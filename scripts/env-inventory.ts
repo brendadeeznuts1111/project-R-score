@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/secrets#bun-secrets-get-options — Bun.secrets
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
@@ -29,6 +30,7 @@ import {
 } from './lib/env-secret-policy.ts';
 import { buildEnvInventoryCompact } from './lib/env-inventory-compact.ts';
 import { buildPackageVaultMap } from '../lib/harness/packages-vault-map.ts';
+import { logTable } from '../lib/console-depth.ts';
 
 const ROOT = process.cwd();
 const argv = Bun.argv.slice(2);
@@ -247,7 +249,11 @@ if (WRITE_BASELINE) {
   console.log(
     `✅ wrote ${actionableGaps.length} actionable vault gap(s) → ${relative(ROOT, BASELINE_PATH)}`
   );
-  for (const g of actionableGaps) console.log(`   · ${g}`);
+  if (actionableGaps.length)
+    logTable(
+      actionableGaps.map(gap => ({ gap })),
+      ['gap']
+    );
   process.exit(0);
 }
 
@@ -332,34 +338,67 @@ console.log(
 );
 console.log('');
 console.log('Vault templates:');
-for (const t of report.vault.templates) {
-  console.log(`  ${t.path}: ${t.keyCount} keys, ${t.vaultRefCount} pass:// refs`);
-  for (const r of t.refs) {
-    console.log(`    ${r.key} ← ${r.ref}`);
-  }
-}
+logTable(
+  report.vault.templates.map(t => ({
+    path: t.path,
+    keys: t.keyCount,
+    passRefs: t.vaultRefCount,
+  })),
+  ['path', 'keys', 'passRefs']
+);
+const vaultRefRows = report.vault.templates.flatMap(t =>
+  t.refs.map(r => ({ template: t.path, key: r.key, ref: r.ref }))
+);
+if (vaultRefRows.length) logTable(vaultRefRows, ['template', 'key', 'ref']);
 console.log('');
 console.log(`Vaulted in template (${report.vault.secretsUsedAndVaulted.length}):`);
-for (const s of report.vault.secretsUsedAndVaulted) console.log(`  ✓ ${s}`);
+if (report.vault.secretsUsedAndVaulted.length) {
+  logTable(
+    report.vault.secretsUsedAndVaulted.map(secret => ({ secret })),
+    ['secret']
+  );
+}
 console.log(`Aliases of vaulted keys (${report.vault.secretsUsedAsAlias.length}):`);
-for (const s of report.vault.secretsUsedAsAlias) {
-  console.log(`  → ${s} ≡ ${SECRET_ALIASES[s] ?? s}`);
+if (report.vault.secretsUsedAsAlias.length) {
+  logTable(
+    report.vault.secretsUsedAsAlias.map(alias => ({
+      alias,
+      canonical: SECRET_ALIASES[alias] ?? alias,
+    })),
+    ['alias', 'canonical']
+  );
 }
 if (secretsService.length) {
   console.log(`Bun.secrets service labels (not vault passwords) (${secretsService.length}):`);
-  for (const s of secretsService) console.log(`  · ${s}`);
+  logTable(
+    secretsService.map(label => ({ label })),
+    ['label']
+  );
 }
 console.log('');
 console.log(`Actionable vault gaps (${actionableGaps.length}) — need Proton Pass + env.template:`);
-for (const g of actionableGaps) {
-  const samples = byVar.get(g)?.samples?.join(', ') ?? '';
-  console.log(`  ✗ ${g}  ${samples}`);
+if (actionableGaps.length) {
+  logTable(
+    actionableGaps.map(gap => ({
+      gap,
+      samples: byVar.get(gap)?.samples?.join(', ') ?? '',
+    })),
+    ['gap', 'samples']
+  );
 }
 if (!VAULT_ONLY) {
   console.log('');
   console.log('Top config vars (not secret/ambient):');
-  for (const c of report.topConfig.slice(0, 12)) {
-    console.log(`  ${c.var} ×${c.count}  e.g. ${c.samples[0] ?? ''}`);
+  const topConfigRows = report.topConfig.slice(0, 12);
+  if (topConfigRows.length) {
+    logTable(
+      topConfigRows.map(c => ({
+        var: c.var,
+        count: c.count,
+        example: c.samples[0] ?? '',
+      })),
+      ['var', 'count', 'example']
+    );
   }
 }
 if (report.packagesPlane) {
@@ -367,10 +406,14 @@ if (report.packagesPlane) {
   console.log(
     `Packages plane: ${report.packagesPlane.summary.packagesWithEnv} pkg(s) · ${report.packagesPlane.summary.envKeyCount} keys · missingTemplate=${report.packagesPlane.summary.missingTemplate}`
   );
-  for (const row of report.packagesPlane.byPackage) {
-    console.log(
-      `  · ${row.package}  [${row.envKeys.join(', ')}]` +
-        (row.missingTemplateKeys.length ? `  missing=${row.missingTemplateKeys.join(',')}` : '')
+  if (report.packagesPlane.byPackage.length) {
+    logTable(
+      report.packagesPlane.byPackage.map(row => ({
+        package: row.package,
+        envKeys: row.envKeys.join(', '),
+        missing: row.missingTemplateKeys.join(','),
+      })),
+      ['package', 'envKeys', 'missing']
     );
   }
 }
