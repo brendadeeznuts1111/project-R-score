@@ -82,7 +82,7 @@ Template: [`config/machine.bunfig.toml.template`](../../../config/machine.bunfig
 
 Live Access is **off** in CI (offline skips). Local edge proof: `portal-cli doctor --group infra --live-access`.
 
-**Pre-commit:** when staged paths touch the bunfig policy surface (`bunfig.toml`, `config/machine.bunfig.toml.template`, `scripts/ensure-machine-bunfig.ts`, `scripts/lib/machine-bunfig.ts`, `tools/lib/portal-cli-doctor-bunfig.ts`), harness runs `bun run portal:doctor:bunfig:check` (offline · plain · `--no-write`). Escape: `SKIP_DOCTOR_BUNFIG=1`.
+**Pre-commit:** when staged paths touch the bunfig policy surface (`bunfig.toml`, `config/machine.bunfig.toml.template`, `scripts/ensure-machine-bunfig.ts`, `scripts/lib/machine-bunfig.ts`, `tools/lib/portal-cli-doctor-bunfig.ts`), harness runs `bun run portal:doctor:bunfig:check` (offline · plain · `--no-write`). Escape: `SKIP_DOCTOR_BUNFIG=1`. When staged paths touch the doctor-state bake surface (`public/registry/doctor-state.json`, `tools/bake-doctor.ts`), harness runs `bun run bake:doctor:check` (machine bunfig ensure + portable fingerprint). Escape: `SKIP_DOCTOR_STATE_CHECK=1`.
 
 ## Data plane
 

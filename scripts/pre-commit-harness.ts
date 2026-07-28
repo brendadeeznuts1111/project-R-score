@@ -87,6 +87,15 @@ export function isDoctorBunfigPath(file: string): boolean {
   );
 }
 
+/**
+ * Doctor-state bake surface — portable fingerprint only (no full doctor suite).
+ * Escape: SKIP_DOCTOR_STATE_CHECK=1
+ */
+export function isDoctorStatePath(file: string): boolean {
+  const n = file.replace(/^\.\//, '');
+  return n === 'public/registry/doctor-state.json' || n === 'tools/bake-doctor.ts';
+}
+
 /** Audit findings/concepts SSOT — verify even when no harness .ts is staged. */
 export function isAuditSsotPath(file: string): boolean {
   const n = file.replace(/^\.\//, '');
@@ -310,6 +319,28 @@ async function main(): Promise<void> {
     }
   }
 
+  // Doctor-state bake surface — portable fingerprint (ensure machine bunfig + check).
+  const doctorStateFiles = staged.filter(isDoctorStatePath);
+  if (doctorStateFiles.length > 0) {
+    if (Bun.env.SKIP_DOCTOR_STATE_CHECK === '1') {
+      console.info('⏭️  SKIP_DOCTOR_STATE_CHECK=1 — doctor-state fingerprint skipped');
+    } else {
+      console.info(`🩺 Doctor-state fingerprint (${doctorStateFiles.length} path(s) staged)...`);
+      const code = await runGate('doctor-state', ['bun', 'run', 'bake:doctor:check'], timings);
+      if (code !== 0) {
+        console.error(
+          '❌ Doctor-state fingerprint failed — re-bake or fix portable groups\n' +
+            '   bun run bake:doctor\n' +
+            '   bun run bake:doctor:check\n' +
+            '   escape: SKIP_DOCTOR_STATE_CHECK=1\n' +
+            '   docs/harness/tenants/portal-doctor.md'
+        );
+        await writeTimings(timings, full);
+        process.exit(1);
+      }
+    }
+  }
+
   if (harnessFiles.length === 0) {
     if (
       docMapFiles.length > 0 ||
@@ -318,10 +349,11 @@ async function main(): Promise<void> {
       auditFiles.length > 0 ||
       publicFiles.length > 0 ||
       runtimeFlagsFiles.length > 0 ||
-      doctorBunfigFiles.length > 0
+      doctorBunfigFiles.length > 0 ||
+      doctorStateFiles.length > 0
     ) {
       console.info(
-        '✅ Harness pre-commit checks passed (doc/projects/lib/audit/public/flags/bunfig gates only)'
+        '✅ Harness pre-commit checks passed (doc/projects/lib/audit/public/flags/bunfig/doctor-state gates only)'
       );
     } else {
       console.info('✅ No staged harness TypeScript or doc-map SSOT files');
