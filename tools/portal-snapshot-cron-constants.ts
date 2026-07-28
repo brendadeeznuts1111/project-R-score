@@ -10,9 +10,16 @@ import {
   isSnapshotScope,
   type SnapshotScopeName,
 } from './snapshot-scopes.ts';
+import { joinPath } from '../lib/path-bun.ts';
 
 /** OS Bun.cron title (launchd / crontab / Task Scheduler). */
 export const PORTAL_SNAPSHOT_CRON_TITLE = 'portal-snapshot';
+
+/** Worker script registered with the OS scheduler (absolute — Bun.cron resolves no relatives). */
+export const PORTAL_SNAPSHOT_CRON_WORKER = joinPath(
+  import.meta.dir,
+  'portal-snapshot-cron-worker.ts'
+);
 
 /** OS-level schedule — system local time (primary, reboot-surviving). */
 export const PORTAL_SNAPSHOT_OS_SCHEDULE =
