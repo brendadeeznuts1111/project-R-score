@@ -133,6 +133,7 @@ import {
   type ServeBindSnapshot,
 } from '../lib/http/bun-server.ts';
 import { resolveBunServeDefaultPort } from '../lib/http/bun-serve-shape.ts';
+import { isPublicReadPath } from '../lib/http/public-read-path.ts';
 import { getDb, getMonitoringData } from '../lib/db/connection.ts';
 
 /** Optional bind override — omit to use Bun docs default (`0.0.0.0`). */
@@ -1628,31 +1629,7 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   // Optional auth for read endpoints — public paths skip the gate
   const authErr = requireReadAuth(req);
   if (authErr) {
-    const publicReadPaths = [
-      '/api/monitoring',
-      '/api/registry',
-      '/api/dod',
-      '/api/compliance',
-      '/api/channels',
-      '/api/operations/summary',
-      '/api/limits/summary',
-      '/api/limits/analyze',
-      '/api/limits/predictions',
-      '/api/catalog',
-      '/api/skills', // prefix also covers /api/skills/{name} + /package (publish-gated POST)
-      // Packaged .skill archives under public/skills/ — public read plane.
-      '/skills/',
-      // Portal static chrome (HTML is route-matched; CSS/JS/modules hit fetch)
-      '/portal/',
-      // Static proof plane under public/registry/ (Pages parity; dashboard fetches JSON)
-      '/registry/',
-      // Tarball downloads are public (read plane) like npm metadata — auth is
-      // publish-only. SDK download() must work without credentials.
-      '/registry/storage/',
-      // Scoped npm packuments (/@scope%2Fname) — public read plane.
-      '/@',
-    ];
-    if (!publicReadPaths.some(p => path.startsWith(p))) return authErr;
+    if (!isPublicReadPath(path)) return authErr;
   }
   if (path === '/api/monitoring' || path === '/api/monitoring/') return liveMonitoringApi();
   if (path === '/monitoring' || path === '/monitoring/') return monitoringPage();

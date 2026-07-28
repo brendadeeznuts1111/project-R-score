@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-07-28T18:25:21.218Z",
+  "generated": "2026-07-28T19:24:04.022Z",
   "path": "/registry/portal-chrome.json",
   "summary": {
     "priorityNav": 6,
     "overflowNav": 14,
-    "footerLinks": 14,
-    "components": 12,
+    "footerLinks": 15,
+    "components": 13,
     "scripts": 5
   },
   "related": {
@@ -209,6 +209,10 @@
       "href": "/portal/health/"
     },
     {
+      "label": "Portal proof",
+      "href": "/registry/portal-weave.json"
+    },
+    {
       "label": "CLI Tools",
       "href": "/portal/tools/"
     },
@@ -300,6 +304,12 @@
       "path": "/portal/style.css",
       "role": "design tokens · chrome layout",
       "kind": "style"
+    },
+    {
+      "id": "brand-assets",
+      "path": "/site.webmanifest",
+      "role": "FactoryWager mark · install metadata · theme colors",
+      "kind": "shell"
     },
     {
       "id": "page-template",

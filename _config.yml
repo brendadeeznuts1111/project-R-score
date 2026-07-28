@@ -3,6 +3,9 @@
 # front matter fixtures (e.g. api-plive-setup-discovery/rules/invalid-rule.md).
 # Site: wiki.factory-wager.com (CNAME) · source: main:/
 title: FactoryWager Wiki
+description: FactoryWager artifact registry, operating portals, harness proof, and platform documentation.
+url: "https://wiki.factory-wager.com"
+logo: /assets/portal-icons/factory.png
 exclude:
   - node_modules
   - bun.lock

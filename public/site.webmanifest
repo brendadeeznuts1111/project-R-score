@@ -1,0 +1,24 @@
+{
+  "name": "FactoryWager Command Centre",
+  "short_name": "FactoryWager",
+  "description": "FactoryWager registry, operations, health, and proof portals.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "/icons/factory/mark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/factory/mark.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

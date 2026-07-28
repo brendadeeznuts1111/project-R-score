@@ -9,6 +9,7 @@ const FALLBACK_LINKS = [
   { label: 'TOC', href: '/portal/toc/' },
   { label: 'Packages', href: '/portal/packages/' },
   { label: 'Health', href: '/portal/health/' },
+  { label: 'Portal proof', href: '/registry/portal-weave.json' },
   { label: 'Compliance', href: '/portal/compliance/' },
   { label: 'Monorepo health', href: '/registry/monorepo-health.json' },
   {

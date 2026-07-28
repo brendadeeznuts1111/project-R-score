@@ -1,0 +1,35 @@
+/**
+ * Public read-plane paths shared by the authenticated local portal server.
+ *
+ * These resources are public on Cloudflare Pages and must remain reachable
+ * without a bearer token locally so the portal renders with Pages parity.
+ */
+
+export const PUBLIC_READ_PATH_PREFIXES = [
+  '/api/monitoring',
+  '/api/registry',
+  '/api/dod',
+  '/api/compliance',
+  '/api/channels',
+  '/api/operations/summary',
+  '/api/limits/summary',
+  '/api/limits/analyze',
+  '/api/limits/predictions',
+  '/api/catalog',
+  '/api/skills',
+  '/skills/',
+  '/portal/',
+  '/registry/',
+  '/registry/storage/',
+  '/icons/',
+  '/@',
+] as const;
+
+export const PUBLIC_READ_EXACT_PATHS = ['/site.webmanifest'] as const;
+
+export function isPublicReadPath(path: string): boolean {
+  return (
+    PUBLIC_READ_EXACT_PATHS.some(candidate => path === candidate) ||
+    PUBLIC_READ_PATH_PREFIXES.some(prefix => path.startsWith(prefix))
+  );
+}

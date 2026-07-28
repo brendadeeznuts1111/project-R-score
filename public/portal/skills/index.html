@@ -6,6 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="portal-poll-ms" content="30000" />
   <title>Skills · FactoryWager</title>
+  <meta name="theme-color" content="#0d1117" />
+  <meta name="application-name" content="FactoryWager" />
+  <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+  <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
+  <link rel="manifest" href="/site.webmanifest" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -42,7 +47,7 @@
   <header class="topbar">
     <div class="topbar-inner">
       <h1 class="logo">
-        <span class="logo-icon">■</span>
+        <span class="logo-icon" aria-hidden="true"></span>
         <span class="brand-wordmark">FactoryWager</span>
         <span class="brand-badge">ops</span>
         <span class="logo-page">Skills</span>
@@ -67,6 +72,7 @@
             <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
             <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
             <a href="/portal/limits/" class="nav-link" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
+            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
             <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
             <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
             <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub" data-group="other" role="menuitem">Wiki</a>
@@ -115,6 +121,7 @@
       <a href="/portal/toc/">TOC</a> ·
       <a href="/portal/packages/">Packages</a> ·
       <a href="/portal/health/">Health</a> ·
+      <a href="/registry/portal-weave.json">Portal proof</a> ·
       <a href="/portal/tools/">CLI Tools</a> ·
       <a href="/portal/compliance/">Compliance</a> ·
       <a href="/portal/limits/">Limits</a> ·

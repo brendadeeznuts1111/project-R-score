@@ -236,6 +236,7 @@ export const PORTAL_FOOTER_LINKS: PortalChromeCatalog['footerLinks'] = [
   { label: 'TOC', href: '/portal/toc/' },
   { label: 'Packages', href: '/portal/packages/' },
   { label: 'Health', href: '/portal/health/' },
+  { label: 'Portal proof', href: '/registry/portal-weave.json' },
   { label: 'CLI Tools', href: '/portal/tools/' },
   { label: 'Compliance', href: '/portal/compliance/' },
   { label: 'Limits', href: '/portal/limits/' },
@@ -306,6 +307,12 @@ export const PORTAL_CHROME_COMPONENTS: PortalChromeComponent[] = [
     path: '/portal/style.css',
     role: 'design tokens · chrome layout',
     kind: 'style',
+  },
+  {
+    id: 'brand-assets',
+    path: '/site.webmanifest',
+    role: 'FactoryWager mark · install metadata · theme colors',
+    kind: 'shell',
   },
   {
     id: 'page-template',

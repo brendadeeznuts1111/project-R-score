@@ -23,6 +23,14 @@ const FONT_BLOCK = `<link rel="preconnect" href="https://fonts.googleapis.com" /
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   `;
 
+const BRAND_HEAD_LINES = [
+  '<meta name="theme-color" content="#0d1117" />',
+  '<meta name="application-name" content="FactoryWager" />',
+  '<link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />',
+  '<link rel="apple-touch-icon" href="/icons/factory/mark.png" />',
+  '<link rel="manifest" href="/site.webmanifest" />',
+] as const;
+
 type PageKey =
   | 'home'
   | 'registry'
@@ -75,7 +83,7 @@ function renderNav(active: PageKey): string {
 function renderLogo(pageLabel: string, brandBadge?: string): string {
   const badge = brandBadge ? `\n        <span class="brand-badge">${brandBadge}</span>` : '';
   return `<h1 class="logo">
-        <span class="logo-icon">■</span>
+        <span class="logo-icon" aria-hidden="true"></span>
         <span class="brand-wordmark">FactoryWager</span>${badge}
         <span class="logo-page">${pageLabel}</span>
       </h1>`;
@@ -94,6 +102,14 @@ async function patchFile(entry: (typeof PAGES)[number]): Promise<void> {
   }
   let html = await Bun.file(path).text();
   let changed = false;
+
+  const titleLine = html.match(/^([ \t]*)<title>.*<\/title>[ \t]*$/m);
+  if (!html.includes('/site.webmanifest') && titleLine) {
+    const indent = titleLine[1] ?? '';
+    const brandHead = BRAND_HEAD_LINES.map(line => `${indent}${line}`).join('\n');
+    html = html.replace(titleLine[0], `${titleLine[0]}\n${brandHead}`);
+    changed = true;
+  }
 
   if (!html.includes('fonts.googleapis.com')) {
     if (html.includes('<link rel="stylesheet" href="/portal/style.css" />')) {

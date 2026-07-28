@@ -73,8 +73,19 @@ body {
 }
 
 .logo-icon {
-  color: var(--accent);
-  font-size: 20px;
+  display: inline-block;
+  inline-size: 20px;
+  block-size: 20px;
+  flex: 0 0 20px;
+  border-radius: 5px;
+  background: url("/icons/factory/mark-32.webp") center / contain no-repeat;
+  color: transparent;
+  font-size: 0;
+}
+
+/* Tenant shells historically placed a second mark outside the shared logo. */
+.topbar > .brand-icon {
+  display: none;
 }
 
 .brand-wordmark {
@@ -458,6 +469,14 @@ body {
 @keyframes skeleton-shine {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-line,
+  .skeleton-cell,
+  .cc-skeleton {
+    animation: none;
+  }
 }
 
 /* ── Main ──────────────────────────────────────────────────────────── */

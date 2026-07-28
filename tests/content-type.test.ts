@@ -160,6 +160,9 @@ describe('content-type deep matrix (default|our|wire|expected|status)', () => {
     expect(guessContentType('public/x.json')).toBe(CT_JSON);
     expect(guessContentType('/a/b.html')).toContain('text/html');
     expect(guessContentType('chart.svg')).toBe('image/svg+xml');
+    expect(guessContentType('/site.webmanifest')).toBe(
+      'application/manifest+json; charset=utf-8'
+    );
     expect(guessContentType('pkg.tgz')).toBe('application/gzip');
   });
 });

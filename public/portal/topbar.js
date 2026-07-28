@@ -146,11 +146,22 @@ function bootstrapNavOverflow() {
   });
 }
 
+function normalizeBrandChrome() {
+  document.querySelectorAll('.logo-icon').forEach(mark => {
+    mark.setAttribute('aria-hidden', 'true');
+    mark.textContent = '';
+  });
+
+  const wordmark = document.querySelector('.brand-wordmark');
+  if (wordmark) wordmark.textContent = 'FactoryWager';
+}
+
 if (!window.__portalDataStarted) {
   startDataService();
 }
 
 function onReady() {
+  normalizeBrandChrome();
   const navigation = markCurrentNavigation();
   if (navigation) {
     document.dispatchEvent(new CustomEvent('portal:navigation', { detail: navigation }));

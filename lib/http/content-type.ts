@@ -26,6 +26,7 @@ export const CT_JS = 'text/javascript; charset=utf-8';
 export const CT_CSS = 'text/css; charset=utf-8';
 export const CT_SSE = 'text/event-stream; charset=utf-8';
 export const CT_SVG = 'image/svg+xml';
+export const CT_WEB_MANIFEST = 'application/manifest+json; charset=utf-8';
 export const CT_GZIP = 'application/gzip';
 export const CT_OCTET = 'application/octet-stream';
 export const CT_EMPTY = '';
@@ -607,6 +608,7 @@ export function jsonFile(data: unknown, filename = 'payload.json'): File {
 
 export function guessContentType(path: string): string {
   const p = path.toLowerCase().split('?')[0]!;
+  if (p.endsWith('.webmanifest')) return CT_WEB_MANIFEST;
   if (p.endsWith('.json')) return CT_JSON;
   if (p.endsWith('.html') || p.endsWith('.htm')) return CT_HTML;
   if (p.endsWith('.js') || p.endsWith('.mjs') || p.endsWith('.cjs')) return CT_JS;

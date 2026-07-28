@@ -27,6 +27,8 @@ describe('lib/http/public-routes', () => {
     expect(paths.has('/api/limits/analyze')).toBe(true);
     expect(paths.has('/api/limits/predictions')).toBe(true);
     expect(paths.has('/portal/limits/')).toBe(true);
+    expect(paths.has('/site.webmanifest')).toBe(true);
+    expect(paths.has('/icons/factory/mark-32.webp')).toBe(true);
     expect(paths.has('/registry/limit-raises.json')).toBe(true);
     expect(paths.has('/registry/compliance-board.json')).toBe(true);
     expect(paths.has('/api/operations/summary')).toBe(true);

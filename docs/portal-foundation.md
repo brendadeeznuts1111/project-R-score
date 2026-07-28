@@ -34,6 +34,7 @@ Exception: [`public/portal/health-page.js`](../public/portal/health-page.js) (sh
 | Nav SSOT | [`lib/portal/chrome-catalog.ts`](../lib/portal/chrome-catalog.ts) | priority + overflow · `group` · `cli` · bake `portal:chrome:bake` · apply `portal:chrome:apply` |
 | Weave surfaces | [`lib/http/portal-weave.ts`](../lib/http/portal-weave.ts) | machine map · includes `vault` · `tools` · `failures` |
 | Nav badges | [`public/portal/nav-badges.js`](../public/portal/nav-badges.js) | client `fetch` of **baked** registry JSON only (no pass-cli) |
+| Brand assets | [`public/site.webmanifest`](../public/site.webmanifest) · [`public/icons/factory/`](../public/icons/factory/) | canonical mark, favicon/install metadata, theme colors |
 | CLI hub | [`/portal/tools/`](../public/portal/tools/) | copy-CLI · bake freshness · capability subset · `#capabilities` |
 | Packages board | [`/portal/packages/`](../public/portal/packages/) | SVG dependency graph · role filter · detail panel · claim `packages-graph-map-v13` |
 | Vault board | [`/portal/vault/`](../public/portal/vault/) | live bake visual; gate = `portal-cli vault health` (offline snaps) |
@@ -99,9 +100,9 @@ Content-Type matrix rows for env page CT section.
    <script type="module" src="/portal/data.js"></script>
    <script type="module" src="/portal/topbar.js"></script>
    ```
-3. Use shared topbar chrome from SSOT (do not hand-edit nav): [`lib/portal/chrome-catalog.ts`](../lib/portal/chrome-catalog.ts) · bake `bun run portal:chrome:bake` → `/registry/portal-chrome.json` · apply `bun run portal:chrome:apply`. Priority: Home · Ops · Registry · Health · DOD · Compliance. Overflow includes Packages · Vault · Env · CLI Tools · Failures · … (see catalog).
+3. Use shared topbar chrome from SSOT (do not hand-edit nav or substitute a text glyph for the mark): [`lib/portal/chrome-catalog.ts`](../lib/portal/chrome-catalog.ts) · bake `bun run portal:chrome:bake` → `/registry/portal-chrome.json` · apply `bun run portal:chrome:apply`. Priority: Home · Ops · Registry · Health · DOD · Compliance. Overflow includes Packages · Vault · Env · CLI Tools · Failures · … (see catalog).
 4. Bun-native monorepo/portal probes: `bun run portal:probe` · `portal-cli probe lockfile`. Launcher: `portal-cli dashboard --view=<board>`.
-5. Add topbar status: MD link (if applicable) + health link with `#health-dot` / `#health-label` (badges via `nav-badges.js` / topbar).
+5. Keep the generated brand head block (`theme-color`, factory icons, `/site.webmanifest`) and add topbar status: MD link (if applicable) + health link with `#health-dot` / `#health-label` (badges via `nav-badges.js` / topbar).
 6. Subscribe to `portal:data` for data; do not inline-fetch `/api/health` for the dot.
 7. Register route in [`lib/http/portal-route-manifest.ts`](../lib/http/portal-route-manifest.ts) + `public/_redirects` + chrome/weave when adding a board.
 8. Run `bun run verify:portal:static` · `bun run public:discover:check`.
@@ -300,6 +301,7 @@ When auth is enabled, static read plane is public (Pages parity):
 
 - `/portal/*` — HTML, CSS, JS modules
 - `/registry/*` — proof JSON for dashboard fetches
+- `/icons/*` + `/site.webmanifest` — canonical public brand resources
 
 Publish and most API routes remain Bearer-gated. See [`docs/platform-routing.md`](platform-routing.md).
 

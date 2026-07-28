@@ -8,6 +8,7 @@ import {
 describe('public-discovery', () => {
   test('PUBLIC_PERIMETER covers portal and registry', () => {
     expect(PUBLIC_PERIMETER.some(p => p === 'public/portal')).toBe(true);
+    expect(PUBLIC_PERIMETER.some(p => p === 'public/site.webmanifest')).toBe(true);
     expect(PUBLIC_PERIMETER.some(p => p === 'public/registry')).toBe(true);
   });
 

@@ -447,6 +447,24 @@ export const FETCH_HANDLER_ROUTES: PublicRouteDef[] = [
     okStatuses: [200],
     note: 'static Response route (docs zero-alloc pattern)',
   },
+  {
+    path: '/site.webmanifest',
+    name: 'FactoryWager web manifest',
+    category: 'portal',
+    kind: 'file-static',
+    critical: true,
+    okStatuses: [200],
+    note: 'brand install metadata · public with read auth enabled',
+  },
+  {
+    path: '/icons/factory/mark-32.webp',
+    name: 'FactoryWager portal mark',
+    category: 'portal',
+    kind: 'file-static',
+    critical: true,
+    okStatuses: [200],
+    note: 'shared header mark · public with read auth enabled',
+  },
 ];
 
 /**

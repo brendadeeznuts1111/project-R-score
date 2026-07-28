@@ -42,6 +42,7 @@ describe('portal-chrome-catalog', () => {
     expect(ids).toContain('topbar');
     expect(ids).toContain('footer');
     expect(ids).toContain('sidebar');
+    expect(ids).toContain('brand-assets');
     expect(ids).toContain('operations-dashboard');
   });
 
@@ -58,6 +59,7 @@ describe('portal-chrome-catalog', () => {
   test('renderFooterHtml links monorepo health registry', () => {
     const html = renderFooterHtml();
     expect(html).toContain('/registry/monorepo-health.json');
+    expect(html).toContain('/registry/portal-weave.json');
     expect(html).toContain('portal-chrome.json');
     expect(html).toContain('/portal/tools/');
   });

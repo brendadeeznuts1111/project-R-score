@@ -25,6 +25,7 @@ export const PUBLIC_PERIMETER = [
   'public/_redirects',
   'public/sitemap.xml',
   'public/sitemap-pages.xml',
+  'public/site.webmanifest',
   'public/manifest.json',
 ] as const;
 
