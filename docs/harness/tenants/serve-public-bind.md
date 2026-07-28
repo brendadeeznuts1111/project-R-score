@@ -129,13 +129,18 @@ English “host” / “hostname” / “domain” spans **two planes**. Do not 
 |-------|---------|--------------|---------|--------|
 | **bind** | listen hostname | `server.hostname` (`string`) | `0.0.0.0`, `localhost` | `HostId` |
 | **bind** | listen port | `server.port` (`number`) | `3000` | brand |
+| **bind** | wire protocol | `server.protocol` | `http`, `https` | `URL.protocol` / HostId |
+| **bind** | URL scheme | `server.url.protocol` | `http:`, `https:` | bare `server.protocol` |
 | **bind** | loopback origin | `loopbackOrigin` | `http://127.0.0.1:3000` | public FQDN |
-| **dns** | public FQDN | `HostId` | `score.factory-wager.com` | bind hostname |
+| **dns** | public FQDN | `HostId` | `score.factory-wager.com` | bind hostname / scheme |
+| **dns** | probe URL | `httpsUrlForHost(host)` | `https://score…/` | stored inside HostId |
 | **dns** | zone apex | `ApexDomainId` | `factory-wager.com` | bind hostname |
 | **dns** | left labels | `SubdomainId` | `score`, `@` | `SurfaceId` |
 | **dns** | inventory key | `SurfaceId` | `pages_dev` | DNS subdomain |
 | **access** | Access app domain | `AccessDomainId` | `score…/portal` | `HostId` |
 | **pages** | Pages project | `PagesProjectId` | `project-r-score` | ops `ProjectId` |
+
+`server.protocol` is `"http" | "https"` (no colon); `server.url.protocol` is `"http:" | "https:"`. HostId never carries a scheme — use `httpsUrlForHost` / `httpsUrlForAccessDomain` at the edge.
 
 ```mermaid
 flowchart LR

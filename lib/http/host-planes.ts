@@ -1,12 +1,13 @@
 // @see https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname — Bun.serve port/hostname
+// @see https://bun.com/docs/runtime/http/tls — protocol https when TLS enabled
 /**
  * Host planes — stop conflating Bun.serve bind hostname with DNS HostId.
  *
- * Two planes share English words ("host", "hostname", "domain") but different
- * types, defaults, and SSOTs. This matrix is the data map for CLI/docs.
+ * Two planes share English words ("host", "hostname", "domain", "protocol") but
+ * different types, defaults, and SSOTs. This matrix is the data map for CLI/docs.
  *
- * Bind plane:  Bun.serve({ port, hostname }) · serve-public · bind.json
- * DNS plane:   HostId / ApexDomainId / SubdomainId · config/surfaces.toml
+ * Bind plane:  Bun.serve({ port, hostname }) · server.protocol · serve-public · bind.json
+ * DNS plane:   HostId / ApexDomainId / SubdomainId · config/surfaces.toml (no scheme)
  *
  * Operator: docs/harness/tenants/serve-public-bind.md
  * Brands:   lib/types/branded/surfaces.ts · bun run brand:status
@@ -54,13 +55,31 @@ export const HOST_PLANE_MAP: readonly HostPlaneRow[] = [
     note: 'OS bind address. NOT HostId. Docs default 0.0.0.0; macOS canary often localhost.',
   },
   {
+    id: 'bind.protocol',
+    plane: 'bind',
+    concept: 'wire protocol',
+    typeOrField: 'server.protocol ("http"|"https"|null)',
+    example: 'http | https',
+    ssot: 'Bun.serve TLS → https; plain TCP → http; unix → null · bun-server.ts',
+    note: 'Bare scheme, no colon. Distinct from URL.protocol. Not part of HostId.',
+  },
+  {
+    id: 'bind.urlProtocol',
+    plane: 'bind',
+    concept: 'URL scheme',
+    typeOrField: 'server.url.protocol (string)',
+    example: 'http: | https:',
+    ssot: 'server.url · always trailing colon',
+    note: 'URL shape of the same listen — must match `${server.protocol}:` on TCP.',
+  },
+  {
     id: 'bind.loopback',
     plane: 'bind',
     concept: 'loopback origin',
     typeOrField: 'loopbackOrigin (URL string)',
     example: 'http://127.0.0.1:3000',
     ssot: 'lib/http/bun-server.ts serverLoopbackOrigin · .serve-public/bind.json',
-    note: 'Maps 0.0.0.0 → 127.0.0.1 for browser/verify. Still not a public FQDN.',
+    note: 'scheme://loopback:port. Maps 0.0.0.0 → 127.0.0.1. Still not a public FQDN.',
   },
   {
     id: 'dns.host',
@@ -69,7 +88,16 @@ export const HOST_PLANE_MAP: readonly HostPlaneRow[] = [
     typeOrField: 'HostId',
     example: 'score.factory-wager.com',
     ssot: 'config/surfaces.toml host · lib/types/branded/surfaces.ts',
-    note: 'DNS name only — no scheme/path. Never pass Access host/path here.',
+    note: 'DNS name only — no scheme/path. Compose https via httpsUrlForHost(host).',
+  },
+  {
+    id: 'dns.probeUrl',
+    plane: 'dns',
+    concept: 'probe HTTPS URL',
+    typeOrField: 'string (URL) from httpsUrlForHost',
+    example: 'https://score.factory-wager.com/',
+    ssot: 'httpsUrlForHost / httpsUrlForAccessDomain',
+    note: 'Scheme lives on the URL helper, never inside HostId / ApexDomainId.',
   },
   {
     id: 'dns.apex',
