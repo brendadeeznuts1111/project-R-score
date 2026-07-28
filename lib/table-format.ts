@@ -1,22 +1,28 @@
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/terminal — Bun.terminal / Bun.stdout
 /**
  * Universal table formatter — rich ANSI-styled terminal tables.
  *
  * Features:
- * - ANSI color coding (can disable with `NO_COLOR` or `--no-color`)
+ * - Uses Bun.terminal for proper color detection (respects NO_COLOR, isTTY)
+ * - Auto-sizes columns to terminal width when no explicit width given
+ * - ANSI color coding
  * - Smart column width limiting with ellipsis
  * - Alternating row backgrounds
  * - Left/right/center alignment per column
  * - Section separators
  * - Compact mode for chat
  * - Unicode box-drawing with fallback to ASCII
+ * - Supports Bun.inspect for rich cell values
  */
-import { stringWidth } from 'bun';
+import { stringWidth, inspect, terminal } from 'bun';
 
-// ── Color support ─────────────────────────────────────────────────────────
-const NO_COLOR =
-  typeof process !== 'undefined' &&
-  (Bun.env.NO_COLOR !== undefined || process.argv.includes('--no-color'));
+// ── Color support via Bun.terminal ───────────────────────────────────────
+const isTTY = terminal?.isTTY ?? false;
+const NO_COLOR = !isTTY || Bun.env.NO_COLOR !== undefined || process.argv.includes('--no-color');
+const TERM_WIDTH = terminal?.columns ?? 80;
+
 const C = (code: string) => (s: string) => (NO_COLOR ? s : `\x1b[${code}m${s}\x1b[0m`);
 export const color = {
   red: C('31'),
@@ -71,7 +77,7 @@ export type TableOpts = {
 const DEFAULT_OPTS: TableOpts = {
   compact: false,
   colors: !NO_COLOR,
-  maxColWidth: 40,
+  maxColWidth: Math.floor(TERM_WIDTH / 3),
   alternate: true,
   border: 'unicode',
 };
@@ -188,7 +194,7 @@ export function formatTable(
   }
 
   // Compute column widths
-  const maxW = o.maxColWidth ?? 40;
+  const maxW = o.maxColWidth ?? Math.floor(TERM_WIDTH / 3);
   const widths = columns.map((col, i) => {
     const labelW = sw(col.label);
     const dataW = Math.max(
