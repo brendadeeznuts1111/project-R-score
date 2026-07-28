@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "kind": "env-inventory",
-  "generatedAt": "2026-07-28T14:02:47.257Z",
+  "generatedAt": "2026-07-28T16:39:33.490Z",
   "scannedRoots": [
     "lib",
     "config",
@@ -9,12 +9,12 @@
     "tools",
     "packages"
   ],
-  "usageCount": 400,
-  "uniqueVars": 183,
+  "usageCount": 428,
+  "uniqueVars": 193,
   "byKind": {
-    "ambient": 17,
+    "ambient": 18,
     "secret": 15,
-    "config": 151
+    "config": 160
   },
   "vault": {
     "templateKeyCount": 41,
@@ -41,12 +41,15 @@
       "SLACK_WEBHOOK_URL",
       "TELEGRAM_BOT_TOKEN",
       "TELEGRAM_CATALOG_RESEARCH_LLM_KEY"
-    ]
+    ],
+    "displayMapped": 17,
+    "withColor": 17,
+    "withIcon": 17
   },
   "topConfig": [
     {
       "var": "OPS_DB_PATH",
-      "count": 45,
+      "count": 46,
       "samples": [
         "lib/registry-snapshot.ts:135",
         "lib/monitoring/integrity.ts:37",
@@ -65,12 +68,22 @@
       ]
     },
     {
+      "var": "PORTAL_SCOPE",
+      "count": 5,
+      "samples": [
+        "tools/snapshot-core.ts:622",
+        "tools/portal-probe.ts:200",
+        "tools/portal-probe.ts:204",
+        "tools/portal-probe.ts:324"
+      ]
+    },
+    {
       "var": "BASE_URL",
       "count": 4,
       "samples": [
         "lib/verification/networking-channel.ts:155",
         "tools/verify-etag.ts:87",
-        "tools/ops-snapshot.ts:512",
+        "tools/ops-snapshot.ts:562",
         "tools/verify-networking.ts:130"
       ]
     },
@@ -90,7 +103,7 @@
       "samples": [
         "lib/verification/networking-channel.ts:155",
         "tools/verify-etag.ts:87",
-        "tools/ops-snapshot.ts:512",
+        "tools/ops-snapshot.ts:562",
         "tools/verify-networking.ts:130"
       ]
     },
@@ -100,7 +113,7 @@
       "samples": [
         "lib/registry-snapshot.ts:97",
         "lib/verification/install-env-probes.ts:35",
-        "tools/ops-snapshot.ts:108",
+        "tools/ops-snapshot.ts:111",
         "tools/verify-package-info.ts:19"
       ]
     },
@@ -138,7 +151,16 @@
       "samples": [
         "lib/registry-snapshot.ts:97",
         "lib/verification/install-env-probes.ts:35",
-        "tools/ops-snapshot.ts:108"
+        "tools/ops-snapshot.ts:111"
+      ]
+    },
+    {
+      "var": "PROTON_PASS_AGENT_REASON",
+      "count": 3,
+      "samples": [
+        "scripts/vault-gap-close.ts:70",
+        "scripts/lib/vault-gap-status.ts:203",
+        "tools/portal-secret.ts:166"
       ]
     },
     {
@@ -148,6 +170,15 @@
         "lib/core/url-handler.ts:347",
         "config/ports.ts:28",
         "scripts/lib/dashboard-env.ts:28"
+      ]
+    },
+    {
+      "var": "SNAPSHOT_BASE_URL",
+      "count": 3,
+      "samples": [
+        "tools/snapshot-core.ts:630",
+        "tools/portal-snapshot-cron-constants.ts:57",
+        "tools/snapshot-scopes.ts:22"
       ]
     },
     {
@@ -239,30 +270,6 @@
         "scripts/machine-bun-health.ts:18",
         "scripts/machine-bun-health.ts:19"
       ]
-    },
-    {
-      "var": "MONITORING_SNAPSHOT_PATH",
-      "count": 2,
-      "samples": [
-        "lib/registry-snapshot.ts:138",
-        "tools/ops-snapshot.ts:93"
-      ]
-    },
-    {
-      "var": "OPS_SNAPSHOT_PATH",
-      "count": 2,
-      "samples": [
-        "lib/registry-snapshot.ts:136",
-        "tools/ops-snapshot.ts:78"
-      ]
-    },
-    {
-      "var": "PROTON_PASS_AGENT_REASON",
-      "count": 2,
-      "samples": [
-        "scripts/vault-gap-close.ts:70",
-        "scripts/lib/vault-gap-status.ts:203"
-      ]
     }
   ],
   "owners": [
@@ -332,7 +339,7 @@
         "lib/factory/server.ts:181",
         "lib/verification/install-env-probes.ts:196",
         "scripts/lib/domain-registry.ts:141",
-        "tools/ops-snapshot.ts:111"
+        "tools/ops-snapshot.ts:114"
       ]
     },
     {
@@ -352,8 +359,8 @@
       "runtimePresent": true,
       "samples": [
         "lib/factory/server.ts:181",
-        "scripts/serve-public.ts:1467",
-        "tools/ops-snapshot.ts:110",
+        "scripts/serve-public.ts:1470",
+        "tools/ops-snapshot.ts:113",
         "tools/verify-formdata.ts:20"
       ]
     },
@@ -490,8 +497,26 @@
       "passRef": null,
       "runtimePresent": false,
       "samples": [
-        "lib/channels/outbox.ts:436",
+        "lib/channels/outbox.ts:437",
         "lib/factory/alerts.ts:31"
+      ]
+    },
+    {
+      "envKey": "TELEGRAM_BOT_TOKEN",
+      "kind": "secret",
+      "disposition": "alias",
+      "count": 2,
+      "planes": [
+        "lib"
+      ],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "lib/operations/account-service.ts:425",
+        "lib/identity/account-lockout.ts:65"
       ]
     },
     {
@@ -546,23 +571,6 @@
       ]
     },
     {
-      "envKey": "TELEGRAM_BOT_TOKEN",
-      "kind": "secret",
-      "disposition": "alias",
-      "count": 1,
-      "planes": [
-        "lib"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "lib/operations/account-service.ts:425"
-      ]
-    },
-    {
       "envKey": "TELEGRAM_CATALOG_RESEARCH_LLM_KEY",
       "kind": "secret",
       "disposition": "alias",
@@ -606,7 +614,7 @@
       "envKey": "OPS_DB_PATH",
       "kind": "config",
       "disposition": "config",
-      "count": 45,
+      "count": 46,
       "planes": [
         "lib",
         "scripts",
@@ -684,7 +692,7 @@
       "samples": [
         "lib/verification/networking-channel.ts:155",
         "tools/verify-etag.ts:87",
-        "tools/ops-snapshot.ts:512",
+        "tools/ops-snapshot.ts:562",
         "tools/verify-networking.ts:130"
       ]
     },
@@ -705,7 +713,7 @@
       "samples": [
         "lib/verification/networking-channel.ts:155",
         "tools/verify-etag.ts:87",
-        "tools/ops-snapshot.ts:512",
+        "tools/ops-snapshot.ts:562",
         "tools/verify-networking.ts:130"
       ]
     },
@@ -726,7 +734,7 @@
       "samples": [
         "lib/registry-snapshot.ts:97",
         "lib/verification/install-env-probes.ts:35",
-        "tools/ops-snapshot.ts:108",
+        "tools/ops-snapshot.ts:111",
         "tools/verify-package-info.ts:19"
       ]
     },
@@ -787,7 +795,7 @@
       "samples": [
         "lib/registry-snapshot.ts:97",
         "lib/verification/install-env-probes.ts:35",
-        "tools/ops-snapshot.ts:108"
+        "tools/ops-snapshot.ts:111"
       ]
     },
     {
@@ -808,6 +816,26 @@
         "lib/verification/resolve-bun-binary.ts:98",
         "tools/overseer-cli.ts:39",
         "tools/bun-api-showcase.ts:644"
+      ]
+    },
+    {
+      "envKey": "PROTON_PASS_AGENT_REASON",
+      "kind": "config",
+      "disposition": "config",
+      "count": 3,
+      "planes": [
+        "scripts",
+        "tools"
+      ],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "scripts/vault-gap-close.ts:70",
+        "scripts/lib/vault-gap-status.ts:203",
+        "tools/portal-secret.ts:166"
       ]
     },
     {
@@ -942,7 +970,26 @@
       "runtimePresent": false,
       "samples": [
         "lib/registry-snapshot.ts:138",
-        "tools/ops-snapshot.ts:93"
+        "tools/ops-snapshot.ts:96"
+      ]
+    },
+    {
+      "envKey": "NO_COLOR",
+      "kind": "ambient",
+      "disposition": "ambient",
+      "count": 2,
+      "planes": [
+        "lib",
+        "tools"
+      ],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": true,
+      "samples": [
+        "lib/console-depth.ts:92",
+        "tools/portal-probe.ts:45"
       ]
     },
     {
@@ -984,6 +1031,26 @@
       ]
     },
     {
+      "envKey": "PORTAL_SCOPE",
+      "kind": "config",
+      "disposition": "config",
+      "count": 5,
+      "planes": [
+        "tools"
+      ],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "tools/snapshot-core.ts:622",
+        "tools/portal-probe.ts:200",
+        "tools/portal-probe.ts:204",
+        "tools/portal-probe.ts:324"
+      ]
+    },
+    {
       "envKey": "DOMAIN_REGISTRY_PATH",
       "kind": "config",
       "disposition": "config",
@@ -1021,6 +1088,25 @@
         "scripts/search-benchmark-dashboard.ts:157",
         "scripts/search-unified-status.ts:39",
         "scripts/lib/domain-health-read.ts:383"
+      ]
+    },
+    {
+      "envKey": "SNAPSHOT_BASE_URL",
+      "kind": "config",
+      "disposition": "config",
+      "count": 3,
+      "planes": [
+        "tools"
+      ],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "tools/snapshot-core.ts:630",
+        "tools/portal-snapshot-cron-constants.ts:57",
+        "tools/snapshot-scopes.ts:22"
       ]
     },
     {
@@ -1188,12 +1274,12 @@
       ]
     },
     {
-      "envKey": "PROTON_PASS_AGENT_REASON",
+      "envKey": "PORTAL_SNAPSHOT_INPROCESS_SCHEDULE",
       "kind": "config",
       "disposition": "config",
       "count": 2,
       "planes": [
-        "scripts"
+        "tools"
       ],
       "packages": [],
       "inRootTemplate": false,
@@ -1201,8 +1287,26 @@
       "passRef": null,
       "runtimePresent": false,
       "samples": [
-        "scripts/vault-gap-close.ts:70",
-        "scripts/lib/vault-gap-status.ts:203"
+        "tools/portal-snapshot-cron-constants.ts:24",
+        "tools/portal-snapshot-cron-constants.ts:38"
+      ]
+    },
+    {
+      "envKey": "PORTAL_SNAPSHOT_OS_SCHEDULE",
+      "kind": "config",
+      "disposition": "config",
+      "count": 2,
+      "planes": [
+        "tools"
+      ],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "tools/portal-snapshot-cron-constants.ts:19",
+        "tools/portal-snapshot-cron-constants.ts:33"
       ]
     },
     {
@@ -1330,93 +1434,6 @@
         "scripts/search-benchmark-snapshot.ts:206",
         "scripts/search-benchmark.ts:136"
       ]
-    },
-    {
-      "envKey": "SEARCH_BENCH_QUERY_TIMEOUT_MS",
-      "kind": "config",
-      "disposition": "config",
-      "count": 2,
-      "planes": [
-        "scripts"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "scripts/search-benchmark-snapshot.ts:202",
-        "scripts/search-benchmark.ts:132"
-      ]
-    },
-    {
-      "envKey": "TELEGRAM_CATALOG_RESEARCH_LLM_URL",
-      "kind": "config",
-      "disposition": "config",
-      "count": 2,
-      "planes": [
-        "lib"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "lib/telegram/catalog-research/llm-pass.ts:66",
-        "lib/telegram/catalog-research/agent.ts:41"
-      ]
-    },
-    {
-      "envKey": "AB_TESTING_URL",
-      "kind": "config",
-      "disposition": "config",
-      "count": 1,
-      "planes": [
-        "lib"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "lib/core/url-service.ts:24"
-      ]
-    },
-    {
-      "envKey": "API_BASE_URL",
-      "kind": "config",
-      "disposition": "config",
-      "count": 1,
-      "planes": [
-        "lib"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "lib/core/url-service.ts:21"
-      ]
-    },
-    {
-      "envKey": "AUDIT_CATALOG_PATH",
-      "kind": "config",
-      "disposition": "config",
-      "count": 1,
-      "planes": [
-        "tools"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "tools/audit-catalog.ts:43"
-      ]
     }
   ],
   "defaultsIssues": {
@@ -1426,7 +1443,7 @@
     "top": []
   },
   "packagesPlane": {
-    "generatedAt": "2026-07-28T14:02:47.257Z",
+    "generatedAt": "2026-07-28T16:39:33.490Z",
     "templateKeys": [
       "R2_ACCOUNT_ID",
       "R2_ACCESS_KEY_ID",
@@ -1440,68 +1457,120 @@
       "TELEGRAM_BOT_FACTORY",
       "TELEGRAM_WEBHOOK_SECRET",
       "TELEGRAM_OPS_CHAT_ID",
-      "NODE_ENV",
-      "MCP_LOG_LEVEL",
-      "BUN_CONSOLE_DEPTH",
-      "REDIS_URL",
+      "PLAY_SIGNING_SECRET",
+      "REPORT_SIGNING_SECRET",
       "DOD_PROOF_SECRET",
       "DOD_ID_ENCRYPTION_KEY",
       "PROVISION_ENCRYPTION_KEY",
-      "PLAY_SIGNING_SECRET",
-      "REPORT_SIGNING_SECRET"
+      "REDIS_URL",
+      "NODE_ENV",
+      "MCP_LOG_LEVEL",
+      "BUN_CONSOLE_DEPTH"
     ],
     "vaultRefs": [
       {
         "key": "R2_ACCESS_KEY_ID",
-        "ref": "pass://factorywager/R2 bun-secrets bucket/username"
+        "ref": "pass://factorywager/R2 bun-secrets bucket/username",
+        "label": "R2 Access Key",
+        "color": "#E11D48",
+        "icon": "public/portal/icons/vault/r2.svg",
+        "type": "token"
       },
       {
         "key": "R2_SECRET_ACCESS_KEY",
-        "ref": "pass://factorywager/R2 bun-secrets bucket/password"
+        "ref": "pass://factorywager/R2 bun-secrets bucket/password",
+        "label": "R2 Secret Key",
+        "color": "#E11D48",
+        "icon": "public/portal/icons/vault/r2.svg",
+        "type": "token"
       },
       {
         "key": "FACTORY_WAGER_TOKEN",
-        "ref": "pass://factorywager/FactoryWager Registry Token/password"
+        "ref": "pass://factorywager/FactoryWager Registry Token/password",
+        "label": "FactoryWager Registry Token",
+        "color": "#3B82F6",
+        "icon": "public/portal/icons/vault/key.svg",
+        "type": "token"
       },
       {
         "key": "REGISTRY_SECRET",
-        "ref": "pass://factorywager/Registry Dev Secret/password"
+        "ref": "pass://factorywager/Registry Dev Secret/password",
+        "label": "Registry Dev Secret",
+        "color": "#A855F7",
+        "icon": "public/portal/icons/vault/hmac.svg",
+        "type": "secret"
       },
       {
         "key": "CLOUDFLARE_API_TOKEN",
-        "ref": "pass://factorywager/Cloudflare API Token/password"
+        "ref": "pass://factorywager/Cloudflare API Token/password",
+        "label": "Cloudflare API Token",
+        "color": "#F6821F",
+        "icon": "public/portal/icons/vault/cloudflare.svg",
+        "type": "token"
       },
       {
         "key": "CLOUDFLARE_DNS_API_TOKEN",
-        "ref": "pass://factorywager/Cloudflare API Token (DNS)/password"
+        "ref": "pass://factorywager/Cloudflare API Token (DNS)/password",
+        "label": "Cloudflare DNS API Token",
+        "color": "#F6821F",
+        "icon": "public/portal/icons/vault/cloudflare.svg",
+        "type": "token"
       },
       {
         "key": "TELEGRAM_BOT_FACTORY",
-        "ref": "pass://factorywager/Telegram: factorywager_bot/password"
+        "ref": "pass://factorywager/Telegram: factorywager_bot/password",
+        "label": "Telegram factorywager_bot",
+        "color": "#26A5E4",
+        "icon": "public/portal/icons/vault/telegram.svg",
+        "type": "token"
       },
       {
         "key": "TELEGRAM_WEBHOOK_SECRET",
-        "ref": "pass://factorywager/Telegram Webhook Secret/password"
-      },
-      {
-        "key": "DOD_PROOF_SECRET",
-        "ref": "pass://factorywager/DOD Proof Secret/password"
-      },
-      {
-        "key": "DOD_ID_ENCRYPTION_KEY",
-        "ref": "pass://factorywager/DOD ID Encryption Key/password"
-      },
-      {
-        "key": "PROVISION_ENCRYPTION_KEY",
-        "ref": "pass://factorywager/Provision Encryption Key/password"
+        "ref": "pass://factorywager/Telegram Webhook Secret/password",
+        "label": "Telegram Webhook Secret",
+        "color": "#26A5E4",
+        "icon": "public/portal/icons/vault/telegram.svg",
+        "type": "secret"
       },
       {
         "key": "PLAY_SIGNING_SECRET",
-        "ref": "pass://factorywager/Play Signing Secret/password"
+        "ref": "pass://factorywager/Play Signing Secret/password",
+        "label": "Play Signing Secret",
+        "color": "#A855F7",
+        "icon": "public/portal/icons/vault/hmac.svg",
+        "type": "hmac"
       },
       {
         "key": "REPORT_SIGNING_SECRET",
-        "ref": "pass://factorywager/Report Signing Secret/password"
+        "ref": "pass://factorywager/Report Signing Secret/password",
+        "label": "Report Signing Secret",
+        "color": "#A855F7",
+        "icon": "public/portal/icons/vault/hmac.svg",
+        "type": "hmac"
+      },
+      {
+        "key": "DOD_PROOF_SECRET",
+        "ref": "pass://factorywager/DOD Proof Secret/password",
+        "label": "DOD Proof Secret",
+        "color": "#8B5CF6",
+        "icon": "public/portal/icons/vault/hmac.svg",
+        "type": "hmac"
+      },
+      {
+        "key": "DOD_ID_ENCRYPTION_KEY",
+        "ref": "pass://factorywager/DOD ID Encryption Key/password",
+        "label": "DOD ID Encryption Key",
+        "color": "#8B5CF6",
+        "icon": "public/portal/icons/vault/key.svg",
+        "type": "key"
+      },
+      {
+        "key": "PROVISION_ENCRYPTION_KEY",
+        "ref": "pass://factorywager/Provision Encryption Key/password",
+        "label": "Provision Encryption Key",
+        "color": "#8B5CF6",
+        "icon": "public/portal/icons/vault/key.svg",
+        "type": "key"
       }
     ],
     "envHits": [
@@ -1553,6 +1622,246 @@
       }
     ],
     "actions": [],
+    "displayMap": [
+      {
+        "envKey": "CLOUDFLARE_API_TOKEN",
+        "vault": "factorywager",
+        "item": "Cloudflare API Token",
+        "field": "password",
+        "passRef": "pass://factorywager/Cloudflare API Token/password",
+        "label": "Cloudflare API Token",
+        "color": "#F6821F",
+        "icon": "public/portal/icons/vault/cloudflare.svg",
+        "glyph": "☁",
+        "type": "token",
+        "inTemplate": true,
+        "runtimePresent": true
+      },
+      {
+        "envKey": "CLOUDFLARE_DNS_API_TOKEN",
+        "vault": "factorywager",
+        "item": "Cloudflare API Token (DNS)",
+        "field": "password",
+        "passRef": "pass://factorywager/Cloudflare API Token (DNS)/password",
+        "label": "Cloudflare DNS API Token",
+        "color": "#F6821F",
+        "icon": "public/portal/icons/vault/cloudflare.svg",
+        "glyph": "☁",
+        "type": "token",
+        "inTemplate": true,
+        "runtimePresent": true
+      },
+      {
+        "envKey": "DOD_ID_ENCRYPTION_KEY",
+        "vault": "factorywager",
+        "item": "DOD ID Encryption Key",
+        "field": "password",
+        "passRef": "pass://factorywager/DOD ID Encryption Key/password",
+        "label": "DOD ID Encryption Key",
+        "color": "#8B5CF6",
+        "icon": "public/portal/icons/vault/key.svg",
+        "glyph": "🔑",
+        "type": "key",
+        "inTemplate": true,
+        "runtimePresent": true
+      },
+      {
+        "envKey": "DOD_PROOF_SECRET",
+        "vault": "factorywager",
+        "item": "DOD Proof Secret",
+        "field": "password",
+        "passRef": "pass://factorywager/DOD Proof Secret/password",
+        "label": "DOD Proof Secret",
+        "color": "#8B5CF6",
+        "icon": "public/portal/icons/vault/hmac.svg",
+        "glyph": "🔏",
+        "type": "hmac",
+        "inTemplate": true,
+        "runtimePresent": true
+      },
+      {
+        "envKey": "FACTORY_WAGER_TOKEN",
+        "vault": "factorywager",
+        "item": "FactoryWager Registry Token",
+        "field": "password",
+        "passRef": "pass://factorywager/FactoryWager Registry Token/password",
+        "label": "FactoryWager Registry Token",
+        "color": "#3B82F6",
+        "icon": "public/portal/icons/vault/key.svg",
+        "glyph": "🔑",
+        "type": "token",
+        "inTemplate": true,
+        "runtimePresent": true
+      },
+      {
+        "envKey": "GITHUB_TOKEN",
+        "vault": null,
+        "item": null,
+        "field": null,
+        "passRef": null,
+        "label": "GitHub PAT",
+        "color": "#2DA44E",
+        "icon": "public/portal/icons/vault/github.svg",
+        "glyph": "🐙",
+        "type": "token",
+        "inTemplate": false,
+        "runtimePresent": false
+      },
+      {
+        "envKey": "OPENAI_API_KEY",
+        "vault": null,
+        "item": null,
+        "field": null,
+        "passRef": null,
+        "label": "OpenAI API Key",
+        "color": "#10A37F",
+        "icon": "public/portal/icons/vault/key.svg",
+        "glyph": "🔑",
+        "type": "token",
+        "inTemplate": false,
+        "runtimePresent": false
+      },
+      {
+        "envKey": "PLAY_SIGNING_SECRET",
+        "vault": "factorywager",
+        "item": "Play Signing Secret",
+        "field": "password",
+        "passRef": "pass://factorywager/Play Signing Secret/password",
+        "label": "Play Signing Secret",
+        "color": "#A855F7",
+        "icon": "public/portal/icons/vault/hmac.svg",
+        "glyph": "🔏",
+        "type": "hmac",
+        "inTemplate": true,
+        "runtimePresent": true
+      },
+      {
+        "envKey": "PROVISION_ENCRYPTION_KEY",
+        "vault": "factorywager",
+        "item": "Provision Encryption Key",
+        "field": "password",
+        "passRef": "pass://factorywager/Provision Encryption Key/password",
+        "label": "Provision Encryption Key",
+        "color": "#8B5CF6",
+        "icon": "public/portal/icons/vault/key.svg",
+        "glyph": "🔑",
+        "type": "key",
+        "inTemplate": true,
+        "runtimePresent": true
+      },
+      {
+        "envKey": "R2_ACCESS_KEY_ID",
+        "vault": "factorywager",
+        "item": "R2 bun-secrets bucket",
+        "field": "username",
+        "passRef": "pass://factorywager/R2 bun-secrets bucket/username",
+        "label": "R2 Access Key",
+        "color": "#E11D48",
+        "icon": "public/portal/icons/vault/r2.svg",
+        "glyph": "🗄",
+        "type": "token",
+        "inTemplate": true,
+        "runtimePresent": true
+      },
+      {
+        "envKey": "R2_SECRET_ACCESS_KEY",
+        "vault": "factorywager",
+        "item": "R2 bun-secrets bucket",
+        "field": "password",
+        "passRef": "pass://factorywager/R2 bun-secrets bucket/password",
+        "label": "R2 Secret Key",
+        "color": "#E11D48",
+        "icon": "public/portal/icons/vault/r2.svg",
+        "glyph": "🗄",
+        "type": "token",
+        "inTemplate": true,
+        "runtimePresent": true
+      },
+      {
+        "envKey": "REGISTRY_SECRET",
+        "vault": "factorywager",
+        "item": "Registry Dev Secret",
+        "field": "password",
+        "passRef": "pass://factorywager/Registry Dev Secret/password",
+        "label": "Registry Dev Secret",
+        "color": "#A855F7",
+        "icon": "public/portal/icons/vault/hmac.svg",
+        "glyph": "🔏",
+        "type": "secret",
+        "inTemplate": true,
+        "runtimePresent": true
+      },
+      {
+        "envKey": "REPORT_SIGNING_SECRET",
+        "vault": "factorywager",
+        "item": "Report Signing Secret",
+        "field": "password",
+        "passRef": "pass://factorywager/Report Signing Secret/password",
+        "label": "Report Signing Secret",
+        "color": "#A855F7",
+        "icon": "public/portal/icons/vault/hmac.svg",
+        "glyph": "🔏",
+        "type": "hmac",
+        "inTemplate": true,
+        "runtimePresent": true
+      },
+      {
+        "envKey": "SLACK_WEBHOOK_URL",
+        "vault": null,
+        "item": null,
+        "field": null,
+        "passRef": null,
+        "label": "Slack Webhook URL",
+        "color": "#E01E5A",
+        "icon": "public/portal/icons/vault/url.svg",
+        "glyph": "🔗",
+        "type": "url",
+        "inTemplate": false,
+        "runtimePresent": false
+      },
+      {
+        "envKey": "SSH_PKEY",
+        "vault": null,
+        "item": null,
+        "field": null,
+        "passRef": null,
+        "label": "SSH Deploy Key",
+        "color": "#FF6B35",
+        "icon": "public/portal/icons/vault/ssh.svg",
+        "glyph": "🔐",
+        "type": "ssh",
+        "inTemplate": false,
+        "runtimePresent": false
+      },
+      {
+        "envKey": "TELEGRAM_BOT_FACTORY",
+        "vault": "factorywager",
+        "item": "Telegram: factorywager_bot",
+        "field": "password",
+        "passRef": "pass://factorywager/Telegram: factorywager_bot/password",
+        "label": "Telegram factorywager_bot",
+        "color": "#26A5E4",
+        "icon": "public/portal/icons/vault/telegram.svg",
+        "glyph": "✈",
+        "type": "token",
+        "inTemplate": true,
+        "runtimePresent": true
+      },
+      {
+        "envKey": "TELEGRAM_WEBHOOK_SECRET",
+        "vault": "factorywager",
+        "item": "Telegram Webhook Secret",
+        "field": "password",
+        "passRef": "pass://factorywager/Telegram Webhook Secret/password",
+        "label": "Telegram Webhook Secret",
+        "color": "#26A5E4",
+        "icon": "public/portal/icons/vault/telegram.svg",
+        "glyph": "✈",
+        "type": "secret",
+        "inTemplate": true,
+        "runtimePresent": true
+      }
+    ],
     "summary": {
       "packagesWithEnv": 2,
       "envKeyCount": 1,
@@ -1560,7 +1869,8 @@
       "missingTemplate": 0,
       "openVaultActions": 0,
       "inTemplateHits": 2,
-      "runtimePresentHits": 0
+      "runtimePresentHits": 0,
+      "displayMapped": 17
     }
   },
   "runtime": {
@@ -1663,7 +1973,7 @@
   "summary": {
     "ownerCount": 60,
     "packageTouchedKeys": 1,
-    "multiPlaneKeys": 27,
+    "multiPlaneKeys": 29,
     "rootRuntimeMissing": 1,
     "rootRuntimeNeedsInject": 0,
     "rootCoveredByDefault": 1,

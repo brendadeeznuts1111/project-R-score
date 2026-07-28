@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
 /**
  * Portal secret — thin wrapper over official Proton Pass CLI (`pass-cli`).
  *
@@ -13,7 +14,9 @@
  *   pass-cli share list
  *   pass-cli login | info | test
  *
- * Does **not** invent `item get`, `--format json`, or URL-based `accept`.
+ * Display chrome (label/color/icon): config/vault-map.json + env.template
+ * via lib/security/vault-map.ts — never invents pass-cli flags.
+ *
  * Prefer agent session: `source scripts/agent-env.sh factorywager`
  *
  *   bun tools/portal-secret.ts which
@@ -21,6 +24,12 @@
  *   bun run portal:secret autofill --vault factorywager -- bun run cloudflare:env:validate
  */
 import { safeJsonParse } from '../lib/core/index.ts';
+import {
+  buildVaultMapBundle,
+  entryForVaultItem,
+  formatVaultStatusLine,
+  type VaultMapBundle,
+} from '../lib/security/vault-map.ts';
 
 const PASS_CLI = 'pass-cli';
 
@@ -46,7 +55,9 @@ Subcommands:
                         pass-cli inject (env.template → file/stdout)
   autofill --vault <v> -- <cmd…>
                         List vault items; inject each password as ENV from title
+                        Status lines use config/vault-map.json label/color/glyph
                         Prefer: secret run --env-file env.template -- <cmd>
+  map [--json]          Print vault-map bundle (template paths + display chrome)
   invite list           pass-cli invite list
   invite accept <id>    pass-cli invite accept <INVITE_ID>
   share list [--json]   pass-cli share list (not secure-link mint)
@@ -231,6 +242,21 @@ async function cmdGet(target: string | undefined): Promise<void> {
   process.stdout.write(stdout.endsWith('\n') ? stdout : `${stdout}\n`);
 }
 
+async function cmdMap(rest: string[]): Promise<void> {
+  const bundle = await buildVaultMapBundle();
+  if (hasFlag(rest, '--json')) {
+    console.log(JSON.stringify(bundle, null, 2));
+    return;
+  }
+  console.error(
+    `vault-map: ${bundle.summary.entryCount} entries · passRef=${bundle.summary.withPassRef} · color=${bundle.summary.withColor} · icon=${bundle.summary.withIcon}`
+  );
+  for (const e of bundle.entries) {
+    console.log(formatVaultStatusLine(e, e.runtimePresent));
+    if (e.passRef) console.log(`      ${e.passRef}`);
+  }
+}
+
 async function cmdAutofill(rest: string[]): Promise<void> {
   const { before, after } = takeAfterDashDash(rest);
   const vault = flagValue(before, '--vault') ?? flagValue(before, '--vault-name');
@@ -255,8 +281,20 @@ async function cmdAutofill(rest: string[]): Promise<void> {
     process.exit(1);
   }
 
+  let mapBundle: VaultMapBundle | null = null;
+  try {
+    mapBundle = await buildVaultMapBundle();
+  } catch {
+    mapBundle = null;
+  }
+
   const injected: Record<string, string> = {};
+  const statusRows: string[] = [];
   for (const title of titles) {
+    const mapped = mapBundle
+      ? entryForVaultItem(mapBundle, vault, title, envNameFromTitle)
+      : undefined;
+    const field = mapped?.field || 'password';
     const { code: vc, stdout: secret } = await capturePassCli([
       'item',
       'view',
@@ -265,25 +303,47 @@ async function cmdAutofill(rest: string[]): Promise<void> {
       '--item-title',
       title,
       '--field',
-      'password',
+      field,
     ]);
     if (vc !== 0) {
+      statusRows.push(
+        formatVaultStatusLine(
+          {
+            label: mapped?.label ?? title,
+            envKey: mapped?.envKey ?? envNameFromTitle(title),
+            color: mapped?.color ?? null,
+            glyph: mapped?.glyph ?? null,
+          },
+          false
+        )
+      );
       console.error(
-        `warn: skip "${title}" (item view failed exit ${vc}; non-login items may lack password)`
+        `warn: skip "${title}" (item view --field ${field} exit ${vc}; try note/username)`
       );
       continue;
     }
-    const name = envNameFromTitle(title);
+    const name = mapped?.envKey ?? envNameFromTitle(title);
     if (!name) continue;
     injected[name] = secret.trim();
+    statusRows.push(
+      formatVaultStatusLine(
+        {
+          label: mapped?.label ?? name,
+          envKey: name,
+          color: mapped?.color ?? null,
+          glyph: mapped?.glyph ?? null,
+        },
+        true
+      )
+    );
   }
 
   const keys = Object.keys(injected);
   if (keys.length === 0) {
     cliError(`No secrets resolved from vault "${vault}"`);
   }
-  // Never print secret values — only injected key names
   console.error(`portal secret autofill: injected ${keys.length} env key(s) from vault "${vault}"`);
+  for (const line of statusRows) console.error(line);
 
   const proc = Bun.spawn(after, {
     stdout: 'inherit',
@@ -382,6 +442,10 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
 
     case 'autofill':
       await cmdAutofill(rest);
+      return;
+
+    case 'map':
+      await cmdMap(rest);
       return;
 
     case 'invite': {

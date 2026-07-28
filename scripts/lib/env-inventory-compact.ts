@@ -96,6 +96,10 @@ export type EnvInventoryCompact = {
     actionableVaultGaps: string[];
     secretsUsedAndVaulted: string[];
     secretsUsedButNotInTemplate: string[];
+    /** Display chrome count from config/vault-map.json (additive). */
+    displayMapped?: number;
+    withColor?: number;
+    withIcon?: number;
   };
   topConfig: Array<{ var: string; count: number; samples: string[] }>;
   /** Reverse index: env key → consuming planes / packages (heaviest first). */
@@ -353,6 +357,9 @@ export async function buildEnvInventoryCompact(
       actionableVaultGaps: actionableVaultGaps(usedSecrets, vaultKeySet),
       secretsUsedAndVaulted: usedSecrets.filter(s => dispositions[s] === 'vaulted'),
       secretsUsedButNotInTemplate: usedSecrets.filter(s => !vaultKeySet.has(s)),
+      displayMapped: packagesPlane.summary.displayMapped ?? packagesPlane.displayMap?.length ?? 0,
+      withColor: packagesPlane.displayMap?.filter(e => e.color).length ?? 0,
+      withIcon: packagesPlane.displayMap?.filter(e => e.icon).length ?? 0,
     },
     topConfig: usedConfig
       .map(v => ({

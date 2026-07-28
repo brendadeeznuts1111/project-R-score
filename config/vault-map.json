@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "kind": "vault-map",
+  "description": "Display metadata for env keys resolved via env.template pass:// refs. Paths are machine truth from the template; label/color/icon are optional UI chrome.",
+  "envMap": {
+    "R2_ACCESS_KEY_ID": {
+      "label": "R2 Access Key",
+      "type": "token",
+      "color": "#E11D48",
+      "icon": "public/portal/icons/vault/r2.svg",
+      "glyph": "🗄"
+    },
+    "R2_SECRET_ACCESS_KEY": {
+      "label": "R2 Secret Key",
+      "type": "token",
+      "color": "#E11D48",
+      "icon": "public/portal/icons/vault/r2.svg",
+      "glyph": "🗄"
+    },
+    "FACTORY_WAGER_TOKEN": {
+      "label": "FactoryWager Registry Token",
+      "type": "token",
+      "color": "#3B82F6",
+      "icon": "public/portal/icons/vault/key.svg",
+      "glyph": "🔑"
+    },
+    "REGISTRY_SECRET": {
+      "label": "Registry Dev Secret",
+      "type": "secret",
+      "color": "#A855F7",
+      "icon": "public/portal/icons/vault/hmac.svg",
+      "glyph": "🔏"
+    },
+    "CLOUDFLARE_API_TOKEN": {
+      "label": "Cloudflare API Token",
+      "type": "token",
+      "color": "#F6821F",
+      "icon": "public/portal/icons/vault/cloudflare.svg",
+      "glyph": "☁"
+    },
+    "CLOUDFLARE_DNS_API_TOKEN": {
+      "label": "Cloudflare DNS API Token",
+      "type": "token",
+      "color": "#F6821F",
+      "icon": "public/portal/icons/vault/cloudflare.svg",
+      "glyph": "☁"
+    },
+    "TELEGRAM_BOT_FACTORY": {
+      "label": "Telegram factorywager_bot",
+      "type": "token",
+      "color": "#26A5E4",
+      "icon": "public/portal/icons/vault/telegram.svg",
+      "glyph": "✈"
+    },
+    "TELEGRAM_WEBHOOK_SECRET": {
+      "label": "Telegram Webhook Secret",
+      "type": "secret",
+      "color": "#26A5E4",
+      "icon": "public/portal/icons/vault/telegram.svg",
+      "glyph": "✈"
+    },
+    "PLAY_SIGNING_SECRET": {
+      "label": "Play Signing Secret",
+      "type": "hmac",
+      "color": "#A855F7",
+      "icon": "public/portal/icons/vault/hmac.svg",
+      "glyph": "🔏"
+    },
+    "REPORT_SIGNING_SECRET": {
+      "label": "Report Signing Secret",
+      "type": "hmac",
+      "color": "#A855F7",
+      "icon": "public/portal/icons/vault/hmac.svg",
+      "glyph": "🔏"
+    },
+    "DOD_PROOF_SECRET": {
+      "label": "DOD Proof Secret",
+      "type": "hmac",
+      "color": "#8B5CF6",
+      "icon": "public/portal/icons/vault/hmac.svg",
+      "glyph": "🔏"
+    },
+    "DOD_ID_ENCRYPTION_KEY": {
+      "label": "DOD ID Encryption Key",
+      "type": "key",
+      "color": "#8B5CF6",
+      "icon": "public/portal/icons/vault/key.svg",
+      "glyph": "🔑"
+    },
+    "PROVISION_ENCRYPTION_KEY": {
+      "label": "Provision Encryption Key",
+      "type": "key",
+      "color": "#8B5CF6",
+      "icon": "public/portal/icons/vault/key.svg",
+      "glyph": "🔑"
+    },
+    "OPENAI_API_KEY": {
+      "label": "OpenAI API Key",
+      "type": "token",
+      "color": "#10A37F",
+      "icon": "public/portal/icons/vault/key.svg",
+      "glyph": "🔑",
+      "note": "Human vault gap — not yet in env.template pass://"
+    },
+    "SLACK_WEBHOOK_URL": {
+      "label": "Slack Webhook URL",
+      "type": "url",
+      "color": "#E01E5A",
+      "icon": "public/portal/icons/vault/url.svg",
+      "glyph": "🔗",
+      "note": "Human vault gap — not yet in env.template pass://"
+    },
+    "SSH_PKEY": {
+      "label": "SSH Deploy Key",
+      "type": "ssh",
+      "color": "#FF6B35",
+      "icon": "public/portal/icons/vault/ssh.svg",
+      "glyph": "🔐",
+      "note": "Documented in env.template (commented)"
+    },
+    "GITHUB_TOKEN": {
+      "label": "GitHub PAT",
+      "type": "token",
+      "color": "#2DA44E",
+      "icon": "public/portal/icons/vault/github.svg",
+      "glyph": "🐙",
+      "note": "Documented in env.template (commented)"
+    }
+  }
+}

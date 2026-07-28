@@ -22,5 +22,12 @@ describe('packages-vault-map', () => {
     const blob = JSON.stringify(map);
     expect(blob.includes('pass://')).toBe(true); // refs OK
     expect(blob).not.toMatch(/cfat_[A-Za-z0-9]+/);
+
+    // Display chrome from config/vault-map.json (additive)
+    expect(map.displayMap?.length).toBeGreaterThan(0);
+    expect(map.summary.displayMapped).toBeGreaterThan(0);
+    const cf = map.vaultRefs.find(r => r.key === 'CLOUDFLARE_API_TOKEN');
+    expect(cf?.label).toBeDefined();
+    expect(cf?.color).toMatch(/^#/);
   });
 });

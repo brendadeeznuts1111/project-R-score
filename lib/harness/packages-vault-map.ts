@@ -17,8 +17,18 @@ import {
   listVaultGapItems,
   type VaultGapReport,
 } from '../../scripts/lib/vault-gap-status.ts';
+import { buildVaultMapBundle, type VaultMapEntry } from '../security/vault-map.ts';
 
 export type PackageVaultDisposition = SecretDisposition | 'config' | 'ambient';
+
+/** Display chrome from config/vault-map.json (optional; never secret values). */
+export type PackageVaultDisplay = {
+  label: string;
+  color: string | null;
+  icon: string | null;
+  glyph: string | null;
+  type: string | null;
+};
 
 export type PackageVaultEnvHit = {
   package: string;
@@ -31,6 +41,8 @@ export type PackageVaultEnvHit = {
   runtimePresent: boolean;
   /** pass:// ref from env.template when present. */
   passRef: string | null;
+  /** Optional UI metadata when key is in vault-map. */
+  display?: PackageVaultDisplay;
   samples: string[]; // brand-ok — "file:line" samples
 };
 
@@ -43,7 +55,14 @@ export type PackageVaultAction =
 export type PackageVaultMap = {
   generatedAt: string;
   templateKeys: string[];
-  vaultRefs: Array<{ key: string; ref: string }>;
+  vaultRefs: Array<{
+    key: string;
+    ref: string;
+    label?: string;
+    color?: string | null;
+    icon?: string | null;
+    type?: string | null;
+  }>;
   /** Bun.env hits inside packages/{name}/src. */
   envHits: PackageVaultEnvHit[];
   /** Per-package rollup. */
@@ -68,6 +87,24 @@ export type PackageVaultMap = {
     mintableWouldMint: string[];
     catalogFlags: Array<{ envKey: string; flag: string; title: string }>;
   };
+  /** Merged config/vault-map.json + env.template (display only). */
+  displayMap?: Array<
+    Pick<
+      VaultMapEntry,
+      | 'envKey'
+      | 'vault'
+      | 'item'
+      | 'field'
+      | 'passRef'
+      | 'label'
+      | 'color'
+      | 'icon'
+      | 'glyph'
+      | 'type'
+      | 'inTemplate'
+      | 'runtimePresent'
+    >
+  >;
   summary: {
     packagesWithEnv: number;
     envKeyCount: number;
@@ -76,8 +113,20 @@ export type PackageVaultMap = {
     openVaultActions: number;
     inTemplateHits: number;
     runtimePresentHits: number;
+    displayMapped?: number;
   };
 };
+
+function displayFromEntry(e: VaultMapEntry | undefined): PackageVaultDisplay | undefined {
+  if (!e) return undefined;
+  return {
+    label: e.label,
+    color: e.color,
+    icon: e.icon,
+    glyph: e.glyph,
+    type: e.type,
+  };
+}
 
 const SECRET_KINDS = new Set(['secret', 'token', 'password', 'key']);
 
@@ -128,7 +177,8 @@ function dispositionForUsage(
 async function scanPackageEnvHits(
   root: string,
   packageNames: string[],
-  state: TemplateState
+  state: TemplateState,
+  displayByKey: Map<string, VaultMapEntry>
 ): Promise<PackageVaultEnvHit[]> {
   const hits: PackageVaultEnvHit[] = [];
   for (const p of packageNames) {
@@ -148,6 +198,7 @@ async function scanPackageEnvHits(
           if (existing.samples.length < 4) existing.samples.push(`${f}:${u.line}`);
           continue;
         }
+        const display = displayFromEntry(displayByKey.get(envKey));
         hits.push({
           package: p,
           envKey,
@@ -156,6 +207,7 @@ async function scanPackageEnvHits(
           inTemplate: state.templateSet.has(envKey),
           runtimePresent: !!Bun.env[envKey]?.trim(),
           passRef: state.passByKey.get(envKey) ?? null,
+          ...(display ? { display } : {}),
           samples: [`${f}:${u.line}`],
         });
       }
@@ -275,15 +327,48 @@ export async function buildPackageVaultMap(
   opts?: { includeGapReport?: boolean }
 ): Promise<PackageVaultMap> {
   const state = await loadTemplateState(root);
-  const hits = await scanPackageEnvHits(root, packageNames, state);
+  const bundle = await buildVaultMapBundle({ root });
+  const displayByKey = new Map(bundle.entries.map(e => [e.envKey, e]));
+  const hits = await scanPackageEnvHits(root, packageNames, state, displayByKey);
   const byPackage = rollupByPackage(packageNames, hits, state.templateSet);
   const actions = buildPackageVaultActions(byPackage, hits, state.vaulted);
   const gap = opts?.includeGapReport ? await attachLiveVaultGap(actions) : undefined;
 
+  const vaultRefs = state.vaultRefs.map(r => {
+    const d = displayByKey.get(r.key);
+    return {
+      key: r.key,
+      ref: r.ref,
+      ...(d
+        ? {
+            label: d.label,
+            color: d.color,
+            icon: d.icon,
+            type: d.type,
+          }
+        : {}),
+    };
+  });
+
+  const displayMap = bundle.entries.map(e => ({
+    envKey: e.envKey,
+    vault: e.vault,
+    item: e.item,
+    field: e.field,
+    passRef: e.passRef,
+    label: e.label,
+    color: e.color,
+    icon: e.icon,
+    glyph: e.glyph,
+    type: e.type,
+    inTemplate: e.inTemplate,
+    runtimePresent: e.runtimePresent,
+  }));
+
   return {
     generatedAt: new Date().toISOString(),
     templateKeys: state.templateKeys,
-    vaultRefs: state.vaultRefs,
+    vaultRefs,
     envHits: hits,
     byPackage,
     actions: actions.sort(
@@ -293,6 +378,7 @@ export async function buildPackageVaultMap(
         a.action.localeCompare(b.action)
     ),
     ...(gap ? { gap } : {}),
+    displayMap,
     summary: {
       packagesWithEnv: byPackage.length,
       envKeyCount: new Set(hits.map(h => h.envKey)).size,
@@ -301,6 +387,7 @@ export async function buildPackageVaultMap(
       openVaultActions: actions.filter(a => a.action !== 'ok').length,
       inTemplateHits: hits.filter(h => h.inTemplate).length,
       runtimePresentHits: hits.filter(h => h.runtimePresent).length,
+      displayMapped: displayMap.length,
     },
   };
 }
