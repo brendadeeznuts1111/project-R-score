@@ -15,7 +15,9 @@ and activity timeline (`timeline.ts` · `getTimeline`). Phase 4: self-service
 security (`self-service.ts` — password change, session revoke, device untrust,
 IP allowlist; HTTP under `/auth/me/*`). Phase 5: TOTP MFA (`mfa.ts` +
 `totp-core.ts` — RFC 6238 enroll/confirm/disable, recovery codes, login
-`ctx.otp` gate; HTTP under `/auth/me/totp/*`).
+`ctx.otp` gate; HTTP under `/auth/me/totp/*`). Phase 6: WebAuthn/passkeys
+(`webauthn.ts` — passwordless login + self-service registration; HTTP under
+`/auth/passkey/*` and `/auth/me/passkeys*`).
 
 ## Schema (`schema.ts` — `migrateIdentity(db)`, idempotent)
 
@@ -28,6 +30,8 @@ IP allowlist; HTTP under `/auth/me/*`). Phase 5: TOTP MFA (`mfa.ts` +
 | `auth_ip_allowlist` | `(node_id, cidr)` self-service login allowlist — plain IPv4 or IPv4 `/24`, `label`, `created_at` |
 | `auth_totp` | TOTP enrollment (mfa.ts) — `node_id` PK, `secret` (plaintext, see tradeoff below), `enabled` (0 pending / 1 confirmed), `created_at`, `verified_at` |
 | `auth_totp_recovery` | `(node_id, code_hash)` single-use recovery codes — SHA-256 hashes only, `used_at` stamps consumption |
+| `auth_passkeys` | WebAuthn credentials (webauthn.ts) — `credential_id` PK (authenticator-minted), `node_id`, `public_key` (base64url COSE), `counter` (sign counter), `device_name`, `transports` (JSON), `created_at`, `last_used_at` |
+| `auth_webauthn_challenges` | Ceremony challenges — `challenge` PK, `node_id` (NULL for authentication: node unknown until the assertion), `kind` (`registration`/`authentication`), `expires_at` (5min TTL), single-use (deleted on consume), expired rows swept lazily |
 
 ## Anomaly detection (`anomaly.ts`)
 
@@ -184,6 +188,73 @@ salted-hashed (the server must compute the same HMAC as the authenticator),
 and encryption with a same-host key is theatre. This is the pragmatic norm
 for TOTP; mitigation is DB file permissions + backup hygiene.
 
+## WebAuthn/passkeys (`webauthn.ts`)
+
+Passwordless login + self-service passkey management. Thin policy/audit
+wrapper over narrow `IdentitySystem` accessors (same pattern as `mfa.ts`).
+
+> **One-dep justification.** Attestation/assertion verification is delegated
+> to `@simplewebauthn/server` — the ONE approved runtime dependency for this
+> subsystem. WebAuthn verification (COSE key parsing, attestation formats,
+> signature checks) must NOT be hand-rolled; the subsystem stays
+> Bun-native/zero-dep everywhere else (TOTP, password strength, base32 are
+> all hand-rolled because they are small, stable, and auditable — WebAuthn
+> is not). Only the options/response JSON wire types are re-exported.
+
+Relying-party config via `IdentityOptions.webauthn` (resolved on
+`identity.webauthnConfig`): `rpName` (default `'FactoryWager'`), `rpID`
+(default `'factory-wager.com'`), `origin` (default
+`'https://factory-wager.com'`).
+
+**Registration** (Bearer self-scope, caller's own node):
+
+1. `startPasskeyRegistration(identity, nodeId, deviceName?)`
+   (`POST /auth/passkey/register-options`, body `{ deviceName? }`) →
+   `PublicKeyCredentialCreationOptionsJSON` — `excludeCredentials` = existing
+   passkeys, `userID` = nodeId bytes; challenge stored (kind `registration`,
+   5min TTL, node-scoped).
+2. `finishPasskeyRegistration(identity, nodeId, response, deviceName?)`
+   (`POST /auth/passkey/register-verify`, body `{ response, deviceName? }`)
+   → verifies via `verifyRegistrationResponse` against the stored challenge
+   (single-use: consumed via the `expectedChallenge` callback, so a failed
+   verify also burns the challenge), then stores the credential (id, base64url
+   public key, counter, transports, device name). Audits `passkey_registered`
+   / `passkey_register_failed` (0).
+
+**Authentication** (passwordless login, public routes):
+
+1. `startPasskeyAuthentication(identity, slug)`
+   (`POST /auth/passkey/auth-options`, body `{ slug }`) →
+   `PublicKeyCredentialRequestOptionsJSON` scoped to the slug's credentials.
+   Unknown slug → empty `allowCredentials` + a stored challenge anyway (**no
+   user enumeration**). Challenge stored with NULL `node_id` (node unknown
+   until the assertion) and consumed by challenge value.
+2. `finishPasskeyAuthentication(identity, slug, response, { ip?, userAgent? }?)`
+   (`POST /auth/passkey/auth-verify`, body `{ slug, response }`) →
+   `{ token, expiresAt }` — verifies via `verifyAuthenticationResponse`
+   (`requireUserVerification: false`), advances the sign counter, audits
+   `login_success` with `details.via='passkey'`, and mints the session via
+   `IdentitySystem.createSession` (same hash-only storage invariant as
+   `login()`). A counter REGRESSION audits `passkey_counter_regression` (0)
+   and blocks; other failures audit `passkey_auth_failed` (0).
+
+**Management** (Bearer self): `listPasskeys(identity, nodeId)`
+(`GET /auth/me/passkeys` — credential id truncated to 12 chars, `public_key`
+NEVER included), `revokePasskey(identity, nodeId, credentialId)`
+(`POST /auth/me/passkeys/revoke` — full id or unique ≥12-char prefix; audits
+`passkey_revoked`).
+
+**Errors** (all 400, machine-readable): `PasskeyChallengeError` →
+`passkey_challenge_invalid` (unknown/used/expired challenge),
+`PasskeyVerificationError` → `passkey_verification_failed` (unknown
+credential or failed attestation/assertion),
+`PasskeyCounterRegressionError` → `passkey_counter_regression` (cloned
+authenticator signal).
+
+**Testability seam.** The four @simplewebauthn calls are injectable via
+`PasskeyOverrides` on every start/finish function — tests run with fakes
+(zero real attestation crypto); production passes nothing.
+
 ## API (`identity.ts`)
 
 ```ts
@@ -234,6 +305,18 @@ inward.
 - `POST /auth/impersonate` `Authorization: Bearer <token>` (superadmin) + `{ nodeId }`
   → `{ token, expiresAt }` (1h TTL, impersonated session for the target) · 400/401/403/404
 - `POST /auth/impersonate/end` `Authorization: Bearer <impersonated token>` → `{ ok: true }` · 401
+- `POST /auth/passkey/register-options` `Authorization: Bearer <token>` + `{ deviceName? }`
+  → `PublicKeyCredentialCreationOptionsJSON` · 400/401/403
+- `POST /auth/passkey/register-verify` `Authorization: Bearer <token>` + `{ response, deviceName? }`
+  → `{ ok: true }` · 400 (`passkey_challenge_invalid` / `passkey_verification_failed`)/401/403
+- `POST /auth/passkey/auth-options` (public) `{ slug }` → `PublicKeyCredentialRequestOptionsJSON`
+  (unknown slug → empty `allowCredentials`, no enumeration) · 400
+- `POST /auth/passkey/auth-verify` (public) `{ slug, response }` → `{ token, expiresAt }`
+  · 400 (`passkey_challenge_invalid` / `passkey_verification_failed` / `passkey_counter_regression`)
+- `GET /auth/me/passkeys` `Authorization: Bearer <token>` → `{ passkeys: [...] }`
+  (credential id truncated to 12 chars, never `public_key`) · 401
+- `POST /auth/me/passkeys/revoke` `Authorization: Bearer <token>` + `{ credentialId }`
+  → `{ ok: true }` · 400/401
 
 Session-resolving routes (`/auth/session`, `/auth/export`,
 `/auth/impersonate/end`) set the response header `X-Impersonator: <nodeId>`

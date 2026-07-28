@@ -164,6 +164,51 @@ export interface AliasSummary {
   rotatedAt: string | null;
 }
 
+/** WebAuthn challenge kind (auth_webauthn_challenges.kind CHECK constraint). */
+export type WebAuthnChallengeKind = 'registration' | 'authentication';
+
+/**
+ * Deserialized auth_passkeys row (webauthn.ts). `publicKey` is the
+ * base64url-encoded COSE public key; `transports` the JSON-decoded
+ * authenticator transport list (null when the authenticator reported none).
+ */
+export interface StoredPasskey {
+  credentialId: string; // brand-ok — opaque WebAuthn credential ID (authenticator-minted base64url wire key, not a domain id)
+  nodeId: TreeNodeId;
+  publicKey: string;
+  counter: number;
+  deviceName: string | null;
+  transports: string[] | null;
+  createdAt: string;
+  lastUsedAt: number | null; // unix seconds
+}
+
+/** Input for insertPasskey (webauthn.ts finish-registration). */
+export interface NewPasskey {
+  credentialId: string; // brand-ok — opaque WebAuthn credential ID (authenticator-minted base64url wire key)
+  publicKey: string; // base64url-encoded COSE public key
+  counter: number;
+  deviceName: string | null;
+  transports: string[] | null;
+}
+
+/** WebAuthn/passkey relying-party config (webauthn.ts). All fields optional — see defaults below. */
+export interface WebAuthnOptions {
+  /** RP ID (effective domain). Default 'factory-wager.com'. */
+  rpID?: string; // brand-ok — WebAuthn RP id is a domain-name string, not a domain entity id
+  /** Expected origin for attestation/assertion verification. Default 'https://factory-wager.com'. */
+  origin?: string;
+  /** User-visible relying-party name. Default 'FactoryWager'. */
+  rpName?: string;
+}
+
+/** Resolved WebAuthn config (IdentityOptions.webauthn + defaults). */
+export interface ResolvedWebAuthnConfig {
+  rpID: string; // brand-ok — WebAuthn RP id is a domain-name string, not a domain entity id
+  origin: string;
+  rpName: string;
+}
+
 export interface IdentityOptions {
   /**
    * Geo resolver used by login anomaly scoring. Undefined → no geo signal
@@ -181,6 +226,8 @@ export interface IdentityOptions {
   geoPolicy?: GeoPolicy;
   /** Phase 2b password bar for createAlias (default 3; 0 disables). */
   minPasswordScore?: number;
+  /** WebAuthn/passkey relying-party config (webauthn.ts). */
+  webauthn?: WebAuthnOptions;
 }
 
 // ── Errors ───────────────────────────────────────────────────────────────
@@ -293,6 +340,8 @@ export class IdentitySystem {
   private onHighRisk: ((nodeId: TreeNodeId, reason: string) => void) | undefined;
   private geoPolicy: GeoPolicy;
   readonly minPasswordScore: number;
+  /** Resolved WebAuthn relying-party config (webauthn.ts). */
+  readonly webauthnConfig: ResolvedWebAuthnConfig;
 
   constructor(
     tenantId: PortalTenantId = asPortalTenantId('operations'),
@@ -304,6 +353,11 @@ export class IdentitySystem {
     this.onHighRisk = options.onHighRisk;
     this.geoPolicy = options.geoPolicy ?? DEFAULT_GEO_POLICY;
     this.minPasswordScore = options.minPasswordScore ?? 3;
+    this.webauthnConfig = {
+      rpID: options.webauthn?.rpID ?? 'factory-wager.com',
+      origin: options.webauthn?.origin ?? 'https://factory-wager.com',
+      rpName: options.webauthn?.rpName ?? 'FactoryWager',
+    };
     if (dbPath) {
       this.db = new Database(dbPath);
     } else {
@@ -1016,7 +1070,169 @@ export class IdentitySystem {
     return result.changes > 0;
   }
 
+  // ── WebAuthn/passkey accessors (narrow, typed — consumed by webauthn.ts) ──
+
+  /** Node behind an alias slug, or null (passkey auth-options scoping; no enumeration). */
+  nodeIdForSlug(slug: string): TreeNodeId | null {
+    return this.credentialBySlug(slug)?.nodeId ?? null;
+  }
+
+  /** All passkeys registered to the node, oldest-first. public_key included — internal use only. */
+  passkeysFor(nodeId: TreeNodeId): StoredPasskey[] {
+    const rows = this.db
+      .query(
+        `SELECT credential_id, node_id, public_key, counter, device_name, transports, created_at, last_used_at
+         FROM auth_passkeys WHERE node_id = $node ORDER BY created_at ASC`
+      )
+      .all({ $node: nodeId }) as Record<string, unknown>[];
+    return rows.map(row => this.toStoredPasskey(row));
+  }
+
+  /** Passkey by its authenticator-minted credential id (assertion lookup), or null. */
+  passkeyByCredentialId(
+    credentialId: string // brand-ok — opaque WebAuthn credential ID (authenticator-minted wire key)
+  ): StoredPasskey | null {
+    const row = this.db
+      .query(
+        `SELECT credential_id, node_id, public_key, counter, device_name, transports, created_at, last_used_at
+         FROM auth_passkeys WHERE credential_id = $cred`
+      )
+      .get({ $cred: credentialId }) as Record<string, unknown> | null;
+    return row ? this.toStoredPasskey(row) : null;
+  }
+
+  /** Store a verified credential (webauthn.ts finish-registration). */
+  insertPasskey(nodeId: TreeNodeId, passkey: NewPasskey): void {
+    this.db
+      .query(
+        `INSERT INTO auth_passkeys
+           (credential_id, node_id, public_key, counter, device_name, transports, created_at, last_used_at)
+         VALUES ($cred, $node, $key, $counter, $device, $transports, $created, NULL)`
+      )
+      .run({
+        $cred: passkey.credentialId,
+        $node: nodeId,
+        $key: passkey.publicKey,
+        $counter: passkey.counter,
+        $device: passkey.deviceName,
+        $transports: passkey.transports ? JSON.stringify(passkey.transports) : null,
+        $created: new Date().toISOString(),
+      });
+  }
+
+  /** Advance the sign counter after a verified assertion; also stamps last_used_at. */
+  updatePasskeyCounter(
+    credentialId: string, // brand-ok — opaque WebAuthn credential ID (authenticator-minted wire key)
+    counter: number
+  ): void {
+    this.db
+      .query(
+        `UPDATE auth_passkeys SET counter = $counter, last_used_at = $at
+         WHERE credential_id = $cred`
+      )
+      .run({ $counter: counter, $at: unixNow(), $cred: credentialId });
+  }
+
+  /** Delete a passkey, SCOPED to the node — another node's credential is never touched. */
+  deletePasskey(
+    nodeId: TreeNodeId,
+    credentialId: string // brand-ok — opaque WebAuthn credential ID (authenticator-minted wire key)
+  ): boolean {
+    const result = this.db
+      .query('DELETE FROM auth_passkeys WHERE credential_id = $cred AND node_id = $node')
+      .run({ $cred: credentialId, $node: nodeId });
+    return result.changes > 0;
+  }
+
+  /**
+   * Store a WebAuthn challenge (5min TTL chosen by the caller). Registration
+   * challenges are node-scoped; authentication challenges carry NULL node_id
+   * (the node is unknown until the assertion arrives). INSERT OR REPLACE so
+   * a re-started ceremony replaces its own challenge. Expired rows are swept
+   * lazily on every call.
+   */
+  storeWebAuthnChallenge(
+    challenge: string,
+    kind: WebAuthnChallengeKind,
+    nodeId: TreeNodeId | null,
+    expiresAt: number
+  ): void {
+    this.db
+      .query('DELETE FROM auth_webauthn_challenges WHERE expires_at <= $now')
+      .run({ $now: unixNow() });
+    this.db
+      .query(
+        `INSERT OR REPLACE INTO auth_webauthn_challenges (challenge, node_id, kind, expires_at, created_at)
+         VALUES ($challenge, $node, $kind, $expires, $created)`
+      )
+      .run({
+        $challenge: challenge,
+        $node: nodeId,
+        $kind: kind,
+        $expires: expiresAt,
+        $created: new Date().toISOString(),
+      });
+  }
+
+  /**
+   * Consume a challenge: true (and the row is DELETED — single-use) when a
+   * matching, unexpired row of the right kind exists. When nodeId is given
+   * the row must also belong to that node (registration); null matches any
+   * node (authentication, where the row's node_id is NULL by design).
+   * Expired rows are swept lazily on every call.
+   */
+  consumeWebAuthnChallenge(
+    challenge: string,
+    kind: WebAuthnChallengeKind,
+    nodeId: TreeNodeId | null
+  ): boolean {
+    const now = unixNow();
+    this.db
+      .query('DELETE FROM auth_webauthn_challenges WHERE expires_at <= $now')
+      .run({ $now: now });
+    const result = nodeId
+      ? this.db
+          .query(
+            `DELETE FROM auth_webauthn_challenges
+             WHERE challenge = $challenge AND kind = $kind AND node_id = $node AND expires_at > $now`
+          )
+          .run({ $challenge: challenge, $kind: kind, $node: nodeId, $now: now })
+      : this.db
+          .query(
+            `DELETE FROM auth_webauthn_challenges
+             WHERE challenge = $challenge AND kind = $kind AND expires_at > $now`
+          )
+          .run({ $challenge: challenge, $kind: kind, $now: now });
+    return result.changes > 0;
+  }
+
   // ── Internals ─────────────────────────────────────────────────────────
+
+  private toStoredPasskey(row: Record<string, unknown>): StoredPasskey {
+    return {
+      credentialId: row.credential_id as string,
+      nodeId: asTreeNodeId(row.node_id as string),
+      publicKey: row.public_key as string,
+      counter: row.counter as number,
+      deviceName: (row.device_name as string | null) ?? null,
+      transports: this.parseTransports(row.transports),
+      createdAt: row.created_at as string,
+      lastUsedAt: (row.last_used_at as number | null) ?? null,
+    };
+  }
+
+  /** transports column is a JSON array string (or NULL); a malformed value degrades to null. */
+  private parseTransports(raw: unknown): string[] | null {
+    if (typeof raw !== 'string') return null;
+    try {
+      const parsed: unknown = JSON.parse(raw);
+      return Array.isArray(parsed) && parsed.every(t => typeof t === 'string')
+        ? (parsed as string[])
+        : null;
+    } catch {
+      return null;
+    }
+  }
 
   private toDeviceFingerprint(row: Record<string, unknown>): DeviceFingerprint {
     return {

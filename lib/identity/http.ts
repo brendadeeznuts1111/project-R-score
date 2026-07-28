@@ -26,6 +26,17 @@
  *   POST /auth/me/totp/enroll            → { secret, uri, recoveryCodes } (409 if enabled)
  *   POST /auth/me/totp/confirm           { code } → { ok: true }
  *   POST /auth/me/totp/disable           { code } → { ok: true } (code = TOTP or recovery)
+ *   GET  /auth/me/passkeys               → { passkeys: [...] } (credential id truncated to 12)
+ *   POST /auth/me/passkeys/revoke        { credentialId } → { ok: true }
+ *
+ * WebAuthn/passkeys (webauthn.ts):
+ *   POST /auth/passkey/register-options  Bearer self + { deviceName? } → PublicKeyCredentialCreationOptionsJSON
+ *   POST /auth/passkey/register-verify   Bearer self + { response, deviceName? } → { ok: true }
+ *   POST /auth/passkey/auth-options      (public) { slug } → PublicKeyCredentialRequestOptionsJSON
+ *                                        (unknown slug → empty allowCredentials, no enumeration)
+ *   POST /auth/passkey/auth-verify       (public) { slug, response } → { token, expiresAt }
+ * Passkey failures map to 400 with machine-readable codes:
+ * 'passkey_challenge_invalid' | 'passkey_verification_failed' | 'passkey_counter_regression'.
  *
  * Responses to session-resolving routes (session, export, impersonate/end)
  * carry `X-Impersonator: <nodeId>` when the resolved session is impersonated.
@@ -56,6 +67,19 @@ import {
   setIpAllowlist,
   untrustDevice,
 } from './self-service.ts';
+import {
+  finishPasskeyAuthentication,
+  finishPasskeyRegistration,
+  listPasskeys,
+  PasskeyChallengeError,
+  PasskeyCounterRegressionError,
+  PasskeyVerificationError,
+  revokePasskey,
+  startPasskeyAuthentication,
+  startPasskeyRegistration,
+  type AuthenticationResponseJSON,
+  type RegistrationResponseJSON,
+} from './webauthn.ts';
 
 interface ChangePasswordBody {
   currentPassword: string;
@@ -122,6 +146,77 @@ function isImpersonateBody(value: unknown): value is ImpersonateBody {
   if (typeof value !== 'object' || value === null) return false;
   const body = value as Record<string, unknown>;
   return typeof body.nodeId === 'string';
+}
+
+// ── WebAuthn/passkey wire bodies ──
+
+interface PasskeyRegisterOptionsBody {
+  deviceName?: string;
+}
+
+function isPasskeyRegisterOptionsBody(value: unknown): value is PasskeyRegisterOptionsBody {
+  if (typeof value !== 'object' || value === null) return false;
+  const body = value as Record<string, unknown>;
+  return body.deviceName === undefined || typeof body.deviceName === 'string';
+}
+
+interface PasskeyRegisterVerifyBody {
+  response: RegistrationResponseJSON;
+  deviceName?: string;
+}
+
+function isPasskeyRegisterVerifyBody(value: unknown): value is PasskeyRegisterVerifyBody {
+  if (typeof value !== 'object' || value === null) return false;
+  const body = value as Record<string, unknown>;
+  if (typeof body.response !== 'object' || body.response === null) return false;
+  const response = body.response as Record<string, unknown>;
+  if (typeof response.id !== 'string') return false;
+  return body.deviceName === undefined || typeof body.deviceName === 'string';
+}
+
+interface PasskeyAuthOptionsBody {
+  slug: string;
+}
+
+function isPasskeyAuthOptionsBody(value: unknown): value is PasskeyAuthOptionsBody {
+  if (typeof value !== 'object' || value === null) return false;
+  const body = value as Record<string, unknown>;
+  return typeof body.slug === 'string';
+}
+
+interface PasskeyAuthVerifyBody {
+  slug: string;
+  response: AuthenticationResponseJSON;
+}
+
+function isPasskeyAuthVerifyBody(value: unknown): value is PasskeyAuthVerifyBody {
+  if (typeof value !== 'object' || value === null) return false;
+  const body = value as Record<string, unknown>;
+  if (typeof body.slug !== 'string') return false;
+  if (typeof body.response !== 'object' || body.response === null) return false;
+  return typeof (body.response as Record<string, unknown>).id === 'string';
+}
+
+interface PasskeyRevokeBody {
+  credentialId: string; // brand-ok — opaque WebAuthn credential id (or its ≥12-char prefix) straight from the wire
+}
+
+function isPasskeyRevokeBody(value: unknown): value is PasskeyRevokeBody {
+  if (typeof value !== 'object' || value === null) return false;
+  const body = value as Record<string, unknown>;
+  return typeof body.credentialId === 'string';
+}
+
+/** Passkey error → machine-readable 400; null when the error isn't a passkey/identity error. */
+// Intentional boundary: catch-all error mapper at the wire edge.
+// eslint-disable-next-line harness/no-unknown-function-param
+function passkeyErrorResponse(err: unknown): Response | null {
+  if (err instanceof PasskeyChallengeError) return jsonError(400, 'passkey_challenge_invalid');
+  if (err instanceof PasskeyCounterRegressionError)
+    return jsonError(400, 'passkey_counter_regression');
+  if (err instanceof PasskeyVerificationError) return jsonError(400, 'passkey_verification_failed');
+  if (err instanceof IdentityError) return jsonError(400, err.message);
+  return null;
 }
 
 async function parseJsonBody(req: Request): Promise<unknown> {
@@ -290,6 +385,65 @@ export function createIdentityHandler(
       return withImpersonatorHeader(Response.json({ ok: true }), session);
     }
 
+    // ── WebAuthn/passkeys (/auth/passkey/*) — webauthn.ts ──
+
+    if (url.pathname === '/auth/passkey/auth-options' && req.method === 'POST') {
+      const body = await parseJsonBody(req);
+      if (!isPasskeyAuthOptionsBody(body)) return jsonError(400, 'Invalid request body');
+      const options = await startPasskeyAuthentication(identity, body.slug);
+      return Response.json(options);
+    }
+
+    if (url.pathname === '/auth/passkey/auth-verify' && req.method === 'POST') {
+      const body = await parseJsonBody(req);
+      if (!isPasskeyAuthVerifyBody(body)) return jsonError(400, 'Invalid request body');
+      try {
+        const result = await finishPasskeyAuthentication(identity, body.slug, body.response, {
+          ip: clientIp(req),
+          userAgent: req.headers.get('user-agent') ?? undefined,
+        });
+        return Response.json({ token: result.token as string, expiresAt: result.expiresAt });
+      } catch (err) {
+        const mapped = passkeyErrorResponse(err);
+        if (mapped) return mapped;
+        throw err;
+      }
+    }
+
+    if (url.pathname === '/auth/passkey/register-options' && req.method === 'POST') {
+      const token = bearerToken(req);
+      if (!token) return jsonError(401, 'Missing bearer token');
+      const session = identity.resolveSession(asTokenId(token));
+      if (!session) return jsonError(401, 'Invalid or expired session');
+      if (session.impersonatorId !== null) {
+        return jsonError(403, 'Self-service is unavailable while impersonating');
+      }
+      const body = await parseJsonBody(req);
+      if (!isPasskeyRegisterOptionsBody(body)) return jsonError(400, 'Invalid request body');
+      const options = await startPasskeyRegistration(identity, session.nodeId, body.deviceName);
+      return Response.json(options);
+    }
+
+    if (url.pathname === '/auth/passkey/register-verify' && req.method === 'POST') {
+      const token = bearerToken(req);
+      if (!token) return jsonError(401, 'Missing bearer token');
+      const session = identity.resolveSession(asTokenId(token));
+      if (!session) return jsonError(401, 'Invalid or expired session');
+      if (session.impersonatorId !== null) {
+        return jsonError(403, 'Self-service is unavailable while impersonating');
+      }
+      const body = await parseJsonBody(req);
+      if (!isPasskeyRegisterVerifyBody(body)) return jsonError(400, 'Invalid request body');
+      try {
+        await finishPasskeyRegistration(identity, session.nodeId, body.response, body.deviceName);
+        return Response.json({ ok: true });
+      } catch (err) {
+        const mapped = passkeyErrorResponse(err);
+        if (mapped) return mapped;
+        throw err;
+      }
+    }
+
     // ── Self-service (/auth/me/*) — Bearer-required, caller's OWN node only ──
 
     if (url.pathname.startsWith('/auth/me/')) {
@@ -399,6 +553,24 @@ export function createIdentityHandler(
         if (!isTotpCodeBody(body)) return jsonError(400, 'Invalid request body');
         try {
           await disableTotp(identity, nodeId, body.code);
+          return Response.json({ ok: true });
+        } catch (err) {
+          if (err instanceof IdentityError) return jsonError(400, err.message);
+          throw err;
+        }
+      }
+
+      // ── Passkey management (/auth/me/passkeys*) — list/revoke, own node only ──
+
+      if (url.pathname === '/auth/me/passkeys' && req.method === 'GET') {
+        return Response.json({ passkeys: listPasskeys(identity, nodeId) });
+      }
+
+      if (url.pathname === '/auth/me/passkeys/revoke' && req.method === 'POST') {
+        const body = await parseJsonBody(req);
+        if (!isPasskeyRevokeBody(body)) return jsonError(400, 'Invalid request body');
+        try {
+          revokePasskey(identity, nodeId, body.credentialId);
           return Response.json({ ok: true });
         } catch (err) {
           if (err instanceof IdentityError) return jsonError(400, err.message);
