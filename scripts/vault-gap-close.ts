@@ -25,6 +25,7 @@ import {
   mintLocalAll,
   mintedSecretPath,
   readMintedSecret,
+  listMintedSecretKeys,
   MINTABLE_SECRET_KEYS,
 } from '../lib/security/mintable-secret.ts';
 import { parseEnvTemplate } from './lib/env-defaults-scan.ts';

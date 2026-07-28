@@ -94,4 +94,26 @@ describe('ZipEnrichmentRepo + ScopedRepository', () => {
     expect(z084?.win_rate).toBeGreaterThanOrEqual(0);
     expect(z084?.avg_clv).not.toBeNull();
   });
+
+  test('getClusterStats day window filters via plays.sent_at', () => {
+    db.run(`
+      CREATE TABLE plays (
+        id TEXT PRIMARY KEY,
+        sent_at TEXT
+      );
+    `);
+    const oldIso = new Date(Date.now() - 200 * 86_400_000).toISOString();
+    const recentIso = new Date().toISOString();
+    for (let i = 0; i < 6; i++) {
+      db.run(`INSERT INTO plays (id, sent_at) VALUES (?, ?)`, `p${i}`, i < 2 ? recentIso : oldIso);
+    }
+
+    const zipRepo = new ZipEnrichmentRepo(db, scope);
+    const all = zipRepo.getClusterStats(0);
+    expect(all.reduce((n, s) => n + s.total_plays, 0)).toBe(6);
+
+    const windowed = zipRepo.getClusterStats(30);
+    const total = windowed.reduce((n, s) => n + s.total_plays, 0);
+    expect(total).toBe(2);
+  });
 });

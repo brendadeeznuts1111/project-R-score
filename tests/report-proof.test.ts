@@ -1,6 +1,10 @@
 // @see https://bun.com/docs/test — bun:test
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
-import { describe, test, expect } from 'bun:test';
+import { describe, expect, test } from 'bun:test';
+import { mkdirSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { requireMintableSecret } from '../lib/security/mintable-secret.ts';
 import {
   buildReportProofFromValue,
   canonicalReportJson,
@@ -39,5 +43,30 @@ describe('report-proof', () => {
     expect(h.hasDigest).toBe(true);
     expect(h.hasHmac).toBe(false);
     expect(h.scoreHint).toContain('integrity-only');
+  });
+
+  test('HMAC resolves from machine-local mint when env unset', () => {
+    const dir = join(tmpdir(), `report-proof-mint-${Date.now()}`);
+    mkdirSync(dir, { recursive: true });
+    const prevDir = Bun.env.FACTORYWAGER_MINTED_SECRETS_DIR;
+    const prevReport = Bun.env.REPORT_SIGNING_SECRET;
+    const prevPlay = Bun.env.PLAY_SIGNING_SECRET;
+    try {
+      Bun.env.FACTORYWAGER_MINTED_SECRETS_DIR = dir;
+      delete Bun.env.REPORT_SIGNING_SECRET;
+      delete Bun.env.PLAY_SIGNING_SECRET;
+      requireMintableSecret('REPORT_SIGNING_SECRET');
+      const p = buildReportProofFromValue({ mint: true }, { tryHmac: true });
+      expect(p.hmac).toBeTruthy();
+      expect(proofScoreHints(p).hasHmac).toBe(true);
+    } finally {
+      if (prevDir === undefined) delete Bun.env.FACTORYWAGER_MINTED_SECRETS_DIR;
+      else Bun.env.FACTORYWAGER_MINTED_SECRETS_DIR = prevDir;
+      if (prevReport === undefined) delete Bun.env.REPORT_SIGNING_SECRET;
+      else Bun.env.REPORT_SIGNING_SECRET = prevReport;
+      if (prevPlay === undefined) delete Bun.env.PLAY_SIGNING_SECRET;
+      else Bun.env.PLAY_SIGNING_SECRET = prevPlay;
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });

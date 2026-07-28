@@ -49,6 +49,18 @@ const vaultGapItemCatalog: VaultGapItem[] = [
     note: 'Provision AES material — local mint or Pass',
   },
   {
+    envKey: 'PLAY_SIGNING_SECRET',
+    title: 'Play Signing Secret',
+    mintable: true,
+    note: 'Play HMAC (PlaySigner) — local mint or Pass',
+  },
+  {
+    envKey: 'REPORT_SIGNING_SECRET',
+    title: 'Report Signing Secret',
+    mintable: true,
+    note: 'Board/deep-audit HMAC — local mint or Pass',
+  },
+  {
     envKey: 'OPENAI_API_KEY',
     title: 'OpenAI API Key',
     mintable: false,

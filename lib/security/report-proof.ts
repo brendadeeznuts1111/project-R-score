@@ -1,5 +1,7 @@
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { isMintableSecretKey, readMintedSecret } from './mintable-secret.ts';
+
 /**
  * Report integrity fingerprints — shared by deep-audit / compliance reports.
  *
@@ -111,16 +113,14 @@ export function buildReportProofFromValue(
 function tryReportSigningSecret(envKey?: string): string | undefined {
   const keys = envKey ? [envKey] : ['REPORT_SIGNING_SECRET', 'PLAY_SIGNING_SECRET'];
   for (const k of keys) {
-    const v = Bun.env[k]?.trim();
-    if (v) return v;
+    const fromEnv = Bun.env[k]?.trim();
+    if (fromEnv) return fromEnv;
   }
-  // Dev: do not force mint — HMAC optional so CI without secrets still gets digests
-  try {
-    if (Bun.env.NODE_ENV === 'production') {
-      return requireSecret('REPORT_SIGNING_SECRET', '');
-    }
-  } catch {
-    // optional
+  // Existing local mint only — never auto-mint during bake/CI proof build
+  for (const k of keys) {
+    if (!isMintableSecretKey(k)) continue;
+    const fromMint = readMintedSecret(k);
+    if (fromMint) return fromMint;
   }
   return undefined;
 }

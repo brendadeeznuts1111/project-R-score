@@ -25,6 +25,7 @@ import {
   normalizeMarketCatalogKey,
   setPartnerIdentityVerified,
   sumDailyStateWagerVolume,
+  upsertPartnerGeoProfile,
 } from '../lib/operations/state-regulation.ts';
 import { asStateCode, asTreeNodeId } from '../lib/types/branded.ts';
 
@@ -421,6 +422,12 @@ describe('state compliance · play dispatcher', () => {
     bindPartnerProfile(db, asTreeNodeId(agentId));
     ensurePosition(db, agentId, '_all', 50_000);
     new ComplianceRepository(db).upsertLicense(agentId, 'MA', { licenseNumber: 'MA-DISP-1' });
+    upsertPartnerGeoProfile(db, agentId, {
+      stateCode: 'MA',
+      age: 32,
+      location: 'Boston',
+      zipCode: '02108',
+    });
 
     const result = await publishAndDispatch(
       new PlaySigner(),
@@ -458,6 +465,22 @@ describe('state compliance · play dispatcher', () => {
       .query('SELECT allowed FROM play_gate_decisions WHERE play_id = $pid')
       .get({ $pid: result.id }) as { allowed: number };
     expect(gate.allowed).toBe(1);
+
+    const enrich = db
+      .query(
+        `SELECT state_code, age, location, zip_code FROM play_zip_enrichment
+         WHERE play_id = $pid AND node_id = $nid`
+      )
+      .get({ $pid: result.id, $nid: agentId }) as {
+      state_code: string;
+      age: number;
+      location: string;
+      zip_code: string;
+    };
+    expect(enrich.state_code).toBe('MA');
+    expect(enrich.age).toBe(32);
+    expect(enrich.location).toBe('Boston');
+    expect(enrich.zip_code).toBe('02108');
     db.close();
   });
 

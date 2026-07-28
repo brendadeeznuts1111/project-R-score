@@ -27,7 +27,12 @@ import {
   recordGateDecision,
 } from './partner-profile-bridge.ts';
 import { validatePlay } from './play-validation.ts';
-import { ComplianceRepository, ensureStateRegulationSchema } from './state-regulation.ts';
+import {
+  ComplianceRepository,
+  ensureStateRegulationSchema,
+  resolveGeoForNode,
+  upsertPlayZipEnrichment,
+} from './state-regulation.ts';
 import { rankPlayRecipients, type TocRoutingContext } from './toc-play-routing.ts';
 import type { PlayInput, PlaySigner } from './play-signing.ts';
 
@@ -271,6 +276,17 @@ export async function publishAndDispatch(
            VALUES ($pid, $nid, 'telegram', $now, $stake, 'pending', $state)`,
           { $pid: id, $nid: nodeId, $now: now, $stake: stake, $state: playState }
         );
+
+        // Discrete geo stamp for ZIP/age/location analytics (partner profile → play row).
+        if (playState) {
+          const geo = resolveGeoForNode(db, treeNodeId, { stateCode: playState });
+          upsertPlayZipEnrichment(db, id, treeNodeId, {
+            stateCode: geo.stateCode ?? playState,
+            age: geo.age,
+            location: geo.location,
+            zipCode: geo.zipCode,
+          });
+        }
 
         enqueuePlayTelegramEvent(db, {
           playId: id,
