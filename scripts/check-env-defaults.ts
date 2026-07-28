@@ -28,7 +28,7 @@ const FULL = argv.includes('--full');
 const SUMMARY = argv.includes('--summary');
 const JSON_OUT = argv.includes('--json');
 
-const DEFAULT_ROOTS = ['lib', 'config', 'scripts', 'tools'];
+const DEFAULT_ROOTS = ['lib', 'config', 'scripts', 'tools', 'packages'];
 
 const IGNORE_DIR_PARTS = [
   '/node_modules/',

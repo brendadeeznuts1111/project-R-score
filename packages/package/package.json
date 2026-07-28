@@ -2,6 +2,7 @@
   "name": "@factorywager/package",
   "version": "0.1.0",
   "private": true,
+  "description": "QUARANTINED placeholder — see QUARANTINE.md; archive-candidate (schema v11)",
   "module": "src/index.ts",
   "type": "module"
 }

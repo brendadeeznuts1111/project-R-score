@@ -1,17 +1,10 @@
 # Packages metafile audit
 
-- Generated: 2026-07-28T04:15:40.252Z
+- Generated: 2026-07-28T04:16:27.609Z
 - Bun: 1.4.0
 - Score: **100/100** (healthy)
 - Scanned: 27 · Entrypoints: 10
 - Orphans: 0 (0%) · Cycles: 0
-
-## Diff
-
-- Score Δ: 0 (prev 100)
-- Orphan Δ: 0 · Cycle Δ: 0
-- Added orphans: —
-- Removed orphans: —
 
 ## Summary
 
@@ -118,6 +111,18 @@ _(none — packages are isolated)_
 - `business`: REDIS_URL
 - `p2p`: REDIS_URL
 
+#### Vault actions
+
+- `(repo)` / `OPENAI_API_KEY`: **vault-gap-open** — human vault gap open — OpenAI API Key
+- `(repo)` / `SLACK_WEBHOOK_URL`: **vault-gap-open** — human vault gap open — Slack Webhook URL
+
+#### Vault gap status
+
+- pass-cli: available · items: 26
+- human open: OPENAI_API_KEY, SLACK_WEBHOOK_URL
+- would mint: —
+
+
 ### Env inventory (owners)
 
 - unique=183 · owners=60 · packageTouched=1 · multiPlane=27
@@ -131,7 +136,6 @@ _(none — packages are isolated)_
 - leaves = zero outbound imports (not dead). orphans = scanned but unreachable from entrypoints.
 - 8 external input(s) pulled into graph (lib/, config/, …) — expected for workspace edges.
 - score 100/100 (healthy)
-- cross-check: metafile orphans=0 · transpiler orphans(excl entry)=0 · cycles(transpiler)=0
 - Package map: no cross-package edges (packages are isolated islands)
 - Outside consumers (lib/tools/scripts/tests): registry-client:3, guards:1, rip:1
 - Declared: 6/9 in root workspace deps · 0 pkg(s) with undeclared cross-imports
@@ -141,6 +145,7 @@ _(none — packages are isolated)_
 - Actions: ab-testing:archive-candidate, package:archive-candidate, versioning:archive-candidate
 - Summary: avgPkg=93.9 · openActions=3 · archivePlaceholders=1 · hub=lib/docs
 - Archive probes: package(placeholder)
-- Vault: 2 pkg(s) with Bun.env · 1 keys · inTemplate=2 · missingTemplate=0 · openActions=0
+- Vault: 2 pkg(s) with Bun.env · 1 keys · inTemplate=2 · missingTemplate=0 · openActions=2
+- Vault gap: pass-cli=yes items=26 humanOpen=2 wouldMint=0
 - Env inventory: unique=183 · secrets=15 · config=151 · actionableGaps=2 · rootRuntimeMissing=1 · owners=60 · pkgKeys=1 · multiPlane=27 · defaultsIssues=0
 - Quarantine: package(blocked=4)

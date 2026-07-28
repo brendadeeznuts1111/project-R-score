@@ -87,6 +87,20 @@
         </tbody>
       </table>
 
+      <div class="section-title">Packages plane <a href="/portal/packages/" style="font-size:12px;font-weight:400">board</a></div>
+      <p class="section-sub" id="pkg-summary">Loading inventory bake…</p>
+      <table class="env-table">
+        <thead><tr><th>Package</th><th>Env keys</th><th>Missing template</th></tr></thead>
+        <tbody id="pkg-body"><tr><td colspan="3">—</td></tr></tbody>
+      </table>
+
+      <div class="section-title">Env key owners (package-touched)</div>
+      <p class="section-sub" id="owners-summary">—</p>
+      <table class="env-table">
+        <thead><tr><th>Key</th><th>×count</th><th>Packages</th><th>Planes</th><th>Root tpl</th></tr></thead>
+        <tbody id="owners-body"><tr><td colspan="5">—</td></tr></tbody>
+      </table>
+
       <div class="generated" id="generated"></div>
     </div>
   </main>
@@ -190,6 +204,46 @@
       else if (env.contentType?.rows) renderContentType(env);
     }
 
+    async function loadPackagesPlane() {
+      try {
+        const res = await fetch('/registry/env-inventory.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error(String(res.status));
+        const inv = await res.json();
+        const plane = inv.packagesPlane || {};
+        const rows = plane.byPackage || [];
+        const sum = inv.summary || {};
+        $('pkg-summary').textContent = rows.length
+          ? `${plane.summary?.packagesWithEnv ?? rows.length} pkg(s) · ${plane.summary?.envKeyCount ?? '—'} keys · missingTemplate=${plane.summary?.missingTemplate ?? 0} · gaps=${(inv.vault?.actionableVaultGaps || []).length} · owners=${sum.ownerCount ?? '—'} · multiPlane=${sum.multiPlaneKeys ?? '—'} · defaultsIssues=${inv.defaultsIssues?.total ?? sum.defaultsIssueCount ?? 0}`
+          : 'No packages Bun.env hits in bake';
+        $('pkg-body').innerHTML = rows.length
+          ? rows.map(r => `<tr>
+              <td class="env-key">${escapeHtml(r.package)}</td>
+              <td>${escapeHtml((r.envKeys || []).join(', '))}</td>
+              <td class="${(r.missingTemplateKeys || []).length ? 'st-warn' : 'st-ok'}">${escapeHtml((r.missingTemplateKeys || []).join(', ') || '—')}</td>
+            </tr>`).join('')
+          : '<tr><td colspan="3">Run <code>bun run env:inventory:bake</code> or <code>bun run audit:packages:env</code></td></tr>';
+        const owners = (inv.owners || []).filter(o => (o.packages || []).length).slice(0, 24);
+        $('owners-summary').textContent = owners.length
+          ? `${owners.length} package-touched key(s) · schema ${inv.schemaVersion ?? '?'}`
+          : 'No package-touched owners in bake';
+        $('owners-body').innerHTML = owners.length
+          ? owners.map(o => `<tr>
+              <td class="env-key">${escapeHtml(o.envKey)}</td>
+              <td>${escapeHtml(String(o.count))}</td>
+              <td>${escapeHtml((o.packages || []).join(', '))}</td>
+              <td>${escapeHtml((o.planes || []).join(', '))}</td>
+              <td class="${o.inRootTemplate ? 'st-ok' : 'st-warn'}">${o.inRootTemplate ? 'yes' : 'no'}</td>
+            </tr>`).join('')
+          : '<tr><td colspan="5">—</td></tr>';
+      } catch {
+        $('pkg-summary').textContent = 'No /registry/env-inventory.json — run bun run env:inventory:bake';
+        $('pkg-body').innerHTML =
+          '<tr><td colspan="3">Bake missing. <a href="/portal/packages/">Packages board</a></td></tr>';
+        $('owners-summary').textContent = 'Bake missing';
+        $('owners-body').innerHTML = '<tr><td colspan="5">—</td></tr>';
+      }
+    }
+
     async function load() {
       try {
         const ctPromise = fetchContentType();
@@ -197,6 +251,7 @@
         await loadFromEnv(env, env.checkedAt);
         const ct = await ctPromise;
         if (ct) renderContentType(ct);
+        await loadPackagesPlane();
       } catch (e) {
         $('loading').innerHTML = '<p style="color:var(--red)">⚠️ Failed to load: ' + escapeHtml(e.message) + '</p>';
       }

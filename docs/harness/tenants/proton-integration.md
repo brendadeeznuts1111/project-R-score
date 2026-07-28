@@ -38,6 +38,23 @@ bun run check:env-defaults         # optional config without fallback (harness)
 bun run proton:check               # inject proof for all templates
 ```
 
+### Packages ↔ vault + env inventory (workspace `packages/*`)
+
+`env:inventory` scans **`packages/`** alongside `lib`/`config`/`scripts`/`tools` and emits reverse **owners** + root/product runtime (claim `packages-graph-map-v11`):
+
+```bash
+bun run env:inventory              # includes packages plane section
+bun run env:inventory:bake         # → /registry/env-inventory.json
+bun run audit:packages:full        # --vault --env
+bun run audit:packages:env         # --env --vault-gap + dual bake
+bun run audit:packages:vault       # --vault --vault-gap
+```
+
+- Scanners: [`lib/harness/packages-vault-map.ts`](../../../lib/harness/packages-vault-map.ts) · [`scripts/lib/env-inventory-compact.ts`](../../../scripts/lib/env-inventory-compact.ts)
+- Bake: `/registry/packages-graph-map.json` (`map.vault` · `map.env`) · `/registry/env-inventory.json`
+- Boards: `/portal/packages/` · `/portal/env/`
+- Never prints secret values — only key names, `pass://` refs, runtime present/missing booleans, and gap flags
+
 Policy: [`scripts/lib/env-secret-policy.ts`](../../../scripts/lib/env-secret-policy.ts) · baseline: [`scripts/env-secret-gap-baseline.json`](../../../scripts/env-secret-gap-baseline.json)
 
 | Signal | Meaning |

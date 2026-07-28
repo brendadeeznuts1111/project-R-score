@@ -21,8 +21,10 @@ describe('packages-metafile-audit', () => {
     cross = await runPackagesMetafileAudit({ crossCheck: true });
   });
 
-  test('schema v11 score + probes + summary', () => {
+  test('schema v11 score + probes + quarantine + summary', () => {
     expect(deep.schemaVersion).toBe(11);
+    expect(deep.map.quarantine).toBeDefined();
+    expect(deep.map.summary?.quarantineCount).toBe(deep.map.quarantine!.length);
     expect(deep.score).toBeGreaterThanOrEqual(90);
     expect(deep.grade).toBe('healthy');
     expect(deep.map.packages.length).toBeGreaterThan(0);
@@ -121,11 +123,18 @@ describe('packages-metafile-audit', () => {
     expect(report.map.vault!.envHits.every(h => typeof h.inTemplate === 'boolean')).toBe(true);
   });
 
-  test('env inventory attaches compact harness scan', async () => {
+  test('env inventory attaches compact harness scan with owners', async () => {
     const report = await runPackagesMetafileAudit({ envInventory: true });
     expect(report.map.env).toBeDefined();
+    expect(report.map.env!.schemaVersion).toBe(2);
     expect(report.map.env!.scannedRoots).toContain('packages');
     expect(report.map.env!.packagesPlane.summary.packagesWithEnv).toBeGreaterThan(0);
+    expect(report.map.env!.owners.length).toBeGreaterThan(0);
+    expect(report.map.env!.runtime.root).toBeDefined();
+    expect(report.map.env!.defaultsIssues).toBeDefined();
     expect(report.map.vault).toBeDefined();
+    expect(report.map.summary?.envPackageTouchedKeys).toBe(
+      report.map.env!.summary.packageTouchedKeys
+    );
   });
 });

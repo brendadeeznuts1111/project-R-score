@@ -24,6 +24,15 @@ describe('packages-board failure paths', () => {
           summary: { openActions: 0, avgPackageScore: 100, archivePlaceholders: 0 },
           actions: [],
           archiveProbes: [],
+          quarantine: [{ package: 'package', reason: 'placeholder', blockedBy: ['tsconfig.json'] }],
+          env: {
+            schemaVersion: 2,
+            uniqueVars: 1,
+            summary: { ownerCount: 1, packageTouchedKeys: 1, multiPlaneKeys: 0 },
+            owners: [{ envKey: 'REDIS_URL', count: 2, packages: ['p2p'], planes: ['packages'] }],
+            defaultsIssues: { total: 0 },
+            runtime: { root: { templateKeysMissing: 0 } },
+          },
         },
       },
       '/registry/packages-graph-map.json'
@@ -31,6 +40,8 @@ describe('packages-board failure paths', () => {
     expect(data.schemaOk).toBe(true);
     expect(data.packages).toHaveLength(1);
     expect(data.summary.openActions).toBe(0);
+    expect(data.quarantine).toHaveLength(1);
+    expect(data.env?.owners?.[0]?.envKey).toBe('REDIS_URL');
   });
 
   test('normalizePackagesMap rejects empty payload', () => {

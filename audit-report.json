@@ -1,7 +1,7 @@
 {
   "schemaVersion": 11,
   "kind": "packages-metafile-audit",
-  "generatedAt": "2026-07-28T04:15:40.252Z",
+  "generatedAt": "2026-07-28T04:16:27.609Z",
   "bunVersion": "1.4.0",
   "root": "/Users/nolarose/Projects",
   "glob": "packages/*/src/**/*.{ts,tsx}",
@@ -249,7 +249,7 @@
         "targetPrefix": "lib/docs",
         "weight": 11,
         "samples": [
-          "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/domains",
+          "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/domains.ts",
           "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/categories",
           "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/fragments.ts"
         ]
@@ -905,7 +905,7 @@
       "envRootRuntimeMissing": 1
     },
     "vault": {
-      "generatedAt": "2026-07-28T04:15:40.243Z",
+      "generatedAt": "2026-07-28T04:16:27.607Z",
       "templateKeys": [
         "R2_ACCOUNT_ID",
         "R2_ACCESS_KEY_ID",
@@ -1031,13 +1031,72 @@
           "missingTemplateKeys": []
         }
       ],
-      "actions": [],
+      "actions": [
+        {
+          "package": "(repo)",
+          "envKey": "OPENAI_API_KEY",
+          "action": "vault-gap-open",
+          "reason": "human vault gap open — OpenAI API Key"
+        },
+        {
+          "package": "(repo)",
+          "envKey": "SLACK_WEBHOOK_URL",
+          "action": "vault-gap-open",
+          "reason": "human vault gap open — Slack Webhook URL"
+        }
+      ],
+      "gap": {
+        "passCliAvailable": true,
+        "passItemCount": 26,
+        "humanOpen": [
+          "OPENAI_API_KEY",
+          "SLACK_WEBHOOK_URL"
+        ],
+        "mintableWouldMint": [],
+        "catalogFlags": [
+          {
+            "envKey": "DOD_PROOF_SECRET",
+            "flag": "vault+env",
+            "title": "DOD Proof Secret"
+          },
+          {
+            "envKey": "DOD_ID_ENCRYPTION_KEY",
+            "flag": "vault+env",
+            "title": "DOD ID Encryption Key"
+          },
+          {
+            "envKey": "PROVISION_ENCRYPTION_KEY",
+            "flag": "vault+env",
+            "title": "Provision Encryption Key"
+          },
+          {
+            "envKey": "PLAY_SIGNING_SECRET",
+            "flag": "vault+env",
+            "title": "Play Signing Secret"
+          },
+          {
+            "envKey": "REPORT_SIGNING_SECRET",
+            "flag": "vault+env",
+            "title": "Report Signing Secret"
+          },
+          {
+            "envKey": "OPENAI_API_KEY",
+            "flag": "open",
+            "title": "OpenAI API Key"
+          },
+          {
+            "envKey": "SLACK_WEBHOOK_URL",
+            "flag": "open",
+            "title": "Slack Webhook URL"
+          }
+        ]
+      },
       "summary": {
         "packagesWithEnv": 2,
         "envKeyCount": 1,
         "vaultedHits": 0,
         "missingTemplate": 0,
-        "openVaultActions": 0,
+        "openVaultActions": 2,
         "inTemplateHits": 2,
         "runtimePresentHits": 0
       }
@@ -1045,7 +1104,7 @@
     "env": {
       "schemaVersion": 2,
       "kind": "env-inventory",
-      "generatedAt": "2026-07-28T04:15:40.243Z",
+      "generatedAt": "2026-07-28T04:16:27.608Z",
       "scannedRoots": [
         "lib",
         "config",
@@ -2470,7 +2529,7 @@
         "top": []
       },
       "packagesPlane": {
-        "generatedAt": "2026-07-28T04:15:40.243Z",
+        "generatedAt": "2026-07-28T04:16:27.607Z",
         "templateKeys": [
           "R2_ACCOUNT_ID",
           "R2_ACCESS_KEY_ID",
@@ -2596,13 +2655,72 @@
             "missingTemplateKeys": []
           }
         ],
-        "actions": [],
+        "actions": [
+          {
+            "package": "(repo)",
+            "envKey": "OPENAI_API_KEY",
+            "action": "vault-gap-open",
+            "reason": "human vault gap open — OpenAI API Key"
+          },
+          {
+            "package": "(repo)",
+            "envKey": "SLACK_WEBHOOK_URL",
+            "action": "vault-gap-open",
+            "reason": "human vault gap open — Slack Webhook URL"
+          }
+        ],
+        "gap": {
+          "passCliAvailable": true,
+          "passItemCount": 26,
+          "humanOpen": [
+            "OPENAI_API_KEY",
+            "SLACK_WEBHOOK_URL"
+          ],
+          "mintableWouldMint": [],
+          "catalogFlags": [
+            {
+              "envKey": "DOD_PROOF_SECRET",
+              "flag": "vault+env",
+              "title": "DOD Proof Secret"
+            },
+            {
+              "envKey": "DOD_ID_ENCRYPTION_KEY",
+              "flag": "vault+env",
+              "title": "DOD ID Encryption Key"
+            },
+            {
+              "envKey": "PROVISION_ENCRYPTION_KEY",
+              "flag": "vault+env",
+              "title": "Provision Encryption Key"
+            },
+            {
+              "envKey": "PLAY_SIGNING_SECRET",
+              "flag": "vault+env",
+              "title": "Play Signing Secret"
+            },
+            {
+              "envKey": "REPORT_SIGNING_SECRET",
+              "flag": "vault+env",
+              "title": "Report Signing Secret"
+            },
+            {
+              "envKey": "OPENAI_API_KEY",
+              "flag": "open",
+              "title": "OpenAI API Key"
+            },
+            {
+              "envKey": "SLACK_WEBHOOK_URL",
+              "flag": "open",
+              "title": "Slack Webhook URL"
+            }
+          ]
+        },
         "summary": {
           "packagesWithEnv": 2,
           "envKeyCount": 1,
           "vaultedHits": 0,
           "missingTemplate": 0,
-          "openVaultActions": 0,
+          "openVaultActions": 2,
           "inTemplateHits": 2,
           "runtimePresentHits": 0
         }
@@ -2774,22 +2892,11 @@
     "openActions": 3,
     "avgPackageScore": 93.9
   },
-  "crossCheck": {
-    "deadFileCount": 0,
-    "cyclicDependencyCount": 0,
-    "metafileOnlyOrphans": [],
-    "transpilerOnlyDead": [],
-    "notes": [
-      "import graph via Bun.Transpiler.scanImports; dead=orphan; package edges=8; cycles raw=0 capped=0",
-      "Cross-check excludes entrypoints from Transpiler “dead” (roots are never imported)."
-    ]
-  },
   "notes": [
     "Entrypoints: 9 index · 1 cli · 0 main/bin · 0 package.json",
     "leaves = zero outbound imports (not dead). orphans = scanned but unreachable from entrypoints.",
     "8 external input(s) pulled into graph (lib/, config/, …) — expected for workspace edges.",
     "score 100/100 (healthy)",
-    "cross-check: metafile orphans=0 · transpiler orphans(excl entry)=0 · cycles(transpiler)=0",
     "Package map: no cross-package edges (packages are isolated islands)",
     "Outside consumers (lib/tools/scripts/tests): registry-client:3, guards:1, rip:1",
     "Declared: 6/9 in root workspace deps · 0 pkg(s) with undeclared cross-imports",
@@ -2799,19 +2906,11 @@
     "Actions: ab-testing:archive-candidate, package:archive-candidate, versioning:archive-candidate",
     "Summary: avgPkg=93.9 · openActions=3 · archivePlaceholders=1 · hub=lib/docs",
     "Archive probes: package(placeholder)",
-    "Vault: 2 pkg(s) with Bun.env · 1 keys · inTemplate=2 · missingTemplate=0 · openActions=0",
+    "Vault: 2 pkg(s) with Bun.env · 1 keys · inTemplate=2 · missingTemplate=0 · openActions=2",
+    "Vault gap: pass-cli=yes items=26 humanOpen=2 wouldMint=0",
     "Env inventory: unique=183 · secrets=15 · config=151 · actionableGaps=2 · rootRuntimeMissing=1 · owners=60 · pkgKeys=1 · multiPlane=27 · defaultsIssues=0",
     "Quarantine: package(blocked=4)"
   ],
-  "diff": {
-    "previousGeneratedAt": "2026-07-28T04:12:37.208Z",
-    "previousScore": 100,
-    "scoreDelta": 0,
-    "orphanDelta": 0,
-    "cycleDelta": 0,
-    "addedOrphans": [],
-    "removedOrphans": []
-  },
   "metafile": {
     "inputs": {
       "config/bun-dx-catalog.ts": {
