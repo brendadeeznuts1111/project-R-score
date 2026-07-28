@@ -67,6 +67,11 @@ function isPublicPlanePath(file: string): boolean {
   );
 }
 
+/** Runtime flags catalog SSOT — keep JSON valid and in sync with live bun --help. */
+function isRuntimeFlagsPath(file: string): boolean {
+  return file.replace(/^\.\//, '') === 'config/runtime-flags.json';
+}
+
 /** Audit findings/concepts SSOT — verify even when no harness .ts is staged. */
 export function isAuditSsotPath(file: string): boolean {
   const n = file.replace(/^\.\//, '');
@@ -251,16 +256,31 @@ async function main(): Promise<void> {
     }
   }
 
+  const runtimeFlagsFiles = staged.filter(isRuntimeFlagsPath);
+  if (runtimeFlagsFiles.length > 0) {
+    console.info(`🚩 Runtime flags catalog (${runtimeFlagsFiles.length} path(s) staged)...`);
+    const code = await runGate('runtime-flags', ['bun', 'run', 'portal:flags:check'], timings);
+    if (code !== 0) {
+      console.error(
+        '❌ Runtime flags catalog failed — fix schema/shortcode/help or bun --help parity\n' +
+          '   bun run portal:flags:check'
+      );
+      await writeTimings(timings, full);
+      process.exit(1);
+    }
+  }
+
   if (harnessFiles.length === 0) {
     if (
       docMapFiles.length > 0 ||
       projectsFiles.length > 0 ||
       libFiles.length > 0 ||
       auditFiles.length > 0 ||
-      publicFiles.length > 0
+      publicFiles.length > 0 ||
+      runtimeFlagsFiles.length > 0
     ) {
       console.info(
-        '✅ Harness pre-commit checks passed (doc/projects/lib/audit/public gates only)'
+        '✅ Harness pre-commit checks passed (doc/projects/lib/audit/public/flags gates only)'
       );
     } else {
       console.info('✅ No staged harness TypeScript or doc-map SSOT files');
@@ -344,6 +364,18 @@ async function main(): Promise<void> {
   const libStaged = harnessFiles.some(f => f.replace(/^\.\//, '').startsWith('lib/'));
   const scriptsStaged = harnessFiles.some(f => f.replace(/^\.\//, '').startsWith('scripts/'));
   const toolsStaged = harnessFiles.some(f => f.replace(/^\.\//, '').startsWith('tools/'));
+  const npmInstallStaged = staged.some(f => {
+    const n = f.replace(/^\.\//, '');
+    return (
+      n === 'package.json' ||
+      n === '.npmrc' ||
+      n === 'bunfig.toml' ||
+      n.startsWith('.github/workflows/') ||
+      n.startsWith('scripts/') ||
+      n.startsWith('tools/') ||
+      n.startsWith('lib/')
+    );
+  });
 
   // Parallel: brands staged ‖ brands smart ‖ path-bun ‖ bun-env (types only on --full)
   console.info(
@@ -396,6 +428,10 @@ async function main(): Promise<void> {
   if (libStaged || scriptsStaged || toolsStaged) {
     parallelJobs.push(spawnGate('oxlint-ratchet', ['bun', 'scripts/check-oxlint-ratchet.ts']));
   }
+  if (npmInstallStaged) {
+    parallelJobs.push(spawnGate('npm-install', ['bun', 'run', 'check:npm-install']));
+    parallelJobs.push(spawnGate('bun-pm-cache', ['bun', 'run', 'check:bun-pm-cache']));
+  }
 
   // Monorepo-health formula/UI/history — unit tests only (full ratchet lives in ci:core).
   const monorepoHealthStaged = staged.some(f => {
@@ -446,6 +482,7 @@ async function main(): Promise<void> {
   const bunEnv = parallelResults.find(r => r.name === 'bun-env')?.code ?? 0;
   const importGraph = parallelResults.find(r => r.name === 'import-graph')?.code ?? 0;
   const oxlintRatchet = parallelResults.find(r => r.name === 'oxlint-ratchet')?.code ?? 0;
+  const npmInstall = parallelResults.find(r => r.name === 'npm-install')?.code ?? 0;
   const monorepoHealthTests =
     parallelResults.find(r => r.name === 'monorepo-health-tests')?.code ?? 0;
   const complexityStaged =
@@ -485,6 +522,13 @@ async function main(): Promise<void> {
   }
   if (oxlintRatchet !== 0) {
     console.error('❌ oxlint warnings grew — bun run check:oxlint-ratchet');
+    await writeTimings(timings, full);
+    process.exit(1);
+  }
+  if (npmInstall !== 0) {
+    console.error(
+      '❌ npm/yarn/pnpm install command detected in production path — bun run check:npm-install'
+    );
     await writeTimings(timings, full);
     process.exit(1);
   }
