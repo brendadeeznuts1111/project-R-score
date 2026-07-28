@@ -7,8 +7,6 @@
     "--parallel|bun-run|projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/package.json#1",
     "--parallel|bun-run|scratch/bun-v1.3.9-examples/benchmarks/package.json#1",
     "--parallel|bun-run|scratch/bun-v1.3.9-examples/playground/package.json#1",
-    "Bun.Image|image-processing|lib/dod/verifier.ts#1",
-    "Bun.Image|image-processing|lib/dod/verifier.ts#2",
     "Bun.Image|image-processing|lib/image-metadata.ts#1",
     "Bun.Image|image-processing|lib/image-metadata.ts#2",
     "Bun.Image|image-processing|lib/prediction/report.ts#1",

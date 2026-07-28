@@ -25,6 +25,9 @@ import { defineBunBrandUsages } from './bun-brand-contract.ts';
 const none = (rationale: string) =>
   [{ direction: 'none' as const, brand: null, rationale }] as const;
 
+const packageScripts = (...symbols: string[]) =>
+  symbols.map(symbol => ({ path: 'package.json', symbol }));
+
 export const BUN_BRAND_USAGES = defineBunBrandUsages([
   {
     key: 'bun-image-dod-evidence',
@@ -33,8 +36,18 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     scope: 'production',
     policy: 'production-approved',
     ownerLane: 'audit',
-    implementations: [{ path: 'lib/dod/evidence.ts', symbol: 'buildDodEvidencePackage' }],
-    consumers: [{ path: 'lib/dod/evidence.ts', symbol: 'DodEvidencePackage' }],
+    implementations: [
+      { path: 'lib/dod/evidence.ts', symbol: 'averageHash' },
+      { path: 'lib/dod/evidence.ts', symbol: 'storePreviewWebp' },
+      { path: 'lib/dod/verifier.ts', symbol: 'DODVerifier.process' },
+      { path: 'lib/dod/verifier.ts', symbol: 'DODVerifier.applyWatermark' },
+    ],
+    consumers: [
+      { path: 'lib/dod/evidence.ts', symbol: 'buildDodEvidencePackage' },
+      { path: 'tools/dod-evidence.ts', symbol: 'cmdPack' },
+      { path: 'lib/dod/verifier.ts', symbol: 'DODVerifier.process' },
+      { path: 'lib/dod/verifier.ts', symbol: 'DODVerifier.process' },
+    ],
     relationships: [
       {
         direction: 'evidence',
@@ -57,8 +70,14 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     scope: 'production',
     policy: 'lab-only',
     ownerLane: 'audit',
-    implementations: [{ path: 'lib/dod/verifier.ts', symbol: 'DODVerifier.applyWatermark' }],
-    consumers: [{ path: 'lib/dod/verifier.ts', symbol: 'DODVerifier.process' }],
+    implementations: [
+      { path: 'lib/dod/verifier.ts', symbol: 'DODVerifier.applyWatermark' },
+      { path: 'lib/dod/verifier.ts', symbol: 'DODVerifier.extractText' },
+    ],
+    consumers: [
+      { path: 'lib/dod/verifier.ts', symbol: 'DODVerifier.process' },
+      { path: 'lib/dod/verifier.ts', symbol: 'DODVerifier.process' },
+    ],
     relationships: [
       {
         direction: 'evidence',
@@ -75,8 +94,14 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     scope: 'production',
     policy: 'optional',
     ownerLane: 'audit',
-    implementations: [{ path: 'lib/time.ts', symbol: 'mintEvidenceId' }],
-    consumers: [{ path: 'lib/dod/evidence.ts', symbol: 'buildDodEvidencePackage' }],
+    implementations: [
+      { path: 'lib/time.ts', symbol: 'randomUUIDv7' },
+      { path: 'lib/time.ts', symbol: 'uuidV7WithTimestamp' },
+    ],
+    consumers: [
+      { path: 'lib/time.ts', symbol: 'mintEvidenceId' },
+      { path: 'lib/time.ts', symbol: 'mintEvidenceIdAt' },
+    ],
     relationships: [
       {
         direction: 'output',
@@ -121,8 +146,14 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     scope: 'production',
     policy: 'optional',
     ownerLane: 'runtime-tooling',
-    implementations: [{ path: 'lib/console-depth.ts', symbol: 'truncateWidth' }],
-    consumers: [{ path: 'lib/factory/cli.ts', symbol: 'truncateDesc' }],
+    implementations: [
+      { path: 'lib/console-depth.ts', symbol: 'truncateWidth' },
+      { path: 'lib/console-depth.ts', symbol: 'fitWidth' },
+    ],
+    consumers: [
+      { path: 'lib/factory/cli.ts', symbol: 'truncateDesc' },
+      { path: 'lib/console-depth.ts', symbol: 'fitWidth' },
+    ],
     relationships: none(
       'ANSI-aware slicing transforms display text and does not create or consume an identity.'
     ),
@@ -183,7 +214,18 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     scope: 'config',
     policy: 'optional',
     ownerLane: 'runtime-tooling',
-    implementations: [{ path: 'package.json', symbol: 'test:parallel' }],
+    implementations: packageScripts(
+      'test:shard:parallel',
+      'test:ci:shard:parallel',
+      'test:parallel',
+      'test:watch',
+      'test:watch:full',
+      'test:watch:shard1',
+      'test:watch:shard2',
+      'test:watch:shard3',
+      'test:state-compliance',
+      'test:state-compliance:watch'
+    ),
     consumers: [{ path: '.github/workflows/test-sharded.yml', symbol: 'tests shard' }],
     relationships: none(
       'Test scheduling changes execution topology but does not transport domain identities.'
@@ -197,7 +239,7 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     scope: 'config',
     policy: 'optional',
     ownerLane: 'runtime-tooling',
-    implementations: [{ path: 'package.json', symbol: 'test:isolate' }],
+    implementations: packageScripts('test:isolate'),
     consumers: [{ path: 'package.json', symbol: 'scripts' }],
     relationships: none(
       'Per-file test isolation is harness configuration without a domain identity.'
@@ -211,7 +253,15 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     scope: 'config',
     policy: 'optional',
     ownerLane: 'runtime-tooling',
-    implementations: [{ path: 'package.json', symbol: 'test:ci:shard' }],
+    implementations: packageScripts(
+      'test:shard:parallel',
+      'test:shard',
+      'test:ci:shard',
+      'test:ci:shard:parallel',
+      'test:watch:shard1',
+      'test:watch:shard2',
+      'test:watch:shard3'
+    ),
     consumers: [{ path: '.github/workflows/test-sharded.yml', symbol: 'tests shard' }],
     relationships: none(
       'Shard coordinates are CI configuration rather than a FactoryWager domain value.'
@@ -225,7 +275,7 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     scope: 'config',
     policy: 'optional',
     ownerLane: 'runtime-tooling',
-    implementations: [{ path: 'package.json', symbol: 'test:watch' }],
+    implementations: packageScripts('test:watch'),
     consumers: [{ path: 'package.json', symbol: 'scripts' }],
     relationships: none('Changed-test selection consumes repository state, not a domain identity.'),
     proofs: [],

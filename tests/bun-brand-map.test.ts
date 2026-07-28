@@ -31,7 +31,23 @@ describe('Bun capability observation', () => {
       ['Bun.serve http3', 'quic-server'],
       ['fetch protocol http2', 'fetch-client'],
     ]);
+    expect(rows.map(row => row.symbol)).toEqual([null, null, null, null]);
     expect(rows.some(row => row.token === 'Bun.WebView')).toBe(false);
+  });
+
+  test('captures function and class-method ownership for exact declaration matching', () => {
+    const rows = observeBunCapabilities([
+      {
+        path: 'lib/owned.ts',
+        content: `
+          function resize() { return new Bun.Image(bytes); }
+          class Renderer {
+            render() { return new Bun.Image(bytes); }
+          }
+        `,
+      },
+    ]);
+    expect(rows.map(row => row.symbol)).toEqual(['resize', 'Renderer.render']);
   });
 
   test('distinguishes bun test flags from bun run flags', () => {
@@ -138,6 +154,7 @@ describe('Bun brand map join', () => {
           token: 'Bun.Image',
           variant: 'image-processing',
           path: 'lib/image.ts',
+          symbol: 'render',
           line: 1,
           occurrence: 1,
           project: 'project-R-score',
@@ -169,6 +186,78 @@ describe('Bun brand map join', () => {
     expect(payload.summary.totalCanonicalBrands).toBe(47);
     expect(payload.summary.trackedProjects).toBe(1);
     expect(payload.summary.externalProjects).toBe(1);
+  });
+
+  test('does not match an unrelated symbol in a declared implementation file', () => {
+    const declaration = {
+      key: 'image',
+      token: asDocTokenId('Bun.Image'),
+      variant: 'image-processing',
+      scope: 'production' as const,
+      policy: 'optional' as const,
+      ownerLane: 'audit',
+      implementations: [{ path: 'lib/image.ts', symbol: 'render' }],
+      consumers: [],
+      relationships: [
+        {
+          direction: 'none' as const,
+          brand: null,
+          rationale: 'The native image stays unbranded in this wrapper.',
+        },
+      ],
+      proofs: [],
+    };
+    const payload = buildBunBrandMap({
+      declarations: [declaration],
+      catalog: {
+        generated: '2026-07-28T00:00:00Z',
+        entries: [
+          {
+            name: 'Bun.Image',
+            type: 'api',
+            stability: 'stable',
+            releasedIn: '1.3.14',
+          },
+        ],
+      },
+      manifest: { brandCount: 0, domains: ['audit'], brands: [] },
+      brandKeymap: { projects: [] },
+      trackedPaths: new Set(['lib/image.ts']),
+      observations: [
+        {
+          token: 'Bun.Image',
+          variant: 'image-processing',
+          path: 'lib/image.ts',
+          symbol: 'render',
+          line: 1,
+          occurrence: 1,
+          project: 'project-R-score',
+          syntax: 'ast-new',
+        },
+        {
+          token: 'Bun.Image',
+          variant: 'image-processing',
+          path: 'lib/image.ts',
+          symbol: 'unreviewed',
+          line: 2,
+          occurrence: 2,
+          project: 'project-R-score',
+          syntax: 'ast-new',
+        },
+      ],
+      baseline: new Set(['Bun.Image|image-processing|lib/image.ts#2']),
+      releases: new Map(),
+      generatedAt: '2026-07-28T12:00:00Z',
+    });
+
+    expect(payload.summary.matched).toBe(1);
+    expect(payload.summary.undeclared).toBe(1);
+    expect(payload.findings).toContainEqual(
+      expect.objectContaining({
+        key: 'Bun.Image|image-processing|lib/image.ts#2',
+        baseline: true,
+      })
+    );
   });
 
   test(

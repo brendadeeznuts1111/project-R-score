@@ -77,6 +77,7 @@ export type BunCapabilityObservation = {
   token: string;
   variant: string | null;
   path: string;
+  symbol: string | null;
   line: number;
   occurrence?: number;
   project: string;
@@ -143,6 +144,54 @@ function scriptKind(path: string): ts.ScriptKind {
 
 function sourceLine(source: ts.SourceFile, node: ts.Node): number {
   return source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1;
+}
+
+function declarationName(name: ts.DeclarationName | undefined): string | null {
+  if (!name) return null;
+  if (
+    ts.isIdentifier(name) ||
+    ts.isStringLiteralLike(name) ||
+    ts.isNumericLiteral(name) ||
+    ts.isPrivateIdentifier(name)
+  ) {
+    return name.text;
+  }
+  return null;
+}
+
+function enclosingSymbol(node: ts.Node): string | null {
+  let current: ts.Node | undefined = node.parent;
+  while (current) {
+    if (
+      ts.isMethodDeclaration(current) ||
+      ts.isGetAccessorDeclaration(current) ||
+      ts.isSetAccessorDeclaration(current)
+    ) {
+      const method = declarationName(current.name);
+      const owner =
+        ts.isClassDeclaration(current.parent) || ts.isClassExpression(current.parent)
+          ? current.parent.name?.text
+          : undefined;
+      return method ? (owner ? `${owner}.${method}` : method) : null;
+    }
+    if (ts.isConstructorDeclaration(current)) {
+      const owner =
+        ts.isClassDeclaration(current.parent) || ts.isClassExpression(current.parent)
+          ? current.parent.name?.text
+          : undefined;
+      return owner ? `${owner}.constructor` : 'constructor';
+    }
+    if (ts.isFunctionDeclaration(current) && current.name) return current.name.text;
+    if (ts.isArrowFunction(current) || ts.isFunctionExpression(current)) {
+      const parent = current.parent;
+      if (ts.isVariableDeclaration(parent) && ts.isIdentifier(parent.name)) {
+        return parent.name.text;
+      }
+      if (ts.isPropertyAssignment(parent)) return declarationName(parent.name);
+    }
+    current = current.parent;
+  }
+  return null;
 }
 
 function propertyPath(expression: ts.Expression): string | null {
@@ -213,6 +262,7 @@ function addObservation(
     token,
     variant,
     path,
+    symbol: enclosingSymbol(node),
     line: sourceLine(source, node),
     project,
     syntax,
@@ -396,21 +446,30 @@ function commandObservations(
   path: string,
   line: number,
   project: string,
-  syntax: 'package-script' | 'workflow-command'
+  syntax: 'package-script' | 'workflow-command',
+  symbol: string | null = null
 ): BunCapabilityObservation[] {
   const rows: BunCapabilityObservation[] = [];
   if (/\bbun(?:\s+--\S+)*\s+test\b/.test(command)) {
     for (const flag of TEST_FLAGS) {
       if (new RegExp(`(^|\\s)${flag.replace('-', '\\-')}(?:=|\\s|$)`).test(command)) {
-        rows.push({ token: flag, variant: 'bun-test', path, line, project, syntax });
+        rows.push({ token: flag, variant: 'bun-test', path, symbol, line, project, syntax });
       }
     }
   }
   if (/\bbun(?:\s+--\S+)*\s+run\b/.test(command) && /(^|\s)--parallel(?:=|\s|$)/.test(command)) {
-    rows.push({ token: '--parallel', variant: 'bun-run', path, line, project, syntax });
+    rows.push({ token: '--parallel', variant: 'bun-run', path, symbol, line, project, syntax });
   }
   if (/\bbun\b[^\n]*--no-orphans(?:=|\s|$)/.test(command)) {
-    rows.push({ token: '--no-orphans', variant: 'runtime-cli', path, line, project, syntax });
+    rows.push({
+      token: '--no-orphans',
+      variant: 'runtime-cli',
+      path,
+      symbol,
+      line,
+      project,
+      syntax,
+    });
   }
   return rows;
 }
@@ -420,10 +479,12 @@ function observeConfigFile(file: SourceFile, project: string): BunCapabilityObse
     try {
       const parsed = JSON.parse(file.content) as { scripts?: Record<string, string> };
       const rows: BunCapabilityObservation[] = [];
-      for (const command of Object.values(parsed.scripts ?? {})) {
+      for (const [script, command] of Object.entries(parsed.scripts ?? {})) {
         const index = file.content.indexOf(command);
         const line = index < 0 ? 1 : file.content.slice(0, index).split('\n').length;
-        rows.push(...commandObservations(command, file.path, line, project, 'package-script'));
+        rows.push(
+          ...commandObservations(command, file.path, line, project, 'package-script', script)
+        );
       }
       return rows;
     } catch {
@@ -444,6 +505,7 @@ function observeConfigFile(file: SourceFile, project: string): BunCapabilityObse
         token: '--no-orphans',
         variant: 'bun-config',
         path: file.path,
+        symbol: 'noOrphans',
         line: file.content.slice(0, index).split('\n').length,
         project,
         syntax: 'bun-config',
@@ -504,7 +566,9 @@ function declarationMatches(
   return (
     declaration.token === observation.token &&
     declaration.variant === observation.variant &&
-    declaration.implementations.some(ref => ref.path === observation.path)
+    declaration.implementations.some(
+      ref => ref.path === observation.path && ref.symbol === observation.symbol
+    )
   );
 }
 

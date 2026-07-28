@@ -46,9 +46,12 @@ describe('Bun brand governance wiring', () => {
   test('cross-map bake follows capability and brand bakes and precedes ops', async () => {
     const source = await Bun.file('tools/bake-all.ts').text();
     const capabilities = source.indexOf("id: 'capabilities'");
+    const bunfig = source.indexOf("id: 'bunfig'");
     const brands = source.indexOf("id: 'brands'");
     const crossMap = source.indexOf("id: 'bun-brand-map'");
     const ops = source.indexOf("id: 'ops'");
+    expect(capabilities).toBeLessThan(bunfig);
+    expect(bunfig).toBeLessThan(brands);
     expect(capabilities).toBeLessThan(brands);
     expect(brands).toBeLessThan(crossMap);
     expect(crossMap).toBeLessThan(ops);

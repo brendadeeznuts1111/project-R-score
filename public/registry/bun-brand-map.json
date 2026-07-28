@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "bun-brand-map",
   "path": "/registry/bun-brand-map.json",
-  "generatedAt": "2026-07-28T23:05:39.933Z",
+  "generatedAt": "2026-07-28T23:20:31.248Z",
   "sources": {
     "declarations": "lib/docs/bun-brand-usages.ts",
     "catalog": "tools/bun-docs-catalog.json",
@@ -12,27 +12,27 @@
     "proof": "public/registry/release-features.json"
   },
   "sourceDigests": {
-    "declarations": "17216ebf587660a3865417a6d8578fd74c0a4d624a5257f2ce2842f37b110a2d",
+    "declarations": "13d821366a7b19349116395132c2e9535d8333b1b3a4abb94e89a25ce5d4ba62",
     "catalog": "397470e5050312c556f570ec32cc4f2b57b82e6e3e607231ab8d2079303556b6",
     "brandManifest": "63a869f0e826cf0e201245c40fdfa0f4569c372481c345a880bb66159cfe6735",
     "brandKeymap": "f14a57b2b7ac4516370a56f5e6829c9893d8454fdfaf12625ff5dbe6edb0811c",
-    "observations": "216cb4cf827fc22fd9057b6ecfa81f61dacea342414185d4995810640af964ac",
-    "baseline": "01a862cd2467b74b632bf7562f0b03c604fb19f548c9ecfafed77438b24cae43",
+    "observations": "db454e5401f85abe3a57938fa6aaaf672022316bb23f13d4b2eedbfa4b7d9ce3",
+    "baseline": "57e70c50175bc9a9ce9fafdb90fdb801e1e423fff49ae2fcf7c422bd268fb330",
     "proofs": "a605f7e22ca4954bf58f3eb2940e4edab0ad009b4205c484d0f6e2ecd9fc0033"
   },
   "summary": {
     "apis": 15,
-    "relationships": 16,
+    "relationships": 37,
     "wrappers": 10,
     "projects": 32,
     "verified": 2,
-    "attention": 321,
+    "attention": 319,
     "declared": 16,
     "observed": 324,
-    "matched": 31,
-    "undeclared": 293,
-    "baselineUndeclared": 293,
-    "legacyUndeclared": 293,
+    "matched": 33,
+    "undeclared": 291,
+    "baselineUndeclared": 291,
+    "legacyUndeclared": 291,
     "newUndeclared": 0,
     "catalogConflicts": 0,
     "productionProofErrors": 0,
@@ -60,13 +60,37 @@
       "implementations": [
         {
           "path": "lib/dod/evidence.ts",
-          "symbol": "buildDodEvidencePackage"
+          "symbol": "averageHash"
+        },
+        {
+          "path": "lib/dod/evidence.ts",
+          "symbol": "storePreviewWebp"
+        },
+        {
+          "path": "lib/dod/verifier.ts",
+          "symbol": "DODVerifier.process"
+        },
+        {
+          "path": "lib/dod/verifier.ts",
+          "symbol": "DODVerifier.applyWatermark"
         }
       ],
       "consumers": [
         {
           "path": "lib/dod/evidence.ts",
-          "symbol": "DodEvidencePackage"
+          "symbol": "buildDodEvidencePackage"
+        },
+        {
+          "path": "tools/dod-evidence.ts",
+          "symbol": "cmdPack"
+        },
+        {
+          "path": "lib/dod/verifier.ts",
+          "symbol": "DODVerifier.process"
+        },
+        {
+          "path": "lib/dod/verifier.ts",
+          "symbol": "DODVerifier.process"
         }
       ],
       "brands": [
@@ -87,7 +111,7 @@
       "projects": [
         "project-R-score"
       ],
-      "observations": 2,
+      "observations": 4,
       "attention": []
     },
     {
@@ -106,9 +130,17 @@
         {
           "path": "lib/dod/verifier.ts",
           "symbol": "DODVerifier.applyWatermark"
+        },
+        {
+          "path": "lib/dod/verifier.ts",
+          "symbol": "DODVerifier.extractText"
         }
       ],
       "consumers": [
+        {
+          "path": "lib/dod/verifier.ts",
+          "symbol": "DODVerifier.process"
+        },
         {
           "path": "lib/dod/verifier.ts",
           "symbol": "DODVerifier.process"
@@ -148,13 +180,21 @@
       "implementations": [
         {
           "path": "lib/time.ts",
-          "symbol": "mintEvidenceId"
+          "symbol": "randomUUIDv7"
+        },
+        {
+          "path": "lib/time.ts",
+          "symbol": "uuidV7WithTimestamp"
         }
       ],
       "consumers": [
         {
-          "path": "lib/dod/evidence.ts",
-          "symbol": "buildDodEvidencePackage"
+          "path": "lib/time.ts",
+          "symbol": "mintEvidenceId"
+        },
+        {
+          "path": "lib/time.ts",
+          "symbol": "mintEvidenceIdAt"
         }
       ],
       "brands": [
@@ -272,12 +312,20 @@
         {
           "path": "lib/console-depth.ts",
           "symbol": "truncateWidth"
+        },
+        {
+          "path": "lib/console-depth.ts",
+          "symbol": "fitWidth"
         }
       ],
       "consumers": [
         {
           "path": "lib/factory/cli.ts",
           "symbol": "truncateDesc"
+        },
+        {
+          "path": "lib/console-depth.ts",
+          "symbol": "fitWidth"
         }
       ],
       "brands": [
@@ -439,7 +487,43 @@
       "implementations": [
         {
           "path": "package.json",
+          "symbol": "test:shard:parallel"
+        },
+        {
+          "path": "package.json",
+          "symbol": "test:ci:shard:parallel"
+        },
+        {
+          "path": "package.json",
           "symbol": "test:parallel"
+        },
+        {
+          "path": "package.json",
+          "symbol": "test:watch"
+        },
+        {
+          "path": "package.json",
+          "symbol": "test:watch:full"
+        },
+        {
+          "path": "package.json",
+          "symbol": "test:watch:shard1"
+        },
+        {
+          "path": "package.json",
+          "symbol": "test:watch:shard2"
+        },
+        {
+          "path": "package.json",
+          "symbol": "test:watch:shard3"
+        },
+        {
+          "path": "package.json",
+          "symbol": "test:state-compliance"
+        },
+        {
+          "path": "package.json",
+          "symbol": "test:state-compliance:watch"
         }
       ],
       "consumers": [
@@ -521,7 +605,31 @@
       "implementations": [
         {
           "path": "package.json",
+          "symbol": "test:shard:parallel"
+        },
+        {
+          "path": "package.json",
+          "symbol": "test:shard"
+        },
+        {
+          "path": "package.json",
           "symbol": "test:ci:shard"
+        },
+        {
+          "path": "package.json",
+          "symbol": "test:ci:shard:parallel"
+        },
+        {
+          "path": "package.json",
+          "symbol": "test:watch:shard1"
+        },
+        {
+          "path": "package.json",
+          "symbol": "test:watch:shard2"
+        },
+        {
+          "path": "package.json",
+          "symbol": "test:watch:shard3"
         }
       ],
       "consumers": [
@@ -727,9 +835,72 @@
       "direction": "evidence",
       "rationale": "Decoded and resized image bytes are stored in an EvidenceId-addressed record.",
       "wrapper": "lib/dod/evidence.ts",
-      "wrapperSymbol": "buildDodEvidencePackage",
+      "wrapperSymbol": "averageHash",
       "consumer": "lib/dod/evidence.ts",
-      "consumerSymbol": "DodEvidencePackage",
+      "consumerSymbol": "buildDodEvidencePackage",
+      "project": "project-R-score",
+      "policy": "production-approved",
+      "evidenceState": "verified",
+      "proofs": [
+        "public/registry/release-features.json#result:terminal-methods"
+      ]
+    },
+    {
+      "id": "bun-image-dod-evidence:1:0",
+      "key": "bun-image-dod-evidence:1:0",
+      "capabilityId": "bun-image-dod-evidence",
+      "capabilityKey": "bun-image-dod-evidence",
+      "api": "Bun.Image",
+      "variant": "image-processing",
+      "brand": "EvidenceId",
+      "direction": "evidence",
+      "rationale": "Decoded and resized image bytes are stored in an EvidenceId-addressed record.",
+      "wrapper": "lib/dod/evidence.ts",
+      "wrapperSymbol": "storePreviewWebp",
+      "consumer": "tools/dod-evidence.ts",
+      "consumerSymbol": "cmdPack",
+      "project": "project-R-score",
+      "policy": "production-approved",
+      "evidenceState": "verified",
+      "proofs": [
+        "public/registry/release-features.json#result:terminal-methods"
+      ]
+    },
+    {
+      "id": "bun-image-dod-evidence:2:0",
+      "key": "bun-image-dod-evidence:2:0",
+      "capabilityId": "bun-image-dod-evidence",
+      "capabilityKey": "bun-image-dod-evidence",
+      "api": "Bun.Image",
+      "variant": "image-processing",
+      "brand": "EvidenceId",
+      "direction": "evidence",
+      "rationale": "Decoded and resized image bytes are stored in an EvidenceId-addressed record.",
+      "wrapper": "lib/dod/verifier.ts",
+      "wrapperSymbol": "DODVerifier.process",
+      "consumer": "lib/dod/verifier.ts",
+      "consumerSymbol": "DODVerifier.process",
+      "project": "project-R-score",
+      "policy": "production-approved",
+      "evidenceState": "verified",
+      "proofs": [
+        "public/registry/release-features.json#result:terminal-methods"
+      ]
+    },
+    {
+      "id": "bun-image-dod-evidence:3:0",
+      "key": "bun-image-dod-evidence:3:0",
+      "capabilityId": "bun-image-dod-evidence",
+      "capabilityKey": "bun-image-dod-evidence",
+      "api": "Bun.Image",
+      "variant": "image-processing",
+      "brand": "EvidenceId",
+      "direction": "evidence",
+      "rationale": "Decoded and resized image bytes are stored in an EvidenceId-addressed record.",
+      "wrapper": "lib/dod/verifier.ts",
+      "wrapperSymbol": "DODVerifier.applyWatermark",
+      "consumer": "lib/dod/verifier.ts",
+      "consumerSymbol": "DODVerifier.process",
       "project": "project-R-score",
       "policy": "production-approved",
       "evidenceState": "verified",
@@ -757,6 +928,25 @@
       "proofs": []
     },
     {
+      "id": "bun-webview-dod-evidence:1:0",
+      "key": "bun-webview-dod-evidence:1:0",
+      "capabilityId": "bun-webview-dod-evidence",
+      "capabilityKey": "bun-webview-dod-evidence",
+      "api": "Bun.WebView",
+      "variant": "headless",
+      "brand": "EvidenceId",
+      "direction": "evidence",
+      "rationale": "Headless rendering prepares the visual payload in the DOD evidence flow.",
+      "wrapper": "lib/dod/verifier.ts",
+      "wrapperSymbol": "DODVerifier.extractText",
+      "consumer": "lib/dod/verifier.ts",
+      "consumerSymbol": "DODVerifier.process",
+      "project": "project-R-score",
+      "policy": "lab-only",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
       "id": "bun-randomuuidv7-evidence-mint:0:0",
       "key": "bun-randomuuidv7-evidence-mint:0:0",
       "capabilityId": "bun-randomuuidv7-evidence-mint",
@@ -767,9 +957,28 @@
       "direction": "output",
       "rationale": "The owned mint converts a UUIDv7 result into EvidenceId.",
       "wrapper": "lib/time.ts",
-      "wrapperSymbol": "mintEvidenceId",
-      "consumer": "lib/dod/evidence.ts",
-      "consumerSymbol": "buildDodEvidencePackage",
+      "wrapperSymbol": "randomUUIDv7",
+      "consumer": "lib/time.ts",
+      "consumerSymbol": "mintEvidenceId",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-evidence-mint:1:0",
+      "key": "bun-randomuuidv7-evidence-mint:1:0",
+      "capabilityId": "bun-randomuuidv7-evidence-mint",
+      "capabilityKey": "bun-randomuuidv7-evidence-mint",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "EvidenceId",
+      "direction": "output",
+      "rationale": "The owned mint converts a UUIDv7 result into EvidenceId.",
+      "wrapper": "lib/time.ts",
+      "wrapperSymbol": "uuidV7WithTimestamp",
+      "consumer": "lib/time.ts",
+      "consumerSymbol": "mintEvidenceIdAt",
       "project": "project-R-score",
       "policy": "optional",
       "evidenceState": "declared-unproven",
@@ -827,6 +1036,25 @@
       "wrapperSymbol": "truncateWidth",
       "consumer": "lib/factory/cli.ts",
       "consumerSymbol": "truncateDesc",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-sliceansi-terminal-output:1:0",
+      "key": "bun-sliceansi-terminal-output:1:0",
+      "capabilityId": "bun-sliceansi-terminal-output",
+      "capabilityKey": "bun-sliceansi-terminal-output",
+      "api": "Bun.sliceAnsi",
+      "variant": "display-width",
+      "brand": null,
+      "direction": "none",
+      "rationale": "ANSI-aware slicing transforms display text and does not create or consume an identity.",
+      "wrapper": "lib/console-depth.ts",
+      "wrapperSymbol": "fitWidth",
+      "consumer": "lib/console-depth.ts",
+      "consumerSymbol": "fitWidth",
       "project": "project-R-score",
       "policy": "optional",
       "evidenceState": "declared-unproven",
@@ -902,7 +1130,178 @@
       "direction": "none",
       "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
       "wrapper": "package.json",
+      "wrapperSymbol": "test:shard:parallel",
+      "consumer": ".github/workflows/test-sharded.yml",
+      "consumerSymbol": "tests shard",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-parallel:1:0",
+      "key": "bun-test-parallel:1:0",
+      "capabilityId": "bun-test-parallel",
+      "capabilityKey": "bun-test-parallel",
+      "api": "--parallel",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "test:ci:shard:parallel",
+      "consumer": ".github/workflows/test-sharded.yml",
+      "consumerSymbol": "tests shard",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-parallel:2:0",
+      "key": "bun-test-parallel:2:0",
+      "capabilityId": "bun-test-parallel",
+      "capabilityKey": "bun-test-parallel",
+      "api": "--parallel",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
+      "wrapper": "package.json",
       "wrapperSymbol": "test:parallel",
+      "consumer": ".github/workflows/test-sharded.yml",
+      "consumerSymbol": "tests shard",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-parallel:3:0",
+      "key": "bun-test-parallel:3:0",
+      "capabilityId": "bun-test-parallel",
+      "capabilityKey": "bun-test-parallel",
+      "api": "--parallel",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "test:watch",
+      "consumer": ".github/workflows/test-sharded.yml",
+      "consumerSymbol": "tests shard",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-parallel:4:0",
+      "key": "bun-test-parallel:4:0",
+      "capabilityId": "bun-test-parallel",
+      "capabilityKey": "bun-test-parallel",
+      "api": "--parallel",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "test:watch:full",
+      "consumer": ".github/workflows/test-sharded.yml",
+      "consumerSymbol": "tests shard",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-parallel:5:0",
+      "key": "bun-test-parallel:5:0",
+      "capabilityId": "bun-test-parallel",
+      "capabilityKey": "bun-test-parallel",
+      "api": "--parallel",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "test:watch:shard1",
+      "consumer": ".github/workflows/test-sharded.yml",
+      "consumerSymbol": "tests shard",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-parallel:6:0",
+      "key": "bun-test-parallel:6:0",
+      "capabilityId": "bun-test-parallel",
+      "capabilityKey": "bun-test-parallel",
+      "api": "--parallel",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "test:watch:shard2",
+      "consumer": ".github/workflows/test-sharded.yml",
+      "consumerSymbol": "tests shard",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-parallel:7:0",
+      "key": "bun-test-parallel:7:0",
+      "capabilityId": "bun-test-parallel",
+      "capabilityKey": "bun-test-parallel",
+      "api": "--parallel",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "test:watch:shard3",
+      "consumer": ".github/workflows/test-sharded.yml",
+      "consumerSymbol": "tests shard",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-parallel:8:0",
+      "key": "bun-test-parallel:8:0",
+      "capabilityId": "bun-test-parallel",
+      "capabilityKey": "bun-test-parallel",
+      "api": "--parallel",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "test:state-compliance",
+      "consumer": ".github/workflows/test-sharded.yml",
+      "consumerSymbol": "tests shard",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-parallel:9:0",
+      "key": "bun-test-parallel:9:0",
+      "capabilityId": "bun-test-parallel",
+      "capabilityKey": "bun-test-parallel",
+      "api": "--parallel",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "test:state-compliance:watch",
       "consumer": ".github/workflows/test-sharded.yml",
       "consumerSymbol": "tests shard",
       "project": "project-R-score",
@@ -940,7 +1339,121 @@
       "direction": "none",
       "rationale": "Shard coordinates are CI configuration rather than a FactoryWager domain value.",
       "wrapper": "package.json",
+      "wrapperSymbol": "test:shard:parallel",
+      "consumer": ".github/workflows/test-sharded.yml",
+      "consumerSymbol": "tests shard",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-shard:1:0",
+      "key": "bun-test-shard:1:0",
+      "capabilityId": "bun-test-shard",
+      "capabilityKey": "bun-test-shard",
+      "api": "--shard",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Shard coordinates are CI configuration rather than a FactoryWager domain value.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "test:shard",
+      "consumer": ".github/workflows/test-sharded.yml",
+      "consumerSymbol": "tests shard",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-shard:2:0",
+      "key": "bun-test-shard:2:0",
+      "capabilityId": "bun-test-shard",
+      "capabilityKey": "bun-test-shard",
+      "api": "--shard",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Shard coordinates are CI configuration rather than a FactoryWager domain value.",
+      "wrapper": "package.json",
       "wrapperSymbol": "test:ci:shard",
+      "consumer": ".github/workflows/test-sharded.yml",
+      "consumerSymbol": "tests shard",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-shard:3:0",
+      "key": "bun-test-shard:3:0",
+      "capabilityId": "bun-test-shard",
+      "capabilityKey": "bun-test-shard",
+      "api": "--shard",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Shard coordinates are CI configuration rather than a FactoryWager domain value.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "test:ci:shard:parallel",
+      "consumer": ".github/workflows/test-sharded.yml",
+      "consumerSymbol": "tests shard",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-shard:4:0",
+      "key": "bun-test-shard:4:0",
+      "capabilityId": "bun-test-shard",
+      "capabilityKey": "bun-test-shard",
+      "api": "--shard",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Shard coordinates are CI configuration rather than a FactoryWager domain value.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "test:watch:shard1",
+      "consumer": ".github/workflows/test-sharded.yml",
+      "consumerSymbol": "tests shard",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-shard:5:0",
+      "key": "bun-test-shard:5:0",
+      "capabilityId": "bun-test-shard",
+      "capabilityKey": "bun-test-shard",
+      "api": "--shard",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Shard coordinates are CI configuration rather than a FactoryWager domain value.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "test:watch:shard2",
+      "consumer": ".github/workflows/test-sharded.yml",
+      "consumerSymbol": "tests shard",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-shard:6:0",
+      "key": "bun-test-shard:6:0",
+      "capabilityId": "bun-test-shard",
+      "capabilityKey": "bun-test-shard",
+      "api": "--shard",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Shard coordinates are CI configuration rather than a FactoryWager domain value.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "test:watch:shard3",
       "consumer": ".github/workflows/test-sharded.yml",
       "consumerSymbol": "tests shard",
       "project": "project-R-score",
@@ -1181,7 +1694,7 @@
         "Bun.WebView",
         "Bun.randomUUIDv7"
       ],
-      "relationships": 3,
+      "relationships": 8,
       "projects": [
         "project-R-score"
       ]
@@ -2026,26 +2539,6 @@
       "path": "lib/harness/cron.ts",
       "line": 57,
       "detail": "Bun.cron (unknown) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.Image|image-processing|lib/dod/verifier.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.Image",
-      "path": "lib/dod/verifier.ts",
-      "line": 255,
-      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.Image|image-processing|lib/dod/verifier.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.Image",
-      "path": "lib/dod/verifier.ts",
-      "line": 506,
-      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
       "baseline": true
     },
     {
