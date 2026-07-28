@@ -22,19 +22,20 @@ async function fetchJson(url) {
 }
 
 async function loadToc() {
+  const complianceBoard = await loadComplianceBoard();
   const embed = parseEmbed();
   if (embed?.partners) {
     const loop = embed.opsLoop ?? (await loadOpsLoopSlice());
-    return { mode: 'embed', data: embed, loop };
+    return { mode: 'embed', data: embed, loop, complianceBoard };
   }
   try {
     const data = await fetchJson('/api/toc');
     const loop = data.opsLoop ?? (await loadOpsLoopSlice());
-    return { mode: data.mode || 'api', data, loop };
+    return { mode: data.mode || 'api', data, loop, complianceBoard };
   } catch {
     const data = await fetchJson('/registry/toc-ops.json');
     const loop = data.opsLoop ?? (await loadOpsLoopSlice());
-    return { mode: 'registry', data, loop };
+    return { mode: 'registry', data, loop, complianceBoard };
   }
 }
 
@@ -44,6 +45,18 @@ async function loadOpsLoopSlice() {
     return summary?.loop ?? null;
   } catch {
     return null;
+  }
+}
+
+async function loadComplianceBoard() {
+  try {
+    return await fetchJson('/registry/compliance-board.json');
+  } catch {
+    try {
+      return await fetchJson('/api/compliance');
+    } catch {
+      return { _error: true };
+    }
   }
 }
 
@@ -656,6 +669,45 @@ function renderPresenceRollup(presence, house) {
   </section>`;
 }
 
+/**
+ * MA/NJ regulatory board glance — loads /registry/compliance-board.json
+ * (shared with /portal/compliance/ and ops-summary.compliance).
+ */
+function renderComplianceBoard(board) {
+  const available = board && !board._error;
+  const enh = board?.enhancements;
+  const shadow = board?.shadow?.summary;
+  const geoN = board?.geo?.partners?.length ?? 0;
+  const passed = enh?.passed ?? 0;
+  const total = enh?.total ?? 0;
+  const mm = shadow?.mismatches ?? 0;
+  const ok = available && total > 0 && passed === total && mm === 0;
+  const states = 'MA / NJ';
+  return `<section class="toc-section" id="compliance-board">
+    ${sectionHead(
+      'State compliance',
+      'MA/NJ licenses · shadow matrix · discrete geo (portal bake)'
+    )}
+    <div class="toc-stats">
+      <div class="toc-stat ${ok ? 'ok' : available ? 'hot' : ''}"><span class="k">Enhancements</span><span class="v">${available && total ? `${passed}/${total}` : '—'}</span></div>
+      <div class="toc-stat"><span class="k">Shadow allow</span><span class="v">${shadow?.allow ?? '—'}</span></div>
+      <div class="toc-stat"><span class="k">Shadow block</span><span class="v">${shadow?.block ?? '—'}</span></div>
+      <div class="toc-stat ${mm > 0 ? 'hot' : ''}"><span class="k">Mismatches</span><span class="v">${available ? mm : '—'}</span></div>
+      <div class="toc-stat ok"><span class="k">Geo profiles</span><span class="v">${available ? geoN : '—'}</span></div>
+      <div class="toc-stat"><span class="k">States</span><span class="v">${states}</span></div>
+      <div class="toc-stat"><span class="k">Open flags</span><span class="v" id="toc-compliance-open">—</span></div>
+      <div class="toc-stat"><span class="k">Proof</span><span class="v">${board?.integrity?.scoreHint ? esc(String(board.integrity.scoreHint).slice(0, 18)) : available ? 'sha3' : '—'}</span></div>
+    </div>
+    <div class="toc-buffer">
+      <span class="toc-buffer-label">Board</span>
+      <span>${available ? 'Baked snapshot' : 'Missing — bun run compliance:bake'}</span>
+      <a href="/portal/compliance/">Open compliance board</a>
+      <a href="/registry/compliance-board.json">compliance-board.json</a>
+      <a href="/portal/ops/">Ops panel</a>
+    </div>
+  </section>`;
+}
+
 function renderPlays(plays) {
   if (!plays?.length) return '<li class="toc-sub">No recent plays</li>';
   return plays
@@ -1231,7 +1283,7 @@ function renderPartners(partners, assetBySign, limitBySign) {
   </section>`;
 }
 
-function render(root, { mode, data, loop }) {
+function render(root, { mode, data, loop, complianceBoard }) {
   const s = data.summary || {};
   const buf = data.buffer || {};
   const partners = data.partners || [];
@@ -1248,6 +1300,7 @@ function render(root, { mode, data, loop }) {
   root.innerHTML = `
     ${renderHero({ mode, data, plane, enf, flow })}
     ${renderAgentBrief({ mode, data, plane, enf, flow, identity })}
+    ${renderComplianceBoard(complianceBoard)}
 
     <section class="toc-section" id="rollup">
       ${sectionHead('Rollup', 'Drum readiness and open work')}
@@ -1305,9 +1358,16 @@ function render(root, { mode, data, loop }) {
       <a href="/registry/toc-ops.json"><code>/registry/toc-ops.json</code></a>
       · <a href="/api/toc"><code>/api/toc</code></a>
       · <a href="/portal/ops">Ops rollup</a>
+      · <a href="/portal/compliance/">Compliance board</a>
       · seed <code>bun run ops:seed:toc -- --force</code>
+      · <code>bun run compliance:bake</code>
     </footer>
   `;
+
+  const openEl = root.querySelector('#toc-compliance-open');
+  if (openEl) {
+    openEl.textContent = String(s.complianceOpen ?? 0);
+  }
 }
 
 export async function mountTocDashboard(selector = '#toc-app') {

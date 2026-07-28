@@ -33,6 +33,7 @@ Two planes. Cloudflare MCP is **not** a TOC desk API — it only helps deploy/in
 | Accounts (call signs, WARMED, capital) | Accounts + journals | Demo ASH/PAT/NOV | TOC rollup card |
 | Cellphone / data plan | `ct phone-*` logistics | Not on TOC board | FW phone inventory counts |
 | Places / ROI (T/I/OE) | Soft + `ct t-ioe` / expert ROI | Capital location + buffer | Ops-loop ≠ TOC T |
+| MA/NJ state compliance | Partner licenses + geo in FW DB | Board section + venues/legal states · `/portal/compliance/` | Ops `compliance` panel · `ops-summary.compliance` |
 | Message return / SLA | Bottlenecks + `partner-health` | PendingPartner + bottleneck list | Channel oldest-pending |
 | Accounting (Soft / Gate 12) | Soft journal + principal | Soft + Gate 12 pills | `toc.principalOutstandingTotal` |
 | Deal structure (70/20/10) | Package split | Catalog `defaultSplit` | FW `cut_percentage` (plays) |

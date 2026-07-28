@@ -175,6 +175,16 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-sub" id="toc-detail"></div>
             <div class="ops-sub" id="toc-enforcement"></div>
             <a class="ops-link" href="/portal/toc/">Open TOC board (read-only)</a>
+            <a class="ops-link" href="/portal/compliance/">MA/NJ compliance</a>
+          </section>
+          <section class="ops-panel" id="compliance-panel" data-subsystem="compliance">
+            <h2>Compliance <span class="ops-badge" title="Baked MA/NJ board · shadow matrix · discrete geo">MA/NJ</span></h2>
+            <div class="ops-metric" id="compliance-metric">—</div>
+            <div class="ops-sub" id="compliance-detail"></div>
+            <div class="ops-sub" id="compliance-geo"></div>
+            <a class="ops-link" href="/portal/compliance/">Open compliance board</a>
+            <a class="ops-link" href="/registry/compliance-board.json">Board JSON</a>
+            <a class="ops-link" href="/api/compliance">API snapshot</a>
           </section>
           <section class="ops-panel">
             <h2>Growth</h2>
@@ -853,6 +863,39 @@ class OperationsDashboard extends HTMLElement {
       } else if (tocDetail) {
         tocDetail.textContent = 'Fixture missing — bun run ops:seed:toc';
         if (tocEnf) tocEnf.textContent = '';
+      }
+    }
+
+    const cmpMetric = this.querySelector('#compliance-metric');
+    const cmpDetail = this.querySelector('#compliance-detail');
+    const cmpGeo = this.querySelector('#compliance-geo');
+    if (cmpMetric) {
+      const c = d.compliance;
+      if (c?.available) {
+        cmpMetric.textContent = c.enhancements ?? (c.ok ? 'ok' : 'fail');
+        cmpMetric.classList.toggle('ok', c.ok === true);
+        cmpMetric.classList.toggle('bad', c.ok === false);
+        if (cmpDetail) {
+          const states = (c.states || ['MA', 'NJ']).join('/');
+          const mm = c.shadowMismatches != null ? ` · shadow Δ ${c.shadowMismatches}` : '';
+          const ab =
+            c.shadowAllow != null
+              ? ` · allow ${c.shadowAllow}/block ${c.shadowBlock ?? 0}`
+              : '';
+          const hmac = c.hmac ? ' · HMAC' : ' · integrity-only';
+          cmpDetail.textContent = `${states}${mm}${ab}${hmac}${c.scoreHint ? ` · ${c.scoreHint}` : ''}`;
+        }
+        if (cmpGeo) {
+          cmpGeo.textContent =
+            c.geoProfiles != null
+              ? `${c.geoProfiles} geo profiles (state|age|location|zip)`
+              : 'geo profiles not on board — re-bake compliance';
+        }
+      } else {
+        cmpMetric.textContent = '—';
+        cmpMetric.classList.remove('ok', 'bad');
+        if (cmpDetail) cmpDetail.textContent = 'Board missing — bun run compliance:bake';
+        if (cmpGeo) cmpGeo.textContent = '';
       }
     }
 

@@ -151,12 +151,17 @@ function renderOpsPlane(ops) {
     <article class="plane-card">
       <h3>Seat capital desk</h3>
       <p class="plane-detail empty-hint">No seat desk slice until ops-summary loads.</p>
+    </article>
+    <article class="plane-card">
+      <h3>Compliance</h3>
+      <p class="plane-detail empty-hint">No compliance slice until ops-summary loads.</p>
     </article>`;
     return;
   }
 
   const toc = ops.toc;
   const loop = ops.loop;
+  const compliance = ops.compliance;
   let tocHtml;
   if (toc?.available) {
     const crit = toc.criticalBottlenecks ?? 0;
@@ -310,7 +315,42 @@ function renderOpsPlane(ops) {
     </article>`;
   }
 
-  el.innerHTML = tocHtml + loopHtml + handshakeHtml + seatDeskHtml;
+  let complianceHtml;
+  if (compliance?.available) {
+    const mm = compliance.shadowMismatches ?? 0;
+    const metricCls = compliance.ok ? 'ok' : mm > 0 ? 'err' : 'warn';
+    const states = (compliance.states || ['MA', 'NJ']).join('/');
+    complianceHtml = `<article class="plane-card" data-plane="compliance">
+      <h3>Compliance <span class="badge-demo" title="Baked MA/NJ board">MA/NJ</span></h3>
+      <div class="plane-metric ${metricCls}">${esc(String(compliance.enhancements ?? (compliance.ok ? 'ok' : 'fail')))}</div>
+      <p class="plane-detail">
+        ${esc(states)} · shadow Δ ${esc(String(mm))}
+        ${compliance.shadowAllow != null ? ` · allow ${esc(String(compliance.shadowAllow))}/block ${esc(String(compliance.shadowBlock ?? 0))}` : ''}
+      </p>
+      <p class="plane-sub">${esc(
+        [
+          compliance.geoProfiles != null ? `${compliance.geoProfiles} geo profiles` : '',
+          compliance.hmac ? 'HMAC' : 'integrity-only',
+          compliance.scoreHint || '',
+        ]
+          .filter(Boolean)
+          .join(' · ')
+      )}</p>
+      <div class="plane-actions">
+        <a class="ops-link" href="/portal/compliance/">Compliance board</a>
+        <a class="ops-link" href="/registry/compliance-board.json">Board JSON</a>
+        <a class="ops-link" href="/portal/toc/">TOC · venues/geo</a>
+      </div>
+    </article>`;
+  } else {
+    complianceHtml = `<article class="plane-card" data-plane="compliance">
+      <h3>Compliance <span class="badge-demo">MA/NJ</span></h3>
+      <p class="plane-detail empty-hint">Board missing — run <code>bun run compliance:bake</code>.</p>
+      <div class="plane-actions"><a class="ops-link" href="/portal/compliance/">Compliance board</a></div>
+    </article>`;
+  }
+
+  el.innerHTML = tocHtml + loopHtml + handshakeHtml + seatDeskHtml + complianceHtml;
 }
 
 function proofStatusCls(sum) {
@@ -451,6 +491,25 @@ function renderKpis(ctx) {
           : 'ops-summary.loop',
       cls: ops?.loop?.settled != null ? 'ok' : 'warn',
       href: '/registry/ops-summary.json',
+    },
+    {
+      label: 'Compliance',
+      value: ops?.compliance?.available
+        ? String(ops.compliance.enhancements ?? (ops.compliance.ok ? 'ok' : 'fail'))
+        : '—',
+      detail: ops?.compliance?.available
+        ? `shadow Δ ${ops.compliance.shadowMismatches ?? 0}${
+            ops.compliance.geoProfiles != null ? ` · ${ops.compliance.geoProfiles} geo` : ''
+          }${ops.compliance.hmac ? ' · HMAC' : ''}`
+        : 'compliance:bake',
+      cls: ops?.compliance?.available
+        ? ops.compliance.ok
+          ? 'ok'
+          : (ops.compliance.shadowMismatches ?? 0) > 0
+            ? 'err'
+            : 'warn'
+        : 'warn',
+      href: '/portal/compliance/',
     },
   ];
 

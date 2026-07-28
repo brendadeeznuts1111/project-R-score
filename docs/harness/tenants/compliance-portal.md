@@ -43,6 +43,19 @@ bun run proton:deploy:pages
 - Mismatches or failed enhancement rows **degrade** edge health status.
 - Monitoring tile **Compliance** links to `/portal/compliance/` (from live `getMonitoringData` slice).
 
+## Portal · Ops · Dashboard · TOC
+
+| Surface | Integration |
+|---------|-------------|
+| `/portal/compliance/` | Board UI + embed (`compliance:bake`) |
+| `/portal/ops/` | Panel from `ops-summary.compliance` |
+| `/portal/dashboard/` | Plane card + KPI (enhancements · shadow · geo · HMAC) |
+| `/portal/toc/` | “State compliance” section (board JSON + open flags) |
+| `/monitoring/` | Compliance tile via `loadComplianceMonitoringSlice` |
+| Route SSOT | `PORTAL_HTML_ROUTES` · `public-routes` · `/api/compliance` |
+
+Slice code: [`lib/monitoring/compliance-slice.ts`](../../../lib/monitoring/compliance-slice.ts) · wired into [`lib/operations/ops-summary.ts`](../../../lib/operations/ops-summary.ts).
+
 ## Env (non-secret)
 
 | Name | Role |

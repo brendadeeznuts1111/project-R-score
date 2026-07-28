@@ -16,6 +16,10 @@ import { queryOpsChannelHealth } from '../channels/outbox.ts';
 import type { OpsChannelHealthSlice } from '../channels/ops-channel-event.ts';
 import { loadTocOpsSummarySlice, type TocOpsSummarySlice } from '../toc-ops/export-snapshot.ts';
 import {
+  loadComplianceSummarySliceSync,
+  type ComplianceSummarySlice,
+} from '../monitoring/compliance-slice.ts';
+import {
   queryLoopMetricsSlice,
   withProjectorBackendSignal,
   type OpsLoopMetricsSlice,
@@ -218,6 +222,9 @@ export type OpsSummaryTelegramHandshake = TelegramHandshakeSummarySlice;
 /** SPEN seat capital desk (FUND status · outs · checklist, no passwords). */
 export type OpsSummarySeatCapitalDesk = SeatCapitalDeskSummarySlice;
 
+/** MA/NJ compliance board rollup from /registry/compliance-board.json. */
+export type OpsSummaryCompliance = ComplianceSummarySlice;
+
 export type OpsSummaryPayload = {
   source: 'live' | 'snapshot';
   generated: string;
@@ -300,6 +307,11 @@ export type OpsSummaryPayload = {
    * (`ops:snapshot` / `exportSeatCapitalDeskSnapshot`).
    */
   seatCapitalDesk: OpsSummarySeatCapitalDesk;
+  /**
+   * MA/NJ compliance board from public/registry/compliance-board.json
+   * (`bun run compliance:bake` / ops:snapshot companion).
+   */
+  compliance: OpsSummaryCompliance;
 };
 
 function tableExists(db: Database, name: string): boolean {
@@ -865,5 +877,6 @@ export function buildOpsSummary(
     })(),
     telegramHandshake: loadTelegramHandshakeSummarySlice(),
     seatCapitalDesk: loadSeatCapitalDeskSummarySlice(),
+    compliance: loadComplianceSummarySliceSync(),
   };
 }

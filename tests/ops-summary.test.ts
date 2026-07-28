@@ -77,6 +77,16 @@ describe('buildOpsSummary', () => {
       recent: [],
     });
     expect(s.channels).toMatchObject({ pending: 0, failed: 0, sent: 0 });
+    // MA/NJ compliance board (baked registry; available when compliance:bake present)
+    expect(s.compliance).toHaveProperty('available');
+    expect(s.compliance.path).toBe('/registry/compliance-board.json');
+    expect(s.compliance.portal).toBe('/portal/compliance/');
+    if (s.compliance.available) {
+      expect(s.compliance.enhancements).toMatch(/^\d+\/\d+$/);
+      expect(typeof s.compliance.ok).toBe('boolean');
+      expect(typeof s.compliance.shadowMismatches).toBe('number');
+      expect(Array.isArray(s.compliance.states)).toBe(true);
+    }
     expect(s.loop).toMatchObject({
       dispatched: 0,
       loopCompletionRate: 0,

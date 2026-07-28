@@ -1,6 +1,6 @@
 {
   "source": "snapshot",
-  "generated": "2026-07-27T17:09:30.907Z",
+  "generated": "2026-07-28T00:49:13.211Z",
   "liquidity": {
     "total": 108210
   },
@@ -136,11 +136,11 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "a79afeea7c7f4831b1c52ff7259a176a72d1d2fac5470e16cb5c62e021729f42",
+    "proofHash": "287b955e6794c446f46000e8375f040ae52cae913252147cb7b5eeacf88d6394",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-27T17:09:30.908Z"
+    "timestamp": "2026-07-28T00:49:13.213Z"
   },
   "registryClient": {
     "available": true,
@@ -214,7 +214,7 @@
         "detail": "13 contracts · 20 consistency"
       }
     ],
-    "timestamp": "2026-07-27T17:09:29.095Z",
+    "timestamp": "2026-07-28T00:49:11.355Z",
     "pagesUrl": "https://project-r-score.pages.dev",
     "path": "/registry/cloudflare-pages-preflight.json"
   },
@@ -400,8 +400,8 @@
         "ok": true
       }
     ],
-    "proofHash": "f08342bc53c84ba4162604c8e605b9711b219fff75b0af9559046065a851bb04",
-    "timestamp": "2026-07-27T17:09:28.460Z",
+    "proofHash": "1da0ae6400c3705af3001c2bd3617b473ce2a3fa5828f52c7d085a81ea9257aa",
+    "timestamp": "2026-07-28T00:49:11.021Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "channelMeta": {
@@ -411,8 +411,8 @@
     "passed": 75,
     "total": 75,
     "status": "pass",
-    "proofHash": "6c3b796b77f71b668eaca7b6a703ffce1109063a325965c30405011494dcd651",
-    "updatedAt": "2026-07-27T17:09:28.454Z",
+    "proofHash": "36a60aabb4b0b07ae9f4ea7e5d3998e229aebd0e7a68d599f89cfabe6b2dacaf",
+    "updatedAt": "2026-07-28T00:49:11.018Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -693,16 +693,16 @@
     ]
   },
   "channels": {
-    "pending": 0,
+    "pending": 4,
     "failed": 0,
-    "sent": 778,
-    "oldestPendingAt": null,
+    "sent": 792,
+    "oldestPendingAt": "2026-07-28T00:48:58.562Z",
     "failRate": 0
   },
   "toc": {
     "available": true,
     "path": "/registry/toc-ops.json",
-    "generatedAt": "2026-07-27T17:09:29.202Z",
+    "generatedAt": "2026-07-28T00:49:11.381Z",
     "partners": 3,
     "warmed": 4,
     "warming": 2,
@@ -730,7 +730,7 @@
     "throughputI": 47810,
     "throughputOE": 1655,
     "topRankedProcess": "LIMIT",
-    "avgRP": 9.340179869988143,
+    "avgRP": 8.860877405516254,
     "settlementFloatRatio": 0.5103534825350345,
     "presencePartners": 3,
     "presenceIpv6": 31,
@@ -798,11 +798,11 @@
     "reserved": 29,
     "settled": 7,
     "settledViaFullLoop": 29,
-    "outboxSent": 778,
+    "outboxSent": 792,
     "outboxFailed": 0,
-    "outboxPending": 0,
-    "oldestPendingAgeSec": null,
-    "manualStepsPerCycle": 0,
+    "outboxPending": 4,
+    "oldestPendingAgeSec": 14,
+    "manualStepsPerCycle": 4,
     "loopCompletionRate": 1,
     "distinctPlaysDispatched": 7,
     "settledPlaysViaFullLoop": 7,
@@ -817,7 +817,7 @@
   "telegramHandshake": {
     "available": true,
     "path": "/registry/telegram-handshake.json",
-    "generatedAt": "2026-07-27T17:09:30.901Z",
+    "generatedAt": "2026-07-28T00:49:13.208Z",
     "partners": 4,
     "inviteGaps": 0,
     "blocked": 0,
@@ -931,7 +931,7 @@
   "seatCapitalDesk": {
     "available": true,
     "path": "/registry/seat-capital-desk.json",
-    "generatedAt": "2026-07-27T17:09:30.905Z",
+    "generatedAt": "2026-07-28T00:49:13.210Z",
     "desks": 4,
     "blocked": 0,
     "partial": 0,
@@ -1178,5 +1178,23 @@
       "post": "bun run seat:desk:post",
       "update": "bun run seat:desk:update"
     }
+  },
+  "compliance": {
+    "available": true,
+    "ok": true,
+    "enhancements": "8/8",
+    "shadowMismatches": 0,
+    "shadowAllow": 4,
+    "shadowBlock": 4,
+    "geoProfiles": 4,
+    "hmac": true,
+    "scoreHint": "integrity+hmac",
+    "states": [
+      "MA",
+      "NJ"
+    ],
+    "generatedAt": "2026-07-28T00:38:39.134Z",
+    "path": "/registry/compliance-board.json",
+    "portal": "/portal/compliance/"
   }
 }
