@@ -60,10 +60,12 @@ export function manifestFlatPath(id: string): string {
 const ANSI_RESET = '\x1b[0m';
 
 function termColor(text: string, color: string): string {
-  // Bun.color(…, 'ansi') auto-detects and returns '' off-TTY; without the
-  // isTTY guard the ansi-256 fallback would force escape codes into pipes.
-  const code =
-    Bun.color(color, 'ansi') || (process.stdout.isTTY ? Bun.color(color, 'ansi-256') : null) || '';
+  // Bun.color(…, 'ansi') auto-detects stdout color depth from the environment
+  // (16m / 256 / 16) and returns '' when stdout supports no color (pipes,
+  // dumb terminals, NO_COLOR) — so detection, upgrade, and opt-out are all
+  // the runtime's job; no manual fallback or env checks.
+  // https://bun.com/docs/runtime/color#format-colors-as-ansi-for-terminals
+  const code = Bun.color(color, 'ansi') || '';
   return code ? `${code}${text}${ANSI_RESET}` : text;
 }
 

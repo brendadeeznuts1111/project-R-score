@@ -147,7 +147,7 @@ bun run snapshot:data-plane --scope prediction
 rg "scope=prediction" snapshots/
 ```
 
-**Env overrides:** `PORTAL_SCOPE` (default scope) · `PORTAL_SNAPSHOT_DIR` (default `snapshots`) · `SNAPSHOT_BASE_URL` (fetch origin).
+**Env overrides:** `PORTAL_SCOPE` (default scope) · `PORTAL_SNAPSHOT_DIR` (default `snapshots`, local only — never point it at a public web root: manifests carry repo-identity fields like `pkgName`/`pkgVersion`) · `SNAPSHOT_BASE_URL` (fetch origin).
 
 **Manifest metadata** (all greppable via `portal-cli snapshot grep "<key>=<val>"` or numeric `bias>2`):
 
