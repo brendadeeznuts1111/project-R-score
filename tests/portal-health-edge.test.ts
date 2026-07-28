@@ -4,14 +4,27 @@
  */
 import { describe, expect, test } from 'bun:test';
 import {
+  collectEdgeHealth,
   edgeHealthETagPayload,
   edgeTaxonomyDegradesHealth,
   renderEdgeHealthPlain,
   sliceDefaults,
   sliceProofTaxonomy,
   type EdgeHealthBody,
+  type HealthEnv,
 } from '../lib/http/portal-health-edge.ts';
 import { portalOptionsResponse } from '../lib/http/portal-cors.ts';
+
+/** Freeze shape for artifacts.complianceBoard (edge + local parity). */
+type ComplianceBoardSlice = {
+  exists: boolean;
+  ok: boolean;
+  generated: string | null;
+  enhancements: string | null;
+  shadowMismatches: number | null;
+  path: '/registry/compliance-board.json';
+  portal: '/portal/compliance/';
+};
 
 function sample(): EdgeHealthBody {
   return {
@@ -25,6 +38,15 @@ function sample(): EdgeHealthBody {
       opsSummary: { exists: true, generated: '2026-07-24T06:00:00.000Z', source: 'snapshot' },
       defaultsProof: { exists: true },
       proofTaxonomyAudit: { exists: true },
+      complianceBoard: {
+        exists: true,
+        ok: true,
+        generated: '2026-07-24T05:00:00.000Z',
+        enhancements: '8/8',
+        shadowMismatches: 0,
+        path: '/registry/compliance-board.json',
+        portal: '/portal/compliance/',
+      },
     },
     registry: { packages: 3, versions: 5 },
     monitoring: { packageCount: 3, dodQueue: 1 },
@@ -182,5 +204,121 @@ describe('portal-health-edge', () => {
     expect(fromSummary.passed).toBe(12);
     expect(fromSummary.status).toBe('pass');
     expect(sliceDefaults(null).available).toBe(false);
+  });
+
+  /** Mock ASSETS that serves path → JSON body (404 for unknown). */
+  function mockAssetsEnv(
+    byPath: Record<string, Record<string, unknown> | null>
+  ): HealthEnv {
+    return {
+      ASSETS: {
+        fetch: async (input: RequestInfo | URL) => {
+          const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+          const path = new URL(url).pathname;
+          const body = byPath[path];
+          if (body == null) {
+            return new Response(null, { status: 404 });
+          }
+          return new Response(JSON.stringify(body), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        },
+      },
+    };
+  }
+
+  const emptyArtifacts = {
+    '/registry/ops-summary.json': null,
+    '/registry/monitoring.json': null,
+    '/registry/static.json': null,
+    '/registry/registry.json': null,
+    '/tools/bun-api-coverage-proof.json': null,
+    '/registry/defaults-proof.json': null,
+    '/registry/proof-taxonomy-audit.json': null,
+    '/registry/compliance-board.json': null,
+  } as const;
+
+  test('complianceBoard missing: exists false, does not degrade status', async () => {
+    const body = await collectEdgeHealth(
+      mockAssetsEnv({ ...emptyArtifacts }),
+      'https://edge.test/'
+    );
+    const cb = body.artifacts.complianceBoard as ComplianceBoardSlice;
+    expect(cb).toEqual({
+      exists: false,
+      ok: false,
+      generated: null,
+      enhancements: null,
+      shadowMismatches: null,
+      path: '/registry/compliance-board.json',
+      portal: '/portal/compliance/',
+    });
+    expect(body.status).toBe('ok');
+  });
+
+  test('complianceBoard present + pass: ok true, status ok', async () => {
+    const body = await collectEdgeHealth(
+      mockAssetsEnv({
+        ...emptyArtifacts,
+        '/registry/compliance-board.json': {
+          schemaVersion: 1,
+          generatedAt: '2026-07-24T05:00:00.000Z',
+          enhancements: { passed: 8, total: 8, signature: 'abc' },
+          shadow: { summary: { mismatches: 0, allow: 4, block: 4 } },
+        },
+      }),
+      'https://edge.test/'
+    );
+    const cb = body.artifacts.complianceBoard as ComplianceBoardSlice;
+    expect(cb.exists).toBe(true);
+    expect(cb.ok).toBe(true);
+    expect(cb.generated).toBe('2026-07-24T05:00:00.000Z');
+    expect(cb.enhancements).toBe('8/8');
+    expect(cb.shadowMismatches).toBe(0);
+    expect(cb.path).toBe('/registry/compliance-board.json');
+    expect(cb.portal).toBe('/portal/compliance/');
+    expect(body.status).toBe('ok');
+  });
+
+  test('complianceBoard present + enhancement fail degrades status', async () => {
+    const body = await collectEdgeHealth(
+      mockAssetsEnv({
+        ...emptyArtifacts,
+        '/registry/compliance-board.json': {
+          schemaVersion: 1,
+          generatedAt: '2026-07-24T05:00:00.000Z',
+          enhancements: { passed: 6, total: 8 },
+          shadow: { summary: { mismatches: 0 } },
+        },
+      }),
+      'https://edge.test/'
+    );
+    const cb = body.artifacts.complianceBoard as ComplianceBoardSlice;
+    expect(cb.exists).toBe(true);
+    expect(cb.ok).toBe(false);
+    expect(cb.enhancements).toBe('6/8');
+    expect(body.status).toBe('degraded');
+  });
+
+  test('complianceBoard present + shadow mismatches degrades status', async () => {
+    const body = await collectEdgeHealth(
+      mockAssetsEnv({
+        ...emptyArtifacts,
+        '/registry/compliance-board.json': {
+          schemaVersion: 1,
+          generatedAt: '2026-07-24T05:00:00.000Z',
+          enhancements: { passed: 8, total: 8 },
+          shadow: { summary: { mismatches: 2, allow: 3, block: 5 } },
+        },
+      }),
+      'https://edge.test/'
+    );
+    const cb = body.artifacts.complianceBoard as ComplianceBoardSlice;
+    expect(cb.exists).toBe(true);
+    expect(cb.ok).toBe(false);
+    expect(cb.shadowMismatches).toBe(2);
+    expect(cb.enhancements).toBe('8/8');
+    expect(body.status).toBe('degraded');
   });
 });

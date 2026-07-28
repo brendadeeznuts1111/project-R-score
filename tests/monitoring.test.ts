@@ -31,6 +31,25 @@ describe('monitoring', () => {
     db.close();
   });
 
+  test('collectMonitoring includes compliance when board is baked', async () => {
+    const board = Bun.file('public/registry/compliance-board.json');
+    if (!(await board.exists())) {
+      // Optional plane — skip when workspace has no bake yet
+      return;
+    }
+    const db = openOperationsDb({ path: ':memory:' });
+    const data = await collectMonitoring(db, { source: 'snapshot' });
+    db.close();
+
+    expect(data.compliance).toBeDefined();
+    expect(data.compliance?.available).toBe(true);
+    expect(data.compliance?.path).toBe('/registry/compliance-board.json');
+    expect(data.compliance?.portal).toBe('/portal/compliance/');
+    expect(typeof data.compliance?.ok).toBe('boolean');
+    expect(data.compliance?.enhancements).toMatch(/^\d+\/\d+$/);
+    expect(typeof data.compliance?.shadowMismatches).toBe('number');
+  });
+
   test('renderMonitoringHtml embeds Bun.inspect.table output', async () => {
     const db = openOperationsDb({ path: ':memory:' });
     const data = await collectMonitoring(db, { source: 'live' });

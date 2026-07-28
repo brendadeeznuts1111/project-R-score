@@ -1016,13 +1016,49 @@ async function collectHealthData(): Promise<{
     networking.available === true &&
     typeof networking.degraded === 'boolean' &&
     networking.degraded;
+
+  // Compliance board slice — parity with edge collectEdgeHealth (lib/http/portal-health-edge.ts).
+  // Missing bake does not degrade; present + fail does.
+  let complianceRaw: Record<string, unknown> | null = null;
+  const complianceFile = Bun.file('public/registry/compliance-board.json');
+  if (await complianceFile.exists()) {
+    try {
+      complianceRaw = (await complianceFile.json()) as Record<string, unknown>;
+    } catch {
+      /* malformed → treat as missing */
+    }
+  }
+  const enh = complianceRaw?.enhancements as { passed?: number; total?: number } | undefined;
+  const shadow = complianceRaw?.shadow as { summary?: { mismatches?: number } } | undefined;
+  const complianceExists = Boolean(complianceRaw?.schemaVersion === 1);
+  const complianceOk =
+    complianceExists &&
+    (enh?.passed ?? 0) === (enh?.total ?? 0) &&
+    (shadow?.summary?.mismatches ?? 0) === 0;
+  const complianceFail = complianceExists && !complianceOk;
+  const complianceBoard = {
+    exists: complianceExists,
+    ok: complianceOk,
+    generated: (complianceRaw?.generatedAt as string) ?? null,
+    enhancements: enh ? `${enh.passed ?? 0}/${enh.total ?? 0}` : null,
+    shadowMismatches: shadow?.summary?.mismatches ?? null,
+    path: '/registry/compliance-board.json' as const,
+    portal: '/portal/compliance/' as const,
+  };
+
   const data: Record<string, unknown> = {
     schemaVersion: 1,
-    status: envCheck.summary.requiredMissing > 0 || networkingDegraded ? 'degraded' : 'ok',
+    status:
+      envCheck.summary.requiredMissing > 0 || networkingDegraded || complianceFail
+        ? 'degraded'
+        : 'ok',
     uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
     bun: Bun.version,
     platform: process.arch + ' ' + process.platform,
-    artifacts: { opsSummary: { exists, generated, ageSeconds } },
+    artifacts: {
+      opsSummary: { exists, generated, ageSeconds },
+      complianceBoard,
+    },
     registry: { packages: pkgCount, versions: versionCount },
     bunApiProof: proofStatus,
     networking,

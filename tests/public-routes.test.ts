@@ -19,11 +19,15 @@ describe('lib/http/public-routes', () => {
     expect(paths.has('/health/pre')).toBe(true);
     expect(paths.has('/portal/ops/')).toBe(true);
     expect(paths.has('/portal/health/')).toBe(true);
+    expect(paths.has('/portal/compliance/')).toBe(true);
+    expect(paths.has('/api/compliance')).toBe(true);
+    expect(paths.has('/registry/compliance-board.json')).toBe(true);
     expect(paths.has('/api/operations/summary')).toBe(true);
     expect(paths.has('/api/monitoring')).toBe(true);
     expect(paths.has('/registry/prediction/report/')).toBe(true);
     expect(SIMD_ROUTES.some(r => r.critical)).toBe(true);
     expect(PORTAL_DASHBOARD_ROUTES.some(r => r.path === '/portal/ops/')).toBe(true);
+    expect(PORTAL_DASHBOARD_ROUTES.some(r => r.path === '/portal/compliance/')).toBe(true);
   });
 
   test('byCategory groups portal separately', () => {

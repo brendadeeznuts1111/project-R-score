@@ -14,6 +14,10 @@ export {
   type MonitoringPayload,
   type RegistryIndex,
 } from './collect.ts';
+export {
+  loadComplianceMonitoringSlice,
+  type ComplianceMonitoringSlice,
+} from './compliance-slice.ts';
 export { ensureMonitoringSchema } from './schema.ts';
 export { renderMonitoringHtml } from './page.ts';
 export { enrichMonitoringForSnapshot, type MonitoringSnapshotExtras } from './enrich-snapshot.ts';

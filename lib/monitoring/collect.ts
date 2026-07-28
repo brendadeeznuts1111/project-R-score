@@ -6,6 +6,10 @@
  */
 import type { Database } from 'bun:sqlite';
 import { joinPath } from '../path-bun';
+import {
+  loadComplianceMonitoringSlice,
+  type ComplianceMonitoringSlice,
+} from './compliance-slice.ts';
 import { ensureMonitoringSchema } from './schema.ts';
 
 export type IntegritySnapshot = {
@@ -106,6 +110,11 @@ export type MonitoringPayload = {
   /** Compact proof slices (ops:snapshot enrichment). */
   registryClientProof?: Record<string, unknown>;
   docsCoverageProof?: Record<string, unknown>;
+  /**
+   * Compliance board slice for monitoring tile + portal cross-link.
+   * Baked into monitoring.json (no live SQLite required on Pages).
+   */
+  compliance?: ComplianceMonitoringSlice;
 };
 
 const REGISTRY_INTEGRITY_FILE = joinPath(import.meta.dir, '../../reports/registry-integrity.json');
@@ -307,6 +316,7 @@ export async function collectMonitoring(
   }
 
   const timestamp = new Date().toISOString();
+  const compliance = await loadComplianceMonitoringSlice();
 
   return {
     source: opts?.source ?? 'live',
@@ -323,5 +333,6 @@ export async function collectMonitoring(
     predictionN,
     timestamp,
     snapshotAt: timestamp,
+    ...(compliance ? { compliance } : {}),
   };
 }

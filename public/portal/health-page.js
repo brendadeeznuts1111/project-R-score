@@ -405,6 +405,32 @@ function renderCards(d) {
     </article>`,
   ];
 
+  // Optional compliance board card (artifacts.complianceBoard from edge/local health).
+  const cb = d.artifacts?.complianceBoard;
+  if (cb && typeof cb === 'object') {
+    const cbCls = !cb.exists ? 'warn' : cb.ok ? 'ok' : 'bad';
+    const cbVal = !cb.exists
+      ? 'missing'
+      : cb.enhancements != null
+        ? String(cb.enhancements)
+        : cb.ok
+          ? 'ok'
+          : 'fail';
+    const cbSub = [
+      cb.shadowMismatches != null ? `${cb.shadowMismatches} shadow mismatch` : null,
+      cb.generated ? String(cb.generated).slice(0, 19) : null,
+    ]
+      .filter(Boolean)
+      .join(' · ');
+    const portalHref = esc(cb.portal || '/portal/compliance/');
+    html.push(`<article class="health-card ${cbCls}" data-card="compliance">
+      <h3>Compliance</h3>
+      <div class="val">${esc(cbVal)}</div>
+      <div class="sub">${esc(cbSub || (cb.exists ? 'board' : 'optional bake'))}</div>
+      <div class="sub"><a class="ops-link" href="${portalHref}">portal/compliance</a></div>
+    </article>`);
+  }
+
   $('cards').innerHTML = html.join('');
   void fillDefaultsCard(d.defaults);
 }

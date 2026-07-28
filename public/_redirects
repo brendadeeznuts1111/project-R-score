@@ -11,6 +11,7 @@
 /portal/env              /portal/env/              301
 /portal/catalog          /portal/catalog/          301
 /portal/dod              /portal/dod/              301
+/portal/compliance       /portal/compliance/       301
 /portal/dashboard        /portal/dashboard/        301
 /portal/skills           /portal/skills/           301
 # bare /health → Functions JSON (functions/health/index.ts); /health/ → portal UI redirect

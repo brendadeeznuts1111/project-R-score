@@ -36,8 +36,17 @@ describe('portal route wiring', () => {
     expect(paths.has('/portal/toc/')).toBe(true);
     expect(paths.has('/registry/toc-ops.json')).toBe(true);
     expect(paths.has('/api/toc')).toBe(true);
+    expect(paths.has('/portal/compliance/')).toBe(true);
+    expect(paths.has('/registry/compliance-board.json')).toBe(true);
+    expect(paths.has('/api/compliance')).toBe(true);
     expect(paths.has('/portal/skills/')).toBe(true);
     expect(paths.has('/monitoring/')).toBe(true);
+  });
+
+  test('compliance portal is first-class in route SSOT', () => {
+    expect(PORTAL_HTML_ROUTES).toContain('/portal/compliance/');
+    expect(PORTAL_TRAILING_SLASH_SOURCES).toContain('/portal/compliance');
+    expect(PORTAL_MARKDOWN_SLUGS).toContain('compliance');
   });
 
   test('markdown slugs have static stubs under public/portal/', async () => {
