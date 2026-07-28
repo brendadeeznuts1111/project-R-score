@@ -21,6 +21,7 @@ Machine-readable proofs and operator bakes live on **Cloudflare Pages** (not thi
 | Seat capital desk | [seat-capital-desk.json](https://score.factory-wager.com/registry/seat-capital-desk.json) | `seat:desk:refresh` |
 | TOC Ops | [toc-ops.json](https://score.factory-wager.com/registry/toc-ops.json) | `ops:seed:toc` |
 | Monitoring | [monitoring.json](https://score.factory-wager.com/registry/monitoring.json) | `ops:snapshot` |
+| Limit raises | [limit-raises.json](https://score.factory-wager.com/registry/limit-raises.json) | `ops:snapshot` · multi-factor · [`partner-limits.md`](docs/harness/tenants/partner-limits.md) |
 | Doc index | [doc-index.json](https://score.factory-wager.com/registry/doc-index.json) | `bun run build:doc-index` |
 | Verification | [verification-index.json](https://score.factory-wager.com/registry/verification-index.json) | `bun run verify-all` |
 
@@ -30,6 +31,8 @@ Machine-readable proofs and operator bakes live on **Cloudflare Pages** (not thi
 |-------|-----|
 | Ops | [/portal/ops/](https://score.factory-wager.com/portal/ops/) |
 | Compliance | [/portal/compliance/](https://score.factory-wager.com/portal/compliance/) |
+| Partner limits | [/portal/limits/](https://score.factory-wager.com/portal/limits/) |
+| Partner history | [/portal/partner-history/](https://score.factory-wager.com/portal/partner-history/) |
 | TOC Ops | [/portal/toc/](https://score.factory-wager.com/portal/toc/) |
 | Monitoring | [/monitoring/](https://score.factory-wager.com/monitoring/) |
 

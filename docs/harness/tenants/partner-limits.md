@@ -100,7 +100,7 @@ bun run serve:public:hot   # open /portal/limits/ · /registry/limit-raises.json
 | `bun run ops:limits:predict:json` | Forecast JSON only                        |
 | `bun run ops:limits:analyze`      | Granular book/sport/market breakdown      |
 | `bun run ops:limits:analyze:json` | Analyze JSON only                         |
-| `bun tools/seed-limit-patterns.ts --force --bake` | Connected multi-partner seed + registry bake |
+| `bun run ops:limits:seed-patterns` | Connected multi-partner seed + registry bake (`seed-limit-patterns --force --bake`) |
 | `bun run ops:snapshot`            | Bakes `limit-raises.json` (capture + 48h) |
 
 ```bash
@@ -179,4 +179,4 @@ chargebacks / volatility **lower** score). SSOT: `MULTI_FACTOR_WEIGHTS` /
 - [`compliance-portal.md`](compliance-portal.md) — sibling portal board pattern
 - [`public-plane.md`](public-plane.md) — portal static / registry plane
 - [Bun.inspect.table](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options)
-  · [inspect.custom](https://bun.com/docs/runtime/utils#bun-inspect-custom) )
+  · [inspect.custom](https://bun.com/docs/runtime/utils#bun-inspect-custom)

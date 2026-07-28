@@ -76,6 +76,17 @@ describe('portal route wiring', () => {
     expect(await Bun.file('functions/api/agents/v1/limits/record.ts').exists()).toBe(true);
   });
 
+  test('/api/limits/analyze and predictions Pages stubs exist', async () => {
+    expect(await Bun.file('functions/api/limits/analyze.ts').exists()).toBe(true);
+    expect(await Bun.file('functions/api/limits/predictions.ts').exists()).toBe(true);
+  });
+
+  test('partner-history portal is first-class in route SSOT', async () => {
+    expect(await Bun.file('public/portal/partner-history/index.html').exists()).toBe(true);
+    const redirects = await Bun.file('public/_redirects').text();
+    expect(redirects).toContain('/portal/partner-history');
+  });
+
   test('monitoring href variants share one public handler', async () => {
     const source = await Bun.file('scripts/serve-public.ts').text();
     expect(source).toContain("'/monitoring': () => monitoringPage()");

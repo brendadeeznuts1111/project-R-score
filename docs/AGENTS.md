@@ -26,6 +26,7 @@
 | Concern | Document · commands |
 |---------|---------------------|
 | Compliance portal (MA/NJ) | [harness/tenants/compliance-portal.md](./harness/tenants/compliance-portal.md) · `compliance:bake` · `compliance:verify` |
+| Partner limit raises | [harness/tenants/partner-limits.md](./harness/tenants/partner-limits.md) · `/portal/limits/` · `ops:limits:demo` · bake `ops:snapshot` → `limit-raises.json` |
 | TOC Ops board | [harness/tenants/toc-ops.md](./harness/tenants/toc-ops.md) · `/portal/toc/` · `ops:seed:toc` |
 | Ops loop / outbox | [harness/tenants/ops-loop-throughput.md](./harness/tenants/ops-loop-throughput.md) |
 | Ops snapshot / registry | [harness/tenants/ops-snapshot.md](./harness/tenants/ops-snapshot.md) · `ops:snapshot` |

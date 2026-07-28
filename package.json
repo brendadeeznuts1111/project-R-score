@@ -1580,6 +1580,7 @@
     "ops:limits:predict:json": "bun tools/ops-limit-predict.ts --json",
     "ops:limits:analyze": "bun tools/ops-limit-analyze.ts",
     "ops:limits:analyze:json": "bun tools/ops-limit-analyze.ts --json",
+    "ops:limits:seed-patterns": "bun tools/seed-limit-patterns.ts --force --bake",
     "ops:seed:toc": "bun tools/ops-seed-toc.ts",
     "ops:seed:all": "bun tools/ops-seed.ts && bun tools/ops-seed-prediction.ts && bun tools/ops-seed-dod.ts && bun tools/ops-seed-partners.ts && bun tools/ops-seed-toc.ts && bun tools/ops-seed-tenants.ts",
     "ops:snapshot:demo": "bun run ops:seed:all && bun tools/ops-snapshot.ts --no-routing",

@@ -53,6 +53,11 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     href: '/portal/limits/',
     note: 'account raises · multi-factor score · drivers',
   },
+  {
+    label: 'Partner history',
+    href: '/portal/partner-history/',
+    note: 'per-partner limit history board',
+  },
   { label: 'Skills', href: '/portal/skills/', note: 'catalog · .skill packages' },
   {
     label: 'Packages',
@@ -228,7 +233,7 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
   },
   {
     label: 'Limit pattern seed + bake',
-    cmd: 'bun tools/seed-limit-patterns.ts --force --bake',
+    cmd: 'bun run ops:limits:seed-patterns',
     doc: 'docs/harness/tenants/partner-limits.md',
   },
   {
