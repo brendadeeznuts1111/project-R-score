@@ -13,6 +13,7 @@ import {
   formatPortalDoctorVerbose,
   parseDoctorEnv,
   parseDoctorGroup,
+  parseDoctorGroupsFromArgv,
   runPortalDoctor,
   summarizeDoctorChecks,
 } from '../tools/lib/portal-cli-doctor.ts';
@@ -124,7 +125,7 @@ describe('portal-cli doctor pure', () => {
   test('runPortalDoctor is OK on monorepo root (default)', async () => {
     const r = await runPortalDoctor({ cwd: ROOT, full: false });
     expect(r.kind).toBe('portal-cli-doctor');
-    expect(r.schemaVersion).toBe(3);
+    expect(r.schemaVersion).toBe(4);
     expect(r.ok).toBe(true);
     const linker = r.checks.find(c => c.id === 'linker-config-version');
     expect(linker?.ok).toBe(true);
@@ -133,19 +134,20 @@ describe('portal-cli doctor pure', () => {
     expect(r.summary.passed).toBe(r.summary.checkCount);
     expect(r.summary.failed).toBe(0);
     const text = formatPortalDoctor(r);
-    expect(text).toContain('Linker policy:');
-    expect(text).toContain('Offline bakes:');
+    expect(text).toContain('portal doctor');
+    expect(text).toContain('Linker policy');
+    expect(text).toContain('Offline bakes');
     expect(text).toContain('linker-config-version');
     expect(text).toMatch(/\d+\/\d+ passed/);
+    expect(text).toMatch(/╭|╰/); // framed chrome
   });
 
   test('verbose format includes status table and remediation section', async () => {
     const r = await runPortalDoctor({ cwd: ROOT, full: false, verbose: true });
     const text = formatPortalDoctorVerbose(r);
-    expect(text).toContain('verbose');
-    expect(text).toMatch(/status|pass|FAIL/i);
-    expect(text).toContain('Remediation detail');
-    expect(text).toContain('Linker policy reference');
+    expect(text).toContain('portal doctor');
+    expect(text).toMatch(/status|pass|FAIL|check/i);
+    expect(text.toLowerCase()).toContain('remediation');
     expect(text).toContain('default-strategy');
   });
 
@@ -171,7 +173,7 @@ describe('portal-cli doctor pure', () => {
     expect(schema?.autoFixable).toBe(false);
     expect(r.checks.find(c => c.id === 'catalog-help-coverage')?.autoFixable).toBe(true);
     expect(r.checks.find(c => c.id === 'catalog-deprecated-flags')?.envScope).toBe('dev');
-    expect(formatPortalDoctor(r)).toContain('Catalog SSOT:');
+    expect(formatPortalDoctor(r)).toContain('Catalog SSOT');
   });
 
   test('runCatalogChecks returns health + four checks', async () => {
@@ -190,6 +192,31 @@ describe('portal-cli doctor pure', () => {
     expect(r.checks).toHaveLength(4);
     expect(r.ok).toBe(true);
     expect(formatPortalDoctor(r)).toContain('group=catalog');
+  });
+
+  test('parseDoctorGroupsFromArgv supports multi and comma groups', () => {
+    expect(parseDoctorGroupsFromArgv(['--group', 'catalog'])).toEqual(['catalog']);
+    expect(parseDoctorGroupsFromArgv(['--group=linker,catalog'])).toEqual([
+      'linker',
+      'catalog',
+    ]);
+    expect(
+      parseDoctorGroupsFromArgv(['--group', 'linker', '--group', 'catalog'])
+    ).toEqual(['linker', 'catalog']);
+    expect(parseDoctorGroupsFromArgv([])).toBeUndefined();
+  });
+
+  test('multi --group filters with OR', async () => {
+    const r = await runPortalDoctor({
+      cwd: ROOT,
+      full: false,
+      groups: ['linker', 'catalog'],
+    });
+    expect(r.groups).toEqual(['linker', 'catalog']);
+    expect(r.checks.every(c => c.group === 'linker' || c.group === 'catalog')).toBe(true);
+    expect(r.checks.some(c => c.group === 'linker')).toBe(true);
+    expect(r.checks.some(c => c.group === 'catalog')).toBe(true);
+    expect(r.checks.some(c => c.group === 'bakes')).toBe(false);
   });
 
   test('--env ci drops envScope=dev checks', async () => {
@@ -242,7 +269,7 @@ describe('portal-cli doctor CLI', () => {
     expect(out).toContain('portal doctor');
     expect(out).toContain('linker-config-version');
     expect(out).toContain('configVersion=1');
-    expect(out).toContain('Linker policy:');
+    expect(out).toContain('Linker policy');
   });
 
   test('doctor --json is machine-readable with summary + groups', async () => {
@@ -256,7 +283,7 @@ describe('portal-cli doctor CLI', () => {
     expect(code).toBe(0);
     const j = JSON.parse(out);
     expect(j.kind).toBe('portal-cli-doctor');
-    expect(j.schemaVersion).toBe(3);
+    expect(j.schemaVersion).toBe(4);
     expect(j.ok).toBe(true);
     expect(j.summary?.passed).toBe(j.summary?.checkCount);
     expect(j.docs?.installIsolated).toContain('isolated-installs');

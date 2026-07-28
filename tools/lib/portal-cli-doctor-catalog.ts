@@ -66,7 +66,7 @@ export async function runCatalogChecks(cwd?: string): Promise<CatalogChecksResul
       {
         fixCommand: schemaOk
           ? undefined
-          : `Edit ${RUNTIME_FLAGS_CATALOG_PATH} (flag, category, description, url) · bun test tests/portal-cli-bun-flags.test.ts`,
+          : `bun run portal:flags:check  # then edit ${RUNTIME_FLAGS_CATALOG_PATH} (flag, category, description, url)`,
         impact: 'Blocks flag harvest sets, portal-cli flags, and generated --help runtime section',
         autoFixable: false,
         timeToFix: schemaOk ? undefined : '5–15 min',
@@ -92,7 +92,7 @@ export async function runCatalogChecks(cwd?: string): Promise<CatalogChecksResul
       {
         fixCommand: shortOk
           ? undefined
-          : `Edit ${RUNTIME_FLAGS_CATALOG_PATH} — resolve duplicate shortcodes · bun run portal:flags --all`,
+          : `bun run portal:flags:check  # then dedupe shortcodes in ${RUNTIME_FLAGS_CATALOG_PATH}`,
         impact: 'CLI parsing ambiguity when harvesting Bun runtime flags for child spawns',
         autoFixable: false,
         timeToFix: shortOk ? undefined : '2–10 min',
@@ -118,10 +118,10 @@ export async function runCatalogChecks(cwd?: string): Promise<CatalogChecksResul
         source: RUNTIME_DOCS,
       },
       {
-        // Help is generated from catalog — coverage miss is a generator/catalog bug; re-run tests.
+        // Help is generated from catalog at import time — miss = curated row missing description/flag.
         fixCommand: helpOk
           ? undefined
-          : `Ensure curated rows have flag+description · bun test tests/portal-cli-bun-flags.test.ts · bun run portal:flags`,
+          : 'bun run portal:flags:check  # curated rows must have flag+description; help is catalog-generated',
         impact: 'portal-cli --help runtime section drifts from catalog SSOT',
         autoFixable: true,
         timeToFix: helpOk ? undefined : '1–5 min',
@@ -149,7 +149,7 @@ export async function runCatalogChecks(cwd?: string): Promise<CatalogChecksResul
         fixCommand:
           depFlags.length === 0
             ? undefined
-            : `Review ${RUNTIME_FLAGS_CATALOG_PATH} deprecated rows · bun run portal:flags --all --verbose`,
+            : 'bun run portal:flags:migrate  # list deprecated harvest rows for removal plan',
         impact: 'Planned removal awareness for harvest set and portal operators',
         autoFixable: false,
         timeToFix: depFlags.length === 0 ? undefined : '5–30 min',

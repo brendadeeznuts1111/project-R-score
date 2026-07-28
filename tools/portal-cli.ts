@@ -1227,21 +1227,25 @@ Checks (default — pure, no network):
   Gates:   (only with --full) install:verify · vault-health tests · capability tests
 
 Flags:
-  --verbose · -v     Table: status · fix · auto · scope · age + remediation detail
+  --verbose · -v     Table: status · fix · auto · impact · scope + remediation
   --failed-only      Hide passing checks (pairs with --verbose)
   --full             Spawn install:verify · vault-health · capability-map tests
-  --group <name>     linker | bakes | catalog | gates
+  --group <name>     linker | bakes | catalog | gates  (repeatable / comma list)
   --env <scope>      all (default) | ci (skip envScope=dev) | dev
-  --json             Machine-readable report (schemaVersion 3 + summary)
+  --json             Machine-readable report (schemaVersion 4 + summary)
 
 Examples:
   portal-cli doctor
   portal-cli doctor --verbose
   portal-cli doctor --group catalog --verbose
-  portal-cli doctor --env ci
-  portal-cli doctor --failed-only --verbose
+  portal-cli doctor --group linker --group catalog
+  portal-cli doctor --env ci --failed-only
   portal-cli doctor --json
   portal-cli doctor --full --verbose
+
+Catalog fix scripts:
+  bun run portal:flags:check     # schema · shortcodes · help coverage
+  bun run portal:flags:migrate   # list deprecated flags
 
 Related: vault health · capabilities health · scanner doctor · bunfig check · flags · install:verify
 `);
@@ -1251,21 +1255,14 @@ Related: vault health · capabilities health · scanner doctor · bunfig check �
       runPortalDoctor,
       formatPortalDoctor,
       formatPortalDoctorVerbose,
-      parseDoctorGroup,
+      parseDoctorGroupsFromArgv,
       parseDoctorEnv,
     } = await import('./lib/portal-cli-doctor.ts');
     const verbose = argv.includes('--verbose') || argv.includes('-v');
-    let group: ReturnType<typeof parseDoctorGroup>;
+    let groups: ReturnType<typeof parseDoctorGroupsFromArgv>;
     let env: ReturnType<typeof parseDoctorEnv>;
     try {
-      const groupEq = argv.find(a => a.startsWith('--group='));
-      const groupIdx = argv.indexOf('--group');
-      const groupRaw = groupEq
-        ? groupEq.slice('--group='.length)
-        : groupIdx >= 0
-          ? argv[groupIdx + 1]
-          : undefined;
-      group = parseDoctorGroup(groupRaw);
+      groups = parseDoctorGroupsFromArgv(argv);
       const envEq = argv.find(a => a.startsWith('--env='));
       const envIdx = argv.indexOf('--env');
       const envRaw = envEq
@@ -1281,7 +1278,7 @@ Related: vault health · capabilities health · scanner doctor · bunfig check �
       full: argv.includes('--full'),
       verbose,
       failedOnly: argv.includes('--failed-only'),
-      group,
+      groups,
       env,
     });
     if (argv.includes('--json')) {

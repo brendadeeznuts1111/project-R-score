@@ -2,7 +2,7 @@
 // @see https://bun.com/docs/pm/cli/install#default-strategy — lockfile configVersion
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
-// @see https://bun.com/docs/runtime/utils#bun-inspect-table — Bun.inspect.table
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth (cli-chrome tables)
 /**
  * portal-cli doctor — unified offline health gate for portal control plane.
  *
@@ -11,10 +11,11 @@
  *
  *   portal-cli doctor
  *   portal-cli doctor --json
- *   portal-cli doctor --verbose     # table: fix · auto · scope · time + impact
- *   portal-cli doctor --failed-only # hide passing checks (default + verbose)
+ *   portal-cli doctor --verbose     # table: fix · auto · impact · scope
+ *   portal-cli doctor --failed-only # hide passing checks
  *   portal-cli doctor --full        # spawn install:verify · vault · capability gates
  *   portal-cli doctor --group catalog
+ *   portal-cli doctor --group linker --group catalog
  *   portal-cli doctor --env ci      # skip envScope=dev checks
  *
  * Fix commands use real monorepo scripts only (no invented Bun flags).
@@ -34,6 +35,7 @@ import {
   readProjectBunfig,
   resolveEffectiveInstallPolicy,
 } from '../../scripts/lib/machine-bunfig.ts';
+import { cliTone, columnTable, frameBlock, kvLines } from '../../lib/portal/cli-chrome.ts';
 import { runCatalogChecks } from './portal-cli-doctor-catalog.ts';
 
 export type PortalDoctorLevel = 'fatal' | 'warn' | 'info';
@@ -60,6 +62,8 @@ export type PortalDoctorCheck = {
   envScope?: PortalDoctorEnvScope;
   /** Optional freshness note (e.g. bake age). */
   freshness?: string;
+  /** When true, only runs under --full (spawned gates). */
+  heavy?: boolean;
 };
 
 export type PortalDoctorSummary = {
@@ -77,13 +81,15 @@ export type PortalDoctorSummary = {
 
 export type PortalDoctorReport = {
   kind: 'portal-cli-doctor';
-  schemaVersion: 3;
+  schemaVersion: 4;
   ok: boolean;
   full: boolean;
   verbose: boolean;
   failedOnly: boolean;
-  /** Optional group filter applied to display + summary. */
+  /** Optional single-group filter (legacy; prefer groups). */
   group?: PortalDoctorGroup;
+  /** Optional multi-group filter (OR). */
+  groups?: PortalDoctorGroup[];
   /** Optional env filter: ci skips envScope=dev checks. */
   env?: PortalDoctorEnvScope;
   generatedAt: string;
@@ -104,6 +110,8 @@ export type PortalDoctorOpts = {
   failedOnly?: boolean;
   /** Only include checks from this group (e.g. catalog). */
   group?: PortalDoctorGroup;
+  /** Multi-group filter (OR). When set, overrides single group. */
+  groups?: PortalDoctorGroup[];
   /**
    * Env filter for envScope:
    * - `ci` → include envScope `ci` | `all` (skip `dev`)
@@ -132,20 +140,54 @@ export function parseDoctorGroup(raw: string | undefined): PortalDoctorGroup | u
   );
 }
 
+/**
+ * Parse one or more --group values from argv.
+ * Supports: --group catalog · --group=linker · --group linker,catalog · repeated --group
+ */
+export function parseDoctorGroupsFromArgv(argv: string[]): PortalDoctorGroup[] | undefined {
+  const raw: string[] = [];
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i]!;
+    if (a.startsWith('--group=')) {
+      raw.push(...a.slice('--group='.length).split(','));
+    } else if (a === '--group') {
+      const next = argv[i + 1];
+      if (next && !next.startsWith('-')) {
+        raw.push(...next.split(','));
+        i++;
+      }
+    }
+  }
+  const tokens = raw.map(s => s.trim()).filter(Boolean);
+  if (tokens.length === 0) return undefined;
+  const groups: PortalDoctorGroup[] = [];
+  for (const t of tokens) {
+    const g = parseDoctorGroup(t);
+    if (g && !groups.includes(g)) groups.push(g);
+  }
+  return groups;
+}
+
 export function parseDoctorEnv(raw: string | undefined): PortalDoctorEnvScope | undefined {
   if (!raw) return undefined;
   if (raw === 'dev' || raw === 'ci' || raw === 'all') return raw;
   throw new Error(`Unknown doctor --env=${raw}; expect one of: dev | ci | all`);
 }
 
-/** Apply group + env filters (pure). */
+/** Apply group(s) + env filters (pure). */
 export function filterDoctorByScope(
   checks: PortalDoctorCheck[],
-  opts: { group?: PortalDoctorGroup; env?: PortalDoctorEnvScope }
+  opts: {
+    group?: PortalDoctorGroup;
+    groups?: PortalDoctorGroup[];
+    env?: PortalDoctorEnvScope;
+  }
 ): PortalDoctorCheck[] {
   let out = checks;
-  if (opts.group) {
-    out = out.filter(c => c.group === opts.group);
+  const groups = opts.groups?.length ? opts.groups : opts.group ? [opts.group] : undefined;
+  if (groups && groups.length > 0) {
+    const set = new Set(groups);
+    out = out.filter(c => set.has(c.group));
   }
   if (opts.env && opts.env !== 'all') {
     out = out.filter(c => {
@@ -324,7 +366,8 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
   const full = Boolean(opts.full);
   const verbose = Boolean(opts.verbose);
   const failedOnly = Boolean(opts.failedOnly);
-  const group = opts.group;
+  const groups = opts.groups?.length ? opts.groups : opts.group ? [opts.group] : undefined;
+  const group = groups?.length === 1 ? groups[0] : opts.group;
   const env = opts.env;
   const spawn = opts.spawn ?? defaultSpawn;
   const checks: PortalDoctorCheck[] = [];
@@ -484,8 +527,8 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
     );
   }
 
-  // Scope filters (group / env) apply to report checks + summary + exit ok
-  const scoped = filterDoctorByScope(checks, { group, env });
+  // Scope filters (group(s) / env) apply to report checks + summary + exit ok
+  const scoped = filterDoctorByScope(checks, { group, groups, env });
 
   // Default mode: only fatal failures fail the doctor; warns are advisory
   const ok = scoped.filter(c => c.level === 'fatal').every(c => c.ok);
@@ -493,12 +536,13 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
 
   return {
     kind: 'portal-cli-doctor',
-    schemaVersion: 3,
+    schemaVersion: 4,
     ok,
     full,
     verbose,
     failedOnly,
     group,
+    groups,
     env,
     generatedAt: new Date().toISOString(),
     checks: scoped,
@@ -517,46 +561,51 @@ function statusMark(c: PortalDoctorCheck): string {
   return '✗';
 }
 
-/** Compact default listing with grouped sections. */
-export function formatPortalDoctor(r: PortalDoctorReport): string {
-  const display = filterDoctorChecks(r.checks, r.failedOnly);
-  const modeBits = [
-    r.ok ? 'OK' : 'FAIL',
+function doctorModeLabel(r: PortalDoctorReport): string {
+  const groups = r.groups?.length ? r.groups.join('+') : r.group ? r.group : null;
+  return [
     r.full ? 'full' : null,
     r.verbose ? 'verbose' : null,
     r.failedOnly ? 'failed-only' : null,
-    r.group ? `group=${r.group}` : null,
+    groups ? `group=${groups}` : null,
     r.env && r.env !== 'all' ? `env=${r.env}` : null,
   ]
     .filter(Boolean)
     .join(' · ');
+}
 
-  const lines = [`portal doctor  ${modeBits}`, ''];
+/** Compact default listing with framed chrome + grouped checks. */
+export function formatPortalDoctor(r: PortalDoctorReport): string {
+  const display = filterDoctorChecks(r.checks, r.failedOnly);
+  const body: string[] = [];
 
   let lastGroup: PortalDoctorGroup | undefined;
   for (const c of display) {
     if (c.group !== lastGroup) {
-      if (lastGroup) lines.push('');
-      lines.push(`${GROUP_LABEL[c.group]}:`);
+      if (lastGroup) body.push('');
+      body.push(cliTone.accent(GROUP_LABEL[c.group]));
       lastGroup = c.group;
     }
-    const mark = statusMark(c);
-    lines.push(`  ${mark} [${c.level}] ${c.id}: ${c.message}`);
+    const mark = c.ok ? cliTone.ok(statusMark(c)) : cliTone.fail(statusMark(c));
+    body.push(`  ${mark} [${c.level}] ${c.id}`);
+    body.push(cliTone.dim(`       ${c.message}`));
+    if (!c.ok && c.fixCommand) {
+      body.push(cliTone.dim(`       fix · ${c.fixCommand}`));
+    }
   }
 
-  lines.push('');
-  lines.push(formatDoctorSummaryFooter(r.summary, r.failedOnly));
-  lines.push('');
-  lines.push(`Docs: ${r.docs.defaultStrategy}`);
-  lines.push(`      ${r.docs.isolatedInstalls}`);
-  lines.push('');
-  lines.push(
-    'Related: portal-cli vault health · capabilities health · scanner doctor · bunfig check · flags'
+  body.push('');
+  for (const line of formatDoctorSummaryFooter(r.summary, r.failedOnly).split('\n')) {
+    body.push(line);
+  }
+
+  const mode = doctorModeLabel(r);
+  return (
+    frameBlock('portal doctor', r.ok ? 'OK' : 'FAIL', body, {
+      width: 88,
+      ok: r.ok,
+    }) + (mode ? `\n${cliTone.dim(`  mode · ${mode}`)}` : '')
   );
-  lines.push(
-    '         bun run install:verify · portal-cli doctor --verbose · portal-cli doctor --full'
-  );
-  return lines.join('\n');
 }
 
 export function formatDoctorSummaryFooter(s: PortalDoctorSummary, failedOnly = false): string {
@@ -580,90 +629,82 @@ export function formatDoctorSummaryFooter(s: PortalDoctorSummary, failedOnly = f
 }
 
 /**
- * Extended table for --verbose: check · level · status · what · fix · auto · scope · time.
+ * Extended table for --verbose: check · level · status · what · fix · auto · impact · scope
+ * Table is printed unframed so Bun.stringWidth columns stay aligned.
  */
 export function formatPortalDoctorVerbose(r: PortalDoctorReport): string {
   const display = filterDoctorChecks(r.checks, r.failedOnly);
-  const rows = display.map(c => ({
-    group: c.group,
-    check: c.id,
-    level: c.level,
-    status: c.ok ? 'pass' : 'FAIL',
-    what: truncate(c.message, 52),
-    fix: truncate(c.fixCommand ?? (c.ok ? '—' : '?'), 44),
-    auto: c.autoFixable === undefined ? '—' : c.autoFixable ? 'yes' : 'no',
-    scope: c.envScope ?? '—',
-    age: c.freshness ?? '—',
-  }));
+  const tableRows = display.map(c => [
+    c.group,
+    c.id,
+    c.level,
+    c.ok ? 'pass' : 'FAIL',
+    c.message,
+    c.ok ? '—' : (c.fixCommand ?? '?'),
+    c.autoFixable === undefined ? '—' : c.autoFixable ? 'yes' : 'no',
+    c.impact ?? '—',
+    c.envScope ?? '—',
+  ]);
 
-  const modeBits = [
-    r.ok ? 'OK' : 'FAIL',
-    r.full ? 'full' : null,
-    'verbose',
-    r.failedOnly ? 'failed-only' : null,
-    r.group ? `group=${r.group}` : null,
-    r.env && r.env !== 'all' ? `env=${r.env}` : null,
-  ]
-    .filter(Boolean)
-    .join(' · ');
+  const table = columnTable(
+    ['group', 'check', 'level', 'status', 'what', 'fix', 'auto', 'impact', 'scope'],
+    tableRows,
+    { maxWidths: [8, 26, 6, 5, 40, 40, 4, 32, 4], gap: 2 }
+  ).join('\n');
 
-  const header = [`portal doctor  ${modeBits}`, ''];
-
-  let table: string;
-  try {
-    table = Bun.inspect.table(rows, {
-      columns: ['group', 'check', 'level', 'status', 'what', 'fix', 'auto', 'scope', 'age'],
-      colors: false,
-    });
-  } catch {
-    table = rows
-      .map(
-        row =>
-          `${row.status === 'pass' ? '✓' : '✗'} ${row.check.padEnd(26)} ${row.level.padEnd(6)} ${row.fix}`
-      )
-      .join('\n');
-  }
-
-  const impactLines: string[] = ['', 'Remediation detail (failures only):'];
-  const failures = r.checks.filter(c => !c.ok);
-  if (failures.length === 0) {
-    impactLines.push('  (none — all checks passed)');
-  } else {
-    for (const c of failures) {
-      impactLines.push(`  · ${c.id} [${c.level}]`);
-      if (c.impact) impactLines.push(`      impact: ${c.impact}`);
-      if (c.fixCommand) impactLines.push(`      fix:    ${c.fixCommand}`);
-      if (c.source) impactLines.push(`      doc:    ${c.source}`);
-      if (c.timeToFix) impactLines.push(`      time:   ${c.timeToFix}`);
-      if (c.envScope) impactLines.push(`      scope:  ${c.envScope}`);
+  const summaryBody: string[] = [
+    ...kvLines([
+      ['checks', `${r.summary.passed}/${r.summary.checkCount} passed`],
+      [
+        'failed',
+        `${r.summary.failed} (${r.summary.failedFatal} fatal · ${r.summary.failedWarn} warn)`,
+      ],
+      ['auto-fix', String(r.summary.autoFixableFailed)],
+    ]),
+  ];
+  if (r.summary.autoFixableFailed > 0 && r.summary.suggested.length) {
+    summaryBody.push('');
+    summaryBody.push(cliTone.accent('Auto-fix available'));
+    for (const cmd of r.summary.suggested) {
+      summaryBody.push(`  ${cmd}`);
     }
   }
 
-  // Compact linker reference always (policy SSOT)
-  impactLines.push('', 'Linker policy reference:');
-  for (const id of ['linker-config-version', 'machine-isolated-linker'] as const) {
-    const c = r.checks.find(x => x.id === id);
-    if (!c) continue;
-    impactLines.push(`  · ${c.id}: ${c.ok ? 'pass' : 'FAIL'} — ${c.message}`);
-    if (c.impact) impactLines.push(`      ${c.impact}`);
-    if (c.source) impactLines.push(`      ${c.source}`);
+  const failures = r.checks.filter(c => !c.ok);
+  const remBody: string[] = [];
+  if (failures.length === 0) {
+    remBody.push(cliTone.dim('(none — all checks passed)'));
+  } else {
+    for (const c of failures) {
+      remBody.push(`· ${c.id} [${c.level}]`);
+      if (c.impact) remBody.push(cliTone.dim(`  impact  ${c.impact}`));
+      if (c.fixCommand) remBody.push(cliTone.dim(`  fix     ${c.fixCommand}`));
+      if (c.source) remBody.push(cliTone.dim(`  doc     ${c.source}`));
+    }
   }
 
+  const mode = doctorModeLabel({ ...r, verbose: true });
+  const head = frameBlock('portal doctor', r.ok ? 'OK' : 'FAIL', summaryBody, {
+    width: 72,
+    ok: r.ok,
+  });
+  const rem = frameBlock('remediation', failures.length ? 'ACTION' : 'none', remBody, {
+    width: 72,
+    ok: failures.length === 0,
+  });
+
   return [
-    ...header,
+    head,
+    mode ? cliTone.dim(`  mode · ${mode}`) : '',
+    '',
+    cliTone.accent('Checks'),
     table,
     '',
-    formatDoctorSummaryFooter(r.summary, r.failedOnly),
-    ...impactLines,
+    rem,
     '',
-    `Docs: ${r.docs.defaultStrategy}`,
-    `      ${r.docs.isolatedInstalls}`,
-    `      ${r.docs.installIsolated}`,
-    `      ${r.docs.installHoisted}`,
-  ].join('\n');
-}
-
-function truncate(s: string, n: number): string {
-  if (s.length <= n) return s;
-  return `${s.slice(0, n - 1)}…`;
+    cliTone.dim(`docs · ${r.docs.defaultStrategy}`),
+    cliTone.dim(`     · ${r.docs.isolatedInstalls}`),
+  ]
+    .filter(Boolean)
+    .join('\n');
 }
