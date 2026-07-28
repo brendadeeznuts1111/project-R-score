@@ -146,7 +146,7 @@ describe('capability-map-subset parse', () => {
   test('repo AGENTS.md parses non-empty map', async () => {
     const md = await Bun.file('AGENTS.md').text();
     const rows = parseCapabilityTableFromMarkdown(md);
-    expect(rows.length).toBeGreaterThanOrEqual(55);
+    expect(rows.length).toBeGreaterThanOrEqual(65);
     expect(rows.some(r => /item view|Secret retrieval|Vault inject/i.test(r.capability + r.api))).toBe(
       true
     );

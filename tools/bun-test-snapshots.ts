@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/test/index#run-tests — bun:test
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
@@ -28,17 +29,18 @@ import {
   TEST_SNAPSHOT_SUITES,
   type TestSnapshotSuite,
 } from '../lib/portal/bun-test-snapshots.ts';
+import { cliTone, frameBlock, kvLines, padDisplay } from '../lib/portal/cli-chrome.ts';
 
 const ROOT = joinPath(import.meta.dir, '..');
 
 function usage(): void {
-  console.log(`Usage: bun tools/bun-test-snapshots.ts [--list|--check|--update|--prune-orphans] [opts]
+  console.log(`Usage: bun tools/bun-test-snapshots.ts <flag> [opts]
 
   --list                 Catalog of bun:test snapshot suites (SSOT)
-  --check                Fail on orphan/missing snaps or bad Bun Snapshot v1 headers
-  --update               Run bun test <suite files> --update-snapshots (file-scoped)
-  --id <suite>           Limit --update to one suite id (e.g. capability-map, vault-health)
-  --prune-orphans        Delete tests/__snapshots__/*.snap not in the catalog
+  --check                Orphan / missing / header / entry-count gate
+  --update               File-scoped bun test … --update-snapshots
+  --id <suite>           Limit --update (capability-map · vault-health · …)
+  --prune-orphans        Delete uncatalogued tests/__snapshots__/*.snap
   --dry-run              With --prune-orphans: print only
   --json                 Machine JSON for --check / --list
 
@@ -69,20 +71,26 @@ async function main(): Promise<void> {
     if (asJson) {
       console.log(JSON.stringify({ suites: TEST_SNAPSHOT_SUITES }, null, 2));
     } else {
-      console.log(
-        `\n  bun:test snapshot suites (${TEST_SNAPSHOT_SUITES.length}) · SSOT lib/portal/bun-test-snapshots.ts\n`
-      );
+      const idW = Math.max(...TEST_SNAPSHOT_SUITES.map(s => Bun.stringWidth(s.id)), 8);
+      const body: string[] = [
+        cliTone.dim('SSOT  lib/portal/bun-test-snapshots.ts'),
+        cliTone.dim('policy  file-scoped --update-snapshots only'),
+        '',
+      ];
       for (const s of TEST_SNAPSHOT_SUITES) {
-        console.log(`  ${s.id.padEnd(16)} ${s.testRel}`);
-        console.log(`  ${''.padEnd(16)} snap: ${s.snapRel}`);
-        console.log(`  ${''.padEnd(16)} ${s.purpose}`);
+        body.push(`${padDisplay(cliTone.accent(s.id), idW + 2)} ${s.testRel}`);
+        body.push(`${''.padStart(idW + 2)} ${cliTone.dim(s.snapRel)}`);
         if (s.cli || s.updateScript) {
-          console.log(`  ${''.padEnd(16)} update: ${s.cli ?? `bun run ${s.updateScript}`}`);
+          body.push(
+            `${''.padStart(idW + 2)} ${cliTone.dim(`update · ${s.cli ?? `bun run ${s.updateScript}`}`)}`
+          );
         }
-        console.log('');
       }
       console.log(
-        '  Policy: always file-scoped updates — never `bun test --update-snapshots` alone.\n'
+        frameBlock(`bun:test snapshots`, `${TEST_SNAPSHOT_SUITES.length} suites`, body, {
+          width: 88,
+          ok: true,
+        })
       );
     }
     return;
@@ -93,20 +101,40 @@ async function main(): Promise<void> {
     if (asJson) {
       console.log(JSON.stringify(report, null, 2));
     } else {
-      console.log(`\n  check:snapshots · suites=${report.suiteCount} · ok=${report.ok}\n`);
-      for (const f of report.findings) {
-        if (f.severity === 'info' && !Bun.env.SNAPSHOT_CHECK_VERBOSE) continue;
-        const mark = f.severity === 'error' ? '❌' : f.severity === 'warn' ? '⚠️ ' : '·';
-        console.log(`  ${mark} [${f.code}] ${f.path}`);
-        console.log(`     ${f.detail}`);
-      }
-      if (report.ok) {
-        console.log(
-          `\n  ✅ ${report.suiteCount} catalog suites · snap headers Bun Snapshot v1 · no orphans\n`
-        );
+      const errors = report.findings.filter(f => f.severity === 'error');
+      const warns = report.findings.filter(f => f.severity === 'warn');
+      const body: string[] = [
+        ...kvLines([
+          ['suites', String(report.suiteCount)],
+          ['snap dir', report.snapDir],
+          ['errors', String(errors.length)],
+          ['warnings', String(warns.length)],
+        ]),
+      ];
+      if (errors.length || warns.length || Bun.env.SNAPSHOT_CHECK_VERBOSE) {
+        body.push('');
+        for (const f of report.findings) {
+          if (f.severity === 'info' && !Bun.env.SNAPSHOT_CHECK_VERBOSE) continue;
+          const tone =
+            f.severity === 'error'
+              ? cliTone.fail
+              : f.severity === 'warn'
+                ? cliTone.warn
+                : cliTone.dim;
+          body.push(tone(`${f.code}`));
+          body.push(cliTone.dim(`  ${f.path}`));
+          body.push(cliTone.dim(`  ${f.detail}`));
+        }
       } else {
-        console.log('\n  ❌ snapshot SSOT check failed\n');
+        body.push('');
+        body.push(cliTone.ok('catalog · Bun Snapshot v1 headers · entry counts · no orphans'));
       }
+      console.log(
+        frameBlock('check:snapshots', report.ok ? 'OK' : 'FAIL', body, {
+          width: 80,
+          ok: report.ok,
+        })
+      );
     }
     process.exit(report.ok ? 0 : 1);
   }

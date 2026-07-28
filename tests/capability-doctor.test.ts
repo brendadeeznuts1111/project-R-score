@@ -100,7 +100,7 @@ describe('capability-doctor', () => {
     expect(report.failing).toHaveLength(0);
   });
 
-  test('formatCapabilityDoctorHuman uses inspect.table / stripANSI surfaces', () => {
+  test('formatCapabilityDoctorHuman uses framed inspect.table / stripANSI surfaces', () => {
     const subset = buildCapabilityMapSubset(SAMPLE, '2026-07-28T00:00:00.000Z');
     const bad = doctorFromSubset(subset, {
       bunVersion: '1.0.0',
@@ -109,12 +109,12 @@ describe('capability-doctor', () => {
       generatedAt: '2026-07-28T00:00:00.000Z',
     });
     const text = formatCapabilityDoctorHuman(bad, { columns: 80, elapsedNs: 1_500_000 });
-    expect(text).toContain('capability doctor');
-    expect(text).toContain('FAIL');
-    expect(text).toContain('elapsed:');
-    // table or list of fails present
-    expect(text.toLowerCase()).toMatch(/minbun|minpass|pack workspace|vault inject/);
     const plain = Bun.stripANSI(text);
+    expect(plain).toContain('capability doctor');
+    expect(plain).toContain('FAIL');
+    expect(plain).toMatch(/elapsed/i);
+    expect(plain).toMatch(/╭|╰|│/); // framed chrome
+    expect(plain.toLowerCase()).toMatch(/minbun|minpass|pack workspace|vault inject|version floor/);
     expect(Bun.stringWidth(plain.split('\n')[0]!)).toBeGreaterThan(10);
   });
 

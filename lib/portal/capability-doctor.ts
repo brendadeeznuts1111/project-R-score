@@ -22,6 +22,7 @@
  * Human output uses Bun.inspect.table · stringWidth · stripANSI · wrapAnsi.
  * No invented flags.
  */
+import { cliTone, frameBlock, kvLines, msFromNs } from './cli-chrome.ts';
 import {
   CAPABILITY_MAP_SUBSET_REL,
   type CapabilityMapRow,
@@ -235,7 +236,7 @@ export async function runCapabilityDoctor(
 }
 
 /**
- * Human-readable doctor report using Bun display utils (not console.table).
+ * Human-readable doctor report — framed + aligned (Bun.color · stringWidth · inspect.table).
  * @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options
  */
 export function formatCapabilityDoctorHuman(
@@ -243,62 +244,57 @@ export function formatCapabilityDoctorHuman(
   opts: { columns?: number; elapsedNs?: number } = {}
 ): string {
   const columns =
-    opts.columns ?? (typeof process !== 'undefined' ? process.stdout?.columns : undefined) ?? 100;
-  const status = report.ok ? 'OK' : 'FAIL';
-  const lines: string[] = [];
-
-  const headline = `capability doctor  bun=${report.bunVersion}  pass-cli=${report.passCliVersion ?? '—'}  ${status}`;
-  lines.push(headline);
-  lines.push(
-    `  checked minBun=${report.checked.minBunRows}  minPassCli=${report.checked.minPassCliRows}  rows=${report.rowCount}`
-  );
-
-  if (report.failing.length) {
-    lines.push(`  failing (${report.failing.length}):`);
-    const rows = report.failing.slice(0, 20).map(f => ({
-      capability: f.capability,
-      field: f.field,
-      range: f.range,
-      actual: f.actual,
-    }));
-    // Bun.inspect.table returns a string (unlike console.table).
-    const table = Bun.inspect.table(rows, ['capability', 'field', 'range', 'actual'], {
-      colors: true,
-    });
-    for (const line of table.split('\n')) {
-      lines.push(line);
-    }
-    if (report.failing.length > 20) {
-      lines.push(`  … +${report.failing.length - 20} more`);
-    }
-    // Wrap a plain hint without ANSI for log files
-    const hint = Bun.wrapAnsi(
-      'Fix: upgrade Bun and/or pass-cli, or relax AGENTS version cells then bake:capabilities:update.',
-      Math.max(40, columns - 2),
-      { hard: false, wordWrap: true, trim: true }
-    );
-    for (const h of hint.split('\n')) {
-      lines.push(`  ${h}`);
-    }
-  } else {
-    lines.push('  all structured version floors satisfied on this machine');
-  }
+    opts.columns ?? (typeof process !== 'undefined' ? process.stdout?.columns : undefined) ?? 72;
 
   const proto = Object.entries(report.summary.protocolCounts)
     .map(([k, v]) => `${k}=${v}`)
-    .join(' · ');
-  lines.push(`  protocols: ${proto}`);
+    .join('  ');
 
+  const pairs: Array<[string, string]> = [
+    ['bun', report.bunVersion],
+    ['pass-cli', report.passCliVersion ?? (report.passCliAvailable ? '(unknown)' : 'not found')],
+    [
+      'floors',
+      `minBun ${report.checked.minBunRows}  ·  minPassCli ${report.checked.minPassCliRows}  ·  rows ${report.rowCount}`,
+    ],
+    ['protocols', proto || '—'],
+  ];
   if (opts.elapsedNs != null && Number.isFinite(opts.elapsedNs)) {
-    const ms = opts.elapsedNs / 1e6;
-    lines.push(`  elapsed: ${ms < 1 ? `${ms.toFixed(2)}ms` : `${ms.toFixed(1)}ms`}`);
+    pairs.push(['elapsed', msFromNs(opts.elapsedNs)]);
+  }
+  const body: string[] = [...kvLines(pairs)];
+
+  if (report.failing.length) {
+    body.push('');
+    body.push(cliTone.fail(`${report.failing.length} version floor(s) not met`));
+    const rows = report.failing.slice(0, 12).map(f => ({
+      capability: f.capability.length > 28 ? `${f.capability.slice(0, 27)}…` : f.capability,
+      field: f.field,
+      need: f.range,
+      have: f.actual,
+    }));
+    const table = Bun.inspect.table(rows, ['capability', 'field', 'need', 'have'], {
+      colors: true,
+    });
+    for (const line of table.split('\n')) {
+      if (line.trim()) body.push(line);
+    }
+    if (report.failing.length > 12) {
+      body.push(cliTone.dim(`… +${report.failing.length - 12} more`));
+    }
+    body.push('');
+    body.push(
+      cliTone.dim('fix: upgrade Bun / pass-cli, or bake:capabilities:update after AGENTS edits')
+    );
+  } else {
+    body.push('');
+    body.push(cliTone.ok('all structured version floors satisfied'));
   }
 
-  // Prove stripANSI + stringWidth stay consistent for plain width (no throw).
-  const plain = Bun.stripANSI(lines.join('\n'));
-  void Bun.stringWidth(plain.slice(0, 80));
-
-  return lines.join('\n');
+  return frameBlock('capability doctor', report.ok ? 'OK' : 'FAIL', body, {
+    width: Math.min(columns, 88),
+    ok: report.ok,
+  });
 }
 
 /**
