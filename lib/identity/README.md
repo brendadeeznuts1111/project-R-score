@@ -23,6 +23,7 @@ IP allowlist; HTTP under `/auth/me/*`).
 | `auth_sessions` | `token_hash` (SHA-256) PK — **raw bearer tokens are never stored** — `node_id`, `expires_at` (unix s), `revoked_at`, `ip`, `user_agent`, `impersonator_id` |
 | `auth_audit` | Append-only auth event log (`id`, `node_id`, `action`, `details_json`, `ip`, `success`, `created_at`, `impersonator_id`) |
 | `auth_device_fingerprints` | `(node_id, fingerprint_hash)` trust registry — `first_seen`/`last_seen`, `country_code`, `trusted` |
+| `auth_ip_allowlist` | `(node_id, cidr)` self-service login allowlist — plain IPv4 or IPv4 `/24`, `label`, `created_at` |
 
 ## Anomaly detection (`anomaly.ts`)
 
@@ -100,6 +101,41 @@ Superadmin → partner support access, fully audited:
   pass `impersonatorId` explicitly to `logAuthEvent` — nothing is propagated
   magically.
 
+## Self-service security (`self-service.ts`)
+
+Thin wrapper over narrow `IdentitySystem` accessors — partners manage THEIR
+OWN security only (every function takes the caller's own `nodeId`; there is
+no target-node parameter). HTTP routes are all Bearer-required under
+`/auth/me/*`, scoped to the resolved session's node.
+
+| Route | Body → Response |
+|---|---|
+| `POST /auth/me/password` | `{ currentPassword, newPassword }` → `{ ok, revoked }` · 400 weak (`feedback`) / 401 bad current |
+| `GET /auth/me/sessions` | → `{ sessions: [...] }` (active only; ip, UA, `impersonated` flag — never `token_hash`) |
+| `POST /auth/me/sessions/revoke-others` | → `{ revoked: n }` (current token survives) |
+| `GET /auth/me/devices` | → `{ devices: [...] }` (fingerprint hash truncated to 12 chars) |
+| `POST /auth/me/devices/untrust` | `{ fingerprintHash }` → `{ ok: true }` (full hash or unique ≥12-char prefix) |
+| `GET /auth/me/ip-allowlist` | → `{ entries: [...] }` |
+| `PUT /auth/me/ip-allowlist` | `{ cidrs: string[] }` → `{ ok, count }` · 400 invalid entry |
+
+Library API: `changePassword` (verify current → strength-check new → argon2id
+rehash + `rotated_at` → revoke all OTHER sessions; audits
+`password_change_failed` / `password_changed` / `sessions_revoked`),
+`listSessions`, `revokeOwnSession` ("log out this device"),
+`revokeOtherSessions`, `listDevices`, `untrustDevice` (audits
+`device_untrusted`; `trustDevice` is re-exported from `anomaly.ts`, not
+duplicated), `setIpAllowlist` / `getIpAllowlist`.
+
+**IP allowlist semantics.** Entries are plain IPv4 (`203.0.113.7`) or IPv4
+`/24` (`203.0.113.0/24`) only — other prefix lengths and IPv6 are rejected at
+write time. Enforcement in `login()` runs AFTER the geo gate and BEFORE
+password verification (fail cheap): with ≥1 entries, a `ctx.ip` matching none
+(exact IPv4, or /24 prefix — the documented approximation, same granularity
+as anomaly fingerprints) audits `login_blocked_ip` (success 0) and throws
+`IpNotAllowedError` (HTTP → 403). Empty allowlist → no restriction; absent
+`ctx.ip` → allowed (a missing IP signal never blocks).
+`setIpAllowlist` is replace-all (audits `ip_allowlist_updated` with count).
+
 ## API (`identity.ts`)
 
 ```ts
@@ -127,7 +163,8 @@ identity.close();
 
 Failures: `InvalidCredentialsError` (unknown slug **or** wrong password — never
 distinguish), `AccountLockedError` (carries `lockedUntil`), `GeoBlockedError`
-(carries `country`, HTTP 403), `WeakPasswordError` (carries `feedback`),
+(carries `country`, HTTP 403), `IpNotAllowedError` (carries `ip`, HTTP 403),
+`WeakPasswordError` (carries `feedback`),
 `IdentityError` (validation, duplicate slug, unknown node).
 
 ## HTTP (`http.ts`)
