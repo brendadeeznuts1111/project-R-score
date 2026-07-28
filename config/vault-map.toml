@@ -1,0 +1,172 @@
+# Vault map — environment variable → Proton Pass vault mapping
+# Grounded in: Bun `import config from './file.toml' with { type: 'toml' }`
+# See: https://bun.com/docs/pm/filter?search=type%3Atoml
+#
+# Naming: {DOMAIN}_{SCOPE}_{ROLE}
+#   _TOKEN  = API tokens      _PAT    = Personal Access Tokens
+#   _KEY    = Encryption/SSH   _SECRET = Symmetric secrets
+
+[metadata]
+version = 1
+generated = "2026-07-28T00:00:00Z"
+description = "Env → Proton Pass vault mapping"
+
+[conventions]
+naming = "{DOMAIN}_{SCOPE}_{ROLE}"
+color_api = "Used via Bun.color(hex, 'ansi')"
+icon_path = "Relative path for dashboard; Unicode fallback in terminal"
+
+# ── R2 Storage ──────────────────────────────────────────────────────────────
+[env.R2_ACCESS_KEY_ID]
+vault = "factorywager"
+item = "R2 bun-secrets bucket"
+field = "username"
+label = "R2 Access Key"
+color = "#F38020"
+icon = "assets/icons/r2.svg"
+type = "token"
+
+[env.R2_SECRET_ACCESS_KEY]
+vault = "factorywager"
+item = "R2 bun-secrets bucket"
+field = "password"
+label = "R2 Secret Key"
+color = "#F38020"
+icon = "assets/icons/r2.svg"
+type = "secret"
+
+# ── Registry / API Tokens ───────────────────────────────────────────────────
+[env.FACTORY_WAGER_TOKEN]
+vault = "factorywager"
+item = "FactoryWager Registry Token"
+field = "password"
+label = "Registry Token"
+color = "#6366F1"
+icon = "assets/icons/registry.svg"
+type = "token"
+
+[env.REGISTRY_SECRET]
+vault = "factorywager"
+item = "Registry Dev Secret"
+field = "password"
+label = "Registry Dev Secret"
+color = "#6366F1"
+type = "secret"
+
+# ── Cloudflare ───────────────────────────────────────────────────────────────
+[env.CLOUDFLARE_API_TOKEN]
+vault = "factorywager"
+item = "Cloudflare API Token"
+field = "password"
+label = "Cloudflare API Token"
+color = "#F38020"
+icon = "assets/icons/cloudflare.svg"
+type = "token"
+
+[env.CLOUDFLARE_DNS_API_TOKEN]
+vault = "factorywager"
+item = "Cloudflare API Token (DNS)"
+field = "password"
+label = "Cloudflare DNS Token"
+color = "#F38020"
+icon = "assets/icons/cloudflare.svg"
+type = "token"
+
+# ── Telegram ─────────────────────────────────────────────────────────────────
+[env.TELEGRAM_BOT_FACTORY]
+vault = "factorywager"
+item = "Telegram: factorywager_bot"
+field = "password"
+label = "Telegram Bot Token"
+color = "#26A5E4"
+icon = "assets/icons/telegram.svg"
+type = "token"
+
+[env.TELEGRAM_WEBHOOK_SECRET]
+vault = "factorywager"
+item = "Telegram Webhook Secret"
+field = "password"
+label = "Telegram Webhook Secret"
+color = "#26A5E4"
+type = "secret"
+
+# ── Ops Signing ──────────────────────────────────────────────────────────────
+[env.PLAY_SIGNING_SECRET]
+vault = "factorywager"
+item = "Play Signing Secret"
+field = "password"
+label = "Play Signing Secret"
+color = "#10B981"
+type = "secret"
+
+[env.REPORT_SIGNING_SECRET]
+vault = "factorywager"
+item = "Report Signing Secret"
+field = "password"
+label = "Report Signing Secret"
+color = "#10B981"
+type = "secret"
+
+# ── DOD / Identity / Provisioning ────────────────────────────────────────────
+[env.DOD_PROOF_SECRET]
+vault = "factorywager"
+item = "DOD Proof Secret"
+field = "password"
+label = "DOD Proof Secret"
+color = "#8B5CF6"
+type = "secret"
+
+[env.DOD_ID_ENCRYPTION_KEY]
+vault = "factorywager"
+item = "DOD ID Encryption Key"
+field = "password"
+label = "DOD Encryption Key"
+color = "#8B5CF6"
+type = "key"
+
+[env.PROVISION_ENCRYPTION_KEY]
+vault = "factorywager"
+item = "Provision Encryption Key"
+field = "password"
+label = "Provision Key"
+color = "#8B5CF6"
+type = "key"
+
+# ── SSH Keys ─────────────────────────────────────────────────────────────────
+[env.SSH_DEPLOY_KEY]
+vault = "factorywager"
+item = "SSH Deploy Key"
+field = "note"
+label = "SSH Deploy Key"
+color = "#F59E0B"
+icon = "assets/icons/ssh.svg"
+type = "ssh"
+filename = "id_deploy"
+
+[env.SSH_CASCADE_KEY]
+vault = "factorywager"
+item = "SSH Cascade Key"
+field = "note"
+label = "SSH Cascade Key"
+color = "#F59E0B"
+icon = "assets/icons/ssh.svg"
+type = "ssh"
+filename = "id_cascade"
+
+# ── Personal Access Tokens ───────────────────────────────────────────────────
+[env.GITHUB_TOKEN]
+vault = "factorywager"
+item = "GitHub PAT"
+field = "note"
+label = "GitHub Personal Access Token"
+color = "#2DA44E"
+icon = "assets/icons/github.svg"
+type = "pat"
+
+# ── Backlog ──────────────────────────────────────────────────────────────────
+[backlog]
+human_only = ["OPENAI_API_KEY", "SLACK_WEBHOOK_URL"]
+mintable = [
+  "DOD_PROOF_SECRET", "DOD_ID_ENCRYPTION_KEY", "PROVISION_ENCRYPTION_KEY",
+  "PLAY_SIGNING_SECRET", "REPORT_SIGNING_SECRET",
+]
