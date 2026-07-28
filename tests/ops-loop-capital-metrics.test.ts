@@ -114,7 +114,11 @@ describe('ops loop capital proxies', () => {
     const slice = queryLoopMetricsSlice(db);
     if (slice.limitEfficiencyProxy != null) {
       expect(slice.limitEfficiencyProxy).toBeGreaterThan(0);
-      expect(slice.limitEfficiencyProxy).toBeLessThan(2);
+      // Sanity ceiling on the fixture, not a domain invariant. Current ceiling is
+      // the Stake.com crypto account PAT-004 (lib/toc-ops/venues.ts — "Crypto book,
+      // soft limits": dailyMax 5000 / capital 2400 ≈ 2.08). Adjust deliberately if
+      // a future fixture account exceeds it.
+      expect(slice.limitEfficiencyProxy).toBeLessThan(3);
     }
     db.close();
   });
