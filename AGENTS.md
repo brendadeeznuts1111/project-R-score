@@ -13,6 +13,7 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | Role | Doc |
 |------|-----|
 | This file (agent entry) | [`AGENTS.md`](AGENTS.md) |
+| Human hub / wiki homepage | [`README.md`](README.md) · [wiki.factory-wager.com](https://wiki.factory-wager.com/) |
 | Full agent guide | [`docs/AGENTS.md`](docs/AGENTS.md) (aligned to this entry + UNIFIED / WIRE_BOUNDARY) |
 | Harness JIT index | [`docs/harness/README.md`](docs/harness/README.md) (when NFR unresolved → one owner) |
 | Authority / lanes | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) |
@@ -30,6 +31,10 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | Ops loop throughput | [`docs/harness/tenants/ops-loop-throughput.md`](docs/harness/tenants/ops-loop-throughput.md) · `bun run ops:loop:baseline` / `ops:loop:post` / `ops:outbox:requeue` · claim `ops-loop-throughput` |
 | Factory Telegram | [`docs/harness/tenants/telegram-factory.md`](docs/harness/tenants/telegram-factory.md) · `bun run telegram:verify` · `telegram:ops:consume` · handshake: [`partner-package-group-handshake.md`](docs/harness/tenants/partner-package-group-handshake.md) · `telegram:handshake:catalog` · [`lib/telegram/`](lib/telegram/) |
 | Seat capital desk | [`docs/harness/tenants/seat-capital-desk.md`](docs/harness/tenants/seat-capital-desk.md) · `bun run seat:desk:refresh` · `seat:desk:topic-prompts` · `telegram:package-group:accounting` |
+| Compliance portal (MA/NJ) | [`docs/harness/tenants/compliance-portal.md`](docs/harness/tenants/compliance-portal.md) · `/portal/compliance/` · `bun run compliance:bake` / `compliance:verify` |
+| Identity / auth (Phase 0–2b) | [`lib/identity/README.md`](lib/identity/README.md) · lockout · anomaly · geo · password strength · JIT |
+| Ops snapshot / registry bake | [`docs/harness/tenants/ops-snapshot.md`](docs/harness/tenants/ops-snapshot.md) · `bun run ops:snapshot` |
+| Proton / vault deploy | [`docs/harness/tenants/proton-integration.md`](docs/harness/tenants/proton-integration.md) · `bun run proton:inject:factorywager:reasonix` |
 | Platform routing (local vs Pages) | [`docs/platform-routing.md`](docs/platform-routing.md) · `bun run check:routes` · `bun run verify:pages-edge` |
 | Bun native capabilities | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) (WebView, markdown.ansi, Terminal/PTY, Bun.Image, cron, UDP) |
 | Bun token/catalog operate | [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · [`lib/docs/docs-artifact-paths.ts`](lib/docs/docs-artifact-paths.ts) (`docs:refresh:fast` daily · `docs:feeds:refresh` · full `docs:refresh`) |

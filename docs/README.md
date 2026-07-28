@@ -12,6 +12,16 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 | Workspace map | [`../STRUCTURE.md`](../STRUCTURE.md) |
 | Coding standards | [`../.custom-instructions.md`](../.custom-instructions.md) · [DEVELOPMENT-STANDARDS.md](./DEVELOPMENT-STANDARDS.md) |
 | Harness JIT | [harness/README.md](./harness/README.md) · `bun run harness:status` |
+| Live surfaces (wiki vs portal) | [`../README.md`](../README.md#live-surfaces) · [platform-routing.md](./platform-routing.md) |
+
+## Live surfaces
+
+| Surface | URL |
+|---------|-----|
+| Wiki | [wiki.factory-wager.com](https://wiki.factory-wager.com/) |
+| Portal | [score.factory-wager.com/portal/](https://score.factory-wager.com/portal/) |
+| Registry | [score.factory-wager.com/registry/](https://score.factory-wager.com/registry/) |
+| Portal weave (JSON) | [portal-weave.json](https://score.factory-wager.com/registry/portal-weave.json) |
 
 ## Boundaries and install
 
@@ -26,6 +36,9 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 | Factory Telegram | [harness/tenants/telegram-factory.md](./harness/tenants/telegram-factory.md) | surfaces · ops consume · templates |
 | Package-group handshake | [harness/tenants/partner-package-group-handshake.md](./harness/tenants/partner-package-group-handshake.md) | readiness · invite gap · 23 lanes |
 | Identity / auth subsystem | [../lib/identity/README.md](../lib/identity/README.md) | lockout · anomaly · geo · JIT |
+| Ops snapshot / registry bake | [harness/tenants/ops-snapshot.md](./harness/tenants/ops-snapshot.md) | `ops:snapshot` · portal embeds |
+| Public plane | [harness/tenants/public-plane.md](./harness/tenants/public-plane.md) | `public:audit:verify` |
+| Proton / vault | [harness/tenants/proton-integration.md](./harness/tenants/proton-integration.md) | CF token · deploy · signing |
 | TOC Ops portal tenant | [harness/tenants/toc-ops.md](./harness/tenants/toc-ops.md) | `/portal/toc` fixture · surface map · MCP boundary |
 | Registry client SDK | [registry-client.md](./registry-client.md) | resolve · download · publish |
 | Bun runtime nits (Phase 1) | [bun-runtime-nits.md](./bun-runtime-nits.md) | inspect · streams · url · file-io |
@@ -60,6 +73,8 @@ PORTAL_VERIFY_BASE=http://127.0.0.1:3000 bun run verify:portal
 bun run verify:portal:static
 bun run compliance:verify
 bun run telegram:handshake:readiness --deep
+bun run ops:snapshot --no-seed
+bun run public:audit:verify
 ```
 
 ## Not SSOT / archives
