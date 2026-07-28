@@ -186,7 +186,7 @@ Object-inspection depth is controlled project-wide via [`lib/console-depth.ts`](
 |------|------------|
 | Repo | claim `console-depth-boundaries` · wrapper [`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts) · [`tests/console-depth.test.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tests/console-depth.test.ts) · [`tools/benchmarks/console-depth-perf.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/benchmarks/console-depth-perf.ts) · wrappers map [`PROOF.md`](docs/harness/PROOF.md#bun-native-utils-wrappers) · hash wrapper `security-hash-boundaries` |
 | Bun | [runtime/console](https://bun.com/docs/runtime/console) · [runtime/utils](https://bun.com/docs/runtime/utils) (`inspect` · `.table` · `.custom` · `stringWidth`) · [hashing](https://bun.com/docs/runtime/hashing) |
-| Other external | [bun-types pin](https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types) |
+| Other external | [Bun repository](https://github.com/oven-sh/bun) · [bun-types current source](https://github.com/oven-sh/bun/tree/main/packages/bun-types) · [bun-types 1.3.14 pin](https://github.com/oven-sh/bun/tree/bun-v1.3.14/packages/bun-types) |
 
 
 ## Grounded capability map

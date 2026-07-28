@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/toml#bun-toml-parse — Bun.TOML
+// @see https://bun.com/docs/runtime/toml — Bun.TOML.stringify
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
@@ -20,19 +23,25 @@ import {
   proofPreview,
   probeRuntimeApi,
   readBunTypesText,
+  readBunTypesPackageMetadata,
   resolveBunTypesDir,
   typesContains,
 } from '../lib/bun-api-proof.ts';
+import {
+  BUN_API_REFERENCE_URL,
+  BUN_REPOSITORY_URL,
+  BUN_TYPES_SOURCE_URL,
+  bunTypesVersionSourceUrl,
+} from '../lib/docs/bun-source-links.ts';
 import { BUN_API_ONELINERS, runOneliner } from './bun-api-oneliners.ts';
 import { OPS_ONELINERS, runOpsOneliner } from './bun-ops-oneliners.ts';
 import { CANONICAL_REFS } from './bun-doc-refs.ts';
 
 export const PROOF_MANIFEST_PATH = 'tools/bun-api-coverage-proof.json';
 
-type DocsEntry = { title: string; url: string; desc?: string; domain?: string; anchors?: string[] };
-
 export type ApiSymbolProof = {
   inTypes: boolean;
+  knownTypeGap: boolean;
   inDocs: boolean;
   docUrl: string | null;
   runtime: string;
@@ -55,12 +64,21 @@ export type VerifyManifest = {
   generated: string;
   bunVersion: string;
   bunTypesDir: string;
+  bunTypesVersion: string;
   docsIndexVersion: string | null;
+  sources: {
+    apiReference: string;
+    bunTypes: string;
+    bunTypesPinned: string;
+    repository: string;
+  };
   summary: {
     demos: number;
     demosPassed: number;
     apis: number;
     apisVerified: number;
+    typesVerified: number;
+    knownTypeGaps: number;
     opsDemos: number;
     apiDemos: number;
   };
@@ -68,18 +86,16 @@ export type VerifyManifest = {
   apis: Record<string, ApiSymbolProof>;
 };
 
-function findDocUrl(api: string, entries: DocsEntry[]): string | null {
-  const canonical = CANONICAL_REFS[api];
-  if (canonical) return canonical;
-  const token = api.split(/[.:]/).pop()!.toLowerCase();
-  for (const e of entries) {
-    const hay = [e.title, e.url, e.desc ?? '', e.domain ?? '', ...(e.anchors ?? [])]
-      .join('\n')
-      .toLowerCase();
-    if (hay.includes(token)) return e.url;
-  }
-  return null;
+function findDocUrl(api: string): string | null {
+  return CANONICAL_REFS[api] ?? null;
 }
+
+const KNOWN_BUN_TYPES_GAPS: Readonly<Record<string, { version: string; reason: string }>> = {
+  'Bun.TOML.stringify': {
+    version: '1.3.14',
+    reason: 'runtime 1.4 API is not declared by the latest published bun-types package',
+  },
+};
 
 type RunnableDemo = {
   id: string; // brand-ok — demo oneliner id
@@ -120,8 +136,8 @@ export async function verifyBunApis(opts?: {
 }): Promise<VerifyManifest> {
   const live = opts?.live ?? false;
   const dts = await readBunTypesText();
+  const bunTypes = await readBunTypesPackageMetadata();
   const docs = (await Bun.file('tools/bun-docs-index.json').json()) as {
-    entries: DocsEntry[];
     bunVersion?: string;
   };
 
@@ -130,23 +146,32 @@ export async function verifyBunApis(opts?: {
 
   const apis: Record<string, ApiSymbolProof> = {};
   let apisVerified = 0;
+  let typesVerified = 0;
+  let knownTypeGaps = 0;
+  const bunTypesPinned = bunTypesVersionSourceUrl(bunTypes.version);
   for (const api of allApis) {
     const inTypes = typesContains(dts, api);
-    const docUrl = findDocUrl(api, docs.entries);
+    const knownGap = KNOWN_BUN_TYPES_GAPS[api];
+    const knownTypeGap = !inTypes && knownGap?.version === bunTypes.version;
+    const docUrl = findDocUrl(api);
     const runtime = await probeRuntimeApi(api);
     const runtimeOk = runtime !== 'undefined';
-    const ok = inTypes && runtimeOk;
+    const ok = (inTypes || knownTypeGap) && docUrl != null && runtimeOk;
     const sha256 = proofHash({
       signature: `${api}|types:${inTypes}|doc:${docUrl}|runtime:${runtime}`,
+      bunTypesSource: bunTypesPinned,
     });
     apis[api] = {
       inTypes,
+      knownTypeGap,
       inDocs: docUrl != null,
       docUrl,
       runtime,
       ok,
       sha256,
     };
+    if (inTypes) typesVerified++;
+    if (knownTypeGap) knownTypeGaps++;
     if (ok) apisVerified++;
   }
 
@@ -162,10 +187,11 @@ export async function verifyBunApis(opts?: {
     } catch (e) {
       runtimeOutput = e instanceof Error ? e.message : String(e);
     }
-    const docUrl = d.apis.map(a => findDocUrl(a, docs.entries)).find(Boolean) ?? null;
+    const docsUrls = d.apis.map(findDocUrl).filter((url): url is string => url != null);
     const hash = proofHash({
       signature: `${d.kind}:${d.id}:${d.apis.join(',')}`,
-      docsUrl: docUrl,
+      docsUrls,
+      bunTypesSource: bunTypesPinned,
       runtimeOutput: runtimeOutput ?? undefined,
     });
     demoProofs.push({
@@ -184,12 +210,21 @@ export async function verifyBunApis(opts?: {
     generated: new Date().toISOString(),
     bunVersion: Bun.version,
     bunTypesDir: resolveBunTypesDir(),
+    bunTypesVersion: bunTypes.version,
     docsIndexVersion: docs.bunVersion ?? null,
+    sources: {
+      apiReference: BUN_API_REFERENCE_URL,
+      bunTypes: BUN_TYPES_SOURCE_URL,
+      bunTypesPinned,
+      repository: BUN_REPOSITORY_URL,
+    },
     summary: {
       demos: demos.length,
       demosPassed,
       apis: allApis.length,
       apisVerified,
+      typesVerified,
+      knownTypeGaps,
       opsDemos: demoProofs.filter(d => d.kind === 'ops').length,
       apiDemos: demoProofs.filter(d => d.kind === 'api').length,
     },
@@ -206,16 +241,16 @@ export async function verifyBunApis(opts?: {
 
 function printReport(manifest: VerifyManifest, write: boolean): void {
   const { summary } = manifest;
-  console.log(
-    `Bun ${manifest.bunVersion} · bun-types: ${manifest.bunTypesDir.split('/').slice(-1)[0]}`
-  );
+  console.log(`Bun ${manifest.bunVersion} · bun-types ${manifest.bunTypesVersion}`);
   console.log(
     `Demos: ${summary.demosPassed}/${summary.demos} passed (${summary.apiDemos} api + ${summary.opsDemos} ops)`
   );
   console.log(
-    `APIs: ${summary.apisVerified}/${summary.apis} verified (types+runtime) · doc hits: ${
-      Object.values(manifest.apis).filter(a => a.inDocs).length
-    }/${summary.apis}`
+    `APIs: ${summary.apisVerified}/${summary.apis} validated (types+docs+runtime) · declarations: ${
+      summary.typesVerified
+    }/${summary.apis} exact${
+      summary.knownTypeGaps ? ` + ${summary.knownTypeGaps} pinned upstream gap` : ''
+    } · doc hits: ${Object.values(manifest.apis).filter(a => a.inDocs).length}/${summary.apis}`
   );
 
   const failedDemos = manifest.demos.filter(d => !d.runtimeOk);
@@ -226,9 +261,19 @@ function printReport(manifest: VerifyManifest, write: boolean): void {
 
   const apiMismatches = Object.entries(manifest.apis).filter(([, p]) => !p.ok);
   if (apiMismatches.length) {
-    console.log('\nAPI MISMATCHES (types/runtime):');
+    console.log('\nAPI MISMATCHES (types/docs/runtime):');
     for (const [api, p] of apiMismatches) {
-      console.log(`  ✗ ${api} types:${p.inTypes} runtime:${p.runtime}`);
+      console.log(
+        `  ✗ ${api} types:${p.inTypes} known-gap:${p.knownTypeGap} docs:${p.inDocs} runtime:${p.runtime}`
+      );
+    }
+  }
+
+  const knownGaps = Object.entries(manifest.apis).filter(([, proof]) => proof.knownTypeGap);
+  if (knownGaps.length) {
+    console.log('\nPINNED UPSTREAM TYPE GAPS:');
+    for (const [api] of knownGaps) {
+      console.log(`  △ ${api} — ${KNOWN_BUN_TYPES_GAPS[api]?.reason}`);
     }
   }
 

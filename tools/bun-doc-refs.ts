@@ -67,6 +67,11 @@ import {
   type BundlerNavGroup,
 } from '../lib/docs/bundler-nav';
 import { bunBlog, bunDocs, bunReference, mdnWebApi } from '../lib/docs/bun-site-url.ts';
+import {
+  BUN_REPOSITORY_URL,
+  BUN_TYPES_SOURCE_URL,
+  bunTypesVersionSourceUrl,
+} from '../lib/docs/bun-source-links.ts';
 import type { BunTokenKind, BunTokenStability } from '../lib/docs/bun-token.ts';
 import type { VerificationSubsystem } from '../lib/verification/types.ts';
 import { BUN_CONFIG_INSTALL_VARS } from './bun-install-env.ts';
@@ -606,9 +611,9 @@ const CANONICAL_BUNDLER_URLS = Object.fromEntries(
 // Agent-consumable docs: append `.md` to any bun.com/docs page for raw
 // markdown (e.g. .../environment-variables.md). Full index:
 //   https://bun.com/docs/llms.txt
-export const BUN_TYPES_PINNED =
-  'https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types';
-export const BUN_TYPES_MAIN = 'https://github.com/oven-sh/bun/tree/main/packages/bun-types';
+export const BUN_TYPES_PINNED = bunTypesVersionSourceUrl('1.3.14');
+export const BUN_TYPES_MAIN = BUN_TYPES_SOURCE_URL;
+export const BUN_REPOSITORY = BUN_REPOSITORY_URL;
 
 export const CANONICAL_REFS: Record<string, string> = {
   // ── Terminal width & ANSI (replaces string-width / strip-ansi / wrap-ansi /
@@ -806,8 +811,10 @@ export const CANONICAL_REFS: Record<string, string> = {
   dns: 'https://bun.com/docs/runtime/networking/dns#dns-prefetch',
   'Bun.listen': 'https://bun.com/docs/runtime/networking/tcp#start-a-server-bun-listen',
   'Bun.ArrayBufferSink': 'https://bun.com/docs/runtime/streams#bun-arraybuffersink',
+  'Bun.FileSystemRouter': 'https://bun.com/reference/bun/FileSystemRouter',
 
   // ── Process & spawn ─────────────────────────────────────────────────────
+  'Bun.argv': 'https://bun.com/reference/bun/argv',
   'Bun.spawnSync': 'https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync',
   'Bun.Terminal': 'https://bun.com/docs/runtime/child-process#terminal-pty-support',
   'Bun.Terminal (v1.3.5 ship)':
@@ -838,16 +845,23 @@ export const CANONICAL_REFS: Record<string, string> = {
   // ── Data stores (Redis / S3 / SQL / FFI) ──────────────────────────────────
   // Prefer RedisClient from 'bun' (not ioredis). Streams via client.send().
   RedisClient: 'https://bun.com/docs/runtime/redis#getting-started',
+  'Bun.RedisClient': 'https://bun.com/reference/bun/RedisClient',
   'Bun.redis': 'https://bun.com/docs/runtime/redis#getting-started',
   redis: 'https://bun.com/docs/runtime/redis#getting-started',
   S3Client: 'https://bun.com/docs/runtime/s3#bun-s3client-bun-s3',
   'Bun.s3': 'https://bun.com/docs/runtime/s3#bun-s3client-bun-s3',
   'Bun.sql': 'https://bun.com/docs/runtime/sql#features',
+  'Bun.SQL': 'https://bun.com/reference/bun/SQL',
   'bun:sql': 'https://bun.com/docs/runtime/sql#features',
   'bun:ffi': 'https://bun.com/docs/runtime/ffi#dlopen-usage-bunffi',
 
   // ── Data formats & hashing ──────────────────────────────────────────────
   'Bun.TOML': 'https://bun.com/docs/runtime/toml#bun-toml-parse',
+  'Bun.TOML.parse': 'https://bun.com/reference/bun/TOML/parse',
+  'Bun.TOML.stringify': 'https://bun.com/docs/runtime/toml',
+  'Bun.JSON5': 'https://bun.com/reference/bun/JSON5',
+  'Bun.JSONC': 'https://bun.com/reference/bun/JSONC',
+  'Bun.JSONL': 'https://bun.com/reference/bun/JSONL',
   // Markdown page (html + ansi + render + react)
   'Bun.markdown': 'https://bun.com/docs/runtime/markdown#bun-markdown-html',
   'Bun.markdown.html': 'https://bun.com/docs/runtime/markdown#bun-markdown-html',
@@ -871,6 +885,12 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.YAML': 'https://bun.com/docs/runtime/yaml#bun-yaml-parse',
   YAML: 'https://bun.com/docs/runtime/yaml#bun-yaml-parse',
   'Bun.hash': 'https://bun.com/docs/runtime/hashing#bun-hash',
+  'Bun.hash.crc32': 'https://bun.com/docs/runtime/hashing#bun-hash',
+  'Bun.allocUnsafe': 'https://bun.com/reference/bun/allocUnsafe',
+  'Bun.concatArrayBuffers': 'https://bun.com/reference/bun/concatArrayBuffers',
+  'Bun.gc': 'https://bun.com/reference/bun/gc',
+  'Bun.generateHeapSnapshot': 'https://bun.com/reference/bun/generateHeapSnapshot',
+  'Bun.readableStreamToBytes': 'https://bun.com/reference/bun/readableStreamToBytes',
   'tls.getCACertificates': 'https://bun.com/reference/node/tls/getCACertificates',
   "tls.getCACertificates('system')":
     'https://bun.com/blog/bun-v1.3.14#tls-getcacertificates-system-now-works-without-use-system-ca',
@@ -895,9 +915,14 @@ export const CANONICAL_REFS: Record<string, string> = {
   // SHA-3 family (node:crypto / WebCrypto / Bun.CryptoHasher) shipped in 1.3.13
   'crypto.sha3': 'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
   'Bun.password': 'https://bun.com/docs/runtime/hashing#bun-password',
+  'Bun.password.hash': 'https://bun.com/docs/runtime/hashing#bun-password',
+  'Bun.password.verify': 'https://bun.com/docs/runtime/hashing#bun-password',
   'Bun.secrets': 'https://bun.com/docs/runtime/secrets#bun-secrets-get-options',
   'Bun.semver':
     'https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean',
+  'Bun.semver.order': 'https://bun.com/reference/bun/semver/order',
+  'Bun.semver.satisfies': 'https://bun.com/reference/bun/semver/satisfies',
+  'Bun.Transpiler': 'https://bun.com/reference/bun/Transpiler',
   'Bun.Image': 'https://bun.com/docs/runtime/image#input',
   'Bun.Image (v1.3.14)': 'https://bun.com/blog/bun-v1.3.14#bun-image',
   'Bun.Image terminal methods': 'https://bun.com/blog/bun-v1.3.14#terminal-methods',
@@ -1450,7 +1475,9 @@ export const CANONICAL_REFS: Record<string, string> = {
     'https://bun.com/docs/runtime/bunfig#run-noorphans-dont-leave-orphan-processes-behind',
 
   // ── Meta ───────────────────────────────────────────────────────────────
-  'bun-types': BUN_TYPES_PINNED,
+  'bun-types': BUN_TYPES_MAIN,
+  'bun-types pinned': BUN_TYPES_PINNED,
+  'Bun repository': BUN_REPOSITORY,
   'llms.txt index': 'https://bun.com/docs/llms.txt',
   'markdown docs': 'https://bun.com/docs/runtime/markdown.md',
   // Operational endpoints (verified live; bun.com has no subdomains —
@@ -2042,6 +2069,20 @@ async function suggest(query: string): Promise<void> {
   const runtimeNitsToken =
     CANONICAL_RUNTIME_NITS_TOKENS[query] ?? CANONICAL_RUNTIME_NITS_TOKENS[resolveApiAlias(query)];
   if (mapped) {
+    const upstreamSourceDescription =
+      query === 'bun-types'
+        ? 'Current TypeScript declaration source in the upstream Bun repository.'
+        : query === 'bun-types pinned'
+          ? 'Immutable TypeScript declaration source matching the project bun-types pin.'
+          : query === 'Bun repository'
+            ? 'Canonical upstream source repository for Bun.'
+            : null;
+    if (upstreamSourceDescription) {
+      console.info(`${query} → ${mapped}`);
+      console.info('  (canonical upstream source — tools/bun-doc-refs.ts CANONICAL_REFS)');
+      console.info(`  ${upstreamSourceDescription}`);
+      return;
+    }
     if (platformToken) {
       console.info(`${query} → ${platformToken.url}`);
       console.info(`  kind: ${platformToken.kind}  stability: ${platformToken.stability}`);

@@ -8,6 +8,12 @@
 // @see https://bun.com/docs/runtime/watch-mode — --watch · --hot · --no-clear-screen
 // @see https://bun.com/docs/runtime/debugger — --inspect · --inspect-wait · --inspect-brk
 // @see https://bun.com/docs/runtime/auto-install — --prefer-offline · --install=fallback
+import {
+  BUN_API_REFERENCE_URL,
+  BUN_REPOSITORY_URL,
+  BUN_TYPES_SOURCE_URL,
+} from '../../lib/docs/bun-source-links.ts';
+
 /**
  * Parse Bun general execution options from portal-cli argv and rebuild spawn argv.
  *
@@ -227,6 +233,11 @@ export const BUN_FLAGS_HELP = `Runtime options (via bun):
   Dependency resolution:
     bun --prefer-offline tools/portal-cli.ts ...    skip cache staleness checks
     bun --install=fallback tools/portal-cli.ts ...  install missing packages only
+
+  Canonical Bun sources:
+    API reference: ${BUN_API_REFERENCE_URL}
+    Type declarations: ${BUN_TYPES_SOURCE_URL}
+    Repository: ${BUN_REPOSITORY_URL}
 
   See all options: https://bun.com/docs/runtime/index#general-execution-options
 `;
