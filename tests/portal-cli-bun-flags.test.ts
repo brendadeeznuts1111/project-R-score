@@ -335,4 +335,58 @@ describe('parseBunExecutionFlags', () => {
     expect(p.bunFlags).toEqual(['-i']);
     expect(p.rest).toEqual(['pm', 'ls']);
   });
+
+  test('assessRuntimeFlagsCatalog reports unverified versions without failing', () => {
+    const catalog = [
+      {
+        flag: '--watch',
+        category: 'Development',
+        version: 'Bun ≥1.0',
+        description: 'a',
+        url: 'https://bun.com/docs/runtime',
+        curated: true,
+        versionVerified: false,
+      },
+      {
+        flag: '--hot',
+        category: 'Development',
+        version: 'Bun ≥1.1.0',
+        description: 'b',
+        url: 'https://bun.com/docs/runtime',
+        curated: true,
+        versionVerified: true,
+      },
+    ];
+    const health = assessRuntimeFlagsCatalog(catalog);
+    expect(health.ok).toBe(true);
+    expect(health.unverifiedVersions).toEqual(['--watch']);
+    expect(health.issues).toEqual([]);
+  });
+
+  test('formatRuntimeFlagsTable marks unverified versions with * in verbose mode', () => {
+    const catalog = [
+      {
+        flag: '--watch',
+        category: 'Development',
+        version: 'Bun ≥1.0',
+        description: 'a',
+        url: 'https://bun.com/docs/runtime',
+        curated: true,
+        versionVerified: false,
+      },
+      {
+        flag: '--hot',
+        category: 'Development',
+        version: 'Bun ≥1.1.0',
+        description: 'b',
+        url: 'https://bun.com/docs/runtime',
+        curated: true,
+        versionVerified: true,
+      },
+    ];
+    const table = formatRuntimeFlagsTable({ all: true, verbose: true, catalog });
+    expect(table).toContain('Bun ≥1.0 *');
+    expect(table).toContain('Bun ≥1.1.0');
+    expect(table).not.toContain('Bun ≥1.1.0 *');
+  });
 });

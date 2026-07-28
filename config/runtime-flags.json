@@ -9,7 +9,8 @@
     "default": null,
     "deprecated": false,
     "behavior": "Restarts the process when any imported file changes",
-    "curated": true
+    "curated": true,
+    "versionVerified": false
   },
   {
     "flag": "--hot",
@@ -21,7 +22,8 @@
     "default": null,
     "deprecated": false,
     "behavior": "Hot-reloads modules without a full process restart when possible",
-    "curated": true
+    "curated": true,
+    "versionVerified": false
   },
   {
     "flag": "--no-clear-screen",
@@ -33,7 +35,8 @@
     "default": null,
     "deprecated": false,
     "behavior": "Disables clearing the terminal on each --watch/--hot reload",
-    "curated": true
+    "curated": true,
+    "versionVerified": false
   },
   {
     "flag": "--inspect",
@@ -45,7 +48,8 @@
     "default": null,
     "deprecated": false,
     "behavior": "Optional host:port value; starts inspector without blocking startup",
-    "curated": true
+    "curated": true,
+    "versionVerified": false
   },
   {
     "flag": "--inspect-wait",
@@ -57,7 +61,8 @@
     "default": null,
     "deprecated": false,
     "behavior": "Blocks until a debugger connects, then continues",
-    "curated": true
+    "curated": true,
+    "versionVerified": false
   },
   {
     "flag": "--inspect-brk",
@@ -69,7 +74,8 @@
     "default": null,
     "deprecated": false,
     "behavior": "Starts paused on the first line until a debugger continues",
-    "curated": true
+    "curated": true,
+    "versionVerified": false
   },
   {
     "flag": "--cwd",
@@ -81,7 +87,8 @@
     "default": null,
     "deprecated": false,
     "behavior": "Changes process.cwd before loading the entrypoint",
-    "curated": true
+    "curated": true,
+    "versionVerified": false
   },
   {
     "flag": "--config",
@@ -94,7 +101,8 @@
     "default": null,
     "deprecated": false,
     "behavior": "Loads the given bunfig path instead of discovering one",
-    "curated": true
+    "curated": true,
+    "versionVerified": false
   },
   {
     "flag": "--define",
@@ -107,7 +115,8 @@
     "default": null,
     "deprecated": false,
     "behavior": "Compile-time identifier → literal replacement (e.g. process.env.NODE_ENV:\"production\")",
-    "curated": true
+    "curated": true,
+    "versionVerified": false
   },
   {
     "flag": "--conditions",
@@ -119,7 +128,8 @@
     "default": null,
     "deprecated": false,
     "behavior": "Adds package.json exports conditions for resolution",
-    "curated": true
+    "curated": true,
+    "versionVerified": false
   },
   {
     "flag": "--silent",
@@ -131,7 +141,8 @@
     "default": null,
     "deprecated": false,
     "behavior": "Hides the $ command line Bun prints when running package scripts",
-    "curated": true
+    "curated": true,
+    "versionVerified": false
   },
   {
     "flag": "--smol",
@@ -143,7 +154,8 @@
     "default": null,
     "deprecated": false,
     "behavior": "Trades CPU for a smaller heap via more aggressive GC",
-    "curated": true
+    "curated": true,
+    "versionVerified": false
   },
   {
     "flag": "--prefer-offline",
@@ -155,7 +167,8 @@
     "default": null,
     "deprecated": false,
     "behavior": "Prefers local cache / node_modules without revalidating remoteness",
-    "curated": true
+    "curated": true,
+    "versionVerified": false
   },
   {
     "flag": "--install",
@@ -169,7 +182,8 @@
     "behavior": "Controls auto-install mode; curated help documents =fallback. Runtime bare -i ≡ --install=fallback (standalone catalog row).",
     "helpExample": "fallback",
     "context": "runtime",
-    "curated": true
+    "curated": true,
+    "versionVerified": false
   },
   {
     "flag": "--bun",
@@ -181,7 +195,8 @@
     "takesValue": false,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--if-present",
@@ -192,7 +207,8 @@
     "takesValue": false,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--eval",
@@ -204,7 +220,8 @@
     "takesValue": true,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--print",
@@ -216,7 +233,8 @@
     "takesValue": true,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--shell",
@@ -227,7 +245,8 @@
     "takesValue": true,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--title",
@@ -238,7 +257,8 @@
     "takesValue": true,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--console-depth",
@@ -249,7 +269,8 @@
     "takesValue": true,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--unhandled-rejections",
@@ -260,7 +281,8 @@
     "takesValue": true,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--expose-gc",
@@ -271,7 +293,8 @@
     "takesValue": false,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--no-deprecation",
@@ -282,7 +305,8 @@
     "takesValue": false,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--throw-deprecation",
@@ -293,7 +317,8 @@
     "takesValue": false,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--zero-fill-buffers",
@@ -304,7 +329,8 @@
     "takesValue": false,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--no-addons",
@@ -315,7 +341,8 @@
     "takesValue": false,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--no-install",
@@ -328,7 +355,8 @@
     "deprecated": false,
     "behavior": "No shortcode — runtime -i is NOT --no-install (see standalone -i row)",
     "context": "runtime",
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "-i",
@@ -342,7 +370,8 @@
     "behavior": "Standalone runtime short flag; NOT --no-install. bun update -i is --interactive (PM context — out of this catalog).",
     "equivalentTo": "--install=fallback",
     "context": "runtime",
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--prefer-latest",
@@ -353,7 +382,8 @@
     "takesValue": false,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--preserve-symlinks",
@@ -364,7 +394,8 @@
     "takesValue": false,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--preserve-symlinks-main",
@@ -375,7 +406,8 @@
     "takesValue": false,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--preload",
@@ -387,7 +419,8 @@
     "takesValue": true,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--require",
@@ -398,7 +431,8 @@
     "takesValue": true,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--import",
@@ -409,7 +443,8 @@
     "takesValue": true,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--main-fields",
@@ -420,7 +455,8 @@
     "takesValue": true,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--extension-order",
@@ -431,7 +467,8 @@
     "takesValue": true,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--tsconfig-override",
@@ -442,7 +479,8 @@
     "takesValue": true,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--drop",
@@ -453,7 +491,8 @@
     "takesValue": true,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--loader",
@@ -465,7 +504,8 @@
     "takesValue": true,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--env-file",
@@ -477,7 +517,8 @@
     "default": null,
     "deprecated": false,
     "behavior": "Loads .env-style vars before the entrypoint (shortcode is not -e; -e is --eval)",
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   },
   {
     "flag": "--port",
@@ -488,6 +529,7 @@
     "takesValue": true,
     "default": null,
     "deprecated": false,
-    "curated": false
+    "curated": false,
+    "versionVerified": false
   }
 ]

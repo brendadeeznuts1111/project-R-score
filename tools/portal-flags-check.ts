@@ -62,6 +62,7 @@ if (json) {
       ['shortcode conflicts', String(health.shortcodeConflicts.length)],
       ['bun --help misses', String(health.bunHelpMisses.length)],
       ['help misses', String(health.helpCoverageMisses.length)],
+      ['unverified versions', String(health.unverifiedVersions.length)],
     ]),
   ];
   if (!ok) {
@@ -82,6 +83,14 @@ if (json) {
         skipParity
           ? 'catalog healthy (parity skipped)'
           : 'catalog healthy · harvest sets + bun --help parity + help'
+      )
+    );
+  }
+  if (health.unverifiedVersions.length > 0) {
+    body.push('');
+    body.push(
+      cliTone.warn(
+        `· ${health.unverifiedVersions.length} flag(s) have unverified version (marked * in --verbose; set versionVerified: true after checking Bun release notes)`
       )
     );
   }

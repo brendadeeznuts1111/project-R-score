@@ -62,6 +62,12 @@ export type RuntimeFlagEntry = {
    * Not necessarily another catalog primary flag.
    */
   equivalentTo?: string;
+  /**
+   * True when `version` has been verified against Bun release notes/docs.
+   * False (default) means the version string is an unverified placeholder.
+   * `portal:flags:check` warns when version is present but versionVerified !== true.
+   */
+  versionVerified?: boolean;
 };
 
 export const RUNTIME_FLAGS_CATALOG_PATH = 'config/runtime-flags.json';
@@ -75,6 +81,7 @@ function normalizeEntry(raw: RuntimeFlagEntry): RuntimeFlagEntry {
     deprecated: Boolean(raw.deprecated),
     curated: Boolean(raw.curated),
     context: raw.context ?? DEFAULT_RUNTIME_FLAG_CONTEXT,
+    versionVerified: Boolean(raw.versionVerified),
   };
 }
 
@@ -330,6 +337,8 @@ export type RuntimeFlagsCatalogHealth = {
    * Populated only when assess opts include bunHelpText / parity result.
    */
   bunHelpMisses: string[];
+  /** Flags whose `version` is present but `versionVerified` is not true. */
+  unverifiedVersions: string[];
 };
 
 export type AssessRuntimeFlagsOpts = {
@@ -405,6 +414,7 @@ export function assessRuntimeFlagsCatalog(
   let valueFlags = 0;
   let boolFlags = 0;
   const deprecatedFlags: string[] = [];
+  const unverifiedVersions: string[] = [];
 
   for (const row of catalog) {
     const ctx = row.context ?? DEFAULT_RUNTIME_FLAG_CONTEXT;
@@ -468,6 +478,10 @@ export function assessRuntimeFlagsCatalog(
       schemaIssues.push(`${row.flag}: version must be a string`);
     }
 
+    if (row.version && !row.versionVerified) {
+      unverifiedVersions.push(row.flag);
+    }
+
     if (row.curated) curated++;
     if (row.deprecated) {
       deprecated++;
@@ -516,6 +530,7 @@ export function assessRuntimeFlagsCatalog(
     deprecatedFlags,
     helpCoverageMisses,
     bunHelpMisses,
+    unverifiedVersions,
   };
 }
 
@@ -602,7 +617,7 @@ export function formatRuntimeFlagsTable(opts: FormatRuntimeFlagsTableOpts = {}):
       takesValue: formatTakesValue(r),
     };
     if (opts.verbose) {
-      base.version = r.version;
+      base.version = r.versionVerified ? r.version : `${r.version} *`;
       base.default = r.default == null ? '—' : String(r.default);
       base.deprecated = r.deprecated ? 'yes' : 'no';
       base.behavior = r.behavior ?? '—';
