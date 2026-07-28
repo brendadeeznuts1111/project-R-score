@@ -1,5 +1,5 @@
 /**
- * Branded ID forge — public barrel.
+ * Branded domain-value forge — public barrel.
  *
  * Prefer importing from `lib/types/branded.ts` (stable path) or this index.
  * Domain modules teach by repetition: each exports type + as* + try* + parse* + SPECS.
@@ -8,8 +8,30 @@
  * @see ../brand-manifest.json — living institutional record
  */
 
-export type { Brand, BrandedString, BrandSpec, ConstructorTier, MintAuthority } from './_core.ts';
-export { unbrand, makeId, tryBrandId, parseBrandId, defineBrandConstructors } from './_core.ts';
+export type {
+  Brand,
+  BrandedString,
+  BrandConstructorNames,
+  BrandDomain,
+  BrandKind,
+  BrandName,
+  BrandSpec,
+  ConstructorTier,
+  MintAuthority,
+} from './_core.ts';
+export {
+  brandKindFromName,
+  constructorNamesForBrand,
+  defineBrandConstructors,
+  makeBrandedString,
+  parseBrandedString,
+  tryBrandedString,
+  unbrand,
+  // Compatibility aliases.
+  makeId,
+  parseBrandId,
+  tryBrandId,
+} from './_core.ts';
 
 export * from './session.ts';
 export * from './identity.ts';
@@ -59,6 +81,10 @@ import type {
   ExperimentId,
   ExperimentVariantId,
   ExperimentAssignmentId,
+  PartnerProfileKey,
+  PartnerTemplateId,
+  GateDecisionId,
+  OpsChannelEventId,
   StateCode,
   ZipCode,
 } from './operations.ts';
@@ -76,7 +102,7 @@ export const BRAND_CATALOG: readonly BrandSpec[] = [
   ...PORTAL_BRAND_SPECS,
 ] as const;
 
-/** Union of every branded ID — telemetry/serialization edges that accept any ID. */
+/** Union of every identity brand (all catalog names ending in `Id`). */
 export type AnyId =
   | SessionId
   | TerminalId
@@ -115,9 +141,13 @@ export type AnyId =
   | ExperimentId
   | ExperimentVariantId
   | ExperimentAssignmentId
-  | StateCode
-  | ZipCode
+  | PartnerTemplateId
+  | GateDecisionId
+  | OpsChannelEventId
   | PortalTenantId
   | TelegramUserId
   | PortalAccountId
   | LinkNonceId;
+
+/** Union of all branded strings, including IDs, keys, and validated codes. */
+export type AnyBrandedValue = AnyId | PartnerProfileKey | StateCode | ZipCode;

@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
+// @see https://bun.com/reference/bun/argv — Bun.argv
 /**
  * branded-id-check.ts — detector for unbranded ID declarations.
  *
@@ -78,10 +79,12 @@ type ManifestFile = {
 
 /** Pascal brand name → field aliases (sessionId, SessionId, session_id). */
 function fieldAliasesForBrand(brandName: string): string[] {
-  // SessionId → sessionId, SessionId, session_id
-  const base = brandName.endsWith('Id') ? brandName.slice(0, -2) : brandName;
-  const camel = base.charAt(0).toLowerCase() + base.slice(1) + 'Id';
-  const snake = base.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase() + '_id';
+  const suffix = (['Id', 'Key', 'Code'] as const).find(candidate => brandName.endsWith(candidate));
+  const base = suffix ? brandName.slice(0, -suffix.length) : brandName;
+  const fieldSuffix = suffix ?? '';
+  const camel = base.charAt(0).toLowerCase() + base.slice(1) + fieldSuffix;
+  const snakeBase = base.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
+  const snake = `${snakeBase}${fieldSuffix ? `_${fieldSuffix.toLowerCase()}` : ''}`;
   return [...new Set([brandName, camel, snake])];
 }
 

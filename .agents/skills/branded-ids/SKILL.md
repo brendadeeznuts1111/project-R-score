@@ -1,94 +1,121 @@
 ---
 name: branded-ids
-description: Discover and apply FactoryWager branded ID types (SessionId, AccountId, …). Use when minting IDs, fixing unbranded string fields, or choosing as*/try*/parse* constructors. MANDATORY for any domain *Id — pre-commit blocks bare string.
+description:
+  Discover, add, and apply FactoryWager branded domain values (IDs, keys, and
+  validated codes). Use for any domain *Id, constructor-tier choice, brand
+  catalog or manifest maintenance, and branded-ID gate failures.
 ---
 
-# Branded IDs skill
+# Branded domain values
 
-## Hard rule (agents)
+## Invariant
 
-**Domain ID types MUST be branded strings.** Do not write:
-
-```ts
-sessionId: string
-userId?: string
-function f(accountId: string) { … }
-```
-
-Write:
+Domain identities must not travel as bare strings after the wire, CLI, form, or
+environment boundary.
 
 ```ts
-import { asSessionId, parseUserId, type AccountId, type SessionId } from "lib/types/branded";
+// Wrong
+sessionId: string;
+function load(accountId: string) {}
 
-sessionId: SessionId
-userId?: UserId
-function f(accountId: AccountId) { … }
+// Right
+sessionId: SessionId;
+function load(accountId: AccountId) {}
 ```
 
-Pre-commit runs `bun tools/branded-id-check.ts --staged --strict` with **no baseline**. Mid-line function parameters are detected. Commits that add bare-string domain IDs fail.
+Import consumers from `lib/types/branded.ts`. The forge itself is split across
+eight domain modules under `lib/types/branded/`.
 
-## When to use
+## Start with live discovery
 
-- Adding or typing any `*Id` / `*_id` field or parameter
-- Choosing between `asXId`, `tryXId`, `parseXId`
-- Pre-commit / `check:brands` failures
-- Auditing credential or session boundaries
-
-## Discover (JIT — do not load the whole forge first)
+Do not infer a constructor from memory or load every module first.
 
 ```bash
-bun tools/brand-catalog.ts                 # domains + brand names
-bun tools/brand-catalog.ts session         # one domain
-bun tools/brand-catalog.ts AccountId       # one brand (tiers + mint authority)
-bun tools/brand-catalog.ts identity --json # machine-readable
+bun tools/brand-catalog.ts
+bun tools/brand-catalog.ts operations
+bun tools/brand-catalog.ts AccountId
+bun tools/brand-catalog.ts StateCode --json
 ```
 
-Institutional record: `lib/types/brand-manifest.json`  
-Agent map: `lib/types/branded/README.md`  
-Stable import: `lib/types/branded.ts`  
-Agent entry: `AGENTS.md` (branded IDs are mandatory)  
-Standards: `.custom-instructions.md` · `docs/DEVELOPMENT-STANDARDS.md` (domain strings)  
-Wire boundary: `docs/WIRE_BOUNDARY.md` (`parse*` is the edge; brands travel after it)
+The current contract is 47 branded values across 8 domains:
 
-## Apply
+- 44 IDs represented by `AnyId`
+- `PartnerProfileKey`
+- `StateCode` and `ZipCode`
+- all 47 represented by `AnyBrandedValue`
 
-| Situation | Constructor |
-|-----------|-------------|
-| Required string known good | `asSessionId(value)` |
-| Optional / soft config merge | `tryAccountId(env)` → `undefined` if blank |
-| Wire / JSON / unknown | `parseZoneId(raw.zone_id)` — may throw |
-| Missing credentials | **never** `'' as AccountId` |
+`lib/types/branded/index.ts#BRAND_CATALOG` is the source catalog.
+`lib/types/brand-manifest.json` is generated and must not be hand-edited.
 
-Mint authority (from catalog): `system-internal` · `user-input` · `wire-input`.
+## Choose the constructor tier
 
-## Mandatory check before commit
+| Situation                                             | Tier            |
+| ----------------------------------------------------- | --------------- |
+| Required, trusted interior value or owned system mint | `asX(value)`    |
+| Optional config or soft merge                         | `tryX(value)`   |
+| Wire, JSON, CLI, form, or environment ingress         | `parseX(value)` |
 
-Run this on your diff **before** committing. Pre-commit runs the same command with **no baseline**, so any new bare-string domain ID blocks the commit.
+`as*` and `parse*` throw `BrandValidationError` on invalid input. `try*` returns
+`undefined`. Missing is never represented by an empty branded string.
+
+Format-aware brands retain their owned constructors. For example,
+`asStateCode('ma')` normalizes to `MA`, while `asZipCode` enforces ZIP/ZIP+4.
+
+## Apply at the boundary
+
+1. Parse once at ingress with `parse*` or the domain-specific boundary parser.
+2. Keep the branded type through interior APIs, persistence models, and events.
+3. Use `unbrand()` only at an outbound serialization boundary.
+4. Do not cast one brand to another. Convert through an owned domain function.
+5. Do not forge with `as Type` or `'' as Type`.
+
+Mint authority is catalog metadata:
+
+- `system-internal`: owned generators and factories
+- `user-input`: validated user or operator input
+- `wire-input`: external payloads through `parse*`
+
+## Add or change a brand
+
+1. Confirm no existing brand has the same meaning.
+2. Edit the owning domain module: type, `as*`, `try*`, `parse*`, and
+   `*_BRAND_SPECS`.
+3. Add the type to `AnyId` when its name ends in `Id`; otherwise add it to
+   `AnyBrandedValue`.
+4. Extend the compile-only type proof and runtime catalog test.
+5. Regenerate the manifest.
+6. Run the full brand gate.
+
+```bash
+bun tools/brand-manifest.ts
+bun test tests/branded-catalog.test.ts
+bun run check:brands:all
+```
+
+## Fix gate failures
+
+Run the staged gate before commit:
 
 ```bash
 bun tools/branded-id-check.ts --staged --strict
 ```
 
-If it fails, either brand the field/parameter or explicitly suppress an opaque primary key:
+Brand an owned domain field. Suppress only a genuinely opaque provider key and
+record the reason on the declaration line:
 
 ```ts
-id: string; // brand-ok — opaque entity primary key
+id: string; // brand-ok — opaque provider primary key
 ```
 
-Bare `id: string` / `_id: string` is no longer silently auto-suppressed — every opaque primary key must carry an explicit `// brand-ok` decision.
+The staged strict gate has no baseline. The smart repository gate may
+grandfather legacy lines only; it never permits a new bare-string ID.
 
-## Verify
+## References
 
-```bash
-bun tools/branded-id-check.ts --staged --strict   # your diff (what hooks run)
-bun tools/branded-id-check.ts --smart --strict    # repo-wide
-bun tools/brand-manifest.ts --check
-bun run check:brands:all
-```
-
-Intentional opaque passthrough only: end the line with `// brand-ok`.
-
-## Pattern (every domain module)
-
-`lib/types/branded/{session,identity,documents,security,deployment,audit,operations}.ts` each export:
-`type` + `as*` + `try*` + `parse*` + `*_BRAND_SPECS`.
+- `lib/types/branded/README.md` — complete maintainer contract
+- `lib/types/branded.ts` — stable public import
+- `lib/types/branded/_core.ts` — nominal and constructor semantics
+- `lib/types/brand-manifest.json` — generated machine record
+- `docs/WIRE_BOUNDARY.md` — parse-once boundary policy
+- `tests/branded-types.test-d.ts` — nominal type proof
+- `tests/branded-catalog.test.ts` — catalog and runtime proof

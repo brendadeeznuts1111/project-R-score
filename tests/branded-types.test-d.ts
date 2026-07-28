@@ -14,6 +14,7 @@
 import type {
   AccessKeyId,
   AccountId,
+  AnyBrandedValue,
   AnyId,
   AuditId,
   AuditFindingId,
@@ -27,8 +28,11 @@ import type {
   IdentityId,
   JobId,
   OperationId,
+  PartnerProfileKey,
   PipelineId,
   PolicyId,
+  PortalAccountId,
+  PortalTenantId,
   ProjectId,
   RequestId,
   ResourceId,
@@ -49,18 +53,30 @@ import {
   asAuditFindingId,
   asAuditConceptId,
   asAuditEntryId,
+  asEvidenceId,
   asChallengeId,
   asCorrelationId,
   asDecisionId,
   asDeploymentId,
   asDocumentId,
+  asDocTokenId,
+  asExperimentAssignmentId,
+  asExperimentId,
+  asExperimentVariantId,
   asFeedId,
   asIdentityId,
   asJobId,
+  asGateDecisionId,
+  asLinkNonceId,
   asLoopId,
   asOperationId,
+  asOpsChannelEventId,
+  asPartnerProfileKey,
+  asPartnerTemplateId,
   asPipelineId,
   asPolicyId,
+  asPortalAccountId,
+  asPortalTenantId,
   asProjectId,
   asRequestId,
   asResourceId,
@@ -68,11 +84,15 @@ import {
   asSessionId,
   asSnapshotId,
   asStepId,
+  asStateCode,
   asTerminalId,
   asTokenId,
+  asTelegramUserId,
+  asTreeNodeId,
   asUserId,
   asVersionId,
   asWebhookId,
+  asZipCode,
   asZoneId,
   parseZoneId,
   trySessionId,
@@ -88,6 +108,9 @@ const accessKeyId: AccessKeyId = asAccessKeyId('ak-1');
 const operationId: OperationId = asOperationId('op-1');
 const requestId: RequestId = asRequestId('req-1');
 const documentId: DocumentId = asDocumentId('doc-1');
+const portalTenantId: PortalTenantId = asPortalTenantId('factory');
+const portalAccountId: PortalAccountId = asPortalAccountId('account-1');
+const partnerProfileKey: PartnerProfileKey = asPartnerProfileKey('profile-1');
 
 // @ts-expect-error — SessionId is not a UserId
 const crossAsUser: UserId = sessionId;
@@ -111,6 +134,12 @@ const crossAsToken: TokenId = sessionId;
 
 // @ts-expect-error — DocumentId is not a FeedId
 const crossAsFeed: FeedId = documentId;
+
+// @ts-expect-error — PortalTenantId is not a PortalAccountId
+const crossPortalTenantAsAccount: PortalAccountId = portalTenantId;
+
+// @ts-expect-error — PortalAccountId is not a PortalTenantId
+const crossPortalAccountAsTenant: PortalTenantId = portalAccountId;
 
 const auditFindingId: AuditFindingId = asAuditFindingId('finding-1');
 const auditConceptId: AuditConceptId = asAuditConceptId('concept-1');
@@ -167,42 +196,73 @@ const parseReturnsZone: ZoneId = parseZoneId(wireValue);
 // @ts-expect-error — asUserId mints a UserId, never a SessionId
 const wrongBrandFromCtor: SessionId = asUserId('u-3');
 
-// ─── 6. AnyId accepts every one of the 25 brands ────────────────────────────
+// ─── 6. Aggregate unions cover the complete 47-value catalog ────────────────
 
-const anySession: AnyId = asSessionId('s');
-const anyTerminal: AnyId = asTerminalId('t');
-const anyRequest: AnyId = asRequestId('r');
-const anyCorrelation: AnyId = asCorrelationId('c');
-const anySnapshot: AnyId = asSnapshotId('sn');
-const anyUser: AnyId = asUserId('u');
-const anyAccount: AnyId = asAccountId('a');
-const anyIdentity: AnyId = asIdentityId('i');
-const anyAccessKey: AnyId = asAccessKeyId('ak');
-const anyToken: AnyId = asTokenId('tk');
-const anyDocument: AnyId = asDocumentId('d');
-const anyZone: AnyId = asZoneId('z');
-const anyChallenge: AnyId = asChallengeId('ch');
-const anyPolicy: AnyId = asPolicyId('p');
-const anyDeployment: AnyId = asDeploymentId('dep');
-const anyVersion: AnyId = asVersionId('v');
-const anyAudit: AnyId = asAuditId('au');
-const anyAuditFinding: AnyId = asAuditFindingId('af');
-const anyAuditConcept: AnyId = asAuditConceptId('ac');
-const anyAuditEntry: AnyId = asAuditEntryId('ae');
-const anyOperation: AnyId = asOperationId('op');
-const anyResource: AnyId = asResourceId('res');
-const anyProject: AnyId = asProjectId('pr');
-const anyPipeline: AnyId = asPipelineId('pl');
-const anyJob: AnyId = asJobId('j');
-const anyStep: AnyId = asStepId('st');
-const anyWebhook: AnyId = asWebhookId('wh');
-const anyFeed: AnyId = asFeedId('f');
-const anyRun: AnyId = asRunId('run');
-const anyDecision: AnyId = asDecisionId('dec');
-const anyLoop: AnyId = asLoopId('loop');
+const everyId: readonly AnyId[] = [
+  asSessionId('s'),
+  asTerminalId('t'),
+  asRequestId('r'),
+  asCorrelationId('c'),
+  asSnapshotId('sn'),
+  asUserId('u'),
+  asAccountId('a'),
+  asIdentityId('i'),
+  asAccessKeyId('ak'),
+  asTokenId('tk'),
+  asDocumentId('d'),
+  asZoneId('z'),
+  asDocTokenId('dt'),
+  asChallengeId('ch'),
+  asPolicyId('p'),
+  asDeploymentId('dep'),
+  asVersionId('v'),
+  asAuditId('au'),
+  asAuditFindingId('af'),
+  asAuditConceptId('ac'),
+  asAuditEntryId('ae'),
+  asEvidenceId('ev'),
+  asOperationId('op'),
+  asResourceId('res'),
+  asProjectId('pr'),
+  asPipelineId('pl'),
+  asJobId('j'),
+  asStepId('st'),
+  asWebhookId('wh'),
+  asFeedId('f'),
+  asRunId('run'),
+  asDecisionId('dec'),
+  asLoopId('loop'),
+  asTreeNodeId('tree'),
+  asExperimentId('exp'),
+  asExperimentVariantId('variant'),
+  asExperimentAssignmentId('assignment'),
+  asPartnerTemplateId('template'),
+  asGateDecisionId('gate'),
+  asOpsChannelEventId('event'),
+  asPortalTenantId('factory'),
+  asTelegramUserId('telegram-user'),
+  asPortalAccountId('portal-account'),
+  asLinkNonceId('nonce'),
+];
+
+const everyBrandedValue: readonly AnyBrandedValue[] = [
+  ...everyId,
+  asPartnerProfileKey('profile-key'),
+  asStateCode('MA'),
+  asZipCode('02139'),
+];
+
+// @ts-expect-error — a key is a branded value, not an ID
+const profileKeyAsId: AnyId = partnerProfileKey;
+
+// @ts-expect-error — a validated code is a branded value, not an ID
+const stateCodeAsId: AnyId = asStateCode('NJ');
 
 // @ts-expect-error — a plain string is not any branded ID
 const plainAsAny: AnyId = 'plain';
+
+// @ts-expect-error — a plain string is not any branded domain value
+const plainAsAnyBrandedValue: AnyBrandedValue = 'plain';
 
 // ─── 7. unbrand() ───────────────────────────────────────────────────────────
 //
@@ -229,5 +289,7 @@ export const brandedTypeAssertions = [
   tryReturnsMaybeSession,
   tryReturnsUndefined,
   parseReturnsZone,
+  everyId,
+  everyBrandedValue,
   unbranded,
 ] as const;

@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
+// @see https://bun.com/reference/bun/argv — Bun.argv
 /**
  * brand-manifest.ts — living institutional record for branded IDs.
  *
@@ -11,17 +12,37 @@
  *   bun tools/brand-manifest.ts --json    # print to stdout only
  */
 
-import { BRAND_CATALOG } from '../lib/types/branded/index.ts';
+import {
+  BRAND_CATALOG,
+  brandKindFromName,
+  constructorNamesForBrand,
+  type BrandDomain,
+  type BrandKind,
+  type BrandSpec,
+} from '../lib/types/branded/index.ts';
 
 const MANIFEST_PATH = new URL('../lib/types/brand-manifest.json', import.meta.url).pathname;
 
 type Manifest = {
-  version: 1;
+  version: 2;
   generatedAt: string;
-  source: 'lib/types/branded/ BRAND_CATALOG';
+  source: 'lib/types/branded/index.ts#BRAND_CATALOG';
   brandCount: number;
-  domains: string[];
-  brands: typeof BRAND_CATALOG;
+  domainCount: number;
+  domains: BrandDomain[];
+  kinds: Record<BrandKind, number>;
+  domainCatalog: Array<{
+    name: BrandDomain;
+    module: string;
+    brandCount: number;
+  }>;
+  brands: Array<
+    BrandSpec & {
+      kind: BrandKind;
+      module: string;
+      constructors: ReturnType<typeof constructorNamesForBrand>;
+    }
+  >;
   constructorTiers: {
     as: string;
     try: string;
@@ -32,20 +53,37 @@ type Manifest = {
 };
 
 function buildManifest(): Manifest {
-  const domains = [...new Set(BRAND_CATALOG.map(b => b.domain))].sort();
+  const domains = [...new Set(BRAND_CATALOG.map(b => b.domain))].sort() as BrandDomain[];
+  const brands = BRAND_CATALOG.map(spec => ({
+    ...spec,
+    kind: brandKindFromName(spec.name),
+    module: `lib/types/branded/${spec.domain}.ts`,
+    constructors: constructorNamesForBrand(spec.name),
+  }));
   return {
-    version: 1,
+    version: 2,
     generatedAt: new Date().toISOString(),
-    source: 'lib/types/branded/ BRAND_CATALOG',
+    source: 'lib/types/branded/index.ts#BRAND_CATALOG',
     brandCount: BRAND_CATALOG.length,
+    domainCount: domains.length,
     domains,
-    brands: BRAND_CATALOG,
+    kinds: {
+      id: brands.filter(brand => brand.kind === 'id').length,
+      key: brands.filter(brand => brand.kind === 'key').length,
+      code: brands.filter(brand => brand.kind === 'code').length,
+    },
+    domainCatalog: domains.map(name => ({
+      name,
+      module: `lib/types/branded/${name}.ts`,
+      brandCount: brands.filter(brand => brand.domain === name).length,
+    })),
+    brands,
     constructorTiers: {
-      as: 'Hard mint from string; throws BrandValidationError if empty',
+      as: 'Hard mint from string; throws BrandValidationError if blank or invalid',
       try: 'Soft mint; blank/missing → undefined (never forge empty brand)',
       parse: 'Wire/unknown ingress; fail-closed throw',
     },
-    emptyPolicy: 'Missing IDs are undefined or throw — never empty-string brands',
+    emptyPolicy: 'Missing branded values are undefined or throw — never empty-string brands',
     provenance: 'Set BRAND_PROVENANCE=1 to log brand.mint events at as/parse',
   };
 }

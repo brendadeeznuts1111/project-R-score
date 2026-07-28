@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/reference/bun/argv — Bun.argv
 /**
  * brand-catalog.ts — just-in-time brand discovery for agents and humans.
  *
@@ -18,14 +19,24 @@ const MANIFEST = new URL('../lib/types/brand-manifest.json', import.meta.url).pa
 type Brand = {
   name: string;
   domain: string;
+  kind: 'id' | 'key' | 'code';
+  module: string;
+  constructors: {
+    as: string;
+    try: string;
+    parse: string;
+  };
   tiers: string[];
   mint: string[];
   description: string;
 };
 
 type Manifest = {
+  version: 2;
   brandCount: number;
+  domainCount: number;
   domains: string[];
+  kinds: Record<'id' | 'key' | 'code', number>;
   brands: Brand[];
   constructorTiers: Record<string, string>;
   emptyPolicy: string;
@@ -33,7 +44,11 @@ type Manifest = {
 };
 
 async function load(): Promise<Manifest> {
-  return JSON.parse(await Bun.file(MANIFEST).text()) as Manifest;
+  const manifest = JSON.parse(await Bun.file(MANIFEST).text()) as Manifest;
+  if (manifest.version !== 2 || !Array.isArray(manifest.brands)) {
+    throw new Error('brand-manifest.json schema is stale — run: bun tools/brand-manifest.ts');
+  }
+  return manifest;
 }
 
 function printDomain(m: Manifest, domain: string, asJson: boolean): void {
@@ -55,7 +70,7 @@ function printDomain(m: Manifest, domain: string, asJson: boolean): void {
     console.info(`    ${b.description}`);
     console.info('');
   }
-  console.info(`  import: lib/types/branded/${domain === 'documents' ? 'documents' : domain}.ts`);
+  console.info(`  import: ${brands[0]!.module}`);
   console.info(`  or:     lib/types/branded.ts\n`);
 }
 
@@ -71,14 +86,10 @@ function printBrand(m: Manifest, name: string, asJson: boolean): void {
   }
   console.info(`\n🏷️  ${b.name}  [${b.domain}]\n`);
   console.info(`  ${b.description}`);
-  console.info(
-    `  tiers: as${b.name.replace(/Id$/, '')}Id · try* · parse*  (${b.tiers.join(', ')})`
-  );
+  console.info(`  kind: ${b.kind}`);
+  console.info(`  tiers: ${b.constructors.as} · ${b.constructors.try} · ${b.constructors.parse}`);
   console.info(`  mint authority: ${b.mint.join(', ')}`);
-  console.info(`  constructors: as${b.name} / try${b.name} / parse${b.name}`);
-  console.info(
-    `  module: lib/types/branded/${b.domain === 'documents' ? 'documents' : b.domain}.ts\n`
-  );
+  console.info(`  module: ${b.module}\n`);
 }
 
 function printIndex(m: Manifest, asJson: boolean): void {
@@ -87,8 +98,15 @@ function printIndex(m: Manifest, asJson: boolean): void {
       `${JSON.stringify(
         {
           brandCount: m.brandCount,
+          domainCount: m.domainCount,
+          kinds: m.kinds,
           domains: m.domains,
-          brands: m.brands.map(b => ({ name: b.name, domain: b.domain })),
+          brands: m.brands.map(b => ({
+            name: b.name,
+            domain: b.domain,
+            kind: b.kind,
+            constructors: b.constructors,
+          })),
           constructorTiers: m.constructorTiers,
           emptyPolicy: m.emptyPolicy,
           provenance: m.provenance,
@@ -99,7 +117,10 @@ function printIndex(m: Manifest, asJson: boolean): void {
     );
     return;
   }
-  console.info(`\n🏷️  Brand catalog — ${m.brandCount} brands · ${m.domains.length} domains\n`);
+  console.info(
+    `\n🏷️  Brand catalog — ${m.brandCount} values · ${m.domainCount} domains ` +
+      `(${m.kinds.id} ids · ${m.kinds.key} key · ${m.kinds.code} codes)\n`
+  );
   console.info(`  ${m.emptyPolicy}`);
   console.info(`  ${m.provenance}\n`);
   for (const d of m.domains) {
@@ -121,8 +142,9 @@ async function main(): Promise<void> {
     printIndex(m, asJson);
     return;
   }
-  if (m.domains.includes(query)) {
-    printDomain(m, query, asJson);
+  const domain = m.domains.find(candidate => candidate.toLowerCase() === query.toLowerCase());
+  if (domain) {
+    printDomain(m, domain, asJson);
     return;
   }
   printBrand(m, query, asJson);

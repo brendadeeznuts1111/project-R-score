@@ -1,8 +1,9 @@
 {
-  "version": 1,
-  "generatedAt": "2026-07-27T16:50:32.325Z",
-  "source": "lib/types/branded/ BRAND_CATALOG",
+  "version": 2,
+  "generatedAt": "2026-07-28T20:04:32.038Z",
+  "source": "lib/types/branded/index.ts#BRAND_CATALOG",
   "brandCount": 47,
+  "domainCount": 8,
   "domains": [
     "audit",
     "deployment",
@@ -12,6 +13,53 @@
     "portal",
     "security",
     "session"
+  ],
+  "kinds": {
+    "id": 44,
+    "key": 1,
+    "code": 2
+  },
+  "domainCatalog": [
+    {
+      "name": "audit",
+      "module": "lib/types/branded/audit.ts",
+      "brandCount": 6
+    },
+    {
+      "name": "deployment",
+      "module": "lib/types/branded/deployment.ts",
+      "brandCount": 1
+    },
+    {
+      "name": "documents",
+      "module": "lib/types/branded/documents.ts",
+      "brandCount": 3
+    },
+    {
+      "name": "identity",
+      "module": "lib/types/branded/identity.ts",
+      "brandCount": 5
+    },
+    {
+      "name": "operations",
+      "module": "lib/types/branded/operations.ts",
+      "brandCount": 21
+    },
+    {
+      "name": "portal",
+      "module": "lib/types/branded/portal.ts",
+      "brandCount": 4
+    },
+    {
+      "name": "security",
+      "module": "lib/types/branded/security.ts",
+      "brandCount": 2
+    },
+    {
+      "name": "session",
+      "module": "lib/types/branded/session.ts",
+      "brandCount": 5
+    }
   ],
   "brands": [
     {
@@ -27,7 +75,14 @@
         "user-input",
         "wire-input"
       ],
-      "description": "Interactive terminal / agent session identity"
+      "description": "Interactive terminal / agent session identity",
+      "kind": "id",
+      "module": "lib/types/branded/session.ts",
+      "constructors": {
+        "as": "asSessionId",
+        "try": "trySessionId",
+        "parse": "parseSessionId"
+      }
     },
     {
       "name": "TerminalId",
@@ -41,7 +96,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "PTY / terminal instance identity"
+      "description": "PTY / terminal instance identity",
+      "kind": "id",
+      "module": "lib/types/branded/session.ts",
+      "constructors": {
+        "as": "asTerminalId",
+        "try": "tryTerminalId",
+        "parse": "parseTerminalId"
+      }
     },
     {
       "name": "RequestId",
@@ -55,7 +117,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "HTTP or RPC request correlation handle"
+      "description": "HTTP or RPC request correlation handle",
+      "kind": "id",
+      "module": "lib/types/branded/session.ts",
+      "constructors": {
+        "as": "asRequestId",
+        "try": "tryRequestId",
+        "parse": "parseRequestId"
+      }
     },
     {
       "name": "CorrelationId",
@@ -69,7 +138,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Cross-service distributed trace correlation"
+      "description": "Cross-service distributed trace correlation",
+      "kind": "id",
+      "module": "lib/types/branded/session.ts",
+      "constructors": {
+        "as": "asCorrelationId",
+        "try": "tryCorrelationId",
+        "parse": "parseCorrelationId"
+      }
     },
     {
       "name": "SnapshotId",
@@ -83,7 +159,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Point-in-time state snapshot identity"
+      "description": "Point-in-time state snapshot identity",
+      "kind": "id",
+      "module": "lib/types/branded/session.ts",
+      "constructors": {
+        "as": "asSnapshotId",
+        "try": "trySnapshotId",
+        "parse": "parseSnapshotId"
+      }
     },
     {
       "name": "UserId",
@@ -98,7 +181,14 @@
         "wire-input",
         "system-internal"
       ],
-      "description": "Human or agent principal identity"
+      "description": "Human or agent principal identity",
+      "kind": "id",
+      "module": "lib/types/branded/identity.ts",
+      "constructors": {
+        "as": "asUserId",
+        "try": "tryUserId",
+        "parse": "parseUserId"
+      }
     },
     {
       "name": "AccountId",
@@ -112,7 +202,14 @@
         "wire-input",
         "user-input"
       ],
-      "description": "Cloud account (e.g. Cloudflare/R2 account) — env/wire only, never empty forge"
+      "description": "Cloud account (e.g. Cloudflare/R2 account) — env/wire only, never empty forge",
+      "kind": "id",
+      "module": "lib/types/branded/identity.ts",
+      "constructors": {
+        "as": "asAccountId",
+        "try": "tryAccountId",
+        "parse": "parseAccountId"
+      }
     },
     {
       "name": "IdentityId",
@@ -126,7 +223,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Zero-trust / federated identity record"
+      "description": "Zero-trust / federated identity record",
+      "kind": "id",
+      "module": "lib/types/branded/identity.ts",
+      "constructors": {
+        "as": "asIdentityId",
+        "try": "tryIdentityId",
+        "parse": "parseIdentityId"
+      }
     },
     {
       "name": "AccessKeyId",
@@ -140,7 +244,14 @@
         "wire-input",
         "system-internal"
       ],
-      "description": "S3/R2 access key id (not the secret material)"
+      "description": "S3/R2 access key id (not the secret material)",
+      "kind": "id",
+      "module": "lib/types/branded/identity.ts",
+      "constructors": {
+        "as": "asAccessKeyId",
+        "try": "tryAccessKeyId",
+        "parse": "parseAccessKeyId"
+      }
     },
     {
       "name": "TokenId",
@@ -154,7 +265,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Opaque token handle (not the token secret)"
+      "description": "Opaque token handle (not the token secret)",
+      "kind": "id",
+      "module": "lib/types/branded/identity.ts",
+      "constructors": {
+        "as": "asTokenId",
+        "try": "tryTokenId",
+        "parse": "parseTokenId"
+      }
     },
     {
       "name": "DocumentId",
@@ -168,7 +286,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Wiki / collab document identity"
+      "description": "Wiki / collab document identity",
+      "kind": "id",
+      "module": "lib/types/branded/documents.ts",
+      "constructors": {
+        "as": "asDocumentId",
+        "try": "tryDocumentId",
+        "parse": "parseDocumentId"
+      }
     },
     {
       "name": "ZoneId",
@@ -181,7 +306,14 @@
       "mint": [
         "wire-input"
       ],
-      "description": "DNS / Cloudflare zone — mint from wire via parseZoneId"
+      "description": "DNS / Cloudflare zone — mint from wire via parseZoneId",
+      "kind": "id",
+      "module": "lib/types/branded/documents.ts",
+      "constructors": {
+        "as": "asZoneId",
+        "try": "tryZoneId",
+        "parse": "parseZoneId"
+      }
     },
     {
       "name": "DocTokenId",
@@ -195,7 +327,14 @@
         "wire-input",
         "system-internal"
       ],
-      "description": "Bun documentation token identity (catalog / TokenRef northstar)"
+      "description": "Bun documentation token identity (catalog / TokenRef northstar)",
+      "kind": "id",
+      "module": "lib/types/branded/documents.ts",
+      "constructors": {
+        "as": "asDocTokenId",
+        "try": "tryDocTokenId",
+        "parse": "parseDocTokenId"
+      }
     },
     {
       "name": "ChallengeId",
@@ -209,7 +348,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Auth challenge / proof-of-possession handle"
+      "description": "Auth challenge / proof-of-possession handle",
+      "kind": "id",
+      "module": "lib/types/branded/security.ts",
+      "constructors": {
+        "as": "asChallengeId",
+        "try": "tryChallengeId",
+        "parse": "parseChallengeId"
+      }
     },
     {
       "name": "PolicyId",
@@ -223,7 +369,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Access policy identity"
+      "description": "Access policy identity",
+      "kind": "id",
+      "module": "lib/types/branded/security.ts",
+      "constructors": {
+        "as": "asPolicyId",
+        "try": "tryPolicyId",
+        "parse": "parsePolicyId"
+      }
     },
     {
       "name": "DeploymentId",
@@ -237,7 +390,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Release / deployment instance identity"
+      "description": "Release / deployment instance identity",
+      "kind": "id",
+      "module": "lib/types/branded/deployment.ts",
+      "constructors": {
+        "as": "asDeploymentId",
+        "try": "tryDeploymentId",
+        "parse": "parseDeploymentId"
+      }
     },
     {
       "name": "VersionId",
@@ -251,7 +411,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Secret or config version identity"
+      "description": "Secret or config version identity",
+      "kind": "id",
+      "module": "lib/types/branded/audit.ts",
+      "constructors": {
+        "as": "asVersionId",
+        "try": "tryVersionId",
+        "parse": "parseVersionId"
+      }
     },
     {
       "name": "AuditId",
@@ -265,7 +432,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Audit log entry identity"
+      "description": "Audit log entry identity",
+      "kind": "id",
+      "module": "lib/types/branded/audit.ts",
+      "constructors": {
+        "as": "asAuditId",
+        "try": "tryAuditId",
+        "parse": "parseAuditId"
+      }
     },
     {
       "name": "AuditFindingId",
@@ -279,7 +453,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "FactoryWager audit-finding SSOT primary key"
+      "description": "FactoryWager audit-finding SSOT primary key",
+      "kind": "id",
+      "module": "lib/types/branded/audit.ts",
+      "constructors": {
+        "as": "asAuditFindingId",
+        "try": "tryAuditFindingId",
+        "parse": "parseAuditFindingId"
+      }
     },
     {
       "name": "AuditConceptId",
@@ -293,7 +474,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "FactoryWager audit-concept SSOT primary key"
+      "description": "FactoryWager audit-concept SSOT primary key",
+      "kind": "id",
+      "module": "lib/types/branded/audit.ts",
+      "constructors": {
+        "as": "asAuditConceptId",
+        "try": "tryAuditConceptId",
+        "parse": "parseAuditConceptId"
+      }
     },
     {
       "name": "AuditEntryId",
@@ -307,7 +495,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Polymorphic audit SSOT ref (finding or concept id)"
+      "description": "Polymorphic audit SSOT ref (finding or concept id)",
+      "kind": "id",
+      "module": "lib/types/branded/audit.ts",
+      "constructors": {
+        "as": "asAuditEntryId",
+        "try": "tryAuditEntryId",
+        "parse": "parseAuditEntryId"
+      }
     },
     {
       "name": "EvidenceId",
@@ -321,7 +516,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Screenshot / image evidence row (UUID v7 via Bun.randomUUIDv7)"
+      "description": "Screenshot / image evidence row (UUID v7 via Bun.randomUUIDv7)",
+      "kind": "id",
+      "module": "lib/types/branded/audit.ts",
+      "constructors": {
+        "as": "asEvidenceId",
+        "try": "tryEvidenceId",
+        "parse": "parseEvidenceId"
+      }
     },
     {
       "name": "OperationId",
@@ -335,7 +537,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Batch or async operation handle"
+      "description": "Batch or async operation handle",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asOperationId",
+        "try": "tryOperationId",
+        "parse": "parseOperationId"
+      }
     },
     {
       "name": "ResourceId",
@@ -349,7 +558,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Generic resource pointer (errors, ACL subjects)"
+      "description": "Generic resource pointer (errors, ACL subjects)",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asResourceId",
+        "try": "tryResourceId",
+        "parse": "parseResourceId"
+      }
     },
     {
       "name": "ProjectId",
@@ -363,7 +579,14 @@
         "user-input",
         "wire-input"
       ],
-      "description": "Project / workspace identity"
+      "description": "Project / workspace identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asProjectId",
+        "try": "tryProjectId",
+        "parse": "parseProjectId"
+      }
     },
     {
       "name": "PipelineId",
@@ -377,7 +600,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Transform or CI pipeline identity"
+      "description": "Transform or CI pipeline identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asPipelineId",
+        "try": "tryPipelineId",
+        "parse": "parsePipelineId"
+      }
     },
     {
       "name": "JobId",
@@ -391,7 +621,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Scheduled or queued job identity"
+      "description": "Scheduled or queued job identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asJobId",
+        "try": "tryJobId",
+        "parse": "parseJobId"
+      }
     },
     {
       "name": "StepId",
@@ -405,7 +642,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Pipeline step identity"
+      "description": "Pipeline step identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asStepId",
+        "try": "tryStepId",
+        "parse": "parseStepId"
+      }
     },
     {
       "name": "WebhookId",
@@ -419,7 +663,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Webhook registration identity"
+      "description": "Webhook registration identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asWebhookId",
+        "try": "tryWebhookId",
+        "parse": "parseWebhookId"
+      }
     },
     {
       "name": "FeedId",
@@ -433,7 +684,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "RSS / event feed identity"
+      "description": "RSS / event feed identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asFeedId",
+        "try": "tryFeedId",
+        "parse": "parseFeedId"
+      }
     },
     {
       "name": "RunId",
@@ -446,7 +704,14 @@
       "mint": [
         "system-internal"
       ],
-      "description": "Benchmark / search-loop run identity"
+      "description": "Benchmark / search-loop run identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asRunId",
+        "try": "tryRunId",
+        "parse": "parseRunId"
+      }
     },
     {
       "name": "DecisionId",
@@ -460,7 +725,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Decision evidence record identity"
+      "description": "Decision evidence record identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asDecisionId",
+        "try": "tryDecisionId",
+        "parse": "parseDecisionId"
+      }
     },
     {
       "name": "LoopId",
@@ -473,7 +745,14 @@
       "mint": [
         "system-internal"
       ],
-      "description": "Search / maintenance loop identity"
+      "description": "Search / maintenance loop identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asLoopId",
+        "try": "tryLoopId",
+        "parse": "parseLoopId"
+      }
     },
     {
       "name": "TreeNodeId",
@@ -487,7 +766,14 @@
         "system-internal",
         "wire-input"
       ],
-      "description": "Ops tree node (partner / agent / sub_agent) identity"
+      "description": "Ops tree node (partner / agent / sub_agent) identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asTreeNodeId",
+        "try": "tryTreeNodeId",
+        "parse": "parseTreeNodeId"
+      }
     },
     {
       "name": "ExperimentId",
@@ -502,7 +788,14 @@
         "user-input",
         "wire-input"
       ],
-      "description": "Factorial or multi-variant experiment identity"
+      "description": "Factorial or multi-variant experiment identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asExperimentId",
+        "try": "tryExperimentId",
+        "parse": "parseExperimentId"
+      }
     },
     {
       "name": "ExperimentVariantId",
@@ -515,7 +808,14 @@
       "mint": [
         "system-internal"
       ],
-      "description": "One design cell (factor combination) in an experiment"
+      "description": "One design cell (factor combination) in an experiment",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asExperimentVariantId",
+        "try": "tryExperimentVariantId",
+        "parse": "parseExperimentVariantId"
+      }
     },
     {
       "name": "ExperimentAssignmentId",
@@ -528,7 +828,14 @@
       "mint": [
         "system-internal"
       ],
-      "description": "Sticky partner-to-variant assignment row"
+      "description": "Sticky partner-to-variant assignment row",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asExperimentAssignmentId",
+        "try": "tryExperimentAssignmentId",
+        "parse": "parseExperimentAssignmentId"
+      }
     },
     {
       "name": "PartnerProfileKey",
@@ -541,7 +848,14 @@
       "mint": [
         "system-internal"
       ],
-      "description": "Partner profile binding key for tree node ↔ template"
+      "description": "Partner profile binding key for tree node ↔ template",
+      "kind": "key",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asPartnerProfileKey",
+        "try": "tryPartnerProfileKey",
+        "parse": "parsePartnerProfileKey"
+      }
     },
     {
       "name": "PartnerTemplateId",
@@ -555,7 +869,14 @@
         "user-input",
         "wire-input"
       ],
-      "description": "Partner onboarding template identifier"
+      "description": "Partner onboarding template identifier",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asPartnerTemplateId",
+        "try": "tryPartnerTemplateId",
+        "parse": "parsePartnerTemplateId"
+      }
     },
     {
       "name": "GateDecisionId",
@@ -568,7 +889,14 @@
       "mint": [
         "system-internal"
       ],
-      "description": "Policy gate decision row for play dispatch"
+      "description": "Policy gate decision row for play dispatch",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asGateDecisionId",
+        "try": "tryGateDecisionId",
+        "parse": "parseGateDecisionId"
+      }
     },
     {
       "name": "OpsChannelEventId",
@@ -581,7 +909,14 @@
       "mint": [
         "system-internal"
       ],
-      "description": "Unified ops channel outbox event id"
+      "description": "Unified ops channel outbox event id",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asOpsChannelEventId",
+        "try": "tryOpsChannelEventId",
+        "parse": "parseOpsChannelEventId"
+      }
     },
     {
       "name": "StateCode",
@@ -595,7 +930,14 @@
         "user-input",
         "wire-input"
       ],
-      "description": "US state jurisdiction code for regulatory scoping (MA, NJ, …)"
+      "description": "US state jurisdiction code for regulatory scoping (MA, NJ, …)",
+      "kind": "code",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asStateCode",
+        "try": "tryStateCode",
+        "parse": "parseStateCode"
+      }
     },
     {
       "name": "ZipCode",
@@ -609,7 +951,14 @@
         "user-input",
         "wire-input"
       ],
-      "description": "US ZIP or ZIP+4 postal code (discrete geo column)"
+      "description": "US ZIP or ZIP+4 postal code (discrete geo column)",
+      "kind": "code",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asZipCode",
+        "try": "tryZipCode",
+        "parse": "parseZipCode"
+      }
     },
     {
       "name": "PortalTenantId",
@@ -623,7 +972,14 @@
         "user-input",
         "wire-input"
       ],
-      "description": "Multi-tenant portal tenant key (factory | science | tennis)"
+      "description": "Multi-tenant portal tenant key (factory | science | tennis)",
+      "kind": "id",
+      "module": "lib/types/branded/portal.ts",
+      "constructors": {
+        "as": "asPortalTenantId",
+        "try": "tryPortalTenantId",
+        "parse": "parsePortalTenantId"
+      }
     },
     {
       "name": "TelegramUserId",
@@ -636,7 +992,14 @@
       "mint": [
         "wire-input"
       ],
-      "description": "Telegram user id from Bot API"
+      "description": "Telegram user id from Bot API",
+      "kind": "id",
+      "module": "lib/types/branded/portal.ts",
+      "constructors": {
+        "as": "asTelegramUserId",
+        "try": "tryTelegramUserId",
+        "parse": "parseTelegramUserId"
+      }
     },
     {
       "name": "PortalAccountId",
@@ -649,7 +1012,14 @@
       "mint": [
         "system-internal"
       ],
-      "description": "Portal user account primary key (UUID v7)"
+      "description": "Portal user account primary key (UUID v7)",
+      "kind": "id",
+      "module": "lib/types/branded/portal.ts",
+      "constructors": {
+        "as": "asPortalAccountId",
+        "try": "tryPortalAccountId",
+        "parse": "parsePortalAccountId"
+      }
     },
     {
       "name": "LinkNonceId",
@@ -662,14 +1032,21 @@
       "mint": [
         "system-internal"
       ],
-      "description": "Telegram link nonce for account binding"
+      "description": "Telegram link nonce for account binding",
+      "kind": "id",
+      "module": "lib/types/branded/portal.ts",
+      "constructors": {
+        "as": "asLinkNonceId",
+        "try": "tryLinkNonceId",
+        "parse": "parseLinkNonceId"
+      }
     }
   ],
   "constructorTiers": {
-    "as": "Hard mint from string; throws BrandValidationError if empty",
+    "as": "Hard mint from string; throws BrandValidationError if blank or invalid",
     "try": "Soft mint; blank/missing → undefined (never forge empty brand)",
     "parse": "Wire/unknown ingress; fail-closed throw"
   },
-  "emptyPolicy": "Missing IDs are undefined or throw — never empty-string brands",
+  "emptyPolicy": "Missing branded values are undefined or throw — never empty-string brands",
   "provenance": "Set BRAND_PROVENANCE=1 to log brand.mint events at as/parse"
 }
