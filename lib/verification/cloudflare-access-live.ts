@@ -1,10 +1,14 @@
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortController
 // @see https://bun.com/docs/runtime/networking/dns — Bun.dns.lookup
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep (probe retry)
 // @see https://developers.cloudflare.com/cloudflare-one/access-controls/policies/
 // @see https://developers.cloudflare.com/cloudflare-one/access-controls/policies/app-paths/
 /**
  * Live Cloudflare Access enforcement probes (HTTP HEAD/GET, no credentials).
+ *
+ * Host / Access domain values use separated brands from lib/types/branded/surfaces.ts:
+ *   HostId · AccessDomainId (never bare hostname strings after construction).
  *
  * Access enforced signals (unauthenticated request):
  *   - Location → *.cloudflareaccess.com or /cdn-cgi/access/login
@@ -13,13 +17,38 @@
  * Does not apply policies — only observes edge behavior.
  */
 
-export const LEDGER_ACCESS_URL = 'https://ledger.factory-wager.com/';
-export const PORTAL_ACCESS_CUSTOM_URL = 'https://score.factory-wager.com/portal/';
-/** Pages production hostname (Access must cover this too — custom-domain app alone does not). */
-export const PORTAL_ACCESS_PAGES_URL = 'https://project-r-score.pages.dev/portal/';
+import {
+  asAccessDomainId,
+  asHostId,
+  httpsUrlForHost,
+  type AccessDomainId,
+  type HostId,
+} from '../types/branded.ts';
+
+/** Whole-host Access / tunnel surfaces (HostId). */
+export const LEDGER_HOST: HostId = asHostId('ledger.factory-wager.com');
+export const SCORE_HOST: HostId = asHostId('score.factory-wager.com');
+export const PAGES_DEV_HOST: HostId = asHostId('project-r-score.pages.dev');
+export const TERMINAL_HOST: HostId = asHostId('terminal.factory-wager.com');
+export const REASONIX_HOST: HostId = asHostId('reasonix.factory-wager.com');
+
+/** Access app domain fields (host or host/path) — separate from HostId. */
+export const LEDGER_ACCESS_DOMAIN: AccessDomainId = asAccessDomainId('ledger.factory-wager.com');
+export const PORTAL_ACCESS_DOMAIN: AccessDomainId = asAccessDomainId(
+  'score.factory-wager.com/portal'
+);
+export const PORTAL_PAGES_ACCESS_DOMAIN: AccessDomainId = asAccessDomainId(
+  'project-r-score.pages.dev/portal'
+);
+
+export const LEDGER_ACCESS_URL = httpsUrlForHost(LEDGER_HOST, '/');
+export const PORTAL_ACCESS_CUSTOM_URL = httpsUrlForHost(SCORE_HOST, '/portal/');
+/** Pages production hostname (Access must cover this too — custom-domain apps do not cover it alone). */
+export const PORTAL_ACCESS_PAGES_URL = httpsUrlForHost(PAGES_DEV_HOST, '/portal/');
 /** Dangling tunnel host (502, no ingress) — inventory only. */
-export const TERMINAL_HOST_URL = 'https://terminal.factory-wager.com/';
-export const REASONIX_HOSTNAME = 'reasonix.factory-wager.com';
+export const TERMINAL_HOST_URL = httpsUrlForHost(TERMINAL_HOST, '/');
+/** @deprecated use REASONIX_HOST (HostId) */
+export const REASONIX_HOSTNAME = String(REASONIX_HOST);
 
 export type AccessProbeFetch = (
   url: string,
@@ -158,7 +187,7 @@ export async function probePortalAccess(opts?: {
 }
 
 export type HostProbeResult = {
-  host: string;
+  host: HostId;
   /** DNS resolves (A/AAAA). */
   resolves: boolean;
   status: number | null;
@@ -170,9 +199,9 @@ export type HostProbeResult = {
  * DNS lookup via Bun.dns (no dig dependency).
  * @see https://bun.com/docs/runtime/networking/dns
  */
-export async function probeDnsResolves(hostname: string): Promise<boolean> {
+export async function probeDnsResolves(hostname: HostId | string): Promise<boolean> {
   try {
-    const rows = await Bun.dns.lookup(hostname);
+    const rows = await Bun.dns.lookup(String(hostname));
     return Array.isArray(rows) && rows.length > 0;
   } catch {
     return false;
@@ -208,7 +237,7 @@ export async function probeTerminalHost(opts?: {
   fetch?: AccessProbeFetch;
   timeoutMs?: number;
 }): Promise<HostProbeResult> {
-  const host = 'terminal.factory-wager.com';
+  const host = TERMINAL_HOST;
   const resolves = await probeDnsResolves(host);
   if (!resolves) {
     return {
@@ -243,7 +272,7 @@ export async function probeTerminalHost(opts?: {
 
 /** reasonix.factory-wager.com — staged Access app; DNS should not resolve until provisioned. */
 export async function probeReasonixDns(): Promise<HostProbeResult> {
-  const host = REASONIX_HOSTNAME;
+  const host = REASONIX_HOST;
   const resolves = await probeDnsResolves(host);
   return {
     host,

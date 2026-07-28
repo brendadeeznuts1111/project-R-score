@@ -12,6 +12,7 @@
  */
 
 import type {
+  AccessDomainId,
   AccessKeyId,
   AccountId,
   AnyBrandedValue,
@@ -25,6 +26,7 @@ import type {
   DeploymentId,
   DocumentId,
   FeedId,
+  HostId,
   IdentityId,
   JobId,
   OperationId,
@@ -40,6 +42,7 @@ import type {
   SnapshotId,
   StateCode,
   StepId,
+  SurfaceId,
   TerminalId,
   TokenId,
   UserId,
@@ -49,6 +52,7 @@ import type {
 } from '../lib/types/branded.ts';
 import {
   BRAND_GUARDS,
+  asAccessDomainId,
   asAccessKeyId,
   asAccountId,
   asAuditId,
@@ -66,6 +70,7 @@ import {
   asExperimentId,
   asExperimentVariantId,
   asFeedId,
+  asHostId,
   asIdentityId,
   asJobId,
   asGateDecisionId,
@@ -87,6 +92,7 @@ import {
   asSnapshotId,
   asStepId,
   asStateCode,
+  asSurfaceId,
   asTerminalId,
   asTokenId,
   asTelegramUserId,
@@ -125,6 +131,17 @@ const crossAsAccessKey: AccessKeyId = accountId;
 
 // @ts-expect-error — AccessKeyId is not an AccountId
 const crossAsAccount: AccountId = accessKeyId;
+
+const hostId: HostId = asHostId('ledger.factory-wager.com');
+const accessDomainId: AccessDomainId = asAccessDomainId('score.factory-wager.com/portal');
+const surfaceId: SurfaceId = asSurfaceId('ledger');
+
+// @ts-expect-error — HostId is not an AccessDomainId (path-bearing Access domain stays separate)
+const crossHostAsAccessDomain: AccessDomainId = hostId;
+// @ts-expect-error — AccessDomainId is not a HostId
+const crossAccessDomainAsHost: HostId = accessDomainId;
+// @ts-expect-error — SurfaceId is not a HostId
+const crossSurfaceAsHost: HostId = surfaceId;
 
 // @ts-expect-error — OperationId is not a JobId
 const crossAsJob: JobId = operationId;
@@ -210,7 +227,7 @@ if (isBrandedValue('SessionId', guardInput)) {
   void guardedSession;
 }
 
-// ─── 6. Aggregate unions cover the complete 47-value catalog ────────────────
+// ─── 6. Aggregate unions cover the complete 50-value catalog (47 IDs) ───────
 
 const everyId: readonly AnyId[] = [
   asSessionId('s'),
@@ -257,6 +274,9 @@ const everyId: readonly AnyId[] = [
   asTelegramUserId('telegram-user'),
   asPortalAccountId('portal-account'),
   asLinkNonceId('nonce'),
+  asHostId('ledger.factory-wager.com'),
+  asSurfaceId('ledger'),
+  asAccessDomainId('score.factory-wager.com/portal'),
 ];
 
 const everyBrandedValue: readonly AnyBrandedValue[] = [

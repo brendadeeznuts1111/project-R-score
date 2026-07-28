@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "surfaces-state",
-  "generatedAt": "2026-07-28T22:12:18.073Z",
+  "generatedAt": "2026-07-28T22:33:17.253Z",
   "source": "config/surfaces.toml (dig+curl verified 2026-07-28)",
   "surfaces": [
     {
@@ -29,11 +29,11 @@
       "status": "live",
       "protocol": "https-static+functions",
       "access": "public",
-      "note": "Portal + registry proofs. /portal Access app STAGED (public 200 today).",
+      "note": "Portal + registry proofs. /portal Access applied 2026-07-28 (302 Access).",
       "accessSubpaths": [
         {
           "path": "/portal",
-          "access": "staged"
+          "access": "applied"
         }
       ]
     },
@@ -44,7 +44,13 @@
       "status": "live",
       "protocol": "https-static+functions",
       "access": "public",
-      "note": "Pages hostname + previews — Pages Access control NOT enforced (custom-domain apps do not cover it)."
+      "note": "Pages hostname. /portal Access app applied 2026-07-28 (FactoryWager Portal pages.dev).",
+      "accessSubpaths": [
+        {
+          "path": "/portal",
+          "access": "applied"
+        }
+      ]
     },
     {
       "id": "registry",

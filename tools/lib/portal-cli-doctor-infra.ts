@@ -16,8 +16,10 @@
 
 import { joinPath } from '../../scripts/lib/fs-bun.ts';
 import {
+  LEDGER_ACCESS_DOMAIN,
   LEDGER_ACCESS_URL,
   PORTAL_ACCESS_CUSTOM_URL,
+  PORTAL_ACCESS_DOMAIN,
   PORTAL_ACCESS_PAGES_URL,
   probeCloudflareAccess,
   probePortalAccess,
@@ -32,8 +34,9 @@ const ACCESS_DOCS = 'https://developers.cloudflare.com/cloudflare-one/access-con
 const ACCESS_POLICY_PATH = '.cloudflare-access.yml';
 const TUNNEL_DOCS = 'docs/harness/tenants/tunnel-inventory.md';
 
-const LEDGER_DOMAIN = 'ledger.factory-wager.com';
-const PORTAL_DOMAIN = 'score.factory-wager.com/portal';
+/** Display labels (AccessDomainId → string at the doctor message boundary). */
+const LEDGER_DOMAIN = String(LEDGER_ACCESS_DOMAIN);
+const PORTAL_DOMAIN = String(PORTAL_ACCESS_DOMAIN);
 
 function withMeta(
   base: PortalDoctorCheck,

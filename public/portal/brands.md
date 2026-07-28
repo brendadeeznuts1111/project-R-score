@@ -3,7 +3,7 @@
 Portal: [/portal/brands/](/portal/brands/)
 Machine artifact: [/registry/brand-keymap.json](/registry/brand-keymap.json)
 
-The keymap joins the canonical 47-value brand catalog with tracked-source
+The keymap joins the canonical 50-value brand catalog with tracked-source
 coverage and per-project adoption evidence.
 
 ## Constructor tiers

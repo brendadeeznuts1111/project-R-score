@@ -2,7 +2,7 @@
  * branded.ts — stable import path for branded domain strings.
  *
  * Implementation lives in domain modules under `lib/types/branded/`:
- *   session · identity · documents · security · deployment · audit · operations · portal
+ *   session · identity · documents · security · deployment · audit · operations · portal · surfaces
  * Each module repeats the same pattern (type + as* + try* + parse* + SPECS)
  * so agents learn the invariant by structure, not by one dense file.
  *

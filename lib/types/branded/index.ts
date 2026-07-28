@@ -46,6 +46,7 @@ export * from './deployment.ts';
 export * from './audit.ts';
 export * from './operations.ts';
 export * from './portal.ts';
+export * from './surfaces.ts';
 
 import { createBrandGuard, type BrandGuard, type BrandedString, type BrandSpec } from './_core.ts';
 import { SESSION_BRAND_SPECS } from './session.ts';
@@ -56,6 +57,7 @@ import { DEPLOYMENT_BRAND_SPECS } from './deployment.ts';
 import { AUDIT_BRAND_SPECS } from './audit.ts';
 import { OPERATIONS_BRAND_SPECS } from './operations.ts';
 import { PORTAL_BRAND_SPECS } from './portal.ts';
+import { SURFACES_BRAND_SPECS } from './surfaces.ts';
 
 import type { SessionId, TerminalId, RequestId, CorrelationId, SnapshotId } from './session.ts';
 import type { UserId, AccountId, IdentityId, AccessKeyId, TokenId } from './identity.ts';
@@ -94,6 +96,7 @@ import type {
   ZipCode,
 } from './operations.ts';
 import type { PortalTenantId, TelegramUserId, PortalAccountId, LinkNonceId } from './portal.ts';
+import type { HostId, SurfaceId, AccessDomainId } from './surfaces.ts';
 
 /** Full institutional catalog — SSOT for brand-manifest generation. */
 export const BRAND_CATALOG = [
@@ -105,6 +108,7 @@ export const BRAND_CATALOG = [
   ...AUDIT_BRAND_SPECS,
   ...OPERATIONS_BRAND_SPECS,
   ...PORTAL_BRAND_SPECS,
+  ...SURFACES_BRAND_SPECS,
 ] as const satisfies readonly BrandSpec[];
 
 export type CatalogBrandName = (typeof BRAND_CATALOG)[number]['name'];
@@ -170,7 +174,10 @@ export type AnyId =
   | PortalTenantId
   | TelegramUserId
   | PortalAccountId
-  | LinkNonceId;
+  | LinkNonceId
+  | HostId
+  | SurfaceId
+  | AccessDomainId;
 
 /** Union of all branded strings, including IDs, keys, and validated codes. */
 export type AnyBrandedValue = AnyId | PartnerProfileKey | StateCode | ZipCode;

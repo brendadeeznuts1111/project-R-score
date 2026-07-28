@@ -37,12 +37,12 @@ bun tools/brand-catalog.ts AccountId
 bun tools/brand-catalog.ts StateCode --json
 ```
 
-The current contract is 47 branded values across 8 domains:
+The current contract is 50 branded values across 9 domains:
 
-- 44 IDs represented by `AnyId`
+- 47 IDs represented by `AnyId` (including surfaces: `HostId`, `SurfaceId`, `AccessDomainId`)
 - `PartnerProfileKey`
 - `StateCode` and `ZipCode`
-- all 47 represented by `AnyBrandedValue`
+- all 50 represented by `AnyBrandedValue`
 
 `lib/types/branded/index.ts#BRAND_CATALOG` is the source catalog.
 `lib/types/brand-manifest.json` is generated and must not be hand-edited.

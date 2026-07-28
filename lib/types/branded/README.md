@@ -10,7 +10,7 @@ text must not travel through the harness as a bare `string`.
 - **Source catalog:** [`index.ts`](./index.ts) → `BRAND_CATALOG`
 - **Generated record:** [`brand-manifest.json`](../brand-manifest.json) — never
   hand-edit
-- **Inventory:** 47 values across 8 domains: 44 IDs, 1 key, and 2 codes
+- **Inventory:** 50 values across 9 domains: 47 IDs, 1 key, and 2 codes
 - **Runtime:** branded values remain ordinary strings; the nominal tag is
   type-only
 - **Shape guards:** `BRAND_GUARDS.isX(value)` and `isBrandedValue(name, value)`
@@ -36,9 +36,12 @@ authoritative.
 | audit      | 6 version, audit, finding, concept, entry, and evidence IDs             | [`audit.ts`](./audit.ts)           |
 | operations | 21 operational IDs plus `PartnerProfileKey`, `StateCode`, and `ZipCode` | [`operations.ts`](./operations.ts) |
 | portal     | 4 portal tenant, Telegram user, portal account, and link-nonce IDs      | [`portal.ts`](./portal.ts)         |
+| surfaces   | 3 host FQDN, surface inventory key, and Access app domain IDs           | [`surfaces.ts`](./surfaces.ts)     |
 
 `StateCode` and `ZipCode` have format-aware constructors. Do not replace those
-constructors with the generic factory.
+constructors with the generic factory. `HostId` / `AccessDomainId` are also
+format-aware (FQDN vs host/path) — never use a path-bearing Access domain as a
+`HostId`.
 
 ## Constructor tiers
 

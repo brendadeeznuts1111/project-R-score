@@ -36,8 +36,12 @@ describe('Cloudflare Access policy', () => {
 
   test('requires the custom-domain portal path without gating the public read plane', async () => {
     const source = await Bun.file(configPath).text();
+    // Replace the app domain field only — not the STATUS comment that also mentions the path.
     const report = verifyCloudflareAccessPolicyText(
-      source.replace('score.factory-wager.com/portal', 'score.factory-wager.com')
+      source.replace(
+        'domain: score.factory-wager.com/portal',
+        'domain: score.factory-wager.com'
+      )
     );
     expect(report.ok).toBe(false);
     expect(report.issues.map(problem => problem.code)).toContain('missing-required-domain');

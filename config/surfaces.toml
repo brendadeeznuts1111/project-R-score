@@ -32,11 +32,11 @@ backend = "cloudflare-pages:project-r-score"
 status = "live"
 protocol = "https-static+functions"
 access = "public"
-note = "Portal + registry proofs. /portal Access app STAGED (public 200 today)."
+note = "Portal + registry proofs. /portal Access applied 2026-07-28 (302 Access)."
 
 [[surfaces.score.accessSubpaths]]
 path = "/portal"
-access = "staged"
+access = "applied"
 
 [surfaces.pages_dev]
 host = "project-r-score.pages.dev"
@@ -44,7 +44,11 @@ backend = "cloudflare-pages:project-r-score"
 status = "live"
 protocol = "https-static+functions"
 access = "public"
-note = "Pages hostname + previews — Pages Access control NOT enforced (custom-domain apps do not cover it)."
+note = "Pages hostname. /portal Access app applied 2026-07-28 (FactoryWager Portal pages.dev)."
+
+[[surfaces.pages_dev.accessSubpaths]]
+path = "/portal"
+access = "applied"
 
 [surfaces.registry]
 host = "registry.factory-wager.com"

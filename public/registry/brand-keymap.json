@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-07-28T20:55:31.700Z",
+  "generatedAt": "2026-07-28T22:33:11.844Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -10,12 +10,12 @@
     "stableImport": "lib/types/branded.ts"
   },
   "summary": {
-    "brands": 47,
-    "domains": 8,
-    "ids": 44,
+    "brands": 50,
+    "domains": 9,
+    "ids": 47,
     "keys": 1,
     "codes": 2,
-    "covered": 30,
+    "covered": 33,
     "referencedUnconstructed": 2,
     "unused": 15,
     "cataloguedProjects": 35,
@@ -88,6 +88,11 @@
       "name": "session",
       "module": "lib/types/branded/session.ts",
       "brandCount": 5
+    },
+    {
+      "name": "surfaces",
+      "module": "lib/types/branded/surfaces.ts",
+      "brandCount": 3
     }
   ],
   "brands": [
@@ -2885,6 +2890,187 @@
             "constructionCalls": 0,
             "guardCalls": 0,
             "files": []
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "HostId",
+      "domain": "surfaces",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Public edge FQDN (no scheme/path) — config/surfaces.toml host",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9-]{2,63}$",
+        "flags": "",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/surfaces.ts",
+      "constructors": {
+        "as": "asHostId",
+        "try": "tryHostId",
+        "parse": "parseHostId"
+      },
+      "guard": "BRAND_GUARDS.isHostId",
+      "coverage": {
+        "status": "covered",
+        "references": 10,
+        "constructors": {
+          "as": 7,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/verification/cloudflare-access-live.ts",
+          "scripts/bake-surfaces.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 10,
+            "constructionCalls": 7,
+            "guardCalls": 0,
+            "files": [
+              "lib/verification/cloudflare-access-live.ts",
+              "scripts/bake-surfaces.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "SurfaceId",
+      "domain": "surfaces",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Surface inventory key (ledger, score, pages_dev, …)",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z][a-z0-9_]{0,62}$",
+        "flags": "",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/surfaces.ts",
+      "constructors": {
+        "as": "asSurfaceId",
+        "try": "trySurfaceId",
+        "parse": "parseSurfaceId"
+      },
+      "guard": "BRAND_GUARDS.isSurfaceId",
+      "coverage": {
+        "status": "covered",
+        "references": 2,
+        "constructors": {
+          "as": 2,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "scripts/bake-surfaces.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 2,
+            "constructionCalls": 2,
+            "guardCalls": 0,
+            "files": [
+              "scripts/bake-surfaces.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "AccessDomainId",
+      "domain": "surfaces",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Cloudflare Access app domain field (host or host/path)",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9-]{2,63}(?:\\/[A-Za-z0-9._~*+/-]+)?",
+        "flags": "",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/surfaces.ts",
+      "constructors": {
+        "as": "asAccessDomainId",
+        "try": "tryAccessDomainId",
+        "parse": "parseAccessDomainId"
+      },
+      "guard": "BRAND_GUARDS.isAccessDomainId",
+      "coverage": {
+        "status": "covered",
+        "references": 6,
+        "constructors": {
+          "as": 4,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/verification/cloudflare-access-live.ts",
+          "scripts/bake-surfaces.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 6,
+            "constructionCalls": 4,
+            "guardCalls": 0,
+            "files": [
+              "lib/verification/cloudflare-access-live.ts",
+              "scripts/bake-surfaces.ts"
+            ]
           },
           "projects": {
             "status": "unused",

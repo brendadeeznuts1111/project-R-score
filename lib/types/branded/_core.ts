@@ -48,7 +48,8 @@ export type BrandDomain =
   | 'deployment'
   | 'audit'
   | 'operations'
-  | 'portal';
+  | 'portal'
+  | 'surfaces';
 export type BrandName = `${string}Id` | `${string}Key` | `${string}Code`;
 export type BrandKind = 'id' | 'key' | 'code';
 export type BrandIngressNormalization = 'trim' | 'trim-uppercase';
