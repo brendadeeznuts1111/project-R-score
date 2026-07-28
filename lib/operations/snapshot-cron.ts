@@ -51,8 +51,14 @@ export type OpsSnapshotCronOpts = {
   forceRouting?: boolean;
   /** Bake compliance-board.json companion (default true; ops-snapshot owns freshness). */
   withCompliance?: boolean;
+  /** Run limit baseline + prediction state preparation before the snapshot. Default true. */
+  prepareState?: boolean;
   /** When true (default), run ops-sync + settle ticks after snapshot in --once mode. */
   withLoopAutomation?: boolean;
+};
+
+export type OpsSnapshotCycleDependencies = {
+  buildSnapshot?: typeof buildRegistrySnapshot;
 };
 
 function tryR2OutboxOpts(): Parameters<typeof settlePendingPlays>[1]['outbox'] {
@@ -166,33 +172,38 @@ export function capturePartnerLimitBaselines(db: Database): { recorded: number }
  * Returns process-style exit code (0 ok, 1 failed).
  */
 export async function runOpsSnapshotCycle(
-  opts: OpsSnapshotCronOpts = {}
+  opts: OpsSnapshotCronOpts = {},
+  dependencies: OpsSnapshotCycleDependencies = {}
 ): Promise<{ code: number; summary?: Record<string, unknown>; error?: string }> {
   try {
-    const db = openOperationsDb();
-    const limitResult = capturePartnerLimitBaselines(db);
-    db.close();
-    if (limitResult.recorded > 0) {
-      console.log(`[${OPS_SNAPSHOT_CRON_TITLE}] recorded ${limitResult.recorded} limit baselines`);
-    }
-    // Limit prediction cycle
-    try {
-      const { runLimitPredictionCycle } = await import('../prediction/limit-prediction.ts');
-      const predDb = openOperationsDb();
-      const predResult = runLimitPredictionCycle(predDb);
-      predDb.close();
-      if (predResult.predictions > 0) {
+    if (opts.prepareState !== false) {
+      const db = openOperationsDb();
+      const limitResult = capturePartnerLimitBaselines(db);
+      db.close();
+      if (limitResult.recorded > 0) {
         console.log(
-          `[${OPS_SNAPSHOT_CRON_TITLE}] limit predictions: ${predResult.predictions} new, ${predResult.backfilled} backfilled`
+          `[${OPS_SNAPSHOT_CRON_TITLE}] recorded ${limitResult.recorded} limit baselines`
         );
       }
-    } catch (e) {
-      console.warn(
-        `[${OPS_SNAPSHOT_CRON_TITLE}] limit prediction cycle skipped:`,
-        e instanceof Error ? e.message : e
-      );
+      // Limit prediction cycle
+      try {
+        const { runLimitPredictionCycle } = await import('../prediction/limit-prediction.ts');
+        const predDb = openOperationsDb();
+        const predResult = runLimitPredictionCycle(predDb);
+        predDb.close();
+        if (predResult.predictions > 0) {
+          console.log(
+            `[${OPS_SNAPSHOT_CRON_TITLE}] limit predictions: ${predResult.predictions} new, ${predResult.backfilled} backfilled`
+          );
+        }
+      } catch (e) {
+        console.warn(
+          `[${OPS_SNAPSHOT_CRON_TITLE}] limit prediction cycle skipped:`,
+          e instanceof Error ? e.message : e
+        );
+      }
     }
-    const summary = await buildRegistrySnapshot({
+    const summary = await (dependencies.buildSnapshot ?? buildRegistrySnapshot)({
       withRouting: opts.withRouting ?? true,
       withReport: opts.withReport ?? true,
       withWebView: opts.withWebView ?? false,

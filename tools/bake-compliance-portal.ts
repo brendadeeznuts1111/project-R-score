@@ -199,15 +199,27 @@ export type BakeCompliancePortalResult = {
   board: ComplianceBoard;
 };
 
+export type BakeCompliancePortalOptions = {
+  /** When false, skip console chatter (ops-snapshot uses a one-liner). Default true. */
+  log?: boolean;
+  /** Registry destination. Tests should provide a disposable directory. */
+  registryDir?: string;
+  /** Portal HTML destination for the JSON embed. Tests should provide a disposable copy. */
+  portalHtmlPath?: string;
+  /** Refresh portal-weave.json in the registry destination. Default true. */
+  writePortalWeave?: boolean;
+};
+
 /**
  * Bake compliance registry + portal embed (offline-safe).
  * Used by `bun run compliance:bake` and as an ops:snapshot companion.
  */
-export async function bakeCompliancePortal(opts?: {
-  /** When false, skip console chatter (ops-snapshot uses a one-liner). Default true. */
-  log?: boolean;
-}): Promise<BakeCompliancePortalResult> {
+export async function bakeCompliancePortal(
+  opts: BakeCompliancePortalOptions = {}
+): Promise<BakeCompliancePortalResult> {
   const log = opts?.log !== false;
+  const registryDir = opts.registryDir ?? REG;
+  const portalHtmlPath = opts.portalHtmlPath ?? PORTAL_HTML;
   if (log) console.info('compliance:bake · building enhancement + shadow artifacts…');
 
   const enhancements = await buildEnhancementReport();
@@ -337,28 +349,36 @@ export async function bakeCompliancePortal(opts?: {
     },
   };
 
-  const boardPath = joinPath(REG, 'compliance-board.json');
+  const boardPath = joinPath(registryDir, 'compliance-board.json');
   await Bun.write(
-    joinPath(REG, 'compliance-enhancements.json'),
+    joinPath(registryDir, 'compliance-enhancements.json'),
     JSON.stringify(enhancements, null, 2) + '\n'
   );
-  await Bun.write(joinPath(REG, 'compliance-shadow.json'), JSON.stringify(shadow, null, 2) + '\n');
+  await Bun.write(
+    joinPath(registryDir, 'compliance-shadow.json'),
+    JSON.stringify(shadow, null, 2) + '\n'
+  );
   await Bun.write(boardPath, JSON.stringify(board, null, 2) + '\n');
 
-  if (await Bun.file(PORTAL_HTML).exists()) {
-    await bakeJsonEmbed(PORTAL_HTML, 'compliance-board-embed', board);
+  if (await Bun.file(portalHtmlPath).exists()) {
+    await bakeJsonEmbed(portalHtmlPath, 'compliance-board-embed', board);
     if (log) console.info(`  baked embed → portal/compliance/index.html`);
   } else if (log) {
-    console.warn(`  skip embed — missing ${PORTAL_HTML}`);
+    console.warn(`  skip embed — missing ${portalHtmlPath}`);
   }
 
-  try {
-    const { buildPortalWeavePayload } = await import('../lib/http/portal-weave.ts');
-    const weave = buildPortalWeavePayload();
-    await Bun.write(joinPath(REG, 'portal-weave.json'), JSON.stringify(weave, null, 2) + '\n');
-    if (log) console.info(`  portal-weave.json refreshed`);
-  } catch (e) {
-    if (log) console.warn('  portal weave skip:', e instanceof Error ? e.message : e);
+  if (opts.writePortalWeave !== false) {
+    try {
+      const { buildPortalWeavePayload } = await import('../lib/http/portal-weave.ts');
+      const weave = buildPortalWeavePayload();
+      await Bun.write(
+        joinPath(registryDir, 'portal-weave.json'),
+        JSON.stringify(weave, null, 2) + '\n'
+      );
+      if (log) console.info(`  portal-weave.json refreshed`);
+    } catch (e) {
+      if (log) console.warn('  portal weave skip:', e instanceof Error ? e.message : e);
+    }
   }
 
   const { isComplianceBoardOk } = await import('../lib/monitoring/compliance-slice.ts');

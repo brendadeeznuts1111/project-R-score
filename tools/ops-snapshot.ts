@@ -138,6 +138,40 @@ async function maybePublishJsonArtifact(
   }
 }
 
+export type ComplianceSnapshotBake = {
+  ok: boolean;
+  enhancements: { passed: number; total: number };
+  shadowMismatches: number;
+  hmac: boolean;
+};
+
+export type ComplianceSnapshotBaker = (options: { log: false }) => Promise<ComplianceSnapshotBake>;
+
+/**
+ * Keep compliance ownership independently testable without running the entire
+ * snapshot pipeline or writing its other public artifacts.
+ */
+export async function runComplianceSnapshotBake(options: {
+  enabled: boolean;
+  bake?: ComplianceSnapshotBaker;
+}): Promise<ComplianceSnapshotBake | null> {
+  if (!options.enabled) return null;
+  const bake =
+    options.bake ??
+    (async (bakeOptions: { log: false }) => {
+      const { bakeCompliancePortal } = await import('./bake-compliance-portal.ts');
+      return bakeCompliancePortal(bakeOptions);
+    });
+  const baked = await bake({ log: false });
+  console.log(
+    `[ops-snapshot] compliance → ${baked.enhancements.passed}/${baked.enhancements.total}` +
+      ` · shadow mismatches=${baked.shadowMismatches}` +
+      (baked.hmac ? ' · hmac' : ' · integrity-only') +
+      (baked.ok ? '' : ' · DEGRADED')
+  );
+  return baked;
+}
+
 export async function buildRegistrySnapshot(options?: {
   withRouting?: boolean;
   withReport?: boolean;
@@ -432,19 +466,10 @@ export async function buildRegistrySnapshot(options?: {
     }
 
     // Compliance board before ops-summary so payload.compliance + monitoring slice are fresh.
-    if (cfg.withCompliance) {
-      try {
-        const { bakeCompliancePortal } = await import('./bake-compliance-portal.ts');
-        const baked = await bakeCompliancePortal({ log: false });
-        console.log(
-          `[ops-snapshot] compliance → ${baked.enhancements.passed}/${baked.enhancements.total}` +
-            ` · shadow mismatches=${baked.shadowMismatches}` +
-            (baked.hmac ? ' · hmac' : ' · integrity-only') +
-            (baked.ok ? '' : ' · DEGRADED')
-        );
-      } catch (e) {
-        console.warn('[ops-snapshot] compliance bake skipped:', e instanceof Error ? e.message : e);
-      }
+    try {
+      await runComplianceSnapshotBake({ enabled: cfg.withCompliance });
+    } catch (e) {
+      console.warn('[ops-snapshot] compliance bake skipped:', e instanceof Error ? e.message : e);
     }
 
     // Monorepo health before ops-summary so payload.monorepoHealth + /registry/monorepo-health.json are fresh.
