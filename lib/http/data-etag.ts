@@ -20,25 +20,25 @@ export type DataVersion<T = unknown> = {
 const dataVersions = new Map<string, DataVersion>();
 
 /** Stable JSON for hashing (sorted object keys). */
-export function stableStringify(value: unknown): string {
+export function stableStringify<T>(value: T): string {
   return JSON.stringify(sortKeys(value));
 }
 
-function sortKeys(value: unknown): unknown {
+function sortKeys<T>(value: T): T {
   if (value === null || typeof value !== 'object') return value;
-  if (Array.isArray(value)) return value.map(sortKeys);
-  const obj = value as Record<string, unknown>;
-  const out: Record<string, unknown> = {};
+  if (Array.isArray(value)) return value.map(sortKeys) as T;
+  const obj = value as Record<string, T>;
+  const out: Record<string, T> = {};
   for (const k of Object.keys(obj).sort()) {
     out[k] = sortKeys(obj[k]);
   }
-  return out;
+  return out as T;
 }
 
 /**
  * ETag from data content. Optional `slice` shortens for debug logs (still unique enough for ops).
  */
-export function computeDataETag(data: unknown, opts: { slice?: number } = {}): string {
+export function computeDataETag<T>(data: T, opts: { slice?: number } = {}): string {
   const hasher = new Bun.CryptoHasher('sha256');
   hasher.update(stableStringify(data));
   const hex = hasher.digest('hex');
@@ -90,9 +90,9 @@ export function notModified(
  * Respond with a rendered format of `data`, using a shared data ETag.
  * Call after isFresh check, or pass request to auto-304.
  */
-export function respondWithSharedETag(
+export function respondWithSharedETag<T>(
   req: Request,
-  data: unknown,
+  data: T,
   render: { body: string; contentType: string },
   opts: {
     /** Cache key for getDataVersion (default: hash only, no cache). */
@@ -105,9 +105,7 @@ export function respondWithSharedETag(
 ): Response {
   const etag =
     opts.etag ??
-    (opts.versionKey
-      ? getDataVersion(opts.versionKey, data).contentHash
-      : computeDataETag(data));
+    (opts.versionKey ? getDataVersion(opts.versionKey, data).contentHash : computeDataETag(data));
 
   if (isFresh(req, etag)) {
     return notModified(etag, {
