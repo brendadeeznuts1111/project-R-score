@@ -73,6 +73,44 @@ Inventory (parse once): [`lib/surfaces/inventory.ts`](../../surfaces/inventory.t
 [`serve-public-bind.md`](../../../docs/harness/tenants/serve-public-bind.md) ·
 `bun run brand:status:once`.
 
+### DNS / Access lineage
+
+Identity stays scheme- and path-free. Transitions are only through the helpers
+below — never cast `AccessDomainId` to `HostId` or stuff `/portal` into a FQDN
+brand.
+
+```mermaid
+flowchart TB
+  HostId["HostId FQDN"]
+  Apex["ApexDomainId"]
+  Sub["SubdomainId"]
+  Access["AccessDomainId"]
+  Url["https URL string"]
+  HostId -->|"splitHostId"| Apex
+  HostId -->|"splitHostId"| Sub
+  Apex -->|"hostIdFromParts"| HostId
+  Sub -->|"hostIdFromParts"| HostId
+  HostId -->|"accessDomainFromHost path?"| Access
+  Access -->|"hostIdFromAccessDomain"| HostId
+  Access -->|"httpsUrlForAccessDomain"| Url
+  HostId -->|"httpsUrlForHost"| Url
+```
+
+| Rule | Detail |
+|------|--------|
+| `HostId` | Full FQDN (`score.factory-wager.com`) — no scheme, no path |
+| `ApexDomainId` | Zone apex (`factory-wager.com`) |
+| `SubdomainId` | Left labels (`score`) or `@` for bare apex |
+| Scheme | Only on URL helpers (`httpsUrlForHost` / `httpsUrlForAccessDomain`) |
+| Path | Only on `AccessDomainId` or the URL path argument — never inside `HostId` |
+| Assignability | `AccessDomainId` ≇ `HostId` — cross only via `hostIdFromAccessDomain` |
+| Ops scope | Cookie / TLS / CORS follow `HostId`, not `SurfaceId` |
+
+Compose: `hostIdFromParts(apex, '@')` → bare apex host; otherwise `sub.apex`.
+Split: `splitHostId` prefers `FACTORY_WAGER_APEX` over the public-suffix
+heuristic. Access: `accessDomainFromHost(host, '/portal' | 'portal')` — both
+normalize to a single path segment (no `//` in probe URLs).
+
 ## Constructor tiers
 
 Every catalog entry exports the same public trio:
