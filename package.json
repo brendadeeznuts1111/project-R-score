@@ -2138,7 +2138,9 @@
     "portal:secret": "bun tools/portal-secret.ts",
     "portal:secret:which": "bun tools/portal-secret.ts which",
     "cn": "bunx --bun shadcn@latest",
-    "cn:sto": "bunx --bun shadcn@latest --cwd projects/active/sports-terminal-os"
+    "cn:sto": "bunx --bun shadcn@latest --cwd projects/active/sports-terminal-os",
+    "bake:capabilities": "bun tools/bake-capability-map.ts --write",
+    "bake:capabilities:check": "bun tools/bake-capability-map.ts --check"
   },
   "dependencies": {
     "@factorywager/docs-tools": "workspace:*",

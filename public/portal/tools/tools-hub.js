@@ -178,6 +178,8 @@ const CAPABILITY_FALLBACK = [
 
 /** @type {string[][]} */
 let capabilityRows = CAPABILITY_FALLBACK.slice();
+/** @type {{ generatedAt?: string, source?: string }|null} */
+let capabilityMeta = null;
 
 /**
  * Normalize registry JSON rows to [capability, api, status, usedIn] tuples.
@@ -203,6 +205,10 @@ async function loadCapabilityRows() {
   const r = await fetchJson('/registry/capability-map-subset.json');
   if (r.ok && r.data) {
     capabilityRows = normalizeCapabilityRows(r.data);
+    capabilityMeta = {
+      generatedAt: r.data.generatedAt,
+      source: r.data.source,
+    };
   }
 }
 
@@ -217,6 +223,10 @@ function fillCapabilityTable() {
         `<tr><td>${cap}</td><td><code>${api}</code></td><td>${status}</td><td><code>${used}</code></td></tr>`
     )
     .join('');
+  const meta = document.getElementById('capability-meta');
+  if (meta && capabilityMeta) {
+    meta.textContent = `${capabilityRows.length} rows · generated ${capabilityMeta.generatedAt || '—'} · source ${capabilityMeta.source || 'AGENTS.md'} · rebake: bun run bake:capabilities`;
+  }
 }
 
 export async function initToolsHub() {
