@@ -52,6 +52,10 @@
     .pkg-dep-svg { width: 100%; max-width: 640px; height: auto; color: var(--text-dim); }
     .pkg-dep-svg .edge-int { stroke: var(--accent, #58a6ff); opacity: 0.45; }
     .pkg-dep-svg .edge-ext { stroke: var(--text-dim); opacity: 0.35; stroke-dasharray: 4 3; }
+    .pkg-dep-svg .edge-page-reg { stroke: var(--accent, #58a6ff); fill: none; }
+    .pkg-dep-svg .node-page { fill: color-mix(in srgb, var(--green, #3dd68c) 45%, #111); stroke: var(--green, #3dd68c); }
+    .pkg-dep-svg .node-reg { fill: color-mix(in srgb, var(--accent, #58a6ff) 45%, #111); stroke: var(--accent, #58a6ff); }
+    .page-reg-svg { margin: 8px 0 12px; max-width: 100%; }
     .pkg-dep-svg .node-pkg { fill: color-mix(in srgb, var(--accent, #58a6ff) 55%, #111); stroke: var(--accent); stroke-width: 1.5; cursor: pointer; }
     .pkg-dep-svg .node-consumed { fill: color-mix(in srgb, var(--green, #3dd68c) 45%, #111); stroke: var(--green, #3dd68c); stroke-width: 1.5; cursor: pointer; }
     .pkg-dep-svg .node-dormant { fill: color-mix(in srgb, var(--yellow, #e6b84d) 40%, #111); stroke: var(--yellow, #e6b84d); stroke-width: 1.5; cursor: pointer; }
@@ -141,7 +145,7 @@
   <main class="main pkg-board">
     <section class="hero">
       <h2>Packages graph map</h2>
-      <p class="hero-sub">Multi-surface inventory · packages/* · lib/STO · portal chrome/brand/theme · registry families (schema v13 · surfaces v2)</p>
+      <p class="hero-sub">Multi-surface · page→registry · lib hubs · orphan triage (schema v13 · surfaces v3)</p>
       <p class="meta" id="gen-meta">Loading…</p>
     </section>
 
@@ -194,6 +198,15 @@
       <ul id="workspace-list"><li>Loading…</li></ul>
       <h3>Portal chrome · brand · registry families</h3>
       <ul id="chrome-list"><li>Loading…</li></ul>
+
+      <h3>Page → registry edges</h3>
+      <p class="meta" id="page-reg-meta">Loading…</p>
+      <div id="page-reg-graph"><p class="pkg-empty">Loading…</p></div>
+      <h3>packages → lib hubs</h3>
+      <ul id="lib-hub-list"><li>Loading…</li></ul>
+      <h3>Orphan registry triage</h3>
+      <p class="meta">Wire candidates should land on a portal board; proofs stay document-only.</p>
+      <ul id="orphan-triage-list"><li>Loading…</li></ul>
     </section>
 
     <table class="pkg-table" aria-label="Package coupling">

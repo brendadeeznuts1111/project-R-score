@@ -14,6 +14,7 @@
  *   pass-cli invite accept | invite list
  *   pass-cli share list | item share | vault share
  *   pass-cli vault member | item member (list/update/remove)
+ *   pass-cli item totp | session | settings | personal-access-token
  *   pass-cli login | info | test
  *
  * Display chrome (label/color/icon): config/vault-map.toml + env.template
@@ -73,6 +74,13 @@ Subcommands:
   member vault …        pass-cli vault member list|update|remove (passthrough)
   member item …         pass-cli item member list|update|remove (passthrough)
                         remove = revoke a share (by --member-share-id)
+  totp <target>         pass-cli item totp (code to stdout)
+                        target: pass://vault/item[/field] OR vault/item[/field]
+  session <lock|unlock|create-lock>
+                        pass-cli session (2.2.x session lock; passthrough)
+  settings <set|…>      pass-cli settings (default vault, output format)
+  pat <list|create|delete|renew|access>
+                        pass-cli personal-access-token (passthrough)
   move <vault/title> --to <vault>
                         pass-cli item move
   trash <vault/title>   pass-cli item trash
@@ -136,6 +144,33 @@ export function viewArgsFromTarget(target: string): string[] {
   const title = parts.length >= 3 ? parts.slice(1, -1).join('/') : parts.slice(1).join('/');
 
   return ['item', 'view', '--vault-name', vault, '--item-title', title, '--field', field];
+}
+
+/**
+ * Map portal target → `pass-cli item totp` args.
+ * Unlike view, --field is only passed when explicitly given — otherwise the
+ * item's own TOTP field is used (2.2.0 also supports ?totp=uri|code on URIs).
+ */
+export function totpArgsFromTarget(target: string): string[] {
+  const t = target.trim();
+  if (!t) throw new Error('empty totp target');
+
+  if (t.startsWith('pass://')) {
+    return ['item', 'totp', t];
+  }
+
+  const parts = t.split('/').filter(Boolean);
+  if (parts.length < 2) {
+    throw new Error(`Invalid target "${t}". Use pass://vault/item[/field] or vault/item[/field]`);
+  }
+
+  const args = ['item', 'totp', '--vault-name', parts[0]!];
+  if (parts.length >= 3) {
+    args.push('--item-title', parts.slice(1, -1).join('/'), '--field', parts[parts.length - 1]!);
+  } else {
+    args.push('--item-title', parts.slice(1).join('/'));
+  }
+  return args;
 }
 
 /** Sanitize item title → ENV var name (upper snake). */
@@ -776,6 +811,53 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
         );
       }
       process.exit(await runPassCli([kind!, 'member', ...rest.slice(1)]));
+      return;
+    }
+
+    case 'totp': {
+      const target = rest[0];
+      if (!target) {
+        cliError('Usage: portal secret totp <pass://vault/item[/field]|vault/item[/field]>');
+      }
+      let args: string[];
+      try {
+        args = totpArgsFromTarget(target);
+      } catch (e) {
+        cliError(e instanceof Error ? e.message : String(e));
+      }
+      const { code, stdout } = await capturePassCli(args);
+      await exitOnFail(code);
+      process.stdout.write(stdout.endsWith('\n') ? stdout : `${stdout}\n`);
+      return;
+    }
+
+    case 'session': {
+      // Thin passthrough: pass-cli session lock|unlock|create-lock (2.2.x).
+      if (!rest[0]) {
+        cliError('Usage: portal secret session <lock|unlock|create-lock> [args…]');
+      }
+      process.exit(await runPassCli(['session', ...rest]));
+      return;
+    }
+
+    case 'settings': {
+      // Thin passthrough: pass-cli settings (default vault, output format).
+      if (!rest[0]) {
+        cliError(
+          'Usage: portal secret settings <subcommand> [args…] — e.g. settings set default-vault <name>'
+        );
+      }
+      process.exit(await runPassCli(['settings', ...rest]));
+      return;
+    }
+
+    case 'pat':
+    case 'personal-access-token': {
+      // Thin passthrough: pass-cli personal-access-token list|create|delete|renew|access.
+      if (!rest[0]) {
+        cliError('Usage: portal secret pat <list|create|delete|renew|access> [args…]');
+      }
+      process.exit(await runPassCli(['personal-access-token', ...rest]));
       return;
     }
 

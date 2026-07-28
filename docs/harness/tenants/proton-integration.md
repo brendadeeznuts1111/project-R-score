@@ -50,16 +50,19 @@ pass://factorywager/Cloudflare API Token/password
 | **Intentional drift** | `portal-cli vault health --update` | No | Refresh inventory/shape snaps after you move/rename a mapped item; commit the `.snap`. |
 | **Live bake** | `bun run vault:health:bake` | Yes (agent session) | Cross-check live Proton Pass titles/states vs map; exit 1 on trashed/missing refs (purge risk). |
 | **Dashboard** | `/portal/vault/` · `public/registry/vault-health.json` | — | Visual summary of the last bake — not the gate. |
+| **CLI hub** | `/portal/tools/` · `portal-cli dashboard` | No | Command → board matrix, bake freshness, capability subset, copy-CLI. Nav badges from registry JSON (no pass-cli in browser). |
 
 ```bash
 bun run vault:health                 # same as portal-cli vault health
 bun run vault:health:update          # intentional snap refresh
 bun run vault:resolve                # list map (no secret values)
 bun run vault:resolve --json         # machine inventory
+bun run portal-cli dashboard --view=vault --open
+bun run portal-cli dashboard --view=tools
 source scripts/agent-env.sh factorywager && bun run vault:health:bake
 ```
 
-Engine: [`lib/security/vault-health.ts`](../../../lib/security/vault-health.ts) · bake: [`tools/vault-health-bake.ts`](../../../tools/vault-health-bake.ts) · resolve: [`tools/vault-resolver.ts`](../../../tools/vault-resolver.ts). Portal nav: `/portal/vault/` (weave surface `vault`).
+Engine: [`lib/security/vault-health.ts`](../../../lib/security/vault-health.ts) · bake: [`tools/vault-health-bake.ts`](../../../tools/vault-health-bake.ts) · resolve: [`tools/vault-resolver.ts`](../../../tools/vault-resolver.ts). Portal nav: `/portal/vault/` (weave surface `vault`) · tools hub: [`public/portal/tools/`](../../../public/portal/tools/) · badges: [`public/portal/nav-badges.js`](../../../public/portal/nav-badges.js).
 
 If pass-cli reports a corrupted local DB: `pass-cli logout --force` then re-login / re-run `source scripts/agent-env.sh factorywager`.
 
@@ -79,7 +82,7 @@ bun run proton:check               # inject proof for all templates
 
 ### Packages ↔ vault + env inventory (workspace `packages/*`)
 
-`env:inventory` scans **`packages/`** alongside `lib`/`config`/`scripts`/`tools` and emits reverse **owners** + root/product runtime (claim `packages-graph-map-v11`):
+`env:inventory` scans **`packages/`** alongside `lib`/`config`/`scripts`/`tools` and emits reverse **owners** + root/product runtime (claim `packages-graph-map-v13`):
 
 ```bash
 bun run env:inventory              # includes packages plane section
@@ -163,7 +166,7 @@ bun run portal-cli secret inject -i env.template -o .env -f
 bun run portal-cli secret invite accept <INVITE_ID>
 ```
 
-Maps to real CLI only (verified against pass-cli 2.2.3 source): `item view` / `item list --output json` / `run` / `inject` / `invite accept` / `share list` / `item share` / `vault share` / `vault member` / `item member`. No phantom flags, no invented secure-link URL accept (use invite id); shares are by email, one per call, roles `viewer|editor|manager`; revoke via `member … remove --member-share-id`. Autofill injects vault item passwords as env names derived from titles (`--parallel` fetches concurrently; `--json` prints a value-free `{injected, missing, errors}` report for `jq`, report-only when `--` is omitted); prefer `run --env-file` when a template exists. Status lines use vault-map label/color/glyph (never secret values).
+Maps to real CLI only (verified against pass-cli 2.2.3 source): `item view` / `item list --output json` / `item totp` / `run` / `inject` / `invite accept` / `share list` / `item share` / `vault share` / `vault member` / `item member` / `session lock|unlock|create-lock` / `settings` / `personal-access-token`. No phantom flags, no invented secure-link URL accept (use invite id); shares are by email, one per call, roles `viewer|editor|manager`; revoke via `member … remove --member-share-id`. Autofill injects vault item passwords as env names derived from titles (`--parallel` fetches concurrently; `--json` prints a value-free `{injected, missing, errors}` report for `jq`, report-only when `--` is omitted); prefer `run --env-file` when a template exists. Status lines use vault-map label/color/glyph (never secret values).
 
 ### Vault map (display chrome)
 

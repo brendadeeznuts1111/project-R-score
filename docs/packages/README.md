@@ -81,9 +81,9 @@ bun run packages:docs-index --bump-verified=2026-07-20:registry-md,pm-filter
 
 | Tool | Role | Status | Notes |
 |------|------|--------|--------|
-| **portal-cli** (`tools/portal-cli.ts`) | Snapshot · probe · secrets (pass-cli wrapper) | active | Root `bin.portal-cli` · `bun run portal-cli` · compile: `bun run build:portal-cli` → `dist/portal` |
+| **portal-cli** (`tools/portal-cli.ts`) | Snapshot · probe · secret · vault health · pm · dashboard launcher | active | Root `bin.portal-cli` · `bun run portal-cli` · compile: `bun run build:portal-cli` → `dist/portal` · boards: `/portal/tools/` |
 
-portal-cli is **not** `@factorywager/portal-cli` and is **not** listed under root `workspaces.packages`. It is monorepo root tooling that operates on the workspace graph (snapshots, probes) and vault (secret autofill).
+portal-cli is **not** `@factorywager/portal-cli` and is **not** listed under root `workspaces.packages`. It is monorepo root tooling: workspace graph (snapshots, probes, `pm graph`), vault (`secret`, `vault health`), and portal launcher (`dashboard --view=…`).
 
 ### Planned / dormant workspace members
 
@@ -124,7 +124,7 @@ bun outdated --filter './'                       # root package.json only
 bun outdated --filter sports-terminal-os
 bun outdated --filter '!./' --filter './packages/*'
 
-# Portal CLI (root tooling — snapshot + secrets + bun pm passthrough)
+# Portal CLI (root tooling — snapshot · probe · secret · vault · pm · dashboard)
 bun run portal-cli snapshot run --scope prediction
 bun run portal-cli snapshot list
 bun run portal-cli probe lockfile
@@ -136,8 +136,14 @@ bun run portal-cli pm hash
 # FactoryWager extension: offline packages graph bake (not bun pm)
 bun run portal-cli pm graph
 bun run audit:packages -- --bake              # rebake packages-graph-map.json
+# Vault health gate (offline snapshots · Harness Gates) + live bake
+bun run portal-cli vault health
+bun run vault:health:bake                     # needs agent session → /portal/vault/
 # Inject secrets from Proton Pass and run a command (real pass-cli)
 bun run portal-cli secret autofill --vault factorywager -- ./start-agent.sh
+# Open real boards (no phantom routes)
+bun run portal-cli dashboard --view=packages --open
+bun run portal-cli dashboard --view=tools
 # Compiled binary (optional)
 bun run build:portal-cli                         # → dist/portal
 

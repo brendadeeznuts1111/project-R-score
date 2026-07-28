@@ -1,10 +1,13 @@
 // @see https://bun.com/docs/test — bun:test
 import { describe, expect, test } from 'bun:test';
 import {
+  buildLibImportHubs,
   buildMonorepoSurfaces,
+  buildPageRegistryEdges,
   classifyRegistryFamily,
   discoverPackagesGraphDirs,
   discoverWorkspaceMembers,
+  triageRegistryOrphans,
 } from '../lib/harness/monorepo-surfaces.ts';
 import { resolvePath } from '../scripts/lib/fs-bun';
 
@@ -37,10 +40,95 @@ describe('monorepo-surfaces', () => {
     expect(classifyRegistryFamily('telegram-handshake.json', null)).toBe('telegram');
   });
 
-  test('buildMonorepoSurfaces v2 inventories portal chrome brand registry lib sto', async () => {
-    const s = await buildMonorepoSurfaces(ROOT);
+  test('buildPageRegistryEdges + lib hubs + orphan triage', () => {
+    const edges = buildPageRegistryEdges(
+      [
+        {
+          href: '/portal/ops/',
+          slug: 'ops',
+          hasIndex: true,
+          hasMd: true,
+          scripts: ['/portal/data.js', '/portal/operations-dashboard.js'],
+        },
+      ],
+      [
+        {
+          path: '/registry/ops-summary.json',
+          from: ['public/portal/operations-dashboard.js'],
+          exists: true,
+        },
+        {
+          path: '/registry/monorepo-health.json',
+          from: ['public/portal/data.js'],
+          exists: true,
+        },
+      ],
+      [
+        {
+          file: 'ops-summary.json',
+          kind: null,
+          schemaVersion: 1,
+          bytes: 1,
+          family: 'ops',
+        },
+        {
+          file: 'monorepo-health.json',
+          kind: 'monorepo-health',
+          schemaVersion: 1,
+          bytes: 1,
+          family: 'health',
+        },
+      ]
+    );
+    expect(edges.some(e => e.page === 'ops' && e.registryPath.includes('ops-summary'))).toBe(
+      true
+    );
+    expect(edges.some(e => e.registryPath.includes('monorepo-health'))).toBe(true);
+
+    const hubs = buildLibImportHubs([
+      { fromPackage: 'docs-tools', plane: 'lib', targetPrefix: 'lib/docs', weight: 11 },
+      { fromPackage: 'business', plane: 'lib', targetPrefix: 'lib/docs', weight: 1 },
+      { fromPackage: 'guards', plane: 'config', targetPrefix: 'config', weight: 1 },
+    ]);
+    expect(hubs).toHaveLength(1);
+    expect(hubs[0]!.targetPrefix).toBe('lib/docs');
+    expect(hubs[0]!.weight).toBe(12);
+    expect(hubs[0]!.fromPackages).toEqual(['business', 'docs-tools']);
+
+    const triage = triageRegistryOrphans(
+      ['networking-proof.json', 'package-info.json', 'weird.json'],
+      [
+        {
+          file: 'networking-proof.json',
+          kind: null,
+          schemaVersion: null,
+          bytes: 1,
+          family: 'proof',
+        },
+        {
+          file: 'package-info.json',
+          kind: null,
+          schemaVersion: null,
+          bytes: 1,
+          family: 'packages',
+        },
+        { file: 'weird.json', kind: null, schemaVersion: null, bytes: 1, family: 'other' },
+      ]
+    );
+    expect(triage.find(t => t.file === 'networking-proof.json')?.action).toBe('document');
+    expect(triage.find(t => t.file === 'package-info.json')?.action).toBe('wire-portal');
+    expect(triage.find(t => t.file === 'weird.json')?.action).toBe('review');
+  });
+
+  test('buildMonorepoSurfaces v3 inventories portal chrome brand registry lib sto', async () => {
+    const s = await buildMonorepoSurfaces(ROOT, {
+      packageExternalEdges: [
+        { fromPackage: 'docs-tools', plane: 'lib', targetPrefix: 'lib/docs', weight: 11 },
+        { fromPackage: 'business', plane: 'lib', targetPrefix: 'lib/docs', weight: 1 },
+      ],
+    });
     expect(s.kind).toBe('monorepo-surfaces');
-    expect(s.schemaVersion).toBe(2);
+    expect(s.schemaVersion).toBe(3);
     expect(s.summary.workspaceMembers).toBeGreaterThanOrEqual(7);
     expect(s.summary.packagesPlane).toBe(s.packagesGraphDirs.length);
     expect(s.summary.otherWorkspaces).toBe(
@@ -84,5 +172,12 @@ describe('monorepo-surfaces', () => {
     expect(planeIds).toContain('lib-plane');
     expect(planeIds).toContain('sto-nested');
     expect(planeIds).toContain('registry-portal-refs');
+    expect(planeIds).toContain('page-registry-edges');
+    expect(planeIds).toContain('lib-import-hubs');
+    expect(planeIds).toContain('orphan-wire');
+    expect((s.crossPlane?.pageToRegistry.length ?? 0)).toBeGreaterThan(10);
+    expect(s.crossPlane?.libImportHubs.some(h => h.targetPrefix === 'lib/docs')).toBe(true);
+    expect((s.registry.orphanTriage?.length ?? 0)).toBe(s.registry.orphanFromPortal?.length ?? 0);
+    expect((s.summary.orphanWireCandidates ?? 0)).toBeGreaterThanOrEqual(0);
   });
 });
