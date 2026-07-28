@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-28T16:06:31.077Z",
+  "generatedAt": "2026-07-28T16:41:38.413Z",
   "enhancements": {
-    "generatedAt": "2026-07-28T16:06:31.061Z",
+    "generatedAt": "2026-07-28T16:41:38.376Z",
     "consoleDepth": 4,
     "rows": [
       {
@@ -130,11 +130,11 @@
     ],
     "passed": 8,
     "total": 8,
-    "signature": "6ad1feb5805c0d78923bf4c813498268be188e686eda7575b5731cd9d2cfa6b8"
+    "signature": "c352712b355435ddbdeb4c8025dada318f3a893feb03b9fa455aab01db8d368f"
   },
   "shadow": {
-    "generatedAt": "2026-07-28T16:06:31.077Z",
-    "base": "http://127.0.0.1:58136/",
+    "generatedAt": "2026-07-28T16:41:38.413Z",
+    "base": "http://127.0.0.1:63489/",
     "rows": [
       {
         "state": "MA",
@@ -210,13 +210,13 @@
       "block": 4,
       "mismatches": 0
     },
-    "signature": "197a08eae57c500aaea1f68d565aec56f7073294440243cf6149dc0a570424d0",
+    "signature": "c84627afd3c65800a46f3869a49a3ca35107b6e67f1651be07375cb3263cfaaa",
     "proof": {
       "algorithm": "sha3-256",
-      "digest": "197a08eae57c500aaea1f68d565aec56f7073294440243cf6149dc0a570424d0",
+      "digest": "c84627afd3c65800a46f3869a49a3ca35107b6e67f1651be07375cb3263cfaaa",
       "bunVersion": "1.4.0",
-      "generatedAt": "2026-07-28T16:06:31.077Z",
-      "hmac": "961277b2eb784b30538ded03ecaf413523f03764a4c981dcc224e285e89906bf"
+      "generatedAt": "2026-07-28T16:41:38.413Z",
+      "hmac": "8b140efd870f4955b5c704fe4d0ee9f543e7462b5fda0120d067f8469181ba85"
     }
   },
   "geo": {
@@ -266,10 +266,10 @@
     "scoreHint": "integrity+hmac",
     "proof": {
       "algorithm": "sha3-256",
-      "digest": "cbfd7f2f43b6c466cbabe9e5a0655030bf53355d432485aacee2b7d5a22d0719",
+      "digest": "d565c25b7653cd6e314eaedff551bb93c4fd5bdf5350d55c250feb4ba00d6e82",
       "bunVersion": "1.4.0",
-      "generatedAt": "2026-07-28T16:06:31.084Z",
-      "hmac": "e161281646b74c5115ba7ce38773991db485d70532e88eb3dd81341dbc3618e2"
+      "generatedAt": "2026-07-28T16:41:38.423Z",
+      "hmac": "1316b282a5e06837c4ac9e3d6a4c300d3877b5a24c205dd70575002f856561d2"
     },
     "checks": [
       {

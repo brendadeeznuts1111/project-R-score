@@ -22,4 +22,4 @@ export {
   type ImageMetaCheckId,
   type ImageMetaExpectations,
   type ResizeScreenshotOptions,
-} from "../../../../../lib/image-metadata.ts";
+} from "../../../../../lib/image-metadata";

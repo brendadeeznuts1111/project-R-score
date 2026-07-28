@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "kind": "vault-map",
+  "description": "Env → Proton Pass vault mapping",
+  "envMap": {
+    "R2_ACCESS_KEY_ID": {
+      "vault": "factorywager",
+      "item": "R2 bun-secrets bucket",
+      "key": "username",
+      "type": "token",
+      "label": "R2 Access Key",
+      "color": "#F38020",
+      "icon": "public/portal/icons/vault/r2.svg"
+    },
+    "R2_SECRET_ACCESS_KEY": {
+      "vault": "factorywager",
+      "item": "R2 bun-secrets bucket",
+      "key": "password",
+      "type": "secret",
+      "label": "R2 Secret Key",
+      "color": "#F38020",
+      "icon": "public/portal/icons/vault/r2.svg"
+    },
+    "FACTORY_WAGER_TOKEN": {
+      "vault": "factorywager",
+      "item": "FactoryWager Registry Token",
+      "key": "password",
+      "type": "token",
+      "label": "Registry Token",
+      "color": "#6366F1",
+      "icon": "public/portal/icons/vault/key.svg"
+    },
+    "REGISTRY_SECRET": {
+      "vault": "factorywager",
+      "item": "Registry Dev Secret",
+      "key": "password",
+      "type": "secret",
+      "label": "Registry Dev Secret",
+      "color": "#6366F1"
+    },
+    "CLOUDFLARE_API_TOKEN": {
+      "vault": "factorywager",
+      "item": "Cloudflare API Token",
+      "key": "password",
+      "type": "token",
+      "label": "Cloudflare API Token",
+      "color": "#F38020",
+      "icon": "public/portal/icons/vault/cloudflare.svg"
+    },
+    "CLOUDFLARE_DNS_API_TOKEN": {
+      "vault": "factorywager",
+      "item": "Cloudflare API Token (DNS)",
+      "key": "password",
+      "type": "token",
+      "label": "Cloudflare DNS Token",
+      "color": "#F38020",
+      "icon": "public/portal/icons/vault/cloudflare.svg"
+    },
+    "TELEGRAM_BOT_FACTORY": {
+      "vault": "factorywager",
+      "item": "Telegram: factorywager_bot",
+      "key": "password",
+      "type": "token",
+      "label": "Telegram Bot Token",
+      "color": "#26A5E4",
+      "icon": "public/portal/icons/vault/telegram.svg"
+    },
+    "TELEGRAM_WEBHOOK_SECRET": {
+      "vault": "factorywager",
+      "item": "Telegram Webhook Secret",
+      "key": "password",
+      "type": "secret",
+      "label": "Telegram Webhook Secret",
+      "color": "#26A5E4"
+    },
+    "PLAY_SIGNING_SECRET": {
+      "vault": "factorywager",
+      "item": "Play Signing Secret",
+      "key": "password",
+      "type": "secret",
+      "label": "Play Signing Secret",
+      "color": "#10B981"
+    },
+    "REPORT_SIGNING_SECRET": {
+      "vault": "factorywager",
+      "item": "Report Signing Secret",
+      "key": "password",
+      "type": "secret",
+      "label": "Report Signing Secret",
+      "color": "#10B981"
+    },
+    "DOD_PROOF_SECRET": {
+      "vault": "factorywager",
+      "item": "DOD Proof Secret",
+      "key": "password",
+      "type": "secret",
+      "label": "DOD Proof Secret",
+      "color": "#8B5CF6"
+    },
+    "DOD_ID_ENCRYPTION_KEY": {
+      "vault": "factorywager",
+      "item": "DOD ID Encryption Key",
+      "key": "password",
+      "type": "key",
+      "label": "DOD Encryption Key",
+      "color": "#8B5CF6"
+    },
+    "PROVISION_ENCRYPTION_KEY": {
+      "vault": "factorywager",
+      "item": "Provision Encryption Key",
+      "key": "password",
+      "type": "key",
+      "label": "Provision Key",
+      "color": "#8B5CF6"
+    },
+    "SSH_DEPLOY_KEY": {
+      "vault": "factorywager",
+      "item": "SSH Deploy Key",
+      "key": "note",
+      "type": "ssh",
+      "label": "SSH Deploy Key",
+      "color": "#F59E0B",
+      "icon": "public/portal/icons/vault/ssh.svg"
+    },
+    "SSH_CASCADE_KEY": {
+      "vault": "factorywager",
+      "item": "SSH Cascade Key",
+      "key": "note",
+      "type": "ssh",
+      "label": "SSH Cascade Key",
+      "color": "#F59E0B",
+      "icon": "public/portal/icons/vault/ssh.svg"
+    },
+    "GITHUB_TOKEN": {
+      "vault": "factorywager",
+      "item": "GitHub PAT",
+      "key": "note",
+      "type": "pat",
+      "label": "GitHub Personal Access Token",
+      "color": "#2DA44E",
+      "icon": "public/portal/icons/vault/github.svg"
+    }
+  }
+}

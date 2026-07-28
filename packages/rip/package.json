@@ -2,6 +2,11 @@
   "name": "@factorywager/rip",
   "version": "0.1.0",
   "private": true,
-  "module": "src/index.ts",
-  "type": "module"
+  "type": "module",
+  "description": "Code analysis / ripgrep-oriented tooling for FactoryWager",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "module": "./src/index.ts"
 }

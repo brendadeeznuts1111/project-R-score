@@ -92,7 +92,7 @@ These may exist on disk under `~/Projects` but are **gitignored** or separate re
 
 - **Day loop?** `bun run help` · `bun run type-check` (`tsconfig.check.json` spine) · `bun run build:affected` / `test:affected` (**git-true** via [`scripts/affected-workspaces.ts`](scripts/affected-workspaces.ts)). Harness JIT: [`docs/harness/README.md`](docs/harness/README.md). CLI: `bun run help` (optional regenerate [`docs/CLI.md`](docs/CLI.md) via `cli:docs`).
 - **Run something?** Root `package.json` scripts (`bun run <name>`). Prefer named scripts over inventing paths.
-- **Workspace:** `bun run validate:workspaces` · `build:affected` / `test:affected` · `affected:list`
+- **Workspace:** `bun run validate:workspaces` · [monorepo-workspaces.md](docs/harness/tenants/monorepo-workspaces.md) · `build:affected` / `test:affected` · `affected:list`
 - **CLI:** [`tools/cli/`](tools/cli/) · `bun run help`
 - **Demos:** [`examples/`](examples/INDEX.md) (optional for product work)
 - **Bun install policy:** [`docs/UNIFIED.md`](docs/UNIFIED.md)
@@ -110,6 +110,10 @@ From root `package.json` `workspaces.packages` (SSOT — do not invent extra glo
 - `packages/*` — `@factorywager/*` library packages
 - `projects/active/sports-terminal-os` — Sports Terminal OS (workspace member, not a nested install root)
 - `lib/*` — currently only `lib/shared` (`name: shared`); product code under other `lib/**` paths is imported relatively, not as workspace packages
+
+**Root `workspace:*` deps (imported from spine):** `docs-tools`, `guards`, `registry-client`, `rip`.  
+**Workspace-only (not root deps):** `business`, `p2p`, `@factorywager/shared` (`lib/shared`), `sports-terminal-os`.  
+**Archived (out of root install graph):** `projects/archive/factorywager-packages/{ab-testing,versioning}` — revive only with a real consumer.
 
 **Not root workspaces:** nested monorepos under `projects/**` (e.g. `projects/active/factorywager/registry`) keep their **own** `workspaces` / `catalog` and own `bun install`. Shared third-party pins for root members use root `catalog` + `catalog:` — see [`docs/UNIFIED.md`](docs/UNIFIED.md#catalogs-and-workspace-protocols).
 

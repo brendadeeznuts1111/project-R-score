@@ -4,7 +4,8 @@
 **Runs** `bun run monorepo:health` · `bun run check:monorepo-health` · `bun tools/monorepo-health.ts`  
 **Proof** claim `monorepo-health-score` · `reports/monorepo-health-latest.json` · formula unit tests  
 **Gates** pre-commit `--tests-only` when health sources staged · **ci:core** full ratchet · import-graph shares `scanSourceImports`  
-**Catalog** Bun-native Glob · build metafile · optional Archive · SQLite trend
+**Catalog** Bun-native Glob · build metafile · optional Archive · SQLite trend  
+**Workspace graph / catalog policy** sibling [monorepo-workspaces.md](./monorepo-workspaces.md) · `bun run validate:workspaces`
 
 ## Formula (0–100)
 

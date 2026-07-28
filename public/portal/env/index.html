@@ -104,6 +104,13 @@
         <tbody id="owners-body"><tr><td colspan="5">—</td></tr></tbody>
       </table>
 
+      <div class="section-title">Vault map (display chrome)</div>
+      <p class="section-sub" id="vault-map-summary">—</p>
+      <table class="env-table">
+        <thead><tr><th></th><th>Key</th><th>Label</th><th>Vault / item</th><th>Template</th><th>Runtime</th></tr></thead>
+        <tbody id="vault-map-body"><tr><td colspan="6">—</td></tr></tbody>
+      </table>
+
       <div class="generated" id="generated"></div>
     </div>
   </main>
@@ -207,6 +214,62 @@
       else if (env.contentType?.rows) renderContentType(env);
     }
 
+    async function loadVaultMap() {
+      try {
+        const res = await fetch('/registry/vault-map.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error(String(res.status));
+        const map = await res.json();
+        const entries = map.entries || [];
+        const s = map.summary || {};
+        $('vault-map-summary').textContent = entries.length
+          ? `${s.entryCount ?? entries.length} entries · passRef=${s.withPassRef ?? '—'} · color=${s.withColor ?? '—'} · icon=${s.withIcon ?? '—'} · runtime set=${s.runtimePresent ?? '—'} · <a href="/registry/vault-map.json">JSON</a>`
+          : 'Empty vault map';
+        $('vault-map-body').innerHTML = entries.length
+          ? entries.map(e => {
+              const swatch = e.color
+                ? `<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${escapeHtml(e.color)};margin-right:6px;vertical-align:middle"></span>`
+                : '';
+              const icon = e.icon
+                ? `<img src="/${escapeHtml(String(e.icon).replace(/^public\//, ''))}" alt="" width="16" height="16" style="vertical-align:middle;margin-right:4px;opacity:.9" />`
+                : (e.glyph ? `<span style="margin-right:4px">${escapeHtml(e.glyph)}</span>` : '');
+              const path = [e.vault, e.item].filter(Boolean).join(' / ') || '—';
+              return `<tr>
+                <td>${icon}${swatch}</td>
+                <td class="env-key">${escapeHtml(e.envKey)}</td>
+                <td>${escapeHtml(e.label || e.envKey)}</td>
+                <td style="font-size:11px;color:var(--text-dim)">${escapeHtml(path)}</td>
+                <td class="${e.inTemplate ? 'st-ok' : 'st-warn'}">${e.inTemplate ? 'yes' : 'no'}</td>
+                <td class="${e.runtimePresent ? 'st-ok' : 'st-bad'}">${e.runtimePresent ? 'set' : 'missing'}</td>
+              </tr>`;
+            }).join('')
+          : '<tr><td colspan="6">Run <code>bun run env:inventory:bake</code></td></tr>';
+      } catch {
+        // Fall back to packagesPlane.displayMap from env-inventory
+        try {
+          const res = await fetch('/registry/env-inventory.json', { cache: 'no-store' });
+          if (!res.ok) throw new Error(String(res.status));
+          const inv = await res.json();
+          const entries = inv.packagesPlane?.displayMap || [];
+          $('vault-map-summary').textContent = entries.length
+            ? `${entries.length} from packagesPlane.displayMap · bake vault-map.json for dedicated artifact`
+            : 'No vault-map bake — run bun run env:inventory:bake';
+          $('vault-map-body').innerHTML = entries.length
+            ? entries.map(e => `<tr>
+                <td>${e.color ? `<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${escapeHtml(e.color)}"></span>` : ''}</td>
+                <td class="env-key">${escapeHtml(e.envKey)}</td>
+                <td>${escapeHtml(e.label || e.envKey)}</td>
+                <td style="font-size:11px">${escapeHtml([e.vault, e.item].filter(Boolean).join(' / ') || '—')}</td>
+                <td class="${e.inTemplate ? 'st-ok' : 'st-warn'}">${e.inTemplate ? 'yes' : 'no'}</td>
+                <td class="${e.runtimePresent ? 'st-ok' : 'st-bad'}">${e.runtimePresent ? 'set' : 'missing'}</td>
+              </tr>`).join('')
+            : '<tr><td colspan="6">—</td></tr>';
+        } catch {
+          $('vault-map-summary').textContent = 'No /registry/vault-map.json';
+          $('vault-map-body').innerHTML = '<tr><td colspan="6">Bake missing</td></tr>';
+        }
+      }
+    }
+
     async function loadPackagesPlane() {
       try {
         const res = await fetch('/registry/env-inventory.json', { cache: 'no-store' });
@@ -216,7 +279,7 @@
         const rows = plane.byPackage || [];
         const sum = inv.summary || {};
         $('pkg-summary').textContent = rows.length
-          ? `${plane.summary?.packagesWithEnv ?? rows.length} pkg(s) · ${plane.summary?.envKeyCount ?? '—'} keys · missingTemplate=${plane.summary?.missingTemplate ?? 0} · gaps=${(inv.vault?.actionableVaultGaps || []).length} · owners=${sum.ownerCount ?? '—'} · multiPlane=${sum.multiPlaneKeys ?? '—'} · needsInject=${sum.rootRuntimeNeedsInject ?? inv.runtime?.root?.missingNeedsInject?.length ?? '—'} · coveredByDefault=${sum.rootCoveredByDefault ?? inv.runtime?.root?.coveredByTemplateDefault?.length ?? '—'} · defaultsIssues=${inv.defaultsIssues?.total ?? sum.defaultsIssueCount ?? 0}`
+          ? `${plane.summary?.packagesWithEnv ?? rows.length} pkg(s) · ${plane.summary?.envKeyCount ?? '—'} keys · missingTemplate=${plane.summary?.missingTemplate ?? 0} · gaps=${(inv.vault?.actionableVaultGaps || []).length} · display=${inv.vault?.displayMapped ?? plane.summary?.displayMapped ?? '—'} · owners=${sum.ownerCount ?? '—'} · multiPlane=${sum.multiPlaneKeys ?? '—'} · needsInject=${sum.rootRuntimeNeedsInject ?? inv.runtime?.root?.missingNeedsInject?.length ?? '—'} · coveredByDefault=${sum.rootCoveredByDefault ?? inv.runtime?.root?.coveredByTemplateDefault?.length ?? '—'} · defaultsIssues=${inv.defaultsIssues?.total ?? sum.defaultsIssueCount ?? 0}`
           : 'No packages Bun.env hits in bake';
         $('pkg-body').innerHTML = rows.length
           ? rows.map(r => `<tr>
@@ -255,6 +318,7 @@
         const ct = await ctPromise;
         if (ct) renderContentType(ct);
         await loadPackagesPlane();
+        await loadVaultMap();
       } catch (e) {
         $('loading').innerHTML = '<p style="color:var(--red)">⚠️ Failed to load: ' + escapeHtml(e.message) + '</p>';
       }

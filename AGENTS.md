@@ -25,7 +25,7 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | Human hub | [`README.md`](/) |
 | Workspace map | [`STRUCTURE.md`](STRUCTURE.md) |
 | Coding standards | [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md) · [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) |
-| Bun install policy | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
+| Bun install policy | [`docs/UNIFIED.md`](docs/UNIFIED.md) · catalogs/workspaces: [`docs/harness/tenants/monorepo-workspaces.md`](docs/harness/tenants/monorepo-workspaces.md) · `bun run validate:workspaces` |
 | Import boundaries | [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md) |
 | Wire boundary (parse once) | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) |
 | Portal foundation (static UI) | [`docs/portal-foundation.md`](docs/portal-foundation.md) · `bun run verify:portal:static` · `bun run public:audit:verify` · [`docs/harness/tenants/public-plane.md`](docs/harness/tenants/public-plane.md) · `serve:public:hot` |
@@ -46,6 +46,7 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | Path SSOT (code) | [`lib/docs/repo-docs.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/repo-docs.ts) |
 | Cloudflare / R2 / Pages | [`config/r2-env.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/r2-env.ts) · `bun run cloudflare:env` / `:assert` / `:assert-apex` / `:assert-live` / `:validate` · `cloudflare:preflight` · `cloudflare:deploy:verify` · [`docs/harness/tenants/cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) |
 | Harness thesis | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) |
+
 
 ## Communication precision
 
@@ -184,3 +185,27 @@ Object-inspection depth is controlled project-wide via [`lib/console-depth.ts`](
 | Repo | claim `console-depth-boundaries` · wrapper [`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts) · [`tests/console-depth.test.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tests/console-depth.test.ts) · [`tools/benchmarks/console-depth-perf.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/benchmarks/console-depth-perf.ts) · wrappers map [`PROOF.md`](docs/harness/PROOF.md#bun-native-utils-wrappers) · hash wrapper `security-hash-boundaries` |
 | Bun | [runtime/console](https://bun.com/docs/runtime/console) · [runtime/utils](https://bun.com/docs/runtime/utils) (`inspect` · `.table` · `.custom` · `stringWidth`) · [hashing](https://bun.com/docs/runtime/hashing) |
 | Other external | [bun-types pin](https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types) |
+
+## Grounded capability map
+
+Each row maps to a documented API — Bun or Proton Pass CLI — with type, version, "Used in", status, and canonical source.
+
+| Capability | Type | Version | Bun API | Proton CLI | Used in | Status | Source |
+|---|---|---|---|---|---|---|---|
+| **Vault config (TOML)** | config | Bun ≥1.4 | `import x from './vault-map.toml' with { type: 'toml' }` | — | `portal secrets autofill` | Available | [Bun TOML loader](https://bun.sh/docs/runtime/loaders#toml) |
+| **Vault inject** | secrets | pass‑cli ≥2.2 | — | `pass-cli inject --in-file --out-file` | `portal secrets autofill` (template patching) | Planned | [pass-cli inject](https://protonpass.github.io/pass-cli/commands/contents/inject/) |
+| **SSH agent load** | ssh | pass‑cli ≥2.2 | — | `pass-cli ssh-agent load --vault-name` | `portal secrets autofill` (SSH key injection) | Planned | [Proton Pass CLI](https://protonpass.github.io/pass-cli/) |
+| **Secure share link** | secrets | pass‑cli ≥2.2 | — | `pass-cli share`, `pass-cli accept` | `portal secrets share` / `accept` | Implemented | [pass-cli share](https://protonpass.github.io/pass-cli/) |
+| **Secret retrieval** | secrets | pass‑cli ≥2.2 | — | `pass-cli item get <vault>/<item>` | `portal secrets autofill` core loop | Implemented | same |
+| **Vault & item listing** | secrets | pass‑cli ≥2.2 | — | `pass-cli vault list`, `pass-cli item list` | `portal secrets autofill` (legacy fallback) | Implemented | same |
+| **Spawn external process** | runtime | Bun ≥1.0 | `Bun.spawn(cmd, { stdout: "inherit", … })` | — | All subcommands (snapshot git, pass-cli wrappers) | Implemented | [Bun.spawn](https://bun.sh/docs/api/spawn) |
+| **Streaming file write** | io | Bun ≥1.0 | `Bun.write(path, response)` | — | `snapshot run` (asset capture) | Implemented | [Bun.write](https://bun.sh/docs/api/file-io#writing-files) |
+| **Glob scanning** | io | Bun ≥1.0 | `Bun.glob(pattern)` → async iterator | — | `snapshot grep` (manifest scanning) | Implemented | [Bun.glob](https://bun.sh/docs/api/glob) |
+| **File existence & read** | io | Bun ≥1.0 | `Bun.file(path).exists()`, `.text()` | — | snapshot index, manifest loading | Implemented | [Bun.file](https://bun.sh/docs/api/file-io#reading-files) |
+| **ANSI color output** | display | Bun ≥1.0 | `Bun.color(hex, "ansi")` | — | `portal secrets autofill` status lines, help text | Implemented | [Bun.color](https://bun.sh/docs/api/color) |
+| **Terminal detection** | display | Bun ≥1.0 | `new Bun.Terminal(Bun.stdout)` | — | Help text formatting (future) | Available | [Bun.Terminal](https://bun.sh/docs/api/terminal) |
+| **Image chart generation** | image | Bun ≥1.0 | `new Bun.Image(file).png()` | — | Report charts (histogram, rolling) – if using server‑side render | Available | [Bun.Image](https://bun.sh/docs/api/image) |
+| **Built‑in test runner** | test | Bun ≥1.0 | `bun:test` – `describe`, `test`, `expect` | — | Unit tests for snapshot, secrets, manifest | Implemented | [Bun test](https://bun.sh/docs/test/writing-tests) |
+| **Environment variables** | runtime | Bun ≥1.0 | `Bun.env` (read‑only) | — | All modules (scope fallback, TMPDIR) | Implemented | [Bun.env](https://bun.sh/docs/api/env) |
+| **Module main detection** | runtime | Bun ≥1.0 | `Bun.main` | — | CLI entry guard | Implemented | [Bun.main](https://bun.sh/docs/api/main) |
+| **Sleep** | runtime | Bun ≥1.0 | `Bun.sleep(ms)` | — | Rate limiting (future) | Available | [Bun.sleep](https://bun.sh/docs/api/sleep) |

@@ -281,6 +281,11 @@ if (BAKE) {
   const compact = await buildEnvInventoryCompact(ROOT, { includeGapReport: false });
   await Bun.write(BAKE_PATH, JSON.stringify(compact, null, 2) + '\n');
   console.log(`→ ${relative(ROOT, BAKE_PATH)}`);
+  const { buildVaultMapBundle } = await import('../lib/security/vault-map.ts');
+  const vaultMapPath = resolve(ROOT, 'public/registry/vault-map.json');
+  const vaultBundle = await buildVaultMapBundle({ root: ROOT });
+  await Bun.write(vaultMapPath, JSON.stringify(vaultBundle, null, 2) + '\n');
+  console.log(`→ ${relative(ROOT, vaultMapPath)}`);
 }
 
 if (JSON_OUT) {

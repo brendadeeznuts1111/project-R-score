@@ -1,13 +1,15 @@
 {
-  "name": "shared",
+  "name": "@factorywager/shared",
   "version": "0.1.0",
-  "author": "mike.hunt@factory.wager.com",
-  "license": "MIT",
-  "description": "",
+  "private": true,
+  "type": "module",
+  "description": "Shared entry-guard and URL helpers under lib/shared (workspace member via lib/*)",
+  "exports": {
+    "./tools/entry-guard": "./tools/entry-guard.ts",
+    "./tools/bun-urls": "./tools/bun-urls.ts",
+    "./package.json": "./package.json"
+  },
   "engines": {
     "bun": ">=1.4.0"
-  },
-  "publishConfig": {
-    "registry": "https://registry.factory-wager.com"
   }
 }

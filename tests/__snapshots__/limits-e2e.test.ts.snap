@@ -1,0 +1,30 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`limit detection pipeline (E2E) Stage 12: chart SVG generation 1`] = `
+"<svg xmlns="http://www.w3.org/2000/svg" width="600" height="398" viewBox="0 0 600 398">
+<rect width="600" height="398" fill="#f8f9fa" rx="8"/>
+<text x="20" y="25" font-family="system-ui" font-size="16" font-weight="bold" fill="#333">🚀 Limit Changes Snapshot</text>
+<text x="20" y="55" font-family="system-ui" font-size="12" fill="#666">Total changes: 4</text>
+<text x="20" y="73" font-family="system-ui" font-size="12" fill="#666">🚀 Raises: 3</text>
+<text x="20" y="91" font-family="system-ui" font-size="12" fill="#666">⬇️ Decreases: 1</text>
+<text x="20" y="109" font-family="system-ui" font-size="12" fill="#666">Net: +$15,000</text>
+<text x="20" y="127" font-family="system-ui" font-size="12" fill="#666">Avg score: 71%</text>
+<text x="20" y="145" font-family="system-ui" font-size="12" fill="#666">Books: 2</text>
+<text x="20" y="163" font-family="system-ui" font-size="12" fill="#666">Partners: 1</text>
+<text x="20" y="191" font-family="system-ui" font-size="14" font-weight="bold" fill="#333">Recent Changes</text>
+<text x="20" y="228" font-family="system-ui" font-size="11" fill="#333">🚀 draftkings</text>
+<rect x="120" y="216" width="133" height="18" fill="#16a34a" rx="3" opacity="0.8"/>
+<text x="258.3333333333333" y="229" font-family="system-ui" font-size="11" fill="#16a34a">+$1,000</text>
+<text x="20" y="252" font-family="system-ui" font-size="11" fill="#333">⬇️ fanduel</text>
+<rect x="120" y="240" width="133" height="18" fill="#dc2626" rx="3" opacity="0.8"/>
+<text x="258.3333333333333" y="253" font-family="system-ui" font-size="11" fill="#dc2626">$1,000</text>
+<text x="20" y="276" font-family="system-ui" font-size="11" fill="#333">🚀 betmgm</text>
+<rect x="120" y="264" width="400" height="18" fill="#16a34a" rx="3" opacity="0.8"/>
+<text x="525" y="277" font-family="system-ui" font-size="11" fill="#16a34a">+$3,000</text>
+<line x1="20" y1="303" x2="580" y2="303" stroke="#ddd" stroke-width="1"/>
+<text x="20" y="323" font-family="system-ui" font-size="14" font-weight="bold" fill="#333">Prediction Accuracy (n=50)</text>
+<text x="20" y="345" font-family="system-ui" font-size="12" fill="#666">MAE: 0.1230 | RMSE: 0.4560 | Bias: -0.0120</text>
+<line x1="20" y1="370" x2="580" y2="370" stroke="#ddd" stroke-width="1"/>
+<text x="20" y="388" font-family="system-ui" font-size="10" fill="#666">Generated: 2026-07-28T00:00:00 | Bun 1.4.0</text>
+</svg>"
+`;

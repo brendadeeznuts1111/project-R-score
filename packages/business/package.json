@@ -2,6 +2,11 @@
   "name": "@factorywager/business",
   "version": "0.1.0",
   "private": true,
-  "module": "src/index.ts",
-  "type": "module"
+  "type": "module",
+  "description": "Business/habits helpers (workspace-coupled; no spine importers yet)",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "module": "./src/index.ts"
 }

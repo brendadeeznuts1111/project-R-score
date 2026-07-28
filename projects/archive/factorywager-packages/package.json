@@ -1,0 +1,7 @@
+{
+  "name": "@factorywager/archived-packages",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Index package for archived @factorywager/* libraries (not a root workspace member)",
+  "type": "module"
+}

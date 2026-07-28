@@ -2,6 +2,24 @@
 
 **Token SSOT:** all API tokens, bot tokens, R2 keys, and registry secrets are stored in **Proton Pass** and resolved with **`pass-cli inject` / `pass-cli run`**. Do not mint into shell history or hand-append secrets to `~/.reasonix/.env` / `.env` as the authority path. Derived env files are a **cache** regenerated from vault templates.
 
+## Official Pass CLI documentation
+
+Canonical docs: **[protonpass.github.io/pass-cli](https://protonpass.github.io/pass-cli/)**
+
+| Topic | Doc |
+|-------|-----|
+| Overview / install | [Overview](https://protonpass.github.io/pass-cli/) |
+| Web / interactive / PAT login | [`login`](https://protonpass.github.io/pass-cli/commands/login/) |
+| Personal access tokens (create, grant, renew) | [`pat`](https://protonpass.github.io/pass-cli/commands/personal-access-token/) |
+| `pass://vault/item/field` URIs | [Secret references](https://protonpass.github.io/pass-cli/commands/contents/secret-references/) |
+| Resolve env + exec | [`run`](https://protonpass.github.io/pass-cli/commands/contents/run/) — bare `pass://` |
+| Template → file | [`inject`](https://protonpass.github.io/pass-cli/commands/contents/inject/) — `{{ pass://… }}` |
+| Session status | [`info`](https://protonpass.github.io/pass-cli/commands/info/) · [`test`](https://protonpass.github.io/pass-cli/commands/test/) |
+| Vaults / items | [`vault`](https://protonpass.github.io/pass-cli/commands/vault/) · [`item`](https://protonpass.github.io/pass-cli/commands/item/) |
+| Troubleshoot | [Troubleshoot](https://protonpass.github.io/pass-cli/help/troubleshoot/) · [Configuration](https://protonpass.github.io/pass-cli/get-started/configuration/) (`PROTON_PASS_KEY_PROVIDER`, session dir) |
+
+This monorepo prefers **`inject`** → project `.env` (see below). Sibling Kalshi-bot prefers **`run`** + `.env.protonpass` — see [`Kalshi-bot/docs/PROTONPASS.md`](../../../Kalshi-bot/docs/PROTONPASS.md).
+
 ## Vault Layout
 
 | Vault | Purpose | Items | Agent PAT (`.env.pass-tokens`) |
@@ -108,6 +126,47 @@ bun run cloudflare:deploy:vault
 | `proton:run` | [`scripts/proton-run.sh`](../../../scripts/proton-run.sh) | inject then `exec` |
 | `proton:deploy:pages` | [`scripts/proton-deploy.sh`](../../../scripts/proton-deploy.sh) | root `.env` then deploy |
 | Agent session | [`scripts/agent-env.sh`](../../../scripts/agent-env.sh) | — |
+| Portal CLI wrapper | [`tools/portal-secret.ts`](../../../tools/portal-secret.ts) · `bun run portal:secret` / `portal-cli secret` | thin `pass-cli` only |
+| Vault map display | [`config/vault-map.toml`](../../../config/vault-map.toml) · [`lib/security/vault-map.ts`](../../../lib/security/vault-map.ts) | label/color/icon (`type: "toml"`) |
+
+### Portal `secret` subcommand
+
+```bash
+bun run portal:secret:which          # Bun.which pass-cli
+bun run portal-cli secret help
+bun run portal-cli secret get 'pass://factorywager/Cloudflare API Token/password'
+bun run portal-cli secret run --env-file env.template -- bun run cloudflare:env:validate
+bun run portal-cli secret autofill --vault factorywager -- ./start-agent.sh
+bun run portal-cli secret map        # label/color/icon status (no secret values)
+bun run portal-cli secret inject -i env.template -o .env -f
+bun run portal-cli secret invite accept <INVITE_ID>
+```
+
+Maps to real CLI only: `item view` / `item list --output json` / `run` / `inject` / `invite accept` / `share list`. No phantom flags, no invented secure-link URL accept (use invite id). Autofill injects vault item passwords as env names derived from titles; prefer `run --env-file` when a template exists. Status lines use vault-map label/color/glyph (never secret values).
+
+### Vault map (display chrome)
+
+**Source SSOT:** [`config/vault-map.toml`](../../../config/vault-map.toml) — Bun-native TOML (`import … with { type: "toml" }`), no JSON parse step for the map itself.
+
+| Layer | Role |
+|-------|------|
+| [`env.template`](../../../env.template) | Machine truth: `KEY={{ pass://vault/item/field }}` ([secret references](https://protonpass.github.io/pass-cli/commands/contents/secret-references/)) |
+| [`config/vault-map.toml`](../../../config/vault-map.toml) | Display chrome: `label` / `color` / `icon` / `glyph` / `type` + optional vault/item/field |
+| [`lib/security/vault-map.ts`](../../../lib/security/vault-map.ts) | Normalize TOML `[env.KEY]` → bundle; `Bun.color` status lines (ansi-16m) |
+| [`tools/vault-resolver.ts`](../../../tools/vault-resolver.ts) · `bun run vault:resolve` | List map entries (no secret values) |
+| `public/registry/vault-map.json` | **Baked artifact** for portal `/portal/env/` (`bun run env:inventory:bake`) — not the edit SSOT |
+| `config/vault-map.json` | Legacy fallback only — do not edit; prefer TOML |
+
+```ts
+// Prefer static import attribute (bundler + runtime loader)
+import vaultMap from '../config/vault-map.toml' with { type: 'toml' };
+// Dynamic: const mod = await import('../config/vault-map.toml', { with: { type: 'toml' } });
+// Text: Bun.TOML.parse(await Bun.file('config/vault-map.toml').text())
+```
+
+Bun docs: [Import a TOML file](https://bun.com/docs/guides/runtime/import-toml) · [`Bun.TOML`](https://bun.com/docs/runtime/toml) · [loader:toml](https://bun.com/docs/bundler/loaders#toml).
+
+TOML shape: `[metadata]`, `[env.KEY]` (`vault` / `item` / `field` / `label` / `color` / `type`), `[backlog]`. Paths align with Pass URIs (`pass://vault/item/field`) used by [`inject`](https://protonpass.github.io/pass-cli/commands/contents/inject/) (`{{ … }}`) and [`run`](https://protonpass.github.io/pass-cli/commands/contents/run/) (bare). Never stores secret values. Icons under `public/portal/icons/vault/`.
 
 Template refs use `{{ pass://<vault>/<item>/<field> }}` — see root [`env.template`](../../../env.template).
 
@@ -115,19 +174,28 @@ Template refs use `{{ pass://<vault>/<item>/<field> }}` — see root [`env.templ
 
 ```bash
 source scripts/agent-env.sh <project>
-# Projects: factorywager, cloudflare, bet-ticker, cascade-mover
+# Projects: factorywager, cloudflare, bet-ticker, cascade-mover, partners
 # Always set: PROTON_PASS_AGENT_REASON="why" on pass-cli calls
 ```
 
-Agent PATs (`pst_…`) live in gitignored **`.env.pass-tokens`** (or env). They are **not** the Cloudflare API token — they only authenticate `pass-cli` to vault shares.
+Agent PATs (`pst_…`) live in gitignored **`.env.pass-tokens`** (or env). They are **not** the Cloudflare API token — they only authenticate `pass-cli` to vault shares via [`PROTON_PASS_PERSONAL_ACCESS_TOKEN`](https://protonpass.github.io/pass-cli/commands/login/#personal-access-token-login).
+
+Mint / grant (main account) — official [typical workflow](https://protonpass.github.io/pass-cli/commands/personal-access-token/#typical-workflow):
+
+```bash
+pass-cli login
+pass-cli pat create --name <bot> --expiration 1y
+pass-cli pat access grant --pat-name <bot> --vault-name <vault> --role viewer
+# Save pst_… into .env.pass-tokens as PROTON_PASS_<PROJECT>_TOKEN
+```
 
 ## PAT Rotation
 
-PATs expire 2027-07-27. To rotate:
+PATs expire 2027-07-27. To rotate ([`pat renew`](https://protonpass.github.io/pass-cli/commands/personal-access-token/#pat-renew)):
 
 ```bash
 pass-cli pat renew --pat-name <name> --expiration 1y
-# Update .env.pass-tokens only (never commit)
+# Update .env.pass-tokens only (never commit) — renew outputs a new token string
 ```
 
 ## SSH Agent
