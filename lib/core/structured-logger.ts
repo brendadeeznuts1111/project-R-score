@@ -1,6 +1,7 @@
 // lib/core/structured-logger.ts — Structured logging with correlation tracking
 
 import { AtomicFileOperations } from '../core/atomic-file-operations';
+import { shouldColor } from '../console-depth.ts';
 import {
   type CorrelationId,
   type UserId,
@@ -266,8 +267,9 @@ class StructuredLogger {
     };
 
     const reset = '\x1b[0m';
-    const color = colorMap[entry.level];
-    const prefix = `${color}[${entry.level.toUpperCase()}]${reset}`;
+    const color = shouldColor() ? colorMap[entry.level] : '';
+    const suffix = color ? reset : '';
+    const prefix = `${color}[${entry.level.toUpperCase()}]${suffix}`;
     const timestamp = entry.timestamp.substring(11, 23); // HH:mm:ss.sss
     const correlation = entry.correlationId ? ` [${entry.correlationId}]` : '';
 

@@ -76,7 +76,7 @@ export const colorize = (
   const cacheKey = `${status}-${bold}-${hueShift}`;
   if (COLOR_CACHE.has(cacheKey)) {
     const ansi = COLOR_CACHE.get(cacheKey)!;
-    return `${ansi}${text}\x1b[0m`;
+    return ansi ? `${ansi}${text}\x1b[0m` : text;
   }
 
   const config = getColorConfig(status);
@@ -84,10 +84,10 @@ export const colorize = (
   const hslString = `hsl(${hue}, ${config.saturation}%, ${config.lightness}%)`;
 
   let ansi = color(hslString, 'ansi') || '';
-  if (bold) ansi = `\x1b[1m${ansi}`;
+  if (ansi && bold) ansi = `\x1b[1m${ansi}`;
 
   COLOR_CACHE.set(cacheKey, ansi);
-  return `${ansi}${text}\x1b[0m`;
+  return ansi ? `${ansi}${text}\x1b[0m` : text;
 };
 
 // ──────────────────────────────────────────────────────────────────────────────

@@ -245,12 +245,12 @@ export function advancedColorize(
       const adjustedFg = autoAdjustContrast(fgHsl, options.backgroundHsl);
       const adjustedHsl = `hsl(${adjustedFg.h}, ${adjustedFg.s}%, ${adjustedFg.l}%)`;
       const ansi = color(adjustedHsl, 'ansi') || '';
-      return `${options.bold ? '\x1b[1m' : ''}${ansi}${text}\x1b[0m`;
+      return ansi ? `${options.bold ? '\x1b[1m' : ''}${ansi}${text}\x1b[0m` : text;
     }
   }
 
   const ansi = color(hslString, 'ansi') || '';
-  return `${options.bold ? '\x1b[1m' : ''}${ansi}${text}\x1b[0m`;
+  return ansi ? `${options.bold ? '\x1b[1m' : ''}${ansi}${text}\x1b[0m` : text;
 }
 
 // ──────────────────────────────────────────────────────────────────────────────

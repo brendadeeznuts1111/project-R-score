@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/reference/bun/JSONC — Bun.JSONC
+// @see https://bun.com/reference/bun/concatArrayBuffers — Bun.concatArrayBuffers
 // @see https://bun.com/reference/bun/sliceAnsi — Bun.sliceAnsi
 // @see https://bun.com/docs/runtime/bun-apis — Bun.concatArrayBuffers
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
@@ -34,7 +37,7 @@ import { buildRegistryHealthReport } from './health';
 import { runIntegrityCycle } from './monitoring';
 import { registry } from './registry';
 import { type ArtifactType } from './artifact';
-import { shouldColor } from '../console-depth';
+import { colorize, shouldColor } from '../console-depth';
 import { tomlStringify } from '../toml-stringify';
 
 const VERSION = '0.1.0';
@@ -196,7 +199,7 @@ function paint(tag: string, label: string): string {
     text: 'white',
   };
   const c = map[tag] || 'white';
-  return `${Bun.color(c, 'ansi')}${label}\x1b[0m`;
+  return colorize(label, c);
 }
 
 // ── Command handlers ──────────────────────────────────────────────────────
@@ -205,7 +208,8 @@ async function cmdEnv(): Promise<void> {
   const result = await registry.checkEnv();
   const color = result.ok ? 'green' : 'red';
   const status = result.ok ? '✓ OK' : '✗ FAIL';
-  console.log(`\n  Registry status: \x1b[1m${Bun.color(color, 'ansi')}${status}\x1b[0m\n`);
+  const styled = colorize(status, color);
+  console.log(`\n  Registry status: ${shouldColor() ? `\x1b[1m${styled}\x1b[0m` : styled}\n`);
   console.log(tomlStringify(result));
   process.exit(result.ok ? 0 : 1);
 }
@@ -583,22 +587,28 @@ async function cmdReadme(args: string[]): Promise<void> {
   }
 
   // Render via Bun.markdown.render with Bun.color for ANSI output.
-  // Auto-detects terminal depth; degrades to plain text when piped.
+  // Gated by shouldColor(): degrades to plain text when piped / NO_COLOR.
+  const colored = shouldColor();
   const ansi = Bun.markdown.render(
     readme,
     {
       heading: (children, { level }) => {
+        if (!colored) return `\n${children}\n`;
         const prefix = level === 1 ? '\x1b[1;4m' : '\x1b[1m';
         return `\n${prefix}${children}\x1b[0m\n`;
       },
-      strong: children => `\x1b[1m${children}\x1b[22m`,
-      emphasis: children => `\x1b[3m${children}\x1b[23m`,
-      codespan: children => `${Bun.color('cyan', 'ansi')}${children}\x1b[39m`,
+      strong: children => (colored ? `\x1b[1m${children}\x1b[22m` : children),
+      emphasis: children => (colored ? `\x1b[3m${children}\x1b[23m` : children),
+      codespan: children => colorize(children, 'cyan'),
       code: (children, meta) => {
+        if (!colored) {
+          const lang = meta?.language ? ` [${meta.language}]` : '';
+          return `\n---${lang}---\n${children}\n---\n`;
+        }
         const lang = meta?.language ? ` \x1b[2m[${meta.language}]\x1b[22m` : '';
         return `\n\x1b[2m---${lang}---\x1b[22m\n${children}\n\x1b[2m---\x1b[22m\n`;
       },
-      link: children => `${Bun.color('blue', 'ansi')}${children}\x1b[39m`,
+      link: children => colorize(children, 'blue'),
       paragraph: children => children + '\n',
     },
     {

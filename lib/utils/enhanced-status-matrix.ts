@@ -78,7 +78,7 @@ export function createEnhancedStatus(config: StatusConfig, customText?: string):
 
   return {
     text,
-    ansi: `${ansi}${text}\x1b[0m`,
+    ansi: ansi ? `${ansi}${text}\x1b[0m` : text,
     hsl: finalHslString,
     hex,
     brightness,
