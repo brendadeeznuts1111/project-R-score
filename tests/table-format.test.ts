@@ -33,9 +33,9 @@ const sampleRows = [
   { label: 'BetMGM', totalChanges: 1, raises: 0, decreases: 1, netDelta: -500, avgMagnitudePct: -10, trend7d: -100 },
 ];
 const limitChangeRows = [
-  { direction: 'up', sportsbook: 'draftkings', sport_id: 'nba', market_id: 'spread', bet_type: 'straight', previous_max: 500, new_limit: 1500, multi_factor_score: 0.714, increased_at: 1700000000 },
-  { direction: 'down', sportsbook: 'fanduel', sport_id: 'nfl', market_id: 'totals', bet_type: 'live', previous_max: 2000, new_limit: 1000, multi_factor_score: null, increased_at: 1700003600 },
-  { direction: 'up', sportsbook: 'betmgm', sport_id: 'nba', market_id: 'moneyline', bet_type: 'pregame', previous_max: null, new_limit: 3000, multi_factor_score: 0.2, increased_at: null },
+  { icon: '🚀', direction: 'up', sportsbook: 'draftkings', sport_id: 'nba', market_id: 'spread', bet_type: 'straight', previous_max: 500, new_limit: 1500, multi_factor_score: 0.714, increased_at: 1700000000 },
+  { icon: '⬇️', direction: 'down', sportsbook: 'fanduel', sport_id: 'nfl', market_id: 'totals', bet_type: 'live', previous_max: 2000, new_limit: 1000, multi_factor_score: null, increased_at: 1700003600 },
+  { icon: '🚀', direction: 'up', sportsbook: 'betmgm', sport_id: 'nba', market_id: 'moneyline', bet_type: 'pregame', previous_max: null, new_limit: 3000, multi_factor_score: 0.2, increased_at: null },
 ];
 // ── 1. Bun utilities integration (test.each × edge cases) ────────────────
 describe('Bun.stringWidth', () => {
@@ -334,7 +334,7 @@ describe('formatTable — data edge cases', () => {
 // ── 6. Predefined column sets ────────────────────────────────────────────
 describe('Predefined column sets', () => {
   const sets: [string, ColumnDef[], string[]][] = [
-    ['LIMIT_CHANGE_COLUMNS',  LIMIT_CHANGE_COLUMNS,  ['direction', 'sportsbook', 'sport_id', 'market_id', 'bet_type', 'previous_max', 'new_limit', 'multi_factor_score']],
+    ['LIMIT_CHANGE_COLUMNS',  LIMIT_CHANGE_COLUMNS,  ['icon', 'sportsbook', 'sport_id', 'market_id', 'bet_type', 'previous_max', 'new_limit', 'multi_factor_score']],
     ['DIMENSION_COLUMNS',     DIMENSION_COLUMNS,     ['label', 'totalChanges', 'raises', 'netDelta']],
     ['REGULATORY_COLUMNS',    REGULATORY_COLUMNS,    ['partner', 'sportsbook', 'status', 'stateCode']],
     ['PREDICTION_COLUMNS',    PREDICTION_COLUMNS,    ['sportsbook', 'sport_id', 'market_id', 'bet_type', 'predictedRaiseProb', 'confidence']],

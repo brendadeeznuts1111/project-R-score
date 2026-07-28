@@ -409,3 +409,10 @@ public/registry/@factorywager/*/0.0.0+*.json
 .env.pass-tokens
 /vault
 .dev/
+snapshots/
+
+# Snapshot types and probe files (regenerable test infrastructure)
+tests/snapshot-types.test-d.ts
+tests/tsconfig.snapshot.json
+tools/portal-probe.ts
+tools/snapshot-types.ts

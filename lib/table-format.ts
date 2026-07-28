@@ -365,11 +365,11 @@ export const fmt = {
 // ── Predefined column sets ────────────────────────────────────────────────
 export const LIMIT_CHANGE_COLUMNS: ColumnDef[] = [
   {
-    key: 'direction',
-    label: '',
+    key: 'icon',
+    label: 'I',
     align: 'center',
     width: 3,
-    format: v => (v === 'down' ? '⬇️' : '🚀'),
+    format: v => (v === 'down' || v === '⬇️' ? '⬇️' : v === undefined || v === null ? '·' : '🚀'),
     color: s => (s.includes('⬇') ? color.red(s) : color.green(s)),
   },
   { key: 'sportsbook', label: 'Book', align: 'left', width: 14 },
