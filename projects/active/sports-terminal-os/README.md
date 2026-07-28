@@ -37,6 +37,24 @@ bun run --filter sports-terminal-os build         # Production build
 bun run --filter sports-terminal-os start         # Production start
 ```
 
+### shadcn / `cn add` (UI components)
+
+shadcn is initialized for this package (`components.json`, Tailwind v4, dark terminal theme).
+
+```bash
+# From monorepo root (cn is not a global binary — use bun run / bunx)
+bun run cn -- add button -c projects/active/sports-terminal-os
+bun run cn:sto -- add card badge dialog
+# or from this package:
+bun run --filter sports-terminal-os cn -- add table
+
+# Import in React (alias @ → src/)
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+```
+
+Components land in `src/components/ui/`. Existing zone pages stay under `src/frontend/components/`.
+
 ## Quick Start (Standalone)
 
 ```bash

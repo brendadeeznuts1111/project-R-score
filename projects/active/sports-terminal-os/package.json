@@ -32,6 +32,8 @@
     "generate-jwt-secret": "bun run scripts/generate-jwt-secret.ts",
     "frontend:dev": "vite",
     "frontend:build": "vite build",
+    "cn": "bunx --bun shadcn@latest",
+    "cn:add": "bunx --bun shadcn@latest add",
     "preview": "bun run build && bun run src/index.ts",
     "start": "bun run src/index.ts",
     "typecheck": "tsc --noEmit",
@@ -43,11 +45,20 @@
     "build:verify": "echo '=== STAGE 1/3: Typecheck ===' && bun run typecheck && echo '=== STAGE 2/3: Tests ===' && bun test && echo '=== STAGE 3/3: Build ===' && tsc --noEmit && echo 'BUILD VERIFIED'"
   },
   "dependencies": {
+    "@fontsource-variable/geist": "^5.3.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "jose": "5.10.0",
+    "lucide-react": "^1.26.0",
     "prom-client": "15.1.3",
+    "radix-ui": "^1.6.7",
+    "shadcn": "^4.14.1",
+    "tailwind-merge": "^3.6.0",
+    "tw-animate-css": "^1.4.0",
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "4.7.0",
@@ -55,6 +66,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-router-dom": "7.15.1",
+    "tailwindcss": "^4.3.3",
     "typescript": "5.9.3",
     "vite": "5.4.21"
   }

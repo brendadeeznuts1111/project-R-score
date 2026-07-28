@@ -2124,7 +2124,9 @@
     "portal:probe:json": "bun tools/portal-probe.ts --json",
     "portal:probe:lockfile": "bun tools/portal-probe.ts lockfile",
     "portal:secret": "bun tools/portal-secret.ts",
-    "portal:secret:which": "bun tools/portal-secret.ts which"
+    "portal:secret:which": "bun tools/portal-secret.ts which",
+    "cn": "bunx --bun shadcn@latest",
+    "cn:sto": "bunx --bun shadcn@latest -c projects/active/sports-terminal-os"
   },
   "dependencies": {
     "@factorywager/docs-tools": "workspace:*",

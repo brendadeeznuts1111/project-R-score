@@ -1,13 +1,15 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 import { resolve } from "path";
 
 /**
  * Vite 5 configuration for Sports Terminal OS frontend.
  * React 19 + TypeScript SPA with HMR and optimized builds.
+ * Tailwind v4 via @tailwindcss/vite (shadcn / cn add).
  */
 export default defineConfig(({ mode }) => ({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   root: resolve(__dirname, "src/frontend"),
   publicDir: resolve(__dirname, "src/frontend/public"),
   build: {
