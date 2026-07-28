@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/bundler/index#metafile — Bun.build metafile
 // @see https://bun.com/docs/bundler/index#target — target bun
@@ -15,6 +16,8 @@
  *   bun run audit:packages
  *   bun run audit:packages:full   # --cross-check --diff --md --map --bake
  *   bun tools/packages-metafile-audit.ts --strict
+ *
+ * Claim: packages-graph-map-v11
  */
 import { Glob, sliceAnsi } from 'bun';
 import { joinPath } from '../lib/path-bun.ts';
@@ -22,13 +25,19 @@ import { logTable } from '../lib/console-depth.ts';
 import {
   buildPackageGraphMap,
   compareDeclaredWorkspaceDeps,
+  applyWireRootDeps,
+  enrichDeepPackageMap,
   enrichIntraPackageMap,
+  formatIntraPackageMermaid,
   formatPackageMapDot,
   formatPackageMapMermaid,
   resolveMetaImportPath,
   scanOutsidePackageConsumers,
+  scanRootScriptRefs,
   type PackageGraphMap,
 } from '../lib/harness/packages-graph-map.ts';
+import { buildPackageVaultMap } from '../lib/harness/packages-vault-map.ts';
+import { buildEnvInventoryCompact } from '../scripts/lib/env-inventory-compact.ts';
 
 const ROOT = joinPath(import.meta.dir, '..');
 
@@ -112,7 +121,7 @@ export type EntrypointKind =
   | 'explicit';
 
 export type PackageAuditReport = {
-  schemaVersion: 5;
+  schemaVersion: 11;
   kind: 'packages-metafile-audit';
   generatedAt: string;
   bunVersion: string;
@@ -142,6 +151,9 @@ export type PackageAuditReport = {
     inGraph: number;
     orphans: number;
     bytes: number;
+    score?: number;
+    grade?: PackageAuditGrade;
+    role?: string;
   }>;
   totals: {
     inputCount: number;
@@ -154,6 +166,8 @@ export type PackageAuditReport = {
     crossPackageEdges: number;
     externalEdges: number;
     mapLayers: number;
+    openActions?: number;
+    avgPackageScore?: number;
   };
   diff?: {
     previousGeneratedAt: string | null;
@@ -387,15 +401,27 @@ export function formatAuditMarkdown(report: PackageAuditReport): string {
       ``
     );
   }
+  if (report.map.summary) {
+    const s = report.map.summary;
+    lines.push(
+      `## Summary`,
+      ``,
+      `- Packages: ${s.packageCount} · avg score **${s.avgPackageScore}**`,
+      `- Coupling: ${s.consumed} consumed · ${s.rootTooling} root-tooling · ${s.scripted} scripted · ${s.dormant} dormant`,
+      `- Open actions: ${s.openActions} · archive placeholders: ${s.archivePlaceholders}`,
+      `- Top hub: ${s.topHub ?? '—'}`,
+      ``
+    );
+  }
   lines.push(
     `## Packages`,
     ``,
-    `| Package | Scanned | InGraph | Orphans | KiB |`,
-    `|---|---:|---:|---:|---:|`
+    `| Package | Role | Score | Scanned | Orphans | KiB |`,
+    `|---|---|---:|---:|---:|---:|`
   );
   for (const p of report.packages) {
     lines.push(
-      `| ${p.name} | ${p.scanned} | ${p.inGraph} | ${p.orphans} | ${(p.bytes / 1024).toFixed(1)} |`
+      `| ${p.name} | ${p.role ?? '—'} | ${p.score ?? '—'} | ${p.scanned} | ${p.orphans} | ${(p.bytes / 1024).toFixed(1)} |`
     );
   }
   if (report.map.packageEdges.length || report.map.externalEdges.length || report.map.intra) {
@@ -439,6 +465,101 @@ export function formatAuditMarkdown(report: PackageAuditReport): string {
       lines.push(`- \`${d.package}\` missing: ${d.missingInPackageJson.join(', ')}`);
     }
   }
+  if (report.map.externalHubs?.length) {
+    lines.push(``, `### External hubs`, ``);
+    for (const h of report.map.externalHubs) {
+      lines.push(
+        `- \`${h.targetPrefix}\` (${h.plane}) w=${h.weight} ← ${h.fromPackages.join(', ')}`
+      );
+    }
+  }
+  if (report.map.coupling?.length) {
+    lines.push(``, `### Coupling roles`, ``);
+    for (const c of report.map.coupling) {
+      lines.push(
+        `- \`${c.package}\`: **${c.role}** · outside=${c.outsideCount} · dependents=${c.dependentCount} · root=${c.inRootWorkspaceDeps}`
+      );
+    }
+  }
+  if (report.map.archiveProbes?.length) {
+    lines.push(``, `### Archive probes`, ``);
+    for (const p of report.map.archiveProbes) {
+      lines.push(
+        `- \`${p.package}\`: ${p.kind} → **${p.recommendation}** (${p.srcFiles} files, ${p.bytes}B) — ${p.note}`
+      );
+    }
+  }
+  if (report.map.actions?.length) {
+    const actionable = report.map.actions.filter(a => a.action !== 'ok');
+    if (actionable.length) {
+      lines.push(``, `### Actions`, ``);
+      for (const a of actionable) {
+        lines.push(`- \`${a.package}\`: **${a.action}** — ${a.reason}`);
+      }
+    }
+  }
+  if (report.map.quarantine?.length) {
+    lines.push(``, `### Quarantine (archive blocked)`, ``);
+    for (const q of report.map.quarantine) {
+      lines.push(
+        `- \`${q.package}\`: ${q.reason}` +
+          (q.blockedBy.length ? ` · blocked by: ${q.blockedBy.join(', ')}` : '')
+      );
+    }
+  }
+  if (report.map.vault) {
+    const v = report.map.vault;
+    lines.push(
+      ``,
+      `### Proton / env.template`,
+      ``,
+      `- Packages with Bun.env: ${v.summary.packagesWithEnv} · keys: ${v.summary.envKeyCount}`,
+      `- Vaulted hits: ${v.summary.vaultedHits} · missing template: ${v.summary.missingTemplate}`,
+      ``
+    );
+    for (const row of v.byPackage) {
+      lines.push(
+        `- \`${row.package}\`: ${row.envKeys.join(', ')}` +
+          (row.missingTemplateKeys.length
+            ? ` · **missing template:** ${row.missingTemplateKeys.join(', ')}`
+            : '')
+      );
+    }
+    const va = v.actions.filter(a => a.action !== 'ok').slice(0, 12);
+    if (va.length) {
+      lines.push(``, `#### Vault actions`, ``);
+      for (const a of va) {
+        lines.push(`- \`${a.package}\` / \`${a.envKey}\`: **${a.action}** — ${a.reason}`);
+      }
+    }
+    if (v.gap) {
+      lines.push(
+        ``,
+        `#### Vault gap status`,
+        ``,
+        `- pass-cli: ${v.gap.passCliAvailable ? 'available' : 'unavailable'} · items: ${v.gap.passItemCount ?? '—'}`,
+        `- human open: ${v.gap.humanOpen.join(', ') || '—'}`,
+        `- would mint: ${v.gap.mintableWouldMint.join(', ') || '—'}`,
+        ``
+      );
+    }
+  }
+  if (report.map.env) {
+    const e = report.map.env;
+    lines.push(
+      ``,
+      `### Env inventory (owners)`,
+      ``,
+      `- unique=${e.uniqueVars} · owners=${e.summary.ownerCount} · packageTouched=${e.summary.packageTouchedKeys} · multiPlane=${e.summary.multiPlaneKeys}`,
+      `- root runtime missing=${e.runtime.root.templateKeysMissing} · defaultsIssues=${e.defaultsIssues.total} (pkg=${e.defaultsIssues.packages})`,
+      ``
+    );
+    for (const o of e.owners.filter(x => x.packages.length).slice(0, 16)) {
+      lines.push(
+        `- \`${o.envKey}\` ×${o.count} · pkgs=[${o.packages.join(', ')}] · planes=[${o.planes.join(', ')}] · rootTpl=${o.inRootTemplate}`
+      );
+    }
+  }
   if (report.orphans.length) {
     lines.push(``, `## Orphans`, ``, ...report.orphans.map(o => `- \`${o}\``));
   }
@@ -459,6 +580,12 @@ export async function runPackagesMetafileAudit(opts?: {
   previous?: PackageAuditReport | Partial<PackageAuditReport> | null;
   /** Intra-package layers + outside consumers + declared-vs-actual (default true). */
   deepMap?: boolean;
+  /** Scan packages Bun.env ↔ env.template / Proton Pass. */
+  vault?: boolean;
+  /** Also attach live vault:gap:status (pass-cli probe; no secret values). */
+  vaultGap?: boolean;
+  /** Attach compact harness env inventory (includes packages plane + bake path). */
+  envInventory?: boolean;
 }): Promise<PackageAuditReport> {
   const globPat = opts?.glob ?? 'packages/*/src/**/*.{ts,tsx}';
   const g = new Glob(globPat);
@@ -566,15 +693,6 @@ export async function runPackagesMetafileAudit(opts?: {
   const cycles = findImportCycles(adjacency, { maxCycles: 20, packagesOnly: true });
   let map = buildPackageGraphMap(adjacency, { root: ROOT });
 
-  if (opts?.deepMap !== false) {
-    map = enrichIntraPackageMap(map, adjacency, { minFiles: 2 });
-    map = {
-      ...map,
-      outsideConsumers: await scanOutsidePackageConsumers(ROOT, map.packages),
-      declared: await compareDeclaredWorkspaceDeps(ROOT, map),
-    };
-  }
-
   const hubs = [...inbound.entries()]
     .filter(([p]) => p.startsWith('packages/'))
     .map(([path, count]) => ({
@@ -613,9 +731,72 @@ export async function runPackagesMetafileAudit(opts?: {
     pkgMap.set(name, row);
   }
 
-  const packages = [...pkgMap.entries()]
+  let packages = [...pkgMap.entries()]
     .map(([name, r]) => ({ name, ...r }))
     .sort((a, b) => b.orphans - a.orphans || a.name.localeCompare(b.name));
+
+  if (opts?.deepMap !== false) {
+    map = enrichIntraPackageMap(map, adjacency, { minFiles: 2 });
+    map = {
+      ...map,
+      outsideConsumers: await scanOutsidePackageConsumers(ROOT, map.packages),
+      scriptRefs: await scanRootScriptRefs(ROOT, map.packages),
+      declared: await compareDeclaredWorkspaceDeps(ROOT, map),
+    };
+    const packageStats = Object.fromEntries(
+      packages.map(p => [p.name, { orphans: p.orphans, bytes: p.bytes }])
+    );
+    map = await enrichDeepPackageMap(map, ROOT, { packageStats });
+    if (opts?.vault || opts?.vaultGap || opts?.envInventory) {
+      const vault = await buildPackageVaultMap(ROOT, map.packages, {
+        includeGapReport: opts?.vaultGap === true,
+      });
+      map = {
+        ...map,
+        vault,
+        summary: map.summary
+          ? {
+              ...map.summary,
+              vaultOpenActions: vault.summary.openVaultActions,
+              vaultPackagesWithEnv: vault.summary.packagesWithEnv,
+            }
+          : map.summary,
+      };
+    }
+    if (opts?.envInventory) {
+      const env = await buildEnvInventoryCompact(ROOT, {
+        packageNames: map.packages,
+        includeGapReport: opts?.vaultGap === true,
+      });
+      // Prefer packagesPlane from compact (same scanner) as map.vault when both run
+      map = {
+        ...map,
+        env,
+        vault: env.packagesPlane,
+        summary: map.summary
+          ? {
+              ...map.summary,
+              vaultOpenActions: Math.max(
+                env.packagesPlane.summary.openVaultActions,
+                env.vault.actionableVaultGaps.length
+              ),
+              vaultPackagesWithEnv: env.packagesPlane.summary.packagesWithEnv,
+              envPackageTouchedKeys: env.summary.packageTouchedKeys,
+              envMultiPlaneKeys: env.summary.multiPlaneKeys,
+              envRootRuntimeMissing: env.summary.rootRuntimeMissing,
+            }
+          : map.summary,
+      };
+    }
+    const scoreBy = new Map((map.packageScores ?? []).map(s => [s.package, s]));
+    const roleBy = new Map((map.coupling ?? []).map(c => [c.package, c.role]));
+    packages = packages.map(p => ({
+      ...p,
+      score: scoreBy.get(p.name)?.score,
+      grade: scoreBy.get(p.name)?.grade,
+      role: roleBy.get(p.name),
+    }));
+  }
 
   const inputBytes = [...inputs.values()].reduce((n, m) => n + m.bytes, 0);
   const orphanPercent = scannedRel.length ? (orphans.length / scannedRel.length) * 100 : 0;
@@ -717,9 +898,68 @@ export async function runPackagesMetafileAudit(opts?: {
       );
     }
   }
+  if (map.externalHubs?.length) {
+    const top = map.externalHubs
+      .slice(0, 3)
+      .map(h => `${h.targetPrefix}:${h.weight}`)
+      .join(', ');
+    notes.push(`External hubs: ${top}`);
+  }
+  if (map.coupling?.length) {
+    const dormant = map.coupling.filter(c => c.role === 'dormant').map(c => c.package);
+    const consumed = map.coupling.filter(c => c.role === 'consumed').map(c => c.package);
+    const scripted = map.coupling.filter(c => c.role === 'scripted').map(c => c.package);
+    notes.push(
+      `Coupling: ${consumed.length} consumed · ${map.coupling.filter(c => c.role === 'root-tooling').length} root-tooling · ${scripted.length} scripted · ${dormant.length} dormant` +
+        (dormant.length ? ` (${dormant.join(', ')})` : '')
+    );
+  }
+  if (map.actions?.length) {
+    const actionable = map.actions.filter(a => a.action !== 'ok');
+    if (actionable.length) {
+      notes.push(
+        `Actions: ${actionable
+          .slice(0, 6)
+          .map(a => `${a.package}:${a.action}`)
+          .join(', ')}`
+      );
+    }
+  }
+  if (map.summary) {
+    notes.push(
+      `Summary: avgPkg=${map.summary.avgPackageScore} · openActions=${map.summary.openActions} · archivePlaceholders=${map.summary.archivePlaceholders} · hub=${map.summary.topHub ?? '—'}`
+    );
+  }
+  if (map.archiveProbes?.length) {
+    const arch = map.archiveProbes
+      .filter(p => p.recommendation === 'archive')
+      .map(p => `${p.package}(${p.kind})`);
+    if (arch.length) notes.push(`Archive probes: ${arch.join(', ')}`);
+  }
+  if (map.vault) {
+    const v = map.vault.summary;
+    notes.push(
+      `Vault: ${v.packagesWithEnv} pkg(s) with Bun.env · ${v.envKeyCount} keys · inTemplate=${v.inTemplateHits} · missingTemplate=${v.missingTemplate} · openActions=${v.openVaultActions}`
+    );
+    if (map.vault.gap) {
+      notes.push(
+        `Vault gap: pass-cli=${map.vault.gap.passCliAvailable ? 'yes' : 'no'} items=${map.vault.gap.passItemCount ?? '—'} humanOpen=${map.vault.gap.humanOpen.length} wouldMint=${map.vault.gap.mintableWouldMint.length}`
+      );
+    }
+  }
+  if (map.env) {
+    notes.push(
+      `Env inventory: unique=${map.env.uniqueVars} · secrets=${map.env.byKind.secret} · config=${map.env.byKind.config} · actionableGaps=${map.env.vault.actionableVaultGaps.length} · rootRuntimeMissing=${map.env.runtime.root.templateKeysMissing} · owners=${map.env.summary.ownerCount} · pkgKeys=${map.env.summary.packageTouchedKeys} · multiPlane=${map.env.summary.multiPlaneKeys} · defaultsIssues=${map.env.defaultsIssues.total}`
+    );
+  }
+  if (map.quarantine?.length) {
+    notes.push(
+      `Quarantine: ${map.quarantine.map(q => `${q.package}(blocked=${q.blockedBy.length})`).join(', ')}`
+    );
+  }
 
   const report: PackageAuditReport = {
-    schemaVersion: 5,
+    schemaVersion: 11,
     kind: 'packages-metafile-audit',
     generatedAt: new Date().toISOString(),
     bunVersion: Bun.version,
@@ -754,6 +994,8 @@ export async function runPackagesMetafileAudit(opts?: {
       crossPackageEdges: map.packageEdges.length,
       externalEdges: map.externalEdges.length,
       mapLayers: map.layers.length,
+      openActions: map.summary?.openActions,
+      avgPackageScore: map.summary?.avgPackageScore,
     },
     ...(crossCheck ? { crossCheck } : {}),
     notes,
@@ -793,15 +1035,21 @@ async function main(): Promise<void> {
   --include-tests     include *.test.ts / *.spec.ts in scan
   --cross-check       Bun.Transpiler.scan orphan/cycle compare
   --map               write audit-map.mmd + audit-map.dot beside --out
-  --bake              write map to public/registry/packages-graph-map.json
+  --bake              write map to public/registry/packages-graph-map.json (+ portal board)
   --shallow           skip intra/outside/declared deep-map enrichment
+  --apply-actions     wire open wire-root-dep actions into root package.json
+  --dry-run           with --apply-actions: print adds without writing
+  --vault             scan packages Bun.env ↔ env.template / pass://
+  --vault-gap         --vault + live vault:gap:status (pass-cli; no secrets printed)
+  --env               attach compact env inventory (lib/config/scripts/tools/packages)
   --no-pkg-json       skip package.json module/bin/exports entrypoints
   --strict            exit 1 if grade=critical or orphans/cycles/build fail
+  --strict-actions    exit 1 if any non-ok coupling actions remain
   --help              this message
 
 Score: 100 − 8·orphans − 0.5·orphan% − 10·cycles − 25·buildFail
 Grade: healthy≥90 · needs-improvement≥60 · critical<60
-Map v5: cross-pkg + external planes + intra depth + outside consumers + declared
+Map v11: + env key owners · root/product runtime · defaults issues · quarantine
 `);
     return;
   }
@@ -816,7 +1064,7 @@ Map v5: cross-pkg + external planes + intra depth + outside consumers + declared
     }
   }
 
-  const report = await runPackagesMetafileAudit({
+  let report = await runPackagesMetafileAudit({
     glob: argvFlag('--glob') ? argvValue('--glob', 'packages/*/src/**/*.{ts,tsx}') : undefined,
     fullMetafile: argvFlag('--full-metafile'),
     includeTests: argvFlag('--include-tests'),
@@ -824,6 +1072,9 @@ Map v5: cross-pkg + external planes + intra depth + outside consumers + declared
     packageJsonEntrypoints: !argvFlag('--no-pkg-json'),
     previous: argvFlag('--diff') ? previous : undefined,
     deepMap: !argvFlag('--shallow'),
+    vault: argvFlag('--vault') || argvFlag('--vault-gap') || argvFlag('--env'),
+    vaultGap: argvFlag('--vault-gap'),
+    envInventory: argvFlag('--env'),
   });
 
   await Bun.write(outPath, JSON.stringify(report, null, 2) + '\n');
@@ -844,12 +1095,45 @@ Map v5: cross-pkg + external planes + intra depth + outside consumers + declared
       console.log(`→ ${mmdPath}`);
       console.log(`→ ${dotPath}`);
     }
+    if (report.map.intra) {
+      const deepest = Object.entries(report.map.intra)
+        .sort((a, b) => b[1].depth - a[1].depth || b[1].fileCount - a[1].fileCount)
+        .slice(0, 3);
+      for (const [name, info] of deepest) {
+        const intraPath = `${base}-intra-${name}.mmd`;
+        await Bun.write(intraPath, formatIntraPackageMermaid(name, info));
+        if (!argvFlag('--json')) console.log(`→ ${intraPath}`);
+      }
+    }
+  }
+
+  if (argvFlag('--apply-actions')) {
+    const toWire = (report.map.actions ?? [])
+      .filter(a => a.action === 'wire-root-dep')
+      .map(a => a.package);
+    const result = await applyWireRootDeps(ROOT, toWire, { dryRun: argvFlag('--dry-run') });
+    if (!argvFlag('--json')) {
+      console.log(
+        `apply wire-root-dep: added=[${result.added.join(', ') || '—'}] skipped=[${result.skipped.join(', ') || '—'}] dryRun=${result.dryRun}`
+      );
+    }
+    if (result.added.length && !result.dryRun) {
+      report = await runPackagesMetafileAudit({
+        glob: argvFlag('--glob') ? argvValue('--glob', 'packages/*/src/**/*.{ts,tsx}') : undefined,
+        fullMetafile: argvFlag('--full-metafile'),
+        includeTests: argvFlag('--include-tests'),
+        crossCheck: argvFlag('--cross-check'),
+        packageJsonEntrypoints: !argvFlag('--no-pkg-json'),
+        deepMap: !argvFlag('--shallow'),
+      });
+      await Bun.write(outPath, JSON.stringify(report, null, 2) + '\n');
+    }
   }
 
   if (argvFlag('--bake')) {
     const bakePath = joinPath(ROOT, 'public/registry/packages-graph-map.json');
     const bake = {
-      schemaVersion: 5,
+      schemaVersion: 11,
       kind: 'packages-graph-map',
       generatedAt: report.generatedAt,
       bunVersion: report.bunVersion,
@@ -861,6 +1145,11 @@ Map v5: cross-pkg + external planes + intra depth + outside consumers + declared
     };
     await Bun.write(bakePath, JSON.stringify(bake, null, 2) + '\n');
     if (!argvFlag('--json')) console.log(`→ ${bakePath}`);
+    if (report.map.env) {
+      const envBake = joinPath(ROOT, 'public/registry/env-inventory.json');
+      await Bun.write(envBake, JSON.stringify(report.map.env, null, 2) + '\n');
+      if (!argvFlag('--json')) console.log(`→ ${envBake}`);
+    }
   }
 
   if (argvFlag('--json')) {
@@ -875,12 +1164,13 @@ Map v5: cross-pkg + external planes + intra depth + outside consumers + declared
     logTable(
       report.packages.map(p => ({
         Package: p.name,
+        Role: p.role ?? '—',
+        Score: p.score ?? '—',
         Scanned: p.scanned,
-        InGraph: p.inGraph,
         Orphans: p.orphans,
         KiB: Number((p.bytes / 1024).toFixed(1)),
       })),
-      ['Package', 'Scanned', 'InGraph', 'Orphans', 'KiB']
+      ['Package', 'Role', 'Score', 'Scanned', 'Orphans', 'KiB']
     );
     writeLine(
       `🗺️ map: ${report.totals.crossPackageEdges} cross-pkg · ${report.totals.externalEdges} external · ${report.totals.mapLayers} layers · internal file-edges ${report.map.internalEdgeCount}`
@@ -915,7 +1205,15 @@ Map v5: cross-pkg + external planes + intra depth + outside consumers + declared
     if (report.map.outsideConsumers?.length) {
       console.log('\noutside consumers:');
       for (const c of report.map.outsideConsumers.slice(0, 8)) {
-        console.log(`  · ${c.package}  ×${c.count}`);
+        console.log(
+          `  · ${c.package}  ×${c.count}  workspace=${c.workspaceImports} relative=${c.relativeImports}`
+        );
+      }
+    }
+    if (report.map.scriptRefs?.length) {
+      console.log('\nscript refs:');
+      for (const s of report.map.scriptRefs.slice(0, 8)) {
+        console.log(`  · ${s.package}  ← ${s.scripts.slice(0, 4).join(', ')}`);
       }
     }
     if (report.map.declared) {
@@ -924,6 +1222,98 @@ Map v5: cross-pkg + external planes + intra depth + outside consumers + declared
       console.log(
         `\ndeclared: ${rootN}/${report.map.declared.length} in root workspace · ${missing.length} undeclared cross-imports`
       );
+    }
+    if (report.map.externalHubs?.length) {
+      console.log('\nexternal hubs:');
+      for (const h of report.map.externalHubs.slice(0, 8)) {
+        console.log(`  · ${h.targetPrefix}  w=${h.weight}  ← ${h.fromPackages.join(', ')}`);
+      }
+    }
+    if (report.map.coupling?.length) {
+      console.log('\ncoupling:');
+      for (const c of report.map.coupling) {
+        console.log(`  · ${c.package}  ${c.role}`);
+      }
+    }
+    if (report.map.archiveProbes?.length) {
+      console.log('\narchive probes:');
+      for (const p of report.map.archiveProbes) {
+        console.log(
+          `  · ${p.package}  ${p.kind} → ${p.recommendation}  (${p.srcFiles} files) ${p.note}`
+        );
+      }
+    }
+    if (report.map.actions?.length) {
+      const actionable = report.map.actions.filter(a => a.action !== 'ok');
+      if (actionable.length) {
+        console.log('\nactions:');
+        for (const a of actionable.slice(0, 12)) {
+          console.log(`  · ${a.package}  ${a.action} — ${a.reason}`);
+        }
+      }
+    }
+    if (report.map.summary) {
+      const s = report.map.summary;
+      console.log(
+        `\nsummary: avgPkg=${s.avgPackageScore} openActions=${s.openActions} archivePlaceholders=${s.archivePlaceholders}`
+      );
+    }
+    if (report.map.vault) {
+      const v = report.map.vault;
+      console.log('\nproton / env.template:');
+      for (const row of v.byPackage) {
+        console.log(
+          `  · ${row.package}  env=[${row.envKeys.join(', ')}]` +
+            (row.missingTemplateKeys.length
+              ? `  missing=[${row.missingTemplateKeys.join(', ')}]`
+              : '')
+        );
+      }
+      const va = v.actions.filter(a => a.action !== 'ok').slice(0, 10);
+      if (va.length) {
+        console.log('vault actions:');
+        for (const a of va) {
+          console.log(`  · ${a.package} / ${a.envKey}  ${a.action}`);
+        }
+      }
+      if (v.gap) {
+        console.log(
+          `vault gap: pass-cli=${v.gap.passCliAvailable} items=${v.gap.passItemCount ?? '—'} open=${v.gap.humanOpen.join('|') || '—'} wouldMint=${v.gap.mintableWouldMint.join('|') || '—'}`
+        );
+      }
+    }
+    if (report.map.env) {
+      const e = report.map.env;
+      console.log(
+        `\nenv inventory: roots=[${e.scannedRoots.join(',')}] unique=${e.uniqueVars} secret=${e.byKind.secret} config=${e.byKind.config} gaps=${e.vault.actionableVaultGaps.length}`
+      );
+      console.log(
+        `  root runtime: present=${e.runtime.root.templateKeysPresent} missing=${e.runtime.root.templateKeysMissing}` +
+          (e.runtime.root.missingKeys.length
+            ? ` [${e.runtime.root.missingKeys.slice(0, 8).join(', ')}]`
+            : '')
+      );
+      console.log(
+        `  product runtime missing=${e.runtime.products.templateKeysMissing} · owners=${e.summary.ownerCount} · pkgKeys=${e.summary.packageTouchedKeys} · multiPlane=${e.summary.multiPlaneKeys} · defaultsIssues=${e.defaultsIssues.total}`
+      );
+      const pkgOwners = e.owners.filter(o => o.packages.length).slice(0, 8);
+      if (pkgOwners.length) {
+        console.log('  env key owners (package-touched):');
+        for (const o of pkgOwners) {
+          console.log(
+            `    · ${o.envKey}  ×${o.count}  pkgs=[${o.packages.join(',')}]  planes=[${o.planes.join(',')}]  rootTpl=${o.inRootTemplate}`
+          );
+        }
+      }
+      if (e.vault.actionableVaultGaps.length) {
+        console.log(`  actionable: ${e.vault.actionableVaultGaps.join(', ')}`);
+      }
+    }
+    if (report.map.quarantine?.length) {
+      console.log('\nquarantine (archive blocked by wiring):');
+      for (const q of report.map.quarantine) {
+        console.log(`  · ${q.package}  blockedBy=[${q.blockedBy.join(', ') || '—'}]  ${q.reason}`);
+      }
     }
     if (report.diff) {
       console.log('\ndiff vs previous:');
@@ -983,6 +1373,10 @@ Map v5: cross-pkg + external planes + intra depth + outside consumers + declared
     ) {
       process.exitCode = 1;
     }
+  }
+  if (argvFlag('--strict-actions')) {
+    const open = (report.map.actions ?? []).filter(a => a.action !== 'ok');
+    if (open.length) process.exitCode = 1;
   }
 }
 

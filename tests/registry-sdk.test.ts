@@ -6,7 +6,7 @@ import {
   uint8TotalBytes,
   type RegistryFetch,
   type RegistryIndex,
-} from '../packages/registry-client/src/index';
+} from '@factorywager/registry-client';
 
 async function checksum(data: Uint8Array): Promise<string> {
   const digest = await crypto.subtle.digest('SHA-256', data);

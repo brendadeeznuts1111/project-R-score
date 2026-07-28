@@ -1,0 +1,8 @@
+flowchart TB
+  subgraph p2p["p2p depth=3"]
+    p2p_L0["L0<br/>src/index.ts"]
+    p2p_L1["L1<br/>src/customer-notifier.ts<br/>src/migration-workflow.ts"]
+    p2p_L0 --> p2p_L1
+    p2p_L2["L2<br/>src/business-continuity.ts"]
+    p2p_L1 --> p2p_L2
+  end

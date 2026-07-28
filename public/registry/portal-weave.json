@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-28T03:22:12.758Z",
+  "generated": "2026-07-28T04:15:54.786Z",
   "surfaces": [
     {
       "label": "Home",
@@ -43,6 +43,11 @@
       "label": "Skills",
       "href": "/portal/skills/",
       "note": "catalog · .skill packages"
+    },
+    {
+      "label": "Packages",
+      "href": "/portal/packages/",
+      "note": "metafile map · coupling · archive probes"
     },
     {
       "label": "Dashboard",
@@ -103,6 +108,16 @@
       "label": "harness-skills-catalog",
       "href": "/registry/harness-skills-catalog.json",
       "note": "repo .agents/skills · skill-loop-registry"
+    },
+    {
+      "label": "packages-graph-map",
+      "href": "/registry/packages-graph-map.json",
+      "note": "workspace coupling · env owners · quarantine · claim packages-graph-map-v11"
+    },
+    {
+      "label": "env-inventory",
+      "href": "/registry/env-inventory.json",
+      "note": "Bun.env owners · root/product runtime · packages plane · env:inventory:bake"
     },
     {
       "label": "dod-queue",
@@ -266,6 +281,21 @@
     {
       "label": "Limit raises multi check",
       "cmd": "bun run ops:limits:check:multi",
+      "doc": "docs/harness/tenants/partner-limits.md"
+    },
+    {
+      "label": "Limit raise analyze",
+      "cmd": "bun run ops:limits:analyze",
+      "doc": "docs/harness/tenants/partner-limits.md"
+    },
+    {
+      "label": "Limit pattern seed + bake",
+      "cmd": "bun tools/seed-limit-patterns.ts --force --bake",
+      "doc": "docs/harness/tenants/partner-limits.md"
+    },
+    {
+      "label": "Limit raise alerts",
+      "cmd": "bun run ops:limits:alerts",
       "doc": "docs/harness/tenants/partner-limits.md"
     },
     {

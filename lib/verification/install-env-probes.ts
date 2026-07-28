@@ -15,7 +15,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { joinPath } from '../path-bun.ts';
 import { factoryWagerRegistryUrlFromEnv } from '../../config/r2-env.ts';
-import { RegistryClient } from '../../packages/registry-client/src/index.ts';
+import { RegistryClient } from '@factorywager/registry-client';
 import { resolveCanonicalForProbe } from '../../tools/canonical-helpers.ts';
 import { resolveVerificationBunBinary } from './resolve-bun-binary.ts';
 import { withSubsystem } from './subsystem.ts';

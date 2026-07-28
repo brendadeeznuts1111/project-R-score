@@ -1,10 +1,15 @@
 // @see https://bun.com/docs/test — bun:test
 import { describe, test, expect } from 'bun:test';
 import {
+  applyWireRootDeps,
   buildPackageGraphMap,
+  classifyPackageCoupling,
+  enrichCouplingMap,
   enrichIntraPackageMap,
+  formatIntraPackageMermaid,
   formatPackageMapMermaid,
   resolveMetaImportPath,
+  scorePackageCoupling,
 } from '../lib/harness/packages-graph-map.ts';
 
 describe('packages-graph-map', () => {
@@ -68,5 +73,105 @@ describe('packages-graph-map', () => {
     expect(map.intra?.a?.fileCount).toBe(3);
     expect(map.intra?.a?.depth).toBeGreaterThanOrEqual(2);
     expect(map.intra?.a?.layers.flat()).toContain('src/leaf.ts');
+    const mmd = formatIntraPackageMermaid('a', map.intra!.a!);
+    expect(mmd).toContain('flowchart TB');
+    expect(mmd).toContain('depth=');
+  });
+
+  test('classifyPackageCoupling marks dormant vs consumed + actions', () => {
+    let map = buildPackageGraphMap(
+      new Map([
+        ['packages/live/src/i.ts', ['lib/x.ts']],
+        ['packages/dead/src/i.ts', []],
+      ])
+    );
+    map = {
+      ...map,
+      outsideConsumers: [
+        {
+          package: 'live',
+          count: 2,
+          consumers: ['lib/a.ts', 'tools/b.ts'],
+          workspaceImports: 0,
+          relativeImports: 2,
+        },
+      ],
+      declared: [
+        {
+          package: 'live',
+          npmName: '@factorywager/live',
+          declaredWorkspace: [],
+          actualCrossPkg: [],
+          missingInPackageJson: [],
+          unusedDeclared: [],
+          inRootWorkspaceDeps: false,
+        },
+        {
+          package: 'dead',
+          npmName: '@factorywager/dead',
+          declaredWorkspace: [],
+          actualCrossPkg: [],
+          missingInPackageJson: [],
+          unusedDeclared: [],
+          inRootWorkspaceDeps: false,
+        },
+      ],
+    };
+    map = enrichCouplingMap(map);
+    expect(map.externalHubs?.[0]?.targetPrefix).toBe('lib/x.ts');
+    const roles = Object.fromEntries(classifyPackageCoupling(map).map(c => [c.package, c.role]));
+    expect(roles.live).toBe('consumed');
+    expect(roles.dead).toBe('dormant');
+    expect(map.actions?.some(a => a.package === 'live' && a.action === 'wire-root-dep')).toBe(true);
+    expect(map.actions?.some(a => a.package === 'live' && a.action === 'migrate-relative-imports')).toBe(
+      true
+    );
+    expect(map.actions?.some(a => a.package === 'dead' && a.action === 'archive-candidate')).toBe(
+      true
+    );
+    const scores = scorePackageCoupling(map);
+    expect(scores.find(s => s.package === 'live')!.score).toBeLessThan(100);
+  });
+
+  test('applyWireRootDeps dry-run reports adds', async () => {
+    const result = await applyWireRootDeps(process.cwd(), ['docs-tools'], { dryRun: true });
+    expect(result.dryRun).toBe(true);
+    // docs-tools may already be wired after apply; either added or skipped is fine
+    expect(result.added.length + result.skipped.length).toBe(1);
+  });
+
+  test('residual relative imports still migrate even when workspace imports exist', () => {
+    let map = buildPackageGraphMap(new Map([['packages/sdk/src/i.ts', []]]));
+    map = {
+      ...map,
+      outsideConsumers: [
+        {
+          package: 'sdk',
+          count: 2,
+          consumers: ['lib/a.ts', 'lib/b.ts'],
+          workspaceImports: 3,
+          relativeImports: 1,
+        },
+      ],
+      declared: [
+        {
+          package: 'sdk',
+          npmName: '@factorywager/sdk',
+          declaredWorkspace: [],
+          actualCrossPkg: [],
+          missingInPackageJson: [],
+          unusedDeclared: [],
+          inRootWorkspaceDeps: true,
+        },
+      ],
+    };
+    map = enrichCouplingMap(map);
+    expect(
+      map.actions?.some(a => a.package === 'sdk' && a.action === 'migrate-relative-imports')
+    ).toBe(true);
+    expect(map.actions?.some(a => a.package === 'sdk' && a.action === 'ok')).toBe(false);
+    const score = scorePackageCoupling(map).find(s => s.package === 'sdk')!;
+    expect(score.score).toBe(92); // 100 − 8 residual relative
+    expect(score.reasons.some(r => r.includes('residual relative'))).toBe(true);
   });
 });

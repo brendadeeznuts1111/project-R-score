@@ -58,18 +58,25 @@ bun tools/monorepo-health.ts --archive   # tar report when Bun.Archive available
 Focused `packages/*/src` graph (Bun.build metafile), complementary to this tenant:
 
 ```bash
-bun run audit:packages           # score/grade + deep map (schema v5)
-bun run audit:packages:full      # --cross-check --diff --md --map --bake
-bun run audit:packages:strict    # exit 1 on orphans/cycles/critical
+bun run audit:packages           # score/grade + deep map (schema v11)
+bun run audit:packages:full      # --cross-check --diff --md --map --bake --vault --env
+bun run audit:packages:env       # --env --vault-gap + bake packages + env-inventory
+bun run audit:packages:vault     # --vault --vault-gap (live pass-cli status) + bake
+bun run audit:packages:apply     # wire open wire-root-dep actions + bake
+bun run env:inventory            # now scans packages/ · packages plane section
+bun run env:inventory:bake       # → /registry/env-inventory.json
 ```
 
 | Path | Role |
 |------|------|
-| [`tools/packages-metafile-audit.ts`](../../../tools/packages-metafile-audit.ts) | orphans · cycles · hubs · fan-out · score · diff · bake |
-| [`lib/harness/packages-graph-map.ts`](../../../lib/harness/packages-graph-map.ts) | cross-pkg + external + intra depth + outside consumers + declared |
-| `audit-report.json` / `.md` / `-map.mmd` / `-map.dot` | latest artifacts (repo root) |
-| [`public/registry/packages-graph-map.json`](../../../public/registry/packages-graph-map.json) | baked map (`--bake`) |
+| [`tools/packages-metafile-audit.ts`](../../../tools/packages-metafile-audit.ts) | orphans · cycles · hubs · scores · vault · env · apply · bake |
+| [`lib/harness/packages-graph-map.ts`](../../../lib/harness/packages-graph-map.ts) | coupling · archive probes · summary · applyWireRootDeps |
+| [`lib/harness/packages-vault-map.ts`](../../../lib/harness/packages-vault-map.ts) | Bun.env ↔ `env.template` / Proton Pass · inTemplate · runtimePresent |
+| [`scripts/lib/env-inventory-compact.ts`](../../../scripts/lib/env-inventory-compact.ts) | shared compact inventory (roots include `packages`) |
+| [`public/registry/packages-graph-map.json`](../../../public/registry/packages-graph-map.json) | baked map |
+| [`public/registry/env-inventory.json`](../../../public/registry/env-inventory.json) | baked env inventory |
+| [`public/portal/packages/`](../../../public/portal/packages/) · [`/portal/env/`](../../../public/portal/env/) | boards (packages: multi-source load · schema pin · retry banner) |
 
-Score: `100 − 8·orphans − 0.5·orphan% − 10·cycles − 25·buildFail` (same grade bands as above).
-Map resolves relative/bare metafile paths so external planes stay honest (`lib/docs`, `bare:bun`, `config`).
-Deep map (default; `--shallow` to skip): intra-package topo depth, outside consumers under `lib/tools/scripts/tests`, and declared `workspace:*` vs actual cross-pkg edges.
+**Claim** `packages-graph-map-v11` · ratchet: `bun test tests/packages-graph-map.test.ts tests/packages-metafile-audit.test.ts tests/packages-vault-map.test.ts tests/env-inventory-compact.test.ts` · `bun run audit:packages:env`
+
+`--env` attaches compact harness inventory (`lib`/`config`/`scripts`/`tools`/`packages`) and bakes `/registry/env-inventory.json` alongside the packages map. Companion: [`proton-integration.md`](proton-integration.md) · `bun run env:inventory:ratchet` · `bun run proton:inject:factorywager`.

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<!-- @see docs/portal-foundation.md · claim packages-graph-map-v11 -->
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="portal-poll-ms" content="60000" />
+  <title>Packages map · FactoryWager</title>
+  <link rel="stylesheet" href="/portal/style.css" />
+  <style>
+    .pkg-board { max-width: 1100px; margin: 0 auto; padding: 0 24px 48px; }
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0 28px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+    .stat-card .stat-num { font-size: 26px; font-weight: 600; }
+    .stat-card .stat-label { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+    table.pkg-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.pkg-table th, table.pkg-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+    table.pkg-table th { color: var(--text-dim); font-weight: 500; }
+    .role { font-family: ui-monospace, monospace; font-size: 12px; }
+    .role-dormant { color: var(--yellow, #e6b84d); }
+    .role-consumed { color: var(--green, #3dd68c); }
+    .role-scripted { color: var(--accent); }
+    .role-root-tooling { color: var(--text-dim); }
+    .actions { margin-top: 28px; }
+    .actions li { margin: 6px 0; font-size: 13px; }
+    .meta { font-size: 12px; color: var(--text-dim); margin-top: 8px; }
+    .pkg-error, .pkg-empty { color: var(--text-dim); font-size: 13px; }
+    .ops-banner.error { margin-bottom: 16px; padding: 12px 14px; border: 1px solid var(--red, #f07178); border-radius: var(--radius); background: color-mix(in srgb, var(--red, #f07178) 12%, transparent); }
+    .ops-banner.hidden { display: none; }
+    .error-hint { margin: 8px 0 0; font-size: 13px; }
+    .retry-btn { cursor: pointer; }
+    @media (max-width: 720px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+</head>
+<body>
+  <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <h1 class="logo">
+        <span class="logo-icon">■</span>
+        <span class="brand-wordmark">FactoryWager</span>
+        <span class="brand-badge">ops</span>
+        <span class="logo-page">Packages</span>
+      </h1>
+      <nav class="topbar-nav" aria-label="Primary">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/portal/ops" class="nav-link">Ops</a>
+        <a href="/portal/" class="nav-link">Registry</a>
+        <a href="/portal/health" class="nav-link">Health</a>
+        <a href="/portal/packages/" class="nav-link active">Packages</a>
+      </nav>
+      <div class="topbar-status">
+        <a href="/registry/packages-graph-map.json" class="nav-link nav-md" title="Raw JSON">JSON</a>
+        <a href="/portal/health" class="topbar-health-link" title="System health">
+          <span id="health-dot" class="health-dot unknown"></span>
+          <span id="health-label" class="health-label">…</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main pkg-board">
+    <section class="hero">
+      <h2>Packages graph map</h2>
+      <p class="hero-sub">Coupling · quarantine · env owners · Proton vault (schema v11)</p>
+      <p class="meta" id="gen-meta">Loading…</p>
+    </section>
+
+    <div id="pkg-error-banner" class="ops-banner error hidden" role="alert"></div>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num" id="s-score">—</div><div class="stat-label">board score</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-avg">—</div><div class="stat-label">avg package score</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-actions">—</div><div class="stat-label">open actions</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-archive">—</div><div class="stat-label">archive placeholders</div></div>
+    </div>
+
+    <table class="pkg-table" aria-label="Package coupling">
+      <thead>
+        <tr><th>Package</th><th>Role</th><th>Score</th><th>Orphans</th><th>KiB</th></tr>
+      </thead>
+      <tbody id="pkg-body"></tbody>
+    </table>
+
+    <div class="actions">
+      <h3>Actions</h3>
+      <ul id="action-list"><li>Loading…</li></ul>
+      <h3>Archive probes</h3>
+      <ul id="probe-list"><li>Loading…</li></ul>
+      <h3>Quarantine</h3>
+      <ul id="quarantine-list"><li>Loading…</li></ul>
+      <h3>Proton / env.template</h3>
+      <ul id="vault-list"><li>Loading…</li></ul>
+      <p class="meta" id="vault-gap-meta"></p>
+      <h3>Env owners <a href="/portal/env/" style="font-size:12px;font-weight:400">env board</a></h3>
+      <p class="meta" id="env-meta">Loading…</p>
+      <ul id="env-owner-list"><li>Loading…</li></ul>
+      <p class="meta">Hub: <span id="hub">—</span> · <code>bun run audit:packages:env</code></p>
+    </div>
+  </main>
+
+  <script type="module" src="/portal/data.js"></script>
+  <script type="module" src="/portal/topbar.js"></script>
+  <script type="module" src="/portal/components/sidebar.js"></script>
+  <script type="module" src="/portal/packages/packages-board.js"></script>
+</body>
+</html>

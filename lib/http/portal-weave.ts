@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/bundler/executables — --force
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Portal weave — cross-surface links and operator runbooks baked into registry.
  *
@@ -53,6 +55,11 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
   },
   { label: 'Skills', href: '/portal/skills/', note: 'catalog · .skill packages' },
   {
+    label: 'Packages',
+    href: '/portal/packages/',
+    note: 'metafile map · coupling · archive probes',
+  },
+  {
     label: 'Dashboard',
     href: '/portal/dashboard/',
     note: 'executive KPIs · TOC · compliance plane',
@@ -84,6 +91,16 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     label: 'harness-skills-catalog',
     href: '/registry/harness-skills-catalog.json',
     note: 'repo .agents/skills · skill-loop-registry',
+  },
+  {
+    label: 'packages-graph-map',
+    href: '/registry/packages-graph-map.json',
+    note: 'workspace coupling · env owners · quarantine · claim packages-graph-map-v11',
+  },
+  {
+    label: 'env-inventory',
+    href: '/registry/env-inventory.json',
+    note: 'Bun.env owners · root/product runtime · packages plane · env:inventory:bake',
   },
   { label: 'dod-queue', href: '/registry/dod-queue.json' },
   {
@@ -202,6 +219,21 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
   {
     label: 'Limit raises multi check',
     cmd: 'bun run ops:limits:check:multi',
+    doc: 'docs/harness/tenants/partner-limits.md',
+  },
+  {
+    label: 'Limit raise analyze',
+    cmd: 'bun run ops:limits:analyze',
+    doc: 'docs/harness/tenants/partner-limits.md',
+  },
+  {
+    label: 'Limit pattern seed + bake',
+    cmd: 'bun tools/seed-limit-patterns.ts --force --bake',
+    doc: 'docs/harness/tenants/partner-limits.md',
+  },
+  {
+    label: 'Limit raise alerts',
+    cmd: 'bun run ops:limits:alerts',
     doc: 'docs/harness/tenants/partner-limits.md',
   },
   {

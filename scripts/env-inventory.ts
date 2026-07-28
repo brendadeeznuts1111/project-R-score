@@ -10,10 +10,12 @@
  *   bun run env:inventory --vault-only
  *   bun run env:inventory --ratchet          # fail if actionable vault gaps grow
  *   bun run env:inventory --write-baseline   # refresh gap baseline (intentional)
+ *   bun run env:inventory --bake             # → public/registry/env-inventory.json
  *
  * Complements:
  *   bun run check:env-defaults   — optional config without fallback
  *   bun run proton:check         — vault inject proof
+ *   bun run audit:packages:env   — packages graph + env inventory bake
  */
 import { Glob } from 'bun';
 import { relative, resolve } from 'node:path';
@@ -25,6 +27,8 @@ import {
   dispositionForSecret,
   type SecretDisposition,
 } from './lib/env-secret-policy.ts';
+import { buildEnvInventoryCompact } from './lib/env-inventory-compact.ts';
+import { buildPackageVaultMap } from '../lib/harness/packages-vault-map.ts';
 
 const ROOT = process.cwd();
 const argv = Bun.argv.slice(2);
@@ -32,10 +36,12 @@ const JSON_OUT = argv.includes('--json');
 const VAULT_ONLY = argv.includes('--vault-only');
 const RATCHET = argv.includes('--ratchet');
 const WRITE_BASELINE = argv.includes('--write-baseline');
+const BAKE = argv.includes('--bake');
 
 const BASELINE_PATH = resolve(ROOT, 'scripts/env-secret-gap-baseline.json');
+const BAKE_PATH = resolve(ROOT, 'public/registry/env-inventory.json');
 
-const ROOTS = ['lib', 'config', 'scripts', 'tools'];
+const ROOTS = ['lib', 'config', 'scripts', 'tools', 'packages'];
 const TEMPLATES = [
   'env.template',
   'projects/active/enterprise/bet-ticker-worker-v1.1/env.template',
@@ -189,7 +195,33 @@ const report = {
     }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 30),
+  packagesPlane: null as Awaited<ReturnType<typeof buildPackageVaultMap>> | null,
 };
+
+// Packages plane (structured) — same scanner as audit:packages --vault
+{
+  const pkgNames = [
+    ...new Set(
+      usages
+        .map(u => {
+          const m = u.file.match(/^packages\/([^/]+)\//);
+          return m?.[1];
+        })
+        .filter((x): x is string => !!x)
+    ),
+  ].sort();
+  // Always scan all workspace package folders so dormant packages appear when they gain Bun.env
+  const g = new Glob('packages/*/package.json');
+  const allPkgs: string[] = [];
+  for await (const f of g.scan({ cwd: ROOT, absolute: false, onlyFiles: true })) {
+    const name = f.split('/')[1];
+    if (name) allPkgs.push(name);
+  }
+  report.packagesPlane = await buildPackageVaultMap(
+    ROOT,
+    [...new Set([...allPkgs, ...pkgNames])].sort()
+  );
+}
 
 // --- baseline / ratchet ---
 type Baseline = {
@@ -243,6 +275,12 @@ if (RATCHET) {
       console.log(`   − ${g} (closed vs baseline — run --write-baseline to lock)`);
     }
   }
+}
+
+if (BAKE) {
+  const compact = await buildEnvInventoryCompact(ROOT, { includeGapReport: false });
+  await Bun.write(BAKE_PATH, JSON.stringify(compact, null, 2) + '\n');
+  console.log(`→ ${relative(ROOT, BAKE_PATH)}`);
 }
 
 if (JSON_OUT) {
@@ -319,9 +357,21 @@ if (!VAULT_ONLY) {
     console.log(`  ${c.var} ×${c.count}  e.g. ${c.samples[0] ?? ''}`);
   }
 }
+if (report.packagesPlane) {
+  console.log('');
+  console.log(
+    `Packages plane: ${report.packagesPlane.summary.packagesWithEnv} pkg(s) · ${report.packagesPlane.summary.envKeyCount} keys · missingTemplate=${report.packagesPlane.summary.missingTemplate}`
+  );
+  for (const row of report.packagesPlane.byPackage) {
+    console.log(
+      `  · ${row.package}  [${row.envKeys.join(', ')}]` +
+        (row.missingTemplateKeys.length ? `  missing=${row.missingTemplateKeys.join(',')}` : '')
+    );
+  }
+}
 console.log('');
 console.log(
-  'Related: bun run check:env-defaults · bun run proton:check · bun run env:inventory --ratchet'
+  'Related: bun run check:env-defaults · bun run proton:check · bun run env:inventory --ratchet · bun run audit:packages:env'
 );
 
 if (actionableGaps.length > 0 && !RATCHET) {

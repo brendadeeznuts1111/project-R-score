@@ -7,8 +7,8 @@
  * @see docs/guides/REGISTRY_PRODUCTION_READINESS.md
  */
 import { factoryWagerRegistryUrlFromEnv } from '../../config/r2-env.ts';
-import { RegistryClient, uint8TotalBytes } from '../../packages/registry-client/src/index.ts';
-import registryClientPkg from '../../packages/registry-client/package.json';
+import { RegistryClient, uint8TotalBytes } from '@factorywager/registry-client';
+import registryClientPkg from '@factorywager/registry-client/package.json';
 import { resolveCanonicalForProbe } from '../../tools/canonical-helpers.ts';
 import { SCOPED_REGISTRY_LANES } from './install-env-probes.ts';
 import type { VerificationLinks, VerificationResult } from './types.ts';

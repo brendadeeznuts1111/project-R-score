@@ -10,10 +10,12 @@
 import { withTocEnforcement } from './enforcement.ts';
 import { buildDemoTocOpsFixture } from './fixture.ts';
 import { getTioeSnapshot } from './return-efficiency.ts';
-import type { TocOpsSnapshot, TocOpsSummarySlice } from './types.ts';
+import { TOC_OPS_REGISTRY_PATH, type TocOpsSnapshot, type TocOpsSummarySlice } from './types.ts';
 
 export const TOC_OPS_REGISTRY_REL = 'public/registry/toc-ops.json';
-export const TOC_OPS_REGISTRY_PATH = '/registry/toc-ops.json' as const;
+// SSOT lives in ./types.ts (breaks bake-proof ↔ export-snapshot cycle).
+// Import for local use + re-export for existing import sites.
+export { TOC_OPS_REGISTRY_PATH };
 
 function tocOpsAbsPath(root = process.cwd()): string {
   return root.endsWith('/') ? `${root}${TOC_OPS_REGISTRY_REL}` : `${root}/${TOC_OPS_REGISTRY_REL}`;

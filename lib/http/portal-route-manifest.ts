@@ -18,6 +18,7 @@ export const PORTAL_HTML_ROUTES = [
   '/portal/limits/',
   '/portal/dashboard/',
   '/portal/skills/',
+  '/portal/packages/',
   '/monitoring/',
 ] as const;
 
@@ -34,6 +35,7 @@ export const PORTAL_TRAILING_SLASH_SOURCES = [
   '/portal/limits',
   '/portal/dashboard',
   '/portal/skills',
+  '/portal/packages',
   '/monitoring',
   // /health is Functions JSON (not a trailing-slash HTML surface)
 ] as const;
@@ -50,6 +52,7 @@ export const PORTAL_MARKDOWN_SLUGS = [
   'health',
   'env',
   'skills',
+  'packages',
   'monitoring',
   'dashboard',
 ] as const;

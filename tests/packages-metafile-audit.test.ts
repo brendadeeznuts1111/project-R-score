@@ -21,8 +21,8 @@ describe('packages-metafile-audit', () => {
     cross = await runPackagesMetafileAudit({ crossCheck: true });
   });
 
-  test('schema v5 score + deep package map', () => {
-    expect(deep.schemaVersion).toBe(5);
+  test('schema v11 score + probes + summary', () => {
+    expect(deep.schemaVersion).toBe(11);
     expect(deep.score).toBeGreaterThanOrEqual(90);
     expect(deep.grade).toBe('healthy');
     expect(deep.map.packages.length).toBeGreaterThan(0);
@@ -31,6 +31,17 @@ describe('packages-metafile-audit', () => {
     expect(deep.map.intra).toBeDefined();
     expect(deep.map.declared).toBeDefined();
     expect(deep.map.declared!.length).toBe(deep.map.packages.length);
+    expect(deep.map.externalHubs?.length).toBeGreaterThan(0);
+    expect(deep.map.coupling?.length).toBe(deep.map.packages.length);
+    expect(deep.map.coupling!.some(c => c.role === 'consumed')).toBe(true);
+    expect(deep.map.actions).toBeDefined();
+    expect(deep.map.summary).toBeDefined();
+    expect(deep.map.packageScores?.length).toBe(deep.map.packages.length);
+    expect(deep.map.archiveProbes?.length).toBeGreaterThan(0);
+    expect(deep.packages.every(p => typeof p.score === 'number')).toBe(true);
+    expect(deep.map.declared!.find(d => d.package === 'registry-client')?.inRootWorkspaceDeps).toBe(
+      true
+    );
     expect(deep.entrypointKinds['packages/rip/src/cli.ts']).toBe('cli');
     expect(deep.orphans.includes('packages/rip/src/cli.ts')).toBe(false);
     // Prefer src over dist for registry-client
@@ -97,5 +108,24 @@ describe('packages-metafile-audit', () => {
 
   test('cross-check attaches Transpiler compare', () => {
     expect(cross.crossCheck).toBeDefined();
+  });
+
+  test('vault plane attaches env.template coupling', async () => {
+    const report = await runPackagesMetafileAudit({ vault: true });
+    expect(report.schemaVersion).toBe(11);
+    expect(report.map.vault).toBeDefined();
+    expect(report.map.vault!.summary.packagesWithEnv).toBeGreaterThan(0);
+    expect(report.map.summary?.vaultPackagesWithEnv).toBe(
+      report.map.vault!.summary.packagesWithEnv
+    );
+    expect(report.map.vault!.envHits.every(h => typeof h.inTemplate === 'boolean')).toBe(true);
+  });
+
+  test('env inventory attaches compact harness scan', async () => {
+    const report = await runPackagesMetafileAudit({ envInventory: true });
+    expect(report.map.env).toBeDefined();
+    expect(report.map.env!.scannedRoots).toContain('packages');
+    expect(report.map.env!.packagesPlane.summary.packagesWithEnv).toBeGreaterThan(0);
+    expect(report.map.vault).toBeDefined();
   });
 });

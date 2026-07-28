@@ -1,0 +1,8 @@
+flowchart TB
+  subgraph docs_tools["docs-tools depth=3"]
+    docs_tools_L0["L0<br/>src/index.ts"]
+    docs_tools_L1["L1<br/>src/builders/url-builder.ts<br/>src/builders/validator-enhanced.ts<br/>src/builders/validator.ts<br/>src/documentation-validator.ts"]
+    docs_tools_L0 --> docs_tools_L1
+    docs_tools_L2["L2<br/>src/documentation-validator.internal.ts"]
+    docs_tools_L1 --> docs_tools_L2
+  end

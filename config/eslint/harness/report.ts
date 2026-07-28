@@ -1,17 +1,13 @@
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --format
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 /**
  * Harness report engine — collect, aggregate, and render grouped lint/guard findings.
  */
-import {
-  getBunDxEntry,
-  mapRuleToCatalog,
-  type FixTier,
-} from '../../bun-dx-catalog.ts';
-import { checkBunFirstCompliance } from '../../../packages/guards/src/bun-first-guard.ts';
-import {
-  HARNESS_IGNORES,
-  HARNESS_PATHS,
-  STRICT_INVENTORY,
-} from './rollout.ts';
+import { getBunDxEntry, mapRuleToCatalog, type FixTier } from '../../bun-dx-catalog.ts';
+import { checkBunFirstCompliance } from '@factorywager/guards';
+import { HARNESS_IGNORES, HARNESS_PATHS, STRICT_INVENTORY } from './rollout.ts';
 
 export type HarnessIssue = {
   source: 'eslint' | 'guard';
@@ -82,11 +78,7 @@ export const HARNESS_ESLINT_GLOBS = [
   'tools/**/*.ts',
 ] as const;
 
-export const HARNESS_ESLINT_IGNORES = [
-  '**/*.test.ts',
-  '**/*.spec.ts',
-  '**/*.bench.ts',
-] as const;
+export const HARNESS_ESLINT_IGNORES = ['**/*.test.ts', '**/*.spec.ts', '**/*.bench.ts'] as const;
 
 type EslintJsonResult = {
   filePath: string;
@@ -344,7 +336,9 @@ export function groupByCatalog(issues: HarnessIssue[], maxSamples = 3): CatalogG
     }
   }
 
-  return [...map.values()].sort((a, b) => b.count - a.count || a.catalogId.localeCompare(b.catalogId));
+  return [...map.values()].sort(
+    (a, b) => b.count - a.count || a.catalogId.localeCompare(b.catalogId)
+  );
 }
 
 export function groupByFixTier(issues: HarnessIssue[], tier: FixTier): CatalogGroup[] {

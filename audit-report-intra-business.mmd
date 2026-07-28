@@ -1,0 +1,8 @@
+flowchart TB
+  subgraph business["business depth=3"]
+    business_L0["L0<br/>src/index.ts"]
+    business_L1["L1<br/>src/habits-classifier.ts<br/>src/reference-manager.ts"]
+    business_L0 --> business_L1
+    business_L2["L2<br/>src/habits-pure.ts"]
+    business_L1 --> business_L2
+  end
