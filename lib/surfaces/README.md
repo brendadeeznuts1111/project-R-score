@@ -66,10 +66,13 @@ hostIdFromParts(FACTORY_WAGER_APEX, asSubdomainId('ledger'));
 | SSOT TOML | [`config/surfaces.toml`](../../config/surfaces.toml) |
 | Bake (schema v2) | `bun run surfaces:bake` → [`scripts/bake-surfaces.ts`](../../scripts/bake-surfaces.ts) |
 | Baked state | [`public/registry/surfaces-state.json`](../../public/registry/surfaces-state.json) |
+| Portal board | [`/portal/surfaces/`](../../public/portal/surfaces/) |
+| Doctor check | `infra-surfaces-state` · [`doctor-check.ts`](./doctor-check.ts) |
 | Access policy | [`.cloudflare-access.yml`](../../.cloudflare-access.yml) |
 | Live probes | [`lib/verification/cloudflare-access-live.ts`](../verification/cloudflare-access-live.ts) |
 
 ```bash
 bun tools/brand-catalog.ts surfaces
-bun test tests/surfaces-inventory.test.ts
+bun run surfaces:bake
+bun test tests/surfaces-inventory.test.ts tests/surfaces-doctor.test.ts
 ```

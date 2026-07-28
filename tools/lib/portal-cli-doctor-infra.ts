@@ -3,18 +3,27 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file (policy file)
 // @see https://bun.com/docs/runtime/networking/dns — Bun.dns.lookup
 /**
- * portal-cli doctor — Infra group (Access + host inventory).
+ * portal-cli doctor — Infra group (Access + host inventory + surfaces bake).
  *
- *   infra-access-policy     warn  · all — .cloudflare-access.yml static verify
- *   infra-ledger-access     fatal · all — ledger Access (live) or policy (offline)
- *   infra-portal-access     warn  · all — score + pages.dev /portal
- *   infra-terminal-host     warn  · all — terminal dangling 502 (live only)
- *   infra-reasonix-dns      info  · dev  — reasonix NXDOMAIN until provisioned (live)
+ *   infra-access-policy      warn  · all — .cloudflare-access.yml static verify
+ *   infra-surfaces-state     warn  · all — surfaces-state.json schema v2 + crossCheck
+ *   infra-ledger-access      fatal · all — ledger Access (live) or policy (offline)
+ *   infra-portal-access      warn  · all — score + pages.dev /portal
+ *   infra-terminal-host      warn  · all — terminal posture (live; inventory-aware)
+ *   infra-reasonix-dns       info  · dev  — reasonix NXDOMAIN until provisioned (live)
  *
- * Offline: policy SSOT only (no fake green). Live: HTTPS + Bun.dns.
+ * Offline: policy SSOT + surfaces bake (no fake green). Live: HTTPS + Bun.dns.
  */
 
-import { joinPath } from '../../scripts/lib/fs-bun.ts';
+import {
+  loadSurfacesStateBake,
+  SURFACES_BAKE_CLI,
+  SURFACES_CHECK_CLI,
+  SURFACES_STATE_REL,
+  terminalInventoryOk,
+  type SurfacesDoctorResult,
+} from '../../lib/surfaces/doctor-check.ts';
+import { asSurfaceId } from '../../lib/types/branded.ts';
 import {
   LEDGER_ACCESS_DOMAIN,
   LEDGER_ACCESS_URL,
@@ -28,11 +37,13 @@ import {
   type AccessProbeFetch,
 } from '../../lib/verification/cloudflare-access-live.ts';
 import { verifyCloudflareAccessPolicyText } from '../../lib/verification/cloudflare-access-policy.ts';
+import { joinPath } from '../../scripts/lib/fs-bun.ts';
 import type { PortalDoctorCheck } from './portal-cli-doctor.ts';
 
 const ACCESS_DOCS = 'https://developers.cloudflare.com/cloudflare-one/access-controls/policies/';
 const ACCESS_POLICY_PATH = '.cloudflare-access.yml';
 const TUNNEL_DOCS = 'docs/harness/tenants/tunnel-inventory.md';
+const SURFACES_DOCS = 'lib/surfaces/README.md';
 
 /** Display labels (AccessDomainId → string at the doctor message boundary). */
 const LEDGER_DOMAIN = String(LEDGER_ACCESS_DOMAIN);
@@ -125,13 +136,34 @@ function policyCheck(policy: PolicySurfacePresence): PortalDoctorCheck {
   );
 }
 
+function surfacesStateCheck(result: SurfacesDoctorResult): PortalDoctorCheck {
+  return withMeta(
+    {
+      id: 'infra-surfaces-state',
+      level: 'warn',
+      group: 'infra',
+      ok: result.ok,
+      message: result.message,
+      source: SURFACES_DOCS,
+    },
+    {
+      fixCommand: result.ok ? undefined : `${SURFACES_BAKE_CLI} · ${SURFACES_CHECK_CLI}`,
+      impact: 'Surface inventory bake is SSOT for host/Access/backend shortcodes (schema v2)',
+      autoFixable: false,
+      timeToFix: result.ok ? undefined : '2–10 min',
+      envScope: 'all',
+    }
+  );
+}
+
 /**
  * Access + host inventory checks (group: infra).
  */
 export async function runInfraChecks(opts: RunInfraChecksOpts = {}): Promise<PortalDoctorCheck[]> {
   const cwd = opts.cwd ?? process.cwd();
   const policy = await loadAccessPolicySurfaces(cwd);
-  const checks: PortalDoctorCheck[] = [policyCheck(policy)];
+  const surfacesBake = await loadSurfacesStateBake(joinPath(cwd, SURFACES_STATE_REL));
+  const checks: PortalDoctorCheck[] = [policyCheck(policy), surfacesStateCheck(surfacesBake)];
 
   if (opts.skipLive) {
     checks.push(
@@ -163,7 +195,7 @@ export async function runInfraChecks(opts: RunInfraChecksOpts = {}): Promise<Por
           group: 'infra',
           ok: policy.portal,
           message: policy.portal
-            ? `portal · policy has ${PORTAL_DOMAIN} staged (offline · no live probe)`
+            ? `portal · policy has ${PORTAL_DOMAIN} (offline · no live probe)`
             : `portal · missing from ${ACCESS_POLICY_PATH}`,
           source: ACCESS_DOCS,
         },
@@ -171,7 +203,7 @@ export async function runInfraChecks(opts: RunInfraChecksOpts = {}): Promise<Por
           fixCommand: policy.portal
             ? undefined
             : `Add self_hosted app for ${PORTAL_DOMAIN} in ${ACCESS_POLICY_PATH}`,
-          impact: 'Staged in policy only until Access apply + live probe green',
+          impact: 'Policy SSOT must list portal Access domain; live probe confirms edge',
           autoFixable: false,
           timeToFix: policy.portal ? undefined : '15–45 min',
           envScope: 'all',
@@ -240,30 +272,33 @@ export async function runInfraChecks(opts: RunInfraChecksOpts = {}): Promise<Por
     )
   );
 
-  // Host inventory
+  // Host inventory (terminal posture follows surfaces-state when present)
   const terminal = await probeTerminalHost({
     fetch: opts.fetch,
     timeoutMs: opts.timeoutMs,
   });
-  // 502 dangling → fail warn; NXDOMAIN → pass (decommissioned)
-  const terminalOk = !terminal.resolves || terminal.status !== 502;
+  const terminalStatus = surfacesBake.statusOf(asSurfaceId('terminal'));
+  const terminalPosture = terminalInventoryOk(terminalStatus, {
+    resolves: terminal.resolves,
+    status: terminal.status,
+  });
   checks.push(
     withMeta(
       {
         id: 'infra-terminal-host',
         level: 'warn',
         group: 'infra',
-        ok: terminalOk,
-        message: `terminal · ${terminal.evidence}`,
+        ok: terminalPosture.ok,
+        message: `terminal · ${terminalPosture.evidence}${terminalStatus ? ` · inventory=${terminalStatus}` : ''}`,
         source: TUNNEL_DOCS,
       },
       {
-        fixCommand: terminalOk
+        fixCommand: terminalPosture.ok
           ? undefined
           : 'Delete DNS for terminal.factory-wager.com or attach a real tunnel · tunnel-inventory.md',
-        impact: 'Dangling 502 confuses operators; not Sports Terminal until provisioned',
+        impact: 'Dangling/retired DNS must match surfaces-state inventory',
         autoFixable: false,
-        timeToFix: terminalOk ? undefined : '15–60 min',
+        timeToFix: terminalPosture.ok ? undefined : '15–60 min',
         envScope: 'all',
       }
     )

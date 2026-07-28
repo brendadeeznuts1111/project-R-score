@@ -113,6 +113,14 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     group: 'registry',
     cli: 'bun tools/brand-keymap.ts',
   },
+  {
+    id: 'surfaces',
+    label: 'Surfaces',
+    href: '/portal/surfaces/',
+    note: 'edge inventory · HostId/SubdomainId · Access domains · schema v2 bake',
+    group: 'registry',
+    cli: 'bun run surfaces:bake',
+  },
   // ── Secrets & env ──
   {
     id: 'vault',
@@ -242,6 +250,11 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     label: 'brand-keymap',
     href: '/registry/brand-keymap.json',
     note: '57-value catalog · tracked project adoption',
+  },
+  {
+    label: 'surfaces-state',
+    href: '/registry/surfaces-state.json',
+    note: 'schema v2 · apex/subdomain/backendCode · Access domains · surfaces:bake',
   },
   {
     label: 'telegram-handshake',

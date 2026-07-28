@@ -388,11 +388,13 @@ describe('portal-cli doctor pure', () => {
     expect(r.liveAccess).toBe(false);
     expect(r.checks.map(c => c.id)).toEqual([
       'infra-access-policy',
+      'infra-surfaces-state',
       'infra-ledger-access',
       'infra-portal-access',
     ]);
     expect(r.checks.find(c => c.id === 'infra-ledger-access')?.message).toMatch(/policy/);
     expect(r.checks.find(c => c.id === 'infra-ledger-access')?.ok).toBe(true);
+    expect(r.checks.find(c => c.id === 'infra-surfaces-state')?.ok).toBe(true);
   });
 
   test('--env ci drops envScope=dev checks', async () => {

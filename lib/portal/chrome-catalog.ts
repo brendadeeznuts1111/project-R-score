@@ -133,6 +133,15 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     cli: 'bun run brand:keymap',
   },
   {
+    id: 'surfaces',
+    label: 'Surfaces',
+    href: '/portal/surfaces/',
+    tier: 'overflow',
+    group: 'registry',
+    note: 'edge host inventory · Access domains · backend shortcodes · schema v2',
+    cli: 'bun run surfaces:bake  # → /registry/surfaces-state.json',
+  },
+  {
     id: 'skills',
     label: 'Skills',
     href: '/portal/skills/',
@@ -263,6 +272,7 @@ export const PORTAL_FOOTER_LINKS: PortalChromeCatalog['footerLinks'] = [
   { label: 'TOC', href: '/portal/toc/' },
   { label: 'Packages', href: '/portal/packages/' },
   { label: 'Brands', href: '/portal/brands/' },
+  { label: 'Surfaces', href: '/portal/surfaces/' },
   { label: 'Health', href: '/portal/health/' },
   { label: 'Portal proof', href: '/registry/portal-weave.json' },
   { label: 'CLI Tools', href: '/portal/tools/' },

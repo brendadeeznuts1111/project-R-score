@@ -99,15 +99,17 @@ describe('cloudflare-access-live', () => {
 
   test('runInfraChecks offline uses policy SSOT (not fake green skip)', async () => {
     const checks = await runInfraChecks({ skipLive: true, cwd: process.cwd() });
-    // policy + ledger + portal
+    // policy + surfaces bake + ledger + portal
     expect(checks.map(c => c.id)).toEqual([
       'infra-access-policy',
+      'infra-surfaces-state',
       'infra-ledger-access',
       'infra-portal-access',
     ]);
     expect(checks.find(c => c.id === 'infra-ledger-access')?.message).toContain('policy');
     expect(checks.find(c => c.id === 'infra-ledger-access')?.ok).toBe(true);
-    expect(checks.find(c => c.id === 'infra-portal-access')?.message).toContain('staged');
+    expect(checks.find(c => c.id === 'infra-portal-access')?.message).toContain('policy has');
+    expect(checks.find(c => c.id === 'infra-surfaces-state')?.ok).toBe(true);
   });
 
   test('runInfraChecks live includes host inventory ids', async () => {
@@ -133,9 +135,12 @@ describe('cloudflare-access-live', () => {
     expect(ids).toContain('infra-access-policy');
     expect(ids).toContain('infra-ledger-access');
     expect(ids).toContain('infra-portal-access');
+    expect(ids).toContain('infra-surfaces-state');
     expect(ids).toContain('infra-terminal-host');
     expect(ids).toContain('infra-reasonix-dns');
-    expect(checks.find(c => c.id === 'infra-terminal-host')?.ok).toBe(false);
+    // terminal inventory is retired; ok depends on real DNS (NXDOMAIN → pass; residual 502 → fail)
+    const terminal = checks.find(c => c.id === 'infra-terminal-host');
+    expect(terminal?.message).toMatch(/retired|inventory=retired/);
     expect(checks.find(c => c.id === 'infra-reasonix-dns')?.level).toBe('info');
   });
 });
