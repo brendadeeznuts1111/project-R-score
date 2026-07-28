@@ -209,3 +209,15 @@ Each row maps to a documented API — Bun or Proton Pass CLI — with type, vers
 | **Environment variables** | runtime | Bun ≥1.0 | `Bun.env` (read‑only) | — | All modules (scope fallback, TMPDIR) | Implemented | [Bun.env](https://bun.sh/docs/api/env) |
 | **Module main detection** | runtime | Bun ≥1.0 | `Bun.main` | — | CLI entry guard | Implemented | [Bun.main](https://bun.sh/docs/api/main) |
 | **Sleep** | runtime | Bun ≥1.0 | `Bun.sleep(ms)` | — | Rate limiting (future) | Available | [Bun.sleep](https://bun.sh/docs/api/sleep) |
+| **String width** | util | Bun ≥1.0 | `Bun.stringWidth(str)` | — | `table-format.ts`, `account-limits-repo.ts` | Implemented | [runtime/utils](https://bun.com/docs/runtime/utils) |
+| **Object inspect** | util | Bun ≥1.0 | `Bun.inspect(obj, opts)` | — | `limit-raise-agent-api.ts`, `snapshot-core.ts` | Implemented | [runtime/utils](https://bun.com/docs/runtime/utils) |
+| **Inspect table** | util | Bun ≥1.0 | `Bun.inspect.table(data, props)` | — | `limit-prediction-report.ts` | Implemented | [runtime/utils](https://bun.com/docs/runtime/utils) |
+| **Inspect custom** | util | Bun ≥1.0 | `Bun.inspect.custom` (symbol) | — | `limit-raise-report.ts` | Implemented | [runtime/utils](https://bun.com/docs/runtime/utils) |
+| **WebView** | browser | Bun ≥1.3 | `new Bun.WebView({ headless: true })` | — | Prediction report screenshot (SVG→PNG) | Available | [runtime/webview](https://bun.com/docs/runtime/webview) |
+| **Shell template** | runtime | Bun ≥1.0 | `` Bun.$`cmd` `` | — | `snapshot-core.ts` (mkdir), `report.ts` | Implemented | [runtime/shell](https://bun.com/docs/runtime/shell) |
+| **UUID v7** | util | Bun ≥1.0 | `Bun.randomUUIDv7()` | — | `limit-prediction.ts`, `account-limits-repo.ts` | Implemented | [runtime/utils](https://bun.com/docs/runtime/utils) |
+| **Crypto hasher** | crypto | Bun ≥1.0 | `new Bun.CryptoHasher(algo, key?)` | — | `report-proof.ts` (SHA3-256, HMAC-SHA256) | Implemented | [runtime/hashing](https://bun.com/docs/runtime/hashing) |
+| **Runtime version** | util | Bun ≥1.0 | `Bun.version` | — | All modules (proof, manifest, debug) | Implemented | [runtime/utils](https://bun.com/docs/runtime/utils) |
+| **Current working dir** | runtime | Bun ≥1.0 | `Bun.cwd` | — | `snapshot-core.ts` (manifest metadata) | Implemented | [runtime/utils](https://bun.com/docs/runtime/utils) |
+| **Standalone detection** | runtime | Bun ≥1.0 | `Bun.isStandaloneExecutable` | — | `snapshot-core.ts` (manifest metadata) | Implemented | [bundler/executables](https://bun.com/docs/bundler/executables) |
+| **Sync spawn** | process | Bun ≥1.0 | `Bun.spawnSync(cmd)` | — | `snapshot-core.ts` (git info) | Implemented | [runtime/child-process](https://bun.com/docs/runtime/child-process) |
