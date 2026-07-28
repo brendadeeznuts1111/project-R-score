@@ -66,7 +66,7 @@ export function parseDeskMaxBetAmount(raw: string | undefined | null): number | 
   t = t.replace(/^\$/, '').trim();
   if (!t) return null;
   // Units (e.g. 2.5u) are not USD — skip delta math
-  if (/\d\s*u\b/.test(t) || /u$/.test(t)) return null;
+  if (/\d\s*u\b/.test(t) || t.endsWith('u')) return null;
   const k = t.match(/^(\d+(?:\.\d+)?)\s*k$/i);
   if (k) {
     const n = Number(k[1]) * 1000;
@@ -126,6 +126,69 @@ export function formatMaxBetSetConfirm(opts: {
     deskMaxBet: opts.deskMaxBet,
   });
   return `${base} ${line}`;
+}
+
+/**
+ * Format last-known book max as desk maxBet display text (USD).
+ * Desk storage only — never writes into partner_account_limits.
+ */
+export function formatBookMaxAsDeskMaxBet(bookMax: number): string {
+  return formatUsdAmount(bookMax);
+}
+
+/**
+ * True when desk maxBet is missing, unparseable as USD, or ≠ book max.
+ * Units (`2.5u`) count as differing (cannot compare) so adopt is offered.
+ */
+export function deskMaxBetDiffersFromBookMax(
+  deskMaxBet: string | null | undefined,
+  bookMax: number
+): boolean {
+  if (!Number.isFinite(bookMax)) return false;
+  const desk = parseDeskMaxBetAmount(deskMaxBet);
+  if (desk == null) return true;
+  return desk !== bookMax;
+}
+
+/**
+ * Offer Fill-path "Use book max" when book history exists and desk maxBet differs.
+ * Pure — caller supplies last-known book max (no dual-write).
+ */
+export function shouldOfferAdoptBookMax(opts: {
+  bookMax: number | null | undefined;
+  deskMaxBet: string | null | undefined;
+}): boolean {
+  if (opts.bookMax == null || !Number.isFinite(opts.bookMax) || opts.bookMax < 0) {
+    return false;
+  }
+  return deskMaxBetDiffersFromBookMax(opts.deskMaxBet, opts.bookMax);
+}
+
+/** Button label for adopt-from-book action (shows amount = one confirm). */
+export function formatAdoptBookMaxButtonLabel(bookMax: number): string {
+  return `Use book ${formatUsdAmount(bookMax)}`;
+}
+
+/** Confirm-keyboard label before applying book max → desk maxBet. */
+export function formatAdoptBookMaxConfirmLabel(bookMax: number): string {
+  return `✓ Set maxBet ${formatUsdAmount(bookMax)}`;
+}
+
+/**
+ * Toast after adopting book max onto desk maxBet.
+ * Distinct from free-text set so operators see the source.
+ */
+export function formatAdoptBookMaxConfirm(opts: {
+  outId: string; // brand-ok — seat out token
+  deskMaxBet: string;
+  bookMax: number;
+}): string {
+  return `${opts.outId} max bet adopted from book max ${formatUsdAmount(opts.bookMax)}. ${formatBookMaxDeltaLine(
+    {
+      bookMax: opts.bookMax,
+      deskMaxBet: opts.deskMaxBet,
+    }
+  )}`;
 }
 
 /** Prefer last raise `new_limit` when present and higher; else latest max_wager. */

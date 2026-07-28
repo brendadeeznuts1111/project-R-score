@@ -345,7 +345,7 @@ export function topicsMapFromCreated(
   topics: ForumTopicCreated[],
   extras?: Record<string, number>
 ): Record<string, number> {
-  const out: Record<string, number> = { ...(extras ?? {}), general: 1 };
+  const out: Record<string, number> = { ...extras, general: 1 };
   for (const t of topics) {
     if (t.ok && t.messageThreadId > 0) out[t.name] = t.messageThreadId;
   }

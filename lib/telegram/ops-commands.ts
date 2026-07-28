@@ -16,11 +16,7 @@ import { enqueuePartnerWelcomeEvent } from '../channels/outbox.ts';
 import { flowOutputToPlainText } from './flows/deliver.ts';
 import { commandToFlowId, runFlow } from './flows/registry.ts';
 import { linkTelegramChat, getChatChannelMeta } from './flows/channel-meta.ts';
-import {
-  handleOpsSeatCommand,
-  resolveFlowNodeForTelegram,
-  setActiveCallSignForTelegram,
-} from './flows/seat-telegram.ts';
+import { handleOpsSeatCommand, resolveFlowNodeForTelegram } from './flows/seat-telegram.ts';
 import type { FlowOutput } from './flows/types.ts';
 import { gateFactoryCommand } from './ops-acl.ts';
 import { AccountLimitsRepository } from '../account-limits-repo.ts';

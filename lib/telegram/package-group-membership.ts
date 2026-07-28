@@ -154,7 +154,7 @@ export function formatMembershipDeskCell(
 
 export function membershipForumLaneOk(
   tell: PackageGroupMembershipTell,
-  dmSeatStatus?: DmSeatStatus | null
+  _dmSeatStatus?: DmSeatStatus | null
 ): boolean {
   if (tell.status === 'understaffed' || tell.status === 'unknown') return false;
   if (tell.needsPartnerInForum) return false;

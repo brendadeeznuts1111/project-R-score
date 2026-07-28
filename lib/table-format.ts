@@ -279,15 +279,18 @@ export function formatTable(
 
 export const fmt = {
   dollar: (v: any) => {
+    if (v == null || v === '') return '—';
     const n = Number(v);
     return Number.isFinite(n) ? `$${n.toLocaleString()}` : '—';
   },
   delta: (v: any) => {
+    if (v == null || v === '') return '—';
     const n = Number(v);
     if (!Number.isFinite(n)) return '—';
     return `${n >= 0 ? '+' : ''}$${n.toLocaleString()}`;
   },
   pct: (v: any) => {
+    if (v == null || v === '') return '—';
     const n = Number(v);
     return Number.isFinite(n) ? `${(n * 100).toFixed(1)}%` : '—';
   },
@@ -301,6 +304,7 @@ export const fmt = {
     return Number.isFinite(n) ? new Date(n * 1000).toLocaleDateString() : '—';
   },
   score: (v: any) => {
+    if (v == null || v === '') return '···';
     const n = Number(v);
     return Number.isFinite(n) ? `${(n * 100).toFixed(0)}%` : '···';
   },

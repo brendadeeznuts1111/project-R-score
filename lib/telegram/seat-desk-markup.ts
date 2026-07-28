@@ -4,14 +4,17 @@
  * @see https://core.telegram.org/bots/api#copytextbutton — Copy table buttons (≤256 UTF-8 bytes)
  */
 import {
+  formatAdoptBookMaxButtonLabel,
+  formatAdoptBookMaxConfirmLabel,
+  shouldOfferAdoptBookMax,
+} from './seat-desk-book-max.ts';
+import {
   buildSeatDeskTableCopyBody,
   buildSeatDeskTableCopyReplyLine,
-  buildSeatDeskTableCopyText,
   buildSeatDeskTodoCopyText,
   formatOutId,
   isSeatOutFillable,
   isSeatOutIncomplete,
-  listOutMissingFieldLabels,
   listOutTodoMissingFieldLabels,
   normalizeSeatIntake,
   outSequenceNumber,
@@ -71,7 +74,11 @@ export type SeatDeskCallback =
   | { op: 'back'; callSign: string }
   | { op: 'fill'; callSign: string; outId: string } // brand-ok — seat out token
   | { op: 'pick'; callSign: string; outId: string; field: 'rail' | 'send' | 'user' | 'max' | 'fp' } // brand-ok
-  | { op: 'setRail'; callSign: string; outId: string; railCode: string }; // brand-ok
+  | { op: 'setRail'; callSign: string; outId: string; railCode: string } // brand-ok
+  /** Offer confirm keyboard to set desk maxBet from last-known book max. */
+  | { op: 'adoptBookMax'; callSign: string; outId: string } // brand-ok — seat out token
+  /** One-confirm apply: desk maxBet ← book max (never dual-writes limits). */
+  | { op: 'confirmAdoptBookMax'; callSign: string; outId: string }; // brand-ok
 
 export function isSeatDeskCallback(data: string): boolean {
   const d = data.trim();
@@ -83,10 +90,34 @@ export function callbackDataUtf8ByteLength(data: string): number {
   return new TextEncoder().encode(data).length;
 }
 
+/**
+ * Build adopt-book-max callback_data (`sd:bm:` offer / `sd:bmy:` confirm).
+ * Must stay ≤64 UTF-8 bytes (Telegram InlineKeyboardButton limit).
+ */
+export function buildAdoptBookMaxCallbackData(
+  callSign: string,
+  outId: string, // brand-ok — seat out token
+  phase: 'offer' | 'confirm' = 'offer'
+): string {
+  const cs = callSign.toUpperCase().trim();
+  const oid = outId.toUpperCase().trim();
+  return phase === 'confirm' ? `sd:bmy:${cs}:${oid}` : `sd:bm:${cs}:${oid}`;
+}
+
 export function parseSeatDeskCallback(data: string): SeatDeskCallback | null {
   const d = data.trim();
   const refresh = /^sd:r:([A-Z0-9-]+)$/i.exec(d);
   if (refresh) return { op: 'refresh', callSign: refresh[1]!.toUpperCase() };
+
+  // Confirm adopt before bare `sd:b:` back (prefix overlap).
+  const confirmAdopt = /^sd:bmy:([A-Z0-9-]+):([A-Z0-9-]+)$/i.exec(d);
+  if (confirmAdopt) {
+    return {
+      op: 'confirmAdoptBookMax',
+      callSign: confirmAdopt[1]!.toUpperCase(),
+      outId: confirmAdopt[2]!.toUpperCase(),
+    };
+  }
 
   const back = /^sd:b:([A-Z0-9-]+)$/i.exec(d);
   if (back) return { op: 'back', callSign: back[1]!.toUpperCase() };
@@ -97,6 +128,15 @@ export function parseSeatDeskCallback(data: string): SeatDeskCallback | null {
       op: 'fill',
       callSign: fill[1]!.toUpperCase(),
       outId: fill[2]!.toUpperCase(),
+    };
+  }
+
+  const adopt = /^sd:bm:([A-Z0-9-]+):([A-Z0-9-]+)$/i.exec(d);
+  if (adopt) {
+    return {
+      op: 'adoptBookMax',
+      callSign: adopt[1]!.toUpperCase(),
+      outId: adopt[2]!.toUpperCase(),
     };
   }
 
@@ -183,17 +223,26 @@ export function buildSeatDeskRootMarkup(record: SeatIntakeRecord): Record<string
   return inlineKeyboard(rows);
 }
 
+export type SeatDeskFieldPickerOpts = {
+  /**
+   * Last-known sportsbook max for this out (from partner_account_limits).
+   * When set and desk maxBet differs, Fill path offers adopt-book-max.
+   */
+  bookMax?: number | null;
+};
+
 export function buildSeatDeskFieldPickerMarkup(
   callSign: string,
   outId: string, // brand-ok — seat out token
-  record: SeatIntakeRecord
+  record: SeatIntakeRecord,
+  opts?: SeatDeskFieldPickerOpts
 ): Record<string, unknown> {
   const cs = callSign.toUpperCase().trim();
   const oid = outId.toUpperCase().trim();
   const hydrated = normalizeSeatIntake(record);
   const defRail = hydrated.defaultPaymentRail?.trim();
   const defSend = hydrated.defaultSendTo?.trim();
-  const out = hydrated.outs.find(o => o.outId === oid);
+  const out = hydrated.outs.find(o => (o.outId ?? '').toUpperCase() === oid);
   const missing = out ? listOutTodoMissingFieldLabels(out, defRail, defSend) : [];
   const row: InlineBtn[] = [];
   if (missing.includes('username')) {
@@ -211,8 +260,44 @@ export function buildSeatDeskFieldPickerMarkup(
   if (missing.includes('fp%')) {
     row.push({ text: 'FP%', callback_data: `sd:p:${cs}:${oid}:fp` });
   }
+
+  const bookMax = opts?.bookMax;
+  if (bookMax != null && shouldOfferAdoptBookMax({ bookMax, deskMaxBet: out?.maxBet })) {
+    const adoptData = buildAdoptBookMaxCallbackData(cs, oid, 'offer');
+    row.push({
+      text: formatAdoptBookMaxButtonLabel(bookMax),
+      callback_data: adoptData,
+    });
+  }
+
   row.push({ text: '← Back', callback_data: `sd:b:${cs}` });
-  return inlineKeyboard([row]);
+  // Keep rows ≤8 buttons: split adopt + back when crowded.
+  if (row.length <= 4) return inlineKeyboard([row]);
+  const mid = Math.ceil(row.length / 2);
+  return inlineKeyboard([row.slice(0, mid), row.slice(mid)]);
+}
+
+/**
+ * One-confirm keyboard: set desk maxBet from last-known book max.
+ * Cancel returns to field picker (`sd:f:`).
+ */
+export function buildSeatDeskAdoptBookMaxConfirmMarkup(
+  callSign: string,
+  outId: string, // brand-ok — seat out token
+  bookMax: number
+): Record<string, unknown> {
+  const cs = callSign.toUpperCase().trim();
+  const oid = outId.toUpperCase().trim();
+  const confirmData = buildAdoptBookMaxCallbackData(cs, oid, 'confirm');
+  return inlineKeyboard([
+    [
+      {
+        text: formatAdoptBookMaxConfirmLabel(bookMax),
+        callback_data: confirmData,
+      },
+    ],
+    [{ text: '← Cancel', callback_data: `sd:f:${cs}:${oid}` }],
+  ]);
 }
 
 export function buildSeatDeskRailPickerMarkup(

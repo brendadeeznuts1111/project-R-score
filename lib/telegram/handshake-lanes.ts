@@ -292,7 +292,7 @@ export async function assessHandshakeLanes(opts: {
     lanes.push(outboxLane('route_toc', 'toc', topics, 'toc.soft.posted'));
 
     const envMap = loadTelegramSurfacesMap(opts.env ?? Bun.env);
-    const suggested = suggestPackageGroupSurfacesMap([reg]);
+    const _suggested = suggestPackageGroupSurfacesMap([reg]);
     const pkgKey = `pkg-${code.toLowerCase()}`;
     const envBound = envMap[pkgKey] === reg.chatId;
     lanes.push(

@@ -4,7 +4,6 @@
  */
 import type { Database } from 'bun:sqlite';
 import {
-  getPackageGroupRegistry,
   listPackageGroupRegistry,
   parsePartnerCode,
   type PackageGroupRegistryRow,
