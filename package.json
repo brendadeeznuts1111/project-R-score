@@ -1629,6 +1629,7 @@
     "portal:doctor:bunfig": "bun tools/portal-cli.ts doctor --group bunfig --verbose",
     "portal:doctor:ci": "bun scripts/ensure-machine-bunfig.ts && bun tools/portal-cli.ts doctor --env ci --no-write",
     "portal:doctor:ci:json": "bun tools/portal-cli.ts doctor --env ci --json --no-write",
+    "portal:doctor:ci:report": "bun scripts/doctor-ci-report.ts",
     "bake:doctor": "bun scripts/ensure-machine-bunfig.ts && bun tools/bake-doctor.ts",
     "bake:doctor:check": "bun scripts/ensure-machine-bunfig.ts && bun tools/bake-doctor.ts --check",
     "machine:bunfig:ensure": "bun scripts/ensure-machine-bunfig.ts",
