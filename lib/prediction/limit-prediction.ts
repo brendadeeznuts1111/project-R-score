@@ -8,7 +8,7 @@
 import type { Database } from 'bun:sqlite';
 import { randomUUIDv7 } from 'bun';
 import { getPredictionAccuracy, type AccuracySummary } from './tester.ts';
-import { AccountLimitsRepository, queryRecentLimitChanges } from '../account-limits-repo.ts';
+import { AccountLimitsRepository } from '../account-limits-repo.ts';
 
 export const LIMIT_PREDICTION_MODEL = 'bun-1.4.0-limit-v1';
 
