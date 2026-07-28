@@ -43,6 +43,22 @@ describe('Bun brand governance wiring', () => {
     expect(addedBunBrandBaselineKeys(['a'], ['a', 'c', 'c', 'b'])).toEqual(['b', 'c']);
   });
 
+  test('root install and Bun cache gates are both fail-closed', async () => {
+    const source = await Bun.file('scripts/pre-commit-harness.ts').text();
+    expect(source).toContain("spawnGate('npm-install'");
+    expect(source).toContain("spawnGate('bun-pm-cache'");
+    expect(source).toContain("r.name === 'bun-pm-cache'");
+    expect(source).toContain('if (bunPmCache !== 0)');
+    expect(source).toContain('const brandStaged = stagedBrandCode');
+  });
+
+  test('semver pre-commit gate uses tracked test entrypoints', async () => {
+    const source = await Bun.file('scripts/pre-commit-ast-grep.ts').text();
+    expect(source).toContain('./.agents/skills/ast-grep/tests/unit/semver-api.test.ts');
+    expect(source).toContain('./.agents/skills/ast-grep/tests/unit/semver-policy-runtime.test.ts');
+    expect(source).not.toContain("'test-ci', '--profile', 'semver'");
+  });
+
   test('cross-map bake follows capability and brand bakes and precedes ops', async () => {
     const source = await Bun.file('tools/bake-all.ts').text();
     const capabilities = source.indexOf("id: 'capabilities'");

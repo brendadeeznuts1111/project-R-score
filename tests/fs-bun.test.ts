@@ -5,7 +5,9 @@ import {
   bunFile,
   copyFile,
   deleteFile,
+  dirExistsSync,
   fileExists,
+  fileExistsSync,
   fileSize,
   listFilesSync,
   readJson,
@@ -69,5 +71,13 @@ describe('fs-bun (Bun.file / Bun.write)', () => {
 
   test('missing file exists() is false', async () => {
     expect(await fileExists(resolvePath(TMP, 'no-such-file.bin'))).toBe(false);
+  });
+
+  test('distinguishes readable directories from regular files', () => {
+    const directory = resolvePath(TMP, 'nested');
+    const file = resolvePath(directory, 'hello.txt');
+    expect(dirExistsSync(directory)).toBe(true);
+    expect(dirExistsSync(file)).toBe(false);
+    expect(fileExistsSync(file)).toBe(true);
   });
 });

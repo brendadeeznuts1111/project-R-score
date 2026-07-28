@@ -14,6 +14,15 @@
     ]
   },
   "trustedDependencies": [],
+  "overrides": {
+    "axios": "1.18.0",
+    "body-parser": "2.3.0",
+    "fast-uri": "3.1.4",
+    "form-data": "4.0.6",
+    "hono": "4.12.27",
+    "js-yaml": "4.3.0",
+    "postcss": "8.5.18"
+  },
   "catalog": {
     "zod": "3.23.0",
     "@types/bun": "1.3.14",
@@ -2085,6 +2094,7 @@
     "check:path-bun": "bun scripts/check-path-bun.ts",
     "check:bun-env": "bun scripts/check-bun-env.ts",
     "check:npm-install": "bun scripts/check-npm-install.ts",
+    "check:bun-pm-cache": "bun scripts/check-bun-pm-cache.ts",
     "check:import-graph": "bun scripts/check-import-graph.ts",
     "check:oxlint-ratchet": "bun scripts/check-oxlint-ratchet.ts",
     "check:monorepo-health": "bun scripts/check-monorepo-health.ts",

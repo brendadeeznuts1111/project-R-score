@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "bun-brand-map",
   "path": "/registry/bun-brand-map.json",
-  "generatedAt": "2026-07-28T23:20:31.248Z",
+  "generatedAt": "2026-07-28T23:29:45.573Z",
   "sources": {
     "declarations": "lib/docs/bun-brand-usages.ts",
     "catalog": "tools/bun-docs-catalog.json",
@@ -14,9 +14,9 @@
   "sourceDigests": {
     "declarations": "13d821366a7b19349116395132c2e9535d8333b1b3a4abb94e89a25ce5d4ba62",
     "catalog": "397470e5050312c556f570ec32cc4f2b57b82e6e3e607231ab8d2079303556b6",
-    "brandManifest": "63a869f0e826cf0e201245c40fdfa0f4569c372481c345a880bb66159cfe6735",
-    "brandKeymap": "f14a57b2b7ac4516370a56f5e6829c9893d8454fdfaf12625ff5dbe6edb0811c",
-    "observations": "db454e5401f85abe3a57938fa6aaaf672022316bb23f13d4b2eedbfa4b7d9ce3",
+    "brandManifest": "32b2566b816426219747091404260c1c9d99590a27b054e4105f13e2ccabdb8d",
+    "brandKeymap": "9b6d4f2cf562310f725e39440879f32af0acf2de3d67f8fb3a4e2f5859de4c62",
+    "observations": "d6dc227f828d1e0634e337bcdd28c84989a8b480405b4baad3b557c80a3b40b7",
     "baseline": "57e70c50175bc9a9ce9fafdb90fdb801e1e423fff49ae2fcf7c422bd268fb330",
     "proofs": "a605f7e22ca4954bf58f3eb2940e4edab0ad009b4205c484d0f6e2ecd9fc0033"
   },
@@ -38,9 +38,9 @@
     "productionProofErrors": 0,
     "stale": 0,
     "experimentalApprovals": 0,
-    "brands": 50,
+    "brands": 55,
     "mappedBrands": 1,
-    "totalCanonicalBrands": 50,
+    "totalCanonicalBrands": 55,
     "trackedProjects": 32,
     "externalProjects": 3
   },
@@ -1882,6 +1882,20 @@
       "projects": []
     },
     {
+      "name": "ApexDomainId",
+      "domain": "surfaces",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "SubdomainId",
+      "domain": "surfaces",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
       "name": "SurfaceId",
       "domain": "surfaces",
       "capabilities": [],
@@ -1889,7 +1903,28 @@
       "projects": []
     },
     {
+      "name": "PagesProjectId",
+      "domain": "surfaces",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
       "name": "AccessDomainId",
+      "domain": "surfaces",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "SurfaceStatusCode",
+      "domain": "surfaces",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "SurfaceAccessCode",
       "domain": "surfaces",
       "capabilities": [],
       "relationships": 0,

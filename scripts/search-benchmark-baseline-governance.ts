@@ -1,7 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
-import { fileExistsSync, joinPath, readText, resolvePath } from './lib/fs-bun';
+import { dirExistsSync, joinPath, readText, resolvePath } from './lib/fs-bun';
 
 type PinnedBaseline = {
   version?: number;
@@ -94,7 +95,7 @@ async function main(): Promise<void> {
 
   const asJson = args.includes('--json');
   const root = resolvePath('.search');
-  if (!fileExistsSync(root)) {
+  if (!dirExistsSync(root)) {
     throw new Error('.search directory not found');
   }
 

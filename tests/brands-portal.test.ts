@@ -36,7 +36,7 @@ describe('brand keymap portal', () => {
       kind: 'bun-brand-map',
       path: '/registry/bun-brand-map.json',
       summary: {
-        totalCanonicalBrands: 50,
+        totalCanonicalBrands: 55,
         trackedProjects: 32,
         externalProjects: 3,
         newUndeclared: 0,

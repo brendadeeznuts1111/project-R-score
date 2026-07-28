@@ -11,16 +11,20 @@ All notable FactoryWager artifact changes are recorded here.
 - Extend `/portal/brands/` with accessible Relationships, Glossary, and Projects
   views, focused graph navigation, equivalent tables, filters, and shareable
   fragment state.
-- Govern all 50 canonical branded values and 32 tracked projects while keeping
+- Govern all 55 canonical branded values and 32 tracked projects while keeping
   three external roots explicit.
 
 ### Governance
 
-- Baseline 293 legacy observed-but-undeclared Bun uses as visible warnings while
+- Baseline 291 legacy observed-but-undeclared Bun uses as visible warnings while
   failing new staged and PR-diff regressions.
 - Run project-only branded-ID additions through local and PR gates.
 - Block invalid declarations, catalog conflicts, stale sources, expired
   experimental approvals, and missing or failed production proof.
+- Restore the root package-manager and Bun-cache pre-commit gates, including
+  fail-closed result handling and visible non-strict cache-path drift.
+- Pin patched transitive dependencies and update the Sports Terminal Vite and
+  React Router lines, reducing the repository audit from 42 advisories to three.
 
 ### Verification
 
@@ -28,6 +32,8 @@ All notable FactoryWager artifact changes are recorded here.
   catalog.
 - Add contract, AST detection, proof-join, baseline, portal, health, ops, and
   release-version tests.
+- Make search-baseline verification distinguish directories from regular files,
+  with a filesystem regression test.
 - Restore clean `type-check:ci` and `type-check:full` builds under Bun's
   isolated linker by preserving package symlink resolution and repairing the
   remaining package-local type errors.

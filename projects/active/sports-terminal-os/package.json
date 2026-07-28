@@ -65,9 +65,9 @@
     "bun-types": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-router-dom": "7.15.1",
+    "react-router-dom": "7.18.1",
     "tailwindcss": "^4.3.3",
     "typescript": "5.9.3",
-    "vite": "5.4.21"
+    "vite": "6.4.3"
   }
 }

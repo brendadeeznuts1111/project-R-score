@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * Pre-commit ast-grep + semver gates.
@@ -123,7 +125,12 @@ function buildGates(includePackages: boolean, includeDoctor: boolean): Gate[] {
     {
       id: 'semver',
       label: 'semver policy tests',
-      cmd: ['python3', helper, '-q', 'bun', 'test-ci', '--profile', 'semver', '--skip-preflight'],
+      cmd: [
+        'bun',
+        'test',
+        './.agents/skills/ast-grep/tests/unit/semver-api.test.ts',
+        './.agents/skills/ast-grep/tests/unit/semver-policy-runtime.test.ts',
+      ],
     }
   );
 

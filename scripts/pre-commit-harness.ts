@@ -622,7 +622,7 @@ async function main(): Promise<void> {
   const parallelResults = await Promise.all(parallelJobs);
   for (const r of parallelResults) timings.push({ name: r.name, ms: r.ms, ok: r.ok });
 
-  const brandStaged = parallelResults.find(r => r.name === 'brands-staged')?.code ?? 1;
+  const brandStaged = stagedBrandCode;
   const brandSmart = parallelResults.find(r => r.name === 'brands-smart')?.code ?? 1;
   const brandTypes = parallelResults.find(r => r.name === 'brands-types')?.code ?? 0;
   const pathBun = parallelResults.find(r => r.name === 'path-bun')?.code ?? 0;
@@ -634,6 +634,7 @@ async function main(): Promise<void> {
   const consoleFormatRatchet =
     parallelResults.find(r => r.name === 'console-format-ratchet')?.code ?? 0;
   const npmInstall = parallelResults.find(r => r.name === 'npm-install')?.code ?? 0;
+  const bunPmCache = parallelResults.find(r => r.name === 'bun-pm-cache')?.code ?? 0;
   const monorepoHealthTests =
     parallelResults.find(r => r.name === 'monorepo-health-tests')?.code ?? 0;
   const complexityStaged =
@@ -692,6 +693,11 @@ async function main(): Promise<void> {
     console.error(
       '❌ npm/yarn/pnpm install command detected in production path — bun run check:npm-install'
     );
+    await writeTimings(timings, full);
+    process.exit(1);
+  }
+  if (bunPmCache !== 0) {
+    console.error('❌ Bun cache path disagrees with machine policy — bun run check:bun-pm-cache');
     await writeTimings(timings, full);
     process.exit(1);
   }
