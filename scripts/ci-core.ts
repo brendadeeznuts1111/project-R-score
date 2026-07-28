@@ -30,6 +30,10 @@ const CORE_STEPS: Array<{ name: string; cmd: string[] }> = [
     name: 'hygiene',
     cmd: ['bun', 'run', 'hygiene'],
   },
+  {
+    name: 'import-graph',
+    cmd: ['bun', 'scripts/check-import-graph.ts'],
+  },
 ];
 
 async function run(

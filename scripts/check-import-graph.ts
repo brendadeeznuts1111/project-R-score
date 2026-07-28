@@ -6,13 +6,15 @@
 /**
  * Import-graph gate: file-level import cycles + deep-relative-import ratchet.
  *
- *   bun run check:import-graph                 # enforce (pre-commit runs this)
+ *   bun run check:import-graph                 # enforce (pre-commit + ci:core run this)
+ *   bun scripts/check-import-graph.ts --json   # machine-readable report (agents, health tooling)
  *   bun scripts/check-import-graph.ts --write-baseline   # owners: re-pin after intentional restructuring
  *
  * Scope: lib/ + scripts/ TypeScript (same perimeter as check-bun-env).
  *
- *   cycles      — file-level relative-import cycles may only go DOWN vs baseline
- *                 (Transpiler.scanImports is more accurate than regex; 0 is ideal).
+ *   cycles      — file-level relative-import cycles may only go DOWN vs baseline,
+ *                 split strong (all-static) vs weak (≥1 lazy dynamic-import edge).
+ *                 Failure output names the cheapest edge to break per cycle.
  *   deepImports — relative specs climbing 3+ levels (`../../../`) may only
  *                 go DOWN vs scripts/import-graph-baseline.json.
  *
@@ -26,6 +28,7 @@ export {};
 const ROOT = process.cwd();
 const BASELINE_PATH = `${ROOT}/scripts/import-graph-baseline.json`;
 const WRITE_BASELINE = Bun.argv.includes('--write-baseline');
+const JSON_OUT = Bun.argv.includes('--json');
 
 interface Baseline {
   deepRelativeImports: number;
@@ -144,6 +147,21 @@ function isWeakCycle(cycle: string[]): boolean {
 const strongCycles = cycles.filter(c => !isWeakCycle(c));
 const weakCycles = cycles.filter(c => isWeakCycle(c));
 
+// ── Break hints: cheapest edge = the one whose target has fewest inbound importers ──
+const inboundCount = new Map<string, number>();
+for (const rec of files.values()) {
+  for (const e of rec.relImports) inboundCount.set(e.target, (inboundCount.get(e.target) ?? 0) + 1);
+}
+function breakHint(cycle: string[]): string {
+  let best: { from: string; to: string; score: number } | null = null;
+  for (let i = 0; i < cycle.length - 1; i++) {
+    const score = inboundCount.get(cycle[i + 1]) ?? 0;
+    if (!best || score < best.score) best = { from: cycle[i], to: cycle[i + 1], score };
+  }
+  if (!best) return '';
+  return `     hint: break \`${best.from} → ${best.to}\` (${best.to} has ${best.score} inbound importer(s) — cheapest edge)`;
+}
+
 // ── Baseline I/O ─────────────────────────────────────────────────────────
 const current: Baseline = {
   deepRelativeImports,
@@ -176,27 +194,58 @@ const weakBaseline = baseline.weakCycles ?? 0;
 // ── Verdict ──────────────────────────────────────────────────────────────
 let failed = false;
 
-if (strongCycles.length > strongBaseline) {
-  failed = true;
+const strongExceeded = strongCycles.length > strongBaseline;
+const weakExceeded = weakCycles.length > weakBaseline;
+const deepExceeded = deepRelativeImports > baseline.deepRelativeImports;
+failed = strongExceeded || weakExceeded || deepExceeded;
+
+if (JSON_OUT) {
+  console.log(
+    JSON.stringify(
+      {
+        ok: !failed,
+        strongCycles: strongCycles.map(c => ({ cycle: c, hint: breakHint(c).trim() })),
+        weakCycles: weakCycles.map(c => ({ cycle: c, hint: breakHint(c).trim() })),
+        deepRelativeImports,
+        deepImportFiles,
+        baseline: {
+          strongCycles: strongBaseline,
+          weakCycles: weakBaseline,
+          deepRelativeImports: baseline.deepRelativeImports,
+        },
+        exceeded: { strong: strongExceeded, weak: weakExceeded, deep: deepExceeded },
+      },
+      null,
+      2
+    )
+  );
+  process.exit(failed ? 1 : 0);
+}
+
+if (strongExceeded) {
   console.error(
     `strong import cycles ratchet: ${strongCycles.length} > baseline ${strongBaseline} (all-static edges; may only go down):`
   );
-  for (const c of strongCycles.slice(0, 10)) console.error(`  🔄 ${c.join(' → ')}`);
+  for (const c of strongCycles.slice(0, 10)) {
+    console.error(`  🔄 ${c.join(' → ')}`);
+    console.error(breakHint(c));
+  }
   console.error(
     'Break via a shared leaf module or dependency inversion; lazy import() is the last resort.'
   );
 }
 
-if (weakCycles.length > weakBaseline) {
-  failed = true;
+if (weakExceeded) {
   console.error(
     `weak import cycles ratchet: ${weakCycles.length} > baseline ${weakBaseline} (contains lazy dynamic-import edge; may only go down):`
   );
-  for (const c of weakCycles.slice(0, 10)) console.error(`  🔄 ${c.join(' → ')}`);
+  for (const c of weakCycles.slice(0, 10)) {
+    console.error(`  🔄 ${c.join(' → ')}`);
+    console.error(breakHint(c));
+  }
 }
 
-if (deepRelativeImports > baseline.deepRelativeImports) {
-  failed = true;
+if (deepExceeded) {
   console.error(
     `deep relative imports ratchet: ${deepRelativeImports} > baseline ${baseline.deepRelativeImports} (../../../ may only go down):`
   );
