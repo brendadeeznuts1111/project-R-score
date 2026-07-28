@@ -1,0 +1,60 @@
+{
+  "kind": "identity-board",
+  "generatedAt": "2026-07-28T18:41:27.412Z",
+  "empty": false,
+  "dbPath": "/Users/nolarose/Projects/data/accounts-operations.db",
+  "counts": {
+    "aliases": 2,
+    "activeSessions": 0,
+    "lockedAccounts": 0,
+    "anomalies24h": 0
+  },
+  "anomalyByAction": {},
+  "aliases": [
+    {
+      "nodeId": "019faa06-db84-75cc-b061-ee56dac24e64",
+      "slug": "demo-superadmin",
+      "role": "superadmin",
+      "failedAttempts": 0,
+      "lockedUntil": null,
+      "lockReason": null,
+      "createdAt": "2026-07-28T18:40:04.051Z"
+    },
+    {
+      "nodeId": "019faa06-dbd4-71ef-92d1-9ea7e1a1ed1d",
+      "slug": "demo-partner",
+      "role": "operator",
+      "failedAttempts": 0,
+      "lockedUntil": null,
+      "lockReason": null,
+      "createdAt": "2026-07-28T18:40:04.121Z"
+    }
+  ],
+  "sessions": [],
+  "audit": [
+    {
+      "nodeId": "019faa06-dbd4-71ef-92d1-9ea7e1a1ed1d",
+      "action": "account_unlocked",
+      "success": true,
+      "ip": null,
+      "createdAt": "2026-07-28T18:40:20.369Z",
+      "impersonatorId": null
+    },
+    {
+      "nodeId": "019faa06-dbd4-71ef-92d1-9ea7e1a1ed1d",
+      "action": "alias_created",
+      "success": true,
+      "ip": null,
+      "createdAt": "2026-07-28T18:40:04.121Z",
+      "impersonatorId": null
+    },
+    {
+      "nodeId": "019faa06-db84-75cc-b061-ee56dac24e64",
+      "action": "alias_created",
+      "success": true,
+      "ip": null,
+      "createdAt": "2026-07-28T18:40:04.052Z",
+      "impersonatorId": null
+    }
+  ]
+}
