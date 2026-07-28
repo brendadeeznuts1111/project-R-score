@@ -6,8 +6,10 @@
       "name": "factorywager-enterprise",
       "dependencies": {
         "@factorywager/business": "workspace:*",
+        "@factorywager/docs-tools": "workspace:*",
         "@factorywager/guards": "workspace:*",
         "@factorywager/p2p": "workspace:*",
+        "@factorywager/registry-client": "workspace:*",
         "@factorywager/rip": "workspace:*",
         "@modelcontextprotocol/sdk": "1.29.0",
         "@pinecone-database/pinecone": "7.2.0",
@@ -20,18 +22,15 @@
         "@types/node": "25.9.0",
         "@typescript-eslint/eslint-plugin": "8.59.3",
         "@typescript-eslint/parser": "8.59.3",
-        "bun-types": "1.3.14",
+        "bun-types": "catalog:",
         "eslint": "9.39.4",
         "eslint-plugin-import": "2.32.0",
         "eslint-plugin-security": "3.0.1",
         "husky": "9.1.7",
         "prettier": "3.6.2",
-        "typescript": "6.0.3",
+        "typescript": "catalog:",
         "typescript-eslint": "8.59.3",
-        "undici-types": "^8.7.0",
-      },
-      "peerDependencies": {
-        "typescript": "6.0.3",
+        "undici-types": "8.8.0",
       },
     },
     "lib/shared": {
@@ -58,16 +57,15 @@
       "name": "@factorywager/p2p",
       "version": "0.1.0",
     },
-    "packages/package": {
-      "name": "@factorywager/package",
-      "version": "0.1.0",
-    },
     "packages/registry-client": {
       "name": "@factorywager/registry-client",
       "version": "1.0.0",
       "peerDependencies": {
-        "bun-types": "*",
+        "bun-types": ">=1.3.0",
       },
+      "optionalPeers": [
+        "bun-types",
+      ],
     },
     "packages/rip": {
       "name": "@factorywager/rip",
@@ -81,23 +79,20 @@
       "name": "sports-terminal-os",
       "version": "5.2.0",
       "dependencies": {
-        "jose": "^5.2.0",
-        "prom-client": "^15.1.0",
-        "zod": "^3.23.0",
+        "jose": "5.10.0",
+        "prom-client": "15.1.3",
+        "zod": "catalog:",
       },
       "devDependencies": {
-        "@types/react": "^19.0.0",
-        "@types/react-dom": "^19.0.0",
-        "@vitejs/plugin-react": "^4.2.0",
-        "bun-types": "latest",
-        "react": "^19.0.0",
-        "react-dom": "^19.0.0",
-        "react-router-dom": "^7.0.0",
-        "typescript": "^5.4.0",
-        "vite": "^5.2.0",
-      },
-      "peerDependencies": {
-        "typescript": "^5.4.0",
+        "@types/react": "catalog:",
+        "@types/react-dom": "catalog:",
+        "@vitejs/plugin-react": "4.7.0",
+        "bun-types": "catalog:",
+        "react": "catalog:",
+        "react-dom": "catalog:",
+        "react-router-dom": "7.15.1",
+        "typescript": "5.9.3",
+        "vite": "5.4.21",
       },
     },
   },
@@ -105,15 +100,11 @@
     "@types/bun": "1.3.14",
     "@types/react": "19.2.15",
     "@types/react-dom": "19.2.3",
+    "bun-types": "1.3.14",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "typescript": "6.0.3",
     "zod": "3.23.0",
-  },
-  "catalogs": {
-    "next": {
-      "typescript": "6.0.3",
-    },
   },
   "packages": {
     "@babel/code-frame": ["@babel/code-frame@7.29.7", "", { "dependencies": { "@babel/helper-validator-identifier": "^7.29.7", "js-tokens": "^4.0.0", "picocolors": "^1.1.1" } }, "sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw=="],
@@ -227,8 +218,6 @@
     "@factorywager/guards": ["@factorywager/guards@workspace:packages/guards"],
 
     "@factorywager/p2p": ["@factorywager/p2p@workspace:packages/p2p"],
-
-    "@factorywager/package": ["@factorywager/package@workspace:packages/package"],
 
     "@factorywager/registry-client": ["@factorywager/registry-client@workspace:packages/registry-client"],
 

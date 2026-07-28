@@ -28,7 +28,7 @@ exact = true
 # Hardened (gate bunfig-policy): text lockfile + frozen installs.
 # Dependency changes go through bun add / bun update, not plain bun install.
 saveTextLockfile = true
-frozenLockfile = false
+frozenLockfile = true
 
 # Scoped registries — private FactoryWager packages (SSOT for Bun).
 # Canonical URL per .npmrc + commit 13ce5157; both scope spellings are in use

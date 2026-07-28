@@ -16,6 +16,12 @@
  *   - Any service that needs versioned, lockable config
  */
 
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+
+/** Sports-terminal-os package root (stable when tests run from monorepo root). */
+const PACKAGE_ROOT = join(import.meta.dir, "../..");
+
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
@@ -37,8 +43,26 @@ export async function readConfigFromPackage<T = Record<string, unknown>>(
 ): Promise<T> {
   const readmePath = await resolveReadme(packageName);
   const raw = await Bun.file(readmePath).text();
+  return parseTomlConfig<T>(packageName, raw, options);
+}
 
-  // Extract the first ```toml fenced code block
+/**
+ * Sync variant of {@link readConfigFromPackage} for tests and CLI paths.
+ */
+export function readConfigFromPackageSync<T = Record<string, unknown>>(
+  packageName: string,
+  options?: { key?: string }
+): T {
+  const readmePath = resolveReadmeSync(packageName);
+  const raw = readFileSync(readmePath, "utf8");
+  return parseTomlConfig<T>(packageName, raw, options);
+}
+
+function parseTomlConfig<T>(
+  packageName: string,
+  raw: string,
+  options?: { key?: string }
+): T {
   const match = raw.match(/```toml\n([\s\S]*?)\n```/);
   if (!match) {
     throw new Error(
@@ -48,13 +72,12 @@ export async function readConfigFromPackage<T = Record<string, unknown>>(
 
   const parsed = Bun.TOML.parse(match[1]) as Record<string, unknown>;
 
-  // If a specific key was requested, return just that subtree
   if (options?.key) {
     const subtree = parsed[options.key];
     if (subtree === undefined) {
       throw new Error(
         `Key "${options.key}" not found in TOML block of package "${packageName}". ` +
-        `Available keys: ${Object.keys(parsed).join(", ")}`
+          `Available keys: ${Object.keys(parsed).join(", ")}`
       );
     }
     return subtree as T;
@@ -75,22 +98,32 @@ export async function readConfigFromPackage<T = Record<string, unknown>>(
  *   2. `node_modules/<name>/README.md` (npm-installed package)
  */
 async function resolveReadme(packageName: string): Promise<string> {
-  // Local workspace package (monorepo)
-  const localPath = `packages/${packageName}/README.md`;
+  const localPath = join(PACKAGE_ROOT, "packages", packageName, "README.md");
   if (await Bun.file(localPath).exists()) {
     return localPath;
   }
 
-  // npm-installed package (node_modules)
-  const npmPath = `node_modules/${packageName}/README.md`;
+  const npmPath = join(PACKAGE_ROOT, "node_modules", packageName, "README.md");
   if (await Bun.file(npmPath).exists()) {
     return npmPath;
   }
 
-  throw new Error(
+  throw notFound(packageName, localPath, npmPath);
+}
+
+function resolveReadmeSync(packageName: string): string {
+  const localPath = join(PACKAGE_ROOT, "packages", packageName, "README.md");
+  if (existsSync(localPath)) return localPath;
+  const npmPath = join(PACKAGE_ROOT, "node_modules", packageName, "README.md");
+  if (existsSync(npmPath)) return npmPath;
+  throw notFound(packageName, localPath, npmPath);
+}
+
+function notFound(packageName: string, localPath: string, npmPath: string): Error {
+  return new Error(
     `Package "${packageName}" not found. Checked:\n` +
-    `  - ${localPath}\n` +
-    `  - ${npmPath}\n` +
-    `Run \`bun add ${packageName}\` or create it in packages/.`
+      `  - ${localPath}\n` +
+      `  - ${npmPath}\n` +
+      `Run \`bun add ${packageName}\` or create it in packages/.`
   );
 }

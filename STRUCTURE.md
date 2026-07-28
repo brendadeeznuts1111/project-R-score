@@ -105,12 +105,13 @@ These may exist on disk under `~/Projects` but are **gitignored** or separate re
 
 ## Root workspaces (authoritative)
 
-From `package.json` `workspaces.packages`:
+From root `package.json` `workspaces.packages` (SSOT — do not invent extra globs):
 
-- `packages/*`
-- `projects/active/factorywager/registry/packages/*`
-- `projects/active/sports-terminal-os`
-- `lib/*`
+- `packages/*` — `@factorywager/*` library packages
+- `projects/active/sports-terminal-os` — Sports Terminal OS (workspace member, not a nested install root)
+- `lib/*` — currently only `lib/shared` (`name: shared`); product code under other `lib/**` paths is imported relatively, not as workspace packages
+
+**Not root workspaces:** nested monorepos under `projects/**` (e.g. `projects/active/factorywager/registry`) keep their **own** `workspaces` / `catalog` and own `bun install`. Shared third-party pins for root members use root `catalog` + `catalog:` — see [`docs/UNIFIED.md`](docs/UNIFIED.md#catalogs-and-workspace-protocols).
 
 ## Organization history (condensed)
 

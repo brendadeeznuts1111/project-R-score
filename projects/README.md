@@ -25,7 +25,7 @@ Category folders (`analysis/`, `utilities/`, …) are indexes only — each has 
 ## Rules
 
 - Each product is **independent** — own `bun install`, `bun.lock`, `bun test` (except where root workspaces explicitly list a package).
-- **Root workspaces** (see root `package.json`): `packages/*`, `projects/active/factorywager/registry/packages/*`, `projects/active/sports-terminal-os`, `lib/*`.
+- **Root workspaces** (SSOT: root `package.json` `workspaces.packages`): `packages/*`, `projects/active/sports-terminal-os`, `lib/*`. Nested trees such as `factorywager/registry` are **not** root workspace members — install inside that product.
 - Nested products with **own git remotes** are gitignored under this monorepo (kimiremote, cascade-mover-v3, bet-ticker-worker-v1.1, f402-openapi). Treat them as sibling checkouts, not monorepo source of truth.
 - Promote / demote:
 
@@ -46,7 +46,7 @@ Status: `workspace` = root workspace member · `own remote` = gitignored nested 
 | Path | Purpose | Status |
 |------|---------|--------|
 | [`active/sports-terminal-os/`](active/sports-terminal-os/) | Sports Terminal OS v5.2 — proxy, WS/SSE, partner profiles | workspace |
-| [`active/factorywager/`](active/factorywager/) | Private NPM registry umbrella → `registry/` | local (packages in workspaces) |
+| [`active/factorywager/`](active/factorywager/) | Private NPM registry umbrella → `registry/` | local (nested monorepo; own install) |
 | [`active/kimiremote/`](active/kimiremote/) | Sports terminal proxy / remote ops | own remote |
 | [`active/f402-openapi/`](active/f402-openapi/) | Fantasy402 OpenAPI + Workers | own remote |
 | [`active/playwriter-skill/`](active/playwriter-skill/) | Playwright skill package (Chrome + CLI + R2) | local |

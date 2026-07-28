@@ -16,16 +16,12 @@
   "catalog": {
     "zod": "3.23.0",
     "@types/bun": "1.3.14",
+    "bun-types": "1.3.14",
     "typescript": "6.0.3",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "@types/react": "19.2.15",
     "@types/react-dom": "19.2.3"
-  },
-  "catalogs": {
-    "next": {
-      "typescript": "6.0.3"
-    }
   },
   "bin": {
     "dx-mcp": "./scripts/dx-mcp.ts",
@@ -2133,20 +2129,17 @@
     "@types/node": "25.9.0",
     "@typescript-eslint/eslint-plugin": "8.59.3",
     "@typescript-eslint/parser": "8.59.3",
-    "bun-types": "1.3.14",
+    "bun-types": "catalog:",
     "eslint": "9.39.4",
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-security": "3.0.1",
     "husky": "9.1.7",
     "prettier": "3.6.2",
-    "typescript": "6.0.3",
+    "typescript": "catalog:",
     "typescript-eslint": "8.59.3",
-    "undici-types": "^8.7.0"
+    "undici-types": "8.8.0"
   },
   "private": "false",
-  "peerDependencies": {
-    "typescript": "6.0.3"
-  },
   "files": [
     "lib/",
     "server/",

@@ -50,6 +50,28 @@ bun install --cpu=x64 --os=linux --dry-run --ignore-scripts
 
 Docs: [platform-specific dependencies](https://bun.com/docs/pm/cli/install#platform-specific-dependencies) · [cpu-and-os flags](https://bun.com/docs/pm/cli/install#cpu-and-os-flags).
 
+## Catalogs and workspace protocols
+
+Canonical Bun docs: [workspaces](https://bun.com/docs/pm/workspaces) · [catalogs](https://bun.com/docs/pm/catalogs) · [filter](https://bun.com/docs/pm/filter).
+
+| Mechanism | Where | Rule |
+|-----------|--------|------|
+| `workspaces.packages` | root `package.json` | Only listed globs are monorepo members: `packages/*`, `projects/active/sports-terminal-os`, `lib/*`. Nested products under `projects/**` are separate install roots unless promoted. |
+| `catalog` | root `package.json` | **Version SSOT** for shared third-party pins (`typescript`, `@types/bun`, `bun-types`, `zod`, React stack). Prefer exact pins (matches `install.exact`). |
+| `catalog:` / `catalog:<name>` | any **root workspace** `package.json` | Consumers of shared pins **must** use the protocol — do not re-declare floating `^` / `latest` for cataloged names. |
+| `workspace:*` | root or packages | Link **internal** packages only. Apps like sports-terminal-os are workspace members for `--filter` / install; they need not be root `dependencies`. |
+| Named `catalogs` | root | Only when a second stack needs a separate pin set. Empty/demo named catalogs are not allowed. |
+| `overrides` | root only | Metadeps / CVE pins — [pm/overrides](https://bun.com/docs/pm/overrides). Nested overrides unsupported. |
+| `patchedDependencies` | root + `patches/` | Only via [bun patch](https://bun.com/docs/pm/cli/patch). Patched pkgs may be global-store ineligible. |
+| `trustedDependencies` | root | Explicit list **replaces** Bun defaults — do not set a partial list casually. |
+| Root `peerDependencies` | avoid | Application root is not a library; put toolchain pins in `devDependencies` + `catalog:`. |
+
+**Scripts:** product/ops scripts live on the **root** package. Package scripts run with `bun run --filter <name|./path> <script>` or `--workspaces --if-present`. Do not use `--filter` for root-only script names.
+
+**Types pin:** catalog `@types/bun` / `bun-types` may lag `packageManager` / runtime (e.g. runtime 1.4.0, types 1.3.14). Bump both type packages together; prove with typecheck gates. Pages `BUN_VERSION` is a separate deploy pin.
+
+**Intentional catalog exception:** `sports-terminal-os` pins `typescript` at **5.9.3** (not `catalog:` → 6.0.3) until its `tsc` surface is cleaned for TS 6 (`baseUrl` deprecation, rootDir/path imports into monorepo `lib/`). Other shared pins (zod, react, bun-types) still use `catalog:`.
+
 ## Config SSOT rules
 
 - **Scope→registry mapping: bunfig `[install.scopes]` owns it for Bun** (Bun itself recommends migrating `.npmrc` → bunfig — [pm/npmrc](https://bun.com/docs/pm/npmrc)). `.npmrc` registry/auth lines remain only for non-Bun tooling (vite/npm clients). Both scope spellings exist (`@factorywager` ×42, `@factory-wager` ×1). **Registry URL variants:** root `bunfig.toml` scopes use `http://localhost:3000/` for local `serve-public`; production/apex is `https://registry.factory-wager.com/` — do not assume one URL in docs or scripts without naming which lane.
@@ -70,6 +92,9 @@ Docs: [platform-specific dependencies](https://bun.com/docs/pm/cli/install#platf
 | Cross `--cpu`/`--os` install that **mutates** `bun.lock` | lockfile should stay platform-agnostic | `--dry-run` first; see `lockfile-stable` aspect |
 | Trusting `.npmrc` for Bun scope URLs | Bun reads `[install.scopes]` in bunfig, not `.npmrc` | bunfig SSOT; `.npmrc` for npm/vite clients only |
 | Leaving root `frozenLockfile = false` long-term | drift from hardened CI-parity policy | root stays `true`; flip only for intentional dep edits |
+| Hardcoding shared versions in every workspace package | defeats [catalogs](https://bun.com/docs/pm/catalogs); version skew (e.g. TS 5 vs 6) | root `catalog` + `catalog:` in members |
+| `bun-types: "latest"` / wide carets for cataloged names | fights `install.exact` + frozen lockfile | pin via catalog |
+| Treating nested `projects/**` as root workspaces in docs | false install graph; filter/install surprise | match root `package.json` only |
 | Spawning bare `'bun'` in verify scripts | PATH may resolve a different binary than the runtime interpreter | `lib/verification/resolve-bun-binary.ts` — `process.execPath` first, `Bun.which('bun')` fallback |
 | `BUN_CONFIG_REGISTRY` in project `.env` for default registry | env overrides bunfig unpredictably in dev/CI | use `[install].registry` in bunfig, scoped `.npmrc`, or `bun publish --registry` ([docs](https://bun.com/docs/pm/cli/publish#registry-configuration)); tool overlay `REGISTRY_URL` is npm API only — not Pages routing probes |
 
