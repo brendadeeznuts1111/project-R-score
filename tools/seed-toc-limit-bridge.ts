@@ -1,15 +1,16 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/bundler/executables — force-seed
 // @see https://bun.com/docs/guides/process/argv — Bun.argv
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 /**
  * Seed sportsbook limit raises on TOC identity treeNodeIds (ASH/PAT by default).
  *
  * Writes partner_account_limits only — never dual-writes TOC fixture limitHistory.
- * Scoped --force re-seeds resolved TOC node_ids only (leaves limit-demo-* alone).
+ * Scoped force-seed re-seeds resolved TOC node_ids only (leaves limit-demo-* alone).
  *
  * Usage:
  *   bun tools/seed-toc-limit-bridge.ts
- *   bun tools/seed-toc-limit-bridge.ts --force --bake
+ *   bun tools/seed-toc-limit-bridge.ts force-seed --bake
  *   bun run ops:limits:seed-toc-bridge
  *
  * @see lib/operations/toc-limit-bridge-seed.ts
@@ -28,7 +29,7 @@ import {
 } from '../lib/toc-ops/limit-raises-join.ts';
 import { loadTocOpsSnapshotSync } from '../lib/toc-ops/export-snapshot.ts';
 
-const force = Bun.argv.includes('--force');
+const force = Bun.argv.includes('force-seed');
 const bake = Bun.argv.includes('--bake');
 const noCapture = Bun.argv.includes('--no-capture');
 const prove = !Bun.argv.includes('--no-prove');
@@ -99,7 +100,7 @@ try {
           : null,
         hint:
           result.targets.length === 0
-            ? 'No ASH/PAT identity treeNodeIds found — run bun run ops:seed:toc -- --force first'
+            ? 'No ASH/PAT identity treeNodeIds found — run bun run ops:seed:toc -- force-seed first'
             : joinProof?.hasPerPartner
               ? 'TOC board raises 48h badges should light for joined partners when ops-summary reloads'
               : 'Seeded; re-bake toc-ops identity or pass identity if joinProof is null',
