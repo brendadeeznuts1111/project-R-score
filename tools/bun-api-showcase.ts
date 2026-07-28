@@ -656,7 +656,14 @@ export function load(path: string) {
         redis: 'skip',
       };
       if (Bun.env.REDIS_URL) {
-        const client = new Bun.RedisClient(Bun.env.REDIS_URL);
+        // Health probe must fail fast: client defaults (10s connectionTimeout,
+        // autoReconnect with 20 retries) hang ~30s against an unreachable
+        // host. One capped attempt, no reconnect — per Bun Redis docs.
+        const client = new Bun.RedisClient(Bun.env.REDIS_URL, {
+          connectionTimeout: 1500,
+          autoReconnect: false,
+          maxRetries: 1,
+        });
         try {
           await client.connect();
           checks.redis = 'ok';
