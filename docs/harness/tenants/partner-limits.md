@@ -42,7 +42,7 @@ operations.db
 ```bash
 # 1. Demo seed + multi-factor tables (CLI)
 bun run ops:limits:demo
-# ≡ ops-check-limits --force-seed --multi  → LimitRaiseReport inspect tables
+# ≡ ops-check-limits --reseed --multi  → LimitRaiseReport inspect tables
 
 # Connected fixture: 3 partners · 5 downline nodes · 5 books · MA/NJ · 5 ZIP clusters
 bun run ops:limits:seed-patterns
