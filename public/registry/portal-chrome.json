@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-07-28T22:15:28.598Z",
+  "generated": "2026-07-28T23:47:26.015Z",
   "path": "/registry/portal-chrome.json",
   "summary": {
     "priorityNav": 6,
-    "overflowNav": 17,
-    "footerLinks": 16,
+    "overflowNav": 18,
+    "footerLinks": 17,
     "components": 13,
     "scripts": 5
   },
@@ -92,6 +92,15 @@
       "group": "registry",
       "note": "domain-value glossary · constructor tiers · project adoption",
       "cli": "bun run brand:keymap"
+    },
+    {
+      "id": "surfaces",
+      "label": "Surfaces",
+      "href": "/portal/surfaces/",
+      "tier": "overflow",
+      "group": "registry",
+      "note": "edge host inventory · Access domains · backend shortcodes · schema v2",
+      "cli": "bun run surfaces:bake  # → /registry/surfaces-state.json"
     },
     {
       "id": "skills",
@@ -234,6 +243,10 @@
     {
       "label": "Brands",
       "href": "/portal/brands/"
+    },
+    {
+      "label": "Surfaces",
+      "href": "/portal/surfaces/"
     },
     {
       "label": "Health",

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-07-28T23:36:15.065Z",
+  "generatedAt": "2026-07-28T23:48:00.881Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -880,24 +880,28 @@
       "envName": "DOC_TOKEN_ID",
       "coverage": {
         "status": "covered",
-        "references": 2,
+        "references": 4,
         "constructors": {
-          "as": 1,
+          "as": 18,
           "try": 0,
           "parse": 0
         },
         "guards": 0,
         "files": [
+          "lib/docs/bun-brand-contract.ts",
+          "lib/docs/bun-brand-usages.ts",
           "lib/docs/token-ref-adapter.ts",
           "lib/docs/token-ref.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 2,
-            "constructionCalls": 1,
+            "references": 4,
+            "constructionCalls": 18,
             "guardCalls": 0,
             "files": [
+              "lib/docs/bun-brand-contract.ts",
+              "lib/docs/bun-brand-usages.ts",
               "lib/docs/token-ref-adapter.ts",
               "lib/docs/token-ref.ts"
             ]
@@ -1421,7 +1425,7 @@
       "envName": "EVIDENCE_ID",
       "coverage": {
         "status": "covered",
-        "references": 11,
+        "references": 16,
         "constructors": {
           "as": 3,
           "try": 0,
@@ -1429,6 +1433,7 @@
         },
         "guards": 0,
         "files": [
+          "lib/docs/bun-brand-usages.ts",
           "lib/dod/evidence.ts",
           "lib/screenshot-remediation.ts",
           "lib/time.ts"
@@ -1436,10 +1441,11 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 11,
+            "references": 16,
             "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
+              "lib/docs/bun-brand-usages.ts",
               "lib/dod/evidence.ts",
               "lib/screenshot-remediation.ts",
               "lib/time.ts"
@@ -3028,7 +3034,7 @@
       "envName": "HOST_ID",
       "coverage": {
         "status": "covered",
-        "references": 19,
+        "references": 20,
         "constructors": {
           "as": 2,
           "try": 3,
@@ -3037,6 +3043,7 @@
         "guards": 0,
         "files": [
           "lib/http/host-planes.ts",
+          "lib/http/portal-weave.ts",
           "lib/surfaces/inventory.ts",
           "lib/verification/cloudflare-access-live.ts",
           "scripts/bake-surfaces.ts",
@@ -3046,11 +3053,12 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 19,
+            "references": 20,
             "constructionCalls": 5,
             "guardCalls": 0,
             "files": [
               "lib/http/host-planes.ts",
+              "lib/http/portal-weave.ts",
               "lib/surfaces/inventory.ts",
               "lib/verification/cloudflare-access-live.ts",
               "scripts/bake-surfaces.ts",
@@ -3162,7 +3170,7 @@
       "envName": "SUBDOMAIN_ID",
       "coverage": {
         "status": "covered",
-        "references": 7,
+        "references": 8,
         "constructors": {
           "as": 4,
           "try": 0,
@@ -3171,17 +3179,19 @@
         "guards": 0,
         "files": [
           "lib/http/host-planes.ts",
+          "lib/http/portal-weave.ts",
           "lib/surfaces/inventory.ts",
           "lib/verification/cloudflare-access-live.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 7,
+            "references": 8,
             "constructionCalls": 4,
             "guardCalls": 0,
             "files": [
               "lib/http/host-planes.ts",
+              "lib/http/portal-weave.ts",
               "lib/surfaces/inventory.ts",
               "lib/verification/cloudflare-access-live.ts"
             ]
@@ -3227,28 +3237,32 @@
       "envName": "SURFACE_ID",
       "coverage": {
         "status": "covered",
-        "references": 8,
+        "references": 11,
         "constructors": {
-          "as": 2,
+          "as": 3,
           "try": 0,
           "parse": 0
         },
         "guards": 0,
         "files": [
           "lib/http/host-planes.ts",
+          "lib/surfaces/doctor-check.ts",
           "lib/surfaces/inventory.ts",
-          "scripts/bake-surfaces.ts"
+          "scripts/bake-surfaces.ts",
+          "tools/lib/portal-cli-doctor-infra.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 8,
-            "constructionCalls": 2,
+            "references": 11,
+            "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
               "lib/http/host-planes.ts",
+              "lib/surfaces/doctor-check.ts",
               "lib/surfaces/inventory.ts",
-              "scripts/bake-surfaces.ts"
+              "scripts/bake-surfaces.ts",
+              "tools/lib/portal-cli-doctor-infra.ts"
             ]
           },
           "projects": {

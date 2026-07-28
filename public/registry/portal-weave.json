@@ -2,10 +2,10 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-07-28T23:39:54.802Z",
+  "generated": "2026-07-28T23:47:26.016Z",
   "summary": {
-    "surfaces": 21,
-    "artifacts": 32,
+    "surfaces": 22,
+    "artifacts": 33,
     "components": 13,
     "wiki": 6,
     "scripts": 32
@@ -59,6 +59,14 @@
       "note": "Bun capability relationships · domain-value glossary · project adoption",
       "group": "registry",
       "cli": "bun run bun:brand-map"
+    },
+    {
+      "id": "surfaces",
+      "label": "Surfaces",
+      "href": "/portal/surfaces/",
+      "note": "edge inventory · HostId/SubdomainId · Access domains · schema v2 bake",
+      "group": "registry",
+      "cli": "bun run surfaces:bake"
     },
     {
       "id": "vault",
@@ -188,6 +196,12 @@
       "href": "/registry/brand-keymap.json",
       "note": "57-value catalog · tracked project adoption",
       "id": "artifact-brand-keymap"
+    },
+    {
+      "label": "surfaces-state",
+      "href": "/registry/surfaces-state.json",
+      "note": "schema v2 · apex/subdomain/backendCode · Access domains · surfaces:bake",
+      "id": "artifact-surfaces-state"
     },
     {
       "label": "bun-brand-map",

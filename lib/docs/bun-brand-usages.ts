@@ -140,6 +140,20 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     proofs: [],
   },
   {
+    key: 'bun-cron-brand-status-watch',
+    token: asDocTokenId('Bun.cron'),
+    variant: 'in-process',
+    scope: 'tooling',
+    policy: 'optional',
+    ownerLane: 'runtime-tooling',
+    implementations: [{ path: 'tools/brand-status.ts', symbol: 'startWatch' }],
+    consumers: [{ path: 'tools/brand-status.ts', symbol: 'main' }],
+    relationships: none(
+      'The watch scheduler controls periodic terminal refreshes; no domain identity crosses this boundary.'
+    ),
+    proofs: [],
+  },
+  {
     key: 'bun-sliceansi-terminal-output',
     token: asDocTokenId('Bun.sliceAnsi'),
     variant: 'display-width',
