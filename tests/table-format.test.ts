@@ -79,23 +79,9 @@ describe('Bun.inspect', () => {
   });
 });
 
-describe('Bun.Terminal', () => {
-  test('should create a Terminal instance exposing isTTY boolean and columns number', () => {
-    try {
-      const T = (Bun as any).Terminal;
-      if (typeof T === 'function') {
-        const t = new T(Bun.stdout);
-        expect(t == null).toBe(false);
-        if (t !== undefined) {
-          expect(typeof t.isTTY === 'boolean' || t.isTTY === undefined).toBe(true);
-          expect(typeof t.columns === 'number' || t.columns === undefined).toBe(true);
-        }
-      }
-    } catch {
-      // Bun.Terminal may not exist in older versions — feature-detect gracefully
-    }
-  });
-});
+// Bun.Terminal tests now use describe.if(hasTerminal) — see section 13.
+// This standalone test is deprecated and kept for backward compatibility.
+// The conditional describe.if block in section 13 handles TTY detection properly.
 
 // ── 2. Color system ──────────────────────────────────────────────────────
 describe('color system', () => {
@@ -668,14 +654,9 @@ describe('error handling', () => {
     expect(result).toBeTruthy();
   });
 
-  test('should return a string without crashing when input is null', () => {
+  test('should throw descriptive error when input is null', () => {
     expect.assertions(1);
-    try {
-      const result = formatTableNative(null as any);
-      expect(typeof result).toBe('string');
-    } catch {
-      expect(true).toBe(true); // Graceful error handling
-    }
+    expect(() => formatTableNative(null as any)).toThrow();
   });
 });
 
@@ -779,20 +760,16 @@ describe('complete matcher coverage', () => {
   });
 
   // .toHaveBeenCalled / .toHaveBeenCalledTimes / .toHaveBeenCalledWith
-  test('mock function matchers', () => {
-    const mock = (msg: string) => msg;
-    const spy = { fn: (x: number) => x + 1 };
-    const orig = spy.fn;
+  test('mock function pattern (manual tracking for environments without jest.fn)', () => {
     let callCount = 0;
-    const wrapped = (x: number) => { callCount++; return orig(x); };
+    const tracked = (x: number) => { callCount++; return x + 1; };
 
-    expect(wrapped(1)).toBe(2);
-    expect(wrapped(2)).toBe(3);
+    expect(tracked(1)).toBe(2);
+    expect(tracked(2)).toBe(3);
     expect(callCount).toBe(2);
 
-    // Verify function behavior without jest.fn using manual tracking
-    expect(typeof wrapped).toBe('function');
-    expect(wrapped(0)).toBe(1);
+    expect(typeof tracked).toBe('function');
+    expect(tracked(0)).toBe(1);
     expect(callCount).toBe(3);
   });
 });
