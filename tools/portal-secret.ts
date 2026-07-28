@@ -11,7 +11,8 @@
  *   pass-cli item view | item list | vault list
  *   pass-cli run | inject
  *   pass-cli invite accept | invite list
- *   pass-cli share list
+ *   pass-cli share list | item share | vault share
+ *   pass-cli vault member | item member (list/update/remove)
  *   pass-cli login | info | test
  *
  * Display chrome (label/color/icon): config/vault-map.toml + env.template
@@ -63,6 +64,11 @@ Subcommands:
   share list [--json]   pass-cli share list
   share item <vault/title> <email> [--role viewer|editor|manager]
                         pass-cli item share (resolves share-id via item list)
+  share vault <vault> <email> [--role viewer|editor|manager]
+                        pass-cli vault share --vault-name (one email per call)
+  member vault …        pass-cli vault member list|update|remove (passthrough)
+  member item …         pass-cli item member list|update|remove (passthrough)
+                        remove = revoke a share (by --member-share-id)
   move <vault/title> --to <vault>
                         pass-cli item move
   trash <vault/title>   pass-cli item trash
@@ -244,6 +250,16 @@ export function shareItemArgs(
   }
   if (!email.includes('@')) throw new Error(`Invalid email "${email}"`);
   return ['item', 'share', '--share-id', shareId, '--item-id', itemId, '--role', role, email];
+}
+
+/** `pass-cli vault share` args (one email per call; default role is viewer). */
+export function shareVaultArgs(vault: string, email: string, role: string): string[] {
+  if (!vault.trim()) throw new Error('share vault requires a non-empty vault name');
+  if (!SHARE_ROLES.has(role)) {
+    throw new Error(`Invalid role "${role}" — expected viewer|editor|manager`);
+  }
+  if (!email.includes('@')) throw new Error(`Invalid email "${email}"`);
+  return ['vault', 'share', '--vault-name', vault, '--role', role, email];
 }
 
 function passEnv(): NodeJS.ProcessEnv {
@@ -641,10 +657,45 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
         }
         process.exit(await runPassCli(args));
       }
+      if (action === 'vault') {
+        const vault = rest[1];
+        const email = rest[2];
+        const role = flagValue(rest, '--role') ?? 'viewer';
+        if (!vault || vault.startsWith('-') || !email) {
+          cliError(
+            'Usage: portal secret share vault <vault> <email> [--role viewer|editor|manager]'
+          );
+        }
+        let args: string[];
+        try {
+          args = shareVaultArgs(vault!, email!, role);
+        } catch (e) {
+          cliError(e instanceof Error ? e.message : String(e));
+        }
+        process.exit(await runPassCli(args));
+      }
       cliError(
-        'Usage: portal secret share list [--json] | share item <vault/item-title> <email> [--role …]\n' +
-          'Note: pass-cli shares items by email (no secure-link mint in CLI v2.2.3).'
+        'Usage: portal secret share list [--json] | share item <vault/item-title> <email> [--role …] | share vault <vault> <email> [--role …]\n' +
+          'Note: pass-cli shares by email, one per call (no secure-link mint in CLI v2.2.3).'
       );
+      return;
+    }
+
+    case 'member': {
+      // Thin passthrough: pass-cli vault member | item member (list/update/remove).
+      // `remove --member-share-id <id>` is the revoke path for a share.
+      const kind = rest[0];
+      if (kind !== 'vault' && kind !== 'item') {
+        cliError('Usage: portal secret member vault|item <list|update|remove> [pass-cli args…]');
+      }
+      if (rest.length === 1) {
+        cliError(
+          `Usage: portal secret member ${kind} <list|update|remove> [args…]\n` +
+            'examples: member vault list --vault-name portal · ' +
+            'member vault remove --vault-name portal --member-share-id <id>'
+        );
+      }
+      process.exit(await runPassCli([kind!, 'member', ...rest.slice(1)]));
       return;
     }
 

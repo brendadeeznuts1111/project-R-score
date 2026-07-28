@@ -191,6 +191,8 @@ Object-inspection depth is controlled project-wide via [`lib/console-depth.ts`](
 
 Each row maps to a documented API — Bun or Proton Pass CLI — with type, version, "Used in", status, and canonical source.
 
+**Consumers of this map (decision tables):** packages/workspace docs index — [`docs/packages/README.md`](docs/packages/README.md) · machine SSOT [`docs/packages/docs-index.json`](docs/packages/docs-index.json) (Type · Status · Audience · Last verified · Grounded capabilities · Maintainer · Triggers · Related commands).
+
 | Capability | Type | Version | Bun API | Proton CLI | Used in | Status | Source | Example (snippet) |
 |---|---|---|---|---|---|---|---|---|
 | **Vault config (TOML)** | config | Bun ≥1.4 | `import x from './vault-map.toml' with { type: 'toml' }` | — | autofill map loading | Available | [Bun TOML loader](https://bun.sh/docs/runtime/loaders#toml) | `const map = await import('./vault-map.toml', { with: { type: 'toml' } });` |

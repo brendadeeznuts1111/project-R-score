@@ -3,23 +3,54 @@
 Traceability map: internal docs · Bun canonical pages · generated artifacts · root tooling.  
 **Capability map (grounded APIs):** [AGENTS.md § Grounded capability map](../../AGENTS.md#grounded-capability-map) · install/filter policy: [UNIFIED § catalogs](../UNIFIED.md#catalogs-and-workspace-protocols).
 
-## Documentation index
+## Documentation index (decision table)
 
-| Doc | Role | Type | Status | Audience | Grounded capabilities | Maintainer | Triggers |
-|-----|------|------|--------|----------|----------------------|------------|----------|
-| [REGISTRY.md](./REGISTRY.md) | Generated package table — refresh with `bun run packages:list --write` | generated | active | developers | `Bun.Glob` (via `scanFilesSync`) · `Bun.file` / readJson · `Bun.write` | docs / packages tooling | new workspace member · version bump · triage change |
-| [monorepo-workspaces.md](../harness/tenants/monorepo-workspaces.md) | Hybrid workspace graph · catalog · filter runbook · Bun canonical refs | internal | active | devops · contributors | workspace globs · `catalog:` · `bun run --filter` | platform | Bun PM upgrade · workspace membership change |
-| [monorepo-workspaces § bun --filter](../harness/tenants/monorepo-workspaces.md#bun---filter-canonical) | Name vs `./path` · install · outdated · parallel · `type:toml` pitfall | internal | active | all operators | `--filter` · `--if-present` · `--parallel` / `--sequential` | platform | Bun filter semantics change |
-| [UNIFIED.md § catalogs](../UNIFIED.md#catalogs-and-workspace-protocols) | Install + catalog policy · scripts vs filter · `type:toml` warning | policy | active | all | `catalog:` · `workspace:*` · frozenLockfile · exact | platform | install policy change |
-| [UNIFIED § Scripts vs --filter](../UNIFIED.md#scripts-vs---filter) | Root scripts vs package `--filter` · docs UI facet warning | policy | active | all | root `bun run` · package `--filter` | platform | new root ops scripts |
-| [pm/filter](https://bun.com/docs/pm/filter) | Canonical workspace package selector | canonical | active | all | `bun run --filter` · `bun install --filter` · `bun outdated --filter` | Bun OSS | — |
-| [pm/cli/outdated](https://bun.com/docs/pm/cli/outdated) | Outdated deps; supports `--filter` | canonical | active | all | `bun outdated --filter` | Bun OSS | — |
-| [pm/workspaces](https://bun.com/docs/pm/workspaces) | Workspace globs · `workspace:` protocol | canonical | active | all | workspaces · `workspace:*` | Bun OSS | — |
-| [pm/catalogs](https://bun.com/docs/pm/catalogs) | Shared version SSOT · `catalog:` | canonical | active | all | `catalog` · `catalog:` | Bun OSS | — |
+**Purpose:** route readers to the right doc, show trustworthiness, and link each row to the [Grounded capability map](../../AGENTS.md#grounded-capability-map).  
+**Machine SSOT:** [`docs-index.json`](./docs-index.json) (same rows — update JSON when status/owners change, then keep this table in sync).  
+**Last catalog pass:** `2026-07-28`.
+
+### Identity & trust
+
+| Doc | Role | Type | Status | Audience | Last verified | Format |
+|-----|------|------|--------|----------|---------------|--------|
+| [REGISTRY.md](./REGISTRY.md) | Generated package table — refresh with `bun run packages:list --write` | generated | active | developers | 2026-07-28 | markdown (generated) |
+| [monorepo-workspaces.md](../harness/tenants/monorepo-workspaces.md) | Hybrid workspace graph · catalog · filter runbook · Bun canonical refs | internal | active | devops · contributors | 2026-07-28 | markdown |
+| [monorepo-workspaces § bun --filter](../harness/tenants/monorepo-workspaces.md#bun---filter-canonical) | Name vs `./path` · install · outdated · parallel · `type:toml` pitfall | internal | active | all operators | 2026-07-28 | markdown (section) |
+| [UNIFIED.md § catalogs](../UNIFIED.md#catalogs-and-workspace-protocols) | Install + catalog policy · scripts vs filter · `type:toml` warning | policy | active | all | 2026-07-28 | markdown |
+| [UNIFIED § Scripts vs --filter](../UNIFIED.md#scripts-vs---filter) | Root scripts vs package `--filter` · docs UI facet warning | policy | active | all | 2026-07-28 | markdown (section) |
+| [pm/filter](https://bun.com/docs/pm/filter) | Canonical workspace package selector | canonical | active | all | 2026-07-28 | external HTML |
+| [pm/cli/outdated](https://bun.com/docs/pm/cli/outdated) | Outdated deps; supports `--filter` | canonical | active | all | 2026-07-28 | external HTML |
+| [pm/workspaces](https://bun.com/docs/pm/workspaces) | Workspace globs · `workspace:` protocol | canonical | active | all | 2026-07-28 | external HTML |
+| [pm/catalogs](https://bun.com/docs/pm/catalogs) | Shared version SSOT · `catalog:` | canonical | active | all | 2026-07-28 | external HTML |
+
+### Ownership, capabilities & actions
+
+| Doc | Grounded capabilities | Maintainer | Triggers | Related commands |
+|-----|----------------------|------------|----------|------------------|
+| [REGISTRY.md](./REGISTRY.md) | `Bun.Glob` (via `scanFilesSync`) · `Bun.file` / readJson · `Bun.write` | docs / packages tooling | new workspace member · version bump · triage change | `bun run packages:list` · `bun run packages:list --write` |
+| [monorepo-workspaces.md](../harness/tenants/monorepo-workspaces.md) | workspace globs · `catalog:` · `bun run --filter` · `bun outdated --filter` | platform | Bun PM upgrade · workspace membership change | `bun run validate:workspaces` · `bun run --filter '*'` · `bun outdated --filter` |
+| [§ bun --filter](../harness/tenants/monorepo-workspaces.md#bun---filter-canonical) | `--filter` · `--if-present` · `--parallel` / `--sequential` · `--workspaces` | platform | Bun filter semantics change | `bun run --parallel --filter '*'` · `bun install --filter` · `bun outdated --filter` |
+| [UNIFIED catalogs](../UNIFIED.md#catalogs-and-workspace-protocols) | `catalog:` · `workspace:*` · frozenLockfile · `install.exact` | platform | install policy change · catalog pin bump | `bun install` · `bun run validate:workspaces` |
+| [UNIFIED Scripts vs --filter](../UNIFIED.md#scripts-vs---filter) | root `bun run` · package `--filter` | platform | new root ops scripts | `bun run ops:*` · `bun run --filter <pkg>` |
+| [pm/filter](https://bun.com/docs/pm/filter) | `bun run --filter` · `bun install --filter` · `bun outdated --filter` | Bun OSS | — | `bun run --filter` · `bun outdated --filter` |
+| [pm/cli/outdated](https://bun.com/docs/pm/cli/outdated) | `bun outdated --filter` | Bun OSS | — | `bun outdated` · `bun outdated --filter` |
+| [pm/workspaces](https://bun.com/docs/pm/workspaces) | workspaces · `workspace:*` | Bun OSS | — | `bun install` · `bun pm ls` |
+| [pm/catalogs](https://bun.com/docs/pm/catalogs) | `catalog` · `catalog:` | Bun OSS | — | `bun install` · `bun outdated` |
 
 **Type legend:** `canonical` = bun.com · `policy` = FactoryWager install SSOT · `internal` = harness runbook · `generated` = machine-written artifact.
 
-**Status legend:** `active` = maintained · `planned` = stub / no spine importers yet · `archived` = out of root install graph.
+**Status legend:** `active` = maintained and trustworthy · `stale` = re-verify before relying · `planned` = incomplete · `archived` = historical only.
+
+**How to use this table**
+
+| Question | Column |
+|----------|--------|
+| Can I trust it today? | **Status** + **Last verified** |
+| Is this for me? | **Audience** |
+| Which APIs does it depend on? | **Grounded capabilities** → [capability map](../../AGENTS.md#grounded-capability-map) |
+| Who owns fixes? | **Maintainer** |
+| When must I refresh it? | **Triggers** |
+| What do I type in the terminal? | **Related commands** |
 
 ---
 

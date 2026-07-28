@@ -6,6 +6,7 @@ import {
   itemTitlesFromListJson,
   moveArgsFromTarget,
   shareItemArgs,
+  shareVaultArgs,
   splitVaultTitle,
   trashArgsFromTarget,
   viewArgsFromTarget,
@@ -132,5 +133,17 @@ describe('portal-secret move/trash/share helpers', () => {
   test('shareItemArgs validates role and email', () => {
     expect(() => shareItemArgs('s', 'i', 'a@b.c', 'owner')).toThrow(/role/);
     expect(() => shareItemArgs('s', 'i', 'not-an-email', 'viewer')).toThrow(/email/);
+  });
+
+  test('shareVaultArgs maps to vault share with email positional', () => {
+    expect(shareVaultArgs('portal', 'alice@example.com', 'viewer')).toEqual([
+      'vault', 'share', '--vault-name', 'portal', '--role', 'viewer', 'alice@example.com',
+    ]);
+  });
+
+  test('shareVaultArgs validates vault, role, and email', () => {
+    expect(() => shareVaultArgs('  ', 'a@b.c', 'viewer')).toThrow(/vault/);
+    expect(() => shareVaultArgs('portal', 'a@b.c', 'owner')).toThrow(/role/);
+    expect(() => shareVaultArgs('portal', 'not-an-email', 'editor')).toThrow(/email/);
   });
 });
