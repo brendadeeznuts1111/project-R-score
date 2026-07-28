@@ -497,7 +497,7 @@ export async function assertCloudflarePagesApex(
   return { url, status: res.status };
 }
 
-if (import.meta.main) {
+async function runCloudflareEnvCli(): Promise<void> {
   const assertOnly = Bun.argv.includes('--assert');
   const assertLive = Bun.argv.includes('--assert-live');
   const assertApex = Bun.argv.includes('--assert-apex');
@@ -548,4 +548,11 @@ if (import.meta.main) {
     console.log(`  registry      ${factoryWagerRegistryUrlFromEnv()}`);
     console.log(`  r2BucketUrl   ${r2BucketUrlFromEnv()}`);
   }
+}
+
+if (import.meta.main) {
+  void runCloudflareEnvCli().catch(error => {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exitCode = 1;
+  });
 }

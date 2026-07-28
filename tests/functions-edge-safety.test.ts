@@ -1,4 +1,11 @@
 // @see https://bun.com/docs/test/index#run-tests
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
+// @see https://bun.com/docs/runtime/webview#new-bun-webview-options — Bun.WebView
+// @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — Bun.S3Client
+// @see https://bun.com/docs/runtime/ffi#dlopen-usage-bunffi — bun:ffi
+// @see https://bun.com/docs/runtime/workers#creating-a-worker — Workers
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 /**
  * Edge-safety guard — `functions/` is deployed to Cloudflare Pages (edge).
  * Bun-only APIs belong in `functions-bun-only/` (see 6ff0514). This guard
@@ -54,5 +61,13 @@ describe("functions/ edge safety", () => {
     ] as const;
     const hits = forbidden.filter(([re]) => re.test(stripped)).map(([, label]) => label);
     expect(hits).toEqual([]);
+  });
+
+  test("r2-env Pages Functions boundary — CLI entry has no top-level await", async () => {
+    const text = await Bun.file("config/r2-env.ts").text();
+    const entrypoint = text.slice(text.indexOf("if (import.meta.main)"));
+
+    expect(entrypoint).toContain("void runCloudflareEnvCli().catch");
+    expect(entrypoint).not.toMatch(/\bawait\b/);
   });
 });
