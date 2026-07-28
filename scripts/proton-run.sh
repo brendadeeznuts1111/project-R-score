@@ -30,6 +30,10 @@ for arg in "$@"; do
     --reasonix)
       REASONIX_FLAG=(--reasonix)
       ;;
+    --ssh)
+      # Pre-load SSH keys from vault before running command
+      SSH_LOAD=1
+      ;;
     factorywager|bet-ticker|cascade-mover|scanner|cloudflare)
       PROJECT="$arg"
       ;;
@@ -79,5 +83,15 @@ if [ -f "${HOME}/.reasonix/.env" ]; then
 fi
 
 cd "$ROOT"
+
+# Optionally load SSH keys from vault
+if [ "${SSH_LOAD:-0}" -eq 1 ]; then
+  echo "🔑 Loading SSH keys from vault..."
+  if command -v ssh-agent >/dev/null && [ -z "${SSH_AUTH_SOCK:-}" ]; then
+    eval "$(ssh-agent -s)" >/dev/null
+  fi
+  bash "$SCRIPT_DIR/ssh-vault.sh" load
+fi
+
 echo "🚀 Running (vault env loaded): ${ARGS[*]}"
 exec "${ARGS[@]}"
