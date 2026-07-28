@@ -280,12 +280,18 @@ describe('tools/verify-bun-release.ts', () => {
       const proc = Bun.spawn(['bun', 'tools/verify-bun-release.ts'], {
         stdout: 'pipe',
         stderr: 'pipe',
+        env: {
+          ...Bun.env,
+          R2_ACCESS_KEY_ID: '',
+          R2_SECRET_ACCESS_KEY: '',
+        },
       });
       const [stdout, code] = await Promise.all([new Response(proc.stdout).text(), proc.exited]);
       expect(code).toBe(0);
       expect(stdout).toContain("tls.getCACertificates('system')");
       expect(stdout).toContain('Built-in objects GC smoke');
       expect(stdout).toContain('timer.ref() after fired setTimeout');
+      expect(stdout).not.toContain('R2/S3 binary roundtrip');
       expect(stdout).toContain('passed');
     },
     { timeout: 60_000 }

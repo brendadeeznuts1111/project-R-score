@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/gc — Bun.gc
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/bun-apis — Bun.mmap
@@ -61,6 +62,8 @@ export type RunReleaseVerificationOptions = {
   semanticTags?: SemanticTags;
   save?: boolean;
   channel?: string;
+  /** Opt into the credentialed, mutating R2 roundtrip. Offline verification omits this row. */
+  liveR2?: boolean;
 };
 
 export async function runReleaseVerification(
@@ -595,34 +598,42 @@ export async function runReleaseVerification(
 
   // 31. R2/S3 binary roundtrip (upload → download → verify)
   let s3Ok = false;
-  try {
-    const ep =
-      Bun.env.R2_S3_ENDPOINT || 'https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com';
-    const { S3Client } = await import('bun');
-    const client = new S3Client({
-      accessKeyId: Bun.env.R2_ACCESS_KEY_ID,
-      secretAccessKey: Bun.env.R2_SECRET_ACCESS_KEY,
-      bucket: 'factory-wager-registry',
-      endpoint: ep,
-    });
-    const key = `verify-binary-${Date.now()}.bin`;
-    const original = new Uint8Array([1, 2, 3, 4, 5]);
-    await client.write(key, original);
-    const dl = await client.file(key).bytes();
-    s3Ok = dl.length === 5 && dl[0] === 1;
-    await client.delete(key);
-  } catch {}
-  pushReleaseResult(
-    results,
-    {
-      name: 'R2/S3 binary roundtrip (upload, download, verify)',
-      expected: 'uploaded bytes match downloaded bytes exactly',
-      actual: s3Ok ? '5/5 bytes match' : 'failed',
-      passed: s3Ok,
-      anchor: 'r2-binary-roundtrip',
-    },
-    ctx
-  );
+  const hasS3Credentials = Boolean(Bun.env.R2_ACCESS_KEY_ID && Bun.env.R2_SECRET_ACCESS_KEY);
+  if (options.liveR2 && hasS3Credentials) {
+    try {
+      const ep =
+        Bun.env.R2_S3_ENDPOINT ||
+        'https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com';
+      const { S3Client } = await import('bun');
+      const client = new S3Client({
+        accessKeyId: Bun.env.R2_ACCESS_KEY_ID,
+        secretAccessKey: Bun.env.R2_SECRET_ACCESS_KEY,
+        bucket: 'factory-wager-registry',
+        endpoint: ep,
+      });
+      const key = `verify-binary-${Date.now()}.bin`;
+      const original = new Uint8Array([1, 2, 3, 4, 5]);
+      await client.write(key, original);
+      const dl = await client.file(key).bytes();
+      s3Ok = dl.length === 5 && dl[0] === 1;
+      await client.delete(key);
+    } catch {}
+  }
+  if (options.liveR2) {
+    pushReleaseResult(
+      results,
+      {
+        name: 'R2/S3 binary roundtrip (upload, download, verify)',
+        expected: hasS3Credentials
+          ? 'uploaded bytes match downloaded bytes exactly'
+          : 'R2 credentials are available',
+        actual: hasS3Credentials ? (s3Ok ? '5/5 bytes match' : 'failed') : 'missing credentials',
+        passed: hasS3Credentials && s3Ok,
+        anchor: 'r2-binary-roundtrip',
+      },
+      ctx
+    );
+  }
 
   // 32. URL.host / hostname / port (WHATWG compliance)
   const uHost = new URL('https://example.com:8080/path');
@@ -786,8 +797,9 @@ function printProof(proof: ChannelAwareVerificationReport): void {
 async function main(): Promise<void> {
   const shouldSave = process.argv.includes('--save');
   const channelArg = process.argv.find(a => a.startsWith('--channel='))?.split('=')[1];
+  const liveR2 = process.argv.includes('--live-r2');
 
-  const proof = await runReleaseVerification({ channel: channelArg, save: shouldSave });
+  const proof = await runReleaseVerification({ channel: channelArg, save: shouldSave, liveR2 });
   printProof(proof);
 
   if (shouldSave) {

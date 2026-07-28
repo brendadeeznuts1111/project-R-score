@@ -6,6 +6,11 @@ import {
   bunSpawnArgv,
   parseBunExecutionFlags,
 } from '../tools/lib/portal-cli-bun-flags.ts';
+import {
+  BUN_API_REFERENCE_URL,
+  BUN_REPOSITORY_URL,
+  BUN_TYPES_SOURCE_URL,
+} from '../lib/docs/bun-source-links.ts';
 
 describe('parseBunExecutionFlags', () => {
   test('harvests leading --smol before vault health', () => {
@@ -113,6 +118,9 @@ describe('parseBunExecutionFlags', () => {
       'script-command echo'
     );
     expect(BUN_FLAGS_HELP).not.toContain('--verbose');
+    expect(BUN_FLAGS_HELP).toContain(`API reference: ${BUN_API_REFERENCE_URL}`);
+    expect(BUN_FLAGS_HELP).toContain(`Type declarations: ${BUN_TYPES_SOURCE_URL}`);
+    expect(BUN_FLAGS_HELP).toContain(`Repository: ${BUN_REPOSITORY_URL}`);
     for (const row of catalog) {
       expect(BUN_FLAGS_HELP).toContain(row.flag);
     }
