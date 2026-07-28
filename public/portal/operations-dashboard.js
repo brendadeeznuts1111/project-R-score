@@ -398,6 +398,8 @@ class OperationsDashboard extends HTMLElement {
             <h2>Portal weave</h2>
             <div class="ops-sub">Cross-surface links · <a href="/registry/portal-weave.json">portal-weave.json</a></div>
             <div id="portal-weave-surfaces" class="ops-weave-links"></div>
+            <h3 class="ops-weave-h3">Wiki (GitHub Pages)</h3>
+            <div id="portal-weave-wiki" class="ops-weave-links ops-weave-wiki"></div>
             <h3 class="ops-weave-h3">Operator scripts</h3>
             <ul id="portal-weave-scripts" class="ops-weave-scripts"></ul>
           </section>
@@ -2190,6 +2192,18 @@ class OperationsDashboard extends HTMLElement {
             `<a class="ops-link" href="${esc(s.href)}" title="${esc(s.note || '')}">${esc(s.label)}</a>`
         )
         .join('');
+    }
+    const weaveWiki = this.querySelector('#portal-weave-wiki');
+    if (weaveWiki) {
+      const wikiLinks = weave?.wiki?.length ? weave.wiki : [];
+      weaveWiki.innerHTML = wikiLinks.length
+        ? wikiLinks
+            .map(
+              w =>
+                `<a class="ops-link" href="${esc(w.href)}" target="_blank" rel="noopener noreferrer" title="${esc(w.note || '')}">${esc(w.label)}</a>`
+            )
+            .join('')
+        : '<span class="ops-muted">Rebake portal-weave.json for wiki links</span>';
     }
     const weaveScripts = this.querySelector('#portal-weave-scripts');
     if (weaveScripts) {

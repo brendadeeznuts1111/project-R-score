@@ -2,15 +2,21 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://wiki.factory-wager.com/</loc>
-    <lastmod>2026-02-08T10:24:03-06:00</lastmod>
+    <lastmod>2026-07-28T02:30:00Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://wiki.factory-wager.com/wiki-index.html</loc>
-    <lastmod>2026-02-07T20:26:48-06:00</lastmod>
+    <lastmod>2026-07-28T02:30:00Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://wiki.factory-wager.com/registry-index.html</loc>
+    <lastmod>2026-07-28T02:30:00Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://wiki.factory-wager.com/app-index.html</loc>
@@ -27,12 +33,6 @@
   <url>
     <loc>https://wiki.factory-wager.com/dashboard-index.html</loc>
     <lastmod>2026-02-08T23:59:37.585Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://wiki.factory-wager.com/registry-index.html</loc>
-    <lastmod>2026-02-07T20:26:48-06:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

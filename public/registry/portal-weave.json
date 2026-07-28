@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-28T00:53:29.120Z",
+  "generated": "2026-07-28T02:26:36.976Z",
   "surfaces": [
     {
       "label": "Home",
@@ -33,6 +33,11 @@
       "label": "Compliance",
       "href": "/portal/compliance/",
       "note": "MA/NJ enhancements · shadow · geo · HMAC"
+    },
+    {
+      "label": "Limits",
+      "href": "/portal/limits/",
+      "note": "account raises · multi-factor score · drivers"
     },
     {
       "label": "Skills",
@@ -119,6 +124,21 @@
       "note": "real vs shadow check matrix"
     },
     {
+      "label": "limit-raises",
+      "href": "/registry/limit-raises.json",
+      "note": "multi-factor raise context bake · agent API snapshot"
+    },
+    {
+      "label": "verification-index",
+      "href": "/registry/verification-index.json",
+      "note": "verify-all rollup · release track"
+    },
+    {
+      "label": "doc-index",
+      "href": "/registry/doc-index.json",
+      "note": "CANONICAL_REFS · bun docs catalog coverage"
+    },
+    {
       "label": "static aggregate",
       "href": "/registry/static.json"
     },
@@ -149,6 +169,38 @@
       "label": "seat-capital-desk",
       "href": "/registry/seat-capital-desk.json",
       "note": "FUND status · outs · checklist"
+    }
+  ],
+  "wiki": [
+    {
+      "label": "Wiki index",
+      "href": "https://wiki.factory-wager.com/wiki-index.html",
+      "note": "portal boards · registry · tenants · proof loop"
+    },
+    {
+      "label": "Wiki home",
+      "href": "https://wiki.factory-wager.com",
+      "note": "README · GitHub Pages homepage"
+    },
+    {
+      "label": "Docs index",
+      "href": "https://wiki.factory-wager.com/docs/README.html",
+      "note": "platform SSOT markdown tree"
+    },
+    {
+      "label": "Harness JIT",
+      "href": "https://wiki.factory-wager.com/docs/harness/README.html",
+      "note": "tenant owners · proof commands"
+    },
+    {
+      "label": "Registry index",
+      "href": "https://wiki.factory-wager.com/registry-index.html",
+      "note": "registry bake map · portal consumers"
+    },
+    {
+      "label": "AGENTS",
+      "href": "https://wiki.factory-wager.com/AGENTS.html",
+      "note": "agent entrypoint"
     }
   ],
   "scripts": [
@@ -182,6 +234,11 @@
       "doc": "docs/harness/tenants/compliance-portal.md"
     },
     {
+      "label": "Compliance verify (bake + tests)",
+      "cmd": "bun run compliance:verify",
+      "doc": "docs/harness/tenants/compliance-portal.md"
+    },
+    {
       "label": "Ops snapshot (includes compliance)",
       "cmd": "bun run ops:snapshot",
       "doc": "docs/harness/tenants/ops-snapshot.md"
@@ -190,6 +247,14 @@
       "label": "Compliance bake (Proton vault)",
       "cmd": "bun run compliance:bake:vault",
       "doc": "docs/harness/tenants/proton-integration.md"
+    },
+    {
+      "label": "Limit raises multi-factor demo",
+      "cmd": "bun run ops:limits:demo"
+    },
+    {
+      "label": "Capture raise context",
+      "cmd": "bun run ops:limits:capture"
     },
     {
       "label": "Reference discovery",
@@ -218,6 +283,16 @@
     {
       "label": "Pages edge verify",
       "cmd": "bun run verify:pages-edge --taxonomy"
+    },
+    {
+      "label": "Doc map check",
+      "cmd": "bun run docs:map:check",
+      "doc": "docs/README.md"
+    },
+    {
+      "label": "Doc index bake",
+      "cmd": "bun run build:doc-index",
+      "doc": "lib/docs/doc-index.ts"
     }
   ]
 }

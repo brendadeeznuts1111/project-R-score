@@ -28,8 +28,22 @@ Navigation hub for [wiki.factory-wager.com](https://wiki.factory-wager.com/). Ho
 | Registry bake | [score.factory-wager.com/registry/](https://score.factory-wager.com/registry/) |
 | Monitoring | [score.factory-wager.com/monitoring/](https://score.factory-wager.com/monitoring/) |
 | Portal weave JSON | [portal-weave.json](https://score.factory-wager.com/registry/portal-weave.json) |
+| Registry index (wiki) | [`registry-index.md`](registry-index.md) |
 
 Routing: [`docs/platform-routing.md`](docs/platform-routing.md)
+
+## Portal ↔ wiki integration
+
+Bidirectional SSOT between GitHub Pages (this wiki) and Cloudflare Pages (portal + registry):
+
+| Mechanism | Role |
+|-----------|------|
+| [`portal-weave.json`](https://score.factory-wager.com/registry/portal-weave.json) | Machine cross-links: `surfaces[]`, `artifacts[]`, **`wiki[]`**, `scripts[]` |
+| [`lib/http/wiki-nav.ts`](lib/http/wiki-nav.ts) | Portal chrome wiki URL · weave `wiki[]` bake source |
+| [`registry-index.md`](registry-index.md) | Registry-focused wiki companion |
+| Portal ops dashboard | Renders weave surfaces + wiki links from JSON |
+
+Rebake weave after doc changes: `bun run ops:snapshot --no-seed` or `bun run compliance:bake`.
 
 ## Portal boards
 

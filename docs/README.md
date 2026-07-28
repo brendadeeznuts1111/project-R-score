@@ -8,6 +8,7 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 |------|------|
 | Human hub | [`../README.md`](../README.md) |
 | Wiki full index | [`../wiki-index.md`](../wiki-index.md) |
+| Registry index (wiki) | [`../registry-index.md`](../registry-index.md) |
 | Agent entry | [`../AGENTS.md`](../AGENTS.md) |
 | Agent full guide | [AGENTS.md](./AGENTS.md) |
 | Workspace map | [`../STRUCTURE.md`](../STRUCTURE.md) |

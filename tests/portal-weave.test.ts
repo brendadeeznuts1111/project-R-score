@@ -5,6 +5,7 @@ import {
   PORTAL_WEAVE_ARTIFACTS,
   PORTAL_WEAVE_SURFACES,
 } from '../lib/http/portal-weave.ts';
+import { PORTAL_WEAVE_WIKI } from '../lib/http/wiki-nav.ts';
 import { PORTAL_MARKDOWN_SLUGS } from '../lib/http/portal-route-manifest.ts';
 import { PORTAL_MD_SLUGS } from '../lib/http/llms-txt.ts';
 
@@ -13,6 +14,8 @@ describe('portal weave', () => {
     const p = buildPortalWeavePayload('2026-01-01T00:00:00.000Z');
     expect(p.generated).toBe('2026-01-01T00:00:00.000Z');
     expect(p.surfaces.length).toBeGreaterThan(8);
+    expect(p.wiki).toEqual(PORTAL_WEAVE_WIKI);
+    expect(p.wiki.some(w => w.label === 'Wiki index')).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('reference:discover'))).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('public:discover'))).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('public:audit:verify'))).toBe(true);
@@ -53,6 +56,9 @@ describe('portal weave', () => {
     expect(arts).toContain('/registry/compliance-enhancements.json');
     expect(arts).toContain('/registry/compliance-shadow.json');
     expect(arts).toContain('/registry/limit-raises.json');
+    expect(arts).toContain('/registry/verification-index.json');
+    expect(arts).toContain('/registry/doc-index.json');
+    expect(p.scripts.some(s => s.cmd.includes('docs:map:check'))).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('compliance:bake'))).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('compliance:verify'))).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('ops:limits:demo'))).toBe(true);

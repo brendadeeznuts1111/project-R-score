@@ -3,7 +3,10 @@
  *
  * @see public/registry/portal-weave.json
  * @see docs/portal-foundation.md
+ * @see lib/http/wiki-nav.ts
  */
+
+import { PORTAL_WEAVE_WIKI } from './wiki-nav.ts';
 
 export type PortalWeaveLink = {
   label: string;
@@ -21,6 +24,8 @@ export type PortalWeavePayload = {
   generated: string;
   surfaces: PortalWeaveLink[];
   artifacts: PortalWeaveLink[];
+  /** GitHub Pages wiki (external to score.factory-wager.com). */
+  wiki: PortalWeaveLink[];
   scripts: PortalWeaveScript[];
 };
 
@@ -100,6 +105,16 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     label: 'limit-raises',
     href: '/registry/limit-raises.json',
     note: 'multi-factor raise context bake · agent API snapshot',
+  },
+  {
+    label: 'verification-index',
+    href: '/registry/verification-index.json',
+    note: 'verify-all rollup · release track',
+  },
+  {
+    label: 'doc-index',
+    href: '/registry/doc-index.json',
+    note: 'CANONICAL_REFS · bun docs catalog coverage',
   },
   { label: 'static aggregate', href: '/registry/static.json' },
   { label: 'proof taxonomy', href: '/registry/proof-taxonomy-audit.json' },
@@ -199,6 +214,16 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
   },
   { label: 'Sync R2 registry index', cmd: 'bun run registry:sync-index-r2' },
   { label: 'Pages edge verify', cmd: 'bun run verify:pages-edge --taxonomy' },
+  {
+    label: 'Doc map check',
+    cmd: 'bun run docs:map:check',
+    doc: 'docs/README.md',
+  },
+  {
+    label: 'Doc index bake',
+    cmd: 'bun run build:doc-index',
+    doc: 'lib/docs/doc-index.ts',
+  },
 ];
 
 export function buildPortalWeavePayload(generated?: string): PortalWeavePayload {
@@ -206,6 +231,7 @@ export function buildPortalWeavePayload(generated?: string): PortalWeavePayload 
     generated: generated ?? new Date().toISOString(),
     surfaces: PORTAL_WEAVE_SURFACES,
     artifacts: PORTAL_WEAVE_ARTIFACTS,
+    wiki: PORTAL_WEAVE_WIKI,
     scripts: PORTAL_WEAVE_SCRIPTS,
   };
 }

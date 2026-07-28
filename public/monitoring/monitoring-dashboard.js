@@ -290,6 +290,7 @@ export function renderMonitoringDashboard(payload) {
         <a href="/registry/monitoring.json">Snapshot</a>
         <a href="/registry/prediction/report/">Prediction report</a>
         <a href="/registry/portal-weave.json">Portal weave</a>
+        <a href="https://wiki.factory-wager.com/wiki-index.html" target="_blank" rel="noopener noreferrer">Wiki index</a>
       </section>`,
   };
 }

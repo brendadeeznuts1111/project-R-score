@@ -15,6 +15,7 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | This file (agent entry) | [`AGENTS.md`](AGENTS.md) |
 | Human hub / wiki homepage | [`README.md`](README.md) · [wiki.factory-wager.com](https://wiki.factory-wager.com/) |
 | Wiki full index | [`wiki-index.md`](wiki-index.md) — portal boards · registry · tenants · proof loop |
+| Registry index | [`registry-index.md`](registry-index.md) — registry bake + portal consumer map |
 | Full agent guide | [`docs/AGENTS.md`](docs/AGENTS.md) (aligned to this entry + UNIFIED / WIRE_BOUNDARY) |
 | Harness JIT index | [`docs/harness/README.md`](docs/harness/README.md) (when NFR unresolved → one owner) |
 | Authority / lanes | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) |

@@ -10,6 +10,7 @@ Local dev vs Cloudflare Pages — how URLs reach code and static files.
 
 | Surface | Domain(s) | Artifact tree |
 |---------|-------------|---------------|
+| **Wiki** (docs hub) | `wiki.factory-wager.com` | GitHub Pages from repo root (`README.md`, `wiki-index.md`, `docs/`, `AGENTS.md`) — **not** Cloudflare Pages |
 | Portal + registry proofs | `project-r-score.pages.dev`, `score.factory-wager.com` | `public/` + `functions/` |
 | npm/R2 registry | `registry.factory-wager.com` | Pages Functions + R2 binding `REGISTRY_BUCKET` (`wrangler.toml`, `functions/api/registry/[[path]].ts`) — no separate registry Worker |
 | Reasonix UI | `reasonix.factory-wager.com` | **Not installed** — tunnel config `scripts/cloudflared-reasonix.yml` exists in-repo but no `~/.cloudflared/config.yml` / credentials on this machine; hostname does not resolve. Inventory: `docs/harness/tenants/tunnel-inventory.md` |
@@ -76,7 +77,18 @@ Publish remains auth-gated.
 - Ops summary embeds a `proofTaxonomy` slice (contracts/consistency/hash); dashboard uses slice first, full audit JSON for the contract table
 - Optional `toc` slice from `/registry/toc-ops.json` (TOC rollup card → `/portal/toc/`)
 
-Regenerate: `bun run ops:snapshot` (writes summary + taxonomy audit + routing proofs + TOC bake).
+Regenerate: `bun run ops:snapshot` (writes summary + taxonomy audit + routing proofs + TOC bake + **portal-weave.json** with wiki cross-links).
+
+## Wiki ↔ portal integration
+
+| Direction | SSOT |
+|-----------|------|
+| Portal chrome → wiki index | [`lib/http/wiki-nav.ts`](../lib/http/wiki-nav.ts) · `PORTAL_WIKI_DROPDOWN_HREF` |
+| Registry machine links | [`public/registry/portal-weave.json`](../public/registry/portal-weave.json) · `wiki[]` slice |
+| Wiki human hub | [`wiki-index.md`](../wiki-index.md) · live at `/wiki-index.html` |
+| Doc path registry | [`lib/docs/repo-docs.ts`](../lib/docs/repo-docs.ts) · `CANONICAL_REPO_DOCS.wikiIndex` |
+
+Ops dashboard (`operations-dashboard.js`) renders `portal-weave.json` **`wiki`** links beside Pages surfaces. Monitoring links to the weave JSON for the same SSOT.
 
 ## TOC Ops board data flow
 

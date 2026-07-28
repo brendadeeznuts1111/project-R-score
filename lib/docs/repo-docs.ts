@@ -15,6 +15,8 @@ import { CLOUDFLARE_DEFAULTS } from '../../config/r2-env.ts';
 export const CANONICAL_REPO_DOCS = {
   /** Human hub */
   readme: 'README.md',
+  /** Wiki full navigation hub (GitHub Pages) */
+  wikiIndex: 'wiki-index.md',
   /** AI agent entrypoint (thin) */
   agents: 'AGENTS.md',
   /** Full agent guide */
@@ -144,6 +146,7 @@ export type CanonicalHarnessKey = keyof typeof CANONICAL_HARNESS;
  */
 export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   readme: 'Human hub + scripts',
+  wikiIndex: 'Wiki navigation hub (portal · registry · tenants)',
   agents: 'AI agent entrypoint',
   agentsFull: 'Full agent guide',
   structure: 'Workspace map',

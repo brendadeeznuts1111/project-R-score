@@ -26,6 +26,8 @@ const REPO = resolvePath(import.meta.dir, '..');
 const ROOT_MD = [
   'AGENTS.md',
   'README.md',
+  'wiki-index.md',
+  'registry-index.md',
   'STRUCTURE.md',
   '.custom-instructions.md',
   'docs/AGENTS.md',

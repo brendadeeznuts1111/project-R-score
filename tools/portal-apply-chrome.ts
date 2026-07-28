@@ -8,6 +8,7 @@
  *   bun tools/portal-apply-chrome.ts
  */
 import { joinPath } from '../lib/path-bun.ts';
+import { PORTAL_WIKI_DROPDOWN_HREF } from '../lib/http/wiki-nav.ts';
 
 const PORTAL = joinPath(import.meta.dir, '../public/portal');
 
@@ -60,7 +61,7 @@ function renderNav(active: PageKey): string {
             <a href="/portal/dashboard" class="${cls(active, 'dashboard')}" role="menuitem">Dashboard</a>
             <a href="/portal/toc/" class="nav-link" role="menuitem">TOC</a>
             <a href="/monitoring" class="nav-link" role="menuitem">Monitoring</a>
-            <a href="https://wiki.factory-wager.com" class="nav-link" target="_blank" rel="noopener noreferrer" role="menuitem">Wiki</a>
+            <a href="${PORTAL_WIKI_DROPDOWN_HREF}" class="nav-link" target="_blank" rel="noopener noreferrer" role="menuitem" title="Portal · registry · tenants · proof loop">Wiki</a>
           </div>
         </div>
       </nav>`;
@@ -127,4 +128,32 @@ async function patchFile(entry: (typeof PAGES)[number]): Promise<void> {
 
 for (const page of PAGES) {
   await patchFile(page);
+}
+
+/** Normalize wiki dropdown on shells not in PAGES (compliance, monitoring, …). */
+const WIKI_NAV_RE =
+  /<a href="https:\/\/wiki\.factory-wager\.com(?:\/wiki-index\.html)?" class="nav-link" target="_blank" rel="noopener noreferrer" role="menuitem"[^>]*>Wiki<\/a>/g;
+const WIKI_NAV_ANCHOR = `<a href="${PORTAL_WIKI_DROPDOWN_HREF}" class="nav-link" target="_blank" rel="noopener noreferrer" role="menuitem" title="Portal · registry · tenants · proof loop">Wiki</a>`;
+
+async function sweepWikiNav(rel: string): Promise<void> {
+  const path = joinPath(import.meta.dir, '..', rel);
+  if (!(await Bun.file(path).exists())) return;
+  let html = await Bun.file(path).text();
+  const next = html.replace(WIKI_NAV_RE, WIKI_NAV_ANCHOR);
+  if (next !== html) {
+    await Bun.write(path, next);
+    console.log(`wiki-nav ${rel}`);
+  }
+}
+
+for (const rel of [
+  'public/monitoring/index.html',
+  'public/portal/compliance/index.html',
+  'public/portal/toc/index.html',
+  'public/portal/limits/index.html',
+  'public/portal/science/index.html',
+  'public/portal/tennis/index.html',
+  'public/portal/factory/index.html',
+]) {
+  await sweepWikiNav(rel);
 }
