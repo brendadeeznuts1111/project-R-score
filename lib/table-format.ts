@@ -16,7 +16,11 @@
  * - Unicode box-drawing with fallback to ASCII
  * - Supports Bun.inspect for rich cell values
  */
-import { stringWidth, inspect } from 'bun';
+import { stringWidth, inspect, semver } from 'bun';
+
+// ── Bun version check ────────────────────────────────────────────────────
+const BUN_MIN_TABLE = '1.3.0';
+export const BUN_TABLE_OK = semver.satisfies(Bun.version, `>=${BUN_MIN_TABLE}`);
 
 // ── Terminal detection (lazy, first-use only) ─────────────────────────────
 let _ttyCache: { isTTY: boolean; width: number } | undefined;
@@ -208,6 +212,10 @@ export function formatTable(
   rows: Record<string, any>[],
   opts: TableOpts = {}
 ): string {
+  // Version gate: fall back to compact mode on old Bun
+  if (!BUN_TABLE_OK && !opts.compact) {
+    return formatTable(title, columns, rows, { ...opts, compact: true, colors: false });
+  }
   const o = { ...DEFAULT_OPTS, ...opts };
   const b = BOX[o.border ?? 'unicode'];
   const useColor = o.colors && !isNoColor();
