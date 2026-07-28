@@ -1,7 +1,7 @@
 {
   "schemaVersion": 13,
   "kind": "packages-metafile-audit",
-  "generatedAt": "2026-07-28T17:38:18.622Z",
+  "generatedAt": "2026-07-28T18:02:19.843Z",
   "bunVersion": "1.4.0",
   "root": "/Users/nolarose/Projects",
   "glob": "packages/*/src/**/*.{ts,tsx}",
@@ -234,7 +234,7 @@
         "targetPrefix": "lib/docs",
         "weight": 11,
         "samples": [
-          "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/domains",
+          "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/domains.ts",
           "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/categories",
           "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/fragments.ts"
         ]
@@ -737,9 +737,9 @@
     }
   },
   "surfaces": {
-    "schemaVersion": 1,
+    "schemaVersion": 2,
     "kind": "monorepo-surfaces",
-    "generatedAt": "2026-07-28T17:38:18.616Z",
+    "generatedAt": "2026-07-28T18:02:19.817Z",
     "summary": {
       "workspaceMembers": 8,
       "packagesPlane": 6,
@@ -749,7 +749,13 @@
       "chromeComponents": 12,
       "brandAssets": 20,
       "registryTopLevelJson": 54,
-      "registryStoragePackages": 9
+      "registryStoragePackages": 9,
+      "libTopLevelDirs": 39,
+      "stoNestedPackages": 3,
+      "portalRegistryRefs": 44,
+      "registryOrphanFromPortal": 12,
+      "registryFamilyCount": 13,
+      "themeDarkTokens": 12
     },
     "workspaces": [
       {
@@ -823,115 +829,253 @@
           "href": "/portal/",
           "slug": "",
           "hasIndex": true,
-          "hasMd": true
+          "hasMd": true,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/app.js",
+            "/portal/components/footer.js"
+          ]
         },
         {
           "href": "/portal/catalog/",
           "slug": "catalog",
           "hasIndex": true,
-          "hasMd": true
+          "hasMd": true,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js",
+            "/portal/components/footer.js"
+          ]
         },
         {
           "href": "/portal/compliance/",
           "slug": "compliance",
           "hasIndex": true,
-          "hasMd": true
+          "hasMd": true,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/compliance/compliance-dashboard.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js",
+            "/portal/components/footer.js"
+          ]
         },
         {
           "href": "/portal/dashboard/",
           "slug": "dashboard",
           "hasIndex": true,
-          "hasMd": true
+          "hasMd": true,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/dashboard-app.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js",
+            "/portal/components/footer.js"
+          ]
         },
         {
           "href": "/portal/dod/",
           "slug": "dod",
           "hasIndex": true,
-          "hasMd": true
+          "hasMd": true,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/dod/dod-dashboard.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js",
+            "/portal/components/footer.js"
+          ]
         },
         {
           "href": "/portal/env/",
           "slug": "env",
           "hasIndex": true,
-          "hasMd": true
+          "hasMd": true,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/${escapeHtml(String(e.icon).replace(/^public\\//, ",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js",
+            "/portal/components/footer.js"
+          ]
         },
         {
           "href": "/portal/factory/",
           "slug": "factory",
           "hasIndex": true,
-          "hasMd": true
+          "hasMd": true,
+          "scripts": [
+            "/icons/factory/mark.svg",
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js"
+          ]
         },
         {
           "href": "/portal/failures/",
           "slug": "failures",
           "hasIndex": true,
-          "hasMd": false
+          "hasMd": false,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js",
+            "/portal/components/footer.js"
+          ]
         },
         {
           "href": "/portal/health/",
           "slug": "health",
           "hasIndex": true,
-          "hasMd": true
+          "hasMd": true,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/health-page.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js",
+            "/portal/components/limit-changes-card.js",
+            "/portal/components/footer.js"
+          ]
         },
         {
           "href": "/portal/limits/",
           "slug": "limits",
           "hasIndex": true,
-          "hasMd": true
+          "hasMd": true,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/components/footer.js"
+          ]
         },
         {
           "href": "/portal/ops/",
           "slug": "ops",
           "hasIndex": true,
-          "hasMd": true
+          "hasMd": true,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/operations-dashboard.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js",
+            "/portal/components/footer.js"
+          ]
         },
         {
           "href": "/portal/packages/",
           "slug": "packages",
           "hasIndex": true,
-          "hasMd": true
+          "hasMd": true,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/components/sidebar.js",
+            "/portal/packages/packages-board.js",
+            "/portal/components/footer.js"
+          ]
         },
         {
           "href": "/portal/partner-history/",
           "slug": "partner-history",
           "hasIndex": true,
-          "hasMd": false
+          "hasMd": false,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/components/notification.js",
+            "/portal/components/limit-changes-card.js"
+          ]
         },
         {
           "href": "/portal/science/",
           "slug": "science",
           "hasIndex": true,
-          "hasMd": true
+          "hasMd": true,
+          "scripts": [
+            "/icons/science/mark.svg",
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js"
+          ]
         },
         {
           "href": "/portal/skills/",
           "slug": "skills",
           "hasIndex": true,
-          "hasMd": true
+          "hasMd": true,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js",
+            "/portal/components/footer.js"
+          ]
         },
         {
           "href": "/portal/tennis/",
           "slug": "tennis",
           "hasIndex": true,
-          "hasMd": true
+          "hasMd": true,
+          "scripts": [
+            "/icons/tennis/mark.svg",
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js"
+          ]
         },
         {
           "href": "/portal/toc/",
           "slug": "toc",
           "hasIndex": true,
-          "hasMd": true
+          "hasMd": true,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/toc/toc-dashboard.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js",
+            "/portal/components/footer.js"
+          ]
         },
         {
           "href": "/portal/tools/",
           "slug": "tools",
           "hasIndex": true,
-          "hasMd": false
+          "hasMd": false,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/tools/tools-hub.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js",
+            "/portal/components/footer.js"
+          ]
         },
         {
           "href": "/portal/vault/",
           "slug": "vault",
           "hasIndex": true,
-          "hasMd": false
+          "hasMd": false,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js",
+            "/portal/components/footer.js"
+          ]
         }
       ],
       "modules": [
@@ -1076,79 +1220,116 @@
           "id": "data",
           "path": "/portal/data.js",
           "kind": "module",
-          "role": "SWR health service · portal:data"
+          "role": "SWR health service · portal:data",
+          "onDisk": true
         },
         {
           "id": "nav-badges",
           "path": "/portal/nav-badges.js",
           "kind": "module",
-          "role": "live counts from baked registry JSON on nav links"
+          "role": "live counts from baked registry JSON on nav links",
+          "onDisk": true
         },
         {
           "id": "topbar",
           "path": "/portal/topbar.js",
           "kind": "module",
-          "role": "health dot · nav current · sidebar bootstrap · nav badges"
+          "role": "health dot · nav current · sidebar bootstrap · nav badges",
+          "onDisk": true
         },
         {
           "id": "navigation",
           "path": "/portal/navigation.js",
           "kind": "module",
-          "role": "markCurrentNavigation path SSOT"
+          "role": "markCurrentNavigation path SSOT",
+          "onDisk": true
         },
         {
           "id": "sidebar",
           "path": "/portal/components/sidebar.js",
           "kind": "module",
-          "role": "tenant switcher"
+          "role": "tenant switcher",
+          "onDisk": true
         },
         {
           "id": "notification",
           "path": "/portal/components/notification.js",
           "kind": "module",
-          "role": "notification-center toasts"
+          "role": "notification-center toasts",
+          "onDisk": true
         },
         {
           "id": "footer",
           "path": "/portal/components/footer.js",
           "kind": "module",
-          "role": "shared footer from portal-chrome registry"
+          "role": "shared footer from portal-chrome registry",
+          "onDisk": true
         },
         {
           "id": "limit-changes-card",
           "path": "/portal/components/limit-changes-card.js",
           "kind": "module",
-          "role": "reusable limit-raises card"
+          "role": "reusable limit-raises card",
+          "onDisk": true
         },
         {
           "id": "style",
           "path": "/portal/style.css",
           "kind": "style",
-          "role": "design tokens · chrome layout"
+          "role": "design tokens · chrome layout",
+          "onDisk": true
         },
         {
           "id": "page-template",
           "path": "/portal/_page-template.html",
           "kind": "template",
-          "role": "new page shell SSOT"
+          "role": "new page shell SSOT",
+          "onDisk": true
         },
         {
           "id": "operations-dashboard",
           "path": "/portal/operations-dashboard.js",
           "kind": "module",
-          "role": "ops custom element · monorepoHealth panel"
+          "role": "ops custom element · monorepoHealth panel",
+          "onDisk": true
         },
         {
           "id": "toc-dashboard",
           "path": "/portal/toc/toc-dashboard.js",
           "kind": "module",
-          "role": "TOC Drum/Buffer/Rope · harness glance"
+          "role": "TOC Drum/Buffer/Rope · harness glance",
+          "onDisk": true
         }
       ],
       "theme": {
         "jsonc": true,
         "tokensCss": true,
-        "styleCss": true
+        "styleCss": true,
+        "darkTokenCount": 12,
+        "lightTokenCount": 12,
+        "fontKeys": [
+          "brand",
+          "mono",
+          "sans"
+        ],
+        "layoutKeys": [
+          "fontHero",
+          "fontMetric",
+          "max",
+          "padBlock",
+          "padInline",
+          "radius"
+        ],
+        "version": "1.0.0",
+        "colorSchemeDefault": "dark"
+      },
+      "modulesByKind": {
+        "template": 1,
+        "module": 14,
+        "page-script": 5,
+        "component": 4,
+        "style": 1,
+        "theme": 2
       }
     },
     "brand": {
@@ -1266,325 +1447,379 @@
           "file": "bun-defaults-proof.json",
           "kind": null,
           "schemaVersion": 1,
-          "bytes": 4022
+          "bytes": 4022,
+          "family": "proof"
         },
         {
           "file": "bun-runtime-nits-proof.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 15065
+          "bytes": 15065,
+          "family": "proof"
         },
         {
           "file": "bundler-loaders-proof.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 9961
+          "bytes": 9961,
+          "family": "proof"
         },
         {
           "file": "catalog-snapshot.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 4451
+          "bytes": 4451,
+          "family": "catalog"
         },
         {
           "file": "channel-meta-bake.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 821
+          "bytes": 821,
+          "family": "catalog"
         },
         {
           "file": "cloudflare-pages-preflight.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 1069
+          "bytes": 1069,
+          "family": "ops"
         },
         {
           "file": "cloudflare-token-scope-proof.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 3019
+          "bytes": 3019,
+          "family": "proof"
         },
         {
           "file": "compliance-board.json",
           "kind": null,
           "schemaVersion": 1,
-          "bytes": 8511
+          "bytes": 8511,
+          "family": "compliance"
         },
         {
           "file": "compliance-enhancements.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 3043
+          "bytes": 3043,
+          "family": "compliance"
         },
         {
           "file": "compliance-shadow.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 2156
+          "bytes": 2156,
+          "family": "compliance"
         },
         {
           "file": "content-type-matrix.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 11701
+          "bytes": 11701,
+          "family": "catalog"
         },
         {
           "file": "defaults-proof.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 4856
+          "bytes": 4856,
+          "family": "proof"
         },
         {
           "file": "doc-index.json",
           "kind": null,
           "schemaVersion": 1,
-          "bytes": 164860
+          "bytes": 164860,
+          "family": "catalog"
         },
         {
           "file": "docs-coverage-proof.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 2750
+          "bytes": 2750,
+          "family": "proof"
         },
         {
           "file": "dod-queue.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 4713
+          "bytes": 4713,
+          "family": "compliance"
         },
         {
           "file": "dod-registry.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 2187
+          "bytes": 2187,
+          "family": "compliance"
         },
         {
           "file": "env-inventory.json",
           "kind": "env-inventory",
           "schemaVersion": 3,
-          "bytes": 49270
+          "bytes": 49270,
+          "family": "env"
         },
         {
           "file": "failures.json",
           "kind": "test-failures",
           "schemaVersion": null,
-          "bytes": 250
+          "bytes": 250,
+          "family": "ops"
         },
         {
           "file": "formdata-proof.json",
           "kind": null,
           "schemaVersion": 1,
-          "bytes": 2914
+          "bytes": 2914,
+          "family": "proof"
         },
         {
           "file": "guides-proof.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 1240
+          "bytes": 1240,
+          "family": "proof"
         },
         {
           "file": "harness-skills-catalog.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 18656
+          "bytes": 18656,
+          "family": "catalog"
         },
         {
           "file": "install-env-proof.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 8488
+          "bytes": 8488,
+          "family": "proof"
         },
         {
           "file": "install-platform.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 10384
+          "bytes": 10384,
+          "family": "catalog"
         },
         {
           "file": "limit-raises.json",
           "kind": null,
           "schemaVersion": 1,
-          "bytes": 59659
+          "bytes": 59659,
+          "family": "compliance"
         },
         {
           "file": "monitoring.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 12176
+          "bytes": 12176,
+          "family": "health"
         },
         {
           "file": "monorepo-health.json",
           "kind": "monorepo-health",
           "schemaVersion": 1,
-          "bytes": 1131
+          "bytes": 1131,
+          "family": "health"
         },
         {
           "file": "networking-channel-proof.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 10592
+          "bytes": 10592,
+          "family": "proof"
         },
         {
           "file": "networking-proof.json",
           "kind": null,
           "schemaVersion": 1,
-          "bytes": 9217
+          "bytes": 9217,
+          "family": "proof"
         },
         {
           "file": "ops-summary.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 67452
+          "bytes": 67452,
+          "family": "ops"
         },
         {
           "file": "package-info.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 1027
+          "bytes": 1027,
+          "family": "packages"
         },
         {
           "file": "packages-graph-map.json",
           "kind": "packages-graph-map",
-          "schemaVersion": 12,
-          "bytes": 13781
+          "schemaVersion": 13,
+          "bytes": 37269,
+          "family": "packages"
         },
         {
           "file": "portal-chrome.json",
           "kind": "portal-chrome",
           "schemaVersion": 1,
-          "bytes": 8115
+          "bytes": 8115,
+          "family": "portal"
         },
         {
           "file": "portal-weave.json",
           "kind": "portal-weave",
           "schemaVersion": 2,
-          "bytes": 18186
+          "bytes": 18186,
+          "family": "portal"
         },
         {
           "file": "projects-registry.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 17207
+          "bytes": 17207,
+          "family": "tenant"
         },
         {
           "file": "proof-taxonomy-audit.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 7041
+          "bytes": 7041,
+          "family": "verification"
         },
         {
           "file": "ratchet.json",
           "kind": null,
           "schemaVersion": 1,
-          "bytes": 691
+          "bytes": 691,
+          "family": "verification"
         },
         {
           "file": "registry-client-proof.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 4010
+          "bytes": 4010,
+          "family": "proof"
         },
         {
           "file": "registry.json",
           "kind": null,
           "schemaVersion": 1,
-          "bytes": 19740
+          "bytes": 19740,
+          "family": "other"
         },
         {
           "file": "release-features.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 109656
+          "bytes": 109656,
+          "family": "verification"
         },
         {
           "file": "seat-capital-desk.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 7467
+          "bytes": 7467,
+          "family": "ops"
         },
         {
           "file": "skills-catalog.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 27769
+          "bytes": 27769,
+          "family": "catalog"
         },
         {
           "file": "static.json",
           "kind": null,
           "schemaVersion": 1,
-          "bytes": 115523
+          "bytes": 115523,
+          "family": "catalog"
         },
         {
           "file": "telegram-handshake-catalog.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 17963
+          "bytes": 17963,
+          "family": "telegram"
         },
         {
           "file": "telegram-handshake.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 3073
+          "bytes": 3073,
+          "family": "telegram"
         },
         {
           "file": "toc-ops-bake-proof.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 1141
+          "bytes": 1141,
+          "family": "proof"
         },
         {
           "file": "toc-ops.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 383949
+          "bytes": 383949,
+          "family": "ops"
         },
         {
           "file": "vault-health.json",
           "kind": "vault-health",
           "schemaVersion": null,
-          "bytes": 2547
+          "bytes": 2547,
+          "family": "vault"
         },
         {
           "file": "vault-map.json",
           "kind": "vault-map-bundle",
           "schemaVersion": 1,
-          "bytes": 7345
+          "bytes": 7345,
+          "family": "vault"
         },
         {
           "file": "verification-index.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 2060
+          "bytes": 2060,
+          "family": "verification"
         },
         {
           "file": "verification-pinned-1.3.14.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 54601
+          "bytes": 54601,
+          "family": "verification"
         },
         {
           "file": "verification-stable-1.4.0-bundler.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 6416
+          "bytes": 6416,
+          "family": "verification"
         },
         {
           "file": "verification-stable-1.4.0-networking.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 10592
+          "bytes": 10592,
+          "family": "verification"
         },
         {
           "file": "verification-stable-1.4.0.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 109656
+          "bytes": 109656,
+          "family": "verification"
         },
         {
           "file": "vps-health.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 606
+          "bytes": 606,
+          "family": "health"
         }
       ],
       "storagePackageNames": [
@@ -1603,6 +1838,710 @@
         "@factorywager/registry-client/latest.json",
         "@factorywager/registry-snapshot/latest.json",
         "@factorywager/routing-test/latest.json"
+      ],
+      "byFamily": [
+        {
+          "family": "proof",
+          "count": 13
+        },
+        {
+          "family": "catalog",
+          "count": 8
+        },
+        {
+          "family": "verification",
+          "count": 8
+        },
+        {
+          "family": "compliance",
+          "count": 6
+        },
+        {
+          "family": "ops",
+          "count": 5
+        },
+        {
+          "family": "health",
+          "count": 3
+        },
+        {
+          "family": "packages",
+          "count": 2
+        },
+        {
+          "family": "portal",
+          "count": 2
+        },
+        {
+          "family": "telegram",
+          "count": 2
+        },
+        {
+          "family": "vault",
+          "count": 2
+        },
+        {
+          "family": "env",
+          "count": 1
+        },
+        {
+          "family": "other",
+          "count": 1
+        },
+        {
+          "family": "tenant",
+          "count": 1
+        }
+      ],
+      "portalRefs": [
+        {
+          "path": "/registry/@factorywager/bun-utils-test/latest.json",
+          "from": [
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/@factorywager/routing-test/latest.json",
+          "from": [
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/bun-defaults-proof.json",
+          "from": [
+            "public/portal/dashboard-app.js",
+            "public/portal/health-page.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/bun-runtime-nits-proof.json",
+          "from": [
+            "public/portal/dashboard-app.js",
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/bundler-loaders-proof.json",
+          "from": [
+            "public/portal/dashboard-app.js",
+            "public/portal/dashboard/index.html",
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/catalog-snapshot.json",
+          "from": [
+            "public/portal/catalog/index.html",
+            "public/portal/tools/tools-hub.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/channel-meta-bake.json",
+          "from": [
+            "public/portal/dashboard-app.js",
+            "public/portal/dashboard/index.html",
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/cloudflare-pages-preflight.json",
+          "from": [
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/cloudflare-token-scope-proof.json",
+          "from": [
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/compliance-board.json",
+          "from": [
+            "public/portal/compliance/compliance-dashboard.js",
+            "public/portal/compliance/index.html",
+            "public/portal/dashboard-app.js",
+            "public/portal/operations-dashboard.js",
+            "public/portal/toc/toc-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/compliance-enhancements.json",
+          "from": [
+            "public/portal/compliance/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/compliance-shadow.json",
+          "from": [
+            "public/portal/compliance/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/defaults-proof.json",
+          "from": [
+            "public/portal/dashboard-app.js",
+            "public/portal/health-page.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/doc-index.json",
+          "from": [
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/docs-coverage-proof.json",
+          "from": [
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/dod-queue.json",
+          "from": [
+            "public/portal/dod/dod-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/env-inventory.json",
+          "from": [
+            "public/portal/env/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/failures.json",
+          "from": [
+            "public/portal/_page-template.html",
+            "public/portal/catalog/index.html",
+            "public/portal/compliance/index.html",
+            "public/portal/dashboard/index.html",
+            "public/portal/dod/index.html",
+            "public/portal/env/index.html",
+            "public/portal/failures/index.html",
+            "public/portal/health/index.html",
+            "public/portal/index.html",
+            "public/portal/nav-badges.js",
+            "public/portal/ops/index.html",
+            "public/portal/packages/index.html",
+            "public/portal/skills/index.html",
+            "public/portal/toc/index.html",
+            "public/portal/tools/index.html",
+            "public/portal/tools/tools-hub.js",
+            "public/portal/vault/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/guides-proof.json",
+          "from": [
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/install-env-proof.json",
+          "from": [
+            "public/portal/dashboard-app.js",
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/install-platform.json",
+          "from": [
+            "public/portal/dashboard-app.js",
+            "public/portal/dashboard/index.html",
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/limit-raises.json",
+          "from": [
+            "public/portal/components/limit-changes-card.js",
+            "public/portal/dashboard-app.js",
+            "public/portal/health-page.js",
+            "public/portal/limits/index.html",
+            "public/portal/operations-dashboard.js",
+            "public/portal/toc/toc-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/monitoring.json",
+          "from": [
+            "public/portal/dashboard-app.js",
+            "public/portal/health-page.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/monorepo-health.json",
+          "from": [
+            "public/portal/_page-template.html",
+            "public/portal/catalog/index.html",
+            "public/portal/compliance/index.html",
+            "public/portal/components/footer.js",
+            "public/portal/dashboard/index.html",
+            "public/portal/dod/index.html",
+            "public/portal/env/index.html",
+            "public/portal/failures/index.html",
+            "public/portal/health/index.html",
+            "public/portal/index.html",
+            "public/portal/limits/index.html",
+            "public/portal/nav-badges.js",
+            "public/portal/operations-dashboard.js",
+            "public/portal/ops/index.html",
+            "public/portal/packages/index.html",
+            "public/portal/skills/index.html",
+            "public/portal/toc/index.html",
+            "public/portal/toc/toc-dashboard.js",
+            "public/portal/tools/index.html",
+            "public/portal/tools/tools-hub.js",
+            "public/portal/vault/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/networking-proof.json",
+          "from": [
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/ops-summary.json",
+          "from": [
+            "public/portal/components/limit-changes-card.js",
+            "public/portal/dashboard-app.js",
+            "public/portal/dashboard/index.html",
+            "public/portal/health-page.js",
+            "public/portal/health/index.html",
+            "public/portal/limits/index.html",
+            "public/portal/operations-dashboard.js",
+            "public/portal/partner-history/index.html",
+            "public/portal/toc/toc-dashboard.js",
+            "public/portal/tools/tools-hub.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/packages-graph-map.json",
+          "from": [
+            "public/portal/nav-badges.js",
+            "public/portal/operations-dashboard.js",
+            "public/portal/packages/index.html",
+            "public/portal/packages/packages-board.js",
+            "public/portal/tools/tools-hub.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/portal-chrome.json",
+          "from": [
+            "public/portal/_page-template.html",
+            "public/portal/catalog/index.html",
+            "public/portal/compliance/index.html",
+            "public/portal/components/footer.js",
+            "public/portal/dashboard/index.html",
+            "public/portal/dod/index.html",
+            "public/portal/env/index.html",
+            "public/portal/failures/index.html",
+            "public/portal/health/index.html",
+            "public/portal/index.html",
+            "public/portal/limits/index.html",
+            "public/portal/operations-dashboard.js",
+            "public/portal/ops/index.html",
+            "public/portal/packages/index.html",
+            "public/portal/skills/index.html",
+            "public/portal/toc/index.html",
+            "public/portal/tools/index.html",
+            "public/portal/vault/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/portal-weave.json",
+          "from": [
+            "public/portal/dashboard/index.html",
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/proof-taxonomy-audit.json",
+          "from": [
+            "public/portal/dashboard-app.js",
+            "public/portal/dashboard/index.html",
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/ratchet.json",
+          "from": [
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/registry-client-proof.json",
+          "from": [
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/registry.json",
+          "from": [
+            "public/portal/app.js",
+            "public/portal/components/sidebar.js",
+            "public/portal/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/release-features.json",
+          "from": [
+            "public/portal/dashboard-app.js",
+            "public/portal/dashboard/index.html",
+            "public/portal/operations-dashboard.js",
+            "public/portal/verification-card.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/seat-capital-desk.json",
+          "from": [
+            "public/portal/dashboard-app.js",
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/skills-catalog.json",
+          "from": [
+            "public/portal/skills/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/static.json",
+          "from": [
+            "public/portal/health/index.html",
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/telegram-handshake-catalog.json",
+          "from": [
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/telegram-handshake.json",
+          "from": [
+            "public/portal/dashboard-app.js",
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/toc-ops.json",
+          "from": [
+            "public/portal/dashboard-app.js",
+            "public/portal/dashboard/index.html",
+            "public/portal/health/index.html",
+            "public/portal/operations-dashboard.js",
+            "public/portal/toc/index.html",
+            "public/portal/toc/toc-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/vault-health.json",
+          "from": [
+            "public/portal/nav-badges.js",
+            "public/portal/tools/tools-hub.js",
+            "public/portal/vault/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/vault-map.json",
+          "from": [
+            "public/portal/env/index.html",
+            "public/portal/tools/tools-hub.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/verification-index.json",
+          "from": [
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/vps-health.json",
+          "from": [
+            "public/portal/health-page.js"
+          ],
+          "exists": true
+        }
+      ],
+      "orphanFromPortal": [
+        "content-type-matrix.json",
+        "dod-registry.json",
+        "formdata-proof.json",
+        "harness-skills-catalog.json",
+        "networking-channel-proof.json",
+        "package-info.json",
+        "projects-registry.json",
+        "toc-ops-bake-proof.json",
+        "verification-pinned-1.3.14.json",
+        "verification-stable-1.4.0-bundler.json",
+        "verification-stable-1.4.0-networking.json",
+        "verification-stable-1.4.0.json"
+      ]
+    },
+    "libPlane": {
+      "dirs": [
+        {
+          "name": "accounts",
+          "hasPackageJson": false,
+          "tsFiles": 5
+        },
+        {
+          "name": "ai",
+          "hasPackageJson": false,
+          "tsFiles": 2
+        },
+        {
+          "name": "audit",
+          "hasPackageJson": false,
+          "tsFiles": 6
+        },
+        {
+          "name": "auth",
+          "hasPackageJson": false,
+          "tsFiles": 2
+        },
+        {
+          "name": "automation",
+          "hasPackageJson": false,
+          "tsFiles": 1
+        },
+        {
+          "name": "channels",
+          "hasPackageJson": false,
+          "tsFiles": 6
+        },
+        {
+          "name": "constants",
+          "hasPackageJson": false,
+          "tsFiles": 2
+        },
+        {
+          "name": "core",
+          "hasPackageJson": false,
+          "tsFiles": 15
+        },
+        {
+          "name": "db",
+          "hasPackageJson": false,
+          "tsFiles": 1
+        },
+        {
+          "name": "docs",
+          "hasPackageJson": false,
+          "tsFiles": 34
+        },
+        {
+          "name": "dod",
+          "hasPackageJson": false,
+          "tsFiles": 4
+        },
+        {
+          "name": "experiments",
+          "hasPackageJson": false,
+          "tsFiles": 12
+        },
+        {
+          "name": "factory",
+          "hasPackageJson": false,
+          "tsFiles": 15
+        },
+        {
+          "name": "harness",
+          "hasPackageJson": false,
+          "tsFiles": 20
+        },
+        {
+          "name": "http",
+          "hasPackageJson": false,
+          "tsFiles": 29
+        },
+        {
+          "name": "identity",
+          "hasPackageJson": false,
+          "tsFiles": 16
+        },
+        {
+          "name": "macros",
+          "hasPackageJson": false,
+          "tsFiles": 3
+        },
+        {
+          "name": "mcp",
+          "hasPackageJson": false,
+          "tsFiles": 4
+        },
+        {
+          "name": "monitoring",
+          "hasPackageJson": false,
+          "tsFiles": 10
+        },
+        {
+          "name": "net",
+          "hasPackageJson": false,
+          "tsFiles": 1
+        },
+        {
+          "name": "operations",
+          "hasPackageJson": false,
+          "tsFiles": 49
+        },
+        {
+          "name": "package",
+          "hasPackageJson": false,
+          "tsFiles": 1
+        },
+        {
+          "name": "pages",
+          "hasPackageJson": false,
+          "tsFiles": 2
+        },
+        {
+          "name": "performance",
+          "hasPackageJson": false,
+          "tsFiles": 1
+        },
+        {
+          "name": "portal",
+          "hasPackageJson": false,
+          "tsFiles": 4
+        },
+        {
+          "name": "prediction",
+          "hasPackageJson": false,
+          "tsFiles": 7
+        },
+        {
+          "name": "provisioning",
+          "hasPackageJson": false,
+          "tsFiles": 4
+        },
+        {
+          "name": "r2",
+          "hasPackageJson": false,
+          "tsFiles": 1
+        },
+        {
+          "name": "registry",
+          "hasPackageJson": false,
+          "tsFiles": 4
+        },
+        {
+          "name": "routing",
+          "hasPackageJson": false,
+          "tsFiles": 1
+        },
+        {
+          "name": "rss",
+          "hasPackageJson": false,
+          "tsFiles": 1
+        },
+        {
+          "name": "security",
+          "hasPackageJson": false,
+          "tsFiles": 13
+        },
+        {
+          "name": "shared",
+          "hasPackageJson": true,
+          "tsFiles": 2
+        },
+        {
+          "name": "telegram",
+          "hasPackageJson": false,
+          "tsFiles": 91
+        },
+        {
+          "name": "theme",
+          "hasPackageJson": false,
+          "tsFiles": 1
+        },
+        {
+          "name": "toc-ops",
+          "hasPackageJson": false,
+          "tsFiles": 13
+        },
+        {
+          "name": "types",
+          "hasPackageJson": false,
+          "tsFiles": 11
+        },
+        {
+          "name": "utils",
+          "hasPackageJson": false,
+          "tsFiles": 5
+        },
+        {
+          "name": "verification",
+          "hasPackageJson": false,
+          "tsFiles": 25
+        }
+      ],
+      "workspaceShared": true
+    },
+    "sto": {
+      "root": "projects/active/sports-terminal-os",
+      "nested": [
+        {
+          "path": "projects/active/sports-terminal-os/integrations/kimi-plugin/sports-mcp-server",
+          "name": "sports-mcp-server",
+          "version": "1.0.0"
+        },
+        {
+          "path": "projects/active/sports-terminal-os/packages/odds-selectors",
+          "name": "odds-selectors",
+          "version": "1.0.0"
+        },
+        {
+          "path": "projects/active/sports-terminal-os/src/frontend",
+          "name": "sports-terminal-frontend",
+          "version": "5.2.0"
+        }
       ]
     },
     "planes": [
@@ -1621,18 +2560,30 @@
         "note": "packages/* + sports-terminal-os + lib/* — see bun pm ls"
       },
       {
+        "id": "lib-plane",
+        "label": "lib/ top-level dirs",
+        "count": 39,
+        "note": "interior modules; workspace package only lib/shared · shared=yes"
+      },
+      {
+        "id": "sto-nested",
+        "label": "STO nested package.json",
+        "count": 3,
+        "note": "under projects/active/sports-terminal-os (not packages/* graph)"
+      },
+      {
         "id": "portal-pages",
         "label": "portal HTML pages",
         "count": 19,
         "portal": "/portal/",
-        "note": "public/portal/*/index.html shells"
+        "note": "public/portal/*/index.html shells + script src inventory"
       },
       {
         "id": "portal-chrome",
         "label": "portal chrome components",
         "count": 12,
         "bake": "/registry/portal-chrome.json",
-        "note": "nav + shared modules SSOT · portal:chrome:bake"
+        "note": "nav + shared modules SSOT · onDisk=12/12"
       },
       {
         "id": "portal-modules",
@@ -1644,14 +2595,20 @@
         "id": "brand",
         "label": "brand + tenant icons",
         "count": 20,
-        "note": "tenants: factory, science, telegram, tennis · public/icons · public/brand"
+        "note": "tenants: factory, science, telegram, tennis · theme darkTokens=12 fonts=brand,mono,sans"
       },
       {
         "id": "registry-bake",
         "label": "registry top-level JSON",
         "count": 54,
         "bake": "/registry/",
-        "note": "ops/proof/health bakes — not npm package deps"
+        "note": "families: proof=13 · catalog=8 · verification=8 · compliance=6 · ops=5 · health=3 · not npm package deps"
+      },
+      {
+        "id": "registry-portal-refs",
+        "label": "portal → registry refs",
+        "count": 44,
+        "note": "unique /registry/*.json from portal JS/HTML · orphanTop=12"
       },
       {
         "id": "registry-storage",

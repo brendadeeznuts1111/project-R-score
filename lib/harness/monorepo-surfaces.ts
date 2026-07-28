@@ -9,7 +9,7 @@
  * full workspace package.json members (STO + lib/shared). This module
  * inventories those surfaces without inventing edges between planes.
  *
- * Claim: packages-graph-map-v13
+ * Claim: packages-graph-map-v13 · monorepo-surfaces schema v2
  */
 
 import { Glob } from 'bun';
@@ -34,6 +34,8 @@ export type PortalPage = {
   slug: string;
   hasIndex: boolean;
   hasMd: boolean;
+  /** Script srcs referenced from this page shell (repo-relative web paths). */
+  scripts?: string[];
 };
 
 export type PortalModule = {
@@ -48,6 +50,22 @@ export type BrandAsset = {
   kind: 'icon' | 'brand' | 'manifest';
 };
 
+/** Heuristic family when JSON has no kind field (most registry bakes). */
+export type RegistryFamily =
+  | 'proof'
+  | 'ops'
+  | 'compliance'
+  | 'portal'
+  | 'verification'
+  | 'vault'
+  | 'telegram'
+  | 'health'
+  | 'catalog'
+  | 'packages'
+  | 'env'
+  | 'tenant'
+  | 'other';
+
 export type RegistryArtifact = {
   /** File name under public/registry (top-level .json only). */
   file: string;
@@ -56,10 +74,46 @@ export type RegistryArtifact = {
   /** schemaVersion when present. */
   schemaVersion: number | null;
   bytes: number;
+  /** Heuristic family from kind or filename (v2). */
+  family: RegistryFamily;
+};
+
+export type PortalRegistryRef = {
+  /** Path as referenced e.g. /registry/ops-summary.json */
+  path: string;
+  /** Source portal files that reference it. */
+  from: string[];
+  /** True when public/registry/<file> exists. */
+  exists: boolean;
+};
+
+export type LibPlaneDir = {
+  name: string; // brand-ok — lib/<name>
+  hasPackageJson: boolean;
+  /** Approximate .ts/.tsx file count (depth-capped). */
+  tsFiles: number;
+};
+
+export type StoNestedPackage = {
+  path: string;
+  name: string;
+  version?: string;
+};
+
+export type ThemeInventory = {
+  jsonc: boolean;
+  tokensCss: boolean;
+  styleCss: boolean;
+  version?: string;
+  colorSchemeDefault?: string;
+  darkTokenCount: number;
+  lightTokenCount: number;
+  fontKeys: string[]; // brand-ok — theme font slot keys
+  layoutKeys: string[]; // brand-ok — theme layout slot keys
 };
 
 export type MonorepoSurfaces = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   kind: 'monorepo-surfaces';
   generatedAt: string;
   summary: {
@@ -72,6 +126,13 @@ export type MonorepoSurfaces = {
     brandAssets: number;
     registryTopLevelJson: number;
     registryStoragePackages: number;
+    /** v2 */
+    libTopLevelDirs?: number;
+    stoNestedPackages?: number;
+    portalRegistryRefs?: number;
+    registryOrphanFromPortal?: number;
+    registryFamilyCount?: number;
+    themeDarkTokens?: number;
   };
   /** Full workspace package.json members (root workspaces globs). */
   workspaces: WorkspaceMember[];
@@ -86,8 +147,11 @@ export type MonorepoSurfaces = {
       path: string;
       kind: string;
       role: string;
+      onDisk?: boolean;
     }>;
-    theme: { jsonc: boolean; tokensCss: boolean; styleCss: boolean };
+    theme: ThemeInventory;
+    /** Modules counted by kind (v2). */
+    modulesByKind?: Record<string, number>;
   };
   brand: {
     tenants: string[]; // brand-ok — icon tenant ids
@@ -97,6 +161,22 @@ export type MonorepoSurfaces = {
     topLevel: RegistryArtifact[];
     storagePackageNames: string[]; // brand-ok — published artifact names under storage/
     scopedLatest: string[]; // brand-ok — @factorywager/*/latest.json paths
+    /** Family rollup counts (v2). */
+    byFamily?: Array<{ family: RegistryFamily; count: number }>;
+    /** /registry/*.json referenced from portal JS/HTML (v2). */
+    portalRefs?: PortalRegistryRef[];
+    /** Top-level registry JSON never referenced from portal (v2). */
+    orphanFromPortal?: string[];
+  };
+  /** lib/ top-level dirs (not only workspace package.json members) (v2). */
+  libPlane?: {
+    dirs: LibPlaneDir[];
+    workspaceShared: boolean;
+  };
+  /** Nested package.json under sports-terminal-os (v2). */
+  sto?: {
+    root: string;
+    nested: StoNestedPackage[];
   };
   /** Explicit plane map so operators know why counts differ. */
   planes: Array<{
@@ -117,12 +197,101 @@ const RE_PORTAL_PREFIX = /^public\/portal\//;
 const RE_INDEX_HTML = /\/index\.html$/;
 const RE_EXT = /\.(js|css|html|jsonc)$/;
 const RE_REGISTRY_PREFIX = /^public\/registry\//;
+const RE_REGISTRY_REF = /\/registry\/[A-Za-z0-9_@./-]+\.json/g;
+const RE_SCRIPT_SRC = /src=["']([^"']+)["']/g;
 
 function planeOfWorkspacePath(rel: string): WorkspaceMember['plane'] {
   if (rel.startsWith('packages/')) return 'packages';
   if (rel.startsWith('lib/')) return 'lib';
   if (rel.startsWith('projects/')) return 'projects';
   return 'other';
+}
+
+/** Exact basename → family (no .json). */
+const REGISTRY_FAMILY_EXACT: Record<string, RegistryFamily> = {
+  'portal-chrome': 'portal',
+  'portal-weave': 'portal',
+  'packages-graph-map': 'packages',
+  'package-info': 'packages',
+  'env-inventory': 'env',
+  'monorepo-health': 'health',
+  'vps-health': 'health',
+  monitoring: 'health',
+  'limit-raises': 'compliance',
+  'dod-queue': 'compliance',
+  'dod-registry': 'compliance',
+  'proof-taxonomy-audit': 'verification',
+  ratchet: 'verification',
+  'release-features': 'verification',
+  'catalog-snapshot': 'catalog',
+  'skills-catalog': 'catalog',
+  'harness-skills-catalog': 'catalog',
+  'doc-index': 'catalog',
+  static: 'catalog',
+  'content-type-matrix': 'catalog',
+  'channel-meta-bake': 'catalog',
+  'install-platform': 'catalog',
+  'ops-summary': 'ops',
+  'toc-ops': 'ops',
+  'toc-ops-bake-proof': 'ops',
+  'seat-capital-desk': 'ops',
+  'cloudflare-pages-preflight': 'ops',
+  failures: 'ops',
+  'projects-registry': 'tenant',
+};
+
+/** Substring match on kind or basename → family (first hit wins). */
+const REGISTRY_FAMILY_NEEDLES: Array<{ needle: string; family: RegistryFamily }> = [
+  { needle: 'portal-chrome', family: 'portal' },
+  { needle: 'portal-weave', family: 'portal' },
+  { needle: 'packages-graph', family: 'packages' },
+  { needle: 'vault', family: 'vault' },
+  { needle: 'env-inventory', family: 'env' },
+  { needle: 'monorepo-health', family: 'health' },
+  { needle: 'telegram', family: 'telegram' },
+  { needle: 'compliance', family: 'compliance' },
+  { needle: 'verification', family: 'verification' },
+  { needle: 'test-failures', family: 'ops' },
+  { needle: 'proof', family: 'proof' },
+  { needle: 'ops', family: 'ops' },
+  { needle: 'tenant', family: 'tenant' },
+];
+
+/**
+ * Classify registry JSON into operator families.
+ * Table-driven (exact basename + needles) to keep cyclomatic complexity low.
+ */
+export function classifyRegistryFamily(
+  file: string,
+  kind: string | null | undefined
+): RegistryFamily {
+  const f = file.toLowerCase().replace(/\.json$/, '');
+  const k = (kind ?? '').toLowerCase();
+
+  const exact = REGISTRY_FAMILY_EXACT[f];
+  if (exact) return exact;
+
+  if (f.startsWith('package-')) return 'packages';
+  if (f.startsWith('vault-')) return 'vault';
+  if (f.endsWith('-health')) return 'health';
+  if (f.startsWith('compliance')) return 'compliance';
+  if (f.startsWith('verification-')) return 'verification';
+  if (f.endsWith('-proof') || f.includes('-proof') || f.endsWith('proof')) return 'proof';
+  if (f.startsWith('test-failures')) return 'ops';
+  if (f.startsWith('toc-')) return 'tenant';
+
+  const hay = k || f;
+  for (const row of REGISTRY_FAMILY_NEEDLES) {
+    if (hay.includes(row.needle)) return row.family;
+  }
+  return 'other';
+}
+
+/** Disk path for a chrome/module web path like /portal/foo.js → public/portal/foo.js */
+function webPathToPublicRel(webPath: string): string {
+  const p = webPath.startsWith('/') ? webPath.slice(1) : webPath;
+  if (p.startsWith('public/')) return p;
+  return 'public/' + p;
 }
 
 /** Expand root workspaces globs to concrete package.json dirs. */
@@ -183,17 +352,36 @@ export async function discoverPackagesGraphDirs(root: string): Promise<string[]>
   return dirs.sort();
 }
 
+async function extractScriptSrcs(htmlPath: string): Promise<string[]> {
+  try {
+    const text = await Bun.file(htmlPath).text();
+    const out: string[] = [];
+    RE_SCRIPT_SRC.lastIndex = 0;
+    let m: RegExpExecArray | null;
+    while ((m = RE_SCRIPT_SRC.exec(text)) !== null) {
+      const src = m[1];
+      if (!src || src.startsWith('http') || src.startsWith('//')) continue;
+      out.push(src.startsWith('/') ? src : '/' + src);
+    }
+    return out;
+  } catch {
+    return [];
+  }
+}
+
 export async function discoverPortalPages(root: string): Promise<PortalPage[]> {
   const portalRoot = joinPath(root, 'public/portal');
   const pages: PortalPage[] = [];
   // Root portal home
-  const homeIndex = Bun.file(joinPath(portalRoot, 'index.html'));
+  const homeIndexPath = joinPath(portalRoot, 'index.html');
+  const homeIndex = Bun.file(homeIndexPath);
   if (await homeIndex.exists()) {
     pages.push({
       href: '/portal/',
       slug: '',
       hasIndex: true,
       hasMd: await Bun.file(joinPath(portalRoot, 'index.md')).exists(),
+      scripts: await extractScriptSrcs(homeIndexPath),
     });
   }
   const g = new Glob('public/portal/*/index.html');
@@ -205,6 +393,7 @@ export async function discoverPortalPages(root: string): Promise<PortalPage[]> {
       slug,
       hasIndex: true,
       hasMd: await Bun.file(joinPath(root, 'public/portal/' + slug + '.md')).exists(),
+      scripts: await extractScriptSrcs(joinPath(root, match)),
     });
   }
   return pages.sort((a, b) => a.href.localeCompare(b.href));
@@ -345,7 +534,13 @@ export async function discoverRegistryArtifacts(root: string): Promise<{
     } catch {
       /* binary or invalid */
     }
-    topLevel.push({ file, kind, schemaVersion, bytes });
+    topLevel.push({
+      file,
+      kind,
+      schemaVersion,
+      bytes,
+      family: classifyRegistryFamily(file, kind),
+    });
   }
 
   const storagePackageNames = new Set<string>();
@@ -380,35 +575,255 @@ export async function discoverRegistryArtifacts(root: string): Promise<{
   };
 }
 
+/** Scan portal JS/HTML for /registry/*.json references. */
+export async function discoverPortalRegistryRefs(root: string): Promise<PortalRegistryRef[]> {
+  const byPath = new Map<string, Set<string>>();
+  const globs = ['public/portal/**/*.js', 'public/portal/**/*.html'];
+  for (const pat of globs) {
+    for await (const m of new Glob(pat).scan({ cwd: root, onlyFiles: true })) {
+      const rel = m.replace(RE_BACKSLASH, '/');
+      let text: string;
+      try {
+        text = await Bun.file(joinPath(root, m)).text();
+      } catch {
+        continue;
+      }
+      RE_REGISTRY_REF.lastIndex = 0;
+      let match: RegExpExecArray | null;
+      while ((match = RE_REGISTRY_REF.exec(text)) !== null) {
+        const path = match[0];
+        let set = byPath.get(path);
+        if (!set) {
+          set = new Set();
+          byPath.set(path, set);
+        }
+        set.add(rel);
+      }
+    }
+  }
+
+  const out: PortalRegistryRef[] = [];
+  for (const [path, fromSet] of [...byPath.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
+    const file = path.replace(/^\/registry\//, '');
+    const exists = await Bun.file(joinPath(root, 'public/registry', file)).exists();
+    out.push({
+      path,
+      from: [...fromSet].sort(),
+      exists,
+    });
+  }
+  return out;
+}
+
+export async function discoverLibPlane(root: string): Promise<{
+  dirs: LibPlaneDir[];
+  workspaceShared: boolean;
+}> {
+  const dirs: LibPlaneDir[] = [];
+  const libRoot = joinPath(root, 'lib');
+  try {
+    for await (const entry of new Glob('lib/*').scan({
+      cwd: root,
+      onlyFiles: false,
+      absolute: false,
+    })) {
+      const name = entry.replace(/^lib\//, '').replace(/\/$/, '');
+      if (!name || name.includes('/') || name.startsWith('.')) continue;
+      // Skip top-level files (console-depth.ts etc.) — only dirs with children
+      let anyChild = false;
+      for await (const _ of new Glob('lib/' + name + '/*').scan({
+        cwd: root,
+        onlyFiles: false,
+      })) {
+        anyChild = true;
+        break;
+      }
+      if (!anyChild) continue;
+
+      const hasPackageJson = await Bun.file(joinPath(root, 'lib', name, 'package.json')).exists();
+      let tsFiles = 0;
+      for await (const _ of new Glob('lib/' + name + '/**/*.{ts,tsx}').scan({
+        cwd: root,
+        onlyFiles: true,
+      })) {
+        tsFiles++;
+        if (tsFiles > 500) break;
+      }
+      dirs.push({ name, hasPackageJson, tsFiles });
+    }
+  } catch {
+    /* no lib */
+  }
+
+  const uniq = new Map<string, LibPlaneDir>();
+  for (const d of dirs) {
+    const prev = uniq.get(d.name);
+    if (!prev || d.tsFiles > prev.tsFiles) uniq.set(d.name, d);
+  }
+
+  const sorted = [...uniq.values()].sort((a, b) => a.name.localeCompare(b.name));
+  const workspaceShared = await Bun.file(joinPath(libRoot, 'shared/package.json')).exists();
+  return { dirs: sorted, workspaceShared };
+}
+
+export async function discoverStoNested(root: string): Promise<{
+  root: string;
+  nested: StoNestedPackage[];
+} | null> {
+  const stoRoot = 'projects/active/sports-terminal-os';
+  if (!(await Bun.file(joinPath(root, stoRoot, 'package.json')).exists())) return null;
+  const nested: StoNestedPackage[] = [];
+  for await (const m of new Glob(stoRoot + '/**/package.json').scan({
+    cwd: root,
+    onlyFiles: true,
+  })) {
+    const rel = m.replace(RE_BACKSLASH, '/');
+    if (rel === stoRoot + '/package.json') continue;
+    // skip node_modules
+    if (rel.includes('/node_modules/')) continue;
+    const dir = rel.replace(RE_PKG_JSON_SUFFIX, '');
+    let name = dir.split('/').pop() ?? dir;
+    let version: string | undefined;
+    try {
+      const j = (await Bun.file(joinPath(root, m)).json()) as {
+        name?: string;
+        version?: string;
+      };
+      if (j.name) name = j.name;
+      if (j.version) version = j.version;
+    } catch {
+      /* ignore */
+    }
+    nested.push({ path: dir, name, version });
+  }
+  return {
+    root: stoRoot,
+    nested: nested.sort((a, b) => a.path.localeCompare(b.path)),
+  };
+}
+
+export async function discoverThemeInventory(root: string): Promise<ThemeInventory> {
+  const jsoncPath = joinPath(root, 'public/portal/theme.jsonc');
+  const jsonc = await Bun.file(jsoncPath).exists();
+  const tokensCss = await Bun.file(joinPath(root, 'public/portal/theme-tokens.css')).exists();
+  const styleCss = await Bun.file(joinPath(root, 'public/portal/style.css')).exists();
+  const inv: ThemeInventory = {
+    jsonc,
+    tokensCss,
+    styleCss,
+    darkTokenCount: 0,
+    lightTokenCount: 0,
+    fontKeys: [],
+    layoutKeys: [],
+  };
+  if (!jsonc) return inv;
+  try {
+    // Bun native jsonc import path via file read + JSONC strip is fragile;
+    // use Bun.JSONC if available else dynamic import.
+    let theme: {
+      version?: string;
+      colorSchemeDefault?: string;
+      dark?: Record<string, unknown>;
+      light?: Record<string, unknown>;
+      fonts?: Record<string, unknown>;
+      layout?: Record<string, unknown>;
+    };
+    try {
+      theme = (await import(jsoncPath)).default as typeof theme;
+    } catch {
+      // fallback: strip // comments lightly
+      const raw = await Bun.file(jsoncPath).text();
+      const stripped = raw
+        .split('\n')
+        .map(line => {
+          const t = line.trim();
+          if (t.startsWith('//')) return '';
+          return line;
+        })
+        .join('\n');
+      theme = JSON.parse(stripped) as typeof theme;
+    }
+    inv.version = theme.version;
+    inv.colorSchemeDefault = theme.colorSchemeDefault;
+    inv.darkTokenCount = theme.dark ? Object.keys(theme.dark).length : 0;
+    inv.lightTokenCount = theme.light ? Object.keys(theme.light).length : 0;
+    inv.fontKeys = theme.fonts ? Object.keys(theme.fonts).sort() : [];
+    inv.layoutKeys = theme.layout ? Object.keys(theme.layout).sort() : [];
+  } catch {
+    /* leave zeros */
+  }
+  return inv;
+}
+
 /** Build full multi-surface inventory for bake + CLI. */
 export async function buildMonorepoSurfaces(
   root: string,
   generatedAt = new Date().toISOString()
 ): Promise<MonorepoSurfaces> {
-  const [workspaces, packagesGraphDirs, pages, modules, chromeComponents, brand, registry] =
-    await Promise.all([
-      discoverWorkspaceMembers(root),
-      discoverPackagesGraphDirs(root),
-      discoverPortalPages(root),
-      discoverPortalModules(root),
-      loadChromeComponents(root),
-      discoverBrandAssets(root),
-      discoverRegistryArtifacts(root),
-    ]);
+  const [
+    workspaces,
+    packagesGraphDirs,
+    pages,
+    modules,
+    chromeRaw,
+    brand,
+    registry,
+    portalRefs,
+    libPlane,
+    sto,
+    theme,
+  ] = await Promise.all([
+    discoverWorkspaceMembers(root),
+    discoverPackagesGraphDirs(root),
+    discoverPortalPages(root),
+    discoverPortalModules(root),
+    loadChromeComponents(root),
+    discoverBrandAssets(root),
+    discoverRegistryArtifacts(root),
+    discoverPortalRegistryRefs(root),
+    discoverLibPlane(root),
+    discoverStoNested(root),
+    discoverThemeInventory(root),
+  ]);
 
   const packagesPlane = workspaces.filter(w => w.plane === 'packages').length;
   const otherWorkspaces = workspaces.length - packagesPlane;
 
-  const theme = {
-    jsonc: await Bun.file(joinPath(root, 'public/portal/theme.jsonc')).exists(),
-    tokensCss: await Bun.file(joinPath(root, 'public/portal/theme-tokens.css')).exists(),
-    styleCss: await Bun.file(joinPath(root, 'public/portal/style.css')).exists(),
-  };
+  // Chrome onDisk check
+  const chromeComponents = await Promise.all(
+    chromeRaw.map(async c => {
+      const disk = joinPath(root, webPathToPublicRel(c.path));
+      return { ...c, onDisk: await Bun.file(disk).exists() };
+    })
+  );
+
+  const modulesByKind: Record<string, number> = {};
+  for (const m of modules) {
+    modulesByKind[m.kind] = (modulesByKind[m.kind] ?? 0) + 1;
+  }
+
+  const byFamilyMap = new Map<RegistryFamily, number>();
+  for (const a of registry.topLevel) {
+    byFamilyMap.set(a.family, (byFamilyMap.get(a.family) ?? 0) + 1);
+  }
+  const byFamily = [...byFamilyMap.entries()]
+    .map(([family, count]) => ({ family, count }))
+    .sort((a, b) => b.count - a.count || a.family.localeCompare(b.family));
+
+  const topFiles = new Set(registry.topLevel.map(a => a.file));
+  const referencedTop = new Set(
+    portalRefs.map(r => r.path.replace(/^\/registry\//, '')).filter(f => !f.includes('/'))
+  );
+  const orphanFromPortal = [...topFiles].filter(f => !referencedTop.has(f)).sort();
 
   const brandTenantNote = brand.tenants.length > 0 ? brand.tenants.join(', ') : '(none)';
+  const familyNote = byFamily
+    .slice(0, 6)
+    .map(x => x.family + '=' + x.count)
+    .join(' · ');
 
   const surfaces: MonorepoSurfaces = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     kind: 'monorepo-surfaces',
     generatedAt,
     summary: {
@@ -421,6 +836,12 @@ export async function buildMonorepoSurfaces(
       brandAssets: brand.assets.length,
       registryTopLevelJson: registry.topLevel.length,
       registryStoragePackages: registry.storagePackageNames.length,
+      libTopLevelDirs: libPlane.dirs.length,
+      stoNestedPackages: sto?.nested.length ?? 0,
+      portalRegistryRefs: portalRefs.length,
+      registryOrphanFromPortal: orphanFromPortal.length,
+      registryFamilyCount: byFamily.length,
+      themeDarkTokens: theme.darkTokenCount,
     },
     workspaces,
     packagesGraphDirs,
@@ -429,6 +850,7 @@ export async function buildMonorepoSurfaces(
       modules,
       chromeComponents,
       theme,
+      modulesByKind,
     },
     brand: {
       tenants: brand.tenants,
@@ -438,7 +860,12 @@ export async function buildMonorepoSurfaces(
       topLevel: registry.topLevel,
       storagePackageNames: registry.storagePackageNames,
       scopedLatest: registry.scopedLatest,
+      byFamily,
+      portalRefs,
+      orphanFromPortal,
     },
+    libPlane,
+    sto: sto ?? undefined,
     planes: [
       {
         id: 'packages-graph',
@@ -455,18 +882,36 @@ export async function buildMonorepoSurfaces(
         note: 'packages/* + sports-terminal-os + lib/* — see bun pm ls',
       },
       {
+        id: 'lib-plane',
+        label: 'lib/ top-level dirs',
+        count: libPlane.dirs.length,
+        note:
+          'interior modules; workspace package only lib/shared · shared=' +
+          (libPlane.workspaceShared ? 'yes' : 'no'),
+      },
+      {
+        id: 'sto-nested',
+        label: 'STO nested package.json',
+        count: sto?.nested.length ?? 0,
+        note: 'under projects/active/sports-terminal-os (not packages/* graph)',
+      },
+      {
         id: 'portal-pages',
         label: 'portal HTML pages',
         count: pages.length,
         portal: '/portal/',
-        note: 'public/portal/*/index.html shells',
+        note: 'public/portal/*/index.html shells + script src inventory',
       },
       {
         id: 'portal-chrome',
         label: 'portal chrome components',
         count: chromeComponents.length,
         bake: '/registry/portal-chrome.json',
-        note: 'nav + shared modules SSOT · portal:chrome:bake',
+        note:
+          'nav + shared modules SSOT · onDisk=' +
+          chromeComponents.filter(c => c.onDisk).length +
+          '/' +
+          chromeComponents.length,
       },
       {
         id: 'portal-modules',
@@ -478,14 +923,26 @@ export async function buildMonorepoSurfaces(
         id: 'brand',
         label: 'brand + tenant icons',
         count: brand.assets.length,
-        note: 'tenants: ' + brandTenantNote + ' · public/icons · public/brand',
+        note:
+          'tenants: ' +
+          brandTenantNote +
+          ' · theme darkTokens=' +
+          theme.darkTokenCount +
+          ' fonts=' +
+          theme.fontKeys.join(','),
       },
       {
         id: 'registry-bake',
         label: 'registry top-level JSON',
         count: registry.topLevel.length,
         bake: '/registry/',
-        note: 'ops/proof/health bakes — not npm package deps',
+        note: 'families: ' + (familyNote || '—') + ' · not npm package deps',
+      },
+      {
+        id: 'registry-portal-refs',
+        label: 'portal → registry refs',
+        count: portalRefs.length,
+        note: 'unique /registry/*.json from portal JS/HTML · orphanTop=' + orphanFromPortal.length,
       },
       {
         id: 'registry-storage',

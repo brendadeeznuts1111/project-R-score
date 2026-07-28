@@ -976,7 +976,7 @@ export async function runPackagesMetafileAudit(opts?: {
     try {
       surfaces = await buildMonorepoSurfaces(ROOT);
       notes.push(
-        `Surfaces: workspaces=${surfaces.summary.workspaceMembers} (packagesPlane=${surfaces.summary.packagesPlane}+other=${surfaces.summary.otherWorkspaces}) · portalPages=${surfaces.summary.portalPages} · chrome=${surfaces.summary.chromeComponents} · brand=${surfaces.summary.brandAssets} · registryJson=${surfaces.summary.registryTopLevelJson} · storagePkgs=${surfaces.summary.registryStoragePackages}`
+        `Surfaces v${surfaces.schemaVersion}: workspaces=${surfaces.summary.workspaceMembers} (packagesPlane=${surfaces.summary.packagesPlane}+other=${surfaces.summary.otherWorkspaces}) · libDirs=${surfaces.summary.libTopLevelDirs ?? '—'} · stoNested=${surfaces.summary.stoNestedPackages ?? '—'} · portalPages=${surfaces.summary.portalPages} · chrome=${surfaces.summary.chromeComponents} · brand=${surfaces.summary.brandAssets} · registryJson=${surfaces.summary.registryTopLevelJson} · regRefs=${surfaces.summary.portalRegistryRefs ?? '—'} · regOrphan=${surfaces.summary.registryOrphanFromPortal ?? '—'} · themeDark=${surfaces.summary.themeDarkTokens ?? '—'} · storagePkgs=${surfaces.summary.registryStoragePackages}`
       );
     } catch (e) {
       notes.push(`Surfaces: discovery failed — ${e instanceof Error ? e.message : String(e)}`);

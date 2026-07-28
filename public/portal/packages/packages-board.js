@@ -699,10 +699,19 @@ export function renderPackagesBoard(data, doc = document) {
   const chromeList = doc.getElementById('chrome-list');
   if (surfaces?.summary && surfacesMeta) {
     const s = surfaces.summary;
-    surfacesMeta.textContent = `workspaces=${s.workspaceMembers ?? '—'} (graph=${s.packagesPlane ?? '—'}+other=${s.otherWorkspaces ?? '—'}) · portalPages=${s.portalPages ?? '—'} · chrome=${s.chromeComponents ?? '—'} · brand=${s.brandAssets ?? '—'} · registryJson=${s.registryTopLevelJson ?? '—'} · storagePkgs=${s.registryStoragePackages ?? '—'}`;
+    const v2bits = [
+      s.libTopLevelDirs != null ? `libDirs=${s.libTopLevelDirs}` : null,
+      s.stoNestedPackages != null ? `stoNested=${s.stoNestedPackages}` : null,
+      s.portalRegistryRefs != null ? `regRefs=${s.portalRegistryRefs}` : null,
+      s.registryOrphanFromPortal != null ? `regOrphan=${s.registryOrphanFromPortal}` : null,
+      s.themeDarkTokens != null ? `themeDark=${s.themeDarkTokens}` : null,
+    ]
+      .filter(Boolean)
+      .join(' · ');
+    surfacesMeta.textContent = `workspaces=${s.workspaceMembers ?? '—'} (graph=${s.packagesPlane ?? '—'}+other=${s.otherWorkspaces ?? '—'}) · portalPages=${s.portalPages ?? '—'} · chrome=${s.chromeComponents ?? '—'} · brand=${s.brandAssets ?? '—'} · registryJson=${s.registryTopLevelJson ?? '—'} · storagePkgs=${s.registryStoragePackages ?? '—'}${v2bits ? ` · ${v2bits}` : ''}`;
   } else if (surfacesMeta) {
     surfacesMeta.textContent =
-      'No surfaces block — rebake: bun run audit:packages -- --bake (schema v13)';
+      'No surfaces block — rebake: bun run audit:packages -- --bake (schema v13+)';
   }
   if (surfacesList) {
     const planes = Array.isArray(surfaces?.planes) ? surfaces.planes : [];
@@ -717,32 +726,50 @@ export function renderPackagesBoard(data, doc = document) {
   }
   if (workspaceList) {
     const ws = Array.isArray(surfaces?.workspaces) ? surfaces.workspaces : [];
-    workspaceList.innerHTML = ws.length
+    const libDirs = Array.isArray(surfaces?.libPlane?.dirs) ? surfaces.libPlane.dirs : [];
+    const stoNested = Array.isArray(surfaces?.sto?.nested) ? surfaces.sto.nested : [];
+    const wsHtml = ws.length
       ? ws
           .map(
             w =>
               `<li><code>${escapeHtml(w.path)}</code> · ${escapeHtml(w.name || '')} · plane=${escapeHtml(w.plane || '')}${w.inPackagesGraph ? ' · inGraph' : ''}</li>`
           )
           .join('')
-      : '<li>—</li>';
+      : '';
+    const libHtml = libDirs.length
+      ? `<li class="surfaces-lib"><strong>lib/</strong> dirs=${libDirs.length} (workspace pkg only shared) · heavy: ${[...libDirs]
+          .sort((a, b) => (b.tsFiles || 0) - (a.tsFiles || 0))
+          .slice(0, 6)
+          .map(d => `${escapeHtml(d.name)}(${d.tsFiles || 0})`)
+          .join(', ')}</li>`
+      : '';
+    const stoHtml = stoNested.length
+      ? `<li class="surfaces-sto"><strong>STO nested</strong>: ${stoNested.map(n => `<code>${escapeHtml(n.name || n.path)}</code>`).join(', ')}</li>`
+      : '';
+    workspaceList.innerHTML = wsHtml + libHtml + stoHtml || '<li>—</li>';
   }
   if (chromeList) {
     const chrome = Array.isArray(surfaces?.portal?.chromeComponents)
       ? surfaces.portal.chromeComponents
       : [];
     const brandTenants = Array.isArray(surfaces?.brand?.tenants) ? surfaces.brand.tenants : [];
+    const byFamily = Array.isArray(surfaces?.registry?.byFamily) ? surfaces.registry.byFamily : [];
     const chromeHtml = chrome.length
       ? chrome
-          .map(
-            c =>
-              `<li><code>${escapeHtml(c.id)}</code> · ${escapeHtml(c.kind || 'module')} · ${escapeHtml(c.path || '')}</li>`
-          )
+          .map(c => {
+            const disk =
+              c.onDisk === false ? ' · <span class="grade-critical">missing</span>' : '';
+            return `<li><code>${escapeHtml(c.id)}</code> · ${escapeHtml(c.kind || 'module')} · ${escapeHtml(c.path || '')}${disk}</li>`;
+          })
           .join('')
       : '<li>No chrome components (portal-chrome bake missing?)</li>';
     const brandHtml = brandTenants.length
-      ? `<li class="surfaces-brand">brand tenants: ${brandTenants.map(escapeHtml).join(', ')} · assets=${surfaces?.brand?.assets?.length ?? 0}</li>`
+      ? `<li class="surfaces-brand">brand tenants: ${brandTenants.map(escapeHtml).join(', ')} · assets=${surfaces?.brand?.assets?.length ?? 0}${surfaces?.portal?.theme?.darkTokenCount != null ? ` · theme darkTokens=${surfaces.portal.theme.darkTokenCount}` : ''}</li>`
       : '';
-    chromeList.innerHTML = chromeHtml + brandHtml;
+    const familyHtml = byFamily.length
+      ? `<li class="surfaces-family">registry families: ${byFamily.map(f => `${escapeHtml(f.family)}=${f.count}`).join(' · ')}</li>`
+      : '';
+    chromeList.innerHTML = chromeHtml + brandHtml + familyHtml;
   }
 
   const body = doc.getElementById('pkg-body');

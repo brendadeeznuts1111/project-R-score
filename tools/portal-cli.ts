@@ -347,6 +347,11 @@ async function printPackagesGraphTable(): Promise<void> {
     const top = surfaces.registry.topLevel ?? [];
     const storage = surfaces.registry.storagePackageNames ?? [];
     const scoped = surfaces.registry.scopedLatest ?? [];
+    const reg = surfaces.registry as {
+      byFamily?: Array<{ family: string; count: number }>;
+      portalRefs?: Array<{ path: string; from: string[]; exists: boolean }>;
+      orphanFromPortal?: string[];
+    };
     console.log('\n── registry bake plane ──');
     console.log(
       'topLevelJson=' +
@@ -354,23 +359,104 @@ async function printPackagesGraphTable(): Promise<void> {
         '  storagePackages=' +
         storage.length +
         '  scopedLatest=' +
-        scoped.length
+        scoped.length +
+        '  portalRefs=' +
+        (reg.portalRefs?.length ?? 0) +
+        '  orphanFromPortal=' +
+        (reg.orphanFromPortal?.length ?? 0)
     );
-    const byKind = new Map<string, number>();
-    for (const a of top) {
-      const k = a.kind ?? '(no-kind)';
-      byKind.set(k, (byKind.get(k) ?? 0) + 1);
+    if (reg.byFamily?.length) {
+      logTable(
+        reg.byFamily.map(r => ({ family: r.family, count: r.count })),
+        ['family', 'count']
+      );
+    } else {
+      const byKind = new Map<string, number>();
+      for (const a of top) {
+        const k = a.kind ?? '(no-kind)';
+        byKind.set(k, (byKind.get(k) ?? 0) + 1);
+      }
+      const kindRows = [...byKind.entries()]
+        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+        .map(([kind, n]) => ({ kind, count: n }));
+      if (kindRows.length) logTable(kindRows.slice(0, 20), ['kind', 'count']);
     }
-    const kindRows = [...byKind.entries()]
-      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-      .map(([kind, n]) => ({ kind, count: n }));
-    if (kindRows.length) {
-      logTable(kindRows.slice(0, 20), ['kind', 'count']);
-      if (kindRows.length > 20) console.log('  … +' + (kindRows.length - 20) + ' more kinds');
+    if (reg.portalRefs?.length) {
+      const topRefs = [...reg.portalRefs].sort((a, b) => b.from.length - a.from.length).slice(0, 8);
+      console.log('top portal->registry refs:');
+      for (const r of topRefs) {
+        console.log('  · ' + r.path + '  x' + r.from.length + (r.exists ? '' : '  MISSING'));
+      }
     }
-    if (storage.length) {
-      console.log('storage: ' + storage.join(', '));
+    if (reg.orphanFromPortal?.length) {
+      const show = reg.orphanFromPortal.slice(0, 12);
+      console.log(
+        'orphan top-level (not referenced from portal): ' +
+          show.join(', ') +
+          (reg.orphanFromPortal.length > 12 ? ' ... +' + (reg.orphanFromPortal.length - 12) : '')
+      );
     }
+    if (storage.length) console.log('storage: ' + storage.join(', '));
+  }
+
+  const deep = surfaces as
+    | {
+        libPlane?: {
+          dirs?: Array<{ name: string; hasPackageJson: boolean; tsFiles: number }>;
+          workspaceShared?: boolean;
+        };
+        sto?: { nested?: Array<{ path: string; name: string }> };
+      }
+    | undefined;
+  if (deep?.libPlane?.dirs?.length) {
+    console.log('\n── lib/ plane (interior modules) ──');
+    console.log(
+      'dirs=' +
+        deep.libPlane.dirs.length +
+        '  workspaceShared=' +
+        (deep.libPlane.workspaceShared ? 'yes' : 'no')
+    );
+    const heavy = [...deep.libPlane.dirs].sort((a, b) => b.tsFiles - a.tsFiles).slice(0, 10);
+    logTable(
+      heavy.map(d => ({
+        dir: d.name,
+        ts: d.tsFiles,
+        pkg: d.hasPackageJson ? 'yes' : 'no',
+      })),
+      ['dir', 'ts', 'pkg']
+    );
+  }
+  if (deep?.sto?.nested?.length) {
+    console.log('\n── sports-terminal-os nested packages ──');
+    logTable(
+      deep.sto.nested.map(n => ({ path: n.path, name: n.name })),
+      ['path', 'name']
+    );
+  }
+
+  const themeDeep = surfaces?.portal?.theme as
+    | {
+        darkTokenCount?: number;
+        lightTokenCount?: number;
+        fontKeys?: string[];
+        version?: string;
+        colorSchemeDefault?: string;
+      }
+    | undefined;
+  if (themeDeep && (themeDeep.darkTokenCount || themeDeep.fontKeys?.length)) {
+    console.log('\n── brand theme tokens ──');
+    console.log(
+      'version=' +
+        (themeDeep.version ?? '?') +
+        '  scheme=' +
+        (themeDeep.colorSchemeDefault ?? '?') +
+        '  dark=' +
+        (themeDeep.darkTokenCount ?? 0) +
+        '  light=' +
+        (themeDeep.lightTokenCount ?? 0) +
+        '  fonts=' +
+        (themeDeep.fontKeys?.join(',') ?? '-')
+    );
   }
 
   console.log('\nRebake: bun run audit:packages -- --bake');
