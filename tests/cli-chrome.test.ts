@@ -3,14 +3,42 @@
 // @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
 import { describe, expect, test } from 'bun:test';
 import {
+  cliTone,
   columnTable,
   displayWidth,
   frameBlock,
   padDisplay,
   truncateDisplay,
 } from '../lib/portal/cli-chrome.ts';
+import {
+  doctorUsesPlainFormat,
+  formatPortalDoctorPlain,
+  formatPortalDoctorPretty,
+} from '../tools/lib/portal-cli-doctor.ts';
 
 describe('cli-chrome · Bun.stringWidth layout', () => {
+  test('cliTone is plain when NO_COLOR (shouldColor false)', () => {
+    const prev = Bun.env.NO_COLOR;
+    const prevForce = Bun.env.FORCE_COLOR;
+    Bun.env.NO_COLOR = '1';
+    delete Bun.env.FORCE_COLOR;
+    try {
+      expect(cliTone.ok('OK')).toBe('OK');
+      expect(cliTone.ok('OK')).not.toContain('\x1b[');
+    } finally {
+      if (prev === undefined) delete Bun.env.NO_COLOR;
+      else Bun.env.NO_COLOR = prev;
+      if (prevForce === undefined) delete Bun.env.FORCE_COLOR;
+      else Bun.env.FORCE_COLOR = prevForce;
+    }
+  });
+
+  test('doctor plain vs pretty format selection', () => {
+    expect(doctorUsesPlainFormat({ PORTAL_DOCTOR_FORMAT: 'plain' })).toBe(true);
+    expect(doctorUsesPlainFormat({ PORTAL_DOCTOR_FORMAT: 'pretty' })).toBe(false);
+    expect(doctorUsesPlainFormat({ CI: 'true' })).toBe(true);
+  });
+
   test('displayWidth ignores ANSI escape codes', () => {
     expect(displayWidth('OK')).toBe(2);
     expect(displayWidth('\u001b[31mOK\u001b[0m')).toBe(2);

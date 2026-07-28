@@ -2,14 +2,25 @@
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/utils#bun-stripansi — Bun.stripANSI
 // @see https://bun.com/docs/runtime/utils#bun-wrapansi — Bun.wrapAnsi
+// @see https://bun.com/docs/runtime/environment-variables#configuring-bun — NO_COLOR / FORCE_COLOR
 /**
- * Bun-native CLI chrome: ANSI-aware layout via Bun.stringWidth (not String.length).
- * Used by capabilities doctor, check:snapshots, and related portal CLI.
+ * Bun-native CLI chrome: layout via Bun.stringWidth / wrapAnsi / stripANSI;
+ * color via Bun.color gated by shouldColor() (console-depth SSOT).
+ *
+ * Never emit ANSI when piped, CI, or NO_COLOR — same contract as logDepth/colorize.
  */
+import { shouldColor } from '../console-depth.ts';
+
 const RESET = '\x1b[0m';
 
+/**
+ * Color text with Bun.color when TTY allows it.
+ * Uses "ansi" first (docs: auto-detects terminal depth, returns "" when none).
+ * @see https://bun.com/docs/runtime/color
+ */
 function ansi(hex: string, text: string): string {
-  const code = Bun.color(hex, 'ansi-16m') || Bun.color(hex, 'ansi') || '';
+  if (!shouldColor()) return text;
+  const code = Bun.color(hex, 'ansi') || Bun.color(hex, 'ansi-256') || '';
   return code ? `${code}${text}${RESET}` : text;
 }
 
@@ -19,12 +30,13 @@ export const cliTone = {
   warn: (s: string) => ansi('#d29922', s),
   dim: (s: string) => ansi('#8b949e', s),
   accent: (s: string) => ansi('#58a6ff', s),
-  bold: (s: string) => `\x1b[1m${s}${RESET}`,
+  bold: (s: string) => (shouldColor() ? `\x1b[1m${s}${RESET}` : s),
 } as const;
 
 /**
  * Terminal column width. Bun.stringWidth ignores ANSI by default and handles
  * emoji / wide Unicode — use this, never s.length, for layout.
+ * @see https://bun.com/docs/runtime/utils#bun-stringwidth
  */
 export function displayWidth(s: string): number {
   return Bun.stringWidth(s);
@@ -40,13 +52,13 @@ export function padDisplay(s: string, width: number, align: 'left' | 'right' = '
 
 /**
  * Truncate to max visible columns, appending "…" when needed.
- * Works on plain or ANSI strings (measures with stringWidth).
+ * @see https://bun.com/docs/runtime/utils#bun-stripansi
+ * @see https://bun.com/docs/runtime/utils#bun-stringwidth
  */
 export function truncateDisplay(s: string, max: number): string {
   if (max <= 0) return '';
   if (displayWidth(s) <= max) return s;
   if (max === 1) return '…';
-  // Build from stripped text so we don't split mid-escape; re-dim if original was dimmed.
   const plain = Bun.stripANSI(s);
   let out = '';
   for (const ch of plain) {
@@ -67,8 +79,8 @@ export function kvLines(
 }
 
 /**
- * Fixed-column table using Bun.stringWidth (cleaner than inspect.table for short CLI).
- * Headers + rows; each cell truncated to column max.
+ * Fixed-column table using Bun.stringWidth.
+ * @see https://bun.com/docs/runtime/utils#bun-stringwidth
  */
 export function columnTable(
   headers: readonly string[],
@@ -85,7 +97,6 @@ export function columnTable(
       for (const row of rows) {
         m = Math.max(m, displayWidth(String(row[i] ?? '')));
       }
-      // Cap wide columns so doctor fits in ~80 cols
       return Math.min(m, i === 0 ? 28 : 16);
     });
 
@@ -107,10 +118,8 @@ export function columnTable(
 }
 
 /**
- * Framed block:
- *   ╭ title ──────────── status ╮
- *   │ body…                     │
- *   ╰───────────────────────────╯
+ * Framed block (box-drawing + stringWidth padding).
+ * @see https://bun.com/docs/runtime/utils#bun-wrapansi
  */
 export function frameBlock(
   title: string,
@@ -132,7 +141,6 @@ export function frameBlock(
   const topInner = width - 2;
   const titlePart = ` ${cliTone.accent(title)} `;
   const statusPart = statusText ? ` ${statusText} ` : '';
-  // stringWidth already ignores ANSI escape width by default
   const titleW = displayWidth(titlePart);
   const statusW = displayWidth(statusPart);
   const dash = Math.max(1, topInner - titleW - statusW);
