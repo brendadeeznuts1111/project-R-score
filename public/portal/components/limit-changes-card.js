@@ -139,7 +139,7 @@ export class LimitChangesCard extends HTMLElement {
     `;
 
     // Table
-    const headers = ['Dir', 'Book', 'Sport', 'Market', 'Type', 'Old', 'New', '±$', isCompact ? '' : 'Score', 'When'].filter(Boolean);
+    const headers = ['Dir', 'Book', 'Sport', 'Market', 'Type', 'Old', 'New', '±$', isCompact ? '' : 'Score', isCompact ? '' : '🔮', 'When'].filter(Boolean);
     this.shadowRoot.getElementById('lcc-table-wrap').innerHTML = `
       <table class="lcc-table">
         <thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
@@ -152,7 +152,9 @@ export class LimitChangesCard extends HTMLElement {
             ? `${c.new_limit >= c.previous_max ? '+' : ''}$${(c.new_limit - c.previous_max).toLocaleString()}`
             : '—';
           const score = c.multi_factor_score;
+          const predRaise = c.predicted_raise_prob;
           const scoreCell = isCompact ? '' : `<td>${score != null ? `<div class="lcc-score-bar" style="width:${score * 100}%"></div> ${(score * 100).toFixed(0)}%` : '···'}</td>`;
+          const predCell = isCompact ? '' : `<td>${predRaise != null ? `<div class="lcc-score-bar" style="width:${predRaise * 100}%"></div> ${(predRaise * 100).toFixed(0)}%` : '—'}</td>`;
           const when = c.increased_at != null ? new Date(c.increased_at * 1000).toLocaleDateString() : '—';
           return `<tr>
             <td class="${dirCls}">${dir}</td>
@@ -164,6 +166,7 @@ export class LimitChangesCard extends HTMLElement {
             <td><strong>${newVal}</strong></td>
             <td>${delta}</td>
             ${scoreCell}
+            ${predCell}
             <td>${when}</td>
           </tr>`;
         }).join('')}</tbody>

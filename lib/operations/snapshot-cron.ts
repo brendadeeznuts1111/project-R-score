@@ -175,6 +175,23 @@ export async function runOpsSnapshotCycle(
     if (limitResult.recorded > 0) {
       console.log(`[${OPS_SNAPSHOT_CRON_TITLE}] recorded ${limitResult.recorded} limit baselines`);
     }
+    // Limit prediction cycle
+    try {
+      const { runLimitPredictionCycle } = await import('../prediction/limit-prediction.ts');
+      const predDb = openOperationsDb();
+      const predResult = runLimitPredictionCycle(predDb);
+      predDb.close();
+      if (predResult.predictions > 0) {
+        console.log(
+          `[${OPS_SNAPSHOT_CRON_TITLE}] limit predictions: ${predResult.predictions} new, ${predResult.backfilled} backfilled`
+        );
+      }
+    } catch (e) {
+      console.warn(
+        `[${OPS_SNAPSHOT_CRON_TITLE}] limit prediction cycle skipped:`,
+        e instanceof Error ? e.message : e
+      );
+    }
     const summary = await buildRegistrySnapshot({
       withRouting: opts.withRouting ?? true,
       withReport: opts.withReport ?? true,
