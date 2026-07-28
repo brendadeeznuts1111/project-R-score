@@ -12,6 +12,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { IdentitySystem } from '../lib/identity/identity.ts';
+import { impersonate } from '../lib/identity/impersonate.ts';
 import { getTimeline, TIMELINE_ACTIONS } from '../lib/identity/timeline.ts';
 import { asTreeNodeId, type TreeNodeId } from '../lib/types/branded.ts';
 
@@ -54,14 +55,7 @@ describe('identity-timeline', () => {
     await identity.login('timeline-agent', 'wrong password').catch(() => {}); // login_failed
     identity.lockAccount('timeline-agent', 'test lock', 3600);
     identity.unlockAccount(adminNodeId, 'timeline-agent');
-    // Column is stamped for the audit trail; details mirror makes it visible
-    // through auditFor (which does not map the impersonator_id column).
-    identity.logAuthEvent({
-      nodeId,
-      action: 'impersonation_start',
-      details: { impersonatorId: adminNodeId },
-      impersonatorId: adminNodeId,
-    });
+    await impersonate(identity, adminNodeId, nodeId);
   }
 
   beforeEach(async () => {
@@ -72,7 +66,7 @@ describe('identity-timeline', () => {
     seedTreeNode(nodeId, 'Timeline Agent');
     seedTreeNode(adminNodeId, 'Timeline Admin');
     identity = new IdentitySystem(undefined, dbPath);
-    await identity.createAlias(adminNodeId, 'timeline-admin', PASSWORD, 'admin');
+    await identity.createAlias(adminNodeId, 'timeline-admin', PASSWORD, 'superadmin');
     await seedEvents();
   });
 
@@ -97,7 +91,7 @@ describe('identity-timeline', () => {
     }
     const failed = events.find(e => e.action === 'login_failed');
     expect(failed!.success).toBe(false);
-    expect(failed!.nodeId).toBe(nodeId as string);
+    expect(failed!.nodeId).toBe(nodeId);
     expect(failed!.details).toMatchObject({ slug: 'timeline-agent' });
   });
 
@@ -157,10 +151,10 @@ describe('identity-timeline', () => {
     expect(zero.length).toBe(1); // clamped up to 1
   });
 
-  test('impersonatorId passes through from the audit entry', () => {
+  test('real impersonation carries the audit-column impersonatorId into the timeline', () => {
     const events = getTimeline(identity, nodeId, { actions: ['impersonation_start'] });
     expect(events.length).toBe(1);
-    expect(events[0]!.impersonatorId).toBe(adminNodeId as string);
+    expect(events[0]!.impersonatorId).toBe(adminNodeId);
 
     // Non-impersonated events carry no impersonatorId.
     const login = getTimeline(identity, nodeId, { actions: ['login_success'] });
@@ -174,17 +168,20 @@ describe('identity-timeline', () => {
     expect(TIMELINE_ACTIONS).toContain('login_blocked_anomaly');
     expect(TIMELINE_ACTIONS).toContain('login_blocked_geo');
     expect(TIMELINE_ACTIONS).toContain('login_blocked_ip');
+    expect(TIMELINE_ACTIONS).toContain('login_suspicious');
     expect(TIMELINE_ACTIONS).toContain('logout');
     expect(TIMELINE_ACTIONS).toContain('account_locked');
     expect(TIMELINE_ACTIONS).toContain('account_unlocked');
     expect(TIMELINE_ACTIONS).toContain('impersonation_start');
     expect(TIMELINE_ACTIONS).toContain('impersonation_end');
     expect(TIMELINE_ACTIONS).toContain('alias_created');
+    expect(TIMELINE_ACTIONS).toContain('password_change_failed');
     expect(TIMELINE_ACTIONS).toContain('password_changed');
     expect(TIMELINE_ACTIONS).toContain('device_trusted');
     expect(TIMELINE_ACTIONS).toContain('device_untrusted');
     expect(TIMELINE_ACTIONS).toContain('ip_allowlist_updated');
     expect(TIMELINE_ACTIONS).toContain('jit_provision');
+    expect(TIMELINE_ACTIONS).toContain('session_revoked');
     expect(TIMELINE_ACTIONS).toContain('sessions_revoked');
     expect(new Set(TIMELINE_ACTIONS).size).toBe(TIMELINE_ACTIONS.length);
   });

@@ -10,15 +10,12 @@
  * range / success filters down into SQL in identity.ts instead of widening
  * the client-side fetch.
  *
- * impersonatorId passthrough: `auditFor` currently maps audit rows WITHOUT
- * the impersonator_id column. The timeline therefore reads it from (1) an
- * `impersonatorId` field on the entry, should AuthAuditEntry gain one, then
- * (2) `details.impersonatorId` — the channel visible through the public API
- * today (impersonate.ts stamps the column; callers that want it in the
- * timeline also mirror it into details).
+ * impersonatorId passthrough: `auditFor` maps the audit row's
+ * `impersonator_id` column to a branded `TreeNodeId`; the timeline exposes
+ * that value without relying on mutable details JSON.
  */
 
-import { asTreeNodeId, type IdentityId, type TreeNodeId } from '../types/branded.ts';
+import type { IdentityId, TreeNodeId } from '../types/branded.ts';
 import type { AuthAuditEntry, IdentitySystem } from './identity.ts';
 
 export interface TimelineEvent {
@@ -67,6 +64,7 @@ export const TIMELINE_ACTIONS = [
   'login_blocked_anomaly',
   'login_blocked_geo',
   'login_blocked_ip',
+  'login_suspicious',
   'logout',
   // admin
   'account_locked',
@@ -75,11 +73,13 @@ export const TIMELINE_ACTIONS = [
   'impersonation_end',
   'alias_created',
   // security
+  'password_change_failed',
   'password_changed',
   'device_trusted',
   'device_untrusted',
   'ip_allowlist_updated',
   'jit_provision',
+  'session_revoked',
   'sessions_revoked',
 ] as const;
 
@@ -87,15 +87,6 @@ export type TimelineAction = (typeof TIMELINE_ACTIONS)[number];
 
 function clampLimit(limit: number | undefined): number {
   return Math.max(1, Math.min(limit ?? DEFAULT_LIMIT, AUDIT_FETCH_CAP));
-}
-
-function extractImpersonatorId(entry: AuthAuditEntry): TreeNodeId | undefined {
-  // Future-proof: if AuthAuditEntry gains the field, prefer it.
-  const onEntry = (entry as AuthAuditEntry & { impersonatorId?: string | null }).impersonatorId; // brand-ok — optional wire field before asTreeNodeId
-  if (typeof onEntry === 'string' && onEntry.length > 0) return asTreeNodeId(onEntry);
-  const inDetails = entry.details?.impersonatorId;
-  if (typeof inDetails === 'string' && inDetails.length > 0) return asTreeNodeId(inDetails);
-  return undefined;
 }
 
 function toTimelineEvent(entry: AuthAuditEntry): TimelineEvent {
@@ -108,8 +99,7 @@ function toTimelineEvent(entry: AuthAuditEntry): TimelineEvent {
     success: entry.success,
     createdAt: entry.createdAt,
   };
-  const impersonatorId = extractImpersonatorId(entry);
-  if (impersonatorId !== undefined) event.impersonatorId = impersonatorId;
+  if (entry.impersonatorId !== null) event.impersonatorId = entry.impersonatorId;
   return event;
 }
 

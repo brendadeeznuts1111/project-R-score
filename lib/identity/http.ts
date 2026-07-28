@@ -273,6 +273,9 @@ export function createIdentityHandler(
       const tokenId = asTokenId(token);
       const session = identity.resolveSession(tokenId);
       if (!session) return jsonError(401, 'Invalid or expired session');
+      if (session.impersonatorId !== null) {
+        return jsonError(403, 'Self-service is unavailable while impersonating');
+      }
       const nodeId = session.nodeId;
 
       if (url.pathname === '/auth/me/password' && req.method === 'POST') {

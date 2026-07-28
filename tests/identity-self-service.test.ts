@@ -17,6 +17,7 @@ import {
   IpNotAllowedError,
   WeakPasswordError,
 } from '../lib/identity/identity.ts';
+import { impersonate } from '../lib/identity/impersonate.ts';
 import {
   changePassword,
   getIpAllowlist,
@@ -184,6 +185,32 @@ describe('identity-self-service', () => {
 
     const audit = identity.auditFor(nodeId, { action: 'sessions_revoked' });
     expect(audit[0]!.details).toMatchObject({ count: 1, reason: 'user_request' });
+  });
+
+  test('revokeOtherSessions ignores expired unrevoked sessions', () => {
+    const expired = identity.createSession(nodeId);
+    const db = new Database(dbPath);
+    db.query(
+      `UPDATE auth_sessions SET expires_at = 0
+       WHERE node_id = $node`
+    ).run({ $node: nodeId });
+
+    const current = identity.createSession(nodeId);
+    const activeOther = identity.createSession(nodeId);
+    expect(identity.revokeOtherSessions(nodeId, current.token)).toBe(1);
+
+    const expiredRow = db
+      .query(
+        `SELECT revoked_at FROM auth_sessions
+         WHERE node_id = $node AND expires_at = 0`
+      )
+      .get({ $node: nodeId }) as { revoked_at: number | null } | null;
+    db.close();
+
+    expect(expiredRow?.revoked_at).toBeNull();
+    expect(identity.resolveSession(expired.token)).toBeNull();
+    expect(identity.resolveSession(current.token)).not.toBeNull();
+    expect(identity.resolveSession(activeOther.token)).toBeNull();
   });
 
   test('revokeOwnSession kills exactly that session ("log out this device")', async () => {
@@ -439,5 +466,50 @@ describe('identity-self-service', () => {
       expect(res, `${route.method} ${route.path}`).not.toBeNull();
       expect(res!.status, `${route.method} ${route.path}`).toBe(401);
     }
+  });
+
+  test('every /auth/me/* route is 403 for an impersonated session', async () => {
+    const adminNodeId = asTreeNodeId(Bun.randomUUIDv7());
+    seedTreeNode(adminNodeId);
+    await identity.createAlias(adminNodeId, 'self-service-admin', PASSWORD, 'superadmin');
+    const targetLogin = await identity.login('test-agent', PASSWORD);
+    const impersonated = await impersonate(identity, adminNodeId, nodeId);
+    const routes: { method: string; path: string; body?: unknown }[] = [
+      {
+        method: 'POST',
+        path: '/auth/me/password',
+        body: { currentPassword: PASSWORD, newPassword: NEW_PASSWORD },
+      },
+      { method: 'GET', path: '/auth/me/sessions' },
+      { method: 'POST', path: '/auth/me/sessions/revoke-others' },
+      { method: 'GET', path: '/auth/me/devices' },
+      {
+        method: 'POST',
+        path: '/auth/me/devices/untrust',
+        body: { fingerprintHash: '0123456789abcdef' },
+      },
+      { method: 'GET', path: '/auth/me/ip-allowlist' },
+      { method: 'PUT', path: '/auth/me/ip-allowlist', body: { cidrs: ['203.0.113.0/24'] } },
+    ];
+
+    for (const route of routes) {
+      const res = await handler(
+        req(route.path, {
+          method: route.method,
+          token: impersonated.token as string,
+          body: route.body,
+        })
+      );
+      expect(res, `${route.method} ${route.path}`).not.toBeNull();
+      expect(res!.status, `${route.method} ${route.path}`).toBe(403);
+      expect(await res!.json()).toEqual({
+        error: 'Self-service is unavailable while impersonating',
+      });
+    }
+
+    expect(identity.resolveSession(targetLogin.token)).not.toBeNull();
+    expect(identity.ipAllowlistFor(nodeId)).toEqual([]);
+    expect(identity.auditFor(nodeId, { action: 'password_changed' })).toEqual([]);
+    expect(identity.auditFor(nodeId, { action: 'sessions_revoked' })).toEqual([]);
   });
 });

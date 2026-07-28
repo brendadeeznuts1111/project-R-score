@@ -97,6 +97,7 @@ export interface AuthEventInput {
 export interface AuthAuditEntry {
   id: IdentityId;
   nodeId: TreeNodeId | null;
+  impersonatorId: TreeNodeId | null;
   action: string;
   details: Record<string, unknown> | null;
   ip: string | null;
@@ -674,6 +675,7 @@ export class IdentitySystem {
     return rows.map(row => ({
       id: asIdentityId(row.id as string),
       nodeId: row.node_id ? asTreeNodeId(row.node_id as string) : null,
+      impersonatorId: row.impersonator_id ? asTreeNodeId(row.impersonator_id as string) : null,
       action: row.action as string,
       details: this.parseDetails(row.details_json),
       ip: (row.ip as string) ?? null,
@@ -836,12 +838,14 @@ export class IdentitySystem {
    */
   revokeOtherSessions(nodeId: TreeNodeId, currentToken: TokenId): number {
     const keepHash = sha256Hex(currentToken as string);
+    const now = unixNow();
     const result = this.db
       .query(
         `UPDATE auth_sessions SET revoked_at = $at
-         WHERE node_id = $node AND revoked_at IS NULL AND token_hash != $keep`
+         WHERE node_id = $node AND revoked_at IS NULL AND expires_at > $now
+           AND token_hash != $keep`
       )
-      .run({ $at: unixNow(), $node: nodeId, $keep: keepHash });
+      .run({ $at: now, $now: now, $node: nodeId, $keep: keepHash });
     return result.changes;
   }
 
