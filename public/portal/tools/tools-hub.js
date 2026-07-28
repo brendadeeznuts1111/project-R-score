@@ -46,6 +46,13 @@ const BAKES = [
     board: '/portal/ops/',
     cli: 'bun run ops:snapshot --no-routing',
   },
+  {
+    id: 'capability-map',
+    label: 'capability-map-subset',
+    href: '/registry/capability-map-subset.json',
+    board: '/portal/tools/#capabilities',
+    cli: 'bun run portal-cli dashboard --view=capabilities',
+  },
 ];
 
 function ageLabel(iso) {
@@ -149,8 +156,12 @@ function bindCopyButtons(root = document) {
   });
 }
 
-/** Capability rows — grounded subset (AGENTS.md map). Not a full markdown parse. */
-const CAPABILITY_ROWS = [
+/**
+ * Capability subset SSOT: /registry/capability-map-subset.json
+ * Fallback rows only if bake missing (keep in sync with registry file).
+ * Full matrix: AGENTS.md#grounded-capability-map
+ */
+const CAPABILITY_FALLBACK = [
   ['Vault config (TOML)', 'import with { type: "toml" }', 'Available', 'config/vault-map.toml'],
   ['Secret inject', 'pass-cli inject -i/-o', 'Implemented', 'portal-cli secret inject'],
   ['Vault & item list', 'pass-cli vault list · item list', 'Implemented', 'portal-cli secret vaults'],
@@ -160,16 +171,46 @@ const CAPABILITY_ROWS = [
   ['Pack workspace', 'bun pm pack', 'Implemented', 'portal-cli pm pack'],
   ['List deps', 'bun pm ls', 'Implemented', 'portal-cli pm ls'],
   ['Packages graph', 'packages-graph-map bake', 'Implemented', 'portal-cli pm graph'],
-  ['Spawn process', 'Bun.spawn', 'Implemented', 'portal-cli (all)'],
+  ['Dashboard launcher', 'portal-cli dashboard --view', 'Implemented', '/portal/tools/'],
   ['ANSI color', 'Bun.color(hex, "ansi-16m")', 'Implemented', 'vault-map status lines'],
   ['File I/O', 'Bun.file · Bun.write', 'Implemented', 'bakes · snapshots'],
 ];
+
+/** @type {string[][]} */
+let capabilityRows = CAPABILITY_FALLBACK.slice();
+
+/**
+ * Normalize registry JSON rows to [capability, api, status, usedIn] tuples.
+ * @param {object|null} data
+ * @returns {string[][]}
+ */
+export function normalizeCapabilityRows(data) {
+  if (!data || !Array.isArray(data.rows) || data.rows.length === 0) {
+    return CAPABILITY_FALLBACK.slice();
+  }
+  return data.rows.map(r => {
+    if (Array.isArray(r)) return r.map(String);
+    return [
+      String(r.capability ?? r.name ?? ''),
+      String(r.api ?? r.bunApi ?? ''),
+      String(r.status ?? ''),
+      String(r.usedIn ?? r.used_in ?? ''),
+    ];
+  });
+}
+
+async function loadCapabilityRows() {
+  const r = await fetchJson('/registry/capability-map-subset.json');
+  if (r.ok && r.data) {
+    capabilityRows = normalizeCapabilityRows(r.data);
+  }
+}
 
 function fillCapabilityTable() {
   const tbody = document.getElementById('capability-body');
   if (!tbody) return;
   const q = (document.getElementById('capability-filter')?.value || '').toLowerCase();
-  const rows = CAPABILITY_ROWS.filter(r => !q || r.join(' ').toLowerCase().includes(q));
+  const rows = capabilityRows.filter(r => !q || r.join(' ').toLowerCase().includes(q));
   tbody.innerHTML = rows
     .map(
       ([cap, api, status, used]) =>
@@ -181,6 +222,7 @@ function fillCapabilityTable() {
 export async function initToolsHub() {
   await fillBakeStatus();
   await fillSnapshotWidget();
+  await loadCapabilityRows();
   fillCapabilityTable();
   document.getElementById('capability-filter')?.addEventListener('input', fillCapabilityTable);
   bindCopyButtons();
@@ -192,10 +234,13 @@ export async function initToolsHub() {
   if (snap) observer.observe(snap, { childList: true });
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
+// Browser only — do not auto-run when imported from bun:test
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      void initToolsHub();
+    });
+  } else {
     void initToolsHub();
-  });
-} else {
-  void initToolsHub();
+  }
 }

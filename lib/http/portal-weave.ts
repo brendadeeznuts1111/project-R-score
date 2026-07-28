@@ -270,6 +270,11 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     href: '/registry/vault-map.json',
     note: 'display chrome + pass:// paths · no secret values',
   },
+  {
+    label: 'capability-map-subset',
+    href: '/registry/capability-map-subset.json',
+    note: 'tools hub capability table · full matrix AGENTS.md',
+  },
   { label: 'dod-queue', href: '/registry/dod-queue.json' },
   {
     label: 'compliance-board',

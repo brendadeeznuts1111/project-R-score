@@ -1,0 +1,81 @@
+{
+  "kind": "capability-map-subset",
+  "schemaVersion": 1,
+  "source": "AGENTS.md#grounded-capability-map",
+  "note": "Compact portal tools-hub rows — full matrix stays in AGENTS.md. No secret values.",
+  "generatedAt": "2026-07-28T00:00:00.000Z",
+  "rows": [
+    {
+      "capability": "Vault config (TOML)",
+      "api": "import with { type: \"toml\" }",
+      "status": "Available",
+      "usedIn": "config/vault-map.toml"
+    },
+    {
+      "capability": "Secret inject",
+      "api": "pass-cli inject -i/-o",
+      "status": "Implemented",
+      "usedIn": "portal-cli secret inject"
+    },
+    {
+      "capability": "Vault & item list",
+      "api": "pass-cli vault list · item list",
+      "status": "Implemented",
+      "usedIn": "portal-cli secret vaults"
+    },
+    {
+      "capability": "Secret view",
+      "api": "pass-cli item view",
+      "status": "Implemented",
+      "usedIn": "portal-cli secret get"
+    },
+    {
+      "capability": "Snapshot testing",
+      "api": "expect().toMatchSnapshot()",
+      "status": "Implemented",
+      "usedIn": "portal-cli vault health"
+    },
+    {
+      "capability": "Update snapshots",
+      "api": "bun test --update-snapshots",
+      "status": "Implemented",
+      "usedIn": "portal-cli vault health --update"
+    },
+    {
+      "capability": "Pack workspace",
+      "api": "bun pm pack",
+      "status": "Implemented",
+      "usedIn": "portal-cli pm pack"
+    },
+    {
+      "capability": "List deps",
+      "api": "bun pm ls",
+      "status": "Implemented",
+      "usedIn": "portal-cli pm ls"
+    },
+    {
+      "capability": "Packages graph",
+      "api": "packages-graph-map bake",
+      "status": "Implemented",
+      "usedIn": "portal-cli pm graph"
+    },
+    {
+      "capability": "Dashboard launcher",
+      "api": "portal-cli dashboard --view",
+      "status": "Implemented",
+      "usedIn": "/portal/tools/"
+    },
+    {
+      "capability": "ANSI color",
+      "api": "Bun.color(hex, \"ansi-16m\")",
+      "status": "Implemented",
+      "usedIn": "vault-map status lines"
+    },
+    {
+      "capability": "File I/O",
+      "api": "Bun.file · Bun.write",
+      "status": "Implemented",
+      "usedIn": "bakes · snapshots"
+    }
+  ]
+}

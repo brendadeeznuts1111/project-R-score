@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-07-28T18:11:52.145Z",
+  "generated": "2026-07-28T18:25:21.218Z",
   "path": "/registry/portal-chrome.json",
   "summary": {
     "priorityNav": 6,
-    "overflowNav": 13,
+    "overflowNav": 14,
     "footerLinks": 14,
     "components": 12,
     "scripts": 5
@@ -149,6 +149,15 @@
       "href": "/portal/limits/",
       "tier": "overflow",
       "group": "ops",
+      "cli": "bun run ops:limits:demo"
+    },
+    {
+      "id": "partner-history",
+      "label": "Partner history",
+      "href": "/portal/partner-history/",
+      "tier": "overflow",
+      "group": "ops",
+      "note": "per-partner limit history board",
       "cli": "bun run ops:limits:demo"
     },
     {

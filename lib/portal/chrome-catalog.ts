@@ -194,6 +194,15 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     cli: 'bun run ops:limits:demo',
   },
   {
+    id: 'partner-history',
+    label: 'Partner history',
+    href: '/portal/partner-history/',
+    tier: 'overflow',
+    group: 'ops',
+    note: 'per-partner limit history board',
+    cli: 'bun run ops:limits:demo',
+  },
+  {
     id: 'monitoring',
     label: 'Monitoring',
     href: '/monitoring/',

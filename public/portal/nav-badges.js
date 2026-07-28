@@ -11,47 +11,82 @@
  * @see lib/portal/chrome-catalog.ts data-cli / data-group
  */
 
+/** Pure pickers — unit-tested; no DOM. */
+
+/** @param {object|null|undefined} data */
+export function pickFailuresBadge(data) {
+  const n = data?.totals?.failures;
+  return typeof n === 'number' ? n : data?.failures?.length ?? null;
+}
+
+/** @param {number|null} n */
+export function toneFailuresBadge(n) {
+  return n != null && n > 0 ? 'bad' : 'ok';
+}
+
+/** @param {object|null|undefined} data */
+export function pickVaultBadge(data) {
+  const s = data?.summary;
+  if (typeof s?.activeItems === 'number') return s.activeItems;
+  if (Array.isArray(data?.vaults)) {
+    return data.vaults.reduce((a, v) => a + (v.active ?? 0), 0);
+  }
+  return null;
+}
+
+/** @param {number|null} n */
+export function toneVaultBadge(n) {
+  return n === 0 ? 'warn' : 'ok';
+}
+
+/** @param {object|null|undefined} data */
+export function pickPackagesBadge(data) {
+  if (Array.isArray(data?.packages)) return data.packages.length;
+  if (Array.isArray(data?.map?.packages)) return data.map.packages.length;
+  return data?.map?.summary?.packageCount ?? null;
+}
+
+/** @param {number|null} _n */
+export function tonePackagesBadge(_n) {
+  return 'neutral';
+}
+
+/** @param {object|null|undefined} data */
+export function pickHealthBadge(data) {
+  const score = data?.score ?? data?.summary?.score;
+  return typeof score === 'number' ? score : null;
+}
+
+/** @param {number|null} n */
+export function toneHealthBadge(n) {
+  if (n == null) return 'neutral';
+  return n >= 80 ? 'ok' : n >= 50 ? 'warn' : 'bad';
+}
+
 const BADGE_SPECS = [
   {
     href: '/portal/failures/',
     source: '/registry/failures.json',
-    pick: data => {
-      const n = data?.totals?.failures;
-      return typeof n === 'number' ? n : data?.failures?.length ?? null;
-    },
-    tone: n => (n > 0 ? 'bad' : 'ok'),
+    pick: pickFailuresBadge,
+    tone: toneFailuresBadge,
   },
   {
     href: '/portal/vault/',
     source: '/registry/vault-health.json',
-    pick: data => {
-      const s = data?.summary;
-      if (typeof s?.activeItems === 'number') return s.activeItems;
-      if (Array.isArray(data?.vaults)) {
-        return data.vaults.reduce((a, v) => a + (v.active ?? 0), 0);
-      }
-      return null;
-    },
-    tone: n => (n === 0 ? 'warn' : 'ok'),
+    pick: pickVaultBadge,
+    tone: toneVaultBadge,
   },
   {
     href: '/portal/packages/',
     source: '/registry/packages-graph-map.json',
-    pick: data => {
-      if (Array.isArray(data?.packages)) return data.packages.length;
-      if (Array.isArray(data?.map?.packages)) return data.map.packages.length;
-      return data?.map?.summary?.packageCount ?? null;
-    },
-    tone: () => 'neutral',
+    pick: pickPackagesBadge,
+    tone: tonePackagesBadge,
   },
   {
     href: '/portal/health/',
     source: '/registry/monorepo-health.json',
-    pick: data => {
-      const score = data?.score ?? data?.summary?.score;
-      return typeof score === 'number' ? score : null;
-    },
-    tone: n => (n >= 80 ? 'ok' : n >= 50 ? 'warn' : 'bad'),
+    pick: pickHealthBadge,
+    tone: toneHealthBadge,
     format: n => String(n),
   },
 ];

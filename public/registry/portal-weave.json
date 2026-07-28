@@ -2,10 +2,10 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-07-28T18:11:52.146Z",
+  "generated": "2026-07-28T18:25:21.218Z",
   "summary": {
     "surfaces": 19,
-    "artifacts": 28,
+    "artifacts": 29,
     "components": 12,
     "wiki": 6,
     "scripts": 29
@@ -243,84 +243,90 @@
       "id": "artifact-13-vault-map"
     },
     {
+      "label": "capability-map-subset",
+      "href": "/registry/capability-map-subset.json",
+      "note": "tools hub capability table · full matrix AGENTS.md",
+      "id": "artifact-14-capability-map-subset"
+    },
+    {
       "label": "dod-queue",
       "href": "/registry/dod-queue.json",
-      "id": "artifact-14-dod-queue"
+      "id": "artifact-15-dod-queue"
     },
     {
       "label": "compliance-board",
       "href": "/registry/compliance-board.json",
       "note": "enhancements + shadow + geo · ops-summary.compliance",
-      "id": "artifact-15-compliance-board"
+      "id": "artifact-16-compliance-board"
     },
     {
       "label": "compliance-enhancements",
       "href": "/registry/compliance-enhancements.json",
       "note": "deepEquals · escapeHTML proof rows",
-      "id": "artifact-16-compliance-enhancements"
+      "id": "artifact-17-compliance-enhancements"
     },
     {
       "label": "compliance-shadow",
       "href": "/registry/compliance-shadow.json",
       "note": "real vs shadow check matrix",
-      "id": "artifact-17-compliance-shadow"
+      "id": "artifact-18-compliance-shadow"
     },
     {
       "label": "limit-raises",
       "href": "/registry/limit-raises.json",
       "note": "multi-factor raise context bake · agent API snapshot",
-      "id": "artifact-18-limit-raises"
+      "id": "artifact-19-limit-raises"
     },
     {
       "label": "verification-index",
       "href": "/registry/verification-index.json",
       "note": "verify-all rollup · release track",
-      "id": "artifact-19-verification-index"
+      "id": "artifact-20-verification-index"
     },
     {
       "label": "doc-index",
       "href": "/registry/doc-index.json",
       "note": "CANONICAL_REFS · bun docs catalog coverage",
-      "id": "artifact-20-doc-index"
+      "id": "artifact-21-doc-index"
     },
     {
       "label": "static aggregate",
       "href": "/registry/static.json",
-      "id": "artifact-21-static-aggregate"
+      "id": "artifact-22-static-aggregate"
     },
     {
       "label": "proof taxonomy",
       "href": "/registry/proof-taxonomy-audit.json",
-      "id": "artifact-22-proof-taxonomy"
+      "id": "artifact-23-proof-taxonomy"
     },
     {
       "label": "portal weave",
       "href": "/registry/portal-weave.json",
-      "id": "artifact-23-portal-weave"
+      "id": "artifact-24-portal-weave"
     },
     {
       "label": "content-type matrix",
       "href": "/registry/content-type-matrix.json",
       "note": "Pages Functions content-type.ts snapshot",
-      "id": "artifact-24-content-type-matrix"
+      "id": "artifact-25-content-type-matrix"
     },
     {
       "label": "formdata proof",
       "href": "/registry/formdata-proof.json",
       "note": "verify:formdata bake",
-      "id": "artifact-25-formdata-proof"
+      "id": "artifact-26-formdata-proof"
     },
     {
       "label": "package-info",
       "href": "/registry/package-info.json",
       "note": "verify:package-info bake",
-      "id": "artifact-26-package-info"
+      "id": "artifact-27-package-info"
     },
     {
       "label": "seat-capital-desk",
       "href": "/registry/seat-capital-desk.json",
       "note": "FUND status · outs · checklist",
-      "id": "artifact-27-seat-capital-desk"
+      "id": "artifact-28-seat-capital-desk"
     }
   ],
   "components": [
