@@ -53,12 +53,17 @@ describe('capability-map-subset normalize', () => {
     const rows = normalizeCapabilityRows(data);
     expect(rows.length).toBeGreaterThan(5);
     expect(rows.some(r => r[0].includes('Secret view') || r[0].includes('Secret'))).toBe(true);
-    expect(rows.every(r => r.length === 4)).toBe(true);
+    // [capability, type, protocol, version, api, status, usedIn]
+    expect(rows.every(r => r.length === 7)).toBe(true);
+    expect(rows.some(r => r[1] === 'secrets' || r[1] === 'pkg' || r[1] === 'runtime')).toBe(true);
+    expect(rows.some(r => r[2] === 'Bun' || r[2] === 'pass-cli')).toBe(true);
+    expect(rows.every(r => String(r[4]).length > 0)).toBe(true); // api
   });
 
   test('fallback when empty', () => {
     const rows = normalizeCapabilityRows(null);
     expect(rows.length).toBeGreaterThan(5);
+    expect(rows.every(r => r.length === 7)).toBe(true);
   });
 });
 

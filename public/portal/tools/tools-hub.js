@@ -161,28 +161,30 @@ function bindCopyButtons(root = document) {
  * Fallback rows only if bake missing (keep in sync with registry file).
  * Full matrix: AGENTS.md#grounded-capability-map
  */
+/** Fallback when bake missing: [capability, type, protocol, version, api, status, usedIn] */
 const CAPABILITY_FALLBACK = [
-  ['Vault config (TOML)', 'import with { type: "toml" }', 'Available', 'config/vault-map.toml'],
-  ['Secret inject', 'pass-cli inject -i/-o', 'Implemented', 'portal-cli secret inject'],
-  ['Vault & item list', 'pass-cli vault list · item list', 'Implemented', 'portal-cli secret vaults'],
-  ['Secret view', 'pass-cli item view', 'Implemented', 'portal-cli secret get'],
-  ['Snapshot testing', 'expect().toMatchSnapshot()', 'Implemented', 'portal-cli vault health'],
-  ['Update snapshots', 'bun test --update-snapshots', 'Implemented', 'portal-cli vault health --update'],
-  ['Pack workspace', 'bun pm pack', 'Implemented', 'portal-cli pm pack'],
-  ['List deps', 'bun pm ls', 'Implemented', 'portal-cli pm ls'],
-  ['Packages graph', 'packages-graph-map bake', 'Implemented', 'portal-cli pm graph'],
-  ['Dashboard launcher', 'portal-cli dashboard --view', 'Implemented', '/portal/tools/'],
-  ['ANSI color', 'Bun.color(hex, "ansi-16m")', 'Implemented', 'vault-map status lines'],
-  ['File I/O', 'Bun.file · Bun.write', 'Implemented', 'bakes · snapshots'],
+  ['Vault config (TOML)', 'config', 'Bun', 'Bun ≥1.4', 'import with { type: "toml" }', 'Available', 'config/vault-map.toml'],
+  ['Secret inject', 'secrets', 'pass-cli', 'pass-cli ≥2.2', 'pass-cli inject -i/-o', 'Implemented', 'portal-cli secret inject'],
+  ['Vault & item list', 'secrets', 'pass-cli', 'pass-cli ≥2.2', 'pass-cli vault list · item list', 'Implemented', 'portal-cli secret vaults'],
+  ['Secret view', 'secrets', 'pass-cli', 'pass-cli ≥2.2', 'pass-cli item view', 'Implemented', 'portal-cli secret get'],
+  ['Snapshot testing', 'test', 'Bun', 'Bun ≥1.0', 'expect().toMatchSnapshot()', 'Implemented', 'portal-cli vault health'],
+  ['Update snapshots', 'test', 'Bun', 'Bun ≥1.0', 'bun test --update-snapshots', 'Implemented', 'portal-cli vault health --update'],
+  ['Pack workspace', 'pkg', 'Bun', 'Bun ≥1.0', 'bun pm pack', 'Implemented', 'portal-cli pm pack'],
+  ['List deps', 'pkg', 'Bun', 'Bun ≥1.0', 'bun pm ls', 'Implemented', 'portal-cli pm ls'],
+  ['Packages graph', 'pkg', 'Bun', 'Bun ≥1.0', 'packages-graph-map bake · portal-cli pm graph', 'Implemented', 'portal-cli pm graph'],
+  ['Dashboard launcher', 'cli', 'Bun', 'Bun ≥1.0', 'portal-cli dashboard --view', 'Implemented', '/portal/tools/'],
+  ['ANSI color', 'display', 'Bun', 'Bun ≥1.0', 'Bun.color(hex, "ansi-16m")', 'Implemented', 'vault-map status lines'],
+  ['File I/O', 'io', 'Bun', 'Bun ≥1.0', 'Bun.file · Bun.write', 'Implemented', 'bakes · snapshots'],
 ];
 
 /** @type {string[][]} */
 let capabilityRows = CAPABILITY_FALLBACK.slice();
-/** @type {{ generatedAt?: string, source?: string }|null} */
+/** @type {{ generatedAt?: string, source?: string, schemaVersion?: number }|null} */
 let capabilityMeta = null;
 
 /**
- * Normalize registry JSON rows to [capability, api, status, usedIn] tuples.
+ * Normalize registry JSON rows to
+ * [capability, type, protocol, version, api, status, usedIn].
  * @param {object|null} data
  * @returns {string[][]}
  */
@@ -191,10 +193,34 @@ export function normalizeCapabilityRows(data) {
     return CAPABILITY_FALLBACK.slice();
   }
   return data.rows.map(r => {
-    if (Array.isArray(r)) return r.map(String);
+    if (Array.isArray(r)) {
+      // Legacy 4-tuple → pad type/protocol/version
+      if (r.length === 4) {
+        return [String(r[0]), '—', '—', '—', String(r[1]), String(r[2]), String(r[3])];
+      }
+      return r.map(String);
+    }
+    const bunApi = String(r.bunApi ?? '');
+    const protonCli = String(r.protonCli ?? '');
+    let protocol = String(r.protocol ?? '');
+    if (!protocol || protocol === 'undefined') {
+      const hasBun = bunApi && bunApi !== '—';
+      const hasProton = protonCli && protonCli !== '—';
+      protocol =
+        hasBun && hasProton
+          ? 'Bun + pass-cli'
+          : hasBun
+            ? 'Bun'
+            : hasProton
+              ? 'pass-cli'
+              : '—';
+    }
     return [
       String(r.capability ?? r.name ?? ''),
-      String(r.api ?? r.bunApi ?? ''),
+      String(r.type ?? '—'),
+      protocol,
+      String(r.version ?? '—'),
+      String(r.api ?? r.bunApi ?? r.protonCli ?? ''),
       String(r.status ?? ''),
       String(r.usedIn ?? r.used_in ?? ''),
     ];
@@ -208,6 +234,7 @@ async function loadCapabilityRows() {
     capabilityMeta = {
       generatedAt: r.data.generatedAt,
       source: r.data.source,
+      schemaVersion: r.data.schemaVersion,
     };
   }
 }
@@ -219,13 +246,21 @@ function fillCapabilityTable() {
   const rows = capabilityRows.filter(r => !q || r.join(' ').toLowerCase().includes(q));
   tbody.innerHTML = rows
     .map(
-      ([cap, api, status, used]) =>
-        `<tr><td>${cap}</td><td><code>${api}</code></td><td>${status}</td><td><code>${used}</code></td></tr>`
+      ([cap, type, protocol, version, api, status, used]) =>
+        `<tr>
+          <td>${cap}</td>
+          <td><span class="group-tag">${type}</span></td>
+          <td><code>${protocol}</code></td>
+          <td class="dim">${version}</td>
+          <td><code>${api}</code></td>
+          <td>${status}</td>
+          <td><code>${used}</code></td>
+        </tr>`
     )
     .join('');
   const meta = document.getElementById('capability-meta');
   if (meta && capabilityMeta) {
-    meta.textContent = `${capabilityRows.length} rows · generated ${capabilityMeta.generatedAt || '—'} · source ${capabilityMeta.source || 'AGENTS.md'} · rebake: bun run bake:capabilities`;
+    meta.textContent = `${capabilityRows.length} rows · schema v${capabilityMeta.schemaVersion ?? '?'} · generated ${capabilityMeta.generatedAt || '—'} · source ${capabilityMeta.source || 'AGENTS.md'} · columns: type · protocol · version · api · rebake: bun run bake:capabilities`;
   }
 }
 

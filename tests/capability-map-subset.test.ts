@@ -5,6 +5,7 @@ import {
   capabilityMapSubsetFingerprint,
   parseCapabilityTableFromMarkdown,
   pickApiCell,
+  pickProtocol,
   stripMdCell,
 } from '../lib/portal/capability-map-subset.ts';
 
@@ -32,22 +33,35 @@ describe('capability-map-subset parse', () => {
     expect(pickApiCell('—', 'pass-cli inject -i')).toBe('pass-cli inject -i');
   });
 
-  test('parseCapabilityTableFromMarkdown extracts rows', () => {
+  test('pickProtocol classifies Bun vs pass-cli', () => {
+    expect(pickProtocol('bun pm pack', '—')).toBe('Bun');
+    expect(pickProtocol('—', 'pass-cli inject -i')).toBe('pass-cli');
+    expect(pickProtocol('Bun.spawn', 'pass-cli list')).toBe('Bun + pass-cli');
+    expect(pickProtocol('—', '—')).toBe('—');
+  });
+
+  test('parseCapabilityTableFromMarkdown extracts rows with type/protocol/api', () => {
     const rows = parseCapabilityTableFromMarkdown(SAMPLE);
     expect(rows.length).toBe(3);
     expect(rows[0]?.capability).toBe('Vault inject');
     expect(rows[0]?.api).toContain('pass-cli inject');
+    expect(rows[0]?.type).toBe('secrets');
+    expect(rows[0]?.protocol).toBe('pass-cli');
+    expect(rows[0]?.version).toContain('pass');
     expect(rows[0]?.status).toBe('Implemented');
     expect(rows[1]?.api).toContain('bun pm pack');
+    expect(rows[1]?.type).toBe('pkg');
+    expect(rows[1]?.protocol).toBe('Bun');
     expect(rows[2]?.status).toBe('Available');
   });
 
   test('buildCapabilityMapSubset sets kind and count', () => {
     const p = buildCapabilityMapSubset(SAMPLE, '2026-07-28T00:00:00.000Z');
     expect(p.kind).toBe('capability-map-subset');
-    expect(p.schemaVersion).toBe(1);
+    expect(p.schemaVersion).toBe(2);
     expect(p.rowCount).toBe(3);
     expect(p.rows).toHaveLength(3);
+    expect(p.rows.every(r => r.type && r.protocol && r.api)).toBe(true);
     expect(capabilityMapSubsetFingerprint(p)).not.toContain('2026-07-28');
   });
 
