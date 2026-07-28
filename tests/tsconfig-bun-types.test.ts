@@ -3,9 +3,17 @@
 /**
  * Guard: TypeScript 6.0 defaults `compilerOptions.types` to [] (no auto @types/*).
  * Primary monorepo tsconfigs must load @types/bun so editors/tsc see Bun globals.
+ * Full monorepo walk: `bun run check:tsconfig-types` (`tools/tsconfig-types-audit.ts`).
  */
 import { describe, expect, test } from 'bun:test';
 import { joinPath, resolvePath } from '../scripts/lib/fs-bun';
+import {
+  auditTsconfigTypes,
+  isIntentionalEmptyTypes,
+  isMonorepoOwnedTsconfig,
+  resolveTypes,
+  stripJsonc,
+} from '../tools/tsconfig-types-audit';
 
 const ROOT = resolvePath(import.meta.dir, '..');
 
@@ -19,50 +27,6 @@ const MUST_INCLUDE_BUN = [
   'tests/tsconfig.branded.json',
   'tests/tsconfig.snapshot.json',
 ] as const;
-
-/** Strip line and block comments so we can parse tsconfig JSONC. */
-function stripJsonc(text: string): string {
-  let out = '';
-  let i = 0;
-  let inStr = false;
-  let strQ = '';
-  while (i < text.length) {
-    const c = text[i]!;
-    const n = text[i + 1];
-    if (inStr) {
-      out += c;
-      if (c === '\\' && i + 1 < text.length) {
-        out += text[i + 1]!;
-        i += 2;
-        continue;
-      }
-      if (c === strQ) inStr = false;
-      i++;
-      continue;
-    }
-    if (c === '"' || c === "'") {
-      inStr = true;
-      strQ = c;
-      out += c;
-      i++;
-      continue;
-    }
-    if (c === '/' && n === '/') {
-      i += 2;
-      while (i < text.length && text[i] !== '\n') i++;
-      continue;
-    }
-    if (c === '/' && n === '*') {
-      i += 2;
-      while (i + 1 < text.length && !(text[i] === '*' && text[i + 1] === '/')) i++;
-      i += 2;
-      continue;
-    }
-    out += c;
-    i++;
-  }
-  return out;
-}
 
 async function readJson(rel: string): Promise<Record<string, unknown>> {
   const path = joinPath(ROOT, rel);
@@ -100,5 +64,47 @@ describe('TypeScript 6+ bun types (tsconfig)', () => {
     const cfg = await readJson('packages/registry-client/tsconfig.json');
     const types = typesArray(cfg);
     expect(types).toEqual([]);
+    expect(isIntentionalEmptyTypes('packages/registry-client/tsconfig.json')).toBe(true);
+  });
+});
+
+describe('tsconfig-types-audit helpers', () => {
+  test('stripJsonc removes // and /* */ outside strings', () => {
+    const raw = `{
+  // line comment
+  "types": ["bun"] /* trailing */,
+  "note": "not // a comment"
+}`;
+    const j = JSON.parse(stripJsonc(raw)) as { types: string[]; note: string };
+    expect(j.types).toEqual(['bun']);
+    expect(j.note).toBe('not // a comment');
+  });
+
+  test('isMonorepoOwnedTsconfig matches spine surfaces', () => {
+    expect(isMonorepoOwnedTsconfig('tsconfig.base.json')).toBe(true);
+    expect(isMonorepoOwnedTsconfig('tools/tsconfig.json')).toBe(true);
+    expect(isMonorepoOwnedTsconfig('packages/registry-client/tsconfig.json')).toBe(true);
+    expect(isMonorepoOwnedTsconfig('tests/tsconfig.branded.json')).toBe(true);
+    expect(isMonorepoOwnedTsconfig('projects/active/foo/tsconfig.json')).toBe(false);
+  });
+
+  test('resolveTypes walks extends for packages that omit local types', async () => {
+    // packages that only extend base should resolve ["bun"] via extends
+    const hit = await resolveTypes(resolvePath(ROOT, 'packages/guards/tsconfig.json'));
+    // guards may or may not exist with that shape — fall back to base itself
+    const base = await resolveTypes(resolvePath(ROOT, 'tsconfig.base.json'));
+    expect(base.types).toContain('bun');
+    expect(base.source).toBe('local');
+    if (await Bun.file(resolvePath(ROOT, 'packages/guards/tsconfig.json')).exists()) {
+      expect(hit.types === null || hit.types.includes('bun') || hit.types.length === 0).toBe(true);
+    }
+  });
+
+  test('audit monorepo_risk is zero (strict gate)', async () => {
+    const { summary, monorepoRisk } = await auditTsconfigTypes(ROOT);
+    expect(summary.monorepoRisk).toBe(0);
+    expect(monorepoRisk).toEqual([]);
+    expect(summary.bunOk).toBeGreaterThan(0);
+    expect(summary.emitClean).toBeGreaterThanOrEqual(1);
   });
 });

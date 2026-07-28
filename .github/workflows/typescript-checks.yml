@@ -31,6 +31,11 @@ jobs:
       - name: Verify Package Import Boundaries
         run: bun run imports:verify
 
+      # TS 6+ defaults types to [] — monorepo-owned configs must resolve "bun" (or intentional empty emit).
+      # Auto-strict under GITHUB_ACTIONS; explicit --strict for local parity.
+      - name: TS6 types allowlist (tsconfig)
+        run: bun run check:tsconfig-types -- --strict
+
       # path-bun / bun-env already enforced by harness-gates ci:core
 
       - name: Type Check (CI Scope)

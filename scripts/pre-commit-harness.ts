@@ -96,6 +96,21 @@ export function isDoctorStatePath(file: string): boolean {
   return n === 'public/registry/doctor-state.json' || n === 'tools/bake-doctor.ts';
 }
 
+/**
+ * TypeScript 6+ types discovery — monorepo-owned tsconfigs / audit tool.
+ * Escape: SKIP_TSCONFIG_TYPES=1
+ */
+export function isTsconfigTypesPath(file: string): boolean {
+  const n = file.replace(/^\.\//, '');
+  if (n === 'tools/tsconfig-types-audit.ts') return true;
+  if (n === 'tsconfig.base.json' || n === 'tsconfig.bun.json') return true;
+  if (n === 'tsconfig.check.json' || n === 'tsconfig.lint.json') return true;
+  if (n === 'tools/tsconfig.json') return true;
+  if (n.startsWith('packages/') && n.endsWith('/tsconfig.json')) return true;
+  if (n.startsWith('tests/tsconfig.') && n.endsWith('.json')) return true;
+  return false;
+}
+
 /** Audit findings/concepts SSOT — verify even when no harness .ts is staged. */
 export function isAuditSsotPath(file: string): boolean {
   const n = file.replace(/^\.\//, '');
@@ -341,6 +356,31 @@ async function main(): Promise<void> {
     }
   }
 
+  // TypeScript 6+ types allowlist — monorepo-owned configs must resolve "bun" (or emit-clean).
+  const tsconfigTypesFiles = staged.filter(isTsconfigTypesPath);
+  if (tsconfigTypesFiles.length > 0) {
+    if (Bun.env.SKIP_TSCONFIG_TYPES === '1') {
+      console.info('⏭️  SKIP_TSCONFIG_TYPES=1 — tsconfig types audit skipped');
+    } else {
+      console.info(`📘 TS6 types audit (${tsconfigTypesFiles.length} path(s) staged)...`);
+      const code = await runGate(
+        'tsconfig-types',
+        ['bun', 'run', 'check:tsconfig-types', '--', '--strict'],
+        timings
+      );
+      if (code !== 0) {
+        console.error(
+          '❌ TS6 types audit failed — monorepo-owned tsconfigs must resolve "types": ["bun"]\n' +
+            '   bun run check:tsconfig-types -- --strict\n' +
+            '   escape: SKIP_TSCONFIG_TYPES=1\n' +
+            '   https://bun.com/docs/typescript-6 · docs/harness/tenants/monorepo-workspaces.md'
+        );
+        await writeTimings(timings, full);
+        process.exit(1);
+      }
+    }
+  }
+
   if (harnessFiles.length === 0) {
     if (
       docMapFiles.length > 0 ||
@@ -350,10 +390,11 @@ async function main(): Promise<void> {
       publicFiles.length > 0 ||
       runtimeFlagsFiles.length > 0 ||
       doctorBunfigFiles.length > 0 ||
-      doctorStateFiles.length > 0
+      doctorStateFiles.length > 0 ||
+      tsconfigTypesFiles.length > 0
     ) {
       console.info(
-        '✅ Harness pre-commit checks passed (doc/projects/lib/audit/public/flags/bunfig/doctor-state gates only)'
+        '✅ Harness pre-commit checks passed (doc/projects/lib/audit/public/flags/bunfig/doctor-state/tsconfig-types gates only)'
       );
     } else {
       console.info('✅ No staged harness TypeScript or doc-map SSOT files');

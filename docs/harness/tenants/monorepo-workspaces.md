@@ -192,6 +192,26 @@ Policy table + anti-patterns: [UNIFIED § Catalogs and workspace protocols](../.
 | **Exit** | STO `bun run typecheck` green on catalog `typescript` → switch STO `package.json` to `"typescript": "catalog:"` → drop the UNIFIED catalog exception. |
 | **Owner** | platform / STO maintainers |
 
+## TypeScript 6+ types discovery
+
+TS 6 defaults `compilerOptions.types` to `[]` (no auto `@types/*`). Monorepo apps/scripts need `"types": ["bun"]` so editors and `tsc` see Bun globals. Public packages that emit clean `.d.ts` may keep `"types": []` intentionally (e.g. `packages/registry-client`).
+
+| Surface | Role |
+|---------|------|
+| `tsconfig.base.json` | SSOT `"types": ["bun"]` for extenders |
+| `bun run check:tsconfig-types` | Walk all `tsconfig*.json`; JSONC-aware extends resolution |
+| `--strict` / `CI` / `GITHUB_ACTIONS` | Exit 1 when **monorepo-owned** configs omit bun after extends walk |
+| Pre-commit | Staged spine tsconfigs / audit tool → `check:tsconfig-types --strict` (`SKIP_TSCONFIG_TYPES=1`) |
+| CI | `typescript-checks.yml` step before type-check scopes |
+
+```bash
+bun run check:tsconfig-types
+bun run check:tsconfig-types -- --strict
+bun test tests/tsconfig-bun-types.test.ts
+```
+
+@see https://bun.com/docs/typescript-6 · tool [`tools/tsconfig-types-audit.ts`](../../../tools/tsconfig-types-audit.ts)
+
 ## Commands cheatsheet
 
 ```bash
@@ -200,6 +220,7 @@ bun run validate:workspaces
 bun run validate:workspaces --verbose
 bun pm ls
 bun install --dry-run          # must succeed with frozenLockfile=true
+bun run check:tsconfig-types -- --strict   # TS6 types: monorepo_risk=0
 
 # Package scripts — full filter semantics: § bun --filter above
 bun run --parallel --filter '*' --if-present test
