@@ -295,19 +295,11 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
       (defaults.passed != null && defaults.total != null && defaults.passed < defaults.total));
   const taxonomyFail = edgeTaxonomyDegradesHealth(proofTaxonomy);
 
-  const enh = complianceBoard?.enhancements as
-    | { passed?: number; total?: number; signature?: string }
-    | undefined;
-  const shadow = complianceBoard?.shadow as
-    | { summary?: { mismatches?: number; allow?: number; block?: number } }
-    | undefined;
-  const complianceExists = Boolean(complianceBoard?.schemaVersion === 1);
-  const complianceOk =
-    complianceExists &&
-    (enh?.passed ?? 0) === (enh?.total ?? 0) &&
-    (shadow?.summary?.mismatches ?? 0) === 0;
-  // Missing bake does not degrade edge health (optional plane); mismatches do.
-  const complianceFail = complianceExists && !complianceOk;
+  // Shared freeze-shape with serve-public + monitoring (lib/monitoring/compliance-slice.ts).
+  const { projectComplianceHealthArtifact } = await import('../monitoring/compliance-slice.ts');
+  const complianceArtifact = projectComplianceHealthArtifact(complianceBoard);
+  // Missing bake does not degrade edge health (optional plane); present + fail does.
+  const complianceFail = complianceArtifact.exists && !complianceArtifact.ok;
 
   const status: 'ok' | 'degraded' =
     defaultsFail || taxonomyFail || complianceFail ? 'degraded' : 'ok';
@@ -330,15 +322,7 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
       tocOps: { exists: Boolean(ops?.toc) },
       defaultsProof: { exists: Boolean(defaultsRaw) },
       proofTaxonomyAudit: { exists: Boolean(taxonomyAudit) },
-      complianceBoard: {
-        exists: complianceExists,
-        ok: complianceOk,
-        generated: (complianceBoard?.generatedAt as string) ?? null,
-        enhancements: enh ? `${enh.passed ?? 0}/${enh.total ?? 0}` : null,
-        shadowMismatches: shadow?.summary?.mismatches ?? null,
-        path: '/registry/compliance-board.json',
-        portal: '/portal/compliance/',
-      },
+      complianceBoard: complianceArtifact,
     },
     registry: {
       packages,

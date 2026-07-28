@@ -35,6 +35,7 @@ export const COMPLIANCE_BOARD_PATH = '/registry/compliance-board.json' as const;
 export const COMPLIANCE_PORTAL_PATH = '/portal/compliance/' as const;
 
 type ComplianceBoardFile = {
+  schemaVersion?: number;
   generatedAt?: string;
   enhancements?: { passed?: number; total?: number };
   shadow?: { summary?: { mismatches?: number; allow?: number; block?: number } };
@@ -45,6 +46,52 @@ type ComplianceBoardFile = {
     checks?: Array<{ id?: string; ok?: boolean }>; // brand-ok — board integrity check key (enhancements|shadow|sha3|hmac|geo)
   };
 };
+
+/**
+ * Edge `/api/health` + local serve-public artifacts.complianceBoard shape.
+ * Missing bake → exists:false (does not degrade). Present + fail → ok:false (degrades).
+ */
+export type ComplianceHealthArtifact = {
+  exists: boolean;
+  ok: boolean;
+  generated: string | null;
+  enhancements: string | null;
+  shadowMismatches: number | null;
+  path: typeof COMPLIANCE_BOARD_PATH;
+  portal: typeof COMPLIANCE_PORTAL_PATH;
+};
+
+function emptyHealthArtifact(): ComplianceHealthArtifact {
+  return {
+    exists: false,
+    ok: false,
+    generated: null,
+    enhancements: null,
+    shadowMismatches: null,
+    path: COMPLIANCE_BOARD_PATH,
+    portal: COMPLIANCE_PORTAL_PATH,
+  };
+}
+
+/**
+ * Project raw board JSON into the freeze-shape health artifact.
+ * Shared by Pages edge health and local serve-public (parity).
+ */
+export function projectComplianceHealthArtifact(board: unknown): ComplianceHealthArtifact {
+  if (!board || typeof board !== 'object') return emptyHealthArtifact();
+  const raw = board as ComplianceBoardFile;
+  if (raw.schemaVersion !== 1) return emptyHealthArtifact();
+  const slice = projectBoard(raw);
+  return {
+    exists: true,
+    ok: slice.ok,
+    generated: slice.generatedAt ?? null,
+    enhancements: slice.enhancements,
+    shadowMismatches: slice.shadowMismatches,
+    path: COMPLIANCE_BOARD_PATH,
+    portal: COMPLIANCE_PORTAL_PATH,
+  };
+}
 
 function emptyUnavailable(): ComplianceMonitoringSlice {
   return {

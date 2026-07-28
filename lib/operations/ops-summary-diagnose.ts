@@ -18,6 +18,15 @@ export type OpsSummaryDiagnoseShape = {
   };
   liquidity?: { total?: number };
   bunUtils?: { passed?: number; total?: number; failed?: number };
+  /** MA/NJ board slice from ops-summary.compliance (baked companion). */
+  compliance?: {
+    available?: boolean;
+    ok?: boolean;
+    enhancements?: string | null;
+    shadowMismatches?: number | null;
+    hmac?: boolean;
+    portal?: string;
+  };
 };
 
 export type DiagnoseSeverity = 'ok' | 'warn' | 'fail';
@@ -36,6 +45,9 @@ const CRITICAL_ROUTE_PATHS = [
   '/portal/dashboard/',
   '/portal/dashboard-app.js',
   '/api/monitoring',
+  '/portal/compliance/',
+  '/registry/compliance-board.json',
+  '/api/compliance',
 ] as const;
 
 /** Parse summary API / snapshot JSON at the diagnose wire edge. */
@@ -62,6 +74,10 @@ export function parseSummaryShape(payload: unknown): OpsSummaryDiagnoseShape {
     bunUtils:
       d.bunUtils && typeof d.bunUtils === 'object'
         ? (d.bunUtils as OpsSummaryDiagnoseShape['bunUtils'])
+        : undefined,
+    compliance:
+      d.compliance && typeof d.compliance === 'object'
+        ? (d.compliance as OpsSummaryDiagnoseShape['compliance'])
         : undefined,
   };
 }
@@ -110,6 +126,13 @@ export function classifySummaryPayload(
   ) {
     bump('warn');
     reasons.push(`channelMeta ${shape.channelMeta.passed}/${shape.channelMeta.total}`);
+  }
+
+  if (shape.compliance?.available === true && shape.compliance.ok === false) {
+    bump('warn');
+    const enh = shape.compliance.enhancements ?? '?';
+    const mm = shape.compliance.shadowMismatches ?? '?';
+    reasons.push(`compliance board fail (${enh} · shadowΔ ${mm})`);
   }
 
   if (severity === 'ok' && reasons.length === 0 && shape.source === 'live') {
