@@ -84,13 +84,13 @@ fi
 
 cd "$ROOT"
 
-# Optionally load SSH keys from vault
+# Optionally load SSH keys from vault (official pass-cli API)
 if [ "${SSH_LOAD:-0}" -eq 1 ]; then
   echo "🔑 Loading SSH keys from vault..."
   if command -v ssh-agent >/dev/null && [ -z "${SSH_AUTH_SOCK:-}" ]; then
     eval "$(ssh-agent -s)" >/dev/null
   fi
-  bash "$SCRIPT_DIR/ssh-vault.sh" load
+  pass-cli ssh-agent load --vault-name factorywager 2>&1 | tail -1
 fi
 
 echo "🚀 Running (vault env loaded): ${ARGS[*]}"

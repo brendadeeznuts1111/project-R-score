@@ -1,109 +1,61 @@
 #!/usr/bin/env bash
 # ssh-vault.sh — load SSH keys from Proton Pass into ssh-agent.
-# Usage:
-#   bash scripts/ssh-vault.sh                    # list available SSH keys in vault
-#   bash scripts/ssh-vault.sh load               # load all vault SSH keys into agent
-#   bash scripts/ssh-vault.sh load cascade       # load specific key by name
-#   bash scripts/ssh-vault.sh clear              # remove all vault keys from agent
+# Uses the official pass-cli ssh-agent command (v2.2.3+).
 #
-# Requires: pass-cli login (authenticated session)
-# Depends on: SSH_KEYS array defined below matching env.template entries.
+# Usage:
+#   bash scripts/ssh-vault.sh                    # list available SSH keys
+#   bash scripts/ssh-vault.sh load               # load SSH keys from vault (official API)
+#   bash scripts/ssh-vault.sh load --vault <name> # load from specific vault
+#   bash scripts/ssh-vault.sh daemon             # start SSH agent daemon
+#   bash scripts/ssh-vault.sh clear              # remove vault keys from agent
+#
+# Grounded in: pass-cli ssh-agent load (Proton Pass CLI v2.2.3)
+# See: https://github.com/protonpass/pass-cli/blob/main/CHANGELOG.md
 
 set -euo pipefail
+VAULT="${FACTORYWAGER_VAULT:-factorywager}"
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-
-# ── SSH key definitions (match env.template pass:// refs) ────────────────
-# Format: "vault_name|key_name|filename"
-SSH_KEYS=(
-  "factorywager|SSH Deploy Key|id_deploy"
-  "factorywager|SSH Cascade Key|id_cascade"
-)
-
-# ── Help ──────────────────────────────────────────────────────────────────
 show_help() {
-  echo "SSH Key Vault Manager"
+  echo "SSH Key Vault Manager (pass-cli v2.2.3+)"
   echo ""
-  echo "  list        List SSH keys available in vault"
-  echo "  load [name] Load SSH key(s) into ssh-agent ('cascade' = specific key)"
-  echo "  clear       Remove all vault keys from ssh-agent"
-  echo "  help        This message"
+  echo "  list              List SSH keys available in vault"
+  echo "  load [--vault]    Load SSH keys via pass-cli ssh-agent load"
+  echo "  daemon            Start pass-cli SSH agent daemon"
+  echo "  clear             Remove vault keys from agent (ssh-add -D)"
+  echo "  help              This message"
 }
 
-# ── List available keys ───────────────────────────────────────────────────
 list_keys() {
-  echo "  📋 Available SSH keys in vault:"
-  for entry in "${SSH_KEYS[@]}"; do
-    IFS='|' read -r vault name filename <<< "$entry"
-    local ref="$vault/$name/note"
-    echo "    - $name (pass://$ref) → ~/.ssh/$filename"
-  done
+  echo "  📋 SSH keys — pass-cli vault: $VAULT"
+  pass-cli item list --vault-name "$VAULT" 2>/dev/null | grep -i ssh || echo "    (no SSH keys found)"
 }
 
-# ── Load key into agent ───────────────────────────────────────────────────
-load_key() {
-  local filter="$1"
-  for entry in "${SSH_KEYS[@]}"; do
-    IFS='|' read -r vault name filename <<< "$entry"
-    if [ -n "$filter" ] && ! echo "$name" | grep -qi "$filter"; then
-      continue
-    fi
-
-    local ref="$vault/$name/note"
-    local key_path="$HOME/.ssh/$filename"
-
-    echo "  🔑 Loading $name..."
-    # Decrypt key from vault
-    if ! pass-cli view "pass://$ref" 2>/dev/null | head -n 1 > "$key_path.tmp"; then
-      echo "    ⚠️  Could not retrieve $ref from vault (session expired?)"
-      continue
-    fi
-
-    chmod 600 "$key_path.tmp"
-
-    # Add to ssh-agent
-    if ssh-add "$key_path.tmp" 2>/dev/null; then
-      echo "    ✅ Added to ssh-agent"
-      # Move to final location (only after successful add)
-      mv "$key_path.tmp" "$key_path"
-    else
-      echo "    ⚠️  ssh-agent add failed (agent running? key format wrong?)"
-      rm -f "$key_path.tmp"
-    fi
-  done
+load_keys() {
+  local vault="$VAULT"
+  if [ "${1:-}" = "--vault" ] && [ -n "${2:-}" ]; then
+    vault="$2"
+  fi
+  echo "  🔑 Loading SSH keys from vault '$vault'..."
+  pass-cli ssh-agent load --vault-name "$vault"
+  echo "    ✅ Keys loaded"
 }
 
-# ── Clear keys from agent ─────────────────────────────────────────────────
+start_daemon() {
+  echo "  🔑 Starting pass-cli SSH agent daemon..."
+  pass-cli ssh-agent daemon
+}
+
 clear_keys() {
-  for entry in "${SSH_KEYS[@]}"; do
-    IFS='|' read -r vault name filename <<< "$entry"
-    local key_path="$HOME/.ssh/$filename"
-    if [ -f "$key_path" ]; then
-      ssh-add -d "$key_path" 2>/dev/null || true
-      rm -f "$key_path"
-      echo "  🧹 Removed $name"
-    fi
-  done
+  echo "  🧹 Removing vault keys from ssh-agent..."
+  ssh-add -D 2>/dev/null || true
+  echo "    ✅ Cleared"
 }
 
-# ── Main ──────────────────────────────────────────────────────────────────
 case "${1:-help}" in
-  list)
-    list_keys
-    ;;
-  load)
-    load_key "${2:-}"
-    ;;
-  clear)
-    clear_keys
-    ;;
-  help|--help|-h)
-    show_help
-    ;;
-  *)
-    echo "Unknown command: $1"
-    show_help
-    exit 1
-    ;;
+  list) list_keys ;;
+  load) load_keys "${2:-}" "${3:-}" ;;
+  daemon) start_daemon ;;
+  clear) clear_keys ;;
+  help|--help|-h) show_help ;;
+  *) echo "Unknown: $1"; show_help; exit 1 ;;
 esac
