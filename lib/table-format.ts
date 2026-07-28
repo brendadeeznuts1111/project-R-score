@@ -16,12 +16,30 @@
  * - Unicode box-drawing with fallback to ASCII
  * - Supports Bun.inspect for rich cell values
  */
-import { stringWidth, inspect, terminal } from 'bun';
+import { stringWidth, inspect, semver } from 'bun';
 
-// ── Color support via Bun.terminal ───────────────────────────────────────
-const isTTY = terminal?.isTTY ?? false;
+// ── Bun version check ────────────────────────────────────────────────────
+const BUN_VERSION = Bun.version;
+const BUN_MAJOR = parseInt(BUN_VERSION.split('.')[0] ?? '0', 10);
+const BUN_MINOR = parseInt(BUN_VERSION.split('.')[1] ?? '0', 10);
+const BUN_OK = semver.satisfies(BUN_VERSION, '>=1.3.0');
+
+// ── Terminal detection via Bun.Terminal (constructor) ─────────────────────
+// Bun 1.4+: new Bun.Terminal(writable) returns a Terminal instance
+// with isTTY, columns, rows, color, etc.
+let isTTY = false;
+let TERM_WIDTH = 80;
+try {
+  const t = new (Bun as any).Terminal(Bun.stdout);
+  isTTY = t.isTTY === true;
+  TERM_WIDTH = typeof t.columns === 'number' && t.columns > 0 ? t.columns : 80;
+} catch {
+  // Fallback: Bun.stdout may have TTY info in some versions
+  try {
+    isTTY = (Bun.stdout as any)?.isTTY === true;
+  } catch {}
+}
 const NO_COLOR = !isTTY || Bun.env.NO_COLOR !== undefined || process.argv.includes('--no-color');
-const TERM_WIDTH = terminal?.columns ?? 80;
 
 const C = (code: string) => (s: string) => (NO_COLOR ? s : `\x1b[${code}m${s}\x1b[0m`);
 export const color = {
@@ -273,6 +291,23 @@ export function formatTable(
   }
 
   return out.join('\n');
+}
+
+/** Quick native table via Bun.inspect.table — no custom formatting, just raw data dump. */
+export function formatTableNative(
+  rows: Record<string, any>[],
+  options?: { properties?: string[]; colors?: boolean }
+): string {
+  if (rows.length === 0) return '(no data)';
+  const props = options?.properties;
+  const data = props
+    ? rows.map(r => {
+        const subset: Record<string, any> = {};
+        for (const p of props) subset[p] = r[p];
+        return subset;
+      })
+    : rows;
+  return inspect.table(data, { colors: options?.colors ?? !NO_COLOR });
 }
 
 // ── Convenience: number formatting ────────────────────────────────────────
