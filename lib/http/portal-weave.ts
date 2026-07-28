@@ -104,6 +104,14 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     note: 'catalog · .skill packages',
     group: 'registry',
   },
+  {
+    id: 'brands',
+    label: 'Brands',
+    href: '/portal/brands/',
+    note: 'domain-value glossary · constructors · project adoption',
+    group: 'registry',
+    cli: 'bun tools/brand-keymap.ts',
+  },
   // ── Secrets & env ──
   {
     id: 'vault',
@@ -221,6 +229,11 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
 /** Static registry artifacts the portal surfaces depend on. */
 export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
   { label: 'ops-summary', href: '/registry/ops-summary.json' },
+  {
+    label: 'brand-keymap',
+    href: '/registry/brand-keymap.json',
+    note: '47-value catalog · tracked project adoption',
+  },
   {
     label: 'telegram-handshake',
     href: '/registry/telegram-handshake.json',

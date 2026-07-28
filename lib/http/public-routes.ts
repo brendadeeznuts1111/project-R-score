@@ -412,6 +412,14 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     note: '/api/skills JSON · *.skill package downloads under /skills/',
   },
   {
+    path: '/portal/brands/',
+    name: 'Brand keymap',
+    category: 'portal',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: '/registry/brand-keymap.json · constructor glossary · project adoption',
+  },
+  {
     path: '/portal/dashboard/',
     name: 'Executive dashboard',
     category: 'portal',

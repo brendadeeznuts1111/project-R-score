@@ -1,0 +1,3257 @@
+{
+  "schemaVersion": 1,
+  "kind": "brand-keymap",
+  "path": "/registry/brand-keymap.json",
+  "generatedAt": "2026-07-28T20:55:31.700Z",
+  "sources": {
+    "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
+    "manifest": "lib/types/brand-manifest.json",
+    "coverage": "tools/brand-coverage.ts",
+    "stableImport": "lib/types/branded.ts"
+  },
+  "summary": {
+    "brands": 47,
+    "domains": 8,
+    "ids": 44,
+    "keys": 1,
+    "codes": 2,
+    "covered": 30,
+    "referencedUnconstructed": 2,
+    "unused": 15,
+    "cataloguedProjects": 35,
+    "trackedProjects": 32,
+    "adoptedProjects": 2,
+    "canonicalProjects": 1,
+    "localPatternProjects": 1
+  },
+  "governance": {
+    "rule": "Domain identities are branded after the wire boundary; new bare-string IDs fail the staged strict gate.",
+    "stagedGate": "bun tools/branded-id-check.ts --staged --strict",
+    "catalog": "bun tools/brand-catalog.ts [domain|BrandName]",
+    "coverage": "bun tools/brand-coverage.ts --attention",
+    "constructorTiers": [
+      {
+        "tier": "as",
+        "use": "required trusted interior value or owned mint"
+      },
+      {
+        "tier": "try",
+        "use": "optional config or soft merge; blank becomes undefined"
+      },
+      {
+        "tier": "parse",
+        "use": "wire, JSON, CLI, form, or environment ingress"
+      },
+      {
+        "tier": "guard",
+        "use": "narrow an already-canonical unknown value; does not prove provenance"
+      }
+    ]
+  },
+  "domains": [
+    {
+      "name": "audit",
+      "module": "lib/types/branded/audit.ts",
+      "brandCount": 6
+    },
+    {
+      "name": "deployment",
+      "module": "lib/types/branded/deployment.ts",
+      "brandCount": 1
+    },
+    {
+      "name": "documents",
+      "module": "lib/types/branded/documents.ts",
+      "brandCount": 3
+    },
+    {
+      "name": "identity",
+      "module": "lib/types/branded/identity.ts",
+      "brandCount": 5
+    },
+    {
+      "name": "operations",
+      "module": "lib/types/branded/operations.ts",
+      "brandCount": 21
+    },
+    {
+      "name": "portal",
+      "module": "lib/types/branded/portal.ts",
+      "brandCount": 4
+    },
+    {
+      "name": "security",
+      "module": "lib/types/branded/security.ts",
+      "brandCount": 2
+    },
+    {
+      "name": "session",
+      "module": "lib/types/branded/session.ts",
+      "brandCount": 5
+    }
+  ],
+  "brands": [
+    {
+      "name": "SessionId",
+      "domain": "session",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "user-input",
+        "wire-input"
+      ],
+      "description": "Interactive terminal / agent session identity",
+      "kind": "id",
+      "module": "lib/types/branded/session.ts",
+      "constructors": {
+        "as": "asSessionId",
+        "try": "trySessionId",
+        "parse": "parseSessionId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isSessionId",
+      "coverage": {
+        "status": "covered",
+        "references": 23,
+        "constructors": {
+          "as": 8,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/core/fw-types.ts",
+          "lib/core/structured-logger.ts",
+          "lib/identity/identity.ts",
+          "lib/identity/impersonate.ts",
+          "lib/security/secret-audit-logger.ts",
+          "lib/security/zero-trust-manager.ts",
+          "projects/active/factorywager/registry/packages/dev-dashboard/src/api/routes.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 21,
+            "constructionCalls": 8,
+            "guardCalls": 0,
+            "files": [
+              "lib/core/fw-types.ts",
+              "lib/core/structured-logger.ts",
+              "lib/identity/identity.ts",
+              "lib/identity/impersonate.ts",
+              "lib/security/secret-audit-logger.ts",
+              "lib/security/zero-trust-manager.ts"
+            ]
+          },
+          "projects": {
+            "status": "referenced-unconstructed",
+            "references": 2,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": [
+              "projects/active/factorywager/registry/packages/dev-dashboard/src/api/routes.ts"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "TerminalId",
+      "domain": "session",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "PTY / terminal instance identity",
+      "kind": "id",
+      "module": "lib/types/branded/session.ts",
+      "constructors": {
+        "as": "asTerminalId",
+        "try": "tryTerminalId",
+        "parse": "parseTerminalId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isTerminalId",
+      "coverage": {
+        "status": "unused",
+        "references": 0,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [],
+        "scopes": {
+          "spine": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "RequestId",
+      "domain": "session",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "HTTP or RPC request correlation handle",
+      "kind": "id",
+      "module": "lib/types/branded/session.ts",
+      "constructors": {
+        "as": "asRequestId",
+        "try": "tryRequestId",
+        "parse": "parseRequestId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isRequestId",
+      "coverage": {
+        "status": "covered",
+        "references": 6,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 1
+        },
+        "guards": 0,
+        "files": [
+          "projects/active/sports-terminal-os/src/middleware/security.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          },
+          "projects": {
+            "status": "covered",
+            "references": 6,
+            "constructionCalls": 2,
+            "guardCalls": 0,
+            "files": [
+              "projects/active/sports-terminal-os/src/middleware/security.ts"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "CorrelationId",
+      "domain": "session",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Cross-service distributed trace correlation",
+      "kind": "id",
+      "module": "lib/types/branded/session.ts",
+      "constructors": {
+        "as": "asCorrelationId",
+        "try": "tryCorrelationId",
+        "parse": "parseCorrelationId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isCorrelationId",
+      "coverage": {
+        "status": "covered",
+        "references": 13,
+        "constructors": {
+          "as": 2,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/ai/ai-operations-manager.ts",
+          "lib/core/structured-logger.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 13,
+            "constructionCalls": 2,
+            "guardCalls": 0,
+            "files": [
+              "lib/ai/ai-operations-manager.ts",
+              "lib/core/structured-logger.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "SnapshotId",
+      "domain": "session",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Point-in-time state snapshot identity",
+      "kind": "id",
+      "module": "lib/types/branded/session.ts",
+      "constructors": {
+        "as": "asSnapshotId",
+        "try": "trySnapshotId",
+        "parse": "parseSnapshotId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isSnapshotId",
+      "coverage": {
+        "status": "unused",
+        "references": 0,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [],
+        "scopes": {
+          "spine": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "UserId",
+      "domain": "identity",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "user-input",
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Human or agent principal identity",
+      "kind": "id",
+      "module": "lib/types/branded/identity.ts",
+      "constructors": {
+        "as": "asUserId",
+        "try": "tryUserId",
+        "parse": "parseUserId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isUserId",
+      "coverage": {
+        "status": "referenced-unconstructed",
+        "references": 8,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/core/structured-logger.ts",
+          "lib/mcp/r2-integration-fixed.ts",
+          "lib/security/secret-audit-logger.ts",
+          "projects/active/factorywager/registry/packages/dev-dashboard/src/api/routes.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "referenced-unconstructed",
+            "references": 7,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": [
+              "lib/core/structured-logger.ts",
+              "lib/mcp/r2-integration-fixed.ts",
+              "lib/security/secret-audit-logger.ts"
+            ]
+          },
+          "projects": {
+            "status": "referenced-unconstructed",
+            "references": 1,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": [
+              "projects/active/factorywager/registry/packages/dev-dashboard/src/api/routes.ts"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "AccountId",
+      "domain": "identity",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "user-input"
+      ],
+      "description": "Cloud account (e.g. Cloudflare/R2 account) — env/wire only, never empty forge",
+      "kind": "id",
+      "module": "lib/types/branded/identity.ts",
+      "constructors": {
+        "as": "asAccountId",
+        "try": "tryAccountId",
+        "parse": "parseAccountId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isAccountId",
+      "coverage": {
+        "status": "covered",
+        "references": 24,
+        "constructors": {
+          "as": 5,
+          "try": 2,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/mcp/cloudflare-domain-manager.ts",
+          "lib/mcp/domain-integration.ts",
+          "lib/mcp/r2-integration-fixed.ts",
+          "lib/r2/r2-storage-enhanced.ts",
+          "lib/security/infra-secrets.ts",
+          "lib/security/r2-credentials.ts",
+          "lib/verification/cloudflare-token-scope.ts",
+          "lib/verification/proof-consistency.ts",
+          "lib/verification/proof-taxonomy.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 24,
+            "constructionCalls": 7,
+            "guardCalls": 0,
+            "files": [
+              "lib/mcp/cloudflare-domain-manager.ts",
+              "lib/mcp/domain-integration.ts",
+              "lib/mcp/r2-integration-fixed.ts",
+              "lib/r2/r2-storage-enhanced.ts",
+              "lib/security/infra-secrets.ts",
+              "lib/security/r2-credentials.ts",
+              "lib/verification/cloudflare-token-scope.ts",
+              "lib/verification/proof-consistency.ts",
+              "lib/verification/proof-taxonomy.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "IdentityId",
+      "domain": "identity",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Zero-trust / federated identity record",
+      "kind": "id",
+      "module": "lib/types/branded/identity.ts",
+      "constructors": {
+        "as": "asIdentityId",
+        "try": "tryIdentityId",
+        "parse": "parseIdentityId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isIdentityId",
+      "coverage": {
+        "status": "covered",
+        "references": 14,
+        "constructors": {
+          "as": 5,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/identity/identity.ts",
+          "lib/identity/timeline.ts",
+          "lib/security/zero-trust-manager.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 14,
+            "constructionCalls": 5,
+            "guardCalls": 0,
+            "files": [
+              "lib/identity/identity.ts",
+              "lib/identity/timeline.ts",
+              "lib/security/zero-trust-manager.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "AccessKeyId",
+      "domain": "identity",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "S3/R2 access key id (not the secret material)",
+      "kind": "id",
+      "module": "lib/types/branded/identity.ts",
+      "constructors": {
+        "as": "asAccessKeyId",
+        "try": "tryAccessKeyId",
+        "parse": "parseAccessKeyId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isAccessKeyId",
+      "coverage": {
+        "status": "covered",
+        "references": 12,
+        "constructors": {
+          "as": 1,
+          "try": 2,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/factory/object-store.ts",
+          "lib/mcp/r2-integration-fixed.ts",
+          "lib/r2/r2-storage-enhanced.ts",
+          "lib/security/infra-secrets.ts",
+          "lib/security/r2-credentials.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 12,
+            "constructionCalls": 3,
+            "guardCalls": 0,
+            "files": [
+              "lib/factory/object-store.ts",
+              "lib/mcp/r2-integration-fixed.ts",
+              "lib/r2/r2-storage-enhanced.ts",
+              "lib/security/infra-secrets.ts",
+              "lib/security/r2-credentials.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "TokenId",
+      "domain": "identity",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Opaque token handle (not the token secret)",
+      "kind": "id",
+      "module": "lib/types/branded/identity.ts",
+      "constructors": {
+        "as": "asTokenId",
+        "try": "tryTokenId",
+        "parse": "parseTokenId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isTokenId",
+      "coverage": {
+        "status": "covered",
+        "references": 14,
+        "constructors": {
+          "as": 10,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/identity/http.ts",
+          "lib/identity/identity.ts",
+          "lib/identity/impersonate.ts",
+          "lib/identity/self-service.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 14,
+            "constructionCalls": 10,
+            "guardCalls": 0,
+            "files": [
+              "lib/identity/http.ts",
+              "lib/identity/identity.ts",
+              "lib/identity/impersonate.ts",
+              "lib/identity/self-service.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "DocumentId",
+      "domain": "documents",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Wiki / collab document identity",
+      "kind": "id",
+      "module": "lib/types/branded/documents.ts",
+      "constructors": {
+        "as": "asDocumentId",
+        "try": "tryDocumentId",
+        "parse": "parseDocumentId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isDocumentId",
+      "coverage": {
+        "status": "unused",
+        "references": 0,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [],
+        "scopes": {
+          "spine": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ZoneId",
+      "domain": "documents",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input"
+      ],
+      "description": "DNS / Cloudflare zone — mint from wire via parseZoneId",
+      "kind": "id",
+      "module": "lib/types/branded/documents.ts",
+      "constructors": {
+        "as": "asZoneId",
+        "try": "tryZoneId",
+        "parse": "parseZoneId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isZoneId",
+      "coverage": {
+        "status": "covered",
+        "references": 4,
+        "constructors": {
+          "as": 2,
+          "try": 0,
+          "parse": 1
+        },
+        "guards": 0,
+        "files": [
+          "lib/mcp/cloudflare-domain-manager.ts",
+          "lib/verification/cloudflare-token-scope.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 4,
+            "constructionCalls": 3,
+            "guardCalls": 0,
+            "files": [
+              "lib/mcp/cloudflare-domain-manager.ts",
+              "lib/verification/cloudflare-token-scope.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "DocTokenId",
+      "domain": "documents",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Bun documentation token identity (catalog / TokenRef northstar)",
+      "kind": "id",
+      "module": "lib/types/branded/documents.ts",
+      "constructors": {
+        "as": "asDocTokenId",
+        "try": "tryDocTokenId",
+        "parse": "parseDocTokenId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isDocTokenId",
+      "coverage": {
+        "status": "covered",
+        "references": 2,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/docs/token-ref-adapter.ts",
+          "lib/docs/token-ref.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 2,
+            "constructionCalls": 1,
+            "guardCalls": 0,
+            "files": [
+              "lib/docs/token-ref-adapter.ts",
+              "lib/docs/token-ref.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ChallengeId",
+      "domain": "security",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Auth challenge / proof-of-possession handle",
+      "kind": "id",
+      "module": "lib/types/branded/security.ts",
+      "constructors": {
+        "as": "asChallengeId",
+        "try": "tryChallengeId",
+        "parse": "parseChallengeId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isChallengeId",
+      "coverage": {
+        "status": "covered",
+        "references": 4,
+        "constructors": {
+          "as": 2,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/security/zero-trust-manager.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 4,
+            "constructionCalls": 2,
+            "guardCalls": 0,
+            "files": [
+              "lib/security/zero-trust-manager.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "PolicyId",
+      "domain": "security",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Access policy identity",
+      "kind": "id",
+      "module": "lib/types/branded/security.ts",
+      "constructors": {
+        "as": "asPolicyId",
+        "try": "tryPolicyId",
+        "parse": "parsePolicyId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isPolicyId",
+      "coverage": {
+        "status": "covered",
+        "references": 5,
+        "constructors": {
+          "as": 6,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/security/zero-trust-manager.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 5,
+            "constructionCalls": 6,
+            "guardCalls": 0,
+            "files": [
+              "lib/security/zero-trust-manager.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "DeploymentId",
+      "domain": "deployment",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Release / deployment instance identity",
+      "kind": "id",
+      "module": "lib/types/branded/deployment.ts",
+      "constructors": {
+        "as": "asDeploymentId",
+        "try": "tryDeploymentId",
+        "parse": "parseDeploymentId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isDeploymentId",
+      "coverage": {
+        "status": "unused",
+        "references": 0,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [],
+        "scopes": {
+          "spine": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "VersionId",
+      "domain": "audit",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Secret or config version identity",
+      "kind": "id",
+      "module": "lib/types/branded/audit.ts",
+      "constructors": {
+        "as": "asVersionId",
+        "try": "tryVersionId",
+        "parse": "parseVersionId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isVersionId",
+      "coverage": {
+        "status": "unused",
+        "references": 0,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [],
+        "scopes": {
+          "spine": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "AuditId",
+      "domain": "audit",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Audit log entry identity",
+      "kind": "id",
+      "module": "lib/types/branded/audit.ts",
+      "constructors": {
+        "as": "asAuditId",
+        "try": "tryAuditId",
+        "parse": "parseAuditId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isAuditId",
+      "coverage": {
+        "status": "unused",
+        "references": 0,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [],
+        "scopes": {
+          "spine": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "AuditFindingId",
+      "domain": "audit",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "FactoryWager audit-finding SSOT primary key",
+      "kind": "id",
+      "module": "lib/types/branded/audit.ts",
+      "constructors": {
+        "as": "asAuditFindingId",
+        "try": "tryAuditFindingId",
+        "parse": "parseAuditFindingId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isAuditFindingId",
+      "coverage": {
+        "status": "covered",
+        "references": 14,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 1
+        },
+        "guards": 0,
+        "files": [
+          "lib/audit/audit-finding.ts",
+          "lib/audit/audit-refs.ts",
+          "tools/audit-catalog.ts",
+          "tools/audit-emit-stub.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 14,
+            "constructionCalls": 2,
+            "guardCalls": 0,
+            "files": [
+              "lib/audit/audit-finding.ts",
+              "lib/audit/audit-refs.ts",
+              "tools/audit-catalog.ts",
+              "tools/audit-emit-stub.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "AuditConceptId",
+      "domain": "audit",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "FactoryWager audit-concept SSOT primary key",
+      "kind": "id",
+      "module": "lib/types/branded/audit.ts",
+      "constructors": {
+        "as": "asAuditConceptId",
+        "try": "tryAuditConceptId",
+        "parse": "parseAuditConceptId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isAuditConceptId",
+      "coverage": {
+        "status": "covered",
+        "references": 14,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 1
+        },
+        "guards": 0,
+        "files": [
+          "lib/audit/audit-concept.ts",
+          "lib/audit/audit-refs.ts",
+          "tools/audit-catalog.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 14,
+            "constructionCalls": 1,
+            "guardCalls": 0,
+            "files": [
+              "lib/audit/audit-concept.ts",
+              "lib/audit/audit-refs.ts",
+              "tools/audit-catalog.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "AuditEntryId",
+      "domain": "audit",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Polymorphic audit SSOT ref (finding or concept id)",
+      "kind": "id",
+      "module": "lib/types/branded/audit.ts",
+      "constructors": {
+        "as": "asAuditEntryId",
+        "try": "tryAuditEntryId",
+        "parse": "parseAuditEntryId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isAuditEntryId",
+      "coverage": {
+        "status": "covered",
+        "references": 26,
+        "constructors": {
+          "as": 38,
+          "try": 0,
+          "parse": 2
+        },
+        "guards": 0,
+        "files": [
+          "lib/audit/audit-concept.ts",
+          "lib/audit/audit-finding.ts",
+          "lib/audit/audit-refs.ts",
+          "lib/audit/render-finding.ts",
+          "tools/audit-catalog.ts",
+          "tools/audit-emit-stub.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 26,
+            "constructionCalls": 40,
+            "guardCalls": 0,
+            "files": [
+              "lib/audit/audit-concept.ts",
+              "lib/audit/audit-finding.ts",
+              "lib/audit/audit-refs.ts",
+              "lib/audit/render-finding.ts",
+              "tools/audit-catalog.ts",
+              "tools/audit-emit-stub.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "EvidenceId",
+      "domain": "audit",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Screenshot / image evidence row (UUID v7 via Bun.randomUUIDv7)",
+      "kind": "id",
+      "module": "lib/types/branded/audit.ts",
+      "constructors": {
+        "as": "asEvidenceId",
+        "try": "tryEvidenceId",
+        "parse": "parseEvidenceId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isEvidenceId",
+      "coverage": {
+        "status": "covered",
+        "references": 11,
+        "constructors": {
+          "as": 3,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/dod/evidence.ts",
+          "lib/screenshot-remediation.ts",
+          "lib/time.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 11,
+            "constructionCalls": 3,
+            "guardCalls": 0,
+            "files": [
+              "lib/dod/evidence.ts",
+              "lib/screenshot-remediation.ts",
+              "lib/time.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "OperationId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Batch or async operation handle",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asOperationId",
+        "try": "tryOperationId",
+        "parse": "parseOperationId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isOperationId",
+      "coverage": {
+        "status": "covered",
+        "references": 6,
+        "constructors": {
+          "as": 4,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/core/concurrent-operations.ts",
+          "lib/core/core-types.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 6,
+            "constructionCalls": 4,
+            "guardCalls": 0,
+            "files": [
+              "lib/core/concurrent-operations.ts",
+              "lib/core/core-types.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ResourceId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Generic resource pointer (errors, ACL subjects)",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asResourceId",
+        "try": "tryResourceId",
+        "parse": "parseResourceId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isResourceId",
+      "coverage": {
+        "status": "referenced-unconstructed",
+        "references": 5,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/core/core-errors.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "referenced-unconstructed",
+            "references": 5,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": [
+              "lib/core/core-errors.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ProjectId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "user-input",
+        "wire-input"
+      ],
+      "description": "Project / workspace identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asProjectId",
+        "try": "tryProjectId",
+        "parse": "parseProjectId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isProjectId",
+      "coverage": {
+        "status": "covered",
+        "references": 3,
+        "constructors": {
+          "as": 7,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/gate-map.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 3,
+            "constructionCalls": 7,
+            "guardCalls": 0,
+            "files": [
+              "lib/gate-map.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "PipelineId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Transform or CI pipeline identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asPipelineId",
+        "try": "tryPipelineId",
+        "parse": "parsePipelineId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isPipelineId",
+      "coverage": {
+        "status": "unused",
+        "references": 0,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [],
+        "scopes": {
+          "spine": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "JobId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Scheduled or queued job identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asJobId",
+        "try": "tryJobId",
+        "parse": "parseJobId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isJobId",
+      "coverage": {
+        "status": "unused",
+        "references": 0,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [],
+        "scopes": {
+          "spine": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "StepId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Pipeline step identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asStepId",
+        "try": "tryStepId",
+        "parse": "parseStepId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isStepId",
+      "coverage": {
+        "status": "unused",
+        "references": 0,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [],
+        "scopes": {
+          "spine": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "WebhookId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Webhook registration identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asWebhookId",
+        "try": "tryWebhookId",
+        "parse": "parseWebhookId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isWebhookId",
+      "coverage": {
+        "status": "unused",
+        "references": 0,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [],
+        "scopes": {
+          "spine": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "FeedId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "RSS / event feed identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asFeedId",
+        "try": "tryFeedId",
+        "parse": "parseFeedId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isFeedId",
+      "coverage": {
+        "status": "unused",
+        "references": 0,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [],
+        "scopes": {
+          "spine": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "RunId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Benchmark / search-loop run identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asRunId",
+        "try": "tryRunId",
+        "parse": "parseRunId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isRunId",
+      "coverage": {
+        "status": "unused",
+        "references": 0,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [],
+        "scopes": {
+          "spine": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "DecisionId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Decision evidence record identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asDecisionId",
+        "try": "tryDecisionId",
+        "parse": "parseDecisionId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isDecisionId",
+      "coverage": {
+        "status": "unused",
+        "references": 0,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [],
+        "scopes": {
+          "spine": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "LoopId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Search / maintenance loop identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asLoopId",
+        "try": "tryLoopId",
+        "parse": "parseLoopId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isLoopId",
+      "coverage": {
+        "status": "unused",
+        "references": 0,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [],
+        "scopes": {
+          "spine": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "TreeNodeId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Ops tree node (partner / agent / sub_agent) identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asTreeNodeId",
+        "try": "tryTreeNodeId",
+        "parse": "parseTreeNodeId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isTreeNodeId",
+      "coverage": {
+        "status": "covered",
+        "references": 247,
+        "constructors": {
+          "as": 93,
+          "try": 2,
+          "parse": 7
+        },
+        "guards": 0,
+        "files": [
+          "lib/accounts/accounts.ts",
+          "lib/accounts/automation.ts",
+          "lib/channels/outbox.ts",
+          "lib/experiments/cluster.ts",
+          "lib/experiments/design.ts",
+          "lib/experiments/engine.ts",
+          "lib/experiments/outcomes.ts",
+          "lib/experiments/runner.ts",
+          "lib/experiments/switchback.ts",
+          "lib/identity/anomaly.ts",
+          "lib/identity/board.ts",
+          "lib/identity/export.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 247,
+            "constructionCalls": 102,
+            "guardCalls": 0,
+            "files": [
+              "lib/accounts/accounts.ts",
+              "lib/accounts/automation.ts",
+              "lib/channels/outbox.ts",
+              "lib/experiments/cluster.ts",
+              "lib/experiments/design.ts",
+              "lib/experiments/engine.ts",
+              "lib/experiments/outcomes.ts",
+              "lib/experiments/runner.ts",
+              "lib/experiments/switchback.ts",
+              "lib/identity/anomaly.ts",
+              "lib/identity/board.ts",
+              "lib/identity/export.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ExperimentId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "user-input",
+        "wire-input"
+      ],
+      "description": "Factorial or multi-variant experiment identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asExperimentId",
+        "try": "tryExperimentId",
+        "parse": "parseExperimentId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isExperimentId",
+      "coverage": {
+        "status": "covered",
+        "references": 32,
+        "constructors": {
+          "as": 3,
+          "try": 0,
+          "parse": 10
+        },
+        "guards": 0,
+        "files": [
+          "lib/experiments/cluster.ts",
+          "lib/experiments/design.ts",
+          "lib/experiments/engine.ts",
+          "lib/experiments/outcomes.ts",
+          "lib/experiments/runner.ts",
+          "lib/experiments/switchback.ts",
+          "tools/ops-experiments.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 32,
+            "constructionCalls": 13,
+            "guardCalls": 0,
+            "files": [
+              "lib/experiments/cluster.ts",
+              "lib/experiments/design.ts",
+              "lib/experiments/engine.ts",
+              "lib/experiments/outcomes.ts",
+              "lib/experiments/runner.ts",
+              "lib/experiments/switchback.ts",
+              "tools/ops-experiments.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ExperimentVariantId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "One design cell (factor combination) in an experiment",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asExperimentVariantId",
+        "try": "tryExperimentVariantId",
+        "parse": "parseExperimentVariantId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isExperimentVariantId",
+      "coverage": {
+        "status": "covered",
+        "references": 3,
+        "constructors": {
+          "as": 6,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/experiments/engine.ts",
+          "lib/experiments/switchback.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 3,
+            "constructionCalls": 6,
+            "guardCalls": 0,
+            "files": [
+              "lib/experiments/engine.ts",
+              "lib/experiments/switchback.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ExperimentAssignmentId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Sticky partner-to-variant assignment row",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asExperimentAssignmentId",
+        "try": "tryExperimentAssignmentId",
+        "parse": "parseExperimentAssignmentId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isExperimentAssignmentId",
+      "coverage": {
+        "status": "covered",
+        "references": 0,
+        "constructors": {
+          "as": 2,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/experiments/engine.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 0,
+            "constructionCalls": 2,
+            "guardCalls": 0,
+            "files": [
+              "lib/experiments/engine.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "PartnerProfileKey",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Partner profile binding key for tree node ↔ template",
+      "kind": "key",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asPartnerProfileKey",
+        "try": "tryPartnerProfileKey",
+        "parse": "parsePartnerProfileKey"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isPartnerProfileKey",
+      "coverage": {
+        "status": "covered",
+        "references": 3,
+        "constructors": {
+          "as": 2,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/operations/partner-profile-bridge.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 3,
+            "constructionCalls": 2,
+            "guardCalls": 0,
+            "files": [
+              "lib/operations/partner-profile-bridge.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "PartnerTemplateId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "user-input",
+        "wire-input"
+      ],
+      "description": "Partner onboarding template identifier",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asPartnerTemplateId",
+        "try": "tryPartnerTemplateId",
+        "parse": "parsePartnerTemplateId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isPartnerTemplateId",
+      "coverage": {
+        "status": "covered",
+        "references": 24,
+        "constructors": {
+          "as": 11,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/channels/outbox.ts",
+          "lib/operations/onboarding-config.ts",
+          "lib/operations/ops-loop-fixture.ts",
+          "lib/operations/partner-onboard-package.ts",
+          "lib/operations/partner-onboarding.ts",
+          "lib/operations/partner-profile-bridge.ts",
+          "lib/operations/partner-profile-seed.ts",
+          "tools/ops-loop-live-proof.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 24,
+            "constructionCalls": 11,
+            "guardCalls": 0,
+            "files": [
+              "lib/channels/outbox.ts",
+              "lib/operations/onboarding-config.ts",
+              "lib/operations/ops-loop-fixture.ts",
+              "lib/operations/partner-onboard-package.ts",
+              "lib/operations/partner-onboarding.ts",
+              "lib/operations/partner-profile-bridge.ts",
+              "lib/operations/partner-profile-seed.ts",
+              "tools/ops-loop-live-proof.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "GateDecisionId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Policy gate decision row for play dispatch",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asGateDecisionId",
+        "try": "tryGateDecisionId",
+        "parse": "parseGateDecisionId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isGateDecisionId",
+      "coverage": {
+        "status": "covered",
+        "references": 2,
+        "constructors": {
+          "as": 4,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/operations/ops-loop-gate-backfill.ts",
+          "lib/operations/partner-profile-bridge.ts",
+          "lib/operations/play-dispatcher.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 2,
+            "constructionCalls": 4,
+            "guardCalls": 0,
+            "files": [
+              "lib/operations/ops-loop-gate-backfill.ts",
+              "lib/operations/partner-profile-bridge.ts",
+              "lib/operations/play-dispatcher.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "OpsChannelEventId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Unified ops channel outbox event id",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asOpsChannelEventId",
+        "try": "tryOpsChannelEventId",
+        "parse": "parseOpsChannelEventId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isOpsChannelEventId",
+      "coverage": {
+        "status": "covered",
+        "references": 2,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/channels/ops-channel-event.ts",
+          "lib/channels/outbox.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 2,
+            "constructionCalls": 1,
+            "guardCalls": 0,
+            "files": [
+              "lib/channels/ops-channel-event.ts",
+              "lib/channels/outbox.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "StateCode",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "user-input",
+        "wire-input"
+      ],
+      "description": "US state jurisdiction code for regulatory scoping (MA, NJ, …)",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[A-Z]{2}$",
+        "ingressNormalization": "trim-uppercase"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asStateCode",
+        "try": "tryStateCode",
+        "parse": "parseStateCode"
+      },
+      "guard": "BRAND_GUARDS.isStateCode",
+      "coverage": {
+        "status": "covered",
+        "references": 19,
+        "constructors": {
+          "as": 22,
+          "try": 6,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/operations/limit-patterns.ts",
+          "lib/operations/partner-compliance-onboard.ts",
+          "lib/operations/play-dispatcher.ts",
+          "lib/operations/state-compliance-http.ts",
+          "lib/operations/state-regulation.ts",
+          "tools/deep-audit-report.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 19,
+            "constructionCalls": 28,
+            "guardCalls": 0,
+            "files": [
+              "lib/operations/limit-patterns.ts",
+              "lib/operations/partner-compliance-onboard.ts",
+              "lib/operations/play-dispatcher.ts",
+              "lib/operations/state-compliance-http.ts",
+              "lib/operations/state-regulation.ts",
+              "tools/deep-audit-report.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ZipCode",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "user-input",
+        "wire-input"
+      ],
+      "description": "US ZIP or ZIP+4 postal code (discrete geo column)",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^\\d{5}(-\\d{4})?$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asZipCode",
+        "try": "tryZipCode",
+        "parse": "parseZipCode"
+      },
+      "guard": "BRAND_GUARDS.isZipCode",
+      "coverage": {
+        "status": "covered",
+        "references": 10,
+        "constructors": {
+          "as": 11,
+          "try": 3,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/operations/limit-patterns.ts",
+          "lib/operations/state-regulation.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 10,
+            "constructionCalls": 14,
+            "guardCalls": 0,
+            "files": [
+              "lib/operations/limit-patterns.ts",
+              "lib/operations/state-regulation.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "PortalTenantId",
+      "domain": "portal",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "user-input",
+        "wire-input"
+      ],
+      "description": "Multi-tenant portal tenant key (factory | science | tennis)",
+      "kind": "id",
+      "module": "lib/types/branded/portal.ts",
+      "constructors": {
+        "as": "asPortalTenantId",
+        "try": "tryPortalTenantId",
+        "parse": "parsePortalTenantId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isPortalTenantId",
+      "coverage": {
+        "status": "covered",
+        "references": 26,
+        "constructors": {
+          "as": 4,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/accounts/account-r2-store.ts",
+          "lib/accounts/account-types.ts",
+          "lib/accounts/accounts.ts",
+          "lib/accounts/memory-account-store.ts",
+          "lib/channels/channels.ts",
+          "lib/identity/identity.ts",
+          "lib/telegram/link-nonce.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 26,
+            "constructionCalls": 4,
+            "guardCalls": 0,
+            "files": [
+              "lib/accounts/account-r2-store.ts",
+              "lib/accounts/account-types.ts",
+              "lib/accounts/accounts.ts",
+              "lib/accounts/memory-account-store.ts",
+              "lib/channels/channels.ts",
+              "lib/identity/identity.ts",
+              "lib/telegram/link-nonce.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "TelegramUserId",
+      "domain": "portal",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input"
+      ],
+      "description": "Telegram user id from Bot API",
+      "kind": "id",
+      "module": "lib/types/branded/portal.ts",
+      "constructors": {
+        "as": "asTelegramUserId",
+        "try": "tryTelegramUserId",
+        "parse": "parseTelegramUserId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isTelegramUserId",
+      "coverage": {
+        "status": "covered",
+        "references": 20,
+        "constructors": {
+          "as": 9,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/accounts/account-r2-store.ts",
+          "lib/accounts/account-types.ts",
+          "lib/accounts/accounts.ts",
+          "lib/accounts/memory-account-store.ts",
+          "lib/identity/jit.ts",
+          "lib/telegram/bot.ts",
+          "lib/telegram/brands.ts",
+          "lib/telegram/ops-bot.ts",
+          "lib/telegram/ops-commands.ts",
+          "tools/identity-admin.ts",
+          "tools/telegram-ops-consumer.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 20,
+            "constructionCalls": 9,
+            "guardCalls": 0,
+            "files": [
+              "lib/accounts/account-r2-store.ts",
+              "lib/accounts/account-types.ts",
+              "lib/accounts/accounts.ts",
+              "lib/accounts/memory-account-store.ts",
+              "lib/identity/jit.ts",
+              "lib/telegram/bot.ts",
+              "lib/telegram/brands.ts",
+              "lib/telegram/ops-bot.ts",
+              "lib/telegram/ops-commands.ts",
+              "tools/identity-admin.ts",
+              "tools/telegram-ops-consumer.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "PortalAccountId",
+      "domain": "portal",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Portal user account primary key (UUID v7)",
+      "kind": "id",
+      "module": "lib/types/branded/portal.ts",
+      "constructors": {
+        "as": "asPortalAccountId",
+        "try": "tryPortalAccountId",
+        "parse": "parsePortalAccountId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isPortalAccountId",
+      "coverage": {
+        "status": "covered",
+        "references": 15,
+        "constructors": {
+          "as": 4,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/accounts/account-r2-store.ts",
+          "lib/accounts/account-types.ts",
+          "lib/accounts/memory-account-store.ts",
+          "lib/telegram/link-nonce.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 15,
+            "constructionCalls": 4,
+            "guardCalls": 0,
+            "files": [
+              "lib/accounts/account-r2-store.ts",
+              "lib/accounts/account-types.ts",
+              "lib/accounts/memory-account-store.ts",
+              "lib/telegram/link-nonce.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "LinkNonceId",
+      "domain": "portal",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Telegram link nonce for account binding",
+      "kind": "id",
+      "module": "lib/types/branded/portal.ts",
+      "constructors": {
+        "as": "asLinkNonceId",
+        "try": "tryLinkNonceId",
+        "parse": "parseLinkNonceId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isLinkNonceId",
+      "coverage": {
+        "status": "unused",
+        "references": 0,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [],
+        "scopes": {
+          "spine": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    }
+  ],
+  "projects": [
+    {
+      "project": "projects/active/dashboards/quantum-terminal-dashboard",
+      "sourceFiles": 26,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/active/enterprise/fantasy42-fire22-registry",
+      "sourceFiles": 1118,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/active/utilities/bun-toml-secrets-editor",
+      "sourceFiles": 224,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/active/enterprise/bet-ticker-worker-v1.1",
+      "sourceFiles": 0,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "external-or-untracked"
+    },
+    {
+      "project": "projects/active/dashboards/enterprise-dashboard",
+      "sourceFiles": 190,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/experimental/api-plive-setup-discovery",
+      "sourceFiles": 100,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/active/automation/enhancements-1.0.01",
+      "sourceFiles": 2,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/experimental/keyboard-shortcuts-lite",
+      "sourceFiles": 7,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/active/enterprise/full-stack-bun.io",
+      "sourceFiles": 193,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/active/dashboards/secrets-dashboard",
+      "sourceFiles": 1,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/active/utilities/bun-file-analyzer",
+      "sourceFiles": 75,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/active/utilities/shortcut-registry",
+      "sourceFiles": 29,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/active/enterprise/cascade-mover-v3",
+      "sourceFiles": 0,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "external-or-untracked"
+    },
+    {
+      "project": "projects/active/development/kal-poly-bot",
+      "sourceFiles": 269,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/active/analysis/matrix-analysis",
+      "sourceFiles": 683,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/active/tools/native-addon-tool",
+      "sourceFiles": 2,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/active/analysis/grok-security",
+      "sourceFiles": 91,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/active/enterprise/foxy-proxy",
+      "sourceFiles": 86,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/experimental/rust-bun-plugin",
+      "sourceFiles": 2,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/active/utilities/proton-pass",
+      "sourceFiles": 10,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [
+        "ItemId",
+        "VaultId"
+      ],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "local-pattern"
+    },
+    {
+      "project": "projects/active/development/geelark",
+      "sourceFiles": 200,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/experimental/cli-dashboard",
+      "sourceFiles": 2,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/active/utilities/toml-cli",
+      "sourceFiles": 50,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/experimental/zig-self-bun",
+      "sourceFiles": 32,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/active/sports-terminal-os",
+      "sourceFiles": 176,
+      "brandedFiles": 1,
+      "brands": [
+        "RequestId"
+      ],
+      "localBrandTypes": [],
+      "constructorCalls": 2,
+      "guardCalls": 0,
+      "status": "adopted"
+    },
+    {
+      "project": "projects/experimental/edge-worker",
+      "sourceFiles": 2,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/active/analysis/scanner",
+      "sourceFiles": 58,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/active/playwriter-skill",
+      "sourceFiles": 2,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/experimental/my-bun-app",
+      "sourceFiles": 2,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/experimental/codepoint",
+      "sourceFiles": 142,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/experimental/tan-bun",
+      "sourceFiles": 46,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/experimental/testing",
+      "sourceFiles": 72,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/active/f402-openapi",
+      "sourceFiles": 0,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "external-or-untracked"
+    },
+    {
+      "project": "projects/active/factorywager",
+      "sourceFiles": 75,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    },
+    {
+      "project": "projects/experimental/2048",
+      "sourceFiles": 95,
+      "brandedFiles": 0,
+      "brands": [],
+      "localBrandTypes": [],
+      "constructorCalls": 0,
+      "guardCalls": 0,
+      "status": "governed-no-usage"
+    }
+  ]
+}

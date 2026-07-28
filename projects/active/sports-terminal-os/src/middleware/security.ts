@@ -12,6 +12,11 @@
 
 import { env } from "@utils/env";
 import { createLogger } from "@utils/logger";
+import {
+  asRequestId,
+  parseRequestId,
+  type RequestId,
+} from "../../../../../lib/types/branded.ts";
 
 const logger = createLogger("Security");
 
@@ -35,16 +40,16 @@ const TRUST_PROXY = process.env.TRUST_PROXY === "true";
 /**
  * Generate a unique request ID for tracing.
  */
-export function generateRequestId(): string {
-  return `req_${Bun.randomUUIDv7().slice(0, 12)}`;
+export function generateRequestId(): RequestId {
+  return asRequestId(`req_${Bun.randomUUIDv7().slice(0, 12)}`);
 }
 
 /**
  * Get request ID from headers or generate a new one.
  */
-export function getRequestId(req: Request): string {
+export function getRequestId(req: Request): RequestId {
   const existingId = req.headers.get("X-Request-ID");
-  if (existingId) return existingId;
+  if (existingId) return parseRequestId(existingId);
   return generateRequestId();
 }
 
@@ -160,8 +165,8 @@ export function applySecurityHeaders(response: Response): Response {
 export function logRequest(
   req: Request,
   pathname: string,
-  requestId: string
-): string {
+  requestId: RequestId
+): RequestId {
   const method = req.method;
   const userAgent = req.headers.get("User-Agent") || "-";
   const clientIp = getClientIp(req);
@@ -179,7 +184,7 @@ export function logRequest(
  * Log a completed response.
  */
 export function logResponse(
-  requestId: string,
+  requestId: RequestId,
   method: string,
   pathname: string,
   statusCode: number,

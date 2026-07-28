@@ -56,6 +56,12 @@ describe('portal route wiring', () => {
     expect(PORTAL_MARKDOWN_SLUGS).toContain('limits');
   });
 
+  test('brand keymap portal is first-class in route SSOT', () => {
+    expect(PORTAL_HTML_ROUTES).toContain('/portal/brands/');
+    expect(PORTAL_TRAILING_SLASH_SOURCES).toContain('/portal/brands');
+    expect(PORTAL_MARKDOWN_SLUGS).toContain('brands');
+  });
+
   test('markdown slugs have static stubs under public/portal/', async () => {
     for (const slug of PORTAL_MARKDOWN_SLUGS) {
       const rel = slug === 'index' ? 'public/portal/index.md' : `public/portal/${slug}.md`;

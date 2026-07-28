@@ -124,6 +124,15 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     cli: 'bun run portal-cli pm graph  # offline packages-graph-map table',
   },
   {
+    id: 'brands',
+    label: 'Brands',
+    href: '/portal/brands/',
+    tier: 'overflow',
+    group: 'registry',
+    note: 'domain-value glossary · constructor tiers · project adoption',
+    cli: 'bun run brand:keymap',
+  },
+  {
     id: 'skills',
     label: 'Skills',
     href: '/portal/skills/',
@@ -235,6 +244,7 @@ export const PORTAL_FOOTER_LINKS: PortalChromeCatalog['footerLinks'] = [
   { label: 'Ops', href: '/portal/ops/' },
   { label: 'TOC', href: '/portal/toc/' },
   { label: 'Packages', href: '/portal/packages/' },
+  { label: 'Brands', href: '/portal/brands/' },
   { label: 'Health', href: '/portal/health/' },
   { label: 'Portal proof', href: '/registry/portal-weave.json' },
   { label: 'CLI Tools', href: '/portal/tools/' },

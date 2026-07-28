@@ -1,0 +1,363 @@
+<!doctype html>
+<!-- @see docs/portal-foundation.md · brand-keymap schema v1 -->
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="portal-poll-ms" content="60000" />
+    <title>Brand keymap · FactoryWager</title>
+    <meta
+      name="description"
+      content="FactoryWager branded domain-value glossary, constructor guide, and project adoption map."
+    />
+    <meta name="theme-color" content="#0d1117" />
+    <meta name="application-name" content="FactoryWager" />
+    <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+    <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/portal/style.css" />
+    <style>
+      .brand-board {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 24px 48px;
+      }
+      .brand-summary {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin: 20px 0 24px;
+      }
+      @media (min-width: 780px) {
+        .brand-summary {
+          grid-template-columns: repeat(6, 1fr);
+        }
+      }
+      .brand-stat {
+        padding: 14px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+      .brand-stat strong {
+        display: block;
+        font: 600 24px/1 var(--font-mono);
+      }
+      .brand-stat span {
+        display: block;
+        margin-top: 5px;
+        color: var(--text-dim);
+        font-size: 12px;
+      }
+      .brand-toolbar {
+        display: grid;
+        grid-template-columns: minmax(220px, 1fr);
+        gap: 10px;
+        margin: 18px 0;
+      }
+      @media (min-width: 760px) {
+        .brand-toolbar {
+          grid-template-columns: minmax(280px, 1fr) 190px 220px;
+        }
+      }
+      .brand-toolbar :is(input, select) {
+        width: 100%;
+        padding: 9px 11px;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        background: var(--surface);
+        color: var(--text);
+      }
+      .brand-panel {
+        margin-top: 24px;
+        padding: 18px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+      .brand-panel h3 {
+        margin: 0 0 6px;
+      }
+      .brand-table-wrap {
+        overflow: auto;
+      }
+      .brand-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      .brand-table th,
+      .brand-table td {
+        padding: 9px 10px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        vertical-align: top;
+      }
+      .brand-table th {
+        color: var(--text-dim);
+        font-weight: 500;
+      }
+      .brand-table code {
+        white-space: nowrap;
+      }
+      .brand-name {
+        color: var(--accent);
+        font-weight: 600;
+      }
+      .brand-description {
+        min-width: 240px;
+        color: var(--text-dim);
+      }
+      .brand-pill {
+        display: inline-block;
+        padding: 2px 7px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        font: 500 11px/1.5 var(--font-mono);
+      }
+      .brand-pill.covered,
+      .brand-pill.adopted {
+        color: var(--green, #3dd68c);
+        border-color: color-mix(in srgb, var(--green, #3dd68c) 55%, var(--border));
+      }
+      .brand-pill.referenced-unconstructed,
+      .brand-pill.types-only,
+      .brand-pill.local-pattern {
+        color: var(--yellow, #e6b84d);
+      }
+      .brand-pill.unused,
+      .brand-pill.governed-no-usage {
+        color: var(--text-dim);
+      }
+      .brand-pill.external-or-untracked {
+        color: var(--red, #f07178);
+      }
+      .brand-tier-grid {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+      }
+      @media (min-width: 760px) {
+        .brand-tier-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+      .brand-tier {
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        background: var(--bg);
+      }
+      .brand-tier code {
+        color: var(--accent);
+      }
+      .brand-tier p {
+        margin: 6px 0 0;
+        color: var(--text-dim);
+        font-size: 12px;
+      }
+      .brand-meta {
+        color: var(--text-dim);
+        font-size: 12px;
+      }
+      .brand-error {
+        padding: 12px 14px;
+        border: 1px solid var(--red, #f07178);
+        border-radius: 7px;
+        color: var(--red, #f07178);
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <h1 class="logo">
+          <span class="logo-icon" aria-hidden="true"></span>
+          <span class="brand-wordmark">FactoryWager</span>
+          <span class="brand-badge">types</span>
+          <span class="logo-page">Brand keymap</span>
+        </h1>
+        <nav class="topbar-nav" aria-label="Primary">
+          <a href="/" class="nav-link" data-group="other">Home</a>
+          <a href="/portal/ops/" class="nav-link" data-group="ops">Ops</a>
+          <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
+          <a href="/portal/health/" class="nav-link" data-group="harness">Health</a>
+          <a href="/portal/dod/" class="nav-link" data-group="plane">DOD</a>
+          <a href="/portal/compliance/" class="nav-link" data-group="ops">Compliance</a>
+          <div class="nav-overflow">
+            <button
+              type="button"
+              class="nav-more"
+              aria-label="More navigation"
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              ⋯
+            </button>
+            <div class="nav-dropdown" role="menu">
+              <a href="/portal/catalog/" class="nav-link" data-group="registry" role="menuitem"
+                >Catalog</a
+              >
+              <a href="/portal/packages/" class="nav-link" data-group="registry" role="menuitem"
+                >Packages</a
+              >
+              <a
+                href="/portal/brands/"
+                class="nav-link active"
+                aria-current="page"
+                data-group="registry"
+                role="menuitem"
+                >Brands</a
+              >
+              <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem"
+                >Skills</a
+              >
+              <a href="/portal/tools/" class="nav-link" data-group="harness" role="menuitem"
+                >CLI Tools</a
+              >
+              <a href="/portal/failures/" class="nav-link" data-group="harness" role="menuitem"
+                >Failures</a
+              >
+              <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem"
+                >Dashboard</a
+              >
+              <a href="/portal/toc/" class="nav-link" data-group="ops" role="menuitem">TOC</a>
+              <a href="/portal/env/" class="nav-link" data-group="secrets" role="menuitem">Env</a>
+              <a href="/portal/vault/" class="nav-link" data-group="secrets" role="menuitem"
+                >Vault</a
+              >
+            </div>
+          </div>
+        </nav>
+        <div class="topbar-status">
+          <a href="/registry/brand-keymap.json" class="nav-link nav-md" title="Raw keymap JSON"
+            >JSON</a
+          >
+          <a href="/portal/health/" class="topbar-health-link" title="System health">
+            <span id="health-dot" class="health-dot unknown"></span>
+            <span id="health-label" class="health-label">Connecting…</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="main brand-board">
+      <section class="hero">
+        <h2>Branded domain-value keymap</h2>
+        <p class="hero-sub">
+          One glossary for IDs, keys, validated codes, constructor tiers, runtime guards, and
+          tracked-project adoption.
+        </p>
+        <p class="brand-meta" id="brand-generated">Loading <code>brand-keymap.json</code>…</p>
+      </section>
+
+      <div class="brand-summary" id="brand-summary" aria-label="Brand coverage summary"></div>
+
+      <section class="brand-panel" aria-labelledby="constructor-title">
+        <h3 id="constructor-title">Constructor key</h3>
+        <p class="brand-meta">
+          Parse once at ingress, keep the brand through the interior, and unbrand only at outbound
+          serialization.
+        </p>
+        <div class="brand-tier-grid" id="brand-tiers"></div>
+      </section>
+
+      <section class="brand-panel" aria-labelledby="glossary-title">
+        <h3 id="glossary-title">Glossary</h3>
+        <div class="brand-toolbar">
+          <label
+            ><span class="sr-only">Search brands</span
+            ><input id="brand-search" type="search" placeholder="Search name, domain, purpose…"
+          /></label>
+          <label
+            ><span class="sr-only">Filter domain</span
+            ><select id="brand-domain">
+              <option value="">All domains</option>
+            </select></label
+          >
+          <label
+            ><span class="sr-only">Filter coverage</span
+            ><select id="brand-status">
+              <option value="">All coverage states</option>
+              <option value="covered">Covered</option>
+              <option value="referenced-unconstructed">Referenced, no constructor</option>
+              <option value="unused">Unused</option>
+            </select></label
+          >
+        </div>
+        <p class="brand-meta" id="brand-result-count"></p>
+        <div class="brand-table-wrap">
+          <table class="brand-table">
+            <thead>
+              <tr>
+                <th>Value</th>
+                <th>Purpose</th>
+                <th>Constructors / guard</th>
+                <th>Validation</th>
+                <th>Coverage</th>
+              </tr>
+            </thead>
+            <tbody id="brand-rows">
+              <tr>
+                <td colspan="5">Loading glossary…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="brand-panel" aria-labelledby="projects-title">
+        <h3 id="projects-title">Project adoption map</h3>
+        <p class="brand-meta">
+          Every tracked project is governed by the staged strict gate. “Local pattern” identifies
+          project-owned brand forges that should converge on the canonical package boundary.
+        </p>
+        <div class="brand-table-wrap">
+          <table class="brand-table">
+            <thead>
+              <tr>
+                <th>Project</th>
+                <th>Status</th>
+                <th>Source files</th>
+                <th>Canonical usage</th>
+                <th>Local brand types</th>
+              </tr>
+            </thead>
+            <tbody id="project-rows">
+              <tr>
+                <td colspan="5">Loading projects…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <notification-center aria-live="polite"></notification-center>
+    <footer class="footer" data-portal-chrome="footer">
+      <p>
+        <strong>FactoryWager</strong> · <a href="/portal/">Registry</a> ·
+        <a href="/portal/packages/">Packages</a> · <a href="/portal/brands/">Brands</a> ·
+        <a href="/portal/skills/">Skills</a> · <a href="/portal/health/">Health</a> ·
+        <a href="/registry/brand-keymap.json">Keymap JSON</a>
+      </p>
+      <p class="footer-meta">
+        project-R-score · branded values are compile-time nominal and runtime string-compatible
+      </p>
+    </footer>
+
+    <script type="module" src="/portal/data.js"></script>
+    <script type="module" src="/portal/topbar.js"></script>
+    <script type="module" src="/portal/brands/brands-board.js"></script>
+    <script type="module" src="/portal/components/sidebar.js"></script>
+    <script type="module" src="/portal/components/notification.js"></script>
+    <script type="module" src="/portal/components/footer.js"></script>
+  </body>
+</html>

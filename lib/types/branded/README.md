@@ -14,6 +14,8 @@ text must not travel through the harness as a bare `string`.
 - **Runtime:** branded values remain ordinary strings; the nominal tag is
   type-only
 - **Shape guards:** `BRAND_GUARDS.isX(value)` and `isBrandedValue(name, value)`
+- **Portal glossary:** [`/portal/brands/`](../../../public/portal/brands/)
+  backed by [`brand-keymap.json`](../../../public/registry/brand-keymap.json)
 - **Boundary:** [`docs/WIRE_BOUNDARY.md`](../../../docs/WIRE_BOUNDARY.md)
 - **Agent workflow:**
   [`.agents/skills/branded-ids/SKILL.md`](../../../.agents/skills/branded-ids/SKILL.md)
@@ -128,12 +130,36 @@ the nominal type and constructor semantics.
 | `bun run check:brands:types`                      | proves nominal separation and aggregate coverage                   |
 | `bun test tests/branded-catalog.test.ts`          | proves catalog uniqueness, constructor exports, and runtime tiers  |
 | `bun tools/brand-coverage.ts --attention`         | reports unused and referenced-but-unconstructed brands             |
+| `bun tools/brand-keymap.ts --check`               | proves the portal glossary and project adoption map are current    |
 
 Intentional opaque third-party primary keys require an inline decision:
 
 ```ts
 id: string; // brand-ok — opaque provider primary key
 ```
+
+### Project-wide adoption
+
+Coverage loads Git-tracked TypeScript across the harness spine and `projects/`.
+It excludes tests, fixtures, generated output, caches, nested dependencies, and
+frozen archives. This keeps independent repositories and third-party snapshots
+from masquerading as FactoryWager adoption.
+
+Every staged TypeScript file is governed by the strict no-baseline gate,
+including nested projects. The keymap separates that universal governance from
+current adoption:
+
+- `adopted`: imports the canonical forge and calls a constructor or guard.
+- `local-pattern`: owns a project-local nominal brand implementation that should
+  converge on the canonical distribution boundary.
+- `types-only`: imports canonical types without a visible construction path.
+- `governed-no-usage`: tracked by the gate but not yet using the canonical
+  vocabulary.
+- `external-or-untracked`: catalogued project whose source belongs to another
+  repository or is absent locally.
+
+The portal is evidence, not a bulk-cast queue. Migrate an owned boundary,
+constructor, and interior path together.
 
 ## Operable commands
 
@@ -144,6 +170,8 @@ bun tools/brand-catalog.ts StateCode
 bun tools/brand-catalog.ts portal --json
 bun tools/brand-coverage.ts --attention
 bun tools/brand-coverage.ts --json
+bun tools/brand-keymap.ts
+bun tools/brand-keymap.ts --check
 bun tools/brand-manifest.ts
 bun tools/brand-manifest.ts --check
 bun run check:brands

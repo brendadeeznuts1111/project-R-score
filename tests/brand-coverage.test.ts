@@ -2,6 +2,9 @@ import { describe, expect, test } from 'bun:test';
 
 import {
   analyzeBrandCoverage,
+  analyzeProjectBrandAdoption,
+  inferProjectRoot,
+  stripSourceComments,
   type BrandCoverageFile,
 } from '../tools/brand-coverage.ts';
 
@@ -33,16 +36,28 @@ describe('brand coverage reporter', () => {
           if (isBrandedValue('StateCode', other)) return other;
         `,
       },
+      {
+        path: 'projects/active/example/src/session.ts',
+        project: 'projects/active/example',
+        text: `
+          import { asSessionId } from '../../../../lib/types/branded.ts';
+          const projectSession = asSessionId('project-session');
+        `,
+      },
     ];
 
     const rows = analyzeBrandCoverage(files);
     expect(rows).toHaveLength(47);
     expect(row(rows, 'SessionId')).toMatchObject({
       references: 0,
-      asCalls: 1,
+      asCalls: 2,
       parseCalls: 1,
-      constructionCalls: 2,
+      constructionCalls: 3,
       status: 'covered',
+    });
+    expect(row(rows, 'SessionId').scopes).toMatchObject({
+      spine: { asCalls: 1, parseCalls: 1 },
+      projects: { asCalls: 1, parseCalls: 0 },
     });
     expect(row(rows, 'AccountId')).toMatchObject({
       references: 2,
@@ -65,5 +80,77 @@ describe('brand coverage reporter', () => {
     ]);
 
     expect(row(rows, 'SessionId').files).toEqual(['lib/session.ts']);
+  });
+
+  test('ignores brand names in comments while preserving generic guard string literals', () => {
+    const source = stripSourceComments(`
+      // RunId is not used here.
+      const note = "keep // inside strings";
+      /* ResourceId is prose. */
+      isBrandedValue('StateCode', value);
+    `);
+    const rows = analyzeBrandCoverage([{ path: 'lib/commented.ts', text: source }]);
+
+    expect(row(rows, 'RunId').status).toBe('unused');
+    expect(row(rows, 'ResourceId').status).toBe('unused');
+    expect(row(rows, 'StateCode').guardCalls).toBe(1);
+    expect(source).toContain('keep // inside strings');
+  });
+
+  test('rolls canonical usage up by catalogued project', () => {
+    const files: BrandCoverageFile[] = [
+      {
+        path: 'projects/active/adopted/src/index.ts',
+        project: 'projects/active/adopted',
+        text: `
+          import { asSessionId } from '../../../../lib/types/branded.ts';
+          export const id = asSessionId('session');
+        `,
+      },
+      {
+        path: 'projects/active/legacy/src/index.ts',
+        project: 'projects/active/legacy',
+        text: `
+          declare const localBrand: unique symbol;
+          export type LocalItemId = string & { readonly [localBrand]: true };
+        `,
+      },
+    ];
+    const projects = analyzeProjectBrandAdoption(files, [
+      'projects/active/adopted',
+      'projects/active/legacy',
+      'projects/active/external',
+    ]);
+
+    expect(projects).toEqual([
+      expect.objectContaining({
+        project: 'projects/active/adopted',
+        status: 'adopted',
+        brands: ['SessionId'],
+      }),
+      expect.objectContaining({
+        project: 'projects/active/legacy',
+        status: 'local-pattern',
+        localBrandTypes: ['LocalItemId'],
+      }),
+      expect.objectContaining({
+        project: 'projects/active/external',
+        status: 'external-or-untracked',
+      }),
+    ]);
+  });
+
+  test('infers top-level, category, and experimental product roots', () => {
+    expect(
+      inferProjectRoot('projects/active/sports-terminal-os/src/middleware/security.ts')
+    ).toBe('projects/active/sports-terminal-os');
+    expect(
+      inferProjectRoot('projects/active/utilities/proton-pass/src/brands.ts')
+    ).toBe('projects/active/utilities/proton-pass');
+    expect(inferProjectRoot('projects/experimental/2048/src/index.ts')).toBe(
+      'projects/experimental/2048'
+    );
+    expect(inferProjectRoot('lib/types/branded.ts')).toBeUndefined();
+    expect(inferProjectRoot('projects/active/analysis/README.md')).toBeUndefined();
   });
 });
