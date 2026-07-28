@@ -58,7 +58,9 @@ Decision tables below are **generated** from [`docs-index.json`](./docs-index.js
 ```bash
 bun run packages:docs-index          # regenerate tables from docs-index.json
 bun run packages:docs-index:check    # CI: fail if README out of sync
-bun run packages:docs-index --bump-verified   # set lastVerified=today for all rows
+bun run packages:docs-index --bump-verified              # all rows → today
+bun run packages:docs-index --bump-verified=2026-07-20   # all rows → date
+bun run packages:docs-index --bump-verified=2026-07-20:registry-md,pm-filter
 ```
 <!-- packages-docs-index:end -->
 
@@ -120,10 +122,15 @@ bun outdated --filter './'                       # root package.json only
 bun outdated --filter sports-terminal-os
 bun outdated --filter '!./' --filter './packages/*'
 
-# Portal CLI (root tooling — snapshot + secrets)
+# Portal CLI (root tooling — snapshot + secrets + bun pm passthrough)
 bun run portal-cli snapshot run --scope prediction
 bun run portal-cli snapshot list
 bun run portal-cli probe lockfile
+# bun pm surface (canonical: https://bun.com/docs/pm/cli/pm — no invented flags)
+bun run portal-cli pm ls
+bun run portal-cli pm pack --dry-run
+bun run portal-cli pm pkg get name
+bun run portal-cli pm hash
 # Inject secrets from Proton Pass and run a command (real pass-cli)
 bun run portal-cli secret autofill --vault factorywager -- ./start-agent.sh
 # Compiled binary (optional)

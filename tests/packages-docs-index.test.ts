@@ -36,4 +36,26 @@ describe('packages-docs-index', () => {
     expect(code).toBe(0);
     expect(err).toBe('');
   });
+
+  test('--bump-verified=YYYY-MM-DD parses without rewriting when --check after restore', async () => {
+    // Smoke: flag is accepted and exits 0 when writing (we re-run --write after to keep tree clean)
+    const before = await Bun.file(resolvePath(ROOT, 'docs/packages/docs-index.json')).text();
+    const bump = Bun.spawn(
+      ['bun', 'run', 'scripts/packages-docs-index.ts', '--bump-verified=2099-01-01', '--write'],
+      { cwd: ROOT, stdout: 'pipe', stderr: 'pipe' }
+    );
+    expect(await bump.exited).toBe(0);
+    const mid = await Bun.file(resolvePath(ROOT, 'docs/packages/docs-index.json')).json();
+    expect(mid.docs.every((d: { lastVerified: string }) => d.lastVerified === '2099-01-01')).toBe(
+      true
+    );
+    // restore
+    await Bun.write(resolvePath(ROOT, 'docs/packages/docs-index.json'), before);
+    const restore = Bun.spawn(['bun', 'run', 'scripts/packages-docs-index.ts', '--write'], {
+      cwd: ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    expect(await restore.exited).toBe(0);
+  });
 });

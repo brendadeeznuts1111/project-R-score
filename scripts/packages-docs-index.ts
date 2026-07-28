@@ -12,6 +12,8 @@
  *   bun run packages:docs-index --check      # fail if README out of sync (CI)
  *   bun run packages:docs-index --bump-verified
  *   bun run packages:docs-index --bump-verified=registry-md,pm-filter
+ *   bun run packages:docs-index --bump-verified=2026-07-20
+ *   bun run packages:docs-index --bump-verified=2026-07-20:registry-md,pm-filter
  *
  * Grounded map: Bun.file · Bun.write · plain string templates (AGENTS.md capability map).
  */
@@ -22,6 +24,7 @@ const INDEX_PATH = resolvePath(ROOT, 'docs/packages/docs-index.json');
 const README_PATH = resolvePath(ROOT, 'docs/packages/README.md');
 const MARKER_START = '<!-- packages-docs-index:start -->';
 const MARKER_END = '<!-- packages-docs-index:end -->';
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 type DocRow = {
   id: string; // brand-ok — docs-index.json row key (not a domain *Id)
@@ -48,9 +51,64 @@ type DocsIndex = {
   };
 };
 
+type BumpSpec = { date: string; ids: 'all' | string[] };
+
 const WRITE = Bun.argv.includes('--write') || !Bun.argv.includes('--check');
 const CHECK = Bun.argv.includes('--check');
-const bumpArg = Bun.argv.find(a => a === '--bump-verified' || a.startsWith('--bump-verified='));
+
+/** Parse --bump-verified[=DATE][=:ids] or space forms. */
+function parseBumpVerified(argv: string[]): BumpSpec | null {
+  const eq = argv.find(a => a.startsWith('--bump-verified='));
+  if (eq) {
+    const val = eq.slice('--bump-verified='.length).trim();
+    if (!val) return { date: todayISO(), ids: 'all' };
+    if (ISO_DATE.test(val)) return { date: val, ids: 'all' };
+    const dated = val.match(/^(\d{4}-\d{2}-\d{2})[=:](.+)$/);
+    if (dated) {
+      return {
+        date: dated[1]!,
+        ids: dated[2]!
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean),
+      };
+    }
+    // id list only → today
+    return {
+      date: todayISO(),
+      ids: val
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean),
+    };
+  }
+  if (!argv.includes('--bump-verified')) return null;
+  const i = argv.indexOf('--bump-verified');
+  const a = argv[i + 1];
+  const b = argv[i + 2];
+  if (a && !a.startsWith('--')) {
+    if (ISO_DATE.test(a)) {
+      if (b && !b.startsWith('--')) {
+        return {
+          date: a,
+          ids: b
+            .split(',')
+            .map(s => s.trim())
+            .filter(Boolean),
+        };
+      }
+      return { date: a, ids: 'all' };
+    }
+    return {
+      date: todayISO(),
+      ids: a
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean),
+    };
+  }
+  return { date: todayISO(), ids: 'all' };
+}
 
 function todayISO(): string {
   return new Date().toISOString().slice(0, 10);
@@ -142,26 +200,22 @@ function buildGeneratedBlock(index: DocsIndex): string {
     '```bash',
     'bun run packages:docs-index          # regenerate tables from docs-index.json',
     'bun run packages:docs-index:check    # CI: fail if README out of sync',
-    'bun run packages:docs-index --bump-verified   # set lastVerified=today for all rows',
+    'bun run packages:docs-index --bump-verified              # all rows → today',
+    'bun run packages:docs-index --bump-verified=2026-07-20   # all rows → date',
+    'bun run packages:docs-index --bump-verified=2026-07-20:registry-md,pm-filter',
     '```',
   ].join('\n');
 }
 
-function applyBumpVerified(index: DocsIndex, bump: string | true): DocsIndex {
-  const date = todayISO();
-  index.lastUpdated = date;
-  if (bump === true) {
-    for (const d of index.docs) d.lastVerified = date;
+function applyBumpVerified(index: DocsIndex, bump: BumpSpec): DocsIndex {
+  index.lastUpdated = todayISO();
+  if (bump.ids === 'all') {
+    for (const d of index.docs) d.lastVerified = bump.date;
     return index;
   }
-  const ids = new Set(
-    String(bump)
-      .split(',')
-      .map(s => s.trim())
-      .filter(Boolean)
-  );
+  const ids = new Set(bump.ids);
   for (const d of index.docs) {
-    if (ids.has(d.id) || ids.has(d.doc)) d.lastVerified = date;
+    if (ids.has(d.id) || ids.has(d.doc)) d.lastVerified = bump.date;
   }
   return index;
 }
@@ -174,12 +228,12 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  if (bumpArg) {
-    const val =
-      bumpArg === '--bump-verified' ? true : bumpArg.slice('--bump-verified='.length) || true;
-    index = applyBumpVerified(index, val);
+  const bumpSpec = parseBumpVerified(Bun.argv);
+  if (bumpSpec) {
+    index = applyBumpVerified(index, bumpSpec);
     await Bun.write(INDEX_PATH, `${JSON.stringify(index, null, 2)}\n`);
-    console.info(`Updated lastVerified in ${INDEX_PATH}`);
+    const who = bumpSpec.ids === 'all' ? 'all rows' : bumpSpec.ids.join(',');
+    console.info(`Updated lastVerified=${bumpSpec.date} (${who}) in ${INDEX_PATH}`);
   }
 
   const generated = buildGeneratedBlock(index);
@@ -225,7 +279,7 @@ async function main(): Promise<void> {
     process.exit(0);
   }
 
-  if (WRITE || bumpArg) {
+  if (WRITE || bumpSpec) {
     await Bun.write(README_PATH, next);
     console.info(`Wrote decision tables → ${README_PATH}`);
   }

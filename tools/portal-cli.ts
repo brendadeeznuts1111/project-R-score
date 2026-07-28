@@ -4,17 +4,17 @@
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/pm/cli/pm — bun pm (pack · ls · version · pkg · trust · cache · hash)
 /**
- * FactoryWager portal CLI — snapshot subcommand for scope-aware data-plane capture.
+ * FactoryWager portal CLI — snapshot, probe, secret, and bun pm passthrough.
  *
  *   portal-cli snapshot run [--scope prediction] [--dry-run] [--debug]
  *   portal-cli snapshot list [--scope portal]
- *   portal-cli snapshot grep "bias>2" [--scope prediction]
- *   portal-cli snapshot last [--scope prediction]
- *   portal-cli snapshot config [--scope gaps]
+ *   portal-cli pm ls | pack | version | pkg …
+ *   portal-cli secret autofill --vault factorywager -- <cmd>
  *
  *   bun tools/portal-cli.ts snapshot run
- *   bun run portal-cli snapshot list
+ *   bun run portal-cli pm ls
  */
 import {
   cliError,
@@ -61,12 +61,25 @@ const ROOT_HELP = `FactoryWager portal CLI
   portal-cli snapshot <subcommand>   Scope-aware report snapshots
   portal-cli probe [command]         Bun-native monorepo/portal probes
   portal-cli secret <subcommand>     Proton Pass CLI (pass-cli) wrapper
+  portal-cli pm <args…>              Passthrough → bun pm (pack, ls, version, pkg, …)
   portal-cli help                    This message
 
   bun run portal-cli snapshot run --scope prediction
   bun run portal-cli probe lockfile
   bun run portal-cli secret which
+  bun run portal-cli pm ls
+  bun run portal-cli pm pack --dry-run
   bun run portal:probe
+
+pm (canonical: https://bun.com/docs/pm/cli/pm) — zero invention, only bun pm flags:
+  pm ls | ls --all | ls --trusted
+  pm pack [--destination dir] [--quiet] [--dry-run]
+  pm version [patch|minor|major|…]
+  pm pkg get|set|delete|fix …
+  pm hash | hash-string | hash-print
+  pm cache | cache rm
+  pm trust <names> | untrusted | default-trusted
+  pm whoami | migrate | bin [-g]
 
 Secret (real pass-cli only — https://protonpass.github.io/pass-cli/):
   secret which | login | info | vaults | items <vault>
@@ -161,6 +174,18 @@ async function main(): Promise<void> {
     const { dispatchSecret } = await import('./portal-secret.ts');
     await dispatchSecret(argv[1], argv.slice(2));
     return;
+  }
+
+  if (cmd === 'pm') {
+    // Full bun pm surface — https://bun.com/docs/pm/cli/pm
+    // Inherit stdio; no invented flags (only what bun pm accepts).
+    const proc = Bun.spawn(['bun', 'pm', ...argv.slice(1)], {
+      cwd: process.cwd(),
+      stdout: 'inherit',
+      stderr: 'inherit',
+      stdin: 'inherit',
+    });
+    process.exit((await proc.exited) ?? 1);
   }
 
   cliError(`Unknown command: ${cmd}\n\n${ROOT_HELP}`);

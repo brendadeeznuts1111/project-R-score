@@ -214,3 +214,11 @@ Each row maps to a documented API — Bun or Proton Pass CLI — with type, vers
 | **Sleep** | runtime | Bun ≥1.0 | `Bun.sleep(ms)` | — | rate limiting (future) | Available | [Bun.sleep](https://bun.sh/docs/api/sleep) | `await Bun.sleep(1000);` |
 | **Structured debug output** | dev | Bun ≥1.0 | `Bun.inspect(obj, { colors: true, depth: 4 })` | — | `snapshot run --debug` | Implemented | [Bun.inspect](https://bun.sh/docs/api/inspect) | `console.log(Bun.inspect(manifest, { colors: true }));` |
 | **Semantic versioning** | dev | Bun ≥1.0 | `Bun.semver` (compare, satisfies) | — | version checks (future) | Available | [Bun.semver](https://bun.sh/docs/api/semver) | `Bun.semver.satisfies("1.4.0", ">=1.4");` |
+| **Pack workspace** | pkg | Bun ≥1.0 | `bun pm pack` | — | `portal-cli pm pack` | Implemented | [bun pm pack](https://bun.com/docs/pm/cli/pm#pack) | `bun run portal-cli pm pack --dry-run` |
+| **List dependencies** | pkg | Bun ≥1.0 | `bun pm ls` | — | `portal-cli pm ls` | Implemented | [bun pm ls](https://bun.com/docs/pm/cli/pm#ls) | `bun run portal-cli pm ls` |
+| **Bump version** | pkg | Bun ≥1.0 | `bun pm version` | — | `portal-cli pm version` | Implemented | [bun pm version](https://bun.com/docs/pm/cli/pm#version) | `bun run portal-cli pm version --no-git-tag-version` |
+| **Manage package.json** | pkg | Bun ≥1.0 | `bun pm pkg get/set/delete/fix` | — | `portal-cli pm pkg …` | Implemented | [bun pm pkg](https://bun.com/docs/pm/cli/pm#pkg) | `bun run portal-cli pm pkg get name` |
+| **Trust lifecycle scripts** | security | Bun ≥1.0 | `bun pm trust` / `untrusted` | — | `portal-cli pm trust` | Implemented | [bun pm trust](https://bun.com/docs/pm/cli/pm#trust) | `bun run portal-cli pm untrusted` |
+| **Cache inspection** | infra | Bun ≥1.0 | `bun pm cache` | — | `portal-cli pm cache` | Implemented | [bun pm cache](https://bun.com/docs/pm/cli/pm#cache) | `bun run portal-cli pm cache` |
+| **Lockfile hash** | integrity | Bun ≥1.0 | `bun pm hash` | — | `portal-cli pm hash` | Implemented | [bun pm hash](https://bun.com/docs/pm/cli/pm#hash) | `bun run portal-cli pm hash` |
+| **PM utilities (full group)** | pkg | Bun ≥1.0 | `bun pm` | — | `portal-cli pm` passthrough | Implemented | [bun pm](https://bun.com/docs/pm/cli/pm) | `bun run portal-cli pm whoami` |
