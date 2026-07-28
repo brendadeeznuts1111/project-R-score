@@ -1,0 +1,32 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`test-failures parser report shape is a stable contract (snapshot) 1`] = `
+{
+  "failures": [
+    {
+      "file": "tests/foo.test.ts",
+      "message": 
+"Expected: 2
+Received: 3 & more"
+,
+      "name": "breaks <badly> (with regex+chars)",
+      "replayFile": "bun test tests/foo.test.ts",
+      "replayTest": "bun test tests/foo.test.ts --test-name-pattern "breaks <badly> \\(with regex\\+chars\\)"",
+      "suite": "foo",
+      "timeSeconds": 0.002,
+    },
+  ],
+  "generatedAt": "2026-07-28T00:00:00Z",
+  "healthy": false,
+  "kind": "test-failures",
+  "sources": [
+    "junit.xml",
+  ],
+  "totals": {
+    "failures": 1,
+    "skipped": 1,
+    "tests": 3,
+    "timeSeconds": 2.5,
+  },
+}
+`;

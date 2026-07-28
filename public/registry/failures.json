@@ -1,0 +1,15 @@
+{
+  "kind": "test-failures",
+  "generatedAt": "2026-07-28T17:26:50.517Z",
+  "sources": [
+    "tmp/junit.xml"
+  ],
+  "totals": {
+    "tests": 14,
+    "failures": 0,
+    "skipped": 0,
+    "timeSeconds": 0.183
+  },
+  "failures": [],
+  "healthy": true
+}
