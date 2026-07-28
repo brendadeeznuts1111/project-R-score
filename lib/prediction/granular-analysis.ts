@@ -276,3 +276,8 @@ export function formatRegulatoryTable(correlations: RegulatoryCorrelation[], lim
     separatorAfter: correlations.length > limit ? [limit - 1] : undefined,
   });
 }
+
+// ── Naming aliases ───────────────────────────────────────────────────────
+export const analyzeLimitDimensions = analyzeByDimension;
+export const correlateLimitRegulations = correlateWithRegulations;
+export const runLimitAnalysis = runGranularAnalysis;

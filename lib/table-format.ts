@@ -452,3 +452,8 @@ export const PREDICTION_COLUMNS: ColumnDef[] = [
   },
   { key: 'windowHint', label: 'Window', align: 'left', width: 24, color: color.dim },
 ];
+
+// ── Naming aliases ───────────────────────────────────────────────────────
+/** @deprecated Use `formatInspectTable` */
+export const formatTableNativeAlias = formatTableNative;
+export const formatInspectTable = formatTableNative;
