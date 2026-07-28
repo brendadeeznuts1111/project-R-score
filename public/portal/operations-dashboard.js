@@ -411,10 +411,16 @@ class OperationsDashboard extends HTMLElement {
             <h2>Hardware</h2>
             <div id="phone-inventory"></div>
           </section>
-          <section class="ops-panel wide" id="portal-weave-panel">
-            <h2>Portal weave</h2>
-            <div class="ops-sub">Cross-surface links · <a href="/registry/portal-weave.json">portal-weave.json</a></div>
+          <section class="ops-panel wide" id="portal-weave-panel" data-subsystem="harness">
+            <h2>Portal weave <span class="ops-badge" title="schema v2 · surfaces · artifacts · chrome">v2</span></h2>
+            <div class="ops-sub" id="portal-weave-summary">Cross-surface links · registry SSOT</div>
+            <div class="ops-sub" id="portal-weave-related"></div>
+            <h3 class="ops-weave-h3">Surfaces</h3>
             <div id="portal-weave-surfaces" class="ops-weave-links"></div>
+            <h3 class="ops-weave-h3">Artifacts</h3>
+            <div id="portal-weave-artifacts" class="ops-weave-links"></div>
+            <h3 class="ops-weave-h3">Chrome components</h3>
+            <div id="portal-weave-components" class="ops-weave-links"></div>
             <h3 class="ops-weave-h3">Wiki (GitHub Pages)</h3>
             <div id="portal-weave-wiki" class="ops-weave-links ops-weave-wiki"></div>
             <h3 class="ops-weave-h3">Operator scripts</h3>
@@ -2314,33 +2320,86 @@ class OperationsDashboard extends HTMLElement {
     }
 
     const weave = this.portalWeave;
+    const weaveSummary = this.querySelector('#portal-weave-summary');
+    if (weaveSummary) {
+      const sum = weave?.summary;
+      const ver = weave?.schemaVersion != null ? `schema v${weave.schemaVersion}` : 'legacy weave';
+      if (sum) {
+        weaveSummary.innerHTML = `${esc(ver)} · ${sum.surfaces} surfaces · ${sum.artifacts} artifacts · ${sum.components} components · ${sum.scripts} scripts · <a class="ops-link" href="/registry/portal-weave.json">portal-weave.json</a>`;
+      } else {
+        weaveSummary.innerHTML = `Cross-surface links · <a class="ops-link" href="/registry/portal-weave.json">portal-weave.json</a> · rebake for schema v2`;
+      }
+    }
+    const weaveRelated = this.querySelector('#portal-weave-related');
+    if (weaveRelated) {
+      const rel = weave?.related || {
+        chrome: '/registry/portal-chrome.json',
+        monorepoHealth: '/registry/monorepo-health.json',
+        packagesGraph: '/registry/packages-graph-map.json',
+        opsSummary: '/registry/ops-summary.json',
+        tocOps: '/registry/toc-ops.json',
+      };
+      weaveRelated.innerHTML = [
+        ['chrome', rel.chrome],
+        ['monorepo-health', rel.monorepoHealth],
+        ['packages-graph', rel.packagesGraph],
+        ['ops-summary', rel.opsSummary],
+        ['toc-ops', rel.tocOps],
+      ]
+        .filter(([, href]) => href)
+        .map(
+          ([label, href]) =>
+            `<a class="ops-link ops-weave-chip" href="${esc(href)}" data-group="related">${esc(label)}</a>`
+        )
+        .join(' ');
+    }
+    const chip = (item, opts = {}) => {
+      const group = item.group ? ` data-group="${esc(item.group)}"` : '';
+      const title = item.note || item.role || '';
+      const ext = opts.external ? ' target="_blank" rel="noopener noreferrer"' : '';
+      return `<a class="ops-link ops-weave-chip" href="${esc(item.href || item.path || '#')}" title="${esc(title)}"${group}${ext}>${esc(item.label || item.id || '?')}</a>`;
+    };
     const weaveSurfaces = this.querySelector('#portal-weave-surfaces');
     if (weaveSurfaces) {
       const surfaces = weave?.surfaces?.length
         ? weave.surfaces
         : [
-            { label: 'Monitoring', href: '/monitoring/' },
-            { label: 'DOD', href: '/portal/dod/' },
-            { label: 'Skills', href: '/portal/skills/' },
-            { label: 'Prediction', href: '/registry/prediction/report/' },
+            { label: 'Monitoring', href: '/monitoring/', group: 'ops' },
+            { label: 'DOD', href: '/portal/dod/', group: 'plane' },
+            { label: 'Skills', href: '/portal/skills/', group: 'registry' },
+            { label: 'Prediction', href: '/registry/prediction/report/', group: 'registry' },
           ];
-      weaveSurfaces.innerHTML = surfaces
-        .map(
-          s =>
-            `<a class="ops-link" href="${esc(s.href)}" title="${esc(s.note || '')}">${esc(s.label)}</a>`
-        )
-        .join('');
+      weaveSurfaces.innerHTML = surfaces.map(s => chip(s)).join('');
+    }
+    const weaveArts = this.querySelector('#portal-weave-artifacts');
+    if (weaveArts) {
+      const arts = (weave?.artifacts || []).slice(0, 18);
+      weaveArts.innerHTML = arts.length
+        ? arts.map(a => chip(a)).join('')
+        : '<span class="ops-muted">Rebake portal-weave for artifacts</span>';
+    }
+    const weaveComps = this.querySelector('#portal-weave-components');
+    if (weaveComps) {
+      const comps = weave?.components || [];
+      weaveComps.innerHTML = comps.length
+        ? comps
+            .map(c =>
+              chip({
+                id: c.id,
+                label: c.id,
+                href: c.path,
+                note: c.role,
+                group: 'harness',
+              })
+            )
+            .join('')
+        : '<span class="ops-muted">Rebake for chrome components</span>';
     }
     const weaveWiki = this.querySelector('#portal-weave-wiki');
     if (weaveWiki) {
       const wikiLinks = weave?.wiki?.length ? weave.wiki : [];
       weaveWiki.innerHTML = wikiLinks.length
-        ? wikiLinks
-            .map(
-              w =>
-                `<a class="ops-link" href="${esc(w.href)}" target="_blank" rel="noopener noreferrer" title="${esc(w.note || '')}">${esc(w.label)}</a>`
-            )
-            .join('')
+        ? wikiLinks.map(w => chip(w, { external: true })).join('')
         : '<span class="ops-muted">Rebake portal-weave.json for wiki links</span>';
     }
     const weaveScripts = this.querySelector('#portal-weave-scripts');
@@ -2354,7 +2413,7 @@ class OperationsDashboard extends HTMLElement {
       weaveScripts.innerHTML = scripts
         .map(
           s =>
-            `<li><code>${esc(s.cmd)}</code>${s.doc ? ` · <a href="/${esc(s.doc)}">doc</a>` : ''}</li>`
+            `<li data-group="${esc(s.group || 'other')}"><strong>${esc(s.label || '')}</strong> · <code>${esc(s.cmd)}</code>${s.doc ? ` · <a class="ops-link" href="/${esc(s.doc)}">doc</a>` : ''}</li>`
         )
         .join('');
     }
