@@ -13,25 +13,30 @@ function runtimeConstructor(name: string): RuntimeConstructor {
 function sampleFor(name: string): { input: string; expected: string } {
   if (name === 'StateCode') return { input: 'ma', expected: 'MA' };
   if (name === 'ZipCode') return { input: '02139', expected: '02139' };
-  // surfaces domain: format-aware FQDN / inventory key / Access domain
+  // surfaces domain: format-aware FQDN / shortcodes / Access / type codes
   if (name === 'HostId') return { input: 'Ledger.Factory-Wager.COM', expected: 'ledger.factory-wager.com' };
   if (name === 'ApexDomainId') {
     return { input: 'Factory-Wager.COM', expected: 'factory-wager.com' };
   }
   if (name === 'SubdomainId') return { input: 'Score', expected: 'score' };
   if (name === 'SurfaceId') return { input: 'Ledger', expected: 'ledger' };
+  if (name === 'PagesProjectId') {
+    return { input: 'Project-R-Score', expected: 'project-r-score' };
+  }
   if (name === 'AccessDomainId') {
     return {
       input: 'Score.Factory-Wager.COM/Portal',
       expected: 'score.factory-wager.com/portal',
     };
   }
+  if (name === 'SurfaceStatusCode') return { input: 'Live', expected: 'live' };
+  if (name === 'SurfaceAccessCode') return { input: 'Applied', expected: 'applied' };
   return { input: `sample-${name.toLowerCase()}`, expected: `sample-${name.toLowerCase()}` };
 }
 
 describe('branded domain-value catalog', () => {
-  test('catalog is a unique 52-value, 9-domain contract', () => {
-    expect(branded.BRAND_CATALOG).toHaveLength(52);
+  test('catalog is a unique 55-value, 9-domain contract', () => {
+    expect(branded.BRAND_CATALOG).toHaveLength(55);
 
     const names = branded.BRAND_CATALOG.map(spec => spec.name);
     const domains = new Set(branded.BRAND_CATALOG.map(spec => spec.domain));
@@ -40,9 +45,9 @@ describe('branded domain-value catalog', () => {
     expect(new Set(names).size).toBe(names.length);
     expect(domains.size).toBe(9);
     expect(domains.has('surfaces')).toBeTrue();
-    expect(kinds.filter(kind => kind === 'id')).toHaveLength(49);
+    expect(kinds.filter(kind => kind === 'id')).toHaveLength(50);
     expect(kinds.filter(kind => kind === 'key')).toHaveLength(1);
-    expect(kinds.filter(kind => kind === 'code')).toHaveLength(2);
+    expect(kinds.filter(kind => kind === 'code')).toHaveLength(4);
   });
 
   test('every catalog value exports working as/try/parse constructors', () => {
@@ -63,7 +68,7 @@ describe('branded domain-value catalog', () => {
   });
 
   test('generated guards cover every canonical runtime shape', () => {
-    expect(Object.keys(branded.BRAND_GUARDS)).toHaveLength(52);
+    expect(Object.keys(branded.BRAND_GUARDS)).toHaveLength(55);
 
     for (const spec of branded.BRAND_CATALOG) {
       const guardName = `is${spec.name}` as keyof typeof branded.BRAND_GUARDS;
@@ -121,6 +126,27 @@ describe('branded domain-value catalog', () => {
     expect(branded.BRAND_GUARDS.isApexDomainId('factory-wager.com')).toBeTrue();
     expect(branded.BRAND_GUARDS.isSubdomainId('@')).toBeTrue();
     expect(branded.trySubdomainId('bad/label')).toBeUndefined();
+  });
+
+  test('surfaces shortcodes: Pages project ≠ operations ProjectId; status/access codes', () => {
+    expect(branded.PROJECT_R_SCORE_PAGES).toBe('project-r-score');
+    expect(branded.asPagesProjectId('project-r-score')).toBe(branded.PROJECT_R_SCORE_PAGES);
+    expect(
+      branded.tryPagesProjectIdFromBackend('cloudflare-pages:project-r-score (vanity CNAME)')
+    ).toBe('project-r-score');
+    expect(branded.tryPagesProjectIdFromBackend('github-pages')).toBeUndefined();
+    // PagesProjectId is not operations ProjectId (distinct brands)
+    const pages = branded.asPagesProjectId('project-r-score');
+    const ops = branded.asProjectId('project-r-score');
+    expect(pages).toBe(ops); // same string
+    // but cross-assign is a type error (proven in branded-types.test-d.ts)
+
+    expect(branded.asSurfaceStatusCode('dangling')).toBe('dangling');
+    expect(() => branded.asSurfaceStatusCode('unknown')).toThrow();
+    expect(branded.asSurfaceAccessCode('bearer (intended)')).toBe('bearer (intended)');
+    expect(branded.BRAND_GUARDS.isSurfaceStatusCode('live')).toBeTrue();
+    expect(branded.BRAND_GUARDS.isSurfaceAccessCode('public')).toBeTrue();
+    expect(branded.BRAND_GUARDS.isSurfaceAccessCode('Bearer (intended)')).toBeFalse();
   });
 
   test('generic constructors reject blank values and strip a brand explicitly', () => {

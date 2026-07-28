@@ -14,10 +14,15 @@ Import constructors from [`lib/types/branded.ts`](../types/branded.ts) (domain m
 | Brand | Meaning |
 |-------|---------|
 | `HostId` | Pure FQDN (no scheme/path) |
+| `ApexDomainId` | Zone apex (`factory-wager.com`) |
+| `SubdomainId` | DNS labels under apex (`score`, `@`) |
 | `SurfaceId` | Inventory key (`ledger`, `score`, …) |
+| `PagesProjectId` | CF Pages shortcode (`project-r-score`) ≠ ops `ProjectId` |
 | `AccessDomainId` | Access app domain (`host` or `host/path`) |
+| `SurfaceStatusCode` | live \| vanity \| broken \| … |
+| `SurfaceAccessCode` | public \| applied \| staged \| … |
 
-Helpers: `accessDomainFromHost`, `hostIdFromAccessDomain`, `pathFromAccessDomain`,
+Helpers: `splitHostId`, `accessDomainFromHost`, `tryPagesProjectIdFromBackend`,
 `hostIdFromUrl`, `httpsUrlForAccessDomain`.
 
 ## Usage

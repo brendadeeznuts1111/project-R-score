@@ -2,15 +2,22 @@
  * @domain surfaces
  * @module lib/types/branded/surfaces.ts
  *
- * Public edge surface brands — hostnames and inventory keys stay separated.
+ * Public edge surface brands — hostnames, shortcodes, and inventory types stay separated.
  *
+ * IDs:
  * - **HostId** — pure FQDN (no scheme, no path): `ledger.factory-wager.com`
  * - **ApexDomainId** — zone apex: `factory-wager.com`
  * - **SubdomainId** — left labels under apex (`score`, `www`) or `@` for bare apex
  * - **SurfaceId** — config/surfaces.toml key: `ledger`, `score`, `pages_dev`
  *   (inventory key — not the same as DNS SubdomainId)
+ * - **PagesProjectId** — Cloudflare Pages project shortcode: `project-r-score`
+ *   (not operations `ProjectId` — that is a workspace PK)
  * - **AccessDomainId** — Cloudflare Access app `domain` (host or host/path):
  *   `score.factory-wager.com/portal`
+ *
+ * Codes (closed vocabularies from config/surfaces.toml):
+ * - **SurfaceStatusCode** — live | vanity | broken | dangling | staged | placeholder | external
+ * - **SurfaceAccessCode** — public | allowlist | applied | staged | bearer (intended) | external | none
  *
  * Do not pass a path-bearing Access domain where a HostId is required.
  * Split with `hostIdFromAccessDomain` / `pathFromAccessDomain`.
@@ -38,10 +45,22 @@ export type SubdomainId = BrandedString<'SubdomainId'>;
 export type SurfaceId = BrandedString<'SurfaceId'>;
 
 /**
+ * Cloudflare Pages project shortcode (dashboard project name).
+ * Not operations ProjectId (workspace PK) — e.g. `project-r-score`.
+ */
+export type PagesProjectId = BrandedString<'PagesProjectId'>;
+
+/**
  * Cloudflare Access application domain field.
  * Either a bare host or `host/path` (no leading slash on path segment in CF form).
  */
 export type AccessDomainId = BrandedString<'AccessDomainId'>;
+
+/** Surface status vocabulary from config/surfaces.toml. */
+export type SurfaceStatusCode = BrandedString<'SurfaceStatusCode'>;
+
+/** Surface Access posture vocabulary from config/surfaces.toml. */
+export type SurfaceAccessCode = BrandedString<'SurfaceAccessCode'>;
 
 /** Hostname: labels + TLD; lowercase; no trailing dot. */
 const HOST_RE = /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9-]{2,63}$/;
@@ -55,6 +74,40 @@ const SUBDOMAIN_RE =
 
 /** Surface keys: snake_case / alphanumeric starting with letter. */
 const SURFACE_RE = /^[a-z][a-z0-9_]{0,62}$/;
+
+/** Cloudflare Pages project name: lowercase DNS-label style with hyphens. */
+const PAGES_PROJECT_RE = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
+
+/** Closed status vocabulary (config/surfaces.toml header). */
+export const SURFACE_STATUS_CODES = [
+  'live',
+  'vanity',
+  'broken',
+  'dangling',
+  'staged',
+  'placeholder',
+  'external',
+] as const;
+
+/** Closed Access posture vocabulary (config/surfaces.toml). */
+export const SURFACE_ACCESS_CODES = [
+  'public',
+  'allowlist',
+  'applied',
+  'staged',
+  'bearer (intended)',
+  'external',
+  'none',
+] as const;
+
+const SURFACE_STATUS_SET = new Set<string>(SURFACE_STATUS_CODES);
+const SURFACE_ACCESS_SET = new Set<string>(SURFACE_ACCESS_CODES);
+
+const SURFACE_STATUS_PATTERN = `^(?:${SURFACE_STATUS_CODES.join('|')})$`;
+// Escape parentheses in "bearer (intended)" for catalog regex / guard.
+const SURFACE_ACCESS_PATTERN = `^(?:${SURFACE_ACCESS_CODES.map(c =>
+  c.replace(/[()]/g, '\\$&')
+).join('|')})$`;
 
 /** Common multi-part public suffixes (apex = last 3 labels). */
 const THREE_PART_PUBLIC_SUFFIXES = new Set([
@@ -225,6 +278,99 @@ export function parseSurfaceId(value: unknown): SurfaceId {
   return asSurfaceId(value);
 }
 
+export function asPagesProjectId(value: string): PagesProjectId {
+  const s = value.trim().toLowerCase();
+  if (!PAGES_PROJECT_RE.test(s)) {
+    throw new BrandValidationError('PagesProjectId', value);
+  }
+  return s as PagesProjectId;
+}
+
+export function tryPagesProjectId(value: string | undefined | null): PagesProjectId | undefined {
+  if (value == null || String(value).trim() === '') return undefined;
+  try {
+    return asPagesProjectId(String(value));
+  } catch {
+    return undefined;
+  }
+}
+
+export function parsePagesProjectId(value: unknown): PagesProjectId {
+  if (typeof value !== 'string') {
+    throw new BrandValidationError('PagesProjectId', value as never);
+  }
+  return asPagesProjectId(value);
+}
+
+/** Canonical Pages project for score / public plane (r2-env CLOUDFLARE_DEFAULTS.pages.project). */
+export const PROJECT_R_SCORE_PAGES: PagesProjectId = asPagesProjectId('project-r-score');
+
+/**
+ * Extract Pages project shortcode from a backend field like
+ * `cloudflare-pages:project-r-score` or `cloudflare-pages:project-r-score (vanity CNAME)`.
+ */
+export function tryPagesProjectIdFromBackend(
+  backend: string | undefined | null
+): PagesProjectId | undefined {
+  if (backend == null || String(backend).trim() === '') return undefined;
+  const m = /^cloudflare-pages:([a-z0-9][a-z0-9-]*)/i.exec(String(backend).trim());
+  if (!m?.[1]) return undefined;
+  return tryPagesProjectId(m[1]);
+}
+
+export function asSurfaceStatusCode(value: string): SurfaceStatusCode {
+  const s = value.trim().toLowerCase();
+  if (!SURFACE_STATUS_SET.has(s)) {
+    throw new BrandValidationError('SurfaceStatusCode', value);
+  }
+  return s as SurfaceStatusCode;
+}
+
+export function trySurfaceStatusCode(
+  value: string | undefined | null
+): SurfaceStatusCode | undefined {
+  if (value == null || String(value).trim() === '') return undefined;
+  try {
+    return asSurfaceStatusCode(String(value));
+  } catch {
+    return undefined;
+  }
+}
+
+export function parseSurfaceStatusCode(value: unknown): SurfaceStatusCode {
+  if (typeof value !== 'string') {
+    throw new BrandValidationError('SurfaceStatusCode', value as never);
+  }
+  return asSurfaceStatusCode(value);
+}
+
+export function asSurfaceAccessCode(value: string): SurfaceAccessCode {
+  // Preserve "bearer (intended)" — only trim outer whitespace, lowercase known forms.
+  const s = value.trim().toLowerCase();
+  if (!SURFACE_ACCESS_SET.has(s)) {
+    throw new BrandValidationError('SurfaceAccessCode', value);
+  }
+  return s as SurfaceAccessCode;
+}
+
+export function trySurfaceAccessCode(
+  value: string | undefined | null
+): SurfaceAccessCode | undefined {
+  if (value == null || String(value).trim() === '') return undefined;
+  try {
+    return asSurfaceAccessCode(String(value));
+  } catch {
+    return undefined;
+  }
+}
+
+export function parseSurfaceAccessCode(value: unknown): SurfaceAccessCode {
+  if (typeof value !== 'string') {
+    throw new BrandValidationError('SurfaceAccessCode', value as never);
+  }
+  return asSurfaceAccessCode(value);
+}
+
 export function asAccessDomainId(value: string): AccessDomainId {
   let raw = value
     .trim()
@@ -372,6 +518,27 @@ export const SUBDOMAIN_BRAND_VALIDATION = {
   ingressNormalization: 'trim',
 } as const satisfies BrandValidationSpec;
 
+export const PAGES_PROJECT_BRAND_VALIDATION = {
+  shape: 'pattern',
+  pattern: PAGES_PROJECT_RE.source,
+  flags: '',
+  ingressNormalization: 'trim',
+} as const satisfies BrandValidationSpec;
+
+export const SURFACE_STATUS_BRAND_VALIDATION = {
+  shape: 'pattern',
+  pattern: SURFACE_STATUS_PATTERN,
+  flags: '',
+  ingressNormalization: 'trim',
+} as const satisfies BrandValidationSpec;
+
+export const SURFACE_ACCESS_BRAND_VALIDATION = {
+  shape: 'pattern',
+  pattern: SURFACE_ACCESS_PATTERN,
+  flags: '',
+  ingressNormalization: 'trim',
+} as const satisfies BrandValidationSpec;
+
 export const SURFACES_BRAND_SPECS = [
   {
     name: 'HostId',
@@ -406,11 +573,36 @@ export const SURFACES_BRAND_SPECS = [
     validation: SURFACE_BRAND_VALIDATION,
   },
   {
+    name: 'PagesProjectId',
+    domain: 'surfaces',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['wire-input', 'system-internal'],
+    description: 'Cloudflare Pages project shortcode (project-r-score) — not operations ProjectId',
+    validation: PAGES_PROJECT_BRAND_VALIDATION,
+  },
+  {
     name: 'AccessDomainId',
     domain: 'surfaces',
     tiers: ['as', 'try', 'parse'],
     mint: ['wire-input', 'system-internal'],
     description: 'Cloudflare Access app domain field (host or host/path)',
     validation: ACCESS_DOMAIN_BRAND_VALIDATION,
+  },
+  {
+    name: 'SurfaceStatusCode',
+    domain: 'surfaces',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['wire-input', 'system-internal'],
+    description:
+      'Surface status vocabulary (live|vanity|broken|dangling|staged|placeholder|external)',
+    validation: SURFACE_STATUS_BRAND_VALIDATION,
+  },
+  {
+    name: 'SurfaceAccessCode',
+    domain: 'surfaces',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['wire-input', 'system-internal'],
+    description: 'Surface Access posture (public|allowlist|applied|staged|bearer (intended)|…)',
+    validation: SURFACE_ACCESS_BRAND_VALIDATION,
   },
 ] as const satisfies readonly BrandSpec[];

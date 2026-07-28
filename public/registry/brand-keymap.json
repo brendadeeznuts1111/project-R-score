@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-07-28T23:10:42.782Z",
+  "generatedAt": "2026-07-28T23:14:30.956Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -10,13 +10,13 @@
     "stableImport": "lib/types/branded.ts"
   },
   "summary": {
-    "brands": 52,
+    "brands": 55,
     "domains": 9,
-    "ids": 49,
+    "ids": 50,
     "keys": 1,
-    "codes": 2,
-    "covered": 33,
-    "referencedUnconstructed": 4,
+    "codes": 4,
+    "covered": 35,
+    "referencedUnconstructed": 5,
     "unused": 15,
     "cataloguedProjects": 35,
     "trackedProjects": 32,
@@ -92,7 +92,7 @@
     {
       "name": "surfaces",
       "module": "lib/types/branded/surfaces.ts",
-      "brandCount": 5
+      "brandCount": 8
     }
   ],
   "brands": [
@@ -3248,6 +3248,67 @@
       }
     },
     {
+      "name": "PagesProjectId",
+      "domain": "surfaces",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Cloudflare Pages project shortcode (project-r-score) — not operations ProjectId",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$",
+        "flags": "",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/surfaces.ts",
+      "constructors": {
+        "as": "asPagesProjectId",
+        "try": "tryPagesProjectId",
+        "parse": "parsePagesProjectId"
+      },
+      "guard": "BRAND_GUARDS.isPagesProjectId",
+      "shortName": "pagesProjectId",
+      "envName": "PAGES_PROJECT_ID",
+      "coverage": {
+        "status": "referenced-unconstructed",
+        "references": 2,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/surfaces/inventory.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "referenced-unconstructed",
+            "references": 2,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": [
+              "lib/surfaces/inventory.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
       "name": "AccessDomainId",
       "domain": "surfaces",
       "tiers": [
@@ -3302,6 +3363,128 @@
               "lib/verification/cloudflare-access-live.ts",
               "lib/verification/cloudflare-access-policy.ts",
               "scripts/bake-surfaces.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "SurfaceStatusCode",
+      "domain": "surfaces",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Surface status vocabulary (live|vanity|broken|dangling|staged|placeholder|external)",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^(?:live|vanity|broken|dangling|staged|placeholder|external)$",
+        "flags": "",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/surfaces.ts",
+      "constructors": {
+        "as": "asSurfaceStatusCode",
+        "try": "trySurfaceStatusCode",
+        "parse": "parseSurfaceStatusCode"
+      },
+      "guard": "BRAND_GUARDS.isSurfaceStatusCode",
+      "shortName": "surfaceStatusCode",
+      "envName": "SURFACE_STATUS_CODE",
+      "coverage": {
+        "status": "covered",
+        "references": 3,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/surfaces/inventory.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 3,
+            "constructionCalls": 1,
+            "guardCalls": 0,
+            "files": [
+              "lib/surfaces/inventory.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "SurfaceAccessCode",
+      "domain": "surfaces",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Surface Access posture (public|allowlist|applied|staged|bearer (intended)|…)",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^(?:public|allowlist|applied|staged|bearer \\(intended\\)|external|none)$",
+        "flags": "",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/surfaces.ts",
+      "constructors": {
+        "as": "asSurfaceAccessCode",
+        "try": "trySurfaceAccessCode",
+        "parse": "parseSurfaceAccessCode"
+      },
+      "guard": "BRAND_GUARDS.isSurfaceAccessCode",
+      "shortName": "surfaceAccessCode",
+      "envName": "SURFACE_ACCESS_CODE",
+      "coverage": {
+        "status": "covered",
+        "references": 5,
+        "constructors": {
+          "as": 2,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/surfaces/inventory.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 5,
+            "constructionCalls": 2,
+            "guardCalls": 0,
+            "files": [
+              "lib/surfaces/inventory.ts"
             ]
           },
           "projects": {

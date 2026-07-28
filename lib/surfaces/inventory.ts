@@ -14,57 +14,52 @@
 import {
   accessDomainFromHost,
   asHostId,
+  asSurfaceAccessCode,
   asSurfaceId,
+  asSurfaceStatusCode,
   splitHostId,
+  tryPagesProjectIdFromBackend,
   type AccessDomainId,
   type ApexDomainId,
   type HostId,
+  type PagesProjectId,
   type SubdomainId,
+  type SurfaceAccessCode,
   type SurfaceId,
+  type SurfaceStatusCode,
 } from '../types/branded.ts';
 
-export type SurfaceStatus =
-  | 'live'
-  | 'vanity'
-  | 'broken'
-  | 'dangling'
-  | 'staged'
-  | 'placeholder'
-  | 'external';
-
-export type SurfaceAccess =
-  | 'public'
-  | 'allowlist'
-  | 'applied'
-  | 'staged'
-  | 'bearer (intended)'
-  | 'external'
-  | 'none';
+/** @deprecated use SurfaceStatusCode */
+export type SurfaceStatus = SurfaceStatusCode;
+/** @deprecated use SurfaceAccessCode */
+export type SurfaceAccess = SurfaceAccessCode;
 
 export type SurfaceAccessSubpath = {
   path: string;
-  access: 'applied' | 'staged';
+  access: Extract<SurfaceAccessCode, 'applied' | 'staged'>;
 };
 
 /** Wire shape of one [surfaces.*] table before branding. */
 export type SurfaceWire = {
   host: string;
   backend: string;
-  status: SurfaceStatus;
+  status: string;
   protocol: string;
-  access: SurfaceAccess;
+  access: string;
   note: string;
-  accessSubpaths?: SurfaceAccessSubpath[];
+  accessSubpaths?: Array<{ path: string; access: string }>;
 };
 
-/** Interior surface record — ids and hosts are branded. */
+/** Interior surface record — ids, hosts, and type codes are branded. */
 export type SurfaceRecord = {
   id: SurfaceId;
   host: HostId;
   backend: string;
-  status: SurfaceStatus;
+  /** Pages project shortcode when backend is cloudflare-pages:… */
+  pagesProject?: PagesProjectId;
+  status: SurfaceStatusCode;
   protocol: string;
-  access: SurfaceAccess;
+  access: SurfaceAccessCode;
   note: string;
   accessSubpaths?: SurfaceAccessSubpath[];
 };
@@ -90,15 +85,28 @@ type SurfacesToml = {
 };
 
 export function parseSurfaceRecord(rawKey: string, wire: SurfaceWire): SurfaceRecord {
+  const accessSubpaths = wire.accessSubpaths?.map(sp => ({
+    path: sp.path,
+    access: asSurfaceAccessCode(sp.access) as Extract<SurfaceAccessCode, 'applied' | 'staged'>,
+  }));
+  // Subpath access must be applied|staged only
+  for (const sp of accessSubpaths ?? []) {
+    if (sp.access !== 'applied' && sp.access !== 'staged') {
+      throw new Error(
+        `surfaces.toml [${rawKey}]: accessSubpaths.access must be applied|staged (got ${sp.access})`
+      );
+    }
+  }
   return {
     id: asSurfaceId(rawKey),
     host: asHostId(wire.host),
     backend: wire.backend,
-    status: wire.status,
+    pagesProject: tryPagesProjectIdFromBackend(wire.backend),
+    status: asSurfaceStatusCode(wire.status),
     protocol: wire.protocol,
-    access: wire.access,
+    access: asSurfaceAccessCode(wire.access),
     note: wire.note,
-    accessSubpaths: wire.accessSubpaths,
+    accessSubpaths,
   };
 }
 

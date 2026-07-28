@@ -12,16 +12,18 @@ describe('brand keymap portal', () => {
       kind: 'brand-keymap',
       path: '/registry/brand-keymap.json',
       summary: {
-        brands: 52,
+        brands: 55,
         domains: 9,
       },
       governance: {
         stagedGate: 'bun tools/branded-id-check.ts --staged --strict',
       },
     });
-    expect(payload.brands).toHaveLength(52);
+    expect(payload.brands).toHaveLength(55);
     expect(payload.brands.some((b: { name: string }) => b.name === 'HostId')).toBe(true);
     expect(payload.brands.some((b: { name: string }) => b.name === 'AccessDomainId')).toBe(true);
+    expect(payload.brands.some((b: { name: string }) => b.name === 'PagesProjectId')).toBe(true);
+    expect(payload.brands.some((b: { name: string }) => b.name === 'SurfaceStatusCode')).toBe(true);
     expect(payload.projects.length).toBeGreaterThan(0);
     expect(payload.projects.some(project => project.status === 'local-pattern')).toBe(true);
   });

@@ -81,6 +81,7 @@ import {
   asLoopId,
   asOperationId,
   asOpsChannelEventId,
+  asPagesProjectId,
   asPartnerProfileKey,
   asPartnerTemplateId,
   asPipelineId,
@@ -96,7 +97,9 @@ import {
   asStepId,
   asStateCode,
   asSubdomainId,
+  asSurfaceAccessCode,
   asSurfaceId,
+  asSurfaceStatusCode,
   asTerminalId,
   asTokenId,
   asTelegramUserId,
@@ -158,6 +161,15 @@ const crossSubdomainAsSurface: SurfaceId = subdomainId;
 const crossSurfaceAsSubdomain: SubdomainId = surfaceId;
 // @ts-expect-error — SubdomainId is not a HostId
 const crossSubdomainAsHost: HostId = subdomainId;
+
+const pagesProjectId = asPagesProjectId('project-r-score');
+const opsProjectId = asProjectId('project-r-score');
+// @ts-expect-error — PagesProjectId is not operations ProjectId (Pages shortcode ≠ workspace PK)
+const crossPagesAsOpsProject: typeof opsProjectId = pagesProjectId;
+// @ts-expect-error — ProjectId is not PagesProjectId
+const crossOpsAsPagesProject: typeof pagesProjectId = opsProjectId;
+// @ts-expect-error — SurfaceStatusCode is a code, not an AnyId
+const statusCodeAsId: AnyId = asSurfaceStatusCode('live');
 
 // @ts-expect-error — OperationId is not a JobId
 const crossAsJob: JobId = operationId;
@@ -243,7 +255,7 @@ if (isBrandedValue('SessionId', guardInput)) {
   void guardedSession;
 }
 
-// ─── 6. Aggregate unions cover the complete 52-value catalog (49 IDs) ───────
+// ─── 6. Aggregate unions cover the complete 55-value catalog (50 IDs + codes) ─
 
 const everyId: readonly AnyId[] = [
   asSessionId('s'),
@@ -294,6 +306,7 @@ const everyId: readonly AnyId[] = [
   asApexDomainId('factory-wager.com'),
   asSubdomainId('ledger'),
   asSurfaceId('ledger'),
+  asPagesProjectId('project-r-score'),
   asAccessDomainId('score.factory-wager.com/portal'),
 ];
 
@@ -302,6 +315,8 @@ const everyBrandedValue: readonly AnyBrandedValue[] = [
   asPartnerProfileKey('profile-key'),
   asStateCode('MA'),
   asZipCode('02139'),
+  asSurfaceStatusCode('live'),
+  asSurfaceAccessCode('public'),
 ];
 
 // @ts-expect-error — a key is a branded value, not an ID

@@ -27,12 +27,13 @@ const ROOT = resolvePath(import.meta.dir, '..');
 const TOML = `${ROOT}/config/surfaces.toml`;
 
 describe('lib/surfaces/inventory', () => {
-  test('loadSurfacesInventory mints SurfaceId and HostId at the TOML boundary', async () => {
+  test('loadSurfacesInventory mints SurfaceId, HostId, and type codes at the TOML boundary', async () => {
     const inv = await loadSurfacesInventory(TOML);
     expect(inv.surfaces.length).toBeGreaterThanOrEqual(10);
 
     const ledger = findSurfaceById(inv, asSurfaceId('ledger'));
     expect(ledger?.access).toBe('applied');
+    expect(ledger?.status).toBe('live');
     expect(ledger?.host).toBe(asHostId('ledger.factory-wager.com'));
     expect(findSurfaceByHost(inv, asHostId('ledger.factory-wager.com'))?.id).toBe(
       asSurfaceId('ledger')
@@ -40,6 +41,7 @@ describe('lib/surfaces/inventory', () => {
 
     const score = findSurfaceById(inv, asSurfaceId('score'));
     expect(score?.access).toBe('public');
+    expect(score?.pagesProject).toBe('project-r-score');
     const applied = appliedAccessDomains(score!);
     expect(applied.map(String)).toContain('score.factory-wager.com/portal');
     expect(applied.every(d => isPathScopedAccessDomain(d) || d === score!.host)).toBeTrue();

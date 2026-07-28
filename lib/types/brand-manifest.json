@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "generatedAt": "2026-07-28T23:10:41.610Z",
+  "generatedAt": "2026-07-28T23:14:26.077Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
-  "brandCount": 52,
+  "brandCount": 55,
   "domainCount": 9,
   "domains": [
     "audit",
@@ -16,9 +16,9 @@
     "surfaces"
   ],
   "kinds": {
-    "id": 49,
+    "id": 50,
     "key": 1,
-    "code": 2
+    "code": 4
   },
   "domainCatalog": [
     {
@@ -64,7 +64,7 @@
     {
       "name": "surfaces",
       "module": "lib/types/branded/surfaces.ts",
-      "brandCount": 5
+      "brandCount": 8
     }
   ],
   "brands": [
@@ -1499,6 +1499,36 @@
       "envName": "SURFACE_ID"
     },
     {
+      "name": "PagesProjectId",
+      "domain": "surfaces",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Cloudflare Pages project shortcode (project-r-score) — not operations ProjectId",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$",
+        "flags": "",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/surfaces.ts",
+      "constructors": {
+        "as": "asPagesProjectId",
+        "try": "tryPagesProjectId",
+        "parse": "parsePagesProjectId"
+      },
+      "guard": "BRAND_GUARDS.isPagesProjectId",
+      "shortName": "pagesProjectId",
+      "envName": "PAGES_PROJECT_ID"
+    },
+    {
       "name": "AccessDomainId",
       "domain": "surfaces",
       "tiers": [
@@ -1527,6 +1557,66 @@
       "guard": "BRAND_GUARDS.isAccessDomainId",
       "shortName": "accessDomainId",
       "envName": "ACCESS_DOMAIN_ID"
+    },
+    {
+      "name": "SurfaceStatusCode",
+      "domain": "surfaces",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Surface status vocabulary (live|vanity|broken|dangling|staged|placeholder|external)",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^(?:live|vanity|broken|dangling|staged|placeholder|external)$",
+        "flags": "",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/surfaces.ts",
+      "constructors": {
+        "as": "asSurfaceStatusCode",
+        "try": "trySurfaceStatusCode",
+        "parse": "parseSurfaceStatusCode"
+      },
+      "guard": "BRAND_GUARDS.isSurfaceStatusCode",
+      "shortName": "surfaceStatusCode",
+      "envName": "SURFACE_STATUS_CODE"
+    },
+    {
+      "name": "SurfaceAccessCode",
+      "domain": "surfaces",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Surface Access posture (public|allowlist|applied|staged|bearer (intended)|…)",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^(?:public|allowlist|applied|staged|bearer \\(intended\\)|external|none)$",
+        "flags": "",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/surfaces.ts",
+      "constructors": {
+        "as": "asSurfaceAccessCode",
+        "try": "trySurfaceAccessCode",
+        "parse": "parseSurfaceAccessCode"
+      },
+      "guard": "BRAND_GUARDS.isSurfaceAccessCode",
+      "shortName": "surfaceAccessCode",
+      "envName": "SURFACE_ACCESS_CODE"
     }
   ],
   "constructorTiers": {

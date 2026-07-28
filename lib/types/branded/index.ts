@@ -96,7 +96,16 @@ import type {
   ZipCode,
 } from './operations.ts';
 import type { PortalTenantId, TelegramUserId, PortalAccountId, LinkNonceId } from './portal.ts';
-import type { HostId, ApexDomainId, SubdomainId, SurfaceId, AccessDomainId } from './surfaces.ts';
+import type {
+  HostId,
+  ApexDomainId,
+  SubdomainId,
+  SurfaceId,
+  PagesProjectId,
+  AccessDomainId,
+  SurfaceStatusCode,
+  SurfaceAccessCode,
+} from './surfaces.ts';
 
 /** Full institutional catalog — SSOT for brand-manifest generation. */
 export const BRAND_CATALOG = [
@@ -179,7 +188,14 @@ export type AnyId =
   | ApexDomainId
   | SubdomainId
   | SurfaceId
+  | PagesProjectId
   | AccessDomainId;
 
 /** Union of all branded strings, including IDs, keys, and validated codes. */
-export type AnyBrandedValue = AnyId | PartnerProfileKey | StateCode | ZipCode;
+export type AnyBrandedValue =
+  | AnyId
+  | PartnerProfileKey
+  | StateCode
+  | ZipCode
+  | SurfaceStatusCode
+  | SurfaceAccessCode;

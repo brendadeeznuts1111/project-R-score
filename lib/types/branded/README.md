@@ -10,7 +10,7 @@ text must not travel through the harness as a bare `string`.
 - **Source catalog:** [`index.ts`](./index.ts) → `BRAND_CATALOG`
 - **Generated record:** [`brand-manifest.json`](../brand-manifest.json) — never
   hand-edit
-- **Inventory:** 52 values across 9 domains: 49 IDs, 1 key, and 2 codes
+- **Inventory:** 55 values across 9 domains: 50 IDs, 1 key, and 4 codes
 - **Runtime:** branded values remain ordinary strings; the nominal tag is
   type-only
 - **Shape guards:** `BRAND_GUARDS.isX(value)` and `isBrandedValue(name, value)`
@@ -36,20 +36,27 @@ authoritative.
 | audit      | 6 version, audit, finding, concept, entry, and evidence IDs             | [`audit.ts`](./audit.ts)           |
 | operations | 21 operational IDs plus `PartnerProfileKey`, `StateCode`, and `ZipCode` | [`operations.ts`](./operations.ts) |
 | portal     | 4 portal tenant, Telegram user, portal account, and link-nonce IDs      | [`portal.ts`](./portal.ts)         |
-| surfaces   | 5 host FQDN, apex, DNS subdomain, surface inventory key, and Access app domain IDs | [`surfaces.ts`](./surfaces.ts) |
+| surfaces   | 8 host/apex/subdomain/surface/Pages-project/Access IDs + status & access codes | [`surfaces.ts`](./surfaces.ts) |
 
 `StateCode` and `ZipCode` have format-aware constructors. Do not replace those
 constructors with the generic factory. `HostId` / `AccessDomainId` are also
 format-aware (FQDN vs host/path) — never use a path-bearing Access domain as a
-`HostId`. `SubdomainId` is the DNS left-of-apex label (`@` for bare apex) —
-not the same as `SurfaceId` (inventory key; e.g. `pages_dev` ≠ `project-r-score`).
+`HostId`. Keep these shortcodes separate:
+
+| Brand | Is | Is not |
+|-------|----|--------|
+| `SubdomainId` | DNS left-of-apex (`score`, `@`) | `SurfaceId` inventory key |
+| `PagesProjectId` | CF Pages project (`project-r-score`) | operations `ProjectId` |
+| `SurfaceStatusCode` | live/vanity/… | free-form string |
+| `SurfaceAccessCode` | public/applied/… | free-form string |
 
 **Surfaces helpers** ([`surfaces.ts`](./surfaces.ts)):
 
 | Helper | Role |
 |--------|------|
 | `splitHostId` / `hostIdFromParts` | apex + subdomain ↔ `HostId` |
-| `FACTORY_WAGER_APEX` | canonical `factory-wager.com` apex constant |
+| `FACTORY_WAGER_APEX` / `PROJECT_R_SCORE_PAGES` | canonical apex + Pages project |
+| `tryPagesProjectIdFromBackend` | parse `cloudflare-pages:…` backend field |
 | `accessDomainFromHost(host, path?)` | compose Access domain from `HostId` |
 | `hostIdFromAccessDomain` / `pathFromAccessDomain` | split Access domain |
 | `isPathScopedAccessDomain` | path-bearing vs whole-host |
