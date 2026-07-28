@@ -47,10 +47,25 @@ describe('portal-cli doctor pure', () => {
   test('runPortalDoctor is OK on monorepo root (default)', async () => {
     const r = await runPortalDoctor({ cwd: ROOT, full: false });
     expect(r.kind).toBe('portal-cli-doctor');
+    expect(r.schemaVersion).toBe(2);
     expect(r.ok).toBe(true);
     const linker = r.checks.find(c => c.id === 'linker-config-version');
     expect(linker?.ok).toBe(true);
+    expect(linker?.fixCommand).toBeTruthy();
+    expect(linker?.autoFixable).toBe(false);
+    expect(linker?.envScope).toBe('all');
+    expect(r.summary.fatal).toBeGreaterThanOrEqual(2);
     expect(formatPortalDoctor(r)).toContain('linker-config-version');
+    expect(formatPortalDoctor(r)).toContain('Summary:');
+  });
+
+  test('verbose format includes fix table columns', async () => {
+    const { formatPortalDoctorVerbose } = await import('../tools/lib/portal-cli-doctor.ts');
+    const r = await runPortalDoctor({ cwd: ROOT, full: false, verbose: true });
+    const text = formatPortalDoctorVerbose(r);
+    expect(text).toContain('verbose');
+    expect(text).toMatch(/fix|auto|scope/i);
+    expect(text).toContain('impact');
   });
 
   test('PORTAL_CLI_COMMANDS includes doctor', () => {
@@ -73,7 +88,7 @@ describe('portal-cli doctor CLI', () => {
     expect(out).toContain('configVersion=1');
   });
 
-  test('doctor --json is machine-readable', async () => {
+  test('doctor --json is machine-readable with summary + fix metadata', async () => {
     const proc = Bun.spawn(['bun', CLI, 'doctor', '--json'], {
       cwd: ROOT,
       stdout: 'pipe',
@@ -84,10 +99,30 @@ describe('portal-cli doctor CLI', () => {
     expect(code).toBe(0);
     const j = JSON.parse(out);
     expect(j.kind).toBe('portal-cli-doctor');
+    expect(j.schemaVersion).toBe(2);
     expect(j.ok).toBe(true);
+    expect(j.summary?.fatal).toBeGreaterThanOrEqual(2);
     expect(
       j.checks.some((c: { id: string /* brand-ok — opaque check key */ }) => c.id === 'linker-config-version')
     ).toBe(true);
+    const linker = j.checks.find(
+      (c: { id: string /* brand-ok */ }) => c.id === 'linker-config-version'
+    );
+    expect(linker?.fixCommand).toBeTruthy();
+    expect(typeof linker?.autoFixable).toBe('boolean');
+  });
+
+  test('doctor --verbose prints extended columns', async () => {
+    const proc = Bun.spawn(['bun', CLI, 'doctor', '--verbose'], {
+      cwd: ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const code = await proc.exited;
+    const out = await new Response(proc.stdout).text();
+    expect(code).toBe(0);
+    expect(out).toContain('verbose');
+    expect(out).toContain('Summary:');
   });
 
   test('root help lists doctor', async () => {

@@ -1161,10 +1161,11 @@ Rebake: bun run bunfig:bake  ·  Policy: docs/UNIFIED.md
   if (cmd === 'doctor') {
     // Unified portal health gate — linker configVersion + offline bakes.
     // --full also runs install:verify + vault/capabilities test gates.
+    // --verbose adds fix command · impact · auto-fixable · env scope table.
     // @see https://bun.com/docs/pm/cli/install#default-strategy
     // @see https://bun.com/docs/pm/isolated-installs
     if (argv.includes('--help') || argv.includes('-h')) {
-      console.log(`Usage: portal-cli doctor [--json] [--full]
+      console.log(`Usage: portal-cli doctor [--json] [--verbose|-v] [--full]
 
 Unified offline health gate for the portal control plane.
 
@@ -1175,24 +1176,33 @@ Checks (default — pure, no network):
   capability-map-subset   public/registry/capability-map-subset.json present
   bunfig-state-bake       public/registry/bunfig-state.json (info)
 
-  --full   also spawn: install:verify · vault-health tests · capability-map tests
-  --json   machine-readable report
+Flags:
+  --verbose · -v   Table: fix command · auto-fixable · scope · time · impact
+  --full           Also spawn: install:verify · vault-health tests · capability tests
+  --json           Machine-readable report (schemaVersion 2 + summary)
 
 Examples:
   portal-cli doctor
+  portal-cli doctor --verbose
   portal-cli doctor --json
-  portal-cli doctor --full
+  portal-cli doctor --full --verbose
 
 Related: vault health · capabilities health · scanner doctor · bunfig check · install:verify
 `);
       return;
     }
-    const { runPortalDoctor, formatPortalDoctor } = await import('./lib/portal-cli-doctor.ts');
+    const { runPortalDoctor, formatPortalDoctor, formatPortalDoctorVerbose } = await import(
+      './lib/portal-cli-doctor.ts'
+    );
+    const verbose = argv.includes('--verbose') || argv.includes('-v');
     const report = await runPortalDoctor({
       full: argv.includes('--full'),
+      verbose,
     });
     if (argv.includes('--json')) {
       console.log(JSON.stringify(report, null, 2));
+    } else if (verbose) {
+      console.log(formatPortalDoctorVerbose(report));
     } else {
       console.log(formatPortalDoctor(report));
     }
