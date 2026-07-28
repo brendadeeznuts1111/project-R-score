@@ -6,7 +6,6 @@ digraph packages {
   "docs-tools";
   "guards";
   "p2p";
-  "package";
   "registry-client";
   "rip";
   "versioning";

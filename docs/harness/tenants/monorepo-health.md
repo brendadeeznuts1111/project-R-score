@@ -30,8 +30,8 @@ Health = 100
 | duplicateDepCount | workspace + root `package.json` dependency version sets |
 | deadCodePercent / cycles | **`Bun.Transpiler.scanImports`** (prefers over `scan` — captures `require()` on Bun 1.4) · ESM + dynamic `import()` · type-only ignored · relative edges for orphans/cycles |
 | largeFilePercent | `Bun.Glob` + line count (&gt; 200 default) |
-| testFailureRate | optional `--with-tests` focused `bun test` sample |
-| testCoveragePercent | reserved (0 until coverage parse wired) |
+| testFailureRate | optional `--with-tests` / `--with-coverage` focused `bun test` sample |
+| testCoveragePercent | `--with-coverage` → `bun test --coverage`; parse `All files` **line %** (bonus ×0.2) |
 
 **Not a full AST.** Bun has no public ESTree walk API; `scan` / `scanImports` are the native module-graph surface ([transpiler](https://bun.com/docs/runtime/transpiler)). Cyclomatic complexity still uses the TypeScript compiler API.
 
@@ -40,9 +40,11 @@ Health = 100
 ```bash
 bun run monorepo:health              # human table + latest JSON
 bun run monorepo:health:json         # stdout JSON only
+bun run monorepo:health:full         # --with-coverage --archive
 bun tools/monorepo-health.ts --no-build
 bun tools/monorepo-health.ts --with-tests
-bun tools/monorepo-health.ts --archive   # tar report when Bun.Archive available
+bun tools/monorepo-health.ts --with-coverage  # tests + All-files line % bonus
+bun tools/monorepo-health.ts --archive        # tar report when Bun.Archive available
 ```
 
 ## Code
@@ -64,7 +66,7 @@ bun run audit:packages:env       # --env --vault-gap + bake packages + env-inven
 bun run audit:packages:vault     # --vault --vault-gap (live pass-cli status) + bake
 bun run audit:packages:apply     # wire open wire-root-dep actions + bake
 bun run env:inventory            # scans packages/ · owners · packages plane
-bun run env:inventory:bake       # → /registry/env-inventory.json (schemaVersion 2)
+bun run env:inventory:bake       # → /registry/env-inventory.json (schemaVersion 3)
 ```
 
 | Path | Role |
@@ -72,11 +74,11 @@ bun run env:inventory:bake       # → /registry/env-inventory.json (schemaVersi
 | [`tools/packages-metafile-audit.ts`](../../../tools/packages-metafile-audit.ts) | orphans · cycles · hubs · scores · vault · env owners · apply · bake |
 | [`lib/harness/packages-graph-map.ts`](../../../lib/harness/packages-graph-map.ts) | coupling · archive probes · quarantine · summary · applyWireRootDeps |
 | [`lib/harness/packages-vault-map.ts`](../../../lib/harness/packages-vault-map.ts) | Bun.env ↔ `env.template` / Proton Pass · inTemplate · runtimePresent |
-| [`scripts/lib/env-inventory-compact.ts`](../../../scripts/lib/env-inventory-compact.ts) | owners · root/product runtime · defaults issues · packages plane |
+| [`scripts/lib/env-inventory-compact.ts`](../../../scripts/lib/env-inventory-compact.ts) | owners · needsInject vs template defaults · packages plane |
 | [`public/registry/packages-graph-map.json`](../../../public/registry/packages-graph-map.json) | baked map |
 | [`public/registry/env-inventory.json`](../../../public/registry/env-inventory.json) | baked env inventory |
 | [`public/portal/packages/`](../../../public/portal/packages/) · [`/portal/env/`](../../../public/portal/env/) | boards (schema pin · quarantine · env owners) |
 
-**Claim** `packages-graph-map-v11` · ratchet: `bun test tests/packages-graph-map.test.ts tests/packages-metafile-audit.test.ts tests/packages-vault-map.test.ts tests/env-inventory-compact.test.ts tests/packages-board.test.ts` · `bun run audit:packages:env`
+**Claim** `packages-graph-map-v12` · ratchet: `bun test tests/packages-graph-map.test.ts tests/packages-metafile-audit.test.ts tests/packages-vault-map.test.ts tests/env-inventory-compact.test.ts tests/packages-board.test.ts tests/env-defaults-scan.test.ts` · `bun run audit:packages:env`
 
-`--env` attaches compact inventory (owners reverse index, root vs product runtime, defaults issues) and bakes `/registry/env-inventory.json`. Archive placeholders stay as `quarantine[]` until boundary refs are removed. Companion: [`proton-integration.md`](proton-integration.md) · `bun run env:inventory:ratchet` · `bun run proton:inject:factorywager`.
+`--env` attaches compact inventory (owners, `missingNeedsInject` vs `coveredByTemplateDefault`) and bakes `/registry/env-inventory.json`. Placeholder `@factorywager/package` removed. Companion: [`proton-integration.md`](proton-integration.md) · `bun run env:inventory:ratchet` · `bun run proton:inject:factorywager`.

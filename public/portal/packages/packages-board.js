@@ -137,9 +137,42 @@ function setText(el, text) {
  * @param {ReturnType<typeof normalizePackagesMap>} data
  * @param {Document} doc
  */
+/**
+ * Grade band for package / board scores (matches monorepo-health).
+ * @param {number | null | undefined} score
+ * @returns {'healthy'|'needs-improvement'|'critical'|'unknown'}
+ */
+export function gradeFromScore(score) {
+  if (score == null || !Number.isFinite(Number(score))) return 'unknown';
+  const n = Number(score);
+  if (n >= 90) return 'healthy';
+  if (n >= 60) return 'needs-improvement';
+  return 'critical';
+}
+
+/** Operator CLI hint for coupling actions. */
+export function actionHint(action) {
+  switch (action) {
+    case 'wire-root-dep':
+      return 'bun run audit:packages:apply';
+    case 'migrate-relative-imports':
+      return 'prefer @factorywager/<pkg> over packages/<pkg>/…';
+    case 'archive-candidate':
+      return 'review probes · quarantine blocks hard delete';
+    default:
+      return '';
+  }
+}
+
 export function renderPackagesBoard(data, doc = document) {
   const summary = data.summary ?? {};
-  setText(doc.getElementById('s-score'), data.score != null ? String(data.score) : '—');
+  const boardGrade = gradeFromScore(data.score);
+  const scoreEl = doc.getElementById('s-score');
+  setText(scoreEl, data.score != null ? String(data.score) : '—');
+  if (scoreEl) {
+    scoreEl.className = `stat-num grade-${boardGrade}`;
+    scoreEl.title = data.grade ? String(data.grade) : boardGrade;
+  }
   setText(
     doc.getElementById('s-avg'),
     summary.avgPackageScore != null ? String(summary.avgPackageScore) : '—'
@@ -152,14 +185,29 @@ export function renderPackagesBoard(data, doc = document) {
     doc.getElementById('s-archive'),
     summary.archivePlaceholders != null ? String(summary.archivePlaceholders) : '—'
   );
+  setText(
+    doc.getElementById('s-quarantine'),
+    summary.quarantineCount != null
+      ? String(summary.quarantineCount)
+      : String((data.quarantine || []).length)
+  );
+  setText(
+    doc.getElementById('s-inject'),
+    summary.envRootRuntimeNeedsInject != null
+      ? String(summary.envRootRuntimeNeedsInject)
+      : data.env?.summary?.rootRuntimeNeedsInject != null
+        ? String(data.env.summary.rootRuntimeNeedsInject)
+        : '—'
+  );
   setText(doc.getElementById('hub'), summary.topHub != null ? String(summary.topHub) : '—');
 
   const schemaNote = data.schemaOk
     ? `schema ${data.schemaVersion || PACKAGES_MAP_SCHEMA}`
     : `schema ${data.schemaVersion} (board pins v${PACKAGES_MAP_SCHEMA} — rebake recommended)`;
+  const gradeNote = data.grade ? ` · ${data.grade}` : '';
   setText(
     doc.getElementById('gen-meta'),
-    `${data.generatedAt || 'unknown time'} · bun ${data.bunVersion || '?'} · ${schemaNote} · ${data.source}`
+    `${data.generatedAt || 'unknown time'} · bun ${data.bunVersion || '?'} · ${schemaNote}${gradeNote} · ${data.source}`
   );
 
   const body = doc.getElementById('pkg-body');
@@ -170,12 +218,21 @@ export function renderPackagesBoard(data, doc = document) {
       tr.innerHTML = `<td colspan="5" class="pkg-empty">No package rows in bake</td>`;
       body.appendChild(tr);
     } else {
-      for (const p of data.packages) {
+      // Sort: critical / needs-improvement first, then name
+      const rows = [...data.packages].sort((a, b) => {
+        const ga = gradeFromScore(a.score);
+        const gb = gradeFromScore(b.score);
+        const rank = g =>
+          g === 'critical' ? 0 : g === 'needs-improvement' ? 1 : g === 'healthy' ? 2 : 3;
+        return rank(ga) - rank(gb) || String(a.name ?? a.package).localeCompare(String(b.name ?? b.package));
+      });
+      for (const p of rows) {
         const tr = doc.createElement('tr');
         const role = p.role ?? '—';
         const name = p.name ?? p.package ?? '—';
         const bytes = typeof p.bytes === 'number' ? (p.bytes / 1024).toFixed(1) : '—';
-        tr.innerHTML = `<td>${escapeHtml(String(name))}</td><td class="role role-${escapeAttr(String(role))}">${escapeHtml(String(role))}</td><td>${p.score ?? '—'}</td><td>${p.orphans ?? 0}</td><td>${bytes}</td>`;
+        const g = gradeFromScore(p.score);
+        tr.innerHTML = `<td>${escapeHtml(String(name))}</td><td class="role role-${escapeAttr(String(role))}">${escapeHtml(String(role))}</td><td class="grade-${g}">${p.score ?? '—'}</td><td>${p.orphans ?? 0}</td><td>${bytes}</td>`;
         body.appendChild(tr);
       }
     }
@@ -186,10 +243,13 @@ export function renderPackagesBoard(data, doc = document) {
     const actions = data.actions.filter(a => a.action !== 'ok');
     actionList.innerHTML = actions.length
       ? actions
-          .map(
-            a =>
-              `<li><code>${escapeHtml(a.package)}</code> · <strong>${escapeHtml(a.action)}</strong> — ${escapeHtml(a.reason)}</li>`
-          )
+          .map(a => {
+            const hint = actionHint(a.action);
+            const hintHtml = hint
+              ? ` · <span class="action-hint"><code>${escapeHtml(hint)}</code></span>`
+              : '';
+            return `<li><code>${escapeHtml(a.package)}</code> · <strong>${escapeHtml(a.action)}</strong> — ${escapeHtml(a.reason)}${hintHtml}</li>`;
+          })
           .join('')
       : '<li>None — coupling aligned</li>';
   }
@@ -276,7 +336,11 @@ export function renderPackagesBoardError(err, doc = document) {
   setText(doc.getElementById('s-avg'), '—');
   setText(doc.getElementById('s-actions'), '—');
   setText(doc.getElementById('s-archive'), '—');
+  setText(doc.getElementById('s-quarantine'), '—');
+  setText(doc.getElementById('s-inject'), '—');
   setText(doc.getElementById('hub'), '—');
+  const scoreEl = doc.getElementById('s-score');
+  if (scoreEl) scoreEl.className = 'stat-num';
 
   const body = doc.getElementById('pkg-body');
   if (body) {

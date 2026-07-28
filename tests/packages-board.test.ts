@@ -2,19 +2,35 @@
 import { describe, test, expect } from 'bun:test';
 import {
   PACKAGES_MAP_SCHEMA,
+  actionHint,
   formatLoadError,
+  gradeFromScore,
   normalizePackagesMap,
 } from '../public/portal/packages/packages-board.js';
 
 describe('packages-board failure paths', () => {
-  test('pins board schema v11', () => {
-    expect(PACKAGES_MAP_SCHEMA).toBe(11);
+  test('pins board schema v12', () => {
+    expect(PACKAGES_MAP_SCHEMA).toBe(12);
+  });
+
+  test('gradeFromScore matches monorepo-health bands', () => {
+    expect(gradeFromScore(100)).toBe('healthy');
+    expect(gradeFromScore(90)).toBe('healthy');
+    expect(gradeFromScore(89.9)).toBe('needs-improvement');
+    expect(gradeFromScore(59.9)).toBe('critical');
+    expect(gradeFromScore(null)).toBe('unknown');
+  });
+
+  test('actionHint surfaces operator CLI', () => {
+    expect(actionHint('wire-root-dep')).toContain('audit:packages:apply');
+    expect(actionHint('migrate-relative-imports')).toContain('@factorywager');
+    expect(actionHint('archive-candidate')).toContain('quarantine');
   });
 
   test('normalizePackagesMap accepts bake shape', () => {
     const data = normalizePackagesMap(
       {
-        schemaVersion: 11,
+        schemaVersion: 12,
         kind: 'packages-graph-map',
         generatedAt: 't',
         bunVersion: '1.4.0',
@@ -26,7 +42,7 @@ describe('packages-board failure paths', () => {
           archiveProbes: [],
           quarantine: [{ package: 'package', reason: 'placeholder', blockedBy: ['tsconfig.json'] }],
           env: {
-            schemaVersion: 2,
+            schemaVersion: 3,
             uniqueVars: 1,
             summary: { ownerCount: 1, packageTouchedKeys: 1, multiPlaneKeys: 0 },
             owners: [{ envKey: 'REDIS_URL', count: 2, packages: ['p2p'], planes: ['packages'] }],

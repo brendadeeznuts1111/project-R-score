@@ -21,10 +21,11 @@ describe('packages-metafile-audit', () => {
     cross = await runPackagesMetafileAudit({ crossCheck: true });
   });
 
-  test('schema v11 score + probes + quarantine + summary', () => {
-    expect(deep.schemaVersion).toBe(11);
+  test('schema v12 score + probes + quarantine + summary', () => {
+    expect(deep.schemaVersion).toBe(12);
     expect(deep.map.quarantine).toBeDefined();
     expect(deep.map.summary?.quarantineCount).toBe(deep.map.quarantine!.length);
+    expect(deep.map.packages.includes('package')).toBe(false);
     expect(deep.score).toBeGreaterThanOrEqual(90);
     expect(deep.grade).toBe('healthy');
     expect(deep.map.packages.length).toBeGreaterThan(0);
@@ -114,7 +115,7 @@ describe('packages-metafile-audit', () => {
 
   test('vault plane attaches env.template coupling', async () => {
     const report = await runPackagesMetafileAudit({ vault: true });
-    expect(report.schemaVersion).toBe(11);
+    expect(report.schemaVersion).toBe(12);
     expect(report.map.vault).toBeDefined();
     expect(report.map.vault!.summary.packagesWithEnv).toBeGreaterThan(0);
     expect(report.map.summary?.vaultPackagesWithEnv).toBe(
@@ -126,7 +127,11 @@ describe('packages-metafile-audit', () => {
   test('env inventory attaches compact harness scan with owners', async () => {
     const report = await runPackagesMetafileAudit({ envInventory: true });
     expect(report.map.env).toBeDefined();
-    expect(report.map.env!.schemaVersion).toBe(2);
+    expect(report.map.env!.schemaVersion).toBe(3);
+    expect(report.map.env!.runtime.root.missingNeedsInject).toBeDefined();
+    expect(report.map.summary?.envRootRuntimeNeedsInject).toBe(
+      report.map.env!.summary.rootRuntimeNeedsInject
+    );
     expect(report.map.env!.scannedRoots).toContain('packages');
     expect(report.map.env!.packagesPlane.summary.packagesWithEnv).toBeGreaterThan(0);
     expect(report.map.env!.owners.length).toBeGreaterThan(0);

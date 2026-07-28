@@ -6,6 +6,7 @@ import {
   countCycles,
   gradeMonorepoHealth,
   loaderForPath,
+  parseCoveragePercent,
   parseTestSummary,
   scanSourceExports,
   scanSourceImports,
@@ -80,6 +81,20 @@ describe('monorepo-health helpers', () => {
       ['c', ['a']],
     ]);
     expect(countCycles(adj)).toBeGreaterThanOrEqual(1);
+  });
+
+  test('parseCoveragePercent reads All-files table and Lines: summary', () => {
+    const table = `
+--------------------------------|---------|---------|-------------------
+File                            | % Funcs | % Lines | Uncovered Line #s
+--------------------------------|---------|---------|-------------------
+All files                       |   27.78 |   19.58 |
+ lib/harness/monorepo-health.ts |   55.56 |   25.52 | 136-178
+--------------------------------|---------|---------|-------------------
+`;
+    expect(parseCoveragePercent(table)).toBe(19.58);
+    expect(parseCoveragePercent('Lines        : 42.5% ( 10/24 )')).toBe(42.5);
+    expect(parseCoveragePercent('no coverage here')).toBe(0);
   });
 
   test('parseTestSummary reads pass/fail lines', () => {

@@ -213,7 +213,7 @@
         const rows = plane.byPackage || [];
         const sum = inv.summary || {};
         $('pkg-summary').textContent = rows.length
-          ? `${plane.summary?.packagesWithEnv ?? rows.length} pkg(s) · ${plane.summary?.envKeyCount ?? '—'} keys · missingTemplate=${plane.summary?.missingTemplate ?? 0} · gaps=${(inv.vault?.actionableVaultGaps || []).length} · owners=${sum.ownerCount ?? '—'} · multiPlane=${sum.multiPlaneKeys ?? '—'} · defaultsIssues=${inv.defaultsIssues?.total ?? sum.defaultsIssueCount ?? 0}`
+          ? `${plane.summary?.packagesWithEnv ?? rows.length} pkg(s) · ${plane.summary?.envKeyCount ?? '—'} keys · missingTemplate=${plane.summary?.missingTemplate ?? 0} · gaps=${(inv.vault?.actionableVaultGaps || []).length} · owners=${sum.ownerCount ?? '—'} · multiPlane=${sum.multiPlaneKeys ?? '—'} · needsInject=${sum.rootRuntimeNeedsInject ?? inv.runtime?.root?.missingNeedsInject?.length ?? '—'} · coveredByDefault=${sum.rootCoveredByDefault ?? inv.runtime?.root?.coveredByTemplateDefault?.length ?? '—'} · defaultsIssues=${inv.defaultsIssues?.total ?? sum.defaultsIssueCount ?? 0}`
           : 'No packages Bun.env hits in bake';
         $('pkg-body').innerHTML = rows.length
           ? rows.map(r => `<tr>

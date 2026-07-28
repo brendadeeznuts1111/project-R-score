@@ -10,6 +10,7 @@
  *   bun tools/monorepo-health.ts --json
  *   bun tools/monorepo-health.ts --no-build
  *   bun tools/monorepo-health.ts --with-tests
+ *   bun tools/monorepo-health.ts --with-coverage
  *   bun tools/monorepo-health.ts --archive
  *   bun run monorepo:health
  *
@@ -26,17 +27,19 @@ const argv = process.argv.slice(2);
 const asJson = argv.includes('--json');
 const noBuild = argv.includes('--no-build');
 const withTests = argv.includes('--with-tests');
+const withCoverage = argv.includes('--with-coverage');
 const archive = argv.includes('--archive');
 const help = argv.includes('--help') || argv.includes('-h');
 
 if (help) {
   console.log(`Usage: bun tools/monorepo-health.ts [options]
 
-  --json         print report JSON only
-  --no-build     skip Bun.build metafile (dead code / cycles)
-  --with-tests   run focused bun test sample for failure rate
-  --archive      also write a tar of the report via Bun.Archive when available
-  --help         this message
+  --json            print report JSON only
+  --no-build        skip Bun.build metafile (dead code / cycles)
+  --with-tests      run focused bun test sample for failure rate
+  --with-coverage   same as --with-tests plus bun --coverage; parse All-files line %
+  --archive         also write a tar of the report via Bun.Archive when available
+  --help            this message
 
 Health = 100 − 2·dupDeps − 0.5·dead% − 1·large% − 5·testFail% − 1.5·cycles + 0.2·coverage%
 Target ≥ 90 (healthy).
@@ -46,7 +49,8 @@ Target ≥ 90 (healthy).
 
 const report = await collectMonorepoHealth({
   withBuild: !noBuild,
-  withTests,
+  withTests: withTests || withCoverage,
+  withCoverage,
 });
 
 const { jsonPath, archivePath } = await writeMonorepoHealthArtifacts(report, {

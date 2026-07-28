@@ -1998,7 +1998,7 @@
     "harness:status": "bun scripts/harness-status.ts",
     "monorepo:health": "bun tools/monorepo-health.ts",
     "monorepo:health:json": "bun tools/monorepo-health.ts --json",
-    "monorepo:health:full": "bun tools/monorepo-health.ts --with-tests --archive",
+    "monorepo:health:full": "bun tools/monorepo-health.ts --with-coverage --archive",
     "audit:packages": "bun tools/packages-metafile-audit.ts",
     "audit:packages:json": "bun tools/packages-metafile-audit.ts --json",
     "audit:packages:strict": "bun tools/packages-metafile-audit.ts --strict",

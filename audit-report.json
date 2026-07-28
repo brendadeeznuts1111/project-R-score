@@ -1,21 +1,20 @@
 {
-  "schemaVersion": 11,
+  "schemaVersion": 12,
   "kind": "packages-metafile-audit",
-  "generatedAt": "2026-07-28T04:16:27.609Z",
+  "generatedAt": "2026-07-28T14:02:47.267Z",
   "bunVersion": "1.4.0",
   "root": "/Users/nolarose/Projects",
   "glob": "packages/*/src/**/*.{ts,tsx}",
   "target": "bun",
   "score": 100,
   "grade": "healthy",
-  "scanned": 27,
+  "scanned": 26,
   "entrypoints": [
     "packages/ab-testing/src/index.ts",
     "packages/business/src/index.ts",
     "packages/docs-tools/src/index.ts",
     "packages/guards/src/index.ts",
     "packages/p2p/src/index.ts",
-    "packages/package/src/index.ts",
     "packages/registry-client/src/index.ts",
     "packages/rip/src/cli.ts",
     "packages/rip/src/index.ts",
@@ -23,7 +22,6 @@
   ],
   "entrypointKinds": {
     "packages/registry-client/src/index.ts": "index",
-    "packages/package/src/index.ts": "index",
     "packages/guards/src/index.ts": "index",
     "packages/versioning/src/index.ts": "index",
     "packages/docs-tools/src/index.ts": "index",
@@ -44,7 +42,6 @@
     "lib/docs/urls.ts",
     "packages/ab-testing/src/manager.ts",
     "packages/business/src/habits-pure.ts",
-    "packages/package/src/index.ts",
     "packages/registry-client/src/index.ts",
     "packages/rip/src/config.ts",
     "packages/versioning/src/version-tracking.ts"
@@ -55,7 +52,6 @@
     "packages/docs-tools/src/index.ts",
     "packages/guards/src/index.ts",
     "packages/p2p/src/index.ts",
-    "packages/package/src/index.ts",
     "packages/registry-client/src/index.ts",
     "packages/rip/src/cli.ts",
     "packages/rip/src/index.ts",
@@ -236,7 +232,6 @@
       "docs-tools",
       "guards",
       "p2p",
-      "package",
       "registry-client",
       "rip",
       "versioning"
@@ -320,7 +315,6 @@
       "docs-tools": [],
       "guards": [],
       "p2p": [],
-      "package": [],
       "registry-client": [],
       "rip": [],
       "versioning": []
@@ -331,7 +325,6 @@
       "docs-tools": [],
       "guards": [],
       "p2p": [],
-      "package": [],
       "registry-client": [],
       "rip": [],
       "versioning": []
@@ -343,7 +336,6 @@
         "docs-tools",
         "guards",
         "p2p",
-        "package",
         "registry-client",
         "rip",
         "versioning"
@@ -572,15 +564,6 @@
         "inRootWorkspaceDeps": true
       },
       {
-        "package": "package",
-        "npmName": "@factorywager/package",
-        "declaredWorkspace": [],
-        "actualCrossPkg": [],
-        "missingInPackageJson": [],
-        "unusedDeclared": [],
-        "inRootWorkspaceDeps": false
-      },
-      {
         "package": "registry-client",
         "npmName": "@factorywager/registry-client",
         "declaredWorkspace": [],
@@ -697,16 +680,6 @@
         "scriptCount": 0
       },
       {
-        "package": "package",
-        "role": "dormant",
-        "outsideCount": 0,
-        "dependentCount": 0,
-        "inRootWorkspaceDeps": false,
-        "workspaceImports": 0,
-        "relativeImports": 0,
-        "scriptCount": 0
-      },
-      {
         "package": "registry-client",
         "role": "consumed",
         "outsideCount": 3,
@@ -749,11 +722,6 @@
         "reason": "workspace imports + root dep aligned"
       },
       {
-        "package": "package",
-        "action": "archive-candidate",
-        "reason": "no outside imports, no root dep, no package.json script refs"
-      },
-      {
         "package": "registry-client",
         "action": "ok",
         "reason": "workspace imports + root dep aligned"
@@ -781,16 +749,6 @@
         "note": "dormant with real source — review before archive"
       },
       {
-        "package": "package",
-        "kind": "placeholder",
-        "srcFiles": 1,
-        "bytes": 104,
-        "hasTests": false,
-        "indexIsEmptyExport": true,
-        "recommendation": "archive",
-        "note": "index is empty export / placeholder"
-      },
-      {
         "package": "versioning",
         "kind": "library",
         "srcFiles": 2,
@@ -801,18 +759,7 @@
         "note": "dormant with real source — review before archive"
       }
     ],
-    "quarantine": [
-      {
-        "package": "package",
-        "reason": "index is empty export / placeholder",
-        "blockedBy": [
-          "tsconfig.json",
-          "docs/IMPORT_BOUNDARIES.md",
-          "scripts/verify-package-import-boundaries.ts",
-          ".agents/skills/ast-grep/repo-map.json"
-        ]
-      }
-    ],
+    "quarantine": [],
     "packageScores": [
       {
         "package": "ab-testing",
@@ -855,14 +802,6 @@
         ]
       },
       {
-        "package": "package",
-        "score": 75,
-        "grade": "needs-improvement",
-        "reasons": [
-          "dormant placeholder"
-        ]
-      },
-      {
         "package": "registry-client",
         "score": 100,
         "grade": "healthy",
@@ -888,24 +827,26 @@
       }
     ],
     "summary": {
-      "packageCount": 9,
+      "packageCount": 8,
       "consumed": 3,
       "rootTooling": 3,
       "scripted": 0,
-      "dormant": 3,
-      "openActions": 3,
-      "archivePlaceholders": 1,
-      "avgPackageScore": 93.9,
+      "dormant": 2,
+      "openActions": 2,
+      "archivePlaceholders": 0,
+      "avgPackageScore": 96.3,
       "topHub": "lib/docs",
-      "quarantineCount": 1,
+      "quarantineCount": 0,
       "vaultOpenActions": 2,
       "vaultPackagesWithEnv": 2,
       "envPackageTouchedKeys": 1,
       "envMultiPlaneKeys": 27,
-      "envRootRuntimeMissing": 1
+      "envRootRuntimeMissing": 1,
+      "envRootRuntimeNeedsInject": 0,
+      "envRootCoveredByDefault": 1
     },
     "vault": {
-      "generatedAt": "2026-07-28T04:16:27.607Z",
+      "generatedAt": "2026-07-28T14:02:47.257Z",
       "templateKeys": [
         "R2_ACCOUNT_ID",
         "R2_ACCESS_KEY_ID",
@@ -1031,80 +972,21 @@
           "missingTemplateKeys": []
         }
       ],
-      "actions": [
-        {
-          "package": "(repo)",
-          "envKey": "OPENAI_API_KEY",
-          "action": "vault-gap-open",
-          "reason": "human vault gap open — OpenAI API Key"
-        },
-        {
-          "package": "(repo)",
-          "envKey": "SLACK_WEBHOOK_URL",
-          "action": "vault-gap-open",
-          "reason": "human vault gap open — Slack Webhook URL"
-        }
-      ],
-      "gap": {
-        "passCliAvailable": true,
-        "passItemCount": 26,
-        "humanOpen": [
-          "OPENAI_API_KEY",
-          "SLACK_WEBHOOK_URL"
-        ],
-        "mintableWouldMint": [],
-        "catalogFlags": [
-          {
-            "envKey": "DOD_PROOF_SECRET",
-            "flag": "vault+env",
-            "title": "DOD Proof Secret"
-          },
-          {
-            "envKey": "DOD_ID_ENCRYPTION_KEY",
-            "flag": "vault+env",
-            "title": "DOD ID Encryption Key"
-          },
-          {
-            "envKey": "PROVISION_ENCRYPTION_KEY",
-            "flag": "vault+env",
-            "title": "Provision Encryption Key"
-          },
-          {
-            "envKey": "PLAY_SIGNING_SECRET",
-            "flag": "vault+env",
-            "title": "Play Signing Secret"
-          },
-          {
-            "envKey": "REPORT_SIGNING_SECRET",
-            "flag": "vault+env",
-            "title": "Report Signing Secret"
-          },
-          {
-            "envKey": "OPENAI_API_KEY",
-            "flag": "open",
-            "title": "OpenAI API Key"
-          },
-          {
-            "envKey": "SLACK_WEBHOOK_URL",
-            "flag": "open",
-            "title": "Slack Webhook URL"
-          }
-        ]
-      },
+      "actions": [],
       "summary": {
         "packagesWithEnv": 2,
         "envKeyCount": 1,
         "vaultedHits": 0,
         "missingTemplate": 0,
-        "openVaultActions": 2,
+        "openVaultActions": 0,
         "inTemplateHits": 2,
         "runtimePresentHits": 0
       }
     },
     "env": {
-      "schemaVersion": 2,
+      "schemaVersion": 3,
       "kind": "env-inventory",
-      "generatedAt": "2026-07-28T04:16:27.608Z",
+      "generatedAt": "2026-07-28T14:02:47.257Z",
       "scannedRoots": [
         "lib",
         "config",
@@ -1455,7 +1337,7 @@
           "runtimePresent": true,
           "samples": [
             "lib/factory/server.ts:181",
-            "scripts/serve-public.ts:1453",
+            "scripts/serve-public.ts:1467",
             "tools/ops-snapshot.ts:110",
             "tools/verify-formdata.ts:20"
           ]
@@ -2529,7 +2411,7 @@
         "top": []
       },
       "packagesPlane": {
-        "generatedAt": "2026-07-28T04:16:27.607Z",
+        "generatedAt": "2026-07-28T14:02:47.257Z",
         "templateKeys": [
           "R2_ACCOUNT_ID",
           "R2_ACCESS_KEY_ID",
@@ -2655,72 +2537,13 @@
             "missingTemplateKeys": []
           }
         ],
-        "actions": [
-          {
-            "package": "(repo)",
-            "envKey": "OPENAI_API_KEY",
-            "action": "vault-gap-open",
-            "reason": "human vault gap open — OpenAI API Key"
-          },
-          {
-            "package": "(repo)",
-            "envKey": "SLACK_WEBHOOK_URL",
-            "action": "vault-gap-open",
-            "reason": "human vault gap open — Slack Webhook URL"
-          }
-        ],
-        "gap": {
-          "passCliAvailable": true,
-          "passItemCount": 26,
-          "humanOpen": [
-            "OPENAI_API_KEY",
-            "SLACK_WEBHOOK_URL"
-          ],
-          "mintableWouldMint": [],
-          "catalogFlags": [
-            {
-              "envKey": "DOD_PROOF_SECRET",
-              "flag": "vault+env",
-              "title": "DOD Proof Secret"
-            },
-            {
-              "envKey": "DOD_ID_ENCRYPTION_KEY",
-              "flag": "vault+env",
-              "title": "DOD ID Encryption Key"
-            },
-            {
-              "envKey": "PROVISION_ENCRYPTION_KEY",
-              "flag": "vault+env",
-              "title": "Provision Encryption Key"
-            },
-            {
-              "envKey": "PLAY_SIGNING_SECRET",
-              "flag": "vault+env",
-              "title": "Play Signing Secret"
-            },
-            {
-              "envKey": "REPORT_SIGNING_SECRET",
-              "flag": "vault+env",
-              "title": "Report Signing Secret"
-            },
-            {
-              "envKey": "OPENAI_API_KEY",
-              "flag": "open",
-              "title": "OpenAI API Key"
-            },
-            {
-              "envKey": "SLACK_WEBHOOK_URL",
-              "flag": "open",
-              "title": "Slack Webhook URL"
-            }
-          ]
-        },
+        "actions": [],
         "summary": {
           "packagesWithEnv": 2,
           "envKeyCount": 1,
           "vaultedHits": 0,
           "missingTemplate": 0,
-          "openVaultActions": 2,
+          "openVaultActions": 0,
           "inTemplateHits": 2,
           "runtimePresentHits": 0
         }
@@ -2730,6 +2553,10 @@
           "templateKeysPresent": 20,
           "templateKeysMissing": 1,
           "missingKeys": [
+            "REDIS_URL"
+          ],
+          "missingNeedsInject": [],
+          "coveredByTemplateDefault": [
             "REDIS_URL"
           ]
         },
@@ -2749,6 +2576,26 @@
             "CSRF_SECRET",
             "HYGIENE_JWT_SECRET",
             "INITIAL_TOKEN",
+            "LOG_LEVEL",
+            "OFFICE",
+            "R2_S3_ENDPOINT",
+            "SCANNER_PORT"
+          ],
+          "missingNeedsInject": [
+            "ADMIN_PASSWORD",
+            "CSRF_SECRET",
+            "HYGIENE_JWT_SECRET",
+            "INITIAL_TOKEN"
+          ],
+          "coveredByTemplateDefault": [
+            "AGENT_ID",
+            "BACKUP_DIR",
+            "BACKUP_RETENTION_DAYS",
+            "BET_TICKER_WORKER_URL",
+            "CASCADE_DB_PATH",
+            "CASCADE_HOSTNAME",
+            "CASCADE_LOG_LEVEL",
+            "CASCADE_PORT",
             "LOG_LEVEL",
             "OFFICE",
             "R2_S3_ENDPOINT",
@@ -2775,6 +2622,27 @@
           "R2_S3_ENDPOINT",
           "REDIS_URL",
           "SCANNER_PORT"
+        ],
+        "missingNeedsInject": [
+          "ADMIN_PASSWORD",
+          "CSRF_SECRET",
+          "HYGIENE_JWT_SECRET",
+          "INITIAL_TOKEN"
+        ],
+        "coveredByTemplateDefault": [
+          "AGENT_ID",
+          "BACKUP_DIR",
+          "BACKUP_RETENTION_DAYS",
+          "BET_TICKER_WORKER_URL",
+          "CASCADE_DB_PATH",
+          "CASCADE_HOSTNAME",
+          "CASCADE_LOG_LEVEL",
+          "CASCADE_PORT",
+          "LOG_LEVEL",
+          "OFFICE",
+          "R2_S3_ENDPOINT",
+          "REDIS_URL",
+          "SCANNER_PORT"
         ]
       },
       "summary": {
@@ -2782,6 +2650,8 @@
         "packageTouchedKeys": 1,
         "multiPlaneKeys": 27,
         "rootRuntimeMissing": 1,
+        "rootRuntimeNeedsInject": 0,
+        "rootCoveredByDefault": 1,
         "defaultsIssueCount": 0
       }
     }
@@ -2838,16 +2708,6 @@
       "role": "root-tooling"
     },
     {
-      "name": "package",
-      "scanned": 1,
-      "inGraph": 1,
-      "orphans": 0,
-      "bytes": 104,
-      "score": 75,
-      "grade": "needs-improvement",
-      "role": "dormant"
-    },
-    {
       "name": "registry-client",
       "scanned": 1,
       "inGraph": 1,
@@ -2879,38 +2739,56 @@
     }
   ],
   "totals": {
-    "inputCount": 35,
-    "inputBytes": 327263,
+    "inputCount": 34,
+    "inputBytes": 327159,
     "orphanCount": 0,
-    "leafCount": 12,
+    "leafCount": 11,
     "orphanPercent": 0,
     "cycleCount": 0,
     "hubCount": 10,
     "crossPackageEdges": 0,
     "externalEdges": 7,
     "mapLayers": 1,
-    "openActions": 3,
-    "avgPackageScore": 93.9
+    "openActions": 2,
+    "avgPackageScore": 96.3
+  },
+  "crossCheck": {
+    "deadFileCount": 0,
+    "cyclicDependencyCount": 0,
+    "metafileOnlyOrphans": [],
+    "transpilerOnlyDead": [],
+    "notes": [
+      "import graph via Bun.Transpiler.scanImports; dead=orphan; package edges=8; cycles raw=0 capped=0",
+      "Cross-check excludes entrypoints from Transpiler “dead” (roots are never imported)."
+    ]
   },
   "notes": [
-    "Entrypoints: 9 index · 1 cli · 0 main/bin · 0 package.json",
+    "Entrypoints: 8 index · 1 cli · 0 main/bin · 0 package.json",
     "leaves = zero outbound imports (not dead). orphans = scanned but unreachable from entrypoints.",
     "8 external input(s) pulled into graph (lib/, config/, …) — expected for workspace edges.",
     "score 100/100 (healthy)",
+    "cross-check: metafile orphans=0 · transpiler orphans(excl entry)=0 · cycles(transpiler)=0",
     "Package map: no cross-package edges (packages are isolated islands)",
     "Outside consumers (lib/tools/scripts/tests): registry-client:3, guards:1, rip:1",
-    "Declared: 6/9 in root workspace deps · 0 pkg(s) with undeclared cross-imports",
+    "Declared: 6/8 in root workspace deps · 0 pkg(s) with undeclared cross-imports",
     "Intra depth: deepest ab-testing depth=3 files=3",
     "External hubs: lib/docs:12, bare:bun:7, bare:url:1",
-    "Coupling: 3 consumed · 3 root-tooling · 0 scripted · 3 dormant (ab-testing, package, versioning)",
-    "Actions: ab-testing:archive-candidate, package:archive-candidate, versioning:archive-candidate",
-    "Summary: avgPkg=93.9 · openActions=3 · archivePlaceholders=1 · hub=lib/docs",
-    "Archive probes: package(placeholder)",
-    "Vault: 2 pkg(s) with Bun.env · 1 keys · inTemplate=2 · missingTemplate=0 · openActions=2",
-    "Vault gap: pass-cli=yes items=26 humanOpen=2 wouldMint=0",
-    "Env inventory: unique=183 · secrets=15 · config=151 · actionableGaps=2 · rootRuntimeMissing=1 · owners=60 · pkgKeys=1 · multiPlane=27 · defaultsIssues=0",
-    "Quarantine: package(blocked=4)"
+    "Coupling: 3 consumed · 3 root-tooling · 0 scripted · 2 dormant (ab-testing, versioning)",
+    "Actions: ab-testing:archive-candidate, versioning:archive-candidate",
+    "Summary: avgPkg=96.3 · openActions=2 · archivePlaceholders=0 · hub=lib/docs",
+    "Vault: 2 pkg(s) with Bun.env · 1 keys · inTemplate=2 · missingTemplate=0 · openActions=0",
+    "Env inventory: unique=183 · secrets=15 · config=151 · actionableGaps=2 · rootNeedsInject=0 · rootCoveredByDefault=1 · owners=60 · pkgKeys=1 · multiPlane=27 · defaultsIssues=0",
+    "Quarantine: none"
   ],
+  "diff": {
+    "previousGeneratedAt": "2026-07-28T13:53:45.240Z",
+    "previousScore": 100,
+    "scoreDelta": 0,
+    "orphanDelta": 0,
+    "cycleDelta": 0,
+    "addedOrphans": [],
+    "removedOrphans": []
+  },
   "metafile": {
     "inputs": {
       "config/bun-dx-catalog.ts": {
@@ -3046,11 +2924,6 @@
       "packages/p2p/src/migration-workflow.ts": {
         "bytes": 7144,
         "importCount": 2,
-        "format": "esm"
-      },
-      "packages/package/src/index.ts": {
-        "bytes": 104,
-        "importCount": 0,
         "format": "esm"
       },
       "packages/registry-client/src/index.ts": {

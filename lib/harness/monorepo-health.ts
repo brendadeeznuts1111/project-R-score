@@ -444,6 +444,28 @@ export function parseTestSummary(stdout: string): {
   return { pass, fail, testFailureRate };
 }
 
+/**
+ * Parse Bun's table coverage footer (`All files | % Funcs | % Lines | …`).
+ * Prefer line coverage; fall back to function coverage. Returns 0–100 or 0 if absent.
+ */
+export function parseCoveragePercent(stdout: string): number {
+  // All files                       |   27.78 |   19.58 |
+  const m = stdout.match(/All files\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)\s*\|/i);
+  if (m) {
+    const funcs = Number(m[1]);
+    const lines = Number(m[2]);
+    const pick = Number.isFinite(lines) ? lines : funcs;
+    if (Number.isFinite(pick)) return Math.max(0, Math.min(100, pick));
+  }
+  // LCOV-style or summary: "Lines        : 19.58% ( … )"
+  const m2 = stdout.match(/Lines\s*:\s*([\d.]+)\s*%/i);
+  if (m2) {
+    const n = Number(m2[1]);
+    if (Number.isFinite(n)) return Math.max(0, Math.min(100, n));
+  }
+  return 0;
+}
+
 /** Default entrypoints for this monorepo (exist-checked at collect time). */
 export function defaultEntrypoints(root: string): string[] {
   return [
@@ -463,6 +485,11 @@ export type CollectMonorepoHealthOpts = {
   withBuild?: boolean;
   /** Run a focused bun test sample (default false — expensive). */
   withTests?: boolean;
+  /**
+   * When withTests, also pass `bun test --coverage` and parse All-files line %.
+   * Implies withTests.
+   */
+  withCoverage?: boolean;
   testArgs?: string[];
 };
 
@@ -474,7 +501,8 @@ export async function collectMonorepoHealth(
 ): Promise<MonorepoHealthReport> {
   const root = opts.root ?? process.cwd();
   const withBuild = opts.withBuild !== false;
-  const withTests = opts.withTests === true;
+  const withCoverage = opts.withCoverage === true;
+  const withTests = opts.withTests === true || withCoverage;
   const notes: string[] = [];
 
   const { files, largeFileCount, largeFilePercent } = await scanSourceFiles(
@@ -510,7 +538,9 @@ export async function collectMonorepoHealth(
 
   if (withTests) {
     testsRun = true;
-    const args = opts.testArgs ?? ['test', 'tests/monorepo-health.test.ts', '--timeout=30000'];
+    const baseArgs = opts.testArgs ?? ['test', 'tests/monorepo-health.test.ts', '--timeout=30000'];
+    const args =
+      withCoverage && !baseArgs.includes('--coverage') ? [...baseArgs, '--coverage'] : baseArgs;
     const proc = Bun.spawn(['bun', ...args], {
       cwd: root,
       stdout: 'pipe',
@@ -519,14 +549,22 @@ export async function collectMonorepoHealth(
     const out = await new Response(proc.stdout).text();
     const err = await new Response(proc.stderr).text();
     await proc.exited;
-    const summary = parseTestSummary(out + '\n' + err);
+    const combined = out + '\n' + err;
+    const summary = parseTestSummary(combined);
     testFailureRate = summary.testFailureRate;
-    // Coverage requires --coverage; leave 0 unless we parse it later
+    if (withCoverage) {
+      testCoveragePercent = parseCoveragePercent(combined);
+      if (testCoveragePercent > 0) {
+        notes.push(`coverage (line %) from bun test --coverage: ${testCoveragePercent.toFixed(2)}`);
+      } else {
+        notes.push('coverage requested but All-files line % not found in test output');
+      }
+    }
     if (summary.pass + summary.fail === 0) {
       notes.push('test run produced no pass/fail summary');
     }
   } else {
-    notes.push('tests skipped (pass --with-tests for failure rate)');
+    notes.push('tests skipped (pass --with-tests / --with-coverage for failure rate + coverage)');
   }
 
   const scored = computeMonorepoHealth({

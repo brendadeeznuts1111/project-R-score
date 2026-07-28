@@ -134,5 +134,15 @@ NODE_ENV=production
         ref: 'pass://factorywager/Cloudflare API Token/password',
       },
     ]);
+    expect(p.defaults.CLOUDFLARE_ACCOUNT_ID).toBe('7a470541a704caaf91e71efccc78fd36');
+    expect(p.defaults.NODE_ENV).toBe('production');
+    expect(p.defaults.CLOUDFLARE_API_TOKEN).toBeUndefined();
+  });
+
+  test('REDIS_URL-style literals count as usable defaults', () => {
+    const p = parseEnvTemplate('REDIS_URL=redis://localhost:6379\nEMPTY=\nSECRET={{ pass://x/y/password }}\n');
+    expect(p.defaults.REDIS_URL).toBe('redis://localhost:6379');
+    expect(p.defaults.EMPTY).toBeUndefined();
+    expect(p.defaults.SECRET).toBeUndefined();
   });
 });

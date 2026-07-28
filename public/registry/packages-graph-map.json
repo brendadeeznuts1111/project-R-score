@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 11,
+  "schemaVersion": 12,
   "kind": "packages-graph-map",
-  "generatedAt": "2026-07-28T04:16:27.609Z",
+  "generatedAt": "2026-07-28T14:02:47.267Z",
   "bunVersion": "1.4.0",
   "score": 100,
   "grade": "healthy",
@@ -12,7 +12,6 @@
       "docs-tools",
       "guards",
       "p2p",
-      "package",
       "registry-client",
       "rip",
       "versioning"
@@ -96,7 +95,6 @@
       "docs-tools": [],
       "guards": [],
       "p2p": [],
-      "package": [],
       "registry-client": [],
       "rip": [],
       "versioning": []
@@ -107,7 +105,6 @@
       "docs-tools": [],
       "guards": [],
       "p2p": [],
-      "package": [],
       "registry-client": [],
       "rip": [],
       "versioning": []
@@ -119,7 +116,6 @@
         "docs-tools",
         "guards",
         "p2p",
-        "package",
         "registry-client",
         "rip",
         "versioning"
@@ -348,15 +344,6 @@
         "inRootWorkspaceDeps": true
       },
       {
-        "package": "package",
-        "npmName": "@factorywager/package",
-        "declaredWorkspace": [],
-        "actualCrossPkg": [],
-        "missingInPackageJson": [],
-        "unusedDeclared": [],
-        "inRootWorkspaceDeps": false
-      },
-      {
         "package": "registry-client",
         "npmName": "@factorywager/registry-client",
         "declaredWorkspace": [],
@@ -473,16 +460,6 @@
         "scriptCount": 0
       },
       {
-        "package": "package",
-        "role": "dormant",
-        "outsideCount": 0,
-        "dependentCount": 0,
-        "inRootWorkspaceDeps": false,
-        "workspaceImports": 0,
-        "relativeImports": 0,
-        "scriptCount": 0
-      },
-      {
         "package": "registry-client",
         "role": "consumed",
         "outsideCount": 3,
@@ -525,11 +502,6 @@
         "reason": "workspace imports + root dep aligned"
       },
       {
-        "package": "package",
-        "action": "archive-candidate",
-        "reason": "no outside imports, no root dep, no package.json script refs"
-      },
-      {
         "package": "registry-client",
         "action": "ok",
         "reason": "workspace imports + root dep aligned"
@@ -557,16 +529,6 @@
         "note": "dormant with real source — review before archive"
       },
       {
-        "package": "package",
-        "kind": "placeholder",
-        "srcFiles": 1,
-        "bytes": 104,
-        "hasTests": false,
-        "indexIsEmptyExport": true,
-        "recommendation": "archive",
-        "note": "index is empty export / placeholder"
-      },
-      {
         "package": "versioning",
         "kind": "library",
         "srcFiles": 2,
@@ -577,18 +539,7 @@
         "note": "dormant with real source — review before archive"
       }
     ],
-    "quarantine": [
-      {
-        "package": "package",
-        "reason": "index is empty export / placeholder",
-        "blockedBy": [
-          "tsconfig.json",
-          "docs/IMPORT_BOUNDARIES.md",
-          "scripts/verify-package-import-boundaries.ts",
-          ".agents/skills/ast-grep/repo-map.json"
-        ]
-      }
-    ],
+    "quarantine": [],
     "packageScores": [
       {
         "package": "ab-testing",
@@ -631,14 +582,6 @@
         ]
       },
       {
-        "package": "package",
-        "score": 75,
-        "grade": "needs-improvement",
-        "reasons": [
-          "dormant placeholder"
-        ]
-      },
-      {
         "package": "registry-client",
         "score": 100,
         "grade": "healthy",
@@ -664,24 +607,26 @@
       }
     ],
     "summary": {
-      "packageCount": 9,
+      "packageCount": 8,
       "consumed": 3,
       "rootTooling": 3,
       "scripted": 0,
-      "dormant": 3,
-      "openActions": 3,
-      "archivePlaceholders": 1,
-      "avgPackageScore": 93.9,
+      "dormant": 2,
+      "openActions": 2,
+      "archivePlaceholders": 0,
+      "avgPackageScore": 96.3,
       "topHub": "lib/docs",
-      "quarantineCount": 1,
+      "quarantineCount": 0,
       "vaultOpenActions": 2,
       "vaultPackagesWithEnv": 2,
       "envPackageTouchedKeys": 1,
       "envMultiPlaneKeys": 27,
-      "envRootRuntimeMissing": 1
+      "envRootRuntimeMissing": 1,
+      "envRootRuntimeNeedsInject": 0,
+      "envRootCoveredByDefault": 1
     },
     "vault": {
-      "generatedAt": "2026-07-28T04:16:27.607Z",
+      "generatedAt": "2026-07-28T14:02:47.257Z",
       "templateKeys": [
         "R2_ACCOUNT_ID",
         "R2_ACCESS_KEY_ID",
@@ -807,80 +752,21 @@
           "missingTemplateKeys": []
         }
       ],
-      "actions": [
-        {
-          "package": "(repo)",
-          "envKey": "OPENAI_API_KEY",
-          "action": "vault-gap-open",
-          "reason": "human vault gap open — OpenAI API Key"
-        },
-        {
-          "package": "(repo)",
-          "envKey": "SLACK_WEBHOOK_URL",
-          "action": "vault-gap-open",
-          "reason": "human vault gap open — Slack Webhook URL"
-        }
-      ],
-      "gap": {
-        "passCliAvailable": true,
-        "passItemCount": 26,
-        "humanOpen": [
-          "OPENAI_API_KEY",
-          "SLACK_WEBHOOK_URL"
-        ],
-        "mintableWouldMint": [],
-        "catalogFlags": [
-          {
-            "envKey": "DOD_PROOF_SECRET",
-            "flag": "vault+env",
-            "title": "DOD Proof Secret"
-          },
-          {
-            "envKey": "DOD_ID_ENCRYPTION_KEY",
-            "flag": "vault+env",
-            "title": "DOD ID Encryption Key"
-          },
-          {
-            "envKey": "PROVISION_ENCRYPTION_KEY",
-            "flag": "vault+env",
-            "title": "Provision Encryption Key"
-          },
-          {
-            "envKey": "PLAY_SIGNING_SECRET",
-            "flag": "vault+env",
-            "title": "Play Signing Secret"
-          },
-          {
-            "envKey": "REPORT_SIGNING_SECRET",
-            "flag": "vault+env",
-            "title": "Report Signing Secret"
-          },
-          {
-            "envKey": "OPENAI_API_KEY",
-            "flag": "open",
-            "title": "OpenAI API Key"
-          },
-          {
-            "envKey": "SLACK_WEBHOOK_URL",
-            "flag": "open",
-            "title": "Slack Webhook URL"
-          }
-        ]
-      },
+      "actions": [],
       "summary": {
         "packagesWithEnv": 2,
         "envKeyCount": 1,
         "vaultedHits": 0,
         "missingTemplate": 0,
-        "openVaultActions": 2,
+        "openVaultActions": 0,
         "inTemplateHits": 2,
         "runtimePresentHits": 0
       }
     },
     "env": {
-      "schemaVersion": 2,
+      "schemaVersion": 3,
       "kind": "env-inventory",
-      "generatedAt": "2026-07-28T04:16:27.608Z",
+      "generatedAt": "2026-07-28T14:02:47.257Z",
       "scannedRoots": [
         "lib",
         "config",
@@ -1231,7 +1117,7 @@
           "runtimePresent": true,
           "samples": [
             "lib/factory/server.ts:181",
-            "scripts/serve-public.ts:1453",
+            "scripts/serve-public.ts:1467",
             "tools/ops-snapshot.ts:110",
             "tools/verify-formdata.ts:20"
           ]
@@ -2305,7 +2191,7 @@
         "top": []
       },
       "packagesPlane": {
-        "generatedAt": "2026-07-28T04:16:27.607Z",
+        "generatedAt": "2026-07-28T14:02:47.257Z",
         "templateKeys": [
           "R2_ACCOUNT_ID",
           "R2_ACCESS_KEY_ID",
@@ -2431,72 +2317,13 @@
             "missingTemplateKeys": []
           }
         ],
-        "actions": [
-          {
-            "package": "(repo)",
-            "envKey": "OPENAI_API_KEY",
-            "action": "vault-gap-open",
-            "reason": "human vault gap open — OpenAI API Key"
-          },
-          {
-            "package": "(repo)",
-            "envKey": "SLACK_WEBHOOK_URL",
-            "action": "vault-gap-open",
-            "reason": "human vault gap open — Slack Webhook URL"
-          }
-        ],
-        "gap": {
-          "passCliAvailable": true,
-          "passItemCount": 26,
-          "humanOpen": [
-            "OPENAI_API_KEY",
-            "SLACK_WEBHOOK_URL"
-          ],
-          "mintableWouldMint": [],
-          "catalogFlags": [
-            {
-              "envKey": "DOD_PROOF_SECRET",
-              "flag": "vault+env",
-              "title": "DOD Proof Secret"
-            },
-            {
-              "envKey": "DOD_ID_ENCRYPTION_KEY",
-              "flag": "vault+env",
-              "title": "DOD ID Encryption Key"
-            },
-            {
-              "envKey": "PROVISION_ENCRYPTION_KEY",
-              "flag": "vault+env",
-              "title": "Provision Encryption Key"
-            },
-            {
-              "envKey": "PLAY_SIGNING_SECRET",
-              "flag": "vault+env",
-              "title": "Play Signing Secret"
-            },
-            {
-              "envKey": "REPORT_SIGNING_SECRET",
-              "flag": "vault+env",
-              "title": "Report Signing Secret"
-            },
-            {
-              "envKey": "OPENAI_API_KEY",
-              "flag": "open",
-              "title": "OpenAI API Key"
-            },
-            {
-              "envKey": "SLACK_WEBHOOK_URL",
-              "flag": "open",
-              "title": "Slack Webhook URL"
-            }
-          ]
-        },
+        "actions": [],
         "summary": {
           "packagesWithEnv": 2,
           "envKeyCount": 1,
           "vaultedHits": 0,
           "missingTemplate": 0,
-          "openVaultActions": 2,
+          "openVaultActions": 0,
           "inTemplateHits": 2,
           "runtimePresentHits": 0
         }
@@ -2506,6 +2333,10 @@
           "templateKeysPresent": 20,
           "templateKeysMissing": 1,
           "missingKeys": [
+            "REDIS_URL"
+          ],
+          "missingNeedsInject": [],
+          "coveredByTemplateDefault": [
             "REDIS_URL"
           ]
         },
@@ -2525,6 +2356,26 @@
             "CSRF_SECRET",
             "HYGIENE_JWT_SECRET",
             "INITIAL_TOKEN",
+            "LOG_LEVEL",
+            "OFFICE",
+            "R2_S3_ENDPOINT",
+            "SCANNER_PORT"
+          ],
+          "missingNeedsInject": [
+            "ADMIN_PASSWORD",
+            "CSRF_SECRET",
+            "HYGIENE_JWT_SECRET",
+            "INITIAL_TOKEN"
+          ],
+          "coveredByTemplateDefault": [
+            "AGENT_ID",
+            "BACKUP_DIR",
+            "BACKUP_RETENTION_DAYS",
+            "BET_TICKER_WORKER_URL",
+            "CASCADE_DB_PATH",
+            "CASCADE_HOSTNAME",
+            "CASCADE_LOG_LEVEL",
+            "CASCADE_PORT",
             "LOG_LEVEL",
             "OFFICE",
             "R2_S3_ENDPOINT",
@@ -2551,6 +2402,27 @@
           "R2_S3_ENDPOINT",
           "REDIS_URL",
           "SCANNER_PORT"
+        ],
+        "missingNeedsInject": [
+          "ADMIN_PASSWORD",
+          "CSRF_SECRET",
+          "HYGIENE_JWT_SECRET",
+          "INITIAL_TOKEN"
+        ],
+        "coveredByTemplateDefault": [
+          "AGENT_ID",
+          "BACKUP_DIR",
+          "BACKUP_RETENTION_DAYS",
+          "BET_TICKER_WORKER_URL",
+          "CASCADE_DB_PATH",
+          "CASCADE_HOSTNAME",
+          "CASCADE_LOG_LEVEL",
+          "CASCADE_PORT",
+          "LOG_LEVEL",
+          "OFFICE",
+          "R2_S3_ENDPOINT",
+          "REDIS_URL",
+          "SCANNER_PORT"
         ]
       },
       "summary": {
@@ -2558,6 +2430,8 @@
         "packageTouchedKeys": 1,
         "multiPlaneKeys": 27,
         "rootRuntimeMissing": 1,
+        "rootRuntimeNeedsInject": 0,
+        "rootCoveredByDefault": 1,
         "defaultsIssueCount": 0
       }
     }
@@ -2614,16 +2488,6 @@
       "role": "root-tooling"
     },
     {
-      "name": "package",
-      "scanned": 1,
-      "inGraph": 1,
-      "orphans": 0,
-      "bytes": 104,
-      "score": 75,
-      "grade": "needs-improvement",
-      "role": "dormant"
-    },
-    {
       "name": "registry-client",
       "scanned": 1,
       "inGraph": 1,
@@ -2655,17 +2519,17 @@
     }
   ],
   "totals": {
-    "inputCount": 35,
-    "inputBytes": 327263,
+    "inputCount": 34,
+    "inputBytes": 327159,
     "orphanCount": 0,
-    "leafCount": 12,
+    "leafCount": 11,
     "orphanPercent": 0,
     "cycleCount": 0,
     "hubCount": 10,
     "crossPackageEdges": 0,
     "externalEdges": 7,
     "mapLayers": 1,
-    "openActions": 3,
-    "avgPackageScore": 93.9
+    "openActions": 2,
+    "avgPackageScore": 96.3
   }
 }
