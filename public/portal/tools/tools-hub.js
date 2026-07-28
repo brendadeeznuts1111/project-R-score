@@ -109,6 +109,7 @@ const CAPABILITY_FALLBACK = [
   ['Pack workspace', 'pkg', 'Bun', 'Bun ≥1.0', 'bun pm pack', 'Implemented', 'portal-cli pm pack', ''],
   ['List deps', 'pkg', 'Bun', 'Bun ≥1.0', 'bun pm ls', 'Implemented', 'portal-cli pm ls', ''],
   ['Packages graph', 'pkg', 'Bun', 'Bun ≥1.0', 'packages-graph-map bake · portal-cli pm graph', 'Implemented', 'portal-cli pm graph', ''],
+  ['Security scanner', 'security', 'Bun', 'Bun ≥1.4', 'bun pm scan · [install.security]', 'Implemented', 'portal-cli scanner doctor', 'https://bun.com/docs/pm/security-scanner-api'],
   ['Dashboard launcher', 'cli', 'Bun', 'Bun ≥1.0', 'portal-cli dashboard --view', 'Implemented', '/', ''],
   ['ANSI color', 'display', 'Bun', 'Bun ≥1.0', 'Bun.color(hex, "ansi-16m")', 'Implemented', 'vault-map status lines', ''],
   ['File I/O', 'io', 'Bun', 'Bun ≥1.0', 'Bun.file · Bun.write', 'Implemented', 'bakes · snapshots', ''],

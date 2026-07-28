@@ -15,11 +15,15 @@
  *   - One-off / lockfile scan: `bun pm scan` (requires scanner configured)
  *   - Scanner packages export `scanner: Bun.Security.Scanner` with `version: "1"`
  *     and `scan({ packages })` → `Bun.Security.Advisory[]` (fatal | warn)
+ *   - Optional Socket org mode: SOCKET_API_KEY (packages scope)
  *
  * Docs example package `@oven/bun-security-scanner` is **not** a real npm package.
  * Official authoring template: https://github.com/oven-sh/security-scanner-template
+ * Real Socket package: @socketsecurity/bun-security-scanner
  *
- *   portal-cli scanner status
+ *   portal-cli scanner status [--json]
+ *   portal-cli scanner doctor [--strict] [--json]
+ *   portal-cli scanner vault
  *   portal-cli scanner scan
  *   portal-cli scanner configure <pkg> --write
  *   portal-cli scanner install <pkg>
@@ -30,10 +34,18 @@ export const SECURITY_SCANNER_DOCS = 'https://bun.com/docs/pm/security-scanner-a
 export const SECURITY_SCANNER_BUNFIG =
   'https://bun.com/docs/runtime/bunfig#install-security-scanner';
 export const SECURITY_SCANNER_TEMPLATE = 'https://github.com/oven-sh/security-scanner-template';
+/** Official Socket scanner (real npm package — not the docs placeholder). */
+export const SOCKET_SCANNER_PACKAGE = '@socketsecurity/bun-security-scanner';
 /** Canonical Proton Pass ref for Socket authenticated mode (packages scope). */
 export const SOCKET_API_KEY_PASS_REF = 'pass://factorywager/Socket API Key/password';
 export const SOCKET_API_KEY_ENV = 'SOCKET_API_KEY';
+export const SOCKET_API_KEY_VAULT = 'factorywager';
+export const SOCKET_API_KEY_ITEM = 'Socket API Key';
+export const SOCKET_API_KEY_FIELD = 'password';
 export const DEFAULT_BUNFIG_REL = 'bunfig.toml';
+export const DEFAULT_ENV_TEMPLATE_REL = 'env.template';
+export const DEFAULT_VAULT_MAP_REL = 'config/vault-map.toml';
+export const DEFAULT_PACKAGE_JSON_REL = 'package.json';
 export const DEFAULT_INIT_DIR = 'my-security-scanner';
 
 /** npm package name shape: name or @scope/name (no invented packages). */
@@ -65,6 +77,18 @@ export type InstallSecurityStatus = {
   socketApiKeySet: boolean;
   /** Canonical vault ref for inject (no secret value). */
   socketApiKeyPassRef: string;
+  /** True when package.json lists the configured scanner (deps or devDeps). */
+  scannerInPackageJson: boolean;
+  /** True when node_modules/<scanner>/package.json exists. */
+  scannerInNodeModules: boolean;
+  /** env.template contains SOCKET_API_KEY=…pass://… */
+  socketInEnvTemplate: boolean;
+  /** config/vault-map.toml has [env.SOCKET_API_KEY] */
+  socketInVaultMap: boolean;
+  /** Template pass ref matches vault-map / canonical (when both present). */
+  socketRefsAligned: boolean;
+  /** Effective mode label for humans / JSON */
+  mode: 'unconfigured' | 'free' | 'authenticated';
 };
 
 /**
@@ -109,35 +133,323 @@ export function isSocketApiKeySet(env: Record<string, string | undefined> = Bun.
   return typeof v === 'string' && v.trim().length > 0;
 }
 
-/** Load status from a bunfig path (repo root default). */
-export async function readInstallSecurityStatus(
-  bunfigPath: string = DEFAULT_BUNFIG_REL
-): Promise<InstallSecurityStatus> {
-  const socketApiKeySet = isSocketApiKeySet();
-  const f = Bun.file(bunfigPath);
-  const exists = await f.exists();
-  if (!exists) {
-    return {
-      bunfigPath,
-      bunfigExists: false,
-      scanner: undefined,
-      frozenLockfile: undefined,
-      exact: undefined,
-      socketApiKeySet,
-      socketApiKeyPassRef: SOCKET_API_KEY_PASS_REF,
-    };
+/** Extract pass://… ref from env.template line for SOCKET_API_KEY (if any). */
+export function parseSocketPassRefFromEnvTemplate(text: string): string | undefined {
+  for (const line of text.split(/\r?\n/)) {
+    const t = line.trim();
+    if (!t || t.startsWith('#')) continue;
+    // Item titles may contain spaces: pass://vault/Socket API Key/password
+    const m = t.match(/^SOCKET_API_KEY\s*=\s*(?:\{\{\s*)?(pass:\/\/.+?)(?:\s*\}\})?\s*$/);
+    if (m?.[1]) return m[1]!.trim();
   }
-  const text = await f.text();
-  const parsed = parseInstallSecurityFromText(text);
+  return undefined;
+}
+
+/** Read [env.SOCKET_API_KEY] pass path pieces from vault-map TOML text. */
+export function parseSocketFromVaultMapText(text: string): {
+  present: boolean;
+  passRef: string | undefined;
+} {
+  let parsed: unknown;
+  try {
+    parsed = Bun.TOML.parse(text);
+  } catch {
+    return { present: false, passRef: undefined };
+  }
+  if (!parsed || typeof parsed !== 'object') return { present: false, passRef: undefined };
+  const env = (parsed as Record<string, unknown>).env;
+  if (!env || typeof env !== 'object') return { present: false, passRef: undefined };
+  const sock = (env as Record<string, unknown>).SOCKET_API_KEY;
+  if (!sock || typeof sock !== 'object') return { present: false, passRef: undefined };
+  const s = sock as Record<string, unknown>;
+  const vault = typeof s.vault === 'string' ? s.vault : undefined;
+  const item = typeof s.item === 'string' ? s.item : undefined;
+  const field = typeof s.field === 'string' ? s.field : undefined;
+  if (!vault || !item || !field) return { present: true, passRef: undefined };
+  return { present: true, passRef: `pass://${vault}/${item}/${field}` };
+}
+
+/** Whether package.json deps/devDeps list the scanner package name. */
+export function packageJsonHasScanner(
+  pkgJson: unknown,
+  scanner: string | undefined
+): boolean {
+  if (!scanner || !pkgJson || typeof pkgJson !== 'object') return false;
+  const p = pkgJson as Record<string, unknown>;
+  for (const key of ['dependencies', 'devDependencies', 'optionalDependencies'] as const) {
+    const block = p[key];
+    if (block && typeof block === 'object' && scanner in (block as object)) return true;
+  }
+  return false;
+}
+
+export type ScannerStatusPaths = {
+  bunfigPath?: string;
+  envTemplatePath?: string;
+  vaultMapPath?: string;
+  packageJsonPath?: string;
+  cwd?: string;
+};
+
+/** Load status from bunfig + template + vault-map + package tree (repo root default). */
+export async function readInstallSecurityStatus(
+  bunfigPath: string = DEFAULT_BUNFIG_REL,
+  paths: ScannerStatusPaths = {}
+): Promise<InstallSecurityStatus> {
+  const cwd = paths.cwd ?? process.cwd();
+  const envTemplatePath = paths.envTemplatePath ?? `${cwd}/${DEFAULT_ENV_TEMPLATE_REL}`;
+  const vaultMapPath = paths.vaultMapPath ?? `${cwd}/${DEFAULT_VAULT_MAP_REL}`;
+  const packageJsonPath = paths.packageJsonPath ?? `${cwd}/${DEFAULT_PACKAGE_JSON_REL}`;
+  const resolvedBunfig = paths.bunfigPath ?? bunfigPath;
+
+  const socketApiKeySet = isSocketApiKeySet();
+  const f = Bun.file(resolvedBunfig);
+  const exists = await f.exists();
+  let scanner: string | undefined;
+  let frozenLockfile: boolean | undefined;
+  let exact: boolean | undefined;
+  if (exists) {
+    const parsed = parseInstallSecurityFromText(await f.text());
+    scanner = parsed.scanner;
+    frozenLockfile = parsed.frozenLockfile;
+    exact = parsed.exact;
+  }
+
+  let scannerInPackageJson = false;
+  const pkgFile = Bun.file(packageJsonPath);
+  if (await pkgFile.exists()) {
+    try {
+      scannerInPackageJson = packageJsonHasScanner(await pkgFile.json(), scanner);
+    } catch {
+      scannerInPackageJson = false;
+    }
+  }
+
+  let scannerInNodeModules = false;
+  if (scanner) {
+    // scoped packages: @scope/name → node_modules/@scope/name/package.json
+    const nm = `${cwd}/node_modules/${scanner}/package.json`;
+    scannerInNodeModules = await Bun.file(nm).exists();
+  }
+
+  let socketInEnvTemplate = false;
+  let templatePassRef: string | undefined;
+  const envFile = Bun.file(envTemplatePath);
+  if (await envFile.exists()) {
+    templatePassRef = parseSocketPassRefFromEnvTemplate(await envFile.text());
+    socketInEnvTemplate = Boolean(templatePassRef);
+  }
+
+  let socketInVaultMap = false;
+  let mapPassRef: string | undefined;
+  const mapFile = Bun.file(vaultMapPath);
+  if (await mapFile.exists()) {
+    const vm = parseSocketFromVaultMapText(await mapFile.text());
+    socketInVaultMap = vm.present;
+    mapPassRef = vm.passRef;
+  }
+
+  const refs = [templatePassRef, mapPassRef, SOCKET_API_KEY_PASS_REF].filter(
+    (r): r is string => Boolean(r)
+  );
+  const socketRefsAligned =
+    refs.length === 0 ? true : refs.every(r => r === refs[0]);
+
+  const mode: InstallSecurityStatus['mode'] = !scanner
+    ? 'unconfigured'
+    : socketApiKeySet
+      ? 'authenticated'
+      : 'free';
+
   return {
-    bunfigPath,
-    bunfigExists: true,
-    scanner: parsed.scanner,
-    frozenLockfile: parsed.frozenLockfile,
-    exact: parsed.exact,
+    bunfigPath: resolvedBunfig,
+    bunfigExists: exists,
+    scanner,
+    frozenLockfile,
+    exact,
     socketApiKeySet,
     socketApiKeyPassRef: SOCKET_API_KEY_PASS_REF,
+    scannerInPackageJson,
+    scannerInNodeModules,
+    socketInEnvTemplate,
+    socketInVaultMap,
+    socketRefsAligned,
+    mode,
   };
+}
+
+export type DoctorCheckLevel = 'fatal' | 'warn' | 'info';
+export type DoctorCheck = {
+  id: string;
+  level: DoctorCheckLevel;
+  ok: boolean;
+  message: string;
+};
+
+export type DoctorReport = {
+  kind: 'portal-cli-scanner-doctor';
+  ok: boolean;
+  strict: boolean;
+  mode: InstallSecurityStatus['mode'];
+  status: InstallSecurityStatus;
+  checks: DoctorCheck[];
+};
+
+/** Pure readiness checklist from status (no I/O). */
+export function buildDoctorChecks(s: InstallSecurityStatus): DoctorCheck[] {
+  const checks: DoctorCheck[] = [
+    {
+      id: 'bunfig-exists',
+      level: 'fatal',
+      ok: s.bunfigExists,
+      message: s.bunfigExists
+        ? `bunfig present: ${s.bunfigPath}`
+        : `bunfig missing: ${s.bunfigPath}`,
+    },
+    {
+      id: 'scanner-configured',
+      level: 'fatal',
+      ok: Boolean(s.scanner),
+      message: s.scanner
+        ? `[install.security] scanner = "${s.scanner}"`
+        : 'no [install.security] scanner configured',
+    },
+    {
+      id: 'scanner-in-package-json',
+      level: 'warn',
+      ok: !s.scanner || s.scannerInPackageJson,
+      message: !s.scanner
+        ? 'skip package.json (no scanner)'
+        : s.scannerInPackageJson
+          ? `package.json lists ${s.scanner}`
+          : `package.json missing ${s.scanner} (run: portal-cli scanner install ${s.scanner})`,
+    },
+    {
+      id: 'scanner-in-node-modules',
+      level: 'warn',
+      ok: !s.scanner || s.scannerInNodeModules,
+      message: !s.scanner
+        ? 'skip node_modules (no scanner)'
+        : s.scannerInNodeModules
+          ? `node_modules has ${s.scanner}`
+          : `node_modules missing ${s.scanner} (bun install)`,
+    },
+    {
+      id: 'socket-api-key',
+      level: 'info',
+      ok: true, // free mode is valid
+      message: s.socketApiKeySet
+        ? 'SOCKET_API_KEY set (authenticated / org mode)'
+        : 'SOCKET_API_KEY unset (Socket free mode — optional)',
+    },
+    {
+      id: 'env-template-socket',
+      level: 'warn',
+      ok: s.socketInEnvTemplate,
+      message: s.socketInEnvTemplate
+        ? `env.template wires ${SOCKET_API_KEY_ENV}`
+        : `env.template missing ${SOCKET_API_KEY_ENV} pass:// ref`,
+    },
+    {
+      id: 'vault-map-socket',
+      level: 'warn',
+      ok: s.socketInVaultMap,
+      message: s.socketInVaultMap
+        ? `vault-map has [env.${SOCKET_API_KEY_ENV}]`
+        : `vault-map missing [env.${SOCKET_API_KEY_ENV}]`,
+    },
+    {
+      id: 'socket-refs-aligned',
+      level: 'warn',
+      ok: s.socketRefsAligned,
+      message: s.socketRefsAligned
+        ? `pass refs aligned → ${s.socketApiKeyPassRef}`
+        : 'env.template / vault-map / canonical pass refs disagree',
+    },
+  ];
+  return checks;
+}
+
+export function evaluateDoctor(
+  s: InstallSecurityStatus,
+  opts: { strict?: boolean } = {}
+): DoctorReport {
+  const checks = buildDoctorChecks(s);
+  const strict = Boolean(opts.strict);
+  const failed = checks.filter(c => {
+    if (c.ok) return false;
+    if (c.level === 'fatal') return true;
+    if (strict && c.level === 'warn') return true;
+    return false;
+  });
+  return {
+    kind: 'portal-cli-scanner-doctor',
+    ok: failed.length === 0,
+    strict,
+    mode: s.mode,
+    status: s,
+    checks,
+  };
+}
+
+export function formatDoctorReport(r: DoctorReport): string {
+  const lines: string[] = [
+    `Bun Security Scanner doctor  mode=${r.mode}  ${r.ok ? 'OK' : 'FAIL'}${r.strict ? ' (strict)' : ''}`,
+    '',
+  ];
+  for (const c of r.checks) {
+    const mark = c.ok ? '✓' : c.level === 'info' ? '·' : '✗';
+    lines.push(`  ${mark} [${c.level}] ${c.id}: ${c.message}`);
+  }
+  lines.push('');
+  if (!r.status.scanner) {
+    lines.push(
+      'Next: portal-cli scanner install @socketsecurity/bun-security-scanner',
+      '      portal-cli scanner configure @socketsecurity/bun-security-scanner --write'
+    );
+  } else if (!r.status.socketApiKeySet) {
+    lines.push(
+      'Optional org mode (packages scope token):',
+      `  portal-cli scanner vault   # Pass item create recipe`,
+      `  # then: portal-cli secret inject -i env.template -o .env -f`
+    );
+  } else {
+    lines.push('Ready: portal-cli scanner scan');
+  }
+  lines.push('', `Docs: ${SECURITY_SCANNER_DOCS}`);
+  return lines.join('\n');
+}
+
+/** Human vault wiring + pass-cli create recipe (no secrets). */
+export function formatScannerVaultHelp(): string {
+  return `Socket API key vault wiring (no secret values)
+
+Env:      ${SOCKET_API_KEY_ENV}
+Pass ref: ${SOCKET_API_KEY_PASS_REF}
+Vault:    ${SOCKET_API_KEY_VAULT}
+Item:     ${SOCKET_API_KEY_ITEM}
+Field:    ${SOCKET_API_KEY_FIELD}
+Map:      config/vault-map.toml [env.${SOCKET_API_KEY_ENV}]
+Template: env.template
+
+Mint token: https://socket.dev  (API tokens · scope: packages)
+Scanner:    ${SOCKET_SCANNER_PACKAGE}  (bunfig [install.security])
+
+Create Pass login item (after agent session works):
+  source scripts/agent-env.sh factorywager
+  pass-cli item create login \\
+    --vault-name ${SOCKET_API_KEY_VAULT} \\
+    --title "${SOCKET_API_KEY_ITEM}" \\
+    --password '<paste Socket packages-scope token>' \\
+    --url https://socket.dev
+
+Inject (never commit .env):
+  bun run portal-cli secret inject -i env.template -o .env -f
+  bun run portal-cli scanner doctor
+  bun run portal-cli scanner scan
+
+Free mode works without ${SOCKET_API_KEY_ENV}; doctor marks it as info.
+`;
 }
 
 /**
@@ -207,12 +519,18 @@ export function formatScannerStatus(s: InstallSecurityStatus): string {
     : 'unset (Socket free mode — optional)';
   const lines: string[] = [
     'Bun Security Scanner status',
+    `  mode:            ${s.mode}`,
     `  bunfig:          ${s.bunfigPath}${s.bunfigExists ? '' : ' (missing)'}`,
     `  scanner:         ${s.scanner ?? '(not configured)'}`,
+    `  package.json:    ${s.scanner ? (s.scannerInPackageJson ? 'listed' : 'missing') : '—'}`,
+    `  node_modules:    ${s.scanner ? (s.scannerInNodeModules ? 'present' : 'missing') : '—'}`,
     `  frozenLockfile:  ${s.frozenLockfile === undefined ? '—' : String(s.frozenLockfile)}`,
     `  exact:           ${s.exact === undefined ? '—' : String(s.exact)}`,
     `  SOCKET_API_KEY:  ${keyLine}`,
     `  vault ref:       ${s.socketApiKeyPassRef}`,
+    `  env.template:    ${s.socketInEnvTemplate ? 'wired' : 'missing'}`,
+    `  vault-map:       ${s.socketInVaultMap ? 'wired' : 'missing'}`,
+    `  refs aligned:    ${s.socketRefsAligned ? 'yes' : 'NO'}`,
     '',
     `Docs: ${SECURITY_SCANNER_DOCS}`,
     `bunfig: ${SECURITY_SCANNER_BUNFIG}`,
@@ -221,20 +539,26 @@ export function formatScannerStatus(s: InstallSecurityStatus): string {
     lines.push(
       '',
       'No scanner configured. `bun pm scan` will exit until you set one:',
-      '  portal-cli scanner install <pkg>   # bun add -d (watch frozenLockfile)',
-      '  portal-cli scanner configure <pkg> --write',
+      `  portal-cli scanner install ${SOCKET_SCANNER_PACKAGE}`,
+      `  portal-cli scanner configure ${SOCKET_SCANNER_PACKAGE} --write`,
       '  portal-cli scanner init [dir]      # clone official template',
       '',
       'Note: docs example "@oven/bun-security-scanner" is not a real package.',
+      `Real Socket package: ${SOCKET_SCANNER_PACKAGE}`,
       `Template: ${SECURITY_SCANNER_TEMPLATE}`
     );
   } else {
-    lines.push('', 'Run: portal-cli scanner scan   # → bun pm scan');
+    lines.push(
+      '',
+      'Run: portal-cli scanner scan     # → bun pm scan',
+      '     portal-cli scanner doctor   # readiness checklist'
+    );
   }
   if (!s.socketApiKeySet) {
     lines.push(
       '',
       'Optional org mode: mint Socket API token (packages scope) → vault item, inject:',
+      `  portal-cli scanner vault`,
       `  ${s.socketApiKeyPassRef}`,
       '  bun run portal-cli secret inject -i env.template -o .env -f',
       '  # or: export SOCKET_API_KEY=…'
@@ -254,9 +578,13 @@ export const SCANNER_HELP = `Usage: portal-cli scanner <subcommand> [options]
 
 Grounded Bun Security Scanner control plane — no invented packages/APIs.
 Docs: ${SECURITY_SCANNER_DOCS}
+Real Socket package: ${SOCKET_SCANNER_PACKAGE}
 
 Subcommands:
-  status                 Show [install.security] scanner from bunfig.toml (default)
+  status [--json]        Show bunfig + vault wiring + package presence (default)
+  doctor [--strict] [--json]
+                         Readiness checklist (fatal fails exit 1; --strict fails on warns)
+  vault                  Pass ref + pass-cli create recipe for SOCKET_API_KEY
   scan                   Run \`bun pm scan\` (requires scanner configured)
   configure <pkg>        Preview / write scanner into bunfig.toml
                          --write   apply (default is dry-run preview)
@@ -273,6 +601,7 @@ Real mechanics:
   2. Set bunfig:  [install.security]
                   scanner = "your-package"
   3. bun install / bun add run the scanner; one-off: bun pm scan
+  4. Optional: SOCKET_API_KEY via Pass inject for Socket org mode
 
 Scanner package export shape (template):
   export const scanner: Bun.Security.Scanner = {
@@ -286,9 +615,12 @@ Advisories:
 
 Examples:
   portal-cli scanner status
-  portal-cli scanner configure @acme/bun-security-scanner
-  portal-cli scanner configure @acme/bun-security-scanner --write
-  portal-cli scanner install @acme/bun-security-scanner
+  portal-cli scanner status --json
+  portal-cli scanner doctor
+  portal-cli scanner doctor --strict
+  portal-cli scanner vault
+  portal-cli scanner configure ${SOCKET_SCANNER_PACKAGE} --write
+  portal-cli scanner install ${SOCKET_SCANNER_PACKAGE}
   portal-cli scanner scan
   portal-cli scanner init my-org-scanner
   portal-cli scanner clear --write
@@ -377,13 +709,33 @@ export async function dispatchScanner(
   }
 
   if (cmd === 'status') {
-    const status = await readInstallSecurityStatus(bunfigPath);
-    console.log(formatScannerStatus(status));
+    const status = await readInstallSecurityStatus(bunfigPath, { cwd });
+    if (hasFlag(rest, '--json')) {
+      console.log(JSON.stringify(status, null, 2));
+    } else {
+      console.log(formatScannerStatus(status));
+    }
+    return 0;
+  }
+
+  if (cmd === 'doctor') {
+    const status = await readInstallSecurityStatus(bunfigPath, { cwd });
+    const report = evaluateDoctor(status, { strict: hasFlag(rest, '--strict') });
+    if (hasFlag(rest, '--json')) {
+      console.log(JSON.stringify(report, null, 2));
+    } else {
+      console.log(formatDoctorReport(report));
+    }
+    return report.ok ? 0 : 1;
+  }
+
+  if (cmd === 'vault') {
+    console.log(formatScannerVaultHelp());
     return 0;
   }
 
   if (cmd === 'scan') {
-    const status = await readInstallSecurityStatus(bunfigPath);
+    const status = await readInstallSecurityStatus(bunfigPath, { cwd });
     if (!status.scanner) {
       console.error(
         `error: no security scanner configured in ${bunfigPath}\n` +

@@ -14,8 +14,15 @@ import {
   parseInstallSecurityFromText,
   setInstallSecurityScanner,
   dispatchScanner,
+  evaluateDoctor,
+  buildDoctorChecks,
+  packageJsonHasScanner,
+  parseSocketPassRefFromEnvTemplate,
+  parseSocketFromVaultMapText,
   SECURITY_SCANNER_DOCS,
   SECURITY_SCANNER_TEMPLATE,
+  SOCKET_API_KEY_PASS_REF,
+  SOCKET_SCANNER_PACKAGE,
 } from '../tools/lib/portal-cli-scanner.ts';
 import { PORTAL_CLI_COMMANDS } from '../tools/lib/portal-cli-bun-flags.ts';
 
@@ -92,6 +99,12 @@ describe('portal-cli-scanner pure helpers', () => {
       exact: true,
       socketApiKeySet: false,
       socketApiKeyPassRef: 'pass://factorywager/Socket API Key/password',
+      scannerInPackageJson: false,
+      scannerInNodeModules: false,
+      socketInEnvTemplate: true,
+      socketInVaultMap: true,
+      socketRefsAligned: true,
+      mode: 'unconfigured',
     });
     expect(text).toContain('(not configured)');
     expect(text).toContain(SECURITY_SCANNER_DOCS);
@@ -100,6 +113,74 @@ describe('portal-cli-scanner pure helpers', () => {
     expect(text).toContain('SOCKET_API_KEY');
     expect(text).toContain('pass://factorywager/Socket API Key/password');
     expect(text).toContain('unset');
+    expect(text).toContain('mode:');
+  });
+
+  test('parseSocketPassRefFromEnvTemplate + vault-map TOML', () => {
+    const ref = parseSocketPassRefFromEnvTemplate(
+      '# c\nSOCKET_API_KEY={{ pass://factorywager/Socket API Key/password }}\n'
+    );
+    expect(ref).toBe(SOCKET_API_KEY_PASS_REF);
+    const vm = parseSocketFromVaultMapText(`
+[env.SOCKET_API_KEY]
+vault = "factorywager"
+item = "Socket API Key"
+field = "password"
+`);
+    expect(vm.present).toBe(true);
+    expect(vm.passRef).toBe(SOCKET_API_KEY_PASS_REF);
+  });
+
+  test('packageJsonHasScanner reads devDependencies', () => {
+    expect(
+      packageJsonHasScanner(
+        { devDependencies: { [SOCKET_SCANNER_PACKAGE]: '1.1.2' } },
+        SOCKET_SCANNER_PACKAGE
+      )
+    ).toBe(true);
+    expect(packageJsonHasScanner({ dependencies: {} }, SOCKET_SCANNER_PACKAGE)).toBe(false);
+  });
+
+  test('doctor is ok for fully wired free-mode Socket status', () => {
+    const s = {
+      bunfigPath: 'bunfig.toml',
+      bunfigExists: true,
+      scanner: SOCKET_SCANNER_PACKAGE,
+      frozenLockfile: true,
+      exact: true,
+      socketApiKeySet: false,
+      socketApiKeyPassRef: SOCKET_API_KEY_PASS_REF,
+      scannerInPackageJson: true,
+      scannerInNodeModules: true,
+      socketInEnvTemplate: true,
+      socketInVaultMap: true,
+      socketRefsAligned: true,
+      mode: 'free' as const,
+    };
+    const r = evaluateDoctor(s);
+    expect(r.ok).toBe(true);
+    expect(r.mode).toBe('free');
+    expect(buildDoctorChecks(s).every(c => c.ok || c.level === 'info')).toBe(true);
+  });
+
+  test('doctor fails fatal when scanner missing', () => {
+    const r = evaluateDoctor({
+      bunfigPath: 'bunfig.toml',
+      bunfigExists: true,
+      scanner: undefined,
+      frozenLockfile: true,
+      exact: true,
+      socketApiKeySet: false,
+      socketApiKeyPassRef: SOCKET_API_KEY_PASS_REF,
+      scannerInPackageJson: false,
+      scannerInNodeModules: false,
+      socketInEnvTemplate: true,
+      socketInVaultMap: true,
+      socketRefsAligned: true,
+      mode: 'unconfigured',
+    });
+    expect(r.ok).toBe(false);
+    expect(r.checks.find(c => c.id === 'scanner-configured')?.ok).toBe(false);
   });
 
   test('PORTAL_CLI_COMMANDS includes scanner', () => {
@@ -242,6 +323,54 @@ describe('portal-cli scanner CLI', () => {
     expect(out).toContain('@socketsecurity/bun-security-scanner');
     expect(out).toContain('SOCKET_API_KEY');
     expect(out).toContain('pass://factorywager/Socket API Key/password');
+    expect(out).toContain('mode:');
+    expect(out).toContain('env.template:');
+  });
+
+  test('scanner status --json is machine-readable', async () => {
+    const proc = Bun.spawn(['bun', CLI, 'scanner', 'status', '--json'], {
+      cwd: ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const code = await proc.exited;
+    const out = await new Response(proc.stdout).text();
+    expect(code).toBe(0);
+    const j = JSON.parse(out);
+    expect(j.scanner).toBe(SOCKET_SCANNER_PACKAGE);
+    expect(j.socketApiKeyPassRef).toBe(SOCKET_API_KEY_PASS_REF);
+    expect(j.socketInEnvTemplate).toBe(true);
+    expect(j.socketInVaultMap).toBe(true);
+    expect(['free', 'authenticated', 'unconfigured']).toContain(j.mode);
+  });
+
+  test('scanner doctor exits 0 for configured Socket free mode', async () => {
+    const proc = Bun.spawn(['bun', CLI, 'scanner', 'doctor'], {
+      cwd: ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const code = await proc.exited;
+    const out = await new Response(proc.stdout).text();
+    expect(code).toBe(0);
+    expect(out).toContain('doctor');
+    expect(out).toContain('scanner-configured');
+  });
+
+  test('scanner vault prints Pass create recipe without secrets', async () => {
+    const proc = Bun.spawn(['bun', CLI, 'scanner', 'vault'], {
+      cwd: ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const code = await proc.exited;
+    const out = await new Response(proc.stdout).text();
+    expect(code).toBe(0);
+    expect(out).toContain(SOCKET_API_KEY_PASS_REF);
+    expect(out).toContain('pass-cli item create login');
+    expect(out).toContain('packages');
+    // never leak a token-looking value
+    expect(out).not.toMatch(/skt_[a-zA-Z0-9]{8,}/);
   });
 
   test('scanner help lists grounded subcommands', async () => {
@@ -254,6 +383,8 @@ describe('portal-cli scanner CLI', () => {
     const out = await new Response(proc.stdout).text();
     expect(code).toBe(0);
     expect(out).toContain('configure');
+    expect(out).toContain('doctor');
+    expect(out).toContain('vault');
     expect(out).toContain('bun pm scan');
     expect(out).toContain('fatal');
     expect(out).toContain('warn');

@@ -165,7 +165,7 @@ const ROOT_HELP = `FactoryWager portal CLI
   portal-cli vault health [--update] Vault-map inventory + report-shape gate
   portal-cli secret <subcommand>     Proton Pass CLI (pass-cli) wrapper
   portal-cli pm <args…>              bun pm passthrough + FW graph helper
-  portal-cli scanner <subcommand>    Bun Security Scanner (status · scan · configure)
+  portal-cli scanner <subcommand>    Bun Security Scanner (status · doctor · vault · scan)
   portal-cli badge [--json]          Offline nav-badge preview (from baked registry JSON)
   portal-cli dashboard [--view=name] [--open]  Print/open portal board (default: tools)
   portal-cli help                    This message
@@ -210,7 +210,9 @@ pm (canonical: https://bun.com/docs/pm/cli/pm) — zero invention, only bun pm f
                                # FW: offline packages-graph-map table
 
 Scanner (real: https://bun.com/docs/pm/security-scanner-api):
-  scanner status               # [install.security] scanner from bunfig.toml
+  scanner status [--json]      # bunfig + vault wiring + package presence
+  scanner doctor [--strict]    # readiness checklist (CI-friendly)
+  scanner vault                # SOCKET_API_KEY Pass create recipe
   scanner scan                 # → bun pm scan
   scanner configure <pkg> [--write]
   scanner install <pkg>        # bun add -d (frozenLockfile may block)
