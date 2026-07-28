@@ -1,0 +1,14 @@
+{
+  "deepRelativeImports": 8,
+  "cycles": 0,
+  "deepImportFiles": {
+    "lib/telegram/flows/cards/status.ts": 1,
+    "lib/telegram/flows/cards/welcome.ts": 1,
+    "lib/telegram/flows/cards/balances.ts": 1,
+    "lib/telegram/flows/cards/plays.ts": 1,
+    "lib/telegram/flows/cards/menu.ts": 1,
+    "lib/telegram/flows/cards/accounts.ts": 1,
+    "lib/telegram/flows/cards/tree.ts": 1,
+    "scripts/check-import-graph.ts": 1
+  }
+}

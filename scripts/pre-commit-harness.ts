@@ -391,6 +391,7 @@ async function main(): Promise<void> {
   }
   if (libStaged || scriptsStaged) {
     parallelJobs.push(spawnGate('bun-env', ['bun', 'scripts/check-bun-env.ts']));
+    parallelJobs.push(spawnGate('import-graph', ['bun', 'scripts/check-import-graph.ts']));
   }
 
   // Complexity floor on staged lib/harness sources (Bun.stdin path list — not npm pre*).
@@ -417,6 +418,7 @@ async function main(): Promise<void> {
   const brandTypes = parallelResults.find(r => r.name === 'brands-types')?.code ?? 0;
   const pathBun = parallelResults.find(r => r.name === 'path-bun')?.code ?? 0;
   const bunEnv = parallelResults.find(r => r.name === 'bun-env')?.code ?? 0;
+  const importGraph = parallelResults.find(r => r.name === 'import-graph')?.code ?? 0;
   const complexityStaged =
     parallelResults.find(r => r.name === 'harness-complexity-staged')?.code ?? 0;
 
@@ -444,6 +446,11 @@ async function main(): Promise<void> {
   }
   if (bunEnv !== 0) {
     console.error('❌ process.env in lib/|scripts/ — use Bun.env (bun run check:bun-env)');
+    await writeTimings(timings, full);
+    process.exit(1);
+  }
+  if (importGraph !== 0) {
+    console.error('❌ import cycle or deep-relative-import growth — bun run check:import-graph');
     await writeTimings(timings, full);
     process.exit(1);
   }
