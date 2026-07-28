@@ -77,7 +77,7 @@ Inventory (parse once): [`lib/surfaces/inventory.ts`](../../surfaces/inventory.t
 
 Identity stays scheme- and path-free. Transitions are only through the helpers
 below — never cast `AccessDomainId` to `HostId` or stuff `/portal` into a FQDN
-brand.
+brand. Terminal render: `bun run brand:status:docs` (`Bun.markdown.ansi`).
 
 ```mermaid
 flowchart TB

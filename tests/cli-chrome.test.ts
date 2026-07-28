@@ -58,6 +58,14 @@ describe('cli-chrome · Bun.stringWidth layout', () => {
     expect(truncateDisplay('short', 10)).toBe('short');
   });
 
+  test('truncateDisplay preserves ANSI via Bun.sliceAnsi', () => {
+    const colored = '\u001b[31mhello world\u001b[0m';
+    const out = truncateDisplay(colored, 8);
+    expect(displayWidth(out)).toBeLessThanOrEqual(8);
+    expect(out).toContain('\u001b[31m');
+    expect(out).toContain('…');
+  });
+
   test('columnTable aligns columns by stringWidth', () => {
     const lines = columnTable(
       ['name', 'ver'],

@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/utils#bun-stripansi — Bun.stripANSI
 // @see https://bun.com/docs/runtime/utils#bun-wrapansi — Bun.wrapAnsi
+// @see https://bun.com/reference/bun/sliceAnsi — Bun.sliceAnsi
 // @see https://bun.com/docs/runtime/environment-variables#configuring-bun — NO_COLOR / FORCE_COLOR
 /**
  * Bun-native CLI chrome: layout via Bun.stringWidth / wrapAnsi / stripANSI;
@@ -9,7 +10,7 @@
  *
  * Never emit ANSI when piped, CI, or NO_COLOR — same contract as logDepth/colorize.
  */
-import { shouldColor, stripANSI } from '../console-depth.ts';
+import { shouldColor, truncateWidth } from '../console-depth.ts';
 
 const RESET = '\x1b[0m';
 
@@ -52,20 +53,14 @@ export function padDisplay(s: string, width: number, align: 'left' | 'right' = '
 
 /**
  * Truncate to max visible columns, appending "…" when needed.
- * @see https://bun.com/docs/runtime/utils#bun-stripansi
+ * ANSI / grapheme safe via Bun.sliceAnsi (console-depth truncateWidth).
+ * @see https://bun.com/reference/bun/sliceAnsi
  * @see https://bun.com/docs/runtime/utils#bun-stringwidth
  */
 export function truncateDisplay(s: string, max: number): string {
   if (max <= 0) return '';
-  if (displayWidth(s) <= max) return s;
   if (max === 1) return '…';
-  const plain = stripANSI(s);
-  let out = '';
-  for (const ch of plain) {
-    if (displayWidth(out + ch + '…') > max) break;
-    out += ch;
-  }
-  return `${out}…`;
+  return truncateWidth(s, max, { ellipsis: '…' });
 }
 
 /** Two-column key/value lines with stringWidth-aligned keys. */
