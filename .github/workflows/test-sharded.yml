@@ -52,8 +52,8 @@ jobs:
             tests/portal-weave.test.ts \
             tests/registry-contracts.test.ts
 
-      - name: Prove tests did not rewrite tracked public artifacts
-        run: git diff --exit-code -- public/
+      - name: Prove tests left public artifacts clean
+        run: test -z "$(git status --porcelain --untracked-files=all -- public/)"
 
   test:
     name: tests shard ${{ matrix.shard }}/4

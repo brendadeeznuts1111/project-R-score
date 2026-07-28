@@ -167,7 +167,14 @@ export function createJsonTestServer(
     port,
     url(pathname = '/'): string {
       if (disposed) throw new Error(`test JSON server has been disposed: ${origin}`);
-      return new URL(pathname, `${origin}/`).href;
+      if (!pathname.startsWith('/') || pathname.startsWith('//')) {
+        throw new Error(`test JSON server URL must be a local absolute path: ${pathname}`);
+      }
+      const fixtureUrl = new URL(pathname, `${origin}/`);
+      if (fixtureUrl.origin !== origin) {
+        throw new Error(`test JSON server URL escapes fixture origin: ${pathname}`);
+      }
+      return fixtureUrl.href;
     },
     async [Symbol.asyncDispose](): Promise<void> {
       if (disposed) return;

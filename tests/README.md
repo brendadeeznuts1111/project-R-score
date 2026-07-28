@@ -71,7 +71,7 @@ not sufficient if the test leaves the source tree dirty.
 - Keep immutable checked-in artifacts read-only; copy them into a temporary
   workspace before testing mutations.
 - After changing a writer test, run it and verify
-  `git diff --exit-code -- public/`.
+  `test -z "$(git status --porcelain --untracked-files=all -- public/)"`.
 
 Do not hide filesystem coupling with serial execution. Isolation is what makes
 `--parallel`, local reruns, and CI sharding deterministic.

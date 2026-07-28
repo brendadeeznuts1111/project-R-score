@@ -30,7 +30,7 @@ export interface DurationBalancedShardPlanOptions {
 
 export interface TestInventoryLane {
   name: string;
-  mode: 'serial' | 'parallel-probe';
+  mode: 'serial';
   parallelProbe: boolean;
   runtime: 'bun';
   runtimeVersion: string;

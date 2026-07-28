@@ -1,5 +1,6 @@
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron in-process
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — Database type
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * In-process Bun.cron complement for ops/registry snapshots.
@@ -16,6 +17,7 @@
  *
  * Spine: tenant `ops-snapshot` · `bun run spine:schedule:once -- --tenant=ops-snapshot`
  */
+import type { Database } from 'bun:sqlite';
 import { scheduleInProcess, type InProcessCronJob } from '../harness/cron.ts';
 import { buildRegistrySnapshot } from '../../tools/ops-snapshot.ts';
 import { resolveChannelR2BridgeConfig } from '../../scripts/lib/r2-bridge.ts';
@@ -178,8 +180,12 @@ export async function runOpsSnapshotCycle(
   try {
     if (opts.prepareState !== false) {
       const db = openOperationsDb();
-      const limitResult = capturePartnerLimitBaselines(db);
-      db.close();
+      let limitResult: { recorded: number };
+      try {
+        limitResult = capturePartnerLimitBaselines(db);
+      } finally {
+        db.close();
+      }
       if (limitResult.recorded > 0) {
         console.log(
           `[${OPS_SNAPSHOT_CRON_TITLE}] recorded ${limitResult.recorded} limit baselines`
@@ -189,8 +195,12 @@ export async function runOpsSnapshotCycle(
       try {
         const { runLimitPredictionCycle } = await import('../prediction/limit-prediction.ts');
         const predDb = openOperationsDb();
-        const predResult = runLimitPredictionCycle(predDb);
-        predDb.close();
+        let predResult: ReturnType<typeof runLimitPredictionCycle>;
+        try {
+          predResult = runLimitPredictionCycle(predDb);
+        } finally {
+          predDb.close();
+        }
         if (predResult.predictions > 0) {
           console.log(
             `[${OPS_SNAPSHOT_CRON_TITLE}] limit predictions: ${predResult.predictions} new, ${predResult.backfilled} backfilled`

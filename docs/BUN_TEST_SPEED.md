@@ -44,11 +44,12 @@ After changing a portal or registry writer test:
 
 ```bash
 bun test path/to/changed-writer.test.ts
-git diff --exit-code -- public/
+test -z "$(git status --porcelain --untracked-files=all -- public/)"
 ```
 
-The second command is part of the contract. A green assertion set that leaves
-tracked artifacts modified is a failing test design.
+The second command is part of the contract and detects modified tracked outputs
+as well as newly created untracked files. A green assertion set that leaves
+artifacts behind is a failing test design.
 
 Serial execution is not an isolation mechanism. It can temporarily help diagnose
 an order-dependent failure, but the fix is to remove shared writable state.
@@ -123,6 +124,8 @@ bun run test:inventory -- \
 The complete report is written to `tmp/test-file-report.json`; the optional
 shard-plan path contains the stable assignment. Failed and hanging files remain
 in the evidence and assignment instead of disappearing from scheduling.
+`--parallel-probe` runs an additional batch probe; the retained per-file timing
+rows remain serial measurements and are labeled accordingly.
 
 A single observation is not yet a promoted CI baseline. Promotion should use
 rolling medians from comparable OS, Bun-version, and serial/parallel lanes, with

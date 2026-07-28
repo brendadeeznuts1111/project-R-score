@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/utils#bun-env
+// @see https://bun.com/docs/test/index#run-tests
 import { describe, expect, test } from 'bun:test';
 import { existsSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
@@ -74,6 +76,8 @@ describe('shared test harness utilities', () => {
       origin = server.origin;
 
       expect(server.port).toBeGreaterThan(0);
+      expect(() => server.url('//example.com/escaped')).toThrow('local absolute path');
+      expect(() => server.url('relative.json')).toThrow('local absolute path');
       const response = await fetch(server.url('/registry.json?tenant=factory'));
       expect(response.status).toBe(200);
       expect(response.headers.get('content-type')).toBe(

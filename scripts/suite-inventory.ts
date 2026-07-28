@@ -3,6 +3,7 @@
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --parallel
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 /**
  * Per-file tests/ inventory — pass / fail / HANG with wall timeout.
  *
@@ -21,7 +22,7 @@
  * Writes: tmp/test-file-report.json
  */
 import { Glob } from 'bun';
-import { joinPath, resolvePath } from '../lib/path-bun.ts';
+import { dirnamePath, joinPath, resolvePath } from '../lib/path-bun.ts';
 import {
   buildTestSuiteInventoryReport,
   type TestDurationRow,
@@ -159,7 +160,9 @@ const report = buildTestSuiteInventoryReport(results, {
   generatedAt: new Date().toISOString(),
   lane: {
     name: laneName,
-    mode: PARALLEL_PROBE ? 'parallel-probe' : 'serial',
+    // Per-file evidence is collected by runOne serially. --parallel-probe is
+    // an additional batch diagnostic, represented separately below.
+    mode: 'serial',
     parallelProbe: PARALLEL_PROBE,
     runtime: 'bun',
     runtimeVersion: process.versions.bun ?? 'unknown',
@@ -171,9 +174,11 @@ const report = buildTestSuiteInventoryReport(results, {
   ...(shardCount === undefined ? {} : { shardCount }),
 });
 
+await Bun.$`mkdir -p ${dirnamePath(OUT)}`.quiet();
 await Bun.write(OUT, JSON.stringify(report, null, 2) + '\n');
 if (shardPlanOut && report.shardPlan) {
   const resolvedShardPlanOut = resolvePath(ROOT, shardPlanOut);
+  await Bun.$`mkdir -p ${dirnamePath(resolvedShardPlanOut)}`.quiet();
   await Bun.write(resolvedShardPlanOut, JSON.stringify(report.shardPlan, null, 2) + '\n');
   if (!JSON_ONLY) console.info(`wrote ${resolvedShardPlanOut}`);
 }
