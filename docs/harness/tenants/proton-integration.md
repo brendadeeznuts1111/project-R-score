@@ -179,6 +179,32 @@ Continuous validation (`tests/secret-ratchet.test.ts`):
 | `OPENAI_API_KEY` | `OpenAI API Key` | **yes** | no |
 | `SLACK_WEBHOOK_URL` | `Slack Webhook URL` | **yes** | no |
 | `TELEGRAM_CATALOG_RESEARCH_LLM_KEY` | — | via OPENAI alias | no |
+| `PLAY_SIGNING_SECRET` | `Play Signing Secret` | no | yes |
+| `REPORT_SIGNING_SECRET` | `Report Signing Secret` | no | yes |
+
+### Report / compliance HMAC (`REPORT_SIGNING_SECRET`)
+
+Board integrity and deep-audit reports use [`lib/security/report-proof.ts`](../../../lib/security/report-proof.ts). Without a secret the digest is still tamper-detect (sha3-256); **HMAC** is only present when `REPORT_SIGNING_SECRET` (or fallback `PLAY_SIGNING_SECRET`) is injected or mint-local'd.
+
+```bash
+# Local mint (no Pass create required)
+bun run vault:gap:mint-local     # writes ~/.factorywager/minted-secrets/REPORT_SIGNING_SECRET
+
+# Prefer vault SSOT when ready:
+#   pass://factorywager/Report Signing Secret/password
+# Uncomment in env.template:
+#   REPORT_SIGNING_SECRET={{ pass://factorywager/Report Signing Secret/password }}
+bun run proton:inject:factorywager
+bun run compliance:bake:vault    # bake with injected secret → board.integrity.proof.hmac
+```
+
+| Surface | How HMAC appears |
+|---------|------------------|
+| `public/registry/compliance-board.json` | `integrity.proof.hmac` + check `id: hmac` |
+| Monitoring / ops-summary slice | `scoreHint: integrity+hmac` when present |
+| Deep audit | `bun run ops:audit:deep` |
+
+Full operator loop: [`compliance-portal.md`](compliance-portal.md). Bake ownership on Pages freshness: `ops:snapshot` (default) or `OPS_SNAPSHOT_COMPLIANCE=0` / `--no-compliance` to skip.
 
 Code path: `requireSecret` / `requireMintableSecret` in [`lib/security/mintable-secret.ts`](../../../lib/security/mintable-secret.ts) — **env inject wins**, then local mint.
 

@@ -177,8 +177,27 @@ export type ComplianceBoard = {
   };
 };
 
-async function main(): Promise<void> {
-  console.info('compliance:bake · building enhancement + shadow artifacts…');
+export type BakeCompliancePortalResult = {
+  ok: boolean;
+  boardPath: string;
+  generatedAt: string;
+  enhancements: { passed: number; total: number };
+  shadowMismatches: number;
+  hmac: boolean;
+  board: ComplianceBoard;
+};
+
+/**
+ * Bake compliance registry + portal embed (offline-safe).
+ * Used by `bun run compliance:bake` and as an ops:snapshot companion.
+ */
+export async function bakeCompliancePortal(opts?: {
+  /** When false, skip console chatter (ops-snapshot uses a one-liner). Default true. */
+  log?: boolean;
+}): Promise<BakeCompliancePortalResult> {
+  const log = opts?.log !== false;
+  if (log) console.info('compliance:bake · building enhancement + shadow artifacts…');
+
   const enhancements = await buildEnhancementReport();
   const shadow = await buildShadowMatrix();
   const generatedAt = new Date().toISOString();
@@ -277,17 +296,18 @@ async function main(): Promise<void> {
     },
   };
 
+  const boardPath = joinPath(REG, 'compliance-board.json');
   await Bun.write(
     joinPath(REG, 'compliance-enhancements.json'),
     JSON.stringify(enhancements, null, 2) + '\n'
   );
   await Bun.write(joinPath(REG, 'compliance-shadow.json'), JSON.stringify(shadow, null, 2) + '\n');
-  await Bun.write(joinPath(REG, 'compliance-board.json'), JSON.stringify(board, null, 2) + '\n');
+  await Bun.write(boardPath, JSON.stringify(board, null, 2) + '\n');
 
   if (await Bun.file(PORTAL_HTML).exists()) {
     await bakeJsonEmbed(PORTAL_HTML, 'compliance-board-embed', board);
-    console.info(`  baked embed → portal/compliance/index.html`);
-  } else {
+    if (log) console.info(`  baked embed → portal/compliance/index.html`);
+  } else if (log) {
     console.warn(`  skip embed — missing ${PORTAL_HTML}`);
   }
 
@@ -295,18 +315,33 @@ async function main(): Promise<void> {
     const { buildPortalWeavePayload } = await import('../lib/http/portal-weave.ts');
     const weave = buildPortalWeavePayload();
     await Bun.write(joinPath(REG, 'portal-weave.json'), JSON.stringify(weave, null, 2) + '\n');
-    console.info(`  portal-weave.json refreshed`);
+    if (log) console.info(`  portal-weave.json refreshed`);
   } catch (e) {
-    console.warn('  portal weave skip:', e instanceof Error ? e.message : e);
+    if (log) console.warn('  portal weave skip:', e instanceof Error ? e.message : e);
   }
 
-  console.info(
-    `  enhancements ${enhancements.passed}/${enhancements.total} · shadow mismatches=${shadow.summary.mismatches}`
-  );
-  console.info(`  → ${REG}/compliance-board.json`);
-  if (enhancements.passed !== enhancements.total || shadow.summary.mismatches > 0) {
-    process.exitCode = 1;
+  const ok = enhancements.passed === enhancements.total && shadow.summary.mismatches === 0;
+  if (log) {
+    console.info(
+      `  enhancements ${enhancements.passed}/${enhancements.total} · shadow mismatches=${shadow.summary.mismatches}`
+    );
+    console.info(`  → ${boardPath}`);
   }
+
+  return {
+    ok,
+    boardPath,
+    generatedAt,
+    enhancements: { passed: enhancements.passed, total: enhancements.total },
+    shadowMismatches: shadow.summary.mismatches,
+    hmac: Boolean(boardProof.hmac),
+    board,
+  };
+}
+
+async function main(): Promise<void> {
+  const result = await bakeCompliancePortal();
+  if (!result.ok) process.exitCode = 1;
 }
 
 if (import.meta.main) {

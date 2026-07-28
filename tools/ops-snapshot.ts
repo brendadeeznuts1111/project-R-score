@@ -23,6 +23,7 @@
  *   public/registry/monitoring.json
  *   public/registry/telegram-handshake.json
  *   public/registry/static.json          — composite fast snapshot
+ *   public/registry/compliance-board.json (+ enhancements/shadow) unless --no-compliance
  *   public/registry/@factorywager/bun-utils-test/latest.json
  *   public/registry/@factorywager/routing-test/latest.json  (when routing runs)
  *   public/registry/prediction/*         (unless --no-report)
@@ -86,6 +87,8 @@ const publishProofs = argv.includes('--publish') || Bun.env.OPS_SNAPSHOT_PUBLISH
 /** Prefer-artifact suite=all merge for Pages (disable with --no-channel-meta). */
 const withChannelMeta =
   !argv.includes('--no-channel-meta') && Bun.env.OPS_SNAPSHOT_CHANNEL_META !== '0';
+/** MA/NJ compliance board bake (disable with --no-compliance or OPS_SNAPSHOT_COMPLIANCE=0). */
+const withCompliance = !argv.includes('--no-compliance') && Bun.env.OPS_SNAPSHOT_COMPLIANCE !== '0';
 
 const monitoringPath = Bun.env.MONITORING_SNAPSHOT_PATH ?? 'public/registry/monitoring.json';
 const staticRegistryPath = Bun.env.REGISTRY_STATIC_PATH ?? 'public/registry/static.json';
@@ -140,6 +143,8 @@ export async function buildRegistrySnapshot(options?: {
   forceRouting?: boolean;
   publish?: boolean;
   withChannelMeta?: boolean;
+  /** Bake compliance-board.json + portal embed before ops-summary (default true). */
+  withCompliance?: boolean;
   outPath?: string;
   dbPath?: string;
 }): Promise<Record<string, unknown>> {
@@ -151,6 +156,7 @@ export async function buildRegistrySnapshot(options?: {
     forceRouting: options?.forceRouting ?? forceRouting,
     publish: options?.publish ?? publishProofs,
     withChannelMeta: options?.withChannelMeta ?? withChannelMeta,
+    withCompliance: options?.withCompliance ?? withCompliance,
     outPath: options?.outPath ?? outPath,
     dbPath: options?.dbPath ?? dbPath,
   };
@@ -417,6 +423,22 @@ export async function buildRegistrySnapshot(options?: {
       );
     } catch (e) {
       console.warn('[ops-snapshot] toc-ops export skipped:', e instanceof Error ? e.message : e);
+    }
+
+    // Compliance board before ops-summary so payload.compliance + monitoring slice are fresh.
+    if (cfg.withCompliance) {
+      try {
+        const { bakeCompliancePortal } = await import('./bake-compliance-portal.ts');
+        const baked = await bakeCompliancePortal({ log: false });
+        console.log(
+          `[ops-snapshot] compliance → ${baked.enhancements.passed}/${baked.enhancements.total}` +
+            ` · shadow mismatches=${baked.shadowMismatches}` +
+            (baked.hmac ? ' · hmac' : ' · integrity-only') +
+            (baked.ok ? '' : ' · DEGRADED')
+        );
+      } catch (e) {
+        console.warn('[ops-snapshot] compliance bake skipped:', e instanceof Error ? e.message : e);
+      }
     }
 
     let telegramHandshakeSlice = (

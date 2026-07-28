@@ -7,7 +7,8 @@
 ## Architecture
 
 ```text
-bun run compliance:bake
+bun run compliance:bake          # direct
+bun run ops:snapshot             # companion bake (default; --no-compliance to skip)
         │
         ├── show-enhancements (deepEquals · escapeHTML proofs)
         ├── shadow matrix (real vs ?shadow=true checks)
@@ -16,10 +17,14 @@ bun run compliance:bake
         ├── public/registry/compliance-shadow.json
         └── bakeJsonEmbed → public/portal/compliance/index.html
 
+Owner: tools/bake-compliance-portal.ts → bakeCompliancePortal()
+       ops-snapshot / snapshot-cron call it before ops-summary + monitoring
+       so payload.compliance and /registry/monitoring.json stay fresh on Pages.
+
 Pages edge:  GET /api/compliance  → ASSETS registry snapshot (read-only)
-Local Bun:   functions-bun-only/api/compliance → in-process mock handler
-Workers:     no dedicated Worker — bake runs in CI/cron; Pages serves static
-Proton Pass: inject CF token for deploy only (pass://factorywager/Cloudflare API Token)
+Local Bun:   serve-public /api/compliance → board file (503 if missing bake)
+Workers:     no dedicated Worker — bake runs in ops:snapshot cron; Pages serves static
+Proton Pass: CF deploy token + optional REPORT_SIGNING_SECRET for board HMAC
 ```
 
 ## Operator loop

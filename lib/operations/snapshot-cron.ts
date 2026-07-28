@@ -48,6 +48,8 @@ export type OpsSnapshotCronOpts = {
   withWebView?: boolean;
   withStatic?: boolean;
   forceRouting?: boolean;
+  /** Bake compliance-board.json companion (default true; ops-snapshot owns freshness). */
+  withCompliance?: boolean;
   /** When true (default), run ops-sync + settle ticks after snapshot in --once mode. */
   withLoopAutomation?: boolean;
 };
@@ -139,6 +141,7 @@ export async function runOpsSnapshotCycle(
       withWebView: opts.withWebView ?? false,
       withStatic: opts.withStatic ?? true,
       forceRouting: opts.forceRouting ?? false,
+      withCompliance: opts.withCompliance ?? true,
     });
     const critical = Number(
       (summary.routing as { criticalFailed?: number } | undefined)?.criticalFailed ?? 0
