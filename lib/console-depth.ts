@@ -243,9 +243,11 @@ export function logTable<T extends object>(
  * Machine JSON output for `--json` branches — pretty-printed object dump
  * (2-space indent, trailing newline via console.info). Single choke point
  * so machine output stays parseable and greppable behind one symbol.
+ * Pass `{ compact: true }` for single-line JSON (byte-identical to
+ * `console.log(JSON.stringify(value))`) — logs, JSONL streams, pipes.
  */
-export function jsonOut<T>(value: T): void {
-  console.info(JSON.stringify(value, null, 2)); // console-ok — --json choke point
+export function jsonOut<T>(value: T, options: { compact?: boolean } = {}): void {
+  console.info(options.compact ? JSON.stringify(value) : JSON.stringify(value, null, 2)); // console-ok — --json choke point
 }
 
 /**

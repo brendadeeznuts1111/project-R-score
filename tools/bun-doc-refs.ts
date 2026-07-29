@@ -1997,13 +1997,14 @@ async function suggestAudit(query: string, opts?: { json?: boolean }): Promise<b
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     if (opts?.json) {
-      console.info(
-        JSON.stringify({
+      jsonOut(
+        {
           ok: false,
           query,
           error: msg,
           repair: 'bun run audit:catalog:build',
-        })
+        },
+        { compact: true }
       );
     } else {
       console.error(`❌ audit catalog load failed: ${msg}`);
@@ -2015,7 +2016,7 @@ async function suggestAudit(query: string, opts?: { json?: boolean }): Promise<b
   const hits = searchAuditCatalog(catalog, query);
   if (hits.length === 0) {
     if (opts?.json) {
-      console.info(JSON.stringify({ ok: false, query, alias: alias ?? null, hits: [] }));
+      jsonOut({ ok: false, query, alias: alias ?? null, hits: [] }, { compact: true });
     } else {
       console.info(`❌ no audit entries for "${query}"`);
       console.info('  (sibling SSOT — tools/audit-catalog.json · lib/audit/)');

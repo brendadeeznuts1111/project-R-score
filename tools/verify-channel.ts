@@ -287,7 +287,7 @@ async function main(): Promise<void> {
   }
 
   console.log('\n---JSON---');
-  console.log(JSON.stringify(report));
+  jsonOut(report, { compact: true });
 
   if (report.summary.status !== 'pass') process.exit(1);
 }
