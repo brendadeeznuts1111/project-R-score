@@ -66,6 +66,7 @@ import {
   type RuntimeFlagsJsonReport,
 } from './lib/portal-cli-bun-flags.ts';
 import { dispatchScanner } from './lib/portal-cli-scanner.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 /** Bun runtime flags harvested from argv (before portal-cli command). */
 let bunExecFlags: string[] = [];
@@ -747,7 +748,7 @@ async function printPackagesGraphTable(flags: PackageGraphFlags): Promise<void> 
  */
 async function printBadgeTable(flags: string[] = []): Promise<void> {
   const { joinPath } = await import('../lib/path-bun.ts');
-  const { logTable } = await import('../lib/console-depth.ts');
+  const { jsonOut, logTable } = await import('../lib/console-depth.ts');
   const badges = (await import('../public/portal/nav-badges.js')) as {
     pickFailuresBadge: (d: unknown) => number | null;
     toneFailuresBadge: (n: number | null) => string;
@@ -799,7 +800,7 @@ async function printBadgeTable(flags: string[] = []): Promise<void> {
     })
   );
   if (flags.includes('--json')) {
-    console.log(JSON.stringify(rows, null, 2));
+    jsonOut(rows);
     return;
   }
   console.log('nav badges (offline — from baked registry JSON):');
@@ -816,7 +817,7 @@ async function printBadgeTable(flags: string[] = []): Promise<void> {
  */
 async function printBunfigStatus(flags: string[] = []): Promise<void> {
   const { joinPath } = await import('../lib/path-bun.ts');
-  const { logTable } = await import('../lib/console-depth.ts');
+  const { jsonOut, logTable } = await import('../lib/console-depth.ts');
   const root = joinPath(import.meta.dir, '..');
   const statePath = joinPath(root, 'public/registry/bunfig-state.json');
   const file = Bun.file(statePath);
@@ -848,7 +849,7 @@ async function printBunfigStatus(flags: string[] = []): Promise<void> {
     summary?: { healthy: boolean; driftKeys: string[] };
   };
   if (flags.includes('--json')) {
-    console.log(JSON.stringify(data, null, 2));
+    jsonOut(data);
     return;
   }
   type TomlScalar = string | number | boolean | Array<string | number | boolean> | null | undefined;
@@ -1042,7 +1043,7 @@ async function dispatchCapabilities(sub: string | undefined, rest: string[]): Pr
     const report = await runCapabilityDoctor(root, { bunOnly });
     const elapsedNs = Bun.nanoseconds() - t0;
     if (rest.includes('--json')) {
-      console.log(JSON.stringify({ ...report, elapsedNs }, null, 2));
+      jsonOut({ ...report, elapsedNs });
     } else {
       console.log(
         formatCapabilityDoctorHuman(report, {
@@ -1211,7 +1212,7 @@ Related: portal-cli --help · portal-cli doctor --group catalog
         flags: all ? catalog : catalog.filter(r => r.curated),
         health,
       };
-      console.log(JSON.stringify(report, null, 2));
+      jsonOut(report);
     } else {
       console.log(formatRuntimeFlagsTable({ all, verbose, catalog }));
     }
@@ -1333,7 +1334,7 @@ Related: vault health · capabilities · scanner · flags · install:verify
       }
     }
     if (argv.includes('--json')) {
-      console.log(JSON.stringify(report, null, 2));
+      jsonOut(report);
     } else if (verbose) {
       console.log(formatPortalDoctorVerbose(report, { format }));
     } else {

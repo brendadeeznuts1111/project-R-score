@@ -18,7 +18,7 @@
  *   bun run telegram:ops -- graph --mermaid
  *   bun run telegram:ops -- link-package-group ASH -1003937534779 --invite 'https://t.me/+…'
  */
-import { logTable } from '../lib/console-depth.ts';
+import { jsonOut, logTable } from '../lib/console-depth.ts';
 import { DEFAULT_OPS_DB_PATH, openOperationsDb } from '../lib/operations/db.ts';
 import {
   broadcastToKnownChats,
@@ -357,7 +357,7 @@ async function cmdDirectory(opts: CommonOpts): Promise<void> {
           ...(opts.rich ? { linkedSeats: extra?.linkedSeats ?? 0 } : {}),
         };
       });
-      console.log(JSON.stringify(payload, null, 2));
+      jsonOut(payload);
       return;
     }
 
@@ -494,7 +494,7 @@ async function cmdGraph(opts: CommonOpts): Promise<void> {
     }
 
     if (opts.json) {
-      console.log(JSON.stringify(model, null, 2));
+      jsonOut(model);
       return;
     }
     if (opts.mermaid) {
@@ -1009,7 +1009,7 @@ Use --deep with --detail for per-lane audit (forum / routing / operator).
     }
 
     if (wantJson) {
-      console.log(JSON.stringify({ rows, dbPath }, null, 2));
+      jsonOut({ rows, dbPath });
       return;
     }
 
@@ -1036,7 +1036,7 @@ async function cmdSeatMap(opts: CommonOpts): Promise<void> {
     const seats = await buildSeatTelegramMap(db);
     const packages = await buildPartnerPackageMap(db);
     if (opts.json) {
-      console.log(JSON.stringify({ seats, packages, dbPath: opts.dbPath }, null, 2));
+      jsonOut({ seats, packages, dbPath: opts.dbPath });
       return;
     }
     console.log(`seat-map · db=${opts.dbPath}`);

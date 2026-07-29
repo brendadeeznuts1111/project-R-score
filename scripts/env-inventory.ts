@@ -30,7 +30,7 @@ import {
 } from './lib/env-secret-policy.ts';
 import { buildEnvInventoryCompact } from './lib/env-inventory-compact.ts';
 import { buildPackageVaultMap } from '../lib/harness/packages-vault-map.ts';
-import { logTable } from '../lib/console-depth.ts';
+import { jsonOut, logTable } from '../lib/console-depth.ts';
 
 const ROOT = process.cwd();
 const argv = Bun.argv.slice(2);
@@ -295,23 +295,17 @@ if (BAKE) {
 }
 
 if (JSON_OUT) {
-  console.log(
-    JSON.stringify(
-      {
-        ...report,
-        ratchet: baseline
-          ? {
-              baselinePath: relative(ROOT, BASELINE_PATH),
-              baselineGaps: baseline.actionableVaultGaps,
-              currentGaps: actionableGaps,
-              failed: ratchetFailed,
-            }
-          : null,
-      },
-      null,
-      2
-    )
-  );
+  jsonOut({
+    ...report,
+    ratchet: baseline
+      ? {
+          baselinePath: relative(ROOT, BASELINE_PATH),
+          baselineGaps: baseline.actionableVaultGaps,
+          currentGaps: actionableGaps,
+          failed: ratchetFailed,
+        }
+      : null,
+  });
   if (ratchetFailed) process.exit(1);
   process.exit(0);
 }
