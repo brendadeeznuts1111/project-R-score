@@ -14,7 +14,7 @@ probes, vault plane, env owners, and the SVG dependency graph.
     `packages/*` rows by npm namespace; surface inventories stay global
   - `bun run portal-cli pm graph --scope unscoped`
   - `bun run portal-cli pm graph --update` — refresh the complete package audit
-    plus graph (`audit-report.json` and `packages-graph-map.json`)
+    plus graph (`reports/audit-report.json` and `packages-graph-map.json`)
   - `bun run portal-cli dashboard --view=packages --open` — open board
   - `bun run audit:packages:full` — cross-check · diff · map · vault · env ·
     bake

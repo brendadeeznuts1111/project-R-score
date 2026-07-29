@@ -1,6 +1,6 @@
 # FactoryWager harness index (JIT)
 
-Wiki hub: [wiki index](../../wiki-index.html) · live surfaces: [Live surfaces](/#live-surfaces)
+Wiki hub: [wiki index](../../wiki-index.md) (live: `/wiki-index.html`) · live surfaces: [Live surfaces](/#live-surfaces)
 
 Hold the model fixed; improve **context + tools**. Upstream: [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) (transform ideas into our owners — do not clone their tree). Prefer **artifact** over “codebase.”
 
