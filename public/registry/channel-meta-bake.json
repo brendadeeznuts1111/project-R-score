@@ -1,10 +1,10 @@
 {
   "type": "ChannelMetaBake",
   "version": "1.0.0",
-  "updatedAt": "2026-07-28T16:41:42.957Z",
-  "proofHash": "15a1b1faabf3cefaaab2e8303bb4d209ac47345001685d25fa6312bbd145c192",
-  "passed": 75,
-  "total": 75,
+  "updatedAt": "2026-07-29T00:04:48.888Z",
+  "proofHash": "922968d21cd928c770560fc95113cf4df8c3db6c79a962dcb50570f7cac037c5",
+  "passed": 74,
+  "total": 74,
   "status": "pass",
   "channel": "stable",
   "targetVersion": "1.4.0",
@@ -27,8 +27,8 @@
       "total": 13
     },
     "other": {
-      "passed": 6,
-      "total": 6
+      "passed": 5,
+      "total": 5
     }
   },
   "sources": {
