@@ -1,21 +1,11 @@
 {
-  "total": 18,
+  "total": 3,
   "byPattern": {
-    "direct-inspect-table": 15,
     "pretty-json-console": 3
   },
   "files": {
-    "lib/text.ts": 1,
-    "lib/operations/limit-raise-report.ts": 1,
     "scripts/bun-cache-lifecycle.ts": 1,
-    "scripts/brand-bench-evaluate.ts": 1,
     "scripts/check-bun-pm-cache.ts": 1,
-    "tools/bun-docs-guide-examples.ts": 5,
-    "tools/bun-docs-curated.ts": 2,
-    "tools/ops-check-limits.ts": 1,
-    "tools/bun-doc-refs.ts": 2,
-    "tools/ops-snapshot.ts": 1,
-    "tools/bun-docs-catalog.ts": 1,
-    "tools/bun-api-oneliners.ts": 1
+    "tools/ops-snapshot.ts": 1
   }
 }
