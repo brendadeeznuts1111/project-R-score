@@ -2224,7 +2224,8 @@
     "bunfig:check": "bun scripts/bake-bunfig.ts --check",
     "surfaces:bake": "bun scripts/bake-surfaces.ts",
     "surfaces:check": "bun scripts/bake-surfaces.ts --check",
-    "check:console-format": "bun scripts/lint-console-format.ts"
+    "check:console-format": "bun scripts/lint-console-format.ts",
+    "console-format:bake": "bun scripts/bake-console-format.ts"
   },
   "private": "false",
   "files": [
