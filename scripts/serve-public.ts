@@ -1851,6 +1851,52 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   });
 }
 
+/** Portal board slugs with `public/portal/<slug>/index.html` (excludes components/dist/icons). */
+const PORTAL_BOARD_SLUGS = [
+  'ops',
+  'health',
+  'env',
+  'dod',
+  'dashboard',
+  'catalog',
+  'skills',
+  'brands',
+  'bunfig',
+  'compliance',
+  'doctor',
+  'factory',
+  'failures',
+  'identity',
+  'install-hygiene',
+  'limits',
+  'packages',
+  'partner-history',
+  'science',
+  'surfaces',
+  'tennis',
+  'toc',
+  'tools',
+  'vault',
+] as const;
+
+/**
+ * Exact `/portal/<slug>` + trailing-slash routes → directory index via portalPage.
+ * @see https://bun.com/docs/runtime/http/routing#route-precedence
+ */
+function portalBoardRoutes(
+  portalPage: (urlPath: string) => (req: Request) => Promise<Response>,
+  slugs: readonly string[]
+): Record<string, (req: Request) => Promise<Response>> {
+  const out: Record<string, (req: Request) => Promise<Response>> = {};
+  for (const slug of slugs) {
+    const dir = `/portal/${slug}/`;
+    const handler = portalPage(dir);
+    out[`/portal/${slug}`] = handler;
+    out[dir] = handler;
+  }
+  return out;
+}
+
 /**
  * Exact SIMD-matched routes (docs: exact > :param > wildcard).
  * Named params are type-safe via BunRequest string literals.
@@ -2156,23 +2202,10 @@ function buildPublicRoutes() {
         : json({ error: 'live-reload disabled' }, 404);
     },
 
-    // Portal dashboards — exact routes (file strategy under the hood)
+    // Portal home + every board index (SIMD exact routes; fetch for unmatched only)
     '/portal': portalPage('/portal/index.html'),
     '/portal/': portalPage('/portal/index.html'),
-    '/portal/ops': portalPage('/portal/ops/'),
-    '/portal/ops/': portalPage('/portal/ops/'),
-    '/portal/health': portalPage('/portal/health/'),
-    '/portal/health/': portalPage('/portal/health/'),
-    '/portal/env': portalPage('/portal/env/'),
-    '/portal/env/': portalPage('/portal/env/'),
-    '/portal/dod': portalPage('/portal/dod/'),
-    '/portal/dod/': portalPage('/portal/dod/'),
-    '/portal/dashboard': portalPage('/portal/dashboard/'),
-    '/portal/dashboard/': portalPage('/portal/dashboard/'),
-    '/portal/catalog': portalPage('/portal/catalog/'),
-    '/portal/catalog/': portalPage('/portal/catalog/'),
-    '/portal/skills': portalPage('/portal/skills/'),
-    '/portal/skills/': portalPage('/portal/skills/'),
+    ...portalBoardRoutes(portalPage, PORTAL_BOARD_SLUGS),
   };
 }
 

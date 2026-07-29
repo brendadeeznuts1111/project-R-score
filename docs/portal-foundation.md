@@ -340,6 +340,8 @@ bun run check:serve-shape           # shape + lifecycle + bind-identity suites
 
 Verify helper: `resolveBunServeDefaultPort()` in `lib/http/bun-serve-shape.ts` (includes `--port` for probes only; bind is native Bun). After bind, `serve-public` logs **BIND IDENTITY** ([`bind-identity-card.ts`](../lib/http/bind-identity-card.ts)); full policy: [`serve-public-bind.md`](harness/tenants/serve-public-bind.md).
 
+**Routing:** [`buildPublicRoutes`](../scripts/serve-public.ts) registers exact SIMD `routes` for `/ready`, APIs (method maps), and **every** `public/portal/<board>/` index via `portalBoardRoutes` / `PORTAL_BOARD_SLUGS`. Unmatched traffic (npm publish `PUT`, multi-segment static, skill detail pages) stays on `fetch` — [Bun routing](https://bun.com/docs/runtime/http/routing).
+
 ### Dev reload (`--watch`, `--hot`, browser SSE)
 
 Three independent layers — do not conflate them. See [Bun watch mode](https://bun.com/docs/runtime/watch-mode) and [runtime `--watch`](https://bun.com/docs/runtime#watch).
