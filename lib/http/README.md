@@ -49,7 +49,7 @@ Run proof hashes (`proofHash` in `public/registry/*-proof.json`) are separate �
 
 ### Bun.serve bind shape (port + protocol)
 
-Cross-reference SSOT: [`bun-serve-shape.ts`](bun-serve-shape.ts) · helpers: [`bun-server.ts`](bun-server.ts)
+Cross-reference SSOT: [`bun-serve-shape.ts`](bun-serve-shape.ts) (identity fields) · [`bun-serve-lifecycle.ts`](bun-serve-lifecycle.ts) (methods + options) · helpers: [`bun-server.ts`](bun-server.ts) · startup card: [`bind-identity-card.ts`](bind-identity-card.ts)
 
 | Source | Role |
 |--------|------|
@@ -62,7 +62,10 @@ Cross-reference SSOT: [`bun-serve-shape.ts`](bun-serve-shape.ts) · helpers: [`b
 
 ```bash
 bun run check:serve-shape          # 41 tests ([test].timeout=10s in bunfig.toml)
-bun test tests/bun-serve-shape.test.ts --timeout 3000  # CLI overrides bunfig per-test limit
+bun test tests/bun-serve-shape.test.ts tests/bun-serve-lifecycle.test.ts \
+  tests/bind-identity-card.test.ts --timeout 3000
+bun run brand:status:bind
+bun run brand:status:lifecycle
 bun tools/bun-doc-refs.ts suggest "Bun.serve reference"
 bun tools/bun-doc-refs.ts suggest "Bun.serve port"
 ```
@@ -86,7 +89,7 @@ console.log(server.url);  // URL — href like http://localhost:3000/
 
 Helpers in [`bun-server.ts`](./bun-server.ts): `formatServerPortUrlLines` · `assertServerPortUrlAligned` · `serveBindSnapshot`.
 
-`serve-public` uses `bindServePublicPort()` + `serveBindSnapshot()` for typed startup, ephemeral fallback, and loopback URLs when bound to `0.0.0.0`. Operator doc: [`docs/harness/tenants/serve-public-bind.md`](../../docs/harness/tenants/serve-public-bind.md).
+`serve-public` uses `bindServePublicPort()` + `serveBindSnapshot()` for typed startup, ephemeral fallback, and loopback URLs when bound to `0.0.0.0`. Startup logs append **BIND IDENTITY** via [`bind-identity-card.ts`](bind-identity-card.ts). Operator doc: [`docs/harness/tenants/serve-public-bind.md`](../../docs/harness/tenants/serve-public-bind.md).
 
 ### Portal spine + flag-order
 

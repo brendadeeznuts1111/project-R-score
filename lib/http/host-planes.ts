@@ -11,6 +11,8 @@
  * DNS plane:   HostId / ApexDomainId / SubdomainId · config/surfaces.toml (no scheme)
  *
  * Server/URL property defaults: lib/http/bun-serve-shape.ts · BUN_SERVE_SHAPE_MATRIX
+ * Methods + serve/WS options:   lib/http/bun-serve-lifecycle.ts · brand:status:lifecycle
+ * Startup identity card:        lib/http/bind-identity-card.ts (serve-public BIND IDENTITY)
  * Operator: docs/harness/tenants/serve-public-bind.md
  * Brands:   lib/types/branded/surfaces.ts · bun run brand:status
  */

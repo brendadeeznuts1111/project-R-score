@@ -142,11 +142,15 @@ When `serve-public` omits `port` on `Bun.serve`, Bun applies this chain ([docs](
 
 English “host” / “hostname” / “domain” spans **two planes**. Do not put `0.0.0.0` in a `HostId` column or `score.factory-wager.com` in `Bun.serve({ hostname })` unless you intend that bind.
 
-**Data SSOT:** [`lib/http/host-planes.ts`](../../../lib/http/host-planes.ts) · `HOST_PLANE_MAP` · Server/URL defaults [`lib/http/bun-serve-shape.ts`](../../../lib/http/bun-serve-shape.ts) · live transitions [`lib/http/host-lineage.ts`](../../../lib/http/host-lineage.ts) · CLI: `bun run brand:status:once` · `--plane bind --verbose` · `brand:status:json`.
+**Data SSOT:** [`lib/http/host-planes.ts`](../../../lib/http/host-planes.ts) · `HOST_PLANE_MAP` · Server/URL defaults [`lib/http/bun-serve-shape.ts`](../../../lib/http/bun-serve-shape.ts) · methods/options [`lib/http/bun-serve-lifecycle.ts`](../../../lib/http/bun-serve-lifecycle.ts) · live transitions [`lib/http/host-lineage.ts`](../../../lib/http/host-lineage.ts) · CLI: `bun run brand:status:once` · `brand:status:bind` · `brand:status:lifecycle` · `brand:status:json`.
 
 ### Server methods + serve options (lifecycle)
 
-Lifecycle cards (stop / reload / `timeout` / `idleTimeout` / TLS→protocol / WS idleTimeout) live in [`lib/http/bun-serve-lifecycle.ts`](../../../lib/http/bun-serve-lifecycle.ts) — `BUN_SERVE_METHOD_MATRIX` · `BUN_SERVE_OPTION_MATRIX`. Printed as **C. SERVER METHODS** and **D. SERVE OPTIONS** whenever bind serve-shape prints (`bun run brand:status:bind` · `--plane bind --once`). Lifecycle-only: `bun tools/brand-status.ts --lifecycle --once`. HTTP `idleTimeout`: default **10**, max **255**, **0 = off**; per-request override via `server.timeout(req, seconds)`.
+Lifecycle cards (stop / reload / `timeout` / `idleTimeout` / TLS→protocol / WS idleTimeout) live in [`lib/http/bun-serve-lifecycle.ts`](../../../lib/http/bun-serve-lifecycle.ts) — `BUN_SERVE_METHOD_MATRIX` · `BUN_SERVE_OPTION_MATRIX`. Printed as **C. SERVER METHODS** and **D. SERVE OPTIONS** whenever bind serve-shape prints (`bun run brand:status:bind`). Lifecycle-only: `bun run brand:status:lifecycle` (`--lifecycle --once`). HTTP `idleTimeout`: default **10**, max **255**, **0 = off**; per-request override via `server.timeout(req, seconds)`.
+
+### BIND IDENTITY (serve-public startup)
+
+After bind, [`formatServePublicBindLines`](../../../lib/http/serve-public-bind.ts) keeps the one-line `Serve: development=…` summary and appends an indexed **BIND IDENTITY** card from [`lib/http/bind-identity-card.ts`](../../../lib/http/bind-identity-card.ts) (`port` · `hostname` · `protocol` · `url` · `origin` · `loopbackOrigin` · `development`) — full wrap via `formatIndexedCards`, no mid-token ellipsis. Identity only; lifecycle methods stay in brand-status C/D.
 
 | Plane | Concept | Property | Type | Values | Default (omit / pre-bind) | Fallback / after-bind | Example |
 |-------|---------|----------|------|--------|---------------------------|------------------------|---------|
@@ -326,7 +330,12 @@ bun run verify:portal    # auto when bind.json exists
 ## Verification
 
 ```bash
-bun test tests/serve-public-bind.test.ts tests/serve-public-config.test.ts tests/bun-serve-shape.test.ts tests/server-defaults.test.ts
+bun test tests/serve-public-bind.test.ts tests/serve-public-config.test.ts \
+  tests/bun-serve-shape.test.ts tests/bun-serve-lifecycle.test.ts \
+  tests/bind-identity-card.test.ts tests/brand-status-cli.test.ts \
+  tests/server-defaults.test.ts
+bun run brand:status:bind
+bun run brand:status:lifecycle
 bun run verify:portal
 ```
 
@@ -336,5 +345,6 @@ bun run verify:portal
 - Platform routing: [`docs/platform-routing.md`](../../platform-routing.md)
 - Command centre: [`command-centre.md`](command-centre.md)
 - Public plane: [`public-plane.md`](public-plane.md)
+- Lib index: [`lib/http/README.md`](../../../lib/http/README.md) · Bun.serve claim row: [`docs/BUN_NATIVE_CAPABILITIES.md`](../../BUN_NATIVE_CAPABILITIES.md)
 
 **Owner** `// owner: platform / portal`
