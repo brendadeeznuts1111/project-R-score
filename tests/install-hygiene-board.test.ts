@@ -5,8 +5,10 @@ import { describe, expect, test } from 'bun:test';
 import {
   ageLabel,
   buildStatRows,
+  INSTALL_HYGIENE_EMBED_ID,
   INSTALL_HYGIENE_SCHEMA,
   INSTALL_HYGIENE_SOURCE,
+  readInstallHygieneEmbed,
   renderCacheRowsSimple,
   renderVerifyCheckRows,
   statusChip,
@@ -125,5 +127,30 @@ describe('install-hygiene-board', () => {
   test('ageLabel handles missing and recent', () => {
     expect(ageLabel(null)).toBe('—');
     expect(ageLabel(new Date().toISOString())).toBe('just now');
+  });
+
+  test('readInstallHygieneEmbed parses offline SSOT (no network)', () => {
+    expect(INSTALL_HYGIENE_EMBED_ID).toBe('install-hygiene-embed');
+    const fakeDoc = {
+      getElementById(id: string) { // brand-ok — DOM element id, not domain *Id
+        if (id !== INSTALL_HYGIENE_EMBED_ID) return null;
+        return { textContent: JSON.stringify(healthy) };
+      },
+    };
+    const got = readInstallHygieneEmbed(fakeDoc as unknown as Document);
+    expect(got?.kind).toBe('install-hygiene');
+    expect(got?.ok).toBe(true);
+    expect(readInstallHygieneEmbed(null)).toBeNull();
+    expect(
+      readInstallHygieneEmbed({
+        getElementById: () => ({ textContent: 'not-json' }),
+      } as unknown as Document)
+    ).toBeNull();
+  });
+
+  test('board HTML ships install-hygiene-embed for offline', async () => {
+    const html = await Bun.file('public/portal/install-hygiene/index.html').text();
+    expect(html).toContain(`id="${INSTALL_HYGIENE_EMBED_ID}"`);
+    expect(html).toContain('"kind":"install-hygiene"');
   });
 });

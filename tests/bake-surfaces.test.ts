@@ -48,7 +48,7 @@ describe('bake-surfaces', () => {
     expect(byId.get(asSurfaceId('terminal'))?.status).toBe('retired');
     expect(byId.get(asSurfaceId('support'))?.status).toBe('retired');
     expect(byId.get(asSurfaceId('health_host'))?.status).toBe('vanity');
-    expect(byId.get(asSurfaceId('reasonix'))?.status).toBe('staged');
+    expect(byId.get(asSurfaceId('reasonix'))?.status).toBe('retired');
     expect(byId.get(asSurfaceId('registry_write'))?.status).toBe('placeholder');
     expect(byId.get(asSurfaceId('score'))?.apex).toBe('factory-wager.com');
     expect(byId.get(asSurfaceId('score'))?.subdomain).toBe('score');

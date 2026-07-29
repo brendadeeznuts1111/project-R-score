@@ -11,6 +11,8 @@ import { fetchJsonResult } from '../fetch-json.js';
 
 export const INSTALL_HYGIENE_SOURCE = '/registry/install-hygiene-report.json';
 export const INSTALL_HYGIENE_SCHEMA = 1;
+/** DOM id for offline bake embed (vault/failures pattern). */
+export const INSTALL_HYGIENE_EMBED_ID = 'install-hygiene-embed';
 
 /** @typedef {'green'|'yellow'|'red'|'neutral'|'missing'} Tone */
 
@@ -256,7 +258,7 @@ export function renderInstallHygieneReport(report) {
   if (!report || report.kind !== 'install-hygiene') {
     if (meta) {
       meta.textContent =
-        'No install-hygiene bake — run: bun run bake:install-hygiene · or ops:snapshot';
+        'No offline embed / registry bake — run: bun run bake:install-hygiene (writes JSON + HTML embed)';
     }
     if (stats) stats.innerHTML = '';
     if (cacheBody) {
@@ -338,9 +340,56 @@ export function renderInstallHygieneReport(report) {
   }
 }
 
-async function load() {
+/**
+ * Offline-first: read baked embed from the page (no network).
+ * @returns {Record<string, unknown>|null}
+ */
+export function readInstallHygieneEmbed(doc = typeof document !== 'undefined' ? document : null) {
+  if (!doc) return null;
+  const el = doc.getElementById(INSTALL_HYGIENE_EMBED_ID);
+  if (!el) return null;
+  const raw = (el.textContent || '').trim();
+  if (!raw || raw === 'null' || raw === '{}') return null;
+  try {
+    const data = JSON.parse(raw);
+    if (data && typeof data === 'object' && data.kind === 'install-hygiene') {
+      return /** @type {Record<string, unknown>} */ (data);
+    }
+  } catch {
+    /* ignore corrupt embed */
+  }
+  return null;
+}
+
+/**
+ * Prefer offline embed; refresh from registry when fetch works (optional live).
+ * @returns {Promise<Record<string, unknown>|null>}
+ */
+export async function loadInstallHygieneReport() {
+  const embedded = readInstallHygieneEmbed();
+  // Always render embed first so the board works with no network / broken static host.
+  if (embedded) {
+    // Non-blocking refresh when online
+    void fetchJsonResult(INSTALL_HYGIENE_SOURCE).then(r => {
+      if (r.ok && r.data && /** @type {Record<string, unknown>} */ (r.data).kind === 'install-hygiene') {
+        const live = /** @type {Record<string, unknown>} */ (r.data);
+        const embAt = Date.parse(String(embedded.generatedAt || ''));
+        const liveAt = Date.parse(String(live.generatedAt || ''));
+        if (!Number.isFinite(embAt) || (Number.isFinite(liveAt) && liveAt >= embAt)) {
+          renderInstallHygieneReport(live);
+        }
+      }
+    });
+    return embedded;
+  }
   const r = await fetchJsonResult(INSTALL_HYGIENE_SOURCE);
-  renderInstallHygieneReport(r.ok ? /** @type {Record<string, unknown>} */ (r.data) : null);
+  if (r.ok && r.data) return /** @type {Record<string, unknown>} */ (r.data);
+  return null;
+}
+
+async function load() {
+  const report = await loadInstallHygieneReport();
+  renderInstallHygieneReport(report);
 }
 
 if (typeof document !== 'undefined') {
