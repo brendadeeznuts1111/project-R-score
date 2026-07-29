@@ -66,6 +66,7 @@ Live boards under `public/portal/<name>/` (plus Home). Product/ops first, then c
 | Packages | [/portal/packages/](https://score.factory-wager.com/portal/packages/) | [`monorepo-health.md`](docs/harness/tenants/monorepo-health.md) |
 | Doctor | [/portal/doctor/](https://score.factory-wager.com/portal/doctor/) | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
 | Bunfig | [/portal/bunfig/](https://score.factory-wager.com/portal/bunfig/) | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
+| Install hygiene | [/portal/install-hygiene/](https://score.factory-wager.com/portal/install-hygiene/) | [`docs/UNIFIED.md`](docs/UNIFIED.md) · `bake:install-hygiene` |
 | Vault | [/portal/vault/](https://score.factory-wager.com/portal/vault/) | [`proton-integration.md`](docs/harness/tenants/proton-integration.md) |
 | Failures | [/portal/failures/](https://score.factory-wager.com/portal/failures/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
 | Brands | [/portal/brands/](https://score.factory-wager.com/portal/brands/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |

@@ -40,6 +40,7 @@ Exception: [`public/portal/health-page.js`](../public/portal/health-page.js) (sh
 | Brand keymap | [`/portal/brands/`](../public/portal/brands/) | 57-value glossary · constructor tiers · tracked-project adoption · `/registry/brand-keymap.json` |
 | Vault board | [`/portal/vault/`](../public/portal/vault/) | live bake visual; gate = `portal-cli vault health` (offline snaps) |
 | Failures board | [`/portal/failures/`](../public/portal/failures/) | junit bake · nav badge = failure count |
+| Install hygiene | [`/portal/install-hygiene/`](../public/portal/install-hygiene/) | cache prune · npm policy · install:verify · `bake:install-hygiene` |
 | Launcher | `bun run portal-cli dashboard --view=packages\|vault\|tools\|… [--open]` | real boards only — no phantom `/portal/pm/` etc. |
 
 Do **not** invent new portal routes without a board under `public/portal/<name>/` + route manifest + chrome/weave entries.

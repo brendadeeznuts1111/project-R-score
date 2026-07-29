@@ -15,8 +15,8 @@ probes, vault plane, env owners, and the SVG dependency graph.
   - `bun run portal-cli pm graph --scope unscoped`
   - `bun run portal-cli pm graph --update` — refresh the complete package audit
     plus graph (`reports/audit-report.json` and `packages-graph-map.json`)
-  - Install hygiene bake: `/registry/install-hygiene-report.json` · `bun run bake:install-hygiene`
-    (monitoring.installHygiene · weave artifact; board `/portal/install-hygiene/` reserved)
+  - Install hygiene: board `/portal/install-hygiene/` · bake `/registry/install-hygiene-report.json`
+    · `bun run bake:install-hygiene` (monitoring.installHygiene · weave)
   - `bun run portal-cli dashboard --view=packages --open` — open board
   - `bun run audit:packages:full` — cross-check · diff · map · vault · env ·
     bake

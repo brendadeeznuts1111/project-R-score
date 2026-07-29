@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-07-28T21:33:03.431Z",
+  "generated": "2026-07-29T00:24:31.491Z",
   "path": "/registry/portal-chrome.json",
   "summary": {
     "priorityNav": 6,
-    "overflowNav": 17,
-    "footerLinks": 16,
+    "overflowNav": 19,
+    "footerLinks": 18,
     "components": 13,
     "scripts": 5
   },
@@ -94,6 +94,15 @@
       "cli": "bun run brand:keymap"
     },
     {
+      "id": "surfaces",
+      "label": "Surfaces",
+      "href": "/portal/surfaces/",
+      "tier": "overflow",
+      "group": "registry",
+      "note": "edge host inventory · Access domains · backend shortcodes · schema v2",
+      "cli": "bun run surfaces:bake  # → /registry/surfaces-state.json"
+    },
+    {
       "id": "skills",
       "label": "Skills",
       "href": "/portal/skills/",
@@ -153,6 +162,15 @@
       "group": "harness",
       "note": "unified health gate · bunfig · catalog · linker",
       "cli": "bun run portal:doctor --verbose"
+    },
+    {
+      "id": "install-hygiene",
+      "label": "Install hygiene",
+      "href": "/portal/install-hygiene/",
+      "tier": "overflow",
+      "group": "harness",
+      "note": "cache prune · npm-install policy · install:verify bake",
+      "cli": "bun run bake:install-hygiene  # → /registry/install-hygiene-report.json"
     },
     {
       "id": "dashboard",
@@ -236,6 +254,10 @@
       "href": "/portal/brands/"
     },
     {
+      "label": "Surfaces",
+      "href": "/portal/surfaces/"
+    },
+    {
       "label": "Health",
       "href": "/portal/health/"
     },
@@ -270,6 +292,10 @@
     {
       "label": "Failures",
       "href": "/portal/failures/"
+    },
+    {
+      "label": "Install hygiene",
+      "href": "/portal/install-hygiene/"
     },
     {
       "label": "Monorepo health",
