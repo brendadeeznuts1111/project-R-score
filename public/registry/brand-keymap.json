@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-07-29T00:48:12.806Z",
+  "generatedAt": "2026-07-29T01:21:14.281Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -3098,7 +3098,7 @@
       "envName": "HOST_ID",
       "coverage": {
         "status": "covered",
-        "references": 35,
+        "references": 38,
         "constructors": {
           "as": 2,
           "try": 4,
@@ -3120,7 +3120,7 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 35,
+            "references": 38,
             "constructionCalls": 6,
             "guardCalls": 0,
             "files": [
@@ -3441,7 +3441,7 @@
         "status": "covered",
         "references": 19,
         "constructors": {
-          "as": 5,
+          "as": 4,
           "try": 1,
           "parse": 0
         },
@@ -3458,7 +3458,7 @@
           "spine": {
             "status": "covered",
             "references": 19,
-            "constructionCalls": 6,
+            "constructionCalls": 5,
             "guardCalls": 0,
             "files": [
               "lib/http/host-lineage.ts",
@@ -3510,7 +3510,7 @@
       "envName": "SURFACE_STATUS_CODE",
       "coverage": {
         "status": "covered",
-        "references": 5,
+        "references": 7,
         "constructors": {
           "as": 1,
           "try": 0,
@@ -3518,16 +3518,18 @@
         },
         "guards": 0,
         "files": [
-          "lib/surfaces/inventory.ts"
+          "lib/surfaces/inventory.ts",
+          "scripts/bake-surfaces.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 5,
+            "references": 7,
             "constructionCalls": 1,
             "guardCalls": 0,
             "files": [
-              "lib/surfaces/inventory.ts"
+              "lib/surfaces/inventory.ts",
+              "scripts/bake-surfaces.ts"
             ]
           },
           "projects": {
