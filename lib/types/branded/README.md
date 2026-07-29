@@ -71,14 +71,16 @@ Inventory (parse once): [`lib/surfaces/inventory.ts`](../../surfaces/inventory.t
 `localhost`) — not a `HostId`. Cross-map:
 [`lib/http/host-planes.ts`](../../http/host-planes.ts) ·
 [`serve-public-bind.md`](../../../docs/harness/tenants/serve-public-bind.md) ·
-`bun run brand:status:once`.
+`bun run brand:status:once` · `brand:status:bind` (identity cards) ·
+`brand:status:lifecycle` (Server methods + serve options).
 
 ### DNS / Access lineage
 
 Identity stays scheme- and path-free. Transitions are only through the helpers
 below — never cast `AccessDomainId` to `HostId` or stuff `/portal` into a FQDN
 brand. Terminal: `bun run brand:status:docs` (markdown.ansi) ·
-`brand:status:lineage` (live helper matrix) · `brand:status:json`.
+`brand:status:lineage` (live helper matrix) · `brand:status:json` ·
+`brand:status:bind` · `brand:status:lifecycle`.
 
 ```mermaid
 flowchart TB

@@ -24,6 +24,9 @@
  * - one retry with `port: 0` when default port is busy
  * - bind manifest at `.serve-public/bind.json` for verify tools
  *
+ * Startup logs: formatServePublicBindLines appends BIND IDENTITY
+ * (lib/http/bind-identity-card.ts). Lifecycle methods stay in brand-status C/D.
+ *
  * Operator doc: docs/harness/tenants/serve-public-bind.md
  */
 import { formatBindIdentityStartup } from './bind-identity-card.ts';

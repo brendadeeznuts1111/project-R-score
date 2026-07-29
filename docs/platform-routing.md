@@ -16,7 +16,7 @@ Local dev vs Cloudflare Pages — how URLs reach code and static files.
 | Reasonix UI | `reasonix.factory-wager.com` | **Not installed** — tunnel config `scripts/cloudflared-reasonix.yml` exists in-repo but no `~/.cloudflared/config.yml` / credentials on this machine; hostname does not resolve. Inventory: `docs/harness/tenants/tunnel-inventory.md` |
 | Local dev | `http://127.0.0.1:<port>` | `serve-public.ts` + `functions-bun-only/` |
 
-Port resolution: [`lib/http/bun-serve-shape.ts`](../lib/http/bun-serve-shape.ts) — `--port` → `BUN_PORT` → `PORT` → `NODE_PORT` → `3000`.
+Port / bind policy: [`docs/harness/tenants/serve-public-bind.md`](harness/tenants/serve-public-bind.md) · [`lib/http/serve-public-bind.ts`](../lib/http/serve-public-bind.ts). Default port chain: `--port` → `BUN_PORT` → `PORT` → `NODE_PORT` → **3000**; busy → ephemeral + `.serve-public/bind.json`. Operator cards: `bun run brand:status:bind` · `brand:status:lifecycle`.
 
 ## Three routing layers
 
@@ -64,7 +64,7 @@ Publish remains auth-gated.
 
 | Concern | Command |
 |---------|---------|
-| Local portal + styles | `bun run verify:portal` · override `PORTAL_VERIFY_BASE` |
+| Local portal + styles | `bun run verify:portal` · override `PORTAL_VERIFY_BASE` · auto `.serve-public/bind.json` |
 | Live Pages edge | `PAGES_VERIFY_BASE=https://project-r-score.pages.dev bun run verify:pages-edge` |
 | Route catalog | `bun run check:routes` |
 | Routing proof | `bun run routing:proof` |

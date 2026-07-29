@@ -61,7 +61,7 @@ Cross-reference SSOT: [`bun-serve-shape.ts`](bun-serve-shape.ts) (identity field
 | Runtime probe | `probeServerShape()` on this Bun |
 
 ```bash
-bun run check:serve-shape          # 41 tests ([test].timeout=10s in bunfig.toml)
+bun run check:serve-shape          # shape + lifecycle + bind-identity (+ bun-server/defaults)
 bun test tests/bun-serve-shape.test.ts tests/bun-serve-lifecycle.test.ts \
   tests/bind-identity-card.test.ts --timeout 3000
 bun run brand:status:bind

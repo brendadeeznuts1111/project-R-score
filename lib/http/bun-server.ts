@@ -30,7 +30,8 @@
  * @see https://bun.com/docs/runtime/http/server#server-pendingrequests-and-server-pendingwebsockets
  * @see https://bun.com/docs/runtime/http/websockets#start-a-websocket-server — WebSocketHandler
  * @see https://bun.com/docs/runtime/http/tls — TLSOptions
- * @see ./bun-serve-shape.ts — docs / bun-types / runtime drift matrix
+ * @see ./bun-serve-shape.ts — docs / bun-types / runtime drift matrix (bind fields)
+ * @see ./bun-serve-lifecycle.ts — Server methods + serve/WS options matrix
  */
 
 import { inspectCustom, shouldColor } from '../console-depth.ts';
