@@ -203,17 +203,32 @@ export function logSorted<T>(value: T, options: InspectOptions = {}): void {
  * Overloads match docs: options alone as 2nd arg, or properties then options.
  * @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options
  */
+export function inspectTableFromUnknown(
+  data: unknown,
+  columns?: string[],
+  options: { colors?: boolean } = {}
+): string {
+  const rows = (Array.isArray(data) ? data : [data]) as object[];
+  const opts = { colors: options.colors ?? shouldColor() };
+  // Docs: (data, options) OR (data, properties, options) — never pass undefined properties.
+  return columns?.length ? Bun.inspect.table(rows, columns, opts) : Bun.inspect.table(rows, opts);
+}
+
+/** String-returning table for report/HTML/file contexts (logTable prints). */
+export function inspectTable<T extends object>(
+  data: T | T[],
+  columns?: string[],
+  options: { colors?: boolean } = {}
+): string {
+  return inspectTableFromUnknown(data, columns, options);
+}
+
 export function logTableFromUnknown(
   data: unknown,
   columns?: string[],
   options: { colors?: boolean } = {}
 ): void {
-  const rows = (Array.isArray(data) ? data : [data]) as object[];
-  const opts = { colors: options.colors ?? shouldColor() };
-  // Docs: (data, options) OR (data, properties, options) — never pass undefined properties.
-  console.info(
-    columns?.length ? Bun.inspect.table(rows, columns, opts) : Bun.inspect.table(rows, opts)
-  );
+  console.info(inspectTableFromUnknown(data, columns, options));
 }
 
 export function logTable<T extends object>(
@@ -222,6 +237,15 @@ export function logTable<T extends object>(
   options: { colors?: boolean } = {}
 ): void {
   logTableFromUnknown(data, columns, options);
+}
+
+/**
+ * Machine JSON output for `--json` branches — pretty-printed object dump
+ * (2-space indent, trailing newline via console.info). Single choke point
+ * so machine output stays parseable and greppable behind one symbol.
+ */
+export function jsonOut<T>(value: T): void {
+  console.info(JSON.stringify(value, null, 2)); // console-ok — --json choke point
 }
 
 /**

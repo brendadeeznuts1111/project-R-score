@@ -3,7 +3,7 @@
 **Tenant** `serve-public-bind` (local dev plane)
 **Server** [`scripts/serve-public.ts`](../../../scripts/serve-public.ts)
 **Bind SSOT** [`lib/http/serve-public-bind.ts`](../../../lib/http/serve-public-bind.ts)
-**Shape helpers** [`lib/http/bun-serve-shape.ts`](../../../lib/http/bun-serve-shape.ts) · [`lib/http/bun-server.ts`](../../../lib/http/bun-server.ts)
+**Shape helpers** [`lib/http/bun-serve-shape.ts`](../../../lib/http/bun-serve-shape.ts) · lifecycle [`lib/http/bun-serve-lifecycle.ts`](../../../lib/http/bun-serve-lifecycle.ts) · [`lib/http/bun-server.ts`](../../../lib/http/bun-server.ts)
 
 Local public-plane dev server — static `public/` + live SQLite/APIs. This doc is the operator reference for **port**, **hostname**, **URL shapes**, and **verify probes**.
 
@@ -26,6 +26,25 @@ Open the command centre: `http://127.0.0.1:3000/` (or the port printed at startu
 | What port will Bun try first? | Omit `port` on `Bun.serve` — **Bun decides** | Same env/`--port` chain inside the runtime |
 | What port for verify *before* server is up? | `.serve-public/bind.json` or `PORTAL_VERIFY_BASE` | Prefer manifest from last run |
 | Pre-bind port *guess* | `resolveBunServeDefaultPort(Bun.env, Bun.argv)` | Mirror of server docs only — **not** a second bind path |
+
+### `server.port` vs `server.url` (two shapes, same listen)
+
+After bind, Bun exposes the chosen listen in **two related properties**:
+
+```ts
+console.log(server.port); // 3000              — number
+console.log(server.url);  // http://localhost:3000/  — URL instance (prints as href)
+```
+
+| Field | Type | Role |
+|-------|------|------|
+| `server.port` | `number` | Actual TCP port (works for `port: 0` ephemeral) |
+| `server.url` | `URL` | Full listen URL (`href`, `origin`, `hostname`, …) |
+| `server.url.port` | `string` | Same port as a string; **empty** only for default 80/443 |
+| `server.protocol` | `"http"\|"https"` | Bare scheme (no colon) |
+| `server.url.protocol` | `"http:"\|"https:"` | URL scheme **with** colon |
+
+Helpers: `formatServerPortUrlLines(server)` · `assertServerPortUrlAligned(server)` · `serveBindSnapshot(server)` in [`lib/http/bun-server.ts`](../../../lib/http/bun-server.ts).
 
 We do **not** scrape or parse Bun’s doc site at runtime. Docs are cited with `@see` URLs; behavior is validated with tests against **this Bun version’s runtime** (`tests/server-defaults.test.ts`).
 
@@ -123,24 +142,34 @@ When `serve-public` omits `port` on `Bun.serve`, Bun applies this chain ([docs](
 
 English “host” / “hostname” / “domain” spans **two planes**. Do not put `0.0.0.0` in a `HostId` column or `score.factory-wager.com` in `Bun.serve({ hostname })` unless you intend that bind.
 
-**Data SSOT:** [`lib/http/host-planes.ts`](../../../lib/http/host-planes.ts) · `HOST_PLANE_MAP` · live transitions [`lib/http/host-lineage.ts`](../../../lib/http/host-lineage.ts) · CLI: `bun run brand:status:once` · `brand:status:docs` · `brand:status:lineage` · `brand:status:json` · `--plane dns|bind|access|pages`.
+**Data SSOT:** [`lib/http/host-planes.ts`](../../../lib/http/host-planes.ts) · `HOST_PLANE_MAP` · Server/URL defaults [`lib/http/bun-serve-shape.ts`](../../../lib/http/bun-serve-shape.ts) · methods/options [`lib/http/bun-serve-lifecycle.ts`](../../../lib/http/bun-serve-lifecycle.ts) · live transitions [`lib/http/host-lineage.ts`](../../../lib/http/host-lineage.ts) · CLI: `bun run brand:status:once` · `brand:status:bind` · `brand:status:lifecycle` · `brand:status:json`.
 
-| Plane | Concept | Type / field | Example | Is not |
-|-------|---------|--------------|---------|--------|
-| **bind** | listen hostname | `server.hostname` (`string`) | `0.0.0.0`, `localhost` | `HostId` |
-| **bind** | listen port | `server.port` (`number`) | `3000` | brand |
-| **bind** | wire protocol | `server.protocol` | `http`, `https` | `URL.protocol` / HostId |
-| **bind** | URL scheme | `server.url.protocol` | `http:`, `https:` | bare `server.protocol` |
-| **bind** | loopback origin | `loopbackOrigin` | `http://127.0.0.1:3000` | public FQDN |
-| **dns** | public FQDN | `HostId` | `score.factory-wager.com` | bind hostname / scheme |
-| **dns** | probe URL | `httpsUrlForHost(host)` | `https://score…/` | stored inside HostId |
-| **dns** | zone apex | `ApexDomainId` | `factory-wager.com` | bind hostname |
-| **dns** | left labels | `SubdomainId` | `score`, `@` | `SurfaceId` |
-| **dns** | inventory key | `SurfaceId` | `pages_dev` | DNS subdomain |
-| **access** | Access app domain | `AccessDomainId` | `score…/portal` | `HostId` |
-| **pages** | Pages project | `PagesProjectId` | `project-r-score` | ops `ProjectId` |
+### Server methods + serve options (lifecycle)
 
-`server.protocol` is `"http" | "https"` (no colon); `server.url.protocol` is `"http:" | "https:"`. HostId never carries a scheme — use `httpsUrlForHost` / `httpsUrlForAccessDomain` at the edge.
+Lifecycle cards (stop / reload / `timeout` / `idleTimeout` / TLS→protocol / WS idleTimeout) live in [`lib/http/bun-serve-lifecycle.ts`](../../../lib/http/bun-serve-lifecycle.ts) — `BUN_SERVE_METHOD_MATRIX` · `BUN_SERVE_OPTION_MATRIX`. Printed as **C. SERVER METHODS** and **D. SERVE OPTIONS** whenever bind serve-shape prints (`bun run brand:status:bind`). Lifecycle-only: `bun run brand:status:lifecycle` (`--lifecycle --once`). HTTP `idleTimeout`: default **10**, max **255**, **0 = off**; per-request override via `server.timeout(req, seconds)`.
+
+### BIND IDENTITY (serve-public startup)
+
+After bind, [`formatServePublicBindLines`](../../../lib/http/serve-public-bind.ts) keeps the one-line `Serve: development=…` summary and appends an indexed **BIND IDENTITY** card from [`lib/http/bind-identity-card.ts`](../../../lib/http/bind-identity-card.ts) (`port` · `hostname` · `protocol` · `url` · `origin` · `loopbackOrigin` · `development`) — full wrap via `formatIndexedCards`, no mid-token ellipsis. Identity only; lifecycle methods stay in brand-status C/D.
+
+| Plane | Concept | Property | Type | Values | Default (omit / pre-bind) | Fallback / after-bind | Example |
+|-------|---------|----------|------|--------|---------------------------|------------------------|---------|
+| **bind** | listen port | `server.port` | `number \| undefined` | 1–65535 · unix `undefined` | `--port` → `BUN_PORT` → `PORT` → `NODE_PORT` → `3000` | `port:0` ephemeral · re-read after bind | `3000` |
+| **bind** | listen URL | `server.url` | `URL` | `http(s)://host:port/` | derived after bind | prefer `loopbackOrigin` when hostname is `0.0.0.0` | `http://localhost:3000/` |
+| **bind** | URL port | `server.url.port` | `string` | `"3000"` · `""` on 80/443 | n/a (mirror) | twin of `server.port` | `3000` |
+| **bind** | listen hostname | `server.hostname` | `string \| undefined` | `0.0.0.0`, `localhost` | docs `0.0.0.0` | **not** `HostId` · unix `undefined` | `localhost` |
+| **bind** | wire protocol | `server.protocol` | `"http"\|"https"\|null` | bare scheme | TCP→http · TLS→https | unix `null` | `http` |
+| **bind** | URL scheme | `server.url.protocol` | `string` | `http:`, `https:` | `${server.protocol}:` | always trailing colon | `http:` |
+| **bind** | loopback origin | `loopbackOrigin` | URL string | `http://127.0.0.1:PORT` | after bind rewrite | `0.0.0.0`→`127.0.0.1` · bind.json | `http://127.0.0.1:3000` |
+| **dns** | public FQDN | `HostId` | `HostId` | no scheme/path | surfaces.toml `host` | `hostIdFromParts` / `hostIdFromUrl` | `score.factory-wager.com` |
+| **dns** | probe URL | `httpsUrlForHost` | `string` | `https://host/…` | path `/` | Access helper for path scope | `https://score…/` |
+| **dns** | zone apex | `ApexDomainId` | `ApexDomainId` | zone root | `FACTORY_WAGER_APEX` | public-suffix split | `factory-wager.com` |
+| **dns** | left labels | `SubdomainId` | `SubdomainId` | labels · `@` | from split | `hostIdFromParts` | `score`, `@` |
+| **dns** | inventory key | `SurfaceId` | `SurfaceId` | config key | `[surfaces.*]` | may ≠ DNS subdomain | `pages_dev` |
+| **access** | Access app domain | `AccessDomainId` | `AccessDomainId` | host · host/path | accessSubpaths | cross via helpers only | `score…/portal` |
+| **pages** | Pages project | `PagesProjectId` | `PagesProjectId` | CF slug | `CLOUDFLARE_DEFAULTS.pages.project` | `pagesDevHostForProject` | `project-r-score` |
+
+Bun recommend: after `Bun.serve`, read the **chosen** listen from `server.port` / `server.url` — env/`--port` only set the pre-bind attempt. `server.protocol` is `"http" | "https"` (no colon); `server.url.protocol` is `"http:" | "https:"`. HostId never carries a scheme — use `httpsUrlForHost` / `httpsUrlForAccessDomain` at the edge.
 
 ```mermaid
 flowchart LR
@@ -301,7 +330,12 @@ bun run verify:portal    # auto when bind.json exists
 ## Verification
 
 ```bash
-bun test tests/serve-public-bind.test.ts tests/serve-public-config.test.ts tests/bun-serve-shape.test.ts tests/server-defaults.test.ts
+bun test tests/serve-public-bind.test.ts tests/serve-public-config.test.ts \
+  tests/bun-serve-shape.test.ts tests/bun-serve-lifecycle.test.ts \
+  tests/bind-identity-card.test.ts tests/brand-status-cli.test.ts \
+  tests/server-defaults.test.ts
+bun run brand:status:bind
+bun run brand:status:lifecycle
 bun run verify:portal
 ```
 
@@ -311,5 +345,6 @@ bun run verify:portal
 - Platform routing: [`docs/platform-routing.md`](../../platform-routing.md)
 - Command centre: [`command-centre.md`](command-centre.md)
 - Public plane: [`public-plane.md`](public-plane.md)
+- Lib index: [`lib/http/README.md`](../../../lib/http/README.md) · Bun.serve claim row: [`docs/BUN_NATIVE_CAPABILITIES.md`](../../BUN_NATIVE_CAPABILITIES.md)
 
 **Owner** `// owner: platform / portal`

@@ -378,8 +378,9 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  // Write matrix
-  await Bun.write('domain-matrix.json', JSON.stringify(matrix, null, 2));
+  // Write matrix under reports/ (gitignored local dump; not wiki/docs SSOT)
+  const matrixPath = `${import.meta.dir}/../reports/domain-matrix.json`;
+  await Bun.write(matrixPath, JSON.stringify(matrix, null, 2));
 
   if (jsonOut) {
     console.log(
@@ -400,7 +401,7 @@ async function main(): Promise<void> {
   } else {
     render(matrix, total, useInspect);
     console.log(
-      `  📝 Written: domain-matrix.json (${Object.keys(matrix).length} domains, ${total} files)`
+      `  📝 Written: reports/domain-matrix.json (${Object.keys(matrix).length} domains, ${total} files)`
     );
   }
 

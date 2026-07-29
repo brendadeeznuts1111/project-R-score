@@ -52,6 +52,7 @@ Pages static artifact plane — portal UI, registry bake, monitoring shells. Dis
 - Both planes → `bun run discover:compose:check`
 - TOC fixture rows → `audit-gap-close` · `docs/harness/tenants/toc-ops.md`
 - Platform routing → `docs/platform-routing.md` · `bun run check:routes`
+- Local dev bind (port / URLs) → [`serve-public-bind.md`](serve-public-bind.md) · `lib/http/serve-public-bind.ts` · BIND IDENTITY startup card · `bun run brand:status:bind` / `brand:status:lifecycle` · `bun run check:serve-shape`
 
 ## Shared SSOT
 

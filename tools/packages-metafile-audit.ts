@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/Transpiler — Bun.Transpiler
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/bundler/index#metafile — Bun.build metafile
@@ -1094,9 +1095,9 @@ async function main(): Promise<void> {
     console.log(`Usage: bun tools/packages-metafile-audit.ts [options]
 
   --json              print report JSON only
-  --md                also write audit-report.md (or --out with .md sibling)
+  --md                also write sibling .md next to --out
   --diff              compare against existing --out report before overwrite
-  --out <path>        write report (default: audit-report.json)
+  --out <path>        write report (default: reports/audit-report.json)
   --glob <pattern>    override scan glob
   --full-metafile     include raw Bun.build metafile.inputs
   --include-tests     include *.test.ts / *.spec.ts in scan
@@ -1121,7 +1122,7 @@ Map v12: + template-default cover · archive placeholder removed · env inventor
     return;
   }
 
-  const outPath = argvValue('--out', joinPath(ROOT, 'audit-report.json'));
+  const outPath = argvValue('--out', joinPath(ROOT, 'reports/audit-report.json'));
   let previous: Partial<PackageAuditReport> | null = null;
   if (argvFlag('--diff') && (await Bun.file(outPath).exists())) {
     try {

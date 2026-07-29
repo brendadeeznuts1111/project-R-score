@@ -7,6 +7,7 @@ import {
   BUN_SERVE_DEFAULT_PORT_ENV,
   BUN_SERVE_DEFAULT_PORT_FALLBACK,
   BUN_SERVE_SHAPE_MATRIX,
+  bunServeShapeTableRows,
   isTcpServer,
   probeServerShape,
   renderBunServeShapeMatrix,
@@ -18,14 +19,24 @@ import {
 import { BUN_SERVER_PORT_DOCS, serverIdentity } from '../lib/http/bun-server.ts';
 
 describe('lib/http/bun-serve-shape — cross-reference', () => {
-  test('matrix covers port, protocol, and url fields', () => {
+  test('matrix covers port, protocol, and url fields with defaults/fallbacks', () => {
     const fields = BUN_SERVE_SHAPE_MATRIX.map(r => r.field);
     expect(fields).toContain('server.port');
+    expect(fields).toContain('server.url');
+    expect(fields).toContain('server.url.port');
     expect(fields).toContain('server.protocol');
     expect(fields).toContain('server.url.protocol');
     expect(BUN_SERVE_SHAPE_MATRIX.find(r => r.field === 'server.protocol')?.docsReference).toBe(
       'missing'
     );
+    const port = BUN_SERVE_SHAPE_MATRIX.find(r => r.field === 'server.port')!;
+    expect(port.defaultWhen).toContain('BUN_PORT');
+    expect(port.fallback).toContain('port:0');
+    expect(port.values).toContain('65535');
+    const rows = bunServeShapeTableRows();
+    expect(rows[0]).toHaveProperty('default');
+    expect(rows[0]).toHaveProperty('fallback');
+    expect(rows.some(r => r.property === 'server.url')).toBeTrue();
   });
 
   test('cross-ref URLs point at docs, bun-types repo, and RSS', () => {
@@ -69,6 +80,9 @@ describe('lib/http/bun-serve-shape — cross-reference', () => {
     const md = renderBunServeShapeMatrix();
     expect(md).toContain('server.protocol');
     expect(md).toContain('missing');
+    expect(md).toContain('Default (omit / pre-bind)');
+    expect(md).toContain('Fallback / after-bind');
+    expect(md.toLowerCase()).toContain('server.port');
   });
 
   test('probeServerShape + serverIdentity agree on TCP server', async () => {

@@ -5,8 +5,10 @@
 import { describe, expect, test } from 'bun:test';
 import { inspectCustom } from '../lib/console-depth.ts';
 import {
+  assertServerPortUrlAligned,
   BUN_SERVER_REFERENCE_DOCS,
   buildServerProbeReport,
+  formatServerPortUrlLines,
   loopbackFetch,
   probeServerPath,
   serveBindSnapshot,
@@ -36,6 +38,28 @@ describe('lib/http/bun-server — Server surface', () => {
       expect(snap.urlProtocol).toBe(server.url.protocol);
       expect(snap.loopbackOrigin).toBe(server.url.origin);
       expect(snap.server).toBe(server);
+    } finally {
+      void stopServer(server, true);
+    }
+  });
+
+  test('formatServerPortUrlLines + assertServerPortUrlAligned cover docs dual shape', () => {
+    const server: BunServer = Bun.serve({
+      port: 0,
+      hostname: '127.0.0.1',
+      fetch: () => new Response('ok'),
+    });
+    try {
+      expect(() => assertServerPortUrlAligned(server)).not.toThrow();
+      const lines = formatServerPortUrlLines(server);
+      expect(lines[0]).toBe(`server.port = ${server.port}`);
+      expect(lines[1]).toBe(`server.url  = ${server.url.href}`);
+      expect(lines[2]).toContain(`hostname=${server.hostname}`);
+      expect(lines[2]).toContain(`protocol=${server.protocol}`);
+      // dual shape: number port ↔ string url.port
+      expect(server.url).toBeInstanceOf(URL);
+      expect(server.url.port).toBe(String(server.port));
+      expect(server.url.protocol).toBe(`${server.protocol}:`);
     } finally {
       void stopServer(server, true);
     }

@@ -23,7 +23,7 @@ Apex command centre — live glance at monorepo health, registry graph, snapshot
 
 1. Rebake registry: `bun run ops:snapshot --no-routing`
 2. Health / failures / packages: `bun run monorepo:health:bake` · `bun run failures:bake` · `bun run audit:packages -- --bake`
-3. Local snapshot index (dev): `bun run portal-cli snapshot list` · `serve:public:hot` → `GET /api/portal/dashboard` · bind URLs: [`serve-public-bind.md`](serve-public-bind.md)
+3. Local snapshot index (dev): `bun run portal-cli snapshot list` · `serve:public:hot` → `GET /api/portal/dashboard` · bind URLs: [`serve-public-bind.md`](serve-public-bind.md) · `bun run brand:status:bind`
 4. Loopback Run buttons 403: expected on Pages — use copy-CLI in a trusted shell
 5. Re-run: `bun test tests/command-centre*.test.ts tests/public-lander.test.ts` · `bun run public:audit:verify`
 

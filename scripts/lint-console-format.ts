@@ -8,7 +8,9 @@
 /**
  * Console-format ratchet: structured console output must go through the
  * lib/console-depth.ts wrappers (logTable / logDepth), not raw
- * `console.table` calls or pretty-JSON dumps (`console.log(JSON.stringify(x, null, N))`).
+ * `console.table` calls, pretty-JSON dumps (`console.log(JSON.stringify(x, null, N))`),
+ * direct `Bun.inspect.table` (bypasses the wrapper's TTY colors + overload safety),
+ * or `console.dir`.
  *
  *   bun run check:console-format                      # repo-wide ratchet (counts may only go down)
  *   bun scripts/lint-console-format.ts --staged       # ADDED lines only (pre-commit runs this)
@@ -30,9 +32,9 @@ const STAGED = Bun.argv.includes('--staged');
 
 const SCANNED_DIRS = ['lib', 'scripts', 'tools'];
 
-type PatternId = 'console-table' | 'pretty-json-console';
+type PatternId = 'console-table' | 'pretty-json-console' | 'direct-inspect-table' | 'console-dir';
 
-const PATTERNS: Array<{ id: PatternId; re: RegExp; hint: string }> = [
+const PATTERNS: Array<{ id: PatternId; re: RegExp; hint: string; excludeFiles?: string[] }> = [
   {
     id: 'console-table',
     re: /console\.table\(/,
@@ -41,7 +43,18 @@ const PATTERNS: Array<{ id: PatternId; re: RegExp; hint: string }> = [
   {
     id: 'pretty-json-console',
     re: /console\.(?:log|info)\(\s*JSON\.stringify\([^)]*,\s*null,\s*\d/,
-    hint: 'default human output belongs in logDepth/logTable; machine output needs a --json branch (add // console-ok)',
+    hint: 'default human output belongs in logDepth/logTable; machine output goes through jsonOut (or add // console-ok)',
+  },
+  {
+    id: 'direct-inspect-table',
+    re: /Bun\.inspect\.table\(/,
+    hint: 'use logTable/inspectTable from lib/console-depth.ts (wrapper adds TTY-aware colors + overload safety)',
+    excludeFiles: ['lib/console-depth.ts'],
+  },
+  {
+    id: 'console-dir',
+    re: /console\.dir\(/,
+    hint: 'use logDepth from lib/console-depth.ts (project depth + TTY colors)',
   },
 ];
 
@@ -68,6 +81,7 @@ async function repoViolations(): Promise<Violation[]> {
         const line = lines[i]!;
         if (SUPPRESS.test(line)) continue;
         for (const p of PATTERNS) {
+          if (p.excludeFiles?.includes(file)) continue;
           if (p.re.test(line)) {
             violations.push({ file, line: i + 1, id: p.id, hint: p.hint, text: line.trim() });
           }
@@ -103,6 +117,7 @@ async function stagedViolations(): Promise<Violation[]> {
       const line = raw.slice(1);
       if (isScannable(file) && !SUPPRESS.test(line)) {
         for (const p of PATTERNS) {
+          if (p.excludeFiles?.includes(file)) continue;
           if (p.re.test(line)) {
             violations.push({ file, line: newLine, id: p.id, hint: p.hint, text: line.trim() });
           }

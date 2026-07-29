@@ -52,7 +52,7 @@ export const scopeConfigs: Record<SnapshotScopeName, SnapshotScopeConfig> = {
     reportPath: '',
     reportKind: 'json',
     assetPaths: [],
-    localAssets: ['audit-report.json'],
+    localAssets: ['reports/audit-report.json'],
     manifestExtra: { reportType: 'gaps' },
   },
   limits: {

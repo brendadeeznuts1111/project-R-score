@@ -168,3 +168,60 @@ export function msFromNs(ns: number): string {
   if (ms < 1000) return `${ms.toFixed(1)} ms`;
   return `${(ms / 1000).toFixed(2)} s`;
 }
+
+/** One indexed card — title + full-text key/value fields (wrap, never truncate). */
+export type IndexedCard = {
+  /** Index number (1-based) shown as `#N`. */
+  index: number;
+  /** Card heading (property or concept). */
+  title: string;
+  /** Optional one-line subtitle (plane · brand). */
+  subtitle?: string;
+  /** Field rows — values are wrapped, not ellipsis-truncated. */
+  fields: ReadonlyArray<readonly [string, string]>;
+};
+
+/**
+ * Section with index + full cards. Prefer this over wide inspect.table for
+ * long default/fallback prose (chat and narrow TTYs truncate mid-word).
+ *
+ * @see https://bun.com/docs/runtime/utils#bun-wrapansi
+ * @see https://bun.com/docs/runtime/utils#bun-stringwidth
+ */
+export function formatIndexedCards(
+  section: string,
+  blurb: string,
+  cards: readonly IndexedCard[],
+  opts: { width?: number; indexOnly?: boolean } = {}
+): string {
+  const width = Math.min(Math.max(opts.width ?? 72, 48), 100);
+  const keyW = 10;
+  const lines: string[] = [];
+
+  lines.push(cliTone.accent(`\n${section}`) + (blurb ? cliTone.dim(`  ${blurb}`) : ''));
+  lines.push(cliTone.dim('INDEX'));
+  for (const c of cards) {
+    const sub = c.subtitle ? cliTone.dim(`  ${c.subtitle}`) : '';
+    lines.push(`  ${cliTone.accent(`#${c.index}`)}  ${c.title}${sub}`);
+  }
+  if (opts.indexOnly) return lines.join('\n');
+
+  for (const c of cards) {
+    lines.push('');
+    const head = `${cliTone.accent(`#${c.index}`)}  ${cliTone.bold(c.title)}`;
+    lines.push(head);
+    if (c.subtitle) lines.push(cliTone.dim(`     ${c.subtitle}`));
+    for (const [k, v] of c.fields) {
+      if (!v) continue;
+      const label = padDisplay(cliTone.dim(k), keyW);
+      const wrapCols = Math.max(24, width - keyW - 6);
+      const wrapped = Bun.wrapAnsi(v, wrapCols, { hard: false, wordWrap: true, trim: false });
+      const [first, ...rest] = wrapped.split('\n');
+      lines.push(`     ${label}  ${first ?? ''}`);
+      for (const cont of rest) {
+        lines.push(`     ${padDisplay('', keyW)}  ${cont}`);
+      }
+    }
+  }
+  return lines.join('\n');
+}

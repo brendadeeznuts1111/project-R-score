@@ -17,6 +17,8 @@ HTTP helpers for Bun.serve surfaces (static response utilities, caching headers)
 | [`bun-serve-shape.ts`](bun-serve-shape.ts) | Docs / bun-types / runtime cross-ref matrix for Server bind fields |
 | [`host-planes.ts`](host-planes.ts) | Bind vs DNS vs Access vs Pages vocabulary map (`HOST_PLANE_MAP`) |
 | [`host-lineage.ts`](host-lineage.ts) | Live HostId → apex/sub → Access → https transition rows |
+| [`bun-serve-lifecycle.ts`](bun-serve-lifecycle.ts) | Server methods + serve/WS options matrix (`timeout` · `idleTimeout`) |
+| [`bind-identity-card.ts`](bind-identity-card.ts) | Indexed BIND IDENTITY card for serve-public startup |
 | [`../docs/bun-release-tracker.ts`](../docs/bun-release-tracker.ts) | Release-note changelog → verification probes (TLS system CA, GC smoke) |
 | [`verification-scripts.ts`](verification-scripts.ts) | Pipe-friendly verify scripts (`curl …/script \| bun run -`) |
 
@@ -47,7 +49,7 @@ Run proof hashes (`proofHash` in `public/registry/*-proof.json`) are separate �
 
 ### Bun.serve bind shape (port + protocol)
 
-Cross-reference SSOT: [`bun-serve-shape.ts`](bun-serve-shape.ts) · helpers: [`bun-server.ts`](bun-server.ts)
+Cross-reference SSOT: [`bun-serve-shape.ts`](bun-serve-shape.ts) (identity fields) · [`bun-serve-lifecycle.ts`](bun-serve-lifecycle.ts) (methods + options) · helpers: [`bun-server.ts`](bun-server.ts) · startup card: [`bind-identity-card.ts`](bind-identity-card.ts)
 
 | Source | Role |
 |--------|------|
@@ -59,18 +61,35 @@ Cross-reference SSOT: [`bun-serve-shape.ts`](bun-serve-shape.ts) · helpers: [`b
 | Runtime probe | `probeServerShape()` on this Bun |
 
 ```bash
-bun run check:serve-shape          # 41 tests ([test].timeout=10s in bunfig.toml)
-bun test tests/bun-serve-shape.test.ts --timeout 3000  # CLI overrides bunfig per-test limit
+bun run check:serve-shape          # shape + lifecycle + bind-identity (+ bun-server/defaults)
+bun test tests/bun-serve-shape.test.ts tests/bun-serve-lifecycle.test.ts \
+  tests/bind-identity-card.test.ts --timeout 3000
+bun run brand:status:bind
+bun run brand:status:lifecycle
 bun tools/bun-doc-refs.ts suggest "Bun.serve reference"
 bun tools/bun-doc-refs.ts suggest "Bun.serve port"
 ```
 
-Two shapes on the same listener:
+Two shapes on the same listener (read **after** bind — never re-read env):
 
-- `server.port` (number) · `server.url.port` (string; empty only on default 80/443)
-- `server.protocol` (`http` / `https`) · `server.url.protocol` (`http:` / `https:`)
+```ts
+console.log(server.port); // number — chosen listen port
+console.log(server.url);  // URL — href like http://localhost:3000/
+// server.url.port === String(server.port) for non-80/443
+// server.url.protocol === `${server.protocol}:`
+```
 
-`serve-public` uses `bindServePublicPort()` + `serveBindSnapshot()` for typed startup, ephemeral fallback, and loopback URLs when bound to `0.0.0.0`. Operator doc: [`docs/harness/tenants/serve-public-bind.md`](../../docs/harness/tenants/serve-public-bind.md).
+| Field | Type | Use |
+|-------|------|-----|
+| `server.port` | `number` | Store / log the bound port |
+| `server.url` | `URL` | Console origin, `new URL(path, server.url)`, fetch base |
+| `server.url.port` | `string` | Wire twin of `server.port` (empty on 80/443) |
+| `server.protocol` | `http`/`https` | Bare scheme |
+| `server.url.protocol` | `http:`/`https:` | URL scheme with colon |
+
+Helpers in [`bun-server.ts`](./bun-server.ts): `formatServerPortUrlLines` · `assertServerPortUrlAligned` · `serveBindSnapshot`.
+
+`serve-public` uses `bindServePublicPort()` + `serveBindSnapshot()` for typed startup, ephemeral fallback, and loopback URLs when bound to `0.0.0.0`. Startup logs append **BIND IDENTITY** via [`bind-identity-card.ts`](bind-identity-card.ts). Operator doc: [`docs/harness/tenants/serve-public-bind.md`](../../docs/harness/tenants/serve-public-bind.md).
 
 ### Portal spine + flag-order
 

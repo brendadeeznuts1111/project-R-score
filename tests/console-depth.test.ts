@@ -14,7 +14,7 @@
  * the reference expectations in one shot.
  */
 
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, spyOn, test } from 'bun:test';
 import { STRING_WIDTH_V135_VECTORS } from '../lib/docs/bun-release-tracker.ts';
 import {
   widthOf,
@@ -26,6 +26,8 @@ import {
   truncateWidth,
   wrapText,
   stripANSI,
+  inspectTable,
+  jsonOut,
   colorize,
   inspect,
   getConsoleDepth,
@@ -347,6 +349,39 @@ describe('stripANSI', () => {
     expect(stripANSI('\x1b[1m\x1b[31mbold red\x1b[0m')).toBe('bold red');
     expect(stripANSI('plain')).toBe('plain');
     expect(stripANSI('\x1b]8;;https://bun.com\x07link\x1b]8;;\x07')).toBe('link');
+  });
+});
+
+describe('inspectTable', () => {
+  const rows = [
+    { tool: 'bun-docs', status: 'ok' },
+    { tool: 'dx', status: 'ok' },
+  ];
+  test('returns the same string as Bun.inspect.table (both overloads)', () => {
+    expect(inspectTable(rows, ['tool', 'status'], { colors: false })).toBe(
+      Bun.inspect.table(rows, ['tool', 'status'], { colors: false })
+    );
+    expect(inspectTable(rows, undefined, { colors: false })).toBe(
+      Bun.inspect.table(rows, { colors: false })
+    );
+  });
+  test('never passes undefined properties to the 3-arg overload', () => {
+    // 2-arg (data, options) form must be used when columns is undefined —
+    // Bun.inspect.table(rows, undefined, opts) would throw/misrender.
+    expect(() => inspectTable(rows, undefined, { colors: false })).not.toThrow();
+  });
+  test('wraps non-array data into a single row', () => {
+    expect(inspectTable({ a: 1 }, ['a'], { colors: false })).toContain('a');
+  });
+});
+
+describe('jsonOut', () => {
+  test('stdout bytes are identical to console.log(JSON.stringify(v, null, 2))', () => {
+    const value = { status: 'ok', rows: [1, 2, { deep: true }] };
+    using spy = spyOn(console, 'info').mockImplementation(() => {});
+    jsonOut(value);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy.mock.calls[0]![0]).toBe(JSON.stringify(value, null, 2));
   });
 });
 

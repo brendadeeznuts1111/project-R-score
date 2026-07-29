@@ -127,12 +127,14 @@ import {
 } from '../lib/http/verification-scripts.ts';
 import { resolvePublishReadme } from '../lib/registry/npm-publish-readme.ts';
 import {
+  assertServerPortUrlAligned,
   serveBindSnapshot,
   type BunServer,
   type BunServeOptions,
   type ServeBindSnapshot,
 } from '../lib/http/bun-server.ts';
 import { resolveBunServeDefaultPort } from '../lib/http/bun-serve-shape.ts';
+import { formatServePublicBindLines } from '../lib/http/serve-public-bind.ts';
 import { isPublicReadPath } from '../lib/http/public-read-path.ts';
 import { getDb, getMonitoringData } from '../lib/db/connection.ts';
 
@@ -2242,7 +2244,9 @@ Failed to bind serve-public on ${HOST_OVERRIDE ?? '(Bun default hostname)'} port
 }
 
 const bind = await startServer();
-const { port: boundPort, hostname: boundHost, protocol: boundProtocol, ephemeralFallback } = bind;
+// After bind: server.port (number) + server.url (URL) are SSOT — never re-read env.
+assertServerPortUrlAligned(bind.server);
+const { ephemeralFallback } = bind;
 activeServer = bind.server;
 const base = bind.loopbackOrigin;
 
@@ -2286,16 +2290,18 @@ console.log(
     ? `Publish:       PUT ${base}/{name} (Bearer REGISTRY_SECRET required)`
     : `Publish:       disabled — set REGISTRY_SECRET or FACTORY_WAGER_TOKEN`
 );
-console.log(
-  `Bind: ${boundProtocol}://${boundHost}:${boundPort} (url.port=${bind.urlPort || 'default'})  DB: ${dbPath}`
-);
-console.log(
-  `Serve:         development=${bind.development} · protocol=${bind.protocol} · origin=${bind.origin} · loopback=${base} · routes=SIMD+static · fetch=unmatched`
-);
-if (ephemeralFallback) {
-  console.log(
-    `(default port busy — bound ephemeral port ${boundPort}; set BUN_PORT/PORT or bun --port=…)`
-  );
+// Docs dual shape (server.port + server.url) then Bind/Serve lines — all from live Server.
+for (const line of formatServePublicBindLines(
+  {
+    ...bind,
+    schemaVersion: 1,
+    ephemeralFallback,
+    requestedDefaultPort: resolveBunServeDefaultPort(),
+    boundAt: new Date().toISOString(),
+  },
+  { dbPath }
+)) {
+  console.log(line);
 }
 if (LIVE_RELOAD && liveReloadHub) {
   await liveReloadHub.startPolling(WATCH_PATHS);

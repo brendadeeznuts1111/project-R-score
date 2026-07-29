@@ -36,6 +36,8 @@
  *   portal-cli scanner configure|clear|install|init
  */
 
+import { jsonOut } from '../../lib/console-depth.ts';
+
 export const SECURITY_SCANNER_DOCS = 'https://bun.com/docs/pm/security-scanner-api';
 export const SECURITY_SCANNER_BUNFIG =
   'https://bun.com/docs/runtime/bunfig#install-security-scanner';
@@ -1101,7 +1103,7 @@ export async function dispatchScanner(
   if (cmd === 'status') {
     const status = await readInstallSecurityStatus(bunfigPath, { cwd });
     if (hasFlag(rest, '--json')) {
-      console.log(JSON.stringify(status, null, 2));
+      jsonOut(status);
     } else {
       console.log(formatScannerStatus(status));
     }
@@ -1112,7 +1114,7 @@ export async function dispatchScanner(
     const status = await readInstallSecurityStatus(bunfigPath, { cwd });
     const report = evaluateDoctor(status, { strict: hasFlag(rest, '--strict') });
     if (hasFlag(rest, '--json')) {
-      console.log(JSON.stringify(report, null, 2));
+      jsonOut(report);
     } else {
       console.log(formatDoctorReport(report));
       if (status.scanner) {
@@ -1152,7 +1154,7 @@ export async function dispatchScanner(
       globalStore: eff.globalStore,
     });
     if (hasFlag(rest, '--json')) {
-      console.log(JSON.stringify(policy, null, 2));
+      jsonOut(policy);
     } else {
       console.log(formatPackageMgmtPolicy(policy));
     }
@@ -1175,7 +1177,7 @@ export async function dispatchScanner(
           : 'bun.lock not found',
     };
     if (hasFlag(rest, '--json')) {
-      console.log(JSON.stringify(payload, null, 2));
+      jsonOut(payload);
     } else {
       console.log(`Lockfile package estimate: ${n ?? '—'}`);
       console.log(`Socket free-mode API hits if scanned: ${n ?? '—'}`);
