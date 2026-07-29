@@ -13,32 +13,67 @@
   <link rel="manifest" href="/site.webmanifest" />
   <link rel="stylesheet" href="/portal/style.css" />
   <style>
+    /* Color code: green=ok · yellow=attention · red=fail · neutral=info */
     .doc-wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px 48px; }
+    .ih-shell--green { border-top: 3px solid var(--green, #3fb950); }
+    .ih-shell--yellow { border-top: 3px solid var(--yellow, #d29922); }
+    .ih-shell--red { border-top: 3px solid var(--red, #f85149); }
+    .ih-shell--neutral { border-top: 3px solid var(--border); }
     .doc-hero { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin: 16px 0 8px; }
     .doc-hero h1 { font-size: 1.35rem; font-weight: 650; margin: 0; }
     .doc-badge {
       font-size: 12px; font-weight: 650; letter-spacing: .04em; text-transform: uppercase;
       padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border);
     }
-    .doc-badge.green { color: #3fb950; border-color: #238636; background: rgba(63,185,80,.12); }
-    .doc-badge.yellow { color: #d29922; border-color: #9e6a03; background: rgba(210,153,34,.12); }
-    .doc-badge.red { color: #f85149; border-color: #da3633; background: rgba(248,81,73,.12); }
+    .doc-badge.green { color: var(--green, #3fb950); border-color: #238636; background: color-mix(in srgb, var(--green, #3fb950) 14%, transparent); }
+    .doc-badge.yellow { color: var(--yellow, #d29922); border-color: #9e6a03; background: color-mix(in srgb, var(--yellow, #d29922) 14%, transparent); }
+    .doc-badge.red { color: var(--red, #f85149); border-color: #da3633; background: color-mix(in srgb, var(--red, #f85149) 14%, transparent); }
+    .doc-badge.neutral { color: var(--text-dim); border-color: var(--border); background: transparent; }
+    .ih-legend {
+      display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center;
+      margin: 4px 0 12px; font-size: 12px; color: var(--text-dim);
+    }
+    .ih-legend .ih-chip { vertical-align: middle; }
+    .ih-chip {
+      display: inline-block; font-size: 11px; font-weight: 650; letter-spacing: .03em;
+      padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border);
+      font-variant-numeric: tabular-nums; max-width: 100%; word-break: break-word;
+    }
+    .ih-chip--green { color: var(--green, #3fb950); border-color: #238636; background: color-mix(in srgb, var(--green, #3fb950) 16%, transparent); }
+    .ih-chip--yellow { color: var(--yellow, #d29922); border-color: #9e6a03; background: color-mix(in srgb, var(--yellow, #d29922) 16%, transparent); }
+    .ih-chip--red { color: var(--red, #f85149); border-color: #da3633; background: color-mix(in srgb, var(--red, #f85149) 16%, transparent); }
+    .ih-chip--neutral { color: var(--text-dim); border-color: var(--border); background: transparent; }
     .doc-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 16px 0; }
     .doc-stat {
       background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px;
+      border-left-width: 3px;
     }
-    .doc-stat.bad .v { color: var(--red, #f85149); }
+    .doc-stat--green { border-left-color: var(--green, #3fb950); }
+    .doc-stat--yellow { border-left-color: var(--yellow, #d29922); }
+    .doc-stat--red { border-left-color: var(--red, #f85149); }
+    .doc-stat--neutral { border-left-color: var(--border); }
+    .doc-stat--green .v { color: var(--green, #3fb950); }
+    .doc-stat--yellow .v { color: var(--yellow, #d29922); }
+    .doc-stat--red .v { color: var(--red, #f85149); }
     .doc-stat .k { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
     .doc-stat .v { font-size: 18px; font-weight: 650; font-variant-numeric: tabular-nums; word-break: break-word; }
     .doc-panel {
       background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 16px 18px; margin-bottom: 16px;
+      padding: 16px 18px; margin-bottom: 16px; border-top-width: 2px;
     }
+    .doc-panel--green { border-top-color: var(--green, #3fb950); }
+    .doc-panel--yellow { border-top-color: var(--yellow, #d29922); }
+    .doc-panel--red { border-top-color: var(--red, #f85149); }
+    .doc-panel--neutral { border-top-color: var(--border); }
     .doc-panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin: 0 0 12px; }
     .doc-table { width: 100%; border-collapse: collapse; font-size: 12px; }
     .doc-table th { text-align: left; padding: 6px 8px; color: var(--text-dim); font-weight: 500; border-bottom: 1px solid var(--border); }
     .doc-table td { padding: 6px 8px; border-bottom: 1px solid rgba(48,54,61,.4); vertical-align: top; }
-    .doc-table tr.fail td { color: var(--red, #f85149); }
+    .doc-table tr.ih-row--green td:first-child { box-shadow: inset 3px 0 0 var(--green, #3fb950); }
+    .doc-table tr.ih-row--yellow td:first-child { box-shadow: inset 3px 0 0 var(--yellow, #d29922); }
+    .doc-table tr.ih-row--red td:first-child { box-shadow: inset 3px 0 0 var(--red, #f85149); }
+    .doc-table tr.ih-row--red td { color: var(--red, #f85149); }
+    .doc-table tr.ih-row--yellow td { color: var(--yellow, #d29922); }
     .doc-table code { font-size: 11px; word-break: break-all; }
     .doc-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 0; }
     .doc-actions button, .doc-actions a.btn {
@@ -48,8 +83,15 @@
     }
     .doc-actions button:hover, .doc-actions a.btn:hover { border-color: var(--accent); color: var(--accent); }
     .dim { color: var(--text-dim); font-size: 12px; }
-    #ih-reasons:not(:empty) { color: var(--yellow, #d29922); margin: 8px 0 0; font-size: 13px; }
+    .ih-reasons {
+      margin: 8px 0 0; font-size: 13px; padding: 10px 12px; border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+    .ih-reasons--green { border-color: #238636; background: color-mix(in srgb, var(--green, #3fb950) 10%, transparent); color: var(--green, #3fb950); }
+    .ih-reasons--yellow { border-color: #9e6a03; background: color-mix(in srgb, var(--yellow, #d29922) 12%, transparent); color: var(--yellow, #d29922); }
+    .ih-reasons--red { border-color: #da3633; background: color-mix(in srgb, var(--red, #f85149) 12%, transparent); color: var(--red, #f85149); }
     #ih-npm-body ul { margin: 8px 0 0; padding-left: 1.2rem; font-size: 12px; }
+    .ih-list--red li { color: var(--red, #f85149); }
   </style>
 </head>
 <body>
@@ -82,13 +124,19 @@
       </div>
     </div>
   </header>
-  <main class="doc-wrap">
+  <main class="doc-wrap ih-shell" id="ih-shell">
     <div class="doc-hero">
       <h1>Install hygiene</h1>
-      <span id="ih-tone" class="doc-badge">…</span>
+      <span id="ih-tone" class="doc-badge neutral" data-tone="neutral">…</span>
       <p class="dim" id="ih-meta">Loading /registry/install-hygiene-report.json…</p>
     </div>
-    <p id="ih-reasons" class="dim"></p>
+    <div class="ih-legend" aria-label="Color legend">
+      <span><span class="ih-chip ih-chip--green">green</span> ok / pass / clean</span>
+      <span><span class="ih-chip ih-chip--yellow">yellow</span> attention (prune · schema · mismatch)</span>
+      <span><span class="ih-chip ih-chip--red">red</span> fail (npm · install:verify)</span>
+      <span><span class="ih-chip ih-chip--neutral">neutral</span> info only</span>
+    </div>
+    <p id="ih-reasons" class="ih-reasons" hidden></p>
     <div class="doc-actions">
       <button type="button" class="copy-cli" data-cli="bun run bake:install-hygiene">copy bake CLI</button>
       <button type="button" class="copy-cli" data-cli="bun run install:verify">copy install:verify</button>
@@ -100,7 +148,7 @@
 
     <div class="doc-stats" id="ih-stats"></div>
 
-    <div class="doc-panel">
+    <div class="doc-panel doc-panel--neutral" id="ih-panel-cache" data-tone="neutral">
       <h2>Install cache</h2>
       <table class="doc-table">
         <thead><tr><th>Field</th><th>Value</th></tr></thead>
@@ -108,15 +156,15 @@
       </table>
     </div>
 
-    <div class="doc-panel">
+    <div class="doc-panel doc-panel--neutral" id="ih-panel-verify" data-tone="neutral">
       <h2>install:verify checks</h2>
       <table class="doc-table">
-        <thead><tr><th>OK</th><th>Check</th><th>Detail</th></tr></thead>
+        <thead><tr><th>Status</th><th>Check</th><th>Detail</th></tr></thead>
         <tbody id="ih-verify-body"><tr><td colspan="3" class="dim">Loading…</td></tr></tbody>
       </table>
     </div>
 
-    <div class="doc-panel">
+    <div class="doc-panel doc-panel--neutral" id="ih-panel-npm" data-tone="neutral">
       <h2>npm install policy</h2>
       <div id="ih-npm-body" class="dim">Loading…</div>
     </div>

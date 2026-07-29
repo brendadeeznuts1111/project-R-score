@@ -1,5 +1,5 @@
 /**
- * Pure helpers for the install-hygiene portal board.
+ * Pure helpers for the install-hygiene portal board (color-coded tones).
  */
 import { describe, expect, test } from 'bun:test';
 import {
@@ -7,7 +7,10 @@ import {
   buildStatRows,
   INSTALL_HYGIENE_SCHEMA,
   INSTALL_HYGIENE_SOURCE,
+  renderCacheRowsSimple,
   renderVerifyCheckRows,
+  statusChip,
+  toneClass,
   toneFromReport,
 } from '../public/portal/install-hygiene/install-hygiene-board.js';
 
@@ -39,6 +42,18 @@ describe('install-hygiene-board', () => {
     expect(INSTALL_HYGIENE_SCHEMA).toBe(1);
   });
 
+  test('toneClass maps missing → yellow', () => {
+    expect(toneClass('missing')).toBe('yellow');
+    expect(toneClass('green')).toBe('green');
+    expect(toneClass('red')).toBe('red');
+  });
+
+  test('statusChip embeds tone class', () => {
+    expect(statusChip('green', 'ok')).toContain('ih-chip--green');
+    expect(statusChip('red', 'fail')).toContain('ih-chip--red');
+    expect(statusChip('yellow', 'attention')).toContain('ih-chip--yellow');
+  });
+
   test('toneFromReport missing / schema / healthy / attention / fail', () => {
     expect(toneFromReport(null).tone).toBe('missing');
     expect(toneFromReport({ kind: 'other' }).tone).toBe('missing');
@@ -60,7 +75,7 @@ describe('install-hygiene-board', () => {
     ).toBe('red');
   });
 
-  test('buildStatRows flags prune and counts', () => {
+  test('buildStatRows uses tone color codes', () => {
     const rows = buildStatRows({
       ...healthy,
       ok: false,
@@ -70,15 +85,41 @@ describe('install-hygiene-board', () => {
         wouldPrune: true,
       },
     });
-    expect(rows.find(r => r.k === 'would prune')?.bad).toBe(true);
+    expect(rows.find(r => r.k === 'would prune')?.tone).toBe('yellow');
+    expect(rows.find(r => r.k === 'cache size')?.tone).toBe('yellow');
+    expect(rows.find(r => r.k === 'npm install')?.tone).toBe('green');
+    expect(rows.find(r => r.k === 'overall')?.tone).toBe('yellow');
     expect(rows.find(r => r.k === 'cache size')?.v).toBe('3.54 GB');
+
+    const red = buildStatRows({
+      ...healthy,
+      ok: false,
+      npmInstall: { ok: false, violations: ['hit'] },
+    });
+    expect(red.find(r => r.k === 'npm install')?.tone).toBe('red');
+    expect(red.find(r => r.k === 'overall')?.tone).toBe('red');
   });
 
-  test('renderVerifyCheckRows marks failures', () => {
+  test('renderVerifyCheckRows color-codes pass/fail chips', () => {
     const html = renderVerifyCheckRows(healthy);
     expect(html).toContain('install policy');
-    expect(html).toContain('class="fail"');
+    expect(html).toContain('ih-chip--green');
+    expect(html).toContain('ih-chip--red');
+    expect(html).toContain('ih-row--red');
     expect(html).toContain('broken');
+  });
+
+  test('renderCacheRowsSimple tones prune and mismatch', () => {
+    const html = renderCacheRowsSimple({
+      available: true,
+      sizeHuman: '3.5 GB',
+      wouldPrune: true,
+      pruneReason: 'over',
+      bunPmCacheMismatch: 'path drift',
+    });
+    expect(html).toContain('ih-row--yellow');
+    expect(html).toContain('ih-chip--yellow');
+    expect(html).toContain('ih-chip--green'); // available
   });
 
   test('ageLabel handles missing and recent', () => {

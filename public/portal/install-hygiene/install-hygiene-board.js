@@ -1,5 +1,7 @@
 /**
  * Install hygiene board — reads /registry/install-hygiene-report.json.
+ * Color code: green = ok · yellow = attention · red = fail · dim = neutral/missing
+ *
  * @see docs/UNIFIED.md
  * @see lib/monitoring/install-hygiene-slice.ts
  * @see docs/harness/tenants/public-plane.md
@@ -9,6 +11,8 @@ import { fetchJsonResult } from '../fetch-json.js';
 
 export const INSTALL_HYGIENE_SOURCE = '/registry/install-hygiene-report.json';
 export const INSTALL_HYGIENE_SCHEMA = 1;
+
+/** @typedef {'green'|'yellow'|'red'|'neutral'|'missing'} Tone */
 
 /**
  * @param {unknown} s
@@ -39,9 +43,29 @@ export function ageLabel(iso) {
 }
 
 /**
+ * @param {Tone} tone
+ * @returns {string} CSS class fragment (green|yellow|red|neutral)
+ */
+export function toneClass(tone) {
+  if (tone === 'missing') return 'yellow';
+  if (tone === 'green' || tone === 'yellow' || tone === 'red' || tone === 'neutral') return tone;
+  return 'neutral';
+}
+
+/**
+ * Status chip HTML (colored pill).
+ * @param {Tone} tone
+ * @param {string} text
+ */
+export function statusChip(tone, text) {
+  const cls = toneClass(tone);
+  return `<span class="ih-chip ih-chip--${cls}" data-tone="${esc(cls)}">${esc(text)}</span>`;
+}
+
+/**
  * Board tone from bake: green | yellow | red | missing
  * @param {Record<string, unknown>|null|undefined} report
- * @returns {{ tone: string, label: string, reasons: string[] }}
+ * @returns {{ tone: Tone, label: string, reasons: string[] }}
  */
 export function toneFromReport(report) {
   if (!report || report.kind !== 'install-hygiene') {
@@ -76,7 +100,7 @@ export function toneFromReport(report) {
 
 /**
  * @param {Record<string, unknown>|null|undefined} report
- * @returns {{ k: string, v: string, bad?: boolean }[]}
+ * @returns {{ k: string, v: string, tone: Tone }[]}
  */
 export function buildStatRows(report) {
   if (!report || report.kind !== 'install-hygiene') return [];
@@ -85,35 +109,47 @@ export function buildStatRows(report) {
   const verify = /** @type {Record<string, unknown>} */ (report.installVerify || {});
   const violations = Array.isArray(npm.violations) ? npm.violations.length : 0;
   const failed = typeof verify.failed === 'number' ? verify.failed : 0;
+
+  /** @type {Tone} */
+  let overallTone = 'neutral';
+  if (report.ok === true) overallTone = 'green';
+  else if (verify.ok === false || npm.ok === false) overallTone = 'red';
+  else overallTone = 'yellow';
+
+  /** @type {Tone} */
+  const pruneTone =
+    cache.wouldPrune === true ? 'yellow' : cache.wouldPrune === false ? 'green' : 'neutral';
+
   return [
     {
       k: 'overall',
-      v: report.ok === true ? 'ok' : 'attention',
-      bad: report.ok !== true,
+      v: report.ok === true ? 'ok' : overallTone === 'red' ? 'fail' : 'attention',
+      tone: overallTone,
     },
     {
       k: 'cache size',
       v: String(cache.sizeHuman || '—'),
-      bad: cache.wouldPrune === true,
+      tone: pruneTone === 'yellow' ? 'yellow' : 'neutral',
     },
     {
       k: 'would prune',
       v: cache.wouldPrune === true ? 'yes' : cache.wouldPrune === false ? 'no' : '—',
-      bad: cache.wouldPrune === true,
+      tone: pruneTone,
     },
     {
       k: 'npm install',
       v: npm.ok === true ? `clean (${violations})` : npm.ok === false ? `${violations} hit` : '—',
-      bad: npm.ok === false,
+      tone: npm.ok === true ? 'green' : npm.ok === false ? 'red' : 'neutral',
     },
     {
       k: 'install:verify',
       v: verify.ok === true ? `pass (${failed} fail)` : verify.ok === false ? `${failed} fail` : '—',
-      bad: verify.ok === false,
+      tone: verify.ok === true ? 'green' : verify.ok === false ? 'red' : 'neutral',
     },
     {
       k: 'bun',
       v: String(report.bunVersion || '—'),
+      tone: 'neutral',
     },
   ];
 }
@@ -132,11 +168,60 @@ export function renderVerifyCheckRows(report) {
     .map(c => {
       const row = /** @type {Record<string, unknown>} */ (c || {});
       const ok = row.ok === true;
-      return `<tr class="${ok ? '' : 'fail'}">
-        <td>${ok ? '✓' : '✗'}</td>
+      const tone = ok ? 'green' : 'red';
+      return `<tr class="ih-row--${tone}" data-tone="${tone}">
+        <td>${statusChip(tone, ok ? 'pass' : 'fail')}</td>
         <td>${esc(row.label)}</td>
         <td class="dim">${esc(row.detail)}</td>
       </tr>`;
+    })
+    .join('');
+}
+
+/**
+ * Cache table rows with per-field tone (green / yellow / red / neutral).
+ * @param {Record<string, unknown>} cache
+ */
+export function renderCacheRowsSimple(cache) {
+  /** @type {{ k: string, v: string, tone: Tone }[]} */
+  const rows = [
+    {
+      k: 'available',
+      v: String(cache.available ?? '—'),
+      tone: cache.available === true ? 'green' : cache.available === false ? 'red' : 'neutral',
+    },
+    {
+      k: 'size',
+      v: String(cache.sizeHuman ?? '—'),
+      tone: cache.wouldPrune === true ? 'yellow' : 'neutral',
+    },
+    { k: 'threshold', v: String(cache.thresholdHuman ?? '—'), tone: 'neutral' },
+    {
+      k: 'would prune',
+      v: String(cache.wouldPrune ?? '—'),
+      tone: cache.wouldPrune === true ? 'yellow' : cache.wouldPrune === false ? 'green' : 'neutral',
+    },
+    {
+      k: 'prune reason',
+      v: String(cache.pruneReason ?? '—'),
+      tone: cache.wouldPrune === true ? 'yellow' : 'neutral',
+    },
+    { k: 'cache dir', v: String(cache.cacheDir ?? '—'), tone: 'neutral' },
+    { k: 'bun pm cache path', v: String(cache.bunPmCachePath ?? '—'), tone: 'neutral' },
+    {
+      k: 'pm cache mismatch',
+      v: String(cache.bunPmCacheMismatch ?? 'none'),
+      tone: cache.bunPmCacheMismatch ? 'yellow' : 'green',
+    },
+    { k: 'collected', v: String(cache.collectedAt ?? '—'), tone: 'neutral' },
+  ];
+  return rows
+    .map(r => {
+      const val =
+        r.tone === 'neutral'
+          ? `<code>${esc(r.v)}</code>`
+          : statusChip(r.tone, r.v.length > 72 ? `${r.v.slice(0, 69)}…` : r.v);
+      return `<tr class="ih-row--${r.tone}" data-tone="${r.tone}"><td>${esc(r.k)}</td><td>${val}</td></tr>`;
     })
     .join('');
 }
@@ -152,11 +237,21 @@ export function renderInstallHygieneReport(report) {
   const verifyBody = document.getElementById('ih-verify-body');
   const npmBody = document.getElementById('ih-npm-body');
   const reasonsEl = document.getElementById('ih-reasons');
+  const shell = document.getElementById('ih-shell');
+  const cachePanel = document.getElementById('ih-panel-cache');
+  const verifyPanel = document.getElementById('ih-panel-verify');
+  const npmPanel = document.getElementById('ih-panel-npm');
   if (!toneEl) return;
 
   const { tone, label, reasons } = toneFromReport(report);
+  const badgeTone = toneClass(tone);
   toneEl.textContent = label;
-  toneEl.className = `doc-badge ${tone === 'missing' ? 'yellow' : tone}`;
+  toneEl.className = `doc-badge ${badgeTone}`;
+  toneEl.dataset.tone = badgeTone;
+  if (shell) {
+    shell.dataset.tone = badgeTone;
+    shell.className = `doc-wrap ih-shell ih-shell--${badgeTone}`;
+  }
 
   if (!report || report.kind !== 'install-hygiene') {
     if (meta) {
@@ -172,65 +267,74 @@ export function renderInstallHygieneReport(report) {
         '<tr><td colspan="3" class="dim">Missing /registry/install-hygiene-report.json</td></tr>';
     }
     if (npmBody) npmBody.innerHTML = '<p class="dim">—</p>';
-    if (reasonsEl) reasonsEl.textContent = '';
+    if (reasonsEl) {
+      reasonsEl.textContent = '';
+      reasonsEl.className = 'ih-reasons';
+      reasonsEl.hidden = true;
+    }
     return;
   }
 
   if (meta) {
-    const rev =
-      typeof report.bunRevision === 'string' ? report.bunRevision.slice(0, 8) : '';
-    meta.textContent = `generated ${ageLabel(/** @type {string} */ (report.generatedAt))} · bun ${String(report.bunVersion || '?')}${rev ? ` (${rev})` : ''} · bake:install-hygiene`;
+    const rev = typeof report.bunRevision === 'string' ? report.bunRevision.slice(0, 8) : '';
+    meta.innerHTML = `generated ${esc(ageLabel(/** @type {string} */ (report.generatedAt)))} · bun <span class="ih-chip ih-chip--neutral">${esc(String(report.bunVersion || '?'))}${rev ? ` · ${esc(rev)}` : ''}</span> · bake:install-hygiene`;
   }
 
   if (reasonsEl) {
-    reasonsEl.textContent = reasons.length ? `Attention: ${reasons.join(' · ')}` : '';
+    if (reasons.length) {
+      reasonsEl.hidden = false;
+      reasonsEl.className = `ih-reasons ih-reasons--${badgeTone}`;
+      reasonsEl.innerHTML = `${statusChip(badgeTone === 'red' ? 'red' : 'yellow', badgeTone === 'red' ? 'fail' : 'attention')} ${esc(reasons.join(' · '))}`;
+    } else {
+      reasonsEl.hidden = false;
+      reasonsEl.className = 'ih-reasons ih-reasons--green';
+      reasonsEl.innerHTML = `${statusChip('green', 'ok')} All planes clean`;
+    }
   }
 
   if (stats) {
     stats.innerHTML = buildStatRows(report)
       .map(
         row =>
-          `<div class="doc-stat${row.bad ? ' bad' : ''}"><div class="k">${esc(row.k)}</div><div class="v">${esc(row.v)}</div></div>`
+          `<div class="doc-stat doc-stat--${row.tone}" data-tone="${row.tone}"><div class="k">${esc(row.k)}</div><div class="v">${esc(row.v)}</div></div>`
       )
       .join('');
   }
 
   const cache = /** @type {Record<string, unknown>} */ (report.installCache || {});
-  if (cacheBody) {
-    const rows = [
-      ['available', String(cache.available ?? '—')],
-      ['size', String(cache.sizeHuman ?? '—')],
-      ['threshold', String(cache.thresholdHuman ?? '—')],
-      ['would prune', String(cache.wouldPrune ?? '—')],
-      ['prune reason', String(cache.pruneReason ?? '—')],
-      ['cache dir', String(cache.cacheDir ?? '—')],
-      ['bun pm cache path', String(cache.bunPmCachePath ?? '—')],
-      ['pm cache mismatch', String(cache.bunPmCacheMismatch ?? '—')],
-      ['collected', String(cache.collectedAt ?? '—')],
-    ];
-    cacheBody.innerHTML = rows
-      .map(
-        ([k, v]) =>
-          `<tr class="${k === 'would prune' && cache.wouldPrune === true ? 'fail' : ''}"><td>${esc(k)}</td><td><code>${esc(v)}</code></td></tr>`
-      )
-      .join('');
+  if (cacheBody) cacheBody.innerHTML = renderCacheRowsSimple(cache);
+  if (cachePanel) {
+    cachePanel.dataset.tone = cache.wouldPrune === true ? 'yellow' : 'green';
+    cachePanel.className = `doc-panel doc-panel--${cache.wouldPrune === true ? 'yellow' : 'green'}`;
   }
 
   if (verifyBody) verifyBody.innerHTML = renderVerifyCheckRows(report);
+  const verify = /** @type {Record<string, unknown>} */ (report.installVerify || {});
+  if (verifyPanel) {
+    const vt = verify.ok === true ? 'green' : verify.ok === false ? 'red' : 'neutral';
+    verifyPanel.dataset.tone = vt;
+    verifyPanel.className = `doc-panel doc-panel--${vt}`;
+  }
 
   if (npmBody) {
     const npm = /** @type {Record<string, unknown>} */ (report.npmInstall || {});
     const violations = Array.isArray(npm.violations) ? npm.violations : [];
     const allowed = Array.isArray(npm.allowedPaths) ? npm.allowedPaths : [];
     if (violations.length) {
-      npmBody.innerHTML = `<p class="dim">Violations (${violations.length})</p><ul>${violations
+      npmBody.innerHTML = `<p>${statusChip('red', `${violations.length} violation(s)`)}</p><ul class="ih-list--red">${violations
         .slice(0, 40)
         .map(v => `<li><code>${esc(typeof v === 'string' ? v : JSON.stringify(v))}</code></li>`)
         .join('')}</ul>`;
     } else {
-      npmBody.innerHTML = `<p class="dim">No production-path npm/yarn/pnpm install hits · allowlist ${allowed.length} path(s)</p>
+      npmBody.innerHTML = `<p>${statusChip('green', 'clean')} No production-path npm/yarn/pnpm install hits · allowlist ${allowed.length} path(s)</p>
         <ul class="dim">${allowed.map(p => `<li><code>${esc(p)}</code></li>`).join('')}</ul>`;
     }
+  }
+  if (npmPanel) {
+    const npm = /** @type {Record<string, unknown>} */ (report.npmInstall || {});
+    const nt = npm.ok === true ? 'green' : npm.ok === false ? 'red' : 'neutral';
+    npmPanel.dataset.tone = nt;
+    npmPanel.className = `doc-panel doc-panel--${nt}`;
   }
 }
 
