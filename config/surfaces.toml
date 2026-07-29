@@ -109,11 +109,11 @@ note = "CNAME removed via CF API 2026-07-28 (was 525 SSL failure). Re-add only i
 
 [surfaces.reasonix]
 host = "reasonix.factory-wager.com"
-backend = "none — scripts/cloudflared-reasonix.yml template never installed"
-status = "staged"
+backend = "none — decommissioned 2026-07-28 (template + staged Access app removed)"
+status = "retired"
 protocol = "—"
-access = "staged"
-note = "No DNS record. Access app staged. Install tunnel + credential or decommission template."
+access = "none"
+note = "Never provisioned (no DNS, no tunnel — creation needs the other CF account). Template scripts/cloudflared-reasonix.yml deleted; Access app dropped from .cloudflare-access.yml. Re-create from scratch if ever needed."
 
 [surfaces.registry_write]
 host = "registry-write.internal.factory-wager.com"
