@@ -1651,149 +1651,35 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
     return liveReloadHub.subscribe(req);
   }
 
-  // Health endpoint — no auth (also registered on routes; kept for trailing variants)
-  if (
-    path === '/health' ||
-    path === '/health/' ||
-    path === '/api/health' ||
-    path === '/api/health/'
-  )
-    return health(req, server);
-  if (path === '/health/pre' || path === '/health/pre/') return healthHtml(req, server);
-  if (path === '/llms.txt') return llmsTxt();
-  if (path === '/llms-full.txt') return llmsFullTxt();
+  // Primary APIs + portal boards + health/llms live on `routes` (buildPublicRoutes).
+  // fetch = unmatched only: markdown stubs, encoded/tenant registry, static, npm PUT.
 
   const md = await portalMarkdown(req);
   if (md) return md;
-
-  // Bun API proof status
-  if (path === '/api/proof' || path === '/api/proof/') return bunApiProof();
-  if (path === '/api/env' || path === '/api/env/') return envStatus();
-  if (path === '/api/content-type' || path === '/api/content-type/') return contentTypeApi();
-  if (path === '/api/compliance' || path === '/api/compliance/') return complianceBoardApi();
-  if (path === '/api/agents/v1/limits/raises' || path === '/api/agents/v1/limits/raises/') {
-    return agentLimitRaisesApi(req);
-  }
-  if (path === '/api/agents/v1/limits/record' || path === '/api/agents/v1/limits/record/') {
-    return agentLimitRecordApi(req);
-  }
-  if (path === '/api/limits/summary' || path === '/api/limits/summary/') {
-    return limitSummaryApi(req);
-  }
-  if (path === '/api/limits/analyze' || path === '/api/limits/analyze/') {
-    return limitAnalyzeApi();
-  }
-  // /api/limits/predictions · /api/doctor/run · /api/packages/graph/rebake → routes method maps
 
   // Optional auth for read endpoints — public paths skip the gate
   const authErr = requireReadAuth(req);
   if (authErr) {
     if (!isPublicReadPath(path)) return authErr;
   }
-  if (path === '/api/monitoring' || path === '/api/monitoring/') return liveMonitoringApi();
-  if (path === '/monitoring' || path === '/monitoring/') return monitoringPage();
-  if (path === '/api/operations/summary' || path === '/api/operations/summary/')
-    return liveOpsSummary();
-  if (path === '/api/portal/dashboard' || path === '/api/portal/dashboard/') {
-    const { portalDashboardResponse } = await import('../lib/portal/command-centre-api.ts');
-    return portalDashboardResponse();
-  }
-  if (path === '/api/portal/action' || path === '/api/portal/action/') {
-    const { portalActionResponse } = await import('../lib/portal/command-centre-api.ts');
-    return portalActionResponse(req, server);
-  }
-  if (path === '/api/catalog' || path === '/api/catalog/') return liveCatalog(req);
-  // Skills registry — local SKILL.md scan + *.skill package drop (never crashes)
-  if (path === '/api/skills' || path === '/api/skills/') return json(await buildSkillsCatalog());
 
-  // Skill detail JSON: GET /api/skills/{name}
-  const skillDetailM = path.match(/^\/api\/skills\/([a-z0-9-]{1,64})$/);
-  if (skillDetailM) {
-    if (req.method !== 'GET') return json({ error: 'Method not allowed' }, 405);
-    const detail = await buildSkillDetail(skillDetailM[1]!);
-    if (!detail) return json({ error: `No such skill: ${skillDetailM[1]}` }, 404);
-    return json(detail);
-  }
-
-  // Skill packaging (publish-gated): POST /api/skills/{name}/package
-  const skillPkgM = path.match(/^\/api\/skills\/([a-z0-9-]{1,64})\/package$/);
-  if (skillPkgM) {
-    if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
-    const pubErr = await requirePublishAuth(req);
-    if (pubErr) return pubErr;
-    try {
-      const result = await packageSkill(skillPkgM[1]!);
-      return json({ ok: true, ...result });
-    } catch (err) {
-      if (err instanceof SkillPackageError)
-        return json({ error: err.message, code: err.code }, err.code === 'not-found' ? 404 : 500);
-      return json({ error: err instanceof Error ? err.message : String(err) }, 500);
-    }
-  }
-
-  // Skill detail page (server-rendered): GET /portal/skills/{name}
-  const skillPageM = path.match(/^\/portal\/skills\/([a-z0-9-]{1,64})$/);
-  if (skillPageM && req.method === 'GET') {
-    const detail = await buildSkillDetail(skillPageM[1]!);
-    const html = detail
-      ? renderSkillDetailPage(detail, await skillPackageExists(skillPageM[1]!))
-      : renderSkillNotFoundPage(skillPageM[1]!);
-    return new Response(html, {
-      status: detail ? 200 : 404,
-      headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
-    });
-  }
-
-  // Registry
-  if (path === '/api/registry' || path === '/api/registry/') return serveRegistryIndex();
-  if (path === '/api/registry/registry.json') return serveRegistryIndex();
-  if (path === '/api/registry/search') return searchRegistry(req);
-
-  // Version endpoints: /api/registry/{name}/versions
+  // Encoded scoped package: /api/registry/@scope%2Fname[/versions] (not matched by :param routes)
   if (path.startsWith('/api/registry/') && path.endsWith('/versions')) {
     const name = path.slice(14, -9);
-    if (req.method === 'GET') return listVersions(name);
-    if (req.method === 'POST') return publishVersion(req, name);
-    return json({ error: 'Method not allowed' }, 405);
+    if (name.includes('%') || (name.includes('/') && !name.startsWith('@'))) {
+      if (req.method === 'GET') return listVersions(decodeURIComponent(name));
+      if (req.method === 'POST') return publishVersion(req, decodeURIComponent(name));
+      return json({ error: 'Method not allowed' }, 405);
+    }
   }
-
-  // Registry health: GET /api/registry/health (un-shadow from packageDetail)
-  if (
-    (path === '/api/registry/health' || path === '/api/registry/health/') &&
-    req.method === 'GET'
-  ) {
-    const idx = await Bun.file('public/registry/registry.json')
-      .json()
-      .catch(() => ({ packages: {} }));
-    const packages = Object.keys(idx.packages ?? {});
-    return json({
-      ok: true,
-      source: 'assets',
-      packageCount: packages.length,
-      timestamp: new Date().toISOString(),
-    });
-  }
-
-  // Package detail: GET /api/registry/{name}
   if (path.startsWith('/api/registry/') && req.method === 'GET') {
     const name = path.slice(14);
-    if (
-      name &&
-      name !== 'search' &&
-      name !== 'registry.json' &&
-      name !== 'health' &&
-      !name.includes('/tenants/')
-    ) {
-      if (name.includes('/')) {
-        const parts = name.split('/');
-        if (parts.length === 2 && parts[0]!.startsWith('@')) return packageDetail(name);
-      } else {
-        return packageDetail(name);
-      }
+    if (name.includes('%2') || name.includes('%2F') || name.includes('%2f')) {
+      return packageDetail(decodeURIComponent(name));
     }
   }
 
-  // Tenant registries
+  // Tenant registries (multi-segment — keep on fetch)
   const tenantM = path.match(/^\/api\/registry\/tenants\/([^/]+)\/registry\.json$/);
   if (tenantM) {
     const f = Bun.file(`public/registry/${tenantM[1]}/registry.json`);
@@ -1801,11 +1687,6 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
       return new Response(f, { headers: { 'Content-Type': 'application/json; charset=utf-8' } });
     return json({ error: `No registry for tenant: ${tenantM[1]}` }, 404);
   }
-
-  // DOD + Channels
-  if (path === '/api/dod' || path === '/api/dod/' || path.startsWith('/api/dod/'))
-    return dodApi(req);
-  if (path === '/api/channels/events') return channelsEvents(req);
 
   const storageRes = await serveRegistryStorage(path, req);
   if (storageRes) return storageRes;
@@ -2083,7 +1964,9 @@ function buildPublicRoutes() {
     '/api/doc-refs/script.meta': (req: Request) =>
       serveVerificationScriptMeta('doc-index', new URL(req.url).origin),
     '/api/env': () => envStatus(),
+    '/api/env/': () => envStatus(),
     '/api/monitoring': () => liveMonitoringApi(),
+    '/api/monitoring/': () => liveMonitoringApi(),
     '/api/compliance': () => complianceBoardApi(),
     '/api/compliance/': () => complianceBoardApi(),
     '/api/agents/v1/limits/raises': (req: Request) => agentLimitRaisesApi(req),
@@ -2091,7 +1974,9 @@ function buildPublicRoutes() {
     '/api/agents/v1/limits/record': (req: Request) => agentLimitRecordApi(req),
     '/api/agents/v1/limits/record/': (req: Request) => agentLimitRecordApi(req),
     '/api/limits/summary': (req: Request) => limitSummaryApi(req),
+    '/api/limits/summary/': (req: Request) => limitSummaryApi(req),
     '/api/limits/analyze': () => limitAnalyzeApi(),
+    '/api/limits/analyze/': () => limitAnalyzeApi(),
     // Method maps (Bun routing docs) — prefer over req.method branching
     '/api/limits/predictions': {
       GET: () => limitPredictionsApi(),
@@ -2118,7 +2003,63 @@ function buildPublicRoutes() {
       POST: (req: Request, server: RouteServer) => packagesGraphRebake(req, server),
     },
     '/api/operations/summary': () => liveOpsSummary(),
+    '/api/operations/summary/': () => liveOpsSummary(),
     '/api/catalog': (req: Request) => liveCatalog(req),
+    '/api/catalog/': (req: Request) => liveCatalog(req),
+    '/api/portal/dashboard': async () => {
+      const { portalDashboardResponse } = await import('../lib/portal/command-centre-api.ts');
+      return portalDashboardResponse();
+    },
+    '/api/portal/dashboard/': async () => {
+      const { portalDashboardResponse } = await import('../lib/portal/command-centre-api.ts');
+      return portalDashboardResponse();
+    },
+    '/api/portal/action': async (req: Request, server: RouteServer) => {
+      const { portalActionResponse } = await import('../lib/portal/command-centre-api.ts');
+      return portalActionResponse(req, server);
+    },
+    '/api/portal/action/': async (req: Request, server: RouteServer) => {
+      const { portalActionResponse } = await import('../lib/portal/command-centre-api.ts');
+      return portalActionResponse(req, server);
+    },
+    '/api/skills': async () => json(await buildSkillsCatalog()),
+    '/api/skills/': async () => json(await buildSkillsCatalog()),
+    '/api/skills/:name': {
+      GET: async (req: BunRequest<'/api/skills/:name'>) => {
+        const detail = await buildSkillDetail(req.params.name);
+        if (!detail) return json({ error: `No such skill: ${req.params.name}` }, 404);
+        return json(detail);
+      },
+    },
+    '/api/skills/:name/package': {
+      POST: async (req: BunRequest<'/api/skills/:name/package'>) => {
+        const pubErr = await requirePublishAuth(req);
+        if (pubErr) return pubErr;
+        try {
+          const result = await packageSkill(req.params.name);
+          return json({ ok: true, ...result });
+        } catch (err) {
+          if (err instanceof SkillPackageError)
+            return json(
+              { error: err.message, code: err.code },
+              err.code === 'not-found' ? 404 : 500
+            );
+          return json({ error: err instanceof Error ? err.message : String(err) }, 500);
+        }
+      },
+    },
+    '/portal/skills/:name': {
+      GET: async (req: BunRequest<'/portal/skills/:name'>) => {
+        const detail = await buildSkillDetail(req.params.name);
+        const html = detail
+          ? renderSkillDetailPage(detail, await skillPackageExists(req.params.name))
+          : renderSkillNotFoundPage(req.params.name);
+        return new Response(html, {
+          status: detail ? 200 : 404,
+          headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
+        });
+      },
+    },
     '/api/dod': {
       GET: (req: Request) => dodApi(req),
       POST: (req: Request) => dodApi(req),
@@ -2140,8 +2081,10 @@ function buildPublicRoutes() {
       POST: (req: Request) => dodApi(req),
     },
     '/api/channels/events': (req: Request) => channelsEvents(req),
+    '/api/channels/events/': (req: Request) => channelsEvents(req),
 
     '/api/registry': () => serveRegistryIndex(),
+    '/api/registry/': () => serveRegistryIndex(),
     '/api/registry/registry.json': () => serveRegistryIndex(),
     '/api/registry/health': async () => {
       const idx = await Bun.file('public/registry/registry.json')
@@ -2188,6 +2131,7 @@ function buildPublicRoutes() {
     '/monitoring': () => monitoringPage(),
     '/monitoring/': () => monitoringPage(),
     '/llms.txt': llmsTxt(),
+    '/llms-full.txt': llmsFullTxt(),
 
     '/__hmr': (req: Request, server: RouteServer) => {
       if (server?.timeout) {
