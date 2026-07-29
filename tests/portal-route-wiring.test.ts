@@ -98,4 +98,10 @@ describe('portal route wiring', () => {
     expect(source).toContain("'/monitoring': () => monitoringPage()");
     expect(source).toContain("'/monitoring/': () => monitoringPage()");
   });
+
+  test('proof href variants remain routed after thinning the fetch fallback', async () => {
+    const source = await Bun.file('scripts/serve-public.ts').text();
+    expect(source).toContain("'/api/proof': (req: Request)");
+    expect(source).toContain("'/api/proof/': (req: Request)");
+  });
 });

@@ -256,11 +256,19 @@ Install verify spawns resolve `bun` via `lib/verification/resolve-bun-binary.ts`
 
 ### Install-hygiene audit bake
 
-`bun run bake:install-hygiene` writes `public/registry/install-hygiene-report.json` by combining the install-cache slice, the npm-install check, and a dry-run of `install:verify`. The report is projected into `monitoring.json` as `installHygiene` and consumed by `ops:snapshot`. It is informational: a failed hygiene check bakes the failure into the report rather than blocking the snapshot.
+`bun run bake:install-hygiene` writes `public/registry/install-hygiene-report.json` by combining the install-cache slice, the npm-install check, and a dry-run of `install:verify`. The same bake injects an **offline embed** into `public/portal/install-hygiene/index.html` (`#install-hygiene-embed`) so the board renders without a network fetch (vault/failures pattern). The report is projected into `monitoring.json` as `installHygiene` and consumed by `ops:snapshot`. It is informational: a failed hygiene check bakes the failure into the report rather than blocking the snapshot.
+
+| Surface | Path / command |
+|---------|----------------|
+| Board | `/portal/install-hygiene/` · `bun run portal-cli dashboard --view=install-hygiene` |
+| Registry bake | `/registry/install-hygiene-report.json` |
+| Offline embed | `#install-hygiene-embed` in board HTML (preferred load path) |
+| Rebake | `bun run bake:install-hygiene` |
 
 ```bash
 bun run bake:install-hygiene
 bun run install:verify --dry-run --json   # JSON used by the bake script
+bun run portal-cli dashboard --view=install-hygiene --open
 ```
 
 **`BUN_CONFIG_*` (env > bunfig)** — canonical: [configuring-with-environment-variables](https://bun.com/docs/pm/cli/install#configuring-with-environment-variables). SSOT: `tools/bun-install-env.ts` · runtime proof: `tools/verify-install-env.ts` · **8 probe rows** in `public/registry/install-env-proof.json` (6 env vars + `install.scopes` npm plane + `registry-read-plane` SDK plane).
