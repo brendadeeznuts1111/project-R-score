@@ -18,7 +18,7 @@ import {
   summarizeContentTypeMatrix,
   type ContentTypeDecision,
 } from '../lib/http/content-type.ts';
-import { jsonOut } from '../lib/console-depth.ts';
+import { jsonOut, logTable } from '../lib/console-depth.ts';
 
 function flag(name: string): string | undefined {
   const hit = Bun.argv.find(a => a.startsWith(`--${name}=`));
@@ -74,15 +74,9 @@ if (asJson) {
     status: r.status,
     sev: r.severity,
   }));
-  console.log(
-    Bun.inspect.table(
-      display,
-      ['id', 'side', 'default', 'our', 'wire', 'expected', 'status', 'sev'],
-      {
-        colors: true,
-      }
-    )
-  );
+  logTable(display, ['id', 'side', 'default', 'our', 'wire', 'expected', 'status', 'sev'], {
+    colors: true,
+  });
   console.log(
     `\nsummary: total=${summary.total} pass=${summary.pass} warn=${summary.warn} fail=${summary.fail}` +
       ` · byStatus ${JSON.stringify(summary.byStatus)}`

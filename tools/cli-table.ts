@@ -15,7 +15,7 @@
  * @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options
  * @see https://bun.com/docs/runtime/utils#bun-version
  */
-import { padEndWidth, truncateWidth, widthOf } from '../lib/console-depth.ts';
+import { inspectTable, padEndWidth, truncateWidth, widthOf } from '../lib/console-depth.ts';
 
 export type CliColumnAlign = 'left' | 'right';
 
@@ -172,7 +172,7 @@ export function formatInspectTable(
           bun: opts?.bun,
           cols: properties,
         });
-  const body = Bun.inspect.table(rows as Record<string, unknown>[], properties, {
+  const body = inspectTable(rows as Record<string, unknown>[], properties, {
     colors: Boolean(process.stdout.isTTY),
   });
   return `${meta}${body}\n`;

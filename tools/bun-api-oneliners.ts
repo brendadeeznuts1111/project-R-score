@@ -1,4 +1,20 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/FileSystemRouter — Bun.FileSystemRouter
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/reference/bun/RedisClient — Bun.RedisClient
+// @see https://bun.com/reference/bun/SQL — Bun.SQL
+// @see https://bun.com/reference/bun/TOML/parse — Bun.TOML.parse
+// @see https://bun.com/reference/bun/JSON5 — Bun.JSON5
+// @see https://bun.com/reference/bun/JSONC — Bun.JSONC
+// @see https://bun.com/reference/bun/JSONL — Bun.JSONL
+// @see https://bun.com/reference/bun/allocUnsafe — Bun.allocUnsafe
+// @see https://bun.com/reference/bun/concatArrayBuffers — Bun.concatArrayBuffers
+// @see https://bun.com/reference/bun/gc — Bun.gc
+// @see https://bun.com/reference/bun/generateHeapSnapshot — Bun.generateHeapSnapshot
+// @see https://bun.com/reference/bun/readableStreamToBytes — Bun.readableStreamToBytes
+// @see https://bun.com/reference/bun/semver/order — Bun.semver.order
+// @see https://bun.com/reference/bun/semver/satisfies — Bun.semver.satisfies
+// @see https://bun.com/reference/bun/Transpiler — Bun.Transpiler
 // @see https://bun.com/reference/bun/sliceAnsi — Bun.sliceAnsi
 // @see https://bun.com/docs/runtime/json5 — Bun.JSON5
 // @see https://bun.com/docs/runtime/jsonl — Bun.JSONL
@@ -19,6 +35,7 @@
  * @see ./cli-table.ts
  */
 import { formatCliTable, toolTableVersion } from './cli-table.ts';
+import { inspectTable } from '../lib/console-depth.ts';
 
 export type ApiOneliner = {
   id: string; // brand-ok — demo oneliner id
@@ -231,7 +248,7 @@ Bun.sliceAnsi("\\x1b[31mred\\x1b[0m", 0, 2);`,
 Bun.inspect.table([{ a: 1 }], ["a"]);`,
     run: () => {
       const s = Bun.inspect({ a: { b: 1 } }, { depth: 1 });
-      const t = Bun.inspect.table([{ a: 1, b: 2 }], ['a', 'b']);
+      const t = inspectTable([{ a: 1, b: 2 }], ['a', 'b']);
       return `inspect=${s.includes('a')} table=${t.includes('1')}`;
     },
   },

@@ -11,7 +11,7 @@
  *   bun tools/env-check.ts --strict   # exit 1 if required missing
  */
 import { checkEnv } from '../lib/env-check.ts';
-import { jsonOut } from '../lib/console-depth.ts';
+import { jsonOut, logTable } from '../lib/console-depth.ts';
 import { describeChannelAuth, probeChannelAuth } from '../lib/verification/channels.ts';
 
 const args = Bun.argv.slice(2);
@@ -51,11 +51,9 @@ if (json) {
   console.log(
     `${report.summary.ok}/${report.summary.total} ok · missing ${report.summary.missing} · placeholder ${report.summary.placeholder} · required gaps ${report.summary.requiredMissing}`
   );
-  console.log(
-    Bun.inspect.table(report.table, ['Key', 'Group', 'Severity', 'Status', 'Detail'], {
-      colors: true,
-    })
-  );
+  logTable(report.table, ['Key', 'Group', 'Severity', 'Status', 'Detail'], {
+    colors: true,
+  });
   if (report.summary.requiredMissing > 0) {
     const keys = report.rows.filter(r => r.severity === 'required' && !r.ok).map(r => r.key);
     console.log('\nRequired missing:', keys.join(', '));

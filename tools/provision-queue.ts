@@ -21,7 +21,7 @@ import {
   type ProvisionStep,
 } from '../lib/provisioning/queue.ts';
 import { runAutomatedTestTask } from '../lib/provisioning/run-automated.ts';
-import { logDepth } from '../lib/console-depth.ts';
+import { logDepth, logTable } from '../lib/console-depth.ts';
 
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 const args = process.argv.slice(2);
@@ -62,17 +62,15 @@ try {
       const step = flag('step') as ProvisionStep | undefined;
       const mode = flag('mode') as ProvisionMode | undefined;
       const rows = listTasks(db, { step, mode, limit: 50 });
-      console.log(
-        Bun.inspect.table(
-          rows.map(r => ({
-            id: r.id.slice(0, 8),
-            platform: r.platform_id,
-            partner: r.partner_id.slice(0, 8),
-            mode: r.mode,
-            step: r.step,
-            error: r.last_error?.slice(0, 40) ?? '',
-          }))
-        )
+      logTable(
+        rows.map(r => ({
+          id: r.id.slice(0, 8),
+          platform: r.platform_id,
+          partner: r.partner_id.slice(0, 8),
+          mode: r.mode,
+          step: r.step,
+          error: r.last_error?.slice(0, 40) ?? '',
+        }))
       );
       break;
     }

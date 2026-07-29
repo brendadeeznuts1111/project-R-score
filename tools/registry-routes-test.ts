@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://github.com/brendadeeznuts1111/project-R-score/blob/main/packages/registry-client/README.md — RegistryClient
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve routes
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
@@ -17,6 +19,7 @@
 import { createMemoryObjectStore } from '../lib/factory/object-store.ts';
 import { RegistryClient } from '../lib/factory/registry.ts';
 import { createRegistryServer } from '../lib/factory/server.ts';
+import { logTable } from '../lib/console-depth.ts';
 
 type Row = {
   path: string;
@@ -93,18 +96,16 @@ async function probe(
 
 function printTable(title: string, results: Row[]): string {
   console.log(title);
-  console.log(
-    Bun.inspect.table(
-      results.map(r => ({
-        Endpoint: `${r.method} ${r.path}`,
-        Status: r.status,
-        OK: r.ok ? '✅' : '❌',
-        Time: r.ms,
-        'Content-Type': r.type,
-      })),
-      ['Endpoint', 'Status', 'OK', 'Time', 'Content-Type'],
-      { colors: true }
-    )
+  logTable(
+    results.map(r => ({
+      Endpoint: `${r.method} ${r.path}`,
+      Status: r.status,
+      OK: r.ok ? '✅' : '❌',
+      Time: r.ms,
+      'Content-Type': r.type,
+    })),
+    ['Endpoint', 'Status', 'OK', 'Time', 'Content-Type'],
+    { colors: true }
   );
   const hasher = new Bun.CryptoHasher('sha256');
   hasher.update(JSON.stringify(results));

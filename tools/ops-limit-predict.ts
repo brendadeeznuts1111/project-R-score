@@ -13,7 +13,7 @@
  *   bun run ops:limits:predict --partner partner-42 --inspect
  *   bun --console-depth=6 run ops:limits:predict --partner partner-42
  */
-import { jsonOut } from '../lib/console-depth.ts';
+import { jsonOut, logTable } from '../lib/console-depth.ts';
 import { openOperationsDb } from '../lib/operations/db.ts';
 import { ensureAccountLimitsSchema } from '../lib/account-limits-repo.ts';
 import {
@@ -111,11 +111,9 @@ function main(): void {
           value: result.accuracy?.n ? result.accuracy.bias.toFixed(4) : '—',
         },
       ];
-      console.log(
-        Bun.inspect.table(summaryRows, ['metric', 'value'], {
-          colors: true,
-        })
-      );
+      logTable(summaryRows, ['metric', 'value'], {
+        colors: true,
+      });
       if (!result.accuracy || result.accuracy.n === 0) {
         console.log('  No accuracy data yet — predictions will backfill on next cycle.');
       }

@@ -16,6 +16,7 @@
  * @see https://bun.com/docs/typescript-6
  */
 import { Glob } from 'bun';
+import { logTable } from '../lib/console-depth';
 import { dirnamePath, resolvePath } from '../lib/path-bun';
 
 type TsConfig = {
@@ -275,7 +276,7 @@ if (import.meta.main) {
     `${JSON.stringify({ generated: new Date().toISOString(), summary, rows }, null, 2)}\n`
   );
 
-  console.log(Bun.inspect.table([{ ...summary }], undefined, { colors: true }));
+  logTable([{ ...summary }], undefined, { colors: true });
   console.log(`wrote ${outPath}`);
 
   console.log('\nTS6-risk (omit after extends walk):');

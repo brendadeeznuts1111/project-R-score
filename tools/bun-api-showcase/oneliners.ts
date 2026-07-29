@@ -1,4 +1,20 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/FileSystemRouter — Bun.FileSystemRouter
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/reference/bun/RedisClient — Bun.RedisClient
+// @see https://bun.com/reference/bun/SQL — Bun.SQL
+// @see https://bun.com/reference/bun/TOML/parse — Bun.TOML.parse
+// @see https://bun.com/reference/bun/JSON5 — Bun.JSON5
+// @see https://bun.com/reference/bun/JSONC — Bun.JSONC
+// @see https://bun.com/reference/bun/JSONL — Bun.JSONL
+// @see https://bun.com/reference/bun/allocUnsafe — Bun.allocUnsafe
+// @see https://bun.com/reference/bun/concatArrayBuffers — Bun.concatArrayBuffers
+// @see https://bun.com/reference/bun/gc — Bun.gc
+// @see https://bun.com/reference/bun/generateHeapSnapshot — Bun.generateHeapSnapshot
+// @see https://bun.com/reference/bun/readableStreamToBytes — Bun.readableStreamToBytes
+// @see https://bun.com/reference/bun/semver/order — Bun.semver.order
+// @see https://bun.com/reference/bun/semver/satisfies — Bun.semver.satisfies
+// @see https://bun.com/reference/bun/Transpiler — Bun.Transpiler
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/utils#bun-stripansi — Bun.stripANSI
 // @see https://bun.com/docs/runtime/utils#bun-wrapansi — Bun.wrapAnsi
@@ -92,6 +108,7 @@
  *
  * Corrections vs the original one-liner set are marked `// FIX:`.
  */
+import { inspectTable } from '../../lib/console-depth.ts';
 
 export type ShowcaseDemo = {
   id: string; // brand-ok — demo oneliner id
@@ -256,7 +273,7 @@ export const demos: ShowcaseDemo[] = [
     run() {
       // NOTE: inspect.table's columns arg is a key allowlist, not positional labels —
       // array rows render empty cells; pass objects (keys become headers).
-      const t = Bun.inspect.table([
+      const t = inspectTable([
         { A: 1, B: 2 },
         { A: 3, B: 4 },
       ]);

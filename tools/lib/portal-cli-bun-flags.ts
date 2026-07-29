@@ -14,6 +14,7 @@ import {
   BUN_REPOSITORY_URL,
   BUN_TYPES_SOURCE_URL,
 } from '../../lib/docs/bun-source-links.ts';
+import { inspectTable } from '../../lib/console-depth.ts';
 import { joinPath } from '../../scripts/lib/fs-bun.ts';
 import catalogJson from '../../config/runtime-flags.json' with { type: 'json' };
 
@@ -632,20 +633,7 @@ export function formatRuntimeFlagsTable(opts: FormatRuntimeFlagsTableOpts = {}):
 
   let table: string;
   try {
-    const columns = opts.verbose
-      ? [
-          'flag',
-          'shortcode',
-          'category',
-          'description',
-          'takesValue',
-          'version',
-          'default',
-          'deprecated',
-          'behavior',
-        ]
-      : ['flag', 'shortcode', 'category', 'description', 'takesValue'];
-    table = Bun.inspect.table(tableRows, { columns, colors: false });
+    table = inspectTable(tableRows, undefined, { colors: false });
   } catch {
     table = tableRows
       .map(

@@ -29,7 +29,7 @@
  *   bun run portal:probe
  */
 import { joinPath } from '../lib/path-bun.ts';
-import { jsonOut } from '../lib/console-depth.ts';
+import { jsonOut, logTable } from '../lib/console-depth.ts';
 
 const ROOT = process.cwd();
 const argv = Bun.argv.slice(2);
@@ -136,9 +136,7 @@ async function probeWorkspaces(): Promise<ProbeResult> {
   }
   if (!asJson) {
     say(true, `${rows.length} workspace package.json files`);
-    console.log(
-      Bun.inspect.table(rows, ['path', 'name', 'version', 'snapshotScope'], { colors: true })
-    );
+    logTable(rows, ['path', 'name', 'version', 'snapshotScope'], { colors: true });
   }
   return { name: 'workspaces', ok: rows.length > 0, detail: rows };
 }
@@ -364,7 +362,7 @@ async function probeSnapshotsList(): Promise<ProbeResult> {
   if (!asJson) {
     say(true, `${rows.length} snapshot(s)`);
     if (rows.length) {
-      console.log(Bun.inspect.table(rows, ['path', 'scope', 'timestamp'], { colors: true }));
+      logTable(rows, ['path', 'scope', 'timestamp'], { colors: true });
     }
   }
   return { name: 'snapshots', ok: true, detail: rows };

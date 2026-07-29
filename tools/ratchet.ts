@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/bundler/executables — --force
@@ -12,6 +13,7 @@
  */
 
 import { getChannelDelta, ratchetVerify } from '../lib/verification/ratchet.ts';
+import { logTable } from '../lib/console-depth.ts';
 
 const args = Bun.argv.slice(2);
 const channel = args.find(a => a.startsWith('--channel='))?.slice(10) ?? 'stable';
@@ -36,22 +38,20 @@ if (result.skipped) {
 }
 
 const { current, previous, regressed, diff } = result;
-console.log(
-  Bun.inspect.table([
-    {
-      Record: 'previous',
-      Version: previous?.version ?? '—',
-      Passed: previous ? `${previous.summary.passed}/${previous.summary.total}` : '—',
-      Hash: previous?.proofHash.slice(0, 12) ?? '—',
-    },
-    {
-      Record: 'current',
-      Version: current.version,
-      Passed: `${current.summary.passed}/${current.summary.total}`,
-      Hash: current.proofHash.slice(0, 12),
-    },
-  ])
-);
+logTable([
+  {
+    Record: 'previous',
+    Version: previous?.version ?? '—',
+    Passed: previous ? `${previous.summary.passed}/${previous.summary.total}` : '—',
+    Hash: previous?.proofHash.slice(0, 12) ?? '—',
+  },
+  {
+    Record: 'current',
+    Version: current.version,
+    Passed: `${current.summary.passed}/${current.summary.total}`,
+    Hash: current.proofHash.slice(0, 12),
+  },
+]);
 
 if (regressed) {
   if (force) {

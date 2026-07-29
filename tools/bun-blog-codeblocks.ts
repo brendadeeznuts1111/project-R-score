@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
@@ -21,6 +22,7 @@
  *   bun tools/bun-blog-codeblocks.ts --rss
  */
 import { parseArgs } from 'util';
+import { logTable } from '../lib/console-depth.ts';
 import { buildDerivedApiRows, matchBlocksToTokens } from '../lib/docs/blog-codeblock-join.ts';
 import {
   decodeHtmlEntities,
@@ -392,7 +394,7 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
     lines: b.code.split('\n').length,
     preview: previewLine(b.code),
   }));
-  console.log(Bun.inspect.table(rows, ['#', 'section', 'lines', 'preview'], { colors: true }));
+  logTable(rows, ['#', 'section', 'lines', 'preview'], { colors: true });
 
   const sectionNum =
     values.section != null && values.section !== ''

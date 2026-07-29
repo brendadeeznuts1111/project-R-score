@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Registry proof dist-tag lifecycle CLI.
@@ -22,6 +25,7 @@ import {
   type ProofPackageId,
   REGISTRY_DIST_TAGS,
 } from '../lib/registry-tags.ts';
+import { logTable } from '../lib/console-depth.ts';
 
 const args = Bun.argv.slice(2);
 const cmd = args[0] ?? 'status';
@@ -47,7 +51,7 @@ if (cmd === 'status') {
   if (rows.length === 0) {
     console.log('No proof packages yet. Run: bun run ops:snapshot');
   } else {
-    console.log(Bun.inspect.table(rows, ['Package', 'pre', 'post', 'latest', 'stable', 'versions'], { colors: true }));
+    logTable(rows, ['Package', 'pre', 'post', 'latest', 'stable', 'versions'], { colors: true });
   }
   process.exit(0);
 }
@@ -89,7 +93,8 @@ if (cmd === 'promote') {
 
 if (cmd === 'upgrade') {
   const fromIdx = args.indexOf('--from');
-  const from = (fromIdx >= 0 ? args[fromIdx + 1] : REGISTRY_DIST_TAGS.pre) ?? REGISTRY_DIST_TAGS.pre;
+  const from =
+    (fromIdx >= 0 ? args[fromIdx + 1] : REGISTRY_DIST_TAGS.pre) ?? REGISTRY_DIST_TAGS.pre;
   const index = loadProofIndex();
   const rows = PROOF_PACKAGES.map(name => {
     const u = describeUpgrade(index, name, from);
@@ -100,7 +105,7 @@ if (cmd === 'upgrade') {
       Action: u.action,
     };
   });
-  console.log(Bun.inspect.table(rows, ['Package', 'From', 'To', 'Action'], { colors: true }));
+  logTable(rows, ['Package', 'From', 'To', 'Action'], { colors: true });
   console.log('\nPromote: bun tools/registry-tags-cli.ts promote --all');
   console.log('Post-deploy snapshot: SNAPSHOT_PHASE=post bun run ops:snapshot');
   process.exit(0);

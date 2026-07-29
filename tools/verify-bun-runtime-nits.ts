@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/reference/globals/DecompressionStream — DecompressionStream
 // @see https://bun.com/reference/globals/TextDecoderStream — TextDecoderStream
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
@@ -16,6 +17,7 @@
  */
 
 import { CANONICAL_RUNTIME_NITS_TOKENS } from './bun-doc-refs.ts';
+import { logTable } from '../lib/console-depth.ts';
 import { buildSemanticTags } from '../lib/verification/channels.ts';
 import {
   BUN_RUNTIME_NITS_PROOF_REPORT_PATH,
@@ -378,7 +380,7 @@ if (import.meta.main) {
     Actual: r.actual,
     Pass: r.passed ? '✅' : '❌',
   }));
-  console.log(Bun.inspect.table(rows));
+  logTable(rows);
   console.log(`\n${proof.summary.passed}/${proof.summary.total} passed`);
   console.log(`Proof hash: ${proof.proofHash}`);
 

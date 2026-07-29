@@ -78,7 +78,7 @@
 import { Database } from 'bun:sqlite';
 import { cc, FFIType, suffix } from 'bun:ffi';
 import { formatCliTable } from './cli-table.ts';
-import { ansiMarkdown, colorize } from '../lib/console-depth.ts';
+import { ansiMarkdown, colorize, inspectTable } from '../lib/console-depth.ts';
 
 export type ShowcaseGate = 'offline' | 'network' | 'env' | 'ui';
 
@@ -176,7 +176,7 @@ export const SHOWCASE_DEMOS: readonly ShowcaseDemo[] = [
       }>;
       const ok = await Bun.password.verify('secret', hash);
       if (!ok) throw new Error('password verify failed');
-      log(Bun.inspect.table(rows, ['n', 'p']));
+      log(inspectTable(rows, ['n', 'p']));
       return `users=${rows.length} verify=ok`;
     },
   },
@@ -370,7 +370,7 @@ export const SHOWCASE_DEMOS: readonly ShowcaseDemo[] = [
       const ms = (Bun.nanoseconds() - t0) / 1e6;
       if (!out.success) throw new Error(out.logs.map(String).join('\n') || 'build failed');
       const rows = out.outputs.map(o => ({ path: o.path.split('/').pop(), size: o.size }));
-      log(Bun.inspect.table(rows, ['path', 'size']));
+      log(inspectTable(rows, ['path', 'size']));
       return `outputs=${out.outputs.length} ${ms.toFixed(1)}ms`;
     },
   },
@@ -508,7 +508,7 @@ export function load(path: string) {
       ]);
       await Promise.all([p1.exited, p2.exited]);
       const rows = [{ bun: v1.trim(), print: v2.trim() }];
-      log(Bun.inspect.table(rows, ['bun', 'print']));
+      log(inspectTable(rows, ['bun', 'print']));
       return `bun=${v1.trim()} print=${v2.trim()}`;
     },
   },
@@ -530,7 +530,7 @@ export function load(path: string) {
         const [c1, c2, c3] = l.split(',');
         return { c1, c2, c3 };
       });
-      log(Bun.inspect.table(table, ['c1', 'c2', 'c3']));
+      log(inspectTable(table, ['c1', 'c2', 'c3']));
       return `bytes=${bytes.byteLength} rows=${table.length}`;
     },
   },
@@ -599,7 +599,7 @@ export function load(path: string) {
       const sql = new Bun.SQL(Bun.env.DATABASE_URL!);
       try {
         const rows = await sql`SELECT 1 AS id, 'showcase' AS name`;
-        log(Bun.inspect.table(rows as object[], ['id', 'name']));
+        log(inspectTable(rows as object[], ['id', 'name']));
         return `rows=${(rows as unknown[]).length}`;
       } finally {
         await sql.close();
@@ -673,7 +673,7 @@ export function load(path: string) {
         }
       }
       const table = Object.entries(checks).map(([component, status]) => ({ component, status }));
-      log(Bun.inspect.table(table, ['component', 'status']));
+      log(inspectTable(table, ['component', 'status']));
       if (checks.file !== 'ok' || checks.sql !== 'ok') throw new Error('health failed');
       return table.map(r => `${r.component}=${r.status}`).join(' ');
     },

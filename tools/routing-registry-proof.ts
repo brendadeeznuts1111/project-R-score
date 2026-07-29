@@ -24,7 +24,7 @@ import {
   writeRoutingArtifact,
   ROUTING_ARTIFACT_PACKAGE,
 } from '../lib/routing-proof.ts';
-import { jsonOut } from '../lib/console-depth.ts';
+import { jsonOut, logTable } from '../lib/console-depth.ts';
 
 const argv = Bun.argv.slice(2);
 const writeLocal = argv.includes('--write');
@@ -55,12 +55,10 @@ if (jsonOnly) {
   console.log('Registry routing proof v2');
   console.log(`Base: ${result.baseUrl} · concurrency ${result.concurrency}`);
   console.log(`Bun v${result.bunVersion} (${result.bunRevision})`);
-  console.log(
-    Bun.inspect.table(
-      routingTableRows(result),
-      ['Endpoint', 'Status', 'OK', 'Pass', 'Crit', 'Time', 'Type', 'Note'],
-      { colors: true }
-    )
+  logTable(
+    routingTableRows(result),
+    ['Endpoint', 'Status', 'OK', 'Pass', 'Crit', 'Time', 'Type', 'Note'],
+    { colors: true }
   );
   const { latency, summary } = result;
   console.log(
