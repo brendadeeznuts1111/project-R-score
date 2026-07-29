@@ -51,7 +51,15 @@ export type SurfaceWire = {
   protocol: string;
   access: string;
   note: string;
+  /** Expected zone CNAME target ('' = no record expected); verified vs CF API. */
+  dnsTarget?: string;
   accessSubpaths?: Array<{ path: string; access: string }>;
+};
+
+/** Wire shape of the [mail] plane ([[mail.mx]] / [[mail.txt]]). */
+export type MailPlaneWire = {
+  mx?: Array<{ host: string; target: string; priority: number }>;
+  txt?: Array<{ host: string; content: string; purpose: string }>;
 };
 
 /** Interior surface record — fully branded + derived shortcodes. */
@@ -70,6 +78,8 @@ export type SurfaceRecord = {
   protocol: string;
   access: SurfaceAccessCode;
   note: string;
+  /** Expected zone CNAME target ('' = no record expected); passthrough from TOML. */
+  dnsTarget?: string; // brand-ok — DNS record content, not a minted domain ID
   accessSubpaths?: SurfaceAccessSubpath[];
 };
 
@@ -92,6 +102,7 @@ export type PublishLaneRecord = {
 export type SurfacesInventory = {
   surfaces: readonly SurfaceRecord[];
   publishLanes: readonly PublishLaneRecord[];
+  mail: MailPlaneWire;
   byId: ReadonlyMap<SurfaceId, SurfaceRecord>;
   byHost: ReadonlyMap<HostId, SurfaceRecord>;
   /** First surface for each DNS subdomain label (under any apex). */
@@ -105,6 +116,7 @@ export type SurfacesInventory = {
 type SurfacesToml = {
   surfaces: Record<string, SurfaceWire>;
   publish?: Record<string, PublishLaneWire>;
+  mail?: MailPlaneWire;
 };
 
 function groupBy<K, V>(items: readonly V[], keyOf: (v: V) => K | undefined): Map<K, V[]> {
@@ -146,6 +158,7 @@ export function parseSurfaceRecord(rawKey: string, wire: SurfaceWire): SurfaceRe
     protocol: wire.protocol,
     access: asSurfaceAccessCode(wire.access),
     note: wire.note,
+    dnsTarget: wire.dnsTarget,
     accessSubpaths,
   };
 }
@@ -308,6 +321,7 @@ export function parseSurfacesToml(text: string): SurfacesInventory {
   return {
     surfaces,
     publishLanes,
+    mail: inv.mail ?? {},
     byId,
     byHost,
     bySubdomain: groupBy(surfaces, s => s.subdomain),

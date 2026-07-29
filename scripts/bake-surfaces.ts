@@ -20,6 +20,7 @@
  *   bun run surfaces:bake -- --check
  *   bun run surfaces:bake -- --probe          # live DNS+HTTP re-verification (opt-in)
  *   bun run surfaces:bake -- --probe --check  # fail on live drift vs TOML status
+ *   bun run surfaces:bake -- --zone-check     # CF API: TOML dnsTarget/mail vs live zone
  */
 import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
 import {
@@ -44,12 +45,46 @@ import { resolvePath } from './lib/fs-bun';
 const ROOT = resolvePath(import.meta.dir, '..');
 const CHECK = Bun.argv.includes('--check');
 const PROBE = Bun.argv.includes('--probe');
+const ZONE_CHECK = Bun.argv.includes('--zone-check');
 const TOML = `${ROOT}/config/surfaces.toml`;
 const OUTPUT = `${ROOT}/public/registry/surfaces-state.json`;
 
 function comparableState(value: Record<string, unknown>): Record<string, unknown> {
-  const { probe: _probe, ...rest } = value;
+  const { probe: _probe, zoneCheck: _zoneCheck, ...rest } = value;
   return { ...rest, generatedAt: '' };
+}
+
+// ── Zone check (opt-in, CF API) ───────────────────────────────────────
+// Compares TOML dnsTarget / mail records against the live zone. Token from
+// CLOUDFLARE_DNS_API_TOKEN ?? CLOUDFLARE_API_TOKEN — never logged.
+
+export type ZoneRecord = { type: string; name: string; content: string };
+
+export function zoneDrift(
+  surfaces: ReadonlyArray<{ id: unknown; host: unknown; dnsTarget?: string }>,
+  mail: { mx?: Array<{ host: string; target: string; priority: number }> },
+  live: readonly ZoneRecord[]
+): string[] {
+  const issues: string[] = [];
+  for (const s of surfaces) {
+    const host = String(s.host);
+    const expected = s.dnsTarget ?? '';
+    const cname = live.find(r => r.type === 'CNAME' && r.name === host);
+    if (expected) {
+      if (!cname) {
+        issues.push(`${String(s.id)}: expected CNAME ${host} → ${expected} — no live record`);
+      } else if (cname.content !== expected) {
+        issues.push(`${String(s.id)}: CNAME target drift — toml=${expected} live=${cname.content}`);
+      }
+    } else if (cname) {
+      issues.push(`${String(s.id)}: live CNAME ${host} → ${cname.content} but TOML expects none`);
+    }
+  }
+  for (const mx of mail.mx ?? []) {
+    const found = live.some(r => r.type === 'MX' && r.name === mx.host && r.content === mx.target);
+    if (!found) issues.push(`mail: expected MX ${mx.host} → ${mx.target} (${mx.priority})`);
+  }
+  return issues;
 }
 
 // ── Live probe (opt-in) ────────────────────────────────────────────────
@@ -189,6 +224,7 @@ async function main(): Promise<void> {
     source: 'config/surfaces.toml (dig+curl verified 2026-07-28)',
     surfaces,
     publishLanes: lanes,
+    mail: inventory.mail,
     crossCheck: { ok: issues.length === 0, issues },
     summary: {
       ...summary,
@@ -230,6 +266,35 @@ async function main(): Promise<void> {
     };
   }
 
+  // Opt-in zone check — TOML dnsTarget/mail vs live zone via CF API.
+  let zoneIssues: string[] = [];
+  if (ZONE_CHECK) {
+    const token = Bun.env.CLOUDFLARE_DNS_API_TOKEN?.trim() || Bun.env.CLOUDFLARE_API_TOKEN?.trim();
+    if (!token) {
+      console.warn('⚠ --zone-check: no CLOUDFLARE_DNS_API_TOKEN / CLOUDFLARE_API_TOKEN — skipped');
+    } else {
+      const zoneId = CLOUDFLARE_DEFAULTS.zones.factoryWager.id;
+      const res = await fetch(
+        `https://api.cloudflare.com/client/v4/zones/${zoneId}/dns_records?per_page=100`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const body = (await res.json()) as {
+        success: boolean;
+        errors?: Array<{ message: string }>;
+        result?: ZoneRecord[];
+      };
+      if (!body.success) {
+        zoneIssues.push(`zone API error: ${body.errors?.[0]?.message ?? res.status}`);
+      } else {
+        zoneIssues = zoneDrift(surfaces, inventory.mail, body.result ?? []);
+        (state as { zoneCheck?: { ok: boolean; issues: string[] } }).zoneCheck = {
+          ok: zoneIssues.length === 0,
+          issues: zoneIssues,
+        };
+      }
+    }
+  }
+
   if (CHECK) {
     const output = Bun.file(OUTPUT);
     if (!(await output.exists())) {
@@ -256,7 +321,18 @@ async function main(): Promise<void> {
       `probe: ${probeRows.length - probeDrift.length}/${probeRows.length} surfaces match live state${probeDrift.length ? ` — ${probeDrift.length} DRIFT` : ''}`
     );
   }
-  if (issues.length > 0 || (CHECK && probeDrift.length > 0)) process.exit(1);
+  if (ZONE_CHECK && zoneIssues.length === 0) {
+    console.log('zone-check: ok — TOML dnsTarget/mail matches live zone');
+  }
+  for (const i of zoneIssues) console.log(`  ✗ ${i}`);
+
+  if (
+    issues.length > 0 ||
+    (CHECK && probeDrift.length > 0) ||
+    (ZONE_CHECK && zoneIssues.length > 0)
+  ) {
+    process.exit(1);
+  }
 }
 
 if (import.meta.main) await main();

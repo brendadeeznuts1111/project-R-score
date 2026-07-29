@@ -6,12 +6,14 @@ import {
   pickDoctorBadge,
   pickFailuresBadge,
   pickHealthBadge,
+  pickInstallHygieneBadge,
   pickPackagesBadge,
   pickVaultBadge,
   toneBrandsBadge,
   toneDoctorBadge,
   toneFailuresBadge,
   toneHealthBadge,
+  toneInstallHygieneBadge,
   tonePackagesBadge,
   toneVaultBadge,
 } from '../public/portal/nav-badges.js';
@@ -65,6 +67,40 @@ describe('nav-badges pure pickers', () => {
     expect(toneDoctorBadge('yellow')).toBe('warn');
     expect(toneDoctorBadge('red')).toBe('bad');
   });
+
+  test('install-hygiene pick + badge tones', () => {
+    expect(
+      pickInstallHygieneBadge({
+        kind: 'install-hygiene',
+        ok: true,
+        installCache: { wouldPrune: false },
+        npmInstall: { ok: true },
+        installVerify: { ok: true },
+      })
+    ).toBe('ok');
+    expect(
+      pickInstallHygieneBadge({
+        kind: 'install-hygiene',
+        ok: false,
+        installCache: { wouldPrune: true },
+        npmInstall: { ok: true },
+        installVerify: { ok: true },
+      })
+    ).toBe('prune');
+    expect(
+      pickInstallHygieneBadge({
+        kind: 'install-hygiene',
+        ok: false,
+        installCache: { wouldPrune: true },
+        npmInstall: { ok: false },
+        installVerify: { ok: true },
+      })
+    ).toBe('fail');
+    expect(pickInstallHygieneBadge({ kind: 'other' })).toBeNull();
+    expect(toneInstallHygieneBadge('ok')).toBe('ok');
+    expect(toneInstallHygieneBadge('prune')).toBe('warn');
+    expect(toneInstallHygieneBadge('fail')).toBe('bad');
+  });
 });
 
 describe('capability-map-subset normalize', () => {
@@ -106,6 +142,8 @@ describe('nav-badges + tools-hub static modules', () => {
     expect(src).toContain('/registry/monorepo-health.json');
     expect(src).toContain('/registry/doctor-state.json');
     expect(src).toContain('/portal/doctor/');
+    expect(src).toContain('/registry/install-hygiene-report.json');
+    expect(src).toContain('/portal/install-hygiene/');
     expect(src).toContain('applyNavBadges');
     expect(src).not.toContain('password');
     expect(src).toContain('activeItems');

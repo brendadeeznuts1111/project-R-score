@@ -85,6 +85,56 @@ describe('bake-surfaces', () => {
   });
 });
 
+describe('bake-surfaces --zone-check drift rules', () => {
+  test('zoneDrift flags missing/mismatched CNAMEs and unexpected records', async () => {
+    const { zoneDrift } = await import('../scripts/bake-surfaces.ts');
+    const surfaces = [
+      { id: 'score', host: 'score.factory-wager.com', dnsTarget: 'project-r-score.pages.dev' },
+      { id: 'terminal', host: 'terminal.factory-wager.com', dnsTarget: '' },
+    ];
+    // clean: expected CNAME present, retired absent
+    expect(
+      zoneDrift(
+        surfaces,
+        {},
+        [{ type: 'CNAME', name: 'score.factory-wager.com', content: 'project-r-score.pages.dev' }]
+      )
+    ).toEqual([]);
+    // missing expected record
+    expect(zoneDrift(surfaces, {}, [])).toEqual([
+      'score: expected CNAME score.factory-wager.com → project-r-score.pages.dev — no live record',
+    ]);
+    // target drift
+    expect(
+      zoneDrift(
+        surfaces,
+        {},
+        [{ type: 'CNAME', name: 'score.factory-wager.com', content: 'other.pages.dev' }]
+      )
+    ).toEqual(['score: CNAME target drift — toml=project-r-score.pages.dev live=other.pages.dev']);
+    // unexpected record on retired host
+    expect(
+      zoneDrift(
+        surfaces,
+        {},
+        [
+          { type: 'CNAME', name: 'score.factory-wager.com', content: 'project-r-score.pages.dev' },
+          { type: 'CNAME', name: 'terminal.factory-wager.com', content: 'dead.cfargotunnel.com' },
+        ]
+      )
+    ).toEqual([
+      'terminal: live CNAME terminal.factory-wager.com → dead.cfargotunnel.com but TOML expects none',
+    ]);
+    // MX expectations
+    const mail = { mx: [{ host: 'factory-wager.com', target: 'mail.protonmail.ch', priority: 10 }] };
+    expect(
+      zoneDrift([], mail, [{ type: 'MX', name: 'factory-wager.com', content: 'mail.protonmail.ch' }])
+    ).toEqual([]);
+    expect(zoneDrift([], mail, [])).toEqual([
+      'mail: expected MX factory-wager.com → mail.protonmail.ch (10)',
+    ]);
+  });
+});
 describe('bake-surfaces --probe drift rules', () => {
   test('probeDriftFor maps status × DNS × HTTP to drift verdicts', async () => {
     const { probeDriftFor } = await import('../scripts/bake-surfaces.ts');

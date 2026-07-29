@@ -9,6 +9,7 @@
  *   Brands    → /registry/bun-brand-map.json summary.attention
  *   Health    → /registry/monorepo-health.json score (optional)
  *   Doctor    → /registry/doctor-state.json tone (green/yellow/red)
+ *   Install hygiene → /registry/install-hygiene-report.json (ok / prune / fail)
  *
  * @see lib/portal/chrome-catalog.ts data-cli / data-group
  */
@@ -99,6 +100,27 @@ export function toneDoctorBadge(tone) {
   return 'neutral';
 }
 
+/**
+ * Install-hygiene badge label: ok | prune | fail | null.
+ * @param {object|null|undefined} data
+ * @returns {string|null}
+ */
+export function pickInstallHygieneBadge(data) {
+  if (!data || data.kind !== 'install-hygiene') return null;
+  if (data.npmInstall?.ok === false || data.installVerify?.ok === false) return 'fail';
+  if (data.installCache?.wouldPrune === true || data.ok === false) return 'prune';
+  if (data.ok === true) return 'ok';
+  return 'ok';
+}
+
+/** @param {string|null} label */
+export function toneInstallHygieneBadge(label) {
+  if (label === 'ok') return 'ok';
+  if (label === 'prune') return 'warn';
+  if (label === 'fail') return 'bad';
+  return 'neutral';
+}
+
 const BADGE_SPECS = [
   {
     href: '/portal/failures/',
@@ -136,6 +158,13 @@ const BADGE_SPECS = [
     source: '/registry/doctor-state.json',
     pick: pickDoctorBadge,
     tone: toneDoctorBadge,
+    format: t => String(t),
+  },
+  {
+    href: '/portal/install-hygiene/',
+    source: '/registry/install-hygiene-report.json',
+    pick: pickInstallHygieneBadge,
+    tone: toneInstallHygieneBadge,
     format: t => String(t),
   },
 ];

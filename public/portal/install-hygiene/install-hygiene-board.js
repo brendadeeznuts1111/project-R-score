@@ -101,6 +101,96 @@ export function toneFromReport(report) {
 }
 
 /**
+ * Operator actions (copy-CLI ready). Color-coded by urgency.
+ * @param {Record<string, unknown>|null|undefined} report
+ * @returns {{ title: string, cli: string, tone: Tone, why: string }[]}
+ */
+export function buildRecommendedActions(report) {
+  /** @type {{ title: string, cli: string, tone: Tone, why: string }[]} */
+  const actions = [
+    {
+      title: 'Rebake report + board embed',
+      cli: 'bun run bake:install-hygiene',
+      tone: 'neutral',
+      why: 'Refresh offline embed and /registry/install-hygiene-report.json',
+    },
+    {
+      title: 'install:verify (dry-run JSON)',
+      cli: 'bun run install:verify --dry-run --json',
+      tone: 'neutral',
+      why: 'Same plane the bake uses for installVerify checks',
+    },
+  ];
+  if (!report || report.kind !== 'install-hygiene') {
+    actions[0].tone = 'yellow';
+    return actions;
+  }
+  const cache = /** @type {Record<string, unknown>} */ (report.installCache || {});
+  const npm = /** @type {Record<string, unknown>} */ (report.npmInstall || {});
+  const verify = /** @type {Record<string, unknown>} */ (report.installVerify || {});
+
+  if (cache.wouldPrune === true) {
+    actions.push({
+      title: 'Cache lifecycle dry-run',
+      cli: 'bun run install:cache:lifecycle',
+      tone: 'yellow',
+      why: String(cache.pruneReason || 'cache over BUN_CACHE_PRUNE_MAX_MB threshold'),
+    });
+    actions.push({
+      title: 'Prune install cache (destructive)',
+      cli: 'bun run install:cache:prune',
+      tone: 'red',
+      why: 'Runs bun pm cache rm when over threshold on allowed runners',
+    });
+  }
+  if (cache.bunPmCacheMismatch) {
+    actions.push({
+      title: 'Check bun pm cache path',
+      cli: 'bun scripts/check-bun-pm-cache.ts',
+      tone: 'yellow',
+      why: String(cache.bunPmCacheMismatch),
+    });
+  }
+  if (npm.ok === false) {
+    actions.push({
+      title: 'Scan npm-install policy',
+      cli: 'bun scripts/check-npm-install.ts',
+      tone: 'red',
+      why: 'Production paths must not shell out to npm/yarn/pnpm install',
+    });
+  }
+  if (verify.ok === false) {
+    actions.push({
+      title: 'install:verify (verbose)',
+      cli: 'bun run install:verify',
+      tone: 'red',
+      why: 'Fix failed install policy / cache / lockfile checks',
+    });
+  }
+  return actions;
+}
+
+/**
+ * Cache fill ratio 0–1+ for meter (null if unknown).
+ * @param {Record<string, unknown>|null|undefined} cache
+ * @returns {{ ratio: number, pct: number, tone: Tone, label: string }|null}
+ */
+export function cacheMeterFromSlice(cache) {
+  if (!cache || typeof cache !== 'object') return null;
+  const size = typeof cache.sizeBytes === 'number' ? cache.sizeBytes : null;
+  const thr = typeof cache.thresholdBytes === 'number' ? cache.thresholdBytes : null;
+  if (size == null || thr == null || thr <= 0) return null;
+  const ratio = size / thr;
+  const pct = Math.round(ratio * 100);
+  /** @type {Tone} */
+  let tone = 'green';
+  if (ratio > 1) tone = 'yellow';
+  if (ratio > 1.5) tone = 'red';
+  const label = `${cache.sizeHuman || '?'} / ${cache.thresholdHuman || '?'} (${pct}%)`;
+  return { ratio, pct, tone, label };
+}
+
+/**
  * @param {Record<string, unknown>|null|undefined} report
  * @returns {{ k: string, v: string, tone: Tone }[]}
  */
@@ -243,6 +333,9 @@ export function renderInstallHygieneReport(report) {
   const cachePanel = document.getElementById('ih-panel-cache');
   const verifyPanel = document.getElementById('ih-panel-verify');
   const npmPanel = document.getElementById('ih-panel-npm');
+  const meterEl = document.getElementById('ih-cache-meter');
+  const actionsEl = document.getElementById('ih-actions');
+  const sourceEl = document.getElementById('ih-source');
   if (!toneEl) return;
 
   const { tone, label, reasons } = toneFromReport(report);
@@ -255,12 +348,26 @@ export function renderInstallHygieneReport(report) {
     shell.className = `doc-wrap ih-shell ih-shell--${badgeTone}`;
   }
 
+  if (sourceEl && report && typeof report === 'object' && '_source' in report) {
+    const src = String(report._source || 'unknown');
+    const st = src === 'live' ? 'green' : src === 'embed' ? 'neutral' : 'yellow';
+    sourceEl.innerHTML = statusChip(st, src === 'live' ? 'live registry' : 'offline embed');
+    sourceEl.hidden = false;
+  } else if (sourceEl) {
+    sourceEl.hidden = true;
+  }
+
   if (!report || report.kind !== 'install-hygiene') {
     if (meta) {
       meta.textContent =
         'No offline embed / registry bake — run: bun run bake:install-hygiene (writes JSON + HTML embed)';
     }
     if (stats) stats.innerHTML = '';
+    if (meterEl) meterEl.innerHTML = '';
+    if (actionsEl) {
+      actionsEl.innerHTML = renderActionsHtml(buildRecommendedActions(null));
+      bindCopyButtons(document);
+    }
     if (cacheBody) {
       cacheBody.innerHTML = '<tr><td colspan="2" class="dim">Missing report</td></tr>';
     }
@@ -305,9 +412,28 @@ export function renderInstallHygieneReport(report) {
 
   const cache = /** @type {Record<string, unknown>} */ (report.installCache || {});
   if (cacheBody) cacheBody.innerHTML = renderCacheRowsSimple(cache);
+  if (meterEl) {
+    const meter = cacheMeterFromSlice(cache);
+    if (meter) {
+      const fill = Math.min(meter.ratio, 1.5) / 1.5; // cap bar at 150% scale
+      const width = Math.min(100, Math.round(fill * 100));
+      meterEl.innerHTML = `<div class="ih-meter ih-meter--${meter.tone}" title="${esc(meter.label)}">
+        <div class="ih-meter-track"><div class="ih-meter-fill" style="width:${width}%"></div>
+        <div class="ih-meter-mark" style="left:${Math.min(100, Math.round((1 / 1.5) * 100))}%" title="threshold"></div></div>
+        <div class="ih-meter-label">${esc(meter.label)}</div>
+      </div>`;
+    } else {
+      meterEl.innerHTML = '';
+    }
+  }
   if (cachePanel) {
     cachePanel.dataset.tone = cache.wouldPrune === true ? 'yellow' : 'green';
     cachePanel.className = `doc-panel doc-panel--${cache.wouldPrune === true ? 'yellow' : 'green'}`;
+  }
+
+  if (actionsEl) {
+    actionsEl.innerHTML = renderActionsHtml(buildRecommendedActions(report));
+    bindCopyButtons(document);
   }
 
   if (verifyBody) verifyBody.innerHTML = renderVerifyCheckRows(report);
@@ -362,6 +488,14 @@ export function readInstallHygieneEmbed(doc = typeof document !== 'undefined' ? 
 }
 
 /**
+ * @param {Record<string, unknown>} report
+ * @param {'embed'|'live'} source
+ */
+function withSource(report, source) {
+  return { ...report, _source: source };
+}
+
+/**
  * Prefer offline embed; refresh from registry when fetch works (optional live).
  * @returns {Promise<Record<string, unknown>|null>}
  */
@@ -376,15 +510,37 @@ export async function loadInstallHygieneReport() {
         const embAt = Date.parse(String(embedded.generatedAt || ''));
         const liveAt = Date.parse(String(live.generatedAt || ''));
         if (!Number.isFinite(embAt) || (Number.isFinite(liveAt) && liveAt >= embAt)) {
-          renderInstallHygieneReport(live);
+          renderInstallHygieneReport(withSource(live, 'live'));
         }
       }
     });
-    return embedded;
+    return withSource(embedded, 'embed');
   }
   const r = await fetchJsonResult(INSTALL_HYGIENE_SOURCE);
-  if (r.ok && r.data) return /** @type {Record<string, unknown>} */ (r.data);
+  if (r.ok && r.data && /** @type {Record<string, unknown>} */ (r.data).kind === 'install-hygiene') {
+    return withSource(/** @type {Record<string, unknown>} */ (r.data), 'live');
+  }
   return null;
+}
+
+/**
+ * @param {{ title: string, cli: string, tone: Tone, why: string }[]} actions
+ */
+export function renderActionsHtml(actions) {
+  if (!actions.length) return '<p class="dim">No actions</p>';
+  return `<ul class="ih-action-list">${actions
+    .map(
+      a => `<li class="ih-action ih-action--${a.tone}" data-tone="${a.tone}">
+      <div class="ih-action-head">
+        ${statusChip(a.tone, a.tone === 'neutral' ? 'run' : a.tone)}
+        <strong>${esc(a.title)}</strong>
+        <button type="button" class="copy-cli" data-cli="${esc(a.cli)}">copy</button>
+      </div>
+      <code class="ih-action-cli">${esc(a.cli)}</code>
+      <p class="dim">${esc(a.why)}</p>
+    </li>`
+    )
+    .join('')}</ul>`;
 }
 
 async function load() {
