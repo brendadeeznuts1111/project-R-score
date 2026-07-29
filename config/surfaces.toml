@@ -13,6 +13,7 @@
 
 [surfaces.apex]
 host = "factory-wager.com"
+dnsTarget = "project-r-score.pages.dev"
 backend = "cloudflare-pages:project-r-score"
 status = "live"
 protocol = "https-static+functions"
@@ -21,6 +22,7 @@ note = "Apex of the Pages app."
 
 [surfaces.www]
 host = "www.factory-wager.com"
+dnsTarget = "project-r-score.pages.dev"
 backend = "cloudflare-pages:project-r-score"
 status = "live"
 protocol = "https-static+functions"
@@ -29,6 +31,7 @@ note = "Same as apex."
 
 [surfaces.score]
 host = "score.factory-wager.com"
+dnsTarget = "project-r-score.pages.dev"
 backend = "cloudflare-pages:project-r-score"
 status = "live"
 protocol = "https-static+functions"
@@ -41,6 +44,7 @@ access = "applied"
 
 [surfaces.pages_dev]
 host = "project-r-score.pages.dev"
+dnsTarget = ""
 backend = "cloudflare-pages:project-r-score"
 status = "live"
 protocol = "https-static+functions"
@@ -53,6 +57,7 @@ access = "applied"
 
 [surfaces.registry]
 host = "registry.factory-wager.com"
+dnsTarget = "project-r-score.pages.dev"
 backend = "cloudflare-pages:project-r-score /api/registry/* → R2 factory-wager-registry"
 status = "live"
 protocol = "https-get-only allowlist gateway (npm packuments + proof JSON)"
@@ -61,6 +66,7 @@ note = "Token in bunfig scope is sent but not verified; authz = key allowlist. W
 
 [surfaces.wiki]
 host = "wiki.factory-wager.com"
+dnsTarget = "brendadeeznuts1111.github.io"
 backend = "github-pages"
 status = "live"
 protocol = "https-static (Jekyll)"
@@ -69,6 +75,7 @@ note = "Docs hub. Proxied via Cloudflare. Do NOT repoint to CF Pages without con
 
 [surfaces.ledger]
 host = "ledger.factory-wager.com"
+dnsTarget = "2029fc06-5bbf-415e-9fa1-6b7d3f0b1527.cfargotunnel.com"
 backend = "cloudflared tunnel accounting-ledger → 127.0.0.1:3000 (this Mac)"
 status = "live"
 protocol = "https via cloudflared"
@@ -77,6 +84,7 @@ note = "Access app APPLIED 2026-07-28 (302 → factory-wager.cloudflareaccess.co
 
 [surfaces.health_host]
 host = "health.factory-wager.com"
+dnsTarget = "project-r-score.pages.dev"
 backend = "cloudflare-pages:project-r-score (vanity CNAME)"
 status = "vanity"
 protocol = "https-static"
@@ -85,6 +93,7 @@ note = "Serves app landing, NOT health. Real endpoint: score.factory-wager.com/h
 
 [surfaces.telegram_host]
 host = "telegram.factory-wager.com"
+dnsTarget = "project-r-score.pages.dev"
 backend = "cloudflare-pages:project-r-score (vanity CNAME)"
 status = "vanity"
 protocol = "https-static"
@@ -93,6 +102,7 @@ note = "Serves app landing, NOT the webhook. Real endpoint: score…/api/telegra
 
 [surfaces.terminal]
 host = "terminal.factory-wager.com"
+dnsTarget = ""
 backend = "none — CNAME deleted 2026-07-28 (was → 293ba37a.cfargotunnel.com, orphaned tunnel)"
 status = "retired"
 protocol = "—"
@@ -101,6 +111,7 @@ note = "CNAME removed via CF API 2026-07-28 (was 502 dangling to the orphan tunn
 
 [surfaces.support]
 host = "support.factory-wager.com"
+dnsTarget = ""
 backend = "none — CNAME deleted 2026-07-28 (was → helpscout.com, no custom-domain cert)"
 status = "retired"
 protocol = "—"
@@ -109,6 +120,7 @@ note = "CNAME removed via CF API 2026-07-28 (was 525 SSL failure). Re-add only i
 
 [surfaces.reasonix]
 host = "reasonix.factory-wager.com"
+dnsTarget = ""
 backend = "none — decommissioned 2026-07-28 (template + staged Access app removed)"
 status = "retired"
 protocol = "—"
@@ -117,11 +129,33 @@ note = "Never provisioned (no DNS, no tunnel — creation needs the other CF acc
 
 [surfaces.registry_write]
 host = "registry-write.internal.factory-wager.com"
+dnsTarget = ""
 backend = "none — never provisioned"
 status = "retired"
 protocol = "—"
 access = "none"
 note = "Retired 2026-07-28 (ADR-0002 addendum): the private publish plane is dropped; write origins are the local gateway (:3000, Bearer) and direct-to-R2 SigV4 (factory publish). Re-add only alongside an authenticated edge writer (design doc required)."
+
+# Mail plane (Proton) — zone MX/SPF verified via CF API 2026-07-28.
+[[mail.mx]]
+host = "factory-wager.com"
+target = "mail.protonmail.ch"
+priority = 10
+
+[[mail.mx]]
+host = "factory-wager.com"
+target = "mailsec.protonmail.ch"
+priority = 20
+
+[[mail.txt]]
+host = "factory-wager.com"
+content = "v=spf1 include:_spf.protonmail.ch ~all"
+purpose = "spf"
+
+[[mail.txt]]
+host = "factory-wager.com"
+content = "protonmail-verification=96c089f0b6b18c1c28ff042ec54b48c"
+purpose = "domain-verification"
 
 # Publish lanes (ADR-0002) — not hosts, but part of the registry protocol map.
 [publish.prod]

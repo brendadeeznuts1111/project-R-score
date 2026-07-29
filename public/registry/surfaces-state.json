@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "kind": "surfaces-state",
-  "generatedAt": "2026-07-29T00:45:57.344Z",
+  "generatedAt": "2026-07-29T01:21:38.013Z",
   "source": "config/surfaces.toml (dig+curl verified 2026-07-28)",
   "surfaces": [
     {
@@ -15,7 +15,8 @@
       "status": "live",
       "protocol": "https-static+functions",
       "access": "public",
-      "note": "Apex of the Pages app."
+      "note": "Apex of the Pages app.",
+      "dnsTarget": "project-r-score.pages.dev"
     },
     {
       "id": "www",
@@ -28,7 +29,8 @@
       "status": "live",
       "protocol": "https-static+functions",
       "access": "public",
-      "note": "Same as apex."
+      "note": "Same as apex.",
+      "dnsTarget": "project-r-score.pages.dev"
     },
     {
       "id": "score",
@@ -42,6 +44,7 @@
       "protocol": "https-static+functions",
       "access": "public",
       "note": "Portal + registry proofs. /portal Access applied 2026-07-28 (302 Access).",
+      "dnsTarget": "project-r-score.pages.dev",
       "accessSubpaths": [
         {
           "path": "/portal",
@@ -61,6 +64,7 @@
       "protocol": "https-static+functions",
       "access": "public",
       "note": "Pages hostname. /portal Access app applied 2026-07-28 (FactoryWager Portal pages.dev).",
+      "dnsTarget": "",
       "accessSubpaths": [
         {
           "path": "/portal",
@@ -79,7 +83,8 @@
       "status": "live",
       "protocol": "https-get-only allowlist gateway (npm packuments + proof JSON)",
       "access": "allowlist",
-      "note": "Token in bunfig scope is sent but not verified; authz = key allowlist. Writes → 405. Bucket audit 2026-07-28: 12 objects, catalog index (registry.json, 17 pkgs metadata+readme) + ops stub + telegram channels/ — NO storage/ artifacts; installable packuments+tarballs are served from the committed static mirror (public/registry/@factorywager/*), not R2."
+      "note": "Token in bunfig scope is sent but not verified; authz = key allowlist. Writes → 405. Bucket audit 2026-07-28: 12 objects, catalog index (registry.json, 17 pkgs metadata+readme) + ops stub + telegram channels/ — NO storage/ artifacts; installable packuments+tarballs are served from the committed static mirror (public/registry/@factorywager/*), not R2.",
+      "dnsTarget": "project-r-score.pages.dev"
     },
     {
       "id": "wiki",
@@ -91,7 +96,8 @@
       "status": "live",
       "protocol": "https-static (Jekyll)",
       "access": "public",
-      "note": "Docs hub. Proxied via Cloudflare. Do NOT repoint to CF Pages without content migration."
+      "note": "Docs hub. Proxied via Cloudflare. Do NOT repoint to CF Pages without content migration.",
+      "dnsTarget": "brendadeeznuts1111.github.io"
     },
     {
       "id": "ledger",
@@ -103,7 +109,8 @@
       "status": "live",
       "protocol": "https via cloudflared",
       "access": "applied",
-      "note": "Access app APPLIED 2026-07-28 (302 → factory-wager.cloudflareaccess.com login). Tunnel is manual-run only — no launchd."
+      "note": "Access app APPLIED 2026-07-28 (302 → factory-wager.cloudflareaccess.com login). Tunnel is manual-run only — no launchd.",
+      "dnsTarget": "2029fc06-5bbf-415e-9fa1-6b7d3f0b1527.cfargotunnel.com"
     },
     {
       "id": "health_host",
@@ -116,7 +123,8 @@
       "status": "vanity",
       "protocol": "https-static",
       "access": "public",
-      "note": "Serves app landing, NOT health. Real endpoint: score.factory-wager.com/health."
+      "note": "Serves app landing, NOT health. Real endpoint: score.factory-wager.com/health.",
+      "dnsTarget": "project-r-score.pages.dev"
     },
     {
       "id": "telegram_host",
@@ -129,7 +137,8 @@
       "status": "vanity",
       "protocol": "https-static",
       "access": "public",
-      "note": "Serves app landing, NOT the webhook. Real endpoint: score…/api/telegram/webhook/{tenant}."
+      "note": "Serves app landing, NOT the webhook. Real endpoint: score…/api/telegram/webhook/{tenant}.",
+      "dnsTarget": "project-r-score.pages.dev"
     },
     {
       "id": "terminal",
@@ -141,7 +150,8 @@
       "status": "retired",
       "protocol": "—",
       "access": "none",
-      "note": "CNAME removed via CF API 2026-07-28 (was 502 dangling to the orphan tunnel). Remaining human decisions: delete the dead tunnel in the dashboard + the 293ba37a credential file on this Mac."
+      "note": "CNAME removed via CF API 2026-07-28 (was 502 dangling to the orphan tunnel). Remaining human decisions: delete the dead tunnel in the dashboard + the 293ba37a credential file on this Mac.",
+      "dnsTarget": ""
     },
     {
       "id": "support",
@@ -153,7 +163,8 @@
       "status": "retired",
       "protocol": "—",
       "access": "none",
-      "note": "CNAME removed via CF API 2026-07-28 (was 525 SSL failure). Re-add only if HelpScout custom-domain SSL is configured first."
+      "note": "CNAME removed via CF API 2026-07-28 (was 525 SSL failure). Re-add only if HelpScout custom-domain SSL is configured first.",
+      "dnsTarget": ""
     },
     {
       "id": "reasonix",
@@ -165,7 +176,8 @@
       "status": "retired",
       "protocol": "—",
       "access": "none",
-      "note": "Never provisioned (no DNS, no tunnel — creation needs the other CF account). Template scripts/cloudflared-reasonix.yml deleted; Access app dropped from .cloudflare-access.yml. Re-create from scratch if ever needed."
+      "note": "Never provisioned (no DNS, no tunnel — creation needs the other CF account). Template scripts/cloudflared-reasonix.yml deleted; Access app dropped from .cloudflare-access.yml. Re-create from scratch if ever needed.",
+      "dnsTarget": ""
     },
     {
       "id": "registry_write",
@@ -177,7 +189,8 @@
       "status": "retired",
       "protocol": "—",
       "access": "none",
-      "note": "Retired 2026-07-28 (ADR-0002 addendum): the private publish plane is dropped; write origins are the local gateway (:3000, Bearer) and direct-to-R2 SigV4 (factory publish). Re-add only alongside an authenticated edge writer (design doc required)."
+      "note": "Retired 2026-07-28 (ADR-0002 addendum): the private publish plane is dropped; write origins are the local gateway (:3000, Bearer) and direct-to-R2 SigV4 (factory publish). Re-add only alongside an authenticated edge writer (design doc required).",
+      "dnsTarget": ""
     }
   ],
   "publishLanes": [
@@ -203,6 +216,32 @@
       "note": "bun publish works here ONLY. Writes local storage/ + registry.json — never R2 (ADR-0002)."
     }
   ],
+  "mail": {
+    "mx": [
+      {
+        "host": "factory-wager.com",
+        "target": "mail.protonmail.ch",
+        "priority": 10
+      },
+      {
+        "host": "factory-wager.com",
+        "target": "mailsec.protonmail.ch",
+        "priority": 20
+      }
+    ],
+    "txt": [
+      {
+        "host": "factory-wager.com",
+        "content": "v=spf1 include:_spf.protonmail.ch ~all",
+        "purpose": "spf"
+      },
+      {
+        "host": "factory-wager.com",
+        "content": "protonmail-verification=96c089f0b6b18c1c28ff042ec54b48c",
+        "purpose": "domain-verification"
+      }
+    ]
+  },
   "crossCheck": {
     "ok": true,
     "issues": []
