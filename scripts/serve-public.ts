@@ -2057,8 +2057,15 @@ function buildPublicRoutes() {
     '/api/agents/v1/limits/record/': (req: Request) => agentLimitRecordApi(req),
     '/api/limits/summary': (req: Request) => limitSummaryApi(req),
     '/api/limits/analyze': () => limitAnalyzeApi(),
-    '/api/limits/predictions': (req: Request) =>
-      req.method === 'POST' ? limitPredictCycleApi() : limitPredictionsApi(),
+    // Method map (Bun routing docs) — prefer over req.method branching
+    '/api/limits/predictions': {
+      GET: () => limitPredictionsApi(),
+      POST: () => limitPredictCycleApi(),
+    },
+    '/api/limits/predictions/': {
+      GET: () => limitPredictionsApi(),
+      POST: () => limitPredictCycleApi(),
+    },
     '/api/operations/summary': () => liveOpsSummary(),
     '/api/catalog': (req: Request) => liveCatalog(req),
     '/api/dod': (req: Request) => dodApi(req),
