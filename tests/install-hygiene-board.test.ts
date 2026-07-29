@@ -4,11 +4,14 @@
 import { describe, expect, test } from 'bun:test';
 import {
   ageLabel,
+  buildRecommendedActions,
   buildStatRows,
+  cacheMeterFromSlice,
   INSTALL_HYGIENE_EMBED_ID,
   INSTALL_HYGIENE_SCHEMA,
   INSTALL_HYGIENE_SOURCE,
   readInstallHygieneEmbed,
+  renderActionsHtml,
   renderCacheRowsSimple,
   renderVerifyCheckRows,
   statusChip,
@@ -152,5 +155,57 @@ describe('install-hygiene-board', () => {
     const html = await Bun.file('public/portal/install-hygiene/index.html').text();
     expect(html).toContain(`id="${INSTALL_HYGIENE_EMBED_ID}"`);
     expect(html).toContain('"kind":"install-hygiene"');
+    expect(html).toContain('ih-cache-meter');
+    expect(html).toContain('ih-actions');
+  });
+
+  test('buildRecommendedActions adds prune CLIs when over threshold', () => {
+    const base = buildRecommendedActions(healthy);
+    expect(base.some(a => a.cli.includes('bake:install-hygiene'))).toBe(true);
+    const over = buildRecommendedActions({
+      ...healthy,
+      ok: false,
+      installCache: {
+        ...healthy.installCache,
+        wouldPrune: true,
+        pruneReason: 'over threshold',
+        bunPmCacheMismatch: 'path drift',
+      },
+    });
+    expect(over.some(a => a.cli === 'bun run install:cache:lifecycle')).toBe(true);
+    expect(over.some(a => a.cli === 'bun run install:cache:prune' && a.tone === 'red')).toBe(true);
+    expect(over.some(a => a.cli.includes('check-bun-pm-cache'))).toBe(true);
+  });
+
+  test('cacheMeterFromSlice tones ratio bands', () => {
+    expect(cacheMeterFromSlice(null)).toBeNull();
+    const under = cacheMeterFromSlice({
+      sizeBytes: 1e9,
+      thresholdBytes: 2e9,
+      sizeHuman: '1 GB',
+      thresholdHuman: '2 GB',
+    });
+    expect(under?.tone).toBe('green');
+    expect(under?.pct).toBe(50);
+    const over = cacheMeterFromSlice({
+      sizeBytes: 3e9,
+      thresholdBytes: 2e9,
+      sizeHuman: '3 GB',
+      thresholdHuman: '2 GB',
+    });
+    expect(over?.tone).toBe('yellow');
+    const way = cacheMeterFromSlice({
+      sizeBytes: 4e9,
+      thresholdBytes: 2e9,
+      sizeHuman: '4 GB',
+      thresholdHuman: '2 GB',
+    });
+    expect(way?.tone).toBe('red');
+  });
+
+  test('renderActionsHtml emits copy-cli buttons', () => {
+    const html = renderActionsHtml(buildRecommendedActions(healthy));
+    expect(html).toContain('copy-cli');
+    expect(html).toContain('bake:install-hygiene');
   });
 });
