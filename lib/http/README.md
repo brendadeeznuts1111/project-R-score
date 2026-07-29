@@ -19,6 +19,7 @@ HTTP helpers for Bun.serve surfaces (static response utilities, caching headers)
 | [`host-lineage.ts`](host-lineage.ts) | Live HostId → apex/sub → Access → https transition rows |
 | [`bun-serve-lifecycle.ts`](bun-serve-lifecycle.ts) | Server methods + serve/WS options matrix (`timeout` · `idleTimeout`) |
 | [`bind-identity-card.ts`](bind-identity-card.ts) | Indexed BIND IDENTITY card for serve-public startup |
+| [`portal-board-slugs.ts`](portal-board-slugs.ts) | Portal board slug SSOT for `portalBoardRoutes` / exact `routes` |
 | [`../docs/bun-release-tracker.ts`](../docs/bun-release-tracker.ts) | Release-note changelog → verification probes (TLS system CA, GC smoke) |
 | [`verification-scripts.ts`](verification-scripts.ts) | Pipe-friendly verify scripts (`curl …/script \| bun run -`) |
 

@@ -647,8 +647,8 @@ async function cmdAutofill(rest: string[]): Promise<void> {
 
   if (json) {
     // Machine report on stdout. Secret values are never serialized.
-    console.log(
-      JSON.stringify({
+    jsonOut(
+      {
         vault,
         injected: summary.injected,
         missing: summary.missing,
@@ -656,7 +656,8 @@ async function cmdAutofill(rest: string[]): Promise<void> {
         fetchedAt: new Date().toISOString(),
         durationMs: Date.now() - start,
         parallel,
-      })
+      },
+      { compact: true }
     );
   }
 

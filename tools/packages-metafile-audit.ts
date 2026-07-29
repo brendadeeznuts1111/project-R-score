@@ -22,7 +22,7 @@
  */
 import { Glob, sliceAnsi } from 'bun';
 import { joinPath } from '../lib/path-bun.ts';
-import { logTable } from '../lib/console-depth.ts';
+import { jsonOut, logTable } from '../lib/console-depth.ts';
 import {
   buildPackageGraphMap,
   compareDeclaredWorkspaceDeps,
@@ -1222,7 +1222,7 @@ Map v12: + template-default cover · archive placeholder removed · env inventor
   }
 
   if (argvFlag('--json')) {
-    console.log(JSON.stringify(report, null, 2));
+    jsonOut(report);
   } else {
     writeLine(
       `📦 ${report.scanned} scanned · ${report.entrypoints.length} entrypoints · score ${report.score}/100 (${report.grade})`

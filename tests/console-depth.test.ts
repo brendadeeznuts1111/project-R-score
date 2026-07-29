@@ -383,6 +383,13 @@ describe('jsonOut', () => {
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy.mock.calls[0]![0]).toBe(JSON.stringify(value, null, 2));
   });
+  test('compact mode is byte-identical to console.log(JSON.stringify(v))', () => {
+    const value = { status: 'ok', rows: [1, 2] };
+    using spy = spyOn(console, 'info').mockImplementation(() => {});
+    jsonOut(value, { compact: true });
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy.mock.calls[0]![0]).toBe(JSON.stringify(value));
+  });
 });
 
 describe('docs-grounded runtime behavior (verified Bun 1.4.0)', () => {

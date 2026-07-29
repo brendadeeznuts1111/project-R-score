@@ -134,6 +134,7 @@ import {
   type ServeBindSnapshot,
 } from '../lib/http/bun-server.ts';
 import { resolveBunServeDefaultPort } from '../lib/http/bun-serve-shape.ts';
+import { PORTAL_BOARD_SLUGS } from '../lib/http/portal-board-slugs.ts';
 import { formatServePublicBindLines } from '../lib/http/serve-public-bind.ts';
 import { isPublicReadPath } from '../lib/http/public-read-path.ts';
 import { getDb, getMonitoringData } from '../lib/db/connection.ts';
@@ -1648,25 +1649,8 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   const url = new URL(req.url);
   const path = url.pathname;
 
-  // Long-lived SSE: disable idle timeout when Server is available
-  if ((path === '/__hmr' || path === '/__hmr/') && server?.timeout) {
-    try {
-      server.timeout(req, 0);
-    } catch {
-      /* ignore */
-    }
-  }
-
-  // Browser live-reload SSE (loopback / SERVE_PUBLIC_HMR=1)
-  if (path === '/__hmr' || path === '/__hmr/') {
-    if (!liveReloadHub) {
-      return json({ error: 'live-reload disabled', hint: 'SERVE_PUBLIC_HMR=1' }, 404);
-    }
-    return liveReloadHub.subscribe(req);
-  }
-
-  // Primary APIs + portal boards + health/llms live on `routes` (buildPublicRoutes).
-  // fetch = unmatched only: markdown stubs, encoded/tenant registry, static, npm PUT.
+  // Primary APIs + portal boards + health/llms + __hmr live on `routes` (buildPublicRoutes).
+  // fetch = unmatched only: markdown stubs, encoded registry, static, npm PUT/GET.
 
   const md = await portalMarkdown(req);
   if (md) return md;
@@ -1691,15 +1675,6 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
     if (name.includes('%2') || name.includes('%2F') || name.includes('%2f')) {
       return packageDetail(decodeURIComponent(name));
     }
-  }
-
-  // Tenant registries (multi-segment — keep on fetch)
-  const tenantM = path.match(/^\/api\/registry\/tenants\/([^/]+)\/registry\.json$/);
-  if (tenantM) {
-    const f = Bun.file(`public/registry/${tenantM[1]}/registry.json`);
-    if (await f.exists())
-      return new Response(f, { headers: { 'Content-Type': 'application/json; charset=utf-8' } });
-    return json({ error: `No registry for tenant: ${tenantM[1]}` }, 404);
   }
 
   const storageRes = await serveRegistryStorage(path, req);
@@ -1745,34 +1720,6 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
     headers: { 'Content-Type': 'text/plain; charset=utf-8' },
   });
 }
-
-/** Portal board slugs with `public/portal/<slug>/index.html` (excludes components/dist/icons). */
-const PORTAL_BOARD_SLUGS = [
-  'ops',
-  'health',
-  'env',
-  'dod',
-  'dashboard',
-  'catalog',
-  'skills',
-  'brands',
-  'bunfig',
-  'compliance',
-  'doctor',
-  'factory',
-  'failures',
-  'identity',
-  'install-hygiene',
-  'limits',
-  'packages',
-  'partner-history',
-  'science',
-  'surfaces',
-  'tennis',
-  'toc',
-  'tools',
-  'vault',
-] as const;
 
 /**
  * Exact `/portal/<slug>` + trailing-slash routes → directory index via portalPage.
@@ -1836,7 +1783,7 @@ function buildPublicRoutes() {
       return bunApiProof();
     },
     '/api/proof/': (req: Request) => {
-      const hot = hotByUrl.get('/api/proof/');
+      const hot = hotByUrl.get('/api/proof');
       if (hot) return respondStatic(hot, req, { cacheControl: 'public, max-age=30' });
       return bunApiProof();
     },
@@ -2119,6 +2066,17 @@ function buildPublicRoutes() {
     },
     '/api/registry/static': () => serveStaticRegistry(),
     '/api/registry/search': (req: Request) => searchRegistry(req),
+    '/api/registry/search/': (req: Request) => searchRegistry(req),
+
+    // Tenant registries (literal `tenants` before :package so it is not shadowed)
+    '/api/registry/tenants/:tenant/registry.json': async (
+      req: BunRequest<'/api/registry/tenants/:tenant/registry.json'>
+    ) => {
+      const f = Bun.file(`public/registry/${req.params.tenant}/registry.json`);
+      if (await f.exists())
+        return new Response(f, { headers: { 'Content-Type': 'application/json; charset=utf-8' } });
+      return json({ error: `No registry for tenant: ${req.params.tenant}` }, 404);
+    },
 
     // Unscoped package detail + versions (named params — type-safe)
     '/api/registry/:package': (req: BunRequest<'/api/registry/:package'>) => {

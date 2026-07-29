@@ -1,8 +1,8 @@
 {
-  "total": 19,
+  "total": 18,
   "byPattern": {
     "direct-inspect-table": 15,
-    "pretty-json-console": 4
+    "pretty-json-console": 3
   },
   "files": {
     "lib/text.ts": 1,
@@ -15,7 +15,6 @@
     "tools/ops-check-limits.ts": 1,
     "tools/bun-doc-refs.ts": 2,
     "tools/ops-snapshot.ts": 1,
-    "tools/packages-metafile-audit.ts": 1,
     "tools/bun-docs-catalog.ts": 1,
     "tools/bun-api-oneliners.ts": 1
   }

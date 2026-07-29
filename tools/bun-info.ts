@@ -52,7 +52,7 @@ if (cli.json) {
   try {
     jsonOut(JSON.parse(out.value));
   } catch {
-    console.log(JSON.stringify(out.value));
+    jsonOut(out.value, { compact: true });
   }
 } else {
   console.log(out.value);
