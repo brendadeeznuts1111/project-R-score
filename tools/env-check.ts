@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/utils — Bun.inspect.table
@@ -10,6 +11,7 @@
  *   bun tools/env-check.ts --strict   # exit 1 if required missing
  */
 import { checkEnv } from '../lib/env-check.ts';
+import { jsonOut, logTable } from '../lib/console-depth.ts';
 import { describeChannelAuth, probeChannelAuth } from '../lib/verification/channels.ts';
 
 const args = Bun.argv.slice(2);
@@ -43,17 +45,15 @@ if (args.includes('--reasonix') || args.includes('--load-reasonix')) {
 const report = checkEnv();
 
 if (json) {
-  console.log(JSON.stringify(report, null, 2));
+  jsonOut(report);
 } else {
   console.log('Environment checklist (secrets redacted)');
   console.log(
     `${report.summary.ok}/${report.summary.total} ok · missing ${report.summary.missing} · placeholder ${report.summary.placeholder} · required gaps ${report.summary.requiredMissing}`
   );
-  console.log(
-    Bun.inspect.table(report.table, ['Key', 'Group', 'Severity', 'Status', 'Detail'], {
-      colors: true,
-    })
-  );
+  logTable(report.table, ['Key', 'Group', 'Severity', 'Status', 'Detail'], {
+    colors: true,
+  });
   if (report.summary.requiredMissing > 0) {
     const keys = report.rows.filter(r => r.severity === 'required' && !r.ok).map(r => r.key);
     console.log('\nRequired missing:', keys.join(', '));

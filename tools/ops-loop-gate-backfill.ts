@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 /**
  * Legacy ops-loop gate + settle outbox backfill on data/operations.db.
@@ -9,6 +10,7 @@
 import { resolveProductionOutboxOpts } from '../lib/channels/outbox-prod-opts.ts';
 import { openOperationsDb } from '../lib/operations/db.ts';
 import { backfillOpsLoopGateAttribution } from '../lib/operations/ops-loop-gate-backfill.ts';
+import { logDepth } from '../lib/console-depth.ts';
 
 function usage(): never {
   console.log(`Usage: bun tools/ops-loop-gate-backfill.ts [options]
@@ -42,7 +44,7 @@ async function main(): Promise<void> {
     }
 
     const result = await backfillOpsLoopGateAttribution(db, { dryRun, outbox });
-    console.log(JSON.stringify(result, null, 2));
+    logDepth(result);
   } finally {
     db.close();
   }

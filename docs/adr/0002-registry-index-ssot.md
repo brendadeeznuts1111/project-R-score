@@ -1,6 +1,7 @@
 # ADR-0002: Registry index — R2 is the SSOT, the file is a snapshot
 
 > Status: **decided** (2026-07-24) · Supersedes the P3 discovery finding "two sources of truth"
+> **Linked from:** [`registry-index.md`](../../registry-index.md) · [`docs/README.md`](../README.md) · guides registry stack
 
 ## Context
 
@@ -46,3 +47,30 @@ consumer (portal reads file, Pages Functions read R2, monitoring reads file).
   local-only packages.
 - Authenticated `PUT` in Pages Functions (design doc required — token scope,
   replay protection, R2 write perms).
+
+## Addendum — 2026-07-28 bucket audit (B4/B5/B6 of `docs/harness/tenants/remaining-work.md`)
+
+Verified via SigV4 `ListObjectsV2` against `factory-wager-registry`:
+
+1. **The R2 artifact plane is catalog-only (deferred, not abandoned).** The bucket
+   holds 11 objects: the catalog index (`registry.json`, 17 packages,
+   metadata + inline README), an `ops-summary.json` stub, and the `channels/*`
+   telegram event streams + consumer cursor. **No `storage/` artifact objects
+   exist** — no publish has landed artifact bytes in R2 to date. What
+   `bun install` resolves (packuments + tarballs) is served from the committed
+   static mirror (`public/registry/@factorywager/*`). Decision 1 ("R2 is the
+   single source of truth … and artifacts") stands for the *index*; the
+   `storage/` artifact write plane is **deferred until deliberately activated**
+   (one real `factory publish` + verification), at which point this addendum is
+   removed.
+2. **Bucket multi-tenancy is accepted.** The registry index and the telegram
+   event channels share the bucket. The enforced read boundary is the edge
+   allowlist (`lib/factory/http-keys.ts`) — `channels/*` keys can never be
+   served publicly; anonymous reads only get allowlisted keys. Split into a
+   dedicated channels bucket only if write-scope separation is ever required.
+3. **`registry-write.internal.factory-wager.com` is retired.** The documented
+   private publish plane was never provisioned (no DNS, no server). The surface
+   is `status = "retired"` in `config/surfaces.toml`; write origins remain the
+   local gateway (`:3000`, Bearer) and direct-to-R2 SigV4 (`factory publish`).
+4. **Housekeeping:** `channels/_probe/channel-plane.txt` (leftover probe) was
+   deleted from the bucket 2026-07-28 (12 → 11 objects).

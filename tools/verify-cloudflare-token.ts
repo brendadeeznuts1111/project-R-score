@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
  * Cloudflare token scope + MCP catalog parity proof.
@@ -9,7 +10,7 @@
  *
  * @see docs/harness/tenants/cloudflare-pages.md
  */
-import { logTable } from '../lib/console-depth.ts';
+import { jsonOut, logTable } from '../lib/console-depth.ts';
 import {
   CLOUDFLARE_TOKEN_SCOPE_PROOF_PATH,
   buildCloudflareTokenScopeProof,
@@ -28,7 +29,7 @@ const proof = await buildCloudflareTokenScopeProof({
 });
 
 if (asJson) {
-  console.log(JSON.stringify(proof, null, 2));
+  jsonOut(proof);
 } else {
   console.log('╔══════════════════════════════════════════════════════════════════════╗');
   console.log('║  ☁️  Cloudflare token scope + MCP catalog parity                     ║');

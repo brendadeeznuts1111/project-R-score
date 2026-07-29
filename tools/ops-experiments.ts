@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/bunx — bunx (args after bin name; --bun before package)
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
@@ -37,6 +38,7 @@ import {
   type FactorLevel,
 } from '../lib/experiments/index.ts';
 import { parseExperimentId, parseTreeNodeId, unbrand } from '../lib/types/branded.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 const argv = Bun.argv.slice(2);
@@ -137,7 +139,7 @@ function partnerIdsFromFlag(): string[] {
 /** CLI dump helper — accepts any serializable payload at the process edge. */
 function out(data: object | string | number | boolean | null): void {
   if (json) {
-    console.log(JSON.stringify(data, null, 2));
+    jsonOut(data);
   } else if (typeof data === 'string') {
     console.log(data);
   } else {

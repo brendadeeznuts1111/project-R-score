@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/reference/bun/semver/satisfies — Bun.semver.satisfies
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
@@ -27,6 +29,7 @@
  *   bun run portal:probe
  */
 import { joinPath } from '../lib/path-bun.ts';
+import { jsonOut, logTable } from '../lib/console-depth.ts';
 
 const ROOT = process.cwd();
 const argv = Bun.argv.slice(2);
@@ -133,9 +136,7 @@ async function probeWorkspaces(): Promise<ProbeResult> {
   }
   if (!asJson) {
     say(true, `${rows.length} workspace package.json files`);
-    console.log(
-      Bun.inspect.table(rows, ['path', 'name', 'version', 'snapshotScope'], { colors: true })
-    );
+    logTable(rows, ['path', 'name', 'version', 'snapshotScope'], { colors: true });
   }
   return { name: 'workspaces', ok: rows.length > 0, detail: rows };
 }
@@ -361,7 +362,7 @@ async function probeSnapshotsList(): Promise<ProbeResult> {
   if (!asJson) {
     say(true, `${rows.length} snapshot(s)`);
     if (rows.length) {
-      console.log(Bun.inspect.table(rows, ['path', 'scope', 'timestamp'], { colors: true }));
+      logTable(rows, ['path', 'scope', 'timestamp'], { colors: true });
     }
   }
   return { name: 'snapshots', ok: true, detail: rows };
@@ -472,7 +473,7 @@ async function main(): Promise<void> {
   }
 
   if (asJson) {
-    console.log(JSON.stringify(cmd === 'all' ? results : results[0], null, 2));
+    jsonOut(cmd === 'all' ? results : results[0]);
   } else if (cmd === 'all') {
     const hard = results.filter(isHardFailure);
     const soft = results.filter(r => !r.ok && !isHardFailure(r));

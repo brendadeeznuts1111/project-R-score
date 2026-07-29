@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
@@ -25,6 +26,7 @@
  *
  * Usage: bun run showcase:ops [--live]
  */
+import { logTable } from '../../lib/console-depth.ts';
 
 const OPS = '.tmp/showcase/ops';
 await Bun.$`mkdir -p ${OPS}/{partners,transactions,plays}`.quiet();
@@ -181,7 +183,7 @@ export const opsDemos: OpsDemo[] = [
         .query('SELECT result, sum(pnl) as total FROM wagers GROUP BY result')
         .all() as { result: string; total: number }[];
       db.close();
-      console.log(Bun.inspect.table(rows.map(r => ({ Result: r.result, 'P&L': r.total }))));
+      logTable(rows.map(r => ({ Result: r.result, 'P&L': r.total })));
     },
   },
   {

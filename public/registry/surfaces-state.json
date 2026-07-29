@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "kind": "surfaces-state",
-  "generatedAt": "2026-07-28T23:36:33.387Z",
+  "generatedAt": "2026-07-29T00:45:57.344Z",
   "source": "config/surfaces.toml (dig+curl verified 2026-07-28)",
   "surfaces": [
     {
@@ -160,24 +160,24 @@
       "host": "reasonix.factory-wager.com",
       "apex": "factory-wager.com",
       "subdomain": "reasonix",
-      "backend": "none — scripts/cloudflared-reasonix.yml template never installed",
+      "backend": "none — decommissioned 2026-07-28 (template + staged Access app removed)",
       "backendCode": "none",
-      "status": "staged",
+      "status": "retired",
       "protocol": "—",
-      "access": "staged",
-      "note": "No DNS record. Access app staged. Install tunnel + credential or decommission template."
+      "access": "none",
+      "note": "Never provisioned (no DNS, no tunnel — creation needs the other CF account). Template scripts/cloudflared-reasonix.yml deleted; Access app dropped from .cloudflare-access.yml. Re-create from scratch if ever needed."
     },
     {
       "id": "registry_write",
       "host": "registry-write.internal.factory-wager.com",
       "apex": "factory-wager.com",
       "subdomain": "registry-write.internal",
-      "backend": "none",
+      "backend": "none — never provisioned",
       "backendCode": "none",
-      "status": "placeholder",
+      "status": "retired",
       "protocol": "—",
-      "access": "bearer (intended)",
-      "note": "Intended private publish plane (SDK publishUrl examples). Not provisioned; real writes = local :3000 POST or direct-to-R2 SigV4 (ADR-0002)."
+      "access": "none",
+      "note": "Retired 2026-07-28 (ADR-0002 addendum): the private publish plane is dropped; write origins are the local gateway (:3000, Bearer) and direct-to-R2 SigV4 (factory publish). Re-add only alongside an authenticated edge writer (design doc required)."
     }
   ],
   "publishLanes": [
@@ -213,17 +213,13 @@
     "byStatus": {
       "live": 7,
       "vanity": 2,
-      "retired": 2,
-      "staged": 1,
-      "placeholder": 1
+      "retired": 4
     },
     "byAccess": {
       "public": 7,
       "allowlist": 1,
       "applied": 1,
-      "none": 2,
-      "staged": 1,
-      "bearer (intended)": 1
+      "none": 4
     },
     "byBackendCode": {
       "cloudflare-pages": 7,
@@ -234,7 +230,6 @@
     "accessDomains": [
       "ledger.factory-wager.com",
       "project-r-score.pages.dev/portal",
-      "reasonix.factory-wager.com",
       "score.factory-wager.com/portal"
     ],
     "pagesProjects": [

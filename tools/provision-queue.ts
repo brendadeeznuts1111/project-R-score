@@ -21,6 +21,7 @@ import {
   type ProvisionStep,
 } from '../lib/provisioning/queue.ts';
 import { runAutomatedTestTask } from '../lib/provisioning/run-automated.ts';
+import { logDepth, logTable } from '../lib/console-depth.ts';
 
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 const args = process.argv.slice(2);
@@ -54,24 +55,22 @@ try {
         process.exit(1);
       }
       const task = enqueueTask(db, { platformId, partnerId, mode });
-      console.log(JSON.stringify(task, null, 2));
+      logDepth(task);
       break;
     }
     case 'list': {
       const step = flag('step') as ProvisionStep | undefined;
       const mode = flag('mode') as ProvisionMode | undefined;
       const rows = listTasks(db, { step, mode, limit: 50 });
-      console.log(
-        Bun.inspect.table(
-          rows.map(r => ({
-            id: r.id.slice(0, 8),
-            platform: r.platform_id,
-            partner: r.partner_id.slice(0, 8),
-            mode: r.mode,
-            step: r.step,
-            error: r.last_error?.slice(0, 40) ?? '',
-          }))
-        )
+      logTable(
+        rows.map(r => ({
+          id: r.id.slice(0, 8),
+          platform: r.platform_id,
+          partner: r.partner_id.slice(0, 8),
+          mode: r.mode,
+          step: r.step,
+          error: r.last_error?.slice(0, 40) ?? '',
+        }))
       );
       break;
     }
@@ -82,7 +81,7 @@ try {
       if (!task) {
         console.log('No pending tasks');
       } else {
-        console.log(JSON.stringify(task, null, 2));
+        logDepth(task);
       }
       break;
     }
@@ -103,7 +102,7 @@ try {
         dbPath,
         encryptionKey: Bun.env.PROVISION_ENCRYPTION_KEY,
       });
-      console.log(JSON.stringify(result, null, 2));
+      logDepth(result);
       process.exit(result.ok ? 0 : 1);
       break;
     }

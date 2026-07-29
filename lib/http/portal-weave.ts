@@ -157,6 +157,14 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     cli: 'bun run portal:doctor --verbose',
   },
   {
+    id: 'install-hygiene',
+    label: 'Install hygiene',
+    href: '/portal/install-hygiene/',
+    note: 'install cache · npm policy · install:verify · install-hygiene-report bake',
+    group: 'harness',
+    cli: 'bun run bake:install-hygiene',
+  },
+  {
     id: 'tools',
     label: 'CLI Tools',
     href: '/portal/tools/',
@@ -285,6 +293,13 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     label: 'packages-graph-map',
     href: '/registry/packages-graph-map.json',
     note: 'workspace coupling · multi-surface · env owners · claim packages-graph-map-v13',
+  },
+  {
+    label: 'install-hygiene-report',
+    href: '/registry/install-hygiene-report.json',
+    note: 'bunfig/cache/npm-install hygiene bake · bake:install-hygiene · monitoring.installHygiene · board /portal/install-hygiene/',
+    group: 'harness',
+    cli: 'bun run bake:install-hygiene',
   },
   {
     label: 'monorepo-health',

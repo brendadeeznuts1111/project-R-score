@@ -75,6 +75,13 @@ describe('buildOpsSummary', () => {
     expect(Object.keys(s.bunBrandMap).sort()).toEqual(
       ['available', 'errors', 'ok', 'path', 'stale', 'warnings'].sort()
     );
+    expect(s.installHygiene).toHaveProperty('available');
+    expect(s.installHygiene.path).toBe('/registry/install-hygiene-report.json');
+    expect(typeof s.installHygiene.warnings).toBe('number');
+    expect(typeof s.installHygiene.errors).toBe('number');
+    expect(Object.keys(s.installHygiene).sort()).toEqual(
+      ['available', 'errors', 'ok', 'path', 'stale', 'warnings'].sort()
+    );
     if (s.proofTaxonomy.available) {
       expect(s.proofTaxonomy.contracts).toBeGreaterThan(0);
       expect(s.proofTaxonomy.proofHash).toMatch(/^[a-f0-9]{64}$/);

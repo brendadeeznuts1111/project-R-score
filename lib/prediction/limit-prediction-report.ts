@@ -5,7 +5,12 @@
  * Limit-prediction report with Bun.inspect.table + inspect.custom.
  * Pair with LimitRaiseReport for multi-factor history + forecast in one CLI flow.
  */
-import { getConsoleDepth, inspectCustom, shouldColor } from '../console-depth.ts';
+import {
+  getConsoleDepth,
+  inspectCustom,
+  inspectTable as inspectTableCore,
+  shouldColor,
+} from '../console-depth.ts';
 import {
   inspectTable,
   proveInspectTable,
@@ -109,10 +114,10 @@ export class LimitPredictionReport {
     const colors = opts.colors ?? shouldColor();
     const pred = this.predictionRows();
     const projected = projectTableRows(pred, LIMIT_PREDICTION_TABLE_PROPERTIES);
-    const a = Bun.inspect.table(projected, [...LIMIT_PREDICTION_TABLE_PROPERTIES], {
+    const a = inspectTableCore(projected, [...LIMIT_PREDICTION_TABLE_PROPERTIES], {
       colors: false,
     });
-    const b = Bun.inspect.table(projected, [...LIMIT_PREDICTION_TABLE_PROPERTIES], {
+    const b = inspectTableCore(projected, [...LIMIT_PREDICTION_TABLE_PROPERTIES], {
       colors: false,
     });
     if (!deepEquals(a, b)) {

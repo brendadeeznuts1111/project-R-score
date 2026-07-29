@@ -9,7 +9,7 @@ authorization selector. Proton Pass is the credential source for automation.
 Live status (verified 2026-07-28 — see `.cloudflare-access.yml` header):
 
 - `ledger.factory-wager.com` — whole hostname behind Access. **APPLIED** (302 → Access login).
-- `reasonix.factory-wager.com` — whole hostname behind Access. **STAGED** (no DNS record yet).
+- ~~`reasonix.factory-wager.com` — whole hostname behind Access.~~ **DECOMMISSIONED 2026-07-28** (never provisioned; app removed from policy).
 - `score.factory-wager.com/portal` — portal path behind Access. **APPLIED** 2026-07-28 17:18 (302 → Access login; also `project-r-score.pages.dev/portal`).
 - `score.factory-wager.com/registry` and public proof/API read routes stay
   outside this app so package and verification consumers remain non-interactive.
@@ -110,7 +110,7 @@ bun tools/portal-cli.ts doctor --group infra --verbose
 | `ledger.factory-wager.com` | **Access 302** | `infra-ledger-access` PASS |
 | `score.factory-wager.com/portal` | **public 200** | `infra-portal-access` FAIL warn |
 | `project-r-score.pages.dev/portal` | **public 200** | (same) |
-| `terminal.factory-wager.com` | **502 dangling** | `infra-terminal-host` FAIL warn |
+| `terminal.factory-wager.com` | **NXDOMAIN** (CNAME deleted 2026-07-28) | `infra-terminal-host` — host gone; see [tunnel-inventory](tunnel-inventory.md) · [brand-alignment](../../brand-alignment.md) |
 | `reasonix.factory-wager.com` | **NXDOMAIN** | `infra-reasonix-dns` info (expected) |
 
 ```bash

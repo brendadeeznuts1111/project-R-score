@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 /**
  * Production settlement caller — closes pending plays with distribution rows.
@@ -7,6 +8,7 @@
  *   bun tools/ops-settle.ts --limit 20 --result win --pnl 120
  *   bun tools/ops-settle.ts --dry-run
  */
+import { jsonOut } from '../lib/console-depth.ts';
 import { resolveChannelR2BridgeConfig } from '../scripts/lib/r2-bridge.ts';
 import { createR2ChannelStoreFromConfig } from '../lib/channels/r2-channel-bucket.ts';
 import { openOperationsDb } from '../lib/operations/db.ts';
@@ -62,7 +64,7 @@ async function main(): Promise<void> {
            LIMIT $lim`
         )
         .all({ $lim: Number.isFinite(limit) ? limit : 50 });
-      console.log(JSON.stringify({ pending, count: pending.length }, null, 2));
+      jsonOut({ pending, count: pending.length });
       return;
     }
 
@@ -87,18 +89,12 @@ async function main(): Promise<void> {
       outbox: outboxOpts,
     });
 
-    console.log(
-      JSON.stringify(
-        {
-          settled: batch.settled,
-          skipped: batch.skipped,
-          errors: batch.errors,
-          outbox: batch.outbox,
-        },
-        null,
-        2
-      )
-    );
+    jsonOut({
+      settled: batch.settled,
+      skipped: batch.skipped,
+      errors: batch.errors,
+      outbox: batch.outbox,
+    });
     if (batch.errors.length > 0) process.exitCode = 1;
   } finally {
     db.close();

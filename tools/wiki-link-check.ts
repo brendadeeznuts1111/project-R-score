@@ -14,6 +14,7 @@
  * @see docs/platform-routing.md
  * @see _config.yml
  */
+import { jsonOut } from '../lib/console-depth.ts';
 import { resolvePath } from '../lib/path-bun.ts';
 import { CANONICAL_REMOTES } from '../lib/docs/repo-docs.ts';
 
@@ -162,7 +163,7 @@ async function main(): Promise<void> {
   }
 
   if (json) {
-    console.log(JSON.stringify({ issues: allIssues, count: allIssues.length }, null, 2));
+    jsonOut({ issues: allIssues, count: allIssues.length });
   } else if (allIssues.length === 0) {
     console.log('✅ wiki-link-check: all wiki markdown links OK');
   } else {

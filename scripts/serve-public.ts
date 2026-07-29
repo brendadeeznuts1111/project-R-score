@@ -1697,10 +1697,7 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   if (path === '/api/limits/analyze' || path === '/api/limits/analyze/') {
     return limitAnalyzeApi();
   }
-  if (path === '/api/limits/predictions' || path === '/api/limits/predictions/') {
-    if (req.method === 'POST') return limitPredictCycleApi();
-    return limitPredictionsApi();
-  }
+  // /api/limits/predictions · /api/doctor/run · /api/packages/graph/rebake → routes method maps
 
   // Optional auth for read endpoints — public paths skip the gate
   const authErr = requireReadAuth(req);
@@ -1711,14 +1708,6 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   if (path === '/monitoring' || path === '/monitoring/') return monitoringPage();
   if (path === '/api/operations/summary' || path === '/api/operations/summary/')
     return liveOpsSummary();
-  // Local-only packages graph rebake (never on Pages / remote binds)
-  if (path === '/api/packages/graph/rebake' || path === '/api/packages/graph/rebake/') {
-    return packagesGraphRebake(req, server);
-  }
-  // Local-only portal doctor run + doctor-state bake
-  if (path === '/api/doctor/run' || path === '/api/doctor/run/') {
-    return doctorRunApi(req, server);
-  }
   if (path === '/api/portal/dashboard' || path === '/api/portal/dashboard/') {
     const { portalDashboardResponse } = await import('../lib/portal/command-centre-api.ts');
     return portalDashboardResponse();
@@ -1874,6 +1863,52 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
     status: 404,
     headers: { 'Content-Type': 'text/plain; charset=utf-8' },
   });
+}
+
+/** Portal board slugs with `public/portal/<slug>/index.html` (excludes components/dist/icons). */
+const PORTAL_BOARD_SLUGS = [
+  'ops',
+  'health',
+  'env',
+  'dod',
+  'dashboard',
+  'catalog',
+  'skills',
+  'brands',
+  'bunfig',
+  'compliance',
+  'doctor',
+  'factory',
+  'failures',
+  'identity',
+  'install-hygiene',
+  'limits',
+  'packages',
+  'partner-history',
+  'science',
+  'surfaces',
+  'tennis',
+  'toc',
+  'tools',
+  'vault',
+] as const;
+
+/**
+ * Exact `/portal/<slug>` + trailing-slash routes → directory index via portalPage.
+ * @see https://bun.com/docs/runtime/http/routing#route-precedence
+ */
+function portalBoardRoutes(
+  portalPage: (urlPath: string) => (req: Request) => Promise<Response>,
+  slugs: readonly string[]
+): Record<string, (req: Request) => Promise<Response>> {
+  const out: Record<string, (req: Request) => Promise<Response>> = {};
+  for (const slug of slugs) {
+    const dir = `/portal/${slug}/`;
+    const handler = portalPage(dir);
+    out[`/portal/${slug}`] = handler;
+    out[dir] = handler;
+  }
+  return out;
 }
 
 /**
@@ -2071,11 +2106,53 @@ function buildPublicRoutes() {
     '/api/agents/v1/limits/record/': (req: Request) => agentLimitRecordApi(req),
     '/api/limits/summary': (req: Request) => limitSummaryApi(req),
     '/api/limits/analyze': () => limitAnalyzeApi(),
-    '/api/limits/predictions': (req: Request) =>
-      req.method === 'POST' ? limitPredictCycleApi() : limitPredictionsApi(),
+    // Method maps (Bun routing docs) — prefer over req.method branching
+    '/api/limits/predictions': {
+      GET: () => limitPredictionsApi(),
+      POST: () => limitPredictCycleApi(),
+    },
+    '/api/limits/predictions/': {
+      GET: () => limitPredictionsApi(),
+      POST: () => limitPredictCycleApi(),
+    },
+    '/api/doctor/run': {
+      GET: (req: Request, server: RouteServer) => doctorRunApi(req, server),
+      POST: (req: Request, server: RouteServer) => doctorRunApi(req, server),
+    },
+    '/api/doctor/run/': {
+      GET: (req: Request, server: RouteServer) => doctorRunApi(req, server),
+      POST: (req: Request, server: RouteServer) => doctorRunApi(req, server),
+    },
+    '/api/packages/graph/rebake': {
+      GET: (req: Request, server: RouteServer) => packagesGraphRebake(req, server),
+      POST: (req: Request, server: RouteServer) => packagesGraphRebake(req, server),
+    },
+    '/api/packages/graph/rebake/': {
+      GET: (req: Request, server: RouteServer) => packagesGraphRebake(req, server),
+      POST: (req: Request, server: RouteServer) => packagesGraphRebake(req, server),
+    },
     '/api/operations/summary': () => liveOpsSummary(),
     '/api/catalog': (req: Request) => liveCatalog(req),
-    '/api/dod': (req: Request) => dodApi(req),
+    '/api/dod': {
+      GET: (req: Request) => dodApi(req),
+      POST: (req: Request) => dodApi(req),
+    },
+    '/api/dod/': {
+      GET: (req: Request) => dodApi(req),
+      POST: (req: Request) => dodApi(req),
+    },
+    '/api/dod/approve': {
+      POST: (req: Request) => dodApi(req),
+    },
+    '/api/dod/approve/': {
+      POST: (req: Request) => dodApi(req),
+    },
+    '/api/dod/reject': {
+      POST: (req: Request) => dodApi(req),
+    },
+    '/api/dod/reject/': {
+      POST: (req: Request) => dodApi(req),
+    },
     '/api/channels/events': (req: Request) => channelsEvents(req),
 
     '/api/registry': () => serveRegistryIndex(),
@@ -2139,23 +2216,10 @@ function buildPublicRoutes() {
         : json({ error: 'live-reload disabled' }, 404);
     },
 
-    // Portal dashboards — exact routes (file strategy under the hood)
+    // Portal home + every board index (SIMD exact routes; fetch for unmatched only)
     '/portal': portalPage('/portal/index.html'),
     '/portal/': portalPage('/portal/index.html'),
-    '/portal/ops': portalPage('/portal/ops/'),
-    '/portal/ops/': portalPage('/portal/ops/'),
-    '/portal/health': portalPage('/portal/health/'),
-    '/portal/health/': portalPage('/portal/health/'),
-    '/portal/env': portalPage('/portal/env/'),
-    '/portal/env/': portalPage('/portal/env/'),
-    '/portal/dod': portalPage('/portal/dod/'),
-    '/portal/dod/': portalPage('/portal/dod/'),
-    '/portal/dashboard': portalPage('/portal/dashboard/'),
-    '/portal/dashboard/': portalPage('/portal/dashboard/'),
-    '/portal/catalog': portalPage('/portal/catalog/'),
-    '/portal/catalog/': portalPage('/portal/catalog/'),
-    '/portal/skills': portalPage('/portal/skills/'),
-    '/portal/skills/': portalPage('/portal/skills/'),
+    ...portalBoardRoutes(portalPage, PORTAL_BOARD_SLUGS),
   };
 }
 

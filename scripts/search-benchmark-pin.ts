@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { fileExistsSync, joinPath, readJson, readText, resolvePath, writeText } from './lib/fs-bun';
+import { jsonOut } from '../lib/console-depth';
 
 const dirnamePath = (p: string) => (p.includes('/') ? p.slice(0, p.lastIndexOf('/')) || '/' : '.');
 
@@ -890,7 +892,7 @@ export async function compare(
   );
 
   if (asJson) {
-    console.info(JSON.stringify(payload, null, 2));
+    jsonOut(payload);
   } else {
     console.info(
       `[search:bench:compare] baseline=${payload.baseline.snapshot.id} current=${payload.current.snapshot.id}`

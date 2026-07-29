@@ -27,6 +27,7 @@
  *   bun tools/portal-cli.ts secret get 'pass://factorywager/Cloudflare API Token/password'
  *   bun run portal:secret autofill --vault factorywager -- bun run cloudflare:env:validate
  */
+import { jsonOut } from '../lib/console-depth.ts';
 import { safeJsonParse } from '../lib/core/index.ts';
 import {
   buildVaultMapBundle,
@@ -498,7 +499,7 @@ async function cmdGet(target: string | undefined): Promise<void> {
 async function cmdMap(rest: string[]): Promise<void> {
   const bundle = await buildVaultMapBundle();
   if (hasFlag(rest, '--json')) {
-    console.log(JSON.stringify(bundle, null, 2));
+    jsonOut(bundle);
     return;
   }
   console.error(

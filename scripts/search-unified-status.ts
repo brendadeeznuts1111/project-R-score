@@ -1,10 +1,12 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/update#latest — --latest
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 import { fileExists, readText, resolvePath } from './lib/fs-bun';
+import { jsonOut } from '../lib/console-depth';
 import { buildDomainRegistryStatus } from './domain-registry-status';
 import { runSearchStatusContract } from './search-status-contract-check';
 import {
@@ -245,7 +247,7 @@ if (import.meta.main) {
   const options = parseArgs(Bun.argv.slice(2));
   const unified = await buildUnifiedStatus(options);
   if (options.json) {
-    console.info(JSON.stringify(unified, null, 2));
+    jsonOut(unified);
   } else {
     printText(unified);
   }

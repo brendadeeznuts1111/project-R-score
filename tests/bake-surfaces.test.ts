@@ -66,8 +66,8 @@ describe('bake-surfaces', () => {
     expect(byId.get(asSurfaceId('terminal'))?.status).toBe('retired');
     expect(byId.get(asSurfaceId('support'))?.status).toBe('retired');
     expect(byId.get(asSurfaceId('health_host'))?.status).toBe('vanity');
-    expect(byId.get(asSurfaceId('reasonix'))?.status).toBe('staged');
-    expect(byId.get(asSurfaceId('registry_write'))?.status).toBe('placeholder');
+    expect(byId.get(asSurfaceId('reasonix'))?.status).toBe('retired');
+    expect(byId.get(asSurfaceId('registry_write'))?.status).toBe('retired');
     expect(byId.get(asSurfaceId('score'))?.apex).toBe('factory-wager.com');
     expect(byId.get(asSurfaceId('score'))?.subdomain).toBe('score');
     expect(byId.get(asSurfaceId('score'))?.backendCode).toBe('cloudflare-pages');
@@ -82,5 +82,28 @@ describe('bake-surfaces', () => {
     ).toEqual(['local-gateway', 'local-npm', 'prod-write']);
     // No secrets in the bake
     expect(JSON.stringify(state)).not.toMatch(/cfat_[A-Za-z0-9]+/);
+  });
+});
+
+describe('bake-surfaces --probe drift rules', () => {
+  test('probeDriftFor maps status × DNS × HTTP to drift verdicts', async () => {
+    const { probeDriftFor } = await import('../scripts/bake-surfaces.ts');
+    // retired / placeholder: must NOT resolve
+    expect(probeDriftFor('retired', false, null)).toBeNull();
+    expect(probeDriftFor('retired', true, 200)).toMatch(/resolves but marked retired/);
+    expect(probeDriftFor('placeholder', true, null)).toMatch(/placeholder/);
+    // staged: no expectation
+    expect(probeDriftFor('staged', false, null)).toBeNull();
+    expect(probeDriftFor('staged', true, 200)).toBeNull();
+    // broken / dangling: must resolve AND 5xx
+    expect(probeDriftFor('broken', true, 525)).toBeNull();
+    expect(probeDriftFor('dangling', true, 502)).toBeNull();
+    expect(probeDriftFor('broken', false, null)).toMatch(/NXDOMAIN/);
+    expect(probeDriftFor('dangling', true, 200)).toMatch(/<500/);
+    // live / vanity / external: must resolve
+    expect(probeDriftFor('live', true, 200)).toBeNull();
+    expect(probeDriftFor('live', true, 302)).toBeNull(); // Access redirect is fine
+    expect(probeDriftFor('vanity', false, null)).toMatch(/NXDOMAIN/);
+    expect(probeDriftFor('external', false, null)).toMatch(/NXDOMAIN/);
   });
 });

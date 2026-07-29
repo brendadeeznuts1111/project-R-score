@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-07-29T00:48:26.089Z",
+  "generated": "2026-07-29T00:57:51.000Z",
   "path": "/registry/portal-chrome.json",
   "summary": {
     "priorityNav": 6,
-    "overflowNav": 18,
-    "footerLinks": 17,
+    "overflowNav": 19,
+    "footerLinks": 18,
     "components": 13,
     "scripts": 5
   },
@@ -164,6 +164,15 @@
       "cli": "bun run portal:doctor --verbose"
     },
     {
+      "id": "install-hygiene",
+      "label": "Install hygiene",
+      "href": "/portal/install-hygiene/",
+      "tier": "overflow",
+      "group": "harness",
+      "note": "cache prune · npm-install policy · install:verify bake",
+      "cli": "bun run bake:install-hygiene  # → /registry/install-hygiene-report.json"
+    },
+    {
       "id": "dashboard",
       "label": "Dashboard",
       "href": "/portal/dashboard/",
@@ -283,6 +292,10 @@
     {
       "label": "Failures",
       "href": "/portal/failures/"
+    },
+    {
+      "label": "Install hygiene",
+      "href": "/portal/install-hygiene/"
     },
     {
       "label": "Monorepo health",

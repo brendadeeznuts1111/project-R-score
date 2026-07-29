@@ -10,6 +10,8 @@ Machine-readable proofs and operator bakes live on **Cloudflare Pages** (not thi
 
 **Cross-links SSOT:** [portal-weave.json](https://score.factory-wager.com/registry/portal-weave.json) · human hub: [`wiki-index.md`](wiki-index.md)
 
+**ADR:** [docs/adr/0002-registry-index-ssot.md](docs/adr/0002-registry-index-ssot.md) — R2 is production SSOT; `public/registry/registry.json` is a generated snapshot.
+
 ## Operator bakes
 
 | Artifact | JSON | Bake |

@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
@@ -19,6 +20,7 @@
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 import { Glob } from 'bun';
+import { logTable } from '../lib/console-depth.ts';
 import { isDirectorySync, joinPath, listEntriesSync } from './lib/fs-bun';
 import { isTildeCachePath } from './lib/bun-install-env.ts';
 
@@ -258,12 +260,10 @@ async function main() {
   }
 
   console.info(`❌ Repo hygiene: ${violations.length} violation(s)\n`);
-  console.info(
-    Bun.inspect.table(
-      violations.map(v => ({ file: v.file, rule: v.rule })),
-      ['file', 'rule'],
-      { colors: true }
-    )
+  logTable(
+    violations.map(v => ({ file: v.file, rule: v.rule })),
+    ['file', 'rule'],
+    { colors: true }
   );
 
   process.exit(1);

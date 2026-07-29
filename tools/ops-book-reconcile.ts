@@ -1,8 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/webview
 /** CLI: scrape sportsbook balances and reconcile vs sb_accounts. */
 import { openOperationsDb } from '../lib/operations/db.ts';
 import { runBookReconciliation } from '../lib/operations/book-reconcile.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 const json = Bun.argv.includes('--json');
 const live = Bun.argv.includes('--live');
@@ -13,7 +15,7 @@ const result = await runBookReconciliation(db, { live, webview });
 db.close();
 
 if (json) {
-  console.log(JSON.stringify(result, null, 2));
+  jsonOut(result);
 } else {
   console.log(
     `Book reconcile: scrapes=${result.scrapes} updated=${result.updated} mismatches=${result.mismatches.length}`

@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/file-io — Bun.write
+import { jsonOut } from '../lib/console-depth';
 import { readText, writeText, resolvePath } from './lib/fs-bun';
 import type { BrandBenchPinnedBaseline, BrandBenchReport } from './lib/brand-bench-types';
 import { createShutdown } from './lib/graceful-shutdown';
@@ -51,7 +53,7 @@ async function main(): Promise<void> {
   };
 
   await writeText(options.outPath, JSON.stringify(next, null, 2));
-  console.info(JSON.stringify(next, null, 2));
+  jsonOut(next);
 }
 
 if (import.meta.main) {

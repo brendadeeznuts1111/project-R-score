@@ -156,9 +156,12 @@ describe('monorepo-surfaces', () => {
     expect(s.registry.topLevel.some(a => a.file === 'packages-graph-map.json')).toBe(true);
     expect(s.registry.topLevel.some(a => a.file === 'portal-chrome.json')).toBe(true);
     // Portal refs are factual: the orphan count may be zero when every tracked
-    // registry artifact is linked from a page.
+    // registry artifact is linked from a page. Install hygiene is explicitly wired.
     expect((s.registry.portalRefs?.length ?? 0)).toBeGreaterThan(5);
     expect((s.summary.registryOrphanFromPortal ?? 0)).toBeGreaterThanOrEqual(0);
+    expect(s.registry.portalRefs?.some(r => r.path.includes('install-hygiene-report.json'))).toBe(
+      true
+    );
     // lib plane is much larger than workspaces lib/*
     expect((s.libPlane?.dirs.length ?? 0)).toBeGreaterThanOrEqual(10);
     expect(s.libPlane?.workspaceShared).toBe(true);

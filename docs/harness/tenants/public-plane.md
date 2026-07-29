@@ -33,7 +33,7 @@ Pages static artifact plane — portal UI, registry bake, monitoring shells. Dis
 | `/registry/` fetches resolve to baked JSON | **Closed (ops loop)** | `ops:snapshot` · `broken-registry-ref` gate |
 | Proof taxonomy panel on ops dashboard | **Closed** | `verify-portal.ts` taxonomy chrome check |
 | Live `/api/health` schema v1 on Pages | **Partial** | `verify:portal` live probe · env-dependent |
-| Orphan registry JSON without portal link | **Closed** | weave SSOT (`PORTAL_WEAVE_ARTIFACTS`) · `content-type-matrix` · `formdata-proof` · `package-info` |
+| Orphan registry JSON without portal link | **Closed** | weave SSOT (`PORTAL_WEAVE_ARTIFACTS`) · `content-type-matrix` · `formdata-proof` · `package-info` · **`install-hygiene-report.json`** + board `/portal/install-hygiene/` |
 | Shared mark, head metadata, and proof footer | **Closed** | `site.webmanifest` · `icons/factory` · `portal:chrome:apply` · footer `portal-weave.json` |
 | Limit raises bake + board | **Closed** | `/portal/limits/` · `limit-raises.json` · health `artifacts.limitRaises` · tenant `partner-limits.md` |
 | `skills-catalog.json` scope | **Closed** | Kimi Daimon (`PORTAL_SKILLS_DIR`) · harness plane baked separately as `harness-skills-catalog.json` |
@@ -69,6 +69,16 @@ Portal static anti-patterns live in `lib/portal-static-checks.ts` — consumed b
 
 **Fresh-rerun** `bun run public:audit:verify`
 
+## Install hygiene (bake plane)
+
+| Item | Path / command |
+|------|----------------|
+| Board | [`/portal/install-hygiene/`](../../../public/portal/install-hygiene/) · `bun run portal-cli dashboard --view=install-hygiene` |
+| Bake | `bun run bake:install-hygiene` → `public/registry/install-hygiene-report.json` |
+| Monitoring | `collectMonitoring` projects `installHygiene` when the bake exists |
+| Weave | surface `install-hygiene` + artifact `install-hygiene-report` |
+| Policy | [`docs/UNIFIED.md`](../../UNIFIED.md) install hygiene section |
+
 ## Audit evidence (Discovery → Audit → Re-gate)
 
 Compose loop: [`.agents/skills/audit-gap-close/`](../../../.agents/skills/audit-gap-close/) · [`docs/audit/README.md`](../../audit/README.md)
@@ -82,13 +92,22 @@ bun run ops:snapshot --no-routing # portal-weave rebake
 
 | Gate | Last run | Result |
 |------|----------|--------|
-| `discover:compose:check` | 2026-07-26 | 0 errors · harness + public |
-| `public:discover:check` | 2026-07-26 | 0 findings |
-| `public:audit:verify` | 2026-07-26 | pass · portal static · audit catalog |
-| `verify:portal:static` | 2026-07-26 | pass |
-| `reference:discover:check` | 2026-07-26 | 0 errors · 0 warn (`similar-env` trimmed) |
+| `discover:compose:check` | 2026-07-28 | 0 errors · harness + public (info naming-cluster / similar-env remain) |
+| `public:discover:check` | 2026-07-28 | 0 findings · `install-hygiene-report.json` weave-wired (not orphan) |
+| `public:audit:verify` | 2026-07-28 | pass · portal static · audit catalog |
+| `verify:portal:static` | 2026-07-28 | pass |
+| `reference:discover:check` | 2026-07-28 | 0 errors · info similar-env / naming-cluster (warn tier not gated) |
 | `test:toc-ops` | 2026-07-26 | 71 pass · 18 files |
 | `cloudflare:preflight` | 2026-07-26 | pass · 13 contracts · 20 consistency |
 | `ci:harness:fast` | 2026-07-26 | pass |
 | `harness-skills-catalog` | 2026-07-26 | 22 skills baked · portal-weave artifact |
 | Registry rebake | 2026-07-26 | `portal-weave.json` · `harness-skills-catalog.json` + weave artifacts |
+
+### Deferred lanes (not this triage)
+
+| Lane | Why deferred |
+|------|----------------|
+| similar-env / naming-cluster warn cleanup | Separate reference-discovery pass (`--min-severity warn`) |
+| Live `/api/health` schema on Pages (Partial) | Needs Access-aware live `verify:portal` |
+| Board-deep discovery (schemaVersion / badges) | New finding kinds — not in `lib/public-discovery.ts` today |
+| toc-ops dual-write · tunnel DNS | Product / CF ops — outside public-discovery |

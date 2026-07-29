@@ -12,6 +12,8 @@
  *   bun run proton:verify
  *   bun run proton:verify --json
  */
+import { jsonOut } from '../lib/console-depth.ts';
+
 const ENV_TEMPLATE = 'env.template';
 const PASS_RE = /\{\{\s*pass:\/\/([^/]+)\/([^/]+)\/(\S+?)\s*\}\}/g;
 
@@ -24,7 +26,7 @@ type VaultRef = {
 };
 
 async function main(): Promise<void> {
-  const jsonOut = process.argv.includes('--json');
+  const wantJson = process.argv.includes('--json');
   const content = await Bun.file(ENV_TEMPLATE).text();
   const lines = content.split('\n');
   const refs: VaultRef[] = [];
@@ -64,7 +66,7 @@ async function main(): Promise<void> {
     vaults: [...new Set(refs.map(r => r.vault))],
     warnings,
   };
-  if (jsonOut) return void console.log(JSON.stringify({ summary, refs }, null, 2));
+  if (wantJson) return void jsonOut({ summary, refs });
   console.log(
     `  ✅ Proton Pass Vault: ${summary.uniqueItems} unique refs, ${summary.duplicates} dupes, ${summary.warnings} warnings`
   );

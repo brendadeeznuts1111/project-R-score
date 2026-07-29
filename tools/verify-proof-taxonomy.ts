@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see lib/verification/proof-taxonomy.ts — PROOF_TAXONOMY_CONTRACTS
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 /**
@@ -11,13 +12,14 @@
  * --save writes public/registry/proof-taxonomy-audit.json for the ops dashboard.
  */
 import { resolvePath } from '../lib/path-bun.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 import {
   runProofTaxonomyAudit,
   saveProofTaxonomyAudit,
 } from '../lib/verification/proof-taxonomy.ts';
 
 const ROOT = resolvePath(import.meta.dir, '..');
-const jsonOut = Bun.argv.includes('--json');
+const JSON_OUT = Bun.argv.includes('--json');
 const save = Bun.argv.includes('--save');
 
 if (import.meta.main) {
@@ -25,13 +27,13 @@ if (import.meta.main) {
   const failedContracts = report.audits.filter(a => !a.ok);
   const failedConsistency = report.consistency.filter(c => !c.ok);
 
-  if (save && !jsonOut) {
+  if (save && !JSON_OUT) {
     console.log(`💾 Saved ${report.reportPath}`);
     if (report.proofHash) console.log(`   hash ${report.proofHash.slice(0, 16)}…`);
   }
 
-  if (jsonOut) {
-    console.log(JSON.stringify(report, null, 2));
+  if (JSON_OUT) {
+    jsonOut(report);
   } else {
     for (const a of report.audits) {
       const mark = a.ok ? '✅' : '❌';

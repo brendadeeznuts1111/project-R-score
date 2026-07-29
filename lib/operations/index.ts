@@ -36,6 +36,8 @@ export {
   type OpsSummaryPartners,
   /** MA/NJ board rollup — alias of monitoring `ComplianceSummarySlice`. */
   type OpsSummaryCompliance,
+  type OpsSummaryBunBrandMap,
+  type OpsSummaryInstallHygiene,
 } from './ops-summary.ts';
 export type { RoutingOpsSlice } from '../routing-proof.ts';
 export { PlaySigner } from './play-signing.ts';

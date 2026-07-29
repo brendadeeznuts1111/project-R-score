@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed
 /**
  * Validate gate-map.json and print the project tree.
  *
@@ -8,6 +10,7 @@
  *   bun run gate-map:validate -- --json
  */
 
+import { jsonOut } from '../lib/console-depth.ts';
 import {
   formatGateMapTree,
   gitChangedPaths,
@@ -47,9 +50,7 @@ async function main(): Promise<number> {
   );
 
   if (asJson) {
-    console.info(
-      JSON.stringify({ validation, projects, changedPathCount: changed.length }, null, 2)
-    );
+    jsonOut({ validation, projects, changedPathCount: changed.length });
     return validation.ok ? 0 : 1;
   }
 

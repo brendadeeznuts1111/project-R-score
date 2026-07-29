@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "kind": "install-hygiene",
+  "generatedAt": "2026-07-29T01:04:47.268Z",
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
+  "installCache": {
+    "available": true,
+    "sizeBytes": 3859976192,
+    "sizeHuman": "3.59 GB",
+    "thresholdBytes": 2147483648,
+    "thresholdHuman": "2.00 GB",
+    "wouldPrune": true,
+    "pruneReason": "over threshold (2.00 GB, current 3.59 GB)",
+    "cacheDir": "/Users/nolarose/.bun/install/cache",
+    "bunPmCachePath": "/Users/nolarose/.npm",
+    "bunPmCacheMismatch": "reported /Users/nolarose/.npm does not match expected /Users/nolarose/.bun/install/cache",
+    "collectedAt": "2026-07-29T01:04:42.842Z"
+  },
+  "npmInstall": {
+    "ok": true,
+    "violations": [],
+    "violationCount": 0,
+    "allowedPaths": [
+      ".npmrc",
+      "tools/bun-doc-refs.ts",
+      "tools/bun-docs-catalog.json",
+      "tools/bun-docs-index.json",
+      "tools/bun-docs-llms-full.txt",
+      "tools/verify-guides.ts"
+    ]
+  },
+  "installVerify": {
+    "ok": true,
+    "failed": 0,
+    "strict": false,
+    "dryRun": true,
+    "checks": [
+      {
+        "ok": true,
+        "label": "install policy",
+        "detail": "linker=isolated (inherited from ~/.bunfig.toml); globalStore=true (inherited from ~/.bunfig.toml); cache=/Users/nolarose/.bun/install/cache"
+      },
+      {
+        "ok": true,
+        "label": "install env",
+        "detail": "cache absolute, globalStore=1 (BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE)"
+      },
+      {
+        "ok": true,
+        "label": "install shell env",
+        "detail": "no BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE"
+      },
+      {
+        "ok": true,
+        "label": "cache dir",
+        "detail": "/Users/nolarose/.bun/install/cache (3.6G)"
+      },
+      {
+        "ok": true,
+        "label": "global store",
+        "detail": "/Users/nolarose/.bun/install/cache/links (1064 entries)"
+      },
+      {
+        "ok": true,
+        "label": "tilde drift",
+        "detail": "no literal ./~ cache dirs"
+      },
+      {
+        "ok": true,
+        "label": "trustedDependencies",
+        "detail": "explicitly empty and documented"
+      },
+      {
+        "ok": true,
+        "label": "lockfile",
+        "detail": "configVersion 1 (isolated)"
+      },
+      {
+        "ok": true,
+        "label": "node_modules layout",
+        "detail": "resolves into global store/cache"
+      }
+    ]
+  },
+  "ok": false
+}

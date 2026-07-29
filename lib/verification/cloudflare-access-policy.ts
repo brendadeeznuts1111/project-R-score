@@ -61,7 +61,6 @@ export type CloudflareAccessPolicyReport = {
 /** Operator surfaces that policy-as-code must manage (AccessDomainId, not HostId). */
 const REQUIRED_DOMAINS: readonly AccessDomainId[] = [
   asAccessDomainId('ledger.factory-wager.com'),
-  asAccessDomainId('reasonix.factory-wager.com'),
   asAccessDomainId('score.factory-wager.com/portal'),
   asAccessDomainId('project-r-score.pages.dev/portal'),
 ];

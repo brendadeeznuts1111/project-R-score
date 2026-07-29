@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
@@ -23,6 +24,7 @@ import {
 import { appendHealthHistory } from '../lib/harness/monorepo-health-history.ts';
 import { parseHealthReportSchemaIssues } from '../lib/harness/monorepo-health-ui.ts';
 import { joinPath } from '../lib/path-bun.ts';
+import { jsonOut, logDepth } from '../lib/console-depth.ts';
 
 const ROOT = process.cwd();
 const BASELINE_PATH = joinPath(ROOT, 'scripts/monorepo-health-baseline.json');
@@ -175,7 +177,7 @@ async function main(): Promise<void> {
     const next = baselineFromReport(report);
     await Bun.write(BASELINE_PATH, JSON.stringify(next, null, 2) + '\n');
     console.info(`✅ wrote ${BASELINE_PATH}`);
-    console.info(JSON.stringify(next, null, 2));
+    logDepth(next);
     process.exit(0);
   }
 
@@ -183,20 +185,14 @@ async function main(): Promise<void> {
   const violations = ratchetViolations(report, baseline);
 
   if (JSON_OUT) {
-    console.log(
-      JSON.stringify(
-        {
-          ok: violations.length === 0,
-          score: report.score,
-          grade: report.grade,
-          violations,
-          baseline,
-          metrics: report.metrics,
-        },
-        null,
-        2
-      )
-    );
+    jsonOut({
+      ok: violations.length === 0,
+      score: report.score,
+      grade: report.grade,
+      violations,
+      baseline,
+      metrics: report.metrics,
+    });
   } else {
     console.info(
       `monorepo-health gate: score ${report.score}/100 (${report.grade}) · formula v${report.formulaVersion}`

@@ -1,8 +1,12 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/cli/install#cpu-and-os-flags — --cpu
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options — --cpu-prof
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 import { ensureDir } from './lib/fs-bun';
 import { createShutdown } from './lib/graceful-shutdown';
+import { jsonOut } from '../lib/console-depth';
 
 const joinPath = (...parts: string[]) => parts.filter(Boolean).join('/').replace(/\/+/g, '/');
 
@@ -108,7 +112,7 @@ async function main(): Promise<void> {
     interrupted: shutdown.requested,
   };
 
-  console.info(JSON.stringify(payload, null, 2));
+  jsonOut(payload);
   process.exit(exitCode ?? 1);
 }
 

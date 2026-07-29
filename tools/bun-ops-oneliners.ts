@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher
@@ -11,6 +12,7 @@
 import { randomUUIDv7 } from 'bun';
 import type { Database } from 'bun:sqlite';
 import { proofHash, proofPreview } from '../lib/bun-api-proof.ts';
+import { inspectTable } from '../lib/console-depth.ts';
 import { openOperationsDb, PlaySigner } from '../lib/operations/index.ts';
 import { formatCliTable, toolTableVersion } from './cli-table.ts';
 
@@ -300,7 +302,7 @@ export const OPS_ONELINERS: readonly OpsOneliner[] = [
       const rows = db
         .query(`SELECT sport, COALESCE(SUM(pnl), 0) as total FROM plays GROUP BY sport`)
         .all() as { sport: string; total: number }[];
-      const table = Bun.inspect.table(
+      const table = inspectTable(
         rows.map(r => [r.sport, r.total]),
         ['Sport', 'P&L'],
         { colors: false }

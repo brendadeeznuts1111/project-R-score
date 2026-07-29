@@ -20,11 +20,9 @@
  *   - Bun.hash returns bigint
  *   - inspect default depth expands shallow nests; assert depth options
  */
-import {
-  BunDefaultsReport,
-  buildBunDefaultsProof,
-} from '../lib/http/bun-defaults-proof.ts';
+import { BunDefaultsReport, buildBunDefaultsProof } from '../lib/http/bun-defaults-proof.ts';
 import { runDefaultsVerification } from '../lib/http/defaults-cron.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 /** Programmatic entry for cron / importers. */
 export { runDefaultsVerification };
@@ -41,7 +39,7 @@ if (import.meta.main) {
   const report = new BunDefaultsReport(proof);
 
   if (AS_JSON) {
-    console.log(JSON.stringify(proof, null, 2));
+    jsonOut(proof);
   } else {
     console.log(report);
     if (result.path) console.log(`\nwrote ${result.path}`);
@@ -51,7 +49,9 @@ if (import.meta.main) {
     console.log('  • Bun.hash: bigint Wyhash');
     console.log('  • CryptoHasher: algorithm required');
     console.log('  • serve port:0 = ephemeral; omit port → BUN_PORT|PORT|NODE_PORT|3000');
-    console.log('  • cron: BUN_DEFAULTS_CRON=1 · schedule 0 4 * * * UTC (lib/http/defaults-cron.ts)');
+    console.log(
+      '  • cron: BUN_DEFAULTS_CRON=1 · schedule 0 4 * * * UTC (lib/http/defaults-cron.ts)'
+    );
   }
 
   process.exit(result.code);

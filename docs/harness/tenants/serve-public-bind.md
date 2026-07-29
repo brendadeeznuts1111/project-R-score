@@ -5,7 +5,7 @@
 **Bind SSOT** [`lib/http/serve-public-bind.ts`](../../../lib/http/serve-public-bind.ts)
 **Shape helpers** [`lib/http/bun-serve-shape.ts`](../../../lib/http/bun-serve-shape.ts) · lifecycle [`lib/http/bun-serve-lifecycle.ts`](../../../lib/http/bun-serve-lifecycle.ts) · [`lib/http/bun-server.ts`](../../../lib/http/bun-server.ts)
 
-Local public-plane dev server — static `public/` + live SQLite/APIs. This doc is the operator reference for **port**, **hostname**, **URL shapes**, and **verify probes**.
+Local public-plane dev server — static `public/` + live SQLite/APIs. This doc is the operator reference for **port**, **hostname**, **URL shapes**, and **verify probes**. Portal board indexes and primary APIs live on Bun.serve `routes` ([routing docs](https://bun.com/docs/runtime/http/routing)); `fetch` is unmatched/static/publish only — see `buildPublicRoutes` / `PORTAL_BOARD_SLUGS` in the server script.
 
 ## Quick start
 

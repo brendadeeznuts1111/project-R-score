@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
@@ -11,12 +12,13 @@
  */
 import { DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { seedDodDemo } from '../lib/operations/dod-seed.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 const force = Bun.argv.includes('--force');
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 
 const result = await seedDodDemo({ dbPath, force, ifEmpty: !force });
-console.log(JSON.stringify({ dbPath, ...result }, null, 2));
+jsonOut({ dbPath, ...result });
 
 if (result.seeded) {
   console.log('\nNext: bun run ops:snapshot --no-routing  →  /registry/dod-queue.json');

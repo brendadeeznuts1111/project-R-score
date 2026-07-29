@@ -40,6 +40,7 @@ Exception: [`public/portal/health-page.js`](../public/portal/health-page.js) (sh
 | Bun × brand map | [`/portal/brands/`](../public/portal/brands/) | API → wrapper → brand → project/proof relationships · 58-value glossary · `/registry/bun-brand-map.json` + `/registry/brand-keymap.json` |
 | Vault board | [`/portal/vault/`](../public/portal/vault/) | live bake visual; gate = `portal-cli vault health` (offline snaps) |
 | Failures board | [`/portal/failures/`](../public/portal/failures/) | junit bake · nav badge = failure count |
+| Install hygiene | [`/portal/install-hygiene/`](../public/portal/install-hygiene/) | cache prune · npm policy · install:verify · `bake:install-hygiene` |
 | Launcher | `bun run portal-cli dashboard --view=packages\|vault\|tools\|… [--open]` | real boards only — no phantom `/portal/pm/` etc. |
 
 Do **not** invent new portal routes without a board under `public/portal/<name>/` + route manifest + chrome/weave entries.
@@ -338,6 +339,8 @@ bun run check:serve-shape           # shape + lifecycle + bind-identity suites
 ```
 
 Verify helper: `resolveBunServeDefaultPort()` in `lib/http/bun-serve-shape.ts` (includes `--port` for probes only; bind is native Bun). After bind, `serve-public` logs **BIND IDENTITY** ([`bind-identity-card.ts`](../lib/http/bind-identity-card.ts)); full policy: [`serve-public-bind.md`](harness/tenants/serve-public-bind.md).
+
+**Routing:** [`buildPublicRoutes`](../scripts/serve-public.ts) registers exact SIMD `routes` for `/ready`, APIs (method maps), and **every** `public/portal/<board>/` index via `portalBoardRoutes` / `PORTAL_BOARD_SLUGS`. Unmatched traffic (npm publish `PUT`, multi-segment static, skill detail pages) stays on `fetch` — [Bun routing](https://bun.com/docs/runtime/http/routing).
 
 ### Dev reload (`--watch`, `--hot`, browser SSE)
 

@@ -42,6 +42,11 @@ import {
   type BunBrandMapOpsSlice,
 } from '../monitoring/bun-brand-map-slice.ts';
 import {
+  loadInstallHygieneSummarySliceSync,
+  toInstallHygieneOpsSlice,
+  type InstallHygieneOpsSlice,
+} from '../monitoring/install-hygiene-slice.ts';
+import {
   queryLoopMetricsSlice,
   withProjectorBackendSignal,
   type OpsLoopMetricsSlice,
@@ -255,6 +260,9 @@ export type OpsSummaryMonorepoHealth = MonorepoHealthSummarySlice;
 /** Bun capability × brand declaration, adoption, and proof rollup. */
 export type OpsSummaryBunBrandMap = BunBrandMapOpsSlice;
 
+/** Install cache, package-manager policy, and install:verify health rollup. */
+export type OpsSummaryInstallHygiene = InstallHygieneOpsSlice;
+
 export type OpsSummaryPayload = {
   source: 'live' | 'snapshot';
   generated: string;
@@ -379,6 +387,11 @@ export type OpsSummaryPayload = {
    * new/hard findings and stale proof degrade the slice.
    */
   bunBrandMap: OpsSummaryBunBrandMap;
+  /**
+   * Install-hygiene report. Warnings remain visible without degrading `ok`;
+   * malformed, stale, npm-policy, and install:verify failures fail closed.
+   */
+  installHygiene: OpsSummaryInstallHygiene;
   /** Recent account limit changes (partner_account_limits table; live query, 48h window). */
   limitChanges: Array<{
     limit_id: number; // brand-ok — partner_account_limits.id
@@ -1049,6 +1062,7 @@ export function buildOpsSummary(
     compliance: loadComplianceSummarySliceSync(),
     monorepoHealth: loadMonorepoHealthSummarySliceSync(),
     bunBrandMap: toBunBrandMapOpsSlice(loadBunBrandMapSummarySliceSync()),
+    installHygiene: toInstallHygieneOpsSlice(loadInstallHygieneSummarySliceSync()),
     limitChanges,
     limitPatterns,
   };

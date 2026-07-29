@@ -17,6 +17,7 @@ import {
   tryLoadRuntimeFlagsCatalog,
 } from './lib/portal-cli-bun-flags.ts';
 import { cliTone, frameBlock, kvLines } from '../lib/portal/cli-chrome.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 const json = Bun.argv.includes('--json');
 const skipParity = Bun.argv.includes('--skip-parity');
@@ -35,21 +36,15 @@ const parityFailed = !skipParity && bunHelpText == null;
 const ok = loaded.ok && health.ok && !parityFailed;
 
 if (json) {
-  console.log(
-    JSON.stringify(
-      {
-        kind: 'portal-flags-check',
-        path: RUNTIME_FLAGS_CATALOG_PATH,
-        loadOk: loaded.ok,
-        loadError: loaded.ok ? undefined : loaded.error,
-        paritySkipped: skipParity,
-        parityUnavailable: !skipParity && bunHelpText == null,
-        health,
-      },
-      null,
-      2
-    )
-  );
+  jsonOut({
+    kind: 'portal-flags-check',
+    path: RUNTIME_FLAGS_CATALOG_PATH,
+    loadOk: loaded.ok,
+    loadError: loaded.ok ? undefined : loaded.error,
+    paritySkipped: skipParity,
+    parityUnavailable: !skipParity && bunHelpText == null,
+    health,
+  });
 } else {
   const body = [
     ...kvLines([

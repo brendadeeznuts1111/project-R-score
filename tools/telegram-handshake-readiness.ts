@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/bundler/executables#code-signing-on-macos — --deep
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
@@ -21,6 +22,7 @@ import {
 } from '../lib/telegram/package-group-registry.ts';
 import { loadReasonixEnv } from '../lib/telegram/catalog-research/load-reasonix-env.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 const argv = Bun.argv.slice(2);
 let dbPath = Bun.env.OPS_DB_PATH?.trim() || DEFAULT_OPS_DB_PATH;
@@ -80,7 +82,7 @@ try {
   }
 
   if (wantJson) {
-    console.log(JSON.stringify({ rows, dbPath }, null, 2));
+    jsonOut({ rows, dbPath });
   } else if (inviteGap) {
     const gaps = filterForumInviteGapRows(rows);
     console.log(`forum invite gap · ${gaps.length} of ${rows.length} partner(s) · db=${dbPath}`);

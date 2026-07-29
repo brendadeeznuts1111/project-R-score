@@ -4,7 +4,7 @@ Local dev vs Cloudflare Pages — how URLs reach code and static files.
 
 **Route catalog SSOT:** [`lib/http/public-routes.ts`](../lib/http/public-routes.ts) mirrors `buildPublicRoutes()` in [`scripts/serve-public.ts`](../scripts/serve-public.ts). Update both when adding portal or API paths.
 
-**Domain SSOT:** [`config/r2-env.ts`](../config/r2-env.ts) · tenant [`docs/harness/tenants/cloudflare-pages.md`](harness/tenants/cloudflare-pages.md)
+**Domain SSOT:** [`config/r2-env.ts`](../config/r2-env.ts) · brand map [`docs/brand-alignment.md`](brand-alignment.md) · tenant [`docs/harness/tenants/cloudflare-pages.md`](harness/tenants/cloudflare-pages.md) · tunnels [`tunnel-inventory.md`](harness/tenants/tunnel-inventory.md)
 
 ## Surfaces
 

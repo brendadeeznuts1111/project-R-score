@@ -1,16 +1,16 @@
 {
   "kind": "portal-doctor-state",
   "schemaVersion": 1,
-  "generatedAt": "2026-07-28T22:57:54.334Z",
+  "generatedAt": "2026-07-29T01:10:43.731Z",
   "ok": true,
   "tone": "green",
   "full": false,
   "summary": {
-    "checkCount": 19,
-    "passed": 19,
+    "checkCount": 20,
+    "passed": 20,
     "failed": 0,
     "fatal": 10,
-    "warn": 7,
+    "warn": 8,
     "info": 2,
     "failedFatal": 0,
     "failedWarn": 0,
@@ -39,7 +39,7 @@
       "fatalFailed": 0
     },
     "infra": {
-      "total": 3,
+      "total": 4,
       "failed": 0,
       "fatalFailed": 0
     }
@@ -66,7 +66,7 @@
       "group": "bakes",
       "level": "warn",
       "ok": true,
-      "message": "public/registry/vault-health.json present · 5h ago",
+      "message": "public/registry/vault-health.json present · 7h ago",
       "autoFixable": true
     },
     {
@@ -74,7 +74,7 @@
       "group": "bakes",
       "level": "warn",
       "ok": true,
-      "message": "public/registry/capability-map-subset.json present · 4m ago",
+      "message": "public/registry/capability-map-subset.json present · 2h ago",
       "autoFixable": true
     },
     {
@@ -82,7 +82,7 @@
       "group": "bakes",
       "level": "info",
       "ok": true,
-      "message": "public/registry/bunfig-state.json present · 2h ago",
+      "message": "public/registry/bunfig-state.json present · 4h ago",
       "autoFixable": true
     },
     {
@@ -182,6 +182,14 @@
       "autoFixable": false
     },
     {
+      "id": "infra-surfaces-state",
+      "group": "infra",
+      "level": "warn",
+      "ok": true,
+      "message": "surfaces-state v2 · total=13 · apexes=2 · accessDomains=3 · crossCheck ok",
+      "autoFixable": false
+    },
+    {
       "id": "infra-ledger-access",
       "group": "infra",
       "level": "fatal",
@@ -194,7 +202,7 @@
       "group": "infra",
       "level": "warn",
       "ok": true,
-      "message": "portal · policy has score.factory-wager.com/portal staged (offline · no live probe)",
+      "message": "portal · policy has score.factory-wager.com/portal (offline · no live probe)",
       "autoFixable": false
     }
   ],

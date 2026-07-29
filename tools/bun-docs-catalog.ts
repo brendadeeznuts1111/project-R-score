@@ -826,10 +826,14 @@ function mergeEntry(
   if (partial.verifiedOn) existing.verifiedOn = partial.verifiedOn;
   // type: prefer api over concept
   if (partial.type === 'api' && existing.type === 'concept') existing.type = 'api';
-  // Preserve the CLI identity supplied by the authoritative source. Boolean
-  // flags and value-taking options are separate DocRefType contracts.
-  if (partial.type === 'cli-option' || partial.type === 'cli-flag') {
-    existing.type = partial.type;
+  // Preserve the authoritative cli-flag vs cli-option identity. A legacy
+  // scrape may enrich an entry, but it must never downgrade a correctly
+  // derived boolean flag to a value-taking option.
+  if (partial.type === 'cli-option' && existing.type !== 'cli-flag') {
+    existing.type = 'cli-option';
+  }
+  if ((partial.type as string) === 'cli-flag') {
+    existing.type = 'cli-flag';
   }
   if ((partial.type as string) === 'config') existing.type = 'config-key';
   // aliases

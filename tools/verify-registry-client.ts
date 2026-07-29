@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
  * verify-registry-client.ts — Live probes for RegistryClient resolve/download/publish.
@@ -12,7 +13,7 @@
  */
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher
 import { CryptoHasher, revision, version } from 'bun';
-import { logTable } from '../lib/console-depth.ts';
+import { jsonOut, logTable } from '../lib/console-depth.ts';
 import { buildSemanticTags } from '../lib/verification/channels.ts';
 import {
   ensureVerificationResultsHaveCanonical,
@@ -62,7 +63,7 @@ const proof = {
 };
 
 if (asJson) {
-  console.log(JSON.stringify(proof, null, 2));
+  jsonOut(proof);
 } else {
   console.log('╔══════════════════════════════════════════════════════════════════════╗');
   console.log('║  📦 Registry client SDK verification (resolve · download · publish)  ║');

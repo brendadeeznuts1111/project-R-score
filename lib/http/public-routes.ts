@@ -243,6 +243,22 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     note: 'failures:bake · junit',
   },
   {
+    path: '/portal/install-hygiene/',
+    name: 'Install hygiene board',
+    category: 'portal',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: 'bake:install-hygiene · install-hygiene-report.json · cache/npm/verify',
+  },
+  {
+    path: '/registry/install-hygiene-report.json',
+    name: 'Install hygiene bake',
+    category: 'registry',
+    kind: 'file-static',
+    okStatuses: [200, 404],
+    note: 'optional plane · bun run bake:install-hygiene',
+  },
+  {
     path: '/portal/dod/',
     name: 'DOD portal',
     category: 'portal',

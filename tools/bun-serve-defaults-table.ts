@@ -17,11 +17,13 @@
  *   - docs: canonical default from bun.com/docs
  *   - live: this process runtime probe (Bun.version)
  */
+import { inspectTable } from '../lib/console-depth.ts';
+
 const colors = Bun.env.NO_COLOR === undefined && Bun.env.FORCE_COLOR !== '0';
 
 function table(rows: Record<string, string | number | boolean>[], properties?: string[]): string {
   // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options
-  return Bun.inspect.table(rows, properties, { colors });
+  return inspectTable(rows, properties, { colors });
 }
 
 /** Docs anchors (SSOT) — keep in sync with bun-doc-refs suggest output. */

@@ -64,6 +64,21 @@ describe('monitoring', () => {
     expect(typeof data.limitRaises?.ok).toBe('boolean');
   });
 
+  test('collectMonitoring includes installHygiene when its bake is present', async () => {
+    const bake = Bun.file('public/registry/install-hygiene-report.json');
+    if (!(await bake.exists())) return;
+    const db = openOperationsDb({ path: ':memory:' });
+    const data = await collectMonitoring(db, { source: 'snapshot' });
+    db.close();
+
+    expect(data.installHygiene).toBeDefined();
+    expect(data.installHygiene?.available).toBe(true);
+    expect(data.installHygiene?.path).toBe('/registry/install-hygiene-report.json');
+    expect(data.installHygiene?.portal).toBe('/portal/install-hygiene/');
+    expect(typeof data.installHygiene?.warnings).toBe('number');
+    expect(typeof data.installHygiene?.errors).toBe('number');
+  });
+
   test('renderMonitoringHtml embeds Bun.inspect.table output', async () => {
     const db = openOperationsDb({ path: ':memory:' });
     const data = await collectMonitoring(db, { source: 'live' });

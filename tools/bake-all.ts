@@ -18,6 +18,7 @@
  *   bun run bake:all -- --only=capabilities,packages
  */
 import { resolvePath } from '../scripts/lib/fs-bun';
+import { logTable } from '../lib/console-depth';
 
 const ROOT = resolvePath(import.meta.dir, '..');
 
@@ -50,6 +51,11 @@ const STEPS: BakeStep[] = [
     id: 'packages',
     cmd: ['bun', 'run', 'audit:packages', '--', '--bake'],
     note: 'packages-graph-map.json',
+  },
+  {
+    id: 'install-hygiene',
+    cmd: ['bun', 'run', 'bake:install-hygiene'],
+    note: 'install-hygiene-report.json + offline board embed',
   },
   { id: 'failures', cmd: ['bun', 'run', 'failures:bake'], note: 'failures.json' },
   { id: 'health', cmd: ['bun', 'run', 'monorepo:health:bake'], note: 'monorepo-health.json' },
@@ -123,17 +129,15 @@ async function main(): Promise<void> {
   }
 
   console.log('\n── bake:all summary ──');
-  // Native Bun.inspect.table (string return) — same surface as capabilities doctor.
-  console.log(
-    Bun.inspect.table(
-      results.map(r => ({
-        step: r.id,
-        status: r.code === 0 ? 'ok' : `fail(${r.code})`,
-        ms: r.ms,
-      })),
-      ['step', 'status', 'ms'],
-      { colors: true }
-    )
+  // logTable wrapper (lib/console-depth) — same surface as capabilities doctor.
+  logTable(
+    results.map(r => ({
+      step: r.id,
+      status: r.code === 0 ? 'ok' : `fail(${r.code})`,
+      ms: r.ms,
+    })),
+    ['step', 'status', 'ms'],
+    { colors: true }
   );
   const failed = results.find(r => r.code !== 0);
   if (failed) {

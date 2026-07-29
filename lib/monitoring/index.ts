@@ -50,6 +50,23 @@ export {
   type MonorepoHealthRegistryBake,
   type MonorepoHealthHealthArtifact,
 } from './monorepo-health-slice.ts';
+export {
+  collectInstallCacheMonitoringSlice,
+  type InstallCacheMonitoringSlice,
+} from './install-cache-slice.ts';
+export {
+  loadInstallHygieneMonitoringSlice,
+  loadInstallHygieneSummarySliceSync,
+  parseInstallHygieneReport,
+  projectInstallHygieneReport,
+  toInstallHygieneOpsSlice,
+  INSTALL_HYGIENE_BOARD_PATH,
+  INSTALL_HYGIENE_PORTAL_PATH,
+  INSTALL_HYGIENE_REGISTRY_REL,
+  INSTALL_HYGIENE_STALE_AFTER_MS,
+  type InstallHygieneMonitoringSlice,
+  type InstallHygieneOpsSlice,
+} from './install-hygiene-slice.ts';
 export { ensureMonitoringSchema } from './schema.ts';
 export { renderMonitoringHtml } from './page.ts';
 export { enrichMonitoringForSnapshot, type MonitoringSnapshotExtras } from './enrich-snapshot.ts';

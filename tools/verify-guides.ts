@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
@@ -19,6 +20,7 @@
  */
 
 import { CANONICAL_GUIDES_TOKENS } from './bun-doc-refs.ts';
+import { logTable } from '../lib/console-depth.ts';
 
 export type GuideCheck = {
   name: string;
@@ -116,15 +118,13 @@ export async function buildGuidesProof(): Promise<GuidesProof> {
 
 if (import.meta.main) {
   const proof = await buildGuidesProof();
-  console.log(
-    Bun.inspect.table(
-      proof.results.map(r => ({
-        Resource: r.name,
-        Expected: r.expected,
-        Actual: r.actual,
-        Pass: r.passed ? '✅' : '❌',
-      }))
-    )
+  logTable(
+    proof.results.map(r => ({
+      Resource: r.name,
+      Expected: r.expected,
+      Actual: r.actual,
+      Pass: r.passed ? '✅' : '❌',
+    }))
   );
   console.log(`\n${proof.summary.passed}/${proof.summary.total} passed`);
   console.log(`Proof hash: ${proof.proofHash}`);

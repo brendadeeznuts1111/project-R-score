@@ -51,6 +51,7 @@
  * Operate runbook: docs/BUN_DOCS_OPERATE.md
  */
 
+import { jsonOut } from '../lib/console-depth.ts';
 import {
   catalogMissingRefCount,
   computeBundlerGaps,
@@ -2034,20 +2035,14 @@ async function suggestAudit(query: string, opts?: { json?: boolean }): Promise<b
     return false;
   }
   if (opts?.json) {
-    console.info(
-      JSON.stringify(
-        {
-          ok: true,
-          query,
-          alias: alias ?? null,
-          source: 'tools/audit-catalog.json',
-          bunToken: false,
-          hits,
-        },
-        null,
-        2
-      )
-    );
+    jsonOut({
+      ok: true,
+      query,
+      alias: alias ?? null,
+      source: 'tools/audit-catalog.json',
+      bunToken: false,
+      hits,
+    });
     return true;
   }
   if (alias && hits[0] && normalizeAuditSuggestId(hits[0].id) === normalizeAuditSuggestId(alias)) {
@@ -3007,29 +3002,23 @@ async function locusAudit(args: string[]): Promise<number> {
   const widths = [28, 14, 12, 28, 36, 44, 7, 7];
 
   if (asJson) {
-    console.info(
-      JSON.stringify(
-        {
-          depth,
-          showAll,
-          total,
-          needsWork,
-          byStatus: {
-            fragment: byStatus('fragment'),
-            page: byStatus('page'),
-            inherited: byStatus('inherited'),
-            dump: byStatus('dump'),
-            reference: byStatus('reference'),
-            coincidence: byStatus('coincidence'),
-            unresolved: byStatus('unresolved'),
-          },
-          shown: slice.length,
-          entries: slice,
-        },
-        null,
-        2
-      )
-    );
+    jsonOut({
+      depth,
+      showAll,
+      total,
+      needsWork,
+      byStatus: {
+        fragment: byStatus('fragment'),
+        page: byStatus('page'),
+        inherited: byStatus('inherited'),
+        dump: byStatus('dump'),
+        reference: byStatus('reference'),
+        coincidence: byStatus('coincidence'),
+        unresolved: byStatus('unresolved'),
+      },
+      shown: slice.length,
+      entries: slice,
+    });
   } else if (asTsv) {
     console.info([...headers, 'INHERIT_FROM'].join('\t'));
     for (const r of slice) {
@@ -3129,18 +3118,14 @@ async function runBundlerCli(argv: string[]): Promise<number> {
             l => l.group === group
           )
         : (await import('../lib/docs/bundler-nav')).BUNDLER_NAV_LEAVES;
-      console.info(
-        JSON.stringify(
-          leaves.map(l => ({
-            group: l.group,
-            title: l.title,
-            path: l.path,
-            url: `https://bun.com/docs/${l.path}`,
-            anchors: byDomain.get(l.path)?.anchors ?? [],
-          })),
-          null,
-          2
-        )
+      jsonOut(
+        leaves.map(l => ({
+          group: l.group,
+          title: l.title,
+          path: l.path,
+          url: `https://bun.com/docs/${l.path}`,
+          anchors: byDomain.get(l.path)?.anchors ?? [],
+        }))
       );
     } else {
       console.info(text.trimEnd());
@@ -3151,13 +3136,11 @@ async function runBundlerCli(argv: string[]): Promise<number> {
     const rows = computeBundlerTokenRows({ catalogEntries: catalog, refs: CANONICAL_REFS });
     const filtered = group ? rows.filter(r => r.group === group) : rows;
     if (asJson) {
-      console.info(
-        JSON.stringify(
-          { count: filtered.length, missing: catalogMissingRefCount(filtered), rows: filtered },
-          null,
-          2
-        )
-      );
+      jsonOut({
+        count: filtered.length,
+        missing: catalogMissingRefCount(filtered),
+        rows: filtered,
+      });
     } else {
       console.info(
         `bundler catalog tokens: ${filtered.length} · missingRef=${catalogMissingRefCount(filtered)}`
@@ -3179,7 +3162,7 @@ async function runBundlerCli(argv: string[]): Promise<number> {
       group,
     });
     if (asJson) {
-      console.info(JSON.stringify({ count: gaps.length, gaps }, null, 2));
+      jsonOut({ count: gaps.length, gaps });
     } else {
       console.info(formatBundlerGapsText(gaps).trimEnd());
     }

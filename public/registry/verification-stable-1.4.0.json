@@ -1,7 +1,7 @@
 {
   "type": "ChannelAwareVerificationReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-29T00:04:48.879Z",
+  "timestamp": "2026-07-29T01:08:58.392Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62",
   "blogPost": "https://bun.com/blog/bun-v1.3.14",
@@ -956,7 +956,7 @@
     {
       "name": "install platform: runtime-flags",
       "expected": "Bun CLI (isolated probe dir): runtime-flags",
-      "actual": "dry-run --cpu=x64 --os=linux exit=0; invalid cpu rejected",
+      "actual": "skipped (--dry-run) — would run bun install --cpu=x64 --os=linux --dry-run in isolated dir",
       "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
       "canonicalKey": "bun install --cpu",
@@ -1046,7 +1046,7 @@
     {
       "name": "install platform: monorepo-cross-dry-run",
       "expected": "FactoryWager monorepo root (package.json + bun.lock): monorepo-cross-dry-run",
-      "actual": "cross-linux-x64:ok; cross-linux-arm64:ok; cross-darwin-arm64:ok",
+      "actual": "skipped (--dry-run) — would run: cross-linux-x64=bun install --cpu=x64 --os=linux --dry-run (x64/linux); cross-linux-arm64=bun install --cpu=arm64 --os=linux --dry-run (arm64/linux); cross-darwin-arm64=bun install --cpu=arm64 --os=darwin --dry-run (arm64/darwin)",
       "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
       "canonicalKey": "bun install --cpu",
@@ -1064,7 +1064,7 @@
     {
       "name": "install platform: lockfile-stable",
       "expected": "bun.lock shared lockfile (docs/UNIFIED.md): lockfile-stable",
-      "actual": "hash unchanged (2b472f7979e44d88) after cross dry-runs",
+      "actual": "skipped (--dry-run) — would hash bun.lock before/after cross dry-runs",
       "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#platform-specific-dependencies",
       "canonicalKey": "platform-specific dependencies",

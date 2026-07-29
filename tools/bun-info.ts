@@ -9,6 +9,7 @@
  *   bun tools/bun-info.ts @factorywager/registry-client
  *   bun tools/bun-info.ts --registry http://127.0.0.1:3000 @factorywager/registry-client --json
  */
+import { jsonOut } from '../lib/console-depth.ts';
 import {
   bunInfoField,
   fetchPackumentJson,
@@ -33,7 +34,7 @@ try {
 
 if (cli.json && !cli.property) {
   const meta = await fetchPackumentJson(cli.pkg, cli);
-  console.log(JSON.stringify(meta, null, 2));
+  jsonOut(meta);
   process.exit(0);
 }
 
@@ -49,7 +50,7 @@ if (!out.ok) {
 
 if (cli.json) {
   try {
-    console.log(JSON.stringify(JSON.parse(out.value), null, 2));
+    jsonOut(JSON.parse(out.value));
   } catch {
     console.log(JSON.stringify(out.value));
   }

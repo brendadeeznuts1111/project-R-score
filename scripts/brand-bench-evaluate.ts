@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.table
 // @see https://bun.com/docs/runtime/file-io — Bun.file
+import { jsonOut, logTable } from '../lib/console-depth';
 import { readText, resolvePath } from './lib/fs-bun';
 import type {
   BrandBenchEvaluation,
@@ -263,7 +265,7 @@ async function main(): Promise<void> {
       ],
       thresholds: THRESHOLDS,
     };
-    console.info(JSON.stringify(result, null, 2));
+    jsonOut(result);
     process.exit(0);
     return;
   }
@@ -295,7 +297,7 @@ async function main(): Promise<void> {
       ],
       thresholds: THRESHOLDS,
     };
-    console.info(JSON.stringify(result, null, 2));
+    jsonOut(result);
     process.exit(0);
     return;
   }
@@ -310,7 +312,7 @@ async function main(): Promise<void> {
   });
 
   if (options.json) {
-    console.info(JSON.stringify(result, null, 2));
+    jsonOut(result);
   } else {
     // Use Bun.inspect.table() for formatted summary
     const useColors = process.stdout.isTTY;
@@ -329,9 +331,7 @@ async function main(): Promise<void> {
       }));
 
       console.info('\nViolations:');
-      console.info(
-        Bun.inspect.table(tableData, ['metric', 'kind', 'severity', 'delta'], { colors: useColors })
-      );
+      logTable(tableData, ['metric', 'kind', 'severity', 'delta'], { colors: useColors });
     } else {
       console.info('\n✅ No violations detected');
     }

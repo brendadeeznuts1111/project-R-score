@@ -20,7 +20,12 @@
  * @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
  */
 
-import { inspectCustom, shouldColor, widthOf } from '../console-depth.ts';
+import {
+  inspectCustom,
+  inspectTable as inspectTableCore,
+  shouldColor,
+  widthOf,
+} from '../console-depth.ts';
 import { BUN_DEEP_EQUALS_DOCS, deepEquals } from '../deep-equals.ts';
 import type { HealthRouteObjects, PublicRouteDef } from './public-routes.ts';
 
@@ -110,7 +115,7 @@ export function proveInspectTable(
   properties: readonly string[]
 ): InspectTableProof {
   const projected = projectTableRows(rows, properties);
-  const render = () => Bun.inspect.table(projected, [...properties], { colors: false });
+  const render = () => inspectTableCore(projected, [...properties], { colors: false });
   const r1 = render();
   const r2 = render();
   return {
@@ -136,16 +141,16 @@ export function inspectTable(
   const colors = opts.colors ?? shouldColor();
 
   if (!properties?.length) {
-    return Bun.inspect.table(rows, { colors });
+    return inspectTableCore(rows, undefined, { colors });
   }
 
   const projected = projectTableRows(rows, properties);
-  const stable = Bun.inspect.table(projected, [...properties], { colors: false });
-  if (!deepEquals(stable, Bun.inspect.table(projected, [...properties], { colors: false }))) {
+  const stable = inspectTableCore(projected, [...properties], { colors: false });
+  if (!deepEquals(stable, inspectTableCore(projected, [...properties], { colors: false }))) {
     throw new Error('inspectTable: Bun.inspect.table render not idempotent (deepEquals)');
   }
 
-  return Bun.inspect.table(projected, [...properties], { colors });
+  return inspectTableCore(projected, [...properties], { colors });
 }
 
 function routeStatsRows(health: HealthRouteObjects | null): TableRow[] {

@@ -1386,6 +1386,8 @@ Related: vault health · capabilities · scanner · flags · install:verify
       env: '/portal/env/',
       failures: '/portal/failures/',
       bunfig: '/portal/bunfig/',
+      'install-hygiene': '/portal/install-hygiene/',
+      hygiene: '/portal/install-hygiene/',
       health: '/portal/health/',
       ops: '/portal/ops/',
       compliance: '/portal/compliance/',

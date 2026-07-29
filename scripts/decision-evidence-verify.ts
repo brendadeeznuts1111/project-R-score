@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+import { jsonOut } from '../lib/console-depth';
 import { joinPath, readText, resolvePath } from './lib/fs-bun';
 import { sha256Hex } from './lib/hash';
 
@@ -163,7 +165,7 @@ async function main(): Promise<void> {
   const options = parseArgs(Bun.argv.slice(2));
   const summary = await verifyDecisionEvidence(options);
   if (options.json) {
-    console.info(JSON.stringify(summary, null, 2));
+    jsonOut(summary);
   } else {
     for (const result of summary.results) {
       const status = result.valid ? 'ok' : 'fail';

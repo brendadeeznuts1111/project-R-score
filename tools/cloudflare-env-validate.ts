@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 /**
  * CLI entry for token scope validation — avoids r2-env import.meta.main circular load.
  *
@@ -6,14 +7,15 @@
  * @see docs/harness/tenants/cloudflare-pages.md
  */
 import { runCloudflareTokenScopeProbe } from '../lib/verification/cloudflare-token-scope.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
-const jsonOut = Bun.argv.includes('--json');
+const asJson = Bun.argv.includes('--json');
 const strict = Bun.argv.includes('--strict');
 
 try {
   const report = await runCloudflareTokenScopeProbe({ strict });
-  if (jsonOut) {
-    console.log(JSON.stringify(report, null, 2));
+  if (asJson) {
+    jsonOut(report);
   } else {
     console.log('Cloudflare token scope OK');
     console.log(`  tier          ${report.tier}`);

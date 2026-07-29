@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
+import { jsonOut } from '../lib/console-depth';
 import { dirExistsSync, joinPath, readText, resolvePath } from './lib/fs-bun';
 
 type PinnedBaseline = {
@@ -120,18 +121,12 @@ async function main(): Promise<void> {
 
   const failed = results.filter(r => !r.ok);
   if (asJson) {
-    console.info(
-      JSON.stringify(
-        {
-          ok: failed.length === 0,
-          checked: results.length,
-          failed: failed.length,
-          results,
-        },
-        null,
-        2
-      )
-    );
+    jsonOut({
+      ok: failed.length === 0,
+      checked: results.length,
+      failed: failed.length,
+      results,
+    });
   } else {
     for (const result of results) {
       if (result.ok) {

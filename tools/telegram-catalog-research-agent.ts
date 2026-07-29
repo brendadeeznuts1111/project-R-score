@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Telegram catalog research agent — deterministic analyzers + optional LLM pass.
@@ -11,6 +12,7 @@
  * Output: reports/telegram/catalog-enhancements.json (with --write)
  */
 import { DEFAULT_OPS_DB_PATH, openOperationsDb } from '../lib/operations/db.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 import {
   exportCatalogEnhancementReport,
   formatCatalogEnhancementSummary,
@@ -75,7 +77,7 @@ try {
   }
 
   if (wantJson) {
-    console.log(JSON.stringify(report, null, 2));
+    jsonOut(report);
   } else {
     for (const line of formatCatalogEnhancementSummary(report)) console.log(line);
   }

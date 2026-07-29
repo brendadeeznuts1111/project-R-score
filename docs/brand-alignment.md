@@ -1,8 +1,12 @@
 # FactoryWager Brand & Infrastructure Alignment
 
+**Role** Domain map · email · naming · vaults (human SSOT for brand plane).
+**Tunnels / machine cloudflared** → [`docs/harness/tenants/tunnel-inventory.md`](harness/tenants/tunnel-inventory.md) (not duplicated here).
+**Routing (local vs Pages)** → [`docs/platform-routing.md`](platform-routing.md).
+
 ## Domain Structure
 
-Verified live (dig + curl 2026-07-28 — status in parentheses):
+Verified live (dig + curl 2026-07-28 — status in parentheses; `terminal` CNAME removal re-checked 2026-07-29):
 ```
 factory-wager.com          → Pages (project-r-score, apex)
   www.factory-wager.com    → Pages (same as apex)

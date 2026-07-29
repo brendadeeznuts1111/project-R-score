@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "bun-brand-map",
   "path": "/registry/bun-brand-map.json",
-  "generatedAt": "2026-07-29T00:48:17.657Z",
+  "generatedAt": "2026-07-29T01:06:46.024Z",
   "sources": {
     "declarations": "lib/docs/bun-brand-usages.ts",
     "catalog": "tools/bun-docs-catalog.json",
@@ -16,7 +16,7 @@
     "catalog": "bad33942d40497ea7dfa485acc9b846be247c4da0ef665ff2193b2d2f542317d",
     "brandManifest": "2aa8c57662ea41c90b2c2d53aecfd78ec126aec6257a84e996d4499b349f0923",
     "brandKeymap": "55b07924a3980ad8e53fc380f65028308614004602fb15998538396565ecd0b7",
-    "observations": "6f41307663f3a269638f9affe8a8fdf4ad0dc6016ea79fef0ef2eb619fd6c5ce",
+    "observations": "b293e14a4dd7190605ca1ef77b334ca4097f16e0753a7fe32b7b8ee018699bed",
     "baseline": "57e70c50175bc9a9ce9fafdb90fdb801e1e423fff49ae2fcf7c422bd268fb330",
     "proofs": "ce8d77f0f78ff897544131e184f9a3518f623d3fdfe869daf1fea8402a953e33"
   },
@@ -2553,7 +2553,7 @@
       "severity": "warning",
       "api": "Bun.cron",
       "path": "tools/bun-api-oneliners.ts",
-      "line": 619,
+      "line": 636,
       "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -2563,7 +2563,7 @@
       "severity": "warning",
       "api": "Bun.cron",
       "path": "tools/bun-api-showcase/oneliners.ts",
-      "line": 563,
+      "line": 580,
       "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -2573,7 +2573,7 @@
       "severity": "warning",
       "api": "Bun.cron",
       "path": "tools/bun-api-showcase/ops-oneliners.ts",
-      "line": 192,
+      "line": 194,
       "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -2583,7 +2583,7 @@
       "severity": "warning",
       "api": "Bun.cron",
       "path": "tools/bun-ops-oneliners.ts",
-      "line": 319,
+      "line": 321,
       "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -2763,7 +2763,7 @@
       "severity": "warning",
       "api": "Bun.Image",
       "path": "tools/bun-api-showcase/oneliners.ts",
-      "line": 537,
+      "line": 554,
       "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -3263,7 +3263,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "lib/monitoring/collect.ts",
-      "line": 186,
+      "line": 194,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4683,7 +4683,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "tools/benchmarks/deep-benchmark.ts",
-      "line": 167,
+      "line": 169,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4693,7 +4693,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "tools/bun-api-oneliners.ts",
-      "line": 153,
+      "line": 170,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4713,7 +4713,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "tools/bun-api-showcase/oneliners.ts",
-      "line": 193,
+      "line": 210,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4723,7 +4723,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "tools/bun-api-showcase/ops-oneliners.ts",
-      "line": 46,
+      "line": 48,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4733,7 +4733,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "tools/bun-api-showcase/ops-oneliners.ts",
-      "line": 75,
+      "line": 77,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4743,7 +4743,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "tools/bun-api-showcase/ops-oneliners.ts",
-      "line": 102,
+      "line": 104,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4753,7 +4753,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "tools/bun-ops-oneliners.ts",
-      "line": 33,
+      "line": 35,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4763,7 +4763,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "tools/bun-ops-oneliners.ts",
-      "line": 34,
+      "line": 36,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4773,7 +4773,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "tools/bun-ops-oneliners.ts",
-      "line": 35,
+      "line": 37,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4783,7 +4783,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "tools/bun-ops-oneliners.ts",
-      "line": 36,
+      "line": 38,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4793,7 +4793,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "tools/bun-ops-oneliners.ts",
-      "line": 61,
+      "line": 63,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4803,7 +4803,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "tools/bun-ops-oneliners.ts",
-      "line": 87,
+      "line": 89,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4813,7 +4813,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "tools/bun-ops-oneliners.ts",
-      "line": 114,
+      "line": 116,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4823,7 +4823,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "tools/bun-ops-oneliners.ts",
-      "line": 265,
+      "line": 267,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4863,7 +4863,7 @@
       "severity": "warning",
       "api": "Bun.sliceAnsi",
       "path": "tools/bun-api-oneliners.ts",
-      "line": 213,
+      "line": 230,
       "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4873,7 +4873,7 @@
       "severity": "warning",
       "api": "Bun.sliceAnsi",
       "path": "tools/bun-api-showcase/oneliners.ts",
-      "line": 237,
+      "line": 254,
       "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -5323,7 +5323,7 @@
       "severity": "warning",
       "api": "Bun.WebView",
       "path": "tools/bun-api-showcase/oneliners.ts",
-      "line": 523,
+      "line": 540,
       "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -5333,7 +5333,7 @@
       "severity": "warning",
       "api": "Bun.WebView",
       "path": "tools/bun-api-showcase/ops-oneliners.ts",
-      "line": 119,
+      "line": 121,
       "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -5343,7 +5343,7 @@
       "severity": "warning",
       "api": "Bun.WebView",
       "path": "tools/bun-ops-oneliners.ts",
-      "line": 194,
+      "line": 196,
       "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
       "baseline": true
     },

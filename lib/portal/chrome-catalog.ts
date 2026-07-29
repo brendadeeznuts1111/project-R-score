@@ -204,6 +204,15 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     note: 'unified health gate · bunfig · catalog · linker',
     cli: 'bun run portal:doctor --verbose',
   },
+  {
+    id: 'install-hygiene',
+    label: 'Install hygiene',
+    href: '/portal/install-hygiene/',
+    tier: 'overflow',
+    group: 'harness',
+    note: 'cache prune · npm-install policy · install:verify bake',
+    cli: 'bun run bake:install-hygiene  # → /registry/install-hygiene-report.json',
+  },
   // ── Ops boards ──
   {
     id: 'dashboard',
@@ -282,6 +291,7 @@ export const PORTAL_FOOTER_LINKS: PortalChromeCatalog['footerLinks'] = [
   { label: 'Env', href: '/portal/env/' },
   { label: 'Vault', href: '/portal/vault/' },
   { label: 'Failures', href: '/portal/failures/' },
+  { label: 'Install hygiene', href: '/portal/install-hygiene/' },
   { label: 'Monorepo health', href: '/registry/monorepo-health.json' },
   {
     label: 'GitHub',

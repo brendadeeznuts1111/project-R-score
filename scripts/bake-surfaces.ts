@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/reference/bun/argv — Bun.argv
@@ -17,6 +18,8 @@
  *
  *   bun run surfaces:bake
  *   bun run surfaces:bake -- --check
+ *   bun run surfaces:bake -- --probe          # live DNS+HTTP re-verification (opt-in)
+ *   bun run surfaces:bake -- --probe --check  # fail on live drift vs TOML status
  */
 import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
 import {
@@ -33,17 +36,87 @@ import {
   hostIdFromAccessDomain,
   pathFromAccessDomain,
   type AccessDomainId,
+  type HostId,
+  type SurfaceStatusCode,
 } from '../lib/types/branded.ts';
 import { resolvePath } from './lib/fs-bun';
 
 const ROOT = resolvePath(import.meta.dir, '..');
 const CHECK = Bun.argv.includes('--check');
+const PROBE = Bun.argv.includes('--probe');
 const TOML = `${ROOT}/config/surfaces.toml`;
 const OUTPUT = `${ROOT}/public/registry/surfaces-state.json`;
 
 function comparableState(value: Record<string, unknown>): Record<string, unknown> {
-  return { ...value, generatedAt: '' };
+  const { probe: _probe, ...rest } = value;
+  return { ...rest, generatedAt: '' };
 }
+
+// ── Live probe (opt-in) ────────────────────────────────────────────────
+// Drift rules per status: retired/placeholder must NOT resolve; broken/dangling
+// must resolve AND 5xx; live/vanity/external must resolve; staged = no expectation.
+
+export function probeDriftFor(
+  status: SurfaceStatusCode,
+  resolves: boolean,
+  httpStatus: number | null
+): string | null {
+  switch (status) {
+    case 'retired':
+    case 'placeholder':
+      return resolves ? `resolves but marked ${status}` : null;
+    case 'staged':
+      return null;
+    case 'broken':
+    case 'dangling':
+      if (!resolves) return `NXDOMAIN but marked ${status}`;
+      if (httpStatus != null && httpStatus < 500)
+        return `HTTP ${httpStatus} (<500) but marked ${status}`;
+      return null;
+    case 'live':
+    case 'vanity':
+    case 'external':
+      return resolves ? null : `NXDOMAIN but marked ${status}`;
+    default:
+      return null;
+  }
+}
+
+async function dnsResolves(host: HostId): Promise<boolean> {
+  try {
+    const { resolve4 } = await import('node:dns/promises');
+    const result = await Promise.race([
+      resolve4(host)
+        .then(() => true)
+        .catch(() => false),
+      Bun.sleep(3000).then(() => false),
+    ]);
+    return result;
+  } catch {
+    return false;
+  }
+}
+
+async function httpStatusOf(host: HostId): Promise<number | null> {
+  try {
+    const res = await fetch(`https://${host}/`, {
+      redirect: 'manual',
+      signal: AbortSignal.timeout(5000),
+    });
+    return res.status;
+  } catch {
+    return null;
+  }
+}
+
+type ProbeRow = {
+  id: string; // brand-ok — surfaces.toml inventory key in probe output
+  host: string;
+  status: string;
+  resolves: boolean;
+  http: number | null;
+  drift: string | null;
+};
 
 async function main(): Promise<void> {
   const inventory = await loadSurfacesInventory(TOML);
@@ -123,6 +196,40 @@ async function main(): Promise<void> {
     },
   };
 
+  // Opt-in live probe — re-verify every surface against DNS + HTTP.
+  let probeRows: ProbeRow[] = [];
+  if (PROBE) {
+    probeRows = await Promise.all(
+      surfaces.map(async s => {
+        const resolves = await dnsResolves(s.host);
+        const http = resolves ? await httpStatusOf(s.host) : null;
+        return {
+          id: String(s.id),
+          host: String(s.host),
+          status: String(s.status),
+          resolves,
+          http,
+          drift: probeDriftFor(s.status, resolves, http),
+        };
+      })
+    );
+    const { logTable } = await import('../lib/console-depth.ts');
+    console.log('\n── live probe (dig + HTTPS) ──');
+    logTable(
+      probeRows.map(r => ({
+        surface: r.id,
+        resolves: r.resolves ? 'y' : 'n',
+        http: r.http ?? '—',
+        drift: r.drift ?? '',
+      })),
+      ['surface', 'resolves', 'http', 'drift']
+    );
+    (state as { probe?: { at: string; results: ProbeRow[] } }).probe = {
+      at: state.generatedAt,
+      results: probeRows,
+    };
+  }
+
   if (CHECK) {
     const output = Bun.file(OUTPUT);
     if (!(await output.exists())) {
@@ -143,7 +250,13 @@ async function main(): Promise<void> {
     `surfaces-state  total=${summary.total}  apexes=${summary.apexes.length}  backend=${JSON.stringify(summary.byBackendCode)}  accessDomains=${summary.accessDomains.length}  crossCheck=${issues.length === 0 ? 'ok' : 'DRIFT'}`
   );
   for (const i of issues) console.log(`  ✗ ${i}`);
-  if (issues.length > 0) process.exit(1);
+  const probeDrift = probeRows.filter(r => r.drift);
+  if (PROBE) {
+    console.log(
+      `probe: ${probeRows.length - probeDrift.length}/${probeRows.length} surfaces match live state${probeDrift.length ? ` — ${probeDrift.length} DRIFT` : ''}`
+    );
+  }
+  if (issues.length > 0 || (CHECK && probeDrift.length > 0)) process.exit(1);
 }
 
 if (import.meta.main) await main();

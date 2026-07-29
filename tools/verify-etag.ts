@@ -48,6 +48,7 @@ import {
   respondWithSharedETag,
 } from '../lib/http/data-etag.ts';
 import { BUN_DEEP_EQUALS_DOCS, deepEqualsModes, deepEqualsStrict } from '../lib/deep-equals.ts';
+import { inspectTable } from '../lib/console-depth.ts';
 import {
   BUN_DNS_PREFETCHING_DOCS,
   BUN_FETCH_PRECONNECT_STARTUP_DOCS,
@@ -484,7 +485,7 @@ async function baseReachable(base: string): Promise<boolean> {
 
 function renderTable(rows: ETagCheckRow[]): string {
   // Bun.inspect.table wants objects — array-of-arrays leaves named columns empty.
-  return Bun.inspect.table(
+  return inspectTable(
     rows.map(r => ({
       step: r.step,
       format: r.format,

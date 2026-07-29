@@ -10,6 +10,10 @@ import {
   loadComplianceMonitoringSlice,
   type ComplianceMonitoringSlice,
 } from './compliance-slice.ts';
+import {
+  loadInstallHygieneMonitoringSlice,
+  type InstallHygieneMonitoringSlice,
+} from './install-hygiene-slice.ts';
 import { loadLimitRaisesMonitoringSlice, type LimitRaisesMonitoringSlice } from './limit-slice.ts';
 import { ensureMonitoringSchema } from './schema.ts';
 
@@ -121,6 +125,10 @@ export type MonitoringPayload = {
    * Baked into monitoring.json from public/registry/limit-raises.json.
    */
   limitRaises?: LimitRaisesMonitoringSlice;
+  /**
+   * Install cache, npm-install policy, and install:verify registry projection.
+   */
+  installHygiene?: InstallHygieneMonitoringSlice;
 };
 
 const REGISTRY_INTEGRITY_FILE = joinPath(import.meta.dir, '../../reports/registry-integrity.json');
@@ -322,9 +330,10 @@ export async function collectMonitoring(
   }
 
   const timestamp = new Date().toISOString();
-  const [compliance, limitRaises] = await Promise.all([
+  const [compliance, limitRaises, installHygiene] = await Promise.all([
     loadComplianceMonitoringSlice(),
     loadLimitRaisesMonitoringSlice(),
+    loadInstallHygieneMonitoringSlice(),
   ]);
 
   return {
@@ -344,5 +353,6 @@ export async function collectMonitoring(
     snapshotAt: timestamp,
     ...(compliance ? { compliance } : {}),
     ...(limitRaises ? { limitRaises } : {}),
+    ...(installHygiene ? { installHygiene } : {}),
   };
 }
