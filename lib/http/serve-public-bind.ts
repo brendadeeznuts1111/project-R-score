@@ -26,6 +26,7 @@
  *
  * Operator doc: docs/harness/tenants/serve-public-bind.md
  */
+import { formatBindIdentityStartup } from './bind-identity-card.ts';
 import type { BunServer } from './bun-server.ts';
 import { serveBindSnapshot, type ServeBindSnapshot } from './bun-server.ts';
 import { resolveBunServeDefaultPort } from './bun-serve-shape.ts';
@@ -245,6 +246,8 @@ export function formatServePublicBindLines(
     ...docsLines,
     `Bind: ${manifest.protocol}://${manifest.hostname}:${manifest.port} (url.port=${urlPortLabel})${dbSuffix}`,
     `Serve: development=${manifest.development} · protocol=${manifest.protocol} · origin=${manifest.origin} · loopback=${manifest.loopbackOrigin} · routes=SIMD+static · fetch=unmatched`,
+    // INDEX + full bind-identity cards (chosen listen after Bun.serve)
+    ...formatBindIdentityStartup(manifest).split('\n'),
   ];
   if (manifest.ephemeralFallback) {
     lines.push(

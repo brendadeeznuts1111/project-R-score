@@ -71,6 +71,9 @@ describe('lib/http/serve-public-bind', () => {
     expect(lines.some(l => l.includes('DB: /tmp/ops.db'))).toBe(true);
     expect(lines.some(l => l.includes('ephemeral port'))).toBe(true);
     expect(lines.some(l => l.startsWith('Bind:'))).toBe(true);
+    expect(lines.some(l => l.includes('BIND IDENTITY'))).toBe(true);
+    expect(lines.some(l => l.includes('INDEX'))).toBe(true);
+    expect(lines.some(l => l.includes(String(snap.port)))).toBe(true);
   });
 
   test('write/read bind manifest round-trip', async () => {
