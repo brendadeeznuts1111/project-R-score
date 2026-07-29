@@ -1,0 +1,21 @@
+# Cloudflare Tunnel config template — expose reasonix serve via factory-wager.com
+#
+# STATUS: repo-side template only. NOT installed on this machine — no
+# ~/.cloudflared/config.yml exists and no reasonix-serve credential file is
+# present under ~/.cloudflared/. Copy this file into place with matching
+# tunnel credentials for it to take effect.
+#
+# Install steps (when/if activated):
+#   brew install cloudflared
+#   cloudflared tunnel create reasonix-serve
+#   cloudflared tunnel route dns reasonix-serve reasonix.factory-wager.com
+#   cp scripts/cloudflared-reasonix.yml ~/.cloudflared/config.yml
+#   cloudflared tunnel run reasonix-serve
+tunnel: reasonix-serve
+credentials-file: /Users/nolarose/.cloudflared/reasonix-serve.json
+ingress:
+  # Forward reasonix serve (web UI) traffic
+  - hostname: reasonix.factory-wager.com
+    service: http://localhost:8787
+  # Catch-all: reject
+  - service: http_status:404

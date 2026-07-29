@@ -95,7 +95,7 @@ gateway instance; the R2 index update model has a single-writer authority while
 Cloudflare scales the read plane independently.
 
 > **Bucket reality (audited 2026-07-28 via SigV4 ListObjectsV2):** the
-> `factory-wager-registry` bucket holds 11 objects (`channels/_probe` removed 2026-07-28) — the catalog index
+> `factory-wager-registry` bucket holds 12 objects — the catalog index
 > (`registry.json`, 17 packages, metadata + inline README), an `ops-summary.json`
 > stub, and the `channels/*` telegram event streams. **No `storage/` artifact
 > objects exist** — no publish has landed artifact bytes in R2 to date. What

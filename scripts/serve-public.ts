@@ -1683,7 +1683,10 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   if (path === '/api/limits/analyze' || path === '/api/limits/analyze/') {
     return limitAnalyzeApi();
   }
-  // /api/limits/predictions · /api/doctor/run · /api/packages/graph/rebake → routes method maps
+  if (path === '/api/limits/predictions' || path === '/api/limits/predictions/') {
+    if (req.method === 'POST') return limitPredictCycleApi();
+    return limitPredictionsApi();
+  }
 
   // Optional auth for read endpoints — public paths skip the gate
   const authErr = requireReadAuth(req);
@@ -1694,6 +1697,14 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   if (path === '/monitoring' || path === '/monitoring/') return monitoringPage();
   if (path === '/api/operations/summary' || path === '/api/operations/summary/')
     return liveOpsSummary();
+  // Local-only packages graph rebake (never on Pages / remote binds)
+  if (path === '/api/packages/graph/rebake' || path === '/api/packages/graph/rebake/') {
+    return packagesGraphRebake(req, server);
+  }
+  // Local-only portal doctor run + doctor-state bake
+  if (path === '/api/doctor/run' || path === '/api/doctor/run/') {
+    return doctorRunApi(req, server);
+  }
   if (path === '/api/portal/dashboard' || path === '/api/portal/dashboard/') {
     const { portalDashboardResponse } = await import('../lib/portal/command-centre-api.ts');
     return portalDashboardResponse();
@@ -2046,7 +2057,7 @@ function buildPublicRoutes() {
     '/api/agents/v1/limits/record/': (req: Request) => agentLimitRecordApi(req),
     '/api/limits/summary': (req: Request) => limitSummaryApi(req),
     '/api/limits/analyze': () => limitAnalyzeApi(),
-    // Method maps (Bun routing docs) — prefer over req.method branching
+    // Method map (Bun routing docs) — prefer over req.method branching
     '/api/limits/predictions': {
       GET: () => limitPredictionsApi(),
       POST: () => limitPredictCycleApi(),
@@ -2055,44 +2066,9 @@ function buildPublicRoutes() {
       GET: () => limitPredictionsApi(),
       POST: () => limitPredictCycleApi(),
     },
-    '/api/doctor/run': {
-      GET: (req: Request, server: RouteServer) => doctorRunApi(req, server),
-      POST: (req: Request, server: RouteServer) => doctorRunApi(req, server),
-    },
-    '/api/doctor/run/': {
-      GET: (req: Request, server: RouteServer) => doctorRunApi(req, server),
-      POST: (req: Request, server: RouteServer) => doctorRunApi(req, server),
-    },
-    '/api/packages/graph/rebake': {
-      GET: (req: Request, server: RouteServer) => packagesGraphRebake(req, server),
-      POST: (req: Request, server: RouteServer) => packagesGraphRebake(req, server),
-    },
-    '/api/packages/graph/rebake/': {
-      GET: (req: Request, server: RouteServer) => packagesGraphRebake(req, server),
-      POST: (req: Request, server: RouteServer) => packagesGraphRebake(req, server),
-    },
     '/api/operations/summary': () => liveOpsSummary(),
     '/api/catalog': (req: Request) => liveCatalog(req),
-    '/api/dod': {
-      GET: (req: Request) => dodApi(req),
-      POST: (req: Request) => dodApi(req),
-    },
-    '/api/dod/': {
-      GET: (req: Request) => dodApi(req),
-      POST: (req: Request) => dodApi(req),
-    },
-    '/api/dod/approve': {
-      POST: (req: Request) => dodApi(req),
-    },
-    '/api/dod/approve/': {
-      POST: (req: Request) => dodApi(req),
-    },
-    '/api/dod/reject': {
-      POST: (req: Request) => dodApi(req),
-    },
-    '/api/dod/reject/': {
-      POST: (req: Request) => dodApi(req),
-    },
+    '/api/dod': (req: Request) => dodApi(req),
     '/api/channels/events': (req: Request) => channelsEvents(req),
 
     '/api/registry': () => serveRegistryIndex(),

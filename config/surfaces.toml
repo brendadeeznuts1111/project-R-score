@@ -57,7 +57,7 @@ backend = "cloudflare-pages:project-r-score /api/registry/* → R2 factory-wager
 status = "live"
 protocol = "https-get-only allowlist gateway (npm packuments + proof JSON)"
 access = "allowlist"
-note = "Token in bunfig scope is sent but not verified; authz = key allowlist. Writes → 405. Bucket audit 2026-07-28: 11 objects (channels/_probe removed), catalog index (registry.json, 17 pkgs metadata+readme) + ops stub + telegram channels/ — NO storage/ artifacts; installable packuments+tarballs are served from the committed static mirror (public/registry/@factorywager/*), not R2."
+note = "Token in bunfig scope is sent but not verified; authz = key allowlist. Writes → 405. Bucket audit 2026-07-28: 12 objects, catalog index (registry.json, 17 pkgs metadata+readme) + ops stub + telegram channels/ — NO storage/ artifacts; installable packuments+tarballs are served from the committed static mirror (public/registry/@factorywager/*), not R2."
 
 [surfaces.wiki]
 host = "wiki.factory-wager.com"
@@ -109,11 +109,11 @@ note = "CNAME removed via CF API 2026-07-28 (was 525 SSL failure). Re-add only i
 
 [surfaces.reasonix]
 host = "reasonix.factory-wager.com"
-backend = "none — decommissioned 2026-07-28 (template + staged Access app removed)"
-status = "retired"
+backend = "none — scripts/cloudflared-reasonix.yml template never installed"
+status = "staged"
 protocol = "—"
-access = "none"
-note = "Never provisioned (no DNS, no tunnel — creation needs the other CF account). Template scripts/cloudflared-reasonix.yml deleted; Access app dropped from .cloudflare-access.yml. Re-create from scratch if ever needed."
+access = "staged"
+note = "No DNS record. Access app staged. Install tunnel + credential or decommission template."
 
 [surfaces.registry_write]
 host = "registry-write.internal.factory-wager.com"
