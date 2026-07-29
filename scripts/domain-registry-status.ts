@@ -1,8 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/update#latest — --latest
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { fileExistsSync, joinPath, readText, resolvePath, writeText } from './lib/fs-bun';
+import { jsonOut } from '../lib/console-depth';
 
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 
@@ -344,7 +346,7 @@ async function main(): Promise<void> {
   if (options.doctor) {
     const doctor = await runDomainRegistryDoctor(options);
     if (options.json) {
-      console.info(JSON.stringify(doctor, null, 2));
+      jsonOut(doctor);
     } else {
       console.info(`Domain Registry Doctor (fix=${options.fix ? 'on' : 'off'})`);
       for (const check of doctor.checks) {
@@ -372,7 +374,7 @@ async function main(): Promise<void> {
   const payload = await buildDomainRegistryStatus(options);
 
   if (options.json) {
-    console.info(JSON.stringify(payload, null, 2));
+    jsonOut(payload);
     return;
   }
 

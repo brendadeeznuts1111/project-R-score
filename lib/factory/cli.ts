@@ -37,7 +37,7 @@ import { buildRegistryHealthReport } from './health';
 import { runIntegrityCycle } from './monitoring';
 import { registry } from './registry';
 import { type ArtifactType } from './artifact';
-import { colorize, shouldColor, stripANSI } from '../console-depth';
+import { colorize, jsonOut, shouldColor, stripANSI } from '../console-depth';
 import { tomlStringify } from '../toml-stringify';
 
 const VERSION = '0.1.0';
@@ -439,7 +439,7 @@ async function cmdStatus(): Promise<void> {
 
 async function cmdHealth(): Promise<void> {
   const report = await buildRegistryHealthReport(registry);
-  console.log(JSON.stringify(report, null, 2));
+  jsonOut(report);
   process.exit(report.status === 'error' ? 1 : 0);
 }
 

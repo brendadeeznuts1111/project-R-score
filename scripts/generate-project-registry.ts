@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 /**
  * Regenerate public/registry/projects-registry.json from on-disk projects/.
@@ -22,6 +23,7 @@ import {
   readPackageJson,
   readTextFile,
 } from '../lib/projects-scan';
+import { logDepth } from '../lib/console-depth';
 
 const ROOT = process.cwd();
 const OUT = joinPath(ROOT, 'public/registry/projects-registry.json');
@@ -221,7 +223,7 @@ async function main(): Promise<void> {
   };
 
   if (DRY) {
-    console.info(JSON.stringify(payload.stats, null, 2));
+    logDepth(payload.stats);
     console.info(`Would write ${OUT} (${payload.stats.total_projects} projects)`);
     return;
   }

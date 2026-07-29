@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 import {
@@ -28,6 +29,7 @@ import type {
   MetricSummary,
 } from './lib/brand-bench-types';
 import { createShutdown, type ShutdownState } from './lib/graceful-shutdown';
+import { jsonOut } from '../lib/console-depth';
 
 let shutdown: ShutdownState | null = null;
 
@@ -438,7 +440,7 @@ if (import.meta.main) {
   const report = await runBrandBench(options);
   shutdown.dispose();
   if (options.quiet) {
-    console.info(JSON.stringify(report, null, 2));
+    jsonOut(report);
   }
   process.exit(report.status === 'fail' ? 1 : 0);
 }

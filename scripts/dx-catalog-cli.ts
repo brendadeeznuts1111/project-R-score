@@ -1,8 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 /**
  * Bun DX catalog CLI — discover one-liners and doc links from the harness catalog.
  */
 import { BUN_DX_CATALOG, randomCatalogEntry, searchCatalog } from '../config/bun-dx-catalog.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 function printEntry(entry: (typeof BUN_DX_CATALOG)[number]): void {
   console.info(`\n📌 ${entry.id} — ${entry.summary}`);
@@ -26,7 +28,7 @@ async function main(): Promise<void> {
   const args = Bun.argv.slice(2);
 
   if (args.includes('--json')) {
-    console.info(JSON.stringify(BUN_DX_CATALOG, null, 2));
+    jsonOut(BUN_DX_CATALOG);
     return;
   }
 

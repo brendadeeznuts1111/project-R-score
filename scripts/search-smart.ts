@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * Smart Search (Optimized Phase 2)
@@ -12,6 +13,7 @@
  * - Schema-based CLI parsing
  */
 
+import { jsonOut } from '../lib/console-depth';
 import { joinPath, resolvePath } from './lib/fs-bun';
 import {
   searchSymbolIndex,
@@ -1478,7 +1480,7 @@ async function main(): Promise<void> {
           }
         : { enabled: false },
     };
-    console.info(JSON.stringify(payload, null, 2));
+    jsonOut(payload);
 
     if (options.fusionFailOnCritical) {
       const status = computeOverallStatus([readinessToStatusLevel(fusionReport?.readiness.status)]);

@@ -1,8 +1,10 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { evaluateReadiness, loadDomainHealthSummary } from './lib/domain-health-read';
+import { jsonOut } from '../lib/console-depth';
 
 type Options = {
   domain: string;
@@ -66,7 +68,7 @@ async function main(): Promise<void> {
   };
 
   if (options.json) {
-    console.info(JSON.stringify(payload, null, 2));
+    jsonOut(payload);
   } else {
     console.info(`Project Online Readiness: ${options.domain}`);
     console.info(`Source: ${options.source}`);

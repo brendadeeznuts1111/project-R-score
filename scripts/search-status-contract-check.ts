@@ -1,8 +1,10 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
 // @see https://bun.com/docs/pm/cli/update#latest — --latest
 // @see https://bun.com/docs/runtime/file-io — Bun.file
+import { jsonOut } from '../lib/console-depth';
 import { fileExists, readJson, readText, resolvePath } from './lib/fs-bun';
 import { normalizeWarningCode } from './lib/search-status-contract';
 
@@ -155,6 +157,6 @@ function parseArgs(argv: string[]): ContractInput {
 if (import.meta.main) {
   const input = parseArgs(Bun.argv.slice(2));
   const result = await runSearchStatusContract(input);
-  console.info(JSON.stringify(result, null, 2));
+  jsonOut(result);
   process.exit(result.ok ? 0 : 1);
 }
