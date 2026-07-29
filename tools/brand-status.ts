@@ -112,6 +112,7 @@ type CliOpts = {
   flagsOnly: boolean;
   plane: HostPlane | undefined;
   lineageHost: string | undefined;
+  zone: boolean;
   help: boolean;
 };
 
@@ -136,6 +137,11 @@ const BRAND_STATUS_FLAGS = [
   { short: '', long: '--watch', meaning: 'Bun.cron reprint (default */5; no REPL)' },
   { short: '', long: '--every EXPR', meaning: 'Cron expression for --watch (UTC)' },
   { short: '', long: '--flags', meaning: 'Print this flag catalog (long · short · meaning)' },
+  {
+    short: '',
+    long: '--zone',
+    meaning: 'CF zone check — TOML dnsTarget/mail vs live zone (drift table)',
+  },
   { short: '', long: '--compact', meaning: 'Wide inspect.table instead of indexed cards' },
   {
     short: '',
@@ -169,6 +175,7 @@ function args(): CliOpts {
     flagsOnly: a.includes('--flags'),
     plane,
     lineageHost,
+    zone: a.includes('--zone'),
     help: a.includes('--help') || a.includes('-h'),
   };
 }
@@ -498,6 +505,52 @@ async function printInventoryTable(): Promise<void> {
   logTable(rows, ['surfaceId', 'host', 'apex', 'subdomain', 'status', 'access']);
 }
 
+/** --zone — TOML dnsTarget/mail vs live CF zone (drift table via surfaces:bake zoneDrift). */
+async function runZoneCheck(): Promise<{ ok: boolean; issues: string[]; skipped?: string }> {
+  const token = Bun.env.CLOUDFLARE_DNS_API_TOKEN?.trim() || Bun.env.CLOUDFLARE_API_TOKEN?.trim();
+  if (!token) {
+    return { ok: false, issues: [], skipped: 'no CLOUDFLARE_DNS_API_TOKEN / CLOUDFLARE_API_TOKEN' };
+  }
+  const { zoneDrift } = await import('../scripts/bake-surfaces.ts');
+  const { CLOUDFLARE_DEFAULTS } = await import('../config/r2-env.ts');
+  const inv = await loadSurfacesInventory(SURFACES_TOML);
+  const zoneId = CLOUDFLARE_DEFAULTS.zones.factoryWager.id;
+  const res = await fetch(
+    `https://api.cloudflare.com/client/v4/zones/${zoneId}/dns_records?per_page=100`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  const body = (await res.json()) as {
+    success: boolean;
+    errors?: Array<{ message: string }>;
+    result?: Array<{ type: string; name: string; content: string }>;
+  };
+  if (!body.success) {
+    return { ok: false, issues: [`zone API error: ${body.errors?.[0]?.message ?? res.status}`] };
+  }
+  const issues = zoneDrift(inv.surfaces, inv.mail, body.result ?? []);
+  return { ok: issues.length === 0, issues };
+}
+
+async function printZoneSection(): Promise<void> {
+  const r = await runZoneCheck();
+  console.info(
+    cliTone.accent('\nZONE CHECK') +
+      cliTone.dim('  config/surfaces.toml dnsTarget + mail ↔ live zone')
+  );
+  if (r.skipped) {
+    console.info(cliTone.warn(`  skipped — ${r.skipped}`));
+    return;
+  }
+  if (r.ok) {
+    console.info(cliTone.ok('  ✓ TOML dnsTarget/mail matches live zone'));
+    return;
+  }
+  logTable(
+    r.issues.map(i => ({ drift: i })),
+    ['drift']
+  );
+}
+
 async function printLineageDocs(): Promise<void> {
   const md = await Bun.file(BRANDED_README).text();
   const a = md.indexOf(LINEAGE_START);
@@ -734,6 +787,7 @@ async function buildJsonSnapshot(opts: CliOpts): Promise<Record<string, unknown>
           transitions: dnsAccessLineageRows(lineageHost),
         }
       : null,
+    ...(opts.zone ? { zoneCheck: await runZoneCheck() } : {}),
   };
 }
 
@@ -771,6 +825,9 @@ async function printTables(opts: CliOpts & { widthHint: boolean }): Promise<void
     printDomainTable(m.brands);
     printSurfacesTable(m.brands);
     await printInventoryTable();
+  }
+  if (opts.zone) {
+    await printZoneSection();
   }
   if (opts.lineageHost !== undefined) {
     printLineageTransitions(opts.lineageHost);
