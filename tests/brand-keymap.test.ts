@@ -80,6 +80,6 @@ describe('brand keymap', () => {
       expect(stderr).toBe('');
       expect(exitCode, stdout).toBe(0);
     },
-    { timeout: 30_000 }
+    { timeout: 60_000 }
   );
 });

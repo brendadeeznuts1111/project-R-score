@@ -36,7 +36,7 @@ import {
 } from '../lib/identity/mfa.ts';
 import { asTreeNodeId, type TreeNodeId } from '../lib/types/branded.ts';
 
-describe('identity-mfa', () => {
+describe.serial('identity-mfa', () => {
   // RFC 6238 Appendix B seed (ASCII '12345678901234567890'), base32-encoded.
   const RFC_SECRET = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
 

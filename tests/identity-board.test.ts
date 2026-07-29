@@ -15,7 +15,7 @@ import { asTelegramUserId } from '../lib/types/branded.ts';
 
 const PASSWORD = 'correct horse battery staple';
 
-describe('identity-board', () => {
+describe.serial('identity-board', () => {
   let dir: string;
   let dbPath: string;
   let accounts: AccountSystem;

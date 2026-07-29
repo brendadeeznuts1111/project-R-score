@@ -22,7 +22,7 @@ import {
 } from '../lib/identity/lockout.ts';
 import { asTreeNodeId, type TreeNodeId } from '../lib/types/branded.ts';
 
-describe('identity-lockout', () => {
+describe.serial('identity-lockout', () => {
   let dir: string;
   let dbPath: string;
   let identity: IdentitySystem;
