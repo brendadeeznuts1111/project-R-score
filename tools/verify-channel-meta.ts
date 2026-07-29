@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 /**
  * Prefer-artifact channel meta refresh (suite=all merge without full release re-run).
  *
@@ -9,6 +10,7 @@
  * @see docs/harness/tenants/channel-meta-verification.md
  */
 import { parseArgs } from 'util';
+import { jsonOut } from '../lib/console-depth.ts';
 import {
   refreshChannelMetaProof,
   saveChannelMetaProof,
@@ -56,7 +58,7 @@ async function main(): Promise<void> {
 
   if (values.json) {
     console.log('\n---JSON---');
-    console.log(JSON.stringify({ sources, report }, null, 2));
+    jsonOut({ sources, report });
   }
 
   if (report.summary.status !== 'pass') process.exit(1);

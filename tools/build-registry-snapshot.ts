@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Production-grade registry snapshot CLI.
@@ -9,6 +11,7 @@
  *
  * @see lib/registry-snapshot.ts
  */
+import { logDepth } from '../lib/console-depth.ts';
 import { buildRegistrySnapshot } from '../lib/registry-snapshot.ts';
 
 const args = Bun.argv.slice(2);
@@ -30,4 +33,4 @@ const summary = await buildRegistrySnapshot({
   pinStable,
 });
 
-console.log(JSON.stringify(summary, null, 2));
+logDepth(summary);

@@ -18,6 +18,7 @@ import {
 } from '../lib/channels/r2-channel-bucket.ts';
 import { processChannelOutbox } from '../lib/channels/outbox.ts';
 import { resolveProductionOutboxOpts } from '../lib/channels/outbox-prod-opts.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 import { openOperationsDb } from '../lib/operations/db.ts';
 import { sendTelegramMessage } from '../lib/telegram/bot.ts';
 import { drainTelegramUpdatesDetailed } from '../lib/telegram/consumer-updates.ts';
@@ -80,19 +81,13 @@ async function main(): Promise<void> {
   const commands = await channel.readSince(TELEGRAM_COMMANDS_TOPIC, commandsSince);
 
   if (dryRun) {
-    console.log(
-      JSON.stringify(
-        {
-          dryRun: true,
-          updatesPending: updates.length,
-          commandsPending: commands.length,
-          updatesCursor: updatesSince,
-          commandsCursor: commandsSince,
-        },
-        null,
-        2
-      )
-    );
+    jsonOut({
+      dryRun: true,
+      updatesPending: updates.length,
+      commandsPending: commands.length,
+      updatesCursor: updatesSince,
+      commandsCursor: commandsSince,
+    });
     return;
   }
 

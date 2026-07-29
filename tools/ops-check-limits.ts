@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
@@ -38,6 +39,7 @@ import {
   type MultiFactorEnrichedRaise,
 } from '../lib/operations/partner-analytics-repo.ts';
 import { LimitRaiseReport, printLimitRaiseReport } from '../lib/operations/limit-raise-report.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 const HELP = `Usage: ops-check-limits.ts [opts]
 
@@ -200,7 +202,7 @@ function main(): void {
       }
       output.alerts = alertsMap;
     }
-    console.log(JSON.stringify(output, null, 2));
+    jsonOut(output);
     return;
   }
 

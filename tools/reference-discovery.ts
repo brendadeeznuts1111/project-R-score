@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Reference discovery CLI — unused paths, plane mismatches, similar naming clusters.
@@ -16,6 +17,7 @@ import {
   type ReferenceDiscoveryReport,
   type ReferenceSeverity,
 } from '../lib/reference-discovery.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 import {
   publicReportPasses,
   runPublicDiscovery,
@@ -23,7 +25,7 @@ import {
 } from '../lib/public-discovery.ts';
 
 const args = Bun.argv.slice(2);
-const jsonOut = args.includes('--json');
+const wantJson = args.includes('--json');
 const check = args.includes('--check');
 const skipUnused = args.includes('--skip-unused');
 const publicOnly = args.includes('--public');
@@ -38,8 +40,8 @@ if (publicOnly) {
   report = await runReferenceDiscovery({ skipUnused });
 }
 
-if (jsonOut) {
-  console.log(JSON.stringify(report, null, 2));
+if (wantJson) {
+  jsonOut(report);
 } else if (publicOnly) {
   const pub = report as PublicDiscoveryReport;
   console.log(`public-discovery · ${pub.summary.total} findings`);

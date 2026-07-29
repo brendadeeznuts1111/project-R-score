@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Verify package-group handshake lifecycle (JSONL + registry).
@@ -6,6 +7,7 @@
  *   bun tools/verify-package-group-handshake.ts ASH
  *   bun tools/verify-package-group-handshake.ts ASH --json
  */
+import { jsonOut } from '../lib/console-depth.ts';
 import { DEFAULT_OPS_DB_PATH, openOperationsDb } from '../lib/operations/db.ts';
 import {
   formatHandshakeVerifyReport,
@@ -60,7 +62,7 @@ try {
     telegramToken: tg.effectiveToken,
   });
   if (wantJson) {
-    console.log(JSON.stringify(result, null, 2));
+    jsonOut(result);
   } else {
     for (const line of formatHandshakeVerifyReport(result)) {
       console.log(line);

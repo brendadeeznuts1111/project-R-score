@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
  * Project-scoped bun install platform verification.
@@ -13,7 +14,7 @@
  */
 // @see https://bun.com/docs/pm/cli/install#cpu-and-os-flags
 import { version, revision } from 'bun';
-import { logTable } from '../lib/console-depth.ts';
+import { jsonOut, logTable } from '../lib/console-depth.ts';
 import { buildSemanticTags } from '../lib/verification/channels.ts';
 import {
   ensureVerificationResultsHaveCanonical,
@@ -77,7 +78,7 @@ const proof = {
 };
 
 if (asJson) {
-  console.log(JSON.stringify(proof, null, 2));
+  jsonOut(proof);
 } else {
   console.log('╔══════════════════════════════════════════════════════════════════════╗');
   console.log('║  📦 Install platform verification (project-scoped aspects)          ║');

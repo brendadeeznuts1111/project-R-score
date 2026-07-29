@@ -10,6 +10,7 @@
  *
  * @see docs/harness/ops-summary-endpoint.md
  */
+import { jsonOut } from '../lib/console-depth.ts';
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import {
   CRITICAL_ROUTE_PATHS,
@@ -207,7 +208,7 @@ async function main(): Promise<void> {
   const opts = parseArgs(process.argv.slice(2));
   const report = await runDiagnose(opts);
   if (opts.json) {
-    console.log(JSON.stringify(report, null, 2));
+    jsonOut(report);
   } else {
     printHuman(report);
   }

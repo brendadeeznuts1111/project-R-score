@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 /**
  * Ops coverage health one-liner / CLI.
@@ -11,6 +12,7 @@ import {
   getPlatformCapacities,
   recordCoverageSnapshot,
 } from '../lib/operations/platform-coverage.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 const json = process.argv.includes('--json');
@@ -56,7 +58,7 @@ const payload = {
 };
 
 if (json) {
-  console.log(JSON.stringify(payload, null, 2));
+  jsonOut(payload);
 } else {
   console.log(`
 🏢 OPERATIONS HEALTH

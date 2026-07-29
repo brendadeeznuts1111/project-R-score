@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
@@ -21,6 +22,7 @@ import { IdentitySystem, type IdentityRole } from '../lib/identity/identity.ts';
 import { getTimeline } from '../lib/identity/timeline.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { asTelegramUserId, type TreeNodeId } from '../lib/types/branded.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 const ROOT = joinPath(import.meta.dir, '..');
 const DEFAULT_DB = joinPath(ROOT, 'data', 'accounts-operations.db');
@@ -128,7 +130,7 @@ async function seedDemo(): Promise<void> {
 function aliases(): void {
   const board = collectBoardData(dbPath());
   if (hasFlag('--json')) {
-    console.log(JSON.stringify(board.aliases, null, 2));
+    jsonOut(board.aliases);
     return;
   }
   if (board.aliases.length === 0) {
@@ -176,7 +178,7 @@ function timeline(): void {
     if (!nodeId) fail(`alias not found: ${slug}`);
     const events = getTimeline(identity, nodeId, { limit });
     if (hasFlag('--json')) {
-      console.log(JSON.stringify(events, null, 2));
+      jsonOut(events);
       return;
     }
     if (events.length === 0) {

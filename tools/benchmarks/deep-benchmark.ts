@@ -5,6 +5,8 @@
 // Run: bun templates/deep-benchmark.ts
 // Pipe: bun templates/deep-benchmark.ts | jq .summary
 
+import { jsonOut } from '../../lib/console-depth.ts';
+
 export interface DeepBenchmarkConfig {
   name: string;
   iterations: number;
@@ -272,5 +274,5 @@ if (import.meta.main) {
   const results = await benchmark.run();
 
   console.info('\nFINAL RESULTS (JSON):');
-  console.info(JSON.stringify(results.summary, null, 2));
+  jsonOut(results.summary);
 }

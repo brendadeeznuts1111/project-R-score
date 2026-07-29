@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/utils — Bun.inspect · .table · stringWidth · deepEquals
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
@@ -20,6 +21,7 @@
  */
 import { factoryWagerPagesCustomUrl, factoryWagerRegistryUrlFromEnv } from '../config/r2-env.ts';
 import { buildBunUtilsProof, tableRows, type BunUtilsProofResult } from '../lib/bun-utils-proof.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 const argv = Bun.argv.slice(2);
 const writeLocal = argv.includes('--write');
@@ -40,7 +42,7 @@ const ARTIFACT_DIR = `public/registry/${PACKAGE_NAME}`;
 const result = buildBunUtilsProof();
 
 if (jsonOnly) {
-  console.log(JSON.stringify(result, null, 2));
+  jsonOut(result);
 } else {
   console.log('Bun utility defaults proof');
   console.log(`Bun v${result.bunVersion} (${result.bunRevision})`);

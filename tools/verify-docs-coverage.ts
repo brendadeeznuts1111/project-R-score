@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
@@ -13,7 +14,7 @@
  */
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher
 import { CryptoHasher, revision, version } from 'bun';
-import { logTable } from '../lib/console-depth.ts';
+import { jsonOut, logTable } from '../lib/console-depth.ts';
 import { buildSemanticTags } from '../lib/verification/channels.ts';
 import {
   buildDocsCoverageReport,
@@ -94,7 +95,7 @@ export async function runDocsCoverageVerification(): Promise<DocsCoverageReport>
 const report = await runDocsCoverageVerification();
 
 if (asJson) {
-  console.log(JSON.stringify(report, null, 2));
+  jsonOut(report);
 } else {
   console.log('╔══════════════════════════════════════════════════════════════════════╗');
   console.log('║  Docs coverage — RSS index · API reference · canonical alignment      ║');

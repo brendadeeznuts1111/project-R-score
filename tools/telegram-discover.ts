@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
@@ -18,6 +19,7 @@ import {
   discoverTelegramAssets,
   formatDiscoveryDigest,
 } from '../lib/telegram/telegram-discovery.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 function usage(): never {
   console.log(`Usage: bun tools/telegram-discover.ts [options]
@@ -114,7 +116,7 @@ async function main(): Promise<void> {
   });
 
   if (opts.json) {
-    console.log(JSON.stringify(report, null, 2));
+    jsonOut(report);
   } else {
     console.log(
       report.summary.ready || report.bot

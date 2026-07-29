@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 /**
  * Read config JSON → hash bytes once → write TOML snapshot.
  *
@@ -20,6 +21,7 @@
  * @see https://bun.com/docs/runtime/utils#bun-version
  */
 import { tomlStringify } from '../lib/toml-stringify.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 export type SnapshotAlgorithm = 'sha256' | 'sha3-256';
 export type SnapshotEmbed = 'auto' | 'table' | 'json';
@@ -199,7 +201,7 @@ if (import.meta.main) {
   });
 
   if (args.asJson) {
-    console.log(JSON.stringify(snapshot, null, 2));
+    jsonOut(snapshot);
   } else if (args.stdout || !written) {
     process.stdout.write(body.endsWith('\n') ? body : `${body}\n`);
   } else {

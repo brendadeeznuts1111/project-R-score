@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
@@ -12,6 +13,7 @@
  *   bun tools/sync-registry-index-r2.ts
  *   bun tools/sync-registry-index-r2.ts --dry-run
  */
+import { jsonOut } from '../lib/console-depth.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { createS3RegistryStore } from '../lib/factory/object-store.ts';
 
@@ -27,12 +29,10 @@ if (!parsed.packages || typeof parsed.packages !== 'object') {
 }
 
 if (dryRun) {
-  console.log(
-    JSON.stringify({ ok: true, dryRun: true, bytes: raw.length, snapshot: SNAPSHOT }, null, 2)
-  );
+  jsonOut({ ok: true, dryRun: true, bytes: raw.length, snapshot: SNAPSHOT });
   process.exit(0);
 }
 
 const store = createS3RegistryStore();
 await store.putJson('registry.json', parsed);
-console.log(JSON.stringify({ ok: true, bytes: raw.length, key: 'registry.json' }, null, 2));
+jsonOut({ ok: true, bytes: raw.length, key: 'registry.json' });

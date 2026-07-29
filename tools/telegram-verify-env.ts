@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Verify factory Telegram env + Bot API reachability (getMe, webhook info).
@@ -6,6 +7,7 @@
  *   bun tools/telegram-verify-env.ts
  *   bun run telegram:verify
  */
+import { jsonOut, logDepth } from '../lib/console-depth.ts';
 import { queryTelegramTransportHealth } from '../lib/telegram/telegram-transport-health.ts';
 
 function usage(): never {
@@ -29,14 +31,14 @@ async function main(): Promise<void> {
   const health = await queryTelegramTransportHealth({ probe: !noProbe });
 
   if (jsonOnly) {
-    console.log(JSON.stringify(health, null, 2));
+    jsonOut(health);
     process.exit(health.ready ? 0 : 1);
   }
 
   if (!health.ready) {
     console.error('❌ Telegram transport not ready:', health.missing.join(', '));
     for (const rec of health.recommendations) console.error(`   → ${rec}`);
-    console.log(JSON.stringify(health, null, 2));
+    logDepth(health);
     process.exit(1);
   }
 
@@ -62,7 +64,7 @@ async function main(): Promise<void> {
     console.log(`   note: ${rec}`);
   }
 
-  console.log(JSON.stringify(health, null, 2));
+  logDepth(health);
   process.exit(0);
 }
 

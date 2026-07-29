@@ -19,7 +19,7 @@
 import { Database } from 'bun:sqlite';
 import { stringWidth } from 'bun';
 import { asStateCode, asTreeNodeId } from '../lib/types/branded.ts';
-import { getConsoleDepth, logDepth } from '../lib/console-depth.ts';
+import { getConsoleDepth, jsonOut, logDepth } from '../lib/console-depth.ts';
 import { ScopedRepository, type Scope } from '../lib/repository.ts';
 import { AccountLimitsRepository, ensureAccountLimitsSchema } from '../lib/account-limits-repo.ts';
 import { ZipEnrichmentRepo } from '../lib/zip-enrichment-repo.ts';
@@ -473,7 +473,7 @@ async function main(): Promise<void> {
 
   if (Bun.env.DEEP_AUDIT_JSON === '1') {
     console.log('\n--- JSON ---');
-    console.log(JSON.stringify({ stableBody, proof, gapScore, gaps }, null, 2));
+    jsonOut({ stableBody, proof, gapScore, gaps });
   }
 
   console.log('\n🔍 Patterns (deep):');

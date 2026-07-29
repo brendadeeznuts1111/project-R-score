@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
@@ -13,6 +14,8 @@
  * Requires CLOUDFLARE_API_TOKEN (project .env / proton inject).
  * Workspace MCP SSOT: .mcp.json · Grok: ~/.grok/config.toml [mcp_servers.cloudflare*]
  */
+import { jsonOut } from '../lib/console-depth.ts';
+
 const ENDPOINTS = [
   { id: 'cloudflare', url: 'https://mcp.cloudflare.com/mcp' },
   { id: 'cloudflare-docs', url: 'https://docs.mcp.cloudflare.com/mcp' },
@@ -99,7 +102,7 @@ async function main(): Promise<void> {
   };
 
   if (json) {
-    console.log(JSON.stringify(report, null, 2));
+    jsonOut(report);
   } else {
     console.log(
       `Cloudflare MCP probe · token=${report.tokenKind} · ${report.summary.ok}/${report.summary.total} ok`

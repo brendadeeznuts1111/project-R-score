@@ -21,6 +21,7 @@ import {
   type ProvisionStep,
 } from '../lib/provisioning/queue.ts';
 import { runAutomatedTestTask } from '../lib/provisioning/run-automated.ts';
+import { logDepth } from '../lib/console-depth.ts';
 
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 const args = process.argv.slice(2);
@@ -54,7 +55,7 @@ try {
         process.exit(1);
       }
       const task = enqueueTask(db, { platformId, partnerId, mode });
-      console.log(JSON.stringify(task, null, 2));
+      logDepth(task);
       break;
     }
     case 'list': {
@@ -82,7 +83,7 @@ try {
       if (!task) {
         console.log('No pending tasks');
       } else {
-        console.log(JSON.stringify(task, null, 2));
+        logDepth(task);
       }
       break;
     }
@@ -103,7 +104,7 @@ try {
         dbPath,
         encryptionKey: Bun.env.PROVISION_ENCRYPTION_KEY,
       });
-      console.log(JSON.stringify(result, null, 2));
+      logDepth(result);
       process.exit(result.ok ? 0 : 1);
       break;
     }

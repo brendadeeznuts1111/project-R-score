@@ -21,6 +21,7 @@
  *   portal-cli snapshot prune --keep=5
  */
 import { joinPath } from '../lib/path-bun.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 import {
   bunTestArgsForSuites,
   checkTestSnapshots,
@@ -69,7 +70,7 @@ async function main(): Promise<void> {
 
   if (list) {
     if (asJson) {
-      console.log(JSON.stringify({ suites: TEST_SNAPSHOT_SUITES }, null, 2));
+      jsonOut({ suites: TEST_SNAPSHOT_SUITES });
     } else {
       const idW = Math.max(...TEST_SNAPSHOT_SUITES.map(s => Bun.stringWidth(s.id)), 8);
       const body: string[] = [
@@ -99,7 +100,7 @@ async function main(): Promise<void> {
   if (check) {
     const report = await checkTestSnapshots(ROOT);
     if (asJson) {
-      console.log(JSON.stringify(report, null, 2));
+      jsonOut(report);
     } else {
       const errors = report.findings.filter(f => f.severity === 'error');
       const warns = report.findings.filter(f => f.severity === 'warn');

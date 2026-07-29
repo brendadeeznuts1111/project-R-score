@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 /**
  * Read-only handshake reference — constants, mappings, CLI, lanes (from code SSOT).
  *
@@ -13,6 +14,7 @@ import {
   HANDSHAKE_LANE_CATALOG,
   HANDSHAKE_VERIFY_CHECK_IDS,
 } from '../lib/telegram/handshake-catalog.ts';
+import { jsonOut, logDepth } from '../lib/console-depth.ts';
 
 const argv = Bun.argv.slice(2);
 const wantJson = argv.includes('--json');
@@ -46,9 +48,9 @@ Single read-only reference for package-group handshake. Prose runbook:
 
 const out = sliceSection(section);
 if (wantJson) {
-  console.log(JSON.stringify(out, null, 2));
+  jsonOut(out);
 } else if (section === 'all') {
   for (const line of formatHandshakeCatalogHuman(buildHandshakeCatalog())) console.log(line);
 } else {
-  console.log(JSON.stringify(out, null, 2));
+  logDepth(out);
 }

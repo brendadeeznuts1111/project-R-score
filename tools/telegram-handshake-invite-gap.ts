@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
@@ -8,6 +9,7 @@
  *   bun run telegram:handshake:invite-gap
  *   bun run telegram:handshake:invite-gap ASH BIL --refresh
  */
+import { jsonOut } from '../lib/console-depth.ts';
 import { DEFAULT_OPS_DB_PATH, openOperationsDb } from '../lib/operations/db.ts';
 import {
   assessHandshakeReadiness,
@@ -105,7 +107,7 @@ try {
     }
     if (results.some(r => !r.ok)) process.exit(1);
   } else if (wantJson) {
-    console.log(JSON.stringify({ gaps, all: rows, dbPath }, null, 2));
+    jsonOut({ gaps, all: rows, dbPath });
   } else {
     console.log(`forum invite gap · ${gaps.length} of ${rows.length} partner(s) · db=${dbPath}`);
     for (const line of formatForumInviteGapReport(rows)) console.log(`   ${line}`);

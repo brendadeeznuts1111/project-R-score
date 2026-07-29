@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/networking/fetch#content-type-handling — Content-Type
 /**
@@ -17,6 +18,7 @@ import {
   summarizeContentTypeMatrix,
   type ContentTypeDecision,
 } from '../lib/http/content-type.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 function flag(name: string): string | undefined {
   const hit = Bun.argv.find(a => a.startsWith(`--${name}=`));
@@ -47,23 +49,17 @@ const table = contentTypePolicyTableRows(rows);
 const realFails = rows.filter(r => r.severity === 'fail' && !demoIds.has(r.id));
 
 if (asJson) {
-  console.log(
-    JSON.stringify(
-      {
-        summary: {
-          total: summary.total,
-          pass: summary.pass,
-          warn: summary.warn,
-          fail: summary.fail,
-          byStatus: summary.byStatus,
-          realFails: realFails.length,
-        },
-        rows: table,
-      },
-      null,
-      2
-    )
-  );
+  jsonOut({
+    summary: {
+      total: summary.total,
+      pass: summary.pass,
+      warn: summary.warn,
+      fail: summary.fail,
+      byStatus: summary.byStatus,
+      realFails: realFails.length,
+    },
+    rows: table,
+  });
 } else {
   console.log(
     'Content-Type matrix\n  columns: defaultValue | ourValue | wireValue | expected | status | severity\n'

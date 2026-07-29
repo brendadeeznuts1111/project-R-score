@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
  * verify-install-env.ts — Runtime probes for Bun install BUN_CONFIG_* env vars.
@@ -12,7 +13,7 @@
  */
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 import { CryptoHasher, inspect, version, revision } from 'bun';
-import { logTable } from '../lib/console-depth.ts';
+import { jsonOut, logTable } from '../lib/console-depth.ts';
 import { buildSemanticTags } from '../lib/verification/channels.ts';
 import {
   ensureVerificationResultsHaveCanonical,
@@ -57,7 +58,7 @@ const proof = {
 };
 
 if (asJson) {
-  console.log(JSON.stringify(proof, null, 2));
+  jsonOut(proof);
 } else {
   console.log('╔══════════════════════════════════════════════════════════════════════╗');
   console.log('║  🔧 Install BUN_CONFIG_* + scoped registry verification              ║');

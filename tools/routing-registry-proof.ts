@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils — Bun.inspect.table
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
@@ -23,6 +24,7 @@ import {
   writeRoutingArtifact,
   ROUTING_ARTIFACT_PACKAGE,
 } from '../lib/routing-proof.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 const argv = Bun.argv.slice(2);
 const writeLocal = argv.includes('--write');
@@ -48,7 +50,7 @@ const result = await runRoutingProof({
 });
 
 if (jsonOnly) {
-  console.log(JSON.stringify(result, null, 2));
+  jsonOut(result);
 } else {
   console.log('Registry routing proof v2');
   console.log(`Base: ${result.baseUrl} · concurrency ${result.concurrency}`);

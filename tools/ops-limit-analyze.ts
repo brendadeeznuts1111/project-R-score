@@ -7,6 +7,7 @@
  *   bun run ops:limits:analyze --json
  *   bun run ops:limits:analyze --hours 168
  */
+import { jsonOut } from '../lib/console-depth.ts';
 import { openOperationsDb } from '../lib/operations/db.ts';
 import { ensureAccountLimitsSchema } from '../lib/account-limits-repo.ts';
 import {
@@ -44,7 +45,7 @@ function main(): void {
 
   if (flags.json) {
     const analysis = runGranularAnalysis(db, hours);
-    console.log(JSON.stringify(analysis, null, 2));
+    jsonOut(analysis);
     db.close();
     return;
   }

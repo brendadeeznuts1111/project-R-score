@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/utils — Bun.inspect.table
@@ -10,6 +11,7 @@
  *   bun tools/env-check.ts --strict   # exit 1 if required missing
  */
 import { checkEnv } from '../lib/env-check.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 import { describeChannelAuth, probeChannelAuth } from '../lib/verification/channels.ts';
 
 const args = Bun.argv.slice(2);
@@ -43,7 +45,7 @@ if (args.includes('--reasonix') || args.includes('--load-reasonix')) {
 const report = checkEnv();
 
 if (json) {
-  console.log(JSON.stringify(report, null, 2));
+  jsonOut(report);
 } else {
   console.log('Environment checklist (secrets redacted)');
   console.log(

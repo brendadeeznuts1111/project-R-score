@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/http/server#reference — Server
+// @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortController
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 /**
  * 🎯 Endpoint Status CLI - HSL Color Integrated
@@ -16,6 +18,7 @@ import {
 } from '../../lib/utils/enhanced-status-matrix.ts';
 import { colorize, type ColorStatus } from '../../lib/utils/color-system.ts';
 import { styled, FW_COLORS } from '../../lib/theme/colors.ts';
+import { jsonOut } from '../../lib/console-depth.ts';
 
 /** Pad string to target visual width (left-aligned) */
 function swPad(str: string, width: number, char = ' '): string {
@@ -319,7 +322,7 @@ async function main(): Promise<void> {
         const result = await checkEndpoint(endpoint, timeout);
 
         if (args.includes('--json')) {
-          console.info(JSON.stringify(result, null, 2));
+          jsonOut(result);
         } else {
           displayEndpointDetails(result, context);
         }
@@ -328,7 +331,7 @@ async function main(): Promise<void> {
         const results = await checkAllEndpoints(DEFAULT_ENDPOINTS);
 
         if (args.includes('--json')) {
-          console.info(JSON.stringify(results, null, 2));
+          jsonOut(results);
         } else {
           displayEndpointResults(results, context);
         }

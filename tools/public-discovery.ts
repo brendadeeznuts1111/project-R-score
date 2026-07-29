@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Public-plane discovery CLI — portal chrome, registry refs, static anti-patterns.
@@ -15,17 +16,18 @@ import {
   runPublicDiscovery,
   type PublicSeverity,
 } from '../lib/public-discovery.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 const args = Bun.argv.slice(2);
-const jsonOut = args.includes('--json');
+const asJson = args.includes('--json');
 const check = args.includes('--check');
 const minSeverity = (args.find((a, i) => args[i - 1] === '--min-severity') ??
   'error') as PublicSeverity;
 
 const report = await runPublicDiscovery();
 
-if (jsonOut) {
-  console.log(JSON.stringify(report, null, 2));
+if (asJson) {
+  jsonOut(report);
 } else {
   console.log(`public-discovery · ${report.summary.total} findings`);
   console.log(`  errors=${report.summary.errors} warnings=${report.summary.warnings}`);

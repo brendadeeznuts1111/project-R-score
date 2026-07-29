@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
@@ -12,6 +13,7 @@
  *   bun run ops:limits:predict --partner partner-42 --inspect
  *   bun --console-depth=6 run ops:limits:predict --partner partner-42
  */
+import { jsonOut } from '../lib/console-depth.ts';
 import { openOperationsDb } from '../lib/operations/db.ts';
 import { ensureAccountLimitsSchema } from '../lib/account-limits-repo.ts';
 import {
@@ -75,7 +77,7 @@ function main(): void {
 
     if (wantJson) {
       const report = new LimitPredictionReport(results, { nodeId: flags.partner });
-      console.log(JSON.stringify(report.toJSON(), null, 2));
+      jsonOut(report.toJSON());
     } else if (wantInspect) {
       printLimitPredictionReport(results, { nodeId: flags.partner });
     } else {
@@ -86,7 +88,7 @@ function main(): void {
     const result = runLimitPredictionCycle(db);
 
     if (wantJson) {
-      console.log(JSON.stringify(result, null, 2));
+      jsonOut(result);
     } else {
       // Cycle summary as inspect.table
       const summaryRows = [

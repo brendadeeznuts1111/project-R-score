@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
@@ -18,6 +19,7 @@
  * @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
  */
 import { parseArgs } from 'util';
+import { jsonOut } from '../lib/console-depth.ts';
 import {
   buildSemanticTags,
   describeChannelAuth,
@@ -136,7 +138,7 @@ async function runDiff(
   }
   if (opts.json) {
     console.log('\n---JSON---');
-    console.log(JSON.stringify(diff, null, 2));
+    jsonOut(diff);
   }
   if (diff.summary.passFlipped > 0) process.exit(1);
 }
@@ -171,7 +173,7 @@ async function main(): Promise<void> {
 
   if (authStatusOnly) {
     const probed = await probeChannelAuth();
-    console.log(JSON.stringify({ type: 'ChannelAuthStatus', ...probed }, null, 2));
+    jsonOut({ type: 'ChannelAuthStatus', ...probed });
     // Exit 0 if anonymous-ok OR token valid; 1 only when a configured token is invalid
     if (probed.configured && probed.valid === false) process.exit(1);
     process.exit(0);
@@ -179,7 +181,7 @@ async function main(): Promise<void> {
 
   if (resolveOnly) {
     const resolution = await resolveChannel(channel, { preferAuth });
-    console.log(JSON.stringify({ type: 'ChannelResolution', ...resolution }, null, 2));
+    jsonOut({ type: 'ChannelResolution', ...resolution });
     return;
   }
 

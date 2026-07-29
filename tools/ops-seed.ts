@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
@@ -11,6 +12,7 @@
  *
  * @see lib/operations/ops-seed.ts
  */
+import { logDepth } from '../lib/console-depth.ts';
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
 import { seedOperationsDemo } from '../lib/operations/ops-seed.ts';
@@ -22,7 +24,7 @@ const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 const db = openOperationsDb({ path: dbPath });
 const result = await seedOperationsDemo(db, { force, ifEmpty: !force });
 
-console.log(JSON.stringify({ dbPath, ...result }, null, 2));
+logDepth({ dbPath, ...result });
 
 if (result.seeded) {
   console.log(
@@ -33,19 +35,13 @@ if (result.seeded) {
 if (showSummary) {
   const summary = buildOpsSummary(db, 'live');
   console.log('\n--- ops summary preview ---');
-  console.log(
-    JSON.stringify(
-      {
-        liquidity: summary.liquidity,
-        experts: summary.experts.length,
-        plays: summary.plays.length,
-        experiments: summary.experiments.active,
-        growth: summary.growth,
-      },
-      null,
-      2
-    )
-  );
+  logDepth({
+    liquidity: summary.liquidity,
+    experts: summary.experts.length,
+    plays: summary.plays.length,
+    experiments: summary.experiments.active,
+    growth: summary.growth,
+  });
 }
 
 db.close();

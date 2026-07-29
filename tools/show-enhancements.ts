@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin — bun run -
 // @see https://bun.com/docs/runtime/console — --console-depth
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
@@ -52,7 +53,7 @@ type DeepEqualsMod = typeof import('../lib/deep-equals.ts');
 type EscapeHtmlMod = typeof import('../lib/escape-html.ts');
 type ComplianceMod = typeof import('../lib/operations/state-compliance-http.ts');
 
-const { getConsoleDepth, inspect, logDepth, logTable } =
+const { getConsoleDepth, inspect, jsonOut, logDepth, logTable } =
   await loadModule<ConsoleDepthMod>('lib/console-depth.ts');
 const { deepEqualsStrict, deepEqualsModes, deepEqualsDocsStrictProof } =
   await loadModule<DeepEqualsMod>('lib/deep-equals.ts');
@@ -440,7 +441,7 @@ async function main(): Promise<void> {
 
   if (Bun.argv.includes('--json')) {
     const report = await buildEnhancementReport();
-    console.log(JSON.stringify(report, null, 2));
+    jsonOut(report);
     if (report.passed !== report.total) process.exitCode = 1;
     return;
   }

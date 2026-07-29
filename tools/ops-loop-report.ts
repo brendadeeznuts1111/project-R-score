@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
@@ -8,6 +9,7 @@
  *   bun tools/ops-loop-report.ts --out reports/ops-loop-post.json --fixture
  */
 import { openOperationsDb } from '../lib/operations/db.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 import { resolveProductionOutboxOpts } from '../lib/channels/outbox-prod-opts.ts';
 import {
   loopThroughputLift,
@@ -78,22 +80,16 @@ async function main(): Promise<void> {
       if (await baselineFile.exists()) {
         const baseline = (await baselineFile.json()) as OpsLoopReport;
         const lift = loopThroughputLift(baseline.metrics, report.metrics);
-        console.log(
-          JSON.stringify(
-            {
-              baselineRate: baseline.metrics.loopCompletionRate,
-              postRate: report.metrics.loopCompletionRate,
-              throughputLift: lift,
-              manualStepsDelta:
-                baseline.metrics.manualStepsPerCycle - report.metrics.manualStepsPerCycle,
-            },
-            null,
-            2
-          )
-        );
+        jsonOut({
+          baselineRate: baseline.metrics.loopCompletionRate,
+          postRate: report.metrics.loopCompletionRate,
+          throughputLift: lift,
+          manualStepsDelta:
+            baseline.metrics.manualStepsPerCycle - report.metrics.manualStepsPerCycle,
+        });
       }
     } else {
-      console.log(JSON.stringify(report, null, 2));
+      jsonOut(report);
     }
   } finally {
     db.close();

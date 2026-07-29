@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/sqlite
 /**
@@ -8,6 +9,7 @@
  *   bun tools/ops-loop-live-proof.ts --dry-run
  */
 import { processChannelOutbox } from '../lib/channels/outbox.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 import { openOperationsDb } from '../lib/operations/db.ts';
 import { ensurePosition } from '../lib/operations/liquidity.ts';
 import { bindPartnerProfile } from '../lib/operations/partner-profile-bridge.ts';
@@ -24,7 +26,7 @@ async function main(): Promise<void> {
   try {
     const before = queryLoopMetricsSlice(db);
     if (dryRun) {
-      console.log(JSON.stringify({ before, action: 'would dispatch one gated play' }, null, 2));
+      jsonOut({ before, action: 'would dispatch one gated play' });
       return;
     }
 
@@ -82,20 +84,14 @@ async function main(): Promise<void> {
     const outbox = await processChannelOutbox(db, { deliver: false });
     const after = queryLoopMetricsSlice(db);
 
-    console.log(
-      JSON.stringify(
-        {
-          playId: dispatch.id,
-          enqueued: dispatch.enqueued,
-          settle,
-          outbox,
-          before,
-          after,
-        },
-        null,
-        2
-      )
-    );
+    jsonOut({
+      playId: dispatch.id,
+      enqueued: dispatch.enqueued,
+      settle,
+      outbox,
+      before,
+      after,
+    });
   } finally {
     db.close();
   }

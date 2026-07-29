@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/reference/bun/semver/satisfies — Bun.semver.satisfies
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
@@ -27,6 +29,7 @@
  *   bun run portal:probe
  */
 import { joinPath } from '../lib/path-bun.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 const ROOT = process.cwd();
 const argv = Bun.argv.slice(2);
@@ -472,7 +475,7 @@ async function main(): Promise<void> {
   }
 
   if (asJson) {
-    console.log(JSON.stringify(cmd === 'all' ? results : results[0], null, 2));
+    jsonOut(cmd === 'all' ? results : results[0]);
   } else if (cmd === 'all') {
     const hard = results.filter(isHardFailure);
     const soft = results.filter(r => !r.ok && !isHardFailure(r));

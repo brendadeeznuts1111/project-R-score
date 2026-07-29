@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Combined harness + public-plane discovery CLI.
@@ -15,9 +16,10 @@ import {
   type CombinedDiscoveryReport,
 } from '../lib/discovery-compose.ts';
 import type { ReferenceSeverity } from '../lib/reference-discovery.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 const args = Bun.argv.slice(2);
-const jsonOut = args.includes('--json');
+const asJson = args.includes('--json');
 const check = args.includes('--check');
 const skipUnused = args.includes('--skip-unused');
 const minSeverity = (args.find((a, i) => args[i - 1] === '--min-severity') ??
@@ -25,8 +27,8 @@ const minSeverity = (args.find((a, i) => args[i - 1] === '--min-severity') ??
 
 const report: CombinedDiscoveryReport = await runCombinedDiscovery({ skipUnused });
 
-if (jsonOut) {
-  console.log(JSON.stringify(report, null, 2));
+if (asJson) {
+  jsonOut(report);
 } else {
   console.log(`discovery-compose · ${report.summary.totalFindings} findings`);
   console.log(

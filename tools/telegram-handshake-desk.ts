@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Package-group desk — registry + known chats + handshake status.
@@ -18,6 +19,7 @@ import { getPackageGroupRegistry } from '../lib/telegram/package-group-registry.
 import { PENDING_PACKAGE_GROUPS_JSONL } from '../lib/telegram/package-group-registry.ts';
 import { loadReasonixEnv } from '../lib/telegram/catalog-research/load-reasonix-env.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 const argv = Bun.argv.slice(2);
 let jsonlPath = PENDING_PACKAGE_GROUPS_JSONL;
@@ -85,7 +87,7 @@ try {
     }
     if (rows.length > 0) process.exit(1);
   } else if (wantJson) {
-    console.log(JSON.stringify({ rows, jsonlPath, dbPath }, null, 2));
+    jsonOut({ rows, jsonlPath, dbPath });
   } else if (detail) {
     console.log(`package-group desk · ${rows.length} row(s) · db=${dbPath}`);
     for (const line of formatHandshakeDeskDetail(rows)) console.log(line);
