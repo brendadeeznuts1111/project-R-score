@@ -29,6 +29,8 @@ Code SSOT: [`lib/prediction/README.md`](../../../lib/prediction/README.md) · ge
 
 ## Domain thresholds (coverage %)
 
+**Freshness gate:** `tests/prediction-freshness.test.ts` fails when `summary.json.generated` is older than 48h — if the 01:00 UTC cron dies, the test turns red instead of the report silently aging. Refresh: `bun run ops:prediction report`.
+
 These are **percentage points of coverage**, not unit-scale regression metrics:
 
 | Signal | Good | Fair / marginal | Poor |
