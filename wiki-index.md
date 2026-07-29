@@ -112,6 +112,7 @@ Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc: [`
 | Ops loop / outbox | [`ops-loop-throughput.md`](docs/harness/tenants/ops-loop-throughput.md) |
 | Ops snapshot | [`ops-snapshot.md`](docs/harness/tenants/ops-snapshot.md) |
 | Public plane | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
+| serve-public bind | [`serve-public-bind.md`](docs/harness/tenants/serve-public-bind.md) · `brand:status:bind` · `brand:status:lifecycle` |
 | Factory Telegram | [`telegram-factory.md`](docs/harness/tenants/telegram-factory.md) |
 | Package-group handshake | [`partner-package-group-handshake.md`](docs/harness/tenants/partner-package-group-handshake.md) |
 | Seat capital desk | [`seat-capital-desk.md`](docs/harness/tenants/seat-capital-desk.md) |

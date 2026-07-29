@@ -332,9 +332,12 @@ bun --port=3099 run serve:public
 BUN_PORT=3099 bun run serve:public
 HOST=0.0.0.0 bun run serve:public   # optional LAN bind override
 bun run verify:portal               # probes resolveBunServeDefaultPort() or PORTAL_VERIFY_BASE
+bun run brand:status:bind           # indexed Server/URL identity cards
+bun run brand:status:lifecycle      # C. SERVER METHODS + D. SERVE OPTIONS
+bun run check:serve-shape           # shape + lifecycle + bind-identity suites
 ```
 
-Verify helper: `resolveBunServeDefaultPort()` in `lib/http/bun-serve-shape.ts` (includes `--port` for probes only; bind is native Bun).
+Verify helper: `resolveBunServeDefaultPort()` in `lib/http/bun-serve-shape.ts` (includes `--port` for probes only; bind is native Bun). After bind, `serve-public` logs **BIND IDENTITY** ([`bind-identity-card.ts`](../lib/http/bind-identity-card.ts)); full policy: [`serve-public-bind.md`](harness/tenants/serve-public-bind.md).
 
 ### Dev reload (`--watch`, `--hot`, browser SSE)
 
