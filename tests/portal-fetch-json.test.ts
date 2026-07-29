@@ -47,11 +47,12 @@ describe('portal JSON fetch', () => {
   test('falls back to the HTTP status when statusText is blank', async () => {
     globalThis.fetch = (async () => new Response('', { status: 503, statusText: '' })) as typeof fetch;
 
-    await expect(fetchJsonResult('/registry/example.json')).resolves.toEqual({
+    await expect(fetchJsonResult('/registry/example.json')).resolves.toMatchObject({
       ok: false,
       data: null,
       status: 503,
       error: 'HTTP 503',
+      kind: 'http',
     });
   });
 
@@ -59,11 +60,12 @@ describe('portal JSON fetch', () => {
     globalThis.fetch = (async () =>
       new Response('', { status: 429, statusText: 'Too Many Requests' })) as typeof fetch;
 
-    await expect(fetchJsonResult('/registry/example.json')).resolves.toEqual({
+    await expect(fetchJsonResult('/registry/example.json')).resolves.toMatchObject({
       ok: false,
       data: null,
       status: 429,
       error: 'Too Many Requests',
+      kind: 'http',
     });
   });
 });

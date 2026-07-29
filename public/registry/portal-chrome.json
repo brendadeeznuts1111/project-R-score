@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-07-29T00:57:51.000Z",
+  "generated": "2026-07-29T01:49:06.742Z",
   "path": "/registry/portal-chrome.json",
   "summary": {
     "priorityNav": 6,
-    "overflowNav": 19,
+    "overflowNav": 20,
     "footerLinks": 18,
     "components": 13,
     "scripts": 5
@@ -153,6 +153,15 @@
       "group": "harness",
       "note": "bunfig install config provenance · portal-cli bunfig status",
       "cli": "bun run bunfig:bake  # → /registry/bunfig-state.json"
+    },
+    {
+      "id": "console-format",
+      "label": "Console Format",
+      "href": "/portal/console-format/",
+      "tier": "overflow",
+      "group": "harness",
+      "note": "structured output gate · logTable/logDepth/jsonOut ratchet",
+      "cli": "bun run console-format:bake  # → /registry/console-format-state.json"
     },
     {
       "id": "doctor",

@@ -1,47 +1,189 @@
 /**
- * Shared fail-soft JSON fetch for static portal boards.
+ * Shared registry JSON fetch for portal client modules.
+ * Returns parsed JSON or structured failure (Pages-safe, no throw).
+ *
+ * Aligns with Bun fetch request options / error cases where they overlap the web API:
+ * - GET only (no request body — GET/HEAD + body throws)
+ * - AbortSignal timeout
+ * - Explicit Accept for JSON
+ * - Soft Content-Type check after response
+ *
+ * Bun-only `verbose: true` is **not** passed in the browser (extension, not web standard).
+ * Use `?portal_fetch_debug=1` or `localStorage.PORTAL_FETCH_DEBUG=1` for console debug.
+ *
+ * @see https://bun.com/docs/runtime/networking/fetch#request-options
+ * @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request
  */
+
+/** @typedef {'network'|'timeout'|'http'|'parse'|'empty'|'method'} FetchErrorKind */
 
 export const DEFAULT_JSON_TIMEOUT_MS = 8000;
 
-/** @param {{ timeoutMs?: number }} init */
-export function jsonFetchTimeout(init = {}) {
-  const timeout = Number(init.timeoutMs);
+/** @param {{ timeoutMs?: number }} opts */
+export function jsonFetchTimeout(opts = {}) {
+  const timeout = Number(opts.timeoutMs);
   return Number.isFinite(timeout) && timeout > 0 ? timeout : DEFAULT_JSON_TIMEOUT_MS;
 }
 
-/** @param {RequestInit & { timeoutMs?: number }} init */
-export async function fetchJsonResult(url, init = {}) {
-  const { timeoutMs: _timeoutMs, ...requestInit } = init;
-  const headers = new Headers(requestInit.headers);
-  if (!headers.has('accept')) headers.set('accept', 'application/json');
+/**
+ * @typedef {object} FetchJsonOk
+ * @property {true} ok
+ * @property {object} data
+ * @property {number} [status]
+ * @property {string} [contentType]
+ */
+
+/**
+ * @typedef {object} FetchJsonErr
+ * @property {false} ok
+ * @property {FetchErrorKind} [kind]
+ * @property {number} [status]
+ * @property {string} [error]
+ * @property {string} [contentType]
+ */
+
+/**
+ * @returns {boolean}
+ */
+export function isPortalFetchDebug() {
   try {
-    const response = await fetch(url, {
-      cache: 'no-store',
-      ...requestInit,
-      headers,
-      signal: requestInit.signal ?? AbortSignal.timeout(jsonFetchTimeout(init)),
-    });
-    if (!response.ok) {
-      return {
-        ok: false,
-        data: null,
-        status: response.status,
-        error: response.statusText || `HTTP ${response.status}`,
-      };
+    if (typeof location !== 'undefined') {
+      const q = new URLSearchParams(location.search);
+      if (q.get('portal_fetch_debug') === '1' || q.get('verbose') === '1') return true;
     }
-    return { ok: true, data: await response.json(), status: response.status, error: null };
-  } catch (error) {
-    return {
-      ok: false,
-      data: null,
-      status: null,
-      error: error instanceof Error ? error.message : String(error),
-    };
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('PORTAL_FETCH_DEBUG') === '1') {
+      return true;
+    }
+  } catch {
+    /* ignore */
   }
+  return false;
 }
 
-export async function fetchJson(url, init = {}) {
-  const result = await fetchJsonResult(url, init);
-  return result.ok ? result.data : null;
+/**
+ * Classify a thrown value from fetch / json parse.
+ * @param {unknown} err
+ * @returns {{ kind: FetchErrorKind, error: string }}
+ */
+export function classifyFetchError(err) {
+  const msg = err instanceof Error ? err.message : String(err ?? 'unknown');
+  const name = err instanceof Error ? err.name : '';
+  if (name === 'TimeoutError' || /timeout|timed out/i.test(msg)) {
+    return { kind: 'timeout', error: msg };
+  }
+  if (name === 'AbortError') {
+    return { kind: 'timeout', error: msg || 'aborted' };
+  }
+  if (/Failed to fetch|NetworkError|Load failed|ECONNREFUSED|ENOTFOUND/i.test(msg)) {
+    return { kind: 'network', error: msg };
+  }
+  if (/JSON|Unexpected token|is not valid JSON/i.test(msg)) {
+    return { kind: 'parse', error: msg };
+  }
+  return { kind: 'network', error: msg };
+}
+
+/**
+ * @param {string} url
+ * @param {RequestInit & { timeoutMs?: number }} [opts]
+ * @returns {Promise<object|null>}
+ */
+export async function fetchJson(url, opts = {}) {
+  const r = await fetchJsonResult(url, opts);
+  return r.ok ? r.data : null;
+}
+
+/**
+ * @param {string} url
+ * @param {RequestInit & { timeoutMs?: number }} [opts]
+ * @returns {Promise<FetchJsonOk|FetchJsonErr>}
+ */
+export async function fetchJsonResult(url, opts = {}) {
+  const debug = isPortalFetchDebug();
+  const method = (opts.method || 'GET').toUpperCase();
+  // Web + Bun: body with GET/HEAD is invalid
+  if ((method === 'GET' || method === 'HEAD') && opts.body != null) {
+    const error = 'fetchJsonResult: request body not allowed with GET/HEAD';
+    if (debug) console.warn('[portal-fetch]', error, url);
+    return { ok: false, kind: 'method', error };
+  }
+
+  const timeoutMs = jsonFetchTimeout(opts);
+  const headers = new Headers(opts.headers || {});
+  if (!headers.has('Accept')) headers.set('Accept', 'application/json, text/json;q=0.9, */*;q=0.1');
+
+  /** @type {RequestInit} */
+  const init = {
+    method,
+    cache: opts.cache ?? 'no-store',
+    credentials: opts.credentials ?? 'same-origin',
+    headers,
+    signal: opts.signal ?? AbortSignal.timeout(timeoutMs),
+  };
+  // Do not forward body/proxy/unix — browser path only
+
+  if (debug) {
+    console.info('[portal-fetch] >', method, url, { timeoutMs });
+  }
+
+  try {
+    const res = await fetch(url, init);
+    const contentType = res.headers.get('content-type') || '';
+    if (debug) {
+      console.info(
+        '[portal-fetch] <',
+        res.status,
+        res.statusText,
+        contentType || '(no content-type)'
+      );
+    }
+    if (!res.ok) {
+      return {
+        ok: false,
+        kind: 'http',
+        data: null,
+        status: res.status,
+        error: res.statusText || `HTTP ${res.status}`,
+        contentType,
+      };
+    }
+    const text = await res.text();
+    if (!text || !text.trim()) {
+      return { ok: false, kind: 'empty', status: res.status, error: 'empty body', contentType };
+    }
+    try {
+      const data = JSON.parse(text);
+      if (data === null || typeof data !== 'object') {
+        return {
+          ok: false,
+          kind: 'parse',
+          status: res.status,
+          error: 'JSON root must be object/array',
+          contentType,
+        };
+      }
+      if (
+        debug &&
+        contentType &&
+        !/json/i.test(contentType) &&
+        !contentType.includes('text/plain')
+      ) {
+        console.warn('[portal-fetch] unexpected Content-Type for JSON body:', contentType);
+      }
+      return { ok: true, data, status: res.status, contentType };
+    } catch (e) {
+      const c = classifyFetchError(e);
+      return {
+        ok: false,
+        kind: 'parse',
+        status: res.status,
+        error: c.error,
+        contentType,
+      };
+    }
+  } catch (e) {
+    const c = classifyFetchError(e);
+    if (debug) console.warn('[portal-fetch] !', c.kind, c.error, url);
+    return { ok: false, kind: c.kind, data: null, status: null, error: c.error };
+  }
 }

@@ -1,10 +1,17 @@
 /**
- * Install hygiene board — reads /registry/install-hygiene-report.json.
+ * Install hygiene board — offline embed + optional live refresh of
+ * /registry/install-hygiene-report.json via portal fetch-json (GET, timeout, Accept).
  * Color code: green = ok · yellow = attention · red = fail · dim = neutral/missing
+ *
+ * Live refresh errors are non-fatal (embed wins). Debug live fetch:
+ *   ?portal_fetch_debug=1  or  localStorage.PORTAL_FETCH_DEBUG=1
+ * (Browser cannot use Bun's fetch `verbose: true` — Bun-only extension.)
  *
  * @see docs/UNIFIED.md
  * @see lib/monitoring/install-hygiene-slice.ts
  * @see docs/harness/tenants/public-plane.md
+ * @see https://bun.com/docs/runtime/networking/fetch#request-options
+ * @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request
  */
 import { bindCopyButtons } from '../copy-cli.js';
 import { fetchJsonResult } from '../fetch-json.js';
@@ -98,6 +105,32 @@ export function toneFromReport(report) {
     return { tone: 'red', label: 'fail', reasons };
   }
   return { tone: 'yellow', label: 'attention', reasons };
+}
+
+/**
+ * Plain-text summary for copy / noscript / SSR meta.
+ * @param {Record<string, unknown>|null|undefined} report
+ * @returns {string}
+ */
+export function buildTextSummary(report) {
+  if (!report || report.kind !== 'install-hygiene') {
+    return 'install-hygiene: missing bake — run bun run bake:install-hygiene';
+  }
+  const { tone, label, reasons } = toneFromReport(report);
+  const cache = /** @type {Record<string, unknown>} */ (report.installCache || {});
+  const npm = /** @type {Record<string, unknown>} */ (report.npmInstall || {});
+  const verify = /** @type {Record<string, unknown>} */ (report.installVerify || {});
+  const lines = [
+    `install-hygiene · ${label} (${tone})`,
+    `generated: ${String(report.generatedAt || '—')}`,
+    `bun: ${String(report.bunVersion || '—')}`,
+    `cache: ${String(cache.sizeHuman || '—')} / ${String(cache.thresholdHuman || '—')} prune=${String(cache.wouldPrune)}`,
+    `npm: ${npm.ok === true ? 'clean' : npm.ok === false ? 'FAIL' : '—'}`,
+    `install:verify: ${verify.ok === true ? 'pass' : verify.ok === false ? 'FAIL' : '—'}`,
+  ];
+  if (reasons.length) lines.push(`reasons: ${reasons.join('; ')}`);
+  if (cache.bunPmCacheMismatch) lines.push(`pm-cache: ${String(cache.bunPmCacheMismatch)}`);
+  return lines.join('\n');
 }
 
 /**
@@ -351,10 +384,12 @@ export function renderInstallHygieneReport(report) {
   if (sourceEl && report && typeof report === 'object' && '_source' in report) {
     const src = String(report._source || 'unknown');
     const st = src === 'live' ? 'green' : src === 'embed' ? 'neutral' : 'yellow';
-    sourceEl.innerHTML = statusChip(st, src === 'live' ? 'live registry' : 'offline embed');
-    sourceEl.hidden = false;
-  } else if (sourceEl) {
-    sourceEl.hidden = true;
+    sourceEl.innerHTML = statusChip(
+      st,
+      src === 'live' ? 'live registry' : src === 'embed' ? 'offline embed' : src
+    );
+  } else if (sourceEl && report?.kind === 'install-hygiene') {
+    sourceEl.innerHTML = statusChip('neutral', 'offline SSR');
   }
 
   if (!report || report.kind !== 'install-hygiene') {
@@ -387,6 +422,31 @@ export function renderInstallHygieneReport(report) {
   if (meta) {
     const rev = typeof report.bunRevision === 'string' ? report.bunRevision.slice(0, 8) : '';
     meta.innerHTML = `generated ${esc(ageLabel(/** @type {string} */ (report.generatedAt)))} · bun <span class="ih-chip ih-chip--neutral">${esc(String(report.bunVersion || '?'))}${rev ? ` · ${esc(rev)}` : ''}</span> · bake:install-hygiene`;
+  }
+
+  const summaryPre = document.getElementById('ih-summary-text');
+  if (summaryPre) summaryPre.textContent = buildTextSummary(report);
+
+  const copySummary = document.getElementById('ih-copy-summary');
+  if (copySummary && !copySummary.dataset.bound) {
+    copySummary.dataset.bound = '1';
+    copySummary.addEventListener('click', async () => {
+      const text = buildTextSummary(
+        readInstallHygieneEmbed() ||
+          (await fetchJsonResult(INSTALL_HYGIENE_SOURCE).then(r =>
+            r.ok ? /** @type {Record<string, unknown>} */ (r.data) : null
+          ))
+      );
+      try {
+        await navigator.clipboard.writeText(text);
+        copySummary.textContent = 'copied';
+        setTimeout(() => {
+          copySummary.textContent = 'copy summary';
+        }, 1200);
+      } catch {
+        copySummary.textContent = 'copy failed';
+      }
+    });
   }
 
   if (reasonsEl) {
@@ -496,6 +556,17 @@ function withSource(report, source) {
 }
 
 /**
+ * @param {import('../fetch-json.js').FetchJsonErr|object} r
+ * @returns {string}
+ */
+export function formatLiveFetchStatus(r) {
+  if (!r || r.ok) return '';
+  const kind = /** @type {string} */ (r.kind || 'network');
+  const detail = r.status != null ? `${kind} HTTP ${r.status}` : `${kind}: ${r.error || 'failed'}`;
+  return `live refresh failed (${detail}) — showing offline embed`;
+}
+
+/**
  * Prefer offline embed; refresh from registry when fetch works (optional live).
  * @returns {Promise<Record<string, unknown>|null>}
  */
@@ -503,22 +574,39 @@ export async function loadInstallHygieneReport() {
   const embedded = readInstallHygieneEmbed();
   // Always render embed first so the board works with no network / broken static host.
   if (embedded) {
-    // Non-blocking refresh when online
-    void fetchJsonResult(INSTALL_HYGIENE_SOURCE).then(r => {
+    // Non-blocking refresh when online (GET only · timeout · Accept: json)
+    void fetchJsonResult(INSTALL_HYGIENE_SOURCE, { timeoutMs: 5000, method: 'GET' }).then(r => {
+      const statusEl = document.getElementById('ih-fetch-status');
       if (r.ok && r.data && /** @type {Record<string, unknown>} */ (r.data).kind === 'install-hygiene') {
         const live = /** @type {Record<string, unknown>} */ (r.data);
         const embAt = Date.parse(String(embedded.generatedAt || ''));
         const liveAt = Date.parse(String(live.generatedAt || ''));
         if (!Number.isFinite(embAt) || (Number.isFinite(liveAt) && liveAt >= embAt)) {
           renderInstallHygieneReport(withSource(live, 'live'));
+          if (statusEl) {
+            statusEl.hidden = true;
+            statusEl.textContent = '';
+          }
+          return;
         }
+      }
+      if (statusEl && !r.ok) {
+        statusEl.hidden = false;
+        statusEl.className = 'ih-fetch-status ih-fetch-status--warn';
+        statusEl.textContent = formatLiveFetchStatus(r);
       }
     });
     return withSource(embedded, 'embed');
   }
-  const r = await fetchJsonResult(INSTALL_HYGIENE_SOURCE);
+  const r = await fetchJsonResult(INSTALL_HYGIENE_SOURCE, { timeoutMs: 5000, method: 'GET' });
   if (r.ok && r.data && /** @type {Record<string, unknown>} */ (r.data).kind === 'install-hygiene') {
     return withSource(/** @type {Record<string, unknown>} */ (r.data), 'live');
+  }
+  const statusEl = document.getElementById('ih-fetch-status');
+  if (statusEl && !r.ok) {
+    statusEl.hidden = false;
+    statusEl.className = 'ih-fetch-status ih-fetch-status--warn';
+    statusEl.textContent = formatLiveFetchStatus(r) || 'live fetch failed and no offline embed';
   }
   return null;
 }

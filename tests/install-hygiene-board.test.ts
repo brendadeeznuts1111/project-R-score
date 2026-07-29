@@ -6,7 +6,9 @@ import {
   ageLabel,
   buildRecommendedActions,
   buildStatRows,
+  buildTextSummary,
   cacheMeterFromSlice,
+  formatLiveFetchStatus,
   INSTALL_HYGIENE_EMBED_ID,
   INSTALL_HYGIENE_SCHEMA,
   INSTALL_HYGIENE_SOURCE,
@@ -207,5 +209,23 @@ describe('install-hygiene-board', () => {
     const html = renderActionsHtml(buildRecommendedActions(healthy));
     expect(html).toContain('copy-cli');
     expect(html).toContain('bake:install-hygiene');
+  });
+
+  test('buildTextSummary is copy-friendly plain text', () => {
+    const text = buildTextSummary(healthy);
+    expect(text).toContain('install-hygiene');
+    expect(text).toContain('healthy');
+    expect(text).toContain('bun: 1.4.0');
+    expect(buildTextSummary(null)).toContain('missing bake');
+  });
+
+  test('formatLiveFetchStatus surfaces kind/status for failed live refresh', () => {
+    expect(
+      formatLiveFetchStatus({ ok: false, kind: 'timeout', error: 'aborted' })
+    ).toContain('timeout');
+    expect(
+      formatLiveFetchStatus({ ok: false, kind: 'http', status: 404, error: 'HTTP 404' })
+    ).toContain('404');
+    expect(formatLiveFetchStatus({ ok: true })).toBe('');
   });
 });

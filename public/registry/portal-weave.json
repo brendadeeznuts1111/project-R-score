@@ -2,10 +2,10 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-07-29T00:48:26.090Z",
+  "generated": "2026-07-29T01:49:06.742Z",
   "summary": {
-    "surfaces": 22,
-    "artifacts": 33,
+    "surfaces": 23,
+    "artifacts": 34,
     "components": 13,
     "wiki": 6,
     "scripts": 32
@@ -100,6 +100,14 @@
       "note": "unified portal doctor · bunfig · catalog · linker · doctor-state bake",
       "group": "harness",
       "cli": "bun run portal:doctor --verbose"
+    },
+    {
+      "id": "install-hygiene",
+      "label": "Install hygiene",
+      "href": "/portal/install-hygiene/",
+      "note": "install cache · npm policy · install:verify · install-hygiene-report bake",
+      "group": "harness",
+      "cli": "bun run bake:install-hygiene"
     },
     {
       "id": "tools",
@@ -255,6 +263,14 @@
       "href": "/registry/packages-graph-map.json",
       "note": "workspace coupling · multi-surface · env owners · claim packages-graph-map-v13",
       "id": "artifact-packages-graph-map"
+    },
+    {
+      "label": "install-hygiene-report",
+      "href": "/registry/install-hygiene-report.json",
+      "note": "bunfig/cache/npm-install hygiene bake · bake:install-hygiene · monitoring.installHygiene · board /portal/install-hygiene/",
+      "group": "harness",
+      "cli": "bun run bake:install-hygiene",
+      "id": "artifact-install-hygiene-report"
     },
     {
       "label": "monorepo-health",

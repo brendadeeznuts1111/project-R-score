@@ -577,6 +577,29 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
         }
       )
     );
+
+    const consoleFormatGate = await spawn(['bun', 'scripts/lint-console-format.ts'], { cwd });
+    checks.push(
+      withMeta(
+        {
+          id: 'console-format-gate',
+          level: 'fatal',
+          group: 'gates',
+          ok: consoleFormatGate === 0,
+          message:
+            consoleFormatGate === 0
+              ? 'console-format ratchet OK (hits ≤ baseline)'
+              : 'console-format ratchet FAILED (hits grew)',
+        },
+        {
+          fixCommand: consoleFormatGate === 0 ? undefined : 'bun run check:console-format',
+          impact: 'Structured console output must use lib/console-depth wrappers',
+          autoFixable: false,
+          timeToFix: consoleFormatGate === 0 ? undefined : '5–30 min',
+          envScope: 'ci',
+        }
+      )
+    );
   }
 
   // Scope filters (group(s) / env) apply to report checks + summary + exit ok

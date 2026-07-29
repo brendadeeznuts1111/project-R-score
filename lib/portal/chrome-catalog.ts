@@ -196,6 +196,15 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     cli: 'bun run bunfig:bake  # → /registry/bunfig-state.json',
   },
   {
+    id: 'console-format',
+    label: 'Console Format',
+    href: '/portal/console-format/',
+    tier: 'overflow',
+    group: 'harness',
+    note: 'structured output gate · logTable/logDepth/jsonOut ratchet',
+    cli: 'bun run console-format:bake  # → /registry/console-format-state.json',
+  },
+  {
     id: 'doctor',
     label: 'Doctor',
     href: '/portal/doctor/',
