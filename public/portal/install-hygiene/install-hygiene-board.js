@@ -101,6 +101,32 @@ export function toneFromReport(report) {
 }
 
 /**
+ * Plain-text summary for copy / noscript / SSR meta.
+ * @param {Record<string, unknown>|null|undefined} report
+ * @returns {string}
+ */
+export function buildTextSummary(report) {
+  if (!report || report.kind !== 'install-hygiene') {
+    return 'install-hygiene: missing bake — run bun run bake:install-hygiene';
+  }
+  const { tone, label, reasons } = toneFromReport(report);
+  const cache = /** @type {Record<string, unknown>} */ (report.installCache || {});
+  const npm = /** @type {Record<string, unknown>} */ (report.npmInstall || {});
+  const verify = /** @type {Record<string, unknown>} */ (report.installVerify || {});
+  const lines = [
+    `install-hygiene · ${label} (${tone})`,
+    `generated: ${String(report.generatedAt || '—')}`,
+    `bun: ${String(report.bunVersion || '—')}`,
+    `cache: ${String(cache.sizeHuman || '—')} / ${String(cache.thresholdHuman || '—')} prune=${String(cache.wouldPrune)}`,
+    `npm: ${npm.ok === true ? 'clean' : npm.ok === false ? 'FAIL' : '—'}`,
+    `install:verify: ${verify.ok === true ? 'pass' : verify.ok === false ? 'FAIL' : '—'}`,
+  ];
+  if (reasons.length) lines.push(`reasons: ${reasons.join('; ')}`);
+  if (cache.bunPmCacheMismatch) lines.push(`pm-cache: ${String(cache.bunPmCacheMismatch)}`);
+  return lines.join('\n');
+}
+
+/**
  * Operator actions (copy-CLI ready). Color-coded by urgency.
  * @param {Record<string, unknown>|null|undefined} report
  * @returns {{ title: string, cli: string, tone: Tone, why: string }[]}
@@ -351,10 +377,12 @@ export function renderInstallHygieneReport(report) {
   if (sourceEl && report && typeof report === 'object' && '_source' in report) {
     const src = String(report._source || 'unknown');
     const st = src === 'live' ? 'green' : src === 'embed' ? 'neutral' : 'yellow';
-    sourceEl.innerHTML = statusChip(st, src === 'live' ? 'live registry' : 'offline embed');
-    sourceEl.hidden = false;
-  } else if (sourceEl) {
-    sourceEl.hidden = true;
+    sourceEl.innerHTML = statusChip(
+      st,
+      src === 'live' ? 'live registry' : src === 'embed' ? 'offline embed' : src
+    );
+  } else if (sourceEl && report?.kind === 'install-hygiene') {
+    sourceEl.innerHTML = statusChip('neutral', 'offline SSR');
   }
 
   if (!report || report.kind !== 'install-hygiene') {
@@ -387,6 +415,31 @@ export function renderInstallHygieneReport(report) {
   if (meta) {
     const rev = typeof report.bunRevision === 'string' ? report.bunRevision.slice(0, 8) : '';
     meta.innerHTML = `generated ${esc(ageLabel(/** @type {string} */ (report.generatedAt)))} · bun <span class="ih-chip ih-chip--neutral">${esc(String(report.bunVersion || '?'))}${rev ? ` · ${esc(rev)}` : ''}</span> · bake:install-hygiene`;
+  }
+
+  const summaryPre = document.getElementById('ih-summary-text');
+  if (summaryPre) summaryPre.textContent = buildTextSummary(report);
+
+  const copySummary = document.getElementById('ih-copy-summary');
+  if (copySummary && !copySummary.dataset.bound) {
+    copySummary.dataset.bound = '1';
+    copySummary.addEventListener('click', async () => {
+      const text = buildTextSummary(
+        readInstallHygieneEmbed() ||
+          (await fetchJsonResult(INSTALL_HYGIENE_SOURCE).then(r =>
+            r.ok ? /** @type {Record<string, unknown>} */ (r.data) : null
+          ))
+      );
+      try {
+        await navigator.clipboard.writeText(text);
+        copySummary.textContent = 'copied';
+        setTimeout(() => {
+          copySummary.textContent = 'copy summary';
+        }, 1200);
+      } catch {
+        copySummary.textContent = 'copy failed';
+      }
+    });
   }
 
   if (reasonsEl) {
