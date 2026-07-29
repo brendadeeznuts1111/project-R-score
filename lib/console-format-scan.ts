@@ -73,6 +73,47 @@ export function isConsoleFormatScannable(path: string): boolean {
 const OBJECT_KEY = /^\s*['"][^'"]+['"]\s*:/;
 
 /**
+ * Stateless per-line code extraction for the staged (diff) path, where
+ * cross-line template/comment state is unavailable. Returns `null` for
+ * comment/JSDoc-body/object-key lines, else the line with // comments,
+ * strings, and same-line template literals stripped. Multi-line templates
+ * remain an edge case (suppress with // console-ok).
+ */
+export function stripConsoleFormatLine(line: string): string | null {
+  const trimmed = line.trim();
+  if (trimmed.startsWith('*')) return null; // JSDoc body line
+  if (OBJECT_KEY.test(line)) return null;
+  let out = '';
+  let inString: string | null = null;
+  let inTemplate = false;
+  for (let j = 0; j < line.length; j++) {
+    const ch = line[j]!;
+    const next = line[j + 1];
+    const prev = line[j - 1];
+    if (inTemplate) {
+      if (ch === '`' && prev !== '\\') inTemplate = false;
+      continue;
+    }
+    if (inString) {
+      if (ch === inString && prev !== '\\') inString = null;
+      continue;
+    }
+    if (ch === '/' && next === '/') break; // line comment: drop rest
+    if (ch === '/' && next === '*') break; // block comment start: drop rest (stateless)
+    if (ch === '`') {
+      inTemplate = true;
+      continue;
+    }
+    if (ch === "'" || ch === '"') {
+      inString = ch;
+      continue;
+    }
+    out += ch;
+  }
+  return out;
+}
+
+/**
  * Line scanner with comment/template/string awareness — doc data, embedded
  * example code, and object keys mention the APIs without being call sites;
  * counting them pins phantom hits in the baseline forever.
