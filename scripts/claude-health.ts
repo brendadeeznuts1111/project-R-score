@@ -16,6 +16,7 @@
 
 import { Glob } from 'bun';
 import { joinPath } from './lib/fs-bun';
+import { inspectTable } from '../lib/console-depth';
 
 const relativePath = (from: string, to: string) => {
   const a = from.replace(/\/$/, '');
@@ -48,7 +49,7 @@ function redraw() {
   if (lastLineCount > 0) {
     process.stdout.write(`\x1b[${lastLineCount}A\x1b[J`);
   }
-  const table = Bun.inspect.table(results, COLUMNS as unknown as string[], { colors: true });
+  const table = inspectTable(results, COLUMNS as unknown as string[], { colors: true });
   process.stdout.write(table + '\n');
   lastLineCount = table.split('\n').length + 1;
 }

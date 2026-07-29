@@ -1,3 +1,4 @@
+// @see https://bun.com/reference/bun/semver/satisfies — Bun.semver.satisfies
 // @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
@@ -12,7 +13,13 @@
  * Bun.inspect / inspect.table: structured dumps (depth + colors via console-depth).
  * Bun.Terminal (lib/terminal.ts): PTY for *child* processes — not host spinners.
  */
-import { getConsoleDepth, inspect, shouldColor, termWidth } from '../console-depth.ts';
+import {
+  getConsoleDepth,
+  inspect,
+  inspectTable,
+  shouldColor,
+  termWidth,
+} from '../console-depth.ts';
 import type { MonorepoHealthReport } from './monorepo-health.ts';
 import type { HealthTrend } from './monorepo-health-history.ts';
 
@@ -258,9 +265,9 @@ export function printHealthInspect(report: MonorepoHealthReport, depth?: number)
 
 export function printMetricTable(report: MonorepoHealthReport): void {
   const rows = metricTableRows(report);
-  // Bun.inspect.table returns a string — write to stdout for full control
+  // inspectTable returns a string — write to stdout for full control
   process.stdout.write(
-    Bun.inspect.table(rows, ['Metric', 'Value', 'Delta'], { colors: shouldColor() }) + '\n'
+    inspectTable(rows, ['Metric', 'Value', 'Delta'], { colors: shouldColor() }) + '\n'
   );
 }
 

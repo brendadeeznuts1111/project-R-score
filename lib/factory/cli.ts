@@ -37,7 +37,7 @@ import { buildRegistryHealthReport } from './health';
 import { runIntegrityCycle } from './monitoring';
 import { registry } from './registry';
 import { type ArtifactType } from './artifact';
-import { colorize, jsonOut, shouldColor, stripANSI } from '../console-depth';
+import { colorize, jsonOut, logTable, shouldColor, stripANSI } from '../console-depth';
 import { tomlStringify } from '../toml-stringify';
 
 const VERSION = '0.1.0';
@@ -345,11 +345,9 @@ async function cmdList(): Promise<void> {
   }));
 
   console.log(`\n  ${paint('toml', '── factory list ──')}  ${packages.length} package(s)\n`);
-  console.log(
-    Bun.inspect.table(table, ['name', 'latest', 'versions', 'description'], {
-      colors: shouldColor(),
-    })
-  );
+  logTable(table, ['name', 'latest', 'versions', 'description'], {
+    colors: shouldColor(),
+  });
 }
 
 async function cmdColors(): Promise<void> {
@@ -366,7 +364,7 @@ async function cmdColors(): Promise<void> {
     return row;
   });
 
-  console.log(Bun.inspect.table(table, ['color', ...formats], { colors: shouldColor() }));
+  logTable(table, ['color', ...formats], { colors: shouldColor() });
   console.log();
 }
 
@@ -394,9 +392,7 @@ async function cmdSearch(args: string[]): Promise<void> {
   console.log(
     `\n  ${paint('toml', '── factory search ──')}  ${results.length} result(s) for "${query}"\n`
   );
-  console.log(
-    Bun.inspect.table(table, ['name', 'latest', 'description'], { colors: shouldColor() })
-  );
+  logTable(table, ['name', 'latest', 'description'], { colors: shouldColor() });
 }
 
 async function cmdStatus(): Promise<void> {
@@ -423,16 +419,14 @@ async function cmdStatus(): Promise<void> {
   ];
 
   console.log(`\n  ${paint('bash', '── factory status ──')}\n`);
-  console.log(
-    Bun.inspect.table(
-      rows.map(([svc, ver, state, col]) => ({
-        Service: svc,
-        State: colorize(String(state), col as string),
-        Details: ver,
-      })),
-      ['Service', 'State', 'Details'],
-      { colors: shouldColor() }
-    )
+  logTable(
+    rows.map(([svc, ver, state, col]) => ({
+      Service: svc,
+      State: colorize(String(state), col as string),
+      Details: ver,
+    })),
+    ['Service', 'State', 'Details'],
+    { colors: shouldColor() }
   );
   console.log();
 }
@@ -520,16 +514,14 @@ async function cmdProof(args: string[]): Promise<void> {
     });
   }
 
-  console.log(
-    Bun.inspect.table(
-      results.map(r => ({
-        Claim: r.claim,
-        Status: colorize(r.status, r.color),
-        Detail: r.detail,
-      })),
-      ['Claim', 'Status', 'Detail'],
-      { colors: shouldColor() }
-    )
+  logTable(
+    results.map(r => ({
+      Claim: r.claim,
+      Status: colorize(r.status, r.color),
+      Detail: r.detail,
+    })),
+    ['Claim', 'Status', 'Detail'],
+    { colors: shouldColor() }
   );
   console.log();
 }

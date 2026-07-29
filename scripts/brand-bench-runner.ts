@@ -29,7 +29,7 @@ import type {
   MetricSummary,
 } from './lib/brand-bench-types';
 import { createShutdown, type ShutdownState } from './lib/graceful-shutdown';
-import { jsonOut } from '../lib/console-depth';
+import { jsonOut, logTable } from '../lib/console-depth';
 
 let shutdown: ShutdownState | null = null;
 
@@ -421,11 +421,9 @@ export async function runBrandBench(options: RunnerOptions): Promise<BrandBenchR
             ? '⚡ Good'
             : '✅ OK',
     }));
-    console.info(
-      Bun.inspect.table(opsTable, ['operation', 'ops/sec', 'p50', 'p95', 'rating'], {
-        colors: true,
-      })
-    );
+    logTable(opsTable, ['operation', 'ops/sec', 'p50', 'p95', 'rating'], {
+      colors: true,
+    });
 
     console.info(`\nbrand-bench report: ${runPath}`);
     console.info(`brand-bench latest: ${latestPath}`);

@@ -3,7 +3,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.table
 // @see https://bun.com/docs/runtime/file-io — Bun.file
-import { jsonOut } from '../lib/console-depth';
+import { jsonOut, logTable } from '../lib/console-depth';
 import { readText, resolvePath } from './lib/fs-bun';
 import type {
   BrandBenchEvaluation,
@@ -331,9 +331,7 @@ async function main(): Promise<void> {
       }));
 
       console.info('\nViolations:');
-      console.info(
-        Bun.inspect.table(tableData, ['metric', 'kind', 'severity', 'delta'], { colors: useColors })
-      );
+      logTable(tableData, ['metric', 'kind', 'severity', 'delta'], { colors: useColors });
     } else {
       console.info('\n✅ No violations detected');
     }

@@ -12,7 +12,13 @@
  * @see lib/http/networking-report.ts — RouteProbeReport pattern
  * @see lib/console-depth.ts — getConsoleDepth · inspectCustom · shouldColor
  */
-import { getConsoleDepth, inspectCustom, shouldColor, widthOf } from '../console-depth.ts';
+import {
+  getConsoleDepth,
+  inspectCustom,
+  inspectTable as inspectTableCore,
+  shouldColor,
+  widthOf,
+} from '../console-depth.ts';
 import { deepEquals } from '../deep-equals.ts';
 import {
   inspectTable,
@@ -382,10 +388,10 @@ export class LimitRaiseReport {
 
     // prove idempotency on primary table
     const projected = projectTableRows(raiseRows, LIMIT_RAISE_TABLE_PROPERTIES);
-    const t1 = Bun.inspect.table(projected, [...LIMIT_RAISE_TABLE_PROPERTIES], {
+    const t1 = inspectTableCore(projected, [...LIMIT_RAISE_TABLE_PROPERTIES], {
       colors: false,
     });
-    const t2 = Bun.inspect.table(projected, [...LIMIT_RAISE_TABLE_PROPERTIES], {
+    const t2 = inspectTableCore(projected, [...LIMIT_RAISE_TABLE_PROPERTIES], {
       colors: false,
     });
     if (!deepEquals(t1, t2)) {
