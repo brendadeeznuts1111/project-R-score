@@ -17,7 +17,6 @@
  *   public/registry/install-hygiene-report.json
  *   offline embed into public/portal/install-hygiene/index.html
  */
-export {};
 
 import { joinPath } from '../lib/path-bun.ts';
 import { collectInstallCacheMonitoringSlice } from '../lib/monitoring/install-cache-slice.ts';
@@ -205,13 +204,14 @@ function buildSsrFragments(report: Record<string, unknown>): {
     )
     .join('');
 
+  // Plain text only (no nested tags) so SSR inject cannot corrupt HTML via early </span>
   const reasonsHtml =
     reasons.length > 0
-      ? `<span class="ih-chip ih-chip--${tone}">${escHtml(tone === 'red' ? 'fail' : 'attention')}</span> ${escHtml(reasons.join(' · '))}`
-      : `<span class="ih-chip ih-chip--green">ok</span> All planes clean`;
+      ? `${escHtml(tone === 'red' ? 'fail' : 'attention')}: ${escHtml(reasons.join(' · '))}`
+      : 'ok: All planes clean';
 
   const gen = String(report.generatedAt ?? '—');
-  const metaHtml = `generated ${escHtml(gen)} · bun <span class="ih-chip ih-chip--neutral">${escHtml(String(report.bunVersion ?? '?'))}</span> · offline SSR bake`;
+  const metaHtml = `generated ${escHtml(gen)} · bun ${escHtml(String(report.bunVersion ?? '?'))} · offline SSR bake`;
 
   const summaryText = [
     `install-hygiene · ${label} (${tone})`,
@@ -228,23 +228,52 @@ function buildSsrFragments(report: Record<string, unknown>): {
   return { tone, label, reasonsHtml, metaHtml, statsHtml, meterHtml, summaryText };
 }
 
-function replaceIdInner(html: string, id: string, inner: string): string {
-  // brand-ok — HTML element id
-  // brand-ok — HTML element id
-  const re = new RegExp(`(id="${id}"[^>]*>)([\\s\\S]*?)(</(?:span|div|p|pre)>)`);
-  if (!re.test(html)) return html;
-  return html.replace(re, `$1${inner}$3`);
+/** Replace innerHTML of the first element with id=domKey (depth-aware). */
+function replaceDomInner(html: string, domKey: string, inner: string): string {
+  const idAttr = `id="${domKey}"`;
+  const idPos = html.indexOf(idAttr);
+  if (idPos < 0) return html;
+  const openStart = html.lastIndexOf('<', idPos);
+  if (openStart < 0) return html;
+  const openEnd = html.indexOf('>', idPos);
+  if (openEnd < 0) return html;
+  const tagMatch = /^<\s*([a-zA-Z0-9-]+)/.exec(html.slice(openStart, openEnd + 1));
+  if (!tagMatch) return html;
+  const tag = tagMatch[1]!;
+  const openTag = html.slice(openStart, openEnd + 1);
+  if (openTag.trim().endsWith('/>')) return html; // void
+  let depth = 1;
+  let i = openEnd + 1;
+  const openRe = new RegExp(`<${tag}\\b`, 'gi');
+  const closeRe = new RegExp(`</${tag}\\s*>`, 'gi');
+  while (i < html.length && depth > 0) {
+    openRe.lastIndex = i;
+    closeRe.lastIndex = i;
+    const nextOpen = openRe.exec(html);
+    const nextClose = closeRe.exec(html);
+    if (!nextClose) break;
+    if (nextOpen && nextOpen.index < nextClose.index) {
+      depth++;
+      i = nextOpen.index + nextOpen[0].length;
+    } else {
+      depth--;
+      if (depth === 0) {
+        // Keep the closing tag; replace only the inner HTML.
+        return html.slice(0, openEnd + 1) + inner + html.slice(nextClose.index);
+      }
+      i = nextClose.index + nextClose[0].length;
+    }
+  }
+  return html;
 }
 
-function replaceIdOpenClass(html: string, id: string, className: string): string {
-  // brand-ok — HTML element id
-  // brand-ok — HTML element id
+function replaceDomClass(html: string, domKey: string, className: string): string {
   // class may appear before or after id=
-  const reAfter = new RegExp(`id="${id}" class="[^"]*"`);
-  if (reAfter.test(html)) return html.replace(reAfter, `id="${id}" class="${className}"`);
-  const reBefore = new RegExp(`class="[^"]*" id="${id}"`);
-  if (reBefore.test(html)) return html.replace(reBefore, `class="${className}" id="${id}"`);
-  return html.replace(`id="${id}"`, `id="${id}" class="${className}"`);
+  const reAfter = new RegExp(`id="${domKey}" class="[^"]*"`);
+  if (reAfter.test(html)) return html.replace(reAfter, `id="${domKey}" class="${className}"`);
+  const reBefore = new RegExp(`class="[^"]*" id="${domKey}"`);
+  if (reBefore.test(html)) return html.replace(reBefore, `class="${className}" id="${domKey}"`);
+  return html.replace(`id="${domKey}"`, `id="${domKey}" class="${className}"`);
 }
 
 /** Offline SSOT: inject compact JSON + no-JS SSR paint into the board HTML. */
@@ -265,26 +294,22 @@ async function injectBoardEmbed(report: Record<string, unknown>): Promise<void> 
   }
 
   const ssr = buildSsrFragments(report);
-  html = replaceIdOpenClass(html, 'ih-tone', `doc-badge ${ssr.tone}`);
-  html = replaceIdInner(html, 'ih-tone', escHtml(ssr.label));
-  html = replaceIdOpenClass(html, 'ih-shell', `doc-wrap ih-shell ih-shell--${ssr.tone}`);
-  html = replaceIdInner(html, 'ih-meta', ssr.metaHtml);
-  html = replaceIdOpenClass(
+  html = replaceDomClass(html, 'ih-tone', `doc-badge ${ssr.tone}`);
+  html = replaceDomInner(html, 'ih-tone', escHtml(ssr.label));
+  html = replaceDomClass(html, 'ih-shell', `doc-wrap ih-shell ih-shell--${ssr.tone}`);
+  html = replaceDomInner(html, 'ih-meta', ssr.metaHtml);
+  html = replaceDomClass(
     html,
     'ih-reasons',
     `ih-reasons ih-reasons--${ssr.tone === 'missing' ? 'yellow' : ssr.tone}`
   );
   // unhide reasons
   html = html.replace(/id="ih-reasons"([^>]*)\shidden/, `id="ih-reasons"$1`);
-  html = replaceIdInner(html, 'ih-reasons', ssr.reasonsHtml);
-  html = replaceIdInner(html, 'ih-stats', ssr.statsHtml);
-  html = replaceIdInner(html, 'ih-cache-meter', ssr.meterHtml);
-  html = replaceIdInner(html, 'ih-summary-text', escHtml(ssr.summaryText));
-  html = replaceIdInner(
-    html,
-    'ih-source',
-    `<span class="ih-chip ih-chip--neutral" data-tone="neutral">offline SSR</span>`
-  );
+  html = replaceDomInner(html, 'ih-reasons', ssr.reasonsHtml);
+  html = replaceDomInner(html, 'ih-stats', ssr.statsHtml);
+  html = replaceDomInner(html, 'ih-cache-meter', ssr.meterHtml);
+  html = replaceDomInner(html, 'ih-summary-text', escHtml(ssr.summaryText));
+  html = replaceDomInner(html, 'ih-source', 'offline SSR');
 
   await Bun.write(BOARD_HTML, html);
 }

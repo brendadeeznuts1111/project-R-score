@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "install-hygiene",
-  "generatedAt": "2026-07-29T01:28:31.333Z",
+  "generatedAt": "2026-07-29T01:35:09.194Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
   "installCache": {
@@ -15,7 +15,7 @@
     "cacheDir": "/Users/nolarose/.bun/install/cache",
     "bunPmCachePath": "/Users/nolarose/.npm",
     "bunPmCacheMismatch": "reported /Users/nolarose/.npm does not match expected /Users/nolarose/.bun/install/cache",
-    "collectedAt": "2026-07-29T01:28:15.234Z"
+    "collectedAt": "2026-07-29T01:34:52.342Z"
   },
   "npmInstall": {
     "ok": true,

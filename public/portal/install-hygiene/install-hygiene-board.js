@@ -1,10 +1,17 @@
 /**
- * Install hygiene board — reads /registry/install-hygiene-report.json.
+ * Install hygiene board — offline embed + optional live refresh of
+ * /registry/install-hygiene-report.json via portal fetch-json (GET, timeout, Accept).
  * Color code: green = ok · yellow = attention · red = fail · dim = neutral/missing
+ *
+ * Live refresh errors are non-fatal (embed wins). Debug live fetch:
+ *   ?portal_fetch_debug=1  or  localStorage.PORTAL_FETCH_DEBUG=1
+ * (Browser cannot use Bun's fetch `verbose: true` — Bun-only extension.)
  *
  * @see docs/UNIFIED.md
  * @see lib/monitoring/install-hygiene-slice.ts
  * @see docs/harness/tenants/public-plane.md
+ * @see https://bun.com/docs/runtime/networking/fetch#request-options
+ * @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request
  */
 import { bindCopyButtons } from '../copy-cli.js';
 import { fetchJsonResult } from '../fetch-json.js';
@@ -549,6 +556,17 @@ function withSource(report, source) {
 }
 
 /**
+ * @param {import('../fetch-json.js').FetchJsonErr|object} r
+ * @returns {string}
+ */
+export function formatLiveFetchStatus(r) {
+  if (!r || r.ok) return '';
+  const kind = /** @type {string} */ (r.kind || 'network');
+  const detail = r.status != null ? `${kind} HTTP ${r.status}` : `${kind}: ${r.error || 'failed'}`;
+  return `live refresh failed (${detail}) — showing offline embed`;
+}
+
+/**
  * Prefer offline embed; refresh from registry when fetch works (optional live).
  * @returns {Promise<Record<string, unknown>|null>}
  */
@@ -556,22 +574,39 @@ export async function loadInstallHygieneReport() {
   const embedded = readInstallHygieneEmbed();
   // Always render embed first so the board works with no network / broken static host.
   if (embedded) {
-    // Non-blocking refresh when online
-    void fetchJsonResult(INSTALL_HYGIENE_SOURCE).then(r => {
+    // Non-blocking refresh when online (GET only · timeout · Accept: json)
+    void fetchJsonResult(INSTALL_HYGIENE_SOURCE, { timeoutMs: 5000, method: 'GET' }).then(r => {
+      const statusEl = document.getElementById('ih-fetch-status');
       if (r.ok && r.data && /** @type {Record<string, unknown>} */ (r.data).kind === 'install-hygiene') {
         const live = /** @type {Record<string, unknown>} */ (r.data);
         const embAt = Date.parse(String(embedded.generatedAt || ''));
         const liveAt = Date.parse(String(live.generatedAt || ''));
         if (!Number.isFinite(embAt) || (Number.isFinite(liveAt) && liveAt >= embAt)) {
           renderInstallHygieneReport(withSource(live, 'live'));
+          if (statusEl) {
+            statusEl.hidden = true;
+            statusEl.textContent = '';
+          }
+          return;
         }
+      }
+      if (statusEl && !r.ok) {
+        statusEl.hidden = false;
+        statusEl.className = 'ih-fetch-status ih-fetch-status--warn';
+        statusEl.textContent = formatLiveFetchStatus(r);
       }
     });
     return withSource(embedded, 'embed');
   }
-  const r = await fetchJsonResult(INSTALL_HYGIENE_SOURCE);
+  const r = await fetchJsonResult(INSTALL_HYGIENE_SOURCE, { timeoutMs: 5000, method: 'GET' });
   if (r.ok && r.data && /** @type {Record<string, unknown>} */ (r.data).kind === 'install-hygiene') {
     return withSource(/** @type {Record<string, unknown>} */ (r.data), 'live');
+  }
+  const statusEl = document.getElementById('ih-fetch-status');
+  if (statusEl && !r.ok) {
+    statusEl.hidden = false;
+    statusEl.className = 'ih-fetch-status ih-fetch-status--warn';
+    statusEl.textContent = formatLiveFetchStatus(r) || 'live fetch failed and no offline embed';
   }
   return null;
 }
