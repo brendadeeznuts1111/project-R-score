@@ -37,8 +37,8 @@ function sampleFor(name: string): { input: string; expected: string } {
 }
 
 describe('branded domain-value catalog', () => {
-  test('catalog is a unique 57-value, 9-domain contract', () => {
-    expect(branded.BRAND_CATALOG).toHaveLength(57);
+  test('catalog is a unique 58-value, 9-domain contract', () => {
+    expect(branded.BRAND_CATALOG).toHaveLength(58);
 
     const names = branded.BRAND_CATALOG.map(spec => spec.name);
     const domains = new Set(branded.BRAND_CATALOG.map(spec => spec.domain));
@@ -47,7 +47,7 @@ describe('branded domain-value catalog', () => {
     expect(new Set(names).size).toBe(names.length);
     expect(domains.size).toBe(9);
     expect(domains.has('surfaces')).toBeTrue();
-    expect(kinds.filter(kind => kind === 'id')).toHaveLength(51);
+    expect(kinds.filter(kind => kind === 'id')).toHaveLength(52);
     expect(kinds.filter(kind => kind === 'key')).toHaveLength(1);
     expect(kinds.filter(kind => kind === 'code')).toHaveLength(5);
   });
@@ -70,7 +70,7 @@ describe('branded domain-value catalog', () => {
   });
 
   test('generated guards cover every canonical runtime shape', () => {
-    expect(Object.keys(branded.BRAND_GUARDS)).toHaveLength(57);
+    expect(Object.keys(branded.BRAND_GUARDS)).toHaveLength(58);
 
     for (const spec of branded.BRAND_CATALOG) {
       const guardName = `is${spec.name}` as keyof typeof branded.BRAND_GUARDS;

@@ -156,7 +156,7 @@ function renderSummary() {
     stat(graph.apis ?? bunBrandMap?.capabilities?.length ?? 0, 'Bun APIs'),
     stat(graph.relationships ?? bunBrandMap?.relationships?.length ?? 0, 'relationships'),
     stat(graph.wrappers ?? 0, 'wrappers'),
-    stat(graph.projects ?? bunBrandMap?.projects?.length ?? 0, 'projects'),
+    stat(graph.projects ?? bunBrandMap?.projects?.length ?? 0, 'tracked projects'),
     stat(graph.verified ?? 0, 'verified'),
     stat(graph.attention ?? 0, 'attention', Number(graph.attention ?? 0) > 0)
   );

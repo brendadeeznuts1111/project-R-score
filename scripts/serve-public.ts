@@ -529,7 +529,7 @@ async function npmPackageMetadata(req: Request): Promise<Response> {
 
 // ── DOD / Channels ──────────────────────────────────────────────────
 
-const dodVerifier = new DODVerifier();
+const dodVerifier = new DODVerifier(dbPath);
 
 async function dodApi(req: Request): Promise<Response> {
   const url = new URL(req.url);
@@ -695,10 +695,24 @@ async function serveRegistryStorage(pathname: string, request: Request): Promise
   if (segments.length < 3) return null;
   const fsPath = `public/registry/storage/${segments.join('/')}`;
   const file = Bun.file(fsPath);
-  if (!(await file.exists())) return null;
-  return respondAuto(fsPath, request, {
-    cache: fileRouteCache,
-    cacheControl: 'public, max-age=60',
+  if (await file.exists()) {
+    return respondAuto(fsPath, request, {
+      cache: fileRouteCache,
+      cacheControl: 'public, max-age=60',
+    });
+  }
+
+  // Binary registry fixtures are stored as base64 so clean checkouts retain
+  // byte-for-byte download proof even though *.tgz is globally ignored.
+  const encodedFile = Bun.file(`${fsPath}.base64`);
+  if (!(await encodedFile.exists())) return null;
+  const bytes = Buffer.from((await encodedFile.text()).trim(), 'base64');
+  return new Response(request.method === 'HEAD' ? null : bytes, {
+    headers: {
+      'cache-control': 'public, max-age=60',
+      'content-length': String(bytes.byteLength),
+      'content-type': 'application/gzip',
+    },
   });
 }
 

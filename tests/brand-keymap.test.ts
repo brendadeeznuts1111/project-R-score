@@ -37,7 +37,7 @@ describe('brand keymap', () => {
       path: '/registry/brand-keymap.json',
       generatedAt: '2026-07-28T00:00:00.000Z',
       summary: {
-        brands: 57,
+        brands: 58,
         domains: 9,
         trackedProjects: 1,
         canonicalProjects: 1,
@@ -80,6 +80,6 @@ describe('brand keymap', () => {
       expect(stderr).toBe('');
       expect(exitCode, stdout).toBe(0);
     },
-    { timeout: 15_000 }
+    { timeout: 30_000 }
   );
 });

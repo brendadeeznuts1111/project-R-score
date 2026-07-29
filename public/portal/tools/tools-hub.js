@@ -145,6 +145,29 @@ function escapeHtml(s) {
     .replace(/"/g, '&quot;');
 }
 
+/** @type {Set<string>} */
+let bunBrandCapabilityTokens = new Set();
+
+export const BRANDS_RELATIONSHIPS_HREF = '/portal/brands/#view=relationships';
+
+/**
+ * Filter only when the capability API contains a token declared by the cross-map.
+ * Otherwise keep the link useful by opening the complete relationship view.
+ *
+ * @param {string} api
+ * @param {Iterable<string>} trackedTokens
+ */
+export function capabilityBrandsHref(api, trackedTokens = []) {
+  const value = String(api || '');
+  const token = [...trackedTokens]
+    .filter(Boolean)
+    .sort((a, b) => b.length - a.length)
+    .find(candidate => value.includes(candidate));
+  return token
+    ? `${BRANDS_RELATIONSHIPS_HREF}&q=${encodeURIComponent(token)}`
+    : BRANDS_RELATIONSHIPS_HREF;
+}
+
 /**
  * Normalize registry JSON rows to
  * [capability, type, protocol, version, api, status, usedIn, sourceUrl].
@@ -203,7 +226,10 @@ export function normalizeCapabilityRows(data) {
 }
 
 async function loadCapabilityRows() {
-  const r = await fetchJsonResult('/registry/capability-map-subset.json');
+  const [r, brandMap] = await Promise.all([
+    fetchJsonResult('/registry/capability-map-subset.json'),
+    fetchJsonResult('/registry/bun-brand-map.json'),
+  ]);
   if (r.ok && r.data) {
     capabilityRows = normalizeCapabilityRows(r.data);
     capabilityMeta = {
@@ -212,6 +238,11 @@ async function loadCapabilityRows() {
       schemaVersion: r.data.schemaVersion,
       summary: r.data.summary,
     };
+  }
+  if (brandMap.ok && Array.isArray(brandMap.data?.capabilities)) {
+    bunBrandCapabilityTokens = new Set(
+      brandMap.data.capabilities.map(capability => capability?.token).filter(Boolean)
+    );
   }
 }
 
@@ -222,9 +253,11 @@ function fillCapabilityTable() {
   const rows = capabilityRows.filter(r => !q || r.join(' ').toLowerCase().includes(q));
   tbody.innerHTML = rows
     .map(([cap, type, protocol, version, api, status, used, sourceUrl, minBun, minPassCli]) => {
-      const capCell = sourceUrl
+      const sourceLink = sourceUrl
         ? `${escapeHtml(cap)} <a class="cap-source" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer" title="docs">↗</a>`
         : escapeHtml(cap);
+      const brandsHref = capabilityBrandsHref(api, bunBrandCapabilityTokens);
+      const capCell = `${sourceLink} <a class="cap-brand-link" href="${escapeHtml(brandsHref)}" title="Bun × brand relationships">Brands</a>`;
       const floors = [minBun ? `bun≥${minBun}` : '', minPassCli ? `pass≥${minPassCli}` : '']
         .filter(Boolean)
         .join(' · ');

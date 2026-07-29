@@ -133,7 +133,9 @@ describe('telegram-catalog-research', () => {
     const live = context.forumMetaByPartner.get('GAP');
     expect(live?.missingTopics).toContain('Alerts');
     expect(live?.topicsComplete).toBe(false);
-    expect(context.houseMetaBySurface.get('hq')?.welcomePromptPosted).toBe(true);
+    // A clean checkout has no gitignored house-forum observation. The loader
+    // must report that absence instead of inventing a posted prompt.
+    expect(context.houseMetaBySurface.get('hq')?.welcomePromptPosted).toBe(false);
 
     const proposals = runDeterministicAnalyzers(buildHandshakeCatalog(), context);
     expect(proposals.some(p => p.title.includes('GAP: incomplete topic plan'))).toBe(true);

@@ -6,7 +6,6 @@ import {
   PORTAL_WEAVE_SURFACES,
   withStableLinkIds,
 } from '../lib/http/portal-weave.ts';
-import { PORTAL_WEAVE_WIKI } from '../lib/http/wiki-nav.ts';
 import { PORTAL_MARKDOWN_SLUGS } from '../lib/http/portal-route-manifest.ts';
 import { PORTAL_MD_SLUGS } from '../lib/http/llms-txt.ts';
 
@@ -18,6 +17,7 @@ describe('portal weave', () => {
     expect(p.kind).toBe('portal-weave');
     expect(p.path).toBe('/registry/portal-weave.json');
     expect(p.summary.surfaces).toBe(p.surfaces.length);
+    expect(p.related.bunBrandMap).toBe('/registry/bun-brand-map.json');
     expect(p.related.monorepoHealth).toBe('/registry/monorepo-health.json');
     expect(p.related.chrome).toBe('/registry/portal-chrome.json');
     expect(p.surfaces.length).toBeGreaterThan(8);

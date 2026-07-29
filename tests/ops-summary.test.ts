@@ -3,6 +3,9 @@
  * Portal ops summary includes experiments + prediction for live + snapshot.
  */
 import { describe, expect, test } from 'bun:test';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { openOperationsDb } from '../lib/operations/db.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
 import { FactorialEngine } from '../lib/experiments/index.ts';
@@ -10,8 +13,24 @@ import { runCoverageBacktest } from '../lib/prediction/index.ts';
 import { asTreeNodeId, unbrand } from '../lib/types/branded.ts';
 import { seedAccountLimitsDemo } from '../lib/account-limits-repo.ts';
 import { PartnerAnalyticsRepository } from '../lib/operations/partner-analytics-repo.ts';
+import { refreshOpsSummaryBunBrandMap } from '../tools/refresh-ops-bun-brand-map.ts';
 
 describe('buildOpsSummary', () => {
+  test('focused Bun-brand refresh preserves unrelated snapshot fields', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'ops-bun-brand-'));
+    try {
+      const path = join(dir, 'ops-summary.json');
+      await Bun.write(path, JSON.stringify({ source: 'snapshot', generated: 'fixed', sentinel: 42 }));
+      const payload = await refreshOpsSummaryBunBrandMap(path);
+      expect(payload.source).toBe('snapshot');
+      expect(payload.generated).toBe('fixed');
+      expect(payload.sentinel).toBe(42);
+      expect((payload.bunBrandMap as { available?: boolean }).available).toBe(true);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+
   test('live and snapshot use the same top-level contract keys', () => {
     const db = openOperationsDb({ path: ':memory:' });
     const live = buildOpsSummary(db, 'live');
@@ -53,6 +72,9 @@ describe('buildOpsSummary', () => {
     expect(s.bunBrandMap.path).toBe('/registry/bun-brand-map.json');
     expect(typeof s.bunBrandMap.warnings).toBe('number');
     expect(typeof s.bunBrandMap.errors).toBe('number');
+    expect(Object.keys(s.bunBrandMap).sort()).toEqual(
+      ['available', 'errors', 'ok', 'path', 'stale', 'warnings'].sort()
+    );
     if (s.proofTaxonomy.available) {
       expect(s.proofTaxonomy.contracts).toBeGreaterThan(0);
       expect(s.proofTaxonomy.proofHash).toMatch(/^[a-f0-9]{64}$/);

@@ -302,8 +302,12 @@ describe('tools/verify-bun-release.ts', () => {
       stdout: 'pipe',
       stderr: 'pipe',
     });
-    const [stdout, code] = await Promise.all([new Response(proc.stdout).text(), proc.exited]);
-    expect(code).toBe(0);
+    const [stdout, stderr, code] = await Promise.all([
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+      proc.exited,
+    ]);
+    expect(code, stderr).toBe(0);
     expect(stdout).toContain('Proof saved');
 
     const proof = await Bun.file('public/registry/release-features.json').json();

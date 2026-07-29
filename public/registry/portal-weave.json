@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-07-28T23:47:26.016Z",
+  "generated": "2026-07-29T00:48:26.090Z",
   "summary": {
     "surfaces": 22,
     "artifacts": 33,
@@ -11,6 +11,7 @@
     "scripts": 32
   },
   "related": {
+    "bunBrandMap": "/registry/bun-brand-map.json",
     "chrome": "/registry/portal-chrome.json",
     "monorepoHealth": "/registry/monorepo-health.json",
     "doctorState": "/registry/doctor-state.json",
@@ -194,7 +195,7 @@
     {
       "label": "brand-keymap",
       "href": "/registry/brand-keymap.json",
-      "note": "57-value catalog · tracked project adoption",
+      "note": "58-value catalog · tracked project adoption",
       "id": "artifact-brand-keymap"
     },
     {

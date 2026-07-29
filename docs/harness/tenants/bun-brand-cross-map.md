@@ -76,14 +76,16 @@ Three version axes are deliberately separate:
    values; declarations and prose do not override them.
 
 This is why `Bun.Image` reports `1.3.14` regardless of the FactoryWager release
-number or installed runtime. `schemaVersion` on the registry payload versions
-the JSON contract and is not a package or Bun runtime version.
+number, the `bun@1.4.0` runtime pin, or the `1.3.14` definition catalog pin.
+`schemaVersion` on the registry payload versions the JSON contract and is not a
+package or Bun runtime version.
 
 ## Operate
 
 ```bash
 bun run brand:keymap
 bun run bun:brand-map
+bun run ops:snapshot:bun-brand-map
 bun run bun:brand-map:check
 bun run check:brands:staged
 bun run check:brands:diff <base-sha>

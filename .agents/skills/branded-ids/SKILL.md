@@ -37,9 +37,9 @@ bun tools/brand-catalog.ts AccountId
 bun tools/brand-catalog.ts StateCode --json
 ```
 
-The current contract is 57 branded values across 9 domains:
+The current contract is 58 branded values across 9 domains:
 
-- 51 IDs represented by `AnyId` (surfaces: `HostId`, `ApexDomainId`, `SubdomainId`, `SurfaceId`, `PagesProjectId`, `PublishLaneId`, `AccessDomainId`)
+- 52 IDs represented by `AnyId` (including `OidcClientId`; surfaces: `HostId`, `ApexDomainId`, `SubdomainId`, `SurfaceId`, `PagesProjectId`, `PublishLaneId`, `AccessDomainId`)
 - `PartnerProfileKey`
 - codes: `StateCode`, `ZipCode`, `SurfaceStatusCode`, `SurfaceAccessCode`, `SurfaceBackendCode`
 - all 57 represented by `AnyBrandedValue`

@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "kind": "bun-brand-usage-baseline",
   "keys": [
     "--no-orphans|bun-config|.bun-create/factory-library/bunfig.toml#1",

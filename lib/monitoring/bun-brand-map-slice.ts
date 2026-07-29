@@ -37,6 +37,23 @@ export type BunBrandMapSummarySlice = {
   path: '/registry/bun-brand-map.json';
 };
 
+export type BunBrandMapOpsSlice = Pick<
+  BunBrandMapSummarySlice,
+  'available' | 'ok' | 'warnings' | 'errors' | 'stale' | 'path'
+>;
+
+/** Keep the ops summary small; project attribution stays in the map artifact. */
+export function toBunBrandMapOpsSlice(slice: BunBrandMapSummarySlice): BunBrandMapOpsSlice {
+  return {
+    available: slice.available,
+    ok: slice.ok,
+    warnings: slice.warnings,
+    errors: slice.errors,
+    stale: slice.stale,
+    path: slice.path,
+  };
+}
+
 type WireFinding = {
   kind?: string;
   severity?: string;
@@ -108,35 +125,29 @@ function optionalField(
 
 function parseWireArtifact(value: unknown): WireArtifact | null {
   if (!isRecord(value)) return null;
-  if (!optionalField(value, 'schemaVersion', candidate => candidate === 1)) return null;
-  if (!optionalField(value, 'kind', candidate => candidate === 'bun-brand-map')) return null;
-  if (!optionalField(value, 'generatedAt', candidate => typeof candidate === 'string')) return null;
-
-  if (value.summary !== undefined) {
-    if (!isRecord(value.summary)) return null;
-    const summary = value.summary;
-    if (!SUMMARY_COUNT_FIELDS.every(field => optionalField(summary, field, isCount))) {
-      return null;
-    }
+  if (value.schemaVersion !== 1) return null;
+  if (value.kind !== 'bun-brand-map') return null;
+  if (typeof value.generatedAt !== 'string') return null;
+  if (!isRecord(value.summary)) return null;
+  if (!SUMMARY_COUNT_FIELDS.every(field => optionalField(value.summary, field, isCount))) {
+    return null;
   }
 
-  if (value.findings !== undefined) {
-    if (
-      !Array.isArray(value.findings) ||
-      !value.findings.every(
-        row =>
-          isRecord(row) &&
-          optionalField(row, 'kind', candidate => typeof candidate === 'string') &&
-          optionalField(
-            row,
-            'severity',
-            candidate => candidate === 'warning' || candidate === 'error'
-          ) &&
-          optionalField(row, 'baseline', candidate => typeof candidate === 'boolean')
-      )
-    ) {
-      return null;
-    }
+  if (
+    !Array.isArray(value.findings) ||
+    !value.findings.every(
+      row =>
+        isRecord(row) &&
+        optionalField(row, 'kind', candidate => typeof candidate === 'string') &&
+        optionalField(
+          row,
+          'severity',
+          candidate => candidate === 'warning' || candidate === 'error'
+        ) &&
+        optionalField(row, 'baseline', candidate => typeof candidate === 'boolean')
+    )
+  ) {
+    return null;
   }
 
   if (value.capabilities !== undefined) {

@@ -34,6 +34,7 @@ export type CommandContext = {
   bucket: R2PutBucket;
   channel: R2ChannelStore | MemoryChannelStore;
   env: Record<string, string | undefined>;
+  fetchImpl?: typeof globalThis.fetch;
   opsArgs?: string[];
 };
 
@@ -108,7 +109,13 @@ export class TelegramBot {
         const nonce = arg.slice(5);
         const record = await consumeLinkNonce(deps.bucket, nonce);
         if (!record) {
-          await sendTelegramMessage(deps.env, deps.tenant, msg.chat.id, 'Link expired or invalid.');
+          await sendTelegramMessage(
+            deps.env,
+            deps.tenant,
+            msg.chat.id,
+            'Link expired or invalid.',
+            deps.fetchImpl
+          );
           return;
         }
         const linked = await deps.accounts.linkTelegram(
@@ -135,7 +142,8 @@ export class TelegramBot {
           deps.env,
           deps.tenant,
           msg.chat.id,
-          'Telegram linked to your portal account.'
+          'Telegram linked to your portal account.',
+          deps.fetchImpl
         );
         return;
       }
@@ -151,7 +159,12 @@ export class TelegramBot {
               args: [],
             });
             if (output) {
-              await deliverFlowOutput(output, { token, chatId: msg.chat.id, db });
+              await deliverFlowOutput(output, {
+                token,
+                chatId: msg.chat.id,
+                db,
+                fetchImpl: deps.fetchImpl,
+              });
               return;
             }
           } finally {
@@ -165,14 +178,15 @@ export class TelegramBot {
           args: [],
           chatType: msg.chat.type,
         });
-        await sendTelegramMessage(deps.env, deps.tenant, msg.chat.id, ops.reply);
+        await sendTelegramMessage(deps.env, deps.tenant, msg.chat.id, ops.reply, deps.fetchImpl);
         return;
       }
       await sendTelegramMessage(
         deps.env,
         deps.tenant,
         msg.chat.id,
-        `Welcome to ${deps.tenant.name}. Use /help for commands.`
+        `Welcome to ${deps.tenant.name}. Use /help for commands.`,
+        deps.fetchImpl
       );
       return;
     }
@@ -197,7 +211,13 @@ export class TelegramBot {
     const [command, ...argParts] = text.split(/\s+/);
     const cmd = this.commands.get(command!);
     if (!cmd) {
-      await sendTelegramMessage(deps.env, deps.tenant, msg.chat.id, 'Unknown command. Try /help');
+      await sendTelegramMessage(
+        deps.env,
+        deps.tenant,
+        msg.chat.id,
+        'Unknown command. Try /help',
+        deps.fetchImpl
+      );
       return;
     }
 
@@ -222,11 +242,21 @@ export class TelegramBot {
                   asTelegramUserId(String(msg.from.id))
                 );
                 if (!account || (account.tenantId as string) !== 'factory') {
-                  await deliverFlowOutput(output, { token, chatId: msg.chat.id, db });
+                  await deliverFlowOutput(output, {
+                    token,
+                    chatId: msg.chat.id,
+                    db,
+                    fetchImpl: deps.fetchImpl,
+                  });
                   return;
                 }
               } else {
-                await deliverFlowOutput(output, { token, chatId: msg.chat.id, db });
+                await deliverFlowOutput(output, {
+                  token,
+                  chatId: msg.chat.id,
+                  db,
+                  fetchImpl: deps.fetchImpl,
+                });
                 return;
               }
             }
@@ -244,7 +274,7 @@ export class TelegramBot {
       account,
       opsArgs: argParts,
     });
-    await sendTelegramMessage(deps.env, deps.tenant, msg.chat.id, response);
+    await sendTelegramMessage(deps.env, deps.tenant, msg.chat.id, response, deps.fetchImpl);
   }
 
   private async handleCallbackQuery(
@@ -303,6 +333,7 @@ export class TelegramBot {
           chatId,
           editMessageId: msgId,
           db,
+          fetchImpl: deps.fetchImpl,
         });
         await answerCallbackQuery(token, cq.id, output.text.replace(/<[^>]+>/g, '').slice(0, 80));
       } else {
@@ -318,11 +349,12 @@ export async function sendTelegramMessage(
   env: Record<string, string | undefined>,
   tenant: TenantConfig,
   chatId: number,
-  text: string
+  text: string,
+  fetchImpl: typeof globalThis.fetch = globalThis.fetch
 ): Promise<void> {
   const token = resolveTelegramToken(env, tenant);
   if (!token) return;
-  await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+  await fetchImpl(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'Markdown' }),

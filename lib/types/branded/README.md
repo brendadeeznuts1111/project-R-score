@@ -10,7 +10,7 @@ text must not travel through the harness as a bare `string`.
 - **Source catalog:** [`index.ts`](./index.ts) → `BRAND_CATALOG`
 - **Generated record:** [`brand-manifest.json`](../brand-manifest.json) — never
   hand-edit
-- **Inventory:** 57 values across 9 domains: 51 IDs, 1 key, and 5 codes
+- **Inventory:** 58 values across 9 domains: 52 IDs, 1 key, and 5 codes
 - **Runtime:** branded values remain ordinary strings; the nominal tag is
   type-only
 - **Shape guards:** `BRAND_GUARDS.isX(value)` and `isBrandedValue(name, value)`
@@ -33,7 +33,7 @@ authoritative.
 | Domain     | Values                                                                  | Module                             |
 | ---------- | ----------------------------------------------------------------------- | ---------------------------------- |
 | session    | 5 session, terminal, request, correlation, and snapshot IDs             | [`session.ts`](./session.ts)       |
-| identity   | 5 user, account, identity, access-key, and token IDs                    | [`identity.ts`](./identity.ts)     |
+| identity   | 6 user, account, identity, OIDC-client, access-key, and token IDs       | [`identity.ts`](./identity.ts)     |
 | documents  | 3 document, zone, and Bun documentation-token IDs                       | [`documents.ts`](./documents.ts)   |
 | security   | 2 challenge and policy IDs                                              | [`security.ts`](./security.ts)     |
 | deployment | 1 deployment ID                                                         | [`deployment.ts`](./deployment.ts) |

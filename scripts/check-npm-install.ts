@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 /**
  * Block non-Bun install commands in root production paths.
  *
@@ -6,6 +9,7 @@
  * this gate owns the root workflows, scripts, tools, libraries, and scripts map.
  */
 import { parse } from 'yaml';
+import * as ts from 'typescript';
 import { fileExists, joinPath, listFilesSync, readJson, readText } from './lib/fs-bun';
 
 const ROOT = `${import.meta.dir}/..`;
@@ -41,11 +45,75 @@ function snippet(value: string): string {
   return compact.length > 100 ? `${compact.slice(0, 99)}…` : compact;
 }
 
-function withoutCommentsAndStrings(source: string): string {
-  return source
-    .replace(/\/\*[\s\S]*?\*\//g, match => match.replace(/[^\n]/g, ' '))
-    .replace(/\/\/.*$/gm, '')
-    .replace(/(['"`])(?:\\.|(?!\1)[^\\\n])*\1/g, '""');
+function expressionPath(node: ts.Expression): string | null {
+  if (ts.isIdentifier(node)) return node.text;
+  if (ts.isPropertyAccessExpression(node)) {
+    const parent = expressionPath(node.expression);
+    return parent ? `${parent}.${node.name.text}` : null;
+  }
+  return null;
+}
+
+function templateCommand(node: ts.TemplateLiteral): string {
+  if (ts.isNoSubstitutionTemplateLiteral(node)) return node.text;
+  return [node.head.text, ...node.templateSpans.map(span => span.literal.text)].join(' ');
+}
+
+function commandArgument(node: ts.Expression | undefined): string | null {
+  if (!node) return null;
+  if (ts.isStringLiteralLike(node)) return node.text;
+  if (ts.isNoSubstitutionTemplateLiteral(node) || ts.isTemplateExpression(node)) {
+    return templateCommand(node);
+  }
+  if (ts.isArrayLiteralExpression(node)) {
+    return node.elements
+      .map(element =>
+        ts.isStringLiteralLike(element)
+          ? element.text
+          : ts.isNoSubstitutionTemplateLiteral(element) || ts.isTemplateExpression(element)
+            ? templateCommand(element)
+            : ' '
+      )
+      .join(' ');
+  }
+  return null;
+}
+
+function executableCommands(source: string, file: string): Violation[] {
+  const parsed = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+  const rawLines = source.split('\n');
+  const violations: Violation[] = [];
+  const spawnPaths = new Set(['Bun.spawn', 'Bun.spawnSync', 'spawn', 'spawnSync']);
+  const execPaths = new Set(['exec', 'execSync', 'execFile', 'execFileSync']);
+  const tagPaths = new Set(['Bun.$', '$']);
+
+  const add = (node: ts.Node, command: string | null) => {
+    if (!command) return;
+    const rule = findCommand(command);
+    if (!rule) return;
+    const line = parsed.getLineAndCharacterOfPosition(node.getStart(parsed)).line + 1;
+    violations.push({ file, line, rule, snippet: snippet(rawLines[line - 1] ?? command) });
+  };
+
+  const visit = (node: ts.Node) => {
+    if (ts.isCallExpression(node)) {
+      const path = expressionPath(node.expression);
+      if (path && spawnPaths.has(path)) {
+        const executable = commandArgument(node.arguments[0]);
+        const argumentsList = commandArgument(node.arguments[1]);
+        add(node, [executable, argumentsList].filter(Boolean).join(' '));
+      } else if (path && execPaths.has(path)) {
+        add(node, commandArgument(node.arguments[0]));
+      }
+    } else if (ts.isTaggedTemplateExpression(node)) {
+      const path = expressionPath(node.tag);
+      if (path && tagPaths.has(path)) add(node, templateCommand(node.template));
+    }
+    ts.forEachChild(node, visit);
+  };
+
+  visit(parsed);
+  return violations;
 }
 
 export function findBlockedInstallCommands(
@@ -53,9 +121,9 @@ export function findBlockedInstallCommands(
   file = '<source>',
   codeAware = false
 ): Violation[] {
-  const inspected = codeAware ? withoutCommentsAndStrings(source) : source;
+  if (codeAware) return executableCommands(source, file);
   const rawLines = source.split('\n');
-  return inspected.split('\n').flatMap((line, index) => {
+  return source.split('\n').flatMap((line, index) => {
     const rule = findCommand(line);
     return rule ? [{ file, line: index + 1, rule, snippet: snippet(rawLines[index] ?? line) }] : [];
   });

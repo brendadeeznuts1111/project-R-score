@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/update#latest — --latest
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
@@ -185,17 +186,22 @@ export async function buildDomainRegistryStatus(options: Options) {
   };
 }
 
-type DoctorCheck = {
+export type DoctorCheckState = 'pass' | 'blocked' | 'fail';
+
+export type DoctorCheck = {
   id: string;
   ok: boolean;
+  state: DoctorCheckState;
   detail: string;
 };
 
-type DoctorResult = {
+export type DoctorResult = {
   ok: boolean;
+  state: 'ready' | 'blocked' | 'invalid';
   fixApplied: boolean;
   envFile: string;
   checks: DoctorCheck[];
+  blockedByConfig: string[];
   blockedBySecrets: string[];
   secretCommands?: {
     bunSecretsSet: string[];
@@ -206,17 +212,27 @@ type DoctorResult = {
 async function ensureRegistryFile(registryPath: string, fix: boolean): Promise<DoctorCheck> {
   const path = resolvePath(registryPath);
   if (fileExistsSync(path)) {
-    return { id: 'registry_file_exists', ok: true, detail: path };
+    return { id: 'registry_file_exists', ok: true, state: 'pass', detail: path };
   }
   if (!fix) {
-    return { id: 'registry_file_exists', ok: false, detail: `missing ${path}` };
+    return {
+      id: 'registry_file_exists',
+      ok: false,
+      state: 'blocked',
+      detail: `not configured: missing ${path} · see docs/guides/DOMAIN_GOLDEN_TEMPLATE.md`,
+    };
   }
   const templatePath = resolvePath('.search/domain-registry.json');
   if (fileExistsSync(templatePath)) {
-    return { id: 'registry_file_exists', ok: true, detail: `already available at ${templatePath}` };
+    return {
+      id: 'registry_file_exists',
+      ok: true,
+      state: 'pass',
+      detail: `already available at ${templatePath}`,
+    };
   }
   await Bun.write(path, JSON.stringify({ version: '2026.02.08.1', domains: [] }, null, 2) + '\n');
-  return { id: 'registry_file_exists', ok: true, detail: `created ${path}` };
+  return { id: 'registry_file_exists', ok: true, state: 'pass', detail: `created ${path}` };
 }
 
 function parseEnvKeys(raw: string): Set<string> {
@@ -252,12 +268,32 @@ async function ensureEnvScaffold(
   const keys = parseEnvKeys(current);
   const missing = defaults.filter(([key]) => !keys.has(key));
   if (missing.length === 0) {
-    return { id: 'env_scaffold', ok: true, detail: `all defaults present in ${envPath}` };
+    return {
+      id: 'env_scaffold',
+      ok: true,
+      state: 'pass',
+      detail: `all defaults present in ${envPath}`,
+    };
   }
   if (!fix) {
+    const examplePath = resolvePath('.env.example');
+    const example = fileExistsSync(examplePath) ? await readText(examplePath) : '';
+    const exampleKeys = parseEnvKeys(example);
+    const missingFromExample = missing.filter(([key]) => !exampleKeys.has(key));
+    if (missingFromExample.length === 0) {
+      return {
+        id: 'env_scaffold',
+        ok: true,
+        state: 'pass',
+        detail:
+          `${envPath} is optional/machine-local; committed defaults cover ` +
+          `${missing.map(([key]) => key).join(', ')} in ${examplePath}`,
+      };
+    }
     return {
       id: 'env_scaffold',
       ok: false,
+      state: 'fail',
       detail: `missing ${missing.length} keys in ${envPath}: ${missing.map(([k]) => k).join(', ')}`,
     };
   }
@@ -266,7 +302,12 @@ async function ensureEnvScaffold(
   const lines = missing.map(([key, value]) => `${key}=${value}`).join('\n') + '\n';
   const next = `${current}${current.endsWith('\n') || current.length === 0 ? '' : '\n'}${header}${lines}`;
   await writeText(envPath, next);
-  return { id: 'env_scaffold', ok: true, detail: `added ${missing.length} keys to ${envPath}` };
+  return {
+    id: 'env_scaffold',
+    ok: true,
+    state: 'pass',
+    detail: `added ${missing.length} keys to ${envPath}`,
+  };
 }
 
 export async function runDomainRegistryDoctor(options: Options): Promise<DoctorResult> {
@@ -274,10 +315,17 @@ export async function runDomainRegistryDoctor(options: Options): Promise<DoctorR
   const registryPath = options.registryPath || '.search/domain-registry.json';
   checks.push(await ensureRegistryFile(registryPath, options.fix));
   const registry = await loadDomainRegistry(registryPath);
+  const registryUnavailable = registry.error === 'registry_not_found';
+  const registryInvalid = Boolean(registry.error && !registryUnavailable);
   checks.push({
     id: 'registry_has_domains',
     ok: registry.entries.length > 0,
-    detail: `domains=${registry.entries.length}`,
+    state: registryInvalid ? 'fail' : registry.entries.length > 0 ? 'pass' : 'blocked',
+    detail: registryInvalid
+      ? `invalid registry: ${registry.error}`
+      : registry.entries.length > 0
+        ? `domains=${registry.entries.length}`
+        : 'not configured: no domain entries; onboarding metadata is required',
   });
 
   const tokenVars = Array.from(
@@ -291,23 +339,59 @@ export async function runDomainRegistryDoctor(options: Options): Promise<DoctorR
     ok:
       status.registry.totalDomains > 0 &&
       status.registry.bucketMapped === status.registry.totalDomains,
-    detail: `${status.registry.bucketMapped}/${status.registry.totalDomains}`,
+    state:
+      status.registry.totalDomains === 0
+        ? 'blocked'
+        : status.registry.bucketMapped === status.registry.totalDomains
+          ? 'pass'
+          : 'fail',
+    detail:
+      status.registry.totalDomains === 0
+        ? 'not evaluated: no configured domains'
+        : `${status.registry.bucketMapped}/${status.registry.totalDomains}`,
   });
   checks.push({
     id: 'header_mapping_complete',
     ok:
       status.registry.totalDomains > 0 &&
       status.registry.headerConfigured === status.registry.totalDomains,
-    detail: `${status.registry.headerConfigured}/${status.registry.totalDomains}`,
+    state:
+      status.registry.totalDomains === 0
+        ? 'blocked'
+        : status.registry.headerConfigured === status.registry.totalDomains
+          ? 'pass'
+          : 'fail',
+    detail:
+      status.registry.totalDomains === 0
+        ? 'not evaluated: no configured domains'
+        : `${status.registry.headerConfigured}/${status.registry.totalDomains}`,
   });
   checks.push({
     id: 'token_secrets_present',
     ok:
       status.registry.totalDomains > 0 &&
       status.registry.tokenConfigured === status.registry.totalDomains,
-    detail: `${status.registry.tokenConfigured}/${status.registry.totalDomains}`,
+    state:
+      status.registry.totalDomains === 0
+        ? 'blocked'
+        : status.registry.tokenConfigured === status.registry.totalDomains
+          ? 'pass'
+          : 'blocked',
+    detail:
+      status.registry.totalDomains === 0
+        ? 'not evaluated: no configured domains'
+        : `${status.registry.tokenConfigured}/${status.registry.totalDomains}`,
   });
 
+  const blockedByConfig = checks
+    .filter(
+      check =>
+        check.state === 'blocked' &&
+        (check.id === 'registry_file_exists' ||
+          check.id === 'registry_has_domains' ||
+          check.id === 'env_scaffold')
+    )
+    .map(check => check.detail);
   const blockedBySecrets: string[] = [];
   if (status.registry.tokenMissing > 0) {
     blockedBySecrets.push(
@@ -328,12 +412,19 @@ export async function runDomainRegistryDoctor(options: Options): Promise<DoctorR
         wranglerSecretPut: missingTokenVars.map(name => `wrangler secret put ${name}`),
       }
     : undefined;
-  const ok = checks.every(check => check.ok);
+  const state: DoctorResult['state'] = checks.some(check => check.state === 'fail')
+    ? 'invalid'
+    : checks.some(check => check.state === 'blocked')
+      ? 'blocked'
+      : 'ready';
+  const ok = state === 'ready';
   return {
     ok,
+    state,
     fixApplied: options.fix,
     envFile: resolvePath(options.envFile),
     checks,
+    blockedByConfig,
     blockedBySecrets,
     secretCommands,
   };
@@ -346,9 +437,17 @@ async function main(): Promise<void> {
     if (options.json) {
       console.info(JSON.stringify(doctor, null, 2));
     } else {
-      console.info(`Domain Registry Doctor (fix=${options.fix ? 'on' : 'off'})`);
+      console.info(
+        `Domain Registry Doctor (state=${doctor.state}, fix=${options.fix ? 'on' : 'off'})`
+      );
       for (const check of doctor.checks) {
-        console.info(`- [${check.ok ? 'ok' : 'fail'}] ${check.id}: ${check.detail}`);
+        console.info(`- [${check.state}] ${check.id}: ${check.detail}`);
+      }
+      if (doctor.blockedByConfig.length > 0) {
+        console.info('- blocked by configuration:');
+        for (const reason of doctor.blockedByConfig) {
+          console.info(`  - ${reason}`);
+        }
       }
       if (doctor.blockedBySecrets.length > 0) {
         console.info('- blocked:');

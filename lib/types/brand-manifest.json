@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "generatedAt": "2026-07-28T23:36:14.223Z",
+  "generatedAt": "2026-07-29T00:48:09.210Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
-  "brandCount": 57,
+  "brandCount": 58,
   "domainCount": 9,
   "domains": [
     "audit",
@@ -16,7 +16,7 @@
     "surfaces"
   ],
   "kinds": {
-    "id": 51,
+    "id": 52,
     "key": 1,
     "code": 5
   },
@@ -39,7 +39,7 @@
     {
       "name": "identity",
       "module": "lib/types/branded/identity.ts",
-      "brandCount": 5
+      "brandCount": 6
     },
     {
       "name": "operations",
@@ -293,6 +293,33 @@
       "guard": "BRAND_GUARDS.isIdentityId",
       "shortName": "identityId",
       "envName": "IDENTITY_ID"
+    },
+    {
+      "name": "OidcClientId",
+      "domain": "identity",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input"
+      ],
+      "description": "OIDC relying-party client identifier parsed from deployment configuration",
+      "kind": "id",
+      "module": "lib/types/branded/identity.ts",
+      "constructors": {
+        "as": "asOidcClientId",
+        "try": "tryOidcClientId",
+        "parse": "parseOidcClientId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isOidcClientId",
+      "shortName": "oidcClientId",
+      "envName": "OIDC_CLIENT_ID"
     },
     {
       "name": "AccessKeyId",

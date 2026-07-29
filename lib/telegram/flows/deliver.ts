@@ -12,6 +12,7 @@ import type { FlowLocale, FlowOutput } from './types.ts';
 export type DeliverFlowOpts = {
   token: string;
   chatId: string | number; // brand-ok — Telegram chat_id wire
+  fetchImpl?: typeof globalThis.fetch;
   locale?: FlowLocale;
   editMessageId?: number;
   db?: Database;
@@ -34,13 +35,17 @@ export async function deliverFlowOutput(
   }
 
   if (messageId != null) {
-    const edited = await editTelegramMessage(opts.token, {
-      chatId: opts.chatId,
-      messageId,
-      text: output.text,
-      parseMode: output.parseMode === 'Markdown' ? 'Markdown' : 'HTML',
-      replyMarkup,
-    });
+    const edited = await editTelegramMessage(
+      opts.token,
+      {
+        chatId: opts.chatId,
+        messageId,
+        text: output.text,
+        parseMode: output.parseMode === 'Markdown' ? 'Markdown' : 'HTML',
+        replyMarkup,
+      },
+      opts.fetchImpl
+    );
     if (edited.ok) {
       if (opts.db && templateId) {
         rememberTemplateMessageId(opts.db, String(opts.chatId), templateId, messageId);
@@ -49,12 +54,16 @@ export async function deliverFlowOutput(
     }
   }
 
-  const sent = await sendTelegramBotMessage(opts.token, {
-    chatId: opts.chatId,
-    text: output.text,
-    parseMode: output.parseMode === 'Markdown' ? 'Markdown' : 'HTML',
-    replyMarkup,
-  });
+  const sent = await sendTelegramBotMessage(
+    opts.token,
+    {
+      chatId: opts.chatId,
+      text: output.text,
+      parseMode: output.parseMode === 'Markdown' ? 'Markdown' : 'HTML',
+      replyMarkup,
+    },
+    opts.fetchImpl
+  );
 
   if (sent.ok && opts.db && templateId && sent.messageId != null) {
     rememberTemplateMessageId(opts.db, String(opts.chatId), templateId, sent.messageId);

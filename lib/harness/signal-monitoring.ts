@@ -80,6 +80,16 @@ export const SIGNAL_MONITORS: readonly SignalMonitor[] = [
     lastCheckPath: 'public/registry/ops-summary.json',
     maxAgeMinutes: 60,
   },
+  {
+    tenant: 'portal-snapshot',
+    kind: 'spine-tick',
+    checkCommand: 'bun run spine:schedule:once -- --tenant=portal-snapshot',
+    alertChannel:
+      'spine daemon stdout · non-zero exit / ❌ spine tenant · portal-snapshot; snapshot manifest missing or failed',
+    lastCheckPath: 'reports/spine-tenant-ticks.jsonl',
+    maxAgeMinutes: 12 * 60,
+    lastCheckFilterByTenant: true,
+  },
 ] as const;
 
 export function monitorByTenant(tenant: string): SignalMonitor | undefined {

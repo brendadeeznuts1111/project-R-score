@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "bun-brand-map",
   "path": "/registry/bun-brand-map.json",
-  "generatedAt": "2026-07-28T23:50:44.514Z",
+  "generatedAt": "2026-07-29T00:48:17.657Z",
   "sources": {
     "declarations": "lib/docs/bun-brand-usages.ts",
     "catalog": "tools/bun-docs-catalog.json",
@@ -13,12 +13,12 @@
   },
   "sourceDigests": {
     "declarations": "d3464df81cf24c7f8ecbdecd19e2dba197dc55282e0d47f2a55754766fc671b5",
-    "catalog": "397470e5050312c556f570ec32cc4f2b57b82e6e3e607231ab8d2079303556b6",
-    "brandManifest": "42c15d90917c2e3b6d63f8759ab6365e9184e128075d171e9c709457070065f1",
-    "brandKeymap": "b63120a336aa056af7e6b10c8cd71bdba07412ce701e918bf1c2512238d62140",
-    "observations": "7b5d2a6db64cf130bbffa4fc0280022a9b682b42d1566792c198e8a1296cc668",
+    "catalog": "bad33942d40497ea7dfa485acc9b846be247c4da0ef665ff2193b2d2f542317d",
+    "brandManifest": "2aa8c57662ea41c90b2c2d53aecfd78ec126aec6257a84e996d4499b349f0923",
+    "brandKeymap": "55b07924a3980ad8e53fc380f65028308614004602fb15998538396565ecd0b7",
+    "observations": "6f41307663f3a269638f9affe8a8fdf4ad0dc6016ea79fef0ef2eb619fd6c5ce",
     "baseline": "57e70c50175bc9a9ce9fafdb90fdb801e1e423fff49ae2fcf7c422bd268fb330",
-    "proofs": "a605f7e22ca4954bf58f3eb2940e4edab0ad009b4205c484d0f6e2ecd9fc0033"
+    "proofs": "ce8d77f0f78ff897544131e184f9a3518f623d3fdfe869daf1fea8402a953e33"
   },
   "summary": {
     "apis": 15,
@@ -38,9 +38,9 @@
     "productionProofErrors": 0,
     "stale": 0,
     "experimentalApprovals": 0,
-    "brands": 57,
+    "brands": 58,
     "mappedBrands": 1,
-    "totalCanonicalBrands": 57,
+    "totalCanonicalBrands": 58,
     "trackedProjects": 32,
     "externalProjects": 3
   },
@@ -518,7 +518,7 @@
       "key": "bun-test-parallel",
       "token": "--parallel",
       "variant": "bun-test",
-      "kind": "cli-option",
+      "kind": "cli-flag",
       "versionIntroduced": "1.3.13",
       "stability": "stable",
       "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel",
@@ -595,7 +595,7 @@
       "key": "bun-test-isolate",
       "token": "--isolate",
       "variant": "bun-test",
-      "kind": "cli-option",
+      "kind": "cli-flag",
       "versionIntroduced": "1.3.13",
       "stability": "stable",
       "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel",
@@ -636,7 +636,7 @@
       "key": "bun-test-shard",
       "token": "--shard",
       "variant": "bun-test",
-      "kind": "cli-option",
+      "kind": "cli-flag",
       "versionIntroduced": "1.3.13",
       "stability": "stable",
       "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs",
@@ -701,7 +701,7 @@
       "key": "bun-test-changed",
       "token": "--changed",
       "variant": "bun-test",
-      "kind": "cli-option",
+      "kind": "cli-flag",
       "versionIntroduced": "1.3.13",
       "stability": "stable",
       "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-changed",
@@ -1650,6 +1650,13 @@
     },
     {
       "name": "IdentityId",
+      "domain": "identity",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "OidcClientId",
       "domain": "identity",
       "capabilities": [],
       "relationships": 0,
@@ -2796,7 +2803,7 @@
       "severity": "warning",
       "api": "Bun.Image",
       "path": "tools/verify-bun-release.ts",
-      "line": 416,
+      "line": 418,
       "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4876,7 +4883,7 @@
       "severity": "warning",
       "api": "Bun.sliceAnsi",
       "path": "tools/packages-metafile-audit.ts",
-      "line": 259,
+      "line": 260,
       "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
       "baseline": true
     },

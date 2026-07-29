@@ -4,6 +4,7 @@
     "docs-integrity": false,
     "install-verify": false,
     "registry-integrity": false,
-    "ops-snapshot": false
+    "ops-snapshot": false,
+    "portal-snapshot": false
   }
 }

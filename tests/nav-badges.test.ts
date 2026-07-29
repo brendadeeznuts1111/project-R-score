@@ -82,7 +82,9 @@ describe('capability-map-subset normalize', () => {
     expect(rows.every(r => String(r[4]).length > 0)).toBe(true); // api
     // schema v3: optional source URLs on many Bun rows
     expect(rows.some(r => String(r[7]).startsWith('https://'))).toBe(true);
-    expect(data.schemaVersion).toBe(4);
+    // No wire-field change has shipped since v3; keep the assertion aligned
+    // with CAPABILITY_MAP_SUBSET_SCHEMA instead of versioning test-only drift.
+    expect(data.schemaVersion).toBe(3);
     expect(data.summary?.protocolCounts).toBeDefined();
   });
 

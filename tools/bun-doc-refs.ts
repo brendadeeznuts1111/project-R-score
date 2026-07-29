@@ -931,6 +931,18 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.Image': 'https://bun.com/docs/runtime/image#input',
   'Bun.Image (v1.3.14)': 'https://bun.com/blog/bun-v1.3.14#bun-image',
   'Bun.Image terminal methods': 'https://bun.com/blog/bun-v1.3.14#terminal-methods',
+  'Bun built-in object GC (v1.3.14)':
+    'https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects',
+  'Bun.escapeHTML LTO (v1.3.14)':
+    'https://bun.com/blog/bun-v1.3.14#cross-language-lto-for-zig-c-on-linux',
+  'Bun ESM loading (v1.3.14)': 'https://bun.com/blog/bun-v1.3.14#faster-esm-module-loading',
+  'Bun WebSocket perMessageDeflate fix (v1.3.14)':
+    'https://bun.com/blog/bun-v1.3.14#websocket-permessagedeflate-false-now-respected-in-upgrade-requests',
+  'Bun JavaScriptCore upgrade (v1.3.14)':
+    'https://bun.com/blog/bun-v1.3.14#upgraded-javascriptcore-engine',
+  'Bun.Archive docs': 'https://bun.com/docs/runtime/archive',
+  'Bun.stringWidth accuracy (v1.3.5)':
+    'https://bun.com/blog/bun-v1.3.5#improved-bun-stringwidth-accuracy',
   '--no-orphans': 'https://bun.com/blog/bun-v1.3.14#no-orphans',
   BUN_FEATURE_FLAG_NO_ORPHANS: 'https://bun.com/blog/bun-v1.3.14#no-orphans',
   'using / await using':

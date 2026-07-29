@@ -10,16 +10,28 @@ import {
 
 describe('factory S3 store requestPayer (Bun ≥1.3.6)', () => {
   test('requireFactoryRegistryS3Config includes requestPayer from env', () => {
-    const prev = Bun.env.R2_REQUEST_PAYER;
+    const previous = {
+      accessKeyId: Bun.env.R2_ACCESS_KEY_ID,
+      requestPayer: Bun.env.R2_REQUEST_PAYER,
+      secretAccessKey: Bun.env.R2_SECRET_ACCESS_KEY,
+    };
     try {
+      Bun.env.R2_ACCESS_KEY_ID = 'test-access-key';
+      Bun.env.R2_SECRET_ACCESS_KEY = 'test-secret-access-key';
       Bun.env.R2_REQUEST_PAYER = 'true';
       const cfg = requireFactoryRegistryS3Config();
       expect(cfg.requestPayer).toBe(true);
       Bun.env.R2_REQUEST_PAYER = '0';
       expect(requireFactoryRegistryS3Config().requestPayer).toBe(false);
     } finally {
-      if (prev === undefined) delete Bun.env.R2_REQUEST_PAYER;
-      else Bun.env.R2_REQUEST_PAYER = prev;
+      for (const [key, value] of Object.entries({
+        R2_ACCESS_KEY_ID: previous.accessKeyId,
+        R2_REQUEST_PAYER: previous.requestPayer,
+        R2_SECRET_ACCESS_KEY: previous.secretAccessKey,
+      })) {
+        if (value === undefined) delete Bun.env[key];
+        else Bun.env[key] = value;
+      }
     }
   });
 

@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/test/index#run-tests
 import { describe, expect, test } from 'bun:test';
 import { PROOF_TAXONOMY_CONTRACT_COUNT } from '../lib/verification/proof-taxonomy.ts';
+import { isCloudflareAccessRedirect } from '../tools/verify-pages-edge.ts';
 
 describe('verify-pages-edge tiers', () => {
   test('core tier includes well-known, preflight, and cloudflare token proof names', () => {
@@ -30,5 +31,27 @@ describe('verify-pages-edge tiers', () => {
     expect(text).toContain('PROOF_TAXONOMY_CONTRACT_COUNT');
     expect(text).toContain('cloudflare-pages-preflight.json');
     expect(PROOF_TAXONOMY_CONTRACT_COUNT).toBeGreaterThanOrEqual(13);
+  });
+
+  test('recognizes only the scoped Cloudflare Access login redirect', () => {
+    expect(
+      isCloudflareAccessRedirect(
+        new Response(null, {
+          status: 302,
+          headers: {
+            location:
+              'https://factory-wager.cloudflareaccess.com/cdn-cgi/access/login/score.factory-wager.com',
+          },
+        })
+      )
+    ).toBe(true);
+    expect(
+      isCloudflareAccessRedirect(
+        new Response(null, {
+          status: 302,
+          headers: { location: 'https://example.com/cdn-cgi/access/login/score' },
+        })
+      )
+    ).toBe(false);
   });
 });

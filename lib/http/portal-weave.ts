@@ -55,6 +55,7 @@ export type PortalWeaveSummary = {
 };
 
 export type PortalWeaveRelated = {
+  bunBrandMap: '/registry/bun-brand-map.json';
   chrome: '/registry/portal-chrome.json';
   monorepoHealth: '/registry/monorepo-health.json';
   doctorState: '/registry/doctor-state.json';
@@ -249,7 +250,7 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
   {
     label: 'brand-keymap',
     href: '/registry/brand-keymap.json',
-    note: '57-value catalog · tracked project adoption',
+    note: '58-value catalog · tracked project adoption',
   },
   {
     label: 'surfaces-state',
@@ -609,6 +610,7 @@ export function buildPortalWeavePayload(generated?: string): PortalWeavePayload 
       scripts: scripts.length,
     },
     related: {
+      bunBrandMap: '/registry/bun-brand-map.json',
       chrome: '/registry/portal-chrome.json',
       monorepoHealth: '/registry/monorepo-health.json',
       doctorState: '/registry/doctor-state.json',

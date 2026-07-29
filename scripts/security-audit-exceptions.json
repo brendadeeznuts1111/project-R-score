@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-07-28",
+  "exceptions": [
+    {
+      "advisory": "GHSA-frvp-7c67-39w9",
+      "package": "@hono/node-server",
+      "owner": "runtime-tooling",
+      "expires": "2026-08-28",
+      "scope": "Transitive dependency of @modelcontextprotocol/sdk.",
+      "rationale": "The advisory requires Windows encoded-backslash static serving. FactoryWager MCP and portal workloads run on macOS/Linux and do not expose @hono/node-server serveStatic on Windows. Re-evaluate when the SDK accepts @hono/node-server 2.x."
+    },
+    {
+      "advisory": "GHSA-mh99-v99m-4gvg",
+      "package": "brace-expansion",
+      "owner": "runtime-tooling",
+      "expires": "2026-08-28",
+      "scope": "Transitive development dependency through ESLint minimatch 3.",
+      "rationale": "The vulnerable 1.x instance is used only by local/CI lint path matching and never receives remote or tenant-controlled glob patterns. The patched 5.x package is ESM and cannot safely replace minimatch 3's CommonJS dependency."
+    },
+    {
+      "advisory": "GHSA-qwww-vcr4-c8h2",
+      "package": "react-router",
+      "owner": "sports-terminal",
+      "expires": "2026-08-28",
+      "scope": "Sports Terminal client-side BrowserRouter application.",
+      "rationale": "The advisory affects only unstable React Server Components APIs. Sports Terminal uses BrowserRouter, Routes, Route, Link, and NavLink and has no RSC runtime. React Router 8.3 removes react-router-dom, so remediation requires an owned migration rather than an unsafe forced override."
+    }
+  ]
+}

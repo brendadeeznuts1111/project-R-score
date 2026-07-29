@@ -25,6 +25,9 @@ export interface DomainHealthSummary {
 
 export interface ReadinessResult {
   ready: boolean;
+  blocked: boolean;
+  blockedBy: string[];
+  state: 'ready' | 'blocked' | 'not-ready';
   status: 'healthy' | 'degraded' | 'critical';
   reasons: string[];
   metrics: {
@@ -455,8 +458,24 @@ export function evaluateReadiness(
   if (summary.storage.status === 'unknown') reasons.push('storage_unknown');
   if (summary.notes.length > 0) reasons.push(...summary.notes.slice(0, 5));
 
+  const blockingEvidence = summary.notes.filter(
+    note =>
+      note.startsWith('missing_local_health_report:') ||
+      note === 'r2_not_configured' ||
+      note === 'r2_health_missing' ||
+      note.startsWith('r2_read_failed:')
+  );
+  const blocked = blockingEvidence.length > 0;
+  if (blocked) {
+    reasons.unshift(`required_evidence_unavailable:${blockingEvidence.join(',')}`);
+  }
+  const ready = status === 'healthy' && !blocked;
+
   return {
-    ready: status === 'healthy',
+    ready,
+    blocked,
+    blockedBy: blockingEvidence,
+    state: ready ? 'ready' : blocked ? 'blocked' : 'not-ready',
     status,
     reasons,
     metrics: {

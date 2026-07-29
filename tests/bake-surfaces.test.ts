@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/test — bun:test
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 import { describe, expect, test } from 'bun:test';
 import {
   asHostId,
@@ -13,6 +14,23 @@ import { resolvePath } from '../scripts/lib/fs-bun';
 const ROOT = resolvePath(import.meta.dir, '..');
 
 describe('bake-surfaces', () => {
+  test('check mode verifies without rewriting the artifact', async () => {
+    const path = resolvePath(ROOT, 'public/registry/surfaces-state.json');
+    const before = await Bun.file(path).text();
+    const proc = Bun.spawn(['bun', 'scripts/bake-surfaces.ts', '--check'], {
+      cwd: ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const [code, stderr] = await Promise.all([
+      proc.exited,
+      new Response(proc.stderr).text(),
+      new Response(proc.stdout).text(),
+    ]);
+    expect(code, stderr).toBe(0);
+    expect(await Bun.file(path).text()).toBe(before);
+  });
+
   test('surfaces-state.json matches the verified inventory shape', async () => {
     const file = Bun.file(resolvePath(ROOT, 'public/registry/surfaces-state.json'));
     expect(await file.exists()).toBe(true);

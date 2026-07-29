@@ -38,7 +38,7 @@ export type ScheduledJobExemption = {
   reason: string;
 };
 
-/** Path (repo-relative) → spine tenant that owns this schedule entrypoint. */
+/** Source path or package-script name → spine tenant that owns this schedule entrypoint. */
 export const SCHEDULED_JOB_OWNERS: Readonly<Record<string, string>> = {
   'tools/bun-doc-refs.ts': 'docs-integrity',
   'lib/operations/snapshot-cron.ts': 'ops-snapshot',
@@ -109,6 +109,31 @@ export const SCHEDULED_JOB_EXEMPTIONS: readonly ScheduledJobExemption[] = [
     source: 'package-script',
     match: 'ops:snapshot:once',
     reason: 'One-shot entry for spine tenant ops-snapshot',
+  },
+  {
+    id: 'pkg-portal-snapshot-cron-register',
+    source: 'package-script',
+    match: 'portal:snapshot:cron:register',
+    reason: 'OS-persistent registration entrypoint for the portal-snapshot tenant',
+  },
+  {
+    id: 'pkg-portal-snapshot-cron-remove',
+    source: 'package-script',
+    match: 'portal:snapshot:cron:remove',
+    reason: 'OS-persistent removal entrypoint for the portal-snapshot tenant',
+  },
+  {
+    id: 'pkg-portal-snapshot-cron-preview',
+    source: 'package-script',
+    match: 'portal:snapshot:cron:preview',
+    reason: 'Read-only schedule preview for the portal-snapshot tenant',
+  },
+  {
+    id: 'pkg-vault-health-cron-register',
+    source: 'package-script',
+    match: 'vault:health:cron:register',
+    reason:
+      'OS-persistent vault-health registration is deployment tooling; vault health remains a required bake gate rather than a spine tenant',
   },
   {
     id: 'gha-har-performance',

@@ -291,6 +291,8 @@ Each row maps to a documented API — Bun or Proton Pass CLI — with type, vers
 | **PM utilities (full group)** | pkg | Bun ≥1.0 | `bun pm` | — | `portal-cli pm` passthrough | Implemented | [bun pm](https://bun.com/docs/pm/cli/pm) | `bun run portal-cli pm whoami` |
 | **Package graph bake** | audit | Bun ≥1.0 | `Bun.file` + `Bun.write` (bake) · `Bun.inspect.table` (view) | — | `audit:packages --bake` · `portal-cli pm graph` | Implemented | claim `packages-graph-map-v13` · surfaces v3 (page→registry · lib hubs · orphan triage) · [pm/filter](https://bun.com/docs/pm/filter) | `bun run portal-cli pm graph` · `bun run audit:packages -- --bake` |
 | **Install age gate + excludes** | security | Bun ≥1.3 | `minimumReleaseAge` / `minimumReleaseAgeExcludes` (bunfig) | — | machine `~/.bunfig.toml` · `bunfig:bake` · `portal-cli bunfig status` | Implemented | [minimum release age](https://bun.com/docs/pm/cli/install#minimum-release-age) · [`docs/UNIFIED.md`](docs/UNIFIED.md) | `bun run bunfig:bake` · `bun run portal-cli bunfig status` |
+| **Bunfig state bake** | audit | Bun ≥1.3 | `Bun.TOML.parse` (machine+project merge, per-key provenance) | — | `bunfig:bake` → `bunfig-state.json` · `portal-cli bunfig status\|check` | Implemented | [`scripts/bake-bunfig.ts`](scripts/bake-bunfig.ts) · `bake:all` step `bunfig` | `bun run bunfig:bake` · `bun run portal-cli bunfig check` |
+| **Surfaces state bake** | audit | Bun ≥1.3 | `Bun.TOML.parse` (`config/surfaces.toml` + Access/wrangler/r2-env cross-check) | — | `surfaces:bake` → `surfaces-state.json` · subdomain + publish-lane SSOT | Implemented | [`config/surfaces.toml`](config/surfaces.toml) · `bun run surfaces:check` | `bun run surfaces:bake` · `bun run surfaces:check` |
 
 ## Known technical debt
 

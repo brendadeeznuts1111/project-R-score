@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { asDocTokenId } from '../lib/types/branded/documents.ts';
+import { parseBunBrandBaseline } from '../scripts/check-bun-brand-baseline.ts';
 import {
   buildBunBrandMap,
   loadBunBrandMapInput,
@@ -14,6 +15,25 @@ import {
 } from '../tools/bun-brand-map.ts';
 
 describe('Bun capability observation', () => {
+  test('accepts a v1 baseline only as the historical ratchet input', () => {
+    const legacy = JSON.stringify({
+      schemaVersion: 1,
+      kind: 'bun-brand-usage-baseline',
+      keys: ['legacy-key'],
+    });
+    const current = JSON.stringify({
+      schemaVersion: 2,
+      kind: 'bun-brand-usage-baseline',
+      keys: ['legacy-key'],
+    });
+
+    expect(parseBunBrandBaseline(legacy, 'HEAD:baseline.json', true).schemaVersion).toBe(1);
+    expect(() => parseBunBrandBaseline(legacy, 'baseline.json')).toThrow(
+      'invalid Bun brand baseline'
+    );
+    expect(parseBunBrandBaseline(current, 'baseline.json').schemaVersion).toBe(2);
+  });
+
   test('uses AST calls, aliases, variants, and ignores comments, strings, and type-only imports', () => {
     const rows = observeBunCapabilities([
       {
@@ -194,7 +214,7 @@ describe('Bun brand map join', () => {
     expect(payload.summary.externalProjects).toBe(1);
   });
 
-  test('does not match an unrelated symbol in a declared implementation file', () => {
+  test('does not match an unrelated symbol or renumber its baseline after a declared use', () => {
     const declaration = {
       key: 'image',
       token: asDocTokenId('Bun.Image'),
@@ -251,7 +271,7 @@ describe('Bun brand map join', () => {
           syntax: 'ast-new',
         },
       ],
-      baseline: new Set(['Bun.Image|image-processing|lib/image.ts#2']),
+      baseline: new Set(['Bun.Image|image-processing|lib/image.ts#1']),
       releases: new Map(),
       generatedAt: '2026-07-28T12:00:00Z',
     });
@@ -260,7 +280,7 @@ describe('Bun brand map join', () => {
     expect(payload.summary.undeclared).toBe(1);
     expect(payload.findings).toContainEqual(
       expect.objectContaining({
-        key: 'Bun.Image|image-processing|lib/image.ts#2',
+        key: 'Bun.Image|image-processing|lib/image.ts#1',
         baseline: true,
       })
     );
@@ -364,7 +384,7 @@ describe('Bun brand map join', () => {
     ).toThrow('release-features.json at timestamp');
     expect(() =>
       parseBunBrandUsageBaseline({
-        schemaVersion: 1,
+        schemaVersion: 2,
         kind: 'bun-brand-usage-baseline',
         keys: ['duplicate', 'duplicate'],
       })

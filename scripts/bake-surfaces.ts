@@ -39,6 +39,11 @@ import { resolvePath } from './lib/fs-bun';
 const ROOT = resolvePath(import.meta.dir, '..');
 const CHECK = Bun.argv.includes('--check');
 const TOML = `${ROOT}/config/surfaces.toml`;
+const OUTPUT = `${ROOT}/public/registry/surfaces-state.json`;
+
+function comparableState(value: Record<string, unknown>): Record<string, unknown> {
+  return { ...value, generatedAt: '' };
+}
 
 async function main(): Promise<void> {
   const inventory = await loadSurfacesInventory(TOML);
@@ -118,16 +123,27 @@ async function main(): Promise<void> {
     },
   };
 
-  await Bun.write(
-    `${ROOT}/public/registry/surfaces-state.json`,
-    JSON.stringify(state, null, 2) + '\n'
-  );
+  if (CHECK) {
+    const output = Bun.file(OUTPUT);
+    if (!(await output.exists())) {
+      console.error('✗ public/registry/surfaces-state.json is missing; run bun run surfaces:bake');
+      process.exit(1);
+    }
+    const current = (await output.json()) as Record<string, unknown>;
+    const expected = comparableState(state);
+    if (JSON.stringify(comparableState(current)) !== JSON.stringify(expected)) {
+      console.error('✗ public/registry/surfaces-state.json is stale; run bun run surfaces:bake');
+      process.exit(1);
+    }
+  } else {
+    await Bun.write(OUTPUT, JSON.stringify(state, null, 2) + '\n');
+  }
   console.log('→ public/registry/surfaces-state.json');
   console.log(
     `surfaces-state  total=${summary.total}  apexes=${summary.apexes.length}  backend=${JSON.stringify(summary.byBackendCode)}  accessDomains=${summary.accessDomains.length}  crossCheck=${issues.length === 0 ? 'ok' : 'DRIFT'}`
   );
   for (const i of issues) console.log(`  ✗ ${i}`);
-  if (CHECK && issues.length > 0) process.exit(1);
+  if (issues.length > 0) process.exit(1);
 }
 
 if (import.meta.main) await main();

@@ -528,8 +528,8 @@
           "publisher": "api",
           "storage": {
             "r2Key": "@factorywager/@factorywager/registry-client/1.0.0.tgz",
-            "size": 69,
-            "checksum": "76f15dd931dcd2f9ee0d36473e58b879561a6df6bdd9a4c276cdebc9ad76b792",
+            "size": 245,
+            "checksum": "436e17c5c983e683c47bd7e82ae86cd48b2c51bc107a5f2849e46b66a1eacc41",
             "contentType": "application/gzip"
           }
         }

@@ -2469,5 +2469,13 @@
         "regulatory_violations"
       ]
     }
+  },
+  "bunBrandMap": {
+    "available": true,
+    "ok": true,
+    "warnings": 306,
+    "errors": 0,
+    "stale": false,
+    "path": "/registry/bun-brand-map.json"
   }
 }

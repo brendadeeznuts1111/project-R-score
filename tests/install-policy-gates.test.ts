@@ -25,8 +25,34 @@ describe('root install policy gate', () => {
   });
 
   test('ignores TypeScript comments and string literals', () => {
-    const source = `// npm install\nconst docs = "yarn install";\nconsole.info(docs);`;
+    const source = [
+      `// Bun.spawn(['npm', 'install']);`,
+      `const docs = "yarn install";`,
+      `const example = 'exec("pnpm install")';`,
+      `console.info(docs, example);`,
+    ].join('\n');
     expect(findBlockedInstallCommands(source, 'sample.ts', true)).toEqual([]);
+  });
+
+  test('detects executable Bun.spawn, Bun shell, and exec command literals', () => {
+    const source = [
+      `Bun.spawn(['npm', 'install']);`,
+      'await Bun.$`pnpm install`;',
+      `exec('yarn install');`,
+      `spawn('npm', ['ci']);`,
+      `Bun.spawnSync(['pnpm', 'install']);`,
+      `execFileSync('yarn install');`,
+      `Bun.spawn(['bun', 'install']);`,
+    ].join('\n');
+
+    expect(findBlockedInstallCommands(source, 'sample.ts', true)).toEqual([
+      expect.objectContaining({ line: 1, rule: 'npm install' }),
+      expect.objectContaining({ line: 2, rule: 'pnpm install' }),
+      expect.objectContaining({ line: 3, rule: 'yarn install' }),
+      expect.objectContaining({ line: 4, rule: 'npm install' }),
+      expect.objectContaining({ line: 5, rule: 'pnpm install' }),
+      expect.objectContaining({ line: 6, rule: 'yarn install' }),
+    ]);
   });
 });
 

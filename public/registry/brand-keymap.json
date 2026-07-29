@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-07-28T23:50:39.688Z",
+  "generatedAt": "2026-07-29T00:48:12.806Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -10,13 +10,13 @@
     "stableImport": "lib/types/branded.ts"
   },
   "summary": {
-    "brands": 57,
+    "brands": 58,
     "domains": 9,
-    "ids": 51,
+    "ids": 52,
     "keys": 1,
     "codes": 5,
     "covered": 37,
-    "referencedUnconstructed": 5,
+    "referencedUnconstructed": 6,
     "unused": 15,
     "cataloguedProjects": 35,
     "trackedProjects": 32,
@@ -67,7 +67,7 @@
     {
       "name": "identity",
       "module": "lib/types/branded/identity.ts",
-      "brandCount": 5
+      "brandCount": 6
     },
     {
       "name": "operations",
@@ -592,6 +592,64 @@
               "lib/identity/identity.ts",
               "lib/identity/timeline.ts",
               "lib/security/zero-trust-manager.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "OidcClientId",
+      "domain": "identity",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input"
+      ],
+      "description": "OIDC relying-party client identifier parsed from deployment configuration",
+      "kind": "id",
+      "module": "lib/types/branded/identity.ts",
+      "constructors": {
+        "as": "asOidcClientId",
+        "try": "tryOidcClientId",
+        "parse": "parseOidcClientId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isOidcClientId",
+      "shortName": "oidcClientId",
+      "envName": "OIDC_CLIENT_ID",
+      "coverage": {
+        "status": "referenced-unconstructed",
+        "references": 4,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/auth/oidc.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "referenced-unconstructed",
+            "references": 4,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": [
+              "lib/auth/oidc.ts"
             ]
           },
           "projects": {
@@ -2765,18 +2823,20 @@
       "envName": "PORTAL_TENANT_ID",
       "coverage": {
         "status": "covered",
-        "references": 26,
+        "references": 32,
         "constructors": {
           "as": 4,
           "try": 0,
           "parse": 0
         },
-        "guards": 0,
+        "guards": 2,
         "files": [
+          "config/tenants.ts",
           "lib/accounts/account-r2-store.ts",
           "lib/accounts/account-types.ts",
           "lib/accounts/accounts.ts",
           "lib/accounts/memory-account-store.ts",
+          "lib/auth/session.ts",
           "lib/channels/channels.ts",
           "lib/identity/identity.ts",
           "lib/telegram/link-nonce.ts"
@@ -2784,14 +2844,16 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 26,
+            "references": 32,
             "constructionCalls": 4,
-            "guardCalls": 0,
+            "guardCalls": 2,
             "files": [
+              "config/tenants.ts",
               "lib/accounts/account-r2-store.ts",
               "lib/accounts/account-types.ts",
               "lib/accounts/accounts.ts",
               "lib/accounts/memory-account-store.ts",
+              "lib/auth/session.ts",
               "lib/channels/channels.ts",
               "lib/identity/identity.ts",
               "lib/telegram/link-nonce.ts"
@@ -2913,29 +2975,31 @@
       "envName": "PORTAL_ACCOUNT_ID",
       "coverage": {
         "status": "covered",
-        "references": 15,
+        "references": 18,
         "constructors": {
           "as": 4,
           "try": 0,
           "parse": 0
         },
-        "guards": 0,
+        "guards": 1,
         "files": [
           "lib/accounts/account-r2-store.ts",
           "lib/accounts/account-types.ts",
           "lib/accounts/memory-account-store.ts",
+          "lib/auth/session.ts",
           "lib/telegram/link-nonce.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 15,
+            "references": 18,
             "constructionCalls": 4,
-            "guardCalls": 0,
+            "guardCalls": 1,
             "files": [
               "lib/accounts/account-r2-store.ts",
               "lib/accounts/account-types.ts",
               "lib/accounts/memory-account-store.ts",
+              "lib/auth/session.ts",
               "lib/telegram/link-nonce.ts"
             ]
           },
@@ -3034,7 +3098,7 @@
       "envName": "HOST_ID",
       "coverage": {
         "status": "covered",
-        "references": 27,
+        "references": 35,
         "constructors": {
           "as": 2,
           "try": 4,
@@ -3042,6 +3106,8 @@
         },
         "guards": 0,
         "files": [
+          "lib/http/bun-serve-lifecycle.ts",
+          "lib/http/bun-serve-shape.ts",
           "lib/http/host-lineage.ts",
           "lib/http/host-planes.ts",
           "lib/http/portal-weave.ts",
@@ -3054,10 +3120,12 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 27,
+            "references": 35,
             "constructionCalls": 6,
             "guardCalls": 0,
             "files": [
+              "lib/http/bun-serve-lifecycle.ts",
+              "lib/http/bun-serve-shape.ts",
               "lib/http/host-lineage.ts",
               "lib/http/host-planes.ts",
               "lib/http/portal-weave.ts",
@@ -3172,7 +3240,7 @@
       "envName": "SUBDOMAIN_ID",
       "coverage": {
         "status": "covered",
-        "references": 8,
+        "references": 10,
         "constructors": {
           "as": 4,
           "try": 0,
@@ -3188,7 +3256,7 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 8,
+            "references": 10,
             "constructionCalls": 4,
             "guardCalls": 0,
             "files": [
@@ -3239,7 +3307,7 @@
       "envName": "SURFACE_ID",
       "coverage": {
         "status": "covered",
-        "references": 11,
+        "references": 12,
         "constructors": {
           "as": 3,
           "try": 0,
@@ -3256,7 +3324,7 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 11,
+            "references": 12,
             "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
@@ -3308,7 +3376,7 @@
       "envName": "PAGES_PROJECT_ID",
       "coverage": {
         "status": "referenced-unconstructed",
-        "references": 5,
+        "references": 6,
         "constructors": {
           "as": 0,
           "try": 0,
@@ -3322,7 +3390,7 @@
         "scopes": {
           "spine": {
             "status": "referenced-unconstructed",
-            "references": 5,
+            "references": 6,
             "constructionCalls": 0,
             "guardCalls": 0,
             "files": [
@@ -3384,8 +3452,7 @@
           "lib/surfaces/inventory.ts",
           "lib/verification/cloudflare-access-live.ts",
           "lib/verification/cloudflare-access-policy.ts",
-          "scripts/bake-surfaces.ts",
-          "tools/brand-status.ts"
+          "scripts/bake-surfaces.ts"
         ],
         "scopes": {
           "spine": {
@@ -3399,8 +3466,7 @@
               "lib/surfaces/inventory.ts",
               "lib/verification/cloudflare-access-live.ts",
               "lib/verification/cloudflare-access-policy.ts",
-              "scripts/bake-surfaces.ts",
-              "tools/brand-status.ts"
+              "scripts/bake-surfaces.ts"
             ]
           },
           "projects": {

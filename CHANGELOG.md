@@ -11,7 +11,7 @@ All notable FactoryWager artifact changes are recorded here.
 - Extend `/portal/brands/` with accessible Relationships, Glossary, and Projects
   views, focused graph navigation, equivalent tables, filters, and shareable
   fragment state.
-- Govern all 55 canonical branded values and 32 tracked projects while keeping
+- Govern all 58 canonical branded values and 32 tracked projects while keeping
   three external roots explicit.
 
 ### Governance
@@ -25,6 +25,8 @@ All notable FactoryWager artifact changes are recorded here.
   fail-closed result handling and visible non-strict cache-path drift.
 - Pin patched transitive dependencies and update the Sports Terminal Vite and
   React Router lines, reducing the repository audit from 42 advisories to three.
+- Gate the three remaining upstream-only advisories through exact, owned,
+  expiring exceptions; new, expired, or stale exceptions fail CI.
 
 ### Verification
 

@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/test/index#run-tests
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 import { describe, expect, test } from 'bun:test';
 import {
   probeRegistryClientPublishRequiresApiKey,
@@ -20,6 +21,25 @@ describe('registry-client verification probes', () => {
     expect(CANONICAL_REFS['registry-client resolve']).toContain('registry-client.md#resolve');
     expect(CANONICAL_REFS['registry-client download']).toContain('registry-client.md#download');
     expect(CANONICAL_REFS['registry-client publish']).toContain('registry-client.md#publish');
+  });
+
+  test('committed download fixture matches registry size and checksum', async () => {
+    const registry = await Bun.file('public/registry/registry.json').json();
+    const release =
+      registry.packages?.[REGISTRY_CLIENT_PROBE_PACKAGE]?.releases?.[
+        REGISTRY_CLIENT_PROBE_VERSION
+      ];
+    const encoded = await Bun.file(
+      'public/registry/storage/@factorywager/registry-client/1.0.0/artifact.tgz.base64'
+    ).text();
+    const bytes = Uint8Array.from(Buffer.from(encoded.trim(), 'base64'));
+    const digest = Array.from(
+      new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)),
+      byte => byte.toString(16).padStart(2, '0')
+    ).join('');
+
+    expect(bytes.byteLength).toBe(release.storage.size);
+    expect(digest).toBe(release.storage.checksum);
   });
 
   test('publish probe rejects missing apiKey', async () => {

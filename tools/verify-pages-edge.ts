@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Post-deploy smoke for Cloudflare Pages (production or preview URL).
@@ -22,6 +23,21 @@ type SemanticTags = { subsystems?: string[] };
 type SummaryRollup = { bySubsystem?: Record<string, unknown> };
 type DefaultsCoverage = { passed?: boolean };
 
+export function isCloudflareAccessRedirect(response: Response): boolean {
+  if (response.status !== 302) return false;
+  const location = response.headers.get('location');
+  if (!location) return false;
+  try {
+    const target = new URL(location);
+    return (
+      target.hostname.endsWith('.cloudflareaccess.com') &&
+      target.pathname.startsWith('/cdn-cgi/access/login/')
+    );
+  } catch {
+    return false;
+  }
+}
+
 async function check(
   name: string,
   tier: Check['tier'],
@@ -36,7 +52,8 @@ async function check(
 }
 
 async function expectJs(path: string) {
-  const res = await fetch(`${BASE}${path}`, { redirect: 'follow' });
+  const res = await fetch(`${BASE}${path}`, { redirect: 'manual' });
+  if (isCloudflareAccessRedirect(res)) return `${path} Cloudflare Access enforced`;
   const ct = res.headers.get('content-type') ?? '';
   const head = (await res.text()).slice(0, 40);
   if (!res.ok) throw new Error(`${path} → ${res.status}`);
@@ -80,7 +97,8 @@ async function main() {
       })
     ),
     check('/portal/env/ page', 'core', async () => {
-      const res = await fetch(`${BASE}/portal/env/`, { redirect: 'follow' });
+      const res = await fetch(`${BASE}/portal/env/`, { redirect: 'manual' });
+      if (isCloudflareAccessRedirect(res)) return 'Cloudflare Access enforced';
       const html = await res.text();
       if (!res.ok) throw new Error(String(res.status));
       if (!html.includes('/portal/data.js')) throw new Error('missing data.js script tag');

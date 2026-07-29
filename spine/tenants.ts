@@ -8,6 +8,7 @@
  *   bun run spine:schedule:once -- --tenant=install-verify
  */
 import { joinPath } from '../lib/path-bun';
+import { PORTAL_SNAPSHOT_INPROCESS_SCHEDULE } from '../tools/portal-snapshot-cron-constants.ts';
 
 const ROOT = joinPath(import.meta.dir, '..');
 
@@ -15,7 +16,8 @@ export type SpineTenantId =
   | 'docs-integrity'
   | 'install-verify'
   | 'registry-integrity'
-  | 'ops-snapshot';
+  | 'ops-snapshot'
+  | 'portal-snapshot';
 
 export type SpineTenant = {
   id: SpineTenantId;
@@ -98,6 +100,17 @@ export const SPINE_TENANTS: readonly SpineTenant[] = [
         ['bun', 'lib/operations/snapshot-cron.ts', '--once', '--no-webview'],
         'ops-snapshot',
         'ops-snapshot'
+      ),
+  },
+  {
+    id: 'portal-snapshot',
+    label: 'portal-snapshot (scope-aware data-plane capture)',
+    schedule: PORTAL_SNAPSHOT_INPROCESS_SCHEDULE,
+    run: () =>
+      spawnTenant(
+        ['bun', 'lib/operations/portal-snapshot-cron.ts', '--once'],
+        'portal-snapshot',
+        'portal-snapshot'
       ),
   },
 ] as const;

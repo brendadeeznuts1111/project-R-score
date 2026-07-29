@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test';
 
 import { PORTAL_OVERFLOW_NAV, PORTAL_FOOTER_LINKS } from '../lib/portal/chrome-catalog.ts';
 import { PORTAL_WEAVE_ARTIFACTS, PORTAL_WEAVE_SURFACES } from '../lib/http/portal-weave.ts';
+import { formatBunBrandAlignment } from '../public/portal/bun-brand-alignment.js';
 import {
   buildBrandDomainMap,
   chooseRelationship,
@@ -10,6 +11,11 @@ import {
   patchBrandHash,
   relationshipLabel,
 } from '../public/portal/brands/brands-board.js';
+import { PACKAGE_BRANDS_HREF } from '../public/portal/packages/packages-board.js';
+import {
+  BRANDS_RELATIONSHIPS_HREF,
+  capabilityBrandsHref,
+} from '../public/portal/tools/tools-hub.js';
 
 describe('brand keymap portal', () => {
   test('registry artifact exposes glossary, governance, and project adoption', async () => {
@@ -20,14 +26,14 @@ describe('brand keymap portal', () => {
       kind: 'brand-keymap',
       path: '/registry/brand-keymap.json',
       summary: {
-        brands: 57,
+        brands: 58,
         domains: 9,
       },
       governance: {
         stagedGate: 'bun tools/branded-id-check.ts --staged --strict',
       },
     });
-    expect(payload.brands).toHaveLength(57);
+    expect(payload.brands).toHaveLength(58);
     expect(payload.brands.some((b: { name: string }) => b.name === 'HostId')).toBe(true);
     expect(payload.brands.some((b: { name: string }) => b.name === 'AccessDomainId')).toBe(true);
     expect(payload.brands.some((b: { name: string }) => b.name === 'PagesProjectId')).toBe(true);
@@ -44,7 +50,7 @@ describe('brand keymap portal', () => {
       kind: 'bun-brand-map',
       path: '/registry/bun-brand-map.json',
       summary: {
-        totalCanonicalBrands: 57,
+        totalCanonicalBrands: 58,
         trackedProjects: 32,
         externalProjects: 3,
         newUndeclared: 0,
@@ -88,6 +94,7 @@ describe('brand keymap portal', () => {
     expect(html).not.toContain('<style>');
     expect(script).toContain("const BRAND_KEYMAP_URL = '/registry/brand-keymap.json'");
     expect(script).toContain("const BUN_BRAND_MAP_URL = '/registry/bun-brand-map.json'");
+    expect(script).toContain("'tracked projects'");
     expect(script).not.toContain("fetch('/api/health");
     expect(css).toContain('@media (max-width: 759px)');
     expect(css).toContain('@media (prefers-reduced-motion: reduce)');
@@ -187,12 +194,54 @@ describe('brand keymap portal', () => {
     });
   });
 
+  test('cross-links preserve useful results across capability and package contexts', () => {
+    const tracked = new Set(['Bun.Image', 'Bun.Terminal', 'Bun.randomUUIDv7']);
+
+    expect(capabilityBrandsHref('new Bun.Image(file).png()', tracked)).toBe(
+      '/portal/brands/#view=relationships&q=Bun.Image'
+    );
+    expect(capabilityBrandsHref('Bun.spawn(cmd)', tracked)).toBe(BRANDS_RELATIONSHIPS_HREF);
+    expect(PACKAGE_BRANDS_HREF).toBe('/portal/brands/#view=projects');
+  });
+
+  test('ops alignment keeps legacy warnings visible without degrading health', () => {
+    expect(
+      formatBunBrandAlignment({
+        available: true,
+        ok: true,
+        warnings: 291,
+        errors: 0,
+        stale: false,
+      })
+    ).toEqual({
+      metric: 'aligned',
+      detail: '291 warnings',
+      tone: 'ok',
+    });
+    expect(
+      formatBunBrandAlignment({
+        available: true,
+        ok: false,
+        warnings: 3,
+        errors: 1,
+        stale: false,
+      })
+    ).toEqual({
+      metric: '1 error',
+      detail: '3 warnings · open the Brands attention view',
+      tone: 'bad',
+    });
+    expect(formatBunBrandAlignment(null).tone).toBe('missing');
+  });
+
   test('raw artifacts and adjacent portal surfaces cross-link the map', async () => {
-    const [html, nav, tools, packages] = await Promise.all([
+    const [html, nav, tools, toolsHub, packages, ops] = await Promise.all([
       Bun.file('public/portal/brands/index.html').text(),
       Bun.file('public/portal/nav-badges.js').text(),
       Bun.file('public/portal/tools/index.html').text(),
+      Bun.file('public/portal/tools/tools-hub.js').text(),
       Bun.file('public/portal/packages/packages-board.js').text(),
+      Bun.file('public/portal/operations-dashboard.js').text(),
     ]);
 
     expect(html).toContain('/registry/bun-brand-map.json');
@@ -200,7 +249,11 @@ describe('brand keymap portal', () => {
     expect(nav).toContain("href: '/portal/brands/'");
     expect(nav).toContain("source: '/registry/bun-brand-map.json'");
     expect(tools).toContain('/portal/brands/#view=relationships');
-    expect(packages).toContain('/portal/brands/#view=relationships');
+    expect(toolsHub).toContain('cap-brand-link');
+    expect(packages).toContain('/portal/brands/#view=projects');
+    expect(packages).not.toContain('q=${encodeURIComponent(pkgId)}');
+    expect(ops).toContain('id="bun-brand-alignment-panel"');
+    expect(ops).toContain('/portal/brands/#view=projects');
   });
 
   test('chrome and weave make the glossary discoverable', () => {

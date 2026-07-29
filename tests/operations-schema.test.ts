@@ -3,6 +3,7 @@
  * @see ../lib/operations/schema.ts
  */
 import { describe, expect, test } from 'bun:test';
+import { rm } from 'node:fs/promises';
 import { openOperationsDb } from '../lib/operations/db.ts';
 
 describe('operations schema', () => {
@@ -51,6 +52,18 @@ describe('operations schema', () => {
     const journal = db.query('PRAGMA journal_mode').get() as { journal_mode: string };
     expect(['wal', 'memory']).toContain(journal.journal_mode);
     db.close();
+  });
+
+  test('creates missing parent directories for file-backed databases', async () => {
+    const root = `.tmp/operations-db-parent-${crypto.randomUUID()}`;
+    const path = `${root}/nested/operations.db`;
+    await rm(root, { recursive: true, force: true });
+
+    const db = openOperationsDb({ path });
+    expect(await Bun.file(path).exists()).toBe(true);
+    db.close();
+
+    await rm(root, { recursive: true, force: true });
   });
 
   test('tree_nodes has portal sync columns', () => {

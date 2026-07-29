@@ -209,7 +209,7 @@ export function parseReleaseProof(value: unknown): ReleaseProof {
 export function parseBunBrandUsageBaseline(value: unknown): BunBrandUsageBaseline {
   const source = BUN_BRAND_BASELINE_PATH;
   const record = parseSourceRecord(source, '<root>', value);
-  if (record.schemaVersion !== 1) sourceFailure(source, 'schemaVersion', 'expected 1');
+  if (record.schemaVersion !== 2) sourceFailure(source, 'schemaVersion', 'expected 2');
   if (record.kind !== 'bun-brand-usage-baseline') {
     sourceFailure(source, 'kind', 'expected bun-brand-usage-baseline');
   }
@@ -232,7 +232,7 @@ export type BunCapabilityObservation = {
 };
 
 export type BunBrandUsageBaseline = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   kind: 'bun-brand-usage-baseline';
   keys: string[];
 };
@@ -693,8 +693,14 @@ export function observeBunCapabilities(
         a.path.localeCompare(b.path) ||
         a.line - b.line
     );
+  return assignObservationOccurrences(sorted);
+}
+
+function assignObservationOccurrences(
+  rows: readonly BunCapabilityObservation[]
+): BunCapabilityObservation[] {
   const occurrences = new Map<string, number>();
-  return sorted.map(row => {
+  return rows.map(row => {
     const group = `${row.token}|${row.variant ?? 'default'}|${row.path}`;
     const occurrence = (occurrences.get(group) ?? 0) + 1;
     occurrences.set(group, occurrence);
@@ -790,14 +796,16 @@ export function buildBunBrandMap(input: {
   });
 
   const declarationObservations = new Map<string, BunCapabilityObservation[]>();
-  const undeclared = input.observations.filter(observation => {
-    const declaration = input.declarations.find(row => declarationMatches(row, observation));
-    if (!declaration) return true;
-    const rows = declarationObservations.get(declaration.key) ?? [];
-    rows.push(observation);
-    declarationObservations.set(declaration.key, rows);
-    return false;
-  });
+  const undeclared = assignObservationOccurrences(
+    input.observations.filter(observation => {
+      const declaration = input.declarations.find(row => declarationMatches(row, observation));
+      if (!declaration) return true;
+      const rows = declarationObservations.get(declaration.key) ?? [];
+      rows.push(observation);
+      declarationObservations.set(declaration.key, rows);
+      return false;
+    })
+  );
 
   const findings: Array<{
     key: string;
@@ -1137,7 +1145,7 @@ async function readJsonSource(root: string, path: string): Promise<unknown> {
 async function loadBaseline(root: string): Promise<BunBrandUsageBaseline> {
   const file = Bun.file(`${root}/${BUN_BRAND_BASELINE_PATH}`);
   if (!(await file.exists())) {
-    return { schemaVersion: 1, kind: 'bun-brand-usage-baseline', keys: [] };
+    return { schemaVersion: 2, kind: 'bun-brand-usage-baseline', keys: [] };
   }
   return parseBunBrandUsageBaseline(await readJsonSource(root, BUN_BRAND_BASELINE_PATH));
 }
@@ -1183,7 +1191,7 @@ async function main(): Promise<void> {
       .map(row => row.key)
       .sort();
     const baseline: BunBrandUsageBaseline = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       kind: 'bun-brand-usage-baseline',
       keys,
     };

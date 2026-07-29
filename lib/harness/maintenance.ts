@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/bunfig#run-noorphans-dont-leave-orphan-processes-behind — noOrphans
@@ -152,6 +153,25 @@ export const MAINTENANCE_RUNBOOKS: readonly TenantRunbook[] = [
     freshRerun: 'bun run docs:tenant-ops-snapshot',
     freshRerunKind: 'catalog',
     docPath: 'docs/harness/tenants/ops-snapshot.md',
+  },
+  {
+    tenant: 'portal-snapshot',
+    signal:
+      '`bun run spine:schedule:once -- --tenant=portal-snapshot` exits non-zero (scope capture failed)',
+    intervention:
+      'bun test tests/portal-snapshot-cron.test.ts · bun lib/operations/portal-snapshot-cron.ts --once --dry-run',
+    proofId: 'portal-snapshot-cron-v1',
+    retirement:
+      'Remove when OS scheduling and required deploy verification own the portal snapshot proof without the spine complement',
+    retirementVerified: false,
+    retirementCheck: {
+      description: 'portal-snapshot is owned by a required deploy or operate schedule',
+      command: 'bun scripts/retirement-check-ci-owner.ts --tenant=portal-snapshot',
+    },
+    schedule: '0 */6 * * *',
+    freshRerun: 'bun run docs:tenant-portal-snapshot',
+    freshRerunKind: 'catalog',
+    docPath: 'docs/harness/tenants/portal-snapshot-cron.md',
   },
 ] as const;
 

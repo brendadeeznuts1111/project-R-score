@@ -6,7 +6,7 @@ Glossary artifact: [/registry/brand-keymap.json](/registry/brand-keymap.json)
 
 The relationship map joins canonical Bun API tokens with reviewed wrappers,
 branded domain values, tracked projects, and exact runtime proof. The glossary
-keeps the canonical 57-value brand catalog, constructor tiers, tracked-source
+keeps the canonical 58-value brand catalog, constructor tiers, tracked-source
 coverage, and per-project adoption evidence.
 
 ## Views

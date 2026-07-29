@@ -31,6 +31,7 @@ import type {
   IdentityId,
   JobId,
   OperationId,
+  OidcClientId,
   PartnerProfileKey,
   PipelineId,
   PolicyId,
@@ -80,6 +81,7 @@ import {
   asLinkNonceId,
   asLoopId,
   asOperationId,
+  asOidcClientId,
   asOpsChannelEventId,
   asPagesProjectId,
   asPublishLaneId,
@@ -234,6 +236,10 @@ const plainAsSession: SessionId = 'plain';
 
 // as* hard-mints the right brand (runtime throws on empty — not a type-level rule).
 const asReturnsUser: UserId = asUserId('u-2');
+const asReturnsOidcClient: OidcClientId = asOidcClientId('client-2');
+
+// @ts-expect-error — an OIDC client is not a federated identity record
+const oidcClientAsIdentity: IdentityId = asReturnsOidcClient;
 
 // try* soft-mints: brand or undefined, never a forged empty brand.
 const tryReturnsMaybeSession: SessionId | undefined = trySessionId('s-2');
@@ -257,7 +263,7 @@ if (isBrandedValue('SessionId', guardInput)) {
   void guardedSession;
 }
 
-// ─── 6. Aggregate unions cover the complete 57-value catalog (51 IDs + codes) ─
+// ─── 6. Aggregate unions cover the complete 58-value catalog (52 IDs + codes) ─
 
 const everyId: readonly AnyId[] = [
   asSessionId('s'),
@@ -268,6 +274,7 @@ const everyId: readonly AnyId[] = [
   asUserId('u'),
   asAccountId('a'),
   asIdentityId('i'),
+  asOidcClientId('oidc-client'),
   asAccessKeyId('ak'),
   asTokenId('tk'),
   asDocumentId('d'),

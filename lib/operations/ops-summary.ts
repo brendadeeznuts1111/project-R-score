@@ -38,7 +38,8 @@ import {
 } from '../monitoring/monorepo-health-slice.ts';
 import {
   loadBunBrandMapSummarySliceSync,
-  type BunBrandMapSummarySlice,
+  toBunBrandMapOpsSlice,
+  type BunBrandMapOpsSlice,
 } from '../monitoring/bun-brand-map-slice.ts';
 import {
   queryLoopMetricsSlice,
@@ -252,7 +253,7 @@ export type OpsSummaryCompliance = ComplianceSummarySlice;
 export type OpsSummaryMonorepoHealth = MonorepoHealthSummarySlice;
 
 /** Bun capability × brand declaration, adoption, and proof rollup. */
-export type OpsSummaryBunBrandMap = BunBrandMapSummarySlice;
+export type OpsSummaryBunBrandMap = BunBrandMapOpsSlice;
 
 export type OpsSummaryPayload = {
   source: 'live' | 'snapshot';
@@ -1047,7 +1048,7 @@ export function buildOpsSummary(
     seatCapitalDesk: loadSeatCapitalDeskSummarySlice(),
     compliance: loadComplianceSummarySliceSync(),
     monorepoHealth: loadMonorepoHealthSummarySliceSync(),
-    bunBrandMap: loadBunBrandMapSummarySliceSync(),
+    bunBrandMap: toBunBrandMapOpsSlice(loadBunBrandMapSummarySliceSync()),
     limitChanges,
     limitPatterns,
   };

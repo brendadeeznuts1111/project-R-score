@@ -24,7 +24,7 @@ import { Database } from 'bun:sqlite';
 import { averageHash, hammingDistance } from './evidence.ts';
 import { requireSecret } from '../security/require-secret.ts';
 import { requireMintableSecret } from '../security/mintable-secret.ts';
-import { DEFAULT_OPS_DB_PATH } from '../operations/db.ts';
+import { DEFAULT_OPS_DB_PATH, ensureOperationsDbParent } from '../operations/db.ts';
 import {
   agentHasPlatformAccount,
   detectPlatformFromText,
@@ -205,6 +205,7 @@ export class DODVerifier {
     // Prefer explicit opt → env → machine-local mint
     this.idEncryptionKey = opts.idEncryptionKey ?? requireMintableSecret('DOD_ID_ENCRYPTION_KEY');
     this.onVerifiedBalance = opts.onVerifiedBalance;
+    ensureOperationsDbParent(dbPath);
     this.db = new Database(dbPath);
     this.db.run('PRAGMA journal_mode=WAL');
     this.initTable();

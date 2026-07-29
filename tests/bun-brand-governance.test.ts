@@ -93,6 +93,8 @@ describe('Bun brand governance wiring', () => {
 describe('Bun brand ops slice', () => {
   test('legacy undeclared findings remain warnings and preserve project attribution', async () => {
     const path = await writeArtifact({
+      schemaVersion: 1,
+      kind: 'bun-brand-map',
       generatedAt: '2026-07-28T00:00:00.000Z',
       summary: {
         declared: 9,
@@ -143,6 +145,9 @@ describe('Bun brand ops slice', () => {
 
   test('new undeclared and stale evidence degrade the slice', async () => {
     const path = await writeArtifact({
+      schemaVersion: 1,
+      kind: 'bun-brand-map',
+      generatedAt: '2026-07-28T00:00:00.000Z',
       summary: { baselineUndeclared: 3, newUndeclared: 1, stale: 1 },
       findings: [
         {
@@ -171,15 +176,22 @@ describe('Bun brand ops slice', () => {
       stale: false,
       path: '/registry/bun-brand-map.json',
     });
+    const emptyObject = await writeArtifact({});
+    expect(loadBunBrandMapSummarySliceSync(emptyObject).available).toBe(false);
+
     const malformedSummary = await writeArtifact({
       schemaVersion: 1,
       kind: 'bun-brand-map',
+      generatedAt: '2026-07-28T00:00:00.000Z',
       summary: { newUndeclared: '0' },
       findings: [],
     });
     expect(loadBunBrandMapSummarySliceSync(malformedSummary).available).toBe(false);
 
     const malformedFinding = await writeArtifact({
+      schemaVersion: 1,
+      kind: 'bun-brand-map',
+      generatedAt: '2026-07-28T00:00:00.000Z',
       summary: { newUndeclared: 0 },
       findings: [{ severity: 'critical', baseline: false }],
     });

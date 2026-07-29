@@ -16,7 +16,7 @@ const BASELINE_PATH = 'lib/docs/bun-brand-usage-baseline.json';
 const ROOT = new URL('..', import.meta.url).pathname;
 
 type Baseline = {
-  schemaVersion: 1;
+  schemaVersion: 1 | 2;
   kind: 'bun-brand-usage-baseline';
   keys: string[];
 };
@@ -39,10 +39,16 @@ async function gitShow(spec: string): Promise<string | null> {
   return code === 0 ? out : null;
 }
 
-function parseBaseline(raw: string, source: string): Baseline {
+export function parseBunBrandBaseline(
+  raw: string,
+  source: string,
+  allowLegacySchema = false
+): Baseline {
   const value = JSON.parse(raw) as Partial<Baseline>;
+  const schemaVersionIsValid =
+    value.schemaVersion === 2 || (allowLegacySchema && value.schemaVersion === 1);
   if (
-    value.schemaVersion !== 1 ||
+    !schemaVersionIsValid ||
     value.kind !== 'bun-brand-usage-baseline' ||
     !Array.isArray(value.keys) ||
     !value.keys.every(key => typeof key === 'string')
@@ -73,13 +79,16 @@ async function main(): Promise<void> {
 
   const previousRaw = await gitShow(`${base}:${BASELINE_PATH}`);
   if (previousRaw == null) {
-    parseBaseline(currentRaw, staged ? `index:${BASELINE_PATH}` : BASELINE_PATH);
+    parseBunBrandBaseline(currentRaw, staged ? `index:${BASELINE_PATH}` : BASELINE_PATH);
     console.info('✅ Bun brand baseline bootstrap (no baseline on comparison ref)');
     return;
   }
 
-  const previous = parseBaseline(previousRaw, `${base}:${BASELINE_PATH}`);
-  const current = parseBaseline(currentRaw, staged ? `index:${BASELINE_PATH}` : BASELINE_PATH);
+  const previous = parseBunBrandBaseline(previousRaw, `${base}:${BASELINE_PATH}`, true);
+  const current = parseBunBrandBaseline(
+    currentRaw,
+    staged ? `index:${BASELINE_PATH}` : BASELINE_PATH
+  );
   const added = addedBunBrandBaselineKeys(previous.keys, current.keys);
   if (added.length > 0) {
     console.error(
@@ -95,7 +104,7 @@ async function main(): Promise<void> {
   }
 
   console.info(
-    `✅ Bun brand baseline monotonic (${previous.keys.length} → ${current.keys.length}; no additions)`
+    `✅ Bun brand baseline monotonic (v${previous.schemaVersion} ${previous.keys.length} → v${current.schemaVersion} ${current.keys.length}; no additions)`
   );
 }
 

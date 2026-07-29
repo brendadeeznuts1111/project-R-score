@@ -1,8 +1,13 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
-import { evaluateReadiness, loadDomainHealthSummary } from './lib/domain-health-read';
+import {
+  evaluateReadiness,
+  loadDomainHealthSummary,
+  type ReadinessResult,
+} from './lib/domain-health-read';
 
 type Options = {
   domain: string;
@@ -47,6 +52,13 @@ function parseArgs(argv: string[]): Options {
   return options;
 }
 
+export function readinessExitCode(readiness: ReadinessResult): 0 | 2 | 3 {
+  if (readiness.blocked) return 2;
+  if (readiness.status === 'critical') return 3;
+  if (readiness.status === 'degraded') return 2;
+  return 0;
+}
+
 async function main(): Promise<void> {
   const options = parseArgs(Bun.argv.slice(2));
 
@@ -70,6 +82,7 @@ async function main(): Promise<void> {
   } else {
     console.info(`Project Online Readiness: ${options.domain}`);
     console.info(`Source: ${options.source}`);
+    console.info(`State: ${readiness.state}`);
     console.info(`Status: ${readiness.status}`);
     console.info(`Ready: ${readiness.ready}`);
     console.info(`Overall score: ${readiness.metrics.overallScore}`);
@@ -84,9 +97,7 @@ async function main(): Promise<void> {
     }
   }
 
-  if (readiness.status === 'critical') process.exit(3);
-  if (readiness.status === 'degraded') process.exit(2);
-  process.exit(0);
+  process.exit(readinessExitCode(readiness));
 }
 
 if (import.meta.main) {

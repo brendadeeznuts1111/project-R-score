@@ -46,10 +46,11 @@ async function respectRateLimit(token: string): Promise<void> {
 export async function telegramApiCall(
   token: string,
   method: string,
-  body: Record<string, unknown>
+  body: Record<string, unknown>,
+  fetchImpl: typeof globalThis.fetch = globalThis.fetch
 ): Promise<TelegramApiResult> {
   await respectRateLimit(token);
-  const res = await fetch(`https://api.telegram.org/bot${token}/` + method, {
+  const res = await fetchImpl(`https://api.telegram.org/bot${token}/` + method, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -343,15 +344,17 @@ export type SendTelegramBotMessageResult = {
 
 async function callSendMessage(
   token: string,
-  body: Record<string, unknown>
+  body: Record<string, unknown>,
+  fetchImpl?: typeof globalThis.fetch
 ): Promise<TelegramApiResult> {
-  return telegramApiCall(token, 'sendMessage', body);
+  return telegramApiCall(token, 'sendMessage', body, fetchImpl);
 }
 
 /** sendMessage — used by ops outbox telegram projector + flow deliver. */
 export async function sendTelegramBotMessage(
   token: string,
-  input: SendTelegramBotMessageInput
+  input: SendTelegramBotMessageInput,
+  fetchImpl?: typeof globalThis.fetch
 ): Promise<SendTelegramBotMessageResult> {
   const body: Record<string, unknown> = {
     chat_id: input.chatId,
@@ -371,7 +374,7 @@ export async function sendTelegramBotMessage(
     };
   }
 
-  let r = await callSendMessage(token, body);
+  let r = await callSendMessage(token, body, fetchImpl);
   let retriedAfter429 = false;
   let retryAfterSec: number | undefined;
 
@@ -379,7 +382,7 @@ export async function sendTelegramBotMessage(
     retryAfterSec = r.parameters?.retry_after ?? 1;
     await Bun.sleep(Math.max(0, retryAfterSec * 1000));
     resetTelegramRateLimiters();
-    r = await callSendMessage(token, body);
+    r = await callSendMessage(token, body, fetchImpl);
     retriedAfter429 = true;
     if (!r.ok && r.error_code === 429) {
       retryAfterSec = r.parameters?.retry_after ?? retryAfterSec ?? 1;
@@ -435,7 +438,8 @@ export async function editMessageReplyMarkup(
 /** editMessageText — used by flow deliver for keyboard updates. */
 export async function editTelegramMessage(
   token: string,
-  input: EditTelegramMessageInput
+  input: EditTelegramMessageInput,
+  fetchImpl?: typeof globalThis.fetch
 ): Promise<SendTelegramBotMessageResult> {
   const body: Record<string, unknown> = {
     chat_id: input.chatId,
@@ -445,7 +449,7 @@ export async function editTelegramMessage(
   if (input.parseMode) body.parse_mode = input.parseMode;
   if (input.replyMarkup) body.reply_markup = input.replyMarkup;
 
-  const r = await telegramApiCall(token, 'editMessageText', body);
+  const r = await telegramApiCall(token, 'editMessageText', body, fetchImpl);
   return {
     ok: r.ok,
     messageId: input.messageId,

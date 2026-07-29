@@ -21,6 +21,7 @@ export const PACKAGES_RELATED_REGISTRY = [
   '/registry/package-info.json',
   '/registry/monorepo-health.json',
 ];
+export const PACKAGE_BRANDS_HREF = '/portal/brands/#view=projects';
 
 /**
  * @param {unknown} err
@@ -580,7 +581,7 @@ function renderPackageDetail(data, model, pkgId, doc = document) {
     <ul id="pkg-registry-links">
       <li><a href="/registry/packages-graph-map.json"><code>packages-graph-map.json</code></a></li>
       <li><a href="/registry/package-info.json"><code>package-info.json</code></a> · match <code>${escapeHtml(npmGuess)}</code></li>
-      <li><a href="/portal/brands/#view=relationships&amp;q=${encodeURIComponent(pkgId)}">Bun × brand relationships</a> · filtered to <code>${escapeHtml(pkgId)}</code></li>
+      <li><a href="${PACKAGE_BRANDS_HREF}">Bun × brand project alignment</a> · browse tracked ownership and external roots</li>
       <li id="pkg-info-hit" class="meta">package-info: loading…</li>
       <li id="pkg-cap-hit" class="meta">capabilities: loading…</li>
     </ul>

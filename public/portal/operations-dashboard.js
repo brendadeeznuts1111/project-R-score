@@ -5,6 +5,7 @@
  * growth metrics, Bun utils runtime proof, and routing proof.
  */
 import { renderVerificationResults, renderVerificationTableRow } from './verification-card.js';
+import { formatBunBrandAlignment } from './bun-brand-alignment.js';
 import './channel-filter.js';
 
 /** Format summary.bySubsystem for ops panel subtitle. */
@@ -201,6 +202,14 @@ class OperationsDashboard extends HTMLElement {
             <a class="ops-link" href="/registry/toc-ops.json">TOC ops fixture</a>
             <a class="ops-link" href="/registry/toc-ops-bake-proof.json" title="TOC ops bake proof">TOC bake proof</a>
             <a class="ops-link" href="/registry/portal-chrome.json">Chrome registry</a>
+          </section>
+          <section class="ops-panel" id="bun-brand-alignment-panel" data-subsystem="harness">
+            <h2>Bun × brand alignment <span class="ops-badge" title="capability relationships · branded values · project proof">harness</span></h2>
+            <div class="ops-metric" id="bun-brand-alignment-metric">—</div>
+            <div class="ops-sub" id="bun-brand-alignment-detail"></div>
+            <a class="ops-link" href="/portal/brands/#view=projects">Open project alignment</a>
+            <a class="ops-link" href="/portal/brands/#view=relationships">Relationship map</a>
+            <a class="ops-link" href="/registry/bun-brand-map.json">Map JSON</a>
           </section>
           <section class="ops-panel">
             <h2>Growth</h2>
@@ -947,6 +956,16 @@ class OperationsDashboard extends HTMLElement {
           mhDetail.textContent = 'Missing — bun run monorepo:health:bake · ops:snapshot';
         if (mhMetrics) mhMetrics.textContent = '';
       }
+    }
+
+    const bunBrandMetric = this.querySelector('#bun-brand-alignment-metric');
+    const bunBrandDetail = this.querySelector('#bun-brand-alignment-detail');
+    if (bunBrandMetric) {
+      const alignment = formatBunBrandAlignment(d.bunBrandMap);
+      bunBrandMetric.textContent = alignment.metric;
+      bunBrandMetric.classList.toggle('ok', alignment.tone === 'ok');
+      bunBrandMetric.classList.toggle('bad', alignment.tone === 'bad');
+      if (bunBrandDetail) bunBrandDetail.textContent = alignment.detail;
     }
 
     if (partnersBound && d.partners) {
@@ -2335,6 +2354,7 @@ class OperationsDashboard extends HTMLElement {
     const weaveRelated = this.querySelector('#portal-weave-related');
     if (weaveRelated) {
       const rel = weave?.related || {
+        bunBrandMap: '/registry/bun-brand-map.json',
         chrome: '/registry/portal-chrome.json',
         monorepoHealth: '/registry/monorepo-health.json',
         packagesGraph: '/registry/packages-graph-map.json',
@@ -2342,6 +2362,7 @@ class OperationsDashboard extends HTMLElement {
         tocOps: '/registry/toc-ops.json',
       };
       weaveRelated.innerHTML = [
+        ['bun-brand-map', rel.bunBrandMap],
         ['chrome', rel.chrome],
         ['monorepo-health', rel.monorepoHealth],
         ['packages-graph', rel.packagesGraph],
