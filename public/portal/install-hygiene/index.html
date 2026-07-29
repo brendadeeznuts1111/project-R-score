@@ -140,6 +140,13 @@
       border-color: #238636; color: var(--green, #3fb950);
       background: color-mix(in srgb, var(--green, #3fb950) 10%, transparent);
     }
+    .ih-fetch-debug {
+      margin: 10px 0 0; padding: 10px 12px; border-radius: var(--radius);
+      border: 1px dashed var(--border); background: #010409;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11px; line-height: 1.45; color: #8b949e; white-space: pre-wrap; word-break: break-word;
+      max-height: 14rem; overflow: auto;
+    }
     .ih-summary {
       margin: 10px 0 0; padding: 10px 12px; border-radius: var(--radius);
       border: 1px solid var(--border); background: var(--surface);
@@ -222,6 +229,7 @@
     </div>
     <p id="ih-reasons" class="ih-reasons ih-reasons--yellow">attention: cache over prune threshold</p>
     <p id="ih-fetch-status" class="ih-fetch-status" hidden aria-live="polite"></p>
+    <pre id="ih-fetch-debug" class="ih-fetch-debug" hidden aria-label="Fetch debug log"></pre>
     <div class="ih-summary-bar">
       <button type="button" id="ih-copy-summary" class="btn">copy summary</button>
       <a class="btn" href="/registry/install-hygiene-report.json">JSON</a>

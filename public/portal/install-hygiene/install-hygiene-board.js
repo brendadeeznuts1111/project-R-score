@@ -14,7 +14,7 @@
  * @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request
  */
 import { bindCopyButtons } from '../copy-cli.js';
-import { fetchJsonResult } from '../fetch-json.js';
+import { fetchJsonResult, isPortalFetchDebug } from '../fetch-json.js';
 
 export const INSTALL_HYGIENE_SOURCE = '/registry/install-hygiene-report.json';
 export const INSTALL_HYGIENE_SCHEMA = 1;
@@ -567,16 +567,63 @@ export function formatLiveFetchStatus(r) {
 }
 
 /**
+ * On-page debug lines (browser stand-in for Bun fetch verbose: true).
+ * @param {string[]} lines
+ */
+export function renderFetchDebugPanel(lines) {
+  const el = document.getElementById('ih-fetch-debug');
+  if (!el) return;
+  if (!isPortalFetchDebug() || !lines.length) {
+    el.hidden = true;
+    el.textContent = '';
+    return;
+  }
+  el.hidden = false;
+  el.textContent = [
+    'portal fetch debug (not Bun verbose — browser cannot pass verbose:true)',
+    `source: ${INSTALL_HYGIENE_SOURCE}`,
+    `method: GET · timeoutMs: 5000 · Accept: application/json`,
+    ...lines,
+    'docs: https://bun.com/docs/runtime/networking/fetch#request-options',
+  ].join('\n');
+}
+
+/**
+ * @param {object} r
+ * @returns {string[]}
+ */
+export function describeFetchResultLines(r) {
+  if (!r) return ['[portal-fetch] ! no result'];
+  if (r.ok) {
+    const data = /** @type {Record<string, unknown>} */ (r.data || {});
+    return [
+      `[portal-fetch] < ${r.status ?? 200} OK ${r.contentType || ''}`.trim(),
+      `[portal-fetch] kind=${String(data.kind || '?')} generatedAt=${String(data.generatedAt || '?')} ok=${String(data.ok)}`,
+    ];
+  }
+  return [
+    `[portal-fetch] ! ${r.kind || 'error'}${r.status != null ? ` HTTP ${r.status}` : ''}`,
+    `[portal-fetch] ${r.error || 'failed'}`,
+  ];
+}
+
+/**
  * Prefer offline embed; refresh from registry when fetch works (optional live).
  * @returns {Promise<Record<string, unknown>|null>}
  */
 export async function loadInstallHygieneReport() {
   const embedded = readInstallHygieneEmbed();
+  const debugLines = [
+    `[portal-fetch] > GET ${INSTALL_HYGIENE_SOURCE}`,
+    `[portal-fetch] > embed=${embedded ? 'yes' : 'no'}`,
+  ];
+
   // Always render embed first so the board works with no network / broken static host.
   if (embedded) {
     // Non-blocking refresh when online (GET only · timeout · Accept: json)
     void fetchJsonResult(INSTALL_HYGIENE_SOURCE, { timeoutMs: 5000, method: 'GET' }).then(r => {
       const statusEl = document.getElementById('ih-fetch-status');
+      const lines = [...debugLines, ...describeFetchResultLines(r)];
       if (r.ok && r.data && /** @type {Record<string, unknown>} */ (r.data).kind === 'install-hygiene') {
         const live = /** @type {Record<string, unknown>} */ (r.data);
         const embAt = Date.parse(String(embedded.generatedAt || ''));
@@ -584,22 +631,42 @@ export async function loadInstallHygieneReport() {
         if (!Number.isFinite(embAt) || (Number.isFinite(liveAt) && liveAt >= embAt)) {
           renderInstallHygieneReport(withSource(live, 'live'));
           if (statusEl) {
-            statusEl.hidden = true;
-            statusEl.textContent = '';
+            if (isPortalFetchDebug()) {
+              statusEl.hidden = false;
+              statusEl.className = 'ih-fetch-status ih-fetch-status--ok';
+              statusEl.textContent = 'live refresh ok — registry newer or equal to embed';
+            } else {
+              statusEl.hidden = true;
+              statusEl.textContent = '';
+            }
           }
+          lines.push('[portal-fetch] applied live report');
+          renderFetchDebugPanel(lines);
           return;
         }
+        lines.push('[portal-fetch] kept embed (newer than live)');
+        if (statusEl && isPortalFetchDebug()) {
+          statusEl.hidden = false;
+          statusEl.className = 'ih-fetch-status ih-fetch-status--ok';
+          statusEl.textContent = 'embed is newer than live registry — kept offline SSR';
+        }
+        renderFetchDebugPanel(lines);
+        return;
       }
       if (statusEl && !r.ok) {
         statusEl.hidden = false;
         statusEl.className = 'ih-fetch-status ih-fetch-status--warn';
         statusEl.textContent = formatLiveFetchStatus(r);
       }
+      renderFetchDebugPanel(lines);
     });
+    renderFetchDebugPanel(debugLines.concat('[portal-fetch] showing embed first; live refresh in flight'));
     return withSource(embedded, 'embed');
   }
   const r = await fetchJsonResult(INSTALL_HYGIENE_SOURCE, { timeoutMs: 5000, method: 'GET' });
+  const lines = [...debugLines, ...describeFetchResultLines(r)];
   if (r.ok && r.data && /** @type {Record<string, unknown>} */ (r.data).kind === 'install-hygiene') {
+    renderFetchDebugPanel(lines.concat('[portal-fetch] applied live (no embed)'));
     return withSource(/** @type {Record<string, unknown>} */ (r.data), 'live');
   }
   const statusEl = document.getElementById('ih-fetch-status');
@@ -608,6 +675,7 @@ export async function loadInstallHygieneReport() {
     statusEl.className = 'ih-fetch-status ih-fetch-status--warn';
     statusEl.textContent = formatLiveFetchStatus(r) || 'live fetch failed and no offline embed';
   }
+  renderFetchDebugPanel(lines);
   return null;
 }
 
