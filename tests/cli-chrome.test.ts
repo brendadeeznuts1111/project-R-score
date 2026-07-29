@@ -6,6 +6,7 @@ import {
   cliTone,
   columnTable,
   displayWidth,
+  formatIndexedCards,
   frameBlock,
   padDisplay,
   truncateDisplay,
@@ -87,6 +88,34 @@ describe('cli-chrome · Bun.stringWidth layout', () => {
     const lines = block.split('\n');
     const widths = lines.map(l => displayWidth(l));
     expect(new Set(widths).size).toBe(1);
+  });
+
+  test('formatIndexedCards prints full fallback text without ellipsis truncation', () => {
+    const long =
+      'omit option → --port → BUN_PORT → PORT → NODE_PORT → 3000 then read server.port after bind';
+    const out = formatIndexedCards(
+      'A. SERVER / URL',
+      'blurb',
+      [
+        {
+          index: 1,
+          title: 'server.port',
+          fields: [
+            ['type', 'number | undefined'],
+            ['default', long],
+            ['fallback', 'port:0 → OS ephemeral; EADDRINUSE → harness retry'],
+          ],
+        },
+      ],
+      { width: 56 }
+    );
+    expect(out).toContain('INDEX');
+    expect(out).toContain('#1');
+    expect(out).toContain('server.port');
+    expect(out).toContain('BUN_PORT');
+    expect(out).toContain('NODE_PORT');
+    expect(out).toContain('after bind');
+    expect(out).not.toContain('BUN_PORT → P…');
   });
 });
 

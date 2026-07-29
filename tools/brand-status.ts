@@ -18,16 +18,15 @@
  * Tables use Bun.inspect.table + cli-chrome. Depth follows bunfig [console] depth.
  * `--docs` → Bun.markdown.ansi lineage slice · `--json` → machine snapshot
  * `--plane` filters HOST PLANES · `--lineage [host]` live transition matrix
+ * `--flags` → long/short flag catalog · default bind/serve view uses indexed cards
+ * `--compact` → wide Bun.inspect.table (may truncate) instead of cards
  * REPL: FQDN / URL / AccessDomain · commands access · url · plane · lineage · help
  *
  * Usage:
  *   bun tools/brand-status.ts --once
- *   bun tools/brand-status.ts --docs --once
- *   bun tools/brand-status.ts --lineage score.factory-wager.com --once
- *   bun tools/brand-status.ts --plane dns --verbose --once
+ *   bun tools/brand-status.ts --plane bind --once
+ *   bun tools/brand-status.ts --flags
  *   bun tools/brand-status.ts --json --once
- *   bun tools/brand-status.ts --watch
- *   bun tools/brand-status.ts --repl
  */
 
 import {
@@ -47,7 +46,14 @@ import {
 } from '../lib/http/host-lineage.ts';
 import { bunServeShapeTableRows } from '../lib/http/bun-serve-shape.ts';
 import { type HostPlane, hostPlaneTableRows, isHostPlane } from '../lib/http/host-planes.ts';
-import { cliTone, frameBlock, kvLines, msFromNs } from '../lib/portal/cli-chrome.ts';
+import {
+  cliTone,
+  formatIndexedCards,
+  frameBlock,
+  kvLines,
+  msFromNs,
+  type IndexedCard,
+} from '../lib/portal/cli-chrome.ts';
 import { hostPartsForSurface, loadSurfacesInventory } from '../lib/surfaces/inventory.ts';
 import {
   FACTORY_WAGER_APEX,
@@ -95,10 +101,32 @@ type CliOpts = {
   every: string;
   json: boolean;
   verbose: boolean;
+  compact: boolean;
+  flagsOnly: boolean;
   plane: HostPlane | undefined;
   lineageHost: string | undefined;
   help: boolean;
 };
+
+/** brand-status flag catalog (not Bun runtime flags — those are portal:flags). */
+const BRAND_STATUS_FLAGS = [
+  { short: '-h', long: '--help', meaning: 'Show usage' },
+  { short: '-v', long: '--verbose', meaning: 'Extra columns (ssot · docs) on cards/tables' },
+  { short: '', long: '--once', meaning: 'Print tables/cards and exit (no REPL)' },
+  { short: '', long: '--repl', meaning: 'Skip inventory dump; host/lineage REPL only' },
+  { short: '', long: '--docs', meaning: 'Render DNS/Access lineage markdown (ansi)' },
+  {
+    short: '',
+    long: '--lineage [host]',
+    meaning: 'Live helper transition matrix (default score…)',
+  },
+  { short: '', long: '--plane NAME', meaning: 'Filter HOST PLANES: bind|dns|access|pages' },
+  { short: '', long: '--json', meaning: 'Machine snapshot (planes + serveShape + lineage)' },
+  { short: '', long: '--watch', meaning: 'Bun.cron reprint (default */5; no REPL)' },
+  { short: '', long: '--every EXPR', meaning: 'Cron expression for --watch (UTC)' },
+  { short: '', long: '--flags', meaning: 'Print this flag catalog (long · short · meaning)' },
+  { short: '', long: '--compact', meaning: 'Wide inspect.table instead of indexed cards' },
+] as const;
 
 function args(): CliOpts {
   const a = Bun.argv.slice(2);
@@ -120,10 +148,27 @@ function args(): CliOpts {
     every: take('--every') ?? DEFAULT_WATCH_CRON,
     json: a.includes('--json'),
     verbose: a.includes('--verbose') || a.includes('-v'),
+    compact: a.includes('--compact'),
+    flagsOnly: a.includes('--flags'),
     plane,
     lineageHost,
     help: a.includes('--help') || a.includes('-h'),
   };
+}
+
+function printFlagsCatalog(): void {
+  console.info(
+    cliTone.accent('\nFLAGS') +
+      cliTone.dim('  brand-status · Bun runtime flags → bun run portal:flags')
+  );
+  logTable(
+    BRAND_STATUS_FLAGS.map(f => ({
+      short: f.short || '—',
+      long: f.long,
+      meaning: f.meaning,
+    })),
+    ['short', 'long', 'meaning']
+  );
 }
 
 function printHelp(): void {
@@ -131,27 +176,20 @@ function printHelp(): void {
 
 Usage:
   bun tools/brand-status.ts --once
+  bun tools/brand-status.ts --plane bind --once     indexed SERVER/URL + bind cards
+  bun tools/brand-status.ts --flags                 long · short · meaning
+  bun tools/brand-status.ts --compact --plane bind  wide inspect.table (truncates)
   bun tools/brand-status.ts --docs --once
   bun tools/brand-status.ts --lineage [host] --once
-  bun tools/brand-status.ts --plane bind --once   # + SERVER/URL defaults/fallbacks
-  bun tools/brand-status.ts --plane dns|access|pages [--verbose] --once
   bun tools/brand-status.ts --json --once
   bun tools/brand-status.ts --watch [--every '*/5 * * * *']
   bun tools/brand-status.ts --repl
 
-REPL lines:
-  <fqdn> | <url> | <host/path>     split / resolve + lineage steps
-  access <host> [path]             mint AccessDomainId (default /portal)
-  url <host|access>                https URL helpers
-  lineage [host]                   transition matrix
-  plane [name]                     HOST PLANES filter
-  docs                             markdown.ansi lineage slice
-  help | q                         this help / quit
-
-Depth: bunfig [console] depth · Planes notes: Bun.sliceAnsi on TTY.
+REPL: FQDN · url · host/path · access · url · lineage · plane · docs · help · q
+Cards: full default/fallback text (wrap). Compact tables may ellipsis.
 `);
+  printFlagsCatalog();
 }
-
 async function loadManifest(): Promise<Manifest> {
   return (await Bun.file(MANIFEST).json()) as Manifest;
 }
@@ -188,71 +226,117 @@ function clip(text: string, cols: number, tty: boolean): string {
   return tty ? truncateWidth(text, cols, { ellipsis: '…' }) : text;
 }
 
-/** Bun.serve Server + URL property matrix (type · values · default · fallback). */
-function printServeShapeTable(opts: { verbose: boolean }): void {
-  const tty = process.stdout.isTTY === true;
-  const w = Math.min(48, Math.max(24, hostPlaneNoteCols()));
-  console.info(
-    cliTone.accent('\nSERVER / URL') +
-      cliTone.dim(
-        '  after bind read server.port · server.url · defaults are pre-bind attempts only'
-      )
-  );
-  const cols = opts.verbose
-    ? (['property', 'type', 'values', 'default', 'fallback', 'docs'] as const)
-    : (['property', 'type', 'values', 'default', 'fallback'] as const);
-  const rows = bunServeShapeTableRows().map(r => ({
-    property: r.property,
-    type: r.type,
-    values: clip(r.values, w, tty),
-    default: clip(r.default, w, tty),
-    fallback: clip(r.fallback, w, tty),
-    ...(opts.verbose ? { docs: r.docs } : {}),
-  }));
-  logTable(rows, [...cols]);
+function cardWidth(): number {
+  return Math.min(termWidth(), 88);
 }
 
-function printHostPlanesTable(opts: { plane?: HostPlane; verbose: boolean }): void {
-  const tty = process.stdout.isTTY === true;
-  const noteCols = hostPlaneNoteCols();
+/** Bun.serve Server + URL — indexed cards (full text) or compact table. */
+function printServeShapeTable(opts: { verbose: boolean; compact: boolean }): void {
+  const rows = bunServeShapeTableRows();
+  if (opts.compact) {
+    const tty = process.stdout.isTTY === true;
+    const w = Math.min(48, Math.max(24, hostPlaneNoteCols()));
+    console.info(cliTone.accent('\nSERVER / URL') + cliTone.dim('  compact table · may truncate'));
+    logTable(
+      rows.map(r => ({
+        property: r.property,
+        type: r.type,
+        values: clip(r.values, w, tty),
+        default: clip(r.default, w, tty),
+        fallback: clip(r.fallback, w, tty),
+        ...(opts.verbose ? { docs: r.docs } : {}),
+      })),
+      opts.verbose
+        ? ['property', 'type', 'values', 'default', 'fallback', 'docs']
+        : ['property', 'type', 'values', 'default', 'fallback']
+    );
+    return;
+  }
+
+  const cards: IndexedCard[] = rows.map((r, i) => ({
+    index: i + 1,
+    title: r.property,
+    fields: [
+      ['type', r.type],
+      ['values', r.values],
+      ['default', r.default],
+      ['fallback', r.fallback],
+      ...(opts.verbose ? ([['docs', r.docs]] as const) : []),
+    ],
+  }));
+  console.info(
+    formatIndexedCards(
+      'A. SERVER / URL',
+      'after bind read server.port · server.url · defaults are pre-bind only',
+      cards,
+      { width: cardWidth() }
+    )
+  );
+}
+
+/** HOST PLANES — indexed cards when expanded; dense table otherwise. */
+function printHostPlanesTable(opts: {
+  plane?: HostPlane;
+  verbose: boolean;
+  compact: boolean;
+}): void {
   const planeLabel = opts.plane ? ` · plane=${opts.plane}` : '';
   const expanded = opts.verbose || opts.plane === 'bind';
-  console.info(
-    cliTone.accent('\nHOST PLANES') +
-      cliTone.dim(
-        tty
-          ? `  bind≠dns${planeLabel} · notes≤${noteCols}${expanded ? ' · +defaults' : ''}`
-          : `  bind≠dns${planeLabel} · do not mix`
-      )
-  );
-  const cols = expanded
-    ? ([
-        'plane',
-        'concept',
-        'property',
-        'type',
-        'values',
-        'default',
-        'fallback',
-        'example',
-        ...(opts.verbose ? (['ssot', 'note'] as const) : (['note'] as const)),
-      ] as string[])
-    : (['plane', 'concept', 'typeOrField', 'example', 'note'] as string[]);
-  const rows = hostPlaneTableRows({
+  const planeRows = hostPlaneTableRows({
     plane: opts.plane,
-    includeSsot: opts.verbose,
-    includeDefaults: expanded,
-  }).map(r => ({
-    ...r,
-    note: clip(r.note, noteCols, tty),
-    ...(r.values !== undefined ? { values: clip(r.values, noteCols, tty) } : {}),
-    ...(r.default !== undefined ? { default: clip(r.default, noteCols, tty) } : {}),
-    ...(r.fallback !== undefined ? { fallback: clip(r.fallback, noteCols, tty) } : {}),
-    ...(r.ssot !== undefined ? { ssot: clip(r.ssot, Math.min(40, noteCols), tty) } : {}),
-  }));
-  logTable(rows, cols);
-}
+    includeSsot: true,
+    includeDefaults: true,
+  });
 
+  if (!expanded || opts.compact) {
+    const tty = process.stdout.isTTY === true;
+    const noteCols = hostPlaneNoteCols();
+    console.info(
+      cliTone.accent('\nHOST PLANES') +
+        cliTone.dim(
+          opts.compact ? `  bind≠dns${planeLabel} · compact` : `  bind≠dns${planeLabel} · dense`
+        )
+    );
+    const cols = expanded
+      ? (['plane', 'concept', 'property', 'type', 'example', 'note'] as string[])
+      : (['plane', 'concept', 'typeOrField', 'example', 'note'] as string[]);
+    logTable(
+      planeRows.map(r => ({
+        ...r,
+        note: clip(r.note, noteCols, tty),
+      })),
+      cols
+    );
+    return;
+  }
+
+  const cards: IndexedCard[] = planeRows.map((r, i) => ({
+    index: i + 1,
+    title: r.property ?? r.typeOrField,
+    subtitle: `${r.plane} · ${r.concept}`,
+    fields: [
+      ['type', r.type ?? ''],
+      ['values', r.values ?? ''],
+      ['default', r.default ?? ''],
+      ['fallback', r.fallback ?? ''],
+      ['example', r.example],
+      ...(opts.verbose
+        ? ([
+            ['ssot', r.ssot ?? ''],
+            ['note', r.note],
+          ] as const)
+        : ([['note', r.note]] as const)),
+    ],
+  }));
+  console.info(
+    formatIndexedCards(
+      'B. HOST PLANES',
+      `bind ≠ dns${planeLabel} · full default/fallback (wrap, no ellipsis)`,
+      cards,
+      { width: cardWidth() }
+    )
+  );
+}
 function printDomainTable(brands: BrandRow[]): void {
   const byDomain = new Map<string, number>();
   for (const b of brands) byDomain.set(b.domain, (byDomain.get(b.domain) ?? 0) + 1);
@@ -559,9 +643,16 @@ async function printTables(opts: CliOpts & { widthHint: boolean }): Promise<void
   const t0 = Bun.nanoseconds();
   const m = await loadManifest();
   printHeader(m, t0);
-  printHostPlanesTable({ plane: opts.plane, verbose: opts.verbose });
+  printHostPlanesTable({
+    plane: opts.plane,
+    verbose: opts.verbose,
+    compact: opts.compact,
+  });
   if (!opts.plane || opts.plane === 'bind' || opts.verbose) {
-    printServeShapeTable({ verbose: opts.verbose || opts.plane === 'bind' });
+    printServeShapeTable({
+      verbose: opts.verbose || opts.plane === 'bind',
+      compact: opts.compact,
+    });
   }
   if (!opts.plane) {
     printDomainTable(m.brands);
@@ -596,6 +687,10 @@ async function main(): Promise<void> {
   const opts = args();
   if (opts.help) {
     printHelp();
+    return;
+  }
+  if (opts.flagsOnly) {
+    printFlagsCatalog();
     return;
   }
 

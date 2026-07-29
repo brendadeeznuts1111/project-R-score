@@ -1,5 +1,5 @@
 // @see https://bun.com/docs/test — bun:test
-// @see https://bun.com/docs/runtime/bun-apis#bun-spawn — Bun.spawn
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 import { describe, expect, test } from 'bun:test';
 import { resolvePath } from '../scripts/lib/fs-bun.ts';
 
@@ -52,13 +52,27 @@ describe('brand-status CLI', () => {
     expect(stdout).not.toContain('\nDOMAINS\n');
   });
 
-  test('--plane bind --once shows SERVER/URL defaults columns', async () => {
+  test('--plane bind --once shows indexed SERVER/URL cards with full defaults', async () => {
     const { code, stdout } = await runBrandStatus(['--plane', 'bind', '--once']);
     expect(code).toBe(0);
-    expect(stdout).toContain('SERVER / URL');
+    expect(stdout).toContain('A. SERVER / URL');
+    expect(stdout).toContain('B. HOST PLANES');
+    expect(stdout).toContain('INDEX');
+    expect(stdout).toContain('#1');
     expect(stdout).toContain('server.port');
     expect(stdout).toContain('BUN_PORT');
-    expect(stdout).toContain('fallback');
+    expect(stdout).toContain('NODE_PORT');
+    expect(stdout).not.toContain('BUN_PORT → P…');
+  });
+
+  test('--flags lists long and short options', async () => {
+    const { code, stdout } = await runBrandStatus(['--flags']);
+    expect(code).toBe(0);
+    expect(stdout).toContain('FLAGS');
+    expect(stdout).toContain('--plane');
+    expect(stdout).toContain('--compact');
+    expect(stdout).toContain('-h');
+    expect(stdout).toContain('portal:flags');
   });
 
   test('--lineage --once prints live transition steps', async () => {
@@ -78,7 +92,9 @@ describe('brand-status CLI', () => {
     const { code, stdout } = await runBrandStatus(['--help']);
     expect(code).toBe(0);
     expect(stdout).toContain('--json');
-    expect(stdout).toContain('access <host>');
+    expect(stdout).toContain('--flags');
+    expect(stdout).toContain('access');
     expect(stdout).toContain('lineage');
+    expect(stdout).toContain('FLAGS');
   });
 });
