@@ -65,10 +65,24 @@ bun tools/bun-doc-refs.ts suggest "Bun.serve reference"
 bun tools/bun-doc-refs.ts suggest "Bun.serve port"
 ```
 
-Two shapes on the same listener:
+Two shapes on the same listener (read **after** bind — never re-read env):
 
-- `server.port` (number) · `server.url.port` (string; empty only on default 80/443)
-- `server.protocol` (`http` / `https`) · `server.url.protocol` (`http:` / `https:`)
+```ts
+console.log(server.port); // number — chosen listen port
+console.log(server.url);  // URL — href like http://localhost:3000/
+// server.url.port === String(server.port) for non-80/443
+// server.url.protocol === `${server.protocol}:`
+```
+
+| Field | Type | Use |
+|-------|------|-----|
+| `server.port` | `number` | Store / log the bound port |
+| `server.url` | `URL` | Console origin, `new URL(path, server.url)`, fetch base |
+| `server.url.port` | `string` | Wire twin of `server.port` (empty on 80/443) |
+| `server.protocol` | `http`/`https` | Bare scheme |
+| `server.url.protocol` | `http:`/`https:` | URL scheme with colon |
+
+Helpers in [`bun-server.ts`](./bun-server.ts): `formatServerPortUrlLines` · `assertServerPortUrlAligned` · `serveBindSnapshot`.
 
 `serve-public` uses `bindServePublicPort()` + `serveBindSnapshot()` for typed startup, ephemeral fallback, and loopback URLs when bound to `0.0.0.0`. Operator doc: [`docs/harness/tenants/serve-public-bind.md`](../../docs/harness/tenants/serve-public-bind.md).
 

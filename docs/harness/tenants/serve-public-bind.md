@@ -27,6 +27,25 @@ Open the command centre: `http://127.0.0.1:3000/` (or the port printed at startu
 | What port for verify *before* server is up? | `.serve-public/bind.json` or `PORTAL_VERIFY_BASE` | Prefer manifest from last run |
 | Pre-bind port *guess* | `resolveBunServeDefaultPort(Bun.env, Bun.argv)` | Mirror of server docs only — **not** a second bind path |
 
+### `server.port` vs `server.url` (two shapes, same listen)
+
+After bind, Bun exposes the chosen listen in **two related properties**:
+
+```ts
+console.log(server.port); // 3000              — number
+console.log(server.url);  // http://localhost:3000/  — URL instance (prints as href)
+```
+
+| Field | Type | Role |
+|-------|------|------|
+| `server.port` | `number` | Actual TCP port (works for `port: 0` ephemeral) |
+| `server.url` | `URL` | Full listen URL (`href`, `origin`, `hostname`, …) |
+| `server.url.port` | `string` | Same port as a string; **empty** only for default 80/443 |
+| `server.protocol` | `"http"\|"https"` | Bare scheme (no colon) |
+| `server.url.protocol` | `"http:"\|"https:"` | URL scheme **with** colon |
+
+Helpers: `formatServerPortUrlLines(server)` · `assertServerPortUrlAligned(server)` · `serveBindSnapshot(server)` in [`lib/http/bun-server.ts`](../../../lib/http/bun-server.ts).
+
 We do **not** scrape or parse Bun’s doc site at runtime. Docs are cited with `@see` URLs; behavior is validated with tests against **this Bun version’s runtime** (`tests/server-defaults.test.ts`).
 
 ## Environment variables ([Bun env docs](https://bun.com/docs/runtime/environment-variables))

@@ -184,6 +184,59 @@ export function serveBindSnapshot(server: BunServer): ServeBindSnapshot {
 }
 
 /**
+ * Docs parity: after bind, read the chosen port from the Server — never re-read env.
+ *
+ * ```ts
+ * console.log(server.port); // 3000
+ * console.log(server.url);  // http://localhost:3000/
+ * ```
+ *
+ * `server.url` is a WHATWG `URL` (not a string). Logging it prints `href`.
+ * Port has two shapes: `server.port` (number) vs `server.url.port` (string).
+ *
+ * @see https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname
+ */
+export function formatServerPortUrlLines(
+  server: Pick<BunServer, 'port' | 'url' | 'hostname' | 'protocol'>
+): string[] {
+  const urlPort = server.url.port === '' ? '(default empty · 80/443)' : server.url.port;
+  return [
+    `server.port = ${server.port}`,
+    `server.url  = ${server.url.href}`,
+    `server.url.port = ${urlPort} · hostname=${server.hostname} · protocol=${server.protocol} / ${server.url.protocol}`,
+  ];
+}
+
+/**
+ * Fail-closed invariant for TCP listeners after bind.
+ * Call from tests / doctor / bind path when dual shape must stay aligned.
+ */
+export function assertServerPortUrlAligned(
+  server: Pick<BunServer, 'port' | 'url' | 'protocol'>
+): void {
+  if (typeof server.port !== 'number' || !(server.port > 0) || server.port >= 65536) {
+    throw new Error(`server.port must be a live TCP port (got ${String(server.port)})`);
+  }
+  if (!(server.url instanceof URL)) {
+    throw new Error('server.url must be a URL instance after bind');
+  }
+  const nonDefault = server.port !== 80 && server.port !== 443;
+  if (nonDefault && server.url.port !== String(server.port)) {
+    throw new Error(
+      `server.url.port (${server.url.port}) must equal String(server.port) (${server.port})`
+    );
+  }
+  if (server.protocol != null && server.url.protocol !== `${server.protocol}:`) {
+    throw new Error(`server.url.protocol (${server.url.protocol}) must be ${server.protocol}:`);
+  }
+  if (!server.url.origin.includes(String(server.port)) && nonDefault) {
+    throw new Error(
+      `server.url.origin (${server.url.origin}) must include server.port (${server.port})`
+    );
+  }
+}
+
+/**
  * In-process request — docs: `server.fetch(request: Request | string)`.
  *
  * **Does not match `routes`** on current Bun — only the `fetch` handler runs.
