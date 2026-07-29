@@ -1,3 +1,4 @@
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#cpu-and-os-flags — --cpu
 // @see https://bun.com/docs/pm/cli/install#cpu-and-os-flags — --os
 // @see https://bun.com/docs/runtime/http/server#configuring-a-default-port — --port
@@ -825,9 +826,14 @@ function mergeEntry(
   if (partial.verifiedOn) existing.verifiedOn = partial.verifiedOn;
   // type: prefer api over concept
   if (partial.type === 'api' && existing.type === 'concept') existing.type = 'api';
-  // Accept legacy scrape labels; map onto nearest DocRefType.
-  if (partial.type === 'cli-option' || (partial.type as string) === 'cli-flag') {
+  // Accept legacy scrape labels; map onto nearest DocRefType — but never
+  // downgrade a correctly-derived cli-flag (rule: `bun test|run --*` →
+  // cli-flag) to cli-option when a scrape partial disagrees.
+  if (partial.type === 'cli-option' && existing.type !== 'cli-flag') {
     existing.type = 'cli-option';
+  }
+  if ((partial.type as string) === 'cli-flag') {
+    existing.type = 'cli-flag';
   }
   if ((partial.type as string) === 'config') existing.type = 'config-key';
   // aliases
