@@ -117,11 +117,11 @@ note = "No DNS record. Access app staged. Install tunnel + credential or decommi
 
 [surfaces.registry_write]
 host = "registry-write.internal.factory-wager.com"
-backend = "none"
-status = "placeholder"
+backend = "none — never provisioned"
+status = "retired"
 protocol = "—"
-access = "bearer (intended)"
-note = "Intended private publish plane (SDK publishUrl examples). Not provisioned; real writes = local :3000 POST or direct-to-R2 SigV4 (ADR-0002)."
+access = "none"
+note = "Retired 2026-07-28 (ADR-0002 addendum): the private publish plane is dropped; write origins are the local gateway (:3000, Bearer) and direct-to-R2 SigV4 (factory publish). Re-add only alongside an authenticated edge writer (design doc required)."
 
 # Publish lanes (ADR-0002) — not hosts, but part of the registry protocol map.
 [publish.prod]

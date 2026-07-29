@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "kind": "surfaces-state",
-  "generatedAt": "2026-07-28T23:36:33.387Z",
+  "generatedAt": "2026-07-29T00:39:02.451Z",
   "source": "config/surfaces.toml (dig+curl verified 2026-07-28)",
   "surfaces": [
     {
@@ -172,12 +172,12 @@
       "host": "registry-write.internal.factory-wager.com",
       "apex": "factory-wager.com",
       "subdomain": "registry-write.internal",
-      "backend": "none",
+      "backend": "none — never provisioned",
       "backendCode": "none",
-      "status": "placeholder",
+      "status": "retired",
       "protocol": "—",
-      "access": "bearer (intended)",
-      "note": "Intended private publish plane (SDK publishUrl examples). Not provisioned; real writes = local :3000 POST or direct-to-R2 SigV4 (ADR-0002)."
+      "access": "none",
+      "note": "Retired 2026-07-28 (ADR-0002 addendum): the private publish plane is dropped; write origins are the local gateway (:3000, Bearer) and direct-to-R2 SigV4 (factory publish). Re-add only alongside an authenticated edge writer (design doc required)."
     }
   ],
   "publishLanes": [
@@ -213,17 +213,15 @@
     "byStatus": {
       "live": 7,
       "vanity": 2,
-      "retired": 2,
-      "staged": 1,
-      "placeholder": 1
+      "retired": 3,
+      "staged": 1
     },
     "byAccess": {
       "public": 7,
       "allowlist": 1,
       "applied": 1,
-      "none": 2,
-      "staged": 1,
-      "bearer (intended)": 1
+      "none": 3,
+      "staged": 1
     },
     "byBackendCode": {
       "cloudflare-pages": 7,
