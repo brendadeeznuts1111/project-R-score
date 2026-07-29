@@ -8,12 +8,16 @@ Path SSOT: [`lib/docs/repo-docs.ts`](../../lib/docs/repo-docs.ts). Maps: [`STRUC
 
 ## Metrics
 
-| Metric | Baseline | r1 | r2 | r3 | r4 | r5 (Bun-native) |
-|--------|---------:|---:|---:|---:|---:|----------------:|
-| `package.json` scripts | 329 (431 original) | 275 | 258 | 193 | 176 | **173** |
-| `projects/experimental/` | 0 | 6 | 7 | 9 | 11 | 11 |
-| `node:path` / `path` in `scripts/` | many | — | — | — | — | **0** (dns/os/inspector remain where real) |
-| `process.argv` in `scripts/*.ts` | 52 files | — | — | — | — | **0** → `Bun.argv` |
+Historical pass table (Jul 2026 trim). **r5 was the end of that pass** — not a live ratchet.
+
+| Metric | Baseline | r1 | r2 | r3 | r4 | r5 (Bun-native) | **Live 2026-07-29** |
+|--------|---------:|---:|---:|---:|---:|----------------:|--------------------:|
+| `package.json` scripts | 329 (431 original) | 275 | 258 | 193 | 176 | 173 | **~660** (regrowth after r5 — day-loop + portal + proof scripts) |
+| `projects/experimental/` product leaves | 0 | 6 | 7 | 9 | 11 | 11 | **11** |
+| `node:path` / `path` in `scripts/` | many | — | — | — | — | **0** (dns/os/inspector remain where real) | keep via `check:path-bun` |
+| `process.argv` in `scripts/*.ts` | 52 files | — | — | — | — | **0** → `Bun.argv` | keep via day-loop |
+
+Re-count scripts: `bun -e 'console.log(Object.keys(require("./package.json").scripts).length)'`. Treat r5 as history; open a new trim pass only if intentional bloat reduction is scheduled.
 
 ## What changed
 

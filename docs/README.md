@@ -34,6 +34,7 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 | Wire boundary (parse once) | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) | full map |
 | Portal foundation (static UI) | [portal-foundation.md](./portal-foundation.md) | data.js · topbar · verify · dev reload · TOC board § |
 | Platform routing (local vs Pages) | [platform-routing.md](./platform-routing.md) | domains · functions · auth plane |
+| Brand / domain / vault map | [brand-alignment.md](./brand-alignment.md) | dig-verified hosts · email · Proton vaults · tunnels → [tunnel-inventory](./harness/tenants/tunnel-inventory.md) |
 | Compliance portal (MA/NJ) | [harness/tenants/compliance-portal.md](./harness/tenants/compliance-portal.md) | `/portal/compliance/` · `compliance:bake` |
 | Partner limit raises | [harness/tenants/partner-limits.md](./harness/tenants/partner-limits.md) | `/portal/limits/` · multi-factor · `ops:limits:*` · agent API |
 | Seat capital desk | [harness/tenants/seat-capital-desk.md](./harness/tenants/seat-capital-desk.md) | Telegram desk · intake · registry bake |
@@ -51,12 +52,16 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 | Bun DX catalog | `bun run dx:catalog <id>` | SSOT [`config/bun-dx-catalog.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/bun-dx-catalog.ts) |
 | Bun token/catalog operate | [BUN_DOCS_OPERATE.md](./BUN_DOCS_OPERATE.md) · [docs-artifact-paths.ts](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/docs-artifact-paths.ts) | `docs:refresh:fast` (daily) · `docs:feeds:refresh` · `docs:refresh` (full) |
 | Bun-first policy | [bun/BUN_FIRST_POLICY.md](./bun/BUN_FIRST_POLICY.md) | pin 1.4.0 |
+| Bun-first guards | [BUN_FIRST_GUARDS.md](./BUN_FIRST_GUARDS.md) | policy enforcement notes |
+| Bun test speed | [BUN_TEST_SPEED.md](./BUN_TEST_SPEED.md) | parallel / isolate / shard day-loop |
+| Registry index ADR | [adr/0002-registry-index-ssot.md](./adr/0002-registry-index-ssot.md) | R2 SSOT · file is snapshot |
 
 ## Live trees (only)
 
 | Tree | Role |
 |------|------|
 | [guides/](./guides/) | Short runbooks |
+| [adr/](./adr/) | Architecture decision records (registry index · telegram desk) |
 | [audit/](./audit/) | FactoryWager audit findings + concepts (sibling SSOT, not BunToken) |
 | [organization/](./organization/) | Velocity / homebase discovery |
 | [harness/](./harness/) | JIT index, proof, authority |

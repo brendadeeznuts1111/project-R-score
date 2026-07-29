@@ -281,6 +281,13 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     note: 'workspace coupling · multi-surface · env owners · claim packages-graph-map-v13',
   },
   {
+    label: 'install-hygiene-report',
+    href: '/registry/install-hygiene-report.json',
+    note: 'bunfig/cache/npm-install hygiene bake · bake:install-hygiene · monitoring.installHygiene · board path reserved /portal/install-hygiene/',
+    group: 'harness',
+    cli: 'bun run bake:install-hygiene',
+  },
+  {
     label: 'monorepo-health',
     href: '/registry/monorepo-health.json',
     note: 'score 0–100 · claim monorepo-health-score · gate check:monorepo-health · TOC harness glance',

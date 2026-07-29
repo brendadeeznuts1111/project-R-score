@@ -9,17 +9,15 @@ export const PACKAGES_MAP_SCHEMA = 13;
 /** Older bakes still render; surfaces block appears only on v13+. */
 const PACKAGES_MAP_SCHEMA_MIN = 12;
 
-/** Primary registry bake + optional local audit-report fallbacks (dev only paths may 404 on Pages). */
-const PACKAGES_MAP_SOURCES = [
-  '/registry/packages-graph-map.json',
-  '/audit-report.json',
-];
+/** Primary registry bake (Pages serves public/registry only). */
+const PACKAGES_MAP_SOURCES = ['/registry/packages-graph-map.json'];
 
-/** Related package-plane bakes (wire-portal orphan close for package-info). */
+/** Related package-plane bakes (wire-portal orphan close for package-info + install hygiene). */
 export const PACKAGES_RELATED_REGISTRY = [
   '/registry/packages-graph-map.json',
   '/registry/package-info.json',
   '/registry/monorepo-health.json',
+  '/registry/install-hygiene-report.json',
 ];
 
 /**

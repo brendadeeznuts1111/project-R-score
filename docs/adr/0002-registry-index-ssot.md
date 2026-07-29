@@ -1,6 +1,7 @@
 # ADR-0002: Registry index — R2 is the SSOT, the file is a snapshot
 
-> Status: **decided** (2026-07-24) · Supersedes the P3 discovery finding "two sources of truth"
+> Status: **decided** (2026-07-24) · Supersedes the P3 discovery finding "two sources of truth"  
+> **Linked from:** [`registry-index.md`](../../registry-index.md) · [`docs/README.md`](../README.md) · guides registry stack
 
 ## Context
 

@@ -18,6 +18,7 @@ Navigation hub for [wiki.factory-wager.com](https://wiki.factory-wager.com/). Ho
 | Workspace map | [`STRUCTURE.md`](STRUCTURE.md) |
 | Harness JIT | [`docs/harness/`](docs/harness/) · `bun run harness:status` |
 | Coding standards | [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) |
+| Brand / domain map | [`docs/brand-alignment.md`](docs/brand-alignment.md) · tunnels [`tunnel-inventory.md`](docs/harness/tenants/tunnel-inventory.md) |
 
 ## Live surfaces
 

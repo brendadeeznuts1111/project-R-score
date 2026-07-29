@@ -110,7 +110,7 @@ bun tools/portal-cli.ts doctor --group infra --verbose
 | `ledger.factory-wager.com` | **Access 302** | `infra-ledger-access` PASS |
 | `score.factory-wager.com/portal` | **public 200** | `infra-portal-access` FAIL warn |
 | `project-r-score.pages.dev/portal` | **public 200** | (same) |
-| `terminal.factory-wager.com` | **502 dangling** | `infra-terminal-host` FAIL warn |
+| `terminal.factory-wager.com` | **NXDOMAIN** (CNAME deleted 2026-07-28) | `infra-terminal-host` — host gone; see [tunnel-inventory](tunnel-inventory.md) · [brand-alignment](../../brand-alignment.md) |
 | `reasonix.factory-wager.com` | **NXDOMAIN** | `infra-reasonix-dns` info (expected) |
 
 ```bash

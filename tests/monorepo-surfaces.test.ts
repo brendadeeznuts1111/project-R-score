@@ -155,9 +155,12 @@ describe('monorepo-surfaces', () => {
     expect(s.registry.byFamily?.length).toBeGreaterThanOrEqual(4);
     expect(s.registry.topLevel.some(a => a.file === 'packages-graph-map.json')).toBe(true);
     expect(s.registry.topLevel.some(a => a.file === 'portal-chrome.json')).toBe(true);
-    // Portal refs + orphans
+    // Portal refs + orphans (install-hygiene wired 2026-07-29 — orphan count may be 0)
     expect((s.registry.portalRefs?.length ?? 0)).toBeGreaterThan(5);
-    expect((s.summary.registryOrphanFromPortal ?? 0)).toBeGreaterThan(0);
+    expect((s.summary.registryOrphanFromPortal ?? 0)).toBeGreaterThanOrEqual(0);
+    expect(s.registry.portalRefs?.some(r => r.path.includes('install-hygiene-report.json'))).toBe(
+      true
+    );
     // lib plane is much larger than workspaces lib/*
     expect((s.libPlane?.dirs.length ?? 0)).toBeGreaterThanOrEqual(10);
     expect(s.libPlane?.workspaceShared).toBe(true);

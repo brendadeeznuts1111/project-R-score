@@ -1,7 +1,7 @@
 {
   "schemaVersion": 13,
   "kind": "packages-graph-map",
-  "generatedAt": "2026-07-28T18:29:50.708Z",
+  "generatedAt": "2026-07-29T00:20:09.390Z",
   "bunVersion": "1.4.0",
   "score": 100,
   "grade": "healthy",
@@ -603,24 +603,24 @@
   "surfaces": {
     "schemaVersion": 3,
     "kind": "monorepo-surfaces",
-    "generatedAt": "2026-07-28T18:29:50.682Z",
+    "generatedAt": "2026-07-29T00:20:09.336Z",
     "summary": {
       "workspaceMembers": 8,
       "packagesPlane": 6,
       "otherWorkspaces": 2,
-      "portalPages": 19,
-      "portalModules": 28,
-      "chromeComponents": 12,
+      "portalPages": 24,
+      "portalModules": 37,
+      "chromeComponents": 13,
       "brandAssets": 20,
-      "registryTopLevelJson": 55,
+      "registryTopLevelJson": 62,
       "registryStoragePackages": 9,
-      "libTopLevelDirs": 39,
+      "libTopLevelDirs": 42,
       "stoNestedPackages": 3,
-      "portalRegistryRefs": 57,
+      "portalRegistryRefs": 64,
       "registryOrphanFromPortal": 0,
       "registryFamilyCount": 13,
       "themeDarkTokens": 12,
-      "pageRegistryEdges": 156,
+      "pageRegistryEdges": 198,
       "libImportHubs": 1,
       "orphanWireCandidates": 0
     },
@@ -705,6 +705,33 @@
           ]
         },
         {
+          "href": "/portal/brands/",
+          "slug": "brands",
+          "hasIndex": true,
+          "hasMd": true,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/brands/brands-board.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js",
+            "/portal/components/footer.js"
+          ]
+        },
+        {
+          "href": "/portal/bunfig/",
+          "slug": "bunfig",
+          "hasIndex": true,
+          "hasMd": false,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js",
+            "/portal/components/footer.js"
+          ]
+        },
+        {
           "href": "/portal/catalog/",
           "slug": "catalog",
           "hasIndex": true,
@@ -743,6 +770,17 @@
             "/portal/components/sidebar.js",
             "/portal/components/notification.js",
             "/portal/components/footer.js"
+          ]
+        },
+        {
+          "href": "/portal/doctor/",
+          "slug": "doctor",
+          "hasIndex": true,
+          "hasMd": false,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/doctor/doctor-board.js",
+            "/portal/topbar.js"
           ]
         },
         {
@@ -811,6 +849,19 @@
             "/portal/components/sidebar.js",
             "/portal/components/notification.js",
             "/portal/components/limit-changes-card.js",
+            "/portal/components/footer.js"
+          ]
+        },
+        {
+          "href": "/portal/identity/",
+          "slug": "identity",
+          "hasIndex": true,
+          "hasMd": false,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js",
             "/portal/components/footer.js"
           ]
         },
@@ -891,6 +942,20 @@
           ]
         },
         {
+          "href": "/portal/surfaces/",
+          "slug": "surfaces",
+          "hasIndex": true,
+          "hasMd": false,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/footer.js",
+            "/portal/copy-cli.js",
+            "/portal/surfaces/surfaces-board.js"
+          ]
+        },
+        {
           "href": "/portal/tennis/",
           "slug": "tennis",
           "hasIndex": true,
@@ -957,6 +1022,11 @@
           "id": "app"
         },
         {
+          "path": "//portal/brands/brands-board.js",
+          "kind": "page-script",
+          "id": "brands-board"
+        },
+        {
           "path": "//portal/card.js",
           "kind": "module",
           "id": "card"
@@ -965,6 +1035,16 @@
           "path": "//portal/channel-filter.js",
           "kind": "module",
           "id": "channel-filter"
+        },
+        {
+          "path": "//portal/command-centre-core.js",
+          "kind": "module",
+          "id": "command-centre-core"
+        },
+        {
+          "path": "//portal/command-centre.js",
+          "kind": "module",
+          "id": "command-centre"
         },
         {
           "path": "//portal/compliance/compliance-dashboard.js",
@@ -987,9 +1067,19 @@
           "id": "notification"
         },
         {
+          "path": "//portal/components/package-card.js",
+          "kind": "component",
+          "id": "package-card"
+        },
+        {
           "path": "//portal/components/sidebar.js",
           "kind": "component",
           "id": "sidebar"
+        },
+        {
+          "path": "//portal/copy-cli.js",
+          "kind": "module",
+          "id": "copy-cli"
         },
         {
           "path": "//portal/dashboard-app.js",
@@ -1007,9 +1097,19 @@
           "id": "data"
         },
         {
+          "path": "//portal/doctor/doctor-board.js",
+          "kind": "page-script",
+          "id": "doctor-board"
+        },
+        {
           "path": "//portal/dod/dod-dashboard.js",
           "kind": "page-script",
           "id": "dod-dashboard"
+        },
+        {
+          "path": "//portal/fetch-json.js",
+          "kind": "module",
+          "id": "fetch-json"
         },
         {
           "path": "//portal/health-page.js",
@@ -1047,6 +1147,11 @@
           "id": "proof-index"
         },
         {
+          "path": "//portal/registry-cache.js",
+          "kind": "module",
+          "id": "registry-cache"
+        },
+        {
           "path": "//portal/search.js",
           "kind": "module",
           "id": "search"
@@ -1055,6 +1160,11 @@
           "path": "//portal/style.css",
           "kind": "style",
           "id": "style"
+        },
+        {
+          "path": "//portal/surfaces/surfaces-board.js",
+          "kind": "page-script",
+          "id": "surfaces-board"
         },
         {
           "path": "//portal/theme-tokens.css",
@@ -1152,6 +1262,13 @@
           "onDisk": true
         },
         {
+          "id": "brand-assets",
+          "path": "/site.webmanifest",
+          "kind": "shell",
+          "role": "FactoryWager mark · install metadata · theme colors",
+          "onDisk": true
+        },
+        {
           "id": "page-template",
           "path": "/portal/_page-template.html",
           "kind": "template",
@@ -1197,9 +1314,9 @@
       },
       "modulesByKind": {
         "template": 1,
-        "module": 15,
-        "page-script": 5,
-        "component": 4,
+        "module": 20,
+        "page-script": 8,
+        "component": 5,
         "style": 1,
         "theme": 2
       }
@@ -1316,6 +1433,13 @@
     "registry": {
       "topLevel": [
         {
+          "file": "brand-keymap.json",
+          "kind": "brand-keymap",
+          "schemaVersion": 1,
+          "bytes": 102804,
+          "family": "other"
+        },
+        {
           "file": "bun-defaults-proof.json",
           "kind": null,
           "schemaVersion": 1,
@@ -1337,10 +1461,24 @@
           "family": "proof"
         },
         {
+          "file": "bunfig-state.json",
+          "kind": "bunfig-state",
+          "schemaVersion": 2,
+          "bytes": 3545,
+          "family": "other"
+        },
+        {
+          "file": "capability-map-full.json",
+          "kind": "capability-map-full",
+          "schemaVersion": 2,
+          "bytes": 50007,
+          "family": "other"
+        },
+        {
           "file": "capability-map-subset.json",
           "kind": "capability-map-subset",
-          "schemaVersion": 1,
-          "bytes": 2203,
+          "schemaVersion": 4,
+          "bytes": 47562,
           "family": "other"
         },
         {
@@ -1354,7 +1492,7 @@
           "file": "channel-meta-bake.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 821,
+          "bytes": 149,
           "family": "catalog"
         },
         {
@@ -1410,7 +1548,7 @@
           "file": "doc-index.json",
           "kind": null,
           "schemaVersion": 1,
-          "bytes": 164860,
+          "bytes": 155542,
           "family": "catalog"
         },
         {
@@ -1419,6 +1557,13 @@
           "schemaVersion": null,
           "bytes": 2750,
           "family": "proof"
+        },
+        {
+          "file": "doctor-state.json",
+          "kind": "portal-doctor-state",
+          "schemaVersion": 1,
+          "bytes": 5542,
+          "family": "other"
         },
         {
           "file": "dod-queue.json",
@@ -1437,8 +1582,8 @@
         {
           "file": "env-inventory.json",
           "kind": "env-inventory",
-          "schemaVersion": 3,
-          "bytes": 49270,
+          "schemaVersion": 4,
+          "bytes": 57156,
           "family": "env"
         },
         {
@@ -1466,8 +1611,15 @@
           "file": "harness-skills-catalog.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 18656,
+          "bytes": 11175,
           "family": "catalog"
+        },
+        {
+          "file": "identity-board.json",
+          "kind": "identity-board",
+          "schemaVersion": null,
+          "bytes": 1517,
+          "family": "other"
         },
         {
           "file": "install-env-proof.json",
@@ -1477,10 +1629,17 @@
           "family": "proof"
         },
         {
+          "file": "install-hygiene-report.json",
+          "kind": "install-hygiene",
+          "schemaVersion": 1,
+          "bytes": 2260,
+          "family": "other"
+        },
+        {
           "file": "install-platform.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 10384,
+          "bytes": 10132,
           "family": "catalog"
         },
         {
@@ -1494,7 +1653,7 @@
           "file": "monitoring.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 12176,
+          "bytes": 12173,
           "family": "health"
         },
         {
@@ -1515,14 +1674,14 @@
           "file": "networking-proof.json",
           "kind": null,
           "schemaVersion": 1,
-          "bytes": 9217,
+          "bytes": 10530,
           "family": "proof"
         },
         {
           "file": "ops-summary.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 67452,
+          "bytes": 67399,
           "family": "ops"
         },
         {
@@ -1536,21 +1695,21 @@
           "file": "packages-graph-map.json",
           "kind": "packages-graph-map",
           "schemaVersion": 13,
-          "bytes": 98380,
+          "bytes": 115396,
           "family": "packages"
         },
         {
           "file": "portal-chrome.json",
           "kind": "portal-chrome",
           "schemaVersion": 1,
-          "bytes": 8371,
+          "bytes": 9513,
           "family": "portal"
         },
         {
           "file": "portal-weave.json",
           "kind": "portal-weave",
           "schemaVersion": 2,
-          "bytes": 18428,
+          "bytes": 20304,
           "family": "portal"
         },
         {
@@ -1564,7 +1723,7 @@
           "file": "proof-taxonomy-audit.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 7041,
+          "bytes": 6955,
           "family": "verification"
         },
         {
@@ -1592,7 +1751,7 @@
           "file": "release-features.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 109657,
+          "bytes": 69099,
           "family": "verification"
         },
         {
@@ -1613,8 +1772,15 @@
           "file": "static.json",
           "kind": null,
           "schemaVersion": 1,
-          "bytes": 115523,
+          "bytes": 115421,
           "family": "catalog"
+        },
+        {
+          "file": "surfaces-state.json",
+          "kind": "surfaces-state",
+          "schemaVersion": 2,
+          "bytes": 8761,
+          "family": "other"
         },
         {
           "file": "telegram-handshake-catalog.json",
@@ -1641,21 +1807,21 @@
           "file": "toc-ops.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 383949,
+          "bytes": 383955,
           "family": "ops"
         },
         {
           "file": "vault-health.json",
           "kind": "vault-health",
           "schemaVersion": null,
-          "bytes": 2547,
+          "bytes": 2835,
           "family": "vault"
         },
         {
           "file": "vault-map.json",
           "kind": "vault-map-bundle",
           "schemaVersion": 1,
-          "bytes": 7345,
+          "bytes": 7350,
           "family": "vault"
         },
         {
@@ -1690,7 +1856,7 @@
           "file": "verification-stable-1.4.0.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 109657,
+          "bytes": 108118,
           "family": "verification"
         },
         {
@@ -1724,6 +1890,10 @@
           "count": 12
         },
         {
+          "family": "other",
+          "count": 9
+        },
+        {
           "family": "catalog",
           "count": 8
         },
@@ -1742,10 +1912,6 @@
         {
           "family": "health",
           "count": 3
-        },
-        {
-          "family": "other",
-          "count": 2
         },
         {
           "family": "packages",
@@ -1788,6 +1954,14 @@
           "exists": true
         },
         {
+          "path": "/registry/brand-keymap.json",
+          "from": [
+            "public/portal/brands/brands-board.js",
+            "public/portal/brands/index.html"
+          ],
+          "exists": true
+        },
+        {
           "path": "/registry/bun-defaults-proof.json",
           "from": [
             "public/portal/dashboard-app.js",
@@ -1813,8 +1987,25 @@
           "exists": true
         },
         {
+          "path": "/registry/bunfig-state.json",
+          "from": [
+            "public/portal/bunfig/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/capability-map-full.json",
+          "from": [
+            "public/portal/tools/tools-hub.js"
+          ],
+          "exists": true
+        },
+        {
           "path": "/registry/capability-map-subset.json",
           "from": [
+            "public/portal/command-centre-core.js",
+            "public/portal/command-centre.js",
+            "public/portal/packages/packages-board.js",
             "public/portal/tools/tools-hub.js"
           ],
           "exists": true
@@ -1823,6 +2014,7 @@
           "path": "/registry/catalog-snapshot.json",
           "from": [
             "public/portal/catalog/index.html",
+            "public/portal/command-centre.js",
             "public/portal/tools/tools-hub.js"
           ],
           "exists": true
@@ -1905,6 +2097,17 @@
           "exists": true
         },
         {
+          "path": "/registry/doctor-state.json",
+          "from": [
+            "public/portal/command-centre-core.js",
+            "public/portal/doctor/doctor-board.js",
+            "public/portal/doctor/index.html",
+            "public/portal/nav-badges.js",
+            "public/portal/tools/tools-hub.js"
+          ],
+          "exists": true
+        },
+        {
           "path": "/registry/dod-queue.json",
           "from": [
             "public/portal/dod/dod-dashboard.js"
@@ -1930,6 +2133,8 @@
           "from": [
             "public/portal/_page-template.html",
             "public/portal/catalog/index.html",
+            "public/portal/command-centre-core.js",
+            "public/portal/command-centre.js",
             "public/portal/compliance/index.html",
             "public/portal/dashboard/index.html",
             "public/portal/dod/index.html",
@@ -1942,9 +2147,7 @@
             "public/portal/packages/index.html",
             "public/portal/skills/index.html",
             "public/portal/toc/index.html",
-            "public/portal/tools/index.html",
-            "public/portal/tools/tools-hub.js",
-            "public/portal/vault/index.html"
+            "public/portal/tools/index.html"
           ],
           "exists": true
         },
@@ -1971,10 +2174,25 @@
           "exists": true
         },
         {
+          "path": "/registry/identity-board.json",
+          "from": [
+            "public/portal/identity/index.html"
+          ],
+          "exists": true
+        },
+        {
           "path": "/registry/install-env-proof.json",
           "from": [
             "public/portal/dashboard-app.js",
             "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/install-hygiene-report.json",
+          "from": [
+            "public/portal/packages/index.html",
+            "public/portal/packages/packages-board.js"
           ],
           "exists": true
         },
@@ -2002,6 +2220,7 @@
         {
           "path": "/registry/monitoring.json",
           "from": [
+            "public/portal/command-centre.js",
             "public/portal/dashboard-app.js",
             "public/portal/health-page.js"
           ],
@@ -2011,7 +2230,10 @@
           "path": "/registry/monorepo-health.json",
           "from": [
             "public/portal/_page-template.html",
+            "public/portal/bunfig/index.html",
             "public/portal/catalog/index.html",
+            "public/portal/command-centre-core.js",
+            "public/portal/command-centre.js",
             "public/portal/compliance/index.html",
             "public/portal/components/footer.js",
             "public/portal/dashboard/index.html",
@@ -2029,9 +2251,7 @@
             "public/portal/skills/index.html",
             "public/portal/toc/index.html",
             "public/portal/toc/toc-dashboard.js",
-            "public/portal/tools/index.html",
-            "public/portal/tools/tools-hub.js",
-            "public/portal/vault/index.html"
+            "public/portal/tools/index.html"
           ],
           "exists": true
         },
@@ -2052,6 +2272,8 @@
         {
           "path": "/registry/ops-summary.json",
           "from": [
+            "public/portal/command-centre-core.js",
+            "public/portal/command-centre.js",
             "public/portal/components/limit-changes-card.js",
             "public/portal/dashboard-app.js",
             "public/portal/dashboard/index.html",
@@ -2060,8 +2282,7 @@
             "public/portal/limits/index.html",
             "public/portal/operations-dashboard.js",
             "public/portal/partner-history/index.html",
-            "public/portal/toc/toc-dashboard.js",
-            "public/portal/tools/tools-hub.js"
+            "public/portal/toc/toc-dashboard.js"
           ],
           "exists": true
         },
@@ -2075,12 +2296,13 @@
         {
           "path": "/registry/packages-graph-map.json",
           "from": [
+            "public/portal/command-centre-core.js",
+            "public/portal/command-centre.js",
             "public/portal/nav-badges.js",
             "public/portal/operations-dashboard.js",
             "public/portal/packages/index.html",
             "public/portal/packages/packages-board.js",
-            "public/portal/proof-index.js",
-            "public/portal/tools/tools-hub.js"
+            "public/portal/proof-index.js"
           ],
           "exists": true
         },
@@ -2088,6 +2310,7 @@
           "path": "/registry/portal-chrome.json",
           "from": [
             "public/portal/_page-template.html",
+            "public/portal/bunfig/index.html",
             "public/portal/catalog/index.html",
             "public/portal/compliance/index.html",
             "public/portal/components/footer.js",
@@ -2103,16 +2326,31 @@
             "public/portal/packages/index.html",
             "public/portal/skills/index.html",
             "public/portal/toc/index.html",
-            "public/portal/tools/index.html",
-            "public/portal/vault/index.html"
+            "public/portal/tools/index.html"
           ],
           "exists": true
         },
         {
           "path": "/registry/portal-weave.json",
           "from": [
+            "public/portal/_page-template.html",
+            "public/portal/bunfig/index.html",
+            "public/portal/catalog/index.html",
+            "public/portal/compliance/index.html",
+            "public/portal/components/footer.js",
             "public/portal/dashboard/index.html",
-            "public/portal/operations-dashboard.js"
+            "public/portal/dod/index.html",
+            "public/portal/env/index.html",
+            "public/portal/failures/index.html",
+            "public/portal/health/index.html",
+            "public/portal/index.html",
+            "public/portal/limits/index.html",
+            "public/portal/operations-dashboard.js",
+            "public/portal/ops/index.html",
+            "public/portal/packages/index.html",
+            "public/portal/skills/index.html",
+            "public/portal/toc/index.html",
+            "public/portal/tools/index.html"
           ],
           "exists": true
         },
@@ -2150,8 +2388,10 @@
           "path": "/registry/registry.json",
           "from": [
             "public/portal/app.js",
+            "public/portal/components/package-card.js",
             "public/portal/components/sidebar.js",
-            "public/portal/index.html"
+            "public/portal/index.html",
+            "public/portal/registry-cache.js"
           ],
           "exists": true
         },
@@ -2185,6 +2425,14 @@
           "from": [
             "public/portal/health/index.html",
             "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/surfaces-state.json",
+          "from": [
+            "public/portal/surfaces/index.html",
+            "public/portal/surfaces/surfaces-board.js"
           ],
           "exists": true
         },
@@ -2225,8 +2473,9 @@
         {
           "path": "/registry/vault-health.json",
           "from": [
+            "public/portal/command-centre-core.js",
+            "public/portal/command-centre.js",
             "public/portal/nav-badges.js",
-            "public/portal/tools/tools-hub.js",
             "public/portal/vault/index.html"
           ],
           "exists": true
@@ -2336,7 +2585,12 @@
         {
           "name": "docs",
           "hasPackageJson": false,
-          "tsFiles": 34
+          "tsFiles": 35
+        },
+        {
+          "name": "doctor",
+          "hasPackageJson": false,
+          "tsFiles": 0
         },
         {
           "name": "dod",
@@ -2361,12 +2615,17 @@
         {
           "name": "http",
           "hasPackageJson": false,
-          "tsFiles": 29
+          "tsFiles": 36
         },
         {
           "name": "identity",
           "hasPackageJson": false,
-          "tsFiles": 16
+          "tsFiles": 17
+        },
+        {
+          "name": "install",
+          "hasPackageJson": false,
+          "tsFiles": 1
         },
         {
           "name": "macros",
@@ -2381,7 +2640,7 @@
         {
           "name": "monitoring",
           "hasPackageJson": false,
-          "tsFiles": 10
+          "tsFiles": 12
         },
         {
           "name": "net",
@@ -2411,7 +2670,7 @@
         {
           "name": "portal",
           "hasPackageJson": false,
-          "tsFiles": 4
+          "tsFiles": 9
         },
         {
           "name": "prediction",
@@ -2446,11 +2705,16 @@
         {
           "name": "security",
           "hasPackageJson": false,
-          "tsFiles": 13
+          "tsFiles": 14
         },
         {
           "name": "shared",
           "hasPackageJson": true,
+          "tsFiles": 2
+        },
+        {
+          "name": "surfaces",
+          "hasPackageJson": false,
           "tsFiles": 2
         },
         {
@@ -2471,7 +2735,7 @@
         {
           "name": "types",
           "hasPackageJson": false,
-          "tsFiles": 11
+          "tsFiles": 12
         },
         {
           "name": "utils",
@@ -2481,7 +2745,7 @@
         {
           "name": "verification",
           "hasPackageJson": false,
-          "tsFiles": 25
+          "tsFiles": 26
         }
       ],
       "workspaceShared": true
@@ -2509,6 +2773,27 @@
     "crossPlane": {
       "pageToRegistry": [
         {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/failures.json",
+          "family": "ops",
+          "weight": 4
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 4
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/packages-graph-map.json",
+          "family": "packages",
+          "weight": 4
+        },
+        {
           "page": "health",
           "pageHref": "/portal/health/",
           "registryPath": "/registry/ops-summary.json",
@@ -2530,10 +2815,24 @@
           "weight": 3
         },
         {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 3
+        },
+        {
           "page": "packages",
           "pageHref": "/portal/packages/",
           "registryPath": "/registry/monorepo-health.json",
           "family": "health",
+          "weight": 3
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/vault-health.json",
+          "family": "vault",
           "weight": 3
         },
         {
@@ -2544,11 +2843,32 @@
           "weight": 3
         },
         {
-          "page": "tools",
-          "pageHref": "/portal/tools/",
+          "page": "brands",
+          "pageHref": "/portal/brands/",
+          "registryPath": "/registry/brand-keymap.json",
+          "family": "other",
+          "weight": 2
+        },
+        {
+          "page": "bunfig",
+          "pageHref": "/portal/bunfig/",
           "registryPath": "/registry/monorepo-health.json",
           "family": "health",
-          "weight": 3
+          "weight": 2
+        },
+        {
+          "page": "bunfig",
+          "pageHref": "/portal/bunfig/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "bunfig",
+          "pageHref": "/portal/bunfig/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 2
         },
         {
           "page": "catalog",
@@ -2561,6 +2881,13 @@
           "page": "catalog",
           "pageHref": "/portal/catalog/",
           "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "catalog",
+          "pageHref": "/portal/catalog/",
+          "registryPath": "/registry/portal-weave.json",
           "family": "portal",
           "weight": 2
         },
@@ -2582,6 +2909,13 @@
           "page": "compliance",
           "pageHref": "/portal/compliance/",
           "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "compliance",
+          "pageHref": "/portal/compliance/",
+          "registryPath": "/registry/portal-weave.json",
           "family": "portal",
           "weight": 2
         },
@@ -2630,6 +2964,13 @@
         {
           "page": "dashboard",
           "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
           "registryPath": "/registry/proof-taxonomy-audit.json",
           "family": "verification",
           "weight": 2
@@ -2649,6 +2990,13 @@
           "weight": 2
         },
         {
+          "page": "doctor",
+          "pageHref": "/portal/doctor/",
+          "registryPath": "/registry/doctor-state.json",
+          "family": "other",
+          "weight": 2
+        },
+        {
           "page": "dod",
           "pageHref": "/portal/dod/",
           "registryPath": "/registry/monorepo-health.json",
@@ -2659,6 +3007,13 @@
           "page": "dod",
           "pageHref": "/portal/dod/",
           "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "dod",
+          "pageHref": "/portal/dod/",
+          "registryPath": "/registry/portal-weave.json",
           "family": "portal",
           "weight": 2
         },
@@ -2677,6 +3032,13 @@
           "weight": 2
         },
         {
+          "page": "env",
+          "pageHref": "/portal/env/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
           "page": "failures",
           "pageHref": "/portal/failures/",
           "registryPath": "/registry/monorepo-health.json",
@@ -2687,6 +3049,13 @@
           "page": "failures",
           "pageHref": "/portal/failures/",
           "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "failures",
+          "pageHref": "/portal/failures/",
+          "registryPath": "/registry/portal-weave.json",
           "family": "portal",
           "weight": 2
         },
@@ -2712,6 +3081,13 @@
           "weight": 2
         },
         {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
           "page": "home",
           "pageHref": "/portal/",
           "registryPath": "/registry/monorepo-health.json",
@@ -2722,6 +3098,13 @@
           "page": "home",
           "pageHref": "/portal/",
           "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "home",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/portal-weave.json",
           "family": "portal",
           "weight": 2
         },
@@ -2747,6 +3130,20 @@
           "weight": 2
         },
         {
+          "page": "limits",
+          "pageHref": "/portal/limits/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "packages",
+          "pageHref": "/portal/packages/",
+          "registryPath": "/registry/install-hygiene-report.json",
+          "family": "other",
+          "weight": 2
+        },
+        {
           "page": "packages",
           "pageHref": "/portal/packages/",
           "registryPath": "/registry/packages-graph-map.json",
@@ -2757,6 +3154,13 @@
           "page": "packages",
           "pageHref": "/portal/packages/",
           "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "packages",
+          "pageHref": "/portal/packages/",
+          "registryPath": "/registry/portal-weave.json",
           "family": "portal",
           "weight": 2
         },
@@ -2770,22 +3174,22 @@
         {
           "page": "shared",
           "pageHref": "/portal/",
-          "registryPath": "/registry/failures.json",
+          "registryPath": "/registry/capability-map-subset.json",
+          "family": "other",
+          "weight": 2
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/doctor-state.json",
+          "family": "other",
+          "weight": 2
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/ops-summary.json",
           "family": "ops",
-          "weight": 2
-        },
-        {
-          "page": "shared",
-          "pageHref": "/portal/",
-          "registryPath": "/registry/monorepo-health.json",
-          "family": "health",
-          "weight": 2
-        },
-        {
-          "page": "shared",
-          "pageHref": "/portal/",
-          "registryPath": "/registry/packages-graph-map.json",
-          "family": "packages",
           "weight": 2
         },
         {
@@ -2803,9 +3207,30 @@
           "weight": 2
         },
         {
+          "page": "skills",
+          "pageHref": "/portal/skills/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "surfaces",
+          "pageHref": "/portal/surfaces/",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
+          "weight": 2
+        },
+        {
           "page": "toc",
           "pageHref": "/portal/toc/",
           "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "toc",
+          "pageHref": "/portal/toc/",
+          "registryPath": "/registry/portal-weave.json",
           "family": "portal",
           "weight": 2
         },
@@ -2819,8 +3244,8 @@
         {
           "page": "tools",
           "pageHref": "/portal/tools/",
-          "registryPath": "/registry/failures.json",
-          "family": "ops",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
           "weight": 2
         },
         {
@@ -2831,18 +3256,53 @@
           "weight": 2
         },
         {
-          "page": "vault",
-          "pageHref": "/portal/vault/",
-          "registryPath": "/registry/monorepo-health.json",
-          "family": "health",
+          "page": "tools",
+          "pageHref": "/portal/tools/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
           "weight": 2
         },
         {
-          "page": "vault",
-          "pageHref": "/portal/vault/",
+          "page": "brands",
+          "pageHref": "/portal/brands/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 1
+        },
+        {
+          "page": "brands",
+          "pageHref": "/portal/brands/",
           "registryPath": "/registry/portal-chrome.json",
           "family": "portal",
-          "weight": 2
+          "weight": 1
+        },
+        {
+          "page": "brands",
+          "pageHref": "/portal/brands/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 1
+        },
+        {
+          "page": "brands",
+          "pageHref": "/portal/brands/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "bunfig",
+          "pageHref": "/portal/bunfig/",
+          "registryPath": "/registry/bunfig-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "bunfig",
+          "pageHref": "/portal/bunfig/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
         },
         {
           "page": "catalog",
@@ -2915,6 +3375,13 @@
           "weight": 1
         },
         {
+          "page": "components",
+          "pageHref": "/portal/components/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
           "page": "dashboard",
           "pageHref": "/portal/dashboard/",
           "registryPath": "/registry/bun-defaults-proof.json",
@@ -2968,13 +3435,6 @@
           "pageHref": "/portal/dashboard/",
           "registryPath": "/registry/monitoring.json",
           "family": "health",
-          "weight": 1
-        },
-        {
-          "page": "dashboard",
-          "pageHref": "/portal/dashboard/",
-          "registryPath": "/registry/portal-weave.json",
-          "family": "portal",
           "weight": 1
         },
         {
@@ -3132,6 +3592,41 @@
           "weight": 1
         },
         {
+          "page": "identity",
+          "pageHref": "/portal/identity/",
+          "registryPath": "/registry/identity-board.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "identity",
+          "pageHref": "/portal/identity/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 1
+        },
+        {
+          "page": "identity",
+          "pageHref": "/portal/identity/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 1
+        },
+        {
+          "page": "identity",
+          "pageHref": "/portal/identity/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 1
+        },
+        {
+          "page": "identity",
+          "pageHref": "/portal/identity/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
           "page": "limits",
           "pageHref": "/portal/limits/",
           "registryPath": "/registry/limit-raises.json",
@@ -3260,13 +3755,6 @@
         {
           "page": "ops",
           "pageHref": "/portal/ops/",
-          "registryPath": "/registry/portal-weave.json",
-          "family": "portal",
-          "weight": 1
-        },
-        {
-          "page": "ops",
-          "pageHref": "/portal/ops/",
           "registryPath": "/registry/proof-taxonomy-audit.json",
           "family": "verification",
           "weight": 1
@@ -3351,6 +3839,13 @@
         {
           "page": "packages",
           "pageHref": "/portal/packages/",
+          "registryPath": "/registry/capability-map-subset.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "packages",
+          "pageHref": "/portal/packages/",
           "registryPath": "/registry/failures.json",
           "family": "ops",
           "weight": 1
@@ -3386,8 +3881,22 @@
         {
           "page": "shared",
           "pageHref": "/portal/",
+          "registryPath": "/registry/catalog-snapshot.json",
+          "family": "catalog",
+          "weight": 1
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
           "registryPath": "/registry/formdata-proof.json",
           "family": "proof",
+          "weight": 1
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/monitoring.json",
+          "family": "health",
           "weight": 1
         },
         {
@@ -3407,15 +3916,22 @@
         {
           "page": "shared",
           "pageHref": "/portal/",
-          "registryPath": "/registry/release-features.json",
-          "family": "verification",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
           "weight": 1
         },
         {
           "page": "shared",
           "pageHref": "/portal/",
-          "registryPath": "/registry/vault-health.json",
-          "family": "vault",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/release-features.json",
+          "family": "verification",
           "weight": 1
         },
         {
@@ -3482,6 +3998,34 @@
           "weight": 1
         },
         {
+          "page": "surfaces",
+          "pageHref": "/portal/surfaces/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 1
+        },
+        {
+          "page": "surfaces",
+          "pageHref": "/portal/surfaces/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 1
+        },
+        {
+          "page": "surfaces",
+          "pageHref": "/portal/surfaces/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 1
+        },
+        {
+          "page": "surfaces",
+          "pageHref": "/portal/surfaces/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
           "page": "tennis",
           "pageHref": "/portal/tennis/",
           "registryPath": "/registry/registry.json",
@@ -3533,6 +4077,13 @@
         {
           "page": "tools",
           "pageHref": "/portal/tools/",
+          "registryPath": "/registry/capability-map-full.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "tools",
+          "pageHref": "/portal/tools/",
           "registryPath": "/registry/capability-map-subset.json",
           "family": "other",
           "weight": 1
@@ -3547,15 +4098,15 @@
         {
           "page": "tools",
           "pageHref": "/portal/tools/",
-          "registryPath": "/registry/ops-summary.json",
-          "family": "ops",
+          "registryPath": "/registry/doctor-state.json",
+          "family": "other",
           "weight": 1
         },
         {
           "page": "tools",
           "pageHref": "/portal/tools/",
-          "registryPath": "/registry/packages-graph-map.json",
-          "family": "packages",
+          "registryPath": "/registry/failures.json",
+          "family": "ops",
           "weight": 1
         },
         {
@@ -3568,13 +4119,6 @@
         {
           "page": "tools",
           "pageHref": "/portal/tools/",
-          "registryPath": "/registry/vault-health.json",
-          "family": "vault",
-          "weight": 1
-        },
-        {
-          "page": "tools",
-          "pageHref": "/portal/tools/",
           "registryPath": "/registry/vault-map.json",
           "family": "vault",
           "weight": 1
@@ -3582,8 +4126,22 @@
         {
           "page": "vault",
           "pageHref": "/portal/vault/",
-          "registryPath": "/registry/failures.json",
-          "family": "ops",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 1
+        },
+        {
+          "page": "vault",
+          "pageHref": "/portal/vault/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 1
+        },
+        {
+          "page": "vault",
+          "pageHref": "/portal/vault/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
           "weight": 1
         },
         {
@@ -3630,7 +4188,7 @@
       {
         "id": "lib-plane",
         "label": "lib/ top-level dirs",
-        "count": 39,
+        "count": 42,
         "note": "interior modules; workspace package only lib/shared · shared=yes"
       },
       {
@@ -3642,21 +4200,21 @@
       {
         "id": "portal-pages",
         "label": "portal HTML pages",
-        "count": 19,
+        "count": 24,
         "portal": "/portal/",
         "note": "public/portal/*/index.html shells + script src inventory"
       },
       {
         "id": "portal-chrome",
         "label": "portal chrome components",
-        "count": 12,
+        "count": 13,
         "bake": "/registry/portal-chrome.json",
-        "note": "nav + shared modules SSOT · onDisk=12/12"
+        "note": "nav + shared modules SSOT · onDisk=13/13"
       },
       {
         "id": "portal-modules",
         "label": "portal JS/CSS modules",
-        "count": 28,
+        "count": 37,
         "note": "components/ + root modules + page scripts + theme"
       },
       {
@@ -3668,20 +4226,20 @@
       {
         "id": "registry-bake",
         "label": "registry top-level JSON",
-        "count": 55,
+        "count": 62,
         "bake": "/registry/",
-        "note": "families: proof=12 · catalog=8 · verification=8 · compliance=6 · ops=6 · health=3 · not npm package deps"
+        "note": "families: proof=12 · other=9 · catalog=8 · verification=8 · compliance=6 · ops=6 · not npm package deps"
       },
       {
         "id": "registry-portal-refs",
         "label": "portal → registry refs",
-        "count": 57,
+        "count": 64,
         "note": "unique /registry/*.json from portal JS/HTML · orphanTop=0"
       },
       {
         "id": "page-registry-edges",
         "label": "page → registry edges",
-        "count": 156,
+        "count": 198,
         "portal": "/portal/packages/",
         "note": "attributed via page scripts + shell HTML (v3 cross-plane)"
       },

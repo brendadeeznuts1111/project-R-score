@@ -31,15 +31,17 @@ Replaced by [`scripts/affected-workspaces.ts`](../../scripts/affected-workspaces
 
 ## Context fan-out (cold start)
 
+Measured with `wc -l` on 2026-07-29 (do not hand-edit without re-measuring). Historical 2026-07-21 snapshot was AGENTS 173 / docs/AGENTS 22 / total 522 — capability map growth moved root AGENTS to ~300 lines.
+
 | File | Lines |
 |------|------:|
-| AGENTS.md | 173 |
-| docs/AGENTS.md | 22 (thin pointer → root AGENTS) |
+| AGENTS.md | 300 |
+| docs/AGENTS.md | 50 (pointer → root AGENTS + tables) |
 | .custom-instructions.md | 271 |
 | docs/WIRE_BOUNDARY.md | 56 |
-| **Total** | **522** |
+| **Total** | **677** |
 
-Mitigation: JIT index at [`docs/harness/README.md`](../harness/README.md).
+Mitigation: JIT index at [`docs/harness/README.md`](../harness/README.md). Re-measure: `wc -l AGENTS.md docs/AGENTS.md .custom-instructions.md docs/WIRE_BOUNDARY.md`.
 
 ## Competing precedents (Phase D)
 
