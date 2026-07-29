@@ -1806,6 +1806,7 @@
     "brand:status:lineage": "bun tools/brand-status.ts --lineage --once",
     "brand:status:flags": "bun tools/brand-status.ts --flags",
     "brand:status:bind": "bun tools/brand-status.ts --plane bind --once",
+    "brand:status:lifecycle": "bun tools/brand-status.ts --lifecycle --once",
     "brand:manifest:check": "bun tools/brand-manifest.ts --check",
     "check:brands": "bun tools/branded-id-check.ts --smart --strict",
     "check:brands:staged": "bun tools/branded-id-check.ts --staged --strict",

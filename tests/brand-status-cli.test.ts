@@ -32,6 +32,8 @@ describe('brand-status CLI', () => {
       apex: string;
       planes: Array<{ property?: string; default?: string }>;
       serveShape: Array<{ property: string; default: string; fallback: string }>;
+      serveMethods: Array<{ property: string; kind: string; signature: string }>;
+      serveOptions: Array<{ property: string; kind: string; default: string }>;
       lineage: { host: string; transitions: Array<{ step: string }> } | null;
     };
     expect(snap.kind).toBe('brand-status');
@@ -39,6 +41,12 @@ describe('brand-status CLI', () => {
     expect(snap.planes.length).toBeGreaterThanOrEqual(13);
     expect(snap.planes.some(p => p.property === 'server.port' && p.default?.includes('BUN_PORT'))).toBeTrue();
     expect(snap.serveShape.some(r => r.property === 'server.url')).toBeTrue();
+    expect(snap.serveMethods.some(r => r.property === 'server.timeout')).toBeTrue();
+    expect(
+      snap.serveOptions.some(
+        r => r.property === 'idleTimeout' && r.default.includes('omit → 10 seconds')
+      )
+    ).toBeTrue();
     expect(snap.lineage?.host).toBe('score.factory-wager.com');
     expect(snap.lineage?.transitions.some(t => t.step === '4.accessPath')).toBeTrue();
   });
@@ -57,12 +65,27 @@ describe('brand-status CLI', () => {
     expect(code).toBe(0);
     expect(stdout).toContain('A. SERVER / URL');
     expect(stdout).toContain('B. HOST PLANES');
+    expect(stdout).toContain('C. SERVER METHODS');
+    expect(stdout).toContain('D. SERVE OPTIONS');
     expect(stdout).toContain('INDEX');
     expect(stdout).toContain('#1');
     expect(stdout).toContain('server.port');
     expect(stdout).toContain('BUN_PORT');
     expect(stdout).toContain('NODE_PORT');
     expect(stdout).not.toContain('BUN_PORT → P…');
+    expect(stdout).toContain('omit → 10 seconds · max 255 · 0 = off');
+  });
+
+  test('--lifecycle --once prints only SERVER METHODS + SERVE OPTIONS', async () => {
+    const { code, stdout } = await runBrandStatus(['--lifecycle', '--once']);
+    expect(code).toBe(0);
+    expect(stdout).toContain('C. SERVER METHODS');
+    expect(stdout).toContain('D. SERVE OPTIONS');
+    expect(stdout).toContain('server.timeout');
+    expect(stdout).toContain('idleTimeout');
+    expect(stdout).toContain('omit → 10 seconds · max 255 · 0 = off');
+    expect(stdout).not.toContain('A. SERVER / URL');
+    expect(stdout).not.toContain('B. HOST PLANES');
   });
 
   test('--flags lists long and short options', async () => {
@@ -71,6 +94,7 @@ describe('brand-status CLI', () => {
     expect(stdout).toContain('FLAGS');
     expect(stdout).toContain('--plane');
     expect(stdout).toContain('--compact');
+    expect(stdout).toContain('--lifecycle');
     expect(stdout).toContain('-h');
     expect(stdout).toContain('portal:flags');
   });

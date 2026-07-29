@@ -3,7 +3,7 @@
 **Tenant** `serve-public-bind` (local dev plane)
 **Server** [`scripts/serve-public.ts`](../../../scripts/serve-public.ts)
 **Bind SSOT** [`lib/http/serve-public-bind.ts`](../../../lib/http/serve-public-bind.ts)
-**Shape helpers** [`lib/http/bun-serve-shape.ts`](../../../lib/http/bun-serve-shape.ts) · [`lib/http/bun-server.ts`](../../../lib/http/bun-server.ts)
+**Shape helpers** [`lib/http/bun-serve-shape.ts`](../../../lib/http/bun-serve-shape.ts) · lifecycle [`lib/http/bun-serve-lifecycle.ts`](../../../lib/http/bun-serve-lifecycle.ts) · [`lib/http/bun-server.ts`](../../../lib/http/bun-server.ts)
 
 Local public-plane dev server — static `public/` + live SQLite/APIs. This doc is the operator reference for **port**, **hostname**, **URL shapes**, and **verify probes**.
 
@@ -143,6 +143,10 @@ When `serve-public` omits `port` on `Bun.serve`, Bun applies this chain ([docs](
 English “host” / “hostname” / “domain” spans **two planes**. Do not put `0.0.0.0` in a `HostId` column or `score.factory-wager.com` in `Bun.serve({ hostname })` unless you intend that bind.
 
 **Data SSOT:** [`lib/http/host-planes.ts`](../../../lib/http/host-planes.ts) · `HOST_PLANE_MAP` · Server/URL defaults [`lib/http/bun-serve-shape.ts`](../../../lib/http/bun-serve-shape.ts) · live transitions [`lib/http/host-lineage.ts`](../../../lib/http/host-lineage.ts) · CLI: `bun run brand:status:once` · `--plane bind --verbose` · `brand:status:json`.
+
+### Server methods + serve options (lifecycle)
+
+Lifecycle cards (stop / reload / `timeout` / `idleTimeout` / TLS→protocol / WS idleTimeout) live in [`lib/http/bun-serve-lifecycle.ts`](../../../lib/http/bun-serve-lifecycle.ts) — `BUN_SERVE_METHOD_MATRIX` · `BUN_SERVE_OPTION_MATRIX`. Printed as **C. SERVER METHODS** and **D. SERVE OPTIONS** whenever bind serve-shape prints (`bun run brand:status:bind` · `--plane bind --once`). Lifecycle-only: `bun tools/brand-status.ts --lifecycle --once`. HTTP `idleTimeout`: default **10**, max **255**, **0 = off**; per-request override via `server.timeout(req, seconds)`.
 
 | Plane | Concept | Property | Type | Values | Default (omit / pre-bind) | Fallback / after-bind | Example |
 |-------|---------|----------|------|--------|---------------------------|------------------------|---------|

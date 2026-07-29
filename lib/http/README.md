@@ -17,6 +17,8 @@ HTTP helpers for Bun.serve surfaces (static response utilities, caching headers)
 | [`bun-serve-shape.ts`](bun-serve-shape.ts) | Docs / bun-types / runtime cross-ref matrix for Server bind fields |
 | [`host-planes.ts`](host-planes.ts) | Bind vs DNS vs Access vs Pages vocabulary map (`HOST_PLANE_MAP`) |
 | [`host-lineage.ts`](host-lineage.ts) | Live HostId → apex/sub → Access → https transition rows |
+| [`bun-serve-lifecycle.ts`](bun-serve-lifecycle.ts) | Server methods + serve/WS options matrix (`timeout` · `idleTimeout`) |
+| [`bind-identity-card.ts`](bind-identity-card.ts) | Indexed BIND IDENTITY card for serve-public startup |
 | [`../docs/bun-release-tracker.ts`](../docs/bun-release-tracker.ts) | Release-note changelog → verification probes (TLS system CA, GC smoke) |
 | [`verification-scripts.ts`](verification-scripts.ts) | Pipe-friendly verify scripts (`curl …/script \| bun run -`) |
 

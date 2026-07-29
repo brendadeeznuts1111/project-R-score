@@ -20,11 +20,13 @@
  * `--plane` filters HOST PLANES · `--lineage [host]` live transition matrix
  * `--flags` → long/short flag catalog · default bind/serve view uses indexed cards
  * `--compact` → wide Bun.inspect.table (may truncate) instead of cards
+ * `--lifecycle` → Server methods + serve options cards only (C + D)
  * REPL: FQDN / URL / AccessDomain · commands access · url · plane · lineage · help
  *
  * Usage:
  *   bun tools/brand-status.ts --once
  *   bun tools/brand-status.ts --plane bind --once
+ *   bun tools/brand-status.ts --lifecycle --once
  *   bun tools/brand-status.ts --flags
  *   bun tools/brand-status.ts --json --once
  */
@@ -44,6 +46,10 @@ import {
   dnsAccessLineageRows,
   resolveLineageInput,
 } from '../lib/http/host-lineage.ts';
+import {
+  bunServeMethodTableRows,
+  bunServeOptionTableRows,
+} from '../lib/http/bun-serve-lifecycle.ts';
 import { bunServeShapeTableRows } from '../lib/http/bun-serve-shape.ts';
 import { type HostPlane, hostPlaneTableRows, isHostPlane } from '../lib/http/host-planes.ts';
 import {
@@ -102,6 +108,7 @@ type CliOpts = {
   json: boolean;
   verbose: boolean;
   compact: boolean;
+  lifecycle: boolean;
   flagsOnly: boolean;
   plane: HostPlane | undefined;
   lineageHost: string | undefined;
@@ -121,11 +128,20 @@ const BRAND_STATUS_FLAGS = [
     meaning: 'Live helper transition matrix (default score…)',
   },
   { short: '', long: '--plane NAME', meaning: 'Filter HOST PLANES: bind|dns|access|pages' },
-  { short: '', long: '--json', meaning: 'Machine snapshot (planes + serveShape + lineage)' },
+  {
+    short: '',
+    long: '--json',
+    meaning: 'Machine snapshot (planes + serveShape + serveMethods + serveOptions + lineage)',
+  },
   { short: '', long: '--watch', meaning: 'Bun.cron reprint (default */5; no REPL)' },
   { short: '', long: '--every EXPR', meaning: 'Cron expression for --watch (UTC)' },
   { short: '', long: '--flags', meaning: 'Print this flag catalog (long · short · meaning)' },
   { short: '', long: '--compact', meaning: 'Wide inspect.table instead of indexed cards' },
+  {
+    short: '',
+    long: '--lifecycle',
+    meaning: 'Print only C. SERVER METHODS + D. SERVE OPTIONS',
+  },
 ] as const;
 
 function args(): CliOpts {
@@ -149,6 +165,7 @@ function args(): CliOpts {
     json: a.includes('--json'),
     verbose: a.includes('--verbose') || a.includes('-v'),
     compact: a.includes('--compact'),
+    lifecycle: a.includes('--lifecycle'),
     flagsOnly: a.includes('--flags'),
     plane,
     lineageHost,
@@ -176,7 +193,8 @@ function printHelp(): void {
 
 Usage:
   bun tools/brand-status.ts --once
-  bun tools/brand-status.ts --plane bind --once     indexed SERVER/URL + bind cards
+  bun tools/brand-status.ts --plane bind --once     indexed SERVER/URL + bind + lifecycle
+  bun tools/brand-status.ts --lifecycle --once      C. SERVER METHODS + D. SERVE OPTIONS only
   bun tools/brand-status.ts --flags                 long · short · meaning
   bun tools/brand-status.ts --compact --plane bind  wide inspect.table (truncates)
   bun tools/brand-status.ts --docs --once
@@ -269,6 +287,84 @@ function printServeShapeTable(opts: { verbose: boolean; compact: boolean }): voi
       'A. SERVER / URL',
       'after bind read server.port · server.url · defaults are pre-bind only',
       cards,
+      { width: cardWidth() }
+    )
+  );
+}
+
+/** Server methods + serve/WS options — indexed cards or compact table. */
+function printServeLifecycleTables(opts: { compact: boolean }): void {
+  const methods = bunServeMethodTableRows();
+  const options = bunServeOptionTableRows();
+
+  if (opts.compact) {
+    const tty = process.stdout.isTTY === true;
+    const w = Math.min(48, Math.max(24, hostPlaneNoteCols()));
+    console.info(
+      cliTone.accent('\nC. SERVER METHODS') + cliTone.dim('  compact table · may truncate')
+    );
+    logTable(
+      methods.map(r => ({
+        property: r.property,
+        signature: clip(r.signature, w, tty),
+        default: clip(r.default, w, tty),
+        note: clip(r.note, w, tty),
+      })),
+      ['property', 'signature', 'default', 'note']
+    );
+    console.info(
+      cliTone.accent('\nD. SERVE OPTIONS') + cliTone.dim('  compact table · may truncate')
+    );
+    logTable(
+      options.map(r => ({
+        property: r.property,
+        signature: clip(r.signature, w, tty),
+        default: clip(r.default, w, tty),
+        note: clip(r.note, w, tty),
+      })),
+      ['property', 'signature', 'default', 'note']
+    );
+    return;
+  }
+
+  const methodCards: IndexedCard[] = methods.map((r, i) => ({
+    index: i + 1,
+    title: r.property,
+    fields: [
+      ['kind', r.kind],
+      ['signature', r.signature],
+      ['values', r.values],
+      ['default', r.default],
+      ['fallback', r.fallback],
+      ['note', r.note],
+    ],
+  }));
+  console.info(
+    formatIndexedCards(
+      'C. SERVER METHODS',
+      'stop · reload · timeout · ref/unref — bun-types Server',
+      methodCards,
+      { width: cardWidth() }
+    )
+  );
+
+  const optionCards: IndexedCard[] = options.map((r, i) => ({
+    index: i + 1,
+    title: r.property,
+    fields: [
+      ['kind', r.kind],
+      ['signature', r.signature],
+      ['values', r.values],
+      ['default', r.default],
+      ['fallback', r.fallback],
+      ['note', r.note],
+    ],
+  }));
+  console.info(
+    formatIndexedCards(
+      'D. SERVE OPTIONS',
+      'idleTimeout default 10 · max 255 · 0 = off · WS idleTimeout separate',
+      optionCards,
       { width: cardWidth() }
     )
   );
@@ -615,6 +711,8 @@ async function buildJsonSnapshot(opts: CliOpts): Promise<Record<string, unknown>
       includeDefaults: true,
     }),
     serveShape: bunServeShapeTableRows(),
+    serveMethods: bunServeMethodTableRows(),
+    serveOptions: bunServeOptionTableRows(),
     domains: [...new Set(m.brands.map(b => b.domain))].sort(),
     surfacesBrands: m.brands
       .filter(b => b.domain === 'surfaces')
@@ -643,6 +741,20 @@ async function printTables(opts: CliOpts & { widthHint: boolean }): Promise<void
   const t0 = Bun.nanoseconds();
   const m = await loadManifest();
   printHeader(m, t0);
+
+  if (opts.lifecycle) {
+    printServeLifecycleTables({ compact: opts.compact });
+    if (opts.widthHint) {
+      const sample = cliTone.ok('ok');
+      console.info(
+        cliTone.dim(
+          `\nwidth  stripANSI=${JSON.stringify(stripANSI(sample))}  stringWidth=${Bun.stringWidth(sample)}  depth=${getConsoleDepth()}  noteCols=${hostPlaneNoteCols()}`
+        )
+      );
+    }
+    return;
+  }
+
   printHostPlanesTable({
     plane: opts.plane,
     verbose: opts.verbose,
@@ -653,6 +765,7 @@ async function printTables(opts: CliOpts & { widthHint: boolean }): Promise<void
       verbose: opts.verbose || opts.plane === 'bind',
       compact: opts.compact,
     });
+    printServeLifecycleTables({ compact: opts.compact });
   }
   if (!opts.plane) {
     printDomainTable(m.brands);
