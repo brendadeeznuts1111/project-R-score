@@ -17,6 +17,8 @@ export const CANONICAL_REPO_DOCS = {
   readme: 'README.md',
   /** Wiki full navigation hub (GitHub Pages) */
   wikiIndex: 'wiki-index.md',
+  /** Registry bake index (portal consumers) */
+  registryIndex: 'registry-index.md',
   /** AI agent entrypoint (thin) */
   agents: 'AGENTS.md',
   /** Full agent guide */
@@ -147,6 +149,7 @@ export type CanonicalHarnessKey = keyof typeof CANONICAL_HARNESS;
 export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   readme: 'Human hub + scripts',
   wikiIndex: 'Wiki navigation hub (portal · registry · tenants)',
+  registryIndex: 'Registry bake index (portal consumers)',
   agents: 'AI agent entrypoint',
   agentsFull: 'Full agent guide',
   structure: 'Workspace map',

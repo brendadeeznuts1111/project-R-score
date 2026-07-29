@@ -426,3 +426,11 @@ tools/snapshot-types.ts
 /bun-write-test/
 /integration-test-metafile.json
 /large-metafile.json
+
+# Root-generated package/domain audit dumps (local only; bake → public/registry/)
+/audit-report.json
+/audit-report.md
+/audit-report-map.mmd
+/audit-report-map.dot
+/audit-report-intra-*.mmd
+/domain-matrix.json

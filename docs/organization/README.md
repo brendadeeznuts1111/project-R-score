@@ -10,4 +10,4 @@ title: Organization docs
 | [VELOCITY_BASELINE.md](VELOCITY_BASELINE.md) | Velocity baseline · day-loop honesty |
 | [BLOAT_SPEED_PASS.md](BLOAT_SPEED_PASS.md) | Bloat / speed pass notes |
 
-Hub: [docs index](../) · [wiki index](../../wiki-index.html)
+Hub: [docs index](../) · [wiki index](../../wiki-index.md)

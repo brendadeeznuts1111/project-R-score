@@ -30,6 +30,8 @@ Projects/
 ├── .custom-instructions.md  # Coding standards SSOT → docs/DEVELOPMENT-STANDARDS.md
 ├── README.md                # Human hub
 ├── STRUCTURE.md             # This file
+├── wiki-index.md            # Wiki full navigation (portal · registry · tenants)
+├── registry-index.md        # Registry bake index (portal consumers)
 ├── archive/                 # Frozen local experiments (gitignored entire tree)
 ├── artifacts/               # Releases + local reports (reports/ largely ignored)
 ├── assets/                  # Logos, charts
@@ -48,12 +50,12 @@ Projects/
 ├── Kalshi-bot/              # Nested product submodule (own remote; see .gitmodules)
 ├── lib/                     # Shared library — README.md inventory + domain/*/README.md indexes
 │   └── docs/repo-docs.ts    # CANONICAL_REPO_DOCS path SSOT
-├── packages/                # @factorywager/* internal packages (8)
+├── packages/                # @factorywager/* internal packages (6 live · 2 archived under projects/archive/factorywager-packages)
 ├── plannator/               # Local Plannotator extra skills mirror (thin)
 ├── projects/
 │   ├── README.md            # Triage SSOT — every product leaf + root contract
 │   ├── experimental/        # Demos / PoCs (each top-level has README + package.json)
-│   ├── archive/             # Tier bucket (+ README); empty until first freeze
+│   ├── archive/             # Tier bucket (+ README); first freeze: factorywager-packages/
 │   └── active/              # README.md tier index; categories keep indexes (no flatten)
 │       ├── analysis|automation|dashboards|development|enterprise|tools|utilities/
 │       │     └── each category README.md lists product leaves (each leaf = install root)
@@ -86,7 +88,7 @@ These may exist on disk under `~/Projects` but are **gitignored** or separate re
 | `herdr-worktrees/` | Empty worktree parking |
 | Root `test-binary-*`, `**/sports-terminal-{before,after}` | Bun `--compile` dumps — delete if reappear |
 
-`projects/experimental/` holds relocated demos (see [`projects/experimental/README.md`](projects/experimental/README.md)). `projects/archive/` remains a tier bucket until first freeze.
+`projects/experimental/` holds relocated demos (see [`projects/experimental/README.md`](projects/experimental/README.md)). `projects/archive/` holds the first freeze ([`factorywager-packages/`](projects/archive/factorywager-packages/) — `ab-testing`, `versioning`).
 
 ## Key navigation
 
@@ -132,7 +134,7 @@ Detail: [`docs/organization/HOMEBASE_DISCOVERY.md`](docs/organization/HOMEBASE_D
 
 ## Future candidates
 
-- Populate `projects/archive/` on first freeze.
+- Further freezes under `projects/archive/` as packages leave the install graph.
 - Curate remaining `scratch/bun-v1.3.9-examples/`.
 - Optional: physical move of root-parked nested repos out of `~/Projects` entirely.
 

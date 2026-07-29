@@ -186,7 +186,7 @@ FactoryWager extensions (not bun pm — read offline bake):
     --export <fmt>  table (default) | json | csv  (shorthand: --json)
     --color / --no-color   Force ANSI score tones (default: auto TTY)
     --update         Refresh the complete package audit + graph before reading
-                    Writes audit-report.json and packages-graph-map.json
+                    Writes reports/audit-report.json + packages-graph-map.json
                     Source: public/registry/packages-graph-map.json
                     Rebake: bun run audit:packages -- --bake
 

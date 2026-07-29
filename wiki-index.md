@@ -47,17 +47,34 @@ Rebake weave after doc changes: `bun run ops:snapshot --no-seed` or `bun run com
 
 ## Portal boards
 
+Live boards under `public/portal/<name>/` (plus Home). Product/ops first, then control-plane, then niche.
+
 | Board | Live | Doc |
 |-------|------|-----|
 | Home | [/portal/](https://score.factory-wager.com/portal/) | [`docs/portal-foundation.md`](docs/portal-foundation.md) |
 | Ops | [/portal/ops/](https://score.factory-wager.com/portal/ops/) | [`ops-loop-throughput.md`](docs/harness/tenants/ops-loop-throughput.md) |
 | TOC Ops | [/portal/toc/](https://score.factory-wager.com/portal/toc/) | [`toc-ops.md`](docs/harness/tenants/toc-ops.md) |
 | Compliance | [/portal/compliance/](https://score.factory-wager.com/portal/compliance/) | [`compliance-portal.md`](docs/harness/tenants/compliance-portal.md) |
-| Limits | [/portal/limits/](https://score.factory-wager.com/portal/limits/) | [`partner-limits.md`](docs/harness/tenants/partner-limits.md) · `ops:limits:demo` · `ops:limits:predict` |
-| Dashboard | [/portal/dashboard/](https://score.factory-wager.com/portal/dashboard/) | — |
-| Health · Env | [/portal/health/](https://score.factory-wager.com/portal/health/) · [/portal/env/](https://score.factory-wager.com/portal/env/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
+| Limits | [/portal/limits/](https://score.factory-wager.com/portal/limits/) | [`partner-limits.md`](docs/harness/tenants/partner-limits.md) |
+| Partner history | [/portal/partner-history/](https://score.factory-wager.com/portal/partner-history/) | [`partner-limits.md`](docs/harness/tenants/partner-limits.md) |
+| Dashboard | [/portal/dashboard/](https://score.factory-wager.com/portal/dashboard/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
+| Health | [/portal/health/](https://score.factory-wager.com/portal/health/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
+| Env | [/portal/env/](https://score.factory-wager.com/portal/env/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
 | DOD | [/portal/dod/](https://score.factory-wager.com/portal/dod/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
 | Skills | [/portal/skills/](https://score.factory-wager.com/portal/skills/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
+| Packages | [/portal/packages/](https://score.factory-wager.com/portal/packages/) | [`monorepo-health.md`](docs/harness/tenants/monorepo-health.md) |
+| Doctor | [/portal/doctor/](https://score.factory-wager.com/portal/doctor/) | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
+| Bunfig | [/portal/bunfig/](https://score.factory-wager.com/portal/bunfig/) | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
+| Vault | [/portal/vault/](https://score.factory-wager.com/portal/vault/) | [`proton-integration.md`](docs/harness/tenants/proton-integration.md) |
+| Failures | [/portal/failures/](https://score.factory-wager.com/portal/failures/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
+| Brands | [/portal/brands/](https://score.factory-wager.com/portal/brands/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
+| Catalog | [/portal/catalog/](https://score.factory-wager.com/portal/catalog/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
+| Surfaces | [/portal/surfaces/](https://score.factory-wager.com/portal/surfaces/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
+| Tools | [/portal/tools/](https://score.factory-wager.com/portal/tools/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
+| Factory | [/portal/factory/](https://score.factory-wager.com/portal/factory/) | [`telegram-factory.md`](docs/harness/tenants/telegram-factory.md) |
+| Identity | [/portal/identity/](https://score.factory-wager.com/portal/identity/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
+| Science | [/portal/science/](https://score.factory-wager.com/portal/science/) | — |
+| Tennis | [/portal/tennis/](https://score.factory-wager.com/portal/tennis/) | — |
 
 ## Registry artifacts (key bakes)
 
