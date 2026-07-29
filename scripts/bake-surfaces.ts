@@ -268,11 +268,13 @@ async function main(): Promise<void> {
 
   // Opt-in zone check — TOML dnsTarget/mail vs live zone via CF API.
   let zoneIssues: string[] = [];
+  let zoneCheckRan = false;
   if (ZONE_CHECK) {
     const token = Bun.env.CLOUDFLARE_DNS_API_TOKEN?.trim() || Bun.env.CLOUDFLARE_API_TOKEN?.trim();
     if (!token) {
       console.warn('⚠ --zone-check: no CLOUDFLARE_DNS_API_TOKEN / CLOUDFLARE_API_TOKEN — skipped');
     } else {
+      zoneCheckRan = true;
       const zoneId = CLOUDFLARE_DEFAULTS.zones.factoryWager.id;
       const res = await fetch(
         `https://api.cloudflare.com/client/v4/zones/${zoneId}/dns_records?per_page=100`,
@@ -321,7 +323,7 @@ async function main(): Promise<void> {
       `probe: ${probeRows.length - probeDrift.length}/${probeRows.length} surfaces match live state${probeDrift.length ? ` — ${probeDrift.length} DRIFT` : ''}`
     );
   }
-  if (ZONE_CHECK && zoneIssues.length === 0) {
+  if (ZONE_CHECK && zoneCheckRan && zoneIssues.length === 0) {
     console.log('zone-check: ok — TOML dnsTarget/mail matches live zone');
   }
   for (const i of zoneIssues) console.log(`  ✗ ${i}`);

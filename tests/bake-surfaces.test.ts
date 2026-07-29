@@ -86,6 +86,27 @@ describe('bake-surfaces', () => {
 });
 
 describe('bake-surfaces --zone-check drift rules', () => {
+  test('missing credentials report skipped without a false ok', async () => {
+    const proc = Bun.spawn(['bun', 'scripts/bake-surfaces.ts', '--zone-check', '--check'], {
+      cwd: ROOT,
+      env: {
+        ...Bun.env,
+        CLOUDFLARE_DNS_API_TOKEN: '',
+        CLOUDFLARE_API_TOKEN: '',
+      },
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const [code, stdout, stderr] = await Promise.all([
+      proc.exited,
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+    ]);
+    expect(code, stderr).toBe(0);
+    expect(stderr).toContain('--zone-check: no CLOUDFLARE_DNS_API_TOKEN');
+    expect(stdout).not.toContain('zone-check: ok');
+  });
+
   test('zoneDrift flags missing/mismatched CNAMEs and unexpected records', async () => {
     const { zoneDrift } = await import('../scripts/bake-surfaces.ts');
     const surfaces = [
