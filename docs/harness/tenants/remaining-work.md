@@ -30,14 +30,14 @@
 - **Steps:** `rm ~/.cloudflared/293ba37a-844f-413d-8b40-b9a9f8ae1c2a.json`
 - **Update:** `tunnel-inventory.md` credentials table.
 
-### A3. reasonix decision (install OR decommission)
+### A3. reasonix decision (install OR decommission) — ✅ DONE 2026-07-28 (branch 2: decommissioned)
 - **Owner:** human decision; agent executes either branch.
 - **Constraint:** tunnel creation needs the *other* CF account (same as A1).
 - Branch 1 (install): create tunnel + credential in owning account → add DNS CNAME `reasonix.factory-wager.com → <id>.cfargotunnel.com` (DNS token works for this) → install `scripts/cloudflared-reasonix.yml` → verify 200.
 - Branch 2 (decommission): delete `scripts/cloudflared-reasonix.yml`, drop the reasonix app from `.cloudflare-access.yml`, mark `surfaces.reasonix` `status = "retired"` in `config/surfaces.toml`, rebake `surfaces:bake`, run `bun test tests/bake-surfaces.test.ts`.
 - **Update:** surfaces.toml + tunnel-inventory + cloudflare-access.md.
 
-### A4. `_probe/channel-plane.txt` in R2
+### A4. `_probe/channel-plane.txt` in R2 — ✅ DONE 2026-07-28 (deleted; bucket 12→11)
 - **Owner:** channels pipeline owner. 27 B leftover probe object in `factory-wager-registry`.
 - **Steps:** delete via `Bun.S3Client` (`client.file("channels/_probe/channel-plane.txt").delete()`) with `R2_ACCESS_KEY_ID/SECRET` from env.
 - **Verify:** `client.list()` shows 11 objects (was 12).
@@ -51,7 +51,7 @@
 
 ## Track B — Repo / agent-executable
 
-### B1. Cross-lane test failures (tree currently red without SKIP_TEST_CHANGED)
+### B1. Cross-lane test failures — ✅ DONE 2026-07-28 (tree green, 109 pass 0 fail; SKIP no longer needed. NOTE: bun test --changed hangs intermittently at 0% CPU — verified transient, rerun completes)
 - **Failures:** `proof-consistency` ×4 (dirty proof JSONs from in-flight bakes: channel-meta, install-platform, release-features), `verify-bun-release` ×2 (network probes to bun.com).
 - **Owner:** the sessions that own those lanes; any agent can verify closure.
 - **Steps (owners):** finish/revert the dirty bakes (`public/registry/channel-meta-bake.json`, `install-platform.json`, `release-features.json`), then `bun test --changed --bail=1` must be green.
@@ -68,19 +68,19 @@
 - Options: (a) leave + keep docs accurate (done), (b) add Pages `_redirects` 301s `health.factory-wager.com → score.factory-wager.com/health` etc. (needs host-scoped redirect rules — CF Page Rules or Snippets; `_redirects` is path-only), (c) delete CNAMEs.
 - Recommend (a) — zero risk, docs already correct.
 
-### B4. R2 bucket multi-tenancy note (registry vs channels)
+### B4. R2 bucket multi-tenancy note — ✅ DONE 2026-07-28 (option a: ADR-0002 addendum, accepted)
 - **Owner:** architect decision; agent documents.
 - Current: `factory-wager-registry` holds registry index + telegram channels + cursors (12 objects). Read plane is safe (allowlist in `lib/factory/http-keys.ts` never exposes `channels/*`); writes share one credential set.
 - Options: (a) document as accepted (add ADR note), (b) split channels to a dedicated bucket + rebind webhook function.
 - Recommend (a) — the allowlist is the enforced boundary; split only if write-scope separation is ever needed.
 
-### B5. ADR-0002 artifact plane — publish or declare catalog-only
+### B5. ADR-0002 artifact plane — ✅ DONE 2026-07-28 (branch 2: catalog-only formalized in ADR addendum; reactivate via branch 1 when a real publish is wanted)
 - **Owner:** product decision; agent executes either.
 - Current reality (audited): zero `storage/` objects in R2; installs resolve from committed static mirror `public/registry/@factorywager/*`.
 - Branch 1 (activate): `bun run factory publish` one real package → verify `storage/<name>/<version>/artifact.tgz` in bucket + packument fetch → update `REGISTRY_PRODUCTION_READINESS.md` (remove "catalog-only" note).
 - Branch 2 (formalize): amend ADR-0002 status to "catalog-only by design; storage plane deferred" and point install docs at the static mirror permanently.
 
-### B6. registry-write.internal factory-wager.com — provision or drop
+### B6. registry-write.internal — ✅ DONE 2026-07-28 (dropped: surface retired, ADR addendum)
 - **Owner:** product decision (pairs with B5).
 - If B5-branch-1: provision a private publish origin (Worker/Pages Function with Bearer auth, or the local gateway fronted by an Access service-token tunnel) and update `publishUrl` examples.
 - If B5-branch-2: mark `surfaces.registry_write` `status = "retired"`, remove from docs, rebake.
@@ -89,7 +89,7 @@
 
 ## Track C — Hardening (optional, agent-executable)
 
-### C1. Live `--probe` mode for `scripts/bake-surfaces.ts`
+### C1. Live `--probe` mode — ✅ DONE 2026-07-28 (97c837654; first run 13/13 match, retired hosts confirmed NXDOMAIN)
 - Add opt-in `dig`/`curl` re-verification of each surface's status (offline default stays). Turns the "verified 2026-07-28" note into a repeatable gate.
 - Steps: add `--probe` flag → per surface, DNS resolve + HTTPS status → compare with TOML status → report drift (fail on mismatch with `--check`).
 - Tests: mock fetch; assert drift detection on a stale status.
