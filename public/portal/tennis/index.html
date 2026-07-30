@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<!-- @see docs/portal-foundation.md · venue identity: /portal/venues.css · lib/venues/venue-brand.ts -->
+<!-- @see docs/portal-foundation.md · venues.css · venue-badge · bar-chart primitives -->
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="portal-poll-ms" content="30000" />
+  <meta name="description" content="Tennis desk — venue badges, volume bars, mid distribution, registry." />
   <title>Tennis · FactoryWager</title>
   <meta name="theme-color" content="#0d1117" />
   <meta name="application-name" content="FactoryWager" />
@@ -30,18 +31,34 @@
       </h1>
       <nav class="topbar-nav" aria-label="Primary">
         <a href="/" class="nav-link" data-group="other">Home</a>
-        <a href="/portal/ops/" class="nav-link" data-group="ops">Ops</a>
+        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · bun run ops:snapshot" data-group="ops" data-cli="bun run ops:snapshot">Ops</a>
         <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
-        <a href="/portal/health/" class="nav-link" data-group="harness">Health</a>
-        <a href="/portal/dod/" class="nav-link" data-group="plane">DOD</a>
-        <a href="/portal/compliance/" class="nav-link" data-group="ops">Compliance</a>
+        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake">Health</a>
+        <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane">DOD</a>
+        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake">Compliance</a>
         <div class="nav-overflow">
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
-            <a href="/portal/tennis/" class="nav-link active" aria-current="page" data-group="ops" role="menuitem">Tennis</a>
-            <a href="/portal/tools/" class="nav-link" data-group="harness" role="menuitem">CLI Tools</a>
-            <a href="/registry/tennis/registry.json" class="nav-link" data-group="registry" role="menuitem">Tennis registry</a>
-            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" role="menuitem" title="Portal · registry · tenants · proof loop">Wiki</a>
+            <a href="/portal/catalog/" class="nav-link" data-group="registry" role="menuitem">Catalog</a>
+            <a href="/portal/packages/" class="nav-link" title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table" data-group="registry" data-cli="bun run portal-cli pm graph  # offline packages-graph-map table" role="menuitem">Packages</a>
+            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
+            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
+            <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
+            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
+            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
+            <a href="/portal/tools/" class="nav-link" title="portal-cli surface map · badges · capability subset · bun run portal-cli dashboard --view=tools" data-group="harness" data-cli="bun run portal-cli dashboard --view=tools" role="menuitem">CLI Tools</a>
+            <a href="/portal/failures/" class="nav-link" title="test failures bake · junit · nav badge = count · bun run failures:bake  # → /registry/failures.json" data-group="harness" data-cli="bun run failures:bake  # → /registry/failures.json" role="menuitem">Failures</a>
+            <a href="/portal/bunfig/" class="nav-link" title="bunfig install config provenance · portal-cli bunfig status · bun run bunfig:bake  # → /registry/bunfig-state.json" data-group="harness" data-cli="bun run bunfig:bake  # → /registry/bunfig-state.json" role="menuitem">Bunfig</a>
+            <a href="/portal/console-format/" class="nav-link" title="structured output gate · logTable/logDepth/jsonOut ratchet · bun run console-format:bake  # → /registry/console-format-state.json" data-group="harness" data-cli="bun run console-format:bake  # → /registry/console-format-state.json" role="menuitem">Console Format</a>
+            <a href="/portal/doctor/" class="nav-link" title="unified health gate · bunfig · catalog · linker · bun run portal:doctor --verbose" data-group="harness" data-cli="bun run portal:doctor --verbose" role="menuitem">Doctor</a>
+            <a href="/portal/install-hygiene/" class="nav-link" title="cache prune · npm-install policy · install:verify bake · bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" data-group="harness" data-cli="bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" role="menuitem">Install hygiene</a>
+            <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
+            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
+            <a href="/portal/limits/" class="nav-link" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
+            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
+            <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
+            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
+            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub" data-group="other" role="menuitem">Wiki</a>
           </div>
         </div>
       </nav>
@@ -59,9 +76,8 @@
     <header class="portal-hero">
       <h2 class="portal-hero__title">Tennis</h2>
       <p class="sub">
-        Cross-market venue identity for tennis desk signals — Kalshi · Polymarket · Pinnacle · Betfair.
-        Venue colors are <strong>brand identity</strong> (border + text + 8% tint), not status semantics
-        (<code>ok</code> / <code>warn</code> / <code>bad</code> stay on <code>--green</code> / <code>--yellow</code> / <code>--red</code>).
+        Desk surface for cross-market tennis — venue identity badges, volume bars, mid distribution.
+        Status tones use <code>--green</code> / <code>--yellow</code> / <code>--red</code>; venues use brand border + text only.
       </p>
     </header>
 
@@ -69,20 +85,34 @@
       <a href="/registry/tennis/registry.json" target="_blank" rel="noopener">tennis registry</a>
       <a href="/portal/health/">Health</a>
       <a href="/portal/ops/">Ops</a>
+      <a href="/portal/limits/">Limits</a>
+      <button type="button" id="btn-refresh">Refresh</button>
+    </div>
+
+    <div class="portal-banner warn" id="live-banner" role="status">
+      <span class="dot"></span>
+      <div>
+        <div class="title" id="banner-title">Loading tennis board…</div>
+        <div class="meta" id="banner-meta">Registry · venues · charts</div>
+      </div>
     </div>
 
     <section class="portal-section" aria-labelledby="venues-heading">
       <h2 id="venues-heading">Venue legend</h2>
       <p class="section-sub">
-        Primer-dark venue badges — scannable at desk density. Short codes: KX · PM · PN · BF.
+        Primer-dark venue badges — short codes KX · PM · PN · BF for desk density.
       </p>
       <div id="venue-legend-host"></div>
       <div class="portal-card-grid" id="venue-demo" style="margin-top:12px"></div>
     </section>
 
+    <div class="plane" style="margin: 16px 0" id="charts-host">
+      <!-- volume + mid charts injected -->
+    </div>
+
     <section class="portal-section" aria-labelledby="sample-heading">
-      <h2 id="sample-heading">Sample cross-market rows</h2>
-      <p class="section-sub">Demo table shape for desk Ven column (short badges).</p>
+      <h2 id="sample-heading">Cross-market sample rows</h2>
+      <p class="section-sub">Ven column uses short venue badges; edge uses semantic tone.</p>
       <div class="table-wrap">
         <table class="data-table" id="sample-rows">
           <thead>
@@ -99,14 +129,53 @@
       </div>
     </section>
 
+    <section class="portal-section" aria-labelledby="reg-heading">
+      <h2 id="reg-heading">Tenant registry packages</h2>
+      <p class="section-sub" id="reg-sub">Loading <code>/registry/tennis/registry.json</code>…</p>
+      <div class="table-wrap">
+        <table class="data-table" id="reg-table">
+          <thead>
+            <tr><th>Package</th><th>Latest</th><th>Versions</th></tr>
+          </thead>
+          <tbody><tr><td colspan="3">…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
     <section class="portal-section" aria-labelledby="health-heading">
-      <h2 id="health-heading">Tenant health</h2>
-      <p class="section-sub" id="tenant-health-line">Probing portal health…</p>
+      <h2 id="health-heading">Portal health</h2>
+      <p class="section-sub" id="tenant-health-line">Probing…</p>
     </section>
   </main>
 
   <notification-center aria-live="polite"></notification-center>
-  <footer class="footer" data-portal-chrome="footer"></footer>
+  <footer class="footer" data-portal-chrome="footer">
+    <p>
+      <strong>FactoryWager</strong> ·
+      <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
+      <a href="/portal/ops/">Ops</a> ·
+      <a href="/portal/toc/">TOC</a> ·
+      <a href="/portal/packages/">Packages</a> ·
+      <a href="/portal/brands/">Brands</a> ·
+      <a href="/portal/surfaces/">Surfaces</a> ·
+      <a href="/portal/health/">Health</a> ·
+      <a href="/registry/portal-weave.json">Portal proof</a> ·
+      <a href="/portal/tools/">CLI Tools</a> ·
+      <a href="/portal/compliance/">Compliance</a> ·
+      <a href="/portal/limits/">Limits</a> ·
+      <a href="/portal/dod/">DOD</a> ·
+      <a href="/portal/env/">Env</a> ·
+      <a href="/portal/vault/">Vault</a> ·
+      <a href="/portal/failures/">Failures</a> ·
+      <a href="/portal/install-hygiene/">Install hygiene</a> ·
+      <a href="/registry/monorepo-health.json">Monorepo health</a> ·
+      <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </p>
+    <p class="footer-meta">
+      project-R-score · chrome <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a>
+      · <span data-footer-ts>…</span>
+    </p>
+  </footer>
 
   <script type="module" src="/portal/data.js"></script>
   <script type="module" src="/portal/topbar.js"></script>
@@ -119,9 +188,68 @@
       renderVenueBadge,
     } from '/portal/components/venue-badge.js';
 
-    mountVenueLegend(document.getElementById('venue-legend-host'));
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) =>
+      String(s ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
 
-    const demo = document.getElementById('venue-demo');
+    function barChartHtml(data, { title, subtitle = '' } = {}) {
+      if (!data.length) return '';
+      const maxVal = Math.max(...data.map((d) => d.value), 0);
+      const rows = data
+        .map((d) => {
+          const pct = maxVal > 0 ? (d.value / maxVal) * 100 : 0;
+          const display = d.display ?? d.value.toLocaleString();
+          const color = d.color ? `;background:${d.color}` : '';
+          return `<div class="bar-chart-row">
+            <div class="bar-chart-label" title="${esc(d.label)}">${esc(d.label)}</div>
+            <div class="bar-chart-track"><div class="bar-chart-bar" style="width:${pct.toFixed(1)}%${color}"></div></div>
+            <div class="bar-chart-value">${esc(display)}</div>
+          </div>`;
+        })
+        .join('');
+      return `<div class="bar-chart">
+        <div class="bar-chart-header">
+          <div class="bar-chart-title">${esc(title)}</div>
+          ${subtitle ? `<div class="bar-chart-subtitle">${esc(subtitle)}</div>` : ''}
+        </div>
+        <div class="bar-chart-bars">${rows}</div>
+      </div>`;
+    }
+
+    /** Bucket mid cents 1–99 (mirrors Kalshi-bot bucketMidCents). */
+    function bucketMidCents(mids) {
+      const ranges = [
+        { range: '1–20¢', lo: 1, hi: 20 },
+        { range: '21–40¢', lo: 21, hi: 40 },
+        { range: '41–60¢', lo: 41, hi: 60 },
+        { range: '61–80¢', lo: 61, hi: 80 },
+        { range: '81–99¢', lo: 81, hi: 99 },
+      ];
+      const counts = ranges.map(() => 0);
+      let n = 0;
+      for (const m of mids) {
+        if (!Number.isFinite(m)) continue;
+        const c = Math.round(m);
+        if (c < 1 || c > 99) continue;
+        n++;
+        const i = ranges.findIndex((r) => c >= r.lo && c <= r.hi);
+        if (i >= 0) counts[i]++;
+      }
+      return ranges.map((r, i) => ({
+        label: r.range,
+        value: counts[i],
+        display: String(counts[i]),
+        pct: n > 0 ? Math.round((counts[i] / n) * 100) : 0,
+      }));
+    }
+
+    mountVenueLegend($('venue-legend-host'));
+
+    const demo = $('venue-demo');
     if (demo) {
       for (const v of ['kalshi', 'polymarket', 'pinnacle', 'betfair']) {
         demo.insertAdjacentHTML(
@@ -141,30 +269,168 @@
     if (tbody) {
       tbody.innerHTML = sample
         .map(
-          r => `<tr>
-            <td>${r.a}</td>
-            <td>${r.b}</td>
+          (r) => `<tr>
+            <td>${esc(r.a)}</td>
+            <td>${esc(r.b)}</td>
             <td>${renderVenueBadge(r.venue, { showLabel: false })}</td>
-            <td class="mono ${r.edge.startsWith('-') ? 'st-bad' : 'st-ok'}">${r.edge}¢</td>
-            <td class="mono">${r.score}</td>
+            <td class="mono ${r.edge.startsWith('-') ? 'st-bad' : 'st-ok'}">${esc(r.edge)}¢</td>
+            <td class="mono">${esc(r.score)}</td>
           </tr>`
         )
         .join('');
     }
 
-    const healthLine = document.getElementById('tenant-health-line');
+    function renderCharts({ volumeRows, midRows, volumeNote, midNote }) {
+      const host = $('charts-host');
+      if (!host) return;
+      host.innerHTML =
+        barChartHtml(volumeRows, {
+          title: 'Volume by series',
+          subtitle: volumeNote,
+        }) +
+        barChartHtml(midRows, {
+          title: 'Mid distribution',
+          subtitle: midNote,
+        });
+    }
+
+    async function loadRegistry() {
+      try {
+        const res = await fetch('/registry/tennis/registry.json', {
+          credentials: 'same-origin',
+          headers: { Accept: 'application/json' },
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const reg = await res.json();
+        const packages = reg.packages && typeof reg.packages === 'object' ? reg.packages : {};
+        const names = Object.keys(packages);
+        const regBody = $('reg-table')?.querySelector('tbody');
+        if (regBody) {
+          regBody.innerHTML = names.length
+            ? names
+                .map((name) => {
+                  const p = packages[name];
+                  const latest = p?.['dist-tags']?.latest ?? p?.versions?.[0] ?? '—';
+                  const nVer = Array.isArray(p?.versions) ? p.versions.length : '—';
+                  return `<tr><td class="mono">${esc(name)}</td><td class="mono">${esc(latest)}</td><td class="mono">${esc(String(nVer))}</td></tr>`;
+                })
+                .join('')
+            : '<tr><td colspan="3">No packages in tennis registry</td></tr>';
+        }
+        const regSub = $('reg-sub');
+        if (regSub) {
+          regSub.innerHTML = `${names.length} package(s) · updated ${esc(reg.lastUpdated ?? '—')} · <code>/registry/tennis/registry.json</code>`;
+        }
+
+        // Volume chart: version count per package as stand-in until live desk bake
+        const volumeRows = names.map((name) => {
+          const p = packages[name];
+          const n = Array.isArray(p?.versions) ? p.versions.length : 0;
+          return { label: name.slice(0, 10), value: Math.max(n, 1), display: String(n) };
+        });
+
+        // Try live mid snapshot if present (optional bake)
+        let midRows = null;
+        let midNote = 'desk sample mids — bake tennis mid snapshot for live book_ticks';
+        try {
+          const midRes = await fetch('/registry/tennis/mid-distribution.json', {
+            credentials: 'same-origin',
+            headers: { Accept: 'application/json' },
+          });
+          if (midRes.ok) {
+            const mid = await midRes.json();
+            if (Array.isArray(mid.buckets) && mid.buckets.length) {
+              midRows = mid.buckets.map((b) => ({
+                label: b.range ?? b.label,
+                value: b.count ?? 0,
+                display: String(b.count ?? 0),
+              }));
+              midNote = `live bake · ${mid.generatedAt ? String(mid.generatedAt).slice(0, 19) : 'ok'} · n=${mid.n ?? '—'}`;
+            } else if (Array.isArray(mid.mids)) {
+              midRows = bucketMidCents(mid.mids);
+              midNote = `live mids · n=${mid.mids.length}`;
+            }
+          }
+        } catch {
+          /* sample */
+        }
+        if (!midRows) {
+          const sampleMids = [
+            ...Array(124).fill(12),
+            ...Array(89).fill(30),
+            ...Array(67).fill(50),
+            ...Array(45).fill(70),
+            ...Array(28).fill(90),
+          ];
+          midRows = bucketMidCents(sampleMids);
+        }
+
+        renderCharts({
+          volumeRows: volumeRows.length
+            ? volumeRows
+            : [
+                { label: 'ATP', value: 3.2e6, display: '3.2M' },
+                { label: 'WTA', value: 1.8e6, display: '1.8M' },
+                { label: 'ITF W', value: 9.5e5, display: '950K' },
+                { label: 'ITF M', value: 4.2e5, display: '420K' },
+              ],
+          midRows,
+          volumeNote: volumeRows.length
+            ? 'version counts from tennis registry (live)'
+            : 'sample series volume',
+          midNote,
+        });
+
+        const banner = $('live-banner');
+        if (banner) {
+          banner.className = 'portal-banner ok';
+          $('banner-title').textContent = 'Tennis board live';
+          $('banner-meta').textContent = `${names.length} packages · venues · charts · ${reg.lastUpdated ?? ''}`;
+        }
+      } catch (e) {
+        const banner = $('live-banner');
+        if (banner) {
+          banner.className = 'portal-banner warn';
+          $('banner-title').textContent = 'Registry unavailable';
+          $('banner-meta').textContent = String(e?.message || e);
+        }
+        renderCharts({
+          volumeRows: [
+            { label: 'ATP', value: 3.2e6, display: '3.2M' },
+            { label: 'WTA', value: 1.8e6, display: '1.8M' },
+            { label: 'ITF W', value: 9.5e5, display: '950K' },
+            { label: 'ITF M', value: 4.2e5, display: '420K' },
+          ],
+          midRows: bucketMidCents([
+            ...Array(124).fill(12),
+            ...Array(89).fill(30),
+            ...Array(67).fill(50),
+            ...Array(45).fill(70),
+            ...Array(28).fill(90),
+          ]),
+          volumeNote: 'sample (registry offline)',
+          midNote: 'sample mid distribution',
+        });
+      }
+    }
+
     function renderHealth(detail) {
+      const healthLine = $('tenant-health-line');
       if (!healthLine) return;
       const { status, data } = detail || {};
       if (status === 'ok' || status === 'stale') {
-        healthLine.innerHTML = `Portal health: <span class="st-ok">${data?.status ?? 'ok'}</span> · edge runtime ${data?.runtime ?? '—'}`;
+        healthLine.innerHTML = `Portal health: <span class="st-ok">${esc(data?.status ?? 'ok')}</span> · ${esc(data?.runtime ?? '—')}`;
       } else {
         healthLine.innerHTML = '<span class="st-warn">Health unavailable</span>';
       }
     }
-    document.addEventListener('portal:data', e => renderHealth(e.detail));
+
+    document.addEventListener('portal:data', (e) => renderHealth(e.detail));
     const cached = getHealthData();
     if (cached) renderHealth({ status: 'stale', data: cached });
+
+    $('btn-refresh')?.addEventListener('click', () => void loadRegistry());
+    void loadRegistry();
   </script>
 </body>
 </html>

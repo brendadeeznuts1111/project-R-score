@@ -777,6 +777,67 @@ body {
 .portal-banner .title { font-weight: 600; font-size: 16px; }
 .portal-banner .meta { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
 
+/* Aligned bar charts (tennis HQ / portal) — grid locks label | track | value */
+.bar-chart {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+.bar-chart-header { margin-bottom: 12px; }
+.bar-chart-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+.bar-chart-subtitle {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+.bar-chart-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.bar-chart-row {
+  display: grid;
+  grid-template-columns: 72px 1fr 64px;
+  align-items: center;
+  gap: 12px;
+}
+.bar-chart-label {
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bar-chart-track {
+  height: 8px;
+  background: rgba(48, 54, 61, 0.55);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.bar-chart-bar {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+  min-width: 0;
+}
+.bar-chart-value {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  text-align: right;
+  font-family: var(--font-mono, ui-monospace, monospace);
+}
+
 .search-box input {
   width: 100%;
   max-width: 480px;

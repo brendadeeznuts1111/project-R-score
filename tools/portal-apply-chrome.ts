@@ -52,6 +52,7 @@ type PageKey =
   | 'partner-history'
   | 'doctor'
   | 'install-hygiene'
+  | 'tennis'
   | 'template';
 
 const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: string }[] = [
@@ -89,6 +90,7 @@ const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: st
     pageLabel: 'Install hygiene',
     brandBadge: 'ops',
   },
+  { file: 'tennis/index.html', active: 'tennis', pageLabel: 'Tennis', brandBadge: 'tenant' },
   { file: '_page-template.html', active: 'template', pageLabel: 'New Page', brandBadge: 'ops' },
 ];
 

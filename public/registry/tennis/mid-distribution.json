@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "kind": "tennis-mid-distribution",
+  "generatedAt": "2026-07-30T20:40:00.000Z",
+  "source": "sample",
+  "n": 353,
+  "note": "Sample mid buckets until event-store book_ticks bake is published. Replace via tennis HQ export.",
+  "buckets": [
+    { "range": "1–20¢", "count": 124, "pct": 35 },
+    { "range": "21–40¢", "count": 89, "pct": 25 },
+    { "range": "41–60¢", "count": 67, "pct": 19 },
+    { "range": "61–80¢", "count": 45, "pct": 13 },
+    { "range": "81–99¢", "count": 28, "pct": 8 }
+  ]
+}
