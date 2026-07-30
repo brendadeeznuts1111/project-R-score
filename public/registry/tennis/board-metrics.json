@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "kind": "tennis-board-metrics",
+  "generatedAt": "2026-07-30T21:25:52.054Z",
+  "source": "event-store",
+  "eventStorePath": "Kalshi-bot/research/cache/event-store.db",
+  "bookTicksLatest": 174,
+  "midsUsable": 52,
+  "markets": 6378,
+  "buckets": [
+    {
+      "range": "1–20¢",
+      "count": 4,
+      "pct": 8
+    },
+    {
+      "range": "21–40¢",
+      "count": 12,
+      "pct": 23
+    },
+    {
+      "range": "41–60¢",
+      "count": 21,
+      "pct": 40
+    },
+    {
+      "range": "61–80¢",
+      "count": 11,
+      "pct": 21
+    },
+    {
+      "range": "81–99¢",
+      "count": 4,
+      "pct": 8
+    }
+  ],
+  "seriesVolume": [
+    {
+      "series": "KXITFMATCH",
+      "label": "ITF M",
+      "markets": 2462,
+      "volume24h": 44493481.07,
+      "display": "44.5M"
+    },
+    {
+      "series": "KXITFWMATCH",
+      "label": "ITF W",
+      "markets": 2484,
+      "volume24h": 34687128.08,
+      "display": "34.7M"
+    },
+    {
+      "series": "KXITFWDOUBLES",
+      "label": "ITF W DBL",
+      "markets": 710,
+      "volume24h": 2241065.7,
+      "display": "2.2M"
+    },
+    {
+      "series": "KXITFDOUBLES",
+      "label": "ITF M DBL",
+      "markets": 722,
+      "volume24h": 1236451.65,
+      "display": "1.2M"
+    }
+  ],
+  "venues": [
+    {
+      "venue": "kalshi",
+      "count": 6378
+    }
+  ],
+  "note": "Live from event-store · 174 latest books · 52 mids"
+}

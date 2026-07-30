@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- @see docs/portal-foundation.md · venues.css · venue-badge · bar-chart primitives -->
+<!-- @see docs/portal-foundation.md · tennis:board:bake · board-metrics.json -->
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="portal-poll-ms" content="30000" />
-  <meta name="description" content="Tennis desk — venue badges, volume bars, mid distribution, registry." />
+  <meta name="description" content="Tennis desk — live venue metrics, volume bars, mid distribution, registry." />
   <title>Tennis · FactoryWager</title>
   <meta name="theme-color" content="#0d1117" />
   <meta name="application-name" content="FactoryWager" />
@@ -76,16 +76,18 @@
     <header class="portal-hero">
       <h2 class="portal-hero__title">Tennis</h2>
       <p class="sub">
-        Desk surface for cross-market tennis — venue identity badges, volume bars, mid distribution.
-        Status tones use <code>--green</code> / <code>--yellow</code> / <code>--red</code>; venues use brand border + text only.
+        Live desk board from event-store bake when present —
+        <code>bun run tennis:board:bake</code> →
+        <code>/registry/tennis/board-metrics.json</code>.
+        Venue colors are identity; edge uses semantic green/red.
       </p>
     </header>
 
     <div class="portal-actions">
-      <a href="/registry/tennis/registry.json" target="_blank" rel="noopener">tennis registry</a>
+      <a href="/registry/tennis/board-metrics.json" target="_blank" rel="noopener">board-metrics</a>
+      <a href="/registry/tennis/mid-distribution.json" target="_blank" rel="noopener">mid-distribution</a>
+      <a href="/registry/tennis/registry.json" target="_blank" rel="noopener">registry</a>
       <a href="/portal/health/">Health</a>
-      <a href="/portal/ops/">Ops</a>
-      <a href="/portal/limits/">Limits</a>
       <button type="button" id="btn-refresh">Refresh</button>
     </div>
 
@@ -93,26 +95,34 @@
       <span class="dot"></span>
       <div>
         <div class="title" id="banner-title">Loading tennis board…</div>
-        <div class="meta" id="banner-meta">Registry · venues · charts</div>
+        <div class="meta" id="banner-meta">metrics · registry · venues</div>
       </div>
     </div>
 
+    <div class="portal-card-grid" id="kpi-host" aria-live="polite"></div>
+
     <section class="portal-section" aria-labelledby="venues-heading">
-      <h2 id="venues-heading">Venue legend</h2>
-      <p class="section-sub">
-        Primer-dark venue badges — short codes KX · PM · PN · BF for desk density.
-      </p>
+      <h2 id="venues-heading">Venues</h2>
+      <p class="section-sub">Identity badges (KX · PM · PN · BF). Live market counts from event-store when baked.</p>
       <div id="venue-legend-host"></div>
-      <div class="portal-card-grid" id="venue-demo" style="margin-top:12px"></div>
+      <div class="portal-card-grid" id="venue-live-host" style="margin-top:12px"></div>
     </section>
 
-    <div class="plane" style="margin: 16px 0" id="charts-host">
-      <!-- volume + mid charts injected -->
-    </div>
+    <div class="plane" style="margin: 16px 0" id="charts-host"></div>
 
     <section class="portal-section" aria-labelledby="sample-heading">
       <h2 id="sample-heading">Cross-market sample rows</h2>
-      <p class="section-sub">Ven column uses short venue badges; edge uses semantic tone.</p>
+      <p class="section-sub">
+        Desk shape demo — filter by venue.
+        <label for="venue-filter" class="dim">Venue</label>
+        <select id="venue-filter" style="margin-left:8px;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit">
+          <option value="">All</option>
+          <option value="kalshi">Kalshi</option>
+          <option value="polymarket">Polymarket</option>
+          <option value="pinnacle">Pinnacle</option>
+          <option value="betfair">Betfair</option>
+        </select>
+      </p>
       <div class="table-wrap">
         <table class="data-table" id="sample-rows">
           <thead>
@@ -131,7 +141,7 @@
 
     <section class="portal-section" aria-labelledby="reg-heading">
       <h2 id="reg-heading">Tenant registry packages</h2>
-      <p class="section-sub" id="reg-sub">Loading <code>/registry/tennis/registry.json</code>…</p>
+      <p class="section-sub" id="reg-sub">Loading…</p>
       <div class="table-wrap">
         <table class="data-table" id="reg-table">
           <thead>
@@ -145,6 +155,10 @@
     <section class="portal-section" aria-labelledby="health-heading">
       <h2 id="health-heading">Portal health</h2>
       <p class="section-sub" id="tenant-health-line">Probing…</p>
+      <p class="section-sub">
+        Operator: <code>bun run tennis:board:bake</code> · CLI bars:
+        <code>Kalshi-bot/src/lib/tennis-hq/charts/ascii-bars.ts</code>
+      </p>
     </section>
   </main>
 
@@ -181,256 +195,6 @@
   <script type="module" src="/portal/topbar.js"></script>
   <script type="module" src="/portal/components/sidebar.js"></script>
   <script type="module" src="/portal/components/footer.js"></script>
-  <script type="module">
-    import { getHealthData } from '/portal/data.js';
-    import {
-      mountVenueLegend,
-      renderVenueBadge,
-    } from '/portal/components/venue-badge.js';
-
-    const $ = (id) => document.getElementById(id);
-    const esc = (s) =>
-      String(s ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-
-    function barChartHtml(data, { title, subtitle = '' } = {}) {
-      if (!data.length) return '';
-      const maxVal = Math.max(...data.map((d) => d.value), 0);
-      const rows = data
-        .map((d) => {
-          const pct = maxVal > 0 ? (d.value / maxVal) * 100 : 0;
-          const display = d.display ?? d.value.toLocaleString();
-          const color = d.color ? `;background:${d.color}` : '';
-          return `<div class="bar-chart-row">
-            <div class="bar-chart-label" title="${esc(d.label)}">${esc(d.label)}</div>
-            <div class="bar-chart-track"><div class="bar-chart-bar" style="width:${pct.toFixed(1)}%${color}"></div></div>
-            <div class="bar-chart-value">${esc(display)}</div>
-          </div>`;
-        })
-        .join('');
-      return `<div class="bar-chart">
-        <div class="bar-chart-header">
-          <div class="bar-chart-title">${esc(title)}</div>
-          ${subtitle ? `<div class="bar-chart-subtitle">${esc(subtitle)}</div>` : ''}
-        </div>
-        <div class="bar-chart-bars">${rows}</div>
-      </div>`;
-    }
-
-    /** Bucket mid cents 1–99 (mirrors Kalshi-bot bucketMidCents). */
-    function bucketMidCents(mids) {
-      const ranges = [
-        { range: '1–20¢', lo: 1, hi: 20 },
-        { range: '21–40¢', lo: 21, hi: 40 },
-        { range: '41–60¢', lo: 41, hi: 60 },
-        { range: '61–80¢', lo: 61, hi: 80 },
-        { range: '81–99¢', lo: 81, hi: 99 },
-      ];
-      const counts = ranges.map(() => 0);
-      let n = 0;
-      for (const m of mids) {
-        if (!Number.isFinite(m)) continue;
-        const c = Math.round(m);
-        if (c < 1 || c > 99) continue;
-        n++;
-        const i = ranges.findIndex((r) => c >= r.lo && c <= r.hi);
-        if (i >= 0) counts[i]++;
-      }
-      return ranges.map((r, i) => ({
-        label: r.range,
-        value: counts[i],
-        display: String(counts[i]),
-        pct: n > 0 ? Math.round((counts[i] / n) * 100) : 0,
-      }));
-    }
-
-    mountVenueLegend($('venue-legend-host'));
-
-    const demo = $('venue-demo');
-    if (demo) {
-      for (const v of ['kalshi', 'polymarket', 'pinnacle', 'betfair']) {
-        demo.insertAdjacentHTML(
-          'beforeend',
-          `<article class="portal-card"><div class="sub" style="margin-bottom:8px">${v}</div>${renderVenueBadge(v, { size: 'md' })} ${renderVenueBadge(v, { showLabel: false, size: 'sm' })}</article>`
-        );
-      }
-    }
-
-    const sample = [
-      { a: 'Sinner', b: 'Alcaraz', venue: 'kalshi', edge: '+4.2', score: '72' },
-      { a: 'Gauff', b: 'Swiatek', venue: 'polymarket', edge: '+1.8', score: '61' },
-      { a: 'Medvedev', b: 'Zverev', venue: 'pinnacle', edge: '-0.4', score: '48' },
-      { a: 'Sabalenka', b: 'Rybakina', venue: 'betfair', edge: '+2.1', score: '55' },
-    ];
-    const tbody = document.querySelector('#sample-rows tbody');
-    if (tbody) {
-      tbody.innerHTML = sample
-        .map(
-          (r) => `<tr>
-            <td>${esc(r.a)}</td>
-            <td>${esc(r.b)}</td>
-            <td>${renderVenueBadge(r.venue, { showLabel: false })}</td>
-            <td class="mono ${r.edge.startsWith('-') ? 'st-bad' : 'st-ok'}">${esc(r.edge)}¢</td>
-            <td class="mono">${esc(r.score)}</td>
-          </tr>`
-        )
-        .join('');
-    }
-
-    function renderCharts({ volumeRows, midRows, volumeNote, midNote }) {
-      const host = $('charts-host');
-      if (!host) return;
-      host.innerHTML =
-        barChartHtml(volumeRows, {
-          title: 'Volume by series',
-          subtitle: volumeNote,
-        }) +
-        barChartHtml(midRows, {
-          title: 'Mid distribution',
-          subtitle: midNote,
-        });
-    }
-
-    async function loadRegistry() {
-      try {
-        const res = await fetch('/registry/tennis/registry.json', {
-          credentials: 'same-origin',
-          headers: { Accept: 'application/json' },
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const reg = await res.json();
-        const packages = reg.packages && typeof reg.packages === 'object' ? reg.packages : {};
-        const names = Object.keys(packages);
-        const regBody = $('reg-table')?.querySelector('tbody');
-        if (regBody) {
-          regBody.innerHTML = names.length
-            ? names
-                .map((name) => {
-                  const p = packages[name];
-                  const latest = p?.['dist-tags']?.latest ?? p?.versions?.[0] ?? '—';
-                  const nVer = Array.isArray(p?.versions) ? p.versions.length : '—';
-                  return `<tr><td class="mono">${esc(name)}</td><td class="mono">${esc(latest)}</td><td class="mono">${esc(String(nVer))}</td></tr>`;
-                })
-                .join('')
-            : '<tr><td colspan="3">No packages in tennis registry</td></tr>';
-        }
-        const regSub = $('reg-sub');
-        if (regSub) {
-          regSub.innerHTML = `${names.length} package(s) · updated ${esc(reg.lastUpdated ?? '—')} · <code>/registry/tennis/registry.json</code>`;
-        }
-
-        // Volume chart: version count per package as stand-in until live desk bake
-        const volumeRows = names.map((name) => {
-          const p = packages[name];
-          const n = Array.isArray(p?.versions) ? p.versions.length : 0;
-          return { label: name.slice(0, 10), value: Math.max(n, 1), display: String(n) };
-        });
-
-        // Try live mid snapshot if present (optional bake)
-        let midRows = null;
-        let midNote = 'desk sample mids — bake tennis mid snapshot for live book_ticks';
-        try {
-          const midRes = await fetch('/registry/tennis/mid-distribution.json', {
-            credentials: 'same-origin',
-            headers: { Accept: 'application/json' },
-          });
-          if (midRes.ok) {
-            const mid = await midRes.json();
-            if (Array.isArray(mid.buckets) && mid.buckets.length) {
-              midRows = mid.buckets.map((b) => ({
-                label: b.range ?? b.label,
-                value: b.count ?? 0,
-                display: String(b.count ?? 0),
-              }));
-              midNote = `live bake · ${mid.generatedAt ? String(mid.generatedAt).slice(0, 19) : 'ok'} · n=${mid.n ?? '—'}`;
-            } else if (Array.isArray(mid.mids)) {
-              midRows = bucketMidCents(mid.mids);
-              midNote = `live mids · n=${mid.mids.length}`;
-            }
-          }
-        } catch {
-          /* sample */
-        }
-        if (!midRows) {
-          const sampleMids = [
-            ...Array(124).fill(12),
-            ...Array(89).fill(30),
-            ...Array(67).fill(50),
-            ...Array(45).fill(70),
-            ...Array(28).fill(90),
-          ];
-          midRows = bucketMidCents(sampleMids);
-        }
-
-        renderCharts({
-          volumeRows: volumeRows.length
-            ? volumeRows
-            : [
-                { label: 'ATP', value: 3.2e6, display: '3.2M' },
-                { label: 'WTA', value: 1.8e6, display: '1.8M' },
-                { label: 'ITF W', value: 9.5e5, display: '950K' },
-                { label: 'ITF M', value: 4.2e5, display: '420K' },
-              ],
-          midRows,
-          volumeNote: volumeRows.length
-            ? 'version counts from tennis registry (live)'
-            : 'sample series volume',
-          midNote,
-        });
-
-        const banner = $('live-banner');
-        if (banner) {
-          banner.className = 'portal-banner ok';
-          $('banner-title').textContent = 'Tennis board live';
-          $('banner-meta').textContent = `${names.length} packages · venues · charts · ${reg.lastUpdated ?? ''}`;
-        }
-      } catch (e) {
-        const banner = $('live-banner');
-        if (banner) {
-          banner.className = 'portal-banner warn';
-          $('banner-title').textContent = 'Registry unavailable';
-          $('banner-meta').textContent = String(e?.message || e);
-        }
-        renderCharts({
-          volumeRows: [
-            { label: 'ATP', value: 3.2e6, display: '3.2M' },
-            { label: 'WTA', value: 1.8e6, display: '1.8M' },
-            { label: 'ITF W', value: 9.5e5, display: '950K' },
-            { label: 'ITF M', value: 4.2e5, display: '420K' },
-          ],
-          midRows: bucketMidCents([
-            ...Array(124).fill(12),
-            ...Array(89).fill(30),
-            ...Array(67).fill(50),
-            ...Array(45).fill(70),
-            ...Array(28).fill(90),
-          ]),
-          volumeNote: 'sample (registry offline)',
-          midNote: 'sample mid distribution',
-        });
-      }
-    }
-
-    function renderHealth(detail) {
-      const healthLine = $('tenant-health-line');
-      if (!healthLine) return;
-      const { status, data } = detail || {};
-      if (status === 'ok' || status === 'stale') {
-        healthLine.innerHTML = `Portal health: <span class="st-ok">${esc(data?.status ?? 'ok')}</span> · ${esc(data?.runtime ?? '—')}`;
-      } else {
-        healthLine.innerHTML = '<span class="st-warn">Health unavailable</span>';
-      }
-    }
-
-    document.addEventListener('portal:data', (e) => renderHealth(e.detail));
-    const cached = getHealthData();
-    if (cached) renderHealth({ status: 'stale', data: cached });
-
-    $('btn-refresh')?.addEventListener('click', () => void loadRegistry());
-    void loadRegistry();
-  </script>
+  <script type="module" src="/portal/tennis/tennis-board.js"></script>
 </body>
 </html>

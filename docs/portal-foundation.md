@@ -166,6 +166,18 @@ bun -e 'import { fmtVenueLegend, fmtVenueBadge } from "./lib/venues/venue-brand.
 bun test tests/venue-brand.test.ts
 ```
 
+### Tennis board metrics bake
+
+| Artifact | Path |
+|----------|------|
+| Board metrics | `/registry/tennis/board-metrics.json` |
+| Mid distribution | `/registry/tennis/mid-distribution.json` |
+| Bake | `bun run tennis:board:bake` (event-store) · `--sample` fallback |
+| Board UI | [`/portal/tennis/`](../public/portal/tennis/) · `tennis-board.js` |
+| Pure helpers | [`lib/tennis/board-metrics.ts`](../lib/tennis/board-metrics.ts) |
+
+Event-store default: `Kalshi-bot/research/cache/event-store.db` (book_ticks mids + markets series volume).
+
 **Reference boards:** [`/portal/health/`](../public/portal/health/) (Live check multi-column + section rhythm) · [`/portal/install-hygiene/`](../public/portal/install-hygiene/) (tone chips). **Template:** [`_page-template.html`](../public/portal/_page-template.html). **Chrome apply:** `bun run portal:chrome:apply`.
 
 **Unification phases:** P0 chrome holes + emoji/token strip · P1 promote remaining private CSS into primitives · P2 rewrite limits/partner-history/doctor/vault shells to full template.

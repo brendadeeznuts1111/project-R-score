@@ -1633,6 +1633,8 @@
     "portal:doctor:ci:report": "bun scripts/doctor-ci-report.ts",
     "bake:doctor": "bun scripts/ensure-machine-bunfig.ts && bun tools/bake-doctor.ts",
     "bake:install-hygiene": "bun scripts/bake-install-hygiene-report.ts",
+    "tennis:board:bake": "bun scripts/bake-tennis-board.ts",
+    "tennis:board:bake:sample": "bun scripts/bake-tennis-board.ts --sample",
     "bake:doctor:check": "bun scripts/ensure-machine-bunfig.ts && bun tools/bake-doctor.ts --check",
     "bake:doctor:check:report": "bun scripts/ensure-machine-bunfig.ts && bun tools/bake-doctor.ts --check --report",
     "machine:bunfig:ensure": "bun scripts/ensure-machine-bunfig.ts",
