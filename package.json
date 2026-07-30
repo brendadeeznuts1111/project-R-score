@@ -2225,7 +2225,9 @@
     "surfaces:bake": "bun scripts/bake-surfaces.ts",
     "surfaces:check": "bun scripts/bake-surfaces.ts --check",
     "check:console-format": "bun scripts/lint-console-format.ts",
-    "console-format:bake": "bun scripts/bake-console-format.ts"
+    "console-format:bake": "bun scripts/bake-console-format.ts",
+    "add:safe": "bun scripts/bun-add-safe.ts",
+    "check:bun-deps:tier-a": "bun scripts/check-bun-deps-tier-a.ts"
   },
   "private": "false",
   "files": [

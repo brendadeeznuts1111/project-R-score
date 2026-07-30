@@ -123,6 +123,21 @@ TOML samples under package-manager docs are almost always **`bunfig.toml`** (`ex
 - **Scope→registry mapping: bunfig `[install.scopes]` owns it for Bun** (Bun itself recommends migrating `.npmrc` → bunfig — [pm/npmrc](https://bun.com/docs/pm/npmrc)). `.npmrc` registry/auth lines remain only for non-Bun tooling (vite/npm clients). Both scope spellings exist (`@factorywager` ×42, `@factory-wager` ×1). **Registry URL variants:** root `bunfig.toml` scopes use `http://localhost:3000/` for local `serve-public`; production/apex is `https://registry.factory-wager.com/` — do not assume one URL in docs or scripts without naming which lane.
 - **`bunfig.toml` does not inherit upward.** A nested workspace root (e.g. `projects/active/factorywager/registry/`) reads only its own `./bunfig.toml` + `~/.bunfig.toml` — it needs its own `frozenLockfile = false` dev override.
 - **`frozenLockfile` has no runtime override** (no `BUN_CONFIG_*` key, no negated flag). Root `bunfig.toml` is **`frozenLockfile = true`** (hardened / CI-parity). Intentional dep change: temporarily set root to `false`, run `bun add`/`bun update`, commit lockfile, restore `true`. Nested workspace roots may keep a local `false` override — bunfig does not inherit upward. Details: `kimi-toolchain/docs/references/bun-install-config.md`.
+  - **Helper:** `bun run add:safe -- <pkg> [--dev]` ([`scripts/bun-add-safe.ts`](../scripts/bun-add-safe.ts)) toggles root `frozenLockfile`, runs `bun add`, always restores `true`, then `install:verify` + Tier-A (`scripts/check-bun-deps-tier-a.ts` — scans workspace **`package.json` keys**, not `node_modules`). Prefer Bun natives over Tier-A wrappers (`tools/bun-prefer-matrix.ts` `tierAAvoidPackages()`).
+  - **`--exact` / `-E` default** (belt-and-suspenders with `install.exact = true`): injects long-form `--exact` unless the caller already passed `--exact` **or** `-E`, used **`--global` / `-g`** (globals do not write `package.json`), or an **open range** after the last `@` (`^`, `~`, `*`, `>`, `>=`, `<`, `<=`, `x.x.x - y`, `.x`). Do **not** treat bare `@` as a range (breaks `@types/bun`). Pins like `zod@3.20.0` / `zod@latest` still get `--exact` so `package.json` stores digits.
+  - **Other flags** (`--dev`/`-D`, `--optional`, `--peer`, `--trusted`, etc.) pass through unchanged.
+
+    | Input | Open range? | Skip inject? | Script injects `--exact`? | Effective `bun add` |
+    |-------|-------------|--------------|---------------------------|---------------------|
+    | `zod` | no | no | yes | `zod --exact` |
+    | `zod@latest` | no | no | yes | `zod@latest --exact` |
+    | `zod@3.20.0` | no | no | yes | `zod@3.20.0 --exact` |
+    | `zod@^3.0.0` | yes | open range | no | `zod@^3.0.0` |
+    | `zod@>=3` | yes | open range | no | `zod@>=3` |
+    | `zod --exact` | no | already `--exact` | no | `zod --exact` |
+    | `zod -E` | no | already `-E` | no | `zod -E` |
+    | `-g cowsay` | no | `--global`/`-g` | no | `-g cowsay` |
+    | `@types/bun` | no | no | yes | `@types/bun --exact` |
 - **Known drift (pending removal):** root `.npmrc` `cache=${HOME}/.npm` splits the global virtual store into a shadow store at `~/.npm/links`; machine SSOT is `~/.bun/install/cache`. Single cache root is the target state.
 - **Forbidden in normal shell/IDE env** (see Machine layer): `BUN_INSTALL_CACHE_DIR`, `BUN_INSTALL_GLOBAL_STORE` — use `~/.bunfig.toml` instead. Exception: ephemeral CI via `bun scripts/with-bun-cache-env.ts ci` only.
 
