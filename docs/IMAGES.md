@@ -104,3 +104,14 @@ source_dir = "./warehouse/avatars"
 - `using` dispose is **not** required (and currently fails on some canaries); chain and await terminals only.
 - HEIC/AVIF may throw `ERR_IMAGE_FORMAT_UNSUPPORTED` — CLI falls back to PNG.
 - Path strings must not be user-controlled (arbitrary file read).
+
+
+## Avatar index (clean mapping)
+
+Bake writes `/registry/tennis/avatar-index.json` with:
+
+- `players[]` — slug, displayName, hasSource, hasWebp
+- `bySlug` — O(1) slug lookup
+- `nameToSlug` — normalized display name → slug
+
+Live matches join sides via `side.slug === nameToSlug[normalize(label)]`.

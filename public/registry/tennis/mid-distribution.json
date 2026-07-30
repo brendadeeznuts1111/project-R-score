@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "tennis-mid-distribution",
-  "generatedAt": "2026-07-30T21:25:52.054Z",
+  "generatedAt": "2026-07-30T23:06:41.542Z",
   "source": "event-store",
   "n": 52,
   "note": "Live from event-store · 174 latest books · 52 mids",

@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --format
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
@@ -29,10 +31,22 @@ import {
   type TennisBoardMetrics,
   type VenueCountRow,
 } from '../lib/tennis/board-metrics.ts';
+import {
+  buildAvatarIndexFromNames,
+  scanWarehouseAvatars,
+  toAvatarIndexDoc,
+} from '../lib/tennis/avatar-index.ts';
+import {
+  collectLiveMatchesFromEventStore,
+  loadLiveMatchesDoc,
+  sampleLiveMatches,
+} from '../lib/tennis/live-matches.ts';
 
 const ROOT = join(import.meta.dir, '..');
 const OUT_DIR = join(ROOT, 'public/registry/tennis');
 const DEFAULT_DB = join(ROOT, 'Kalshi-bot/research/cache/event-store.db');
+const WAREHOUSE_AVATARS = join(ROOT, 'warehouse/avatars');
+const PUBLIC_AVATARS = join(ROOT, 'public/avatars');
 
 function argValue(flag: string): string | undefined {
   const i = Bun.argv.indexOf(flag);
@@ -139,9 +153,57 @@ function collectFromEventStore(dbPath: string): TennisBoardMetrics | null {
   }
 }
 
+function collectProfileNames(dbPath: string): string[] {
+  try {
+    if (!Bun.file(dbPath).size) return [];
+    const db = new Database(dbPath, { readonly: true });
+    try {
+      const has = db
+        .query(`SELECT 1 AS ok FROM sqlite_master WHERE type='table' AND name='player_profiles'`)
+        .get() as { ok: number } | null;
+      if (!has) return [];
+      const rows = db
+        .query(
+          `SELECT player_name FROM player_profiles
+           WHERE player_name IS NOT NULL AND player_name != ''
+           ORDER BY appearances DESC LIMIT 200`
+        )
+        .all() as Array<{ player_name: string }>;
+      return rows.map(r => r.player_name);
+    } finally {
+      db.close();
+    }
+  } catch {
+    return [];
+  }
+}
+
+async function maybeGenerateAvatars(): Promise<number> {
+  if (Bun.argv.includes('--no-images')) return 0;
+  try {
+    const proc = Bun.spawn(
+      [
+        'bun',
+        'scripts/images-generate.ts',
+        '--template=avatar',
+        `--source=${WAREHOUSE_AVATARS}`,
+        `--out=${PUBLIC_AVATARS}`,
+        '--size=128x128',
+        '--format=webp',
+      ],
+      { cwd: ROOT, stdout: 'pipe', stderr: 'pipe' }
+    );
+    await proc.exited;
+    return proc.exitCode === 0 ? 1 : 0;
+  } catch {
+    return 0;
+  }
+}
+
 async function main(): Promise<void> {
   const dbPath = argValue('--db') ?? DEFAULT_DB;
   const forceSample = Bun.argv.includes('--sample');
+  const matchLimit = Number(argValue('--match-limit') ?? '12') || 12;
 
   let metrics: TennisBoardMetrics;
   if (forceSample) {
@@ -153,19 +215,51 @@ async function main(): Promise<void> {
     }
   }
 
+  // Live matches + avatar index (clean mapping)
+  const liveMatches = forceSample
+    ? sampleLiveMatches(new Date(), matchLimit)
+    : loadLiveMatchesDoc(dbPath, { limit: matchLimit });
+
+  const profileNames = forceSample
+    ? liveMatches.matches.flatMap(m => [m.sideA.label, m.sideB.label])
+    : [
+        ...collectProfileNames(dbPath),
+        ...liveMatches.matches.flatMap(m => [m.sideA.label, m.sideB.label]),
+      ];
+
+  const imagesOk = await maybeGenerateAvatars();
+  const avatarIndex =
+    profileNames.length > 0
+      ? await buildAvatarIndexFromNames(profileNames)
+      : await scanWarehouseAvatars();
+
   await Bun.write(join(OUT_DIR, 'board-metrics.json'), `${JSON.stringify(metrics, null, 2)}\n`);
   await Bun.write(
     join(OUT_DIR, 'mid-distribution.json'),
     `${JSON.stringify(toMidDistributionDoc(metrics), null, 2)}\n`
   );
+  await Bun.write(join(OUT_DIR, 'live-matches.json'), `${JSON.stringify(liveMatches, null, 2)}\n`);
+  await Bun.write(
+    join(OUT_DIR, 'avatar-index.json'),
+    `${JSON.stringify(toAvatarIndexDoc(avatarIndex), null, 2)}\n`
+  );
 
   console.log(
-    `tennis board bake → source=${metrics.source} mids=${metrics.midsUsable} series=${metrics.seriesVolume.length} markets=${metrics.markets}`
+    `tennis board bake → metrics=${metrics.source} mids=${metrics.midsUsable} series=${metrics.seriesVolume.length} markets=${metrics.markets}`
+  );
+  console.log(
+    `  matches=${liveMatches.source} n=${liveMatches.matches.length} · avatars=${avatarIndex.players.length} · images=${imagesOk ? 'ok' : 'skip'}`
   );
   console.log(`  ${OUT_DIR}/board-metrics.json`);
   console.log(`  ${OUT_DIR}/mid-distribution.json`);
+  console.log(`  ${OUT_DIR}/live-matches.json`);
+  console.log(`  ${OUT_DIR}/avatar-index.json`);
   if (Bun.argv.includes('--json')) {
-    jsonOut(metrics);
+    jsonOut({
+      metrics,
+      liveMatches,
+      avatarIndex: toAvatarIndexDoc(avatarIndex),
+    });
   }
 }
 

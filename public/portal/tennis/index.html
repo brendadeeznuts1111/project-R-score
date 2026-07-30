@@ -121,9 +121,9 @@
     <div class="plane" style="margin: 16px 0" id="charts-host"></div>
 
     <section class="portal-section" aria-labelledby="sample-heading">
-      <h2 id="sample-heading">Cross-market sample rows</h2>
-      <p class="section-sub">
-        Desk shape demo — filter by venue.
+      <h2 id="sample-heading">Live matches</h2>
+      <p class="section-sub" id="matches-sub">
+        Event-store pairs with avatar slugs — filter by venue.
         <label for="venue-filter" class="dim">Venue</label>
         <select id="venue-filter" style="margin-left:8px;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit">
           <option value="">All</option>
@@ -137,11 +137,15 @@
         <table class="data-table" id="sample-rows">
           <thead>
             <tr>
+              <th></th>
               <th>A</th>
+              <th></th>
               <th>B</th>
               <th>Ven</th>
+              <th>Mid A</th>
+              <th>Mid B</th>
               <th>Edge</th>
-              <th>Score</th>
+              <th>Series</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -339,30 +343,123 @@ function renderVenuesFromMetrics(metrics) {
     .join('');
 }
 
-const SAMPLE_ROWS = [
-  { a: 'Sinner', b: 'Alcaraz', venue: 'kalshi', edge: '+4.2', score: '72' },
-  { a: 'Gauff', b: 'Swiatek', venue: 'polymarket', edge: '+1.8', score: '61' },
-  { a: 'Medvedev', b: 'Zverev', venue: 'pinnacle', edge: '-0.4', score: '48' },
-  { a: 'Sabalenka', b: 'Rybakina', venue: 'betfair', edge: '+2.1', score: '55' },
-];
+
+/** @type {{ players: any[], nameToSlug: Record<string,string> }} */
+let avatarIndex = { players: [], nameToSlug: {} };
+/** @type {any[]} */
+let liveMatchRows = [];
+
+function resolveSlug(name) {
+  const raw = String(name || '').trim();
+  if (!raw) return 'demo-player';
+  if (avatarIndex.nameToSlug[raw]) return avatarIndex.nameToSlug[raw];
+  const n = raw.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'player';
+  return avatarIndex.nameToSlug[n] || n;
+}
+
+function avatarImg(slug, size = 28) {
+  const s = esc(slug || 'demo-player');
+  return `<img src="/avatars/${s}.webp" width="${size}" height="${size}" alt="${s}" loading="lazy"
+    style="border-radius:50%;object-fit:cover;background:var(--border);vertical-align:middle"
+    onerror="this.onerror=null;this.src='/avatar/${s}'" />`;
+}
 
 function renderSampleTable(filterVenue = '') {
   const tbody = document.querySelector('#sample-rows tbody');
   if (!tbody) return;
   const rows = filterVenue
-    ? SAMPLE_ROWS.filter(r => r.venue === filterVenue)
-    : SAMPLE_ROWS;
-  tbody.innerHTML = rows
-    .map(
-      r => `<tr>
-        <td>${esc(r.a)}</td>
-        <td>${esc(r.b)}</td>
-        <td>${renderVenueBadge(r.venue, { showLabel: false })}</td>
-        <td class="mono ${r.edge.startsWith('-') ? 'st-bad' : 'st-ok'}">${esc(r.edge)}¢</td>
-        <td class="mono">${esc(r.score)}</td>
-      </tr>`
-    )
-    .join('');
+    ? liveMatchRows.filter((r) => r.venue === filterVenue)
+    : liveMatchRows;
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="9">No matches — run <code>bun run tennis:board:bake</code></td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.map((r) => {
+    const slugA = r.sideA?.slug || resolveSlug(r.sideA?.label);
+    const slugB = r.sideB?.slug || resolveSlug(r.sideB?.label);
+    const edge = r.edgeCents;
+    const edgeCls = edge == null ? '' : edge >= 0 ? 'st-ok' : 'st-bad';
+    const edgeStr = edge == null ? '—' : (edge >= 0 ? '+' : '') + edge + '¢';
+    const midA = r.sideA?.midCents != null ? r.sideA.midCents + '¢' : '—';
+    const midB = r.sideB?.midCents != null ? r.sideB.midCents + '¢' : '—';
+    return `<tr>
+      <td>${avatarImg(slugA)}</td>
+      <td>${esc(r.sideA?.label || '—')}</td>
+      <td>${avatarImg(slugB)}</td>
+      <td>${esc(r.sideB?.label || '—')}</td>
+      <td>${typeof renderVenueBadge === 'function' ? renderVenueBadge(r.venue || 'kalshi', { showLabel: false }) : esc(r.venue || '—')}</td>
+      <td class="mono">${esc(midA)}</td>
+      <td class="mono">${esc(midB)}</td>
+      <td class="mono ${edgeCls}">${esc(edgeStr)}</td>
+      <td class="mono">${esc(r.seriesLabel || r.series || '—')}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderAvatarStrip() {
+  const host = document.getElementById('avatar-strip');
+  const img = document.getElementById('hero-avatar');
+  const players = (avatarIndex.players || []).filter((p) => p.hasSource || p.hasWebp || p.slug === 'demo-player');
+  const ids = players.length ? players.slice(0, 12).map((p) => p.slug) : ['demo-player'];
+  if (img) {
+    const id = ids[0] || 'demo-player';
+    img.src = `/avatars/${id}.webp`;
+    img.alt = id;
+    const label = img.closest('a')?.querySelector('span');
+    // keep first text span as name
+  }
+  if (host) {
+    host.innerHTML = ids.map((id) => {
+      const p = (avatarIndex.players || []).find((x) => x.slug === id);
+      const name = p?.displayName || id;
+      return `<a href="/avatars/${esc(id)}.webp" class="portal-card" style="display:flex;align-items:center;gap:10px;padding:10px 12px;text-decoration:none;color:inherit">
+        ${avatarImg(id, 48)}
+        <div>
+          <div style="font-weight:600;font-size:13px">${esc(name)}</div>
+          <div class="sub" style="margin:0"><code>${esc(id)}</code> · ${p?.hasWebp ? 'webp' : 'pending'}</div>
+        </div>
+      </a>`;
+    }).join('');
+  }
+}
+
+async function loadAvatarIndex() {
+  try {
+    const res = await fetch('/registry/tennis/avatar-index.json', {
+      credentials: 'same-origin', headers: { Accept: 'application/json' }, cache: 'no-cache',
+    });
+    if (!res.ok) return;
+    const doc = await res.json();
+    avatarIndex = {
+      players: doc.players || [],
+      nameToSlug: doc.nameToSlug || {},
+    };
+    if (!Object.keys(avatarIndex.nameToSlug).length && avatarIndex.players.length) {
+      const m = {};
+      for (const p of avatarIndex.players) {
+        m[p.slug] = p.slug;
+      }
+      avatarIndex.nameToSlug = m;
+    }
+  } catch { /* keep empty */ }
+}
+
+async function loadLiveMatches() {
+  try {
+    const res = await fetch('/registry/tennis/live-matches.json', {
+      credentials: 'same-origin', headers: { Accept: 'application/json' }, cache: 'no-cache',
+    });
+    if (!res.ok) return;
+    const doc = await res.json();
+    liveMatchRows = doc.matches || [];
+    const sub = document.getElementById('matches-sub');
+    if (sub) {
+      sub.innerHTML = `${doc.source || '—'} · ${liveMatchRows.length} matches · filter by venue · slugs from avatar-index`;
+    }
+  } catch {
+    liveMatchRows = [];
+  }
 }
 
 async function loadMetrics() {
@@ -453,9 +550,16 @@ function renderHealth(detail) {
 }
 
 export async function load() {
-  setBanner('warn', 'Loading tennis board…', 'metrics · registry · venues');
-  const [metrics, reg] = await Promise.all([loadMetrics(), loadRegistry()]);
+  setBanner('warn', 'Loading tennis board…', 'metrics · registry · avatars · matches');
+  const [metrics, reg] = await Promise.all([
+    loadMetrics(),
+    loadRegistry(),
+    loadAvatarIndex(),
+    loadLiveMatches(),
+  ]);
   const pkgCount = renderRegistry(reg);
+  renderAvatarStrip();
+  renderSampleTable(document.getElementById('venue-filter')?.value || '');
 
   if (metrics) {
     renderKpis(metrics, pkgCount);
