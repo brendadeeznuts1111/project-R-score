@@ -6,6 +6,7 @@ import {
   buildStatRows,
   buildTextSummary,
   cacheMeterFromSlice,
+  describeFetchResultLines,
   formatLiveFetchStatus,
   INSTALL_HYGIENE_EMBED_ID,
   INSTALL_HYGIENE_SCHEMA,
@@ -235,5 +236,18 @@ describe('install-hygiene-board', () => {
       formatLiveFetchStatus({ ok: false, kind: 'timeout', error: 'aborted' })
     ).toContain('embedded snapshot');
     expect(formatLiveFetchStatus({ ok: true })).toBe('');
+  });
+
+  test('describeFetchResultLines formats ok and error results', () => {
+    const ok = describeFetchResultLines({
+      ok: true,
+      status: 200,
+      contentType: 'application/json',
+      data: { kind: 'install-hygiene', generatedAt: 't', ok: false },
+    });
+    expect(ok.some(l => l.includes('200 OK'))).toBe(true);
+    expect(ok.some(l => l.includes('install-hygiene'))).toBe(true);
+    const bad = describeFetchResultLines({ ok: false, kind: 'timeout', error: 'aborted' });
+    expect(bad.some(l => l.includes('timeout'))).toBe(true);
   });
 });

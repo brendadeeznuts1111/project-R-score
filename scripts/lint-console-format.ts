@@ -28,6 +28,7 @@ import {
   CONSOLE_FORMAT_SUPPRESS,
   isConsoleFormatScannable,
   scanConsoleFormat,
+  stripConsoleFormatLine,
   summarizeConsoleFormat,
   type ConsoleFormatSummary,
   type ConsoleFormatViolation,
@@ -62,10 +63,13 @@ async function stagedViolations(): Promise<ConsoleFormatViolation[]> {
     if (raw.startsWith('+') && !raw.startsWith('+++')) {
       const line = raw.slice(1);
       if (isConsoleFormatScannable(file) && !CONSOLE_FORMAT_SUPPRESS.test(line)) {
-        for (const p of CONSOLE_FORMAT_PATTERNS) {
-          if (p.excludeFiles?.includes(file)) continue;
-          if (p.re.test(line)) {
-            violations.push({ file, line: newLine, id: p.id, hint: p.hint, text: line.trim() });
+        const code = stripConsoleFormatLine(line);
+        if (code !== null) {
+          for (const p of CONSOLE_FORMAT_PATTERNS) {
+            if (p.excludeFiles?.includes(file)) continue;
+            if (p.re.test(code)) {
+              violations.push({ file, line: newLine, id: p.id, hint: p.hint, text: line.trim() });
+            }
           }
         }
       }

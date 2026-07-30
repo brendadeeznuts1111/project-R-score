@@ -12,7 +12,7 @@
     <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="stylesheet" href="/portal/style.css" />
-    <script type="application/json" id="install-hygiene-embed">{"schemaVersion":1,"kind":"install-hygiene","generatedAt":"2026-07-30T01:59:33.181Z","bunVersion":"1.4.0","bunRevision":"a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88","installCache":{"available":true,"sizeBytes":3859976192,"sizeHuman":"3.59 GB","thresholdBytes":2147483648,"thresholdHuman":"2.00 GB","wouldPrune":true,"pruneReason":"over threshold (2.00 GB, current 3.59 GB)","cacheDir":"/Users/nolarose/.bun/install/cache","bunPmCachePath":"/Users/nolarose/.npm","bunPmCacheMismatch":"reported /Users/nolarose/.npm does not match expected /Users/nolarose/.bun/install/cache","collectedAt":"2026-07-30T01:59:28.020Z"},"npmInstall":{"ok":true,"violations":[],"violationCount":0,"allowedPaths":[".npmrc","tools/bun-doc-refs.ts","tools/bun-docs-catalog.json","tools/bun-docs-index.json","tools/bun-docs-llms-full.txt","tools/verify-guides.ts"]},"installVerify":{"ok":true,"failed":0,"strict":false,"dryRun":true,"checks":[{"ok":true,"label":"install policy","detail":"linker=isolated (inherited from ~/.bunfig.toml); globalStore=true (inherited from ~/.bunfig.toml); cache=/Users/nolarose/.bun/install/cache"},{"ok":true,"label":"install env","detail":"cache absolute, globalStore=1 (BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE)"},{"ok":true,"label":"install shell env","detail":"no BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE"},{"ok":true,"label":"cache dir","detail":"/Users/nolarose/.bun/install/cache (3.6G)"},{"ok":true,"label":"global store","detail":"/Users/nolarose/.bun/install/cache/links (1064 entries)"},{"ok":true,"label":"tilde drift","detail":"no literal ./~ cache dirs"},{"ok":true,"label":"trustedDependencies","detail":"explicitly empty and documented"},{"ok":true,"label":"lockfile","detail":"configVersion 1 (isolated)"},{"ok":true,"label":"node_modules layout","detail":"resolves into global store/cache"}]},"ok":false}</script>
+    <script type="application/json" id="install-hygiene-embed">{"schemaVersion":1,"kind":"install-hygiene","generatedAt":"2026-07-30T05:23:04.920Z","bunVersion":"1.4.0","bunRevision":"a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88","installCache":{"available":true,"sizeBytes":3859976192,"sizeHuman":"3.59 GB","thresholdBytes":2147483648,"thresholdHuman":"2.00 GB","wouldPrune":true,"pruneReason":"over threshold (2.00 GB, current 3.59 GB)","cacheDir":"/Users/nolarose/.bun/install/cache","bunPmCachePath":"/Users/nolarose/.npm","bunPmCacheMismatch":"reported /Users/nolarose/.npm does not match expected /Users/nolarose/.bun/install/cache","collectedAt":"2026-07-30T05:22:52.910Z"},"npmInstall":{"ok":true,"violations":[],"violationCount":0,"allowedPaths":[".npmrc","tools/bun-doc-refs.ts","tools/bun-docs-catalog.json","tools/bun-docs-index.json","tools/bun-docs-llms-full.txt","tools/verify-guides.ts"]},"installVerify":{"ok":true,"failed":0,"strict":false,"dryRun":true,"checks":[{"ok":true,"label":"install policy","detail":"linker=isolated (inherited from ~/.bunfig.toml); globalStore=true (inherited from ~/.bunfig.toml); cache=/Users/nolarose/.bun/install/cache"},{"ok":true,"label":"install env","detail":"cache absolute, globalStore=1 (BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE)"},{"ok":true,"label":"install shell env","detail":"no BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE"},{"ok":true,"label":"cache dir","detail":"/Users/nolarose/.bun/install/cache (3.6G)"},{"ok":true,"label":"global store","detail":"/Users/nolarose/.bun/install/cache/links (1064 entries)"},{"ok":true,"label":"tilde drift","detail":"no literal ./~ cache dirs"},{"ok":true,"label":"trustedDependencies","detail":"explicitly empty and documented"},{"ok":true,"label":"lockfile","detail":"configVersion 1 (isolated)"},{"ok":true,"label":"node_modules layout","detail":"resolves into global store/cache"}]},"ok":false}</script>
     <style>
       /* Status colors: green=passed · yellow=review · red=blocked · neutral=information */
       .doc-wrap {
@@ -414,6 +414,21 @@
         color: var(--green, #3fb950);
         background: color-mix(in srgb, var(--green, #3fb950) 10%, transparent);
       }
+      .ih-fetch-debug {
+        margin: 10px 0 0;
+        padding: 10px 12px;
+        border: 1px dashed var(--border);
+        border-radius: var(--radius);
+        background: #010409;
+        color: #8b949e;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 11px;
+        line-height: 1.45;
+        white-space: pre-wrap;
+        word-break: break-word;
+        max-height: 14rem;
+        overflow: auto;
+      }
       .ih-summary {
         margin: 10px 0 0;
         padding: 10px 12px;
@@ -551,7 +566,7 @@
         <h1>Install hygiene</h1>
         <span id="ih-tone" class="doc-badge yellow" data-tone="neutral">review needed</span>
         <span id="ih-source">embedded snapshot</span>
-        <p class="dim" id="ih-meta">generated 2026-07-30T01:59:33.181Z · Bun 1.4.0 · embedded snapshot</p>
+        <p class="dim" id="ih-meta">generated 2026-07-30T05:23:04.920Z · Bun 1.4.0 · embedded snapshot</p>
       </div>
       <p class="doc-lede">
         Checks Bun's install cache, package-manager policy, lockfile, and workspace layout. Read
@@ -567,6 +582,7 @@
       </div>
       <p id="ih-reasons" class="ih-reasons ih-reasons--yellow">review needed: Install cache exceeds the configured cleanup threshold.</p>
       <p id="ih-fetch-status" class="ih-fetch-status" hidden aria-live="polite"></p>
+      <pre id="ih-fetch-debug" class="ih-fetch-debug" hidden aria-label="Fetch debug log"></pre>
 
       <div class="doc-stats" id="ih-stats"><div class="doc-stat doc-stat--yellow" data-tone="yellow"><div class="k">status</div><div class="v">review needed</div></div><div class="doc-stat doc-stat--yellow" data-tone="yellow"><div class="k">cache usage</div><div class="v">3.59 GB</div></div><div class="doc-stat doc-stat--yellow" data-tone="yellow"><div class="k">cleanup recommended</div><div class="v">yes</div></div><div class="doc-stat doc-stat--green" data-tone="green"><div class="k">package-manager policy</div><div class="v">clean</div></div><div class="doc-stat doc-stat--green" data-tone="green"><div class="k">installation verification</div><div class="v">passed</div></div><div class="doc-stat doc-stat--neutral" data-tone="neutral"><div class="k">Bun runtime</div><div class="v">1.4.0</div></div></div>
 
@@ -588,7 +604,7 @@
           <a class="btn" href="/registry/install-hygiene-report.json">View JSON</a>
         </div>
         <pre id="ih-summary-text" class="ih-summary" aria-label="Install hygiene text summary">install hygiene: review needed
-generated: 2026-07-30T01:59:33.181Z
+generated: 2026-07-30T05:23:04.920Z
 Bun runtime: 1.4.0
 cache usage: 3.59 GB; cleanup threshold: 2.00 GB; cleanup recommended: yes
 package-manager policy: clean

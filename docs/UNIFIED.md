@@ -264,11 +264,16 @@ Install verify spawns resolve `bun` via `lib/verification/resolve-bun-binary.ts`
 | Registry bake | `/registry/install-hygiene-report.json` |
 | Offline embed | `#install-hygiene-embed` in board HTML (preferred load path) |
 | Rebake | `bun run bake:install-hygiene` |
+| Live fetch debug | `?portal_fetch_debug=1` (or `?verbose=1`) · on-page log + console · [fetch request options](https://bun.com/docs/runtime/networking/fetch#request-options) |
+
+Live refresh uses portal `fetch-json` (**GET only**, no body, `Accept: application/json`, timeout). Browser **cannot** pass Bun’s `verbose: true` (Bun-only extension); the query flag is the stand-in.
 
 ```bash
 bun run bake:install-hygiene
 bun run install:verify --dry-run --json   # JSON used by the bake script
 bun run portal-cli dashboard --view=install-hygiene --open
+# debug live registry refresh in the browser:
+# open http://127.0.0.1:3000/portal/install-hygiene/?portal_fetch_debug=1
 ```
 
 **`BUN_CONFIG_*` (env > bunfig)** — canonical: [configuring-with-environment-variables](https://bun.com/docs/pm/cli/install#configuring-with-environment-variables). SSOT: `tools/bun-install-env.ts` · runtime proof: `tools/verify-install-env.ts` · **8 probe rows** in `public/registry/install-env-proof.json` (6 env vars + `install.scopes` npm plane + `registry-read-plane` SDK plane).

@@ -1,33 +1,22 @@
 {
   "kind": "console-format-state",
   "schemaVersion": 1,
-  "bakedAt": "2026-07-29T01:49:06.715Z",
+  "bakedAt": "2026-07-30T05:23:05.344Z",
   "gate": "pass",
   "current": {
-    "total": 18,
+    "total": 3,
     "byPattern": {
-      "direct-inspect-table": 15,
       "pretty-json-console": 3
     },
     "files": {
-      "lib/text.ts": 1,
-      "lib/operations/limit-raise-report.ts": 1,
       "scripts/bun-cache-lifecycle.ts": 1,
-      "scripts/brand-bench-evaluate.ts": 1,
-      "tools/bun-docs-guide-examples.ts": 5,
-      "tools/bun-docs-curated.ts": 2,
-      "tools/ops-check-limits.ts": 1,
-      "tools/bun-doc-refs.ts": 2,
       "tools/ops-snapshot.ts": 1,
-      "tools/bun-docs-catalog.ts": 1,
-      "tools/bun-api-oneliners.ts": 1,
       "tools/bun-brand-map.ts": 1
     }
   },
   "baseline": {
-    "total": 18,
+    "total": 3,
     "byPattern": {
-      "direct-inspect-table": 15,
       "pretty-json-console": 3
     }
   },
@@ -35,57 +24,12 @@
   "deltaVsBaseline": 0,
   "topFiles": [
     {
-      "file": "tools/bun-docs-guide-examples.ts",
-      "hits": 5,
-      "baseline": 5
-    },
-    {
-      "file": "tools/bun-docs-curated.ts",
-      "hits": 2,
-      "baseline": 2
-    },
-    {
-      "file": "tools/bun-doc-refs.ts",
-      "hits": 2,
-      "baseline": 2
-    },
-    {
-      "file": "lib/text.ts",
-      "hits": 1,
-      "baseline": 1
-    },
-    {
-      "file": "lib/operations/limit-raise-report.ts",
-      "hits": 1,
-      "baseline": 1
-    },
-    {
       "file": "scripts/bun-cache-lifecycle.ts",
       "hits": 1,
       "baseline": 1
     },
     {
-      "file": "scripts/brand-bench-evaluate.ts",
-      "hits": 1,
-      "baseline": 1
-    },
-    {
-      "file": "tools/ops-check-limits.ts",
-      "hits": 1,
-      "baseline": 1
-    },
-    {
       "file": "tools/ops-snapshot.ts",
-      "hits": 1,
-      "baseline": 1
-    },
-    {
-      "file": "tools/bun-docs-catalog.ts",
-      "hits": 1,
-      "baseline": 1
-    },
-    {
-      "file": "tools/bun-api-oneliners.ts",
       "hits": 1,
       "baseline": 1
     },

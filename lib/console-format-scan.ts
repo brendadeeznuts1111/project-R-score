@@ -69,6 +69,109 @@ export function isConsoleFormatScannable(path: string): boolean {
   return SCANNED_DIRS.some(d => n === d || n.startsWith(`${d}/`));
 }
 
+/** Object-key shape: 'Bun.inspect.table': or "console.dir": — data, not a call. */
+const OBJECT_KEY = /^\s*['"][^'"]+['"]\s*:/;
+
+/**
+ * Stateless per-line code extraction for the staged (diff) path, where
+ * cross-line template/comment state is unavailable. Returns `null` for
+ * comment/JSDoc-body/object-key lines, else the line with // comments,
+ * strings, and same-line template literals stripped. Multi-line templates
+ * remain an edge case (suppress with // console-ok).
+ */
+export function stripConsoleFormatLine(line: string): string | null {
+  const trimmed = line.trim();
+  if (trimmed.startsWith('*')) return null; // JSDoc body line
+  if (OBJECT_KEY.test(line)) return null;
+  let out = '';
+  let inString: string | null = null;
+  let inTemplate = false;
+  for (let j = 0; j < line.length; j++) {
+    const ch = line[j]!;
+    const next = line[j + 1];
+    const prev = line[j - 1];
+    if (inTemplate) {
+      if (ch === '`' && prev !== '\\') inTemplate = false;
+      continue;
+    }
+    if (inString) {
+      if (ch === inString && prev !== '\\') inString = null;
+      continue;
+    }
+    if (ch === '/' && next === '/') break; // line comment: drop rest
+    if (ch === '/' && next === '*') break; // block comment start: drop rest (stateless)
+    if (ch === '`') {
+      inTemplate = true;
+      continue;
+    }
+    if (ch === "'" || ch === '"') {
+      inString = ch;
+      continue;
+    }
+    out += ch;
+  }
+  return out;
+}
+
+/**
+ * Line scanner with comment/template/string awareness — doc data, embedded
+ * example code, and object keys mention the APIs without being call sites;
+ * counting them pins phantom hits in the baseline forever.
+ * Heuristic (documented, not a parser): tracks /* *\/ block comments and
+ * unescaped-backtick template state; skips // and * comment lines, object
+ * keys, and matches inside a quoted run on the same line.
+ */
+function* scannableLines(text: string): Generator<{ code: string; raw: string; n: number }> {
+  let inTemplate = false;
+  let inBlockComment = false;
+  const lines = text.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]!;
+    const trimmed = line.trim();
+    let out = '';
+    let inString: string | null = null;
+    for (let j = 0; j < line.length; j++) {
+      const ch = line[j]!;
+      const next = line[j + 1];
+      const prev = line[j - 1];
+      if (inBlockComment) {
+        if (ch === '*' && next === '/') {
+          inBlockComment = false;
+          j++;
+        }
+        continue;
+      }
+      if (inTemplate) {
+        if (ch === '`' && prev !== '\\') inTemplate = false;
+        continue;
+      }
+      if (inString) {
+        if (ch === inString && prev !== '\\') inString = null;
+        continue;
+      }
+      if (ch === '/' && next === '/') break; // line comment: drop rest
+      if (ch === '/' && next === '*') {
+        inBlockComment = true;
+        j++;
+        continue;
+      }
+      if (ch === '`') {
+        inTemplate = true;
+        continue;
+      }
+      if (ch === "'" || ch === '"') {
+        inString = ch;
+        continue;
+      }
+      out += ch;
+    }
+    if (inBlockComment || inTemplate) continue;
+    if (trimmed.startsWith('*')) continue; // JSDoc body line
+    if (OBJECT_KEY.test(line)) continue;
+    yield { code: out, raw: line, n: i + 1 };
+  }
+}
+
 /** Repo-wide scan of lib/ + scripts/ + tools/ (tests and projects/ excluded). */
 export async function scanConsoleFormat(root: string): Promise<ConsoleFormatViolation[]> {
   const violations: ConsoleFormatViolation[] = [];
@@ -77,14 +180,12 @@ export async function scanConsoleFormat(root: string): Promise<ConsoleFormatViol
     for await (const file of glob.scan({ cwd: root })) {
       if (!isConsoleFormatScannable(file)) continue;
       const text = await Bun.file(`${root}/${file}`).text();
-      const lines = text.split('\n');
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i]!;
-        if (CONSOLE_FORMAT_SUPPRESS.test(line)) continue;
+      for (const { code, raw, n } of scannableLines(text)) {
+        if (CONSOLE_FORMAT_SUPPRESS.test(raw)) continue;
         for (const p of CONSOLE_FORMAT_PATTERNS) {
           if (p.excludeFiles?.includes(file)) continue;
-          if (p.re.test(line)) {
-            violations.push({ file, line: i + 1, id: p.id, hint: p.hint, text: line.trim() });
+          if (p.re.test(code)) {
+            violations.push({ file, line: n, id: p.id, hint: p.hint, text: raw.trim() });
           }
         }
       }

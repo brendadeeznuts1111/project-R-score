@@ -14,7 +14,7 @@
  * @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request
  */
 import { bindCopyButtons } from '../copy-cli.js';
-import { fetchJsonResult } from '../fetch-json.js';
+import { fetchJsonResult, isPortalFetchDebug } from '../fetch-json.js';
 
 export const INSTALL_HYGIENE_SOURCE = '/registry/install-hygiene-report.json';
 export const INSTALL_HYGIENE_SCHEMA = 1;
@@ -591,16 +591,63 @@ export function formatLiveFetchStatus(r) {
 }
 
 /**
+ * Show request details only when portal fetch debugging is explicitly enabled.
+ * @param {string[]} lines
+ */
+export function renderFetchDebugPanel(lines) {
+  const el = document.getElementById('ih-fetch-debug');
+  if (!el) return;
+  if (!isPortalFetchDebug() || !lines.length) {
+    el.hidden = true;
+    el.textContent = '';
+    return;
+  }
+  el.hidden = false;
+  el.textContent = [
+    'Portal fetch debug',
+    `Source: ${INSTALL_HYGIENE_SOURCE}`,
+    ...lines,
+    'Browser requests do not support Bun fetch verbose:true.',
+    'Docs: https://bun.com/docs/runtime/networking/fetch#request-options',
+  ].join('\n');
+}
+
+/**
+ * @param {object} r
+ * @returns {string[]}
+ */
+export function describeFetchResultLines(r) {
+  if (!r) return ['[portal-fetch] no result'];
+  if (r.ok) {
+    const data = /** @type {Record<string, unknown>} */ (r.data || {});
+    return [
+      `[portal-fetch] ${r.status ?? 200} OK ${r.contentType || ''}`.trim(),
+      `[portal-fetch] kind=${String(data.kind || '?')} generatedAt=${String(data.generatedAt || '?')} ok=${String(data.ok)}`,
+    ];
+  }
+  return [
+    `[portal-fetch] ${r.kind || 'error'}${r.status != null ? ` HTTP ${r.status}` : ''}`,
+    `[portal-fetch] ${r.error || 'failed'}`,
+  ];
+}
+
+/**
  * Prefer the embedded snapshot; refresh from the registry when fetch works.
  * @returns {Promise<Record<string, unknown>|null>}
  */
 export async function loadInstallHygieneReport() {
   const embedded = readInstallHygieneEmbed();
+  const debugLines = [
+    `[portal-fetch] GET ${INSTALL_HYGIENE_SOURCE}`,
+    `[portal-fetch] embedded snapshot=${embedded ? 'available' : 'missing'}`,
+  ];
+
   // Always render embed first so the board works with no network / broken static host.
   if (embedded) {
     // Non-blocking refresh when online (GET only · timeout · Accept: json)
     void fetchJsonResult(INSTALL_HYGIENE_SOURCE, { timeoutMs: 5000, method: 'GET' }).then(r => {
       const statusEl = document.getElementById('ih-fetch-status');
+      const lines = [...debugLines, ...describeFetchResultLines(r)];
       if (
         r.ok &&
         r.data &&
@@ -612,26 +659,50 @@ export async function loadInstallHygieneReport() {
         if (!Number.isFinite(embAt) || (Number.isFinite(liveAt) && liveAt >= embAt)) {
           renderInstallHygieneReport(withSource(live, 'live'));
           if (statusEl) {
-            statusEl.hidden = true;
-            statusEl.textContent = '';
+            if (isPortalFetchDebug()) {
+              statusEl.hidden = false;
+              statusEl.className = 'ih-fetch-status ih-fetch-status--ok';
+              statusEl.textContent = 'Live update succeeded; the registry report is current.';
+            } else {
+              statusEl.hidden = true;
+              statusEl.textContent = '';
+            }
           }
+          lines.push('[portal-fetch] applied live report');
+          renderFetchDebugPanel(lines);
           return;
         }
+        lines.push('[portal-fetch] kept the newer embedded snapshot');
+        if (statusEl && isPortalFetchDebug()) {
+          statusEl.hidden = false;
+          statusEl.className = 'ih-fetch-status ih-fetch-status--ok';
+          statusEl.textContent = 'The embedded snapshot is newer than the live registry report.';
+        }
+        renderFetchDebugPanel(lines);
+        return;
       }
       if (statusEl && !r.ok) {
         statusEl.hidden = false;
         statusEl.className = 'ih-fetch-status ih-fetch-status--warn';
         statusEl.textContent = formatLiveFetchStatus(r);
       }
+      renderFetchDebugPanel(lines);
     });
+    renderFetchDebugPanel(
+      debugLines.concat('[portal-fetch] showing the embedded snapshot while live update runs')
+    );
     return withSource(embedded, 'embed');
   }
   const r = await fetchJsonResult(INSTALL_HYGIENE_SOURCE, { timeoutMs: 5000, method: 'GET' });
+  const lines = [...debugLines, ...describeFetchResultLines(r)];
   if (
     r.ok &&
     r.data &&
     /** @type {Record<string, unknown>} */ (r.data).kind === 'install-hygiene'
   ) {
+    renderFetchDebugPanel(
+      lines.concat('[portal-fetch] applied live report; no snapshot available')
+    );
     return withSource(/** @type {Record<string, unknown>} */ (r.data), 'live');
   }
   const statusEl = document.getElementById('ih-fetch-status');
@@ -641,6 +712,7 @@ export async function loadInstallHygieneReport() {
     statusEl.textContent =
       formatLiveFetchStatus(r) || 'Live refresh failed and no embedded snapshot is available.';
   }
+  renderFetchDebugPanel(lines);
   return null;
 }
 
