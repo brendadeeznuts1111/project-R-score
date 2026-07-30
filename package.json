@@ -17,7 +17,7 @@
   "catalog": {
     "zod": "3.23.0",
     "@types/bun": "1.3.14",
-    "bun-types": "1.3.14",
+    "bun-types": "1.4.0-canary.20260519T150915",
     "typescript": "6.0.3",
     "react": "19.2.6",
     "react-dom": "19.2.6",
@@ -1580,6 +1580,7 @@
     "gate-report:monorepo": "bun scripts/gate-report-monorepo.ts",
     "install:all": "bun scripts/with-bun-cache-env.ts install",
     "install:verify": "bun scripts/verify-install-cache.ts",
+    "add:safe": "bun scripts/bun-add-safe.ts",
     "install:verify:strict": "bun scripts/verify-install-cache.ts --strict",
     "install:machine:health": "bun scripts/machine-bun-health.ts",
     "install:cache:lifecycle": "bun scripts/bun-cache-lifecycle.ts --dry-run",
@@ -1927,6 +1928,7 @@
     "setup": "bun run install:all && bun run build",
     "security:audit": "bun audit",
     "security:guard:deps": "bun run scripts/security-dependency-guard.ts",
+    "check:bun-deps:tier-a": "bun scripts/check-bun-deps-tier-a.ts",
     "security:secrets:local": "bun run scripts/secrets-scan-local.ts",
     "validate:bun-urls": "bun run scripts/validate-bun-urls.ts",
     "validate:github": "bun run scripts/bun-github-validation.ts",
@@ -2086,6 +2088,7 @@
     "check:npm-install": "bun scripts/check-npm-install.ts",
     "check:import-graph": "bun scripts/check-import-graph.ts",
     "check:oxlint-ratchet": "bun scripts/check-oxlint-ratchet.ts",
+    "check:banned-wrappers": "bun scripts/check-banned-wrappers.ts",
     "check:monorepo-health": "bun scripts/check-monorepo-health.ts",
     "check:invisible-chars": "bun scripts/check-invisible-chars.ts",
     "harness:status": "bun scripts/harness-status.ts",
@@ -2225,9 +2228,7 @@
     "surfaces:bake": "bun scripts/bake-surfaces.ts",
     "surfaces:check": "bun scripts/bake-surfaces.ts --check",
     "check:console-format": "bun scripts/lint-console-format.ts",
-    "console-format:bake": "bun scripts/bake-console-format.ts",
-    "add:safe": "bun scripts/bun-add-safe.ts",
-    "check:bun-deps:tier-a": "bun scripts/check-bun-deps-tier-a.ts"
+    "console-format:bake": "bun scripts/bake-console-format.ts"
   },
   "private": "false",
   "files": [
@@ -2243,5 +2244,8 @@
   "publishConfig": {
     "registry": "https://registry.factory-wager.com/",
     "access": "public"
+  },
+  "overrides": {
+    "bun-types": "1.4.0-canary.20260519T150915"
   }
 }
