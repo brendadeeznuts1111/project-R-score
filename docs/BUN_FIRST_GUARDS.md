@@ -21,7 +21,7 @@ bun run harness:status
 | DX catalog | [`config/bun-dx-catalog.ts`](../config/bun-dx-catalog.ts) |
 | Harness ESLint | [`eslint.harness.config.ts`](../eslint.harness.config.ts) |
 | Rollout inventory | [`config/eslint/harness/rollout.ts`](../config/eslint/harness/rollout.ts) |
-| Project overlay | [`eslint.project.config.ts`](../eslint.project.config.ts) |
+| Project overlay | [`config/eslint/legacy/project.config.ts`](../config/eslint/legacy/project.config.ts) |
 
 Policy: [bun/BUN_FIRST_POLICY.md](./bun/BUN_FIRST_POLICY.md) · capabilities: [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md).
 
