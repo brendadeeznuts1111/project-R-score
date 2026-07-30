@@ -88,14 +88,24 @@ function diversifyBySubsystem(results, limitPer = 2, maxTotal = 12) {
   return out;
 }
 
-function metricCard({ label, value, detail, cls = '', href }) {
+function metricCard({ label, value, detail, details, cls = '', href }) {
   const val = href
     ? `<a class="val ${cls}" href="${esc(href)}">${esc(String(value))}</a>`
     : `<div class="val ${cls}">${esc(String(value))}</div>`;
+  // Structured secondary metrics — each gets its own label + value, never
+  // jammed into one subtitle line. `detail` stays for static descriptors.
+  const secondary = details?.length
+    ? `<dl class="metrics">${details
+        .map(
+          ([mLabel, mValue]) =>
+            `<div class="metric"><dt>${esc(mLabel)}</dt><dd>${esc(String(mValue))}</dd></div>`
+        )
+        .join('')}</dl>`
+    : `<div class="d">${esc(detail || '')}</div>`;
   return `<article class="card metric-card" data-label="${esc(label)}">
     <div class="lbl">${esc(label)}</div>
     ${val}
-    <div class="d">${esc(detail || '')}</div>
+    ${secondary}
   </article>`;
 }
 
@@ -415,10 +425,23 @@ function renderKpis(ctx) {
     {
       label: 'Release verification',
       value: relSum ? `${relSum.passed}/${relSum.total}` : '—',
-      detail: hasMetaEmbeds(release?.results)
-        ? `meta · ${release?.semanticTags?.channel || '?'}@${release?.semanticTags?.targetVersion || '?'}`
+      details: hasMetaEmbeds(release?.results)
+        ? [
+            ['mode', 'meta'],
+            [
+              'channel',
+              `${release?.semanticTags?.channel || '?'}@${release?.semanticTags?.targetVersion || '?'}`,
+            ],
+          ]
         : release?.semanticTags
-          ? `bare · Bun ${release.bunVersion || '?'}`
+          ? [
+              ['mode', 'bare'],
+              ['bun', release.bunVersion || '?'],
+            ]
+          : undefined,
+      detail:
+        hasMetaEmbeds(release?.results) || release?.semanticTags
+          ? undefined
           : 'Run verify:channel:meta',
       cls: proofStatusCls(relSum),
       href: '/registry/release-features.json',
@@ -478,9 +501,13 @@ function renderKpis(ctx) {
           : def?.passed != null
             ? `${def.passed}/${def.total}`
             : '—',
-      detail: def?.bunVersion
-        ? `Bun ${def.bunVersion}${def.summary?.status ? ` · ${def.summary.status}` : ''}`
-        : def?.status || 'defaults proof',
+      details: def?.bunVersion
+        ? [
+            ['bun', def.bunVersion],
+            ...(def.summary?.status ? [['status', def.summary.status]] : []),
+          ]
+        : undefined,
+      detail: def?.bunVersion ? undefined : def?.status || 'defaults proof',
       cls:
         def?.summary?.status === 'pass' ||
         (def?.summary?.passed ?? def?.passed) === (def?.summary?.total ?? def?.total)
@@ -493,9 +520,16 @@ function renderKpis(ctx) {
     {
       label: 'Tree / liquidity',
       value: partners != null ? String(partners) : (ops?.liquidity?.total ?? mon?.dodQueue ?? '—'),
+      details:
+        partners != null
+          ? [
+              ['agents', tree?.agents ?? 0],
+              ['liquidity', `$${ops?.liquidity?.total ?? '—'}`],
+            ]
+          : undefined,
       detail:
         partners != null
-          ? `${tree?.agents ?? 0} agents · $${ops?.liquidity?.total ?? '—'}`
+          ? undefined
           : mon?.experimentsActive != null
             ? `${mon.experimentsActive} experiments`
             : 'ops-summary',
@@ -505,9 +539,13 @@ function renderKpis(ctx) {
     {
       label: 'TOC warmed',
       value: ops?.toc?.available ? String(ops.toc.warmed ?? 0) : '—',
-      detail: ops?.toc?.available
-        ? `${ops.toc.warming ?? 0} warming · ${ops.toc.openBottlenecks ?? 0} bottlenecks`
-        : 'seed toc fixture',
+      details: ops?.toc?.available
+        ? [
+            ['warming', ops.toc.warming ?? 0],
+            ['bottlenecks', ops.toc.openBottlenecks ?? 0],
+          ]
+        : undefined,
+      detail: ops?.toc?.available ? undefined : 'seed toc fixture',
       cls: ops?.toc?.available
         ? ops.toc.criticalBottlenecks > 0
           ? 'err'
@@ -520,14 +558,19 @@ function renderKpis(ctx) {
     {
       label: 'Loop settle',
       value: ops?.loop?.settled != null ? String(ops.loop.settled) : '—',
-      detail:
+      details:
         ops?.loop != null
-          ? `${ops.loop.dispatched ?? 0} dispatched · ${
-              typeof ops.loop.loopCompletionRate === 'number'
-                ? `${Math.round(ops.loop.loopCompletionRate * 100)}% complete`
-                : 'rate n/a'
-            }`
-          : 'ops-summary.loop',
+          ? [
+              ['dispatched', ops.loop.dispatched ?? 0],
+              [
+                'complete',
+                typeof ops.loop.loopCompletionRate === 'number'
+                  ? `${Math.round(ops.loop.loopCompletionRate * 100)}%`
+                  : 'n/a',
+              ],
+            ]
+          : undefined,
+      detail: ops?.loop != null ? undefined : 'ops-summary.loop',
       cls: ops?.loop?.settled != null ? 'ok' : 'warn',
       href: '/registry/ops-summary.json',
     },
@@ -536,11 +579,14 @@ function renderKpis(ctx) {
       value: ops?.compliance?.available
         ? String(ops.compliance.enhancements ?? (ops.compliance.ok ? 'ok' : 'fail'))
         : '—',
-      detail: ops?.compliance?.available
-        ? `shadow Δ ${ops.compliance.shadowMismatches ?? 0}${
-            ops.compliance.geoProfiles != null ? ` · ${ops.compliance.geoProfiles} geo` : ''
-          }${ops.compliance.hmac ? ' · HMAC' : ''}`
-        : 'compliance:bake',
+      details: ops?.compliance?.available
+        ? [
+            ['shadow Δ', ops.compliance.shadowMismatches ?? 0],
+            ...(ops.compliance.geoProfiles != null ? [['geo', ops.compliance.geoProfiles]] : []),
+            ...(ops.compliance.hmac ? [['HMAC', '✓']] : []),
+          ]
+        : undefined,
+      detail: ops?.compliance?.available ? undefined : 'compliance:bake',
       cls: ops?.compliance?.available
         ? ops.compliance.ok
           ? 'ok'

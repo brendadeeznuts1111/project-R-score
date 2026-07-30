@@ -116,6 +116,28 @@
     }
     .card a.val:hover { color: var(--accent); }
     .card .d { font-size: 12px; color: var(--text-dim); line-height: 1.35; }
+    /* Structured secondary metrics (replaces jammed subtitle lines) */
+    .card .metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 14px;
+      margin: 2px 0 0;
+      padding: 6px 0 0;
+      border-top: 1px solid var(--border, rgba(48, 54, 61, 0.6));
+    }
+    .card .metrics .metric { display: flex; flex-direction: column; min-width: 0; }
+    .card .metrics dt {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--text-dim);
+    }
+    .card .metrics dd {
+      margin: 0;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
     .ok { color: var(--green, #3fb950); }
     .warn { color: var(--yellow, #d29922); }
     .err { color: var(--red, #f85149); }
