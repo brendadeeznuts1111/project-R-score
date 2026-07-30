@@ -539,7 +539,8 @@ async function main(): Promise<void> {
     parallelJobs.push(spawnGate('bun-env', ['bun', 'scripts/check-bun-env.ts']));
     parallelJobs.push(spawnGate('import-graph', ['bun', 'scripts/check-import-graph.ts']));
   }
-  parallelJobs.push(spawnGate('banned-wrappers', ['bun', 'scripts/check-banned-wrappers.ts']));
+  // Tier-A package gate always runs (sole successor to check-banned-wrappers).
+  parallelJobs.push(spawnGate('bun-deps-tier-a', ['bun', 'scripts/check-bun-deps-tier-a.ts']));
   if (libStaged || scriptsStaged || toolsStaged) {
     parallelJobs.push(spawnGate('oxlint-ratchet', ['bun', 'scripts/check-oxlint-ratchet.ts']));
     parallelJobs.push(
@@ -552,14 +553,6 @@ async function main(): Promise<void> {
   if (npmInstallStaged) {
     parallelJobs.push(spawnGate('npm-install', ['bun', 'run', 'check:npm-install']));
     parallelJobs.push(spawnGate('bun-pm-cache', ['bun', 'run', 'check:bun-pm-cache']));
-  }
-
-  const packageJsonStaged = staged.some(f => {
-    const n = f.replace(/^\.\//, '');
-    return n === 'package.json' || /(^|\/)package\.json$/.test(n);
-  });
-  if (packageJsonStaged) {
-    parallelJobs.push(spawnGate('bun-deps-tier-a', ['bun', 'scripts/check-bun-deps-tier-a.ts']));
   }
 
   // Monorepo-health formula/UI/history — unit tests only (full ratchet lives in ci:core).
@@ -610,7 +603,6 @@ async function main(): Promise<void> {
   const pathBun = parallelResults.find(r => r.name === 'path-bun')?.code ?? 0;
   const bunEnv = parallelResults.find(r => r.name === 'bun-env')?.code ?? 0;
   const importGraph = parallelResults.find(r => r.name === 'import-graph')?.code ?? 0;
-  const bannedWrappers = parallelResults.find(r => r.name === 'banned-wrappers')?.code ?? 0;
   const oxlintRatchet = parallelResults.find(r => r.name === 'oxlint-ratchet')?.code ?? 0;
   const consoleFormatStaged =
     parallelResults.find(r => r.name === 'console-format-staged')?.code ?? 0;
@@ -657,11 +649,6 @@ async function main(): Promise<void> {
   }
   if (oxlintRatchet !== 0) {
     console.error('❌ oxlint warnings grew — bun run check:oxlint-ratchet');
-    await writeTimings(timings, full);
-    process.exit(1);
-  }
-  if (bannedWrappers !== 0) {
-    console.error('❌ banned wrapper package in package.json — bun run check:banned-wrappers');
     await writeTimings(timings, full);
     process.exit(1);
   }

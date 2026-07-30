@@ -2,8 +2,9 @@
 /**
  * Tier-A Bun-native direct-dep gate.
  * Fails when a banned wrapper package is declared in workspace package.json
- * (dependencies / devDependencies / optionalDependencies). Transitive lockfile
- * hits are out of scope — see tools/bun-prefer-matrix.ts TIER_A_AVOID_PACKAGES.
+ * (dependencies / devDependencies / optionalDependencies / peerDependencies).
+ * Transitive lockfile hits are out of scope — see tools/bun-prefer-matrix.ts
+ * TIER_A_AVOID_PACKAGES.
  *
  * @see https://bun.com/docs/runtime/file-io — Bun.file
  * @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
@@ -16,17 +17,23 @@ type PackageJson = {
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
   optionalDependencies?: Record<string, string>;
+  peerDependencies?: Record<string, string>;
 };
 
 type Hit = {
   pkgFile: string;
   pkgName: string;
-  section: 'dependencies' | 'devDependencies' | 'optionalDependencies';
+  section: 'dependencies' | 'devDependencies' | 'optionalDependencies' | 'peerDependencies';
   name: string;
   version: string;
 };
 
-const SECTIONS = ['dependencies', 'devDependencies', 'optionalDependencies'] as const;
+const SECTIONS = [
+  'dependencies',
+  'devDependencies',
+  'optionalDependencies',
+  'peerDependencies',
+] as const;
 const REPO_ROOT = joinPath(import.meta.dir, '..');
 
 async function workspacePackageJsonPaths(repoRoot: string): Promise<string[]> {

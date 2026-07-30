@@ -170,6 +170,7 @@ export const TIER_A_AVOID_PACKAGES = [
   'node-fetch',
   'execa',
   'fs-extra',
+  'better-sqlite3',
 ] as const;
 
 export type TierAAvoidPackage = (typeof TIER_A_AVOID_PACKAGES)[number];
