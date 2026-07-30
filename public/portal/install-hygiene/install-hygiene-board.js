@@ -1,7 +1,7 @@
 /**
- * Install hygiene board — offline embed + optional live refresh of
+ * Install hygiene board — embedded snapshot + optional live refresh of
  * /registry/install-hygiene-report.json via portal fetch-json (GET, timeout, Accept).
- * Color code: green = ok · yellow = attention · red = fail · dim = neutral/missing
+ * Status colors: green = passed · yellow = review · red = blocked · dim = information/missing
  *
  * Live refresh errors are non-fatal (embed wins). Debug live fetch:
  *   ?portal_fetch_debug=1  or  localStorage.PORTAL_FETCH_DEBUG=1
@@ -18,7 +18,7 @@ import { fetchJsonResult } from '../fetch-json.js';
 
 export const INSTALL_HYGIENE_SOURCE = '/registry/install-hygiene-report.json';
 export const INSTALL_HYGIENE_SCHEMA = 1;
-/** DOM id for offline bake embed (vault/failures pattern). */
+/** DOM id for the baked report snapshot (vault/failures pattern). */
 export const INSTALL_HYGIENE_EMBED_ID = 'install-hygiene-embed';
 
 /** @typedef {'green'|'yellow'|'red'|'neutral'|'missing'} Tone */
@@ -78,13 +78,19 @@ export function statusChip(tone, text) {
  */
 export function toneFromReport(report) {
   if (!report || report.kind !== 'install-hygiene') {
-    return { tone: 'missing', label: 'missing', reasons: ['No install-hygiene bake'] };
+    return {
+      tone: 'missing',
+      label: 'missing',
+      reasons: ['No install-hygiene report is available.'],
+    };
   }
   if (report.schemaVersion !== INSTALL_HYGIENE_SCHEMA) {
     return {
       tone: 'yellow',
-      label: 'schema',
-      reasons: [`schemaVersion ${String(report.schemaVersion)} ≠ ${INSTALL_HYGIENE_SCHEMA}`],
+      label: 'review needed',
+      reasons: [
+        `Report schema ${String(report.schemaVersion)} does not match supported schema ${INSTALL_HYGIENE_SCHEMA}.`,
+      ],
     };
   }
   /** @type {string[]} */
@@ -93,43 +99,51 @@ export function toneFromReport(report) {
   const npm = /** @type {Record<string, unknown>} */ (report.npmInstall || {});
   const verify = /** @type {Record<string, unknown>} */ (report.installVerify || {});
 
-  if (cache.wouldPrune === true) reasons.push('cache over prune threshold');
-  if (npm.ok === false) reasons.push('npm-install policy violations');
-  if (verify.ok === false) reasons.push('install:verify failed');
-  if (report.ok === false && reasons.length === 0) reasons.push('report.ok=false');
+  if (cache.wouldPrune === true) {
+    reasons.push('Install cache exceeds the configured cleanup threshold.');
+  }
+  if (npm.ok === false) {
+    reasons.push('Disallowed package-manager install commands were found.');
+  }
+  if (verify.ok === false) reasons.push('Installation verification failed.');
+  if (report.ok === false && reasons.length === 0) {
+    reasons.push('The report is unhealthy for an unspecified reason.');
+  }
 
   if (reasons.length === 0 && report.ok === true) {
     return { tone: 'green', label: 'healthy', reasons: [] };
   }
   if (verify.ok === false || npm.ok === false) {
-    return { tone: 'red', label: 'fail', reasons };
+    return { tone: 'red', label: 'blocked', reasons };
   }
-  return { tone: 'yellow', label: 'attention', reasons };
+  return { tone: 'yellow', label: 'review needed', reasons };
 }
 
 /**
- * Plain-text summary for copy / noscript / SSR meta.
+ * Plain-text summary for copy, no-script rendering, and page metadata.
  * @param {Record<string, unknown>|null|undefined} report
  * @returns {string}
  */
 export function buildTextSummary(report) {
   if (!report || report.kind !== 'install-hygiene') {
-    return 'install-hygiene: missing bake — run bun run bake:install-hygiene';
+    return 'install hygiene: missing report — run bun run bake:install-hygiene';
   }
   const { tone, label, reasons } = toneFromReport(report);
   const cache = /** @type {Record<string, unknown>} */ (report.installCache || {});
   const npm = /** @type {Record<string, unknown>} */ (report.npmInstall || {});
   const verify = /** @type {Record<string, unknown>} */ (report.installVerify || {});
   const lines = [
-    `install-hygiene · ${label} (${tone})`,
+    `install hygiene: ${label}`,
     `generated: ${String(report.generatedAt || '—')}`,
-    `bun: ${String(report.bunVersion || '—')}`,
-    `cache: ${String(cache.sizeHuman || '—')} / ${String(cache.thresholdHuman || '—')} prune=${String(cache.wouldPrune)}`,
-    `npm: ${npm.ok === true ? 'clean' : npm.ok === false ? 'FAIL' : '—'}`,
-    `install:verify: ${verify.ok === true ? 'pass' : verify.ok === false ? 'FAIL' : '—'}`,
+    `Bun runtime: ${String(report.bunVersion || '—')}`,
+    `cache usage: ${String(cache.sizeHuman || '—')}; cleanup threshold: ${String(cache.thresholdHuman || '—')}; cleanup recommended: ${cache.wouldPrune === true ? 'yes' : cache.wouldPrune === false ? 'no' : 'unknown'}`,
+    `package-manager policy: ${npm.ok === true ? 'clean' : npm.ok === false ? 'failed' : 'unknown'}`,
+    `installation verification: ${verify.ok === true ? 'passed' : verify.ok === false ? 'failed' : 'unknown'}`,
   ];
-  if (reasons.length) lines.push(`reasons: ${reasons.join('; ')}`);
-  if (cache.bunPmCacheMismatch) lines.push(`pm-cache: ${String(cache.bunPmCacheMismatch)}`);
+  if (reasons.length) lines.push(`reason: ${reasons.join(' ')}`);
+  if (cache.bunPmCacheMismatch) {
+    lines.push(`cache-path comparison: ${String(cache.bunPmCacheMismatch)}`);
+  }
   return lines.join('\n');
 }
 
@@ -142,16 +156,16 @@ export function buildRecommendedActions(report) {
   /** @type {{ title: string, cli: string, tone: Tone, why: string }[]} */
   const actions = [
     {
-      title: 'Rebake report + board embed',
+      title: 'Refresh the report and embedded snapshot',
       cli: 'bun run bake:install-hygiene',
       tone: 'neutral',
-      why: 'Refresh offline embed and /registry/install-hygiene-report.json',
+      why: 'Updates the registry report and the page snapshot shown when live refresh is unavailable.',
     },
     {
-      title: 'install:verify (dry-run JSON)',
+      title: 'Run installation verification',
       cli: 'bun run install:verify --dry-run --json',
       tone: 'neutral',
-      why: 'Same plane the bake uses for installVerify checks',
+      why: 'Runs the same non-destructive verification used to build this report.',
     },
   ];
   if (!report || report.kind !== 'install-hygiene') {
@@ -164,21 +178,21 @@ export function buildRecommendedActions(report) {
 
   if (cache.wouldPrune === true) {
     actions.push({
-      title: 'Cache lifecycle dry-run',
+      title: 'Preview install-cache cleanup',
       cli: 'bun run install:cache:lifecycle',
       tone: 'yellow',
       why: String(cache.pruneReason || 'cache over BUN_CACHE_PRUNE_MAX_MB threshold'),
     });
     actions.push({
-      title: 'Prune install cache (destructive)',
+      title: 'Clean the install cache',
       cli: 'bun run install:cache:prune',
-      tone: 'red',
-      why: 'Runs bun pm cache rm when over threshold on allowed runners',
+      tone: 'yellow',
+      why: 'Deletes Bun install-cache entries only when the configured threshold is exceeded.',
     });
   }
   if (cache.bunPmCacheMismatch) {
     actions.push({
-      title: 'Check bun pm cache path',
+      title: "Verify Bun's reported cache path",
       cli: 'bun scripts/check-bun-pm-cache.ts',
       tone: 'yellow',
       why: String(cache.bunPmCacheMismatch),
@@ -186,18 +200,18 @@ export function buildRecommendedActions(report) {
   }
   if (npm.ok === false) {
     actions.push({
-      title: 'Scan npm-install policy',
+      title: 'Review package-manager policy violations',
       cli: 'bun scripts/check-npm-install.ts',
       tone: 'red',
-      why: 'Production paths must not shell out to npm/yarn/pnpm install',
+      why: 'Production paths must not invoke npm, Yarn, or pnpm install commands.',
     });
   }
   if (verify.ok === false) {
     actions.push({
-      title: 'install:verify (verbose)',
+      title: 'Investigate installation verification',
       cli: 'bun run install:verify',
       tone: 'red',
-      why: 'Fix failed install policy / cache / lockfile checks',
+      why: 'Review and repair the failed install-policy, cache, or lockfile checks.',
     });
   }
   return actions;
@@ -218,7 +232,6 @@ export function cacheMeterFromSlice(cache) {
   /** @type {Tone} */
   let tone = 'green';
   if (ratio > 1) tone = 'yellow';
-  if (ratio > 1.5) tone = 'red';
   const label = `${cache.sizeHuman || '?'} / ${cache.thresholdHuman || '?'} (${pct}%)`;
   return { ratio, pct, tone, label };
 }
@@ -247,32 +260,42 @@ export function buildStatRows(report) {
 
   return [
     {
-      k: 'overall',
-      v: report.ok === true ? 'ok' : overallTone === 'red' ? 'fail' : 'attention',
+      k: 'status',
+      v: report.ok === true ? 'healthy' : overallTone === 'red' ? 'blocked' : 'review needed',
       tone: overallTone,
     },
     {
-      k: 'cache size',
+      k: 'cache usage',
       v: String(cache.sizeHuman || '—'),
       tone: pruneTone === 'yellow' ? 'yellow' : 'neutral',
     },
     {
-      k: 'would prune',
+      k: 'cleanup recommended',
       v: cache.wouldPrune === true ? 'yes' : cache.wouldPrune === false ? 'no' : '—',
       tone: pruneTone,
     },
     {
-      k: 'npm install',
-      v: npm.ok === true ? `clean (${violations})` : npm.ok === false ? `${violations} hit` : '—',
+      k: 'package-manager policy',
+      v:
+        npm.ok === true
+          ? `clean · ${violations} violations`
+          : npm.ok === false
+            ? `${violations} violations`
+            : '—',
       tone: npm.ok === true ? 'green' : npm.ok === false ? 'red' : 'neutral',
     },
     {
-      k: 'install:verify',
-      v: verify.ok === true ? `pass (${failed} fail)` : verify.ok === false ? `${failed} fail` : '—',
+      k: 'installation verification',
+      v:
+        verify.ok === true
+          ? `passed · ${failed} failures`
+          : verify.ok === false
+            ? `${failed} failures`
+            : '—',
       tone: verify.ok === true ? 'green' : verify.ok === false ? 'red' : 'neutral',
     },
     {
-      k: 'bun',
+      k: 'Bun runtime',
       v: String(report.bunVersion || '—'),
       tone: 'neutral',
     },
@@ -287,7 +310,7 @@ export function renderVerifyCheckRows(report) {
   const verify = /** @type {Record<string, unknown>} */ (report?.installVerify || {});
   const checks = Array.isArray(verify.checks) ? verify.checks : [];
   if (!checks.length) {
-    return '<tr><td colspan="3" class="dim">No install:verify checks in bake</td></tr>';
+    return '<tr><td colspan="3" class="dim">No installation-verification checks are included in this report.</td></tr>';
   }
   return checks
     .map(c => {
@@ -295,7 +318,7 @@ export function renderVerifyCheckRows(report) {
       const ok = row.ok === true;
       const tone = ok ? 'green' : 'red';
       return `<tr class="ih-row--${tone}" data-tone="${tone}">
-        <td>${statusChip(tone, ok ? 'pass' : 'fail')}</td>
+        <td>${statusChip(tone, ok ? 'passed' : 'failed')}</td>
         <td>${esc(row.label)}</td>
         <td class="dim">${esc(row.detail)}</td>
       </tr>`;
@@ -311,41 +334,38 @@ export function renderCacheRowsSimple(cache) {
   /** @type {{ k: string, v: string, tone: Tone }[]} */
   const rows = [
     {
-      k: 'available',
-      v: String(cache.available ?? '—'),
+      k: 'cache readable',
+      v: cache.available === true ? 'yes' : cache.available === false ? 'no' : '—',
       tone: cache.available === true ? 'green' : cache.available === false ? 'red' : 'neutral',
     },
     {
-      k: 'size',
+      k: 'current usage',
       v: String(cache.sizeHuman ?? '—'),
       tone: cache.wouldPrune === true ? 'yellow' : 'neutral',
     },
-    { k: 'threshold', v: String(cache.thresholdHuman ?? '—'), tone: 'neutral' },
+    { k: 'cleanup threshold', v: String(cache.thresholdHuman ?? '—'), tone: 'neutral' },
     {
-      k: 'would prune',
-      v: String(cache.wouldPrune ?? '—'),
+      k: 'cleanup recommended',
+      v: cache.wouldPrune === true ? 'yes' : cache.wouldPrune === false ? 'no' : '—',
       tone: cache.wouldPrune === true ? 'yellow' : cache.wouldPrune === false ? 'green' : 'neutral',
     },
     {
-      k: 'prune reason',
+      k: 'cleanup reason',
       v: String(cache.pruneReason ?? '—'),
       tone: cache.wouldPrune === true ? 'yellow' : 'neutral',
     },
-    { k: 'cache dir', v: String(cache.cacheDir ?? '—'), tone: 'neutral' },
-    { k: 'bun pm cache path', v: String(cache.bunPmCachePath ?? '—'), tone: 'neutral' },
+    { k: 'configured cache directory', v: String(cache.cacheDir ?? '—'), tone: 'neutral' },
+    { k: 'Bun-reported cache path', v: String(cache.bunPmCachePath ?? '—'), tone: 'neutral' },
     {
-      k: 'pm cache mismatch',
+      k: 'cache-path comparison',
       v: String(cache.bunPmCacheMismatch ?? 'none'),
       tone: cache.bunPmCacheMismatch ? 'yellow' : 'green',
     },
-    { k: 'collected', v: String(cache.collectedAt ?? '—'), tone: 'neutral' },
+    { k: 'measured at', v: String(cache.collectedAt ?? '—'), tone: 'neutral' },
   ];
   return rows
     .map(r => {
-      const val =
-        r.tone === 'neutral'
-          ? `<code>${esc(r.v)}</code>`
-          : statusChip(r.tone, r.v.length > 72 ? `${r.v.slice(0, 69)}…` : r.v);
+      const val = r.tone === 'neutral' ? `<code>${esc(r.v)}</code>` : statusChip(r.tone, r.v);
       return `<tr class="ih-row--${r.tone}" data-tone="${r.tone}"><td>${esc(r.k)}</td><td>${val}</td></tr>`;
     })
     .join('');
@@ -386,16 +406,16 @@ export function renderInstallHygieneReport(report) {
     const st = src === 'live' ? 'green' : src === 'embed' ? 'neutral' : 'yellow';
     sourceEl.innerHTML = statusChip(
       st,
-      src === 'live' ? 'live registry' : src === 'embed' ? 'offline embed' : src
+      src === 'live' ? 'live registry' : src === 'embed' ? 'embedded snapshot' : src
     );
   } else if (sourceEl && report?.kind === 'install-hygiene') {
-    sourceEl.innerHTML = statusChip('neutral', 'offline SSR');
+    sourceEl.innerHTML = statusChip('neutral', 'embedded snapshot');
   }
 
   if (!report || report.kind !== 'install-hygiene') {
     if (meta) {
       meta.textContent =
-        'No offline embed / registry bake — run: bun run bake:install-hygiene (writes JSON + HTML embed)';
+        'No embedded snapshot or registry report. Run bun run bake:install-hygiene to generate both.';
     }
     if (stats) stats.innerHTML = '';
     if (meterEl) meterEl.innerHTML = '';
@@ -421,7 +441,7 @@ export function renderInstallHygieneReport(report) {
 
   if (meta) {
     const rev = typeof report.bunRevision === 'string' ? report.bunRevision.slice(0, 8) : '';
-    meta.innerHTML = `generated ${esc(ageLabel(/** @type {string} */ (report.generatedAt)))} · bun <span class="ih-chip ih-chip--neutral">${esc(String(report.bunVersion || '?'))}${rev ? ` · ${esc(rev)}` : ''}</span> · bake:install-hygiene`;
+    meta.innerHTML = `generated ${esc(ageLabel(/** @type {string} */ (report.generatedAt)))} · Bun <span class="ih-chip ih-chip--neutral">${esc(String(report.bunVersion || '?'))}${rev ? ` · ${esc(rev)}` : ''}</span> · bake:install-hygiene`;
   }
 
   const summaryPre = document.getElementById('ih-summary-text');
@@ -441,7 +461,7 @@ export function renderInstallHygieneReport(report) {
         await navigator.clipboard.writeText(text);
         copySummary.textContent = 'copied';
         setTimeout(() => {
-          copySummary.textContent = 'copy summary';
+          copySummary.textContent = 'Copy summary';
         }, 1200);
       } catch {
         copySummary.textContent = 'copy failed';
@@ -453,11 +473,14 @@ export function renderInstallHygieneReport(report) {
     if (reasons.length) {
       reasonsEl.hidden = false;
       reasonsEl.className = `ih-reasons ih-reasons--${badgeTone}`;
-      reasonsEl.innerHTML = `${statusChip(badgeTone === 'red' ? 'red' : 'yellow', badgeTone === 'red' ? 'fail' : 'attention')} ${esc(reasons.join(' · '))}`;
+      reasonsEl.innerHTML = `${statusChip(
+        badgeTone === 'red' ? 'red' : 'yellow',
+        badgeTone === 'red' ? 'blocked' : 'review needed'
+      )} ${esc(reasons.join(' · '))}`;
     } else {
       reasonsEl.hidden = false;
       reasonsEl.className = 'ih-reasons ih-reasons--green';
-      reasonsEl.innerHTML = `${statusChip('green', 'ok')} All planes clean`;
+      reasonsEl.innerHTML = `${statusChip('green', 'passed')} All install checks passed.`;
     }
   }
 
@@ -514,7 +537,8 @@ export function renderInstallHygieneReport(report) {
         .map(v => `<li><code>${esc(typeof v === 'string' ? v : JSON.stringify(v))}</code></li>`)
         .join('')}</ul>`;
     } else {
-      npmBody.innerHTML = `<p>${statusChip('green', 'clean')} No production-path npm/yarn/pnpm install hits · allowlist ${allowed.length} path(s)</p>
+      npmBody.innerHTML = `<p>${statusChip('green', 'clean')} No disallowed npm, Yarn, or pnpm install commands were found in production paths.</p>
+        <p class="dim">${allowed.length} documented exception path(s):</p>
         <ul class="dim">${allowed.map(p => `<li><code>${esc(p)}</code></li>`).join('')}</ul>`;
     }
   }
@@ -563,11 +587,11 @@ export function formatLiveFetchStatus(r) {
   if (!r || r.ok) return '';
   const kind = /** @type {string} */ (r.kind || 'network');
   const detail = r.status != null ? `${kind} HTTP ${r.status}` : `${kind}: ${r.error || 'failed'}`;
-  return `live refresh failed (${detail}) — showing offline embed`;
+  return `Live update failed (${detail}). Showing the embedded snapshot.`;
 }
 
 /**
- * Prefer offline embed; refresh from registry when fetch works (optional live).
+ * Prefer the embedded snapshot; refresh from the registry when fetch works.
  * @returns {Promise<Record<string, unknown>|null>}
  */
 export async function loadInstallHygieneReport() {
@@ -577,7 +601,11 @@ export async function loadInstallHygieneReport() {
     // Non-blocking refresh when online (GET only · timeout · Accept: json)
     void fetchJsonResult(INSTALL_HYGIENE_SOURCE, { timeoutMs: 5000, method: 'GET' }).then(r => {
       const statusEl = document.getElementById('ih-fetch-status');
-      if (r.ok && r.data && /** @type {Record<string, unknown>} */ (r.data).kind === 'install-hygiene') {
+      if (
+        r.ok &&
+        r.data &&
+        /** @type {Record<string, unknown>} */ (r.data).kind === 'install-hygiene'
+      ) {
         const live = /** @type {Record<string, unknown>} */ (r.data);
         const embAt = Date.parse(String(embedded.generatedAt || ''));
         const liveAt = Date.parse(String(live.generatedAt || ''));
@@ -599,14 +627,19 @@ export async function loadInstallHygieneReport() {
     return withSource(embedded, 'embed');
   }
   const r = await fetchJsonResult(INSTALL_HYGIENE_SOURCE, { timeoutMs: 5000, method: 'GET' });
-  if (r.ok && r.data && /** @type {Record<string, unknown>} */ (r.data).kind === 'install-hygiene') {
+  if (
+    r.ok &&
+    r.data &&
+    /** @type {Record<string, unknown>} */ (r.data).kind === 'install-hygiene'
+  ) {
     return withSource(/** @type {Record<string, unknown>} */ (r.data), 'live');
   }
   const statusEl = document.getElementById('ih-fetch-status');
   if (statusEl && !r.ok) {
     statusEl.hidden = false;
     statusEl.className = 'ih-fetch-status ih-fetch-status--warn';
-    statusEl.textContent = formatLiveFetchStatus(r) || 'live fetch failed and no offline embed';
+    statusEl.textContent =
+      formatLiveFetchStatus(r) || 'Live refresh failed and no embedded snapshot is available.';
   }
   return null;
 }
@@ -620,7 +653,16 @@ export function renderActionsHtml(actions) {
     .map(
       a => `<li class="ih-action ih-action--${a.tone}" data-tone="${a.tone}">
       <div class="ih-action-head">
-        ${statusChip(a.tone, a.tone === 'neutral' ? 'run' : a.tone)}
+        ${statusChip(
+          a.tone,
+          a.tone === 'neutral'
+            ? 'optional'
+            : a.tone === 'yellow'
+              ? 'recommended'
+              : a.tone === 'red'
+                ? 'required'
+                : 'complete'
+        )}
         <strong>${esc(a.title)}</strong>
         <button type="button" class="copy-cli" data-cli="${esc(a.cli)}">copy</button>
       </div>

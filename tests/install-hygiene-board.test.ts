@@ -1,6 +1,4 @@
-/**
- * Pure helpers for the install-hygiene portal board (color-coded tones).
- */
+/** Pure helpers for the install-hygiene portal board. */
 import { describe, expect, test } from 'bun:test';
 import {
   ageLabel,
@@ -57,11 +55,11 @@ describe('install-hygiene-board', () => {
 
   test('statusChip embeds tone class', () => {
     expect(statusChip('green', 'ok')).toContain('ih-chip--green');
-    expect(statusChip('red', 'fail')).toContain('ih-chip--red');
-    expect(statusChip('yellow', 'attention')).toContain('ih-chip--yellow');
+    expect(statusChip('red', 'blocked')).toContain('ih-chip--red');
+    expect(statusChip('yellow', 'review needed')).toContain('ih-chip--yellow');
   });
 
-  test('toneFromReport missing / schema / healthy / attention / fail', () => {
+  test('toneFromReport distinguishes missing, healthy, review, and blocked states', () => {
     expect(toneFromReport(null).tone).toBe('missing');
     expect(toneFromReport({ kind: 'other' }).tone).toBe('missing');
     expect(toneFromReport({ ...healthy, schemaVersion: 99 }).tone).toBe('yellow');
@@ -92,22 +90,22 @@ describe('install-hygiene-board', () => {
         wouldPrune: true,
       },
     });
-    expect(rows.find(r => r.k === 'would prune')?.tone).toBe('yellow');
-    expect(rows.find(r => r.k === 'cache size')?.tone).toBe('yellow');
-    expect(rows.find(r => r.k === 'npm install')?.tone).toBe('green');
-    expect(rows.find(r => r.k === 'overall')?.tone).toBe('yellow');
-    expect(rows.find(r => r.k === 'cache size')?.v).toBe('3.54 GB');
+    expect(rows.find(r => r.k === 'cleanup recommended')?.tone).toBe('yellow');
+    expect(rows.find(r => r.k === 'cache usage')?.tone).toBe('yellow');
+    expect(rows.find(r => r.k === 'package-manager policy')?.tone).toBe('green');
+    expect(rows.find(r => r.k === 'status')?.tone).toBe('yellow');
+    expect(rows.find(r => r.k === 'cache usage')?.v).toBe('3.54 GB');
 
     const red = buildStatRows({
       ...healthy,
       ok: false,
       npmInstall: { ok: false, violations: ['hit'] },
     });
-    expect(red.find(r => r.k === 'npm install')?.tone).toBe('red');
-    expect(red.find(r => r.k === 'overall')?.tone).toBe('red');
+    expect(red.find(r => r.k === 'package-manager policy')?.tone).toBe('red');
+    expect(red.find(r => r.k === 'status')?.tone).toBe('red');
   });
 
-  test('renderVerifyCheckRows color-codes pass/fail chips', () => {
+  test('renderVerifyCheckRows color-codes passed and failed checks', () => {
     const html = renderVerifyCheckRows(healthy);
     expect(html).toContain('install policy');
     expect(html).toContain('ih-chip--green');
@@ -116,7 +114,7 @@ describe('install-hygiene-board', () => {
     expect(html).toContain('broken');
   });
 
-  test('renderCacheRowsSimple tones prune and mismatch', () => {
+  test('renderCacheRowsSimple highlights cleanup and path mismatches', () => {
     const html = renderCacheRowsSimple({
       available: true,
       sizeHuman: '3.5 GB',
@@ -134,7 +132,7 @@ describe('install-hygiene-board', () => {
     expect(ageLabel(new Date().toISOString())).toBe('just now');
   });
 
-  test('readInstallHygieneEmbed parses offline SSOT (no network)', () => {
+  test('readInstallHygieneEmbed parses the embedded report without network access', () => {
     expect(INSTALL_HYGIENE_EMBED_ID).toBe('install-hygiene-embed');
     const fakeDoc = {
       getElementById(id: string) { // brand-ok — DOM element id, not domain *Id
@@ -153,12 +151,16 @@ describe('install-hygiene-board', () => {
     ).toBeNull();
   });
 
-  test('board HTML ships install-hygiene-embed for offline', async () => {
+  test('board HTML ships a structured embedded report and clear reading order', async () => {
     const html = await Bun.file('public/portal/install-hygiene/index.html').text();
     expect(html).toContain(`id="${INSTALL_HYGIENE_EMBED_ID}"`);
-    expect(html).toContain('"kind":"install-hygiene"');
+    expect(html).toMatch(/"kind"\s*:\s*"install-hygiene"/);
     expect(html).toContain('ih-cache-meter');
     expect(html).toContain('ih-actions');
+    expect(html).toContain('embedded snapshot');
+    expect(html.indexOf('Recommended actions')).toBeLessThan(
+      html.indexOf('Install-cache evidence')
+    );
   });
 
   test('buildRecommendedActions adds prune CLIs when over threshold', () => {
@@ -175,7 +177,9 @@ describe('install-hygiene-board', () => {
       },
     });
     expect(over.some(a => a.cli === 'bun run install:cache:lifecycle')).toBe(true);
-    expect(over.some(a => a.cli === 'bun run install:cache:prune' && a.tone === 'red')).toBe(true);
+    expect(over.some(a => a.cli === 'bun run install:cache:prune' && a.tone === 'yellow')).toBe(
+      true
+    );
     expect(over.some(a => a.cli.includes('check-bun-pm-cache'))).toBe(true);
   });
 
@@ -202,7 +206,7 @@ describe('install-hygiene-board', () => {
       sizeHuman: '4 GB',
       thresholdHuman: '2 GB',
     });
-    expect(way?.tone).toBe('red');
+    expect(way?.tone).toBe('yellow');
   });
 
   test('renderActionsHtml emits copy-cli buttons', () => {
@@ -213,10 +217,11 @@ describe('install-hygiene-board', () => {
 
   test('buildTextSummary is copy-friendly plain text', () => {
     const text = buildTextSummary(healthy);
-    expect(text).toContain('install-hygiene');
+    expect(text).toContain('install hygiene');
     expect(text).toContain('healthy');
-    expect(text).toContain('bun: 1.4.0');
-    expect(buildTextSummary(null)).toContain('missing bake');
+    expect(text).toContain('Bun runtime: 1.4.0');
+    expect(text).toContain('installation verification: passed');
+    expect(buildTextSummary(null)).toContain('missing report');
   });
 
   test('formatLiveFetchStatus surfaces kind/status for failed live refresh', () => {
@@ -226,6 +231,9 @@ describe('install-hygiene-board', () => {
     expect(
       formatLiveFetchStatus({ ok: false, kind: 'http', status: 404, error: 'HTTP 404' })
     ).toContain('404');
+    expect(
+      formatLiveFetchStatus({ ok: false, kind: 'timeout', error: 'aborted' })
+    ).toContain('embedded snapshot');
     expect(formatLiveFetchStatus({ ok: true })).toBe('');
   });
 });

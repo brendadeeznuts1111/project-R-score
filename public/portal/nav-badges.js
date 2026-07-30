@@ -9,7 +9,7 @@
  *   Brands    → /registry/bun-brand-map.json summary.attention
  *   Health    → /registry/monorepo-health.json score (optional)
  *   Doctor    → /registry/doctor-state.json tone (green/yellow/red)
- *   Install hygiene → /registry/install-hygiene-report.json (ok / prune / fail)
+ *   Install hygiene → /registry/install-hygiene-report.json (passed / cleanup / blocked)
  *
  * @see lib/portal/chrome-catalog.ts data-cli / data-group
  */
@@ -101,23 +101,22 @@ export function toneDoctorBadge(tone) {
 }
 
 /**
- * Install-hygiene badge label: ok | prune | fail | null.
+ * Install-hygiene badge label: passed | cleanup | blocked | null.
  * @param {object|null|undefined} data
  * @returns {string|null}
  */
 export function pickInstallHygieneBadge(data) {
   if (!data || data.kind !== 'install-hygiene') return null;
-  if (data.npmInstall?.ok === false || data.installVerify?.ok === false) return 'fail';
-  if (data.installCache?.wouldPrune === true || data.ok === false) return 'prune';
-  if (data.ok === true) return 'ok';
-  return 'ok';
+  if (data.npmInstall?.ok === false || data.installVerify?.ok === false) return 'blocked';
+  if (data.installCache?.wouldPrune === true || data.ok === false) return 'cleanup';
+  return 'passed';
 }
 
 /** @param {string|null} label */
 export function toneInstallHygieneBadge(label) {
-  if (label === 'ok') return 'ok';
-  if (label === 'prune') return 'warn';
-  if (label === 'fail') return 'bad';
+  if (label === 'passed') return 'ok';
+  if (label === 'cleanup') return 'warn';
+  if (label === 'blocked') return 'bad';
   return 'neutral';
 }
 

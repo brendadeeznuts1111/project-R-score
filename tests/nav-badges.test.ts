@@ -77,7 +77,7 @@ describe('nav-badges pure pickers', () => {
         npmInstall: { ok: true },
         installVerify: { ok: true },
       })
-    ).toBe('ok');
+    ).toBe('passed');
     expect(
       pickInstallHygieneBadge({
         kind: 'install-hygiene',
@@ -86,7 +86,7 @@ describe('nav-badges pure pickers', () => {
         npmInstall: { ok: true },
         installVerify: { ok: true },
       })
-    ).toBe('prune');
+    ).toBe('cleanup');
     expect(
       pickInstallHygieneBadge({
         kind: 'install-hygiene',
@@ -95,11 +95,11 @@ describe('nav-badges pure pickers', () => {
         npmInstall: { ok: false },
         installVerify: { ok: true },
       })
-    ).toBe('fail');
+    ).toBe('blocked');
     expect(pickInstallHygieneBadge({ kind: 'other' })).toBeNull();
-    expect(toneInstallHygieneBadge('ok')).toBe('ok');
-    expect(toneInstallHygieneBadge('prune')).toBe('warn');
-    expect(toneInstallHygieneBadge('fail')).toBe('bad');
+    expect(toneInstallHygieneBadge('passed')).toBe('ok');
+    expect(toneInstallHygieneBadge('cleanup')).toBe('warn');
+    expect(toneInstallHygieneBadge('blocked')).toBe('bad');
   });
 });
 

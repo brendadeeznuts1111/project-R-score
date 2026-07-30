@@ -15,7 +15,7 @@
  *
  * Writes:
  *   public/registry/install-hygiene-report.json
- *   offline embed into public/portal/install-hygiene/index.html
+ *   embedded snapshot in public/portal/install-hygiene/index.html
  */
 
 import { joinPath } from '../lib/path-bun.ts';
@@ -136,19 +136,25 @@ function buildSsrFragments(report: Record<string, unknown>): {
   const npm = (report.npmInstall ?? {}) as Record<string, unknown>;
   const verify = (report.installVerify ?? {}) as Record<string, unknown>;
   const reasons: string[] = [];
-  if (cache.wouldPrune === true) reasons.push('cache over prune threshold');
-  if (npm.ok === false) reasons.push('npm-install policy violations');
-  if (verify.ok === false) reasons.push('install:verify failed');
-  if (report.ok === false && reasons.length === 0) reasons.push('report.ok=false');
+  if (cache.wouldPrune === true) {
+    reasons.push('Install cache exceeds the configured cleanup threshold.');
+  }
+  if (npm.ok === false) {
+    reasons.push('Disallowed package-manager install commands were found.');
+  }
+  if (verify.ok === false) reasons.push('Installation verification failed.');
+  if (report.ok === false && reasons.length === 0) {
+    reasons.push('The report is unhealthy for an unspecified reason.');
+  }
 
   let tone = 'yellow';
-  let label = 'attention';
+  let label = 'review needed';
   if (reasons.length === 0 && report.ok === true) {
     tone = 'green';
     label = 'healthy';
   } else if (verify.ok === false || npm.ok === false) {
     tone = 'red';
-    label = 'fail';
+    label = 'blocked';
   }
 
   const size = typeof cache.sizeBytes === 'number' ? cache.sizeBytes : null;
@@ -159,7 +165,6 @@ function buildSsrFragments(report: Record<string, unknown>): {
     const pct = Math.round(ratio * 100);
     let mTone = 'green';
     if (ratio > 1) mTone = 'yellow';
-    if (ratio > 1.5) mTone = 'red';
     const width = Math.min(100, Math.round((Math.min(ratio, 1.5) / 1.5) * 100));
     const labelM = `${String(cache.sizeHuman ?? '?')} / ${String(cache.thresholdHuman ?? '?')} (${pct}%)`;
     meterHtml = `<div class="ih-meter ih-meter--${mTone}" title="${escHtml(labelM)}"><div class="ih-meter-track"><div class="ih-meter-fill" style="width:${width}%"></div><div class="ih-meter-mark" style="left:67%" title="threshold"></div></div><div class="ih-meter-label">${escHtml(labelM)}</div></div>`;
@@ -171,31 +176,31 @@ function buildSsrFragments(report: Record<string, unknown>): {
     cache.wouldPrune === true ? 'yellow' : cache.wouldPrune === false ? 'green' : 'neutral';
   const stats = [
     {
-      k: 'overall',
-      v: report.ok === true ? 'ok' : overallTone === 'red' ? 'fail' : 'attention',
+      k: 'status',
+      v: report.ok === true ? 'healthy' : overallTone === 'red' ? 'blocked' : 'review needed',
       t: overallTone,
     },
     {
-      k: 'cache size',
+      k: 'cache usage',
       v: String(cache.sizeHuman ?? '—'),
       t: pruneTone === 'yellow' ? 'yellow' : 'neutral',
     },
     {
-      k: 'would prune',
+      k: 'cleanup recommended',
       v: cache.wouldPrune === true ? 'yes' : cache.wouldPrune === false ? 'no' : '—',
       t: pruneTone,
     },
     {
-      k: 'npm install',
-      v: npm.ok === true ? 'clean' : npm.ok === false ? 'fail' : '—',
+      k: 'package-manager policy',
+      v: npm.ok === true ? 'clean' : npm.ok === false ? 'failed' : '—',
       t: npm.ok === true ? 'green' : npm.ok === false ? 'red' : 'neutral',
     },
     {
-      k: 'install:verify',
-      v: verify.ok === true ? 'pass' : verify.ok === false ? 'fail' : '—',
+      k: 'installation verification',
+      v: verify.ok === true ? 'passed' : verify.ok === false ? 'failed' : '—',
       t: verify.ok === true ? 'green' : verify.ok === false ? 'red' : 'neutral',
     },
-    { k: 'bun', v: String(report.bunVersion ?? '—'), t: 'neutral' },
+    { k: 'Bun runtime', v: String(report.bunVersion ?? '—'), t: 'neutral' },
   ];
   const statsHtml = stats
     .map(
@@ -207,20 +212,20 @@ function buildSsrFragments(report: Record<string, unknown>): {
   // Plain text only (no nested tags) so SSR inject cannot corrupt HTML via early </span>
   const reasonsHtml =
     reasons.length > 0
-      ? `${escHtml(tone === 'red' ? 'fail' : 'attention')}: ${escHtml(reasons.join(' · '))}`
-      : 'ok: All planes clean';
+      ? `${escHtml(tone === 'red' ? 'blocked' : 'review needed')}: ${escHtml(reasons.join(' '))}`
+      : 'passed: All install checks passed.';
 
   const gen = String(report.generatedAt ?? '—');
-  const metaHtml = `generated ${escHtml(gen)} · bun ${escHtml(String(report.bunVersion ?? '?'))} · offline SSR bake`;
+  const metaHtml = `generated ${escHtml(gen)} · Bun ${escHtml(String(report.bunVersion ?? '?'))} · embedded snapshot`;
 
   const summaryText = [
-    `install-hygiene · ${label} (${tone})`,
+    `install hygiene: ${label}`,
     `generated: ${gen}`,
-    `bun: ${String(report.bunVersion ?? '—')}`,
-    `cache: ${String(cache.sizeHuman ?? '—')} / ${String(cache.thresholdHuman ?? '—')} prune=${String(cache.wouldPrune)}`,
-    `npm: ${npm.ok === true ? 'clean' : npm.ok === false ? 'FAIL' : '—'}`,
-    `install:verify: ${verify.ok === true ? 'pass' : verify.ok === false ? 'FAIL' : '—'}`,
-    reasons.length ? `reasons: ${reasons.join('; ')}` : '',
+    `Bun runtime: ${String(report.bunVersion ?? '—')}`,
+    `cache usage: ${String(cache.sizeHuman ?? '—')}; cleanup threshold: ${String(cache.thresholdHuman ?? '—')}; cleanup recommended: ${cache.wouldPrune === true ? 'yes' : cache.wouldPrune === false ? 'no' : 'unknown'}`,
+    `package-manager policy: ${npm.ok === true ? 'clean' : npm.ok === false ? 'failed' : 'unknown'}`,
+    `installation verification: ${verify.ok === true ? 'passed' : verify.ok === false ? 'failed' : 'unknown'}`,
+    reasons.length ? `reason: ${reasons.join(' ')}` : '',
   ]
     .filter(Boolean)
     .join('\n');
@@ -276,7 +281,7 @@ function replaceDomClass(html: string, domKey: string, className: string): strin
   return html.replace(`id="${domKey}"`, `id="${domKey}" class="${className}"`);
 }
 
-/** Offline SSOT: inject compact JSON + no-JS SSR paint into the board HTML. */
+/** Inject compact JSON and no-script-ready content into the board HTML. */
 async function injectBoardEmbed(report: Record<string, unknown>): Promise<void> {
   const htmlFile = Bun.file(BOARD_HTML);
   if (!(await htmlFile.exists())) return;
@@ -309,7 +314,7 @@ async function injectBoardEmbed(report: Record<string, unknown>): Promise<void> 
   html = replaceDomInner(html, 'ih-stats', ssr.statsHtml);
   html = replaceDomInner(html, 'ih-cache-meter', ssr.meterHtml);
   html = replaceDomInner(html, 'ih-summary-text', escHtml(ssr.summaryText));
-  html = replaceDomInner(html, 'ih-source', 'offline SSR');
+  html = replaceDomInner(html, 'ih-source', 'embedded snapshot');
 
   await Bun.write(BOARD_HTML, html);
 }
