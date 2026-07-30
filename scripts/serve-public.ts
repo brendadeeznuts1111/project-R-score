@@ -11,6 +11,7 @@
 // @see https://bun.com/docs/runtime/http/routing#static-responses — zero-alloc Response routes
 // @see https://bun.com/docs/runtime/http/routing#file-responses-vs-static-responses — memory vs Bun.file
 // @see https://bun.com/docs/runtime/http/routing#fetch-request-handler — fetch(req, server)
+// @see https://bun.com/docs/runtime/http/error-handling — development + error callback
 // @see https://bun.com/docs/runtime/http/server#server-stop — server.stop
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/bundler/hot-reloading — bun --hot (server module re-eval)
@@ -37,6 +38,7 @@
  * Routing — Bun native recommendations (docs/runtime/http/routing):
  *   routes  — SIMD match: exact > :param > wildcard; static Response for /ready
  *             hot JSON via respondStatic (ETag); portal pages via respondAuto/file
+ *             JSON GET APIs via jsonETag → data-ETag + If-None-Match 304
  *   fetch   — unmatched only (publish, npm PUT, multi-segment static, 404)
  *             signature fetch(req, server) for requestIP / timeout on real sockets
  *
@@ -133,16 +135,17 @@ import {
   type BunServeOptions,
   type ServeBindSnapshot,
 } from '../lib/http/bun-server.ts';
-import { resolveBunServeDefaultPort } from '../lib/http/bun-serve-shape.ts';
 import { PORTAL_BOARD_SLUGS } from '../lib/http/portal-board-slugs.ts';
 import { formatServePublicBindLines } from '../lib/http/serve-public-bind.ts';
+import { resolveServePublicBindPrefs } from '../lib/http/serve-public-config.ts';
+import { attachServePublicErrorHandler } from '../lib/http/serve-public-error.ts';
 import { isPublicReadPath } from '../lib/http/public-read-path.ts';
 import { getDb, getMonitoringData } from '../lib/db/connection.ts';
 
-/** Optional bind override — omit to use Bun docs default (`0.0.0.0`). */
-const HOST_OVERRIDE = (Bun.env.HOST || Bun.env.BIND_HOST)?.trim() || undefined;
+/** Env/CLI/TOML bind prefs — omit port/hostname on Bun.serve when Bun env chain wins. */
+const bindPrefs = resolveServePublicBindPrefs(undefined, Bun.env, process.argv);
 /** Hint for live-reload gating before listen (runtime uses `localhost` when hostname omitted). */
-const BIND_HOST_HINT = HOST_OVERRIDE ?? 'localhost';
+const BIND_HOST_HINT = bindPrefs.hostname ?? 'localhost';
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 /** Browser SSE live-reload (not Cloudflare Pages). */
 const LIVE_RELOAD = shouldEnableLiveReload({ host: BIND_HOST_HINT });
@@ -169,6 +172,30 @@ function json(
   });
 }
 
+/**
+ * JSON GET with strong data-ETag + If-None-Match → 304 (shared with health helpers).
+ * Errors / non-objects stay on `json()` (no-store).
+ * @see lib/http/data-etag.ts
+ */
+function jsonETag(
+  req: Request,
+  data: object,
+  opts: { cache?: string; versionKey?: string; etagData?: object } = {}
+): Response {
+  const etagPayload = opts.etagData ?? data;
+  const body = JSON.stringify(data);
+  return respondWithSharedETag(
+    req,
+    etagPayload,
+    { body, contentType: 'application/json; charset=utf-8' },
+    {
+      cacheControl: opts.cache ?? 'public, max-age=5, must-revalidate',
+      versionKey: opts.versionKey,
+      vary: 'Accept',
+    }
+  );
+}
+
 /** Fail-closed publish gate — 503 unconfigured, 401 bad/missing Bearer. */
 async function requirePublishAuth(req: Request): Promise<Response | null> {
   const decision = await decidePublishAuth(req);
@@ -186,14 +213,20 @@ async function writeBytes(path: string, data: Uint8Array | string): Promise<void
 
 // ── Ops Summary ─────────────────────────────────────────────────────
 
-async function liveOpsSummary(): Promise<Response> {
+async function liveOpsSummary(req: Request): Promise<Response> {
   try {
-    return json(buildOpsSummary(getDb(), 'live'));
+    return jsonETag(req, buildOpsSummary(getDb(), 'live') as object, {
+      versionKey: 'ops-summary-live',
+    });
   } catch (err) {
     const snap = Bun.file('public/registry/ops-summary.json');
     if (await snap.exists()) {
       const data = (await snap.json()) as Record<string, unknown>;
-      return json({ ...data, source: 'snapshot', fallback: 'db-unavailable' });
+      return jsonETag(
+        req,
+        { ...data, source: 'snapshot', fallback: 'db-unavailable' },
+        { versionKey: 'ops-summary-snap' }
+      );
     }
     return json(
       {
@@ -230,10 +263,16 @@ async function liveCatalog(req: Request): Promise<Response> {
       params.push(status);
     }
     sql += ' ORDER BY p.category, p.name';
-    return json({ source: 'live', accounts: db.query(sql).all(...params) });
+    return jsonETag(
+      req,
+      { source: 'live', accounts: db.query(sql).all(...params) },
+      { versionKey: `catalog:${search}|${category}|${status}` }
+    );
   } catch {
     const file = Bun.file('public/registry/catalog-snapshot.json');
-    if (await file.exists()) return json(await file.json());
+    if (await file.exists()) {
+      return jsonETag(req, (await file.json()) as object, { versionKey: 'catalog-snap' });
+    }
     return json(
       { error: 'No live database or snapshot available', source: 'none', accounts: [] },
       503
@@ -249,22 +288,25 @@ async function readRegistry() {
   return JSON.parse(await f.text());
 }
 
-async function serveRegistryIndex(): Promise<Response> {
+async function serveRegistryIndex(req: Request): Promise<Response> {
   const reg = await readRegistry();
   if (!reg) return json({ error: 'No registry index' }, 404);
-  return json(reg);
+  return jsonETag(req, reg as object, {
+    versionKey: 'registry-index',
+    cache: 'public, max-age=30, must-revalidate',
+  });
 }
 
 /** GET /api/registry/static — aggregated snapshot with monitoring + proof. */
-async function serveStaticRegistry(): Promise<Response> {
+async function serveStaticRegistry(req: Request): Promise<Response> {
   const f = Bun.file('public/registry/static.json');
-  if (await f.exists())
-    return new Response(f, {
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Cache-Control': 'public, max-age=60',
-      },
+  if (await f.exists()) {
+    const data = (await f.json()) as object;
+    return jsonETag(req, data, {
+      versionKey: 'registry-static-file',
+      cache: 'public, max-age=60, must-revalidate',
     });
+  }
   // Fallback to live aggregation
   const reg = await readRegistry();
   const db = openOperationsDb({ path: dbPath });
@@ -279,16 +321,20 @@ async function serveStaticRegistry(): Promise<Response> {
     try {
       proof = JSON.parse(await proofFile.text());
     } catch {}
+  const generated = new Date().toISOString();
   const snapshot = {
-    generated: new Date().toISOString(),
+    generated,
     bunVersion: Bun.version,
     packageCount: reg?.packages ? Object.keys(reg.packages).length : 0,
     packages: reg?.packages || {},
     ops,
     bunApiProof: proof,
   };
-  return new Response(JSON.stringify(snapshot, null, 2), {
-    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' },
+  const { generated: _g, ...etagData } = snapshot;
+  return jsonETag(req, snapshot, {
+    versionKey: 'registry-static-live',
+    etagData,
+    cache: 'public, max-age=5, must-revalidate',
   });
 }
 
@@ -297,7 +343,7 @@ async function searchRegistry(req: Request): Promise<Response> {
   const q = url.searchParams.get('q')?.toLowerCase() || '';
   const type = url.searchParams.get('type')?.toLowerCase() || '';
   const reg = await readRegistry();
-  if (!reg) return json({ results: [] });
+  if (!reg) return jsonETag(req, { results: [] }, { versionKey: 'registry-search-empty' });
   const results: { name: string; version: string; type: string; description: string }[] = [];
   for (const [name, pkg] of Object.entries(reg.packages || {})) {
     const info = pkg as any;
@@ -318,37 +364,47 @@ async function searchRegistry(req: Request): Promise<Response> {
       description: rel?.description || '',
     });
   }
-  return json({ results, total: results.length });
+  return jsonETag(
+    req,
+    { results, total: results.length },
+    {
+      versionKey: `registry-search:${q}|${type}`,
+    }
+  );
 }
 
-async function packageDetail(name: string): Promise<Response> {
+async function packageDetail(req: Request, name: string): Promise<Response> {
   const reg = await readRegistry();
   if (!reg) return json({ error: 'No registry' }, 404);
   const pkg = (reg.packages || {})[name];
   if (!pkg) return json({ error: 'Package not found' }, 404);
-  return json({ name, ...pkg });
+  return jsonETag(req, { name, ...pkg }, { versionKey: `pkg:${name}` });
 }
 
 // ── Version endpoints ───────────────────────────────────────────────
 
-async function listVersions(name: string): Promise<Response> {
+async function listVersions(req: Request, name: string): Promise<Response> {
   const reg = await readRegistry();
   const pkg = reg?.packages?.[name];
-  if (!pkg) return json({ versions: [] });
-  return json({
-    name,
-    versions: (pkg.versions || []).map((v: string) => {
-      const r = pkg.releases?.[v];
-      return {
-        version: v,
-        publishedAt: r?.publishedAt || null,
-        checksum: r?.storage?.checksum || null,
-        type: r?.type || null,
-        description: r?.description || null,
-      };
-    }),
-    distTags: pkg['dist-tags'] || {},
-  });
+  if (!pkg) return jsonETag(req, { versions: [] }, { versionKey: `versions-empty:${name}` });
+  return jsonETag(
+    req,
+    {
+      name,
+      versions: (pkg.versions || []).map((v: string) => {
+        const r = pkg.releases?.[v];
+        return {
+          version: v,
+          publishedAt: r?.publishedAt || null,
+          checksum: r?.storage?.checksum || null,
+          type: r?.type || null,
+          description: r?.description || null,
+        };
+      }),
+      distTags: pkg['dist-tags'] || {},
+    },
+    { versionKey: `versions:${name}` }
+  );
 }
 
 async function publishVersion(req: Request, name: string): Promise<Response> {
@@ -591,12 +647,16 @@ async function channelsEvents(req: Request): Promise<Response> {
   }
 
   const events = await readLocalChannelEvents(topic, since);
-  return json({
-    topic,
-    since,
-    events,
-    ok: true,
-  });
+  return jsonETag(
+    req,
+    {
+      topic,
+      since,
+      events,
+      ok: true,
+    },
+    { versionKey: `channels:${topic}:${since}`, cache: 'no-store' }
+  );
 }
 
 // ── Static files ────────────────────────────────────────────────────
@@ -764,7 +824,7 @@ function withMarkdownAlternate(res: Response, path: string): Response {
 const startedAt = Date.now();
 
 /** GET /api/compliance — baked board snapshot (public read plane; no auth). */
-async function complianceBoardApi(): Promise<Response> {
+async function complianceBoardApi(req: Request): Promise<Response> {
   const f = Bun.file('public/registry/compliance-board.json');
   if (!(await f.exists())) {
     return json(
@@ -777,11 +837,15 @@ async function complianceBoardApi(): Promise<Response> {
     );
   }
   const board = await f.json();
-  return json({ ok: true, mode: 'snapshot', readOnly: true, ...board });
+  return jsonETag(
+    req,
+    { ok: true, mode: 'snapshot', readOnly: true, ...board },
+    { versionKey: 'compliance-board', cache: 'public, max-age=30, must-revalidate' }
+  );
 }
 
 /** GET /api/monitoring — registry + ops metrics + API proof (JSON). */
-async function liveMonitoringApi(): Promise<Response> {
+async function liveMonitoringApi(req: Request): Promise<Response> {
   try {
     const data = (await getMonitoringData({ source: 'live', uptimeOriginMs: startedAt })) as Record<
       string,
@@ -836,7 +900,11 @@ async function liveMonitoringApi(): Promise<Response> {
         data.docsCoverageProof = JSON.parse(await docsCovFile.text());
       } catch {}
     }
-    return json(data);
+    return jsonETag(req, data, {
+      versionKey: 'monitoring-live',
+      etagData: healthETagPayload(data),
+      cache: 'public, max-age=5, must-revalidate',
+    });
   } catch (err) {
     const snap = Bun.file('public/registry/monitoring.json');
     if (await snap.exists()) {
@@ -857,11 +925,15 @@ async function liveMonitoringApi(): Promise<Response> {
           if (await f.exists()) data[key] = JSON.parse(await f.text());
         } catch {}
       }
-      return json({
+      const payload = {
         ...data,
         source: 'snapshot',
         fallback: 'db-unavailable',
         routeStats: routeStatsForHealth(),
+      };
+      return jsonETag(req, payload, {
+        versionKey: 'monitoring-snap',
+        etagData: healthETagPayload(payload),
       });
     }
     return json(
@@ -1367,49 +1439,63 @@ function formatDuration(seconds: number): string {
 }
 
 /** GET /api/content-type — default | our | wire | expected | status matrix. */
-function contentTypeApi(): Response {
+function contentTypeApi(req: Request): Response {
   const m = summarizeContentTypeMatrix();
-  return json({
-    columns: ['defaultValue', 'ourValue', 'wireValue', 'expected', 'status', 'severity'],
-    summary: {
-      total: m.total,
-      pass: m.pass,
-      warn: m.warn,
-      fail: m.fail,
-      byStatus: m.byStatus,
+  return jsonETag(
+    req,
+    {
+      columns: ['defaultValue', 'ourValue', 'wireValue', 'expected', 'status', 'severity'],
+      summary: {
+        total: m.total,
+        pass: m.pass,
+        warn: m.warn,
+        fail: m.fail,
+        byStatus: m.byStatus,
+      },
+      rows: contentTypePolicyTableRows(m.rows),
     },
-    rows: contentTypePolicyTableRows(m.rows),
-  });
+    { versionKey: 'content-type-matrix', cache: 'public, max-age=60, must-revalidate' }
+  );
 }
 
 /** GET /api/proof — Bun API coverage proof status. */
-async function bunApiProof(): Promise<Response> {
+async function bunApiProof(req: Request): Promise<Response> {
   const proofFile = Bun.file('tools/bun-api-coverage-proof.json');
   if (!(await proofFile.exists()))
     return json({ error: 'No proof manifest generated yet — run bun run docs:api-verify' }, 404);
   const proof = JSON.parse(await proofFile.text());
-  return json({
-    generated: proof.generated,
-    bunVersion: proof.bunVersion,
-    summary: proof.summary,
-    demoPassRate: proof.summary?.demos
-      ? `${Math.round((proof.summary.demosPassed / proof.summary.demos) * 100)}%`
-      : '0%',
-    allPassed: proof.summary?.demosPassed === proof.summary?.demos,
-    _links: {
-      self: '/api/proof',
-      // Contract note: when the proof asset is hot-preloaded this route serves
-      // the raw manifest; otherwise this normalized summary. Edge /api/proof
-      // (functions/api/proof.ts) is always normalized.
-      manifest: '/api/proof?format=manifest',
-      contract: 'normalized summary (default) | raw manifest when hot-preloaded',
+  return jsonETag(
+    req,
+    {
+      generated: proof.generated,
+      bunVersion: proof.bunVersion,
+      summary: proof.summary,
+      demoPassRate: proof.summary?.demos
+        ? `${Math.round((proof.summary.demosPassed / proof.summary.demos) * 100)}%`
+        : '0%',
+      allPassed: proof.summary?.demosPassed === proof.summary?.demos,
+      _links: {
+        self: '/api/proof',
+        // Contract note: when the proof asset is hot-preloaded this route serves
+        // the raw manifest; otherwise this normalized summary. Edge /api/proof
+        // (functions/api/proof.ts) is always normalized.
+        manifest: '/api/proof?format=manifest',
+        contract: 'normalized summary (default) | raw manifest when hot-preloaded',
+      },
     },
-  });
+    { versionKey: 'bun-api-proof', cache: 'public, max-age=30, must-revalidate' }
+  );
 }
 
 /** GET /api/env — read-only env var status with HSL health indicators. */
-async function envStatus(): Promise<Response> {
-  return json(buildPortalEnvStatus());
+async function envStatus(req: Request): Promise<Response> {
+  const data = buildPortalEnvStatus() as Record<string, unknown>;
+  const { checkedAt: _checkedAt, ...etagData } = data;
+  return jsonETag(req, data, {
+    versionKey: 'portal-env-status',
+    etagData,
+    cache: 'public, max-age=5, must-revalidate',
+  });
 }
 
 /**
@@ -1651,7 +1737,7 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   if (path.startsWith('/api/registry/') && path.endsWith('/versions')) {
     const name = path.slice(14, -9);
     if (name.includes('%') || (name.includes('/') && !name.startsWith('@'))) {
-      if (req.method === 'GET') return listVersions(decodeURIComponent(name));
+      if (req.method === 'GET') return listVersions(req, decodeURIComponent(name));
       if (req.method === 'POST') return publishVersion(req, decodeURIComponent(name));
       return json({ error: 'Method not allowed' }, 405);
     }
@@ -1659,7 +1745,7 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   if (path.startsWith('/api/registry/') && req.method === 'GET') {
     const name = path.slice(14);
     if (name.includes('%2') || name.includes('%2F') || name.includes('%2f')) {
-      return packageDetail(decodeURIComponent(name));
+      return packageDetail(req, decodeURIComponent(name));
     }
   }
 
@@ -1761,17 +1847,17 @@ function buildPublicRoutes() {
     '/index.html': (req: Request): Promise<Response> =>
       staticFile('/index.html', req).then(r => r ?? new Response('Not found', { status: 404 })),
 
-    '/api/content-type': () => contentTypeApi(),
-    '/api/content-type/': () => contentTypeApi(),
+    '/api/content-type': (req: Request) => contentTypeApi(req),
+    '/api/content-type/': (req: Request) => contentTypeApi(req),
     '/api/proof': (req: Request) => {
       const hot = hotByUrl.get('/api/proof');
       if (hot) return respondStatic(hot, req, { cacheControl: 'public, max-age=30' });
-      return bunApiProof();
+      return bunApiProof(req);
     },
     '/api/proof/': (req: Request) => {
       const hot = hotByUrl.get('/api/proof');
       if (hot) return respondStatic(hot, req, { cacheControl: 'public, max-age=30' });
-      return bunApiProof();
+      return bunApiProof(req);
     },
     '/api/defaults': async (req: Request) => {
       const f = Bun.file('public/registry/defaults-proof.json');
@@ -1797,7 +1883,10 @@ function buildPublicRoutes() {
       if (format === 'raw' || (format === 'application/json' && url.searchParams.has('format'))) {
         const cases = raw.results ?? raw.cases ?? raw.testCases;
         const body = cases && !raw.tests ? { ...raw, tests: cases } : raw;
-        return json(body, 200, 'public, max-age=60');
+        return jsonETag(req, body as object, {
+          versionKey: 'defaults-raw',
+          cache: 'public, max-age=60, must-revalidate',
+        });
       }
       if (format === 'text' || format.startsWith('text/')) {
         return new Response(
@@ -1815,29 +1904,33 @@ function buildPublicRoutes() {
         );
       }
 
-      return json({
-        status: passed === total ? 'pass' : 'fail',
-        passed,
-        total,
-        passedRatio: +(passed / Math.max(total, 1)).toFixed(2),
-        bunVersion: raw.bunVersion,
-        proofHash: raw.proofHash,
-        generated: raw.timestamp,
-        results: raw.results ?? raw.cases ?? raw.testCases,
-        tests: raw.results ?? raw.cases ?? raw.testCases,
-        _links: {
-          self: '/api/defaults',
-          raw: '/api/defaults?format=raw',
-          text: '/api/defaults?format=text',
-          proof: '/registry/defaults-proof.json',
-          script: '/api/defaults/script',
-          // Contract note: local serves this normalized shape; the Pages edge
-          // (functions/api/defaults.ts) passes the raw proof through.
-          contract: 'normalized/local vs raw/edge — use ?format=raw for the edge shape',
-          scriptMeta: '/api/defaults/script.meta',
-          docs: 'https://bun.com/docs/runtime/utils',
+      return jsonETag(
+        req,
+        {
+          status: passed === total ? 'pass' : 'fail',
+          passed,
+          total,
+          passedRatio: +(passed / Math.max(total, 1)).toFixed(2),
+          bunVersion: raw.bunVersion,
+          proofHash: raw.proofHash,
+          generated: raw.timestamp,
+          results: raw.results ?? raw.cases ?? raw.testCases,
+          tests: raw.results ?? raw.cases ?? raw.testCases,
+          _links: {
+            self: '/api/defaults',
+            raw: '/api/defaults?format=raw',
+            text: '/api/defaults?format=text',
+            proof: '/registry/defaults-proof.json',
+            script: '/api/defaults/script',
+            // Contract note: local serves this normalized shape; the Pages edge
+            // (functions/api/defaults.ts) passes the raw proof through.
+            contract: 'normalized/local vs raw/edge — use ?format=raw for the edge shape',
+            scriptMeta: '/api/defaults/script.meta',
+            docs: 'https://bun.com/docs/runtime/utils',
+          },
         },
-      });
+        { versionKey: 'defaults-normalized', cache: 'public, max-age=60, must-revalidate' }
+      );
     },
     '/api/defaults/script': (req: Request) =>
       serveVerificationScript('defaults', { baseUrl: new URL(req.url).origin }),
@@ -1915,12 +2008,12 @@ function buildPublicRoutes() {
       serveVerificationScript('doc-index', { baseUrl: new URL(req.url).origin }),
     '/api/doc-refs/script.meta': (req: Request) =>
       serveVerificationScriptMeta('doc-index', new URL(req.url).origin),
-    '/api/env': () => envStatus(),
-    '/api/env/': () => envStatus(),
-    '/api/monitoring': () => liveMonitoringApi(),
-    '/api/monitoring/': () => liveMonitoringApi(),
-    '/api/compliance': () => complianceBoardApi(),
-    '/api/compliance/': () => complianceBoardApi(),
+    '/api/env': (req: Request) => envStatus(req),
+    '/api/env/': (req: Request) => envStatus(req),
+    '/api/monitoring': (req: Request) => liveMonitoringApi(req),
+    '/api/monitoring/': (req: Request) => liveMonitoringApi(req),
+    '/api/compliance': (req: Request) => complianceBoardApi(req),
+    '/api/compliance/': (req: Request) => complianceBoardApi(req),
     '/api/agents/v1/limits/raises': (req: Request) => agentLimitRaisesApi(req),
     '/api/agents/v1/limits/raises/': (req: Request) => agentLimitRaisesApi(req),
     '/api/agents/v1/limits/record': (req: Request) => agentLimitRecordApi(req),
@@ -1954,8 +2047,8 @@ function buildPublicRoutes() {
       GET: (req: Request, server: RouteServer) => packagesGraphRebake(req, server),
       POST: (req: Request, server: RouteServer) => packagesGraphRebake(req, server),
     },
-    '/api/operations/summary': () => liveOpsSummary(),
-    '/api/operations/summary/': () => liveOpsSummary(),
+    '/api/operations/summary': (req: Request) => liveOpsSummary(req),
+    '/api/operations/summary/': (req: Request) => liveOpsSummary(req),
     '/api/catalog': (req: Request) => liveCatalog(req),
     '/api/catalog/': (req: Request) => liveCatalog(req),
     '/api/portal/dashboard': async () => {
@@ -1974,13 +2067,24 @@ function buildPublicRoutes() {
       const { portalActionResponse } = await import('../lib/portal/command-centre-api.ts');
       return portalActionResponse(req, server);
     },
-    '/api/skills': async () => json(await buildSkillsCatalog()),
-    '/api/skills/': async () => json(await buildSkillsCatalog()),
+    '/api/skills': async (req: Request) =>
+      jsonETag(req, await buildSkillsCatalog(), {
+        versionKey: 'skills-catalog',
+        cache: 'public, max-age=30, must-revalidate',
+      }),
+    '/api/skills/': async (req: Request) =>
+      jsonETag(req, await buildSkillsCatalog(), {
+        versionKey: 'skills-catalog',
+        cache: 'public, max-age=30, must-revalidate',
+      }),
     '/api/skills/:name': {
       GET: async (req: BunRequest<'/api/skills/:name'>) => {
         const detail = await buildSkillDetail(req.params.name);
         if (!detail) return json({ error: `No such skill: ${req.params.name}` }, 404);
-        return json(detail);
+        return jsonETag(req, detail as object, {
+          versionKey: `skill:${req.params.name}`,
+          cache: 'public, max-age=30, must-revalidate',
+        });
       },
     },
     '/api/skills/:name/package': {
@@ -2035,22 +2139,28 @@ function buildPublicRoutes() {
     '/api/channels/events': (req: Request) => channelsEvents(req),
     '/api/channels/events/': (req: Request) => channelsEvents(req),
 
-    '/api/registry': () => serveRegistryIndex(),
-    '/api/registry/': () => serveRegistryIndex(),
-    '/api/registry/registry.json': () => serveRegistryIndex(),
-    '/api/registry/health': async () => {
+    '/api/registry': (req: Request) => serveRegistryIndex(req),
+    '/api/registry/': (req: Request) => serveRegistryIndex(req),
+    '/api/registry/registry.json': (req: Request) => serveRegistryIndex(req),
+    '/api/registry/health': async (req: Request) => {
       const idx = await Bun.file('public/registry/registry.json')
         .json()
         .catch(() => ({ packages: {} }));
       const packages = Object.keys(idx.packages ?? {});
-      return json({
+      const timestamp = new Date().toISOString();
+      const body = {
         ok: true,
         source: 'assets',
         packageCount: packages.length,
-        timestamp: new Date().toISOString(),
+        timestamp,
+      };
+      return jsonETag(req, body, {
+        versionKey: 'registry-health',
+        etagData: { ok: true, source: 'assets', packageCount: packages.length },
+        cache: 'public, max-age=5, must-revalidate',
       });
     },
-    '/api/registry/static': () => serveStaticRegistry(),
+    '/api/registry/static': (req: Request) => serveStaticRegistry(req),
     '/api/registry/search': (req: Request) => searchRegistry(req),
     '/api/registry/search/': (req: Request) => searchRegistry(req),
 
@@ -2059,8 +2169,12 @@ function buildPublicRoutes() {
       req: BunRequest<'/api/registry/tenants/:tenant/registry.json'>
     ) => {
       const f = Bun.file(`public/registry/${req.params.tenant}/registry.json`);
-      if (await f.exists())
-        return new Response(f, { headers: { 'Content-Type': 'application/json; charset=utf-8' } });
+      if (await f.exists()) {
+        return jsonETag(req, (await f.json()) as object, {
+          versionKey: `tenant-registry:${req.params.tenant}`,
+          cache: 'public, max-age=30, must-revalidate',
+        });
+      }
       return json({ error: `No registry for tenant: ${req.params.tenant}` }, 404);
     },
 
@@ -2070,10 +2184,11 @@ function buildPublicRoutes() {
       if (name === 'search' || name === 'registry.json' || name === 'static' || name === 'health') {
         return json({ error: 'Not found' }, 404);
       }
-      return packageDetail(name);
+      return packageDetail(req, name);
     },
     '/api/registry/:package/versions': {
-      GET: (req: BunRequest<'/api/registry/:package/versions'>) => listVersions(req.params.package),
+      GET: (req: BunRequest<'/api/registry/:package/versions'>) =>
+        listVersions(req, req.params.package),
       POST: (req: BunRequest<'/api/registry/:package/versions'>) =>
         publishVersion(req, req.params.package),
     },
@@ -2082,11 +2197,11 @@ function buildPublicRoutes() {
     '/api/registry/:scope/:name': (req: BunRequest<'/api/registry/:scope/:name'>) => {
       const { scope, name } = req.params;
       if (!scope.startsWith('@')) return json({ error: 'Not found' }, 404);
-      return packageDetail(`${scope}/${name}`);
+      return packageDetail(req, `${scope}/${name}`);
     },
     '/api/registry/:scope/:name/versions': {
       GET: (req: BunRequest<'/api/registry/:scope/:name/versions'>) =>
-        listVersions(`${req.params.scope}/${req.params.name}`),
+        listVersions(req, `${req.params.scope}/${req.params.name}`),
       POST: (req: BunRequest<'/api/registry/:scope/:name/versions'>) =>
         publishVersion(req, `${req.params.scope}/${req.params.name}`),
     },
@@ -2123,18 +2238,19 @@ function isListenPortBusy(err: unknown): boolean {
 
 function createServer(options: Pick<BunServeOptions, 'port' | 'hostname'> = {}): BunServer {
   const routes = buildPublicRoutes();
-  const serveOptions: BunServeOptions = {
-    development: SERVE_DEVELOPMENT,
-    routes,
-    fetch: fetchHandler,
-    error(error) {
-      console.error('[serve] unhandled:', error);
-      return new Response('Internal Server Error', { status: 500 });
-    },
-  };
-  if (HOST_OVERRIDE) serveOptions.hostname = HOST_OVERRIDE;
-  else if (options.hostname !== undefined) serveOptions.hostname = options.hostname;
+  const serveOptions = attachServePublicErrorHandler(
+    {
+      development: SERVE_DEVELOPMENT,
+      routes,
+      fetch: fetchHandler,
+    } satisfies BunServeOptions,
+    { development: SERVE_DEVELOPMENT }
+  );
+  // Explicit options (ephemeral retry) win; otherwise TOML hostname/port when prefs set them.
+  if (options.hostname !== undefined) serveOptions.hostname = options.hostname;
+  else if (bindPrefs.hostname !== undefined) serveOptions.hostname = bindPrefs.hostname;
   if (options.port !== undefined) serveOptions.port = options.port;
+  else if (bindPrefs.port !== undefined) serveOptions.port = bindPrefs.port;
 
   return Bun.serve(serveOptions);
 }
@@ -2146,9 +2262,9 @@ function createServer(options: Pick<BunServeOptions, 'port' | 'hostname'> = {}):
  * the bind-time check alone is not enough. A connect probe is deterministic.
  */
 async function probeDefaultPortBusy(): Promise<boolean> {
-  const port = resolveBunServeDefaultPort();
+  const port = bindPrefs.requestedPort;
   if (port === 0) return false;
-  const host = HOST_OVERRIDE ?? '127.0.0.1';
+  const host = bindPrefs.hostname ?? '127.0.0.1';
   try {
     const socket = await Bun.connect({
       hostname: host,
@@ -2177,14 +2293,22 @@ async function probeDefaultPortBusy(): Promise<boolean> {
 async function startServer(): Promise<ServeBindSnapshot & { ephemeralFallback: boolean }> {
   if (await probeDefaultPortBusy()) {
     console.warn(
-      `[serve] default port ${resolveBunServeDefaultPort()} already listening — binding ephemeral port instead`
+      `[serve] default port ${bindPrefs.requestedPort} already listening — binding ephemeral port instead`
     );
     return { ...serveBindSnapshot(createServer({ port: 0 })), ephemeralFallback: true };
   }
 
   let lastErr: unknown;
   try {
-    return { ...serveBindSnapshot(createServer()), ephemeralFallback: false };
+    return {
+      ...serveBindSnapshot(
+        createServer({
+          port: bindPrefs.port,
+          hostname: bindPrefs.hostname,
+        })
+      ),
+      ephemeralFallback: false,
+    };
   } catch (e) {
     lastErr = e;
     if (!isListenPortBusy(e)) throw e;
@@ -2192,16 +2316,16 @@ async function startServer(): Promise<ServeBindSnapshot & { ephemeralFallback: b
 
   try {
     console.warn(
-      `[serve] default port ${resolveBunServeDefaultPort()} busy — retrying with port: 0 (ephemeral)`
+      `[serve] default port ${bindPrefs.requestedPort} busy — retrying with port: 0 (ephemeral)`
     );
     return { ...serveBindSnapshot(createServer({ port: 0 })), ephemeralFallback: true };
   } catch (e) {
     lastErr = e;
   }
 
-  const expected = resolveBunServeDefaultPort();
+  const expected = bindPrefs.requestedPort;
   console.error(`
-Failed to bind serve-public on ${HOST_OVERRIDE ?? '(Bun default hostname)'} port ${expected}.
+Failed to bind serve-public on ${bindPrefs.hostname ?? '(Bun default hostname)'} port ${expected}.
 
   # Free the default port, then re-run (Bun resolves --port → BUN_PORT → PORT → NODE_PORT → 3000):
   lsof -nP -iTCP:${expected} -sTCP:LISTEN
@@ -2261,13 +2385,16 @@ console.log(
     ? `Publish:       PUT ${base}/{name} (Bearer REGISTRY_SECRET required)`
     : `Publish:       disabled — set REGISTRY_SECRET or FACTORY_WAGER_TOKEN`
 );
+console.log(
+  `[serve] portSource=${bindPrefs.portSource} hostnameSource=${bindPrefs.hostnameSource} requestedPort=${bindPrefs.requestedPort}`
+);
 // Docs dual shape (server.port + server.url) then Bind/Serve lines — all from live Server.
 for (const line of formatServePublicBindLines(
   {
     ...bind,
     schemaVersion: 1,
     ephemeralFallback,
-    requestedDefaultPort: resolveBunServeDefaultPort(),
+    requestedDefaultPort: bindPrefs.requestedPort,
     boundAt: new Date().toISOString(),
   },
   { dbPath }
