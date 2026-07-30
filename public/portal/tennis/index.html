@@ -74,13 +74,23 @@
 
   <main class="main portal-page">
     <header class="portal-hero">
-      <h2 class="portal-hero__title">Tennis</h2>
-      <p class="sub">
-        Live desk board from event-store bake when present —
-        <code>bun run tennis:board:bake</code> →
-        <code>/registry/tennis/board-metrics.json</code>.
-        Venue colors are identity; edge uses semantic green/red.
-      </p>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;width:100%">
+        <a href="/avatars/demo-player.webp" class="tennis-avatar-chip" title="demo-player avatar (Bun.Image)" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:999px;padding:4px 12px 4px 4px;background:var(--surface)">
+          <img id="hero-avatar" src="/avatars/demo-player.webp" width="40" height="40" alt="demo-player" style="border-radius:50%;object-fit:cover;display:block;background:var(--border)" loading="lazy" />
+          <span style="font-size:12px;font-weight:600">demo-player</span>
+          <span class="tone-chip tone-neutral" style="font-size:10px">avatar</span>
+        </a>
+        <div style="flex:1;min-width:12rem">
+          <h2 class="portal-hero__title">Tennis</h2>
+          <p class="sub" style="margin-top:4px">
+            Live desk board from event-store bake when present —
+            <code>bun run tennis:board:bake</code> →
+            <code>/registry/tennis/board-metrics.json</code>.
+            Venue colors are identity; edge uses semantic green/red.
+            Local on-demand: <code>GET /avatar/demo-player</code> (serve-public · Bun.Image).
+          </p>
+        </div>
+      </div>
     </header>
 
     <div class="portal-actions">
@@ -469,7 +479,42 @@ export async function load() {
   }
 }
 
+function renderAvatarStrip() {
+  const host = document.getElementById('avatar-strip');
+  const img = document.getElementById('hero-avatar');
+  const ids = ['demo-player'];
+  // Prefer static bake on Pages; probe on-demand path when local serve-public
+  const candidates = (id) => [`/avatars/${id}.webp`, `/avatar/${id}`];
+  if (img) {
+    const id = 'demo-player';
+    const tryNext = (i) => {
+      if (i >= 2) return;
+      const url = candidates(id)[i] + (i === 0 ? '' : `?s=128`);
+      const probe = new Image();
+      probe.onload = () => { img.src = url; };
+      probe.onerror = () => tryNext(i + 1);
+      probe.src = url;
+    };
+    tryNext(0);
+  }
+  if (host) {
+    host.innerHTML = ids.map((id) => {
+      const src = `/avatars/${id}.webp`;
+      return `<a href="${src}" class="portal-card" style="display:flex;align-items:center;gap:10px;padding:10px 12px;text-decoration:none;color:inherit">
+        <img src="${src}" width="48" height="48" alt="${id}" style="border-radius:50%;object-fit:cover;background:var(--border)" loading="lazy"
+          onerror="this.onerror=null;this.src='/avatar/${id}'" />
+        <div>
+          <div style="font-weight:600;font-size:13px">${id}</div>
+          <div class="sub" style="margin:0">Bun.Image · /avatars · /avatar/:id</div>
+        </div>
+      </a>`;
+    }).join('');
+  }
+}
+
 function boot() {
+  renderAvatarStrip();
+
   mountVenueLegend($('venue-legend-host'));
   renderSampleTable();
 
