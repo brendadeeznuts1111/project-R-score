@@ -49,6 +49,9 @@ type PageKey =
   | 'toc'
   | 'compliance'
   | 'limits'
+  | 'partner-history'
+  | 'doctor'
+  | 'install-hygiene'
   | 'template';
 
 const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: string }[] = [
@@ -73,6 +76,19 @@ const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: st
     brandBadge: 'ops',
   },
   { file: 'limits/index.html', active: 'limits', pageLabel: 'Limits', brandBadge: 'ops' },
+  {
+    file: 'partner-history/index.html',
+    active: 'partner-history',
+    pageLabel: 'Partner history',
+    brandBadge: 'ops',
+  },
+  { file: 'doctor/index.html', active: 'doctor', pageLabel: 'Doctor', brandBadge: 'ops' },
+  {
+    file: 'install-hygiene/index.html',
+    active: 'install-hygiene',
+    pageLabel: 'Install hygiene',
+    brandBadge: 'ops',
+  },
   { file: '_page-template.html', active: 'template', pageLabel: 'New Page', brandBadge: 'ops' },
 ];
 

@@ -123,6 +123,29 @@ Agent rule: [`.cursor/rules/portal-frontend.mdc`](../.cursor/rules/portal-fronte
 
 Preferred chrome patterns: priority nav + overflow, subtle atmosphere gradient, skeleton loading (not spinner-only), actionable error states with codes, channel-aware verification cards (`data-channel`, `data-subsystem`, etc.) with `<channel-filter>` composing channel + subsystem checkboxes on the ops dashboard. Keep the existing GitHub-dark palette.
 
+### Board primitives
+
+Shared layout / status classes in [`public/portal/style.css`](../public/portal/style.css) (**Board primitives** block). Prefer these over new per-board prefixes (`vh-*`, `tf-*`, light Tailwind hexes, emoji headings).
+
+| Class | Role |
+|-------|------|
+| `.portal-page` | Page shell (`max-width: var(--layout-max)`, pad). Aliases: `.health-page`, `.doc-wrap`, `.partner-page`. |
+| `.portal-hero` | In-page title + `.hero-sub` / `.sub` (topbar `.logo-page` stays chrome). |
+| `.portal-section` / `.section` + `.section-sub` | Bordered `h2` + dim description. **No emoji in headings.** |
+| `.portal-card` / `.portal-card-grid` | Metric / panel cards (accent hairline). |
+| `.data-table` + `.table-wrap` | Dark data tables; aliases include `.env-table`, `.ops-table`, `.live-table`, `.doc-table`. |
+| `.row-ok` / `.row-warn` / `.row-bad` | 3px inset row rails (Live check pattern). |
+| `.tone-chip.tone-ok\|warn\|bad\|neutral` | Status pills. |
+| `.status-text` / `.st-ok` / `.st-warn` / `.st-bad` | Inline status color. |
+| `.portal-actions` + `.btn` / `.btn-primary` | Secondary outline actions. |
+| `.portal-banner` | Status strip + `.dot` (ok/warn/bad). |
+
+**Tone contract (only):** `ok → var(--green)` · `warn → var(--yellow)` · `bad → var(--red)` · `neutral → var(--text-dim)`. Do not use Tailwind greens (`#16a34a`) or light badge fills on portal boards.
+
+**Reference boards:** [`/portal/health/`](../public/portal/health/) (Live check multi-column + section rhythm) · [`/portal/install-hygiene/`](../public/portal/install-hygiene/) (tone chips). **Template:** [`_page-template.html`](../public/portal/_page-template.html). **Chrome apply:** `bun run portal:chrome:apply`.
+
+**Unification phases:** P0 chrome holes + emoji/token strip · P1 promote remaining private CSS into primitives · P2 rewrite limits/partner-history/doctor/vault shells to full template.
+
 Modern CSS in [`public/portal/style.css`](../public/portal/style.css) — **static-first** by default.
 
 **Scoring SSOT:**
@@ -340,7 +363,7 @@ bun run check:serve-shape           # shape + lifecycle + bind-identity suites
 
 Verify helper: `resolveBunServeDefaultPort()` in `lib/http/bun-serve-shape.ts` (includes `--port` for probes only; bind is native Bun). After bind, `serve-public` logs **BIND IDENTITY** ([`bind-identity-card.ts`](../lib/http/bind-identity-card.ts)); full policy: [`serve-public-bind.md`](harness/tenants/serve-public-bind.md).
 
-**Routing:** [`buildPublicRoutes`](../scripts/serve-public.ts) registers exact SIMD `routes` for `/ready`, APIs (method maps), and **every** `public/portal/<board>/` index via `portalBoardRoutes` / `PORTAL_BOARD_SLUGS`. Unmatched traffic (npm publish `PUT`, multi-segment static, skill detail pages) stays on `fetch` — [Bun routing](https://bun.com/docs/runtime/http/routing).
+**Routing:** [`buildPublicRoutes`](../scripts/serve-public.ts) registers exact SIMD `routes` for `/ready`, APIs (method maps), and **every** `public/portal/<board>/` index via `portalBoardRoutes` / `PORTAL_BOARD_SLUGS`. JSON GET APIs use `jsonETag` (data-ETag + 304). Unmatched traffic (npm publish `PUT`, multi-segment static, skill detail pages) stays on `fetch` — [Bun routing](https://bun.com/docs/runtime/http/routing).
 
 ### Dev reload (`--watch`, `--hot`, browser SSE)
 

@@ -7,7 +7,15 @@
   <meta name="portal-poll-ms" content="60000" />
   <title>Doctor · FactoryWager</title>
   <meta name="theme-color" content="#0d1117" />
+  <meta name="application-name" content="FactoryWager" />
   <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+  <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0d1117" />
+  <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/portal/style.css" />
   <style>
     .doc-wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px 48px; }
@@ -56,18 +64,43 @@
   <header class="topbar">
     <div class="topbar-inner">
       <h1 class="logo">
-        <span class="logo-icon">■</span>
+        <span class="logo-icon" aria-hidden="true"></span>
         <span class="brand-wordmark">FactoryWager</span>
         <span class="brand-badge">ops</span>
         <span class="logo-page">Doctor</span>
       </h1>
       <nav class="topbar-nav" aria-label="Primary">
         <a href="/" class="nav-link" data-group="other">Home</a>
-        <a href="/portal/ops/" class="nav-link" data-group="ops">Ops</a>
+        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · bun run ops:snapshot" data-group="ops" data-cli="bun run ops:snapshot">Ops</a>
         <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
-        <a href="/portal/health/" class="nav-link" data-group="harness">Health</a>
-        <a href="/portal/doctor/" class="nav-link active" aria-current="page" data-group="harness">Doctor</a>
-        <a href="/portal/tools/" class="nav-link" data-group="harness">CLI Tools</a>
+        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake">Health</a>
+        <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane">DOD</a>
+        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake">Compliance</a>
+        <div class="nav-overflow">
+          <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
+          <div class="nav-dropdown" role="menu">
+            <a href="/portal/catalog/" class="nav-link" data-group="registry" role="menuitem">Catalog</a>
+            <a href="/portal/packages/" class="nav-link" title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table" data-group="registry" data-cli="bun run portal-cli pm graph  # offline packages-graph-map table" role="menuitem">Packages</a>
+            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
+            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
+            <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
+            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
+            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
+            <a href="/portal/tools/" class="nav-link" title="portal-cli surface map · badges · capability subset · bun run portal-cli dashboard --view=tools" data-group="harness" data-cli="bun run portal-cli dashboard --view=tools" role="menuitem">CLI Tools</a>
+            <a href="/portal/failures/" class="nav-link" title="test failures bake · junit · nav badge = count · bun run failures:bake  # → /registry/failures.json" data-group="harness" data-cli="bun run failures:bake  # → /registry/failures.json" role="menuitem">Failures</a>
+            <a href="/portal/bunfig/" class="nav-link" title="bunfig install config provenance · portal-cli bunfig status · bun run bunfig:bake  # → /registry/bunfig-state.json" data-group="harness" data-cli="bun run bunfig:bake  # → /registry/bunfig-state.json" role="menuitem">Bunfig</a>
+            <a href="/portal/console-format/" class="nav-link" title="structured output gate · logTable/logDepth/jsonOut ratchet · bun run console-format:bake  # → /registry/console-format-state.json" data-group="harness" data-cli="bun run console-format:bake  # → /registry/console-format-state.json" role="menuitem">Console Format</a>
+            <a href="/portal/doctor/" class="nav-link active" aria-current="page" title="unified health gate · bunfig · catalog · linker · bun run portal:doctor --verbose" data-group="harness" data-cli="bun run portal:doctor --verbose" role="menuitem">Doctor</a>
+            <a href="/portal/install-hygiene/" class="nav-link" title="cache prune · npm-install policy · install:verify bake · bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" data-group="harness" data-cli="bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" role="menuitem">Install hygiene</a>
+            <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
+            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
+            <a href="/portal/limits/" class="nav-link" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
+            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
+            <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
+            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
+            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub" data-group="other" role="menuitem">Wiki</a>
+          </div>
+        </div>
       </nav>
     </div>
   </header>
@@ -106,5 +139,33 @@
   <script type="module" src="/portal/data.js"></script>
   <script type="module" src="/portal/doctor/doctor-board.js"></script>
   <script type="module" src="/portal/topbar.js"></script>
+  <script type="module" src="/portal/components/footer.js"></script>
+  <footer class="footer" data-portal-chrome="footer">
+    <p>
+      <strong>FactoryWager</strong> ·
+      <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
+      <a href="/portal/ops/">Ops</a> ·
+      <a href="/portal/toc/">TOC</a> ·
+      <a href="/portal/packages/">Packages</a> ·
+      <a href="/portal/brands/">Brands</a> ·
+      <a href="/portal/surfaces/">Surfaces</a> ·
+      <a href="/portal/health/">Health</a> ·
+      <a href="/registry/portal-weave.json">Portal proof</a> ·
+      <a href="/portal/tools/">CLI Tools</a> ·
+      <a href="/portal/compliance/">Compliance</a> ·
+      <a href="/portal/limits/">Limits</a> ·
+      <a href="/portal/dod/">DOD</a> ·
+      <a href="/portal/env/">Env</a> ·
+      <a href="/portal/vault/">Vault</a> ·
+      <a href="/portal/failures/">Failures</a> ·
+      <a href="/portal/install-hygiene/">Install hygiene</a> ·
+      <a href="/registry/monorepo-health.json">Monorepo health</a> ·
+      <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </p>
+    <p class="footer-meta">
+      project-R-score · chrome <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a>
+      · <span data-footer-ts>…</span>
+    </p>
+  </footer>
 </body>
 </html>

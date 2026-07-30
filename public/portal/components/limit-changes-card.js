@@ -19,9 +19,9 @@ const STYLE = `
     .lcc-table { width: 100%; border-collapse: collapse; font-size: 0.85em; margin: 4px 0; }
     .lcc-table th, .lcc-table td { padding: 4px 6px; text-align: left; border-bottom: 1px solid var(--border, #ddd); }
     .lcc-table th { font-weight: 600; color: var(--text-dim, #666); }
-    .lcc-up { color: #16a34a; }
-    .lcc-down { color: #dc2626; }
-    .lcc-score-bar { display: inline-block; height: 8px; border-radius: 4px; background: linear-gradient(90deg, #dc2626, #f59e0b, #16a34a); min-width: 40px; }
+    .lcc-up { color: var(--green, #3fb950); }
+    .lcc-down { color: var(--red, #f85149); }
+    .lcc-score-bar { display: inline-block; height: 8px; border-radius: 4px; background: linear-gradient(90deg, var(--red, #f85149), var(--yellow, #d29922), var(--green, #3fb950)); min-width: 40px; }
     .lcc-summary { display: flex; gap: 1em; padding: 6px 0; color: var(--text-dim, #666); font-size: 0.85em; }
     .lcc-summary span { display: flex; align-items: center; gap: 3px; }
     .lcc-empty { color: var(--text-dim, #999); font-style: italic; padding: 1em; text-align: center; }
@@ -134,8 +134,8 @@ export class LimitChangesCard extends HTMLElement {
     const avgScore = filtered.reduce((s, c) => s + ((c.multi_factor_score ?? 0)), 0) / filtered.length;
     this.shadowRoot.getElementById('lcc-summary').innerHTML = `
       <span>📊 ${filtered.length} changes</span>
-      <span style="color:#16a34a">🚀 ${raises}</span>
-      ${downs > 0 ? `<span style="color:#dc2626">⬇ ${downs}</span>` : ''}
+      <span class="lcc-up">↑ ${raises}</span>
+      ${downs > 0 ? `<span class="lcc-down">↓ ${downs}</span>` : ''}
       <span>${netDelta >= 0 ? '+' : ''}$${Math.abs(netDelta).toLocaleString()} net</span>
       ${avgScore > 0 ? `<span>🧮 ${(avgScore * 100).toFixed(0)}% avg</span>` : ''}
     `;

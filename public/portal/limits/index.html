@@ -1,159 +1,127 @@
 <!doctype html>
-<html lang="en">
+<!-- @see docs/portal-foundation.md — board primitives · tone tokens · no emoji headings -->
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Partner Limit Patterns — FactoryWager</title>
+    <title>Partner Limit Patterns · FactoryWager</title>
     <meta name="theme-color" content="#0d1117" />
     <meta name="application-name" content="FactoryWager" />
     <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
     <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/portal/style.css" />
-    <link rel="stylesheet" href="/portal/theme-tokens.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/portal/style.css" />
     <script type="module" src="/portal/data.js"></script>
     <script type="module" src="/portal/topbar.js"></script>
     <style>
-      body {
-        font-family: system-ui, sans-serif;
-        margin: 1em;
-        background: var(--bg, #fff);
-        color: var(--text, #111);
+      /* Board-local only — shared shell/table/tone live in style.css */
+      .limits-page .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+        margin: 16px 0;
       }
-      .card {
-        background: var(--card, #f5f5f5);
-        border-radius: 8px;
-        padding: 1em;
-        margin: 1em 0;
-      }
-      .card h2 {
-        margin: 0 0 0.5em;
-        font-size: 1.1em;
+      .limits-page .card h2 {
+        margin: 0 0 10px;
+        font-size: 15px;
+        font-weight: 600;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 8px;
       }
       .metric {
         font-size: 1.8em;
         font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        font-family: var(--font-mono, ui-monospace, monospace);
       }
-      .metric.ok {
-        color: #16a34a;
-      }
-      .metric.raised {
-        color: #2563eb;
-      }
-      table {
+      .metric.ok { color: var(--green, #3fb950); }
+      .metric.raised { color: var(--accent, #58a6ff); }
+      .limits-page table {
         width: 100%;
         border-collapse: collapse;
         margin: 0.5em 0;
+        font-size: 12px;
       }
-      th,
-      td {
-        padding: 6px 8px;
+      .limits-page th,
+      .limits-page td {
+        padding: 7px 10px;
         text-align: left;
-        border-bottom: 1px solid var(--border, #ddd);
-        font-size: 0.9em;
+        border-bottom: 1px solid rgba(48, 54, 61, 0.35);
       }
-      th {
-        font-weight: 600;
-        color: var(--text-dim, #666);
+      .limits-page th {
+        font-weight: 500;
+        color: var(--text-dim);
       }
       .badge {
         display: inline-block;
         padding: 2px 8px;
-        border-radius: 4px;
-        font-size: 0.75em;
-        font-weight: 600;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 650;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        border: 1px solid var(--border);
       }
-      .badge.up {
-        background: #dbeafe;
-        color: #1d4ed8;
-      }
-      .badge.down {
-        background: #fee2e2;
-        color: #b91c1c;
-      }
-      .badge.live {
-        background: #fce7f3;
-        color: #be185d;
-      }
-      .badge.pregame {
-        background: #d1fae5;
-        color: #047857;
-      }
-      .badge.score {
-        background: #ede9fe;
-        color: #6d28d9;
-        cursor: help;
-      }
-      .badge.pending {
-        background: #e5e7eb;
-        color: #4b5563;
-        cursor: help;
-      }
+      .badge.up { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+      .badge.down { color: var(--red, #f85149); border-color: #da3633; }
+      .badge.live { color: var(--yellow, #d29922); border-color: #9e6a03; }
+      .badge.pregame { color: var(--green, #3fb950); border-color: #238636; }
+      .badge.score { color: var(--accent); cursor: help; }
+      .badge.pending { color: var(--text-dim); cursor: help; }
       .filter-bar {
         display: flex;
         gap: 0.5em;
         flex-wrap: wrap;
         margin: 1em 0;
+        align-items: center;
       }
       .filter-bar input,
       .filter-bar select {
-        padding: 6px 10px;
-        border: 1px solid var(--border, #ccc);
-        border-radius: 4px;
-        font-size: 0.9em;
+        padding: 7px 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 13px;
+        background: var(--surface);
+        color: var(--text);
       }
       .filter-bar button {
-        padding: 6px 14px;
-        border: none;
-        border-radius: 4px;
-        background: #2563eb;
+        padding: 7px 14px;
+        min-height: 36px;
+        border: 1px solid var(--accent);
+        border-radius: 6px;
+        background: var(--accent);
         color: #fff;
         cursor: pointer;
         font-weight: 600;
+        font-family: inherit;
       }
       .empty {
-        color: var(--text-dim, #999);
+        color: var(--text-dim);
         font-style: italic;
         padding: 2em;
         text-align: center;
-      }
-      .nav {
-        display: flex;
-        gap: 1em;
-        margin-bottom: 1em;
-      }
-      .nav a {
-        color: #2563eb;
-        text-decoration: none;
-        font-size: 0.9em;
-      }
-      .nav a:hover {
-        text-decoration: underline;
       }
       .pattern-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         gap: 1em;
       }
-      .pattern-list {
-        display: grid;
-        gap: 0.5em;
-      }
+      .pattern-list { display: grid; gap: 0.5em; }
       .pattern-row {
         display: grid;
         grid-template-columns: minmax(90px, 1fr) 2fr auto;
         gap: 0.75em;
         align-items: center;
         padding: 0.55em;
-        border: 1px solid var(--border, #ddd);
+        border: 1px solid var(--border);
         border-radius: 6px;
+        background: var(--surface);
       }
-      .pattern-row small {
-        color: var(--text-dim, #666);
-      }
+      .pattern-row small { color: var(--text-dim); }
       .audit-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -162,28 +130,83 @@
       .audit-item {
         padding: 0.65em;
         border-radius: 6px;
-        background: var(--bg, #fafafa);
+        border: 1px solid var(--border);
+        background: var(--surface);
       }
       .audit-item strong {
         display: block;
         font-size: 1.3em;
+        font-variant-numeric: tabular-nums;
       }
     </style>
   </head>
   <body>
-    <div class="nav">
-      <a href="/portal/">&larr; Portal home</a>
-      <a href="/portal/ops/">Ops dashboard</a>
-      <a href="/registry/limit-raises.json" target="_blank">limit-raises.json</a>
-      <a href="/registry/ops-summary.json" target="_blank">ops-summary.json</a>
-      <a href="/api/limits/summary" target="_blank">summary API</a>
+    <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <h1 class="logo">
+        <span class="logo-icon" aria-hidden="true"></span>
+        <span class="brand-wordmark">FactoryWager</span>
+        <span class="brand-badge">ops</span>
+        <span class="logo-page">Limits</span>
+      </h1>
+        <nav class="topbar-nav" aria-label="Primary">
+        <a href="/" class="nav-link" data-group="other">Home</a>
+        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · bun run ops:snapshot" data-group="ops" data-cli="bun run ops:snapshot">Ops</a>
+        <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
+        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake">Health</a>
+        <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane">DOD</a>
+        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake">Compliance</a>
+        <div class="nav-overflow">
+          <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
+          <div class="nav-dropdown" role="menu">
+            <a href="/portal/catalog/" class="nav-link" data-group="registry" role="menuitem">Catalog</a>
+            <a href="/portal/packages/" class="nav-link" title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table" data-group="registry" data-cli="bun run portal-cli pm graph  # offline packages-graph-map table" role="menuitem">Packages</a>
+            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
+            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
+            <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
+            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
+            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
+            <a href="/portal/tools/" class="nav-link" title="portal-cli surface map · badges · capability subset · bun run portal-cli dashboard --view=tools" data-group="harness" data-cli="bun run portal-cli dashboard --view=tools" role="menuitem">CLI Tools</a>
+            <a href="/portal/failures/" class="nav-link" title="test failures bake · junit · nav badge = count · bun run failures:bake  # → /registry/failures.json" data-group="harness" data-cli="bun run failures:bake  # → /registry/failures.json" role="menuitem">Failures</a>
+            <a href="/portal/bunfig/" class="nav-link" title="bunfig install config provenance · portal-cli bunfig status · bun run bunfig:bake  # → /registry/bunfig-state.json" data-group="harness" data-cli="bun run bunfig:bake  # → /registry/bunfig-state.json" role="menuitem">Bunfig</a>
+            <a href="/portal/console-format/" class="nav-link" title="structured output gate · logTable/logDepth/jsonOut ratchet · bun run console-format:bake  # → /registry/console-format-state.json" data-group="harness" data-cli="bun run console-format:bake  # → /registry/console-format-state.json" role="menuitem">Console Format</a>
+            <a href="/portal/doctor/" class="nav-link" title="unified health gate · bunfig · catalog · linker · bun run portal:doctor --verbose" data-group="harness" data-cli="bun run portal:doctor --verbose" role="menuitem">Doctor</a>
+            <a href="/portal/install-hygiene/" class="nav-link" title="cache prune · npm-install policy · install:verify bake · bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" data-group="harness" data-cli="bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" role="menuitem">Install hygiene</a>
+            <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
+            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
+            <a href="/portal/limits/" class="nav-link active" aria-current="page" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
+            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
+            <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
+            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
+            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub" data-group="other" role="menuitem">Wiki</a>
+          </div>
+        </div>
+      </nav>
+        <div class="topbar-status">
+          <a href="/portal/health/" class="topbar-health-link" title="System health">
+            <span id="health-dot" class="health-dot unknown"></span>
+            <span id="health-label" class="health-label">…</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="portal-page limits-page">
+    <div class="portal-actions">
+      <a href="/registry/limit-raises.json" target="_blank" rel="noopener">limit-raises.json</a>
+      <a href="/registry/ops-summary.json" target="_blank" rel="noopener">ops-summary</a>
+      <a href="/api/limits/summary" target="_blank" rel="noopener">summary API</a>
+      <a href="/portal/partner-history/">Partner history</a>
     </div>
 
-    <h1>🚀 Partner Limit Patterns</h1>
-    <p style="color: var(--text-dim, #666)">
-      Connected partner, downline, sportsbook, regulatory state, and ZIP-prefix signals — last 48
-      hours. Auto-refreshes every 30s.
-    </p>
+    <header class="portal-hero">
+      <h2 class="portal-hero__title">Partner limit patterns</h2>
+      <p class="sub">
+        Connected partner, downline, sportsbook, regulatory state, and ZIP-prefix signals — last 48
+        hours. Auto-refreshes every 30s.
+      </p>
+    </header>
 
     <div class="filter-bar">
       <input
@@ -214,7 +237,7 @@
     </div>
 
     <div id="summary-section" class="card">
-      <h2>📊 Summary</h2>
+      <h2>Summary</h2>
       <div style="display: flex; gap: 2em; flex-wrap: wrap">
         <div><span class="metric" id="total-raises">0</span><br />Total changes</div>
         <div><span class="metric" id="unique-partners">0</span><br />Nodes with changes</div>
@@ -226,7 +249,7 @@
     </div>
 
     <div id="predict-section" class="card">
-      <h2>🎯 Limit raise prediction</h2>
+      <h2>Limit raise prediction</h2>
       <p id="predict-body" style="color: var(--text-dim, #666); margin: 0.25em 0">
         Loading prediction accuracy…
       </p>
@@ -237,27 +260,27 @@
 
     <div class="pattern-grid">
       <div class="card">
-        <h2>📚 Sportsbook Patterns</h2>
+        <h2>Sportsbook patterns</h2>
         <div id="book-patterns" class="pattern-list"></div>
       </div>
       <div class="card">
-        <h2>🗺️ State &amp; ZIP Patterns</h2>
+        <h2>State &amp; ZIP patterns</h2>
         <div id="geo-patterns" class="pattern-list"></div>
       </div>
     </div>
 
     <div class="card">
-      <h2>🔗 Partner → Downline Context</h2>
+      <h2>Partner → downline context</h2>
       <div id="downline-patterns"></div>
     </div>
 
     <div class="card">
-      <h2>🛡️ Data Connection Audit</h2>
+      <h2>Data connection audit</h2>
       <div id="pattern-audit" class="audit-grid"></div>
     </div>
 
     <div id="raises-table-section" class="card">
-      <h2>📋 Recent Limit Changes</h2>
+      <h2>Recent limit changes</h2>
       <table>
         <thead>
           <tr>
@@ -283,7 +306,7 @@
     </div>
 
     <div id="per-partner-section" class="card">
-      <h2>👥 Per-Node Breakdown</h2>
+      <h2>Per-node breakdown</h2>
       <div id="partner-breakdown"></div>
     </div>
 
@@ -636,6 +659,7 @@
       load();
       setInterval(load, POLL_INTERVAL);
     </script>
+    </main>
     <footer class="footer" data-portal-chrome="footer">
     <p>
       <strong>FactoryWager</strong> ·
@@ -643,6 +667,8 @@
       <a href="/portal/ops/">Ops</a> ·
       <a href="/portal/toc/">TOC</a> ·
       <a href="/portal/packages/">Packages</a> ·
+      <a href="/portal/brands/">Brands</a> ·
+      <a href="/portal/surfaces/">Surfaces</a> ·
       <a href="/portal/health/">Health</a> ·
       <a href="/registry/portal-weave.json">Portal proof</a> ·
       <a href="/portal/tools/">CLI Tools</a> ·
@@ -652,6 +678,7 @@
       <a href="/portal/env/">Env</a> ·
       <a href="/portal/vault/">Vault</a> ·
       <a href="/portal/failures/">Failures</a> ·
+      <a href="/portal/install-hygiene/">Install hygiene</a> ·
       <a href="/registry/monorepo-health.json">Monorepo health</a> ·
       <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
     </p>

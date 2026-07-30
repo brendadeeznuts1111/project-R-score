@@ -11,6 +11,9 @@
   <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
   <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
   <link rel="manifest" href="/site.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/portal/style.css" />
   <script type="application/json" id="install-hygiene-embed">{"schemaVersion":1,"kind":"install-hygiene","generatedAt":"2026-07-29T01:35:09.194Z","bunVersion":"1.4.0","bunRevision":"a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88","installCache":{"available":true,"sizeBytes":3859976192,"sizeHuman":"3.59 GB","thresholdBytes":2147483648,"thresholdHuman":"2.00 GB","wouldPrune":true,"pruneReason":"over threshold (2.00 GB, current 3.59 GB)","cacheDir":"/Users/nolarose/.bun/install/cache","bunPmCachePath":"/Users/nolarose/.npm","bunPmCacheMismatch":"reported /Users/nolarose/.npm does not match expected /Users/nolarose/.bun/install/cache","collectedAt":"2026-07-29T01:34:52.342Z"},"npmInstall":{"ok":true,"violations":[],"violationCount":0,"allowedPaths":[".npmrc","tools/bun-docs-index.json","tools/bun-docs-catalog.json","tools/bun-docs-llms-full.txt","tools/bun-doc-refs.ts","tools/verify-guides.ts"]},"installVerify":{"ok":true,"failed":0,"strict":false,"dryRun":true,"checks":[{"ok":true,"label":"install policy","detail":"linker=isolated (inherited from ~/.bunfig.toml); globalStore=true (inherited from ~/.bunfig.toml); cache=/Users/nolarose/.bun/install/cache"},{"ok":true,"label":"install env","detail":"cache absolute, globalStore=1 (BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE)"},{"ok":true,"label":"install shell env","detail":"no BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE"},{"ok":true,"label":"cache dir","detail":"/Users/nolarose/.bun/install/cache (3.6G)"},{"ok":true,"label":"global store","detail":"/Users/nolarose/.bun/install/cache/links (1064 entries)"},{"ok":true,"label":"tilde drift","detail":"no literal ./~ cache dirs"},{"ok":true,"label":"trustedDependencies","detail":"explicitly empty and documented"},{"ok":true,"label":"lockfile","detail":"configVersion 1 (isolated)"},{"ok":true,"label":"node_modules layout","detail":"resolves into global store/cache"}]},"ok":false}</script>
   <style>
@@ -196,13 +199,36 @@
       </h1>
       <nav class="topbar-nav" aria-label="Primary">
         <a href="/" class="nav-link" data-group="other">Home</a>
-        <a href="/portal/ops/" class="nav-link" data-group="ops">Ops</a>
+        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · bun run ops:snapshot" data-group="ops" data-cli="bun run ops:snapshot">Ops</a>
         <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
-        <a href="/portal/health/" class="nav-link" data-group="harness">Health</a>
-        <a href="/portal/doctor/" class="nav-link" data-group="harness">Doctor</a>
-        <a href="/portal/bunfig/" class="nav-link" data-group="harness">Bunfig</a>
-        <a href="/portal/install-hygiene/" class="nav-link active" aria-current="page" title="install cache · npm policy · install:verify · bun run bake:install-hygiene" data-group="harness" data-cli="bun run bake:install-hygiene">Install hygiene</a>
-        <a href="/portal/packages/" class="nav-link" data-group="registry">Packages</a>
+        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake">Health</a>
+        <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane">DOD</a>
+        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake">Compliance</a>
+        <div class="nav-overflow">
+          <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
+          <div class="nav-dropdown" role="menu">
+            <a href="/portal/catalog/" class="nav-link" data-group="registry" role="menuitem">Catalog</a>
+            <a href="/portal/packages/" class="nav-link" title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table" data-group="registry" data-cli="bun run portal-cli pm graph  # offline packages-graph-map table" role="menuitem">Packages</a>
+            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
+            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
+            <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
+            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
+            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
+            <a href="/portal/tools/" class="nav-link" title="portal-cli surface map · badges · capability subset · bun run portal-cli dashboard --view=tools" data-group="harness" data-cli="bun run portal-cli dashboard --view=tools" role="menuitem">CLI Tools</a>
+            <a href="/portal/failures/" class="nav-link" title="test failures bake · junit · nav badge = count · bun run failures:bake  # → /registry/failures.json" data-group="harness" data-cli="bun run failures:bake  # → /registry/failures.json" role="menuitem">Failures</a>
+            <a href="/portal/bunfig/" class="nav-link" title="bunfig install config provenance · portal-cli bunfig status · bun run bunfig:bake  # → /registry/bunfig-state.json" data-group="harness" data-cli="bun run bunfig:bake  # → /registry/bunfig-state.json" role="menuitem">Bunfig</a>
+            <a href="/portal/console-format/" class="nav-link" title="structured output gate · logTable/logDepth/jsonOut ratchet · bun run console-format:bake  # → /registry/console-format-state.json" data-group="harness" data-cli="bun run console-format:bake  # → /registry/console-format-state.json" role="menuitem">Console Format</a>
+            <a href="/portal/doctor/" class="nav-link" title="unified health gate · bunfig · catalog · linker · bun run portal:doctor --verbose" data-group="harness" data-cli="bun run portal:doctor --verbose" role="menuitem">Doctor</a>
+            <a href="/portal/install-hygiene/" class="nav-link active" aria-current="page" title="cache prune · npm-install policy · install:verify bake · bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" data-group="harness" data-cli="bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" role="menuitem">Install hygiene</a>
+            <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
+            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
+            <a href="/portal/limits/" class="nav-link" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
+            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
+            <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
+            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
+            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub" data-group="other" role="menuitem">Wiki</a>
+          </div>
+        </div>
       </nav>
       <div class="topbar-status">
         <a href="/portal/install-hygiene.md" class="nav-link nav-md" title="Markdown view">MD</a>
@@ -290,15 +316,27 @@ reasons: cache over prune threshold</pre>
   <footer class="footer" data-portal-chrome="footer">
     <p>
       <strong>FactoryWager</strong> ·
-      <a href="/portal/install-hygiene/">Install hygiene</a> ·
-      <a href="/portal/bunfig/">Bunfig</a> ·
-      <a href="/portal/doctor/">Doctor</a> ·
+      <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
+      <a href="/portal/ops/">Ops</a> ·
+      <a href="/portal/toc/">TOC</a> ·
       <a href="/portal/packages/">Packages</a> ·
-      <a href="/registry/install-hygiene-report.json">install-hygiene-report.json</a> ·
-      <a href="/registry/portal-weave.json">Portal proof</a>
+      <a href="/portal/brands/">Brands</a> ·
+      <a href="/portal/surfaces/">Surfaces</a> ·
+      <a href="/portal/health/">Health</a> ·
+      <a href="/registry/portal-weave.json">Portal proof</a> ·
+      <a href="/portal/tools/">CLI Tools</a> ·
+      <a href="/portal/compliance/">Compliance</a> ·
+      <a href="/portal/limits/">Limits</a> ·
+      <a href="/portal/dod/">DOD</a> ·
+      <a href="/portal/env/">Env</a> ·
+      <a href="/portal/vault/">Vault</a> ·
+      <a href="/portal/failures/">Failures</a> ·
+      <a href="/portal/install-hygiene/">Install hygiene</a> ·
+      <a href="/registry/monorepo-health.json">Monorepo health</a> ·
+      <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
     </p>
     <p class="footer-meta">
-      project-R-score · <code>bun run bake:install-hygiene</code>
+      project-R-score · chrome <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a>
       · <span data-footer-ts>…</span>
     </p>
   </footer>
@@ -306,5 +344,6 @@ reasons: cache over prune threshold</pre>
   <script type="module" src="/portal/data.js"></script>
   <script type="module" src="/portal/install-hygiene/install-hygiene-board.js"></script>
   <script type="module" src="/portal/topbar.js"></script>
+  <script type="module" src="/portal/components/footer.js"></script>
 </body>
 </html>

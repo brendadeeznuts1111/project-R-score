@@ -503,6 +503,280 @@ body {
 
 .hero-sub { color: var(--text-dim); font-size: 15px; margin-bottom: 20px; }
 
+/* ── Board primitives (unification SSOT) ─────────────────────────────
+ * Promote per-board forks (health-*, doc-*, vh-*, tf-*, live-*) here.
+ * @see docs/portal-foundation.md#board-primitives
+ * Tone: ok → --green · warn → --yellow · bad → --red · neutral → --text-dim
+ */
+
+.portal-page {
+  flex: 1;
+  width: 100%;
+  max-width: min(var(--layout-max), 100%);
+  margin: 0 auto;
+  padding-block: var(--pad-block, 24px);
+  padding-inline: var(--pad-inline, 24px);
+  padding-bottom: 48px;
+}
+
+/* Alias mature board shells onto portal-page metrics */
+.health-page,
+.doc-wrap,
+.tf-wrap,
+.vh-wrap,
+.partner-page {
+  max-width: min(var(--layout-max), 100%);
+  margin-inline: auto;
+  padding-inline: var(--pad-inline, 24px);
+  padding-bottom: 48px;
+  width: 100%;
+}
+
+.portal-hero {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  align-items: flex-start;
+  margin: 8px 0 16px;
+}
+
+.portal-hero h1,
+.portal-hero .portal-hero__title {
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.portal-hero .hero-sub,
+.portal-hero .sub {
+  width: 100%;
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.45;
+  max-width: 72ch;
+}
+
+.portal-section,
+.section {
+  margin: 28px 0;
+}
+
+.portal-section > h2,
+.section > h2 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+
+.section-sub {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin: 0 0 12px;
+  line-height: 1.4;
+}
+
+.portal-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.portal-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.portal-card::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.portal-card--metric .val,
+.portal-card .val {
+  font-size: 22px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono, ui-monospace, monospace);
+}
+
+.portal-card--panel {
+  padding: 16px 18px;
+}
+
+.table-wrap {
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.data-table,
+.env-table,
+.ops-table,
+.live-table,
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  background: var(--surface);
+}
+
+.data-table th,
+.env-table th,
+.ops-table th,
+.live-table th,
+.doc-table th {
+  text-align: left;
+  padding: 8px 10px;
+  color: var(--text-dim);
+  font-weight: 500;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-hover, rgba(255, 255, 255, 0.03));
+  white-space: nowrap;
+}
+
+.data-table td,
+.env-table td,
+.ops-table td,
+.live-table td,
+.doc-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid rgba(48, 54, 61, 0.35);
+  vertical-align: top;
+}
+
+.data-table .mono,
+.env-table .mono,
+.ops-table .mono,
+.live-table .mono {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+}
+
+/* Row tone rails (Live check pattern) */
+.data-table tr.row-ok td:first-child,
+.live-table tr.live-row-ok td:first-child,
+.ops-table tr.row-ok td:first-child {
+  box-shadow: inset 3px 0 0 var(--green, #3fb950);
+}
+.data-table tr.row-warn td:first-child,
+.live-table tr.live-row-warn td:first-child {
+  box-shadow: inset 3px 0 0 var(--yellow, #d29922);
+}
+.data-table tr.row-bad td:first-child,
+.live-table tr.live-row-bad td:first-child {
+  box-shadow: inset 3px 0 0 var(--red, #f85149);
+}
+
+.status-text.ok,
+.st-ok { color: var(--green, #3fb950); font-weight: 600; }
+.status-text.warn,
+.st-warn { color: var(--yellow, #d29922); font-weight: 600; }
+.status-text.bad,
+.st-bad { color: var(--red, #f85149); font-weight: 600; }
+
+.tone-chip,
+.kind-chip,
+.plane-chip {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+.tone-chip.tone-ok,
+.tone-chip--ok { color: var(--green, #3fb950); border-color: #238636; }
+.tone-chip.tone-warn,
+.tone-chip--warn { color: var(--yellow, #d29922); border-color: #9e6a03; }
+.tone-chip.tone-bad,
+.tone-chip--bad { color: var(--red, #f85149); border-color: #da3633; }
+.tone-chip.tone-neutral,
+.tone-chip--neutral { color: var(--text-dim); }
+
+.kind-chip { color: var(--accent); border-radius: 4px; }
+.plane-chip { color: var(--text-dim); border-radius: 4px; }
+
+.portal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0 8px;
+}
+
+.portal-actions a,
+.portal-actions button,
+.btn {
+  font-size: 13px;
+  font-family: inherit;
+  padding: 6px 12px;
+  min-height: 36px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  text-decoration: none;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.portal-actions a:hover,
+.portal-actions button:hover,
+.btn:hover {
+  border-color: var(--accent);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.portal-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  margin: 12px 0 8px;
+}
+
+.portal-banner .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.portal-banner.ok .dot { background: var(--green, #3fb950); box-shadow: 0 0 8px var(--green, #3fb950); }
+.portal-banner.warn .dot { background: var(--yellow, #d29922); }
+.portal-banner.bad .dot { background: var(--red, #f85149); }
+.portal-banner .title { font-weight: 600; font-size: 16px; }
+.portal-banner .meta { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
 .search-box input {
   width: 100%;
   max-width: 480px;
