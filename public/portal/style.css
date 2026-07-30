@@ -777,6 +777,69 @@ body {
 .portal-banner .title { font-weight: 600; font-size: 16px; }
 .portal-banner .meta { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
 
+/* ── Venue identity badges (also public/portal/venues.css) ───────────
+ * Brand border+text+8% tint — not status semantics.
+ */
+:root,
+[data-theme="dark"] {
+  --venue-poly-border: #2e5cff;
+  --venue-poly-text: #58a6ff;
+  --venue-poly-bg: rgba(46, 92, 255, 0.08);
+  --venue-pinnacle-border: #1a73e8;
+  --venue-pinnacle-text: #79c0ff;
+  --venue-pinnacle-bg: rgba(26, 115, 232, 0.08);
+  --venue-betfair-border: #f5b942;
+  --venue-betfair-text: #e3b341;
+  --venue-betfair-bg: rgba(245, 185, 66, 0.08);
+  --venue-kalshi-border: #7dd3fc;
+  --venue-kalshi-text: #a5d6ff;
+  --venue-kalshi-bg: rgba(125, 211, 252, 0.08);
+  --venue-unknown-border: var(--border, #30363d);
+  --venue-unknown-text: var(--text-dim, #8b949e);
+  --venue-unknown-bg: rgba(139, 148, 158, 0.08);
+}
+.venue-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  border-radius: 4px;
+  border: 1px solid;
+  background: transparent;
+  white-space: nowrap;
+  user-select: none;
+  vertical-align: middle;
+}
+.venue-badge--sm { font-size: 11px; line-height: 14px; padding: 1px 6px; min-height: 16px; }
+.venue-badge--md { font-size: 12px; line-height: 16px; padding: 2px 8px; min-height: 20px; }
+.venue-badge__dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.venue-badge--kalshi { color: var(--venue-kalshi-text); border-color: var(--venue-kalshi-border); background: var(--venue-kalshi-bg); }
+.venue-badge--kalshi .venue-badge__dot { background: var(--venue-kalshi-border); }
+.venue-badge--polymarket { color: var(--venue-poly-text); border-color: var(--venue-poly-border); background: var(--venue-poly-bg); }
+.venue-badge--polymarket .venue-badge__dot { background: var(--venue-poly-border); }
+.venue-badge--pinnacle { color: var(--venue-pinnacle-text); border-color: var(--venue-pinnacle-border); background: var(--venue-pinnacle-bg); }
+.venue-badge--pinnacle .venue-badge__dot { background: var(--venue-pinnacle-border); }
+.venue-badge--betfair { color: var(--venue-betfair-text); border-color: var(--venue-betfair-border); background: var(--venue-betfair-bg); }
+.venue-badge--betfair .venue-badge__dot { background: var(--venue-betfair-border); }
+.venue-badge--unknown { color: var(--venue-unknown-text); border-color: var(--venue-unknown-border); background: var(--venue-unknown-bg); }
+.venue-badge--unknown .venue-badge__dot { background: var(--venue-unknown-text); }
+.venue-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 12px;
+  font-size: 11px;
+}
+.venue-legend__title {
+  color: var(--text-dim, #8b949e);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
 /* Aligned bar charts (tennis HQ / portal) — grid locks label | track | value */
 .bar-chart {
   background: var(--surface);

@@ -2,6 +2,9 @@
  * Venue brand identity tokens — Primer dark compatible.
  * Distinct from semantic status tones (--green / --yellow / --red).
  *
+ * SSOT also inlined in style.css (board primitives) so apex cache misses
+ * on this file still get badges via /portal/style.css.
+ *
  * Usage: border + text + 8% tint. No solid brand fills as primary surface.
  * @see lib/venues/venue-brand.ts
  * @see docs/portal-foundation.md
