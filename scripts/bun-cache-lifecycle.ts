@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 /**
  * CI / self-hosted Bun install cache lifecycle.
  *

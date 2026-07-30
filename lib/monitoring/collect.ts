@@ -11,6 +11,14 @@ import {
   type ComplianceMonitoringSlice,
 } from './compliance-slice.ts';
 import { loadLimitRaisesMonitoringSlice, type LimitRaisesMonitoringSlice } from './limit-slice.ts';
+import {
+  collectInstallCacheMonitoringSlice,
+  type InstallCacheMonitoringSlice,
+} from './install-cache-slice.ts';
+import {
+  loadInstallHygieneMonitoringSlice,
+  type InstallHygieneMonitoringSlice,
+} from './install-hygiene-slice.ts';
 import { ensureMonitoringSchema } from './schema.ts';
 
 export type IntegritySnapshot = {
@@ -121,6 +129,14 @@ export type MonitoringPayload = {
    * Baked into monitoring.json from public/registry/limit-raises.json.
    */
   limitRaises?: LimitRaisesMonitoringSlice;
+  /**
+   * Bun PM cache size + prune threshold for install hygiene.
+   */
+  installCache?: InstallCacheMonitoringSlice;
+  /**
+   * Install-hygiene audit report slice (cache + npm-install + install:verify).
+   */
+  installHygiene?: InstallHygieneMonitoringSlice;
 };
 
 const REGISTRY_INTEGRITY_FILE = joinPath(import.meta.dir, '../../reports/registry-integrity.json');
@@ -322,9 +338,11 @@ export async function collectMonitoring(
   }
 
   const timestamp = new Date().toISOString();
-  const [compliance, limitRaises] = await Promise.all([
+  const [compliance, limitRaises, installCache, installHygiene] = await Promise.all([
     loadComplianceMonitoringSlice(),
     loadLimitRaisesMonitoringSlice(),
+    collectInstallCacheMonitoringSlice(),
+    loadInstallHygieneMonitoringSlice(),
   ]);
 
   return {
@@ -344,5 +362,7 @@ export async function collectMonitoring(
     snapshotAt: timestamp,
     ...(compliance ? { compliance } : {}),
     ...(limitRaises ? { limitRaises } : {}),
+    ...(installCache?.available ? { installCache } : {}),
+    ...(installHygiene ? { installHygiene } : {}),
   };
 }

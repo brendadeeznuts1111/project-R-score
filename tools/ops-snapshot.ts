@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/pm/bunx — bunx (args after bin name; --bun before package)
@@ -70,6 +71,7 @@ import {
 } from '../lib/verification/channel-meta-refresh.ts';
 import { loadReasonixEnv } from '../lib/telegram/catalog-research/load-reasonix-env.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
+import { bakeInstallHygieneReport } from '../scripts/bake-install-hygiene-report.ts';
 
 const argv = Bun.argv.slice(2);
 const outIdx = argv.indexOf('--out');
@@ -488,6 +490,19 @@ export async function buildRegistrySnapshot(options?: {
           e instanceof Error ? e.message : e
         );
       }
+    }
+
+    // Install-hygiene audit before monitoring.json so the portal row is fresh.
+    try {
+      const ih = await bakeInstallHygieneReport({ log: false });
+      console.log(
+        `[ops-snapshot] install-hygiene → ${ih.path.replace(root + '/', '')} · ok=${ih.ok}`
+      );
+    } catch (e) {
+      console.warn(
+        '[ops-snapshot] install-hygiene bake skipped:',
+        e instanceof Error ? e.message : e
+      );
     }
 
     // TOC identity → sportsbook raises bridge (demo/snapshot:demo path).
