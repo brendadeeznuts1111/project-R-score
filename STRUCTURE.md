@@ -69,8 +69,7 @@ Projects/
 ├── scripts/                 # Automation, CI, fix-* remediations
 ├── server/ · tests/ · tools/
 ├── bunfig.toml · package.json · tsconfig*.json
-├── registry.config.json5    # → config/ (symlink)
-└── ci.bunfig.toml           # → config/ (symlink)
+└── registry.config.json5    # → config/ (symlink)
 ```
 
 ### Not monorepo spine (local / nested only)
