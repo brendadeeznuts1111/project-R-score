@@ -33,7 +33,7 @@ wire / CLI / env / JSON / HTTP
 | Rule | Severity |
 |------|----------|
 | `harness/no-decode-unknown-outside-boundary` | **error** |
-| `harness/no-unknown-function-param` | warn harness · **error** types/security/core/boundary |
+| `harness/no-unknown-function-param` | **error** on `HARNESS_PATHS` (see `eslint.harness.config.ts`) |
 | `branded-id-check --staged --strict` | **error** on new bare `*Id` / opaque `id` without `// brand-ok` |
 
 ```bash
