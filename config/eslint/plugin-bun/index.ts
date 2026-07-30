@@ -240,10 +240,3 @@ export const bunPluginRules: Linter.RulesRecord = {
   'bun/prefer-bun-sqlite': 'warn',
   'bun/require-bun-prefix': 'off',
 };
-
-export const bunPluginStrictRules: Linter.RulesRecord = {
-  'bun/prefer-import-meta-main': 'error',
-  'bun/prefer-bun-env': 'error',
-  'bun/prefer-bun-test': 'warn',
-  'bun/prefer-bun-sqlite': 'warn',
-};

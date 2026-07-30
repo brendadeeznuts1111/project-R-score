@@ -3,7 +3,7 @@ import tseslint from 'typescript-eslint';
 import { Linter } from 'eslint';
 import importPlugin from 'eslint-plugin-import';
 import security from 'eslint-plugin-security';
-import { bunNativeLintRollout, bunNativeLintStrict } from './config/eslint/bun-native.ts';
+import { bunNativeLintRollout } from './config/eslint/bun-native.ts';
 import { HARNESS_BUN_GLOBALS, HARNESS_PATHS } from './config/eslint/harness/rollout.ts';
 import bunPlugin, { bunPluginRules } from './config/eslint/plugin-bun/index.ts';
 import { projectEslintConfig } from './eslint.project.config.ts';
@@ -409,8 +409,7 @@ export default tseslint.config(
     },
   },
 
-  // Bun-native API enforcement (strict on migrated inventory; warn on core rollout)
-  bunNativeLintStrict,
+  // Bun-native API enforcement (error on harness paths)
   bunNativeLintRollout,
 );
 

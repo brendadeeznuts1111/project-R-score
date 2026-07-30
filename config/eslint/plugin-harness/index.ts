@@ -46,12 +46,3 @@ export const harnessBoundaryDecodeRules: Linter.RulesRecord = {
 export const harnessBoundaryUnknownParamRules: Linter.RulesRecord = {
   [BOUNDARY_POLICY.eslintRules.unknownParam]: 'error',
 };
-
-/** Strict tier: both rules error. */
-export const harnessBoundaryStrictRules: Linter.RulesRecord = {
-  [BOUNDARY_POLICY.eslintRules.decode]: 'error',
-  [BOUNDARY_POLICY.eslintRules.unknownParam]: 'error',
-};
-
-/** Globs where unknown-param is error (keep aligned with eslint.harness.config.ts). */
-export const HARNESS_BOUNDARY_STRICT_FILE_GLOBS = BOUNDARY_POLICY.unknownParamErrorGlobs;

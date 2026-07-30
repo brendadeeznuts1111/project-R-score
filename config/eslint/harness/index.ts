@@ -8,8 +8,6 @@ export {
 
 export {
   bunNativeLintRollout,
-  bunNativeLintStrict,
-  bunNativeLintTargets,
   bunNativeRestrictedImports,
   bunNativeRestrictedSyntax,
 } from './bun-native.ts';

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 /**
  * verify-package-info.ts — Verify package metadata + README from npm and custom registry.
  *
@@ -10,8 +11,8 @@
  *   bun tools/verify-package-info.ts --save
  */
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 import { CryptoHasher, inspect } from 'bun';
-import { writeFileSync } from 'fs';
 import { resolveVerificationBunBinary } from '../lib/verification/resolve-bun-binary.ts';
 
 const SAVE_PATH = 'public/registry/package-info.json';
@@ -34,7 +35,8 @@ async function checkPackage(name: string, registry: string): Promise<PkgCheck> {
     if (registry === 'custom') {
       const rProc = Bun.spawnSync([bunPath, 'info', name, 'readme', `--registry=${url}`]);
       const readme = rProc.stdout.toString().trim();
-      if (readme && readme.length > 20) readmeStatus = '✅ ' + readme.slice(0, 40).replace(/\n/g, ' ') + '…';
+      if (readme && readme.length > 20)
+        readmeStatus = '✅ ' + readme.slice(0, 40).replace(/\n/g, ' ') + '…';
       else readmeStatus = readme ? '⚠️ short' : '❌ empty';
     }
 
@@ -55,13 +57,16 @@ async function run() {
 
   console.log('╔══════════════════════════════════════════════════════════════════════╗');
   console.log('║  📦 Package Info Verification                                        ║');
-  console.log(`║  Bun: ${(Bun.version).padEnd(58)}║`);
+  console.log(`║  Bun: ${Bun.version.padEnd(58)}║`);
   console.log('╚══════════════════════════════════════════════════════════════════════╝\n');
 
   const results = await Promise.all(packages.map(p => checkPackage(p.name, p.registry)));
   const passed = results.filter(r => r.ok).length;
 
-  const table = inspect(results.map(r => [r.name, r.registry, r.version, r.readme, r.ok ? '✅' : '❌']), { colors: true, table: true });
+  const table = inspect(
+    results.map(r => [r.name, r.registry, r.version, r.readme, r.ok ? '✅' : '❌']),
+    { colors: true, table: true }
+  );
   console.log(table);
   console.log(`\n  📊 ${passed}/${results.length} packages resolved`);
 
@@ -87,12 +92,15 @@ async function run() {
   };
 
   if (SHOULD_SAVE) {
-    writeFileSync(SAVE_PATH, JSON.stringify(proof, null, 2));
+    await Bun.write(SAVE_PATH, JSON.stringify(proof, null, 2));
     console.log(`\n💾 Proof saved to ${SAVE_PATH}`);
   }
 
   if (passed < results.length) {
-    const failed = results.filter(r => !r.ok).map(r => r.name).join(', ');
+    const failed = results
+      .filter(r => !r.ok)
+      .map(r => r.name)
+      .join(', ');
     console.log(`\n  ⚠️  ${results.length - passed} package(s) resolved but had issues: ${failed}`);
     console.log(`  (non-blocking — version resolution succeeded)`);
   }

@@ -101,6 +101,12 @@ const CHEAP: Step[] = [
     owner: 'tools/verify-script-flags.ts · docs/portal-foundation.md',
     repair: 'bun run verify:flag-order · use bun --watch not bun run --watch',
   },
+  {
+    name: 'bun-deps-tier-a',
+    cmd: ['bun', 'scripts/check-bun-deps-tier-a.ts'],
+    owner: 'scripts/check-bun-deps-tier-a.ts · tools/bun-prefer-matrix.ts',
+    repair: 'bun scripts/check-bun-deps-tier-a.ts · remove Tier-A wrappers from package.json',
+  },
 ];
 
 function eslintStep(fullLint: boolean): Step {

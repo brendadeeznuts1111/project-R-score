@@ -61,7 +61,7 @@ export const PREFER_MATRIX: readonly PreferMatrixTask[] = [
     id: 'fileIo',
     group: 'io',
     use: ['Bun.file', 'Bun.write'],
-    avoid: ['fs.readFile', 'fs.writeFile'],
+    avoid: ['fs.readFile', 'fs.writeFile', 'fs-extra'],
   },
   { id: 'exists', group: 'io', use: ['Bun.file'], avoid: ['existsSync'] },
   { id: 'glob', group: 'io', use: ['Bun.Glob'], avoid: ['fast-glob', 'globby'] },
@@ -82,11 +82,11 @@ export const PREFER_MATRIX: readonly PreferMatrixTask[] = [
     id: 'spawn',
     group: 'process',
     use: ['Bun.spawn', 'Bun.spawnSync', 'Bun.$'],
-    avoid: ['child_process'],
+    avoid: ['child_process', 'execa'],
   },
   { id: 'which', group: 'process', use: ['Bun.which'], avoid: [] },
   { id: 'httpServer', group: 'process', use: ['Bun.serve'], avoid: ['express', 'fastify'] },
-  { id: 'fetch', group: 'process', use: ['fetch'], avoid: ['axios'] },
+  { id: 'fetch', group: 'process', use: ['fetch'], avoid: ['axios', 'node-fetch'] },
   { id: 'cron', group: 'process', use: ['Bun.cron'], avoid: ['node-cron'] },
   { id: 'entryGuard', group: 'process', use: [], avoid: [] },
 
@@ -95,7 +95,12 @@ export const PREFER_MATRIX: readonly PreferMatrixTask[] = [
   { id: 'sql', group: 'data', use: ['Bun.sql', 'bun:sql'], avoid: ['pg', 'mysql2'] },
   { id: 'redis', group: 'data', use: ['Bun.redis'], avoid: ['ioredis'] },
   { id: 's3', group: 'data', use: ['Bun.s3'], avoid: [] },
-  { id: 'tomlYaml', group: 'data', use: ['Bun.TOML', 'Bun.YAML'], avoid: ['@iarna/toml'] },
+  {
+    id: 'tomlYaml',
+    group: 'data',
+    use: ['Bun.TOML', 'Bun.YAML'],
+    avoid: ['@iarna/toml', 'toml'],
+  },
   { id: 'semver', group: 'data', use: ['Bun.semver'], avoid: ['semver'] },
   { id: 'test', group: 'data', use: ['bun:test'], avoid: ['vitest', 'jest'] },
 
@@ -105,8 +110,8 @@ export const PREFER_MATRIX: readonly PreferMatrixTask[] = [
   {
     id: 'colorAnsi',
     group: 'ui',
-    use: ['Bun.color', 'Bun.stripANSI', 'Bun.stringWidth'],
-    avoid: ['chalk', 'string-width', 'strip-ansi'],
+    use: ['Bun.color', 'Bun.stripANSI', 'Bun.stringWidth', 'Bun.wrapAnsi'],
+    avoid: ['chalk', 'kleur', 'string-width', 'strip-ansi', 'wrap-ansi'],
   },
   {
     id: 'markdown',
@@ -120,7 +125,18 @@ export const PREFER_MATRIX: readonly PreferMatrixTask[] = [
     ],
     avoid: ['marked'],
   },
-  { id: 'inspect', group: 'ui', use: ['Bun.inspect'], avoid: ['util.inspect'] },
+  {
+    id: 'inspect',
+    group: 'ui',
+    use: ['Bun.inspect', 'Bun.inspect.table'],
+    avoid: ['util.inspect', 'cli-table', 'cli-table3'],
+  },
+  {
+    id: 'htmlEscape',
+    group: 'ui',
+    use: ['Bun.escapeHTML'],
+    avoid: ['escape-html'],
+  },
 
   // ── harness ─────────────────────────────────────────────────────────
   { id: 'env', group: 'harness', use: ['Bun.env'], avoid: ['process.env'] },
@@ -133,6 +149,34 @@ export const PREFER_MATRIX: readonly PreferMatrixTask[] = [
     avoid: [],
   },
 ] as const;
+
+/**
+ * Tier-A npm packages banned as *direct* workspace dependencies.
+ * Source imports are gated by ESLint; transitive lockfile hits are inventory-only.
+ */
+export const TIER_A_AVOID_PACKAGES = [
+  'wrap-ansi',
+  'string-width',
+  'strip-ansi',
+  'slice-ansi',
+  'chalk',
+  'kleur',
+  'cli-table',
+  'cli-table3',
+  'escape-html',
+  '@iarna/toml',
+  'toml',
+  'axios',
+  'node-fetch',
+  'execa',
+  'fs-extra',
+] as const;
+
+export type TierAAvoidPackage = (typeof TIER_A_AVOID_PACKAGES)[number];
+
+export function tierAAvoidPackages(): readonly string[] {
+  return TIER_A_AVOID_PACKAGES;
+}
 
 /** Prefer tokens that participate in API coverage (Bun.* / bun:). */
 export function preferApiTokens(matrix: readonly PreferMatrixTask[] = PREFER_MATRIX): string[] {

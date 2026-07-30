@@ -7,17 +7,11 @@
 import tseslint from 'typescript-eslint';
 import bunPlugin, { bunPluginRules } from './config/eslint/plugin-bun/index.ts';
 import harnessPlugin, {
-  HARNESS_BOUNDARY_STRICT_FILE_GLOBS,
   harnessBoundaryDecodeRules,
   harnessBoundaryUnknownParamRules,
-  harnessBoundaryStrictRules,
 } from './config/eslint/plugin-harness/index.ts';
-import { bunNativeLintRollout, bunNativeLintStrict } from './config/eslint/harness/bun-native.ts';
-import {
-  HARNESS_BUN_GLOBALS,
-  HARNESS_PATHS,
-  STRICT_INVENTORY,
-} from './config/eslint/harness/rollout.ts';
+import { bunNativeLintRollout } from './config/eslint/harness/bun-native.ts';
+import { HARNESS_BUN_GLOBALS, HARNESS_PATHS } from './config/eslint/harness/rollout.ts';
 
 export default tseslint.config(
   {
@@ -40,40 +34,9 @@ export default tseslint.config(
       ...bunPluginRules,
       // Decode: always error (parse once at boundary) — docs/WIRE_BOUNDARY.md
       ...harnessBoundaryDecodeRules,
-      // unknown params: warn on full harness (rollout)
+      // unknown params: error on full harness
       ...harnessBoundaryUnknownParamRules,
     },
   },
-  // Branded forge + explicit boundary dirs: full error tier
-  {
-    name: 'factorywager/harness-boundary-strict-paths',
-    files: [...HARNESS_BOUNDARY_STRICT_FILE_GLOBS],
-    plugins: { harness: harnessPlugin },
-    languageOptions: {
-      parser: tseslint.parser,
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      globals: HARNESS_BUN_GLOBALS,
-    },
-    rules: {
-      ...harnessBoundaryStrictRules,
-    },
-  },
-  // STRICT_INVENTORY: same full error tier
-  {
-    name: 'factorywager/harness-boundary-strict-inventory',
-    files: [...STRICT_INVENTORY],
-    plugins: { harness: harnessPlugin },
-    languageOptions: {
-      parser: tseslint.parser,
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      globals: HARNESS_BUN_GLOBALS,
-    },
-    rules: {
-      ...harnessBoundaryStrictRules,
-    },
-  },
-  bunNativeLintStrict,
   bunNativeLintRollout
 );

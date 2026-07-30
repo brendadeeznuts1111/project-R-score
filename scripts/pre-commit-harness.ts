@@ -553,6 +553,14 @@ async function main(): Promise<void> {
     parallelJobs.push(spawnGate('bun-pm-cache', ['bun', 'run', 'check:bun-pm-cache']));
   }
 
+  const packageJsonStaged = staged.some(f => {
+    const n = f.replace(/^\.\//, '');
+    return n === 'package.json' || /(^|\/)package\.json$/.test(n);
+  });
+  if (packageJsonStaged) {
+    parallelJobs.push(spawnGate('bun-deps-tier-a', ['bun', 'scripts/check-bun-deps-tier-a.ts']));
+  }
+
   // Monorepo-health formula/UI/history — unit tests only (full ratchet lives in ci:core).
   const monorepoHealthStaged = staged.some(f => {
     const n = f.replace(/^\.\//, '');
@@ -607,6 +615,7 @@ async function main(): Promise<void> {
   const consoleFormatRatchet =
     parallelResults.find(r => r.name === 'console-format-ratchet')?.code ?? 0;
   const npmInstall = parallelResults.find(r => r.name === 'npm-install')?.code ?? 0;
+  const bunDepsTierA = parallelResults.find(r => r.name === 'bun-deps-tier-a')?.code ?? 0;
   const monorepoHealthTests =
     parallelResults.find(r => r.name === 'monorepo-health-tests')?.code ?? 0;
   const complexityStaged =
@@ -664,6 +673,13 @@ async function main(): Promise<void> {
   if (npmInstall !== 0) {
     console.error(
       '❌ npm/yarn/pnpm install command detected in production path — bun run check:npm-install'
+    );
+    await writeTimings(timings, full);
+    process.exit(1);
+  }
+  if (bunDepsTierA !== 0) {
+    console.error(
+      '❌ Tier-A Bun wrapper declared as a direct dependency — bun scripts/check-bun-deps-tier-a.ts'
     );
     await writeTimings(timings, full);
     process.exit(1);

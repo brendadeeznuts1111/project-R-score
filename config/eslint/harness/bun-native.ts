@@ -10,7 +10,7 @@ import type { Linter } from 'eslint';
 import { HARNESS_IGNORES, HARNESS_PATHS, STRICT_INVENTORY } from './rollout.ts';
 import { importPathMessage, lintMessage, syntaxMessage } from './messages.ts';
 
-function importPaths(severity: 'error' | 'warn'): Linter.RuleEntry {
+function importPaths(): Linter.RuleEntry {
   const paths = [
     { name: 'node:fs', message: importPathMessage('node:fs') },
     { name: 'node:fs/promises', message: lintMessage('file.read', 'Use Bun.file() async APIs.') },
@@ -22,39 +22,32 @@ function importPaths(severity: 'error' | 'warn'): Linter.RuleEntry {
     { name: 'node:zlib', message: lintMessage('zlib.compress', 'Avoid node:zlib.') },
     { name: 'zlib', message: lintMessage('zlib.compress', 'Avoid zlib.') },
     { name: 'axios', message: lintMessage('http.fetch', 'Avoid axios.') },
+    { name: 'node-fetch', message: lintMessage('http.fetch', 'Avoid node-fetch.') },
     { name: 'node:http', message: lintMessage('http.serve', 'Avoid node:http for servers.') },
     { name: 'node:https', message: lintMessage('http.serve', 'Avoid node:https for servers.') },
     { name: 'http', message: lintMessage('http.serve', 'Avoid http for servers.') },
     { name: 'https', message: lintMessage('http.serve', 'Avoid https for servers.') },
     { name: 'node:test', message: lintMessage('test.bun', 'Avoid node:test.') },
     { name: 'better-sqlite3', message: lintMessage('sqlite.bun', 'Avoid better-sqlite3.') },
+    // Tier-A wrappers — catalog ids must resolve via formatBunMessage
+    { name: 'wrap-ansi', message: lintMessage('tty.wrapAnsi', 'Avoid wrap-ansi.') },
+    { name: 'string-width', message: lintMessage('tty.stringWidth', 'Avoid string-width.') },
+    { name: 'strip-ansi', message: lintMessage('tty.stripANSI', 'Avoid strip-ansi.') },
+    { name: 'chalk', message: lintMessage('tty.color', 'Avoid chalk.') },
+    { name: 'kleur', message: lintMessage('tty.color', 'Avoid kleur.') },
+    { name: 'cli-table', message: lintMessage('tty.table', 'Avoid cli-table.') },
+    { name: 'cli-table3', message: lintMessage('tty.table', 'Avoid cli-table3.') },
+    { name: 'toml', message: lintMessage('data.toml', 'Avoid toml.') },
+    { name: '@iarna/toml', message: lintMessage('data.toml', 'Avoid @iarna/toml.') },
+    { name: 'escape-html', message: lintMessage('html.escape', 'Avoid escape-html.') },
+    { name: 'execa', message: lintMessage('spawn.execa', 'Avoid execa.') },
+    { name: 'fs-extra', message: lintMessage('file.fsExtra', 'Avoid fs-extra.') },
   ];
 
-  return [
-    severity,
-    {
-      paths,
-      patterns: [
-        {
-          group: [
-            'node:fs',
-            'node:fs/promises',
-            'fs',
-            'node:child_process',
-            'child_process',
-            'node:crypto',
-            'crypto',
-            'node:zlib',
-            'zlib',
-            'axios',
-          ],
-          message: lintMessage('file.read', 'Prefer Bun-native APIs.'),
-        },
-      ],
-    },
-  ];
+  return ['error', { paths }];
 }
 
+/** Call-site bans only — module imports are covered by no-restricted-imports paths. */
 const bunNativeSyntaxSelectors = [
   {
     selector:
@@ -79,49 +72,25 @@ const bunNativeSyntaxSelectors = [
     ),
   },
   {
-    selector: 'ImportDeclaration[source.value=/^(node:)?child_process$/]',
-    message: syntaxMessage(
-      'spawn.exec',
-      'Use Bun.spawn() or Bun.spawnSync() instead of child_process.'
-    ),
-  },
-  {
-    selector: "CallExpression[callee.object.name='require'][arguments.0.value='child_process']",
+    selector: "CallExpression[callee.name='require'][arguments.0.value='child_process']",
     message: syntaxMessage('spawn.exec', 'Use Bun.spawn() instead of require("child_process").'),
   },
   {
-    selector: "CallExpression[callee.object.name='require'][arguments.0.value='fs']",
+    selector: "CallExpression[callee.name='require'][arguments.0.value='fs']",
     message: syntaxMessage('file.read', 'Use Bun.file() instead of require("fs").'),
   },
 ] as const;
 
-function restrictedSyntax(severity: 'error' | 'warn'): Linter.RuleEntry {
-  return [severity, ...bunNativeSyntaxSelectors];
+function restrictedSyntax(): Linter.RuleEntry {
+  return ['error', ...bunNativeSyntaxSelectors];
 }
 
-export const bunNativeRestrictedImports = importPaths('error');
-export const bunNativeRestrictedSyntax = restrictedSyntax('error');
-
-/** @deprecated Soft rollout removed — harness paths are error-tier. Alias kept for imports. */
-export const bunNativeRestrictedImportsWarn = bunNativeRestrictedImports;
-/** @deprecated Soft rollout removed — harness paths are error-tier. Alias kept for imports. */
-export const bunNativeRestrictedSyntaxWarn = bunNativeRestrictedSyntax;
-
-export function bunNativeStrictConfig(files: readonly string[]): Linter.Config {
-  return {
-    name: 'factorywager/bun-native-strict',
-    files: [...files],
-    rules: {
-      'no-restricted-imports': bunNativeRestrictedImports,
-      'no-restricted-syntax': bunNativeRestrictedSyntax,
-    },
-  };
-}
+export const bunNativeRestrictedImports = importPaths();
+export const bunNativeRestrictedSyntax = restrictedSyntax();
 
 /**
  * Harness path filter (lib/scripts/packages/server/config/tools): Bun-native
- * import/syntax rules at **error** — same severity as STRICT_INVENTORY.
- * Soft warn rollout was false-green (~max-warnings 500); fix-on-touch is the ratchet.
+ * import/syntax rules at **error**.
  */
 export function bunNativeRolloutConfig(
   files: readonly string[],
@@ -138,8 +107,6 @@ export function bunNativeRolloutConfig(
   };
 }
 
-export const bunNativeLintStrict = bunNativeStrictConfig(STRICT_INVENTORY);
 export const bunNativeLintRollout = bunNativeRolloutConfig(HARNESS_PATHS, HARNESS_IGNORES);
-export const bunNativeLintTargets = [...STRICT_INVENTORY];
 
 export { HARNESS_IGNORES, HARNESS_PATHS, STRICT_INVENTORY };

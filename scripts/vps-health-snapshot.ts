@@ -1,12 +1,12 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --format
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // VPS health snapshot — writes to public/registry/vps-health.json for portal display
 // Called by: spine maintenance or cron
-import { execSync } from "node:child_process";
-import { writeFileSync } from "node:fs";
-import { resolve } from "node:path";
 
-const VPS = "root@100.64.250.26";
-const OUTPUT = resolve(import.meta.dir, "../public/registry/vps-health.json");
+const VPS = 'root@100.64.250.26';
+const OUTPUT = `${import.meta.dir}/../public/registry/vps-health.json`;
 
 interface VpsHealth {
   timestamp: string;
@@ -18,47 +18,57 @@ interface VpsHealth {
   docker: Record<string, string>;
 }
 
-async function main() {
+function ssh(cmd: string): string {
+  const remote = cmd.replace(/"/g, '\\"');
+  const result = Bun.spawnSync(
+    ['ssh', '-o', 'StrictHostKeyChecking=accept-new', '-o', 'ConnectTimeout=5', VPS, remote],
+    { timeout: 15_000, stdout: 'pipe', stderr: 'pipe' }
+  );
+  if (result.exitCode !== 0) {
+    throw new Error(result.stderr.toString().trim() || `ssh exit ${result.exitCode}`);
+  }
+  return result.stdout.toString().trim();
+}
+
+async function main(): Promise<void> {
   const health: VpsHealth = {
     timestamp: new Date().toISOString(),
-    hostname: "",
-    uptime: "",
-    disk: { used: "", free: "", percent: "" },
-    memory: { total: "", used: "", available: "" },
+    hostname: '',
+    uptime: '',
+    disk: { used: '', free: '', percent: '' },
+    memory: { total: '', used: '', available: '' },
     services: {},
     docker: {},
   };
 
   try {
-    const ssh = (cmd: string) => execSync(
-      `ssh -o StrictHostKeyChecking=accept-new -o ConnectTimeout=5 ${VPS} "${cmd.replace(/"/g, '\\"')}"`,
-      { timeout: 15000, encoding: "utf-8" }
-    ).trim();
+    health.hostname = ssh('hostname');
+    health.uptime = ssh('uptime -p');
 
-    health.hostname = ssh("hostname");
-    health.uptime = ssh("uptime -p");
+    const df = ssh('df -h / | tail -1').split(/\s+/);
+    health.disk = { used: df[2] || '', free: df[3] || '', percent: df[4] || '' };
 
-    const df = ssh("df -h / | tail -1").split(/\s+/);
-    health.disk = { used: df[2] || "", free: df[3] || "", percent: df[4] || "" };
+    const mem = ssh('free -h | grep Mem').split(/\s+/);
+    health.memory = { total: mem[1] || '', used: mem[2] || '', available: mem[6] || '' };
 
-    const mem = ssh("free -h | grep Mem").split(/\s+/);
-    health.memory = { total: mem[1] || "", used: mem[2] || "", available: mem[6] || "" };
-
-    for (const s of ["bet-ticker-poller", "cascade-mover", "cascade-mover-mcp", "cascade-token"]) {
+    for (const s of ['bet-ticker-poller', 'cascade-mover', 'cascade-mover-mcp', 'cascade-token']) {
       health.services[s] = ssh(`systemctl is-active ${s}`);
     }
 
-    const dockerPs = ssh("docker ps --format '{{.Names}} {{.Status}}'").split("\n");
+    const dockerPs = ssh("docker ps --format '{{.Names}} {{.Status}}'").split('\n');
     for (const line of dockerPs) {
-      const [name, ...status] = line.split(" ");
-      if (name) health.docker[name] = status.join(" ");
+      const [name, ...status] = line.split(' ');
+      if (name) health.docker[name] = status.join(' ');
     }
   } catch (e) {
-    console.error("[vps-health] SSH failed:", e.message);
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error('[vps-health] SSH failed:', msg);
   }
 
-  writeFileSync(OUTPUT, JSON.stringify(health, null, 2));
-  console.error(`[vps-health] Wrote ${OUTPUT} — ${health.hostname || "unreachable"}`);
+  await Bun.write(OUTPUT, JSON.stringify(health, null, 2));
+  console.error(`[vps-health] Wrote ${OUTPUT} — ${health.hostname || 'unreachable'}`);
 }
 
-main();
+if (import.meta.main) {
+  await main();
+}

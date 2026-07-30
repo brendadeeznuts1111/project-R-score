@@ -11,10 +11,11 @@
  *   bun tools/verify-formdata.ts                           # run proof
  *   bun tools/verify-formdata.ts --save                    # save + print
  */
-import { inspect, CryptoHasher, deepEquals } from 'bun';
-import { writeFileSync, existsSync } from 'fs';
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { inspect, CryptoHasher } from 'bun';
 
-const BASE = process.env.HEALTH_URL || 'http://localhost:3000';
+const BASE = Bun.env.HEALTH_URL || 'http://localhost:3000';
 const SHOULD_SAVE = process.argv.includes('--save');
 const SAVE_PATH = 'public/registry/formdata-proof.json';
 const TOKEN = Bun.env.FACTORY_WAGER_TOKEN || Bun.env.REGISTRY_SECRET || 'dev-key';
@@ -42,7 +43,14 @@ async function runFormDataTest(test: FormDataTest, expectedToken: string): Promi
   const form = new FormData();
   form.append('version', test.version);
   form.append('tags', 'latest,formdata-test');
-  form.append('metadata', JSON.stringify({ description: `FormData: ${test.name}`, type: 'library', source: 'verify-formdata' }));
+  form.append(
+    'metadata',
+    JSON.stringify({
+      description: `FormData: ${test.name}`,
+      type: 'library',
+      source: 'verify-formdata',
+    })
+  );
 
   const blob = new Blob([test.fileContent], { type: test.mimeType });
   form.append('file', blob, test.fileName);
@@ -60,7 +68,8 @@ async function runFormDataTest(test: FormDataTest, expectedToken: string): Promi
   });
   const durMs = (Bun.nanoseconds() - t0) / 1e6;
   const data = await res.json();
-  const sentContentType = res.headers.get('x-content-type-request') || '(auto: multipart/form-data)';
+  const sentContentType =
+    res.headers.get('x-content-type-request') || '(auto: multipart/form-data)';
 
   return {
     test,
@@ -81,17 +90,49 @@ async function main() {
   }
 
   const tests: FormDataTest[] = [
-    { name: 'JavaScript plugin', fileContent: 'module.exports = { name: "test" };', fileName: 'plugin.js', mimeType: 'text/javascript', version: '1.0.0' },
-    { name: 'CSS stylesheet', fileContent: '.test { color: red; }', fileName: 'styles.css', mimeType: 'text/css', version: '1.0.0' },
-    { name: 'JSON config', fileContent: JSON.stringify({ key: 'value' }), fileName: 'config.json', mimeType: 'application/json', version: '1.0.0' },
-    { name: 'Binary WASM', fileContent: '\x00asm\x01\x00\x00\x00', fileName: 'module.wasm', mimeType: 'application/wasm', version: '1.0.0' },
-    { name: 'Markdown doc', fileContent: '# Hello\n\nThis is a **test**.', fileName: 'readme.md', mimeType: 'text/markdown', version: '1.0.0' },
+    {
+      name: 'JavaScript plugin',
+      fileContent: 'module.exports = { name: "test" };',
+      fileName: 'plugin.js',
+      mimeType: 'text/javascript',
+      version: '1.0.0',
+    },
+    {
+      name: 'CSS stylesheet',
+      fileContent: '.test { color: red; }',
+      fileName: 'styles.css',
+      mimeType: 'text/css',
+      version: '1.0.0',
+    },
+    {
+      name: 'JSON config',
+      fileContent: JSON.stringify({ key: 'value' }),
+      fileName: 'config.json',
+      mimeType: 'application/json',
+      version: '1.0.0',
+    },
+    {
+      name: 'Binary WASM',
+      fileContent: '\x00asm\x01\x00\x00\x00',
+      fileName: 'module.wasm',
+      mimeType: 'application/wasm',
+      version: '1.0.0',
+    },
+    {
+      name: 'Markdown doc',
+      fileContent: '# Hello\n\nThis is a **test**.',
+      fileName: 'readme.md',
+      mimeType: 'text/markdown',
+      version: '1.0.0',
+    },
   ];
 
   console.log('╔══════════════════════════════════════════════════════════════════════╗');
   console.log('║  🧪 FormData File Upload Proof (Bun docs guide)                      ║');
   console.log(`║  Base: ${BASE.padEnd(57)}║`);
-  console.log(`║  Bun:  ${(Bun.version + ' / ' + (Bun.revision?.slice(0, 8) || 'unknown')).padEnd(57)}║`);
+  console.log(
+    `║  Bun:  ${(Bun.version + ' / ' + (Bun.revision?.slice(0, 8) || 'unknown')).padEnd(57)}║`
+  );
   console.log('╚══════════════════════════════════════════════════════════════════════╝');
   console.log('');
   console.log('  Pattern: req.formData() → .get("file") → Blob → Bun.write()');
@@ -104,14 +145,17 @@ async function main() {
   }
 
   // Render
-  const table = inspect(results.map(r => [
-    r.test.fileName,
-    r.test.mimeType,
-    r.statusCode,
-    r.success ? '✅' : '❌',
-    r.checksum.slice(0, 12) + '…',
-    r.durMs + 'ms',
-  ]), { colors: true, table: true });
+  const table = inspect(
+    results.map(r => [
+      r.test.fileName,
+      r.test.mimeType,
+      r.statusCode,
+      r.success ? '✅' : '❌',
+      r.checksum.slice(0, 12) + '…',
+      r.durMs + 'ms',
+    ]),
+    { colors: true, table: true }
+  );
   console.log(table);
 
   const allOk = results.every(r => r.ok);
@@ -142,7 +186,7 @@ async function main() {
   };
 
   if (SHOULD_SAVE) {
-    writeFileSync(SAVE_PATH, JSON.stringify(proof, null, 2));
+    await Bun.write(SAVE_PATH, JSON.stringify(proof, null, 2));
     console.log(`\n💾 Proof saved to ${SAVE_PATH}`);
   }
 
@@ -150,16 +194,22 @@ async function main() {
   console.log(`  📋 All uploads: ${allOk ? '✅' : '❌'}`);
 
   if (!allOk) {
-    results.filter(r => !r.ok).forEach(r => console.log(`    ❌ ${r.test.name}: HTTP ${r.statusCode}`));
+    results
+      .filter(r => !r.ok)
+      .forEach(r => console.log(`    ❌ ${r.test.name}: HTTP ${r.statusCode}`));
     process.exit(1);
   }
 
   console.log('');
   console.log('  Canonical API references:');
   console.log('    • req.formData():      https://bun.com/docs/guides/http/file-uploads');
-  console.log('    • Bun.write():         https://bun.com/docs/runtime/file-io#writing-files-bun-write');
+  console.log(
+    '    • Bun.write():         https://bun.com/docs/runtime/file-io#writing-files-bun-write'
+  );
   console.log('    • Bun.CryptoHasher:    https://bun.com/docs/runtime/hashing');
   console.log('    • Bun.inspect:         https://bun.com/docs/runtime/utils#bun-inspect');
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}
