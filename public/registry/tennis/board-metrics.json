@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "tennis-board-metrics",
-  "generatedAt": "2026-07-30T23:06:41.542Z",
+  "generatedAt": "2026-07-30T23:09:19.722Z",
   "source": "event-store",
   "eventStorePath": "Kalshi-bot/research/cache/event-store.db",
   "bookTicksLatest": 174,

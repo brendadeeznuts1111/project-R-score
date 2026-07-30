@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "kind": "tennis-avatar-index",
-  "generatedAt": "2026-07-30T23:06:41.649Z",
-  "sourceDir": "/Users/nolarose/Projects/warehouse/avatars",
-  "cacheDir": "/Users/nolarose/Projects/public/avatars",
+  "generatedAt": "2026-07-30T23:09:19.757Z",
+  "sourceDir": "warehouse/avatars",
+  "cacheDir": "public/avatars",
   "players": [
     {
       "slug": "aaron-funk",

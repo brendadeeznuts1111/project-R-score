@@ -236,6 +236,13 @@ export function buildNameToSlugMap(players: readonly AvatarPlayerEntry[]): Recor
   return map;
 }
 
+function relToRepo(path: string): string {
+  const root = ROOT.endsWith('/') ? ROOT : `${ROOT}/`;
+  if (path.startsWith(root)) return path.slice(root.length);
+  if (path.startsWith(ROOT)) return path.slice(ROOT.length).replace(/^\//, '');
+  return path.replace(/^.*?\/(warehouse|public)\//, '$1/');
+}
+
 /** Plain object for JSON write (stable field order + clean maps). */
 export function toAvatarIndexDoc(index: AvatarIndex): object {
   const bySlug: Record<string, AvatarPlayerEntry> = {};
@@ -244,8 +251,8 @@ export function toAvatarIndexDoc(index: AvatarIndex): object {
     schemaVersion: index.schemaVersion,
     kind: index.kind,
     generatedAt: index.generatedAt,
-    sourceDir: index.sourceDir,
-    cacheDir: index.cacheDir,
+    sourceDir: relToRepo(index.sourceDir),
+    cacheDir: relToRepo(index.cacheDir),
     players: index.players.map(p => {
       const row: Record<string, unknown> = {
         slug: p.slug,
