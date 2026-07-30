@@ -19,6 +19,7 @@
  * Grounded routes (serve-public):
  *   GET /health      → application/json  · ETag = data hash
  *   GET /health/pre  → text/plain        · same ETag (Vary: Accept)
+ *   GET /api/env · /api/registry        · jsonETag (online probe)
  *
  * Offline always proves lib/http/data-etag.ts + deepEquals.
  * Online probes a live base (default http://127.0.0.1:3000) when reachable
@@ -463,6 +464,35 @@ export async function runOnlineETagSuite(
       detail: changed
         ? 'content hash rotated; new ETag shared across formats'
         : 'content-stable ETag (expected when health payload unchanged); shared revalidate still holds',
+    });
+  }
+
+  // 7–8. JSON GET APIs (jsonETag) — env + registry index
+  for (const path of ['/api/env', '/api/registry'] as const) {
+    const first = await fetchHealth(base, path, { accept: ACCEPT_JSON });
+    const apiEtag = first.etag;
+    const re = apiEtag
+      ? await fetchHealth(base, path, { accept: ACCEPT_JSON, ifNoneMatch: apiEtag })
+      : null;
+    rows.push({
+      step: `7. GET ${path}`,
+      endpoint: path,
+      format: 'JSON',
+      etag: shortEtag(apiEtag),
+      status: String(first.status),
+      cache: 'jsonETag',
+      pass: first.status === 200 && Boolean(apiEtag),
+      detail: `vary=${first.vary ?? '—'}`,
+    });
+    rows.push({
+      step: `8. If-None-Match ${path}`,
+      endpoint: path,
+      format: 'JSON',
+      etag: shortEtag(apiEtag),
+      status: String(re?.status ?? 'skip'),
+      cache: re?.status === 304 ? '304' : '—',
+      pass: Boolean(re && re.status === 304),
+      detail: apiEtag ? 'conditional revalidate' : 'no ETag from step 7',
     });
   }
 
