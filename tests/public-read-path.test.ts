@@ -18,5 +18,7 @@ describe('public read plane', () => {
     expect(isPublicReadPath('/')).toBe(false);
     expect(isPublicReadPath('/private')).toBe(false);
     expect(isPublicReadPath('/site.webmanifest.bak')).toBe(false);
+    expect(isPublicReadPath('/avatar/demo-player')).toBe(true);
+    expect(isPublicReadPath('/avatars/demo-player.webp')).toBe(true);
   });
 });

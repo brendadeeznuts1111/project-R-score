@@ -17,11 +17,15 @@ export const PUBLIC_READ_PATH_PREFIXES = [
   '/api/limits/predictions',
   '/api/catalog',
   '/api/skills',
+  '/api/portal/',
   '/skills/',
   '/portal/',
   '/registry/',
   '/registry/storage/',
   '/icons/',
+  '/avatars/',
+  '/avatar/',
+  '/api/avatar/',
   '/@',
 ] as const;
 

@@ -18,6 +18,7 @@
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown.html
 // @see https://bun.com/docs/runtime/networking/fetch#content-type-handling — Content-Type
 // @see https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata — FormData upload
+// @see https://bun.com/docs/runtime/image — Bun.Image avatar route
 /**
  * Local portal + static public/ server with live ops/catalog/registry APIs.
  *
@@ -78,6 +79,7 @@ import {
   decidePublishAuth,
 } from '../lib/registry/publish-auth.ts';
 import { envCheckForHealth } from '../lib/env-check.ts';
+import { avatarWebpResponse } from '../lib/images/avatar-response.ts';
 import {
   computeDataETag,
   isFresh,
@@ -2210,6 +2212,10 @@ function buildPublicRoutes() {
     '/monitoring/': () => monitoringPage(),
     '/llms.txt': llmsTxt(),
     '/llms-full.txt': llmsFullTxt(),
+
+    // Tennis HQ — on-demand avatar (Bun.Image, zero npm image deps)
+    '/avatar/:id': (req: BunRequest<'/avatar/:id'>) => avatarWebpResponse(req.params.id),
+    '/api/avatar/:id': (req: BunRequest<'/api/avatar/:id'>) => avatarWebpResponse(req.params.id),
 
     '/__hmr': (req: Request, server: RouteServer) => {
       if (server?.timeout) {

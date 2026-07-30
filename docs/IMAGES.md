@@ -62,6 +62,17 @@ Regenerate after photo drops:
 bun run images:generate --template=avatar --source=./warehouse/avatars --out=./public/avatars
 ```
 
+### On-demand avatar (local serve-public)
+
+```bash
+bun scripts/serve-public.ts
+curl -sS http://127.0.0.1:3000/avatar/demo-player -o /tmp/a.webp
+# also: GET /api/avatar/:id
+```
+
+Safe id: `[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}`. Source order: warehouse → tennis mark fallback.  
+Caches under `public/avatars/{id}.webp` (`X-Avatar-Cache: hit|miss`).
+
 ## Phase2 daily report (optional)
 
 If/when `phase2:daily` exists in Kalshi-bot:
