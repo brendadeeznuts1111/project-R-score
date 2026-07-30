@@ -19,6 +19,11 @@
   X-Content-Type-Options: nosniff
   Cache-Control: public, max-age=300
 
+/portal/components/*
+  Content-Type: application/javascript; charset=utf-8
+  X-Content-Type-Options: nosniff
+  Cache-Control: public, max-age=60
+
 # Executive dashboard refreshes every 30s — keep edge cache short
 /portal/dashboard.js
   Content-Type: application/javascript; charset=utf-8
