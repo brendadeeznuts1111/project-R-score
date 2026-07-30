@@ -1927,6 +1927,7 @@
     "security:audit": "bun audit",
     "security:guard:deps": "bun run scripts/security-dependency-guard.ts",
     "check:bun-deps:tier-a": "bun scripts/check-bun-deps-tier-a.ts",
+    "inventory:wrappers": "bun scripts/inventory-wrappers.ts",
     "security:secrets:local": "bun run scripts/secrets-scan-local.ts",
     "validate:bun-urls": "bun run scripts/validate-bun-urls.ts",
     "validate:github": "bun run scripts/bun-github-validation.ts",
