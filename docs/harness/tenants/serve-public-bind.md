@@ -108,7 +108,7 @@ host = "127.0.0.1"
 | 2 | `[server] port` in TOML (only when env/CLI port unset) | `[server] host` in TOML |
 | 3 | Bun default **3000** | Bun runtime default |
 
-Merge API: `resolveServePublicBindPrefs()` in [`lib/http/serve-public-config.ts`](../../../lib/http/serve-public-config.ts) — native TOML import of [`config/serve-public.toml`](../../../config/serve-public.toml), env/CLI port chain wins over `[server] port`. Wiring that prefs object into `scripts/serve-public.ts` is owned by the Wire lane; this doc describes the merge contract only.
+Merge API: `resolveServePublicBindPrefs()` in [`lib/http/serve-public-config.ts`](../../../lib/http/serve-public-config.ts) — native TOML import of [`config/serve-public.toml`](../../../config/serve-public.toml), env/CLI port chain wins over `[server] port`. Wired into [`scripts/serve-public.ts`](../../../scripts/serve-public.ts) at startup (`bindPrefs` → `createServer` / busy probe / bind manifest).
 
 Runtime API alternative (dynamic files): `Bun.TOML.parse(await Bun.file("…").text())` — same parser as import.
 
