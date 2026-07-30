@@ -69,16 +69,11 @@ export type HarnessReport = {
   issues: HarnessIssue[];
 };
 
-export const HARNESS_ESLINT_GLOBS = [
-  'lib/**/*.ts',
-  'scripts/**/*.ts',
-  'packages/**/*.ts',
-  'server/**/*.ts',
-  'config/**/*.ts',
-  'tools/**/*.ts',
-] as const;
+/** Same globs as rollout — keep report argv aligned with HARNESS_PATHS. */
+export const HARNESS_ESLINT_GLOBS = HARNESS_PATHS;
 
-export const HARNESS_ESLINT_IGNORES = ['**/*.test.ts', '**/*.spec.ts', '**/*.bench.ts'] as const;
+/** Same ignores as rollout (tests, benches, d.ts, projects/). */
+export const HARNESS_ESLINT_IGNORES = HARNESS_IGNORES;
 
 type EslintJsonResult = {
   filePath: string;

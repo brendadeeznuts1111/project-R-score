@@ -30,16 +30,6 @@ export const STRICT_INVENTORY = [
   'scripts/pre-commit-harness.ts',
 ] as const;
 
-export const HARNESS_FORMAT_GLOBS = [
-  'lib/**/*.ts',
-  'packages/**/*.ts',
-  'server/**/*.ts',
-  'config/**/*.ts',
-  'tools/**/*.ts',
-  'scripts/*.ts',
-  'scripts/fix-*.ts',
-] as const;
-
 export const HARNESS_BUN_GLOBALS: Record<string, 'readonly'> = {
   Bun: 'readonly',
   console: 'readonly',

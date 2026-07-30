@@ -6,7 +6,7 @@
  * Pre-commit harness checks — staged root paths.
  * Parallelizes independent gates; auto-annotates Bun doc refs; records timings.
  */
-import { HARNESS_FORMAT_GLOBS, HARNESS_PATHS } from '../config/eslint/harness/rollout.ts';
+import { HARNESS_PATHS } from '../config/eslint/harness/rollout.ts';
 import { hasFlag } from './lib/cli-args';
 import { ensureDir, writeJson } from './lib/fs-bun';
 
@@ -704,7 +704,6 @@ async function main(): Promise<void> {
   console.info('✅ Harness pre-commit checks passed');
   await writeTimings(timings, full);
   void HARNESS_PATHS;
-  void HARNESS_FORMAT_GLOBS;
 }
 
 if (import.meta.main) {
