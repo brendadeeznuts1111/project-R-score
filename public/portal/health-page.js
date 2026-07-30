@@ -1,10 +1,139 @@
 /**
  * Health diagnostic surface — /portal/health/
  * Probes /api/health (and fallbacks) for its own banner; topbar dot stays on data.js.
+ * Live check table probes each known surface with Kind · Plane · Source · Status · Detail.
  *
  * @see docs/portal-foundation.md
  */
 const $ = id => document.getElementById(id);
+
+/** @typedef {'ok'|'warn'|'bad'|'skip'} LiveTone */
+/** @typedef {'edge-health'|'registry-bake'|'proof'|'board'|'inventory'|'ops-rollup'|'doctor'} LiveKind */
+/** @typedef {'edge'|'public'|'document'|'operate'|'harness'|'infra'} LivePlane */
+
+/**
+ * Curated same-origin probes. Each row is one independent check (not a card rollup).
+ * kind = what the check is · plane = which control plane owns it.
+ */
+const LIVE_PROBES = [
+  {
+    id: 'api-health',
+    surface: 'Edge health API',
+    what: 'Live edge status JSON for this origin',
+    kind: 'edge-health',
+    plane: 'edge',
+    path: '/api/health',
+    accept: 'application/json',
+  },
+  {
+    id: 'raw-health',
+    surface: 'Raw /health',
+    what: 'Alias path — same edge payload shape',
+    kind: 'edge-health',
+    plane: 'edge',
+    path: '/health',
+    accept: 'application/json',
+  },
+  {
+    id: 'ops-summary',
+    surface: 'Ops summary bake',
+    what: 'Operate rollup (TOC · loop · channels)',
+    kind: 'ops-rollup',
+    plane: 'operate',
+    path: '/registry/ops-summary.json',
+    accept: 'application/json',
+  },
+  {
+    id: 'toc-ops',
+    surface: 'TOC ops fixture',
+    what: 'Drum/Buffer/Rope demo bake',
+    kind: 'ops-rollup',
+    plane: 'operate',
+    path: '/registry/toc-ops.json',
+    accept: 'application/json',
+  },
+  {
+    id: 'monorepo-health',
+    surface: 'Monorepo health score',
+    what: 'Harness gate score · grade · metrics',
+    kind: 'registry-bake',
+    plane: 'harness',
+    path: '/registry/monorepo-health.json',
+    accept: 'application/json',
+  },
+  {
+    id: 'doctor-state',
+    surface: 'Portal doctor state',
+    what: 'Unified doctor bake (linker · bunfig · catalog)',
+    kind: 'doctor',
+    plane: 'harness',
+    path: '/registry/doctor-state.json',
+    accept: 'application/json',
+  },
+  {
+    id: 'defaults-proof',
+    surface: 'Defaults proof',
+    what: 'Bun defaults verification pin',
+    kind: 'proof',
+    plane: 'document',
+    path: '/registry/defaults-proof.json',
+    accept: 'application/json',
+  },
+  {
+    id: 'portal-weave',
+    surface: 'Portal weave proof',
+    what: 'Portal surface / capability weave map',
+    kind: 'proof',
+    plane: 'document',
+    path: '/registry/portal-weave.json',
+    accept: 'application/json',
+  },
+  {
+    id: 'monitoring',
+    surface: 'Monitoring bake',
+    what: 'Package / DOD monitoring snapshot',
+    kind: 'registry-bake',
+    plane: 'public',
+    path: '/registry/monitoring.json',
+    accept: 'application/json',
+  },
+  {
+    id: 'static-aggregate',
+    surface: 'Static aggregate',
+    what: 'Public-plane static registry index',
+    kind: 'registry-bake',
+    plane: 'public',
+    path: '/registry/static.json',
+    accept: 'application/json',
+  },
+  {
+    id: 'surfaces-state',
+    surface: 'Surfaces inventory',
+    what: 'Host / subdomain / Access inventory bake',
+    kind: 'inventory',
+    plane: 'public',
+    path: '/registry/surfaces-state.json',
+    accept: 'application/json',
+  },
+  {
+    id: 'vps-health',
+    surface: 'VPS infrastructure',
+    what: 'Host uptime · disk · services bake',
+    kind: 'registry-bake',
+    plane: 'infra',
+    path: '/registry/vps-health.json',
+    accept: 'application/json',
+  },
+  {
+    id: 'health-board',
+    surface: 'Health board HTML',
+    what: 'This portal page is reachable as static asset',
+    kind: 'board',
+    plane: 'public',
+    path: '/portal/health/',
+    accept: 'text/html',
+  },
+];
 
 const CANONICAL_URLS = {
   CLOUDFLARE_API_TOKEN:
@@ -62,6 +191,426 @@ function skeletonCards(n = 8) {
     { length: n },
     () => '<div class="health-card skeleton skeleton-card" aria-hidden="true"></div>'
   ).join('');
+}
+
+function ageLabel(iso) {
+  if (!iso) return null;
+  const t = Date.parse(String(iso));
+  if (!Number.isFinite(t)) return String(iso).slice(0, 19);
+  const sec = Math.max(0, Math.round((Date.now() - t) / 1000));
+  if (sec < 60) return `${sec}s ago`;
+  if (sec < 3600) return `${Math.round(sec / 60)}m ago`;
+  if (sec < 86400) return `${Math.round(sec / 3600)}h ago`;
+  const days = Math.round(sec / 86400);
+  return `${days}d ago · ${String(iso).slice(0, 10)}`;
+}
+
+function isStale(iso, maxHours) {
+  if (!iso) return false;
+  const t = Date.parse(String(iso));
+  if (!Number.isFinite(t)) return false;
+  return Date.now() - t > maxHours * 3600 * 1000;
+}
+
+/**
+ * Interpret a live probe response into tone + human detail.
+ * @returns {{ tone: LiveTone, statusLabel: string, detail: string }}
+ */
+function interpretProbe(probe, res, body, ms, err) {
+  if (err) {
+    return {
+      tone: 'bad',
+      statusLabel: 'error',
+      detail: String(err.message || err).slice(0, 120),
+    };
+  }
+  if (!res) {
+    return { tone: 'bad', statusLabel: 'no response', detail: 'fetch failed' };
+  }
+
+  const http = res.status;
+  const redirectOrAccess =
+    http === 302 ||
+    http === 401 ||
+    http === 403 ||
+    (typeof res.url === 'string' && /cloudflareaccess|cdn-cgi\/access/i.test(res.url));
+
+  if (redirectOrAccess && http !== 200) {
+    return {
+      tone: 'warn',
+      statusLabel: `HTTP ${http} · Access?`,
+      detail: 'Protected or redirected (CF Access / auth) — not a public bake fail',
+    };
+  }
+
+  if (http >= 500) {
+    return { tone: 'bad', statusLabel: `HTTP ${http}`, detail: `${ms}ms · server error` };
+  }
+  if (http === 404) {
+    return {
+      tone: 'warn',
+      statusLabel: 'HTTP 404',
+      detail: 'Missing artifact — bake or deploy may be required',
+    };
+  }
+  if (http < 200 || http >= 400) {
+    return {
+      tone: 'bad',
+      statusLabel: `HTTP ${http}`,
+      detail: `${ms}ms · unexpected status`,
+    };
+  }
+
+  // HTML board probe — success is reachability
+  if (probe.accept === 'text/html') {
+    return {
+      tone: 'ok',
+      statusLabel: `HTTP ${http}`,
+      detail: `board live · ${ms}ms`,
+    };
+  }
+
+  const data = body && typeof body === 'object' ? body : null;
+  if (!data) {
+    return {
+      tone: 'warn',
+      statusLabel: `HTTP ${http}`,
+      detail: `non-JSON or empty · ${ms}ms`,
+    };
+  }
+
+  switch (probe.id) {
+    case 'api-health':
+    case 'raw-health': {
+      const st = String(data.status || '—');
+      const ok = st === 'ok' || st === 'healthy';
+      const parts = [
+        `status ${st}`,
+        data.runtime || (data.edge ? 'edge' : null),
+        data.checkedAt ? ageLabel(data.checkedAt) : null,
+        data.schemaVersion != null ? `schema v${data.schemaVersion}` : null,
+        `${ms}ms`,
+      ].filter(Boolean);
+      return {
+        tone: ok ? 'ok' : 'bad',
+        statusLabel: ok ? `HTTP ${http} · ${st}` : `HTTP ${http} · ${st}`,
+        detail: parts.join(' · '),
+      };
+    }
+    case 'ops-summary': {
+      const gen = data.generated ?? data.generatedAt;
+      const stale = isStale(gen, 48);
+      return {
+        tone: stale ? 'warn' : 'ok',
+        statusLabel: stale ? `HTTP ${http} · stale` : `HTTP ${http}`,
+        detail: [
+          gen ? `generated ${ageLabel(gen)}` : 'no generated ts',
+          data.toc?.available != null ? `toc ${data.toc.available ? 'yes' : 'no'}` : null,
+          data.loop != null ? 'loop slice' : null,
+          `${ms}ms`,
+        ]
+          .filter(Boolean)
+          .join(' · '),
+      };
+    }
+    case 'toc-ops': {
+      const gen = data.generated ?? data.generatedAt;
+      return {
+        tone: 'ok',
+        statusLabel: `HTTP ${http}`,
+        detail: [
+          gen ? ageLabel(gen) : 'fixture present',
+          data.warmed != null ? `${data.warmed} warmed` : null,
+          `${ms}ms`,
+        ]
+          .filter(Boolean)
+          .join(' · '),
+      };
+    }
+    case 'monorepo-health': {
+      const score = data.score;
+      const grade = String(data.grade || '').toLowerCase();
+      const gen = data.generatedAt ?? data.generated;
+      const stale = isStale(gen, 36);
+      let tone = 'ok';
+      if (grade === 'critical' || (typeof score === 'number' && score < 40)) tone = 'bad';
+      else if (grade === 'warning' || grade === 'needs-attention' || stale) tone = 'warn';
+      return {
+        tone,
+        statusLabel:
+          score != null
+            ? `HTTP ${http} · ${score}${grade ? ` ${grade}` : ''}`
+            : `HTTP ${http}`,
+        detail: [
+          gen ? `baked ${ageLabel(gen)}` : null,
+          stale ? 'stale bake' : null,
+          data.metrics?.cyclicDependencyCount != null
+            ? `cycles ${data.metrics.cyclicDependencyCount}`
+            : null,
+          data.gate ? `gate ${data.gate}` : null,
+          `${ms}ms`,
+        ]
+          .filter(Boolean)
+          .join(' · '),
+      };
+    }
+    case 'doctor-state': {
+      const summary = data.summary || data;
+      const failed =
+        summary.failed ?? summary.fail ?? data.failedCount ?? data.failed;
+      const passed = summary.passed ?? summary.pass ?? data.passedCount;
+      const total = summary.total ?? data.total;
+      const ok = data.ok === true || failed === 0 || (passed != null && total != null && passed === total);
+      const gen = data.generatedAt ?? data.generated;
+      return {
+        tone: ok ? 'ok' : failed != null && failed > 0 ? 'bad' : 'warn',
+        statusLabel:
+          passed != null && total != null
+            ? `HTTP ${http} · ${passed}/${total}`
+            : data.ok === true
+              ? `HTTP ${http} · ok`
+              : `HTTP ${http}`,
+        detail: [
+          gen ? ageLabel(gen) : null,
+          failed != null ? `${failed} failed` : null,
+          `${ms}ms`,
+        ]
+          .filter(Boolean)
+          .join(' · '),
+      };
+    }
+    case 'defaults-proof': {
+      const passed = data.passed ?? data.summary?.passed;
+      const total = data.total ?? data.summary?.total;
+      const status = data.status ?? data.summary?.status;
+      const allOk =
+        status === 'pass' || (passed != null && total != null && passed === total);
+      return {
+        tone: allOk ? 'ok' : 'bad',
+        statusLabel:
+          passed != null && total != null
+            ? `HTTP ${http} · ${passed}/${total}`
+            : `HTTP ${http}`,
+        detail: [
+          data.bunVersion ? `Bun ${data.bunVersion}` : null,
+          data.proofHash ? `sha ${String(data.proofHash).slice(0, 10)}…` : null,
+          `${ms}ms`,
+        ]
+          .filter(Boolean)
+          .join(' · '),
+      };
+    }
+    case 'portal-weave': {
+      const n =
+        data.surfaces?.length ??
+        data.entries?.length ??
+        data.rows?.length ??
+        data.count ??
+        null;
+      return {
+        tone: 'ok',
+        statusLabel: `HTTP ${http}`,
+        detail: [
+          n != null ? `${n} entries` : 'weave present',
+          data.generatedAt || data.generated
+            ? ageLabel(data.generatedAt || data.generated)
+            : null,
+          `${ms}ms`,
+        ]
+          .filter(Boolean)
+          .join(' · '),
+      };
+    }
+    case 'monitoring': {
+      return {
+        tone: 'ok',
+        statusLabel: `HTTP ${http}`,
+        detail: [
+          data.packageCount != null ? `${data.packageCount} packages` : null,
+          data.dodQueue != null ? `DOD ${data.dodQueue}` : null,
+          data.generatedAt || data.generated
+            ? ageLabel(data.generatedAt || data.generated)
+            : null,
+          `${ms}ms`,
+        ]
+          .filter(Boolean)
+          .join(' · ') || `${ms}ms`,
+      };
+    }
+    case 'static-aggregate': {
+      return {
+        tone: 'ok',
+        statusLabel: `HTTP ${http}`,
+        detail: `aggregate present · ${ms}ms`,
+      };
+    }
+    case 'surfaces-state': {
+      const surfaces =
+        data.surfaces?.length ??
+        data.inventory?.surfaces?.length ??
+        data.count ??
+        null;
+      const schema = data.schemaVersion ?? data.version;
+      return {
+        tone: 'ok',
+        statusLabel: `HTTP ${http}`,
+        detail: [
+          surfaces != null ? `${surfaces} surfaces` : 'inventory present',
+          schema != null ? `schema v${schema}` : null,
+          data.generatedAt ? ageLabel(data.generatedAt) : null,
+          `${ms}ms`,
+        ]
+          .filter(Boolean)
+          .join(' · '),
+      };
+    }
+    case 'vps-health': {
+      return {
+        tone: data.hostname ? 'ok' : 'warn',
+        statusLabel: `HTTP ${http}`,
+        detail: [
+          data.hostname || null,
+          data.uptime ? `up ${data.uptime}` : null,
+          data.disk?.percent ? `disk ${data.disk.percent}` : null,
+          `${ms}ms`,
+        ]
+          .filter(Boolean)
+          .join(' · '),
+      };
+    }
+    default: {
+      return {
+        tone: 'ok',
+        statusLabel: `HTTP ${http}`,
+        detail: `${ms}ms`,
+      };
+    }
+  }
+}
+
+async function probeOne(probe) {
+  const t0 = performance.now();
+  try {
+    const res = await fetch(probe.path, {
+      credentials: 'same-origin',
+      headers: { Accept: probe.accept || 'application/json' },
+      redirect: 'follow',
+    });
+    const ms = Math.round(performance.now() - t0);
+    let body = null;
+    if (probe.accept !== 'text/html') {
+      try {
+        body = await res.json();
+      } catch {
+        body = null;
+      }
+    } else {
+      // Consume body so the connection can close; board probe only needs status.
+      try {
+        await res.text();
+      } catch {
+        /* ignore */
+      }
+    }
+    const interpreted = interpretProbe(probe, res, body, ms, null);
+    return { probe, res, body, ms, ...interpreted };
+  } catch (e) {
+    const ms = Math.round(performance.now() - t0);
+    const interpreted = interpretProbe(probe, null, null, ms, e);
+    return { probe, res: null, body: null, ms, ...interpreted };
+  }
+}
+
+function renderLiveContext(results) {
+  const el = $('live-context');
+  if (!el) return;
+  const counts = { ok: 0, warn: 0, bad: 0, skip: 0 };
+  for (const r of results) counts[r.tone] = (counts[r.tone] || 0) + 1;
+  const origin = typeof location !== 'undefined' ? location.origin : '—';
+  const when = new Date().toISOString().slice(0, 19) + 'Z';
+  el.innerHTML = `
+    <span><strong>Origin</strong> <code>${esc(origin)}</code></span>
+    <span><strong>Probed</strong> ${esc(when)}</span>
+    <span class="live-counts">
+      <strong>Results</strong>
+      <span class="c-ok">${counts.ok} ok</span> ·
+      <span class="c-warn">${counts.warn} attention</span> ·
+      <span class="c-bad">${counts.bad} fail</span>
+      ${counts.skip ? ` · ${counts.skip} skip` : ''}
+      · ${results.length} checks
+    </span>
+    <span><strong>Scope</strong> same-origin only (browser; no cross-subdomain Access probes)</span>
+  `;
+}
+
+function renderLiveTable(results) {
+  const tbody = $('live-body');
+  if (!tbody) return;
+  if (!results.length) {
+    tbody.innerHTML = '<tr><td colspan="6">No probes configured</td></tr>';
+    return;
+  }
+  tbody.innerHTML = results
+    .map(r => {
+      const p = r.probe;
+      const toneClass =
+        r.tone === 'ok'
+          ? 'live-row-ok'
+          : r.tone === 'warn'
+            ? 'live-row-warn'
+            : r.tone === 'bad'
+              ? 'live-row-bad'
+              : 'live-row-skip';
+      const stClass =
+        r.tone === 'ok'
+          ? 'st-ok'
+          : r.tone === 'warn'
+            ? 'st-warn'
+            : r.tone === 'bad'
+              ? 'st-bad'
+              : 'st-skip';
+      return `<tr class="${toneClass}" data-probe="${esc(p.id)}" data-tone="${esc(r.tone)}">
+        <td>
+          <span class="surface-name">${esc(p.surface)}</span>
+          <span class="surface-what">${esc(p.what || '')}</span>
+        </td>
+        <td><span class="kind-chip">${esc(p.kind)}</span></td>
+        <td><span class="plane-chip" data-plane="${esc(p.plane)}">${esc(p.plane)}</span></td>
+        <td class="mono"><a class="ops-link" href="${esc(p.path)}" target="_blank" rel="noopener">${esc(p.path)}</a></td>
+        <td class="${stClass}">${esc(r.statusLabel)}</td>
+        <td class="detail">${esc(r.detail)}</td>
+      </tr>`;
+    })
+    .join('');
+}
+
+async function runLiveChecks() {
+  const tbody = $('live-body');
+  const ctx = $('live-context');
+  if (tbody) {
+    tbody.innerHTML = LIVE_PROBES.map(
+      p =>
+        `<tr class="live-row-skip" data-probe="${esc(p.id)}">
+          <td><span class="surface-name">${esc(p.surface)}</span><span class="surface-what">${esc(p.what || '')}</span></td>
+          <td><span class="kind-chip">${esc(p.kind)}</span></td>
+          <td><span class="plane-chip" data-plane="${esc(p.plane)}">${esc(p.plane)}</span></td>
+          <td class="mono">${esc(p.path)}</td>
+          <td class="st-skip">…</td>
+          <td class="detail">probing</td>
+        </tr>`
+    ).join('');
+  }
+  if (ctx) {
+    ctx.innerHTML = `<span>Probing <strong>${LIVE_PROBES.length}</strong> surfaces on <code>${esc(location.origin)}</code>…</span>`;
+  }
+
+  const results = await Promise.all(LIVE_PROBES.map(probeOne));
+  // Stable catalog order
+  const byId = new Map(results.map(r => [r.probe.id, r]));
+  const ordered = LIVE_PROBES.map(p => byId.get(p.id)).filter(Boolean);
+  renderLiveContext(ordered);
+  renderLiveTable(ordered);
+  return ordered;
 }
 
 async function fetchJson(url) {
@@ -587,11 +1136,15 @@ export async function load() {
       '<div class="plane-card skeleton skeleton-card" style="min-height:120px" aria-hidden="true"></div>';
   }
 
+  // Live check table runs in parallel with edge health rollup.
+  const livePromise = runLiveChecks();
+
   const payload = await fetchHealth();
   if (payload?.data) {
     payload.data = await enrichFromOpsSummary(payload.data);
   }
   render(payload);
+  await livePromise;
   document.dispatchEvent(
     new CustomEvent('portal:health-ready', { detail: payload })
   );
