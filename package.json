@@ -2088,6 +2088,7 @@
     "affected:list": "bun scripts/affected-workspaces.ts list",
     "check:path-bun": "bun scripts/check-path-bun.ts",
     "check:bun-env": "bun scripts/check-bun-env.ts",
+    "check:bun-pm-cache": "bun scripts/check-bun-pm-cache.ts",
     "check:npm-install": "bun scripts/check-npm-install.ts",
     "check:import-graph": "bun scripts/check-import-graph.ts",
     "check:oxlint-ratchet": "bun scripts/check-oxlint-ratchet.ts",
