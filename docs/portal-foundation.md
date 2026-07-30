@@ -142,6 +142,30 @@ Shared layout / status classes in [`public/portal/style.css`](../public/portal/s
 
 **Tone contract (only):** `ok → var(--green)` · `warn → var(--yellow)` · `bad → var(--red)` · `neutral → var(--text-dim)`. Do not use Tailwind greens (`#16a34a`) or light badge fills on portal boards.
 
+### Venue identity palette (not status)
+
+Cross-market / tennis desk venues use a **separate identity palette** (brand border + text + 8% tint). Do not map Kalshi/Polymarket/etc. onto ok/warn/bad.
+
+| Venue | Short | Border | Text (dark) | CSS prefix |
+|-------|-------|--------|-------------|------------|
+| Kalshi | KX | `#7DD3FC` | `#A5D6FF` | `--venue-kalshi-*` |
+| Polymarket | PM | `#2E5CFF` | `#58A6FF` | `--venue-poly-*` |
+| Pinnacle | PN | `#1A73E8` | `#79C0FF` | `--venue-pinnacle-*` |
+| Betfair | BF | `#F5B942` | `#E3B341` | `--venue-betfair-*` |
+
+| Surface | Path |
+|---------|------|
+| CSS | [`public/portal/venues.css`](../public/portal/venues.css) |
+| Portal JS | [`public/portal/components/venue-badge.js`](../public/portal/components/venue-badge.js) |
+| TS SSOT + ANSI | [`lib/venues/venue-brand.ts`](../lib/venues/venue-brand.ts) (`fmtVenueBadge` · `fmtVenueLegend`) |
+| Kalshi desk ANSI | [`Kalshi-bot/src/institutions/venue-badge.ts`](../Kalshi-bot/src/institutions/venue-badge.ts) |
+| Board demo | [`/portal/tennis/`](../public/portal/tennis/) |
+
+```bash
+bun -e 'import { fmtVenueLegend, fmtVenueBadge } from "./lib/venues/venue-brand.ts"; console.log(fmtVenueLegend()); console.log("Row:", fmtVenueBadge("polymarket", false), "53¢  +4.2");'
+bun test tests/venue-brand.test.ts
+```
+
 **Reference boards:** [`/portal/health/`](../public/portal/health/) (Live check multi-column + section rhythm) · [`/portal/install-hygiene/`](../public/portal/install-hygiene/) (tone chips). **Template:** [`_page-template.html`](../public/portal/_page-template.html). **Chrome apply:** `bun run portal:chrome:apply`.
 
 **Unification phases:** P0 chrome holes + emoji/token strip · P1 promote remaining private CSS into primitives · P2 rewrite limits/partner-history/doctor/vault shells to full template.

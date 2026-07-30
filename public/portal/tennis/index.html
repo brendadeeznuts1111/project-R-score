@@ -1,103 +1,170 @@
 <!DOCTYPE html>
-<!-- @see docs/portal-foundation.md — copy this file for new pages -->
+<!-- @see docs/portal-foundation.md · venue identity: /portal/venues.css · lib/venues/venue-brand.ts -->
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="portal-poll-ms" content="30000" />
   <title>Tennis · FactoryWager</title>
-  <link rel="icon" type="image/svg+xml" href="/icons/tennis/mark.svg">
-  <link rel="icon" type="image/png" sizes="64x64" href="/icons/tennis/mark-64.webp">
+  <meta name="theme-color" content="#0d1117" />
+  <meta name="application-name" content="FactoryWager" />
+  <link rel="icon" type="image/svg+xml" href="/icons/tennis/mark.svg" />
+  <link rel="icon" type="image/png" sizes="64x64" href="/icons/tennis/mark-64.webp" />
+  <link rel="apple-touch-icon" href="/icons/tennis/mark-64.webp" />
+  <link rel="manifest" href="/site.webmanifest" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/portal/style.css" />
+  <link rel="stylesheet" href="/portal/venues.css" />
 </head>
 <body>
   <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
   <header class="topbar">
-    <img src="/icons/tennis/mark.svg" alt="tennis" class="brand-icon" style="height:24px;vertical-align:middle;margin-right:8px">
     <div class="topbar-inner">
       <h1 class="logo">
-        <span class="logo-icon">■</span>
+        <span class="logo-icon" aria-hidden="true"></span>
         <span class="brand-wordmark">FactoryWager</span>
         <span class="brand-badge">tenant</span>
         <span class="logo-page">Tennis</span>
       </h1>
       <nav class="topbar-nav" aria-label="Primary">
-        <a href="/" class="nav-link">Home</a>
-        <a href="/portal/tenant" class="nav-link">Ops</a>
-        <a href="/portal/" class="nav-link">Registry</a>
-        <a href="/portal/health" class="nav-link">Health</a>
-        <a href="/portal/dod" class="nav-link">DOD</a>
-        <a href="/portal/compliance/" class="nav-link">Compliance</a>
+        <a href="/" class="nav-link" data-group="other">Home</a>
+        <a href="/portal/ops/" class="nav-link" data-group="ops">Ops</a>
+        <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
+        <a href="/portal/health/" class="nav-link" data-group="harness">Health</a>
+        <a href="/portal/dod/" class="nav-link" data-group="plane">DOD</a>
+        <a href="/portal/compliance/" class="nav-link" data-group="ops">Compliance</a>
         <div class="nav-overflow">
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog" class="nav-link" role="menuitem">Catalog</a>
-            <a href="/portal/skills" class="nav-link" role="menuitem">Skills</a>
-            <a href="/portal/env" class="nav-link" role="menuitem">Env</a>
-            <a href="/portal/dashboard" class="nav-link" role="menuitem">Dashboard</a>
-            <a href="/monitoring" class="nav-link" role="menuitem">Monitoring</a>
+            <a href="/portal/tennis/" class="nav-link active" aria-current="page" data-group="ops" role="menuitem">Tennis</a>
+            <a href="/portal/tools/" class="nav-link" data-group="harness" role="menuitem">CLI Tools</a>
+            <a href="/registry/tennis/registry.json" class="nav-link" data-group="registry" role="menuitem">Tennis registry</a>
             <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" role="menuitem" title="Portal · registry · tenants · proof loop">Wiki</a>
           </div>
         </div>
       </nav>
       <div class="topbar-status">
         <a href="/portal/tennis.md" class="nav-link nav-md" title="Markdown view">MD</a>
-        <a href="/portal/health" class="topbar-health-link" title="System health">
+        <a href="/portal/health/" class="topbar-health-link" title="System health">
           <span id="health-dot" class="health-dot unknown"></span>
-          <span id="health-label" class="health-label">Connecting…</span>
+          <span id="health-label" class="health-label">…</span>
         </a>
       </div>
     </div>
   </header>
 
-  <main class="main">
-    <section class="hero">
-      <h2>Tennis</h2>
-      <p class="hero-sub">🎾 Tennis portal — monitor factorywager_tennis_bot status, registry, and operations.
-      <div class="tenant-panel" id="app">
-      <p>Loading Tennis data…</p>
-      <div id="tenant-status" class="card">
-        <h3>Bot Status</h3>
-        <p class="loading">Checking factorywager_tennis_bot…</p>
-      </div>
-      <div id="tenant-registry" class="card">
-        <h3>Registry</h3>
-        <p class="loading">Loading registry data…</p>
-      </div>
+  <main class="main portal-page">
+    <header class="portal-hero">
+      <h2 class="portal-hero__title">Tennis</h2>
+      <p class="sub">
+        Cross-market venue identity for tennis desk signals — Kalshi · Polymarket · Pinnacle · Betfair.
+        Venue colors are <strong>brand identity</strong> (border + text + 8% tint), not status semantics
+        (<code>ok</code> / <code>warn</code> / <code>bad</code> stay on <code>--green</code> / <code>--yellow</code> / <code>--red</code>).
+      </p>
+    </header>
+
+    <div class="portal-actions">
+      <a href="/registry/tennis/registry.json" target="_blank" rel="noopener">tennis registry</a>
+      <a href="/portal/health/">Health</a>
+      <a href="/portal/ops/">Ops</a>
     </div>
+
+    <section class="portal-section" aria-labelledby="venues-heading">
+      <h2 id="venues-heading">Venue legend</h2>
+      <p class="section-sub">
+        Primer-dark venue badges — scannable at desk density. Short codes: KX · PM · PN · BF.
+      </p>
+      <div id="venue-legend-host"></div>
+      <div class="portal-card-grid" id="venue-demo" style="margin-top:12px"></div>
+    </section>
+
+    <section class="portal-section" aria-labelledby="sample-heading">
+      <h2 id="sample-heading">Sample cross-market rows</h2>
+      <p class="section-sub">Demo table shape for desk Ven column (short badges).</p>
+      <div class="table-wrap">
+        <table class="data-table" id="sample-rows">
+          <thead>
+            <tr>
+              <th>A</th>
+              <th>B</th>
+              <th>Ven</th>
+              <th>Edge</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="portal-section" aria-labelledby="health-heading">
+      <h2 id="health-heading">Tenant health</h2>
+      <p class="section-sub" id="tenant-health-line">Probing portal health…</p>
     </section>
   </main>
 
   <notification-center aria-live="polite"></notification-center>
-
-  <footer class="footer">
-    <p>FactoryWager · <a href="https://github.com/brendadeeznuts1111/project-R-score">GitHub</a></p>
-  </footer>
+  <footer class="footer" data-portal-chrome="footer"></footer>
 
   <script type="module" src="/portal/data.js"></script>
   <script type="module" src="/portal/topbar.js"></script>
+  <script type="module" src="/portal/components/sidebar.js"></script>
+  <script type="module" src="/portal/components/footer.js"></script>
   <script type="module">
     import { getHealthData } from '/portal/data.js';
+    import {
+      mountVenueLegend,
+      renderVenueBadge,
+    } from '/portal/components/venue-badge.js';
 
-    const app = document.getElementById('app');
+    mountVenueLegend(document.getElementById('venue-legend-host'));
 
-    function renderFromHealth(detail) {
-      const { status, data } = detail;
-      if (status === 'ok' || status === 'stale') {
-        app.textContent = `Health: ${data?.status ?? 'unknown'}`;
-      } else if (status === 'error') {
-        app.textContent = 'Health unavailable';
+    const demo = document.getElementById('venue-demo');
+    if (demo) {
+      for (const v of ['kalshi', 'polymarket', 'pinnacle', 'betfair']) {
+        demo.insertAdjacentHTML(
+          'beforeend',
+          `<article class="portal-card"><div class="sub" style="margin-bottom:8px">${v}</div>${renderVenueBadge(v, { size: 'md' })} ${renderVenueBadge(v, { showLabel: false, size: 'sm' })}</article>`
+        );
       }
     }
 
-    document.addEventListener('portal:data', e => renderFromHealth(e.detail));
+    const sample = [
+      { a: 'Sinner', b: 'Alcaraz', venue: 'kalshi', edge: '+4.2', score: '72' },
+      { a: 'Gauff', b: 'Swiatek', venue: 'polymarket', edge: '+1.8', score: '61' },
+      { a: 'Medvedev', b: 'Zverev', venue: 'pinnacle', edge: '-0.4', score: '48' },
+      { a: 'Sabalenka', b: 'Rybakina', venue: 'betfair', edge: '+2.1', score: '55' },
+    ];
+    const tbody = document.querySelector('#sample-rows tbody');
+    if (tbody) {
+      tbody.innerHTML = sample
+        .map(
+          r => `<tr>
+            <td>${r.a}</td>
+            <td>${r.b}</td>
+            <td>${renderVenueBadge(r.venue, { showLabel: false })}</td>
+            <td class="mono ${r.edge.startsWith('-') ? 'st-bad' : 'st-ok'}">${r.edge}¢</td>
+            <td class="mono">${r.score}</td>
+          </tr>`
+        )
+        .join('');
+    }
+
+    const healthLine = document.getElementById('tenant-health-line');
+    function renderHealth(detail) {
+      if (!healthLine) return;
+      const { status, data } = detail || {};
+      if (status === 'ok' || status === 'stale') {
+        healthLine.innerHTML = `Portal health: <span class="st-ok">${data?.status ?? 'ok'}</span> · edge runtime ${data?.runtime ?? '—'}`;
+      } else {
+        healthLine.innerHTML = '<span class="st-warn">Health unavailable</span>';
+      }
+    }
+    document.addEventListener('portal:data', e => renderHealth(e.detail));
     const cached = getHealthData();
-    if (cached) renderFromHealth({ status: 'stale', data: cached });
+    if (cached) renderHealth({ status: 'stale', data: cached });
   </script>
-  <script type="module" src="/portal/components/sidebar.js"></script>
-  <script type="module" src="/portal/components/notification.js"></script>
 </body>
 </html>
