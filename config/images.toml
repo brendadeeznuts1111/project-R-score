@@ -1,0 +1,13 @@
+# Image pipeline defaults — CLI flags override.
+# @see docs/IMAGES.md · scripts/images-generate.ts · https://bun.com/docs/runtime/image
+
+[images]
+avatar_size = "128x128"
+hero_width = 1200
+hero_height = 630
+hero_quality = 85
+avatar_format = "webp"
+cache_dir = "./public/avatars"
+source_dir = "./warehouse/avatars"
+fallback_avatar = "./public/icons/tennis/mark.png"
+max_pixels = 16777216
