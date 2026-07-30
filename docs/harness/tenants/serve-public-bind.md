@@ -108,7 +108,7 @@ host = "127.0.0.1"
 | 2 | `[server] port` in TOML (only when env/CLI port unset) | `[server] host` in TOML |
 | 3 | Bun default **3000** | Bun runtime default |
 
-Code: `resolveServePublicBindPrefs()` in [`lib/http/serve-public-config.ts`](../../../lib/http/serve-public-config.ts).
+Merge API: `resolveServePublicBindPrefs()` in [`lib/http/serve-public-config.ts`](../../../lib/http/serve-public-config.ts) — native TOML import of [`config/serve-public.toml`](../../../config/serve-public.toml), env/CLI port chain wins over `[server] port`. Wiring that prefs object into `scripts/serve-public.ts` is owned by the Wire lane; this doc describes the merge contract only.
 
 Runtime API alternative (dynamic files): `Bun.TOML.parse(await Bun.file("…").text())` — same parser as import.
 
@@ -309,7 +309,7 @@ bun run verify:portal    # auto when bind.json exists
 | `BUN_OPTIONS` | [Environment variables](https://bun.com/docs/runtime/environment-variables) | Prepends CLI flags (e.g. `--hot`, `--port=3099`) |
 | `HOST` / `BIND_HOST` | Harness (`serve-public.ts`) | Optional `Bun.serve({ hostname })` |
 | `SERVE_PUBLIC_HMR` | Harness | Browser SSE reload (`0` off, `1` force on) |
-| `SERVE_PUBLIC_DEV` | Harness | `development: true` on Bun.serve |
+| `SERVE_PUBLIC_DEV` | Harness | `development: true` on Bun.serve — Bun in-browser error page; custom JSON `error` only when off ([error-handling](https://bun.com/docs/runtime/http/error-handling)) |
 | `PORTAL_VERIFY_BASE` | Harness | Override verify probe origin |
 | `OPS_DB_PATH` | Harness | SQLite path (logged at startup) |
 | `REGISTRY_SECRET` | Harness | Bearer gate for publish/API (public read plane stays open) |
@@ -326,11 +326,13 @@ bun run verify:portal    # auto when bind.json exists
 | Port busy | `EADDRINUSE` or `port: 0` | Probe + one `port: 0` retry |
 | Discover actual port | `server.port` / `server.url` | + bind.json + startup logs |
 | Pre-bind free port API | Not provided ([issue #25528](https://github.com/oven-sh/bun/issues/25528)) | Connect probe only (best-effort) |
+| Unhandled errors | [`error` callback](https://bun.com/docs/runtime/http/error-handling) | `attachServePublicErrorHandler` — JSON 500 when `!development`; omit `error` in dev so Bun keeps its page ([`serve-public-error.ts`](../../../lib/http/serve-public-error.ts)) |
 
 ## Verification
 
 ```bash
 bun test tests/serve-public-bind.test.ts tests/serve-public-config.test.ts \
+  tests/serve-public-error.test.ts \
   tests/bun-serve-shape.test.ts tests/bun-serve-lifecycle.test.ts \
   tests/bind-identity-card.test.ts tests/brand-status-cli.test.ts \
   tests/server-defaults.test.ts

@@ -13,6 +13,7 @@ HTTP helpers for Bun.serve surfaces (static response utilities, caching headers)
 | [`live-reload.ts`](live-reload.ts) | Local SSE browser live-reload + HTML inject (serve-public HMR) |
 | [`serve-public-config.ts`](serve-public-config.ts) | `config/serve-public.toml` import + env merge for bind prefs |
 | [`serve-public-bind.ts`](serve-public-bind.ts) | Port bind policy, ephemeral fallback, bind manifest, verify base |
+| [`serve-public-error.ts`](serve-public-error.ts) | Bun.serve `error` — JSON 500 when `!development` ([error-handling](https://bun.com/docs/runtime/http/error-handling)) |
 | [`bun-server.ts`](bun-server.ts) | `Bun.serve` Server helpers — identity, probes, lifecycle |
 | [`bun-serve-shape.ts`](bun-serve-shape.ts) | Docs / bun-types / runtime cross-ref matrix for Server bind fields |
 | [`host-planes.ts`](host-planes.ts) | Bind vs DNS vs Access vs Pages vocabulary map (`HOST_PLANE_MAP`) |
@@ -22,6 +23,12 @@ HTTP helpers for Bun.serve surfaces (static response utilities, caching headers)
 | [`portal-board-slugs.ts`](portal-board-slugs.ts) | Portal board slug SSOT for `portalBoardRoutes` / exact `routes` |
 | [`../docs/bun-release-tracker.ts`](../docs/bun-release-tracker.ts) | Release-note changelog → verification probes (TLS system CA, GC smoke) |
 | [`verification-scripts.ts`](verification-scripts.ts) | Pipe-friendly verify scripts (`curl …/script \| bun run -`) |
+
+### serve-public error + bind prefs
+
+**Error callback** ([error-handling](https://bun.com/docs/runtime/http/error-handling)): `attachServePublicErrorHandler(opts, { development })` strips a custom `error` handler when `development: true` so Bun serves its in-browser page; when development is off, attaches `servePublicErrorHandler` → JSON `{ error: "Internal Server Error" }` with status 500 (no stack on the wire).
+
+**TOML bind prefs**: [`config/serve-public.toml`](../../config/serve-public.toml) + `resolveServePublicBindPrefs()` in [`serve-public-config.ts`](serve-public-config.ts). Env/`--port`/`BUN_PORT`/`PORT`/`NODE_PORT` activate Bun's native port chain (omit `port` on `Bun.serve`); otherwise `[server] port` / `host` from TOML apply. Operator reference: [`docs/harness/tenants/serve-public-bind.md`](../../docs/harness/tenants/serve-public-bind.md).
 
 ### Verification scripts via stdin (`bun run -`)
 
