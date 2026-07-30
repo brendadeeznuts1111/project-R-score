@@ -138,7 +138,7 @@ TOML samples under package-manager docs are almost always **`bunfig.toml`** (`ex
     | `zod -E` | no | already `-E` | no | `zod -E` |
     | `-g cowsay` | no | `--global`/`-g` | no | `-g cowsay` |
     | `@types/bun` | no | no | yes | `@types/bun --exact` |
-- **Known drift (pending removal):** root `.npmrc` `cache=${HOME}/.npm` splits the global virtual store into a shadow store at `~/.npm/links`; machine SSOT is `~/.bun/install/cache`. Single cache root is the target state.
+- **Resolved drift (2026-07-30):** root `.npmrc` contains only non-Bun scope mappings and localhost auth; it no longer configures `cache=${HOME}/.npm` or creates a shadow store. The machine cache SSOT is `~/.bun/install/cache`.
 - **Forbidden in normal shell/IDE env** (see Machine layer): `BUN_INSTALL_CACHE_DIR`, `BUN_INSTALL_GLOBAL_STORE` — use `~/.bunfig.toml` instead. Exception: ephemeral CI via `bun scripts/with-bun-cache-env.ts ci` only.
 
 ## Anti-patterns (wrong behaviors)
