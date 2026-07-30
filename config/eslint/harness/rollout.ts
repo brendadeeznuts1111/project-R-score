@@ -26,7 +26,6 @@ export const STRICT_INVENTORY = [
   'scripts/projects-dashboard.ts',
   'scripts/dx-mcp.ts',
   'scripts/dx-catalog-cli.ts',
-  'scripts/harness-strict-lint.ts',
   'scripts/harness-guard.ts',
   'scripts/pre-commit-harness.ts',
 ] as const;

@@ -25,7 +25,7 @@ Fresh-rerun is mandatory for improve-harness retain/revise/remove: run the affec
 - **`type`** — brand / path-bun / parse*  
   *Ratchet* → `bun run check:brands` · `tsc --project tsconfig.check.json`
 - **`lint`** — `config/eslint/plugin-harness/` · `plugin-bun/`  
-  *Ratchet* → `bun eslint --config eslint.bun-native.config.ts --quiet` (**error** rules)
+  *Ratchet* → `bun eslint --config eslint.harness.config.ts --quiet` (**error** rules)
 - **`skill`** — `.agents/skills/<name>/SKILL.md`  
   *Ratchet* → skill retrieved on fresh rerun of the same job class
 - **`doc-map`** — `lib/docs/repo-docs.ts` + SSOT markdown  

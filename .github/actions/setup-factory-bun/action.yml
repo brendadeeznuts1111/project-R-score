@@ -46,6 +46,6 @@ runs:
       uses: actions/cache@v4
       with:
         path: .cache/eslint-bun-native
-        key: eslint-bun-native-${{ runner.os }}-${{ hashFiles('eslint.bun-native.config.ts', 'eslint.harness.config.ts', 'config/eslint/**/*.ts', 'package.json') }}
+        key: eslint-bun-native-${{ runner.os }}-${{ hashFiles('eslint.harness.config.ts', 'config/eslint/**/*.ts', 'package.json') }}
         restore-keys: |
           eslint-bun-native-${{ runner.os }}-

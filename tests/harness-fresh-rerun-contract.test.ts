@@ -324,7 +324,7 @@ describe('fresh-rerun contract', () => {
 
   test('unknown-param freshRerun is bun-native eslint quiet', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'unknown-param');
-    expect(p?.freshRerun).toBe('bun eslint --config eslint.bun-native.config.ts --quiet');
+    expect(p?.freshRerun).toBe('bun eslint --config eslint.harness.config.ts --quiet');
   });
 
   test('day-loop-typecheck freshRerun is day-loop type-check', () => {

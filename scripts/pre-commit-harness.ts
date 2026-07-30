@@ -410,7 +410,7 @@ async function main(): Promise<void> {
       'bun',
       'eslint',
       '--config',
-      'eslint.bun-native.config.ts',
+      'eslint.harness.config.ts',
       '--cache',
       '--cache-location',
       `${repoRoot}/.cache/eslint-bun-native`,

@@ -28,7 +28,7 @@ async function runEslint(files: string[]): Promise<number> {
     'bun',
     'eslint',
     '--config',
-    'eslint.bun-native.config.ts',
+    'eslint.harness.config.ts',
     '--cache',
     '--cache-location',
     CACHE,

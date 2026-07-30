@@ -1,3 +1,4 @@
+// @see https://bun.com/reference/bun/Transpiler — Bun.Transpiler
 // @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client
 // @see https://bun.com/docs/runtime/workers#creating-a-worker — Workers
 // @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
@@ -590,9 +591,9 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     gateRef: 'pre-commit-harness',
     evidence: [
       'eslint harness/no-unknown-function-param (error)',
-      'bun eslint --config eslint.bun-native.config.ts --quiet',
+      'bun eslint --config eslint.harness.config.ts --quiet',
     ],
-    freshRerun: 'bun eslint --config eslint.bun-native.config.ts --quiet',
+    freshRerun: 'bun eslint --config eslint.harness.config.ts --quiet',
     freshRerunKind: 'claim',
     owner: 'platform / harness',
   },

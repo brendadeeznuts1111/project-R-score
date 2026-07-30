@@ -115,7 +115,7 @@ function eslintStep(fullLint: boolean): Step {
     cmd: fullLint
       ? ['bun', 'run', 'lint:bun-native:rollout']
       : ['bun', 'run', 'lint:bun-native:changed'],
-    owner: 'eslint.bun-native.config.ts · scripts/lint-bun-native-changed.ts',
+    owner: 'eslint.harness.config.ts · scripts/lint-bun-native-changed.ts',
     repair: fullLint ? 'bun run lint:bun-native:rollout' : 'bun run lint:bun-native:changed',
   };
 }

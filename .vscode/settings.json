@@ -25,7 +25,7 @@
   "typescript.updateImportsOnFileMove.enabled": "always",
   "eslint.useFlatConfig": true,
   "eslint.options": {
-    "overrideConfigFile": "eslint.bun-native.config.ts"
+    "overrideConfigFile": "eslint.harness.config.ts"
   },
   "eslint.workingDirectories": [{ "mode": "auto" }],
   "eslint.validate": ["typescript", "typescriptreact", "javascript", "javascriptreact"],

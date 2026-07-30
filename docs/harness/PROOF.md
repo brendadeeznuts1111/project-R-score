@@ -150,7 +150,7 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   passed every validator; only width assertions caught it
 - **`unknown-param`** — bare `unknown` params stay at parse edges (`boundary`)
   _Ratchet_ → eslint `harness/no-unknown-function-param` (**error**) ·
-  `bun eslint --config eslint.bun-native.config.ts --quiet`
+  `bun eslint --config eslint.harness.config.ts --quiet`
 - **`day-loop-typecheck`** — advertised `type-check` covers spine agent edit
   surfaces (`journey`) _Ratchet_ → `bun run type-check` · `tsconfig.check.json`
 - **`lib-docs-typecheck`** — `lib/docs/**` inside day-loop type-check (no

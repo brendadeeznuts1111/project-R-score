@@ -148,7 +148,7 @@ function issueKey(issue: HarnessIssue): string {
 
 export async function collectEslintIssues(
   repoRoot: string,
-  configPath = 'eslint.bun-native.config.ts'
+  configPath = 'eslint.harness.config.ts'
 ): Promise<HarnessIssue[]> {
   const args = [
     'eslint',
