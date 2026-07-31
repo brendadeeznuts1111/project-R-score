@@ -268,7 +268,7 @@ Daemon manages SSH keys from Personal vault.
 | bet-ticker | green | R2 + INITIAL_TOKEN |
 | cascade-mover | partial | Security items OK; **R2 login items not in vault yet** — commented in `cascade-mover-v3/env.template` until `R2 cascade-mover bucket` exists |
 | scanner | green | CF token only |
-| Cloudflare Access | blocked | The `Cloudflare Access API Token` item and template wiring exist, but its value failed Cloudflare authentication on 2026-07-31. Remint it with least privilege, replace the password field, then run `bun run cloudflare:access:token:validate`; see [`cloudflare-access.md`](cloudflare-access.md) |
+| Cloudflare Access | green | The dedicated item injects as `CLOUDFLARE_ACCESS_API_TOKEN`; application and service-token reads passed on 2026-07-31. Production write changes remain plan/review/apply; Pages preview Access remains a Pages-settings target. See [`cloudflare-access.md`](cloudflare-access.md) |
 
 When adding a secret: create the Proton Pass item first, then add `{{ pass://vault/item/field }}` to the matching `env.template`, then `bun run proton:check`.
 

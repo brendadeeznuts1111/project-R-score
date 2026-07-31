@@ -12,12 +12,13 @@ Live status (verified 2026-07-31 — see `.cloudflare-access.yml` header):
 - ~~`reasonix.factory-wager.com` — whole hostname behind Access.~~ **DECOMMISSIONED 2026-07-28** (never provisioned; app removed from policy).
 - `score.factory-wager.com/portal` — portal path behind Access. **APPLIED** (302 → Access login).
 - `project-r-score.pages.dev/portal` — production Pages portal behind Access. **APPLIED** (302 → Access login).
-- `*.project-r-score.pages.dev` — branch and hash preview hostnames. **TARGET**; sampled previews returned public 200 on 2026-07-31.
+- Pages branch and hash preview hostnames — **PAGES-OWNED TARGET**; sampled previews returned public 200 on 2026-07-31. Enable the project-level preview Access policy in Pages settings.
 - `score.factory-wager.com/registry` and public proof/API read routes stay
   outside this app so package and verification consumers remain non-interactive.
-- Pages preview deployments are public by default. The wildcard app in policy is
-  the source-controlled protection target; the Pages dashboard preview-Access
-  switch is an equivalent fallback.
+- Pages preview deployments are public by default. Their protection owner is
+  Pages → project settings → General → Enable access policy. The Access app plan
+  deliberately excludes a wildcard preview app so it cannot duplicate or drift
+  the Pages-owned policy.
 
 The policy source is
 [`.cloudflare-access.yml`](../../../.cloudflare-access.yml). It is deliberately
@@ -83,23 +84,19 @@ evidence, then portal evidence.
 ## Token and vault lane
 
 The general Cloudflare Pages token and DNS token do not have Access scope and
-are never used as a fallback. The dedicated vault item exists at
-`pass://factorywager/Cloudflare Access API Token/password`, but its current
-value failed Cloudflare authentication on 2026-07-31. Before a live plan:
+are never used as a fallback. The dedicated vault item at
+`pass://factorywager/Cloudflare Access API Token/password` passed application
+and service-token reads on 2026-07-31 after Proton injection. The policy plan
+also authenticated, proving Apps and Policies Write without printing or
+persisting the credential outside the vault-derived `.env`/Reasonix cache.
 
-1. Mint a replacement restricted to the FactoryWager account with Access Apps
-   and Policies Read/Edit plus Access Service Tokens Read. Do not add Pages
-   Edit, DNS Edit, or Service Tokens Edit.
-2. Replace the password field of `Cloudflare Access API Token` in Proton.
-3. Inject and run `bun run cloudflare:access:token:validate`; the read-only
-   probe checks app/service-token read health and expiry without printing the
-   credential. It does **not** prove Apps and Policies Edit.
-4. Run the plan with that injected token to prove the required Edit capability;
-   do not copy it into the Kimi keychain
-   or a shell command.
-
-Token creation is a human Cloudflare-dashboard action. Source changes must not
-pretend the permission exists before the vault item is real.
+1. Inject with `bun run proton:inject:factorywager:reasonix`.
+2. Run `bun run cloudflare:access:token:validate`; the read-only probe checks
+   application/service-token health and expiry.
+3. Map `CLOUDFLARE_ACCESS_API_TOKEN` to the policy CLI only for an inspected
+   plan. Never substitute the Pages or DNS token.
+4. Keep Pages preview protection in the Pages project setting; it does not
+   require widening the Access token with Pages Edit.
 
 ## Doctor probes (live edge)
 
@@ -143,33 +140,33 @@ bun tools/portal-cli.ts doctor --group infra --no-write          # live
 bun tools/portal-cli.ts doctor --group infra --offline --layout plain
 ```
 
-### Apply blocker (Access API)
+### Plan safety finding
 
-The dedicated Proton item currently fails read-only probes with **Cloudflare API
-400 Authentication failed**. The general Pages token fails with 403 because it
-has no Access scope. This is a credential-value blocker, not permission to
-reuse or widen either existing token.
+The dedicated token is healthy. A live plan on 2026-07-31 exposed two separate
+concerns: the source name for the existing Ledger application was stale, and
+the production portal changes would replace owner-email policies with the
+broader account-member selector. The source name is now `ledger`; production
+policy broadening remains a separate reviewed rollout and is not a prerequisite
+for preview protection.
 
-**Human steps before apply:**
+**Pages preview steps:**
 
-1. Cloudflare dashboard → replace the token with the least-privilege permissions above.
-2. Proton Pass `factorywager` vault → update item `Cloudflare Access API Token`.
-3. `bun run proton:inject:factorywager:reasonix` (or use `portal-cli secret run`).
-4. Run `cloudflare:access:token:validate` and `cloudflare:access:verify`.
-5. Run `kimi-cloudflare-access plan` (creates/updates only).
-6. Review plan → apply only with a rollback snapshot.
-7. Confirm a preview URL returns Access 302, then re-run the infra doctor.
-
-Do **not** run apply until token + IdP + Pages Access + rollback exist.
+1. Cloudflare dashboard → Workers & Pages → `project-r-score` → Settings →
+   General → Enable access policy.
+2. Confirm a current hash/branch preview returns Access 302.
+3. Run `bun run cloudflare:access:edge:validate` and confirm the registry public
+   plane remains 200 with the shared security headers.
+4. Review any later `kimi-cloudflare-access plan` separately with a rollback
+   snapshot before changing the three production Access applications.
 
 ## Apply gate
 
 ```bash
 bun run cloudflare:access:verify
-bun run cloudflare:access:token:validate # read health; write scope remains unverified
+bun run cloudflare:access:token:validate # read health; write scope was proved by plan
 bun run cloudflare:access:edge:validate
 bun run proton:check
-kimi-cloudflare-access plan   # proves required Apps and Policies Edit scope
+kimi-cloudflare-access plan   # production apps only; inspect, do not use for Pages previews
 ```
 
 After apply, verify:
