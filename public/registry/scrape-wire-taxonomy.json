@@ -1,8 +1,8 @@
 {
   "kind": "scrape-wire-taxonomy",
-  "schemaVersion": 4,
+  "schemaVersion": 5,
   "path": "/registry/scrape-wire-taxonomy.json",
-  "generatedAt": "2026-07-31T11:40:42.453Z",
+  "generatedAt": "2026-07-31T13:18:42.491Z",
   "summary": {
     "books": 10,
     "sports": 8,
@@ -32,7 +32,10 @@
         "draftkings",
         "dk",
         "draft_kings"
-      ]
+      ],
+      "colorKey": "draftkings",
+      "hex": "#2563EB",
+      "css": "#2563eb"
     },
     {
       "id": "fanduel",
@@ -44,7 +47,10 @@
         "fanduel",
         "fd",
         "fan_duel"
-      ]
+      ],
+      "colorKey": "fanduel",
+      "hex": "#14934B",
+      "css": "#14934b"
     },
     {
       "id": "betmgm",
@@ -56,7 +62,10 @@
         "betmgm",
         "mgm",
         "bet_mgm"
-      ]
+      ],
+      "colorKey": "betmgm",
+      "hex": "#C5A572",
+      "css": "#c5a572"
     },
     {
       "id": "caesars",
@@ -69,7 +78,10 @@
         "czr",
         "caesars_sportsbook",
         "william_hill"
-      ]
+      ],
+      "colorKey": "caesars",
+      "hex": "#C9A227",
+      "css": "#c9a227"
     },
     {
       "id": "espnbet",
@@ -82,7 +94,10 @@
         "espn_bet",
         "espn",
         "espn_sportsbook"
-      ]
+      ],
+      "colorKey": "espnbet",
+      "hex": "#DC2626",
+      "css": "#dc2626"
     },
     {
       "id": "fanatics",
@@ -93,7 +108,10 @@
       "aliases": [
         "fanatics",
         "fanatics_sportsbook"
-      ]
+      ],
+      "colorKey": "fanatics",
+      "hex": "#1D4ED8",
+      "css": "#1d4ed8"
     },
     {
       "id": "hardrock",
@@ -106,7 +124,10 @@
         "hard_rock_bet",
         "hard_rock",
         "hardrockbet"
-      ]
+      ],
+      "colorKey": "hardrock",
+      "hex": "#D97706",
+      "css": "#d97706"
     },
     {
       "id": "bet365",
@@ -117,7 +138,10 @@
       "aliases": [
         "bet365",
         "bet_365"
-      ]
+      ],
+      "colorKey": "bet365",
+      "hex": "#FBBF24",
+      "css": "#fbbf24"
     },
     {
       "id": "betrivers",
@@ -129,7 +153,10 @@
         "betrivers",
         "bet_rivers",
         "rivers"
-      ]
+      ],
+      "colorKey": "betrivers",
+      "hex": "#1E40AF",
+      "css": "#1e40af"
     },
     {
       "id": "circa",
@@ -141,7 +168,10 @@
         "circa",
         "circa_sports",
         "circasports"
-      ]
+      ],
+      "colorKey": "circa",
+      "hex": "#0D9488",
+      "css": "#0d9488"
     }
   ],
   "books": [
@@ -160,42 +190,66 @@
     {
       "key": "american_football",
       "label": "American football",
-      "conceptId": "sport.american_football"
+      "conceptId": "sport.american_football",
+      "colorKey": "american_football",
+      "hex": "#92400E",
+      "css": "#92400e"
     },
     {
       "key": "baseball",
       "label": "Baseball",
-      "conceptId": "sport.baseball"
+      "conceptId": "sport.baseball",
+      "colorKey": "baseball",
+      "hex": "#E11D48",
+      "css": "#e11d48"
     },
     {
       "key": "basketball",
       "label": "Basketball",
-      "conceptId": "sport.basketball"
+      "conceptId": "sport.basketball",
+      "colorKey": "basketball",
+      "hex": "#EA580C",
+      "css": "#ea580c"
     },
     {
       "key": "hockey",
       "label": "Hockey",
-      "conceptId": "sport.hockey"
+      "conceptId": "sport.hockey",
+      "colorKey": "hockey",
+      "hex": "#0369A1",
+      "css": "#0369a1"
     },
     {
       "key": "soccer",
       "label": "Soccer",
-      "conceptId": "sport.soccer"
+      "conceptId": "sport.soccer",
+      "colorKey": "soccer",
+      "hex": "#16A34A",
+      "css": "#16a34a"
     },
     {
       "key": "tennis",
       "label": "Tennis",
-      "conceptId": "sport.tennis"
+      "conceptId": "sport.tennis",
+      "colorKey": "tennis",
+      "hex": "#CA8A04",
+      "css": "#ca8a04"
     },
     {
       "key": "golf",
       "label": "Golf",
-      "conceptId": "sport.golf"
+      "conceptId": "sport.golf",
+      "colorKey": "golf",
+      "hex": "#15803D",
+      "css": "#15803d"
     },
     {
       "key": "mma",
       "label": "MMA",
-      "conceptId": "sport.mma"
+      "conceptId": "sport.mma",
+      "colorKey": "mma",
+      "hex": "#7F1D1D",
+      "css": "#7f1d1d"
     }
   ],
   "sports": [
@@ -220,7 +274,10 @@
       "aliases": [
         "nba",
         "national_basketball_association"
-      ]
+      ],
+      "colorKey": "nba",
+      "hex": "#F97316",
+      "css": "#f97316"
     },
     {
       "key": "wnba",
@@ -233,7 +290,10 @@
       "aliases": [
         "wnba",
         "women's_national_basketball_association"
-      ]
+      ],
+      "colorKey": "wnba",
+      "hex": "#FB7185",
+      "css": "#fb7185"
     },
     {
       "key": "nfl",
@@ -246,7 +306,10 @@
       "aliases": [
         "nfl",
         "national_football_league"
-      ]
+      ],
+      "colorKey": "nfl",
+      "hex": "#B45309",
+      "css": "#b45309"
     },
     {
       "key": "ncaaf",
@@ -261,7 +324,10 @@
         "ncaaf",
         "ncaa_football",
         "college_football"
-      ]
+      ],
+      "colorKey": "ncaaf",
+      "hex": "#78350F",
+      "css": "#78350f"
     },
     {
       "key": "ncaab",
@@ -278,7 +344,10 @@
         "ncaa_basketball",
         "college_basketball",
         "cbb"
-      ]
+      ],
+      "colorKey": "ncaab",
+      "hex": "#C2410C",
+      "css": "#c2410c"
     },
     {
       "key": "mlb",
@@ -291,7 +360,10 @@
       "aliases": [
         "mlb",
         "major_league_baseball"
-      ]
+      ],
+      "colorKey": "mlb",
+      "hex": "#EF4444",
+      "css": "#ef4444"
     },
     {
       "key": "nhl",
@@ -304,7 +376,10 @@
       "aliases": [
         "nhl",
         "national_hockey_league"
-      ]
+      ],
+      "colorKey": "nhl",
+      "hex": "#0284C7",
+      "css": "#0284c7"
     },
     {
       "key": "mls",
@@ -317,7 +392,10 @@
       "aliases": [
         "mls",
         "major_league_soccer"
-      ]
+      ],
+      "colorKey": "mls",
+      "hex": "#22C55E",
+      "css": "#22c55e"
     },
     {
       "key": "epl",
@@ -332,7 +410,10 @@
         "epl",
         "premier_league",
         "english_premier_league"
-      ]
+      ],
+      "colorKey": "epl",
+      "hex": "#3F6212",
+      "css": "#3f6212"
     },
     {
       "key": "uefa_champions_league",
@@ -347,7 +428,10 @@
         "uefa_champions_league",
         "ucl",
         "champions_league"
-      ]
+      ],
+      "colorKey": "uefa_champions_league",
+      "hex": "#1E3A8A",
+      "css": "#1e3a8a"
     },
     {
       "key": "atp",
@@ -362,7 +446,10 @@
         "atp",
         "atp_tour",
         "men's_tennis"
-      ]
+      ],
+      "colorKey": "atp",
+      "hex": "#4169E1",
+      "css": "#4169e1"
     },
     {
       "key": "wta",
@@ -377,7 +464,10 @@
         "wta",
         "wta_tour",
         "women's_tennis"
-      ]
+      ],
+      "colorKey": "wta",
+      "hex": "#C71585",
+      "css": "#c71585"
     },
     {
       "key": "itf",
@@ -392,7 +482,10 @@
         "itf",
         "itf_world_tennis_tour",
         "itf_tennis"
-      ]
+      ],
+      "colorKey": "itf",
+      "hex": "#A8A29E",
+      "css": "#a8a29e"
     },
     {
       "key": "atp_challenger",
@@ -406,7 +499,10 @@
         "atp_challenger",
         "atp_challenger_tour",
         "challenger_tour"
-      ]
+      ],
+      "colorKey": "atp_challenger",
+      "hex": "#38BDF8",
+      "css": "#38bdf8"
     },
     {
       "key": "wta_125",
@@ -419,7 +515,10 @@
       "aliases": [
         "wta_125",
         "wta_125_series"
-      ]
+      ],
+      "colorKey": "wta_125",
+      "hex": "#E879F9",
+      "css": "#e879f9"
     },
     {
       "key": "pga_tour",
@@ -432,7 +531,10 @@
       "aliases": [
         "pga_tour",
         "pga"
-      ]
+      ],
+      "colorKey": "pga_tour",
+      "hex": "#166534",
+      "css": "#166534"
     },
     {
       "key": "dp_world_tour",
@@ -445,7 +547,10 @@
       "aliases": [
         "dp_world_tour",
         "european_tour"
-      ]
+      ],
+      "colorKey": "dp_world_tour",
+      "hex": "#4ADE80",
+      "css": "#4ade80"
     },
     {
       "key": "ufc",
@@ -458,7 +563,10 @@
       "aliases": [
         "ufc",
         "ultimate_fighting_championship"
-      ]
+      ],
+      "colorKey": "ufc",
+      "hex": "#991B1B",
+      "css": "#991b1b"
     }
   ],
   "leagues": [

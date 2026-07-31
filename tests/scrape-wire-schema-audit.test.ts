@@ -63,6 +63,18 @@ describe('scrape-wire schema:audit', () => {
     expect(report.issues.some(i => i.code === 'desk.sport_missing')).toBe(true);
   });
 
+  test('color kernel bake coverage is required for schema:audit ok', () => {
+    const report = auditScrapeWireSchema({
+      sports: deskValues('ops.limits.sport'),
+      leagues: deskValues('ops.limits.league'),
+      competitions: deskValues('ops.limits.competition'),
+      markets: deskValues('ops.limits.market_type'),
+      phases: deskValues('ops.limits.market_phase'),
+    });
+    expect(report.ok).toBe(true);
+    expect(report.issues.some(i => i.code.startsWith('color.'))).toBe(false);
+  });
+
   test('every sportsbook has a vendor alias map; resolve overlays work', () => {
     for (const bookId of SCRAPE_BOOK_KEYS) {
       expect(SCRAPE_BOOK_VENDOR_ALIASES[bookId]).toBeDefined();

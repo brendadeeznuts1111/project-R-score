@@ -7,6 +7,7 @@
  * 3. Desk sport / market / competition / phase values ⊆ scrape-wire registries
  * 4. Every US top-10 book has a vendor alias map with canonical targets
  * 5. Scrape-wire ↔ competition-catalog parity (sports, leagues)
+ * 6. Color kernel covers every book / sport / league (Bun.color HEX wire on bake)
  *
  * Desk column values are passed in (from portal semantic vocabulary) so this
  * module does not import portal — wire boundary stays operations-owned.
@@ -28,6 +29,14 @@ import {
 } from '../sports-competition-catalog.ts';
 import { listBookVendorAliasCoverage, SCRAPE_BOOK_VENDOR_ALIASES } from './book-vendor-aliases.ts';
 import {
+  SCRAPE_WIRE_BOOK_COLOR_KEYS,
+  assertScrapeWireColorCoverage,
+  bookColorWire,
+  isScrapeWireHex,
+  leagueColorWire,
+  sportColorWire,
+} from './scrape-wire-color-kernel.ts';
+import {
   SCRAPE_BOOK_KEYS,
   SCRAPE_LEAGUE_KEYS,
   SCRAPE_LEAGUE_TO_SPORT,
@@ -35,6 +44,7 @@ import {
   SCRAPE_PHASE_KEYS,
   SCRAPE_SPORT_KEYS,
   SCRAPE_STATE_KEYS,
+  buildScrapeWireTaxonomyArtifact,
 } from './scrape-wire-taxonomy.ts';
 
 export type SchemaAuditIssue = {
@@ -311,6 +321,109 @@ export function auditScrapeWireSchema(
         'scrape.state_count',
         `Expected 51 US jurisdictions (50 states + DC), found ${SCRAPE_STATE_KEYS.length}`,
         'scrape-wire-taxonomy.states'
+      )
+    );
+  }
+
+  // ── 11. Color kernel covers every book / sport / league ──────────
+  try {
+    assertScrapeWireColorCoverage();
+    if (SCRAPE_WIRE_BOOK_COLOR_KEYS.length !== SCRAPE_BOOK_KEYS.length) {
+      issues.push(
+        issue(
+          'color.book_parity',
+          `SCRAPE_WIRE_BOOK_COLOR_KEYS (${SCRAPE_WIRE_BOOK_COLOR_KEYS.length}) ≠ SCRAPE_BOOK_KEYS (${SCRAPE_BOOK_KEYS.length})`,
+          'scrape-wire-color-kernel'
+        )
+      );
+    }
+    for (const book of SCRAPE_BOOK_KEYS) {
+      if (
+        !SCRAPE_WIRE_BOOK_COLOR_KEYS.includes(book as (typeof SCRAPE_WIRE_BOOK_COLOR_KEYS)[number])
+      ) {
+        issues.push(
+          issue(
+            'color.book_missing',
+            `Sportsbook ${book} has no color kernel role`,
+            `scrape-wire-color-kernel.book.${book}`
+          )
+        );
+      }
+    }
+    const artifact = buildScrapeWireTaxonomyArtifact(generatedAt);
+    const bakeWireOk = (
+      row: { key: string; colorKey?: string; hex?: string; css?: string },
+      wire: { colorKey: string; hex: string; css: string }
+    ): boolean =>
+      row.colorKey === row.key &&
+      row.colorKey === wire.colorKey &&
+      typeof row.hex === 'string' &&
+      isScrapeWireHex(row.hex) &&
+      row.hex.toUpperCase() === wire.hex.toUpperCase() &&
+      row.css === wire.css;
+    for (const row of artifact.bookRegistry) {
+      const wire = bookColorWire(row.key);
+      if (!bakeWireOk(row, wire)) {
+        issues.push(
+          issue(
+            'color.book_bake',
+            `Book registry row ${row.key} missing valid color wire (want ${wire.hex})`,
+            `scrape-wire-taxonomy.bookRegistry.${row.key}`
+          )
+        );
+      }
+    }
+    for (const row of artifact.sportRegistry) {
+      const wire = sportColorWire(row.key);
+      if (!bakeWireOk(row, wire)) {
+        issues.push(
+          issue(
+            'color.sport_bake',
+            `Sport registry row ${row.key} missing valid color wire (want ${wire.hex})`,
+            `scrape-wire-taxonomy.sportRegistry.${row.key}`
+          )
+        );
+      }
+    }
+    for (const row of artifact.leagueRegistry) {
+      const wire = leagueColorWire(row.key);
+      if (!bakeWireOk(row, wire)) {
+        issues.push(
+          issue(
+            'color.league_bake',
+            `League registry row ${row.key} missing valid color wire (want ${wire.hex})`,
+            `scrape-wire-taxonomy.leagueRegistry.${row.key}`
+          )
+        );
+      }
+    }
+    // Cross-registry hex uniqueness on baked rows (books ∪ sports ∪ leagues).
+    const bakedHex = new Map<string, string>();
+    for (const row of [
+      ...artifact.bookRegistry.map(r => ({ id: `book.${r.key}`, hex: r.hex })),
+      ...artifact.sportRegistry.map(r => ({ id: `sport.${r.key}`, hex: r.hex })),
+      ...artifact.leagueRegistry.map(r => ({ id: `league.${r.key}`, hex: r.hex })),
+    ]) {
+      const key = row.hex.toUpperCase();
+      const prior = bakedHex.get(key);
+      if (prior) {
+        issues.push(
+          issue(
+            'color.hex_collision',
+            `Baked hex collision: ${prior} and ${row.id} both ${row.hex}`,
+            'scrape-wire-color-kernel'
+          )
+        );
+      } else {
+        bakedHex.set(key, row.id);
+      }
+    }
+  } catch (err) {
+    issues.push(
+      issue(
+        'color.kernel',
+        err instanceof Error ? err.message : String(err),
+        'scrape-wire-color-kernel'
       )
     );
   }

@@ -182,7 +182,18 @@ All Tier 4 agents normalize vendor wire onto one SSOT before JSONL write:
 | Phase | same | `pregame` · `live` (`in_play`/`inplay` → live) — `phaseRegistry` |
 | State | same | Full US + DC (51) — `stateRegistry`; fixture subset `NJ`·`CO`·`MA` |
 
-Bake: `bun run bake:scrape-wire-taxonomy` → [`/registry/scrape-wire-taxonomy.json`](../../../public/registry/scrape-wire-taxonomy.json) (schema v4). Glossary: `scrape.wire` · `scrape.book` · `scrape.sport` · `scrape.league` · `scrape.market` · `scrape.phase` · `scrape.jurisdiction`.
+Bake: `bun run bake:scrape-wire-taxonomy` → [`/registry/scrape-wire-taxonomy.json`](../../../public/registry/scrape-wire-taxonomy.json) (schema v5 · `colorKey`/`hex`/`css` on book/sport/league rows via [`scrape-wire-color-kernel.ts`](../../../lib/operations/scrapers/scrape-wire-color-kernel.ts)). Glossary: `scrape.wire` · `scrape.book` · `scrape.sport` · `scrape.league` · `scrape.market` · `scrape.phase` · `scrape.jurisdiction`.
+
+**Color kernel contract**
+
+| Invariant | Enforcement |
+| --- | --- |
+| Closed palette | [`scrape-wire-palette.ts`](../../../lib/operations/scrapers/scrape-wire-palette.ts) — books + sports + leagues + `unknown` |
+| Bun.color validate | Module load throws on invalid input; caches `HEX` / `css` / `{rgb}` / `ansi-16m` |
+| Unique HEX | No two palette keys share a normalized `#RRGGBB` (load + `assertScrapeWireColorCoverage`) |
+| Strict chip hex | `/^#[0-9A-Fa-f]{6}$/` — catalog rejects non-matching bake values before `--chip-color` |
+| Bake ↔ kernel | `schema:audit` requires `colorKey === key` and `hex`/`css` equal `*ColorWire(key)` |
+| UI tags | Catalog chips set `data-color-key` + `data-glossary-concept` |
 
 #### Governance (schema:audit)
 
@@ -200,6 +211,7 @@ Checks:
 2. Every league used on the desk (`ops.limits.league`) is in the competition league registry.
 3. Desk sport / market / competition / phase values ⊆ scrape-wire keys.
 4. Every US top-10 book has a vendor alias map ([`book-vendor-aliases.ts`](../../../lib/operations/scrapers/book-vendor-aliases.ts)) whose targets are canonical.
+5. Color kernel covers every book / sport / league; baked `hex`/`css`/`colorKey` match kernel wires; no cross-registry hex collisions.
 
 Per-book resolve: `resolveBookSport` / `resolveBookMarket` / `resolveBookLeague` / `resolveBookPhase` (book overlay → global normalizer).
 
