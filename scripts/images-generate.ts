@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --format
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/image
@@ -7,6 +6,7 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write
 // @see https://bun.com/docs/runtime/glob#quickstart
 // @see https://bun.com/docs/runtime/utils#bun-main
+// @see https://bun.com/reference/bun/argv
 /**
  * Bun.Image CLI — avatar / hero / match / convert / placeholder templates.
  *

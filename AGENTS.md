@@ -297,4 +297,4 @@ Each row maps to a documented API — Bun or Proton Pass CLI — with type, vers
 
 | Debt | Status | Exit criteria | Owner | Doc |
 |------|--------|---------------|-------|-----|
-| **STO TypeScript 6** | Tracked — STO pins `typescript` **5.9.3**; root catalog is **6.0.3** | `cd projects/active/sports-terminal-os && bun run typecheck` green with catalog TS 6 → set `"typescript": "catalog:"` and drop UNIFIED exception | platform / STO | [Open debt: STO TypeScript 6](docs/harness/tenants/monorepo-workspaces.md#open-debt-sto-typescript-6) |
+| **STO TypeScript 6** | **RESOLVED 2026-07-28** — STO is on `"typescript": "catalog:"` (6.0.3); bun.lock records the switch | ~~typecheck green with catalog TS 6~~ done | platform / STO | [Open debt: STO TypeScript 6](docs/harness/tenants/monorepo-workspaces.md#open-debt-sto-typescript-6) |
