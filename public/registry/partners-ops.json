@@ -1,7 +1,7 @@
 {
   "schema": "factorywager.partners-ops.v2",
   "version": "2",
-  "generatedAt": "2026-07-31T15:32:49.114Z",
+  "generatedAt": "2026-07-31T15:48:19.735Z",
   "path": "/registry/partners-ops.json",
   "sources": {
     "seatCapitalDesk": "/registry/seat-capital-desk.json",
@@ -485,13 +485,13 @@
         "css": "#3fb950"
       },
       "telegram": {
-        "chatId": null,
+        "chatId": "-1003937534779",
         "topicIds": {
-          "general": null,
-          "ops": null,
-          "alerts": null,
-          "liquidity": null,
-          "accounting": null
+          "general": 1,
+          "ops": 12,
+          "alerts": 11,
+          "liquidity": 13,
+          "accounting": 14
         }
       },
       "outs": [
@@ -606,10 +606,10 @@
           "coveragePct": 50
         },
         "communication": {
-          "chatLinked": false,
-          "topicsConfigured": 0,
+          "chatLinked": true,
+          "topicsConfigured": 5,
           "topicsRequired": 5,
-          "ready": false
+          "ready": true
         },
         "accounting": {
           "depositVolume": 0,
@@ -632,13 +632,13 @@
         "css": "#3fb950"
       },
       "telegram": {
-        "chatId": null,
+        "chatId": "-1004396694559",
         "topicIds": {
-          "general": null,
-          "ops": null,
-          "alerts": null,
-          "liquidity": null,
-          "accounting": null
+          "general": 1,
+          "ops": 4,
+          "alerts": 5,
+          "liquidity": 6,
+          "accounting": 7
         }
       },
       "outs": [
@@ -710,10 +710,10 @@
           "coveragePct": 100
         },
         "communication": {
-          "chatLinked": false,
-          "topicsConfigured": 0,
+          "chatLinked": true,
+          "topicsConfigured": 5,
           "topicsRequired": 5,
-          "ready": false
+          "ready": true
         },
         "accounting": {
           "depositVolume": 0,
@@ -736,13 +736,13 @@
         "css": "#3fb950"
       },
       "telegram": {
-        "chatId": null,
+        "chatId": "-1004464761699",
         "topicIds": {
-          "general": null,
-          "ops": null,
-          "alerts": null,
-          "liquidity": null,
-          "accounting": null
+          "general": 1,
+          "ops": 5,
+          "alerts": 6,
+          "liquidity": 7,
+          "accounting": 8
         }
       },
       "outs": [
@@ -857,10 +857,10 @@
           "coveragePct": 50
         },
         "communication": {
-          "chatLinked": false,
-          "topicsConfigured": 0,
+          "chatLinked": true,
+          "topicsConfigured": 5,
           "topicsRequired": 5,
-          "ready": false
+          "ready": true
         },
         "accounting": {
           "depositVolume": 0,
@@ -883,13 +883,13 @@
         "css": "#3fb950"
       },
       "telegram": {
-        "chatId": null,
+        "chatId": "-1004400413853",
         "topicIds": {
-          "general": null,
-          "ops": null,
-          "alerts": null,
-          "liquidity": null,
-          "accounting": null
+          "general": 1,
+          "ops": 14,
+          "alerts": 15,
+          "liquidity": 26,
+          "accounting": 37
         }
       },
       "outs": [
@@ -1115,7 +1115,7 @@
         "deposits": [],
         "credits": [],
         "freeRoll": {
-          "total": 100,
+          "total": 25,
           "used": 0
         },
         "ledger": []
@@ -1133,16 +1133,16 @@
           "coveragePct": 80
         },
         "communication": {
-          "chatLinked": false,
-          "topicsConfigured": 0,
+          "chatLinked": true,
+          "topicsConfigured": 5,
           "topicsRequired": 5,
-          "ready": false
+          "ready": true
         },
         "accounting": {
           "depositVolume": 0,
           "creditVolume": 0,
           "ledgerEvents": 0,
-          "freeRollPercent": 100,
+          "freeRollPercent": 25,
           "freeRollApplied": 0
         }
       }
@@ -1155,7 +1155,7 @@
     "accounts": 10,
     "readyAccounts": 7,
     "trackedLimits": 7,
-    "communicationReady": 0,
+    "communicationReady": 4,
     "ledgerEvents": 0,
     "incompleteOuts": 0,
     "validationErrors": 0,
