@@ -133,14 +133,15 @@ export function scoreRollingOriginEmbargo(
   const scored: Array<{ probability: number; actual: number }> = [];
   for (let i = 0; i < ordered.length; i++) {
     const target = ordered[i]!;
+    // Embargo: require enough prior matured outcomes before the target issue
+    // so the score is not a cold-start artifact. Probability itself comes from
+    // the issued forecast (not a train-set base rate).
     const train = ordered.filter(
       s => s.evaluationAt <= target.issuedAt && s.issuedAt < target.issuedAt
     );
     if (train.length < minimumTrainingSamples) continue;
-    const raises = train.filter(s => s.actualRaise).length;
-    const probability = clampProbability((raises + 0.5) / (train.length + 1));
     scored.push({
-      probability,
+      probability: clampProbability(target.predictedRaiseProbability),
       actual: target.actualRaise ? 1 : 0,
     });
   }
