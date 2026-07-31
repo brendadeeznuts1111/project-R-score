@@ -51,21 +51,22 @@
     .tone-warn { color: var(--yellow, #d29922); }
     .tone-bad { color: var(--red, #f85149); }
     .topic-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
-    .topic-chip {
-      font-size: 12px; padding: 4px 9px; border: 1px solid color-mix(in srgb, var(--chip-color, var(--border)) 55%, var(--border));
-      border-radius: 4px; background: color-mix(in srgb, var(--chip-color, var(--surface)) 14%, var(--surface)); color: var(--text);
-      text-decoration: none;
+    /* Fallback first — color-mix dropped entirely in browsers without support. */
+    .topic-chip, .book-chip {
+      font-size: 12px; padding: 4px 9px; border-radius: 4px; text-decoration: none;
+      border: 1px solid var(--border); background: var(--surface); color: var(--text);
     }
-    .topic-chip:hover, .topic-chip:focus-visible {
+    .topic-chip, .book-chip {
+      border: 1px solid color-mix(in srgb, var(--chip-color, var(--border)) 55%, var(--border));
+      background: color-mix(in srgb, var(--chip-color, var(--surface)) 14%, var(--surface));
+    }
+    .topic-chip:hover, .topic-chip:focus-visible,
+    .book-chip:hover, .book-chip:focus-visible {
       border-color: var(--chip-color, var(--accent));
+      background: var(--surface);
       background: color-mix(in srgb, var(--chip-color, var(--accent)) 22%, var(--surface));
     }
-    .book-chip {
-      display: inline-block; font-size: 12px; padding: 2px 7px;
-      border: 1px solid color-mix(in srgb, var(--chip-color, var(--border)) 55%, var(--border));
-      border-radius: 4px; background: color-mix(in srgb, var(--chip-color, var(--surface)) 14%, var(--surface));
-      text-decoration: none; color: var(--text);
-    }
+    .book-chip { display: inline-block; padding: 2px 7px; }
     .cli-row { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); margin: 8px 0 0; }
     .hidden { display: none; }
     .ops-banner.error { margin: 0 0 16px; }
@@ -345,8 +346,13 @@
     /** @type {Map<string, any>} */
     let opsByPartner = new Map();
 
+    function isChipHex(hex) {
+      return typeof hex === 'string' && /^#[0-9A-Fa-f]{6}$/.test(hex);
+    }
+
     function conceptChip(conceptId, label, hex) {
-      const style = hex ? ` style="--chip-color:${esc(hex)}"` : '';
+      const safeHex = isChipHex(hex) ? hex : '';
+      const style = safeHex ? ` style="--chip-color:${safeHex}"` : '';
       return `<a class="topic-chip" href="${glossaryHref(conceptId)}" data-glossary-concept="${esc(conceptId)}"${style}>${esc(label)}</a>`;
     }
 
@@ -495,8 +501,8 @@
       }
       const book = resolveBook(label);
       const conceptId = book?.conceptId || 'scrape.book';
-      const hex = book?.hex || '';
-      const style = hex ? ` style="--chip-color:${esc(hex)}"` : '';
+      const safeHex = isChipHex(book?.hex) ? book.hex : '';
+      const style = safeHex ? ` style="--chip-color:${safeHex}"` : '';
       return `<a class="book-chip" href="${glossaryHref(conceptId)}" data-glossary-concept="${esc(conceptId)}"${style}>${esc(label || '—')}</a>`;
     }
 
