@@ -285,12 +285,12 @@ function formatWhen(unixSeconds) {
   };
 }
 
-function meterHtml(score) {
+function meterHtml(score, concept = G.influenceColumn, label = 'influence') {
   if (score == null || Number.isNaN(Number(score))) {
     return '<span class="lcc-muted">—</span>';
   }
   const pct = Math.max(0, Math.min(100, Math.round(Number(score) * 100)));
-  return `<div class="lcc-meter" title="${pct}% influence" data-glossary-concept="${G.influenceColumn}">
+  return `<div class="lcc-meter" title="${pct}% ${escapeText(label)}" data-glossary-concept="${concept}">
     <div class="lcc-meter-track"><div class="lcc-meter-fill" style="width:${pct}%"></div></div>
     <span class="lcc-meter-label">${pct}%</span>
   </div>`;
@@ -688,7 +688,9 @@ export class LimitChangesCard extends HTMLElement {
             const predRaise = c.predicted_raise_prob;
             const predCell = hasPredictions
               ? `<td data-glossary-concept="${G.predictionColumn}">${
-                  predRaise != null ? meterHtml(predRaise) : '<span class="lcc-muted">—</span>'
+                  predRaise != null
+                    ? meterHtml(predRaise, G.predictionColumn, 'prediction')
+                    : '<span class="lcc-muted">—</span>'
                 }</td>`
               : '';
             return `<tr class="${rowCls}">

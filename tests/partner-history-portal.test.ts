@@ -86,6 +86,7 @@ describe('partner-history portal', () => {
     expect(source).toContain('.sort((left, right) => (right.increased_at ?? 0) - (left.increased_at ?? 0))');
     expect(source).toContain('filtered.some(c => c.predicted_raise_prob != null)');
     expect(source).toContain('G.predictionColumn');
+    expect(source).toContain("meterHtml(predRaise, G.predictionColumn, 'prediction')");
     expect(source).toContain('G.ariaTableCaption');
     expect(source).toContain('Partner limit changes, ${filtered.length} of ${totalAvailable} visible');
     expect(source).toContain('G.skeletonTable');
