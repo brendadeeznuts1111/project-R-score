@@ -9,8 +9,8 @@ describe('Cloudflare Access policy', () => {
   test('repository config is scoped and uses Cloudflare account-member SSO', async () => {
     const report = verifyCloudflareAccessPolicyText(await Bun.file(configPath).text());
     expect(report.ok).toBe(true);
-    // ledger · score/portal · pages.dev/portal · all Pages previews
-    expect(report.appCount).toBe(4);
+    // ledger · score/portal · pages.dev/portal. Pages previews are Pages-owned.
+    expect(report.appCount).toBe(3);
     expect(report.issues).toEqual([]);
   });
 
@@ -48,13 +48,21 @@ describe('Cloudflare Access policy', () => {
     expect(report.issues.map(problem => problem.code)).toContain('missing-required-domain');
   });
 
-  test('requires the wildcard Pages preview application', async () => {
+  test('keeps Pages preview protection out of the Access app plan', async () => {
     const source = await Bun.file(configPath).text();
-    const report = verifyCloudflareAccessPolicyText(
-      source.replace('domain: "*.project-r-score.pages.dev"', 'domain: preview.example.com')
-    );
+    const report = verifyCloudflareAccessPolicyText(`${source}
+  - name: Wrong preview owner
+    domain: "*.project-r-score.pages.dev"
+    type: self_hosted
+    session_duration: 4h
+    policies:
+      - name: Allow Cloudflare account members
+        decision: allow
+        include:
+          - cloudflare_account_member: {}
+`);
     expect(report.ok).toBe(false);
-    expect(report.issues.map(problem => problem.code)).toContain('missing-required-domain');
+    expect(report.issues.map(problem => problem.code)).toContain('pages-preview-owner');
   });
 
   test('rejects interactive sessions above the four-hour identity cap', async () => {

@@ -65,7 +65,6 @@ const REQUIRED_DOMAINS: readonly AccessDomainId[] = [
   asAccessDomainId('score.factory-wager.com/portal'),
   asAccessDomainId('project-r-score.pages.dev/portal'),
 ];
-const REQUIRED_DOMAIN_PATTERNS = ['*.project-r-score.pages.dev'] as const; // brand-ok — Cloudflare wildcard Access domain pattern, not a concrete AccessDomainId
 
 function issue(
   issues: CloudflareAccessPolicyIssue[],
@@ -144,6 +143,14 @@ export function verifyCloudflareAccessPolicyText(text: string): CloudflareAccess
     if (!domain) {
       issue(issues, 'missing-domain', `${path}.domain`, 'app domain is required');
     } else {
+      if (domain === '*.project-r-score.pages.dev') {
+        issue(
+          issues,
+          'pages-preview-owner',
+          `${path}.domain`,
+          'Pages preview protection is owned by the Pages project access-policy setting, not this Access app plan'
+        );
+      }
       if (domains.has(domain)) {
         issue(issues, 'duplicate-domain', `${path}.domain`, `duplicate app domain: ${domain}`);
       }
@@ -155,7 +162,6 @@ export function verifyCloudflareAccessPolicyText(text: string): CloudflareAccess
         domain.startsWith('score.factory-wager.com/') ||
         domain === 'factory-wager.com' ||
         domain.startsWith('project-r-score.pages.dev/') ||
-        domain === '*.project-r-score.pages.dev' ||
         domain === 'project-r-score.pages.dev';
       if (!allowed) {
         issue(
@@ -234,7 +240,7 @@ export function verifyCloudflareAccessPolicyText(text: string): CloudflareAccess
     });
   });
 
-  for (const required of [...REQUIRED_DOMAINS, ...REQUIRED_DOMAIN_PATTERNS]) {
+  for (const required of REQUIRED_DOMAINS) {
     if (!domains.has(String(required))) {
       issue(
         issues,

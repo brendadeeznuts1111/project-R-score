@@ -215,11 +215,12 @@ Root `functions/` is bundled by Wrangler for Workers — **no `bun:sqlite`**, **
 
 Static routing: [`public/_redirects`](../../../public/_redirects) (trailing-slash 301 only) · [`public/_headers`](../../../public/_headers) (JSON content-type, cache, security headers) · [`functions/_middleware.ts`](../../../functions/_middleware.ts) (edge parity). **No SPA rewrite.**
 
-Preview deployments are public by default. Protect `*.project-r-score.pages.dev`
-through the Access policy, then confirm a real branch/hash preview returns an
-Access 302 before treating previews as protected. `bun run
-cloudflare:access:edge:validate` discovers and checks the newest preview. See
-[`cloudflare-access.md`](cloudflare-access.md).
+Preview deployments are public by default. Protect them with Workers & Pages →
+`project-r-score` → Settings → General → Enable access policy. This Pages-owned
+control protects branch/hash previews without altering the production
+`project-r-score.pages.dev` or custom domains. Confirm a real preview returns an
+Access 302; `bun run cloudflare:access:edge:validate` discovers and checks the
+newest preview. See [`cloudflare-access.md`](cloudflare-access.md).
 
 Routing map: [`docs/platform-routing.md`](../../platform-routing.md).
 
