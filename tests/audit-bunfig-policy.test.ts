@@ -1,4 +1,6 @@
-// @see https://bun.com/docs/test
+// @see https://bun.com/docs/test/index#run-tests
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write
+// @see https://bun.com/docs/runtime/shell#getting-started
 // @see https://bun.com/docs/pm/isolated-installs
 // @see https://bun.com/docs/pm/cli/install#minimum-release-age
 /**
@@ -22,6 +24,7 @@ import {
   escapeRegExp,
   machineOwnedKeysLabel,
   machineOwnedLineAssignmentKeys,
+  resolveGitTopLevel,
 } from '../scripts/audit-bunfig.ts';
 
 const ROOT = resolvePath(import.meta.dir, '..');
@@ -91,18 +94,30 @@ describe('audit-bunfig policy SSOT', () => {
     const tmp = joinPath(ROOT, 'tmp/audit-bunfig-policy-fixture');
     await Bun.$`rm -rf ${tmp}`.quiet();
     await Bun.$`mkdir -p ${tmp}/nested`.quiet();
-    await Bun.$`mkdir -p ${tmp}/nested ${tmp}/clean`.quiet();
+    await Bun.$`mkdir -p ${tmp}/nested ${tmp}/clean ${tmp}/separate-repo`.quiet();
     await Bun.write(
       joinPath(tmp, 'nested/bunfig.toml'),
       `[install]\nlinker = "hoisted"\nglobalStore = false\nexact = true\n`
     );
     await Bun.write(joinPath(tmp, 'clean/bunfig.toml'), `[install]\nexact = true\n`);
+    await Bun.write(
+      joinPath(tmp, 'separate-repo/bunfig.toml'),
+      `[install]\nlinker = "hoisted"\n`
+    );
+    await Bun.$`git -C ${joinPath(tmp, 'separate-repo')} init --quiet`.quiet();
 
     const files = await collectMachineOwnedBunfigMatches(tmp);
     expect(files.length).toBe(1);
     expect(files[0]!.rel).toBe('nested/bunfig.toml');
     expect(files[0]!.matches.some(m => m.includes('linker'))).toBe(true);
     expect(files[0]!.matches.some(m => m.includes('globalStore'))).toBe(true);
+    expect(files.some(file => file.rel.startsWith('separate-repo/'))).toBe(false);
+    expect(await resolveGitTopLevel(joinPath(tmp, 'nested'))).toBe(
+      await resolveGitTopLevel(ROOT)
+    );
+    expect(await resolveGitTopLevel(joinPath(tmp, 'separate-repo'))).not.toBe(
+      await resolveGitTopLevel(ROOT)
+    );
 
     const strict = await auditBunfig({
       root: tmp,

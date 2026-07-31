@@ -27,7 +27,7 @@ import {
   MACHINE_OWNED_INSTALL_KEYS,
   REQUIRED_RELEASE_AGE_EXCLUDES,
 } from '../lib/install/machine-bunfig-policy.ts';
-import { resolvePath } from './lib/fs-bun.ts';
+import { dirnamePath, resolvePath } from './lib/fs-bun.ts';
 
 // Re-export SSOT so tests prove audit ≡ doctor (same array references).
 export {
@@ -110,6 +110,18 @@ export type AuditBunfigResult = {
   ephemeralCi: boolean;
 };
 
+/** Resolve the Git worktree that owns a path; undefined outside a Git worktree. */
+export async function resolveGitTopLevel(path: string): Promise<string | undefined> {
+  const proc = Bun.spawn(['git', '-C', path, 'rev-parse', '--show-toplevel'], {
+    stdout: 'pipe',
+    stderr: 'ignore',
+  });
+  const stdout = await new Response(proc.stdout).text();
+  const exitCode = await proc.exited;
+  if (exitCode !== 0 || stdout.trim().length === 0) return undefined;
+  return resolvePath(stdout.trim());
+}
+
 function parseArgs(argv: string[]): { strict: boolean; useDoctor: boolean } {
   let strict = false;
   let useDoctor = false;
@@ -133,6 +145,7 @@ export async function collectMachineOwnedBunfigMatches(
   pattern: RegExp = buildMachineOwnedKeyLinePattern()
 ): Promise<AuditMatchFile[]> {
   const files: string[] = [];
+  const auditGitRoot = await resolveGitTopLevel(root);
   for await (const rel of new Bun.Glob('**/bunfig.toml').scan({
     cwd: root,
     onlyFiles: true,
@@ -152,6 +165,8 @@ export async function collectMachineOwnedBunfigMatches(
   const out: AuditMatchFile[] = [];
   for (const rel of files) {
     const abs = resolvePath(root, rel);
+    const ownerGitRoot = await resolveGitTopLevel(dirnamePath(abs));
+    if (auditGitRoot && ownerGitRoot && ownerGitRoot !== auditGitRoot) continue;
     let text: string;
     try {
       text = await Bun.file(abs).text();
