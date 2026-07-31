@@ -117,6 +117,12 @@ demo-*.js
 test-transpiled-*.js
 matrix-v*.lock
 
+# Reproducible runtime outputs
+.matrix-integration/workflows/*.json
+my-wager-v3/artifacts/*.json
+extracted/
+assets-demo/out-public/
+
 # Advanced test examples (submodule)
 my-wager-v3/examples/advanced-tests/
 
