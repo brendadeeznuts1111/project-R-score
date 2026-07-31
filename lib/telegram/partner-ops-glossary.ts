@@ -28,6 +28,8 @@ export type PartnerOpsOverlayConceptId =
   | 'out.status.blocked'
   | 'out.status.partial'
   | 'out.status.funded'
+  | 'book.type.sweepstakes'
+  | 'book.type.exchange'
   | 'telegram.topic.general'
   | 'telegram.topic.ops'
   | 'telegram.topic.alerts'
@@ -59,6 +61,8 @@ const LABELS: Record<Exclude<PartnerOpsOverlayConceptId, 'partner.ops.event'>, s
   'out.status.blocked': 'Blocked',
   'out.status.partial': 'Partial',
   'out.status.funded': 'Funded',
+  'book.type.sweepstakes': 'Sweepstakes book',
+  'book.type.exchange': 'Exchange',
   'telegram.topic.general': 'General topic',
   'telegram.topic.ops': 'Ops topic',
   'telegram.topic.alerts': 'Alerts topic',
@@ -73,6 +77,10 @@ const DESCRIPTIONS: Partial<
   'out.status.blocked': 'Out blocked — cannot accept bets until cleared.',
   'out.status.partial': 'Out partially funded / limited.',
   'out.status.funded': 'Out funded and ready for desk pressure.',
+  'book.type.sweepstakes':
+    'Sweepstakes / social-casino sportsbook (play-through currency, not state-licensed sports wagering).',
+  'book.type.exchange':
+    'Peer-to-peer / exchange sportsbook (matched bets, commission on winnings).',
   'telegram.topic.liquidity': 'Package forum Liquidity/Outs topic — pinned seat capital desk home.',
   'telegram.topic.accounting': 'Package forum Accounting topic — deposit/withdraw proof thread.',
 };
@@ -114,6 +122,30 @@ function concept(
  */
 export function partnerOpsGlossaryConcepts(): PartnerOpsGlossaryConcept[] {
   return [
+    concept('book.type.sweepstakes', {
+      kind: 'ui',
+      synonyms: ['sweepstakes', 'sweepstakes book', 'social casino book'],
+      values: ['sweepstakes'],
+      seeAlso: [
+        'book.type.legal',
+        'book.type.crypto',
+        'book.type.pph',
+        'book.type.exchange',
+        'book.type.offshore',
+      ],
+    }),
+    concept('book.type.exchange', {
+      kind: 'ui',
+      synonyms: ['exchange', 'betting exchange', 'matched betting venue'],
+      values: ['exchange'],
+      seeAlso: [
+        'book.type.legal',
+        'book.type.crypto',
+        'book.type.pph',
+        'book.type.sweepstakes',
+        'book.type.offshore',
+      ],
+    }),
     concept('deposit.method.cashapp', {
       kind: 'ui',
       synonyms: ['Cash App', 'CashApp'],

@@ -195,19 +195,19 @@
     }
   ],
   "summary": {
-    "concepts": 377,
-    "active": 376,
+    "concepts": 379,
+    "active": 378,
     "deprecated": 1,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 240,
+    "portalSemantics": 242,
     "categories": {
       "market": 33,
       "model": 18,
       "pipeline": 41,
       "tournament": 86,
-      "trading": 56,
+      "trading": 58,
       "ui": 116,
       "warehouse": 27
     },
@@ -229,10 +229,10 @@
       "region": 7,
       "registry": 39,
       "sport": 10,
-      "ui": 189
+      "ui": 191
     },
     "semanticTypes": {
-      "classification": 136,
+      "classification": 138,
       "location": 4,
       "presentation": 4,
       "resource": 74,
@@ -241,7 +241,7 @@
     },
     "uiRoles": {
       "badge": 51,
-      "chip": 92,
+      "chip": 94,
       "code": 22,
       "heading": 58,
       "link": 13,
@@ -11625,6 +11625,86 @@
       "featurePurpose": "Governed Telegram package-group, forum topic, seat desk, and handshake concept.",
       "semanticType": "classification",
       "uiRole": "code",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#1f6feb"
+    },
+    {
+      "id": "book.type.sweepstakes",
+      "label": "Sweepstakes book",
+      "description": "Sweepstakes / social-casino sportsbook (play-through currency, not state-licensed sports wagering).",
+      "category": "trading",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "sweepstakes",
+        "sweepstakes book",
+        "social casino book"
+      ],
+      "values": [
+        "sweepstakes"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "book.type.legal",
+        "book.type.crypto",
+        "book.type.pph",
+        "book.type.exchange",
+        "book.type.offshore"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f0883e"
+    },
+    {
+      "id": "book.type.exchange",
+      "label": "Exchange",
+      "description": "Peer-to-peer / exchange sportsbook (matched bets, commission on winnings).",
+      "category": "trading",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "exchange",
+        "betting exchange",
+        "matched betting venue"
+      ],
+      "values": [
+        "exchange"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "book.type.legal",
+        "book.type.crypto",
+        "book.type.pph",
+        "book.type.sweepstakes",
+        "book.type.offshore"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
       "parentId": null,
       "scope": null,
       "countryCodes": null,

@@ -34,9 +34,11 @@ export const PARTNER_TAGS = {
     { id: 'tag.phase.paused', label: 'Paused', glossaryId: 'partner.phase.paused' },
   ],
   bookType: [
-    { id: 'tag.book.legal', label: 'Legal', glossaryId: 'book.type.legal' },
+    { id: 'tag.book.legal_us', label: 'Legal US', glossaryId: 'book.type.legal' },
     { id: 'tag.book.pph', label: 'PPH', glossaryId: 'book.type.pph' },
     { id: 'tag.book.crypto', label: 'Crypto', glossaryId: 'book.type.crypto' },
+    { id: 'tag.book.sweepstakes', label: 'Sweepstakes', glossaryId: 'book.type.sweepstakes' },
+    { id: 'tag.book.exchange', label: 'Exchange', glossaryId: 'book.type.exchange' },
     { id: 'tag.book.offshore', label: 'Offshore', glossaryId: 'book.type.offshore' },
   ],
   status: [

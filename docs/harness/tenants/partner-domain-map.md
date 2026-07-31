@@ -31,10 +31,12 @@ Against the 45 real concepts (31 Kalshi cores + 14 Factory overlay).
 | `partner.phase.operator_ready` | ui | tennis |
 | `partner.phase.incomplete` | ui | trading |
 | `partner.phase.paused` | ui | env |
-| `book.type.legal` | ui | kalshi |
+| `book.type.legal` | ui | kalshi | wire alias `legal-us` |
 | `book.type.offshore` | ui | polymarket |
 | `book.type.pph` | ui | pinnacle |
 | `book.type.crypto` | ui | middleware |
+| `book.type.sweepstakes` | ui | research | Factory overlay |
+| `book.type.exchange` | ui | polymarket | Factory overlay |
 | `deposit.method.venmo` | ui | trading |
 | `deposit.method.wire` | ui | kalshi |
 | `out.status.ready` | ui | tennis |
@@ -152,6 +154,8 @@ Core partner-ops leaves (below) plus control-plane projections:
 | `book.type.offshore` | polymarket | `#1F6FEB` |
 | `book.type.pph` | pinnacle | `#A371F7` |
 | `book.type.crypto` | middleware | `#D29922` |
+| `book.type.sweepstakes` | research | `#F0883E` |
+| `book.type.exchange` | polymarket | `#1F6FEB` |
 | `deposit.method.venmo` | trading | `#F85149` |
 | `deposit.method.crypto` | tennis | `#3FB950` |
 | `deposit.method.wire` | kalshi | `#58A6FF` |

@@ -48,7 +48,21 @@ const LEGAL_BOOK_SLUGS = new Set([
 
 export type PartnerOpsPhase = 'operator_ready' | 'onboarding' | 'incomplete' | 'paused';
 
-export type BookType = 'legal' | 'offshore' | 'pph' | 'crypto';
+/** Canonical book class (registry + `book.type.${BookType}`). */
+export type BookType = 'legal' | 'offshore' | 'pph' | 'crypto' | 'sweepstakes' | 'exchange';
+
+/**
+ * Preferred wire / UI tokens. `legal-us` is the public alias for registry `legal`
+ * (`book.type.legal`); typo `crpyto` normalizes to `crypto`.
+ */
+export type BookTypeWire =
+  | 'crypto'
+  | 'pph'
+  | 'legal-us'
+  | 'sweepstakes'
+  | 'exchange'
+  | 'offshore'
+  | 'legal';
 export type DepositMethodKey =
   | 'venmo'
   | 'crypto'
@@ -244,10 +258,43 @@ function hasTrackedLimit(raw: string): boolean {
   return value !== '' && value !== '—' && value !== '-' && value !== 'tbd' && value !== 'unknown';
 }
 
+/** Normalize wire tokens (`legal-us`, typo `crpyto`) onto registry BookType. */
+export function parseBookType(raw: string | undefined | null): BookType | undefined {
+  const key = String(raw ?? '')
+    .trim()
+    .toLowerCase()
+    .replaceAll('_', '-');
+  if (!key) return undefined;
+  if (key === 'legal-us' || key === 'legal' || key === 'us-legal') return 'legal';
+  if (key === 'crypto' || key === 'crpyto') return 'crypto';
+  if (key === 'pph' || key === 'pay-per-head') return 'pph';
+  if (key === 'sweepstakes' || key === 'sweepstake' || key === 'sweeps') return 'sweepstakes';
+  if (key === 'exchange' || key === 'betting-exchange') return 'exchange';
+  if (key === 'offshore') return 'offshore';
+  return undefined;
+}
+
+/** Public wire token for a registry BookType (`legal` → `legal-us`). */
+export function bookTypeWire(type: BookType): BookTypeWire {
+  return type === 'legal' ? 'legal-us' : type;
+}
+
 export function classifyBookType(name: string, scrapeIds: Set<string>): BookType {
   const lower = name.toLowerCase();
   if (/\b(crypto|bitcoin|btc|usdc|coin)\b/.test(lower)) return 'crypto';
   if (/\b(pph|pay[\s-]?per[\s-]?head|agent desk)\b/.test(lower)) return 'pph';
+  if (
+    /\b(exchange|matched\s*bet|p2p\s*book)\b/.test(lower) ||
+    /\b(betfair|smarkets|matchbook|kalshi|polymarket)\b/.test(lower)
+  ) {
+    return 'exchange';
+  }
+  if (
+    /\b(sweepstakes?|sweeps|social\s*casino|playthrough|gold\s*coins?|sc\b)\b/.test(lower) ||
+    /\b(fliff|dabble|underdog|prizepicks|sleeper|yahoo\s*sports)\b/.test(lower)
+  ) {
+    return 'sweepstakes';
+  }
   const slug = slugify(name).replace(/-/g, '');
   for (const id of scrapeIds) {
     if (slug.includes(id) || id.includes(slug.slice(0, 8))) return 'legal';

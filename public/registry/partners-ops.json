@@ -1,7 +1,7 @@
 {
   "schema": "factorywager.partners-ops.v2",
   "version": "2",
-  "generatedAt": "2026-07-31T15:48:19.735Z",
+  "generatedAt": "2026-07-31T22:49:07.497Z",
   "path": "/registry/partners-ops.json",
   "sources": {
     "seatCapitalDesk": "/registry/seat-capital-desk.json",
@@ -45,6 +45,8 @@
       "event.settlement.processed",
       "event.telegram.invite_sent",
       "event.telegram.message_pinned",
+      "book.type.sweepstakes",
+      "book.type.exchange",
       "deposit.method.cashapp",
       "deposit.method.paypal",
       "deposit.method.zelle",
@@ -134,6 +136,20 @@
       "token": "--partner-ops-middleware",
       "hex": "#D29922",
       "css": "#d29922"
+    },
+    "book.type.sweepstakes": {
+      "conceptId": "book.type.sweepstakes",
+      "colorKey": "research",
+      "token": "--partner-ops-research",
+      "hex": "#F0883E",
+      "css": "#f0883e"
+    },
+    "book.type.exchange": {
+      "conceptId": "book.type.exchange",
+      "colorKey": "polymarket",
+      "token": "--partner-ops-polymarket",
+      "hex": "#1F6FEB",
+      "css": "#1f6feb"
     },
     "deposit.method.venmo": {
       "conceptId": "deposit.method.venmo",
