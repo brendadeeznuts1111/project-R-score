@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
@@ -6,6 +7,7 @@
  * Uses lib/portal/chrome-catalog.ts SSOT. Idempotent.
  *
  *   bun tools/portal-apply-chrome.ts
+ *   bun tools/portal-apply-chrome.ts --only=glossary
  *   bun run portal:chrome:bake && bun tools/portal-apply-chrome.ts
  */
 import { joinPath } from '../lib/path-bun.ts';
@@ -46,6 +48,7 @@ type PageKey =
   | 'dashboard'
   | 'skills'
   | 'packages'
+  | 'glossary'
   | 'toc'
   | 'compliance'
   | 'limits'
@@ -69,6 +72,12 @@ const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: st
   { file: 'dashboard/index.html', active: 'dashboard', pageLabel: 'Dashboard', brandBadge: 'ops' },
   { file: 'skills/index.html', active: 'skills', pageLabel: 'Skills', brandBadge: 'ops' },
   { file: 'packages/index.html', active: 'packages', pageLabel: 'Packages', brandBadge: 'ops' },
+  {
+    file: 'glossary/index.html',
+    active: 'glossary',
+    pageLabel: 'Glossary',
+    brandBadge: 'domain',
+  },
   { file: 'toc/index.html', active: 'toc', pageLabel: 'TOC', brandBadge: 'ops' },
   {
     file: 'compliance/index.html',
@@ -190,7 +199,16 @@ async function patchFile(entry: (typeof PAGES)[number]): Promise<void> {
   }
 }
 
-for (const page of PAGES) {
+const onlyArg = Bun.argv.find(arg => arg.startsWith('--only='));
+const only = onlyArg?.slice('--only='.length);
+const selectedPages = only
+  ? PAGES.filter(page => page.active === only || page.file === only)
+  : PAGES;
+if (only && selectedPages.length === 0) {
+  throw new Error(`Unknown portal chrome page: ${only}`);
+}
+
+for (const page of selectedPages) {
   await patchFile(page);
 }
 

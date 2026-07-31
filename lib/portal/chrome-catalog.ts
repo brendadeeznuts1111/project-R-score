@@ -133,6 +133,15 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     cli: 'bun run brand:keymap',
   },
   {
+    id: 'glossary',
+    label: 'Glossary',
+    href: '/portal/glossary/',
+    tier: 'overflow',
+    group: 'registry',
+    note: 'market · model · trading · warehouse · pipeline concepts',
+    cli: 'bun run glossary:portal',
+  },
+  {
     id: 'surfaces',
     label: 'Surfaces',
     href: '/portal/surfaces/',
@@ -290,6 +299,7 @@ export const PORTAL_FOOTER_LINKS: PortalChromeCatalog['footerLinks'] = [
   { label: 'TOC', href: '/portal/toc/' },
   { label: 'Packages', href: '/portal/packages/' },
   { label: 'Brands', href: '/portal/brands/' },
+  { label: 'Glossary', href: '/portal/glossary/' },
   { label: 'Surfaces', href: '/portal/surfaces/' },
   { label: 'Health', href: '/portal/health/' },
   { label: 'Portal proof', href: '/registry/portal-weave.json' },

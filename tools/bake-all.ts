@@ -48,6 +48,11 @@ const STEPS: BakeStep[] = [
     note: 'brand-keymap.json',
   },
   {
+    id: 'glossary',
+    cmd: ['bun', 'run', 'glossary:portal'],
+    note: 'domain-glossary.json',
+  },
+  {
     id: 'packages',
     cmd: ['bun', 'run', 'audit:packages', '--', '--bake'],
     note: 'packages-graph-map.json',

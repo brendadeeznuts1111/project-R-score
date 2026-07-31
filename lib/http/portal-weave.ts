@@ -114,6 +114,14 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     cli: 'bun tools/brand-keymap.ts',
   },
   {
+    id: 'glossary',
+    label: 'Glossary',
+    href: '/portal/glossary/',
+    note: 'market · model · trading · warehouse · pipeline concepts',
+    group: 'registry',
+    cli: 'bun run glossary:portal',
+  },
+  {
     id: 'surfaces',
     label: 'Surfaces',
     href: '/portal/surfaces/',
@@ -260,6 +268,11 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     note: '57-value catalog · tracked project adoption',
   },
   {
+    label: 'domain-glossary',
+    href: '/registry/domain-glossary.json',
+    note: 'canonical semantic concepts · category colors · deep-link projection',
+  },
+  {
     label: 'surfaces-state',
     href: '/registry/surfaces-state.json',
     note: 'schema v2 · apex/subdomain/backendCode · Access domains · surfaces:bake',
@@ -390,6 +403,11 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
 
 /** Operator scripts linked from ops/monitoring panels. */
 export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
+  {
+    label: 'Domain glossary bake',
+    cmd: 'bun run glossary:portal',
+    doc: 'docs/portal-foundation.md',
+  },
   {
     label: 'Demo snapshot',
     cmd: 'bun run ops:snapshot:demo',

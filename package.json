@@ -1806,6 +1806,8 @@
     "brand:coverage": "bun tools/brand-coverage.ts",
     "brand:keymap": "bun tools/brand-keymap.ts",
     "brand:keymap:check": "bun tools/brand-keymap.ts --check",
+    "glossary:portal": "bun tools/domain-glossary.ts",
+    "glossary:portal:check": "bun tools/domain-glossary.ts --check",
     "brand:manifest": "bun tools/brand-manifest.ts",
     "brand:status": "bun tools/brand-status.ts",
     "brand:status:once": "bun tools/brand-status.ts --once",

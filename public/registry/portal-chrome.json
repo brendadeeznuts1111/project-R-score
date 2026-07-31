@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-07-29T01:39:13.784Z",
+  "generated": "2026-07-31T06:55:13.067Z",
   "path": "/registry/portal-chrome.json",
   "summary": {
     "priorityNav": 6,
-    "overflowNav": 20,
-    "footerLinks": 18,
+    "overflowNav": 21,
+    "footerLinks": 19,
     "components": 13,
     "scripts": 5
   },
@@ -92,6 +92,15 @@
       "group": "registry",
       "note": "domain-value glossary · constructor tiers · project adoption",
       "cli": "bun run brand:keymap"
+    },
+    {
+      "id": "glossary",
+      "label": "Glossary",
+      "href": "/portal/glossary/",
+      "tier": "overflow",
+      "group": "registry",
+      "note": "market · model · trading · warehouse · pipeline concepts",
+      "cli": "bun run glossary:portal"
     },
     {
       "id": "surfaces",
@@ -261,6 +270,10 @@
     {
       "label": "Brands",
       "href": "/portal/brands/"
+    },
+    {
+      "label": "Glossary",
+      "href": "/portal/glossary/"
     },
     {
       "label": "Surfaces",

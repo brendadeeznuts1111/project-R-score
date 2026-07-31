@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
+// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern
 /**
  * Public route catalog for serve-public + portal dashboards.
  *
@@ -434,6 +436,22 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     kind: 'file-static',
     okStatuses: [200],
     note: '/registry/brand-keymap.json · constructor glossary · project adoption',
+  },
+  {
+    path: '/portal/glossary/',
+    name: 'Domain glossary',
+    category: 'portal',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: '/registry/domain-glossary.json · concept search · URLPattern.hash deep links',
+  },
+  {
+    path: '/registry/domain-glossary.json',
+    name: 'Domain glossary projection',
+    category: 'registry',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: 'Kalshi-bot semantic glossary · Bun.color category tokens',
   },
   {
     path: '/portal/dashboard/',

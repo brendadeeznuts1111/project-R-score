@@ -38,6 +38,7 @@ Exception: [`public/portal/health-page.js`](../public/portal/health-page.js) (sh
 | CLI hub | [`/portal/tools/`](../public/portal/tools/) | copy-CLI · bake freshness · capability subset · `#capabilities` |
 | Packages board | [`/portal/packages/`](../public/portal/packages/) | SVG dependency graph · role filter · detail panel · claim `packages-graph-map-v13` |
 | Brand keymap | [`/portal/brands/`](../public/portal/brands/) | 57-value glossary · constructor tiers · tracked-project adoption · `/registry/brand-keymap.json` |
+| Domain glossary | [`/portal/glossary/`](../public/portal/glossary/) | canonical market/model/trading vocabulary · `URLPattern.hash` deep links · Bun.color-normalized category tokens · `/registry/domain-glossary.json` |
 | Vault board | [`/portal/vault/`](../public/portal/vault/) | live bake visual; gate = `portal-cli vault health` (offline snaps) |
 | Failures board | [`/portal/failures/`](../public/portal/failures/) | junit bake · nav badge = failure count |
 | Install hygiene | [`/portal/install-hygiene/`](../public/portal/install-hygiene/) | cache prune · npm policy · install:verify · `bake:install-hygiene` |
