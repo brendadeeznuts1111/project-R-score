@@ -62,6 +62,8 @@ export const PARTNER_OPS_CONCEPT_COLORS = {
   'book.type.offshore': 'polymarket',
   'book.type.pph': 'pinnacle',
   'book.type.crypto': 'middleware',
+  'book.type.sweepstakes': 'research',
+  'book.type.exchange': 'polymarket',
 
   'deposit.method.venmo': 'trading',
   'deposit.method.crypto': 'tennis',

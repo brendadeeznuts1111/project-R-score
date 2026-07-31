@@ -4,14 +4,18 @@
  * GET /api/agents/v1/limits/raises?node_id=partner-42&hours=24
  *   → filter public/registry/limit-raises.json from ASSETS / origin
  * GET ...?format=table|text|inspect → plain-text dump of filtered raises
+ * GET ...?format=csv|jsonl → account betlog / pattern export (download)
  *
  * Live SQLite enrichment: local serve-public (handleLimitRaiseAgentRequest).
  *
  * @see public/registry/limit-raises.json
  * @see lib/operations/partner-analytics-repo.ts exportLimitRaisesSnapshot
+ * @see lib/operations/limit-betlog-export.ts
  * @see docs/harness/tenants/partner-limits.md
  * @see docs/platform-routing.md
  */
+
+import { betlogDownloadResponse } from '../../../../../lib/operations/limit-betlog-export.ts';
 
 export type PagesEnv = {
   ASSETS?: { fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response> };
@@ -83,10 +87,13 @@ export const onRequestGet: PagesFunction<PagesEnv> = async context => {
         error: 'node_id is required',
         example: '/api/agents/v1/limits/raises?node_id=partner-42&hours=24',
         mode: 'snapshot',
+        formats: ['json', 'table', 'csv', 'jsonl'],
         links: {
           summary: '/api/limits/summary',
-          portal: '/portal/limits/',
+          portal: '/portal/partner-history/',
           registry: '/registry/limit-raises.json',
+          betlogCsv: '/api/agents/v1/limits/raises?node_id=partner-42&hours=168&format=csv',
+          betlogJsonl: '/api/agents/v1/limits/raises?node_id=partner-42&hours=168&format=jsonl',
         },
       },
       400
@@ -202,6 +209,15 @@ export const onRequestGet: PagesFunction<PagesEnv> = async context => {
     });
   }
 
+  if (format === 'csv' || format === 'jsonl' || format === 'ndjson') {
+    return betlogDownloadResponse(
+      filtered.map(row => ({ ...row, node_id: nodeId })),
+      nodeId,
+      format === 'csv' ? 'csv' : 'jsonl',
+      'public, max-age=60'
+    );
+  }
+
   return json({
     ok: true,
     mode: 'snapshot',
@@ -216,9 +232,11 @@ export const onRequestGet: PagesFunction<PagesEnv> = async context => {
     raises: filtered,
     patterns,
     links: {
-      portal: '/portal/limits/',
+      portal: '/portal/partner-history/',
       registry: '/registry/limit-raises.json',
       summary: '/api/limits/summary',
+      betlogCsv: `/api/agents/v1/limits/raises?node_id=${encodeURIComponent(nodeId)}&hours=${hours}&format=csv`,
+      betlogJsonl: `/api/agents/v1/limits/raises?node_id=${encodeURIComponent(nodeId)}&hours=${hours}&format=jsonl`,
       live: 'local serve-public for SQLite-backed raises',
       tenant: 'docs/harness/tenants/partner-limits.md',
     },

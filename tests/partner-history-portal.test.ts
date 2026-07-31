@@ -34,6 +34,15 @@ describe('partner-history portal', () => {
     expect(html).toContain('partnerCodeFromRef');
     expect(html).toContain('id="history-hub-links"');
     expect(html).toContain('href="/portal/partners/"');
+    expect(html).toContain('betlogLinksHtml');
+    expect(html).toContain('betlogHref');
+    expect(html).toContain('/api/agents/v1/limits/raises?');
+    expect(html).toContain("betlogHref(accountId, 'csv')");
+    expect(html).toContain("betlogHref(accountId, 'jsonl')");
+    expect(html).toContain('PARTNER_HISTORY_GLOSSARY.betlogCsv');
+    expect(html).toContain('PARTNER_HISTORY_GLOSSARY.betlogJsonl');
+    expect(html).toContain('Betlog CSV');
+    expect(html).toContain('Betlog JSONL');
   });
 
   test('joins account context and keeps metrics and exports on the filtered view', async () => {
@@ -45,7 +54,12 @@ describe('partner-history portal', () => {
     expect(html).toContain('PARTNER_HISTORY_GLOSSARY.activeFilters');
     expect(html).toContain('PARTNER_HISTORY_GLOSSARY.deltas');
     expect(html).toContain('PARTNER_HISTORY_GLOSSARY.highWater');
-    expect(html).toContain('card.data = { ...opsData, limitChanges: filteredData }');
+    expect(html).toContain('withNodeActivity({ ...opsData, limitChanges: filteredData })');
+    expect(html).not.toContain('Math.round(slot.betsPlaced * 0.45)');
+    expect(html).not.toContain('houseVolume / changeNodes.length');
+    expect(html).toContain('buildNodeActivity');
+    expect(html).toContain('PARTNERS_OPS_URL');
+    expect(html).toContain('nodeActivity');
     expect(html).toContain('const rows = filteredData.map(change => [');
     expect(html).toContain('JSON.stringify(filteredData, null, 2)');
     expect(html).toContain('/portal/limits/#account:${encodeURIComponent(accountId)}');
@@ -83,6 +97,14 @@ describe('partner-history portal', () => {
     expect(source).toContain('G.factorsColumn');
     expect(source).toContain('G.evidenceColumn');
     expect(source).toContain('G.observedColumn');
+    expect(source).toContain('G.leagueColumn');
+    expect(source).toContain('G.depositsColumn');
+    expect(source).toContain('G.betVolumeColumn');
+    expect(source).toContain('resolveSportsbook');
+    expect(source).toContain('resolveSportLeague');
+    expect(source).toContain('sportsbookCell');
+    expect(source).toContain('lcc-book-type');
+    expect(source).toContain('typeGlossaryId');
     expect(source).not.toContain('Prior high-water');
     expect(source).toContain("netDelta > 0 ? '+' : '−'");
     expect(source).toContain('const loadVersion = ++this._loadVersion');

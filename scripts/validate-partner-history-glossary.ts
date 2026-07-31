@@ -57,6 +57,12 @@ const visibleContract = [
   ['Sportsbook', PARTNER_HISTORY_GLOSSARY.sportsbookColumn],
   ['Observed', PARTNER_HISTORY_GLOSSARY.observedColumn],
   ['Account', PARTNER_HISTORY_GLOSSARY.accountColumn],
+  ['League', PARTNER_HISTORY_GLOSSARY.leagueColumn],
+  ['Deposits', PARTNER_HISTORY_GLOSSARY.depositsColumn],
+  ['Bet volume', PARTNER_HISTORY_GLOSSARY.betVolumeColumn],
+  ['Avg wager', PARTNER_HISTORY_GLOSSARY.avgWagerColumn],
+  ['Betlog CSV', PARTNER_HISTORY_GLOSSARY.betlogCsv],
+  ['Betlog JSONL', PARTNER_HISTORY_GLOSSARY.betlogJsonl],
 ] as const;
 
 for (const [label, concept] of visibleContract) {
