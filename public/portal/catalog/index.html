@@ -57,9 +57,22 @@
     .wire-stat strong { color: var(--text); font-family: var(--font-mono, monospace); }
     .wire-section-label { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin: 12px 0 8px; }
     .wire-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-    .wire-chip { font-size: 12px; padding: 4px 9px; border: 1px solid color-mix(in srgb, var(--chip-color, var(--border)) 55%, var(--border)); border-radius: 4px; background: color-mix(in srgb, var(--chip-color, var(--surface)) 14%, var(--surface)); color: var(--text); text-decoration: none; }
-    .wire-chip:hover, .wire-chip:focus-visible { border-color: var(--chip-color, var(--accent)); background: color-mix(in srgb, var(--chip-color, var(--accent)) 22%, var(--surface)); }
-    .wire-chip code { font-size: 11px; color: var(--chip-color, var(--accent)); }
+    /* Fallback first — color-mix dropped entirely in browsers without support. */
+    .wire-chip {
+      font-size: 12px; padding: 4px 9px; border-radius: 4px; text-decoration: none;
+      border: 1px solid var(--border); background: var(--surface); color: var(--text);
+    }
+    .wire-chip {
+      border: 1px solid color-mix(in srgb, var(--chip-color, var(--border)) 55%, var(--border));
+      background: color-mix(in srgb, var(--chip-color, var(--surface)) 14%, var(--surface));
+    }
+    .wire-chip:hover, .wire-chip:focus-visible {
+      border-color: var(--chip-color, var(--accent));
+      background: var(--surface);
+      background: color-mix(in srgb, var(--chip-color, var(--accent)) 22%, var(--surface));
+    }
+    /* Key text stays theme-readable; palette color is border/tint only. */
+    .wire-chip code { font-size: 11px; color: var(--text-dim); }
     .wire-states { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 6px; }
     .wire-state { font-size: 12px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 4px; display: flex; justify-content: space-between; gap: 8px; }
     .wire-state code { color: var(--accent); font-size: 11px; }
