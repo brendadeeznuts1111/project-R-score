@@ -69,3 +69,19 @@ export {
   type RaiseRateEstimate,
   type WalkForwardScore,
 } from './limit-forecast-lab.ts';
+export {
+  LIMIT_FORECAST_FEATURE_VERSION,
+  LIMIT_FORECAST_HORIZON_SECONDS,
+  LIMIT_FORECAST_ISSUANCE_CADENCE_SECONDS,
+  LIMIT_FORECAST_OBSERVATION_GRACE_SECONDS,
+  getLimitForecastEvidenceSummary,
+  issueLimitForecast,
+  matureLimitForecasts,
+  readLimitForecastEvidenceSummary,
+  type LimitForecastDimension,
+  type LimitForecastEvidenceSummary,
+  type LimitForecastFeatureSnapshot,
+  type LimitForecastIssue,
+  type LimitForecastMaturityResult,
+  type LimitForecastOutcome,
+} from './limit-forecast-evidence.ts';

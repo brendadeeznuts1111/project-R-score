@@ -15,6 +15,10 @@ import {
   buildLimitForecastLab,
   type LimitSnapshotSample,
 } from '../lib/prediction/limit-forecast-lab.ts';
+import {
+  readLimitForecastEvidenceSummary,
+  type LimitForecastEvidenceSummary,
+} from '../lib/prediction/limit-forecast-evidence.ts';
 import { asTreeNodeId } from '../lib/types/branded.ts';
 
 const DEFAULT_OUTPUT = 'public/registry/limit-forecast-lab.json';
@@ -34,7 +38,10 @@ function optionValue(args: readonly string[], name: string): string | undefined 
   return args.find(argument => argument.startsWith(prefix))?.slice(prefix.length);
 }
 
-function loadSnapshots(path: string): LimitSnapshotSample[] {
+function loadInputs(path: string): {
+  snapshots: LimitSnapshotSample[];
+  evidence: LimitForecastEvidenceSummary;
+} {
   const db = new Database(path, { readonly: true });
   try {
     const rows = db
@@ -44,15 +51,18 @@ function loadSnapshots(path: string): LimitSnapshotSample[] {
          ORDER BY recorded_at, id`
       )
       .all() as WireLimitSnapshot[];
-    return rows.map(row => ({
-      nodeId: asTreeNodeId(row.node_id),
-      sportsbook: row.sportsbook,
-      sportKey: row.sport_id,
-      marketKey: row.market_id,
-      phase: row.bet_type,
-      maxWager: row.max_wager,
-      recordedAt: row.recorded_at,
-    }));
+    return {
+      snapshots: rows.map(row => ({
+        nodeId: asTreeNodeId(row.node_id),
+        sportsbook: row.sportsbook,
+        sportKey: row.sport_id,
+        marketKey: row.market_id,
+        phase: row.bet_type,
+        maxWager: row.max_wager,
+        recordedAt: row.recorded_at,
+      })),
+      evidence: readLimitForecastEvidenceSummary(db),
+    };
   } finally {
     db.close();
   }
@@ -65,12 +75,12 @@ async function main(): Promise<void> {
   const benchmarkIterations = Math.max(1, Number(optionValue(args, 'bench') ?? '1'));
   const write = !args.includes('--no-write');
   const json = args.includes('--json');
-  const snapshots = loadSnapshots(databasePath);
+  const inputs = loadInputs(databasePath);
 
   const started = performance.now();
-  let payload = buildLimitForecastLab(snapshots);
+  let payload = buildLimitForecastLab(inputs.snapshots, undefined, inputs.evidence);
   for (let iteration = 1; iteration < benchmarkIterations; iteration++) {
-    payload = buildLimitForecastLab(snapshots, payload.generatedAt);
+    payload = buildLimitForecastLab(inputs.snapshots, payload.generatedAt, inputs.evidence);
   }
   const elapsedMs = performance.now() - started;
 
@@ -101,6 +111,9 @@ async function main(): Promise<void> {
       { metric: 'global_rate', value: `${(payload.model.globalRate * 100).toFixed(1)}%` },
       { metric: 'support', value: payload.dataset.support },
       { metric: 'forecast_eligible', value: payload.dataset.forecastEligible },
+      { metric: 'evidence_issues', value: payload.evidence.issues },
+      { metric: 'evidence_pending', value: payload.evidence.pending },
+      { metric: 'evidence_matured', value: payload.evidence.matured },
       { metric: 'average_ms', value: result.benchmark.averageMs },
     ],
     ['metric', 'value'],

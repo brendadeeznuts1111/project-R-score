@@ -30,6 +30,7 @@ import type {
   HostId,
   IdentityId,
   JobId,
+  LimitForecastIssueId,
   OperationId,
   PartnerProfileKey,
   PipelineId,
@@ -76,6 +77,7 @@ import {
   asHostId,
   asIdentityId,
   asJobId,
+  asLimitForecastIssueId,
   asGateDecisionId,
   asLinkNonceId,
   asLoopId,
@@ -124,6 +126,7 @@ const userId: UserId = asUserId('user-1');
 const accountId: AccountId = asAccountId('acct-1');
 const accessKeyId: AccessKeyId = asAccessKeyId('ak-1');
 const operationId: OperationId = asOperationId('op-1');
+const forecastIssueId: LimitForecastIssueId = asLimitForecastIssueId('forecast-1');
 const requestId: RequestId = asRequestId('req-1');
 const documentId: DocumentId = asDocumentId('doc-1');
 const portalTenantId: PortalTenantId = asPortalTenantId('factory');
@@ -175,6 +178,9 @@ const statusCodeAsId: AnyId = asSurfaceStatusCode('live');
 
 // @ts-expect-error — OperationId is not a JobId
 const crossAsJob: JobId = operationId;
+
+// @ts-expect-error — LimitForecastIssueId is not a generic OperationId
+const forecastAsOperation: OperationId = forecastIssueId;
 
 // @ts-expect-error — RequestId is not a CorrelationId
 const crossAsCorrelation: CorrelationId = requestId;
@@ -257,7 +263,7 @@ if (isBrandedValue('SessionId', guardInput)) {
   void guardedSession;
 }
 
-// ─── 6. Aggregate unions cover the complete 57-value catalog (51 IDs + codes) ─
+// ─── 6. Aggregate unions cover the complete 58-value catalog (52 IDs + codes) ─
 
 const everyId: readonly AnyId[] = [
   asSessionId('s'),

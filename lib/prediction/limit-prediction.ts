@@ -6,11 +6,20 @@
  * Follows the prediction pattern from tester.ts (coverage prediction).
  */
 import type { Database } from 'bun:sqlite';
-import { randomUUIDv7 } from 'bun';
 import { getPredictionAccuracy, type AccuracySummary } from './tester.ts';
 import { AccountLimitsRepository } from '../account-limits-repo.ts';
+import { PartnerAnalyticsRepository } from '../operations/partner-analytics-repo.ts';
+import { asTreeNodeId } from '../types/branded.ts';
+import {
+  getLimitForecastEvidenceSummary,
+  issueLimitForecast,
+  matureLimitForecasts,
+  type LimitForecastEvidenceSummary,
+  type LimitForecastFeatureSnapshot,
+  type LimitForecastIssue,
+} from './limit-forecast-evidence.ts';
 
-export const LIMIT_PREDICTION_MODEL = 'bun-1.4.0-limit-v1';
+export const LIMIT_PREDICTION_MODEL = 'bun-1.4.0-limit-v2-evidence';
 
 /** Ensure prediction schema if table doesn't exist (reuses prediction_accuracy). */
 export function ensureLimitPredictionSchema(db: Database): void {
@@ -41,13 +50,13 @@ export type LimitPredictionInput = {
 };
 
 export type LimitPrediction = {
-  id?: string; // brand-ok — opaque prediction row pk
   predictionDate: string;
   predictedRaiseProb: number; // 0-1 probability
   predictedMagnitudePct: number; // expected % increase
   confidence: 'low' | 'medium' | 'high';
   topDrivers: string[];
   windowHint: string;
+  features: LimitForecastFeatureSnapshot;
 };
 
 /** Predict probability and magnitude of a limit raise for a given dimension. */
@@ -95,27 +104,25 @@ export function predictLimitRaise(
 
   // Multi-factor score — try to get from context
   let multiScore = 0.5;
-  try {
-    const { PartnerAnalyticsRepository, computeMultiFactorScore } =
-      require('./partner-analytics-repo.ts') as typeof import('../operations/partner-analytics-repo.ts');
-    const analytics = new PartnerAnalyticsRepository(db, input.node_id);
-    const enriched = analytics.getEnrichedRaisesWithContext(now - 48 * 3600);
-    const match = enriched.find(e => e.sportsbook === input.sportsbook);
-    if (match?.multi_factor_score != null) multiScore = match.multi_factor_score;
-  } catch {}
+  const analytics = new PartnerAnalyticsRepository(db, input.node_id);
+  const enriched = analytics.getEnrichedRaisesWithContext(now - 48 * 3600);
+  const match = enriched.find(e => e.sportsbook === input.sportsbook);
+  if (match?.multi_factor_score != null) multiScore = match.multi_factor_score;
 
   // Window analysis
-  const hour = new Date(now * 1000).getHours();
-  const dow = new Date(now * 1000).getDay();
+  const hour = new Date(now * 1000).getUTCHours();
+  const dow = new Date(now * 1000).getUTCDay();
 
-  // Probability model: weighted combination of factors
-  const freqFactor = Math.min(1, recentRaises / 10) * 0.3;
-  const trendFactor = Math.min(1, Math.max(0, trend / 1000)) * 0.25;
-  const scoreFactor = multiScore * 0.3;
-  const windowFactor = (hour >= 6 && hour <= 14 ? 0.1 : 0.05) * 0.15;
+  // Probability model: P(raise) = clamp(5%, 95%, 0.30F + 0.25T + 0.30I + 0.15W).
+  const frequencySignal = Math.min(1, recentRaises / 10);
+  const trendSignal = Math.min(1, Math.max(0, trend / 1000));
+  const windowSignal = hour >= 6 && hour <= 14 ? 1 : 0;
   const prob = Math.min(
     0.95,
-    Math.max(0.05, freqFactor + trendFactor + scoreFactor + windowFactor)
+    Math.max(
+      0.05,
+      frequencySignal * 0.3 + trendSignal * 0.25 + multiScore * 0.3 + windowSignal * 0.15
+    )
   );
 
   // Magnitude prediction: mean recent raise amount / current max
@@ -130,9 +137,19 @@ export function predictLimitRaise(
   // Window hint
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const windowHint = `Best window: ${dayNames[dow]} ${hour}:00-${Math.min(23, hour + 4)}:00 UTC`;
+  const features: LimitForecastFeatureSnapshot = {
+    currentLimit: currentMax,
+    recentObservationCount: recent.length,
+    raiseFrequency7d: recentRaises,
+    dailyLimitTrend: Number(trend.toFixed(6)),
+    multiFactorInfluence: Number(multiScore.toFixed(6)),
+    utcWindowSignal: windowSignal,
+    utcHour: hour,
+    utcDay: dow,
+  };
 
   return {
-    predictionDate: new Date(now * 1000).toISOString().slice(0, 10),
+    predictionDate: new Date(now * 1000).toISOString(),
     predictedRaiseProb: Number(prob.toFixed(4)),
     predictedMagnitudePct: Number((avgRaisePct * 100).toFixed(1)),
     confidence,
@@ -142,102 +159,39 @@ export function predictLimitRaise(
       trend > 0 ? `📈 Trend +$${trend.toFixed(0)}/day` : '📈 Stable trend',
     ],
     windowHint,
+    features,
   };
 }
 
-/** Record a prediction in prediction_accuracy for backtesting. */
+/** Issue an immutable forecast. Accuracy is written only after explicit maturity. */
 export function recordLimitPrediction(
   db: Database,
   input: LimitPredictionInput,
   prediction: LimitPrediction
-): void {
-  db.run(
-    `
-    INSERT OR IGNORE INTO prediction_accuracy
-      (id, prediction_type, predicted_value, actual_value, error, prediction_date, actual_date, model_version, context, created_at)
-    VALUES (?, ?, ?, 0, 0, ?, ?, ?, ?, ?)
-  `,
-    [
-      randomUUIDv7(),
-      'limit_raise',
-      prediction.predictedRaiseProb,
-      prediction.predictionDate,
-      prediction.predictionDate,
-      LIMIT_PREDICTION_MODEL,
-      JSON.stringify({
-        sportsbook: input.sportsbook,
-        sport_id: input.sport_id,
-        market_id: input.market_id,
-        bet_type: input.bet_type,
-        confidence: prediction.confidence,
-        predictedMagnitudePct: prediction.predictedMagnitudePct,
-        topDrivers: prediction.topDrivers,
-      }),
-      new Date().toISOString(),
-    ]
-  );
+): LimitForecastIssue {
+  const issuedAt = Math.floor(new Date(prediction.predictionDate).getTime() / 1000);
+  return issueLimitForecast(db, {
+    dimension: {
+      nodeId: asTreeNodeId(input.node_id),
+      sportsbook: input.sportsbook,
+      sportKey: input.sport_id,
+      marketKey: input.market_id,
+      betType: input.bet_type,
+    },
+    modelVersion: LIMIT_PREDICTION_MODEL,
+    predictedRaiseProbability: prediction.predictedRaiseProb,
+    predictedMagnitudePct: prediction.predictedMagnitudePct,
+    features: prediction.features,
+    issuedAt,
+  });
 }
 
-/** Backfill actual_value + error for past predictions once real data arrives. */
-export function backfillLimitPredictions(db: Database): number {
-  const pending = db
-    .query(
-      `
-    SELECT pa.id, pa.prediction_date, pa.context
-    FROM prediction_accuracy pa
-    WHERE pa.prediction_type = 'limit_raise' AND pa.actual_value = 0
-  `
-    )
-    .all() as Array<{ id: string; prediction_date: string; context: string }>; // brand-ok ×2 — opaque PK + date
-
-  let count = 0;
-  for (const row of pending) {
-    const ctx = JSON.parse(row.context) as Record<string, string>;
-    const dayStart = Math.floor(new Date(row.prediction_date).getTime() / 1000);
-    const dayEnd = dayStart + 86400;
-
-    // Check if a raise occurred in the 48h after prediction
-    const actual = db
-      .query(
-        `
-      SELECT COUNT(*) as n FROM partner_account_limits a
-      WHERE a.node_id = ? AND a.sportsbook = ? AND a.sport_id = ? AND a.market_id = ? AND a.bet_type = ?
-        AND a.recorded_at BETWEEN ? AND ?
-        AND EXISTS (
-          SELECT 1 FROM partner_account_limits b
-          WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
-            AND b.sport_id = a.sport_id AND b.market_id = a.market_id
-            AND b.bet_type = a.bet_type AND b.id < a.id
-            AND a.max_wager > b.max_wager
-        )
-    `
-      )
-      .get(
-        ctx.node_id ?? '',
-        ctx.sportsbook ?? '',
-        ctx.sport_id ?? '',
-        ctx.market_id ?? '',
-        ctx.bet_type ?? '',
-        dayStart,
-        dayEnd + 86400
-      ) as { n: number } | null;
-
-    const actualValue = (actual?.n ?? 0) > 0 ? 1 : 0;
-    const predicted = db
-      .query(`SELECT predicted_value FROM prediction_accuracy WHERE id = ?`)
-      .get(row.id) as { predicted_value: number } | null;
-
-    if (predicted != null) {
-      const error = Math.abs(predicted.predicted_value - actualValue);
-      db.run(`UPDATE prediction_accuracy SET actual_value = ?, error = ? WHERE id = ?`, [
-        actualValue,
-        error,
-        row.id,
-      ]);
-      count++;
-    }
-  }
-  return count;
+/** Mature due forecasts only when a terminal observation proves horizon coverage. */
+export function backfillLimitPredictions(
+  db: Database,
+  options?: { nowSec?: number; observationGraceSeconds?: number }
+): number {
+  return matureLimitForecasts(db, options).matured;
 }
 
 /** Run full prediction cycle: predict, record, backfill, return accuracy. */
@@ -245,6 +199,7 @@ export function runLimitPredictionCycle(db: Database): {
   predictions: number;
   backfilled: number;
   accuracy: AccuracySummary | null;
+  evidence: LimitForecastEvidenceSummary;
 } {
   ensureLimitPredictionSchema(db);
   const now = Math.floor(Date.now() / 1000);
@@ -259,10 +214,9 @@ export function runLimitPredictionCycle(db: Database): {
     SELECT DISTINCT node_id, sportsbook, sport_id, market_id, bet_type
     FROM partner_account_limits
     WHERE recorded_at > ?
-  `,
-      [now - 7 * 86400]
+  `
     )
-    .all() as LimitPredictionInput[];
+    .all(now - 7 * 86400) as LimitPredictionInput[];
 
   let count = 0;
   for (const dim of dimensions) {
@@ -272,7 +226,8 @@ export function runLimitPredictionCycle(db: Database): {
   }
 
   const accuracy = getPredictionAccuracy(db, 'limit_raise');
-  return { predictions: count, backfilled, accuracy };
+  const evidence = getLimitForecastEvidenceSummary(db, now);
+  return { predictions: count, backfilled, accuracy, evidence };
 }
 
 /** Format limit prediction as terminal-friendly string. */

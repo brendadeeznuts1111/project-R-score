@@ -110,6 +110,10 @@ function main(): void {
           metric: 'bias',
           value: result.accuracy?.n ? result.accuracy.bias.toFixed(4) : '—',
         },
+        { metric: 'evidence_issues', value: result.evidence.issues },
+        { metric: 'evidence_pending', value: result.evidence.pending },
+        { metric: 'evidence_matured', value: result.evidence.matured },
+        { metric: 'evidence_no_raise', value: result.evidence.negatives },
       ];
       logTable(summaryRows, ['metric', 'value'], {
         colors: true,

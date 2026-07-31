@@ -26,6 +26,9 @@ function render(payload) {
     metric(payload.dataset.raises, 'raises'),
     metric(payload.dataset.cutsOrFlat, 'cuts or flat'),
     metric(percent(payload.model.globalRate), 'smoothed global rate'),
+    metric(payload.evidence.issues, 'issued forecasts'),
+    metric(payload.evidence.matured, 'matured outcomes'),
+    metric(payload.evidence.negatives, 'matured no-raise'),
   ].join('');
 
   const blockers = payload.promotion.blockers.map(item => `<li>${esc(item)}</li>`).join('');
@@ -46,6 +49,16 @@ function render(payload) {
       </tr>`
     )
     .join('');
+
+  document.getElementById('lab-evidence').innerHTML = `
+    <div class="lab-evidence-grid">
+      ${metric(payload.evidence.pending, 'pending horizon')}
+      ${metric(payload.evidence.dueAwaitingObservation, 'awaiting observation')}
+      ${metric(payload.evidence.positives, 'matured raises')}
+      ${metric(payload.evidence.negatives, 'matured no-raise')}
+      ${metric(score(payload.evidence.meanBrierScore), 'mean Brier')}
+      ${metric(score(payload.evidence.meanLogLoss), 'mean log loss')}
+    </div>`;
 
   document.getElementById('lab-books').innerHTML = payload.model.books
     .map(

@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "generatedAt": "2026-07-28T23:36:14.223Z",
+  "generatedAt": "2026-07-31T09:26:40.836Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
-  "brandCount": 57,
+  "brandCount": 58,
   "domainCount": 9,
   "domains": [
     "audit",
@@ -16,7 +16,7 @@
     "surfaces"
   ],
   "kinds": {
-    "id": 51,
+    "id": 52,
     "key": 1,
     "code": 5
   },
@@ -44,7 +44,7 @@
     {
       "name": "operations",
       "module": "lib/types/branded/operations.ts",
-      "brandCount": 21
+      "brandCount": 22
     },
     {
       "name": "portal",
@@ -1210,6 +1210,33 @@
       "guard": "BRAND_GUARDS.isOpsChannelEventId",
       "shortName": "opsChannelEventId",
       "envName": "OPS_CHANNEL_EVENT_ID"
+    },
+    {
+      "name": "LimitForecastIssueId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Immutable issued limit forecast identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asLimitForecastIssueId",
+        "try": "tryLimitForecastIssueId",
+        "parse": "parseLimitForecastIssueId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isLimitForecastIssueId",
+      "shortName": "limitForecastIssueId",
+      "envName": "LIMIT_FORECAST_ISSUE_ID"
     },
     {
       "name": "StateCode",

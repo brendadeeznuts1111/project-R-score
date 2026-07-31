@@ -7,8 +7,9 @@ SSOT lives here — not under `lib/operations/`.
 |------|------|
 | [`tester.ts`](tester.ts) | `simulateCoveragePrediction` · `runCoverageBacktest` · `runDailyCoveragePredictionCycle` · `getPredictionAccuracy` |
 | [`report.ts`](report.ts) | SVG chart + HTML; optional `Bun.WebView` → `Bun.Image` PNG |
-| [`schema.ts`](schema.ts) | `ensurePredictionSchema` → table `prediction_accuracy` |
-| [`limit-prediction.ts`](limit-prediction.ts) | Partner limit raise forecast · cycle · backfill |
+| [`schema.ts`](schema.ts) | `ensurePredictionSchema` → accuracy + immutable limit forecast evidence tables |
+| [`limit-prediction.ts`](limit-prediction.ts) | Partner limit raise forecast · issue · maturity cycle |
+| [`limit-forecast-evidence.ts`](limit-forecast-evidence.ts) | Issued forecast identity · 48-hour maturity · positive/no-raise outcomes |
 | [`limit-prediction-report.ts`](limit-prediction-report.ts) | `LimitPredictionReport` · Bun.inspect.table |
 | [`granular-analysis.ts`](granular-analysis.ts) | Book/sport/market breakdown + regulatory correlation |
 | [`index.ts`](index.ts) | Public barrel (coverage + limit prediction) |
@@ -52,6 +53,17 @@ bunx --bun ops-prediction report --webview
 Env: `OPS_DB_PATH` (same ops DB as experiments / provision).
 
 Backtest inserts are **idempotent** per `(prediction_type, prediction_date, model_version)`.
+
+## Limit forecast evidence
+
+Limit forecasts do not enter `prediction_accuracy` when issued. The cycle first
+writes an immutable `limit_forecast_issues` row with point-in-time features and
+a 48-hour evaluation horizon. After the horizon, `matureLimitForecasts` requires
+a terminal account-limit observation before it writes the separate immutable
+`limit_forecast_outcomes` row.
+
+This keeps pending forecasts distinct from actual no-raise outcomes. Only
+matured outcomes are projected into `prediction_accuracy`.
 
 ### Report artifacts (Bun native)
 

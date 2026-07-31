@@ -54,6 +54,11 @@
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         margin: 16px 0;
       }
+      .lab-evidence-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+      }
       .lab-stat {
         border: 1px solid var(--border);
         border-radius: var(--radius);
@@ -169,6 +174,15 @@
             <tbody id="lab-candidates"></tbody>
           </table>
         </div>
+      </section>
+
+      <section class="lab-panel">
+        <h2>Evidence lifecycle</h2>
+        <p class="lab-sub">
+          Issued forecasts remain pending until the 48-hour horizon is covered by a terminal
+          observation. Pending forecasts are never counted as no-raise outcomes.
+        </p>
+        <div id="lab-evidence"></div>
       </section>
 
       <section class="lab-panel">

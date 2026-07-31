@@ -41,6 +41,8 @@ export type PartnerTemplateId = BrandedString<'PartnerTemplateId'>;
 export type GateDecisionId = BrandedString<'GateDecisionId'>;
 /** Unified ops channel outbox event id. */
 export type OpsChannelEventId = BrandedString<'OpsChannelEventId'>;
+/** Immutable issued limit-forecast identity. */
+export type LimitForecastIssueId = BrandedString<'LimitForecastIssueId'>;
 /**
  * US state / jurisdiction code for regulatory scoping (e.g. MA, NJ).
  * Always stored uppercase two-letter.
@@ -71,6 +73,7 @@ const partnerProfileKey = defineBrandConstructors('PartnerProfileKey');
 const partnerTemplateId = defineBrandConstructors('PartnerTemplateId');
 const gateDecisionId = defineBrandConstructors('GateDecisionId');
 const opsChannelEventId = defineBrandConstructors('OpsChannelEventId');
+const limitForecastIssueId = defineBrandConstructors('LimitForecastIssueId');
 
 export const asOperationId = operation.as;
 export const tryOperationId = operation.try;
@@ -147,6 +150,10 @@ export const parseGateDecisionId = gateDecisionId.parse;
 export const asOpsChannelEventId = opsChannelEventId.as;
 export const tryOpsChannelEventId = opsChannelEventId.try;
 export const parseOpsChannelEventId = opsChannelEventId.parse;
+
+export const asLimitForecastIssueId = limitForecastIssueId.as;
+export const tryLimitForecastIssueId = limitForecastIssueId.try;
+export const parseLimitForecastIssueId = limitForecastIssueId.parse;
 
 /** Primary regulated jurisdictions for sports-wager compliance (MA / NJ). */
 export const REGULATED_STATE_CODES = ['MA', 'NJ'] as const;
@@ -348,6 +355,13 @@ export const OPERATIONS_BRAND_SPECS = [
     tiers: ['as', 'try', 'parse'],
     mint: ['system-internal'],
     description: 'Unified ops channel outbox event id',
+  },
+  {
+    name: 'LimitForecastIssueId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal'],
+    description: 'Immutable issued limit forecast identity',
   },
   {
     name: 'StateCode',

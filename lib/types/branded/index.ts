@@ -92,6 +92,7 @@ import type {
   PartnerTemplateId,
   GateDecisionId,
   OpsChannelEventId,
+  LimitForecastIssueId,
   StateCode,
   ZipCode,
 } from './operations.ts';
@@ -182,6 +183,7 @@ export type AnyId =
   | PartnerTemplateId
   | GateDecisionId
   | OpsChannelEventId
+  | LimitForecastIssueId
   | PortalTenantId
   | TelegramUserId
   | PortalAccountId

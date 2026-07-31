@@ -9,6 +9,10 @@ cycle. It can compare global and sportsbook-pooled candidates, inspect support,
 and generate Bun CPU profiles without writing `prediction_accuracy`,
 `limit_prediction_state`, or account-limit rows.
 
+The production cycle writes immutable `limit_forecast_issues` and separately
+matured `limit_forecast_outcomes`. The lab reads those tables without mutation
+and exposes pending, observation-blocked, raise, and no-raise counts.
+
 ## Commands
 
 ```bash
@@ -23,10 +27,10 @@ The profiler writes `.cpuprofile` plus Markdown analysis under
 
 ## Evidence boundary
 
-The current dataset contains limit transitions, not a representative collection
-of issued forecasts with completed 48-hour positive and negative outcomes. The
-artifact therefore sets `forecastEligible: false`. Its Brier and log-loss values
-are diagnostic comparisons only.
+The transition candidate dataset is still not a representative collection of
+completed 48-hour positive and negative outcomes. The artifact therefore sets
+`forecastEligible: false`. Transition Brier and log-loss values remain
+diagnostic comparisons; evidence lifecycle metrics are reported separately.
 
 Promotion requires immutable forecast rows, point-in-time features, explicit
 maturity state, rolling-origin evaluation with a horizon embargo, and calibrated

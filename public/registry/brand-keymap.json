@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-07-28T23:36:15.065Z",
+  "generatedAt": "2026-07-31T09:32:29.861Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -10,12 +10,12 @@
     "stableImport": "lib/types/branded.ts"
   },
   "summary": {
-    "brands": 57,
+    "brands": 58,
     "domains": 9,
-    "ids": 51,
+    "ids": 52,
     "keys": 1,
     "codes": 5,
-    "covered": 37,
+    "covered": 38,
     "referencedUnconstructed": 5,
     "unused": 15,
     "cataloguedProjects": 35,
@@ -72,7 +72,7 @@
     {
       "name": "operations",
       "module": "lib/types/branded/operations.ts",
-      "brandCount": 21
+      "brandCount": 22
     },
     {
       "name": "portal",
@@ -2103,9 +2103,9 @@
       "envName": "TREE_NODE_ID",
       "coverage": {
         "status": "covered",
-        "references": 247,
+        "references": 261,
         "constructors": {
-          "as": 93,
+          "as": 99,
           "try": 2,
           "parse": 7
         },
@@ -2127,8 +2127,8 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 247,
-            "constructionCalls": 102,
+            "references": 261,
+            "constructionCalls": 108,
             "guardCalls": 0,
             "files": [
               "lib/accounts/accounts.ts",
@@ -2373,23 +2373,25 @@
       "envName": "PARTNER_PROFILE_KEY",
       "coverage": {
         "status": "covered",
-        "references": 3,
+        "references": 5,
         "constructors": {
-          "as": 2,
+          "as": 3,
           "try": 0,
           "parse": 0
         },
         "guards": 0,
         "files": [
+          "lib/operations/account-limit-profiles.ts",
           "lib/operations/partner-profile-bridge.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 3,
-            "constructionCalls": 2,
+            "references": 5,
+            "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
+              "lib/operations/account-limit-profiles.ts",
               "lib/operations/partner-profile-bridge.ts"
             ]
           },
@@ -2599,6 +2601,64 @@
       }
     },
     {
+      "name": "LimitForecastIssueId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Immutable issued limit forecast identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asLimitForecastIssueId",
+        "try": "tryLimitForecastIssueId",
+        "parse": "parseLimitForecastIssueId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isLimitForecastIssueId",
+      "shortName": "limitForecastIssueId",
+      "envName": "LIMIT_FORECAST_ISSUE_ID",
+      "coverage": {
+        "status": "covered",
+        "references": 3,
+        "constructors": {
+          "as": 3,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/prediction/limit-forecast-evidence.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 3,
+            "constructionCalls": 3,
+            "guardCalls": 0,
+            "files": [
+              "lib/prediction/limit-forecast-evidence.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
       "name": "StateCode",
       "domain": "operations",
       "tiers": [
@@ -2628,17 +2688,19 @@
       "envName": "STATE_CODE",
       "coverage": {
         "status": "covered",
-        "references": 19,
+        "references": 29,
         "constructors": {
-          "as": 22,
+          "as": 32,
           "try": 6,
           "parse": 0
         },
         "guards": 0,
         "files": [
+          "lib/operations/account-limit-profiles.ts",
           "lib/operations/limit-patterns.ts",
           "lib/operations/partner-compliance-onboard.ts",
           "lib/operations/play-dispatcher.ts",
+          "lib/operations/regulation-policy-catalog.ts",
           "lib/operations/state-compliance-http.ts",
           "lib/operations/state-regulation.ts",
           "tools/deep-audit-report.ts"
@@ -2646,13 +2708,15 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 19,
-            "constructionCalls": 28,
+            "references": 29,
+            "constructionCalls": 38,
             "guardCalls": 0,
             "files": [
+              "lib/operations/account-limit-profiles.ts",
               "lib/operations/limit-patterns.ts",
               "lib/operations/partner-compliance-onboard.ts",
               "lib/operations/play-dispatcher.ts",
+              "lib/operations/regulation-policy-catalog.ts",
               "lib/operations/state-compliance-http.ts",
               "lib/operations/state-regulation.ts",
               "tools/deep-audit-report.ts"
@@ -2698,24 +2762,26 @@
       "envName": "ZIP_CODE",
       "coverage": {
         "status": "covered",
-        "references": 10,
+        "references": 12,
         "constructors": {
           "as": 11,
-          "try": 3,
+          "try": 4,
           "parse": 0
         },
         "guards": 0,
         "files": [
+          "lib/operations/account-limit-profiles.ts",
           "lib/operations/limit-patterns.ts",
           "lib/operations/state-regulation.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 10,
-            "constructionCalls": 14,
+            "references": 12,
+            "constructionCalls": 15,
             "guardCalls": 0,
             "files": [
+              "lib/operations/account-limit-profiles.ts",
               "lib/operations/limit-patterns.ts",
               "lib/operations/state-regulation.ts"
             ]
@@ -3028,15 +3094,19 @@
       "envName": "HOST_ID",
       "coverage": {
         "status": "covered",
-        "references": 19,
+        "references": 38,
         "constructors": {
           "as": 2,
-          "try": 3,
+          "try": 4,
           "parse": 0
         },
         "guards": 0,
         "files": [
+          "lib/http/bun-serve-lifecycle.ts",
+          "lib/http/bun-serve-shape.ts",
+          "lib/http/host-lineage.ts",
           "lib/http/host-planes.ts",
+          "lib/http/portal-weave.ts",
           "lib/surfaces/inventory.ts",
           "lib/verification/cloudflare-access-live.ts",
           "scripts/bake-surfaces.ts",
@@ -3046,11 +3116,15 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 19,
-            "constructionCalls": 5,
+            "references": 38,
+            "constructionCalls": 6,
             "guardCalls": 0,
             "files": [
+              "lib/http/bun-serve-lifecycle.ts",
+              "lib/http/bun-serve-shape.ts",
+              "lib/http/host-lineage.ts",
               "lib/http/host-planes.ts",
+              "lib/http/portal-weave.ts",
               "lib/surfaces/inventory.ts",
               "lib/verification/cloudflare-access-live.ts",
               "scripts/bake-surfaces.ts",
@@ -3162,7 +3236,7 @@
       "envName": "SUBDOMAIN_ID",
       "coverage": {
         "status": "covered",
-        "references": 7,
+        "references": 10,
         "constructors": {
           "as": 4,
           "try": 0,
@@ -3171,17 +3245,19 @@
         "guards": 0,
         "files": [
           "lib/http/host-planes.ts",
+          "lib/http/portal-weave.ts",
           "lib/surfaces/inventory.ts",
           "lib/verification/cloudflare-access-live.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 7,
+            "references": 10,
             "constructionCalls": 4,
             "guardCalls": 0,
             "files": [
               "lib/http/host-planes.ts",
+              "lib/http/portal-weave.ts",
               "lib/surfaces/inventory.ts",
               "lib/verification/cloudflare-access-live.ts"
             ]
@@ -3227,28 +3303,32 @@
       "envName": "SURFACE_ID",
       "coverage": {
         "status": "covered",
-        "references": 8,
+        "references": 12,
         "constructors": {
-          "as": 2,
+          "as": 3,
           "try": 0,
           "parse": 0
         },
         "guards": 0,
         "files": [
           "lib/http/host-planes.ts",
+          "lib/surfaces/doctor-check.ts",
           "lib/surfaces/inventory.ts",
-          "scripts/bake-surfaces.ts"
+          "scripts/bake-surfaces.ts",
+          "tools/lib/portal-cli-doctor-infra.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 8,
-            "constructionCalls": 2,
+            "references": 12,
+            "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
               "lib/http/host-planes.ts",
+              "lib/surfaces/doctor-check.ts",
               "lib/surfaces/inventory.ts",
-              "scripts/bake-surfaces.ts"
+              "scripts/bake-surfaces.ts",
+              "tools/lib/portal-cli-doctor-infra.ts"
             ]
           },
           "projects": {
@@ -3292,7 +3372,7 @@
       "envName": "PAGES_PROJECT_ID",
       "coverage": {
         "status": "referenced-unconstructed",
-        "references": 5,
+        "references": 6,
         "constructors": {
           "as": 0,
           "try": 0,
@@ -3306,7 +3386,7 @@
         "scopes": {
           "spine": {
             "status": "referenced-unconstructed",
-            "references": 5,
+            "references": 6,
             "constructionCalls": 0,
             "guardCalls": 0,
             "files": [
@@ -3355,14 +3435,15 @@
       "envName": "ACCESS_DOMAIN_ID",
       "coverage": {
         "status": "covered",
-        "references": 16,
+        "references": 19,
         "constructors": {
-          "as": 5,
-          "try": 0,
+          "as": 4,
+          "try": 1,
           "parse": 0
         },
         "guards": 0,
         "files": [
+          "lib/http/host-lineage.ts",
           "lib/http/host-planes.ts",
           "lib/surfaces/inventory.ts",
           "lib/verification/cloudflare-access-live.ts",
@@ -3372,10 +3453,11 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 16,
+            "references": 19,
             "constructionCalls": 5,
             "guardCalls": 0,
             "files": [
+              "lib/http/host-lineage.ts",
               "lib/http/host-planes.ts",
               "lib/surfaces/inventory.ts",
               "lib/verification/cloudflare-access-live.ts",
@@ -3424,7 +3506,7 @@
       "envName": "SURFACE_STATUS_CODE",
       "coverage": {
         "status": "covered",
-        "references": 5,
+        "references": 7,
         "constructors": {
           "as": 1,
           "try": 0,
@@ -3432,16 +3514,18 @@
         },
         "guards": 0,
         "files": [
-          "lib/surfaces/inventory.ts"
+          "lib/surfaces/inventory.ts",
+          "scripts/bake-surfaces.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 5,
+            "references": 7,
             "constructionCalls": 1,
             "guardCalls": 0,
             "files": [
-              "lib/surfaces/inventory.ts"
+              "lib/surfaces/inventory.ts",
+              "scripts/bake-surfaces.ts"
             ]
           },
           "projects": {
@@ -3751,7 +3835,7 @@
     },
     {
       "project": "projects/active/utilities/shortcut-registry",
-      "sourceFiles": 29,
+      "sourceFiles": 30,
       "brandedFiles": 0,
       "brands": [],
       "localBrandTypes": [],

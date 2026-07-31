@@ -5,6 +5,7 @@
  * write production forecasts or claim 48-hour calibration from change rows.
  */
 import type { TreeNodeId } from '../types/branded.ts';
+import type { LimitForecastEvidenceSummary } from './limit-forecast-evidence.ts';
 
 export const LIMIT_FORECAST_LAB_SCHEMA = 1;
 export const LIMIT_FORECAST_LAB_MODEL = 'beta-binomial-transition-v0';
@@ -209,7 +210,17 @@ export function scoreWalkForward(
 
 export function buildLimitForecastLab(
   rows: readonly LimitSnapshotSample[],
-  generatedAt = new Date().toISOString()
+  generatedAt = new Date().toISOString(),
+  evidence: LimitForecastEvidenceSummary = {
+    issues: 0,
+    pending: 0,
+    dueAwaitingObservation: 0,
+    matured: 0,
+    positives: 0,
+    negatives: 0,
+    meanBrierScore: null,
+    meanLogLoss: null,
+  }
 ) {
   const transitions = buildLimitTransitions(rows);
   const raised = transitions.filter(row => row.raised).length;
@@ -264,11 +275,13 @@ export function buildLimitForecastLab(
       ],
       books: pooled.books,
     },
+    evidence,
     promotion: {
       eligible: false,
       blockers: [
-        'No immutable issued-at forecast rows',
-        'No matured 48-hour no-change outcome windows',
+        ...(evidence.issues === 0 ? ['No immutable issued-at forecast rows'] : []),
+        ...(evidence.matured === 0 ? ['No matured 48-hour outcome windows'] : []),
+        ...(evidence.negatives === 0 ? ['No matured no-raise outcomes'] : []),
         'No leakage-safe rolling-origin calibration set',
       ],
       nextModel: 'regularized-global-logistic-with-pooled-book-effects',

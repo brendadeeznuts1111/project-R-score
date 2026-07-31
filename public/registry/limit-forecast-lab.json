@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "limit-forecast-lab",
-  "generatedAt": "2026-07-31T09:12:47.758Z",
+  "generatedAt": "2026-07-31T09:28:46.458Z",
   "source": {
     "database": "data/operations.db",
     "table": "partner_account_limits",
@@ -107,11 +107,21 @@
       }
     ]
   },
+  "evidence": {
+    "issues": 21,
+    "pending": 21,
+    "dueAwaitingObservation": 0,
+    "matured": 0,
+    "positives": 0,
+    "negatives": 0,
+    "meanBrierScore": null,
+    "meanLogLoss": null
+  },
   "promotion": {
     "eligible": false,
     "blockers": [
-      "No immutable issued-at forecast rows",
-      "No matured 48-hour no-change outcome windows",
+      "No matured 48-hour outcome windows",
+      "No matured no-raise outcomes",
       "No leakage-safe rolling-origin calibration set"
     ],
     "nextModel": "regularized-global-logistic-with-pooled-book-effects"
