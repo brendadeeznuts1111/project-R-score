@@ -97,6 +97,8 @@
       <a href="/registry/tennis/board-metrics.json" target="_blank" rel="noopener">board-metrics</a>
       <a href="/registry/tennis/mid-distribution.json" target="_blank" rel="noopener">mid-distribution</a>
       <a href="/registry/tennis/registry.json" target="_blank" rel="noopener">registry</a>
+      <a href="/registry/tennis/agent-auth.json" target="_blank" rel="noopener" title="Cloud agent FACTORY_WAGER_TOKEN status">agent-auth</a>
+      <a href="/portal/env/" title="Vault map · FACTORY_WAGER_TOKEN">Env / vault</a>
       <a href="/portal/health/">Health</a>
       <button type="button" id="btn-refresh">Refresh</button>
     </div>
@@ -273,21 +275,32 @@ function setBanner(tone, title, meta) {
   $('banner-meta').textContent = meta;
 }
 
-function renderKpis(metrics, regPkgCount) {
+function renderKpis(metrics, regPkgCount, agentAuth) {
   const host = $('kpi-host');
   if (!host) return;
   const source = metrics?.source ?? '—';
   const tone =
     source === 'event-store' ? 'ok' : source === 'sample' ? 'warn' : 'warn';
+  const authStatus = agentAuth?.status === 'configured'
+    ? 'configured'
+    : agentAuth
+      ? (agentAuth.status || 'missing')
+      : '—';
+  const authSub = agentAuth?.envKey
+    ? `${agentAuth.envKey} · cloud agent`
+    : 'FACTORY_WAGER_TOKEN';
   host.innerHTML = [
     kpiHtml('Source', source, metrics?.note?.slice(0, 48) ?? ''),
     kpiHtml('Markets', metrics?.markets ?? '—', 'event-store rows'),
     kpiHtml('Book mids', metrics?.midsUsable ?? '—', `${metrics?.bookTicksLatest ?? 0} latest ticks`),
     kpiHtml('Packages', regPkgCount, 'tennis registry'),
+    kpiHtml('Registry token', authStatus, authSub),
   ].join('');
   // tint first card by source
   const first = host.querySelector('[data-kpi="Source"] .val');
   if (first) first.className = `val st-${tone === 'ok' ? 'ok' : 'warn'}`;
+  const authValue = host.querySelector('[data-kpi="Registry token"] .val');
+  if (authValue) authValue.className = `val st-${authStatus === 'configured' ? 'ok' : 'warn'}`;
 }
 
 function renderCharts(metrics) {
@@ -513,6 +526,20 @@ async function loadRegistry() {
   }
 }
 
+async function loadAgentAuth() {
+  try {
+    const res = await fetch('/registry/tennis/agent-auth.json', {
+      credentials: 'same-origin',
+      headers: { Accept: 'application/json' },
+      cache: 'no-store',
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
 function renderRegistry(reg) {
   const packages = reg?.packages && typeof reg.packages === 'object' ? reg.packages : {};
   const names = Object.keys(packages);
@@ -551,9 +578,10 @@ function renderHealth(detail) {
 
 export async function load() {
   setBanner('warn', 'Loading tennis board…', 'metrics · registry · avatars · matches');
-  const [metrics, reg] = await Promise.all([
+  const [metrics, reg, agentAuth] = await Promise.all([
     loadMetrics(),
     loadRegistry(),
+    loadAgentAuth(),
     loadAvatarIndex(),
     loadLiveMatches(),
   ]);
@@ -562,10 +590,16 @@ export async function load() {
   renderSampleTable(document.getElementById('venue-filter')?.value || '');
 
   if (metrics) {
-    renderKpis(metrics, pkgCount);
+    renderKpis(metrics, pkgCount, agentAuth);
     renderCharts(metrics);
     renderVenuesFromMetrics(metrics);
     const tone = metrics.source === 'event-store' ? 'ok' : 'warn';
+    const authBit =
+      agentAuth?.status === 'configured'
+        ? ' · registry token configured'
+        : agentAuth
+          ? ' · registry token missing'
+          : '';
     setBanner(
       tone,
       metrics.source === 'event-store' ? 'Tennis board live' : 'Tennis board (sample metrics)',
@@ -576,10 +610,16 @@ export async function load() {
         metrics.eventStorePath ? metrics.eventStorePath : null,
       ]
         .filter(Boolean)
-        .join(' · ')
+        .join(' · ') + authBit
     );
   } else {
-    setBanner('bad', 'Metrics unavailable', 'Run bun run tennis:board:bake');
+    renderKpis(null, pkgCount, agentAuth);
+    setBanner(
+      'bad',
+      'Metrics unavailable',
+      'Run bun run tennis:board:bake' +
+        (agentAuth?.status === 'configured' ? ' · registry token configured' : '')
+    );
   }
 }
 
