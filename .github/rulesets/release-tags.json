@@ -1,0 +1,30 @@
+{
+  "name": "FactoryWager immutable release tags",
+  "target": "tag",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "include": ["refs/tags/v*"],
+      "exclude": []
+    }
+  },
+  "rules": [
+    { "type": "deletion" },
+    {
+      "type": "update",
+      "parameters": {
+        "update_allows_fetch_and_merge": false
+      }
+    },
+    { "type": "non_fast_forward" },
+    {
+      "type": "tag_name_pattern",
+      "parameters": {
+        "name": "FactoryWager version tag",
+        "negate": false,
+        "operator": "regex",
+        "pattern": "^v[0-9]+\\.[0-9]+(?:\\.[0-9]+)?(?:-[0-9A-Za-z][0-9A-Za-z.-]*)?(?:\\+[0-9A-Za-z.-]+)?$"
+      }
+    }
+  ]
+}

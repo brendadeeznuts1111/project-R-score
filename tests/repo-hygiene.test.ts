@@ -10,6 +10,7 @@ import {
   dedupeViolations,
   findGitignored,
   findStrayFiles,
+  findTrackedViolations,
   type Violation,
 } from '../scripts/repo-hygiene.ts';
 
@@ -62,5 +63,9 @@ describe('repo hygiene mechanics', () => {
     const findings = await findStrayFiles();
     const keys = findings.map(({ file, rule }) => `${file}\0${rule}`);
     expect(new Set(keys).size).toBe(keys.length);
+  });
+
+  test('tracked scan ignores local runtime residue and keeps the committed tree clean', async () => {
+    expect(await findTrackedViolations()).toEqual([]);
   });
 });

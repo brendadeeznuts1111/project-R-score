@@ -53,6 +53,24 @@ describe('branded domain-value catalog', () => {
     expect(kinds.filter(kind => kind === 'code')).toHaveLength(5);
   });
 
+  test('entity names and generated symbols are collision-free after normalization', () => {
+    const normalizedNames = branded.BRAND_CATALOG.map(spec => spec.name.toLocaleLowerCase('en-US'));
+    expect(new Set(normalizedNames).size).toBe(normalizedNames.length);
+
+    const generatedSymbols = branded.BRAND_CATALOG.flatMap(spec => {
+      const names = branded.constructorNamesForBrand(spec.name);
+      return [names.as, names.try, names.parse, `is${spec.name}`];
+    });
+    expect(new Set(generatedSymbols).size).toBe(generatedSymbols.length);
+
+    for (const spec of branded.BRAND_CATALOG) {
+      expect(new Set(spec.tiers).size).toBe(spec.tiers.length);
+      expect(new Set(spec.mint).size).toBe(spec.mint.length);
+      expect(spec.description.trim()).toBe(spec.description);
+      expect(spec.description.length).toBeGreaterThan(12);
+    }
+  });
+
   test('every catalog value exports working as/try/parse constructors', () => {
     for (const spec of branded.BRAND_CATALOG) {
       const names = branded.constructorNamesForBrand(spec.name);

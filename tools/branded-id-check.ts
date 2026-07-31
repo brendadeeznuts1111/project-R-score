@@ -520,7 +520,25 @@ async function stagedViolations(): Promise<Violation[]> {
 
 async function collectFiles(args: string[]): Promise<string[]> {
   const paths = args.filter(a => !a.startsWith('--'));
-  const roots = paths.length > 0 ? paths : ['lib'];
+  // The repository-wide smart gate governs committed source. Untracked files
+  // are handled by the staged no-baseline gate when an author proposes them;
+  // scanning every local prototype here lets an unrelated worktree lane block
+  // otherwise independent commits.
+  if (paths.length === 0) {
+    const proc = Bun.spawn(['git', 'ls-files', '-z', '--', 'lib/**/*.ts', 'lib/*.ts'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const output = await new Response(proc.stdout).text();
+    const code = await proc.exited;
+    if (code !== 0) throw new Error('git ls-files failed while collecting branded-ID sources');
+    return output
+      .split('\0')
+      .map(file => file.trim())
+      .filter(file => file.endsWith('.ts'));
+  }
+
+  const roots = paths;
   const files: string[] = [];
   for (const root of roots) {
     const stat = await Bun.file(root)

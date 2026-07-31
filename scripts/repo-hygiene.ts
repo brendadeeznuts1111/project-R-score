@@ -15,6 +15,7 @@
  *
  * Usage: bun scripts/repo-hygiene.ts          # full check
  *        bun scripts/repo-hygiene.ts --staged  # only check staged files (pre-commit)
+ *        bun scripts/repo-hygiene.ts --tracked # committed tree only (pre-push/CI)
  */
 
 import {
@@ -230,11 +231,58 @@ async function checkStagedStray(): Promise<Violation[]> {
   return violations;
 }
 
+/** Push/CI view: inspect only Git-owned paths, never ignored operator state. */
+async function findTrackedViolations(): Promise<Violation[]> {
+  const proc = Bun.spawn(['git', 'ls-files', '-z'], {
+    cwd: ROOT,
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
+  const output = await new Response(proc.stdout).text();
+  const code = await proc.exited;
+  if (code !== 0) throw new Error('git ls-files failed during tracked hygiene scan');
+
+  const violations: Violation[] = [];
+  for (const file of output.split('\0').filter(Boolean)) {
+    const [top] = file.split('/');
+    if (file.includes('/') && top && !top.startsWith('.') && !ALLOWED_ROOT_DIRS.has(top)) {
+      violations.push(violation(`${top}/`, 'unexpected-tracked-root-dir'));
+      continue;
+    }
+    if (!file.includes('/') && FORBIDDEN_ROOT_FILES.has(file)) {
+      violations.push(violation(file, 'forbidden-root-file'));
+    }
+    // The tracked-tree gate protects root machine credentials. Nested product
+    // fixtures/config are governed when added by the stricter staged scan.
+    if (!file.includes('/') && SECRETS_FILES.includes(file)) {
+      violations.push(violation(file, 'tracked-secret-file'));
+    }
+    if (
+      FORBIDDEN_STAGED.some(
+        p => file === p || file.startsWith(p) || (p.endsWith('/') && file.startsWith(p))
+      )
+    ) {
+      violations.push(violation(file, 'tracked-harness-regenerable'));
+    }
+    if (!file.includes('/') && STRAY_PATTERNS.some(pattern => pattern.test(file))) {
+      violations.push(violation(file, 'tracked-stray-output-root'));
+    }
+  }
+  return dedupeViolations(violations);
+}
+
 async function main() {
   const stagedOnly = Bun.argv.includes('--staged');
+  const trackedOnly = Bun.argv.includes('--tracked');
   const findings: Violation[] = [];
 
-  if (stagedOnly) {
+  if (stagedOnly && trackedOnly) {
+    throw new Error('--staged and --tracked are mutually exclusive');
+  }
+
+  if (trackedOnly) {
+    findings.push(...(await findTrackedViolations()));
+  } else if (stagedOnly) {
     // Pre-commit mode — evict drift first so ./~ never gets staged
     Bun.spawnSync(['bun', joinPath(ROOT, 'scripts/evict-root-tilde-cache.ts')], { cwd: ROOT });
     findings.push(...(await checkStagedSecrets()));
@@ -278,6 +326,7 @@ export {
   findGitignored,
   findRootClutter,
   findStrayFiles,
+  findTrackedViolations,
   checkStagedSecrets,
   type Violation,
 };

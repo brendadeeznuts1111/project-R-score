@@ -476,7 +476,7 @@ async function main(): Promise<void> {
     );
   });
 
-  // Parallel: brands staged ‖ brands smart ‖ path-bun ‖ bun-env (types only on --full)
+  // Parallel: staged adoption + committed-tree adoption + catalog collision proof.
   console.info(
     full
       ? '🏷️  Branded IDs + ratchets (staged ‖ smart ‖ types ‖ path-bun ‖ bun-env)...'
@@ -503,6 +503,7 @@ async function main(): Promise<void> {
       '--strict',
       '--quiet',
     ]),
+    spawnGate('brands-catalog', ['bun', 'test', 'tests/branded-catalog.test.ts']),
   ];
 
   const brandedTypesStaged = staged.some(f => {
@@ -584,6 +585,7 @@ async function main(): Promise<void> {
 
   const brandStaged = parallelResults.find(r => r.name === 'brands-staged')?.code ?? 1;
   const brandSmart = parallelResults.find(r => r.name === 'brands-smart')?.code ?? 1;
+  const brandCatalog = parallelResults.find(r => r.name === 'brands-catalog')?.code ?? 1;
   const brandTypes = parallelResults.find(r => r.name === 'brands-types')?.code ?? 0;
   const pathBun = parallelResults.find(r => r.name === 'path-bun')?.code ?? 0;
   const bunEnv = parallelResults.find(r => r.name === 'bun-env')?.code ?? 0;
@@ -609,6 +611,11 @@ async function main(): Promise<void> {
   }
   if (brandSmart !== 0) {
     console.error('❌ Actionable unbranded IDs — bun run check:brands');
+    await writeTimings(timings, full);
+    process.exit(1);
+  }
+  if (brandCatalog !== 0) {
+    console.error('❌ Domain entity catalog collision or constructor contract failure');
     await writeTimings(timings, full);
     process.exit(1);
   }

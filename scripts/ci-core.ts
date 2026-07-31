@@ -36,6 +36,18 @@ const CORE_STEPS: Array<{ name: string; cmd: string[] }> = [
     cmd: ['bun', 'scripts/check-import-graph.ts'],
   },
   {
+    name: 'brand-manifest',
+    cmd: ['bun', 'tools/brand-manifest.ts', '--check'],
+  },
+  {
+    name: 'brand-adoption',
+    cmd: ['bun', 'tools/branded-id-check.ts', '--smart', '--strict', '--quiet'],
+  },
+  {
+    name: 'brand-catalog',
+    cmd: ['bun', 'test', 'tests/branded-catalog.test.ts'],
+  },
+  {
     name: 'policy-audit',
     cmd: ['bun', 'tools/policy-audit.ts'],
   },

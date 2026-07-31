@@ -1,5 +1,11 @@
 #!/usr/bin/env sh
 set -e
 
-# Install journey only — full gates live in CI (harness-gates) + pre-commit.
+# Push boundary: verify the committed tree even if a local commit bypassed its
+# hook. GitHub's main ruleset repeats these checks on the proposed merge.
 bun scripts/verify-install-cache.ts --quiet
+bun scripts/repo-hygiene.ts --tracked
+bun tools/brand-manifest.ts --check
+bun tools/branded-id-check.ts --smart --strict --quiet
+bun test tests/branded-catalog.test.ts tests/repository-governance.test.ts
+bun scripts/security-dependency-guard.ts

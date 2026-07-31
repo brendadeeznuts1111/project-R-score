@@ -1,6 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/pm/cli/pm#version — bun pm version
 /**
  * @fileoverview Release workflow script
  * @module scripts/release
@@ -37,17 +40,53 @@ interface ReleaseStep {
   cmd: string;
 }
 
+export const RELEASE_COMMIT_PATHS = ['package.json', 'CHANGELOG.md'] as const;
+
+async function gitText(args: string[]): Promise<string> {
+  const proc = Bun.spawn(['git', ...args], {
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
+  const [stdout, stderr] = await Promise.all([
+    new Response(proc.stdout).text(),
+    new Response(proc.stderr).text(),
+  ]);
+  const code = await proc.exited;
+  if (code !== 0) throw new Error(stderr.trim() || `git ${args.join(' ')} failed`);
+  return stdout.trim();
+}
+
+/** A release starts from reviewed main and never hides unrelated mutations. */
+export async function assertReleasePreconditions(): Promise<void> {
+  const branch = await gitText(['branch', '--show-current']);
+  if (branch !== 'main')
+    throw new Error(`release must start on main (current: ${branch || 'detached'})`);
+
+  const dirty = await gitText(['status', '--porcelain', '--untracked-files=all']);
+  if (dirty !== '') {
+    throw new Error('release requires a clean worktree; commit or isolate every change first');
+  }
+
+  const [head, upstream] = await Promise.all([
+    gitText(['rev-parse', 'HEAD']),
+    gitText(['rev-parse', '@{upstream}']),
+  ]);
+  if (head !== upstream) throw new Error('release requires main to match its upstream exactly');
+}
+
 /**
  * Get release steps for a type
  * @param type - Release type
  * @returns Array of release steps
  */
-function getReleaseSteps(type: ReleaseType): ReleaseStep[] {
+export function getReleaseSteps(type: ReleaseType): ReleaseStep[] {
   return [
     { name: 'Lint check', cmd: 'bun run lint' },
     { name: 'Type check', cmd: 'bun run type-check' },
     { name: 'Run tests', cmd: 'bun test' },
-    { name: 'Bump version', cmd: `bun pm version ${type}` },
+    // Default `bun pm version` creates a commit and tag immediately. Defer both
+    // until every later gate succeeds so a failed build cannot publish a tag.
+    { name: 'Bump version', cmd: `bun pm version ${type} --no-git-tag-version` },
     { name: 'Generate changelog', cmd: 'bun run changelog' },
     { name: 'Build packages', cmd: 'bun run build' },
   ];
@@ -64,6 +103,13 @@ async function main(): Promise<void> {
     console.error('\n📚 Documentation:');
     console.error(`   Registry: ${REGISTRY_URL}`);
     console.error(`   R2 Store: ${R2_BUCKET_URL}`);
+    process.exit(1);
+  }
+
+  try {
+    await assertReleasePreconditions();
+  } catch (error) {
+    console.error(`❌ ${error instanceof Error ? error.message : String(error)}`);
     process.exit(1);
   }
 
@@ -86,7 +132,13 @@ async function main(): Promise<void> {
 
   // Get new version
   const pkg = await Bun.file('package.json').json();
-  const version = pkg.version;
+  const version = String(pkg.version);
+  const tag = `v${version}`;
+  const existingTag = await gitText(['tag', '--list', tag]);
+  if (existingTag !== '') {
+    console.error(`❌ Refusing to reuse immutable release tag ${tag}`);
+    process.exit(1);
+  }
 
   console.info(`\n✅ Release ${version} ready!`);
   console.info(`\n📦 Package Info:`);
@@ -94,14 +146,18 @@ async function main(): Promise<void> {
   console.info(`   Version: ${version}`);
   console.info(`   Registry: ${REGISTRY_URL}`);
   console.info(`\n🚀 Next steps:`);
-  console.info(`   1. Review the changes: git diff HEAD~1`);
-  console.info(`   2. Commit: git add -A && git commit -m "chore: release v${version}"`);
-  console.info(`   3. Tag: git tag -a v${version} -m "Release v${version}"`);
-  console.info(`   4. Push: git push && git push --tags`);
+  console.info(`   1. Review the release changes: git diff -- ${RELEASE_COMMIT_PATHS.join(' ')}`);
   console.info(
-    `   5. Publish: bun run pack:all && npm publish dist/packs/*.tgz --registry=${REGISTRY_URL}`
+    `   2. Stage only release-owned paths: git add -- ${RELEASE_COMMIT_PATHS.join(' ')}`
   );
-  console.info(`   6. Upload to R2: bun run r2:sync`);
+  console.info(`   3. Commit: git commit -m "chore(release): publish ${tag}"`);
+  console.info(`   4. Tag once: git tag -a ${tag} -m "FactoryWager ${tag}"`);
+  console.info(`   5. Push the commit: git push origin main`);
+  console.info(`   6. Push only this tag: git push origin refs/tags/${tag}`);
+  console.info(
+    `   7. Publish: bun run pack:all && bun publish dist/packs/*.tgz --registry=${REGISTRY_URL}`
+  );
+  console.info(`   8. Upload to R2: bun run r2:sync`);
 }
 
 if (import.meta.main) {

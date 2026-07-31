@@ -65,7 +65,9 @@ if command -v gitleaks &>/dev/null; then
   if [ "$DRY_RUN" -eq 1 ]; then
     echo "  [dry-run] gitleaks detect --source . --no-git --config .gitleaks.toml -v"
   else
-    gitleaks detect --source . --no-git --config .gitleaks.toml --verbose 2>&1 | tail -5 || true
+    # Installed scanners are hard gates. Never turn a credential finding into
+    # a successful commit through a trailing `|| true` or non-pipefail shell.
+    gitleaks detect --source . --no-git --config .gitleaks.toml --verbose
   fi
 else
   if [ "$DRY_RUN" -eq 1 ]; then

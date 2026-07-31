@@ -1,0 +1,12 @@
+# FactoryWager repository ownership. GitHub requests this owner on changes and
+# the main ruleset keeps review threads resolved before merge.
+* @brendadeeznuts1111
+
+# Identity, release, and repository-governance kernels.
+/lib/types/branded/ @brendadeeznuts1111
+/tools/branded-id-check.ts @brendadeeznuts1111
+/tools/brand-manifest.ts @brendadeeznuts1111
+/.husky/ @brendadeeznuts1111
+/.github/workflows/ @brendadeeznuts1111
+/.github/rulesets/ @brendadeeznuts1111
+/scripts/release.ts @brendadeeznuts1111

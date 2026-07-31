@@ -5,6 +5,11 @@
 
 # Vendored upstream clones (local only)
 /plannotator-upstream/
+/king-zippy-umbra-acre/
+
+# Unintegrated prototypes are not release artifacts. Promote deliberately into
+# projects/experimental/ with package, type, ownership, and brand contracts.
+/artifacts/deeplink-automation/
 
 # Local symlinks inside nested enterprise repos
 projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/dashboard-worker
