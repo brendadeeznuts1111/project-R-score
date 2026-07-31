@@ -4,6 +4,8 @@
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve routes
 // @see https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata — FormData upload
+// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern component routing
+// @see https://github.com/brendadeeznuts1111/project-R-score/blob/main/packages/registry-client/README.md — RegistryClient
 /**
  * VM / bare-metal registry gateway.
  *
@@ -32,6 +34,15 @@ import { registerRegistryCrons } from './monitoring';
 import { registry, type RegistryClient } from './registry';
 
 const DEFAULT_MAX_PUBLISH_BYTES = 50 * 1024 * 1024;
+
+/**
+ * Parameterized fallback routes. Exact routes stay in Bun.serve's `routes`
+ * table and the hot object-read prefix stays allocation-light; URLPattern owns
+ * the cold multi-segment publish capture used by handler-only tests.
+ */
+export const RegistryGatewayPatterns = {
+  publish: new URLPattern({ pathname: '/api/registry/:package+/versions' }),
+} as const;
 
 /** Static ready probe — buffered once at module load (zero-allocation responses). */
 const READY_RESPONSE = Response.json({ ready: true });
@@ -330,9 +341,10 @@ export function createRegistryFetchHandler(
     }
 
     // Publish (also registered on routes — kept here for handler-only tests)
-    const publishMatch = url.pathname.match(/^\/api\/registry\/(.+)\/versions$/);
-    if (publishMatch && req.method === 'POST') {
-      return publishRegistryVersion(req, client, publishMatch[1]!, options);
+    const publishMatch = RegistryGatewayPatterns.publish.exec(url);
+    const rawPackage = publishMatch?.pathname.groups.package;
+    if (rawPackage && req.method === 'POST') {
+      return publishRegistryVersion(req, client, rawPackage, options);
     }
 
     if (req.method !== 'GET' && req.method !== 'HEAD') {

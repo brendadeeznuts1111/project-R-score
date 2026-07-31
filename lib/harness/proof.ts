@@ -430,14 +430,21 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   },
   {
     id: 'url-pattern-boundaries',
-    claim: 'Bun site URLs are derived from URLPatternInit protocol/hostname/pathname/hash',
+    claim:
+      'URLPattern protocol/username/password/hostname/port/pathname/search/hash components drive site URL and parameterized HTTP routing',
     kinds: ['boundary'],
     gateClass: 'continuous',
     gateRef: 'ci:harness',
-    evidence: ['bun test tests/bun-site-url.test.ts', 'tests/bun-site-url.test.ts'],
-    freshRerun: 'bun test tests/bun-site-url.test.ts',
+    evidence: [
+      'bun test tests/bun-urlpattern.test.ts tests/bun-site-url.test.ts tests/factory-production.test.ts',
+      'tests/bun-urlpattern.test.ts',
+      'tests/bun-site-url.test.ts',
+      'tests/factory-production.test.ts',
+    ],
+    freshRerun:
+      'bun test tests/bun-urlpattern.test.ts tests/bun-site-url.test.ts tests/factory-production.test.ts',
     freshRerunKind: 'claim',
-    owner: 'lib/docs/bun-site-url.ts',
+    owner: 'lib/docs/bun-site-url.ts · lib/factory/server.ts · lib/http/portal-nav.ts',
   },
   {
     id: 'social-metadata-boundaries',

@@ -1,3 +1,4 @@
+// @see https://github.com/brendadeeznuts1111/project-R-score/blob/main/packages/registry-client/README.md — RegistryClient
 /**
  * Factory — artifact registry core.
  *
@@ -73,6 +74,7 @@ export {
   createRegistryRoutes,
   createRegistryFetchHandler,
   publishRegistryVersion,
+  RegistryGatewayPatterns,
   type RegistryGatewayOptions,
 } from './server';
 

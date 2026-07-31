@@ -3,6 +3,10 @@
  * @see docs/harness/FRESH-RERUN.md
  * @see docs/harness/PROOF.md — ProofPath catalog completeness
  * @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+ * @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+ * @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+ * @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
+ * @see https://bun.com/docs/test/index#run-tests — bun:test
  */
 import { describe, expect, test } from 'bun:test';
 import {
@@ -189,11 +193,19 @@ describe('fresh-rerun contract', () => {
 
   test('url-pattern-boundaries freshRerun runs green', async () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'url-pattern-boundaries');
-    expect(p?.freshRerun).toBe('bun test tests/bun-site-url.test.ts');
-    const result = Bun.spawnSync(['bun', 'test', 'tests/bun-site-url.test.ts'], {
-      stdout: 'pipe',
-      stderr: 'pipe',
-    });
+    expect(p?.freshRerun).toBe(
+      'bun test tests/bun-urlpattern.test.ts tests/bun-site-url.test.ts tests/factory-production.test.ts'
+    );
+    const result = Bun.spawnSync(
+      [
+        'bun',
+        'test',
+        'tests/bun-urlpattern.test.ts',
+        'tests/bun-site-url.test.ts',
+        'tests/factory-production.test.ts',
+      ],
+      { stdout: 'pipe', stderr: 'pipe' }
+    );
     expect(result.exitCode).toBe(0);
   });
 

@@ -13,6 +13,7 @@ import {
 import {
   createRegistryFetchHandler,
   createRegistryServer,
+  RegistryGatewayPatterns,
 } from '../lib/factory/server';
 import { onRequest as registryHealthOnRequest } from '../functions/api/registry/health';
 
@@ -163,6 +164,22 @@ describe('registry alerts and scheduling', () => {
 });
 
 describe('registry VM server', () => {
+  test('URLPattern fallback captures encoded and multi-segment package names', () => {
+    expect(
+      RegistryGatewayPatterns.publish.exec(
+        'http://registry.test/api/registry/%40factorywager%2Fsdk/versions'
+      )?.pathname.groups.package
+    ).toBe('%40factorywager%2Fsdk');
+    expect(
+      RegistryGatewayPatterns.publish.exec(
+        'http://registry.test/api/registry/@factorywager/sdk/versions'
+      )?.pathname.groups.package
+    ).toBe('@factorywager/sdk');
+    expect(RegistryGatewayPatterns.publish.test('http://registry.test/api/registry//versions')).toBe(
+      false
+    );
+  });
+
   test('GET /health returns JSON', async () => {
     const store = createMemoryObjectStore();
     await store.putJson('registry.json', {

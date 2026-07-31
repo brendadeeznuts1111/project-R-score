@@ -1,4 +1,5 @@
-// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPatternInit protocol/hostname
+// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — all URLPatternInit components
+// @see https://bun.com/docs/test/index#run-tests — bun:test
 import { describe, expect, test } from 'bun:test';
 import {
   BunBlogIndexPattern,
@@ -22,17 +23,24 @@ describe('bun-site-url (URLPatternInit components)', () => {
     expect(BunComSite.hostname).toBe('bun.com');
   });
 
-  test('hrefFromInit sets protocol/hostname/pathname/hash on URL', () => {
+  test('hrefFromInit assigns all URLPatternInit URL components', () => {
     const href = hrefFromInit({
       ...BunComSite,
+      username: 'reader',
+      password: 'token',
+      port: '8443',
       pathname: '/blog/bun-v1.3.4',
+      search: 'source=harness',
       hash: 'urlpattern-api',
     });
-    expect(href).toBe(bunBlog('bun-v1.3.4', 'urlpattern-api'));
     const u = new URL(href);
     expect(u.protocol).toBe('https:');
+    expect(u.username).toBe('reader');
+    expect(u.password).toBe('token');
     expect(u.hostname).toBe('bun.com');
+    expect(u.port).toBe('8443');
     expect(u.pathname).toBe('/blog/bun-v1.3.4');
+    expect(u.search).toBe('?source=harness');
     expect(u.hash).toBe('#urlpattern-api');
   });
 

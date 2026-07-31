@@ -1,5 +1,5 @@
 /**
- * Bun site URLs via URLPatternInit components (protocol / hostname / pathname / hash).
+ * Bun site URLs via all URLPatternInit URL components (protocol through hash).
  * No assembled `https://bun.com/...` literals for construction — set properties on URL.
  *
  * @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern / URLPatternInit
@@ -76,7 +76,8 @@ export const MdnWebApiPattern = new URLPattern({
 
 /**
  * Build an href from URLPatternInit-style components.
- * Bootstraps a URL then assigns protocol / hostname / pathname / search / hash.
+ * Bootstraps a URL then assigns each concrete protocol / username / password /
+ * hostname / port / pathname / search / hash component.
  */
 export function hrefFromInit(init: URLPatternInit): string {
   const u = new URL('http://localhost');
