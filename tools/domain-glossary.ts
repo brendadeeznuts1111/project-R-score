@@ -5,15 +5,21 @@
 /**
  * Bake the portal-facing domain glossary projection.
  *
- * Semantic authority remains in Kalshi-bot/src/institutions/glossary.ts. Its
- * validated glossary dump is the integration boundary; this tool adds only
- * portal summary counts and Bun.color-normalized category tokens.
+ * Domain authority remains in Kalshi-bot/src/institutions/glossary.ts. Its
+ * validated glossary dump is the integration boundary. Cross-portal UI field
+ * semantics come from lib/portal/semantic-vocabulary.ts; this tool combines
+ * those disjoint authorities and adds summary counts plus Bun.color-normalized
+ * category tokens.
  *
  *   bun run glossary:portal
  *   bun run glossary:portal:check
  */
 
 import { joinPath } from '../lib/path-bun.ts';
+import {
+  PORTAL_SEMANTIC_CONCEPTS,
+  validatePortalSemanticVocabulary,
+} from '../lib/portal/semantic-vocabulary.ts';
 import { FW_COLORS, type FactoryWagerColor } from '../lib/theme/colors.ts';
 
 export const DOMAIN_GLOSSARY_SOURCE_PATH = 'Kalshi-bot/research/registry/glossary-dump.json';
@@ -48,6 +54,8 @@ type CanonicalConcept = {
   registryColumn: number | null;
   source: string | null;
   featurePurpose: string | null;
+  semanticType?: string | null;
+  uiRole?: string | null;
 };
 
 type CanonicalGlossaryDump = {
@@ -84,7 +92,7 @@ function countBy(
 }
 
 function validateSource(source: CanonicalGlossaryDump): void {
-  if (source.schemaVersion !== 4) {
+  if (source.schemaVersion !== 4 && source.schemaVersion !== 5) {
     throw new Error(`Unsupported canonical glossary schema: ${source.schemaVersion}`);
   }
   if (!source.integrityOk || source.integrityErrors.length > 0) {
@@ -106,6 +114,33 @@ function validateSource(source: CanonicalGlossaryDump): void {
 
 export function buildDomainGlossary(source: CanonicalGlossaryDump) {
   validateSource(source);
+  validatePortalSemanticVocabulary();
+
+  const portalConcepts: CanonicalConcept[] = PORTAL_SEMANTIC_CONCEPTS.map(concept => ({
+    id: concept.id,
+    label: concept.label,
+    description: concept.description,
+    category: 'ui',
+    kind: 'ui',
+    mapsTo: null,
+    synonyms: [...concept.synonyms],
+    values: concept.values ? [...concept.values] : null,
+    valueLabels: null,
+    seeAlso: [...concept.seeAlso],
+    status: 'active',
+    deprecatedBy: null,
+    unit: null,
+    registryColumn: null,
+    source: 'lib/portal/semantic-vocabulary.ts',
+    featurePurpose: 'Cross-portal semantic field contract.',
+    semanticType: concept.semanticType,
+    uiRole: concept.uiRole,
+  }));
+  const combinedConcepts = [...source.concepts, ...portalConcepts];
+  const combinedIds = combinedConcepts.map(concept => concept.id);
+  if (new Set(combinedIds).size !== combinedIds.length) {
+    throw new Error('Domain and portal semantic authorities contain duplicate concept ids');
+  }
 
   const categories = (
     source.api?.categories ??
@@ -123,19 +158,21 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
     };
   });
   const colorByCategory = new Map(categories.map(category => [category.id, category.color]));
-  const concepts = source.concepts.map(concept => ({
+  const concepts = combinedConcepts.map(concept => ({
     ...concept,
     color: colorByCategory.get(concept.category),
   }));
 
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
+    sourceSchemaVersion: source.schemaVersion,
     kind: 'domain-glossary',
     path: DOMAIN_GLOSSARY_URL,
     generatedAt: source.generatedAt,
     integrityOk: true,
     sources: {
       semanticAuthority: 'Kalshi-bot/src/institutions/glossary.ts',
+      portalSemanticAuthority: 'lib/portal/semantic-vocabulary.ts',
       canonicalDump: DOMAIN_GLOSSARY_SOURCE_PATH,
       portalProjection: 'tools/domain-glossary.ts',
       colorKernel: 'lib/theme/colors.ts',
@@ -147,8 +184,17 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
       draft: concepts.filter(concept => concept.status === 'draft').length,
       mapped: concepts.filter(concept => concept.mapsTo !== null).length,
       registryColumns: concepts.filter(concept => concept.registryColumn !== null).length,
-      categories: countBy(source.concepts, concept => concept.category),
-      kinds: countBy(source.concepts, concept => concept.kind),
+      portalSemantics: concepts.filter(concept => concept.semanticType != null).length,
+      categories: countBy(combinedConcepts, concept => concept.category),
+      kinds: countBy(combinedConcepts, concept => concept.kind),
+      semanticTypes: countBy(
+        combinedConcepts.filter(concept => concept.semanticType != null),
+        concept => concept.semanticType ?? 'untyped'
+      ),
+      uiRoles: countBy(
+        combinedConcepts.filter(concept => concept.uiRole != null),
+        concept => concept.uiRole ?? 'untyped'
+      ),
     },
     categories,
     concepts,

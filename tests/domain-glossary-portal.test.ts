@@ -9,24 +9,33 @@ import {
   PORTAL_TRAILING_SLASH_SOURCES,
 } from '../lib/http/portal-route-manifest.ts';
 import { PORTAL_WEAVE_ARTIFACTS, PORTAL_WEAVE_SURFACES } from '../lib/http/portal-weave.ts';
+import {
+  PORTAL_SEMANTIC_CONCEPTS,
+  PORTAL_SEMANTIC_TYPES,
+  PORTAL_UI_ROLES,
+  validatePortalSemanticVocabulary,
+} from '../lib/portal/semantic-vocabulary.ts';
 
 describe('domain glossary portal', () => {
   test('registry projection is integral, bounded, and color-normalized', async () => {
     const payload = await Bun.file('public/registry/domain-glossary.json').json();
 
     expect(payload).toMatchObject({
-      schemaVersion: 1,
+      schemaVersion: 2,
+      sourceSchemaVersion: 5,
       kind: 'domain-glossary',
       path: '/registry/domain-glossary.json',
       integrityOk: true,
       sources: {
         semanticAuthority: 'Kalshi-bot/src/institutions/glossary.ts',
+        portalSemanticAuthority: 'lib/portal/semantic-vocabulary.ts',
         canonicalDump: 'Kalshi-bot/research/registry/glossary-dump.json',
         colorKernel: 'lib/theme/colors.ts',
       },
     });
     expect(payload.summary.concepts).toBe(payload.concepts.length);
-    expect(payload.summary.concepts).toBeGreaterThan(80);
+    expect(payload.summary.concepts).toBeGreaterThan(115);
+    expect(payload.summary.portalSemantics).toBe(PORTAL_SEMANTIC_CONCEPTS.length);
     expect(payload.categories).toHaveLength(8);
     expect(payload.categories.every(category => /^#[0-9a-f]{6}$/i.test(category.color))).toBe(true);
     expect(new Set(payload.concepts.map(concept => concept.id)).size).toBe(
@@ -37,6 +46,23 @@ describe('domain glossary portal', () => {
       kind: 'registry',
       unit: 'cents',
     });
+    expect(payload.concepts.find(concept => concept.id === 'ui.semantic.kind')).toMatchObject({
+      kind: 'ui',
+      semanticType: 'classification',
+      uiRole: 'chip',
+      values: expect.arrayContaining(['edge-health', 'registry-bake', 'proof']),
+    });
+  });
+
+  test('portal vocabulary separates concept kind, semantic type, and UI role', () => {
+    expect(() => validatePortalSemanticVocabulary()).not.toThrow();
+    expect(PORTAL_SEMANTIC_TYPES).toContain('classification');
+    expect(PORTAL_SEMANTIC_TYPES).toContain('presentation');
+    expect(PORTAL_UI_ROLES).toContain('chip');
+    expect(PORTAL_UI_ROLES).toContain('token');
+    expect(new Set(PORTAL_SEMANTIC_CONCEPTS.map(concept => concept.id)).size).toBe(
+      PORTAL_SEMANTIC_CONCEPTS.length
+    );
   });
 
   test('board uses URLPattern.hash deep links and shared portal chrome', async () => {
@@ -53,6 +79,7 @@ describe('domain glossary portal', () => {
     expect(html).toContain('id="glossary-category-chips"');
     expect(html).toContain('id="glossary-result-chip"');
     expect(html).toContain('id="clear-glossary-filters"');
+    expect(html).toContain('id="glossary-semantic-type"');
     expect(script).toContain("const GLOSSARY_URL = '/registry/domain-glossary.json'");
     expect(script).toContain("new URLPattern({ hash: 'glossary\\\\::concept' })");
     expect(script).toContain('hash.groups.concept');
@@ -62,6 +89,10 @@ describe('domain glossary portal', () => {
     expect(script).toContain("history.pushState(null, '', url)");
     expect(script).toContain("history.replaceState(history.state, '', url)");
     expect(script).toContain('syncConceptFromUrl');
+    expect(script).toContain("addDetailRow(details, 'Concept kind', concept.kind)");
+    expect(script).toContain("addDetailRow(details, 'Semantic type', concept.semanticType)");
+    expect(script).toContain("addDetailRow(details, 'UI role', concept.uiRole)");
+    expect(script).toContain("payload.schemaVersion !== 2");
     expect(script).not.toContain('location.hash.slice');
     expect(script).not.toContain("fetch('/api/health");
   });

@@ -443,7 +443,7 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     category: 'portal',
     kind: 'file-static',
     okStatuses: [200],
-    note: '/registry/domain-glossary.json · concept search · URLPattern.hash deep links',
+    note: '/registry/domain-glossary.json schema v2 · semantic-type search · URLPattern.hash deep links',
   },
   {
     path: '/registry/domain-glossary.json',
@@ -451,7 +451,7 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     category: 'registry',
     kind: 'file-static',
     okStatuses: [200],
-    note: 'Kalshi-bot semantic glossary · Bun.color category tokens',
+    note: 'domain + portal semantic authorities · typed UI roles · Bun.color category tokens',
   },
   {
     path: '/portal/dashboard/',

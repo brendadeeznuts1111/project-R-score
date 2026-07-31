@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- @see docs/portal-foundation.md · domain-glossary schema v1 -->
+<!-- @see docs/portal-foundation.md · domain-glossary schema v2 -->
 <html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
@@ -120,7 +120,7 @@
       }
       @media (min-width: 820px) {
         .glossary-summary {
-          grid-template-columns: repeat(6, minmax(0, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
         }
       }
       .glossary-stat {
@@ -250,7 +250,7 @@
       }
       @media (min-width: 860px) {
         .glossary-toolbar {
-          grid-template-columns: minmax(300px, 1fr) repeat(3, minmax(150px, 190px));
+          grid-template-columns: minmax(280px, 1fr) repeat(4, minmax(130px, 170px));
         }
       }
       .glossary-toolbar :is(input, select) {
@@ -310,6 +310,13 @@
         justify-content: space-between;
         gap: 10px;
       }
+      .glossary-card-taxonomy {
+        display: flex;
+        flex: 0 0 auto;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 5px;
+      }
       .glossary-card h3 {
         margin: 0;
         font-size: 16px;
@@ -353,6 +360,11 @@
       }
       .glossary-chip--kind {
         background: color-mix(in srgb, var(--chip-color) 16%, transparent);
+      }
+      .glossary-chip--type {
+        border-style: dashed;
+        color: var(--text-dim);
+        background: transparent;
       }
       .glossary-chip--unit {
         color: var(--text-dim);
@@ -722,11 +734,11 @@
 
     <main class="main glossary-board">
       <section class="hero">
-        <p class="glossary-eyebrow">Semantic registry · schema v1</p>
+        <p class="glossary-eyebrow">Semantic registry · schema v2</p>
         <h2>Domain glossary</h2>
         <p class="hero-sub">
-          Search the market, model, tournament, warehouse, trading, UI, and pipeline vocabulary used
-          across FactoryWager surfaces.
+          Search domain concepts and typed portal field semantics across market, model, tournament,
+          warehouse, trading, UI, and pipeline surfaces.
         </p>
         <div
           class="glossary-category-chips"
@@ -783,9 +795,15 @@
             </select>
           </label>
           <label>
-            <span class="sr-only">Filter kind</span>
+            <span class="sr-only">Filter concept kind</span>
             <select id="glossary-kind">
-              <option value="">All kinds</option>
+              <option value="">All concept kinds</option>
+            </select>
+          </label>
+          <label>
+            <span class="sr-only">Filter semantic type</span>
+            <select id="glossary-semantic-type">
+              <option value="">All semantic types</option>
             </select>
           </label>
           <label>

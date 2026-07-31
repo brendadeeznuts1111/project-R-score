@@ -1,7 +1,7 @@
 /**
  * Health diagnostic surface — /portal/health/
  * Probes /api/health (and fallbacks) for its own banner; topbar dot stays on data.js.
- * Live check table probes each known surface with Host · Port · Status · Kind · Plane ·
+ * Live check table probes each known surface with Hostname · Port · Status · Kind · Plane ·
  * Source · Version · Resources · Detail.
  *
  * @see docs/portal-foundation.md
@@ -159,6 +159,17 @@ const CANONICAL_URLS = {
 
 const WIKI_BASE = 'https://wiki.factory-wager.com';
 const PACKAGE_MAP_URL = '/portal/packages/';
+const HEALTH_FIELD_CONCEPTS = {
+  surface: 'ui.semantic.surface',
+  hostname: 'ui.semantic.hostname',
+  port: 'ui.semantic.port',
+  status: 'ui.semantic.status',
+  kind: 'ui.semantic.kind',
+  plane: 'ui.semantic.plane',
+  source: 'ui.semantic.source',
+  version: 'ui.semantic.version',
+  resources: 'ui.semantic.resources',
+};
 
 const PLANE_RESOURCES = {
   edge: {
@@ -619,11 +630,20 @@ function versionForProbe(result) {
   return 'JSON';
 }
 
+function semanticValue(field, label, className, attribute = '') {
+  const conceptId = HEALTH_FIELD_CONCEPTS[field];
+  return `<a class="${esc(className)}" href="/portal/glossary/#glossary:${esc(conceptId)}"
+    target="_blank" rel="noopener" title="Open ${esc(label)} semantic definition"
+    ${attribute}>${esc(label)}</a>`;
+}
+
 function toneBadge(tone, label) {
-  return `<span class="tone-badge" data-tone="${esc(tone)}">
+  return `<a class="tone-badge" data-tone="${esc(tone)}"
+    href="/portal/glossary/#glossary:${HEALTH_FIELD_CONCEPTS.status}"
+    target="_blank" rel="noopener" title="Open Status semantic definition">
     <span class="tone-dot" aria-hidden="true"></span>
     <span>${esc(label)}</span>
-  </span>`;
+  </a>`;
 }
 
 function probeResourceLinks(probe) {
@@ -670,16 +690,16 @@ function renderLiveTable(results) {
       const target = targetForProbe(p);
       return `<tr data-probe="${esc(p.id)}" data-tone="${esc(r.tone)}">
         <td>
-          <span class="surface-name">${esc(p.surface)}</span>
+          ${semanticValue('surface', p.surface, 'surface-name semantic-value')}
           <span class="surface-what">${esc(p.what || '')}</span>
         </td>
-        <td class="mono live-host">${esc(target.hostname)}</td>
-        <td class="mono live-port">${esc(target.port)}</td>
+        <td class="mono live-host">${semanticValue('hostname', target.hostname, 'semantic-value')}</td>
+        <td class="mono live-port">${semanticValue('port', target.port, 'semantic-value')}</td>
         <td>${toneBadge(r.tone, r.statusLabel)}</td>
-        <td><span class="kind-chip">${esc(p.kind)}</span></td>
-        <td><span class="plane-chip" data-plane="${esc(p.plane)}">${esc(p.plane)}</span></td>
+        <td>${semanticValue('kind', p.kind, 'kind-chip')}</td>
+        <td>${semanticValue('plane', p.plane, 'plane-chip', `data-plane="${esc(p.plane)}"`)}</td>
         <td class="mono live-source">${esc(target.source)}</td>
-        <td><span class="version-chip">${esc(versionForProbe(r))}</span></td>
+        <td>${semanticValue('version', versionForProbe(r), 'version-chip')}</td>
         <td>${probeResourceLinks(p)}</td>
         <td class="detail">${esc(r.detail)}</td>
       </tr>`;
@@ -694,14 +714,14 @@ async function runLiveChecks() {
     tbody.innerHTML = LIVE_PROBES.map(p => {
       const target = targetForProbe(p);
       return `<tr data-probe="${esc(p.id)}" data-tone="skip">
-          <td><span class="surface-name">${esc(p.surface)}</span><span class="surface-what">${esc(p.what || '')}</span></td>
-          <td class="mono live-host">${esc(target.hostname)}</td>
-          <td class="mono live-port">${esc(target.port)}</td>
+          <td>${semanticValue('surface', p.surface, 'surface-name semantic-value')}<span class="surface-what">${esc(p.what || '')}</span></td>
+          <td class="mono live-host">${semanticValue('hostname', target.hostname, 'semantic-value')}</td>
+          <td class="mono live-port">${semanticValue('port', target.port, 'semantic-value')}</td>
           <td>${toneBadge('skip', 'probing')}</td>
-          <td><span class="kind-chip">${esc(p.kind)}</span></td>
-          <td><span class="plane-chip" data-plane="${esc(p.plane)}">${esc(p.plane)}</span></td>
+          <td>${semanticValue('kind', p.kind, 'kind-chip')}</td>
+          <td>${semanticValue('plane', p.plane, 'plane-chip', `data-plane="${esc(p.plane)}"`)}</td>
           <td class="mono live-source">${esc(target.source)}</td>
-          <td><span class="version-chip">pending</span></td>
+          <td>${semanticValue('version', 'pending', 'version-chip')}</td>
           <td>${probeResourceLinks(p)}</td>
           <td class="detail">probing</td>
         </tr>`;

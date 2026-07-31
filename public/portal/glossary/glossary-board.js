@@ -13,6 +13,7 @@ const FILTER_PARAM_KEYS = {
   query: 'q',
   category: 'category',
   kind: 'kind',
+  semanticType: 'type',
   status: 'status',
 };
 
@@ -128,7 +129,9 @@ function openConcept(concept) {
   document.getElementById('glossary-detail-accent').style.backgroundColor = concept.color;
   details.replaceChildren();
   addDetailRow(details, 'Category', concept.category);
-  addDetailRow(details, 'Kind', concept.kind);
+  addDetailRow(details, 'Concept kind', concept.kind);
+  addDetailRow(details, 'Semantic type', concept.semanticType);
+  addDetailRow(details, 'UI role', concept.uiRole);
   addDetailRow(details, 'Status', concept.status);
   addDetailRow(details, 'Unit', concept.unit);
   addDetailRow(details, 'Maps to', concept.mapsTo ? relatedLink(concept.mapsTo) : null);
@@ -175,6 +178,7 @@ function syncConceptFromUrl() {
 function matches(concept, filters) {
   if (filters.category && concept.category !== filters.category) return false;
   if (filters.kind && concept.kind !== filters.kind) return false;
+  if (filters.semanticType && concept.semanticType !== filters.semanticType) return false;
   if (filters.status && concept.status !== filters.status) return false;
   if (!filters.query) return true;
   const haystack = [
@@ -183,6 +187,8 @@ function matches(concept, filters) {
     concept.description,
     concept.category,
     concept.kind,
+    concept.semanticType,
+    concept.uiRole,
     concept.mapsTo,
     concept.unit,
     concept.source,
@@ -208,7 +214,13 @@ function conceptCard(concept) {
   titleLink.href = conceptHash(concept.id);
   titleLink.setAttribute('aria-label', `Open ${concept.label} definition`);
   titleLink.append(text('h3', concept.label));
-  heading.append(titleLink, chip(concept.kind, concept.color, 'kind'));
+  const taxonomy = document.createElement('div');
+  taxonomy.className = 'glossary-card-taxonomy';
+  taxonomy.append(chip(concept.kind, concept.color, 'kind'));
+  if (concept.semanticType) {
+    taxonomy.append(chip(concept.semanticType, concept.color, 'type'));
+  }
+  heading.append(titleLink, taxonomy);
 
   const metadata = document.createElement('div');
   metadata.className = 'glossary-card-meta';
@@ -261,6 +273,7 @@ function currentFilters() {
     query: document.getElementById('glossary-search').value.trim(),
     category: document.getElementById('glossary-category').value,
     kind: document.getElementById('glossary-kind').value,
+    semanticType: document.getElementById('glossary-semantic-type').value,
     status: document.getElementById('glossary-status').value,
   };
 }
@@ -279,8 +292,9 @@ function restoreFiltersFromUrl() {
   const url = new URL(window.location.href);
   document.getElementById('glossary-search').value =
     url.searchParams.get(FILTER_PARAM_KEYS.query) ?? '';
-  for (const key of ['category', 'kind', 'status']) {
-    const select = document.getElementById(`glossary-${key}`);
+  for (const key of ['category', 'kind', 'semanticType', 'status']) {
+    const selectId = key === 'semanticType' ? 'glossary-semantic-type' : `glossary-${key}`;
+    const select = document.getElementById(selectId);
     const value = url.searchParams.get(FILTER_PARAM_KEYS[key]) ?? '';
     select.value = [...select.options].some(option => option.value === value) ? value : '';
   }
@@ -300,11 +314,14 @@ function updateFilterState(filters) {
         !filters.query &&
         !filters.category &&
         !filters.kind &&
+        !filters.semanticType &&
         !filters.status);
     card.classList.toggle('active', Boolean(active));
     card.setAttribute('aria-pressed', String(Boolean(active)));
   });
-  const hasFilters = Boolean(filters.query || filters.category || filters.kind || filters.status);
+  const hasFilters = Boolean(
+    filters.query || filters.category || filters.kind || filters.semanticType || filters.status
+  );
   document.getElementById('clear-glossary-filters').disabled = !hasFilters;
 }
 
@@ -329,6 +346,7 @@ function resetFilters() {
   document.getElementById('glossary-search').value = '';
   document.getElementById('glossary-category').value = '';
   document.getElementById('glossary-kind').value = '';
+  document.getElementById('glossary-semantic-type').value = '';
   document.getElementById('glossary-status').value = '';
   renderConcepts();
 }
@@ -383,6 +401,17 @@ function render(payload) {
       .getElementById('glossary-category-chips')
       .scrollIntoView({ block: 'center', behavior: 'smooth' });
   });
+  const semanticCard = stat(
+    summary.portalSemantics,
+    'Portal semantics',
+    'Typed field contracts shared by portal surfaces.',
+    color('ui')
+  );
+  semanticCard.addEventListener('click', () => {
+    document
+      .getElementById('glossary-semantic-type')
+      .scrollIntoView({ block: 'center', behavior: 'smooth' });
+  });
   document
     .getElementById('glossary-summary')
     .replaceChildren(
@@ -415,16 +444,7 @@ function render(payload) {
         color('pipeline'),
         { kind: 'composite' }
       ),
-      stat(
-        summary.deprecated,
-        'Deprecated',
-        summary.deprecated
-          ? 'Concepts with a preferred replacement.'
-          : 'No concepts currently require migration.',
-        '#f85149',
-        { status: 'deprecated' },
-        summary.deprecated === 0
-      )
+      semanticCard
     );
   document.getElementById('glossary-generated').textContent =
     `Generated ${payload.generatedAt} · ${payload.sources.semanticAuthority}`;
@@ -435,6 +455,7 @@ function render(payload) {
     value => payload.categories.find(category => category.id === value)?.label ?? value
   );
   addOptions('glossary-kind', Object.keys(summary.kinds));
+  addOptions('glossary-semantic-type', Object.keys(summary.semanticTypes));
   addOptions('glossary-status', ['active', 'deprecated', 'draft']);
   renderCategoryChips(payload);
   restoreFiltersFromUrl();
@@ -462,13 +483,19 @@ async function load() {
   });
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   const payload = await response.json();
-  if (payload.schemaVersion !== 1 || payload.kind !== 'domain-glossary') {
+  if (payload.schemaVersion !== 2 || payload.kind !== 'domain-glossary') {
     throw new Error(`unsupported domain glossary schema: ${String(payload.schemaVersion)}`);
   }
   return payload;
 }
 
-for (const id of ['glossary-search', 'glossary-category', 'glossary-kind', 'glossary-status']) {
+for (const id of [
+  'glossary-search',
+  'glossary-category',
+  'glossary-kind',
+  'glossary-semantic-type',
+  'glossary-status',
+]) {
   document.getElementById(id).addEventListener('input', () => glossary && renderConcepts());
 }
 

@@ -38,13 +38,32 @@ Exception: [`public/portal/health-page.js`](../public/portal/health-page.js) (sh
 | CLI hub | [`/portal/tools/`](../public/portal/tools/) | copy-CLI · bake freshness · capability subset · `#capabilities` |
 | Packages board | [`/portal/packages/`](../public/portal/packages/) | SVG dependency graph · role filter · detail panel · claim `packages-graph-map-v13` |
 | Brand keymap | [`/portal/brands/`](../public/portal/brands/) | 57-value glossary · constructor tiers · tracked-project adoption · `/registry/brand-keymap.json` |
-| Domain glossary | [`/portal/glossary/`](../public/portal/glossary/) | canonical market/model/trading vocabulary · `URLPattern.hash` deep links · Bun.color-normalized category tokens · `/registry/domain-glossary.json` |
+| Domain glossary | [`/portal/glossary/`](../public/portal/glossary/) | schema v2 · canonical market/model/trading vocabulary + typed portal field semantics · `URLPattern.hash` deep links · Bun.color-normalized category tokens · `/registry/domain-glossary.json` |
 | Vault board | [`/portal/vault/`](../public/portal/vault/) | live bake visual; gate = `portal-cli vault health` (offline snaps) |
 | Failures board | [`/portal/failures/`](../public/portal/failures/) | junit bake · nav badge = failure count |
 | Install hygiene | [`/portal/install-hygiene/`](../public/portal/install-hygiene/) | cache prune · npm policy · install:verify · `bake:install-hygiene` |
 | Launcher | `bun run portal-cli dashboard --view=packages\|vault\|tools\|… [--open]` | real boards only — no phantom `/portal/pm/` etc. |
 
 Do **not** invent new portal routes without a board under `public/portal/<name>/` + route manifest + chrome/weave entries.
+
+### Portal semantic contract
+
+[`lib/portal/semantic-vocabulary.ts`](../lib/portal/semantic-vocabulary.ts) owns
+cross-portal field names and their typed UI meaning. The glossary projection
+combines that authority with the Kalshi-bot domain glossary without changing
+the latter's market/model definitions.
+
+| Dimension | Meaning | Examples |
+|-----------|---------|----------|
+| Concept kind | Provenance and consumer class | `ui` · `registry` · `composite` |
+| Semantic type | Stable data role | `classification` · `state` · `location` · `resource` |
+| UI role | Rendering role | `chip` · `badge` · `code` · `link` · `token` |
+| Operational kind | Governed value of the Kind concept | `edge-health` · `registry-bake` · `proof` |
+| Tone | Presentation token derived from status | `ok` · `warn` · `bad` · `skip` |
+
+Portal labels link to durable glossary fragments such as
+`/portal/glossary/#glossary:ui.semantic.status`. Prefer the canonical
+`Hostname` label; `host` remains a search synonym.
 
 ---
 

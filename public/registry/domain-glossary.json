@@ -1,35 +1,54 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
+  "sourceSchemaVersion": 5,
   "kind": "domain-glossary",
   "path": "/registry/domain-glossary.json",
-  "generatedAt": "2026-07-31T04:10:39.816Z",
+  "generatedAt": "2026-07-31T07:39:55.713Z",
   "integrityOk": true,
   "sources": {
     "semanticAuthority": "Kalshi-bot/src/institutions/glossary.ts",
+    "portalSemanticAuthority": "lib/portal/semantic-vocabulary.ts",
     "canonicalDump": "Kalshi-bot/research/registry/glossary-dump.json",
     "portalProjection": "tools/domain-glossary.ts",
     "colorKernel": "lib/theme/colors.ts"
   },
   "summary": {
-    "concepts": 89,
-    "active": 89,
-    "deprecated": 0,
+    "concepts": 119,
+    "active": 118,
+    "deprecated": 1,
     "draft": 0,
-    "mapped": 11,
+    "mapped": 19,
     "registryColumns": 31,
+    "portalSemantics": 13,
     "categories": {
-      "market": 17,
+      "market": 19,
       "model": 15,
-      "pipeline": 8,
+      "pipeline": 19,
       "tournament": 9,
       "trading": 12,
-      "ui": 10,
-      "warehouse": 18
+      "ui": 24,
+      "warehouse": 21
     },
     "kinds": {
       "composite": 12,
       "registry": 33,
-      "ui": 44
+      "ui": 74
+    },
+    "semanticTypes": {
+      "classification": 3,
+      "location": 3,
+      "presentation": 1,
+      "resource": 4,
+      "state": 1,
+      "version": 1
+    },
+    "uiRoles": {
+      "badge": 2,
+      "chip": 3,
+      "code": 2,
+      "heading": 1,
+      "link": 4,
+      "token": 1
     }
   },
   "categories": [
@@ -104,10 +123,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
+      "color": "#3b82f6",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#3b82f6"
+      "featurePurpose": null
     },
     {
       "id": "spreadCents",
@@ -130,10 +150,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
+      "color": "#3b82f6",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#3b82f6"
+      "featurePurpose": null
     },
     {
       "id": "crossed",
@@ -152,10 +173,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#3b82f6",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#3b82f6"
+      "featurePurpose": null
     },
     {
       "id": "avgKalshiVolumeFp",
@@ -179,10 +201,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "countFp",
+      "color": "#3b82f6",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#3b82f6"
+      "featurePurpose": null
     },
     {
       "id": "yesPriceCents",
@@ -202,10 +225,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
+      "color": "#3b82f6",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#3b82f6"
+      "featurePurpose": null
     },
     {
       "id": "balanceCents",
@@ -224,10 +248,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
+      "color": "#f59e0b",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#f59e0b"
+      "featurePurpose": null
     },
     {
       "id": "portfolioValueCents",
@@ -247,10 +272,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
+      "color": "#f59e0b",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#f59e0b"
+      "featurePurpose": null
     },
     {
       "id": "position",
@@ -269,10 +295,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
+      "color": "#f59e0b",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#f59e0b"
+      "featurePurpose": null
     },
     {
       "id": "exposureCents",
@@ -292,10 +319,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
+      "color": "#f59e0b",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#f59e0b"
+      "featurePurpose": null
     },
     {
       "id": "realizedPnlCents",
@@ -314,10 +342,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
+      "color": "#f59e0b",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#f59e0b"
+      "featurePurpose": null
     },
     {
       "id": "feesPaidCents",
@@ -337,10 +366,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
+      "color": "#f59e0b",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#f59e0b"
+      "featurePurpose": null
     },
     {
       "id": "remainingCount",
@@ -359,10 +389,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
+      "color": "#f59e0b",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#f59e0b"
+      "featurePurpose": null
     },
     {
       "id": "fillCount",
@@ -382,10 +413,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
+      "color": "#f59e0b",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#f59e0b"
+      "featurePurpose": null
     },
     {
       "id": "isTaker",
@@ -404,10 +436,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#f59e0b",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#f59e0b"
+      "featurePurpose": null
     },
     {
       "id": "feeCents",
@@ -427,10 +460,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
+      "color": "#f59e0b",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#f59e0b"
+      "featurePurpose": null
     },
     {
       "id": "postOnly",
@@ -450,10 +484,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#f59e0b",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#f59e0b"
+      "featurePurpose": null
     },
     {
       "id": "dryRun",
@@ -474,10 +509,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#f59e0b",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#f59e0b"
+      "featurePurpose": null
     },
     {
       "id": "shadowMinSignals",
@@ -496,10 +532,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
+      "color": "#8b5cf6",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#8b5cf6"
+      "featurePurpose": null
     },
     {
       "id": "killBrierDriftPct",
@@ -518,10 +555,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "pct",
+      "color": "#8b5cf6",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#8b5cf6"
+      "featurePurpose": null
     },
     {
       "id": "graduationMinRealizedEdgeCentsPerFill",
@@ -541,10 +579,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
+      "color": "#8b5cf6",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#8b5cf6"
+      "featurePurpose": null
     },
     {
       "id": "league",
@@ -574,10 +613,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#22c55e",
+      "url": null,
       "registryColumn": 6,
       "source": "desk",
-      "featurePurpose": "schedule",
-      "color": "#22c55e"
+      "featurePurpose": "schedule"
     },
     {
       "id": "surface",
@@ -602,10 +642,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#22c55e",
+      "url": null,
       "registryColumn": 8,
       "source": "desk",
-      "featurePurpose": "schedule",
-      "color": "#22c55e"
+      "featurePurpose": "schedule"
     },
     {
       "id": "tier",
@@ -643,10 +684,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#22c55e",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#22c55e"
+      "featurePurpose": null
     },
     {
       "id": "round",
@@ -665,10 +707,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#22c55e",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#22c55e"
+      "featurePurpose": null
     },
     {
       "id": "series",
@@ -687,10 +730,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#22c55e",
+      "url": null,
       "registryColumn": 7,
       "source": "kalshi",
-      "featurePurpose": "schedule",
-      "color": "#22c55e"
+      "featurePurpose": "schedule"
     },
     {
       "id": "gender",
@@ -709,10 +753,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#22c55e",
+      "url": null,
       "registryColumn": 9,
       "source": "desk",
-      "featurePurpose": "schedule",
-      "color": "#22c55e"
+      "featurePurpose": "schedule"
     },
     {
       "id": "age_group",
@@ -731,10 +776,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#22c55e",
+      "url": null,
       "registryColumn": 10,
       "source": "desk",
-      "featurePurpose": "schedule",
-      "color": "#22c55e"
+      "featurePurpose": "schedule"
     },
     {
       "id": "match_uuid",
@@ -750,10 +796,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#06b6d4",
+      "url": null,
       "registryColumn": 0,
       "source": "desk",
-      "featurePurpose": "identity",
-      "color": "#06b6d4"
+      "featurePurpose": "identity"
     },
     {
       "id": "event_ticker",
@@ -769,10 +816,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#06b6d4",
+      "url": null,
       "registryColumn": 1,
       "source": "kalshi",
-      "featurePurpose": "identity",
-      "color": "#06b6d4"
+      "featurePurpose": "identity"
     },
     {
       "id": "timestamp",
@@ -788,10 +836,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#06b6d4",
+      "url": null,
       "registryColumn": 2,
       "source": "desk",
-      "featurePurpose": "provenance",
-      "color": "#06b6d4"
+      "featurePurpose": "provenance"
     },
     {
       "id": "player_a",
@@ -807,10 +856,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#06b6d4",
+      "url": null,
       "registryColumn": 3,
       "source": "desk",
-      "featurePurpose": "identity",
-      "color": "#06b6d4"
+      "featurePurpose": "identity"
     },
     {
       "id": "player_b",
@@ -826,10 +876,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#06b6d4",
+      "url": null,
       "registryColumn": 4,
       "source": "desk",
-      "featurePurpose": "identity",
-      "color": "#06b6d4"
+      "featurePurpose": "identity"
     },
     {
       "id": "title",
@@ -845,10 +896,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#06b6d4",
+      "url": null,
       "registryColumn": 5,
       "source": "desk",
-      "featurePurpose": "schedule",
-      "color": "#06b6d4"
+      "featurePurpose": "schedule"
     },
     {
       "id": "kalshi_mu",
@@ -872,10 +924,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
+      "color": "#3b82f6",
+      "url": null,
       "registryColumn": 11,
       "source": "kalshi",
-      "featurePurpose": "market",
-      "color": "#3b82f6"
+      "featurePurpose": "market"
     },
     {
       "id": "kalshi_spread",
@@ -895,10 +948,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
+      "color": "#3b82f6",
+      "url": null,
       "registryColumn": 12,
       "source": "kalshi",
-      "featurePurpose": "market",
-      "color": "#3b82f6"
+      "featurePurpose": "market"
     },
     {
       "id": "kalshi_volume",
@@ -918,10 +972,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "countFp",
+      "color": "#3b82f6",
+      "url": null,
       "registryColumn": 13,
       "source": "kalshi",
-      "featurePurpose": "market",
-      "color": "#3b82f6"
+      "featurePurpose": "market"
     },
     {
       "id": "poly_mid",
@@ -941,10 +996,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
+      "color": "#3b82f6",
+      "url": null,
       "registryColumn": 14,
       "source": "polymarket",
-      "featurePurpose": "market",
-      "color": "#3b82f6"
+      "featurePurpose": "market"
     },
     {
       "id": "poly_volume",
@@ -964,10 +1020,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "usd",
+      "color": "#3b82f6",
+      "url": null,
       "registryColumn": 15,
       "source": "polymarket",
-      "featurePurpose": "market",
-      "color": "#3b82f6"
+      "featurePurpose": "market"
     },
     {
       "id": "pinny_no_vig",
@@ -987,10 +1044,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
+      "color": "#3b82f6",
+      "url": null,
       "registryColumn": 16,
       "source": "pinnacle",
-      "featurePurpose": "market",
-      "color": "#3b82f6"
+      "featurePurpose": "market"
     },
     {
       "id": "pinny_source",
@@ -1012,10 +1070,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#3b82f6",
+      "url": null,
       "registryColumn": 17,
       "source": "pinnacle",
-      "featurePurpose": "provenance",
-      "color": "#3b82f6"
+      "featurePurpose": "provenance"
     },
     {
       "id": "elo_prob",
@@ -1035,10 +1094,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "probability",
+      "color": "#8b5cf6",
+      "url": null,
       "registryColumn": 18,
       "source": "elo",
-      "featurePurpose": "model",
-      "color": "#8b5cf6"
+      "featurePurpose": "model"
     },
     {
       "id": "elo_source",
@@ -1060,10 +1120,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#8b5cf6",
+      "url": null,
       "registryColumn": 19,
       "source": "elo",
-      "featurePurpose": "provenance",
-      "color": "#8b5cf6"
+      "featurePurpose": "provenance"
     },
     {
       "id": "blend_fair_cents",
@@ -1084,10 +1145,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
+      "color": "#8b5cf6",
+      "url": null,
       "registryColumn": 20,
       "source": "desk",
-      "featurePurpose": "model",
-      "color": "#8b5cf6"
+      "featurePurpose": "model"
     },
     {
       "id": "eff_edge",
@@ -1107,10 +1169,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
+      "color": "#8b5cf6",
+      "url": null,
       "registryColumn": 21,
       "source": "desk",
-      "featurePurpose": "model",
-      "color": "#8b5cf6"
+      "featurePurpose": "model"
     },
     {
       "id": "liquidity_ok",
@@ -1130,10 +1193,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#3b82f6",
+      "url": null,
       "registryColumn": 22,
       "source": "desk",
-      "featurePurpose": "gate",
-      "color": "#3b82f6"
+      "featurePurpose": "gate"
     },
     {
       "id": "total_volume_usd",
@@ -1153,10 +1217,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "usd",
+      "color": "#3b82f6",
+      "url": null,
       "registryColumn": 23,
       "source": "desk",
-      "featurePurpose": "market",
-      "color": "#3b82f6"
+      "featurePurpose": "market"
     },
     {
       "id": "multi_venue",
@@ -1176,10 +1241,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#06b6d4",
+      "url": null,
       "registryColumn": 24,
       "source": "desk",
-      "featurePurpose": "gate",
-      "color": "#06b6d4"
+      "featurePurpose": "gate"
     },
     {
       "id": "arb_hint",
@@ -1199,10 +1265,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#8b5cf6",
+      "url": null,
       "registryColumn": 25,
       "source": "desk",
-      "featurePurpose": "model",
-      "color": "#8b5cf6"
+      "featurePurpose": "model"
     },
     {
       "id": "arb_actionable",
@@ -1222,10 +1289,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#8b5cf6",
+      "url": null,
       "registryColumn": 26,
       "source": "desk",
-      "featurePurpose": "gate",
-      "color": "#8b5cf6"
+      "featurePurpose": "gate"
     },
     {
       "id": "rps_flag",
@@ -1244,10 +1312,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#8b5cf6",
+      "url": null,
       "registryColumn": 27,
       "source": "desk",
-      "featurePurpose": "model",
-      "color": "#8b5cf6"
+      "featurePurpose": "model"
     },
     {
       "id": "graph_divergence",
@@ -1267,10 +1336,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#8b5cf6",
+      "url": null,
       "registryColumn": 28,
       "source": "desk",
-      "featurePurpose": "model",
-      "color": "#8b5cf6"
+      "featurePurpose": "model"
     },
     {
       "id": "research_flag",
@@ -1290,10 +1360,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#06b6d4",
+      "url": null,
       "registryColumn": 29,
       "source": "desk",
-      "featurePurpose": "gate",
-      "color": "#06b6d4"
+      "featurePurpose": "gate"
     },
     {
       "id": "export_note",
@@ -1312,10 +1383,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#06b6d4",
+      "url": null,
       "registryColumn": 30,
       "source": "desk",
-      "featurePurpose": "provenance",
-      "color": "#06b6d4"
+      "featurePurpose": "provenance"
     },
     {
       "id": "playerProfiles",
@@ -1337,10 +1409,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#06b6d4",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#06b6d4"
+      "featurePurpose": null
     },
     {
       "id": "lastSeenAtMs",
@@ -1362,10 +1435,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "atMs",
+      "color": "#06b6d4",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#06b6d4"
+      "featurePurpose": null
     },
     {
       "id": "profilesSource",
@@ -1386,10 +1460,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#06b6d4",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#06b6d4"
+      "featurePurpose": null
     },
     {
       "id": "coverage",
@@ -1408,10 +1483,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "pct",
+      "color": "#06b6d4",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#06b6d4"
+      "featurePurpose": null
     },
     {
       "id": "surfaceEdge",
@@ -1433,10 +1509,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "pp",
+      "color": "#06b6d4",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#06b6d4"
+      "featurePurpose": null
     },
     {
       "id": "ui.events.filter.reset",
@@ -1455,10 +1532,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#60a5fa",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#60a5fa"
+      "featurePurpose": null
     },
     {
       "id": "ui.live_board.title",
@@ -1479,10 +1557,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#60a5fa",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#60a5fa"
+      "featurePurpose": null
     },
     {
       "id": "ui.live_board.scanner",
@@ -1506,10 +1585,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#60a5fa",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#60a5fa"
+      "featurePurpose": null
     },
     {
       "id": "ui.live_board.divergence",
@@ -1533,10 +1613,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
+      "color": "#60a5fa",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#60a5fa"
+      "featurePurpose": null
     },
     {
       "id": "ui.live_board.edge_score",
@@ -1560,10 +1641,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#60a5fa",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#60a5fa"
+      "featurePurpose": null
     },
     {
       "id": "ui.live_board.model_suspect",
@@ -1587,10 +1669,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#60a5fa",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#60a5fa"
+      "featurePurpose": null
     },
     {
       "id": "ui.events.filter.tournament",
@@ -1609,10 +1692,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#22c55e",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#22c55e"
+      "featurePurpose": null
     },
     {
       "id": "ui.events.filter.country",
@@ -1631,10 +1715,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#22c55e",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#22c55e"
+      "featurePurpose": null
     },
     {
       "id": "ui.events.filter.when",
@@ -1665,10 +1750,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#60a5fa",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#60a5fa"
+      "featurePurpose": null
     },
     {
       "id": "ui.events.filter.liquidity",
@@ -1695,10 +1781,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#3b82f6",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#3b82f6"
+      "featurePurpose": null
     },
     {
       "id": "ui.events.filter.min_vol",
@@ -1720,10 +1807,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "countFp",
+      "color": "#3b82f6",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#3b82f6"
+      "featurePurpose": null
     },
     {
       "id": "ui.events.filter.min_surface_edge",
@@ -1742,10 +1830,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "pp",
+      "color": "#06b6d4",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#06b6d4"
+      "featurePurpose": null
     },
     {
       "id": "ui.sort.events",
@@ -1775,10 +1864,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#60a5fa",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#60a5fa"
+      "featurePurpose": null
     },
     {
       "id": "ui.filter.unclassified",
@@ -1801,10 +1891,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#60a5fa",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#60a5fa"
+      "featurePurpose": null
     },
     {
       "id": "ui.warehouse.coverage",
@@ -1827,10 +1918,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#06b6d4",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#06b6d4"
+      "featurePurpose": null
     },
     {
       "id": "ui.warehouse.poly_link",
@@ -1854,10 +1946,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#06b6d4",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#06b6d4"
+      "featurePurpose": null
     },
     {
       "id": "ui.warehouse.event_status",
@@ -1879,10 +1972,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#06b6d4",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#06b6d4"
+      "featurePurpose": null
     },
     {
       "id": "ui.warehouse.fleet_count",
@@ -1904,10 +1998,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
+      "color": "#60a5fa",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#60a5fa"
+      "featurePurpose": null
     },
     {
       "id": "ui.warehouse.fleet_volume",
@@ -1929,10 +2024,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "usd",
+      "color": "#3b82f6",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#3b82f6"
+      "featurePurpose": null
     },
     {
       "id": "composite.scanner",
@@ -1952,10 +2048,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#8b5cf6",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#8b5cf6"
+      "featurePurpose": null
     },
     {
       "id": "composite.divergence",
@@ -1975,10 +2072,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
+      "color": "#8b5cf6",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#8b5cf6"
+      "featurePurpose": null
     },
     {
       "id": "composite.edge_score",
@@ -1998,10 +2096,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#8b5cf6",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#8b5cf6"
+      "featurePurpose": null
     },
     {
       "id": "composite.model_suspect",
@@ -2020,10 +2119,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#8b5cf6",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#8b5cf6"
+      "featurePurpose": null
     },
     {
       "id": "alert.poly_dropout",
@@ -2046,10 +2146,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "pct",
+      "color": "#ef4444",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#ef4444"
+      "featurePurpose": null
     },
     {
       "id": "alert.volume_gap",
@@ -2071,10 +2172,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
+      "color": "#ef4444",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#ef4444"
+      "featurePurpose": null
     },
     {
       "id": "alert.feed_frozen",
@@ -2096,10 +2198,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
+      "color": "#ef4444",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#ef4444"
+      "featurePurpose": null
     },
     {
       "id": "alert.stale_feed",
@@ -2121,10 +2224,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "ms",
+      "color": "#ef4444",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#ef4444"
+      "featurePurpose": null
     },
     {
       "id": "alert.divergence",
@@ -2147,10 +2251,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
+      "color": "#ef4444",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#ef4444"
+      "featurePurpose": null
     },
     {
       "id": "alert.resolution",
@@ -2176,10 +2281,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#ef4444",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#ef4444"
+      "featurePurpose": null
     },
     {
       "id": "alert.delivery",
@@ -2202,10 +2308,11 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#ef4444",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#ef4444"
+      "featurePurpose": null
     },
     {
       "id": "alert.severity",
@@ -2232,10 +2339,747 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
+      "color": "#ef4444",
+      "url": null,
       "registryColumn": null,
       "source": null,
-      "featurePurpose": null,
-      "color": "#ef4444"
+      "featurePurpose": null
+    },
+    {
+      "id": "ops.palette",
+      "label": "Color Palette",
+      "description": "Venue and domain colors with WCAG contrast audited. SSOT: src/lib/color/. See docs/COLORS.md + public/registry/color-system.json.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "alert.delivery"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#60a5fa",
+      "url": "https://bun.com/docs/runtime/color",
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "kpi.open_matches",
+      "label": "Open matches",
+      "description": "Count of active Kalshi events with tradable markets and non-crossed books.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "kpi.board_volume",
+      "label": "Board volume",
+      "description": "Sum of 24-hour trading volume across all live board markets in USD.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": "total_volume_usd",
+      "synonyms": [],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "kpi.store_link_rate",
+      "label": "Store link rate",
+      "description": "Percentage of events successfully enriched with cross-market odds from Polymarket and Pinnacle.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "kpi.book_watches",
+      "label": "Book watches",
+      "description": "Count of events with active WebSocket book price monitoring.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "kpi.player_profiles",
+      "label": "Player profiles",
+      "description": "Number of players with computed Elo ratings and player profiles in the index.",
+      "category": "warehouse",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#06b6d4",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "kpi.live_scores",
+      "label": "Live scores",
+      "description": "Count of events currently receiving live score updates from the ITF Stadion feed.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "kpi.rps_warnings",
+      "label": "RPS warnings",
+      "description": "Count of events flagged with RPS (price-smoothed) anomaly warnings on the live board.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": "rps_flag",
+      "synonyms": [],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "kpi.graph_divergence",
+      "label": "Graph divergence",
+      "description": "Count of events where Elo or odds graph signal deviates from market mid price beyond threshold.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": "graph_divergence",
+      "synonyms": [],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "kpi.elite_conviction",
+      "label": "Elite conviction",
+      "description": "Maximum legacy conviction edge score retained for dashboard compatibility; use effective edge for current decisions.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": "eff_edge",
+      "synonyms": [],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [],
+      "status": "deprecated",
+      "deprecatedBy": "eff_edge",
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "kpi.price_archive",
+      "label": "Price archive",
+      "description": "Count of price snapshots stored in the archive table.",
+      "category": "warehouse",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#06b6d4",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "kpi.archive_elo_fair",
+      "label": "Archive Elo fair",
+      "description": "Count of price snapshot rows with Elo fair probability populated.",
+      "category": "warehouse",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#06b6d4",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "kpi.server_errors",
+      "label": "Server errors",
+      "description": "Count of logger error events recorded in the last 24 hours.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "kpi.top_edge",
+      "label": "Top edge",
+      "description": "Maximum effective edge observed across all live board events.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": "eff_edge",
+      "synonyms": [],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "kpi.median_spread",
+      "label": "Median spread",
+      "description": "Median bid-ask spread across all live board events in cents.",
+      "category": "market",
+      "kind": "ui",
+      "mapsTo": "kalshi_spread",
+      "synonyms": [],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#3b82f6",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "kpi.tight_markets",
+      "label": "Tight markets",
+      "description": "Count of events where the bid-ask spread is below the liquidity threshold and both sides are non-null.",
+      "category": "market",
+      "kind": "ui",
+      "mapsTo": "liquidity_ok",
+      "synonyms": [],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#3b82f6",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "kpi.scanner_alerts",
+      "label": "Scanner alerts",
+      "description": "Count of active price divergence scanner flags on the live board.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": "ui.live_board.scanner",
+      "synonyms": [],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "ui.semantic.surface",
+      "label": "Surface",
+      "description": "Named portal, endpoint, board, or artifact being described or checked.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "target",
+        "endpoint",
+        "board"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.source",
+        "ui.semantic.resources"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ui.semantic.hostname",
+      "label": "Hostname",
+      "description": "Network host resolved from a surface URL, without its protocol, port, path, or query.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "host",
+        "domain"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.port",
+        "ui.semantic.source"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "location",
+      "uiRole": "code",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ui.semantic.port",
+      "label": "Port",
+      "description": "Network port resolved from a surface URL, using the protocol default when no port is explicit.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "service port"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.hostname",
+        "ui.semantic.source"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "location",
+      "uiRole": "code",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ui.semantic.status",
+      "label": "Status",
+      "description": "Observed operational outcome reported by a source; status is evidence and does not encode presentation color.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "result",
+        "health state",
+        "outcome"
+      ],
+      "values": [
+        "ok",
+        "attention",
+        "fail",
+        "unavailable",
+        "pending"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.tone",
+        "ui.semantic.source"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ui.semantic.tone",
+      "label": "Tone",
+      "description": "Presentation token derived from status and evidence; tone controls color consistently without replacing status.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "color tone",
+        "severity color"
+      ],
+      "values": [
+        "ok",
+        "warn",
+        "bad",
+        "skip"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.status",
+        "ui.semantic.type"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "presentation",
+      "uiRole": "token",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ui.semantic.kind",
+      "label": "Kind",
+      "description": "Operational classification of a surface or check; distinct from the glossary concept kind used for provenance.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "check kind",
+        "probe class",
+        "operational kind"
+      ],
+      "values": [
+        "edge-health",
+        "registry-bake",
+        "proof",
+        "board",
+        "inventory",
+        "ops-rollup",
+        "doctor"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.type",
+        "ui.semantic.plane"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ui.semantic.plane",
+      "label": "Plane",
+      "description": "Control-plane ownership boundary responsible for producing or operating a surface.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "control plane",
+        "owner plane"
+      ],
+      "values": [
+        "edge",
+        "public",
+        "document",
+        "operate",
+        "harness",
+        "infra"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.kind",
+        "ui.semantic.source"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ui.semantic.source",
+      "label": "Source",
+      "description": "Canonical path or location from which the displayed evidence was read.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "source path",
+        "origin path"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.hostname",
+        "ui.semantic.port",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "location",
+      "uiRole": "link",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ui.semantic.version",
+      "label": "Version",
+      "description": "Declared schema, runtime, proof, or artifact revision attached to the displayed evidence.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "schema version",
+        "revision",
+        "runtime version"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.artifact",
+        "ui.semantic.package"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "version",
+      "uiRole": "badge",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ui.semantic.resources",
+      "label": "Resources",
+      "description": "Governed links that connect a surface to its artifact, package owner, and human documentation.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "mappings",
+        "references",
+        "ownership links"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.artifact",
+        "ui.semantic.package",
+        "ui.semantic.source"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "link",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ui.semantic.artifact",
+      "label": "Artifact",
+      "description": "Produced evidence consumed, maintained, delivered, or verified by the portal.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "bake",
+        "proof",
+        "output"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.package",
+        "ui.semantic.version",
+        "ui.semantic.resources"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "link",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ui.semantic.package",
+      "label": "Package",
+      "description": "Owning or producing package mapped to a portal surface or artifact.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "package owner",
+        "producer"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.artifact",
+        "ui.semantic.version",
+        "ui.semantic.resources"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "link",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ui.semantic.type",
+      "label": "Semantic type",
+      "description": "Stable data role of a concept; distinct from operational kind and from its visual UI role.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "data role",
+        "semantic role",
+        "type"
+      ],
+      "values": [
+        "classification",
+        "location",
+        "presentation",
+        "resource",
+        "state",
+        "version"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.kind",
+        "ui.semantic.tone"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "color": "#60a5fa"
     }
   ]
 }

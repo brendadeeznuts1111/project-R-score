@@ -1,6 +1,8 @@
 // @see https://bun.com/docs/test — bun:test
 import { describe, expect, test } from 'bun:test';
 
+import { HEALTH_FIELD_CONCEPTS } from '../lib/portal/semantic-vocabulary.ts';
+
 describe('portal health page', () => {
   test('live checks separate transport fields and use the tone token contract', async () => {
     const [html, script] = await Promise.all([
@@ -8,9 +10,10 @@ describe('portal health page', () => {
       Bun.file('public/portal/health-page.js').text(),
     ]);
 
-    for (const heading of ['Host', 'Port', 'Status', 'Source', 'Version', 'Resources']) {
-      expect(html).toContain(`<th scope="col">${heading}</th>`);
+    for (const conceptId of Object.values(HEALTH_FIELD_CONCEPTS)) {
+      expect(html).toContain(`/portal/glossary/#glossary:${conceptId}`);
     }
+    expect(html).toMatch(/>Hostname<\/a\s*>/);
     expect(html).toContain("[data-tone='ok']");
     expect(html).toContain('--tone-color');
     expect(html).not.toMatch(/\.tone-badge\s*\{\s*--tone-color/);
@@ -18,6 +21,8 @@ describe('portal health page', () => {
     expect(script).toContain('function targetForProbe(probe)');
     expect(script).toContain("url.port || (url.protocol === 'https:' ? '443' : '80')");
     expect(script).toContain('function toneBadge(tone, label)');
+    expect(script).toContain('function semanticValue(field, label, className');
+    expect(script).toContain('const HEALTH_FIELD_CONCEPTS = {');
     expect(script).toContain('data-tone="${esc(r.tone)}"');
     expect(script).not.toContain('live-row-ok');
   });
