@@ -50,9 +50,18 @@ describe('domain glossary portal', () => {
     expect(html).toContain('/portal/topbar.js');
     expect(html).toContain('/portal/components/footer.js');
     expect(html).toContain('/portal/glossary/glossary-board.js');
+    expect(html).toContain('id="glossary-category-chips"');
+    expect(html).toContain('id="glossary-result-chip"');
+    expect(html).toContain('id="clear-glossary-filters"');
     expect(script).toContain("const GLOSSARY_URL = '/registry/domain-glossary.json'");
     expect(script).toContain("new URLPattern({ hash: 'glossary\\\\::concept' })");
     expect(script).toContain('hash.groups.concept');
+    expect(script).toContain('titleLink.href = conceptHash(concept.id)');
+    expect(script).toContain('deepLink.href = conceptHash(concept.id)');
+    expect(script).toContain('url.searchParams.set(parameter, value)');
+    expect(script).toContain("history.pushState(null, '', url)");
+    expect(script).toContain("history.replaceState(history.state, '', url)");
+    expect(script).toContain('syncConceptFromUrl');
     expect(script).not.toContain('location.hash.slice');
     expect(script).not.toContain("fetch('/api/health");
   });

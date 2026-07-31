@@ -9,6 +9,13 @@ const glossaryPattern = new URLPattern({ hash: 'glossary\\::concept' });
 
 let glossary;
 
+const FILTER_PARAM_KEYS = {
+  query: 'q',
+  category: 'category',
+  kind: 'kind',
+  status: 'status',
+};
+
 function text(tag, value, className) {
   const node = document.createElement(tag);
   node.textContent = String(value);
@@ -16,16 +23,46 @@ function text(tag, value, className) {
   return node;
 }
 
-function pill(value, color) {
-  const node = text('span', value, 'glossary-pill');
-  if (color) node.style.setProperty('--concept-color', color);
+function chip(value, color, tone = 'default') {
+  const node = document.createElement('span');
+  node.className = `glossary-chip glossary-chip--${tone}`;
+  if (color) node.style.setProperty('--chip-color', color);
+  if (color) node.append(text('span', '', 'glossary-chip-dot'));
+  node.append(text('span', value));
   return node;
 }
 
-function stat(value, label) {
-  const card = document.createElement('div');
+function stat(value, label, description, accent, filter, disabled = false) {
+  const card = document.createElement('button');
+  card.type = 'button';
   card.className = 'glossary-stat';
-  card.append(text('strong', value), text('span', label));
+  card.style.setProperty('--stat-accent', accent);
+  card.disabled = disabled;
+  card.dataset.filterKind = filter?.kind ?? '';
+  card.dataset.filterStatus = filter?.status ?? '';
+  if (filter?.reset) card.dataset.filterReset = 'true';
+  card.append(
+    text('span', label, 'glossary-stat-label'),
+    text('strong', value),
+    text('span', description, 'glossary-stat-description')
+  );
+  if (filter) {
+    card.addEventListener('click', () => {
+      if (filter.reset) {
+        resetFilters();
+        return;
+      }
+      if (filter.kind) {
+        const select = document.getElementById('glossary-kind');
+        select.value = select.value === filter.kind ? '' : filter.kind;
+      }
+      if (filter.status) {
+        const select = document.getElementById('glossary-status');
+        select.value = select.value === filter.status ? '' : filter.status;
+      }
+      renderConcepts();
+    });
+  }
   return card;
 }
 
@@ -38,10 +75,14 @@ function readConceptHash() {
 }
 
 function setConceptHash(conceptId) {
+  if (readConceptHash() === conceptId) {
+    syncConceptFromUrl();
+    return;
+  }
   const url = new URL(window.location.href);
   url.hash = conceptHash(conceptId);
   history.pushState(null, '', url);
-  openConceptFromHash();
+  syncConceptFromUrl();
 }
 
 function clearConceptHash() {
@@ -56,9 +97,8 @@ function relatedLink(conceptId) {
   link.href = conceptHash(conceptId);
   link.className = 'glossary-related-link';
   link.textContent = conceptId;
-  link.addEventListener('click', event => {
-    event.preventDefault();
-    setConceptHash(conceptId);
+  link.addEventListener('click', () => {
+    if (readConceptHash() === conceptId) queueMicrotask(syncConceptFromUrl);
   });
   return link;
 }
@@ -106,18 +146,30 @@ function openConcept(concept) {
 
   document.querySelectorAll('.glossary-card.selected').forEach(card => {
     card.classList.remove('selected');
+    card.removeAttribute('aria-current');
   });
   const card = document.querySelector(`[data-concept-id="${CSS.escape(concept.id)}"]`);
   card?.classList.add('selected');
+  card?.setAttribute('aria-current', 'true');
   card?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   if (!dialog.open) dialog.showModal();
 }
 
-function openConceptFromHash() {
+function syncConceptFromUrl() {
+  if (!glossary) return;
   const conceptId = readConceptHash();
-  if (!conceptId || !glossary) return;
-  const concept = glossary.concepts.find(item => item.id === conceptId);
-  if (concept) openConcept(concept);
+  const concept = conceptId ? glossary.concepts.find(item => item.id === conceptId) : undefined;
+  if (concept) {
+    openConcept(concept);
+    return;
+  }
+
+  document.querySelectorAll('.glossary-card.selected').forEach(card => {
+    card.classList.remove('selected');
+    card.removeAttribute('aria-current');
+  });
+  const dialog = document.getElementById('glossary-detail');
+  if (dialog.open) dialog.close();
 }
 
 function matches(concept, filters) {
@@ -148,44 +200,118 @@ function conceptCard(concept) {
   card.className = 'glossary-card';
   card.dataset.conceptId = concept.id;
   card.style.setProperty('--concept-color', concept.color);
-  card.tabIndex = 0;
-  card.setAttribute('role', 'button');
-  card.setAttribute('aria-label', `Open ${concept.label} definition`);
 
   const heading = document.createElement('div');
   heading.className = 'glossary-card-heading';
-  heading.append(text('h3', concept.label), pill(concept.kind, concept.color));
+  const titleLink = document.createElement('a');
+  titleLink.className = 'glossary-card-link';
+  titleLink.href = conceptHash(concept.id);
+  titleLink.setAttribute('aria-label', `Open ${concept.label} definition`);
+  titleLink.append(text('h3', concept.label));
+  heading.append(titleLink, chip(concept.kind, concept.color, 'kind'));
+
   const metadata = document.createElement('div');
   metadata.className = 'glossary-card-meta';
   metadata.append(
-    pill(concept.category, concept.color),
-    text('code', concept.id),
-    concept.unit ? pill(concept.unit, concept.color) : document.createTextNode('')
+    chip(
+      glossary.categories.find(category => category.id === concept.category)?.label ??
+        concept.category,
+      concept.color,
+      'category'
+    ),
+    concept.unit ? chip(concept.unit, concept.color, 'unit') : document.createTextNode('')
   );
-  card.append(heading, text('p', concept.description, 'glossary-card-description'), metadata);
+
+  const footer = document.createElement('footer');
+  footer.className = 'glossary-card-footer';
+  const deepLink = document.createElement('a');
+  deepLink.className = 'glossary-card-deep-link';
+  deepLink.href = conceptHash(concept.id);
+  deepLink.setAttribute('aria-label', `Deep link to ${concept.label}`);
+  deepLink.append(text('span', 'Open definition'), text('span', '↗', 'glossary-link-arrow'));
+  const lineage = concept.seeAlso?.length
+    ? `${concept.seeAlso.length} related`
+    : concept.mapsTo
+      ? '1 mapping'
+      : 'Standalone';
+  footer.append(text('code', concept.id), text('span', lineage, 'glossary-card-lineage'), deepLink);
+
+  card.append(
+    heading,
+    text('p', concept.description, 'glossary-card-description'),
+    metadata,
+    footer
+  );
   if (concept.status !== 'active') {
-    card.append(pill(concept.status, concept.color));
+    card.append(chip(concept.status, concept.color, 'status'));
   }
 
-  const activate = () => setConceptHash(concept.id);
-  card.addEventListener('click', activate);
-  card.addEventListener('keydown', event => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      activate();
+  card.addEventListener('click', event => {
+    if (event.target.closest('a, button')) {
+      if (readConceptHash() === concept.id) queueMicrotask(syncConceptFromUrl);
+      return;
     }
+    setConceptHash(concept.id);
   });
   return card;
 }
 
-function renderConcepts() {
-  const filters = {
-    query: document.getElementById('glossary-search').value.trim().toLowerCase(),
+function currentFilters() {
+  return {
+    query: document.getElementById('glossary-search').value.trim(),
     category: document.getElementById('glossary-category').value,
     kind: document.getElementById('glossary-kind').value,
     status: document.getElementById('glossary-status').value,
   };
-  const concepts = glossary.concepts.filter(concept => matches(concept, filters));
+}
+
+function syncFiltersToUrl(filters) {
+  const url = new URL(window.location.href);
+  for (const [key, parameter] of Object.entries(FILTER_PARAM_KEYS)) {
+    const value = filters[key];
+    if (value) url.searchParams.set(parameter, value);
+    else url.searchParams.delete(parameter);
+  }
+  history.replaceState(history.state, '', url);
+}
+
+function restoreFiltersFromUrl() {
+  const url = new URL(window.location.href);
+  document.getElementById('glossary-search').value =
+    url.searchParams.get(FILTER_PARAM_KEYS.query) ?? '';
+  for (const key of ['category', 'kind', 'status']) {
+    const select = document.getElementById(`glossary-${key}`);
+    const value = url.searchParams.get(FILTER_PARAM_KEYS[key]) ?? '';
+    select.value = [...select.options].some(option => option.value === value) ? value : '';
+  }
+}
+
+function updateFilterState(filters) {
+  document.querySelectorAll('[data-category-chip]').forEach(button => {
+    const active = button.dataset.categoryChip === filters.category;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+  document.querySelectorAll('.glossary-stat').forEach(card => {
+    const active =
+      (card.dataset.filterKind && card.dataset.filterKind === filters.kind) ||
+      (card.dataset.filterStatus && card.dataset.filterStatus === filters.status) ||
+      (card.dataset.filterReset === 'true' &&
+        !filters.query &&
+        !filters.category &&
+        !filters.kind &&
+        !filters.status);
+    card.classList.toggle('active', Boolean(active));
+    card.setAttribute('aria-pressed', String(Boolean(active)));
+  });
+  const hasFilters = Boolean(filters.query || filters.category || filters.kind || filters.status);
+  document.getElementById('clear-glossary-filters').disabled = !hasFilters;
+}
+
+function renderConcepts({ syncUrl = true } = {}) {
+  const filters = currentFilters();
+  const matchFilters = { ...filters, query: filters.query.toLowerCase() };
+  const concepts = glossary.concepts.filter(concept => matches(concept, matchFilters));
   const target = document.getElementById('glossary-grid');
   target.replaceChildren(...concepts.map(conceptCard));
   if (!concepts.length) {
@@ -193,6 +319,18 @@ function renderConcepts() {
   }
   document.getElementById('glossary-result-count').textContent =
     `${concepts.length} of ${glossary.concepts.length} concepts`;
+  document.getElementById('glossary-result-chip').textContent = `${concepts.length} shown`;
+  if (syncUrl) syncFiltersToUrl(filters);
+  updateFilterState(filters);
+  syncConceptFromUrl();
+}
+
+function resetFilters() {
+  document.getElementById('glossary-search').value = '';
+  document.getElementById('glossary-category').value = '';
+  document.getElementById('glossary-kind').value = '';
+  document.getElementById('glossary-status').value = '';
+  renderConcepts();
 }
 
 function addOptions(selectId, values, labelFor = value => value) {
@@ -205,18 +343,88 @@ function addOptions(selectId, values, labelFor = value => value) {
   }
 }
 
+function renderCategoryChips(payload) {
+  const target = document.getElementById('glossary-category-chips');
+  const chips = payload.categories.map(category => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'glossary-filter-chip';
+    button.dataset.categoryChip = category.id;
+    button.style.setProperty('--chip-color', category.color);
+    button.setAttribute('aria-pressed', 'false');
+    button.setAttribute('aria-label', `Filter by ${category.label}`);
+    button.append(
+      text('span', '', 'glossary-filter-chip-dot'),
+      text('span', category.label, 'glossary-filter-chip-label'),
+      text('span', payload.summary.categories[category.id] ?? 0, 'glossary-filter-chip-count')
+    );
+    button.addEventListener('click', () => {
+      const select = document.getElementById('glossary-category');
+      select.value = select.value === category.id ? '' : category.id;
+      renderConcepts();
+    });
+    return button;
+  });
+  target.replaceChildren(...chips);
+}
+
 function render(payload) {
   glossary = payload;
   const summary = payload.summary;
+  const color = id => payload.categories.find(category => category.id === id)?.color ?? '#58a6ff';
+  const categoriesCard = stat(
+    payload.categories.length,
+    'Categories',
+    'Browse the semantic domains represented in the registry.',
+    color('model')
+  );
+  categoriesCard.addEventListener('click', () => {
+    document
+      .getElementById('glossary-category-chips')
+      .scrollIntoView({ block: 'center', behavior: 'smooth' });
+  });
   document
     .getElementById('glossary-summary')
     .replaceChildren(
-      stat(summary.concepts, 'concepts'),
-      stat(payload.categories.length, 'categories'),
-      stat(summary.kinds.registry ?? 0, 'registry fields'),
-      stat(summary.kinds.ui ?? 0, 'UI concepts'),
-      stat(summary.kinds.composite ?? 0, 'composites'),
-      stat(summary.deprecated, 'deprecated')
+      stat(
+        summary.concepts,
+        'Concepts',
+        'Reset to the complete semantic catalog.',
+        color('market'),
+        { reset: true }
+      ),
+      categoriesCard,
+      stat(
+        summary.kinds.registry ?? 0,
+        'Registry fields',
+        'Desk and export contract fields.',
+        color('warehouse'),
+        { kind: 'registry' }
+      ),
+      stat(
+        summary.kinds.ui ?? 0,
+        'UI concepts',
+        'Surface labels, states, and interactions.',
+        color('ui'),
+        { kind: 'ui' }
+      ),
+      stat(
+        summary.kinds.composite ?? 0,
+        'Composites',
+        'Derived concepts composed from multiple fields.',
+        color('pipeline'),
+        { kind: 'composite' }
+      ),
+      stat(
+        summary.deprecated,
+        'Deprecated',
+        summary.deprecated
+          ? 'Concepts with a preferred replacement.'
+          : 'No concepts currently require migration.',
+        '#f85149',
+        { status: 'deprecated' },
+        summary.deprecated === 0
+      )
     );
   document.getElementById('glossary-generated').textContent =
     `Generated ${payload.generatedAt} · ${payload.sources.semanticAuthority}`;
@@ -228,8 +436,9 @@ function render(payload) {
   );
   addOptions('glossary-kind', Object.keys(summary.kinds));
   addOptions('glossary-status', ['active', 'deprecated', 'draft']);
-  renderConcepts();
-  openConceptFromHash();
+  renderCategoryChips(payload);
+  restoreFiltersFromUrl();
+  renderConcepts({ syncUrl: false });
 }
 
 function renderError(error) {
@@ -263,9 +472,14 @@ for (const id of ['glossary-search', 'glossary-category', 'glossary-kind', 'glos
   document.getElementById(id).addEventListener('input', () => glossary && renderConcepts());
 }
 
+document.getElementById('clear-glossary-filters').addEventListener('click', resetFilters);
 const dialog = document.getElementById('glossary-detail');
 dialog.addEventListener('close', clearConceptHash);
-window.addEventListener('hashchange', openConceptFromHash);
-window.addEventListener('popstate', openConceptFromHash);
+window.addEventListener('hashchange', syncConceptFromUrl);
+window.addEventListener('popstate', () => {
+  if (!glossary) return;
+  restoreFiltersFromUrl();
+  renderConcepts({ syncUrl: false });
+});
 
 load().then(render).catch(renderError);
