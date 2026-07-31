@@ -110,6 +110,7 @@ Content-Type matrix rows for env page CT section.
 | [`topbar.js`](../public/portal/topbar.js) | Health dot (rAF + ARIA), lazy sidebar/notif bootstrap |
 | [`components/sidebar.js`](../public/portal/components/sidebar.js) | Tenant manifest, `?tenant=` switch, keyboard a11y |
 | [`components/notification.js`](../public/portal/components/notification.js) | `<notification-center>` toasts via `/api/channels/events` |
+| [`components/glossary-ux.js`](../public/portal/components/glossary-ux.js) | Glossary tooltips · search autocomplete · breadcrumbs · local usage tracking (`domain-glossary.json`) |
 | [`app.js`](../public/portal/app.js) | Registry grid; listens `portal:tenant` |
 
 ---

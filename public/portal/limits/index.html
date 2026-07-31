@@ -167,7 +167,7 @@
       }
       .pattern-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
         gap: 1em;
       }
       .pattern-list {
@@ -387,7 +387,7 @@
       }
       .account-profile-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
         gap: 10px;
       }
       .account-profile {
@@ -848,6 +848,19 @@
         #profile-count {
           grid-column: auto;
         }
+        .section-heading__links,
+        .account-profile__footer,
+        .trace-panel__footer {
+          align-items: flex-start;
+          flex-wrap: wrap;
+        }
+        .account-profile__metrics,
+        .trace-panel__summary {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .limit-actions {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
@@ -1096,6 +1109,8 @@
         </a>
       </nav>
 
+      <nav id="limits-glossary-crumbs" class="glossary-crumbs" aria-label="Breadcrumb"></nav>
+
       <header class="portal-hero limits-hero">
         <h2 class="portal-hero__title">
           <a class="semantic-label" href="/portal/glossary/#glossary:page.limitPatterns"
@@ -1120,7 +1135,12 @@
           <span class="section-heading__links">
             <a href="/portal/glossary/#glossary:section.accountLimitControl">Definition</a>
             <a href="/portal/glossary/#glossary:ops.limits.profile">Profile semantics</a>
-            <a href="/registry/limit-raises.json">Artifact</a>
+            <a
+              class="semantic-label"
+              href="/registry/limit-raises.json"
+              data-glossary-concept="ui.semantic.artifact"
+              >Artifact</a
+            >
           </span>
         </h2>
         <p class="sub section-copy">
@@ -1133,7 +1153,7 @@
           class="profile-summary"
           aria-label="Account limit profile summary"
         ></div>
-        <div class="profile-filter-bar" aria-label="Account profile filters">
+        <div class="profile-filter-bar" role="search" aria-label="Account profile filters">
           <label class="profile-filter profile-filter--search" for="profile-filter">
             <a class="semantic-label" href="/portal/glossary/#glossary:ui.action.searchProfiles"
               >Search profiles</a
@@ -1142,6 +1162,7 @@
               id="profile-filter"
               type="search"
               placeholder="Account, profile, policy, sportsbook…"
+              data-glossary-concept="ui.action.searchProfiles"
             />
           </label>
           <label class="profile-filter" for="profile-status">
@@ -1173,7 +1194,7 @@
           >
             Reset
           </button>
-          <span id="profile-count" class="sub"></span>
+          <span id="profile-count" class="sub" role="status" aria-live="polite"></span>
         </div>
         <div class="profile-board">
           <div id="account-profile-grid" class="account-profile-grid"></div>
@@ -1211,19 +1232,47 @@
           appear automatically when policy rows are added.
         </p>
         <div class="table-wrap">
-          <table>
+          <table aria-label="Jurisdiction limit policies">
             <thead>
               <tr>
-                <th>Jurisdiction</th>
+                <th>
+                  <a
+                    class="semantic-label"
+                    href="/portal/glossary/#glossary:ops.limits.jurisdiction_policy"
+                    >Jurisdiction</a
+                  >
+                </th>
                 <th>
                   <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.policy_code"
                     >Policy</a
                   >
                 </th>
-                <th>Status</th>
-                <th>Authority / risk</th>
-                <th>Scope</th>
-                <th>Sport / market</th>
+                <th>
+                  <a class="semantic-label" href="/portal/glossary/#glossary:ui.semantic.status"
+                    >Status</a
+                  >
+                </th>
+                <th>
+                  <a
+                    class="semantic-label"
+                    href="/portal/glossary/#glossary:ops.limits.jurisdiction_policy"
+                    >Authority / risk</a
+                  >
+                </th>
+                <th>
+                  <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.account"
+                    >Scope</a
+                  >
+                </th>
+                <th>
+                  <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.sport"
+                    >Sport</a
+                  >
+                  /
+                  <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.market_type"
+                    >market</a
+                  >
+                </th>
                 <th>
                   <a
                     class="semantic-label"
@@ -1231,8 +1280,18 @@
                     >Limits</a
                   >
                 </th>
-                <th>Enforcement</th>
-                <th>Effective / source</th>
+                <th>
+                  <a
+                    class="semantic-label"
+                    href="/portal/glossary/#glossary:ops.limits.jurisdiction_policy"
+                    >Enforcement</a
+                  >
+                </th>
+                <th>
+                  <a class="semantic-label" href="/portal/glossary/#glossary:ui.semantic.source"
+                    >Effective / source</a
+                  >
+                </th>
               </tr>
             </thead>
             <tbody id="jurisdiction-policy-body"></tbody>
@@ -1248,6 +1307,7 @@
               type="text"
               id="filter-partner"
               placeholder="Account, partner, or downline…"
+              data-glossary-concept="ui.filter.partnerId"
               aria-label="Filter by account profile"
             />
           </label>
@@ -1317,17 +1377,17 @@
             </div>
             <div class="pattern-summary__item">
               <span class="metric" id="unique-partners">0</span>
-              <a href="/portal/glossary/#glossary:ops.limits.account">Nodes</a>
-              <small>with changes</small>
+              <a href="/portal/glossary/#glossary:ops.limits.node">Accounts</a>
+              <small>tree nodes with changes</small>
             </div>
             <div class="pattern-summary__item">
               <span class="metric" id="unique-books">0</span>
-              <span>Sportsbooks</span>
+              <a href="/portal/glossary/#glossary:ui.filter.sportsbook">Sportsbooks</a>
               <small>connected sources</small>
             </div>
             <div class="pattern-summary__item">
               <span class="metric" id="downline-nodes">0</span>
-              <span>Downline nodes</span>
+              <a href="/portal/glossary/#glossary:ops.limits.downline">Downline</a>
               <small>agents and sub-agents</small>
             </div>
             <div class="pattern-summary__item">
@@ -1337,7 +1397,7 @@
             </div>
             <div class="pattern-summary__item">
               <span class="metric" id="unique-zips">0</span>
-              <span>ZIP clusters</span>
+              <a href="/portal/glossary/#glossary:ui.filter.zipPrefix">ZIP clusters</a>
               <small>three-digit prefixes</small>
             </div>
             <div class="pattern-summary__item">
@@ -1378,7 +1438,9 @@
 
         <section id="research-queue" class="card">
           <h2 class="section-heading-link">
-            <a href="#section:research-queue">Pattern research queue</a>
+            <a href="#section:research-queue" data-glossary-concept="ops.limits.evidence_trace"
+              >Pattern research queue</a
+            >
             <a href="/portal/glossary/#glossary:ops.limits.evidence_trace">Evidence semantics</a>
           </h2>
           <p class="sub">
@@ -1444,11 +1506,35 @@
             <table aria-label="Recent limit changes">
               <thead>
                 <tr>
-                  <th>Node / Downline</th>
-                  <th>State / ZIP</th>
-                  <th>Sportsbook</th>
-                  <th>Sport</th>
-                  <th>Market</th>
+                  <th>
+                    <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.account"
+                      >Node / Downline</a
+                    >
+                  </th>
+                  <th>
+                    <a
+                      class="semantic-label"
+                      href="/portal/glossary/#glossary:ops.limits.jurisdiction_policy"
+                      >State / ZIP</a
+                    >
+                  </th>
+                  <th>
+                    <a class="semantic-label" href="/portal/glossary/#glossary:ui.filter.sportsbook"
+                      >Sportsbook</a
+                    >
+                  </th>
+                  <th>
+                    <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.sport"
+                      >Sport</a
+                    >
+                  </th>
+                  <th>
+                    <a
+                      class="semantic-label"
+                      href="/portal/glossary/#glossary:ops.limits.market_type"
+                      >Market</a
+                    >
+                  </th>
                   <th>
                     <a
                       class="semantic-label"
@@ -1456,8 +1542,20 @@
                       >Phase</a
                     >
                   </th>
-                  <th>Previous limit</th>
-                  <th>New limit</th>
+                  <th>
+                    <a
+                      class="semantic-label"
+                      href="/portal/glossary/#glossary:ops.limits.effective_limit"
+                      >Previous limit</a
+                    >
+                  </th>
+                  <th>
+                    <a
+                      class="semantic-label"
+                      href="/portal/glossary/#glossary:ops.limits.effective_limit"
+                      >New limit</a
+                    >
+                  </th>
                   <th>
                     <a
                       class="semantic-label"
@@ -1472,7 +1570,13 @@
                       >Influence</a
                     >
                   </th>
-                  <th>When</th>
+                  <th>
+                    <a
+                      class="semantic-label"
+                      href="/portal/glossary/#glossary:ops.limits.evidence_trace"
+                      >When</a
+                    >
+                  </th>
                 </tr>
               </thead>
               <tbody id="raises-tbody"></tbody>
@@ -1508,6 +1612,43 @@
           state: 'state',
           zip: 'zip',
         };
+        const GLOSSARY_CONCEPT_PATTERN = /^[a-z0-9][a-z0-9._-]*$/i;
+        const MARKET_GLOSSARY_CONCEPTS = Object.freeze({
+          match_winner: 'market.match_winner',
+          over_under: 'market.total',
+          spread: 'market.point_spread',
+        });
+        const SPORT_GLOSSARY_CONCEPTS = Object.freeze({
+          american_football: 'sport.american_football',
+          baseball: 'sport.baseball',
+          basketball: 'sport.basketball',
+          golf: 'sport.golf',
+          hockey: 'sport.hockey',
+          mma: 'sport.mma',
+          soccer: 'sport.soccer',
+          tennis: 'sport.tennis',
+        });
+
+        function glossaryHref(concept, fallback = 'page.limitPatterns') {
+          const candidate = String(concept ?? '');
+          const safeConcept = GLOSSARY_CONCEPT_PATTERN.test(candidate) ? candidate : fallback;
+          return '/portal/glossary/#glossary:' + encodeURIComponent(safeConcept);
+        }
+
+        function marketGlossaryConcept(marketKey) {
+          return MARKET_GLOSSARY_CONCEPTS[marketKey] ?? 'ops.limits.market_type';
+        }
+
+        function sportGlossaryConcept(sportKey) {
+          return SPORT_GLOSSARY_CONCEPTS[sportKey] ?? 'ops.limits.sport';
+        }
+
+        function roleGlossaryConcept(nodeType) {
+          if (nodeType === 'partner') return 'ops.limits.partner';
+          if (nodeType === 'agent') return 'ops.limits.agent';
+          if (nodeType === 'sub_agent') return 'ops.limits.sub_agent';
+          return 'ops.limits.roleType';
+        }
 
         function hasConnectedPatterns(patterns) {
           return Number(patterns?.audit?.changeRows ?? 0) > 0;
@@ -1817,11 +1958,11 @@
                     ? new Date(Number(r.increased_at) * 1000).toLocaleString()
                     : '—';
                 return `<tr>
-        <td><strong>${esc(pattern?.node_name ?? r.node_id ?? '—')}</strong><br><small>${esc(pattern?.node_type ?? 'node')} · depth ${pattern?.downline_depth ?? 0}</small></td>
+        <td><strong data-glossary-concept="ops.limits.account">${esc(pattern?.node_name ?? r.node_id ?? '—')}</strong><br><small><a class="semantic-label" href="${glossaryHref(roleGlossaryConcept(pattern?.node_type))}">${esc(pattern?.node_type ?? 'node')}</a> · depth ${pattern?.downline_depth ?? 0}</small></td>
         <td>${esc(pattern?.state_code ?? '—')} · <code>${esc(pattern?.zip_code ?? '—')}</code><br><small>${esc(pattern?.location ?? '')}</small></td>
         <td><strong>${esc(r.sportsbook ?? '—')}</strong></td>
-        <td>${esc(r.sport_id ?? '—')}</td>
-        <td>${esc(r.market_id ?? '—')}</td>
+        <td><a class="semantic-label" href="${glossaryHref(sportGlossaryConcept(r.sport_id))}" data-glossary-concept="ops.limits.sport">${esc(r.sport_id ?? '—')}</a></td>
+        <td><a class="semantic-label" href="${glossaryHref(marketGlossaryConcept(r.market_id))}" data-glossary-concept="ops.limits.market_type">${esc(r.market_id ?? '—')}</a></td>
         <td><span class="badge ${typeCls}" data-glossary-concept="ops.limits.market_phase">${esc(r.bet_type ?? '—')}</span></td>
         <td>$${prev.toLocaleString()}</td>
         <td><strong>$${next.toLocaleString()}</strong></td>
@@ -1869,7 +2010,7 @@
                   <div class="node-breakdown__head">
                     <div>
                       <strong>${esc(pattern?.node_name ?? pid)}</strong><br>
-                      <small>${esc(pattern?.node_type ?? 'node')} · depth ${pattern?.downline_depth ?? 0} · ${esc(pattern?.state_code ?? 'unmapped')} ${esc(pattern?.zip_prefix ?? '')}</small>
+                      <small><a class="semantic-label" href="${glossaryHref(roleGlossaryConcept(pattern?.node_type))}">${esc(pattern?.node_type ?? 'node')}</a> · depth ${pattern?.downline_depth ?? 0} · ${esc(pattern?.state_code ?? 'unmapped')} ${esc(pattern?.zip_prefix ?? '')}</small>
                     </div>
                     <span class="badge ${total < 0 ? 'down' : 'up'}" data-glossary-concept="ops.limits.change_direction">${total < 0 ? 'reduced' : 'raised'}</span>
                   </div>
@@ -1944,7 +2085,7 @@
               .map(
                 row => `<tr>
                 <td><code title="${esc(row.partner_node_id)}">${esc(row.partner_node_id.replace('limit-demo-', ''))}</code></td>
-                <td><strong>${esc(row.node_name)}</strong><br><small>${esc(row.node_type)} · depth ${row.downline_depth}</small></td>
+                <td><strong data-glossary-concept="ops.limits.account">${esc(row.node_name)}</strong><br><small><a class="semantic-label" href="${glossaryHref(roleGlossaryConcept(row.node_type))}">${esc(row.node_type)}</a> · depth ${row.downline_depth}</small></td>
                 <td><strong>${esc(row.state_code ?? '—')}</strong> · <code>${esc(row.zip_code ?? '—')}</code><br><small>${esc(row.location ?? 'not observed')}</small></td>
                 <td><span class="badge ${row.license_status === 'active' ? 'pregame' : 'pending'}" data-glossary-concept="ui.semantic.status">${esc(row.license_status ?? 'none')}</span></td>
                 <td><span class="badge ${row.violation_count_30d > 1 ? 'live' : row.violation_count_30d > 0 ? 'pending' : 'pregame'}">${row.violation_count_30d} violations</span></td>
@@ -2044,7 +2185,7 @@
         load();
         setInterval(load, POLL_INTERVAL);
       </script>
-      <script type="module" src="/portal/limits/limit-profiles.js?v=3"></script>
+      <script type="module" src="/portal/limits/limit-profiles.js?v=5"></script>
     </main>
     <footer class="footer" data-portal-chrome="footer">
       <p>

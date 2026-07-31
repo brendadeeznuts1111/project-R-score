@@ -135,6 +135,11 @@ describe('account limit control surface', () => {
     expect(html).toContain('id="compliance-policy-kpis"');
     expect(html).toContain('Policy artifact');
     expect(html).toContain('Partner limit patterns');
+    expect(html).toContain('id="limits-glossary-crumbs"');
+    expect(html).toContain('aria-label="Breadcrumb"');
+    expect(html).toContain('role="search" aria-label="Account profile filters"');
+    expect(html).toContain('aria-label="Jurisdiction limit policies"');
+    expect(html).toContain('id="profile-count" class="sub" role="status"');
     expect(html).toContain('id="pattern-summary"');
     expect(html).toContain('id="research-findings"');
     expect(html).toContain('id="node-breakdown"');
@@ -156,6 +161,15 @@ describe('account limit control surface', () => {
     expect(script).toContain("new URLPattern({ hash: 'account\\\\::account' })");
     expect(script).toContain("new URLPattern({ hash: 'section\\\\::section' })");
     expect(script).toContain("new URLPattern({ pathname: '/portal/limits/' })");
+    expect(script).toContain("from '../components/glossary-ux.js'");
+    expect(script).toContain('bootGlossaryUx');
+    expect(script).toContain('trackGlossaryEvent');
+    expect(script).toContain('const GLOSSARY_CONCEPT_PATTERN =');
+    expect(script).toContain("SPORT_GLOSSARY_CONCEPTS[sportKey] ?? 'ops.limits.sport'");
+    expect(script).toContain(
+      "MARKET_GLOSSARY_CONCEPTS[marketKey] ?? 'ops.limits.market_type'"
+    );
+    expect(script).toContain('encodeURIComponent(safeConcept)');
     expect(script).toContain('hash.groups.account');
     expect(script).toContain('hash.groups.section');
     expect(script).toContain('url.searchParams.set(parameter, value)');

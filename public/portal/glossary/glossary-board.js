@@ -2,12 +2,19 @@
  * Domain glossary board.
  * @see tools/domain-glossary.ts
  * @see https://bun.com/blog/bun-v1.3.4#urlpattern-api
+ * @see ../components/glossary-ux.js
  */
 
-const GLOSSARY_URL = '/registry/domain-glossary.json';
+import {
+  bootGlossaryUx,
+  loadDomainGlossary,
+  trackGlossaryEvent,
+} from '../components/glossary-ux.js';
+
 const glossaryPattern = new URLPattern({ hash: 'glossary\\::concept' });
 
 let glossary;
+let lastTrackedConceptId = null;
 
 const FILTER_PARAM_KEYS = {
   query: 'q',
@@ -68,11 +75,21 @@ function stat(value, label, description, accent, filter, disabled = false) {
 }
 
 function conceptHash(conceptId) {
-  return `#glossary:${conceptId}`;
+  return `#glossary:${encodeURIComponent(conceptId)}`;
 }
 
 function readConceptHash() {
-  return glossaryPattern.exec(window.location.href)?.hash.groups.concept ?? null;
+  const captured = glossaryPattern.exec(window.location.href)?.hash.groups.concept;
+  if (!captured) return null;
+  try {
+    return decodeURIComponent(captured);
+  } catch {
+    return null;
+  }
+}
+
+function scrollBehavior() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
 }
 
 function setConceptHash(conceptId) {
@@ -87,6 +104,7 @@ function setConceptHash(conceptId) {
 }
 
 function clearConceptHash() {
+  lastTrackedConceptId = null;
   if (!readConceptHash()) return;
   const url = new URL(window.location.href);
   url.hash = '';
@@ -132,6 +150,11 @@ function openConcept(concept) {
   addDetailRow(details, 'Concept kind', concept.kind);
   addDetailRow(details, 'Semantic type', concept.semanticType);
   addDetailRow(details, 'UI role', concept.uiRole);
+  addDetailRow(details, 'Parent concept', concept.parentId ? relatedLink(concept.parentId) : null);
+  addDetailRow(details, 'Competition scope', concept.scope);
+  addDetailRow(details, 'Region', concept.region);
+  addDetailRow(details, 'Event country codes', concept.countryCodes?.join(', '));
+  addDetailRow(details, 'Flag', concept.flagEmoji);
   addDetailRow(details, 'Status', concept.status);
   addDetailRow(details, 'Unit', concept.unit);
   addDetailRow(details, 'Format', concept.format);
@@ -155,8 +178,12 @@ function openConcept(concept) {
   const card = document.querySelector(`[data-concept-id="${CSS.escape(concept.id)}"]`);
   card?.classList.add('selected');
   card?.setAttribute('aria-current', 'true');
-  card?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  card?.scrollIntoView({ block: 'nearest', behavior: scrollBehavior() });
   if (!dialog.open) dialog.showModal();
+  if (lastTrackedConceptId !== concept.id) {
+    trackGlossaryEvent('glossary.view', { conceptId: concept.id });
+    lastTrackedConceptId = concept.id;
+  }
 }
 
 function syncConceptFromUrl() {
@@ -174,6 +201,7 @@ function syncConceptFromUrl() {
   });
   const dialog = document.getElementById('glossary-detail');
   if (dialog.open) dialog.close();
+  lastTrackedConceptId = null;
 }
 
 function matches(concept, filters) {
@@ -194,6 +222,10 @@ function matches(concept, filters) {
     concept.unit,
     concept.format,
     concept.source,
+    concept.parentId,
+    concept.scope,
+    concept.region,
+    ...(concept.countryCodes ?? []),
     ...(concept.synonyms ?? []),
     ...(concept.seeAlso ?? []),
   ]
@@ -215,7 +247,14 @@ function conceptCard(concept) {
   titleLink.className = 'glossary-card-link';
   titleLink.href = conceptHash(concept.id);
   titleLink.setAttribute('aria-label', `Open ${concept.label} definition`);
-  titleLink.append(text('h3', concept.label));
+  const title = text('h3', concept.label);
+  if (concept.flagEmoji) {
+    const flag = text('span', concept.flagEmoji, 'glossary-card-flag');
+    flag.setAttribute('role', 'img');
+    flag.setAttribute('aria-label', concept.flagAriaLabel ?? `${concept.label} geography`);
+    title.prepend(flag);
+  }
+  titleLink.append(title);
   const taxonomy = document.createElement('div');
   taxonomy.className = 'glossary-card-taxonomy';
   taxonomy.append(chip(concept.kind, concept.color, 'kind'));
@@ -236,6 +275,7 @@ function conceptCard(concept) {
     concept.unit ? chip(concept.unit, concept.color, 'unit') : document.createTextNode(''),
     concept.format ? chip(concept.format, concept.color, 'format') : document.createTextNode('')
   );
+  if (concept.scope) metadata.append(chip(concept.scope.replace('_', ' '), concept.color, 'type'));
 
   const footer = document.createElement('footer');
   footer.className = 'glossary-card-footer';
@@ -402,7 +442,7 @@ function render(payload) {
   categoriesCard.addEventListener('click', () => {
     document
       .getElementById('glossary-category-chips')
-      .scrollIntoView({ block: 'center', behavior: 'smooth' });
+      .scrollIntoView({ block: 'center', behavior: scrollBehavior() });
   });
   const semanticCard = stat(
     summary.portalSemantics,
@@ -413,7 +453,7 @@ function render(payload) {
   semanticCard.addEventListener('click', () => {
     document
       .getElementById('glossary-semantic-type')
-      .scrollIntoView({ block: 'center', behavior: 'smooth' });
+      .scrollIntoView({ block: 'center', behavior: scrollBehavior() });
   });
   document
     .getElementById('glossary-summary')
@@ -477,21 +517,6 @@ function renderError(error) {
     );
 }
 
-async function load() {
-  const response = await fetch(GLOSSARY_URL, {
-    cache: 'no-store',
-    credentials: 'same-origin',
-    headers: { Accept: 'application/json' },
-    signal: AbortSignal.timeout(8000),
-  });
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  const payload = await response.json();
-  if (payload.schemaVersion !== 2 || payload.kind !== 'domain-glossary') {
-    throw new Error(`unsupported domain glossary schema: ${String(payload.schemaVersion)}`);
-  }
-  return payload;
-}
-
 for (const id of [
   'glossary-search',
   'glossary-category',
@@ -512,4 +537,19 @@ window.addEventListener('popstate', () => {
   renderConcepts({ syncUrl: false });
 });
 
-load().then(render).catch(renderError);
+loadDomainGlossary()
+  .then(async payload => {
+    render(payload);
+    await bootGlossaryUx({
+      breadcrumbsMount: document.getElementById('glossary-crumbs'),
+      searchInput: document.getElementById('glossary-search'),
+      tooltipRoot: document.querySelector('.glossary-board'),
+      trackPage: false,
+      onAutocompleteSelect(concept) {
+        document.getElementById('glossary-search').value = concept.label;
+        renderConcepts();
+        setConceptHash(concept.id);
+      },
+    });
+  })
+  .catch(renderError);

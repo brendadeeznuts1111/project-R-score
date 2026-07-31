@@ -126,6 +126,36 @@ describe('domain glossary portal', () => {
       kind: 'cross_market',
       unit: 'probability',
     });
+    expect(payload.concepts.find(concept => concept.id === 'ops.limits.node')).toMatchObject({
+      kind: 'ui',
+      semanticType: 'resource',
+      synonyms: expect.arrayContaining(['node_id', 'TreeNodeId']),
+    });
+    expect(payload.concepts.find(concept => concept.id === 'ops.limits.agent')).toMatchObject({
+      kind: 'ui',
+      values: expect.arrayContaining(['agent']),
+      seeAlso: expect.arrayContaining(['api.agent']),
+    });
+    expect(payload.concepts.find(concept => concept.id === 'api.agent')).toMatchObject({
+      kind: 'ui',
+      seeAlso: expect.arrayContaining(['ops.limits.agent']),
+    });
+    expect(
+      payload.concepts.find(concept => concept.id === 'ops.limits.opening_baseline')
+    ).toMatchObject({
+      kind: 'baseline',
+      unit: 'usd',
+      format: 'currency:usd',
+    });
+    expect(
+      payload.concepts.find(concept => concept.id === 'ops.limits.baseline_tier')
+    ).toMatchObject({
+      kind: 'baseline',
+      semanticType: 'classification',
+      uiRole: 'chip',
+      values: expect.arrayContaining(['1', '5']),
+    });
+
     expect(payload.surfaces).toContainEqual({
       path: '/portal/partner-history/',
       concept: 'page.partnerHistory',
@@ -161,9 +191,10 @@ describe('domain glossary portal', () => {
   });
 
   test('board uses URLPattern.hash deep links and shared portal chrome', async () => {
-    const [html, script] = await Promise.all([
+    const [html, script, ux] = await Promise.all([
       Bun.file('public/portal/glossary/index.html').text(),
       Bun.file('public/portal/glossary/glossary-board.js').text(),
+      Bun.file('public/portal/components/glossary-ux.js').text(),
     ]);
 
     expect(html).toContain('Domain glossary');
@@ -171,13 +202,23 @@ describe('domain glossary portal', () => {
     expect(html).toContain('/portal/topbar.js');
     expect(html).toContain('/portal/components/footer.js');
     expect(html).toContain('/portal/glossary/glossary-board.js');
+    expect(html).toContain('id="glossary-crumbs"');
     expect(html).toContain('id="glossary-category-chips"');
     expect(html).toContain('id="glossary-result-chip"');
     expect(html).toContain('id="clear-glossary-filters"');
     expect(html).toContain('id="glossary-semantic-type"');
-    expect(script).toContain("const GLOSSARY_URL = '/registry/domain-glossary.json'");
-    expect(script).toContain("new URLPattern({ hash: 'glossary\\\\::concept' })");
+    expect(html).toContain('role="search" aria-label="Filter domain concepts"');
+    expect(html).toContain('aria-labelledby="glossary-detail-title"');
+    expect(html).toContain('aria-describedby="glossary-detail-description"');
+    expect(script).toContain("from '../components/glossary-ux.js'");
+    expect(script).toContain('bootGlossaryUx');
+    expect(script).toContain('trackGlossaryEvent');
+    expect(script).toContain('glossaryPattern = new URLPattern');
+    expect(script).toContain("hash: 'glossary");
     expect(script).toContain('hash.groups.concept');
+    expect(script).toContain('decodeURIComponent(captured)');
+    expect(script).toContain("matchMedia('(prefers-reduced-motion: reduce)')");
+    expect(script).toContain('lastTrackedConceptId !== concept.id');
     expect(script).toContain('titleLink.href = conceptHash(concept.id)');
     expect(script).toContain('deepLink.href = conceptHash(concept.id)');
     expect(script).toContain('url.searchParams.set(parameter, value)');
@@ -188,9 +229,33 @@ describe('domain glossary portal', () => {
     expect(script).toContain("addDetailRow(details, 'Semantic type', concept.semanticType)");
     expect(script).toContain("addDetailRow(details, 'UI role', concept.uiRole)");
     expect(script).toContain("addDetailRow(details, 'Format', concept.format)");
-    expect(script).toContain("payload.schemaVersion !== 2");
     expect(script).not.toContain('location.hash.slice');
     expect(script).not.toContain("fetch('/api/health");
+    expect(ux).toContain("const GLOSSARY_URL = '/registry/domain-glossary.json'");
+    expect(ux).toContain('enhanceGlossaryTooltips');
+    expect(ux).toContain('mountGlossaryAutocomplete');
+    expect(ux).toContain('mountGlossaryBreadcrumbs');
+    expect(ux).toContain('trackGlossaryEvent');
+    expect(ux).toContain('schemaVersion !== 2');
+  });
+
+  test('shared glossary UX keeps DOM, fragments, focus, and telemetry bounded', async () => {
+    const ux = await Bun.file('public/portal/components/glossary-ux.js').text();
+
+    expect(ux).toContain("new URLPattern({ hash: 'section\\\\::section' })");
+    expect(ux).toContain("new URLPattern({ hash: 'glossary\\\\::concept' })");
+    expect(ux).toContain('decodeURIComponent(value)');
+    expect(ux).not.toContain('location.hash.slice');
+    expect(ux).not.toContain('.innerHTML');
+    expect(ux).toContain("el.setAttribute('aria-describedby'");
+    expect(ux).toContain("item.setAttribute('aria-selected', 'false')");
+    expect(ux).toContain("input.removeAttribute('aria-activedescendant')");
+    expect(ux).toContain("button.addEventListener('click'");
+    expect(ux).toContain("if (event.key === 'Escape') hideTip()");
+    expect(ux).toContain('const TRACK_DETAIL_KEYS = Object.freeze');
+    expect(ux).toContain("'page.view': ['page', 'section']");
+    expect(ux).not.toContain("'page.view': ['path'");
+    expect(ux).not.toContain('detail: { name, ...detail');
   });
 
   test('route, chrome, and weave make the glossary discoverable', () => {

@@ -1,3 +1,5 @@
+import { bootGlossaryUx, trackGlossaryEvent } from '../components/glossary-ux.js';
+
 const PROFILE_URL = '/registry/limit-raises.json';
 const PROFILE_POLL_INTERVAL = 30_000;
 const limitsPagePattern = new URLPattern({ pathname: '/portal/limits/' });
@@ -8,6 +10,22 @@ const PROFILE_QUERY_PARAMS = {
   status: 'monitoring',
   jurisdiction: 'jurisdiction',
 };
+const GLOSSARY_CONCEPT_PATTERN = /^[a-z0-9][a-z0-9._-]*$/i;
+const MARKET_GLOSSARY_CONCEPTS = Object.freeze({
+  match_winner: 'market.match_winner',
+  over_under: 'market.total',
+  spread: 'market.point_spread',
+});
+const SPORT_GLOSSARY_CONCEPTS = Object.freeze({
+  american_football: 'sport.american_football',
+  baseball: 'sport.baseball',
+  basketball: 'sport.basketball',
+  golf: 'sport.golf',
+  hockey: 'sport.hockey',
+  mma: 'sport.mma',
+  soccer: 'sport.soccer',
+  tennis: 'sport.tennis',
+});
 
 let projection = null;
 let selectedAccount = null;
@@ -18,8 +36,19 @@ function esc(value) {
   return element.innerHTML;
 }
 
-function glossaryHref(concept) {
-  return `/portal/glossary/#glossary:${concept}`;
+function glossaryHref(concept, fallback = 'page.limitPatterns') {
+  const candidate = String(concept ?? '');
+  const safeConcept = GLOSSARY_CONCEPT_PATTERN.test(candidate) ? candidate : fallback;
+  return '/portal/glossary/#glossary:' + encodeURIComponent(safeConcept);
+}
+
+/** Wire market_id → preferred sports-betting glossary concept. */
+function marketGlossaryConcept(marketKey) {
+  return MARKET_GLOSSARY_CONCEPTS[marketKey] ?? 'ops.limits.market_type';
+}
+
+function sportGlossaryConcept(sportKey) {
+  return SPORT_GLOSSARY_CONCEPTS[sportKey] ?? 'ops.limits.sport';
 }
 
 function accountHash(treeNodeId) {
@@ -355,7 +384,10 @@ function renderPolicies() {
           </td>
           <td>${esc(policy.authority)}<br><small>${esc(policy.risk)} risk</small></td>
           <td>${esc(policy.scope)}${policy.treeNodeId ? `<br><small>${esc(policy.treeNodeId)}</small>` : ''}</td>
-          <td>${esc(policy.sportKey)}<br><small>${esc(policy.marketKey)}</small></td>
+          <td>
+            <a class="semantic-label" href="${glossaryHref(sportGlossaryConcept(policy.sportKey))}" data-glossary-concept="ops.limits.sport">${esc(policy.sportKey)}</a>
+            <br><small><a class="semantic-label" href="${glossaryHref(marketGlossaryConcept(policy.marketKey))}" data-glossary-concept="ops.limits.market_type">${esc(policy.marketKey)}</a></small>
+          </td>
           <td>
             ${formatMoney(policy.maxWager)} max
             <br><small>${formatMoney(policy.minWager)} min · ${formatMoney(policy.dailyLimit)} daily · ${formatMoney(policy.weeklyLimit)} weekly</small>
@@ -421,8 +453,12 @@ for (const id of ['profile-filter', 'profile-status', 'profile-jurisdiction']) {
     ?.addEventListener(id === 'profile-filter' ? 'input' : 'change', () => {
       syncProfileFiltersToUrl();
       renderProfiles();
+      if (id !== 'profile-filter') trackGlossaryEvent('limits.filter', { filter: id });
     });
 }
+document.getElementById('profile-filter')?.addEventListener('change', () => {
+  trackGlossaryEvent('limits.filter', { filter: 'profile-filter' });
+});
 document.getElementById('profile-filter-reset')?.addEventListener('click', () => {
   for (const id of ['profile-filter', 'profile-status', 'profile-jurisdiction']) {
     const control = document.getElementById(id);
@@ -430,6 +466,7 @@ document.getElementById('profile-filter-reset')?.addEventListener('click', () =>
   }
   syncProfileFiltersToUrl();
   renderProfiles();
+  trackGlossaryEvent('limits.filter', { filter: 'profile-filter-reset' });
 });
 window.addEventListener('hashchange', () => {
   selectedAccount = accountFromUrl();
@@ -445,3 +482,11 @@ window.addEventListener('popstate', () => {
 
 loadProfiles();
 setInterval(loadProfiles, PROFILE_POLL_INTERVAL);
+
+bootGlossaryUx({
+  breadcrumbsMount: document.getElementById('limits-glossary-crumbs'),
+  tooltipRoot: document.querySelector('main') ?? document.body,
+  trackPage: false,
+}).catch(() => {
+  // Glossary UX is progressive enhancement; page data still loads.
+});

@@ -157,10 +157,17 @@
       "category": "market",
       "kind": "ui",
       "mapsTo": "kalshi_mu",
-      "synonyms": ["mid price", "market price"],
+      "synonyms": [
+        "mid price",
+        "market price"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["kalshi_mu", "spreadCents", "poly_mid"],
+      "seeAlso": [
+        "kalshi_mu",
+        "spreadCents",
+        "poly_mid"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
@@ -177,10 +184,17 @@
       "category": "market",
       "kind": "ui",
       "mapsTo": "kalshi_spread",
-      "synonyms": ["bid-ask", "spread"],
+      "synonyms": [
+        "bid-ask",
+        "spread"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["mid", "kalshi_spread", "liquidity_ok"],
+      "seeAlso": [
+        "mid",
+        "kalshi_spread",
+        "liquidity_ok"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
@@ -200,7 +214,10 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["mid", "spreadCents"],
+      "seeAlso": [
+        "mid",
+        "spreadCents"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -217,10 +234,18 @@
       "category": "market",
       "kind": "ui",
       "mapsTo": "kalshi_volume",
-      "synonyms": ["avg vol", "volume", "avgKalshiVolume"],
+      "synonyms": [
+        "avg vol",
+        "volume",
+        "avgKalshiVolume"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["kalshi_volume", "playerProfiles", "lastSeenAtMs"],
+      "seeAlso": [
+        "kalshi_volume",
+        "playerProfiles",
+        "lastSeenAtMs"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "countFp",
@@ -240,7 +265,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["mid", "feeCents", "postOnly"],
+      "seeAlso": [
+        "mid",
+        "feeCents",
+        "postOnly"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
@@ -260,7 +289,10 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["portfolioValueCents", "exposureCents"],
+      "seeAlso": [
+        "portfolioValueCents",
+        "exposureCents"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
@@ -280,7 +312,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["balanceCents", "position", "exposureCents"],
+      "seeAlso": [
+        "balanceCents",
+        "position",
+        "exposureCents"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
@@ -300,7 +336,10 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["exposureCents", "fillCount"],
+      "seeAlso": [
+        "exposureCents",
+        "fillCount"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
@@ -320,7 +359,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["position", "balanceCents", "realizedPnlCents"],
+      "seeAlso": [
+        "position",
+        "balanceCents",
+        "realizedPnlCents"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
@@ -340,7 +383,10 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["feesPaidCents", "exposureCents"],
+      "seeAlso": [
+        "feesPaidCents",
+        "exposureCents"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
@@ -360,7 +406,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["feeCents", "realizedPnlCents", "isTaker"],
+      "seeAlso": [
+        "feeCents",
+        "realizedPnlCents",
+        "isTaker"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
@@ -380,7 +430,10 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["fillCount", "postOnly"],
+      "seeAlso": [
+        "fillCount",
+        "postOnly"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
@@ -400,7 +453,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["remainingCount", "feeCents", "isTaker"],
+      "seeAlso": [
+        "remainingCount",
+        "feeCents",
+        "isTaker"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
@@ -420,7 +477,10 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["feeCents", "postOnly"],
+      "seeAlso": [
+        "feeCents",
+        "postOnly"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -440,7 +500,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["feesPaidCents", "isTaker", "postOnly"],
+      "seeAlso": [
+        "feesPaidCents",
+        "isTaker",
+        "postOnly"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
@@ -460,7 +524,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["isTaker", "feeCents", "dryRun"],
+      "seeAlso": [
+        "isTaker",
+        "feeCents",
+        "dryRun"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -477,10 +545,15 @@
       "category": "trading",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["dry run", "simulate"],
+      "synonyms": [
+        "dry run",
+        "simulate"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["postOnly"],
+      "seeAlso": [
+        "postOnly"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -500,7 +573,10 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["killBrierDriftPct", "graduationMinRealizedEdgeCentsPerFill"],
+      "seeAlso": [
+        "killBrierDriftPct",
+        "graduationMinRealizedEdgeCentsPerFill"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
@@ -520,7 +596,10 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["shadowMinSignals", "graduationMinRealizedEdgeCentsPerFill"],
+      "seeAlso": [
+        "shadowMinSignals",
+        "graduationMinRealizedEdgeCentsPerFill"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "pct",
@@ -540,7 +619,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["shadowMinSignals", "eff_edge", "realizedPnlCents"],
+      "seeAlso": [
+        "shadowMinSignals",
+        "eff_edge",
+        "realizedPnlCents"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
@@ -557,7 +640,10 @@
       "category": "tournament",
       "kind": "registry",
       "mapsTo": null,
-      "synonyms": ["series", "tour"],
+      "synonyms": [
+        "series",
+        "tour"
+      ],
       "values": [
         "ATP",
         "WTA",
@@ -567,7 +653,11 @@
         "ITF Women"
       ],
       "valueLabels": null,
-      "seeAlso": ["surface", "tier", "series"],
+      "seeAlso": [
+        "surface",
+        "tier",
+        "series"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -585,9 +675,18 @@
       "kind": "registry",
       "mapsTo": null,
       "synonyms": [],
-      "values": ["Hard", "Clay", "Grass", "Carpet"],
+      "values": [
+        "Hard",
+        "Clay",
+        "Grass",
+        "Carpet"
+      ],
       "valueLabels": null,
-      "seeAlso": ["league", "tier", "surfaceEdge"],
+      "seeAlso": [
+        "league",
+        "tier",
+        "surfaceEdge"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -604,7 +703,9 @@
       "category": "tournament",
       "kind": "registry",
       "mapsTo": null,
-      "synonyms": ["level"],
+      "synonyms": [
+        "level"
+      ],
       "values": [
         "GS",
         "SPECIAL",
@@ -623,7 +724,11 @@
         "ITF15"
       ],
       "valueLabels": null,
-      "seeAlso": ["league", "surface", "round"],
+      "seeAlso": [
+        "league",
+        "surface",
+        "round"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -643,7 +748,10 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["tier", "league"],
+      "seeAlso": [
+        "tier",
+        "league"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -663,7 +771,10 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["league", "event_ticker"],
+      "seeAlso": [
+        "league",
+        "event_ticker"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -683,7 +794,10 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["league", "age_group"],
+      "seeAlso": [
+        "league",
+        "age_group"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -703,7 +817,10 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["gender", "league"],
+      "seeAlso": [
+        "gender",
+        "league"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -840,10 +957,18 @@
       "category": "market",
       "kind": "registry",
       "mapsTo": null,
-      "synonyms": ["kalshi mid", "mu"],
+      "synonyms": [
+        "kalshi mid",
+        "mu"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["mid", "poly_mid", "pinny_no_vig", "blend_fair_cents"],
+      "seeAlso": [
+        "mid",
+        "poly_mid",
+        "pinny_no_vig",
+        "blend_fair_cents"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
@@ -863,7 +988,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["spreadCents", "kalshi_mu", "liquidity_ok"],
+      "seeAlso": [
+        "spreadCents",
+        "kalshi_mu",
+        "liquidity_ok"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
@@ -883,7 +1012,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["avgKalshiVolumeFp", "poly_volume", "total_volume_usd"],
+      "seeAlso": [
+        "avgKalshiVolumeFp",
+        "poly_volume",
+        "total_volume_usd"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "countFp",
@@ -903,7 +1036,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["kalshi_mu", "poly_volume", "alert.divergence"],
+      "seeAlso": [
+        "kalshi_mu",
+        "poly_volume",
+        "alert.divergence"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
@@ -923,7 +1060,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["kalshi_volume", "total_volume_usd", "poly_mid"],
+      "seeAlso": [
+        "kalshi_volume",
+        "total_volume_usd",
+        "poly_mid"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "usd",
@@ -943,7 +1084,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["pinny_source", "kalshi_mu", "blend_fair_cents"],
+      "seeAlso": [
+        "pinny_source",
+        "kalshi_mu",
+        "blend_fair_cents"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
@@ -961,9 +1106,15 @@
       "kind": "registry",
       "mapsTo": null,
       "synonyms": [],
-      "values": ["mock", "live"],
+      "values": [
+        "mock",
+        "live"
+      ],
       "valueLabels": null,
-      "seeAlso": ["pinny_no_vig", "export_note"],
+      "seeAlso": [
+        "pinny_no_vig",
+        "export_note"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -983,7 +1134,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["elo_source", "blend_fair_cents", "eff_edge"],
+      "seeAlso": [
+        "elo_source",
+        "blend_fair_cents",
+        "eff_edge"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "probability",
@@ -1001,9 +1156,15 @@
       "kind": "registry",
       "mapsTo": null,
       "synonyms": [],
-      "values": ["model", "fallback_50", "missing"],
+      "values": [
+        "model",
+        "fallback_50",
+        "missing"
+      ],
       "valueLabels": null,
-      "seeAlso": ["elo_prob"],
+      "seeAlso": [
+        "elo_prob"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1023,7 +1184,12 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["eff_edge", "kalshi_mu", "elo_prob", "pinny_no_vig"],
+      "seeAlso": [
+        "eff_edge",
+        "kalshi_mu",
+        "elo_prob",
+        "pinny_no_vig"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
@@ -1043,7 +1209,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["blend_fair_cents", "surfaceEdge", "arb_hint"],
+      "seeAlso": [
+        "blend_fair_cents",
+        "surfaceEdge",
+        "arb_hint"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
@@ -1087,7 +1257,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["kalshi_volume", "poly_volume", "multi_venue"],
+      "seeAlso": [
+        "kalshi_volume",
+        "poly_volume",
+        "multi_venue"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "usd",
@@ -1107,7 +1281,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["total_volume_usd", "arb_hint", "coverage"],
+      "seeAlso": [
+        "total_volume_usd",
+        "arb_hint",
+        "coverage"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1127,7 +1305,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["arb_actionable", "alert.divergence", "eff_edge"],
+      "seeAlso": [
+        "arb_actionable",
+        "alert.divergence",
+        "eff_edge"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1147,7 +1329,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["arb_hint", "liquidity_ok", "eff_edge"],
+      "seeAlso": [
+        "arb_hint",
+        "liquidity_ok",
+        "eff_edge"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1167,7 +1353,10 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["research_flag", "graph_divergence"],
+      "seeAlso": [
+        "research_flag",
+        "graph_divergence"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1187,7 +1376,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["composite.divergence", "alert.divergence", "rps_flag"],
+      "seeAlso": [
+        "composite.divergence",
+        "alert.divergence",
+        "rps_flag"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1207,7 +1400,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["export_note", "rps_flag", "coverage"],
+      "seeAlso": [
+        "export_note",
+        "rps_flag",
+        "coverage"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1227,7 +1424,10 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["pinny_source", "research_flag"],
+      "seeAlso": [
+        "pinny_source",
+        "research_flag"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1244,10 +1444,16 @@
       "category": "warehouse",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["profiles"],
+      "synonyms": [
+        "profiles"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["avgKalshiVolumeFp", "lastSeenAtMs", "profilesSource"],
+      "seeAlso": [
+        "avgKalshiVolumeFp",
+        "lastSeenAtMs",
+        "profilesSource"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1264,10 +1470,16 @@
       "category": "warehouse",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["last seen", "lastSeenMs"],
+      "synonyms": [
+        "last seen",
+        "lastSeenMs"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["playerProfiles", "avgKalshiVolumeFp"],
+      "seeAlso": [
+        "playerProfiles",
+        "avgKalshiVolumeFp"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "atMs",
@@ -1285,9 +1497,14 @@
       "kind": "ui",
       "mapsTo": null,
       "synonyms": [],
-      "values": ["warehouse", "seed"],
+      "values": [
+        "warehouse",
+        "seed"
+      ],
       "valueLabels": null,
-      "seeAlso": ["playerProfiles"],
+      "seeAlso": [
+        "playerProfiles"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1307,7 +1524,10 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["multi_venue", "ui.warehouse.coverage"],
+      "seeAlso": [
+        "multi_venue",
+        "ui.warehouse.coverage"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "pct",
@@ -1324,10 +1544,16 @@
       "category": "warehouse",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["surface edge"],
+      "synonyms": [
+        "surface edge"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["surface", "eff_edge", "ui.events.filter.min_surface_edge"],
+      "seeAlso": [
+        "surface",
+        "eff_edge",
+        "ui.events.filter.min_surface_edge"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "pp",
@@ -1344,7 +1570,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["clear", "reset"],
+      "synonyms": [
+        "clear",
+        "reset"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [],
@@ -1364,7 +1593,12 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["live board", "board", "monitor", "tennis board"],
+      "synonyms": [
+        "live board",
+        "board",
+        "monitor",
+        "tennis board"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [],
@@ -1384,7 +1618,11 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": "composite.scanner",
-      "synonyms": ["alert", "signal", "flag"],
+      "synonyms": [
+        "alert",
+        "signal",
+        "flag"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -1408,10 +1646,18 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": "composite.divergence",
-      "synonyms": ["delta", "edge", "gap"],
+      "synonyms": [
+        "delta",
+        "edge",
+        "gap"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["composite.divergence", "alert.divergence", "eff_edge"],
+      "seeAlso": [
+        "composite.divergence",
+        "alert.divergence",
+        "eff_edge"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
@@ -1428,10 +1674,18 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": "composite.edge_score",
-      "synonyms": ["edge", "score", "strength"],
+      "synonyms": [
+        "edge",
+        "score",
+        "strength"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["composite.edge_score", "eff_edge", "surfaceEdge"],
+      "seeAlso": [
+        "composite.edge_score",
+        "eff_edge",
+        "surfaceEdge"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1448,10 +1702,18 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": "composite.model_suspect",
-      "synonyms": ["suspect", "stale", "untrusted"],
+      "synonyms": [
+        "suspect",
+        "stale",
+        "untrusted"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["composite.model_suspect", "elo_source", "alert.stale_feed"],
+      "seeAlso": [
+        "composite.model_suspect",
+        "elo_source",
+        "alert.stale_feed"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1468,7 +1730,10 @@
       "category": "tournament",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["competition", "event name"],
+      "synonyms": [
+        "competition",
+        "event name"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [],
@@ -1488,7 +1753,10 @@
       "category": "tournament",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["nation", "geo"],
+      "synonyms": [
+        "nation",
+        "geo"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [],
@@ -1508,8 +1776,17 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["time", "window"],
-      "values": ["all", "live", "today", "24h", "week"],
+      "synonyms": [
+        "time",
+        "window"
+      ],
+      "values": [
+        "all",
+        "live",
+        "today",
+        "24h",
+        "week"
+      ],
       "valueLabels": {
         "all": "all",
         "live": "in play now",
@@ -1534,8 +1811,15 @@
       "category": "market",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["quotes", "book"],
-      "values": ["all", "priced", "active"],
+      "synonyms": [
+        "quotes",
+        "book"
+      ],
+      "values": [
+        "all",
+        "priced",
+        "active"
+      ],
       "valueLabels": {
         "all": "all",
         "priced": "has quotes",
@@ -1558,10 +1842,16 @@
       "category": "market",
       "kind": "ui",
       "mapsTo": "kalshi_volume",
-      "synonyms": ["min volume", "volume floor"],
+      "synonyms": [
+        "min volume",
+        "volume floor"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["kalshi_volume", "ui.events.filter.liquidity"],
+      "seeAlso": [
+        "kalshi_volume",
+        "ui.events.filter.liquidity"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "countFp",
@@ -1581,7 +1871,10 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["surfaceEdge", "surface"],
+      "seeAlso": [
+        "surfaceEdge",
+        "surface"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "pp",
@@ -1598,14 +1891,24 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["sort events", "order"],
-      "values": ["time", "volume", "alpha"],
+      "synonyms": [
+        "sort events",
+        "order"
+      ],
+      "values": [
+        "time",
+        "volume",
+        "alpha"
+      ],
       "valueLabels": {
         "time": "start time",
         "volume": "24h volume",
         "alpha": "A–Z"
       },
-      "seeAlso": ["ui.events.filter.when", "ui.events.filter.min_vol"],
+      "seeAlso": [
+        "ui.events.filter.when",
+        "ui.events.filter.min_vol"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1622,10 +1925,17 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["Unc", "Other", "NA", "unknown"],
+      "synonyms": [
+        "Unc",
+        "Other",
+        "NA",
+        "unknown"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["tier"],
+      "seeAlso": [
+        "tier"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1642,10 +1952,17 @@
       "category": "warehouse",
       "kind": "ui",
       "mapsTo": "coverage",
-      "synonyms": ["venues", "sources"],
+      "synonyms": [
+        "venues",
+        "sources"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["coverage", "multi_venue", "ui.warehouse.poly_link"],
+      "seeAlso": [
+        "coverage",
+        "multi_venue",
+        "ui.warehouse.poly_link"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1662,10 +1979,18 @@
       "category": "warehouse",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["polymarket", "gamma", "matched"],
+      "synonyms": [
+        "polymarket",
+        "gamma",
+        "matched"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["poly_mid", "poly_volume", "ui.warehouse.coverage"],
+      "seeAlso": [
+        "poly_mid",
+        "poly_volume",
+        "ui.warehouse.coverage"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1682,10 +2007,16 @@
       "category": "warehouse",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["status", "state"],
+      "synonyms": [
+        "status",
+        "state"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["ui.events.filter.when", "ui.live_board.title"],
+      "seeAlso": [
+        "ui.events.filter.when",
+        "ui.live_board.title"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1702,10 +2033,16 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["count", "N events", "fleet"],
+      "synonyms": [
+        "count",
+        "N events",
+        "fleet"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["ui.warehouse.fleet_volume"],
+      "seeAlso": [
+        "ui.warehouse.fleet_volume"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
@@ -1722,10 +2059,16 @@
       "category": "market",
       "kind": "ui",
       "mapsTo": "total_volume_usd",
-      "synonyms": ["volume", "X total vol"],
+      "synonyms": [
+        "volume",
+        "X total vol"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["total_volume_usd", "ui.warehouse.fleet_count"],
+      "seeAlso": [
+        "total_volume_usd",
+        "ui.warehouse.fleet_count"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "usd",
@@ -1769,7 +2112,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["ui.live_board.divergence", "alert.divergence", "eff_edge"],
+      "seeAlso": [
+        "ui.live_board.divergence",
+        "alert.divergence",
+        "eff_edge"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
@@ -1789,7 +2136,11 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["ui.live_board.edge_score", "eff_edge", "surfaceEdge"],
+      "seeAlso": [
+        "ui.live_board.edge_score",
+        "eff_edge",
+        "surfaceEdge"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1809,7 +2160,10 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["ui.live_board.model_suspect", "elo_source"],
+      "seeAlso": [
+        "ui.live_board.model_suspect",
+        "elo_source"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1854,9 +2208,15 @@
       "kind": "composite",
       "mapsTo": null,
       "synonyms": [],
-      "values": ["WARNING: midOnly > volume-gap-count for volume-gap-ticks"],
+      "values": [
+        "WARNING: midOnly > volume-gap-count for volume-gap-ticks"
+      ],
       "valueLabels": null,
-      "seeAlso": ["alert.poly_dropout", "alert.feed_frozen", "kalshi_volume"],
+      "seeAlso": [
+        "alert.poly_dropout",
+        "alert.feed_frozen",
+        "kalshi_volume"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
@@ -1874,9 +2234,15 @@
       "kind": "composite",
       "mapsTo": null,
       "synonyms": [],
-      "values": ["CRITICAL: polyMatched=0 for feed-frozen-ticks"],
+      "values": [
+        "CRITICAL: polyMatched=0 for feed-frozen-ticks"
+      ],
       "valueLabels": null,
-      "seeAlso": ["alert.poly_dropout", "alert.volume_gap", "alert.stale_feed"],
+      "seeAlso": [
+        "alert.poly_dropout",
+        "alert.volume_gap",
+        "alert.stale_feed"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
@@ -1894,9 +2260,15 @@
       "kind": "composite",
       "mapsTo": null,
       "synonyms": [],
-      "values": ["CRITICAL: no snapshot within staleness-threshold-ms"],
+      "values": [
+        "CRITICAL: no snapshot within staleness-threshold-ms"
+      ],
       "valueLabels": null,
-      "seeAlso": ["alert.feed_frozen", "alert.delivery", "alert.severity"],
+      "seeAlso": [
+        "alert.feed_frozen",
+        "alert.delivery",
+        "alert.severity"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "ms",
@@ -1914,9 +2286,16 @@
       "kind": "composite",
       "mapsTo": null,
       "synonyms": [],
-      "values": ["INFO: |kalshiMid - polyProb×100| > divergence-cents"],
+      "values": [
+        "INFO: |kalshiMid - polyProb×100| > divergence-cents"
+      ],
       "valueLabels": null,
-      "seeAlso": ["kalshi_mu", "poly_mid", "arb_hint", "alert.severity"],
+      "seeAlso": [
+        "kalshi_mu",
+        "poly_mid",
+        "arb_hint",
+        "alert.severity"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
@@ -1964,9 +2343,16 @@
       "kind": "composite",
       "mapsTo": null,
       "synonyms": [],
-      "values": ["telegram", "discord", "console"],
+      "values": [
+        "telegram",
+        "discord",
+        "console"
+      ],
       "valueLabels": null,
-      "seeAlso": ["alert.severity", "alert.stale_feed"],
+      "seeAlso": [
+        "alert.severity",
+        "alert.stale_feed"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -1984,7 +2370,11 @@
       "kind": "composite",
       "mapsTo": null,
       "synonyms": [],
-      "values": ["CRITICAL", "WARNING", "INFO"],
+      "values": [
+        "CRITICAL",
+        "WARNING",
+        "INFO"
+      ],
       "valueLabels": null,
       "seeAlso": [
         "alert.poly_dropout",
@@ -2013,7 +2403,9 @@
       "synonyms": [],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["alert.delivery"],
+      "seeAlso": [
+        "alert.delivery"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -2350,10 +2742,17 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["target", "endpoint", "board"],
+      "synonyms": [
+        "target",
+        "endpoint",
+        "board"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["ui.semantic.source", "ui.semantic.resources"],
+      "seeAlso": [
+        "ui.semantic.source",
+        "ui.semantic.resources"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -2372,10 +2771,16 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["host", "domain"],
+      "synonyms": [
+        "host",
+        "domain"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["ui.semantic.port", "ui.semantic.source"],
+      "seeAlso": [
+        "ui.semantic.port",
+        "ui.semantic.source"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -2394,10 +2799,15 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["service port"],
+      "synonyms": [
+        "service port"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["ui.semantic.hostname", "ui.semantic.source"],
+      "seeAlso": [
+        "ui.semantic.hostname",
+        "ui.semantic.source"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -2416,7 +2826,11 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["result", "health state", "outcome"],
+      "synonyms": [
+        "result",
+        "health state",
+        "outcome"
+      ],
       "values": [
         "ok",
         "active",
@@ -2428,7 +2842,10 @@
         "pending"
       ],
       "valueLabels": null,
-      "seeAlso": ["ui.semantic.tone", "ui.semantic.source"],
+      "seeAlso": [
+        "ui.semantic.tone",
+        "ui.semantic.source"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -2447,10 +2864,22 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["color tone", "severity color"],
-      "values": ["ok", "warn", "bad", "info", "skip"],
+      "synonyms": [
+        "color tone",
+        "severity color"
+      ],
+      "values": [
+        "ok",
+        "warn",
+        "bad",
+        "info",
+        "skip"
+      ],
       "valueLabels": null,
-      "seeAlso": ["ui.semantic.status", "ui.semantic.type"],
+      "seeAlso": [
+        "ui.semantic.status",
+        "ui.semantic.type"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -2469,7 +2898,11 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["check kind", "probe class", "operational kind"],
+      "synonyms": [
+        "check kind",
+        "probe class",
+        "operational kind"
+      ],
       "values": [
         "edge-health",
         "registry-bake",
@@ -2480,7 +2913,10 @@
         "doctor"
       ],
       "valueLabels": null,
-      "seeAlso": ["ui.semantic.type", "ui.semantic.plane"],
+      "seeAlso": [
+        "ui.semantic.type",
+        "ui.semantic.plane"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -2499,10 +2935,23 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["control plane", "owner plane"],
-      "values": ["edge", "public", "document", "operate", "harness", "infra"],
+      "synonyms": [
+        "control plane",
+        "owner plane"
+      ],
+      "values": [
+        "edge",
+        "public",
+        "document",
+        "operate",
+        "harness",
+        "infra"
+      ],
       "valueLabels": null,
-      "seeAlso": ["ui.semantic.kind", "ui.semantic.source"],
+      "seeAlso": [
+        "ui.semantic.kind",
+        "ui.semantic.source"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -2521,7 +2970,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["source path", "origin path"],
+      "synonyms": [
+        "source path",
+        "origin path"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -2547,10 +2999,17 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["schema version", "revision", "runtime version"],
+      "synonyms": [
+        "schema version",
+        "revision",
+        "runtime version"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["ui.semantic.artifact", "ui.semantic.package"],
+      "seeAlso": [
+        "ui.semantic.artifact",
+        "ui.semantic.package"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -2569,7 +3028,11 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["mappings", "references", "ownership links"],
+      "synonyms": [
+        "mappings",
+        "references",
+        "ownership links"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -2595,7 +3058,11 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["bake", "proof", "output"],
+      "synonyms": [
+        "bake",
+        "proof",
+        "output"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -2621,7 +3088,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["package owner", "producer"],
+      "synonyms": [
+        "package owner",
+        "producer"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -2647,7 +3117,11 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["data role", "semantic role", "type"],
+      "synonyms": [
+        "data role",
+        "semantic role",
+        "type"
+      ],
       "values": [
         "classification",
         "location",
@@ -2657,7 +3131,10 @@
         "version"
       ],
       "valueLabels": null,
-      "seeAlso": ["ui.semantic.kind", "ui.semantic.tone"],
+      "seeAlso": [
+        "ui.semantic.kind",
+        "ui.semantic.tone"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -2676,7 +3153,12 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["partner account", "tree node", "limit subject", "node"],
+      "synonyms": [
+        "partner account",
+        "tree node",
+        "limit subject",
+        "node"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -2703,7 +3185,12 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["node_id", "TreeNodeId", "tree_nodes row", "account"],
+      "synonyms": [
+        "node_id",
+        "TreeNodeId",
+        "tree_nodes row",
+        "account"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -2730,7 +3217,11 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["partner hierarchy", "account tree", "tree_nodes"],
+      "synonyms": [
+        "partner hierarchy",
+        "account tree",
+        "tree_nodes"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -2757,7 +3248,11 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["downline nodes", "downstream accounts", "child accounts"],
+      "synonyms": [
+        "downline nodes",
+        "downstream accounts",
+        "child accounts"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -2784,8 +3279,16 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["node_type", "tree role", "account role"],
-      "values": ["partner", "agent", "sub_agent"],
+      "synonyms": [
+        "node_type",
+        "tree role",
+        "account role"
+      ],
+      "values": [
+        "partner",
+        "agent",
+        "sub_agent"
+      ],
       "valueLabels": null,
       "seeAlso": [
         "ops.limits.partner",
@@ -2811,8 +3314,14 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["master", "partner root", "node_type partner"],
-      "values": ["partner"],
+      "synonyms": [
+        "master",
+        "partner root",
+        "node_type partner"
+      ],
+      "values": [
+        "partner"
+      ],
       "valueLabels": null,
       "seeAlso": [
         "ops.limits.roleType",
@@ -2838,8 +3347,14 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["agent", "node_type agent", "downline agent"],
-      "values": ["agent"],
+      "synonyms": [
+        "agent",
+        "node_type agent",
+        "downline agent"
+      ],
+      "values": [
+        "agent"
+      ],
       "valueLabels": null,
       "seeAlso": [
         "ops.limits.sub_agent",
@@ -2865,8 +3380,14 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["sub_agent", "sub-agent", "node_type sub_agent"],
-      "values": ["sub_agent"],
+      "synonyms": [
+        "sub_agent",
+        "sub-agent",
+        "node_type sub_agent"
+      ],
+      "values": [
+        "sub_agent"
+      ],
       "valueLabels": null,
       "seeAlso": [
         "ops.limits.agent",
@@ -2892,7 +3413,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["limit profile", "account monitoring profile"],
+      "synonyms": [
+        "limit profile",
+        "account monitoring profile"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -2918,7 +3442,11 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["state limit rule", "regulatory policy", "policy binding"],
+      "synonyms": [
+        "state limit rule",
+        "regulatory policy",
+        "policy binding"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -2944,7 +3472,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["regulation code", "limit rule code"],
+      "synonyms": [
+        "regulation code",
+        "limit rule code"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -2970,8 +3501,16 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["profile health", "account limit status"],
-      "values": ["monitored", "attention", "blocked", "incomplete"],
+      "synonyms": [
+        "profile health",
+        "account limit status"
+      ],
+      "values": [
+        "monitored",
+        "attention",
+        "blocked",
+        "incomplete"
+      ],
       "valueLabels": null,
       "seeAlso": [
         "ops.limits.profile",
@@ -2996,7 +3535,11 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["limit trace", "monitoring history", "audit evidence"],
+      "synonyms": [
+        "limit trace",
+        "monitoring history",
+        "audit evidence"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3022,7 +3565,11 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["current limit", "applicable limit", "max wager"],
+      "synonyms": [
+        "current limit",
+        "applicable limit",
+        "max wager"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3048,7 +3595,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["limit pattern board", "partner limit board"],
+      "synonyms": [
+        "limit pattern board",
+        "partner limit board"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3074,8 +3624,14 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["raise direction", "limit movement"],
-      "values": ["raised", "reduced"],
+      "synonyms": [
+        "raise direction",
+        "limit movement"
+      ],
+      "values": [
+        "raised",
+        "reduced"
+      ],
       "valueLabels": null,
       "seeAlso": [
         "ops.limits.limit_delta",
@@ -3100,8 +3656,15 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["bet phase", "wager phase"],
-      "values": ["live", "pregame", "straight"],
+      "synonyms": [
+        "bet phase",
+        "wager phase"
+      ],
+      "values": [
+        "live",
+        "pregame",
+        "straight"
+      ],
       "valueLabels": null,
       "seeAlso": [
         "ops.limits.effective_limit",
@@ -3126,7 +3689,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["sport_id", "sport key"],
+      "synonyms": [
+        "sport_id",
+        "sport key"
+      ],
       "values": [
         "soccer",
         "basketball",
@@ -3159,7 +3725,11 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["league_id", "tour", "competition family"],
+      "synonyms": [
+        "league_id",
+        "tour",
+        "competition family"
+      ],
       "values": [
         "nfl",
         "nba",
@@ -3195,7 +3765,11 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["competition_id", "tournament tier", "tour level"],
+      "synonyms": [
+        "competition_id",
+        "tournament tier",
+        "tour level"
+      ],
       "values": [
         "itf_m15",
         "itf_m25",
@@ -3229,7 +3803,11 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["host country", "event country", "country_code"],
+      "synonyms": [
+        "host country",
+        "event country",
+        "country_code"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3255,7 +3833,11 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["market_id", "market key", "bet market"],
+      "synonyms": [
+        "market_id",
+        "market key",
+        "bet market"
+      ],
       "values": [
         "match_winner",
         "over_under",
@@ -3288,8 +3870,17 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["parlay", "accumulator", "multi", "leg"],
-      "values": ["straight", "parlay", "leg"],
+      "synonyms": [
+        "parlay",
+        "accumulator",
+        "multi",
+        "leg"
+      ],
+      "values": [
+        "straight",
+        "parlay",
+        "leg"
+      ],
       "valueLabels": null,
       "seeAlso": [
         "ops.limits.market_type",
@@ -3314,7 +3905,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["limit movement", "net limit change"],
+      "synonyms": [
+        "limit movement",
+        "net limit change"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3340,7 +3934,11 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["influence", "multi-factor score", "raise score"],
+      "synonyms": [
+        "influence",
+        "multi-factor score",
+        "raise score"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3366,7 +3964,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["connection coverage", "pattern coverage"],
+      "synonyms": [
+        "connection coverage",
+        "pattern coverage"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3392,7 +3993,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["raise forecast", "limit forecast"],
+      "synonyms": [
+        "raise forecast",
+        "limit forecast"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3418,7 +4022,11 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["/api/agents", "agent HTTP API", "limits agent API"],
+      "synonyms": [
+        "/api/agents",
+        "agent HTTP API",
+        "limits agent API"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3445,7 +4053,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["partner limit control", "limit patterns page"],
+      "synonyms": [
+        "partner limit control",
+        "limit patterns page"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3471,7 +4082,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["partner history", "limit history board"],
+      "synonyms": [
+        "partner history",
+        "limit history board"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3498,7 +4112,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["partner limit control", "account controls"],
+      "synonyms": [
+        "partner limit control",
+        "account controls"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3524,7 +4141,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["compliance metrics", "policy KPIs"],
+      "synonyms": [
+        "compliance metrics",
+        "policy KPIs"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3550,7 +4170,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["jurisdiction catalog", "state policy catalog"],
+      "synonyms": [
+        "jurisdiction catalog",
+        "state policy catalog"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3576,7 +4199,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["limit summary", "pattern metrics"],
+      "synonyms": [
+        "limit summary",
+        "pattern metrics"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3602,7 +4228,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["raise prediction section", "limit forecast"],
+      "synonyms": [
+        "raise prediction section",
+        "limit forecast"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3628,7 +4257,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["book patterns", "sportsbook movement"],
+      "synonyms": [
+        "book patterns",
+        "sportsbook movement"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3654,7 +4286,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["state and ZIP patterns", "geographic limit patterns"],
+      "synonyms": [
+        "state and ZIP patterns",
+        "geographic limit patterns"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3680,7 +4315,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["partner downline context", "tree context"],
+      "synonyms": [
+        "partner downline context",
+        "tree context"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3707,7 +4345,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["connection audit", "pattern evidence audit"],
+      "synonyms": [
+        "connection audit",
+        "pattern evidence audit"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3733,7 +4374,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["recent changes", "limit change table"],
+      "synonyms": [
+        "recent changes",
+        "limit change table"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3759,7 +4403,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["node breakdown", "account movement breakdown"],
+      "synonyms": [
+        "node breakdown",
+        "account movement breakdown"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3817,7 +4464,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["filter by profile", "profile selector"],
+      "synonyms": [
+        "filter by profile",
+        "profile selector"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3843,7 +4493,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["filter by jurisdiction", "state filter"],
+      "synonyms": [
+        "filter by jurisdiction",
+        "state filter"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3869,7 +4522,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["filter by partner ID", "account search"],
+      "synonyms": [
+        "filter by partner ID",
+        "account search"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3895,7 +4551,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["all sportsbooks", "book filter"],
+      "synonyms": [
+        "all sportsbooks",
+        "book filter"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3921,7 +4580,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["all states", "jurisdiction state filter"],
+      "synonyms": [
+        "all states",
+        "jurisdiction state filter"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3947,7 +4609,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["all ZIP prefixes", "ZIP cluster filter"],
+      "synonyms": [
+        "all ZIP prefixes",
+        "ZIP cluster filter"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3973,7 +4638,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["reset", "clear filters"],
+      "synonyms": [
+        "reset",
+        "clear filters"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -3999,7 +4667,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["profile search", "find account profile"],
+      "synonyms": [
+        "profile search",
+        "find account profile"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -4025,7 +4696,10 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": ["filter", "apply filter"],
+      "synonyms": [
+        "filter",
+        "apply filter"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -4051,7 +4725,10 @@
       "category": "trading",
       "kind": "jurisdiction",
       "mapsTo": null,
-      "synonyms": ["MA", "Massachusetts jurisdiction"],
+      "synonyms": [
+        "MA",
+        "Massachusetts jurisdiction"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -4082,7 +4759,10 @@
       "category": "trading",
       "kind": "jurisdiction",
       "mapsTo": null,
-      "synonyms": ["NJ", "New Jersey jurisdiction"],
+      "synonyms": [
+        "NJ",
+        "New Jersey jurisdiction"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -4117,9 +4797,17 @@
         "FW-LIMIT-MA-SOCCER-MATCH-WINNER-JURISDICTION",
         "MA soccer match_winner"
       ],
-      "values": ["active", "high", "block"],
+      "values": [
+        "active",
+        "high",
+        "block"
+      ],
       "valueLabels": null,
-      "seeAlso": ["jurisdiction.MA", "sport.soccer", "market.match_winner"],
+      "seeAlso": [
+        "jurisdiction.MA",
+        "sport.soccer",
+        "market.match_winner"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4148,9 +4836,17 @@
         "FW-LIMIT-MA-BASKETBALL-OVER-UNDER-JURISDICTION",
         "MA basketball over_under"
       ],
-      "values": ["active", "high", "block"],
+      "values": [
+        "active",
+        "high",
+        "block"
+      ],
       "valueLabels": null,
-      "seeAlso": ["jurisdiction.MA", "sport.basketball", "market.total"],
+      "seeAlso": [
+        "jurisdiction.MA",
+        "sport.basketball",
+        "market.total"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4179,9 +4875,17 @@
         "FW-LIMIT-NJ-SOCCER-MATCH-WINNER-JURISDICTION",
         "NJ soccer match_winner"
       ],
-      "values": ["active", "critical", "block"],
+      "values": [
+        "active",
+        "critical",
+        "block"
+      ],
       "valueLabels": null,
-      "seeAlso": ["jurisdiction.NJ", "sport.soccer", "market.match_winner"],
+      "seeAlso": [
+        "jurisdiction.NJ",
+        "sport.soccer",
+        "market.match_winner"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4210,9 +4914,17 @@
         "FW-LIMIT-NJ-BASKETBALL-OVER-UNDER-JURISDICTION",
         "NJ basketball over_under"
       ],
-      "values": ["active", "critical", "block"],
+      "values": [
+        "active",
+        "critical",
+        "block"
+      ],
       "valueLabels": null,
-      "seeAlso": ["jurisdiction.NJ", "sport.basketball", "market.total"],
+      "seeAlso": [
+        "jurisdiction.NJ",
+        "sport.basketball",
+        "market.total"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4237,10 +4949,15 @@
       "category": "trading",
       "kind": "kpi",
       "mapsTo": null,
-      "synonyms": ["blocked wagers", "policy blocks"],
+      "synonyms": [
+        "blocked wagers",
+        "policy blocks"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["ops.limits.evidence_trace"],
+      "seeAlso": [
+        "ops.limits.evidence_trace"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
@@ -4265,10 +4982,14 @@
       "category": "trading",
       "kind": "kpi",
       "mapsTo": null,
-      "synonyms": ["active policies"],
+      "synonyms": [
+        "active policies"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["ops.limits.jurisdiction_policy"],
+      "seeAlso": [
+        "ops.limits.jurisdiction_policy"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
@@ -4293,10 +5014,14 @@
       "category": "trading",
       "kind": "kpi",
       "mapsTo": null,
-      "synonyms": ["highest policy risk"],
+      "synonyms": [
+        "highest policy risk"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["ops.limits.jurisdiction_policy"],
+      "seeAlso": [
+        "ops.limits.jurisdiction_policy"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4321,10 +5046,14 @@
       "category": "trading",
       "kind": "kpi",
       "mapsTo": null,
-      "synonyms": ["recent policy changes"],
+      "synonyms": [
+        "recent policy changes"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["ops.limits.policy_code"],
+      "seeAlso": [
+        "ops.limits.policy_code"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
@@ -4349,7 +5078,10 @@
       "category": "tournament",
       "kind": "sport",
       "mapsTo": null,
-      "synonyms": ["sport key", "sport_id"],
+      "synonyms": [
+        "sport key",
+        "sport_id"
+      ],
       "values": [
         "american_football",
         "baseball",
@@ -4395,7 +5127,13 @@
       "category": "tournament",
       "kind": "league",
       "mapsTo": null,
-      "synonyms": ["league", "tour", "series", "league.*", "competition.*"],
+      "synonyms": [
+        "league",
+        "tour",
+        "series",
+        "league.*",
+        "competition.*"
+      ],
       "values": [
         "nba",
         "wnba",
@@ -4463,10 +5201,20 @@
       "category": "tournament",
       "kind": "event",
       "mapsTo": null,
-      "synonyms": ["fixture", "match", "game", "event_id"],
+      "synonyms": [
+        "fixture",
+        "match",
+        "game",
+        "event_id"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["sport", "competition", "event.match", "market.match_winner"],
+      "seeAlso": [
+        "sport",
+        "competition",
+        "event.match",
+        "market.match_winner"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4491,7 +5239,10 @@
       "category": "tournament",
       "kind": "event",
       "mapsTo": null,
-      "synonyms": ["game event", "fixture event"],
+      "synonyms": [
+        "game event",
+        "fixture event"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -4524,10 +5275,20 @@
       "category": "tournament",
       "kind": "sport",
       "mapsTo": null,
-      "synonyms": ["NFL", "NCAAF", "football", "american_football"],
+      "synonyms": [
+        "NFL",
+        "NCAAF",
+        "football",
+        "american_football"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["sport", "competition", "event", "market.match_winner"],
+      "seeAlso": [
+        "sport",
+        "competition",
+        "event",
+        "market.match_winner"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4552,10 +5313,18 @@
       "category": "tournament",
       "kind": "sport",
       "mapsTo": null,
-      "synonyms": ["MLB", "baseball"],
+      "synonyms": [
+        "MLB",
+        "baseball"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["sport", "competition", "event", "market.match_winner"],
+      "seeAlso": [
+        "sport",
+        "competition",
+        "event",
+        "market.match_winner"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4580,10 +5349,21 @@
       "category": "tournament",
       "kind": "sport",
       "mapsTo": null,
-      "synonyms": ["NBA", "WNBA", "NCAAB", "CBB", "basketball"],
+      "synonyms": [
+        "NBA",
+        "WNBA",
+        "NCAAB",
+        "CBB",
+        "basketball"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["sport", "competition", "event", "market.match_winner"],
+      "seeAlso": [
+        "sport",
+        "competition",
+        "event",
+        "market.match_winner"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4608,10 +5388,18 @@
       "category": "tournament",
       "kind": "sport",
       "mapsTo": null,
-      "synonyms": ["NHL", "hockey"],
+      "synonyms": [
+        "NHL",
+        "hockey"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["sport", "competition", "event", "market.match_winner"],
+      "seeAlso": [
+        "sport",
+        "competition",
+        "event",
+        "market.match_winner"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4646,7 +5434,12 @@
       ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["sport", "competition", "event", "market.match_winner"],
+      "seeAlso": [
+        "sport",
+        "competition",
+        "event",
+        "market.match_winner"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4671,10 +5464,18 @@
       "category": "tournament",
       "kind": "sport",
       "mapsTo": null,
-      "synonyms": ["ATP", "WTA", "ITF"],
+      "synonyms": [
+        "ATP",
+        "WTA",
+        "ITF"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["sport", "competition", "event"],
+      "seeAlso": [
+        "sport",
+        "competition",
+        "event"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4699,10 +5500,17 @@
       "category": "tournament",
       "kind": "sport",
       "mapsTo": null,
-      "synonyms": ["PGA", "DP World Tour"],
+      "synonyms": [
+        "PGA",
+        "DP World Tour"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["sport", "competition", "event"],
+      "seeAlso": [
+        "sport",
+        "competition",
+        "event"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4727,10 +5535,17 @@
       "category": "tournament",
       "kind": "sport",
       "mapsTo": null,
-      "synonyms": ["UFC", "Bellator"],
+      "synonyms": [
+        "UFC",
+        "Bellator"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["sport", "competition", "event"],
+      "seeAlso": [
+        "sport",
+        "competition",
+        "event"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4755,7 +5570,10 @@
       "category": "tournament",
       "kind": "region",
       "mapsTo": null,
-      "synonyms": ["geographic region", "sports geography"],
+      "synonyms": [
+        "geographic region",
+        "sports geography"
+      ],
       "values": [
         "north_america",
         "south_america",
@@ -4764,7 +5582,10 @@
         "africa_middle_east"
       ],
       "valueLabels": null,
-      "seeAlso": ["country", "competition"],
+      "seeAlso": [
+        "country",
+        "competition"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4789,7 +5610,11 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["host country", "event country", "country code"],
+      "synonyms": [
+        "host country",
+        "event country",
+        "country code"
+      ],
       "values": [
         "US",
         "CA",
@@ -4817,7 +5642,11 @@
         "AE"
       ],
       "valueLabels": null,
-      "seeAlso": ["region", "competition", "event"],
+      "seeAlso": [
+        "region",
+        "competition",
+        "event"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4842,7 +5671,11 @@
       "category": "tournament",
       "kind": "competition",
       "mapsTo": null,
-      "synonyms": ["tour level", "tournament tier", "competition level"],
+      "synonyms": [
+        "tour level",
+        "tournament tier",
+        "competition level"
+      ],
       "values": [
         "itf_m15",
         "itf_m25",
@@ -4859,7 +5692,11 @@
         "wta_125"
       ],
       "valueLabels": null,
-      "seeAlso": ["competition", "country", "event"],
+      "seeAlso": [
+        "competition",
+        "country",
+        "event"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4884,10 +5721,19 @@
       "category": "tournament",
       "kind": "region",
       "mapsTo": null,
-      "synonyms": ["north_america"],
-      "values": ["US", "CA", "MX"],
+      "synonyms": [
+        "north_america"
+      ],
+      "values": [
+        "US",
+        "CA",
+        "MX"
+      ],
       "valueLabels": null,
-      "seeAlso": ["region", "country"],
+      "seeAlso": [
+        "region",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4899,7 +5745,11 @@
       "uiRole": "chip",
       "parentId": "region",
       "scope": null,
-      "countryCodes": ["US", "CA", "MX"],
+      "countryCodes": [
+        "US",
+        "CA",
+        "MX"
+      ],
       "region": "north_america",
       "flagEmoji": "🌐",
       "flagAriaLabel": "North America region",
@@ -4912,10 +5762,18 @@
       "category": "tournament",
       "kind": "region",
       "mapsTo": null,
-      "synonyms": ["south_america"],
-      "values": ["BR", "AR"],
+      "synonyms": [
+        "south_america"
+      ],
+      "values": [
+        "BR",
+        "AR"
+      ],
       "valueLabels": null,
-      "seeAlso": ["region", "country"],
+      "seeAlso": [
+        "region",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4927,7 +5785,10 @@
       "uiRole": "chip",
       "parentId": "region",
       "scope": null,
-      "countryCodes": ["BR", "AR"],
+      "countryCodes": [
+        "BR",
+        "AR"
+      ],
       "region": "south_america",
       "flagEmoji": "🌐",
       "flagAriaLabel": "South America region",
@@ -4940,7 +5801,9 @@
       "category": "tournament",
       "kind": "region",
       "mapsTo": null,
-      "synonyms": ["europe"],
+      "synonyms": [
+        "europe"
+      ],
       "values": [
         "GB",
         "FR",
@@ -4956,7 +5819,10 @@
         "GR"
       ],
       "valueLabels": null,
-      "seeAlso": ["region", "country"],
+      "seeAlso": [
+        "region",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -4994,10 +5860,21 @@
       "category": "tournament",
       "kind": "region",
       "mapsTo": null,
-      "synonyms": ["asia_pacific"],
-      "values": ["AU", "JP", "CN", "KR", "IN"],
+      "synonyms": [
+        "asia_pacific"
+      ],
+      "values": [
+        "AU",
+        "JP",
+        "CN",
+        "KR",
+        "IN"
+      ],
       "valueLabels": null,
-      "seeAlso": ["region", "country"],
+      "seeAlso": [
+        "region",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5009,7 +5886,13 @@
       "uiRole": "chip",
       "parentId": "region",
       "scope": null,
-      "countryCodes": ["AU", "JP", "CN", "KR", "IN"],
+      "countryCodes": [
+        "AU",
+        "JP",
+        "CN",
+        "KR",
+        "IN"
+      ],
       "region": "asia_pacific",
       "flagEmoji": "🌐",
       "flagAriaLabel": "Asia-Pacific region",
@@ -5022,10 +5905,18 @@
       "category": "tournament",
       "kind": "region",
       "mapsTo": null,
-      "synonyms": ["africa_middle_east"],
-      "values": ["ZA", "AE"],
+      "synonyms": [
+        "africa_middle_east"
+      ],
+      "values": [
+        "ZA",
+        "AE"
+      ],
       "valueLabels": null,
-      "seeAlso": ["region", "country"],
+      "seeAlso": [
+        "region",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5037,7 +5928,10 @@
       "uiRole": "chip",
       "parentId": "region",
       "scope": null,
-      "countryCodes": ["ZA", "AE"],
+      "countryCodes": [
+        "ZA",
+        "AE"
+      ],
       "region": "africa_middle_east",
       "flagEmoji": "🌐",
       "flagAriaLabel": "Africa & Middle East region",
@@ -5050,10 +5944,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["US", "United States"],
+      "synonyms": [
+        "US",
+        "United States"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.north_america"],
+      "seeAlso": [
+        "country",
+        "region.north_america"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5065,7 +5965,9 @@
       "uiRole": "badge",
       "parentId": "region.north_america",
       "scope": "national",
-      "countryCodes": ["US"],
+      "countryCodes": [
+        "US"
+      ],
       "region": "north_america",
       "flagEmoji": "🇺🇸",
       "flagAriaLabel": "United States flag",
@@ -5078,10 +5980,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["CA", "Canada"],
+      "synonyms": [
+        "CA",
+        "Canada"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.north_america"],
+      "seeAlso": [
+        "country",
+        "region.north_america"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5093,7 +6001,9 @@
       "uiRole": "badge",
       "parentId": "region.north_america",
       "scope": "national",
-      "countryCodes": ["CA"],
+      "countryCodes": [
+        "CA"
+      ],
       "region": "north_america",
       "flagEmoji": "🇨🇦",
       "flagAriaLabel": "Canada flag",
@@ -5106,10 +6016,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["GB", "United Kingdom"],
+      "synonyms": [
+        "GB",
+        "United Kingdom"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.europe"],
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5121,7 +6037,9 @@
       "uiRole": "badge",
       "parentId": "region.europe",
       "scope": "national",
-      "countryCodes": ["GB"],
+      "countryCodes": [
+        "GB"
+      ],
       "region": "europe",
       "flagEmoji": "🇬🇧",
       "flagAriaLabel": "United Kingdom flag",
@@ -5134,10 +6052,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["AU", "Australia"],
+      "synonyms": [
+        "AU",
+        "Australia"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.asia_pacific"],
+      "seeAlso": [
+        "country",
+        "region.asia_pacific"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5149,7 +6073,9 @@
       "uiRole": "badge",
       "parentId": "region.asia_pacific",
       "scope": "national",
-      "countryCodes": ["AU"],
+      "countryCodes": [
+        "AU"
+      ],
       "region": "asia_pacific",
       "flagEmoji": "🇦🇺",
       "flagAriaLabel": "Australia flag",
@@ -5162,10 +6088,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["FR", "France"],
+      "synonyms": [
+        "FR",
+        "France"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.europe"],
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5177,7 +6109,9 @@
       "uiRole": "badge",
       "parentId": "region.europe",
       "scope": "national",
-      "countryCodes": ["FR"],
+      "countryCodes": [
+        "FR"
+      ],
       "region": "europe",
       "flagEmoji": "🇫🇷",
       "flagAriaLabel": "France flag",
@@ -5190,10 +6124,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["DE", "Germany"],
+      "synonyms": [
+        "DE",
+        "Germany"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.europe"],
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5205,7 +6145,9 @@
       "uiRole": "badge",
       "parentId": "region.europe",
       "scope": "national",
-      "countryCodes": ["DE"],
+      "countryCodes": [
+        "DE"
+      ],
       "region": "europe",
       "flagEmoji": "🇩🇪",
       "flagAriaLabel": "Germany flag",
@@ -5218,10 +6160,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["IT", "Italy"],
+      "synonyms": [
+        "IT",
+        "Italy"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.europe"],
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5233,7 +6181,9 @@
       "uiRole": "badge",
       "parentId": "region.europe",
       "scope": "national",
-      "countryCodes": ["IT"],
+      "countryCodes": [
+        "IT"
+      ],
       "region": "europe",
       "flagEmoji": "🇮🇹",
       "flagAriaLabel": "Italy flag",
@@ -5246,10 +6196,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["ES", "Spain"],
+      "synonyms": [
+        "ES",
+        "Spain"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.europe"],
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5261,7 +6217,9 @@
       "uiRole": "badge",
       "parentId": "region.europe",
       "scope": "national",
-      "countryCodes": ["ES"],
+      "countryCodes": [
+        "ES"
+      ],
       "region": "europe",
       "flagEmoji": "🇪🇸",
       "flagAriaLabel": "Spain flag",
@@ -5274,10 +6232,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["NL", "Netherlands"],
+      "synonyms": [
+        "NL",
+        "Netherlands"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.europe"],
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5289,7 +6253,9 @@
       "uiRole": "badge",
       "parentId": "region.europe",
       "scope": "national",
-      "countryCodes": ["NL"],
+      "countryCodes": [
+        "NL"
+      ],
       "region": "europe",
       "flagEmoji": "🇳🇱",
       "flagAriaLabel": "Netherlands flag",
@@ -5302,10 +6268,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["BE", "Belgium"],
+      "synonyms": [
+        "BE",
+        "Belgium"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.europe"],
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5317,7 +6289,9 @@
       "uiRole": "badge",
       "parentId": "region.europe",
       "scope": "national",
-      "countryCodes": ["BE"],
+      "countryCodes": [
+        "BE"
+      ],
       "region": "europe",
       "flagEmoji": "🇧🇪",
       "flagAriaLabel": "Belgium flag",
@@ -5330,10 +6304,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["CH", "Switzerland"],
+      "synonyms": [
+        "CH",
+        "Switzerland"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.europe"],
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5345,7 +6325,9 @@
       "uiRole": "badge",
       "parentId": "region.europe",
       "scope": "national",
-      "countryCodes": ["CH"],
+      "countryCodes": [
+        "CH"
+      ],
       "region": "europe",
       "flagEmoji": "🇨🇭",
       "flagAriaLabel": "Switzerland flag",
@@ -5358,10 +6340,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["CZ", "Czechia"],
+      "synonyms": [
+        "CZ",
+        "Czechia"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.europe"],
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5373,7 +6361,9 @@
       "uiRole": "badge",
       "parentId": "region.europe",
       "scope": "national",
-      "countryCodes": ["CZ"],
+      "countryCodes": [
+        "CZ"
+      ],
       "region": "europe",
       "flagEmoji": "🇨🇿",
       "flagAriaLabel": "Czechia flag",
@@ -5386,10 +6376,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["PL", "Poland"],
+      "synonyms": [
+        "PL",
+        "Poland"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.europe"],
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5401,7 +6397,9 @@
       "uiRole": "badge",
       "parentId": "region.europe",
       "scope": "national",
-      "countryCodes": ["PL"],
+      "countryCodes": [
+        "PL"
+      ],
       "region": "europe",
       "flagEmoji": "🇵🇱",
       "flagAriaLabel": "Poland flag",
@@ -5414,10 +6412,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["RS", "Serbia"],
+      "synonyms": [
+        "RS",
+        "Serbia"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.europe"],
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5429,7 +6433,9 @@
       "uiRole": "badge",
       "parentId": "region.europe",
       "scope": "national",
-      "countryCodes": ["RS"],
+      "countryCodes": [
+        "RS"
+      ],
       "region": "europe",
       "flagEmoji": "🇷🇸",
       "flagAriaLabel": "Serbia flag",
@@ -5442,10 +6448,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["GR", "Greece"],
+      "synonyms": [
+        "GR",
+        "Greece"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.europe"],
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5457,7 +6469,9 @@
       "uiRole": "badge",
       "parentId": "region.europe",
       "scope": "national",
-      "countryCodes": ["GR"],
+      "countryCodes": [
+        "GR"
+      ],
       "region": "europe",
       "flagEmoji": "🇬🇷",
       "flagAriaLabel": "Greece flag",
@@ -5470,10 +6484,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["BR", "Brazil"],
+      "synonyms": [
+        "BR",
+        "Brazil"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.south_america"],
+      "seeAlso": [
+        "country",
+        "region.south_america"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5485,7 +6505,9 @@
       "uiRole": "badge",
       "parentId": "region.south_america",
       "scope": "national",
-      "countryCodes": ["BR"],
+      "countryCodes": [
+        "BR"
+      ],
       "region": "south_america",
       "flagEmoji": "🇧🇷",
       "flagAriaLabel": "Brazil flag",
@@ -5498,10 +6520,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["AR", "Argentina"],
+      "synonyms": [
+        "AR",
+        "Argentina"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.south_america"],
+      "seeAlso": [
+        "country",
+        "region.south_america"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5513,7 +6541,9 @@
       "uiRole": "badge",
       "parentId": "region.south_america",
       "scope": "national",
-      "countryCodes": ["AR"],
+      "countryCodes": [
+        "AR"
+      ],
       "region": "south_america",
       "flagEmoji": "🇦🇷",
       "flagAriaLabel": "Argentina flag",
@@ -5526,10 +6556,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["MX", "Mexico"],
+      "synonyms": [
+        "MX",
+        "Mexico"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.north_america"],
+      "seeAlso": [
+        "country",
+        "region.north_america"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5541,7 +6577,9 @@
       "uiRole": "badge",
       "parentId": "region.north_america",
       "scope": "national",
-      "countryCodes": ["MX"],
+      "countryCodes": [
+        "MX"
+      ],
       "region": "north_america",
       "flagEmoji": "🇲🇽",
       "flagAriaLabel": "Mexico flag",
@@ -5554,10 +6592,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["JP", "Japan"],
+      "synonyms": [
+        "JP",
+        "Japan"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.asia_pacific"],
+      "seeAlso": [
+        "country",
+        "region.asia_pacific"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5569,7 +6613,9 @@
       "uiRole": "badge",
       "parentId": "region.asia_pacific",
       "scope": "national",
-      "countryCodes": ["JP"],
+      "countryCodes": [
+        "JP"
+      ],
       "region": "asia_pacific",
       "flagEmoji": "🇯🇵",
       "flagAriaLabel": "Japan flag",
@@ -5582,10 +6628,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["CN", "China"],
+      "synonyms": [
+        "CN",
+        "China"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.asia_pacific"],
+      "seeAlso": [
+        "country",
+        "region.asia_pacific"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5597,7 +6649,9 @@
       "uiRole": "badge",
       "parentId": "region.asia_pacific",
       "scope": "national",
-      "countryCodes": ["CN"],
+      "countryCodes": [
+        "CN"
+      ],
       "region": "asia_pacific",
       "flagEmoji": "🇨🇳",
       "flagAriaLabel": "China flag",
@@ -5610,10 +6664,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["KR", "South Korea"],
+      "synonyms": [
+        "KR",
+        "South Korea"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.asia_pacific"],
+      "seeAlso": [
+        "country",
+        "region.asia_pacific"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5625,7 +6685,9 @@
       "uiRole": "badge",
       "parentId": "region.asia_pacific",
       "scope": "national",
-      "countryCodes": ["KR"],
+      "countryCodes": [
+        "KR"
+      ],
       "region": "asia_pacific",
       "flagEmoji": "🇰🇷",
       "flagAriaLabel": "South Korea flag",
@@ -5638,10 +6700,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["IN", "India"],
+      "synonyms": [
+        "IN",
+        "India"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.asia_pacific"],
+      "seeAlso": [
+        "country",
+        "region.asia_pacific"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5653,7 +6721,9 @@
       "uiRole": "badge",
       "parentId": "region.asia_pacific",
       "scope": "national",
-      "countryCodes": ["IN"],
+      "countryCodes": [
+        "IN"
+      ],
       "region": "asia_pacific",
       "flagEmoji": "🇮🇳",
       "flagAriaLabel": "India flag",
@@ -5666,10 +6736,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["ZA", "South Africa"],
+      "synonyms": [
+        "ZA",
+        "South Africa"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.africa_middle_east"],
+      "seeAlso": [
+        "country",
+        "region.africa_middle_east"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5681,7 +6757,9 @@
       "uiRole": "badge",
       "parentId": "region.africa_middle_east",
       "scope": "national",
-      "countryCodes": ["ZA"],
+      "countryCodes": [
+        "ZA"
+      ],
       "region": "africa_middle_east",
       "flagEmoji": "🇿🇦",
       "flagAriaLabel": "South Africa flag",
@@ -5694,10 +6772,16 @@
       "category": "tournament",
       "kind": "country",
       "mapsTo": null,
-      "synonyms": ["AE", "United Arab Emirates"],
+      "synonyms": [
+        "AE",
+        "United Arab Emirates"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["country", "region.africa_middle_east"],
+      "seeAlso": [
+        "country",
+        "region.africa_middle_east"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5709,7 +6793,9 @@
       "uiRole": "badge",
       "parentId": "region.africa_middle_east",
       "scope": "national",
-      "countryCodes": ["AE"],
+      "countryCodes": [
+        "AE"
+      ],
       "region": "africa_middle_east",
       "flagEmoji": "🇦🇪",
       "flagAriaLabel": "United Arab Emirates flag",
@@ -5722,10 +6808,18 @@
       "category": "tournament",
       "kind": "competition",
       "mapsTo": null,
-      "synonyms": ["itf_m15", "M15"],
+      "synonyms": [
+        "itf_m15",
+        "M15"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition.tier", "league.itf", "sport.tennis", "country"],
+      "seeAlso": [
+        "competition.tier",
+        "league.itf",
+        "sport.tennis",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5750,10 +6844,18 @@
       "category": "tournament",
       "kind": "competition",
       "mapsTo": null,
-      "synonyms": ["itf_m25", "M25"],
+      "synonyms": [
+        "itf_m25",
+        "M25"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition.tier", "league.itf", "sport.tennis", "country"],
+      "seeAlso": [
+        "competition.tier",
+        "league.itf",
+        "sport.tennis",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5778,10 +6880,18 @@
       "category": "tournament",
       "kind": "competition",
       "mapsTo": null,
-      "synonyms": ["itf_w15", "W15"],
+      "synonyms": [
+        "itf_w15",
+        "W15"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition.tier", "league.itf", "sport.tennis", "country"],
+      "seeAlso": [
+        "competition.tier",
+        "league.itf",
+        "sport.tennis",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5806,10 +6916,18 @@
       "category": "tournament",
       "kind": "competition",
       "mapsTo": null,
-      "synonyms": ["itf_w35", "W35"],
+      "synonyms": [
+        "itf_w35",
+        "W35"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition.tier", "league.itf", "sport.tennis", "country"],
+      "seeAlso": [
+        "competition.tier",
+        "league.itf",
+        "sport.tennis",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5834,10 +6952,18 @@
       "category": "tournament",
       "kind": "competition",
       "mapsTo": null,
-      "synonyms": ["itf_w50", "W50"],
+      "synonyms": [
+        "itf_w50",
+        "W50"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition.tier", "league.itf", "sport.tennis", "country"],
+      "seeAlso": [
+        "competition.tier",
+        "league.itf",
+        "sport.tennis",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5862,10 +6988,18 @@
       "category": "tournament",
       "kind": "competition",
       "mapsTo": null,
-      "synonyms": ["itf_w75", "W75"],
+      "synonyms": [
+        "itf_w75",
+        "W75"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition.tier", "league.itf", "sport.tennis", "country"],
+      "seeAlso": [
+        "competition.tier",
+        "league.itf",
+        "sport.tennis",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5890,10 +7024,18 @@
       "category": "tournament",
       "kind": "competition",
       "mapsTo": null,
-      "synonyms": ["itf_w100", "W100"],
+      "synonyms": [
+        "itf_w100",
+        "W100"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition.tier", "league.itf", "sport.tennis", "country"],
+      "seeAlso": [
+        "competition.tier",
+        "league.itf",
+        "sport.tennis",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -5918,7 +7060,10 @@
       "category": "tournament",
       "kind": "competition",
       "mapsTo": null,
-      "synonyms": ["atp_challenger_50", "50"],
+      "synonyms": [
+        "atp_challenger_50",
+        "50"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -5951,7 +7096,10 @@
       "category": "tournament",
       "kind": "competition",
       "mapsTo": null,
-      "synonyms": ["atp_challenger_75", "75"],
+      "synonyms": [
+        "atp_challenger_75",
+        "75"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -5984,7 +7132,10 @@
       "category": "tournament",
       "kind": "competition",
       "mapsTo": null,
-      "synonyms": ["atp_challenger_100", "100"],
+      "synonyms": [
+        "atp_challenger_100",
+        "100"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -6017,7 +7168,10 @@
       "category": "tournament",
       "kind": "competition",
       "mapsTo": null,
-      "synonyms": ["atp_challenger_125", "125"],
+      "synonyms": [
+        "atp_challenger_125",
+        "125"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -6050,7 +7204,10 @@
       "category": "tournament",
       "kind": "competition",
       "mapsTo": null,
-      "synonyms": ["atp_challenger_175", "175"],
+      "synonyms": [
+        "atp_challenger_175",
+        "175"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -6083,7 +7240,10 @@
       "category": "tournament",
       "kind": "competition",
       "mapsTo": null,
-      "synonyms": ["wta_125", "125"],
+      "synonyms": [
+        "wta_125",
+        "125"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -6116,10 +7276,17 @@
       "category": "tournament",
       "kind": "league",
       "mapsTo": null,
-      "synonyms": ["National Basketball Association", "nba"],
+      "synonyms": [
+        "National Basketball Association",
+        "nba"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition", "sport.basketball", "country"],
+      "seeAlso": [
+        "competition",
+        "sport.basketball",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6131,7 +7298,10 @@
       "uiRole": "chip",
       "parentId": "sport.basketball",
       "scope": "multi_country",
-      "countryCodes": ["US", "CA"],
+      "countryCodes": [
+        "US",
+        "CA"
+      ],
       "region": null,
       "flagEmoji": "🇺🇸 🇨🇦",
       "flagAriaLabel": "United States and Canada",
@@ -6144,10 +7314,17 @@
       "category": "tournament",
       "kind": "league",
       "mapsTo": null,
-      "synonyms": ["Women's National Basketball Association", "wnba"],
+      "synonyms": [
+        "Women's National Basketball Association",
+        "wnba"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition", "sport.basketball", "country"],
+      "seeAlso": [
+        "competition",
+        "sport.basketball",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6159,7 +7336,9 @@
       "uiRole": "chip",
       "parentId": "sport.basketball",
       "scope": "national",
-      "countryCodes": ["US"],
+      "countryCodes": [
+        "US"
+      ],
       "region": null,
       "flagEmoji": "🇺🇸",
       "flagAriaLabel": "United States",
@@ -6172,10 +7351,17 @@
       "category": "tournament",
       "kind": "league",
       "mapsTo": null,
-      "synonyms": ["National Football League", "nfl"],
+      "synonyms": [
+        "National Football League",
+        "nfl"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition", "sport.american_football", "country"],
+      "seeAlso": [
+        "competition",
+        "sport.american_football",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6187,7 +7373,9 @@
       "uiRole": "chip",
       "parentId": "sport.american_football",
       "scope": "national",
-      "countryCodes": ["US"],
+      "countryCodes": [
+        "US"
+      ],
       "region": null,
       "flagEmoji": "🇺🇸",
       "flagAriaLabel": "United States",
@@ -6200,10 +7388,18 @@
       "category": "tournament",
       "kind": "league",
       "mapsTo": null,
-      "synonyms": ["NCAAF", "college football", "ncaaf"],
+      "synonyms": [
+        "NCAAF",
+        "college football",
+        "ncaaf"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition", "sport.american_football", "country"],
+      "seeAlso": [
+        "competition",
+        "sport.american_football",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6215,7 +7411,9 @@
       "uiRole": "chip",
       "parentId": "sport.american_football",
       "scope": "national",
-      "countryCodes": ["US"],
+      "countryCodes": [
+        "US"
+      ],
       "region": null,
       "flagEmoji": "🇺🇸",
       "flagAriaLabel": "United States",
@@ -6228,10 +7426,19 @@
       "category": "tournament",
       "kind": "league",
       "mapsTo": null,
-      "synonyms": ["NCAAB", "college basketball", "CBB", "ncaab"],
+      "synonyms": [
+        "NCAAB",
+        "college basketball",
+        "CBB",
+        "ncaab"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition", "sport.basketball", "country"],
+      "seeAlso": [
+        "competition",
+        "sport.basketball",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6243,7 +7450,9 @@
       "uiRole": "chip",
       "parentId": "sport.basketball",
       "scope": "national",
-      "countryCodes": ["US"],
+      "countryCodes": [
+        "US"
+      ],
       "region": null,
       "flagEmoji": "🇺🇸",
       "flagAriaLabel": "United States",
@@ -6256,10 +7465,17 @@
       "category": "tournament",
       "kind": "league",
       "mapsTo": null,
-      "synonyms": ["Major League Baseball", "mlb"],
+      "synonyms": [
+        "Major League Baseball",
+        "mlb"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition", "sport.baseball", "country"],
+      "seeAlso": [
+        "competition",
+        "sport.baseball",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6271,7 +7487,10 @@
       "uiRole": "chip",
       "parentId": "sport.baseball",
       "scope": "multi_country",
-      "countryCodes": ["US", "CA"],
+      "countryCodes": [
+        "US",
+        "CA"
+      ],
       "region": null,
       "flagEmoji": "🇺🇸 🇨🇦",
       "flagAriaLabel": "United States and Canada",
@@ -6284,10 +7503,17 @@
       "category": "tournament",
       "kind": "league",
       "mapsTo": null,
-      "synonyms": ["National Hockey League", "nhl"],
+      "synonyms": [
+        "National Hockey League",
+        "nhl"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition", "sport.hockey", "country"],
+      "seeAlso": [
+        "competition",
+        "sport.hockey",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6299,7 +7525,10 @@
       "uiRole": "chip",
       "parentId": "sport.hockey",
       "scope": "multi_country",
-      "countryCodes": ["US", "CA"],
+      "countryCodes": [
+        "US",
+        "CA"
+      ],
       "region": null,
       "flagEmoji": "🇺🇸 🇨🇦",
       "flagAriaLabel": "United States and Canada",
@@ -6312,10 +7541,17 @@
       "category": "tournament",
       "kind": "league",
       "mapsTo": null,
-      "synonyms": ["Major League Soccer", "mls"],
+      "synonyms": [
+        "Major League Soccer",
+        "mls"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition", "sport.soccer", "country"],
+      "seeAlso": [
+        "competition",
+        "sport.soccer",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6327,7 +7563,10 @@
       "uiRole": "chip",
       "parentId": "sport.soccer",
       "scope": "multi_country",
-      "countryCodes": ["US", "CA"],
+      "countryCodes": [
+        "US",
+        "CA"
+      ],
       "region": null,
       "flagEmoji": "🇺🇸 🇨🇦",
       "flagAriaLabel": "United States and Canada",
@@ -6340,10 +7579,18 @@
       "category": "tournament",
       "kind": "league",
       "mapsTo": null,
-      "synonyms": ["EPL", "English Premier League", "epl"],
+      "synonyms": [
+        "EPL",
+        "English Premier League",
+        "epl"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition", "sport.soccer", "country"],
+      "seeAlso": [
+        "competition",
+        "sport.soccer",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6355,7 +7602,9 @@
       "uiRole": "chip",
       "parentId": "sport.soccer",
       "scope": "national",
-      "countryCodes": ["GB"],
+      "countryCodes": [
+        "GB"
+      ],
       "region": null,
       "flagEmoji": "🇬🇧",
       "flagAriaLabel": "United Kingdom",
@@ -6368,10 +7617,18 @@
       "category": "tournament",
       "kind": "league",
       "mapsTo": null,
-      "synonyms": ["UCL", "Champions League", "uefa_champions_league"],
+      "synonyms": [
+        "UCL",
+        "Champions League",
+        "uefa_champions_league"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition", "sport.soccer", "country"],
+      "seeAlso": [
+        "competition",
+        "sport.soccer",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6396,10 +7653,18 @@
       "category": "tournament",
       "kind": "league",
       "mapsTo": null,
-      "synonyms": ["ATP", "men's tennis", "atp"],
+      "synonyms": [
+        "ATP",
+        "men's tennis",
+        "atp"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition", "sport.tennis", "country"],
+      "seeAlso": [
+        "competition",
+        "sport.tennis",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6424,10 +7689,18 @@
       "category": "tournament",
       "kind": "league",
       "mapsTo": null,
-      "synonyms": ["WTA", "women's tennis", "wta"],
+      "synonyms": [
+        "WTA",
+        "women's tennis",
+        "wta"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition", "sport.tennis", "country"],
+      "seeAlso": [
+        "competition",
+        "sport.tennis",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6452,10 +7725,18 @@
       "category": "tournament",
       "kind": "league",
       "mapsTo": null,
-      "synonyms": ["ITF", "ITF tennis", "itf"],
+      "synonyms": [
+        "ITF",
+        "ITF tennis",
+        "itf"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition", "sport.tennis", "country"],
+      "seeAlso": [
+        "competition",
+        "sport.tennis",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6480,10 +7761,17 @@
       "category": "tournament",
       "kind": "league",
       "mapsTo": null,
-      "synonyms": ["Challenger Tour", "atp_challenger"],
+      "synonyms": [
+        "Challenger Tour",
+        "atp_challenger"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition", "sport.tennis", "country"],
+      "seeAlso": [
+        "competition",
+        "sport.tennis",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6508,10 +7796,17 @@
       "category": "tournament",
       "kind": "league",
       "mapsTo": null,
-      "synonyms": ["WTA 125 Series", "wta_125"],
+      "synonyms": [
+        "WTA 125 Series",
+        "wta_125"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition", "sport.tennis", "country"],
+      "seeAlso": [
+        "competition",
+        "sport.tennis",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6536,10 +7831,17 @@
       "category": "tournament",
       "kind": "league",
       "mapsTo": null,
-      "synonyms": ["PGA", "pga_tour"],
+      "synonyms": [
+        "PGA",
+        "pga_tour"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition", "sport.golf", "country"],
+      "seeAlso": [
+        "competition",
+        "sport.golf",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6564,10 +7866,17 @@
       "category": "tournament",
       "kind": "league",
       "mapsTo": null,
-      "synonyms": ["European Tour", "dp_world_tour"],
+      "synonyms": [
+        "European Tour",
+        "dp_world_tour"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition", "sport.golf", "country"],
+      "seeAlso": [
+        "competition",
+        "sport.golf",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6592,10 +7901,17 @@
       "category": "tournament",
       "kind": "league",
       "mapsTo": null,
-      "synonyms": ["Ultimate Fighting Championship", "ufc"],
+      "synonyms": [
+        "Ultimate Fighting Championship",
+        "ufc"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition", "sport.mma", "country"],
+      "seeAlso": [
+        "competition",
+        "sport.mma",
+        "country"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6620,7 +7936,13 @@
       "category": "market",
       "kind": "market",
       "mapsTo": null,
-      "synonyms": ["moneyline", "ml", "h2h", "1x2", "match winner"],
+      "synonyms": [
+        "moneyline",
+        "ml",
+        "h2h",
+        "1x2",
+        "match winner"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -6653,10 +7975,19 @@
       "category": "market",
       "kind": "market",
       "mapsTo": null,
-      "synonyms": ["spread", "handicap", "line", "ATS"],
+      "synonyms": [
+        "spread",
+        "handicap",
+        "line",
+        "ATS"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["market.match_winner", "market.total", "event.match"],
+      "seeAlso": [
+        "market.match_winner",
+        "market.total",
+        "event.match"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6681,10 +8012,20 @@
       "category": "market",
       "kind": "market",
       "mapsTo": null,
-      "synonyms": ["over_under", "over/under", "totals", "ou", "total points"],
+      "synonyms": [
+        "over_under",
+        "over/under",
+        "totals",
+        "ou",
+        "total points"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["market.match_winner", "market.point_spread", "event.match"],
+      "seeAlso": [
+        "market.match_winner",
+        "market.point_spread",
+        "event.match"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6709,10 +8050,18 @@
       "category": "market",
       "kind": "market",
       "mapsTo": null,
-      "synonyms": ["player proposition", "player market", "prop"],
+      "synonyms": [
+        "player proposition",
+        "player market",
+        "prop"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["market.team_prop", "event.match", "market.futures"],
+      "seeAlso": [
+        "market.team_prop",
+        "event.match",
+        "market.futures"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6737,10 +8086,17 @@
       "category": "market",
       "kind": "market",
       "mapsTo": null,
-      "synonyms": ["team proposition", "team market"],
+      "synonyms": [
+        "team proposition",
+        "team market"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["market.player_prop", "event.match", "market.match_winner"],
+      "seeAlso": [
+        "market.player_prop",
+        "event.match",
+        "market.match_winner"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6765,10 +8121,18 @@
       "category": "market",
       "kind": "market",
       "mapsTo": null,
-      "synonyms": ["outright", "season long", "championship"],
+      "synonyms": [
+        "outright",
+        "season long",
+        "championship"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["competition", "sport", "market.match_winner"],
+      "seeAlso": [
+        "competition",
+        "sport",
+        "market.match_winner"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6793,7 +8157,11 @@
       "category": "market",
       "kind": "market",
       "mapsTo": null,
-      "synonyms": ["live", "in play", "live betting"],
+      "synonyms": [
+        "live",
+        "in play",
+        "live betting"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -6825,7 +8193,10 @@
       "category": "market",
       "kind": "market",
       "mapsTo": null,
-      "synonyms": ["spread", "point_spread"],
+      "synonyms": [
+        "spread",
+        "point_spread"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -6857,10 +8228,18 @@
       "category": "market",
       "kind": "market",
       "mapsTo": null,
-      "synonyms": ["total", "totals", "ou"],
+      "synonyms": [
+        "total",
+        "totals",
+        "ou"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["market.total", "market.match_winner", "market.spread"],
+      "seeAlso": [
+        "market.total",
+        "market.match_winner",
+        "market.spread"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -6885,7 +8264,11 @@
       "category": "model",
       "kind": "metric",
       "mapsTo": null,
-      "synonyms": ["implied probability", "normalized price", "fair odds"],
+      "synonyms": [
+        "implied probability",
+        "normalized price",
+        "fair odds"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -6917,7 +8300,12 @@
       "category": "model",
       "kind": "metric",
       "mapsTo": null,
-      "synonyms": ["vig", "juice", "margin", "hold"],
+      "synonyms": [
+        "vig",
+        "juice",
+        "margin",
+        "hold"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -6949,7 +8337,11 @@
       "category": "model",
       "kind": "metric",
       "mapsTo": null,
-      "synonyms": ["arb gap", "arb", "cross-venue edge"],
+      "synonyms": [
+        "arb gap",
+        "arb",
+        "cross-venue edge"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -6981,7 +8373,11 @@
       "category": "market",
       "kind": "cross_market",
       "mapsTo": null,
-      "synonyms": ["cross-venue comparison", "book comparison", "multi-venue"],
+      "synonyms": [
+        "cross-venue comparison",
+        "book comparison",
+        "multi-venue"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -7014,7 +8410,11 @@
       "category": "market",
       "kind": "cross_market",
       "mapsTo": null,
-      "synonyms": ["consensus price", "blended price", "unified odds"],
+      "synonyms": [
+        "consensus price",
+        "blended price",
+        "unified odds"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -7046,7 +8446,11 @@
       "category": "warehouse",
       "kind": "evidence",
       "mapsTo": null,
-      "synonyms": ["sportsbook odds", "book quote", "price quote"],
+      "synonyms": [
+        "sportsbook odds",
+        "book quote",
+        "price quote"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -7078,7 +8482,11 @@
       "category": "warehouse",
       "kind": "evidence",
       "mapsTo": null,
-      "synonyms": ["Kalshi price", "Polymarket price", "PM price"],
+      "synonyms": [
+        "Kalshi price",
+        "Polymarket price",
+        "PM price"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -7110,7 +8518,12 @@
       "category": "trading",
       "kind": "multi",
       "mapsTo": null,
-      "synonyms": ["multi", "accumulator", "acca", "combo"],
+      "synonyms": [
+        "multi",
+        "accumulator",
+        "acca",
+        "combo"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -7142,10 +8555,18 @@
       "category": "trading",
       "kind": "multi",
       "mapsTo": null,
-      "synonyms": ["leg", "selection", "parlay selection"],
+      "synonyms": [
+        "leg",
+        "selection",
+        "parlay selection"
+      ],
       "values": null,
       "valueLabels": null,
-      "seeAlso": ["multi.parlay", "event.match", "market.match_winner"],
+      "seeAlso": [
+        "multi.parlay",
+        "event.match",
+        "market.match_winner"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -7170,7 +8591,11 @@
       "category": "trading",
       "kind": "baseline",
       "mapsTo": null,
-      "synonyms": ["new account limits", "opening max", "baseline limits"],
+      "synonyms": [
+        "new account limits",
+        "opening max",
+        "baseline limits"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
@@ -7204,10 +8629,23 @@
       "category": "trading",
       "kind": "baseline",
       "mapsTo": null,
-      "synonyms": ["source tier", "baseline confidence", "limit provenance"],
-      "values": ["1", "2", "3", "4", "5"],
+      "synonyms": [
+        "source tier",
+        "baseline confidence",
+        "limit provenance"
+      ],
+      "values": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
       "valueLabels": null,
-      "seeAlso": ["ops.limits.opening_baseline", "ops.limits.effective_limit"],
+      "seeAlso": [
+        "ops.limits.opening_baseline",
+        "ops.limits.effective_limit"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
