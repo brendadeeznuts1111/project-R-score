@@ -640,13 +640,21 @@
     <div class="partner-page portal-page">
       <nav id="partner-history-crumbs" class="glossary-crumbs" aria-label="Breadcrumb"></nav>
       <div class="portal-actions">
+        <a href="/portal/partners/" data-glossary-concept="page.partners">Partners board</a>
         <a href="/portal/limits/" data-glossary-concept="page.limitPatterns">Limit overview</a>
+        <a href="/portal/toc/" data-glossary-concept="page.toc">TOC offers</a>
         <a href="/portal/glossary/#glossary:page.partnerHistory">Glossary</a>
         <a href="/registry/sportsbook-opening-baseline.json" target="_blank" rel="noopener"
           >opening baseline JSON</a
         >
         <a href="/registry/ops-summary.json" target="_blank" rel="noopener">ops-summary.json</a>
       </div>
+      <p
+        id="history-hub-links"
+        class="history-filter-status"
+        data-glossary-concept="page.partners"
+        aria-live="polite"
+      ></p>
 
       <div class="page-header portal-hero">
         <div>
@@ -967,10 +975,14 @@
             </label>
             <label
               >Phase
-              <select id="baseline-phase" aria-label="Filter baseline by market phase">
+              <select
+                id="baseline-phase"
+                aria-label="Filter baseline by market phase"
+                data-glossary-concept="ops.limits.market_phase"
+              >
                 <option value="">All</option>
-                <option value="pregame">pregame</option>
-                <option value="live">live</option>
+                <option value="pregame" data-glossary-concept="ops.limits.market_phase">pregame</option>
+                <option value="live" data-glossary-concept="ops.limits.market_phase">live</option>
               </select>
             </label>
             <label
@@ -1059,11 +1071,13 @@
       const tabPattern = new URLPattern({ hash: 'tab\\::tab' });
       const HISTORY_QUERY = Object.freeze({
         account: 'account',
+        partner: 'partner',
         sportsbook: 'sportsbook',
         direction: 'direction',
         hours: 'hours',
       });
       const HISTORY_TABS = Object.freeze(['recent', 'partner', 'baseline', 'export']);
+      const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
 
       const partnerSelect = document.getElementById('partner-select');
       const sportsbookSelect = document.getElementById('sportsbook-select');
@@ -1167,10 +1181,40 @@
         });
       });
 
+      /** Derive partners-ops CODE from account id / call-sign / query seed. */
+      function partnerCodeFromRef(ref) {
+        const raw = String(ref || '')
+          .trim()
+          .toUpperCase();
+        if (PARTNER_CODE_RE.test(raw)) return raw;
+        const match = raw.match(/^([A-Z]{3,6})(?:[-_]|$)/);
+        return match?.[1] ?? null;
+      }
+
+      function resolveAccountFilter(candidates, seed) {
+        if (!seed) return '';
+        if (candidates.includes(seed)) return seed;
+        const upper = String(seed).toUpperCase();
+        const exact = candidates.find(id => String(id).toUpperCase() === upper);
+        if (exact) return exact;
+        const code = partnerCodeFromRef(seed);
+        if (code) {
+          const byCode = candidates.find(id => {
+            const value = String(id).toUpperCase();
+            return value === code || value.startsWith(`${code}-`) || value.includes(code);
+          });
+          if (byCode) return byCode;
+        }
+        return candidates.find(id => String(id).toUpperCase().includes(upper)) || seed;
+      }
+
       function syncFilterQuery() {
         const url = new URL(window.location.href);
+        const account = partnerSelect.value;
+        const partnerCode = partnerCodeFromRef(account);
         const values = {
-          [HISTORY_QUERY.account]: partnerSelect.value,
+          [HISTORY_QUERY.account]: account,
+          [HISTORY_QUERY.partner]: partnerCode || '',
           [HISTORY_QUERY.sportsbook]: sportsbookSelect.value,
           [HISTORY_QUERY.direction]: directionSelect.value,
           [HISTORY_QUERY.hours]: hoursSelect.value === '48' ? '' : hoursSelect.value,
@@ -1184,10 +1228,33 @@
 
       function restoreFilterQuery() {
         const url = new URL(window.location.href);
-        partnerSelect.value = url.searchParams.get(HISTORY_QUERY.account) || '';
+        // Partners board deep-links with ?partner=CODE; history canon is ?account=.
+        partnerSelect.value =
+          url.searchParams.get(HISTORY_QUERY.account) ||
+          url.searchParams.get(HISTORY_QUERY.partner) ||
+          '';
         sportsbookSelect.value = url.searchParams.get(HISTORY_QUERY.sportsbook) || '';
         directionSelect.value = url.searchParams.get(HISTORY_QUERY.direction) || '';
         hoursSelect.value = url.searchParams.get(HISTORY_QUERY.hours) || '48';
+      }
+
+      function renderHistoryHubLinks() {
+        const hub = document.getElementById('history-hub-links');
+        if (!hub) return;
+        const account = partnerSelect.value;
+        const code = partnerCodeFromRef(account);
+        if (!code) {
+          hub.innerHTML =
+            'Partner hub: <a href="/portal/partners/" data-glossary-concept="page.partners">All partners</a> · deep-link with <code>?partner=CODE</code> or <code>?account=CALL</code>';
+          return;
+        }
+        const call = account && account.toUpperCase() !== code ? account : `${code}-001`;
+        hub.innerHTML = `Partner hub · <strong><code>${escapeHtml(code)}</code></strong>:
+          <a href="/portal/partners/#partner/${encodeURIComponent(code)}" data-glossary-concept="page.partners">Profile</a> ·
+          <a href="/portal/limits/?partner=${encodeURIComponent(code)}" data-glossary-concept="page.limitPatterns">Limits</a> ·
+          <a href="/portal/partners/#partner/${encodeURIComponent(code)}/accounting" data-glossary-concept="section.partnersAccounting">Accounting</a> ·
+          <a href="/portal/toc/" data-glossary-concept="page.toc">TOC offers</a> ·
+          <code>bun run onboard:partner -- ${escapeHtml(call)} --dry-run</code>`;
       }
 
       function fillSelect(select, values, allLabel, labelFor = value => value, allConcept = null) {
@@ -1481,8 +1548,12 @@
           restoreFilterQuery();
           filtersInitialized = true;
         }
-        if (![...partnerSelect.options].some(option => option.value === partnerSelect.value))
-          partnerSelect.value = '';
+        const resolvedAccount = resolveAccountFilter(accounts, partnerSelect.value);
+        partnerSelect.value = [...partnerSelect.options].some(
+          option => option.value === resolvedAccount
+        )
+          ? resolvedAccount
+          : '';
         if (![...sportsbookSelect.options].some(option => option.value === sportsbookSelect.value))
           sportsbookSelect.value = '';
 
@@ -1525,6 +1596,7 @@
           hoursSelect.value !== '48' ? hoursSelect.value : '',
         ].filter(Boolean).length;
         filterStatus.innerHTML = `<strong>${total}</strong> of ${changes.length} changes · <a class="semantic-label" href="${glossaryHref(PARTNER_HISTORY_GLOSSARY.activeFilters)}" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.activeFilters}">${activeFilters} active filter${activeFilters === 1 ? '' : 's'}</a> · <a class="semantic-label" href="${glossaryHref(PARTNER_HISTORY_GLOSSARY.deltas)}" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.deltas}">deltas</a> are versus prior <a class="semantic-label" href="${glossaryHref(PARTNER_HISTORY_GLOSSARY.highWater)}" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.highWater}">high-water</a>`;
+        renderHistoryHubLinks();
         const generated = opsData?.generatedAt || opsData?.generated || null;
         const generatedDate = generated ? new Date(generated) : null;
         freshnessEl.textContent =
@@ -1563,6 +1635,10 @@
             const location = [pattern?.state_code, pattern?.license_status]
               .filter(Boolean)
               .join(' · ');
+            const partnerCode = partnerCodeFromRef(accountId);
+            const profileHref = partnerCode
+              ? `/portal/partners/#partner/${encodeURIComponent(partnerCode)}`
+              : '';
             return `<article class="history-account-card" data-account="${escapeHtml(accountId)}">
         <div class="history-account-card__head">
           <span>
@@ -1586,6 +1662,8 @@
         <div class="history-account-card__actions">
           <button class="partner-drill" data-partner="${escapeHtml(accountId)}">View timeline</button>
           <a class="btn" href="/portal/limits/#account:${encodeURIComponent(accountId)}">Account evidence</a>
+          ${profileHref ? `<a class="btn" href="${profileHref}" data-glossary-concept="page.partners">Partner profile</a>` : ''}
+          ${partnerCode ? `<a class="btn" href="/portal/partner-history/?partner=${encodeURIComponent(partnerCode)}">History CODE</a>` : ''}
         </div>
       </article>`;
           })

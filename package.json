@@ -1808,6 +1808,7 @@
     "partners:governance": "bun run partners:validate && bun run partners:integration:validate && bun run glossary:portal:check",
     "partners:ledger:append": "bun tools/partners-ops.ts ledger:append",
     "partners:refresh": "bun tools/partners-ops.ts build",
+    "onboard:partner": "bun tools/onboard-partner-package.ts",
     "telegram:all-accounting": "bun tools/all-accounting-channel.ts",
     "telegram:all-accounting:bind": "bun tools/telegram-bind-surface.ts all-accounting",
     "telegram:all-accounting:create": "bun tools/create-house-forum.ts all-accounting",

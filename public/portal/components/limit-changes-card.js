@@ -7,55 +7,304 @@
  *
  * Attributes:
  *   partner   — node_id to scope (omit for all partners)
- *   hours     — lookback window (default 48)
+ *   sportsbook— sportsbook id filter
+ *   direction — "up" | "down"
+ *   hours     — lookback window (default 48; 0 = all loaded)
  *   limit     — max rows (default 10)
  *   show-all  — show both raises and decreases (default shows raises only)
- *   compact   — single-line format (no score/details)
- *   data-*    — override render when data supplied externally
+ *   compact   — omit score / factors columns
  */
 import {
   PARTNER_HISTORY_GLOSSARY,
   partnerHistoryGlossaryHref,
 } from '../partner-history/glossary-map.js';
 
+const G = PARTNER_HISTORY_GLOSSARY;
+
 const STYLE = `
   <style>
     :host {
       display: block;
-      font-family: system-ui, sans-serif;
+      color: var(--text, #e6edf3);
+      font-family: var(--font-sans, Inter, system-ui, sans-serif);
       --lcc-up: var(--partner-ops-operator-ready, var(--tone-ok, #3fb950));
       --lcc-down: var(--partner-ops-rejected, var(--tone-bad, #f85149));
       --lcc-warn: var(--partner-ops-deferred, var(--tone-warn, #d29922));
+      --lcc-border: var(--border, #30363d);
+      --lcc-surface: var(--surface, #161b22);
+      --lcc-muted: var(--text-dim, #8b949e);
     }
-    #lcc-table-wrap { overflow-x: auto; border: 1px solid var(--border, #ddd); border-radius: 6px; }
-    .lcc-table { width: 100%; min-width: 760px; border-collapse: collapse; font-size: 0.85em; margin: 0; }
-    .lcc-table th, .lcc-table td { padding: 4px 6px; text-align: left; border-bottom: 1px solid var(--border, #ddd); }
-    .lcc-table th { font-weight: 600; color: var(--text-dim, #666); }
-    .lcc-up { color: var(--lcc-up); }
-    .lcc-down { color: var(--lcc-down); }
-    .lcc-score-bar { display: inline-block; height: 8px; border-radius: 4px; background: linear-gradient(90deg, var(--lcc-down), var(--lcc-warn), var(--lcc-up)); min-width: 40px; }
-    .lcc-summary { display: flex; flex-wrap: wrap; gap: 1em; padding: 6px 0; color: var(--text-dim, #666); font-size: 0.85em; }
-    .lcc-summary span { display: flex; align-items: center; gap: 3px; }
-    .lcc-empty { color: var(--text-dim, #999); font-style: italic; padding: 1em; text-align: center; }
-    .lcc-toolbar { display: flex; flex-wrap: wrap; gap: 0.5em; align-items: center; margin-bottom: 4px; }
-    .lcc-toolbar button, .lcc-toolbar a { padding: 2px 8px; border: 1px solid var(--border, #ccc); border-radius: 4px; background: var(--card, #f5f5f5); cursor: pointer; font-size: 0.8em; text-decoration: none; color: inherit; }
-    .lcc-toolbar button:hover, .lcc-toolbar a:hover { background: var(--accent, #e0e0e0); }
+    .lcc-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5em;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .lcc-toolbar #lcc-title {
+      flex: 1;
+      min-width: 8rem;
+      font-weight: 600;
+      font-size: 0.95em;
+    }
+    .lcc-toolbar button,
+    .lcc-toolbar a {
+      padding: 4px 10px;
+      border: 1px solid var(--lcc-border);
+      border-radius: 6px;
+      background: var(--lcc-surface);
+      cursor: pointer;
+      font-size: 0.8em;
+      text-decoration: none;
+      color: inherit;
+    }
+    .lcc-toolbar button:hover,
+    .lcc-toolbar a:hover {
+      border-color: var(--accent, #58a6ff);
+      color: var(--accent, #58a6ff);
+    }
+    .lcc-summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85em 1.25em;
+      padding: 4px 2px 10px;
+      color: var(--lcc-muted);
+      font-size: 0.82em;
+    }
+    .lcc-summary span { display: inline-flex; align-items: center; gap: 4px; }
+    .lcc-empty {
+      color: var(--lcc-muted);
+      font-style: italic;
+      padding: 1.5em;
+      text-align: center;
+      border: 1px dashed var(--lcc-border);
+      border-radius: 8px;
+    }
+    #lcc-table-wrap {
+      overflow: auto;
+      border: 1px solid var(--lcc-border);
+      border-radius: 8px;
+      background: var(--lcc-surface);
+      max-height: min(70vh, 720px);
+    }
+    .lcc-table {
+      width: 100%;
+      min-width: 880px;
+      border-collapse: collapse;
+      font-size: 0.82em;
+      margin: 0;
+    }
+    .lcc-table caption {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+    .lcc-table th,
+    .lcc-table td {
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1px solid rgba(48, 54, 61, 0.45);
+      vertical-align: top;
+    }
+    .lcc-table th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      font-weight: 600;
+      font-size: 0.78em;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--lcc-muted);
+      background: var(--lcc-surface);
+      border-bottom: 1px solid var(--lcc-border);
+      white-space: nowrap;
+    }
+    .lcc-table tbody tr:hover td { background: rgba(255, 255, 255, 0.025); }
+    .lcc-table tr.lcc-row-up td:first-child { box-shadow: inset 3px 0 0 var(--lcc-up); }
+    .lcc-table tr.lcc-row-down td:first-child { box-shadow: inset 3px 0 0 var(--lcc-down); }
+    .lcc-up { color: var(--lcc-up); font-weight: 600; }
+    .lcc-down { color: var(--lcc-down); font-weight: 600; }
+    .lcc-num {
+      font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .lcc-account {
+      font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+      font-size: 0.92em;
+      color: var(--accent, #58a6ff);
+      text-decoration: none;
+    }
+    .lcc-account:hover { text-decoration: underline; }
+    .lcc-book { font-weight: 600; text-transform: capitalize; }
+    .lcc-market { color: var(--lcc-muted); font-size: 0.92em; }
+    .lcc-meter {
+      display: grid;
+      grid-template-columns: minmax(48px, 72px) auto;
+      gap: 6px;
+      align-items: center;
+      min-width: 96px;
+    }
+    .lcc-meter-track {
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(139, 148, 158, 0.25);
+      overflow: hidden;
+    }
+    .lcc-meter-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--lcc-down), var(--lcc-warn), var(--lcc-up));
+    }
+    .lcc-meter-label {
+      font-family: var(--font-mono, ui-monospace, monospace);
+      font-variant-numeric: tabular-nums;
+      font-size: 0.92em;
+      color: var(--lcc-muted);
+    }
+    .lcc-factors { display: flex; flex-wrap: wrap; gap: 4px; max-width: 220px; }
+    .lcc-factor {
+      display: inline-block;
+      padding: 1px 6px;
+      border: 1px solid var(--lcc-border);
+      border-radius: 999px;
+      color: var(--lcc-muted);
+      font-size: 0.72em;
+      font-family: var(--font-mono, ui-monospace, monospace);
+      white-space: nowrap;
+    }
+    .lcc-when { white-space: nowrap; }
+    .lcc-when time { display: block; font-variant-numeric: tabular-nums; }
+    .lcc-when small { color: var(--lcc-muted); font-size: 0.85em; }
+    .lcc-muted { color: var(--lcc-muted); }
     .semantic-label { color: inherit; text-decoration: underline dotted; text-underline-offset: 2px; }
   </style>`;
 
 const TEMPLATE = `
   ${STYLE}
   <div class="lcc-toolbar">
-    <a id="lcc-title" class="semantic-label" style="font-weight:600;flex:1" href="${partnerHistoryGlossaryHref(PARTNER_HISTORY_GLOSSARY.limitChanges)}" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.limitChanges}">Limit changes</a>
-    <button id="lcc-export" title="Download CSV" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.csv}">⬇ CSV</button>
-    <a id="lcc-link" href="/portal/limits/" title="Limits board" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.limitOverview}">📊 Limits</a>
-    <a href="/portal/partner-history/" title="Partner history" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.page}">Partners</a>
-    <a href="/registry/limit-raises.json" title="Baked registry JSON" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.json}">JSON</a>
+    <a id="lcc-title" class="semantic-label" href="${partnerHistoryGlossaryHref(G.limitChanges)}" data-glossary-concept="${G.limitChanges}">Limit changes</a>
+    <button id="lcc-export" type="button" title="Download CSV" data-glossary-concept="${G.csv}">CSV</button>
+    <a id="lcc-link" href="/portal/limits/" title="Limits board" data-glossary-concept="${G.limitOverview}">Limits</a>
+    <a href="/portal/partner-history/" title="Partner history" data-glossary-concept="${G.page}">History</a>
+    <a href="/registry/limit-raises.json" title="Baked registry JSON" data-glossary-concept="${G.json}">JSON</a>
   </div>
   <div id="lcc-summary" class="lcc-summary" role="status" aria-live="polite"></div>
   <div id="lcc-table-wrap"></div>
-  <div id="lcc-empty" class="lcc-empty">Loading...</div>
+  <div id="lcc-empty" class="lcc-empty" data-glossary-concept="${G.recentChanges}">Loading…</div>
 `;
+
+function shortAccount(nodeId) {
+  if (!nodeId) return '—';
+  const raw = String(nodeId);
+  if (raw.length <= 14) return raw;
+  if (/^[0-9a-f-]{20,}$/i.test(raw)) return `${raw.slice(0, 8)}…${raw.slice(-4)}`;
+  return `${raw.slice(0, 12)}…`;
+}
+
+function formatMoney(value) {
+  if (value == null || Number.isNaN(Number(value))) return '—';
+  return `$${Number(value).toLocaleString()}`;
+}
+
+function formatDelta(previous, next) {
+  if (previous == null || next == null) return '—';
+  const delta = Number(next) - Number(previous);
+  if (!Number.isFinite(delta)) return '—';
+  if (delta === 0) return '$0';
+  const sign = delta > 0 ? '+' : '−';
+  return `${sign}$${Math.abs(delta).toLocaleString()}`;
+}
+
+function formatWhen(unixSeconds) {
+  if (unixSeconds == null) return { label: '—', detail: '', iso: '' };
+  const date = new Date(unixSeconds * 1000);
+  if (Number.isNaN(date.getTime())) return { label: '—', detail: '', iso: '' };
+  return {
+    label: date.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric', year: 'numeric' }),
+    detail: date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }),
+    iso: date.toISOString(),
+  };
+}
+
+function meterHtml(score) {
+  if (score == null || Number.isNaN(Number(score))) {
+    return '<span class="lcc-muted">—</span>';
+  }
+  const pct = Math.max(0, Math.min(100, Math.round(Number(score) * 100)));
+  return `<div class="lcc-meter" title="${pct}% influence" data-glossary-concept="${G.influenceColumn}">
+    <div class="lcc-meter-track"><div class="lcc-meter-fill" style="width:${pct}%"></div></div>
+    <span class="lcc-meter-label">${pct}%</span>
+  </div>`;
+}
+
+function factorsHtml(factors) {
+  if (!Array.isArray(factors) || factors.length === 0) {
+    return '<span class="lcc-muted">—</span>';
+  }
+  return `<div class="lcc-factors" data-glossary-concept="${G.factorsColumn}">${factors
+    .slice(0, 3)
+    .map(f => `<span class="lcc-factor">${escapeText(f)}</span>`)
+    .join('')}</div>`;
+}
+
+function escapeText(value) {
+  if (value == null) return '—';
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/**
+ * Wire `bet_type` is overloaded: structure (straight/parlay) or phase (pregame/live).
+ * Cell glossary + label follow the value so the column is never a bare "Type".
+ */
+function structurePhaseCell(betType) {
+  const raw = String(betType ?? '')
+    .trim()
+    .toLowerCase();
+  if (raw === 'live' || raw === 'in_play' || raw === 'in-play') {
+    return {
+      label: 'Live',
+      concept: G.phaseColumn,
+      title: 'Market phase · ops.limits.market_phase',
+    };
+  }
+  if (raw === 'pregame') {
+    return {
+      label: 'Pregame',
+      concept: G.phaseColumn,
+      title: 'Market phase · ops.limits.market_phase',
+    };
+  }
+  if (raw === 'parlay' || raw === 'multi') {
+    return {
+      label: 'Parlay',
+      concept: G.structureColumn,
+      title: 'Multi / parlay structure · ops.limits.multi_structure',
+    };
+  }
+  if (raw === 'straight' || raw === 'single') {
+    return {
+      label: 'Straight',
+      concept: G.structureColumn,
+      title: 'Multi / parlay structure · ops.limits.multi_structure',
+    };
+  }
+  return {
+    label: betType == null || betType === '' ? '—' : String(betType),
+    concept: G.structureColumn,
+    title: 'Wire bet_type (structure or phase)',
+  };
+}
+
+function columnHeader(label, concept, title) {
+  return `<th scope="col"><a class="semantic-label" href="${partnerHistoryGlossaryHref(concept)}" data-glossary-concept="${concept}" title="${escapeText(title)}">${label}</a></th>`;
+}
 
 export class LimitChangesCard extends HTMLElement {
   static observedAttributes = [
@@ -89,7 +338,6 @@ export class LimitChangesCard extends HTMLElement {
     else this.load();
   }
 
-  /** Load data from ops-summary API. */
   async load() {
     if (this._loading) return;
     this._loading = true;
@@ -114,11 +362,10 @@ export class LimitChangesCard extends HTMLElement {
       }
     } catch {}
     if (loadVersion !== this._loadVersion) return;
-    empty.textContent = '⚠️ Could not load limit data.';
+    empty.textContent = 'Could not load limit data.';
     this._loading = false;
   }
 
-  /** External data setter (skip fetch). */
   set data(payload) {
     this._loadVersion += 1;
     this._loading = false;
@@ -130,12 +377,15 @@ export class LimitChangesCard extends HTMLElement {
     this._loading = false;
     this._payload = payload;
     const empty = this.shadowRoot.getElementById('lcc-empty');
-    const changes = payload.limitChanges ?? [];
+    const wrap = this.shadowRoot.getElementById('lcc-table-wrap');
+    const summary = this.shadowRoot.getElementById('lcc-summary');
+    const changes = payload?.limitChanges ?? [];
+
     if (changes.length === 0) {
       this._data = [];
       empty.textContent = 'No limit changes found.';
-      this.shadowRoot.getElementById('lcc-summary').textContent = '';
-      this.shadowRoot.getElementById('lcc-table-wrap').innerHTML = '';
+      summary.textContent = '';
+      wrap.innerHTML = '';
       return;
     }
 
@@ -149,7 +399,7 @@ export class LimitChangesCard extends HTMLElement {
     const isCompact = this.hasAttribute('compact');
     const since = maxHours > 0 ? Date.now() - maxHours * 3600 * 1000 : 0;
 
-    let filtered = changes
+    const filtered = changes
       .filter(c => {
         if (partnerFilter && c.node_id !== partnerFilter) return false;
         if (sportsbookFilter && c.sportsbook !== sportsbookFilter) return false;
@@ -164,99 +414,171 @@ export class LimitChangesCard extends HTMLElement {
     if (filtered.length === 0) {
       this._data = [];
       empty.textContent = 'No matching limit changes.';
-      this.shadowRoot.getElementById('lcc-summary').textContent = '';
-      this.shadowRoot.getElementById('lcc-table-wrap').innerHTML = '';
+      summary.textContent = '';
+      wrap.innerHTML = '';
       return;
     }
 
     empty.textContent = '';
     this._data = filtered;
 
-    // Summary
     const raises = filtered.filter(c => c.direction === 'up').length;
     const downs = filtered.filter(c => c.direction === 'down').length;
     const netDelta = filtered.reduce((s, c) => s + ((c.new_limit ?? 0) - (c.previous_max ?? 0)), 0);
     const scored = filtered.filter(c => c.context_available && c.multi_factor_score != null);
     const avgScore = scored.reduce((s, c) => s + c.multi_factor_score, 0) / (scored.length || 1);
-    this.shadowRoot.getElementById('lcc-summary').innerHTML = `
-      <span data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.visibleChanges}">${filtered.length} changes</span>
-      <span class="lcc-up" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.raises}">↑ ${raises}</span>
-      ${downs > 0 ? `<span class="lcc-down" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.decreases}">↓ ${downs}</span>` : ''}
-      <span data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.netChange}">${netDelta > 0 ? '+' : netDelta < 0 ? '-' : ''}$${Math.abs(netDelta).toLocaleString()} high-water net</span>
-      ${scored.length ? `<span data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.avgInfluence}">${(avgScore * 100).toFixed(0)}% avg influence</span>` : ''}
+    const windowLabel = maxHours > 0 ? `${maxHours}h window` : 'all loaded';
+    const netLabel =
+      netDelta === 0
+        ? '$0 net'
+        : `${netDelta > 0 ? '+' : '−'}$${Math.abs(netDelta).toLocaleString()} high-water net`;
+
+    summary.innerHTML = `
+      <span data-glossary-concept="${G.visibleChanges}">${filtered.length} shown · ${windowLabel}</span>
+      <span class="lcc-up" data-glossary-concept="${G.raises}">↑ ${raises} raises</span>
+      ${downs > 0 ? `<span class="lcc-down" data-glossary-concept="${G.decreases}">↓ ${downs} decreases</span>` : ''}
+      <span data-glossary-concept="${G.netChange}">${netLabel}</span>
+      ${scored.length ? `<span data-glossary-concept="${G.avgInfluence}">${Math.round(avgScore * 100)}% avg influence</span>` : ''}
     `;
 
-    // Table
+    const showAccount = !partnerFilter;
+    const showFactors =
+      !isCompact &&
+      filtered.some(c => Array.isArray(c.top_contributing_factors) && c.top_contributing_factors.length);
+    const showScore = !isCompact;
     const hasPredictions = !isCompact && filtered.some(c => c.predicted_raise_prob != null);
+    const showEvidence = !isCompact && filtered.some(c => c.context_proof != null);
+
+    // Glossary-aligned labels — never bare Type / Book / When / Market alone.
     const headers = [
-      ['Direction', PARTNER_HISTORY_GLOSSARY.directionFilter],
-      ['Book', PARTNER_HISTORY_GLOSSARY.sportsbookFilter],
-      ['Sport', 'ops.limits.sport'],
-      ['Market', 'ops.limits.market_type'],
-      ['Type', 'ops.limits.multi_structure'],
-      ['Prior high-water', PARTNER_HISTORY_GLOSSARY.highWater],
-      ['New', 'ops.limits.effective_limit'],
-      ['Delta', PARTNER_HISTORY_GLOSSARY.deltas],
-      isCompact ? null : ['Influence', PARTNER_HISTORY_GLOSSARY.avgInfluence],
-      hasPredictions ? ['Prediction', 'ops.limits.prediction'] : null,
-      ['When', PARTNER_HISTORY_GLOSSARY.windowFilter],
+      [
+        'Change',
+        G.directionColumn,
+        'Raise or cut vs the prior limit · ops.limits.change_direction',
+      ],
+      showAccount
+        ? ['Account', G.accountColumn, 'Partner-tree account / node · ops.limits.account']
+        : null,
+      [
+        'Sportsbook',
+        G.sportsbookColumn,
+        'Sportsbook source · ui.filter.sportsbook',
+      ],
+      ['Sport', G.sportColumn, 'Competition catalog sport · ops.limits.sport'],
+      [
+        'Market type',
+        G.marketTypeColumn,
+        'Bet market family (spread, total, moneyline…) · ops.limits.market_type',
+      ],
+      [
+        'Structure / phase',
+        G.structureColumn,
+        'Straight or parlay (ops.limits.multi_structure); pregame or live (ops.limits.market_phase). Wire field: bet_type.',
+      ],
+      [
+        'Prior limit',
+        G.priorLimitColumn,
+        'Previous effective max wager / high-water · ops.limits.effective_limit',
+      ],
+      [
+        'New limit',
+        G.newLimitColumn,
+        'Observed effective max wager after the change · ops.limits.effective_limit',
+      ],
+      ['Delta', G.deltaColumn, 'Signed USD change vs prior · ops.limits.limit_delta'],
+      showScore
+        ? [
+            'Influence',
+            G.influenceColumn,
+            'Multi-factor influence score · ops.limits.influence_score',
+          ]
+        : null,
+      showFactors
+        ? [
+            'Top factors',
+            G.factorsColumn,
+            'Top contributing factors for the influence score · ops.limits.influence_score',
+          ]
+        : null,
+      showEvidence
+        ? ['Evidence', G.evidenceColumn, 'Signed context proof · ops.limits.evidence_trace']
+        : null,
+      hasPredictions
+        ? [
+            'Prediction',
+            G.predictionColumn,
+            'Predicted raise probability · ops.limits.prediction',
+          ]
+        : null,
+      [
+        'Observed',
+        G.observedColumn,
+        'When the limit change was recorded · section.recentLimitChanges',
+      ],
     ].filter(Boolean);
-    this.shadowRoot.getElementById('lcc-table-wrap').innerHTML = `
+
+    wrap.innerHTML = `
       <table class="lcc-table" aria-label="Filtered partner limit changes">
-        <caption style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Limit changes sorted newest first</caption>
-        <thead><tr>${headers.map(([label, concept]) => `<th scope="col" data-glossary-concept="${concept}">${label}</th>`).join('')}</tr></thead>
+        <caption>Limit changes sorted newest first. Structure / phase is wire bet_type: straight/parlay or pregame/live.</caption>
+        <thead><tr>${headers.map(([label, concept, title]) => columnHeader(label, concept, title)).join('')}</tr></thead>
         <tbody>${filtered
           .map(c => {
-            const dir = c.direction === 'down' ? '↓ decrease' : '↑ raise';
-            const dirCls = c.direction === 'down' ? 'lcc-down' : 'lcc-up';
-            const oldVal =
-              c.previous_max != null ? `$${Number(c.previous_max).toLocaleString()}` : '—';
-            const newVal = c.new_limit != null ? `$${Number(c.new_limit).toLocaleString()}` : '—';
-            const deltaValue =
-              c.previous_max != null && c.new_limit != null ? c.new_limit - c.previous_max : null;
-            const delta =
-              deltaValue != null
-                ? `${deltaValue > 0 ? '+' : deltaValue < 0 ? '-' : ''}$${Math.abs(deltaValue).toLocaleString()}`
-                : '—';
-            const score = c.context_available ? c.multi_factor_score : null;
-            const predRaise = c.predicted_raise_prob;
-            const scoreCell = isCompact
-              ? ''
-              : `<td>${score != null ? `<div class="lcc-score-bar" style="width:${score * 100}%"></div> ${(score * 100).toFixed(0)}%` : '···'}</td>`;
-            const predCell = hasPredictions
-              ? `<td>${predRaise != null ? `<div class="lcc-score-bar" style="width:${predRaise * 100}%"></div> ${(predRaise * 100).toFixed(0)}%` : '—'}</td>`
+            const isDown = c.direction === 'down';
+            const dirCls = isDown ? 'lcc-down' : 'lcc-up';
+            const rowCls = isDown ? 'lcc-row-down' : 'lcc-row-up';
+            const dirLabel = isDown ? '↓ Cut' : '↑ Raise';
+            const when = formatWhen(c.increased_at);
+            const account = c.node_id
+              ? `<a class="lcc-account" href="/portal/partner-history/?partner=${encodeURIComponent(c.node_id)}" title="${escapeText(c.node_id)}" data-glossary-concept="${G.accountColumn}">${escapeText(shortAccount(c.node_id))}</a>`
+              : '<span class="lcc-muted">—</span>';
+            const score =
+              c.context_available && c.multi_factor_score != null ? c.multi_factor_score : null;
+            const structure = structurePhaseCell(c.bet_type);
+            const proof = c.context_proof;
+            const evidenceCell = showEvidence
+              ? `<td data-glossary-concept="${G.evidenceColumn}">${
+                  proof?.valid === true
+                    ? '<span class="lcc-up">Signed</span>'
+                    : proof
+                      ? '<span class="lcc-down">Invalid</span>'
+                      : '<span class="lcc-muted">—</span>'
+                }</td>`
               : '';
-            const when =
-              c.increased_at != null ? new Date(c.increased_at * 1000).toLocaleDateString() : '—';
-            return `<tr>
-            <td class="${dirCls}">${dir}</td>
-            <td>${this._esc(c.sportsbook)}</td>
-            <td>${this._esc(c.sport_id)}</td>
-            <td>${this._esc(c.market_id)}</td>
-            <td>${this._esc(c.bet_type)}</td>
-            <td>${oldVal}</td>
-            <td><strong>${newVal}</strong></td>
-            <td>${delta}</td>
-            ${scoreCell}
-            ${predCell}
-            <td>${when}</td>
-          </tr>`;
+            const predRaise = c.predicted_raise_prob;
+            const predCell = hasPredictions
+              ? `<td data-glossary-concept="${G.predictionColumn}">${
+                  predRaise != null ? meterHtml(predRaise) : '<span class="lcc-muted">—</span>'
+                }</td>`
+              : '';
+            return `<tr class="${rowCls}">
+              <td class="${dirCls}" data-glossary-concept="${G.directionColumn}">${dirLabel}</td>
+              ${showAccount ? `<td>${account}</td>` : ''}
+              <td class="lcc-book" data-glossary-concept="${G.sportsbookColumn}">${escapeText(c.sportsbook)}</td>
+              <td data-glossary-concept="${G.sportColumn}">${escapeText(c.sport_id)}</td>
+              <td class="lcc-market" data-glossary-concept="${G.marketTypeColumn}">${escapeText(c.market_id)}</td>
+              <td data-glossary-concept="${structure.concept}" title="${escapeText(structure.title)}">${escapeText(structure.label)}</td>
+              <td class="lcc-num" data-glossary-concept="${G.priorLimitColumn}">${formatMoney(c.previous_max)}</td>
+              <td class="lcc-num" data-glossary-concept="${G.newLimitColumn}"><strong>${formatMoney(c.new_limit)}</strong></td>
+              <td class="lcc-num ${dirCls}" data-glossary-concept="${G.deltaColumn}">${formatDelta(c.previous_max, c.new_limit)}</td>
+              ${showScore ? `<td>${meterHtml(score)}</td>` : ''}
+              ${showFactors ? `<td>${factorsHtml(c.top_contributing_factors)}</td>` : ''}
+              ${evidenceCell}
+              ${predCell}
+              <td class="lcc-when" title="${escapeText(when.iso)}" data-glossary-concept="${G.observedColumn}">
+                <time datetime="${escapeText(when.iso)}">${escapeText(when.label)}</time>
+                ${when.detail ? `<small>${escapeText(when.detail)}</small>` : ''}
+              </td>
+            </tr>`;
           })
           .join('')}</tbody>
       </table>`;
-  }
-
-  _esc(s) {
-    if (s == null) return '—';
-    const d = document.createElement('div');
-    d.textContent = String(s);
-    return d.innerHTML;
   }
 
   _exportCsv() {
     if (!this._data || this._data.length === 0) return;
     const headers = [
       'direction',
+      'node_id',
       'sportsbook',
       'sport_id',
       'market_id',
@@ -265,10 +587,12 @@ export class LimitChangesCard extends HTMLElement {
       'new_limit',
       'delta',
       'score',
+      'top_factors',
       'increased_at',
     ];
     const rows = this._data.map(c => [
       c.direction,
+      c.node_id ?? '',
       c.sportsbook,
       c.sport_id,
       c.market_id,
@@ -277,6 +601,7 @@ export class LimitChangesCard extends HTMLElement {
       c.new_limit ?? '',
       c.previous_max != null && c.new_limit != null ? c.new_limit - c.previous_max : '',
       c.multi_factor_score ?? '',
+      Array.isArray(c.top_contributing_factors) ? c.top_contributing_factors.join('|') : '',
       c.increased_at != null ? new Date(c.increased_at * 1000).toISOString() : '',
     ]);
     const csv = [

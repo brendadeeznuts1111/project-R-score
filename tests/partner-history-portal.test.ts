@@ -26,9 +26,14 @@ describe('partner-history portal', () => {
     expect(html).toMatch(/id="panel-partner"[\s\S]*?hidden/);
     expect(html).toContain("const tabPattern = new URLPattern({ hash: 'tab\\\\::tab' })");
     expect(html).toContain("account: 'account'");
+    expect(html).toContain("partner: 'partner'");
     expect(html).toContain("sportsbook: 'sportsbook'");
     expect(html).toContain('history.replaceState(null, \'\', url)');
     expect(html).toContain("event.key === 'ArrowRight'");
+    expect(html).toContain('resolveAccountFilter');
+    expect(html).toContain('partnerCodeFromRef');
+    expect(html).toContain('id="history-hub-links"');
+    expect(html).toContain('href="/portal/partners/"');
   });
 
   test('joins account context and keeps metrics and exports on the filtered view', async () => {
@@ -44,6 +49,7 @@ describe('partner-history portal', () => {
     expect(html).toContain('const rows = filteredData.map(change => [');
     expect(html).toContain('JSON.stringify(filteredData, null, 2)');
     expect(html).toContain('/portal/limits/#account:${encodeURIComponent(accountId)}');
+    expect(html).toContain('/portal/partners/#partner/${encodeURIComponent(partnerCode)}');
     expect(html).toContain('id="coverage-ct"');
     expect(html).toContain('id="sportsbook-breakdown"');
     expect(html).toContain('filteredData = [];');
@@ -60,11 +66,25 @@ describe('partner-history portal', () => {
     expect(source).toContain("'direction'");
     expect(source).toContain('c.increased_at * 1000 < since');
     expect(source).toContain('.sort((left, right) => (right.increased_at ?? 0) - (left.increased_at ?? 0))');
-    expect(source).toContain("filtered.some(c => c.predicted_raise_prob != null)");
-    expect(source).toContain("hasPredictions ? ['Prediction', 'ops.limits.prediction'] : null");
+    expect(source).toContain('filtered.some(c => c.predicted_raise_prob != null)');
+    expect(source).toContain('G.predictionColumn');
     expect(source).toContain('aria-label="Filtered partner limit changes"');
-    expect(source).toContain('Prior high-water');
-    expect(source).toContain("netDelta < 0 ? '-' : ''");
+    expect(source).toContain('Prior limit');
+    expect(source).toContain('Market type');
+    expect(source).toContain('Structure / phase');
+    expect(source).toContain('Sportsbook');
+    expect(source).toContain('Observed');
+    expect(source).toContain('structurePhaseCell');
+    expect(source).toContain('G.accountColumn');
+    expect(source).toContain('G.priorLimitColumn');
+    expect(source).toContain('G.marketTypeColumn');
+    expect(source).toContain('G.structureColumn');
+    expect(source).toContain('G.phaseColumn');
+    expect(source).toContain('G.factorsColumn');
+    expect(source).toContain('G.evidenceColumn');
+    expect(source).toContain('G.observedColumn');
+    expect(source).not.toContain('Prior high-water');
+    expect(source).toContain("netDelta > 0 ? '+' : '−'");
     expect(source).toContain('const loadVersion = ++this._loadVersion');
     expect(source).toContain('if (loadVersion !== this._loadVersion) return');
     expect(source).toContain('this._loadVersion += 1');
@@ -92,11 +112,33 @@ describe('partner-history portal', () => {
   test('glossary-governs the reusable card title, summaries, actions, and columns', async () => {
     const source = await Bun.file(LIMIT_CARD).text();
 
-    expect(source).toContain('PARTNER_HISTORY_GLOSSARY.limitChanges');
-    expect(source).toContain('PARTNER_HISTORY_GLOSSARY.csv');
-    expect(source).toContain('PARTNER_HISTORY_GLOSSARY.visibleChanges');
-    expect(source).toContain('PARTNER_HISTORY_GLOSSARY.netChange');
-    expect(source).toContain('PARTNER_HISTORY_GLOSSARY.avgInfluence');
+    expect(source).toContain('PARTNER_HISTORY_GLOSSARY');
+    expect(source).toContain('G.limitChanges');
+    expect(source).toContain('G.csv');
+    expect(source).toContain('G.visibleChanges');
+    expect(source).toContain('G.netChange');
+    expect(source).toContain('G.avgInfluence');
+    expect(source).toContain('G.directionColumn');
+    expect(source).toContain('G.observedColumn');
     expect(source).toContain('data-glossary-concept="${concept}"');
+  });
+
+  test('rejects parallel ops.field / empty / toast glossary namespaces in chrome', async () => {
+    const html = await Bun.file(HISTORY_HTML).text();
+    const card = await Bun.file(LIMIT_CARD).text();
+    const chrome = `${html}\n${card}`;
+    for (const prefix of [
+      'ops.field.',
+      'ops.empty.',
+      'ops.toast.',
+      'ops.shortcut.',
+      'ops.sort.',
+      'ops.panel.',
+      'ops.filter.',
+      'ops.metric.',
+      'ui.pagination.',
+    ]) {
+      expect(chrome.includes(prefix), prefix).toBe(false);
+    }
   });
 });

@@ -137,3 +137,33 @@ export function telegramDeepLink(botUsername, code, topic) {
     .replace(/=+$/g, '');
   return `https://t.me/${username}?start=${payload}`;
 }
+
+/** Decode board deep-link start payload. Returns null if invalid / link_ nonce. */
+export function decodeTelegramStartPayload(raw) {
+  const token = String(raw || '').trim();
+  if (!token || token.startsWith('link_')) return null;
+  try {
+    const pad = token.length % 4 === 0 ? '' : '='.repeat(4 - (token.length % 4));
+    const b64 = token.replace(/-/g, '+').replace(/_/g, '/') + pad;
+    const decoded = atob(b64);
+    const colon = decoded.indexOf(':');
+    if (colon < 0) return null;
+    const code = decoded.slice(0, colon).trim().toUpperCase();
+    const topic = decoded.slice(colon + 1).trim().toLowerCase();
+    if (!PARTNER_CODE_RE.test(code) || !TELEGRAM_TOPICS.has(topic)) return null;
+    return { code, topic };
+  } catch {
+    return null;
+  }
+}
+
+const TOPIC_PERMISSIONS = {
+  onboarding: ['general', 'ops'],
+  operator_ready: ['general', 'ops', 'alerts', 'liquidity', 'accounting'],
+  incomplete: ['general'],
+  paused: ['general', 'alerts'],
+};
+
+export function telegramTopicsForPhase(phase) {
+  return TOPIC_PERMISSIONS[phase] || TOPIC_PERMISSIONS.onboarding;
+}
