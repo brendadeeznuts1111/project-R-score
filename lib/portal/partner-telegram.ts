@@ -66,6 +66,35 @@ export function telegramDeepLink(
   return `https://t.me/${username}?start=${payload}`;
 }
 
+/** Decode board deep-link start payload (`CODE:topic` base64url). Null if invalid. */
+export function decodeTelegramStartPayload(
+  raw: string
+): { code: string; topic: TelegramTopicSlug } | null {
+  const token = String(raw || '').trim();
+  if (!token || token.startsWith('link_')) return null;
+  try {
+    const pad = token.length % 4 === 0 ? '' : '='.repeat(4 - (token.length % 4));
+    const b64 = token.replace(/-/g, '+').replace(/_/g, '/') + pad;
+    const decoded = atob(b64);
+    const colon = decoded.indexOf(':');
+    if (colon < 0) return null;
+    const code = decoded.slice(0, colon).trim().toUpperCase();
+    const topic = decoded
+      .slice(colon + 1)
+      .trim()
+      .toLowerCase();
+    if (!PARTNER_CODE_RE.test(code) || !isTelegramTopicSlug(topic)) return null;
+    return { code, topic };
+  } catch {
+    return null;
+  }
+}
+
+/** Topics a partner phase may open via the board Bot column. */
+export function telegramTopicsForPhase(phase: PartnerOpsPhase): readonly TelegramTopicSlug[] {
+  return TOPIC_PERMISSIONS[phase] ?? TOPIC_PERMISSIONS.onboarding;
+}
+
 /** In-app hash to the telegram thread for a partner + topic. */
 export function telegramAppHash(
   partnerCode: string, // brand-ok — partner CODE

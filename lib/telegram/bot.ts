@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Telegram bot command router for multi-tenant portal.
@@ -22,6 +23,7 @@ import { tryObserveKnownChats } from './known-chats.ts';
 import { answerCallbackQuery } from './telegram-api.ts';
 import { handleSeatDeskCallback, isSeatDeskCallback } from './seat-desk-callback.ts';
 import { handleSeatDeskReply } from './seat-desk-reply.ts';
+import { decodeTelegramStartPayload, telegramAppHash } from '../portal/partner-telegram.ts';
 import type { TelegramCallbackQuery, TelegramMessage, TelegramUpdate } from './telegram-update.ts';
 
 export type { TelegramCallbackQuery, TelegramMessage, TelegramUpdate } from './telegram-update.ts';
@@ -136,6 +138,26 @@ export class TelegramBot {
           deps.tenant,
           msg.chat.id,
           'Telegram linked to your portal account.'
+        );
+        return;
+      }
+      // Board deep-link hint: CODE:topic (base64url). Public routing only —
+      // does not grant membership; operator must still link-chat / join forum.
+      const partnerHint = arg ? decodeTelegramStartPayload(arg) : null;
+      if (partnerHint && (deps.tenant.id as string) === 'factory') {
+        const boardHash = telegramAppHash(partnerHint.code, partnerHint.topic);
+        await sendTelegramMessage(
+          deps.env,
+          deps.tenant,
+          msg.chat.id,
+          [
+            `Partner desk hint: *${partnerHint.code}* · topic *${partnerHint.topic}*.`,
+            `Board: \`/portal/partners/${boardHash}\``,
+            'This does not grant access. To connect your seat DM:',
+            `\`bun run telegram:ops -- link-chat ${partnerHint.code}-001 <your tg id>\``,
+            'Then: `bun run telegram:ops:consume` for welcome ·',
+            `\`bun run onboard:partner -- ${partnerHint.code}-001 --dry-run\``,
+          ].join('\n')
         );
         return;
       }

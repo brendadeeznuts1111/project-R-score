@@ -26,9 +26,14 @@ describe('partner-history portal', () => {
     expect(html).toMatch(/id="panel-partner"[\s\S]*?hidden/);
     expect(html).toContain("const tabPattern = new URLPattern({ hash: 'tab\\\\::tab' })");
     expect(html).toContain("account: 'account'");
+    expect(html).toContain("partner: 'partner'");
     expect(html).toContain("sportsbook: 'sportsbook'");
     expect(html).toContain('history.replaceState(null, \'\', url)');
     expect(html).toContain("event.key === 'ArrowRight'");
+    expect(html).toContain('resolveAccountFilter');
+    expect(html).toContain('partnerCodeFromRef');
+    expect(html).toContain('id="history-hub-links"');
+    expect(html).toContain('href="/portal/partners/"');
   });
 
   test('joins account context and keeps metrics and exports on the filtered view', async () => {
@@ -44,6 +49,7 @@ describe('partner-history portal', () => {
     expect(html).toContain('const rows = filteredData.map(change => [');
     expect(html).toContain('JSON.stringify(filteredData, null, 2)');
     expect(html).toContain('/portal/limits/#account:${encodeURIComponent(accountId)}');
+    expect(html).toContain('/portal/partners/#partner/${encodeURIComponent(partnerCode)}');
     expect(html).toContain('id="coverage-ct"');
     expect(html).toContain('id="sportsbook-breakdown"');
     expect(html).toContain('filteredData = [];');
