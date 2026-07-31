@@ -182,7 +182,7 @@ All Tier 4 agents normalize vendor wire onto one SSOT before JSONL write:
 | Phase | same | `pregame` · `live` (`in_play`/`inplay` → live) — `phaseRegistry` |
 | State | same | Full US + DC (51) — `stateRegistry`; fixture subset `NJ`·`CO`·`MA` |
 
-Bake: `bun run bake:scrape-wire-taxonomy` → [`/registry/scrape-wire-taxonomy.json`](../../../public/registry/scrape-wire-taxonomy.json) (schema v4). Glossary: `scrape.wire` · `scrape.book` · `scrape.sport` · `scrape.league` · `scrape.market` · `scrape.phase` · `scrape.jurisdiction`.
+Bake: `bun run bake:scrape-wire-taxonomy` → [`/registry/scrape-wire-taxonomy.json`](../../../public/registry/scrape-wire-taxonomy.json) (schema v5 · `colorKey`/`hex`/`css` on book/sport/league rows via [`scrape-wire-color-kernel.ts`](../../../lib/operations/scrapers/scrape-wire-color-kernel.ts)). Glossary: `scrape.wire` · `scrape.book` · `scrape.sport` · `scrape.league` · `scrape.market` · `scrape.phase` · `scrape.jurisdiction`.
 
 #### Governance (schema:audit)
 

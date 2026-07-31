@@ -57,9 +57,9 @@
     .wire-stat strong { color: var(--text); font-family: var(--font-mono, monospace); }
     .wire-section-label { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin: 12px 0 8px; }
     .wire-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-    .wire-chip { font-size: 12px; padding: 4px 9px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg, var(--surface)); color: var(--text); text-decoration: none; }
-    .wire-chip:hover, .wire-chip:focus-visible { border-color: var(--accent); background: var(--accent-glow); }
-    .wire-chip code { font-size: 11px; color: var(--accent); }
+    .wire-chip { font-size: 12px; padding: 4px 9px; border: 1px solid color-mix(in srgb, var(--chip-color, var(--border)) 55%, var(--border)); border-radius: 4px; background: color-mix(in srgb, var(--chip-color, var(--surface)) 14%, var(--surface)); color: var(--text); text-decoration: none; }
+    .wire-chip:hover, .wire-chip:focus-visible { border-color: var(--chip-color, var(--accent)); background: color-mix(in srgb, var(--chip-color, var(--accent)) 22%, var(--surface)); }
+    .wire-chip code { font-size: 11px; color: var(--chip-color, var(--accent)); }
     .wire-states { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 6px; }
     .wire-state { font-size: 12px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 4px; display: flex; justify-content: space-between; gap: 8px; }
     .wire-state code { color: var(--accent); font-size: 11px; }
@@ -104,6 +104,7 @@
             <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
             <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
             <a href="/portal/limits/" class="nav-link" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
+            <a href="/portal/partners/" class="nav-link" title="package groups · telegram forums · accounting · deposits · bun run telegram:handshake:catalog" data-group="ops" data-cli="bun run telegram:handshake:catalog" role="menuitem">Partners</a>
             <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
             <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
             <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
@@ -281,11 +282,12 @@
       return el.innerHTML;
     }
 
-    function wireChip(label, key, conceptId, detail = '') {
+    function wireChip(label, key, conceptId, detail = '', hex = '') {
       const body = `${esc(label)} <code>${esc(key)}</code>${detail ? ` · ${esc(detail)}` : ''}`;
-      if (!conceptId) return `<span class="wire-chip">${body}</span>`;
+      const style = hex ? ` style="--chip-color:${esc(hex)}"` : '';
+      if (!conceptId) return `<span class="wire-chip"${style}>${body}</span>`;
       const href = `/portal/glossary/#glossary:${encodeURIComponent(conceptId)}`;
-      return `<a class="wire-chip" href="${href}" data-glossary-concept="${esc(conceptId)}">${body}</a>`;
+      return `<a class="wire-chip" href="${href}" data-glossary-concept="${esc(conceptId)}"${style}>${body}</a>`;
     }
 
     function renderScrapeWire(payload) {
@@ -313,21 +315,23 @@
       const books = Array.isArray(payload.bookRegistry) ? payload.bookRegistry : [];
       $('wire-books').innerHTML = books.length
         ? books
-            .map(row => wireChip(`#${row.rank} ${row.label}`, row.key, row.conceptId))
+            .map(row =>
+              wireChip(`#${row.rank} ${row.label}`, row.key, row.conceptId, '', row.hex || '')
+            )
             .join('')
         : '<span class="wire-stat">No bookRegistry in bake</span>';
 
       const sports = Array.isArray(payload.sportRegistry) ? payload.sportRegistry : [];
       $('wire-sports').innerHTML = sports.length
         ? sports
-            .map(row => wireChip(row.label, row.key, row.conceptId))
+            .map(row => wireChip(row.label, row.key, row.conceptId, '', row.hex || ''))
             .join('')
         : '<span class="wire-stat">No sportRegistry in bake</span>';
 
       const leagues = Array.isArray(payload.leagueRegistry) ? payload.leagueRegistry : [];
       $('wire-leagues').innerHTML = leagues.length
         ? leagues
-            .map(row => wireChip(row.label, row.key, row.conceptId, row.sport))
+            .map(row => wireChip(row.label, row.key, row.conceptId, row.sport, row.hex || ''))
             .join('')
         : '<span class="wire-stat">No leagueRegistry in bake</span>';
 
@@ -433,6 +437,7 @@
       <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
       <a href="/portal/ops/">Ops</a> ·
       <a href="/portal/toc/">TOC</a> ·
+      <a href="/portal/partners/">Partners</a> ·
       <a href="/portal/packages/">Packages</a> ·
       <a href="/portal/brands/">Brands</a> ·
       <a href="/portal/glossary/">Glossary</a> ·

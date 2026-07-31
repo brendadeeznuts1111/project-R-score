@@ -133,6 +133,15 @@ describe('scrape wire taxonomy', () => {
     expect(artifact.summary.phases).toBe(2);
     expect(artifact.summary.states).toBe(51);
     expect(artifact.bookRegistry).toHaveLength(10);
+    expect(artifact.bookRegistry.every(r => r.hex?.startsWith('#') && r.colorKey === r.key)).toBe(
+      true
+    );
+    expect(artifact.sportRegistry.every(r => r.hex?.startsWith('#') && r.colorKey === r.key)).toBe(
+      true
+    );
+    expect(artifact.leagueRegistry.every(r => r.hex?.startsWith('#') && r.colorKey === r.key)).toBe(
+      true
+    );
     expect(artifact.phaseRegistry).toHaveLength(2);
     expect(artifact.fixturePhases).toEqual(['pregame', 'live']);
     expect(artifact.marketRegistry.filter(m => m.tier === 'regulation')).toHaveLength(3);

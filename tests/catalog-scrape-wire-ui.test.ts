@@ -52,6 +52,15 @@ describe('catalog scrape-wire static contract', () => {
     expect(catalogHtml).toContain('/registry/scraped-limits-observed.json');
     expect(catalogHtml).toContain('/registry/caesars-scrape-endpoints.json');
   });
+
+  test('applies baked hex as --chip-color on book/sport/league chips', () => {
+    expect(catalogHtml).toContain('--chip-color');
+    expect(catalogHtml).toContain('wireChip(`#${row.rank} ${row.label}`, row.key, row.conceptId, \'\', row.hex || \'\')');
+    expect(catalogHtml).toContain('wireChip(row.label, row.key, row.conceptId, \'\', row.hex || \'\')');
+    expect(catalogHtml).toContain(
+      'wireChip(row.label, row.key, row.conceptId, row.sport, row.hex || \'\')'
+    );
+  });
 });
 
 const WEBVIEW_AVAILABLE = typeof Bun.WebView === 'function';

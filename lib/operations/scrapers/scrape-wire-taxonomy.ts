@@ -27,10 +27,16 @@ import {
   type SportsbookId,
   type StateCode,
 } from '../../types/branded.ts';
+import {
+  bookColorWire,
+  leagueColorWire,
+  sportColorWire,
+  type ScrapeWireColorWire,
+} from './scrape-wire-color-kernel.ts';
 
 export const SCRAPE_WIRE_TAXONOMY_KIND = 'scrape-wire-taxonomy' as const;
 export const SCRAPE_WIRE_TAXONOMY_PATH = '/registry/scrape-wire-taxonomy.json' as const;
-export const SCRAPE_WIRE_TAXONOMY_SCHEMA_VERSION = 4 as const;
+export const SCRAPE_WIRE_TAXONOMY_SCHEMA_VERSION = 5 as const;
 
 // ── Sportsbooks (US top-10 Tier 4 fleet) ───────────────────────────
 
@@ -712,6 +718,12 @@ export function scrapeWireGlossaryConcepts(): ScrapeWireGlossaryConcept[] {
   ];
 }
 
+/** Registry row with Bun.color kernel wire (`colorKey` · `hex` · `css`). */
+export type ScrapeBookRegistryBakeEntry = ScrapeBookRegistryEntry & ScrapeWireColorWire;
+export type ScrapeSportRegistryBakeEntry = (typeof SCRAPE_SPORT_REGISTRY)[number] &
+  ScrapeWireColorWire;
+export type ScrapeLeagueRegistryBakeEntry = ScrapeLeagueRegistryEntry & ScrapeWireColorWire;
+
 export type ScrapeWireTaxonomyArtifact = {
   kind: typeof SCRAPE_WIRE_TAXONOMY_KIND;
   schemaVersion: typeof SCRAPE_WIRE_TAXONOMY_SCHEMA_VERSION;
@@ -735,11 +747,11 @@ export type ScrapeWireTaxonomyArtifact = {
     leagueAliases: number;
     glossaryConcepts: number;
   };
-  bookRegistry: readonly ScrapeBookRegistryEntry[];
+  bookRegistry: readonly ScrapeBookRegistryBakeEntry[];
   books: readonly ScrapeBookKey[];
-  sportRegistry: typeof SCRAPE_SPORT_REGISTRY;
+  sportRegistry: readonly ScrapeSportRegistryBakeEntry[];
   sports: readonly ScrapeSportKey[];
-  leagueRegistry: readonly ScrapeLeagueRegistryEntry[];
+  leagueRegistry: readonly ScrapeLeagueRegistryBakeEntry[];
   leagues: readonly LeagueKey[];
   marketRegistry: readonly ScrapeMarketRegistryEntry[];
   markets: readonly ScrapeMarketKey[];
@@ -774,14 +786,20 @@ export function buildScrapeWireTaxonomyArtifact(
     ...row,
     aliases: [...row.aliases],
   }));
-  const bookRegistry = SCRAPE_BOOK_REGISTRY.map(row => ({
+  const bookRegistry: ScrapeBookRegistryBakeEntry[] = SCRAPE_BOOK_REGISTRY.map(row => ({
     ...row,
     aliases: [...row.aliases],
+    ...bookColorWire(row.key),
   }));
-  const leagueRegistry = SCRAPE_LEAGUE_REGISTRY.map(row => ({
+  const sportRegistry: ScrapeSportRegistryBakeEntry[] = SCRAPE_SPORT_REGISTRY.map(row => ({
+    ...row,
+    ...sportColorWire(row.key),
+  }));
+  const leagueRegistry: ScrapeLeagueRegistryBakeEntry[] = SCRAPE_LEAGUE_REGISTRY.map(row => ({
     ...row,
     synonyms: [...row.synonyms],
     aliases: [...row.aliases],
+    ...leagueColorWire(row.key),
   }));
   const marketRegistry = SCRAPE_MARKET_REGISTRY.map(row => ({
     ...row,
@@ -816,7 +834,7 @@ export function buildScrapeWireTaxonomyArtifact(
     },
     bookRegistry,
     books: [...SCRAPE_BOOK_KEYS],
-    sportRegistry: SCRAPE_SPORT_REGISTRY,
+    sportRegistry,
     sports: [...SCRAPE_SPORT_KEYS],
     leagueRegistry,
     leagues: [...SCRAPE_LEAGUE_KEYS],
