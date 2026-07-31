@@ -9,7 +9,7 @@ the registry bake.
 | Kalshi-bot | `src/institutions/glossary.ts` | Shared cores: `partner.phase.*`, `book.type.*`, `deposit.method.{venmo,crypto,wire,credit}`, `out.status.{ready,deferred,paused}`, `accounting.*`, `event.*` (31 ids) |
 | Kalshi-bot | `scripts/partners-validate.ts` | Gate: core ids exist, correct kind, valid ColorKey, on `PAGE_SURFACES.ops` |
 | FactoryWager | `lib/telegram/partner-ops-glossary.ts` | Factory overlay: `deposit.method.{cashapp,paypal,zelle,apple_pay,unknown}`, `out.status.{blocked,partial,funded}`, `telegram.topic.*`, `partner.ops.event` (14 ids) |
-| FactoryWager | `lib/telegram/partner-ops-color-kernel.ts` | `PARTNER_OPS_COLORS` (9-key closed palette, Bun.color-validated) + `PARTNER_OPS_CONCEPT_COLORS` (33 concept→key) |
+| FactoryWager | `lib/telegram/partner-ops-color-kernel.ts` | `PARTNER_OPS_COLORS` (9-key closed palette, Bun.color-validated) + `PARTNER_OPS_CONCEPT_COLORS` (39 concept→key) |
 | FactoryWager | `lib/telegram/partner-ops-events.ts` | 11 event codes (`PARTNER_OPS_EVENT_CODES`) |
 | FactoryWager | `lib/telegram/partner-ops-registry.ts` | Registry bake (`factorywager.partners-ops.v2` → `/registry/partners-ops.json`) |
 | FactoryWager | `tools/partners-ops.ts` | CLI: `bun run partners:validate` / `partners:build` / `partners:ledger:append` |
@@ -96,7 +96,7 @@ Depicts `accounting.*` renamed to the doc's `*_received|_processed|_extended|_ap
 |-------|---------|
 | 47 new glossary entries | 40 listed (internal inconsistency); 21 already shipped, 5 renames, 13 new |
 | 10 funding methods (§4) | 9 listed |
-| 36 color-mapped ids | 33 in `PARTNER_OPS_CONCEPT_COLORS` |
+| 36 color-mapped ids | **39** in `PARTNER_OPS_CONCEPT_COLORS` (33 partner-ops cores + `telegram.handshake` / `telegram.membership` + 4 `ops.limits.*` control-plane projections) |
 | `category: "ops"` | not a valid category in either taxonomy |
 
 ---
@@ -135,7 +135,12 @@ Verified by importing `lib/telegram/partner-ops-color-kernel.ts` (module-level `
 | `research` | `#F0883E` | orange — discovery / credit |
 | `unknown` | `#8B949E` | gray — unmapped |
 
-### 3.2 Shipped concept colors (33, from kernel)
+### 3.2 Shipped concept colors (39, from kernel)
+
+Core partner-ops leaves (below) plus control-plane projections:
+`telegram.handshake`, `telegram.membership`, `ops.limits.account`,
+`ops.limits.effective_limit`, `ops.limits.monitoring_status`,
+`ops.limits.coverage` — all resolve through the same 9-key palette.
 
 | Concept | Key | HEX |
 |---------|-----|-----|
@@ -308,7 +313,18 @@ stateDiagram-v2
 
 ---
 
-## 8. Node annotations — repo home + status
+## 8. Portal surfaces (FactoryWager)
+
+| Surface | Path | Concepts |
+|---------|------|----------|
+| Partners board | `/portal/partners/` | `page.partners`, `section.partnersTelegram\|AccountsLimits\|Accounting\|Deposits\|Outs\|BookDetail\|Tags\|PartnerMessage`, `ui.route.partnerHash` |
+| Hash router | `lib/portal/partner-routes.ts` + `public/portal/partners/partner-routes.js` | `#partners` → `{ type: 'partners' }` (TS/JS parity required) |
+| Governance | `bun run partners:governance` | validate ∧ integration ∧ glossary:portal:check |
+
+Board glossary wiring: `data-glossary-concept` on tags/outs/books + crumbs via
+`bootGlossaryUx({ breadcrumbsMount })`.
+
+## 9. Node annotations — repo home + status
 
 | Tag | Meaning |
 |-----|---------|
@@ -320,4 +336,5 @@ stateDiagram-v2
 
 Every id in §5–§7 carries these via its section: §1.1–1.5 classifies all 40
 proposed + 5 doc-missed ids; §3.2–3.3 gives the color for every node. Event
-transition labels in §6–§7 are the real `PARTNER_OPS_EVENT_CODES`.
+transition labels in §6–§7 are the real `PARTNER_OPS_EVENT_CODES`. Portal
+wiring lives in §8.

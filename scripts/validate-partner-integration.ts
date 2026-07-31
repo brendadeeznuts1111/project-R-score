@@ -65,6 +65,18 @@ for (const route of ROUTE_SAMPLES) {
   }
 }
 
+// TS ↔ board JS parse parity (same hash → same route.type)
+const boardRoutes = await import('../public/portal/partners/partner-routes.js');
+for (const route of ROUTE_SAMPLES) {
+  const hash = partnerHash(route);
+  const jsParsed = boardRoutes.parsePartnerHash(hash) as { type?: string } | null;
+  if (!jsParsed || jsParsed.type !== route.type) {
+    errs.push(
+      `JS router parity: ${hash} → ${jsParsed?.type ?? 'null'} (expected ${route.type}; align partner-routes.js with lib/portal/partner-routes.ts)`
+    );
+  }
+}
+
 const portalHtml = await Bun.file('public/portal/partners/index.html').text();
 for (const anchor of [
   'partner-panel',
@@ -73,9 +85,20 @@ for (const anchor of [
   'tag-filter-bar',
   'out-table',
   'book-registry',
+  'partners-glossary-crumbs',
 ]) {
   if (!portalHtml.includes(`id="${anchor}"`)) {
     errs.push(`portal anchor ${anchor}: missing from public/portal/partners/index.html`);
+  }
+}
+for (const concept of [
+  'data-glossary-concept="section.partnersTags"',
+  'data-glossary-concept="section.partnersOuts"',
+  'data-glossary-concept="section.partnersBookDetail"',
+  'data-glossary-concept="ui.route.partnerHash"',
+]) {
+  if (!portalHtml.includes(concept)) {
+    errs.push(`portal glossary wiring ${concept}: missing from partners board`);
   }
 }
 for (const marker of ['partner-detail-${', 'out-card-${', 'book-card-${']) {
@@ -106,7 +129,12 @@ for (const [schema, columns] of Object.entries(PARTNER_TABLE_SCHEMAS)) {
 for (const tag of allPartnerTags()) {
   const ids = 'glossaryId' in tag ? [tag.glossaryId] : tag.members;
   for (const id of ids) {
-    if (tag.proposed) continue;
+    if (tag.proposed) {
+      if (SHIPPED.has(id)) {
+        warns.push(`tag ${tag.id}: marked proposed but ${id} is already shipped`);
+      }
+      continue;
+    }
     if (!SHIPPED.has(id)) {
       errs.push(`tag ${tag.id}: concept ${id} not in shipped inventory`);
     }

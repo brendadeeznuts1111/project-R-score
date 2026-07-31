@@ -496,8 +496,22 @@
           class="tag-filter-bar"
           id="tag-filter-bar"
           aria-label="Partner-ops taxonomy filters"
+          data-glossary-concept="section.partnersTags"
         >
           <div id="section:tag-filter-bar" class="sr-only" aria-hidden="true"></div>
+          <p class="blurb" style="margin: 0 0 6px">
+            <a
+              href="/portal/glossary/#glossary:section.partnersTags"
+              data-glossary-concept="section.partnersTags"
+              >Partner tags</a
+            >
+            ·
+            <a
+              href="/portal/glossary/#glossary:ui.route.partnerHash"
+              data-glossary-concept="ui.route.partnerHash"
+              >hash routes</a
+            >
+          </p>
           <ul class="topic-chips" id="taxonomy-chips" aria-label="Partner-ops taxonomy"></ul>
         </nav>
         <p class="partners-meta" id="partners-meta">Loading registry…</p>
@@ -505,6 +519,12 @@
           class="partner-route-bar"
           id="partner-route-bar"
           aria-label="Partner route filter"
+          data-glossary-concept="ui.route.partnerHash"
+        ></nav>
+        <nav
+          id="partners-glossary-crumbs"
+          class="glossary-crumbs"
+          aria-label="Glossary breadcrumbs"
         ></nav>
       </header>
 
@@ -724,8 +744,22 @@
               >book registry</a
             >. Book passwords stay off this board.
           </p>
-          <div class="partners-panel" id="out-table" data-section="outs">
+          <div
+            class="partners-panel"
+            id="out-table"
+            data-section="outs"
+            data-glossary-concept="section.partnersOuts"
+          >
             <div id="section:outs" class="sr-only" aria-hidden="true"></div>
+            <p class="blurb" style="margin: 0 0 8px">
+              <a
+                href="/portal/glossary/#glossary:section.partnersOuts"
+                data-glossary-concept="section.partnersOuts"
+                >Outs</a
+              >
+              — deposit rails and status chips (hash
+              <code>#partner/CODE/out/out-CODE-N</code>).
+            </p>
             <table class="partners-table">
               <thead>
                 <tr>
@@ -1181,19 +1215,21 @@
 
       function bookChip(label, opsOut) {
         if (opsOut?.book) {
-          const color = opsOut.book.scrapeHex || opsOut.book.color || '';
+          // Prefer partners-ops color wire (token + hex); never invent scrape hex for chips.
+          const wire =
+            opsOut.book.color && typeof opsOut.book.color === 'object' ? opsOut.book.color : {};
           const conceptId = opsOut.book.typeConceptId || 'scrape.book';
-          return conceptChip(conceptId, opsOut.book.name || label || '—', color).replace(
+          return conceptChip(conceptId, opsOut.book.name || label || '—', wire).replace(
             'topic-chip',
             'book-chip'
           );
         }
         const book = resolveBook(label);
         const conceptId = book?.conceptId || 'scrape.book';
-        return conceptChip(conceptId, label || '—', book?.hex || '').replace(
-          'topic-chip',
-          'book-chip'
-        );
+        const wire = book?.hex
+          ? { hex: book.hex, token: '', colorKey: '' }
+          : {};
+        return conceptChip(conceptId, label || '—', wire).replace('topic-chip', 'book-chip');
       }
 
       function railChip(label, opsOut) {
@@ -1373,9 +1409,9 @@
           ? books
               .map(book => {
                 const id = String(book.id || '');
-                const hex = book.color?.hex || book.color?.css || '';
+                const wire = book.color && typeof book.color === 'object' ? book.color : {};
                 const concept = book.typeConceptId || 'scrape.book';
-                const chip = conceptChip(concept, book.name || id, hex).replace(
+                const chip = conceptChip(concept, book.name || id, wire).replace(
                   'topic-chip',
                   'book-chip'
                 );
@@ -1386,8 +1422,8 @@
       }
 
       function applyPartnerRoute(scroll = false) {
-        let route = parsePartnerHash(window.location.hash) || { type: 'list' };
-        if ('code' in route && !opsByPartner.has(route.code)) route = { type: 'list' };
+        let route = parsePartnerHash(window.location.hash) || { type: 'partners' };
+        if ('code' in route && !opsByPartner.has(route.code)) route = { type: 'partners' };
         const selectedCode = 'code' in route ? route.code : null;
 
         for (const row of document.querySelectorAll('[data-partner-code]')) {
@@ -1399,7 +1435,7 @@
           const linkRoute = parsePartnerHash(link.hash);
           const active = selectedCode
             ? linkRoute?.type === 'partner' && linkRoute.code === selectedCode
-            : linkRoute?.type === 'list' || linkRoute?.type === 'partners';
+            : linkRoute?.type === 'partners';
           link.setAttribute('aria-current', active ? 'true' : 'false');
         }
         for (const target of document.querySelectorAll('.route-target')) {
@@ -1415,7 +1451,7 @@
             document.getElementById(`partner-detail-${route.code}`) || $('section:accounts-limits');
         }
         if (route.type === 'book') target = document.getElementById(`book-card-${route.bookId}`);
-        if (route.type === 'list' || route.type === 'partners') target = $('partner-panel');
+        if (route.type === 'partners') target = $('partner-panel');
         if (target) target.classList.add('route-target');
 
         const status = $('partner-route-status');
@@ -1466,7 +1502,10 @@
           renderPartnerMessages(seat);
           $('loading').classList.add('hidden');
           $('dashboard').classList.remove('hidden');
-          bootGlossaryUx(document);
+          bootGlossaryUx({
+            breadcrumbsMount: $('partners-glossary-crumbs'),
+            tooltipRoot: document,
+          });
           applyPartnerRoute(false);
         } catch (err) {
           $('loading').classList.add('hidden');
