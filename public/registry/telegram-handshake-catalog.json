@@ -1,6 +1,6 @@
 {
   "schema": "factorywager.telegram-handshake-catalog.v1",
-  "generatedAt": "2026-07-31T12:43:45.214Z",
+  "generatedAt": "2026-07-31T14:18:16.173Z",
   "docs": {
     "runbook": "docs/harness/tenants/partner-package-group-handshake.md",
     "factoryBot": "docs/harness/tenants/telegram-factory.md",
@@ -311,6 +311,10 @@
       },
       "partner:liquidity/outs:rails": {
         "templateId": "topic-rails"
+      },
+      "house:all-accounting": {
+        "templateId": "all-accounting-channel",
+        "builder": "buildAllAccountingChannelPrompt"
       }
     }
   },

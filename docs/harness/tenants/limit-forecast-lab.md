@@ -33,14 +33,18 @@ The profiler writes `.cpuprofile` plus Markdown analysis under
 
 ## Evidence boundary
 
-The transition candidate dataset is still not a representative collection of
-completed 48-hour positive and negative outcomes. The artifact therefore sets
-`forecastEligible: false`. Transition Brier and log-loss values remain
-diagnostic comparisons; evidence lifecycle metrics are reported separately.
+`forecastEligible` is computed — not hardcoded. Transition Brier / log-loss stay
+diagnostic. Promotion clears only when all of the following hold:
 
-Promotion requires immutable forecast rows, point-in-time features, explicit
-maturity state, rolling-origin evaluation with a horizon embargo, and calibrated
-global/book slices.
+1. Immutable `limit_forecast_issues` rows exist
+2. Matured outcomes include both raises and no-raises
+3. Leakage-safe rolling-origin calibration scores at least one sample under the
+   48h horizon embargo (`scoreRollingOriginEmbargo`)
+4. The decision-eligible transition set is non-empty (Tier-4 / fixture-only
+   datasets remain blocked)
+
+Helpers: `computeForecastEligibility` · `readLimitForecastCalibrationSamples` in
+[`lib/prediction/limit-forecast-evidence.ts`](../../../lib/prediction/limit-forecast-evidence.ts).
 
 ## Domain path
 

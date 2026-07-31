@@ -100,8 +100,15 @@ export function applyProposalToOverrides(
       overrides.appliedChangeIds.push(proposal.id);
       return true;
     }
-    case 'documentBehavior':
-      return false;
+    case 'documentBehavior': {
+      overrides.behaviorNotes[proposal.id] = {
+        title: proposal.title,
+        reason: proposal.reason,
+        evidence: [...(proposal.evidence ?? [])],
+      };
+      overrides.appliedChangeIds.push(proposal.id);
+      return true;
+    }
     default:
       return false;
   }

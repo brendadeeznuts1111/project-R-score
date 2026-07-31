@@ -84,6 +84,168 @@ export type LimitForecastEvidenceSummary = {
   meanLogLoss: number | null;
 };
 
+/** Matured issue→outcome pair for leakage-safe rolling-origin scoring. */
+export type ForecastCalibrationSample = {
+  issuedAt: number;
+  evaluationAt: number;
+  predictedRaiseProbability: number;
+  actualRaise: boolean;
+};
+
+export type RollingOriginEmbargoScore = {
+  samples: number;
+  positives: number;
+  brier: number | null;
+  logLoss: number | null;
+  embargoSeconds: number;
+};
+
+export type ForecastEligibility = {
+  forecastEligible: boolean;
+  blockers: string[];
+  calibration: RollingOriginEmbargoScore;
+};
+
+function clampProbability(value: number): number {
+  return Math.min(1 - 1e-9, Math.max(1e-9, value));
+}
+
+/**
+ * Rolling-origin walk-forward with horizon embargo.
+ * Train only on samples with evaluationAt ≤ originIssuedAt (no future leakage);
+ * score a sample only when evaluationAt ≤ now and issuedAt ≤ now - horizon.
+ */
+export function scoreRollingOriginEmbargo(
+  samples: readonly ForecastCalibrationSample[],
+  opts?: {
+    nowSec?: number;
+    horizonSeconds?: number;
+    minimumTrainingSamples?: number;
+  }
+): RollingOriginEmbargoScore {
+  const nowSec = opts?.nowSec ?? Math.floor(Date.now() / 1000);
+  const horizonSeconds = opts?.horizonSeconds ?? LIMIT_FORECAST_HORIZON_SECONDS;
+  const minimumTrainingSamples = opts?.minimumTrainingSamples ?? 8;
+  const ordered = [...samples]
+    .filter(s => s.evaluationAt <= nowSec && s.issuedAt <= nowSec - horizonSeconds)
+    .sort((a, b) => a.issuedAt - b.issuedAt || a.evaluationAt - b.evaluationAt);
+
+  const scored: Array<{ probability: number; actual: number }> = [];
+  for (let i = 0; i < ordered.length; i++) {
+    const target = ordered[i]!;
+    // Embargo: require enough prior matured outcomes before the target issue
+    // so the score is not a cold-start artifact. Probability itself comes from
+    // the issued forecast (not a train-set base rate).
+    const train = ordered.filter(
+      s => s.evaluationAt <= target.issuedAt && s.issuedAt < target.issuedAt
+    );
+    if (train.length < minimumTrainingSamples) continue;
+    scored.push({
+      probability: clampProbability(target.predictedRaiseProbability),
+      actual: target.actualRaise ? 1 : 0,
+    });
+  }
+
+  if (scored.length === 0) {
+    return {
+      samples: 0,
+      positives: 0,
+      brier: null,
+      logLoss: null,
+      embargoSeconds: horizonSeconds,
+    };
+  }
+
+  const brier =
+    scored.reduce((sum, row) => sum + (row.probability - row.actual) ** 2, 0) / scored.length;
+  const logLoss =
+    -scored.reduce(
+      (sum, row) =>
+        sum +
+        row.actual * Math.log(row.probability) +
+        (1 - row.actual) * Math.log(1 - row.probability),
+      0
+    ) / scored.length;
+
+  return {
+    samples: scored.length,
+    positives: scored.filter(row => row.actual === 1).length,
+    brier: round(brier),
+    logLoss: round(logLoss),
+    embargoSeconds: horizonSeconds,
+  };
+}
+
+/** Gate lab / promotion eligibility from evidence + embargoed calibration. */
+export function computeForecastEligibility(
+  evidence: LimitForecastEvidenceSummary,
+  calibration: RollingOriginEmbargoScore,
+  opts?: {
+    researchOnlySnapshots?: number;
+    decisionEligibleTransitions?: number;
+  }
+): ForecastEligibility {
+  const blockers: string[] = [];
+  const researchOnly = (opts?.researchOnlySnapshots ?? 0) > 0;
+  const decisionTransitions = opts?.decisionEligibleTransitions ?? 0;
+  // Decision-eligible transition set must be non-empty — research-only / empty
+  // partner history cannot promote even when SQLite evidence counts look mature.
+  if (decisionTransitions === 0) {
+    blockers.push(
+      researchOnly
+        ? 'Research, fixture, or unclassified snapshots are diagnostics-only'
+        : 'No decision-eligible partner transitions'
+    );
+  }
+  if (evidence.issues === 0) blockers.push('No immutable issued-at forecast rows');
+  if (evidence.matured === 0) blockers.push('No matured 48-hour outcome windows');
+  if (evidence.negatives === 0) blockers.push('No matured no-raise outcomes');
+  if (evidence.positives === 0) blockers.push('No matured raise outcomes');
+  if (calibration.samples === 0 || calibration.brier == null) {
+    blockers.push('No leakage-safe rolling-origin calibration set');
+  }
+
+  return {
+    forecastEligible: blockers.length === 0,
+    blockers,
+    calibration,
+  };
+}
+
+/** Read matured issue/outcome pairs for rolling-origin calibration (empty before migration). */
+export function readLimitForecastCalibrationSamples(
+  db: Database,
+  nowSec = Math.floor(Date.now() / 1000)
+): ForecastCalibrationSample[] {
+  if (!tableExists(db, 'limit_forecast_issues') || !tableExists(db, 'limit_forecast_outcomes')) {
+    return [];
+  }
+  const rows = db
+    .query(
+      `SELECT issue.issued_at AS issued_at,
+              issue.evaluation_at AS evaluation_at,
+              issue.predicted_raise_probability AS predicted_raise_probability,
+              outcome.actual_raise AS actual_raise
+       FROM limit_forecast_issues issue
+       INNER JOIN limit_forecast_outcomes outcome ON outcome.issue_id = issue.id
+       WHERE issue.evaluation_at <= $now
+       ORDER BY issue.issued_at, issue.evaluation_at`
+    )
+    .all({ $now: nowSec }) as Array<{
+    issued_at: number;
+    evaluation_at: number;
+    predicted_raise_probability: number;
+    actual_raise: number;
+  }>;
+
+  return rows.map(row => ({
+    issuedAt: row.issued_at,
+    evaluationAt: row.evaluation_at,
+    predictedRaiseProbability: row.predicted_raise_probability,
+    actualRaise: row.actual_raise === 1,
+  }));
+}
+
 type WireIssueRow = {
   id: string; // brand-ok — parsed as LimitForecastIssueId at SQLite boundary
   node_id: string; // brand-ok — parsed as TreeNodeId at SQLite boundary

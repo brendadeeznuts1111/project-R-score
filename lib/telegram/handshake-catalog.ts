@@ -272,9 +272,30 @@ export const HANDSHAKE_HOUSE_FORUM_TOPICS = {
   allAccountingForumTitles: [...ALL_ACCOUNTING_FORUM_TOPICS],
 } as const;
 
+/** Catalog-row refs for intake-driven pinned prompts (metadata only — not live Telegram posts). */
+export const DEFAULT_PINNED_TEMPLATE_REFS = {
+  [`partner:${PACKAGE_GROUP_FORUM_TOPIC_KEYS.accounting}`]: {
+    templateId: 'topic-accounting',
+    builder: 'buildSeatDeskAccountingTopicPrompt',
+  },
+  [`partner:${PACKAGE_GROUP_FORUM_TOPIC_KEYS.liquidityOuts}:intake`]: {
+    templateId: 'topic-intake',
+    builder: 'buildSeatDeskTopicPrompt',
+  },
+  [`partner:${PACKAGE_GROUP_FORUM_TOPIC_KEYS.liquidityOuts}:rails`]: {
+    templateId: 'topic-rails',
+    builder: 'buildSeatDeskTopicPrompt',
+  },
+  'house:all-accounting': {
+    templateId: 'all-accounting-channel',
+    builder: ALL_ACCOUNTING_CHANNEL_TEMPLATE_SPEC.builder,
+  },
+} as const;
+
 export const HANDSHAKE_SEAT_DESK_TEMPLATES = {
   partner: SEAT_DESK_PARTNER_MESSAGE_TEMPLATES,
   allAccountingChannel: ALL_ACCOUNTING_CHANNEL_TEMPLATE_SPEC,
+  pinnedTemplateRefs: DEFAULT_PINNED_TEMPLATE_REFS,
 } as const;
 
 export const HANDSHAKE_DOC_ROUTING = {

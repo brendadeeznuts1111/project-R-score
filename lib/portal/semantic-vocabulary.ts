@@ -81,6 +81,7 @@ export const PORTAL_SEMANTIC_CONCEPT_KEYS = [
   'section.partnersTelegram',
   'section.partnersAccounting',
   'section.partnersDeposits',
+  'section.partnersPartnerMessage',
   'ui.filter.profile',
   'ui.filter.jurisdiction',
   'ui.filter.partnerId',
@@ -773,7 +774,12 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     semanticType: 'resource',
     uiRole: 'heading',
     synonyms: ['package groups', 'telegram forums', 'handshake board'],
-    seeAlso: ['page.partners', 'section.partnersAccounting', 'section.partnersDeposits'],
+    seeAlso: [
+      'page.partners',
+      'section.partnersAccounting',
+      'section.partnersDeposits',
+      'section.partnersPartnerMessage',
+    ],
   },
   {
     id: 'section.partnersAccounting',
@@ -783,7 +789,12 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     semanticType: 'resource',
     uiRole: 'heading',
     synonyms: ['accounting deals', 'accounting topic', 'fund status'],
-    seeAlso: ['page.partners', 'section.partnersTelegram', 'section.partnersDeposits'],
+    seeAlso: [
+      'page.partners',
+      'section.partnersTelegram',
+      'section.partnersDeposits',
+      'section.partnersPartnerMessage',
+    ],
   },
   {
     id: 'section.partnersDeposits',
@@ -793,7 +804,27 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     semanticType: 'resource',
     uiRole: 'heading',
     synonyms: ['deposit rails', 'betting deposits', 'seat desk outs'],
-    seeAlso: ['page.partners', 'section.partnersAccounting', 'section.partnersTelegram'],
+    seeAlso: [
+      'page.partners',
+      'section.partnersAccounting',
+      'section.partnersTelegram',
+      'section.partnersPartnerMessage',
+    ],
+  },
+  {
+    id: 'section.partnersPartnerMessage',
+    label: 'Partner messages',
+    description:
+      'Partners board section for seat-desk partner-message views (confirm / todo / topic templates) baked from intake.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['partner paste', 'confirm-active', 'seat desk todo'],
+    seeAlso: [
+      'page.partners',
+      'section.partnersAccounting',
+      'section.partnersDeposits',
+      'section.partnersTelegram',
+    ],
   },
   {
     id: 'ui.filter.profile',
@@ -973,6 +1004,7 @@ export const PARTNERS_SURFACE_CONCEPTS = {
   telegram: 'section.partnersTelegram',
   accounting: 'section.partnersAccounting',
   deposits: 'section.partnersDeposits',
+  partnerMessage: 'section.partnersPartnerMessage',
 } as const satisfies Record<string, PortalSemanticConceptKey>;
 
 export function validatePortalSemanticVocabulary(): void {

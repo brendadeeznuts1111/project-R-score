@@ -165,8 +165,22 @@ class OperationsDashboard extends HTMLElement {
               <tbody></tbody>
             </table>
             <div id="seat-capital-desk-expand" class="ops-sub"></div>
+            <h3 class="ops-sub" style="margin-top:12px">Partner messages</h3>
+            <table id="seat-partner-message-table" class="ops-table hidden" aria-label="Seat desk partner messages">
+              <thead>
+                <tr>
+                  <th>Call</th>
+                  <th>Fund</th>
+                  <th>Common missing</th>
+                  <th>Active</th>
+                  <th>CLI</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
             <ul id="seat-capital-desk-commands" class="ops-weave-scripts hidden"></ul>
             <a class="ops-link" id="seat-capital-desk-json" href="/registry/seat-capital-desk.json">Seat desk JSON</a>
+            <a class="ops-link" href="/portal/partners/#section:partner-message">Partners · partner messages</a>
           </section>
           <section class="ops-panel">
             <h2>Ops loop</h2>
@@ -1251,6 +1265,37 @@ class OperationsDashboard extends HTMLElement {
             .join('');
         }
 
+        const pmTable = this.querySelector('#seat-partner-message-table');
+        const pmTbody = pmTable?.querySelector('tbody');
+        const partnerViews = scd.partnerViews ?? [];
+        if (pmTable && pmTbody) {
+          if (partnerViews.length > 0) {
+            pmTable.classList.remove('hidden');
+            pmTbody.innerHTML = partnerViews
+              .map(v => {
+                const fund = v.fund?.status ?? '—';
+                const common = (v.commonMissing ?? []).join(', ') || '—';
+                const fundClass =
+                  fund === 'blocked'
+                    ? 'match-no'
+                    : fund === 'funded' || fund === 'ready'
+                      ? 'match-ok'
+                      : '';
+                return `<tr class="${(v.commonMissing ?? []).length > 0 ? 'ops-row-warn' : ''}">
+                  <td><code>${esc(v.callSign)}</code></td>
+                  <td><span class="version-badge ${fundClass}">${esc(fund)}</span></td>
+                  <td>${esc(common)}</td>
+                  <td>${esc(String((v.activeOuts ?? []).length))}</td>
+                  <td><span class="ops-mono">seat:desk:partner-message ${esc(v.callSign)} --json</span></td>
+                </tr>`;
+              })
+              .join('');
+          } else {
+            pmTable.classList.add('hidden');
+            pmTbody.innerHTML = '';
+          }
+        }
+
         if (scdCommands && scd.commands) {
           scdCommands.classList.remove('hidden');
           scdCommands.innerHTML = Object.entries(scd.commands)
@@ -1271,6 +1316,8 @@ class OperationsDashboard extends HTMLElement {
         if (scdTbody) scdTbody.innerHTML = '';
         if (scdExpand) scdExpand.innerHTML = '';
         if (scdCommands) scdCommands.classList.add('hidden');
+        const pmTableEmpty = this.querySelector('#seat-partner-message-table');
+        if (pmTableEmpty) pmTableEmpty.classList.add('hidden');
       }
     }
 

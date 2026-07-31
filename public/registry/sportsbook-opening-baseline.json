@@ -2,7 +2,7 @@
   "schemaVersion": 3,
   "kind": "sportsbook-opening-baseline",
   "path": "/registry/sportsbook-opening-baseline.json",
-  "generatedAt": "2026-07-31T10:38:37.286Z",
+  "generatedAt": "2026-07-31T14:27:01.405Z",
   "disclaimer": "Internal Tier 1/Tier 2 seeds, the Tier 4 estimate, and the synthetic Tier 5 matrix are preview evidence only. A value becomes decision eligible only after its external citation is explicitly verified.",
   "dimensions": {
     "sportsbooks": 10,
@@ -34,7 +34,10 @@
       "3": {
         "count": 0,
         "label": "partner_api",
-        "wired": false
+        "wired": true,
+        "status": "unavailable",
+        "notes": "No PARTNER_LIMITS_API_URL + PARTNER_LIMITS_API_TOKEN — Tier 3 live comparison unavailable (explicit provenance, not stub).",
+        "checkedAt": "2026-07-31T14:27:01.405Z"
       },
       "4": {
         "count": 160,

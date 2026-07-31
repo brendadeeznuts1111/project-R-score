@@ -20,6 +20,7 @@ describe('partners portal board', () => {
     expect(html).toContain('id="section:telegram"');
     expect(html).toContain('id="section:accounting"');
     expect(html).toContain('id="section:deposits"');
+    expect(html).toContain('id="section:partner-message"');
     expect(html).toContain('/registry/telegram-handshake.json');
     expect(html).toContain('/registry/seat-capital-desk.json');
     expect(html).toContain('/registry/telegram-handshake-catalog.json');
@@ -29,6 +30,9 @@ describe('partners portal board', () => {
     expect(html).toContain('telegram:package-group:accounting');
     expect(html).toContain('Betting deposits');
     expect(html).toContain('Accounting deals');
+    expect(html).toContain('Partner messages');
+    expect(html).toContain('seat:desk:partner-message');
+    expect(html).toContain('renderPartnerMessages');
   });
 
   test('wires telegram glossary concepts and color kernel consumers', async () => {
@@ -37,6 +41,7 @@ describe('partners portal board', () => {
     expect(html).toContain('data-glossary-concept="section.partnersTelegram"');
     expect(html).toContain('data-glossary-concept="section.partnersAccounting"');
     expect(html).toContain('data-glossary-concept="section.partnersDeposits"');
+    expect(html).toContain('data-glossary-concept="section.partnersPartnerMessage"');
     expect(html).toContain('data-glossary-concept="telegram.wire"');
     expect(html).toContain('data-glossary-concept="telegram.handshake"');
     expect(html).toContain('data-glossary-concept="telegram.deposit_rail"');
@@ -67,6 +72,10 @@ describe('partners portal board', () => {
     expect(seat.rows.some((r: { outs?: unknown[] }) => Array.isArray(r.outs) && r.outs.length > 0)).toBe(
       true
     );
+    expect(Array.isArray(seat.partnerViews)).toBe(true);
+    expect(seat.partnerViews.length).toBeGreaterThan(0);
+    expect(Array.isArray(seat.partnerMessageTemplates)).toBe(true);
+    expect(seat.commands?.partnerMessage).toContain('partner-message');
     expect(catalog.colors?.packageTopics?.accounting?.hex).toMatch(/^#/);
     expect(catalog.glossary?.conceptIds).toContain('telegram.wire');
     expect(ops.schema).toBe('factorywager.partners-ops.v2');

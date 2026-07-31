@@ -227,7 +227,7 @@ Capture-derived catalog: [`lib/operations/scrapers/catalogs/caesars-americanwage
 | Optional auth | `CAESARS_SCRAPE_COOKIE` · `CAESARS_WAF_TOKEN` · `CAESARS_SCRAPE_LOCATION` (default `nj`) · `BASELINE_SCRAPE_LIVE=1` |
 | Parser | [`caesars-parse.ts`](../../../lib/operations/scrapers/books/caesars-parse.ts) — flexible `maxBet` / `maxStake` / nested `limits[]` |
 | `bun run baseline:status`            | Tier coverage / row counts for committed baseline artifact                           |
-| `bun run baseline:sync-all`          | Tier 1+2+4+5 bake; Tier 3 / overrides stubbed                                        |
+| `bun run baseline:sync-all`          | Tier 1+2+4+5 bake; Tier 3 partner API provenance (`unavailable` until credentials) · overrides still stubbed |
 | `bun run bake:sportsbook-opening-baseline:check` | Drift gate for `/registry/sportsbook-opening-baseline.json`                 |
 
 ### Baseline source tiers
@@ -236,7 +236,7 @@ Capture-derived catalog: [`lib/operations/scrapers/catalogs/caesars-americanwage
 | ---- | ---- | ------ |
 | 1 | Statutory / regulatory (`REGULATION_POLICY_CATALOG` → compliance ceiling) | Wired · `baseline:sync-regulatory` |
 | 2 | Published sportsbook policies (basketball/soccer research seeds) | Wired · `baseline:sync-policies` |
-| 3 | Partner API live limits | Stub |
+| 3 | Partner API live limits | Wired provenance · `unavailable` until `PARTNER_LIMITS_API_URL` + `PARTNER_LIMITS_API_TOKEN` · [`baseline-partner-api.ts`](../../../lib/operations/baseline-partner-api.ts) |
 | 4 | Public scrape estimates (registry agents → JSONL + merge companion; optional live) | Wired · `scrape()` + `bookId` + [`books/registry.ts`](../../../lib/operations/scrapers/books/registry.ts) · JSONL merge → `/registry/scraped-limits-observed.json` · Lab ingest via [`limit-forecast-scrape-ingest.ts`](../../../lib/prediction/limit-forecast-scrape-ingest.ts) · cron [`scrape-cron.ts`](../../../lib/operations/scrapers/scrape-cron.ts) (`*/15` UTC) |
 | 5 | Ops opening matrix (top-10 US books × sport/market/structure/phase) | Wired · commercial baseline |
 
@@ -257,10 +257,10 @@ bun run ops:limits:predict --partner partner-42 --inspect
 | Ops summary    | `ops-summary.limitChanges`                         | Live SQLite when baking summary                         |
 | Agent raises   | `GET /api/agents/v1/limits/raises?node_id=&hours=` | Local: SQLite · Pages: snapshot                         |
 | Agent table    | same + `?format=table\|text\|inspect`              | `LimitRaiseReport` text/plain (local + Pages)           |
-| Record         | `POST /api/agents/v1/limits/record`                | Local write · Pages **503** stub                        |
+| Record         | `POST /api/agents/v1/limits/record`                | Local write · Pages **503** `plane=local-sqlite` · `reason=bun:sqlite` |
 | Public summary | `GET /api/limits/summary` · `?format=table`        | Local SQLite · Pages snapshot aggregate                 |
-| Analyze        | `GET /api/limits/analyze`                          | Local only                                              |
-| Predictions    | `GET\|POST /api/limits/predictions`                | Local only                                              |
+| Analyze        | `GET /api/limits/analyze`                          | Local only · Pages **503** same contract                |
+| Predictions    | `GET\|POST /api/limits/predictions`                | Local only · Pages **503** same contract                |
 
 ## Account profile and policy semantics
 

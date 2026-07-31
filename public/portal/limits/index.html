@@ -35,6 +35,23 @@
         border-bottom: 1px solid var(--border);
         padding-bottom: 8px;
       }
+      .limits-page .topic-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 10px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+      .limits-page .topic-chip {
+        font-size: 12px;
+        padding: 4px 9px;
+        border-radius: 4px;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+      }
       .metric {
         font-size: 1.8em;
         font-weight: 700;
@@ -947,7 +964,31 @@
           <strong>Domain glossary</strong>
           <small>policy and account terms</small>
         </a>
+        <a href="/registry/sportsbook-opening-baseline.json" target="_blank" rel="noopener">
+          <strong>Opening baseline</strong>
+          <small>tiers 1–5 provenance</small>
+        </a>
       </nav>
+
+      <section
+        id="baseline-provenance"
+        class="card"
+        aria-labelledby="baseline-provenance-title"
+        data-glossary-concept="ops.limits.baseline_tier"
+      >
+        <h2 id="baseline-provenance-title" class="section-heading">
+          <a
+            class="section-anchor"
+            href="/portal/glossary/#glossary:ops.limits.baseline_tier"
+            data-glossary-concept="ops.limits.baseline_tier"
+            >Baseline provenance</a
+          >
+        </h2>
+        <p class="sub" id="baseline-provenance-detail">
+          Loading Tier 3 partner API + Tier 4 Caesars scrape status…
+        </p>
+        <ul class="topic-chips" id="baseline-provenance-chips" aria-label="Provenance chips"></ul>
+      </section>
 
       <nav id="limits-glossary-crumbs" class="glossary-crumbs" aria-label="Breadcrumb"></nav>
 
@@ -1535,7 +1576,42 @@
           }));
         }
 
+        async function loadBaselineProvenance() {
+          const detail = document.getElementById('baseline-provenance-detail');
+          const chips = document.getElementById('baseline-provenance-chips');
+          if (!detail || !chips) return;
+          try {
+            const [baselineRes, caesarsRes] = await Promise.all([
+              fetch('/registry/sportsbook-opening-baseline.json'),
+              fetch('/registry/caesars-scrape-endpoints.json'),
+            ]);
+            const baseline = baselineRes.ok ? await baselineRes.json() : null;
+            const caesars = caesarsRes.ok ? await caesarsRes.json() : null;
+            const t3 = baseline?.sources?.tiers?.['3'] ?? baseline?.sources?.tiers?.[3];
+            const t3Status = t3?.status ?? (t3?.wired === false ? 'stub' : 'unknown');
+            const t3Notes = t3?.notes ?? 'Tier 3 partner API provenance missing — run baseline:sync-all';
+            const wafCount = caesars?.summary?.byRole?.waf ?? 0;
+            const cookieHint =
+              'Live Caesars bets/configuration is CloudFront/WAF-gated; set CAESARS_SCRAPE_COOKIE + CAESARS_WAF_TOKEN for live, else fixture default.';
+            detail.innerHTML =
+              `<a href="${glossaryHref('ops.limits.baseline_tier')}" data-glossary-concept="ops.limits.baseline_tier">Tier 3</a> ` +
+              `<strong>${esc(String(t3Status))}</strong> · ${esc(t3Notes)}` +
+              `<br><a href="${glossaryHref('scrape.book')}" data-glossary-concept="scrape.book">Caesars</a> ` +
+              `WAF templates: <strong>${esc(String(wafCount))}</strong>. ${esc(cookieHint)}`;
+            chips.innerHTML = [
+              `<li><a class="topic-chip" href="${glossaryHref('ops.limits.baseline_tier')}" data-glossary-concept="ops.limits.baseline_tier">tier.3 · ${esc(String(t3Status))}</a></li>`,
+              `<li><a class="topic-chip" href="${glossaryHref('ops.limits.opening_baseline')}" data-glossary-concept="ops.limits.opening_baseline">opening baseline</a></li>`,
+              `<li><a class="topic-chip" href="${glossaryHref('ops.limits.evidence_trace')}" data-glossary-concept="ops.limits.evidence_trace">evidence trace</a></li>`,
+              `<li><a class="topic-chip" href="${glossaryHref('scrape.wire')}" data-glossary-concept="scrape.wire">scrape.wire · caesars waf</a></li>`,
+            ].join('');
+          } catch (e) {
+            detail.textContent =
+              e instanceof Error ? e.message : 'Could not load baseline provenance';
+          }
+        }
+
         async function load() {
+          void loadBaselineProvenance();
           let summary = null;
           let loadError = null;
           try {

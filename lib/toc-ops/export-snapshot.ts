@@ -283,9 +283,19 @@ export async function exportTocOpsSnapshot(opts?: {
   bakeEmbed?: boolean;
   /** Re-evaluate operate-lite gates (default true). */
   enforce?: boolean;
+  /** Overlay seat-intake deposit rails onto matching TOC partners (default true). */
+  seatDeskRails?: boolean;
 }): Promise<ExportTocOpsSnapshotResult> {
   const root = opts?.root ?? process.cwd();
-  const base = opts?.fixture ?? buildDemoTocOpsFixture();
+  let base = opts?.fixture ?? buildDemoTocOpsFixture();
+  if (opts?.seatDeskRails !== false) {
+    try {
+      const { withSeatDeskRailsFromIntake } = await import('./seat-desk-rails-bridge.ts');
+      base = await withSeatDeskRailsFromIntake(base, { root });
+    } catch {
+      /* intake missing — keep fixture rails */
+    }
+  }
   const snap = opts?.enforce === false ? base : withTocMetrics(base);
   const outPath = tocOpsAbsPath(root);
   await Bun.write(outPath, `${JSON.stringify(snap, null, 2)}\n`);

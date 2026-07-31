@@ -5,7 +5,13 @@
  * write production forecasts or claim 48-hour calibration from change rows.
  */
 import type { SportsbookId, TreeNodeId } from '../types/branded.ts';
-import type { LimitForecastEvidenceSummary } from './limit-forecast-evidence.ts';
+import {
+  computeForecastEligibility,
+  scoreRollingOriginEmbargo,
+  type ForecastCalibrationSample,
+  type LimitForecastEvidenceSummary,
+  type RollingOriginEmbargoScore,
+} from './limit-forecast-evidence.ts';
 
 export const LIMIT_FORECAST_LAB_SCHEMA = 1;
 export const LIMIT_FORECAST_LAB_MODEL = 'beta-binomial-transition-v0';
@@ -62,8 +68,8 @@ export type RaiseRateEstimate = {
   pooledRate: number;
   globalWeight: number;
   support: 'insufficient' | 'exploratory';
-  /** Transition estimates are laboratory diagnostics, never deployable forecasts. */
-  forecastEligible: false;
+  /** True only when lab-wide evidence + embargoed calibration clear the gate. */
+  forecastEligible: boolean;
 };
 
 export type WalkForwardScore = {
@@ -140,11 +146,13 @@ export function buildLimitTransitions(rows: readonly LimitSnapshotSample[]): Lim
 
 export function estimatePooledBookRates(
   transitions: readonly LimitTransition[],
-  poolingStrength = LIMIT_FORECAST_POOLING_STRENGTH
+  poolingStrength = LIMIT_FORECAST_POOLING_STRENGTH,
+  opts?: { labForecastEligible?: boolean }
 ): { globalRate: number; books: RaiseRateEstimate[] } {
   const raises = transitions.filter(row => row.raised).length;
   const globalRate = (raises + 0.5) / (transitions.length + 1);
   const grouped = new Map<string, LimitTransition[]>();
+  const labEligible = opts?.labForecastEligible === true;
 
   for (const row of transitions) {
     const group = grouped.get(row.sportsbook) ?? [];
@@ -157,6 +165,11 @@ export function estimatePooledBookRates(
       const bookRaises = rows.filter(row => row.raised).length;
       const pooledRate =
         (bookRaises + poolingStrength * globalRate) / (rows.length + poolingStrength);
+      const support =
+        rows.length >= LIMIT_FORECAST_SUPPORT_GATES.bookCompleted &&
+        bookRaises >= LIMIT_FORECAST_SUPPORT_GATES.bookRaises
+          ? ('exploratory' as const)
+          : ('insufficient' as const);
       return {
         sportsbook,
         transitions: rows.length,
@@ -165,12 +178,8 @@ export function estimatePooledBookRates(
         observedRate: round(bookRaises / rows.length),
         pooledRate: round(pooledRate),
         globalWeight: round(poolingStrength / (rows.length + poolingStrength)),
-        support:
-          rows.length >= LIMIT_FORECAST_SUPPORT_GATES.bookCompleted &&
-          bookRaises >= LIMIT_FORECAST_SUPPORT_GATES.bookRaises
-            ? ('exploratory' as const)
-            : ('insufficient' as const),
-        forecastEligible: false as const,
+        support,
+        forecastEligible: labEligible && support === 'exploratory',
       };
     })
     .sort(
@@ -261,14 +270,22 @@ export function buildLimitForecastLab(
     database: 'data/operations.db',
     table: 'partner_account_limits',
     mode: 'read-only',
-  }
+  },
+  calibrationSamples: readonly ForecastCalibrationSample[] = []
 ) {
   const transitions = buildLimitTransitions(rows);
   const raised = transitions.filter(row => row.raised).length;
   const decisionEligibleSnapshots = rows.filter(row => row.decisionEligible === true).length;
   const researchOnlySnapshots = rows.length - decisionEligibleSnapshots;
   const decisionEligibleTransitions = transitions.filter(row => row.decisionEligible).length;
-  const pooled = estimatePooledBookRates(transitions);
+  const calibration: RollingOriginEmbargoScore = scoreRollingOriginEmbargo(calibrationSamples);
+  const eligibility = computeForecastEligibility(evidence, calibration, {
+    researchOnlySnapshots,
+    decisionEligibleTransitions,
+  });
+  const pooled = estimatePooledBookRates(transitions, LIMIT_FORECAST_POOLING_STRENGTH, {
+    labForecastEligible: eligibility.forecastEligible,
+  });
   const globalSupport =
     transitions.length >= LIMIT_FORECAST_SUPPORT_GATES.globalCompleted &&
     raised >= LIMIT_FORECAST_SUPPORT_GATES.globalRaises
@@ -282,9 +299,10 @@ export function buildLimitForecastLab(
     source: sourceMeta,
     dataset: {
       kind: 'transitions-only',
-      forecastEligible: false,
-      reason:
-        'Change snapshots do not provide unbiased no-change 48-hour outcome windows; scores are diagnostics only.',
+      forecastEligible: eligibility.forecastEligible,
+      reason: eligibility.forecastEligible
+        ? 'Immutable issues + matured outcomes + leakage-safe rolling-origin calibration cleared promotion gates.'
+        : 'Change snapshots do not provide unbiased no-change 48-hour outcome windows; scores are diagnostics only until evidence lifecycle clears.',
       snapshots: rows.length,
       decisionEligibleSnapshots,
       researchOnlySnapshots,
@@ -307,31 +325,24 @@ export function buildLimitForecastLab(
           id: 'global-base-rate-v0',
           label: 'Global transition baseline',
           scope: 'global',
-          forecastEligible: false,
+          forecastEligible: eligibility.forecastEligible,
           score: scoreWalkForward(transitions, 'global'),
         },
         {
           id: 'pooled-book-beta-binomial-v0',
           label: 'Pooled sportsbook transition baseline',
           scope: 'sportsbook-partial-pooling',
-          forecastEligible: false,
+          forecastEligible: eligibility.forecastEligible,
           score: scoreWalkForward(transitions, 'pooled'),
         },
       ],
       books: pooled.books,
+      calibration,
     },
     evidence,
     promotion: {
-      eligible: false,
-      blockers: [
-        ...(researchOnlySnapshots > 0
-          ? ['Research, fixture, or unclassified snapshots are diagnostics-only']
-          : []),
-        ...(evidence.issues === 0 ? ['No immutable issued-at forecast rows'] : []),
-        ...(evidence.matured === 0 ? ['No matured 48-hour outcome windows'] : []),
-        ...(evidence.negatives === 0 ? ['No matured no-raise outcomes'] : []),
-        'No leakage-safe rolling-origin calibration set',
-      ],
+      eligible: eligibility.forecastEligible,
+      blockers: eligibility.blockers,
       nextModel: 'regularized-global-logistic-with-pooled-book-effects',
     },
     links: {
@@ -340,5 +351,5 @@ export function buildLimitForecastLab(
       artifact: '/registry/limit-forecast-lab.json',
       glossary: '/portal/glossary/#glossary:ops.limits.prediction',
     },
-  } as const;
+  };
 }

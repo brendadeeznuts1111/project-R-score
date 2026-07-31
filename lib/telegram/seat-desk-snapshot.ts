@@ -20,6 +20,12 @@ import {
   type SeatIntakeRecord,
 } from './seat-capital-desk.ts';
 import { formatBookMaxDeltaLine, tryLoadBookMaxComparesForSeatDesk } from './seat-desk-book-max.ts';
+import {
+  SEAT_DESK_PARTNER_MESSAGE_TEMPLATES,
+  summarizeSeatDeskPartnerView,
+  type SeatDeskPartnerMessageTemplateSpec,
+  type SeatDeskPartnerView,
+} from './seat-desk-partner-message.ts';
 
 export const SEAT_CAPITAL_DESK_REGISTRY_REL = 'public/registry/seat-capital-desk.json';
 export const SEAT_CAPITAL_DESK_REGISTRY_PATH = '/registry/seat-capital-desk.json' as const;
@@ -28,6 +34,8 @@ const SEAT_CAPITAL_DESK_COMMANDS = {
   refresh: 'bun run seat:desk:refresh',
   post: 'bun run seat:desk:post',
   update: 'bun run seat:desk:update',
+  partnerMessage: 'bun run seat:desk:partner-message CALL --json',
+  partnerMessageTodo: 'bun run seat:desk:partner-message CALL --template todo',
 } as const;
 
 export type SeatCapitalDeskSnapshot = {
@@ -40,6 +48,10 @@ export type SeatCapitalDeskSnapshot = {
   funded: number;
   incompleteOuts: number;
   rows: SeatDeskViewModel[];
+  /** Partner-message panel projection (passwordless). */
+  partnerViews: SeatDeskPartnerView[];
+  /** Template SSOT for portal chips / CLI hints. */
+  partnerMessageTemplates: SeatDeskPartnerMessageTemplateSpec[];
   commands: typeof SEAT_CAPITAL_DESK_COMMANDS;
 };
 
@@ -54,6 +66,8 @@ export type SeatCapitalDeskSummarySlice = {
   funded: number;
   incompleteOuts: number;
   rows: SeatDeskViewModel[];
+  partnerViews: SeatDeskPartnerView[];
+  partnerMessageTemplates: SeatDeskPartnerMessageTemplateSpec[];
   commands: typeof SEAT_CAPITAL_DESK_COMMANDS;
 };
 
@@ -69,6 +83,8 @@ export function emptySeatCapitalDeskSummarySlice(): SeatCapitalDeskSummarySlice 
     funded: 0,
     incompleteOuts: 0,
     rows: [],
+    partnerViews: [],
+    partnerMessageTemplates: Object.values(SEAT_DESK_PARTNER_MESSAGE_TEMPLATES),
     commands: SEAT_CAPITAL_DESK_COMMANDS,
   };
 }
@@ -105,6 +121,7 @@ export async function buildSeatCapitalDeskSnapshot(
   intakeDir: string = SEAT_INTAKE_DIR
 ): Promise<SeatCapitalDeskSnapshot> {
   const rows: SeatDeskViewModel[] = [];
+  const partnerViews: SeatDeskPartnerView[] = [];
   try {
     const glob = new Bun.Glob('*.json');
     for await (const rel of glob.scan(intakeDir)) {
@@ -113,6 +130,7 @@ export async function buildSeatCapitalDeskSnapshot(
         const record = normalizeSeatIntake(raw);
         const vm = buildSeatDeskViewModel(record);
         rows.push(enrichViewModelBookMax(record, vm));
+        partnerViews.push(summarizeSeatDeskPartnerView(record));
       } catch {
         /* skip malformed intake file */
       }
@@ -122,6 +140,7 @@ export async function buildSeatCapitalDeskSnapshot(
   }
 
   rows.sort((a, b) => a.callSign.localeCompare(b.callSign));
+  partnerViews.sort((a, b) => a.callSign.localeCompare(b.callSign));
 
   return {
     schema: 'factorywager.seat-capital-desk.v1',
@@ -133,6 +152,8 @@ export async function buildSeatCapitalDeskSnapshot(
     funded: rows.filter(r => r.fundStatus === 'funded').length,
     incompleteOuts: rows.reduce((sum, r) => sum + r.incompleteOuts, 0),
     rows,
+    partnerViews,
+    partnerMessageTemplates: Object.values(SEAT_DESK_PARTNER_MESSAGE_TEMPLATES),
     commands: SEAT_CAPITAL_DESK_COMMANDS,
   };
 }
@@ -152,6 +173,9 @@ export function snapshotToSummarySlice(
     funded: snap.funded,
     incompleteOuts: snap.incompleteOuts,
     rows: snap.rows,
+    partnerViews: snap.partnerViews ?? [],
+    partnerMessageTemplates:
+      snap.partnerMessageTemplates ?? Object.values(SEAT_DESK_PARTNER_MESSAGE_TEMPLATES),
     commands: snap.commands,
   };
 }

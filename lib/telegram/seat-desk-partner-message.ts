@@ -8,8 +8,8 @@
  * - **Liquidity/Outs thread prompts** — `buildSeatDeskTopicPrompt` (`topic-intake` · `topic-rails`)
  * - **Accounting thread prompt** — `buildSeatDeskAccountingTopicPrompt` (deposit/withdraw screenshots)
  *
- * Dashboard / TOC portal boards do not read intake yet; use `summarizeSeatDeskPartnerView`
- * as the JSON-shaped bridge when wiring `/portal/ops` or a future desk panel.
+ * Portal boards consume `summarizeSeatDeskPartnerView` via
+ * `seat-capital-desk.json` → `partnerViews[]` (`ops:snapshot` bake).
  *
  * @see docs/harness/tenants/seat-capital-desk.md
  */

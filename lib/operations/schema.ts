@@ -161,6 +161,23 @@ export function migrateSchema(db: Database): void {
   migrateOpsChannelOutboxAvailableAt(db);
   migrateOpsChannelOutboxTopicToc(db);
   migrateOpsChannelOutboxAvailableAt(db);
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS phone_sportsbooks (
+      id TEXT PRIMARY KEY,
+      phone_id TEXT NOT NULL REFERENCES phones(id),
+      sportsbook TEXT NOT NULL,
+      jurisdiction TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'active'
+        CHECK(status IN ('active', 'inactive', 'blocked')),
+      evidence_note TEXT,
+      observed_at TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      UNIQUE(phone_id, sportsbook, jurisdiction)
+    );
+    CREATE INDEX IF NOT EXISTS idx_phone_sportsbooks_phone
+      ON phone_sportsbooks(phone_id, status);
+  `);
 }
 
 /** Nullable defer-until for rate-limit backoff (Telegram 429). */
@@ -336,6 +353,21 @@ export function initSchema(db: Database): void {
       issued_at TEXT,
       returned_at TEXT
     );
+
+    CREATE TABLE IF NOT EXISTS phone_sportsbooks (
+      id TEXT PRIMARY KEY,
+      phone_id TEXT NOT NULL REFERENCES phones(id),
+      sportsbook TEXT NOT NULL,
+      jurisdiction TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'active'
+        CHECK(status IN ('active', 'inactive', 'blocked')),
+      evidence_note TEXT,
+      observed_at TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      UNIQUE(phone_id, sportsbook, jurisdiction)
+    );
+    CREATE INDEX IF NOT EXISTS idx_phone_sportsbooks_phone
+      ON phone_sportsbooks(phone_id, status);
 
     CREATE TABLE IF NOT EXISTS funding (
       id TEXT PRIMARY KEY,

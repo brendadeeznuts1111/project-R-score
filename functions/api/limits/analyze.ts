@@ -3,7 +3,10 @@
  *
  * GET /api/limits/analyze → 503 with operator links
  *
+ * Contract: mode=snapshot · plane=local-sqlite · reason=bun:sqlite
+ *
  * @see lib/operations/limit-raise-agent-api.ts handleLimitAnalyzeRequest
+ * @see lib/http/pages-local-only.ts
  * @see docs/harness/tenants/partner-limits.md
  */
 import { getOnly } from '../_get-only.ts';
@@ -25,6 +28,8 @@ export const onRequest: PagesFunction = async (context: { request: Request }) =>
     {
       ok: false,
       mode: 'snapshot',
+      plane: 'local-sqlite',
+      reason: 'bun:sqlite',
       error: 'Analyze requires local SQLite — use serve-public or CLI',
       links: {
         local: 'GET /api/limits/analyze (serve-public)',

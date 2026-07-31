@@ -3,7 +3,10 @@
  *
  * POST /api/agents/v1/limits/record → 503 with operator links
  *
+ * Contract: mode=snapshot · plane=local-sqlite · reason=bun:sqlite
+ *
  * @see lib/operations/limit-raise-agent-api.ts handleLimitRecordRequest
+ * @see lib/http/pages-local-only.ts
  * @see docs/harness/tenants/partner-limits.md
  */
 
@@ -22,6 +25,8 @@ export const onRequestPost: PagesFunction = async () =>
     {
       ok: false,
       mode: 'snapshot',
+      plane: 'local-sqlite',
+      reason: 'bun:sqlite',
       error: 'Mutations not available on Pages — use local serve-public or CLI',
       example: {
         node_id: 'partner-42',
@@ -45,6 +50,9 @@ export const onRequestGet: PagesFunction = async () =>
   json(
     {
       ok: false,
+      mode: 'snapshot',
+      plane: 'local-sqlite',
+      reason: 'bun:sqlite',
       error: 'POST required',
       links: {
         local: 'POST /api/agents/v1/limits/record',
