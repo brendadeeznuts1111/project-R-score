@@ -5,6 +5,7 @@ import {
   HARNESS_ESLINT_CONFIG,
 } from '../config/eslint/harness/command.ts';
 import {
+  HARNESS_ENTRYPOINTS,
   HARNESS_IGNORES,
   HARNESS_PATHS,
   HARNESS_ROOTS,
@@ -15,8 +16,11 @@ import { parseHarnessLintArgs } from '../scripts/lint-harness.ts';
 const repoRoot = `${import.meta.dir}/..`;
 
 describe('harness ESLint scope', () => {
-  test('configures TypeScript and TSX under every harness root', () => {
-    expect(HARNESS_PATHS).toHaveLength(HARNESS_ROOTS.length);
+  test('configures root policy entrypoints and every harness root', () => {
+    expect(HARNESS_PATHS).toHaveLength(HARNESS_ENTRYPOINTS.length + HARNESS_ROOTS.length);
+    for (const entrypoint of HARNESS_ENTRYPOINTS) {
+      expect(HARNESS_PATHS).toContain(entrypoint);
+    }
     for (const root of HARNESS_ROOTS) {
       expect(HARNESS_PATHS).toContain(`${root}/**/*.{ts,tsx}`);
     }
@@ -25,6 +29,8 @@ describe('harness ESLint scope', () => {
   test('changed and staged selectors use the same scope and ignores', () => {
     expect(isHarnessLintPath('lib/example.ts')).toBe(true);
     expect(isHarnessLintPath('./packages/ui/example.tsx')).toBe(true);
+    expect(isHarnessLintPath('eslint.config.ts')).toBe(true);
+    expect(isHarnessLintPath('./eslint.harness.config.ts')).toBe(true);
     expect(isHarnessLintPath('lib/example.test.ts')).toBe(false);
     expect(isHarnessLintPath('lib/example.spec.tsx')).toBe(false);
     expect(isHarnessLintPath('lib/example.bench.ts')).toBe(false);
@@ -33,18 +39,22 @@ describe('harness ESLint scope', () => {
     expect(isHarnessLintPath('lib/example.js')).toBe(false);
   });
 
-  test('ESLint resolves TSX and globally ignores declaration files', async () => {
+  test('ESLint resolves entrypoints and TSX while ignoring declaration files', async () => {
     const eslint = new ESLint({
       cwd: repoRoot,
       overrideConfigFile: `${repoRoot}/${HARNESS_ESLINT_CONFIG}`,
     });
 
+    expect(await eslint.isPathIgnored('eslint.config.ts')).toBe(false);
+    expect(await eslint.isPathIgnored('eslint.harness.config.ts')).toBe(false);
     expect(await eslint.isPathIgnored('lib/example.tsx')).toBe(false);
     expect(await eslint.isPathIgnored('lib/example.d.ts')).toBe(true);
 
-    const config = await eslint.calculateConfigForFile('lib/example.tsx');
-    expect(config?.rules['harness/no-unknown-function-param']).toEqual([2]);
-    expect(config?.rules['no-restricted-imports']?.[0]).toBe(2);
+    for (const file of [...HARNESS_ENTRYPOINTS, 'lib/example.tsx']) {
+      const config = await eslint.calculateConfigForFile(file);
+      expect(config?.rules['harness/no-unknown-function-param']).toEqual([2]);
+      expect(config?.rules['no-restricted-imports']?.[0]).toBe(2);
+    }
   });
 });
 
