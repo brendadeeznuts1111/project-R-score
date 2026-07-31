@@ -241,16 +241,8 @@ bun test tests/limits-e2e.test.ts
 
 ## Portal snapshot cron (workspace-adjacent)
 
-Scope-aware registry snapshots for portal data-plane:
-
-| Script | Role |
-|--------|------|
-| `portal:snapshot:once` | One-shot cycle (`lib/operations/portal-snapshot-cron.ts`) |
-| `portal:snapshot:cron:register` | OS-level `Bun.cron` |
-| `portal:snapshot:cron:preview` | Next fire times |
-| `portal:snapshot:cron:remove` | Unregister |
-
-Tests: `tests/portal-snapshot-cron.test.ts` · Bun cron docs: https://bun.com/docs/runtime/cron
+Scope-aware **data-plane** captures (not registry bake). Operator SSOT:
+[`portal-snapshot-cron.md`](portal-snapshot-cron.md) · `bun run docs:tenant-portal-snapshot`.
 
 ## Anti-patterns
 

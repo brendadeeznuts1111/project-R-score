@@ -111,6 +111,31 @@ export const SCHEDULED_JOB_EXEMPTIONS: readonly ScheduledJobExemption[] = [
     reason: 'One-shot entry for spine tenant ops-snapshot',
   },
   {
+    id: 'pkg-portal-snapshot-cron-register',
+    source: 'package-script',
+    match: 'portal:snapshot:cron:register',
+    reason:
+      'OS cron register for portal-snapshot data-plane (not a spine tenant; see docs/harness/tenants/portal-snapshot-cron.md)',
+  },
+  {
+    id: 'pkg-portal-snapshot-cron-remove',
+    source: 'package-script',
+    match: 'portal:snapshot:cron:remove',
+    reason: 'OS cron remove for portal-snapshot data-plane (not a spine tenant)',
+  },
+  {
+    id: 'pkg-portal-snapshot-cron-preview',
+    source: 'package-script',
+    match: 'portal:snapshot:cron:preview',
+    reason: 'OS cron preview for portal-snapshot data-plane (not a spine tenant)',
+  },
+  {
+    id: 'pkg-vault-health-cron-register',
+    source: 'package-script',
+    match: 'vault:health:cron:register',
+    reason: 'OS cron register for vault-health board bake — not a spine maintenance tenant',
+  },
+  {
     id: 'gha-har-performance',
     source: 'gha-cron',
     match: 'har-performance.yml',

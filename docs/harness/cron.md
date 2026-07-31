@@ -45,6 +45,8 @@ unhandledRejection). `--hot` safe. Disposable via `using job = …`.
   *Ratchet* → `bun run spine:schedule:once` · `bun run spine:schedule:once -- --tenant=install-verify`
 - **ops-snapshot** — `*/10 * * * *` UTC · `lib/operations/snapshot-cron.ts` · portal/Pages artifacts  
   *Ratchet* → `bun run spine:schedule:once -- --tenant=ops-snapshot` · `bun run ops:snapshot:once`
+- **portal-snapshot** (not a spine tenant) — OS primary + in-process complement · data-plane captures  
+  *Ratchet* → `bun run portal:snapshot:once -- --dry-run` · `bun test tests/portal-snapshot-cron.test.ts` · tenant [`tenants/portal-snapshot-cron.md`](tenants/portal-snapshot-cron.md)
 
 Align both with TZ=UTC when you need them to agree.
 

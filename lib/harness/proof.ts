@@ -834,7 +834,6 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'install-verify-journey',
       'factory-registry-integrity-v1',
       'ops-snapshot-cron-v1',
-      'portal-snapshot-cron-v1',
     ],
   },
   {
@@ -1151,10 +1150,10 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'lib/operations/portal-snapshot-cron.ts',
       'tools/portal-snapshot-cron.ts',
       'tools/portal-snapshot-cron-worker.ts',
-      'spine/tenants.ts',
       'docs/harness/tenants/portal-snapshot-cron.md',
       'docs/harness/cron.md',
     ],
+    // Unit suite is the cheap fresh-rerun; OS journey remains in evidence / ratchet.
     freshRerun: 'bun test tests/portal-snapshot-cron.test.ts',
     freshRerunKind: 'claim',
     owner: 'lib/operations/portal-snapshot-cron.ts',
