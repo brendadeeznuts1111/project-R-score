@@ -262,6 +262,7 @@ export const FUNCTIONS_LIB_IMPORT_ALLOWLIST = [
   'lib/monitoring/compliance-slice.ts',
   'lib/monitoring/limit-slice.ts',
   'lib/monitoring/monorepo-health-slice.ts',
+  'lib/operations/limit-betlog-export.ts',
   'lib/pages/pages-function.ts',
   'lib/pages/r2-types.ts',
   'lib/path-bun.ts',
