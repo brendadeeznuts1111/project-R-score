@@ -1,26 +1,26 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-07-31T23:22:29.743Z",
+  "generatedAt": "2026-07-31T23:41:59.270Z",
   "lookbackHours": 168,
   "byNode": {
     "019f92bf-40d6-72e3-aa09-f0a9b8a95824": {
       "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
       "raises": [
         {
-          "limit_id": 225,
+          "limit_id": 247,
           "sportsbook": "fanduel",
           "sport_id": "nba",
           "market_id": "spread",
           "bet_type": "straight",
           "previous_max": 800,
           "new_limit": 1200,
-          "increased_at": 1785537449,
+          "increased_at": 1785538619,
           "line_move_5m": null,
           "top_clv": [],
           "context": {
-            "id": 84,
+            "id": 95,
             "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
-            "limit_record_id": 225,
+            "limit_record_id": 247,
             "active_players_7d": 42,
             "new_players_7d": 6,
             "total_handle_7d": 185000,
@@ -34,10 +34,10 @@
             "sportsbook_share": 0.41,
             "partner_profit_30d": 38000,
             "partner_roi_30d": 0.14,
-            "snapshot_at": 1785537450,
+            "snapshot_at": 1785538620,
             "proof_algorithm": "sha3-256",
-            "proof_digest": "dd4420b4171fde9c1f6ffa8c3ed00bd1b7621d1c2ad9bb82c0db3fcedb815296",
-            "proof_hmac": "38e6a3a2115029cfc492c48bb54b5b2452e8c6bd35c6699e0d97a2cb0bca5fc6"
+            "proof_digest": "45ac82e58a49732d4717aa5f61f53868c6cc167b572caeaa9eec5e6b7e098beb",
+            "proof_hmac": "9573e7777a459177f6577822f03b546c471040d3c19d4363499c4b7b97aa1c1f"
           },
           "multi_factor_score": 0.5935799999999999,
           "top_contributing_factors": [
@@ -66,20 +66,20 @@
           }
         },
         {
-          "limit_id": 223,
+          "limit_id": 245,
           "sportsbook": "hardrock",
           "sport_id": "nba",
           "market_id": "spread",
           "bet_type": "straight",
           "previous_max": 400,
           "new_limit": 1000,
-          "increased_at": 1785535949,
+          "increased_at": 1785537119,
           "line_move_5m": null,
           "top_clv": [],
           "context": {
-            "id": 89,
+            "id": 100,
             "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
-            "limit_record_id": 223,
+            "limit_record_id": 245,
             "active_players_7d": 48,
             "new_players_7d": 7,
             "total_handle_7d": 210000,
@@ -93,10 +93,10 @@
             "sportsbook_share": 0.44,
             "partner_profit_30d": 52000,
             "partner_roi_30d": 0.16,
-            "snapshot_at": 1785535950,
+            "snapshot_at": 1785537120,
             "proof_algorithm": "sha3-256",
-            "proof_digest": "f6336fe031271927ec32b2b36be81df86072a3a07b11de9e26e5be7bfc81be79",
-            "proof_hmac": "08c3fb7a6e3cdb0c62f78f89586be6e7088dda0a7a941b4911e5eaef79ac16c1"
+            "proof_digest": "b46b0917961ebcf8c15a0826d53a55daef0afa27398adf1c76666ea84ecc1e3a",
+            "proof_hmac": "7661524f3ce3048aff8ec80a38af7f13fb54ac1f0cb35867757e927aff253fc5"
           },
           "multi_factor_score": 0.61659,
           "top_contributing_factors": [
@@ -125,20 +125,20 @@
           }
         },
         {
-          "limit_id": 221,
+          "limit_id": 243,
           "sportsbook": "draftkings",
           "sport_id": "nba",
           "market_id": "totals",
           "bet_type": "straight",
           "previous_max": 500,
           "new_limit": 1500,
-          "increased_at": 1785534749,
+          "increased_at": 1785535919,
           "line_move_5m": null,
           "top_clv": [],
           "context": {
-            "id": 90,
+            "id": 101,
             "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
-            "limit_record_id": 221,
+            "limit_record_id": 243,
             "active_players_7d": 48,
             "new_players_7d": 7,
             "total_handle_7d": 210000,
@@ -152,10 +152,10 @@
             "sportsbook_share": 0.44,
             "partner_profit_30d": 52000,
             "partner_roi_30d": 0.16,
-            "snapshot_at": 1785534750,
+            "snapshot_at": 1785535920,
             "proof_algorithm": "sha3-256",
-            "proof_digest": "65a1a99a10b1cef6a24be99c7c60ef3c164452d08d6a08e42ac7f21a1ee69781",
-            "proof_hmac": "83721368e255b6be9f9fca87c7aac97aa4bf5b9c0ffb0c945d4c458529c1ec23"
+            "proof_digest": "3ec4deb5086ec1e650e7df9f727eed042a64514dd6591cbeabdc61c1bff958c5",
+            "proof_hmac": "fc02279b147b2758473f19898d1f98ddce45fbddd455dcd7e084ee255b89e5fd"
           },
           "multi_factor_score": 0.61659,
           "top_contributing_factors": [
@@ -312,20 +312,20 @@
       "node_id": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
       "raises": [
         {
-          "limit_id": 229,
+          "limit_id": 251,
           "sportsbook": "hardrock",
           "sport_id": "nba",
           "market_id": "spread",
           "bet_type": "straight",
           "previous_max": 400,
           "new_limit": 1000,
-          "increased_at": 1785536349,
+          "increased_at": 1785537519,
           "line_move_5m": null,
           "top_clv": [],
           "context": {
-            "id": 85,
+            "id": 96,
             "node_id": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
-            "limit_record_id": 229,
+            "limit_record_id": 251,
             "active_players_7d": 42,
             "new_players_7d": 6,
             "total_handle_7d": 185000,
@@ -339,10 +339,10 @@
             "sportsbook_share": 0.41,
             "partner_profit_30d": 38000,
             "partner_roi_30d": 0.14,
-            "snapshot_at": 1785536350,
+            "snapshot_at": 1785537520,
             "proof_algorithm": "sha3-256",
-            "proof_digest": "eb804ac406821d73fd4b53cd1d197380a93cb8ba1a56c336192f0e512204f1af",
-            "proof_hmac": "8520a6fa0a018b3102b875c05385a8298eb2e67d9b7551a9c5dfcd4e63dabe41"
+            "proof_digest": "c023ce85c1756e77d9d0b1c69ac8d245020d5703a252e3c8a494b4d55ec8cbc3",
+            "proof_hmac": "9f0f8ec102c6a6109bd3cc94b02cee8b16ccd16584194fd0c7afe214a509b052"
           },
           "multi_factor_score": 0.5935799999999999,
           "top_contributing_factors": [
@@ -371,20 +371,20 @@
           }
         },
         {
-          "limit_id": 227,
+          "limit_id": 249,
           "sportsbook": "draftkings",
           "sport_id": "nba",
           "market_id": "totals",
           "bet_type": "straight",
           "previous_max": 500,
           "new_limit": 1500,
-          "increased_at": 1785535149,
+          "increased_at": 1785536319,
           "line_move_5m": null,
           "top_clv": [],
           "context": {
-            "id": 91,
+            "id": 102,
             "node_id": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
-            "limit_record_id": 227,
+            "limit_record_id": 249,
             "active_players_7d": 48,
             "new_players_7d": 7,
             "total_handle_7d": 210000,
@@ -398,10 +398,10 @@
             "sportsbook_share": 0.44,
             "partner_profit_30d": 52000,
             "partner_roi_30d": 0.16,
-            "snapshot_at": 1785535150,
+            "snapshot_at": 1785536320,
             "proof_algorithm": "sha3-256",
-            "proof_digest": "71db416ff6d6329ac1a4ec6bc7ca3edebb20a2075e06c8238419e587012dbe4e",
-            "proof_hmac": "af5576d00338812e0bc451575d334ac72bf848aad517c6c699581a9e3707c5dd"
+            "proof_digest": "39025f4be7c03cdef265c4fc17cc1a53a29e69743e72d12c251879c195dd1a97",
+            "proof_hmac": "6b85dd9fcc53d0085e91a2727981b025effd1d985eb012b2cac08a213a092553"
           },
           "multi_factor_score": 0.61659,
           "top_contributing_factors": [
@@ -435,20 +435,20 @@
       "node_id": "019f92ee-5ef9-728d-950c-6c02a59903a2",
       "raises": [
         {
-          "limit_id": 233,
+          "limit_id": 255,
           "sportsbook": "hardrock",
           "sport_id": "nba",
           "market_id": "spread",
           "bet_type": "straight",
           "previous_max": 400,
           "new_limit": 1000,
-          "increased_at": 1785536349,
+          "increased_at": 1785537519,
           "line_move_5m": null,
           "top_clv": [],
           "context": {
-            "id": 86,
+            "id": 97,
             "node_id": "019f92ee-5ef9-728d-950c-6c02a59903a2",
-            "limit_record_id": 233,
+            "limit_record_id": 255,
             "active_players_7d": 42,
             "new_players_7d": 6,
             "total_handle_7d": 185000,
@@ -462,10 +462,10 @@
             "sportsbook_share": 0.41,
             "partner_profit_30d": 38000,
             "partner_roi_30d": 0.14,
-            "snapshot_at": 1785536350,
+            "snapshot_at": 1785537520,
             "proof_algorithm": "sha3-256",
-            "proof_digest": "762f61d27688b99fd7a7d2a229341dc9db0a25295091f90a638996302866adf0",
-            "proof_hmac": "6ecd7f97ba1bf88eec71d7e349c5b0211b87b6c0d9b5b964f36ae70656409458"
+            "proof_digest": "b1fe07a224a4935602df9cc24d6c5afe527dd9504bf3f9ee8bf18d8d11564faf",
+            "proof_hmac": "2791331afbb38394d8f3244717f754891e82070e31e7809cfefff1aebde6bfc7"
           },
           "multi_factor_score": 0.5935799999999999,
           "top_contributing_factors": [
@@ -494,20 +494,20 @@
           }
         },
         {
-          "limit_id": 231,
+          "limit_id": 253,
           "sportsbook": "draftkings",
           "sport_id": "nba",
           "market_id": "totals",
           "bet_type": "straight",
           "previous_max": 500,
           "new_limit": 1500,
-          "increased_at": 1785535149,
+          "increased_at": 1785536319,
           "line_move_5m": null,
           "top_clv": [],
           "context": {
-            "id": 92,
+            "id": 103,
             "node_id": "019f92ee-5ef9-728d-950c-6c02a59903a2",
-            "limit_record_id": 231,
+            "limit_record_id": 253,
             "active_players_7d": 48,
             "new_players_7d": 7,
             "total_handle_7d": 210000,
@@ -521,10 +521,10 @@
             "sportsbook_share": 0.44,
             "partner_profit_30d": 52000,
             "partner_roi_30d": 0.16,
-            "snapshot_at": 1785535150,
+            "snapshot_at": 1785536320,
             "proof_algorithm": "sha3-256",
-            "proof_digest": "a08ff52a9839a4dbe881c8b22af2d47dcc74c4a9a1325b1d8ea602db1a9eb516",
-            "proof_hmac": "5d67060ffdc1e70d60149afc8824488e1270318ddac9a24e1c53f6981c5ec4a7"
+            "proof_digest": "f43f5645f011f1b5791c5cc6369c1a8d856993a1feca21549c6a7801b727f8c9",
+            "proof_hmac": "6baf55eec800912304eeb75ce9d693f7d5aed423e72471505fcb60618a7684e4"
           },
           "multi_factor_score": 0.61659,
           "top_contributing_factors": [
@@ -558,20 +558,20 @@
       "node_id": "019f92f9-2e3f-74f4-8262-720202846493",
       "raises": [
         {
-          "limit_id": 237,
+          "limit_id": 259,
           "sportsbook": "hardrock",
           "sport_id": "nba",
           "market_id": "spread",
           "bet_type": "straight",
           "previous_max": 400,
           "new_limit": 1000,
-          "increased_at": 1785536349,
+          "increased_at": 1785537519,
           "line_move_5m": null,
           "top_clv": [],
           "context": {
-            "id": 87,
+            "id": 98,
             "node_id": "019f92f9-2e3f-74f4-8262-720202846493",
-            "limit_record_id": 237,
+            "limit_record_id": 259,
             "active_players_7d": 42,
             "new_players_7d": 6,
             "total_handle_7d": 185000,
@@ -585,10 +585,10 @@
             "sportsbook_share": 0.41,
             "partner_profit_30d": 38000,
             "partner_roi_30d": 0.14,
-            "snapshot_at": 1785536350,
+            "snapshot_at": 1785537520,
             "proof_algorithm": "sha3-256",
-            "proof_digest": "86c6a23749b3c1c681d6618d9738efb0ecf05ed1bcb843cef63e1d49e0b3677f",
-            "proof_hmac": "16dec6928b1b095ebcb63a5b68423d0be4df1f05e1374347d2665e07ff53b94c"
+            "proof_digest": "dfeff3d0e1a34fb5ca20435b9e973d1fd6bddc71838c4e4a597d5fb862da2899",
+            "proof_hmac": "7724c54e090a61d6764c0f493911efbcb94d47073ff86af2583246648d4dd79f"
           },
           "multi_factor_score": 0.5935799999999999,
           "top_contributing_factors": [
@@ -617,20 +617,20 @@
           }
         },
         {
-          "limit_id": 235,
+          "limit_id": 257,
           "sportsbook": "draftkings",
           "sport_id": "nba",
           "market_id": "totals",
           "bet_type": "straight",
           "previous_max": 500,
           "new_limit": 1500,
-          "increased_at": 1785535149,
+          "increased_at": 1785536319,
           "line_move_5m": null,
           "top_clv": [],
           "context": {
-            "id": 93,
+            "id": 104,
             "node_id": "019f92f9-2e3f-74f4-8262-720202846493",
-            "limit_record_id": 235,
+            "limit_record_id": 257,
             "active_players_7d": 48,
             "new_players_7d": 7,
             "total_handle_7d": 210000,
@@ -644,10 +644,10 @@
             "sportsbook_share": 0.44,
             "partner_profit_30d": 52000,
             "partner_roi_30d": 0.16,
-            "snapshot_at": 1785535150,
+            "snapshot_at": 1785536320,
             "proof_algorithm": "sha3-256",
-            "proof_digest": "87c4431c8ba43730e8397315e6c2cb64d4cad586510a6de9484dff7ec0e6d91e",
-            "proof_hmac": "a93521debb3951bdff4d6db487256cd659a9ce3b27a75c1cce2eb384288069a9"
+            "proof_digest": "767b44547084167205150b51d8060b24f3c7154599816f7804d7afabe7b9c493",
+            "proof_hmac": "d7d814dc100bff5441c5cd191d01df8c152e4c2b15f2db52128361057bb1336f"
           },
           "multi_factor_score": 0.61659,
           "top_contributing_factors": [
@@ -681,20 +681,20 @@
       "node_id": "019f930b-71e5-7729-91d6-a82589cf488c",
       "raises": [
         {
-          "limit_id": 241,
+          "limit_id": 263,
           "sportsbook": "hardrock",
           "sport_id": "nba",
           "market_id": "spread",
           "bet_type": "straight",
           "previous_max": 400,
           "new_limit": 1000,
-          "increased_at": 1785536349,
+          "increased_at": 1785537519,
           "line_move_5m": null,
           "top_clv": [],
           "context": {
-            "id": 88,
+            "id": 99,
             "node_id": "019f930b-71e5-7729-91d6-a82589cf488c",
-            "limit_record_id": 241,
+            "limit_record_id": 263,
             "active_players_7d": 42,
             "new_players_7d": 6,
             "total_handle_7d": 185000,
@@ -708,10 +708,10 @@
             "sportsbook_share": 0.41,
             "partner_profit_30d": 38000,
             "partner_roi_30d": 0.14,
-            "snapshot_at": 1785536350,
+            "snapshot_at": 1785537520,
             "proof_algorithm": "sha3-256",
-            "proof_digest": "8e48fab18f34cc2cac3abb9ed75b5fa363fe2df77190f760a3423c40bb60bf6e",
-            "proof_hmac": "0512823e01e7b60bdba221c6eb55f501ea5bd4dc80ca406076a504616b657c13"
+            "proof_digest": "755aa93900e8248a281b986222b3a6bba0087f6a58ed1aaf0fd112a78da69e6d",
+            "proof_hmac": "9337b1b54988e68299d09d0f24444995a51e2b7083d530791c846df132746fc9"
           },
           "multi_factor_score": 0.5935799999999999,
           "top_contributing_factors": [
@@ -740,20 +740,20 @@
           }
         },
         {
-          "limit_id": 239,
+          "limit_id": 261,
           "sportsbook": "draftkings",
           "sport_id": "nba",
           "market_id": "totals",
           "bet_type": "straight",
           "previous_max": 500,
           "new_limit": 1500,
-          "increased_at": 1785535149,
+          "increased_at": 1785536319,
           "line_move_5m": null,
           "top_clv": [],
           "context": {
-            "id": 94,
+            "id": 105,
             "node_id": "019f930b-71e5-7729-91d6-a82589cf488c",
-            "limit_record_id": 239,
+            "limit_record_id": 261,
             "active_players_7d": 48,
             "new_players_7d": 7,
             "total_handle_7d": 210000,
@@ -767,10 +767,10 @@
             "sportsbook_share": 0.44,
             "partner_profit_30d": 52000,
             "partner_roi_30d": 0.16,
-            "snapshot_at": 1785535150,
+            "snapshot_at": 1785536320,
             "proof_algorithm": "sha3-256",
-            "proof_digest": "4be85fb69f15efdf8dba45135c0f550fc810ada570f7fee0510ad416cf4c2bc0",
-            "proof_hmac": "173d5605ee12f09e2dd9c42686bf7d503664f36c83aa25ee17729f47773d0318"
+            "proof_digest": "df9a9c90f38338d5e37466cb8d3d1b6436e1df7993b3292ec2579eac571290cd",
+            "proof_hmac": "cb5a12119cde52af727866f597941be5b986c8284180f3ad9915c0c0eec4499e"
           },
           "multi_factor_score": 0.61659,
           "top_contributing_factors": [
@@ -1659,8 +1659,11 @@
         ],
         "zip_prefixes": [
           "021",
+          "070",
           "071",
-          "073"
+          "072",
+          "073",
+          "075"
         ],
         "top_market": "totals"
       },
@@ -1678,8 +1681,11 @@
           "NJ"
         ],
         "zip_prefixes": [
+          "070",
           "071",
+          "072",
           "073",
+          "075",
           "084"
         ],
         "top_market": "spread"
@@ -1759,8 +1765,11 @@
           "NJ"
         ],
         "zip_prefixes": [
+          "070",
           "071",
+          "072",
           "073",
+          "075",
           "084"
         ],
         "top_market": "spread"
@@ -1787,24 +1796,6 @@
     ],
     "zips": [
       {
-        "key": "073",
-        "changes": 10,
-        "raises": 9,
-        "decreases": 1,
-        "net_delta": 6700,
-        "avg_delta_pct": 148,
-        "avg_influence_score": 0.5912,
-        "partners": 2,
-        "nodes": 5,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "073"
-        ],
-        "top_market": "spread"
-      },
-      {
         "key": "071",
         "changes": 7,
         "raises": 6,
@@ -1821,6 +1812,24 @@
           "071"
         ],
         "top_market": "match_winner"
+      },
+      {
+        "key": "073",
+        "changes": 4,
+        "raises": 3,
+        "decreases": 1,
+        "net_delta": 1900,
+        "avg_delta_pct": 107.5,
+        "avg_influence_score": 0.5633,
+        "partners": 2,
+        "nodes": 2,
+        "states": [
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "073"
+        ],
+        "top_market": "over_under"
       },
       {
         "key": "021",
@@ -1857,6 +1866,60 @@
           "016"
         ],
         "top_market": "match_winner"
+      },
+      {
+        "key": "070",
+        "changes": 2,
+        "raises": 2,
+        "decreases": 0,
+        "net_delta": 1600,
+        "avg_delta_pct": 175,
+        "avg_influence_score": 0.6051,
+        "partners": 1,
+        "nodes": 1,
+        "states": [
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "070"
+        ],
+        "top_market": "spread"
+      },
+      {
+        "key": "072",
+        "changes": 2,
+        "raises": 2,
+        "decreases": 0,
+        "net_delta": 1600,
+        "avg_delta_pct": 175,
+        "avg_influence_score": 0.6051,
+        "partners": 1,
+        "nodes": 1,
+        "states": [
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "072"
+        ],
+        "top_market": "spread"
+      },
+      {
+        "key": "075",
+        "changes": 2,
+        "raises": 2,
+        "decreases": 0,
+        "net_delta": 1600,
+        "avg_delta_pct": 175,
+        "avg_influence_score": 0.6051,
+        "partners": 1,
+        "nodes": 1,
+        "states": [
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "075"
+        ],
+        "top_market": "spread"
       },
       {
         "key": "084",
@@ -1941,9 +2004,9 @@
         "node_type": "agent",
         "downline_depth": 1,
         "state_code": "NJ",
-        "location": "Jersey City",
-        "zip_code": "07302",
-        "zip_prefix": "073",
+        "location": "Hoboken",
+        "zip_code": "07030",
+        "zip_prefix": "070",
         "license_status": "active",
         "violation_count_30d": 0,
         "changes": 2,
@@ -1968,9 +2031,9 @@
         "node_type": "agent",
         "downline_depth": 1,
         "state_code": "NJ",
-        "location": "Jersey City",
-        "zip_code": "07302",
-        "zip_prefix": "073",
+        "location": "Elizabeth",
+        "zip_code": "07201",
+        "zip_prefix": "072",
         "license_status": "active",
         "violation_count_30d": 0,
         "changes": 2,
@@ -1995,9 +2058,9 @@
         "node_type": "agent",
         "downline_depth": 1,
         "state_code": "NJ",
-        "location": "Jersey City",
-        "zip_code": "07302",
-        "zip_prefix": "073",
+        "location": "Paterson",
+        "zip_code": "07501",
+        "zip_prefix": "075",
         "license_status": "active",
         "violation_count_30d": 0,
         "changes": 2,
@@ -2352,7 +2415,7 @@
   "accountProfiles": {
     "schemaVersion": 2,
     "kind": "account-limit-profiles",
-    "generatedAt": "2026-07-31T23:22:29.744Z",
+    "generatedAt": "2026-07-31T23:41:59.270Z",
     "summary": {
       "accounts": 27,
       "monitored": 7,
@@ -2592,7 +2655,7 @@
         "license": {
           "stateCode": "NJ",
           "status": "active",
-          "licenseNumber": "DOSSIER-NJ-ASH-partner",
+          "licenseNumber": "NJ-ASH",
           "grantedAt": "2026-07-31T23:19:42.000Z"
         },
         "policyCodes": [
@@ -2606,7 +2669,7 @@
             "fanduel",
             "hardrock"
           ],
-          "lastObservedAt": "2026-07-31T22:37:29.000Z",
+          "lastObservedAt": "2026-07-31T22:56:59.000Z",
           "raises": 3,
           "decreases": 0,
           "violations30d": 0
@@ -2614,13 +2677,13 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T23:22:29.744Z",
+            "at": "2026-07-31T23:41:59.270Z",
             "source": "regulatory_limits",
             "detail": "2 effective NJ policies"
           },
           {
             "kind": "profile-updated",
-            "at": "2026-07-31T23:22:29.716Z",
+            "at": "2026-07-31T23:41:59.211Z",
             "source": "partner_profile_bindings",
             "detail": "active · pp-019f92bf-40d6-72e3-aa09-f0a9b8a9"
           },
@@ -2632,19 +2695,19 @@
           },
           {
             "kind": "limit-observed",
-            "at": "2026-07-31T22:37:29.000Z",
+            "at": "2026-07-31T22:56:59.000Z",
             "source": "partner_account_limits",
             "detail": "fanduel nba/spread · $1200"
           },
           {
             "kind": "limit-observed",
-            "at": "2026-07-31T22:12:29.000Z",
+            "at": "2026-07-31T22:31:59.000Z",
             "source": "partner_account_limits",
             "detail": "hardrock nba/spread · $1000"
           },
           {
             "kind": "limit-observed",
-            "at": "2026-07-31T21:52:29.000Z",
+            "at": "2026-07-31T22:11:59.000Z",
             "source": "partner_account_limits",
             "detail": "draftkings nba/totals · $1500"
           }
@@ -2893,7 +2956,7 @@
         "license": {
           "stateCode": "NJ",
           "status": "active",
-          "licenseNumber": "DOSSIER-NJ-ASH-ASH-001",
+          "licenseNumber": "NJ-ASH-001",
           "grantedAt": "2026-07-31T23:19:42.000Z"
         },
         "policyCodes": [
@@ -2906,7 +2969,7 @@
             "draftkings",
             "hardrock"
           ],
-          "lastObservedAt": "2026-07-31T22:19:09.000Z",
+          "lastObservedAt": "2026-07-31T22:38:39.000Z",
           "raises": 2,
           "decreases": 0,
           "violations30d": 0
@@ -2914,13 +2977,13 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T23:22:29.744Z",
+            "at": "2026-07-31T23:41:59.270Z",
             "source": "regulatory_limits",
             "detail": "2 effective NJ policies"
           },
           {
             "kind": "profile-updated",
-            "at": "2026-07-31T23:22:29.717Z",
+            "at": "2026-07-31T23:41:59.213Z",
             "source": "partner_profile_bindings",
             "detail": "materialized · pp-019f92ee-5ef8-71e9-b207-5ae20c07"
           },
@@ -2932,19 +2995,19 @@
           },
           {
             "kind": "limit-observed",
-            "at": "2026-07-31T22:19:09.000Z",
+            "at": "2026-07-31T22:38:39.000Z",
             "source": "partner_account_limits",
             "detail": "hardrock nba/spread · $1000"
           },
           {
             "kind": "limit-observed",
-            "at": "2026-07-31T21:59:09.000Z",
+            "at": "2026-07-31T22:18:39.000Z",
             "source": "partner_account_limits",
             "detail": "draftkings nba/totals · $1500"
           },
           {
             "kind": "limit-observed",
-            "at": "2026-07-31T18:29:09.000Z",
+            "at": "2026-07-31T18:48:39.000Z",
             "source": "partner_account_limits",
             "detail": "hardrock nba/spread · $400"
           }
@@ -2962,13 +3025,13 @@
         "tone": "ok",
         "jurisdiction": {
           "stateCode": "NJ",
-          "location": "Jersey City",
-          "zipCode": "07302"
+          "location": "Hoboken",
+          "zipCode": "07030"
         },
         "license": {
           "stateCode": "NJ",
           "status": "active",
-          "licenseNumber": "DOSSIER-NJ-ASH-ASH-002",
+          "licenseNumber": "NJ-ASH-002",
           "grantedAt": "2026-07-31T23:19:42.000Z"
         },
         "policyCodes": [
@@ -2981,7 +3044,7 @@
             "draftkings",
             "hardrock"
           ],
-          "lastObservedAt": "2026-07-31T22:19:09.000Z",
+          "lastObservedAt": "2026-07-31T22:38:39.000Z",
           "raises": 2,
           "decreases": 0,
           "violations30d": 0
@@ -2989,13 +3052,13 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T23:22:29.744Z",
+            "at": "2026-07-31T23:41:59.270Z",
             "source": "regulatory_limits",
             "detail": "2 effective NJ policies"
           },
           {
             "kind": "profile-updated",
-            "at": "2026-07-31T23:22:29.717Z",
+            "at": "2026-07-31T23:41:59.215Z",
             "source": "partner_profile_bindings",
             "detail": "materialized · pp-019f92ee-5ef9-728d-950c-6c02a599"
           },
@@ -3007,19 +3070,19 @@
           },
           {
             "kind": "limit-observed",
-            "at": "2026-07-31T22:19:09.000Z",
+            "at": "2026-07-31T22:38:39.000Z",
             "source": "partner_account_limits",
             "detail": "hardrock nba/spread · $1000"
           },
           {
             "kind": "limit-observed",
-            "at": "2026-07-31T21:59:09.000Z",
+            "at": "2026-07-31T22:18:39.000Z",
             "source": "partner_account_limits",
             "detail": "draftkings nba/totals · $1500"
           },
           {
             "kind": "limit-observed",
-            "at": "2026-07-31T18:29:09.000Z",
+            "at": "2026-07-31T18:48:39.000Z",
             "source": "partner_account_limits",
             "detail": "hardrock nba/spread · $400"
           }
@@ -3173,13 +3236,13 @@
         "tone": "ok",
         "jurisdiction": {
           "stateCode": "NJ",
-          "location": "Jersey City",
-          "zipCode": "07302"
+          "location": "Elizabeth",
+          "zipCode": "07201"
         },
         "license": {
           "stateCode": "NJ",
           "status": "active",
-          "licenseNumber": "DOSSIER-NJ-ASH-ASH-003",
+          "licenseNumber": "NJ-ASH-003",
           "grantedAt": "2026-07-31T23:19:42.000Z"
         },
         "policyCodes": [
@@ -3192,7 +3255,7 @@
             "draftkings",
             "hardrock"
           ],
-          "lastObservedAt": "2026-07-31T22:19:09.000Z",
+          "lastObservedAt": "2026-07-31T22:38:39.000Z",
           "raises": 2,
           "decreases": 0,
           "violations30d": 0
@@ -3200,13 +3263,13 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T23:22:29.744Z",
+            "at": "2026-07-31T23:41:59.270Z",
             "source": "regulatory_limits",
             "detail": "2 effective NJ policies"
           },
           {
             "kind": "profile-updated",
-            "at": "2026-07-31T23:22:29.718Z",
+            "at": "2026-07-31T23:41:59.217Z",
             "source": "partner_profile_bindings",
             "detail": "materialized · pp-019f92f9-2e3f-74f4-8262-72020284"
           },
@@ -3218,19 +3281,19 @@
           },
           {
             "kind": "limit-observed",
-            "at": "2026-07-31T22:19:09.000Z",
+            "at": "2026-07-31T22:38:39.000Z",
             "source": "partner_account_limits",
             "detail": "hardrock nba/spread · $1000"
           },
           {
             "kind": "limit-observed",
-            "at": "2026-07-31T21:59:09.000Z",
+            "at": "2026-07-31T22:18:39.000Z",
             "source": "partner_account_limits",
             "detail": "draftkings nba/totals · $1500"
           },
           {
             "kind": "limit-observed",
-            "at": "2026-07-31T18:29:09.000Z",
+            "at": "2026-07-31T18:48:39.000Z",
             "source": "partner_account_limits",
             "detail": "hardrock nba/spread · $400"
           }
@@ -3248,13 +3311,13 @@
         "tone": "ok",
         "jurisdiction": {
           "stateCode": "NJ",
-          "location": "Jersey City",
-          "zipCode": "07302"
+          "location": "Paterson",
+          "zipCode": "07501"
         },
         "license": {
           "stateCode": "NJ",
           "status": "active",
-          "licenseNumber": "DOSSIER-NJ-ASH-ASH-004",
+          "licenseNumber": "NJ-ASH-004",
           "grantedAt": "2026-07-31T23:19:42.000Z"
         },
         "policyCodes": [
@@ -3267,7 +3330,7 @@
             "draftkings",
             "hardrock"
           ],
-          "lastObservedAt": "2026-07-31T22:19:09.000Z",
+          "lastObservedAt": "2026-07-31T22:38:39.000Z",
           "raises": 2,
           "decreases": 0,
           "violations30d": 0
@@ -3275,13 +3338,13 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T23:22:29.744Z",
+            "at": "2026-07-31T23:41:59.270Z",
             "source": "regulatory_limits",
             "detail": "2 effective NJ policies"
           },
           {
             "kind": "profile-updated",
-            "at": "2026-07-31T23:22:29.719Z",
+            "at": "2026-07-31T23:41:59.220Z",
             "source": "partner_profile_bindings",
             "detail": "materialized · pp-019f930b-71e5-7729-91d6-a82589cf"
           },
@@ -3293,19 +3356,19 @@
           },
           {
             "kind": "limit-observed",
-            "at": "2026-07-31T22:19:09.000Z",
+            "at": "2026-07-31T22:38:39.000Z",
             "source": "partner_account_limits",
             "detail": "hardrock nba/spread · $1000"
           },
           {
             "kind": "limit-observed",
-            "at": "2026-07-31T21:59:09.000Z",
+            "at": "2026-07-31T22:18:39.000Z",
             "source": "partner_account_limits",
             "detail": "draftkings nba/totals · $1500"
           },
           {
             "kind": "limit-observed",
-            "at": "2026-07-31T18:29:09.000Z",
+            "at": "2026-07-31T18:48:39.000Z",
             "source": "partner_account_limits",
             "detail": "hardrock nba/spread · $400"
           }
@@ -3468,7 +3531,7 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T23:22:29.744Z",
+            "at": "2026-07-31T23:41:59.270Z",
             "source": "regulatory_limits",
             "detail": "2 effective NJ policies"
           },
@@ -3542,7 +3605,7 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T23:22:29.744Z",
+            "at": "2026-07-31T23:41:59.270Z",
             "source": "regulatory_limits",
             "detail": "2 effective NJ policies"
           },
@@ -3623,7 +3686,7 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T23:22:29.744Z",
+            "at": "2026-07-31T23:41:59.270Z",
             "source": "regulatory_limits",
             "detail": "2 effective MA policies"
           },
@@ -3697,7 +3760,7 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T23:22:29.744Z",
+            "at": "2026-07-31T23:41:59.270Z",
             "source": "regulatory_limits",
             "detail": "2 effective MA policies"
           },
@@ -3771,7 +3834,7 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T23:22:29.744Z",
+            "at": "2026-07-31T23:41:59.270Z",
             "source": "regulatory_limits",
             "detail": "2 effective NJ policies"
           },
@@ -3858,7 +3921,7 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T23:22:29.744Z",
+            "at": "2026-07-31T23:41:59.270Z",
             "source": "regulatory_limits",
             "detail": "2 effective NJ policies"
           },
@@ -3938,7 +4001,7 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T23:22:29.744Z",
+            "at": "2026-07-31T23:41:59.270Z",
             "source": "regulatory_limits",
             "detail": "2 effective NJ policies"
           },
@@ -4012,7 +4075,7 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T23:22:29.744Z",
+            "at": "2026-07-31T23:41:59.270Z",
             "source": "regulatory_limits",
             "detail": "2 effective MA policies"
           },

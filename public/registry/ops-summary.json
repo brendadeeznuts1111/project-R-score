@@ -1,6 +1,6 @@
 {
   "source": "live",
-  "generated": "2026-07-31T23:22:29.751Z",
+  "generated": "2026-07-31T23:41:59.281Z",
   "liquidity": {
     "total": 108210
   },
@@ -157,11 +157,11 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "5284dda1b4077d7767749a534bb67ae1a7979eb45a457488ffb5fa8fd73d5cd5",
+    "proofHash": "1149bf2e85bb074f2a6280c9ab8d5319e1fe959f6beebdf533d39a3600f94153",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-31T23:22:29.753Z"
+    "timestamp": "2026-07-31T23:41:59.283Z"
   },
   "registryClient": {
     "available": true,
@@ -656,18 +656,18 @@
         "name": "TOC ASH-003"
       },
       {
-        "treeNodeId": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
-        "profileKey": "pp-019f92ee-5ef8-71e9-b207-5ae20c07",
-        "partnerTemplate": "default-prospect",
-        "lifecycleStatus": "materialized",
-        "name": "TOC ASH-001"
-      },
-      {
         "treeNodeId": "019f92ee-5ef9-728d-950c-6c02a59903a2",
         "profileKey": "pp-019f92ee-5ef9-728d-950c-6c02a599",
         "partnerTemplate": "default-prospect",
         "lifecycleStatus": "materialized",
         "name": "TOC ASH-002"
+      },
+      {
+        "treeNodeId": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
+        "profileKey": "pp-019f92ee-5ef8-71e9-b207-5ae20c07",
+        "partnerTemplate": "default-prospect",
+        "lifecycleStatus": "materialized",
+        "name": "TOC ASH-001"
       },
       {
         "treeNodeId": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
@@ -714,7 +714,7 @@
     ]
   },
   "channels": {
-    "pending": 504,
+    "pending": 522,
     "failed": 0,
     "sent": 1039,
     "oldestPendingAt": "2026-07-28T17:03:21.207Z",
@@ -821,9 +821,9 @@
     "settledViaFullLoop": 29,
     "outboxSent": 1039,
     "outboxFailed": 0,
-    "outboxPending": 504,
-    "oldestPendingAgeSec": 281948,
-    "manualStepsPerCycle": 504,
+    "outboxPending": 522,
+    "oldestPendingAgeSec": 283118,
+    "manualStepsPerCycle": 522,
     "loopCompletionRate": 1,
     "distinctPlaysDispatched": 7,
     "settledPlaysViaFullLoop": 7,
@@ -1520,7 +1520,7 @@
   },
   "limitChanges": [
     {
-      "limit_id": 225,
+      "limit_id": 247,
       "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
       "sportsbook": "fanduel",
       "sport_id": "nba",
@@ -1528,7 +1528,7 @@
       "bet_type": "straight",
       "previous_max": 800,
       "new_limit": 1200,
-      "increased_at": 1785537449,
+      "increased_at": 1785538619,
       "direction": "up",
       "message": "fanduel nba/spread straight: $800 → $1200",
       "context_available": true,
@@ -1547,7 +1547,7 @@
       }
     },
     {
-      "limit_id": 229,
+      "limit_id": 251,
       "node_id": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
       "sportsbook": "hardrock",
       "sport_id": "nba",
@@ -1555,7 +1555,7 @@
       "bet_type": "straight",
       "previous_max": 400,
       "new_limit": 1000,
-      "increased_at": 1785536349,
+      "increased_at": 1785537519,
       "direction": "up",
       "message": "hardrock nba/spread straight: $400 → $1000",
       "context_available": true,
@@ -1574,7 +1574,7 @@
       }
     },
     {
-      "limit_id": 233,
+      "limit_id": 255,
       "node_id": "019f92ee-5ef9-728d-950c-6c02a59903a2",
       "sportsbook": "hardrock",
       "sport_id": "nba",
@@ -1582,7 +1582,7 @@
       "bet_type": "straight",
       "previous_max": 400,
       "new_limit": 1000,
-      "increased_at": 1785536349,
+      "increased_at": 1785537519,
       "direction": "up",
       "message": "hardrock nba/spread straight: $400 → $1000",
       "context_available": true,
@@ -1601,7 +1601,7 @@
       }
     },
     {
-      "limit_id": 237,
+      "limit_id": 259,
       "node_id": "019f92f9-2e3f-74f4-8262-720202846493",
       "sportsbook": "hardrock",
       "sport_id": "nba",
@@ -1609,7 +1609,7 @@
       "bet_type": "straight",
       "previous_max": 400,
       "new_limit": 1000,
-      "increased_at": 1785536349,
+      "increased_at": 1785537519,
       "direction": "up",
       "message": "hardrock nba/spread straight: $400 → $1000",
       "context_available": true,
@@ -1628,7 +1628,7 @@
       }
     },
     {
-      "limit_id": 241,
+      "limit_id": 263,
       "node_id": "019f930b-71e5-7729-91d6-a82589cf488c",
       "sportsbook": "hardrock",
       "sport_id": "nba",
@@ -1636,7 +1636,7 @@
       "bet_type": "straight",
       "previous_max": 400,
       "new_limit": 1000,
-      "increased_at": 1785536349,
+      "increased_at": 1785537519,
       "direction": "up",
       "message": "hardrock nba/spread straight: $400 → $1000",
       "context_available": true,
@@ -1655,7 +1655,7 @@
       }
     },
     {
-      "limit_id": 223,
+      "limit_id": 245,
       "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
       "sportsbook": "hardrock",
       "sport_id": "nba",
@@ -1663,7 +1663,7 @@
       "bet_type": "straight",
       "previous_max": 400,
       "new_limit": 1000,
-      "increased_at": 1785535949,
+      "increased_at": 1785537119,
       "direction": "up",
       "message": "hardrock nba/spread straight: $400 → $1000",
       "context_available": true,
@@ -1682,7 +1682,7 @@
       }
     },
     {
-      "limit_id": 227,
+      "limit_id": 249,
       "node_id": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
       "sportsbook": "draftkings",
       "sport_id": "nba",
@@ -1690,7 +1690,7 @@
       "bet_type": "straight",
       "previous_max": 500,
       "new_limit": 1500,
-      "increased_at": 1785535149,
+      "increased_at": 1785536319,
       "direction": "up",
       "message": "draftkings nba/totals straight: $500 → $1500",
       "context_available": true,
@@ -1709,7 +1709,7 @@
       }
     },
     {
-      "limit_id": 231,
+      "limit_id": 253,
       "node_id": "019f92ee-5ef9-728d-950c-6c02a59903a2",
       "sportsbook": "draftkings",
       "sport_id": "nba",
@@ -1717,7 +1717,7 @@
       "bet_type": "straight",
       "previous_max": 500,
       "new_limit": 1500,
-      "increased_at": 1785535149,
+      "increased_at": 1785536319,
       "direction": "up",
       "message": "draftkings nba/totals straight: $500 → $1500",
       "context_available": true,
@@ -1736,7 +1736,7 @@
       }
     },
     {
-      "limit_id": 235,
+      "limit_id": 257,
       "node_id": "019f92f9-2e3f-74f4-8262-720202846493",
       "sportsbook": "draftkings",
       "sport_id": "nba",
@@ -1744,7 +1744,7 @@
       "bet_type": "straight",
       "previous_max": 500,
       "new_limit": 1500,
-      "increased_at": 1785535149,
+      "increased_at": 1785536319,
       "direction": "up",
       "message": "draftkings nba/totals straight: $500 → $1500",
       "context_available": true,
@@ -1763,7 +1763,7 @@
       }
     },
     {
-      "limit_id": 239,
+      "limit_id": 261,
       "node_id": "019f930b-71e5-7729-91d6-a82589cf488c",
       "sportsbook": "draftkings",
       "sport_id": "nba",
@@ -1771,7 +1771,7 @@
       "bet_type": "straight",
       "previous_max": 500,
       "new_limit": 1500,
-      "increased_at": 1785535149,
+      "increased_at": 1785536319,
       "direction": "up",
       "message": "draftkings nba/totals straight: $500 → $1500",
       "context_available": true,
@@ -1790,7 +1790,7 @@
       }
     },
     {
-      "limit_id": 221,
+      "limit_id": 243,
       "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
       "sportsbook": "draftkings",
       "sport_id": "nba",
@@ -1798,7 +1798,7 @@
       "bet_type": "straight",
       "previous_max": 500,
       "new_limit": 1500,
-      "increased_at": 1785534749,
+      "increased_at": 1785535919,
       "direction": "up",
       "message": "draftkings nba/totals straight: $500 → $1500",
       "context_available": true,
@@ -2159,8 +2159,11 @@
           "NJ"
         ],
         "zip_prefixes": [
+          "070",
           "071",
+          "072",
           "073",
+          "075",
           "084"
         ],
         "top_market": "spread"
@@ -2181,8 +2184,11 @@
         ],
         "zip_prefixes": [
           "021",
+          "070",
           "071",
-          "073"
+          "072",
+          "073",
+          "075"
         ],
         "top_market": "totals"
       },
@@ -2261,8 +2267,11 @@
           "NJ"
         ],
         "zip_prefixes": [
+          "070",
           "071",
+          "072",
           "073",
+          "075",
           "084"
         ],
         "top_market": "spread"
@@ -2289,24 +2298,6 @@
     ],
     "zips": [
       {
-        "key": "073",
-        "changes": 10,
-        "raises": 9,
-        "decreases": 1,
-        "net_delta": 6700,
-        "avg_delta_pct": 148,
-        "avg_influence_score": 0.5321,
-        "partners": 2,
-        "nodes": 5,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "073"
-        ],
-        "top_market": "spread"
-      },
-      {
         "key": "071",
         "changes": 7,
         "raises": 6,
@@ -2323,6 +2314,24 @@
           "071"
         ],
         "top_market": "match_winner"
+      },
+      {
+        "key": "073",
+        "changes": 4,
+        "raises": 3,
+        "decreases": 1,
+        "net_delta": 1900,
+        "avg_delta_pct": 107.5,
+        "avg_influence_score": 0.4225,
+        "partners": 2,
+        "nodes": 2,
+        "states": [
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "073"
+        ],
+        "top_market": "over_under"
       },
       {
         "key": "021",
@@ -2359,6 +2368,60 @@
           "016"
         ],
         "top_market": "match_winner"
+      },
+      {
+        "key": "070",
+        "changes": 2,
+        "raises": 2,
+        "decreases": 0,
+        "net_delta": 1600,
+        "avg_delta_pct": 175,
+        "avg_influence_score": 0.6051,
+        "partners": 1,
+        "nodes": 1,
+        "states": [
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "070"
+        ],
+        "top_market": "spread"
+      },
+      {
+        "key": "072",
+        "changes": 2,
+        "raises": 2,
+        "decreases": 0,
+        "net_delta": 1600,
+        "avg_delta_pct": 175,
+        "avg_influence_score": 0.6051,
+        "partners": 1,
+        "nodes": 1,
+        "states": [
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "072"
+        ],
+        "top_market": "spread"
+      },
+      {
+        "key": "075",
+        "changes": 2,
+        "raises": 2,
+        "decreases": 0,
+        "net_delta": 1600,
+        "avg_delta_pct": 175,
+        "avg_influence_score": 0.6051,
+        "partners": 1,
+        "nodes": 1,
+        "states": [
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "075"
+        ],
+        "top_market": "spread"
       },
       {
         "key": "084",
@@ -2443,9 +2506,9 @@
         "node_type": "agent",
         "downline_depth": 1,
         "state_code": "NJ",
-        "location": "Jersey City",
-        "zip_code": "07302",
-        "zip_prefix": "073",
+        "location": "Hoboken",
+        "zip_code": "07030",
+        "zip_prefix": "070",
         "license_status": "active",
         "violation_count_30d": 0,
         "changes": 2,
@@ -2470,9 +2533,9 @@
         "node_type": "agent",
         "downline_depth": 1,
         "state_code": "NJ",
-        "location": "Jersey City",
-        "zip_code": "07302",
-        "zip_prefix": "073",
+        "location": "Elizabeth",
+        "zip_code": "07201",
+        "zip_prefix": "072",
         "license_status": "active",
         "violation_count_30d": 0,
         "changes": 2,
@@ -2497,9 +2560,9 @@
         "node_type": "agent",
         "downline_depth": 1,
         "state_code": "NJ",
-        "location": "Jersey City",
-        "zip_code": "07302",
-        "zip_prefix": "073",
+        "location": "Paterson",
+        "zip_code": "07501",
+        "zip_prefix": "075",
         "license_status": "active",
         "violation_count_30d": 0,
         "changes": 2,
