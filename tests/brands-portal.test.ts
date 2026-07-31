@@ -12,18 +12,30 @@ describe('brand keymap portal', () => {
       kind: 'brand-keymap',
       path: '/registry/brand-keymap.json',
       summary: {
-        brands: 58,
+        brands: 59,
         domains: 9,
+      },
+      sources: {
+        colorKernel: 'public/portal/theme.jsonc',
+        domainGlossary: 'public/registry/domain-glossary.json',
       },
       governance: {
         stagedGate: 'bun tools/branded-id-check.ts --staged --strict',
       },
     });
-    expect(payload.brands).toHaveLength(58);
+    expect(payload.brands).toHaveLength(59);
     expect(payload.brands.some((b: { name: string }) => b.name === 'HostId')).toBe(true);
     expect(payload.brands.some((b: { name: string }) => b.name === 'AccessDomainId')).toBe(true);
     expect(payload.brands.some((b: { name: string }) => b.name === 'PagesProjectId')).toBe(true);
     expect(payload.brands.some((b: { name: string }) => b.name === 'SurfaceStatusCode')).toBe(true);
+    expect(payload.brands.some((b: { name: string }) => b.name === 'SportsbookId')).toBe(true);
+    const sportsbook = payload.brands.find((b: { name: string }) => b.name === 'SportsbookId');
+    expect(sportsbook?.glossaryConcepts).toContain('scrape.book');
+    const stateCode = payload.brands.find((b: { name: string }) => b.name === 'StateCode');
+    expect(stateCode?.glossaryConcepts).toContain('scrape.jurisdiction');
+    expect(payload.domains.every((d: { color: string }) => /^#[0-9a-f]{6}$/i.test(d.color))).toBe(
+      true
+    );
     expect(payload.projects.length).toBeGreaterThan(0);
     expect(payload.projects.some(project => project.status === 'local-pattern')).toBe(true);
   });
@@ -39,7 +51,14 @@ describe('brand keymap portal', () => {
     expect(html).toContain('/portal/topbar.js');
     expect(html).toContain('/portal/components/footer.js');
     expect(html).toContain('/portal/brands/brands-board.js');
+    expect(html).toContain('var(--tone-ok)');
+    expect(html).toContain('var(--tone-warn)');
+    expect(html).toContain('var(--tone-bad)');
+    expect(html).toContain('var(--tone-info)');
     expect(script).toContain("const KEYMAP_URL = '/registry/brand-keymap.json'");
+    expect(script).toContain('domainPill');
+    expect(script).toContain('glossaryLinks');
+    expect(script).toContain('/portal/glossary/#glossary:');
     expect(script).not.toContain("fetch('/api/health");
   });
 

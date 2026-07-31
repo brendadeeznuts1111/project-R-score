@@ -24,6 +24,7 @@ export type PartnerOpsColorKey = keyof typeof PARTNER_OPS_COLORS;
 
 export type PartnerOpsColorWire = {
   colorKey: PartnerOpsColorKey;
+  token: `--partner-ops-${PartnerOpsColorKey}`;
   hex: string;
   css: string;
 };
@@ -90,6 +91,14 @@ export const PARTNER_OPS_CONCEPT_COLORS = {
   'telegram.topic.alerts': 'trading',
   'telegram.topic.liquidity': 'polymarket',
   'telegram.topic.accounting': 'tennis',
+
+  // Shared glossary concepts projected onto the partners control plane.
+  'telegram.handshake': 'kalshi',
+  'telegram.membership': 'pinnacle',
+  'ops.limits.account': 'kalshi',
+  'ops.limits.effective_limit': 'research',
+  'ops.limits.monitoring_status': 'middleware',
+  'ops.limits.evidence_trace': 'polymarket',
 } as const satisfies Readonly<Record<string, PartnerOpsColorKey>>;
 
 export type PartnerOpsConceptColorId = keyof typeof PARTNER_OPS_CONCEPT_COLORS;
@@ -107,7 +116,12 @@ export function partnerOpsCssColor(key: PartnerOpsColorKey): string {
 }
 
 export function partnerOpsColorWire(key: PartnerOpsColorKey): PartnerOpsColorWire {
-  return { colorKey: key, hex: partnerOpsHexColor(key), css: partnerOpsCssColor(key) };
+  return {
+    colorKey: key,
+    token: `--partner-ops-${key}`,
+    hex: partnerOpsHexColor(key),
+    css: partnerOpsCssColor(key),
+  };
 }
 
 export function partnerOpsConceptColorWire(

@@ -23,8 +23,27 @@ function code(value) {
   return text('code', value);
 }
 
-function pill(value) {
-  return text('span', value, `brand-pill ${value}`);
+function pill(value, className = value) {
+  return text('span', value, `brand-pill ${className}`);
+}
+
+function domainPill(domain, color) {
+  const node = pill(domain, 'domain');
+  if (color) node.style.setProperty('--domain-color', color);
+  return node;
+}
+
+function glossaryLinks(conceptIds) {
+  const wrap = document.createElement('div');
+  for (const id of conceptIds ?? []) {
+    const link = document.createElement('a');
+    link.className = 'brand-glossary-link';
+    link.href = `/portal/glossary/#glossary:${encodeURIComponent(id)}`;
+    link.textContent = id;
+    link.title = `Open ${id} in domain glossary`;
+    wrap.append(link);
+  }
+  return wrap;
 }
 
 function stat(value, label) {
@@ -91,6 +110,7 @@ function brandMatches(brand, query, domain, status) {
     brand.description,
     brand.module,
     ...(brand.mint ?? []),
+    ...(brand.glossaryConcepts ?? []),
   ]
     .join(' ')
     .toLowerCase();
@@ -111,10 +131,13 @@ function renderBrands(payload) {
       name.append(
         text('span', brand.name, 'brand-name'),
         document.createElement('br'),
-        pill(brand.domain)
+        domainPill(brand.domain, brand.color)
       );
       const purpose = text('div', brand.description, 'brand-description');
       purpose.append(document.createElement('br'), code(brand.module));
+      if (brand.glossaryConcepts?.length) {
+        purpose.append(document.createElement('br'), glossaryLinks(brand.glossaryConcepts));
+      }
       const coverage = document.createElement('div');
       coverage.append(
         pill(brand.coverage?.status ?? 'unknown'),

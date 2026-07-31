@@ -107,3 +107,8 @@ jobs:
       # MA/NJ compliance board bake + portal/route/health freeze tests (offline-safe).
       - name: Compliance verify
         run: bun run compliance:verify
+
+      # Partner-ops governance: registry bake + portal integration (routes → anchors →
+      # tables → tags → telegram). Kalshi-bot glossary cores gated on the submodule side.
+      - name: Partner-ops governance
+        run: bun run partners:governance

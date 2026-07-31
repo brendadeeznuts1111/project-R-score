@@ -31,22 +31,45 @@ import { sportsBettingGlossaryConcepts } from '../lib/operations/sports-betting-
 import { sportsbookOpeningBaselineGlossaryConcepts } from '../lib/operations/sportsbook-opening-baseline.ts';
 import { telegramGlossaryConcepts } from '../lib/telegram/telegram-glossary.ts';
 import { partnerOpsGlossaryConcepts } from '../lib/telegram/partner-ops-glossary.ts';
-import { FW_COLORS, type FactoryWagerColor } from '../lib/theme/colors.ts';
+import {
+  PARTNER_OPS_CONCEPT_COLORS,
+  partnerOpsConceptColorWire,
+} from '../lib/telegram/partner-ops-color-kernel.ts';
+import { portalTheme } from '../lib/portal/theme.ts';
 
 export const DOMAIN_GLOSSARY_SOURCE_PATH = 'Kalshi-bot/research/registry/glossary-dump.json';
 export const DOMAIN_GLOSSARY_PATH = 'public/registry/domain-glossary.json';
 export const DOMAIN_GLOSSARY_URL = '/registry/domain-glossary.json';
 
+/**
+ * Glossary category → portal design-kernel colorKey.
+ * Hex values come from theme.jsonc (dark) plus the closed partner-ops extended
+ * keys (purple/deep blue) so chips match `/portal` tone tokens and Telegram
+ * partner-ops kernels instead of the older FW_COLORS Tailwind palette.
+ */
 const CATEGORY_COLOR_KEYS = {
-  market: 'primary',
-  model: 'secondary',
-  tournament: 'success',
-  warehouse: 'accent',
-  trading: 'warning',
-  ui: 'info',
-  pipeline: 'error',
+  market: 'accent',
+  model: 'purple',
+  tournament: 'green',
+  warehouse: 'blueDeep',
+  trading: 'yellow',
+  ui: 'accent',
+  pipeline: 'red',
   other: 'muted',
-} as const satisfies Record<string, FactoryWagerColor>;
+} as const satisfies Record<string, string>;
+
+/** Closed portal + partner-ops palette used for category tokens. */
+const PORTAL_KERNEL_PALETTE = {
+  accent: portalTheme.dark.accent,
+  green: portalTheme.dark.green,
+  yellow: portalTheme.dark.yellow,
+  red: portalTheme.dark.red,
+  muted: portalTheme.dark.textDim,
+  /** partner-ops `pinnacle` — model / calibration */
+  purple: '#a371f7',
+  /** partner-ops `polymarket` — warehouse / profiles */
+  blueDeep: '#1f6feb',
+} as const satisfies Record<(typeof CATEGORY_COLOR_KEYS)[keyof typeof CATEGORY_COLOR_KEYS], string>;
 
 type CanonicalConcept = {
   id: string; // brand-ok — glossary concept key, not an entity identity
@@ -236,17 +259,27 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
   ).map(category => {
     const colorKey = CATEGORY_COLOR_KEYS[category.id as keyof typeof CATEGORY_COLOR_KEYS];
     if (!colorKey) throw new Error(`Missing color token for glossary category "${category.id}"`);
+    const paletteHex = PORTAL_KERNEL_PALETTE[colorKey];
+    if (!paletteHex) throw new Error(`Missing portal kernel hex for colorKey "${colorKey}"`);
     return {
       ...category,
       colorKey,
-      color: normalizeColor(FW_COLORS[colorKey]),
+      color: normalizeColor(paletteHex),
     };
   });
   const colorByCategory = new Map(categories.map(category => [category.id, category.color]));
-  const concepts = combinedConcepts.map(concept => ({
-    ...concept,
-    color: colorByCategory.get(concept.category),
-  }));
+  const concepts = combinedConcepts.map(concept => {
+    // Partner-ops closed palette wins over category defaults so chips match the
+    // Telegram partner-ops kernel (tennis/kalshi/…), not generic category hues.
+    const partnerHex =
+      concept.id in PARTNER_OPS_CONCEPT_COLORS ? partnerOpsConceptColorWire(concept.id).hex : null;
+    return {
+      ...concept,
+      color: partnerHex
+        ? normalizeColor(partnerHex)
+        : (colorByCategory.get(concept.category) ?? null),
+    };
+  });
 
   return {
     schemaVersion: 2,
@@ -271,7 +304,7 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
       partnerOpsColorKernel: 'lib/telegram/partner-ops-color-kernel.ts',
       canonicalDump: DOMAIN_GLOSSARY_SOURCE_PATH,
       portalProjection: 'tools/domain-glossary.ts',
-      colorKernel: 'lib/theme/colors.ts',
+      colorKernel: 'public/portal/theme.jsonc',
     },
     surfaces: PORTAL_GLOSSARY_SURFACES,
     summary: {

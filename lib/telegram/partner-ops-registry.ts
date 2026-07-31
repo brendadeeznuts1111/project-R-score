@@ -112,6 +112,32 @@ export type PartnersOpsPartner = {
     freeRoll: { total: number; used: number };
     ledger: PartnerOpsEvent[];
   };
+  tracking: {
+    accounts: {
+      total: number;
+      ready: number;
+      deferred: number;
+      blocked: number;
+    };
+    limits: {
+      tracked: number;
+      missing: number;
+      coveragePct: number;
+    };
+    communication: {
+      chatLinked: boolean;
+      topicsConfigured: number;
+      topicsRequired: number;
+      ready: boolean;
+    };
+    accounting: {
+      depositVolume: number;
+      creditVolume: number;
+      ledgerEvents: number;
+      freeRollPercent: number;
+      freeRollApplied: number;
+    };
+  };
 };
 
 export type PartnersOpsRegistry = {
@@ -123,6 +149,7 @@ export type PartnersOpsRegistry = {
     seatCapitalDesk: '/registry/seat-capital-desk.json';
     handshake: '/registry/telegram-handshake.json';
     scrapeWireTaxonomy: '/registry/scrape-wire-taxonomy.json';
+    limitPatterns: '/registry/limit-raises.json';
     events: typeof PARTNERS_OPS_EVENTS_REL;
   };
   glossary: {
@@ -138,6 +165,11 @@ export type PartnersOpsRegistry = {
     partners: number;
     outs: number;
     books: number;
+    accounts: number;
+    readyAccounts: number;
+    trackedLimits: number;
+    communicationReady: number;
+    ledgerEvents: number;
     incompleteOuts: number;
     validationErrors: number;
     validationWarnings: number;
@@ -201,6 +233,11 @@ function parseFreeRollPercent(raw: string | undefined): number | null {
   if (!m) return null;
   const n = Number(m[1]);
   return Number.isFinite(n) ? n : null;
+}
+
+function hasTrackedLimit(raw: string): boolean {
+  const value = raw.trim().toLowerCase();
+  return value !== '' && value !== '—' && value !== '-' && value !== 'tbd' && value !== 'unknown';
 }
 
 export function classifyBookType(name: string, scrapeIds: Set<string>): BookType {
@@ -549,6 +586,38 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
       };
     });
 
+    const topicIds = {
+      general: topicMap.general ?? null,
+      ops: topicMap.ops ?? null,
+      alerts: topicMap.alerts ?? null,
+      liquidity: topicMap['liquidity/outs'] ?? topicMap.liquidity ?? null,
+      accounting: topicMap.accounting ?? null,
+    };
+    const chatId = hs?.chatId != null ? String(hs.chatId) : null;
+    const accounting = {
+      fundStatus: String(row.fundStatus || 'unknown'),
+      incompleteOuts: Number(row.incompleteOuts ?? outs.filter(o => o.incomplete).length),
+      deposits,
+      credits,
+      freeRoll: {
+        total: outs.reduce((s, o) => s + (o.freeRollPercent ?? 0), 0),
+        used: freeRollApplied.length,
+      },
+      ledger: partnerEvents,
+    };
+    const readyAccounts = outs.filter(o => o.status === 'ready' || o.status === 'funded').length;
+    const deferredAccounts = outs.filter(
+      o => o.status === 'deferred' || o.status === 'partial'
+    ).length;
+    const blockedAccounts = outs.filter(
+      o => o.status === 'blocked' || o.status === 'paused'
+    ).length;
+    const trackedLimits = outs.filter(o => hasTrackedLimit(o.maxBet)).length;
+    const topicsConfigured = Object.values(topicIds).filter(value =>
+      Number.isInteger(value)
+    ).length;
+    const topicsRequired = Object.keys(topicIds).length;
+
     partners.push({
       code,
       callSign,
@@ -556,26 +625,36 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
       phaseConceptId,
       phaseColor: partnerOpsConceptColorWire(phaseConceptId),
       telegram: {
-        chatId: hs?.chatId != null ? String(hs.chatId) : null,
-        topicIds: {
-          general: topicMap.general ?? null,
-          ops: topicMap.ops ?? null,
-          alerts: topicMap.alerts ?? null,
-          liquidity: topicMap['liquidity/outs'] ?? topicMap.liquidity ?? null,
-          accounting: topicMap.accounting ?? null,
-        },
+        chatId,
+        topicIds,
       },
       outs,
-      accounting: {
-        fundStatus: String(row.fundStatus || 'unknown'),
-        incompleteOuts: Number(row.incompleteOuts ?? outs.filter(o => o.incomplete).length),
-        deposits,
-        credits,
-        freeRoll: {
-          total: outs.reduce((s, o) => s + (o.freeRollPercent ?? 0), 0),
-          used: freeRollApplied.length,
+      accounting,
+      tracking: {
+        accounts: {
+          total: outs.length,
+          ready: readyAccounts,
+          deferred: deferredAccounts,
+          blocked: blockedAccounts,
         },
-        ledger: partnerEvents,
+        limits: {
+          tracked: trackedLimits,
+          missing: Math.max(0, outs.length - trackedLimits),
+          coveragePct: outs.length === 0 ? 0 : Math.round((trackedLimits / outs.length) * 100),
+        },
+        communication: {
+          chatLinked: chatId !== null,
+          topicsConfigured,
+          topicsRequired,
+          ready: chatId !== null && topicsConfigured === topicsRequired,
+        },
+        accounting: {
+          depositVolume: deposits.reduce((sum, entry) => sum + entry.amount, 0),
+          creditVolume: credits.reduce((sum, entry) => sum + entry.amount, 0),
+          ledgerEvents: partnerEvents.length,
+          freeRollPercent: accounting.freeRoll.total,
+          freeRollApplied: accounting.freeRoll.used,
+        },
       },
     });
   }
@@ -588,7 +667,9 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
     'page.partners',
     'section.partnersTelegram',
     'section.partnersAccounting',
+    'section.partnersAccountsLimits',
     'section.partnersDeposits',
+    'section.partnersPartnerMessage',
     'scrape.book',
   ]);
   const issues = validatePartnersOpsRegistry(partners, knownGlossaryIds);
@@ -604,6 +685,7 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
       seatCapitalDesk: '/registry/seat-capital-desk.json',
       handshake: '/registry/telegram-handshake.json',
       scrapeWireTaxonomy: '/registry/scrape-wire-taxonomy.json',
+      limitPatterns: '/registry/limit-raises.json',
       events: PARTNERS_OPS_EVENTS_REL,
     },
     glossary: {
@@ -619,6 +701,14 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
       partners: partners.length,
       outs: partners.reduce((s, p) => s + p.outs.length, 0),
       books: books.length,
+      accounts: partners.reduce((sum, partner) => sum + partner.tracking.accounts.total, 0),
+      readyAccounts: partners.reduce((sum, partner) => sum + partner.tracking.accounts.ready, 0),
+      trackedLimits: partners.reduce((sum, partner) => sum + partner.tracking.limits.tracked, 0),
+      communicationReady: partners.filter(partner => partner.tracking.communication.ready).length,
+      ledgerEvents: partners.reduce(
+        (sum, partner) => sum + partner.tracking.accounting.ledgerEvents,
+        0
+      ),
       incompleteOuts,
       validationErrors: issues.filter(i => i.level === 'error').length,
       validationWarnings: issues.filter(i => i.level === 'warn').length,

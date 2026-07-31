@@ -1,12 +1,13 @@
 {
   "schema": "factorywager.partners-ops.v2",
   "version": "2",
-  "generatedAt": "2026-07-31T14:04:15.922Z",
+  "generatedAt": "2026-07-31T15:32:49.114Z",
   "path": "/registry/partners-ops.json",
   "sources": {
     "seatCapitalDesk": "/registry/seat-capital-desk.json",
     "handshake": "/registry/telegram-handshake.json",
     "scrapeWireTaxonomy": "/registry/scrape-wire-taxonomy.json",
+    "limitPatterns": "/registry/limit-raises.json",
     "events": "reports/telegram/partners-events.jsonl"
   },
   "glossary": {
@@ -58,6 +59,10 @@
       "telegram.topic.liquidity",
       "telegram.topic.accounting",
       "partner.ops.event",
+      "ops.limits.account",
+      "ops.limits.effective_limit",
+      "ops.limits.monitoring_status",
+      "ops.limits.evidence_trace",
       "telegram.wire",
       "telegram.package_group",
       "telegram.forum.topic",
@@ -77,200 +82,275 @@
     "partner.phase.operator_ready": {
       "conceptId": "partner.phase.operator_ready",
       "colorKey": "tennis",
+      "token": "--partner-ops-tennis",
       "hex": "#3FB950",
       "css": "#3fb950"
     },
     "partner.phase.onboarding": {
       "conceptId": "partner.phase.onboarding",
       "colorKey": "middleware",
+      "token": "--partner-ops-middleware",
       "hex": "#D29922",
       "css": "#d29922"
     },
     "partner.phase.incomplete": {
       "conceptId": "partner.phase.incomplete",
       "colorKey": "trading",
+      "token": "--partner-ops-trading",
       "hex": "#F85149",
       "css": "#f85149"
     },
     "partner.phase.paused": {
       "conceptId": "partner.phase.paused",
       "colorKey": "env",
+      "token": "--partner-ops-env",
       "hex": "#8B949E",
       "css": "#8b949e"
     },
     "book.type.legal": {
       "conceptId": "book.type.legal",
       "colorKey": "kalshi",
+      "token": "--partner-ops-kalshi",
       "hex": "#58A6FF",
       "css": "#58a6ff"
     },
     "book.type.offshore": {
       "conceptId": "book.type.offshore",
       "colorKey": "polymarket",
+      "token": "--partner-ops-polymarket",
       "hex": "#1F6FEB",
       "css": "#1f6feb"
     },
     "book.type.pph": {
       "conceptId": "book.type.pph",
       "colorKey": "pinnacle",
+      "token": "--partner-ops-pinnacle",
       "hex": "#A371F7",
       "css": "#a371f7"
     },
     "book.type.crypto": {
       "conceptId": "book.type.crypto",
       "colorKey": "middleware",
+      "token": "--partner-ops-middleware",
       "hex": "#D29922",
       "css": "#d29922"
     },
     "deposit.method.venmo": {
       "conceptId": "deposit.method.venmo",
       "colorKey": "trading",
+      "token": "--partner-ops-trading",
       "hex": "#F85149",
       "css": "#f85149"
     },
     "deposit.method.crypto": {
       "conceptId": "deposit.method.crypto",
       "colorKey": "tennis",
+      "token": "--partner-ops-tennis",
       "hex": "#3FB950",
       "css": "#3fb950"
     },
     "deposit.method.wire": {
       "conceptId": "deposit.method.wire",
       "colorKey": "kalshi",
+      "token": "--partner-ops-kalshi",
       "hex": "#58A6FF",
       "css": "#58a6ff"
     },
     "deposit.method.credit": {
       "conceptId": "deposit.method.credit",
       "colorKey": "research",
+      "token": "--partner-ops-research",
       "hex": "#F0883E",
       "css": "#f0883e"
     },
     "deposit.method.cashapp": {
       "conceptId": "deposit.method.cashapp",
       "colorKey": "trading",
+      "token": "--partner-ops-trading",
       "hex": "#F85149",
       "css": "#f85149"
     },
     "deposit.method.paypal": {
       "conceptId": "deposit.method.paypal",
       "colorKey": "kalshi",
+      "token": "--partner-ops-kalshi",
       "hex": "#58A6FF",
       "css": "#58a6ff"
     },
     "deposit.method.zelle": {
       "conceptId": "deposit.method.zelle",
       "colorKey": "polymarket",
+      "token": "--partner-ops-polymarket",
       "hex": "#1F6FEB",
       "css": "#1f6feb"
     },
     "deposit.method.apple_pay": {
       "conceptId": "deposit.method.apple_pay",
       "colorKey": "env",
+      "token": "--partner-ops-env",
       "hex": "#8B949E",
       "css": "#8b949e"
     },
     "deposit.method.unknown": {
       "conceptId": "deposit.method.unknown",
       "colorKey": "unknown",
+      "token": "--partner-ops-unknown",
       "hex": "#8B949E",
       "css": "#8b949e"
     },
     "out.status.ready": {
       "conceptId": "out.status.ready",
       "colorKey": "tennis",
+      "token": "--partner-ops-tennis",
       "hex": "#3FB950",
       "css": "#3fb950"
     },
     "out.status.deferred": {
       "conceptId": "out.status.deferred",
       "colorKey": "middleware",
+      "token": "--partner-ops-middleware",
       "hex": "#D29922",
       "css": "#d29922"
     },
     "out.status.paused": {
       "conceptId": "out.status.paused",
       "colorKey": "env",
+      "token": "--partner-ops-env",
       "hex": "#8B949E",
       "css": "#8b949e"
     },
     "out.status.blocked": {
       "conceptId": "out.status.blocked",
       "colorKey": "trading",
+      "token": "--partner-ops-trading",
       "hex": "#F85149",
       "css": "#f85149"
     },
     "out.status.partial": {
       "conceptId": "out.status.partial",
       "colorKey": "middleware",
+      "token": "--partner-ops-middleware",
       "hex": "#D29922",
       "css": "#d29922"
     },
     "out.status.funded": {
       "conceptId": "out.status.funded",
       "colorKey": "tennis",
+      "token": "--partner-ops-tennis",
       "hex": "#3FB950",
       "css": "#3fb950"
     },
     "accounting.deposit": {
       "conceptId": "accounting.deposit",
       "colorKey": "tennis",
+      "token": "--partner-ops-tennis",
       "hex": "#3FB950",
       "css": "#3fb950"
     },
     "accounting.withdrawal": {
       "conceptId": "accounting.withdrawal",
       "colorKey": "trading",
+      "token": "--partner-ops-trading",
       "hex": "#F85149",
       "css": "#f85149"
     },
     "accounting.credit": {
       "conceptId": "accounting.credit",
       "colorKey": "kalshi",
+      "token": "--partner-ops-kalshi",
       "hex": "#58A6FF",
       "css": "#58a6ff"
     },
     "accounting.free_roll": {
       "conceptId": "accounting.free_roll",
       "colorKey": "research",
+      "token": "--partner-ops-research",
       "hex": "#F0883E",
       "css": "#f0883e"
     },
     "accounting.settlement": {
       "conceptId": "accounting.settlement",
       "colorKey": "polymarket",
+      "token": "--partner-ops-polymarket",
       "hex": "#1F6FEB",
       "css": "#1f6feb"
     },
     "telegram.topic.general": {
       "conceptId": "telegram.topic.general",
       "colorKey": "env",
+      "token": "--partner-ops-env",
       "hex": "#8B949E",
       "css": "#8b949e"
     },
     "telegram.topic.ops": {
       "conceptId": "telegram.topic.ops",
       "colorKey": "kalshi",
+      "token": "--partner-ops-kalshi",
       "hex": "#58A6FF",
       "css": "#58a6ff"
     },
     "telegram.topic.alerts": {
       "conceptId": "telegram.topic.alerts",
       "colorKey": "trading",
+      "token": "--partner-ops-trading",
       "hex": "#F85149",
       "css": "#f85149"
     },
     "telegram.topic.liquidity": {
       "conceptId": "telegram.topic.liquidity",
       "colorKey": "polymarket",
+      "token": "--partner-ops-polymarket",
       "hex": "#1F6FEB",
       "css": "#1f6feb"
     },
     "telegram.topic.accounting": {
       "conceptId": "telegram.topic.accounting",
       "colorKey": "tennis",
+      "token": "--partner-ops-tennis",
       "hex": "#3FB950",
       "css": "#3fb950"
+    },
+    "telegram.handshake": {
+      "conceptId": "telegram.handshake",
+      "colorKey": "kalshi",
+      "token": "--partner-ops-kalshi",
+      "hex": "#58A6FF",
+      "css": "#58a6ff"
+    },
+    "telegram.membership": {
+      "conceptId": "telegram.membership",
+      "colorKey": "pinnacle",
+      "token": "--partner-ops-pinnacle",
+      "hex": "#A371F7",
+      "css": "#a371f7"
+    },
+    "ops.limits.account": {
+      "conceptId": "ops.limits.account",
+      "colorKey": "kalshi",
+      "token": "--partner-ops-kalshi",
+      "hex": "#58A6FF",
+      "css": "#58a6ff"
+    },
+    "ops.limits.effective_limit": {
+      "conceptId": "ops.limits.effective_limit",
+      "colorKey": "research",
+      "token": "--partner-ops-research",
+      "hex": "#F0883E",
+      "css": "#f0883e"
+    },
+    "ops.limits.monitoring_status": {
+      "conceptId": "ops.limits.monitoring_status",
+      "colorKey": "middleware",
+      "token": "--partner-ops-middleware",
+      "hex": "#D29922",
+      "css": "#d29922"
+    },
+    "ops.limits.evidence_trace": {
+      "conceptId": "ops.limits.evidence_trace",
+      "colorKey": "polymarket",
+      "token": "--partner-ops-polymarket",
+      "hex": "#1F6FEB",
+      "css": "#1f6feb"
     }
   },
   "eventCodes": [
@@ -295,6 +375,7 @@
       "typeConceptId": "book.type.offshore",
       "color": {
         "colorKey": "polymarket",
+        "token": "--partner-ops-polymarket",
         "hex": "#1F6FEB",
         "css": "#1f6feb"
       }
@@ -307,6 +388,7 @@
       "typeConceptId": "book.type.offshore",
       "color": {
         "colorKey": "polymarket",
+        "token": "--partner-ops-polymarket",
         "hex": "#1F6FEB",
         "css": "#1f6feb"
       }
@@ -319,6 +401,7 @@
       "typeConceptId": "book.type.legal",
       "color": {
         "colorKey": "kalshi",
+        "token": "--partner-ops-kalshi",
         "hex": "#58A6FF",
         "css": "#58a6ff"
       }
@@ -331,6 +414,7 @@
       "typeConceptId": "book.type.offshore",
       "color": {
         "colorKey": "polymarket",
+        "token": "--partner-ops-polymarket",
         "hex": "#1F6FEB",
         "css": "#1f6feb"
       }
@@ -343,6 +427,7 @@
       "typeConceptId": "book.type.offshore",
       "color": {
         "colorKey": "polymarket",
+        "token": "--partner-ops-polymarket",
         "hex": "#1F6FEB",
         "css": "#1f6feb"
       }
@@ -355,6 +440,7 @@
       "typeConceptId": "book.type.offshore",
       "color": {
         "colorKey": "polymarket",
+        "token": "--partner-ops-polymarket",
         "hex": "#1F6FEB",
         "css": "#1f6feb"
       }
@@ -367,6 +453,7 @@
       "typeConceptId": "book.type.offshore",
       "color": {
         "colorKey": "polymarket",
+        "token": "--partner-ops-polymarket",
         "hex": "#1F6FEB",
         "css": "#1f6feb"
       }
@@ -379,6 +466,7 @@
       "typeConceptId": "book.type.pph",
       "color": {
         "colorKey": "pinnacle",
+        "token": "--partner-ops-pinnacle",
         "hex": "#A371F7",
         "css": "#a371f7"
       }
@@ -392,6 +480,7 @@
       "phaseConceptId": "partner.phase.operator_ready",
       "phaseColor": {
         "colorKey": "tennis",
+        "token": "--partner-ops-tennis",
         "hex": "#3FB950",
         "css": "#3fb950"
       },
@@ -416,6 +505,7 @@
             "typeConceptId": "book.type.legal",
             "color": {
               "colorKey": "kalshi",
+              "token": "--partner-ops-kalshi",
               "hex": "#58A6FF",
               "css": "#58a6ff"
             }
@@ -430,6 +520,7 @@
             "railId": "rail-venmo-ash-hr-fl",
             "color": {
               "colorKey": "trading",
+              "token": "--partner-ops-trading",
               "hex": "#F85149",
               "css": "#f85149"
             }
@@ -440,6 +531,7 @@
           "statusConceptId": "out.status.ready",
           "statusColor": {
             "colorKey": "tennis",
+            "token": "--partner-ops-tennis",
             "hex": "#3FB950",
             "css": "#3fb950"
           },
@@ -456,6 +548,7 @@
             "typeConceptId": "book.type.legal",
             "color": {
               "colorKey": "kalshi",
+              "token": "--partner-ops-kalshi",
               "hex": "#58A6FF",
               "css": "#58a6ff"
             }
@@ -470,6 +563,7 @@
             "railId": "rail-venmo-ash-hr-fl",
             "color": {
               "colorKey": "trading",
+              "token": "--partner-ops-trading",
               "hex": "#F85149",
               "css": "#f85149"
             }
@@ -480,6 +574,7 @@
           "statusConceptId": "out.status.deferred",
           "statusColor": {
             "colorKey": "middleware",
+            "token": "--partner-ops-middleware",
             "hex": "#D29922",
             "css": "#d29922"
           },
@@ -497,6 +592,32 @@
           "used": 0
         },
         "ledger": []
+      },
+      "tracking": {
+        "accounts": {
+          "total": 2,
+          "ready": 1,
+          "deferred": 1,
+          "blocked": 0
+        },
+        "limits": {
+          "tracked": 1,
+          "missing": 1,
+          "coveragePct": 50
+        },
+        "communication": {
+          "chatLinked": false,
+          "topicsConfigured": 0,
+          "topicsRequired": 5,
+          "ready": false
+        },
+        "accounting": {
+          "depositVolume": 0,
+          "creditVolume": 0,
+          "ledgerEvents": 0,
+          "freeRollPercent": 25,
+          "freeRollApplied": 0
+        }
       }
     },
     {
@@ -506,6 +627,7 @@
       "phaseConceptId": "partner.phase.operator_ready",
       "phaseColor": {
         "colorKey": "tennis",
+        "token": "--partner-ops-tennis",
         "hex": "#3FB950",
         "css": "#3fb950"
       },
@@ -530,6 +652,7 @@
             "typeConceptId": "book.type.offshore",
             "color": {
               "colorKey": "polymarket",
+              "token": "--partner-ops-polymarket",
               "hex": "#1F6FEB",
               "css": "#1f6feb"
             }
@@ -544,6 +667,7 @@
             "railId": "rail-venmo-bil-newpartner",
             "color": {
               "colorKey": "trading",
+              "token": "--partner-ops-trading",
               "hex": "#F85149",
               "css": "#f85149"
             }
@@ -554,6 +678,7 @@
           "statusConceptId": "out.status.ready",
           "statusColor": {
             "colorKey": "tennis",
+            "token": "--partner-ops-tennis",
             "hex": "#3FB950",
             "css": "#3fb950"
           },
@@ -571,6 +696,32 @@
           "used": 0
         },
         "ledger": []
+      },
+      "tracking": {
+        "accounts": {
+          "total": 1,
+          "ready": 1,
+          "deferred": 0,
+          "blocked": 0
+        },
+        "limits": {
+          "tracked": 1,
+          "missing": 0,
+          "coveragePct": 100
+        },
+        "communication": {
+          "chatLinked": false,
+          "topicsConfigured": 0,
+          "topicsRequired": 5,
+          "ready": false
+        },
+        "accounting": {
+          "depositVolume": 0,
+          "creditVolume": 0,
+          "ledgerEvents": 0,
+          "freeRollPercent": 25,
+          "freeRollApplied": 0
+        }
       }
     },
     {
@@ -580,6 +731,7 @@
       "phaseConceptId": "partner.phase.operator_ready",
       "phaseColor": {
         "colorKey": "tennis",
+        "token": "--partner-ops-tennis",
         "hex": "#3FB950",
         "css": "#3fb950"
       },
@@ -604,6 +756,7 @@
             "typeConceptId": "book.type.legal",
             "color": {
               "colorKey": "kalshi",
+              "token": "--partner-ops-kalshi",
               "hex": "#58A6FF",
               "css": "#58a6ff"
             }
@@ -618,6 +771,7 @@
             "railId": "rail-venmo-nov-newpartner",
             "color": {
               "colorKey": "trading",
+              "token": "--partner-ops-trading",
               "hex": "#F85149",
               "css": "#f85149"
             }
@@ -628,6 +782,7 @@
           "statusConceptId": "out.status.ready",
           "statusColor": {
             "colorKey": "tennis",
+            "token": "--partner-ops-tennis",
             "hex": "#3FB950",
             "css": "#3fb950"
           },
@@ -644,6 +799,7 @@
             "typeConceptId": "book.type.pph",
             "color": {
               "colorKey": "pinnacle",
+              "token": "--partner-ops-pinnacle",
               "hex": "#A371F7",
               "css": "#a371f7"
             }
@@ -658,6 +814,7 @@
             "railId": "rail-venmo-nov-newpartner",
             "color": {
               "colorKey": "trading",
+              "token": "--partner-ops-trading",
               "hex": "#F85149",
               "css": "#f85149"
             }
@@ -668,6 +825,7 @@
           "statusConceptId": "out.status.deferred",
           "statusColor": {
             "colorKey": "middleware",
+            "token": "--partner-ops-middleware",
             "hex": "#D29922",
             "css": "#d29922"
           },
@@ -685,6 +843,32 @@
           "used": 0
         },
         "ledger": []
+      },
+      "tracking": {
+        "accounts": {
+          "total": 2,
+          "ready": 1,
+          "deferred": 1,
+          "blocked": 0
+        },
+        "limits": {
+          "tracked": 1,
+          "missing": 1,
+          "coveragePct": 50
+        },
+        "communication": {
+          "chatLinked": false,
+          "topicsConfigured": 0,
+          "topicsRequired": 5,
+          "ready": false
+        },
+        "accounting": {
+          "depositVolume": 0,
+          "creditVolume": 0,
+          "ledgerEvents": 0,
+          "freeRollPercent": 25,
+          "freeRollApplied": 0
+        }
       }
     },
     {
@@ -694,6 +878,7 @@
       "phaseConceptId": "partner.phase.operator_ready",
       "phaseColor": {
         "colorKey": "tennis",
+        "token": "--partner-ops-tennis",
         "hex": "#3FB950",
         "css": "#3fb950"
       },
@@ -718,6 +903,7 @@
             "typeConceptId": "book.type.offshore",
             "color": {
               "colorKey": "polymarket",
+              "token": "--partner-ops-polymarket",
               "hex": "#1F6FEB",
               "css": "#1f6feb"
             }
@@ -732,6 +918,7 @@
             "railId": "rail-venmo-spen-newpartner",
             "color": {
               "colorKey": "trading",
+              "token": "--partner-ops-trading",
               "hex": "#F85149",
               "css": "#f85149"
             }
@@ -742,6 +929,7 @@
           "statusConceptId": "out.status.ready",
           "statusColor": {
             "colorKey": "tennis",
+            "token": "--partner-ops-tennis",
             "hex": "#3FB950",
             "css": "#3fb950"
           },
@@ -758,6 +946,7 @@
             "typeConceptId": "book.type.offshore",
             "color": {
               "colorKey": "polymarket",
+              "token": "--partner-ops-polymarket",
               "hex": "#1F6FEB",
               "css": "#1f6feb"
             }
@@ -772,6 +961,7 @@
             "railId": "rail-venmo-spen-newpartner",
             "color": {
               "colorKey": "trading",
+              "token": "--partner-ops-trading",
               "hex": "#F85149",
               "css": "#f85149"
             }
@@ -782,6 +972,7 @@
           "statusConceptId": "out.status.ready",
           "statusColor": {
             "colorKey": "tennis",
+            "token": "--partner-ops-tennis",
             "hex": "#3FB950",
             "css": "#3fb950"
           },
@@ -798,6 +989,7 @@
             "typeConceptId": "book.type.offshore",
             "color": {
               "colorKey": "polymarket",
+              "token": "--partner-ops-polymarket",
               "hex": "#1F6FEB",
               "css": "#1f6feb"
             }
@@ -812,6 +1004,7 @@
             "railId": "rail-venmo-spen-newpartner",
             "color": {
               "colorKey": "trading",
+              "token": "--partner-ops-trading",
               "hex": "#F85149",
               "css": "#f85149"
             }
@@ -822,6 +1015,7 @@
           "statusConceptId": "out.status.ready",
           "statusColor": {
             "colorKey": "tennis",
+            "token": "--partner-ops-tennis",
             "hex": "#3FB950",
             "css": "#3fb950"
           },
@@ -838,6 +1032,7 @@
             "typeConceptId": "book.type.offshore",
             "color": {
               "colorKey": "polymarket",
+              "token": "--partner-ops-polymarket",
               "hex": "#1F6FEB",
               "css": "#1f6feb"
             }
@@ -852,6 +1047,7 @@
             "railId": "rail-venmo-spen-newpartner",
             "color": {
               "colorKey": "trading",
+              "token": "--partner-ops-trading",
               "hex": "#F85149",
               "css": "#f85149"
             }
@@ -862,6 +1058,7 @@
           "statusConceptId": "out.status.ready",
           "statusColor": {
             "colorKey": "tennis",
+            "token": "--partner-ops-tennis",
             "hex": "#3FB950",
             "css": "#3fb950"
           },
@@ -878,6 +1075,7 @@
             "typeConceptId": "book.type.offshore",
             "color": {
               "colorKey": "polymarket",
+              "token": "--partner-ops-polymarket",
               "hex": "#1F6FEB",
               "css": "#1f6feb"
             }
@@ -892,6 +1090,7 @@
             "railId": "rail-venmo-spen-newpartner",
             "color": {
               "colorKey": "trading",
+              "token": "--partner-ops-trading",
               "hex": "#F85149",
               "css": "#f85149"
             }
@@ -902,6 +1101,7 @@
           "statusConceptId": "out.status.deferred",
           "statusColor": {
             "colorKey": "middleware",
+            "token": "--partner-ops-middleware",
             "hex": "#D29922",
             "css": "#d29922"
           },
@@ -919,6 +1119,32 @@
           "used": 0
         },
         "ledger": []
+      },
+      "tracking": {
+        "accounts": {
+          "total": 5,
+          "ready": 4,
+          "deferred": 1,
+          "blocked": 0
+        },
+        "limits": {
+          "tracked": 4,
+          "missing": 1,
+          "coveragePct": 80
+        },
+        "communication": {
+          "chatLinked": false,
+          "topicsConfigured": 0,
+          "topicsRequired": 5,
+          "ready": false
+        },
+        "accounting": {
+          "depositVolume": 0,
+          "creditVolume": 0,
+          "ledgerEvents": 0,
+          "freeRollPercent": 100,
+          "freeRollApplied": 0
+        }
       }
     }
   ],
@@ -926,6 +1152,11 @@
     "partners": 4,
     "outs": 10,
     "books": 8,
+    "accounts": 10,
+    "readyAccounts": 7,
+    "trackedLimits": 7,
+    "communicationReady": 0,
+    "ledgerEvents": 0,
     "incompleteOuts": 0,
     "validationErrors": 0,
     "validationWarnings": 0

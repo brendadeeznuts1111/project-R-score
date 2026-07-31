@@ -1,476 +1,1101 @@
-<!DOCTYPE html>
+<!doctype html>
 <!-- @see docs/portal-foundation.md · docs/harness/tenants/partner-package-group-handshake.md · docs/harness/tenants/seat-capital-desk.md -->
 <html lang="en" data-theme="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Partner package groups · Telegram forum chats · Accounting topic deals · betting deposit rails from seat capital desk." />
-  <title>Partners · FactoryWager</title>
-  <meta name="theme-color" content="#0d1117" />
-  <meta name="application-name" content="FactoryWager" />
-  <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
-  <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
-  <link rel="manifest" href="/site.webmanifest" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/portal/style.css" />
-  <style>
-    .partners-page { max-width: 1120px; margin: 0 auto; padding: 28px 24px 48px; }
-    .partners-hero { margin-bottom: 20px; }
-    .partners-title { margin: 0 0 8px; font-size: 28px; font-weight: 650; letter-spacing: -0.03em; }
-    .partners-lede { margin: 0 0 14px; font-size: 14px; color: var(--text-dim); line-height: 1.5; max-width: 62ch; }
-    .partners-lede code { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
-    .partners-meta { font-size: 12px; color: var(--text-dim); margin: 0 0 16px; }
-    .partners-meta a { color: var(--accent); }
-    .partners-stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin: 0 0 22px; }
-    @media (max-width: 900px) { .partners-stats { grid-template-columns: repeat(2, 1fr); } }
-    .partners-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
-    .partners-stat .k { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
-    .partners-stat .v { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; }
-    .partners-stat.ok .v { color: var(--green, #3fb950); }
-    .partners-stat.warn .v { color: var(--yellow, #d29922); }
-    .partners-section { margin: 0 0 26px; }
-    .partners-section h2 {
-      margin: 0 0 6px; font-size: 12px; font-weight: 650;
-      letter-spacing: .06em; text-transform: uppercase; color: var(--text-dim);
-    }
-    .partners-section .blurb { margin: 0 0 12px; font-size: 13px; color: var(--text-dim); line-height: 1.4; }
-    .partners-panel {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 14px 16px; overflow-x: auto;
-    }
-    .partners-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 720px; }
-    .partners-table th {
-      text-align: left; padding: 7px 8px; color: var(--text-dim); font-weight: 600;
-      border-bottom: 1px solid var(--border); white-space: nowrap;
-    }
-    .partners-table td { padding: 7px 8px; border-bottom: 1px solid rgba(48,54,61,.35); vertical-align: top; }
-    .partners-table code { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
-    .tone-ok { color: var(--green, #3fb950); }
-    .tone-warn { color: var(--yellow, #d29922); }
-    .tone-bad { color: var(--red, #f85149); }
-    .topic-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
-    /* Fallback first — color-mix dropped entirely in browsers without support. */
-    .topic-chip, .book-chip {
-      font-size: 12px; padding: 4px 9px; border-radius: 4px; text-decoration: none;
-      border: 1px solid var(--border); background: var(--surface); color: var(--text);
-    }
-    .topic-chip, .book-chip {
-      border: 1px solid color-mix(in srgb, var(--chip-color, var(--border)) 55%, var(--border));
-      background: color-mix(in srgb, var(--chip-color, var(--surface)) 14%, var(--surface));
-    }
-    .topic-chip:hover, .topic-chip:focus-visible,
-    .book-chip:hover, .book-chip:focus-visible {
-      border-color: var(--chip-color, var(--accent));
-      background: var(--surface);
-      background: color-mix(in srgb, var(--chip-color, var(--accent)) 22%, var(--surface));
-    }
-    .book-chip { display: inline-block; padding: 2px 7px; }
-    .cli-row { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); margin: 8px 0 0; }
-    .hidden { display: none; }
-    .ops-banner.error { margin: 0 0 16px; }
-  </style>
-</head>
-<body>
-  <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <h1 class="logo">
-        <span class="logo-icon" aria-hidden="true"></span>
-        <span class="brand-wordmark">FactoryWager</span>
-        <span class="brand-badge">ops</span>
-        <span class="logo-page">Partners</span>
-      </h1>
-      <nav class="topbar-nav" aria-label="Primary">
-        <a href="/" class="nav-link" data-group="other">Home</a>
-        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · bun run ops:snapshot" data-group="ops" data-cli="bun run ops:snapshot">Ops</a>
-        <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
-        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake">Health</a>
-        <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane">DOD</a>
-        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake">Compliance</a>
-        <div class="nav-overflow">
-          <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
-          <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
-            <a href="/portal/packages/" class="nav-link" title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table" data-group="registry" data-cli="bun run portal-cli pm graph  # offline packages-graph-map table" role="menuitem">Packages</a>
-            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
-            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-cli="bun run glossary:portal" role="menuitem">Glossary</a>
-            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
-            <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
-            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
-            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
-            <a href="/portal/tools/" class="nav-link" title="portal-cli surface map · badges · capability subset · bun run portal-cli dashboard --view=tools" data-group="harness" data-cli="bun run portal-cli dashboard --view=tools" role="menuitem">CLI Tools</a>
-            <a href="/portal/failures/" class="nav-link" title="test failures bake · junit · nav badge = count · bun run failures:bake  # → /registry/failures.json" data-group="harness" data-cli="bun run failures:bake  # → /registry/failures.json" role="menuitem">Failures</a>
-            <a href="/portal/bunfig/" class="nav-link" title="bunfig install config provenance · portal-cli bunfig status · bun run bunfig:bake  # → /registry/bunfig-state.json" data-group="harness" data-cli="bun run bunfig:bake  # → /registry/bunfig-state.json" role="menuitem">Bunfig</a>
-            <a href="/portal/console-format/" class="nav-link" title="structured output gate · logTable/logDepth/jsonOut ratchet · bun run console-format:bake  # → /registry/console-format-state.json" data-group="harness" data-cli="bun run console-format:bake  # → /registry/console-format-state.json" role="menuitem">Console Format</a>
-            <a href="/portal/doctor/" class="nav-link" title="unified health gate · bunfig · catalog · linker · bun run portal:doctor --verbose" data-group="harness" data-cli="bun run portal:doctor --verbose" role="menuitem">Doctor</a>
-            <a href="/portal/install-hygiene/" class="nav-link" title="cache prune · npm-install policy · install:verify bake · bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" data-group="harness" data-cli="bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" role="menuitem">Install hygiene</a>
-            <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
-            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
-            <a href="/portal/limits/" class="nav-link" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
-            <a href="/portal/partners/" class="nav-link active" aria-current="page" title="package groups · telegram forums · accounting · deposits · bun run telegram:handshake:catalog" data-group="ops" data-cli="bun run telegram:handshake:catalog" role="menuitem">Partners</a>
-            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
-            <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
-            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
-            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub" data-group="other" role="menuitem">Wiki</a>
-          </div>
-        </div>
-      </nav>
-      <div class="topbar-status">
-        <a href="/portal/health/" class="topbar-health-link" title="System health">
-          <span id="health-dot" class="health-dot unknown"></span>
-          <span id="health-label" class="health-label">Connecting…</span>
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <main class="partners-page">
-    <header class="partners-hero">
-      <h2 class="partners-title">
-        <a class="semantic-label" href="/portal/glossary/#glossary:page.partners" data-glossary-concept="page.partners">Partners</a>
-      </h2>
-      <p class="partners-lede">
-        Package Telegram forums, Accounting topic deals, and betting deposit rails
-        from the seat capital desk. Soft ledger mutations stay in <code>ct</code>;
-        this board is the factory bake mirror.
-        Glossary:
-        <a href="/portal/glossary/#glossary:telegram.wire" data-glossary-concept="telegram.wire">telegram.wire</a>
-        · taxonomy
-        <a href="/registry/partners-ops.json"><code>partners-ops.json</code></a>
-        · <code>bun run partners:validate</code>.
-      </p>
-      <ul class="topic-chips" id="taxonomy-chips" aria-label="Partner-ops taxonomy"></ul>
-      <p class="partners-meta" id="partners-meta">Loading registry…</p>
-    </header>
-
-    <div id="error-banner" class="ops-banner error hidden"></div>
-    <div id="loading" class="ops-loading"><div class="spinner"></div><p>Loading partners…</p></div>
-    <div id="dashboard" class="hidden">
-      <div class="partners-stats" id="partners-stats"></div>
-
-      <section class="partners-section" id="section:telegram" aria-labelledby="telegram-heading" data-glossary-concept="section.partnersTelegram">
-        <h2 id="telegram-heading">
-          <a href="/portal/glossary/#glossary:section.partnersTelegram" data-glossary-concept="section.partnersTelegram">Telegram package groups</a>
-        </h2>
-        <p class="blurb">
-          One forum per partner CODE · invite + membership tell ·
-          topics: General · Ops · Alerts · Liquidity/Outs · Accounting
-          · <a href="/portal/glossary/#glossary:telegram.handshake" data-glossary-concept="telegram.handshake">handshake</a>
-        </p>
-        <ul class="topic-chips" id="topic-chips"></ul>
-        <div class="partners-panel" style="margin-top:12px">
-          <table class="partners-table">
-            <thead>
-              <tr>
-                <th>Partner</th>
-                <th>Phase</th>
-                <th>Taxonomy</th>
-                <th>Membership</th>
-                <th>Call sign</th>
-                <th>DM seat</th>
-                <th>Handshake</th>
-                <th>Invite</th>
-                <th>Next</th>
-              </tr>
-            </thead>
-            <tbody id="partners-tbody"></tbody>
-          </table>
-        </div>
-        <p class="cli-row">bun run telegram:handshake:catalog · telegram:handshake:invite-gap · telegram:ops -- link-package-group CODE chatId</p>
-      </section>
-
-      <section class="partners-section" id="section:accounting" aria-labelledby="accounting-heading" data-glossary-concept="section.partnersAccounting">
-        <h2 id="accounting-heading">
-          <a href="/portal/glossary/#glossary:section.partnersAccounting" data-glossary-concept="section.partnersAccounting">Accounting deals</a>
-        </h2>
-        <p class="blurb">
-          Deposit / withdraw proof lives in each package forum
-          <a href="/portal/glossary/#glossary:telegram.forum.topic.accounting" data-glossary-concept="telegram.forum.topic.accounting"><strong>Accounting</strong></a>
-          topic. House rollup:
-          <a href="/portal/glossary/#glossary:telegram.surface.all_accounting" data-glossary-concept="telegram.surface.all_accounting"><code>all-accounting</code></a>
-          surface.
-        </p>
-        <div class="partners-panel">
-          <table class="partners-table">
-            <thead>
-              <tr>
-                <th>Partner</th>
-                <th>Call sign</th>
-                <th>Fund status</th>
-                <th>Pinned desk</th>
-                <th>Incomplete outs</th>
-                <th>Checklist</th>
-                <th>CLI</th>
-              </tr>
-            </thead>
-            <tbody id="accounting-tbody"></tbody>
-          </table>
-        </div>
-        <p class="cli-row">bun run telegram:package-group:accounting · seat:desk:accounting-prompt · seat:desk:refresh CALL</p>
-      </section>
-
-      <section class="partners-section" id="section:deposits" aria-labelledby="deposits-heading" data-glossary-concept="section.partnersDeposits">
-        <h2 id="deposits-heading">
-          <a href="/portal/glossary/#glossary:section.partnersDeposits" data-glossary-concept="section.partnersDeposits">Betting deposits</a>
-        </h2>
-        <p class="blurb">
-          Per-out
-          <a href="/portal/glossary/#glossary:telegram.deposit_rail" data-glossary-concept="telegram.deposit_rail">deposit rails</a>
-          from
-          <a href="/portal/glossary/#glossary:telegram.seat_desk" data-glossary-concept="telegram.seat_desk">seat capital desk</a>
-          intake (Liquidity/Outs pinned table). Book colors from scrape-wire
-          <a href="/portal/glossary/#glossary:scrape.book" data-glossary-concept="scrape.book">book registry</a>.
-          Book passwords stay off this board.
-        </p>
-        <div class="partners-panel">
-          <table class="partners-table">
-            <thead>
-              <tr>
-                <th>Partner</th>
-                <th>Call</th>
-                <th>Out</th>
-                <th>Book</th>
-                <th>Username</th>
-                <th>Deposit method</th>
-                <th>Send to</th>
-                <th>Max bet</th>
-                <th>FP%</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="deposits-tbody"></tbody>
-          </table>
-        </div>
-        <p class="cli-row">bun run seat:desk:refresh · seat:desk:update · /registry/seat-capital-desk.json</p>
-      </section>
-
-      <section class="partners-section" id="section:partner-message" aria-labelledby="partner-message-heading" data-glossary-concept="section.partnersPartnerMessage">
-        <h2 id="partner-message-heading">
-          <a href="/portal/glossary/#glossary:section.partnersPartnerMessage" data-glossary-concept="section.partnersPartnerMessage">Partner messages</a>
-        </h2>
-        <p class="blurb">
-          Intake-driven
-          <a href="/portal/glossary/#glossary:telegram.seat_desk" data-glossary-concept="telegram.seat_desk">seat desk</a>
-          partner-message views (confirm / todo / topic templates). Same JSON as
-          <code>seat:desk:partner-message CALL --json</code> — no passwords.
-        </p>
-        <div class="partners-panel" style="margin-bottom:12px">
-          <ul class="topic-chips" id="partner-message-templates" aria-label="Partner message templates"></ul>
-        </div>
-        <div class="partners-panel">
-          <table class="partners-table">
-            <thead>
-              <tr>
-                <th>Call</th>
-                <th>Fund</th>
-                <th>Active</th>
-                <th>Deferred</th>
-                <th>Common missing</th>
-                <th>Out-specific</th>
-                <th>CLI</th>
-              </tr>
-            </thead>
-            <tbody id="partner-message-tbody"></tbody>
-          </table>
-        </div>
-        <p class="cli-row">bun run seat:desk:partner-message CALL --json · --template todo · --template topic-rails [--post]</p>
-      </section>
-    </div>
-  </main>
-
-  <notification-center aria-live="polite"></notification-center>
-  <footer class="footer" data-portal-chrome="footer">
-    <p>
-      <strong>FactoryWager</strong> ·
-      <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
-      <a href="/portal/ops/">Ops</a> ·
-      <a href="/portal/toc/">TOC</a> ·
-      <a href="/portal/partners/">Partners</a> ·
-      <a href="/portal/packages/">Packages</a> ·
-      <a href="/portal/brands/">Brands</a> ·
-      <a href="/portal/glossary/">Glossary</a> ·
-      <a href="/portal/surfaces/">Surfaces</a> ·
-      <a href="/portal/health/">Health</a> ·
-      <a href="/registry/portal-weave.json">Portal proof</a> ·
-      <a href="/portal/tools/">CLI Tools</a> ·
-      <a href="/portal/compliance/">Compliance</a> ·
-      <a href="/portal/limits/">Limits</a> ·
-      <a href="/portal/dod/">DOD</a> ·
-      <a href="/portal/env/">Env</a> ·
-      <a href="/portal/vault/">Vault</a> ·
-      <a href="/portal/failures/">Failures</a> ·
-      <a href="/portal/install-hygiene/">Install hygiene</a> ·
-      <a href="/registry/monorepo-health.json">Monorepo health</a> ·
-      <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
-    </p>
-    <p class="footer-meta">
-      project-R-score · chrome <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a>
-      · <span data-footer-ts>…</span>
-    </p>
-  </footer>
-
-  <script type="module" src="/portal/data.js"></script>
-  <script type="module" src="/portal/topbar.js"></script>
-  <script type="module" src="/portal/components/sidebar.js"></script>
-  <script type="module" src="/portal/components/notification.js"></script>
-  <script type="module" src="/portal/components/footer.js"></script>
-  <script type="module">
-    import { bootGlossaryUx } from '/portal/components/glossary-ux.js';
-
-    const $ = (id) => document.getElementById(id);
-    /** @type {Map<string, { hex?: string, conceptId?: string, label?: string }>} */
-    let bookIndex = new Map();
-
-    function esc(value) {
-      const el = document.createElement('div');
-      el.textContent = value == null ? '' : String(value);
-      return el.innerHTML;
-    }
-
-    function glossaryHref(id) {
-      return `/portal/glossary/#glossary:${encodeURIComponent(id)}`;
-    }
-
-    function toneClass(ok) {
-      if (ok === true) return 'tone-ok';
-      if (ok === false) return 'tone-bad';
-      return 'tone-warn';
-    }
-
-    function fundTone(status) {
-      const s = String(status || '').toLowerCase();
-      if (s === 'ready' || s === 'funded') return 'tone-ok';
-      if (s === 'blocked' || s === 'incomplete') return 'tone-bad';
-      return 'tone-warn';
-    }
-
-    async function loadJson(path) {
-      const res = await fetch(path, { cache: 'no-store' });
-      if (!res.ok) throw new Error(`${path} HTTP ${res.status}`);
-      return res.json();
-    }
-
-    function indexBooks(taxonomy) {
-      const map = new Map();
-      for (const book of taxonomy?.bookRegistry || []) {
-        const entry = {
-          hex: book.hex || book.css,
-          conceptId: book.conceptId || 'scrape.book',
-          label: book.label || book.id,
-        };
-        for (const key of [book.id, book.key, book.label, ...(book.aliases || [])]) {
-          const norm = String(key || '').trim().toLowerCase().replace(/[\s_-]+/g, '');
-          if (norm) map.set(norm, entry);
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Partner package groups · Telegram forum chats · Accounting topic deals · betting deposit rails from seat capital desk."
+    />
+    <title>Partners · FactoryWager</title>
+    <meta name="theme-color" content="#0d1117" />
+    <meta name="application-name" content="FactoryWager" />
+    <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+    <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/portal/style.css" />
+    <style>
+      .partners-page {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 28px 24px 48px;
+      }
+      .partners-hero {
+        margin-bottom: 20px;
+      }
+      .partners-title {
+        margin: 0 0 8px;
+        font-size: 28px;
+        font-weight: 650;
+        letter-spacing: -0.03em;
+      }
+      .partners-lede {
+        margin: 0 0 14px;
+        font-size: 14px;
+        color: var(--text-dim);
+        line-height: 1.5;
+        max-width: 62ch;
+      }
+      .partners-lede code {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+      }
+      .partners-meta {
+        font-size: 12px;
+        color: var(--text-dim);
+        margin: 0 0 16px;
+      }
+      .partners-meta a {
+        color: var(--accent);
+      }
+      .partners-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+        gap: 10px;
+        margin: 0 0 22px;
+      }
+      @media (max-width: 900px) {
+        .partners-stats {
+          grid-template-columns: repeat(2, 1fr);
         }
       }
-      return map;
-    }
+      .partners-stat {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 12px 14px;
+      }
+      .partners-stat .k {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-dim);
+      }
+      .partners-stat .v {
+        font-size: 22px;
+        font-weight: 650;
+        font-variant-numeric: tabular-nums;
+      }
+      .partners-stat.ok .v {
+        color: var(--green, #3fb950);
+      }
+      .partners-stat.warn .v {
+        color: var(--yellow, #d29922);
+      }
+      .partners-section {
+        margin: 0 0 26px;
+      }
+      .partners-section h2 {
+        margin: 0 0 6px;
+        font-size: 12px;
+        font-weight: 650;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+      }
+      .partners-section .blurb {
+        margin: 0 0 12px;
+        font-size: 13px;
+        color: var(--text-dim);
+        line-height: 1.4;
+      }
+      .partners-panel {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 14px 16px;
+        overflow-x: auto;
+      }
+      .partners-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+        min-width: 720px;
+      }
+      .partners-table th {
+        text-align: left;
+        padding: 7px 8px;
+        color: var(--text-dim);
+        font-weight: 600;
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+      }
+      .partners-table td {
+        padding: 7px 8px;
+        border-bottom: 1px solid rgba(48, 54, 61, 0.35);
+        vertical-align: top;
+      }
+      .partners-table code {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+      }
+      .tone-ok {
+        color: var(--green, #3fb950);
+      }
+      .tone-warn {
+        color: var(--yellow, #d29922);
+      }
+      .tone-bad {
+        color: var(--red, #f85149);
+      }
+      .topic-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      /* Fallback first — color-mix dropped entirely in browsers without support. */
+      .topic-chip,
+      .book-chip {
+        font-size: 12px;
+        padding: 4px 9px;
+        border-radius: 4px;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+      }
+      .topic-chip,
+      .book-chip {
+        border: 1px solid color-mix(in srgb, var(--chip-color, var(--border)) 55%, var(--border));
+        background: color-mix(in srgb, var(--chip-color, var(--surface)) 14%, var(--surface));
+      }
+      .topic-chip:hover,
+      .topic-chip:focus-visible,
+      .book-chip:hover,
+      .book-chip:focus-visible {
+        border-color: var(--chip-color, var(--accent));
+        background: var(--surface);
+        background: color-mix(in srgb, var(--chip-color, var(--accent)) 22%, var(--surface));
+      }
+      .book-chip {
+        display: inline-block;
+        padding: 2px 7px;
+      }
+      .partner-route-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        margin: 0 0 18px;
+      }
+      .partner-route-bar .topic-chip[aria-current='true'] {
+        box-shadow: 0 0 0 1px var(--chip-color, var(--accent));
+      }
+      .partner-route-status {
+        margin-left: auto;
+        color: var(--text-dim);
+        font-size: 12px;
+      }
+      .is-route-hidden {
+        display: none;
+      }
+      .route-target {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .tracking-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        min-width: 150px;
+      }
+      .tracking-summary .book-chip {
+        white-space: nowrap;
+      }
+      .cli-row {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        color: var(--text-dim);
+        margin: 8px 0 0;
+      }
+      .hidden {
+        display: none;
+      }
+      .ops-banner.error {
+        margin: 0 0 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <h1 class="logo">
+          <span class="logo-icon" aria-hidden="true"></span>
+          <span class="brand-wordmark">FactoryWager</span>
+          <span class="brand-badge">ops</span>
+          <span class="logo-page">Partners</span>
+        </h1>
+        <nav class="topbar-nav" aria-label="Primary">
+          <a href="/" class="nav-link" data-group="other">Home</a>
+          <a
+            href="/portal/ops/"
+            class="nav-link"
+            title="ops-summary rollup · bun run ops:snapshot"
+            data-group="ops"
+            data-cli="bun run ops:snapshot"
+            >Ops</a
+          >
+          <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
+          <a
+            href="/portal/health/"
+            class="nav-link"
+            title="system health · monorepo score · bun run monorepo:health:bake"
+            data-group="harness"
+            data-cli="bun run monorepo:health:bake"
+            >Health</a
+          >
+          <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane"
+            >DOD</a
+          >
+          <a
+            href="/portal/compliance/"
+            class="nav-link"
+            title="MA/NJ board · bun run compliance:bake"
+            data-group="ops"
+            data-cli="bun run compliance:bake"
+            >Compliance</a
+          >
+          <div class="nav-overflow">
+            <button
+              type="button"
+              class="nav-more"
+              aria-label="More navigation"
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              ⋯
+            </button>
+            <div class="nav-dropdown" role="menu">
+              <a
+                href="/portal/catalog/"
+                class="nav-link"
+                title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy"
+                data-group="registry"
+                data-cli="bun run bake:scrape-wire-taxonomy"
+                role="menuitem"
+                >Catalog</a
+              >
+              <a
+                href="/portal/packages/"
+                class="nav-link"
+                title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table"
+                data-group="registry"
+                data-cli="bun run portal-cli pm graph  # offline packages-graph-map table"
+                role="menuitem"
+                >Packages</a
+              >
+              <a
+                href="/portal/brands/"
+                class="nav-link"
+                title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap"
+                data-group="registry"
+                data-cli="bun run brand:keymap"
+                role="menuitem"
+                >Brands</a
+              >
+              <a
+                href="/portal/glossary/"
+                class="nav-link"
+                title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal"
+                data-group="registry"
+                data-cli="bun run glossary:portal"
+                role="menuitem"
+                >Glossary</a
+              >
+              <a
+                href="/portal/surfaces/"
+                class="nav-link"
+                title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json"
+                data-group="registry"
+                data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json"
+                role="menuitem"
+                >Surfaces</a
+              >
+              <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem"
+                >Skills</a
+              >
+              <a
+                href="/portal/vault/"
+                class="nav-link"
+                title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps"
+                data-group="secrets"
+                data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps"
+                role="menuitem"
+                >Vault</a
+              >
+              <a
+                href="/portal/env/"
+                class="nav-link"
+                title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed"
+                data-group="secrets"
+                data-cli="bun run portal-cli secret map  # no secret values printed"
+                role="menuitem"
+                >Env</a
+              >
+              <a
+                href="/portal/tools/"
+                class="nav-link"
+                title="portal-cli surface map · badges · capability subset · bun run portal-cli dashboard --view=tools"
+                data-group="harness"
+                data-cli="bun run portal-cli dashboard --view=tools"
+                role="menuitem"
+                >CLI Tools</a
+              >
+              <a
+                href="/portal/failures/"
+                class="nav-link"
+                title="test failures bake · junit · nav badge = count · bun run failures:bake  # → /registry/failures.json"
+                data-group="harness"
+                data-cli="bun run failures:bake  # → /registry/failures.json"
+                role="menuitem"
+                >Failures</a
+              >
+              <a
+                href="/portal/bunfig/"
+                class="nav-link"
+                title="bunfig install config provenance · portal-cli bunfig status · bun run bunfig:bake  # → /registry/bunfig-state.json"
+                data-group="harness"
+                data-cli="bun run bunfig:bake  # → /registry/bunfig-state.json"
+                role="menuitem"
+                >Bunfig</a
+              >
+              <a
+                href="/portal/console-format/"
+                class="nav-link"
+                title="structured output gate · logTable/logDepth/jsonOut ratchet · bun run console-format:bake  # → /registry/console-format-state.json"
+                data-group="harness"
+                data-cli="bun run console-format:bake  # → /registry/console-format-state.json"
+                role="menuitem"
+                >Console Format</a
+              >
+              <a
+                href="/portal/doctor/"
+                class="nav-link"
+                title="unified health gate · bunfig · catalog · linker · bun run portal:doctor --verbose"
+                data-group="harness"
+                data-cli="bun run portal:doctor --verbose"
+                role="menuitem"
+                >Doctor</a
+              >
+              <a
+                href="/portal/install-hygiene/"
+                class="nav-link"
+                title="cache prune · npm-install policy · install:verify bake · bun run bake:install-hygiene  # → /registry/install-hygiene-report.json"
+                data-group="harness"
+                data-cli="bun run bake:install-hygiene  # → /registry/install-hygiene-report.json"
+                role="menuitem"
+                >Install hygiene</a
+              >
+              <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem"
+                >Dashboard</a
+              >
+              <a
+                href="/portal/toc/"
+                class="nav-link"
+                title="Drum/Buffer/Rope · bun run ops:seed:toc"
+                data-group="ops"
+                data-cli="bun run ops:seed:toc"
+                role="menuitem"
+                >TOC</a
+              >
+              <a
+                href="/portal/limits/"
+                class="nav-link"
+                title="bun run ops:limits:demo"
+                data-group="ops"
+                data-cli="bun run ops:limits:demo"
+                role="menuitem"
+                >Limits</a
+              >
+              <a
+                href="/portal/partners/"
+                class="nav-link active"
+                aria-current="page"
+                title="package groups · telegram forums · accounting · deposits · bun run telegram:handshake:catalog"
+                data-group="ops"
+                data-cli="bun run telegram:handshake:catalog"
+                role="menuitem"
+                >Partners</a
+              >
+              <a
+                href="/portal/partner-history/"
+                class="nav-link"
+                title="per-partner limit history board · bun run ops:limits:demo"
+                data-group="ops"
+                data-cli="bun run ops:limits:demo"
+                role="menuitem"
+                >Partner history</a
+              >
+              <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem"
+                >Monitoring</a
+              >
+              <a
+                href="/registry/prediction/report/"
+                class="nav-link"
+                title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction"
+                data-group="ops"
+                data-cli="bun run portal-cli snapshot last --scope prediction"
+                role="menuitem"
+                >Prediction</a
+              >
+              <a
+                href="https://wiki.factory-wager.com/wiki-index.html"
+                class="nav-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="GitHub Pages hub"
+                data-group="other"
+                role="menuitem"
+                >Wiki</a
+              >
+            </div>
+          </div>
+        </nav>
+        <div class="topbar-status">
+          <a href="/portal/health/" class="topbar-health-link" title="System health">
+            <span id="health-dot" class="health-dot unknown"></span>
+            <span id="health-label" class="health-label">Connecting…</span>
+          </a>
+        </div>
+      </div>
+    </header>
 
-    function resolveBook(label) {
-      const raw = String(label || '').trim();
-      if (!raw) return null;
-      const norm = raw.toLowerCase().replace(/[\s_-]+/g, '');
-      return bookIndex.get(norm) || bookIndex.get(raw.toLowerCase()) || null;
-    }
+    <main class="partners-page" id="partner-panel">
+      <header class="partners-hero">
+        <h2 class="partners-title">
+          <a
+            class="semantic-label"
+            href="/portal/glossary/#glossary:page.partners"
+            data-glossary-concept="page.partners"
+            >Partners</a
+          >
+        </h2>
+        <p class="partners-lede">
+          Package Telegram forums, Accounting topic deals, and betting deposit rails from the seat
+          capital desk. Soft ledger mutations stay in <code>ct</code>; this board is the factory
+          bake mirror. Glossary:
+          <a href="/portal/glossary/#glossary:telegram.wire" data-glossary-concept="telegram.wire"
+            >telegram.wire</a
+          >
+          · taxonomy
+          <a href="/registry/partners-ops.json"><code>partners-ops.json</code></a>
+          · <code>bun run partners:validate</code>.
+        </p>
+        <nav class="tag-filter-bar" id="tag-filter-bar" aria-label="Partner-ops taxonomy filters">
+          <ul class="topic-chips" id="taxonomy-chips" aria-label="Partner-ops taxonomy"></ul>
+        </nav>
+        <p class="partners-meta" id="partners-meta">Loading registry…</p>
+        <nav
+          class="partner-route-bar"
+          id="partner-route-bar"
+          aria-label="Partner route filter"
+        ></nav>
+      </header>
 
-    /** @type {Map<string, any>} */
-    let opsByPartner = new Map();
+      <div id="error-banner" class="ops-banner error hidden"></div>
+      <div id="loading" class="ops-loading">
+        <div class="spinner"></div>
+        <p>Loading partners…</p>
+      </div>
+      <div id="dashboard" class="hidden">
+        <div class="partners-stats" id="partners-stats"></div>
 
-    function isChipHex(hex) {
-      return typeof hex === 'string' && /^#[0-9A-Fa-f]{6}$/.test(hex);
-    }
+        <section
+          class="partners-section"
+          id="section:telegram"
+          aria-labelledby="telegram-heading"
+          data-glossary-concept="section.partnersTelegram"
+        >
+          <h2 id="telegram-heading">
+            <a
+              href="/portal/glossary/#glossary:section.partnersTelegram"
+              data-glossary-concept="section.partnersTelegram"
+              >Telegram package groups</a
+            >
+          </h2>
+          <p class="blurb">
+            One forum per partner CODE · invite + membership tell · topics: General · Ops · Alerts ·
+            Liquidity/Outs · Accounting ·
+            <a
+              href="/portal/glossary/#glossary:telegram.handshake"
+              data-glossary-concept="telegram.handshake"
+              >handshake</a
+            >
+          </p>
+          <ul class="topic-chips" id="topic-chips"></ul>
+          <div class="partners-panel" id="telegram-thread" style="margin-top: 12px">
+            <table class="partners-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>Phase</th>
+                  <th>Taxonomy</th>
+                  <th>Membership</th>
+                  <th>Call sign</th>
+                  <th>DM seat</th>
+                  <th>Handshake</th>
+                  <th>Invite</th>
+                  <th>Bot</th>
+                  <th>Next</th>
+                </tr>
+              </thead>
+              <tbody id="partners-tbody"></tbody>
+            </table>
+          </div>
+          <p class="cli-row">
+            bun run telegram:handshake:catalog · telegram:handshake:invite-gap · telegram:ops --
+            link-package-group CODE chatId
+          </p>
+        </section>
 
-    function conceptChip(conceptId, label, hex) {
-      const safeHex = isChipHex(hex) ? hex : '';
-      const style = safeHex ? ` style="--chip-color:${safeHex}"` : '';
-      return `<a class="topic-chip" href="${glossaryHref(conceptId)}" data-glossary-concept="${esc(conceptId)}"${style}>${esc(label)}</a>`;
-    }
+        <section
+          class="partners-section"
+          id="section:accounts-limits"
+          aria-labelledby="accounts-limits-heading"
+          data-glossary-concept="section.partnersAccountsLimits"
+        >
+          <h2 id="accounts-limits-heading">
+            <a
+              href="/portal/glossary/#glossary:section.partnersAccountsLimits"
+              data-glossary-concept="section.partnersAccountsLimits"
+              >Accounts and limits</a
+            >
+          </h2>
+          <p class="blurb">
+            Partner-level account readiness, tracked
+            <a
+              href="/portal/glossary/#glossary:ops.limits.effective_limit"
+              data-glossary-concept="ops.limits.effective_limit"
+              >effective limits</a
+            >,
+            <a
+              href="/portal/glossary/#glossary:accounting.free_roll"
+              data-glossary-concept="accounting.free_roll"
+              >free-roll</a
+            >
+            exposure, ledger activity, and
+            <a
+              href="/portal/glossary/#glossary:telegram.handshake"
+              data-glossary-concept="telegram.handshake"
+              >Telegram communication readiness</a
+            >. Account-policy detail remains on the <a href="/portal/limits/">Limits board</a>.
+            <span id="account-limit-summary"></span>
+          </p>
+          <div class="partners-panel">
+            <table class="partners-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>Phase</th>
+                  <th>Accounts</th>
+                  <th>Limit coverage</th>
+                  <th>Effective limits</th>
+                  <th>Free roll</th>
+                  <th>Ledger</th>
+                  <th>Communication</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="accounts-limits-tbody"></tbody>
+            </table>
+          </div>
+          <p class="cli-row">
+            bun run ops:limits:demo · bun run partners:validate · bun run
+            telegram:package-group:accounting
+          </p>
+        </section>
 
-    function renderTopics(catalog, ops) {
-      const topicLeaf = [
-        ['General', 'telegram.topic.general'],
-        ['Ops', 'telegram.topic.ops'],
-        ['Alerts', 'telegram.topic.alerts'],
-        ['Liquidity/Outs', 'telegram.topic.liquidity'],
-        ['Accounting', 'telegram.topic.accounting'],
-      ];
-      const colors = ops?.colors || {};
-      const packageColors = catalog?.colors?.packageTopics || {};
-      $('topic-chips').innerHTML = topicLeaf
-        .map(([title, conceptId]) => {
-          const mapKey = String(title).toLowerCase();
-          const hex = colors[conceptId]?.hex || packageColors[mapKey]?.hex || '';
-          return `<li>${conceptChip(conceptId, title, hex)}</li>`;
-        })
-        .join('');
-    }
+        <section
+          class="partners-section"
+          id="section:accounting"
+          aria-labelledby="accounting-heading"
+          data-glossary-concept="section.partnersAccounting"
+        >
+          <h2 id="accounting-heading">
+            <a
+              href="/portal/glossary/#glossary:section.partnersAccounting"
+              data-glossary-concept="section.partnersAccounting"
+              >Accounting deals</a
+            >
+          </h2>
+          <p class="blurb">
+            Deposit / withdraw proof lives in each package forum
+            <a
+              href="/portal/glossary/#glossary:telegram.forum.topic.accounting"
+              data-glossary-concept="telegram.forum.topic.accounting"
+              ><strong>Accounting</strong></a
+            >
+            topic. House rollup:
+            <a
+              href="/portal/glossary/#glossary:telegram.surface.all_accounting"
+              data-glossary-concept="telegram.surface.all_accounting"
+              ><code>all-accounting</code></a
+            >
+            surface.
+          </p>
+          <div class="partners-panel" id="accounting-ledger">
+            <table class="partners-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>Call sign</th>
+                  <th>Fund status</th>
+                  <th>Pinned desk</th>
+                  <th>Incomplete outs</th>
+                  <th>Checklist</th>
+                  <th>CLI</th>
+                </tr>
+              </thead>
+              <tbody id="accounting-tbody"></tbody>
+            </table>
+            <h3 class="partners-subhead" style="margin-top: 16px">Event log</h3>
+            <p class="blurb">
+              Ledger-derived from
+              <code>partners:event</code> /
+              <code>partners:ledger:append</code> →
+              <code>bun run partners:build</code>. Shipped
+              <code>event.*</code> ids only.
+            </p>
+            <table class="partners-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>At</th>
+                  <th>Code</th>
+                  <th>Concept</th>
+                  <th>Amount</th>
+                  <th>Rail / out</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+              <tbody id="accounting-events-tbody"></tbody>
+            </table>
+          </div>
+          <p class="cli-row">
+            bun run partners:event -- deposit_received --partner ASH --amount 1000 --rail venmo ·
+            bun run partners:build · telegram:package-group:accounting
+          </p>
+        </section>
 
-    function renderTaxonomyChips(ops) {
-      const ids = [
-        'partner.phase.operator_ready',
-        'book.type.legal',
-        'book.type.offshore',
-        'deposit.method.venmo',
-        'deposit.method.credit',
-        'out.status.ready',
-        'out.status.deferred',
-        'accounting.deposit',
-        'accounting.free_roll',
-      ];
-      const colors = ops?.colors || {};
-      $('taxonomy-chips').innerHTML = ids
-        .map((id) => {
-          const wire = colors[id] || {};
-          const label = String(id).split('.').slice(-1)[0].replace(/_/g, ' ');
-          return `<li>${conceptChip(id, label, wire.hex)}</li>`;
-        })
-        .join('');
-    }
+        <section
+          class="partners-section"
+          id="section:deposits"
+          aria-labelledby="deposits-heading"
+          data-glossary-concept="section.partnersDeposits"
+        >
+          <h2 id="deposits-heading">
+            <a
+              href="/portal/glossary/#glossary:section.partnersDeposits"
+              data-glossary-concept="section.partnersDeposits"
+              >Betting deposits</a
+            >
+          </h2>
+          <p class="blurb">
+            Per-out
+            <a
+              href="/portal/glossary/#glossary:telegram.deposit_rail"
+              data-glossary-concept="telegram.deposit_rail"
+              >deposit rails</a
+            >
+            from
+            <a
+              href="/portal/glossary/#glossary:telegram.seat_desk"
+              data-glossary-concept="telegram.seat_desk"
+              >seat capital desk</a
+            >
+            intake (Liquidity/Outs pinned table). Book colors from scrape-wire
+            <a href="/portal/glossary/#glossary:scrape.book" data-glossary-concept="scrape.book"
+              >book registry</a
+            >. Book passwords stay off this board.
+          </p>
+          <div class="partners-panel" id="out-table">
+            <table class="partners-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>Call</th>
+                  <th>Out</th>
+                  <th>Book</th>
+                  <th>Username</th>
+                  <th>Deposit method</th>
+                  <th>Send to</th>
+                  <th>Max bet</th>
+                  <th>FP%</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="deposits-tbody"></tbody>
+            </table>
+          </div>
+          <p class="cli-row">
+            bun run seat:desk:refresh · seat:desk:update · /registry/seat-capital-desk.json
+          </p>
+        </section>
 
-    function renderStats(handshake, seat, ops) {
-      const partners = ops?.summary?.partners ?? handshake?.partners ?? (handshake?.rows?.length || 0);
-      const ready = handshake?.operatorReady ?? 0;
-      const desks = seat?.desks ?? (seat?.rows?.length || 0);
-      const incomplete = ops?.summary?.incompleteOuts ?? seat?.incompleteOuts ?? 0;
-      const inviteGaps = handshake?.inviteGaps ?? 0;
-      const cells = [
-        ['Partners', partners, ''],
-        ['Operator ready', ready, ready === partners && partners > 0 ? 'ok' : ''],
-        ['Seat desks', desks, ''],
-        ['Incomplete outs', incomplete, incomplete > 0 ? 'warn' : 'ok'],
-        ['Invite gaps', inviteGaps, inviteGaps > 0 ? 'warn' : 'ok'],
-      ];
-      $('partners-stats').innerHTML = cells
-        .map(
-          ([k, v, tone]) =>
-            `<div class="partners-stat ${tone}"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div></div>`
-        )
-        .join('');
-    }
+        <section
+          class="partners-section"
+          id="section:books"
+          aria-labelledby="books-heading"
+          data-glossary-concept="section.partnersBookDetail"
+        >
+          <h2 id="books-heading">
+            <a
+              href="/portal/glossary/#glossary:section.partnersBookDetail"
+              data-glossary-concept="section.partnersBookDetail"
+              >Books</a
+            >
+          </h2>
+          <p class="blurb">
+            Book registry rows from
+            <a href="/registry/partners-ops.json"><code>partners-ops.json</code></a>
+            · deep link
+            <code>#book/&lt;id&gt;</code>.
+          </p>
+          <div class="partners-panel" id="book-registry">
+            <div class="topic-chips" id="books-cards" aria-label="Book registry cards"></div>
+          </div>
+        </section>
 
-    function phaseChip(code) {
-      const p = opsByPartner.get(String(code || '').toUpperCase());
-      if (!p) return '—';
-      return conceptChip(p.phaseConceptId, p.phase, p.phaseColor?.hex);
-    }
+        <section
+          class="partners-section"
+          id="section:partner-message"
+          aria-labelledby="partner-message-heading"
+          data-glossary-concept="section.partnersPartnerMessage"
+        >
+          <h2 id="partner-message-heading">
+            <a
+              href="/portal/glossary/#glossary:section.partnersPartnerMessage"
+              data-glossary-concept="section.partnersPartnerMessage"
+              >Partner messages</a
+            >
+          </h2>
+          <p class="blurb">
+            Intake-driven
+            <a
+              href="/portal/glossary/#glossary:telegram.seat_desk"
+              data-glossary-concept="telegram.seat_desk"
+              >seat desk</a
+            >
+            partner-message views (confirm / todo / topic templates). Same JSON as
+            <code>seat:desk:partner-message CALL --json</code> — no passwords.
+          </p>
+          <div class="partners-panel" style="margin-bottom: 12px">
+            <ul
+              class="topic-chips"
+              id="partner-message-templates"
+              aria-label="Partner message templates"
+            ></ul>
+          </div>
+          <div class="partners-panel">
+            <table class="partners-table">
+              <thead>
+                <tr>
+                  <th>Call</th>
+                  <th>Fund</th>
+                  <th>Active</th>
+                  <th>Deferred</th>
+                  <th>Common missing</th>
+                  <th>Out-specific</th>
+                  <th>CLI</th>
+                </tr>
+              </thead>
+              <tbody id="partner-message-tbody"></tbody>
+            </table>
+          </div>
+          <p class="cli-row">
+            bun run seat:desk:partner-message CALL --json · --template todo · --template topic-rails
+            [--post]
+          </p>
+        </section>
+      </div>
+    </main>
 
-    function renderPartners(handshake) {
-      const rows = Array.isArray(handshake?.rows) ? handshake.rows : [];
-      $('partners-tbody').innerHTML = rows.length
-        ? rows
-            .map((row) => {
-              const invite = row.inviteLink
-                ? `<a href="${esc(row.inviteLink)}" target="_blank" rel="noopener">invite</a>`
-                : '<span class="tone-warn">none</span>';
-              const verify = `${row.verifyPassed ?? '—'}/${row.verifyTotal ?? '—'}`;
-              const ops = opsByPartner.get(String(row.partnerCode || '').toUpperCase());
-              const tax = ops
-                ? `${ops.outs?.length || 0} outs · ${ops.phase}`
-                : '—';
-              return `<tr>
-                <td><code>${esc(row.partnerCode)}</code></td>
+    <notification-center aria-live="polite"></notification-center>
+    <footer class="footer" data-portal-chrome="footer">
+      <p>
+        <strong>FactoryWager</strong> ·
+        <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a>
+        · <a href="/portal/ops/">Ops</a> · <a href="/portal/toc/">TOC</a> ·
+        <a href="/portal/partners/">Partners</a> · <a href="/portal/packages/">Packages</a> ·
+        <a href="/portal/brands/">Brands</a> · <a href="/portal/glossary/">Glossary</a> ·
+        <a href="/portal/surfaces/">Surfaces</a> · <a href="/portal/health/">Health</a> ·
+        <a href="/registry/portal-weave.json">Portal proof</a> ·
+        <a href="/portal/tools/">CLI Tools</a> · <a href="/portal/compliance/">Compliance</a> ·
+        <a href="/portal/limits/">Limits</a> · <a href="/portal/dod/">DOD</a> ·
+        <a href="/portal/env/">Env</a> · <a href="/portal/vault/">Vault</a> ·
+        <a href="/portal/failures/">Failures</a> ·
+        <a href="/portal/install-hygiene/">Install hygiene</a> ·
+        <a href="/registry/monorepo-health.json">Monorepo health</a> ·
+        <a
+          href="https://github.com/brendadeeznuts1111/project-R-score"
+          target="_blank"
+          rel="noopener noreferrer"
+          >GitHub</a
+        >
+      </p>
+      <p class="footer-meta">
+        project-R-score · chrome
+        <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a> ·
+        <span data-footer-ts>…</span>
+      </p>
+    </footer>
+
+    <script type="module" src="/portal/data.js"></script>
+    <script type="module" src="/portal/topbar.js"></script>
+    <script type="module" src="/portal/components/sidebar.js"></script>
+    <script type="module" src="/portal/components/notification.js"></script>
+    <script type="module" src="/portal/components/footer.js"></script>
+    <script type="module">
+      import { bootGlossaryUx } from '/portal/components/glossary-ux.js';
+      import {
+        parsePartnerHash,
+        partnerAccountingHash,
+        partnerHash,
+        partnerOutHash,
+        partnerTelegramHash,
+        telegramDeepLink,
+      } from '/portal/partners/partner-routes.js';
+
+      const TELEGRAM_BOT = 'FactoryWagerBot';
+
+      const $ = id => document.getElementById(id);
+      /** @type {Map<string, { hex?: string, conceptId?: string, label?: string }>} */
+      let bookIndex = new Map();
+
+      function esc(value) {
+        const el = document.createElement('div');
+        el.textContent = value == null ? '' : String(value);
+        return el.innerHTML;
+      }
+
+      function glossaryHref(id) {
+        return `/portal/glossary/#glossary:${encodeURIComponent(id)}`;
+      }
+
+      function toneClass(ok) {
+        if (ok === true) return 'tone-ok';
+        if (ok === false) return 'tone-bad';
+        return 'tone-warn';
+      }
+
+      function fundTone(status) {
+        const s = String(status || '').toLowerCase();
+        if (s === 'ready' || s === 'funded') return 'tone-ok';
+        if (s === 'blocked' || s === 'incomplete') return 'tone-bad';
+        return 'tone-warn';
+      }
+
+      async function loadJson(path) {
+        const res = await fetch(path, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`${path} HTTP ${res.status}`);
+        return res.json();
+      }
+
+      function indexBooks(taxonomy) {
+        const map = new Map();
+        for (const book of taxonomy?.bookRegistry || []) {
+          const entry = {
+            hex: book.hex || book.css,
+            conceptId: book.conceptId || 'scrape.book',
+            label: book.label || book.id,
+          };
+          for (const key of [book.id, book.key, book.label, ...(book.aliases || [])]) {
+            const norm = String(key || '')
+              .trim()
+              .toLowerCase()
+              .replace(/[\s_-]+/g, '');
+            if (norm) map.set(norm, entry);
+          }
+        }
+        return map;
+      }
+
+      function resolveBook(label) {
+        const raw = String(label || '').trim();
+        if (!raw) return null;
+        const norm = raw.toLowerCase().replace(/[\s_-]+/g, '');
+        return bookIndex.get(norm) || bookIndex.get(raw.toLowerCase()) || null;
+      }
+
+      /** @type {Map<string, any>} */
+      let opsByPartner = new Map();
+
+      function isChipHex(hex) {
+        return typeof hex === 'string' && /^#[0-9A-Fa-f]{6}$/.test(hex);
+      }
+
+      function colorWireAttributes(color) {
+        const wire = typeof color === 'object' && color ? color : { hex: color };
+        const safeHex = isChipHex(wire.hex) ? wire.hex : '';
+        const safeToken = /^--partner-ops-[a-z_]+$/.test(String(wire.token || ''))
+          ? String(wire.token)
+          : '';
+        const safeKey = /^[a-z_]+$/.test(String(wire.colorKey || '')) ? String(wire.colorKey) : '';
+        const value = safeToken && safeHex ? `var(${safeToken}, ${safeHex})` : safeHex;
+        const style = value ? ` style="--chip-color:${value}"` : '';
+        const key = safeKey ? ` data-color-key="${safeKey}"` : '';
+        return `${style}${key}`;
+      }
+
+      function installColorTokens(colors) {
+        for (const wire of Object.values(colors || {})) {
+          if (!isChipHex(wire?.hex)) continue;
+          if (!/^--partner-ops-[a-z_]+$/.test(String(wire?.token || ''))) continue;
+          document.documentElement.style.setProperty(wire.token, wire.hex);
+        }
+      }
+
+      function conceptChip(conceptId, label, color) {
+        const attrs = colorWireAttributes(color);
+        return `<a class="topic-chip" href="${glossaryHref(conceptId)}" data-glossary-concept="${esc(conceptId)}"${attrs}>${esc(label)}</a>`;
+      }
+
+      function renderTopics(catalog, ops) {
+        const topicLeaf = [
+          ['General', 'telegram.topic.general'],
+          ['Ops', 'telegram.topic.ops'],
+          ['Alerts', 'telegram.topic.alerts'],
+          ['Liquidity/Outs', 'telegram.topic.liquidity'],
+          ['Accounting', 'telegram.topic.accounting'],
+        ];
+        const colors = ops?.colors || {};
+        const packageColors = catalog?.colors?.packageTopics || {};
+        $('topic-chips').innerHTML = topicLeaf
+          .map(([title, conceptId]) => {
+            const mapKey = String(title).toLowerCase();
+            const color = colors[conceptId] || packageColors[mapKey] || '';
+            return `<li>${conceptChip(conceptId, title, color)}</li>`;
+          })
+          .join('');
+      }
+
+      function renderTaxonomyChips(ops) {
+        const ids = [
+          'partner.phase.operator_ready',
+          'book.type.legal',
+          'book.type.offshore',
+          'deposit.method.venmo',
+          'deposit.method.credit',
+          'out.status.ready',
+          'out.status.deferred',
+          'accounting.deposit',
+          'accounting.free_roll',
+        ];
+        const colors = ops?.colors || {};
+        $('taxonomy-chips').innerHTML = ids
+          .map(id => {
+            const wire = colors[id] || {};
+            const label = String(id).split('.').slice(-1)[0].replace(/_/g, ' ');
+            return `<li>${conceptChip(id, label, wire)}</li>`;
+          })
+          .join('');
+      }
+
+      function renderStats(handshake, seat, ops) {
+        const partners =
+          ops?.summary?.partners ?? handshake?.partners ?? (handshake?.rows?.length || 0);
+        const ready = handshake?.operatorReady ?? 0;
+        const desks = seat?.desks ?? (seat?.rows?.length || 0);
+        const incomplete = ops?.summary?.incompleteOuts ?? seat?.incompleteOuts ?? 0;
+        const inviteGaps = handshake?.inviteGaps ?? 0;
+        const accounts = ops?.summary?.accounts ?? ops?.summary?.outs ?? 0;
+        const trackedLimits = ops?.summary?.trackedLimits ?? 0;
+        const communicationReady = ops?.summary?.communicationReady ?? 0;
+        const cells = [
+          ['Partners', partners, ''],
+          ['Operator ready', ready, ready === partners && partners > 0 ? 'ok' : ''],
+          ['Accounts', accounts, ''],
+          [
+            'Tracked limits',
+            trackedLimits,
+            trackedLimits === accounts && accounts > 0 ? 'ok' : 'warn',
+          ],
+          [
+            'Telegram ready',
+            communicationReady,
+            communicationReady === partners && partners > 0 ? 'ok' : 'warn',
+          ],
+          ['Seat desks', desks, ''],
+          ['Incomplete outs', incomplete, incomplete > 0 ? 'warn' : 'ok'],
+          ['Invite gaps', inviteGaps, inviteGaps > 0 ? 'warn' : 'ok'],
+        ];
+        $('partners-stats').innerHTML = cells
+          .map(
+            ([k, v, tone]) =>
+              `<div class="partners-stat ${tone}"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div></div>`
+          )
+          .join('');
+      }
+
+      function routeChip(href, label, color, conceptId = '') {
+        const concept = conceptId ? ` data-glossary-concept="${esc(conceptId)}"` : '';
+        return `<a class="topic-chip" href="${esc(href)}"${concept}${colorWireAttributes(color)}>${esc(label)}</a>`;
+      }
+
+      function partnerLink(code, label = code) {
+        return `<a href="${partnerHash(code)}"><code>${esc(label)}</code></a>`;
+      }
+
+      function renderPartnerRoutes(ops) {
+        const colors = ops?.colors || {};
+        const links = [
+          routeChip(
+            '#partners',
+            'All partners',
+            colors['ops.limits.account'],
+            'ops.limits.account'
+          ),
+        ];
+        for (const partner of ops?.partners || []) {
+          links.push(
+            routeChip(
+              partnerHash(partner.code),
+              partner.code,
+              partner.phaseColor,
+              partner.phaseConceptId
+            )
+          );
+        }
+        links.push(
+          '<span class="partner-route-status" id="partner-route-status" aria-live="polite">All partners</span>'
+        );
+        $('partner-route-bar').innerHTML = links.join('');
+      }
+
+      function phaseChip(code) {
+        const p = opsByPartner.get(String(code || '').toUpperCase());
+        if (!p) return '—';
+        return conceptChip(p.phaseConceptId, p.phase, p.phaseColor);
+      }
+
+      function renderPartners(handshake) {
+        const rows = Array.isArray(handshake?.rows) ? handshake.rows : [];
+        $('partners-tbody').innerHTML = rows.length
+          ? rows
+              .map(row => {
+                const invite = row.inviteLink
+                  ? `<a href="${esc(row.inviteLink)}" target="_blank" rel="noopener">invite</a>`
+                  : '<span class="tone-warn">none</span>';
+                const verify = `${row.verifyPassed ?? '—'}/${row.verifyTotal ?? '—'}`;
+                const ops = opsByPartner.get(String(row.partnerCode || '').toUpperCase());
+                const tax = ops ? `${ops.outs?.length || 0} outs · ${ops.phase}` : '—';
+                const botHref = telegramDeepLink(TELEGRAM_BOT, row.partnerCode, 'ops');
+                const bot = botHref
+                  ? `<a href="${esc(botHref)}" target="_blank" rel="noopener">t.me ops</a>`
+                  : '—';
+                return `<tr id="partner-detail-${esc(row.partnerCode)}" data-partner-code="${esc(row.partnerCode)}">
+                <td>${partnerLink(row.partnerCode)}</td>
                 <td>${phaseChip(row.partnerCode)}</td>
                 <td>${esc(tax)}</td>
                 <td><code>${esc(row.membershipCell || '—')}</code></td>
@@ -478,38 +1103,37 @@
                 <td>${esc(row.dmSeatStatus || '—')}</td>
                 <td class="${toneClass(row.handshakeOk)}">${row.handshakeOk ? 'ok' : 'fail'} · ${esc(verify)}</td>
                 <td>${invite}</td>
+                <td>${bot}</td>
                 <td>${esc((row.nextSteps && row.nextSteps[0]) || '—')}</td>
               </tr>`;
-            })
-            .join('')
-        : '<tr><td colspan="9">No partners in telegram-handshake bake</td></tr>';
-    }
-
-    function deskByPartner(seat) {
-      const map = new Map();
-      for (const row of seat?.rows || []) {
-        const code = String(row.partnerCode || '').toUpperCase();
-        if (!code) continue;
-        if (!map.has(code)) map.set(code, row);
+              })
+              .join('')
+          : '<tr><td colspan="10">No partners in telegram-handshake bake</td></tr>';
       }
-      return map;
-    }
 
-    function renderAccounting(handshake, seat) {
-      const desks = deskByPartner(seat);
-      const partners = Array.isArray(handshake?.rows) ? handshake.rows : [];
-      const codes = partners.length
-        ? partners.map((p) => p.partnerCode)
-        : [...desks.keys()];
-      $('accounting-tbody').innerHTML = codes.length
-        ? codes
-            .map((code) => {
-              const desk = desks.get(String(code).toUpperCase());
-              const done = (desk?.checklist || []).filter((c) => c.done).length;
-              const total = (desk?.checklist || []).length;
-              const checklist = total ? `${done}/${total}` : '—';
-              return `<tr>
-                <td><code>${esc(code)}</code></td>
+      function deskByPartner(seat) {
+        const map = new Map();
+        for (const row of seat?.rows || []) {
+          const code = String(row.partnerCode || '').toUpperCase();
+          if (!code) continue;
+          if (!map.has(code)) map.set(code, row);
+        }
+        return map;
+      }
+
+      function renderAccounting(handshake, seat, ops) {
+        const desks = deskByPartner(seat);
+        const partners = Array.isArray(handshake?.rows) ? handshake.rows : [];
+        const codes = partners.length ? partners.map(p => p.partnerCode) : [...desks.keys()];
+        $('accounting-tbody').innerHTML = codes.length
+          ? codes
+              .map(code => {
+                const desk = desks.get(String(code).toUpperCase());
+                const done = (desk?.checklist || []).filter(c => c.done).length;
+                const total = (desk?.checklist || []).length;
+                const checklist = total ? `${done}/${total}` : '—';
+                return `<tr data-partner-code="${esc(code)}">
+                <td>${partnerLink(code)}</td>
                 <td><code>${esc(desk?.callSign || '—')}</code></td>
                 <td class="${fundTone(desk?.fundStatus)}">${esc(desk?.fundStatus || 'no intake')}</td>
                 <td class="${desk?.hasTelegramDesk ? 'tone-ok' : 'tone-warn'}">${desk?.hasTelegramDesk ? 'pinned' : 'missing'}</td>
@@ -517,71 +1141,101 @@
                 <td>${esc(checklist)}</td>
                 <td><code>telegram:package-group:accounting -- ${esc(code)}</code></td>
               </tr>`;
-            })
-            .join('')
-        : '<tr><td colspan="7">No accounting rows</td></tr>';
-    }
+              })
+              .join('')
+          : '<tr><td colspan="7">No accounting rows</td></tr>';
 
-    function bookChip(label, opsOut) {
-      if (opsOut?.book) {
-        const hex = opsOut.book.scrapeHex || opsOut.book.color?.hex || '';
-        const conceptId = opsOut.book.typeConceptId || 'scrape.book';
-        return conceptChip(conceptId, opsOut.book.name || label || '—', hex).replace(
+        const events = [];
+        for (const partner of ops?.partners || []) {
+          for (const event of partner.accounting?.ledger || []) {
+            events.push({ partnerCode: partner.code, ...event });
+          }
+        }
+        events.sort((a, b) => String(b.at || '').localeCompare(String(a.at || '')));
+        const eventsBody = $('accounting-events-tbody');
+        if (eventsBody) {
+          eventsBody.innerHTML = events.length
+            ? events
+                .slice(0, 40)
+                .map(
+                  e => `<tr data-partner-code="${esc(e.partnerCode)}">
+                <td>${partnerLink(e.partnerCode)}</td>
+                <td><time>${esc(e.at || '—')}</time></td>
+                <td><code>${esc(e.code || '—')}</code></td>
+                <td><a href="${glossaryHref(e.conceptId || 'accounting.deposit')}" data-glossary-concept="${esc(e.conceptId || '')}">${esc(e.conceptId || '—')}</a></td>
+                <td>${e.amount != null ? esc(String(e.amount)) : '—'}</td>
+                <td>${esc([e.rail, e.outId].filter(Boolean).join(' · ') || '—')}</td>
+                <td>${esc(e.note || '—')}</td>
+              </tr>`
+                )
+                .join('')
+            : '<tr><td colspan="7">No ledger events — bun run partners:event … then partners:build</td></tr>';
+        }
+      }
+
+      function bookChip(label, opsOut) {
+        if (opsOut?.book) {
+          const color = opsOut.book.scrapeHex || opsOut.book.color || '';
+          const conceptId = opsOut.book.typeConceptId || 'scrape.book';
+          return conceptChip(conceptId, opsOut.book.name || label || '—', color).replace(
+            'topic-chip',
+            'book-chip'
+          );
+        }
+        const book = resolveBook(label);
+        const conceptId = book?.conceptId || 'scrape.book';
+        return conceptChip(conceptId, label || '—', book?.hex || '').replace(
           'topic-chip',
           'book-chip'
         );
       }
-      const book = resolveBook(label);
-      const conceptId = book?.conceptId || 'scrape.book';
-      const safeHex = isChipHex(book?.hex) ? book.hex : '';
-      const style = safeHex ? ` style="--chip-color:${safeHex}"` : '';
-      return `<a class="book-chip" href="${glossaryHref(conceptId)}" data-glossary-concept="${esc(conceptId)}"${style}>${esc(label || '—')}</a>`;
-    }
 
-    function railChip(label, opsOut) {
-      if (opsOut?.funding) {
-        return conceptChip(
-          opsOut.funding.methodConceptId,
-          label || opsOut.funding.method,
-          opsOut.funding.color?.hex
-        ).replace('topic-chip', 'book-chip');
-      }
-      return esc(label || '—');
-    }
-
-    function statusChip(label, opsOut) {
-      if (opsOut?.statusConceptId) {
-        return conceptChip(opsOut.statusConceptId, opsOut.status || label, opsOut.statusColor?.hex);
-      }
-      return `<span class="${fundTone(label)}">${esc(label)}</span>`;
-    }
-
-    function opsOutFor(partnerCode, outNum) {
-      const p = opsByPartner.get(String(partnerCode || '').toUpperCase());
-      if (!p) return null;
-      const id = `out-${String(partnerCode).toUpperCase()}-${outNum}`;
-      return (p.outs || []).find((o) => o.id === id) || null;
-    }
-
-    function renderDeposits(seat) {
-      const outs = [];
-      for (const desk of seat?.rows || []) {
-        for (const out of desk.outs || []) {
-          outs.push({
-            partnerCode: desk.partnerCode,
-            callSign: desk.callSign,
-            ...out,
-          });
+      function railChip(label, opsOut) {
+        if (opsOut?.funding) {
+          return conceptChip(
+            opsOut.funding.methodConceptId,
+            label || opsOut.funding.method,
+            opsOut.funding.color
+          ).replace('topic-chip', 'book-chip');
         }
+        return esc(label || '—');
       }
-      $('deposits-tbody').innerHTML = outs.length
-        ? outs
-            .map((o) => {
-              const opsOut = opsOutFor(o.partnerCode, o.outNum);
-              return `<tr>
-                <td><code>${esc(o.partnerCode)}</code></td>
+
+      function statusChip(label, opsOut) {
+        if (opsOut?.statusConceptId) {
+          return conceptChip(opsOut.statusConceptId, opsOut.status || label, opsOut.statusColor);
+        }
+        return `<span class="${fundTone(label)}">${esc(label)}</span>`;
+      }
+
+      function opsOutFor(partnerCode, outNum) {
+        const p = opsByPartner.get(String(partnerCode || '').toUpperCase());
+        if (!p) return null;
+        const id = `out-${String(partnerCode).toUpperCase()}-${outNum}`;
+        return (p.outs || []).find(o => o.id === id) || null;
+      }
+
+      function renderDeposits(seat) {
+        const outs = [];
+        for (const desk of seat?.rows || []) {
+          for (const out of desk.outs || []) {
+            outs.push({
+              partnerCode: desk.partnerCode,
+              callSign: desk.callSign,
+              ...out,
+            });
+          }
+        }
+        $('deposits-tbody').innerHTML = outs.length
+          ? outs
+              .map(o => {
+                const opsOut = opsOutFor(o.partnerCode, o.outNum);
+                const routeOutId =
+                  opsOut?.id || `out-${String(o.partnerCode || '').toUpperCase()}-${o.outNum}`;
+                return `<tr id="out-card-${esc(routeOutId)}" data-partner-code="${esc(o.partnerCode)}">
+                <td>${partnerLink(o.partnerCode)}</td>
                 <td><code>${esc(o.callSign)}</code></td>
-                <td>${esc(o.outNum)}</td>
+                <td><a href="${partnerOutHash(o.partnerCode, routeOutId)}">${esc(o.outNum)}</a></td>
                 <td>${bookChip(o.book, opsOut)}</td>
                 <td><code>${esc(o.username)}</code></td>
                 <td>${railChip(o.depositMethod, opsOut)}</td>
@@ -590,40 +1244,108 @@
                 <td><a href="${glossaryHref('accounting.free_roll')}" data-glossary-concept="accounting.free_roll">${esc(o.freeplayPct)}</a></td>
                 <td>${statusChip(o.status, opsOut)}</td>
               </tr>`;
-            })
-            .join('')
-        : '<tr><td colspan="10">No deposit outs in seat-capital-desk bake</td></tr>';
-    }
-
-    function renderPartnerMessages(seat) {
-      const templates = seat?.partnerMessageTemplates || [];
-      const tplEl = $('partner-message-templates');
-      if (tplEl) {
-        tplEl.innerHTML = templates.length
-          ? templates
-              .map((t) => {
-                const topicConcept =
-                  t.thread === 'liquidity/outs'
-                    ? 'telegram.topic.liquidity'
-                    : t.thread === 'accounting'
-                      ? 'telegram.forum.topic.accounting'
-                      : 'telegram.seat_desk';
-                return `<li>${conceptChip(topicConcept, t.id, '')}</li>`;
               })
               .join('')
-          : '<li class="tone-warn">No templates in seat bake — run bun run ops:snapshot</li>';
+          : '<tr><td colspan="10">No deposit outs in seat-capital-desk bake</td></tr>';
       }
-      const views = seat?.partnerViews || [];
-      $('partner-message-tbody').innerHTML = views.length
-        ? views
-            .map((v) => {
-              const fund = v.fund?.status || '—';
-              const common = (v.commonMissing || []).join(', ') || '—';
-              const specific =
-                (v.outSpecificMissing || [])
-                  .map((o) => `${o.num} ${o.book}: ${(o.labels || []).join('/')}`)
-                  .join('; ') || '—';
-              return `<tr>
+
+      function renderAccountsLimits(ops, limitPatterns) {
+        const colors = ops?.colors || {};
+        const profiles = limitPatterns?.accountProfiles?.summary || {};
+        $('account-limit-summary').textContent = profiles.accounts
+          ? ` Global profile control: ${profiles.monitored || 0}/${profiles.accounts} monitored · ${profiles.attention || 0} attention.`
+          : '';
+
+        const rows = ops?.partners || [];
+        $('accounts-limits-tbody').innerHTML = rows.length
+          ? rows
+              .map(partner => {
+                const tracking = partner.tracking || {};
+                const accounts = tracking.accounts || {};
+                const limits = tracking.limits || {};
+                const communication = tracking.communication || {};
+                const accounting = tracking.accounting || {};
+                const limitTone =
+                  limits.missing === 0 ? colors['out.status.ready'] : colors['out.status.deferred'];
+                const communicationTone = communication.ready
+                  ? colors['out.status.ready']
+                  : colors['telegram.handshake'];
+                const effectiveLimits = (partner.outs || []).map(out =>
+                  routeChip(
+                    partnerOutHash(partner.code, out.id),
+                    `${out.book?.name || out.id}: ${out.maxBet || '—'}`,
+                    colors['ops.limits.effective_limit'],
+                    'ops.limits.effective_limit'
+                  ).replace('topic-chip', 'book-chip')
+                );
+                const actions = [
+                  routeChip(
+                    partnerHash(partner.code),
+                    'Account',
+                    colors['ops.limits.account'],
+                    'ops.limits.account'
+                  ),
+                  routeChip(
+                    partnerAccountingHash(partner.code),
+                    'Accounting',
+                    colors['telegram.topic.accounting'],
+                    'accounting.deposit'
+                  ),
+                  routeChip(
+                    partnerTelegramHash(partner.code, 'ops'),
+                    'Telegram',
+                    colors['telegram.topic.ops'],
+                    'telegram.handshake'
+                  ),
+                ].join(' ');
+                return `<tr data-partner-code="${esc(partner.code)}">
+                <td>${partnerLink(partner.code)}<br><code>${esc(partner.callSign)}</code></td>
+                <td>${phaseChip(partner.code)}</td>
+                <td>${conceptChip('ops.limits.account', `${accounts.ready || 0}/${accounts.total || 0} ready`, colors['ops.limits.account'])}</td>
+                <td>${conceptChip('ops.limits.monitoring_status', `${limits.coveragePct || 0}% · ${limits.missing || 0} missing`, limitTone)}</td>
+                <td><span class="tracking-summary">${effectiveLimits.join('') || '—'}</span></td>
+                <td>${conceptChip('accounting.free_roll', `${accounting.freeRollPercent || 0}% · ${accounting.freeRollApplied || 0} applied`, colors['accounting.free_roll'])}</td>
+                <td><a href="${partnerAccountingHash(partner.code)}">${esc(accounting.ledgerEvents || 0)} events</a></td>
+                <td>${routeChip(partnerTelegramHash(partner.code, 'accounting'), `${communication.topicsConfigured || 0}/${communication.topicsRequired || 5} topics · ${communication.chatLinked ? 'linked' : 'unlinked'}`, communicationTone, 'telegram.handshake')}</td>
+                <td>${actions}</td>
+              </tr>`;
+              })
+              .join('')
+          : '<tr><td colspan="9">No account tracking in partners-ops bake</td></tr>';
+      }
+
+      function renderPartnerMessages(seat) {
+        const templates = seat?.partnerMessageTemplates || [];
+        const tplEl = $('partner-message-templates');
+        if (tplEl) {
+          tplEl.innerHTML = templates.length
+            ? templates
+                .map(t => {
+                  const topicConcept =
+                    t.thread === 'liquidity/outs'
+                      ? 'telegram.topic.liquidity'
+                      : t.thread === 'accounting'
+                        ? 'telegram.forum.topic.accounting'
+                        : 'telegram.seat_desk';
+                  return `<li>${conceptChip(topicConcept, t.id, '')}</li>`;
+                })
+                .join('')
+            : '<li class="tone-warn">No templates in seat bake — run bun run ops:snapshot</li>';
+        }
+        const views = seat?.partnerViews || [];
+        $('partner-message-tbody').innerHTML = views.length
+          ? views
+              .map(v => {
+                const fund = v.fund?.status || '—';
+                const common = (v.commonMissing || []).join(', ') || '—';
+                const specific =
+                  (v.outSpecificMissing || [])
+                    .map(o => `${o.num} ${o.book}: ${(o.labels || []).join('/')}`)
+                    .join('; ') || '—';
+                const partnerCode = String(v.callSign || '')
+                  .split('-')[0]
+                  .toUpperCase();
+                return `<tr data-partner-code="${esc(partnerCode)}">
                 <td><code>${esc(v.callSign)}</code></td>
                 <td class="${fundTone(fund)}">${esc(fund)}</td>
                 <td>${esc(String((v.activeOuts || []).length))}</td>
@@ -632,51 +1354,123 @@
                 <td>${esc(specific)}</td>
                 <td><code>seat:desk:partner-message ${esc(v.callSign)} --json</code></td>
               </tr>`;
-            })
-            .join('')
-        : '<tr><td colspan="7">No partnerViews in seat-capital-desk bake — run bun run ops:snapshot</td></tr>';
-    }
-
-    async function load() {
-      try {
-        const [handshake, seat, catalog, taxonomy, ops] = await Promise.all([
-          loadJson('/registry/telegram-handshake.json'),
-          loadJson('/registry/seat-capital-desk.json'),
-          loadJson('/registry/telegram-handshake-catalog.json'),
-          loadJson('/registry/scrape-wire-taxonomy.json'),
-          loadJson('/registry/partners-ops.json'),
-        ]);
-        bookIndex = indexBooks(taxonomy);
-        opsByPartner = new Map(
-          (ops.partners || []).map((p) => [String(p.code || '').toUpperCase(), p])
-        );
-        $('partners-meta').innerHTML =
-          `Handshake <time>${esc(handshake.generatedAt || '—')}</time> · ` +
-          `Seat desk <time>${esc(seat.generatedAt || '—')}</time> · ` +
-          `Ops <time>${esc(ops.generatedAt || '—')}</time> · ` +
-          `<a href="/registry/telegram-handshake.json"><code>telegram-handshake.json</code></a> · ` +
-          `<a href="/registry/seat-capital-desk.json"><code>seat-capital-desk.json</code></a> · ` +
-          `<a href="/registry/partners-ops.json"><code>partners-ops.json</code></a> · ` +
-          `<a href="/portal/glossary/#glossary:telegram.wire"><code>telegram glossary</code></a>`;
-        renderTopics(catalog, ops);
-        renderTaxonomyChips(ops);
-        renderStats(handshake, seat, ops);
-        renderPartners(handshake);
-        renderAccounting(handshake, seat);
-        renderDeposits(seat);
-        renderPartnerMessages(seat);
-        $('loading').classList.add('hidden');
-        $('dashboard').classList.remove('hidden');
-        bootGlossaryUx(document);
-      } catch (err) {
-        $('loading').classList.add('hidden');
-        const banner = $('error-banner');
-        banner.classList.remove('hidden');
-        banner.textContent = err instanceof Error ? err.message : String(err);
+              })
+              .join('')
+          : '<tr><td colspan="7">No partnerViews in seat-capital-desk bake — run bun run ops:snapshot</td></tr>';
       }
-    }
 
-    load();
-  </script>
-</body>
+      function renderBooks(ops) {
+        const books = Array.isArray(ops?.books) ? ops.books : [];
+        const el = $('books-cards');
+        if (!el) return;
+        el.innerHTML = books.length
+          ? books
+              .map(book => {
+                const id = String(book.id || '');
+                const hex = book.color?.hex || book.color?.css || '';
+                const concept = book.typeConceptId || 'scrape.book';
+                const chip = conceptChip(concept, book.name || id, hex).replace(
+                  'topic-chip',
+                  'book-chip'
+                );
+                return `<a class="book-card" id="book-card-${esc(id)}" href="#book/${esc(id)}" data-book-id="${esc(id)}">${chip}</a>`;
+              })
+              .join('')
+          : '<span class="tone-warn">No books in partners-ops bake</span>';
+      }
+
+      function applyPartnerRoute(scroll = false) {
+        let route = parsePartnerHash(window.location.hash) || { type: 'list' };
+        if ('code' in route && !opsByPartner.has(route.code)) route = { type: 'list' };
+        const selectedCode = 'code' in route ? route.code : null;
+
+        for (const row of document.querySelectorAll('[data-partner-code]')) {
+          const matches = !selectedCode || row.dataset.partnerCode === selectedCode;
+          row.classList.toggle('is-route-hidden', !matches);
+          row.setAttribute('aria-hidden', matches ? 'false' : 'true');
+        }
+        for (const link of document.querySelectorAll('#partner-route-bar a')) {
+          const linkRoute = parsePartnerHash(link.hash);
+          const active = selectedCode
+            ? linkRoute?.type === 'partner' && linkRoute.code === selectedCode
+            : linkRoute?.type === 'list' || linkRoute?.type === 'partners';
+          link.setAttribute('aria-current', active ? 'true' : 'false');
+        }
+        for (const target of document.querySelectorAll('.route-target')) {
+          target.classList.remove('route-target');
+        }
+
+        let target = null;
+        if (route.type === 'out') target = document.getElementById(`out-card-${route.outId}`);
+        if (route.type === 'accounting') target = $('accounting-ledger');
+        if (route.type === 'telegram') target = $('telegram-thread');
+        if (route.type === 'partner') {
+          target =
+            document.getElementById(`partner-detail-${route.code}`) || $('section:accounts-limits');
+        }
+        if (route.type === 'book') target = document.getElementById(`book-card-${route.bookId}`);
+        if (route.type === 'list' || route.type === 'partners') target = $('partner-panel');
+        if (target) target.classList.add('route-target');
+
+        const status = $('partner-route-status');
+        if (status) {
+          if (route.type === 'book') status.textContent = `Book · ${route.bookId}`;
+          else if (selectedCode)
+            status.textContent = `${selectedCode} · ${route.type}${route.topic ? ` · ${route.topic}` : ''}`;
+          else status.textContent = 'All partners';
+        }
+        if (scroll && target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      window.addEventListener('hashchange', () => applyPartnerRoute(true));
+
+      async function load() {
+        try {
+          const [handshake, seat, catalog, taxonomy, ops, limitPatterns] = await Promise.all([
+            loadJson('/registry/telegram-handshake.json'),
+            loadJson('/registry/seat-capital-desk.json'),
+            loadJson('/registry/telegram-handshake-catalog.json'),
+            loadJson('/registry/scrape-wire-taxonomy.json'),
+            loadJson('/registry/partners-ops.json'),
+            loadJson('/registry/limit-raises.json'),
+          ]);
+          installColorTokens(ops.colors);
+          bookIndex = indexBooks(taxonomy);
+          opsByPartner = new Map(
+            (ops.partners || []).map(p => [String(p.code || '').toUpperCase(), p])
+          );
+          $('partners-meta').innerHTML =
+            `Handshake <time>${esc(handshake.generatedAt || '—')}</time> · ` +
+            `Seat desk <time>${esc(seat.generatedAt || '—')}</time> · ` +
+            `Ops <time>${esc(ops.generatedAt || '—')}</time> · ` +
+            `<a href="/registry/telegram-handshake.json"><code>telegram-handshake.json</code></a> · ` +
+            `<a href="/registry/seat-capital-desk.json"><code>seat-capital-desk.json</code></a> · ` +
+            `<a href="/registry/partners-ops.json"><code>partners-ops.json</code></a> · ` +
+            `<a href="/registry/limit-raises.json"><code>limit-raises.json</code></a> · ` +
+            `<a href="/portal/glossary/#glossary:telegram.wire"><code>telegram glossary</code></a>`;
+          renderTopics(catalog, ops);
+          renderTaxonomyChips(ops);
+          renderPartnerRoutes(ops);
+          renderStats(handshake, seat, ops);
+          renderPartners(handshake);
+          renderAccountsLimits(ops, limitPatterns);
+          renderAccounting(handshake, seat, ops);
+          renderDeposits(seat);
+          renderBooks(ops);
+          renderPartnerMessages(seat);
+          $('loading').classList.add('hidden');
+          $('dashboard').classList.remove('hidden');
+          bootGlossaryUx(document);
+          applyPartnerRoute(false);
+        } catch (err) {
+          $('loading').classList.add('hidden');
+          const banner = $('error-banner');
+          banner.classList.remove('hidden');
+          banner.textContent = err instanceof Error ? err.message : String(err);
+        }
+      }
+
+      load();
+    </script>
+  </body>
 </html>

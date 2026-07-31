@@ -21,7 +21,7 @@
     "partnerOpsColorKernel": "lib/telegram/partner-ops-color-kernel.ts",
     "canonicalDump": "Kalshi-bot/research/registry/glossary-dump.json",
     "portalProjection": "tools/domain-glossary.ts",
-    "colorKernel": "lib/theme/colors.ts"
+    "colorKernel": "public/portal/theme.jsonc"
   },
   "surfaces": [
     {
@@ -143,8 +143,12 @@
       "sections": {
         "telegram": "section.partnersTelegram",
         "accounting": "section.partnersAccounting",
+        "accounts-limits": "section.partnersAccountsLimits",
         "deposits": "section.partnersDeposits",
-        "partner-message": "section.partnersPartnerMessage"
+        "partner-message": "section.partnersPartnerMessage",
+        "outs": "section.partnersOuts",
+        "book-detail": "section.partnersBookDetail",
+        "tags": "section.partnersTags"
       }
     },
     {
@@ -191,20 +195,20 @@
     }
   ],
   "summary": {
-    "concepts": 372,
-    "active": 371,
+    "concepts": 377,
+    "active": 376,
     "deprecated": 1,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 235,
+    "portalSemantics": 240,
     "categories": {
       "market": 33,
       "model": 18,
       "pipeline": 41,
       "tournament": 86,
       "trading": 56,
-      "ui": 111,
+      "ui": 116,
       "warehouse": 27
     },
     "kinds": {
@@ -225,13 +229,13 @@
       "region": 7,
       "registry": 39,
       "sport": 10,
-      "ui": 184
+      "ui": 189
     },
     "semanticTypes": {
       "classification": 136,
       "location": 4,
       "presentation": 4,
-      "resource": 69,
+      "resource": 74,
       "state": 21,
       "version": 1
     },
@@ -239,8 +243,8 @@
       "badge": 51,
       "chip": 92,
       "code": 22,
-      "heading": 54,
-      "link": 12,
+      "heading": 58,
+      "link": 13,
       "token": 4
     }
   },
@@ -248,50 +252,50 @@
     {
       "id": "market",
       "label": "Market data",
-      "colorKey": "primary",
-      "color": "#3b82f6"
+      "colorKey": "accent",
+      "color": "#58a6ff"
     },
     {
       "id": "model",
       "label": "Model & calibration",
-      "colorKey": "secondary",
-      "color": "#8b5cf6"
+      "colorKey": "purple",
+      "color": "#a371f7"
     },
     {
       "id": "tournament",
       "label": "Tournament metadata",
-      "colorKey": "success",
-      "color": "#22c55e"
+      "colorKey": "green",
+      "color": "#3fb950"
     },
     {
       "id": "warehouse",
       "label": "Warehouse & profiles",
-      "colorKey": "accent",
-      "color": "#06b6d4"
+      "colorKey": "blueDeep",
+      "color": "#1f6feb"
     },
     {
       "id": "trading",
       "label": "Trading & orders",
-      "colorKey": "warning",
-      "color": "#f59e0b"
+      "colorKey": "yellow",
+      "color": "#d29922"
     },
     {
       "id": "ui",
       "label": "UI & ops",
-      "colorKey": "info",
-      "color": "#60a5fa"
+      "colorKey": "accent",
+      "color": "#58a6ff"
     },
     {
       "id": "pipeline",
       "label": "Pipeline & alerts",
-      "colorKey": "error",
-      "color": "#ef4444"
+      "colorKey": "red",
+      "color": "#f85149"
     },
     {
       "id": "other",
       "label": "Other",
       "colorKey": "muted",
-      "color": "#6b7280"
+      "color": "#8b949e"
     }
   ],
   "concepts": [
@@ -316,7 +320,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
-      "color": "#3b82f6",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -343,7 +347,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
-      "color": "#3b82f6",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -366,7 +370,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#3b82f6",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -394,7 +398,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "countFp",
-      "color": "#3b82f6",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -418,7 +422,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
-      "color": "#3b82f6",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -441,7 +445,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
-      "color": "#f59e0b",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -465,7 +469,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
-      "color": "#f59e0b",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -488,7 +492,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
-      "color": "#f59e0b",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -512,7 +516,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
-      "color": "#f59e0b",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -535,7 +539,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
-      "color": "#f59e0b",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -559,7 +563,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
-      "color": "#f59e0b",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -582,7 +586,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
-      "color": "#f59e0b",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -606,7 +610,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
-      "color": "#f59e0b",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -629,7 +633,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#f59e0b",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -653,7 +657,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
-      "color": "#f59e0b",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -677,7 +681,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#f59e0b",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -702,7 +706,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#f59e0b",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -725,7 +729,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
-      "color": "#8b5cf6",
+      "color": "#a371f7",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -748,7 +752,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "pct",
-      "color": "#8b5cf6",
+      "color": "#a371f7",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -772,7 +776,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
-      "color": "#8b5cf6",
+      "color": "#a371f7",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -806,7 +810,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#22c55e",
+      "color": "#3fb950",
       "url": null,
       "registryColumn": 6,
       "source": "desk",
@@ -835,7 +839,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#22c55e",
+      "color": "#3fb950",
       "url": null,
       "registryColumn": 8,
       "source": "desk",
@@ -877,7 +881,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#22c55e",
+      "color": "#3fb950",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -900,7 +904,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#22c55e",
+      "color": "#3fb950",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -923,7 +927,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#22c55e",
+      "color": "#3fb950",
       "url": null,
       "registryColumn": 7,
       "source": "kalshi",
@@ -946,7 +950,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#22c55e",
+      "color": "#3fb950",
       "url": null,
       "registryColumn": 9,
       "source": "desk",
@@ -969,7 +973,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#22c55e",
+      "color": "#3fb950",
       "url": null,
       "registryColumn": 10,
       "source": "desk",
@@ -989,7 +993,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": 0,
       "source": "desk",
@@ -1009,7 +1013,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": 1,
       "source": "kalshi",
@@ -1029,7 +1033,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": 2,
       "source": "desk",
@@ -1049,7 +1053,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": 3,
       "source": "desk",
@@ -1069,7 +1073,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": 4,
       "source": "desk",
@@ -1089,7 +1093,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": 5,
       "source": "desk",
@@ -1117,7 +1121,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
-      "color": "#3b82f6",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": 11,
       "source": "kalshi",
@@ -1141,7 +1145,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
-      "color": "#3b82f6",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": 12,
       "source": "kalshi",
@@ -1165,7 +1169,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "countFp",
-      "color": "#3b82f6",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": 13,
       "source": "kalshi",
@@ -1189,7 +1193,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
-      "color": "#3b82f6",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": 14,
       "source": "polymarket",
@@ -1213,7 +1217,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "usd",
-      "color": "#3b82f6",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": 15,
       "source": "polymarket",
@@ -1237,7 +1241,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
-      "color": "#3b82f6",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": 16,
       "source": "pinnacle",
@@ -1263,7 +1267,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#3b82f6",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": 17,
       "source": "pinnacle",
@@ -1287,7 +1291,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "probability",
-      "color": "#8b5cf6",
+      "color": "#a371f7",
       "url": null,
       "registryColumn": 18,
       "source": "elo",
@@ -1313,7 +1317,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#8b5cf6",
+      "color": "#a371f7",
       "url": null,
       "registryColumn": 19,
       "source": "elo",
@@ -1338,7 +1342,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
-      "color": "#8b5cf6",
+      "color": "#a371f7",
       "url": null,
       "registryColumn": 20,
       "source": "desk",
@@ -1362,7 +1366,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
-      "color": "#8b5cf6",
+      "color": "#a371f7",
       "url": null,
       "registryColumn": 21,
       "source": "desk",
@@ -1386,7 +1390,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#3b82f6",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": 22,
       "source": "desk",
@@ -1410,7 +1414,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "usd",
-      "color": "#3b82f6",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": 23,
       "source": "desk",
@@ -1434,7 +1438,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": 24,
       "source": "desk",
@@ -1458,7 +1462,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#8b5cf6",
+      "color": "#a371f7",
       "url": null,
       "registryColumn": 25,
       "source": "desk",
@@ -1482,7 +1486,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#8b5cf6",
+      "color": "#a371f7",
       "url": null,
       "registryColumn": 26,
       "source": "desk",
@@ -1505,7 +1509,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#8b5cf6",
+      "color": "#a371f7",
       "url": null,
       "registryColumn": 27,
       "source": "desk",
@@ -1529,7 +1533,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#8b5cf6",
+      "color": "#a371f7",
       "url": null,
       "registryColumn": 28,
       "source": "desk",
@@ -1553,7 +1557,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": 29,
       "source": "desk",
@@ -1576,7 +1580,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": 30,
       "source": "desk",
@@ -1602,7 +1606,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -1628,7 +1632,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "atMs",
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -1653,7 +1657,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -1676,7 +1680,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "pct",
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -1702,7 +1706,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "pp",
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -1725,7 +1729,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#60a5fa",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -1750,7 +1754,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#60a5fa",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -1778,7 +1782,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#60a5fa",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -1806,7 +1810,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
-      "color": "#60a5fa",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -1834,7 +1838,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#60a5fa",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -1862,7 +1866,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#60a5fa",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -1885,7 +1889,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#22c55e",
+      "color": "#3fb950",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -1908,7 +1912,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#22c55e",
+      "color": "#3fb950",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -1943,7 +1947,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#60a5fa",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -1974,7 +1978,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#3b82f6",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2000,7 +2004,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "countFp",
-      "color": "#3b82f6",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2023,7 +2027,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "pp",
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2057,7 +2061,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#60a5fa",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2084,7 +2088,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#60a5fa",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2111,7 +2115,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2139,7 +2143,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2165,7 +2169,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2191,7 +2195,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
-      "color": "#60a5fa",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2217,7 +2221,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "usd",
-      "color": "#3b82f6",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2241,7 +2245,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#8b5cf6",
+      "color": "#a371f7",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2265,7 +2269,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
-      "color": "#8b5cf6",
+      "color": "#a371f7",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2289,7 +2293,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#8b5cf6",
+      "color": "#a371f7",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2312,7 +2316,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#8b5cf6",
+      "color": "#a371f7",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2339,7 +2343,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "pct",
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2365,7 +2369,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2391,7 +2395,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "count",
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2417,7 +2421,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "ms",
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2444,7 +2448,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "cents",
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2474,7 +2478,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2501,7 +2505,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2532,7 +2536,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2554,7 +2558,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#60a5fa",
+      "color": "#58a6ff",
       "url": "https://bun.com/docs/runtime/color",
       "registryColumn": null,
       "source": null,
@@ -2574,7 +2578,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2594,7 +2598,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2614,7 +2618,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2634,7 +2638,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2654,7 +2658,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2674,7 +2678,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2694,7 +2698,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2714,7 +2718,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2734,7 +2738,7 @@
       "status": "deprecated",
       "deprecatedBy": "eff_edge",
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2754,7 +2758,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2774,7 +2778,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#06b6d4",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2794,7 +2798,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2814,7 +2818,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2834,7 +2838,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#3b82f6",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2854,7 +2858,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#3b82f6",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2874,7 +2878,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2902,7 +2906,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#3fb950",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2929,7 +2933,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2955,7 +2959,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -2980,7 +2984,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#8b949e",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3007,7 +3011,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#f59e0b",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3032,7 +3036,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#f59e0b",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3058,7 +3062,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#f59e0b",
+      "color": "#a371f7",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3083,7 +3087,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#f59e0b",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3109,7 +3113,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#f59e0b",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3137,7 +3141,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#f59e0b",
+      "color": "#3fb950",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3163,7 +3167,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#f59e0b",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3189,7 +3193,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#f59e0b",
+      "color": "#f0883e",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3216,7 +3220,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#3fb950",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3242,7 +3246,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3267,7 +3271,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#8b949e",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3294,7 +3298,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "usd",
-      "color": "#f59e0b",
+      "color": "#3fb950",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3320,7 +3324,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "usd",
-      "color": "#f59e0b",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3346,7 +3350,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "usd",
-      "color": "#f59e0b",
+      "color": "#58a6ff",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3374,7 +3378,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "pct",
-      "color": "#f59e0b",
+      "color": "#f0883e",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3400,7 +3404,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "usd",
-      "color": "#f59e0b",
+      "color": "#1f6feb",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3425,7 +3429,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3450,7 +3454,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3475,7 +3479,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3500,7 +3504,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3525,7 +3529,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "usd",
-      "color": "#f59e0b",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3550,7 +3554,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "usd",
-      "color": "#f59e0b",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3575,7 +3579,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "usd",
-      "color": "#f59e0b",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3600,7 +3604,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "pct",
-      "color": "#f59e0b",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3625,7 +3629,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": "usd",
-      "color": "#f59e0b",
+      "color": "#d29922",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3650,7 +3654,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3675,7 +3679,7 @@
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
-      "color": "#ef4444",
+      "color": "#f85149",
       "url": null,
       "registryColumn": null,
       "source": null,
@@ -3708,7 +3712,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.brandKeymap",
@@ -3737,7 +3741,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.bunfig",
@@ -3766,7 +3770,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.catalog",
@@ -3795,7 +3799,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.compliance",
@@ -3824,7 +3828,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.consoleFormat",
@@ -3853,7 +3857,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.dashboard",
@@ -3882,7 +3886,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.doctor",
@@ -3911,7 +3915,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.dodReview",
@@ -3940,7 +3944,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.environment",
@@ -3969,7 +3973,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.factoryRegistry",
@@ -3998,7 +4002,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.failures",
@@ -4027,7 +4031,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.glossary",
@@ -4056,7 +4060,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.health",
@@ -4085,7 +4089,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.identity",
@@ -4114,7 +4118,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.installHygiene",
@@ -4143,7 +4147,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.limitForecastLab",
@@ -4172,7 +4176,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.limitPatterns",
@@ -4201,7 +4205,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.operations",
@@ -4230,7 +4234,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.packages",
@@ -4259,19 +4263,19 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.partners",
       "label": "Partners",
-      "description": "Portal page for partner package Telegram forums, Accounting topic deals, and seat-desk deposit rails.",
+      "description": "Portal page for partner accounts, limit coverage, package Telegram forums, Accounting topic deals, and seat-desk deposit rails.",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
       "synonyms": [
         "package groups",
         "telegram partners",
-        "seat capital partners"
+        "partner account control"
       ],
       "values": null,
       "valueLabels": null,
@@ -4289,7 +4293,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.partnerHistory",
@@ -4318,7 +4322,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.science",
@@ -4347,7 +4351,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.skills",
@@ -4376,7 +4380,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.surfaces",
@@ -4405,7 +4409,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.tennis",
@@ -4434,7 +4438,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.toc",
@@ -4463,7 +4467,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.tools",
@@ -4492,7 +4496,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "page.vault",
@@ -4521,7 +4525,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.semantic.surface",
@@ -4550,7 +4554,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.semantic.hostname",
@@ -4578,7 +4582,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "location",
       "uiRole": "code",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.semantic.port",
@@ -4605,7 +4609,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "location",
       "uiRole": "code",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.semantic.status",
@@ -4643,7 +4647,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "state",
       "uiRole": "badge",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.semantic.tone",
@@ -4677,7 +4681,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "presentation",
       "uiRole": "token",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.semantic.kind",
@@ -4714,7 +4718,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.semantic.plane",
@@ -4749,7 +4753,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.semantic.source",
@@ -4778,7 +4782,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "location",
       "uiRole": "link",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.semantic.version",
@@ -4807,7 +4811,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "version",
       "uiRole": "badge",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.semantic.resources",
@@ -4837,7 +4841,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "link",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.semantic.artifact",
@@ -4867,7 +4871,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "link",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.semantic.package",
@@ -4896,7 +4900,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "link",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.semantic.type",
@@ -4932,7 +4936,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.account",
@@ -4964,7 +4968,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.node",
@@ -4996,7 +5000,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "code",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.tree",
@@ -5027,7 +5031,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.downline",
@@ -5058,7 +5062,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.roleType",
@@ -5093,7 +5097,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.partner",
@@ -5126,7 +5130,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.agent",
@@ -5159,7 +5163,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.sub_agent",
@@ -5192,7 +5196,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.profile",
@@ -5221,7 +5225,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "link",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.jurisdiction_policy",
@@ -5251,7 +5255,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.policy_code",
@@ -5280,7 +5284,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "code",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.monitoring_status",
@@ -5314,7 +5318,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "state",
       "uiRole": "badge",
-      "color": "#60a5fa"
+      "color": "#d29922"
     },
     {
       "id": "ops.limits.evidence_trace",
@@ -5344,7 +5348,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "link",
-      "color": "#60a5fa"
+      "color": "#1f6feb"
     },
     {
       "id": "ops.limits.effective_limit",
@@ -5374,7 +5378,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "state",
       "uiRole": "code",
-      "color": "#60a5fa"
+      "color": "#f0883e"
     },
     {
       "id": "ops.limits.pattern_surface",
@@ -5403,7 +5407,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.change_direction",
@@ -5435,7 +5439,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "state",
       "uiRole": "badge",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.market_phase",
@@ -5469,7 +5473,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.sport",
@@ -5508,7 +5512,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.league",
@@ -5558,7 +5562,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.competition",
@@ -5602,7 +5606,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.event_country",
@@ -5632,7 +5636,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "location",
       "uiRole": "badge",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.market_type",
@@ -5670,7 +5674,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.multi_structure",
@@ -5705,7 +5709,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.limit_delta",
@@ -5734,7 +5738,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "state",
       "uiRole": "code",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.influence_score",
@@ -5764,7 +5768,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "state",
       "uiRole": "badge",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.data_coverage",
@@ -5793,7 +5797,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "state",
       "uiRole": "badge",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ops.limits.prediction",
@@ -5822,7 +5826,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "api.agent",
@@ -5853,7 +5857,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "link",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "section.accountLimitControl",
@@ -5882,7 +5886,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "section.complianceKpis",
@@ -5911,7 +5915,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "section.jurisdictionCatalog",
@@ -5940,7 +5944,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "section.patternSummary",
@@ -5969,7 +5973,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "section.limitRaisePrediction",
@@ -5998,7 +6002,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "section.sportsbookPatterns",
@@ -6027,7 +6031,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "section.stateZipPatterns",
@@ -6056,7 +6060,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "section.downlineContext",
@@ -6086,7 +6090,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "section.dataConnectionAudit",
@@ -6115,7 +6119,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "section.recentLimitChanges",
@@ -6144,7 +6148,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "section.perNodeBreakdown",
@@ -6174,7 +6178,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "section.openingBaseline",
@@ -6205,7 +6209,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "section.partnersTelegram",
@@ -6224,6 +6228,7 @@
       "seeAlso": [
         "page.partners",
         "section.partnersAccounting",
+        "section.partnersAccountsLimits",
         "section.partnersDeposits",
         "section.partnersPartnerMessage"
       ],
@@ -6236,7 +6241,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "section.partnersAccounting",
@@ -6255,6 +6260,7 @@
       "seeAlso": [
         "page.partners",
         "section.partnersTelegram",
+        "section.partnersAccountsLimits",
         "section.partnersDeposits",
         "section.partnersPartnerMessage"
       ],
@@ -6267,7 +6273,38 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
+    },
+    {
+      "id": "section.partnersAccountsLimits",
+      "label": "Accounts and limits",
+      "description": "Partners board section joining account readiness, effective max-bet coverage, accounting activity, and Telegram communication readiness by partner.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "partner accounts",
+        "limit tracking",
+        "communication readiness"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.partners",
+        "section.partnersAccounting",
+        "section.partnersTelegram",
+        "section.partnersDeposits"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#58a6ff"
     },
     {
       "id": "section.partnersDeposits",
@@ -6286,6 +6323,7 @@
       "seeAlso": [
         "page.partners",
         "section.partnersAccounting",
+        "section.partnersAccountsLimits",
         "section.partnersTelegram",
         "section.partnersPartnerMessage"
       ],
@@ -6298,7 +6336,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "section.partnersPartnerMessage",
@@ -6317,6 +6355,7 @@
       "seeAlso": [
         "page.partners",
         "section.partnersAccounting",
+        "section.partnersAccountsLimits",
         "section.partnersDeposits",
         "section.partnersTelegram"
       ],
@@ -6329,7 +6368,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "heading",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.filter.profile",
@@ -6358,7 +6397,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.filter.jurisdiction",
@@ -6387,7 +6426,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.filter.partnerId",
@@ -6416,7 +6455,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.filter.sportsbook",
@@ -6445,7 +6484,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.filter.state",
@@ -6474,7 +6513,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.filter.zipPrefix",
@@ -6503,7 +6542,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.action.reset",
@@ -6532,7 +6571,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "presentation",
       "uiRole": "link",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "ui.action.searchProfiles",
@@ -6561,7 +6600,125 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "presentation",
       "uiRole": "link",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
+    },
+    {
+      "id": "section.partnersOuts",
+      "label": "Partner outs",
+      "description": "Partners board section for per-out book, funding, status, balance, and limits.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "out table",
+        "outs board",
+        "seat outs"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.partners",
+        "section.partnersDeposits",
+        "section.partnersBookDetail"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "section.partnersBookDetail",
+      "label": "Book detail",
+      "description": "Partners board section for a single book: type, location, max bet, free-roll percent.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "book card",
+        "book profile"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.partners",
+        "section.partnersOuts"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "section.partnersTags",
+      "label": "Partner tag filter bar",
+      "description": "Partners board section for phase, book-type, status, funding, and location filter tags.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "tag bar",
+        "filter taxonomy",
+        "tag-filter-bar"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.partners",
+        "ui.filter.partnerId"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ui.route.partnerHash",
+      "label": "Partner hash route",
+      "description": "URLPattern hash route for partner deep links: #partners, #partner/:code, #partner/:code/out/:outId, #partner/:code/accounting, #partner/:code/telegram/:topic, #book/:bookId.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "hash router",
+        "partner deep link",
+        "URLPattern route"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.partners",
+        "section.partnersOuts",
+        "section.partnersAccounting",
+        "section.partnersTelegram"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "link",
+      "color": "#58a6ff"
     },
     {
       "id": "ui.action.filter",
@@ -6590,7 +6747,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "presentation",
       "uiRole": "link",
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "jurisdiction.MA",
@@ -6624,7 +6781,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "jurisdiction.NJ",
@@ -6658,7 +6815,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "policy.MA.soccer.match_winner",
@@ -6697,7 +6854,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "policy.MA.basketball.over_under",
@@ -6736,7 +6893,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "policy.NJ.soccer.match_winner",
@@ -6775,7 +6932,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "policy.NJ.basketball.over_under",
@@ -6814,7 +6971,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "kpi.compliance.blocked_bets",
@@ -6847,7 +7004,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "kpi.compliance.active_policies",
@@ -6879,7 +7036,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "kpi.compliance.riskiest_jurisdiction",
@@ -6911,7 +7068,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "kpi.compliance.policy_changes",
@@ -6943,7 +7100,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "sport",
@@ -6992,7 +7149,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "competition",
@@ -7066,7 +7223,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "event",
@@ -7104,7 +7261,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "event.match",
@@ -7140,7 +7297,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "sport.american_football",
@@ -7178,7 +7335,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "sport.baseball",
@@ -7214,7 +7371,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "sport.basketball",
@@ -7253,7 +7410,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "sport.hockey",
@@ -7289,7 +7446,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "sport.soccer",
@@ -7329,7 +7486,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "sport.tennis",
@@ -7365,7 +7522,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "sport.golf",
@@ -7400,7 +7557,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "sport.mma",
@@ -7435,7 +7592,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "region",
@@ -7475,7 +7632,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global sports regions",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country",
@@ -7536,7 +7693,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Event host country",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "competition.tier",
@@ -7586,7 +7743,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "region.north_america",
@@ -7627,7 +7784,7 @@
       "region": "north_america",
       "flagEmoji": "🌐",
       "flagAriaLabel": "North America region",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "region.south_america",
@@ -7666,7 +7823,7 @@
       "region": "south_america",
       "flagEmoji": "🌐",
       "flagAriaLabel": "South America region",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "region.europe",
@@ -7725,7 +7882,7 @@
       "region": "europe",
       "flagEmoji": "🌐",
       "flagAriaLabel": "Europe region",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "region.asia_pacific",
@@ -7770,7 +7927,7 @@
       "region": "asia_pacific",
       "flagEmoji": "🌐",
       "flagAriaLabel": "Asia-Pacific region",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "region.africa_middle_east",
@@ -7809,7 +7966,7 @@
       "region": "africa_middle_east",
       "flagEmoji": "🌐",
       "flagAriaLabel": "Africa & Middle East region",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.us",
@@ -7845,7 +8002,7 @@
       "region": "north_america",
       "flagEmoji": "🇺🇸",
       "flagAriaLabel": "United States flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.ca",
@@ -7881,7 +8038,7 @@
       "region": "north_america",
       "flagEmoji": "🇨🇦",
       "flagAriaLabel": "Canada flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.gb",
@@ -7917,7 +8074,7 @@
       "region": "europe",
       "flagEmoji": "🇬🇧",
       "flagAriaLabel": "United Kingdom flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.au",
@@ -7953,7 +8110,7 @@
       "region": "asia_pacific",
       "flagEmoji": "🇦🇺",
       "flagAriaLabel": "Australia flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.fr",
@@ -7989,7 +8146,7 @@
       "region": "europe",
       "flagEmoji": "🇫🇷",
       "flagAriaLabel": "France flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.de",
@@ -8025,7 +8182,7 @@
       "region": "europe",
       "flagEmoji": "🇩🇪",
       "flagAriaLabel": "Germany flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.it",
@@ -8061,7 +8218,7 @@
       "region": "europe",
       "flagEmoji": "🇮🇹",
       "flagAriaLabel": "Italy flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.es",
@@ -8097,7 +8254,7 @@
       "region": "europe",
       "flagEmoji": "🇪🇸",
       "flagAriaLabel": "Spain flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.nl",
@@ -8133,7 +8290,7 @@
       "region": "europe",
       "flagEmoji": "🇳🇱",
       "flagAriaLabel": "Netherlands flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.be",
@@ -8169,7 +8326,7 @@
       "region": "europe",
       "flagEmoji": "🇧🇪",
       "flagAriaLabel": "Belgium flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.ch",
@@ -8205,7 +8362,7 @@
       "region": "europe",
       "flagEmoji": "🇨🇭",
       "flagAriaLabel": "Switzerland flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.cz",
@@ -8241,7 +8398,7 @@
       "region": "europe",
       "flagEmoji": "🇨🇿",
       "flagAriaLabel": "Czechia flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.pl",
@@ -8277,7 +8434,7 @@
       "region": "europe",
       "flagEmoji": "🇵🇱",
       "flagAriaLabel": "Poland flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.rs",
@@ -8313,7 +8470,7 @@
       "region": "europe",
       "flagEmoji": "🇷🇸",
       "flagAriaLabel": "Serbia flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.gr",
@@ -8349,7 +8506,7 @@
       "region": "europe",
       "flagEmoji": "🇬🇷",
       "flagAriaLabel": "Greece flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.br",
@@ -8385,7 +8542,7 @@
       "region": "south_america",
       "flagEmoji": "🇧🇷",
       "flagAriaLabel": "Brazil flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.ar",
@@ -8421,7 +8578,7 @@
       "region": "south_america",
       "flagEmoji": "🇦🇷",
       "flagAriaLabel": "Argentina flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.mx",
@@ -8457,7 +8614,7 @@
       "region": "north_america",
       "flagEmoji": "🇲🇽",
       "flagAriaLabel": "Mexico flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.jp",
@@ -8493,7 +8650,7 @@
       "region": "asia_pacific",
       "flagEmoji": "🇯🇵",
       "flagAriaLabel": "Japan flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.cn",
@@ -8529,7 +8686,7 @@
       "region": "asia_pacific",
       "flagEmoji": "🇨🇳",
       "flagAriaLabel": "China flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.kr",
@@ -8565,7 +8722,7 @@
       "region": "asia_pacific",
       "flagEmoji": "🇰🇷",
       "flagAriaLabel": "South Korea flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.in",
@@ -8601,7 +8758,7 @@
       "region": "asia_pacific",
       "flagEmoji": "🇮🇳",
       "flagAriaLabel": "India flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.za",
@@ -8637,7 +8794,7 @@
       "region": "africa_middle_east",
       "flagEmoji": "🇿🇦",
       "flagAriaLabel": "South Africa flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "country.ae",
@@ -8673,7 +8830,7 @@
       "region": "africa_middle_east",
       "flagEmoji": "🇦🇪",
       "flagAriaLabel": "United Arab Emirates flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "competition.itf_m15",
@@ -8709,7 +8866,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "competition.itf_m25",
@@ -8745,7 +8902,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "competition.itf_w15",
@@ -8781,7 +8938,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "competition.itf_w35",
@@ -8817,7 +8974,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "competition.itf_w50",
@@ -8853,7 +9010,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "competition.itf_w75",
@@ -8889,7 +9046,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "competition.itf_w100",
@@ -8925,7 +9082,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "competition.atp_challenger_50",
@@ -8961,7 +9118,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "competition.atp_challenger_75",
@@ -8997,7 +9154,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "competition.atp_challenger_100",
@@ -9033,7 +9190,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "competition.atp_challenger_125",
@@ -9069,7 +9226,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "competition.atp_challenger_175",
@@ -9105,7 +9262,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "competition.wta_125",
@@ -9141,7 +9298,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "league.nba",
@@ -9179,7 +9336,7 @@
       "region": null,
       "flagEmoji": "🇺🇸 🇨🇦",
       "flagAriaLabel": "United States and Canada",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "league.wnba",
@@ -9216,7 +9373,7 @@
       "region": null,
       "flagEmoji": "🇺🇸",
       "flagAriaLabel": "United States",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "league.nfl",
@@ -9253,7 +9410,7 @@
       "region": null,
       "flagEmoji": "🇺🇸",
       "flagAriaLabel": "United States",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "league.ncaaf",
@@ -9291,7 +9448,7 @@
       "region": null,
       "flagEmoji": "🇺🇸",
       "flagAriaLabel": "United States",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "league.ncaab",
@@ -9330,7 +9487,7 @@
       "region": null,
       "flagEmoji": "🇺🇸",
       "flagAriaLabel": "United States",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "league.mlb",
@@ -9368,7 +9525,7 @@
       "region": null,
       "flagEmoji": "🇺🇸 🇨🇦",
       "flagAriaLabel": "United States and Canada",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "league.nhl",
@@ -9406,7 +9563,7 @@
       "region": null,
       "flagEmoji": "🇺🇸 🇨🇦",
       "flagAriaLabel": "United States and Canada",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "league.mls",
@@ -9444,7 +9601,7 @@
       "region": null,
       "flagEmoji": "🇺🇸 🇨🇦",
       "flagAriaLabel": "United States and Canada",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "league.epl",
@@ -9482,7 +9639,7 @@
       "region": null,
       "flagEmoji": "🇬🇧",
       "flagAriaLabel": "United Kingdom",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "league.uefa_champions_league",
@@ -9518,7 +9675,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global competition",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "league.atp",
@@ -9554,7 +9711,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global competition",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "league.wta",
@@ -9590,7 +9747,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global competition",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "league.itf",
@@ -9626,7 +9783,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global competition",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "league.atp_challenger",
@@ -9661,7 +9818,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global competition",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "league.wta_125",
@@ -9696,7 +9853,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global competition",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "league.pga_tour",
@@ -9731,7 +9888,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global competition",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "league.dp_world_tour",
@@ -9766,7 +9923,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global competition",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "league.ufc",
@@ -9801,7 +9958,7 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global competition",
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "market.match_winner",
@@ -9840,7 +9997,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#3b82f6"
+      "color": "#58a6ff"
     },
     {
       "id": "market.point_spread",
@@ -9877,7 +10034,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#3b82f6"
+      "color": "#58a6ff"
     },
     {
       "id": "market.total",
@@ -9915,7 +10072,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#3b82f6"
+      "color": "#58a6ff"
     },
     {
       "id": "market.player_prop",
@@ -9951,7 +10108,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#3b82f6"
+      "color": "#58a6ff"
     },
     {
       "id": "market.team_prop",
@@ -9986,7 +10143,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#3b82f6"
+      "color": "#58a6ff"
     },
     {
       "id": "market.futures",
@@ -10022,7 +10179,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#3b82f6"
+      "color": "#58a6ff"
     },
     {
       "id": "market.in_play",
@@ -10058,7 +10215,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#3b82f6"
+      "color": "#58a6ff"
     },
     {
       "id": "market.spread",
@@ -10093,7 +10250,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#3b82f6"
+      "color": "#58a6ff"
     },
     {
       "id": "market.over_under",
@@ -10129,7 +10286,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#3b82f6"
+      "color": "#58a6ff"
     },
     {
       "id": "metric.normalized_odds",
@@ -10165,7 +10322,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#8b5cf6"
+      "color": "#a371f7"
     },
     {
       "id": "metric.overround",
@@ -10202,7 +10359,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#8b5cf6"
+      "color": "#a371f7"
     },
     {
       "id": "metric.arbitrage_gap",
@@ -10238,7 +10395,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#8b5cf6"
+      "color": "#a371f7"
     },
     {
       "id": "cross_market.venue_comparison",
@@ -10275,7 +10432,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#3b82f6"
+      "color": "#58a6ff"
     },
     {
       "id": "cross_market.unified_price",
@@ -10311,7 +10468,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#3b82f6"
+      "color": "#58a6ff"
     },
     {
       "id": "evidence.bookmaker_odds",
@@ -10347,7 +10504,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#06b6d4"
+      "color": "#1f6feb"
     },
     {
       "id": "evidence.prediction_market_price",
@@ -10383,7 +10540,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#06b6d4"
+      "color": "#1f6feb"
     },
     {
       "id": "multi.parlay",
@@ -10420,7 +10577,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "multi.leg",
@@ -10456,7 +10613,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "scrape.wire",
@@ -10497,7 +10654,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#06b6d4"
+      "color": "#1f6feb"
     },
     {
       "id": "scrape.book",
@@ -10545,7 +10702,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "scrape.sport",
@@ -10597,7 +10754,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "scrape.league",
@@ -10654,7 +10811,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#22c55e"
+      "color": "#3fb950"
     },
     {
       "id": "scrape.market",
@@ -10702,7 +10859,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#3b82f6"
+      "color": "#58a6ff"
     },
     {
       "id": "scrape.phase",
@@ -10744,7 +10901,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#3b82f6"
+      "color": "#58a6ff"
     },
     {
       "id": "scrape.phase.pregame",
@@ -10782,7 +10939,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#3b82f6"
+      "color": "#58a6ff"
     },
     {
       "id": "scrape.jurisdiction",
@@ -10872,7 +11029,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "ops.limits.opening_baseline",
@@ -10910,7 +11067,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "ops.limits.baseline_tier",
@@ -10951,7 +11108,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "telegram.wire",
@@ -10990,7 +11147,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#ef4444"
+      "color": "#f85149"
     },
     {
       "id": "telegram.package_group",
@@ -11028,7 +11185,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#ef4444"
+      "color": "#f85149"
     },
     {
       "id": "telegram.forum.topic",
@@ -11076,7 +11233,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#ef4444"
+      "color": "#f85149"
     },
     {
       "id": "telegram.topic_map",
@@ -11117,7 +11274,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#06b6d4"
+      "color": "#1f6feb"
     },
     {
       "id": "telegram.forum.topic.accounting",
@@ -11159,7 +11316,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "telegram.forum.topic.liquidity_outs",
@@ -11198,7 +11355,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "telegram.surface",
@@ -11239,7 +11396,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#ef4444"
+      "color": "#f85149"
     },
     {
       "id": "telegram.surface.all_accounting",
@@ -11278,7 +11435,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "telegram.seat_desk",
@@ -11316,7 +11473,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "telegram.deposit_rail",
@@ -11353,7 +11510,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#d29922"
     },
     {
       "id": "telegram.handshake",
@@ -11394,7 +11551,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#ef4444"
+      "color": "#58a6ff"
     },
     {
       "id": "telegram.membership",
@@ -11435,7 +11592,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#ef4444"
+      "color": "#a371f7"
     },
     {
       "id": "telegram.topic_plan_row",
@@ -11474,7 +11631,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#06b6d4"
+      "color": "#1f6feb"
     },
     {
       "id": "deposit.method.cashapp",
@@ -11511,7 +11668,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#f85149"
     },
     {
       "id": "deposit.method.paypal",
@@ -11546,7 +11703,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#58a6ff"
     },
     {
       "id": "deposit.method.zelle",
@@ -11581,7 +11738,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#1f6feb"
     },
     {
       "id": "deposit.method.apple_pay",
@@ -11616,7 +11773,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#8b949e"
     },
     {
       "id": "deposit.method.unknown",
@@ -11649,7 +11806,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#8b949e"
     },
     {
       "id": "out.status.blocked",
@@ -11684,7 +11841,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#ef4444"
+      "color": "#f85149"
     },
     {
       "id": "out.status.partial",
@@ -11719,7 +11876,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#ef4444"
+      "color": "#d29922"
     },
     {
       "id": "out.status.funded",
@@ -11754,7 +11911,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#ef4444"
+      "color": "#3fb950"
     },
     {
       "id": "telegram.topic.general",
@@ -11790,7 +11947,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#60a5fa"
+      "color": "#8b949e"
     },
     {
       "id": "telegram.topic.ops",
@@ -11826,7 +11983,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#60a5fa"
+      "color": "#58a6ff"
     },
     {
       "id": "telegram.topic.alerts",
@@ -11862,7 +12019,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#60a5fa"
+      "color": "#f85149"
     },
     {
       "id": "telegram.topic.liquidity",
@@ -11900,7 +12057,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#60a5fa"
+      "color": "#1f6feb"
     },
     {
       "id": "telegram.topic.accounting",
@@ -11936,7 +12093,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#60a5fa"
+      "color": "#3fb950"
     },
     {
       "id": "partner.ops.event",
@@ -11986,7 +12143,7 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#06b6d4"
+      "color": "#1f6feb"
     }
   ]
 }

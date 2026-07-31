@@ -3,6 +3,14 @@
 import { describe, expect, test } from 'bun:test';
 import { PORTAL_HTML_ROUTES, PORTAL_MARKDOWN_SLUGS } from '../lib/http/portal-route-manifest.ts';
 import { PORTAL_OVERFLOW_NAV } from '../lib/portal/chrome-catalog.ts';
+import {
+  parsePartnerHash,
+  partnerAccountingHash,
+  partnerBookHash,
+  partnerHash,
+  partnerOutHash,
+  partnerTelegramHash,
+} from '../public/portal/partners/partner-routes.js';
 
 const BOARD = 'public/portal/partners/index.html';
 
@@ -19,6 +27,7 @@ describe('partners portal board', () => {
     const html = await Bun.file(BOARD).text();
     expect(html).toContain('id="section:telegram"');
     expect(html).toContain('id="section:accounting"');
+    expect(html).toContain('id="section:accounts-limits"');
     expect(html).toContain('id="section:deposits"');
     expect(html).toContain('id="section:partner-message"');
     expect(html).toContain('/registry/telegram-handshake.json');
@@ -26,6 +35,7 @@ describe('partners portal board', () => {
     expect(html).toContain('/registry/telegram-handshake-catalog.json');
     expect(html).toContain('/registry/scrape-wire-taxonomy.json');
     expect(html).toContain('/registry/partners-ops.json');
+    expect(html).toContain('/registry/limit-raises.json');
     expect(html).toContain('depositMethod');
     expect(html).toContain('telegram:package-group:accounting');
     expect(html).toContain('Betting deposits');
@@ -33,6 +43,16 @@ describe('partners portal board', () => {
     expect(html).toContain('Partner messages');
     expect(html).toContain('seat:desk:partner-message');
     expect(html).toContain('renderPartnerMessages');
+    expect(html).toContain('renderAccountsLimits');
+    expect(html).toContain('applyPartnerRoute');
+    expect(html).toContain('id="tag-filter-bar"');
+    expect(html).toContain('id="out-table"');
+    expect(html).toContain('id="book-registry"');
+    expect(html).toContain('book-card-${');
+    expect(html).toContain('renderBooks');
+    expect(html).toContain('telegramDeepLink');
+    expect(html).toContain('accounting-events-tbody');
+    expect(html).toContain('partners:event');
   });
 
   test('wires telegram glossary concepts and color kernel consumers', async () => {
@@ -40,6 +60,7 @@ describe('partners portal board', () => {
     expect(html).toContain('data-glossary-concept="page.partners"');
     expect(html).toContain('data-glossary-concept="section.partnersTelegram"');
     expect(html).toContain('data-glossary-concept="section.partnersAccounting"');
+    expect(html).toContain('data-glossary-concept="section.partnersAccountsLimits"');
     expect(html).toContain('data-glossary-concept="section.partnersDeposits"');
     expect(html).toContain('data-glossary-concept="section.partnersPartnerMessage"');
     expect(html).toContain('data-glossary-concept="telegram.wire"');
@@ -50,6 +71,8 @@ describe('partners portal board', () => {
     expect(html).toContain('accounting.free_roll');
     expect(html).toContain('bootGlossaryUx');
     expect(html).toContain('--chip-color');
+    expect(html).toContain('--partner-ops-');
+    expect(html).toContain('installColorTokens');
     expect(html).toContain('isChipHex');
     expect(html).toContain('/^#[0-9A-Fa-f]{6}$/');
     expect(html).toContain('Fallback first');
@@ -80,5 +103,35 @@ describe('partners portal board', () => {
     expect(catalog.glossary?.conceptIds).toContain('telegram.wire');
     expect(ops.schema).toBe('factorywager.partners-ops.v2');
     expect(ops.validation.ok).toBe(true);
+    expect(ops.summary.accounts).toBeGreaterThan(0);
+    expect(ops.summary.trackedLimits).toBeGreaterThan(0);
+    expect(ops.partners.every((partner: { tracking?: unknown }) => partner.tracking)).toBe(true);
+  });
+
+  test('URLPattern routes keep partner, out, accounting, and Telegram anchors aligned', () => {
+    expect(parsePartnerHash('#partners')).toEqual({ type: 'list' });
+    expect(parsePartnerHash('#partner/ash')).toEqual({ type: 'partner', code: 'ASH' });
+    expect(parsePartnerHash('#partner/ASH/out/out-ASH-2')).toEqual({
+      type: 'out',
+      code: 'ASH',
+      outId: 'out-ASH-2',
+    });
+    expect(parsePartnerHash('#partner/ASH/accounting')).toEqual({
+      type: 'accounting',
+      code: 'ASH',
+    });
+    expect(parsePartnerHash('#partner/ASH/telegram/liquidity')).toEqual({
+      type: 'telegram',
+      code: 'ASH',
+      topic: 'liquidity',
+    });
+    expect(parsePartnerHash('#partner/ASH/telegram/not-a-topic')).toBeNull();
+    expect(partnerHash('ash')).toBe('#partner/ASH');
+    expect(partnerOutHash('ASH', 'out-ASH-2')).toBe('#partner/ASH/out/out-ASH-2');
+    expect(partnerAccountingHash('ASH')).toBe('#partner/ASH/accounting');
+    expect(partnerTelegramHash('ASH', 'accounting')).toBe('#partner/ASH/telegram/accounting');
+    expect(parsePartnerHash('#book/book-dk-nj')).toEqual({ type: 'book', bookId: 'book-dk-nj' });
+    expect(parsePartnerHash('#book/not-a-book')).toBeNull();
+    expect(partnerBookHash('book-dk-nj')).toBe('#book/book-dk-nj');
   });
 });

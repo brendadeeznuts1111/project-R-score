@@ -1,0 +1,59 @@
+// @see https://bun.com/docs/test — bun:test
+import { describe, expect, test } from 'bun:test';
+import {
+  anchorConceptId,
+  anchorDomId,
+  parsePartnerHash,
+  partnerHash,
+} from '../lib/portal/partner-routes.ts';
+import { PARTNER_TABLE_SCHEMAS } from '../lib/portal/partner-tables.ts';
+import { allPartnerTags } from '../lib/portal/partner-tags.ts';
+import {
+  TELEGRAM_TOPICS,
+  telegramAppHash,
+  telegramDeepLink,
+} from '../lib/portal/partner-telegram.ts';
+
+describe('partner integration contracts', () => {
+  test('URLPattern routes normalize and reject unsafe domain values', () => {
+    const route = parsePartnerHash('#partner/ash/out/out-ASH-1');
+    expect(route).toEqual({ type: 'out', code: 'ASH', outId: 'out-ASH-1' });
+    expect(route && anchorDomId(route)).toBe('out-card-out-ASH-1');
+    expect(route && anchorConceptId(route)).toBe('section.partnersOuts');
+    expect(parsePartnerHash('#partner/ASH/out/out-BIL-1')).toBeNull();
+    expect(parsePartnerHash('#partner/ASH/telegram/admin')).toBeNull();
+    expect(partnerHash({ type: 'partner', code: '../bad' })).toBe('#partners');
+  });
+
+  test('Telegram links use bounded base64url hints and canonical in-app routes', async () => {
+    expect(telegramDeepLink('@FactoryWagerBot', 'ash', 'accounting')).toBe(
+      'https://t.me/FactoryWagerBot?start=QVNIOmFjY291bnRpbmc'
+    );
+    expect(
+      new URL(telegramDeepLink('FactoryWagerBot', 'ASH', 'ops')).searchParams.get('start')
+    ).not.toContain('=');
+    expect(() => telegramDeepLink('bad!', 'ASH', 'ops')).toThrow();
+    expect(telegramAppHash('ash', 'liquidity')).toBe('#partner/ASH/telegram/liquidity');
+    expect(Object.keys(TELEGRAM_TOPICS)).toEqual([
+      'general',
+      'ops',
+      'alerts',
+      'liquidity',
+      'accounting',
+    ]);
+    // Board JS mirror stays byte-compatible with the TypeScript helper.
+    const board = await import('../public/portal/partners/partner-routes.js');
+    expect(board.telegramDeepLink('FactoryWagerBot', 'ASH', 'ops')).toBe(
+      telegramDeepLink('FactoryWagerBot', 'ASH', 'ops')
+    );
+  });
+
+  test('tables and tags expose the reviewed integration taxonomy', () => {
+    expect(Object.keys(PARTNER_TABLE_SCHEMAS)).toEqual(['partners', 'outs', 'accounting']);
+    expect(PARTNER_TABLE_SCHEMAS.outs.some(column => column.key === 'max_bet')).toBe(true);
+    expect(PARTNER_TABLE_SCHEMAS.accounting.some(column => column.key === 'running_balance')).toBe(
+      true
+    );
+    expect(allPartnerTags().length).toBeGreaterThan(15);
+  });
+});

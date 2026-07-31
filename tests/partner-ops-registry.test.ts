@@ -37,8 +37,10 @@ describe('partner-ops color + glossary', () => {
     expect(Object.keys(map).length).toBeGreaterThan(20);
     for (const wire of Object.values(map)) {
       expect(wire.hex).toMatch(/^#[0-9A-F]{6}$/i);
+      expect(wire.token).toMatch(/^--partner-ops-[a-z_]+$/);
     }
     expect(partnerOpsConceptColorWire('partner.phase.operator_ready').colorKey).toBe('tennis');
+    expect(partnerOpsConceptColorWire('ops.limits.effective_limit').colorKey).toBe('research');
   });
 
   test('Factory overlay glossary stays collision-free; events map to event.*', () => {
@@ -75,6 +77,11 @@ describe('partners-ops registry bake', () => {
     expect(ash?.outs[0]?.id).toMatch(/^out-ASH-\d+$/);
     expect(ash?.outs[0]?.funding.methodConceptId).toMatch(/^deposit\.method\./);
     expect(ash?.phaseConceptId).toMatch(/^partner\.phase\./);
+    expect(ash?.tracking.accounts.total).toBe(ash?.outs.length);
+    expect(ash?.tracking.limits.tracked).toBeGreaterThan(0);
+    expect(ash?.tracking.communication.topicsRequired).toBe(5);
+    expect(registry.sources.limitPatterns).toBe('/registry/limit-raises.json');
+    expect(registry.summary.accounts).toBe(registry.summary.outs);
   });
 
   test('validate catches duplicate partner codes', () => {
@@ -93,6 +100,23 @@ describe('partners-ops registry bake', () => {
         credits: [],
         freeRoll: { total: 0, used: 0 },
         ledger: [],
+      },
+      tracking: {
+        accounts: { total: 0, ready: 0, deferred: 0, blocked: 0 },
+        limits: { tracked: 0, missing: 0, coveragePct: 0 },
+        communication: {
+          chatLinked: false,
+          topicsConfigured: 0,
+          topicsRequired: 5,
+          ready: false,
+        },
+        accounting: {
+          depositVolume: 0,
+          creditVolume: 0,
+          ledgerEvents: 0,
+          freeRollPercent: 0,
+          freeRollApplied: 0,
+        },
       },
     };
     const issues = validatePartnersOpsRegistry(

@@ -154,8 +154,8 @@ export const PORTAL_PAGE_CONCEPT_DEFINITIONS = [
     id: 'page.partners',
     label: 'Partners',
     description:
-      'Portal page for partner package Telegram forums, Accounting topic deals, and seat-desk deposit rails.',
-    synonyms: ['package groups', 'telegram partners', 'seat capital partners'],
+      'Portal page for partner accounts, limit coverage, package Telegram forums, Accounting topic deals, and seat-desk deposit rails.',
+    synonyms: ['package groups', 'telegram partners', 'partner account control'],
   },
   {
     path: '/portal/partner-history/',
