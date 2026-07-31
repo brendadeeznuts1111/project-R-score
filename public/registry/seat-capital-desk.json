@@ -1,6 +1,6 @@
 {
   "schema": "factorywager.seat-capital-desk.v1",
-  "generatedAt": "2026-07-28T16:41:44.059Z",
+  "generatedAt": "2026-07-31T14:04:15.824Z",
   "desks": 4,
   "blocked": 0,
   "partial": 0,
@@ -252,9 +252,277 @@
       "deskUpdatedAt": "2026-07-27T08:11:13.534Z"
     }
   ],
+  "partnerViews": [
+    {
+      "callSign": "ASH-001",
+      "partnerCode": "ASH",
+      "fund": {
+        "status": "ready",
+        "detail": "intake complete — FUND can proceed"
+      },
+      "activeOuts": [
+        {
+          "num": "1",
+          "outId": "ASH-1",
+          "book": "Hard Rock Florida",
+          "username": "ash1.staging",
+          "missingFund": [],
+          "missingBookTerms": [],
+          "missingAll": [],
+          "deferred": false,
+          "complete": true
+        }
+      ],
+      "deferredOuts": [
+        {
+          "num": "2",
+          "outId": "ASH-2",
+          "book": "Hard Rock Florida",
+          "username": "—",
+          "missingFund": [],
+          "missingBookTerms": [
+            "max bet",
+            "freeplay % on deposit"
+          ],
+          "missingAll": [
+            "max bet",
+            "freeplay % on deposit"
+          ],
+          "deferred": true,
+          "complete": false
+        }
+      ],
+      "commonMissing": [],
+      "outSpecificMissing": []
+    },
+    {
+      "callSign": "BIL-001",
+      "partnerCode": "BIL",
+      "fund": {
+        "status": "ready",
+        "detail": "intake complete — FUND can proceed"
+      },
+      "activeOuts": [
+        {
+          "num": "1",
+          "outId": "BIL-1",
+          "book": "Partner book TBD",
+          "username": "bil1.staging",
+          "missingFund": [],
+          "missingBookTerms": [],
+          "missingAll": [],
+          "deferred": false,
+          "complete": true
+        }
+      ],
+      "deferredOuts": [],
+      "commonMissing": [],
+      "outSpecificMissing": []
+    },
+    {
+      "callSign": "NOV-001",
+      "partnerCode": "NOV",
+      "fund": {
+        "status": "ready",
+        "detail": "intake complete — FUND can proceed"
+      },
+      "activeOuts": [
+        {
+          "num": "1",
+          "outId": "NOV-1",
+          "book": "Hard Rock Florida",
+          "username": "nov1.staging",
+          "missingFund": [],
+          "missingBookTerms": [],
+          "missingAll": [],
+          "deferred": false,
+          "complete": true
+        }
+      ],
+      "deferredOuts": [
+        {
+          "num": "2",
+          "outId": "NOV-2",
+          "book": "SouthFL PPH Desk",
+          "username": "—",
+          "missingFund": [],
+          "missingBookTerms": [
+            "max bet",
+            "freeplay % on deposit"
+          ],
+          "missingAll": [
+            "max bet",
+            "freeplay % on deposit"
+          ],
+          "deferred": true,
+          "complete": false
+        }
+      ],
+      "commonMissing": [],
+      "outSpecificMissing": []
+    },
+    {
+      "callSign": "SPEN-001",
+      "partnerCode": "SPEN",
+      "fund": {
+        "status": "ready",
+        "detail": "intake complete — FUND can proceed"
+      },
+      "activeOuts": [
+        {
+          "num": "1",
+          "outId": "SPEN-1",
+          "book": "parlay21.com",
+          "username": "vc2013",
+          "missingFund": [],
+          "missingBookTerms": [],
+          "missingAll": [],
+          "deferred": false,
+          "complete": true
+        },
+        {
+          "num": "2",
+          "outId": "SPEN-2",
+          "book": "lonestarwagering.com",
+          "username": "Yungg1",
+          "missingFund": [],
+          "missingBookTerms": [],
+          "missingAll": [],
+          "deferred": false,
+          "complete": true
+        },
+        {
+          "num": "3",
+          "outId": "SPEN-3",
+          "book": "action92.com",
+          "username": "action92",
+          "missingFund": [],
+          "missingBookTerms": [],
+          "missingAll": [],
+          "deferred": false,
+          "complete": true
+        },
+        {
+          "num": "4",
+          "outId": "SPEN-4",
+          "book": "betvegas23.com",
+          "username": "Henry019",
+          "missingFund": [],
+          "missingBookTerms": [],
+          "missingAll": [],
+          "deferred": false,
+          "complete": true
+        }
+      ],
+      "deferredOuts": [
+        {
+          "num": "5",
+          "outId": "SPEN-5",
+          "book": "Orange777",
+          "username": "dmk1064",
+          "missingFund": [],
+          "missingBookTerms": [
+            "max bet",
+            "freeplay % on deposit"
+          ],
+          "missingAll": [
+            "max bet",
+            "freeplay % on deposit"
+          ],
+          "deferred": true,
+          "complete": false
+        }
+      ],
+      "commonMissing": [],
+      "outSpecificMissing": []
+    }
+  ],
+  "partnerMessageTemplates": [
+    {
+      "id": "confirm-active",
+      "label": "Partner confirm (DM paste)",
+      "thread": "dm-paste",
+      "purpose": "Consolidated active-out confirm + missing fields + reply examples.",
+      "cli": "bun run seat:desk:partner-message CALL-SIGN",
+      "postable": false,
+      "dynamicFields": [
+        "callSign",
+        "activeOutCount",
+        "deferredOuts",
+        "commonMissing",
+        "outSpecificMissing"
+      ]
+    },
+    {
+      "id": "todo",
+      "label": "Todo list",
+      "thread": "desk-copy",
+      "purpose": "One line per incomplete out — mirrors Copy todo button.",
+      "cli": "bun run seat:desk:partner-message CALL-SIGN --template todo",
+      "postable": false,
+      "dynamicFields": [
+        "perOutMissing"
+      ]
+    },
+    {
+      "id": "reply-hint",
+      "label": "Reply hint line",
+      "thread": "desk-copy",
+      "purpose": "Single pipe line for first incomplete out.",
+      "cli": "bun run seat:desk:partner-message CALL-SIGN --template reply-hint",
+      "postable": false,
+      "dynamicFields": [
+        "firstIncompleteOutNum"
+      ]
+    },
+    {
+      "id": "topic-intake",
+      "label": "Liquidity/Outs · deposit rails",
+      "thread": "liquidity/outs",
+      "purpose": "First rails ask on pinned desk — pipe format + no-password note.",
+      "cli": "bun run seat:desk:partner-message CALL-SIGN --template topic-intake [--post]",
+      "postable": true,
+      "dynamicFields": [
+        "partnerCode",
+        "deskPin",
+        "activeOutRange",
+        "deferredSkip"
+      ]
+    },
+    {
+      "id": "topic-rails",
+      "label": "Liquidity/Outs · pay rails nudge",
+      "thread": "liquidity/outs",
+      "purpose": "Short follow-up when rails still missing on desk.",
+      "cli": "bun run seat:desk:partner-message CALL-SIGN --template topic-rails [--post]",
+      "postable": true,
+      "dynamicFields": [
+        "partnerCode",
+        "deskPin",
+        "railsNeedLine",
+        "deferredSkip"
+      ]
+    },
+    {
+      "id": "topic-accounting",
+      "label": "Accounting · proof thread",
+      "thread": "accounting",
+      "purpose": "Deposit/withdraw screenshots + optional bet slips — not parsed by desk pipe.",
+      "cli": "bun run seat:desk:accounting-prompt CALL-SIGN [--post] [--thread-id N]",
+      "postable": true,
+      "dynamicFields": [
+        "partnerCode",
+        "deskPin",
+        "activeOutRange",
+        "deferredSkip"
+      ]
+    }
+  ],
   "commands": {
     "refresh": "bun run seat:desk:refresh",
     "post": "bun run seat:desk:post",
-    "update": "bun run seat:desk:update"
+    "update": "bun run seat:desk:update",
+    "partnerMessage": "bun run seat:desk:partner-message CALL --json",
+    "partnerMessageTodo": "bun run seat:desk:partner-message CALL --template todo"
   }
 }

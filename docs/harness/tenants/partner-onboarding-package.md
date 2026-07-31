@@ -99,8 +99,8 @@ Checklist after apply includes license + geo rows. Portal board: `bun run compli
 |------------|--------|
 | `phones` table · issue/return via AccountService | Shipped |
 | Phone label in templates via `getPhoneForSeat` | Shipped |
-| `phone-add` / `phone-sportsbook-add` CLI · `phone_sportsbooks` journal | **Future** (spec reserved) |
-| Geo sportsbook active evidence before welcome hard-gate | **Future** (today: warn only) |
+| `phone:add` / `phone:sportsbook:add` CLI · `phone_sportsbooks` journal | Shipped |
+| Geo sportsbook active evidence before welcome hard-gate | Shipped · warn by default; set `ONBOARD_PHONE_GEO_HARD_GATE=1` or `hardGatePhoneGeo: true` to block welcome |
 
 ---
 
@@ -425,8 +425,8 @@ bun test tests/ops-channel-outbox.test.ts
 | `partner.onboard.complete` | Done |
 | `ChatChannelMeta` store + `telegram-link-chat` | Done |
 | HTML parseMode in telegram projector | Done |
-| `phone-add` / sportsbook geo journal CLI | Future |
-| Hard-gate welcome on active phone sportsbook | Future |
+| `phone:add` / `phone:sportsbook:add` CLI · `phone_sportsbooks` | Done |
+| Hard-gate welcome on active phone sportsbook (`ONBOARD_PHONE_GEO_HARD_GATE`) | Done (opt-in) |
 | All flow cards on templates (`accounts`/`plays`/`tree`/`menu`) | Done |
 | Auto `rememberTemplateMessageId` on every deliver | Done (deliver + outbox projector) |
 | `linkTelegramChat` on register + onboard apply + ops-sync `telegram_linked` | Done |

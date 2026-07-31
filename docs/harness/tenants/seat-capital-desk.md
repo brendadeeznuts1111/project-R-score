@@ -98,12 +98,14 @@ Freeform topic lines: `SPEN-1 | Venmo | @handle` or `2 | Venmo | @handle` (same 
             ├────▶ buildSeatDeskPartnerMessage  (copy-paste to partner)
             ├────▶ summarizeSeatDeskPartnerView (--json for panels)
             │
-            ╳  not wired yet
+            ▼  ops:snapshot → seat-capital-desk.json
+            │     partnerViews[] + partnerMessageTemplates[]
             │
-┌───────────▼─────────────┐     ┌──────────────────────────────┐
-│ /portal/toc/ fixture    │     │ /portal/ops/ partner panel   │
-│ liquidity / rails board │     │ profile bindings (templates) │
-└─────────────────────────┘     └──────────────────────────────┘
+┌───────────▼─────────────────┐     ┌──────────────────────────────────┐
+│ /portal/toc/ fixture        │     │ /portal/ops/ + /portal/partners/ │
+│ seat-* rails overlay        │     │ partner-message panels           │
+│ (read-only; Soft untouched) │     │ #section:partner-message         │
+└─────────────────────────────┘     └──────────────────────────────────┘
 ```
 
 | Surface | Reads intake? | Partner sees |
@@ -111,8 +113,9 @@ Freeform topic lines: `SPEN-1 | Venmo | @handle` or `2 | Venmo | @handle` (same 
 | Pinned desk | Yes | Table cols + STATUS + Fill |
 | Copy table / todo | Yes | Abbreviated paste rows |
 | Partner paste message | Yes | Consolidated confirm / todo (`seat-desk-partner-message.ts`) |
-| TOC ops portal | No (fixture) | Soft balances, rails, agent lanes |
-| Ops dashboard `/portal/ops/` | No (DB bindings) | Welcome/status template prefs |
+| TOC ops portal | Seat rails overlay (read-only) | Soft balances + `seat-*` deposit-rail hints |
+| Ops dashboard `/portal/ops/` | Yes (`partnerViews` in bake) | FUND table + partner-message missing fields |
+| Partners `/portal/partners/#section:partner-message` | Yes (same bake) | Templates + common/out-specific missing |
 | Flow cards (`renderForNode`) | No (tree_nodes) | balances.v1, status.v1, etc. |
 
 **Field visibility SSOT:** `SEAT_DESK_FIELD_MANIFEST` in [`seat-desk-partner-message.ts`](../../../lib/telegram/seat-desk-partner-message.ts) — which fields are intake-only, desk-table, rich details, partner message, fund gate, or internal (password).
@@ -162,7 +165,7 @@ bun run seat:desk:topic-prompts SPEN-001
 bun run seat:desk:harness-rails BIL-001 SPEN-001
 bun run seat:desk:harness-staging CALL-SIGN [CALL-SIGN…]   # rails + staging login + default max/fp
 
-# JSON snapshot for a future dashboard panel
+# JSON snapshot (same shape as seat-capital-desk.json partnerViews[])
 bun run seat:desk:partner-message SPEN-001 --json
 ```
 

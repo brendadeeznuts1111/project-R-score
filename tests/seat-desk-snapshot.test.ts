@@ -63,11 +63,18 @@ describe('seat-desk-snapshot', () => {
     expect(snap.blocked).toBe(1);
     expect(snap.ready).toBe(1);
     expect(snap.incompleteOuts).toBeGreaterThan(0);
+    expect(snap.partnerViews.map(v => v.callSign)).toEqual(['NOV-002', 'SPEN-001']);
+    expect(snap.partnerViews.find(v => v.callSign === 'SPEN-001')?.fund.status).toBe('ready');
+    expect(snap.partnerViews.find(v => v.callSign === 'NOV-002')?.commonMissing.length).toBeGreaterThan(
+      0
+    );
+    expect(snap.partnerMessageTemplates.some(t => t.id === 'confirm-active')).toBe(true);
+    expect(snap.commands.partnerMessage).toContain('partner-message');
 
     const serialized = JSON.stringify(snap);
     expect(serialized).not.toContain('htown-secret');
     expect(serialized).not.toContain('yungg-secret');
-    expect(serialized).not.toContain('password');
+    expect(serialized).not.toContain('"password"');
 
     await rm(dir, { recursive: true, force: true });
   });

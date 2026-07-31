@@ -25,7 +25,9 @@ import {
   mergeLabSnapshots,
 } from '../lib/prediction/limit-forecast-scrape-ingest.ts';
 import {
+  readLimitForecastCalibrationSamples,
   readLimitForecastEvidenceSummary,
+  type ForecastCalibrationSample,
   type LimitForecastEvidenceSummary,
 } from '../lib/prediction/limit-forecast-evidence.ts';
 import { asTreeNodeId, parseSportsbookId } from '../lib/types/branded.ts';
@@ -51,6 +53,7 @@ function optionValue(args: readonly string[], name: string): string | undefined 
 function loadPartnerSnapshots(path: string): {
   snapshots: LimitSnapshotSample[];
   evidence: LimitForecastEvidenceSummary;
+  calibrationSamples: ForecastCalibrationSample[];
 } {
   const db = new Database(path, { readonly: true });
   try {
@@ -74,6 +77,7 @@ function loadPartnerSnapshots(path: string): {
         decisionEligible: true,
       })),
       evidence: readLimitForecastEvidenceSummary(db),
+      calibrationSamples: readLimitForecastCalibrationSamples(db),
     };
   } finally {
     db.close();
@@ -103,9 +107,21 @@ async function main(): Promise<void> {
   };
 
   const started = performance.now();
-  let payload = buildLimitForecastLab(snapshots, undefined, partner.evidence, sourceMeta);
+  let payload = buildLimitForecastLab(
+    snapshots,
+    undefined,
+    partner.evidence,
+    sourceMeta,
+    partner.calibrationSamples
+  );
   for (let iteration = 1; iteration < benchmarkIterations; iteration++) {
-    payload = buildLimitForecastLab(snapshots, payload.generatedAt, partner.evidence, sourceMeta);
+    payload = buildLimitForecastLab(
+      snapshots,
+      payload.generatedAt,
+      partner.evidence,
+      sourceMeta,
+      partner.calibrationSamples
+    );
   }
   const elapsedMs = performance.now() - started;
 

@@ -141,7 +141,8 @@ export function analyzePinnedMessageTemplates(
         builder: 'buildSeatDeskAccountingTopicPrompt',
       },
       applyCommand: 'bun run telegram:package-group:accounting',
-      autoApplySafe: false,
+      // Catalog metadata only — safe to write into overrides / handshake export.
+      autoApplySafe: true,
     });
   }
 
@@ -170,7 +171,7 @@ export function analyzePinnedMessageTemplates(
       evidence: [`template=${spec.id}`, `thread=${spec.thread}`],
       suggestedChange: { mapKey: catalog.packageForumTopics.deskTopicKey, templateId: spec.id },
       applyCommand: 'bun run seat:desk:topic-prompts CALL-SIGN --post',
-      autoApplySafe: false,
+      autoApplySafe: true,
     });
   }
 
@@ -192,7 +193,7 @@ export function analyzePinnedMessageTemplates(
         builder: ALL_ACCOUNTING_CHANNEL_TEMPLATE_SPEC.builder,
       },
       applyCommand: ALL_ACCOUNTING_CHANNEL_TEMPLATE_SPEC.cli,
-      autoApplySafe: false,
+      autoApplySafe: true,
     });
   }
 

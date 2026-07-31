@@ -9,8 +9,43 @@ import {
   scoreWalkForward,
   type LimitSnapshotSample,
 } from '../lib/prediction/limit-forecast-lab.ts';
+import {
+  computeForecastEligibility,
+  scoreRollingOriginEmbargo,
+  type ForecastCalibrationSample,
+  type LimitForecastEvidenceSummary,
+} from '../lib/prediction/limit-forecast-evidence.ts';
 import { observationToLabSnapshot } from '../lib/prediction/limit-forecast-scrape-ingest.ts';
 import { asSportsbookId, asStateCode, asTreeNodeId } from '../lib/types/branded.ts';
+
+function maturedEvidence(): LimitForecastEvidenceSummary {
+  return {
+    issues: 20,
+    pending: 0,
+    dueAwaitingObservation: 0,
+    matured: 20,
+    positives: 8,
+    negatives: 12,
+    meanBrierScore: 0.2,
+    meanLogLoss: 0.5,
+  };
+}
+
+/** Spaced calibration samples so rolling-origin + horizon embargo can score. */
+function calibrationFixture(count = 20, horizon = 10): ForecastCalibrationSample[] {
+  const now = 1_000_000;
+  const samples: ForecastCalibrationSample[] = [];
+  for (let i = 0; i < count; i++) {
+    const issuedAt = now - (count - i) * horizon * 2;
+    samples.push({
+      issuedAt,
+      evaluationAt: issuedAt + horizon,
+      predictedRaiseProbability: 0.4 + (i % 5) * 0.05,
+      actualRaise: i % 3 !== 0,
+    });
+  }
+  return samples;
+}
 
 function sample(
   sportsbook: string,
@@ -98,6 +133,8 @@ describe('Limits Forecast Lab', () => {
     expect(payload.dataset.decisionEligibleTransitions).toBe(1);
     expect(payload.dataset.support).toBe('insufficient');
     expect(payload.promotion.eligible).toBe(false);
+    expect(payload.promotion.blockers).toContain('No immutable issued-at forecast rows');
+    expect(payload.promotion.blockers).toContain('No leakage-safe rolling-origin calibration set');
     expect(payload.links.lab).toBe('/portal/limits-lab/');
   });
 
@@ -119,6 +156,85 @@ describe('Limits Forecast Lab', () => {
     expect(payload.promotion.blockers).toContain(
       'Research, fixture, or unclassified snapshots are diagnostics-only'
     );
+  });
+
+  test('scoreRollingOriginEmbargo refuses leakage across the horizon', () => {
+    const horizon = 10;
+    const samples = calibrationFixture(16, horizon);
+    const score = scoreRollingOriginEmbargo(samples, {
+      nowSec: 1_000_000,
+      horizonSeconds: horizon,
+      minimumTrainingSamples: 4,
+    });
+    expect(score.samples).toBeGreaterThan(0);
+    expect(score.brier).not.toBeNull();
+    expect(score.embargoSeconds).toBe(horizon);
+  });
+
+  test('computeForecastEligibility flips true only with matured pos+neg + calibration', () => {
+    const calibration = scoreRollingOriginEmbargo(calibrationFixture(20, 10), {
+      nowSec: 1_000_000,
+      horizonSeconds: 10,
+      minimumTrainingSamples: 4,
+    });
+    const empty = computeForecastEligibility(
+      {
+        issues: 0,
+        pending: 0,
+        dueAwaitingObservation: 0,
+        matured: 0,
+        positives: 0,
+        negatives: 0,
+        meanBrierScore: null,
+        meanLogLoss: null,
+      },
+      calibration
+    );
+    expect(empty.forecastEligible).toBe(false);
+
+    const ready = computeForecastEligibility(maturedEvidence(), calibration, {
+      researchOnlySnapshots: 0,
+      decisionEligibleTransitions: 5,
+    });
+    expect(ready.forecastEligible).toBe(true);
+    expect(ready.blockers).toEqual([]);
+  });
+
+  test('lab artifact becomes forecastEligible when evidence lifecycle clears', () => {
+    const rows: LimitSnapshotSample[] = [];
+    for (let index = 0; index < 12; index++) {
+      rows.push(sample('draftkings', index * 10 + 1, 500 + index * 100));
+    }
+    const payload = buildLimitForecastLab(
+      rows,
+      '2026-07-31T00:00:00.000Z',
+      maturedEvidence(),
+      undefined,
+      calibrationFixture(20, 10)
+    );
+    // Calibration uses real wall-clock nowSec inside buildLimitForecastLab —
+    // re-score with fixed clock via computeForecastEligibility for the gate.
+    const calibration = scoreRollingOriginEmbargo(calibrationFixture(20, 10), {
+      nowSec: 1_000_000,
+      horizonSeconds: 10,
+      minimumTrainingSamples: 4,
+    });
+    const gate = computeForecastEligibility(maturedEvidence(), calibration, {
+      researchOnlySnapshots: payload.dataset.researchOnlySnapshots,
+      decisionEligibleTransitions: payload.dataset.decisionEligibleTransitions,
+    });
+    expect(gate.forecastEligible).toBe(true);
+
+    // When calibration samples are empty, lab stays false even with evidence counts.
+    const blocked = buildLimitForecastLab(
+      rows,
+      '2026-07-31T00:00:00.000Z',
+      maturedEvidence(),
+      undefined,
+      []
+    );
+    expect(blocked.dataset.forecastEligible).toBe(false);
+    expect(blocked.promotion.eligible).toBe(false);
   });
 
   test('brands scrape feeds and maps every Tier 4 mode to diagnostics-only input', () => {

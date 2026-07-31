@@ -245,6 +245,38 @@
         </div>
         <p class="cli-row">bun run seat:desk:refresh · seat:desk:update · /registry/seat-capital-desk.json</p>
       </section>
+
+      <section class="partners-section" id="section:partner-message" aria-labelledby="partner-message-heading" data-glossary-concept="section.partnersPartnerMessage">
+        <h2 id="partner-message-heading">
+          <a href="/portal/glossary/#glossary:section.partnersPartnerMessage" data-glossary-concept="section.partnersPartnerMessage">Partner messages</a>
+        </h2>
+        <p class="blurb">
+          Intake-driven
+          <a href="/portal/glossary/#glossary:telegram.seat_desk" data-glossary-concept="telegram.seat_desk">seat desk</a>
+          partner-message views (confirm / todo / topic templates). Same JSON as
+          <code>seat:desk:partner-message CALL --json</code> — no passwords.
+        </p>
+        <div class="partners-panel" style="margin-bottom:12px">
+          <ul class="topic-chips" id="partner-message-templates" aria-label="Partner message templates"></ul>
+        </div>
+        <div class="partners-panel">
+          <table class="partners-table">
+            <thead>
+              <tr>
+                <th>Call</th>
+                <th>Fund</th>
+                <th>Active</th>
+                <th>Deferred</th>
+                <th>Common missing</th>
+                <th>Out-specific</th>
+                <th>CLI</th>
+              </tr>
+            </thead>
+            <tbody id="partner-message-tbody"></tbody>
+          </table>
+        </div>
+        <p class="cli-row">bun run seat:desk:partner-message CALL --json · --template todo · --template topic-rails [--post]</p>
+      </section>
     </div>
   </main>
 
@@ -563,6 +595,48 @@
         : '<tr><td colspan="10">No deposit outs in seat-capital-desk bake</td></tr>';
     }
 
+    function renderPartnerMessages(seat) {
+      const templates = seat?.partnerMessageTemplates || [];
+      const tplEl = $('partner-message-templates');
+      if (tplEl) {
+        tplEl.innerHTML = templates.length
+          ? templates
+              .map((t) => {
+                const topicConcept =
+                  t.thread === 'liquidity/outs'
+                    ? 'telegram.topic.liquidity'
+                    : t.thread === 'accounting'
+                      ? 'telegram.forum.topic.accounting'
+                      : 'telegram.seat_desk';
+                return `<li>${conceptChip(topicConcept, t.id, '')}</li>`;
+              })
+              .join('')
+          : '<li class="tone-warn">No templates in seat bake — run bun run ops:snapshot</li>';
+      }
+      const views = seat?.partnerViews || [];
+      $('partner-message-tbody').innerHTML = views.length
+        ? views
+            .map((v) => {
+              const fund = v.fund?.status || '—';
+              const common = (v.commonMissing || []).join(', ') || '—';
+              const specific =
+                (v.outSpecificMissing || [])
+                  .map((o) => `${o.num} ${o.book}: ${(o.labels || []).join('/')}`)
+                  .join('; ') || '—';
+              return `<tr>
+                <td><code>${esc(v.callSign)}</code></td>
+                <td class="${fundTone(fund)}">${esc(fund)}</td>
+                <td>${esc(String((v.activeOuts || []).length))}</td>
+                <td>${esc(String((v.deferredOuts || []).length))}</td>
+                <td>${esc(common)}</td>
+                <td>${esc(specific)}</td>
+                <td><code>seat:desk:partner-message ${esc(v.callSign)} --json</code></td>
+              </tr>`;
+            })
+            .join('')
+        : '<tr><td colspan="7">No partnerViews in seat-capital-desk bake — run bun run ops:snapshot</td></tr>';
+    }
+
     async function load() {
       try {
         const [handshake, seat, catalog, taxonomy, ops] = await Promise.all([
@@ -590,6 +664,7 @@
         renderPartners(handshake);
         renderAccounting(handshake, seat);
         renderDeposits(seat);
+        renderPartnerMessages(seat);
         $('loading').classList.add('hidden');
         $('dashboard').classList.remove('hidden');
         bootGlossaryUx(document);

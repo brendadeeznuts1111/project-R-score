@@ -45,6 +45,10 @@ import {
   assertCallSignArg,
   HANDSHAKE_PARTNER_CODE_RE,
 } from '../telegram/handshake-ref.ts';
+import {
+  isOnboardPhoneGeoHardGateEnabled,
+  phoneHasActiveGeoEvidence,
+} from './phone-sportsbook-journal.ts';
 
 export { CALL_SIGN_PATTERN, PARTNER_CODE_FROM_CALL_SIGN, partnerCodeFromCallSign };
 
@@ -100,6 +104,11 @@ export type PartnerOnboardPackageOpts = AssignOnboardingOpts & {
   dryRun?: boolean;
   /** Optional MA/NJ license + discrete geo after profile bind. */
   compliance?: PartnerComplianceOnboardOpts;
+  /**
+   * When true (or ONBOARD_PHONE_GEO_HARD_GATE=1), welcome requires an active
+   * phone_sportsbooks geo evidence row. Default: warn-only.
+   */
+  hardGatePhoneGeo?: boolean;
 };
 
 /** Resolve call sign or UUID to a tree node id. */
@@ -290,14 +299,31 @@ export function planPartnerOnboardPackage(
   const linked = telegramLinked(ctx.telegramId);
   let welcomeSkipReason: string | null = null;
   if (!linked) welcomeSkipReason = 'no linked telegram id';
-  const wouldEnqueueWelcome = linked;
-  const wouldEnqueueOnboardComplete = linked;
 
   const phone = getPhoneForSeat(db, { treeNodeId, callSign: ctx.callSign });
   const phoneLabel = phone?.displayName ?? null;
-  const phoneWarning = phone
-    ? null
-    : 'no phone asset on seat (welcome still allowed; attach via phones.assigned_to / tree_nodes.phone_id)';
+  const hardGate = isOnboardPhoneGeoHardGateEnabled(opts);
+  let phoneWarning: string | null = null;
+  let geoBlocked = false;
+  if (!phone) {
+    phoneWarning = hardGate
+      ? 'no phone asset on seat — welcome blocked (ONBOARD_PHONE_GEO_HARD_GATE)'
+      : 'no phone asset on seat (welcome still allowed; attach via phone-add / phones.assigned_to)';
+    if (hardGate) geoBlocked = true;
+  } else {
+    const hasGeo = phoneHasActiveGeoEvidence(db, phone.phoneId);
+    if (!hasGeo) {
+      phoneWarning = hardGate
+        ? 'no active phone sportsbook geo evidence — welcome blocked (phone-sportsbook-add)'
+        : 'no active phone sportsbook geo evidence (welcome still allowed; journal via phone-sportsbook-add)';
+      if (hardGate) geoBlocked = true;
+    }
+  }
+  if (geoBlocked && !welcomeSkipReason) {
+    welcomeSkipReason = phoneWarning;
+  }
+  const wouldEnqueueWelcome = linked && !geoBlocked;
+  const wouldEnqueueOnboardComplete = linked;
 
   const expertMatches =
     ctx.expertId != null && wouldAssign.expertId != null && ctx.expertId === wouldAssign.expertId;

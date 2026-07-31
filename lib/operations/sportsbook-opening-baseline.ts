@@ -29,6 +29,7 @@ import {
   mergeBaselineValues,
   type BaselineSourceRecord,
 } from './baseline-source-tiers.ts';
+import { partnerApiTierArtifactSlice, syncPartnerApiLimits } from './baseline-partner-api.ts';
 import type { RegulationPolicyKey } from './regulation-policy-catalog.ts';
 import { asSportsbookId, type SportsbookId, type StateCode } from '../types/branded.ts';
 
@@ -379,7 +380,7 @@ export function buildSportsbookOpeningBaselineArtifact(now = new Date()) {
           label: 'published_policy',
           wired: true,
         },
-        3: { count: 0, label: 'partner_api', wired: false },
+        3: partnerApiTierArtifactSlice(syncPartnerApiLimits({ now })),
         4: { count: scraped.length, label: 'public_scrape', wired: true },
         5: {
           count: limits.length,

@@ -21,6 +21,8 @@ export type CatalogOverrides = {
   pinnedMessageTemplates: Record<string, { templateId: string; builder?: string }>; // brand-ok — template slug wire
   /** house surface slug → About description. */
   groupDescriptions: Record<string, string>;
+  /** documentBehavior notes keyed by proposal id (write-only; no Telegram mutation). */
+  behaviorNotes: Record<string, { title: string; reason: string; evidence: string[] }>;
   appliedChangeIds: string[];
 };
 
@@ -32,6 +34,7 @@ export function emptyCatalogOverrides(): CatalogOverrides {
     houseTopicIcons: {},
     pinnedMessageTemplates: {},
     groupDescriptions: {},
+    behaviorNotes: {},
     appliedChangeIds: [],
   };
 }
@@ -45,7 +48,16 @@ export async function loadCatalogOverrides(root = process.cwd()): Promise<Catalo
   try {
     const raw = (await file.json()) as CatalogOverrides;
     if (raw.schema !== CATALOG_OVERRIDES_SCHEMA) return emptyCatalogOverrides();
-    return raw;
+    return {
+      ...emptyCatalogOverrides(),
+      ...raw,
+      partnerTopicIcons: raw.partnerTopicIcons ?? {},
+      houseTopicIcons: raw.houseTopicIcons ?? {},
+      pinnedMessageTemplates: raw.pinnedMessageTemplates ?? {},
+      groupDescriptions: raw.groupDescriptions ?? {},
+      behaviorNotes: raw.behaviorNotes ?? {},
+      appliedChangeIds: raw.appliedChangeIds ?? [],
+    };
   } catch {
     return emptyCatalogOverrides();
   }
@@ -109,9 +121,10 @@ export function applyOverridesToCatalog(
     },
     seatDeskTemplates: {
       ...catalog.seatDeskTemplates,
-      ...(Object.keys(overrides.pinnedMessageTemplates).length
-        ? { pinnedTemplateRefs: overrides.pinnedMessageTemplates }
-        : {}),
+      pinnedTemplateRefs: {
+        ...(catalog.seatDeskTemplates.pinnedTemplateRefs ?? {}),
+        ...overrides.pinnedMessageTemplates,
+      },
     },
   };
 }

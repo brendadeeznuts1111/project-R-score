@@ -1779,6 +1779,8 @@
     "telegram:catalog:research": "bun tools/telegram-catalog-research-agent.ts --write",
     "telegram:catalog:research:once": "bun lib/telegram/catalog-research/cron.ts --once",
     "telegram:catalog:apply-enhancements": "bun tools/telegram-catalog-apply-enhancements.ts",
+    "phone:add": "bun tools/phone-add.ts",
+    "phone:sportsbook:add": "bun tools/phone-sportsbook-add.ts",
     "telegram:catalog:research:cron:register": "bun tools/telegram-catalog-research-cron.ts register",
     "telegram:catalog:research:cron:remove": "bun tools/telegram-catalog-research-cron.ts remove",
     "telegram:catalog:research:cron:preview": "bun tools/telegram-catalog-research-cron.ts preview",

@@ -60,6 +60,35 @@ describe('telegram-catalog-research', () => {
     const proposals = analyzeGeneralTopicBehavior(catalog);
     expect(proposals).toHaveLength(1);
     expect(proposals[0]?.action).toBe('documentBehavior');
+    expect(proposals[0]?.autoApplySafe).toBe(true);
+  });
+
+  test('buildHandshakeCatalog seeds pinnedTemplateRefs for partner + house prompts', () => {
+    const catalog = buildHandshakeCatalog();
+    const refs = catalog.seatDeskTemplates.pinnedTemplateRefs;
+    expect(refs['partner:accounting']?.templateId).toBe('topic-accounting');
+    expect(refs['partner:liquidity/outs:intake']?.templateId).toBe('topic-intake');
+    expect(refs['partner:liquidity/outs:rails']?.templateId).toBe('topic-rails');
+    expect(refs['house:all-accounting']?.templateId).toBe('all-accounting-channel');
+  });
+
+  test('applyProposalToOverrides records documentBehavior notes', async () => {
+    const { applyProposalToOverrides } = await import('../lib/telegram/catalog-research/apply.ts');
+    const { emptyCatalogOverrides } = await import('../lib/telegram/catalog-research/merge.ts');
+    const overrides = emptyCatalogOverrides();
+    const ok = applyProposalToOverrides(overrides, {
+      id: 'doc-general',
+      severity: 'info',
+      target: { kind: 'catalog', section: 'packageForumTopics' },
+      action: 'documentBehavior',
+      title: 'General is implicit',
+      reason: 'thread 1',
+      evidence: ['botCreated=false'],
+      autoApplySafe: true,
+    });
+    expect(ok).toBe(true);
+    expect(overrides.behaviorNotes['doc-general']?.title).toBe('General is implicit');
+    expect(overrides.appliedChangeIds).toContain('doc-general');
   });
 
   test('runCatalogResearchAgent flags missing accounting prompt from forum metadata', async () => {

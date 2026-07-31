@@ -39,6 +39,7 @@ const PAGE_SECTIONS: Readonly<
     telegram: PARTNERS_SURFACE_CONCEPTS.telegram,
     accounting: PARTNERS_SURFACE_CONCEPTS.accounting,
     deposits: PARTNERS_SURFACE_CONCEPTS.deposits,
+    'partner-message': PARTNERS_SURFACE_CONCEPTS.partnerMessage,
   },
 };
 

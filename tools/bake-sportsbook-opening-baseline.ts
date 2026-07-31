@@ -29,12 +29,17 @@ async function main(): Promise<void> {
       process.exit(1);
     }
     const current = (await Bun.file(target).json()) as Record<string, unknown>;
-    const { generatedAt: _now, ...expected } = payload as Record<string, unknown> & {
-      generatedAt: string;
+    // generatedAt + Tier 3 checkedAt are bake/probe clocks — strip before content compare.
+    const normalize = (raw: Record<string, unknown>): Record<string, unknown> => {
+      const clone = structuredClone(raw) as Record<string, unknown>;
+      delete clone.generatedAt;
+      const tier3 = (
+        clone.sources as { tiers?: Record<string, Record<string, unknown>> } | undefined
+      )?.tiers?.['3'];
+      if (tier3) delete tier3.checkedAt;
+      return clone;
     };
-    const { generatedAt: _was, ...committed } = current;
-    // generatedAt is bake provenance only — content must stay byte-stable otherwise.
-    if (!Bun.deepEquals(committed, expected, true)) {
+    if (!Bun.deepEquals(normalize(current), normalize(payload as Record<string, unknown>), true)) {
       console.error(`❌ ${RELATIVE_PATH} is stale; run bun run bake:sportsbook-opening-baseline`);
       process.exit(1);
     }

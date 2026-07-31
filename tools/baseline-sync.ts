@@ -39,6 +39,7 @@ import {
   evaluateScrapeAlerts,
   scrapeAlertStatusSnapshot,
 } from '../lib/operations/scrapers/scrape-alert.ts';
+import { syncPartnerApiLimits } from '../lib/operations/baseline-partner-api.ts';
 
 const RELATIVE_PATH = 'public/registry/sportsbook-opening-baseline.json';
 const OBSERVED_RELATIVE = 'public/registry/scraped-limits-observed.json';
@@ -144,7 +145,10 @@ async function status(asJson: boolean): Promise<void> {
     phase: {
       tier1: 'wired',
       tier2: 'wired (research seed)',
-      tier3: 'stub',
+      tier3: (() => {
+        const t3 = syncPartnerApiLimits();
+        return `wired (${t3.status}) — ${t3.notes}`;
+      })(),
       tier4: `wired (registry scrape() · ${trackedScrapeBooks().join(',')} · JSONL merge → scraped-limits-observed)`,
       tier5: 'wired (ops matrix)',
     },
@@ -160,8 +164,12 @@ async function syncAll(): Promise<void> {
   await syncRegulatory();
   await syncPolicies();
   await syncScraped();
+  const tier3 = syncPartnerApiLimits();
+  console.info(
+    `✅ baseline:sync-all · Tier 3 partner API → ${tier3.status} (count=${tier3.count}) · ${tier3.notes}`
+  );
   printStub('apply-overrides');
-  console.info('✅ baseline:sync-all · Tier 1+2+4+5 bake complete; Tier 3 stubbed');
+  console.info('✅ baseline:sync-all · Tier 1+2+4+5 bake complete; Tier 3 provenance recorded');
 }
 
 async function main(): Promise<void> {

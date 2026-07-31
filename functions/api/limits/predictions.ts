@@ -3,7 +3,10 @@
  *
  * GET|POST /api/limits/predictions → 503 with operator links
  *
+ * Contract: mode=snapshot · plane=local-sqlite · reason=bun:sqlite
+ *
  * @see lib/operations/limit-raise-agent-api.ts handleLimitPredictionsRequest
+ * @see lib/http/pages-local-only.ts
  * @see docs/harness/tenants/partner-limits.md
  */
 
@@ -20,6 +23,8 @@ function json(data: object, status = 200): Response {
 const body = {
   ok: false,
   mode: 'snapshot',
+  plane: 'local-sqlite',
+  reason: 'bun:sqlite',
   error: 'Predictions require local SQLite — use serve-public or CLI',
   links: {
     local: 'GET|POST /api/limits/predictions (serve-public)',

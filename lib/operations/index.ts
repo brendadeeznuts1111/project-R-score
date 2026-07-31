@@ -209,6 +209,15 @@ export {
   type UnboundAgentSeat,
 } from './partner-onboard-package.ts';
 export {
+  addPhone,
+  addPhoneSportsbook,
+  isOnboardPhoneGeoHardGateEnabled,
+  listActivePhoneSportsbooks,
+  phoneHasActiveGeoEvidence,
+  type PhoneSportsbookRow,
+  type PhoneSportsbookStatus,
+} from './phone-sportsbook-journal.ts';
+export {
   loadTocRoutingContext,
   rankPlayRecipients,
   type TocPlayRecipient,
