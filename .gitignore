@@ -251,6 +251,7 @@ config/*
 !config/images.toml
 !config/runtime-flags.json
 !config/scraper-targets.ts
+!config/tenants.ts
 # Homebase harness SSOT (must clone into worktrees; not machine secrets)
 !config/bun-dx-catalog.ts
 !config/repo-root-policy.ts
