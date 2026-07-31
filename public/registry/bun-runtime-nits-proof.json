@@ -1,16 +1,16 @@
 {
   "type": "BunRuntimeNitsVerificationReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-24T06:13:04.381Z",
+  "timestamp": "2026-07-28T20:27:22.747Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62",
   "semanticTags": {
     "channel": "stable",
     "targetVersion": "1.4.0",
     "latestAtTestTime": "1.4.0",
-    "testSuiteCommit": "22c1a4728c52415a189f663608df51f312cb8c70",
-    "provenanceId": "local-2026-07-24T06-13-04-318Z",
-    "testedAt": "2026-07-24T06:13:04.318Z",
+    "testSuiteCommit": "118fef0cf3309583ea2e8059cc67dd8c9b3d7b8f",
+    "provenanceId": "local-2026-07-28T20-27-22-676Z",
+    "testedAt": "2026-07-28T20:27:22.676Z",
     "bunRevision": "a227ad991b62",
     "runtimeVersion": "1.4.0",
     "platform": "darwin",
@@ -368,5 +368,5 @@
       }
     }
   },
-  "proofHash": "07896fa3ad1e5e9e6802ed53ec5bd1d4f5dd0521918a0a0c800ec858232602b6"
+  "proofHash": "edb681031a374efeb1338e7e70a669632ecdb15966f9f940e080eb46d0e50c4f"
 }

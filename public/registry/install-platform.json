@@ -1,16 +1,16 @@
 {
   "type": "InstallPlatformVerificationReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-27T09:17:14.889Z",
+  "timestamp": "2026-07-28T20:27:36.857Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62",
   "semanticTags": {
     "channel": "stable",
     "targetVersion": "1.4.0",
     "latestAtTestTime": "1.4.0",
-    "testSuiteCommit": "5a6b03e3ba5adbfe6698080b91639a022fb39e2a",
-    "provenanceId": "local-2026-07-27T09-17-14-732Z",
-    "testedAt": "2026-07-27T09:17:14.732Z",
+    "testSuiteCommit": "118fef0cf3309583ea2e8059cc67dd8c9b3d7b8f",
+    "provenanceId": "local-2026-07-28T20-27-36-272Z",
+    "testedAt": "2026-07-28T20:27:36.272Z",
     "bunRevision": "a227ad991b62",
     "runtimeVersion": "1.4.0",
     "platform": "darwin",
@@ -21,7 +21,7 @@
       "package-manager"
     ]
   },
-  "dryRun": true,
+  "dryRun": false,
   "reportPath": "/registry/install-platform.json",
   "toolchain": {
     "path": "/Users/nolarose/.bun/bin/bun",
@@ -102,7 +102,7 @@
     {
       "name": "install platform: runtime-flags",
       "expected": "Bun CLI (isolated probe dir): runtime-flags",
-      "actual": "skipped (--dry-run) — would run bun install --cpu=x64 --os=linux --dry-run in isolated dir",
+      "actual": "dry-run --cpu=x64 --os=linux exit=0; invalid cpu rejected",
       "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
       "canonicalKey": "bun install --cpu",
@@ -187,7 +187,7 @@
     {
       "name": "install platform: monorepo-cross-dry-run",
       "expected": "FactoryWager monorepo root (package.json + bun.lock): monorepo-cross-dry-run",
-      "actual": "skipped (--dry-run) — would run: cross-linux-x64=bun install --cpu=x64 --os=linux --dry-run (x64/linux); cross-linux-arm64=bun install --cpu=arm64 --os=linux --dry-run (arm64/linux); cross-darwin-arm64=bun install --cpu=arm64 --os=darwin --dry-run (arm64/darwin)",
+      "actual": "cross-linux-x64:ok; cross-linux-arm64:ok; cross-darwin-arm64:ok",
       "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
       "canonicalKey": "bun install --cpu",
@@ -204,7 +204,7 @@
     {
       "name": "install platform: lockfile-stable",
       "expected": "bun.lock shared lockfile (docs/UNIFIED.md): lockfile-stable",
-      "actual": "skipped (--dry-run) — would hash bun.lock before/after cross dry-runs",
+      "actual": "hash unchanged (2b472f7979e44d88) after cross dry-runs",
       "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#platform-specific-dependencies",
       "canonicalKey": "platform-specific dependencies",
@@ -222,7 +222,7 @@
   "summary": {
     "passed": 11,
     "total": 11,
-    "skipped": 3,
+    "skipped": 0,
     "status": "pass",
     "bySubsystem": {
       "package-manager": {
