@@ -46,14 +46,19 @@
     .status-limited { background: rgba(231,76,60,.15); color: var(--red); }
     .partner-name { color: var(--text-dim); }
     .wire-panel { margin: 28px 0 8px; padding: 18px 20px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
-    .wire-panel h2 { margin: 0 0 6px; font-size: 15px; font-weight: 600; }
+    .wire-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+    .wire-panel h2 { margin: 0; font-size: 15px; font-weight: 600; }
+    .wire-heading-link { color: inherit; text-decoration: none; }
+    .wire-heading-link:hover, .wire-heading-link:focus-visible { color: var(--accent); text-decoration: underline; }
+    .wire-audit { flex: 0 0 auto; font-size: 11px; padding: 3px 8px; border-radius: 999px; font-weight: 700; }
     .wire-panel .wire-sub { margin: 0 0 14px; font-size: 12px; color: var(--text-dim); }
     .wire-stats { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
     .wire-stat { font-size: 12px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 4px; color: var(--text-dim); }
     .wire-stat strong { color: var(--text); font-family: var(--font-mono, monospace); }
     .wire-section-label { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin: 12px 0 8px; }
     .wire-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-    .wire-chip { font-size: 12px; padding: 4px 9px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg, var(--surface)); color: var(--text); }
+    .wire-chip { font-size: 12px; padding: 4px 9px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg, var(--surface)); color: var(--text); text-decoration: none; }
+    .wire-chip:hover, .wire-chip:focus-visible { border-color: var(--accent); background: var(--accent-glow); }
     .wire-chip code { font-size: 11px; color: var(--accent); }
     .wire-states { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 6px; }
     .wire-state { font-size: 12px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 4px; display: flex; justify-content: space-between; gap: 8px; }
@@ -123,7 +128,7 @@
       <p class="meta" id="catalog-related" style="font-size:12px;color:var(--text-dim);margin:0 0 12px">
         Related registry:
         <a href="/registry/catalog-snapshot.json"><code>catalog-snapshot.json</code></a> ·
-        <a href="/registry/scrape-wire-taxonomy.json" title="Tier 4 scrape wire · sports + US states SSOT · bun run bake:scrape-wire-taxonomy"><code>scrape-wire-taxonomy.json</code></a>
+        <a href="#section:scrape-wire" title="Tier 4 scrape wire · sports + US states SSOT · bun run bake:scrape-wire-taxonomy"><code>scrape-wire-taxonomy.json</code></a>
         <span id="scrape-wire-meta"></span> ·
         <a href="/registry/scrape-wire-schema-audit.json" title="Governance gate · bun run schema:audit"><code>schema-audit</code></a> ·
         <a href="/registry/sports-taxonomy.json" title="Sports competition taxonomy bake"><code>sports-taxonomy.json</code></a> ·
@@ -150,8 +155,11 @@
         </select>
       </div>
       <div id="account-grid" class="account-grid"></div>
-      <section class="wire-panel" id="scrape-wire-panel" aria-labelledby="scrape-wire-heading">
-        <h2 id="scrape-wire-heading">Scrape wire registry</h2>
+      <section class="wire-panel" id="section:scrape-wire" aria-labelledby="scrape-wire-heading" data-glossary-concept="scrape.wire">
+        <div class="wire-heading-row">
+          <h2 id="scrape-wire-heading"><a class="wire-heading-link" href="#section:scrape-wire" data-glossary-concept="scrape.wire">Scrape wire registry</a></h2>
+          <span class="wire-audit status-inactive" id="wire-audit" role="status">audit loading</span>
+        </div>
         <p class="wire-sub">
           Full sport + US state catalogs that Tier 4 agents normalize onto before limit observations.
           Bake: <code>bun run bake:scrape-wire-taxonomy</code>
@@ -270,11 +278,18 @@
       return el.innerHTML;
     }
 
+    function wireChip(label, key, conceptId, detail = '') {
+      const body = `${esc(label)} <code>${esc(key)}</code>${detail ? ` · ${esc(detail)}` : ''}`;
+      if (!conceptId) return `<span class="wire-chip">${body}</span>`;
+      const href = `/portal/glossary/#glossary:${encodeURIComponent(conceptId)}`;
+      return `<a class="wire-chip" href="${href}" data-glossary-concept="${esc(conceptId)}">${body}</a>`;
+    }
+
     function renderScrapeWire(payload) {
       const s = payload.summary || {};
       if ($('scrape-wire-meta')) {
         $('scrape-wire-meta').textContent =
-          ` (${s.books ?? '?'} books · ${s.sports ?? '?'} sports · ${s.markets ?? '?'} markets · ${s.phases ?? '2'} phases · ${s.states ?? '?'} states)`;
+          ` (${s.books ?? '?'} books · ${s.sports ?? '?'} sports · ${s.markets ?? '?'} markets · ${s.phases ?? '?'} phases · ${s.states ?? '?'} states)`;
       }
       $('wire-stats').innerHTML = [
         ['books', s.books],
@@ -295,40 +310,28 @@
       const books = Array.isArray(payload.bookRegistry) ? payload.bookRegistry : [];
       $('wire-books').innerHTML = books.length
         ? books
-            .map(
-              row =>
-                `<span class="wire-chip">#${esc(row.rank)} ${esc(row.label)} <code>${esc(row.key)}</code></span>`
-            )
+            .map(row => wireChip(`#${row.rank} ${row.label}`, row.key, row.conceptId))
             .join('')
         : '<span class="wire-stat">No bookRegistry in bake</span>';
 
       const sports = Array.isArray(payload.sportRegistry) ? payload.sportRegistry : [];
       $('wire-sports').innerHTML = sports.length
         ? sports
-            .map(
-              row =>
-                `<span class="wire-chip">${esc(row.label)} <code>${esc(row.key)}</code></span>`
-            )
+            .map(row => wireChip(row.label, row.key, row.conceptId))
             .join('')
         : '<span class="wire-stat">No sportRegistry in bake</span>';
 
       const leagues = Array.isArray(payload.leagueRegistry) ? payload.leagueRegistry : [];
       $('wire-leagues').innerHTML = leagues.length
         ? leagues
-            .map(
-              row =>
-                `<span class="wire-chip">${esc(row.label)} <code>${esc(row.key)}</code> · ${esc(row.sport)}</span>`
-            )
+            .map(row => wireChip(row.label, row.key, row.conceptId, row.sport))
             .join('')
         : '<span class="wire-stat">No leagueRegistry in bake</span>';
 
       const markets = Array.isArray(payload.marketRegistry) ? payload.marketRegistry : [];
       $('wire-markets').innerHTML = markets.length
         ? markets
-            .map(
-              row =>
-                `<span class="wire-chip">${esc(row.label)} <code>${esc(row.key)}</code> · ${esc(row.tier)}</span>`
-            )
+            .map(row => wireChip(row.label, row.key, row.conceptId, row.tier))
             .join('')
         : (Array.isArray(payload.markets) ? payload.markets : [])
             .map(key => `<span class="wire-chip"><code>${esc(key)}</code></span>`)
@@ -337,10 +340,7 @@
       const phases = Array.isArray(payload.phaseRegistry) ? payload.phaseRegistry : [];
       $('wire-phases').innerHTML = phases.length
         ? phases
-            .map(
-              row =>
-                `<span class="wire-chip">${esc(row.label)} <code>${esc(row.key)}</code></span>`
-            )
+            .map(row => wireChip(row.label, row.key, row.conceptId))
             .join('')
         : ['pregame', 'live']
             .map(key => `<span class="wire-chip"><code>${esc(key)}</code></span>`)
@@ -369,6 +369,27 @@
       } catch (err) {
         $('wire-stats').textContent =
           err instanceof Error ? err.message : 'Failed to load scrape-wire-taxonomy';
+      }
+      try {
+        const res = await fetch('/registry/scrape-wire-schema-audit.json', {
+          cache: 'no-store',
+          headers: { Accept: 'application/json' },
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const report = await res.json();
+        const badge = $('wire-audit');
+        const errors = report?.summary?.errors ?? '?';
+        const warnings = report?.summary?.warnings ?? '?';
+        badge.className = `wire-audit ${report?.ok ? 'status-active' : 'status-limited'}`;
+        badge.textContent = report?.ok
+          ? `audit ok · ${warnings} warning${warnings === 1 ? '' : 's'}`
+          : `audit failed · ${errors} error${errors === 1 ? '' : 's'}`;
+        badge.title = `bun run schema:audit:check · ${report?.generatedAt ?? 'unknown time'}`;
+      } catch (err) {
+        const badge = $('wire-audit');
+        badge.className = 'wire-audit status-inactive';
+        badge.textContent = 'audit unavailable';
+        badge.title = err instanceof Error ? err.message : 'Failed to load schema audit';
       }
       try {
         const res = await fetch('/registry/content-type-matrix.json', {
