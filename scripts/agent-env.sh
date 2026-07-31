@@ -41,9 +41,14 @@ case "${1:-}" in
     export PROTON_PASS_SESSION_DIR="/tmp/pass-agent-partners"
     TOKEN="${PROTON_PASS_PARTNERS_TOKEN}"
     ;;
+  kalshi-bot|kalshi)
+    export PROTON_PASS_KEY_PROVIDER=fs
+    export PROTON_PASS_SESSION_DIR="/tmp/pass-agent-kalshi-bot"
+    TOKEN="${PROTON_PASS_KALSHI_BOT_TOKEN:-}"
+    ;;
   *)
     echo "Usage: source scripts/agent-env.sh <project>"
-    echo "Projects: factorywager, cloudflare, bet-ticker, cascade-mover"
+    echo "Projects: factorywager, cloudflare, bet-ticker, cascade-mover, partners, kalshi-bot"
     return 1
     ;;
 esac

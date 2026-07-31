@@ -5,6 +5,7 @@
 #   bash scripts/proton-inject.sh bet-ticker
 #   bash scripts/proton-inject.sh cascade-mover
 #   bash scripts/proton-inject.sh scanner
+#   bash scripts/proton-inject.sh kalshi-bot
 #   bash scripts/proton-inject.sh factorywager --reasonix   # also refresh ~/.reasonix/.env keys
 #
 # Never paste API tokens into shell history. Mint once in the dashboard,
@@ -21,14 +22,14 @@ for arg in "$@"; do
     --reasonix) SYNC_REASONIX=1 ;;
     *)
       echo "Unknown flag: $arg" >&2
-      echo "Usage: $0 <factorywager|bet-ticker|cascade-mover|scanner|cloudflare> [--reasonix]" >&2
+      echo "Usage: $0 <factorywager|bet-ticker|cascade-mover|scanner|cloudflare|kalshi-bot> [--reasonix]" >&2
       exit 1
       ;;
   esac
 done
 
 if [ -z "$PROJECT" ]; then
-  echo "Usage: $0 <factorywager|bet-ticker|cascade-mover|scanner|cloudflare> [--reasonix]" >&2
+  echo "Usage: $0 <factorywager|bet-ticker|cascade-mover|scanner|cloudflare|kalshi-bot> [--reasonix]" >&2
   exit 1
 fi
 
@@ -57,9 +58,14 @@ case "$PROJECT" in
     TEMPLATE="$ROOT/projects/active/analysis/scanner/env.template"
     OUT="$ROOT/projects/active/analysis/scanner/.env"
     ;;
+  kalshi-bot|kalshi)
+    AGENT="kalshi-bot"
+    TEMPLATE="$ROOT/Kalshi-bot/env.template"
+    OUT="$ROOT/Kalshi-bot/.env"
+    ;;
   *)
     echo "Unknown project: $PROJECT" >&2
-    echo "Projects: factorywager, cloudflare, bet-ticker, cascade-mover, scanner" >&2
+    echo "Projects: factorywager, cloudflare, bet-ticker, cascade-mover, scanner, kalshi-bot" >&2
     exit 1
     ;;
 esac
