@@ -20,6 +20,10 @@ import {
 } from './partner-ops-events.ts';
 import { PARTNER_OPS_GLOSSARY_CONCEPT_IDS } from './partner-ops-glossary.ts';
 import { TELEGRAM_GLOSSARY_CONCEPT_IDS } from './handshake-catalog.ts';
+import {
+  PACKAGE_GROUP_FORUMS_META_DIR,
+  loadPackageGroupForumMetadata,
+} from './package-group-forum.ts';
 
 export const PARTNERS_OPS_SCHEMA = 'factorywager.partners-ops.v2' as const;
 export const PARTNERS_OPS_REGISTRY_REL = 'public/registry/partners-ops.json';
@@ -545,7 +549,11 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
     const hs = hsByCode.get(code);
     const phase = mapHandshakePhase(hs?.phase, row.fundStatus);
     const phaseConceptId = `partner.phase.${phase}` as const;
-    const topicMap = hs?.topicsThreadMap || {};
+    // Handshake bake omits chatId / topicsThreadMap — load forum metadata SSOT.
+    const forumMeta = await loadPackageGroupForumMetadata(code, {
+      rootDir: PACKAGE_GROUP_FORUMS_META_DIR,
+    });
+    const topicMap = forumMeta?.topicsThreadMap || hs?.topicsThreadMap || {};
     const partnerEvents = (eventsByPartner.get(code) ?? []).slice(-50);
     const deposits = partnerEvents
       .filter(e => e.code === 'DEPOSIT_RECEIVED' || e.code === 'DEPOSIT_ALLOCATED')
@@ -593,14 +601,27 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
       liquidity: topicMap['liquidity/outs'] ?? topicMap.liquidity ?? null,
       accounting: topicMap.accounting ?? null,
     };
-    const chatId = hs?.chatId != null ? String(hs.chatId) : null;
+    const chatId =
+      forumMeta?.chatId != null
+        ? String(forumMeta.chatId)
+        : hs?.chatId != null
+          ? String(hs.chatId)
+          : null;
+    const freeRollPercents = outs
+      .map(o => o.freeRollPercent)
+      .filter((n): n is number => typeof n === 'number' && Number.isFinite(n));
+    // Mean of per-out free-roll percents (not a sum — multi-out partners must not inflate %).
+    const freeRollMean =
+      freeRollPercents.length === 0
+        ? 0
+        : freeRollPercents.reduce((s, n) => s + n, 0) / freeRollPercents.length;
     const accounting = {
       fundStatus: String(row.fundStatus || 'unknown'),
       incompleteOuts: Number(row.incompleteOuts ?? outs.filter(o => o.incomplete).length),
       deposits,
       credits,
       freeRoll: {
-        total: outs.reduce((s, o) => s + (o.freeRollPercent ?? 0), 0),
+        total: freeRollMean,
         used: freeRollApplied.length,
       },
       ledger: partnerEvents,
