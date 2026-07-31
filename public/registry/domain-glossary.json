@@ -13,41 +13,41 @@
     "colorKernel": "lib/theme/colors.ts"
   },
   "summary": {
-    "concepts": 119,
-    "active": 118,
+    "concepts": 126,
+    "active": 125,
     "deprecated": 1,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 13,
+    "portalSemantics": 20,
     "categories": {
       "market": 19,
       "model": 15,
       "pipeline": 19,
       "tournament": 9,
       "trading": 12,
-      "ui": 24,
+      "ui": 31,
       "warehouse": 21
     },
     "kinds": {
       "composite": 12,
       "registry": 33,
-      "ui": 74
+      "ui": 81
     },
     "semanticTypes": {
-      "classification": 3,
+      "classification": 5,
       "location": 3,
       "presentation": 1,
-      "resource": 4,
-      "state": 1,
+      "resource": 7,
+      "state": 3,
       "version": 1
     },
     "uiRoles": {
-      "badge": 2,
-      "chip": 3,
-      "code": 2,
-      "heading": 1,
-      "link": 4,
+      "badge": 3,
+      "chip": 4,
+      "code": 4,
+      "heading": 2,
+      "link": 6,
       "token": 1
     }
   },
@@ -3079,6 +3079,211 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ops.limits.account",
+      "label": "Limit account",
+      "description": "Partner-tree account whose observed sportsbook limits, jurisdiction binding, and monitoring evidence are evaluated together.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "partner account",
+        "tree node",
+        "limit subject"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.profile",
+        "ops.limits.evidence_trace",
+        "ui.semantic.resources"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ops.limits.profile",
+      "label": "Account limit profile",
+      "description": "Read model joining a limit account to its operating profile, geography, licenses, policies, observations, and trace evidence.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "limit profile",
+        "account monitoring profile"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.account",
+        "ops.limits.jurisdiction_policy",
+        "ops.limits.monitoring_status"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "link",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ops.limits.jurisdiction_policy",
+      "label": "Jurisdiction policy",
+      "description": "Effective state-scoped or account-scoped wagering rule projected from the regulatory limit authority.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "state limit rule",
+        "regulatory policy",
+        "policy binding"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.policy_code",
+        "ops.limits.effective_limit",
+        "ops.limits.account"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ops.limits.policy_code",
+      "label": "Policy code",
+      "description": "Stable internal code identifying a jurisdiction, sport, market, and optional account override without claiming an external legal citation.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "regulation code",
+        "limit rule code"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.jurisdiction_policy",
+        "ui.semantic.source",
+        "ui.semantic.version"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "classification",
+      "uiRole": "code",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ops.limits.monitoring_status",
+      "label": "Limit monitoring status",
+      "description": "Evidence-derived account state: monitored, attention, blocked, or incomplete; presentation tone is derived separately.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "profile health",
+        "account limit status"
+      ],
+      "values": [
+        "monitored",
+        "attention",
+        "blocked",
+        "incomplete"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.profile",
+        "ops.limits.evidence_trace",
+        "ui.semantic.tone"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ops.limits.evidence_trace",
+      "label": "Limit evidence trace",
+      "description": "Time-ordered record of profile, license, policy, observed-limit, change, and blocked-wager evidence for one account.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "limit trace",
+        "monitoring history",
+        "audit evidence"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.account",
+        "ops.limits.monitoring_status",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "link",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ops.limits.effective_limit",
+      "label": "Effective limit",
+      "description": "Limit value currently applicable at an account, sportsbook, sport, market, bet-type, and jurisdiction intersection.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "current limit",
+        "applicable limit",
+        "max wager"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.jurisdiction_policy",
+        "ops.limits.profile",
+        "ui.semantic.source"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "state",
+      "uiRole": "code",
       "color": "#60a5fa"
     }
   ]

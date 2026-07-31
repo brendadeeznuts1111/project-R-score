@@ -20,6 +20,7 @@ import {
 import { initSchema } from './schema.ts';
 import { PartnerAnalyticsRepository, type RaiseContextMetrics } from './partner-analytics-repo.ts';
 import { applyPartnerComplianceOnboard } from './partner-compliance-onboard.ts';
+import { bindPartnerProfile } from './partner-profile-bridge.ts';
 import {
   ComplianceRepository,
   ensureStateRegulationSchema,
@@ -359,6 +360,12 @@ export function seedLimitPatternDemo(
     .query(`SELECT COUNT(*) AS n FROM partner_account_limits WHERE node_id LIKE 'limit-demo-%'`)
     .get() as { n: number };
   if (existing.n > 0 && !opts?.force) {
+    for (const fixture of LIMIT_PATTERN_FIXTURES) {
+      upsertFixtureTreeNode(db, fixture, nowIso);
+      bindPartnerProfile(db, fixture.nodeId, {
+        lifecycleStatus: fixture.type === 'partner' ? 'active' : 'materialized',
+      });
+    }
     return {
       seeded: false,
       partners: LIMIT_PATTERN_FIXTURES.filter(row => row.type === 'partner').length,
@@ -395,6 +402,9 @@ export function seedLimitPatternDemo(
       }
     }
     upsertFixtureTreeNode(db, fixture, nowIso);
+    bindPartnerProfile(db, fixture.nodeId, {
+      lifecycleStatus: fixture.type === 'partner' ? 'active' : 'materialized',
+    });
   }
 
   const compliance = new ComplianceRepository(db);

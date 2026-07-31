@@ -35,6 +35,13 @@ export const PORTAL_SEMANTIC_CONCEPT_KEYS = [
   'ui.semantic.artifact',
   'ui.semantic.package',
   'ui.semantic.type',
+  'ops.limits.account',
+  'ops.limits.profile',
+  'ops.limits.jurisdiction_policy',
+  'ops.limits.policy_code',
+  'ops.limits.monitoring_status',
+  'ops.limits.evidence_trace',
+  'ops.limits.effective_limit',
 ] as const;
 
 export type PortalSemanticConceptKey = (typeof PORTAL_SEMANTIC_CONCEPT_KEYS)[number];
@@ -182,6 +189,81 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     values: [...PORTAL_SEMANTIC_TYPES],
     seeAlso: ['ui.semantic.kind', 'ui.semantic.tone'],
   },
+  {
+    id: 'ops.limits.account',
+    label: 'Limit account',
+    description:
+      'Partner-tree account whose observed sportsbook limits, jurisdiction binding, and monitoring evidence are evaluated together.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['partner account', 'tree node', 'limit subject'],
+    seeAlso: ['ops.limits.profile', 'ops.limits.evidence_trace', 'ui.semantic.resources'],
+  },
+  {
+    id: 'ops.limits.profile',
+    label: 'Account limit profile',
+    description:
+      'Read model joining a limit account to its operating profile, geography, licenses, policies, observations, and trace evidence.',
+    semanticType: 'resource',
+    uiRole: 'link',
+    synonyms: ['limit profile', 'account monitoring profile'],
+    seeAlso: [
+      'ops.limits.account',
+      'ops.limits.jurisdiction_policy',
+      'ops.limits.monitoring_status',
+    ],
+  },
+  {
+    id: 'ops.limits.jurisdiction_policy',
+    label: 'Jurisdiction policy',
+    description:
+      'Effective state-scoped or account-scoped wagering rule projected from the regulatory limit authority.',
+    semanticType: 'classification',
+    uiRole: 'chip',
+    synonyms: ['state limit rule', 'regulatory policy', 'policy binding'],
+    seeAlso: ['ops.limits.policy_code', 'ops.limits.effective_limit', 'ops.limits.account'],
+  },
+  {
+    id: 'ops.limits.policy_code',
+    label: 'Policy code',
+    description:
+      'Stable internal code identifying a jurisdiction, sport, market, and optional account override without claiming an external legal citation.',
+    semanticType: 'classification',
+    uiRole: 'code',
+    synonyms: ['regulation code', 'limit rule code'],
+    seeAlso: ['ops.limits.jurisdiction_policy', 'ui.semantic.source', 'ui.semantic.version'],
+  },
+  {
+    id: 'ops.limits.monitoring_status',
+    label: 'Limit monitoring status',
+    description:
+      'Evidence-derived account state: monitored, attention, blocked, or incomplete; presentation tone is derived separately.',
+    semanticType: 'state',
+    uiRole: 'badge',
+    synonyms: ['profile health', 'account limit status'],
+    values: ['monitored', 'attention', 'blocked', 'incomplete'],
+    seeAlso: ['ops.limits.profile', 'ops.limits.evidence_trace', 'ui.semantic.tone'],
+  },
+  {
+    id: 'ops.limits.evidence_trace',
+    label: 'Limit evidence trace',
+    description:
+      'Time-ordered record of profile, license, policy, observed-limit, change, and blocked-wager evidence for one account.',
+    semanticType: 'resource',
+    uiRole: 'link',
+    synonyms: ['limit trace', 'monitoring history', 'audit evidence'],
+    seeAlso: ['ops.limits.account', 'ops.limits.monitoring_status', 'ui.semantic.artifact'],
+  },
+  {
+    id: 'ops.limits.effective_limit',
+    label: 'Effective limit',
+    description:
+      'Limit value currently applicable at an account, sportsbook, sport, market, bet-type, and jurisdiction intersection.',
+    semanticType: 'state',
+    uiRole: 'code',
+    synonyms: ['current limit', 'applicable limit', 'max wager'],
+    seeAlso: ['ops.limits.jurisdiction_policy', 'ops.limits.profile', 'ui.semantic.source'],
+  },
 ] as const satisfies readonly PortalSemanticConcept[];
 
 export const HEALTH_FIELD_CONCEPTS = {
@@ -194,6 +276,16 @@ export const HEALTH_FIELD_CONCEPTS = {
   source: 'ui.semantic.source',
   version: 'ui.semantic.version',
   resources: 'ui.semantic.resources',
+} as const satisfies Record<string, PortalSemanticConceptKey>;
+
+export const LIMIT_FIELD_CONCEPTS = {
+  account: 'ops.limits.account',
+  profile: 'ops.limits.profile',
+  jurisdictionPolicy: 'ops.limits.jurisdiction_policy',
+  policyCode: 'ops.limits.policy_code',
+  monitoringStatus: 'ops.limits.monitoring_status',
+  evidenceTrace: 'ops.limits.evidence_trace',
+  effectiveLimit: 'ops.limits.effective_limit',
 } as const satisfies Record<string, PortalSemanticConceptKey>;
 
 export function validatePortalSemanticVocabulary(): void {

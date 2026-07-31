@@ -6,18 +6,23 @@ ops-summary `limitChanges` **Secrets:** none for board bake; agent read paths
 use existing serve-public / Pages auth where wired
 
 Detect sportsbook account limit changes, enrich with multi-factor context
-(handle, CLV, risk inverted), seal digests, and connect each row to
-partner/downline hierarchy, sportsbook behavior, state licenses, geo profiles,
-ZIP-prefix clusters, and regulatory audit counts.
+(handle, CLV, risk inverted), seal digests, and connect each row to an
+account-centered limit profile: partner/downline identity, Partner Profile OS
+binding, sportsbook observations, state licenses, geo profiles, jurisdiction
+policies, ZIP-prefix clusters, regulatory audit counts, and time-ordered trace
+evidence.
 
 ## Architecture
 
 ```text
 operations.db
   partner_account_limits · limit_raise_context · (optional) limit_predictions
+  partner_profile_bindings · partner_geo_profiles · partner_state_licenses
+  regulatory_limits · regulatory_violations
         │
         ├── AccountLimitsRepository          # detect / seed / recent changes
         ├── PartnerAnalyticsRepository       # capture context · multi-factor score · seal
+        ├── buildAccountLimitProfiles        # profile + jurisdiction + monitoring + trace read model
         ├── LimitRaiseReport                 # Bun.inspect.table + inspect.custom
         ├── predictLimitRaise                # forecast next raise
         │
@@ -73,37 +78,41 @@ bun run scan:domains --limit-only
 
 ## Code map
 
-| Layer                    | Path                                                                                                                                                                       | Role                                                                                                                                 |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| **Schema / detect**      | [`lib/account-limits-repo.ts`](../../../lib/account-limits-repo.ts)                                                                                                        | `partner_account_limits` · `detectRaises` · CLV/line enrich · `seedAccountLimitsDemo` · `queryRecentLimitChanges` · alert formatters |
-| **Multi-factor**         | [`lib/operations/partner-analytics-repo.ts`](../../../lib/operations/partner-analytics-repo.ts)                                                                            | `limit_raise_context` · `computeMultiFactorScore` · seal proofs · `exportLimitRaisesSnapshot` · `captureAllMissingRaiseContexts`     |
-| **Connected patterns**   | [`lib/operations/limit-patterns.ts`](../../../lib/operations/limit-patterns.ts)                                                                                            | deterministic partner/downline seed · book/state/ZIP aggregates · hierarchy/geo/license/proof audit coverage                         |
-| **CLI report**           | [`lib/operations/limit-raise-report.ts`](../../../lib/operations/limit-raise-report.ts)                                                                                    | `LimitRaiseReport` · `LIMIT_*_TABLE_PROPERTIES` · `Bun.inspect.table` + `[Bun.inspect.custom]` · deep `Uint8Array` digests           |
-| **Agent HTTP**           | [`lib/operations/limit-raise-agent-api.ts`](../../../lib/operations/limit-raise-agent-api.ts)                                                                              | raises / record / summary / analyze / predictions · `?format=table\|text\|inspect` on raises+summary                                 |
-| **Prediction**           | [`lib/prediction/limit-prediction.ts`](../../../lib/prediction/limit-prediction.ts)                                                                                        | `predictLimitRaise` · backfill · cycle                                                                                               |
-| **Predict report**       | [`lib/prediction/limit-prediction-report.ts`](../../../lib/prediction/limit-prediction-report.ts)                                                                          | forecast `inspect.table` / inspect.custom                                                                                            |
-| **CLI — check**          | [`tools/ops-check-limits.ts`](../../../tools/ops-check-limits.ts)                                                                                                          | `ops:limits:check` · `:all` · `:clv` · `:multi` · `:demo` · `:alerts`                                                                |
-| **CLI — capture**        | [`tools/capture-raise-context.ts`](../../../tools/capture-raise-context.ts)                                                                                                | `ops:limits:capture` · optional `--inspect`                                                                                          |
-| **CLI — predict**        | [`tools/ops-limit-predict.ts`](../../../tools/ops-limit-predict.ts)                                                                                                        | `ops:limits:predict` · `:predict:json` · `--inspect`                                                                                 |
-| **CLI — analyze**        | [`tools/ops-limit-analyze.ts`](../../../tools/ops-limit-analyze.ts)                                                                                                        | `ops:limits:analyze` · `:analyze:json`                                                                                               |
-| **CLI — snapshot**       | [`tools/snapshot-data-plane.ts`](../../../tools/snapshot-data-plane.ts) · [`tools/snapshot-core.ts`](../../../tools/snapshot-core.ts)                                        | `snapshot:data-plane` · `--scope limits` · manifest · index · list · grep                                                            |
-| **CLI — domain scanner** | [`tools/scan-domains.ts`](../../../tools/scan-domains.ts)                                                                                                                  | `scan:domains` · matrix · limit hits · `--limit-only` · `--watch` · `--interactive`                                                  |
-| **Table formatter**      | [`lib/table-format.ts`](../../../lib/table-format.ts)                                                                                                                      | ANSI tables · LIMIT_CHANGE_COLUMNS · DIMENSION_COLUMNS · REGULATORY_COLUMNS · formatTableNative (Bun.inspect.table)                  |
-| **CLI — connected seed** | [`tools/seed-limit-patterns.ts`](../../../tools/seed-limit-patterns.ts)                                                                                                    | `--force` replaces only `limit-demo-*` rows · `--bake` writes the limit registry snapshot                                            |
-| **CLI — TOC bridge seed** | [`tools/seed-toc-limit-bridge.ts`](../../../tools/seed-toc-limit-bridge.ts) · [`lib/operations/toc-limit-bridge-seed.ts`](../../../lib/operations/toc-limit-bridge-seed.ts) | Writes raises on ASH/PAT identity `treeNodeId` UUIDs so TOC board `raises 48h` join lights · scoped `--force` · optional `--bake`   |
-| **Bake**                 | `exportLimitRaisesSnapshot` (analytics) · [`tools/ops-snapshot.ts`](../../../tools/ops-snapshot.ts)                                                                        | companion bake → [`public/registry/limit-raises.json`](../../../public/registry/limit-raises.json)                                   |
-| **Portal UI**            | [`public/portal/limits/index.html`](../../../public/portal/limits/index.html)                                                                                              | board · filters · multi-factor score badges · 48h · summary/registry fallbacks                                                       |
-| **Pages edge**           | [`functions/api/agents/v1/limits/raises.ts`](../../../functions/api/agents/v1/limits/raises.ts) · [`…/record.ts`](../../../functions/api/agents/v1/limits/record.ts) · [`functions/api/limits/summary.ts`](../../../functions/api/limits/summary.ts) | snapshot GET · record **503** stub · summary aggregate                                                                               |
-| **Route SSOT**           | [`lib/http/public-routes.ts`](../../../lib/http/public-routes.ts)                                                                                                          | `/portal/limits/` · registry · raises · record · summary · analyze · predictions                                                     |
-| **Weave**                | [`lib/http/portal-weave.ts`](../../../lib/http/portal-weave.ts)                                                                                                            | surface · artifact · scripts (`ops:limits:*` · seed-limit-patterns)                                                                  |
-| **Ops summary**          | [`lib/operations/ops-summary.ts`](../../../lib/operations/ops-summary.ts)                                                                                                  | `limitChanges[]` card slice from ops DB                                                                                              |
-| **Monitoring / health**  | [`lib/monitoring/limit-slice.ts`](../../../lib/monitoring/limit-slice.ts)                                                                                                  | `limitRaises` monitoring tile · health `artifacts.limitRaises` (missing bake does not degrade)                                       |
-| **Barrel**               | [`lib/operations/index.ts`](../../../lib/operations/index.ts) · [`lib/prediction/index.ts`](../../../lib/prediction/index.ts)                                              | all limit agent handlers + limit prediction exports                                                                                  |
-| **Tests**                | `tests/account-limits-repo.test.ts` · `analytics-multifactor.test.ts` · `limit-raise-report.test.ts` · `limit-raise-agent-api.test.ts` · `limit-patterns*.test.ts` · `limit-prediction-report.test.ts` | schema · score · inspect · agent · Pages · predict                                                                                    |
+| Layer                     | Path                                                                                                                                                                                                                                                 | Role                                                                                                                                 |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| **Schema / detect**       | [`lib/account-limits-repo.ts`](../../../lib/account-limits-repo.ts)                                                                                                                                                                                  | `partner_account_limits` · `detectRaises` · CLV/line enrich · `seedAccountLimitsDemo` · `queryRecentLimitChanges` · alert formatters |
+| **Multi-factor**          | [`lib/operations/partner-analytics-repo.ts`](../../../lib/operations/partner-analytics-repo.ts)                                                                                                                                                      | `limit_raise_context` · `computeMultiFactorScore` · seal proofs · `exportLimitRaisesSnapshot` · `captureAllMissingRaiseContexts`     |
+| **Connected patterns**    | [`lib/operations/limit-patterns.ts`](../../../lib/operations/limit-patterns.ts)                                                                                                                                                                      | deterministic partner/downline seed · book/state/ZIP aggregates · hierarchy/geo/license/proof audit coverage                         |
+| **Account profiles**      | [`lib/operations/account-limit-profiles.ts`](../../../lib/operations/account-limit-profiles.ts)                                                                                                                                                      | account/profile identity · jurisdiction policy codes · evidence-derived status/tone · trace timeline                                 |
+| **Regulation authority**  | [`lib/operations/state-regulation.ts`](../../../lib/operations/state-regulation.ts)                                                                                                                                                                  | effective state/account policies · MA/NJ reference seed · licenses · violations · dynamic additional-state projection                |
+| **Glossary semantics**    | [`lib/portal/semantic-vocabulary.ts`](../../../lib/portal/semantic-vocabulary.ts)                                                                                                                                                                    | limit account/profile/policy/code/status/evidence/effective-limit definitions consumed by the portal                                 |
+| **CLI report**            | [`lib/operations/limit-raise-report.ts`](../../../lib/operations/limit-raise-report.ts)                                                                                                                                                              | `LimitRaiseReport` · `LIMIT_*_TABLE_PROPERTIES` · `Bun.inspect.table` + `[Bun.inspect.custom]` · deep `Uint8Array` digests           |
+| **Agent HTTP**            | [`lib/operations/limit-raise-agent-api.ts`](../../../lib/operations/limit-raise-agent-api.ts)                                                                                                                                                        | raises / record / summary / analyze / predictions · `?format=table\|text\|inspect` on raises+summary                                 |
+| **Prediction**            | [`lib/prediction/limit-prediction.ts`](../../../lib/prediction/limit-prediction.ts)                                                                                                                                                                  | `predictLimitRaise` · backfill · cycle                                                                                               |
+| **Predict report**        | [`lib/prediction/limit-prediction-report.ts`](../../../lib/prediction/limit-prediction-report.ts)                                                                                                                                                    | forecast `inspect.table` / inspect.custom                                                                                            |
+| **CLI — check**           | [`tools/ops-check-limits.ts`](../../../tools/ops-check-limits.ts)                                                                                                                                                                                    | `ops:limits:check` · `:all` · `:clv` · `:multi` · `:demo` · `:alerts`                                                                |
+| **CLI — capture**         | [`tools/capture-raise-context.ts`](../../../tools/capture-raise-context.ts)                                                                                                                                                                          | `ops:limits:capture` · optional `--inspect`                                                                                          |
+| **CLI — predict**         | [`tools/ops-limit-predict.ts`](../../../tools/ops-limit-predict.ts)                                                                                                                                                                                  | `ops:limits:predict` · `:predict:json` · `--inspect`                                                                                 |
+| **CLI — analyze**         | [`tools/ops-limit-analyze.ts`](../../../tools/ops-limit-analyze.ts)                                                                                                                                                                                  | `ops:limits:analyze` · `:analyze:json`                                                                                               |
+| **CLI — snapshot**        | [`tools/snapshot-data-plane.ts`](../../../tools/snapshot-data-plane.ts) · [`tools/snapshot-core.ts`](../../../tools/snapshot-core.ts)                                                                                                                | `snapshot:data-plane` · `--scope limits` · manifest · index · list · grep                                                            |
+| **CLI — domain scanner**  | [`tools/scan-domains.ts`](../../../tools/scan-domains.ts)                                                                                                                                                                                            | `scan:domains` · matrix · limit hits · `--limit-only` · `--watch` · `--interactive`                                                  |
+| **Table formatter**       | [`lib/table-format.ts`](../../../lib/table-format.ts)                                                                                                                                                                                                | ANSI tables · LIMIT_CHANGE_COLUMNS · DIMENSION_COLUMNS · REGULATORY_COLUMNS · formatTableNative (Bun.inspect.table)                  |
+| **CLI — connected seed**  | [`tools/seed-limit-patterns.ts`](../../../tools/seed-limit-patterns.ts)                                                                                                                                                                              | `--force` replaces only `limit-demo-*` rows · `--bake` writes the limit registry snapshot                                            |
+| **CLI — TOC bridge seed** | [`tools/seed-toc-limit-bridge.ts`](../../../tools/seed-toc-limit-bridge.ts) · [`lib/operations/toc-limit-bridge-seed.ts`](../../../lib/operations/toc-limit-bridge-seed.ts)                                                                          | Writes raises on ASH/PAT identity `treeNodeId` UUIDs so TOC board `raises 48h` join lights · scoped `--force` · optional `--bake`    |
+| **Bake**                  | `exportLimitRaisesSnapshot` (analytics) · [`tools/ops-snapshot.ts`](../../../tools/ops-snapshot.ts)                                                                                                                                                  | companion bake → [`public/registry/limit-raises.json`](../../../public/registry/limit-raises.json)                                   |
+| **Portal UI**             | [`public/portal/limits/index.html`](../../../public/portal/limits/index.html) · [`limit-profiles.js`](../../../public/portal/limits/limit-profiles.js)                                                                                               | account profiles · policy catalog · trace deep links · glossary-linked labels · legacy pattern/change analysis                       |
+| **Pages edge**            | [`functions/api/agents/v1/limits/raises.ts`](../../../functions/api/agents/v1/limits/raises.ts) · [`…/record.ts`](../../../functions/api/agents/v1/limits/record.ts) · [`functions/api/limits/summary.ts`](../../../functions/api/limits/summary.ts) | snapshot GET · record **503** stub · summary aggregate                                                                               |
+| **Route SSOT**            | [`lib/http/public-routes.ts`](../../../lib/http/public-routes.ts)                                                                                                                                                                                    | `/portal/limits/` · registry · raises · record · summary · analyze · predictions                                                     |
+| **Weave**                 | [`lib/http/portal-weave.ts`](../../../lib/http/portal-weave.ts)                                                                                                                                                                                      | surface · artifact · scripts (`ops:limits:*` · seed-limit-patterns)                                                                  |
+| **Ops summary**           | [`lib/operations/ops-summary.ts`](../../../lib/operations/ops-summary.ts)                                                                                                                                                                            | `limitChanges[]` card slice from ops DB                                                                                              |
+| **Monitoring / health**   | [`lib/monitoring/limit-slice.ts`](../../../lib/monitoring/limit-slice.ts)                                                                                                                                                                            | `limitRaises` monitoring tile · health `artifacts.limitRaises` (missing bake does not degrade)                                       |
+| **Barrel**                | [`lib/operations/index.ts`](../../../lib/operations/index.ts) · [`lib/prediction/index.ts`](../../../lib/prediction/index.ts)                                                                                                                        | all limit agent handlers + limit prediction exports                                                                                  |
+| **Tests**                 | `tests/account-limits-repo.test.ts` · `analytics-multifactor.test.ts` · `limit-raise-report.test.ts` · `limit-raise-agent-api.test.ts` · `limit-patterns*.test.ts` · `limit-prediction-report.test.ts`                                               | schema · score · inspect · agent · Pages · predict                                                                                   |
 
 ## Monorepo filter (bun --filter)
 
-Limit-related tools run from the root workspace. Use `bun --filter <pattern>` to target packages:
+Limit-related tools run from the root workspace. Use `bun --filter <pattern>` to
+target packages:
 
 ```bash
 # Run limit tests only in specified workspaces
@@ -118,28 +127,28 @@ bun install --filter './packages/*'                # packages only
 
 See [`bun --filter` docs](https://bun.com/docs/cli/filter).
 
-| Script                            | Tool / behavior                           |
-| --------------------------------- | ----------------------------------------- |
-| `bun run ops:limits:check`        | Freshness / changes (default table)       |
-| `bun run ops:limits:check:all`    | All nodes                                 |
-| `bun run ops:limits:check:clv`    | CLV-enriched                              |
-| `bun run ops:limits:check:multi`  | Multi-factor + context                    |
-| `bun run ops:limits:demo`         | Force-seed demo + multi report            |
-| `bun run ops:limits:capture`      | Capture missing raise context rows        |
-| `bun run ops:limits:alerts`       | Deep alerts / channel publish path        |
-| `bun run ops:limits:analyze:json` | Analyze JSON only                         |
-| `bun run ops:limits:predict`      | Forecast next raise (CLI)                 |
-| `bun run ops:limits:predict:json` | Forecast JSON only                        |
-| `bun run snapshot:data-plane`     | Scope-aware snapshot (default: limits)    |
-| `bun run snapshot:data-plane:list`| List all snapshots                        |
-| `bun run snapshot:data-plane:last`| Show latest snapshot manifest             |
-| `bun run ops:limits:analyze`      | Granular book/sport/market breakdown      |
-| `bun run ops:limits:analyze:json` | Analyze JSON only                         |
-| `bun run ops:limits:seed-patterns` | Connected multi-partner seed + registry bake (`seed-limit-patterns --force --bake`) |
+| Script                               | Tool / behavior                                                                      |
+| ------------------------------------ | ------------------------------------------------------------------------------------ |
+| `bun run ops:limits:check`           | Freshness / changes (default table)                                                  |
+| `bun run ops:limits:check:all`       | All nodes                                                                            |
+| `bun run ops:limits:check:clv`       | CLV-enriched                                                                         |
+| `bun run ops:limits:check:multi`     | Multi-factor + context                                                               |
+| `bun run ops:limits:demo`            | Force-seed demo + multi report                                                       |
+| `bun run ops:limits:capture`         | Capture missing raise context rows                                                   |
+| `bun run ops:limits:alerts`          | Deep alerts / channel publish path                                                   |
+| `bun run ops:limits:analyze:json`    | Analyze JSON only                                                                    |
+| `bun run ops:limits:predict`         | Forecast next raise (CLI)                                                            |
+| `bun run ops:limits:predict:json`    | Forecast JSON only                                                                   |
+| `bun run snapshot:data-plane`        | Scope-aware snapshot (default: limits)                                               |
+| `bun run snapshot:data-plane:list`   | List all snapshots                                                                   |
+| `bun run snapshot:data-plane:last`   | Show latest snapshot manifest                                                        |
+| `bun run ops:limits:analyze`         | Granular book/sport/market breakdown                                                 |
+| `bun run ops:limits:analyze:json`    | Analyze JSON only                                                                    |
+| `bun run ops:limits:seed-patterns`   | Connected multi-partner seed + registry bake (`seed-limit-patterns --force --bake`)  |
 | `bun run ops:limits:seed-toc-bridge` | Seed raises on TOC identity UUIDs (ASH/PAT) · `--reseed` · optional bake via `:bake` |
-| `bun run ops:limits:smoke` | Cross-surface test bundle (bridge · join · outbox · seat book-max · UI) |
-| `bun run ops:snapshot:demo` | `ops:seed:all` (includes toc-bridge) + snapshot bake |
-| `bun run ops:snapshot` | Bakes `limit-raises.json` (capture + 48h; runs toc-bridge unless `--no-toc-limits`) |
+| `bun run ops:limits:smoke`           | Cross-surface test bundle (bridge · join · outbox · seat book-max · UI)              |
+| `bun run ops:snapshot:demo`          | `ops:seed:all` (includes toc-bridge) + snapshot bake                                 |
+| `bun run ops:snapshot`               | Bakes `limit-raises.json` (capture + 48h; runs toc-bridge unless `--no-toc-limits`)  |
 
 ```bash
 bun --console-depth=6 run ops:limits:demo     # deeper nested digests
@@ -149,29 +158,64 @@ bun run ops:limits:predict --partner partner-42 --inspect
 
 ## Surfaces
 
-| Surface        | Path                                               | Mode                                               |
-| -------------- | -------------------------------------------------- | -------------------------------------------------- |
-| Portal board   | `/portal/limits/`                                  | Static HTML; prefers live summary / registry       |
-| Registry bake  | `/registry/limit-raises.json`                      | ops-snapshot companion (48h · multi-factor)        |
-| Ops summary    | `ops-summary.limitChanges`                         | Live SQLite when baking summary                    |
-| Agent raises   | `GET /api/agents/v1/limits/raises?node_id=&hours=` | Local: SQLite · Pages: snapshot                    |
-| Agent table    | same + `?format=table\|text\|inspect`              | `LimitRaiseReport` text/plain (local + Pages)      |
-| Record         | `POST /api/agents/v1/limits/record`                | Local write · Pages **503** stub                   |
-| Public summary | `GET /api/limits/summary` · `?format=table`        | Local SQLite · Pages snapshot aggregate            |
-| Analyze        | `GET /api/limits/analyze`                          | Local only                                         |
-| Predictions    | `GET\|POST /api/limits/predictions`                | Local only                                         |
+| Surface        | Path                                               | Mode                                                 |
+| -------------- | -------------------------------------------------- | ---------------------------------------------------- |
+| Portal board   | `/portal/limits/`                                  | Static HTML; prefers live summary / registry         |
+| Registry bake  | `/registry/limit-raises.json`                      | schema v2: 48h raises + `accountProfiles` read model |
+| Ops summary    | `ops-summary.limitChanges`                         | Live SQLite when baking summary                      |
+| Agent raises   | `GET /api/agents/v1/limits/raises?node_id=&hours=` | Local: SQLite · Pages: snapshot                      |
+| Agent table    | same + `?format=table\|text\|inspect`              | `LimitRaiseReport` text/plain (local + Pages)        |
+| Record         | `POST /api/agents/v1/limits/record`                | Local write · Pages **503** stub                     |
+| Public summary | `GET /api/limits/summary` · `?format=table`        | Local SQLite · Pages snapshot aggregate              |
+| Analyze        | `GET /api/limits/analyze`                          | Local only                                           |
+| Predictions    | `GET\|POST /api/limits/predictions`                | Local only                                           |
+
+## Account profile and policy semantics
+
+The board calls a partner-tree node an **account** and keeps that identity as a
+branded `TreeNodeId`. Its Partner Profile OS binding is a separate branded
+`PartnerProfileKey`; the two values are never collapsed into one generic ID.
+
+`accountProfiles` is a read model over existing tables, not a new write
+authority. Monitoring status is derived from evidence:
+
+| Status       | Evidence rule                                                           | Tone   |
+| ------------ | ----------------------------------------------------------------------- | ------ |
+| `monitored`  | profile + jurisdiction + observed limit dimensions; no recent violation | `ok`   |
+| `attention`  | jurisdiction exists but no active matching license                      | `warn` |
+| `blocked`    | one or more regulatory violations in the trailing 30 days               | `bad`  |
+| `incomplete` | remaining accounts missing enough bindings for active monitoring        | `skip` |
+
+Policy codes use the internal form `FW-LIMIT-{STATE}-{SPORT}-{MARKET}-{SCOPE}`.
+They are stable operational keys, not external legal citations. MA and NJ are
+the current reference seed. Additional two-letter jurisdictions are discovered
+from active `regulatory_limits` rows and appear in the artifact and UI without a
+hardcoded state list.
+
+Glossary deep links:
+
+- `#glossary:ops.limits.account`
+- `#glossary:ops.limits.profile`
+- `#glossary:ops.limits.jurisdiction_policy`
+- `#glossary:ops.limits.policy_code`
+- `#glossary:ops.limits.monitoring_status`
+- `#glossary:ops.limits.evidence_trace`
+- `#glossary:ops.limits.effective_limit`
+
+Account trace state uses `/portal/limits/#account:{TreeNodeId}` and is parsed by
+`URLPattern.hash`; the fragment is the canonical selection state.
 
 ## Failure paths (operator)
 
-| Condition | Response / behavior | Fix |
-|-----------|---------------------|-----|
-| Missing `node_id` on raises | **400** + example URL | pass `node_id` |
-| Bad `hours` | **400** (local + Pages) | positive number ≤ 30d |
-| Snapshot missing / empty `byNode` (Pages) | **503** + bake links | `ops:snapshot` or `seed-limit-patterns --force --bake` |
-| Record on Pages | **503** mutations not available | local serve-public |
-| Invalid JSON / fields on record | **400** | required fields + finite `max_wager` |
-| SQLite / schema errors on GET | **500** + demo hint | `ops:limits:demo` |
-| No changes in window | **200** empty / table hint | seed or widen hours |
+| Condition                                 | Response / behavior             | Fix                                                    |
+| ----------------------------------------- | ------------------------------- | ------------------------------------------------------ |
+| Missing `node_id` on raises               | **400** + example URL           | pass `node_id`                                         |
+| Bad `hours`                               | **400** (local + Pages)         | positive number ≤ 30d                                  |
+| Snapshot missing / empty `byNode` (Pages) | **503** + bake links            | `ops:snapshot` or `seed-limit-patterns --force --bake` |
+| Record on Pages                           | **503** mutations not available | local serve-public                                     |
+| Invalid JSON / fields on record           | **400**                         | required fields + finite `max_wager`                   |
+| SQLite / schema errors on GET             | **500** + demo hint             | `ops:limits:demo`                                      |
+| No changes in window                      | **200** empty / table hint      | seed or widen hours                                    |
 
 ## Inspect tables (`LimitRaiseReport`)
 
@@ -217,17 +261,29 @@ chargebacks / volatility **lower** score). SSOT: `MULTI_FACTOR_WEIGHTS` /
 - [`compliance-portal.md`](compliance-portal.md) — sibling portal board pattern
 - [`public-plane.md`](public-plane.md) — portal static / registry plane
 - [`toc-ops.md`](toc-ops.md) — TOC desk fixture · **LIMIT task** (account
-  limit-refresh work) is not a sportsbook **limit raise** · not seat
-  **maxBet** terms
+  limit-refresh work) is not a sportsbook **limit raise** · not seat **maxBet**
+  terms
 - [`telegram-factory.md`](telegram-factory.md) — package bot / outbox plane
   (alerts may fan out; desk UI is `/portal/limits/`)
 - [`partner-onboarding-package.md`](partner-onboarding-package.md) — onboard
   package · flow cards before raises land
-- **Package-group forum:** `enqueueLimitRaiseAlert` dual-routes ops `alerts` + optional package forum mirror (Liquidity/Outs → Alerts) when `package_group_registry` resolves for the tree node.
-- **Alert enrich (optional):** callers may pass `multiFactorScore` / `topDrivers` into `enqueueLimitRaiseAlert` (or agent POST `multi_factor_score` / `top_drivers`) — outbox appends a multi-factor HTML line only when provided; it does **not** query analytics itself.
-- **Seat desk:** maxBet display compares to last-known book max (`seat-desk-book-max.ts`) — never dual-writes desk terms into `partner_account_limits`. Fill path offers `sd:bm:` / `sd:bmy:` to adopt book max onto desk maxBet (one confirm).
-- **TOC board:** pure join `limitChanges.node_id` ↔ partnerCode/callSign/treeNodeId (`lib/toc-ops/limit-raises-join.ts`); ambiguous keys stay aggregate-only. Demo badges: `bun run ops:limits:seed-toc-bridge` seeds sportsbook raises on real identity UUIDs (not `limit-demo-*` dual-write into TOC `limitHistory`).
-- [`seat-capital-desk.md`](seat-capital-desk.md) — per-out **maxBet** /
-  freeplay desk vocabulary (terms, not raise detection)
+- **Package-group forum:** `enqueueLimitRaiseAlert` dual-routes ops `alerts` +
+  optional package forum mirror (Liquidity/Outs → Alerts) when
+  `package_group_registry` resolves for the tree node.
+- **Alert enrich (optional):** callers may pass `multiFactorScore` /
+  `topDrivers` into `enqueueLimitRaiseAlert` (or agent POST `multi_factor_score`
+  / `top_drivers`) — outbox appends a multi-factor HTML line only when provided;
+  it does **not** query analytics itself.
+- **Seat desk:** maxBet display compares to last-known book max
+  (`seat-desk-book-max.ts`) — never dual-writes desk terms into
+  `partner_account_limits`. Fill path offers `sd:bm:` / `sd:bmy:` to adopt book
+  max onto desk maxBet (one confirm).
+- **TOC board:** pure join `limitChanges.node_id` ↔
+  partnerCode/callSign/treeNodeId (`lib/toc-ops/limit-raises-join.ts`);
+  ambiguous keys stay aggregate-only. Demo badges:
+  `bun run ops:limits:seed-toc-bridge` seeds sportsbook raises on real identity
+  UUIDs (not `limit-demo-*` dual-write into TOC `limitHistory`).
+- [`seat-capital-desk.md`](seat-capital-desk.md) — per-out **maxBet** / freeplay
+  desk vocabulary (terms, not raise detection)
 - [Bun.inspect.table](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options)
   · [inspect.custom](https://bun.com/docs/runtime/utils#bun-inspect-custom)

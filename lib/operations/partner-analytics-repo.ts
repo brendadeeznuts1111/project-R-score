@@ -18,6 +18,10 @@ import {
 } from '../account-limits-repo.ts';
 import { buildReportProofFromValue, type ReportHashAlgorithm } from '../security/report-proof.ts';
 import { asTreeNodeId } from '../types/branded.ts';
+import {
+  buildAccountLimitProfiles,
+  type AccountLimitProfilesProjection,
+} from './account-limit-profiles.ts';
 import type { LimitPatternSnapshot } from './limit-patterns.ts';
 
 export type RaiseContextMetrics = {
@@ -486,7 +490,7 @@ export class PartnerAnalyticsRepository {
 }
 
 export type LimitRaisesSnapshot = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   generatedAt: string;
   lookbackHours: number;
   byNode: Record<
@@ -499,6 +503,7 @@ export type LimitRaisesSnapshot = {
   partners: number;
   raises: number;
   patterns: LimitPatternSnapshot;
+  accountProfiles: AccountLimitProfilesProjection;
 };
 
 /** Capture missing context for every node with recent limit history. */
@@ -583,13 +588,14 @@ export async function exportLimitRaisesSnapshot(
   );
 
   const snapshot: LimitRaisesSnapshot = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     generatedAt: new Date().toISOString(),
     lookbackHours,
     byNode,
     partners: Object.keys(byNode).length,
     raises,
     patterns,
+    accountProfiles: buildAccountLimitProfiles(db, patterns),
   };
 
   const root = opts?.root ?? process.cwd();

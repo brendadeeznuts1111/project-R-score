@@ -12,7 +12,10 @@
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="/portal/style.css" />
     <script type="module" src="/portal/data.js"></script>
     <script type="module" src="/portal/topbar.js"></script>
@@ -38,8 +41,12 @@
         font-variant-numeric: tabular-nums;
         font-family: var(--font-mono, ui-monospace, monospace);
       }
-      .metric.ok { color: var(--green, #3fb950); }
-      .metric.raised { color: var(--accent, #58a6ff); }
+      .metric.ok {
+        color: var(--green, #3fb950);
+      }
+      .metric.raised {
+        color: var(--accent, #58a6ff);
+      }
       .limits-page table {
         width: 100%;
         border-collapse: collapse;
@@ -66,12 +73,30 @@
         text-transform: uppercase;
         border: 1px solid var(--border);
       }
-      .badge.up { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
-      .badge.down { color: var(--red, #f85149); border-color: #da3633; }
-      .badge.live { color: var(--yellow, #d29922); border-color: #9e6a03; }
-      .badge.pregame { color: var(--green, #3fb950); border-color: #238636; }
-      .badge.score { color: var(--accent); cursor: help; }
-      .badge.pending { color: var(--text-dim); cursor: help; }
+      .badge.up {
+        color: var(--accent);
+        border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+      }
+      .badge.down {
+        color: var(--red, #f85149);
+        border-color: #da3633;
+      }
+      .badge.live {
+        color: var(--yellow, #d29922);
+        border-color: #9e6a03;
+      }
+      .badge.pregame {
+        color: var(--green, #3fb950);
+        border-color: #238636;
+      }
+      .badge.score {
+        color: var(--accent);
+        cursor: help;
+      }
+      .badge.pending {
+        color: var(--text-dim);
+        cursor: help;
+      }
       .filter-bar {
         display: flex;
         gap: 0.5em;
@@ -110,7 +135,10 @@
         grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         gap: 1em;
       }
-      .pattern-list { display: grid; gap: 0.5em; }
+      .pattern-list {
+        display: grid;
+        gap: 0.5em;
+      }
       .pattern-row {
         display: grid;
         grid-template-columns: minmax(90px, 1fr) 2fr auto;
@@ -121,7 +149,9 @@
         border-radius: 6px;
         background: var(--surface);
       }
-      .pattern-row small { color: var(--text-dim); }
+      .pattern-row small {
+        color: var(--text-dim);
+      }
       .audit-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -138,6 +168,150 @@
         font-size: 1.3em;
         font-variant-numeric: tabular-nums;
       }
+      .profile-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 10px;
+        margin: 14px 0;
+      }
+      .profile-summary__item,
+      .account-profile {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .profile-summary__item {
+        padding: 12px;
+      }
+      .profile-summary__item strong {
+        display: block;
+        font: 700 1.45rem/1 var(--font-mono, ui-monospace, monospace);
+        margin-bottom: 5px;
+      }
+      .profile-summary__item strong[data-tone='ok'] {
+        color: var(--green, #3fb950);
+      }
+      .profile-summary__item strong[data-tone='warn'] {
+        color: var(--yellow, #d29922);
+      }
+      .profile-summary__item strong[data-tone='bad'] {
+        color: var(--red, #f85149);
+      }
+      .profile-summary__item strong[data-tone='skip'] {
+        color: var(--text);
+      }
+      .profile-board {
+        display: grid;
+        grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.75fr);
+        gap: 14px;
+        align-items: start;
+      }
+      .account-profile-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 10px;
+      }
+      .account-profile {
+        border-left: 3px solid var(--text-dim);
+        padding: 13px;
+        min-width: 0;
+      }
+      .account-profile[data-tone='ok'] {
+        border-left-color: var(--green, #3fb950);
+      }
+      .account-profile[data-tone='warn'] {
+        border-left-color: var(--yellow, #d29922);
+      }
+      .account-profile[data-tone='bad'] {
+        border-left-color: var(--red, #f85149);
+      }
+      .account-profile[aria-current='true'] {
+        outline: 1px solid var(--accent);
+        background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+      }
+      .account-profile__head,
+      .profile-keyline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .account-profile__head a {
+        color: var(--text);
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .account-profile__meta {
+        color: var(--text-dim);
+        display: grid;
+        gap: 4px;
+        margin-top: 9px;
+        font-size: 11px;
+      }
+      .status-token {
+        border: 1px solid currentColor;
+        border-radius: 999px;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        padding: 2px 7px;
+        text-transform: uppercase;
+      }
+      .status-token[data-tone='ok'] {
+        color: var(--green, #3fb950);
+      }
+      .status-token[data-tone='warn'] {
+        color: var(--yellow, #d29922);
+      }
+      .status-token[data-tone='bad'] {
+        color: var(--red, #f85149);
+      }
+      .status-token[data-tone='skip'] {
+        color: var(--text-dim);
+      }
+      .trace-panel {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 13px;
+        position: sticky;
+        top: 54px;
+      }
+      .trace-list {
+        display: grid;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .trace-event {
+        border-left: 2px solid var(--border);
+        padding-left: 9px;
+      }
+      .trace-event strong,
+      .trace-event time {
+        display: block;
+      }
+      .trace-event time,
+      .trace-event small {
+        color: var(--text-dim);
+        font-size: 10px;
+      }
+      .semantic-label {
+        color: inherit;
+        text-decoration: underline;
+        text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
+        text-underline-offset: 3px;
+      }
+      .policy-code {
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+      @media (max-width: 860px) {
+        .profile-board {
+          grid-template-columns: 1fr;
+        }
+        .trace-panel {
+          position: static;
+        }
+      }
     </style>
   </head>
   <body>
@@ -145,44 +319,213 @@
     <header class="topbar">
       <div class="topbar-inner">
         <h1 class="logo">
-        <span class="logo-icon" aria-hidden="true"></span>
-        <span class="brand-wordmark">FactoryWager</span>
-        <span class="brand-badge">ops</span>
-        <span class="logo-page">Limits</span>
-      </h1>
+          <span class="logo-icon" aria-hidden="true"></span>
+          <span class="brand-wordmark">FactoryWager</span>
+          <span class="brand-badge">ops</span>
+          <span class="logo-page">Limits</span>
+        </h1>
         <nav class="topbar-nav" aria-label="Primary">
-        <a href="/" class="nav-link" data-group="other">Home</a>
-        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · bun run ops:snapshot" data-group="ops" data-cli="bun run ops:snapshot">Ops</a>
-        <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
-        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake">Health</a>
-        <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane">DOD</a>
-        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake">Compliance</a>
-        <div class="nav-overflow">
-          <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
-          <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog/" class="nav-link" data-group="registry" role="menuitem">Catalog</a>
-            <a href="/portal/packages/" class="nav-link" title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table" data-group="registry" data-cli="bun run portal-cli pm graph  # offline packages-graph-map table" role="menuitem">Packages</a>
-            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
-            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
-            <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
-            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
-            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
-            <a href="/portal/tools/" class="nav-link" title="portal-cli surface map · badges · capability subset · bun run portal-cli dashboard --view=tools" data-group="harness" data-cli="bun run portal-cli dashboard --view=tools" role="menuitem">CLI Tools</a>
-            <a href="/portal/failures/" class="nav-link" title="test failures bake · junit · nav badge = count · bun run failures:bake  # → /registry/failures.json" data-group="harness" data-cli="bun run failures:bake  # → /registry/failures.json" role="menuitem">Failures</a>
-            <a href="/portal/bunfig/" class="nav-link" title="bunfig install config provenance · portal-cli bunfig status · bun run bunfig:bake  # → /registry/bunfig-state.json" data-group="harness" data-cli="bun run bunfig:bake  # → /registry/bunfig-state.json" role="menuitem">Bunfig</a>
-            <a href="/portal/console-format/" class="nav-link" title="structured output gate · logTable/logDepth/jsonOut ratchet · bun run console-format:bake  # → /registry/console-format-state.json" data-group="harness" data-cli="bun run console-format:bake  # → /registry/console-format-state.json" role="menuitem">Console Format</a>
-            <a href="/portal/doctor/" class="nav-link" title="unified health gate · bunfig · catalog · linker · bun run portal:doctor --verbose" data-group="harness" data-cli="bun run portal:doctor --verbose" role="menuitem">Doctor</a>
-            <a href="/portal/install-hygiene/" class="nav-link" title="cache prune · npm-install policy · install:verify bake · bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" data-group="harness" data-cli="bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" role="menuitem">Install hygiene</a>
-            <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
-            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
-            <a href="/portal/limits/" class="nav-link active" aria-current="page" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
-            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
-            <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
-            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
-            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub" data-group="other" role="menuitem">Wiki</a>
+          <a href="/" class="nav-link" data-group="other">Home</a>
+          <a
+            href="/portal/ops/"
+            class="nav-link"
+            title="ops-summary rollup · bun run ops:snapshot"
+            data-group="ops"
+            data-cli="bun run ops:snapshot"
+            >Ops</a
+          >
+          <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
+          <a
+            href="/portal/health/"
+            class="nav-link"
+            title="system health · monorepo score · bun run monorepo:health:bake"
+            data-group="harness"
+            data-cli="bun run monorepo:health:bake"
+            >Health</a
+          >
+          <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane"
+            >DOD</a
+          >
+          <a
+            href="/portal/compliance/"
+            class="nav-link"
+            title="MA/NJ board · bun run compliance:bake"
+            data-group="ops"
+            data-cli="bun run compliance:bake"
+            >Compliance</a
+          >
+          <div class="nav-overflow">
+            <button
+              type="button"
+              class="nav-more"
+              aria-label="More navigation"
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              ⋯
+            </button>
+            <div class="nav-dropdown" role="menu">
+              <a href="/portal/catalog/" class="nav-link" data-group="registry" role="menuitem"
+                >Catalog</a
+              >
+              <a
+                href="/portal/packages/"
+                class="nav-link"
+                title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table"
+                data-group="registry"
+                data-cli="bun run portal-cli pm graph  # offline packages-graph-map table"
+                role="menuitem"
+                >Packages</a
+              >
+              <a
+                href="/portal/brands/"
+                class="nav-link"
+                title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap"
+                data-group="registry"
+                data-cli="bun run brand:keymap"
+                role="menuitem"
+                >Brands</a
+              >
+              <a
+                href="/portal/surfaces/"
+                class="nav-link"
+                title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json"
+                data-group="registry"
+                data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json"
+                role="menuitem"
+                >Surfaces</a
+              >
+              <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem"
+                >Skills</a
+              >
+              <a
+                href="/portal/vault/"
+                class="nav-link"
+                title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps"
+                data-group="secrets"
+                data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps"
+                role="menuitem"
+                >Vault</a
+              >
+              <a
+                href="/portal/env/"
+                class="nav-link"
+                title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed"
+                data-group="secrets"
+                data-cli="bun run portal-cli secret map  # no secret values printed"
+                role="menuitem"
+                >Env</a
+              >
+              <a
+                href="/portal/tools/"
+                class="nav-link"
+                title="portal-cli surface map · badges · capability subset · bun run portal-cli dashboard --view=tools"
+                data-group="harness"
+                data-cli="bun run portal-cli dashboard --view=tools"
+                role="menuitem"
+                >CLI Tools</a
+              >
+              <a
+                href="/portal/failures/"
+                class="nav-link"
+                title="test failures bake · junit · nav badge = count · bun run failures:bake  # → /registry/failures.json"
+                data-group="harness"
+                data-cli="bun run failures:bake  # → /registry/failures.json"
+                role="menuitem"
+                >Failures</a
+              >
+              <a
+                href="/portal/bunfig/"
+                class="nav-link"
+                title="bunfig install config provenance · portal-cli bunfig status · bun run bunfig:bake  # → /registry/bunfig-state.json"
+                data-group="harness"
+                data-cli="bun run bunfig:bake  # → /registry/bunfig-state.json"
+                role="menuitem"
+                >Bunfig</a
+              >
+              <a
+                href="/portal/console-format/"
+                class="nav-link"
+                title="structured output gate · logTable/logDepth/jsonOut ratchet · bun run console-format:bake  # → /registry/console-format-state.json"
+                data-group="harness"
+                data-cli="bun run console-format:bake  # → /registry/console-format-state.json"
+                role="menuitem"
+                >Console Format</a
+              >
+              <a
+                href="/portal/doctor/"
+                class="nav-link"
+                title="unified health gate · bunfig · catalog · linker · bun run portal:doctor --verbose"
+                data-group="harness"
+                data-cli="bun run portal:doctor --verbose"
+                role="menuitem"
+                >Doctor</a
+              >
+              <a
+                href="/portal/install-hygiene/"
+                class="nav-link"
+                title="cache prune · npm-install policy · install:verify bake · bun run bake:install-hygiene  # → /registry/install-hygiene-report.json"
+                data-group="harness"
+                data-cli="bun run bake:install-hygiene  # → /registry/install-hygiene-report.json"
+                role="menuitem"
+                >Install hygiene</a
+              >
+              <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem"
+                >Dashboard</a
+              >
+              <a
+                href="/portal/toc/"
+                class="nav-link"
+                title="Drum/Buffer/Rope · bun run ops:seed:toc"
+                data-group="ops"
+                data-cli="bun run ops:seed:toc"
+                role="menuitem"
+                >TOC</a
+              >
+              <a
+                href="/portal/limits/"
+                class="nav-link active"
+                aria-current="page"
+                title="bun run ops:limits:demo"
+                data-group="ops"
+                data-cli="bun run ops:limits:demo"
+                role="menuitem"
+                >Limits</a
+              >
+              <a
+                href="/portal/partner-history/"
+                class="nav-link"
+                title="per-partner limit history board · bun run ops:limits:demo"
+                data-group="ops"
+                data-cli="bun run ops:limits:demo"
+                role="menuitem"
+                >Partner history</a
+              >
+              <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem"
+                >Monitoring</a
+              >
+              <a
+                href="/registry/prediction/report/"
+                class="nav-link"
+                title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction"
+                data-group="ops"
+                data-cli="bun run portal-cli snapshot last --scope prediction"
+                role="menuitem"
+                >Prediction</a
+              >
+              <a
+                href="https://wiki.factory-wager.com/wiki-index.html"
+                class="nav-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="GitHub Pages hub"
+                data-group="other"
+                role="menuitem"
+                >Wiki</a
+              >
+            </div>
           </div>
-        </div>
-      </nav>
+        </nav>
         <div class="topbar-status">
           <a href="/portal/health/" class="topbar-health-link" title="System health">
             <span id="health-dot" class="health-dot unknown"></span>
@@ -193,347 +536,430 @@
     </header>
 
     <main class="portal-page limits-page">
-    <div class="portal-actions">
-      <a href="/registry/limit-raises.json" target="_blank" rel="noopener">limit-raises.json</a>
-      <a href="/registry/ops-summary.json" target="_blank" rel="noopener">ops-summary</a>
-      <a href="/api/limits/summary" target="_blank" rel="noopener">summary API</a>
-      <a href="/portal/partner-history/">Partner history</a>
-    </div>
-
-    <header class="portal-hero">
-      <h2 class="portal-hero__title">Partner limit patterns</h2>
-      <p class="sub">
-        Connected partner, downline, sportsbook, regulatory state, and ZIP-prefix signals — last 48
-        hours. Auto-refreshes every 30s.
-      </p>
-    </header>
-
-    <div class="filter-bar">
-      <input
-        type="text"
-        id="filter-partner"
-        placeholder="Filter by partner ID..."
-        style="flex: 1"
-      />
-      <select id="filter-book">
-        <option value="">All sportsbooks</option>
-        <option value="draftkings">DraftKings</option>
-        <option value="fanduel">FanDuel</option>
-        <option value="hardrock">Hard Rock</option>
-        <option value="betmgm">BetMGM</option>
-        <option value="caesars">Caesars</option>
-      </select>
-      <select id="filter-state">
-        <option value="">All states</option>
-      </select>
-      <select id="filter-zip">
-        <option value="">All ZIP prefixes</option>
-      </select>
-      <button onclick="applyFilter()">Filter</button>
-      <span
-        id="count-badge"
-        style="margin-left: auto; font-size: 0.9em; color: var(--text-dim)"
-      ></span>
-    </div>
-
-    <div id="summary-section" class="card">
-      <h2>Summary</h2>
-      <div style="display: flex; gap: 2em; flex-wrap: wrap">
-        <div><span class="metric" id="total-raises">0</span><br />Total changes</div>
-        <div><span class="metric" id="unique-partners">0</span><br />Nodes with changes</div>
-        <div><span class="metric" id="unique-books">0</span><br />Sportsbooks</div>
-        <div><span class="metric" id="downline-nodes">0</span><br />Downline nodes</div>
-        <div><span class="metric" id="unique-states">0</span><br />States</div>
-        <div><span class="metric" id="unique-zips">0</span><br />ZIP clusters</div>
+      <div class="portal-actions">
+        <a href="/registry/limit-raises.json" target="_blank" rel="noopener">limit-raises.json</a>
+        <a href="/registry/ops-summary.json" target="_blank" rel="noopener">ops-summary</a>
+        <a href="/api/limits/summary" target="_blank" rel="noopener">summary API</a>
+        <a href="/portal/partner-history/">Partner history</a>
+        <a href="/portal/glossary/?category=ui#glossary:ops.limits.profile">Limit glossary</a>
       </div>
-    </div>
 
-    <div id="predict-section" class="card">
-      <h2>Limit raise prediction</h2>
-      <p id="predict-body" style="color: var(--text-dim, #666); margin: 0.25em 0">
-        Loading prediction accuracy…
-      </p>
-      <p class="empty" id="predict-hint" style="display: none; padding: 0.5em 0">
-        No limit_raise samples yet. Run <code>bun run ops:limits:predict</code>
-      </p>
-    </div>
+      <header class="portal-hero">
+        <h2 class="portal-hero__title">Partner limit patterns</h2>
+        <p class="sub">
+          Connected partner, downline, sportsbook, regulatory state, and ZIP-prefix signals — last
+          48 hours. Auto-refreshes every 30s.
+        </p>
+      </header>
 
-    <div class="pattern-grid">
+      <section id="account-control" class="card" aria-labelledby="account-control-title">
+        <h2 id="account-control-title">
+          <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.profile"
+            >Account limit control</a
+          >
+        </h2>
+        <p class="sub">
+          One profile per partner-tree account, joining operating profile, jurisdiction policy,
+          license, observed limits, monitoring state, and trace evidence.
+        </p>
+        <div
+          id="profile-summary"
+          class="profile-summary"
+          aria-label="Account limit profile summary"
+        ></div>
+        <div class="filter-bar" aria-label="Account profile filters">
+          <input
+            id="profile-filter"
+            type="search"
+            placeholder="Search account, profile, policy, book…"
+            style="flex: 1"
+          />
+          <select id="profile-status">
+            <option value="">All monitoring states</option>
+            <option value="monitored">Monitored</option>
+            <option value="attention">Attention</option>
+            <option value="blocked">Blocked</option>
+            <option value="incomplete">Incomplete</option>
+          </select>
+          <select id="profile-jurisdiction">
+            <option value="">All jurisdictions</option>
+          </select>
+          <span id="profile-count" class="sub"></span>
+        </div>
+        <div class="profile-board">
+          <div id="account-profile-grid" class="account-profile-grid"></div>
+          <aside id="account-trace" class="trace-panel" aria-live="polite">
+            Select an account to inspect its trace evidence.
+          </aside>
+        </div>
+      </section>
+
+      <section id="jurisdiction-control" class="card" aria-labelledby="jurisdiction-control-title">
+        <h2 id="jurisdiction-control-title">
+          <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.jurisdiction_policy"
+            >Jurisdiction policy catalog</a
+          >
+        </h2>
+        <p class="sub">
+          Effective internal policy codes projected from <code>regulatory_limits</code>. New states
+          appear automatically when policy rows are added.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Jurisdiction</th>
+                <th>
+                  <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.policy_code"
+                    >Policy code</a
+                  >
+                </th>
+                <th>Scope</th>
+                <th>Sport / market</th>
+                <th>
+                  <a
+                    class="semantic-label"
+                    href="/portal/glossary/#glossary:ops.limits.effective_limit"
+                    >Effective limit</a
+                  >
+                </th>
+                <th>Bet types</th>
+                <th>Rules</th>
+              </tr>
+            </thead>
+            <tbody id="jurisdiction-policy-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="filter-bar">
+        <input
+          type="text"
+          id="filter-partner"
+          placeholder="Filter by partner ID..."
+          style="flex: 1"
+        />
+        <select id="filter-book">
+          <option value="">All sportsbooks</option>
+          <option value="draftkings">DraftKings</option>
+          <option value="fanduel">FanDuel</option>
+          <option value="hardrock">Hard Rock</option>
+          <option value="betmgm">BetMGM</option>
+          <option value="caesars">Caesars</option>
+        </select>
+        <select id="filter-state">
+          <option value="">All states</option>
+        </select>
+        <select id="filter-zip">
+          <option value="">All ZIP prefixes</option>
+        </select>
+        <button onclick="applyFilter()">Filter</button>
+        <span
+          id="count-badge"
+          style="margin-left: auto; font-size: 0.9em; color: var(--text-dim)"
+        ></span>
+      </div>
+
+      <div id="summary-section" class="card">
+        <h2>Summary</h2>
+        <div style="display: flex; gap: 2em; flex-wrap: wrap">
+          <div><span class="metric" id="total-raises">0</span><br />Total changes</div>
+          <div><span class="metric" id="unique-partners">0</span><br />Nodes with changes</div>
+          <div><span class="metric" id="unique-books">0</span><br />Sportsbooks</div>
+          <div><span class="metric" id="downline-nodes">0</span><br />Downline nodes</div>
+          <div><span class="metric" id="unique-states">0</span><br />States</div>
+          <div><span class="metric" id="unique-zips">0</span><br />ZIP clusters</div>
+        </div>
+      </div>
+
+      <div id="predict-section" class="card">
+        <h2>Limit raise prediction</h2>
+        <p id="predict-body" style="color: var(--text-dim, #666); margin: 0.25em 0">
+          Loading prediction accuracy…
+        </p>
+        <p class="empty" id="predict-hint" style="display: none; padding: 0.5em 0">
+          No limit_raise samples yet. Run <code>bun run ops:limits:predict</code>
+        </p>
+      </div>
+
+      <div class="pattern-grid">
+        <div class="card">
+          <h2>Sportsbook patterns</h2>
+          <div id="book-patterns" class="pattern-list"></div>
+        </div>
+        <div class="card">
+          <h2>State &amp; ZIP patterns</h2>
+          <div id="geo-patterns" class="pattern-list"></div>
+        </div>
+      </div>
+
       <div class="card">
-        <h2>Sportsbook patterns</h2>
-        <div id="book-patterns" class="pattern-list"></div>
+        <h2>Partner → downline context</h2>
+        <div id="downline-patterns"></div>
       </div>
+
       <div class="card">
-        <h2>State &amp; ZIP patterns</h2>
-        <div id="geo-patterns" class="pattern-list"></div>
+        <h2>Data connection audit</h2>
+        <div id="pattern-audit" class="audit-grid"></div>
       </div>
-    </div>
 
-    <div class="card">
-      <h2>Partner → downline context</h2>
-      <div id="downline-patterns"></div>
-    </div>
-
-    <div class="card">
-      <h2>Data connection audit</h2>
-      <div id="pattern-audit" class="audit-grid"></div>
-    </div>
-
-    <div id="raises-table-section" class="card">
-      <h2>Recent limit changes</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Node / Downline</th>
-            <th>State / ZIP</th>
-            <th>Sportsbook</th>
-            <th>Sport</th>
-            <th>Market</th>
-            <th>Type</th>
-            <th>Previous</th>
-            <th>New</th>
-            <th>Raise</th>
-            <th>Influence</th>
-            <th>When</th>
-          </tr>
-        </thead>
-        <tbody id="raises-tbody"></tbody>
-      </table>
-      <div class="empty" id="empty-state">
-        No limit changes found. Seed connected data with
-        <code>bun tools/seed-limit-patterns.ts --force --bake</code>.
+      <div id="raises-table-section" class="card">
+        <h2>Recent limit changes</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Node / Downline</th>
+              <th>State / ZIP</th>
+              <th>Sportsbook</th>
+              <th>Sport</th>
+              <th>Market</th>
+              <th>Type</th>
+              <th>Previous</th>
+              <th>New</th>
+              <th>Raise</th>
+              <th>Influence</th>
+              <th>When</th>
+            </tr>
+          </thead>
+          <tbody id="raises-tbody"></tbody>
+        </table>
+        <div class="empty" id="empty-state">
+          No limit changes found. Seed connected data with
+          <code>bun tools/seed-limit-patterns.ts --force --bake</code>.
+        </div>
       </div>
-    </div>
 
-    <div id="per-partner-section" class="card">
-      <h2>Per-node breakdown</h2>
-      <div id="partner-breakdown"></div>
-    </div>
+      <div id="per-partner-section" class="card">
+        <h2>Per-node breakdown</h2>
+        <div id="partner-breakdown"></div>
+      </div>
 
-    <script>
-      const POLL_INTERVAL = 30_000;
-      let data = null;
-      let filterPartner = '';
-      let filterBook = '';
-      let filterState = '';
-      let filterZip = '';
+      <script>
+        const POLL_INTERVAL = 30_000;
+        let data = null;
+        let filterPartner = '';
+        let filterBook = '';
+        let filterState = '';
+        let filterZip = '';
 
-      async function load() {
-        let summary = null;
-        let loadError = null;
-        try {
-          const res = await fetch('/api/operations/summary');
-          if (res.ok) {
-            summary = await res.json();
-          }
-        } catch (e) {
-          loadError = e;
-        }
-        if (!summary) {
+        async function load() {
+          let summary = null;
+          let loadError = null;
           try {
-            const res = await fetch('/registry/ops-summary.json');
-            if (res.ok) summary = await res.json();
+            const res = await fetch('/api/operations/summary');
+            if (res.ok) {
+              summary = await res.json();
+            }
           } catch (e) {
             loadError = e;
           }
-        }
-        // Prefer live summary API when present (Pages + local)
-        try {
-          const res = await fetch('/api/limits/summary');
-          if (res.ok) {
-            const lim = await res.json();
-            if (Array.isArray(lim.changes) && lim.changes.length) {
+          if (!summary) {
+            try {
+              const res = await fetch('/registry/ops-summary.json');
+              if (res.ok) summary = await res.json();
+            } catch (e) {
+              loadError = e;
+            }
+          }
+          // Prefer live summary API when present (Pages + local)
+          try {
+            const res = await fetch('/api/limits/summary');
+            if (res.ok) {
+              const lim = await res.json();
+              if (Array.isArray(lim.changes) && lim.changes.length) {
+                summary = {
+                  ...(summary ?? {}),
+                  limitChanges: summary?.limitChanges?.length ? summary.limitChanges : lim.changes,
+                  limitPatterns: summary?.limitPatterns ?? lim.patterns,
+                };
+              }
+            } else if (res.status === 503 && !summary) {
+              loadError = new Error('limit summary bake missing (503)');
+            }
+          } catch (e) {
+            loadError = e;
+          }
+          try {
+            const res = await fetch('/registry/limit-raises.json');
+            if (res.ok) {
+              const snapshot = await res.json();
+              const snapshotChanges = Object.values(snapshot.byNode ?? {}).flatMap(bucket =>
+                (bucket.raises ?? []).map(raise => ({
+                  ...raise,
+                  node_id: bucket.node_id ?? raise.node_id,
+                  direction:
+                    Number(raise.new_limit ?? 0) >= Number(raise.previous_max ?? 0) ? 'up' : 'down',
+                  context_available: raise.context != null,
+                }))
+              );
               summary = {
                 ...(summary ?? {}),
-                limitChanges: summary?.limitChanges?.length ? summary.limitChanges : lim.changes,
-                limitPatterns: summary?.limitPatterns ?? lim.patterns,
+                limitChanges: summary?.limitChanges?.length
+                  ? summary.limitChanges
+                  : snapshotChanges,
+                limitPatterns: summary?.limitPatterns ?? snapshot.patterns,
               };
             }
-          } else if (res.status === 503 && !summary) {
-            loadError = new Error('limit summary bake missing (503)');
+          } catch (e) {
+            loadError = e;
           }
-        } catch (e) {
-          loadError = e;
-        }
-        try {
-          const res = await fetch('/registry/limit-raises.json');
-          if (res.ok) {
-            const snapshot = await res.json();
-            const snapshotChanges = Object.values(snapshot.byNode ?? {}).flatMap(bucket =>
-              (bucket.raises ?? []).map(raise => ({
-                ...raise,
-                node_id: bucket.node_id ?? raise.node_id,
-                direction:
-                  Number(raise.new_limit ?? 0) >= Number(raise.previous_max ?? 0) ? 'up' : 'down',
-                context_available: raise.context != null,
-              }))
-            );
-            summary = {
-              ...(summary ?? {}),
-              limitChanges: summary?.limitChanges?.length ? summary.limitChanges : snapshotChanges,
-              limitPatterns: summary?.limitPatterns ?? snapshot.patterns,
-            };
+          if (summary && Array.isArray(summary.limitChanges)) {
+            data = summary;
+            render();
+            loadPredictStrip(summary);
+            return;
           }
-        } catch (e) {
-          loadError = e;
-        }
-        if (summary && Array.isArray(summary.limitChanges)) {
-          data = summary;
-          render();
-          loadPredictStrip(summary);
-          return;
-        }
-        const empty = document.getElementById('empty-state');
-        empty.style.display = 'block';
-        empty.innerHTML =
-          '⚠️ Could not load limit data. ' +
-          (loadError
-            ? 'Run <code>bun run ops:snapshot</code> or <code>bun tools/seed-limit-patterns.ts --force --bake</code>.'
-            : 'Is the server running?') +
-          ' See <code>docs/harness/tenants/partner-limits.md</code>.';
-        loadPredictStrip(summary);
-      }
-
-      /** Soft prediction strip — never throws. */
-      async function loadPredictStrip(summary) {
-        const bodyEl = document.getElementById('predict-body');
-        const hintEl = document.getElementById('predict-hint');
-        if (!bodyEl || !hintEl) return;
-        let acc = null;
-        try {
-          const res = await fetch('/api/limits/predictions');
-          if (res.ok) {
-            const j = await res.json();
-            acc = j.accuracy ?? j;
-            if (j.lastPredicted != null) acc = { ...acc, lastPredicted: j.lastPredicted };
-          }
-        } catch {
-          /* Pages 503 / offline */
-        }
-        if (!acc || !(acc.n > 0)) {
-          const lr = summary?.prediction?.limitRaise;
-          if (lr && (lr.n ?? 0) > 0) acc = lr;
-        }
-        if (acc && (acc.n ?? 0) > 0) {
-          hintEl.style.display = 'none';
-          const last = acc.lastPredicted
-            ? ` · last predicted ${String(acc.lastPredicted).slice(0, 19)}`
-            : '';
-          bodyEl.textContent = `n=${acc.n} · MAE ${Number(acc.mae ?? 0).toFixed(3)} · RMSE ${Number(acc.rmse ?? 0).toFixed(3)}${last}`;
-        } else {
-          bodyEl.textContent = 'No limit_raise accuracy samples on this surface.';
-          hintEl.style.display = 'block';
-        }
-      }
-
-      function applyFilter() {
-        filterPartner = document.getElementById('filter-partner').value.trim().toLowerCase();
-        filterBook = document.getElementById('filter-book').value;
-        filterState = document.getElementById('filter-state').value;
-        filterZip = document.getElementById('filter-zip').value;
-        render();
-      }
-
-      function esc(s) {
-        const d = document.createElement('div');
-        d.textContent = s;
-        return d.innerHTML;
-      }
-
-      function render() {
-        if (!data || !Array.isArray(data.limitChanges)) {
-          document.getElementById('empty-state').style.display = 'block';
-          return;
-        }
-        const lims = data.limitChanges;
-        const patterns = data.limitPatterns ?? {
-          books: [],
-          states: [],
-          zips: [],
-          nodePatterns: [],
-          audit: {},
-        };
-        const patternByNode = new Map(
-          (patterns.nodePatterns ?? []).map(pattern => [pattern.node_id, pattern])
-        );
-
-        const stateSelect = document.getElementById('filter-state');
-        const zipSelect = document.getElementById('filter-zip');
-        const selectedState = stateSelect.value;
-        const selectedZip = zipSelect.value;
-        stateSelect.innerHTML =
-          '<option value="">All states</option>' +
-          (patterns.states ?? [])
-            .map(row => `<option value="${esc(row.key)}">${esc(row.key)}</option>`)
-            .join('');
-        zipSelect.innerHTML =
-          '<option value="">All ZIP prefixes</option>' +
-          (patterns.zips ?? [])
-            .map(row => `<option value="${esc(row.key)}">${esc(row.key)}</option>`)
-            .join('');
-        stateSelect.value = selectedState;
-        zipSelect.value = selectedZip;
-
-        // Filter
-        const filtered = lims.filter(r => {
-          const pattern = patternByNode.get(r.node_id);
-          const partnerSearch =
-            `${r.node_id ?? ''} ${pattern?.partner_node_id ?? ''} ${pattern?.node_name ?? ''}`.toLowerCase();
-          if (filterPartner && !partnerSearch.includes(filterPartner)) return false;
-          if (filterBook && r.sportsbook !== filterBook) return false;
-          if (filterState && pattern?.state_code !== filterState) return false;
-          if (filterZip && pattern?.zip_prefix !== filterZip) return false;
-          return true;
-        });
-
-        // Summary counts
-        const partners = new Set(filtered.map(r => r.node_id));
-        const books = new Set(filtered.map(r => r.sportsbook));
-        document.getElementById('total-raises').textContent = filtered.length;
-        document.getElementById('unique-partners').textContent = partners.size;
-        document.getElementById('unique-books').textContent = books.size;
-        document.getElementById('downline-nodes').textContent = patterns.downlineNodes ?? 0;
-        document.getElementById('unique-states').textContent = patterns.states?.length ?? 0;
-        document.getElementById('unique-zips').textContent = patterns.zips?.length ?? 0;
-        document.getElementById('count-badge').textContent =
-          `Showing ${filtered.length} of ${lims.length} total`;
-
-        // Table
-        const tbody = document.getElementById('raises-tbody');
-        const empty = document.getElementById('empty-state');
-        if (filtered.length === 0) {
-          tbody.innerHTML = '';
+          const empty = document.getElementById('empty-state');
           empty.style.display = 'block';
-        } else {
-          empty.style.display = 'none';
-          tbody.innerHTML = filtered
-            .slice(0, 50)
-            .map(r => {
-              const pattern = patternByNode.get(r.node_id);
-              const prev = Number(r.previous_max ?? 0);
-              const next = Number(r.new_limit ?? 0);
-              const raise = next - prev;
-              const pct = prev > 0 ? ((raise / prev) * 100).toFixed(0) : '∞';
-              const typeCls = r.bet_type === 'live' ? 'live' : 'pregame';
-              const directionCls = r.direction === 'down' ? 'down' : 'up';
-              const directionLabel = r.direction === 'down' ? '↓' : '↑';
-              const drivers = (r.top_contributing_factors ?? []).join(', ');
-              const proof = r.context_proof?.valid
-                ? 'context proof verified'
-                : r.context_proof?.signed
-                  ? 'signed context; proof not verified'
-                  : 'unsigned or pending context';
-              const scoreTitle = drivers
-                ? `Drivers: ${drivers} · ${proof}`
-                : `Drivers pending · ${proof}`;
-              const scoreBadge = r.context_available
-                ? `<span class="badge score" title="${esc(scoreTitle)}">${Math.round((r.multi_factor_score ?? 0) * 100)}</span>`
-                : `<span class="badge pending" title="${esc(scoreTitle)}">pending</span>`;
-              const when =
-                Number.isFinite(Number(r.increased_at)) && Number(r.increased_at) > 0
-                  ? new Date(Number(r.increased_at) * 1000).toLocaleString()
-                  : '—';
-              return `<tr>
+          empty.innerHTML =
+            '⚠️ Could not load limit data. ' +
+            (loadError
+              ? 'Run <code>bun run ops:snapshot</code> or <code>bun tools/seed-limit-patterns.ts --force --bake</code>.'
+              : 'Is the server running?') +
+            ' See <code>docs/harness/tenants/partner-limits.md</code>.';
+          loadPredictStrip(summary);
+        }
+
+        /** Soft prediction strip — never throws. */
+        async function loadPredictStrip(summary) {
+          const bodyEl = document.getElementById('predict-body');
+          const hintEl = document.getElementById('predict-hint');
+          if (!bodyEl || !hintEl) return;
+          let acc = null;
+          try {
+            const res = await fetch('/api/limits/predictions');
+            if (res.ok) {
+              const j = await res.json();
+              acc = j.accuracy ?? j;
+              if (j.lastPredicted != null) acc = { ...acc, lastPredicted: j.lastPredicted };
+            }
+          } catch {
+            /* Pages 503 / offline */
+          }
+          if (!acc || !(acc.n > 0)) {
+            const lr = summary?.prediction?.limitRaise;
+            if (lr && (lr.n ?? 0) > 0) acc = lr;
+          }
+          if (acc && (acc.n ?? 0) > 0) {
+            hintEl.style.display = 'none';
+            const last = acc.lastPredicted
+              ? ` · last predicted ${String(acc.lastPredicted).slice(0, 19)}`
+              : '';
+            bodyEl.textContent = `n=${acc.n} · MAE ${Number(acc.mae ?? 0).toFixed(3)} · RMSE ${Number(acc.rmse ?? 0).toFixed(3)}${last}`;
+          } else {
+            bodyEl.textContent = 'No limit_raise accuracy samples on this surface.';
+            hintEl.style.display = 'block';
+          }
+        }
+
+        function applyFilter() {
+          filterPartner = document.getElementById('filter-partner').value.trim().toLowerCase();
+          filterBook = document.getElementById('filter-book').value;
+          filterState = document.getElementById('filter-state').value;
+          filterZip = document.getElementById('filter-zip').value;
+          render();
+        }
+
+        function esc(s) {
+          const d = document.createElement('div');
+          d.textContent = s;
+          return d.innerHTML;
+        }
+
+        function render() {
+          if (!data || !Array.isArray(data.limitChanges)) {
+            document.getElementById('empty-state').style.display = 'block';
+            return;
+          }
+          const lims = data.limitChanges;
+          const patterns = data.limitPatterns ?? {
+            books: [],
+            states: [],
+            zips: [],
+            nodePatterns: [],
+            audit: {},
+          };
+          const patternByNode = new Map(
+            (patterns.nodePatterns ?? []).map(pattern => [pattern.node_id, pattern])
+          );
+
+          const stateSelect = document.getElementById('filter-state');
+          const zipSelect = document.getElementById('filter-zip');
+          const selectedState = stateSelect.value;
+          const selectedZip = zipSelect.value;
+          stateSelect.innerHTML =
+            '<option value="">All states</option>' +
+            (patterns.states ?? [])
+              .map(row => `<option value="${esc(row.key)}">${esc(row.key)}</option>`)
+              .join('');
+          zipSelect.innerHTML =
+            '<option value="">All ZIP prefixes</option>' +
+            (patterns.zips ?? [])
+              .map(row => `<option value="${esc(row.key)}">${esc(row.key)}</option>`)
+              .join('');
+          stateSelect.value = selectedState;
+          zipSelect.value = selectedZip;
+
+          // Filter
+          const filtered = lims.filter(r => {
+            const pattern = patternByNode.get(r.node_id);
+            const partnerSearch =
+              `${r.node_id ?? ''} ${pattern?.partner_node_id ?? ''} ${pattern?.node_name ?? ''}`.toLowerCase();
+            if (filterPartner && !partnerSearch.includes(filterPartner)) return false;
+            if (filterBook && r.sportsbook !== filterBook) return false;
+            if (filterState && pattern?.state_code !== filterState) return false;
+            if (filterZip && pattern?.zip_prefix !== filterZip) return false;
+            return true;
+          });
+
+          // Summary counts
+          const partners = new Set(filtered.map(r => r.node_id));
+          const books = new Set(filtered.map(r => r.sportsbook));
+          document.getElementById('total-raises').textContent = filtered.length;
+          document.getElementById('unique-partners').textContent = partners.size;
+          document.getElementById('unique-books').textContent = books.size;
+          document.getElementById('downline-nodes').textContent = patterns.downlineNodes ?? 0;
+          document.getElementById('unique-states').textContent = patterns.states?.length ?? 0;
+          document.getElementById('unique-zips').textContent = patterns.zips?.length ?? 0;
+          document.getElementById('count-badge').textContent =
+            `Showing ${filtered.length} of ${lims.length} total`;
+
+          // Table
+          const tbody = document.getElementById('raises-tbody');
+          const empty = document.getElementById('empty-state');
+          if (filtered.length === 0) {
+            tbody.innerHTML = '';
+            empty.style.display = 'block';
+          } else {
+            empty.style.display = 'none';
+            tbody.innerHTML = filtered
+              .slice(0, 50)
+              .map(r => {
+                const pattern = patternByNode.get(r.node_id);
+                const prev = Number(r.previous_max ?? 0);
+                const next = Number(r.new_limit ?? 0);
+                const raise = next - prev;
+                const pct = prev > 0 ? ((raise / prev) * 100).toFixed(0) : '∞';
+                const typeCls = r.bet_type === 'live' ? 'live' : 'pregame';
+                const directionCls = r.direction === 'down' ? 'down' : 'up';
+                const directionLabel = r.direction === 'down' ? '↓' : '↑';
+                const drivers = (r.top_contributing_factors ?? []).join(', ');
+                const proof = r.context_proof?.valid
+                  ? 'context proof verified'
+                  : r.context_proof?.signed
+                    ? 'signed context; proof not verified'
+                    : 'unsigned or pending context';
+                const scoreTitle = drivers
+                  ? `Drivers: ${drivers} · ${proof}`
+                  : `Drivers pending · ${proof}`;
+                const scoreBadge = r.context_available
+                  ? `<span class="badge score" title="${esc(scoreTitle)}">${Math.round((r.multi_factor_score ?? 0) * 100)}</span>`
+                  : `<span class="badge pending" title="${esc(scoreTitle)}">pending</span>`;
+                const when =
+                  Number.isFinite(Number(r.increased_at)) && Number(r.increased_at) > 0
+                    ? new Date(Number(r.increased_at) * 1000).toLocaleString()
+                    : '—';
+                return `<tr>
         <td><strong>${esc(pattern?.node_name ?? r.node_id ?? '—')}</strong><br><small>${esc(pattern?.node_type ?? 'node')} · depth ${pattern?.downline_depth ?? 0}</small></td>
         <td>${esc(pattern?.state_code ?? '—')} · <code>${esc(pattern?.zip_code ?? '—')}</code><br><small>${esc(pattern?.location ?? '')}</small></td>
         <td><strong>${esc(r.sportsbook ?? '—')}</strong></td>
@@ -546,27 +972,27 @@
         <td>${scoreBadge}</td>
         <td>${when}</td>
       </tr>`;
-            })
-            .join('');
-        }
+              })
+              .join('');
+          }
 
-        // Per-node breakdown
-        const pb = document.getElementById('partner-breakdown');
-        const byPartner = {};
-        for (const r of filtered) {
-          const key = r.node_id || 'unknown';
-          if (!byPartner[key]) byPartner[key] = [];
-          byPartner[key].push(r);
-        }
-        pb.innerHTML =
-          Object.entries(byPartner)
-            .slice(0, 20)
-            .map(([pid, raises]) => {
-              const total = raises.reduce(
-                (s, r) => s + (Number(r.new_limit ?? 0) - Number(r.previous_max ?? 0)),
-                0
-              );
-              return `<div style="margin:0.5em 0;padding:0.5em;background:var(--bg,#fafafa);border-radius:4px">
+          // Per-node breakdown
+          const pb = document.getElementById('partner-breakdown');
+          const byPartner = {};
+          for (const r of filtered) {
+            const key = r.node_id || 'unknown';
+            if (!byPartner[key]) byPartner[key] = [];
+            byPartner[key].push(r);
+          }
+          pb.innerHTML =
+            Object.entries(byPartner)
+              .slice(0, 20)
+              .map(([pid, raises]) => {
+                const total = raises.reduce(
+                  (s, r) => s + (Number(r.new_limit ?? 0) - Number(r.previous_max ?? 0)),
+                  0
+                );
+                return `<div style="margin:0.5em 0;padding:0.5em;background:var(--bg,#fafafa);border-radius:4px">
       <div style="display:flex;justify-content:space-between;font-weight:600">
         <span><code>${esc(pid.slice(0, 18))}</code></span>
         <span>${raises.length} change(s) · ${total >= 0 ? '+' : '−'}$${Math.abs(total).toLocaleString()} net</span>
@@ -582,42 +1008,42 @@
         ${raises.length > 3 ? ` · +${raises.length - 3} more` : ''}
       </div>
     </div>`;
-            })
-            .join('') || '<div class="empty">No data</div>';
+              })
+              .join('') || '<div class="empty">No data</div>';
 
-        const bookPatterns = document.getElementById('book-patterns');
-        bookPatterns.innerHTML =
-          (patterns.books ?? [])
-            .map(
-              row => `<div class="pattern-row">
+          const bookPatterns = document.getElementById('book-patterns');
+          bookPatterns.innerHTML =
+            (patterns.books ?? [])
+              .map(
+                row => `<div class="pattern-row">
                 <strong>${esc(row.key)}</strong>
                 <small>${row.changes} changes · ${row.raises} up / ${row.decreases} down · ${row.partners} partners · ${esc((row.states ?? []).join('/'))}</small>
                 <span class="badge score" title="Average multi-factor influence">${row.avg_influence_score == null ? 'pending' : Math.round(row.avg_influence_score * 100)}</span>
               </div>`
-            )
-            .join('') || '<div class="empty">No sportsbook patterns</div>';
+              )
+              .join('') || '<div class="empty">No sportsbook patterns</div>';
 
-        const geoPatterns = document.getElementById('geo-patterns');
-        geoPatterns.innerHTML =
-          [
-            ...(patterns.states ?? []).map(row => ({ ...row, kind: 'state' })),
-            ...(patterns.zips ?? []).map(row => ({ ...row, kind: 'ZIP' })),
-          ]
-            .map(
-              row => `<div class="pattern-row">
+          const geoPatterns = document.getElementById('geo-patterns');
+          geoPatterns.innerHTML =
+            [
+              ...(patterns.states ?? []).map(row => ({ ...row, kind: 'state' })),
+              ...(patterns.zips ?? []).map(row => ({ ...row, kind: 'ZIP' })),
+            ]
+              .map(
+                row => `<div class="pattern-row">
                 <strong>${esc(row.key)} <small>${row.kind}</small></strong>
                 <small>${row.changes} changes · net ${row.net_delta >= 0 ? '+' : '−'}$${Math.abs(row.net_delta).toLocaleString()} · top ${esc(row.top_market ?? '—')}</small>
                 <span>${row.avg_delta_pct >= 0 ? '+' : ''}${row.avg_delta_pct}%</span>
               </div>`
-            )
-            .join('') || '<div class="empty">No state or ZIP patterns</div>';
+              )
+              .join('') || '<div class="empty">No state or ZIP patterns</div>';
 
-        const downlinePatterns = document.getElementById('downline-patterns');
-        downlinePatterns.innerHTML =
-          `<table><thead><tr><th>Partner</th><th>Node</th><th>Depth</th><th>State</th><th>ZIP</th><th>License</th><th>Violations</th><th>Books</th><th>Changes</th><th>Influence</th></tr></thead><tbody>` +
-          (patterns.nodePatterns ?? [])
-            .map(
-              row => `<tr>
+          const downlinePatterns = document.getElementById('downline-patterns');
+          downlinePatterns.innerHTML =
+            `<table><thead><tr><th>Partner</th><th>Node</th><th>Depth</th><th>State</th><th>ZIP</th><th>License</th><th>Violations</th><th>Books</th><th>Changes</th><th>Influence</th></tr></thead><tbody>` +
+            (patterns.nodePatterns ?? [])
+              .map(
+                row => `<tr>
                 <td><code>${esc(row.partner_node_id)}</code></td>
                 <td>${esc(row.node_name)}<br><small>${esc(row.node_type)}</small></td>
                 <td>${row.downline_depth}</td>
@@ -629,64 +1055,65 @@
                 <td>${row.changes}</td>
                 <td>${row.avg_influence_score == null ? 'pending' : Math.round(row.avg_influence_score * 100)}</td>
               </tr>`
+              )
+              .join('') +
+            '</tbody></table>';
+
+          const audit = patterns.audit ?? {};
+          const auditItems = [
+            ['Coverage', `${audit.coveragePct ?? 0}%`],
+            ['Change rows', audit.changeRows ?? 0],
+            ['Hierarchy linked', audit.hierarchyLinked ?? 0],
+            ['Geo linked', audit.geoLinked ?? 0],
+            ['Licensed', audit.licensed ?? 0],
+            ['Scored', audit.scored ?? 0],
+            ['Proof verified', audit.proofVerified ?? 0],
+          ];
+          document.getElementById('pattern-audit').innerHTML = auditItems
+            .map(
+              ([label, value]) =>
+                `<div class="audit-item"><strong>${esc(value)}</strong><small>${esc(label)}</small></div>`
             )
-            .join('') +
-          '</tbody></table>';
+            .join('');
+        }
 
-        const audit = patterns.audit ?? {};
-        const auditItems = [
-          ['Coverage', `${audit.coveragePct ?? 0}%`],
-          ['Change rows', audit.changeRows ?? 0],
-          ['Hierarchy linked', audit.hierarchyLinked ?? 0],
-          ['Geo linked', audit.geoLinked ?? 0],
-          ['Licensed', audit.licensed ?? 0],
-          ['Scored', audit.scored ?? 0],
-          ['Proof verified', audit.proofVerified ?? 0],
-        ];
-        document.getElementById('pattern-audit').innerHTML = auditItems
-          .map(
-            ([label, value]) =>
-              `<div class="audit-item"><strong>${esc(value)}</strong><small>${esc(label)}</small></div>`
-          )
-          .join('');
-      }
+        document.getElementById('filter-partner').addEventListener('input', applyFilter);
+        document.getElementById('filter-book').addEventListener('change', applyFilter);
+        document.getElementById('filter-state').addEventListener('change', applyFilter);
+        document.getElementById('filter-zip').addEventListener('change', applyFilter);
 
-      document.getElementById('filter-partner').addEventListener('input', applyFilter);
-      document.getElementById('filter-book').addEventListener('change', applyFilter);
-      document.getElementById('filter-state').addEventListener('change', applyFilter);
-      document.getElementById('filter-zip').addEventListener('change', applyFilter);
-
-      load();
-      setInterval(load, POLL_INTERVAL);
-    </script>
+        load();
+        setInterval(load, POLL_INTERVAL);
+      </script>
+      <script type="module" src="/portal/limits/limit-profiles.js"></script>
     </main>
     <footer class="footer" data-portal-chrome="footer">
-    <p>
-      <strong>FactoryWager</strong> ·
-      <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
-      <a href="/portal/ops/">Ops</a> ·
-      <a href="/portal/toc/">TOC</a> ·
-      <a href="/portal/packages/">Packages</a> ·
-      <a href="/portal/brands/">Brands</a> ·
-      <a href="/portal/surfaces/">Surfaces</a> ·
-      <a href="/portal/health/">Health</a> ·
-      <a href="/registry/portal-weave.json">Portal proof</a> ·
-      <a href="/portal/tools/">CLI Tools</a> ·
-      <a href="/portal/compliance/">Compliance</a> ·
-      <a href="/portal/limits/">Limits</a> ·
-      <a href="/portal/dod/">DOD</a> ·
-      <a href="/portal/env/">Env</a> ·
-      <a href="/portal/vault/">Vault</a> ·
-      <a href="/portal/failures/">Failures</a> ·
-      <a href="/portal/install-hygiene/">Install hygiene</a> ·
-      <a href="/registry/monorepo-health.json">Monorepo health</a> ·
-      <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
-    </p>
-    <p class="footer-meta">
-      project-R-score · chrome <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a>
-      · <span data-footer-ts>…</span>
-    </p>
-  </footer>
-  <script type="module" src="/portal/components/footer.js"></script>
-</body>
+      <p>
+        <strong>FactoryWager</strong> ·
+        <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a>
+        · <a href="/portal/ops/">Ops</a> · <a href="/portal/toc/">TOC</a> ·
+        <a href="/portal/packages/">Packages</a> · <a href="/portal/brands/">Brands</a> ·
+        <a href="/portal/surfaces/">Surfaces</a> · <a href="/portal/health/">Health</a> ·
+        <a href="/registry/portal-weave.json">Portal proof</a> ·
+        <a href="/portal/tools/">CLI Tools</a> · <a href="/portal/compliance/">Compliance</a> ·
+        <a href="/portal/limits/">Limits</a> · <a href="/portal/dod/">DOD</a> ·
+        <a href="/portal/env/">Env</a> · <a href="/portal/vault/">Vault</a> ·
+        <a href="/portal/failures/">Failures</a> ·
+        <a href="/portal/install-hygiene/">Install hygiene</a> ·
+        <a href="/registry/monorepo-health.json">Monorepo health</a> ·
+        <a
+          href="https://github.com/brendadeeznuts1111/project-R-score"
+          target="_blank"
+          rel="noopener noreferrer"
+          >GitHub</a
+        >
+      </p>
+      <p class="footer-meta">
+        project-R-score · chrome
+        <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a> ·
+        <span data-footer-ts>…</span>
+      </p>
+    </footer>
+    <script type="module" src="/portal/components/footer.js"></script>
+  </body>
 </html>

@@ -83,3 +83,48 @@ describe('health-page limitRaises surface', () => {
     expect(lrBlock).not.toMatch(/degraded/i);
   });
 });
+
+describe('account limit control surface', () => {
+  test('committed artifact carries account profiles and jurisdiction policies', async () => {
+    const artifact = await Bun.file(join(ROOT, 'public/registry/limit-raises.json')).json();
+    expect(artifact.schemaVersion).toBe(2);
+    expect(artifact.accountProfiles).toMatchObject({
+      schemaVersion: 1,
+      kind: 'account-limit-profiles',
+      summary: {
+        accounts: expect.any(Number),
+        jurisdictions: 2,
+        policies: 4,
+      },
+      sources: expect.arrayContaining([
+        'partner_profile_bindings',
+        'partner_account_limits',
+        'regulatory_limits',
+        'regulatory_violations',
+      ]),
+    });
+    expect(artifact.accountProfiles.profiles.length).toBeGreaterThan(0);
+    expect(artifact.accountProfiles.policies).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ stateCode: 'MA', source: 'regulatory_limits' }),
+        expect.objectContaining({ stateCode: 'NJ', source: 'regulatory_limits' }),
+      ])
+    );
+  });
+
+  test('board exposes profile, policy, trace, glossary, and URL fragment state', async () => {
+    const [html, script] = await Promise.all([
+      Bun.file(join(ROOT, 'public/portal/limits/index.html')).text(),
+      Bun.file(join(ROOT, 'public/portal/limits/limit-profiles.js')).text(),
+    ]);
+    expect(html).toContain('id="account-control"');
+    expect(html).toContain('id="jurisdiction-policy-body"');
+    expect(html).toContain('/portal/glossary/#glossary:ops.limits.profile');
+    expect(html).toContain('/portal/limits/limit-profiles.js');
+    expect(script).toContain("new URLPattern({ hash: 'account\\\\::account' })");
+    expect(script).toContain('hash.groups.account');
+    expect(script).toContain('snapshot.accountProfiles');
+    expect(script).toContain("history.pushState({ account: treeNodeId }, '', url)");
+    expect(script).not.toContain('location.hash.slice');
+  });
+});

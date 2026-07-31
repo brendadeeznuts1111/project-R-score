@@ -44,6 +44,14 @@ describe('connected limit patterns', () => {
     expect(patterns.audit.hierarchyLinked).toBe(8);
     expect(patterns.audit.geoLinked).toBe(8);
     expect(patterns.audit.licensed).toBe(8);
+    const profileBindings = db
+      .query(
+        `SELECT COUNT(*) AS n
+         FROM partner_profile_bindings
+         WHERE tree_node_id LIKE 'limit-demo-%'`
+      )
+      .get() as { n: number };
+    expect(profileBindings.n).toBe(patterns.nodes);
     db.close();
   });
 
