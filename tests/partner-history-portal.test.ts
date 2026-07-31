@@ -2,7 +2,10 @@
 // @see https://bun.com/docs/test — bun:test
 import { describe, expect, test } from 'bun:test';
 
-import { PARTNER_HISTORY_GLOSSARY } from '../public/portal/partner-history/glossary-map.js';
+import {
+  PARTNER_HISTORY_COLLAPSE_BACKLOG,
+  PARTNER_HISTORY_GLOSSARY,
+} from '../public/portal/partner-history/glossary-map.js';
 
 const HISTORY_HTML = 'public/portal/partner-history/index.html';
 const LIMIT_CARD = 'public/portal/components/limit-changes-card.js';
@@ -210,5 +213,44 @@ describe('partner-history portal', () => {
     expect(html).toContain('PARTNER_HISTORY_GLOSSARY.skeletonMetrics');
     expect(html).toContain('PARTNER_HISTORY_GLOSSARY.ariaLiveUpdate');
     expect(html).toContain('PARTNER_HISTORY_GLOSSARY.ariaFilterToggle');
+  });
+
+  test('records P2-P3 collapse backlog onto existing owners without minting', async () => {
+    const registry = await Bun.file('public/registry/domain-glossary.json').json();
+    const knownIds = new Set(
+      (registry.concepts ?? []).map((concept: { id: unknown }) => String(concept.id))
+    );
+
+    expect(PARTNER_HISTORY_COLLAPSE_BACKLOG.auditLimitDecreased).toBe(
+      'ops.limits.change_direction'
+    );
+    expect(PARTNER_HISTORY_COLLAPSE_BACKLOG.bulkExportSelected).toBe('ui.semantic.artifact');
+    expect(PARTNER_HISTORY_COLLAPSE_BACKLOG.searchPlaceholder).toBe('ui.action.searchProfiles');
+    expect(PARTNER_HISTORY_COLLAPSE_BACKLOG.printHeader).toBe('ui.semantic.artifact');
+    expect(PARTNER_HISTORY_COLLAPSE_BACKLOG.alertTelegramUrgent).toBe('telegram.topic.alerts');
+    expect(PARTNER_HISTORY_COLLAPSE_BACKLOG.intelUnusualPattern).toBe(
+      'ops.limits.influence_score'
+    );
+    expect(PARTNER_HISTORY_COLLAPSE_BACKLOG.diffDelta).toBe('ops.limits.limit_delta');
+    expect(PARTNER_HISTORY_COLLAPSE_BACKLOG.timeNow).toBe('section.recentLimitChanges');
+    expect(PARTNER_HISTORY_COLLAPSE_BACKLOG.roleOperator).toBe('ops.limits.roleType');
+
+    for (const [key, concept] of Object.entries(PARTNER_HISTORY_COLLAPSE_BACKLOG)) {
+      expect(knownIds.has(concept), `${key} -> ${concept}`).toBe(true);
+      expect(key in PARTNER_HISTORY_GLOSSARY, key).toBe(false);
+      for (const prefix of [
+        'ops.audit.',
+        'ops.bulk.',
+        'ops.search.',
+        'ops.print.',
+        'ops.intel.',
+        'ops.diff.',
+        'ops.time.',
+        'ops.role.',
+        'ops.alert.',
+      ]) {
+        expect(concept.startsWith(prefix), `${key} ${concept}`).toBe(false);
+      }
+    }
   });
 });

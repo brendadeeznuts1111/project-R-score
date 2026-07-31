@@ -123,6 +123,93 @@ export const PARTNER_HISTORY_COPY = Object.freeze({
   freshnessCached: 'Cached',
 });
 
+/**
+ * Future P2/P3 chrome aliases → existing owners.
+ * Not wired into PARTNER_HISTORY_GLOSSARY until the UI exists (wiring gate).
+ * Do not use parallel mint IDs as values.
+ */
+export const PARTNER_HISTORY_COLLAPSE_BACKLOG = Object.freeze({
+  // Audit trail / changelog
+  auditLimitDecreased: 'ops.limits.change_direction',
+  auditLimitIncreased: 'ops.limits.change_direction',
+  auditLimitFrozen: 'ops.limits.influence_score',
+  auditEvidenceSigned: 'ops.limits.evidence_trace',
+  auditEvidenceRevoked: 'ops.limits.evidence_trace',
+  auditExportDownloaded: 'ui.semantic.artifact',
+  auditFilterSaved: 'ui.action.filter',
+  auditViewedAccount: 'ops.limits.account',
+  auditFlaggedReview: 'ops.limits.influence_score',
+  auditNoteAdded: 'ops.limits.account',
+
+  // Bulk actions
+  bulkSelectAll: 'ui.action.filter',
+  bulkSelectPage: 'ui.action.filter',
+  bulkDeselectAll: 'ui.action.reset',
+  bulkSelectedCount: 'ui.action.filter',
+  bulkExportSelected: 'ui.semantic.artifact',
+  bulkSignEvidence: 'ops.limits.evidence_trace',
+  bulkFreezeLimits: 'ops.limits.effective_limit',
+  bulkApplyTag: 'ui.action.filter',
+  bulkRemoveTag: 'ui.action.reset',
+  bulkCompare: 'ops.limits.limit_delta',
+
+  // Search / query
+  searchPlaceholder: 'ui.action.searchProfiles',
+  searchSyntaxHelp: 'ui.action.searchProfiles',
+  searchNoResults: 'ui.action.filter',
+  searchDidYouMean: 'ui.action.searchProfiles',
+  searchRecentQuery: 'ui.action.filter',
+  searchSavedQuery: 'ui.action.filter',
+  searchQueryError: 'ui.action.searchProfiles',
+
+  // Print
+  printHeader: 'ui.semantic.artifact',
+  printFooter: 'ui.semantic.artifact',
+  printPageNumber: 'ui.semantic.artifact',
+  printGeneratedAt: 'ui.semantic.status',
+  printConfidential: 'ui.semantic.artifact',
+  printOperatorId: 'ops.limits.roleType',
+
+  // Alerts (reuse existing alert.* / telegram topic)
+  alertSlackLimit: 'alert.severity',
+  alertEmailDigest: 'alert.delivery',
+  alertTelegramUrgent: 'telegram.topic.alerts',
+  alertDashboardBadge: 'alert.severity',
+  alertPush: 'alert.delivery',
+
+  // Intelligence badges
+  intelUnusualPattern: 'ops.limits.influence_score',
+  intelCluster: 'ops.limits.pattern_surface',
+  intelVelocity: 'ops.limits.influence_score',
+  intelCorrelated: 'ops.limits.influence_score',
+  intelManualOverride: 'ops.limits.prediction',
+  intelSystemRecommendation: 'ops.limits.prediction',
+
+  // Diff / compare
+  diffCompareMode: 'ops.limits.limit_delta',
+  diffBefore: 'ops.limits.effective_limit',
+  diffAfter: 'ops.limits.effective_limit',
+  diffDelta: 'ops.limits.limit_delta',
+  diffSideBySide: 'ops.limits.limit_delta',
+  diffOverlay: 'ops.limits.limit_delta',
+
+  // Time formatting (presentation of observed window)
+  timeNow: 'section.recentLimitChanges',
+  timeMinutesAgo: 'section.recentLimitChanges',
+  timeHoursAgo: 'section.recentLimitChanges',
+  timeDaysAgo: 'section.recentLimitChanges',
+  timeAbsoluteShort: 'section.recentLimitChanges',
+  timeAbsoluteLong: 'section.recentLimitChanges',
+  timeIsoTooltip: 'section.recentLimitChanges',
+
+  // Permission gates
+  roleAdmin: 'ops.limits.roleType',
+  roleOperator: 'ops.limits.roleType',
+  roleAnalyst: 'ops.limits.roleType',
+  roleViewer: 'ops.limits.roleType',
+  roleSystem: 'ops.limits.roleType',
+});
+
 export function partnerHistoryGlossaryHref(concept) {
   return `/portal/glossary/#glossary:${encodeURIComponent(concept)}`;
 }
