@@ -28,8 +28,15 @@ describe('partners portal board', () => {
     expect(html).toContain('id="section:telegram"');
     expect(html).toContain('id="section:accounting"');
     expect(html).toContain('id="section:accounts-limits"');
+    expect(html).toContain('id="section:onboard"');
+    expect(html).toContain('id="partner-profile"');
     expect(html).toContain('id="section:deposits"');
     expect(html).toContain('id="section:partner-message"');
+    expect(html).toContain('renderPartnerProfile');
+    expect(html).toContain('telegramTopicsForPhase');
+    expect(html).toContain('onboard:partner');
+    expect(html).toContain('/portal/limits/?partner=');
+    expect(html).toContain('/portal/partner-history/?partner=');
     expect(html).toContain('/registry/telegram-handshake.json');
     expect(html).toContain('/registry/seat-capital-desk.json');
     expect(html).toContain('/registry/telegram-handshake-catalog.json');

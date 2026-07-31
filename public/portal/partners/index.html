@@ -218,6 +218,42 @@
         color: var(--text-dim);
         margin: 8px 0 0;
       }
+      .partner-profile-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 12px 16px;
+      }
+      .partner-profile-grid .k {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-dim);
+        margin-bottom: 4px;
+      }
+      .partner-profile-grid .v {
+        font-size: 13px;
+        line-height: 1.45;
+      }
+      .partner-profile-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 14px;
+      }
+      .partner-profile-links a {
+        font-size: 12px;
+      }
+      .onboard-steps {
+        margin: 0;
+        padding-left: 1.2em;
+        font-size: 13px;
+        color: var(--text);
+        line-height: 1.55;
+      }
+      .onboard-steps code {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+      }
       .hidden {
         display: none;
       }
@@ -537,6 +573,24 @@
         <div class="partners-stats" id="partners-stats"></div>
 
         <section
+          class="partners-section partner-profile hidden"
+          id="partner-profile"
+          aria-labelledby="partner-profile-heading"
+          data-glossary-concept="page.partners"
+        >
+          <h2 id="partner-profile-heading">
+            <a href="/portal/glossary/#glossary:page.partners" data-glossary-concept="page.partners"
+              >Partner profile</a
+            >
+          </h2>
+          <p class="blurb">
+            Composed view for one CODE — phase, Telegram, accounts, limits, accounting deals, and
+            onboard next steps. Cross-board deep links stay on the partner filter.
+          </p>
+          <div class="partners-panel" id="partner-profile-body"></div>
+        </section>
+
+        <section
           class="partners-section"
           id="section:telegram"
           aria-labelledby="telegram-heading"
@@ -639,6 +693,63 @@
             bun run ops:limits:demo · bun run partners:validate · bun run
             telegram:package-group:accounting
           </p>
+        </section>
+
+        <section
+          class="partners-section"
+          id="section:onboard"
+          aria-labelledby="onboard-heading"
+          data-glossary-concept="partner.phase.onboarding"
+        >
+          <h2 id="onboard-heading">
+            <a
+              href="/portal/glossary/#glossary:partner.phase.onboarding"
+              data-glossary-concept="partner.phase.onboarding"
+              >Onboarding flow</a
+            >
+          </h2>
+          <p class="blurb">
+            Personalized package onboarding — tree node, compliance fields, Telegram package group,
+            and seat desk. Dry-run first; create the forum when ready.
+          </p>
+          <div class="partners-panel">
+            <ol class="onboard-steps" id="onboard-steps">
+              <li>
+                Plan:
+                <code>bun run onboard:partner -- &lt;CODE&gt;-001 --dry-run</code>
+              </li>
+              <li>
+                Apply (optional compliance):
+                <code
+                  >bun run onboard:partner -- &lt;CODE&gt;-001 --state=NJ --age=28
+                  --location=Newark --zip=07102</code
+                >
+              </li>
+              <li>
+                Forum:
+                <code>bun run onboard:partner -- &lt;CODE&gt;-001 --create-package-group</code>
+                · or
+                <code>bun run telegram:ops -- link-package-group CODE chatId</code>
+              </li>
+              <li>
+                Seat DM:
+                <code>bun run telegram:ops -- link-chat &lt;CODE&gt;-001 &lt;tgUserId&gt;</code>
+                · then
+                <code>bun run telegram:ops:consume</code>
+              </li>
+              <li>
+                Board:
+                <code>/portal/partners/#partner/CODE</code>
+                · limits
+                <code>/portal/limits/?partner=CODE</code>
+                · history
+                <code>/portal/partner-history/?partner=CODE</code>
+              </li>
+            </ol>
+            <p class="cli-row" id="onboard-cli-hint">
+              bun run onboard:partner -- ASH-001 --dry-run · docs/harness/tenants/partner-onboarding-package.md
+            </p>
+          </div>
         </section>
 
         <section
@@ -905,6 +1016,7 @@
         partnerOutHash,
         partnerTelegramHash,
         telegramDeepLink,
+        telegramTopicsForPhase,
       } from '/portal/partners/partner-routes.js';
 
       const TELEGRAM_BOT = 'FactoryWagerBot';
@@ -912,6 +1024,10 @@
       const $ = id => document.getElementById(id);
       /** @type {Map<string, { hex?: string, conceptId?: string, label?: string }>} */
       let bookIndex = new Map();
+      /** @type {Map<string, object>} */
+      let opsByPartner = new Map();
+      let handshakeCache = null;
+      let seatCache = null;
 
       function esc(value) {
         const el = document.createElement('div');
@@ -967,9 +1083,6 @@
         const norm = raw.toLowerCase().replace(/[\s_-]+/g, '');
         return bookIndex.get(norm) || bookIndex.get(raw.toLowerCase()) || null;
       }
-
-      /** @type {Map<string, any>} */
-      let opsByPartner = new Map();
 
       function isChipHex(hex) {
         return typeof hex === 'string' && /^#[0-9A-Fa-f]{6}$/.test(hex);
@@ -1119,6 +1232,18 @@
         return conceptChip(p.phaseConceptId, p.phase, p.phaseColor);
       }
 
+      function botTopicLinks(code, phase) {
+        const topics = telegramTopicsForPhase(phase || 'onboarding');
+        const links = topics
+          .map(topic => {
+            const href = telegramDeepLink(TELEGRAM_BOT, code, topic);
+            if (!href) return '';
+            return `<a href="${esc(href)}" target="_blank" rel="noopener" title="Open bot · ${esc(topic)}">${esc(topic)}</a>`;
+          })
+          .filter(Boolean);
+        return links.length ? links.join(' · ') : '—';
+      }
+
       function renderPartners(handshake) {
         const rows = Array.isArray(handshake?.rows) ? handshake.rows : [];
         $('partners-tbody').innerHTML = rows.length
@@ -1130,10 +1255,7 @@
                 const verify = `${row.verifyPassed ?? '—'}/${row.verifyTotal ?? '—'}`;
                 const ops = opsByPartner.get(String(row.partnerCode || '').toUpperCase());
                 const tax = ops ? `${ops.outs?.length || 0} outs · ${ops.phase}` : '—';
-                const botHref = telegramDeepLink(TELEGRAM_BOT, row.partnerCode, 'ops');
-                const bot = botHref
-                  ? `<a href="${esc(botHref)}" target="_blank" rel="noopener">t.me ops</a>`
-                  : '—';
+                const bot = botTopicLinks(row.partnerCode, ops?.phase);
                 return `<tr id="partner-detail-${esc(row.partnerCode)}" data-partner-code="${esc(row.partnerCode)}">
                 <td>${partnerLink(row.partnerCode)}</td>
                 <td>${phaseChip(row.partnerCode)}</td>
@@ -1149,6 +1271,54 @@
               })
               .join('')
           : '<tr><td colspan="10">No partners in telegram-handshake bake</td></tr>';
+      }
+
+      function renderPartnerProfile(code) {
+        const panel = $('partner-profile');
+        const body = $('partner-profile-body');
+        if (!panel || !body) return;
+        if (!code) {
+          panel.classList.add('hidden');
+          body.innerHTML = '';
+          return;
+        }
+        const ops = opsByPartner.get(code);
+        const hs = (handshakeCache?.rows || []).find(
+          r => String(r.partnerCode || '').toUpperCase() === code
+        );
+        const desk = (seatCache?.rows || []).find(
+          r => String(r.partnerCode || '').toUpperCase() === code
+        );
+        const callSign = hs?.callSign || desk?.callSign || `${code}-001`;
+        const tracking = ops?.tracking || {};
+        const accounts = tracking.accounts || {};
+        const limits = tracking.limits || {};
+        const next = (hs?.nextSteps && hs.nextSteps[0]) || 'Review handshake next steps';
+        const bot = botTopicLinks(code, ops?.phase || 'onboarding');
+        const cross = [
+          `<a class="topic-chip" href="/portal/limits/?partner=${encodeURIComponent(code)}">Limits</a>`,
+          `<a class="topic-chip" href="/portal/partner-history/?partner=${encodeURIComponent(code)}">Limit history</a>`,
+          `<a class="topic-chip" href="${partnerAccountingHash(code)}">Accounting deals</a>`,
+          `<a class="topic-chip" href="${partnerTelegramHash(code, 'ops')}">Telegram ops</a>`,
+          `<a class="topic-chip" href="/portal/toc/">TOC offers</a>`,
+          `<a class="topic-chip" href="#section:onboard">Onboard</a>`,
+        ].join('');
+        body.innerHTML = `<div class="partner-profile-grid">
+          <div><div class="k">Code</div><div class="v"><code>${esc(code)}</code> · <code>${esc(callSign)}</code></div></div>
+          <div><div class="k">Phase</div><div class="v">${phaseChip(code)}</div></div>
+          <div><div class="k">Telegram</div><div class="v">${esc(hs?.membershipCell || '—')} · DM ${esc(hs?.dmSeatStatus || (desk?.hasTelegramDesk ? 'pinned' : '—'))}</div></div>
+          <div><div class="k">Accounts</div><div class="v">${esc(String(accounts.ready ?? 0))}/${esc(String(accounts.total ?? 0))} ready · ${esc(String(limits.coveragePct ?? 0))}% limits</div></div>
+          <div><div class="k">Fund / outs</div><div class="v ${fundTone(desk?.fundStatus)}">${esc(desk?.fundStatus || 'no intake')} · ${esc(String(desk?.incompleteOuts ?? ops?.outs?.length ?? '—'))} outs</div></div>
+          <div><div class="k">Bot topics</div><div class="v">${bot}</div></div>
+          <div><div class="k">Next</div><div class="v">${esc(next)}</div></div>
+          <div><div class="k">Onboard CLI</div><div class="v"><code>bun run onboard:partner -- ${esc(callSign)} --dry-run</code></div></div>
+        </div>
+        <div class="partner-profile-links">${cross}</div>`;
+        panel.classList.remove('hidden');
+        const hint = $('onboard-cli-hint');
+        if (hint) {
+          hint.textContent = `bun run onboard:partner -- ${callSign} --dry-run · docs/harness/tenants/partner-onboarding-package.md`;
+        }
       }
 
       function deskByPartner(seat) {
@@ -1323,7 +1493,7 @@
                 const actions = [
                   routeChip(
                     partnerHash(partner.code),
-                    'Account',
+                    'Profile',
                     colors['ops.limits.account'],
                     'ops.limits.account'
                   ),
@@ -1339,6 +1509,8 @@
                     colors['telegram.topic.ops'],
                     'telegram.handshake'
                   ),
+                  `<a class="book-chip" href="/portal/limits/?partner=${encodeURIComponent(partner.code)}" data-glossary-concept="ops.limits.effective_limit">Limits</a>`,
+                  `<a class="book-chip" href="/portal/partner-history/?partner=${encodeURIComponent(partner.code)}" data-glossary-concept="ops.limits.opening_baseline">History</a>`,
                 ].join(' ');
                 return `<tr data-partner-code="${esc(partner.code)}">
                 <td>${partnerLink(partner.code)}<br><code>${esc(partner.callSign)}</code></td>
@@ -1423,7 +1595,14 @@
 
       function applyPartnerRoute(scroll = false) {
         let route = parsePartnerHash(window.location.hash) || { type: 'partners' };
-        if ('code' in route && !opsByPartner.has(route.code)) route = { type: 'partners' };
+        // Unknown CODE still shows profile shell when handshake knows the partner.
+        const codeKnown =
+          'code' in route &&
+          (opsByPartner.has(route.code) ||
+            (handshakeCache?.rows || []).some(
+              r => String(r.partnerCode || '').toUpperCase() === route.code
+            ));
+        if ('code' in route && !codeKnown) route = { type: 'partners' };
         const selectedCode = 'code' in route ? route.code : null;
 
         for (const row of document.querySelectorAll('[data-partner-code]')) {
@@ -1442,13 +1621,14 @@
           target.classList.remove('route-target');
         }
 
+        renderPartnerProfile(selectedCode);
+
         let target = null;
         if (route.type === 'out') target = document.getElementById(`out-card-${route.outId}`);
         if (route.type === 'accounting') target = $('accounting-ledger');
         if (route.type === 'telegram') target = $('telegram-thread');
         if (route.type === 'partner') {
-          target =
-            document.getElementById(`partner-detail-${route.code}`) || $('section:accounts-limits');
+          target = $('partner-profile') || document.getElementById(`partner-detail-${route.code}`);
         }
         if (route.type === 'book') target = document.getElementById(`book-card-${route.bookId}`);
         if (route.type === 'partners') target = $('partner-panel');
@@ -1478,6 +1658,8 @@
           ]);
           installColorTokens(ops.colors);
           bookIndex = indexBooks(taxonomy);
+          handshakeCache = handshake;
+          seatCache = seat;
           opsByPartner = new Map(
             (ops.partners || []).map(p => [String(p.code || '').toUpperCase(), p])
           );

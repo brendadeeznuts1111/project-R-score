@@ -1742,7 +1742,12 @@
 
         function syncPatternFiltersFromUrl() {
           const url = new URL(window.location.href);
-          filterPartner = url.searchParams.get(PATTERN_QUERY_PARAMS.account)?.toLowerCase() ?? '';
+          // Partners board uses ?partner=CODE; patterns board uses ?pattern=.
+          filterPartner = (
+            url.searchParams.get('partner') ||
+            url.searchParams.get(PATTERN_QUERY_PARAMS.account) ||
+            ''
+          ).toLowerCase();
           filterBook = url.searchParams.get(PATTERN_QUERY_PARAMS.sportsbook) ?? '';
           filterState = url.searchParams.get(PATTERN_QUERY_PARAMS.state) ?? '';
           filterZip = url.searchParams.get(PATTERN_QUERY_PARAMS.zip) ?? '';

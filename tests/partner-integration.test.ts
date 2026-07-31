@@ -10,8 +10,10 @@ import { PARTNER_TABLE_SCHEMAS } from '../lib/portal/partner-tables.ts';
 import { allPartnerTags } from '../lib/portal/partner-tags.ts';
 import {
   TELEGRAM_TOPICS,
+  decodeTelegramStartPayload,
   telegramAppHash,
   telegramDeepLink,
+  telegramTopicsForPhase,
 } from '../lib/portal/partner-telegram.ts';
 
 describe('partner integration contracts', () => {
@@ -41,11 +43,21 @@ describe('partner integration contracts', () => {
       'liquidity',
       'accounting',
     ]);
+    const start = new URL(telegramDeepLink('FactoryWagerBot', 'ASH', 'ops')).searchParams.get(
+      'start'
+    )!;
+    expect(decodeTelegramStartPayload(start)).toEqual({ code: 'ASH', topic: 'ops' });
+    expect(decodeTelegramStartPayload('link_abc')).toBeNull();
+    expect(decodeTelegramStartPayload('not-base64!!!')).toBeNull();
+    expect(telegramTopicsForPhase('onboarding')).toEqual(['general', 'ops']);
+    expect(telegramTopicsForPhase('operator_ready')).toContain('accounting');
     // Board JS mirror stays byte-compatible with the TypeScript helper.
     const board = await import('../public/portal/partners/partner-routes.js');
     expect(board.telegramDeepLink('FactoryWagerBot', 'ASH', 'ops')).toBe(
       telegramDeepLink('FactoryWagerBot', 'ASH', 'ops')
     );
+    expect(board.decodeTelegramStartPayload(start)).toEqual({ code: 'ASH', topic: 'ops' });
+    expect(board.telegramTopicsForPhase('paused')).toEqual(['general', 'alerts']);
     // Soft-fail on board (empty) vs throw in TS — both reject invalid bot names.
     expect(board.telegramDeepLink('bad!', 'ASH', 'ops')).toBe('');
   });
