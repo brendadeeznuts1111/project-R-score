@@ -46,6 +46,25 @@ describe('partner integration contracts', () => {
     expect(board.telegramDeepLink('FactoryWagerBot', 'ASH', 'ops')).toBe(
       telegramDeepLink('FactoryWagerBot', 'ASH', 'ops')
     );
+    // Soft-fail on board (empty) vs throw in TS — both reject invalid bot names.
+    expect(board.telegramDeepLink('bad!', 'ASH', 'ops')).toBe('');
+  });
+
+  test('TS and board JS parsePartnerHash share route.type dialect', async () => {
+    const board = await import('../public/portal/partners/partner-routes.js');
+    const samples = [
+      '#partners',
+      '#partner/ASH',
+      '#partner/ASH/out/out-ASH-1',
+      '#partner/ASH/accounting',
+      '#partner/ASH/telegram/ops',
+      '#book/book-dk-nj',
+    ] as const;
+    for (const hash of samples) {
+      const ts = parsePartnerHash(hash);
+      const js = board.parsePartnerHash(hash) as { type?: string } | null;
+      expect(js?.type, hash).toBe(ts?.type);
+    }
   });
 
   test('tables and tags expose the reviewed integration taxonomy', () => {
@@ -54,6 +73,12 @@ describe('partner integration contracts', () => {
     expect(PARTNER_TABLE_SCHEMAS.accounting.some(column => column.key === 'running_balance')).toBe(
       true
     );
-    expect(allPartnerTags().length).toBeGreaterThan(15);
+    expect(allPartnerTags().length).toBeGreaterThan(18);
+    const statusIds = allPartnerTags()
+      .filter(t => t.id.startsWith('tag.status.'))
+      .map(t => ('glossaryId' in t ? t.glossaryId : ''));
+    expect(statusIds).toContain('out.status.blocked');
+    expect(statusIds).toContain('out.status.partial');
+    expect(statusIds).toContain('out.status.funded');
   });
 });

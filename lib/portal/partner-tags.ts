@@ -43,6 +43,9 @@ export const PARTNER_TAGS = {
     { id: 'tag.status.ready', label: 'Ready', glossaryId: 'out.status.ready' },
     { id: 'tag.status.deferred', label: 'Deferred', glossaryId: 'out.status.deferred' },
     { id: 'tag.status.paused', label: 'Paused', glossaryId: 'out.status.paused' },
+    { id: 'tag.status.blocked', label: 'Blocked', glossaryId: 'out.status.blocked' },
+    { id: 'tag.status.partial', label: 'Partial', glossaryId: 'out.status.partial' },
+    { id: 'tag.status.funded', label: 'Funded', glossaryId: 'out.status.funded' },
     {
       id: 'tag.status.zero_balance',
       label: 'Zero balance',
@@ -70,7 +73,12 @@ export const PARTNER_TAGS = {
     {
       id: 'tag.funding.traditional',
       label: 'Traditional',
-      members: ['deposit.method.wire', 'deposit.method.cash'], // cash 🟠 proposed-new
+      members: ['deposit.method.wire'],
+    },
+    {
+      id: 'tag.funding.cash',
+      label: 'Cash',
+      glossaryId: 'deposit.method.cash', // 🟠 proposed-new
       proposed: true,
     },
     { id: 'tag.funding.credit', label: 'Credit', members: ['deposit.method.credit'] },
