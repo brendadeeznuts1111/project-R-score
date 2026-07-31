@@ -4,7 +4,7 @@
 
 **Date**: 2026-02-04 03:45:00 UTC-06:00  
 **Environment**: macOS ARM64, Bun 1.3.9  
-**File**: `src/scan.ts` (6,581 lines, 238KB)
+**File**: `scan.ts` (canonical scanner entrypoint)
 
 ## Performance Metrics
 

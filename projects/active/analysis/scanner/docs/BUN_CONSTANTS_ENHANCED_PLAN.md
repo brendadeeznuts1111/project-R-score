@@ -18,9 +18,8 @@ Extension of the [Complete BUN Constants Mapping Plan](./.cursor/plans/complete_
 
 | Location                                 | Constant                                            | Current                                           | Recommendation                                                       |
 | ---------------------------------------- | --------------------------------------------------- | ------------------------------------------------- | -------------------------------------------------------------------- |
-| `scan.ts`                                | `PROJECTS_ROOT`                                     | Fallback `'/Users/nolarose/Projects'`             | Use `Bun.env.BUN_PLATFORM_HOME ?? '..'` only — remove hardcoded path |
+| `scan.ts`                                | `PROJECTS_ROOT`                                     | Env override, repository-root discovery, then cwd | OK (no machine-specific hardcoded path)                             |
 | `scan.ts`                                | `SNAPSHOT_DIR`, `SNAPSHOT_PATH`, `TOKEN_AUDIT_PATH` | Internal `const`                                  | Optional: `BUN_SNAPSHOT_DIR` etc. if exported; else keep internal    |
-| `src/scan.ts`                            | `PROJECTS_ROOT`                                     | `Bun.env.BUN_PLATFORM_HOME ?? '..'`               | OK (no hardcoded path)                                               |
 | `benchmarks/bench-core.ts`               | `ITERATIONS`, `WARMUP`, `S`, `R`, `B`, `D`          | No BUN\_                                          | OK (benchmark-only)                                                  |
 | `docs/CUSTOM_ESLINT_RULES.md`            | `R2_COOKIE_FORMAT_VERSION`, `API_VERSION`           | Example "bad"                                     | Use `BUN_R2_COOKIE_FORMAT_VERSION`, `BUN_API_VERSION` as "good"      |
 | `optimizations/runtime-optimizations.ts` | `DEFAULT_RISK_CAPACITY`                             | Internal                                          | OK (internal)                                                        |
@@ -28,10 +27,7 @@ Extension of the [Complete BUN Constants Mapping Plan](./.cursor/plans/complete_
 
 ### Action Items
 
-1. **Fix `scan.ts`** `PROJECTS_ROOT` fallback: remove `'/Users/nolarose/Projects'`, use `'..'` or require
-   `BUN_PLATFORM_HOME`.
-2. Align `scan.ts` with `src/scan.ts` for consistency (or document which is canonical).
-3. Update `CUSTOM_ESLINT_RULES.md` examples to show correct `BUN_` prefixes.
+1. Update `CUSTOM_ESLINT_RULES.md` examples to show correct `BUN_` prefixes.
 
 ---
 
@@ -64,7 +60,6 @@ Extension of the [Complete BUN Constants Mapping Plan](./.cursor/plans/complete_
 
 | Location                                 | Finding                                       | Status                                               |
 | ---------------------------------------- | --------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------- |
-| `scanner/src/scan.ts`                    | `escapeXml()` uses `Bun.escapeHTML(text)`     | Correct                                              |
 | `scanner/scan.ts`                        | Same                                          | Correct                                              |
 | `scanner/benchmarks/bench-native.ts`     | `escapeHtmlReplace()` with `.replace()` chain | Intentional (benchmark comparing userland vs native) |
 | `scanner/benchmarks/team-init.ts`        | `.replace(/[<>{}[\]                           | \\^~`]/g, '')`                                       | Character sanitization, not HTML — document if used for security |
@@ -83,14 +78,12 @@ Extension of the [Complete BUN Constants Mapping Plan](./.cursor/plans/complete_
 
 | Location                   | Finding                                                                   | Recommendation                                           |
 | -------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `scanner/scan.ts:1328`     | `PROJECTS_ROOT = Bun.env.BUN_PLATFORM_HOME ?? '/Users/nolarose/Projects'` | Remove hardcoded path; use `'..'` or fail if env missing |
-| `scanner/src/scan.ts:1409` | `PROJECTS_ROOT = Bun.env.BUN_PLATFORM_HOME ?? '..'`                       | OK                                                       |
+| `scanner/scan.ts`          | Env override, repository-root discovery, then cwd fallback               | OK                                                       |
 | `scanner/benchmarks/*`     | `import.meta.dir`-based paths                                             | OK (runtime resolution)                                  |
 
 ### Action Items
 
-1. **scan.ts**: Change fallback from `'/Users/nolarose/Projects'` to `'..'` or to a constant like
-   `BUN_DEFAULT_PROJECTS_ROOT = '..'`.
+No scanner path remediation remains.
 
 ---
 
@@ -118,5 +111,5 @@ Extend `scripts/extract-bun-constants.ts` to also report:
 
 ## Scope
 
-- **Scanner**: scan.ts, src/scan.ts, benchmarks, docs
+- **Scanner**: scan.ts, benchmarks, docs
 - **mcp-bun-docs**: skills-matrix-integration.ts, lib.ts

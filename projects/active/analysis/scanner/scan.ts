@@ -814,8 +814,15 @@ export function semverCompare(a: string, b: string): 0 | 1 | -1 {
  */
 export function getGitCommitHash(cwd?: string): string {
 	try {
+		const env = {...Bun.env};
+		delete env.GIT_DIR;
+		delete env.GIT_WORK_TREE;
+		delete env.GIT_INDEX_FILE;
+		delete env.GIT_OBJECT_DIRECTORY;
+		delete env.GIT_COMMON_DIR;
 		const {stdout, success} = Bun.spawnSync(['git', 'rev-parse', 'HEAD'], {
 			cwd: cwd ?? import.meta.dir,
+			env,
 			stdout: 'pipe',
 			stderr: 'ignore',
 		});
@@ -1398,19 +1405,26 @@ const BUN_DEFAULT_TRUSTED = new Set([
 ]);
 
 // ── CONSTANTS: Configuration ────────────────────────────────────────────
-const PROJECTS_ROOT = Bun.env.BUN_PLATFORM_HOME ?? (() => {
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file
+async function resolveProjectsRoot(): Promise<string> {
+	if (Bun.env.BUN_PLATFORM_HOME) return Bun.env.BUN_PLATFORM_HOME;
 	const mainDir = Bun.main.slice(0, Bun.main.lastIndexOf('/'));
 	// Walk up to find platform root (where .husky, docs/, tools/ exist)
 	let current = mainDir;
 	while (current !== '/' && current !== '') {
-		if (Bun.file(`${current}/.husky`).existsSync() && Bun.file(`${current}/docs`).existsSync()) {
+		const [hasHusky, hasDocs] = await Promise.all([
+			Bun.file(`${current}/.husky`).exists(),
+			Bun.file(`${current}/docs`).exists(),
+		]);
+		if (hasHusky && hasDocs) {
 			return current;
 		}
 		current = current.slice(0, current.lastIndexOf('/'));
 	}
 	// Fallback: use parent of current file's directory
 	return mainDir.split('/').slice(0, -2).join('/') || process.cwd();
-})();
+}
+const PROJECTS_ROOT = await resolveProjectsRoot();
 const projectDir = (p: {folder: string}): string => `${PROJECTS_ROOT}/${p.folder}`;
 
 // ── EXPORTS: Keychain/Secrets ──────────────────────────────────────────

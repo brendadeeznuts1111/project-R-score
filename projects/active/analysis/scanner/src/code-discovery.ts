@@ -116,7 +116,7 @@ export async function findUsage(projectRoot: string, name: string, excludeScanTs
 	const locations: string[] = [];
 	const re = new RegExp(`\\b${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g');
 	for (const rel of files) {
-		if (excludeScanTs && (rel === 'scan.ts' || rel === 'src/scan.ts')) continue;
+		if (excludeScanTs && rel === 'scan.ts') continue;
 		const path = join(projectRoot, rel);
 		try {
 			const text = await Bun.file(path).text();

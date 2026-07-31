@@ -86,9 +86,9 @@ bun run scan.ts --session-cleanup [project-id]
 
 ```text
 scanner/
+├── scan.ts                        Main scanner — CLI, scanning, audit, fix commands
+├── scan-worker.ts                 IPC worker for parallel project scanning
 ├── src/
-│   ├── scan.ts                    Main scanner — CLI, scanning, audit, fix commands
-│   ├── scan-worker.ts             IPC worker for parallel project scanning
 │   ├── scan-columns.ts            Column definitions for table output
 │   ├── cookie-sessions.ts         Cookie session management with Bun.secrets
 │   ├── cookie-terminal.ts         Terminal UI for cookie sessions

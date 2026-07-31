@@ -1,7 +1,5 @@
 import {scanProject} from './scan.ts';
 
-declare const _self: {send(msg: unknown): void};
-
 process.on('message', async (msg: {type: string; id?: number; dir?: string}) => {
 	if (msg.type === 'shutdown') {
 		process.exit(0);

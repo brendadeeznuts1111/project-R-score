@@ -72,12 +72,12 @@ bun build ./index.tsx
 
 | Constant                           | Type                            | Location                                 | Value/Count              | Description                                                    |
 | ---------------------------------- | ------------------------------- | ---------------------------------------- | ------------------------ | -------------------------------------------------------------- |
-| `BUN_KEYCHAIN_SERVICE`             | `string`                        | `src/scan.ts`                            | `'dev.bun.scanner'`      | Keychain service name                                          |
-| `BUN_KEYCHAIN_SERVICE_LEGACY`      | `string`                        | `src/scan.ts`                            | `'bun-scanner'`          | Legacy keychain service                                        |
-| `BUN_KEYCHAIN_TOKEN_NAMES`         | `readonly string[]`             | `src/scan.ts`                            | 2 items                  | Token names for keychain lookup                                |
-| `BUN_TOKEN_AUDIT_RSS_PATH`         | `string`                        | `src/scan.ts`                            | Path                     | Token audit RSS output path                                    |
-| `BUN_SCAN_RESULTS_RSS_PATH`        | `string`                        | `src/scan.ts`                            | Path                     | Scan results RSS output path                                   |
-| `BUN_ADVISORY_MATCHES_PATH`        | `string`                        | `src/scan.ts`                            | Path                     | Advisory matches JSONL path                                    |
+| `BUN_KEYCHAIN_SERVICE`             | `string`                        | `scan.ts`                                | `'dev.bun.scanner'`      | Keychain service name                                          |
+| `BUN_KEYCHAIN_SERVICE_LEGACY`      | `string`                        | `scan.ts`                                | `'bun-scanner'`          | Legacy keychain service                                        |
+| `BUN_KEYCHAIN_TOKEN_NAMES`         | `readonly string[]`             | `scan.ts`                                | 2 items                  | Token names for keychain lookup                                |
+| `BUN_TOKEN_AUDIT_RSS_PATH`         | `string`                        | `scan.ts`                                | Path                     | Token audit RSS output path                                    |
+| `BUN_SCAN_RESULTS_RSS_PATH`        | `string`                        | `scan.ts`                                | Path                     | Scan results RSS output path                                   |
+| `BUN_ADVISORY_MATCHES_PATH`        | `string`                        | `scan.ts`                                | Path                     | Advisory matches JSONL path                                    |
 | `BUN_R2_COOKIE_FORMAT_VERSION`     | `number`                        | `lib/r2-cookie-stream.ts`                | 1                        | R2 cookie format version                                       |
 | `BUN_R2_COOKIE_COMPRESS_THRESHOLD` | `number`                        | `lib/r2-cookie-stream.ts`                | 1024                     | Compress threshold (bytes)                                     |
 | `BUN_MAX_SAFE_SIZE`                | `number`                        | `optimizations/runtime-optimizations.ts` | MAX_SAFE_INTEGER         | Max safe buffer size                                           |

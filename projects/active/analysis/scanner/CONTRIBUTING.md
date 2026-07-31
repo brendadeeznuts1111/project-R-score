@@ -74,7 +74,7 @@ const service = projectTokenService(projectContext.projectInfo);
 
 ## Adding a new `--fix-*` command
 
-1. Add the flag to `parseArgs` options in `src/scan.ts`
+1. Add the flag to `parseArgs` options in `scan.ts`
 2. Add the fix handler after existing fix blocks (search for `flags["fix-`)
 3. Support `--dry-run` — preview changes without writing
 4. Add relevant fields to the `ProjectInfo` interface if scanning new data
