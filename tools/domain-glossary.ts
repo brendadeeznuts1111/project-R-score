@@ -18,8 +18,13 @@
 import { joinPath } from '../lib/path-bun.ts';
 import {
   PORTAL_SEMANTIC_CONCEPTS,
+  type PortalSemanticConcept,
   validatePortalSemanticVocabulary,
 } from '../lib/portal/semantic-vocabulary.ts';
+import {
+  PORTAL_GLOSSARY_SURFACES,
+  validatePortalGlossarySurfaces,
+} from '../lib/portal/page-glossary.ts';
 import { complianceKpiGlossaryConcepts } from '../lib/operations/compliance-policy-kpis.ts';
 import { regulationPolicyGlossaryConcepts } from '../lib/operations/regulation-policy-catalog.ts';
 import { FW_COLORS, type FactoryWagerColor } from '../lib/theme/colors.ts';
@@ -53,6 +58,7 @@ type CanonicalConcept = {
   status: string;
   deprecatedBy: string | null;
   unit: string | null;
+  format?: string | null;
   registryColumn: number | null;
   source: string | null;
   featurePurpose: string | null;
@@ -117,27 +123,31 @@ function validateSource(source: CanonicalGlossaryDump): void {
 export function buildDomainGlossary(source: CanonicalGlossaryDump) {
   validateSource(source);
   validatePortalSemanticVocabulary();
+  validatePortalGlossarySurfaces(new Set(PORTAL_SEMANTIC_CONCEPTS.map(concept => concept.id)));
 
-  const portalConcepts: CanonicalConcept[] = PORTAL_SEMANTIC_CONCEPTS.map(concept => ({
-    id: concept.id,
-    label: concept.label,
-    description: concept.description,
-    category: 'ui',
-    kind: 'ui',
-    mapsTo: null,
-    synonyms: [...concept.synonyms],
-    values: concept.values ? [...concept.values] : null,
-    valueLabels: null,
-    seeAlso: [...concept.seeAlso],
-    status: 'active',
-    deprecatedBy: null,
-    unit: concept.unit ?? null,
-    registryColumn: null,
-    source: 'lib/portal/semantic-vocabulary.ts',
-    featurePurpose: 'Cross-portal semantic field contract.',
-    semanticType: concept.semanticType,
-    uiRole: concept.uiRole,
-  }));
+  const portalConcepts: CanonicalConcept[] = PORTAL_SEMANTIC_CONCEPTS.map(
+    (concept: PortalSemanticConcept) => ({
+      id: concept.id,
+      label: concept.label,
+      description: concept.description,
+      category: 'ui',
+      kind: 'ui',
+      mapsTo: null,
+      synonyms: [...concept.synonyms],
+      values: concept.values ? [...concept.values] : null,
+      valueLabels: null,
+      seeAlso: [...concept.seeAlso],
+      status: 'active',
+      deprecatedBy: null,
+      unit: concept.unit ?? null,
+      format: concept.format ?? null,
+      registryColumn: null,
+      source: 'lib/portal/semantic-vocabulary.ts',
+      featurePurpose: 'Cross-portal semantic field contract.',
+      semanticType: concept.semanticType,
+      uiRole: concept.uiRole,
+    })
+  );
   const governedConcepts: CanonicalConcept[] = [
     ...regulationPolicyGlossaryConcepts(),
     ...complianceKpiGlossaryConcepts(),
@@ -154,7 +164,8 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
     seeAlso: [...concept.seeAlso],
     status: concept.status,
     deprecatedBy: null,
-    unit: null,
+    unit: 'unit' in concept ? concept.unit : null,
+    format: 'format' in concept ? concept.format : null,
     registryColumn: null,
     source: concept.source,
     featurePurpose: 'Governed compliance policy and KPI concept.',
@@ -198,12 +209,14 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
     sources: {
       semanticAuthority: 'Kalshi-bot/src/institutions/glossary.ts',
       portalSemanticAuthority: 'lib/portal/semantic-vocabulary.ts',
+      pageGlossaryAuthority: 'lib/portal/page-glossary.ts',
       regulationPolicyAuthority: 'lib/operations/regulation-policy-catalog.ts',
       complianceKpiAuthority: 'lib/operations/compliance-policy-kpis.ts',
       canonicalDump: DOMAIN_GLOSSARY_SOURCE_PATH,
       portalProjection: 'tools/domain-glossary.ts',
       colorKernel: 'lib/theme/colors.ts',
     },
+    surfaces: PORTAL_GLOSSARY_SURFACES,
     summary: {
       concepts: concepts.length,
       active: concepts.filter(concept => concept.status === 'active').length,

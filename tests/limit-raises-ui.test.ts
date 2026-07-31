@@ -139,8 +139,11 @@ describe('account limit control surface', () => {
     expect(html).toContain('id="research-findings"');
     expect(html).toContain('id="node-breakdown"');
     expect(html).toContain('P(raise) = clamp(5%, 95%, 0.30F + 0.25T + 0.30I + 0.15W)');
-    expect(html).toContain('/portal/glossary/#glossary:ops.limits.pattern_surface');
     expect(html).toContain('/portal/glossary/#glossary:ops.limits.influence_score');
+    expect(html).toContain('/portal/glossary/#glossary:page.limitPatterns');
+    expect(html).toContain('/portal/glossary/#glossary:section.accountLimitControl');
+    expect(html).toContain('/portal/glossary/#glossary:ui.action.searchProfiles');
+    expect(html).toContain('data-glossary-concept="ui.action.filter"');
     expect(html).toContain("new URL(window.location.href)");
     expect(html).toContain("[PATTERN_QUERY_PARAMS.sportsbook]: filterBook");
     expect(html).toContain('pickPatterns(summary?.limitPatterns, snapshot.patterns)');
@@ -152,6 +155,7 @@ describe('account limit control surface', () => {
     expect(html).toContain('/portal/limits/limit-profiles.js');
     expect(script).toContain("new URLPattern({ hash: 'account\\\\::account' })");
     expect(script).toContain("new URLPattern({ hash: 'section\\\\::section' })");
+    expect(script).toContain("new URLPattern({ pathname: '/portal/limits/' })");
     expect(script).toContain('hash.groups.account');
     expect(script).toContain('hash.groups.section');
     expect(script).toContain('url.searchParams.set(parameter, value)');

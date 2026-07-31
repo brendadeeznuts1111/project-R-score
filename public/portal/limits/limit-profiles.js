@@ -1,5 +1,6 @@
 const PROFILE_URL = '/registry/limit-raises.json';
 const PROFILE_POLL_INTERVAL = 30_000;
+const limitsPagePattern = new URLPattern({ pathname: '/portal/limits/' });
 const accountPattern = new URLPattern({ hash: 'account\\::account' });
 const sectionPattern = new URLPattern({ hash: 'section\\::section' });
 const PROFILE_QUERY_PARAMS = {
@@ -39,6 +40,7 @@ function labelFromKey(value) {
 }
 
 function accountFromUrl() {
+  if (!limitsPagePattern.test(window.location.href)) return null;
   const captured = accountPattern.exec(window.location.href)?.hash.groups.account ?? null;
   if (!captured) return null;
   try {
@@ -49,6 +51,7 @@ function accountFromUrl() {
 }
 
 function sectionFromUrl() {
+  if (!limitsPagePattern.test(window.location.href)) return null;
   return sectionPattern.exec(window.location.href)?.hash.groups.section ?? null;
 }
 
@@ -217,11 +220,11 @@ function profileCard(profile) {
           <span class="profile-state">${esc(state)}</span>
         </div>
       </div>
-      <span class="status-token" data-tone="${esc(profile.tone)}">${esc(profile.monitoringStatus)}</span>
+      <span class="status-token" data-tone="${esc(profile.tone)}" data-glossary-concept="ops.limits.monitoring_status">${esc(profile.monitoringStatus)}</span>
     </div>
     <dl class="account-profile__facts">
       <div>
-        <dt>Profile</dt>
+        <dt><a class="semantic-label" href="${glossaryHref('ops.limits.profile')}">Profile</a></dt>
         <dd><code title="${esc(profile.profileKey ?? 'unbound')}">${esc(shortRef(profile.profileKey ?? 'unbound'))}</code> · ${esc(profile.lifecycleStatus ?? 'no lifecycle state')}</dd>
       </div>
       <div>
@@ -263,10 +266,10 @@ function renderTrace() {
   target.innerHTML = `
     <header class="trace-panel__header">
       <div>
-        <p class="trace-panel__eyebrow">Selected account</p>
+        <p class="trace-panel__eyebrow"><a class="semantic-label" href="${glossaryHref('ops.limits.account')}">Selected account</a></p>
         <h3>${esc(profile.accountName)}</h3>
       </div>
-      <span class="status-token" data-tone="${esc(profile.tone)}">${esc(profile.monitoringStatus)}</span>
+      <span class="status-token" data-tone="${esc(profile.tone)}" data-glossary-concept="ops.limits.monitoring_status">${esc(profile.monitoringStatus)}</span>
     </header>
     <div class="trace-panel__identity">
       <code title="${esc(profile.treeNodeId)}">${esc(shortRef(profile.treeNodeId))}</code>
@@ -348,7 +351,7 @@ function renderPolicies() {
             <br><code class="policy-code">${esc(policy.policyCode)}</code>
           </td>
           <td>
-            <span class="status-token" data-tone="${policy.status === 'active' ? 'ok' : 'warn'}">${esc(policy.status)}</span>
+            <span class="status-token" data-tone="${policy.status === 'active' ? 'ok' : 'warn'}" data-glossary-concept="ui.semantic.status">${esc(policy.status)}</span>
           </td>
           <td>${esc(policy.authority)}<br><small>${esc(policy.risk)} risk</small></td>
           <td>${esc(policy.scope)}${policy.treeNodeId ? `<br><small>${esc(policy.treeNodeId)}</small>` : ''}</td>

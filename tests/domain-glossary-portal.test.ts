@@ -10,11 +10,16 @@ import {
 } from '../lib/http/portal-route-manifest.ts';
 import { PORTAL_WEAVE_ARTIFACTS, PORTAL_WEAVE_SURFACES } from '../lib/http/portal-weave.ts';
 import {
+  LIMIT_SURFACE_CONCEPTS,
   PORTAL_SEMANTIC_CONCEPTS,
   PORTAL_SEMANTIC_TYPES,
   PORTAL_UI_ROLES,
   validatePortalSemanticVocabulary,
 } from '../lib/portal/semantic-vocabulary.ts';
+import {
+  PORTAL_GLOSSARY_SURFACES,
+  validatePortalGlossarySurfaces,
+} from '../lib/portal/page-glossary.ts';
 import { complianceKpiGlossaryConcepts } from '../lib/operations/compliance-policy-kpis.ts';
 import { regulationPolicyGlossaryConcepts } from '../lib/operations/regulation-policy-catalog.ts';
 
@@ -31,6 +36,7 @@ describe('domain glossary portal', () => {
       sources: {
         semanticAuthority: 'Kalshi-bot/src/institutions/glossary.ts',
         portalSemanticAuthority: 'lib/portal/semantic-vocabulary.ts',
+        pageGlossaryAuthority: 'lib/portal/page-glossary.ts',
         regulationPolicyAuthority: 'lib/operations/regulation-policy-catalog.ts',
         complianceKpiAuthority: 'lib/operations/compliance-policy-kpis.ts',
         canonicalDump: 'Kalshi-bot/research/registry/glossary-dump.json',
@@ -87,6 +93,16 @@ describe('domain glossary portal', () => {
     ).toMatchObject({
       kind: 'kpi',
       uiRole: 'badge',
+      unit: 'count',
+      format: 'integer',
+    });
+    expect(payload.surfaces).toContainEqual({
+      path: '/portal/limits/',
+      concept: 'page.limitPatterns',
+      sections: expect.objectContaining({
+        'account-control': 'section.accountLimitControl',
+        'recent-changes': 'section.recentLimitChanges',
+      }),
     });
   });
 
@@ -99,6 +115,12 @@ describe('domain glossary portal', () => {
     expect(new Set(PORTAL_SEMANTIC_CONCEPTS.map(concept => concept.id)).size).toBe(
       PORTAL_SEMANTIC_CONCEPTS.length
     );
+    expect(() =>
+      validatePortalGlossarySurfaces(
+        new Set(PORTAL_SEMANTIC_CONCEPTS.map(concept => concept.id))
+      )
+    ).not.toThrow();
+    expect(PORTAL_GLOSSARY_SURFACES[0]?.concept).toBe(LIMIT_SURFACE_CONCEPTS.page);
   });
 
   test('board uses URLPattern.hash deep links and shared portal chrome', async () => {
@@ -128,6 +150,7 @@ describe('domain glossary portal', () => {
     expect(script).toContain("addDetailRow(details, 'Concept kind', concept.kind)");
     expect(script).toContain("addDetailRow(details, 'Semantic type', concept.semanticType)");
     expect(script).toContain("addDetailRow(details, 'UI role', concept.uiRole)");
+    expect(script).toContain("addDetailRow(details, 'Format', concept.format)");
     expect(script).toContain("payload.schemaVersion !== 2");
     expect(script).not.toContain('location.hash.slice');
     expect(script).not.toContain("fetch('/api/health");
@@ -152,6 +175,26 @@ describe('domain glossary portal', () => {
     expect(PORTAL_WEAVE_ARTIFACTS).toContainEqual(
       expect.objectContaining({ href: '/registry/domain-glossary.json' })
     );
+  });
+
+  test('registered limits sections and rendered concept references stay aligned', async () => {
+    const html = await Bun.file('public/portal/limits/index.html').text();
+    const payload = await Bun.file('public/registry/domain-glossary.json').json();
+    const surface = PORTAL_GLOSSARY_SURFACES.find(row => row.path === '/portal/limits/');
+    expect(surface).toBeDefined();
+    expect(html).toContain(`/portal/glossary/#glossary:${surface?.concept}`);
+    for (const [sectionId, concept] of Object.entries(surface?.sections ?? {})) {
+      expect(html).toContain(`id="${sectionId}"`);
+      expect(html).toContain(`/portal/glossary/#glossary:${concept}`);
+    }
+
+    const knownConcepts = new Set(payload.concepts.map(concept => concept.id));
+    const references = [
+      ...html.matchAll(/#glossary:([^"'?#\s<]+)/g),
+      ...html.matchAll(/data-glossary-concept="([^"]+)"/g),
+    ].map(match => match[1]);
+    expect(references.length).toBeGreaterThan(30);
+    expect(references.filter(concept => !knownConcepts.has(concept))).toEqual([]);
   });
 
   test('committed projection stays aligned with the canonical dump', async () => {

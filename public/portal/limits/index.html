@@ -124,6 +124,21 @@
         margin: 1em 0;
         align-items: center;
       }
+      .pattern-filter {
+        display: grid;
+        gap: 4px;
+        min-width: 130px;
+      }
+      .pattern-filter--search {
+        flex: 1 1 240px;
+      }
+      .pattern-filter > a {
+        color: var(--text-dim);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
       .filter-bar input,
       .filter-bar select {
         padding: 7px 10px;
@@ -542,7 +557,8 @@
         display: grid;
         gap: 4px;
       }
-      .profile-filter > span {
+      .profile-filter > span,
+      .profile-filter > a {
         color: var(--text-dim);
         font-size: 9px;
         font-weight: 700;
@@ -1082,7 +1098,7 @@
 
       <header class="portal-hero limits-hero">
         <h2 class="portal-hero__title">
-          <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.pattern_surface"
+          <a class="semantic-label" href="/portal/glossary/#glossary:page.limitPatterns"
             >Partner limit patterns</a
           >
         </h2>
@@ -1095,9 +1111,15 @@
 
       <section id="account-control" class="card" aria-labelledby="account-control-title">
         <h2 id="account-control-title" class="section-heading">
-          <a class="section-anchor" href="#section:account-control">Account limit control</a>
+          <a
+            class="section-anchor"
+            href="#section:account-control"
+            data-glossary-concept="section.accountLimitControl"
+            >Account limit control</a
+          >
           <span class="section-heading__links">
-            <a href="/portal/glossary/#glossary:ops.limits.profile">Definition</a>
+            <a href="/portal/glossary/#glossary:section.accountLimitControl">Definition</a>
+            <a href="/portal/glossary/#glossary:ops.limits.profile">Profile semantics</a>
             <a href="/registry/limit-raises.json">Artifact</a>
           </span>
         </h2>
@@ -1113,7 +1135,9 @@
         ></div>
         <div class="profile-filter-bar" aria-label="Account profile filters">
           <label class="profile-filter profile-filter--search" for="profile-filter">
-            <span>Search profiles</span>
+            <a class="semantic-label" href="/portal/glossary/#glossary:ui.action.searchProfiles"
+              >Search profiles</a
+            >
             <input
               id="profile-filter"
               type="search"
@@ -1121,7 +1145,9 @@
             />
           </label>
           <label class="profile-filter" for="profile-status">
-            <span>Monitoring state</span>
+            <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.monitoring_status"
+              >Monitoring state</a
+            >
             <select id="profile-status">
               <option value="">All states</option>
               <option value="monitored">Monitored</option>
@@ -1131,12 +1157,20 @@
             </select>
           </label>
           <label class="profile-filter" for="profile-jurisdiction">
-            <span>Jurisdiction</span>
+            <a class="semantic-label" href="/portal/glossary/#glossary:ui.filter.jurisdiction"
+              >Jurisdiction</a
+            >
             <select id="profile-jurisdiction">
               <option value="">All jurisdictions</option>
             </select>
           </label>
-          <button id="profile-filter-reset" class="profile-filter-reset" type="button">
+          <button
+            id="profile-filter-reset"
+            class="profile-filter-reset"
+            type="button"
+            data-glossary-concept="ui.action.reset"
+            title="Reset filters · glossary: ui.action.reset"
+          >
             Reset
           </button>
           <span id="profile-count" class="sub"></span>
@@ -1150,7 +1184,11 @@
       </section>
 
       <section id="compliance-kpi-control" class="card" aria-labelledby="compliance-kpi-title">
-        <h2 id="compliance-kpi-title">Compliance policy KPIs</h2>
+        <h2 id="compliance-kpi-title">
+          <a class="semantic-label" href="/portal/glossary/#glossary:section.complianceKpis"
+            >Compliance policy KPIs</a
+          >
+        </h2>
         <p class="sub">
           Decision metrics derived from governed policies and blocked-wager evidence. Each label
           opens its glossary definition.
@@ -1164,7 +1202,7 @@
 
       <section id="jurisdiction-control" class="card" aria-labelledby="jurisdiction-control-title">
         <h2 id="jurisdiction-control-title">
-          <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.jurisdiction_policy"
+          <a class="semantic-label" href="/portal/glossary/#glossary:section.jurisdictionCatalog"
             >Jurisdiction policy catalog</a
           >
         </h2>
@@ -1204,28 +1242,45 @@
 
       <section id="pattern-explorer" aria-label="Limit pattern explorer">
         <div class="filter-bar" aria-label="Limit pattern filters">
-          <input
-            type="text"
-            id="filter-partner"
-            placeholder="Filter by account, partner, or downline…"
-            aria-label="Filter by account profile"
-            style="flex: 1"
-          />
-          <select id="filter-book" aria-label="Filter by sportsbook">
-            <option value="">All sportsbooks</option>
-            <option value="draftkings">DraftKings</option>
-            <option value="fanduel">FanDuel</option>
-            <option value="hardrock">Hard Rock</option>
-            <option value="betmgm">BetMGM</option>
-            <option value="caesars">Caesars</option>
-          </select>
-          <select id="filter-state" aria-label="Filter by state">
-            <option value="">All states</option>
-          </select>
-          <select id="filter-zip" aria-label="Filter by ZIP prefix">
-            <option value="">All ZIP prefixes</option>
-          </select>
-          <button onclick="applyFilter()">Apply filters</button>
+          <label class="pattern-filter pattern-filter--search" for="filter-partner">
+            <a href="/portal/glossary/#glossary:ui.filter.partnerId">Account or partner</a>
+            <input
+              type="text"
+              id="filter-partner"
+              placeholder="Account, partner, or downline…"
+              aria-label="Filter by account profile"
+            />
+          </label>
+          <label class="pattern-filter" for="filter-book">
+            <a href="/portal/glossary/#glossary:ui.filter.sportsbook">Sportsbook</a>
+            <select id="filter-book" aria-label="Filter by sportsbook">
+              <option value="">All sportsbooks</option>
+              <option value="draftkings">DraftKings</option>
+              <option value="fanduel">FanDuel</option>
+              <option value="hardrock">Hard Rock</option>
+              <option value="betmgm">BetMGM</option>
+              <option value="caesars">Caesars</option>
+            </select>
+          </label>
+          <label class="pattern-filter" for="filter-state">
+            <a href="/portal/glossary/#glossary:ui.filter.state">State</a>
+            <select id="filter-state" aria-label="Filter by state">
+              <option value="">All states</option>
+            </select>
+          </label>
+          <label class="pattern-filter" for="filter-zip">
+            <a href="/portal/glossary/#glossary:ui.filter.zipPrefix">ZIP prefix</a>
+            <select id="filter-zip" aria-label="Filter by ZIP prefix">
+              <option value="">All ZIP prefixes</option>
+            </select>
+          </label>
+          <button
+            onclick="applyFilter()"
+            data-glossary-concept="ui.action.filter"
+            title="Apply filters · glossary: ui.action.filter"
+          >
+            Apply filters
+          </button>
           <span
             id="count-badge"
             style="margin-left: auto; font-size: 0.9em; color: var(--text-dim)"
@@ -1234,8 +1289,10 @@
 
         <section id="pattern-summary" class="card">
           <h2 class="section-heading-link">
-            <a href="#section:pattern-summary">Pattern summary</a>
-            <a href="/portal/glossary/#glossary:ops.limits.pattern_surface">Definition</a>
+            <a href="#section:pattern-summary" data-glossary-concept="section.patternSummary"
+              >Pattern summary</a
+            >
+            <a href="/portal/glossary/#glossary:section.patternSummary">Definition</a>
           </h2>
           <div class="pattern-summary">
             <div class="pattern-summary__item">
@@ -1293,8 +1350,10 @@
 
         <section id="prediction" class="card">
           <h2 class="section-heading-link">
-            <a href="#section:prediction">Limit raise prediction</a>
-            <a href="/portal/glossary/#glossary:ops.limits.prediction">Definition</a>
+            <a href="#section:prediction" data-glossary-concept="section.limitRaisePrediction"
+              >Limit raise prediction</a
+            >
+            <a href="/portal/glossary/#glossary:section.limitRaisePrediction">Definition</a>
           </h2>
           <div class="prediction-layout">
             <div>
@@ -1332,15 +1391,23 @@
         <div class="pattern-grid">
           <section id="sportsbook-patterns" class="card">
             <h2 class="section-heading-link">
-              <a href="#section:sportsbook-patterns">Sportsbook patterns</a>
-              <a href="/portal/glossary/#glossary:ops.limits.pattern_surface">Definition</a>
+              <a
+                href="#section:sportsbook-patterns"
+                data-glossary-concept="section.sportsbookPatterns"
+                >Sportsbook patterns</a
+              >
+              <a href="/portal/glossary/#glossary:section.sportsbookPatterns">Definition</a>
             </h2>
             <div id="book-patterns" class="pattern-list"></div>
           </section>
           <section id="geo-patterns-section" class="card">
             <h2 class="section-heading-link">
-              <a href="#section:geo-patterns-section">State &amp; ZIP patterns</a>
-              <a href="/portal/glossary/#glossary:ops.limits.jurisdiction_policy">Jurisdiction</a>
+              <a
+                href="#section:geo-patterns-section"
+                data-glossary-concept="section.stateZipPatterns"
+                >State &amp; ZIP patterns</a
+              >
+              <a href="/portal/glossary/#glossary:section.stateZipPatterns">Definition</a>
             </h2>
             <div id="geo-patterns" class="pattern-list"></div>
           </section>
@@ -1348,24 +1415,30 @@
 
         <section id="downline-context" class="card">
           <h2 class="section-heading-link">
-            <a href="#section:downline-context">Partner → downline context</a>
-            <a href="/portal/glossary/#glossary:ops.limits.account">Account semantics</a>
+            <a href="#section:downline-context" data-glossary-concept="section.downlineContext"
+              >Partner → downline context</a
+            >
+            <a href="/portal/glossary/#glossary:section.downlineContext">Definition</a>
           </h2>
           <div id="downline-patterns" class="table-wrap"></div>
         </section>
 
         <section id="connection-audit" class="card">
           <h2 class="section-heading-link">
-            <a href="#section:connection-audit">Data connection audit</a>
-            <a href="/portal/glossary/#glossary:ops.limits.data_coverage">Coverage definition</a>
+            <a href="#section:connection-audit" data-glossary-concept="section.dataConnectionAudit"
+              >Data connection audit</a
+            >
+            <a href="/portal/glossary/#glossary:section.dataConnectionAudit">Definition</a>
           </h2>
           <div id="pattern-audit" class="audit-grid"></div>
         </section>
 
         <section id="recent-changes" class="card">
           <h2 class="section-heading-link">
-            <a href="#section:recent-changes">Recent limit changes</a>
-            <a href="/portal/glossary/#glossary:ops.limits.limit_delta">Limit delta</a>
+            <a href="#section:recent-changes" data-glossary-concept="section.recentLimitChanges"
+              >Recent limit changes</a
+            >
+            <a href="/portal/glossary/#glossary:section.recentLimitChanges">Definition</a>
           </h2>
           <div class="table-wrap">
             <table aria-label="Recent limit changes">
@@ -1413,8 +1486,10 @@
 
         <section id="node-breakdown" class="card">
           <h2 class="section-heading-link">
-            <a href="#section:node-breakdown">Per-node breakdown</a>
-            <a href="/portal/glossary/#glossary:ops.limits.account">Account definition</a>
+            <a href="#section:node-breakdown" data-glossary-concept="section.perNodeBreakdown"
+              >Per-node breakdown</a
+            >
+            <a href="/portal/glossary/#glossary:section.perNodeBreakdown">Definition</a>
           </h2>
           <div id="partner-breakdown" class="node-breakdown-grid"></div>
         </section>
@@ -1735,8 +1810,8 @@
                   ? `Drivers: ${drivers} · ${proof}`
                   : `Drivers pending · ${proof}`;
                 const scoreBadge = r.context_available
-                  ? `<span class="badge score" title="${esc(scoreTitle)}">${Math.round((r.multi_factor_score ?? 0) * 100)}</span>`
-                  : `<span class="badge pending" title="${esc(scoreTitle)}">pending</span>`;
+                  ? `<span class="badge score" data-glossary-concept="ops.limits.influence_score" title="${esc(scoreTitle)}">${Math.round((r.multi_factor_score ?? 0) * 100)}</span>`
+                  : `<span class="badge pending" data-glossary-concept="ui.semantic.status" title="${esc(scoreTitle)}">pending</span>`;
                 const when =
                   Number.isFinite(Number(r.increased_at)) && Number(r.increased_at) > 0
                     ? new Date(Number(r.increased_at) * 1000).toLocaleString()
@@ -1747,10 +1822,10 @@
         <td><strong>${esc(r.sportsbook ?? '—')}</strong></td>
         <td>${esc(r.sport_id ?? '—')}</td>
         <td>${esc(r.market_id ?? '—')}</td>
-        <td><span class="badge ${typeCls}">${esc(r.bet_type ?? '—')}</span></td>
+        <td><span class="badge ${typeCls}" data-glossary-concept="ops.limits.market_phase">${esc(r.bet_type ?? '—')}</span></td>
         <td>$${prev.toLocaleString()}</td>
         <td><strong>$${next.toLocaleString()}</strong></td>
-        <td><span class="badge ${directionCls}">${directionLabel}</span><br><strong>${raise >= 0 ? '+' : '−'}$${Math.abs(raise).toLocaleString()} (${pct}%)</strong></td>
+        <td><span class="badge ${directionCls}" data-glossary-concept="ops.limits.change_direction">${directionLabel}</span><br><strong>${raise >= 0 ? '+' : '−'}$${Math.abs(raise).toLocaleString()} (${pct}%)</strong></td>
         <td>${scoreBadge}</td>
         <td>${when}</td>
       </tr>`;
@@ -1796,7 +1871,7 @@
                       <strong>${esc(pattern?.node_name ?? pid)}</strong><br>
                       <small>${esc(pattern?.node_type ?? 'node')} · depth ${pattern?.downline_depth ?? 0} · ${esc(pattern?.state_code ?? 'unmapped')} ${esc(pattern?.zip_prefix ?? '')}</small>
                     </div>
-                    <span class="badge ${total < 0 ? 'down' : 'up'}">${total < 0 ? 'reduced' : 'raised'}</span>
+                    <span class="badge ${total < 0 ? 'down' : 'up'}" data-glossary-concept="ops.limits.change_direction">${total < 0 ? 'reduced' : 'raised'}</span>
                   </div>
                   <div class="node-breakdown__metrics">
                     <span><strong>${raises.length}</strong>changes</span>
@@ -1825,7 +1900,7 @@
                   <small>net ${row.net_delta >= 0 ? '+' : '−'}$${Math.abs(row.net_delta).toLocaleString()} · avg ${row.avg_delta_pct >= 0 ? '+' : ''}${row.avg_delta_pct}% · top ${esc(row.top_market ?? '—')}</small>
                   <span class="pattern-meter"><span style="width:${Math.min(100, Math.abs(row.avg_delta_pct))}%"></span></span>
                 </div>
-                <span class="badge score" title="Average multi-factor influence">${row.avg_influence_score == null ? 'pending' : `${Math.round(row.avg_influence_score * 100)}%`}</span>
+                <span class="badge score" data-glossary-concept="ops.limits.influence_score" title="Average multi-factor influence">${row.avg_influence_score == null ? 'pending' : `${Math.round(row.avg_influence_score * 100)}%`}</span>
               </div>`
               )
               .join('') || '<div class="empty">No sportsbook patterns</div>';
@@ -1871,11 +1946,11 @@
                 <td><code title="${esc(row.partner_node_id)}">${esc(row.partner_node_id.replace('limit-demo-', ''))}</code></td>
                 <td><strong>${esc(row.node_name)}</strong><br><small>${esc(row.node_type)} · depth ${row.downline_depth}</small></td>
                 <td><strong>${esc(row.state_code ?? '—')}</strong> · <code>${esc(row.zip_code ?? '—')}</code><br><small>${esc(row.location ?? 'not observed')}</small></td>
-                <td><span class="badge ${row.license_status === 'active' ? 'pregame' : 'pending'}">${esc(row.license_status ?? 'none')}</span></td>
+                <td><span class="badge ${row.license_status === 'active' ? 'pregame' : 'pending'}" data-glossary-concept="ui.semantic.status">${esc(row.license_status ?? 'none')}</span></td>
                 <td><span class="badge ${row.violation_count_30d > 1 ? 'live' : row.violation_count_30d > 0 ? 'pending' : 'pregame'}">${row.violation_count_30d} violations</span></td>
                 <td>${esc((row.sportsbooks ?? []).join(', '))}</td>
                 <td>${row.changes} changes<br><strong>${row.net_delta >= 0 ? '+' : '−'}$${Math.abs(row.net_delta).toLocaleString()}</strong></td>
-                <td>${row.avg_influence_score == null ? '<span class="badge pending">pending</span>' : `<span class="badge score">${Math.round(row.avg_influence_score * 100)}%</span>`}</td>
+                <td>${row.avg_influence_score == null ? '<span class="badge pending" data-glossary-concept="ui.semantic.status">pending</span>' : `<span class="badge score" data-glossary-concept="ops.limits.influence_score">${Math.round(row.avg_influence_score * 100)}%</span>`}</td>
                 <td>${row.proof_verified_changes}/${row.changes}<br><small>${row.scored_changes} scored</small></td>
               </tr>`
               )
@@ -1929,7 +2004,7 @@
                 finding => `<article class="research-finding" data-tone="${finding.tone}">
                   <div class="research-finding__head">
                     <strong>${esc(finding.title)}</strong>
-                    <span class="status-token" data-tone="${finding.tone}">${finding.tone === 'warn' ? 'review' : 'observed'}</span>
+                    <span class="status-token" data-tone="${finding.tone}" data-glossary-concept="ui.semantic.status">${finding.tone === 'warn' ? 'review' : 'observed'}</span>
                   </div>
                   <p>${esc(finding.detail)}</p>
                   <small>${esc(finding.evidence)}</small>

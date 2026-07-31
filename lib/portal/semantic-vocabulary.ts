@@ -49,6 +49,27 @@ export const PORTAL_SEMANTIC_CONCEPT_KEYS = [
   'ops.limits.influence_score',
   'ops.limits.data_coverage',
   'ops.limits.prediction',
+  'page.limitPatterns',
+  'section.accountLimitControl',
+  'section.complianceKpis',
+  'section.jurisdictionCatalog',
+  'section.patternSummary',
+  'section.limitRaisePrediction',
+  'section.sportsbookPatterns',
+  'section.stateZipPatterns',
+  'section.downlineContext',
+  'section.dataConnectionAudit',
+  'section.recentLimitChanges',
+  'section.perNodeBreakdown',
+  'ui.filter.profile',
+  'ui.filter.jurisdiction',
+  'ui.filter.partnerId',
+  'ui.filter.sportsbook',
+  'ui.filter.state',
+  'ui.filter.zipPrefix',
+  'ui.action.reset',
+  'ui.action.searchProfiles',
+  'ui.action.filter',
 ] as const;
 
 export type PortalSemanticConceptKey = (typeof PORTAL_SEMANTIC_CONCEPT_KEYS)[number];
@@ -62,6 +83,7 @@ export type PortalSemanticConcept = {
   synonyms: readonly string[];
   values?: readonly string[];
   unit?: string;
+  format?: string;
   seeAlso: readonly PortalSemanticConceptKey[];
 };
 
@@ -103,7 +125,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     semanticType: 'state',
     uiRole: 'badge',
     synonyms: ['result', 'health state', 'outcome'],
-    values: ['ok', 'attention', 'fail', 'unavailable', 'pending'],
+    values: ['ok', 'active', 'monitored', 'attention', 'blocked', 'fail', 'unavailable', 'pending'],
     seeAlso: ['ui.semantic.tone', 'ui.semantic.source'],
   },
   {
@@ -114,7 +136,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     semanticType: 'presentation',
     uiRole: 'token',
     synonyms: ['color tone', 'severity color'],
-    values: ['ok', 'warn', 'bad', 'skip'],
+    values: ['ok', 'warn', 'bad', 'info', 'skip'],
     seeAlso: ['ui.semantic.status', 'ui.semantic.type'],
   },
   {
@@ -270,6 +292,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     semanticType: 'state',
     uiRole: 'code',
     synonyms: ['current limit', 'applicable limit', 'max wager'],
+    unit: 'usd',
+    format: 'currency:usd',
     seeAlso: ['ops.limits.jurisdiction_policy', 'ops.limits.profile', 'ui.semantic.source'],
   },
   {
@@ -313,6 +337,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'code',
     synonyms: ['limit movement', 'net limit change'],
     unit: 'usd',
+    format: 'currency:usd',
     seeAlso: [
       'ops.limits.change_direction',
       'ops.limits.effective_limit',
@@ -328,6 +353,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'badge',
     synonyms: ['influence', 'multi-factor score', 'raise score'],
     unit: 'percent',
+    format: 'percent:0',
     seeAlso: ['ops.limits.prediction', 'ops.limits.data_coverage', 'ops.limits.evidence_trace'],
   },
   {
@@ -339,6 +365,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'badge',
     synonyms: ['connection coverage', 'pattern coverage'],
     unit: 'percent',
+    format: 'percent:0',
     seeAlso: ['ops.limits.evidence_trace', 'ops.limits.influence_score', 'ui.semantic.source'],
   },
   {
@@ -350,6 +377,220 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['raise forecast', 'limit forecast'],
     seeAlso: ['ops.limits.influence_score', 'ops.limits.limit_delta', 'ops.limits.pattern_surface'],
+  },
+  {
+    id: 'page.limitPatterns',
+    label: 'Partner limit patterns',
+    description:
+      'Portal page for account controls, jurisdiction policies, connected limit patterns, prediction evidence, and per-node movement.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['partner limit control', 'limit patterns page'],
+    seeAlso: [
+      'ops.limits.pattern_surface',
+      'section.accountLimitControl',
+      'section.jurisdictionCatalog',
+    ],
+  },
+  {
+    id: 'section.accountLimitControl',
+    label: 'Account limit control',
+    description:
+      'Section for searching, filtering, selecting, and tracing evidence-backed partner-tree account limit profiles.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['partner limit control', 'account controls'],
+    seeAlso: ['page.limitPatterns', 'ops.limits.profile', 'ops.limits.monitoring_status'],
+  },
+  {
+    id: 'section.complianceKpis',
+    label: 'Compliance policy KPIs',
+    description:
+      'Section presenting governed compliance decision metrics derived from policies and blocked-wager evidence.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['compliance metrics', 'policy KPIs'],
+    seeAlso: ['page.limitPatterns', 'ops.limits.jurisdiction_policy', 'ops.limits.evidence_trace'],
+  },
+  {
+    id: 'section.jurisdictionCatalog',
+    label: 'Jurisdiction policy catalog',
+    description:
+      'Section listing effective state and account policy codes, limits, enforcement actions, and source evidence.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['jurisdiction catalog', 'state policy catalog'],
+    seeAlso: ['page.limitPatterns', 'section.limitRaisePrediction', 'section.dataConnectionAudit'],
+  },
+  {
+    id: 'section.patternSummary',
+    label: 'Pattern summary',
+    description:
+      'Section summarizing selected limit changes, direction, net movement, influence, connected nodes, and evidence coverage.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['limit summary', 'pattern metrics'],
+    seeAlso: ['page.limitPatterns', 'ops.limits.pattern_surface', 'ops.limits.data_coverage'],
+  },
+  {
+    id: 'section.limitRaisePrediction',
+    label: 'Limit raise prediction',
+    description:
+      'Section describing the active raise-probability model, its weighted factors, and available backtest accuracy.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['raise prediction section', 'limit forecast'],
+    seeAlso: [
+      'ops.limits.prediction',
+      'section.jurisdictionCatalog',
+      'section.dataConnectionAudit',
+    ],
+  },
+  {
+    id: 'section.sportsbookPatterns',
+    label: 'Sportsbook patterns',
+    description:
+      'Section comparing change volume, direction, net movement, and influence across sportsbook sources.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['book patterns', 'sportsbook movement'],
+    seeAlso: ['page.limitPatterns', 'ops.limits.pattern_surface', 'ops.limits.influence_score'],
+  },
+  {
+    id: 'section.stateZipPatterns',
+    label: 'State and ZIP patterns',
+    description: 'Section comparing limit movement by jurisdiction and three-digit ZIP prefix.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['state and ZIP patterns', 'geographic limit patterns'],
+    seeAlso: ['page.limitPatterns', 'ops.limits.jurisdiction_policy', 'section.downlineContext'],
+  },
+  {
+    id: 'section.downlineContext',
+    label: 'Partner to downline context',
+    description:
+      'Section preserving the partner-tree lineage, depth, jurisdiction, license, risk, and proof context for every observed node.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['partner downline context', 'tree context'],
+    seeAlso: ['ops.limits.account', 'ops.limits.profile', 'section.stateZipPatterns'],
+  },
+  {
+    id: 'section.dataConnectionAudit',
+    label: 'Data connection audit',
+    description:
+      'Section reporting hierarchy, geography, license, score, and proof connections in the pattern read model.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['connection audit', 'pattern evidence audit'],
+    seeAlso: [
+      'ops.limits.data_coverage',
+      'section.jurisdictionCatalog',
+      'section.limitRaisePrediction',
+    ],
+  },
+  {
+    id: 'section.recentLimitChanges',
+    label: 'Recent limit changes',
+    description:
+      'Section listing observed limit changes with account, geography, sportsbook, market, direction, influence, and time.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['recent changes', 'limit change table'],
+    seeAlso: ['ops.limits.limit_delta', 'ops.limits.change_direction', 'section.perNodeBreakdown'],
+  },
+  {
+    id: 'section.perNodeBreakdown',
+    label: 'Per-node breakdown',
+    description:
+      'Section aggregating movement, influence, sportsbooks, violations, and proof completeness for each selected account node.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['node breakdown', 'account movement breakdown'],
+    seeAlso: ['ops.limits.account', 'ops.limits.influence_score', 'section.recentLimitChanges'],
+  },
+  {
+    id: 'ui.filter.profile',
+    label: 'Profile filter',
+    description: 'Filter limiting the account-control view to matching profile evidence.',
+    semanticType: 'classification',
+    uiRole: 'chip',
+    synonyms: ['filter by profile', 'profile selector'],
+    seeAlso: ['ops.limits.profile', 'ui.action.searchProfiles', 'section.accountLimitControl'],
+  },
+  {
+    id: 'ui.filter.jurisdiction',
+    label: 'Jurisdiction filter',
+    description: 'Filter limiting results to accounts or patterns governed by one jurisdiction.',
+    semanticType: 'classification',
+    uiRole: 'chip',
+    synonyms: ['filter by jurisdiction', 'state filter'],
+    seeAlso: ['ops.limits.jurisdiction_policy', 'ui.filter.state', 'section.jurisdictionCatalog'],
+  },
+  {
+    id: 'ui.filter.partnerId',
+    label: 'Account or partner filter',
+    description:
+      'Search filter matching account identifiers, partner identifiers, downline names, and profile text.',
+    semanticType: 'classification',
+    uiRole: 'chip',
+    synonyms: ['filter by partner ID', 'account search'],
+    seeAlso: ['ops.limits.account', 'ui.filter.profile', 'ui.action.filter'],
+  },
+  {
+    id: 'ui.filter.sportsbook',
+    label: 'Sportsbook filter',
+    description: 'Filter limiting pattern evidence to one sportsbook source.',
+    semanticType: 'classification',
+    uiRole: 'chip',
+    synonyms: ['all sportsbooks', 'book filter'],
+    seeAlso: ['section.sportsbookPatterns', 'ui.action.filter', 'ui.filter.partnerId'],
+  },
+  {
+    id: 'ui.filter.state',
+    label: 'State filter',
+    description: 'Filter limiting pattern evidence to one state jurisdiction.',
+    semanticType: 'classification',
+    uiRole: 'chip',
+    synonyms: ['all states', 'jurisdiction state filter'],
+    seeAlso: ['ui.filter.jurisdiction', 'ui.filter.zipPrefix', 'ui.action.filter'],
+  },
+  {
+    id: 'ui.filter.zipPrefix',
+    label: 'ZIP-prefix filter',
+    description: 'Filter limiting pattern evidence to one connected three-digit ZIP prefix.',
+    semanticType: 'classification',
+    uiRole: 'chip',
+    synonyms: ['all ZIP prefixes', 'ZIP cluster filter'],
+    seeAlso: ['ui.filter.state', 'section.stateZipPatterns', 'ui.action.filter'],
+  },
+  {
+    id: 'ui.action.reset',
+    label: 'Reset filters',
+    description: 'Action clearing the filters owned by the current portal section.',
+    semanticType: 'presentation',
+    uiRole: 'link',
+    synonyms: ['reset', 'clear filters'],
+    seeAlso: ['ui.action.filter', 'ui.filter.profile', 'ui.filter.jurisdiction'],
+  },
+  {
+    id: 'ui.action.searchProfiles',
+    label: 'Search profiles',
+    description:
+      'Action searching account limit profiles by identity, policy, and sportsbook text.',
+    semanticType: 'presentation',
+    uiRole: 'link',
+    synonyms: ['profile search', 'find account profile'],
+    seeAlso: ['ui.filter.profile', 'ops.limits.profile', 'section.accountLimitControl'],
+  },
+  {
+    id: 'ui.action.filter',
+    label: 'Apply filters',
+    description: 'Action applying the current account, sportsbook, state, and ZIP filter state.',
+    semanticType: 'presentation',
+    uiRole: 'link',
+    synonyms: ['filter', 'apply filter'],
+    seeAlso: ['ui.filter.partnerId', 'ui.filter.sportsbook', 'ui.filter.state'],
   },
 ] as const satisfies readonly PortalSemanticConcept[];
 
@@ -380,6 +621,30 @@ export const LIMIT_FIELD_CONCEPTS = {
   influenceScore: 'ops.limits.influence_score',
   dataCoverage: 'ops.limits.data_coverage',
   prediction: 'ops.limits.prediction',
+} as const satisfies Record<string, PortalSemanticConceptKey>;
+
+export const LIMIT_SURFACE_CONCEPTS = {
+  page: 'page.limitPatterns',
+  accountControl: 'section.accountLimitControl',
+  complianceKpis: 'section.complianceKpis',
+  jurisdictionCatalog: 'section.jurisdictionCatalog',
+  patternSummary: 'section.patternSummary',
+  prediction: 'section.limitRaisePrediction',
+  sportsbookPatterns: 'section.sportsbookPatterns',
+  stateZipPatterns: 'section.stateZipPatterns',
+  downlineContext: 'section.downlineContext',
+  dataConnectionAudit: 'section.dataConnectionAudit',
+  recentLimitChanges: 'section.recentLimitChanges',
+  perNodeBreakdown: 'section.perNodeBreakdown',
+  profileFilter: 'ui.filter.profile',
+  jurisdictionFilter: 'ui.filter.jurisdiction',
+  partnerFilter: 'ui.filter.partnerId',
+  sportsbookFilter: 'ui.filter.sportsbook',
+  stateFilter: 'ui.filter.state',
+  zipFilter: 'ui.filter.zipPrefix',
+  resetAction: 'ui.action.reset',
+  searchProfilesAction: 'ui.action.searchProfiles',
+  filterAction: 'ui.action.filter',
 } as const satisfies Record<string, PortalSemanticConceptKey>;
 
 export function validatePortalSemanticVocabulary(): void {

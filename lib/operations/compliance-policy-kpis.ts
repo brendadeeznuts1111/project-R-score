@@ -116,6 +116,8 @@ export function complianceKpiGlossaryConcepts() {
       source: 'lib/operations/compliance-policy-kpis.ts',
       semanticType: 'state',
       uiRole: 'badge',
+      unit: 'count',
+      format: 'integer',
     },
     {
       id: 'kpi.compliance.active_policies',
@@ -130,6 +132,8 @@ export function complianceKpiGlossaryConcepts() {
       source: 'lib/operations/compliance-policy-kpis.ts',
       semanticType: 'state',
       uiRole: 'badge',
+      unit: 'count',
+      format: 'integer',
     },
     {
       id: 'kpi.compliance.riskiest_jurisdiction',
@@ -144,6 +148,8 @@ export function complianceKpiGlossaryConcepts() {
       source: 'lib/operations/compliance-policy-kpis.ts',
       semanticType: 'state',
       uiRole: 'badge',
+      unit: null,
+      format: 'code',
     },
     {
       id: 'kpi.compliance.policy_changes',
@@ -158,6 +164,8 @@ export function complianceKpiGlossaryConcepts() {
       source: 'lib/operations/compliance-policy-kpis.ts',
       semanticType: 'state',
       uiRole: 'badge',
+      unit: 'count',
+      format: 'integer',
     },
   ];
 }

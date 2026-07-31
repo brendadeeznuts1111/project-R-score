@@ -134,6 +134,7 @@ function openConcept(concept) {
   addDetailRow(details, 'UI role', concept.uiRole);
   addDetailRow(details, 'Status', concept.status);
   addDetailRow(details, 'Unit', concept.unit);
+  addDetailRow(details, 'Format', concept.format);
   addDetailRow(details, 'Maps to', concept.mapsTo ? relatedLink(concept.mapsTo) : null);
   addDetailRow(details, 'Registry column', concept.registryColumn);
   addDetailRow(details, 'Source', concept.source);
@@ -191,6 +192,7 @@ function matches(concept, filters) {
     concept.uiRole,
     concept.mapsTo,
     concept.unit,
+    concept.format,
     concept.source,
     ...(concept.synonyms ?? []),
     ...(concept.seeAlso ?? []),
@@ -231,7 +233,8 @@ function conceptCard(concept) {
       concept.color,
       'category'
     ),
-    concept.unit ? chip(concept.unit, concept.color, 'unit') : document.createTextNode('')
+    concept.unit ? chip(concept.unit, concept.color, 'unit') : document.createTextNode(''),
+    concept.format ? chip(concept.format, concept.color, 'format') : document.createTextNode('')
   );
 
   const footer = document.createElement('footer');
