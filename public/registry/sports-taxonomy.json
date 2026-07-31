@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "sports-competition-taxonomy",
   "path": "/registry/sports-taxonomy.json",
-  "generatedAt": "2026-07-31T11:18:29.957Z",
+  "generatedAt": "2026-07-31T11:40:42.832Z",
   "sources": {
     "authority": "lib/operations/sports-competition-catalog.ts",
     "glossary": "/portal/glossary/",
@@ -2511,11 +2511,18 @@
     "path": "/registry/scrape-wire-taxonomy.json",
     "authority": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
     "keys": [
+      "scrape.book",
       "scrape.sport",
+      "scrape.league",
       "scrape.market",
+      "scrape.phase",
       "scrape.jurisdiction"
     ],
+    "books": 10,
     "sports": 8,
+    "leagues": 18,
+    "markets": 6,
+    "phases": 2,
     "states": 51
   }
 }

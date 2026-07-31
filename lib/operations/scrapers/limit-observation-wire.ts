@@ -7,6 +7,7 @@
 
 import { asStateCode, type StateCode } from '../../types/branded.ts';
 import type { OpeningBetStructure, OpeningMarketPhase } from '../baseline-scraped-limits.ts';
+import { normalizeScrapePhase } from './scrape-wire-taxonomy.ts';
 
 export type LimitObservation = {
   sportsbook: string; // brand-ok — sportsbook slug
@@ -46,7 +47,8 @@ function parseStructure(value: unknown): OpeningBetStructure {
 }
 
 function parsePhase(value: unknown): OpeningMarketPhase {
-  return value === 'live' ? 'live' : 'pregame';
+  if (typeof value !== 'string') return 'pregame';
+  return normalizeScrapePhase(value);
 }
 
 function parseMode(value: unknown): LimitObservation['mode'] {

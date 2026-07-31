@@ -1,0 +1,89 @@
+{
+  "kind": "scrape-wire-schema-audit",
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-31T11:40:42.589Z",
+  "ok": true,
+  "summary": {
+    "errors": 0,
+    "warnings": 0,
+    "sports": 8,
+    "leagues": 18,
+    "competitions": 13,
+    "books": 10,
+    "deskLeagues": 18,
+    "deskSports": 8
+  },
+  "issues": [],
+  "bookVendorAliases": [
+    {
+      "bookId": "draftkings",
+      "sports": 14,
+      "markets": 15,
+      "leagues": 10,
+      "phases": 6
+    },
+    {
+      "bookId": "fanduel",
+      "sports": 14,
+      "markets": 15,
+      "leagues": 10,
+      "phases": 6
+    },
+    {
+      "bookId": "betmgm",
+      "sports": 12,
+      "markets": 15,
+      "leagues": 10,
+      "phases": 6
+    },
+    {
+      "bookId": "caesars",
+      "sports": 16,
+      "markets": 17,
+      "leagues": 12,
+      "phases": 8
+    },
+    {
+      "bookId": "espnbet",
+      "sports": 13,
+      "markets": 13,
+      "leagues": 10,
+      "phases": 6
+    },
+    {
+      "bookId": "fanatics",
+      "sports": 12,
+      "markets": 13,
+      "leagues": 10,
+      "phases": 6
+    },
+    {
+      "bookId": "hardrock",
+      "sports": 14,
+      "markets": 13,
+      "leagues": 10,
+      "phases": 6
+    },
+    {
+      "bookId": "bet365",
+      "sports": 15,
+      "markets": 17,
+      "leagues": 10,
+      "phases": 8
+    },
+    {
+      "bookId": "betrivers",
+      "sports": 12,
+      "markets": 13,
+      "leagues": 10,
+      "phases": 6
+    },
+    {
+      "bookId": "circa",
+      "sports": 12,
+      "markets": 15,
+      "leagues": 10,
+      "phases": 6
+    }
+  ]
+}

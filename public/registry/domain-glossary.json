@@ -47,19 +47,19 @@
     }
   ],
   "summary": {
-    "concepts": 279,
-    "active": 278,
+    "concepts": 283,
+    "active": 282,
     "deprecated": 1,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 173,
+    "portalSemantics": 177,
     "categories": {
-      "market": 31,
+      "market": 33,
       "model": 18,
       "pipeline": 19,
-      "tournament": 85,
-      "trading": 27,
+      "tournament": 86,
+      "trading": 28,
       "ui": 75,
       "warehouse": 24
     },
@@ -70,11 +70,11 @@
       "country": 25,
       "cross_market": 2,
       "event": 2,
-      "evidence": 3,
+      "evidence": 4,
       "jurisdiction": 2,
       "kpi": 4,
-      "league": 19,
-      "market": 10,
+      "league": 20,
+      "market": 12,
       "metric": 3,
       "multi": 2,
       "policy": 4,
@@ -84,17 +84,17 @@
       "ui": 125
     },
     "semanticTypes": {
-      "classification": 116,
+      "classification": 119,
       "location": 4,
       "presentation": 4,
       "resource": 33,
-      "state": 15,
+      "state": 16,
       "version": 1
     },
     "uiRoles": {
-      "badge": 40,
+      "badge": 43,
       "chip": 80,
-      "code": 16,
+      "code": 17,
       "heading": 22,
       "link": 12,
       "token": 3
@@ -3653,24 +3653,25 @@
     {
       "id": "ops.limits.market_phase",
       "label": "Market phase",
-      "description": "Trading phase attached to a limit observation: live, pregame, or phase-independent straight wagering.",
+      "description": "Trading phase on a limit observation: pregame or live (in-play). Bet structure is governed separately by ops.limits.multi_structure.",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
       "synonyms": [
         "bet phase",
-        "wager phase"
+        "wager phase",
+        "scrape.phase"
       ],
       "values": [
-        "live",
         "pregame",
-        "straight"
+        "live"
       ],
       "valueLabels": null,
       "seeAlso": [
         "ops.limits.effective_limit",
         "ops.limits.change_direction",
-        "ops.limits.market_type"
+        "ops.limits.market_type",
+        "ops.limits.multi_structure"
       ],
       "status": "active",
       "deprecatedBy": null,
@@ -3686,21 +3687,24 @@
     {
       "id": "ops.limits.sport",
       "label": "Sport",
-      "description": "Hierarchy root for the observed limit row (soccer, basketball, …). Domain definitions live under sport.* in the glossary.",
+      "description": "Hierarchy root for the observed limit row. Values are the competition-catalog / scrape-wire SPORT_KEYS (SSOT with glossary sport.*).",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
       "synonyms": [
         "sport_id",
-        "sport key"
+        "sport key",
+        "scrape.sport"
       ],
       "values": [
-        "soccer",
-        "basketball",
         "american_football",
         "baseball",
+        "basketball",
         "hockey",
-        "tennis"
+        "soccer",
+        "tennis",
+        "golf",
+        "mma"
       ],
       "valueLabels": null,
       "seeAlso": [
@@ -3722,25 +3726,35 @@
     {
       "id": "ops.limits.league",
       "label": "League or tour",
-      "description": "League, tour, or sanctioning body for a limit observation, such as NFL, ATP, WTA, or ITF.",
+      "description": "League, tour, or sanctioning body for a limit observation. Values ⊆ competition-catalog LEAGUE_KEYS (audited by schema:audit).",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
       "synonyms": [
         "league_id",
         "tour",
-        "competition family"
+        "competition family",
+        "scrape.league"
       ],
       "values": [
-        "nfl",
         "nba",
+        "wnba",
+        "nfl",
+        "ncaaf",
+        "ncaab",
         "mlb",
         "nhl",
         "mls",
+        "epl",
+        "uefa_champions_league",
         "atp",
         "wta",
         "itf",
-        "atp_challenger"
+        "atp_challenger",
+        "wta_125",
+        "pga_tour",
+        "dp_world_tour",
+        "ufc"
       ],
       "valueLabels": null,
       "seeAlso": [
@@ -3762,7 +3776,7 @@
     {
       "id": "ops.limits.competition",
       "label": "Competition tier",
-      "description": "Specific level within a league or tour, such as ITF M15, ITF W50, or ATP Challenger 75.",
+      "description": "Specific level within a league or tour. Values ⊆ COMPETITION_KEYS (audited by schema:audit).",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
@@ -3778,7 +3792,13 @@
         "itf_w35",
         "itf_w50",
         "itf_w75",
-        "itf_w100"
+        "itf_w100",
+        "atp_challenger_50",
+        "atp_challenger_75",
+        "atp_challenger_100",
+        "atp_challenger_125",
+        "atp_challenger_175",
+        "wta_125"
       ],
       "valueLabels": null,
       "seeAlso": [
@@ -3830,14 +3850,15 @@
     {
       "id": "ops.limits.market_type",
       "label": "Market type",
-      "description": "Bet market family on the limit row (match_winner, over_under, spread, …). Domain definitions live under market.* in the glossary.",
+      "description": "Bet market family on the limit row. Values are scrape-wire SCRAPE_MARKET_KEYS (regulation + extended); domain definitions under market.* / scrape.market.",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
       "synonyms": [
         "market_id",
         "market key",
-        "bet market"
+        "bet market",
+        "scrape.market"
       ],
       "values": [
         "match_winner",
@@ -8588,7 +8609,7 @@
     {
       "id": "scrape.wire",
       "label": "Scrape wire taxonomy",
-      "description": "Canonical state, sport, and market keys that all Tier 4 sportsbook agents normalize vendor wire onto before LimitObservation write.",
+      "description": "Canonical book, state, sport, league, and market keys that all Tier 4 sportsbook agents normalize vendor wire onto before LimitObservation write.",
       "category": "warehouse",
       "kind": "evidence",
       "mapsTo": null,
@@ -8600,8 +8621,11 @@
       "values": null,
       "valueLabels": null,
       "seeAlso": [
+        "scrape.book",
         "scrape.sport",
+        "scrape.league",
         "scrape.market",
+        "scrape.phase",
         "scrape.jurisdiction",
         "sport",
         "market.point_spread"
@@ -8622,6 +8646,54 @@
       "flagEmoji": null,
       "flagAriaLabel": null,
       "color": "#06b6d4"
+    },
+    {
+      "id": "scrape.book",
+      "label": "Scrape sportsbook",
+      "description": "US top-10 Tier 4 sportsbook fleet on the scrape wire (SportsbookId). Aliases (dk, czr, espn_bet, …) normalize here.",
+      "category": "trading",
+      "kind": "evidence",
+      "mapsTo": null,
+      "synonyms": [
+        "sportsbook",
+        "bookId",
+        "book",
+        "SportsbookId"
+      ],
+      "values": [
+        "draftkings",
+        "fanduel",
+        "betmgm",
+        "caesars",
+        "espnbet",
+        "fanatics",
+        "hardrock",
+        "bet365",
+        "betrivers",
+        "circa"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "scrape.wire",
+        "scrape.market",
+        "scrape.sport"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
+      "featurePurpose": "Tier 4 scrape wire taxonomy — unified state/sport/market normalization.",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": "scrape-wire",
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
     },
     {
       "id": "scrape.sport",
@@ -8648,6 +8720,7 @@
       "valueLabels": null,
       "seeAlso": [
         "sport",
+        "scrape.league",
         "sport.basketball",
         "sport.soccer",
         "sport.american_football",
@@ -8675,9 +8748,66 @@
       "color": "#22c55e"
     },
     {
+      "id": "scrape.league",
+      "label": "Scrape league code",
+      "description": "Competition-catalog league/tour codes on the scrape wire (nba, epl, ufc, …). Normalizes to league key and parent sport.",
+      "category": "tournament",
+      "kind": "league",
+      "mapsTo": null,
+      "synonyms": [
+        "leagueKey",
+        "tour",
+        "competition code"
+      ],
+      "values": [
+        "nba",
+        "wnba",
+        "nfl",
+        "ncaaf",
+        "ncaab",
+        "mlb",
+        "nhl",
+        "mls",
+        "epl",
+        "uefa_champions_league",
+        "atp",
+        "wta",
+        "itf",
+        "atp_challenger",
+        "wta_125",
+        "pga_tour",
+        "dp_world_tour",
+        "ufc"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "competition",
+        "scrape.sport",
+        "league.nba",
+        "league.nfl",
+        "league.epl"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
+      "featurePurpose": "Tier 4 scrape wire taxonomy — unified state/sport/market normalization.",
+      "semanticType": "classification",
+      "uiRole": "code",
+      "parentId": null,
+      "scope": "scrape-wire",
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#22c55e"
+    },
+    {
       "id": "scrape.market",
       "label": "Scrape market key",
-      "description": "Canonical market slug on the scrape wire (match_winner, over_under, spread). point_spread and moneyline aliases normalize here.",
+      "description": "Scrape wire markets: regulation (match_winner, over_under, spread) plus extended glossary markets (player_prop, team_prop, futures).",
       "category": "market",
       "kind": "market",
       "mapsTo": null,
@@ -8689,7 +8819,10 @@
       "values": [
         "match_winner",
         "over_under",
-        "spread"
+        "spread",
+        "player_prop",
+        "team_prop",
+        "futures"
       ],
       "valueLabels": null,
       "seeAlso": [
@@ -8697,6 +8830,9 @@
         "market.over_under",
         "market.spread",
         "market.point_spread",
+        "market.player_prop",
+        "market.team_prop",
+        "market.futures",
         "scrape.wire"
       ],
       "status": "active",
@@ -8708,6 +8844,86 @@
       "featurePurpose": "Tier 4 scrape wire taxonomy — unified state/sport/market normalization.",
       "semanticType": "classification",
       "uiRole": "code",
+      "parentId": null,
+      "scope": "scrape-wire",
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#3b82f6"
+    },
+    {
+      "id": "scrape.phase",
+      "label": "Scrape market phase",
+      "description": "Market phase on the scrape wire: pregame (before start) or live (in-play). Aliases in_play/inplay/live_betting → live; pre_match/pregame → pregame.",
+      "category": "market",
+      "kind": "market",
+      "mapsTo": null,
+      "synonyms": [
+        "marketPhase",
+        "phase",
+        "pregame",
+        "live",
+        "in-play"
+      ],
+      "values": [
+        "pregame",
+        "live"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "market.in_play",
+        "ops.limits.market_phase",
+        "scrape.market",
+        "scrape.wire"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
+      "featurePurpose": "Tier 4 scrape wire taxonomy — unified state/sport/market normalization.",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": "scrape-wire",
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#3b82f6"
+    },
+    {
+      "id": "scrape.phase.pregame",
+      "label": "Pregame phase",
+      "description": "Wagers placed before an event starts. Default scrape/opening-limit phase when wire omits phase.",
+      "category": "market",
+      "kind": "market",
+      "mapsTo": null,
+      "synonyms": [
+        "pre-game",
+        "pre-match",
+        "early"
+      ],
+      "values": [
+        "pregame"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "scrape.phase",
+        "market.in_play",
+        "scrape.wire"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
+      "featurePurpose": "Tier 4 scrape wire taxonomy — unified state/sport/market normalization.",
+      "semanticType": "state",
+      "uiRole": "badge",
       "parentId": null,
       "scope": "scrape-wire",
       "countryCodes": null,

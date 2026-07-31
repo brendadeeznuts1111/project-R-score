@@ -32,12 +32,12 @@ if (check) {
     process.exit(1);
   }
   console.info(
-    `✅ scrape-wire-taxonomy current (${artifact.summary.books} books · ${artifact.summary.sports} sports · ${artifact.summary.leagues} leagues · ${artifact.summary.markets} markets · ${artifact.summary.states} states)`
+    `✅ scrape-wire-taxonomy current (${artifact.summary.books} books · ${artifact.summary.sports} sports · ${artifact.summary.markets} markets · ${artifact.summary.phases} phases · ${artifact.summary.states} states)`
   );
   process.exit(0);
 }
 
 await Bun.write(outPath, `${JSON.stringify(artifact, null, 2)}\n`);
 console.info(
-  `✅ wrote ${SCRAPE_WIRE_TAXONOMY_PATH} (${artifact.summary.books} books · ${artifact.summary.sports} sports · ${artifact.summary.leagues} leagues · ${artifact.summary.markets} markets · ${artifact.summary.states} states · ${artifact.summary.glossaryConcepts} glossary concepts)`
+  `✅ wrote ${SCRAPE_WIRE_TAXONOMY_PATH} (${artifact.summary.books} books · ${artifact.summary.sports} sports · ${artifact.summary.markets} markets · ${artifact.summary.phases} phases · ${artifact.summary.states} states · ${artifact.summary.glossaryConcepts} glossary concepts)`
 );

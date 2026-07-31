@@ -10,7 +10,15 @@
 
 import { asSportsbookId, type SportsbookId, type StateCode } from './domain.ts';
 import {
+  resolveBookLeague,
+  resolveBookMarket,
+  resolveBookPhase,
+  resolveBookSport,
+} from './book-vendor-aliases.ts';
+import {
+  normalizeScrapeLeague,
   normalizeScrapeMarket,
+  normalizeScrapePhase,
   normalizeScrapeSport,
   SCRAPE_DEFAULT_JURISDICTION,
 } from './scrape-wire-taxonomy.ts';
@@ -71,12 +79,16 @@ export function parseGenericLimitsPayload(
     const sportRaw = parseStringOrFallback(item.sport, '');
     const marketRaw = parseStringOrFallback(item.market, '');
     if (!sportRaw || !marketRaw) continue;
-    const sport = normalizeScrapeSport(sportRaw);
-    const market = normalizeScrapeMarket(marketRaw);
+    const sport = resolveBookSport(sportsbook, sportRaw) ?? normalizeScrapeSport(sportRaw);
+    const market = resolveBookMarket(sportsbook, marketRaw) ?? normalizeScrapeMarket(marketRaw);
     const structureRaw = parseStringOrFallback(item.structure ?? item.betType, 'straight');
     const phaseRaw = parseStringOrFallback(item.phase, 'pregame');
     const structure = structureRaw === 'parlay' ? 'parlay' : 'straight';
-    const phase = phaseRaw === 'live' ? 'live' : 'pregame';
+    const phase = resolveBookPhase(sportsbook, phaseRaw) ?? normalizeScrapePhase(phaseRaw);
+    const leagueRaw = typeof item.league === 'string' ? item.league : null;
+    const league = leagueRaw
+      ? (resolveBookLeague(sportsbook, leagueRaw) ?? normalizeScrapeLeague(leagueRaw))
+      : null;
     rows.push({
       sport,
       market,
@@ -87,7 +99,7 @@ export function parseGenericLimitsPayload(
       dailyLimitUsd: parseOptionalNumber(item.dailyLimitUsd ?? item.dailyLimit),
       weeklyLimitUsd: parseOptionalNumber(item.weeklyLimitUsd ?? item.weeklyLimit),
       vipLimitUsd: parseOptionalNumber(item.vipLimitUsd ?? item.vipLimit),
-      league: typeof item.league === 'string' ? item.league : null,
+      league,
       eventType: typeof item.eventType === 'string' ? item.eventType : null,
       sourceRef: `scrape:${stamp}/${sportsbook}-${jurisdiction.toLowerCase()}-${sport}`,
       referenceUrl:

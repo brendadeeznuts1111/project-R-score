@@ -12,6 +12,8 @@ import {
   SCRAPE_LEAGUE_REGISTRY,
   SCRAPE_MARKET_KEYS,
   SCRAPE_MARKET_REGISTRY,
+  SCRAPE_PHASE_KEYS,
+  SCRAPE_PHASE_REGISTRY,
   SCRAPE_REGULATION_MARKET_KEYS,
   SCRAPE_SPORT_KEYS,
   SCRAPE_SPORT_REGISTRY,
@@ -30,8 +32,10 @@ import {
   tryNormalizeScrapeBook,
   tryNormalizeScrapeLeague,
   tryNormalizeScrapeMarket,
+  tryNormalizeScrapePhase,
   tryNormalizeScrapeSport,
   tryNormalizeScrapeState,
+  normalizeScrapePhase,
 } from '../lib/operations/index.ts';
 
 describe('scrape wire taxonomy', () => {
@@ -100,13 +104,25 @@ describe('scrape wire taxonomy', () => {
     expect(String(normalizeScrapeState(undefined))).toBe(String(SCRAPE_DEFAULT_JURISDICTION));
   });
 
+  test('phases cover pregame and live with in-play aliases', () => {
+    expect([...SCRAPE_PHASE_KEYS]).toEqual(['pregame', 'live']);
+    expect(SCRAPE_PHASE_REGISTRY).toHaveLength(2);
+    expect(tryNormalizeScrapePhase('pregame')).toBe('pregame');
+    expect(tryNormalizeScrapePhase('pre-match')).toBe('pregame');
+    expect(tryNormalizeScrapePhase('LIVE')).toBe('live');
+    expect(tryNormalizeScrapePhase('in-play')).toBe('live');
+    expect(tryNormalizeScrapePhase('inplay')).toBe('live');
+    expect(normalizeScrapePhase(undefined)).toBe('pregame');
+    expect(normalizeScrapePhase('during')).toBe('live');
+  });
+
   test('fixture expansion keys stay basketball/soccer × match_winner/over_under × NJ/CO/MA', () => {
     expect([...SCRAPE_FIXTURE_SPORT_KEYS]).toEqual(['basketball', 'soccer']);
     expect([...SCRAPE_FIXTURE_MARKET_KEYS]).toEqual(['match_winner', 'over_under']);
     expect([...SCRAPE_FIXTURE_JURISDICTION_KEYS]).toEqual(['NJ', 'CO', 'MA']);
   });
 
-  test('artifact + glossary concepts include books, leagues, markets', () => {
+  test('artifact + glossary concepts include books, leagues, markets, phases', () => {
     const artifact = buildScrapeWireTaxonomyArtifact('2026-07-31T00:00:00.000Z');
     expect(artifact.kind).toBe(SCRAPE_WIRE_TAXONOMY_KIND);
     expect(artifact.schemaVersion).toBe(SCRAPE_WIRE_TAXONOMY_SCHEMA_VERSION);
@@ -114,8 +130,11 @@ describe('scrape wire taxonomy', () => {
     expect(artifact.summary.sports).toBe(8);
     expect(artifact.summary.leagues).toBeGreaterThanOrEqual(18);
     expect(artifact.summary.markets).toBe(6);
+    expect(artifact.summary.phases).toBe(2);
     expect(artifact.summary.states).toBe(51);
     expect(artifact.bookRegistry).toHaveLength(10);
+    expect(artifact.phaseRegistry).toHaveLength(2);
+    expect(artifact.fixturePhases).toEqual(['pregame', 'live']);
     expect(artifact.marketRegistry.filter(m => m.tier === 'regulation')).toHaveLength(3);
     expect(artifact.glossaryConcepts.map(c => c.id)).toEqual([
       'scrape.wire',
@@ -123,6 +142,8 @@ describe('scrape wire taxonomy', () => {
       'scrape.sport',
       'scrape.league',
       'scrape.market',
+      'scrape.phase',
+      'scrape.phase.pregame',
       'scrape.jurisdiction',
     ]);
 

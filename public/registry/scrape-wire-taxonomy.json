@@ -1,18 +1,161 @@
 {
   "kind": "scrape-wire-taxonomy",
-  "schemaVersion": 2,
+  "schemaVersion": 4,
   "path": "/registry/scrape-wire-taxonomy.json",
-  "generatedAt": "2026-07-31T11:18:13.454Z",
+  "generatedAt": "2026-07-31T11:40:42.453Z",
   "summary": {
+    "books": 10,
     "sports": 8,
-    "markets": 3,
+    "leagues": 18,
+    "markets": 6,
+    "phases": 2,
+    "regulationMarkets": 3,
+    "extendedMarkets": 3,
     "states": 51,
     "fixtureJurisdictions": 3,
     "sportAliases": 41,
-    "marketAliases": 13,
+    "marketAliases": 34,
+    "phaseAliases": 13,
     "stateAliases": 116,
-    "glossaryConcepts": 4
+    "bookAliases": 31,
+    "leagueAliases": 45,
+    "glossaryConcepts": 8
   },
+  "bookRegistry": [
+    {
+      "id": "draftkings",
+      "key": "draftkings",
+      "label": "DraftKings",
+      "rank": 1,
+      "conceptId": "sportsbook.draftkings",
+      "aliases": [
+        "draftkings",
+        "dk",
+        "draft_kings"
+      ]
+    },
+    {
+      "id": "fanduel",
+      "key": "fanduel",
+      "label": "FanDuel",
+      "rank": 2,
+      "conceptId": "sportsbook.fanduel",
+      "aliases": [
+        "fanduel",
+        "fd",
+        "fan_duel"
+      ]
+    },
+    {
+      "id": "betmgm",
+      "key": "betmgm",
+      "label": "BetMGM",
+      "rank": 3,
+      "conceptId": "sportsbook.betmgm",
+      "aliases": [
+        "betmgm",
+        "mgm",
+        "bet_mgm"
+      ]
+    },
+    {
+      "id": "caesars",
+      "key": "caesars",
+      "label": "Caesars",
+      "rank": 4,
+      "conceptId": "sportsbook.caesars",
+      "aliases": [
+        "caesars",
+        "czr",
+        "caesars_sportsbook",
+        "william_hill"
+      ]
+    },
+    {
+      "id": "espnbet",
+      "key": "espnbet",
+      "label": "ESPN BET",
+      "rank": 5,
+      "conceptId": "sportsbook.espnbet",
+      "aliases": [
+        "espnbet",
+        "espn_bet",
+        "espn",
+        "espn_sportsbook"
+      ]
+    },
+    {
+      "id": "fanatics",
+      "key": "fanatics",
+      "label": "Fanatics",
+      "rank": 6,
+      "conceptId": "sportsbook.fanatics",
+      "aliases": [
+        "fanatics",
+        "fanatics_sportsbook"
+      ]
+    },
+    {
+      "id": "hardrock",
+      "key": "hardrock",
+      "label": "Hard Rock Bet",
+      "rank": 7,
+      "conceptId": "sportsbook.hardrock",
+      "aliases": [
+        "hardrock",
+        "hard_rock_bet",
+        "hard_rock",
+        "hardrockbet"
+      ]
+    },
+    {
+      "id": "bet365",
+      "key": "bet365",
+      "label": "bet365",
+      "rank": 8,
+      "conceptId": "sportsbook.bet365",
+      "aliases": [
+        "bet365",
+        "bet_365"
+      ]
+    },
+    {
+      "id": "betrivers",
+      "key": "betrivers",
+      "label": "BetRivers",
+      "rank": 9,
+      "conceptId": "sportsbook.betrivers",
+      "aliases": [
+        "betrivers",
+        "bet_rivers",
+        "rivers"
+      ]
+    },
+    {
+      "id": "circa",
+      "key": "circa",
+      "label": "Circa Sports",
+      "rank": 10,
+      "conceptId": "sportsbook.circa",
+      "aliases": [
+        "circa",
+        "circa_sports",
+        "circasports"
+      ]
+    }
+  ],
+  "books": [
+    "draftkings",
+    "fanduel",
+    "betmgm",
+    "caesars",
+    "espnbet",
+    "fanatics",
+    "hardrock",
+    "bet365",
+    "betrivers",
+    "circa"
+  ],
   "sportRegistry": [
     {
       "key": "american_football",
@@ -65,10 +208,413 @@
     "golf",
     "mma"
   ],
+  "leagueRegistry": [
+    {
+      "key": "nba",
+      "label": "NBA",
+      "sport": "basketball",
+      "conceptId": "league.nba",
+      "synonyms": [
+        "National Basketball Association"
+      ],
+      "aliases": [
+        "nba",
+        "national_basketball_association"
+      ]
+    },
+    {
+      "key": "wnba",
+      "label": "WNBA",
+      "sport": "basketball",
+      "conceptId": "league.wnba",
+      "synonyms": [
+        "Women's National Basketball Association"
+      ],
+      "aliases": [
+        "wnba",
+        "women's_national_basketball_association"
+      ]
+    },
+    {
+      "key": "nfl",
+      "label": "NFL",
+      "sport": "american_football",
+      "conceptId": "league.nfl",
+      "synonyms": [
+        "National Football League"
+      ],
+      "aliases": [
+        "nfl",
+        "national_football_league"
+      ]
+    },
+    {
+      "key": "ncaaf",
+      "label": "NCAA football",
+      "sport": "american_football",
+      "conceptId": "league.ncaaf",
+      "synonyms": [
+        "NCAAF",
+        "college football"
+      ],
+      "aliases": [
+        "ncaaf",
+        "ncaa_football",
+        "college_football"
+      ]
+    },
+    {
+      "key": "ncaab",
+      "label": "NCAA basketball",
+      "sport": "basketball",
+      "conceptId": "league.ncaab",
+      "synonyms": [
+        "NCAAB",
+        "college basketball",
+        "CBB"
+      ],
+      "aliases": [
+        "ncaab",
+        "ncaa_basketball",
+        "college_basketball",
+        "cbb"
+      ]
+    },
+    {
+      "key": "mlb",
+      "label": "MLB",
+      "sport": "baseball",
+      "conceptId": "league.mlb",
+      "synonyms": [
+        "Major League Baseball"
+      ],
+      "aliases": [
+        "mlb",
+        "major_league_baseball"
+      ]
+    },
+    {
+      "key": "nhl",
+      "label": "NHL",
+      "sport": "hockey",
+      "conceptId": "league.nhl",
+      "synonyms": [
+        "National Hockey League"
+      ],
+      "aliases": [
+        "nhl",
+        "national_hockey_league"
+      ]
+    },
+    {
+      "key": "mls",
+      "label": "MLS",
+      "sport": "soccer",
+      "conceptId": "league.mls",
+      "synonyms": [
+        "Major League Soccer"
+      ],
+      "aliases": [
+        "mls",
+        "major_league_soccer"
+      ]
+    },
+    {
+      "key": "epl",
+      "label": "Premier League",
+      "sport": "soccer",
+      "conceptId": "league.epl",
+      "synonyms": [
+        "EPL",
+        "English Premier League"
+      ],
+      "aliases": [
+        "epl",
+        "premier_league",
+        "english_premier_league"
+      ]
+    },
+    {
+      "key": "uefa_champions_league",
+      "label": "UEFA Champions League",
+      "sport": "soccer",
+      "conceptId": "league.uefa_champions_league",
+      "synonyms": [
+        "UCL",
+        "Champions League"
+      ],
+      "aliases": [
+        "uefa_champions_league",
+        "ucl",
+        "champions_league"
+      ]
+    },
+    {
+      "key": "atp",
+      "label": "ATP Tour",
+      "sport": "tennis",
+      "conceptId": "league.atp",
+      "synonyms": [
+        "ATP",
+        "men's tennis"
+      ],
+      "aliases": [
+        "atp",
+        "atp_tour",
+        "men's_tennis"
+      ]
+    },
+    {
+      "key": "wta",
+      "label": "WTA Tour",
+      "sport": "tennis",
+      "conceptId": "league.wta",
+      "synonyms": [
+        "WTA",
+        "women's tennis"
+      ],
+      "aliases": [
+        "wta",
+        "wta_tour",
+        "women's_tennis"
+      ]
+    },
+    {
+      "key": "itf",
+      "label": "ITF World Tennis Tour",
+      "sport": "tennis",
+      "conceptId": "league.itf",
+      "synonyms": [
+        "ITF",
+        "ITF tennis"
+      ],
+      "aliases": [
+        "itf",
+        "itf_world_tennis_tour",
+        "itf_tennis"
+      ]
+    },
+    {
+      "key": "atp_challenger",
+      "label": "ATP Challenger Tour",
+      "sport": "tennis",
+      "conceptId": "league.atp_challenger",
+      "synonyms": [
+        "Challenger Tour"
+      ],
+      "aliases": [
+        "atp_challenger",
+        "atp_challenger_tour",
+        "challenger_tour"
+      ]
+    },
+    {
+      "key": "wta_125",
+      "label": "WTA 125",
+      "sport": "tennis",
+      "conceptId": "league.wta_125",
+      "synonyms": [
+        "WTA 125 Series"
+      ],
+      "aliases": [
+        "wta_125",
+        "wta_125_series"
+      ]
+    },
+    {
+      "key": "pga_tour",
+      "label": "PGA Tour",
+      "sport": "golf",
+      "conceptId": "league.pga_tour",
+      "synonyms": [
+        "PGA"
+      ],
+      "aliases": [
+        "pga_tour",
+        "pga"
+      ]
+    },
+    {
+      "key": "dp_world_tour",
+      "label": "DP World Tour",
+      "sport": "golf",
+      "conceptId": "league.dp_world_tour",
+      "synonyms": [
+        "European Tour"
+      ],
+      "aliases": [
+        "dp_world_tour",
+        "european_tour"
+      ]
+    },
+    {
+      "key": "ufc",
+      "label": "UFC",
+      "sport": "mma",
+      "conceptId": "league.ufc",
+      "synonyms": [
+        "Ultimate Fighting Championship"
+      ],
+      "aliases": [
+        "ufc",
+        "ultimate_fighting_championship"
+      ]
+    }
+  ],
+  "leagues": [
+    "nba",
+    "wnba",
+    "nfl",
+    "ncaaf",
+    "ncaab",
+    "mlb",
+    "nhl",
+    "mls",
+    "epl",
+    "uefa_champions_league",
+    "atp",
+    "wta",
+    "itf",
+    "atp_challenger",
+    "wta_125",
+    "pga_tour",
+    "dp_world_tour",
+    "ufc"
+  ],
+  "marketRegistry": [
+    {
+      "key": "match_winner",
+      "label": "Match winner",
+      "conceptId": "market.match_winner",
+      "tier": "regulation",
+      "aliases": [
+        "match_winner",
+        "moneyline",
+        "ml",
+        "h2h",
+        "winner",
+        "1x2",
+        "matchwinner"
+      ]
+    },
+    {
+      "key": "over_under",
+      "label": "Over/under",
+      "conceptId": "market.total",
+      "tier": "regulation",
+      "aliases": [
+        "over_under",
+        "totals",
+        "total",
+        "ou",
+        "overunder",
+        "total_points"
+      ]
+    },
+    {
+      "key": "spread",
+      "label": "Point spread",
+      "conceptId": "market.point_spread",
+      "tier": "regulation",
+      "aliases": [
+        "spread",
+        "point_spread",
+        "handicap",
+        "asian_handicap",
+        "ats",
+        "line",
+        "pointspread"
+      ]
+    },
+    {
+      "key": "player_prop",
+      "label": "Player prop",
+      "conceptId": "market.player_prop",
+      "tier": "extended",
+      "aliases": [
+        "player_prop",
+        "player_proposition",
+        "player_market",
+        "prop",
+        "playerprop"
+      ]
+    },
+    {
+      "key": "team_prop",
+      "label": "Team prop",
+      "conceptId": "market.team_prop",
+      "tier": "extended",
+      "aliases": [
+        "team_prop",
+        "team_proposition",
+        "team_market",
+        "teamprop"
+      ]
+    },
+    {
+      "key": "futures",
+      "label": "Futures",
+      "conceptId": "market.futures",
+      "tier": "extended",
+      "aliases": [
+        "futures",
+        "outright",
+        "season_long",
+        "championship",
+        "future"
+      ]
+    }
+  ],
   "markets": [
     "match_winner",
     "over_under",
+    "spread",
+    "player_prop",
+    "team_prop",
+    "futures"
+  ],
+  "regulationMarkets": [
+    "match_winner",
+    "over_under",
     "spread"
+  ],
+  "extendedMarkets": [
+    "player_prop",
+    "team_prop",
+    "futures"
+  ],
+  "phaseRegistry": [
+    {
+      "key": "pregame",
+      "label": "Pregame",
+      "conceptId": "scrape.phase.pregame",
+      "aliases": [
+        "pregame",
+        "pre_game",
+        "pre_match",
+        "prematch",
+        "before",
+        "early",
+        "antepost"
+      ]
+    },
+    {
+      "key": "live",
+      "label": "Live / in-play",
+      "conceptId": "market.in_play",
+      "aliases": [
+        "live",
+        "in_play",
+        "inplay",
+        "in_play_betting",
+        "live_betting",
+        "during"
+      ]
+    }
+  ],
+  "phases": [
+    "pregame",
+    "live"
   ],
   "stateRegistry": [
     {
@@ -715,7 +1261,12 @@
     "match_winner",
     "over_under"
   ],
+  "fixturePhases": [
+    "pregame",
+    "live"
+  ],
   "defaultJurisdiction": "NJ",
+  "defaultPhase": "pregame",
   "sportAliases": {
     "american_football": "american_football",
     "baseball": "baseball",
@@ -741,6 +1292,7 @@
     "icehockey": "hockey",
     "ice_hockey": "hockey",
     "epl": "soccer",
+    "premier_league": "soccer",
     "mls": "soccer",
     "ucl": "soccer",
     "uefa_champions_league": "soccer",
@@ -751,8 +1303,7 @@
     "wta": "tennis",
     "itf": "tennis",
     "atp_challenger": "tennis",
-    "tabletennis": "tennis",
-    "table_tennis": "tennis",
+    "wta_125": "tennis",
     "pga": "golf",
     "pga_tour": "golf",
     "dp_world_tour": "golf",
@@ -765,14 +1316,50 @@
     "ml": "match_winner",
     "h2h": "match_winner",
     "winner": "match_winner",
+    "1x2": "match_winner",
+    "matchwinner": "match_winner",
     "over_under": "over_under",
     "totals": "over_under",
     "total": "over_under",
     "ou": "over_under",
+    "overunder": "over_under",
+    "total_points": "over_under",
     "spread": "spread",
     "point_spread": "spread",
     "handicap": "spread",
-    "asian_handicap": "spread"
+    "asian_handicap": "spread",
+    "ats": "spread",
+    "line": "spread",
+    "pointspread": "spread",
+    "player_prop": "player_prop",
+    "player_proposition": "player_prop",
+    "player_market": "player_prop",
+    "prop": "player_prop",
+    "playerprop": "player_prop",
+    "team_prop": "team_prop",
+    "team_proposition": "team_prop",
+    "team_market": "team_prop",
+    "teamprop": "team_prop",
+    "futures": "futures",
+    "outright": "futures",
+    "season_long": "futures",
+    "championship": "futures",
+    "future": "futures"
+  },
+  "phaseAliases": {
+    "pregame": "pregame",
+    "pre_game": "pregame",
+    "pre_match": "pregame",
+    "prematch": "pregame",
+    "before": "pregame",
+    "early": "pregame",
+    "antepost": "pregame",
+    "live": "live",
+    "in_play": "live",
+    "inplay": "live",
+    "in_play_betting": "live",
+    "live_betting": "live",
+    "during": "live"
   },
   "stateAliases": {
     "al": "AL",
@@ -892,11 +1479,111 @@
     "wy": "WY",
     "wyoming": "WY"
   },
+  "bookAliases": {
+    "draftkings": "draftkings",
+    "dk": "draftkings",
+    "draft_kings": "draftkings",
+    "fanduel": "fanduel",
+    "fd": "fanduel",
+    "fan_duel": "fanduel",
+    "betmgm": "betmgm",
+    "mgm": "betmgm",
+    "bet_mgm": "betmgm",
+    "caesars": "caesars",
+    "czr": "caesars",
+    "caesars_sportsbook": "caesars",
+    "william_hill": "caesars",
+    "espnbet": "espnbet",
+    "espn_bet": "espnbet",
+    "espn": "espnbet",
+    "espn_sportsbook": "espnbet",
+    "fanatics": "fanatics",
+    "fanatics_sportsbook": "fanatics",
+    "hardrock": "hardrock",
+    "hard_rock_bet": "hardrock",
+    "hard_rock": "hardrock",
+    "hardrockbet": "hardrock",
+    "bet365": "bet365",
+    "bet_365": "bet365",
+    "betrivers": "betrivers",
+    "bet_rivers": "betrivers",
+    "rivers": "betrivers",
+    "circa": "circa",
+    "circa_sports": "circa",
+    "circasports": "circa"
+  },
+  "leagueAliases": {
+    "nba": "nba",
+    "national_basketball_association": "nba",
+    "wnba": "wnba",
+    "women's_national_basketball_association": "wnba",
+    "nfl": "nfl",
+    "national_football_league": "nfl",
+    "ncaaf": "ncaaf",
+    "ncaa_football": "ncaaf",
+    "college_football": "ncaaf",
+    "ncaab": "ncaab",
+    "ncaa_basketball": "ncaab",
+    "college_basketball": "ncaab",
+    "cbb": "ncaab",
+    "mlb": "mlb",
+    "major_league_baseball": "mlb",
+    "nhl": "nhl",
+    "national_hockey_league": "nhl",
+    "mls": "mls",
+    "major_league_soccer": "mls",
+    "epl": "epl",
+    "premier_league": "epl",
+    "english_premier_league": "epl",
+    "uefa_champions_league": "uefa_champions_league",
+    "ucl": "uefa_champions_league",
+    "champions_league": "uefa_champions_league",
+    "atp": "atp",
+    "atp_tour": "atp",
+    "men's_tennis": "atp",
+    "wta": "wta",
+    "wta_tour": "wta",
+    "women's_tennis": "wta",
+    "itf": "itf",
+    "itf_world_tennis_tour": "itf",
+    "itf_tennis": "itf",
+    "atp_challenger": "atp_challenger",
+    "atp_challenger_tour": "atp_challenger",
+    "challenger_tour": "atp_challenger",
+    "wta_125": "wta_125",
+    "wta_125_series": "wta_125",
+    "pga_tour": "pga_tour",
+    "pga": "pga_tour",
+    "dp_world_tour": "dp_world_tour",
+    "european_tour": "dp_world_tour",
+    "ufc": "ufc",
+    "ultimate_fighting_championship": "ufc"
+  },
+  "leagueToSport": {
+    "nba": "basketball",
+    "wnba": "basketball",
+    "nfl": "american_football",
+    "ncaaf": "american_football",
+    "ncaab": "basketball",
+    "mlb": "baseball",
+    "nhl": "hockey",
+    "mls": "soccer",
+    "epl": "soccer",
+    "uefa_champions_league": "soccer",
+    "atp": "tennis",
+    "wta": "tennis",
+    "itf": "tennis",
+    "atp_challenger": "tennis",
+    "wta_125": "tennis",
+    "pga_tour": "golf",
+    "dp_world_tour": "golf",
+    "ufc": "mma"
+  },
   "glossaryConcepts": [
     {
       "id": "scrape.wire",
       "label": "Scrape wire taxonomy",
-      "description": "Canonical state, sport, and market keys that all Tier 4 sportsbook agents normalize vendor wire onto before LimitObservation write.",
+      "description": "Canonical book, state, sport, league, and market keys that all Tier 4 sportsbook agents normalize vendor wire onto before LimitObservation write.",
       "category": "warehouse",
       "kind": "evidence",
       "synonyms": [
@@ -906,8 +1593,11 @@
       ],
       "values": null,
       "seeAlso": [
+        "scrape.book",
         "scrape.sport",
+        "scrape.league",
         "scrape.market",
+        "scrape.phase",
         "scrape.jurisdiction",
         "sport",
         "market.point_spread"
@@ -916,6 +1606,40 @@
       "source": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
       "semanticType": "classification",
       "uiRole": "chip"
+    },
+    {
+      "id": "scrape.book",
+      "label": "Scrape sportsbook",
+      "description": "US top-10 Tier 4 sportsbook fleet on the scrape wire (SportsbookId). Aliases (dk, czr, espn_bet, …) normalize here.",
+      "category": "trading",
+      "kind": "evidence",
+      "synonyms": [
+        "sportsbook",
+        "bookId",
+        "book",
+        "SportsbookId"
+      ],
+      "values": [
+        "draftkings",
+        "fanduel",
+        "betmgm",
+        "caesars",
+        "espnbet",
+        "fanatics",
+        "hardrock",
+        "bet365",
+        "betrivers",
+        "circa"
+      ],
+      "seeAlso": [
+        "scrape.wire",
+        "scrape.market",
+        "scrape.sport"
+      ],
+      "status": "active",
+      "source": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
+      "semanticType": "classification",
+      "uiRole": "badge"
     },
     {
       "id": "scrape.sport",
@@ -940,6 +1664,7 @@
       ],
       "seeAlso": [
         "sport",
+        "scrape.league",
         "sport.basketball",
         "sport.soccer",
         "sport.american_football",
@@ -955,9 +1680,52 @@
       "uiRole": "code"
     },
     {
+      "id": "scrape.league",
+      "label": "Scrape league code",
+      "description": "Competition-catalog league/tour codes on the scrape wire (nba, epl, ufc, …). Normalizes to league key and parent sport.",
+      "category": "tournament",
+      "kind": "league",
+      "synonyms": [
+        "leagueKey",
+        "tour",
+        "competition code"
+      ],
+      "values": [
+        "nba",
+        "wnba",
+        "nfl",
+        "ncaaf",
+        "ncaab",
+        "mlb",
+        "nhl",
+        "mls",
+        "epl",
+        "uefa_champions_league",
+        "atp",
+        "wta",
+        "itf",
+        "atp_challenger",
+        "wta_125",
+        "pga_tour",
+        "dp_world_tour",
+        "ufc"
+      ],
+      "seeAlso": [
+        "competition",
+        "scrape.sport",
+        "league.nba",
+        "league.nfl",
+        "league.epl"
+      ],
+      "status": "active",
+      "source": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
+      "semanticType": "classification",
+      "uiRole": "code"
+    },
+    {
       "id": "scrape.market",
       "label": "Scrape market key",
-      "description": "Canonical market slug on the scrape wire (match_winner, over_under, spread). point_spread and moneyline aliases normalize here.",
+      "description": "Scrape wire markets: regulation (match_winner, over_under, spread) plus extended glossary markets (player_prop, team_prop, futures).",
       "category": "market",
       "kind": "market",
       "synonyms": [
@@ -968,19 +1736,77 @@
       "values": [
         "match_winner",
         "over_under",
-        "spread"
+        "spread",
+        "player_prop",
+        "team_prop",
+        "futures"
       ],
       "seeAlso": [
         "market.match_winner",
         "market.over_under",
         "market.spread",
         "market.point_spread",
+        "market.player_prop",
+        "market.team_prop",
+        "market.futures",
         "scrape.wire"
       ],
       "status": "active",
       "source": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
       "semanticType": "classification",
       "uiRole": "code"
+    },
+    {
+      "id": "scrape.phase",
+      "label": "Scrape market phase",
+      "description": "Market phase on the scrape wire: pregame (before start) or live (in-play). Aliases in_play/inplay/live_betting → live; pre_match/pregame → pregame.",
+      "category": "market",
+      "kind": "market",
+      "synonyms": [
+        "marketPhase",
+        "phase",
+        "pregame",
+        "live",
+        "in-play"
+      ],
+      "values": [
+        "pregame",
+        "live"
+      ],
+      "seeAlso": [
+        "market.in_play",
+        "ops.limits.market_phase",
+        "scrape.market",
+        "scrape.wire"
+      ],
+      "status": "active",
+      "source": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
+      "semanticType": "classification",
+      "uiRole": "badge"
+    },
+    {
+      "id": "scrape.phase.pregame",
+      "label": "Pregame phase",
+      "description": "Wagers placed before an event starts. Default scrape/opening-limit phase when wire omits phase.",
+      "category": "market",
+      "kind": "market",
+      "synonyms": [
+        "pre-game",
+        "pre-match",
+        "early"
+      ],
+      "values": [
+        "pregame"
+      ],
+      "seeAlso": [
+        "scrape.phase",
+        "market.in_play",
+        "scrape.wire"
+      ],
+      "status": "active",
+      "source": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
+      "semanticType": "state",
+      "uiRole": "badge"
     },
     {
       "id": "scrape.jurisdiction",

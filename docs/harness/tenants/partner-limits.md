@@ -175,11 +175,33 @@ All Tier 4 agents normalize vendor wire onto one SSOT before JSONL write:
 
 | Key | Module | Canonical values |
 | --- | ------ | ---------------- |
-| Sport | [`scrape-wire-taxonomy.ts`](../../../lib/operations/scrapers/scrape-wire-taxonomy.ts) | Full `SPORT_KEYS` registry (8) + league aliases (`nba`→`basketball`, `nfl`→`american_football`, …) — `sportRegistry` in bake |
-| Market | same | `match_winner` · `over_under` · `spread` (`point_spread`/`moneyline` alias in) |
-| State | same | Full US + DC registry (51) — `stateRegistry` / `states`; name + postal aliases; fixture subset `NJ`·`CO`·`MA` |
+| Book | [`scrape-wire-taxonomy.ts`](../../../lib/operations/scrapers/scrape-wire-taxonomy.ts) | US top-10 fleet (`draftkings`…`circa`) — `bookRegistry`; aliases `dk`/`czr`/`espn_bet`… |
+| Sport | same | Full `SPORT_KEYS` (8) + league→sport aliases — `sportRegistry` |
+| League | same | Competition-catalog codes (18+) — `leagueRegistry` (`nba`, `epl`, `ufc`, …) |
+| Market | same | Regulation `match_winner`·`over_under`·`spread` + extended `player_prop`·`team_prop`·`futures` — `marketRegistry` |
+| Phase | same | `pregame` · `live` (`in_play`/`inplay` → live) — `phaseRegistry` |
+| State | same | Full US + DC (51) — `stateRegistry`; fixture subset `NJ`·`CO`·`MA` |
 
-Bake: `bun run bake:scrape-wire-taxonomy` → [`/registry/scrape-wire-taxonomy.json`](../../../public/registry/scrape-wire-taxonomy.json). Glossary concepts: `scrape.wire` · `scrape.sport` · `scrape.market` · `scrape.jurisdiction` (via `sportsBettingGlossaryConcepts` → `glossary:portal`).
+Bake: `bun run bake:scrape-wire-taxonomy` → [`/registry/scrape-wire-taxonomy.json`](../../../public/registry/scrape-wire-taxonomy.json) (schema v4). Glossary: `scrape.wire` · `scrape.book` · `scrape.sport` · `scrape.league` · `scrape.market` · `scrape.phase` · `scrape.jurisdiction`.
+
+#### Governance (schema:audit)
+
+Registries are maintained alongside the domain glossary and the limits desk column semantics (`ops.limits.*` in [`semantic-vocabulary.ts`](../../../lib/portal/semantic-vocabulary.ts)).
+
+| Command | Role |
+| --- | --- |
+| `bun run schema:audit` | Validate + write [`/registry/scrape-wire-schema-audit.json`](../../../public/registry/scrape-wire-schema-audit.json) |
+| `bun run schema:audit:check` | Gate only (exit 1 on errors) |
+| `bun run schema:audit:json` | Machine report |
+
+Checks:
+
+1. Every sport referenced by a league exists in `SPORT_KEYS`.
+2. Every league used on the desk (`ops.limits.league`) is in the competition league registry.
+3. Desk sport / market / competition / phase values ⊆ scrape-wire keys.
+4. Every US top-10 book has a vendor alias map ([`book-vendor-aliases.ts`](../../../lib/operations/scrapers/book-vendor-aliases.ts)) whose targets are canonical.
+
+Per-book resolve: `resolveBookSport` / `resolveBookMarket` / `resolveBookLeague` / `resolveBookPhase` (book overlay → global normalizer).
 
 ### Caesars / American Wagering live path
 

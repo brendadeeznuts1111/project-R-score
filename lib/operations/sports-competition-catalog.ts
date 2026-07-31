@@ -638,8 +638,19 @@ export function buildSportsTaxonomyArtifact(generatedAt = new Date().toISOString
     scrapeWire: {
       path: '/registry/scrape-wire-taxonomy.json',
       authority: 'lib/operations/scrapers/scrape-wire-taxonomy.ts',
-      keys: ['scrape.sport', 'scrape.market', 'scrape.jurisdiction'],
+      keys: [
+        'scrape.book',
+        'scrape.sport',
+        'scrape.league',
+        'scrape.market',
+        'scrape.phase',
+        'scrape.jurisdiction',
+      ],
+      books: 10,
       sports: SPORT_KEYS.length,
+      leagues: LEAGUE_KEYS.length,
+      markets: 6,
+      phases: 2,
       states: 51,
     },
   } as const;

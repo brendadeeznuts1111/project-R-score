@@ -30,7 +30,7 @@ import {
 
 export const SCRAPE_WIRE_TAXONOMY_KIND = 'scrape-wire-taxonomy' as const;
 export const SCRAPE_WIRE_TAXONOMY_PATH = '/registry/scrape-wire-taxonomy.json' as const;
-export const SCRAPE_WIRE_TAXONOMY_SCHEMA_VERSION = 3 as const;
+export const SCRAPE_WIRE_TAXONOMY_SCHEMA_VERSION = 4 as const;
 
 // ── Sportsbooks (US top-10 Tier 4 fleet) ───────────────────────────
 
@@ -89,7 +89,7 @@ export const SCRAPE_BOOK_REGISTRY: readonly ScrapeBookRegistryEntry[] = SCRAPE_B
     label,
     rank,
     conceptId: `sportsbook.${key}` as const,
-    aliases: [key, wireKey(label), ...(SCRAPE_BOOK_EXTRA_ALIASES[key] ?? [])],
+    aliases: [...new Set([key, wireKey(label), ...(SCRAPE_BOOK_EXTRA_ALIASES[key] ?? [])])],
   })
 );
 
@@ -127,7 +127,9 @@ export const SCRAPE_LEAGUE_REGISTRY: readonly ScrapeLeagueRegistryEntry[] = LEAG
   sport: league.sport,
   conceptId: league.conceptId,
   synonyms: league.synonyms,
-  aliases: [league.key, wireKey(league.label), ...league.synonyms.map(s => wireKey(s))],
+  aliases: [
+    ...new Set([league.key, wireKey(league.label), ...league.synonyms.map(s => wireKey(s))]),
+  ],
 }));
 
 export const SCRAPE_LEAGUE_KEYS = LEAGUES.map(l => l.key);
@@ -216,6 +218,44 @@ export const SCRAPE_MARKET_REGISTRY: readonly ScrapeMarketRegistryEntry[] = [
 export const SCRAPE_MARKET_ALIASES: Readonly<Record<string, ScrapeMarketKey>> = Object.fromEntries(
   SCRAPE_MARKET_REGISTRY.flatMap(row => row.aliases.map(alias => [alias, row.key] as const))
 );
+
+// ── Phases (pregame · live) ────────────────────────────────────────
+
+/** Canonical market phases on the scrape / opening-limit wire. */
+export const SCRAPE_PHASE_KEYS = ['pregame', 'live'] as const;
+export type ScrapePhaseKey = (typeof SCRAPE_PHASE_KEYS)[number];
+
+export type ScrapePhaseRegistryEntry = {
+  key: ScrapePhaseKey;
+  label: string;
+  conceptId: string; // brand-ok — glossary concept id
+  aliases: readonly string[];
+};
+
+export const SCRAPE_PHASE_REGISTRY: readonly ScrapePhaseRegistryEntry[] = [
+  {
+    key: 'pregame',
+    label: 'Pregame',
+    conceptId: 'scrape.phase.pregame',
+    aliases: ['pregame', 'pre_game', 'pre_match', 'prematch', 'before', 'early', 'antepost'],
+  },
+  {
+    key: 'live',
+    label: 'Live / in-play',
+    conceptId: 'market.in_play',
+    aliases: ['live', 'in_play', 'inplay', 'in_play_betting', 'live_betting', 'during'],
+  },
+];
+
+export const SCRAPE_PHASE_ALIASES: Readonly<Record<string, ScrapePhaseKey>> = Object.fromEntries(
+  SCRAPE_PHASE_REGISTRY.flatMap(row => row.aliases.map(alias => [alias, row.key] as const))
+);
+
+/** Default phase when wire omits market phase. */
+export const SCRAPE_DEFAULT_PHASE: ScrapePhaseKey = 'pregame';
+
+/** Fixture / CI expansion phases (both). */
+export const SCRAPE_FIXTURE_PHASE_KEYS = SCRAPE_PHASE_KEYS;
 
 // ── States ─────────────────────────────────────────────────────────
 
@@ -482,6 +522,22 @@ export function normalizeScrapeLeague(raw: string): string {
   return tryNormalizeScrapeLeague(raw) ?? wireKey(raw);
 }
 
+/** Normalize market-phase wire → pregame | live (or undefined if empty). */
+export function tryNormalizeScrapePhase(
+  raw: string | null | undefined
+): ScrapePhaseKey | undefined {
+  if (raw == null || raw.trim() === '') return undefined;
+  return SCRAPE_PHASE_ALIASES[wireKey(raw)];
+}
+
+/** Normalize market-phase wire → pregame | live (default pregame). */
+export function normalizeScrapePhase(
+  raw: string | null | undefined,
+  fallback: ScrapePhaseKey = SCRAPE_DEFAULT_PHASE
+): ScrapePhaseKey {
+  return tryNormalizeScrapePhase(raw) ?? fallback;
+}
+
 // ── Glossary ───────────────────────────────────────────────────────
 
 export type ScrapeWireGlossaryConcept = {
@@ -495,7 +551,7 @@ export type ScrapeWireGlossaryConcept = {
   seeAlso: readonly string[];
   status: 'active';
   source: string;
-  semanticType: 'classification' | 'resource';
+  semanticType: 'classification' | 'resource' | 'state';
   uiRole: 'badge' | 'chip' | 'code' | 'token';
 };
 
@@ -518,6 +574,7 @@ export function scrapeWireGlossaryConcepts(): ScrapeWireGlossaryConcept[] {
         'scrape.sport',
         'scrape.league',
         'scrape.market',
+        'scrape.phase',
         'scrape.jurisdiction',
         'sport',
         'market.point_spread',
@@ -608,6 +665,36 @@ export function scrapeWireGlossaryConcepts(): ScrapeWireGlossaryConcept[] {
       uiRole: 'code',
     },
     {
+      id: 'scrape.phase',
+      label: 'Scrape market phase',
+      description:
+        'Market phase on the scrape wire: pregame (before start) or live (in-play). Aliases in_play/inplay/live_betting → live; pre_match/pregame → pregame.',
+      category: 'market',
+      kind: 'market',
+      synonyms: ['marketPhase', 'phase', 'pregame', 'live', 'in-play'],
+      values: [...SCRAPE_PHASE_KEYS],
+      seeAlso: ['market.in_play', 'ops.limits.market_phase', 'scrape.market', 'scrape.wire'],
+      status: 'active',
+      source: SOURCE,
+      semanticType: 'classification',
+      uiRole: 'badge',
+    },
+    {
+      id: 'scrape.phase.pregame',
+      label: 'Pregame phase',
+      description:
+        'Wagers placed before an event starts. Default scrape/opening-limit phase when wire omits phase.',
+      category: 'market',
+      kind: 'market',
+      synonyms: ['pre-game', 'pre-match', 'early'],
+      values: ['pregame'],
+      seeAlso: ['scrape.phase', 'market.in_play', 'scrape.wire'],
+      status: 'active',
+      source: SOURCE,
+      semanticType: 'state',
+      uiRole: 'badge',
+    },
+    {
       id: 'scrape.jurisdiction',
       label: 'Scrape jurisdiction',
       description:
@@ -635,12 +722,14 @@ export type ScrapeWireTaxonomyArtifact = {
     sports: number;
     leagues: number;
     markets: number;
+    phases: number;
     regulationMarkets: number;
     extendedMarkets: number;
     states: number;
     fixtureJurisdictions: number;
     sportAliases: number;
     marketAliases: number;
+    phaseAliases: number;
     stateAliases: number;
     bookAliases: number;
     leagueAliases: number;
@@ -656,6 +745,8 @@ export type ScrapeWireTaxonomyArtifact = {
   markets: readonly ScrapeMarketKey[];
   regulationMarkets: readonly ScrapeRegulationMarketKey[];
   extendedMarkets: readonly ScrapeExtendedMarketKey[];
+  phaseRegistry: readonly ScrapePhaseRegistryEntry[];
+  phases: readonly ScrapePhaseKey[];
   stateRegistry: readonly ScrapeStateRegistryEntry[];
   states: readonly ScrapeStateKey[];
   /** @deprecated Prefer {@link states} — same full registry. */
@@ -663,9 +754,12 @@ export type ScrapeWireTaxonomyArtifact = {
   fixtureJurisdictions: readonly ScrapeStateKey[];
   fixtureSports: readonly ScrapeSportKey[];
   fixtureMarkets: readonly ScrapeRegulationMarketKey[];
+  fixturePhases: readonly ScrapePhaseKey[];
   defaultJurisdiction: StateCode;
+  defaultPhase: ScrapePhaseKey;
   sportAliases: Readonly<Record<string, ScrapeSportKey>>;
   marketAliases: Readonly<Record<string, ScrapeMarketKey>>;
+  phaseAliases: Readonly<Record<string, ScrapePhaseKey>>;
   stateAliases: Readonly<Record<string, StateCode>>;
   bookAliases: Readonly<Record<string, ScrapeBookKey>>;
   leagueAliases: Readonly<Record<string, LeagueKey>>;
@@ -693,6 +787,10 @@ export function buildScrapeWireTaxonomyArtifact(
     ...row,
     aliases: [...row.aliases],
   }));
+  const phaseRegistry = SCRAPE_PHASE_REGISTRY.map(row => ({
+    ...row,
+    aliases: [...row.aliases],
+  }));
   return {
     kind: SCRAPE_WIRE_TAXONOMY_KIND,
     schemaVersion: SCRAPE_WIRE_TAXONOMY_SCHEMA_VERSION,
@@ -703,12 +801,14 @@ export function buildScrapeWireTaxonomyArtifact(
       sports: SCRAPE_SPORT_KEYS.length,
       leagues: SCRAPE_LEAGUE_KEYS.length,
       markets: SCRAPE_MARKET_KEYS.length,
+      phases: SCRAPE_PHASE_KEYS.length,
       regulationMarkets: SCRAPE_REGULATION_MARKET_KEYS.length,
       extendedMarkets: SCRAPE_EXTENDED_MARKET_KEYS.length,
       states: SCRAPE_STATE_KEYS.length,
       fixtureJurisdictions: SCRAPE_FIXTURE_JURISDICTION_KEYS.length,
       sportAliases: Object.keys(SCRAPE_SPORT_ALIASES).length,
       marketAliases: Object.keys(SCRAPE_MARKET_ALIASES).length,
+      phaseAliases: Object.keys(SCRAPE_PHASE_ALIASES).length,
       stateAliases: Object.keys(SCRAPE_STATE_ALIASES).length,
       bookAliases: Object.keys(SCRAPE_BOOK_ALIASES).length,
       leagueAliases: Object.keys(SCRAPE_LEAGUE_ALIASES).length,
@@ -724,15 +824,20 @@ export function buildScrapeWireTaxonomyArtifact(
     markets: [...SCRAPE_MARKET_KEYS],
     regulationMarkets: [...SCRAPE_REGULATION_MARKET_KEYS],
     extendedMarkets: [...SCRAPE_EXTENDED_MARKET_KEYS],
+    phaseRegistry,
+    phases: [...SCRAPE_PHASE_KEYS],
     stateRegistry,
     states: [...SCRAPE_STATE_KEYS],
     jurisdictions: [...SCRAPE_STATE_KEYS],
     fixtureJurisdictions: [...SCRAPE_FIXTURE_JURISDICTION_KEYS],
     fixtureSports: [...SCRAPE_FIXTURE_SPORT_KEYS],
     fixtureMarkets: [...SCRAPE_FIXTURE_MARKET_KEYS],
+    fixturePhases: [...SCRAPE_FIXTURE_PHASE_KEYS],
     defaultJurisdiction: SCRAPE_DEFAULT_JURISDICTION,
+    defaultPhase: SCRAPE_DEFAULT_PHASE,
     sportAliases: SCRAPE_SPORT_ALIASES,
     marketAliases: SCRAPE_MARKET_ALIASES,
+    phaseAliases: SCRAPE_PHASE_ALIASES,
     stateAliases: SCRAPE_STATE_ALIASES,
     bookAliases: SCRAPE_BOOK_ALIASES,
     leagueAliases: SCRAPE_LEAGUE_ALIASES,

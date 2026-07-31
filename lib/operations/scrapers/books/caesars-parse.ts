@@ -10,6 +10,7 @@ import type { StateCode } from '../domain.ts';
 import type { ScrapeTargetParsedRow } from '../scraper-targets.ts';
 import {
   normalizeScrapeMarket,
+  normalizeScrapePhase,
   normalizeScrapeSport,
   SCRAPE_DEFAULT_JURISDICTION,
 } from '../scrape-wire-taxonomy.ts';
@@ -84,7 +85,7 @@ function asLimitRow(
     /parlay|multi|sgp|byo/i.test(structureRaw) || structureRaw.toLowerCase() === 'parlay'
       ? 'parlay'
       : 'straight';
-  const phase = /live|inplay|in-play/i.test(phaseRaw) ? 'live' : 'pregame';
+  const phase = normalizeScrapePhase(phaseRaw);
   const stamp = new Date().toISOString().slice(0, 10);
 
   return {
