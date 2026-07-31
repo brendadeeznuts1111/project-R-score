@@ -10,7 +10,7 @@ text must not travel through the harness as a bare `string`.
 - **Source catalog:** [`index.ts`](./index.ts) → `BRAND_CATALOG`
 - **Generated record:** [`brand-manifest.json`](../brand-manifest.json) — never
   hand-edit
-- **Inventory:** 58 values across 9 domains: 52 IDs, 1 key, and 5 codes
+- **Inventory:** 59 values across 9 domains: 53 IDs, 1 key, and 5 codes
 - **Runtime:** branded values remain ordinary strings; the nominal tag is
   type-only
 - **Shape guards:** `BRAND_GUARDS.isX(value)` and `isBrandedValue(name, value)`
@@ -34,7 +34,7 @@ authoritative.
 | security   | 2 challenge and policy IDs                                              | [`security.ts`](./security.ts)     |
 | deployment | 1 deployment ID                                                         | [`deployment.ts`](./deployment.ts) |
 | audit      | 6 version, audit, finding, concept, entry, and evidence IDs             | [`audit.ts`](./audit.ts)           |
-| operations | 19 operational IDs plus `PartnerProfileKey`, `StateCode`, and `ZipCode` | [`operations.ts`](./operations.ts) |
+| operations | 20 operational IDs plus `PartnerProfileKey`, `StateCode`, and `ZipCode` | [`operations.ts`](./operations.ts) |
 | portal     | 4 portal tenant, Telegram user, portal account, and link-nonce IDs      | [`portal.ts`](./portal.ts)         |
 | surfaces   | 10 host/apex/subdomain/surface/Pages/publish/Access IDs + status/access/backend codes | [`surfaces.ts`](./surfaces.ts) |
 
@@ -152,7 +152,7 @@ ZIP+4. Use `parse*` when input needs trimming or normalization.
 
 ## Aggregate types
 
-- `AnyId` is the union of all 44 catalog values whose names end in `Id`.
+- `AnyId` is the union of all 53 catalog values whose names end in `Id`.
 - `AnyBrandedValue` is the complete union:
   `AnyId | PartnerProfileKey | StateCode | ZipCode`.
 - `unbrand(value)` deliberately returns a plain `string` for serialization,

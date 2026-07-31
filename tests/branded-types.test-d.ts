@@ -42,6 +42,7 @@ import type {
   ResourceId,
   SessionId,
   SnapshotId,
+  SportsbookId,
   StateCode,
   StepId,
   SubdomainId,
@@ -98,6 +99,7 @@ import {
   asRunId,
   asSessionId,
   asSnapshotId,
+  asSportsbookId,
   asStepId,
   asStateCode,
   asSubdomainId,
@@ -127,6 +129,7 @@ const accountId: AccountId = asAccountId('acct-1');
 const accessKeyId: AccessKeyId = asAccessKeyId('ak-1');
 const operationId: OperationId = asOperationId('op-1');
 const forecastIssueId: LimitForecastIssueId = asLimitForecastIssueId('forecast-1');
+const sportsbookId: SportsbookId = asSportsbookId('draftkings');
 const requestId: RequestId = asRequestId('req-1');
 const documentId: DocumentId = asDocumentId('doc-1');
 const portalTenantId: PortalTenantId = asPortalTenantId('factory');
@@ -181,6 +184,9 @@ const crossAsJob: JobId = operationId;
 
 // @ts-expect-error — LimitForecastIssueId is not a generic OperationId
 const forecastAsOperation: OperationId = forecastIssueId;
+
+// @ts-expect-error — SportsbookId is not a generic OperationId
+const sportsbookAsOperation: OperationId = sportsbookId;
 
 // @ts-expect-error — RequestId is not a CorrelationId
 const crossAsCorrelation: CorrelationId = requestId;
@@ -263,7 +269,7 @@ if (isBrandedValue('SessionId', guardInput)) {
   void guardedSession;
 }
 
-// ─── 6. Aggregate unions cover the complete 58-value catalog (52 IDs + codes) ─
+// ─── 6. Aggregate unions cover the complete 59-value catalog (53 IDs + codes) ─
 
 const everyId: readonly AnyId[] = [
   asSessionId('s'),
@@ -306,6 +312,7 @@ const everyId: readonly AnyId[] = [
   asPartnerTemplateId('template'),
   asGateDecisionId('gate'),
   asOpsChannelEventId('event'),
+  asSportsbookId('draftkings'),
   asPortalTenantId('factory'),
   asTelegramUserId('telegram-user'),
   asPortalAccountId('portal-account'),

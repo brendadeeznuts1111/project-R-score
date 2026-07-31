@@ -43,6 +43,8 @@ export type GateDecisionId = BrandedString<'GateDecisionId'>;
 export type OpsChannelEventId = BrandedString<'OpsChannelEventId'>;
 /** Immutable issued limit-forecast identity. */
 export type LimitForecastIssueId = BrandedString<'LimitForecastIssueId'>;
+/** Canonical sportsbook slug used by limit-policy and scrape registries. */
+export type SportsbookId = BrandedString<'SportsbookId'>;
 /**
  * US state / jurisdiction code for regulatory scoping (e.g. MA, NJ).
  * Always stored uppercase two-letter.
@@ -154,6 +156,35 @@ export const parseOpsChannelEventId = opsChannelEventId.parse;
 export const asLimitForecastIssueId = limitForecastIssueId.as;
 export const tryLimitForecastIssueId = limitForecastIssueId.try;
 export const parseLimitForecastIssueId = limitForecastIssueId.parse;
+
+const SPORTSBOOK_ID_VALIDATION = {
+  shape: 'pattern',
+  pattern: '^[a-z0-9][a-z0-9-]*$',
+  ingressNormalization: 'trim',
+} as const satisfies BrandValidationSpec;
+const SPORTSBOOK_ID_RE = new RegExp(SPORTSBOOK_ID_VALIDATION.pattern);
+
+export function asSportsbookId(value: string): SportsbookId {
+  const id = value.trim().toLowerCase();
+  if (!SPORTSBOOK_ID_RE.test(id)) {
+    throw new BrandValidationError('SportsbookId', value);
+  }
+  return id as SportsbookId;
+}
+
+export function trySportsbookId(value: string | undefined | null): SportsbookId | undefined {
+  if (value == null) return undefined;
+  const id = String(value).trim().toLowerCase();
+  if (!SPORTSBOOK_ID_RE.test(id)) return undefined;
+  return id as SportsbookId;
+}
+
+export function parseSportsbookId(value: unknown): SportsbookId {
+  if (typeof value !== 'string' || value.trim() === '') {
+    throw new BrandValidationError('SportsbookId', value as never);
+  }
+  return asSportsbookId(value);
+}
 
 /** Primary regulated jurisdictions for sports-wager compliance (MA / NJ). */
 export const REGULATED_STATE_CODES = ['MA', 'NJ'] as const;
@@ -362,6 +393,14 @@ export const OPERATIONS_BRAND_SPECS = [
     tiers: ['as', 'try', 'parse'],
     mint: ['system-internal'],
     description: 'Immutable issued limit forecast identity',
+  },
+  {
+    name: 'SportsbookId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Canonical sportsbook slug for limits, policy, and scrape registries',
+    validation: SPORTSBOOK_ID_VALIDATION,
   },
   {
     name: 'StateCode',

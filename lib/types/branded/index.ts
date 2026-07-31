@@ -93,6 +93,7 @@ import type {
   GateDecisionId,
   OpsChannelEventId,
   LimitForecastIssueId,
+  SportsbookId,
   StateCode,
   ZipCode,
 } from './operations.ts';
@@ -184,6 +185,7 @@ export type AnyId =
   | GateDecisionId
   | OpsChannelEventId
   | LimitForecastIssueId
+  | SportsbookId
   | PortalTenantId
   | TelegramUserId
   | PortalAccountId

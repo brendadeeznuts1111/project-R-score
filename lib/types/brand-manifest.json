@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "generatedAt": "2026-07-31T09:26:40.836Z",
+  "generatedAt": "2026-07-31T10:27:06.107Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
-  "brandCount": 58,
+  "brandCount": 59,
   "domainCount": 9,
   "domains": [
     "audit",
@@ -16,7 +16,7 @@
     "surfaces"
   ],
   "kinds": {
-    "id": 52,
+    "id": 53,
     "key": 1,
     "code": 5
   },
@@ -44,7 +44,7 @@
     {
       "name": "operations",
       "module": "lib/types/branded/operations.ts",
-      "brandCount": 22
+      "brandCount": 23
     },
     {
       "name": "portal",
@@ -1237,6 +1237,35 @@
       "guard": "BRAND_GUARDS.isLimitForecastIssueId",
       "shortName": "limitForecastIssueId",
       "envName": "LIMIT_FORECAST_ISSUE_ID"
+    },
+    {
+      "name": "SportsbookId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Canonical sportsbook slug for limits, policy, and scrape registries",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z0-9][a-z0-9-]*$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asSportsbookId",
+        "try": "trySportsbookId",
+        "parse": "parseSportsbookId"
+      },
+      "guard": "BRAND_GUARDS.isSportsbookId",
+      "shortName": "sportsbookId",
+      "envName": "SPORTSBOOK_ID"
     },
     {
       "name": "StateCode",
