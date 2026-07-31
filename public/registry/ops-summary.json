@@ -1,6 +1,6 @@
 {
-  "source": "snapshot",
-  "generated": "2026-07-28T16:41:41.204Z",
+  "source": "live",
+  "generated": "2026-07-31T23:22:29.751Z",
   "liquidity": {
     "total": 108210
   },
@@ -157,11 +157,11 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "a8e98175a2c7385ba8b9005e7dac25e7c13373f64534c86594d0e544ad318691",
+    "proofHash": "5284dda1b4077d7767749a534bb67ae1a7979eb45a457488ffb5fa8fd73d5cd5",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-28T16:41:41.209Z"
+    "timestamp": "2026-07-31T23:22:29.753Z"
   },
   "registryClient": {
     "available": true,
@@ -171,7 +171,7 @@
     "status": "pass",
     "subsystem": "package-manager",
     "proofHash": "38542ede96aad679d33a4c8baec9651ad940db3cd75a80f2cb10fc714f116c1f",
-    "timestamp": "2026-07-24T04:59:00.755Z",
+    "timestamp": "2026-07-28T20:27:22.349Z",
     "path": "/registry/registry-client-proof.json"
   },
   "docsCoverage": {
@@ -187,7 +187,7 @@
     "referencePageCount": 57,
     "indexStale": false,
     "proofHash": "9820d84a3f27f610657f8b00c2e3a51272423b881242ff672d4fed3675d1e1ee",
-    "timestamp": "2026-07-27T00:55:47.957Z",
+    "timestamp": "2026-07-28T20:27:22.956Z",
     "path": "/registry/docs-coverage-proof.json"
   },
   "cloudflareTokenScope": {
@@ -207,7 +207,7 @@
   },
   "cloudflarePages": {
     "available": true,
-    "ok": false,
+    "ok": true,
     "steps": [
       {
         "id": "well-known-mcp-parity",
@@ -221,8 +221,8 @@
       },
       {
         "id": "functions-import-graph",
-        "ok": false,
-        "detail": "exit 1"
+        "ok": true,
+        "detail": "allowlist ok"
       },
       {
         "id": "functions-edge-safety",
@@ -232,18 +232,18 @@
       {
         "id": "proof-taxonomy-audit",
         "ok": true,
-        "detail": "13 contracts · 20 consistency · preflight self-contract deferred"
+        "detail": "13 contracts · 20 consistency"
       }
     ],
-    "timestamp": "2026-07-28T16:41:38.277Z",
+    "timestamp": "2026-07-31T11:05:00.618Z",
     "pagesUrl": "https://project-r-score.pages.dev",
     "path": "/registry/cloudflare-pages-preflight.json"
   },
   "proofTaxonomy": {
     "available": true,
-    "ok": false,
+    "ok": true,
     "contracts": 13,
-    "contractsOk": 12,
+    "contractsOk": 13,
     "consistencyOk": 20,
     "consistencyTotal": 20,
     "audits": [
@@ -252,7 +252,7 @@
         "reportPath": "/registry/release-features.json",
         "ok": true,
         "primarySubsystem": "runtime",
-        "rows": 75
+        "rows": 74
       },
       {
         "path": "public/registry/install-platform.json",
@@ -334,7 +334,7 @@
       {
         "path": "public/registry/cloudflare-pages-preflight.json",
         "reportPath": "/registry/cloudflare-pages-preflight.json",
-        "ok": false,
+        "ok": true,
         "primarySubsystem": "other",
         "rows": 5
       }
@@ -421,19 +421,19 @@
         "ok": true
       }
     ],
-    "proofHash": "4d981383872b42d23d88ce651064a14ab1fa8a6c4153179e993f7fcb0c4888d3",
-    "timestamp": "2026-07-28T16:41:37.673Z",
+    "proofHash": "99a4776922c18ec56bc09b14baff0d3fcae87f2171b3681cbba55ea175a73213",
+    "timestamp": "2026-07-31T11:04:59.845Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "channelMeta": {
     "available": true,
     "ok": true,
     "stale": false,
-    "passed": 75,
-    "total": 75,
+    "passed": 74,
+    "total": 74,
     "status": "pass",
-    "proofHash": "77dd527cb7a2ca90d366d20d1cdda04aa52317e7b5ff23cef2ba5ba0da487978",
-    "updatedAt": "2026-07-28T16:41:37.379Z",
+    "proofHash": "4d40f1633c3bb1826b3aea148f05db041cc8451d415ba660c5f0e64c169604bc",
+    "updatedAt": "2026-07-31T10:59:08.029Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -455,8 +455,8 @@
         "total": 13
       },
       "other": {
-        "passed": 6,
-        "total": 6
+        "passed": 5,
+        "total": 5
       }
     },
     "sources": {
@@ -633,76 +633,34 @@
     ]
   },
   "partners": {
-    "bound": 15,
-    "unboundAgents": 18,
+    "bound": 24,
+    "unboundAgents": 9,
     "byLifecycle": {
-      "active": 1,
-      "materialized": 13,
+      "active": 4,
+      "materialized": 19,
       "signup": 1
     },
     "recent": [
       {
-        "treeNodeId": "019fa102-4349-7047-b839-cb8a0d43c12f",
-        "profileKey": "pp-019fa102-4349-7047-b839-cb8a0d43",
+        "treeNodeId": "019f930b-71e5-7729-91d6-a82589cf488c",
+        "profileKey": "pp-019f930b-71e5-7729-91d6-a82589cf",
         "partnerTemplate": "default-prospect",
         "lifecycleStatus": "materialized",
-        "name": "TOC BIL-001"
+        "name": "TOC ASH-004"
       },
       {
-        "treeNodeId": "019f92bf-40d6-72e5-80da-8aaa4cd7e0d2",
-        "profileKey": "pp-019f92bf-40d6-72e5-80da-8aaa4cd7",
+        "treeNodeId": "019f92f9-2e3f-74f4-8262-720202846493",
+        "profileKey": "pp-019f92f9-2e3f-74f4-8262-72020284",
         "partnerTemplate": "default-prospect",
         "lifecycleStatus": "materialized",
-        "name": "Agent Alpha"
+        "name": "TOC ASH-003"
       },
       {
-        "treeNodeId": "019f92bf-40d6-72e6-9a91-8f3f3c099c7b",
-        "profileKey": "pp-019f92bf-40d6-72e6-9a91-8f3f3c09",
+        "treeNodeId": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
+        "profileKey": "pp-019f92ee-5ef8-71e9-b207-5ae20c07",
         "partnerTemplate": "default-prospect",
         "lifecycleStatus": "materialized",
-        "name": "Agent Beta"
-      },
-      {
-        "treeNodeId": "019f92bf-40d6-72e8-96ba-f05db1d93df0",
-        "profileKey": "pp-019f92bf-40d6-72e8-96ba-f05db1d9",
-        "partnerTemplate": "default-prospect",
-        "lifecycleStatus": "materialized",
-        "name": "Sub Scout"
-      },
-      {
-        "treeNodeId": "019f92ee-5ef6-758e-bb1a-fae541f29506",
-        "profileKey": "pp-019f92ee-5ef6-758e-bb1a-fae541f2",
-        "partnerTemplate": "default-prospect",
-        "lifecycleStatus": "materialized",
-        "name": "NOV Onboarding"
-      },
-      {
-        "treeNodeId": "019f92ee-5ef9-728f-812a-c5b3fa642f33",
-        "profileKey": "pp-019f92ee-5ef9-728f-812a-c5b3fa64",
-        "partnerTemplate": "default-prospect",
-        "lifecycleStatus": "materialized",
-        "name": "TOC SPEN-001"
-      },
-      {
-        "treeNodeId": "019f92ee-5efb-7449-899b-de7d263645e7",
-        "profileKey": "pp-019f92ee-5efb-7449-899b-de7d2636",
-        "partnerTemplate": "default-prospect",
-        "lifecycleStatus": "materialized",
-        "name": "TOC NOV-002"
-      },
-      {
-        "treeNodeId": "019f92ee-5efa-7558-bcb4-05414ee32210",
-        "profileKey": "pp-019f92ee-5efa-7558-bcb4-05414ee3",
-        "partnerTemplate": "default-prospect",
-        "lifecycleStatus": "materialized",
-        "name": "TOC NOV-001"
-      },
-      {
-        "treeNodeId": "019f92ee-5efa-7556-98a2-d56a1d369df6",
-        "profileKey": "pp-019f92ee-5efa-7556-98a2-d56a1d36",
-        "partnerTemplate": "default-prospect",
-        "lifecycleStatus": "materialized",
-        "name": "TOC SPEN-002"
+        "name": "TOC ASH-001"
       },
       {
         "treeNodeId": "019f92ee-5ef9-728d-950c-6c02a59903a2",
@@ -710,20 +668,62 @@
         "partnerTemplate": "default-prospect",
         "lifecycleStatus": "materialized",
         "name": "TOC ASH-002"
+      },
+      {
+        "treeNodeId": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+        "profileKey": "pp-019f92bf-40d6-72e3-aa09-f0a9b8a9",
+        "partnerTemplate": "default-prospect",
+        "lifecycleStatus": "active",
+        "name": "Cascade Partner"
+      },
+      {
+        "treeNodeId": "limit-demo-atlantic-sub",
+        "profileKey": "pp-limit-demo-atlantic-sub",
+        "partnerTemplate": "default-prospect",
+        "lifecycleStatus": "materialized",
+        "name": "Atlantic City Sub-Agent"
+      },
+      {
+        "treeNodeId": "limit-demo-shoreline",
+        "profileKey": "pp-limit-demo-shoreline",
+        "partnerTemplate": "default-prospect",
+        "lifecycleStatus": "active",
+        "name": "Shoreline Partner Desk"
+      },
+      {
+        "treeNodeId": "limit-demo-worcester-sub",
+        "profileKey": "pp-limit-demo-worcester-sub",
+        "partnerTemplate": "default-prospect",
+        "lifecycleStatus": "materialized",
+        "name": "Worcester Sub-Agent"
+      },
+      {
+        "treeNodeId": "limit-demo-boston-agent",
+        "profileKey": "pp-limit-demo-boston-agent",
+        "partnerTemplate": "default-prospect",
+        "lifecycleStatus": "materialized",
+        "name": "Boston Agent Lane"
+      },
+      {
+        "treeNodeId": "limit-demo-baystate",
+        "profileKey": "pp-limit-demo-baystate",
+        "partnerTemplate": "default-prospect",
+        "lifecycleStatus": "active",
+        "name": "Bay State Partner Desk"
       }
     ]
   },
   "channels": {
-    "pending": 9,
+    "pending": 504,
     "failed": 0,
-    "sent": 1021,
-    "oldestPendingAt": "2026-07-28T16:07:12.240Z",
+    "sent": 1039,
+    "oldestPendingAt": "2026-07-28T17:03:21.207Z",
     "failRate": 0
   },
   "toc": {
     "available": true,
     "path": "/registry/toc-ops.json",
-    "generatedAt": "2026-07-28T16:41:38.338Z",
+    "generatedAt": "2026-07-31T14:04:15.832Z",
     "partners": 3,
     "warmed": 4,
     "warming": 2,
@@ -737,21 +737,21 @@
     "principalOutstandingTotal": 20300,
     "throttleOnboarding": false,
     "primedDrums": 4,
-    "playableDrums": 1,
+    "playableDrums": 0,
     "playsPending": 4,
     "playsSettled": 13,
     "activeExperiments": 2,
     "plane": "demo-readonly",
-    "identityLinked": true,
-    "identityPartners": 3,
+    "identityLinked": false,
+    "identityPartners": 0,
     "enforcementFocus": "rope",
-    "enforcementFailed": 12,
+    "enforcementFailed": 13,
     "enforcementCritical": 6,
     "throughputT": 5116,
     "throughputI": 47810,
     "throughputOE": 1655,
     "topRankedProcess": "LIMIT",
-    "avgRP": 8.01175573225242,
+    "avgRP": 5.658763615227704,
     "settlementFloatRatio": 0.5103534825350345,
     "presencePartners": 3,
     "presenceIpv6": 31,
@@ -819,17 +819,17 @@
     "reserved": 29,
     "settled": 7,
     "settledViaFullLoop": 29,
-    "outboxSent": 1021,
+    "outboxSent": 1039,
     "outboxFailed": 0,
-    "outboxPending": 9,
-    "oldestPendingAgeSec": 2068,
-    "manualStepsPerCycle": 9,
+    "outboxPending": 504,
+    "oldestPendingAgeSec": 281948,
+    "manualStepsPerCycle": 504,
     "loopCompletionRate": 1,
     "distinctPlaysDispatched": 7,
     "settledPlaysViaFullLoop": 7,
     "loopCompletionRateByPlay": 1,
     "capitalEfficiencyProxy": 0.1278360819590205,
-    "limitEfficiencyProxy": 2.0833333333333335,
+    "limitEfficiencyProxy": null,
     "processReturnProxy": 0.20128651835968908,
     "projectorBackend": "r2",
     "projectorBucket": "factory-wager-registry",
@@ -838,7 +838,7 @@
   "telegramHandshake": {
     "available": true,
     "path": "/registry/telegram-handshake.json",
-    "generatedAt": "2026-07-28T16:41:41.165Z",
+    "generatedAt": "2026-07-28T16:41:44.049Z",
     "partners": 4,
     "inviteGaps": 0,
     "blocked": 0,
@@ -952,7 +952,7 @@
   "seatCapitalDesk": {
     "available": true,
     "path": "/registry/seat-capital-desk.json",
-    "generatedAt": "2026-07-28T16:41:41.193Z",
+    "generatedAt": "2026-07-31T14:04:15.824Z",
     "desks": 4,
     "blocked": 0,
     "partial": 0,
@@ -1204,10 +1204,278 @@
         "deskUpdatedAt": "2026-07-27T08:11:13.534Z"
       }
     ],
+    "partnerViews": [
+      {
+        "callSign": "ASH-001",
+        "partnerCode": "ASH",
+        "fund": {
+          "status": "ready",
+          "detail": "intake complete — FUND can proceed"
+        },
+        "activeOuts": [
+          {
+            "num": "1",
+            "outId": "ASH-1",
+            "book": "Hard Rock Florida",
+            "username": "ash1.staging",
+            "missingFund": [],
+            "missingBookTerms": [],
+            "missingAll": [],
+            "deferred": false,
+            "complete": true
+          }
+        ],
+        "deferredOuts": [
+          {
+            "num": "2",
+            "outId": "ASH-2",
+            "book": "Hard Rock Florida",
+            "username": "—",
+            "missingFund": [],
+            "missingBookTerms": [
+              "max bet",
+              "freeplay % on deposit"
+            ],
+            "missingAll": [
+              "max bet",
+              "freeplay % on deposit"
+            ],
+            "deferred": true,
+            "complete": false
+          }
+        ],
+        "commonMissing": [],
+        "outSpecificMissing": []
+      },
+      {
+        "callSign": "BIL-001",
+        "partnerCode": "BIL",
+        "fund": {
+          "status": "ready",
+          "detail": "intake complete — FUND can proceed"
+        },
+        "activeOuts": [
+          {
+            "num": "1",
+            "outId": "BIL-1",
+            "book": "Partner book TBD",
+            "username": "bil1.staging",
+            "missingFund": [],
+            "missingBookTerms": [],
+            "missingAll": [],
+            "deferred": false,
+            "complete": true
+          }
+        ],
+        "deferredOuts": [],
+        "commonMissing": [],
+        "outSpecificMissing": []
+      },
+      {
+        "callSign": "NOV-001",
+        "partnerCode": "NOV",
+        "fund": {
+          "status": "ready",
+          "detail": "intake complete — FUND can proceed"
+        },
+        "activeOuts": [
+          {
+            "num": "1",
+            "outId": "NOV-1",
+            "book": "Hard Rock Florida",
+            "username": "nov1.staging",
+            "missingFund": [],
+            "missingBookTerms": [],
+            "missingAll": [],
+            "deferred": false,
+            "complete": true
+          }
+        ],
+        "deferredOuts": [
+          {
+            "num": "2",
+            "outId": "NOV-2",
+            "book": "SouthFL PPH Desk",
+            "username": "—",
+            "missingFund": [],
+            "missingBookTerms": [
+              "max bet",
+              "freeplay % on deposit"
+            ],
+            "missingAll": [
+              "max bet",
+              "freeplay % on deposit"
+            ],
+            "deferred": true,
+            "complete": false
+          }
+        ],
+        "commonMissing": [],
+        "outSpecificMissing": []
+      },
+      {
+        "callSign": "SPEN-001",
+        "partnerCode": "SPEN",
+        "fund": {
+          "status": "ready",
+          "detail": "intake complete — FUND can proceed"
+        },
+        "activeOuts": [
+          {
+            "num": "1",
+            "outId": "SPEN-1",
+            "book": "parlay21.com",
+            "username": "vc2013",
+            "missingFund": [],
+            "missingBookTerms": [],
+            "missingAll": [],
+            "deferred": false,
+            "complete": true
+          },
+          {
+            "num": "2",
+            "outId": "SPEN-2",
+            "book": "lonestarwagering.com",
+            "username": "Yungg1",
+            "missingFund": [],
+            "missingBookTerms": [],
+            "missingAll": [],
+            "deferred": false,
+            "complete": true
+          },
+          {
+            "num": "3",
+            "outId": "SPEN-3",
+            "book": "action92.com",
+            "username": "action92",
+            "missingFund": [],
+            "missingBookTerms": [],
+            "missingAll": [],
+            "deferred": false,
+            "complete": true
+          },
+          {
+            "num": "4",
+            "outId": "SPEN-4",
+            "book": "betvegas23.com",
+            "username": "Henry019",
+            "missingFund": [],
+            "missingBookTerms": [],
+            "missingAll": [],
+            "deferred": false,
+            "complete": true
+          }
+        ],
+        "deferredOuts": [
+          {
+            "num": "5",
+            "outId": "SPEN-5",
+            "book": "Orange777",
+            "username": "dmk1064",
+            "missingFund": [],
+            "missingBookTerms": [
+              "max bet",
+              "freeplay % on deposit"
+            ],
+            "missingAll": [
+              "max bet",
+              "freeplay % on deposit"
+            ],
+            "deferred": true,
+            "complete": false
+          }
+        ],
+        "commonMissing": [],
+        "outSpecificMissing": []
+      }
+    ],
+    "partnerMessageTemplates": [
+      {
+        "id": "confirm-active",
+        "label": "Partner confirm (DM paste)",
+        "thread": "dm-paste",
+        "purpose": "Consolidated active-out confirm + missing fields + reply examples.",
+        "cli": "bun run seat:desk:partner-message CALL-SIGN",
+        "postable": false,
+        "dynamicFields": [
+          "callSign",
+          "activeOutCount",
+          "deferredOuts",
+          "commonMissing",
+          "outSpecificMissing"
+        ]
+      },
+      {
+        "id": "todo",
+        "label": "Todo list",
+        "thread": "desk-copy",
+        "purpose": "One line per incomplete out — mirrors Copy todo button.",
+        "cli": "bun run seat:desk:partner-message CALL-SIGN --template todo",
+        "postable": false,
+        "dynamicFields": [
+          "perOutMissing"
+        ]
+      },
+      {
+        "id": "reply-hint",
+        "label": "Reply hint line",
+        "thread": "desk-copy",
+        "purpose": "Single pipe line for first incomplete out.",
+        "cli": "bun run seat:desk:partner-message CALL-SIGN --template reply-hint",
+        "postable": false,
+        "dynamicFields": [
+          "firstIncompleteOutNum"
+        ]
+      },
+      {
+        "id": "topic-intake",
+        "label": "Liquidity/Outs · deposit rails",
+        "thread": "liquidity/outs",
+        "purpose": "First rails ask on pinned desk — pipe format + no-password note.",
+        "cli": "bun run seat:desk:partner-message CALL-SIGN --template topic-intake [--post]",
+        "postable": true,
+        "dynamicFields": [
+          "partnerCode",
+          "deskPin",
+          "activeOutRange",
+          "deferredSkip"
+        ]
+      },
+      {
+        "id": "topic-rails",
+        "label": "Liquidity/Outs · pay rails nudge",
+        "thread": "liquidity/outs",
+        "purpose": "Short follow-up when rails still missing on desk.",
+        "cli": "bun run seat:desk:partner-message CALL-SIGN --template topic-rails [--post]",
+        "postable": true,
+        "dynamicFields": [
+          "partnerCode",
+          "deskPin",
+          "railsNeedLine",
+          "deferredSkip"
+        ]
+      },
+      {
+        "id": "topic-accounting",
+        "label": "Accounting · proof thread",
+        "thread": "accounting",
+        "purpose": "Deposit/withdraw screenshots + optional bet slips — not parsed by desk pipe.",
+        "cli": "bun run seat:desk:accounting-prompt CALL-SIGN [--post] [--thread-id N]",
+        "postable": true,
+        "dynamicFields": [
+          "partnerCode",
+          "deskPin",
+          "activeOutRange",
+          "deferredSkip"
+        ]
+      }
+    ],
     "commands": {
       "refresh": "bun run seat:desk:refresh",
       "post": "bun run seat:desk:post",
-      "update": "bun run seat:desk:update"
+      "update": "bun run seat:desk:update",
+      "partnerMessage": "bun run seat:desk:partner-message CALL --json",
+      "partnerMessageTodo": "bun run seat:desk:partner-message CALL --template todo"
     }
   },
   "compliance": {
@@ -1225,7 +1493,7 @@
       "MA",
       "NJ"
     ],
-    "generatedAt": "2026-07-28T16:41:38.413Z",
+    "generatedAt": "2026-07-31T11:04:28.249Z",
     "path": "/registry/compliance-board.json",
     "portal": "/portal/compliance/"
   },
@@ -1244,7 +1512,7 @@
     "deadCodePercent": 8.1,
     "largeFilePercent": 40.5,
     "testCoveragePercent": 0,
-    "generatedAt": "2026-07-28T16:41:39.562Z",
+    "generatedAt": "2026-07-28T16:41:42.786Z",
     "path": "/registry/monorepo-health.json",
     "portal": "/portal/packages/",
     "claim": "monorepo-health-score",
@@ -1252,7 +1520,7 @@
   },
   "limitChanges": [
     {
-      "limit_id": 161,
+      "limit_id": 225,
       "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
       "sportsbook": "fanduel",
       "sport_id": "nba",
@@ -1260,7 +1528,7 @@
       "bet_type": "straight",
       "previous_max": 800,
       "new_limit": 1200,
-      "increased_at": 1785247351,
+      "increased_at": 1785537449,
       "direction": "up",
       "message": "fanduel nba/spread straight: $800 → $1200",
       "context_available": true,
@@ -1279,17 +1547,17 @@
       }
     },
     {
-      "limit_id": 169,
-      "node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
-      "sportsbook": "fanduel",
+      "limit_id": 229,
+      "node_id": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
+      "sportsbook": "hardrock",
       "sport_id": "nba",
       "market_id": "spread",
       "bet_type": "straight",
-      "previous_max": 800,
-      "new_limit": 1200,
-      "increased_at": 1785247351,
+      "previous_max": 400,
+      "new_limit": 1000,
+      "increased_at": 1785536349,
       "direction": "up",
-      "message": "fanduel nba/spread straight: $800 → $1200",
+      "message": "hardrock nba/spread straight: $400 → $1000",
       "context_available": true,
       "multi_factor_score": 0.5935799999999999,
       "top_contributing_factors": [
@@ -1306,7 +1574,115 @@
       }
     },
     {
-      "limit_id": 163,
+      "limit_id": 233,
+      "node_id": "019f92ee-5ef9-728d-950c-6c02a59903a2",
+      "sportsbook": "hardrock",
+      "sport_id": "nba",
+      "market_id": "spread",
+      "bet_type": "straight",
+      "previous_max": 400,
+      "new_limit": 1000,
+      "increased_at": 1785536349,
+      "direction": "up",
+      "message": "hardrock nba/spread straight: $400 → $1000",
+      "context_available": true,
+      "multi_factor_score": 0.5935799999999999,
+      "top_contributing_factors": [
+        "violation_count_30d",
+        "chargeback_count_30d",
+        "kyc_pass_rate"
+      ],
+      "context_proof": {
+        "algorithm": "sha3-256",
+        "digestValid": true,
+        "signed": true,
+        "hmacValid": true,
+        "valid": true
+      }
+    },
+    {
+      "limit_id": 237,
+      "node_id": "019f92f9-2e3f-74f4-8262-720202846493",
+      "sportsbook": "hardrock",
+      "sport_id": "nba",
+      "market_id": "spread",
+      "bet_type": "straight",
+      "previous_max": 400,
+      "new_limit": 1000,
+      "increased_at": 1785536349,
+      "direction": "up",
+      "message": "hardrock nba/spread straight: $400 → $1000",
+      "context_available": true,
+      "multi_factor_score": 0.5935799999999999,
+      "top_contributing_factors": [
+        "violation_count_30d",
+        "chargeback_count_30d",
+        "kyc_pass_rate"
+      ],
+      "context_proof": {
+        "algorithm": "sha3-256",
+        "digestValid": true,
+        "signed": true,
+        "hmacValid": true,
+        "valid": true
+      }
+    },
+    {
+      "limit_id": 241,
+      "node_id": "019f930b-71e5-7729-91d6-a82589cf488c",
+      "sportsbook": "hardrock",
+      "sport_id": "nba",
+      "market_id": "spread",
+      "bet_type": "straight",
+      "previous_max": 400,
+      "new_limit": 1000,
+      "increased_at": 1785536349,
+      "direction": "up",
+      "message": "hardrock nba/spread straight: $400 → $1000",
+      "context_available": true,
+      "multi_factor_score": 0.5935799999999999,
+      "top_contributing_factors": [
+        "violation_count_30d",
+        "chargeback_count_30d",
+        "kyc_pass_rate"
+      ],
+      "context_proof": {
+        "algorithm": "sha3-256",
+        "digestValid": true,
+        "signed": true,
+        "hmacValid": true,
+        "valid": true
+      }
+    },
+    {
+      "limit_id": 223,
+      "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+      "sportsbook": "hardrock",
+      "sport_id": "nba",
+      "market_id": "spread",
+      "bet_type": "straight",
+      "previous_max": 400,
+      "new_limit": 1000,
+      "increased_at": 1785535949,
+      "direction": "up",
+      "message": "hardrock nba/spread straight: $400 → $1000",
+      "context_available": true,
+      "multi_factor_score": 0.61659,
+      "top_contributing_factors": [
+        "violation_count_30d",
+        "chargeback_count_30d",
+        "kyc_pass_rate"
+      ],
+      "context_proof": {
+        "algorithm": "sha3-256",
+        "digestValid": true,
+        "signed": true,
+        "hmacValid": true,
+        "valid": true
+      }
+    },
+    {
+      "limit_id": 227,
       "node_id": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
       "sportsbook": "draftkings",
       "sport_id": "nba",
@@ -1314,11 +1690,11 @@
       "bet_type": "straight",
       "previous_max": 500,
       "new_limit": 1500,
-      "increased_at": 1785245051,
+      "increased_at": 1785535149,
       "direction": "up",
       "message": "draftkings nba/totals straight: $500 → $1500",
       "context_available": true,
-      "multi_factor_score": 0.5935799999999999,
+      "multi_factor_score": 0.61659,
       "top_contributing_factors": [
         "violation_count_30d",
         "chargeback_count_30d",
@@ -1333,7 +1709,7 @@
       }
     },
     {
-      "limit_id": 165,
+      "limit_id": 231,
       "node_id": "019f92ee-5ef9-728d-950c-6c02a59903a2",
       "sportsbook": "draftkings",
       "sport_id": "nba",
@@ -1341,11 +1717,11 @@
       "bet_type": "straight",
       "previous_max": 500,
       "new_limit": 1500,
-      "increased_at": 1785245051,
+      "increased_at": 1785535149,
       "direction": "up",
       "message": "draftkings nba/totals straight: $500 → $1500",
       "context_available": true,
-      "multi_factor_score": 0.5935799999999999,
+      "multi_factor_score": 0.61659,
       "top_contributing_factors": [
         "violation_count_30d",
         "chargeback_count_30d",
@@ -1360,19 +1736,19 @@
       }
     },
     {
-      "limit_id": 171,
-      "node_id": "019fa2d3-c5a0-74f9-b159-730b0c911784",
+      "limit_id": 235,
+      "node_id": "019f92f9-2e3f-74f4-8262-720202846493",
       "sportsbook": "draftkings",
       "sport_id": "nba",
       "market_id": "totals",
       "bet_type": "straight",
       "previous_max": 500,
       "new_limit": 1500,
-      "increased_at": 1785245051,
+      "increased_at": 1785535149,
       "direction": "up",
       "message": "draftkings nba/totals straight: $500 → $1500",
       "context_available": true,
-      "multi_factor_score": 0.5935799999999999,
+      "multi_factor_score": 0.61659,
       "top_contributing_factors": [
         "violation_count_30d",
         "chargeback_count_30d",
@@ -1387,19 +1763,19 @@
       }
     },
     {
-      "limit_id": 173,
-      "node_id": "019fa2d3-c5a1-7113-82c7-212bf22256de",
+      "limit_id": 239,
+      "node_id": "019f930b-71e5-7729-91d6-a82589cf488c",
       "sportsbook": "draftkings",
       "sport_id": "nba",
       "market_id": "totals",
       "bet_type": "straight",
       "previous_max": 500,
       "new_limit": 1500,
-      "increased_at": 1785245051,
+      "increased_at": 1785535149,
       "direction": "up",
       "message": "draftkings nba/totals straight: $500 → $1500",
       "context_available": true,
-      "multi_factor_score": 0.5935799999999999,
+      "multi_factor_score": 0.61659,
       "top_contributing_factors": [
         "violation_count_30d",
         "chargeback_count_30d",
@@ -1414,7 +1790,7 @@
       }
     },
     {
-      "limit_id": 159,
+      "limit_id": 221,
       "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
       "sportsbook": "draftkings",
       "sport_id": "nba",
@@ -1422,11 +1798,11 @@
       "bet_type": "straight",
       "previous_max": 500,
       "new_limit": 1500,
-      "increased_at": 1785244651,
+      "increased_at": 1785534749,
       "direction": "up",
       "message": "draftkings nba/totals straight: $500 → $1500",
       "context_available": true,
-      "multi_factor_score": 0.49000000000000005,
+      "multi_factor_score": 0.61659,
       "top_contributing_factors": [
         "violation_count_30d",
         "chargeback_count_30d",
@@ -1441,61 +1817,7 @@
       }
     },
     {
-      "limit_id": 167,
-      "node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
-      "sportsbook": "draftkings",
-      "sport_id": "nba",
-      "market_id": "totals",
-      "bet_type": "straight",
-      "previous_max": 500,
-      "new_limit": 1500,
-      "increased_at": 1785244651,
-      "direction": "up",
-      "message": "draftkings nba/totals straight: $500 → $1500",
-      "context_available": true,
-      "multi_factor_score": 0.49000000000000005,
-      "top_contributing_factors": [
-        "violation_count_30d",
-        "chargeback_count_30d",
-        "kyc_pass_rate"
-      ],
-      "context_proof": {
-        "algorithm": "sha3-256",
-        "digestValid": true,
-        "signed": true,
-        "hmacValid": true,
-        "valid": true
-      }
-    },
-    {
-      "limit_id": 116,
-      "node_id": "partner-42",
-      "sportsbook": "draftkings",
-      "sport_id": "nba",
-      "market_id": "totals",
-      "bet_type": "straight",
-      "previous_max": 500,
-      "new_limit": 1500,
-      "increased_at": 1785209600,
-      "direction": "up",
-      "message": "draftkings nba/totals straight: $500 → $1500",
-      "context_available": true,
-      "multi_factor_score": 0.7143,
-      "top_contributing_factors": [
-        "total_handle_7d",
-        "violation_count_30d",
-        "chargeback_count_30d"
-      ],
-      "context_proof": {
-        "algorithm": null,
-        "digestValid": false,
-        "signed": false,
-        "hmacValid": null,
-        "valid": false
-      }
-    },
-    {
-      "limit_id": 137,
+      "limit_id": 193,
       "node_id": "limit-demo-worcester-sub",
       "sportsbook": "caesars",
       "sport_id": "soccer",
@@ -1503,7 +1825,7 @@
       "bet_type": "straight",
       "previous_max": 1100,
       "new_limit": 650,
-      "increased_at": 1785172399,
+      "increased_at": 1785447465,
       "direction": "down",
       "message": "caesars soccer/match_winner straight: $1100 → $650",
       "context_available": false,
@@ -1512,7 +1834,7 @@
       "context_proof": null
     },
     {
-      "limit_id": 141,
+      "limit_id": 197,
       "node_id": "limit-demo-atlantic-sub",
       "sportsbook": "caesars",
       "sport_id": "soccer",
@@ -1520,7 +1842,7 @@
       "bet_type": "live",
       "previous_max": 900,
       "new_limit": 1600,
-      "increased_at": 1785172339,
+      "increased_at": 1785447405,
       "direction": "up",
       "message": "caesars soccer/match_winner live: $900 → $1600",
       "context_available": true,
@@ -1539,7 +1861,7 @@
       }
     },
     {
-      "limit_id": 139,
+      "limit_id": 195,
       "node_id": "limit-demo-shoreline",
       "sportsbook": "hardrock",
       "sport_id": "basketball",
@@ -1547,7 +1869,7 @@
       "bet_type": "straight",
       "previous_max": 1250,
       "new_limit": 3000,
-      "increased_at": 1785171919,
+      "increased_at": 1785446985,
       "direction": "up",
       "message": "hardrock basketball/over_under straight: $1250 → $3000",
       "context_available": true,
@@ -1566,7 +1888,7 @@
       }
     },
     {
-      "limit_id": 136,
+      "limit_id": 192,
       "node_id": "limit-demo-worcester-sub",
       "sportsbook": "caesars",
       "sport_id": "soccer",
@@ -1574,7 +1896,7 @@
       "bet_type": "straight",
       "previous_max": 700,
       "new_limit": 1100,
-      "increased_at": 1785171499,
+      "increased_at": 1785446565,
       "direction": "up",
       "message": "caesars soccer/match_winner straight: $700 → $1100",
       "context_available": true,
@@ -1593,7 +1915,7 @@
       }
     },
     {
-      "limit_id": 128,
+      "limit_id": 184,
       "node_id": "limit-demo-jersey-sub",
       "sportsbook": "hardrock",
       "sport_id": "basketball",
@@ -1601,7 +1923,7 @@
       "bet_type": "straight",
       "previous_max": 1000,
       "new_limit": 800,
-      "increased_at": 1785171139,
+      "increased_at": 1785446205,
       "direction": "down",
       "message": "hardrock basketball/over_under straight: $1000 → $800",
       "context_available": false,
@@ -1610,7 +1932,7 @@
       "context_proof": null
     },
     {
-      "limit_id": 134,
+      "limit_id": 190,
       "node_id": "limit-demo-boston-agent",
       "sportsbook": "draftkings",
       "sport_id": "basketball",
@@ -1618,7 +1940,7 @@
       "bet_type": "live",
       "previous_max": 600,
       "new_limit": 1300,
-      "increased_at": 1785171079,
+      "increased_at": 1785446145,
       "direction": "up",
       "message": "draftkings basketball/over_under live: $600 → $1300",
       "context_available": true,
@@ -1637,7 +1959,7 @@
       }
     },
     {
-      "limit_id": 132,
+      "limit_id": 188,
       "node_id": "limit-demo-baystate",
       "sportsbook": "caesars",
       "sport_id": "soccer",
@@ -1645,7 +1967,7 @@
       "bet_type": "pregame",
       "previous_max": 800,
       "new_limit": 1400,
-      "increased_at": 1785170779,
+      "increased_at": 1785445845,
       "direction": "up",
       "message": "caesars soccer/match_winner pregame: $800 → $1400",
       "context_available": true,
@@ -1664,7 +1986,7 @@
       }
     },
     {
-      "limit_id": 130,
+      "limit_id": 186,
       "node_id": "limit-demo-baystate",
       "sportsbook": "betmgm",
       "sport_id": "basketball",
@@ -1672,7 +1994,7 @@
       "bet_type": "straight",
       "previous_max": 1000,
       "new_limit": 2200,
-      "increased_at": 1785170659,
+      "increased_at": 1785445725,
       "direction": "up",
       "message": "betmgm basketball/over_under straight: $1000 → $2200",
       "context_available": true,
@@ -1691,7 +2013,7 @@
       }
     },
     {
-      "limit_id": 127,
+      "limit_id": 183,
       "node_id": "limit-demo-jersey-sub",
       "sportsbook": "hardrock",
       "sport_id": "basketball",
@@ -1699,7 +2021,7 @@
       "bet_type": "straight",
       "previous_max": 500,
       "new_limit": 1000,
-      "increased_at": 1785170239,
+      "increased_at": 1785445305,
       "direction": "up",
       "message": "hardrock basketball/over_under straight: $500 → $1000",
       "context_available": true,
@@ -1718,7 +2040,7 @@
       }
     },
     {
-      "limit_id": 125,
+      "limit_id": 181,
       "node_id": "limit-demo-newark-agent",
       "sportsbook": "betmgm",
       "sport_id": "soccer",
@@ -1726,7 +2048,7 @@
       "bet_type": "straight",
       "previous_max": 1200,
       "new_limit": 900,
-      "increased_at": 1785169939,
+      "increased_at": 1785445005,
       "direction": "down",
       "message": "betmgm soccer/match_winner straight: $1200 → $900",
       "context_available": false,
@@ -1735,7 +2057,7 @@
       "context_proof": null
     },
     {
-      "limit_id": 123,
+      "limit_id": 179,
       "node_id": "limit-demo-newark-agent",
       "sportsbook": "fanduel",
       "sport_id": "basketball",
@@ -1743,7 +2065,7 @@
       "bet_type": "live",
       "previous_max": 750,
       "new_limit": 1750,
-      "increased_at": 1785169819,
+      "increased_at": 1785444885,
       "direction": "up",
       "message": "fanduel basketball/over_under live: $750 → $1750",
       "context_available": true,
@@ -1762,7 +2084,7 @@
       }
     },
     {
-      "limit_id": 121,
+      "limit_id": 177,
       "node_id": "limit-demo-atlantic",
       "sportsbook": "fanduel",
       "sport_id": "soccer",
@@ -1770,7 +2092,7 @@
       "bet_type": "pregame",
       "previous_max": 1500,
       "new_limit": 2000,
-      "increased_at": 1785169519,
+      "increased_at": 1785444585,
       "direction": "up",
       "message": "fanduel soccer/match_winner pregame: $1500 → $2000",
       "context_available": true,
@@ -1789,7 +2111,7 @@
       }
     },
     {
-      "limit_id": 119,
+      "limit_id": 175,
       "node_id": "limit-demo-atlantic",
       "sportsbook": "draftkings",
       "sport_id": "basketball",
@@ -1797,7 +2119,7 @@
       "bet_type": "straight",
       "previous_max": 1000,
       "new_limit": 2500,
-      "increased_at": 1785169399,
+      "increased_at": 1785444465,
       "direction": "up",
       "message": "draftkings basketball/over_under straight: $1000 → $2500",
       "context_available": true,
@@ -1819,27 +2141,48 @@
   "limitPatterns": {
     "schemaVersion": 1,
     "lookbackHours": 48,
-    "partners": 6,
-    "nodes": 15,
+    "partners": 4,
+    "nodes": 13,
     "downlineNodes": 9,
     "books": [
       {
+        "key": "hardrock",
+        "changes": 8,
+        "raises": 7,
+        "decreases": 1,
+        "net_delta": 5050,
+        "avg_delta_pct": 121.25,
+        "avg_influence_score": 0.5132,
+        "partners": 3,
+        "nodes": 7,
+        "states": [
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "071",
+          "073",
+          "084"
+        ],
+        "top_market": "spread"
+      },
+      {
         "key": "draftkings",
-        "changes": 9,
-        "raises": 9,
+        "changes": 7,
+        "raises": 7,
         "decreases": 0,
-        "net_delta": 9200,
-        "avg_delta_pct": 185.19,
-        "avg_influence_score": 0.598,
-        "partners": 5,
-        "nodes": 9,
+        "net_delta": 7200,
+        "avg_delta_pct": 180.95,
+        "avg_influence_score": 0.628,
+        "partners": 3,
+        "nodes": 7,
         "states": [
           "MA",
           "NJ"
         ],
         "zip_prefixes": [
           "021",
-          "071"
+          "071",
+          "073"
         ],
         "top_market": "totals"
       },
@@ -1866,40 +2209,21 @@
       },
       {
         "key": "fanduel",
-        "changes": 4,
-        "raises": 4,
+        "changes": 3,
+        "raises": 3,
         "decreases": 0,
-        "net_delta": 2300,
-        "avg_delta_pct": 66.67,
-        "avg_influence_score": 0.6301,
-        "partners": 3,
-        "nodes": 4,
+        "net_delta": 1900,
+        "avg_delta_pct": 72.22,
+        "avg_influence_score": 0.6423,
+        "partners": 2,
+        "nodes": 3,
         "states": [
           "NJ"
         ],
         "zip_prefixes": [
           "071"
         ],
-        "top_market": "spread"
-      },
-      {
-        "key": "hardrock",
-        "changes": 3,
-        "raises": 2,
-        "decreases": 1,
-        "net_delta": 2050,
-        "avg_delta_pct": 73.33,
-        "avg_influence_score": 0.3716,
-        "partners": 2,
-        "nodes": 2,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "073",
-          "084"
-        ],
-        "top_market": "over_under"
+        "top_market": "match_winner"
       },
       {
         "key": "betmgm",
@@ -1925,14 +2249,14 @@
     "states": [
       {
         "key": "NJ",
-        "changes": 8,
-        "raises": 6,
+        "changes": 19,
+        "raises": 17,
         "decreases": 2,
-        "net_delta": 5450,
-        "avg_delta_pct": 73.68,
-        "avg_influence_score": 0.4628,
-        "partners": 2,
-        "nodes": 5,
+        "net_delta": 13850,
+        "avg_delta_pct": 125.76,
+        "avg_influence_score": 0.5458,
+        "partners": 3,
+        "nodes": 10,
         "states": [
           "NJ"
         ],
@@ -1941,7 +2265,7 @@
           "073",
           "084"
         ],
-        "top_market": "over_under"
+        "top_market": "spread"
       },
       {
         "key": "MA",
@@ -1965,15 +2289,33 @@
     ],
     "zips": [
       {
-        "key": "071",
-        "changes": 4,
-        "raises": 3,
+        "key": "073",
+        "changes": 10,
+        "raises": 9,
         "decreases": 1,
-        "net_delta": 2700,
-        "avg_delta_pct": 72.92,
-        "avg_influence_score": 0.5177,
-        "partners": 1,
-        "nodes": 2,
+        "net_delta": 6700,
+        "avg_delta_pct": 148,
+        "avg_influence_score": 0.5321,
+        "partners": 2,
+        "nodes": 5,
+        "states": [
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "073"
+        ],
+        "top_market": "spread"
+      },
+      {
+        "key": "071",
+        "changes": 7,
+        "raises": 6,
+        "decreases": 1,
+        "net_delta": 4700,
+        "avg_delta_pct": 98.81,
+        "avg_influence_score": 0.5568,
+        "partners": 2,
+        "nodes": 3,
         "states": [
           "NJ"
         ],
@@ -2019,24 +2361,6 @@
         "top_market": "match_winner"
       },
       {
-        "key": "073",
-        "changes": 2,
-        "raises": 1,
-        "decreases": 1,
-        "net_delta": 300,
-        "avg_delta_pct": 40,
-        "avg_influence_score": 0.2399,
-        "partners": 1,
-        "nodes": 1,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "073"
-        ],
-        "top_market": "over_under"
-      },
-      {
         "key": "084",
         "changes": 2,
         "raises": 2,
@@ -2063,23 +2387,24 @@
         "node_name": "Cascade Partner",
         "node_type": "partner",
         "downline_depth": 0,
-        "state_code": null,
-        "location": null,
-        "zip_code": null,
-        "zip_prefix": null,
-        "license_status": null,
+        "state_code": "NJ",
+        "location": "Newark",
+        "zip_code": "07102",
+        "zip_prefix": "071",
+        "license_status": "active",
         "violation_count_30d": 0,
-        "changes": 2,
-        "scored_changes": 2,
-        "proof_verified_changes": 2,
-        "raises": 2,
+        "changes": 3,
+        "scored_changes": 3,
+        "proof_verified_changes": 3,
+        "raises": 3,
         "decreases": 0,
-        "net_delta": 1400,
-        "avg_delta_pct": 125,
-        "avg_influence_score": 0.5418,
+        "net_delta": 2000,
+        "avg_delta_pct": 133.33,
+        "avg_influence_score": 0.6089,
         "sportsbooks": [
           "draftkings",
-          "fanduel"
+          "fanduel",
+          "hardrock"
         ],
         "top_market": "spread"
       },
@@ -2090,24 +2415,25 @@
         "node_name": "TOC ASH-001",
         "node_type": "agent",
         "downline_depth": 1,
-        "state_code": null,
-        "location": null,
-        "zip_code": null,
-        "zip_prefix": null,
-        "license_status": null,
+        "state_code": "NJ",
+        "location": "Jersey City",
+        "zip_code": "07302",
+        "zip_prefix": "073",
+        "license_status": "active",
         "violation_count_30d": 0,
-        "changes": 1,
-        "scored_changes": 1,
-        "proof_verified_changes": 1,
-        "raises": 1,
+        "changes": 2,
+        "scored_changes": 2,
+        "proof_verified_changes": 2,
+        "raises": 2,
         "decreases": 0,
-        "net_delta": 1000,
-        "avg_delta_pct": 200,
-        "avg_influence_score": 0.5936,
+        "net_delta": 1600,
+        "avg_delta_pct": 175,
+        "avg_influence_score": 0.6051,
         "sportsbooks": [
-          "draftkings"
+          "draftkings",
+          "hardrock"
         ],
-        "top_market": "totals"
+        "top_market": "spread"
       },
       {
         "node_id": "019f92ee-5ef9-728d-950c-6c02a59903a2",
@@ -2116,103 +2442,79 @@
         "node_name": "TOC ASH-002",
         "node_type": "agent",
         "downline_depth": 1,
-        "state_code": null,
-        "location": null,
-        "zip_code": null,
-        "zip_prefix": null,
-        "license_status": null,
-        "violation_count_30d": 0,
-        "changes": 1,
-        "scored_changes": 1,
-        "proof_verified_changes": 1,
-        "raises": 1,
-        "decreases": 0,
-        "net_delta": 1000,
-        "avg_delta_pct": 200,
-        "avg_influence_score": 0.5936,
-        "sportsbooks": [
-          "draftkings"
-        ],
-        "top_market": "totals"
-      },
-      {
-        "node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
-        "partner_node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
-        "parent_node_id": null,
-        "node_name": "Factory Rail Co",
-        "node_type": "partner",
-        "downline_depth": 0,
-        "state_code": null,
-        "location": null,
-        "zip_code": null,
-        "zip_prefix": null,
-        "license_status": null,
+        "state_code": "NJ",
+        "location": "Jersey City",
+        "zip_code": "07302",
+        "zip_prefix": "073",
+        "license_status": "active",
         "violation_count_30d": 0,
         "changes": 2,
         "scored_changes": 2,
         "proof_verified_changes": 2,
         "raises": 2,
         "decreases": 0,
-        "net_delta": 1400,
-        "avg_delta_pct": 125,
-        "avg_influence_score": 0.5418,
+        "net_delta": 1600,
+        "avg_delta_pct": 175,
+        "avg_influence_score": 0.6051,
         "sportsbooks": [
           "draftkings",
-          "fanduel"
+          "hardrock"
         ],
         "top_market": "spread"
       },
       {
-        "node_id": "019fa2d3-c5a0-74f9-b159-730b0c911784",
-        "partner_node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
-        "parent_node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
-        "node_name": "TOC PAT-001",
+        "node_id": "019f92f9-2e3f-74f4-8262-720202846493",
+        "partner_node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+        "parent_node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+        "node_name": "TOC ASH-003",
         "node_type": "agent",
         "downline_depth": 1,
-        "state_code": null,
-        "location": null,
-        "zip_code": null,
-        "zip_prefix": null,
-        "license_status": null,
+        "state_code": "NJ",
+        "location": "Jersey City",
+        "zip_code": "07302",
+        "zip_prefix": "073",
+        "license_status": "active",
         "violation_count_30d": 0,
-        "changes": 1,
-        "scored_changes": 1,
-        "proof_verified_changes": 1,
-        "raises": 1,
+        "changes": 2,
+        "scored_changes": 2,
+        "proof_verified_changes": 2,
+        "raises": 2,
         "decreases": 0,
-        "net_delta": 1000,
-        "avg_delta_pct": 200,
-        "avg_influence_score": 0.5936,
+        "net_delta": 1600,
+        "avg_delta_pct": 175,
+        "avg_influence_score": 0.6051,
         "sportsbooks": [
-          "draftkings"
+          "draftkings",
+          "hardrock"
         ],
-        "top_market": "totals"
+        "top_market": "spread"
       },
       {
-        "node_id": "019fa2d3-c5a1-7113-82c7-212bf22256de",
-        "partner_node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
-        "parent_node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
-        "node_name": "TOC PAT-002",
+        "node_id": "019f930b-71e5-7729-91d6-a82589cf488c",
+        "partner_node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+        "parent_node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+        "node_name": "TOC ASH-004",
         "node_type": "agent",
         "downline_depth": 1,
-        "state_code": null,
-        "location": null,
-        "zip_code": null,
-        "zip_prefix": null,
-        "license_status": null,
+        "state_code": "NJ",
+        "location": "Jersey City",
+        "zip_code": "07302",
+        "zip_prefix": "073",
+        "license_status": "active",
         "violation_count_30d": 0,
-        "changes": 1,
-        "scored_changes": 1,
-        "proof_verified_changes": 1,
-        "raises": 1,
+        "changes": 2,
+        "scored_changes": 2,
+        "proof_verified_changes": 2,
+        "raises": 2,
         "decreases": 0,
-        "net_delta": 1000,
-        "avg_delta_pct": 200,
-        "avg_influence_score": 0.5936,
+        "net_delta": 1600,
+        "avg_delta_pct": 175,
+        "avg_influence_score": 0.6051,
         "sportsbooks": [
-          "draftkings"
+          "draftkings",
+          "hardrock"
         ],
-        "top_market": "totals"
+        "top_market": "spread"
       },
       {
         "node_id": "limit-demo-atlantic",
@@ -2424,42 +2726,16 @@
           "caesars"
         ],
         "top_market": "match_winner"
-      },
-      {
-        "node_id": "partner-42",
-        "partner_node_id": "partner-42",
-        "parent_node_id": null,
-        "node_name": "partner-42",
-        "node_type": "partner",
-        "downline_depth": 0,
-        "state_code": null,
-        "location": null,
-        "zip_code": null,
-        "zip_prefix": null,
-        "license_status": null,
-        "violation_count_30d": 0,
-        "changes": 1,
-        "scored_changes": 1,
-        "proof_verified_changes": 0,
-        "raises": 1,
-        "decreases": 0,
-        "net_delta": 1000,
-        "avg_delta_pct": 200,
-        "avg_influence_score": 0.7143,
-        "sportsbooks": [
-          "draftkings"
-        ],
-        "top_market": "totals"
       }
     ],
     "audit": {
-      "changeRows": 22,
-      "hierarchyLinked": 14,
-      "geoLinked": 8,
-      "licensed": 8,
-      "scored": 22,
-      "proofVerified": 18,
-      "coveragePct": 78.7,
+      "changeRows": 24,
+      "hierarchyLinked": 13,
+      "geoLinked": 13,
+      "licensed": 13,
+      "scored": 24,
+      "proofVerified": 21,
+      "coveragePct": 96.6,
       "sourceTables": [
         "tree_nodes",
         "partner_account_limits",

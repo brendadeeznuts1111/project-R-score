@@ -42,6 +42,95 @@ describe('account dossier helpers', () => {
     expect(dossier.links.betlogCsv).toContain('format=csv');
     expect(dossier.links.history).toContain('/portal/partner-history/?account=');
   });
+
+  test('resolves partner CODE from profile.callSign for UUID accounts', () => {
+    const dossier = buildAccountDossier({
+      accountId: '019f92bf-40d6-72e3-aa09-f0a9b8a95824',
+      limitRaises: {
+        accountProfiles: {
+          profiles: [
+            {
+              treeNodeId: '019f92bf-40d6-72e3-aa09-f0a9b8a95824',
+              accountName: 'Cascade Partner',
+              accountKind: 'partner',
+              callSign: 'ASH',
+              parentNodeId: null,
+              jurisdiction: { stateCode: 'NJ', location: 'Newark', zipCode: '07102' },
+              license: { status: 'active' },
+              observations: { raises: 2 },
+            },
+            {
+              treeNodeId: '019f92ee-5ef8-71e9-b207-5ae20c07d095',
+              accountName: 'TOC ASH-001',
+              accountKind: 'agent',
+              callSign: 'ASH-001',
+              parentNodeId: '019f92bf-40d6-72e3-aa09-f0a9b8a95824',
+              jurisdiction: { stateCode: 'NJ', location: 'Jersey City', zipCode: '07302' },
+              license: { status: 'active' },
+              observations: { raises: 1 },
+            },
+          ],
+        },
+        byNode: {},
+        patterns: { nodePatterns: [] },
+      },
+      partnersOps: {
+        partners: [{ code: 'ASH', outs: [{ book: 'FanDuel', maxBet: 1200 }] }],
+      },
+      hours: 168,
+    });
+    expect(dossier.found).toBe(true);
+    expect(dossier.partnerCode).toBe('ASH');
+    expect(dossier.outs.length).toBe(1);
+    expect(dossier.location.state).toBe('NJ');
+    expect(dossier.connected.length).toBeGreaterThanOrEqual(2);
+  });
+});
+
+describe('account dossier seed (test db)', () => {
+  test('seeds disposable db with ASH geo + raises inside 168h', async () => {
+    const { openOperationsDb } = await import('../lib/operations/db.ts');
+    const { seedAccountDossierDemo, DOSSIER_ASH_PARTNER_ID } = await import(
+      '../lib/operations/account-dossier-seed.ts'
+    );
+    const { buildAccountDossier } = await import('../public/portal/account/account-dossier.js');
+
+    const db = openOperationsDb({ path: ':memory:' });
+    try {
+      const result = await seedAccountDossierDemo(db, {
+        force: true,
+        bake: true,
+        includeLimitDemo: true,
+        lookbackHours: 168,
+        bakePath: '/tmp/account-dossier-limit-raises-test.json',
+        root: process.cwd(),
+      });
+      expect(result.toc.nodes.some(n => n.nodeId === DOSSIER_ASH_PARTNER_ID && n.seeded)).toBe(
+        true
+      );
+      expect(result.compliance.some(c => c.nodeId === DOSSIER_ASH_PARTNER_ID && c.applied)).toBe(
+        true
+      );
+      expect(result.baked?.raises ?? 0).toBeGreaterThan(0);
+
+      const limitRaises = await Bun.file('/tmp/account-dossier-limit-raises-test.json').json();
+      const partnersOps = await Bun.file('public/registry/partners-ops.json').json();
+      const dossier = buildAccountDossier({
+        accountId: DOSSIER_ASH_PARTNER_ID,
+        limitRaises,
+        partnersOps,
+        hours: 168,
+      });
+      expect(dossier.found).toBe(true);
+      expect(dossier.partnerCode).toBe('ASH');
+      expect(dossier.location.state).toBe('NJ');
+      expect(dossier.raiseCount).toBeGreaterThan(0);
+      expect(dossier.connected.length).toBeGreaterThan(0);
+      expect(dossier.monitoringStatus).not.toBe('incomplete');
+    } finally {
+      db.close();
+    }
+  });
 });
 
 describe('account dossier portal wiring', () => {

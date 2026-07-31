@@ -56,6 +56,112 @@ export function collectAccountIds(limitRaises) {
 }
 
 /**
+ * Partner CODE from call-sign / UUID profile / pattern name.
+ * @param {object | null} profile
+ * @param {object | null} pattern
+ * @param {string} accountId
+ * @param {string} partnerNodeId
+ */
+function resolvePartnerCode(profile, pattern, accountId, partnerNodeId) {
+  return (
+    partnerCodeFromRef(profile?.callSign) ||
+    partnerCodeFromRef(pattern?.node_name) ||
+    partnerCodeFromRef(accountId) ||
+    partnerCodeFromRef(partnerNodeId)
+  );
+}
+
+/**
+ * Connected partner-tree rows — pattern bake first, then profile lineage fallback.
+ * @param {string} accountId
+ * @param {string} partnerNodeId
+ * @param {object[]} patterns
+ * @param {object[]} profiles
+ */
+function buildConnectedTree(accountId, partnerNodeId, patterns, profiles) {
+  const fromPatterns = patterns.filter(
+    row => String(row.partner_node_id) === partnerNodeId || String(row.node_id) === accountId
+  );
+  if (fromPatterns.length > 0) {
+    return fromPatterns.slice().sort((a, b) => {
+      const depth = (a.downline_depth ?? 0) - (b.downline_depth ?? 0);
+      if (depth !== 0) return depth;
+      return String(a.node_id).localeCompare(String(b.node_id));
+    });
+  }
+
+  const byId = new Map(profiles.map(row => [String(row.treeNodeId), row]));
+  if (!byId.has(accountId) && !byId.has(partnerNodeId)) return [];
+
+  /** Walk up to partner root via parentNodeId. */
+  let root = partnerNodeId;
+  let cursor = byId.get(partnerNodeId) ?? byId.get(accountId) ?? null;
+  const seen = new Set();
+  while (cursor?.parentNodeId && !seen.has(String(cursor.treeNodeId))) {
+    seen.add(String(cursor.treeNodeId));
+    const parent = byId.get(String(cursor.parentNodeId));
+    if (!parent) break;
+    root = String(parent.treeNodeId);
+    cursor = parent;
+    if (String(parent.accountKind).toLowerCase() === 'partner') break;
+  }
+
+  const underRoot = [...byId.values()].filter(row => {
+    const id = String(row.treeNodeId);
+    if (id === root || id === accountId) return true;
+    let walk = row;
+    const walkSeen = new Set();
+    while (walk?.parentNodeId && !walkSeen.has(String(walk.treeNodeId))) {
+      walkSeen.add(String(walk.treeNodeId));
+      if (String(walk.parentNodeId) === root) return true;
+      walk = byId.get(String(walk.parentNodeId));
+    }
+    return false;
+  });
+
+  return underRoot
+    .map(row => {
+      let depth = 0;
+      let walk = row;
+      const walkSeen = new Set();
+      while (walk?.parentNodeId && !walkSeen.has(String(walk.treeNodeId))) {
+        walkSeen.add(String(walk.treeNodeId));
+        if (String(walk.parentNodeId) === root) {
+          depth += 1;
+          break;
+        }
+        walk = byId.get(String(walk.parentNodeId));
+        depth += 1;
+        if (depth > 16) break;
+      }
+      if (String(row.treeNodeId) === root) depth = 0;
+      return {
+        node_id: String(row.treeNodeId),
+        partner_node_id: root,
+        parent_node_id: row.parentNodeId ? String(row.parentNodeId) : null,
+        node_name: row.accountName ?? String(row.treeNodeId),
+        node_type: row.accountKind ?? 'account',
+        downline_depth: depth,
+        state_code: row.jurisdiction?.stateCode ?? null,
+        location: row.jurisdiction?.location ?? null,
+        zip_code: row.jurisdiction?.zipCode ?? null,
+        zip_prefix: row.jurisdiction?.zipCode
+          ? String(row.jurisdiction.zipCode).slice(0, 3)
+          : null,
+        license_status: row.license?.status ?? null,
+        changes: row.observations?.raises ?? 0,
+        raises: row.observations?.raises ?? 0,
+        call_sign: row.callSign ?? null,
+      };
+    })
+    .sort((a, b) => {
+      const depth = (a.downline_depth ?? 0) - (b.downline_depth ?? 0);
+      if (depth !== 0) return depth;
+      return String(a.node_id).localeCompare(String(b.node_id));
+    });
+}
+
+/**
  * Build a single-account dossier view-model from baked registries.
  * @param {{
  *   accountId: string;
@@ -67,20 +173,15 @@ export function collectAccountIds(limitRaises) {
 export function buildAccountDossier({ accountId, limitRaises, partnersOps = null, hours = 168 }) {
   const id = String(accountId || '').trim();
   const patterns = limitRaises?.patterns?.nodePatterns ?? [];
+  const profiles = limitRaises?.accountProfiles?.profiles ?? [];
   const pattern = patterns.find(row => String(row.node_id) === id) ?? null;
-  const partnerNodeId = pattern?.partner_node_id ? String(pattern.partner_node_id) : id;
-  const connected = patterns
-    .filter(row => String(row.partner_node_id) === partnerNodeId || String(row.node_id) === id)
-    .slice()
-    .sort((a, b) => {
-      const depth = (a.downline_depth ?? 0) - (b.downline_depth ?? 0);
-      if (depth !== 0) return depth;
-      return String(a.node_id).localeCompare(String(b.node_id));
-    });
-
-  const profile =
-    (limitRaises?.accountProfiles?.profiles ?? []).find(row => String(row.treeNodeId) === id) ??
-    null;
+  const profile = profiles.find(row => String(row.treeNodeId) === id) ?? null;
+  const partnerNodeId = pattern?.partner_node_id
+    ? String(pattern.partner_node_id)
+    : profile?.parentNodeId
+      ? String(profile.parentNodeId)
+      : id;
+  const connected = buildConnectedTree(id, partnerNodeId, patterns, profiles);
 
   const bucket = limitRaises?.byNode?.[id] ?? null;
   const raises = Array.isArray(bucket?.raises) ? bucket.raises : [];
@@ -90,10 +191,7 @@ export function buildAccountDossier({ accountId, limitRaises, partnersOps = null
     return !at || at >= sinceSec;
   });
 
-  const code =
-    partnerCodeFromRef(id) ||
-    partnerCodeFromRef(pattern?.node_name) ||
-    partnerCodeFromRef(partnerNodeId);
+  const code = resolvePartnerCode(profile, pattern, id, partnerNodeId);
 
   const partnerRow =
     code && partnersOps?.partners
@@ -117,7 +215,8 @@ export function buildAccountDossier({ accountId, limitRaises, partnersOps = null
     name: pattern?.node_name ?? profile?.accountName ?? id,
     role: pattern?.node_type ?? profile?.accountKind ?? 'node',
     depth: pattern?.downline_depth ?? 0,
-    parentNodeId: pattern?.parent_node_id ?? null,
+    parentNodeId: pattern?.parent_node_id ?? profile?.parentNodeId ?? null,
+    callSign: profile?.callSign ?? null,
     location: {
       state: pattern?.state_code ?? profile?.jurisdiction?.stateCode ?? null,
       city: pattern?.location ?? profile?.jurisdiction?.location ?? null,

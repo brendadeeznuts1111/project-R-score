@@ -1658,6 +1658,8 @@
     "portal:snapshot:cron:preview": "bun tools/portal-snapshot-cron.ts preview",
     "ops:limits:seed-toc-bridge": "bun tools/seed-toc-limit-bridge.ts --reseed",
     "ops:limits:seed-toc-bridge:bake": "bun tools/seed-toc-limit-bridge.ts --reseed --bake",
+    "ops:dossier:seed": "bun tools/seed-account-dossier.ts --force --bake --ops-summary",
+    "ops:dossier:seed:test-db": "bun tools/seed-account-dossier.ts --db=data/account-dossier-test.db --force --bake --include-limit-demo --hours=168 --bake-path=data/account-dossier-test-limit-raises.json",
     "ops:limits:smoke": "bun test tests/toc-ops/toc-limit-bridge-seed.test.ts tests/toc-ops/limit-raises-join.test.ts tests/ops-channel-outbox.test.ts tests/seat-desk-book-max.test.ts tests/limit-raises-ui.test.ts",
     "ops:seed:toc": "bun tools/ops-seed-toc.ts",
     "ops:seed:all": "bun tools/ops-seed.ts && bun tools/ops-seed-prediction.ts && bun tools/ops-seed-dod.ts && bun tools/ops-seed-partners.ts && bun tools/ops-seed-toc.ts && bun tools/ops-seed-tenants.ts && bun run ops:limits:seed-toc-bridge",
