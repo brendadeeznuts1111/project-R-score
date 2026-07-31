@@ -43,6 +43,52 @@ describe('account dossier helpers', () => {
     expect(dossier.links.history).toContain('/portal/partner-history/?account=');
   });
 
+  test('includes depth-2 downlines from profile lineage when patterns are empty', () => {
+    const partner = 'partner-root-id';
+    const agent = 'agent-mid-id';
+    const sub = 'sub-agent-id';
+    const dossier = buildAccountDossier({
+      accountId: partner,
+      limitRaises: {
+        accountProfiles: {
+          profiles: [
+            {
+              treeNodeId: partner,
+              accountName: 'Root',
+              accountKind: 'partner',
+              callSign: 'ROOT',
+              parentNodeId: null,
+              jurisdiction: { stateCode: 'NJ', location: 'Newark', zipCode: '07102' },
+            },
+            {
+              treeNodeId: agent,
+              accountName: 'Mid agent',
+              accountKind: 'agent',
+              callSign: 'ROOT-001',
+              parentNodeId: partner,
+              jurisdiction: { stateCode: 'NJ', location: 'Jersey City', zipCode: '07302' },
+            },
+            {
+              treeNodeId: sub,
+              accountName: 'Sub agent',
+              accountKind: 'sub_agent',
+              callSign: 'ROOT-001-SUB01',
+              parentNodeId: agent,
+              jurisdiction: { stateCode: 'NJ', location: 'Hoboken', zipCode: '07030' },
+            },
+          ],
+        },
+        byNode: {},
+        patterns: { nodePatterns: [] },
+      },
+      hours: 168,
+    });
+    expect(dossier.connected.map(row => row.node_id).sort()).toEqual(
+      [partner, agent, sub].sort()
+    );
+    expect(dossier.connected.find(row => row.node_id === sub)?.downline_depth).toBe(2);
+  });
+
   test('resolves partner CODE from profile.callSign for UUID accounts', () => {
     const dossier = buildAccountDossier({
       accountId: '019f92bf-40d6-72e3-aa09-f0a9b8a95824',
@@ -88,6 +134,47 @@ describe('account dossier helpers', () => {
 });
 
 describe('account dossier seed (test db)', () => {
+  test('non-force seed does not clobber existing agent labels', async () => {
+    const { openOperationsDb } = await import('../lib/operations/db.ts');
+    const {
+      ensureDossierDemoTree,
+      seedAccountDossierDemo,
+      DOSSIER_ASH_PARTNER_ID,
+      DOSSIER_ASH_ACCOUNTS,
+    } = await import('../lib/operations/account-dossier-seed.ts');
+
+    const db = openOperationsDb({ path: ':memory:' });
+    try {
+      ensureDossierDemoTree(db, { force: true });
+      const agentId = DOSSIER_ASH_ACCOUNTS[0]!.id;
+      db.run(`UPDATE tree_nodes SET name = 'Operator Label', call_sign = 'ASH-001' WHERE id = $id`, {
+        $id: agentId,
+      });
+
+      await seedAccountDossierDemo(db, { force: false, bake: false });
+
+      const row = db
+        .query(`SELECT name, call_sign FROM tree_nodes WHERE id = $id`)
+        .get({ $id: agentId }) as { name: string; call_sign: string };
+      expect(row.name).toBe('Operator Label');
+      expect(row.call_sign).toBe('ASH-001');
+
+      await seedAccountDossierDemo(db, { force: true, bake: false });
+      const forced = db
+        .query(`SELECT name, call_sign FROM tree_nodes WHERE id = $id`)
+        .get({ $id: agentId }) as { name: string; call_sign: string };
+      expect(forced.name).toBe('TOC ASH-001');
+      expect(forced.call_sign).toBe('ASH-001');
+
+      const partner = db
+        .query(`SELECT call_sign FROM tree_nodes WHERE id = $id`)
+        .get({ $id: DOSSIER_ASH_PARTNER_ID }) as { call_sign: string };
+      expect(partner.call_sign).toBe('ASH');
+    } finally {
+      db.close();
+    }
+  });
+
   test('seeds disposable db with ASH geo + raises inside 168h', async () => {
     const { openOperationsDb } = await import('../lib/operations/db.ts');
     const { seedAccountDossierDemo, DOSSIER_ASH_PARTNER_ID } = await import(
