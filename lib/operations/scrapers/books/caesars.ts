@@ -13,7 +13,7 @@
  */
 
 import { expandScrapedLimitSeeds } from '../../baseline-scraped-limits.ts';
-import { asSportsbookId, asStateCode, type StateCode } from '../domain.ts';
+import { asSportsbookId, type StateCode } from '../domain.ts';
 import {
   CAESARS_BROWSER_HEADERS,
   CAESARS_DEFAULT_LOCATION,
@@ -21,6 +21,7 @@ import {
   caesarsLimitCandidateUrl,
 } from '../catalogs/caesars-americanwagering.ts';
 import type { LimitObservation } from '../limit-observation-wire.ts';
+import { normalizeScrapeState } from '../scrape-wire-taxonomy.ts';
 import { isCaesarsWafHtmlBody, parseCaesarsBetsConfiguration } from './caesars-parse.ts';
 
 export const CAESARS_AGENT_ID = 'caesars-agent' as const;
@@ -53,10 +54,7 @@ function locationFromEnv(): string {
 }
 
 function jurisdictionForLocation(location: string): StateCode {
-  const upper = location.toUpperCase();
-  // Capture was CO; agents default NJ. Only promote known 2-letter US codes.
-  if (/^[A-Z]{2}$/.test(upper)) return asStateCode(upper);
-  return asStateCode('NJ');
+  return normalizeScrapeState(location);
 }
 
 function buildLiveHeaders(): Record<string, string> {

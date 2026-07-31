@@ -3,10 +3,16 @@
  *
  * @see docs/WIRE_BOUNDARY.md
  * @see lib/operations/scrapers/catalogs/caesars-americanwagering.ts
+ * @see lib/operations/scrapers/scrape-wire-taxonomy.ts
  */
 
-import { asStateCode, type StateCode } from '../domain.ts';
+import type { StateCode } from '../domain.ts';
 import type { ScrapeTargetParsedRow } from '../scraper-targets.ts';
+import {
+  normalizeScrapeMarket,
+  normalizeScrapeSport,
+  SCRAPE_DEFAULT_JURISDICTION,
+} from '../scrape-wire-taxonomy.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -48,23 +54,6 @@ function pickNumber(record: Record<string, unknown>, keys: readonly string[]): n
   return null;
 }
 
-function normalizeSport(raw: string | null): string | null {
-  if (!raw) return null;
-  const s = raw.trim().toLowerCase().replace(/\s+/g, '_');
-  if (s === 'tabletennis' || s === 'table_tennis') return 'table_tennis';
-  if (s === 'americanfootball' || s === 'football') return 'american_football';
-  return s;
-}
-
-function normalizeMarket(raw: string | null): string | null {
-  if (!raw) return null;
-  const s = raw.trim().toLowerCase().replace(/\s+/g, '_');
-  if (s === 'moneyline' || s === 'ml' || s === 'winner') return 'match_winner';
-  if (s === 'total' || s === 'totals' || s === 'ou') return 'over_under';
-  if (s === 'spread' || s === 'handicap') return 'point_spread';
-  return s;
-}
-
 function asLimitRow(
   item: Record<string, unknown>,
   jurisdiction: StateCode,
@@ -73,14 +62,18 @@ function asLimitRow(
   const openingMaxUsd = pickNumber(item, MAX_KEYS);
   if (openingMaxUsd == null || openingMaxUsd <= 0) return null;
 
-  const sport =
-    normalizeSport(
-      parseString(item.sport) ?? parseString(item.sportKey) ?? parseString(item.sportName)
-    ) ?? 'basketball';
-  const market =
-    normalizeMarket(
-      parseString(item.market) ?? parseString(item.marketKey) ?? parseString(item.marketType)
-    ) ?? 'match_winner';
+  const sport = normalizeScrapeSport(
+    parseString(item.sport) ??
+      parseString(item.sportKey) ??
+      parseString(item.sportName) ??
+      'basketball'
+  );
+  const market = normalizeScrapeMarket(
+    parseString(item.market) ??
+      parseString(item.marketKey) ??
+      parseString(item.marketType) ??
+      'match_winner'
+  );
   const structureRaw =
     parseString(item.structure) ??
     parseString(item.betType) ??
@@ -129,15 +122,15 @@ function parseCollectArrays(root: unknown): unknown[] {
     const v = root[key];
     if (Array.isArray(v)) out.push(...v);
   }
-  // Nested: sports[].markets[] or configurations[].limits[]
   for (const value of Object.values(root)) {
     if (Array.isArray(value)) {
       for (const el of value) {
         if (isRecord(el)) {
           for (const nestedKey of ['markets', 'limits', 'configurations', 'betTypes']) {
             const nested = el[nestedKey];
-            if (Array.isArray(nested))
+            if (Array.isArray(nested)) {
               out.push(...nested.map(n => (isRecord(n) ? { ...el, ...n } : n)));
+            }
           }
         }
       }
@@ -154,12 +147,11 @@ export function parseCaesarsBetsConfiguration(
   data: unknown,
   opts?: { jurisdiction?: StateCode; referenceUrl?: string | null }
 ): ScrapeTargetParsedRow[] {
-  const jurisdiction = opts?.jurisdiction ?? asStateCode('NJ');
+  const jurisdiction = opts?.jurisdiction ?? SCRAPE_DEFAULT_JURISDICTION;
   const referenceUrl = opts?.referenceUrl ?? null;
   const rows: ScrapeTargetParsedRow[] = [];
   const seen = new Set<string>();
 
-  // Flat object that itself is a limit row
   if (isRecord(data) && pickNumber(data, MAX_KEYS) != null) {
     const row = asLimitRow(data, jurisdiction, referenceUrl);
     if (row) rows.push(row);

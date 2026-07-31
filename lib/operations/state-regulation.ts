@@ -26,6 +26,7 @@ import {
   REGULATION_POLICY_CATALOG,
   resolveRegulationPolicy,
 } from './regulation-policy-catalog.ts';
+import { normalizeScrapeMarket, normalizeScrapeSport } from './scrapers/scrape-wire-taxonomy.ts';
 
 // ── Schema ─────────────────────────────────────────────────────────
 
@@ -184,47 +185,16 @@ export function ensureStateRegulationSchema(db: Database): void {
 }
 
 // ── Catalog normalization (play wire → regulatory keys) ────────────
-
-const SPORT_CATALOG: Record<string, string> = {
-  nba: 'basketball',
-  wnba: 'basketball',
-  ncaab: 'basketball',
-  cbb: 'basketball',
-  basketball: 'basketball',
-  soccer: 'soccer',
-  football: 'soccer', // association football alias
-  epl: 'soccer',
-  mls: 'soccer',
-  ucl: 'soccer',
-  nfl: 'american_football',
-  ncaaf: 'american_football',
-  mlb: 'baseball',
-  nhl: 'hockey',
-};
-
-const MARKET_CATALOG: Record<string, string> = {
-  totals: 'over_under',
-  total: 'over_under',
-  ou: 'over_under',
-  over_under: 'over_under',
-  moneyline: 'match_winner',
-  ml: 'match_winner',
-  h2h: 'match_winner',
-  match_winner: 'match_winner',
-  spread: 'spread',
-  handicap: 'spread',
-};
+// SSOT aliases live in scrape-wire-taxonomy (shared with Tier 4 agents).
 
 /** Map play.sport (e.g. NBA) → regulatory_limits.sport_id. */
 export function normalizeSportCatalogKey(sport: string): string {
-  const key = sport.trim().toLowerCase();
-  return SPORT_CATALOG[key] ?? key.replace(/\s+/g, '_');
+  return normalizeScrapeSport(sport);
 }
 
 /** Map play.market (e.g. totals) → regulatory_limits.market_id. */
 export function normalizeMarketCatalogKey(market: string): string {
-  const key = market.trim().toLowerCase().replace(/\s+/g, '_');
-  return MARKET_CATALOG[key] ?? key;
+  return normalizeScrapeMarket(market);
 }
 
 // ── Seeds (MA / NJ reference limits) ───────────────────────────────

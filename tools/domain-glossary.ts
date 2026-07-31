@@ -181,12 +181,14 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
     featurePurpose:
       concept.source === 'lib/operations/sports-betting-glossary.ts'
         ? 'Governed sports betting hierarchy, market, and data-product concept.'
-        : concept.source === 'lib/operations/sports-competition-catalog.ts'
-          ? 'Governed sport, league, competition-tier, and event-host geography concept.'
-          : concept.source === 'lib/operations/sportsbook-opening-baseline.ts' ||
-              concept.source === 'lib/operations/baseline-source-tiers.ts'
-            ? 'Governed sportsbook opening-limit baseline concept.'
-            : 'Governed compliance policy and KPI concept.',
+        : concept.source === 'lib/operations/scrapers/scrape-wire-taxonomy.ts'
+          ? 'Tier 4 scrape wire taxonomy — unified state/sport/market normalization.'
+          : concept.source === 'lib/operations/sports-competition-catalog.ts'
+            ? 'Governed sport, league, competition-tier, and event-host geography concept.'
+            : concept.source === 'lib/operations/sportsbook-opening-baseline.ts' ||
+                concept.source === 'lib/operations/baseline-source-tiers.ts'
+              ? 'Governed sportsbook opening-limit baseline concept.'
+              : 'Governed compliance policy and KPI concept.',
     semanticType: concept.semanticType,
     uiRole: concept.uiRole,
     parentId: 'parentId' in concept ? (concept.parentId ?? null) : null,
@@ -253,6 +255,7 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
       complianceKpiAuthority: 'lib/operations/compliance-policy-kpis.ts',
       sportsBettingAuthority: 'lib/operations/sports-betting-glossary.ts',
       sportsTaxonomyAuthority: 'lib/operations/sports-competition-catalog.ts',
+      scrapeWireAuthority: 'lib/operations/scrapers/scrape-wire-taxonomy.ts',
       sportsbookOpeningBaselineAuthority: 'lib/operations/sportsbook-opening-baseline.ts',
       canonicalDump: DOMAIN_GLOSSARY_SOURCE_PATH,
       portalProjection: 'tools/domain-glossary.ts',

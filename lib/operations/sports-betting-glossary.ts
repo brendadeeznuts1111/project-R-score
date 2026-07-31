@@ -17,6 +17,7 @@ import {
   type LeagueKey,
   type SportKey,
 } from './sports-competition-catalog.ts';
+import { scrapeWireGlossaryConcepts } from './scrapers/scrape-wire-taxonomy.ts';
 
 export type SportsBettingGlossaryConcept = {
   id: string; // brand-ok — glossary concept key, not an entity identity
@@ -98,6 +99,16 @@ function marketSeeAlso(...ids: string[]): string[] {
 }
 
 export function sportsBettingGlossaryConcepts(): SportsBettingGlossaryConcept[] {
+  const scrapeWire = scrapeWireGlossaryConcepts().map(
+    (c): SportsBettingGlossaryConcept => ({
+      ...c,
+      category: c.category,
+      kind: c.kind === 'jurisdiction' ? 'region' : c.kind === 'league' ? 'league' : c.kind,
+      parentId: null,
+      scope: 'scrape-wire',
+    })
+  );
+
   const hierarchyRoots: SportsBettingGlossaryConcept[] = [
     {
       id: 'sport',
@@ -541,6 +552,7 @@ export function sportsBettingGlossaryConcepts(): SportsBettingGlossaryConcept[] 
     ...crossMarket,
     ...evidence,
     ...multi,
+    ...scrapeWire,
   ];
 }
 

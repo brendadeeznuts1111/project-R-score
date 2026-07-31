@@ -2,10 +2,11 @@
   "schemaVersion": 1,
   "kind": "sports-competition-taxonomy",
   "path": "/registry/sports-taxonomy.json",
-  "generatedAt": "2026-07-31T09:59:44.453Z",
+  "generatedAt": "2026-07-31T11:18:29.957Z",
   "sources": {
     "authority": "lib/operations/sports-competition-catalog.ts",
-    "glossary": "/portal/glossary/"
+    "glossary": "/portal/glossary/",
+    "scrapeWire": "lib/operations/scrapers/scrape-wire-taxonomy.ts"
   },
   "semantics": {
     "hierarchy": [
@@ -15,7 +16,12 @@
       "event_host_country"
     ],
     "flagOwner": "event_host_country",
-    "globalMarker": "🌐"
+    "globalMarker": "🌐",
+    "scrapeWireKeys": [
+      "scrape.sport",
+      "scrape.market",
+      "scrape.jurisdiction"
+    ]
   },
   "summary": {
     "sports": 8,
@@ -2500,5 +2506,16 @@
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag"
     }
-  ]
+  ],
+  "scrapeWire": {
+    "path": "/registry/scrape-wire-taxonomy.json",
+    "authority": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
+    "keys": [
+      "scrape.sport",
+      "scrape.market",
+      "scrape.jurisdiction"
+    ],
+    "sports": 8,
+    "states": 51
+  }
 }

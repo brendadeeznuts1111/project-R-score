@@ -169,6 +169,18 @@ See [`bun --filter` docs](https://bun.com/docs/cli/filter).
 | `bun run baseline:caesars:probe` | Deep-probe Caesars/AW catalog (`--location=co` · `--live` · `--json`) — WAF vs public |
 | `bun run baseline:test-tier4`        | Tier 4 agent + registry + scrape unit tests                                                     |
 
+### Scrape wire taxonomy (state · sport · market)
+
+All Tier 4 agents normalize vendor wire onto one SSOT before JSONL write:
+
+| Key | Module | Canonical values |
+| --- | ------ | ---------------- |
+| Sport | [`scrape-wire-taxonomy.ts`](../../../lib/operations/scrapers/scrape-wire-taxonomy.ts) | Full `SPORT_KEYS` registry (8) + league aliases (`nba`→`basketball`, `nfl`→`american_football`, …) — `sportRegistry` in bake |
+| Market | same | `match_winner` · `over_under` · `spread` (`point_spread`/`moneyline` alias in) |
+| State | same | Full US + DC registry (51) — `stateRegistry` / `states`; name + postal aliases; fixture subset `NJ`·`CO`·`MA` |
+
+Bake: `bun run bake:scrape-wire-taxonomy` → [`/registry/scrape-wire-taxonomy.json`](../../../public/registry/scrape-wire-taxonomy.json). Glossary concepts: `scrape.wire` · `scrape.sport` · `scrape.market` · `scrape.jurisdiction` (via `sportsBettingGlossaryConcepts` → `glossary:portal`).
+
 ### Caesars / American Wagering live path
 
 Capture-derived catalog: [`lib/operations/scrapers/catalogs/caesars-americanwagering.ts`](../../../lib/operations/scrapers/catalogs/caesars-americanwagering.ts) · bake [`/registry/caesars-scrape-endpoints.json`](../../../public/registry/caesars-scrape-endpoints.json).

@@ -609,11 +609,13 @@ export function buildSportsTaxonomyArtifact(generatedAt = new Date().toISOString
     sources: {
       authority: 'lib/operations/sports-competition-catalog.ts',
       glossary: '/portal/glossary/',
+      scrapeWire: 'lib/operations/scrapers/scrape-wire-taxonomy.ts',
     },
     semantics: {
       hierarchy: ['sport', 'league', 'competition', 'event_host_country'],
       flagOwner: 'event_host_country',
       globalMarker: '🌐',
+      scrapeWireKeys: ['scrape.sport', 'scrape.market', 'scrape.jurisdiction'],
     },
     summary: {
       sports: SPORTS.length,
@@ -633,5 +635,12 @@ export function buildSportsTaxonomyArtifact(generatedAt = new Date().toISOString
     })),
     competitions: COMPETITIONS,
     glossaryConcepts: sportsTaxonomyGlossaryConcepts(),
+    scrapeWire: {
+      path: '/registry/scrape-wire-taxonomy.json',
+      authority: 'lib/operations/scrapers/scrape-wire-taxonomy.ts',
+      keys: ['scrape.sport', 'scrape.market', 'scrape.jurisdiction'],
+      sports: SPORT_KEYS.length,
+      states: 51,
+    },
   } as const;
 }

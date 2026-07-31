@@ -53,6 +53,11 @@ const STEPS: BakeStep[] = [
     note: 'domain-glossary.json',
   },
   {
+    id: 'scrape-wire',
+    cmd: ['bun', 'run', 'bake:scrape-wire-taxonomy'],
+    note: 'scrape-wire-taxonomy.json',
+  },
+  {
     id: 'packages',
     cmd: ['bun', 'run', 'audit:packages', '--', '--bake'],
     note: 'packages-graph-map.json',

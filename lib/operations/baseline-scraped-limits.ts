@@ -10,7 +10,7 @@
  */
 
 import { joinPath } from '../path-bun.ts';
-import { asStateCode, type StateCode } from '../types/branded.ts';
+import type { StateCode } from '../types/branded.ts';
 import { makeBaselineSource, type BaselineSourceRecord } from './baseline-source-tiers.ts';
 import type { LimitObservation } from './scrapers/limit-observation-wire.ts';
 import {
@@ -19,6 +19,11 @@ import {
   readLimitObservations,
   RAW_LIMITS_DIR_REL,
 } from './scrapers/raw-limits-store.ts';
+import {
+  SCRAPE_DEFAULT_JURISDICTION,
+  SCRAPE_FIXTURE_MARKET_KEYS,
+  SCRAPE_FIXTURE_SPORT_KEYS,
+} from './scrapers/scrape-wire-taxonomy.ts';
 // @see https://bun.com/docs/api/glob — Bun.Glob
 
 /** Companion bake: merged fixture + latest JSONL (not the CI-stable opening baseline). */
@@ -65,9 +70,6 @@ const SCRAPE_BOOK_ANCHORS: Record<string, number> = {
   circa: 2_000,
 };
 
-const SCRAPE_SPORTS = ['basketball', 'soccer'] as const;
-const SCRAPE_MARKETS = ['match_winner', 'over_under'] as const;
-
 function roundScrapedUsd(value: number): number {
   if (value < 25) return 25;
   if (value < 100) return Math.round(value / 5) * 5;
@@ -79,8 +81,8 @@ function roundScrapedUsd(value: number): number {
 export function expandScrapedLimitSeeds(): ScrapedLimitSeed[] {
   const seeds: ScrapedLimitSeed[] = [];
   for (const [bookId, anchor] of Object.entries(SCRAPE_BOOK_ANCHORS)) {
-    for (const sport of SCRAPE_SPORTS) {
-      for (const market of SCRAPE_MARKETS) {
+    for (const sport of SCRAPE_FIXTURE_SPORT_KEYS) {
+      for (const market of SCRAPE_FIXTURE_MARKET_KEYS) {
         for (const structure of ['straight', 'parlay'] as const) {
           for (const phase of ['pregame', 'live'] as const) {
             const sportMult = sport === 'basketball' ? 1 : 0.65;
@@ -94,7 +96,7 @@ export function expandScrapedLimitSeeds(): ScrapedLimitSeed[] {
               sportsbook: bookId,
               sport,
               market,
-              jurisdiction: asStateCode('NJ'),
+              jurisdiction: SCRAPE_DEFAULT_JURISDICTION,
               structure,
               phase,
               openingMaxUsd: max,

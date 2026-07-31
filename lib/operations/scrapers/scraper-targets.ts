@@ -8,7 +8,12 @@
  * @see docs/harness/tenants/partner-limits.md
  */
 
-import { asSportsbookId, asStateCode, type SportsbookId, type StateCode } from './domain.ts';
+import { asSportsbookId, type SportsbookId, type StateCode } from './domain.ts';
+import {
+  normalizeScrapeMarket,
+  normalizeScrapeSport,
+  SCRAPE_DEFAULT_JURISDICTION,
+} from './scrape-wire-taxonomy.ts';
 
 export type ScrapeTargetParsedRow = {
   sport: string;
@@ -63,9 +68,11 @@ export function parseGenericLimitsPayload(
   const rows: ScrapeTargetParsedRow[] = [];
   for (const item of limits) {
     if (!isRecord(item)) continue;
-    const sport = parseStringOrFallback(item.sport, '');
-    const market = parseStringOrFallback(item.market, '');
-    if (!sport || !market) continue;
+    const sportRaw = parseStringOrFallback(item.sport, '');
+    const marketRaw = parseStringOrFallback(item.market, '');
+    if (!sportRaw || !marketRaw) continue;
+    const sport = normalizeScrapeSport(sportRaw);
+    const market = normalizeScrapeMarket(marketRaw);
     const structureRaw = parseStringOrFallback(item.structure ?? item.betType, 'straight');
     const phaseRaw = parseStringOrFallback(item.phase, 'pregame');
     const structure = structureRaw === 'parlay' ? 'parlay' : 'straight';
@@ -94,15 +101,14 @@ export function parseGenericLimitsPayload(
   return rows;
 }
 
-const NJ = asStateCode('NJ');
-
 function target(sportsbook: SportsbookId, url: string): ScrapeTarget {
+  const jurisdiction = SCRAPE_DEFAULT_JURISDICTION;
   return {
     sportsbook,
-    jurisdiction: NJ,
+    jurisdiction,
     url,
-    fixtureKey: `${sportsbook}-nj`,
-    parser: data => parseGenericLimitsPayload(data, sportsbook, NJ),
+    fixtureKey: `${sportsbook}-${jurisdiction.toLowerCase()}`,
+    parser: data => parseGenericLimitsPayload(data, sportsbook, jurisdiction),
   };
 }
 

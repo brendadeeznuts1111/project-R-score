@@ -1,0 +1,1062 @@
+{
+  "kind": "scrape-wire-taxonomy",
+  "schemaVersion": 2,
+  "path": "/registry/scrape-wire-taxonomy.json",
+  "generatedAt": "2026-07-31T11:18:13.454Z",
+  "summary": {
+    "sports": 8,
+    "markets": 3,
+    "states": 51,
+    "fixtureJurisdictions": 3,
+    "sportAliases": 41,
+    "marketAliases": 13,
+    "stateAliases": 116,
+    "glossaryConcepts": 4
+  },
+  "sportRegistry": [
+    {
+      "key": "american_football",
+      "label": "American football",
+      "conceptId": "sport.american_football"
+    },
+    {
+      "key": "baseball",
+      "label": "Baseball",
+      "conceptId": "sport.baseball"
+    },
+    {
+      "key": "basketball",
+      "label": "Basketball",
+      "conceptId": "sport.basketball"
+    },
+    {
+      "key": "hockey",
+      "label": "Hockey",
+      "conceptId": "sport.hockey"
+    },
+    {
+      "key": "soccer",
+      "label": "Soccer",
+      "conceptId": "sport.soccer"
+    },
+    {
+      "key": "tennis",
+      "label": "Tennis",
+      "conceptId": "sport.tennis"
+    },
+    {
+      "key": "golf",
+      "label": "Golf",
+      "conceptId": "sport.golf"
+    },
+    {
+      "key": "mma",
+      "label": "MMA",
+      "conceptId": "sport.mma"
+    }
+  ],
+  "sports": [
+    "american_football",
+    "baseball",
+    "basketball",
+    "hockey",
+    "soccer",
+    "tennis",
+    "golf",
+    "mma"
+  ],
+  "markets": [
+    "match_winner",
+    "over_under",
+    "spread"
+  ],
+  "stateRegistry": [
+    {
+      "code": "AL",
+      "key": "AL",
+      "label": "Alabama",
+      "conceptId": "jurisdiction.AL",
+      "aliases": [
+        "al",
+        "alabama"
+      ]
+    },
+    {
+      "code": "AK",
+      "key": "AK",
+      "label": "Alaska",
+      "conceptId": "jurisdiction.AK",
+      "aliases": [
+        "ak",
+        "alaska"
+      ]
+    },
+    {
+      "code": "AZ",
+      "key": "AZ",
+      "label": "Arizona",
+      "conceptId": "jurisdiction.AZ",
+      "aliases": [
+        "az",
+        "arizona"
+      ]
+    },
+    {
+      "code": "AR",
+      "key": "AR",
+      "label": "Arkansas",
+      "conceptId": "jurisdiction.AR",
+      "aliases": [
+        "ar",
+        "arkansas"
+      ]
+    },
+    {
+      "code": "CA",
+      "key": "CA",
+      "label": "California",
+      "conceptId": "jurisdiction.CA",
+      "aliases": [
+        "ca",
+        "california"
+      ]
+    },
+    {
+      "code": "CO",
+      "key": "CO",
+      "label": "Colorado",
+      "conceptId": "jurisdiction.CO",
+      "aliases": [
+        "co",
+        "colorado"
+      ]
+    },
+    {
+      "code": "CT",
+      "key": "CT",
+      "label": "Connecticut",
+      "conceptId": "jurisdiction.CT",
+      "aliases": [
+        "ct",
+        "connecticut"
+      ]
+    },
+    {
+      "code": "DE",
+      "key": "DE",
+      "label": "Delaware",
+      "conceptId": "jurisdiction.DE",
+      "aliases": [
+        "de",
+        "delaware"
+      ]
+    },
+    {
+      "code": "DC",
+      "key": "DC",
+      "label": "District of Columbia",
+      "conceptId": "jurisdiction.DC",
+      "aliases": [
+        "dc",
+        "district_of_columbia",
+        "washington_dc",
+        "washington_d_c",
+        "washingtondc",
+        "district_columbia"
+      ]
+    },
+    {
+      "code": "FL",
+      "key": "FL",
+      "label": "Florida",
+      "conceptId": "jurisdiction.FL",
+      "aliases": [
+        "fl",
+        "florida"
+      ]
+    },
+    {
+      "code": "GA",
+      "key": "GA",
+      "label": "Georgia",
+      "conceptId": "jurisdiction.GA",
+      "aliases": [
+        "ga",
+        "georgia"
+      ]
+    },
+    {
+      "code": "HI",
+      "key": "HI",
+      "label": "Hawaii",
+      "conceptId": "jurisdiction.HI",
+      "aliases": [
+        "hi",
+        "hawaii"
+      ]
+    },
+    {
+      "code": "ID",
+      "key": "ID",
+      "label": "Idaho",
+      "conceptId": "jurisdiction.ID",
+      "aliases": [
+        "id",
+        "idaho"
+      ]
+    },
+    {
+      "code": "IL",
+      "key": "IL",
+      "label": "Illinois",
+      "conceptId": "jurisdiction.IL",
+      "aliases": [
+        "il",
+        "illinois"
+      ]
+    },
+    {
+      "code": "IN",
+      "key": "IN",
+      "label": "Indiana",
+      "conceptId": "jurisdiction.IN",
+      "aliases": [
+        "in",
+        "indiana"
+      ]
+    },
+    {
+      "code": "IA",
+      "key": "IA",
+      "label": "Iowa",
+      "conceptId": "jurisdiction.IA",
+      "aliases": [
+        "ia",
+        "iowa"
+      ]
+    },
+    {
+      "code": "KS",
+      "key": "KS",
+      "label": "Kansas",
+      "conceptId": "jurisdiction.KS",
+      "aliases": [
+        "ks",
+        "kansas"
+      ]
+    },
+    {
+      "code": "KY",
+      "key": "KY",
+      "label": "Kentucky",
+      "conceptId": "jurisdiction.KY",
+      "aliases": [
+        "ky",
+        "kentucky"
+      ]
+    },
+    {
+      "code": "LA",
+      "key": "LA",
+      "label": "Louisiana",
+      "conceptId": "jurisdiction.LA",
+      "aliases": [
+        "la",
+        "louisiana"
+      ]
+    },
+    {
+      "code": "ME",
+      "key": "ME",
+      "label": "Maine",
+      "conceptId": "jurisdiction.ME",
+      "aliases": [
+        "me",
+        "maine"
+      ]
+    },
+    {
+      "code": "MD",
+      "key": "MD",
+      "label": "Maryland",
+      "conceptId": "jurisdiction.MD",
+      "aliases": [
+        "md",
+        "maryland"
+      ]
+    },
+    {
+      "code": "MA",
+      "key": "MA",
+      "label": "Massachusetts",
+      "conceptId": "jurisdiction.MA",
+      "aliases": [
+        "ma",
+        "massachusetts"
+      ]
+    },
+    {
+      "code": "MI",
+      "key": "MI",
+      "label": "Michigan",
+      "conceptId": "jurisdiction.MI",
+      "aliases": [
+        "mi",
+        "michigan"
+      ]
+    },
+    {
+      "code": "MN",
+      "key": "MN",
+      "label": "Minnesota",
+      "conceptId": "jurisdiction.MN",
+      "aliases": [
+        "mn",
+        "minnesota"
+      ]
+    },
+    {
+      "code": "MS",
+      "key": "MS",
+      "label": "Mississippi",
+      "conceptId": "jurisdiction.MS",
+      "aliases": [
+        "ms",
+        "mississippi"
+      ]
+    },
+    {
+      "code": "MO",
+      "key": "MO",
+      "label": "Missouri",
+      "conceptId": "jurisdiction.MO",
+      "aliases": [
+        "mo",
+        "missouri"
+      ]
+    },
+    {
+      "code": "MT",
+      "key": "MT",
+      "label": "Montana",
+      "conceptId": "jurisdiction.MT",
+      "aliases": [
+        "mt",
+        "montana"
+      ]
+    },
+    {
+      "code": "NE",
+      "key": "NE",
+      "label": "Nebraska",
+      "conceptId": "jurisdiction.NE",
+      "aliases": [
+        "ne",
+        "nebraska"
+      ]
+    },
+    {
+      "code": "NV",
+      "key": "NV",
+      "label": "Nevada",
+      "conceptId": "jurisdiction.NV",
+      "aliases": [
+        "nv",
+        "nevada"
+      ]
+    },
+    {
+      "code": "NH",
+      "key": "NH",
+      "label": "New Hampshire",
+      "conceptId": "jurisdiction.NH",
+      "aliases": [
+        "nh",
+        "new_hampshire",
+        "newhampshire"
+      ]
+    },
+    {
+      "code": "NJ",
+      "key": "NJ",
+      "label": "New Jersey",
+      "conceptId": "jurisdiction.NJ",
+      "aliases": [
+        "nj",
+        "new_jersey",
+        "newjersey"
+      ]
+    },
+    {
+      "code": "NM",
+      "key": "NM",
+      "label": "New Mexico",
+      "conceptId": "jurisdiction.NM",
+      "aliases": [
+        "nm",
+        "new_mexico",
+        "newmexico"
+      ]
+    },
+    {
+      "code": "NY",
+      "key": "NY",
+      "label": "New York",
+      "conceptId": "jurisdiction.NY",
+      "aliases": [
+        "ny",
+        "new_york",
+        "newyork"
+      ]
+    },
+    {
+      "code": "NC",
+      "key": "NC",
+      "label": "North Carolina",
+      "conceptId": "jurisdiction.NC",
+      "aliases": [
+        "nc",
+        "north_carolina",
+        "northcarolina"
+      ]
+    },
+    {
+      "code": "ND",
+      "key": "ND",
+      "label": "North Dakota",
+      "conceptId": "jurisdiction.ND",
+      "aliases": [
+        "nd",
+        "north_dakota",
+        "northdakota"
+      ]
+    },
+    {
+      "code": "OH",
+      "key": "OH",
+      "label": "Ohio",
+      "conceptId": "jurisdiction.OH",
+      "aliases": [
+        "oh",
+        "ohio"
+      ]
+    },
+    {
+      "code": "OK",
+      "key": "OK",
+      "label": "Oklahoma",
+      "conceptId": "jurisdiction.OK",
+      "aliases": [
+        "ok",
+        "oklahoma"
+      ]
+    },
+    {
+      "code": "OR",
+      "key": "OR",
+      "label": "Oregon",
+      "conceptId": "jurisdiction.OR",
+      "aliases": [
+        "or",
+        "oregon"
+      ]
+    },
+    {
+      "code": "PA",
+      "key": "PA",
+      "label": "Pennsylvania",
+      "conceptId": "jurisdiction.PA",
+      "aliases": [
+        "pa",
+        "pennsylvania"
+      ]
+    },
+    {
+      "code": "RI",
+      "key": "RI",
+      "label": "Rhode Island",
+      "conceptId": "jurisdiction.RI",
+      "aliases": [
+        "ri",
+        "rhode_island",
+        "rhodeisland"
+      ]
+    },
+    {
+      "code": "SC",
+      "key": "SC",
+      "label": "South Carolina",
+      "conceptId": "jurisdiction.SC",
+      "aliases": [
+        "sc",
+        "south_carolina",
+        "southcarolina"
+      ]
+    },
+    {
+      "code": "SD",
+      "key": "SD",
+      "label": "South Dakota",
+      "conceptId": "jurisdiction.SD",
+      "aliases": [
+        "sd",
+        "south_dakota",
+        "southdakota"
+      ]
+    },
+    {
+      "code": "TN",
+      "key": "TN",
+      "label": "Tennessee",
+      "conceptId": "jurisdiction.TN",
+      "aliases": [
+        "tn",
+        "tennessee"
+      ]
+    },
+    {
+      "code": "TX",
+      "key": "TX",
+      "label": "Texas",
+      "conceptId": "jurisdiction.TX",
+      "aliases": [
+        "tx",
+        "texas"
+      ]
+    },
+    {
+      "code": "UT",
+      "key": "UT",
+      "label": "Utah",
+      "conceptId": "jurisdiction.UT",
+      "aliases": [
+        "ut",
+        "utah"
+      ]
+    },
+    {
+      "code": "VT",
+      "key": "VT",
+      "label": "Vermont",
+      "conceptId": "jurisdiction.VT",
+      "aliases": [
+        "vt",
+        "vermont"
+      ]
+    },
+    {
+      "code": "VA",
+      "key": "VA",
+      "label": "Virginia",
+      "conceptId": "jurisdiction.VA",
+      "aliases": [
+        "va",
+        "virginia"
+      ]
+    },
+    {
+      "code": "WA",
+      "key": "WA",
+      "label": "Washington",
+      "conceptId": "jurisdiction.WA",
+      "aliases": [
+        "wa",
+        "washington"
+      ]
+    },
+    {
+      "code": "WV",
+      "key": "WV",
+      "label": "West Virginia",
+      "conceptId": "jurisdiction.WV",
+      "aliases": [
+        "wv",
+        "west_virginia",
+        "westvirginia"
+      ]
+    },
+    {
+      "code": "WI",
+      "key": "WI",
+      "label": "Wisconsin",
+      "conceptId": "jurisdiction.WI",
+      "aliases": [
+        "wi",
+        "wisconsin"
+      ]
+    },
+    {
+      "code": "WY",
+      "key": "WY",
+      "label": "Wyoming",
+      "conceptId": "jurisdiction.WY",
+      "aliases": [
+        "wy",
+        "wyoming"
+      ]
+    }
+  ],
+  "states": [
+    "AL",
+    "AK",
+    "AZ",
+    "AR",
+    "CA",
+    "CO",
+    "CT",
+    "DE",
+    "DC",
+    "FL",
+    "GA",
+    "HI",
+    "ID",
+    "IL",
+    "IN",
+    "IA",
+    "KS",
+    "KY",
+    "LA",
+    "ME",
+    "MD",
+    "MA",
+    "MI",
+    "MN",
+    "MS",
+    "MO",
+    "MT",
+    "NE",
+    "NV",
+    "NH",
+    "NJ",
+    "NM",
+    "NY",
+    "NC",
+    "ND",
+    "OH",
+    "OK",
+    "OR",
+    "PA",
+    "RI",
+    "SC",
+    "SD",
+    "TN",
+    "TX",
+    "UT",
+    "VT",
+    "VA",
+    "WA",
+    "WV",
+    "WI",
+    "WY"
+  ],
+  "jurisdictions": [
+    "AL",
+    "AK",
+    "AZ",
+    "AR",
+    "CA",
+    "CO",
+    "CT",
+    "DE",
+    "DC",
+    "FL",
+    "GA",
+    "HI",
+    "ID",
+    "IL",
+    "IN",
+    "IA",
+    "KS",
+    "KY",
+    "LA",
+    "ME",
+    "MD",
+    "MA",
+    "MI",
+    "MN",
+    "MS",
+    "MO",
+    "MT",
+    "NE",
+    "NV",
+    "NH",
+    "NJ",
+    "NM",
+    "NY",
+    "NC",
+    "ND",
+    "OH",
+    "OK",
+    "OR",
+    "PA",
+    "RI",
+    "SC",
+    "SD",
+    "TN",
+    "TX",
+    "UT",
+    "VT",
+    "VA",
+    "WA",
+    "WV",
+    "WI",
+    "WY"
+  ],
+  "fixtureJurisdictions": [
+    "NJ",
+    "CO",
+    "MA"
+  ],
+  "fixtureSports": [
+    "basketball",
+    "soccer"
+  ],
+  "fixtureMarkets": [
+    "match_winner",
+    "over_under"
+  ],
+  "defaultJurisdiction": "NJ",
+  "sportAliases": {
+    "american_football": "american_football",
+    "baseball": "baseball",
+    "basketball": "basketball",
+    "hockey": "hockey",
+    "soccer": "soccer",
+    "tennis": "tennis",
+    "golf": "golf",
+    "mma": "mma",
+    "nba": "basketball",
+    "wnba": "basketball",
+    "ncaab": "basketball",
+    "cbb": "basketball",
+    "college_basketball": "basketball",
+    "nfl": "american_football",
+    "ncaaf": "american_football",
+    "college_football": "american_football",
+    "americanfootball": "american_football",
+    "us_football": "american_football",
+    "gridiron": "american_football",
+    "mlb": "baseball",
+    "nhl": "hockey",
+    "icehockey": "hockey",
+    "ice_hockey": "hockey",
+    "epl": "soccer",
+    "mls": "soccer",
+    "ucl": "soccer",
+    "uefa_champions_league": "soccer",
+    "champions_league": "soccer",
+    "football": "soccer",
+    "association_football": "soccer",
+    "atp": "tennis",
+    "wta": "tennis",
+    "itf": "tennis",
+    "atp_challenger": "tennis",
+    "tabletennis": "tennis",
+    "table_tennis": "tennis",
+    "pga": "golf",
+    "pga_tour": "golf",
+    "dp_world_tour": "golf",
+    "ufc": "mma",
+    "bellator": "mma"
+  },
+  "marketAliases": {
+    "match_winner": "match_winner",
+    "moneyline": "match_winner",
+    "ml": "match_winner",
+    "h2h": "match_winner",
+    "winner": "match_winner",
+    "over_under": "over_under",
+    "totals": "over_under",
+    "total": "over_under",
+    "ou": "over_under",
+    "spread": "spread",
+    "point_spread": "spread",
+    "handicap": "spread",
+    "asian_handicap": "spread"
+  },
+  "stateAliases": {
+    "al": "AL",
+    "alabama": "AL",
+    "ak": "AK",
+    "alaska": "AK",
+    "az": "AZ",
+    "arizona": "AZ",
+    "ar": "AR",
+    "arkansas": "AR",
+    "ca": "CA",
+    "california": "CA",
+    "co": "CO",
+    "colorado": "CO",
+    "ct": "CT",
+    "connecticut": "CT",
+    "de": "DE",
+    "delaware": "DE",
+    "dc": "DC",
+    "district_of_columbia": "DC",
+    "washington_dc": "DC",
+    "washington_d_c": "DC",
+    "washingtondc": "DC",
+    "district_columbia": "DC",
+    "fl": "FL",
+    "florida": "FL",
+    "ga": "GA",
+    "georgia": "GA",
+    "hi": "HI",
+    "hawaii": "HI",
+    "id": "ID",
+    "idaho": "ID",
+    "il": "IL",
+    "illinois": "IL",
+    "in": "IN",
+    "indiana": "IN",
+    "ia": "IA",
+    "iowa": "IA",
+    "ks": "KS",
+    "kansas": "KS",
+    "ky": "KY",
+    "kentucky": "KY",
+    "la": "LA",
+    "louisiana": "LA",
+    "me": "ME",
+    "maine": "ME",
+    "md": "MD",
+    "maryland": "MD",
+    "ma": "MA",
+    "massachusetts": "MA",
+    "mi": "MI",
+    "michigan": "MI",
+    "mn": "MN",
+    "minnesota": "MN",
+    "ms": "MS",
+    "mississippi": "MS",
+    "mo": "MO",
+    "missouri": "MO",
+    "mt": "MT",
+    "montana": "MT",
+    "ne": "NE",
+    "nebraska": "NE",
+    "nv": "NV",
+    "nevada": "NV",
+    "nh": "NH",
+    "new_hampshire": "NH",
+    "newhampshire": "NH",
+    "nj": "NJ",
+    "new_jersey": "NJ",
+    "newjersey": "NJ",
+    "nm": "NM",
+    "new_mexico": "NM",
+    "newmexico": "NM",
+    "ny": "NY",
+    "new_york": "NY",
+    "newyork": "NY",
+    "nc": "NC",
+    "north_carolina": "NC",
+    "northcarolina": "NC",
+    "nd": "ND",
+    "north_dakota": "ND",
+    "northdakota": "ND",
+    "oh": "OH",
+    "ohio": "OH",
+    "ok": "OK",
+    "oklahoma": "OK",
+    "or": "OR",
+    "oregon": "OR",
+    "pa": "PA",
+    "pennsylvania": "PA",
+    "ri": "RI",
+    "rhode_island": "RI",
+    "rhodeisland": "RI",
+    "sc": "SC",
+    "south_carolina": "SC",
+    "southcarolina": "SC",
+    "sd": "SD",
+    "south_dakota": "SD",
+    "southdakota": "SD",
+    "tn": "TN",
+    "tennessee": "TN",
+    "tx": "TX",
+    "texas": "TX",
+    "ut": "UT",
+    "utah": "UT",
+    "vt": "VT",
+    "vermont": "VT",
+    "va": "VA",
+    "virginia": "VA",
+    "wa": "WA",
+    "washington": "WA",
+    "wv": "WV",
+    "west_virginia": "WV",
+    "westvirginia": "WV",
+    "wi": "WI",
+    "wisconsin": "WI",
+    "wy": "WY",
+    "wyoming": "WY"
+  },
+  "glossaryConcepts": [
+    {
+      "id": "scrape.wire",
+      "label": "Scrape wire taxonomy",
+      "description": "Canonical state, sport, and market keys that all Tier 4 sportsbook agents normalize vendor wire onto before LimitObservation write.",
+      "category": "warehouse",
+      "kind": "evidence",
+      "synonyms": [
+        "scrape taxonomy",
+        "tier-4 wire",
+        "limit observation keys"
+      ],
+      "values": null,
+      "seeAlso": [
+        "scrape.sport",
+        "scrape.market",
+        "scrape.jurisdiction",
+        "sport",
+        "market.point_spread"
+      ],
+      "status": "active",
+      "source": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
+      "semanticType": "classification",
+      "uiRole": "chip"
+    },
+    {
+      "id": "scrape.sport",
+      "label": "Scrape sport key",
+      "description": "Full sport registry on the scrape wire (competition-catalog SPORT_KEYS). League aliases (nba, nfl, ufc, …) map here before JSONL append.",
+      "category": "tournament",
+      "kind": "sport",
+      "synonyms": [
+        "sport_id",
+        "sportKey",
+        "vendor sport"
+      ],
+      "values": [
+        "american_football",
+        "baseball",
+        "basketball",
+        "hockey",
+        "soccer",
+        "tennis",
+        "golf",
+        "mma"
+      ],
+      "seeAlso": [
+        "sport",
+        "sport.basketball",
+        "sport.soccer",
+        "sport.american_football",
+        "sport.baseball",
+        "sport.hockey",
+        "sport.tennis",
+        "sport.golf",
+        "sport.mma"
+      ],
+      "status": "active",
+      "source": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
+      "semanticType": "classification",
+      "uiRole": "code"
+    },
+    {
+      "id": "scrape.market",
+      "label": "Scrape market key",
+      "description": "Canonical market slug on the scrape wire (match_winner, over_under, spread). point_spread and moneyline aliases normalize here.",
+      "category": "market",
+      "kind": "market",
+      "synonyms": [
+        "market_id",
+        "marketKey",
+        "marketType"
+      ],
+      "values": [
+        "match_winner",
+        "over_under",
+        "spread"
+      ],
+      "seeAlso": [
+        "market.match_winner",
+        "market.over_under",
+        "market.spread",
+        "market.point_spread",
+        "scrape.wire"
+      ],
+      "status": "active",
+      "source": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
+      "semanticType": "classification",
+      "uiRole": "code"
+    },
+    {
+      "id": "scrape.jurisdiction",
+      "label": "Scrape jurisdiction",
+      "description": "Full US state + DC registry on the scrape wire (StateCode brand). Vendor location segments (nj, colorado, washington_dc) normalize here.",
+      "category": "trading",
+      "kind": "jurisdiction",
+      "synonyms": [
+        "state",
+        "location",
+        "region code",
+        "StateCode",
+        "US states"
+      ],
+      "values": [
+        "AL",
+        "AK",
+        "AZ",
+        "AR",
+        "CA",
+        "CO",
+        "CT",
+        "DE",
+        "DC",
+        "FL",
+        "GA",
+        "HI",
+        "ID",
+        "IL",
+        "IN",
+        "IA",
+        "KS",
+        "KY",
+        "LA",
+        "ME",
+        "MD",
+        "MA",
+        "MI",
+        "MN",
+        "MS",
+        "MO",
+        "MT",
+        "NE",
+        "NV",
+        "NH",
+        "NJ",
+        "NM",
+        "NY",
+        "NC",
+        "ND",
+        "OH",
+        "OK",
+        "OR",
+        "PA",
+        "RI",
+        "SC",
+        "SD",
+        "TN",
+        "TX",
+        "UT",
+        "VT",
+        "VA",
+        "WA",
+        "WV",
+        "WI",
+        "WY"
+      ],
+      "seeAlso": [
+        "jurisdiction.NJ",
+        "jurisdiction.MA",
+        "scrape.wire"
+      ],
+      "status": "active",
+      "source": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
+      "semanticType": "classification",
+      "uiRole": "badge"
+    }
+  ]
+}
