@@ -22,7 +22,6 @@ import {
   pickApiCell,
   pickProtocol,
   stripMdCell,
-  type CapabilityMapRow,
 } from '../lib/portal/capability-map-subset.ts';
 
 const SAMPLE = `
@@ -66,28 +65,6 @@ describe('capability-map-subset parse', () => {
     expect(normalizeSemver('1.4')).toBe('1.4.0');
   });
 
-  test('pickApiCell prefers Bun API over dash Proton', () => {
-    expect(pickApiCell('bun pm pack', '—')).toBe('bun pm pack');
-    expect(pickApiCell('—', 'pass-cli inject -i')).toBe('pass-cli inject -i');
-  });
-
-  test('assertApiIntegrity accepts derived api and rejects drift', () => {
-    const ok: CapabilityMapRow = {
-      id: 'pack',
-      capability: 'Pack',
-      api: 'bun pm pack',
-      status: 'Implemented',
-      usedIn: 'x',
-      type: 'pkg',
-      version: 'Bun ≥1.0',
-      protocol: 'Bun',
-      bunApi: 'bun pm pack',
-      protonCli: '—',
-    };
-    expect(() => assertApiIntegrity(ok)).not.toThrow();
-    expect(() => assertApiIntegrity({ ...ok, api: 'wrong' })).toThrow(/api integrity/);
-  });
-
   test('pickProtocol classifies Bun vs pass-cli', () => {
     expect(pickProtocol('bun pm pack', '—')).toBe('Bun');
     expect(pickProtocol('—', 'pass-cli inject -i')).toBe('pass-cli');
@@ -95,37 +72,75 @@ describe('capability-map-subset parse', () => {
     expect(pickProtocol('—', '—')).toBe('—');
   });
 
-  test('parseCapabilityTableFromMarkdown extracts rows with type/protocol/api/source/min', () => {
+  test('pickApiCell preserves the legacy display contract', () => {
+    expect(pickApiCell('bun pm pack', null)).toBe('bun pm pack');
+    expect(pickApiCell(null, 'pass-cli inject -i')).toBe('pass-cli inject -i');
+    expect(pickApiCell(null, null)).toBe('—');
+  });
+
+  test('parseCapabilityTableFromMarkdown extracts rows with type/protocol/version/source/min (v4)', () => {
     const rows = parseCapabilityTableFromMarkdown(SAMPLE);
     expect(rows.length).toBe(4);
     expect(rows[0]?.capability).toBe('Vault inject');
     expect(rows[0]?.id).toBe('vault-inject');
-    expect(rows[0]?.api).toContain('pass-cli inject');
+    expect(rows[0]?.bunApi).toBeNull();
+    expect(rows[0]?.protonCli).toContain('pass-cli inject');
     expect(rows[0]?.type).toBe('secrets');
     expect(rows[0]?.protocol).toBe('pass-cli');
-    expect(rows[0]?.version).toContain('pass');
+    expect(rows[0]?.api).toContain('pass-cli inject');
+    expect(rows[0]?.version).toBe('pass‑cli ≥2.2');
+    expect(rows[0]?.versionRange).toEqual({
+      bun: null,
+      passCli: { min: '2.2.0', max: null },
+    });
     expect(rows[0]?.minPassCli).toBe('2.2.0');
     expect(rows[0]?.source).toBe('https://example.com/pass');
     expect(rows[0]?.status).toBe('Implemented');
-    expect(rows[1]?.api).toContain('bun pm pack');
+    expect(rows[0]?.example).toBe('x');
+    expect(rows[0]?.sourceAnchor).toBe('#grounded-capability-map');
+    expect(rows[0]?.category).toBe('Secrets');
+    expect(rows[1]?.bunApi).toContain('bun pm pack');
     expect(rows[1]?.type).toBe('pkg');
     expect(rows[1]?.protocol).toBe('Bun');
+    expect(rows[1]?.version).toBe('Bun ≥1.0');
+    expect(rows[1]?.versionRange).toEqual({
+      bun: { min: '1.0.0', max: null },
+      passCli: null,
+    });
     expect(rows[1]?.minBun).toBe('1.0.0');
     expect(rows[2]?.status).toBe('Available');
+    expect(rows[2]?.versionRange).toEqual({
+      bun: { min: '1.0.0', max: null },
+      passCli: null,
+    });
     expect(rows[3]?.protocol).toBe('Bun + pass-cli');
     expect(rows[3]?.minBun).toBe('1.4.0');
     expect(rows[3]?.minPassCli).toBe('2.2.0');
     expect(rows[3]?.source).toBeUndefined(); // (custom)
-    expect(rows[3]?.api).toBe('Bun.spawn'); // Bun wins
+    expect(rows[3]?.versionRange).toEqual({
+      bun: { min: '1.4.0', max: null },
+      passCli: { min: '2.2.0', max: null },
+    });
+    expect(rows[3]?.category).toBe('Secrets');
   });
 
-  test('buildCapabilityMapSubset sets kind, summary, schema v3', () => {
+  test('buildCapabilityMapSubset sets kind, summary, schema v4', () => {
     const p = buildCapabilityMapSubset(SAMPLE, '2026-07-28T00:00:00.000Z');
     expect(p.kind).toBe('capability-map-subset');
-    expect(p.schemaVersion).toBe(3);
+    expect(p.schemaVersion).toBe(4);
     expect(p.rowCount).toBe(4);
     expect(p.rows).toHaveLength(4);
-    expect(p.rows.every(r => r.id && r.type && r.protocol && r.api)).toBe(true);
+    expect(p.rows.every(r => r.id && r.protocol && r.type !== undefined)).toBe(true);
+    expect(p.rows.every(r => typeof r.api === 'string' && typeof r.version === 'string')).toBe(
+      true
+    );
+    expect(
+      p.rows.every(
+        r => r.versionRange?.bun?.max == null && r.versionRange?.passCli?.max == null
+      )
+    ).toBe(true);
+    expect(() => p.rows.forEach(assertApiIntegrity)).not.toThrow();
+    expect(p.rows.some(r => r.example !== undefined)).toBe(true);
     expect(p.fingerprint).toMatch(/^[a-f0-9]{64}$/);
     expect(p.summary.protocolCounts['Bun']).toBe(2);
     expect(p.summary.protocolCounts['pass-cli']).toBe(1);
@@ -134,10 +149,10 @@ describe('capability-map-subset parse', () => {
     expect(capabilityMapSubsetFingerprint(p)).not.toContain('2026-07-28');
   });
 
-  test('buildCapabilityMapFull includes example + sourceLabel', () => {
+  test('buildCapabilityMapFull includes sourceLabel + v4 fields', () => {
     const f = buildCapabilityMapFull(SAMPLE, '2026-07-28T00:00:00.000Z');
     expect(f.kind).toBe('capability-map-full');
-    expect(f.schemaVersion).toBe(1);
+    expect(f.schemaVersion).toBe(2);
     expect(f.rowCount).toBe(4);
     expect(f.rows[0]?.example).toBe('x');
     expect(f.rows[0]?.sourceLabel).toBe('docs');
@@ -172,10 +187,8 @@ describe('capability-map-subset parse', () => {
     }
     expect(rows.filter(row => row.capability === 'Debugger')).toHaveLength(1);
     expect(rows.some(row => row.capability === 'Runtime inspect')).toBe(false);
-    // no invented item get
     expect(rows.every(r => !/\bitem get\b/i.test(r.api))).toBe(true);
-    // every row passes api integrity
-    for (const r of rows) assertApiIntegrity(r);
+    for (const row of rows) assertApiIntegrity(row);
     // most Bun rows have minBun
     expect(rows.filter(r => r.protocol === 'Bun' && r.minBun).length).toBeGreaterThan(30);
     // source URLs present for Bun docs rows
@@ -198,7 +211,7 @@ describe('capability-map-subset parse', () => {
     }
     expect(capabilityMapsDeepEqual(baked, baked)).toBe(true);
     expect(capabilityMapSubsetFingerprint(baked)).toBe(capabilityMapSubsetFingerprint(built));
-    expect(baked.schemaVersion).toBe(3);
+    expect(baked.schemaVersion).toBe(4);
     expect(baked.summary).toBeDefined();
     expect(baked.summary.protocolCounts).toBeDefined();
     // Drift gate: stable shape without generatedAt

@@ -10,8 +10,8 @@
  * Compact bake: public/registry/capability-map-subset.json
  * Full bake (debug / portal docs): public/registry/capability-map-full.json
  *
- * Empty cells use the display sentinel `"—"` (not null). Consumers that want
- * null can map: `v === '—' ? null : v`.
+ * Required display fields retain the `"—"` sentinel for compatibility.
+ * Optional v4 fields use null so JSON consumers do not need to parse display text.
  *
  *   bun run bake:capabilities
  *   bun run bake:capabilities:check
@@ -20,48 +20,61 @@
 
 export const CAPABILITY_MAP_SUBSET_KIND = 'capability-map-subset' as const;
 export const CAPABILITY_MAP_FULL_KIND = 'capability-map-full' as const;
-/** v3: minBun/minPassCli · optional row source · root summary · api integrity. */
-export const CAPABILITY_MAP_SUBSET_SCHEMA = 3 as const;
-export const CAPABILITY_MAP_FULL_SCHEMA = 1 as const;
+/** v4: additive structured range, nullable raw APIs, example, source anchor, and category. */
+export const CAPABILITY_MAP_SUBSET_SCHEMA = 4 as const;
+export const CAPABILITY_MAP_FULL_SCHEMA = 2 as const;
 export const CAPABILITY_MAP_SUBSET_REL = 'public/registry/capability-map-subset.json';
 export const CAPABILITY_MAP_FULL_REL = 'public/registry/capability-map-full.json';
 export const CAPABILITY_MAP_SOURCE = 'AGENTS.md#grounded-capability-map';
 
-/** Display sentinel for empty table cells (UI + machine consumers). */
+/** Stable sentinel used by required display fields and legacy consumers. */
 export const CAPABILITY_EMPTY_CELL = '—' as const;
 
 /** Runtime surface: Bun APIs vs Proton Pass CLI vs both. */
 export type CapabilityProtocol = 'Bun' | 'pass-cli' | 'Bun + pass-cli' | '—';
 
+export type CapabilityVersionRange = {
+  bun: { min: string | null; max: string | null } | null;
+  passCli: { min: string | null; max: string | null } | null;
+};
+
 /**
- * Compact tools-hub row.
- * Empty optional cells use `"—"` when present as display fields;
- * `minBun` / `minPassCli` / `source` are omitted when unknown.
+ * Compact tools-hub row (v4).
+ * The display-oriented `api` and `version` fields remain stable for existing
+ * portal consumers. Structured and nullable fields are additive in v4.
  */
 export type CapabilityMapRow = {
   /** Stable slug derived from `capability` — anchors, cross-refs, drift diffs. */
   id: string; // brand-ok — capability row slug (not domain *Id)
   capability: string;
-  /** Primary call signature (Bun preferred when both present). Integrity-checked at bake. */
+  /** Primary display signature; Bun wins when both protocol cells are populated. */
   api: string;
   status: string;
   usedIn: string;
-  /** Domain class from AGENTS table (config · secrets · runtime · pkg · …). Empty → `"—"`. */
-  type: string;
-  /** Human-readable version constraint (e.g. Bun ≥1.0 · pass‑cli ≥2.2). Empty → `"—"`. */
+  /** Domain class from AGENTS table (config · secrets · runtime · pkg · …). Empty → null. */
+  type: string | null;
+  /** Source table display constraint retained for portal compatibility. */
   version: string;
+  /** Structured version constraint for machine consumers. */
+  versionRange: CapabilityVersionRange | null;
   /** Which protocol family the API belongs to. */
   protocol: CapabilityProtocol;
-  /** Raw Bun API cell (may be —). */
-  bunApi?: string;
-  /** Raw Proton CLI cell (may be —). */
-  protonCli?: string;
+  /** Raw Bun API cell (may be null). */
+  bunApi: string | null;
+  /** Raw Proton CLI cell (may be null). */
+  protonCli: string | null;
   /** Minimum Bun version when extractable from `version` (e.g. `"1.4.0"`). */
   minBun?: string;
   /** Minimum pass-cli version when extractable (e.g. `"2.2.0"`). */
   minPassCli?: string;
   /** Canonical Bun/Proton doc URL when Source column has an http(s) link. */
   source?: string;
+  /** Valid AGENTS.md section anchor containing the source row. */
+  sourceAnchor: string;
+  /** Example code snippet from AGENTS.md. Null when absent. */
+  example: string | null;
+  /** Functional category for grouping (e.g. "Secrets", "Runtime", "Config"). Derived from type. */
+  category: string | null;
 };
 
 export type CapabilityMapSummary = {
@@ -82,12 +95,10 @@ export type CapabilityMapSubset = {
   rows: CapabilityMapRow[];
 };
 
-/** Full matrix row — subset fields + example + source label. */
+/** Full matrix row — v4 subset fields plus the markdown source label. */
 export type CapabilityMapFullRow = CapabilityMapRow & {
   /** Source link label (e.g. "Bun TOML loader") when markdown link present. */
   sourceLabel?: string;
-  /** Example snippet cell from AGENTS.md. Empty → `"—"`. */
-  example: string;
 };
 
 export type CapabilityMapFull = {
@@ -117,9 +128,9 @@ export function stripMdCell(raw: string): string {
  * Extract first markdown link URL or bare http(s) URL from a cell.
  * Returns undefined for "same", custom paths, or empty cells.
  */
-export function extractMdLinkUrl(raw: string): string | undefined {
+export function extractMdLinkUrl(raw: string | null | undefined): string | undefined {
+  if (!raw || isDash(raw)) return undefined;
   const s = raw.trim();
-  if (!s || isDash(s)) return undefined;
   const md = s.match(/\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/i);
   if (md?.[2]) return md[2];
   const bare = s.match(/^(https?:\/\/\S+)$/i);
@@ -136,7 +147,8 @@ export function extractMdLinkLabel(raw: string): string | undefined {
   return undefined;
 }
 
-function isDash(s: string): boolean {
+function isDash(s: string | null | undefined): boolean {
+  if (s == null) return true;
   const t = s.trim();
   return !t || t === '—' || t === '-' || t === '–' || t === '—';
 }
@@ -183,30 +195,26 @@ export function parseVersionConstraints(versionCell: string): {
   return out;
 }
 
-/**
- * Prefer Bun API when present; else Proton CLI; never invent values.
- */
-export function pickApiCell(bunApi: string, protonCli: string): string {
-  const bun = stripMdCell(bunApi);
-  let proton = stripMdCell(protonCli);
-  // Drop parenthetical "not item get" clarifiers from AGENTS table cells
-  proton = proton.replace(/\s*\(not\s+[^)]+\)/gi, '').trim();
+/** Prefer Bun API when present; else Proton CLI; never invent values. */
+export function pickApiCell(
+  bunApi: string | null | undefined,
+  protonCli: string | null | undefined
+): string {
+  const bun = stripMdCell(bunApi ?? CAPABILITY_EMPTY_CELL);
+  const proton = stripMdCell(protonCli ?? CAPABILITY_EMPTY_CELL)
+    .replace(/\s*\(not\s+[^)]+\)/gi, '')
+    .trim();
   if (!isDash(bun)) return bun;
   if (!isDash(proton)) return proton;
-  return bun || proton || CAPABILITY_EMPTY_CELL;
+  return CAPABILITY_EMPTY_CELL;
 }
 
-/**
- * Assert `api` matches the Bun-wins derivation rule. Bake fails on drift.
- */
+/** Enforce the compatibility `api` derivation at the bake boundary. */
 export function assertApiIntegrity(row: CapabilityMapRow): void {
-  const expected = pickApiCell(
-    row.bunApi ?? CAPABILITY_EMPTY_CELL,
-    row.protonCli ?? CAPABILITY_EMPTY_CELL
-  );
+  const expected = pickApiCell(row.bunApi, row.protonCli);
   if (row.api !== expected) {
     throw new Error(
-      `capability api integrity failed for "${row.capability}": api=${JSON.stringify(row.api)} expected=${JSON.stringify(expected)} (Bun wins when both non-dash)`
+      `capability api integrity failed for "${row.capability}": api=${JSON.stringify(row.api)} expected=${JSON.stringify(expected)}`
     );
   }
 }
@@ -224,6 +232,37 @@ export function pickProtocol(bunApi: string, protonCli: string): CapabilityProto
   if (hasBun) return 'Bun';
   if (hasProton) return 'pass-cli';
   return CAPABILITY_EMPTY_CELL;
+}
+
+const CATEGORY_BY_TYPE: Readonly<Record<string, string>> = {
+  audit: 'Governance',
+  cli: 'Package',
+  compress: 'Runtime',
+  config: 'Configuration',
+  debug: 'Runtime',
+  deps: 'Package',
+  dev: 'Developer',
+  display: 'Runtime',
+  env: 'Configuration',
+  image: 'Runtime',
+  infra: 'Governance',
+  integrity: 'Package',
+  io: 'Runtime',
+  network: 'Runtime',
+  output: 'Runtime',
+  perf: 'Runtime',
+  pkg: 'Package',
+  runtime: 'Runtime',
+  secrets: 'Secrets',
+  security: 'Governance',
+  ssh: 'Secrets',
+  test: 'Developer',
+  ui: 'Developer',
+};
+
+function capabilityCategory(type: string): string | null {
+  if (!type || isDash(type)) return null;
+  return CATEGORY_BY_TYPE[type.toLowerCase()] ?? 'Other';
 }
 
 export function buildCapabilitySummary(rows: CapabilityMapRow[]): CapabilityMapSummary {
@@ -321,26 +360,38 @@ export function parseCapabilityTableDetailed(md: string): ParsedTableRow[] {
     const sourceUrl = extractMdLinkUrl(sourceRaw);
     const sourceLabel = extractMdLinkLabel(sourceRaw);
     const exampleRaw = iExample >= 0 ? (parts[iExample] ?? '') : '';
-    const example = stripMdCell(exampleRaw) || CAPABILITY_EMPTY_CELL;
+    const example = isDash(exampleRaw) ? null : stripMdCell(exampleRaw);
     const { minBun, minPassCli } = parseVersionConstraints(version);
 
-    const api = pickApiCell(bunApiRaw, protonRaw);
+    const versionRange: CapabilityVersionRange | null =
+      minBun || minPassCli
+        ? {
+            bun: minBun ? { min: minBun, max: null } : null,
+            passCli: minPassCli ? { min: minPassCli, max: null } : null,
+          }
+        : null;
+
+    const capSlug = slugifyCapability(capability);
+
     const subset: CapabilityMapRow = {
-      id: slugifyCapability(capability),
+      id: capSlug,
       capability,
-      api,
+      api: pickApiCell(bunApiRaw, protonRaw),
       status,
       usedIn,
-      type: type || CAPABILITY_EMPTY_CELL,
+      type: type || null,
       version: version || CAPABILITY_EMPTY_CELL,
+      versionRange,
       protocol: pickProtocol(bunApiRaw, protonRaw),
-      bunApi: isDash(bunApi) ? CAPABILITY_EMPTY_CELL : bunApi,
-      protonCli: isDash(protonCli) ? CAPABILITY_EMPTY_CELL : protonCli,
+      bunApi: isDash(bunApi) ? null : bunApi,
+      protonCli: isDash(protonCli) ? null : protonCli,
+      example: example ?? null,
+      sourceAnchor: '#grounded-capability-map',
+      category: capabilityCategory(type),
     };
     if (minBun) subset.minBun = minBun;
     if (minPassCli) subset.minPassCli = minPassCli;
     if (sourceUrl) subset.source = sourceUrl;
-
     assertApiIntegrity(subset);
 
     const full: CapabilityMapFullRow = {
@@ -392,7 +443,7 @@ export function buildCapabilityMapSubset(
     kind: CAPABILITY_MAP_SUBSET_KIND,
     schemaVersion: CAPABILITY_MAP_SUBSET_SCHEMA,
     source: CAPABILITY_MAP_SOURCE,
-    note: 'Compact portal tools-hub rows (id · type · protocol · api · version · minBun/minPassCli · optional source). Empty cells are "—". Full matrix: AGENTS.md or capability-map-full.json. Generated by bake:capabilities. No secret values.',
+    note: 'Compact portal tools-hub rows (v4: compatible api/version display fields + nullable bunApi/protonCli · protocol-scoped versionRange · minBun/minPassCli · category · example · sourceAnchor). Full matrix: AGENTS.md or capability-map-full.json. Generated by bake:capabilities. No secret values.',
     generatedAt,
     rowCount: rows.length,
     summary: buildCapabilitySummary(rows),
@@ -412,7 +463,7 @@ export function buildCapabilityMapFull(
     kind: CAPABILITY_MAP_FULL_KIND,
     schemaVersion: CAPABILITY_MAP_FULL_SCHEMA,
     source: CAPABILITY_MAP_SOURCE,
-    note: 'Full grounded capability matrix (subset columns + sourceLabel + example). Empty cells are "—". Generated by bake:capabilities. No secret values.',
+    note: 'Full grounded capability matrix (v2: additive v4 subset columns + sourceLabel). Generated by bake:capabilities. No secret values.',
     generatedAt,
     rowCount: rows.length,
     summary: buildCapabilitySummary(rows),
