@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
@@ -96,7 +97,8 @@ async function main(): Promise<void> {
   }
 
   console.log('\n---JSON---');
-  console.log(JSON.stringify(proof));
+  // console-ok — machine-output section; %j is the Bun-native single-line JSON print
+  console.log('%j', proof);
 
   if (proof.summary.status !== 'pass') process.exit(1);
 }

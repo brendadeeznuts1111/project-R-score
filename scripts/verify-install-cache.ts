@@ -323,7 +323,8 @@ async function main() {
       dryRun,
       checks: checks.map(c => ({ ok: c.ok, label: c.label, detail: c.detail })),
     };
-    console.info(JSON.stringify(result));
+    // console-ok — machine-output branch; %j is the Bun-native single-line JSON print
+    console.info('%j', result);
     if (failed > 0 && strict) {
       process.exit(1);
     }
