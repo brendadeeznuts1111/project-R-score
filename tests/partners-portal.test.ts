@@ -45,6 +45,9 @@ describe('partners portal board', () => {
     expect(html).toContain('accounting.free_roll');
     expect(html).toContain('bootGlossaryUx');
     expect(html).toContain('--chip-color');
+    expect(html).toContain('isChipHex');
+    expect(html).toContain('/^#[0-9A-Fa-f]{6}$/');
+    expect(html).toContain('Fallback first');
     expect(html).toContain('partners-ops.json');
     expect(html).toContain('bookRegistry');
   });
