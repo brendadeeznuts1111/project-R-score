@@ -64,6 +64,7 @@ export {
   buildLimitTransitions,
   estimatePooledBookRates,
   scoreWalkForward,
+  type LimitForecastInputClass,
   type LimitForecastLabSourceMeta,
   type LimitSnapshotSample,
   type LimitTransition,
