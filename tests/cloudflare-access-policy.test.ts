@@ -56,4 +56,15 @@ describe('Cloudflare Access policy', () => {
     expect(report.ok).toBe(false);
     expect(report.issues.map(problem => problem.code)).toContain('missing-required-domain');
   });
+
+  test('rejects interactive sessions above the four-hour identity cap', async () => {
+    const source = await Bun.file(configPath).text();
+    const report = verifyCloudflareAccessPolicyText(
+      source.replace('session_duration: 4h', 'session_duration: 5h')
+    );
+    expect(report.ok).toBe(false);
+    expect(report.issues).toContainEqual(
+      expect.objectContaining({ code: 'session-duration' })
+    );
+  });
 });

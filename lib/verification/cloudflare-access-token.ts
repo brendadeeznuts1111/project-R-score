@@ -9,6 +9,7 @@
  * @see https://developers.cloudflare.com/cloudflare-one/access-controls/service-credentials/service-tokens/
  * @see https://bun.com/docs/runtime/environment-variables
  */
+import { CLOUDFLARE_ACCESS_TOKEN_PERMISSIONS } from '../../config/r2-env.ts';
 import { asAccountId, type AccountId } from '../types/branded.ts';
 
 type CloudflareError = { code?: number; message?: string };
@@ -36,6 +37,11 @@ export type CloudflareAccessServiceTokenSummary = {
 
 export type CloudflareAccessTokenReport = {
   ok: boolean;
+  verification: {
+    kind: 'read-health';
+    writeScopeVerified: false;
+    requiredWritePermission: 'Access: Apps and Policies Edit';
+  };
   tokenKind: 'account' | 'user' | 'unknown';
   probes: {
     apps: { ok: true; status: number; count: number };
@@ -142,7 +148,12 @@ export async function runCloudflareAccessTokenProbe(
     );
   }
 
-  const account = options.accountId ?? asAccountId(Bun.env.CLOUDFLARE_ACCOUNT_ID?.trim() || '');
+  const configuredAccount =
+    Bun.env.CLOUDFLARE_ACCOUNT_ID?.trim() || CLOUDFLARE_ACCESS_TOKEN_PERMISSIONS.accountId;
+  if (!configuredAccount) {
+    throw new Error('Missing Cloudflare account ID for the Access token read-health probe');
+  }
+  const account = options.accountId ?? asAccountId(configuredAccount);
   const fetchImpl = options.fetch ?? fetch;
   const base = `https://api.cloudflare.com/client/v4/accounts/${account}`;
   const [appsProbe, tokensProbe] = await Promise.all([
@@ -174,9 +185,17 @@ export async function runCloudflareAccessTokenProbe(
       row =>
         `${row.name}: ${row.status}${row.daysRemaining == null ? '' : ` (${row.daysRemaining}d)`}`
     );
+  const hasFailingServiceToken = serviceTokens.some(
+    row => row.status === 'expired' || row.status === 'no-expiry'
+  );
 
   return {
-    ok: warnings.every(warning => !/expired|no-expiry/.test(warning)),
+    ok: !hasFailingServiceToken,
+    verification: {
+      kind: 'read-health',
+      writeScopeVerified: false,
+      requiredWritePermission: 'Access: Apps and Policies Edit',
+    },
     tokenKind: token.startsWith('cfat_')
       ? 'account'
       : token.startsWith('cfut_')

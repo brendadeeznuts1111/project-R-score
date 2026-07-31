@@ -186,11 +186,13 @@ Local ops station chart PNG (optional): `bun run ops:prediction report --webview
 
 Root `functions/` is bundled by Wrangler for Workers — **no `bun:sqlite`**, **no `import 'bun'`**, **no `lib/verification/*` via `config/r2-env.ts`**. Guards: `tests/functions-edge-safety.test.ts` · `tests/functions-import-graph.test.ts` (static allowlist in `lib/verification/cloudflare-pages-preflight.ts`).
 
-**Allowed transitive imports (2026-07):** `lib/http/verification-scripts.ts` → `sha256.ts` + `repo-docs.ts` → `config/r2-env.ts`; `lib/http/portal-env-edge.ts`; `lib/factory/http-keys.ts`. Full inventory:
+**Allowed transitive imports (2026-07):** `lib/http/verification-scripts.ts` → `sha256.ts` + `repo-docs.ts` → `config/r2-env.ts`; `lib/http/portal-env-edge.ts`; `lib/factory/http-keys.ts`. Key inventory:
 
 | Path | Role |
 |------|------|
+| `functions/_middleware.ts` | Applies the shared browser-security headers to Pages Function responses |
 | `functions/api/operations/summary.ts` | Serves `public/registry/ops-summary.json` (C4/C5 portal data) |
+| `functions/api/agents/v1/limits/raises.ts` | Serves limit raises and CSV/JSONL betlog exports |
 | `functions/api/registry/[[path]].ts` | R2 registry proxy (`REGISTRY_BUCKET` binding) |
 | `functions/api/telegram/webhook/[[tenant]].ts` | Telegram edge enqueue → R2 `telegram-updates` (needs `TELEGRAM_WEBHOOK_SECRET`) |
 | `functions/api/registry/health.ts` | Registry health probe |
@@ -198,6 +200,8 @@ Root `functions/` is bundled by Wrangler for Workers — **no `bun:sqlite`**, **
 | `functions/health/index.ts` | Same snapshot as JSON at `/health` |
 | `functions/health/pre.ts` | Plain-text diagnostics at `/health/pre` (curl / Accept: text/plain) |
 | `lib/http/portal-health-edge.ts` | Shared edge collect + plain renderer + ETag |
+| `lib/http/cloudflare-security-headers.ts` | Shared static/Function browser-security header contract |
+| `lib/operations/limit-betlog-export.ts` | Edge-safe betlog export formatter used by the raises route |
 | `functions/api/env.ts` | Env-check table (redacted) |
 | `functions/api/monitoring.ts` | Monitoring snapshot |
 | `functions/api/content-type.ts` | Content-Type matrix |

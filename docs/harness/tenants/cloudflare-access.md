@@ -92,8 +92,10 @@ value failed Cloudflare authentication on 2026-07-31. Before a live plan:
    Edit, DNS Edit, or Service Tokens Edit.
 2. Replace the password field of `Cloudflare Access API Token` in Proton.
 3. Inject and run `bun run cloudflare:access:token:validate`; the read-only
-   probe checks apps and service-token expiry without printing the credential.
-4. Run the plan with that injected token; do not copy it into the Kimi keychain
+   probe checks app/service-token read health and expiry without printing the
+   credential. It does **not** prove Apps and Policies Edit.
+4. Run the plan with that injected token to prove the required Edit capability;
+   do not copy it into the Kimi keychain
    or a shell command.
 
 Token creation is a human Cloudflare-dashboard action. Source changes must not
@@ -164,10 +166,10 @@ Do **not** run apply until token + IdP + Pages Access + rollback exist.
 
 ```bash
 bun run cloudflare:access:verify
-bun run cloudflare:access:token:validate
+bun run cloudflare:access:token:validate # read health; write scope remains unverified
 bun run cloudflare:access:edge:validate
 bun run proton:check
-kimi-cloudflare-access plan   # requires Access-scoped token
+kimi-cloudflare-access plan   # proves required Apps and Policies Edit scope
 ```
 
 After apply, verify:

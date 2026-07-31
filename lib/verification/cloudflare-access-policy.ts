@@ -172,12 +172,12 @@ export function verifyCloudflareAccessPolicyText(text: string): CloudflareAccess
     }
 
     const hours = sessionHours(app.session_duration);
-    if (hours === null || hours > 8) {
+    if (hours === null || hours > 4) {
       issue(
         issues,
         'session-duration',
         `${path}.session_duration`,
-        'session duration must be an hour value no greater than 8h'
+        'session duration must be an hour value no greater than 4h'
       );
     }
 

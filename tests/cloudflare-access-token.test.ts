@@ -62,10 +62,66 @@ describe('Cloudflare Access token boundary', () => {
     });
 
     expect(report.ok).toBe(true);
+    expect(report.verification).toEqual({
+      kind: 'read-health',
+      writeScopeVerified: false,
+      requiredWritePermission: 'Access: Apps and Policies Edit',
+    });
     expect(report.tokenKind).toBe('account');
     expect(report.probes.apps.count).toBe(1);
     expect(report.serviceTokens[0]?.status).toBe('active');
     expect(JSON.stringify(report)).not.toContain('cfat_test_access_token');
+  });
+
+  test('uses the shared account default when no runtime override is supplied', async () => {
+    const urls: string[] = [];
+    await runCloudflareAccessTokenProbe({
+      token: 'cfat_test_access_token',
+      fetch: ((input: RequestInfo | URL) => {
+        urls.push(String(input));
+        return mockFetch(input);
+      }) as typeof fetch,
+      now: new Date('2026-07-31T00:00:00Z'),
+    });
+
+    expect(urls).toHaveLength(2);
+    expect(urls.every(url => url.includes(CLOUDFLARE_ACCESS_TOKEN_PERMISSIONS.accountId))).toBe(
+      true
+    );
+  });
+
+  test('computes health from service-token status, not warning text', async () => {
+    const namedLikeFailure = ((input: RequestInfo | URL) => {
+      if (String(input).includes('/access/service_tokens')) {
+        return Promise.resolve(
+          Response.json({
+            success: true,
+            result: [
+              {
+                id: 'service-1',
+                name: 'expired no-expiry migration',
+                expires_at: '2026-12-31T00:00:00Z',
+              },
+            ],
+          })
+        );
+      }
+      return mockFetch(input);
+    }) as typeof fetch;
+    const report = await runCloudflareAccessTokenProbe({
+      token: 'cfat_test_access_token',
+      accountId: ACCOUNT,
+      fetch: namedLikeFailure,
+      now: new Date('2026-07-31T00:00:00Z'),
+    });
+
+    expect(report.serviceTokens[0]?.status).toBe('active');
+    expect(report.ok).toBe(true);
+  });
+
+  test('CLI module import does not execute the live probe', async () => {
+    const module = await import('../tools/cloudflare-access-token-validate.ts');
+    expect(module).toBeDefined();
   });
 
   test('fails closed when the dedicated token lacks Access scope', async () => {
