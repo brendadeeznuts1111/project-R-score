@@ -1,4 +1,4 @@
-# Dev override — machine ~/.bunfig.toml sets frozenLockfile = true.
-# Mirrors the parent repo (~/Projects/bunfig.toml) stance for this nested workspace root.
+# Nested workspace override — preserve lockfile reproducibility when invoked directly.
+# Mirrors the parent repository's hardened frozen-lockfile stance.
 [install]
-frozenLockfile = false
+frozenLockfile = true
