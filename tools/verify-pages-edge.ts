@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Post-deploy smoke for Cloudflare Pages (production or preview URL).
@@ -10,6 +11,7 @@
  * @see docs/harness/tenants/cloudflare-pages.md
  */
 import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
+import { inspectCloudflareSecurityHeaders } from '../lib/http/cloudflare-security-headers.ts';
 import { PROOF_TAXONOMY_CONTRACT_COUNT } from '../lib/verification/proof-taxonomy.ts';
 
 const BASE = Bun.env.PAGES_VERIFY_BASE?.trim() || `https://${CLOUDFLARE_DEFAULTS.pages.subdomain}`;
@@ -59,11 +61,29 @@ async function expectJson(path: string, assert: (j: Record<string, unknown>) => 
   return `${path} ok`;
 }
 
+async function expectSecurityHeaders(path: string, responseKind: 'static' | 'function') {
+  const res = await fetch(`${BASE}${path}`, { redirect: 'manual' });
+  if (!res.ok) throw new Error(`${path} → ${res.status}`);
+  const issues = inspectCloudflareSecurityHeaders(res.headers);
+  if (issues.length > 0) {
+    throw new Error(
+      `${path} → ${issues.map(issue => `${issue.name}=${issue.actual ?? 'missing'}`).join(', ')}`
+    );
+  }
+  return `${responseKind} · shared contract`;
+}
+
 async function main() {
   console.log(`Pages edge verify → ${BASE}${TAXONOMY ? ' (--taxonomy)' : ''}`);
   const checks = await Promise.all([
     check('portal/data.js', 'core', () => expectJs('/portal/data.js')),
     check('portal/topbar.js', 'core', () => expectJs('/portal/topbar.js')),
+    check('static security headers', 'core', () =>
+      expectSecurityHeaders('/site.webmanifest', 'static')
+    ),
+    check('Function security headers', 'core', () =>
+      expectSecurityHeaders('/api/health', 'function')
+    ),
     check('/api/health schemaVersion', 'core', () =>
       expectJson('/api/health', j => {
         if (j.schemaVersion !== 1) throw new Error(`schemaVersion=${j.schemaVersion}`);

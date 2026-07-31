@@ -23,6 +23,30 @@ export const CLOUDFLARE_SECURITY_HEADERS = {
   'X-Permitted-Cross-Domain-Policies': 'none',
 } as const;
 
+export type CloudflareSecurityHeaderIssue = {
+  name: keyof typeof CLOUDFLARE_SECURITY_HEADERS;
+  expected: string;
+  actual: string | null;
+};
+
+/** Compare a live/static response with the shared Pages header contract. */
+export function inspectCloudflareSecurityHeaders(headers: {
+  get(name: string): string | null;
+}): CloudflareSecurityHeaderIssue[] {
+  const issues: CloudflareSecurityHeaderIssue[] = [];
+  for (const [name, expected] of Object.entries(CLOUDFLARE_SECURITY_HEADERS)) {
+    const actual = headers.get(name);
+    if (actual !== expected) {
+      issues.push({
+        name: name as keyof typeof CLOUDFLARE_SECURITY_HEADERS,
+        expected,
+        actual,
+      });
+    }
+  }
+  return issues;
+}
+
 export function withCloudflareSecurityHeaders(response: Response): Response {
   const headers = new Headers(response.headers);
   for (const [name, value] of Object.entries(CLOUDFLARE_SECURITY_HEADERS)) {

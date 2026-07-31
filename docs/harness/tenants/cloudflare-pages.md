@@ -143,6 +143,18 @@ Use Cloudflare MCP `execute` in Cursor to inspect failed builds (`deployments/{i
 
 Discovery manifest (Layer 5): `/.well-known/mcp.json` on Pages (see [`public/.well-known/mcp.json`](../../../public/.well-known/mcp.json)). Regenerate: `bun run sync:well-known-mcp`. Proof artifact: `bun run verify:cloudflare-token:save` → [`public/registry/cloudflare-token-scope-proof.json`](../../../public/registry/cloudflare-token-scope-proof.json).
 
+`verify:pages-edge` also checks the shared browser-security header contract on a
+static asset and a Pages Function response. `_headers` does not apply to
+Functions, so both checks are required.
+
+### Skip GitHub Actions without skipping Pages
+
+Cloudflare Pages treats a commit prefixed with `[CI Skip]` or `[Skip CI]` as a
+deployment skip. GitHub Actions also recognizes `[skip actions]`, while Pages
+does not reserve that prefix. When the operator asks to skip Actions but a Pages
+preview is still required, use `[skip actions]` in the commit subject — not
+`[skip ci]`. The resulting required GitHub checks can remain pending by design.
+
 Publish surface is `public/` (includes `index.html` + registry/robots/sitemaps + portal) plus root `functions/` (Pages Functions). Apex 404 means `index.html` is missing from that dir. Pack/release/changelog R2 URLs resolve via `r2BucketUrlFromEnv()` in `config/r2-env.ts`. Registry apps import root `lib/` / `config/` at **7** `../` levels from `apps/*/src` and `packages/*/src`.
 
 ### Ops portal + prediction (static)
@@ -201,7 +213,9 @@ Static routing: [`public/_redirects`](../../../public/_redirects) (trailing-slas
 
 Preview deployments are public by default. Protect `*.project-r-score.pages.dev`
 through the Access policy, then confirm a real branch/hash preview returns an
-Access 302 before treating previews as protected. See [`cloudflare-access.md`](cloudflare-access.md).
+Access 302 before treating previews as protected. `bun run
+cloudflare:access:edge:validate` discovers and checks the newest preview. See
+[`cloudflare-access.md`](cloudflare-access.md).
 
 Routing map: [`docs/platform-routing.md`](../../platform-routing.md).
 

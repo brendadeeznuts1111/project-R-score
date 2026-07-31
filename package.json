@@ -2192,6 +2192,7 @@
     "verify:cloudflare-token:static": "bun tools/verify-cloudflare-token.ts --no-live --save",
     "cloudflare:access:verify": "bun tools/verify-cloudflare-access-policy.ts",
     "cloudflare:access:token:validate": "bun tools/cloudflare-access-token-validate.ts",
+    "cloudflare:access:edge:validate": "bun tools/cloudflare-access-edge-validate.ts",
     "sync:well-known-mcp": "bun tools/sync-well-known-mcp.ts",
     "sync:well-known-mcp:check": "bun tools/sync-well-known-mcp.ts --check",
     "mcp:sync": "bun scripts/mcp-sync.ts",

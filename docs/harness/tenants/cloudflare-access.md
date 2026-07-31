@@ -113,6 +113,18 @@ bun tools/portal-cli.ts doctor --env ci --group infra
 bun tools/portal-cli.ts doctor --group infra --verbose
 ```
 
+For the full Pages/Access boundary, use the general **Pages Read** token only to
+discover the newest preview, then probe all surfaces without credentials:
+
+```bash
+bun --env-file ~/.reasonix/.env run cloudflare:access:edge:validate
+```
+
+This command requires Ledger, both production portal hostnames, and the newest
+Pages preview to challenge with Access. It simultaneously requires the public
+registry route to remain JSON and carry the shared security-header contract.
+It never uses `CLOUDFLARE_ACCESS_API_TOKEN` and cannot mutate policy.
+
 ### Live status (re-probed 2026-07-31)
 
 | Surface | Edge | Doctor |
@@ -153,6 +165,7 @@ Do **not** run apply until token + IdP + Pages Access + rollback exist.
 ```bash
 bun run cloudflare:access:verify
 bun run cloudflare:access:token:validate
+bun run cloudflare:access:edge:validate
 bun run proton:check
 kimi-cloudflare-access plan   # requires Access-scoped token
 ```
@@ -173,6 +186,8 @@ and static responses passing through the edge use root
 [`functions/_middleware.ts`](../../../functions/_middleware.ts), backed by
 [`lib/http/cloudflare-security-headers.ts`](../../../lib/http/cloudflare-security-headers.ts).
 Tests enforce parity while preserving route-specific CORS and cache headers.
+`bun run verify:pages-edge` checks the deployed contract on one static asset and
+one Pages Function response so `_headers`/middleware drift is visible after deploy.
 
 The contract sets a frame/object/base-restricted CSP, `DENY` framing,
 `nosniff`, no-referrer, a restrictive permissions policy, COOP, and one-year

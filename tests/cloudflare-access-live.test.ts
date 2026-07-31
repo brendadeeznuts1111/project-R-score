@@ -2,10 +2,13 @@
 // @see https://developers.cloudflare.com/cloudflare-one/access-controls/policies/
 import { describe, expect, test } from 'bun:test';
 import {
+  discoverLatestPagesPreview,
   isCloudflareAccessEnforced,
   probeCloudflareAccess,
   probePortalAccess,
+  runCloudflareAccessEdgeProbe,
 } from '../lib/verification/cloudflare-access-live.ts';
+import { withCloudflareSecurityHeaders } from '../lib/http/cloudflare-security-headers.ts';
 import { runInfraChecks } from '../tools/lib/portal-cli-doctor-infra.ts';
 
 function headers(init: Record<string, string>): Headers {
@@ -71,6 +74,143 @@ describe('cloudflare-access-live', () => {
     expect(mixed.ok).toBe(false);
     expect(mixed.custom.accessEnforced).toBe(true);
     expect(mixed.pages.accessEnforced).toBe(false);
+  });
+
+  test('discovers the newest successful Pages preview without exposing the API token', async () => {
+    const preview = await discoverLatestPagesPreview({
+      apiToken: 'pages-read-token',
+      fetch: (() =>
+        Promise.resolve(
+          Response.json({
+            success: true,
+            result: [
+              {
+                id: 'preview-old',
+                url: 'old.project-r-score.pages.dev',
+                environment: 'preview',
+                modified_on: '2026-07-30T00:00:00Z',
+                latest_stage: { name: 'deploy', status: 'success' },
+              },
+              {
+                id: 'preview-new',
+                url: 'https://new.project-r-score.pages.dev/path',
+                environment: 'preview',
+                modified_on: '2026-07-31T00:00:00Z',
+                latest_stage: { name: 'deploy', status: 'success' },
+              },
+            ],
+          })
+        )) as typeof fetch,
+    });
+
+    expect(preview.id).toBe('preview-new');
+    expect(preview.url).toBe('https://new.project-r-score.pages.dev/');
+    expect(preview.stage).toBe('deploy:success');
+    expect(JSON.stringify(preview)).not.toContain('pages-read-token');
+  });
+
+  test('preview discovery rejects API-supplied URLs outside the Pages project', async () => {
+    await expect(
+      discoverLatestPagesPreview({
+        apiToken: 'pages-read-token',
+        fetch: (() =>
+          Promise.resolve(
+            Response.json({
+              success: true,
+              result: [
+                {
+                  id: 'foreign-preview',
+                  url: 'https://example.com',
+                  environment: 'preview',
+                  modified_on: '2026-07-31T00:00:00Z',
+                  latest_stage: { name: 'deploy', status: 'success' },
+                },
+              ],
+            })
+          )) as typeof fetch,
+      })
+    ).rejects.toThrow(/Unexpected Pages preview hostname/);
+  });
+
+  test('end-to-end probe requires preview Access and preserves public registry', async () => {
+    const fetchImpl = (async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.includes('/pages/projects/project-r-score/deployments')) {
+        return Response.json({
+          success: true,
+          result: [
+            {
+              id: 'preview-1',
+              url: 'https://preview.project-r-score.pages.dev',
+              environment: 'preview',
+              modified_on: '2026-07-31T00:00:00Z',
+              latest_stage: { name: 'deploy', status: 'success' },
+            },
+          ],
+        });
+      }
+      if (url.includes('/registry/ops-summary.json')) {
+        return withCloudflareSecurityHeaders(Response.json({ ok: true }));
+      }
+      return new Response(null, {
+        status: 302,
+        headers: {
+          location: 'https://factory-wager.cloudflareaccess.com/cdn-cgi/access/login/x',
+        },
+      });
+    }) as typeof fetch;
+
+    const report = await runCloudflareAccessEdgeProbe({
+      apiToken: 'pages-read-token',
+      fetch: fetchImpl,
+      retryDelayMs: 0,
+    });
+
+    expect(report.ok).toBe(true);
+    expect(report.preview.access.accessEnforced).toBe(true);
+    expect(report.publicRegistry.ok).toBe(true);
+    expect(report.publicRegistry.accessEnforced).toBe(false);
+  });
+
+  test('end-to-end probe fails closed when a preview remains public', async () => {
+    const fetchImpl = (async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.includes('/pages/projects/project-r-score/deployments')) {
+        return Response.json({
+          success: true,
+          result: [
+            {
+              id: 'preview-1',
+              url: 'https://preview.project-r-score.pages.dev',
+              environment: 'preview',
+              modified_on: '2026-07-31T00:00:00Z',
+              latest_stage: { name: 'deploy', status: 'success' },
+            },
+          ],
+        });
+      }
+      if (url.includes('/registry/ops-summary.json')) {
+        return withCloudflareSecurityHeaders(Response.json({ ok: true }));
+      }
+      if (url.includes('preview.project-r-score.pages.dev')) {
+        return new Response('public', { status: 200 });
+      }
+      return new Response(null, {
+        status: 302,
+        headers: {
+          location: 'https://factory-wager.cloudflareaccess.com/cdn-cgi/access/login/x',
+        },
+      });
+    }) as typeof fetch;
+
+    const report = await runCloudflareAccessEdgeProbe({
+      apiToken: 'pages-read-token',
+      fetch: fetchImpl,
+      retryDelayMs: 0,
+    });
+
+    expect(report.ok).toBe(false);
+    expect(report.preview.access.evidence).toContain('public');
   });
 
   test('runInfraChecks maps probes to doctor rows', async () => {
