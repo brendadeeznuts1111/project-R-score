@@ -22,6 +22,8 @@ import {
 } from '../lib/portal/page-glossary.ts';
 import { complianceKpiGlossaryConcepts } from '../lib/operations/compliance-policy-kpis.ts';
 import { regulationPolicyGlossaryConcepts } from '../lib/operations/regulation-policy-catalog.ts';
+import { sportsBettingGlossaryConcepts } from '../lib/operations/sports-betting-glossary.ts';
+import { sportsbookOpeningBaselineGlossaryConcepts } from '../lib/operations/sportsbook-opening-baseline.ts';
 
 describe('domain glossary portal', () => {
   test('registry projection is integral, bounded, and color-normalized', async () => {
@@ -39,17 +41,27 @@ describe('domain glossary portal', () => {
         pageGlossaryAuthority: 'lib/portal/page-glossary.ts',
         regulationPolicyAuthority: 'lib/operations/regulation-policy-catalog.ts',
         complianceKpiAuthority: 'lib/operations/compliance-policy-kpis.ts',
+        sportsBettingAuthority: 'lib/operations/sports-betting-glossary.ts',
+        sportsbookOpeningBaselineAuthority: 'lib/operations/sportsbook-opening-baseline.ts',
         canonicalDump: 'Kalshi-bot/research/registry/glossary-dump.json',
         colorKernel: 'lib/theme/colors.ts',
       },
     });
     expect(payload.summary.concepts).toBe(payload.concepts.length);
-    expect(payload.summary.concepts).toBeGreaterThan(115);
+    expect(payload.summary.concepts).toBeGreaterThan(140);
     expect(payload.summary.portalSemantics).toBe(
       PORTAL_SEMANTIC_CONCEPTS.length +
         regulationPolicyGlossaryConcepts().length +
-        complianceKpiGlossaryConcepts().length
+        complianceKpiGlossaryConcepts().length +
+        sportsBettingGlossaryConcepts().length +
+        sportsbookOpeningBaselineGlossaryConcepts().length
     );
+    const conceptIds = new Set(payload.concepts.map(concept => concept.id));
+    expect(
+      payload.concepts.flatMap(concept =>
+        concept.seeAlso.filter(relatedId => !conceptIds.has(relatedId))
+      )
+    ).toEqual([]);
     expect(payload.categories).toHaveLength(8);
     expect(payload.categories.every(category => /^#[0-9a-f]{6}$/i.test(category.color))).toBe(true);
     expect(new Set(payload.concepts.map(concept => concept.id)).size).toBe(
@@ -95,6 +107,31 @@ describe('domain glossary portal', () => {
       uiRole: 'badge',
       unit: 'count',
       format: 'integer',
+    });
+    expect(payload.concepts.find(concept => concept.id === 'sport.soccer')).toMatchObject({
+      kind: 'sport',
+      category: 'tournament',
+      semanticType: 'classification',
+    });
+    expect(payload.concepts.find(concept => concept.id === 'market.match_winner')).toMatchObject({
+      kind: 'market',
+      category: 'market',
+      synonyms: expect.arrayContaining(['moneyline']),
+    });
+    expect(payload.concepts.find(concept => concept.id === 'multi.parlay')).toMatchObject({
+      kind: 'multi',
+      synonyms: expect.arrayContaining(['multi', 'accumulator']),
+    });
+    expect(payload.concepts.find(concept => concept.id === 'cross_market.unified_price')).toMatchObject({
+      kind: 'cross_market',
+      unit: 'probability',
+    });
+    expect(payload.surfaces).toContainEqual({
+      path: '/portal/partner-history/',
+      concept: 'page.partnerHistory',
+      sections: expect.objectContaining({
+        'opening-baseline': 'section.openingBaseline',
+      }),
     });
     expect(payload.surfaces).toContainEqual({
       path: '/portal/limits/',

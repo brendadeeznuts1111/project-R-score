@@ -6,6 +6,13 @@
  */
 import { asStateCode, type StateCode, type TreeNodeId } from '../types/branded.ts';
 
+/** Prefer sports-betting glossary primary ids over raw wire keys for policy seeAlso. */
+function glossaryConceptForPolicyMarket(market: string): string {
+  if (market === 'spread') return 'market.point_spread';
+  if (market === 'over_under') return 'market.total';
+  return `market.${market}`;
+}
+
 export type RegulationPolicyKey = `policy.${string}.${string}.${string}`;
 export type JurisdictionConceptKey = `jurisdiction.${string}`;
 export type RegulationPolicyStatus = 'active' | 'draft' | 'revoked' | 'suspended';
@@ -405,7 +412,11 @@ export function regulationPolicyGlossaryConcepts() {
       kind: 'policy',
       synonyms: [resolved.policyCode, `${policy.jurisdiction} ${policy.sport} ${policy.market}`],
       values: [policy.status, policy.riskTier, policy.enforcementAction],
-      seeAlso: [`jurisdiction.${policy.jurisdiction}`],
+      seeAlso: [
+        `jurisdiction.${policy.jurisdiction}`,
+        `sport.${policy.sport}`,
+        glossaryConceptForPolicyMarket(policy.market),
+      ],
       status: policy.status,
       source: 'lib/operations/regulation-policy-catalog.ts',
       semanticType: 'classification',

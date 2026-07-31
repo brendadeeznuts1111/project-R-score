@@ -27,6 +27,8 @@ import {
 } from '../lib/portal/page-glossary.ts';
 import { complianceKpiGlossaryConcepts } from '../lib/operations/compliance-policy-kpis.ts';
 import { regulationPolicyGlossaryConcepts } from '../lib/operations/regulation-policy-catalog.ts';
+import { sportsBettingGlossaryConcepts } from '../lib/operations/sports-betting-glossary.ts';
+import { sportsbookOpeningBaselineGlossaryConcepts } from '../lib/operations/sportsbook-opening-baseline.ts';
 import { FW_COLORS, type FactoryWagerColor } from '../lib/theme/colors.ts';
 
 export const DOMAIN_GLOSSARY_SOURCE_PATH = 'Kalshi-bot/research/registry/glossary-dump.json';
@@ -64,6 +66,12 @@ type CanonicalConcept = {
   featurePurpose: string | null;
   semanticType?: string | null;
   uiRole?: string | null;
+  parentId?: string | null; // brand-ok — glossary concept relation
+  scope?: string | null;
+  countryCodes?: readonly string[] | null;
+  region?: string | null;
+  flagEmoji?: string | null;
+  flagAriaLabel?: string | null;
 };
 
 type CanonicalGlossaryDump = {
@@ -151,6 +159,8 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
   const governedConcepts: CanonicalConcept[] = [
     ...regulationPolicyGlossaryConcepts(),
     ...complianceKpiGlossaryConcepts(),
+    ...sportsBettingGlossaryConcepts(),
+    ...sportsbookOpeningBaselineGlossaryConcepts(),
   ].map(concept => ({
     id: concept.id,
     label: concept.label,
@@ -164,18 +174,47 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
     seeAlso: [...concept.seeAlso],
     status: concept.status,
     deprecatedBy: null,
-    unit: 'unit' in concept ? concept.unit : null,
-    format: 'format' in concept ? concept.format : null,
+    unit: 'unit' in concept ? (concept.unit ?? null) : null,
+    format: 'format' in concept ? (concept.format ?? null) : null,
     registryColumn: null,
     source: concept.source,
-    featurePurpose: 'Governed compliance policy and KPI concept.',
+    featurePurpose:
+      concept.source === 'lib/operations/sports-betting-glossary.ts'
+        ? 'Governed sports betting hierarchy, market, and data-product concept.'
+        : concept.source === 'lib/operations/sports-competition-catalog.ts'
+          ? 'Governed sport, league, competition-tier, and event-host geography concept.'
+          : concept.source === 'lib/operations/sportsbook-opening-baseline.ts' ||
+              concept.source === 'lib/operations/baseline-source-tiers.ts'
+            ? 'Governed sportsbook opening-limit baseline concept.'
+            : 'Governed compliance policy and KPI concept.',
     semanticType: concept.semanticType,
     uiRole: concept.uiRole,
+    parentId: 'parentId' in concept ? (concept.parentId ?? null) : null,
+    scope: 'scope' in concept ? (concept.scope ?? null) : null,
+    countryCodes: 'countryCodes' in concept ? (concept.countryCodes ?? null) : null,
+    region: 'region' in concept ? (concept.region ?? null) : null,
+    flagEmoji: 'flagEmoji' in concept ? (concept.flagEmoji ?? null) : null,
+    flagAriaLabel: 'flagAriaLabel' in concept ? (concept.flagAriaLabel ?? null) : null,
   }));
   const combinedConcepts = [...source.concepts, ...portalConcepts, ...governedConcepts];
   const combinedIds = combinedConcepts.map(concept => concept.id);
   if (new Set(combinedIds).size !== combinedIds.length) {
-    throw new Error('Domain and portal semantic authorities contain duplicate concept ids');
+    const dupes = combinedIds.filter((id, i) => combinedIds.indexOf(id) !== i);
+    throw new Error(
+      `Domain and portal semantic authorities contain duplicate concept ids: ${[...new Set(dupes)].join(', ')}`
+    );
+  }
+
+  const conceptIds = new Set(combinedIds);
+  const danglingRelations = combinedConcepts.flatMap(concept =>
+    concept.seeAlso
+      .filter(relatedId => !conceptIds.has(relatedId))
+      .map(relatedId => `${concept.id} -> ${relatedId}`)
+  );
+  if (danglingRelations.length > 0) {
+    throw new Error(
+      `Domain glossary contains unresolved seeAlso relations: ${danglingRelations.join(', ')}`
+    );
   }
 
   const categories = (
@@ -212,6 +251,9 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
       pageGlossaryAuthority: 'lib/portal/page-glossary.ts',
       regulationPolicyAuthority: 'lib/operations/regulation-policy-catalog.ts',
       complianceKpiAuthority: 'lib/operations/compliance-policy-kpis.ts',
+      sportsBettingAuthority: 'lib/operations/sports-betting-glossary.ts',
+      sportsTaxonomyAuthority: 'lib/operations/sports-competition-catalog.ts',
+      sportsbookOpeningBaselineAuthority: 'lib/operations/sportsbook-opening-baseline.ts',
       canonicalDump: DOMAIN_GLOSSARY_SOURCE_PATH,
       portalProjection: 'tools/domain-glossary.ts',
       colorKernel: 'lib/theme/colors.ts',

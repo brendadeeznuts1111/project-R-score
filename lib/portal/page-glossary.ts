@@ -1,4 +1,9 @@
-import { LIMIT_SURFACE_CONCEPTS, type PortalSemanticConceptKey } from './semantic-vocabulary.ts';
+import {
+  LIMIT_FIELD_CONCEPTS,
+  LIMIT_SURFACE_CONCEPTS,
+  PARTNER_HISTORY_SURFACE_CONCEPTS,
+  type PortalSemanticConceptKey,
+} from './semantic-vocabulary.ts';
 
 export type PortalGlossarySurface = {
   path: `/${string}/`;
@@ -16,12 +21,22 @@ export const PORTAL_GLOSSARY_SURFACES = [
       'jurisdiction-control': LIMIT_SURFACE_CONCEPTS.jurisdictionCatalog,
       'pattern-summary': LIMIT_SURFACE_CONCEPTS.patternSummary,
       prediction: LIMIT_SURFACE_CONCEPTS.prediction,
+      // The research queue is an evidence-trace projection, not a duplicate
+      // terminology namespace of its own.
+      'research-queue': LIMIT_FIELD_CONCEPTS.evidenceTrace,
       'sportsbook-patterns': LIMIT_SURFACE_CONCEPTS.sportsbookPatterns,
       'geo-patterns-section': LIMIT_SURFACE_CONCEPTS.stateZipPatterns,
       'downline-context': LIMIT_SURFACE_CONCEPTS.downlineContext,
       'connection-audit': LIMIT_SURFACE_CONCEPTS.dataConnectionAudit,
       'recent-changes': LIMIT_SURFACE_CONCEPTS.recentLimitChanges,
       'node-breakdown': LIMIT_SURFACE_CONCEPTS.perNodeBreakdown,
+    },
+  },
+  {
+    path: '/portal/partner-history/',
+    concept: PARTNER_HISTORY_SURFACE_CONCEPTS.page,
+    sections: {
+      'opening-baseline': PARTNER_HISTORY_SURFACE_CONCEPTS.openingBaseline,
     },
   },
 ] as const satisfies readonly PortalGlossarySurface[];

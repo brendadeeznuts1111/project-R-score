@@ -36,6 +36,13 @@ export const PORTAL_SEMANTIC_CONCEPT_KEYS = [
   'ui.semantic.package',
   'ui.semantic.type',
   'ops.limits.account',
+  'ops.limits.node',
+  'ops.limits.tree',
+  'ops.limits.downline',
+  'ops.limits.roleType',
+  'ops.limits.partner',
+  'ops.limits.agent',
+  'ops.limits.sub_agent',
   'ops.limits.profile',
   'ops.limits.jurisdiction_policy',
   'ops.limits.policy_code',
@@ -45,11 +52,19 @@ export const PORTAL_SEMANTIC_CONCEPT_KEYS = [
   'ops.limits.pattern_surface',
   'ops.limits.change_direction',
   'ops.limits.market_phase',
+  'ops.limits.sport',
+  'ops.limits.league',
+  'ops.limits.competition',
+  'ops.limits.event_country',
+  'ops.limits.market_type',
+  'ops.limits.multi_structure',
   'ops.limits.limit_delta',
   'ops.limits.influence_score',
   'ops.limits.data_coverage',
   'ops.limits.prediction',
+  'api.agent',
   'page.limitPatterns',
+  'page.partnerHistory',
   'section.accountLimitControl',
   'section.complianceKpis',
   'section.jurisdictionCatalog',
@@ -61,6 +76,7 @@ export const PORTAL_SEMANTIC_CONCEPT_KEYS = [
   'section.dataConnectionAudit',
   'section.recentLimitChanges',
   'section.perNodeBreakdown',
+  'section.openingBaseline',
   'ui.filter.profile',
   'ui.filter.jurisdiction',
   'ui.filter.partnerId',
@@ -223,11 +239,100 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     id: 'ops.limits.account',
     label: 'Limit account',
     description:
-      'Partner-tree account whose observed sportsbook limits, jurisdiction binding, and monitoring evidence are evaluated together.',
+      'Partner-tree account whose observed sportsbook limits, jurisdiction binding, and monitoring evidence are evaluated together. Same subject as ops.limits.node (UI says account; wire says node_id).',
     semanticType: 'resource',
     uiRole: 'heading',
-    synonyms: ['partner account', 'tree node', 'limit subject'],
-    seeAlso: ['ops.limits.profile', 'ops.limits.evidence_trace', 'ui.semantic.resources'],
+    synonyms: ['partner account', 'tree node', 'limit subject', 'node'],
+    seeAlso: [
+      'ops.limits.node',
+      'ops.limits.roleType',
+      'ops.limits.profile',
+      'ops.limits.evidence_trace',
+    ],
+  },
+  {
+    id: 'ops.limits.node',
+    label: 'Tree node',
+    description:
+      'One row in tree_nodes identified by TreeNodeId / node_id. Synonym for limit account; not an AI agent and not the Agent API.',
+    semanticType: 'resource',
+    uiRole: 'code',
+    synonyms: ['node_id', 'TreeNodeId', 'tree_nodes row', 'account'],
+    seeAlso: ['ops.limits.account', 'ops.limits.tree', 'ops.limits.roleType', 'ops.limits.agent'],
+  },
+  {
+    id: 'ops.limits.tree',
+    label: 'Partner tree',
+    description:
+      'Full hierarchy of partner accounts (partner → agent → sub_agent) used for limit, license, and downline context.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['partner hierarchy', 'account tree', 'tree_nodes'],
+    seeAlso: [
+      'ops.limits.node',
+      'ops.limits.downline',
+      'ops.limits.roleType',
+      'section.downlineContext',
+    ],
+  },
+  {
+    id: 'ops.limits.downline',
+    label: 'Downline',
+    description:
+      'Descendant accounts under a partner in the partner tree (agents and sub-agents), excluding the partner root itself.',
+    semanticType: 'resource',
+    uiRole: 'chip',
+    synonyms: ['downline nodes', 'downstream accounts', 'child accounts'],
+    seeAlso: [
+      'ops.limits.tree',
+      'ops.limits.agent',
+      'ops.limits.sub_agent',
+      'section.downlineContext',
+    ],
+  },
+  {
+    id: 'ops.limits.roleType',
+    label: 'Role type',
+    description:
+      'Position of a tree node in the partner hierarchy. Wire field node_type: partner, agent, or sub_agent.',
+    semanticType: 'classification',
+    uiRole: 'chip',
+    synonyms: ['node_type', 'tree role', 'account role'],
+    values: ['partner', 'agent', 'sub_agent'],
+    seeAlso: ['ops.limits.partner', 'ops.limits.agent', 'ops.limits.sub_agent', 'ops.limits.node'],
+  },
+  {
+    id: 'ops.limits.partner',
+    label: 'Partner',
+    description:
+      'Top-of-tree role in the partner hierarchy (node_type partner). Owns downline agents and sub-agents.',
+    semanticType: 'classification',
+    uiRole: 'chip',
+    synonyms: ['master', 'partner root', 'node_type partner'],
+    values: ['partner'],
+    seeAlso: ['ops.limits.roleType', 'ops.limits.downline', 'ops.limits.agent', 'ops.limits.tree'],
+  },
+  {
+    id: 'ops.limits.agent',
+    label: 'Downline agent',
+    description:
+      'Betting downline role in the partner tree (node_type agent). Not an HTTP Agent API client and not a Cursor/AI automation agent.',
+    semanticType: 'classification',
+    uiRole: 'chip',
+    synonyms: ['agent', 'node_type agent', 'downline agent'],
+    values: ['agent'],
+    seeAlso: ['ops.limits.sub_agent', 'ops.limits.partner', 'ops.limits.roleType', 'api.agent'],
+  },
+  {
+    id: 'ops.limits.sub_agent',
+    label: 'Sub-agent',
+    description:
+      'Further-downline role under an agent in the partner tree (node_type sub_agent). Still a limit account, not an automation agent.',
+    semanticType: 'classification',
+    uiRole: 'chip',
+    synonyms: ['sub_agent', 'sub-agent', 'node_type sub_agent'],
+    values: ['sub_agent'],
+    seeAlso: ['ops.limits.agent', 'ops.limits.downline', 'ops.limits.roleType', 'ops.limits.node'],
   },
   {
     id: 'ops.limits.profile',
@@ -326,7 +431,76 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'chip',
     synonyms: ['bet phase', 'wager phase'],
     values: ['live', 'pregame', 'straight'],
-    seeAlso: ['ops.limits.effective_limit', 'ops.limits.change_direction', 'ui.semantic.kind'],
+    seeAlso: [
+      'ops.limits.effective_limit',
+      'ops.limits.change_direction',
+      'ops.limits.market_type',
+    ],
+  },
+  {
+    id: 'ops.limits.sport',
+    label: 'Sport',
+    description:
+      'Hierarchy root for the observed limit row (soccer, basketball, …). Domain definitions live under sport.* in the glossary.',
+    semanticType: 'classification',
+    uiRole: 'chip',
+    synonyms: ['sport_id', 'sport key'],
+    values: ['soccer', 'basketball', 'american_football', 'baseball', 'hockey', 'tennis'],
+    seeAlso: ['ops.limits.league', 'ops.limits.market_type', 'ops.limits.effective_limit'],
+  },
+  {
+    id: 'ops.limits.league',
+    label: 'League or tour',
+    description:
+      'League, tour, or sanctioning body for a limit observation, such as NFL, ATP, WTA, or ITF.',
+    semanticType: 'classification',
+    uiRole: 'chip',
+    synonyms: ['league_id', 'tour', 'competition family'],
+    values: ['nfl', 'nba', 'mlb', 'nhl', 'mls', 'atp', 'wta', 'itf', 'atp_challenger'],
+    seeAlso: ['ops.limits.sport', 'ops.limits.competition', 'ops.limits.event_country'],
+  },
+  {
+    id: 'ops.limits.competition',
+    label: 'Competition tier',
+    description:
+      'Specific level within a league or tour, such as ITF M15, ITF W50, or ATP Challenger 75.',
+    semanticType: 'classification',
+    uiRole: 'chip',
+    synonyms: ['competition_id', 'tournament tier', 'tour level'],
+    values: ['itf_m15', 'itf_m25', 'itf_w15', 'itf_w35', 'itf_w50', 'itf_w75', 'itf_w100'],
+    seeAlso: ['ops.limits.sport', 'ops.limits.league', 'ops.limits.event_country'],
+  },
+  {
+    id: 'ops.limits.event_country',
+    label: 'Event host country',
+    description:
+      'ISO alpha-2 country where the event is played. This dimension owns the displayed country flag; global tours do not.',
+    semanticType: 'location',
+    uiRole: 'badge',
+    synonyms: ['host country', 'event country', 'country_code'],
+    seeAlso: ['ops.limits.sport', 'ops.limits.league', 'ops.limits.competition'],
+  },
+  {
+    id: 'ops.limits.market_type',
+    label: 'Market type',
+    description:
+      'Bet market family on the limit row (match_winner, over_under, spread, …). Domain definitions live under market.* in the glossary.',
+    semanticType: 'classification',
+    uiRole: 'chip',
+    synonyms: ['market_id', 'market key', 'bet market'],
+    values: ['match_winner', 'over_under', 'spread', 'player_prop', 'team_prop', 'futures'],
+    seeAlso: ['ops.limits.sport', 'ops.limits.market_phase', 'ops.limits.multi_structure'],
+  },
+  {
+    id: 'ops.limits.multi_structure',
+    label: 'Multi / parlay structure',
+    description:
+      'How selections combine: straight single, or multi (parlay) with legs. Domain definitions live under multi.* in the glossary.',
+    semanticType: 'classification',
+    uiRole: 'chip',
+    synonyms: ['parlay', 'accumulator', 'multi', 'leg'],
+    values: ['straight', 'parlay', 'leg'],
+    seeAlso: ['ops.limits.market_type', 'ops.limits.effective_limit', 'ops.limits.market_phase'],
   },
   {
     id: 'ops.limits.limit_delta',
@@ -379,6 +553,21 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     seeAlso: ['ops.limits.influence_score', 'ops.limits.limit_delta', 'ops.limits.pattern_surface'],
   },
   {
+    id: 'api.agent',
+    label: 'Agent API',
+    description:
+      'HTTP surface for bots and tools under /api/agents/v1/… (for example limits raises/record). Distinct from ops.limits.agent (partner-tree downline role).',
+    semanticType: 'resource',
+    uiRole: 'link',
+    synonyms: ['/api/agents', 'agent HTTP API', 'limits agent API'],
+    seeAlso: [
+      'ops.limits.agent',
+      'ops.limits.pattern_surface',
+      'ui.semantic.surface',
+      'ui.semantic.artifact',
+    ],
+  },
+  {
     id: 'page.limitPatterns',
     label: 'Partner limit patterns',
     description:
@@ -390,6 +579,21 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'ops.limits.pattern_surface',
       'section.accountLimitControl',
       'section.jurisdictionCatalog',
+    ],
+  },
+  {
+    id: 'page.partnerHistory',
+    label: 'Partner limit history',
+    description:
+      'Portal page for per-account limit change history, partner drill-down, and the top-10 US sportsbook opening-limit baseline.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['partner history', 'limit history board'],
+    seeAlso: [
+      'page.limitPatterns',
+      'section.openingBaseline',
+      'ops.limits.account',
+      'ops.limits.node',
     ],
   },
   {
@@ -473,7 +677,12 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     semanticType: 'resource',
     uiRole: 'heading',
     synonyms: ['partner downline context', 'tree context'],
-    seeAlso: ['ops.limits.account', 'ops.limits.profile', 'section.stateZipPatterns'],
+    seeAlso: [
+      'ops.limits.downline',
+      'ops.limits.tree',
+      'ops.limits.roleType',
+      'section.stateZipPatterns',
+    ],
   },
   {
     id: 'section.dataConnectionAudit',
@@ -507,7 +716,27 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     semanticType: 'resource',
     uiRole: 'heading',
     synonyms: ['node breakdown', 'account movement breakdown'],
-    seeAlso: ['ops.limits.account', 'ops.limits.influence_score', 'section.recentLimitChanges'],
+    seeAlso: [
+      'ops.limits.node',
+      'ops.limits.roleType',
+      'ops.limits.influence_score',
+      'section.recentLimitChanges',
+    ],
+  },
+  {
+    id: 'section.openingBaseline',
+    label: 'Sportsbook opening baseline',
+    description:
+      'Section showing internal top-10 US sportsbook new-account max wagers by sport, market, parlay/straight, and live/pregame.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['opening limits', 'new account baseline', 'book baseline matrix'],
+    seeAlso: [
+      'page.partnerHistory',
+      'ops.limits.market_phase',
+      'ops.limits.multi_structure',
+      'ops.limits.sport',
+    ],
   },
   {
     id: 'ui.filter.profile',
@@ -608,6 +837,13 @@ export const HEALTH_FIELD_CONCEPTS = {
 
 export const LIMIT_FIELD_CONCEPTS = {
   account: 'ops.limits.account',
+  node: 'ops.limits.node',
+  tree: 'ops.limits.tree',
+  downline: 'ops.limits.downline',
+  roleType: 'ops.limits.roleType',
+  partner: 'ops.limits.partner',
+  agent: 'ops.limits.agent',
+  subAgent: 'ops.limits.sub_agent',
   profile: 'ops.limits.profile',
   jurisdictionPolicy: 'ops.limits.jurisdiction_policy',
   policyCode: 'ops.limits.policy_code',
@@ -617,11 +853,34 @@ export const LIMIT_FIELD_CONCEPTS = {
   patternSurface: 'ops.limits.pattern_surface',
   changeDirection: 'ops.limits.change_direction',
   marketPhase: 'ops.limits.market_phase',
+  sport: 'ops.limits.sport',
+  league: 'ops.limits.league',
+  competition: 'ops.limits.competition',
+  eventCountry: 'ops.limits.event_country',
+  marketType: 'ops.limits.market_type',
+  multiStructure: 'ops.limits.multi_structure',
   limitDelta: 'ops.limits.limit_delta',
   influenceScore: 'ops.limits.influence_score',
   dataCoverage: 'ops.limits.data_coverage',
   prediction: 'ops.limits.prediction',
+  agentApi: 'api.agent',
 } as const satisfies Record<string, PortalSemanticConceptKey>;
+
+/** Map wire node_type values to glossary role concepts. */
+export function glossaryConceptForNodeType(
+  nodeType: string | null | undefined
+): PortalSemanticConceptKey {
+  switch (nodeType) {
+    case 'partner':
+      return 'ops.limits.partner';
+    case 'agent':
+      return 'ops.limits.agent';
+    case 'sub_agent':
+      return 'ops.limits.sub_agent';
+    default:
+      return 'ops.limits.roleType';
+  }
+}
 
 export const LIMIT_SURFACE_CONCEPTS = {
   page: 'page.limitPatterns',
@@ -645,6 +904,11 @@ export const LIMIT_SURFACE_CONCEPTS = {
   resetAction: 'ui.action.reset',
   searchProfilesAction: 'ui.action.searchProfiles',
   filterAction: 'ui.action.filter',
+} as const satisfies Record<string, PortalSemanticConceptKey>;
+
+export const PARTNER_HISTORY_SURFACE_CONCEPTS = {
+  page: 'page.partnerHistory',
+  openingBaseline: 'section.openingBaseline',
 } as const satisfies Record<string, PortalSemanticConceptKey>;
 
 export function validatePortalSemanticVocabulary(): void {
