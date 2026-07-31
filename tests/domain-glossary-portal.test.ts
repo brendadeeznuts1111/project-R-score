@@ -225,8 +225,8 @@ describe('domain glossary portal', () => {
       deposits: 'section.partnersDeposits',
       'partner-message': 'section.partnersPartnerMessage',
       outs: 'section.partnersOuts',
-      'book-detail': 'section.partnersBookDetail',
-      tags: 'section.partnersTags',
+      books: 'section.partnersBookDetail',
+      'tag-filter-bar': 'section.partnersTags',
     });
     expect(PORTAL_GLOSSARY_SURFACES).toHaveLength(PORTAL_PAGE_CONCEPT_DEFINITIONS.length);
     expect(new Set(PORTAL_GLOSSARY_SURFACES.map(surface => surface.path))).toEqual(

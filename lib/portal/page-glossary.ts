@@ -41,9 +41,10 @@ const PAGE_SECTIONS: Readonly<
     'accounts-limits': PARTNERS_SURFACE_CONCEPTS.accountsLimits,
     deposits: PARTNERS_SURFACE_CONCEPTS.deposits,
     'partner-message': PARTNERS_SURFACE_CONCEPTS.partnerMessage,
+    // Keys must match board `id="section:…"` / mount ids (glossary UX → #section:key).
     outs: PARTNERS_SURFACE_CONCEPTS.outs,
-    'book-detail': PARTNERS_SURFACE_CONCEPTS.bookDetail,
-    tags: PARTNERS_SURFACE_CONCEPTS.tags,
+    books: PARTNERS_SURFACE_CONCEPTS.bookDetail,
+    'tag-filter-bar': PARTNERS_SURFACE_CONCEPTS.tags,
   },
 };
 

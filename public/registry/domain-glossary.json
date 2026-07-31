@@ -147,8 +147,8 @@
         "deposits": "section.partnersDeposits",
         "partner-message": "section.partnersPartnerMessage",
         "outs": "section.partnersOuts",
-        "book-detail": "section.partnersBookDetail",
-        "tags": "section.partnersTags"
+        "books": "section.partnersBookDetail",
+        "tag-filter-bar": "section.partnersTags"
       }
     },
     {
