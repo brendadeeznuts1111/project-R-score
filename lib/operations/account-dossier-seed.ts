@@ -25,7 +25,10 @@ export const DOSSIER_DEMO_PARTNER_CODES = ['ASH'] as const;
 export type SeedAccountDossierOpts = {
   /** Partner codes to enrich (default ASH). */
   partnerCodes?: readonly string[];
-  /** Force re-seed limit rows for those TOC nodes. */
+  /**
+   * Force re-seed limit rows + rewrite demo identity labels.
+   * Default false (matches seedTocLimitBridge). CLI scripts pass --force.
+   */
   force?: boolean;
   /** Also refresh limit-demo-* pattern fixtures. */
   includeLimitDemo?: boolean;
@@ -71,12 +74,23 @@ export const DOSSIER_ASH_ACCOUNTS = [
   { id: '019f92ee-5ef9-728d-950c-6c02a59903a2', callSign: 'ASH-002', name: 'TOC ASH-002' },
 ] as const;
 
+export type EnsureDossierDemoTreeOpts = {
+  /** When true, rewrite agent parent/call_sign/name to demo fixtures. */
+  force?: boolean;
+  nowIso?: string;
+};
+
 /**
  * Ensure ASH partner + downline agents exist (idempotent). Used so a fresh
  * test DB can seed without a prior ops:seed:toc run.
+ *
+ * Default is insert-only / fill blanks. Pass `force` to repair demo identity
+ * (overwrites agent labels that TOC operators may have edited).
  */
-export function ensureDossierDemoTree(db: Database, nowIso = new Date().toISOString()): void {
+export function ensureDossierDemoTree(db: Database, opts?: EnsureDossierDemoTreeOpts): void {
   ensureAccountLimitsSchema(db);
+  const force = opts?.force ?? false;
+  const nowIso = opts?.nowIso ?? new Date().toISOString();
   const hasTree = db
     .query(`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'tree_nodes' LIMIT 1`)
     .get() as { name: string } | null;
@@ -88,12 +102,24 @@ export function ensureDossierDemoTree(db: Database, nowIso = new Date().toISOStr
      VALUES ($id, 'partner', NULL, NULL, 'Cascade Partner', 'ASH', NULL, 'paypal', 1, $now)`,
     { $id: DOSSIER_ASH_PARTNER_ID, $now: nowIso }
   );
-  // Keep call_sign/name coherent if the row already exists without ASH.
+  // Soft fill only: blank call_sign / name, never clobber an existing label.
   db.run(
-    `UPDATE tree_nodes SET call_sign = 'ASH', name = COALESCE(NULLIF(name, ''), 'Cascade Partner'), type = 'partner', active = 1
+    `UPDATE tree_nodes
+     SET call_sign = COALESCE(NULLIF(trim(call_sign), ''), 'ASH'),
+         name = COALESCE(NULLIF(trim(name), ''), 'Cascade Partner'),
+         type = 'partner',
+         active = 1
      WHERE id = $id`,
     { $id: DOSSIER_ASH_PARTNER_ID }
   );
+  if (force) {
+    db.run(
+      `UPDATE tree_nodes
+       SET call_sign = 'ASH', name = 'Cascade Partner', type = 'partner', active = 1
+       WHERE id = $id`,
+      { $id: DOSSIER_ASH_PARTNER_ID }
+    );
+  }
 
   for (const acc of DOSSIER_ASH_ACCOUNTS) {
     db.run(
@@ -110,7 +136,11 @@ export function ensureDossierDemoTree(db: Database, nowIso = new Date().toISOStr
     );
     db.run(
       `UPDATE tree_nodes
-       SET parent_id = $pid, call_sign = $cs, name = $name, type = 'agent', active = 1
+       SET parent_id = COALESCE(parent_id, $pid),
+           call_sign = COALESCE(NULLIF(trim(call_sign), ''), $cs),
+           name = COALESCE(NULLIF(trim(name), ''), $name),
+           type = COALESCE(NULLIF(trim(type), ''), 'agent'),
+           active = 1
        WHERE id = $id`,
       {
         $id: acc.id,
@@ -119,6 +149,19 @@ export function ensureDossierDemoTree(db: Database, nowIso = new Date().toISOStr
         $cs: acc.callSign,
       }
     );
+    if (force) {
+      db.run(
+        `UPDATE tree_nodes
+         SET parent_id = $pid, call_sign = $cs, name = $name, type = 'agent', active = 1
+         WHERE id = $id`,
+        {
+          $id: acc.id,
+          $pid: DOSSIER_ASH_PARTNER_ID,
+          $name: acc.name,
+          $cs: acc.callSign,
+        }
+      );
+    }
   }
 }
 
@@ -130,8 +173,8 @@ export async function seedAccountDossierDemo(
   opts?: SeedAccountDossierOpts
 ): Promise<SeedAccountDossierResult> {
   ensureAccountLimitsSchema(db);
-  ensureDossierDemoTree(db);
-  const force = opts?.force ?? true;
+  const force = opts?.force ?? false;
+  ensureDossierDemoTree(db, { force });
   const partnerCodes = opts?.partnerCodes ?? DOSSIER_DEMO_PARTNER_CODES;
   const nowSec = opts?.nowSec ?? Math.floor(Date.now() / 1000);
   const lookbackHours = opts?.lookbackHours ?? 168;

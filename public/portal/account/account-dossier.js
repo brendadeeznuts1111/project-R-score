@@ -106,42 +106,47 @@ function buildConnectedTree(accountId, partnerNodeId, patterns, profiles) {
     if (String(parent.accountKind).toLowerCase() === 'partner') break;
   }
 
-  const underRoot = [...byId.values()].filter(row => {
+  /** True when row is root, the viewed account, or any ancestor chain reaches root. */
+  function underPartnerRoot(row) {
     const id = String(row.treeNodeId);
     if (id === root || id === accountId) return true;
     let walk = row;
     const walkSeen = new Set();
-    while (walk?.parentNodeId && !walkSeen.has(String(walk.treeNodeId))) {
+    let hops = 0;
+    while (walk?.parentNodeId && hops < 16 && !walkSeen.has(String(walk.treeNodeId))) {
       walkSeen.add(String(walk.treeNodeId));
       if (String(walk.parentNodeId) === root) return true;
       walk = byId.get(String(walk.parentNodeId));
+      hops += 1;
     }
     return false;
-  });
+  }
+
+  function depthFromRoot(row) {
+    if (String(row.treeNodeId) === root) return 0;
+    let depth = 0;
+    let walk = row;
+    const walkSeen = new Set();
+    while (walk?.parentNodeId && depth < 16 && !walkSeen.has(String(walk.treeNodeId))) {
+      walkSeen.add(String(walk.treeNodeId));
+      depth += 1;
+      if (String(walk.parentNodeId) === root) return depth;
+      walk = byId.get(String(walk.parentNodeId));
+    }
+    return depth;
+  }
+
+  const underRoot = [...byId.values()].filter(underPartnerRoot);
 
   return underRoot
     .map(row => {
-      let depth = 0;
-      let walk = row;
-      const walkSeen = new Set();
-      while (walk?.parentNodeId && !walkSeen.has(String(walk.treeNodeId))) {
-        walkSeen.add(String(walk.treeNodeId));
-        if (String(walk.parentNodeId) === root) {
-          depth += 1;
-          break;
-        }
-        walk = byId.get(String(walk.parentNodeId));
-        depth += 1;
-        if (depth > 16) break;
-      }
-      if (String(row.treeNodeId) === root) depth = 0;
       return {
         node_id: String(row.treeNodeId),
         partner_node_id: root,
         parent_node_id: row.parentNodeId ? String(row.parentNodeId) : null,
         node_name: row.accountName ?? String(row.treeNodeId),
         node_type: row.accountKind ?? 'account',
-        downline_depth: depth,
+        downline_depth: depthFromRoot(row),
         state_code: row.jurisdiction?.stateCode ?? null,
         location: row.jurisdiction?.location ?? null,
         zip_code: row.jurisdiction?.zipCode ?? null,
