@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname
 import { afterEach, describe, expect, test } from 'bun:test';
 import { joinPath } from '../lib/path-bun.ts';
+import { createTestWorkspace } from './harness.ts';
 import {
   formatServePublicBindLines,
   isListenPortBusy,
@@ -77,7 +78,8 @@ describe('lib/http/serve-public-bind', () => {
   });
 
   test('write/read bind manifest round-trip', async () => {
-    const path = joinPath(import.meta.dir, '.tmp-bind-test.json');
+    await using workspace = await createTestWorkspace('factorywager-serve-bind-');
+    const path = workspace.resolve('bind.json');
     const snap = serveBindSnapshot(
       track(
         Bun.serve({
@@ -101,8 +103,6 @@ describe('lib/http/serve-public-bind', () => {
     expect(await Bun.file(tomlPath).exists()).toBe(true);
     const readToml = await readServePublicBindManifest(tomlPath);
     expect(readToml?.port).toBe(manifest.port);
-    await Bun.write(path, '');
-    await Bun.write(tomlPath, '');
   });
 
   test('resolveServePublicVerifyBase prefers PORTAL_VERIFY_BASE', async () => {
@@ -127,7 +127,8 @@ describe('lib/http/serve-public-bind', () => {
   });
 
   test('resolveServePublicVerifyBase prefers bind manifest over default port', async () => {
-    const path = joinPath(import.meta.dir, '.tmp-verify-bind.json');
+    await using workspace = await createTestWorkspace('factorywager-verify-bind-');
+    const path = workspace.resolve('bind.json');
     await writeServePublicBindManifest(
       {
         ...serveBindSnapshot(
@@ -149,6 +150,5 @@ describe('lib/http/serve-public-bind', () => {
     const base = await resolveServePublicVerifyBase({}, ['bun', 'tools/verify-portal.ts'], path);
     const manifest = await readServePublicBindManifest(path);
     expect(base).toBe(manifest?.loopbackOrigin);
-    await Bun.write(path, '');
   });
 });
