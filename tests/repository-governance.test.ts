@@ -3,6 +3,7 @@ import { describe, expect, test } from 'bun:test';
 
 import mainRuleset from '../.github/rulesets/main.json' with { type: 'json' };
 import tagRuleset from '../.github/rulesets/release-tags.json' with { type: 'json' };
+import packageJson from '../package.json' with { type: 'json' };
 import { getReleaseSteps, RELEASE_COMMIT_PATHS } from '../scripts/release.ts';
 
 function ruleTypes(ruleset: { rules: Array<{ type: string }> }): Set<string> {
@@ -10,7 +11,7 @@ function ruleTypes(ruleset: { rules: Array<{ type: string }> }): Set<string> {
 }
 
 describe('repository governance', () => {
-  test('main is PR-only, linear, collision-gated, and non-destructive', () => {
+  test('main is PR-only, linear, locally gated, and non-destructive', async () => {
     expect(mainRuleset.target).toBe('branch');
     expect(mainRuleset.enforcement).toBe('active');
     expect(mainRuleset.conditions.ref_name.include).toContain('~DEFAULT_BRANCH');
@@ -20,16 +21,16 @@ describe('repository governance', () => {
         'non_fast_forward',
         'required_linear_history',
         'pull_request',
-        'required_status_checks',
       ])
     );
 
-    const status = mainRuleset.rules.find(rule => rule.type === 'required_status_checks');
-    const contexts = status?.parameters?.required_status_checks?.map(check => check.context) ?? [];
-    expect(contexts).toContain('Harness (ratchets · lint · brands · test:changed)');
-    expect(contexts).toContain('Type Check');
-    expect(contexts).toContain('security-audit');
-    expect(new Set(contexts).size).toBe(contexts.length);
+    expect(mainRuleset.rules.find(rule => rule.type === 'required_status_checks')).toBeUndefined();
+    expect(packageJson.scripts['bun:ci']).toContain('scripts/bun-ci.ts');
+    const localCi = await Bun.file(`${import.meta.dir}/../scripts/bun-ci.ts`).text();
+    expect(localCi).toContain("['bun', 'run', 'ci:core']");
+    expect(localCi).toContain("['bun', 'run', 'ci:types']");
+    expect(localCi).toContain("['bun', 'run', 'ci:security']");
+    expect(localCi).toContain("['bun', 'run', 'ci:portal-registry']");
   });
 
   test('release tags in the v* namespace are immutable', () => {

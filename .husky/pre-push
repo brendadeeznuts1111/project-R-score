@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 set -e
 
-# Push boundary: verify the committed tree even if a local commit bypassed its
-# hook. GitHub's main ruleset repeats these checks on the proposed merge.
+# Push boundary: verify a fast subset even if a local commit bypassed its hook.
+# Full merge proof is local-only and owned by: bun run bun:ci.
 bun scripts/verify-install-cache.ts --quiet
 bun scripts/repo-hygiene.ts --tracked
 bun tools/brand-manifest.ts --check

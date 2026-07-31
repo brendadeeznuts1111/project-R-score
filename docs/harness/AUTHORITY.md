@@ -42,44 +42,52 @@ Bun create envs (`GITHUB_TOKEN`, `GITHUB_ACCESS_TOKEN`, `GITHUB_API_DOMAIN`) are
 
 Macros do **not** substitute under a plain `bun scripts/foo.ts` run. Keep runtime resolve for live scripts; use macros only for bundle consumers. Full lib map: [`PROOF.md` Lib surface](PROOF.md#lib-surface--docs-vs-bun-vs-other-external).
 
-## Required status checks (`main`)
+## Local CI authority (`main`)
 
-Branch protection should require these GitHub Actions check names (workflow / job):
+GitHub Actions is disabled for this repository. Hosted-runner billing locks jobs
+before step 1, so a GitHub check cannot prove artifact health and must never be
+a merge dependency. The canonical merge proof runs on the operator machine:
 
-- **`Harness Gates / Harness (ratchets · lint · brands · test:changed)`**  
-  *Ratchet* → [harness-gates.yml](../../.github/workflows/harness-gates.yml) · `bun run ci:core` (install verify · hygiene · harness) + Claim on PRs
+```bash
+bun run bun:ci
+```
 
-**Delivery (itch #4):**
+`bun:ci` composes the former hosted boundaries: `ci:core`, TypeScript config and
+both type-check scopes, dependency/security audits, and portal/registry
+isolation. It loads the machine's existing `~/.reasonix/.env`, applies the
+non-secret registry bucket default, and installs the nested registry workspace
+with its frozen lockfile. A passing local command is the merge authority. When
+an open, disjoint lane owns an existing failure, the commit must record the
+failing command, exact evidence, and owning lane; GitHub status is never a
+substitute for that local evidence.
+
+**Delivery:**
 
 | Setting | Status |
 |---------|--------|
-| Required check `Harness Gates / Harness (…)` | on · strict |
-| Required check `TypeScript Checks / Type Check` | **on** · strict |
-| `enforce_admins` | **on** |
+| GitHub Actions | **disabled** at repository level; retained workflow YAML is reference-only |
+| Required hosted status checks | **none** |
+| Local merge proof | `bun run bun:ci` |
 | Require pull request before merging | **on** (`required_pull_request_reviews`, 0 approvals) |
-| search-governance as required | optional — not required yet |
-| Cloudflare Pages (`project-r-score`) | **not required** — Git-integration deploy signal only; merge SSOT remains Harness Gates + TypeScript Checks. Pins/SSOT: `config/r2-env.ts` · `bun run cloudflare:env` / `:assert-apex` · claim `cloudflare-pages-env-ssot` |
-| GitHub-hosted runners | **offline (billing)** — jobs fail in ~2s with **0 steps** / empty `runner_name`. Not a harness test failure. |
+| Review-thread resolution | **on** |
+| Linear history / no force-push | **on** |
+| Cloudflare Pages (`project-r-score`) | External Git integration remains the deploy signal; it does not depend on GitHub Actions. Pins/SSOT: `config/r2-env.ts` · `bun run cloudflare:env` / `:assert-apex` · claim `cloudflare-pages-env-ssot` |
 
-### Local CI when Actions is offline
+### Local operate loop
 
-Bun has no hosted “local CI” product — this repo’s envelope **is** the local CI. When GHA cannot start runners, prove merge readiness locally (same body as the required jobs):
-
-```bash
-bun run ci:core
-bun run ts:verify && bun run imports:verify && bun run type-check:ci && bun run type-check:full
-```
-
-- `ci:core` = install verify · hygiene · `ci:harness` (= Harness Gates job body)
-- Type scripts = TypeScript Checks job body
+- `bun:ci` = complete merge proof; run before every merge.
+- `ci:core` = install verify · hygiene · `ci:harness`.
+- `ci:types` = config/import verification plus CI and full type scopes.
+- `ci:security` = dependency guard plus security audit.
+- `ci:portal-registry` = isolated writer tests plus clean-public-tree proof.
 - Day loop: `bun run ci:harness:fast` · husky pre-commit / pre-push
-- Status discover: `bun run harness:status` mutes 0-step / billing Actions noise by default (`--show-actions-noise` to show) — [README.md](README.md)
+- Status discover: `bun run harness:status`; hosted Actions state is not merge evidence.
+- Main governance still requires a PR, resolved review threads, linear history,
+  and non-destructive updates. Probe: `gh api repos/<org>/<repo>/rulesets`.
 
-Admin merge / temporary protection bypass is required until billing restores green check runs. Local pass ≠ GitHub check green.
-
-Direct `git push` to `main` is declined when the required check is missing. Prefer PR → green Harness Gates → merge (or local proof + admin merge while Actions is offline). Probe: `gh api repos/<org>/<repo>/branches/main/protection`.
-
-Install+hygiene for `main`/PRs is **inside** harness-gates (one runner). `repo-hygiene.yml` only covers `feat/**` / `codex/**`. Setup: [`.github/actions/setup-factory-bun`](../../.github/actions/setup-factory-bun/action.yml).
+Workflow YAML under `.github/workflows/` is retained as historical/executable
+reference only. Do not re-enable GitHub Actions or add hosted required checks;
+extend `bun:ci` when a new merge boundary is needed.
 
 ## Credential custody
 

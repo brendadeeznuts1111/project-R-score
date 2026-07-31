@@ -147,13 +147,13 @@ Discovery manifest (Layer 5): `/.well-known/mcp.json` on Pages (see [`public/.we
 static asset and a Pages Function response. `_headers` does not apply to
 Functions, so both checks are required.
 
-### Skip GitHub Actions without skipping Pages
+### Local CI and Pages deploys
 
-Cloudflare Pages treats a commit prefixed with `[CI Skip]` or `[Skip CI]` as a
-deployment skip. GitHub Actions also recognizes `[skip actions]`, while Pages
-does not reserve that prefix. When the operator asks to skip Actions but a Pages
-preview is still required, use `[skip actions]` in the commit subject — not
-`[skip ci]`. The resulting required GitHub checks can remain pending by design.
+GitHub Actions is disabled repository-wide; `bun run bun:ci` is the merge proof.
+Cloudflare Pages remains an external Git integration and continues to build
+commits without GitHub-hosted runners. Do not use `[CI Skip]` or `[Skip CI]`
+when a Pages preview or production deployment is required because Cloudflare
+reserves those prefixes as deployment skips.
 
 Publish surface is `public/` (includes `index.html` + registry/robots/sitemaps + portal) plus root `functions/` (Pages Functions). Apex 404 means `index.html` is missing from that dir. Pack/release/changelog R2 URLs resolve via `r2BucketUrlFromEnv()` in `config/r2-env.ts`. Registry apps import root `lib/` / `config/` at **7** `../` levels from `apps/*/src` and `packages/*/src`.
 
