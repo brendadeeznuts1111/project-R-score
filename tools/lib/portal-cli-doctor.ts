@@ -19,6 +19,7 @@
  *   portal-cli doctor --full        # spawn install:verify · vault · capability gates
  *   portal-cli doctor --group catalog
  *   portal-cli doctor --group bunfig
+ *   portal-cli doctor --group runtime
  *   portal-cli doctor --group linker --group catalog
  *   portal-cli doctor --env ci      # skip envScope=dev checks
  *
@@ -47,10 +48,18 @@ import { cliTone, displayWidth, frameBlock, padDisplay } from '../../lib/portal/
 import { runCatalogChecks } from './portal-cli-doctor-catalog.ts';
 import { runBunfigChecks } from './portal-cli-doctor-bunfig.ts';
 import { runInfraChecks } from './portal-cli-doctor-infra.ts';
+import { runRuntimeEnvChecks } from './portal-cli-doctor-runtime-env.ts';
 
 export type PortalDoctorLevel = 'fatal' | 'warn' | 'info';
 export type PortalDoctorEnvScope = 'dev' | 'ci' | 'all';
-export type PortalDoctorGroup = 'linker' | 'bakes' | 'catalog' | 'bunfig' | 'infra' | 'gates';
+export type PortalDoctorGroup =
+  | 'linker'
+  | 'bakes'
+  | 'catalog'
+  | 'bunfig'
+  | 'runtime'
+  | 'infra'
+  | 'gates';
 
 export type PortalDoctorCheck = {
   id: string; // brand-ok — check id enum-like opaque key (linker-config-version, …)
@@ -148,7 +157,8 @@ export type PortalDoctorOpts = {
   /** Force plain or pretty output (overrides env auto-detect). */
   format?: 'plain' | 'pretty';
   /**
-   * Process-like env for machine bunfig / BUN_INSTALL_* probes (default Bun.env).
+   * Process-like env for machine bunfig, BUN_INSTALL_*, and runtime controls
+   * (default Bun.env).
    * Distinct from doctor --env ci|dev|all (envScope filter).
    */
   machineEnv?: Record<string, string | undefined>;
@@ -159,6 +169,7 @@ export const GROUP_LABEL: Record<PortalDoctorGroup, string> = {
   bakes: 'Offline bakes',
   catalog: 'Catalog SSOT',
   bunfig: 'Bunfig SSOT',
+  runtime: 'Runtime environment',
   infra: 'Infra · Access',
   gates: 'Spawned gates',
 };
@@ -168,6 +179,7 @@ export const PORTAL_DOCTOR_GROUPS: PortalDoctorGroup[] = [
   'bakes',
   'catalog',
   'bunfig',
+  'runtime',
   'infra',
   'gates',
 ];
@@ -500,7 +512,10 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
   // 3b) Bunfig machine/project SSOT
   checks.push(...(await runBunfigChecks(cwd, opts.machineEnv)));
 
-  // 3c) Infra · Access (live HTTPS or offline policy SSOT)
+  // 3c) Bun runtime environment controls (pure; raw values never reported)
+  checks.push(...runRuntimeEnvChecks(opts.machineEnv ?? Bun.env));
+
+  // 3d) Infra · Access (live HTTPS or offline policy SSOT)
   checks.push(
     ...(await runInfraChecks({
       cwd,

@@ -4,7 +4,7 @@
 **Board** `/portal/doctor/` · lander widget · tools hub  
 **Bake** `public/registry/doctor-state.json`  
 **CLI** `bun run portal:doctor` · `bun run bake:doctor` · `bun run bake:doctor:check`  
-**Policy SSOT** [`lib/install/machine-bunfig-policy.ts`](../../../lib/install/machine-bunfig-policy.ts) · human map [`docs/UNIFIED.md`](../../UNIFIED.md)  
+**Policy SSOT** [`lib/install/machine-bunfig-policy.ts`](../../../lib/install/machine-bunfig-policy.ts) · [`lib/bun-runtime-env.ts`](../../../lib/bun-runtime-env.ts) · human map [`docs/UNIFIED.md`](../../UNIFIED.md)
 **Capability map** AGENTS.md — Unified Doctor · Bunfig · Doctor groups  
 **Workflow** [`.github/workflows/harness-gates.yml`](../../../.github/workflows/harness-gates.yml)
 
@@ -18,6 +18,7 @@ Unified offline health gate for the portal control plane. Pure checks by default
 | `bakes` | vault / capability-map / bunfig-state presence |
 | `catalog` | schema · shortcodes · help coverage · deprecated flags |
 | `bunfig` | machine SSOT · project no machine keys · merge · excludes · frozenLockfile · no install env overrides |
+| `runtime` | TLS safety · documented control values · value-free effective state (not in portable fingerprint) |
 | `infra` | Access offline/live (not in portable fingerprint) |
 | `gates` | only with `--full` (not in portable fingerprint) |
 
@@ -80,7 +81,7 @@ Operator map for harness-gates + local reproduce. Tables over narrative.
 
 | Included (portable) | Excluded |
 |---------------------|----------|
-| `linker` · `bakes` · `catalog` · `bunfig` | `infra` (Access offline/live ok bits) · `gates` (`--full` spawns) |
+| `linker` · `bakes` · `catalog` · `bunfig` | `runtime` (host env) · `infra` (Access offline/live ok bits) · `gates` (`--full` spawns) |
 
 - Code: `PORTABLE_DOCTOR_GROUPS` in `tools/bake-doctor.ts`
 - **Product CI gate:** sha256 of stable fields (ids / ok / level / summary / byGroup) + field `drift[]` — **messages never fingerprinted**
@@ -118,6 +119,7 @@ bun run machine:bunfig:ensure -- --overwrite
 CI=true NO_COLOR=1 bun run portal:doctor:ci:report
 # or: portal:doctor:ci  (no JSON / no GHA sinks)
 bun run portal:doctor --group bunfig
+bun run portal:doctor --group runtime
 bun run audit:bunfig
 bun run bake:doctor
 bun run bake:doctor:check

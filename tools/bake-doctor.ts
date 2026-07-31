@@ -17,7 +17,8 @@
  *
  * Bake/check always skip live Access probes so the artifact is CI-stable.
  * Fingerprint covers portable groups only (linker|bakes|catalog|bunfig) so
- * host-dependent infra ok bits and --full gates do not break CI/laptop compare.
+ * host-dependent runtime/infra ok bits and --full gates do not break
+ * CI/laptop compare.
  * Board JSON still lists all checks.
  * Board: /portal/doctor/
  *
@@ -38,7 +39,8 @@ export const DOCTOR_STATE_CHECK_REPORT_REL = 'reports/doctor-state-check.json';
 
 /**
  * Groups included in doctor-state fingerprint (CI/laptop portable).
- * Excludes `infra` (Access offline/live ok bits) and `gates` (--full spawns).
+ * Excludes `runtime` (host env), `infra` (Access offline/live ok bits), and
+ * `gates` (--full spawns).
  * Messages are never fingerprinted; this filters check ok/level membership.
  */
 export const PORTABLE_DOCTOR_GROUPS = ['linker', 'bakes', 'catalog', 'bunfig'] as const;
@@ -214,8 +216,8 @@ export function toDoctorState(r: PortalDoctorReport, opts: StableDoctorOpts = {}
 
 /**
  * Stable payload for CI fingerprint (no timestamps, no free-text messages).
- * Default portable=true: only linker|bakes|catalog|bunfig; recomputes ok/tone/summary/byGroup
- * so infra/gates drift never fails the gate.
+ * Default portable=true: only linker|bakes|catalog|bunfig; recomputes
+ * ok/tone/summary/byGroup so runtime/infra/gates drift never fails the gate.
  */
 export function stableDoctorState(
   state: DoctorState,

@@ -5,6 +5,7 @@
 // @see https://bun.com/docs/test/index#run-tests — bun:test
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
+// @see https://bun.com/docs/runtime/environment-variables#configuring-bun — Bun runtime environment controls
 // @see https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files — --env-file
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
@@ -212,7 +213,7 @@ const ROOT_HELP = `FactoryWager portal CLI
   portal-cli secret <subcommand>     Proton Pass CLI (pass-cli) wrapper
   portal-cli pm <args…>              bun pm passthrough + FW graph helper
   portal-cli scanner <subcommand>    Bun Security Scanner (policy · estimate · scan --oneshot)
-  portal-cli doctor [--verbose] [--full]  Unified health gate (linker configVersion + bakes + catalog)
+  portal-cli doctor [--verbose] [--full]  Unified health gate (linker + catalog + runtime controls)
   portal-cli flags [--all] [--verbose] [--json]  Curated Bun runtime flags table (SSOT catalog)
   portal-cli badge [--json]          Offline nav-badge preview (from baked registry JSON)
   portal-cli bunfig status|check     Bunfig install config provenance + policy gate
@@ -1220,7 +1221,7 @@ Related: portal-cli --help · portal-cli doctor --group catalog
   }
 
   if (cmd === 'doctor') {
-    // Unified portal health gate — linker configVersion + offline bakes + catalog.
+    // Unified portal health gate — linker + bakes + catalog + runtime controls.
     // --full also runs install:verify + vault/capabilities test gates.
     // --verbose adds fix command · impact · auto-fixable · env scope table.
     // @see https://bun.com/docs/pm/cli/install#default-strategy
@@ -1228,13 +1229,14 @@ Related: portal-cli --help · portal-cli doctor --group catalog
     if (argv.includes('--help') || argv.includes('-h')) {
       console.log(`Usage: portal-cli doctor [flags]
 
-Unified portal health gate (linker · bakes · catalog · bunfig · infra · gates).
+Unified portal health gate (linker · bakes · catalog · bunfig · runtime · infra · gates).
 
 Checks:
   Linker:  linker-config-version · machine-isolated-linker
   Bakes:   vault-health · capability-map-subset · bunfig-state (+ age when present)
   Catalog: catalog-json-schema · shortcode · bun-help-parity · help-coverage · deprecated
   Bunfig:  machine-ssot · frozen-lockfile · project-no-machine-keys · merge · excludes · env
+  Runtime: TLS verification · control values · value-free effective state
   Infra:   access-policy · ledger-access · portal-access · terminal-host · reasonix-dns
   Gates:   (only with --full) install:verify · vault-health tests · capability tests
 
@@ -1248,7 +1250,7 @@ Flags:
   --verbose · -v     Full fields / remediation (pretty: Bun.stringWidth table)
   --failed-only      Hide passing checks
   --full             Spawn install:verify · vault · capability tests
-  --group <name>     linker | bakes | catalog | bunfig | infra | gates
+  --group <name>     linker | bakes | catalog | bunfig | runtime | infra | gates
   --env <scope>      all | ci | dev
   --layout plain|pretty   Override auto (TTY→pretty · CI/pipe→plain)
   --json             Machine-readable report
@@ -1263,6 +1265,7 @@ Examples:
   portal-cli doctor --group infra                 # live Access probes
   portal-cli doctor --env ci --group infra --layout pretty
   portal-cli doctor --group bunfig --offline
+  portal-cli doctor --group runtime --offline
   portal-cli doctor --verbose --failed-only
   portal-cli doctor --json
   portal-cli doctor --full --verbose

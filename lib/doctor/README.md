@@ -4,6 +4,7 @@ Doctor-state bake helpers and portal board contracts for `portal-cli doctor`.
 
 - Machine bunfig policy SSOT: [`lib/install/machine-bunfig-policy.ts`](../install/machine-bunfig-policy.ts)
 - Bunfig probes (doctor group): `tools/lib/portal-cli-doctor-bunfig.ts`
+- Runtime environment probes: `tools/lib/portal-cli-doctor-runtime-env.ts`
 - Live Access probes: [`lib/verification/cloudflare-access-live.ts`](../verification/cloudflare-access-live.ts)
 - CLI checks: `tools/lib/portal-cli-doctor*.ts`
 - Board artifact: `public/registry/doctor-state.json`
@@ -11,6 +12,7 @@ Doctor-state bake helpers and portal board contracts for `portal-cli doctor`.
 
 ```bash
 bun run portal:doctor --group bunfig --verbose
+bun run portal:doctor --group runtime --verbose
 bun run bake:doctor
 bun run bake:doctor:check
 ```

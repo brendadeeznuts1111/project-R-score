@@ -24,6 +24,7 @@ import {
   REQUIRED_RELEASE_AGE_EXCLUDES,
   runBunfigChecks,
 } from '../tools/lib/portal-cli-doctor-bunfig.ts';
+import { runRuntimeEnvChecks } from '../tools/lib/portal-cli-doctor-runtime-env.ts';
 import { toDoctorState, DOCTOR_STATE_KIND } from '../tools/bake-doctor.ts';
 import { PORTAL_CLI_COMMANDS } from '../tools/lib/portal-cli-bun-flags.ts';
 
@@ -253,6 +254,46 @@ describe('portal-cli doctor pure', () => {
     expect(r.ok).toBe(true);
   });
 
+  test('runtime group reports effective state without exposing BUN_OPTIONS', async () => {
+    const secretishOptions = '--preload=pass://vault/private-item/password';
+    const checks = runRuntimeEnvChecks({
+      FORCE_COLOR: '1',
+      NO_COLOR: '1',
+      BUN_OPTIONS: secretishOptions,
+    });
+    expect(checks.map(c => c.id)).toEqual([
+      'runtime-env-tls-verification',
+      'runtime-env-control-values',
+      'runtime-env-effective-state',
+    ]);
+    expect(checks.every(c => c.group === 'runtime')).toBe(true);
+    expect(checks.every(c => c.ok)).toBe(true);
+    expect(checks.find(c => c.id === 'runtime-env-effective-state')?.message).toContain(
+      'color=forced'
+    );
+    expect(JSON.stringify(checks)).not.toContain(secretishOptions);
+  });
+
+  test('--group runtime fails closed when TLS verification is disabled', async () => {
+    const r = await runPortalDoctor({
+      cwd: ROOT,
+      full: false,
+      group: 'runtime',
+      machineEnv: {
+        NODE_TLS_REJECT_UNAUTHORIZED: '0',
+        BUN_CONFIG_MAX_HTTP_REQUESTS: 'invalid',
+      },
+      skipLiveAccess: true,
+    });
+    expect(r.group).toBe('runtime');
+    expect(r.checks).toHaveLength(3);
+    expect(r.checks.every(c => c.group === 'runtime')).toBe(true);
+    expect(r.ok).toBe(false);
+    expect(r.summary.failedFatal).toBe(1);
+    expect(r.summary.failedWarn).toBe(1);
+    expect(formatPortalDoctor(r)).toContain('Runtime environment');
+  });
+
   test('runBunfigChecks exports machine key / excludes constants', async () => {
     expect(MACHINE_OWNED_INSTALL_KEYS).toContain('linker');
     expect(MACHINE_OWNED_INSTALL_KEYS).toContain('globalStore');
@@ -408,6 +449,7 @@ describe('portal-cli doctor pure', () => {
 
   test('parseDoctorGroup / parseDoctorEnv / filterDoctorByScope', () => {
     expect(parseDoctorGroup('catalog')).toBe('catalog');
+    expect(parseDoctorGroup('runtime')).toBe('runtime');
     expect(() => parseDoctorGroup('nope')).toThrow(/Unknown doctor --group/);
     expect(parseDoctorEnv('ci')).toBe('ci');
     expect(() => parseDoctorEnv('prod')).toThrow(/Unknown doctor --env/);
@@ -553,6 +595,20 @@ describe('portal-cli doctor CLI', () => {
     expect(code).toBe(0);
     expect(out).toContain('doctor');
     expect(out).toContain('flags');
+  });
+
+  test('doctor help lists the runtime group and value-free checks', async () => {
+    const proc = Bun.spawn(['bun', CLI, 'doctor', '--help'], {
+      cwd: ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const code = await proc.exited;
+    const out = await new Response(proc.stdout).text();
+    expect(code).toBe(0);
+    expect(out).toContain('bunfig | runtime | infra');
+    expect(out).toContain('Runtime: TLS verification');
+    expect(out).toContain('doctor --group runtime');
   });
 
   test('portal-cli flags prints curated table', async () => {

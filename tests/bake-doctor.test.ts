@@ -146,17 +146,25 @@ function baseState(overrides: Partial<DoctorState> = {}): DoctorState {
 }
 
 describe('bake-doctor portable fingerprint', () => {
-  test('PORTABLE_DOCTOR_GROUPS is linker|bakes|catalog|bunfig', () => {
+  test('PORTABLE_DOCTOR_GROUPS excludes host runtime, infra, and gates', () => {
     expect([...PORTABLE_DOCTOR_GROUPS]).toEqual(['linker', 'bakes', 'catalog', 'bunfig']);
     expect(isPortableDoctorGroup('linker')).toBe(true);
+    expect(isPortableDoctorGroup('runtime')).toBe(false);
     expect(isPortableDoctorGroup('infra')).toBe(false);
     expect(isPortableDoctorGroup('gates')).toBe(false);
   });
 
-  test('stableDoctorState portable excludes infra and gates checks', () => {
+  test('stableDoctorState portable excludes runtime, infra, and gates checks', () => {
     const state = baseState({
       checks: [
         ...baseState().checks,
+        {
+          id: 'runtime-env-effective-state',
+          group: 'runtime',
+          level: 'info',
+          ok: true,
+          message: 'host-dependent',
+        },
         {
           id: 'gate-install-verify',
           group: 'gates',
@@ -171,6 +179,7 @@ describe('bake-doctor portable fingerprint', () => {
     });
     const stable = stableDoctorState(state);
     expect(stable.checks.every(c => isPortableDoctorGroup(c.group))).toBe(true);
+    expect(stable.checks.some(c => c.group === 'runtime')).toBe(false);
     expect(stable.checks.some(c => c.group === 'infra')).toBe(false);
     expect(stable.checks.some(c => c.group === 'gates')).toBe(false);
     expect(stable.full).toBe(false);

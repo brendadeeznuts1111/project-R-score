@@ -74,7 +74,7 @@ Full weave list: [portal-weave.ts](https://github.com/brendadeeznuts1111/project
 
 ```bash
 bun run harness:status              # ratchets + proof posture
-bun run portal:doctor               # unified health gate (linker · bakes · catalog · bunfig)
+bun run portal:doctor               # unified health gate (linker · bakes · catalog · bunfig · runtime)
 bun run portal:doctor --group bunfig --verbose
 bun run bake:doctor                 # → /registry/doctor-state.json · /portal/doctor/
 bun run ops:snapshot --no-seed      # rebake registry + portal embeds
