@@ -3,9 +3,7 @@
   "compilerOptions": {
     "noEmit": true,
     "incremental": true,
-    "types": [
-      "bun"
-    ],
+    "types": ["bun"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "tsBuildInfoFile": ".cache/tsbuildinfo/check.tsbuildinfo"
@@ -32,6 +30,8 @@
     "scripts/pre-commit-harness.ts",
     "scripts/check-path-bun.ts",
     "scripts/check-bun-env.ts",
+    "scripts/check-bun-pm-cache.ts",
+    "lib/verification/resolve-bun-binary.ts",
     "scripts/harness-lesson.ts",
     "scripts/harness-status.ts",
     "scripts/ci-harness.ts",
