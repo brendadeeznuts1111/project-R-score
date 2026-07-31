@@ -74,9 +74,10 @@ Gate timings append to [`reports/harness-gate-timing.json`](../../reports/harnes
 | Era | Installs per PR (root) |
 |-----|------------------------:|
 | Pre | harness-gates + repo-hygiene + pr-claim + typescript matrix×2 + search/brand/demo/url/har on every PR |
-| Post | **Always on PR:** harness-gates (`ci:core`) · typescript (one job). **Path-filtered:** search-governance · brand-bench. **Off PR:** har-performance (schedule/main). Shared [`setup-factory-bun`](../../.github/actions/setup-factory-bun/action.yml). |
+| Post (2026-07-21) | Hosted jobs were consolidated but remained runner-dependent. |
+| Current (2026-07-31) | GitHub-hosted jobs retired; local `ci:core` + type proofs own merge readiness. |
 
-Local parity: `bun run ci:core` · `bun run ci:harness:fast`. Required check: Harness Gates only ([AUTHORITY.md](../harness/AUTHORITY.md)).
+Local proof: `bun run ci:core` · `bun run ci:harness:fast` · type-check scripts ([AUTHORITY.md](../harness/AUTHORITY.md)).
 
 ## Polish (harness-engineering mapping)
 

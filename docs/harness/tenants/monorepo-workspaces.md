@@ -202,7 +202,7 @@ TS 6 defaults `compilerOptions.types` to `[]` (no auto `@types/*`). Monorepo app
 | `bun run check:tsconfig-types` | Walk all `tsconfig*.json`; JSONC-aware extends resolution |
 | `--strict` / `CI` / `GITHUB_ACTIONS` | Exit 1 when **monorepo-owned** configs omit bun after extends walk |
 | Pre-commit | Staged spine tsconfigs / audit tool → `check:tsconfig-types --strict` (`SKIP_TSCONFIG_TYPES=1`) |
-| CI | `typescript-checks.yml` step before type-check scopes |
+| Merge proof | `bun run check:tsconfig-types -- --strict` before type-check scopes |
 
 ```bash
 bun run check:tsconfig-types

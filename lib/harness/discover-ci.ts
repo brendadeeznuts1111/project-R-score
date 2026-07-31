@@ -44,9 +44,6 @@ export const CI_JOB_OWNERS: Readonly<Record<string, string>> = {
   'deploy:staging': 'deploy-staging',
   'migrate:inventory': 'bun-migrate',
   'migrate:status': 'bun-migrate',
-  'harness-gates.yml': 'ci-core',
-  'typescript-checks.yml': 'typescript-ci',
-  'repo-hygiene.yml': 'ci-core',
 };
 
 /**
@@ -54,58 +51,10 @@ export const CI_JOB_OWNERS: Readonly<Record<string, string>> = {
  */
 export const CI_JOB_EXEMPTIONS: readonly CiJobExemption[] = [
   {
-    id: 'gha-brand-bench',
-    source: 'gha-workflow',
-    match: 'brand-bench.yml',
-    reason: 'Brand bench gate — specialized; not a deploy/ci-core tenant',
-  },
-  {
-    id: 'gha-search-governance',
-    source: 'gha-workflow',
-    match: 'search-governance.yml',
-    reason: 'Search governance journey — own claim search-governance-basic',
-  },
-  {
-    id: 'gha-p0-security',
-    source: 'gha-workflow',
-    match: 'p0-security-check.yml',
-    reason: 'Security audit workflow — separate security claim surface',
-  },
-  {
-    id: 'gha-har-performance',
-    source: 'gha-workflow',
-    match: 'har-performance.yml',
-    reason: 'Perf bench workflow — covered by schedule discovery exemption',
-  },
-  {
     id: 'gha-cache-lifecycle',
     source: 'gha-workflow',
     match: 'cache-lifecycle.yml',
-    reason: 'Cache prune schedule — schedule discovery exemption',
-  },
-  {
-    id: 'gha-issue-automation',
-    source: 'gha-workflow',
-    match: 'issue-automation.yml',
-    reason: 'Issue metrics — schedule discovery exemption',
-  },
-  {
-    id: 'gha-test-sharded',
-    source: 'gha-workflow',
-    match: 'test-sharded.yml',
-    reason: 'Sharded tests/ matrix — signal only (continue-on-error); not deploy tenant',
-  },
-  {
-    id: 'gha-verify-bun-apis',
-    source: 'gha-workflow',
-    match: 'verify-bun-apis.yml',
-    reason: 'Bun API proof schedule — schedule discovery exemption',
-  },
-  {
-    id: 'gha-cloudflare-pages-smoke',
-    source: 'gha-workflow',
-    match: 'cloudflare-pages-smoke.yml',
-    reason: 'Pages smoke — cloudflare-pages tenant, not ci-core envelope',
+    reason: 'Explicitly dispatched self-hosted cache maintenance; not a deploy tenant',
   },
   {
     id: 'pkg-build-doc-index',

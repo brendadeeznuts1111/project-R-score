@@ -133,30 +133,24 @@ bun install                 # prepare → husky
 # pre-push:   install:verify --quiet
 bun run ci:harness:fast     # quiet local parity (no hygiene)
 bun run ci:harness          # quiet harness envelope
-bun run ci:core             # install verify · hygiene · ci:harness (= GHA body)
-# Actions offline (billing)? Local proof = required-check bodies:
-#   bun run ci:core
-#   bun run ts:verify && bun run imports:verify && bun run type-check:ci && bun run type-check:full
+bun run ci:core             # install verify · hygiene · ci:harness
+bun run ts:verify && bun run imports:verify && bun run type-check:ci && bun run type-check:full
 ```
 
 ### CI tiers
 
-- **`core`** (GHA main/PR **or local**) — install verify · cache lifecycle · hygiene · claim (PR) · `ci:harness` — **one** runner/install  
-  *Ratchet* → [harness-gates.yml](../../.github/workflows/harness-gates.yml) · `bun run ci:core`
+- **`core`** (local merge proof) — install verify · cache lifecycle · hygiene · `ci:harness`
+  *Ratchet* → `bun run ci:core`
 - **`fast`** (local) — ∥ cheap · `test:changed` dirty  
   *Ratchet* → `bun run ci:harness:fast`
 - **`harness`** — eslint-changed (PR) / full on main · `test:changed:main`  
   *Ratchet* → `bun run ci:harness`
-- **`local-only`** (Actions billing offline) — run `ci:core` + type-check scripts; admin-merge until GHA runners return  
-  *Ratchet* → [AUTHORITY.md](AUTHORITY.md) · Local CI when Actions is offline
-- **`feat/codex only`** — hygiene for branches without harness-gates  
-  *Ratchet* → [repo-hygiene.yml](../../.github/workflows/repo-hygiene.yml)
-- **`setup`** — shared Bun + install cache (+ optional eslint cache)  
-  *Ratchet* → [setup-factory-bun](../../.github/actions/setup-factory-bun/action.yml)
-- **`types`** — `type-check:ci` then `type-check:full` (not matrix×2 installs)  
-  *Ratchet* → [typescript-checks.yml](../../.github/workflows/typescript-checks.yml) · local: same scripts
+- **`types`** — `type-check:ci` then `type-check:full`
+  *Ratchet* → local scripts + [AUTHORITY.md](AUTHORITY.md)
+- **`self-hosted`** — manual Bun install-cache prune only
+  *Ratchet* → [cache-lifecycle.yml](../../.github/workflows/cache-lifecycle.yml)
 
-**Required checks:** Harness Gates + Type Check — see [AUTHORITY.md](AUTHORITY.md). When Actions cannot start, local `ci:core` + type-check is the proof; GitHub status stays red until billing restores. Velocity / install-tax: [VELOCITY_BASELINE.md](../organization/VELOCITY_BASELINE.md#ci-install-tax-2026-07-21-deepen). Pre-commit write tools fail if staged≠worktree (re-stage + retry).
+**Merge proof:** local `ci:core` + type-check scripts — see [AUTHORITY.md](AUTHORITY.md). GitHub-hosted jobs are not part of the repository contract. Pre-commit write tools fail if staged≠worktree (re-stage + retry).
 
 ## Day loop (honest)
 

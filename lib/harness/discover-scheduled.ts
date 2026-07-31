@@ -51,12 +51,6 @@ export const SCHEDULED_JOB_OWNERS: Readonly<Record<string, string>> = {
  */
 export const SCHEDULED_JOB_EXEMPTIONS: readonly ScheduledJobExemption[] = [
   {
-    id: 'verify-bun-apis-workflow',
-    source: 'gha-cron',
-    match: 'verify-bun-apis.yml',
-    reason: 'GitHub Actions owns this Bun API proof schedule; it is not a spine tenant',
-  },
-  {
     id: 'harness-cron-api',
     source: 'code-cron',
     match: 'lib/harness/cron.ts',
@@ -134,24 +128,6 @@ export const SCHEDULED_JOB_EXEMPTIONS: readonly ScheduledJobExemption[] = [
     source: 'package-script',
     match: 'vault:health:cron:register',
     reason: 'OS cron register for vault-health board bake — not a spine maintenance tenant',
-  },
-  {
-    id: 'gha-har-performance',
-    source: 'gha-cron',
-    match: 'har-performance.yml',
-    reason: 'CI metrics schedule — not a spine maintenance tenant',
-  },
-  {
-    id: 'gha-cache-lifecycle',
-    source: 'gha-cron',
-    match: 'cache-lifecycle.yml',
-    reason: 'CI cache prune schedule — not a spine maintenance tenant',
-  },
-  {
-    id: 'gha-issue-automation',
-    source: 'gha-cron',
-    match: 'issue-automation.yml',
-    reason: 'CI issue metrics — not a spine maintenance tenant',
   },
   {
     id: 'pkg-telegram-catalog-research-cron-register',

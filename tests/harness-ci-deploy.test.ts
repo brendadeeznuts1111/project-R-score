@@ -45,11 +45,11 @@ describe('CI / deploy runbooks', () => {
     expect(assertEveryRunbookHasJobOwner()).toEqual([]);
   });
 
-  test('discovery finds package CI scripts and GHA workflows', async () => {
+  test('discovery finds local CI scripts and only the self-hosted workflow', async () => {
     const jobs = await discoverCiJobs(ROOT);
     expect(jobs.some(j => j.source === 'package-script' && j.detail === 'ci:core')).toBe(true);
-    expect(jobs.some(j => j.source === 'gha-workflow' && j.detail === 'harness-gates.yml')).toBe(
-      true
+    expect(jobs.filter(j => j.source === 'gha-workflow').map(j => j.detail)).toEqual(
+      ['cache-lifecycle.yml']
     );
   });
 

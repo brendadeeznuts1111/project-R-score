@@ -11,7 +11,7 @@ Inspect, edit, type-check, test, format, lint staged files, local builds, draft 
 ## Consequential (narrow grant)
 
 - **`git commit`** — user asks to commit (or delivery rule after an explicit ship batch)
-- **`git push` / PR** — user asks to push or open a PR; if the change touches a proof-claim owner, the PR body includes pasted output of that claim’s `freshRerun` ([`FRESH-RERUN.md`](FRESH-RERUN.md)). Non-draft PRs: after **2026-07-28 UTC**, empty Claim→evidence tables fail Harness Gates (`check-pr-claim.ts`); drafts stay skipped. Rollback if false positives: extend `WARN_UNTIL_ISO`, do not drop the invariant.
+- **`git push` / PR** — user asks to push or open a PR; if the change touches a proof-claim owner, the PR body includes pasted output of that claim’s `freshRerun` ([`FRESH-RERUN.md`](FRESH-RERUN.md)).
 - **`--force` / history rewrite** — explicit user request; never force-push `main` without warning
 - **Skip hooks (`--no-verify`)** — explicit user request only
 - **Secrets / credentials in trajectory** — prefer ambient sidecar / env already loaded; do not paste keys into chat or commit `.env`
@@ -42,44 +42,41 @@ Bun create envs (`GITHUB_TOKEN`, `GITHUB_ACCESS_TOKEN`, `GITHUB_API_DOMAIN`) are
 
 Macros do **not** substitute under a plain `bun scripts/foo.ts` run. Keep runtime resolve for live scripts; use macros only for bundle consumers. Full lib map: [`PROOF.md` Lib surface](PROOF.md#lib-surface--docs-vs-bun-vs-other-external).
 
-## Required status checks (`main`)
+## Main protection and proof
 
-Branch protection should require these GitHub Actions check names (workflow / job):
-
-- **`Harness Gates / Harness (ratchets · lint · brands · test:changed)`**  
-  *Ratchet* → [harness-gates.yml](../../.github/workflows/harness-gates.yml) · `bun run ci:core` (install verify · hygiene · harness) + Claim on PRs
+GitHub-hosted Actions are retired. Main protection keeps pull requests, linear
+history, and resolved review threads; it does not require GitHub-hosted status
+contexts. Merge-readiness proof is produced before push by the local harness.
 
 **Delivery (itch #4):**
 
 | Setting | Status |
 |---------|--------|
-| Required check `Harness Gates / Harness (…)` | on · strict |
-| Required check `TypeScript Checks / Type Check` | **on** · strict |
+| GitHub-hosted required checks | **off** |
 | `enforce_admins` | **on** |
 | Require pull request before merging | **on** (`required_pull_request_reviews`, 0 approvals) |
 | search-governance as required | optional — not required yet |
-| Cloudflare Pages (`project-r-score`) | **not required** — Git-integration deploy signal only; merge SSOT remains Harness Gates + TypeScript Checks. Pins/SSOT: `config/r2-env.ts` · `bun run cloudflare:env` / `:assert-apex` · claim `cloudflare-pages-env-ssot` |
-| GitHub-hosted runners | **offline (billing)** — jobs fail in ~2s with **0 steps** / empty `runner_name`. Not a harness test failure. |
+| Cloudflare Pages (`project-r-score`) | **not required** — external Git-integration deploy signal only. Pins/SSOT: `config/r2-env.ts` · `bun run cloudflare:env` / `:assert-apex` · claim `cloudflare-pages-env-ssot` |
+| GitHub-hosted runners | **not used** |
+| Self-hosted Actions | manual cache prune only (`cache-lifecycle.yml`) |
 
-### Local CI when Actions is offline
+### Local merge-readiness proof
 
-Bun has no hosted “local CI” product — this repo’s envelope **is** the local CI. When GHA cannot start runners, prove merge readiness locally (same body as the required jobs):
+The repository's Bun envelope is the merge-readiness proof:
 
 ```bash
 bun run ci:core
 bun run ts:verify && bun run imports:verify && bun run type-check:ci && bun run type-check:full
 ```
 
-- `ci:core` = install verify · hygiene · `ci:harness` (= Harness Gates job body)
-- Type scripts = TypeScript Checks job body
+- `ci:core` = install verify · hygiene · `ci:harness`
+- Type scripts = TypeScript proof
 - Day loop: `bun run ci:harness:fast` · husky pre-commit / pre-push
 - Status discover: `bun run harness:status` mutes 0-step / billing Actions noise by default (`--show-actions-noise` to show) — [README.md](README.md)
 
-Admin merge / temporary protection bypass is required until billing restores green check runs. Local pass ≠ GitHub check green.
-
-Direct `git push` to `main` is declined when the required check is missing. Prefer PR → green Harness Gates → merge (or local proof + admin merge while Actions is offline). Probe: `gh api repos/<org>/<repo>/branches/main/protection`.
-
-Install+hygiene for `main`/PRs is **inside** harness-gates (one runner). `repo-hygiene.yml` only covers `feat/**` / `codex/**`. Setup: [`.github/actions/setup-factory-bun`](../../.github/actions/setup-factory-bun/action.yml).
+Direct `git push` to `main` remains outside the delivery contract. Prefer local
+proof → PR → review-thread resolution → merge. Probe live governance with
+`gh api repos/<org>/<repo>/rulesets`.
 
 ## Credential custody
 

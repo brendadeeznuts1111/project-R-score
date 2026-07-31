@@ -25,7 +25,7 @@ Only relative imports are validated by the guard script.
 
 ## CI Enforcement
 
-`imports:verify` runs in `.github/workflows/typescript-checks.yml` before type-check jobs.
+`imports:verify` runs locally before the `type-check:ci` and `type-check:full` proofs.
 
 ## Local Usage
 

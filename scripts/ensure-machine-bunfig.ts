@@ -10,7 +10,7 @@
  *   bun run machine:bunfig:ensure --overwrite   # replace existing host file
  *   bun run machine:bunfig:ensure --check       # exit 1 if missing / drift from template keys
  *
- * CI: setup-factory-bun runs this so portal:doctor + bake:doctor:check are portable.
+ * Clean-machine proof runs this so portal:doctor + bake:doctor:check are portable.
  * Local: no-op if ~/.bunfig.toml already present (unless --overwrite).
  *
  * Policy table SSOT: lib/install/machine-bunfig-policy.ts

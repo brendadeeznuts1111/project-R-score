@@ -562,7 +562,7 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
         },
         {
           fixCommand: vaultGate === 0 ? undefined : 'bun run portal-cli vault health',
-          impact: 'Vault-map inventory snapshot gate (CI / Harness Gates)',
+          impact: 'Vault-map inventory snapshot gate (local harness)',
           autoFixable: false,
           timeToFix: vaultGate === 0 ? undefined : '2–10 min',
           envScope: 'ci',

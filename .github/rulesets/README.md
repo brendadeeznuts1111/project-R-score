@@ -4,8 +4,9 @@ These JSON files are the reviewed source contract for GitHub repository rules.
 They are applied through the GitHub repository-rulesets API and verified against
 the live repository after every policy change.
 
-- `main.json` requires a pull request, a linear history, resolved review
-  threads, and the harness, type, security, and isolated portal checks.
+- `main.json` requires a pull request, a linear history, and resolved review
+  threads. It deliberately has no GitHub-hosted status checks; merge-readiness
+  proof runs locally before push.
 - `release-tags.json` accepts FactoryWager `v*` version names while preventing
   an existing release tag from being updated or deleted.
 

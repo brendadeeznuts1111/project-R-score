@@ -136,7 +136,7 @@ bun run portal-cli pm hash
 # FactoryWager extension: offline packages graph bake (not bun pm)
 bun run portal-cli pm graph
 bun run audit:packages -- --bake              # rebake packages-graph-map.json
-# Vault health gate (offline snapshots · Harness Gates) + live bake
+# Vault health gate (offline snapshots · local harness) + live bake
 bun run portal-cli vault health
 bun run vault:health:bake                     # needs agent session → /portal/vault/
 # Inject secrets from Proton Pass and run a command (real pass-cli)

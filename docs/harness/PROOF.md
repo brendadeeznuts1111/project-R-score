@@ -21,7 +21,7 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
 - **`journey`** — multi-step user/ops path _Ratchet_ → scripted CLI sequence ·
   contract JSON
 - **`deployed`** — live / machine state _Ratchet_ → `install:verify` · machine
-  health · CI workflow green
+  health · deployment probe green
 
 ## Named critical paths
 
@@ -31,14 +31,13 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   `bun run check:brands:types`
 - **`install-verify`** — Factory install produces a working Bun workspace
   (`journey` + `deployed`) _Ratchet_ → `bun run proof:install` ·
-  `bun run install:verify` (CI: `repo-hygiene.yml`)
+  `bun run install:verify`
 - **`install-verify-journey`** — install:verify → HTML report → WebView asserts
   `#status = verified` _Ratchet_ → `bun run test:install-verify`
 - **`test-changed`** — import-graph affected tests (`unit` + `journey`)
-  _Ratchet_ → `bun run test:changed` · `bun run test:changed:main` (CI:
-  `harness-gates.yml`)
+  _Ratchet_ → `bun run test:changed` · `bun run test:changed:main`
 - **`search-governance`** — bench gate policy holds (`journey`) _Ratchet_ →
-  `bun run search:bench:gate` · `.github/workflows/search-governance.yml`
+  `bun run search:bench:gate`
 - **`search-governance-basic`** — known query → WebView results (`journey`)
   _Ratchet_ → `bun run test:search-governance` ·
   [`search-governance.md`](search-governance.md)
@@ -289,8 +288,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 `gateRef` in [`lib/harness/proof.ts`](../../lib/harness/proof.ts). Catalog meta
 (completeness · evidence⊇freshRerun · `freshRerunKind`) always applies. Classes:
 
-- **continuous** — `pre-commit-harness` and/or `ci:harness` / `ci:core` (Harness
-  Gates)
+- **continuous** — `pre-commit-harness` and/or local `ci:harness` / `ci:core`
 - **workflow** — named GHA job outside that envelope (may also be a required
   status check)
 - **human-only** — package script / `freshRerun` paste only (no always-on gate).
@@ -300,11 +298,11 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 | id                                 | class      | gate / workflow                                                                               |
 | ---------------------------------- | ---------- | --------------------------------------------------------------------------------------------- |
 | `branded-ids`                      | continuous | pre-commit brands staged‖smart; `ci:harness` smart; types when branded staged or `--full`     |
-| `install-verify`                   | continuous | `ci:core` · harness-gates                                                                     |
+| `install-verify`                   | continuous | `ci:core`                                                                                     |
 | `install-verify-journey`           | human-only | `bun run test:install-verify`                                                                 |
-| `test-changed`                     | continuous | `ci:harness` · harness-gates                                                                  |
-| `search-governance`                | workflow   | `search-governance.yml` · `search:bench:gate`                                                 |
-| `search-governance-basic`          | workflow   | `search-governance.yml` · `test:search-governance`                                            |
+| `test-changed`                     | continuous | `ci:harness`                                                                                  |
+| `search-governance`                | human-only | `search:bench:gate`                                                                           |
+| `search-governance-basic`          | human-only | `test:search-governance`                                                                      |
 | `runtime-cli-boundaries`           | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/runtime-cli/`                       |
 | `bun-shell-boundaries`             | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/bun-shell/`                         |
 | `fs-native-boundaries`             | continuous | `ci:harness` boundary-fixtures · fs-bun + bun-glob-scan                                       |
@@ -343,11 +341,11 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 | `bun-env`                          | continuous | pre-commit (lib\|scripts staged) · `ci:harness` · eslint `prefer-bun-env`                     |
 | `invisible-chars`                  | continuous | pre-commit (spine/test .ts staged) · `ci:harness`                                             |
 | `unknown-param`                    | continuous | pre-commit / `ci:harness` eslint                                                              |
-| `day-loop-typecheck`               | workflow   | `typescript-checks.yml` · `type-check` (required check)                                       |
-| `lib-docs-typecheck`               | workflow   | `typescript-checks.yml` · `type-check` (required check)                                       |
-| `lib-utils-typecheck`              | workflow   | `typescript-checks.yml` · `type-check` (required check)                                       |
-| `lib-core-typecheck`               | workflow   | `typescript-checks.yml` · `type-check` (required check)                                       |
-| `lib-security-typecheck`           | workflow   | `typescript-checks.yml` · `type-check` (required check)                                       |
+| `day-loop-typecheck`               | human-only | `type-check`                                                                                  |
+| `lib-docs-typecheck`               | human-only | `type-check`                                                                                  |
+| `lib-utils-typecheck`              | human-only | `type-check`                                                                                  |
+| `lib-core-typecheck`               | human-only | `type-check`                                                                                  |
+| `lib-security-typecheck`           | human-only | `type-check`                                                                                  |
 | `bun-cron`                         | human-only | `bun run test:cron`                                                                           |
 | `cron-os-persistent`               | human-only | `bun run test:cron-os`                                                                        |
 | `docs-integrity`                   | human-only | `bun-doc-refs schedule --once` · spine tenant                                                 |
@@ -363,14 +361,14 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 | `code-quality-tenants`             | continuous | `ci:harness` dual-catalog · `bun run test:code-quality`                                       |
 | `ci-deploy-runbooks`               | continuous | `ci:harness` dual-catalog · `bun run test:ci-deploy`                                          |
 | `ci-core-envelope`                 | continuous | live gate `ci:core`; `freshRerun` = catalog `docs:ci-deploy`                                  |
-| `typescript-ci-gate`               | workflow   | `typescript-checks.yml` (required); `freshRerun` = catalog                                    |
+| `typescript-ci-gate`               | human-only | `type-check:ci`; `freshRerun` = catalog                                                       |
 | `deploy-production-preflight`      | human-only | catalog via `docs:ci-deploy`; behavior = `deploy:production`                                  |
 | `deploy-staging-script`            | human-only | catalog via `docs:ci-deploy`; behavior = `deploy:staging`                                     |
 | `bun-migrate-status`               | human-only | catalog via `docs:ci-deploy`; behavior = `migrate:status`                                     |
 
 Counts (must match `gateClass` tallies):
 
-continuous 28 · workflow 8 · human-only 32.
+continuous 28 · workflow 0 · human-only 40.
 
 Discover (display only, not gates): `bun run harness:status` ·
 `bun run docs:fresh-rerun`.

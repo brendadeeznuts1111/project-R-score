@@ -51,11 +51,10 @@ export const CI_RUNBOOKS: readonly CiRunbook[] = [
     signal: '`bun run ci:core` exits non-zero (install verify · hygiene · ci:harness)',
     intervention: 'bun run ci:core',
     proofId: 'ci-core-envelope',
-    retirement:
-      'Remove when a single required GHA job owns the full envelope without a cataloged runbook',
+    retirement: 'Remove when ci:core is retired or replaced by another local proof envelope',
     retirementVerified: false,
     retirementCheck: {
-      description: 'harness-gates.yml still runs bun run ci:core',
+      description: 'ci:core remains the local merge-readiness envelope',
       command: 'bun run docs:ci-deploy',
     },
     freshRerun: 'bun run docs:ci-deploy',
@@ -64,14 +63,13 @@ export const CI_RUNBOOKS: readonly CiRunbook[] = [
   },
   {
     id: 'typescript-ci',
-    signal: '`bun run type-check:ci` exits non-zero (typescript-checks workflow)',
+    signal: '`bun run type-check:ci` exits non-zero (local TypeScript proof)',
     intervention: 'bun run type-check:ci',
     proofId: 'typescript-ci-gate',
-    retirement:
-      'Remove when type-check:ci is solely owned by typescript-checks.yml without a CI runbook',
+    retirement: 'Remove when type-check:ci is retired or folded into another local proof envelope',
     retirementVerified: false,
     retirementCheck: {
-      description: 'typescript-checks workflow still required',
+      description: 'type-check:ci remains a documented local merge-readiness proof',
       proofId: 'typescript-ci-gate',
     },
     freshRerun: 'bun run docs:ci-deploy',

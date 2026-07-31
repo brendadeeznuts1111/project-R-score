@@ -10,8 +10,8 @@ The search governance surface returns results for a known query. “Done” mean
   *Ratchet* → `bun run test:search-governance`
 - **`lib/harness/proof.ts` / `PROOF.md`** — claim `search-governance-basic`  
   *Ratchet* → proof inventory
-- **CI** — Search Governance workflow runs the journey  
-  *Ratchet* → `.github/workflows/search-governance.yml`
+- **Local proof** — the named command runs the journey
+  *Ratchet* → `bun run test:search-governance`
 
 ## Fresh-rerun
 

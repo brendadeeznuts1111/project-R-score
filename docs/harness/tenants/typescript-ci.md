@@ -3,12 +3,12 @@
 **Tenant** `typescript-ci` (CI · not a spine cron)  
 **Runs** `bun run type-check:ci`  
 **Proof** `typescript-ci-gate`  
-**Workflow** [`.github/workflows/typescript-checks.yml`](../../../.github/workflows/typescript-checks.yml)  
+**Execution** local Bun scripts
 **Catalog** `lib/harness/ci-deploy.ts`
 
 ## Signal (failure)
 
-`bun run type-check:ci` (or `type-check:full` on the workflow) exits non-zero.
+`bun run type-check:ci` or `bun run type-check:full` exits non-zero.
 
 ## Intervention (repair)
 
@@ -19,7 +19,7 @@
 
 ## Retirement
 
-Remove when type-check:ci is solely owned by typescript-checks.yml without a CI runbook.
+Remove when `type-check:ci` is retired or folded into another local proof envelope.
 
 **Retirement verified** `false`  
 **Retirement check** proofId `typescript-ci-gate`

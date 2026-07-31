@@ -126,7 +126,7 @@ function checkEnvDefaults(): Check {
 
 /**
  * Shell must not set install cache/store env (machine bunfig owns them).
- * Ephemeral CI (GHA setup-factory-bun / with-bun-cache-env) may set them — allowed.
+ * Ephemeral shells using with-bun-cache-env may set them — allowed.
  * Same rule as doctor bunfig-no-install-env-overrides / audit:bunfig.
  */
 function checkShellInstallEnv(

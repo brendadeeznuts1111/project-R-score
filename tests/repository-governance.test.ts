@@ -10,7 +10,7 @@ function ruleTypes(ruleset: { rules: Array<{ type: string }> }): Set<string> {
 }
 
 describe('repository governance', () => {
-  test('main is PR-only, linear, collision-gated, and non-destructive', () => {
+  test('main is PR-only, linear, and non-destructive', () => {
     expect(mainRuleset.target).toBe('branch');
     expect(mainRuleset.enforcement).toBe('active');
     expect(mainRuleset.conditions.ref_name.include).toContain('~DEFAULT_BRANCH');
@@ -20,16 +20,8 @@ describe('repository governance', () => {
         'non_fast_forward',
         'required_linear_history',
         'pull_request',
-        'required_status_checks',
       ])
     );
-
-    const status = mainRuleset.rules.find(rule => rule.type === 'required_status_checks');
-    const contexts = status?.parameters?.required_status_checks?.map(check => check.context) ?? [];
-    expect(contexts).toContain('Harness (ratchets · lint · brands · test:changed)');
-    expect(contexts).toContain('Type Check');
-    expect(contexts).toContain('security-audit');
-    expect(new Set(contexts).size).toBe(contexts.length);
   });
 
   test('release tags in the v* namespace are immutable', () => {

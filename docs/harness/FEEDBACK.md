@@ -35,8 +35,8 @@ Fresh-rerun is mandatory for improve-harness retain/revise/remove: run the affec
 - **`proof`** — [`PROOF.md`](PROOF.md) · [`FRESH-RERUN.md`](FRESH-RERUN.md)  
   *Ratchet* → `lib/harness/proof.ts` evidence + `freshRerun` · `bun run harness:status`
 
-- **`CI`** — `.github/workflows/` · `scripts/ci-*.ts`  
-  *Ratchet* → `bun run ci:core` · required Harness Gates check
+- **`CI`** — `scripts/ci-*.ts`
+  *Ratchet* → local `bun run ci:core`
 
 ## Lesson index (detail in git)
 
@@ -53,7 +53,7 @@ Fresh-rerun is mandatory for improve-harness retain/revise/remove: run the affec
 - **Full-tree ESLint every PR** (`script-gate`)  
   *Ratchet* → `lint:bun-native:changed` · `HARNESS_FULL_LINT`
 - **CI install × N jobs** (`CI`)  
-  *Ratchet* → `ci:core` · `setup-factory-bun` · path filters
+  *Ratchet* → retire GitHub-hosted jobs · keep one local `ci:core` envelope
 - **Docs dump attention tax** (`doc-map`)  
   *Ratchet* → slim live `docs/` · `doc-map-check`
 - **Heap profile / fat READMEs** (`doc-map`)  
@@ -81,7 +81,7 @@ Fresh-rerun is mandatory for improve-harness retain/revise/remove: run the affec
 - **Pre-commit ESLint cold** (`script-gate`)  
   *Ratchet* → `.cache/eslint-bun-native`
 - **GHA billing lock** (`ops`)  
-  *Ratchet* → local `ci:core` + type-check scripts prove merge; admin-merge until billing unlocks runners ([AUTHORITY.md](AUTHORITY.md))
+  *Ratchet* → GitHub-hosted jobs retired; local `ci:core` + type-check scripts prove merge ([AUTHORITY.md](AUTHORITY.md))
 - **Actions billing noise in `harness:status`** (`ops`)  
   *Ratchet* → mute 0-step / billing checks by default; `--show-actions-noise` to unmute · local `ci:core` remains merge proof ([README.md](README.md) · [AUTHORITY.md](AUTHORITY.md))
 - **R2 Basic auth mistaken for S3 SigV4** (`proof`) — closed  

@@ -54,22 +54,20 @@ artifacts behind is a failing test design.
 Serial execution is not an isolation mechanism. It can temporarily help diagnose
 an order-dependent failure, but the fix is to remove shared writable state.
 
-## CI lanes
+## Local test lanes
 
-The [`test-sharded` workflow](../.github/workflows/test-sharded.yml) has two
-different confidence levels:
+Run the two confidence levels independently:
 
-- **Portal and registry isolation** is a small required job. It exercises the
+- **Portal and registry isolation** is a focused suite. It exercises the
   isolated snapshot/bake path together with fast portal and registry contracts,
   then fails if tracked `public/` artifacts changed.
-- **Full-suite shard matrix** runs four serial shards and uploads JUnit
-  artifacts. It remains advisory while known crash, hang, and shared-state debt
-  is being retired.
+- **Full-suite shards** use `bun run test:ci:shard` with an explicit `SHARD=M/N`.
+  They remain diagnostic while known crash, hang, and shared-state debt is being
+  retired.
 
-Promote the full matrix to required only after repeated CI runs are hang-clean
-and every artifact writer in its scope uses disposable destinations. Parallel
-workers are a later optimization within each shard, not a prerequisite for
-making the matrix required.
+Promote the full suite into the local merge envelope only after repeated runs
+are hang-clean and every artifact writer in its scope uses disposable
+destinations.
 
 ## Pre-commit
 
@@ -130,8 +128,8 @@ rows remain serial measurements and are labeled accordingly.
 A single observation is not yet a promoted CI baseline. Promotion should use
 rolling medians from comparable OS, Bun-version, and serial/parallel lanes, with
 a conservative default weight for new files. Until that evidence is collected
-and reviewed, the workflow continues to execute Bun's deterministic
-`--shard=M/N` selection; generated balanced plans are diagnostic artifacts.
+and reviewed, use Bun's deterministic `--shard=M/N` selection; generated
+balanced plans are diagnostic artifacts.
 
 ## Runtime capabilities that require no repository configuration
 

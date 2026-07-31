@@ -75,7 +75,7 @@ export type ForbiddenInstallEnvVar = (typeof FORBIDDEN_INSTALL_ENV_VARS)[number]
 
 /**
  * Env key/value pairs that allow ephemeral CI `BUN_INSTALL_*` overrides
- * (setup-factory-bun, with-bun-cache-env). Local `CI=true` alone is not enough.
+ * (`with-bun-cache-env`). Local `CI=true` alone is not enough.
  */
 export const EPHEMERAL_CI_INSTALL_ENV_ALLOWLIST = [
   { key: 'GITHUB_ACTIONS', value: 'true' },
@@ -97,7 +97,7 @@ export const MACHINE_BUNFIG_REQUIRED_SNIPPETS: readonly string[] = [
 
 /**
  * Ephemeral CI may set BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE
- * (setup-factory-bun, with-bun-cache-env). Local developer shells must not.
+ * (`with-bun-cache-env`). Local developer shells must not.
  * @see docs/UNIFIED.md
  */
 export function isEphemeralCiInstallEnv(

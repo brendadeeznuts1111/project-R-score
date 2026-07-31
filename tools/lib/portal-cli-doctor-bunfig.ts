@@ -274,7 +274,7 @@ export async function runBunfigChecks(
   );
 
   // 5) Shell must not set install cache/store env (machine bunfig owns them).
-  // Ephemeral CI (GHA setup-factory-bun / with-bun-cache-env) may set them — allowed.
+  // Ephemeral shells using with-bun-cache-env may set them — allowed.
   const forbiddenEnv = FORBIDDEN_INSTALL_ENV_VARS.filter(k => {
     const v = env[k];
     return typeof v === 'string' && v.trim().length > 0;
@@ -303,7 +303,7 @@ export async function runBunfigChecks(
             ? undefined
             : `Unset ${forbiddenLabel} from shell/IDE; use machine bunfig`,
         impact:
-          'Local shell BUN_INSTALL_* cache/store env bypasses bunfig-policy; GHA/setup-factory-bun is the documented exception',
+          'Local shell BUN_INSTALL_* cache/store env bypasses bunfig-policy; with-bun-cache-env is the documented exception',
         autoFixable: false,
         timeToFix: envOk ? undefined : '2–10 min',
         envScope: 'all',

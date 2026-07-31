@@ -6,7 +6,7 @@
 **CLI** `bun run portal:doctor` · `bun run bake:doctor` · `bun run bake:doctor:check`  
 **Policy SSOT** [`lib/install/machine-bunfig-policy.ts`](../../../lib/install/machine-bunfig-policy.ts) · [`lib/bun-runtime-env.ts`](../../../lib/bun-runtime-env.ts) · human map [`docs/UNIFIED.md`](../../UNIFIED.md)
 **Capability map** AGENTS.md — Unified Doctor · Bunfig · Doctor groups  
-**Workflow** [`.github/workflows/harness-gates.yml`](../../../.github/workflows/harness-gates.yml)
+**Execution** local portal-doctor commands
 
 Unified offline health gate for the portal control plane. Pure checks by default (no network); optional `--full` spawns install:verify and heavy gates.
 
@@ -44,7 +44,7 @@ Operator map for harness-gates + local reproduce. Tables over narrative.
 | Command | Role |
 |---------|------|
 | `bun run machine:bunfig:ensure` | Write `~/.bunfig.toml` from `config/machine.bunfig.toml.template` (absolute `cache.dir`) |
-| `bun run machine:bunfig:ensure -- --overwrite` | Replace host file (CI / setup-factory-bun) |
+| `bun run machine:bunfig:ensure -- --overwrite` | Replace host file for a clean-machine proof |
 | `bun run machine:bunfig:check` | Snippets + absolute cache.dir (exit 1 on drift) |
 | `bun run portal:doctor:ci` | ensure + doctor `--env ci --no-write` (plain offline) |
 | `bun run portal:doctor:ci:json` | same as ci, JSON on stdout only |

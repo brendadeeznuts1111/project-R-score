@@ -214,15 +214,15 @@ bun run machine:bunfig:check    # SSOT snippets + absolute cache.dir
 bun run audit:bunfig
 bun run install:verify          # · :strict — cache, global store links, configVersion
 bun run portal:doctor --group bunfig   # machine SSOT · project drift · merge · excludes
-CI=true bun run portal:doctor:ci       # ensure + offline doctor (harness-gates)
+CI=true bun run portal:doctor:ci       # ensure + offline doctor
 bun run bake:doctor             # ensure + doctor-state.json
 bun run bake:doctor:check       # ensure + sha256 fingerprint gate
 bun run install:machine:health
 bun run install:cache:lifecycle
-bun scripts/with-bun-cache-env.ts ci   # GHA / ephemeral
+bun scripts/with-bun-cache-env.ts ci   # ephemeral CI-compatible shell
 ```
 
-**CI runners:** `setup-factory-bun` writes `~/.bunfig.toml` via `machine:bunfig:ensure --overwrite` so doctor/fingerprint gates are portable.
+**Portable setup:** `machine:bunfig:ensure --overwrite` writes `~/.bunfig.toml` so doctor/fingerprint gates are reproducible on a clean machine.
 
 ```bash
 # Project-scoped install verification (11 aspects — toolchain + config + platform + linker)
@@ -308,7 +308,7 @@ bun run portal-cli dashboard --view=install-hygiene --open
 
 Code SSOT: `lib/verification/install-platform.ts` · `lib/verification/install-env-probes.ts` · `lib/verification/registry-client-probes.ts` · `lib/verification/bun-runtime-nits-probes.ts` · `lib/docs/bun-install-platform-docs.ts` · `lib/docs/bun-install-linker-docs.ts` · `scripts/verify-install-cache.ts`.
 
-CI: `setup-factory-bun` + `ci:core`. Docs: [Bun bunfig](https://bun.com/docs/runtime/bunfig) · [isolated installs](https://bun.com/docs/pm/isolated-installs) · [global store](https://bun.com/docs/pm/global-store) · [lockfile](https://bun.com/docs/pm/lockfile).
+Merge proof: `ci:core`. Docs: [Bun bunfig](https://bun.com/docs/runtime/bunfig) · [isolated installs](https://bun.com/docs/pm/isolated-installs) · [global store](https://bun.com/docs/pm/global-store) · [lockfile](https://bun.com/docs/pm/lockfile).
 
 ## References and further reading
 

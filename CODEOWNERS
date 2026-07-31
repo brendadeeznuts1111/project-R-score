@@ -36,9 +36,7 @@ lib/harness/ @brendadeeznuts1111
 scripts/pre-commit-harness.ts @brendadeeznuts1111
 scripts/ci-harness.ts @brendadeeznuts1111
 scripts/harness-status.ts @brendadeeznuts1111
-.github/workflows/harness-gates.yml @brendadeeznuts1111
-.github/workflows/repo-hygiene.yml @brendadeeznuts1111
-.github/actions/setup-factory-bun/ @brendadeeznuts1111
+.github/workflows/cache-lifecycle.yml @brendadeeznuts1111
 scripts/ci-core.ts @brendadeeznuts1111
 eslint.harness.config.ts @brendadeeznuts1111
 config/eslint/ @brendadeeznuts1111

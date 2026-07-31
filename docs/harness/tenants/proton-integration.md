@@ -63,7 +63,7 @@ pass://factorywager/Socket API Key/password
 
 | Layer | Command | Needs pass-cli session? | Role |
 |-------|---------|-------------------------|------|
-| **Gate (CI)** | `bun test tests/vault-health.test.ts` · `portal-cli vault health` | No | Report-shape + **env→vault inventory** snapshot SSOT in git (`tests/__snapshots__/vault-health.test.ts.snap`). Harness Gates step. |
+| **Gate (local)** | `bun test tests/vault-health.test.ts` · `portal-cli vault health` | No | Report-shape + **env→vault inventory** snapshot SSOT in git (`tests/__snapshots__/vault-health.test.ts.snap`). |
 | **Intentional drift** | `portal-cli vault health --update` | No | Refresh inventory/shape snaps after you move/rename a mapped item; commit the `.snap`. |
 | **Live bake** | `bun run vault:health:bake` | Yes (agent session) | Cross-check live Proton Pass titles/states vs map; exit 1 on trashed/missing refs (purge risk). |
 | **Dashboard** | `/portal/vault/` · `public/registry/vault-health.json` | — | Visual summary of the last bake — not the gate. |

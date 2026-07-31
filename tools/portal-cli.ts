@@ -114,7 +114,7 @@ Subcommands:
   health              Run vault-health snapshot gate (offline-safe)
   health --update     Intentional drift: refresh tests/__snapshots__/vault-health.test.ts.snap
 
-Gate (CI / Harness Gates):
+Gate (local harness):
   bun test tests/vault-health.test.ts
   # same as: portal-cli vault health
 
