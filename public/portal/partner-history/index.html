@@ -1,474 +1,1263 @@
-<!DOCTYPE html>
+<!doctype html>
 <!-- @see docs/portal-foundation.md -->
 <html lang="en" data-theme="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Partner Limit History · FactoryWager</title>
-  <meta name="theme-color" content="#0d1117" />
-  <meta name="application-name" content="FactoryWager" />
-  <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
-  <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
-  <link rel="manifest" href="/site.webmanifest" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/portal/style.css" />
-  <script type="module" src="/portal/data.js"></script>
-  <script type="module" src="/portal/topbar.js"></script>
-  <script type="module" src="/portal/components/notification.js"></script>
-  <script type="module" src="/portal/components/limit-changes-card.js"></script>
-  <style>
-    .partner-page { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin: 24px 0; }
-    .page-header h1 { margin: 0; font-size: 1.5em; }
-    .partner-select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); font-size: 0.9em; min-width: 200px; }
-    .metric-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 16px 0; }
-    .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
-    .metric-card .num { font-size: 1.8em; font-weight: 700; }
-    .metric-card .label { font-size: 0.8em; color: var(--text-dim); margin-top: 2px; }
-    .section-title { font-size: 1.1em; font-weight: 600; margin: 24px 0 8px; }
-    .nav-bar { display: flex; gap: 12px; margin: 16px 0; flex-wrap: wrap; }
-    .nav-bar a { color: var(--accent); text-decoration: none; font-size: 0.9em; }
-    .nav-bar a:hover { text-decoration: underline; }
-    .empty-state { text-align: center; padding: 3em; color: var(--text-dim); }
-    .empty-state code { background: var(--surface); padding: 2px 6px; border-radius: 4px; }
-    .tabs { display: flex; gap: 2px; margin-bottom: 16px; }
-    .tab { padding: 8px 16px; border: 1px solid var(--border); border-radius: 6px 6px 0 0; background: var(--surface); cursor: pointer; font-size: 0.85em; }
-    .tab.active { border-bottom-color: var(--accent); font-weight: 600; }
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-    .baseline-toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin: 0 0 12px;
-      align-items: end;
-    }
-    .baseline-toolbar label {
-      display: grid;
-      gap: 4px;
-      font-size: 0.8em;
-      color: var(--text-dim);
-    }
-    .baseline-toolbar select {
-      min-width: 140px;
-      padding: 6px 8px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      background: var(--surface);
-      color: var(--text);
-    }
-    .baseline-table-wrap { overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
-    .baseline-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
-    .baseline-table th, .baseline-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
-    .baseline-table th { position: sticky; top: 0; background: var(--surface); font-family: var(--font-mono); font-size: 0.75em; }
-    .baseline-table td.num { font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
-    .baseline-note { color: var(--text-dim); font-size: 0.85em; margin: 0 0 12px; max-width: 72ch; }
-    .role-chip { font-family: var(--font-mono); font-size: 0.75em; }
-    .source-chip {
-      display: inline-block;
-      font-family: var(--font-mono);
-      font-size: 0.7em;
-      padding: 1px 6px;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      color: var(--text-dim);
-      white-space: nowrap;
-    }
-    .source-chip.t1 { border-color: var(--green, #3fb950); color: var(--green, #3fb950); }
-    .source-chip.t2 { border-color: #58a6ff; color: #58a6ff; }
-    .source-chip.t4 { border-color: #d29922; color: #d29922; }
-    .source-chip.t5 { border-color: var(--accent); color: var(--accent); }
-    .est-warn { color: #d29922; font-size: 0.75em; margin-left: 4px; }
-    .baseline-sources {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 0 0 12px;
-      font-size: 0.8em;
-      color: var(--text-dim);
-    }
-  </style>
-</head>
-<body>
-  <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <h1 class="logo">
-        <span class="logo-icon" aria-hidden="true"></span>
-        <span class="brand-wordmark">FactoryWager</span>
-        <span class="brand-badge">ops</span>
-        <span class="logo-page">Partner history</span>
-      </h1>
-      <nav class="topbar-nav" aria-label="Primary">
-        <a href="/" class="nav-link" data-group="other">Home</a>
-        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · bun run ops:snapshot" data-group="ops" data-cli="bun run ops:snapshot">Ops</a>
-        <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
-        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake">Health</a>
-        <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane">DOD</a>
-        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake">Compliance</a>
-        <div class="nav-overflow">
-          <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
-          <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
-            <a href="/portal/packages/" class="nav-link" title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table" data-group="registry" data-cli="bun run portal-cli pm graph  # offline packages-graph-map table" role="menuitem">Packages</a>
-            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
-            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-cli="bun run glossary:portal" role="menuitem">Glossary</a>
-            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
-            <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
-            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
-            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
-            <a href="/portal/tools/" class="nav-link" title="portal-cli surface map · badges · capability subset · bun run portal-cli dashboard --view=tools" data-group="harness" data-cli="bun run portal-cli dashboard --view=tools" role="menuitem">CLI Tools</a>
-            <a href="/portal/failures/" class="nav-link" title="test failures bake · junit · nav badge = count · bun run failures:bake  # → /registry/failures.json" data-group="harness" data-cli="bun run failures:bake  # → /registry/failures.json" role="menuitem">Failures</a>
-            <a href="/portal/bunfig/" class="nav-link" title="bunfig install config provenance · portal-cli bunfig status · bun run bunfig:bake  # → /registry/bunfig-state.json" data-group="harness" data-cli="bun run bunfig:bake  # → /registry/bunfig-state.json" role="menuitem">Bunfig</a>
-            <a href="/portal/console-format/" class="nav-link" title="structured output gate · logTable/logDepth/jsonOut ratchet · bun run console-format:bake  # → /registry/console-format-state.json" data-group="harness" data-cli="bun run console-format:bake  # → /registry/console-format-state.json" role="menuitem">Console Format</a>
-            <a href="/portal/doctor/" class="nav-link" title="unified health gate · bunfig · catalog · linker · bun run portal:doctor --verbose" data-group="harness" data-cli="bun run portal:doctor --verbose" role="menuitem">Doctor</a>
-            <a href="/portal/install-hygiene/" class="nav-link" title="cache prune · npm-install policy · install:verify bake · bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" data-group="harness" data-cli="bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" role="menuitem">Install hygiene</a>
-            <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
-            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
-            <a href="/portal/limits/" class="nav-link" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
-            <a href="/portal/partner-history/" class="nav-link active" aria-current="page" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
-            <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
-            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
-            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub" data-group="other" role="menuitem">Wiki</a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Partner Limit History · FactoryWager</title>
+    <meta name="theme-color" content="#0d1117" />
+    <meta name="application-name" content="FactoryWager" />
+    <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+    <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/portal/style.css" />
+    <script type="module" src="/portal/data.js"></script>
+    <script type="module" src="/portal/topbar.js"></script>
+    <script type="module" src="/portal/components/notification.js"></script>
+    <script type="module" src="/portal/components/limit-changes-card.js"></script>
+    <style>
+      .partner-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 18px;
+        margin: 24px 0 12px;
+      }
+      .page-header h1 {
+        margin: 0;
+        font-size: 1.5em;
+      }
+      .history-kicker {
+        margin: 6px 0 0;
+        color: var(--text-dim);
+        font-size: 0.86em;
+        max-width: 70ch;
+      }
+      .history-filter-bar {
+        display: grid;
+        grid-template-columns: minmax(190px, 1.6fr) repeat(3, minmax(120px, 1fr)) auto auto;
+        gap: 10px;
+        align-items: end;
+        padding: 14px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .history-filter-bar label {
+        display: grid;
+        gap: 5px;
+        color: var(--text-dim);
+        font-size: 0.76em;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+      .history-filter-bar select {
+        width: 100%;
+        min-width: 0;
+        padding: 8px 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 0.9rem;
+      }
+      .history-filter-status {
+        margin: 8px 2px 0;
+        color: var(--text-dim);
+        font-size: 0.8em;
+        min-height: 1.4em;
+      }
+      .history-filter-status strong {
+        color: var(--text);
+      }
+      .metric-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+        margin: 16px 0;
+      }
+      .metric-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+        text-align: center;
+      }
+      .metric-card .num {
+        font-size: 1.8em;
+        font-weight: 700;
+      }
+      .metric-card .label {
+        font-size: 0.8em;
+        color: var(--text-dim);
+        margin-top: 2px;
+      }
+      .metric-card[data-tone='ok'] {
+        border-color: var(--partner-ops-operator-ready, var(--tone-ok));
+      }
+      .metric-card[data-tone='ok'] .num {
+        color: var(--partner-ops-operator-ready, var(--tone-ok));
+      }
+      .metric-card[data-tone='bad'] {
+        border-color: var(--partner-ops-rejected, var(--tone-bad));
+      }
+      .metric-card[data-tone='bad'] .num {
+        color: var(--partner-ops-rejected, var(--tone-bad));
+      }
+      .metric-card[data-tone='info'] .num {
+        color: var(--partner-ops-credit, var(--tone-info));
+      }
+      .tone-ok {
+        color: var(--tone-ok);
+      }
+      .tone-bad {
+        color: var(--tone-bad);
+      }
+      .section-title {
+        font-size: 1.1em;
+        font-weight: 600;
+        margin: 24px 0 8px;
+      }
+      .nav-bar {
+        display: flex;
+        gap: 12px;
+        margin: 16px 0;
+        flex-wrap: wrap;
+      }
+      .nav-bar a {
+        color: var(--accent);
+        text-decoration: none;
+        font-size: 0.9em;
+      }
+      .nav-bar a:hover {
+        text-decoration: underline;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 3em;
+        color: var(--text-dim);
+      }
+      .empty-state code {
+        background: var(--surface);
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+      .tabs {
+        display: flex;
+        gap: 2px;
+        margin-bottom: 16px;
+        overflow-x: auto;
+      }
+      .tab {
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 6px 6px 0 0;
+        background: var(--surface);
+        color: var(--text);
+        cursor: pointer;
+        font: inherit;
+        font-size: 0.85em;
+        white-space: nowrap;
+      }
+      .tab:hover,
+      .tab:focus-visible {
+        border-color: var(--accent);
+      }
+      .tab.active {
+        border-bottom-color: var(--accent);
+        box-shadow: inset 0 -2px 0 var(--accent);
+        font-weight: 600;
+      }
+      .tab-panel[hidden] {
+        display: none;
+      }
+      .baseline-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 0 0 12px;
+        align-items: end;
+      }
+      .baseline-toolbar label {
+        display: grid;
+        gap: 4px;
+        font-size: 0.8em;
+        color: var(--text-dim);
+      }
+      .baseline-toolbar select {
+        min-width: 140px;
+        padding: 6px 8px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--surface);
+        color: var(--text);
+      }
+      .baseline-table-wrap {
+        overflow: auto;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+      .baseline-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85em;
+      }
+      .baseline-table th,
+      .baseline-table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+      }
+      .baseline-table th {
+        position: sticky;
+        top: 0;
+        background: var(--surface);
+        font-family: var(--font-mono);
+        font-size: 0.75em;
+      }
+      .baseline-table td.num {
+        font-variant-numeric: tabular-nums;
+        font-family: var(--font-mono);
+      }
+      .baseline-note {
+        color: var(--text-dim);
+        font-size: 0.85em;
+        margin: 0 0 12px;
+        max-width: 72ch;
+      }
+      .role-chip {
+        font-family: var(--font-mono);
+        font-size: 0.75em;
+      }
+      .source-chip {
+        display: inline-block;
+        font-family: var(--font-mono);
+        font-size: 0.7em;
+        padding: 1px 6px;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        color: var(--text-dim);
+        white-space: nowrap;
+      }
+      .source-chip.t1 {
+        border-color: var(--tone-ok);
+        color: var(--tone-ok);
+      }
+      .source-chip.t2 {
+        border-color: var(--tone-info);
+        color: var(--tone-info);
+      }
+      .source-chip.t4 {
+        border-color: var(--tone-warn);
+        color: var(--tone-warn);
+      }
+      .source-chip.t5 {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .est-warn {
+        color: var(--tone-warn);
+        font-size: 0.75em;
+        margin-left: 4px;
+      }
+      .baseline-sources {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 0 0 12px;
+        font-size: 0.8em;
+        color: var(--text-dim);
+      }
+      .history-breakdown-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 10px;
+      }
+      .history-account-card {
+        padding: 12px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+      .history-account-card__head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .history-account-card__summary {
+        font-size: 0.85em;
+        color: var(--text-dim);
+        text-align: right;
+      }
+      .history-account-card__events {
+        font-size: 0.8em;
+        margin-top: 7px;
+        color: var(--text-dim);
+        line-height: 1.5;
+      }
+      .history-account-card__actions {
+        display: flex;
+        gap: 7px;
+        margin-top: 8px;
+      }
+      .history-account-card__actions button {
+        font-size: 0.75em;
+        padding: 4px 9px;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        background: transparent;
+        cursor: pointer;
+        color: var(--accent);
+      }
+      .history-book-summary {
+        margin-top: 20px;
+      }
+      .history-book-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.84em;
+      }
+      .history-book-table th,
+      .history-book-table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+      }
+      .history-book-table th {
+        color: var(--text-dim);
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .history-book-table .num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      .history-freshness {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text-dim);
+        font-size: 0.78em;
+      }
+      .history-freshness::before {
+        content: '';
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--partner-ops-operator-ready, var(--tone-ok));
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      @media (max-width: 900px) {
+        .history-filter-bar {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .page-header {
+          flex-direction: column;
+        }
+      }
+      @media (max-width: 560px) {
+        .partner-page {
+          padding: 0 14px;
+        }
+        .history-filter-bar {
+          grid-template-columns: 1fr;
+        }
+        .history-filter-bar .btn {
+          width: 100%;
+        }
+        .metric-row {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .history-account-card__head {
+          flex-direction: column;
+        }
+        .history-account-card__summary {
+          text-align: left;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <h1 class="logo">
+          <span class="logo-icon" aria-hidden="true"></span>
+          <span class="brand-wordmark">FactoryWager</span>
+          <span class="brand-badge">ops</span>
+          <span class="logo-page">Partner history</span>
+        </h1>
+        <nav class="topbar-nav" aria-label="Primary">
+          <a href="/" class="nav-link" data-group="other">Home</a>
+          <a
+            href="/portal/ops/"
+            class="nav-link"
+            title="ops-summary rollup · bun run ops:snapshot"
+            data-group="ops"
+            data-cli="bun run ops:snapshot"
+            >Ops</a
+          >
+          <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
+          <a
+            href="/portal/health/"
+            class="nav-link"
+            title="system health · monorepo score · bun run monorepo:health:bake"
+            data-group="harness"
+            data-cli="bun run monorepo:health:bake"
+            >Health</a
+          >
+          <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane"
+            >DOD</a
+          >
+          <a
+            href="/portal/compliance/"
+            class="nav-link"
+            title="MA/NJ board · bun run compliance:bake"
+            data-group="ops"
+            data-cli="bun run compliance:bake"
+            >Compliance</a
+          >
+          <div class="nav-overflow">
+            <button
+              type="button"
+              class="nav-more"
+              aria-label="More navigation"
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              ⋯
+            </button>
+            <div class="nav-dropdown" role="menu">
+              <a
+                href="/portal/catalog/"
+                class="nav-link"
+                title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy"
+                data-group="registry"
+                data-cli="bun run bake:scrape-wire-taxonomy"
+                role="menuitem"
+                >Catalog</a
+              >
+              <a
+                href="/portal/packages/"
+                class="nav-link"
+                title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table"
+                data-group="registry"
+                data-cli="bun run portal-cli pm graph  # offline packages-graph-map table"
+                role="menuitem"
+                >Packages</a
+              >
+              <a
+                href="/portal/brands/"
+                class="nav-link"
+                title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap"
+                data-group="registry"
+                data-cli="bun run brand:keymap"
+                role="menuitem"
+                >Brands</a
+              >
+              <a
+                href="/portal/glossary/"
+                class="nav-link"
+                title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal"
+                data-group="registry"
+                data-cli="bun run glossary:portal"
+                role="menuitem"
+                >Glossary</a
+              >
+              <a
+                href="/portal/surfaces/"
+                class="nav-link"
+                title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json"
+                data-group="registry"
+                data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json"
+                role="menuitem"
+                >Surfaces</a
+              >
+              <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem"
+                >Skills</a
+              >
+              <a
+                href="/portal/vault/"
+                class="nav-link"
+                title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps"
+                data-group="secrets"
+                data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps"
+                role="menuitem"
+                >Vault</a
+              >
+              <a
+                href="/portal/env/"
+                class="nav-link"
+                title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed"
+                data-group="secrets"
+                data-cli="bun run portal-cli secret map  # no secret values printed"
+                role="menuitem"
+                >Env</a
+              >
+              <a
+                href="/portal/tools/"
+                class="nav-link"
+                title="portal-cli surface map · badges · capability subset · bun run portal-cli dashboard --view=tools"
+                data-group="harness"
+                data-cli="bun run portal-cli dashboard --view=tools"
+                role="menuitem"
+                >CLI Tools</a
+              >
+              <a
+                href="/portal/failures/"
+                class="nav-link"
+                title="test failures bake · junit · nav badge = count · bun run failures:bake  # → /registry/failures.json"
+                data-group="harness"
+                data-cli="bun run failures:bake  # → /registry/failures.json"
+                role="menuitem"
+                >Failures</a
+              >
+              <a
+                href="/portal/bunfig/"
+                class="nav-link"
+                title="bunfig install config provenance · portal-cli bunfig status · bun run bunfig:bake  # → /registry/bunfig-state.json"
+                data-group="harness"
+                data-cli="bun run bunfig:bake  # → /registry/bunfig-state.json"
+                role="menuitem"
+                >Bunfig</a
+              >
+              <a
+                href="/portal/console-format/"
+                class="nav-link"
+                title="structured output gate · logTable/logDepth/jsonOut ratchet · bun run console-format:bake  # → /registry/console-format-state.json"
+                data-group="harness"
+                data-cli="bun run console-format:bake  # → /registry/console-format-state.json"
+                role="menuitem"
+                >Console Format</a
+              >
+              <a
+                href="/portal/doctor/"
+                class="nav-link"
+                title="unified health gate · bunfig · catalog · linker · bun run portal:doctor --verbose"
+                data-group="harness"
+                data-cli="bun run portal:doctor --verbose"
+                role="menuitem"
+                >Doctor</a
+              >
+              <a
+                href="/portal/install-hygiene/"
+                class="nav-link"
+                title="cache prune · npm-install policy · install:verify bake · bun run bake:install-hygiene  # → /registry/install-hygiene-report.json"
+                data-group="harness"
+                data-cli="bun run bake:install-hygiene  # → /registry/install-hygiene-report.json"
+                role="menuitem"
+                >Install hygiene</a
+              >
+              <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem"
+                >Dashboard</a
+              >
+              <a
+                href="/portal/toc/"
+                class="nav-link"
+                title="Drum/Buffer/Rope · bun run ops:seed:toc"
+                data-group="ops"
+                data-cli="bun run ops:seed:toc"
+                role="menuitem"
+                >TOC</a
+              >
+              <a
+                href="/portal/limits/"
+                class="nav-link"
+                title="bun run ops:limits:demo"
+                data-group="ops"
+                data-cli="bun run ops:limits:demo"
+                role="menuitem"
+                >Limits</a
+              >
+              <a
+                href="/portal/partner-history/"
+                class="nav-link active"
+                aria-current="page"
+                title="per-partner limit history board · bun run ops:limits:demo"
+                data-group="ops"
+                data-cli="bun run ops:limits:demo"
+                role="menuitem"
+                >Partner history</a
+              >
+              <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem"
+                >Monitoring</a
+              >
+              <a
+                href="/registry/prediction/report/"
+                class="nav-link"
+                title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction"
+                data-group="ops"
+                data-cli="bun run portal-cli snapshot last --scope prediction"
+                role="menuitem"
+                >Prediction</a
+              >
+              <a
+                href="https://wiki.factory-wager.com/wiki-index.html"
+                class="nav-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="GitHub Pages hub"
+                data-group="other"
+                role="menuitem"
+                >Wiki</a
+              >
+            </div>
+          </div>
+        </nav>
+        <div class="topbar-status">
+          <a href="/portal/health/" class="topbar-health-link" title="System health">
+            <span id="health-dot" class="health-dot unknown"></span>
+            <span id="health-label" class="health-label">…</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="partner-page portal-page">
+      <nav id="partner-history-crumbs" class="glossary-crumbs" aria-label="Breadcrumb"></nav>
+      <div class="portal-actions">
+        <a href="/portal/limits/">Limit overview</a>
+        <a href="/portal/glossary/#glossary:page.partnerHistory">Glossary</a>
+        <a href="/registry/sportsbook-opening-baseline.json" target="_blank" rel="noopener"
+          >opening baseline JSON</a
+        >
+        <a href="/registry/ops-summary.json" target="_blank" rel="noopener">ops-summary.json</a>
+      </div>
+
+      <div class="page-header portal-hero">
+        <div>
+          <h2 class="portal-hero__title">
+            <a
+              class="semantic-label"
+              href="/portal/glossary/#glossary:page.partnerHistory"
+              data-glossary-concept="page.partnerHistory"
+              >Partner limit history</a
+            >
+          </h2>
+          <p class="history-kicker">
+            Trace account-level limit movement, sportsbook exposure, influence scores, and signed
+            context evidence across the partner tree.
+          </p>
+        </div>
+        <span class="history-freshness" id="history-freshness">Loading history…</span>
+      </div>
+
+      <form
+        id="history-filters"
+        class="history-filter-bar"
+        role="search"
+        aria-label="Partner history filters"
+      >
+        <label>
+          <span
+            ><a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.account"
+              >Account</a
+            ></span
+          >
+          <select id="partner-select" aria-label="Filter by partner-tree account">
+            <option value="">All accounts</option>
+          </select>
+        </label>
+        <label>
+          Sportsbook
+          <select id="sportsbook-select" aria-label="Filter by sportsbook">
+            <option value="">All sportsbooks</option>
+          </select>
+        </label>
+        <label>
+          Direction
+          <select id="direction-select" aria-label="Filter by limit direction">
+            <option value="">All directions</option>
+            <option value="up">Raises</option>
+            <option value="down">Decreases</option>
+          </select>
+        </label>
+        <label>
+          Window
+          <select id="hours-select" aria-label="Filter by history window">
+            <option value="24">24 hours</option>
+            <option value="48" selected>48 hours</option>
+            <option value="168">7 days</option>
+            <option value="0">All loaded</option>
+          </select>
+        </label>
+        <button id="refresh-btn" class="btn btn-primary" type="button">Refresh</button>
+        <button id="filter-reset" class="btn" type="button">Reset</button>
+      </form>
+      <p
+        id="history-filter-status"
+        class="history-filter-status"
+        role="status"
+        aria-live="polite"
+      ></p>
+
+      <!-- Metric row -->
+      <div class="metric-row" id="metric-row">
+        <div class="metric-card">
+          <div class="num" id="total-ct">—</div>
+          <div class="label">Visible changes</div>
+        </div>
+        <div class="metric-card" data-tone="ok">
+          <div class="num" id="raises-ct">—</div>
+          <div class="label">Raises</div>
+        </div>
+        <div class="metric-card" data-tone="bad">
+          <div class="num" id="downs-ct">—</div>
+          <div class="label">Decreases</div>
+        </div>
+        <div class="metric-card">
+          <div class="num" id="net-ct">—</div>
+          <div class="label">Net change</div>
+        </div>
+        <div class="metric-card" data-tone="info">
+          <div class="num" id="avg-score">—</div>
+          <div class="label">
+            <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.influence_score"
+              >Avg influence</a
+            >
           </div>
         </div>
-      </nav>
-      <div class="topbar-status">
-        <a href="/portal/health/" class="topbar-health-link" title="System health">
-          <span id="health-dot" class="health-dot unknown"></span>
-          <span id="health-label" class="health-label">…</span>
-        </a>
+        <div class="metric-card">
+          <div class="num" id="book-ct">—</div>
+          <div class="label">Sportsbooks</div>
+        </div>
+        <div class="metric-card">
+          <div class="num" id="proof-ct">—</div>
+          <div class="label">
+            <a
+              class="semantic-label"
+              href="/portal/glossary/#glossary:ops.limits.evidence_trace"
+              data-glossary-concept="ops.limits.evidence_trace"
+              >Proof coverage</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs" role="tablist" aria-label="Partner history views">
+        <button
+          class="tab active"
+          id="tab-recent"
+          type="button"
+          role="tab"
+          aria-selected="true"
+          aria-controls="panel-recent"
+          data-tab="recent"
+        >
+          Recent changes
+        </button>
+        <button
+          class="tab"
+          id="tab-partner"
+          type="button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-partner"
+          tabindex="-1"
+          data-tab="partner"
+        >
+          Per account
+        </button>
+        <button
+          class="tab"
+          id="tab-baseline"
+          type="button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-baseline"
+          tabindex="-1"
+          data-tab="baseline"
+        >
+          Opening baseline
+        </button>
+        <button
+          class="tab"
+          id="tab-export"
+          type="button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-export"
+          tabindex="-1"
+          data-tab="export"
+        >
+          Export
+        </button>
+      </div>
+
+      <!-- Tab: Recent changes -->
+      <div class="tab-panel active" id="panel-recent" role="tabpanel" aria-labelledby="tab-recent">
+        <section
+          id="recent-changes"
+          aria-labelledby="recent-changes-heading"
+          data-glossary-concept="section.recentLimitChanges"
+        >
+          <h2 id="recent-changes-heading" class="section-title">
+            <a href="#section:recent-changes" data-glossary-concept="section.recentLimitChanges"
+              >Recent limit changes</a
+            >
+            <a
+              href="/portal/glossary/#glossary:section.recentLimitChanges"
+              style="font-size: 0.75em; margin-left: 8px"
+              >Definition</a
+            >
+          </h2>
+          <limit-changes-card id="recent-card" limit="100" hours="48" show-all></limit-changes-card>
+        </section>
+      </div>
+
+      <!-- Tab: Per account -->
+      <div
+        class="tab-panel"
+        id="panel-partner"
+        role="tabpanel"
+        aria-labelledby="tab-partner"
+        hidden
+      >
+        <section
+          id="node-breakdown"
+          aria-labelledby="node-breakdown-heading"
+          data-glossary-concept="section.perNodeBreakdown"
+        >
+          <h2 id="node-breakdown-heading" class="section-title">
+            <a href="#section:node-breakdown" data-glossary-concept="section.perNodeBreakdown"
+              >Per-account breakdown</a
+            >
+            <a
+              href="/portal/glossary/#glossary:section.perNodeBreakdown"
+              style="font-size: 0.75em; margin-left: 8px"
+              >Definition</a
+            >
+          </h2>
+          <p class="baseline-note">
+            Each row is a partner-tree
+            <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.node"
+              >account/node</a
+            >
+            (<a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.partner"
+              >partner</a
+            >
+            /
+            <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.agent">agent</a> /
+            <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.sub_agent"
+              >sub-agent</a
+            >), not an
+            <a class="semantic-label" href="/portal/glossary/#glossary:api.agent">Agent API</a>
+            client.
+          </p>
+          <div id="partner-breakdown" class="history-breakdown-grid"></div>
+          <section class="history-book-summary" aria-labelledby="sportsbook-summary-heading">
+            <h2 class="section-title" id="sportsbook-summary-heading">Sportsbook activity</h2>
+            <div class="baseline-table-wrap" id="sportsbook-breakdown"></div>
+          </section>
+        </section>
+      </div>
+
+      <!-- Tab: Opening baseline -->
+      <div
+        class="tab-panel"
+        id="panel-baseline"
+        role="tabpanel"
+        aria-labelledby="tab-baseline"
+        hidden
+      >
+        <section id="opening-baseline" aria-labelledby="opening-baseline-title">
+          <h2 id="opening-baseline-title" class="section-title">
+            <a href="#section:opening-baseline" data-glossary-concept="section.openingBaseline"
+              >Sportsbook opening baseline</a
+            >
+            <a
+              href="/portal/glossary/#glossary:ops.limits.opening_baseline"
+              style="font-size: 0.75em; margin-left: 8px"
+              >Definition</a
+            >
+          </h2>
+          <p class="baseline-note">
+            Multi-tier baseline: <strong>Tier 5</strong> ops matrix for what a
+            <strong>new account</strong> typically gets as max wager per sport, market,
+            <a class="semantic-label" href="/portal/glossary/#glossary:multi.parlay">parlay</a>/<a
+              class="semantic-label"
+              href="/portal/glossary/#glossary:ops.limits.multi_structure"
+              >straight</a
+            >, and
+            <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.market_phase"
+              >live/pregame</a
+            >, plus <strong>Tier 2</strong> published-policy seeds,
+            <strong>Tier 4</strong> estimated scrape fixtures, and <strong>Tier 1</strong> NJ/MA
+            <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.baseline_tier"
+              >compliance ceilings</a
+            >. Tier 4 is estimated and may be stale. Not live book quotes.
+          </p>
+          <div id="baseline-sources" class="baseline-sources" aria-label="Baseline source tiers">
+            Loading sources…
+          </div>
+          <div class="baseline-toolbar">
+            <label
+              >Sportsbook
+              <select id="baseline-book" aria-label="Filter baseline by sportsbook"></select>
+            </label>
+            <label
+              >Sport
+              <select id="baseline-sport" aria-label="Filter baseline by sport"></select>
+            </label>
+            <label
+              >Market
+              <select id="baseline-market" aria-label="Filter baseline by market"></select>
+            </label>
+            <label
+              >Structure
+              <select id="baseline-structure" aria-label="Filter baseline by bet structure">
+                <option value="">All</option>
+                <option value="straight">straight</option>
+                <option value="parlay">parlay</option>
+              </select>
+            </label>
+            <label
+              >Phase
+              <select id="baseline-phase" aria-label="Filter baseline by market phase">
+                <option value="">All</option>
+                <option value="pregame">pregame</option>
+                <option value="live">live</option>
+              </select>
+            </label>
+            <label
+              >Source tier
+              <select id="baseline-tier" aria-label="Filter baseline by source tier">
+                <option value="">All</option>
+                <option value="1">T1 regulatory</option>
+                <option value="2">T2 policy</option>
+                <option value="4">T4 scraped (estimated)</option>
+                <option value="5">T5 ops</option>
+              </select>
+            </label>
+          </div>
+          <div class="baseline-table-wrap">
+            <table class="baseline-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Sportsbook</th>
+                  <th>Sport</th>
+                  <th>Market</th>
+                  <th>Structure</th>
+                  <th>Phase</th>
+                  <th>Source</th>
+                  <th>Opening max</th>
+                  <th>Published policy</th>
+                  <th>Est. scrape</th>
+                  <th>Compliance ceiling</th>
+                </tr>
+              </thead>
+              <tbody id="baseline-body">
+                <tr>
+                  <td colspan="11">Loading baseline…</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- Tab: Export -->
+      <div class="tab-panel" id="panel-export" role="tabpanel" aria-labelledby="tab-export" hidden>
+        <div class="metric-card" style="text-align: left; padding: 2em">
+          <h2 class="section-title" style="margin-top: 0">Download filtered limit data</h2>
+          <div style="display: flex; gap: 1em; flex-wrap: wrap">
+            <button id="export-csv-btn" class="btn btn-primary">Download CSV</button>
+            <button id="export-json-btn" class="btn">Copy JSON</button>
+          </div>
+          <p style="color: var(--text-dim); font-size: 0.85em; margin-top: 1em">
+            CSV and JSON use the active account, sportsbook, direction, and history-window filters.
+          </p>
+        </div>
+      </div>
+
+      <div id="empty-state" class="empty-state" style="display: none">
+        <p>No limit changes detected.</p>
+        <p>Seed demo data: <code>bun run ops:limits:demo</code></p>
       </div>
     </div>
-  </header>
 
-<div class="partner-page portal-page">
-  <nav id="partner-history-crumbs" class="glossary-crumbs" aria-label="Breadcrumb"></nav>
-  <div class="portal-actions">
-    <a href="/portal/limits/">Limit overview</a>
-    <a href="/portal/glossary/#glossary:page.partnerHistory">Glossary</a>
-    <a href="/registry/sportsbook-opening-baseline.json" target="_blank" rel="noopener">opening baseline JSON</a>
-    <a href="/registry/ops-summary.json" target="_blank" rel="noopener">ops-summary.json</a>
-  </div>
+    <notification-center></notification-center>
+    <script type="module">
+      import { startDataService } from '/portal/data.js';
+      import { bootGlossaryUx } from '/portal/components/glossary-ux.js';
 
-  <div class="page-header portal-hero">
-    <h2 class="portal-hero__title">
-      <a class="semantic-label" href="/portal/glossary/#glossary:page.partnerHistory" data-glossary-concept="page.partnerHistory">Partner limit history</a>
-    </h2>
-    <div>
-      <label for="partner-select" style="font-size:0.85em;color:var(--text-dim);margin-right:8px">
-        <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.account">Account</a>:
-      </label>
-      <select id="partner-select" class="partner-select" aria-label="Filter by partner-tree account">
-        <option value="">All accounts</option>
-      </select>
-      <button id="refresh-btn" class="btn btn-primary" style="margin-left:8px">Refresh</button>
-    </div>
-  </div>
+      const BASELINE_URL = '/registry/sportsbook-opening-baseline.json';
+      const sectionPattern = new URLPattern({ hash: 'section\\::section' });
+      const tabPattern = new URLPattern({ hash: 'tab\\::tab' });
+      const HISTORY_QUERY = Object.freeze({
+        account: 'account',
+        sportsbook: 'sportsbook',
+        direction: 'direction',
+        hours: 'hours',
+      });
+      const HISTORY_TABS = Object.freeze(['recent', 'partner', 'baseline', 'export']);
 
-  <!-- Metric row -->
-  <div class="metric-row" id="metric-row">
-    <div class="metric-card"><div class="num" id="total-ct">—</div><div class="label">Total changes</div></div>
-    <div class="metric-card" style="border-color:var(--green)"><div class="num" id="raises-ct" style="color:var(--green)">—</div><div class="label">Raises</div></div>
-    <div class="metric-card" style="border-color:var(--red)"><div class="num" id="downs-ct" style="color:var(--red)">—</div><div class="label">Decreases</div></div>
-    <div class="metric-card"><div class="num" id="net-ct">—</div><div class="label">Net change</div></div>
-    <div class="metric-card"><div class="num" id="avg-score">—</div><div class="label">Avg score</div></div>
-    <div class="metric-card"><div class="num" id="book-ct">—</div><div class="label">Sportsbooks</div></div>
-  </div>
+      const partnerSelect = document.getElementById('partner-select');
+      const sportsbookSelect = document.getElementById('sportsbook-select');
+      const directionSelect = document.getElementById('direction-select');
+      const hoursSelect = document.getElementById('hours-select');
+      const refreshBtn = document.getElementById('refresh-btn');
+      const filterReset = document.getElementById('filter-reset');
+      const filterStatus = document.getElementById('history-filter-status');
+      const freshnessEl = document.getElementById('history-freshness');
+      const tabs = document.querySelectorAll('.tab');
+      const card = document.getElementById('recent-card');
+      const breakdownEl = document.getElementById('partner-breakdown');
+      const sportsbookBreakdownEl = document.getElementById('sportsbook-breakdown');
+      const emptyState = document.getElementById('empty-state');
+      const baselineBody = document.getElementById('baseline-body');
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <div class="tab active" data-tab="recent">Recent changes</div>
-    <div class="tab" data-tab="partner">Per account</div>
-    <div class="tab" data-tab="baseline">Opening baseline</div>
-    <div class="tab" data-tab="export">Export</div>
-  </div>
+      let filteredData = [];
+      let opsData = null;
+      let baseline = null;
+      let activeTab = 'recent';
+      let nodePatterns = new Map();
+      let filtersInitialized = false;
 
-  <!-- Tab: Recent changes -->
-  <div class="tab-panel active" id="panel-recent">
-    <limit-changes-card id="recent-card" limit="25" show-all></limit-changes-card>
-  </div>
+      function escapeHtml(value) {
+        return String(value ?? '')
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#039;');
+      }
 
-  <!-- Tab: Per account -->
-  <div class="tab-panel" id="panel-partner">
-    <p class="baseline-note">
-      Each row is a partner-tree <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.node">account/node</a>
-      (<a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.partner">partner</a> /
-      <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.agent">agent</a> /
-      <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.sub_agent">sub-agent</a>),
-      not an <a class="semantic-label" href="/portal/glossary/#glossary:api.agent">Agent API</a> client.
-    </p>
-    <div id="partner-breakdown"></div>
-  </div>
+      function accountLabel(accountId) {
+        return nodePatterns.get(accountId)?.node_name || accountId;
+      }
 
-  <!-- Tab: Opening baseline -->
-  <div class="tab-panel" id="panel-baseline">
-    <section id="opening-baseline" aria-labelledby="opening-baseline-title">
-      <h2 id="opening-baseline-title" class="section-title">
-        <a href="#section:opening-baseline" data-glossary-concept="section.openingBaseline">Sportsbook opening baseline</a>
-        <a href="/portal/glossary/#glossary:ops.limits.opening_baseline" style="font-size:0.75em;margin-left:8px">Definition</a>
-      </h2>
-      <p class="baseline-note">
-        Multi-tier baseline: <strong>Tier 5</strong> ops matrix for what a <strong>new account</strong> typically gets as max wager
-        per sport, market, <a class="semantic-label" href="/portal/glossary/#glossary:multi.parlay">parlay</a>/<a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.multi_structure">straight</a>,
-        and <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.market_phase">live/pregame</a>,
-        plus <strong>Tier 2</strong> published-policy seeds, <strong>Tier 4</strong> estimated scrape fixtures,
-        and <strong>Tier 1</strong> NJ/MA <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.baseline_tier">compliance ceilings</a>.
-        Tier 4 is estimated and may be stale. Not live book quotes.
-      </p>
-      <div id="baseline-sources" class="baseline-sources" aria-label="Baseline source tiers">
-        Loading sources…
-      </div>
-      <div class="baseline-toolbar">
-        <label>Sportsbook
-          <select id="baseline-book" aria-label="Filter baseline by sportsbook"></select>
-        </label>
-        <label>Sport
-          <select id="baseline-sport" aria-label="Filter baseline by sport"></select>
-        </label>
-        <label>Market
-          <select id="baseline-market" aria-label="Filter baseline by market"></select>
-        </label>
-        <label>Structure
-          <select id="baseline-structure" aria-label="Filter baseline by bet structure">
-            <option value="">All</option>
-            <option value="straight">straight</option>
-            <option value="parlay">parlay</option>
-          </select>
-        </label>
-        <label>Phase
-          <select id="baseline-phase" aria-label="Filter baseline by market phase">
-            <option value="">All</option>
-            <option value="pregame">pregame</option>
-            <option value="live">live</option>
-          </select>
-        </label>
-        <label>Source tier
-          <select id="baseline-tier" aria-label="Filter baseline by source tier">
-            <option value="">All</option>
-            <option value="1">T1 regulatory</option>
-            <option value="2">T2 policy</option>
-            <option value="4">T4 scraped (estimated)</option>
-            <option value="5">T5 ops</option>
-          </select>
-        </label>
-      </div>
-      <div class="baseline-table-wrap">
-        <table class="baseline-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Sportsbook</th>
-              <th>Sport</th>
-              <th>Market</th>
-              <th>Structure</th>
-              <th>Phase</th>
-              <th>Source</th>
-              <th>Opening max</th>
-              <th>Published policy</th>
-              <th>Est. scrape</th>
-              <th>Compliance ceiling</th>
-            </tr>
-          </thead>
-          <tbody id="baseline-body">
-            <tr><td colspan="11">Loading baseline…</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </div>
+      function accountOptionLabel(accountId) {
+        const pattern = nodePatterns.get(accountId);
+        return pattern?.node_name
+          ? `${pattern.node_name} · ${pattern.node_type || 'node'}`
+          : accountId;
+      }
 
-  <!-- Tab: Export -->
-  <div class="tab-panel" id="panel-export">
-    <div class="metric-card" style="text-align:left;padding:2em">
-      <h3 style="margin:0 0 1em">Download limit data</h3>
-      <div style="display:flex;gap:1em;flex-wrap:wrap">
-        <button id="export-csv-btn" class="btn btn-primary">Download CSV</button>
-        <button id="export-json-btn" class="btn">Copy JSON</button>
-      </div>
-      <p style="color:var(--text-dim);font-size:0.85em;margin-top:1em">CSV includes all limit changes (last 48h). JSON exports the full ops-summary.limitChanges array.</p>
-    </div>
-  </div>
+      function changeTimestamp(change) {
+        return Number(change.increased_at || 0) * 1000;
+      }
 
-  <div id="empty-state" class="empty-state" style="display:none">
-    <p>No limit changes detected.</p>
-    <p>Seed demo data: <code>bun run ops:limits:demo</code></p>
-  </div>
-</div>
+      startDataService();
+      bootGlossaryUx({
+        breadcrumbsMount: document.getElementById('partner-history-crumbs'),
+        tooltipRoot: document.querySelector('.partner-page') ?? document.body,
+        trackPage: false,
+      }).catch(() => {});
 
-<notification-center></notification-center>
-<script type="module">
-import { startDataService } from '/portal/data.js';
-import { bootGlossaryUx } from '/portal/components/glossary-ux.js';
+      function glossaryHref(concept) {
+        return '/portal/glossary/#glossary:' + concept;
+      }
 
-const BASELINE_URL = '/registry/sportsbook-opening-baseline.json';
-const sectionPattern = new URLPattern({ hash: 'section\\::section' });
+      function roleGlossaryConcept(nodeType) {
+        if (nodeType === 'partner') return 'ops.limits.partner';
+        if (nodeType === 'agent') return 'ops.limits.agent';
+        if (nodeType === 'sub_agent') return 'ops.limits.sub_agent';
+        return 'ops.limits.roleType';
+      }
 
-const partnerSelect = document.getElementById('partner-select');
-const refreshBtn = document.getElementById('refresh-btn');
-const tabs = document.querySelectorAll('.tab');
-const card = document.getElementById('recent-card');
-const breakdownEl = document.getElementById('partner-breakdown');
-const emptyState = document.getElementById('empty-state');
-const baselineBody = document.getElementById('baseline-body');
+      function activateTab(tabId, { syncHash = true, focus = false } = {}) {
+        const safeTab = HISTORY_TABS.includes(tabId) ? tabId : 'recent';
+        activeTab = safeTab;
+        tabs.forEach(t => {
+          const selected = t.dataset.tab === safeTab;
+          t.classList.toggle('active', selected);
+          t.setAttribute('aria-selected', String(selected));
+          t.tabIndex = selected ? 0 : -1;
+          if (selected && focus) t.focus();
+        });
+        document.querySelectorAll('.tab-panel').forEach(p => {
+          const selected = p.id === 'panel-' + safeTab;
+          p.classList.toggle('active', selected);
+          p.hidden = !selected;
+        });
+        if (syncHash) {
+          const url = new URL(window.location.href);
+          url.hash = safeTab === 'recent' ? '' : `tab:${safeTab}`;
+          history.replaceState(null, '', url);
+        }
+      }
 
-let data = null;
-let opsData = null;
-let baseline = null;
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => activateTab(tab.dataset.tab));
+        tab.addEventListener('keydown', event => {
+          const current = HISTORY_TABS.indexOf(tab.dataset.tab);
+          let next = current;
+          if (event.key === 'ArrowRight') next = (current + 1) % HISTORY_TABS.length;
+          else if (event.key === 'ArrowLeft')
+            next = (current - 1 + HISTORY_TABS.length) % HISTORY_TABS.length;
+          else if (event.key === 'Home') next = 0;
+          else if (event.key === 'End') next = HISTORY_TABS.length - 1;
+          else return;
+          event.preventDefault();
+          activateTab(HISTORY_TABS[next], { focus: true });
+        });
+      });
 
-startDataService();
-bootGlossaryUx({
-  breadcrumbsMount: document.getElementById('partner-history-crumbs'),
-  tooltipRoot: document.querySelector('.partner-page') ?? document.body,
-  trackPage: false,
-}).catch(() => {});
+      function syncFilterQuery() {
+        const url = new URL(window.location.href);
+        const values = {
+          [HISTORY_QUERY.account]: partnerSelect.value,
+          [HISTORY_QUERY.sportsbook]: sportsbookSelect.value,
+          [HISTORY_QUERY.direction]: directionSelect.value,
+          [HISTORY_QUERY.hours]: hoursSelect.value === '48' ? '' : hoursSelect.value,
+        };
+        for (const [key, value] of Object.entries(values)) {
+          if (value) url.searchParams.set(key, value);
+          else url.searchParams.delete(key);
+        }
+        history.replaceState(null, '', url);
+      }
 
-function glossaryHref(concept) {
-  return '/portal/glossary/#glossary:' + concept;
-}
+      function restoreFilterQuery() {
+        const url = new URL(window.location.href);
+        partnerSelect.value = url.searchParams.get(HISTORY_QUERY.account) || '';
+        sportsbookSelect.value = url.searchParams.get(HISTORY_QUERY.sportsbook) || '';
+        directionSelect.value = url.searchParams.get(HISTORY_QUERY.direction) || '';
+        hoursSelect.value = url.searchParams.get(HISTORY_QUERY.hours) || '48';
+      }
 
-function roleGlossaryConcept(nodeType) {
-  if (nodeType === 'partner') return 'ops.limits.partner';
-  if (nodeType === 'agent') return 'ops.limits.agent';
-  if (nodeType === 'sub_agent') return 'ops.limits.sub_agent';
-  return 'ops.limits.roleType';
-}
+      function fillSelect(select, values, allLabel, labelFor = value => value) {
+        const current = select.value;
+        const options = [new Option(allLabel, '')];
+        for (const value of values) options.push(new Option(labelFor(value), value));
+        select.replaceChildren(...options);
+        select.value = [...select.options].some(option => option.value === current) ? current : '';
+      }
 
-function activateTab(tabId, { syncHash = true } = {}) {
-  tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === tabId));
-  document.querySelectorAll('.tab-panel').forEach(p => {
-    p.classList.toggle('active', p.id === 'panel-' + tabId);
-  });
-  if (syncHash && tabId === 'baseline') {
-    const url = new URL(window.location.href);
-    url.hash = 'section:opening-baseline';
-    history.replaceState(null, '', url);
-  } else if (syncHash && sectionPattern.exec(window.location.href)?.hash.groups.section === 'opening-baseline') {
-    const url = new URL(window.location.href);
-    url.hash = '';
-    history.replaceState(null, '', url);
-  }
-}
+      function sourceChip(row) {
+        const chips = [];
+        const tier = row.source?.tier ?? 5;
+        const tierLabel =
+          tier === 5
+            ? 'T5 ops'
+            : tier === 4
+              ? 'T4 estimated'
+              : tier === 2
+                ? 'T2 policy'
+                : tier === 1
+                  ? 'T1 regulatory'
+                  : 'T' + tier;
+        chips.push(
+          `<a class="source-chip t${tier} semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}" data-glossary-concept="ops.limits.baseline_tier">${tierLabel}</a>`
+        );
+        if (row.publishedPolicyMaxUsd != null) {
+          chips.push(
+            `<a class="source-chip t2 semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}" title="Published policy research seed">T2</a>`
+          );
+        }
+        if (row.scrapedMaxUsd != null) {
+          chips.push(
+            `<a class="source-chip t4 semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}" title="Estimated scrape — may be stale">T4 Est.</a>`
+          );
+        }
+        if (row.complianceMaxUsd != null) {
+          chips.push(
+            `<a class="source-chip t1 semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}" title="Compliance ceiling">T1</a>`
+          );
+        }
+        return chips.join(' ');
+      }
 
-tabs.forEach(tab => {
-  tab.addEventListener('click', () => activateTab(tab.dataset.tab));
-});
+      function complianceCell(row) {
+        if (row.complianceMaxUsd == null) return '<span style="color:var(--text-dim)">—</span>';
+        const key = row.compliancePolicyKey;
+        const link = key
+          ? `<a class="semantic-label" href="${glossaryHref(key)}">$${Number(row.complianceMaxUsd).toLocaleString()}</a>`
+          : `$${Number(row.complianceMaxUsd).toLocaleString()}`;
+        return `<span class="num">${link}</span>`;
+      }
 
-function fillSelect(select, values, allLabel) {
-  const current = select.value;
-  select.innerHTML =
-    `<option value="">${allLabel}</option>` +
-    values.map(value => `<option value="${value}">${value}</option>`).join('');
-  select.value = [...select.options].some(option => option.value === current) ? current : '';
-}
+      function publishedCell(row) {
+        if (row.publishedPolicyMaxUsd == null)
+          return '<span style="color:var(--text-dim)">—</span>';
+        const title = row.publishedPolicyReferenceUrl
+          ? ` title="${String(row.publishedPolicyReferenceUrl).replace(/"/g, '&quot;')}"`
+          : '';
+        return `<span class="num"${title}>$${Number(row.publishedPolicyMaxUsd).toLocaleString()}</span>`;
+      }
 
-function sourceChip(row) {
-  const chips = [];
-  const tier = row.source?.tier ?? 5;
-  const tierLabel =
-    tier === 5
-      ? 'T5 ops'
-      : tier === 4
-        ? 'T4 estimated'
-        : tier === 2
-          ? 'T2 policy'
-          : tier === 1
-            ? 'T1 regulatory'
-            : 'T' + tier;
-  chips.push(
-    `<a class="source-chip t${tier} semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}" data-glossary-concept="ops.limits.baseline_tier">${tierLabel}</a>`
-  );
-  if (row.publishedPolicyMaxUsd != null) {
-    chips.push(
-      `<a class="source-chip t2 semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}" title="Published policy research seed">T2</a>`
-    );
-  }
-  if (row.scrapedMaxUsd != null) {
-    chips.push(
-      `<a class="source-chip t4 semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}" title="Estimated scrape — may be stale">T4 Est.</a>`
-    );
-  }
-  if (row.complianceMaxUsd != null) {
-    chips.push(
-      `<a class="source-chip t1 semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}" title="Compliance ceiling">T1</a>`
-    );
-  }
-  return chips.join(' ');
-}
+      function scrapedCell(row) {
+        if (row.scrapedMaxUsd == null) return '<span style="color:var(--text-dim)">—</span>';
+        const title = row.scrapedReferenceUrl
+          ? ` title="${String(row.scrapedReferenceUrl).replace(/"/g, '&quot;')}"`
+          : ' title="Estimated — may be stale"';
+        return `<span class="num"${title}>$${Number(row.scrapedMaxUsd).toLocaleString()}<span class="est-warn" aria-label="Estimated">≈</span></span>`;
+      }
 
-function complianceCell(row) {
-  if (row.complianceMaxUsd == null) return '<span style="color:var(--text-dim)">—</span>';
-  const key = row.compliancePolicyKey;
-  const link = key
-    ? `<a class="semantic-label" href="${glossaryHref(key)}">$${Number(row.complianceMaxUsd).toLocaleString()}</a>`
-    : `$${Number(row.complianceMaxUsd).toLocaleString()}`;
-  return `<span class="num">${link}</span>`;
-}
-
-function publishedCell(row) {
-  if (row.publishedPolicyMaxUsd == null) return '<span style="color:var(--text-dim)">—</span>';
-  const title = row.publishedPolicyReferenceUrl
-    ? ` title="${String(row.publishedPolicyReferenceUrl).replace(/"/g, '&quot;')}"`
-    : '';
-  return `<span class="num"${title}>$${Number(row.publishedPolicyMaxUsd).toLocaleString()}</span>`;
-}
-
-function scrapedCell(row) {
-  if (row.scrapedMaxUsd == null) return '<span style="color:var(--text-dim)">—</span>';
-  const title = row.scrapedReferenceUrl
-    ? ` title="${String(row.scrapedReferenceUrl).replace(/"/g, '&quot;')}"`
-    : ' title="Estimated — may be stale"';
-  return `<span class="num"${title}>$${Number(row.scrapedMaxUsd).toLocaleString()}<span class="est-warn" aria-label="Estimated">≈</span></span>`;
-}
-
-function renderBaselineSources() {
-  const el = document.getElementById('baseline-sources');
-  if (!el) return;
-  const tiers = baseline?.sources?.tiers;
-  const regCount = baseline?.summary?.regulatoryRows ?? baseline?.regulatory?.length ?? 0;
-  const t2 = tiers?.['2']?.count ?? baseline?.summary?.policyRows ?? 0;
-  const t4 = tiers?.['4']?.count ?? baseline?.summary?.scrapedRows ?? 0;
-  const t5 = tiers?.['5']?.count ?? baseline?.summary?.rows ?? 0;
-  el.innerHTML = `
+      function renderBaselineSources() {
+        const el = document.getElementById('baseline-sources');
+        if (!el) return;
+        const tiers = baseline?.sources?.tiers;
+        const regCount = baseline?.summary?.regulatoryRows ?? baseline?.regulatory?.length ?? 0;
+        const t2 = tiers?.['2']?.count ?? baseline?.summary?.policyRows ?? 0;
+        const t4 = tiers?.['4']?.count ?? baseline?.summary?.scrapedRows ?? 0;
+        const t5 = tiers?.['5']?.count ?? baseline?.summary?.rows ?? 0;
+        el.innerHTML = `
     <span><a class="source-chip t1 semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}">T1 regulatory</a> ${regCount} NJ/MA policies</span>
     <span><a class="source-chip t2 semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}">T2 policy</a> ${t2} published-policy seeds</span>
     <span><a class="source-chip t4 semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}" title="Estimated — may be stale">T4 Est.</a> ${t4} scrape fixtures</span>
     <span><a class="source-chip t5 semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}">T5 ops</a> ${t5}-row opening matrix</span>
     <span>Tier 3 stub · <code>bun run baseline:status</code></span>
   `;
-}
+      }
 
-function renderBaseline() {
-  if (!baseline?.limits) {
-    baselineBody.innerHTML = '<tr><td colspan="11">Baseline unavailable. Run <code>bun run baseline:sync-scraped</code>.</td></tr>';
-    return;
-  }
-  renderBaselineSources();
-  const book = document.getElementById('baseline-book').value;
-  const sport = document.getElementById('baseline-sport').value;
-  const market = document.getElementById('baseline-market').value;
-  const structure = document.getElementById('baseline-structure').value;
-  const phase = document.getElementById('baseline-phase').value;
-  const tier = document.getElementById('baseline-tier')?.value;
-  const rows = baseline.limits.filter(row => {
-    if (book && row.sportsbook !== book) return false;
-    if (sport && row.sport !== sport) return false;
-    if (market && row.market !== market) return false;
-    if (structure && row.structure !== structure) return false;
-    if (phase && row.phase !== phase) return false;
-    if (tier === '1' && row.complianceMaxUsd == null) return false;
-    if (tier === '2' && row.publishedPolicyMaxUsd == null) return false;
-    if (tier === '4' && row.scrapedMaxUsd == null) return false;
-    if (tier === '5' && (row.source?.tier ?? 5) !== 5) return false;
-    return true;
-  });
-  baselineBody.innerHTML =
-    rows
-      .slice(0, 200)
-      .map(
-        row => `<tr>
+      function renderBaseline() {
+        if (!baseline?.limits) {
+          baselineBody.innerHTML =
+            '<tr><td colspan="11">Baseline unavailable. Run <code>bun run baseline:sync-scraped</code>.</td></tr>';
+          return;
+        }
+        renderBaselineSources();
+        const book = document.getElementById('baseline-book').value;
+        const sport = document.getElementById('baseline-sport').value;
+        const market = document.getElementById('baseline-market').value;
+        const structure = document.getElementById('baseline-structure').value;
+        const phase = document.getElementById('baseline-phase').value;
+        const tier = document.getElementById('baseline-tier')?.value;
+        const rows = baseline.limits.filter(row => {
+          if (book && row.sportsbook !== book) return false;
+          if (sport && row.sport !== sport) return false;
+          if (market && row.market !== market) return false;
+          if (structure && row.structure !== structure) return false;
+          if (phase && row.phase !== phase) return false;
+          if (tier === '1' && row.complianceMaxUsd == null) return false;
+          if (tier === '2' && row.publishedPolicyMaxUsd == null) return false;
+          if (tier === '4' && row.scrapedMaxUsd == null) return false;
+          if (tier === '5' && (row.source?.tier ?? 5) !== 5) return false;
+          return true;
+        });
+        baselineBody.innerHTML =
+          rows
+            .slice(0, 200)
+            .map(
+              row => `<tr>
           <td class="num">${row.rank}</td>
           <td><strong>${row.sportsbookLabel}</strong><br><small>${row.sportsbook}</small></td>
           <td><a class="semantic-label" href="${glossaryHref('sport.' + row.sport)}">${row.sport}</a></td>
@@ -481,211 +1270,413 @@ function renderBaseline() {
           <td>${scrapedCell(row)}</td>
           <td>${complianceCell(row)}</td>
         </tr>`
-      )
-      .join('') || '<tr><td colspan="11">No rows match these filters.</td></tr>';
-}
+            )
+            .join('') || '<tr><td colspan="11">No rows match these filters.</td></tr>';
+      }
 
-async function loadBaseline() {
-  try {
-    const res = await fetch(BASELINE_URL, { cache: 'no-store' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    baseline = await res.json();
-    fillSelect(
-      document.getElementById('baseline-book'),
-      baseline.books.map(book => book.id),
-      'All sportsbooks'
-    );
-    fillSelect(
-      document.getElementById('baseline-sport'),
-      [...new Set(baseline.limits.map(row => row.sport))].sort(),
-      'All sports'
-    );
-    fillSelect(
-      document.getElementById('baseline-market'),
-      [...new Set(baseline.limits.map(row => row.market))].sort(),
-      'All markets'
-    );
-    renderBaseline();
-  } catch {
-    baselineBody.innerHTML =
-      '<tr><td colspan="11">Baseline unavailable. Run <code>bun run baseline:sync-scraped</code>.</td></tr>';
-  }
-}
+      async function loadBaseline() {
+        try {
+          const res = await fetch(BASELINE_URL, { cache: 'no-store' });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          baseline = await res.json();
+          fillSelect(
+            document.getElementById('baseline-book'),
+            baseline.books.map(book => book.id),
+            'All sportsbooks'
+          );
+          fillSelect(
+            document.getElementById('baseline-sport'),
+            [...new Set(baseline.limits.map(row => row.sport))].sort(),
+            'All sports'
+          );
+          fillSelect(
+            document.getElementById('baseline-market'),
+            [...new Set(baseline.limits.map(row => row.market))].sort(),
+            'All markets'
+          );
+          renderBaseline();
+        } catch {
+          baselineBody.innerHTML =
+            '<tr><td colspan="11">Baseline unavailable. Run <code>bun run baseline:sync-scraped</code>.</td></tr>';
+        }
+      }
 
-async function load() {
-  try {
-    const res = await fetch('/api/operations/summary');
-    if (res.ok) { opsData = await res.json(); return render(); }
-  } catch {}
-  try {
-    const res = await fetch('/registry/ops-summary.json');
-    if (res.ok) { opsData = await res.json(); return render(); }
-  } catch {}
-  emptyState.style.display = 'block';
-  emptyState.innerHTML = '<p>⚠️ Could not load data. Is the server running?</p>';
-}
+      async function load() {
+        refreshBtn.disabled = true;
+        refreshBtn.setAttribute('aria-busy', 'true');
+        filterStatus.textContent = 'Refreshing partner history…';
+        try {
+          const res = await fetch('/api/operations/summary');
+          if (res.ok) {
+            opsData = await res.json();
+            render();
+            return;
+          }
+        } catch {}
+        try {
+          const res = await fetch('/registry/ops-summary.json');
+          if (res.ok) {
+            opsData = await res.json();
+            render();
+            return;
+          }
+        } catch {}
+        emptyState.style.display = 'block';
+        emptyState.innerHTML = '<p>⚠️ Could not load data. Is the server running?</p>';
+        filterStatus.textContent = 'History data is unavailable.';
+        refreshBtn.disabled = false;
+        refreshBtn.removeAttribute('aria-busy');
+      }
 
-function render() {
-  if (!opsData?.limitChanges) {
-    emptyState.style.display = 'block';
-    document.getElementById('metric-row').style.display = 'none';
-    return;
-  }
+      function signedCurrency(amount) {
+        const value = Number(amount) || 0;
+        if (value > 0) return `+$${value.toLocaleString()}`;
+        if (value < 0) return `-$${Math.abs(value).toLocaleString()}`;
+        return '$0';
+      }
 
-  data = opsData.limitChanges;
-  emptyState.style.display = 'none';
-  document.getElementById('metric-row').style.display = 'grid';
+      function filteredChanges(changes) {
+        const account = partnerSelect.value;
+        const sportsbook = sportsbookSelect.value;
+        const direction = directionSelect.value;
+        const hours = Number(hoursSelect.value);
+        const since = hours > 0 ? Date.now() - hours * 3_600_000 : 0;
+        return changes
+          .filter(change => {
+            if (account && change.node_id !== account) return false;
+            if (sportsbook && change.sportsbook !== sportsbook) return false;
+            if (direction && change.direction !== direction) return false;
+            if (since && changeTimestamp(change) < since) return false;
+            return true;
+          })
+          .sort((left, right) => changeTimestamp(right) - changeTimestamp(left));
+      }
 
-  const selectedPartner = partnerSelect.value;
+      function renderSportsbookBreakdown(changes) {
+        const byBook = new Map();
+        for (const change of changes) {
+          const key = change.sportsbook || 'unknown';
+          const current = byBook.get(key) || { changes: 0, raises: 0, decreases: 0, net: 0 };
+          current.changes += 1;
+          current.raises += change.direction === 'up' ? 1 : 0;
+          current.decreases += change.direction === 'down' ? 1 : 0;
+          current.net += (change.new_limit ?? 0) - (change.previous_max ?? 0);
+          byBook.set(key, current);
+        }
+        const rows = [...byBook.entries()].sort(
+          ([leftName, left], [rightName, right]) =>
+            right.changes - left.changes || leftName.localeCompare(rightName)
+        );
+        sportsbookBreakdownEl.innerHTML = rows.length
+          ? `<table class="history-book-table" aria-label="Sportsbook limit activity">
+        <caption class="sr-only">Sportsbook activity for the current history filters</caption>
+        <thead><tr><th scope="col">Sportsbook</th><th scope="col" class="num">Changes</th><th scope="col" class="num">Raises</th><th scope="col" class="num">Decreases</th><th scope="col" class="num">High-water delta</th></tr></thead>
+        <tbody>${rows
+          .map(
+            ([sportsbook, row]) => `<tr>
+              <td><button class="partner-drill" data-sportsbook="${escapeHtml(sportsbook)}">${escapeHtml(sportsbook)}</button></td>
+              <td class="num">${row.changes}</td>
+              <td class="num tone-ok">${row.raises}</td>
+              <td class="num tone-bad">${row.decreases}</td>
+              <td class="num">${signedCurrency(row.net)}</td>
+            </tr>`
+          )
+          .join('')}</tbody>
+      </table>`
+          : '<p class="baseline-note">No sportsbook activity matches these filters.</p>';
+      }
 
-  const partners = [...new Set(data.map(c => c.node_id).filter(Boolean))];
-  const currentVal = partnerSelect.value;
-  partnerSelect.innerHTML =
-    '<option value="">All accounts</option>' +
-    partners.map(p => `<option value="${p}"${p === currentVal ? ' selected' : ''}>${p}</option>`).join('');
+      function render() {
+        const changes = Array.isArray(opsData?.limitChanges) ? opsData.limitChanges : [];
+        nodePatterns = new Map(
+          (opsData?.limitPatterns?.nodePatterns || []).map(pattern => [pattern.node_id, pattern])
+        );
+        if (changes.length === 0) {
+          emptyState.style.display = 'block';
+          document.getElementById('metric-row').style.display = 'none';
+          filterStatus.textContent = 'No limit changes are present in the loaded history window.';
+          freshnessEl.textContent = `${opsData?.source || 'snapshot'} · no changes`;
+          card.data = { ...opsData, limitChanges: [] };
+          refreshBtn.disabled = false;
+          refreshBtn.removeAttribute('aria-busy');
+          return;
+        }
 
-  const filtered = selectedPartner ? data.filter(c => c.node_id === selectedPartner) : data;
+        emptyState.style.display = 'none';
+        document.getElementById('metric-row').style.display = 'grid';
 
-  const total = filtered.length;
-  const raises = filtered.filter(c => c.direction === 'up').length;
-  const downs = filtered.filter(c => c.direction === 'down').length;
-  const netDelta = filtered.reduce((s, c) => s + ((c.new_limit ?? 0) - (c.previous_max ?? 0)), 0);
-  const avgScore = filtered.reduce((s, c) => s + (c.multi_factor_score ?? 0), 0) / (total || 1);
-  const books = new Set(filtered.map(c => c.sportsbook)).size;
+        const accounts = [...new Set(changes.map(change => change.node_id).filter(Boolean))].sort(
+          (left, right) => accountLabel(left).localeCompare(accountLabel(right))
+        );
+        const sportsbooks = [
+          ...new Set(changes.map(change => change.sportsbook).filter(Boolean)),
+        ].sort();
+        fillSelect(partnerSelect, accounts, 'All accounts', accountOptionLabel);
+        fillSelect(sportsbookSelect, sportsbooks, 'All sportsbooks');
+        if (!filtersInitialized) {
+          restoreFilterQuery();
+          filtersInitialized = true;
+        }
+        if (![...partnerSelect.options].some(option => option.value === partnerSelect.value))
+          partnerSelect.value = '';
+        if (![...sportsbookSelect.options].some(option => option.value === sportsbookSelect.value))
+          sportsbookSelect.value = '';
 
-  document.getElementById('total-ct').textContent = total;
-  document.getElementById('raises-ct').textContent = raises;
-  document.getElementById('downs-ct').textContent = downs;
-  document.getElementById('net-ct').textContent = (netDelta >= 0 ? '+' : '') + '$' + Math.abs(netDelta).toLocaleString();
-  document.getElementById('avg-score').textContent = avgScore > 0 ? (avgScore * 100).toFixed(0) + '%' : '—';
-  document.getElementById('book-ct').textContent = books;
+        filteredData = filteredChanges(changes);
+        const total = filteredData.length;
+        const raises = filteredData.filter(change => change.direction === 'up').length;
+        const downs = filteredData.filter(change => change.direction === 'down').length;
+        const netDelta = filteredData.reduce(
+          (sum, change) => sum + ((change.new_limit ?? 0) - (change.previous_max ?? 0)),
+          0
+        );
+        const scored = filteredData.filter(
+          change => change.context_available && change.multi_factor_score != null
+        );
+        const avgScore =
+          scored.reduce((sum, change) => sum + change.multi_factor_score, 0) / (scored.length || 1);
+        const books = new Set(filteredData.map(change => change.sportsbook)).size;
+        const proofCount = filteredData.filter(
+          change => change.context_proof?.valid === true
+        ).length;
 
-  card.setAttribute('partner', selectedPartner || '');
-  card.data = opsData;
+        document.getElementById('total-ct').textContent = total;
+        document.getElementById('raises-ct').textContent = raises;
+        document.getElementById('downs-ct').textContent = downs;
+        document.getElementById('net-ct').textContent = signedCurrency(netDelta);
+        document.getElementById('avg-score').textContent = scored.length
+          ? (avgScore * 100).toFixed(0) + '%'
+          : '—';
+        document.getElementById('book-ct').textContent = books;
+        document.getElementById('proof-ct').textContent = total
+          ? `${Math.round((proofCount / total) * 100)}%`
+          : '—';
 
-  if (selectedPartner) {
-    breakdownEl.innerHTML =
-      '<p style="color:var(--text-dim)">Select "All accounts" to see the per-account breakdown.</p>';
-  } else {
-    const byPartner = {};
-    for (const c of filtered) {
-      const key = c.node_id || 'unknown';
-      if (!byPartner[key]) byPartner[key] = [];
-      byPartner[key].push(c);
-    }
-    breakdownEl.innerHTML = Object.entries(byPartner)
-      .slice(0, 20)
-      .map(([pid, changes]) => {
-        const pRaises = changes.filter(c => c.direction === 'up').length;
-        const pDowns = changes.filter(c => c.direction === 'down').length;
-        const pNet = changes.reduce((s, c) => s + ((c.new_limit ?? 0) - (c.previous_max ?? 0)), 0);
-        const pAvg = changes.reduce((s, c) => s + (c.multi_factor_score ?? 0), 0) / changes.length;
-        const role = changes[0]?.node_type ?? changes[0]?.role ?? null;
-        const roleConcept = roleGlossaryConcept(role);
-        return `<div style="margin:8px 0;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
-        <div style="display:flex;justify-content:space-between;align-items:center">
+        card.removeAttribute('partner');
+        card.setAttribute('hours', '0');
+        card.data = { ...opsData, limitChanges: filteredData };
+
+        const activeFilters = [
+          partnerSelect.value,
+          sportsbookSelect.value,
+          directionSelect.value,
+          hoursSelect.value !== '0' ? hoursSelect.value : '',
+        ].filter(Boolean).length;
+        filterStatus.innerHTML = `<strong>${total}</strong> of ${changes.length} changes · ${activeFilters} active filter${activeFilters === 1 ? '' : 's'} · deltas are versus prior high-water`;
+        const generated = opsData?.generatedAt || opsData?.generated || null;
+        const generatedDate = generated ? new Date(generated) : null;
+        freshnessEl.textContent =
+          generatedDate && !Number.isNaN(generatedDate.getTime())
+            ? `${opsData?.source || 'history'} · ${generatedDate.toLocaleString()}`
+            : `${opsData?.source || 'live operations'} · refreshed ${new Date().toLocaleTimeString()}`;
+        syncFilterQuery();
+
+        const byPartner = new Map();
+        for (const change of filteredData) {
+          const key = change.node_id || 'unknown';
+          if (!byPartner.has(key)) byPartner.set(key, []);
+          byPartner.get(key).push(change);
+        }
+        breakdownEl.innerHTML = [...byPartner.entries()]
+          .slice(0, 30)
+          .map(([accountId, accountChanges]) => {
+            const pattern = nodePatterns.get(accountId);
+            const accountRaises = accountChanges.filter(change => change.direction === 'up').length;
+            const accountDowns = accountChanges.filter(
+              change => change.direction === 'down'
+            ).length;
+            const accountNet = accountChanges.reduce(
+              (sum, change) => sum + ((change.new_limit ?? 0) - (change.previous_max ?? 0)),
+              0
+            );
+            const scoredChanges = accountChanges.filter(
+              change => change.context_available && change.multi_factor_score != null
+            );
+            const accountAvg =
+              scoredChanges.reduce((sum, change) => sum + change.multi_factor_score, 0) /
+              (scoredChanges.length || 1);
+            const role =
+              pattern?.node_type || accountChanges[0]?.node_type || accountChanges[0]?.role || null;
+            const roleConcept = roleGlossaryConcept(role);
+            const location = [pattern?.state_code, pattern?.license_status]
+              .filter(Boolean)
+              .join(' · ');
+            return `<article class="history-account-card" data-account="${escapeHtml(accountId)}">
+        <div class="history-account-card__head">
           <span>
-            <strong style="font-family:monospace" data-glossary-concept="ops.limits.account">${pid}</strong>
-            ${role ? ` <a class="role-chip semantic-label" href="${glossaryHref(roleConcept)}">${role}</a>` : ''}
+            <strong data-glossary-concept="ops.limits.account">${escapeHtml(accountLabel(accountId))}</strong><br>
+            <code title="Account ID">${escapeHtml(accountId)}</code>
+            ${role ? ` · <a class="role-chip semantic-label" href="${glossaryHref(roleConcept)}">${escapeHtml(role)}</a>` : ''}
+            ${location ? ` · <span>${escapeHtml(location)}</span>` : ''}
           </span>
-          <span style="font-size:0.85em;color:var(--text-dim)"><span style="color:var(--green)">↑${pRaises}</span> <span style="color:var(--red)">↓${pDowns}</span> · ${pNet >= 0 ? '+' : ''}$${Math.abs(pNet).toLocaleString()} net · avg ${(pAvg * 100).toFixed(0)}%</span>
+          <span class="history-account-card__summary"><span class="tone-ok">↑${accountRaises}</span> <span class="tone-bad">↓${accountDowns}</span> · ${signedCurrency(accountNet)} high-water · ${scoredChanges.length ? `${(accountAvg * 100).toFixed(0)}% influence` : 'no score'}</span>
         </div>
-        <div style="font-size:0.8em;margin-top:4px;color:var(--text-dim)">
-          ${changes.slice(0, 3).map(c => `${c.sportsbook} ${c.sport_id}/${c.market_id}: <strong>$${Number(c.new_limit).toLocaleString()}</strong> ${c.direction === 'down' ? '↓' : '↑'}`).join(' · ')}
-          ${changes.length > 3 ? ` · +${changes.length - 3} more` : ''}
+        <div class="history-account-card__events">
+          ${accountChanges
+            .slice(0, 3)
+            .map(
+              change =>
+                `${escapeHtml(change.sportsbook)} ${escapeHtml(change.sport_id)}/${escapeHtml(change.market_id)}: <strong>$${Number(change.new_limit).toLocaleString()}</strong> ${change.direction === 'down' ? '↓' : '↑'}${change.context_proof?.valid === true ? ' · proof ✓' : ''}`
+            )
+            .join(' · ')}
+          ${accountChanges.length > 3 ? ` · +${accountChanges.length - 3} more` : ''}
         </div>
-        <div style="margin-top:4px"><button class="partner-drill" data-partner="${pid}" style="font-size:0.75em;padding:2px 8px;border:1px solid var(--border);border-radius:4px;background:transparent;cursor:pointer;color:var(--accent)">View →</button></div>
-      </div>`;
-      })
-      .join('');
+        <div class="history-account-card__actions">
+          <button class="partner-drill" data-partner="${escapeHtml(accountId)}">View timeline</button>
+          <a class="btn" href="/portal/limits/#account:${encodeURIComponent(accountId)}">Account evidence</a>
+        </div>
+      </article>`;
+          })
+          .join('');
 
-    document.querySelectorAll('.partner-drill').forEach(btn => {
-      btn.addEventListener('click', () => {
-        partnerSelect.value = btn.dataset.partner;
+        renderSportsbookBreakdown(filteredData);
+        document.querySelectorAll('.partner-drill').forEach(button => {
+          button.addEventListener('click', () => {
+            if (button.dataset.partner) partnerSelect.value = button.dataset.partner;
+            if (button.dataset.sportsbook) sportsbookSelect.value = button.dataset.sportsbook;
+            activateTab('recent');
+            render();
+            document
+              .getElementById('panel-recent')
+              ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        });
+        refreshBtn.disabled = false;
+        refreshBtn.removeAttribute('aria-busy');
+      }
+
+      // Export: CSV
+      document.getElementById('export-csv-btn').addEventListener('click', () => {
+        if (filteredData.length === 0) return;
+        const headers = [
+          'account_id',
+          'account_name',
+          'direction',
+          'sportsbook',
+          'sport_id',
+          'market_id',
+          'bet_type',
+          'previous_high_water',
+          'new_limit',
+          'delta',
+          'influence_score',
+          'proof_valid',
+          'increased_at',
+        ];
+        const rows = filteredData.map(change => [
+          change.node_id,
+          accountLabel(change.node_id),
+          change.direction,
+          change.sportsbook,
+          change.sport_id,
+          change.market_id,
+          change.bet_type,
+          change.previous_max ?? '',
+          change.new_limit ?? '',
+          (change.new_limit ?? 0) - (change.previous_max ?? 0),
+          change.context_available ? (change.multi_factor_score ?? '') : '',
+          change.context_proof?.valid === true,
+          change.increased_at != null ? new Date(change.increased_at * 1000).toISOString() : '',
+        ]);
+        const csv = [
+          headers.join(','),
+          ...rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')),
+        ].join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `limit-changes-${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      // Export: Copy JSON
+      document.getElementById('export-json-btn').addEventListener('click', async () => {
+        if (filteredData.length === 0) return;
+        await navigator.clipboard.writeText(JSON.stringify(filteredData, null, 2));
+        const btn = document.getElementById('export-json-btn');
+        btn.textContent = 'Copied';
+        setTimeout(() => (btn.textContent = 'Copy JSON'), 2000);
+      });
+
+      for (const select of [partnerSelect, sportsbookSelect, directionSelect, hoursSelect]) {
+        select.addEventListener('change', render);
+      }
+      filterReset.addEventListener('click', () => {
+        partnerSelect.value = '';
+        sportsbookSelect.value = '';
+        directionSelect.value = '';
+        hoursSelect.value = '48';
         render();
       });
-    });
-  }
-}
+      refreshBtn.addEventListener('click', load);
+      for (const id of [
+        'baseline-book',
+        'baseline-sport',
+        'baseline-market',
+        'baseline-structure',
+        'baseline-phase',
+        'baseline-tier',
+      ]) {
+        document.getElementById(id)?.addEventListener('change', renderBaseline);
+      }
 
-// Export: CSV
-document.getElementById('export-csv-btn').addEventListener('click', () => {
-  if (!data || data.length === 0) return;
-  const headers = ['direction','sportsbook','sport_id','market_id','bet_type','previous_max','new_limit','delta','score','increased_at'];
-  const rows = data.map(c => [c.direction, c.sportsbook, c.sport_id, c.market_id, c.bet_type, c.previous_max ?? '', c.new_limit ?? '', (c.new_limit??0)-(c.previous_max??0), c.multi_factor_score ?? '', c.increased_at != null ? new Date(c.increased_at*1000).toISOString() : '']);
-  const csv = [headers.join(','), ...rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))].join('\n');
-  const blob = new Blob([csv], {type:'text/csv'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `limit-changes-${new Date().toISOString().slice(0,10)}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
-});
+      const initialTab = tabPattern.exec(window.location.href)?.hash.groups.tab;
+      const initialSection = sectionPattern.exec(window.location.href)?.hash.groups.section;
+      if (HISTORY_TABS.includes(initialTab)) {
+        activateTab(initialTab, { syncHash: false });
+      } else if (initialSection === 'opening-baseline') {
+        activateTab('baseline', { syncHash: false });
+      } else if (initialSection === 'node-breakdown') {
+        activateTab('partner', { syncHash: false });
+      }
+      window.addEventListener('hashchange', () => {
+        const routedTab = tabPattern.exec(window.location.href)?.hash.groups.tab;
+        const routedSection = sectionPattern.exec(window.location.href)?.hash.groups.section;
+        if (HISTORY_TABS.includes(routedTab)) {
+          activateTab(routedTab, { syncHash: false });
+        } else if (routedSection === 'opening-baseline') {
+          activateTab('baseline', { syncHash: false });
+        } else if (routedSection === 'node-breakdown') {
+          activateTab('partner', { syncHash: false });
+        } else {
+          activateTab('recent', { syncHash: false });
+        }
+      });
 
-// Export: Copy JSON
-document.getElementById('export-json-btn').addEventListener('click', async () => {
-  if (!data) return;
-  await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
-  const btn = document.getElementById('export-json-btn');
-  btn.textContent = 'Copied';
-  setTimeout(() => btn.textContent = 'Copy JSON', 2000);
-});
-
-partnerSelect.addEventListener('change', render);
-refreshBtn.addEventListener('click', load);
-for (const id of [
-  'baseline-book',
-  'baseline-sport',
-  'baseline-market',
-  'baseline-structure',
-  'baseline-phase',
-  'baseline-tier',
-]) {
-  document.getElementById(id)?.addEventListener('change', renderBaseline);
-}
-
-if (sectionPattern.exec(window.location.href)?.hash.groups.section === 'opening-baseline') {
-  activateTab('baseline', { syncHash: false });
-}
-window.addEventListener('hashchange', () => {
-  if (sectionPattern.exec(window.location.href)?.hash.groups.section === 'opening-baseline') {
-    activateTab('baseline', { syncHash: false });
-  }
-});
-
-load();
-loadBaseline();
-</script>
-  <script type="module" src="/portal/components/sidebar.js"></script>
-  <script type="module" src="/portal/components/footer.js"></script>
-  <footer class="footer" data-portal-chrome="footer">
-    <p>
-      <strong>FactoryWager</strong> ·
-      <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
-      <a href="/portal/ops/">Ops</a> ·
-      <a href="/portal/toc/">TOC</a> ·
-      <a href="/portal/packages/">Packages</a> ·
-      <a href="/portal/brands/">Brands</a> ·
-      <a href="/portal/glossary/">Glossary</a> ·
-      <a href="/portal/surfaces/">Surfaces</a> ·
-      <a href="/portal/health/">Health</a> ·
-      <a href="/registry/portal-weave.json">Portal proof</a> ·
-      <a href="/portal/tools/">CLI Tools</a> ·
-      <a href="/portal/compliance/">Compliance</a> ·
-      <a href="/portal/limits/">Limits</a> ·
-      <a href="/portal/dod/">DOD</a> ·
-      <a href="/portal/env/">Env</a> ·
-      <a href="/portal/vault/">Vault</a> ·
-      <a href="/portal/failures/">Failures</a> ·
-      <a href="/portal/install-hygiene/">Install hygiene</a> ·
-      <a href="/registry/monorepo-health.json">Monorepo health</a> ·
-      <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
-    </p>
-    <p class="footer-meta">
-      project-R-score · chrome <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a>
-      · <span data-footer-ts>…</span>
-    </p>
-  </footer>
-</body>
+      load();
+      loadBaseline();
+    </script>
+    <script type="module" src="/portal/components/sidebar.js"></script>
+    <script type="module" src="/portal/components/footer.js"></script>
+    <footer class="footer" data-portal-chrome="footer">
+      <p>
+        <strong>FactoryWager</strong> ·
+        <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a>
+        · <a href="/portal/ops/">Ops</a> · <a href="/portal/toc/">TOC</a> ·
+        <a href="/portal/packages/">Packages</a> · <a href="/portal/brands/">Brands</a> ·
+        <a href="/portal/glossary/">Glossary</a> · <a href="/portal/surfaces/">Surfaces</a> ·
+        <a href="/portal/health/">Health</a> ·
+        <a href="/registry/portal-weave.json">Portal proof</a> ·
+        <a href="/portal/tools/">CLI Tools</a> · <a href="/portal/compliance/">Compliance</a> ·
+        <a href="/portal/limits/">Limits</a> · <a href="/portal/dod/">DOD</a> ·
+        <a href="/portal/env/">Env</a> · <a href="/portal/vault/">Vault</a> ·
+        <a href="/portal/failures/">Failures</a> ·
+        <a href="/portal/install-hygiene/">Install hygiene</a> ·
+        <a href="/registry/monorepo-health.json">Monorepo health</a> ·
+        <a
+          href="https://github.com/brendadeeznuts1111/project-R-score"
+          target="_blank"
+          rel="noopener noreferrer"
+          >GitHub</a
+        >
+      </p>
+      <p class="footer-meta">
+        project-R-score · chrome
+        <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a> ·
+        <span data-footer-ts>…</span>
+      </p>
+    </footer>
+  </body>
 </html>
