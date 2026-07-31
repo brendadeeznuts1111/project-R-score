@@ -1,0 +1,620 @@
+<!doctype html>
+<!-- @see docs/portal-foundation.md -->
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account dossier · FactoryWager</title>
+    <meta name="theme-color" content="#0d1117" />
+    <meta name="application-name" content="FactoryWager" />
+    <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+    <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/portal/style.css" />
+    <script type="module" src="/portal/data.js"></script>
+    <script type="module" src="/portal/topbar.js"></script>
+    <script type="module" src="/portal/components/limit-changes-card.js"></script>
+    <style>
+      .ad-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px 48px;
+      }
+      .ad-hero {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        align-items: flex-start;
+        margin: 20px 0 12px;
+      }
+      .ad-hero h1 {
+        margin: 0;
+        font-size: 1.45em;
+      }
+      .ad-kicker {
+        margin: 6px 0 0;
+        color: var(--text-dim);
+        font-size: 0.86em;
+        max-width: 72ch;
+      }
+      .ad-id {
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-size: 0.92em;
+      }
+      .ad-picker {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: end;
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        margin-bottom: 14px;
+      }
+      .ad-picker label {
+        display: grid;
+        gap: 4px;
+        font-size: 0.72em;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+      }
+      .ad-picker select,
+      .ad-picker input {
+        min-width: 220px;
+        padding: 8px 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--bg);
+        color: var(--text);
+      }
+      .ad-metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 10px;
+        margin: 14px 0;
+      }
+      .ad-metric {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px 14px;
+      }
+      .ad-metric .k {
+        font-size: 0.72em;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-dim);
+      }
+      .ad-metric .v {
+        margin-top: 4px;
+        font-size: 1.25em;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+      }
+      .ad-metric[data-tone='ok'] .v {
+        color: var(--tone-ok, #3fb950);
+      }
+      .ad-metric[data-tone='bad'] .v {
+        color: var(--tone-bad, #f85149);
+      }
+      .ad-metric[data-tone='warn'] .v {
+        color: var(--tone-warn, #d29922);
+      }
+      .ad-panel {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin-bottom: 14px;
+      }
+      .ad-panel h2 {
+        margin: 0 0 10px;
+        font-size: 0.78em;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+      }
+      .ad-empty {
+        color: var(--text-dim);
+        font-size: 0.9em;
+      }
+      .ad-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.84em;
+      }
+      .ad-table th,
+      .ad-table td {
+        text-align: left;
+        padding: 6px 8px;
+        border-bottom: 1px solid rgba(48, 54, 61, 0.45);
+        vertical-align: top;
+      }
+      .ad-table th {
+        color: var(--text-dim);
+        font-weight: 500;
+      }
+      .ad-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 10px 0 0;
+      }
+      .ad-actions a,
+      .ad-actions .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--bg);
+        color: var(--text);
+        text-decoration: none;
+        font-size: 0.85em;
+      }
+      .ad-actions a:hover {
+        border-color: var(--accent, #58a6ff);
+      }
+      .ad-badge {
+        display: inline-block;
+        padding: 1px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        font-size: 0.78em;
+      }
+      .ad-badge[data-tone='ok'] {
+        color: var(--tone-ok, #3fb950);
+      }
+      .ad-badge[data-tone='bad'] {
+        color: var(--tone-bad, #f85149);
+      }
+      .ad-badge[data-tone='warn'] {
+        color: var(--tone-warn, #d29922);
+      }
+      .ad-badge[data-tone='skip'] {
+        color: var(--text-dim);
+      }
+      .ad-tree-self {
+        font-weight: 700;
+      }
+      .ad-meta {
+        color: var(--text-dim);
+        font-size: 0.8em;
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <h1 class="logo">
+          <span class="logo-icon">■</span>
+          <span class="brand-wordmark">FactoryWager</span>
+          <span class="brand-badge">ops</span>
+          <span class="logo-page">Account</span>
+        </h1>
+        <nav class="topbar-nav" aria-label="Primary"></nav>
+      </div>
+    </header>
+
+    <main class="ad-page portal-page">
+      <div class="portal-actions">
+        <a href="/portal/partners/" data-glossary-concept="page.partners">Partners</a>
+        <a href="/portal/partner-history/" data-glossary-concept="page.partnerHistory">History</a>
+        <a href="/portal/limits/" data-glossary-concept="page.limitPatterns">Limits</a>
+        <a href="/portal/glossary/#glossary:page.accountDossier">Glossary</a>
+        <a href="/registry/limit-raises.json" target="_blank" rel="noopener">limit-raises.json</a>
+      </div>
+
+      <div class="ad-hero portal-hero">
+        <div>
+          <h1>
+            <a
+              class="semantic-label"
+              href="/portal/glossary/#glossary:page.accountDossier"
+              data-glossary-concept="page.accountDossier"
+              >Account dossier</a
+            >
+          </h1>
+          <p class="ad-kicker" data-glossary-concept="ops.limits.account">
+            One partner-tree account at a time — identity, connected nodes, location, monitoring,
+            limit telemetry, outs, and betlog exports.
+          </p>
+        </div>
+        <span class="ad-meta" id="ad-freshness">Loading…</span>
+      </div>
+
+      <form id="ad-picker" class="ad-picker" role="search" aria-label="Account dossier selector">
+        <label data-glossary-concept="ops.limits.account">
+          <span>Account</span>
+          <select id="ad-account-select" aria-label="Select partner-tree account">
+            <option value="">Select account…</option>
+          </select>
+        </label>
+        <label>
+          <span>Or paste id / CODE</span>
+          <input id="ad-account-input" type="text" placeholder="ASH-001 or limit-demo-atlantic" />
+        </label>
+        <label data-glossary-concept="section.recentLimitChanges">
+          <span>Window (h)</span>
+          <select id="ad-hours">
+            <option value="24">24</option>
+            <option value="48">48</option>
+            <option value="168" selected>168</option>
+            <option value="720">720</option>
+          </select>
+        </label>
+        <button type="submit" class="btn">Open</button>
+      </form>
+
+      <div id="ad-empty" class="ad-panel ad-empty" hidden>
+        Pick an account to load its dossier. Deep-link with
+        <code>?account=CALL</code> or <code>?partner=CODE</code>.
+      </div>
+
+      <div id="ad-body" hidden>
+        <div class="ad-panel">
+          <h2 data-glossary-concept="ops.limits.account">Identity</h2>
+          <p>
+            <strong id="ad-name">—</strong>
+            <span class="ad-badge" id="ad-role">—</span>
+            <span class="ad-badge" id="ad-monitor">—</span>
+          </p>
+          <p class="ad-id" id="ad-id">—</p>
+          <p class="ad-meta" id="ad-lineage">—</p>
+          <div class="ad-actions" id="ad-links"></div>
+        </div>
+
+        <div class="ad-metrics" id="ad-metrics"></div>
+
+        <div class="ad-panel">
+          <h2 data-glossary-concept="section.downlineContext">Connected tree</h2>
+          <div id="ad-tree"></div>
+        </div>
+
+        <div class="ad-panel">
+          <h2 data-glossary-concept="ops.limits.jurisdiction_policy">Location & license</h2>
+          <div id="ad-location"></div>
+        </div>
+
+        <div class="ad-panel">
+          <h2 data-glossary-concept="ops.limits.evidence_trace">Evidence traces</h2>
+          <div id="ad-traces"></div>
+        </div>
+
+        <div class="ad-panel">
+          <h2 data-glossary-concept="ops.limits.jurisdiction_policy">Applicable policies</h2>
+          <div id="ad-policies"></div>
+        </div>
+
+        <div class="ad-panel">
+          <h2 data-glossary-concept="ops.limits.pattern_surface">Limit telemetry</h2>
+          <div id="ad-raises"></div>
+        </div>
+
+        <div class="ad-panel">
+          <h2 data-glossary-concept="section.recentLimitChanges">Limit changes</h2>
+          <limit-changes-card id="ad-limit-card" hours="168"></limit-changes-card>
+        </div>
+
+        <div class="ad-panel">
+          <h2 data-glossary-concept="page.partners">Partner outs & books</h2>
+          <div id="ad-outs"></div>
+        </div>
+      </div>
+    </main>
+
+    <script type="module">
+      import {
+        buildAccountDossier,
+        collectAccountIds,
+        partnerCodeFromRef,
+        resolveAccountId,
+      } from './account-dossier.js';
+
+      const $ = id => document.getElementById(id);
+      const esc = value =>
+        String(value ?? '')
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;');
+
+      function money(value) {
+        if (value == null || Number.isNaN(Number(value))) return '—';
+        return `$${Number(value).toLocaleString()}`;
+      }
+
+      function toneFor(status) {
+        if (status === 'monitored' || status === 'ok' || status === 'active') return 'ok';
+        if (status === 'blocked' || status === 'bad') return 'bad';
+        if (status === 'attention' || status === 'warn') return 'warn';
+        return 'skip';
+      }
+
+      async function loadJson(url) {
+        try {
+          const res = await fetch(url, { credentials: 'same-origin' });
+          if (!res.ok) return null;
+          return await res.json();
+        } catch {
+          return null;
+        }
+      }
+
+      function syncUrl(accountId, hours) {
+        const url = new URL(window.location.href);
+        if (accountId) url.searchParams.set('account', accountId);
+        else url.searchParams.delete('account');
+        url.searchParams.delete('partner');
+        if (hours && String(hours) !== '168') url.searchParams.set('hours', String(hours));
+        else url.searchParams.delete('hours');
+        history.replaceState(null, '', url);
+      }
+
+      function renderDossier(dossier) {
+        const empty = $('ad-empty');
+        const body = $('ad-body');
+        if (!dossier?.accountId) {
+          empty.hidden = false;
+          body.hidden = true;
+          return;
+        }
+        empty.hidden = true;
+        body.hidden = false;
+
+        $('ad-name').textContent = dossier.name;
+        const role = $('ad-role');
+        role.textContent = dossier.role;
+        role.dataset.tone = 'skip';
+        const monitor = $('ad-monitor');
+        monitor.textContent = dossier.monitoringStatus || 'no profile';
+        monitor.dataset.tone = toneFor(dossier.monitoringStatus || dossier.monitoringTone);
+        $('ad-id').textContent = dossier.accountId;
+        $('ad-lineage').textContent = [
+          dossier.partnerCode ? `CODE ${dossier.partnerCode}` : null,
+          dossier.parentNodeId ? `parent ${dossier.parentNodeId}` : 'root / partner',
+          `depth ${dossier.depth}`,
+          dossier.partnerNodeId ? `partner node ${dossier.partnerNodeId}` : null,
+        ]
+          .filter(Boolean)
+          .join(' · ');
+
+        $('ad-links').innerHTML = [
+          `<a href="${esc(dossier.links.history)}" data-glossary-concept="page.partnerHistory">History filter</a>`,
+          `<a href="${esc(dossier.links.limits)}" data-glossary-concept="page.limitPatterns">Limits evidence</a>`,
+          `<a href="${esc(dossier.links.partners)}" data-glossary-concept="page.partners">Partner profile</a>`,
+          `<a href="${esc(dossier.links.betlogCsv)}" data-glossary-concept="ui.semantic.artifact">Betlog CSV</a>`,
+          `<a href="${esc(dossier.links.betlogJsonl)}" data-glossary-concept="ui.semantic.artifact">Betlog JSONL</a>`,
+        ].join('');
+
+        const obs = dossier.observations || {};
+        $('ad-metrics').innerHTML = [
+          ['Raises (window)', dossier.raiseCount, dossier.raiseCount > 0 ? 'info' : 'skip'],
+          ['Violations 30d', obs.violations30d ?? dossier.pattern?.violation_count_30d ?? '—', 'bad'],
+          ['Net Δ', dossier.pattern?.net_delta != null ? money(dossier.pattern.net_delta) : '—', 'info'],
+          [
+            'Avg influence',
+            dossier.pattern?.avg_influence_score != null
+              ? Number(dossier.pattern.avg_influence_score).toFixed(2)
+              : '—',
+            'info',
+          ],
+          ['Dimensions', obs.dimensions ?? '—', 'skip'],
+          ['Lifecycle', dossier.lifecycleStatus || '—', toneFor(dossier.lifecycleStatus)],
+        ]
+          .map(
+            ([k, v, tone]) =>
+              `<div class="ad-metric" data-tone="${tone}"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div></div>`
+          )
+          .join('');
+
+        if (!dossier.connected.length) {
+          $('ad-tree').innerHTML =
+            '<p class="ad-empty">No connected tree rows in the baked pattern snapshot.</p>';
+        } else {
+          $('ad-tree').innerHTML = `<table class="ad-table"><thead><tr>
+            <th>Account</th><th>Role</th><th>Depth</th><th>State</th><th>ZIP</th><th>Changes</th>
+          </tr></thead><tbody>${dossier.connected
+            .map(row => {
+              const self = String(row.node_id) === dossier.accountId;
+              const href = `/portal/account/?account=${encodeURIComponent(row.node_id)}&hours=${dossier.lookbackHours}`;
+              return `<tr class="${self ? 'ad-tree-self' : ''}">
+                <td><a href="${href}">${esc(row.node_name || row.node_id)}</a><div class="ad-meta ad-id">${esc(row.node_id)}</div></td>
+                <td>${esc(row.node_type || '—')}</td>
+                <td>${esc(row.downline_depth ?? 0)}</td>
+                <td>${esc(row.state_code || '—')}</td>
+                <td>${esc(row.zip_code || '—')}</td>
+                <td>${esc(row.changes ?? 0)}</td>
+              </tr>`;
+            })
+            .join('')}</tbody></table>`;
+        }
+
+        const loc = dossier.location;
+        $('ad-location').innerHTML = `<table class="ad-table"><tbody>
+          <tr><th>State</th><td>${esc(loc.state || '—')}</td></tr>
+          <tr><th>City / label</th><td>${esc(loc.city || '—')}</td></tr>
+          <tr><th>ZIP</th><td>${esc(loc.zip || '—')}${loc.zipPrefix ? ` <span class="ad-meta">(prefix ${esc(loc.zipPrefix)})</span>` : ''}</td></tr>
+          <tr><th>License</th><td>${esc(dossier.licenseStatus || '—')}</td></tr>
+          <tr><th>Profile key</th><td class="ad-id">${esc(dossier.profileKey || '—')}</td></tr>
+        </tbody></table>`;
+
+        if (!dossier.traces.length) {
+          $('ad-traces').innerHTML = '<p class="ad-empty">No evidence traces on this account profile.</p>';
+        } else {
+          $('ad-traces').innerHTML = `<table class="ad-table"><thead><tr>
+            <th>When</th><th>Kind</th><th>Source</th><th>Detail</th>
+          </tr></thead><tbody>${dossier.traces
+            .slice(0, 40)
+            .map(
+              t => `<tr>
+              <td class="ad-meta">${esc(t.at || '—')}</td>
+              <td>${esc(t.kind || '—')}</td>
+              <td class="ad-meta">${esc(t.source || '—')}</td>
+              <td>${esc(t.detail || '—')}</td>
+            </tr>`
+            )
+            .join('')}</tbody></table>`;
+        }
+
+        if (!dossier.policies.length) {
+          $('ad-policies').innerHTML =
+            '<p class="ad-empty">No jurisdiction / account policies matched this node.</p>';
+        } else {
+          $('ad-policies').innerHTML = `<table class="ad-table"><thead><tr>
+            <th>Code</th><th>Label</th><th>State</th><th>Max</th><th>Risk</th>
+          </tr></thead><tbody>${dossier.policies
+            .map(
+              p => `<tr>
+              <td class="ad-id">${esc(p.policyCode || p.policyKey)}</td>
+              <td>${esc(p.label || '—')}</td>
+              <td>${esc(p.stateCode || '—')}</td>
+              <td>${money(p.maxWager)}</td>
+              <td>${esc(p.riskTier || '—')}</td>
+            </tr>`
+            )
+            .join('')}</tbody></table>`;
+        }
+
+        if (!dossier.raises.length) {
+          $('ad-raises').innerHTML =
+            '<p class="ad-empty">No raise telemetry in this lookback window.</p>';
+        } else {
+          $('ad-raises').innerHTML = `<table class="ad-table"><thead><tr>
+            <th>Book</th><th>Sport</th><th>Market</th><th>Prior→New</th><th>Score</th><th>Factors</th><th>Proof</th>
+          </tr></thead><tbody>${dossier.raises
+            .slice(0, 50)
+            .map(r => {
+              const factors = Array.isArray(r.top_contributing_factors)
+                ? r.top_contributing_factors.join(', ')
+                : '—';
+              const proof = r.context_proof?.valid === true ? 'valid' : '—';
+              return `<tr>
+                <td>${esc(r.sportsbook || '—')}</td>
+                <td>${esc(r.sport_id || '—')}</td>
+                <td>${esc(r.market_id || '—')}</td>
+                <td>${money(r.previous_max)} → <strong>${money(r.new_limit)}</strong></td>
+                <td>${r.multi_factor_score != null ? Number(r.multi_factor_score).toFixed(2) : '—'}</td>
+                <td class="ad-meta">${esc(factors)}</td>
+                <td>${esc(proof)}</td>
+              </tr>`;
+            })
+            .join('')}</tbody></table>`;
+        }
+
+        const card = $('ad-limit-card');
+        if (card) {
+          card.setAttribute('partner', dossier.accountId);
+          card.setAttribute('hours', String(dossier.lookbackHours || 168));
+        }
+
+        if (!dossier.outs.length) {
+          $('ad-outs').innerHTML = dossier.partnerCode
+            ? `<p class="ad-empty">No outs listed for CODE <code>${esc(dossier.partnerCode)}</code> in partners-ops.</p>`
+            : '<p class="ad-empty">No partner CODE resolved — outs unavailable.</p>';
+        } else {
+          $('ad-outs').innerHTML = `<table class="ad-table"><thead><tr>
+            <th>Out</th><th>Book</th><th>Type</th><th>Status</th><th>Rail</th><th>Max</th>
+          </tr></thead><tbody>${dossier.outs
+            .map(o => {
+              const book = o.book || {};
+              return `<tr>
+                <td class="ad-id">${esc(o.id || '—')}</td>
+                <td>${esc(book.name || book.slug || '—')}</td>
+                <td>${esc(book.type || '—')}</td>
+                <td>${esc(o.status || '—')}</td>
+                <td>${esc(o.funding?.method || '—')}</td>
+                <td>${esc(o.maxBet || '—')}</td>
+              </tr>`;
+            })
+            .join('')}</tbody></table>`;
+        }
+
+        $('ad-freshness').textContent = [
+          dossier.found ? 'evidence found' : 'sparse / missing bake rows',
+          dossier.generatedAt ? `bake ${dossier.generatedAt}` : null,
+          `${dossier.lookbackHours}h window`,
+        ]
+          .filter(Boolean)
+          .join(' · ');
+      }
+
+      async function boot() {
+        const url = new URL(window.location.href);
+        const hours = Number(url.searchParams.get('hours') || $('ad-hours').value || 168);
+        $('ad-hours').value = String([24, 48, 168, 720].includes(hours) ? hours : 168);
+
+        const [limitRaises, partnersOps] = await Promise.all([
+          loadJson('/registry/limit-raises.json'),
+          loadJson('/registry/partners-ops.json'),
+        ]);
+
+        const ids = collectAccountIds(limitRaises || {});
+        const select = $('ad-account-select');
+        select.replaceChildren(new Option('Select account…', ''));
+        for (const id of ids) select.append(new Option(id, id));
+
+        const seed =
+          url.searchParams.get('account') ||
+          url.searchParams.get('partner') ||
+          url.searchParams.get('node_id') ||
+          '';
+        const accountId = resolveAccountId(seed, ids);
+        if (accountId) {
+          select.value = ids.includes(accountId) ? accountId : '';
+          $('ad-account-input').value = accountId;
+        }
+
+        const open = () => {
+          const raw = $('ad-account-input').value.trim() || select.value;
+          const nextHours = Number($('ad-hours').value || 168);
+          const nextId = resolveAccountId(raw, ids);
+          if (!nextId) {
+            renderDossier(null);
+            syncUrl('', nextHours);
+            return;
+          }
+          syncUrl(nextId, nextHours);
+          const dossier = buildAccountDossier({
+            accountId: nextId,
+            limitRaises: limitRaises || {},
+            partnersOps,
+            hours: nextHours,
+          });
+          renderDossier(dossier);
+        };
+
+        $('ad-picker').addEventListener('submit', event => {
+          event.preventDefault();
+          open();
+        });
+        select.addEventListener('change', () => {
+          $('ad-account-input').value = select.value;
+          open();
+        });
+        $('ad-hours').addEventListener('change', open);
+
+        if (accountId) open();
+        else {
+          renderDossier(null);
+          $('ad-freshness').textContent = limitRaises?.generatedAt
+            ? `bake ${limitRaises.generatedAt}`
+            : 'no limit-raises bake';
+        }
+      }
+
+      boot();
+    </script>
+  </body>
+</html>

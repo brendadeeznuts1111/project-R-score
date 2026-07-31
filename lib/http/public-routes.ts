@@ -295,6 +295,14 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     note: 'telegram-handshake · seat-capital-desk · accounting topic · deposit rails',
   },
   {
+    path: '/portal/account/',
+    name: 'Account dossier portal',
+    category: 'portal',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: 'single TreeNodeId dossier · tree · location · telemetry · betlog',
+  },
+  {
     path: '/portal/partner-history/',
     name: 'Partner history portal',
     category: 'portal',

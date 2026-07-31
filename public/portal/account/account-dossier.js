@@ -1,0 +1,153 @@
+/**
+ * Account dossier join helpers — scope one TreeNodeId + connected partner-tree nodes.
+ * Pure functions over baked registries (limit-raises · partners-ops).
+ */
+
+const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
+/** Call-sign only — avoids treating slug ids like LIMIT-DEMO-ATLANTIC as CODE LIMIT. */
+const CALL_SIGN_RE = /^([A-Z]{3,6})-\d{3}(?:-SUB\d{2}){0,2}$/;
+
+/** @param {unknown} ref */
+export function partnerCodeFromRef(ref) {
+  const raw = String(ref || '')
+    .trim()
+    .toUpperCase();
+  if (PARTNER_CODE_RE.test(raw)) return raw;
+  const match = raw.match(CALL_SIGN_RE);
+  return match?.[1] ?? null;
+}
+
+/**
+ * @param {string} seed
+ * @param {Iterable<string>} candidates
+ */
+export function resolveAccountId(seed, candidates) {
+  const list = [...candidates].filter(Boolean);
+  if (!seed) return '';
+  if (list.includes(seed)) return seed;
+  const upper = String(seed).toUpperCase();
+  const exact = list.find(id => String(id).toUpperCase() === upper);
+  if (exact) return exact;
+  const code = partnerCodeFromRef(seed);
+  if (code) {
+    const byCode = list.filter(id => partnerCodeFromRef(id) === code);
+    if (byCode.length === 1) return byCode[0];
+    const preferred = byCode.find(id => String(id).toUpperCase().endsWith('-001'));
+    if (preferred) return preferred;
+    if (byCode[0]) return byCode[0];
+  }
+  return seed;
+}
+
+/**
+ * @param {object} limitRaises
+ * @returns {string[]}
+ */
+export function collectAccountIds(limitRaises) {
+  const ids = new Set();
+  for (const key of Object.keys(limitRaises?.byNode ?? {})) ids.add(key);
+  for (const pattern of limitRaises?.patterns?.nodePatterns ?? []) {
+    if (pattern?.node_id) ids.add(String(pattern.node_id));
+  }
+  for (const profile of limitRaises?.accountProfiles?.profiles ?? []) {
+    if (profile?.treeNodeId) ids.add(String(profile.treeNodeId));
+  }
+  return [...ids].sort((a, b) => a.localeCompare(b));
+}
+
+/**
+ * Build a single-account dossier view-model from baked registries.
+ * @param {{
+ *   accountId: string;
+ *   limitRaises: object;
+ *   partnersOps?: object | null;
+ *   hours?: number;
+ * }} input
+ */
+export function buildAccountDossier({ accountId, limitRaises, partnersOps = null, hours = 168 }) {
+  const id = String(accountId || '').trim();
+  const patterns = limitRaises?.patterns?.nodePatterns ?? [];
+  const pattern = patterns.find(row => String(row.node_id) === id) ?? null;
+  const partnerNodeId = pattern?.partner_node_id ? String(pattern.partner_node_id) : id;
+  const connected = patterns
+    .filter(row => String(row.partner_node_id) === partnerNodeId || String(row.node_id) === id)
+    .slice()
+    .sort((a, b) => {
+      const depth = (a.downline_depth ?? 0) - (b.downline_depth ?? 0);
+      if (depth !== 0) return depth;
+      return String(a.node_id).localeCompare(String(b.node_id));
+    });
+
+  const profile =
+    (limitRaises?.accountProfiles?.profiles ?? []).find(row => String(row.treeNodeId) === id) ??
+    null;
+
+  const bucket = limitRaises?.byNode?.[id] ?? null;
+  const raises = Array.isArray(bucket?.raises) ? bucket.raises : [];
+  const sinceSec = Math.floor(Date.now() / 1000) - Math.round(Number(hours || 168) * 3600);
+  const raisesInWindow = raises.filter(row => {
+    const at = Number(row?.increased_at ?? 0);
+    return !at || at >= sinceSec;
+  });
+
+  const code =
+    partnerCodeFromRef(id) ||
+    partnerCodeFromRef(pattern?.node_name) ||
+    partnerCodeFromRef(partnerNodeId);
+
+  const partnerRow =
+    code && partnersOps?.partners
+      ? (partnersOps.partners.find(row => String(row.code).toUpperCase() === code) ?? null)
+      : null;
+
+  const statePolicies = (limitRaises?.accountProfiles?.policies ?? []).filter(policy => {
+    if (policy?.treeNodeId && String(policy.treeNodeId) === id) return true;
+    if (!policy?.stateCode) return false;
+    const state = pattern?.state_code ?? profile?.jurisdiction?.stateCode;
+    return state != null && String(policy.stateCode) === String(state);
+  });
+
+  const betlogBase = `/api/agents/v1/limits/raises?node_id=${encodeURIComponent(id)}&hours=${encodeURIComponent(String(hours || 168))}`;
+
+  return {
+    accountId: id,
+    found: Boolean(pattern || profile || bucket),
+    partnerNodeId,
+    partnerCode: code,
+    name: pattern?.node_name ?? profile?.accountName ?? id,
+    role: pattern?.node_type ?? profile?.accountKind ?? 'node',
+    depth: pattern?.downline_depth ?? 0,
+    parentNodeId: pattern?.parent_node_id ?? null,
+    location: {
+      state: pattern?.state_code ?? profile?.jurisdiction?.stateCode ?? null,
+      city: pattern?.location ?? profile?.jurisdiction?.location ?? null,
+      zip: pattern?.zip_code ?? profile?.jurisdiction?.zipCode ?? null,
+      zipPrefix: pattern?.zip_prefix ?? null,
+    },
+    licenseStatus: pattern?.license_status ?? profile?.license?.status ?? null,
+    monitoringStatus: profile?.monitoringStatus ?? null,
+    monitoringTone: profile?.tone ?? null,
+    lifecycleStatus: profile?.lifecycleStatus ?? null,
+    profileKey: profile?.profileKey ?? null,
+    observations: profile?.observations ?? null,
+    traces: Array.isArray(profile?.traces) ? profile.traces : [],
+    connected,
+    raises: raisesInWindow,
+    raiseCount: raisesInWindow.length,
+    pattern,
+    profile,
+    policies: statePolicies,
+    partner: partnerRow,
+    outs: Array.isArray(partnerRow?.outs) ? partnerRow.outs : [],
+    links: {
+      history: `/portal/partner-history/?account=${encodeURIComponent(id)}`,
+      limits: `/portal/limits/#account:${encodeURIComponent(id)}`,
+      partners: code ? `/portal/partners/#partner/${encodeURIComponent(code)}` : '/portal/partners/',
+      betlogCsv: `${betlogBase}&format=csv`,
+      betlogJsonl: `${betlogBase}&format=jsonl`,
+      registry: '/registry/limit-raises.json',
+    },
+    lookbackHours: hours,
+    generatedAt: limitRaises?.generatedAt ?? null,
+  };
+}

@@ -53,6 +53,7 @@ type PageKey =
   | 'compliance'
   | 'limits'
   | 'partners'
+  | 'account'
   | 'partner-history'
   | 'doctor'
   | 'install-hygiene'
@@ -91,6 +92,12 @@ const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: st
     file: 'partners/index.html',
     active: 'partners',
     pageLabel: 'Partners',
+    brandBadge: 'ops',
+  },
+  {
+    file: 'account/index.html',
+    active: 'account',
+    pageLabel: 'Account',
     brandBadge: 'ops',
   },
   {
@@ -240,6 +247,7 @@ for (const rel of [
   'public/portal/science/index.html',
   'public/portal/tennis/index.html',
   'public/portal/factory/index.html',
+  'public/portal/account/index.html',
   'public/portal/partner-history/index.html',
 ]) {
   await sweepWikiNav(rel);
