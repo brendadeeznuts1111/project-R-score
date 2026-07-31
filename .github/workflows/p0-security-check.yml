@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   security-audit:
@@ -17,13 +18,13 @@ jobs:
       BUN_INSTALL_GLOBAL_STORE: "1"
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Factory Bun
         uses: ./.github/actions/setup-factory-bun
 
       - name: Dependency Guard
         run: bun run security:guard:deps
-      
+
       - name: Check for event-stream
         run: |
           if bun pm ls event-stream 2>/dev/null | grep -q event-stream; then
@@ -31,7 +32,7 @@ jobs:
             exit 1
           fi
           echo "✅ event-stream not found"
-      
+
       - name: Check unused dependencies
         run: |
           # Check for express, axios, chalk
@@ -40,7 +41,7 @@ jobs:
               echo "⚠️  $dep found in package.json - verify if used"
             fi
           done
-      
+
       - name: Verify CORS configuration
         run: |
           if [ -f feedback-server.ts ]; then
@@ -52,7 +53,7 @@ jobs:
           else
             echo "ℹ️ feedback-server.ts not present, skipping CORS grep check"
           fi
-      
+
       - name: Check authentication
         run: |
           if [ -f feedback-server.ts ]; then
@@ -63,7 +64,7 @@ jobs:
           else
             echo "ℹ️ feedback-server.ts not present, skipping authentication grep check"
           fi
-      
+
       - name: Check token hashing
         run: |
           if [ -f pm.ts ]; then
