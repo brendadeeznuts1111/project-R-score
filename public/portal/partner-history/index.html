@@ -771,13 +771,13 @@
           <div class="label" data-glossary-concept="ui.filter.sportsbook">Sportsbooks</div>
         </div>
         <div class="metric-card">
-          <div class="num" id="proof-ct">—</div>
+          <div class="num" id="coverage-ct">—</div>
           <div class="label">
             <a
               class="semantic-label"
               href="/portal/glossary/#glossary:ops.limits.data_coverage"
               data-glossary-concept="ops.limits.data_coverage"
-              >Proof coverage</a
+              >Data coverage</a
             >
           </div>
         </div>
@@ -1440,10 +1440,14 @@
           (opsData?.limitPatterns?.nodePatterns || []).map(pattern => [pattern.node_id, pattern])
         );
         if (changes.length === 0) {
+          filteredData = [];
           emptyState.style.display = 'block';
           document.getElementById('metric-row').style.display = 'none';
           filterStatus.textContent = 'No limit changes are present in the loaded history window.';
           freshnessEl.textContent = `${opsData?.source || 'snapshot'} · no changes`;
+          breakdownEl.innerHTML = '<p class="baseline-note">No account activity is present.</p>';
+          sportsbookBreakdownEl.innerHTML =
+            '<p class="baseline-note">No sportsbook activity is present.</p>';
           card.data = { ...opsData, limitChanges: [] };
           refreshBtn.disabled = false;
           refreshBtn.removeAttribute('aria-busy');
@@ -1496,9 +1500,7 @@
         const avgScore =
           scored.reduce((sum, change) => sum + change.multi_factor_score, 0) / (scored.length || 1);
         const books = new Set(filteredData.map(change => change.sportsbook)).size;
-        const proofCount = filteredData.filter(
-          change => change.context_proof?.valid === true && change.context_proof?.signed === true
-        ).length;
+        const coveragePct = Number(opsData?.limitPatterns?.audit?.coveragePct);
 
         document.getElementById('total-ct').textContent = total;
         document.getElementById('raises-ct').textContent = raises;
@@ -1508,8 +1510,8 @@
           ? (avgScore * 100).toFixed(0) + '%'
           : '—';
         document.getElementById('book-ct').textContent = books;
-        document.getElementById('proof-ct').textContent = total
-          ? `${Math.round((proofCount / total) * 100)}%`
+        document.getElementById('coverage-ct').textContent = Number.isFinite(coveragePct)
+          ? `${coveragePct.toFixed(1).replace(/\.0$/, '')}%`
           : '—';
 
         card.removeAttribute('partner');

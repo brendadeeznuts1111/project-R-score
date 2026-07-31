@@ -44,8 +44,13 @@ describe('partner-history portal', () => {
     expect(html).toContain('const rows = filteredData.map(change => [');
     expect(html).toContain('JSON.stringify(filteredData, null, 2)');
     expect(html).toContain('/portal/limits/#account:${encodeURIComponent(accountId)}');
-    expect(html).toContain('id="proof-ct"');
+    expect(html).toContain('id="coverage-ct"');
     expect(html).toContain('id="sportsbook-breakdown"');
+    expect(html).toContain('filteredData = [];');
+    expect(html).toContain('No account activity is present.');
+    expect(html).toContain('No sportsbook activity is present.');
+    expect(html).toContain('opsData?.limitPatterns?.audit?.coveragePct');
+    expect(html).not.toContain('const proofCount = filteredData.filter');
   });
 
   test('reusable limit card applies time windows and avoids invented predictions', async () => {

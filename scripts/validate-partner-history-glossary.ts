@@ -39,7 +39,7 @@ const visibleContract = [
   ['Direction', PARTNER_HISTORY_GLOSSARY.directionFilter],
   ['30 days', PARTNER_HISTORY_GLOSSARY.window30d],
   ['Visible changes', PARTNER_HISTORY_GLOSSARY.visibleChanges],
-  ['Proof coverage', PARTNER_HISTORY_GLOSSARY.proofCoverage],
+  ['Data coverage', PARTNER_HISTORY_GLOSSARY.dataCoverage],
   ['Recent changes', PARTNER_HISTORY_GLOSSARY.recentChanges],
   ['Per account', PARTNER_HISTORY_GLOSSARY.perAccount],
   ['Opening baseline', PARTNER_HISTORY_GLOSSARY.openingBaseline],

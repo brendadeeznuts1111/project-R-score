@@ -31,7 +31,7 @@ export const PARTNER_HISTORY_GLOSSARY = Object.freeze({
   netChange: 'ops.limits.limit_delta',
   avgInfluence: 'ops.limits.influence_score',
   sportsbooks: 'ui.filter.sportsbook',
-  proofCoverage: 'ops.limits.data_coverage',
+  dataCoverage: 'ops.limits.data_coverage',
   highWater: 'ops.limits.limit_delta',
   deltas: 'ops.limits.limit_delta',
   activeFilters: 'ui.action.filter',
