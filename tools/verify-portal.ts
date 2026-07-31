@@ -11,7 +11,7 @@
  * @see docs/portal-foundation.md
  */
 import { joinPath } from '../lib/path-bun.ts';
-import { resolveBunServeDefaultPort } from '../lib/http/bun-serve-shape.ts';
+import { resolveServePublicVerifyBase } from '../lib/http/serve-public-bind.ts';
 import { collectPortalStaticViolations, PORTAL_ROOT_REL } from '../lib/portal-static-checks.ts';
 import {
   PORTAL_MARKDOWN_SLUGS,
@@ -20,8 +20,7 @@ import {
 } from '../lib/http/portal-route-manifest.ts';
 
 const PORTAL_ROOT = joinPath(import.meta.dir, '../public/portal');
-const BASE =
-  Bun.env.PORTAL_VERIFY_BASE || `http://127.0.0.1:${resolveBunServeDefaultPort(Bun.env, Bun.argv)}`;
+const BASE = await resolveServePublicVerifyBase();
 
 const NAV_PATHS = [...PORTAL_NAV_PROBE_PATHS];
 
