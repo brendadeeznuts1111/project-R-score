@@ -1,4 +1,5 @@
 import {
+  ACCOUNT_DOSSIER_SURFACE_CONCEPTS,
   LIMIT_FIELD_CONCEPTS,
   LIMIT_SURFACE_CONCEPTS,
   PARTNER_HISTORY_SURFACE_CONCEPTS,
@@ -34,6 +35,17 @@ const PAGE_SECTIONS: Readonly<
   },
   [PARTNER_HISTORY_SURFACE_CONCEPTS.page]: {
     'opening-baseline': PARTNER_HISTORY_SURFACE_CONCEPTS.openingBaseline,
+  },
+  [ACCOUNT_DOSSIER_SURFACE_CONCEPTS.page]: {
+    // Keys match board `id="ad-section-…"` / hash `#section:key` (glossary UX).
+    identity: ACCOUNT_DOSSIER_SURFACE_CONCEPTS.identity,
+    tree: ACCOUNT_DOSSIER_SURFACE_CONCEPTS.tree,
+    location: ACCOUNT_DOSSIER_SURFACE_CONCEPTS.location,
+    traces: ACCOUNT_DOSSIER_SURFACE_CONCEPTS.traces,
+    policies: ACCOUNT_DOSSIER_SURFACE_CONCEPTS.policies,
+    telemetry: ACCOUNT_DOSSIER_SURFACE_CONCEPTS.telemetry,
+    changes: ACCOUNT_DOSSIER_SURFACE_CONCEPTS.changes,
+    outs: ACCOUNT_DOSSIER_SURFACE_CONCEPTS.outs,
   },
   [PARTNERS_SURFACE_CONCEPTS.page]: {
     telegram: PARTNERS_SURFACE_CONCEPTS.telegram,

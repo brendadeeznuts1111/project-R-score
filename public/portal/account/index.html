@@ -20,6 +20,7 @@
     <script type="module" src="/portal/data.js"></script>
     <script type="module" src="/portal/topbar.js"></script>
     <script type="module" src="/portal/components/limit-changes-card.js"></script>
+    <script type="module" src="/portal/components/glossary-ux.js"></script>
     <style>
       .ad-page {
         max-width: 1200px;
@@ -201,7 +202,7 @@
           <span class="logo-icon">■</span>
           <span class="brand-wordmark">FactoryWager</span>
           <span class="brand-badge">ops</span>
-          <span class="logo-page">Account</span>
+          <span class="logo-page">Account dossier</span>
         </h1>
         <nav class="topbar-nav" aria-label="Primary"></nav>
       </div>
@@ -236,17 +237,27 @@
 
       <form id="ad-picker" class="ad-picker" role="search" aria-label="Account dossier selector">
         <label data-glossary-concept="ops.limits.account">
-          <span>Account</span>
+          <a
+            class="semantic-label"
+            href="/portal/glossary/#glossary:ops.limits.account"
+            data-glossary-concept="ops.limits.account"
+            >Account</a
+          >
           <select id="ad-account-select" aria-label="Select partner-tree account">
             <option value="">Select account…</option>
           </select>
         </label>
-        <label>
+        <label data-glossary-concept="ops.limits.account">
           <span>Or paste id / CODE</span>
-          <input id="ad-account-input" type="text" placeholder="ASH-001 or limit-demo-atlantic" />
+          <input id="ad-account-input" type="text" placeholder="ASH-001 or #account:UUID" />
         </label>
         <label data-glossary-concept="section.recentLimitChanges">
-          <span>Window (h)</span>
+          <a
+            class="semantic-label"
+            href="/portal/glossary/#glossary:section.recentLimitChanges"
+            data-glossary-concept="section.recentLimitChanges"
+            >Window (h)</a
+          >
           <select id="ad-hours">
             <option value="24">24</option>
             <option value="48">48</option>
@@ -259,12 +270,21 @@
 
       <div id="ad-empty" class="ad-panel ad-empty" hidden>
         Pick an account to load its dossier. Deep-link with
-        <code>?account=CALL</code> or <code>?partner=CODE</code>.
+        <code>?account=</code>, <code>?partner=CODE</code>, or limits-aligned
+        <code>#account:{TreeNodeId}</code>. Sections:
+        <code>#section:identity</code> …
       </div>
 
       <div id="ad-body" hidden>
-        <div class="ad-panel">
-          <h2 data-glossary-concept="ops.limits.account">Identity</h2>
+        <div class="ad-panel" id="ad-section-identity">
+          <h2>
+            <a
+              class="semantic-label"
+              href="/portal/glossary/#glossary:ops.limits.account"
+              data-glossary-concept="ops.limits.account"
+              >Identity</a
+            >
+          </h2>
           <p>
             <strong id="ad-name">—</strong>
             <span class="ad-badge" id="ad-role">—</span>
@@ -277,38 +297,87 @@
 
         <div class="ad-metrics" id="ad-metrics"></div>
 
-        <div class="ad-panel">
-          <h2 data-glossary-concept="section.downlineContext">Connected tree</h2>
+        <div class="ad-panel" id="ad-section-tree">
+          <h2>
+            <a
+              class="semantic-label"
+              href="/portal/glossary/#glossary:section.downlineContext"
+              data-glossary-concept="section.downlineContext"
+              >Connected tree</a
+            >
+          </h2>
           <div id="ad-tree"></div>
         </div>
 
-        <div class="ad-panel">
-          <h2 data-glossary-concept="ops.limits.jurisdiction_policy">Location & license</h2>
+        <div class="ad-panel" id="ad-section-location">
+          <h2>
+            <a
+              class="semantic-label"
+              href="/portal/glossary/#glossary:ops.limits.jurisdiction_policy"
+              data-glossary-concept="ops.limits.jurisdiction_policy"
+              >Location & license</a
+            >
+          </h2>
           <div id="ad-location"></div>
         </div>
 
-        <div class="ad-panel">
-          <h2 data-glossary-concept="ops.limits.evidence_trace">Evidence traces</h2>
+        <div class="ad-panel" id="ad-section-traces">
+          <h2>
+            <a
+              class="semantic-label"
+              href="/portal/glossary/#glossary:ops.limits.evidence_trace"
+              data-glossary-concept="ops.limits.evidence_trace"
+              >Evidence traces</a
+            >
+          </h2>
           <div id="ad-traces"></div>
         </div>
 
-        <div class="ad-panel">
-          <h2 data-glossary-concept="ops.limits.jurisdiction_policy">Applicable policies</h2>
+        <div class="ad-panel" id="ad-section-policies">
+          <h2>
+            <a
+              class="semantic-label"
+              href="/portal/glossary/#glossary:ops.limits.policy_code"
+              data-glossary-concept="ops.limits.policy_code"
+              >Applicable policies</a
+            >
+          </h2>
           <div id="ad-policies"></div>
         </div>
 
-        <div class="ad-panel">
-          <h2 data-glossary-concept="ops.limits.pattern_surface">Limit telemetry</h2>
+        <div class="ad-panel" id="ad-section-telemetry">
+          <h2>
+            <a
+              class="semantic-label"
+              href="/portal/glossary/#glossary:ops.limits.pattern_surface"
+              data-glossary-concept="ops.limits.pattern_surface"
+              >Limit telemetry</a
+            >
+          </h2>
           <div id="ad-raises"></div>
         </div>
 
-        <div class="ad-panel">
-          <h2 data-glossary-concept="section.recentLimitChanges">Limit changes</h2>
+        <div class="ad-panel" id="ad-section-changes">
+          <h2>
+            <a
+              class="semantic-label"
+              href="/portal/glossary/#glossary:section.recentLimitChanges"
+              data-glossary-concept="section.recentLimitChanges"
+              >Limit changes</a
+            >
+          </h2>
           <limit-changes-card id="ad-limit-card" hours="168"></limit-changes-card>
         </div>
 
-        <div class="ad-panel">
-          <h2 data-glossary-concept="page.partners">Partner outs & books</h2>
+        <div class="ad-panel" id="ad-section-outs">
+          <h2>
+            <a
+              class="semantic-label"
+              href="/portal/glossary/#glossary:section.partnersOuts"
+              data-glossary-concept="section.partnersOuts"
+              >Partner outs & books</a
+            >
+          </h2>
           <div id="ad-outs"></div>
         </div>
       </div>
@@ -316,11 +385,19 @@
 
     <script type="module">
       import {
+        accountIdFromLocation,
         buildAccountDossier,
+        buildAccountDossierHref,
         collectAccountIds,
-        partnerCodeFromRef,
         resolveAccountId,
+        sectionFromLocation,
       } from './account-dossier.js';
+      import {
+        ACCOUNT_DOSSIER_GLOSSARY as G,
+        ACCOUNT_DOSSIER_SECTIONS,
+        accountDossierGlossaryHref,
+      } from './glossary-map.js';
+      import { bootGlossaryUx } from '../components/glossary-ux.js';
 
       const $ = id => document.getElementById(id);
       const esc = value =>
@@ -353,13 +430,14 @@
       }
 
       function syncUrl(accountId, hours) {
-        const url = new URL(window.location.href);
-        if (accountId) url.searchParams.set('account', accountId);
-        else url.searchParams.delete('account');
-        url.searchParams.delete('partner');
-        if (hours && String(hours) !== '168') url.searchParams.set('hours', String(hours));
-        else url.searchParams.delete('hours');
-        history.replaceState(null, '', url);
+        const next = buildAccountDossierHref({ accountId, hours });
+        history.replaceState(null, '', next);
+      }
+
+      function scrollSectionFromUrl() {
+        const section = sectionFromLocation(window.location.href);
+        if (!section || !ACCOUNT_DOSSIER_SECTIONS.includes(section)) return;
+        document.getElementById(`ad-section-${section}`)?.scrollIntoView({ block: 'start' });
       }
 
       function renderDossier(dossier) {
@@ -391,31 +469,42 @@
           .join(' · ');
 
         $('ad-links').innerHTML = [
-          `<a href="${esc(dossier.links.history)}" data-glossary-concept="page.partnerHistory">History filter</a>`,
-          `<a href="${esc(dossier.links.limits)}" data-glossary-concept="page.limitPatterns">Limits evidence</a>`,
-          `<a href="${esc(dossier.links.partners)}" data-glossary-concept="page.partners">Partner profile</a>`,
-          `<a href="${esc(dossier.links.betlogCsv)}" data-glossary-concept="ui.semantic.artifact">Betlog CSV</a>`,
-          `<a href="${esc(dossier.links.betlogJsonl)}" data-glossary-concept="ui.semantic.artifact">Betlog JSONL</a>`,
+          `<a href="${esc(dossier.links.history)}" data-glossary-concept="${G.history}">History filter</a>`,
+          `<a href="${esc(dossier.links.limits)}" data-glossary-concept="${G.limits}">Limits evidence</a>`,
+          `<a href="${esc(dossier.links.partners)}" data-glossary-concept="${G.partners}">Partner profile</a>`,
+          `<a href="${esc(dossier.links.betlogCsv)}" data-glossary-concept="${G.betlogCsv}">Betlog CSV</a>`,
+          `<a href="${esc(dossier.links.betlogJsonl)}" data-glossary-concept="${G.betlogJsonl}">Betlog JSONL</a>`,
         ].join('');
 
         const obs = dossier.observations || {};
         $('ad-metrics').innerHTML = [
-          ['Raises (window)', dossier.raiseCount, dossier.raiseCount > 0 ? 'info' : 'skip'],
-          ['Violations 30d', obs.violations30d ?? dossier.pattern?.violation_count_30d ?? '—', 'bad'],
-          ['Net Δ', dossier.pattern?.net_delta != null ? money(dossier.pattern.net_delta) : '—', 'info'],
+          ['Raises (window)', dossier.raiseCount, dossier.raiseCount > 0 ? 'info' : 'skip', G.changes],
+          [
+            'Violations 30d',
+            obs.violations30d ?? dossier.pattern?.violation_count_30d ?? '—',
+            'bad',
+            G.traces,
+          ],
+          [
+            'Net Δ',
+            dossier.pattern?.net_delta != null ? money(dossier.pattern.net_delta) : '—',
+            'info',
+            G.delta,
+          ],
           [
             'Avg influence',
             dossier.pattern?.avg_influence_score != null
               ? Number(dossier.pattern.avg_influence_score).toFixed(2)
               : '—',
             'info',
+            G.influence,
           ],
-          ['Dimensions', obs.dimensions ?? '—', 'skip'],
-          ['Lifecycle', dossier.lifecycleStatus || '—', toneFor(dossier.lifecycleStatus)],
+          ['Dimensions', obs.dimensions ?? '—', 'skip', G.telemetry],
+          ['Lifecycle', dossier.lifecycleStatus || '—', toneFor(dossier.lifecycleStatus), G.profile],
         ]
           .map(
-            ([k, v, tone]) =>
-              `<div class="ad-metric" data-tone="${tone}"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div></div>`
+            ([k, v, tone, concept]) =>
+              `<div class="ad-metric" data-tone="${tone}" data-glossary-concept="${concept}"><div class="k"><a class="semantic-label" href="${accountDossierGlossaryHref(concept)}" data-glossary-concept="${concept}">${esc(k)}</a></div><div class="v">${esc(v)}</div></div>`
           )
           .join('');
 
@@ -428,10 +517,21 @@
           </tr></thead><tbody>${dossier.connected
             .map(row => {
               const self = String(row.node_id) === dossier.accountId;
-              const href = `/portal/account/?account=${encodeURIComponent(row.node_id)}&hours=${dossier.lookbackHours}`;
+              const href = buildAccountDossierHref({
+                accountId: row.node_id,
+                hours: dossier.lookbackHours,
+              });
+              const roleConcept =
+                row.node_type === 'partner'
+                  ? G.partner
+                  : row.node_type === 'sub_agent'
+                    ? G.subAgent
+                    : row.node_type === 'agent'
+                      ? G.agent
+                      : G.roleType;
               return `<tr class="${self ? 'ad-tree-self' : ''}">
-                <td><a href="${href}">${esc(row.node_name || row.node_id)}</a><div class="ad-meta ad-id">${esc(row.node_id)}</div></td>
-                <td>${esc(row.node_type || '—')}</td>
+                <td><a href="${href}" data-glossary-concept="${G.accountFilter}">${esc(row.node_name || row.node_id)}</a><div class="ad-meta ad-id">${esc(row.node_id)}</div></td>
+                <td><a class="semantic-label" href="${accountDossierGlossaryHref(roleConcept)}" data-glossary-concept="${roleConcept}">${esc(row.node_type || '—')}</a></td>
                 <td>${esc(row.downline_depth ?? 0)}</td>
                 <td>${esc(row.state_code || '—')}</td>
                 <td>${esc(row.zip_code || '—')}</td>
@@ -551,6 +651,7 @@
       }
 
       async function boot() {
+        await bootGlossaryUx();
         const url = new URL(window.location.href);
         const hours = Number(url.searchParams.get('hours') || $('ad-hours').value || 168);
         $('ad-hours').value = String([24, 48, 168, 720].includes(hours) ? hours : 168);
@@ -565,11 +666,7 @@
         select.replaceChildren(new Option('Select account…', ''));
         for (const id of ids) select.append(new Option(id, id));
 
-        const seed =
-          url.searchParams.get('account') ||
-          url.searchParams.get('partner') ||
-          url.searchParams.get('node_id') ||
-          '';
+        const seed = accountIdFromLocation(window.location.href);
         const accountId = resolveAccountId(seed, ids);
         if (accountId) {
           select.value = ids.includes(accountId) ? accountId : '';
@@ -593,6 +690,8 @@
             hours: nextHours,
           });
           renderDossier(dossier);
+          scrollSectionFromUrl();
+          void bootGlossaryUx({ markSurface: false });
         };
 
         $('ad-picker').addEventListener('submit', event => {
@@ -604,10 +703,21 @@
           open();
         });
         $('ad-hours').addEventListener('change', open);
+        window.addEventListener('hashchange', () => {
+          const fromHash = accountIdFromLocation(window.location.href);
+          if (fromHash && fromHash !== ($('ad-account-input').value || select.value)) {
+            $('ad-account-input').value = fromHash;
+            if (ids.includes(fromHash)) select.value = fromHash;
+            open();
+            return;
+          }
+          scrollSectionFromUrl();
+        });
 
         if (accountId) open();
         else {
           renderDossier(null);
+          scrollSectionFromUrl();
           $('ad-freshness').textContent = limitRaises?.generatedAt
             ? `bake ${limitRaises.generatedAt}`
             : 'no limit-raises bake';

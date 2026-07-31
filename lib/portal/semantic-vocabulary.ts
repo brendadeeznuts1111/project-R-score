@@ -1068,6 +1068,22 @@ export const PARTNER_HISTORY_SURFACE_CONCEPTS = {
   openingBaseline: 'section.openingBaseline',
 } as const satisfies Record<string, PortalSemanticConceptKey>;
 
+/** Account dossier board — sections collapse onto existing ops.limits.* / partners surfaces. */
+export const ACCOUNT_DOSSIER_SURFACE_CONCEPTS = {
+  page: 'page.accountDossier',
+  identity: 'ops.limits.account',
+  tree: 'section.downlineContext',
+  location: 'ops.limits.jurisdiction_policy',
+  traces: 'ops.limits.evidence_trace',
+  policies: 'ops.limits.policy_code',
+  telemetry: 'ops.limits.pattern_surface',
+  changes: 'section.recentLimitChanges',
+  outs: 'section.partnersOuts',
+  monitoring: 'ops.limits.monitoring_status',
+  profile: 'ops.limits.profile',
+  window: 'section.recentLimitChanges',
+} as const satisfies Record<string, PortalSemanticConceptKey>;
+
 export const PARTNERS_SURFACE_CONCEPTS = {
   page: 'page.partners',
   telegram: 'section.partnersTelegram',

@@ -338,7 +338,11 @@ Glossary deep links:
 
 Account dossier (full single-account breakdown — tree, location, monitoring,
 telemetry, outs, betlog): `/portal/account/?account={TreeNodeId}` (optional
-`&hours=`). Account links on partner-history and the limit-changes card open
+`&hours=`) · limits-aligned hash `#account:{TreeNodeId}` · section scroll
+`#section:identity|tree|location|traces|policies|telemetry|changes|outs`.
+Glossary ownership: `page.accountDossier` +
+`public/portal/account/glossary-map.js` (collapses onto `ops.limits.*` /
+`section.*`). Account links on partner-history and the limit-changes card open
 this board.
 
 Sparse dossiers (empty tree / location / outs) usually mean the bake window was
