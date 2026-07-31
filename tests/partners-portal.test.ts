@@ -48,11 +48,16 @@ describe('partners portal board', () => {
     expect(html).toContain('id="tag-filter-bar"');
     expect(html).toContain('id="out-table"');
     expect(html).toContain('id="book-registry"');
+    expect(html).toContain('id="partners-glossary-crumbs"');
     expect(html).toContain('book-card-${');
     expect(html).toContain('renderBooks');
     expect(html).toContain('telegramDeepLink');
     expect(html).toContain('accounting-events-tbody');
     expect(html).toContain('partners:event');
+    expect(html).toContain('data-glossary-concept="section.partnersTags"');
+    expect(html).toContain('data-glossary-concept="section.partnersOuts"');
+    expect(html).toContain('data-glossary-concept="section.partnersBookDetail"');
+    expect(html).toContain('data-glossary-concept="ui.route.partnerHash"');
   });
 
   test('wires telegram glossary concepts and color kernel consumers', async () => {
@@ -109,7 +114,7 @@ describe('partners portal board', () => {
   });
 
   test('URLPattern routes keep partner, out, accounting, and Telegram anchors aligned', () => {
-    expect(parsePartnerHash('#partners')).toEqual({ type: 'list' });
+    expect(parsePartnerHash('#partners')).toEqual({ type: 'partners' });
     expect(parsePartnerHash('#partner/ash')).toEqual({ type: 'partner', code: 'ASH' });
     expect(parsePartnerHash('#partner/ASH/out/out-ASH-2')).toEqual({
       type: 'out',

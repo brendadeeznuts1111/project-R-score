@@ -1,10 +1,19 @@
+// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern
+/**
+ * Client-side partner hash router — mirrors lib/portal/partner-routes.ts.
+ * Fragment grammar WITHOUT leading "#".
+ *
+ * Contract: parsePartnerHash('#partners') returns type "partners" (same as TS).
+ * Board helpers partnerHash(code) / partnerOutHash stay arity-1 for HTML;
+ * the TS module uses partnerHash(route) for typed round-trips.
+ */
 const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
 const OUT_ID_RE = /^out-[A-Z0-9-]+$/;
 const BOOK_ID_RE = /^book-[a-z0-9-]+$/;
 const TELEGRAM_TOPICS = new Set(['general', 'ops', 'alerts', 'liquidity', 'accounting']);
 
 const PARTNER_PATTERNS = {
-  list: new URLPattern({ hash: 'partners' }),
+  partners: new URLPattern({ hash: 'partners' }),
   out: new URLPattern({ hash: 'partner/:code/out/:outId' }),
   accounting: new URLPattern({ hash: 'partner/:code/accounting' }),
   telegram: new URLPattern({ hash: 'partner/:code/telegram/:topic' }),
@@ -28,7 +37,9 @@ function partnerCode(value) {
 /** Parse the governed partners-board fragment grammar. */
 export function parsePartnerHash(hash) {
   const clean = String(hash || '').replace(/^#/, '');
-  if (PARTNER_PATTERNS.list.test({ hash: clean })) return { type: 'list' };
+  if (!clean) return null;
+
+  if (PARTNER_PATTERNS.partners.test({ hash: clean })) return { type: 'partners' };
 
   const out = PARTNER_PATTERNS.out.exec({ hash: clean });
   if (out) {
@@ -67,6 +78,7 @@ export function parsePartnerHash(hash) {
   return null;
 }
 
+/** Board helper: partner CODE → `#partner/CODE` (TS uses partnerHash(route)). */
 export function partnerHash(code) {
   const normalized = partnerCode(code);
   return normalized ? `#partner/${normalized}` : '#partners';
@@ -109,7 +121,7 @@ export function partnerDomId(code) {
 
 /**
  * t.me deep link with compact base64url start payload (`CODE:topic`).
- * Payload is a routing hint only — bot must still authorize the user.
+ * Soft-fails to '' for board safety (TS helper throws on invalid input).
  */
 export function telegramDeepLink(botUsername, code, topic) {
   const username = String(botUsername || '')
