@@ -147,15 +147,6 @@ async function main(): Promise<number> {
     note: flag('--note'),
   };
 
-  if (entry === null) {
-    console.error(
-      `Trigger "${trigger}" has no shipped event code — withdrawal/credit-repaid/fee events ` +
-        `need new event.* glossary concepts (🟠 deferred). Use the existing codes via ` +
-        `partners:ledger:append if applicable.`
-    );
-    return 2;
-  }
-
   const errs = validateTriggerFields(trigger, fields);
   if (errs.length > 0) {
     console.error(errs.map(e => `  ✗ ${e}`).join('\n'));

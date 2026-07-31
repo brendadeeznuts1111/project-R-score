@@ -25,7 +25,7 @@ describe('partner integration contracts', () => {
     expect(partnerHash({ type: 'partner', code: '../bad' })).toBe('#partners');
   });
 
-  test('Telegram links use bounded base64url hints and canonical in-app routes', () => {
+  test('Telegram links use bounded base64url hints and canonical in-app routes', async () => {
     expect(telegramDeepLink('@FactoryWagerBot', 'ash', 'accounting')).toBe(
       'https://t.me/FactoryWagerBot?start=QVNIOmFjY291bnRpbmc'
     );
@@ -41,6 +41,11 @@ describe('partner integration contracts', () => {
       'liquidity',
       'accounting',
     ]);
+    // Board JS mirror stays byte-compatible with the TypeScript helper.
+    const board = await import('../public/portal/partners/partner-routes.js');
+    expect(board.telegramDeepLink('FactoryWagerBot', 'ASH', 'ops')).toBe(
+      telegramDeepLink('FactoryWagerBot', 'ASH', 'ops')
+    );
   });
 
   test('tables and tags expose the reviewed integration taxonomy', () => {

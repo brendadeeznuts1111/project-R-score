@@ -111,4 +111,4 @@ jobs:
       # Partner-ops governance: registry bake + portal integration (routes → anchors →
       # tables → tags → telegram). Kalshi-bot glossary cores gated on the submodule side.
       - name: Partner-ops governance
-        run: bun run partners:validate && bun run partners:integration:validate
+        run: bun run partners:governance

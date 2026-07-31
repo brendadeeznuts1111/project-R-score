@@ -145,7 +145,10 @@
         "accounting": "section.partnersAccounting",
         "accounts-limits": "section.partnersAccountsLimits",
         "deposits": "section.partnersDeposits",
-        "partner-message": "section.partnersPartnerMessage"
+        "partner-message": "section.partnersPartnerMessage",
+        "outs": "section.partnersOuts",
+        "book-detail": "section.partnersBookDetail",
+        "tags": "section.partnersTags"
       }
     },
     {
@@ -192,20 +195,20 @@
     }
   ],
   "summary": {
-    "concepts": 373,
-    "active": 372,
+    "concepts": 377,
+    "active": 376,
     "deprecated": 1,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 236,
+    "portalSemantics": 240,
     "categories": {
       "market": 33,
       "model": 18,
       "pipeline": 41,
       "tournament": 86,
       "trading": 56,
-      "ui": 112,
+      "ui": 116,
       "warehouse": 27
     },
     "kinds": {
@@ -226,13 +229,13 @@
       "region": 7,
       "registry": 39,
       "sport": 10,
-      "ui": 185
+      "ui": 189
     },
     "semanticTypes": {
       "classification": 136,
       "location": 4,
       "presentation": 4,
-      "resource": 70,
+      "resource": 74,
       "state": 21,
       "version": 1
     },
@@ -240,8 +243,8 @@
       "badge": 51,
       "chip": 92,
       "code": 22,
-      "heading": 55,
-      "link": 12,
+      "heading": 58,
+      "link": 13,
       "token": 4
     }
   },
@@ -6596,6 +6599,124 @@
       "source": "lib/portal/semantic-vocabulary.ts",
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "presentation",
+      "uiRole": "link",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "section.partnersOuts",
+      "label": "Partner outs",
+      "description": "Partners board section for per-out book, funding, status, balance, and limits.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "out table",
+        "outs board",
+        "seat outs"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.partners",
+        "section.partnersDeposits",
+        "section.partnersBookDetail"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "section.partnersBookDetail",
+      "label": "Book detail",
+      "description": "Partners board section for a single book: type, location, max bet, free-roll percent.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "book card",
+        "book profile"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.partners",
+        "section.partnersOuts"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "section.partnersTags",
+      "label": "Partner tag filter bar",
+      "description": "Partners board section for phase, book-type, status, funding, and location filter tags.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "tag bar",
+        "filter taxonomy",
+        "tag-filter-bar"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.partners",
+        "ui.filter.partnerId"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ui.route.partnerHash",
+      "label": "Partner hash route",
+      "description": "URLPattern hash route for partner deep links: #partners, #partner/:code, #partner/:code/out/:outId, #partner/:code/accounting, #partner/:code/telegram/:topic, #book/:bookId.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "hash router",
+        "partner deep link",
+        "URLPattern route"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.partners",
+        "section.partnersOuts",
+        "section.partnersAccounting",
+        "section.partnersTelegram"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
       "uiRole": "link",
       "color": "#58a6ff"
     },

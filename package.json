@@ -1805,6 +1805,7 @@
     "partners:build": "bun tools/partners-ops.ts build",
     "partners:integration:validate": "bun scripts/validate-partner-integration.ts",
     "partners:event": "bun scripts/partners-event.ts",
+    "partners:governance": "bun run partners:validate && bun run partners:integration:validate && bun run glossary:portal:check",
     "partners:ledger:append": "bun tools/partners-ops.ts ledger:append",
     "partners:refresh": "bun tools/partners-ops.ts build",
     "telegram:all-accounting": "bun tools/all-accounting-channel.ts",

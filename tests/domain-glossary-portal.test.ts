@@ -51,7 +51,7 @@ describe('domain glossary portal', () => {
         partnerOpsAuthority: 'lib/telegram/partner-ops-glossary.ts',
         partnerOpsColorKernel: 'lib/telegram/partner-ops-color-kernel.ts',
         canonicalDump: 'Kalshi-bot/research/registry/glossary-dump.json',
-        colorKernel: 'lib/theme/colors.ts',
+        colorKernel: 'public/portal/theme.jsonc',
       },
     });
     expect(payload.summary.concepts).toBe(payload.concepts.length);
@@ -224,6 +224,9 @@ describe('domain glossary portal', () => {
       'accounts-limits': 'section.partnersAccountsLimits',
       deposits: 'section.partnersDeposits',
       'partner-message': 'section.partnersPartnerMessage',
+      outs: 'section.partnersOuts',
+      'book-detail': 'section.partnersBookDetail',
+      tags: 'section.partnersTags',
     });
     expect(PORTAL_GLOSSARY_SURFACES).toHaveLength(PORTAL_PAGE_CONCEPT_DEFINITIONS.length);
     expect(new Set(PORTAL_GLOSSARY_SURFACES.map(surface => surface.path))).toEqual(

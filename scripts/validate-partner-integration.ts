@@ -66,12 +66,19 @@ for (const route of ROUTE_SAMPLES) {
 }
 
 const portalHtml = await Bun.file('public/portal/partners/index.html').text();
-for (const anchor of ['partner-panel', 'accounting-ledger', 'telegram-thread']) {
+for (const anchor of [
+  'partner-panel',
+  'accounting-ledger',
+  'telegram-thread',
+  'tag-filter-bar',
+  'out-table',
+  'book-registry',
+]) {
   if (!portalHtml.includes(`id="${anchor}"`)) {
     errs.push(`portal anchor ${anchor}: missing from public/portal/partners/index.html`);
   }
 }
-for (const marker of ['partner-detail-${', 'out-card-${']) {
+for (const marker of ['partner-detail-${', 'out-card-${', 'book-card-${']) {
   if (!portalHtml.includes(marker)) errs.push(`portal dynamic anchor marker ${marker}: missing`);
 }
 

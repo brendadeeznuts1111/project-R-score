@@ -278,8 +278,17 @@ export const KALSHI_PARTNER_OPS_CORE_CONCEPT_IDS = [
 
 export const PARTNER_OPS_OVERLAY_CONCEPT_IDS = partnerOpsGlossaryConcepts().map(c => c.id);
 
-/** Overlay + Kalshi cores (for registry bake conceptIds). */
+/** Existing limit glossary leaves consumed by the partners account-control view. */
+export const PARTNER_LIMIT_CONCEPT_IDS = [
+  'ops.limits.account',
+  'ops.limits.effective_limit',
+  'ops.limits.monitoring_status',
+  'ops.limits.evidence_trace',
+] as const;
+
+/** Factory overlay + shared cores consumed by the partner registry and board. */
 export const PARTNER_OPS_GLOSSARY_CONCEPT_IDS = [
   ...KALSHI_PARTNER_OPS_CORE_CONCEPT_IDS,
   ...PARTNER_OPS_OVERLAY_CONCEPT_IDS,
+  ...PARTNER_LIMIT_CONCEPT_IDS,
 ];

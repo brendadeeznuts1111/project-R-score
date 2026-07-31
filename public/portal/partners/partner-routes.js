@@ -1,5 +1,6 @@
 const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
 const OUT_ID_RE = /^out-[A-Z0-9-]+$/;
+const BOOK_ID_RE = /^book-[a-z0-9-]+$/;
 const TELEGRAM_TOPICS = new Set(['general', 'ops', 'alerts', 'liquidity', 'accounting']);
 
 const PARTNER_PATTERNS = {
@@ -8,6 +9,7 @@ const PARTNER_PATTERNS = {
   accounting: new URLPattern({ hash: 'partner/:code/accounting' }),
   telegram: new URLPattern({ hash: 'partner/:code/telegram/:topic' }),
   partner: new URLPattern({ hash: 'partner/:code' }),
+  book: new URLPattern({ hash: 'book/:bookId' }),
 };
 
 function decode(value) {
@@ -56,6 +58,12 @@ export function parsePartnerHash(hash) {
     if (code) return { type: 'partner', code };
   }
 
+  const book = PARTNER_PATTERNS.book.exec({ hash: clean });
+  if (book) {
+    const bookId = decode(book.hash.groups.bookId).toLowerCase();
+    if (BOOK_ID_RE.test(bookId)) return { type: 'book', bookId };
+  }
+
   return null;
 }
 
@@ -89,7 +97,31 @@ export function partnerTelegramHash(code, topic) {
   return `#partner/${normalized}/telegram/${normalizedTopic}`;
 }
 
+export function partnerBookHash(bookId) {
+  const id = decode(bookId).toLowerCase();
+  return BOOK_ID_RE.test(id) ? `#book/${id}` : '#partners';
+}
+
 export function partnerDomId(code) {
   const normalized = partnerCode(code);
   return normalized ? `partner-detail-${normalized}` : 'partner-panel';
+}
+
+/**
+ * t.me deep link with compact base64url start payload (`CODE:topic`).
+ * Payload is a routing hint only — bot must still authorize the user.
+ */
+export function telegramDeepLink(botUsername, code, topic) {
+  const username = String(botUsername || '')
+    .replace(/^@/, '')
+    .trim();
+  const normalized = partnerCode(code);
+  const normalizedTopic = decode(topic).toLowerCase();
+  if (!/^[A-Za-z][A-Za-z0-9_]{4,31}$/.test(username)) return '';
+  if (!normalized || !TELEGRAM_TOPICS.has(normalizedTopic)) return '';
+  const payload = btoa(`${normalized}:${normalizedTopic}`)
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/g, '');
+  return `https://t.me/${username}?start=${payload}`;
 }
