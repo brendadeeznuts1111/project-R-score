@@ -2,7 +2,7 @@
 
 **Surface:** `/portal/limits-lab/`
 **Artifact:** `/registry/limit-forecast-lab.json`
-**Source:** read-only `data/operations.db → partner_account_limits`
+**Source:** read-only `data/operations.db → partner_account_limits` **plus** Tier 4 JSONL (`artifacts/raw-limits/{book}.jsonl`, synthetic nodes `scrape-{bookId}`)
 
 The lab isolates forecasting experiments from the production limit-prediction
 cycle. It can compare global and sportsbook-pooled candidates, inspect support,
@@ -16,10 +16,16 @@ and exposes pending, observation-blocked, raise, and no-raise counts.
 ## Commands
 
 ```bash
-bun run ops:limits:lab
+bun run ops:limits:lab              # partner DB + scrape JSONL
 bun run ops:limits:lab:json
+bun run ops:limits:lab -- --no-scrape   # partner DB only
 bun run ops:limits:lab:profile
+bun run baseline:sync-scraped       # refresh JSONL + /registry/scraped-limits-observed.json
 ```
+
+Scrape series use synthetic `TreeNodeId` values (`scrape-draftkings`, …) so they
+never mutate `partner_account_limits`. Companion Tier 4 merge:
+`/registry/scraped-limits-observed.json` (fixture ⊕ latest JSONL per cell).
 
 The profiler writes `.cpuprofile` plus Markdown analysis under
 `reports/limit-forecast-lab/profiles/`. Bun documents these formats at

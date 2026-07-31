@@ -64,11 +64,18 @@ export {
   buildLimitTransitions,
   estimatePooledBookRates,
   scoreWalkForward,
+  type LimitForecastLabSourceMeta,
   type LimitSnapshotSample,
   type LimitTransition,
   type RaiseRateEstimate,
   type WalkForwardScore,
 } from './limit-forecast-lab.ts';
+export {
+  loadScrapeLabSnapshots,
+  mergeLabSnapshots,
+  observationToLabSnapshot,
+  scrapeLabNodeId,
+} from './limit-forecast-scrape-ingest.ts';
 export {
   LIMIT_FORECAST_FEATURE_VERSION,
   LIMIT_FORECAST_HORIZON_SECONDS,

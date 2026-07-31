@@ -38,6 +38,57 @@
     .tab.active { border-bottom-color: var(--accent); font-weight: 600; }
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
+    .baseline-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 0 0 12px;
+      align-items: end;
+    }
+    .baseline-toolbar label {
+      display: grid;
+      gap: 4px;
+      font-size: 0.8em;
+      color: var(--text-dim);
+    }
+    .baseline-toolbar select {
+      min-width: 140px;
+      padding: 6px 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text);
+    }
+    .baseline-table-wrap { overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
+    .baseline-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+    .baseline-table th, .baseline-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+    .baseline-table th { position: sticky; top: 0; background: var(--surface); font-family: var(--font-mono); font-size: 0.75em; }
+    .baseline-table td.num { font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
+    .baseline-note { color: var(--text-dim); font-size: 0.85em; margin: 0 0 12px; max-width: 72ch; }
+    .role-chip { font-family: var(--font-mono); font-size: 0.75em; }
+    .source-chip {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.7em;
+      padding: 1px 6px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+    .source-chip.t1 { border-color: var(--green, #3fb950); color: var(--green, #3fb950); }
+    .source-chip.t2 { border-color: #58a6ff; color: #58a6ff; }
+    .source-chip.t4 { border-color: #d29922; color: #d29922; }
+    .source-chip.t5 { border-color: var(--accent); color: var(--accent); }
+    .est-warn { color: #d29922; font-size: 0.75em; margin-left: 4px; }
+    .baseline-sources {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 12px;
+      font-size: 0.8em;
+      color: var(--text-dim);
+    }
   </style>
 </head>
 <body>
@@ -93,17 +144,24 @@
   </header>
 
 <div class="partner-page portal-page">
+  <nav id="partner-history-crumbs" class="glossary-crumbs" aria-label="Breadcrumb"></nav>
   <div class="portal-actions">
     <a href="/portal/limits/">Limit overview</a>
+    <a href="/portal/glossary/#glossary:page.partnerHistory">Glossary</a>
+    <a href="/registry/sportsbook-opening-baseline.json" target="_blank" rel="noopener">opening baseline JSON</a>
     <a href="/registry/ops-summary.json" target="_blank" rel="noopener">ops-summary.json</a>
   </div>
 
   <div class="page-header portal-hero">
-    <h2 class="portal-hero__title">Partner limit history</h2>
+    <h2 class="portal-hero__title">
+      <a class="semantic-label" href="/portal/glossary/#glossary:page.partnerHistory" data-glossary-concept="page.partnerHistory">Partner limit history</a>
+    </h2>
     <div>
-      <label for="partner-select" style="font-size:0.85em;color:var(--text-dim);margin-right:8px">Partner:</label>
-      <select id="partner-select" class="partner-select">
-        <option value="">All partners</option>
+      <label for="partner-select" style="font-size:0.85em;color:var(--text-dim);margin-right:8px">
+        <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.account">Account</a>:
+      </label>
+      <select id="partner-select" class="partner-select" aria-label="Filter by partner-tree account">
+        <option value="">All accounts</option>
       </select>
       <button id="refresh-btn" class="btn btn-primary" style="margin-left:8px">Refresh</button>
     </div>
@@ -122,7 +180,8 @@
   <!-- Tabs -->
   <div class="tabs">
     <div class="tab active" data-tab="recent">Recent changes</div>
-    <div class="tab" data-tab="partner">Per partner</div>
+    <div class="tab" data-tab="partner">Per account</div>
+    <div class="tab" data-tab="baseline">Opening baseline</div>
     <div class="tab" data-tab="export">Export</div>
   </div>
 
@@ -131,9 +190,93 @@
     <limit-changes-card id="recent-card" limit="25" show-all></limit-changes-card>
   </div>
 
-  <!-- Tab: Per partner -->
+  <!-- Tab: Per account -->
   <div class="tab-panel" id="panel-partner">
+    <p class="baseline-note">
+      Each row is a partner-tree <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.node">account/node</a>
+      (<a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.partner">partner</a> /
+      <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.agent">agent</a> /
+      <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.sub_agent">sub-agent</a>),
+      not an <a class="semantic-label" href="/portal/glossary/#glossary:api.agent">Agent API</a> client.
+    </p>
     <div id="partner-breakdown"></div>
+  </div>
+
+  <!-- Tab: Opening baseline -->
+  <div class="tab-panel" id="panel-baseline">
+    <section id="opening-baseline" aria-labelledby="opening-baseline-title">
+      <h2 id="opening-baseline-title" class="section-title">
+        <a href="#section:opening-baseline" data-glossary-concept="section.openingBaseline">Sportsbook opening baseline</a>
+        <a href="/portal/glossary/#glossary:ops.limits.opening_baseline" style="font-size:0.75em;margin-left:8px">Definition</a>
+      </h2>
+      <p class="baseline-note">
+        Multi-tier baseline: <strong>Tier 5</strong> ops matrix for what a <strong>new account</strong> typically gets as max wager
+        per sport, market, <a class="semantic-label" href="/portal/glossary/#glossary:multi.parlay">parlay</a>/<a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.multi_structure">straight</a>,
+        and <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.market_phase">live/pregame</a>,
+        plus <strong>Tier 2</strong> published-policy seeds, <strong>Tier 4</strong> estimated scrape fixtures,
+        and <strong>Tier 1</strong> NJ/MA <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.baseline_tier">compliance ceilings</a>.
+        Tier 4 is estimated and may be stale. Not live book quotes.
+      </p>
+      <div id="baseline-sources" class="baseline-sources" aria-label="Baseline source tiers">
+        Loading sources…
+      </div>
+      <div class="baseline-toolbar">
+        <label>Sportsbook
+          <select id="baseline-book" aria-label="Filter baseline by sportsbook"></select>
+        </label>
+        <label>Sport
+          <select id="baseline-sport" aria-label="Filter baseline by sport"></select>
+        </label>
+        <label>Market
+          <select id="baseline-market" aria-label="Filter baseline by market"></select>
+        </label>
+        <label>Structure
+          <select id="baseline-structure" aria-label="Filter baseline by bet structure">
+            <option value="">All</option>
+            <option value="straight">straight</option>
+            <option value="parlay">parlay</option>
+          </select>
+        </label>
+        <label>Phase
+          <select id="baseline-phase" aria-label="Filter baseline by market phase">
+            <option value="">All</option>
+            <option value="pregame">pregame</option>
+            <option value="live">live</option>
+          </select>
+        </label>
+        <label>Source tier
+          <select id="baseline-tier" aria-label="Filter baseline by source tier">
+            <option value="">All</option>
+            <option value="1">T1 regulatory</option>
+            <option value="2">T2 policy</option>
+            <option value="4">T4 scraped (estimated)</option>
+            <option value="5">T5 ops</option>
+          </select>
+        </label>
+      </div>
+      <div class="baseline-table-wrap">
+        <table class="baseline-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Sportsbook</th>
+              <th>Sport</th>
+              <th>Market</th>
+              <th>Structure</th>
+              <th>Phase</th>
+              <th>Source</th>
+              <th>Opening max</th>
+              <th>Published policy</th>
+              <th>Est. scrape</th>
+              <th>Compliance ceiling</th>
+            </tr>
+          </thead>
+          <tbody id="baseline-body">
+            <tr><td colspan="11">Loading baseline…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </div>
 
   <!-- Tab: Export -->
@@ -156,7 +299,11 @@
 
 <notification-center></notification-center>
 <script type="module">
-import { startDataService, getOpsData } from '/portal/data.js';
+import { startDataService } from '/portal/data.js';
+import { bootGlossaryUx } from '/portal/components/glossary-ux.js';
+
+const BASELINE_URL = '/registry/sportsbook-opening-baseline.json';
+const sectionPattern = new URLPattern({ hash: 'section\\::section' });
 
 const partnerSelect = document.getElementById('partner-select');
 const refreshBtn = document.getElementById('refresh-btn');
@@ -164,22 +311,205 @@ const tabs = document.querySelectorAll('.tab');
 const card = document.getElementById('recent-card');
 const breakdownEl = document.getElementById('partner-breakdown');
 const emptyState = document.getElementById('empty-state');
+const baselineBody = document.getElementById('baseline-body');
 
 let data = null;
 let opsData = null;
+let baseline = null;
 
-// Start data service for health dots
 startDataService();
+bootGlossaryUx({
+  breadcrumbsMount: document.getElementById('partner-history-crumbs'),
+  tooltipRoot: document.querySelector('.partner-page') ?? document.body,
+  trackPage: false,
+}).catch(() => {});
 
-// Tab switching
-tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    tabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+function glossaryHref(concept) {
+  return '/portal/glossary/#glossary:' + concept;
+}
+
+function roleGlossaryConcept(nodeType) {
+  if (nodeType === 'partner') return 'ops.limits.partner';
+  if (nodeType === 'agent') return 'ops.limits.agent';
+  if (nodeType === 'sub_agent') return 'ops.limits.sub_agent';
+  return 'ops.limits.roleType';
+}
+
+function activateTab(tabId, { syncHash = true } = {}) {
+  tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === tabId));
+  document.querySelectorAll('.tab-panel').forEach(p => {
+    p.classList.toggle('active', p.id === 'panel-' + tabId);
   });
+  if (syncHash && tabId === 'baseline') {
+    const url = new URL(window.location.href);
+    url.hash = 'section:opening-baseline';
+    history.replaceState(null, '', url);
+  } else if (syncHash && sectionPattern.exec(window.location.href)?.hash.groups.section === 'opening-baseline') {
+    const url = new URL(window.location.href);
+    url.hash = '';
+    history.replaceState(null, '', url);
+  }
+}
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => activateTab(tab.dataset.tab));
 });
+
+function fillSelect(select, values, allLabel) {
+  const current = select.value;
+  select.innerHTML =
+    `<option value="">${allLabel}</option>` +
+    values.map(value => `<option value="${value}">${value}</option>`).join('');
+  select.value = [...select.options].some(option => option.value === current) ? current : '';
+}
+
+function sourceChip(row) {
+  const chips = [];
+  const tier = row.source?.tier ?? 5;
+  const tierLabel =
+    tier === 5
+      ? 'T5 ops'
+      : tier === 4
+        ? 'T4 estimated'
+        : tier === 2
+          ? 'T2 policy'
+          : tier === 1
+            ? 'T1 regulatory'
+            : 'T' + tier;
+  chips.push(
+    `<a class="source-chip t${tier} semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}" data-glossary-concept="ops.limits.baseline_tier">${tierLabel}</a>`
+  );
+  if (row.publishedPolicyMaxUsd != null) {
+    chips.push(
+      `<a class="source-chip t2 semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}" title="Published policy research seed">T2</a>`
+    );
+  }
+  if (row.scrapedMaxUsd != null) {
+    chips.push(
+      `<a class="source-chip t4 semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}" title="Estimated scrape — may be stale">T4 Est.</a>`
+    );
+  }
+  if (row.complianceMaxUsd != null) {
+    chips.push(
+      `<a class="source-chip t1 semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}" title="Compliance ceiling">T1</a>`
+    );
+  }
+  return chips.join(' ');
+}
+
+function complianceCell(row) {
+  if (row.complianceMaxUsd == null) return '<span style="color:var(--text-dim)">—</span>';
+  const key = row.compliancePolicyKey;
+  const link = key
+    ? `<a class="semantic-label" href="${glossaryHref(key)}">$${Number(row.complianceMaxUsd).toLocaleString()}</a>`
+    : `$${Number(row.complianceMaxUsd).toLocaleString()}`;
+  return `<span class="num">${link}</span>`;
+}
+
+function publishedCell(row) {
+  if (row.publishedPolicyMaxUsd == null) return '<span style="color:var(--text-dim)">—</span>';
+  const title = row.publishedPolicyReferenceUrl
+    ? ` title="${String(row.publishedPolicyReferenceUrl).replace(/"/g, '&quot;')}"`
+    : '';
+  return `<span class="num"${title}>$${Number(row.publishedPolicyMaxUsd).toLocaleString()}</span>`;
+}
+
+function scrapedCell(row) {
+  if (row.scrapedMaxUsd == null) return '<span style="color:var(--text-dim)">—</span>';
+  const title = row.scrapedReferenceUrl
+    ? ` title="${String(row.scrapedReferenceUrl).replace(/"/g, '&quot;')}"`
+    : ' title="Estimated — may be stale"';
+  return `<span class="num"${title}>$${Number(row.scrapedMaxUsd).toLocaleString()}<span class="est-warn" aria-label="Estimated">≈</span></span>`;
+}
+
+function renderBaselineSources() {
+  const el = document.getElementById('baseline-sources');
+  if (!el) return;
+  const tiers = baseline?.sources?.tiers;
+  const regCount = baseline?.summary?.regulatoryRows ?? baseline?.regulatory?.length ?? 0;
+  const t2 = tiers?.['2']?.count ?? baseline?.summary?.policyRows ?? 0;
+  const t4 = tiers?.['4']?.count ?? baseline?.summary?.scrapedRows ?? 0;
+  const t5 = tiers?.['5']?.count ?? baseline?.summary?.rows ?? 0;
+  el.innerHTML = `
+    <span><a class="source-chip t1 semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}">T1 regulatory</a> ${regCount} NJ/MA policies</span>
+    <span><a class="source-chip t2 semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}">T2 policy</a> ${t2} published-policy seeds</span>
+    <span><a class="source-chip t4 semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}" title="Estimated — may be stale">T4 Est.</a> ${t4} scrape fixtures</span>
+    <span><a class="source-chip t5 semantic-label" href="${glossaryHref('ops.limits.baseline_tier')}">T5 ops</a> ${t5}-row opening matrix</span>
+    <span>Tier 3 stub · <code>bun run baseline:status</code></span>
+  `;
+}
+
+function renderBaseline() {
+  if (!baseline?.limits) {
+    baselineBody.innerHTML = '<tr><td colspan="11">Baseline unavailable. Run <code>bun run baseline:sync-scraped</code>.</td></tr>';
+    return;
+  }
+  renderBaselineSources();
+  const book = document.getElementById('baseline-book').value;
+  const sport = document.getElementById('baseline-sport').value;
+  const market = document.getElementById('baseline-market').value;
+  const structure = document.getElementById('baseline-structure').value;
+  const phase = document.getElementById('baseline-phase').value;
+  const tier = document.getElementById('baseline-tier')?.value;
+  const rows = baseline.limits.filter(row => {
+    if (book && row.sportsbook !== book) return false;
+    if (sport && row.sport !== sport) return false;
+    if (market && row.market !== market) return false;
+    if (structure && row.structure !== structure) return false;
+    if (phase && row.phase !== phase) return false;
+    if (tier === '1' && row.complianceMaxUsd == null) return false;
+    if (tier === '2' && row.publishedPolicyMaxUsd == null) return false;
+    if (tier === '4' && row.scrapedMaxUsd == null) return false;
+    if (tier === '5' && (row.source?.tier ?? 5) !== 5) return false;
+    return true;
+  });
+  baselineBody.innerHTML =
+    rows
+      .slice(0, 200)
+      .map(
+        row => `<tr>
+          <td class="num">${row.rank}</td>
+          <td><strong>${row.sportsbookLabel}</strong><br><small>${row.sportsbook}</small></td>
+          <td><a class="semantic-label" href="${glossaryHref('sport.' + row.sport)}">${row.sport}</a></td>
+          <td><a class="semantic-label" href="${glossaryHref(row.market === 'spread' ? 'market.point_spread' : row.market === 'over_under' ? 'market.total' : 'market.' + row.market)}">${row.market}</a></td>
+          <td><a class="semantic-label" href="${glossaryHref(row.structure === 'parlay' ? 'multi.parlay' : 'ops.limits.multi_structure')}">${row.structure}</a></td>
+          <td><a class="semantic-label" href="${glossaryHref(row.phase === 'live' ? 'market.in_play' : 'ops.limits.market_phase')}">${row.phase}</a></td>
+          <td>${sourceChip(row)}</td>
+          <td class="num">$${Number(row.openingMaxUsd).toLocaleString()}</td>
+          <td>${publishedCell(row)}</td>
+          <td>${scrapedCell(row)}</td>
+          <td>${complianceCell(row)}</td>
+        </tr>`
+      )
+      .join('') || '<tr><td colspan="11">No rows match these filters.</td></tr>';
+}
+
+async function loadBaseline() {
+  try {
+    const res = await fetch(BASELINE_URL, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    baseline = await res.json();
+    fillSelect(
+      document.getElementById('baseline-book'),
+      baseline.books.map(book => book.id),
+      'All sportsbooks'
+    );
+    fillSelect(
+      document.getElementById('baseline-sport'),
+      [...new Set(baseline.limits.map(row => row.sport))].sort(),
+      'All sports'
+    );
+    fillSelect(
+      document.getElementById('baseline-market'),
+      [...new Set(baseline.limits.map(row => row.market))].sort(),
+      'All markets'
+    );
+    renderBaseline();
+  } catch {
+    baselineBody.innerHTML =
+      '<tr><td colspan="11">Baseline unavailable. Run <code>bun run baseline:sync-scraped</code>.</td></tr>';
+  }
+}
 
 async function load() {
   try {
@@ -207,15 +537,14 @@ function render() {
 
   const selectedPartner = partnerSelect.value;
 
-  // Populate partner dropdown
   const partners = [...new Set(data.map(c => c.node_id).filter(Boolean))];
   const currentVal = partnerSelect.value;
-  partnerSelect.innerHTML = '<option value="">All partners</option>' + partners.map(p => `<option value="${p}"${p === currentVal ? ' selected' : ''}>${p}</option>`).join('');
+  partnerSelect.innerHTML =
+    '<option value="">All accounts</option>' +
+    partners.map(p => `<option value="${p}"${p === currentVal ? ' selected' : ''}>${p}</option>`).join('');
 
-  // Filter
   const filtered = selectedPartner ? data.filter(c => c.node_id === selectedPartner) : data;
 
-  // Metrics
   const total = filtered.length;
   const raises = filtered.filter(c => c.direction === 'up').length;
   const downs = filtered.filter(c => c.direction === 'down').length;
@@ -230,13 +559,12 @@ function render() {
   document.getElementById('avg-score').textContent = avgScore > 0 ? (avgScore * 100).toFixed(0) + '%' : '—';
   document.getElementById('book-ct').textContent = books;
 
-  // Recent card
   card.setAttribute('partner', selectedPartner || '');
   card.data = opsData;
 
-  // Partner breakdown
   if (selectedPartner) {
-    breakdownEl.innerHTML = '<p style="color:var(--text-dim)">Select "All partners" to see per-partner breakdown.</p>';
+    breakdownEl.innerHTML =
+      '<p style="color:var(--text-dim)">Select "All accounts" to see the per-account breakdown.</p>';
   } else {
     const byPartner = {};
     for (const c of filtered) {
@@ -244,14 +572,21 @@ function render() {
       if (!byPartner[key]) byPartner[key] = [];
       byPartner[key].push(c);
     }
-    breakdownEl.innerHTML = Object.entries(byPartner).slice(0, 20).map(([pid, changes]) => {
-      const pRaises = changes.filter(c => c.direction === 'up').length;
-      const pDowns = changes.filter(c => c.direction === 'down').length;
-      const pNet = changes.reduce((s, c) => s + ((c.new_limit ?? 0) - (c.previous_max ?? 0)), 0);
-      const pAvg = changes.reduce((s, c) => s + (c.multi_factor_score ?? 0), 0) / changes.length;
-      return `<div style="margin:8px 0;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+    breakdownEl.innerHTML = Object.entries(byPartner)
+      .slice(0, 20)
+      .map(([pid, changes]) => {
+        const pRaises = changes.filter(c => c.direction === 'up').length;
+        const pDowns = changes.filter(c => c.direction === 'down').length;
+        const pNet = changes.reduce((s, c) => s + ((c.new_limit ?? 0) - (c.previous_max ?? 0)), 0);
+        const pAvg = changes.reduce((s, c) => s + (c.multi_factor_score ?? 0), 0) / changes.length;
+        const role = changes[0]?.node_type ?? changes[0]?.role ?? null;
+        const roleConcept = roleGlossaryConcept(role);
+        return `<div style="margin:8px 0;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-weight:600;font-family:monospace">${pid}</span>
+          <span>
+            <strong style="font-family:monospace" data-glossary-concept="ops.limits.account">${pid}</strong>
+            ${role ? ` <a class="role-chip semantic-label" href="${glossaryHref(roleConcept)}">${role}</a>` : ''}
+          </span>
           <span style="font-size:0.85em;color:var(--text-dim)"><span style="color:var(--green)">↑${pRaises}</span> <span style="color:var(--red)">↓${pDowns}</span> · ${pNet >= 0 ? '+' : ''}$${Math.abs(pNet).toLocaleString()} net · avg ${(pAvg * 100).toFixed(0)}%</span>
         </div>
         <div style="font-size:0.8em;margin-top:4px;color:var(--text-dim)">
@@ -260,9 +595,9 @@ function render() {
         </div>
         <div style="margin-top:4px"><button class="partner-drill" data-partner="${pid}" style="font-size:0.75em;padding:2px 8px;border:1px solid var(--border);border-radius:4px;background:transparent;cursor:pointer;color:var(--accent)">View →</button></div>
       </div>`;
-    }).join('');
+      })
+      .join('');
 
-    // Wire drill-down buttons
     document.querySelectorAll('.partner-drill').forEach(btn => {
       btn.addEventListener('click', () => {
         partnerSelect.value = btn.dataset.partner;
@@ -298,8 +633,28 @@ document.getElementById('export-json-btn').addEventListener('click', async () =>
 
 partnerSelect.addEventListener('change', render);
 refreshBtn.addEventListener('click', load);
+for (const id of [
+  'baseline-book',
+  'baseline-sport',
+  'baseline-market',
+  'baseline-structure',
+  'baseline-phase',
+  'baseline-tier',
+]) {
+  document.getElementById(id)?.addEventListener('change', renderBaseline);
+}
+
+if (sectionPattern.exec(window.location.href)?.hash.groups.section === 'opening-baseline') {
+  activateTab('baseline', { syncHash: false });
+}
+window.addEventListener('hashchange', () => {
+  if (sectionPattern.exec(window.location.href)?.hash.groups.section === 'opening-baseline') {
+    activateTab('baseline', { syncHash: false });
+  }
+});
 
 load();
+loadBaseline();
 </script>
   <script type="module" src="/portal/components/sidebar.js"></script>
   <script type="module" src="/portal/components/footer.js"></script>

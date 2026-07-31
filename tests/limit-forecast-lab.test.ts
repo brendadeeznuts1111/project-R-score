@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/test/index#run-tests — bun:test
 // @see https://bun.com/docs/test — bun:test
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 import { describe, expect, test } from 'bun:test';
@@ -8,7 +9,8 @@ import {
   scoreWalkForward,
   type LimitSnapshotSample,
 } from '../lib/prediction/limit-forecast-lab.ts';
-import { asTreeNodeId } from '../lib/types/branded.ts';
+import { observationToLabSnapshot } from '../lib/prediction/limit-forecast-scrape-ingest.ts';
+import { asSportsbookId, asStateCode, asTreeNodeId } from '../lib/types/branded.ts';
 
 function sample(
   sportsbook: string,
@@ -18,12 +20,14 @@ function sample(
 ): LimitSnapshotSample {
   return {
     nodeId: asTreeNodeId('lab-partner'),
-    sportsbook,
+    sportsbook: asSportsbookId(sportsbook),
     sportKey: 'basketball',
     marketKey: 'point_spread',
     phase: 'pregame',
     maxWager,
     recordedAt,
+    inputClass: 'partner-observation',
+    decisionEligible: true,
     ...overrides,
   };
 }
@@ -67,6 +71,7 @@ describe('Limits Forecast Lab', () => {
     expect(fanduel?.pooledRate).toBeGreaterThan(0);
     expect(fanduel?.globalWeight).toBeGreaterThan(0.8);
     expect(fanduel?.support).toBe('insufficient');
+    expect(fanduel?.forecastEligible).toBe(false);
   });
 
   test('walk-forward scoring never trains on transitions at the same origin', () => {
@@ -89,8 +94,60 @@ describe('Limits Forecast Lab', () => {
     );
 
     expect(payload.dataset.forecastEligible).toBe(false);
+    expect(payload.dataset.decisionEligibleSnapshots).toBe(2);
+    expect(payload.dataset.decisionEligibleTransitions).toBe(1);
     expect(payload.dataset.support).toBe('insufficient');
     expect(payload.promotion.eligible).toBe(false);
     expect(payload.links.lab).toBe('/portal/limits-lab/');
+  });
+
+  test('keeps research and fixture evidence outside promotion eligibility', () => {
+    const payload = buildLimitForecastLab([
+      sample('draftkings', 10, 500, {
+        inputClass: 'tier-4-observation',
+        decisionEligible: false,
+      }),
+      sample('draftkings', 20, 1_000, {
+        inputClass: 'tier-4-observation',
+        decisionEligible: false,
+      }),
+    ]);
+
+    expect(payload.dataset.researchOnlySnapshots).toBe(2);
+    expect(payload.dataset.decisionEligibleTransitions).toBe(0);
+    expect(payload.model.candidates.every(candidate => !candidate.forecastEligible)).toBe(true);
+    expect(payload.promotion.blockers).toContain(
+      'Research, fixture, or unclassified snapshots are diagnostics-only'
+    );
+  });
+
+  test('brands scrape feeds and maps every Tier 4 mode to diagnostics-only input', () => {
+    const snapshot = observationToLabSnapshot({
+      sportsbook: 'draftkings',
+      sport: 'tennis',
+      market: 'moneyline',
+      jurisdiction: asStateCode('NJ'),
+      structure: 'straight',
+      phase: 'live',
+      openingMaxUsd: 750,
+      openingMinUsd: null,
+      dailyLimitUsd: null,
+      weeklyLimitUsd: null,
+      vipLimitUsd: null,
+      league: 'itf',
+      eventType: null,
+      referenceUrl: null,
+      sourceRef: 'test-observation',
+      observedAt: '2026-07-31T12:00:00.000Z',
+      agent: 'test-agent',
+      mode: 'live',
+    });
+
+    expect(snapshot).toMatchObject({
+      nodeId: asTreeNodeId('scrape-draftkings'),
+      sportsbook: asSportsbookId('draftkings'),
+      inputClass: 'tier-4-observation',
+      decisionEligible: false,
+    });
   });
 });

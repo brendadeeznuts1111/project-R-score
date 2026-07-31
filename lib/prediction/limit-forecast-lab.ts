@@ -4,7 +4,7 @@
  * This module intentionally evaluates transition-only evidence. It does not
  * write production forecasts or claim 48-hour calibration from change rows.
  */
-import type { TreeNodeId } from '../types/branded.ts';
+import type { SportsbookId, TreeNodeId } from '../types/branded.ts';
 import type { LimitForecastEvidenceSummary } from './limit-forecast-evidence.ts';
 
 export const LIMIT_FORECAST_LAB_SCHEMA = 1;
@@ -18,19 +18,29 @@ export const LIMIT_FORECAST_SUPPORT_GATES = {
   bookRaises: 10,
 } as const;
 
+export type LimitForecastInputClass =
+  | 'partner-observation'
+  | 'tier-4-observation'
+  | 'fixture-seed'
+  | 'unclassified';
+
 export type LimitSnapshotSample = {
   nodeId: TreeNodeId;
-  sportsbook: string;
+  sportsbook: SportsbookId;
   sportKey: string;
   marketKey: string;
   phase: string;
   maxWager: number;
   recordedAt: number;
+  /** Evidence provenance. Missing values are treated as unclassified and ineligible. */
+  inputClass?: LimitForecastInputClass;
+  /** Explicit opt-in. Research, fixture, and unclassified inputs must remain false/absent. */
+  decisionEligible?: boolean;
 };
 
 export type LimitTransition = {
   nodeId: TreeNodeId;
-  sportsbook: string;
+  sportsbook: SportsbookId;
   sportKey: string;
   marketKey: string;
   phase: string;
@@ -39,10 +49,12 @@ export type LimitTransition = {
   delta: number;
   raised: boolean;
   recordedAt: number;
+  inputClass: LimitForecastInputClass | 'mixed';
+  decisionEligible: boolean;
 };
 
 export type RaiseRateEstimate = {
-  sportsbook: string;
+  sportsbook: SportsbookId;
   transitions: number;
   raises: number;
   cutsOrFlat: number;
@@ -50,6 +62,8 @@ export type RaiseRateEstimate = {
   pooledRate: number;
   globalWeight: number;
   support: 'insufficient' | 'exploratory';
+  /** Transition estimates are laboratory diagnostics, never deployable forecasts. */
+  forecastEligible: false;
 };
 
 export type WalkForwardScore = {
@@ -60,7 +74,14 @@ export type WalkForwardScore = {
 };
 
 function dimensionKey(row: LimitSnapshotSample): string {
-  return [row.nodeId, row.sportsbook, row.sportKey, row.marketKey, row.phase].join('\u001f');
+  return [
+    row.nodeId,
+    row.sportsbook,
+    row.sportKey,
+    row.marketKey,
+    row.phase,
+    row.inputClass ?? 'unclassified',
+  ].join('\u001f');
 }
 
 function round(value: number, places = 6): number {
@@ -90,6 +111,8 @@ export function buildLimitTransitions(rows: readonly LimitSnapshotSample[]): Lim
       const previous = ordered[index - 1]!;
       const next = ordered[index]!;
       const delta = next.maxWager - previous.maxWager;
+      const previousClass = previous.inputClass ?? 'unclassified';
+      const nextClass = next.inputClass ?? 'unclassified';
       transitions.push({
         nodeId: next.nodeId,
         sportsbook: next.sportsbook,
@@ -101,6 +124,8 @@ export function buildLimitTransitions(rows: readonly LimitSnapshotSample[]): Lim
         delta,
         raised: delta > 0,
         recordedAt: next.recordedAt,
+        inputClass: previousClass === nextClass ? nextClass : 'mixed',
+        decisionEligible: previous.decisionEligible === true && next.decisionEligible === true,
       });
     }
   }
@@ -145,6 +170,7 @@ export function estimatePooledBookRates(
           bookRaises >= LIMIT_FORECAST_SUPPORT_GATES.bookRaises
             ? ('exploratory' as const)
             : ('insufficient' as const),
+        forecastEligible: false as const,
       };
     })
     .sort(
@@ -208,6 +234,16 @@ export function scoreWalkForward(
   };
 }
 
+export type LimitForecastLabSourceMeta = {
+  database: string;
+  table: string;
+  mode: 'read-only';
+  /** Optional Tier 4 JSONL ingest path. */
+  scrapeJsonl?: string | null;
+  partnerSnapshots?: number;
+  scrapeSnapshots?: number;
+};
+
 export function buildLimitForecastLab(
   rows: readonly LimitSnapshotSample[],
   generatedAt = new Date().toISOString(),
@@ -220,10 +256,18 @@ export function buildLimitForecastLab(
     negatives: 0,
     meanBrierScore: null,
     meanLogLoss: null,
+  },
+  sourceMeta: LimitForecastLabSourceMeta = {
+    database: 'data/operations.db',
+    table: 'partner_account_limits',
+    mode: 'read-only',
   }
 ) {
   const transitions = buildLimitTransitions(rows);
   const raised = transitions.filter(row => row.raised).length;
+  const decisionEligibleSnapshots = rows.filter(row => row.decisionEligible === true).length;
+  const researchOnlySnapshots = rows.length - decisionEligibleSnapshots;
+  const decisionEligibleTransitions = transitions.filter(row => row.decisionEligible).length;
   const pooled = estimatePooledBookRates(transitions);
   const globalSupport =
     transitions.length >= LIMIT_FORECAST_SUPPORT_GATES.globalCompleted &&
@@ -235,18 +279,17 @@ export function buildLimitForecastLab(
     schemaVersion: LIMIT_FORECAST_LAB_SCHEMA,
     kind: 'limit-forecast-lab',
     generatedAt,
-    source: {
-      database: 'data/operations.db',
-      table: 'partner_account_limits',
-      mode: 'read-only',
-    },
+    source: sourceMeta,
     dataset: {
       kind: 'transitions-only',
       forecastEligible: false,
       reason:
         'Change snapshots do not provide unbiased no-change 48-hour outcome windows; scores are diagnostics only.',
       snapshots: rows.length,
+      decisionEligibleSnapshots,
+      researchOnlySnapshots,
       transitions: transitions.length,
+      decisionEligibleTransitions,
       raises: raised,
       cutsOrFlat: transitions.length - raised,
       sportsbooks: new Set(transitions.map(row => row.sportsbook)).size,
@@ -264,12 +307,14 @@ export function buildLimitForecastLab(
           id: 'global-base-rate-v0',
           label: 'Global transition baseline',
           scope: 'global',
+          forecastEligible: false,
           score: scoreWalkForward(transitions, 'global'),
         },
         {
           id: 'pooled-book-beta-binomial-v0',
           label: 'Pooled sportsbook transition baseline',
           scope: 'sportsbook-partial-pooling',
+          forecastEligible: false,
           score: scoreWalkForward(transitions, 'pooled'),
         },
       ],
@@ -279,6 +324,9 @@ export function buildLimitForecastLab(
     promotion: {
       eligible: false,
       blockers: [
+        ...(researchOnlySnapshots > 0
+          ? ['Research, fixture, or unclassified snapshots are diagnostics-only']
+          : []),
         ...(evidence.issues === 0 ? ['No immutable issued-at forecast rows'] : []),
         ...(evidence.matured === 0 ? ['No matured 48-hour outcome windows'] : []),
         ...(evidence.negatives === 0 ? ['No matured no-raise outcomes'] : []),

@@ -696,6 +696,13 @@ const WATCH_PATHS = [
   'public/portal/ops/index.html',
   'public/portal/skills/index.html',
   'public/portal/dashboard/index.html',
+  'public/portal/limits/index.html',
+  'public/portal/limits/limit-profiles.js',
+  'public/portal/partner-history/index.html',
+  'public/portal/glossary/index.html',
+  'public/portal/glossary/glossary-board.js',
+  'public/portal/components/glossary-ux.js',
+  'public/registry/sportsbook-opening-baseline.json',
   'public/portal/operations-dashboard.js',
   'public/portal/dashboard.js',
   'public/portal/app.js',
@@ -793,9 +800,18 @@ async function staticFile(
     : path.startsWith('/registry/')
       ? 'public, max-age=60'
       : 'public, max-age=300';
-  // Skip memory cache for HTML when live-reload so disk is always fresh
+  // Skip memory cache for portal assets and mutable registry JSON when live-reload
+  // is active. Registry bakes occur without changing this server module, so an
+  // in-memory JSON response would otherwise remain pinned until process restart.
+  const skipMemoryCache =
+    LIVE_RELOAD &&
+    (path.endsWith('.html') ||
+      path.endsWith('.js') ||
+      path.endsWith('.css') ||
+      path.endsWith('.md') ||
+      (path.startsWith('/registry/') && path.endsWith('.json')));
   const res = await respondAuto(fsPath, request, {
-    cache: path.endsWith('.html') && LIVE_RELOAD ? undefined : fileRouteCache,
+    cache: skipMemoryCache ? undefined : fileRouteCache,
     cacheControl,
   });
   return withLiveReload(withMarkdownAlternate(res, path));
@@ -2429,6 +2445,18 @@ if (Bun.env.OPS_SNAPSHOT_CRON === '1') {
   registerOpsSnapshotCron();
   console.log(
     `Cron:          ops-snapshot @ ${OPS_SNAPSHOT_SCHEDULE} UTC (in-process Bun.cron, no-overlap)`
+  );
+}
+
+// Tier 4 scrape agents → artifacts/raw-limits/ (JSONL; no registry bake)
+// @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process
+if (Bun.env.BASELINE_SCRAPE_CRON === '1') {
+  const { registerBaselineScrapeCron, BASELINE_SCRAPE_CRON_SCHEDULE } = await import(
+    '../lib/operations/scrapers/scrape-cron.ts'
+  );
+  registerBaselineScrapeCron();
+  console.log(
+    `Cron:          baseline-scrape @ ${BASELINE_SCRAPE_CRON_SCHEDULE} UTC (in-process Bun.cron, no-overlap)`
   );
 }
 

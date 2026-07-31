@@ -5,23 +5,33 @@
 /**
  * Build the read-only Limits Forecast Lab artifact.
  *
+ * Ingests partner_account_limits + Tier 4 JSONL (artifacts/raw-limits/).
+ *
  *   bun run ops:limits:lab
  *   bun run ops:limits:lab:json
+ *   bun run ops:limits:lab -- --no-scrape
  */
 import { Database } from 'bun:sqlite';
 import { jsonOut, logTable } from '../lib/console-depth.ts';
+import { joinPath } from '../lib/path-bun.ts';
 import { DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
+import { RAW_LIMITS_DIR_REL } from '../lib/operations/scrapers/raw-limits-store.ts';
 import {
   buildLimitForecastLab,
   type LimitSnapshotSample,
 } from '../lib/prediction/limit-forecast-lab.ts';
 import {
+  loadScrapeLabSnapshots,
+  mergeLabSnapshots,
+} from '../lib/prediction/limit-forecast-scrape-ingest.ts';
+import {
   readLimitForecastEvidenceSummary,
   type LimitForecastEvidenceSummary,
 } from '../lib/prediction/limit-forecast-evidence.ts';
-import { asTreeNodeId } from '../lib/types/branded.ts';
+import { asTreeNodeId, parseSportsbookId } from '../lib/types/branded.ts';
 
 const DEFAULT_OUTPUT = 'public/registry/limit-forecast-lab.json';
+const root = joinPath(import.meta.dir, '..');
 
 type WireLimitSnapshot = {
   node_id: string; // brand-ok — parsed at the SQLite boundary
@@ -38,7 +48,7 @@ function optionValue(args: readonly string[], name: string): string | undefined 
   return args.find(argument => argument.startsWith(prefix))?.slice(prefix.length);
 }
 
-function loadInputs(path: string): {
+function loadPartnerSnapshots(path: string): {
   snapshots: LimitSnapshotSample[];
   evidence: LimitForecastEvidenceSummary;
 } {
@@ -54,12 +64,14 @@ function loadInputs(path: string): {
     return {
       snapshots: rows.map(row => ({
         nodeId: asTreeNodeId(row.node_id),
-        sportsbook: row.sportsbook,
+        sportsbook: parseSportsbookId(row.sportsbook),
         sportKey: row.sport_id,
         marketKey: row.market_id,
         phase: row.bet_type,
         maxWager: row.max_wager,
         recordedAt: row.recorded_at,
+        inputClass: 'partner-observation',
+        decisionEligible: true,
       })),
       evidence: readLimitForecastEvidenceSummary(db),
     };
@@ -75,12 +87,25 @@ async function main(): Promise<void> {
   const benchmarkIterations = Math.max(1, Number(optionValue(args, 'bench') ?? '1'));
   const write = !args.includes('--no-write');
   const json = args.includes('--json');
-  const inputs = loadInputs(databasePath);
+  const includeScrape = !args.includes('--no-scrape');
+
+  const partner = loadPartnerSnapshots(databasePath);
+  const scrapeSnapshots = includeScrape ? await loadScrapeLabSnapshots(root) : [];
+  const snapshots = mergeLabSnapshots(partner.snapshots, scrapeSnapshots);
+
+  const sourceMeta = {
+    database: 'data/operations.db',
+    table: 'partner_account_limits',
+    mode: 'read-only' as const,
+    scrapeJsonl: includeScrape ? RAW_LIMITS_DIR_REL : null,
+    partnerSnapshots: partner.snapshots.length,
+    scrapeSnapshots: scrapeSnapshots.length,
+  };
 
   const started = performance.now();
-  let payload = buildLimitForecastLab(inputs.snapshots, undefined, inputs.evidence);
+  let payload = buildLimitForecastLab(snapshots, undefined, partner.evidence, sourceMeta);
   for (let iteration = 1; iteration < benchmarkIterations; iteration++) {
-    payload = buildLimitForecastLab(inputs.snapshots, payload.generatedAt, inputs.evidence);
+    payload = buildLimitForecastLab(snapshots, payload.generatedAt, partner.evidence, sourceMeta);
   }
   const elapsedMs = performance.now() - started;
 
@@ -105,8 +130,19 @@ async function main(): Promise<void> {
 
   logTable(
     [
+      { metric: 'partner_snapshots', value: partner.snapshots.length },
+      { metric: 'scrape_snapshots', value: scrapeSnapshots.length },
       { metric: 'snapshots', value: payload.dataset.snapshots },
+      {
+        metric: 'decision_eligible_snapshots',
+        value: payload.dataset.decisionEligibleSnapshots,
+      },
+      { metric: 'research_only_snapshots', value: payload.dataset.researchOnlySnapshots },
       { metric: 'transitions', value: payload.dataset.transitions },
+      {
+        metric: 'decision_eligible_transitions',
+        value: payload.dataset.decisionEligibleTransitions,
+      },
       { metric: 'sportsbooks', value: payload.dataset.sportsbooks },
       { metric: 'global_rate', value: `${(payload.model.globalRate * 100).toFixed(1)}%` },
       { metric: 'support', value: payload.dataset.support },

@@ -250,6 +250,7 @@ config/*
 !config/surfaces.toml
 !config/images.toml
 !config/runtime-flags.json
+!config/scraper-targets.ts
 # Homebase harness SSOT (must clone into worktrees; not machine secrets)
 !config/bun-dx-catalog.ts
 !config/repo-root-policy.ts
@@ -439,3 +440,8 @@ tools/snapshot-types.ts
 /audit-report-map.dot
 /audit-report-intra-*.mmd
 /domain-matrix.json
+
+# Nested standalone repo (oddsblaze) — own git history, published separately
+/oddsblaze/
+# Tier 4 scrape observation warehouse (append-only)
+artifacts/raw-limits/*.jsonl

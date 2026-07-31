@@ -1,28 +1,31 @@
 {
   "schemaVersion": 1,
   "kind": "limit-forecast-lab",
-  "generatedAt": "2026-07-31T09:28:46.458Z",
+  "generatedAt": "2026-07-31T10:14:57.114Z",
   "source": {
     "database": "data/operations.db",
     "table": "partner_account_limits",
-    "mode": "read-only"
+    "mode": "read-only",
+    "scrapeJsonl": "artifacts/raw-limits",
+    "partnerSnapshots": 43,
+    "scrapeSnapshots": 432
   },
   "dataset": {
     "kind": "transitions-only",
     "forecastEligible": false,
     "reason": "Change snapshots do not provide unbiased no-change 48-hour outcome windows; scores are diagnostics only.",
-    "snapshots": 43,
-    "transitions": 22,
+    "snapshots": 475,
+    "transitions": 374,
     "raises": 19,
-    "cutsOrFlat": 3,
-    "sportsbooks": 5,
+    "cutsOrFlat": 355,
+    "sportsbooks": 6,
     "earliestAt": 1785209600,
-    "latestAt": 1785447465,
+    "latestAt": 1785492415,
     "support": "insufficient"
   },
   "model": {
     "id": "beta-binomial-transition-v0",
-    "globalRate": 0.847826,
+    "globalRate": 0.052,
     "poolingStrength": 8,
     "supportGates": {
       "globalCompleted": 100,
@@ -36,10 +39,10 @@
         "label": "Global transition baseline",
         "scope": "global",
         "score": {
-          "samples": 13,
+          "samples": 365,
           "positives": 10,
-          "brier": 0.203226,
-          "logLoss": 0.68223
+          "brier": 0.078054,
+          "logLoss": 0.283867
         }
       },
       {
@@ -47,42 +50,62 @@
         "label": "Pooled sportsbook transition baseline",
         "scope": "sportsbook-partial-pooling",
         "score": {
-          "samples": 13,
+          "samples": 365,
           "positives": 10,
-          "brier": 0.211642,
-          "logLoss": 0.721266
+          "brier": 0.090644,
+          "logLoss": 0.325738
         }
       }
     ],
     "books": [
       {
         "sportsbook": "draftkings",
-        "transitions": 9,
+        "transitions": 121,
         "raises": 9,
-        "cutsOrFlat": 0,
-        "observedRate": 1,
-        "pooledRate": 0.928389,
-        "globalWeight": 0.470588,
-        "support": "insufficient"
-      },
-      {
-        "sportsbook": "caesars",
-        "transitions": 4,
-        "raises": 3,
-        "cutsOrFlat": 1,
-        "observedRate": 0.75,
-        "pooledRate": 0.815217,
-        "globalWeight": 0.666667,
+        "cutsOrFlat": 112,
+        "observedRate": 0.07438,
+        "pooledRate": 0.072992,
+        "globalWeight": 0.062016,
         "support": "insufficient"
       },
       {
         "sportsbook": "fanduel",
-        "transitions": 4,
+        "transitions": 100,
         "raises": 4,
-        "cutsOrFlat": 0,
-        "observedRate": 1,
-        "pooledRate": 0.898551,
-        "globalWeight": 0.666667,
+        "cutsOrFlat": 96,
+        "observedRate": 0.04,
+        "pooledRate": 0.040889,
+        "globalWeight": 0.074074,
+        "support": "insufficient"
+      },
+      {
+        "sportsbook": "caesars",
+        "transitions": 68,
+        "raises": 3,
+        "cutsOrFlat": 65,
+        "observedRate": 0.044118,
+        "pooledRate": 0.044947,
+        "globalWeight": 0.105263,
+        "support": "insufficient"
+      },
+      {
+        "sportsbook": "betmgm",
+        "transitions": 66,
+        "raises": 1,
+        "cutsOrFlat": 65,
+        "observedRate": 0.015152,
+        "pooledRate": 0.019135,
+        "globalWeight": 0.108108,
+        "support": "insufficient"
+      },
+      {
+        "sportsbook": "espnbet",
+        "transitions": 16,
+        "raises": 0,
+        "cutsOrFlat": 16,
+        "observedRate": 0,
+        "pooledRate": 0.017333,
+        "globalWeight": 0.333333,
         "support": "insufficient"
       },
       {
@@ -91,18 +114,8 @@
         "raises": 2,
         "cutsOrFlat": 1,
         "observedRate": 0.666667,
-        "pooledRate": 0.798419,
+        "pooledRate": 0.219636,
         "globalWeight": 0.727273,
-        "support": "insufficient"
-      },
-      {
-        "sportsbook": "betmgm",
-        "transitions": 2,
-        "raises": 1,
-        "cutsOrFlat": 1,
-        "observedRate": 0.5,
-        "pooledRate": 0.778261,
-        "globalWeight": 0.8,
         "support": "insufficient"
       }
     ]
