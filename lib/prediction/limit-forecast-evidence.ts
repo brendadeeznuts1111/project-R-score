@@ -187,10 +187,14 @@ export function computeForecastEligibility(
   const blockers: string[] = [];
   const researchOnly = (opts?.researchOnlySnapshots ?? 0) > 0;
   const decisionTransitions = opts?.decisionEligibleTransitions ?? 0;
-  // Tier-4 / fixture rows may coexist with partner evidence; block only when the
-  // decision-eligible transition set is empty (research-only dataset).
-  if (researchOnly && decisionTransitions === 0) {
-    blockers.push('Research, fixture, or unclassified snapshots are diagnostics-only');
+  // Decision-eligible transition set must be non-empty — research-only / empty
+  // partner history cannot promote even when SQLite evidence counts look mature.
+  if (decisionTransitions === 0) {
+    blockers.push(
+      researchOnly
+        ? 'Research, fixture, or unclassified snapshots are diagnostics-only'
+        : 'No decision-eligible partner transitions'
+    );
   }
   if (evidence.issues === 0) blockers.push('No immutable issued-at forecast rows');
   if (evidence.matured === 0) blockers.push('No matured 48-hour outcome windows');

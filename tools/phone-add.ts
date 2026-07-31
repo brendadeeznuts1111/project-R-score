@@ -8,9 +8,8 @@
  *   bun run phone:add -- --model "Pixel 8" --carrier Verizon [--id phone_x] [--imei …]
  *   bun run phone:add -- --assign CALL-OR-NODE-ID   # issue after create
  */
-import { Database } from 'bun:sqlite';
 import { jsonOut } from '../lib/console-depth.ts';
-import { migrateSchema } from '../lib/operations/schema.ts';
+import { DEFAULT_OPS_DB_PATH, openOperationsDb } from '../lib/operations/db.ts';
 import { AccountService } from '../lib/operations/account-service.ts';
 import { addPhone } from '../lib/operations/phone-sportsbook-journal.ts';
 import { resolveOnboardTreeNodeId } from '../lib/operations/partner-onboard-package.ts';
@@ -21,10 +20,12 @@ function argValue(flag: string): string | undefined {
   return Bun.argv[i + 1];
 }
 
+function resolveDbPath(): string {
+  return Bun.env.OPS_DB_PATH?.trim() || Bun.env.OPERATIONS_DB?.trim() || DEFAULT_OPS_DB_PATH;
+}
+
 function main(): void {
-  const dbPath = Bun.env.OPERATIONS_DB ?? 'operations.db';
-  const db = new Database(dbPath);
-  migrateSchema(db);
+  const db = openOperationsDb({ path: resolveDbPath() });
 
   const result = addPhone(db, {
     id: argValue('--id'),

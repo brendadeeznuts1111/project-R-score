@@ -192,6 +192,13 @@ describe('Limits Forecast Lab', () => {
     );
     expect(empty.forecastEligible).toBe(false);
 
+    const noTransitions = computeForecastEligibility(maturedEvidence(), calibration, {
+      researchOnlySnapshots: 0,
+      decisionEligibleTransitions: 0,
+    });
+    expect(noTransitions.forecastEligible).toBe(false);
+    expect(noTransitions.blockers).toContain('No decision-eligible partner transitions');
+
     const ready = computeForecastEligibility(maturedEvidence(), calibration, {
       researchOnlySnapshots: 0,
       decisionEligibleTransitions: 5,
