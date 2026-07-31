@@ -32,7 +32,16 @@
     {
       "path": "/portal/account/",
       "concept": "page.accountDossier",
-      "sections": {}
+      "sections": {
+        "identity": "ops.limits.account",
+        "tree": "section.downlineContext",
+        "location": "ops.limits.jurisdiction_policy",
+        "traces": "ops.limits.evidence_trace",
+        "policies": "ops.limits.policy_code",
+        "telemetry": "ops.limits.pattern_surface",
+        "changes": "section.recentLimitChanges",
+        "outs": "section.partnersOuts"
+      }
     },
     {
       "path": "/portal/brands/",

@@ -1,11 +1,80 @@
 /**
  * Account dossier join helpers — scope one TreeNodeId + connected partner-tree nodes.
  * Pure functions over baked registries (limit-raises · partners-ops).
+ *
+ * Deep-link parity with limits board:
+ *   query ?account= (form SSOT) · hash #account:{TreeNodeId} (limits pattern)
  */
 
 const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
 /** Call-sign only — avoids treating slug ids like LIMIT-DEMO-ATLANTIC as CODE LIMIT. */
 const CALL_SIGN_RE = /^([A-Z]{3,6})-\d{3}(?:-SUB\d{2}){0,2}$/;
+
+const accountHashPattern = new URLPattern({ hash: 'account\\::account' });
+const sectionHashPattern = new URLPattern({ hash: 'section\\::section' });
+
+/**
+ * Resolve account seed from query (?account|partner|node_id) or hash (#account:).
+ * Query wins when present so the picker remains SSOT.
+ * @param {string} href
+ */
+export function accountIdFromLocation(href) {
+  const absolute = new URL(href, 'https://factory-wager.local').href;
+  const url = new URL(absolute);
+  const fromQuery =
+    url.searchParams.get('account') ||
+    url.searchParams.get('partner') ||
+    url.searchParams.get('node_id') ||
+    '';
+  if (fromQuery.trim()) return fromQuery.trim();
+  const captured = accountHashPattern.exec(absolute)?.hash?.groups?.account;
+  if (!captured) return '';
+  try {
+    return decodeURIComponent(captured);
+  } catch {
+    return String(captured);
+  }
+}
+
+/**
+ * @param {string} href
+ * @returns {string | null}
+ */
+export function sectionFromLocation(href) {
+  const absolute = new URL(href, 'https://factory-wager.local').href;
+  return sectionHashPattern.exec(absolute)?.hash?.groups?.section ?? null;
+}
+
+/**
+ * Build dossier URL with query SSOT + limits-aligned #account: hash.
+ * @param {{ accountId?: string; hours?: number; section?: string | null; base?: string }} opts
+ */
+export function buildAccountDossierHref({
+  accountId = '',
+  hours = 168,
+  section = null,
+  base = '/portal/account/',
+} = {}) {
+  const url = new URL(base, 'https://factory-wager.local');
+  if (accountId) url.searchParams.set('account', accountId);
+  else url.searchParams.delete('account');
+  url.searchParams.delete('partner');
+  url.searchParams.delete('node_id');
+  if (hours && Number(hours) !== 168) url.searchParams.set('hours', String(hours));
+  else url.searchParams.delete('hours');
+  if (accountId && section) {
+    url.hash = `account:${encodeURIComponent(accountId)}`;
+    // section hash cannot coexist with account hash in one fragment — keep account;
+    // section scroll is applied via sync after load when only #section: is used.
+  } else if (accountId) {
+    url.hash = `account:${encodeURIComponent(accountId)}`;
+  } else if (section) {
+    url.hash = `section:${encodeURIComponent(section)}`;
+  } else {
+    url.hash = '';
+  }
+  return `${url.pathname}${url.search}${url.hash}`;
+}
 
 /** @param {unknown} ref */
 export function partnerCodeFromRef(ref) {

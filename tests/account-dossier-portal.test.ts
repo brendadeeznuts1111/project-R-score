@@ -2,17 +2,54 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 import { describe, expect, test } from 'bun:test';
 import {
+  accountIdFromLocation,
   buildAccountDossier,
+  buildAccountDossierHref,
   collectAccountIds,
   partnerCodeFromRef,
   resolveAccountId,
+  sectionFromLocation,
 } from '../public/portal/account/account-dossier.js';
+import {
+  ACCOUNT_DOSSIER_GLOSSARY,
+  ACCOUNT_DOSSIER_SECTIONS,
+} from '../public/portal/account/glossary-map.js';
 
 const ACCOUNT_HTML = 'public/portal/account/index.html';
 const LIMIT_CARD = 'public/portal/components/limit-changes-card.js';
 const HISTORY_HTML = 'public/portal/partner-history/index.html';
 
 describe('account dossier helpers', () => {
+  test('aligns query + #account: hash deep-links with limits board pattern', () => {
+    expect(accountIdFromLocation('/portal/account/?account=ASH-001')).toBe('ASH-001');
+    expect(
+      accountIdFromLocation(
+        '/portal/account/#account:019f92bf-40d6-72e3-aa09-f0a9b8a95824'
+      )
+    ).toBe('019f92bf-40d6-72e3-aa09-f0a9b8a95824');
+    // Query wins when both present (picker SSOT).
+    expect(
+      accountIdFromLocation(
+        '/portal/account/?account=from-query#account:from-hash'
+      )
+    ).toBe('from-query');
+    expect(sectionFromLocation('/portal/account/#section:tree')).toBe('tree');
+    const href = buildAccountDossierHref({
+      accountId: '019f92bf-40d6-72e3-aa09-f0a9b8a95824',
+      hours: 168,
+    });
+    expect(href).toContain('?account=019f92bf-40d6-72e3-aa09-f0a9b8a95824');
+    expect(href).toContain('#account:019f92bf-40d6-72e3-aa09-f0a9b8a95824');
+  });
+
+  test('glossary map owns page.accountDossier and collapses onto ops.limits.*', () => {
+    expect(ACCOUNT_DOSSIER_GLOSSARY.page).toBe('page.accountDossier');
+    expect(ACCOUNT_DOSSIER_GLOSSARY.identity).toBe('ops.limits.account');
+    expect(ACCOUNT_DOSSIER_GLOSSARY.outs).toBe('section.partnersOuts');
+    expect(ACCOUNT_DOSSIER_SECTIONS).toContain('identity');
+    expect(ACCOUNT_DOSSIER_SECTIONS).toContain('outs');
+  });
+
   test('resolves CODE / call-sign seeds onto account ids', () => {
     expect(partnerCodeFromRef('ASH-001')).toBe('ASH');
     expect(partnerCodeFromRef('limit-demo-atlantic')).toBe(null);
@@ -234,13 +271,29 @@ describe('account dossier portal wiring', () => {
   test('board exposes selector, sections, and glossary page concept', async () => {
     const html = await Bun.file(ACCOUNT_HTML).text();
     expect(html).toContain('page.accountDossier');
+    expect(html).toContain('Account dossier');
     expect(html).toContain('id="ad-account-select"');
+    expect(html).toContain('id="ad-section-identity"');
+    expect(html).toContain('id="ad-section-outs"');
     expect(html).toContain('Connected tree');
     expect(html).toContain('Evidence traces');
     expect(html).toContain('Limit telemetry');
     expect(html).toContain('Betlog CSV');
     expect(html).toContain('limit-changes-card');
     expect(html).toContain("from './account-dossier.js'");
+    expect(html).toContain("from './glossary-map.js'");
+    expect(html).toContain('bootGlossaryUx');
+    expect(html).toContain('#account:');
+    expect(html).toContain('section.partnersOuts');
+    expect(html).toContain('ops.limits.policy_code');
+  });
+
+  test('page-glossary registers account dossier sections', async () => {
+    const { PORTAL_GLOSSARY_SURFACES } = await import('../lib/portal/page-glossary.ts');
+    const surface = PORTAL_GLOSSARY_SURFACES.find(row => row.path === '/portal/account/');
+    expect(surface?.concept).toBe('page.accountDossier');
+    expect(surface?.sections.identity).toBe('ops.limits.account');
+    expect(surface?.sections.outs).toBe('section.partnersOuts');
   });
 
   test('account clicks on history cards and limit card target the dossier', async () => {
