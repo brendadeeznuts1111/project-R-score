@@ -1,0 +1,40 @@
+// @see https://bun.com/docs/test — bun:test
+import { describe, expect, test } from 'bun:test';
+
+describe('portal health page', () => {
+  test('live checks separate transport fields and use the tone token contract', async () => {
+    const [html, script] = await Promise.all([
+      Bun.file('public/portal/health/index.html').text(),
+      Bun.file('public/portal/health-page.js').text(),
+    ]);
+
+    for (const heading of ['Host', 'Port', 'Status', 'Source', 'Version', 'Resources']) {
+      expect(html).toContain(`<th scope="col">${heading}</th>`);
+    }
+    expect(html).toContain("[data-tone='ok']");
+    expect(html).toContain('--tone-color');
+    expect(html).not.toMatch(/\.tone-badge\s*\{\s*--tone-color/);
+    expect(html).not.toMatch(/\.health-card\s*\{\s*--tone-color/);
+    expect(script).toContain('function targetForProbe(probe)');
+    expect(script).toContain("url.port || (url.protocol === 'https:' ? '443' : '80')");
+    expect(script).toContain('function toneBadge(tone, label)');
+    expect(script).toContain('data-tone="${esc(r.tone)}"');
+    expect(script).not.toContain('live-row-ok');
+  });
+
+  test('summary cards are grouped, versioned, and resource mapped', async () => {
+    const script = await Bun.file('public/portal/health-page.js').text();
+
+    expect(script).toContain('const CARD_RESOURCES = {');
+    expect(script).toContain('function cardGroup(id, title, description, cards)');
+    expect(script).toMatch(/cardGroup\(\s*'runtime',\s*'Runtime'/);
+    expect(script).toMatch(/cardGroup\(\s*'artifacts',\s*'Packages & artifacts'/);
+    expect(script).toMatch(/cardGroup\(\s*'verification',\s*'Verification'/);
+    expect(script).toMatch(/cardGroup\(\s*'operations',\s*'Operations'/);
+    expect(script).toContain('class="health-card-version"');
+    expect(script).toContain('class="health-resource-links"');
+    expect(script).toContain('>Wiki</a>');
+    expect(script).toContain('>Package</a>');
+    expect(script).toContain('>Artifact</a>');
+  });
+});

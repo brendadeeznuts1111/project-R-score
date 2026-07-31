@@ -1,7 +1,8 @@
 /**
  * Health diagnostic surface — /portal/health/
  * Probes /api/health (and fallbacks) for its own banner; topbar dot stays on data.js.
- * Live check table probes each known surface with Kind · Plane · Source · Status · Detail.
+ * Live check table probes each known surface with Host · Port · Status · Kind · Plane ·
+ * Source · Version · Resources · Detail.
  *
  * @see docs/portal-foundation.md
  */
@@ -143,8 +144,7 @@ const CANONICAL_URLS = {
   GITHUB_ACCESS_TOKEN:
     'https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens',
   GH_TOKEN: 'https://cli.github.com/manual/gh_auth_login',
-  'R2 binding REGISTRY_BUCKET':
-    'https://developers.cloudflare.com/r2/buckets/public-buckets/',
+  'R2 binding REGISTRY_BUCKET': 'https://developers.cloudflare.com/r2/buckets/public-buckets/',
   ASSETS: 'https://developers.cloudflare.com/pages/functions/api-reference/#envassets',
   BUN_VERSION: 'https://bun.com/docs/runtime/bunfig#install',
   SKIP_DEPENDENCY_INSTALL: 'https://bun.com/docs/runtime/bunfig#install',
@@ -155,6 +155,85 @@ const CANONICAL_URLS = {
   'Bun.write': 'https://bun.com/docs/runtime/file-io#writing-files-bun-write',
   'Bun.inspect': 'https://bun.com/docs/runtime/utils#bun-inspect',
   'Bun.CryptoHasher': 'https://bun.com/docs/runtime/hashing',
+};
+
+const WIKI_BASE = 'https://wiki.factory-wager.com';
+const PACKAGE_MAP_URL = '/portal/packages/';
+
+const PLANE_RESOURCES = {
+  edge: {
+    wiki: `${WIKI_BASE}/docs/portal-foundation.html`,
+    package: PACKAGE_MAP_URL,
+  },
+  public: {
+    wiki: `${WIKI_BASE}/docs/harness/tenants/public-plane.html`,
+    package: PACKAGE_MAP_URL,
+  },
+  document: {
+    wiki: `${WIKI_BASE}/docs/harness/PROOF.html`,
+    package: PACKAGE_MAP_URL,
+  },
+  operate: {
+    wiki: `${WIKI_BASE}/docs/harness/tenants/ops-snapshot.html`,
+    package: PACKAGE_MAP_URL,
+  },
+  harness: {
+    wiki: `${WIKI_BASE}/docs/harness/README.html`,
+    package: PACKAGE_MAP_URL,
+  },
+  infra: {
+    wiki: `${WIKI_BASE}/docs/harness/tenants/tunnel-inventory.html`,
+    package: PACKAGE_MAP_URL,
+  },
+};
+
+const CARD_RESOURCES = {
+  status: {
+    wiki: PLANE_RESOURCES.edge.wiki,
+    artifact: '/api/health',
+  },
+  checked: {
+    wiki: PLANE_RESOURCES.edge.wiki,
+    artifact: '/health',
+  },
+  'ops-summary': {
+    wiki: PLANE_RESOURCES.operate.wiki,
+    artifact: '/registry/ops-summary.json',
+  },
+  registry: {
+    wiki: `${WIKI_BASE}/registry-index.html`,
+    artifact: '/registry/registry.json',
+  },
+  routing: {
+    wiki: `${WIKI_BASE}/docs/platform-routing.html`,
+    artifact: '/registry/ops-summary.json',
+  },
+  'api-proof': {
+    wiki: `${WIKI_BASE}/docs/BUN_NATIVE_CAPABILITIES.html`,
+    artifact: '/tools/bun-api-coverage-proof.json',
+  },
+  toc: {
+    wiki: `${WIKI_BASE}/docs/harness/tenants/toc-ops.html`,
+    artifact: '/registry/toc-ops.json',
+  },
+  taxonomy: {
+    wiki: `${WIKI_BASE}/docs/harness/PROOF.html`,
+    artifact: '/registry/proof-taxonomy-audit.json',
+  },
+  defaults: {
+    wiki: `${WIKI_BASE}/docs/UNIFIED.html`,
+    artifact: '/registry/defaults-proof.json',
+  },
+  compliance: {
+    wiki: `${WIKI_BASE}/docs/harness/tenants/compliance-portal.html`,
+    artifact: '/registry/compliance-board.json',
+    portal: '/portal/compliance/',
+  },
+  'limit-raises': {
+    wiki: `${WIKI_BASE}/docs/harness/tenants/partner-limits.html`,
+    artifact: '/registry/limit-raises.json',
+    portal: '/portal/limits/',
+  },
 };
 
 function esc(s) {
@@ -178,19 +257,37 @@ function linkHtml(key) {
   return label;
 }
 
-function card(title, val, sub = '', cls = '') {
-  return `<article class="health-card ${cls}">
-    <h3>${esc(title)}</h3>
-    <div class="val">${esc(String(val))}</div>
+function resourceLinks(resource = {}) {
+  return `<nav class="health-resource-links" aria-label="Resource mappings">
+    <a href="${esc(resource.wiki || `${WIKI_BASE}/wiki-index.html`)}" target="_blank" rel="noopener noreferrer">Wiki</a>
+    <a href="${esc(resource.package || PACKAGE_MAP_URL)}">Package</a>
+    <a href="${esc(resource.artifact || '/portal/health/')}">Artifact</a>
+    ${resource.portal ? `<a href="${esc(resource.portal)}">Portal</a>` : ''}
+  </nav>`;
+}
+
+function card({ id, title, value, sub = '', tone = 'skip', version = 'schema v1' }) {
+  const resource = CARD_RESOURCES[id] || {};
+  return `<article class="health-card" data-card="${esc(id)}" data-tone="${esc(tone)}">
+    <header class="health-card-header">
+      <h3>${esc(title)}</h3>
+      <span class="health-card-version">${esc(version)}</span>
+    </header>
+    <div class="val">${esc(String(value))}</div>
     ${sub ? `<div class="sub">${esc(sub)}</div>` : ''}
+    ${resourceLinks(resource)}
   </article>`;
 }
 
 function skeletonCards(n = 8) {
-  return Array.from(
-    { length: n },
-    () => '<div class="health-card skeleton skeleton-card" aria-hidden="true"></div>'
-  ).join('');
+  return `<section class="health-card-group health-card-group--loading" aria-label="Loading health cards">
+    <div class="health-card-group-grid">
+      ${Array.from(
+        { length: n },
+        () => '<div class="health-card skeleton skeleton-card" aria-hidden="true"></div>'
+      ).join('')}
+    </div>
+  </section>`;
 }
 
 function ageLabel(iso) {
@@ -338,9 +435,7 @@ function interpretProbe(probe, res, body, ms, err) {
       return {
         tone,
         statusLabel:
-          score != null
-            ? `HTTP ${http} · ${score}${grade ? ` ${grade}` : ''}`
-            : `HTTP ${http}`,
+          score != null ? `HTTP ${http} · ${score}${grade ? ` ${grade}` : ''}` : `HTTP ${http}`,
         detail: [
           gen ? `baked ${ageLabel(gen)}` : null,
           stale ? 'stale bake' : null,
@@ -356,11 +451,11 @@ function interpretProbe(probe, res, body, ms, err) {
     }
     case 'doctor-state': {
       const summary = data.summary || data;
-      const failed =
-        summary.failed ?? summary.fail ?? data.failedCount ?? data.failed;
+      const failed = summary.failed ?? summary.fail ?? data.failedCount ?? data.failed;
       const passed = summary.passed ?? summary.pass ?? data.passedCount;
       const total = summary.total ?? data.total;
-      const ok = data.ok === true || failed === 0 || (passed != null && total != null && passed === total);
+      const ok =
+        data.ok === true || failed === 0 || (passed != null && total != null && passed === total);
       const gen = data.generatedAt ?? data.generated;
       return {
         tone: ok ? 'ok' : failed != null && failed > 0 ? 'bad' : 'warn',
@@ -370,11 +465,7 @@ function interpretProbe(probe, res, body, ms, err) {
             : data.ok === true
               ? `HTTP ${http} · ok`
               : `HTTP ${http}`,
-        detail: [
-          gen ? ageLabel(gen) : null,
-          failed != null ? `${failed} failed` : null,
-          `${ms}ms`,
-        ]
+        detail: [gen ? ageLabel(gen) : null, failed != null ? `${failed} failed` : null, `${ms}ms`]
           .filter(Boolean)
           .join(' · '),
       };
@@ -383,14 +474,11 @@ function interpretProbe(probe, res, body, ms, err) {
       const passed = data.passed ?? data.summary?.passed;
       const total = data.total ?? data.summary?.total;
       const status = data.status ?? data.summary?.status;
-      const allOk =
-        status === 'pass' || (passed != null && total != null && passed === total);
+      const allOk = status === 'pass' || (passed != null && total != null && passed === total);
       return {
         tone: allOk ? 'ok' : 'bad',
         statusLabel:
-          passed != null && total != null
-            ? `HTTP ${http} · ${passed}/${total}`
-            : `HTTP ${http}`,
+          passed != null && total != null ? `HTTP ${http} · ${passed}/${total}` : `HTTP ${http}`,
         detail: [
           data.bunVersion ? `Bun ${data.bunVersion}` : null,
           data.proofHash ? `sha ${String(data.proofHash).slice(0, 10)}…` : null,
@@ -402,19 +490,13 @@ function interpretProbe(probe, res, body, ms, err) {
     }
     case 'portal-weave': {
       const n =
-        data.surfaces?.length ??
-        data.entries?.length ??
-        data.rows?.length ??
-        data.count ??
-        null;
+        data.surfaces?.length ?? data.entries?.length ?? data.rows?.length ?? data.count ?? null;
       return {
         tone: 'ok',
         statusLabel: `HTTP ${http}`,
         detail: [
           n != null ? `${n} entries` : 'weave present',
-          data.generatedAt || data.generated
-            ? ageLabel(data.generatedAt || data.generated)
-            : null,
+          data.generatedAt || data.generated ? ageLabel(data.generatedAt || data.generated) : null,
           `${ms}ms`,
         ]
           .filter(Boolean)
@@ -425,16 +507,17 @@ function interpretProbe(probe, res, body, ms, err) {
       return {
         tone: 'ok',
         statusLabel: `HTTP ${http}`,
-        detail: [
-          data.packageCount != null ? `${data.packageCount} packages` : null,
-          data.dodQueue != null ? `DOD ${data.dodQueue}` : null,
-          data.generatedAt || data.generated
-            ? ageLabel(data.generatedAt || data.generated)
-            : null,
-          `${ms}ms`,
-        ]
-          .filter(Boolean)
-          .join(' · ') || `${ms}ms`,
+        detail:
+          [
+            data.packageCount != null ? `${data.packageCount} packages` : null,
+            data.dodQueue != null ? `DOD ${data.dodQueue}` : null,
+            data.generatedAt || data.generated
+              ? ageLabel(data.generatedAt || data.generated)
+              : null,
+            `${ms}ms`,
+          ]
+            .filter(Boolean)
+            .join(' · ') || `${ms}ms`,
       };
     }
     case 'static-aggregate': {
@@ -446,10 +529,7 @@ function interpretProbe(probe, res, body, ms, err) {
     }
     case 'surfaces-state': {
       const surfaces =
-        data.surfaces?.length ??
-        data.inventory?.surfaces?.length ??
-        data.count ??
-        null;
+        data.surfaces?.length ?? data.inventory?.surfaces?.length ?? data.count ?? null;
       const schema = data.schemaVersion ?? data.version;
       return {
         tone: 'ok',
@@ -521,6 +601,40 @@ async function probeOne(probe) {
   }
 }
 
+function targetForProbe(probe) {
+  const url = new URL(probe.path, window.location.href);
+  return {
+    hostname: url.hostname,
+    port: url.port || (url.protocol === 'https:' ? '443' : '80'),
+    source: `${url.pathname}${url.search}`,
+  };
+}
+
+function versionForProbe(result) {
+  const data = result.body;
+  if (data?.schemaVersion != null) return `schema v${data.schemaVersion}`;
+  if (data?.bunVersion) return `Bun ${data.bunVersion}`;
+  if (data?.version != null) return `v${data.version}`;
+  if (result.probe.accept === 'text/html') return 'HTML';
+  return 'JSON';
+}
+
+function toneBadge(tone, label) {
+  return `<span class="tone-badge" data-tone="${esc(tone)}">
+    <span class="tone-dot" aria-hidden="true"></span>
+    <span>${esc(label)}</span>
+  </span>`;
+}
+
+function probeResourceLinks(probe) {
+  const resource = PLANE_RESOURCES[probe.plane] || {};
+  return `<nav class="live-resource-links" aria-label="${esc(probe.surface)} resources">
+    <a href="${esc(probe.path)}" target="_blank" rel="noopener">Artifact</a>
+    <a href="${esc(resource.package || PACKAGE_MAP_URL)}">Package</a>
+    <a href="${esc(resource.wiki || `${WIKI_BASE}/wiki-index.html`)}" target="_blank" rel="noopener noreferrer">Wiki</a>
+  </nav>`;
+}
+
 function renderLiveContext(results) {
   const el = $('live-context');
   if (!el) return;
@@ -547,37 +661,26 @@ function renderLiveTable(results) {
   const tbody = $('live-body');
   if (!tbody) return;
   if (!results.length) {
-    tbody.innerHTML = '<tr><td colspan="6">No probes configured</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10">No probes configured</td></tr>';
     return;
   }
   tbody.innerHTML = results
     .map(r => {
       const p = r.probe;
-      const toneClass =
-        r.tone === 'ok'
-          ? 'live-row-ok'
-          : r.tone === 'warn'
-            ? 'live-row-warn'
-            : r.tone === 'bad'
-              ? 'live-row-bad'
-              : 'live-row-skip';
-      const stClass =
-        r.tone === 'ok'
-          ? 'st-ok'
-          : r.tone === 'warn'
-            ? 'st-warn'
-            : r.tone === 'bad'
-              ? 'st-bad'
-              : 'st-skip';
-      return `<tr class="${toneClass}" data-probe="${esc(p.id)}" data-tone="${esc(r.tone)}">
+      const target = targetForProbe(p);
+      return `<tr data-probe="${esc(p.id)}" data-tone="${esc(r.tone)}">
         <td>
           <span class="surface-name">${esc(p.surface)}</span>
           <span class="surface-what">${esc(p.what || '')}</span>
         </td>
+        <td class="mono live-host">${esc(target.hostname)}</td>
+        <td class="mono live-port">${esc(target.port)}</td>
+        <td>${toneBadge(r.tone, r.statusLabel)}</td>
         <td><span class="kind-chip">${esc(p.kind)}</span></td>
         <td><span class="plane-chip" data-plane="${esc(p.plane)}">${esc(p.plane)}</span></td>
-        <td class="mono"><a class="ops-link" href="${esc(p.path)}" target="_blank" rel="noopener">${esc(p.path)}</a></td>
-        <td class="${stClass}">${esc(r.statusLabel)}</td>
+        <td class="mono live-source">${esc(target.source)}</td>
+        <td><span class="version-chip">${esc(versionForProbe(r))}</span></td>
+        <td>${probeResourceLinks(p)}</td>
         <td class="detail">${esc(r.detail)}</td>
       </tr>`;
     })
@@ -588,17 +691,21 @@ async function runLiveChecks() {
   const tbody = $('live-body');
   const ctx = $('live-context');
   if (tbody) {
-    tbody.innerHTML = LIVE_PROBES.map(
-      p =>
-        `<tr class="live-row-skip" data-probe="${esc(p.id)}">
+    tbody.innerHTML = LIVE_PROBES.map(p => {
+      const target = targetForProbe(p);
+      return `<tr data-probe="${esc(p.id)}" data-tone="skip">
           <td><span class="surface-name">${esc(p.surface)}</span><span class="surface-what">${esc(p.what || '')}</span></td>
+          <td class="mono live-host">${esc(target.hostname)}</td>
+          <td class="mono live-port">${esc(target.port)}</td>
+          <td>${toneBadge('skip', 'probing')}</td>
           <td><span class="kind-chip">${esc(p.kind)}</span></td>
           <td><span class="plane-chip" data-plane="${esc(p.plane)}">${esc(p.plane)}</span></td>
-          <td class="mono">${esc(p.path)}</td>
-          <td class="st-skip">…</td>
+          <td class="mono live-source">${esc(target.source)}</td>
+          <td><span class="version-chip">pending</span></td>
+          <td>${probeResourceLinks(p)}</td>
           <td class="detail">probing</td>
-        </tr>`
-    ).join('');
+        </tr>`;
+    }).join('');
   }
   if (ctx) {
     ctx.innerHTML = `<span>Probing <strong>${LIVE_PROBES.length}</strong> surfaces on <code>${esc(location.origin)}</code>…</span>`;
@@ -651,9 +758,7 @@ async function fetchHealth() {
               generated: ops?.generated ?? null,
             },
           },
-          monitoring: mon
-            ? { packageCount: mon.packageCount, dodQueue: mon.dodQueue }
-            : null,
+          monitoring: mon ? { packageCount: mon.packageCount, dodQueue: mon.dodQueue } : null,
           toc: ops?.toc ?? null,
           channels: ops?.channels ?? null,
           loop: ops?.loop ?? null,
@@ -720,8 +825,7 @@ function renderPlane(opsLike) {
     </article>`;
   }
 
-  const failRate =
-    channels?.failRate != null ? `${Math.round(channels.failRate * 100)}%` : null;
+  const failRate = channels?.failRate != null ? `${Math.round(channels.failRate * 100)}%` : null;
   const capParts = [];
   if (loop?.capitalEfficiencyProxy != null) {
     capParts.push(`CE ${Number(loop.capitalEfficiencyProxy).toFixed(2)}`);
@@ -764,8 +868,7 @@ function renderPlane(opsLike) {
 }
 
 async function enrichFromOpsSummary(d) {
-  const needs =
-    !d.toc?.available || d.loop == null || d.channels == null;
+  const needs = !d.toc?.available || d.loop == null || d.channels == null;
   if (!needs) return d;
   try {
     const res = await fetch('/registry/ops-summary.json', { credentials: 'same-origin' });
@@ -789,19 +892,19 @@ function applyDefaultsCard(sliceOrProof, sourceLabel) {
   const passed = sliceOrProof.passed ?? sliceOrProof.summary?.passed;
   const total = sliceOrProof.total ?? sliceOrProof.summary?.total;
   const status = sliceOrProof.status ?? sliceOrProof.summary?.status;
-  const allOk =
-    status === 'pass' || (passed != null && total != null && passed === total);
+  const allOk = status === 'pass' || (passed != null && total != null && passed === total);
   cardEl.querySelector('.val').textContent =
     passed != null && total != null ? `${passed}/${total}` : '—';
   cardEl.querySelector('.sub').textContent = [
     sliceOrProof.bunVersion ? `Bun ${sliceOrProof.bunVersion}` : null,
-    sliceOrProof.proofHash
-      ? `sha ${String(sliceOrProof.proofHash).slice(0, 12)}…`
-      : sourceLabel,
+    sliceOrProof.proofHash ? `sha ${String(sliceOrProof.proofHash).slice(0, 12)}…` : sourceLabel,
   ]
     .filter(Boolean)
     .join(' · ');
-  cardEl.className = `health-card ${allOk ? 'ok' : sliceOrProof.available === false ? 'warn' : 'bad'}`;
+  cardEl.dataset.tone = allOk ? 'ok' : sliceOrProof.available === false ? 'warn' : 'bad';
+  cardEl.querySelector('.health-card-version').textContent = sliceOrProof.bunVersion
+    ? `Bun ${sliceOrProof.bunVersion}`
+    : 'proof v1';
   return true;
 }
 
@@ -829,8 +932,21 @@ async function fillDefaultsCard(embedded) {
   if (cardEl) {
     cardEl.querySelector('.val').textContent = '—';
     cardEl.querySelector('.sub').textContent = 'defaults proof unavailable';
-    cardEl.className = 'health-card warn';
+    cardEl.dataset.tone = 'warn';
   }
+}
+
+function cardGroup(id, title, description, cards) {
+  return `<section class="health-card-group" data-card-group="${esc(id)}" aria-labelledby="health-group-${esc(id)}">
+    <header class="health-card-group-header">
+      <div>
+        <p class="health-card-group-kicker">${esc(id)}</p>
+        <h2 id="health-group-${esc(id)}">${esc(title)}</h2>
+      </div>
+      <p>${esc(description)}</p>
+    </header>
+    <div class="health-card-group-grid">${cards.join('')}</div>
+  </section>`;
 }
 
 function renderCards(d) {
@@ -842,122 +958,163 @@ function renderCards(d) {
   const mon = d.monitoring || {};
   const proof = d.bunApiProof || {};
   const proofSum = proof.summary || {};
+  const schemaVersion = `schema v${d.schemaVersion ?? 1}`;
 
   const routingCard = routing
-    ? card(
-        'Routing proof',
-        `${routing.passed ?? '—'}/${routing.total ?? '—'}`,
-        [
-          routing.criticalFailed != null ? `${routing.criticalFailed} critical fail` : null,
-          routing.meanMs != null ? `mean ${Math.round(routing.meanMs)}ms` : null,
-          routing.p95Ms != null ? `p95 ${Math.round(routing.p95Ms)}ms` : null,
-        ]
-          .filter(Boolean)
-          .join(' · ') || 'from ops snapshot',
-        routing.criticalFailed > 0 || routing.failed > 0
-          ? 'bad'
-          : routing.passed === routing.total
-            ? 'ok'
-            : 'warn'
-      )
-    : card(
-        'Route static',
-        rs.staticRoutes != null ? String(rs.staticRoutes) : '—',
-        rs.staticHits != null
-          ? `${rs.staticHits} hits · ${rs.notModified304 ?? 0}×304`
-          : rs.note || 'edge: see routing proof after snapshot',
-        'warn'
-      );
+    ? card({
+        id: 'routing',
+        title: 'Routing proof',
+        value: `${routing.passed ?? '—'}/${routing.total ?? '—'}`,
+        sub:
+          [
+            routing.criticalFailed != null ? `${routing.criticalFailed} critical fail` : null,
+            routing.meanMs != null ? `mean ${Math.round(routing.meanMs)}ms` : null,
+            routing.p95Ms != null ? `p95 ${Math.round(routing.p95Ms)}ms` : null,
+          ]
+            .filter(Boolean)
+            .join(' · ') || 'from ops snapshot',
+        tone:
+          routing.criticalFailed > 0 || routing.failed > 0
+            ? 'bad'
+            : routing.passed === routing.total
+              ? 'ok'
+              : 'warn',
+        version: routing.schemaVersion ? `schema v${routing.schemaVersion}` : 'proof v1',
+      })
+    : card({
+        id: 'routing',
+        title: 'Route static',
+        value: rs.staticRoutes != null ? String(rs.staticRoutes) : '—',
+        sub:
+          rs.staticHits != null
+            ? `${rs.staticHits} hits · ${rs.notModified304 ?? 0}×304`
+            : rs.note || 'edge: see routing proof after snapshot',
+        tone: 'warn',
+        version: 'route v1',
+      });
 
-  const html = [
-    card('Status', String(d.status || '—'), d.platform || d.runtime || '', ok ? 'ok' : 'bad'),
-    card(
-      'Checked',
-      d.checkedAt ? String(d.checkedAt).slice(11, 19) + 'Z' : '—',
-      d.checkedAt ? String(d.checkedAt).slice(0, 10) : d.serve?.etagScope || 'no timestamp'
-    ),
-    card(
-      'Ops summary',
-      arts.exists === false ? 'missing' : arts.generated ? 'present' : arts.exists ? 'yes' : '—',
-      arts.generated
-        ? `${String(arts.generated).slice(0, 19)} · ${arts.source || 'artifact'}`
-        : '',
-      arts.exists === false ? 'bad' : 'ok'
-    ),
-    card(
-      'Registry',
-      reg.packages != null
-        ? String(reg.packages)
-        : mon.packageCount != null
-          ? String(mon.packageCount)
+  const runtimeCards = [
+    card({
+      id: 'status',
+      title: 'Status',
+      value: String(d.status || '—'),
+      sub: d.platform || d.runtime || '',
+      tone: ok ? 'ok' : 'bad',
+      version: schemaVersion,
+    }),
+    card({
+      id: 'checked',
+      title: 'Checked',
+      value: d.checkedAt
+        ? String(d.checkedAt).slice(11, 19) + 'Z'
+        : d.serve?.etagScope
+          ? 'shared'
           : '—',
-      reg.versions != null
-        ? `${reg.versions} versions`
-        : mon.dodQueue != null
-          ? `DOD ${mon.dodQueue}`
-          : 'packages'
-    ),
-    routingCard,
-    card(
-      'API proof',
-      proof.available
+      sub: d.checkedAt ? String(d.checkedAt).slice(0, 10) : d.serve?.etagScope || 'no timestamp',
+      tone: d.checkedAt || d.serve?.etagScope ? 'ok' : 'warn',
+      version: 'probe v1',
+    }),
+    card({
+      id: 'api-proof',
+      title: 'API proof',
+      value: proof.available
         ? proofSum.demosPassed != null && proofSum.demos != null
           ? `${proofSum.demosPassed}/${proofSum.demos}`
           : 'available'
         : '—',
-      [
+      sub: [
         proof.bunVersion ? `Bun ${proof.bunVersion}` : null,
         proofSum.apisVerified != null ? `${proofSum.apisVerified}/${proofSum.apis} APIs` : null,
         proof.generated ? String(proof.generated).slice(0, 10) : null,
       ]
         .filter(Boolean)
         .join(' · '),
-      proof.available &&
-        (proofSum.demosPassed == null || proofSum.demosPassed === proofSum.demos)
-        ? 'ok'
-        : proof.available
-          ? 'warn'
-          : 'warn'
-    ),
-    card(
-      'TOC warmed',
-      d.toc?.available ? String(d.toc.warmed ?? 0) : '—',
-      d.toc?.available
+      tone:
+        proof.available && (proofSum.demosPassed == null || proofSum.demosPassed === proofSum.demos)
+          ? 'ok'
+          : 'warn',
+      version: proof.bunVersion ? `Bun ${proof.bunVersion}` : 'proof v1',
+    }),
+  ];
+
+  const artifactCards = [
+    card({
+      id: 'ops-summary',
+      title: 'Ops summary',
+      value:
+        arts.exists === false ? 'missing' : arts.generated ? 'present' : arts.exists ? 'yes' : '—',
+      sub: arts.generated
+        ? `${String(arts.generated).slice(0, 19)} · ${arts.source || 'artifact'}`
+        : '',
+      tone: arts.exists === false ? 'bad' : 'ok',
+      version: 'artifact v1',
+    }),
+    card({
+      id: 'registry',
+      title: 'Registry',
+      value:
+        reg.packages != null
+          ? String(reg.packages)
+          : mon.packageCount != null
+            ? String(mon.packageCount)
+            : '—',
+      sub:
+        reg.versions != null
+          ? `${reg.versions} versions`
+          : mon.dodQueue != null
+            ? `DOD ${mon.dodQueue}`
+            : 'packages',
+      tone: reg.packages != null || mon.packageCount != null ? 'ok' : 'warn',
+      version: reg.versions != null ? `${reg.versions} versions` : 'catalog v1',
+    }),
+    card({
+      id: 'defaults',
+      title: 'Defaults',
+      value: '…',
+      sub: 'loading proof…',
+      tone: 'skip',
+      version: 'proof v1',
+    }),
+  ];
+
+  const verificationCards = [
+    routingCard,
+    card({
+      id: 'taxonomy',
+      title: 'Taxonomy audit',
+      value:
+        d.proofTaxonomy?.available && d.proofTaxonomy.contracts != null
+          ? `${d.proofTaxonomy.contractsOk ?? '?'}/${d.proofTaxonomy.contracts}`
+          : '—',
+      sub: d.proofTaxonomy?.available
+        ? `ok=${d.proofTaxonomy.ok} · ${d.proofTaxonomy.source || 'audit'}`
+        : 'proof-taxonomy-audit',
+      tone: d.proofTaxonomy?.available ? (d.proofTaxonomy.ok ? 'ok' : 'bad') : 'warn',
+      version: 'audit v1',
+    }),
+  ];
+
+  const operationsCards = [
+    card({
+      id: 'toc',
+      title: 'TOC warmed',
+      value: d.toc?.available ? String(d.toc.warmed ?? 0) : '—',
+      sub: d.toc?.available
         ? `${d.toc.openBottlenecks ?? 0} bottlenecks · ${d.toc.confirmedRails ?? 0} rails`
         : 'enrich from ops-summary',
-      d.toc?.available
+      tone: d.toc?.available
         ? d.toc.criticalBottlenecks > 0
           ? 'bad'
           : d.toc.openBottlenecks > 0
             ? 'warn'
             : 'ok'
-        : 'warn'
-    ),
-    card(
-      'Taxonomy audit',
-      d.proofTaxonomy?.available && d.proofTaxonomy.contracts != null
-        ? `${d.proofTaxonomy.contractsOk ?? '?'}/${d.proofTaxonomy.contracts}`
-        : '—',
-      d.proofTaxonomy?.available
-        ? `ok=${d.proofTaxonomy.ok} · ${d.proofTaxonomy.source || 'audit'}`
-        : 'proof-taxonomy-audit',
-      d.proofTaxonomy?.available
-        ? d.proofTaxonomy.ok
-          ? 'ok'
-          : 'bad'
-        : 'warn'
-    ),
-    `<article class="health-card warn" data-card="defaults">
-      <h3>Defaults</h3>
-      <div class="val">…</div>
-      <div class="sub">loading proof…</div>
-    </article>`,
+        : 'warn',
+      version: 'ops v1',
+    }),
   ];
 
-  // Optional compliance board card (artifacts.complianceBoard from edge/local health).
   const cb = d.artifacts?.complianceBoard;
   if (cb && typeof cb === 'object') {
-    const cbCls = !cb.exists ? 'warn' : cb.ok ? 'ok' : 'bad';
     const cbVal = !cb.exists
       ? 'missing'
       : cb.enhancements != null
@@ -973,19 +1130,20 @@ function renderCards(d) {
     ]
       .filter(Boolean)
       .join(' · ');
-    const portalHref = esc(cb.portal || '/portal/compliance/');
-    html.push(`<article class="health-card ${cbCls}" data-card="compliance">
-      <h3>Compliance</h3>
-      <div class="val">${esc(cbVal)}</div>
-      <div class="sub">${esc(cbSub || (cb.exists ? 'board' : 'optional bake'))}</div>
-      <div class="sub"><a class="ops-link" href="${portalHref}">portal/compliance</a> · <a class="ops-link" href="/api/compliance">API</a></div>
-    </article>`);
+    operationsCards.push(
+      card({
+        id: 'compliance',
+        title: 'Compliance',
+        value: cbVal,
+        sub: cbSub || (cb.exists ? 'board' : 'optional bake'),
+        tone: !cb.exists ? 'warn' : cb.ok ? 'ok' : 'bad',
+        version: 'artifact v1',
+      })
+    );
   }
 
-  // Optional limit-raises bake (artifacts.limitRaises). Missing bake is optional — not degraded.
   const lr = d.artifacts?.limitRaises;
   if (lr && typeof lr === 'object') {
-    const lrCls = !lr.exists ? 'warn' : lr.ok ? 'ok' : 'bad';
     const lrVal = !lr.exists
       ? 'missing'
       : lr.raises != null
@@ -1002,17 +1160,44 @@ function renderCards(d) {
         ]
           .filter(Boolean)
           .join(' · ');
-    const lrPortal = esc(lr.portal || '/portal/limits/');
-    const lrPath = esc(lr.path || '/registry/limit-raises.json');
-    html.push(`<article class="health-card ${lrCls}" data-card="limit-raises">
-      <h3>Limit raises</h3>
-      <div class="val">${esc(lrVal)}</div>
-      <div class="sub">${esc(lrSub || (lr.exists ? 'board' : 'optional bake'))}</div>
-      <div class="sub"><a class="ops-link" href="${lrPortal}">portal/limits</a> · <a class="ops-link" href="${lrPath}">registry</a> · <a class="ops-link" href="/api/limits/summary">API</a></div>
-    </article>`);
+    operationsCards.push(
+      card({
+        id: 'limit-raises',
+        title: 'Limit raises',
+        value: lrVal,
+        sub: lrSub || (lr.exists ? 'board' : 'optional bake'),
+        tone: !lr.exists ? 'warn' : lr.ok ? 'ok' : 'bad',
+        version: 'artifact v1',
+      })
+    );
   }
 
-  $('cards').innerHTML = html.join('');
+  $('cards').innerHTML = [
+    cardGroup(
+      'runtime',
+      'Runtime',
+      'Edge state, probe time, and Bun API capability proof.',
+      runtimeCards
+    ),
+    cardGroup(
+      'artifacts',
+      'Packages & artifacts',
+      'Versioned registry and proof outputs consumed by the portal.',
+      artifactCards
+    ),
+    cardGroup(
+      'verification',
+      'Verification',
+      'Routing and taxonomy gates that establish release confidence.',
+      verificationCards
+    ),
+    cardGroup(
+      'operations',
+      'Operations',
+      'TOC, compliance, and partner-limit operating signals.',
+      operationsCards
+    ),
+  ].join('');
   void fillDefaultsCard(d.defaults);
 }
 
@@ -1091,21 +1276,21 @@ function renderRoutingTable(d) {
 function render(payload) {
   const raw = $('raw');
   if (!payload?.data) {
-    $('banner').className = 'health-banner bad';
+    $('banner').className = 'health-banner';
+    $('banner').dataset.tone = 'bad';
     $('banner-title').textContent = 'Health unavailable';
-    $('banner-meta').textContent =
-      'Could not reach /api/health, /health, or static snapshots';
+    $('banner-meta').textContent = 'Could not reach /api/health, /health, or static snapshots';
     $('cards').innerHTML = '';
     renderPlane(null);
     raw.textContent = 'No data';
-    $('env-body').innerHTML =
-      '<tr><td colspan="5">No payload</td></tr>';
+    $('env-body').innerHTML = '<tr><td colspan="5">No payload</td></tr>';
     return;
   }
 
   const d = payload.data;
   const ok = d.status === 'ok' || d.status === 'healthy';
-  $('banner').className = `health-banner ${ok ? 'ok' : 'bad'}`;
+  $('banner').className = 'health-banner';
+  $('banner').dataset.tone = ok ? 'ok' : 'bad';
   $('banner-title').textContent = ok ? 'System healthy' : `Status: ${d.status}`;
   $('banner-meta').textContent = [
     `source ${payload.source}`,
@@ -1145,9 +1330,7 @@ export async function load() {
   }
   render(payload);
   await livePromise;
-  document.dispatchEvent(
-    new CustomEvent('portal:health-ready', { detail: payload })
-  );
+  document.dispatchEvent(new CustomEvent('portal:health-ready', { detail: payload }));
 }
 
 async function loadVpsStatus() {
@@ -1155,10 +1338,13 @@ async function loadVpsStatus() {
   if (!panel) return;
   try {
     const res = await fetch('/registry/vps-health.json', { credentials: 'same-origin' });
-    if (!res.ok) { panel.innerHTML = '<p class="st-bad">VPS unreachable</p>'; return; }
+    if (!res.ok) {
+      panel.innerHTML = '<p class="st-bad">VPS unreachable</p>';
+      return;
+    }
     const d = await res.json();
-    const ok = (s) => s === 'active' || s?.startsWith('Up');
-    const cls = (s) => ok(s) ? 'st-ok' : 'st-bad';
+    const ok = s => s === 'active' || s?.startsWith('Up');
+    const cls = s => (ok(s) ? 'st-ok' : 'st-bad');
     panel.innerHTML = `
       <table class="env-table">
         <thead><tr><th>Host</th><th>Uptime</th><th>Disk</th><th>Memory</th></tr></thead>
@@ -1166,20 +1352,28 @@ async function loadVpsStatus() {
           <tr>
             <td class="mono">${d.hostname || '?'}</td>
             <td>${d.uptime || '?'}</td>
-            <td class="${cls(d.disk?.percent?.replace('%','') > 85 ? 'st-bad' : 'st-ok')}">${d.disk?.percent || '?'} (${d.disk?.free || '?'} free)</td>
-            <td class="${d.memory?.available?.replace('Gi','') > 2 ? 'st-ok' : 'st-warn'}">${d.memory?.used || '?'} / ${d.memory?.total || '?'} (${d.memory?.available || '?'} free)</td>
+            <td class="${cls(d.disk?.percent?.replace('%', '') > 85 ? 'st-bad' : 'st-ok')}">${d.disk?.percent || '?'} (${d.disk?.free || '?'} free)</td>
+            <td class="${d.memory?.available?.replace('Gi', '') > 2 ? 'st-ok' : 'st-warn'}">${d.memory?.used || '?'} / ${d.memory?.total || '?'} (${d.memory?.available || '?'} free)</td>
           </tr>
         </tbody>
       </table>
       <table class="env-table" style="margin-top:8px">
         <thead><tr><th>Service</th><th>Status</th></tr></thead>
         <tbody>
-          ${Object.entries(d.services || {}).map(([name, status]) => `
+          ${Object.entries(d.services || {})
+            .map(
+              ([name, status]) => `
             <tr><td class="mono">${name}</td><td class="${cls(status)}">${status}</td></tr>
-          `).join('')}
-          ${Object.entries(d.docker || {}).map(([name, status]) => `
+          `
+            )
+            .join('')}
+          ${Object.entries(d.docker || {})
+            .map(
+              ([name, status]) => `
             <tr><td class="mono">${name} <span style="opacity:0.5">(docker)</span></td><td class="${cls(status)}">${status}</td></tr>
-          `).join('')}
+          `
+            )
+            .join('')}
         </tbody>
       </table>
     `;

@@ -1,654 +1,1119 @@
-<!DOCTYPE html>
+<!doctype html>
 <!-- @see docs/portal-foundation.md -->
 <html lang="en" data-theme="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="FactoryWager health diagnostic — edge /api/health, routing proof, env checklist, TOC/ops glance." />
-  <title>Health · FactoryWager</title>
-  <meta name="theme-color" content="#0d1117" />
-  <meta name="application-name" content="FactoryWager" />
-  <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
-  <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
-  <link rel="manifest" href="/site.webmanifest" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/portal/style.css" />
-  <style>
-    .health-page {
-      max-width: min(1100px, 100%);
-      margin: 0 auto;
-      padding: 24px var(--pad-inline, 24px) 48px;
-    }
-    .health-hero {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px 20px;
-      align-items: flex-start;
-      margin-bottom: 8px;
-    }
-    .health-hero h1 {
-      font-size: clamp(1.25rem, 2vw, 1.5rem);
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      margin: 0;
-    }
-    .health-hero .sub {
-      width: 100%;
-      margin: 0;
-      font-size: 13px;
-      color: var(--text-dim);
-      line-height: 1.45;
-      max-width: 62ch;
-    }
-    .health-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 12px;
-      margin: 16px 0;
-    }
-    .health-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px;
-      position: relative;
-      overflow: hidden;
-    }
-    .health-card::before {
-      content: "";
-      position: absolute;
-      inset-block-start: 0;
-      inset-inline: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent), transparent);
-      opacity: 0.5;
-    }
-    .health-card h3 {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .4px;
-      color: var(--text-dim);
-      margin: 0 0 8px;
-    }
-    .health-card .val {
-      font-size: 22px;
-      font-weight: 600;
-      font-variant-numeric: tabular-nums;
-      font-family: var(--font-mono, ui-monospace, monospace);
-    }
-    .health-card .sub {
-      font-size: 12px;
-      color: var(--text-dim);
-      margin-top: 6px;
-      word-break: break-all;
-      line-height: 1.35;
-    }
-    .health-card.ok .val { color: var(--green, #3fb950); }
-    .health-card.bad .val { color: var(--red, #f85149); }
-    .health-card.warn .val { color: var(--yellow, #d29922); }
-    .health-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin: 12px 0 8px;
-    }
-    .health-actions a,
-    .health-actions button {
-      font-size: 13px;
-      font-family: inherit;
-      padding: 6px 12px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      color: var(--accent);
-      text-decoration: none;
-      background: var(--surface);
-      cursor: pointer;
-    }
-    .health-actions a:hover,
-    .health-actions button:hover { border-color: var(--accent); }
-    .health-pre {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px;
-      font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
-      font-size: 12px;
-      white-space: pre-wrap;
-      overflow: auto;
-      max-height: 420px;
-      color: var(--text-dim);
-    }
-    .health-banner {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 18px;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      background: var(--surface);
-      margin: 12px 0 8px;
-    }
-    .health-banner .dot {
-      width: 12px; height: 12px; border-radius: 50%;
-      background: var(--text-dim);
-      flex-shrink: 0;
-    }
-    .health-banner.ok .dot {
-      background: var(--green, #3fb950);
-      box-shadow: 0 0 8px var(--green, #3fb950);
-    }
-    .health-banner.bad .dot { background: var(--red, #f85149); }
-    .health-banner.warn .dot { background: var(--yellow, #d29922); }
-    .health-banner .title { font-weight: 600; font-size: 16px; }
-    .health-banner .meta { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
-    .section { margin: 28px 0; }
-    .section h2 {
-      font-size: 15px;
-      font-weight: 600;
-      margin: 0 0 8px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 8px;
-    }
-    .section-sub {
-      font-size: 12px;
-      color: var(--text-dim);
-      margin: 0 0 12px;
-      line-height: 1.4;
-    }
-    .env-table, .ops-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-      background: var(--surface);
-    }
-    .env-table th, .ops-table th {
-      text-align: left; padding: 8px 10px; color: var(--text-dim); font-weight: 500;
-      border-bottom: 1px solid var(--border); background: var(--surface-hover, rgba(255,255,255,.03));
-    }
-    .env-table td, .ops-table td {
-      padding: 7px 10px;
-      border-bottom: 1px solid rgba(48,54,61,.35);
-      vertical-align: top;
-    }
-    .env-table tr:nth-child(even) td,
-    .ops-table tbody tr:nth-child(odd) { background: rgba(255,255,255,.02); }
-    .env-table .st-ok, .ops-table .st-ok { color: var(--green, #3fb950); }
-    .env-table .st-bad, .ops-table .st-bad { color: var(--red, #f85149); }
-    .env-table .st-warn { color: var(--yellow, #d29922); }
-    .env-table .mono, .ops-table .mono {
-      font-family: var(--font-mono, ui-monospace, monospace);
-      font-size: 11px;
-    }
-    .table-wrap {
-      overflow: auto;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-    }
-    .plane {
-      display: grid;
-      grid-template-columns: 1.3fr 1fr;
-      gap: 14px;
-    }
-    @media (max-width: 800px) {
-      .plane { grid-template-columns: 1fr; }
-    }
-    .plane-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px 18px;
-      position: relative;
-      overflow: hidden;
-    }
-    .plane-card::before {
-      content: "";
-      position: absolute;
-      inset-block-start: 0;
-      inset-inline: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent), transparent);
-      opacity: 0.55;
-    }
-    .plane-card h3 {
-      margin: 0 0 6px;
-      font-size: 13px;
-      font-weight: 600;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-    }
-    .plane-metric {
-      font-size: clamp(1.5rem, 3vw, 1.9rem);
-      font-weight: 650;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: -0.02em;
-      margin: 4px 0 8px;
-      line-height: 1.1;
-    }
-    .plane-unit {
-      font-size: 0.45em;
-      font-weight: 500;
-      color: var(--text-dim);
-    }
-    .plane-detail, .plane-sub {
-      font-size: 12px;
-      color: var(--text-dim);
-      line-height: 1.45;
-      margin: 0 0 6px;
-    }
-    .plane-sub {
-      font-family: var(--font-mono, ui-monospace, monospace);
-      font-size: 11px;
-    }
-    .plane-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px 14px;
-      margin-top: 10px;
-      font-size: 12px;
-    }
-    .ops-link { color: var(--accent); }
-    .proof-index-list { list-style: none; padding: 0; margin: 0; font-size: 12px; }
-    .proof-index-list li {
-      padding: 6px 0;
-      border-bottom: 1px solid rgba(48,54,61,.35);
-      font-family: var(--font-mono, ui-monospace, monospace);
-    }
-    .proof-index-list a { color: var(--accent); }
-    .proof-fam { color: var(--text-dim); text-transform: uppercase; font-size: 10px; letter-spacing: .04em; }
-    .proof-index-list .st-ok { color: var(--green, #3fb950); }
-    .proof-index-list .st-bad { color: var(--red, #f85149); }
-    .badge-demo {
-      font-size: 10px;
-      font-weight: 650;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 1px 6px;
-    }
-    .skeleton-card {
-      min-height: 88px;
-      background: linear-gradient(
-        90deg,
-        var(--surface) 25%,
-        var(--surface-hover, rgba(255,255,255,.04)) 50%,
-        var(--surface) 75%
-      );
-      background-size: 200% 100%;
-      animation: shimmer 1.2s ease-in-out infinite;
-    }
-    @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-    .hidden { display: none !important; }
-    .plane-card.ok .plane-metric { color: var(--green, #3fb950); }
-    .plane-card.warn .plane-metric { color: var(--yellow, #d29922); }
-    .plane-card.bad .plane-metric { color: var(--red, #f85149); }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="FactoryWager health diagnostic — edge /api/health, routing proof, env checklist, TOC/ops glance."
+    />
+    <title>Health · FactoryWager</title>
+    <meta name="theme-color" content="#0d1117" />
+    <meta name="application-name" content="FactoryWager" />
+    <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+    <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/portal/style.css" />
+    <style>
+      .health-page {
+        --tone-ok: var(--green, #3fb950);
+        --tone-warn: var(--yellow, #d29922);
+        --tone-bad: var(--red, #f85149);
+        --tone-skip: var(--text-dim);
+        max-width: min(1100px, 100%);
+        margin: 0 auto;
+        padding: 24px var(--pad-inline, 24px) 48px;
+      }
+      [data-tone] {
+        --tone-color: var(--tone-skip);
+      }
+      [data-tone='ok'] {
+        --tone-color: var(--tone-ok);
+      }
+      [data-tone='warn'] {
+        --tone-color: var(--tone-warn);
+      }
+      [data-tone='bad'] {
+        --tone-color: var(--tone-bad);
+      }
+      [data-tone='skip'] {
+        --tone-color: var(--tone-skip);
+      }
+      .health-hero {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 20px;
+        align-items: flex-start;
+        margin-bottom: 8px;
+      }
+      .health-hero h1 {
+        font-size: clamp(1.25rem, 2vw, 1.5rem);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        margin: 0;
+      }
+      .health-hero .sub {
+        width: 100%;
+        margin: 0;
+        font-size: 13px;
+        color: var(--text-dim);
+        line-height: 1.45;
+        max-width: 62ch;
+      }
+      .health-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        margin: 18px 0 28px;
+      }
+      .health-card-group {
+        padding: 14px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: color-mix(in srgb, var(--surface) 72%, transparent);
+      }
+      .health-card-group--loading {
+        grid-column: 1 / -1;
+      }
+      .health-card-group-header {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 12px;
+        padding: 0 2px 11px;
+        border-bottom: 1px solid var(--border);
+      }
+      .health-card-group-header h2 {
+        margin: 0;
+        font-size: 14px;
+        letter-spacing: -0.01em;
+      }
+      .health-card-group-header p {
+        max-width: 34ch;
+        margin: 0;
+        color: var(--text-dim);
+        font-size: 10px;
+        line-height: 1.4;
+        text-align: right;
+      }
+      .health-card-group-kicker {
+        margin: 0 0 3px !important;
+        color: var(--accent) !important;
+        font: 600 9px/1.2 var(--font-mono, ui-monospace, monospace) !important;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-align: left !important;
+      }
+      .health-card-group-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+        gap: 10px;
+      }
+      .health-card {
+        display: flex;
+        min-height: 154px;
+        flex-direction: column;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        padding: 14px;
+        position: relative;
+        overflow: hidden;
+      }
+      .health-card::before {
+        content: '';
+        position: absolute;
+        inset-block-start: 0;
+        inset-inline: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--tone-color), transparent);
+        opacity: 0.9;
+      }
+      .health-card-header {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .health-card h3 {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: var(--text-dim);
+        margin: 0 0 8px;
+      }
+      .health-card-version {
+        padding: 2px 6px;
+        border: 1px solid color-mix(in srgb, var(--tone-color) 38%, var(--border));
+        border-radius: 999px;
+        color: color-mix(in srgb, var(--tone-color) 72%, white);
+        background: color-mix(in srgb, var(--tone-color) 8%, transparent);
+        font: 600 9px/1.25 var(--font-mono, ui-monospace, monospace);
+        white-space: nowrap;
+      }
+      .health-card .val {
+        font-size: 22px;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        font-family: var(--font-mono, ui-monospace, monospace);
+        color: var(--tone-color);
+      }
+      .health-card .sub {
+        font-size: 12px;
+        color: var(--text-dim);
+        margin-top: 6px;
+        word-break: break-all;
+        line-height: 1.35;
+      }
+      .health-resource-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px 10px;
+        margin-top: auto;
+        padding-top: 11px;
+        border-top: 1px solid color-mix(in srgb, var(--tone-color) 15%, var(--border));
+      }
+      .health-resource-links a {
+        color: var(--text-dim);
+        font: 600 9px/1.2 var(--font-mono, ui-monospace, monospace);
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+      .health-resource-links a:hover,
+      .health-resource-links a:focus-visible {
+        color: var(--tone-color);
+        outline: none;
+      }
+      @media (max-width: 900px) {
+        .health-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 560px) {
+        .health-card-group-header {
+          align-items: start;
+          flex-direction: column;
+        }
+        .health-card-group-header p {
+          text-align: left;
+        }
+      }
+      .health-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 12px 0 8px;
+      }
+      .health-actions a,
+      .health-actions button {
+        font-size: 13px;
+        font-family: inherit;
+        padding: 6px 12px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        color: var(--accent);
+        text-decoration: none;
+        background: var(--surface);
+        cursor: pointer;
+      }
+      .health-actions a:hover,
+      .health-actions button:hover {
+        border-color: var(--accent);
+      }
+      .health-pre {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px;
+        font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+        font-size: 12px;
+        white-space: pre-wrap;
+        overflow: auto;
+        max-height: 420px;
+        color: var(--text-dim);
+      }
+      .health-banner {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 18px;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        background: var(--surface);
+        margin: 12px 0 8px;
+      }
+      .health-banner .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--tone-color, var(--text-dim));
+        flex-shrink: 0;
+      }
+      .health-banner[data-tone] .dot {
+        box-shadow: 0 0 8px color-mix(in srgb, var(--tone-color) 75%, transparent);
+      }
+      .health-banner .title {
+        font-weight: 600;
+        font-size: 16px;
+      }
+      .health-banner .meta {
+        font-size: 12px;
+        color: var(--text-dim);
+        margin-top: 2px;
+      }
+      .section {
+        margin: 28px 0;
+      }
+      .section h2 {
+        font-size: 15px;
+        font-weight: 600;
+        margin: 0 0 8px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 8px;
+      }
+      .section-sub {
+        font-size: 12px;
+        color: var(--text-dim);
+        margin: 0 0 12px;
+        line-height: 1.4;
+      }
+      .env-table,
+      .ops-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+        background: var(--surface);
+      }
+      .env-table th,
+      .ops-table th {
+        text-align: left;
+        padding: 8px 10px;
+        color: var(--text-dim);
+        font-weight: 500;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface-hover, rgba(255, 255, 255, 0.03));
+      }
+      .env-table td,
+      .ops-table td {
+        padding: 7px 10px;
+        border-bottom: 1px solid rgba(48, 54, 61, 0.35);
+        vertical-align: top;
+      }
+      .env-table tr:nth-child(even) td,
+      .ops-table tbody tr:nth-child(odd) {
+        background: rgba(255, 255, 255, 0.02);
+      }
+      .env-table .st-ok,
+      .ops-table .st-ok {
+        color: var(--green, #3fb950);
+      }
+      .env-table .st-bad,
+      .ops-table .st-bad {
+        color: var(--red, #f85149);
+      }
+      .env-table .st-warn {
+        color: var(--yellow, #d29922);
+      }
+      .env-table .mono,
+      .ops-table .mono {
+        font-family: var(--font-mono, ui-monospace, monospace);
+        font-size: 11px;
+      }
+      .table-wrap {
+        overflow: auto;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+      }
+      .plane {
+        display: grid;
+        grid-template-columns: 1.3fr 1fr;
+        gap: 14px;
+      }
+      @media (max-width: 800px) {
+        .plane {
+          grid-template-columns: 1fr;
+        }
+      }
+      .plane-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+        position: relative;
+        overflow: hidden;
+      }
+      .plane-card::before {
+        content: '';
+        position: absolute;
+        inset-block-start: 0;
+        inset-inline: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent), transparent);
+        opacity: 0.55;
+      }
+      .plane-card h3 {
+        margin: 0 0 6px;
+        font-size: 13px;
+        font-weight: 600;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .plane-metric {
+        font-size: clamp(1.5rem, 3vw, 1.9rem);
+        font-weight: 650;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.02em;
+        margin: 4px 0 8px;
+        line-height: 1.1;
+      }
+      .plane-unit {
+        font-size: 0.45em;
+        font-weight: 500;
+        color: var(--text-dim);
+      }
+      .plane-detail,
+      .plane-sub {
+        font-size: 12px;
+        color: var(--text-dim);
+        line-height: 1.45;
+        margin: 0 0 6px;
+      }
+      .plane-sub {
+        font-family: var(--font-mono, ui-monospace, monospace);
+        font-size: 11px;
+      }
+      .plane-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 14px;
+        margin-top: 10px;
+        font-size: 12px;
+      }
+      .ops-link {
+        color: var(--accent);
+      }
+      .proof-index-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 12px;
+      }
+      .proof-index-list li {
+        padding: 6px 0;
+        border-bottom: 1px solid rgba(48, 54, 61, 0.35);
+        font-family: var(--font-mono, ui-monospace, monospace);
+      }
+      .proof-index-list a {
+        color: var(--accent);
+      }
+      .proof-fam {
+        color: var(--text-dim);
+        text-transform: uppercase;
+        font-size: 10px;
+        letter-spacing: 0.04em;
+      }
+      .proof-index-list .st-ok {
+        color: var(--green, #3fb950);
+      }
+      .proof-index-list .st-bad {
+        color: var(--red, #f85149);
+      }
+      .badge-demo {
+        font-size: 10px;
+        font-weight: 650;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 1px 6px;
+      }
+      .skeleton-card {
+        min-height: 88px;
+        background: linear-gradient(
+          90deg,
+          var(--surface) 25%,
+          var(--surface-hover, rgba(255, 255, 255, 0.04)) 50%,
+          var(--surface) 75%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.2s ease-in-out infinite;
+      }
+      @keyframes shimmer {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+      .hidden {
+        display: none !important;
+      }
+      .plane-card.ok .plane-metric {
+        color: var(--green, #3fb950);
+      }
+      .plane-card.warn .plane-metric {
+        color: var(--yellow, #d29922);
+      }
+      .plane-card.bad .plane-metric {
+        color: var(--red, #f85149);
+      }
 
-    /* Live check — multi-column probe context */
-    .health-page { max-width: min(1240px, 100%); }
-    .live-context {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px 14px;
-      align-items: center;
-      margin: 0 0 12px;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--surface);
-      font-size: 12px;
-      color: var(--text-dim);
-      line-height: 1.4;
-    }
-    .live-context strong { color: var(--text); font-weight: 600; }
-    .live-context code {
-      font-family: var(--font-mono, ui-monospace, monospace);
-      font-size: 11px;
-    }
-    .live-legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px 12px;
-      margin: 0 0 12px;
-      font-size: 11px;
-      color: var(--text-dim);
-    }
-    .live-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.02);
-      white-space: nowrap;
-    }
-    .live-pill b {
-      font-weight: 650;
-      letter-spacing: .03em;
-      text-transform: uppercase;
-      font-size: 10px;
-      color: var(--text);
-    }
-    .live-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-      background: var(--surface);
-      min-width: 860px;
-    }
-    .live-table th {
-      text-align: left;
-      padding: 8px 10px;
-      color: var(--text-dim);
-      font-weight: 500;
-      border-bottom: 1px solid var(--border);
-      background: var(--surface-hover, rgba(255,255,255,.03));
-      white-space: nowrap;
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-    .live-table td {
-      padding: 8px 10px;
-      border-bottom: 1px solid rgba(48,54,61,.35);
-      vertical-align: top;
-    }
-    .live-table tbody tr:nth-child(even) td { background: rgba(255,255,255,.015); }
-    .live-table tr.live-row-ok td:first-child { box-shadow: inset 3px 0 0 var(--green, #3fb950); }
-    .live-table tr.live-row-warn td:first-child { box-shadow: inset 3px 0 0 var(--yellow, #d29922); }
-    .live-table tr.live-row-bad td:first-child { box-shadow: inset 3px 0 0 var(--red, #f85149); }
-    .live-table tr.live-row-skip td:first-child { box-shadow: inset 3px 0 0 var(--text-dim); }
-    .live-table .st-ok { color: var(--green, #3fb950); font-weight: 600; }
-    .live-table .st-warn { color: var(--yellow, #d29922); font-weight: 600; }
-    .live-table .st-bad { color: var(--red, #f85149); font-weight: 600; }
-    .live-table .st-skip { color: var(--text-dim); }
-    .live-table .mono {
-      font-family: var(--font-mono, ui-monospace, monospace);
-      font-size: 11px;
-    }
-    .live-table .surface-name { font-weight: 600; color: var(--text); }
-    .live-table .surface-what {
-      display: block;
-      margin-top: 2px;
-      font-size: 11px;
-      color: var(--text-dim);
-      font-weight: 400;
-      max-width: 28ch;
-      line-height: 1.35;
-    }
-    .kind-chip, .plane-chip {
-      display: inline-block;
-      font-size: 10px;
-      font-weight: 650;
-      letter-spacing: .04em;
-      text-transform: uppercase;
-      padding: 2px 7px;
-      border-radius: 4px;
-      border: 1px solid var(--border);
-      white-space: nowrap;
-    }
-    .kind-chip { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
-    .plane-chip { color: var(--text-dim); }
-    .plane-chip[data-plane="edge"] { color: #79c0ff; border-color: #1f6feb55; }
-    .plane-chip[data-plane="public"] { color: #a5d6ff; border-color: #388bfd44; }
-    .plane-chip[data-plane="document"] { color: #d2a8ff; border-color: #a371f744; }
-    .plane-chip[data-plane="operate"] { color: #7ee787; border-color: #23863655; }
-    .plane-chip[data-plane="harness"] { color: #ffa657; border-color: #9e6a0355; }
-    .plane-chip[data-plane="infra"] { color: #ffa198; border-color: #da363355; }
-    .live-table .detail { color: var(--text-dim); line-height: 1.4; max-width: 36ch; }
-    .live-table a.ops-link { color: var(--accent); }
-    .live-counts { font-variant-numeric: tabular-nums; }
-    .live-counts .c-ok { color: var(--green, #3fb950); }
-    .live-counts .c-warn { color: var(--yellow, #d29922); }
-    .live-counts .c-bad { color: var(--red, #f85149); }
-  </style>
-</head>
-<body>
-  <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <h1 class="logo">
-        <span class="logo-icon" aria-hidden="true"></span>
-        <span class="brand-wordmark">FactoryWager</span>
-        <span class="brand-badge">ops</span>
-        <span class="logo-page">Health</span>
-      </h1>
-      <nav class="topbar-nav" aria-label="Primary">
-        <a href="/" class="nav-link" data-group="other">Home</a>
-        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · bun run ops:snapshot" data-group="ops" data-cli="bun run ops:snapshot">Ops</a>
-        <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
-        <a href="/portal/health/" class="nav-link active" aria-current="page" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake">Health</a>
-        <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane">DOD</a>
-        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake">Compliance</a>
-        <div class="nav-overflow">
-          <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
-          <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog/" class="nav-link" data-group="registry" role="menuitem">Catalog</a>
-            <a href="/portal/packages/" class="nav-link" title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table" data-group="registry" data-cli="bun run portal-cli pm graph  # offline packages-graph-map table" role="menuitem">Packages</a>
-            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
-            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
-            <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
-            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
-            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
-            <a href="/portal/tools/" class="nav-link" title="portal-cli surface map · badges · capability subset · bun run portal-cli dashboard --view=tools" data-group="harness" data-cli="bun run portal-cli dashboard --view=tools" role="menuitem">CLI Tools</a>
-            <a href="/portal/failures/" class="nav-link" title="test failures bake · junit · nav badge = count · bun run failures:bake  # → /registry/failures.json" data-group="harness" data-cli="bun run failures:bake  # → /registry/failures.json" role="menuitem">Failures</a>
-            <a href="/portal/bunfig/" class="nav-link" title="bunfig install config provenance · portal-cli bunfig status · bun run bunfig:bake  # → /registry/bunfig-state.json" data-group="harness" data-cli="bun run bunfig:bake  # → /registry/bunfig-state.json" role="menuitem">Bunfig</a>
-            <a href="/portal/console-format/" class="nav-link" title="structured output gate · logTable/logDepth/jsonOut ratchet · bun run console-format:bake  # → /registry/console-format-state.json" data-group="harness" data-cli="bun run console-format:bake  # → /registry/console-format-state.json" role="menuitem">Console Format</a>
-            <a href="/portal/doctor/" class="nav-link" title="unified health gate · bunfig · catalog · linker · bun run portal:doctor --verbose" data-group="harness" data-cli="bun run portal:doctor --verbose" role="menuitem">Doctor</a>
-            <a href="/portal/install-hygiene/" class="nav-link" title="cache prune · npm-install policy · install:verify bake · bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" data-group="harness" data-cli="bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" role="menuitem">Install hygiene</a>
-            <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
-            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
-            <a href="/portal/limits/" class="nav-link" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
-            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
-            <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
-            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
-            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub" data-group="other" role="menuitem">Wiki</a>
+      /* Live check — multi-column probe context */
+      .health-page {
+        max-width: min(1240px, 100%);
+      }
+      .live-context {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 14px;
+        align-items: center;
+        margin: 0 0 12px;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+        font-size: 12px;
+        color: var(--text-dim);
+        line-height: 1.4;
+      }
+      .live-context strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .live-context code {
+        font-family: var(--font-mono, ui-monospace, monospace);
+        font-size: 11px;
+      }
+      .live-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 12px;
+        margin: 0 0 12px;
+        font-size: 11px;
+        color: var(--text-dim);
+      }
+      .live-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.02);
+        white-space: nowrap;
+      }
+      .live-pill b {
+        font-weight: 650;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        font-size: 10px;
+        color: var(--text);
+      }
+      .live-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+        background: var(--surface);
+        min-width: 1480px;
+      }
+      .live-table th {
+        text-align: left;
+        padding: 8px 10px;
+        color: var(--text-dim);
+        font-weight: 500;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface-hover, rgba(255, 255, 255, 0.03));
+        white-space: nowrap;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+      .live-table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid rgba(48, 54, 61, 0.35);
+        vertical-align: top;
+      }
+      .live-table tbody tr:nth-child(even) td {
+        background: rgba(255, 255, 255, 0.015);
+      }
+      .live-table tr[data-tone] td:first-child {
+        box-shadow: inset 3px 0 0 var(--tone-color);
+      }
+      .live-table .mono {
+        font-family: var(--font-mono, ui-monospace, monospace);
+        font-size: 11px;
+      }
+      .live-table .surface-name {
+        font-weight: 600;
+        color: var(--text);
+      }
+      .live-table .surface-what {
+        display: block;
+        margin-top: 2px;
+        font-size: 11px;
+        color: var(--text-dim);
+        font-weight: 400;
+        max-width: 28ch;
+        line-height: 1.35;
+      }
+      .live-host {
+        min-width: 130px;
+      }
+      .live-port {
+        width: 64px;
+        color: var(--text);
+        font-variant-numeric: tabular-nums;
+      }
+      .live-source {
+        max-width: 230px;
+        overflow-wrap: anywhere;
+        color: var(--text-dim);
+      }
+      .tone-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-width: 118px;
+        padding: 5px 8px;
+        border: 1px solid color-mix(in srgb, var(--tone-color) 45%, var(--border));
+        border-radius: 999px;
+        color: color-mix(in srgb, var(--tone-color) 78%, white);
+        background: color-mix(in srgb, var(--tone-color) 9%, transparent);
+        font: 600 10px/1.3 var(--font-mono, ui-monospace, monospace);
+        white-space: nowrap;
+      }
+      .tone-dot {
+        width: 7px;
+        height: 7px;
+        flex: 0 0 7px;
+        border-radius: 50%;
+        background: var(--tone-color);
+        box-shadow: 0 0 8px color-mix(in srgb, var(--tone-color) 70%, transparent);
+      }
+      .kind-chip,
+      .plane-chip {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 650;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        padding: 2px 7px;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+        white-space: nowrap;
+      }
+      .kind-chip {
+        color: var(--accent);
+        border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+      }
+      .plane-chip {
+        color: var(--text-dim);
+      }
+      .plane-chip[data-plane='edge'] {
+        color: #79c0ff;
+        border-color: #1f6feb55;
+      }
+      .plane-chip[data-plane='public'] {
+        color: #a5d6ff;
+        border-color: #388bfd44;
+      }
+      .plane-chip[data-plane='document'] {
+        color: #d2a8ff;
+        border-color: #a371f744;
+      }
+      .plane-chip[data-plane='operate'] {
+        color: #7ee787;
+        border-color: #23863655;
+      }
+      .plane-chip[data-plane='harness'] {
+        color: #ffa657;
+        border-color: #9e6a0355;
+      }
+      .plane-chip[data-plane='infra'] {
+        color: #ffa198;
+        border-color: #da363355;
+      }
+      .version-chip {
+        display: inline-block;
+        padding: 3px 7px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        color: var(--text-dim);
+        background: rgb(255 255 255 / 2%);
+        font: 600 10px/1.3 var(--font-mono, ui-monospace, monospace);
+        white-space: nowrap;
+      }
+      .live-resource-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 9px;
+        min-width: 160px;
+      }
+      .live-resource-links a {
+        color: var(--accent);
+        font: 600 10px/1.3 var(--font-mono, ui-monospace, monospace);
+        text-decoration: none;
+      }
+      .live-resource-links a:hover,
+      .live-resource-links a:focus-visible {
+        text-decoration: underline;
+        outline: none;
+      }
+      .live-table .detail {
+        color: var(--text-dim);
+        line-height: 1.4;
+        max-width: 36ch;
+      }
+      .live-table a.ops-link {
+        color: var(--accent);
+      }
+      .live-counts {
+        font-variant-numeric: tabular-nums;
+      }
+      .live-counts .c-ok {
+        color: var(--green, #3fb950);
+      }
+      .live-counts .c-warn {
+        color: var(--yellow, #d29922);
+      }
+      .live-counts .c-bad {
+        color: var(--red, #f85149);
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <h1 class="logo">
+          <span class="logo-icon" aria-hidden="true"></span>
+          <span class="brand-wordmark">FactoryWager</span>
+          <span class="brand-badge">ops</span>
+          <span class="logo-page">Health</span>
+        </h1>
+        <nav class="topbar-nav" aria-label="Primary">
+          <a href="/" class="nav-link" data-group="other">Home</a>
+          <a
+            href="/portal/ops/"
+            class="nav-link"
+            title="ops-summary rollup · bun run ops:snapshot"
+            data-group="ops"
+            data-cli="bun run ops:snapshot"
+            >Ops</a
+          >
+          <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
+          <a
+            href="/portal/health/"
+            class="nav-link active"
+            aria-current="page"
+            title="system health · monorepo score · bun run monorepo:health:bake"
+            data-group="harness"
+            data-cli="bun run monorepo:health:bake"
+            >Health</a
+          >
+          <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane"
+            >DOD</a
+          >
+          <a
+            href="/portal/compliance/"
+            class="nav-link"
+            title="MA/NJ board · bun run compliance:bake"
+            data-group="ops"
+            data-cli="bun run compliance:bake"
+            >Compliance</a
+          >
+          <div class="nav-overflow">
+            <button
+              type="button"
+              class="nav-more"
+              aria-label="More navigation"
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              ⋯
+            </button>
+            <div class="nav-dropdown" role="menu">
+              <a href="/portal/catalog/" class="nav-link" data-group="registry" role="menuitem"
+                >Catalog</a
+              >
+              <a
+                href="/portal/packages/"
+                class="nav-link"
+                title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table"
+                data-group="registry"
+                data-cli="bun run portal-cli pm graph  # offline packages-graph-map table"
+                role="menuitem"
+                >Packages</a
+              >
+              <a
+                href="/portal/brands/"
+                class="nav-link"
+                title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap"
+                data-group="registry"
+                data-cli="bun run brand:keymap"
+                role="menuitem"
+                >Brands</a
+              >
+              <a
+                href="/portal/surfaces/"
+                class="nav-link"
+                title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json"
+                data-group="registry"
+                data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json"
+                role="menuitem"
+                >Surfaces</a
+              >
+              <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem"
+                >Skills</a
+              >
+              <a
+                href="/portal/vault/"
+                class="nav-link"
+                title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps"
+                data-group="secrets"
+                data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps"
+                role="menuitem"
+                >Vault</a
+              >
+              <a
+                href="/portal/env/"
+                class="nav-link"
+                title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed"
+                data-group="secrets"
+                data-cli="bun run portal-cli secret map  # no secret values printed"
+                role="menuitem"
+                >Env</a
+              >
+              <a
+                href="/portal/tools/"
+                class="nav-link"
+                title="portal-cli surface map · badges · capability subset · bun run portal-cli dashboard --view=tools"
+                data-group="harness"
+                data-cli="bun run portal-cli dashboard --view=tools"
+                role="menuitem"
+                >CLI Tools</a
+              >
+              <a
+                href="/portal/failures/"
+                class="nav-link"
+                title="test failures bake · junit · nav badge = count · bun run failures:bake  # → /registry/failures.json"
+                data-group="harness"
+                data-cli="bun run failures:bake  # → /registry/failures.json"
+                role="menuitem"
+                >Failures</a
+              >
+              <a
+                href="/portal/bunfig/"
+                class="nav-link"
+                title="bunfig install config provenance · portal-cli bunfig status · bun run bunfig:bake  # → /registry/bunfig-state.json"
+                data-group="harness"
+                data-cli="bun run bunfig:bake  # → /registry/bunfig-state.json"
+                role="menuitem"
+                >Bunfig</a
+              >
+              <a
+                href="/portal/console-format/"
+                class="nav-link"
+                title="structured output gate · logTable/logDepth/jsonOut ratchet · bun run console-format:bake  # → /registry/console-format-state.json"
+                data-group="harness"
+                data-cli="bun run console-format:bake  # → /registry/console-format-state.json"
+                role="menuitem"
+                >Console Format</a
+              >
+              <a
+                href="/portal/doctor/"
+                class="nav-link"
+                title="unified health gate · bunfig · catalog · linker · bun run portal:doctor --verbose"
+                data-group="harness"
+                data-cli="bun run portal:doctor --verbose"
+                role="menuitem"
+                >Doctor</a
+              >
+              <a
+                href="/portal/install-hygiene/"
+                class="nav-link"
+                title="cache prune · npm-install policy · install:verify bake · bun run bake:install-hygiene  # → /registry/install-hygiene-report.json"
+                data-group="harness"
+                data-cli="bun run bake:install-hygiene  # → /registry/install-hygiene-report.json"
+                role="menuitem"
+                >Install hygiene</a
+              >
+              <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem"
+                >Dashboard</a
+              >
+              <a
+                href="/portal/toc/"
+                class="nav-link"
+                title="Drum/Buffer/Rope · bun run ops:seed:toc"
+                data-group="ops"
+                data-cli="bun run ops:seed:toc"
+                role="menuitem"
+                >TOC</a
+              >
+              <a
+                href="/portal/limits/"
+                class="nav-link"
+                title="bun run ops:limits:demo"
+                data-group="ops"
+                data-cli="bun run ops:limits:demo"
+                role="menuitem"
+                >Limits</a
+              >
+              <a
+                href="/portal/partner-history/"
+                class="nav-link"
+                title="per-partner limit history board · bun run ops:limits:demo"
+                data-group="ops"
+                data-cli="bun run ops:limits:demo"
+                role="menuitem"
+                >Partner history</a
+              >
+              <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem"
+                >Monitoring</a
+              >
+              <a
+                href="/registry/prediction/report/"
+                class="nav-link"
+                title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction"
+                data-group="ops"
+                data-cli="bun run portal-cli snapshot last --scope prediction"
+                role="menuitem"
+                >Prediction</a
+              >
+              <a
+                href="https://wiki.factory-wager.com/wiki-index.html"
+                class="nav-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="GitHub Pages hub"
+                data-group="other"
+                role="menuitem"
+                >Wiki</a
+              >
+            </div>
           </div>
+        </nav>
+        <div class="topbar-status">
+          <a href="/portal/health.md" class="nav-link nav-md" title="Markdown view">MD</a>
+          <a href="/portal/health/" class="topbar-health-link" title="System health">
+            <span id="health-dot" class="health-dot unknown" title="Health"></span>
+            <span id="health-label" class="health-label">…</span>
+          </a>
         </div>
-      </nav>
-      <div class="topbar-status">
-        <a href="/portal/health.md" class="nav-link nav-md" title="Markdown view">MD</a>
-        <a href="/portal/health/" class="topbar-health-link" title="System health">
-          <span id="health-dot" class="health-dot unknown" title="Health"></span>
-          <span id="health-label" class="health-label">…</span>
-        </a>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <main class="health-page">
-    <div class="health-hero">
-      <h1>Health</h1>
-      <p class="sub">
-        Diagnostic probe for edge <code>/api/health</code> — summary cards, multi-column
-        <strong>Live check</strong> (kind · plane · source · status · detail), routing proof,
-        env checklist, and operate glance. Topbar status stays on <code>data.js</code>
-        (this page does not own the dot).
+    <main class="health-page">
+      <div class="health-hero">
+        <h1>Health</h1>
+        <p class="sub">
+          Diagnostic probe for edge <code>/api/health</code> — summary cards, multi-column
+          <strong>Live check</strong> (host · port · status · source · version · resources), routing
+          proof, env checklist, and operate glance. Topbar status stays on <code>data.js</code>
+          (this page does not own the dot).
+        </p>
+      </div>
+
+      <div id="banner" class="health-banner" data-tone="warn" role="status" aria-live="polite">
+        <span class="dot"></span>
+        <div>
+          <div class="title" id="banner-title">Checking health…</div>
+          <div class="meta" id="banner-meta">Probing /api/health and /health</div>
+        </div>
+      </div>
+
+      <div class="health-actions">
+        <a href="/api/health" target="_blank" rel="noopener">API JSON</a>
+        <a href="/health" target="_blank" rel="noopener">Raw /health</a>
+        <a href="/health/pre" target="_blank" rel="noopener">Plain /health/pre</a>
+        <a href="/registry/ops-summary.json" target="_blank" rel="noopener">ops-summary</a>
+        <a href="/registry/toc-ops.json" target="_blank" rel="noopener">toc-ops</a>
+        <a href="/registry/static.json" target="_blank" rel="noopener">static aggregate</a>
+        <a href="/portal/dashboard/">Dashboard</a>
+        <a href="/portal/toc/">TOC board</a>
+        <button type="button" id="btn-refresh">Refresh</button>
+      </div>
+
+      <div class="health-grid" id="cards" aria-live="polite"></div>
+
+      <section class="section" aria-labelledby="live-heading">
+        <h2 id="live-heading">Live check</h2>
+        <p class="section-sub">
+          Browser probes of known surfaces — hostname, port, source path, and status are independent
+          fields. Status derives from the shared tone token contract; version and resource mappings
+          bind every probe to its artifact, package catalog, and wiki owner.
+        </p>
+        <div class="live-context" id="live-context" role="status">
+          <span>Probing…</span>
+        </div>
+        <div class="live-legend" aria-label="Column legend">
+          <span class="live-pill"><b>Kind</b> check type</span>
+          <span class="live-pill"
+            ><b>Plane</b> edge · public · document · operate · harness · infra</span
+          >
+          <span class="live-pill"><b>Host</b> resolved hostname</span>
+          <span class="live-pill"><b>Port</b> explicit or protocol default</span>
+          <span class="live-pill"><b>Status</b> live HTTP + token tone</span>
+          <span class="live-pill"><b>Resources</b> artifact · package · wiki</span>
+          <span class="live-pill"><b>Detail</b> payload / age / score</span>
+        </div>
+        <div class="table-wrap">
+          <table class="live-table" id="live-table">
+            <thead>
+              <tr>
+                <th scope="col">Surface</th>
+                <th scope="col">Host</th>
+                <th scope="col">Port</th>
+                <th scope="col">Status</th>
+                <th scope="col">Kind</th>
+                <th scope="col">Plane</th>
+                <th scope="col">Source</th>
+                <th scope="col">Version</th>
+                <th scope="col">Resources</th>
+                <th scope="col">Detail</th>
+              </tr>
+            </thead>
+            <tbody id="live-body">
+              <tr>
+                <td colspan="10">Loading live probes…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="proof-index-heading">
+        <h2 id="proof-index-heading">Verification · proof pins</h2>
+        <div id="proof-index-host">
+          <p class="section-sub">
+            Document-plane bakes (FormData, networking, stable/pinned verification).
+          </p>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="limits-heading">
+        <h2 id="limits-heading">Limit changes</h2>
+        <p class="section-sub">
+          Recent partner limit raises from ops-summary · full board
+          <a class="ops-link" href="/portal/limits/">/portal/limits/</a>.
+        </p>
+        <limit-changes-card limit="5" compact></limit-changes-card>
+      </section>
+
+      <section class="section" aria-labelledby="plane-heading">
+        <h2 id="plane-heading">Operate glance</h2>
+        <p class="section-sub">
+          Enriched from <code>ops-summary</code> when the edge health payload omits TOC/loop slices.
+        </p>
+        <div class="plane" id="ops-plane"></div>
+      </section>
+
+      <section class="section hidden" id="routing-section" aria-labelledby="routing-heading">
+        <h2 id="routing-heading">Routing proof</h2>
+        <p class="section-sub" id="routing-summary">—</p>
+        <div class="table-wrap">
+          <table class="ops-table">
+            <thead>
+              <tr>
+                <th>Path</th>
+                <th>Status</th>
+                <th>Critical</th>
+                <th>ms</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody id="routing-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="env-heading">
+        <h2 id="env-heading">Environment checklist</h2>
+        <p class="section-sub" id="env-summary">—</p>
+        <div class="table-wrap">
+          <table class="env-table" id="env-table">
+            <thead>
+              <tr>
+                <th>Key</th>
+                <th>Group</th>
+                <th>Severity</th>
+                <th>Status</th>
+                <th>Detail</th>
+              </tr>
+            </thead>
+            <tbody id="env-body">
+              <tr>
+                <td colspan="5">Loading…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="vps-heading">
+        <h2 id="vps-heading">
+          VPS Infrastructure
+          <a class="permalink" href="#vps-heading" aria-label="permalink">¶</a>
+        </h2>
+        <div id="vps-panel">
+          <p class="loading">Loading VPS status…</p>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="raw-heading">
+        <h2 id="raw-heading">Raw payload</h2>
+        <pre class="health-pre" id="raw">Loading…</pre>
+      </section>
+    </main>
+
+    <notification-center aria-live="polite"></notification-center>
+
+    <footer class="footer" data-portal-chrome="footer">
+      <p>
+        <strong>FactoryWager</strong> ·
+        <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a>
+        · <a href="/portal/ops/">Ops</a> · <a href="/portal/toc/">TOC</a> ·
+        <a href="/portal/packages/">Packages</a> · <a href="/portal/brands/">Brands</a> ·
+        <a href="/portal/surfaces/">Surfaces</a> · <a href="/portal/health/">Health</a> ·
+        <a href="/registry/portal-weave.json">Portal proof</a> ·
+        <a href="/portal/tools/">CLI Tools</a> · <a href="/portal/compliance/">Compliance</a> ·
+        <a href="/portal/limits/">Limits</a> · <a href="/portal/dod/">DOD</a> ·
+        <a href="/portal/env/">Env</a> · <a href="/portal/vault/">Vault</a> ·
+        <a href="/portal/failures/">Failures</a> ·
+        <a href="/portal/install-hygiene/">Install hygiene</a> ·
+        <a href="/registry/monorepo-health.json">Monorepo health</a> ·
+        <a
+          href="https://github.com/brendadeeznuts1111/project-R-score"
+          target="_blank"
+          rel="noopener noreferrer"
+          >GitHub</a
+        >
       </p>
-    </div>
-
-    <div id="banner" class="health-banner warn" role="status" aria-live="polite">
-      <span class="dot"></span>
-      <div>
-        <div class="title" id="banner-title">Checking health…</div>
-        <div class="meta" id="banner-meta">Probing /api/health and /health</div>
-      </div>
-    </div>
-
-    <div class="health-actions">
-      <a href="/api/health" target="_blank" rel="noopener">API JSON</a>
-      <a href="/health" target="_blank" rel="noopener">Raw /health</a>
-      <a href="/health/pre" target="_blank" rel="noopener">Plain /health/pre</a>
-      <a href="/registry/ops-summary.json" target="_blank" rel="noopener">ops-summary</a>
-      <a href="/registry/toc-ops.json" target="_blank" rel="noopener">toc-ops</a>
-      <a href="/registry/static.json" target="_blank" rel="noopener">static aggregate</a>
-      <a href="/portal/dashboard/">Dashboard</a>
-      <a href="/portal/toc/">TOC board</a>
-      <button type="button" id="btn-refresh">Refresh</button>
-    </div>
-
-    <div class="health-grid" id="cards" aria-live="polite"></div>
-
-    <section class="section" aria-labelledby="live-heading">
-      <h2 id="live-heading">Live check</h2>
-      <p class="section-sub">
-        Browser probes of known surfaces — each row is a distinct check with kind (what), plane (where),
-        source (URL), tone (ok / attention / fail), and detail (payload context). Not the same as the
-        summary cards above: cards roll up edge <code>/api/health</code>; this table verifies each artifact
-        independently so global context stays explicit.
+      <p class="footer-meta">
+        project-R-score · chrome
+        <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a> ·
+        <span data-footer-ts>…</span>
       </p>
-      <div class="live-context" id="live-context" role="status">
-        <span>Probing…</span>
-      </div>
-      <div class="live-legend" aria-label="Column legend">
-        <span class="live-pill"><b>Kind</b> check type</span>
-        <span class="live-pill"><b>Plane</b> edge · public · document · operate · harness · infra</span>
-        <span class="live-pill"><b>Source</b> URL probed</span>
-        <span class="live-pill"><b>Status</b> HTTP + tone</span>
-        <span class="live-pill"><b>Detail</b> payload / age / score</span>
-      </div>
-      <div class="table-wrap">
-        <table class="live-table" id="live-table">
-          <thead>
-            <tr>
-              <th scope="col">Surface</th>
-              <th scope="col">Kind</th>
-              <th scope="col">Plane</th>
-              <th scope="col">Source</th>
-              <th scope="col">Status</th>
-              <th scope="col">Detail</th>
-            </tr>
-          </thead>
-          <tbody id="live-body">
-            <tr><td colspan="6">Loading live probes…</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+    </footer>
 
-    <section class="section" aria-labelledby="proof-index-heading">
-      <h2 id="proof-index-heading">Verification · proof pins</h2>
-      <div id="proof-index-host">
-        <p class="section-sub">Document-plane bakes (FormData, networking, stable/pinned verification).</p>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="limits-heading">
-      <h2 id="limits-heading">Limit changes</h2>
-      <p class="section-sub">
-        Recent partner limit raises from ops-summary · full board
-        <a class="ops-link" href="/portal/limits/">/portal/limits/</a>.
-      </p>
-      <limit-changes-card limit="5" compact></limit-changes-card>
-    </section>
-
-    <section class="section" aria-labelledby="plane-heading">
-      <h2 id="plane-heading">Operate glance</h2>
-      <p class="section-sub">
-        Enriched from <code>ops-summary</code> when the edge health payload omits TOC/loop slices.
-      </p>
-      <div class="plane" id="ops-plane"></div>
-    </section>
-
-    <section class="section hidden" id="routing-section" aria-labelledby="routing-heading">
-      <h2 id="routing-heading">Routing proof</h2>
-      <p class="section-sub" id="routing-summary">—</p>
-      <div class="table-wrap">
-        <table class="ops-table">
-          <thead>
-            <tr>
-              <th>Path</th>
-              <th>Status</th>
-              <th>Critical</th>
-              <th>ms</th>
-              <th>Result</th>
-            </tr>
-          </thead>
-          <tbody id="routing-body"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="env-heading">
-      <h2 id="env-heading">Environment checklist</h2>
-      <p class="section-sub" id="env-summary">—</p>
-      <div class="table-wrap">
-        <table class="env-table" id="env-table">
-          <thead>
-            <tr>
-              <th>Key</th>
-              <th>Group</th>
-              <th>Severity</th>
-              <th>Status</th>
-              <th>Detail</th>
-            </tr>
-          </thead>
-          <tbody id="env-body">
-            <tr><td colspan="5">Loading…</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="vps-heading">
-      <h2 id="vps-heading">VPS Infrastructure
-        <a class="permalink" href="#vps-heading" aria-label="permalink">¶</a>
-      </h2>
-      <div id="vps-panel">
-        <p class="loading">Loading VPS status…</p>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="raw-heading">
-      <h2 id="raw-heading">Raw payload</h2>
-      <pre class="health-pre" id="raw">Loading…</pre>
-    </section>
-  </main>
-
-  <notification-center aria-live="polite"></notification-center>
-
-  <footer class="footer" data-portal-chrome="footer">
-    <p>
-      <strong>FactoryWager</strong> ·
-      <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
-      <a href="/portal/ops/">Ops</a> ·
-      <a href="/portal/toc/">TOC</a> ·
-      <a href="/portal/packages/">Packages</a> ·
-      <a href="/portal/brands/">Brands</a> ·
-      <a href="/portal/surfaces/">Surfaces</a> ·
-      <a href="/portal/health/">Health</a> ·
-      <a href="/registry/portal-weave.json">Portal proof</a> ·
-      <a href="/portal/tools/">CLI Tools</a> ·
-      <a href="/portal/compliance/">Compliance</a> ·
-      <a href="/portal/limits/">Limits</a> ·
-      <a href="/portal/dod/">DOD</a> ·
-      <a href="/portal/env/">Env</a> ·
-      <a href="/portal/vault/">Vault</a> ·
-      <a href="/portal/failures/">Failures</a> ·
-      <a href="/portal/install-hygiene/">Install hygiene</a> ·
-      <a href="/registry/monorepo-health.json">Monorepo health</a> ·
-      <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
-    </p>
-    <p class="footer-meta">
-      project-R-score · chrome <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a>
-      · <span data-footer-ts>…</span>
-    </p>
-  </footer>
-
-  <script type="module" src="/portal/data.js"></script>
-  <script type="module" src="/portal/topbar.js"></script>
-  <script type="module" src="/portal/health-page.js"></script>
-  <script type="module" src="/portal/components/sidebar.js"></script>
-  <script type="module" src="/portal/components/notification.js"></script>
-  <script type="module" src="/portal/components/limit-changes-card.js"></script>
-  <script type="module" src="/portal/components/footer.js"></script>
-</body>
+    <script type="module" src="/portal/data.js"></script>
+    <script type="module" src="/portal/topbar.js"></script>
+    <script type="module" src="/portal/health-page.js"></script>
+    <script type="module" src="/portal/components/sidebar.js"></script>
+    <script type="module" src="/portal/components/notification.js"></script>
+    <script type="module" src="/portal/components/limit-changes-card.js"></script>
+    <script type="module" src="/portal/components/footer.js"></script>
+  </body>
 </html>

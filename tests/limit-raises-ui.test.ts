@@ -72,7 +72,8 @@ describe('health-page limitRaises surface', () => {
   test('source wires artifacts.limitRaises like complianceBoard', () => {
     const src = readFileSync(join(ROOT, 'public/portal/health-page.js'), 'utf8');
     expect(src).toContain('artifacts?.limitRaises');
-    expect(src).toContain('data-card="limit-raises"');
+    expect(src).toContain("id: 'limit-raises'");
+    expect(src).toContain("'limit-raises': {");
     expect(src).toContain('/portal/limits/');
     expect(src).toContain('/registry/limit-raises.json');
     expect(src).toContain('optional bake');
