@@ -297,6 +297,331 @@
         color: var(--text-dim);
         font-size: 10px;
       }
+      .limit-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+        gap: 8px;
+        margin: 18px 0 14px;
+      }
+      .limit-actions a {
+        display: grid;
+        gap: 2px;
+        min-width: 0;
+        padding: 9px 10px;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        background: color-mix(in srgb, var(--surface) 92%, var(--accent) 8%);
+        color: var(--text);
+        text-decoration: none;
+      }
+      .limit-actions a:hover,
+      .limit-actions a:focus-visible {
+        border-color: var(--accent);
+        background: color-mix(in srgb, var(--surface) 84%, var(--accent) 16%);
+      }
+      .limit-actions strong {
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .limit-actions small {
+        color: var(--text-dim);
+        font-size: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .limits-hero {
+        align-items: start;
+      }
+      .limits-hero .sub {
+        max-width: 72ch;
+      }
+      .section-heading {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .section-heading__links {
+        display: flex;
+        gap: 10px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .section-anchor {
+        color: var(--text);
+        text-decoration: none;
+      }
+      .section-anchor::before {
+        color: var(--text-dim);
+        content: '#';
+        margin-right: 5px;
+        opacity: 0;
+      }
+      .section-anchor:hover::before,
+      .section-anchor:focus-visible::before {
+        opacity: 1;
+      }
+      .section-copy {
+        line-height: 1.55;
+        margin: 0;
+        max-width: 88ch;
+      }
+      .profile-filter-bar {
+        align-items: end;
+        display: grid;
+        grid-template-columns:
+          minmax(220px, 1fr) minmax(160px, max-content)
+          minmax(145px, max-content) auto auto;
+        gap: 8px;
+        margin: 14px 0 12px;
+      }
+      .profile-filter {
+        display: grid;
+        gap: 4px;
+      }
+      .profile-filter > span {
+        color: var(--text-dim);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+      .profile-filter input,
+      .profile-filter select {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        box-sizing: border-box;
+        color: var(--text);
+        font-family: inherit;
+        font-size: 12px;
+        min-height: 36px;
+        padding: 7px 9px;
+        width: 100%;
+      }
+      #profile-status {
+        font-weight: 600;
+      }
+      #profile-jurisdiction {
+        font-weight: 700;
+      }
+      .profile-filter-reset {
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text);
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: 700;
+        min-height: 36px;
+        padding-inline: 12px;
+      }
+      .profile-filter-reset:hover,
+      .profile-filter-reset:focus-visible {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      #profile-count {
+        align-self: center;
+        font-weight: 700;
+        justify-self: end;
+        white-space: nowrap;
+      }
+      .profile-board {
+        grid-template-columns: minmax(0, 1.3fr) minmax(330px, 0.9fr);
+      }
+      .account-profile {
+        display: grid;
+        gap: 11px;
+        padding: 14px;
+      }
+      .account-profile[aria-current='true'] {
+        outline: 2px solid var(--accent);
+        outline-offset: -1px;
+        background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+      }
+      .account-profile__title {
+        display: grid;
+        gap: 4px;
+        min-width: 0;
+      }
+      .account-profile__identity,
+      .trace-panel__identity {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .account-profile__identity code,
+      .trace-panel__identity code {
+        color: var(--text-dim);
+        overflow-wrap: anywhere;
+      }
+      .profile-kind,
+      .profile-state {
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        color: var(--text-dim);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        padding: 2px 6px;
+        text-transform: uppercase;
+      }
+      .account-profile__facts {
+        display: grid;
+        gap: 7px;
+        margin: 0;
+      }
+      .account-profile__facts > div {
+        display: grid;
+        gap: 2px;
+        grid-template-columns: 64px minmax(0, 1fr);
+      }
+      .account-profile__facts dt {
+        color: var(--text-dim);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .account-profile__facts dd {
+        color: var(--text);
+        font-size: 11px;
+        margin: 0;
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+      .account-profile__metrics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+      }
+      .account-profile__metric {
+        border: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
+        border-radius: 6px;
+        color: var(--text-dim);
+        display: grid;
+        font-size: 9px;
+        gap: 2px;
+        padding: 6px;
+      }
+      .account-profile__metric strong {
+        color: var(--text);
+        font: 700 13px/1 var(--font-mono, ui-monospace, monospace);
+      }
+      .account-profile__footer,
+      .trace-panel__footer {
+        align-items: center;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding-top: 9px;
+      }
+      .account-profile__footer small {
+        color: var(--text-dim);
+      }
+      .account-profile__footer a,
+      .trace-panel__footer a,
+      .trace-panel__footer button {
+        color: var(--accent);
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .account-profile__footer a {
+        text-decoration: none;
+      }
+      .trace-panel {
+        display: grid;
+        gap: 12px;
+        padding: 14px;
+      }
+      .trace-panel__header {
+        align-items: start;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .trace-panel__eyebrow {
+        color: var(--text-dim);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        margin: 0 0 4px;
+        text-transform: uppercase;
+      }
+      .trace-panel__header h3 {
+        font-size: 15px;
+        margin: 0;
+      }
+      .trace-panel__summary {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+      }
+      .trace-panel__summary div {
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        display: grid;
+        gap: 2px;
+        padding: 7px;
+      }
+      .trace-panel__summary strong {
+        font: 700 14px/1 var(--font-mono, ui-monospace, monospace);
+      }
+      .trace-panel__summary span {
+        color: var(--text-dim);
+        font-size: 9px;
+      }
+      .trace-list {
+        gap: 0;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .trace-event {
+        display: grid;
+        gap: 3px;
+        padding: 0 0 13px 12px;
+        position: relative;
+      }
+      .trace-event::before {
+        background: var(--surface);
+        border: 2px solid var(--accent);
+        border-radius: 50%;
+        content: '';
+        height: 7px;
+        left: -5px;
+        position: absolute;
+        top: 2px;
+        width: 7px;
+      }
+      .trace-event[data-kind='wager-blocked']::before {
+        border-color: var(--red, #f85149);
+      }
+      .trace-event:last-child {
+        padding-bottom: 0;
+      }
+      .trace-event__top {
+        align-items: baseline;
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .trace-event__detail {
+        color: var(--text);
+        font-size: 11px;
+      }
+      .trace-panel__footer button {
+        border: 0;
+        background: transparent;
+        cursor: pointer;
+        font-family: inherit;
+        padding: 0;
+      }
       .semantic-label {
         color: inherit;
         text-decoration: underline;
@@ -307,12 +632,41 @@
         white-space: normal;
         overflow-wrap: anywhere;
       }
-      @media (max-width: 860px) {
+      @media (max-width: 880px) {
         .profile-board {
           grid-template-columns: 1fr;
         }
         .trace-panel {
+          order: -1;
           position: static;
+        }
+      }
+      @media (max-width: 760px) {
+        .limit-actions {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .profile-filter-bar {
+          grid-template-columns: 1fr 1fr;
+        }
+        .profile-filter--search,
+        #profile-count {
+          grid-column: 1 / -1;
+        }
+        #profile-count {
+          justify-self: start;
+        }
+      }
+      @media (max-width: 520px) {
+        .section-heading {
+          align-items: start;
+          flex-direction: column;
+        }
+        .profile-filter-bar {
+          grid-template-columns: 1fr;
+        }
+        .profile-filter--search,
+        #profile-count {
+          grid-column: auto;
         }
       }
     </style>
@@ -539,54 +893,84 @@
     </header>
 
     <main class="portal-page limits-page">
-      <div class="portal-actions">
-        <a href="/registry/limit-raises.json" target="_blank" rel="noopener">limit-raises.json</a>
-        <a href="/registry/ops-summary.json" target="_blank" rel="noopener">ops-summary</a>
-        <a href="/api/limits/summary" target="_blank" rel="noopener">summary API</a>
-        <a href="/portal/partner-history/">Partner history</a>
-        <a href="/portal/glossary/?category=ui#glossary:ops.limits.profile">Limit glossary</a>
-      </div>
+      <nav class="portal-actions limit-actions" aria-label="Limits resources">
+        <a href="/registry/limit-raises.json" target="_blank" rel="noopener">
+          <strong>Policy artifact</strong>
+          <small>limit-raises.json</small>
+        </a>
+        <a href="/registry/ops-summary.json" target="_blank" rel="noopener">
+          <strong>Operations rollup</strong>
+          <small>ops-summary.json</small>
+        </a>
+        <a href="/api/limits/summary" target="_blank" rel="noopener">
+          <strong>Limits API</strong>
+          <small>live summary</small>
+        </a>
+        <a href="/portal/partner-history/">
+          <strong>Account history</strong>
+          <small>limit changes over time</small>
+        </a>
+        <a href="/portal/glossary/?category=trading#glossary:ops.limits.profile">
+          <strong>Domain glossary</strong>
+          <small>policy and account terms</small>
+        </a>
+      </nav>
 
-      <header class="portal-hero">
-        <h2 class="portal-hero__title">Partner limit patterns</h2>
+      <header class="portal-hero limits-hero">
+        <h2 class="portal-hero__title">Account limits and policy controls</h2>
         <p class="sub">
-          Connected partner, downline, sportsbook, regulatory state, and ZIP-prefix signals — last
-          48 hours. Auto-refreshes every 30s.
+          Monitor partner-tree accounts across observed sportsbook limits, governed jurisdiction
+          policy, license and identity readiness, and evidence history. The signal window covers 48
+          hours and refreshes every 30 seconds.
         </p>
       </header>
 
       <section id="account-control" class="card" aria-labelledby="account-control-title">
-        <h2 id="account-control-title">
-          <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.profile"
-            >Account limit control</a
-          >
+        <h2 id="account-control-title" class="section-heading">
+          <a class="section-anchor" href="#section:account-control">Account limit control</a>
+          <span class="section-heading__links">
+            <a href="/portal/glossary/#glossary:ops.limits.profile">Definition</a>
+            <a href="/registry/limit-raises.json">Artifact</a>
+          </span>
         </h2>
-        <p class="sub">
-          One profile per partner-tree account, joining operating profile, jurisdiction policy,
-          license, observed limits, monitoring state, and trace evidence.
+        <p class="sub section-copy">
+          Review one evidence-backed control record per partner-tree account. Profile identity,
+          jurisdiction and license readiness, observed sportsbook limits, effective policy bindings,
+          and the event trace remain separate and directly inspectable.
         </p>
         <div
           id="profile-summary"
           class="profile-summary"
           aria-label="Account limit profile summary"
         ></div>
-        <div class="filter-bar" aria-label="Account profile filters">
-          <input
-            id="profile-filter"
-            type="search"
-            placeholder="Search account, profile, policy, book…"
-            style="flex: 1"
-          />
-          <select id="profile-status">
-            <option value="">All monitoring states</option>
-            <option value="monitored">Monitored</option>
-            <option value="attention">Attention</option>
-            <option value="blocked">Blocked</option>
-            <option value="incomplete">Incomplete</option>
-          </select>
-          <select id="profile-jurisdiction">
-            <option value="">All jurisdictions</option>
-          </select>
+        <div class="profile-filter-bar" aria-label="Account profile filters">
+          <label class="profile-filter profile-filter--search" for="profile-filter">
+            <span>Search profiles</span>
+            <input
+              id="profile-filter"
+              type="search"
+              placeholder="Account, profile, policy, sportsbook…"
+            />
+          </label>
+          <label class="profile-filter" for="profile-status">
+            <span>Monitoring state</span>
+            <select id="profile-status">
+              <option value="">All states</option>
+              <option value="monitored">Monitored</option>
+              <option value="attention">Attention</option>
+              <option value="blocked">Blocked</option>
+              <option value="incomplete">Incomplete</option>
+            </select>
+          </label>
+          <label class="profile-filter" for="profile-jurisdiction">
+            <span>Jurisdiction</span>
+            <select id="profile-jurisdiction">
+              <option value="">All jurisdictions</option>
+            </select>
+          </label>
+          <button id="profile-filter-reset" class="profile-filter-reset" type="button">
+            Reset
+          </button>
           <span id="profile-count" class="sub"></span>
         </div>
         <div class="profile-board">
@@ -1103,7 +1487,7 @@
         load();
         setInterval(load, POLL_INTERVAL);
       </script>
-      <script type="module" src="/portal/limits/limit-profiles.js"></script>
+    <script type="module" src="/portal/limits/limit-profiles.js?v=3"></script>
     </main>
     <footer class="footer" data-portal-chrome="footer">
       <p>

@@ -1,6 +1,12 @@
 const PROFILE_URL = '/registry/limit-raises.json';
 const PROFILE_POLL_INTERVAL = 30_000;
 const accountPattern = new URLPattern({ hash: 'account\\::account' });
+const sectionPattern = new URLPattern({ hash: 'section\\::section' });
+const PROFILE_QUERY_PARAMS = {
+  query: 'profile',
+  status: 'monitoring',
+  jurisdiction: 'jurisdiction',
+};
 
 let projection = null;
 let selectedAccount = null;
@@ -19,6 +25,19 @@ function accountHash(treeNodeId) {
   return `#account:${encodeURIComponent(treeNodeId)}`;
 }
 
+function shortRef(value) {
+  const text = value == null ? '' : String(value);
+  return text.length > 22 ? `${text.slice(0, 9)}…${text.slice(-8)}` : text;
+}
+
+function labelFromKey(value) {
+  return String(value)
+    .split(/[-_]/g)
+    .filter(Boolean)
+    .map(word => `${word[0]?.toUpperCase() ?? ''}${word.slice(1)}`)
+    .join(' ');
+}
+
 function accountFromUrl() {
   const captured = accountPattern.exec(window.location.href)?.hash.groups.account ?? null;
   if (!captured) return null;
@@ -27,6 +46,46 @@ function accountFromUrl() {
   } catch {
     return captured;
   }
+}
+
+function sectionFromUrl() {
+  return sectionPattern.exec(window.location.href)?.hash.groups.section ?? null;
+}
+
+function syncSectionFromUrl() {
+  const section = sectionFromUrl();
+  if (!section) return;
+  document.getElementById(section)?.scrollIntoView({ block: 'start' });
+}
+
+function syncProfileFiltersFromUrl() {
+  const url = new URL(window.location.href);
+  const query = document.getElementById('profile-filter');
+  const status = document.getElementById('profile-status');
+  const jurisdiction = document.getElementById('profile-jurisdiction');
+  if (query) query.value = url.searchParams.get(PROFILE_QUERY_PARAMS.query) ?? '';
+  if (status) status.value = url.searchParams.get(PROFILE_QUERY_PARAMS.status) ?? '';
+  if (jurisdiction) {
+    const requested = url.searchParams.get(PROFILE_QUERY_PARAMS.jurisdiction) ?? '';
+    jurisdiction.value = [...jurisdiction.options].some(option => option.value === requested)
+      ? requested
+      : '';
+  }
+}
+
+function syncProfileFiltersToUrl() {
+  const url = new URL(window.location.href);
+  const values = {
+    [PROFILE_QUERY_PARAMS.query]: document.getElementById('profile-filter')?.value.trim() ?? '',
+    [PROFILE_QUERY_PARAMS.status]: document.getElementById('profile-status')?.value ?? '',
+    [PROFILE_QUERY_PARAMS.jurisdiction]:
+      document.getElementById('profile-jurisdiction')?.value ?? '',
+  };
+  for (const [parameter, value] of Object.entries(values)) {
+    if (value) url.searchParams.set(parameter, value);
+    else url.searchParams.delete(parameter);
+  }
+  history.replaceState(history.state, '', url);
 }
 
 function setSelectedAccount(treeNodeId, push = true) {
@@ -142,22 +201,47 @@ function filteredProfiles() {
 
 function profileCard(profile) {
   const isSelected = profile.treeNodeId === selectedAccount;
-  const state = profile.jurisdiction.stateCode ?? 'unbound';
+  const state = profile.jurisdiction.stateCode ?? 'not assigned';
+  const location = profile.jurisdiction.location ?? 'Location not observed';
+  const zip = profile.jurisdiction.zipCode ?? 'ZIP not observed';
   const license = profile.license
     ? `${profile.license.status}${profile.license.licenseNumber ? ` · ${profile.license.licenseNumber}` : ''}`
-    : 'no license binding';
+    : 'No license binding';
   return `<article class="account-profile" data-tone="${esc(profile.tone)}" data-account="${esc(profile.treeNodeId)}" aria-current="${isSelected}">
     <div class="account-profile__head">
-      <a href="${accountHash(profile.treeNodeId)}" data-account-link="${esc(profile.treeNodeId)}">${esc(profile.accountName)}</a>
+      <div class="account-profile__title">
+        <a href="${accountHash(profile.treeNodeId)}" data-account-link="${esc(profile.treeNodeId)}">${esc(profile.accountName)}</a>
+        <div class="account-profile__identity">
+          <code title="${esc(profile.treeNodeId)}">${esc(shortRef(profile.treeNodeId))}</code>
+          <span class="profile-kind">${esc(profile.accountKind)}</span>
+          <span class="profile-state">${esc(state)}</span>
+        </div>
+      </div>
       <span class="status-token" data-tone="${esc(profile.tone)}">${esc(profile.monitoringStatus)}</span>
     </div>
-    <div class="account-profile__meta">
-      <div class="profile-keyline"><code>${esc(profile.treeNodeId)}</code><span>${esc(profile.accountKind)}</span></div>
-      <div>profile <code>${esc(profile.profileKey ?? 'unbound')}</code> · ${esc(profile.lifecycleStatus ?? 'no lifecycle')}</div>
-      <div>${esc(state)} · ${esc(profile.jurisdiction.location ?? 'location missing')} · <code>${esc(profile.jurisdiction.zipCode ?? 'ZIP missing')}</code></div>
-      <div>license ${esc(license)}</div>
-      <div>${profile.observations.dimensions} dimensions · ${profile.observations.sportsbooks.length} books · ${profile.observations.raises} raises · ${profile.observations.violations30d} blocked</div>
-      <div>${profile.policyCodes.length} effective policy bindings · last ${esc(formatDate(profile.observations.lastObservedAt))}</div>
+    <dl class="account-profile__facts">
+      <div>
+        <dt>Profile</dt>
+        <dd><code title="${esc(profile.profileKey ?? 'unbound')}">${esc(shortRef(profile.profileKey ?? 'unbound'))}</code> · ${esc(profile.lifecycleStatus ?? 'no lifecycle state')}</dd>
+      </div>
+      <div>
+        <dt>Location</dt>
+        <dd>${esc(location)} · <code>${esc(zip)}</code></dd>
+      </div>
+      <div>
+        <dt>License</dt>
+        <dd>${esc(license)}</dd>
+      </div>
+    </dl>
+    <div class="account-profile__metrics" aria-label="Account evidence counts">
+      <span class="account-profile__metric"><strong>${profile.observations.dimensions}</strong>dimensions</span>
+      <span class="account-profile__metric"><strong>${profile.observations.sportsbooks.length}</strong>books</span>
+      <span class="account-profile__metric"><strong>${profile.policyCodes.length}</strong>policies</span>
+      <span class="account-profile__metric"><strong>${profile.observations.violations30d}</strong>blocked</span>
+    </div>
+    <div class="account-profile__footer">
+      <small>Observed ${esc(formatDate(profile.observations.lastObservedAt))}</small>
+      <a href="${accountHash(profile.treeNodeId)}" data-account-link="${esc(profile.treeNodeId)}">Inspect ${profile.traces.length} events →</a>
     </div>
   </article>`;
 }
@@ -174,28 +258,58 @@ function renderTrace() {
     return;
   }
   selectedAccount = profile.treeNodeId;
+  const state = profile.jurisdiction.stateCode ?? 'not assigned';
+  const lastObserved = formatDate(profile.observations.lastObservedAt);
   target.innerHTML = `
-    <div class="account-profile__head">
-      <strong>${esc(profile.accountName)}</strong>
+    <header class="trace-panel__header">
+      <div>
+        <p class="trace-panel__eyebrow">Selected account</p>
+        <h3>${esc(profile.accountName)}</h3>
+      </div>
       <span class="status-token" data-tone="${esc(profile.tone)}">${esc(profile.monitoringStatus)}</span>
+    </header>
+    <div class="trace-panel__identity">
+      <code title="${esc(profile.treeNodeId)}">${esc(shortRef(profile.treeNodeId))}</code>
+      <span class="profile-kind">${esc(profile.accountKind)}</span>
+      <span class="profile-state">${esc(state)}</span>
     </div>
-    <p class="sub"><code>${esc(profile.treeNodeId)}</code></p>
-    <p><a class="semantic-label" href="${glossaryHref('ops.limits.evidence_trace')}">Evidence trace</a> · ${profile.traces.length} events</p>
-    <div class="trace-list">
+    <div class="trace-panel__summary" aria-label="Selected account evidence summary">
+      <div><strong>${profile.traces.length}</strong><span>trace events</span></div>
+      <div><strong>${profile.policyCodes.length}</strong><span>policy bindings</span></div>
+      <div><strong>${profile.observations.violations30d}</strong><span>blocked / 30d</span></div>
+    </div>
+    <ol class="trace-list" aria-label="Evidence timeline">
       ${
         profile.traces
           .map(
-            trace => `<div class="trace-event">
-              <strong>${esc(trace.kind)}</strong>
-              <small>${esc(trace.detail)}</small>
-              <time datetime="${esc(trace.at)}">${esc(formatDate(trace.at))}</time>
-              <small>source · <code>${esc(trace.source)}</code></small>
-            </div>`
+            trace => `<li class="trace-event" data-kind="${esc(trace.kind)}">
+              <div class="trace-event__top">
+                <strong>${esc(labelFromKey(trace.kind))}</strong>
+                <time datetime="${esc(trace.at)}">${esc(formatDate(trace.at))}</time>
+              </div>
+              <span class="trace-event__detail">${esc(trace.detail)}</span>
+              <small>Source · <code>${esc(trace.source)}</code></small>
+            </li>`
           )
           .join('') || '<p class="empty">No trace events.</p>'
       }
-    </div>
-    <p><a href="${accountHash(profile.treeNodeId)}">Copy account deep link</a></p>`;
+    </ol>
+    <footer class="trace-panel__footer">
+      <a class="semantic-label" href="${glossaryHref('ops.limits.evidence_trace')}">Evidence definition</a>
+      <button type="button" id="copy-account-link" data-account-id="${esc(profile.treeNodeId)}">Copy deep link</button>
+    </footer>
+    <small class="sub">Last observed ${esc(lastObserved)}</small>`;
+  target.querySelector('#copy-account-link')?.addEventListener('click', async event => {
+    const button = event.currentTarget;
+    const url = new URL(window.location.href);
+    url.hash = accountHash(button.dataset.accountId);
+    try {
+      await navigator.clipboard.writeText(url.href);
+      button.textContent = 'Copied';
+    } catch {
+      button.textContent = 'Copy unavailable';
+    }
+  });
 }
 
 function renderProfiles() {
@@ -289,8 +403,10 @@ async function loadProfiles() {
     renderSummary();
     renderComplianceKpis();
     renderJurisdictionOptions();
+    syncProfileFiltersFromUrl();
     renderProfiles();
     renderPolicies();
+    syncSectionFromUrl();
   } catch (error) {
     renderError(error instanceof Error ? error.message : String(error));
   }
@@ -300,16 +416,28 @@ for (const id of ['profile-filter', 'profile-status', 'profile-jurisdiction']) {
   document
     .getElementById(id)
     ?.addEventListener(id === 'profile-filter' ? 'input' : 'change', () => {
+      syncProfileFiltersToUrl();
       renderProfiles();
     });
 }
+document.getElementById('profile-filter-reset')?.addEventListener('click', () => {
+  for (const id of ['profile-filter', 'profile-status', 'profile-jurisdiction']) {
+    const control = document.getElementById(id);
+    if (control) control.value = '';
+  }
+  syncProfileFiltersToUrl();
+  renderProfiles();
+});
 window.addEventListener('hashchange', () => {
   selectedAccount = accountFromUrl();
   renderProfiles();
+  syncSectionFromUrl();
 });
 window.addEventListener('popstate', () => {
+  syncProfileFiltersFromUrl();
   selectedAccount = accountFromUrl();
   renderProfiles();
+  syncSectionFromUrl();
 });
 
 loadProfiles();
