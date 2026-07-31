@@ -3,7 +3,7 @@
   "sourceSchemaVersion": 5,
   "kind": "domain-glossary",
   "path": "/registry/domain-glossary.json",
-  "generatedAt": "2026-07-31T07:39:55.713Z",
+  "generatedAt": "2026-07-31T13:43:54.333Z",
   "integrityOk": true,
   "sources": {
     "semanticAuthority": "Kalshi-bot/src/institutions/glossary.ts",
@@ -190,30 +190,30 @@
     }
   ],
   "summary": {
-    "concepts": 360,
-    "active": 359,
+    "concepts": 371,
+    "active": 370,
     "deprecated": 1,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 254,
+    "portalSemantics": 234,
     "categories": {
       "market": 33,
       "model": 18,
-      "pipeline": 29,
+      "pipeline": 41,
       "tournament": 86,
-      "trading": 57,
+      "trading": 56,
       "ui": 110,
       "warehouse": 27
     },
     "kinds": {
       "baseline": 2,
       "competition": 14,
-      "composite": 14,
+      "composite": 30,
       "country": 25,
       "cross_market": 2,
       "event": 2,
-      "evidence": 15,
+      "evidence": 10,
       "jurisdiction": 2,
       "kpi": 4,
       "league": 20,
@@ -222,21 +222,21 @@
       "multi": 2,
       "policy": 4,
       "region": 7,
-      "registry": 62,
+      "registry": 39,
       "sport": 10,
-      "ui": 160
+      "ui": 183
     },
     "semanticTypes": {
-      "classification": 149,
+      "classification": 136,
       "location": 4,
       "presentation": 4,
       "resource": 68,
-      "state": 28,
+      "state": 21,
       "version": 1
     },
     "uiRoles": {
-      "badge": 63,
-      "chip": 100,
+      "badge": 51,
+      "chip": 92,
       "code": 22,
       "heading": 53,
       "link": 12,
@@ -2870,6 +2870,807 @@
       "values": null,
       "valueLabels": null,
       "seeAlso": [],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "partner.phase.operator_ready",
+      "label": "Operator ready",
+      "description": "Partner cleared for live trading — handshake complete, operator can run desk.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "ready",
+        "live",
+        "operator ready"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.phase.onboarding",
+        "partner.phase.incomplete",
+        "partner.phase.paused"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "partner.phase.onboarding",
+      "label": "Onboarding",
+      "description": "Partner in setup flow — CODE registered or forum wiring in progress.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "onboarding",
+        "forum_ready",
+        "designated"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.phase.operator_ready",
+        "partner.phase.incomplete"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "partner.phase.incomplete",
+      "label": "Incomplete",
+      "description": "Partner setup missing required fields or blocked gates.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "incomplete",
+        "blocked"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.phase.onboarding",
+        "partner.phase.operator_ready"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "partner.phase.paused",
+      "label": "Paused",
+      "description": "Partner temporarily suspended — no FUND pressure.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "paused"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.phase.operator_ready",
+        "out.status.paused"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "book.type.legal",
+      "label": "Legal book",
+      "description": "State-licensed / US-regulated sportsbook.",
+      "category": "trading",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "legal book",
+        "US book"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "book.type.offshore",
+        "book.type.pph",
+        "book.type.crypto"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#f59e0b",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "book.type.offshore",
+      "label": "Offshore book",
+      "description": "Non-US regulated retail sportsbook.",
+      "category": "trading",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "offshore book"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "book.type.legal",
+        "book.type.pph"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#f59e0b",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "book.type.pph",
+      "label": "PPH desk",
+      "description": "Pay-per-head bookmaking service.",
+      "category": "trading",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "PPH",
+        "pay per head"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "book.type.offshore",
+        "book.type.legal"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#f59e0b",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "book.type.crypto",
+      "label": "Crypto book",
+      "description": "Cryptocurrency-accepting / crypto-settled sportsbook.",
+      "category": "trading",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "crypto book"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "book.type.offshore",
+        "deposit.method.crypto"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#f59e0b",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "deposit.method.venmo",
+      "label": "Venmo",
+      "description": "Venmo peer-to-peer transfer funding rail.",
+      "category": "trading",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "Venmo"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "deposit.method.crypto",
+        "deposit.method.wire",
+        "accounting.deposit"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#f59e0b",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "deposit.method.crypto",
+      "label": "Crypto",
+      "description": "Cryptocurrency transfer funding rail.",
+      "category": "trading",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "crypto rail",
+        "BTC",
+        "USDC"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "book.type.crypto",
+        "deposit.method.venmo",
+        "accounting.deposit"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#f59e0b",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "deposit.method.wire",
+      "label": "Wire transfer",
+      "description": "Bank wire transfer funding rail.",
+      "category": "trading",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "wire",
+        "bank wire"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "deposit.method.credit",
+        "accounting.deposit"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#f59e0b",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "deposit.method.credit",
+      "label": "Credit line",
+      "description": "Seat-extended / house credit line (not a cash deposit).",
+      "category": "trading",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "credit line",
+        "house credit"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.credit",
+        "deposit.method.wire"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#f59e0b",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "out.status.ready",
+      "label": "Ready",
+      "description": "Out active and accepting bets.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "out ready",
+        "ready"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "out.status.deferred",
+        "out.status.paused",
+        "partner.phase.operator_ready"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "out.status.deferred",
+      "label": "Deferred",
+      "description": "Out pending activation / warming.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "deferred out",
+        "warming"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "out.status.ready",
+        "out.status.paused"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "out.status.paused",
+      "label": "Paused",
+      "description": "Out temporarily inactive.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "paused out"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "out.status.deferred",
+        "partner.phase.paused"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "accounting.deposit",
+      "label": "Deposit received",
+      "description": "Incoming funds confirmed against a funding target.",
+      "category": "trading",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "deposit received",
+        "DEPOSIT_RECEIVED"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.credit",
+        "accounting.free_roll",
+        "deposit.method.venmo"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": "usd",
+      "color": "#f59e0b",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "accounting.withdrawal",
+      "label": "Withdrawal processed",
+      "description": "Outgoing funds sent.",
+      "category": "trading",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "withdrawal",
+        "cashout"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.deposit",
+        "accounting.settlement"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": "usd",
+      "color": "#f59e0b",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "accounting.credit",
+      "label": "Credit extended",
+      "description": "Credit line issued to partner.",
+      "category": "trading",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "credit extended",
+        "CREDIT_EXTENDED"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.deposit",
+        "deposit.method.credit"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": "usd",
+      "color": "#f59e0b",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "accounting.free_roll",
+      "label": "Free-roll applied",
+      "description": "Risk-free stake / freeplay percent applied.",
+      "category": "trading",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "free-roll",
+        "freeplay",
+        "FREE_ROLL_APPLIED",
+        "FP%"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.deposit",
+        "out.status.ready"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": "pct",
+      "color": "#f59e0b",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "accounting.settlement",
+      "label": "Settlement confirmed",
+      "description": "Bet settled, funds moved — factory mirror event only.",
+      "category": "trading",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "settlement",
+        "SETTLEMENT_PROCESSED"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.deposit",
+        "accounting.withdrawal"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": "usd",
+      "color": "#f59e0b",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "event.partner.registered",
+      "label": "Partner registered",
+      "description": "Factory mirror: partner CODE registered (onboarding).",
+      "category": "pipeline",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "PARTNER_REGISTERED"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.phase.onboarding",
+        "event.partner.phase_change"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "event.partner.phase_change",
+      "label": "Partner phase change",
+      "description": "Factory mirror: partner lifecycle phase changed.",
+      "category": "pipeline",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "PARTNER_PHASE_CHANGE"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.phase.operator_ready",
+        "event.partner.registered"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "event.out.created",
+      "label": "Out created",
+      "description": "Factory mirror: new out row created on the seat desk.",
+      "category": "pipeline",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "OUT_CREATED"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "out.status.ready",
+        "event.out.status_change"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "event.out.status_change",
+      "label": "Out status change",
+      "description": "Factory mirror: out status transitioned.",
+      "category": "pipeline",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "OUT_STATUS_CHANGE"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "out.status.deferred",
+        "event.out.created"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "event.deposit.received",
+      "label": "Deposit received event",
+      "description": "Factory mirror: deposit confirmed (soft ledger stays in ct).",
+      "category": "trading",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "DEPOSIT_RECEIVED"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.deposit",
+        "event.deposit.allocated"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": "usd",
+      "color": "#f59e0b",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "event.deposit.allocated",
+      "label": "Deposit allocated",
+      "description": "Factory mirror: deposit allocated to an out / rail.",
+      "category": "trading",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "DEPOSIT_ALLOCATED"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.deposit",
+        "event.deposit.received"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": "usd",
+      "color": "#f59e0b",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "event.credit.extended",
+      "label": "Credit extended event",
+      "description": "Factory mirror: credit line extended.",
+      "category": "trading",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "CREDIT_EXTENDED"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.credit",
+        "event.deposit.received"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": "usd",
+      "color": "#f59e0b",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "event.free_roll.applied",
+      "label": "Free-roll applied event",
+      "description": "Factory mirror: free-roll / freeplay applied.",
+      "category": "trading",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "FREE_ROLL_APPLIED"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.free_roll",
+        "event.deposit.received"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": "pct",
+      "color": "#f59e0b",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "event.settlement.processed",
+      "label": "Settlement processed",
+      "description": "Factory mirror: settlement confirmed.",
+      "category": "trading",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "SETTLEMENT_PROCESSED"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.settlement",
+        "event.deposit.received"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": "usd",
+      "color": "#f59e0b",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "event.telegram.invite_sent",
+      "label": "Telegram invite sent",
+      "description": "Factory mirror: Telegram invite dispatched for partner forum.",
+      "category": "pipeline",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "TELEGRAM_INVITE_SENT"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "event.telegram.message_pinned",
+        "partner.phase.onboarding"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "color": "#ef4444",
+      "url": null,
+      "registryColumn": null,
+      "source": null,
+      "featurePurpose": null
+    },
+    {
+      "id": "event.telegram.message_pinned",
+      "label": "Telegram message pinned",
+      "description": "Factory mirror: Telegram message pinned (desk home / accounting).",
+      "category": "pipeline",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "TELEGRAM_MESSAGE_PINNED"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "event.telegram.invite_sent",
+        "accounting.deposit"
+      ],
       "status": "active",
       "deprecatedBy": null,
       "unit": null,
@@ -10641,438 +11442,11 @@
       "color": "#06b6d4"
     },
     {
-      "id": "partner.phase.operator_ready",
-      "label": "Operator ready",
-      "description": "Handshake complete — partner forum linked, DM seat designated, operator can run desk.",
-      "category": "pipeline",
-      "kind": "registry",
-      "mapsTo": null,
-      "synonyms": [
-        "operator ready",
-        "phase operator_ready"
-      ],
-      "values": [
-        "operator_ready"
-      ],
-      "valueLabels": null,
-      "seeAlso": [
-        "partner.phase.onboarding",
-        "partner.phase.incomplete",
-        "telegram.handshake",
-        "section.partnersTelegram",
-        "page.partners"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "state",
-      "uiRole": "badge",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#ef4444"
-    },
-    {
-      "id": "partner.phase.onboarding",
-      "label": "Onboarding",
-      "description": "Partner CODE registered or forum wiring in progress (forum_ready / designated).",
-      "category": "pipeline",
-      "kind": "registry",
-      "mapsTo": null,
-      "synonyms": [
-        "onboarding",
-        "forum_ready",
-        "designated"
-      ],
-      "values": [
-        "onboarding",
-        "forum_ready",
-        "designated"
-      ],
-      "valueLabels": null,
-      "seeAlso": [
-        "partner.phase.operator_ready",
-        "partner.phase.incomplete",
-        "telegram.handshake"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "state",
-      "uiRole": "badge",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#ef4444"
-    },
-    {
-      "id": "partner.phase.incomplete",
-      "label": "Incomplete",
-      "description": "Blocked or missing gates — intake/handshake incomplete.",
-      "category": "pipeline",
-      "kind": "registry",
-      "mapsTo": null,
-      "synonyms": [
-        "incomplete",
-        "blocked"
-      ],
-      "values": [
-        "incomplete",
-        "blocked"
-      ],
-      "valueLabels": null,
-      "seeAlso": [
-        "partner.phase.onboarding",
-        "partner.phase.operator_ready"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "state",
-      "uiRole": "badge",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#ef4444"
-    },
-    {
-      "id": "partner.phase.paused",
-      "label": "Paused",
-      "description": "Operator paused the partner seat (no FUND pressure).",
-      "category": "pipeline",
-      "kind": "registry",
-      "mapsTo": null,
-      "synonyms": [
-        "paused"
-      ],
-      "values": [
-        "paused"
-      ],
-      "valueLabels": null,
-      "seeAlso": [
-        "partner.phase.operator_ready",
-        "out.status.paused"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "state",
-      "uiRole": "badge",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#ef4444"
-    },
-    {
-      "id": "book.type.legal",
-      "label": "Legal book",
-      "description": "US-regulated retail sportsbook (scrape-wire book registry class).",
-      "category": "trading",
-      "kind": "registry",
-      "mapsTo": null,
-      "synonyms": [
-        "legal book",
-        "US book"
-      ],
-      "values": null,
-      "valueLabels": null,
-      "seeAlso": [
-        "book.type.offshore",
-        "scrape.book",
-        "telegram.deposit_rail"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "classification",
-      "uiRole": "chip",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#f59e0b"
-    },
-    {
-      "id": "book.type.offshore",
-      "label": "Offshore book",
-      "description": "Offshore / non-US retail book (not in legal scrape-wire set).",
-      "category": "trading",
-      "kind": "registry",
-      "mapsTo": null,
-      "synonyms": [
-        "offshore book"
-      ],
-      "values": null,
-      "valueLabels": null,
-      "seeAlso": [
-        "book.type.legal",
-        "book.type.pph",
-        "scrape.book"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "classification",
-      "uiRole": "chip",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#f59e0b"
-    },
-    {
-      "id": "book.type.pph",
-      "label": "PPH desk",
-      "description": "Pay-per-head / agent desk book.",
-      "category": "trading",
-      "kind": "registry",
-      "mapsTo": null,
-      "synonyms": [
-        "PPH",
-        "pay per head"
-      ],
-      "values": null,
-      "valueLabels": null,
-      "seeAlso": [
-        "book.type.offshore",
-        "book.type.legal"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "classification",
-      "uiRole": "chip",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#f59e0b"
-    },
-    {
-      "id": "book.type.crypto",
-      "label": "Crypto book",
-      "description": "Crypto-settled sportsbook.",
-      "category": "trading",
-      "kind": "registry",
-      "mapsTo": null,
-      "synonyms": [
-        "crypto book"
-      ],
-      "values": null,
-      "valueLabels": null,
-      "seeAlso": [
-        "book.type.offshore",
-        "deposit.method.crypto"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "classification",
-      "uiRole": "chip",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#f59e0b"
-    },
-    {
-      "id": "deposit.method.venmo",
-      "label": "Venmo",
-      "description": "Venmo funding rail target on the seat capital desk.",
-      "category": "trading",
-      "kind": "registry",
-      "mapsTo": null,
-      "synonyms": [
-        "Venmo"
-      ],
-      "values": [
-        "Venmo"
-      ],
-      "valueLabels": null,
-      "seeAlso": [
-        "deposit.method.cashapp",
-        "telegram.deposit_rail",
-        "accounting.deposit"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "classification",
-      "uiRole": "chip",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#f59e0b"
-    },
-    {
-      "id": "deposit.method.crypto",
-      "label": "Crypto",
-      "description": "Crypto address funding rail.",
-      "category": "trading",
-      "kind": "registry",
-      "mapsTo": null,
-      "synonyms": [
-        "crypto rail",
-        "BTC",
-        "USDC"
-      ],
-      "values": null,
-      "valueLabels": null,
-      "seeAlso": [
-        "book.type.crypto",
-        "telegram.deposit_rail",
-        "accounting.deposit"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "classification",
-      "uiRole": "chip",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#f59e0b"
-    },
-    {
-      "id": "deposit.method.wire",
-      "label": "Wire transfer",
-      "description": "Bank wire funding rail.",
-      "category": "trading",
-      "kind": "registry",
-      "mapsTo": null,
-      "synonyms": [
-        "wire",
-        "bank wire"
-      ],
-      "values": null,
-      "valueLabels": null,
-      "seeAlso": [
-        "deposit.method.credit",
-        "telegram.deposit_rail"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "classification",
-      "uiRole": "chip",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#f59e0b"
-    },
-    {
-      "id": "deposit.method.credit",
-      "label": "Credit line",
-      "description": "House credit line (not a cash deposit).",
-      "category": "trading",
-      "kind": "registry",
-      "mapsTo": null,
-      "synonyms": [
-        "credit line",
-        "house credit"
-      ],
-      "values": null,
-      "valueLabels": null,
-      "seeAlso": [
-        "accounting.credit",
-        "telegram.deposit_rail"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "classification",
-      "uiRole": "chip",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#f59e0b"
-    },
-    {
       "id": "deposit.method.cashapp",
       "label": "Cash App",
-      "description": "Cash App — partner-ops taxonomy concept.",
+      "description": "Cash App funding rail target on the seat capital desk.",
       "category": "trading",
-      "kind": "registry",
+      "kind": "ui",
       "mapsTo": null,
       "synonyms": [
         "Cash App",
@@ -11107,9 +11481,9 @@
     {
       "id": "deposit.method.paypal",
       "label": "PayPal",
-      "description": "PayPal — partner-ops taxonomy concept.",
+      "description": "PayPal — partner-ops Factory overlay concept.",
       "category": "trading",
-      "kind": "registry",
+      "kind": "ui",
       "mapsTo": null,
       "synonyms": [
         "PayPal"
@@ -11142,9 +11516,9 @@
     {
       "id": "deposit.method.zelle",
       "label": "Zelle",
-      "description": "Zelle — partner-ops taxonomy concept.",
+      "description": "Zelle — partner-ops Factory overlay concept.",
       "category": "trading",
-      "kind": "registry",
+      "kind": "ui",
       "mapsTo": null,
       "synonyms": [
         "Zelle"
@@ -11177,9 +11551,9 @@
     {
       "id": "deposit.method.apple_pay",
       "label": "Apple Pay",
-      "description": "Apple Pay — partner-ops taxonomy concept.",
+      "description": "Apple Pay — partner-ops Factory overlay concept.",
       "category": "trading",
-      "kind": "registry",
+      "kind": "ui",
       "mapsTo": null,
       "synonyms": [
         "Apple Pay"
@@ -11212,9 +11586,9 @@
     {
       "id": "deposit.method.unknown",
       "label": "Unknown rail",
-      "description": "Unknown rail — partner-ops taxonomy concept.",
+      "description": "Unknown rail — partner-ops Factory overlay concept.",
       "category": "trading",
-      "kind": "registry",
+      "kind": "ui",
       "mapsTo": null,
       "synonyms": [
         "unknown rail",
@@ -11243,119 +11617,11 @@
       "color": "#f59e0b"
     },
     {
-      "id": "out.status.ready",
-      "label": "Ready",
-      "description": "Ready — partner-ops taxonomy concept.",
-      "category": "trading",
-      "kind": "registry",
-      "mapsTo": null,
-      "synonyms": [
-        "out ready"
-      ],
-      "values": [
-        "ready"
-      ],
-      "valueLabels": null,
-      "seeAlso": [
-        "out.status.deferred",
-        "telegram.seat_desk",
-        "section.partnersDeposits"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "state",
-      "uiRole": "badge",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#f59e0b"
-    },
-    {
-      "id": "out.status.deferred",
-      "label": "Deferred",
-      "description": "Deferred — partner-ops taxonomy concept.",
-      "category": "trading",
-      "kind": "registry",
-      "mapsTo": null,
-      "synonyms": [
-        "deferred out",
-        "warming"
-      ],
-      "values": [
-        "deferred"
-      ],
-      "valueLabels": null,
-      "seeAlso": [
-        "out.status.ready",
-        "out.status.paused",
-        "telegram.seat_desk"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "state",
-      "uiRole": "badge",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#f59e0b"
-    },
-    {
-      "id": "out.status.paused",
-      "label": "Paused",
-      "description": "Paused — partner-ops taxonomy concept.",
-      "category": "trading",
-      "kind": "registry",
-      "mapsTo": null,
-      "synonyms": [
-        "paused out"
-      ],
-      "values": [
-        "paused"
-      ],
-      "valueLabels": null,
-      "seeAlso": [
-        "out.status.deferred",
-        "partner.phase.paused"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "state",
-      "uiRole": "badge",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#f59e0b"
-    },
-    {
       "id": "out.status.blocked",
       "label": "Blocked",
-      "description": "Blocked — partner-ops taxonomy concept.",
-      "category": "trading",
-      "kind": "registry",
+      "description": "Out blocked — cannot accept bets until cleared.",
+      "category": "pipeline",
+      "kind": "ui",
       "mapsTo": null,
       "synonyms": [
         "blocked out"
@@ -11383,14 +11649,14 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#ef4444"
     },
     {
       "id": "out.status.partial",
       "label": "Partial",
-      "description": "Partial — partner-ops taxonomy concept.",
-      "category": "trading",
-      "kind": "registry",
+      "description": "Out partially funded / limited.",
+      "category": "pipeline",
+      "kind": "ui",
       "mapsTo": null,
       "synonyms": [
         "partial out"
@@ -11418,14 +11684,14 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#ef4444"
     },
     {
       "id": "out.status.funded",
       "label": "Funded",
-      "description": "Funded — partner-ops taxonomy concept.",
-      "category": "trading",
-      "kind": "registry",
+      "description": "Out funded and ready for desk pressure.",
+      "category": "pipeline",
+      "kind": "ui",
       "mapsTo": null,
       "synonyms": [
         "funded out"
@@ -11453,187 +11719,12 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
-      "color": "#f59e0b"
-    },
-    {
-      "id": "accounting.deposit",
-      "label": "Deposit received",
-      "description": "Incoming deposit confirmed against a funding target.",
-      "category": "trading",
-      "kind": "evidence",
-      "mapsTo": null,
-      "synonyms": [
-        "deposit received",
-        "DEPOSIT_RECEIVED"
-      ],
-      "values": null,
-      "valueLabels": null,
-      "seeAlso": [
-        "accounting.credit",
-        "accounting.free_roll",
-        "telegram.deposit_rail",
-        "page.partners"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "classification",
-      "uiRole": "badge",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#f59e0b"
-    },
-    {
-      "id": "accounting.withdrawal",
-      "label": "Withdrawal processed",
-      "description": "Withdrawal processed — partner-ops taxonomy concept.",
-      "category": "trading",
-      "kind": "evidence",
-      "mapsTo": null,
-      "synonyms": [
-        "withdrawal",
-        "cashout"
-      ],
-      "values": null,
-      "valueLabels": null,
-      "seeAlso": [
-        "accounting.deposit",
-        "telegram.forum.topic.accounting"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "classification",
-      "uiRole": "badge",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#f59e0b"
-    },
-    {
-      "id": "accounting.credit",
-      "label": "Credit extended",
-      "description": "Credit line extended — soft ledger detail stays in ct.",
-      "category": "trading",
-      "kind": "evidence",
-      "mapsTo": null,
-      "synonyms": [
-        "credit extended",
-        "CREDIT_EXTENDED"
-      ],
-      "values": null,
-      "valueLabels": null,
-      "seeAlso": [
-        "accounting.deposit",
-        "deposit.method.credit"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "classification",
-      "uiRole": "badge",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#f59e0b"
-    },
-    {
-      "id": "accounting.free_roll",
-      "label": "Free-roll applied",
-      "description": "Freeplay / free-roll percent applied on a deposit or bet stake.",
-      "category": "trading",
-      "kind": "evidence",
-      "mapsTo": null,
-      "synonyms": [
-        "free-roll",
-        "freeplay",
-        "FREE_ROLL_APPLIED",
-        "FP%"
-      ],
-      "values": null,
-      "valueLabels": null,
-      "seeAlso": [
-        "accounting.deposit",
-        "telegram.seat_desk",
-        "section.partnersDeposits"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "classification",
-      "uiRole": "badge",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#f59e0b"
-    },
-    {
-      "id": "accounting.settlement",
-      "label": "Settlement confirmed",
-      "description": "Settlement confirmed — factory mirror event only.",
-      "category": "trading",
-      "kind": "evidence",
-      "mapsTo": null,
-      "synonyms": [
-        "settlement",
-        "SETTLEMENT_PROCESSED"
-      ],
-      "values": null,
-      "valueLabels": null,
-      "seeAlso": [
-        "accounting.deposit",
-        "accounting.withdrawal"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/telegram/partner-ops-glossary.ts",
-      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
-      "semanticType": "classification",
-      "uiRole": "badge",
-      "parentId": null,
-      "scope": null,
-      "countryCodes": null,
-      "region": null,
-      "flagEmoji": null,
-      "flagAriaLabel": null,
-      "color": "#f59e0b"
+      "color": "#ef4444"
     },
     {
       "id": "telegram.topic.general",
       "label": "General topic",
-      "description": "General topic — partner-ops taxonomy concept.",
+      "description": "General topic — partner-ops Factory overlay concept.",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
@@ -11669,7 +11760,7 @@
     {
       "id": "telegram.topic.ops",
       "label": "Ops topic",
-      "description": "Ops topic — partner-ops taxonomy concept.",
+      "description": "Ops topic — partner-ops Factory overlay concept.",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
@@ -11705,7 +11796,7 @@
     {
       "id": "telegram.topic.alerts",
       "label": "Alerts topic",
-      "description": "Alerts topic — partner-ops taxonomy concept.",
+      "description": "Alerts topic — partner-ops Factory overlay concept.",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
@@ -11815,7 +11906,7 @@
     {
       "id": "partner.ops.event",
       "label": "Partner-ops event code",
-      "description": "Factory mirror event codes for partner/out/deposit/credit/free-roll/telegram actions. Soft ledger stays in ct.",
+      "description": "Factory mirror event codes for partner/out/deposit/credit/free-roll/telegram actions. Soft ledger stays in ct. Prefer event.* glossary leaves for UI.",
       "category": "warehouse",
       "kind": "registry",
       "mapsTo": null,
@@ -11838,6 +11929,7 @@
       ],
       "valueLabels": null,
       "seeAlso": [
+        "event.partner.registered",
         "accounting.deposit",
         "accounting.credit",
         "accounting.free_roll",
