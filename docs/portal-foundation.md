@@ -193,6 +193,7 @@ bun test tests/venue-brand.test.ts
 |----------|------|
 | Board metrics | `/registry/tennis/board-metrics.json` |
 | Mid distribution | `/registry/tennis/mid-distribution.json` |
+| Agent registry auth | `/registry/tennis/agent-auth.json` (`FACTORY_WAGER_TOKEN` status · no secret) · [`tennis-hq-registry`](harness/tenants/tennis-hq-registry.md) |
 | Bake | `bun run tennis:board:bake` (event-store) · `--sample` fallback |
 | Board UI | [`/portal/tennis/`](../public/portal/tennis/) · `tennis-board.js` |
 | Pure helpers | [`lib/tennis/board-metrics.ts`](../lib/tennis/board-metrics.ts) |

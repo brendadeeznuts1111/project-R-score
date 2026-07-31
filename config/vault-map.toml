@@ -52,6 +52,9 @@ label = "Registry Token"
 color = "#6366F1"
 icon = "public/portal/icons/vault/key.svg"
 type = "token"
+# Consumers: monorepo publish gate · Tennis HQ cloud agent (remote sandbox install/publish)
+# Status board: /registry/tennis/agent-auth.json · docs/harness/tenants/tennis-hq-registry.md
+note = "Shared registry Bearer · Tennis HQ cloud agent configured · /registry/tennis/agent-auth.json"
 
 [env.REGISTRY_SECRET]
 vault = "factorywager"

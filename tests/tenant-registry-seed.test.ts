@@ -33,6 +33,13 @@ describe('tenant registry seed', () => {
         factory.packages['@factorywager/registry-client'] || factory.packages['event-store']
       ).toBeTruthy();
 
+      const tennis = await Bun.file(`${SCRATCH}/public/registry/tennis/registry.json`).json();
+      expect(tennis.meta.agentAuth).toMatchObject({
+        status: 'configured',
+        artifact: '/registry/tennis/agent-auth.json',
+        envKey: 'FACTORY_WAGER_TOKEN',
+      });
+
       const skip = await seedTenantRegistries({ rootDir: SCRATCH, force: false, minPackages: 4 });
       expect(skip.seeded).toBe(false);
 

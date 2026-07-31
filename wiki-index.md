@@ -76,7 +76,7 @@ Live boards under `public/portal/<name>/` (plus Home). Product/ops first, then c
 | Factory | [/portal/factory/](https://score.factory-wager.com/portal/factory/) | [`telegram-factory.md`](docs/harness/tenants/telegram-factory.md) |
 | Identity | [/portal/identity/](https://score.factory-wager.com/portal/identity/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
 | Science | [/portal/science/](https://score.factory-wager.com/portal/science/) | — |
-| Tennis | [/portal/tennis/](https://score.factory-wager.com/portal/tennis/) | — |
+| Tennis | [/portal/tennis/](https://score.factory-wager.com/portal/tennis/) | agent-auth [`/registry/tennis/agent-auth.json`](https://score.factory-wager.com/registry/tennis/agent-auth.json) · [tennis-hq-registry](docs/harness/tenants/tennis-hq-registry.md) |
 
 ## Registry artifacts (key bakes)
 

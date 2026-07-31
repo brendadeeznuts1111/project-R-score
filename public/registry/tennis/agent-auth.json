@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 2,
+  "kind": "tennis-hq-agent-auth",
+  "path": "/registry/tennis/agent-auth.json",
+  "generatedAt": "2026-07-31T11:28:01.526Z",
+  "tenantId": "tennis",
+  "consumer": "tennis-hq-cloud-agent",
+  "label": "Tennis HQ · FactoryWager registry auth",
+  "purpose": "Cloud agent remote sandbox: install scoped packages and publish to FactoryWager registry",
+  "status": "configured",
+  "configured": true,
+  "registryUrl": "https://registry.factory-wager.com/",
+  "envKey": "FACTORY_WAGER_TOKEN",
+  "envAliases": [
+    "FW_REGISTRY_TOKEN",
+    "REGISTRY_SECRET"
+  ],
+  "vaultRef": "pass://factorywager/FactoryWager Registry Token/password",
+  "vaultItem": "FactoryWager Registry Token",
+  "vault": "factorywager",
+  "tokenKind": "shared-bearer",
+  "secretInRepo": false,
+  "handoff": {
+    "operatorEnvFile": "~/.reasonix/tennis-hq-registry-token.env",
+    "inject": "export FACTORY_WAGER_TOKEN from vault or operator handoff; never commit",
+    "npmrcLine": "//registry.factory-wager.com/:_authToken=${FACTORY_WAGER_TOKEN}",
+    "bunfigScopes": [
+      "@factorywager",
+      "@factory-wager",
+      "@factory"
+    ]
+  },
+  "planes": {
+    "read": "Public Pages/R2 mirror — GET/HEAD without token",
+    "write": "Bearer FACTORY_WAGER_TOKEN — local serve-public or private publish path (Pages rejects writes)"
+  },
+  "docs": [
+    "docs/harness/tenants/tennis-hq-registry.md",
+    "docs/registry-client.md",
+    "docs/guides/REGISTRY_PRODUCTION_READINESS.md"
+  ],
+  "portal": {
+    "board": "/portal/tennis/",
+    "md": "/portal/tennis.md",
+    "registry": "/registry/tennis/registry.json",
+    "vaultMap": "/registry/vault-map.json",
+    "envBoard": "/portal/env/"
+  }
+}

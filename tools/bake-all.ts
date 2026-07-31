@@ -58,6 +58,11 @@ const STEPS: BakeStep[] = [
     note: 'scrape-wire-taxonomy.json',
   },
   {
+    id: 'tennis-agent-auth',
+    cmd: ['bun', 'run', 'tennis:agent-auth:bake'],
+    note: 'tennis/agent-auth.json',
+  },
+  {
     id: 'packages',
     cmd: ['bun', 'run', 'audit:packages', '--', '--bake'],
     note: 'packages-graph-map.json',

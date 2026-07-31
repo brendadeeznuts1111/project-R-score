@@ -23,6 +23,8 @@ describe('parseRegistryObjectKey (lib)', () => {
     expect(parseRegistryObjectKey('static.json')).toBe('static.json');
     expect(parseRegistryObjectKey('ops-summary.json')).toBe('ops-summary.json');
     expect(parseRegistryObjectKey('monitoring.json')).toBe('monitoring.json');
+    expect(parseRegistryObjectKey('tennis/registry.json')).toBe('tennis/registry.json');
+    expect(parseRegistryObjectKey('tennis/agent-auth.json')).toBe('tennis/agent-auth.json');
     expect(parseRegistryObjectKey('@factorywager/pkg/1.0.0.tgz')).toBe(
       '@factorywager/pkg/1.0.0.tgz'
     );

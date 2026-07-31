@@ -8,13 +8,52 @@
  * @see public/tenants/manifest.json
  */
 import { joinPath } from '../path-bun.ts';
+import {
+  TENNIS_AGENT_AUTH_ENV_KEY,
+  TENNIS_AGENT_AUTH_PATH,
+  TENNIS_AGENT_AUTH_REGISTRY_URL,
+} from '../tennis/agent-auth.ts';
 
 export type SeedTenantRegistriesOpts = {
   rootDir?: string;
   force?: boolean;
   /** Rewrite even when tenant already has ≥ minPackages (default 4). */
   minPackages?: number;
+  /** Restrict writes to named tenants; defaults to every registered tenant. */
+  tenantIds?: readonly TenantRegistryKey[];
 };
+
+export type TenantRegistryKey = 'factory' | 'science' | 'tennis';
+
+const TENNIS_AGENT_AUTH_META = {
+  status: 'configured',
+  artifact: TENNIS_AGENT_AUTH_PATH,
+  envKey: TENNIS_AGENT_AUTH_ENV_KEY,
+  consumer: 'tennis-hq-cloud-agent',
+  registryUrl: TENNIS_AGENT_AUTH_REGISTRY_URL,
+  docs: 'docs/harness/tenants/tennis-hq-registry.md',
+} as const;
+
+function tenantMetadata(tenantId: TenantRegistryKey): Record<string, unknown> {
+  return tenantId === 'tennis' ? { agentAuth: TENNIS_AGENT_AUTH_META } : {};
+}
+
+type TenantRegistryMeta = {
+  rootLastUpdated?: string | null;
+  agentAuth?: Partial<typeof TENNIS_AGENT_AUTH_META>;
+};
+
+function hasCurrentTenantMetadata(tenantId: TenantRegistryKey, meta?: TenantRegistryMeta): boolean {
+  if (tenantId !== 'tennis') return true;
+  const value = meta?.agentAuth;
+  if (!value) return false;
+  return (
+    value.status === TENNIS_AGENT_AUTH_META.status &&
+    value.artifact === TENNIS_AGENT_AUTH_META.artifact &&
+    value.envKey === TENNIS_AGENT_AUTH_META.envKey &&
+    value.registryUrl === TENNIS_AGENT_AUTH_META.registryUrl
+  );
+}
 
 export type SeedTenantRegistriesResult = {
   seeded: boolean;
@@ -23,7 +62,7 @@ export type SeedTenantRegistriesResult = {
 };
 
 /** Curated name lists — must exist in root `registry.json` when present. */
-export const TENANT_PACKAGE_SLICES: Record<string, string[]> = {
+export const TENANT_PACKAGE_SLICES: Record<TenantRegistryKey, string[]> = {
   factory: [
     'event-store',
     'factory-cli',
@@ -39,6 +78,7 @@ export const TENANT_PACKAGE_SLICES: Record<string, string[]> = {
 type RegistryIndex = {
   schemaVersion?: number;
   lastUpdated?: string;
+  meta?: TenantRegistryMeta;
   packages?: Record<string, unknown>;
   [key: string]: unknown;
 };
@@ -75,8 +115,13 @@ export async function seedTenantRegistries(
   const root = (await rootFile.json()) as RegistryIndex;
   const tenants: Record<string, number> = {};
   let wrote = 0;
+  const selected = opts.tenantIds ? new Set(opts.tenantIds) : null;
 
-  for (const [tenantId, names] of Object.entries(TENANT_PACKAGE_SLICES)) {
+  for (const [tenantId, names] of Object.entries(TENANT_PACKAGE_SLICES) as [
+    TenantRegistryKey,
+    string[],
+  ][]) {
+    if (selected && !selected.has(tenantId)) continue;
     const outPath = joinPath(rootDir, `public/registry/${tenantId}/registry.json`);
     const packages = pickPackages(root, names);
     const expectedNames = Object.keys(packages).sort();
@@ -85,12 +130,12 @@ export async function seedTenantRegistries(
       try {
         const cur = (await existing.json()) as RegistryIndex;
         const currentNames = Object.keys(cur.packages ?? {}).sort();
-        const currentRootUpdated = (cur.meta as { rootLastUpdated?: unknown } | undefined)
-          ?.rootLastUpdated;
+        const currentRootUpdated = cur.meta?.rootLastUpdated;
         const sameRootSnapshot =
           currentRootUpdated === (root.lastUpdated ?? null) &&
           currentNames.length === expectedNames.length &&
-          currentNames.every((name, index) => name === expectedNames[index]);
+          currentNames.every((name, index) => name === expectedNames[index]) &&
+          hasCurrentTenantMetadata(tenantId, cur.meta);
         if (currentNames.length >= minPackages && sameRootSnapshot) {
           tenants[tenantId] = currentNames.length;
           continue;
@@ -108,6 +153,7 @@ export async function seedTenantRegistries(
         source: 'tenant-registry-seed',
         rootLastUpdated: root.lastUpdated ?? null,
         packageCount: Object.keys(packages).length,
+        ...tenantMetadata(tenantId),
       },
       packages,
     };

@@ -13,6 +13,8 @@ export const REGISTRY_ALLOWED_EXACT = new Set([
   'factory/registry.json',
   'science/registry.json',
   'tennis/registry.json',
+  /** Tennis HQ cloud agent registry token status (no secret values). */
+  'tennis/agent-auth.json',
   'tenants/factory/registry.json',
   'tenants/science/registry.json',
   'tenants/tennis/registry.json',

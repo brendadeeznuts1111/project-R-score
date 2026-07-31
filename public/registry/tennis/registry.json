@@ -1,11 +1,19 @@
 {
   "schemaVersion": 1,
   "tenantId": "tennis",
-  "lastUpdated": "2026-07-24T06:35:58.661Z",
+  "lastUpdated": "2026-07-31T11:28:01.197Z",
   "meta": {
     "source": "tenant-registry-seed",
     "rootLastUpdated": "2026-07-24T00:00:22.295046+00:00",
-    "packageCount": 5
+    "packageCount": 5,
+    "agentAuth": {
+      "status": "configured",
+      "artifact": "/registry/tennis/agent-auth.json",
+      "envKey": "FACTORY_WAGER_TOKEN",
+      "consumer": "tennis-hq-cloud-agent",
+      "registryUrl": "https://registry.factory-wager.com/",
+      "docs": "docs/harness/tenants/tennis-hq-registry.md"
+    }
   },
   "packages": {
     "cascade-mover": {

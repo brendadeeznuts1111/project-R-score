@@ -1,10 +1,25 @@
 {
   "schemaVersion": 1,
   "kind": "vault-map-bundle",
-  "generatedAt": "2026-07-28T21:16:10.947Z",
+  "generatedAt": "2026-07-31T11:13:01.846Z",
   "sourceMap": "config/vault-map.toml",
   "template": "env.template",
   "entries": [
+    {
+      "envKey": "CLOUDFLARE_ACCESS_API_TOKEN",
+      "vault": "factorywager",
+      "item": "Cloudflare Access API Token",
+      "field": "password",
+      "passRef": "pass://factorywager/Cloudflare Access API Token/password",
+      "type": "token",
+      "label": "Cloudflare Access API Token",
+      "color": "#F38020",
+      "icon": "public/portal/icons/vault/cloudflare.svg",
+      "glyph": "🔑",
+      "note": null,
+      "inTemplate": true,
+      "runtimePresent": false
+    },
     {
       "envKey": "CLOUDFLARE_API_TOKEN",
       "vault": "factorywager",
@@ -76,7 +91,7 @@
       "color": "#6366F1",
       "icon": "public/portal/icons/vault/key.svg",
       "glyph": "🔑",
-      "note": null,
+      "note": "Shared registry Bearer · Tennis HQ cloud agent configured · /registry/tennis/agent-auth.json",
       "inTemplate": true,
       "runtimePresent": true
     },
@@ -247,10 +262,10 @@
     }
   ],
   "summary": {
-    "entryCount": 16,
-    "withPassRef": 16,
-    "withColor": 16,
-    "withIcon": 9,
+    "entryCount": 17,
+    "withPassRef": 17,
+    "withColor": 17,
+    "withIcon": 10,
     "runtimePresent": 13
   }
 }
