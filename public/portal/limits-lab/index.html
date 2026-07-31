@@ -21,9 +21,29 @@
     <link rel="stylesheet" href="/portal/style.css" />
     <style>
       .lab-page {
+        --tone-ok: var(--green, #3fb950);
+        --tone-warn: var(--yellow, #d29922);
+        --tone-bad: var(--red, #f85149);
+        --tone-info: var(--accent, #58a6ff);
+        --tone-skip: var(--text-dim);
         max-width: 1180px;
         margin: 0 auto;
         padding: 20px 24px 56px;
+      }
+      [data-tone] {
+        --tone-color: var(--tone-skip);
+      }
+      [data-tone='ok'] {
+        --tone-color: var(--tone-ok);
+      }
+      [data-tone='warn'] {
+        --tone-color: var(--tone-warn);
+      }
+      [data-tone='bad'] {
+        --tone-color: var(--tone-bad);
+      }
+      [data-tone='info'] {
+        --tone-color: var(--tone-info);
       }
       .lab-hero,
       .lab-panel {
@@ -34,11 +54,39 @@
         margin-bottom: 16px;
       }
       .lab-hero {
-        border-left: 4px solid var(--yellow, #d29922);
+        border-left: 4px solid var(--tone-color, var(--tone-warn));
+      }
+      .lab-page section[id] {
+        scroll-margin-top: 72px;
+      }
+      .lab-page section[id]:target {
+        border-color: color-mix(in srgb, var(--tone-color, var(--accent)) 72%, var(--border));
+        box-shadow: 0 0 0 1px color-mix(in srgb, var(--tone-color, var(--accent)) 28%, transparent);
       }
       .lab-hero h2,
       .lab-panel h2 {
         margin: 0 0 8px;
+      }
+      .lab-section-heading {
+        align-items: baseline;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 8px 14px;
+      }
+      .lab-section-links {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size: 11px;
+        font-weight: 500;
+      }
+      .section-anchor,
+      .semantic-label {
+        color: inherit;
+        text-decoration: underline;
+        text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
+        text-underline-offset: 3px;
       }
       .lab-actions,
       .lab-stats {
@@ -86,9 +134,9 @@
       }
       .lab-badge {
         display: inline-block;
-        border: 1px solid var(--yellow, #d29922);
+        border: 1px solid var(--tone-color, var(--tone-warn));
         border-radius: 999px;
-        color: var(--yellow, #d29922);
+        color: var(--tone-color, var(--tone-warn));
         padding: 3px 8px;
         font-size: 11px;
         font-weight: 700;
@@ -112,10 +160,10 @@
         color: var(--text-dim);
       }
       .lab-callout {
-        border: 1px solid color-mix(in srgb, var(--yellow, #d29922) 60%, var(--border));
+        border: 1px solid color-mix(in srgb, var(--tone-color, var(--tone-warn)) 60%, var(--border));
         border-radius: var(--radius);
         padding: 12px 14px;
-        background: color-mix(in srgb, var(--yellow, #d29922) 8%, transparent);
+        background: color-mix(in srgb, var(--tone-color, var(--tone-warn)) 8%, transparent);
       }
       .taxonomy-controls {
         display: grid;
@@ -215,9 +263,9 @@
     </header>
 
     <main class="lab-page">
-      <section class="lab-hero">
-        <span class="lab-badge">Research sandbox</span>
-        <h2>Limits Forecast Lab</h2>
+      <section id="section:overview" class="lab-hero" data-tone="warn" aria-labelledby="lab-title">
+        <span class="lab-badge" data-tone="warn">Research sandbox</span>
+        <h2 id="lab-title">Limits Forecast Lab</h2>
         <p>
           Read-only model comparison for global and partially pooled sportsbook signals. This
           surface never writes production forecasts or claims calibration from transition-only
@@ -234,15 +282,57 @@
         </div>
       </section>
 
-      <div id="lab-stats" class="lab-stats" aria-label="Forecast lab summary"></div>
+      <div
+        id="lab-stats"
+        class="lab-stats"
+        aria-label="Forecast lab summary"
+        data-glossary-concept="ops.limits.data_coverage"
+      ></div>
 
-      <section class="lab-panel">
-        <h2>Promotion gate</h2>
-        <div id="lab-promotion" class="lab-callout">Loading laboratory evidence…</div>
+      <section
+        id="section:promotion-gate"
+        class="lab-panel"
+        data-tone="warn"
+        aria-labelledby="promotion-gate-title"
+      >
+        <h2 id="promotion-gate-title" class="lab-section-heading">
+          <a class="section-anchor" href="#section:promotion-gate">Promotion gate</a>
+          <span class="lab-section-links">
+            <a
+              class="semantic-label"
+              href="/portal/glossary/#glossary:ops.limits.prediction"
+              data-glossary-concept="ops.limits.prediction"
+              >Prediction semantics</a
+            >
+          </span>
+        </h2>
+        <div
+          id="lab-promotion"
+          class="lab-callout"
+          data-tone="warn"
+          role="status"
+          aria-live="polite"
+        >
+          Loading laboratory evidence…
+        </div>
       </section>
 
-      <section class="lab-panel">
-        <h2>Candidate diagnostics</h2>
+      <section
+        id="section:candidate-diagnostics"
+        class="lab-panel"
+        data-tone="info"
+        aria-labelledby="candidate-diagnostics-title"
+      >
+        <h2 id="candidate-diagnostics-title" class="lab-section-heading">
+          <a class="section-anchor" href="#section:candidate-diagnostics">Candidate diagnostics</a>
+          <span class="lab-section-links">
+            <a
+              href="/portal/glossary/#glossary:section.limitRaisePrediction"
+              data-glossary-concept="section.limitRaisePrediction"
+              >Forecast definition</a
+            >
+          </span>
+        </h2>
         <div class="lab-table-wrap">
           <table class="lab-table">
             <thead>
@@ -259,8 +349,22 @@
         </div>
       </section>
 
-      <section class="lab-panel">
-        <h2>Evidence lifecycle</h2>
+      <section
+        id="section:evidence-lifecycle"
+        class="lab-panel"
+        data-tone="info"
+        aria-labelledby="evidence-lifecycle-title"
+      >
+        <h2 id="evidence-lifecycle-title" class="lab-section-heading">
+          <a class="section-anchor" href="#section:evidence-lifecycle">Evidence lifecycle</a>
+          <span class="lab-section-links">
+            <a
+              href="/portal/glossary/#glossary:ops.limits.evidence_trace"
+              data-glossary-concept="ops.limits.evidence_trace"
+              >Evidence trace</a
+            >
+          </span>
+        </h2>
         <p class="lab-sub">
           Issued forecasts remain pending until the 48-hour horizon is covered by a terminal
           observation. Pending forecasts are never counted as no-raise outcomes.
@@ -268,8 +372,24 @@
         <div id="lab-evidence"></div>
       </section>
 
-      <section class="lab-panel">
-        <h2>Sportsbook partial pooling</h2>
+      <section
+        id="section:sportsbook-pooling"
+        class="lab-panel"
+        data-tone="info"
+        aria-labelledby="sportsbook-pooling-title"
+      >
+        <h2 id="sportsbook-pooling-title" class="lab-section-heading">
+          <a class="section-anchor" href="#section:sportsbook-pooling"
+            >Sportsbook partial pooling</a
+          >
+          <span class="lab-section-links">
+            <a
+              href="/portal/glossary/#glossary:section.sportsbookPatterns"
+              data-glossary-concept="section.sportsbookPatterns"
+              >Sportsbook patterns</a
+            >
+          </span>
+        </h2>
         <p class="lab-sub">
           Global weight shows how strongly a sparse sportsbook estimate shrinks toward the shared
           population rate.
@@ -292,8 +412,34 @@
         </div>
       </section>
 
-      <section id="section:sports-taxonomy" class="lab-panel">
-        <h2>League, competition &amp; country context</h2>
+      <section
+        id="section:sports-taxonomy"
+        class="lab-panel"
+        data-tone="info"
+        aria-labelledby="sports-taxonomy-title"
+      >
+        <h2 id="sports-taxonomy-title" class="lab-section-heading">
+          <a class="section-anchor" href="#section:sports-taxonomy"
+            >League, competition &amp; country context</a
+          >
+          <span class="lab-section-links">
+            <a
+              href="/portal/glossary/#glossary:ops.limits.league"
+              data-glossary-concept="ops.limits.league"
+              >League</a
+            >
+            <a
+              href="/portal/glossary/#glossary:ops.limits.competition"
+              data-glossary-concept="ops.limits.competition"
+              >Competition</a
+            >
+            <a
+              href="/portal/glossary/#glossary:ops.limits.event_country"
+              data-glossary-concept="ops.limits.event_country"
+              >Host country</a
+            >
+          </span>
+        </h2>
         <p class="lab-sub">
           Governed dimensions for segmenting limit evidence. League scope and event-host country
           stay separate: a global ITF tier receives the flag of the country hosting that event.
