@@ -1628,6 +1628,8 @@
     "portal:doctor:catalog": "bun tools/portal-cli.ts doctor --group catalog --verbose",
     "portal:doctor:bunfig": "bun tools/portal-cli.ts doctor --group bunfig --verbose",
     "portal:doctor:bunfig:check": "bun tools/portal-cli.ts doctor --group bunfig --no-write --offline --layout plain",
+    "portal:doctor:runtime": "bun tools/portal-cli.ts doctor --group runtime --verbose",
+    "portal:doctor:runtime:check": "bun test tests/bun-env-loading.test.ts && bun tools/portal-cli.ts doctor --group runtime --no-write --offline --layout plain",
     "portal:doctor:ci": "bun scripts/ensure-machine-bunfig.ts && bun tools/portal-cli.ts doctor --env ci --no-write",
     "portal:doctor:ci:json": "bun tools/portal-cli.ts doctor --env ci --json --no-write",
     "portal:doctor:ci:report": "bun scripts/doctor-ci-report.ts",

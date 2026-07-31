@@ -593,6 +593,31 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
       )
     );
 
+    const runtimeEnvGate = await spawn(['bun', 'test', 'tests/bun-env-loading.test.ts'], { cwd });
+    checks.push(
+      withMeta(
+        {
+          id: 'runtime-env-native-gate',
+          level: 'fatal',
+          group: 'gates',
+          ok: runtimeEnvGate === 0,
+          message:
+            runtimeEnvGate === 0
+              ? 'Bun native env loading and bunfig controls OK'
+              : 'Bun native env-loading tests FAILED',
+        },
+        {
+          fixCommand: runtimeEnvGate === 0 ? undefined : 'bun test tests/bun-env-loading.test.ts',
+          impact:
+            'Runtime upgrades must preserve env precedence, disable controls, and explicit-file loading',
+          autoFixable: false,
+          timeToFix: runtimeEnvGate === 0 ? undefined : '2–10 min',
+          envScope: 'ci',
+          heavy: true,
+        }
+      )
+    );
+
     const consoleFormatGate = await spawn(['bun', 'scripts/lint-console-format.ts'], { cwd });
     checks.push(
       withMeta(

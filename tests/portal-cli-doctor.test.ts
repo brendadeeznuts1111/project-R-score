@@ -271,6 +271,12 @@ describe('portal-cli doctor pure', () => {
     expect(checks.find(c => c.id === 'runtime-env-effective-state')?.message).toContain(
       'color=forced'
     );
+    expect(checks.find(c => c.id === 'runtime-env-effective-state')?.message).toContain(
+      'tmp=platform'
+    );
+    expect(checks.find(c => c.id === 'runtime-env-effective-state')?.message).toContain(
+      'reload=default'
+    );
     expect(JSON.stringify(checks)).not.toContain(secretishOptions);
   });
 
@@ -292,6 +298,27 @@ describe('portal-cli doctor pure', () => {
     expect(r.summary.failedFatal).toBe(1);
     expect(r.summary.failedWarn).toBe(1);
     expect(formatPortalDoctor(r)).toContain('Runtime environment');
+  });
+
+  test('--full wires the native Bun env-loading integration gate', async () => {
+    const spawned: string[] = [];
+    const r = await runPortalDoctor({
+      cwd: ROOT,
+      full: true,
+      group: 'gates',
+      skipLiveAccess: true,
+      spawn: async argv => {
+        spawned.push(argv.join(' '));
+        return 0;
+      },
+    });
+    expect(spawned).toContain('bun test tests/bun-env-loading.test.ts');
+    expect(r.checks.find(c => c.id === 'runtime-env-native-gate')).toMatchObject({
+      group: 'gates',
+      level: 'fatal',
+      ok: true,
+      heavy: true,
+    });
   });
 
   test('runBunfigChecks exports machine key / excludes constants', async () => {
@@ -608,6 +635,7 @@ describe('portal-cli doctor CLI', () => {
     expect(code).toBe(0);
     expect(out).toContain('bunfig | runtime | infra');
     expect(out).toContain('Runtime: TLS verification');
+    expect(out).toContain('native env-loading tests');
     expect(out).toContain('doctor --group runtime');
   });
 

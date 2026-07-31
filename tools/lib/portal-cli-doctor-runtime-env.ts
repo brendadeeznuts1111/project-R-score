@@ -25,10 +25,13 @@ function effectiveSummary(assessment: BunRuntimeEnvAssessment): string {
   const state = assessment.effective;
   return [
     `configured=${assessment.configured.length}/${BUN_RUNTIME_ENV_NAMES.length}`,
+    `tls=${state.tlsVerification}`,
     `http=${String(state.maxHttpRequests)}`,
     `fetch=${state.verboseFetch}`,
     `cache=${state.transpilerCache}`,
+    `tmp=${state.tempDirectory}`,
     `color=${state.color}`,
+    `reload=${state.clearTerminalOnReload}`,
     `crash-reports=${state.crashReports}`,
     `bun-options=${state.bunOptions}`,
   ].join(' · ');

@@ -20,7 +20,7 @@ Unified offline health gate for the portal control plane. Pure checks by default
 | `bunfig` | machine SSOT · project no machine keys · merge · excludes · frozenLockfile · no install env overrides |
 | `runtime` | TLS safety · documented control values · value-free effective state (not in portable fingerprint) |
 | `infra` | Access offline/live (not in portable fingerprint) |
-| `gates` | only with `--full` (not in portable fingerprint) |
+| `gates` | only with `--full`: install · vault · capability · native env-loading · console-format (not in portable fingerprint) |
 
 ## Bunfig probes
 
@@ -120,6 +120,7 @@ CI=true NO_COLOR=1 bun run portal:doctor:ci:report
 # or: portal:doctor:ci  (no JSON / no GHA sinks)
 bun run portal:doctor --group bunfig
 bun run portal:doctor --group runtime
+bun run portal:doctor:runtime:check
 bun run audit:bunfig
 bun run bake:doctor
 bun run bake:doctor:check

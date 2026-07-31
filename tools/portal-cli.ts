@@ -1238,7 +1238,7 @@ Checks:
   Bunfig:  machine-ssot · frozen-lockfile · project-no-machine-keys · merge · excludes · env
   Runtime: TLS verification · control values · value-free effective state
   Infra:   access-policy · ledger-access · portal-access · terminal-host · reasonix-dns
-  Gates:   (only with --full) install:verify · vault-health tests · capability tests
+  Gates:   (only with --full) install · vault · capability · native env-loading tests
 
 Access probes:
   Default doctor is offline (policy SSOT only — stable bake fingerprint).
