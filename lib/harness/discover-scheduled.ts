@@ -148,12 +148,6 @@ export const SCHEDULED_JOB_EXEMPTIONS: readonly ScheduledJobExemption[] = [
     reason: 'CI cache prune schedule — not a spine maintenance tenant',
   },
   {
-    id: 'gha-metrics-dashboard',
-    source: 'gha-cron',
-    match: 'metrics-dashboard.yml',
-    reason: 'CI metrics refresh — not a spine maintenance tenant',
-  },
-  {
     id: 'gha-issue-automation',
     source: 'gha-cron',
     match: 'issue-automation.yml',

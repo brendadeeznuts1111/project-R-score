@@ -72,12 +72,6 @@ export const CI_JOB_EXEMPTIONS: readonly CiJobExemption[] = [
     reason: 'Security audit workflow — separate security claim surface',
   },
   {
-    id: 'gha-micro-enhancements',
-    source: 'gha-workflow',
-    match: 'micro-enhancements.yml',
-    reason: 'Optional enhancement smoke — not required CI envelope',
-  },
-  {
     id: 'gha-har-performance',
     source: 'gha-workflow',
     match: 'har-performance.yml',
@@ -88,12 +82,6 @@ export const CI_JOB_EXEMPTIONS: readonly CiJobExemption[] = [
     source: 'gha-workflow',
     match: 'cache-lifecycle.yml',
     reason: 'Cache prune schedule — schedule discovery exemption',
-  },
-  {
-    id: 'gha-metrics-dashboard',
-    source: 'gha-workflow',
-    match: 'metrics-dashboard.yml',
-    reason: 'Metrics refresh — schedule discovery exemption',
   },
   {
     id: 'gha-issue-automation',
