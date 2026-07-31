@@ -26,7 +26,12 @@ for (const concept of new Set(Object.values(PARTNER_HISTORY_GLOSSARY))) {
 for (const [key, concept] of Object.entries(PARTNER_HISTORY_GLOSSARY)) {
   const directMarker = `data-glossary-concept="${concept}"`;
   const mappedReference = `PARTNER_HISTORY_GLOSSARY.${key}`;
-  if (!chromeSource.includes(directMarker) && !chromeSource.includes(mappedReference)) {
+  const shortMapped = `G.${key}`;
+  if (
+    !chromeSource.includes(directMarker) &&
+    !chromeSource.includes(mappedReference) &&
+    !chromeSource.includes(shortMapped)
+  ) {
     failures.push(`unwired chrome mapping: ${key} -> ${concept}`);
   }
 }
@@ -46,6 +51,12 @@ const visibleContract = [
   ['Export', PARTNER_HISTORY_GLOSSARY.export],
   ['CSV', PARTNER_HISTORY_GLOSSARY.csv],
   ['JSON', PARTNER_HISTORY_GLOSSARY.json],
+  ['Prior limit', PARTNER_HISTORY_GLOSSARY.priorLimitColumn],
+  ['Market type', PARTNER_HISTORY_GLOSSARY.marketTypeColumn],
+  ['Structure / phase', PARTNER_HISTORY_GLOSSARY.structureColumn],
+  ['Sportsbook', PARTNER_HISTORY_GLOSSARY.sportsbookColumn],
+  ['Observed', PARTNER_HISTORY_GLOSSARY.observedColumn],
+  ['Account', PARTNER_HISTORY_GLOSSARY.accountColumn],
 ] as const;
 
 for (const [label, concept] of visibleContract) {
@@ -53,21 +64,34 @@ for (const [label, concept] of visibleContract) {
   const directMarker = `data-glossary-concept="${concept}"`;
   const mappedMarker = Object.entries(PARTNER_HISTORY_GLOSSARY)
     .filter(([, value]) => value === concept)
-    .some(([key]) => chromeSource.includes(`PARTNER_HISTORY_GLOSSARY.${key}`));
+    .some(
+      ([key]) =>
+        chromeSource.includes(`PARTNER_HISTORY_GLOSSARY.${key}`) ||
+        chromeSource.includes(`G.${key}`)
+    );
   if (!chromeSource.includes(directMarker) && !mappedMarker) {
     failures.push(`visible chrome is not governed: ${label} -> ${concept}`);
   }
 }
 
+// Parallel namespaces that would drift from the collapse map (trim plan).
 const duplicateNamespaces = [
+  'ops.field.',
+  'ops.empty.',
+  'ops.error.',
+  'ops.toast.',
+  'ops.shortcut.',
+  'ops.sort.',
   'ops.panel.',
   'ops.filter.',
   'ops.metric.',
   'ops.table.',
+  'ops.action.',
   'ui.action.refresh',
   'ui.action.export',
   'ui.export.csv',
   'ui.export.json',
+  'ui.pagination.',
 ];
 for (const prefix of duplicateNamespaces) {
   if (chromeSource.includes(prefix)) failures.push(`parallel glossary namespace used: ${prefix}`);
