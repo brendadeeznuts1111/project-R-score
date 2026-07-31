@@ -640,7 +640,7 @@
     <div class="partner-page portal-page">
       <nav id="partner-history-crumbs" class="glossary-crumbs" aria-label="Breadcrumb"></nav>
       <div class="portal-actions">
-        <a href="/portal/limits/">Limit overview</a>
+        <a href="/portal/limits/" data-glossary-concept="page.limitPatterns">Limit overview</a>
         <a href="/portal/glossary/#glossary:page.partnerHistory">Glossary</a>
         <a href="/registry/sportsbook-opening-baseline.json" target="_blank" rel="noopener"
           >opening baseline JSON</a
@@ -658,7 +658,7 @@
               >Partner limit history</a
             >
           </h2>
-          <p class="history-kicker">
+          <p class="history-kicker" data-glossary-concept="page.partnerHistory">
             Trace account-level limit movement, sportsbook exposure, influence scores, and signed
             context evidence across the partner tree.
           </p>
@@ -672,41 +672,64 @@
         role="search"
         aria-label="Partner history filters"
       >
-        <label>
+        <label data-glossary-concept="ops.limits.account">
           <span
-            ><a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.account"
+            ><a
+              class="semantic-label"
+              href="/portal/glossary/#glossary:ops.limits.account"
+              data-glossary-concept="ops.limits.account"
               >Account</a
             ></span
           >
           <select id="partner-select" aria-label="Filter by partner-tree account">
-            <option value="">All accounts</option>
+            <option value="" data-glossary-concept="ui.filter.partnerId">All accounts</option>
           </select>
         </label>
-        <label>
-          Sportsbook
+        <label data-glossary-concept="ui.filter.sportsbook">
+          <a class="semantic-label" href="/portal/glossary/#glossary:ui.filter.sportsbook"
+            >Sportsbook</a
+          >
           <select id="sportsbook-select" aria-label="Filter by sportsbook">
-            <option value="">All sportsbooks</option>
+            <option value="" data-glossary-concept="ui.filter.sportsbook">All sportsbooks</option>
           </select>
         </label>
-        <label>
-          Direction
+        <label data-glossary-concept="ops.limits.change_direction">
+          <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.change_direction"
+            >Direction</a
+          >
           <select id="direction-select" aria-label="Filter by limit direction">
             <option value="">All directions</option>
-            <option value="up">Raises</option>
-            <option value="down">Decreases</option>
+            <option value="up" data-glossary-concept="ops.limits.change_direction">Raises</option>
+            <option value="down" data-glossary-concept="ops.limits.change_direction">
+              Decreases
+            </option>
           </select>
         </label>
-        <label>
-          Window
+        <label data-glossary-concept="section.recentLimitChanges">
+          <a class="semantic-label" href="/portal/glossary/#glossary:section.recentLimitChanges"
+            >Window</a
+          >
           <select id="hours-select" aria-label="Filter by history window">
-            <option value="24">24 hours</option>
-            <option value="48" selected>48 hours</option>
-            <option value="168">7 days</option>
+            <option value="24" data-glossary-concept="section.recentLimitChanges">24 hours</option>
+            <option value="48" selected data-glossary-concept="section.recentLimitChanges">
+              48 hours
+            </option>
+            <option value="168" data-glossary-concept="section.recentLimitChanges">7 days</option>
+            <option value="720" data-glossary-concept="section.recentLimitChanges">30 days</option>
             <option value="0">All loaded</option>
           </select>
         </label>
-        <button id="refresh-btn" class="btn btn-primary" type="button">Refresh</button>
-        <button id="filter-reset" class="btn" type="button">Reset</button>
+        <button
+          id="refresh-btn"
+          class="btn btn-primary"
+          type="button"
+          data-glossary-concept="ui.action.filter"
+        >
+          Refresh
+        </button>
+        <button id="filter-reset" class="btn" type="button" data-glossary-concept="ui.action.reset">
+          Reset
+        </button>
       </form>
       <p
         id="history-filter-status"
@@ -719,23 +742,25 @@
       <div class="metric-row" id="metric-row">
         <div class="metric-card">
           <div class="num" id="total-ct">—</div>
-          <div class="label">Visible changes</div>
+          <div class="label" data-glossary-concept="section.recentLimitChanges">
+            Visible changes
+          </div>
         </div>
         <div class="metric-card" data-tone="ok">
           <div class="num" id="raises-ct">—</div>
-          <div class="label">Raises</div>
+          <div class="label" data-glossary-concept="ops.limits.change_direction">Raises</div>
         </div>
         <div class="metric-card" data-tone="bad">
           <div class="num" id="downs-ct">—</div>
-          <div class="label">Decreases</div>
+          <div class="label" data-glossary-concept="ops.limits.change_direction">Decreases</div>
         </div>
         <div class="metric-card">
           <div class="num" id="net-ct">—</div>
-          <div class="label">Net change</div>
+          <div class="label" data-glossary-concept="ops.limits.limit_delta">Net change</div>
         </div>
         <div class="metric-card" data-tone="info">
           <div class="num" id="avg-score">—</div>
-          <div class="label">
+          <div class="label" data-glossary-concept="ops.limits.influence_score">
             <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.influence_score"
               >Avg influence</a
             >
@@ -743,15 +768,15 @@
         </div>
         <div class="metric-card">
           <div class="num" id="book-ct">—</div>
-          <div class="label">Sportsbooks</div>
+          <div class="label" data-glossary-concept="ui.filter.sportsbook">Sportsbooks</div>
         </div>
         <div class="metric-card">
           <div class="num" id="proof-ct">—</div>
           <div class="label">
             <a
               class="semantic-label"
-              href="/portal/glossary/#glossary:ops.limits.evidence_trace"
-              data-glossary-concept="ops.limits.evidence_trace"
+              href="/portal/glossary/#glossary:ops.limits.data_coverage"
+              data-glossary-concept="ops.limits.data_coverage"
               >Proof coverage</a
             >
           </div>
@@ -768,6 +793,7 @@
           aria-selected="true"
           aria-controls="panel-recent"
           data-tab="recent"
+          data-glossary-concept="section.recentLimitChanges"
         >
           Recent changes
         </button>
@@ -780,6 +806,7 @@
           aria-controls="panel-partner"
           tabindex="-1"
           data-tab="partner"
+          data-glossary-concept="section.perNodeBreakdown"
         >
           Per account
         </button>
@@ -792,6 +819,7 @@
           aria-controls="panel-baseline"
           tabindex="-1"
           data-tab="baseline"
+          data-glossary-concept="section.openingBaseline"
         >
           Opening baseline
         </button>
@@ -804,6 +832,7 @@
           aria-controls="panel-export"
           tabindex="-1"
           data-tab="export"
+          data-glossary-concept="ui.semantic.artifact"
         >
           Export
         </button>
@@ -985,10 +1014,24 @@
       <!-- Tab: Export -->
       <div class="tab-panel" id="panel-export" role="tabpanel" aria-labelledby="tab-export" hidden>
         <div class="metric-card" style="text-align: left; padding: 2em">
-          <h2 class="section-title" style="margin-top: 0">Download filtered limit data</h2>
+          <h2
+            class="section-title"
+            style="margin-top: 0"
+            data-glossary-concept="ui.semantic.artifact"
+          >
+            Download filtered limit data
+          </h2>
           <div style="display: flex; gap: 1em; flex-wrap: wrap">
-            <button id="export-csv-btn" class="btn btn-primary">Download CSV</button>
-            <button id="export-json-btn" class="btn">Copy JSON</button>
+            <button
+              id="export-csv-btn"
+              class="btn btn-primary"
+              data-glossary-concept="ui.semantic.artifact"
+            >
+              Download CSV
+            </button>
+            <button id="export-json-btn" class="btn" data-glossary-concept="ui.semantic.artifact">
+              Copy JSON
+            </button>
           </div>
           <p style="color: var(--text-dim); font-size: 0.85em; margin-top: 1em">
             CSV and JSON use the active account, sportsbook, direction, and history-window filters.
@@ -1006,6 +1049,10 @@
     <script type="module">
       import { startDataService } from '/portal/data.js';
       import { bootGlossaryUx } from '/portal/components/glossary-ux.js';
+      import {
+        PARTNER_HISTORY_GLOSSARY,
+        partnerHistoryGlossaryHref,
+      } from '/portal/partner-history/glossary-map.js';
 
       const BASELINE_URL = '/registry/sportsbook-opening-baseline.json';
       const sectionPattern = new URLPattern({ hash: 'section\\::section' });
@@ -1072,7 +1119,7 @@
       }).catch(() => {});
 
       function glossaryHref(concept) {
-        return '/portal/glossary/#glossary:' + concept;
+        return partnerHistoryGlossaryHref(concept);
       }
 
       function roleGlossaryConcept(nodeType) {
@@ -1143,9 +1190,10 @@
         hoursSelect.value = url.searchParams.get(HISTORY_QUERY.hours) || '48';
       }
 
-      function fillSelect(select, values, allLabel, labelFor = value => value) {
+      function fillSelect(select, values, allLabel, labelFor = value => value, allConcept = null) {
         const current = select.value;
         const options = [new Option(allLabel, '')];
+        if (allConcept) options[0].dataset.glossaryConcept = allConcept;
         for (const value of values) options.push(new Option(labelFor(value), value));
         select.replaceChildren(...options);
         select.value = [...select.options].some(option => option.value === current) ? current : '';
@@ -1370,7 +1418,7 @@
         sportsbookBreakdownEl.innerHTML = rows.length
           ? `<table class="history-book-table" aria-label="Sportsbook limit activity">
         <caption class="sr-only">Sportsbook activity for the current history filters</caption>
-        <thead><tr><th scope="col">Sportsbook</th><th scope="col" class="num">Changes</th><th scope="col" class="num">Raises</th><th scope="col" class="num">Decreases</th><th scope="col" class="num">High-water delta</th></tr></thead>
+        <thead><tr><th scope="col" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.sportsbooks}">Sportsbook</th><th scope="col" class="num" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.visibleChanges}">Changes</th><th scope="col" class="num" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.raises}">Raises</th><th scope="col" class="num" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.decreases}">Decreases</th><th scope="col" class="num" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.deltas}">High-water delta</th></tr></thead>
         <tbody>${rows
           .map(
             ([sportsbook, row]) => `<tr>
@@ -1411,8 +1459,20 @@
         const sportsbooks = [
           ...new Set(changes.map(change => change.sportsbook).filter(Boolean)),
         ].sort();
-        fillSelect(partnerSelect, accounts, 'All accounts', accountOptionLabel);
-        fillSelect(sportsbookSelect, sportsbooks, 'All sportsbooks');
+        fillSelect(
+          partnerSelect,
+          accounts,
+          'All accounts',
+          accountOptionLabel,
+          PARTNER_HISTORY_GLOSSARY.allAccounts
+        );
+        fillSelect(
+          sportsbookSelect,
+          sportsbooks,
+          'All sportsbooks',
+          undefined,
+          PARTNER_HISTORY_GLOSSARY.allSportsbooks
+        );
         if (!filtersInitialized) {
           restoreFilterQuery();
           filtersInitialized = true;
@@ -1437,7 +1497,7 @@
           scored.reduce((sum, change) => sum + change.multi_factor_score, 0) / (scored.length || 1);
         const books = new Set(filteredData.map(change => change.sportsbook)).size;
         const proofCount = filteredData.filter(
-          change => change.context_proof?.valid === true
+          change => change.context_proof?.valid === true && change.context_proof?.signed === true
         ).length;
 
         document.getElementById('total-ct').textContent = total;
@@ -1460,9 +1520,9 @@
           partnerSelect.value,
           sportsbookSelect.value,
           directionSelect.value,
-          hoursSelect.value !== '0' ? hoursSelect.value : '',
+          hoursSelect.value !== '48' ? hoursSelect.value : '',
         ].filter(Boolean).length;
-        filterStatus.innerHTML = `<strong>${total}</strong> of ${changes.length} changes · ${activeFilters} active filter${activeFilters === 1 ? '' : 's'} · deltas are versus prior high-water`;
+        filterStatus.innerHTML = `<strong>${total}</strong> of ${changes.length} changes · <a class="semantic-label" href="${glossaryHref(PARTNER_HISTORY_GLOSSARY.activeFilters)}" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.activeFilters}">${activeFilters} active filter${activeFilters === 1 ? '' : 's'}</a> · <a class="semantic-label" href="${glossaryHref(PARTNER_HISTORY_GLOSSARY.deltas)}" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.deltas}">deltas</a> are versus prior <a class="semantic-label" href="${glossaryHref(PARTNER_HISTORY_GLOSSARY.highWater)}" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.highWater}">high-water</a>`;
         const generated = opsData?.generatedAt || opsData?.generated || null;
         const generatedDate = generated ? new Date(generated) : null;
         freshnessEl.textContent =

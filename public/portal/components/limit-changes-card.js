@@ -13,6 +13,11 @@
  *   compact   — single-line format (no score/details)
  *   data-*    — override render when data supplied externally
  */
+import {
+  PARTNER_HISTORY_GLOSSARY,
+  partnerHistoryGlossaryHref,
+} from '../partner-history/glossary-map.js';
+
 const STYLE = `
   <style>
     :host {
@@ -35,16 +40,17 @@ const STYLE = `
     .lcc-toolbar { display: flex; flex-wrap: wrap; gap: 0.5em; align-items: center; margin-bottom: 4px; }
     .lcc-toolbar button, .lcc-toolbar a { padding: 2px 8px; border: 1px solid var(--border, #ccc); border-radius: 4px; background: var(--card, #f5f5f5); cursor: pointer; font-size: 0.8em; text-decoration: none; color: inherit; }
     .lcc-toolbar button:hover, .lcc-toolbar a:hover { background: var(--accent, #e0e0e0); }
+    .semantic-label { color: inherit; text-decoration: underline dotted; text-underline-offset: 2px; }
   </style>`;
 
 const TEMPLATE = `
   ${STYLE}
   <div class="lcc-toolbar">
-    <span id="lcc-title" style="font-weight:600;flex:1">Limit changes</span>
-    <button id="lcc-export" title="Download CSV">⬇ CSV</button>
-    <a id="lcc-link" href="/portal/limits/" title="Limits board">📊 Limits</a>
-    <a href="/portal/partner-history/" title="Partner history">Partners</a>
-    <a href="/registry/limit-raises.json" title="Baked registry JSON">JSON</a>
+    <a id="lcc-title" class="semantic-label" style="font-weight:600;flex:1" href="${partnerHistoryGlossaryHref(PARTNER_HISTORY_GLOSSARY.limitChanges)}" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.limitChanges}">Limit changes</a>
+    <button id="lcc-export" title="Download CSV" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.csv}">⬇ CSV</button>
+    <a id="lcc-link" href="/portal/limits/" title="Limits board" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.limitOverview}">📊 Limits</a>
+    <a href="/portal/partner-history/" title="Partner history" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.page}">Partners</a>
+    <a href="/registry/limit-raises.json" title="Baked registry JSON" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.json}">JSON</a>
   </div>
   <div id="lcc-summary" class="lcc-summary" role="status" aria-live="polite"></div>
   <div id="lcc-table-wrap"></div>
@@ -69,6 +75,7 @@ export class LimitChangesCard extends HTMLElement {
     this._data = null;
     this._payload = null;
     this._loading = false;
+    this._loadVersion = 0;
   }
 
   connectedCallback() {
@@ -86,11 +93,13 @@ export class LimitChangesCard extends HTMLElement {
   async load() {
     if (this._loading) return;
     this._loading = true;
+    const loadVersion = ++this._loadVersion;
     const empty = this.shadowRoot.getElementById('lcc-empty');
     try {
       const res = await fetch('/api/operations/summary');
       if (res.ok) {
         const payload = await res.json();
+        if (loadVersion !== this._loadVersion) return;
         this._processData(payload);
         return;
       }
@@ -99,16 +108,20 @@ export class LimitChangesCard extends HTMLElement {
       const res = await fetch('/registry/ops-summary.json');
       if (res.ok) {
         const payload = await res.json();
+        if (loadVersion !== this._loadVersion) return;
         this._processData(payload);
         return;
       }
     } catch {}
+    if (loadVersion !== this._loadVersion) return;
     empty.textContent = '⚠️ Could not load limit data.';
     this._loading = false;
   }
 
   /** External data setter (skip fetch). */
   set data(payload) {
+    this._loadVersion += 1;
+    this._loading = false;
     this._payload = payload;
     this._processData(payload);
   }
@@ -166,32 +179,32 @@ export class LimitChangesCard extends HTMLElement {
     const scored = filtered.filter(c => c.context_available && c.multi_factor_score != null);
     const avgScore = scored.reduce((s, c) => s + c.multi_factor_score, 0) / (scored.length || 1);
     this.shadowRoot.getElementById('lcc-summary').innerHTML = `
-      <span>${filtered.length} changes</span>
-      <span class="lcc-up">↑ ${raises}</span>
-      ${downs > 0 ? `<span class="lcc-down">↓ ${downs}</span>` : ''}
-      <span>${netDelta > 0 ? '+' : netDelta < 0 ? '-' : ''}$${Math.abs(netDelta).toLocaleString()} high-water net</span>
-      ${scored.length ? `<span>${(avgScore * 100).toFixed(0)}% avg influence</span>` : ''}
+      <span data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.visibleChanges}">${filtered.length} changes</span>
+      <span class="lcc-up" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.raises}">↑ ${raises}</span>
+      ${downs > 0 ? `<span class="lcc-down" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.decreases}">↓ ${downs}</span>` : ''}
+      <span data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.netChange}">${netDelta > 0 ? '+' : netDelta < 0 ? '-' : ''}$${Math.abs(netDelta).toLocaleString()} high-water net</span>
+      ${scored.length ? `<span data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.avgInfluence}">${(avgScore * 100).toFixed(0)}% avg influence</span>` : ''}
     `;
 
     // Table
     const hasPredictions = !isCompact && filtered.some(c => c.predicted_raise_prob != null);
     const headers = [
-      'Direction',
-      'Book',
-      'Sport',
-      'Market',
-      'Type',
-      'Prior high-water',
-      'New',
-      'Delta',
-      isCompact ? '' : 'Influence',
-      hasPredictions ? 'Prediction' : '',
-      'When',
+      ['Direction', PARTNER_HISTORY_GLOSSARY.directionFilter],
+      ['Book', PARTNER_HISTORY_GLOSSARY.sportsbookFilter],
+      ['Sport', 'ops.limits.sport'],
+      ['Market', 'ops.limits.market_type'],
+      ['Type', 'ops.limits.multi_structure'],
+      ['Prior high-water', PARTNER_HISTORY_GLOSSARY.highWater],
+      ['New', 'ops.limits.effective_limit'],
+      ['Delta', PARTNER_HISTORY_GLOSSARY.deltas],
+      isCompact ? null : ['Influence', PARTNER_HISTORY_GLOSSARY.avgInfluence],
+      hasPredictions ? ['Prediction', 'ops.limits.prediction'] : null,
+      ['When', PARTNER_HISTORY_GLOSSARY.windowFilter],
     ].filter(Boolean);
     this.shadowRoot.getElementById('lcc-table-wrap').innerHTML = `
       <table class="lcc-table" aria-label="Filtered partner limit changes">
         <caption style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Limit changes sorted newest first</caption>
-        <thead><tr>${headers.map(h => `<th scope="col">${h}</th>`).join('')}</tr></thead>
+        <thead><tr>${headers.map(([label, concept]) => `<th scope="col" data-glossary-concept="${concept}">${label}</th>`).join('')}</tr></thead>
         <tbody>${filtered
           .map(c => {
             const dir = c.direction === 'down' ? '↓ decrease' : '↑ raise';
