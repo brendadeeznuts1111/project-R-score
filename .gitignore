@@ -73,6 +73,7 @@ out/
 **/.cursor/agents/
 
 # Other IDE / agent tooling
+.devin/
 .claude/*
 !.claude/agents/
 !.claude/commands/
@@ -103,6 +104,7 @@ out/
 !.agents/skills/**/tests/
 !.agents/skills/**/tests/**
 .reasonix/
+/.serve-public/
 
 # OS
 .DS_Store
@@ -142,6 +144,8 @@ test-results/
 tmp/
 temp/
 .tmp/
+/tests/.tmp-bind-test.*
+/tests/.tmp-verify-bind.*
 
 # Project-specific
 profiles/
@@ -356,6 +360,7 @@ artifacts/*.zip
 # Docs: scripts/BUN_NATIVE.md · docs/harness/FEEDBACK.md
 artifacts/reports/
 /artifacts/browser/
+/artifacts/phase2-hero.webp
 /artifacts/root-hygiene/
 /artifacts/snapshots/
 # reports/ already ignored above (harness-gate-timing · ci-*-timing · inventories)
@@ -446,3 +451,8 @@ tools/snapshot-types.ts
 /oddsblaze/
 # Tier 4 scrape observation warehouse (append-only)
 artifacts/raw-limits/*.jsonl
+/artifacts/raw-limits/alert-state.json
+/artifacts/raw-limits/health.json
+
+# Legacy Bun release-feed cache; tools/bun-docs-feeds.json is canonical.
+/tools/release-index.json
