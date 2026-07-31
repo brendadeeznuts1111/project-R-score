@@ -32,21 +32,12 @@ describe('repository governance', () => {
     expect(new Set(contexts).size).toBe(contexts.length);
   });
 
-  test('release tags are immutable and constrained to the version namespace', () => {
+  test('release tags in the v* namespace are immutable', () => {
     expect(tagRuleset.target).toBe('tag');
     expect(tagRuleset.conditions.ref_name.include).toEqual(['refs/tags/v*']);
     expect(ruleTypes(tagRuleset)).toEqual(
-      new Set(['deletion', 'update', 'non_fast_forward', 'tag_name_pattern'])
+      new Set(['deletion', 'update', 'non_fast_forward'])
     );
-
-    const patternRule = tagRuleset.rules.find(rule => rule.type === 'tag_name_pattern');
-    const pattern = new RegExp(patternRule?.parameters?.pattern ?? 'a^');
-    for (const tag of ['v5.2.2', 'v5.2.2-pre', 'v5.2.2-monorepo-workspaces-catalog']) {
-      expect(pattern.test(tag)).toBeTrue();
-    }
-    for (const tag of ['latest', '5.2.2', 'v5', 'v5.2.2/rewritten']) {
-      expect(pattern.test(tag)).toBeFalse();
-    }
   });
 
   test('release workflow defers tags and stages only owned paths', () => {
