@@ -1,27 +1,72 @@
 // @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortController
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
- * Caesars Tier 4 scrape agent (fixture-first; no headless).
+ * Caesars Tier 4 scrape agent (fixture-first; American Wagering live path).
+ *
+ * Live primary: `api.americanwagering.com/.../sb/bets/configuration`
+ * (see catalogs/caesars-americanwagering.ts). That route is WAF-gated —
+ * without CAESARS_SCRAPE_COOKIE / CAESARS_WAF_TOKEN the agent records the
+ * block and falls back to the committed fixture.
  *
  * @see https://bun.com/docs/api/fetch — fetch
  * @see docs/harness/tenants/partner-limits.md
  */
 
 import { expandScrapedLimitSeeds } from '../../baseline-scraped-limits.ts';
-import { asSportsbookId, asStateCode } from '../domain.ts';
-import { parseGenericLimitsPayload } from '../scraper-targets.ts';
+import { asSportsbookId, asStateCode, type StateCode } from '../domain.ts';
+import {
+  CAESARS_BROWSER_HEADERS,
+  CAESARS_DEFAULT_LOCATION,
+  caesarsBetsConfigurationUrl,
+  caesarsLimitCandidateUrl,
+} from '../catalogs/caesars-americanwagering.ts';
 import type { LimitObservation } from '../limit-observation-wire.ts';
+import { isCaesarsWafHtmlBody, parseCaesarsBetsConfiguration } from './caesars-parse.ts';
 
 export const CAESARS_AGENT_ID = 'caesars-agent' as const;
 export const CAESARS_SPORTSBOOK = asSportsbookId('caesars');
-export const CAESARS_LIVE_URL = 'https://api.caesars.com/odds/v1/limits?state=NJ';
+
+/** @deprecated Use caesarsBetsConfigurationUrl() — kept as the default NJ live URL. */
+export const CAESARS_LIVE_URL = caesarsBetsConfigurationUrl(CAESARS_DEFAULT_LOCATION);
+
+export type CaesarsLiveFetchKind = 'json' | 'waf' | 'http_error' | 'network' | 'empty';
+
+export type CaesarsLiveFetchResult = {
+  kind: CaesarsLiveFetchKind;
+  url: string;
+  status: number | null;
+  data: unknown | null;
+  detail: string | null;
+};
 
 export type CaesarsAgentResult = {
   ok: boolean;
   mode: LimitObservation['mode'];
   observations: LimitObservation[];
   error: string | null;
+  live?: CaesarsLiveFetchResult;
 };
+
+function locationFromEnv(): string {
+  const raw = Bun.env.CAESARS_SCRAPE_LOCATION?.trim().toLowerCase();
+  return raw && raw.length > 0 ? raw : CAESARS_DEFAULT_LOCATION;
+}
+
+function jurisdictionForLocation(location: string): StateCode {
+  const upper = location.toUpperCase();
+  // Capture was CO; agents default NJ. Only promote known 2-letter US codes.
+  if (/^[A-Z]{2}$/.test(upper)) return asStateCode(upper);
+  return asStateCode('NJ');
+}
+
+function buildLiveHeaders(): Record<string, string> {
+  const headers: Record<string, string> = { ...CAESARS_BROWSER_HEADERS };
+  const cookie = Bun.env.CAESARS_SCRAPE_COOKIE?.trim();
+  if (cookie) headers.Cookie = cookie;
+  const waf = Bun.env.CAESARS_WAF_TOKEN?.trim();
+  if (waf) headers['x-aws-waf-token'] = waf;
+  return headers;
+}
 
 function fixtureObservations(observedAt: string): LimitObservation[] {
   return expandScrapedLimitSeeds()
@@ -48,17 +93,17 @@ function fixtureObservations(observedAt: string): LimitObservation[] {
     }));
 }
 
-function parsePayloadToObservations(
-  data: unknown,
+function rowsToObservations(
+  rows: ReturnType<typeof parseCaesarsBetsConfiguration>,
   observedAt: string,
+  jurisdiction: StateCode,
   mode: LimitObservation['mode']
 ): LimitObservation[] {
-  const parsed = parseGenericLimitsPayload(data, CAESARS_SPORTSBOOK, asStateCode('NJ'));
-  return parsed.map(row => ({
+  return rows.map(row => ({
     sportsbook: CAESARS_SPORTSBOOK,
     sport: row.sport,
     market: row.market,
-    jurisdiction: asStateCode('NJ'),
+    jurisdiction,
     structure: row.structure,
     phase: row.phase,
     openingMaxUsd: row.openingMaxUsd,
@@ -76,6 +121,87 @@ function parsePayloadToObservations(
   }));
 }
 
+/** Fetch bets/configuration with browser headers + optional cookie/WAF token. */
+export async function fetchCaesarsBetsConfiguration(opts?: {
+  location?: string;
+  timeoutMs?: number;
+  url?: string;
+}): Promise<CaesarsLiveFetchResult> {
+  const location = opts?.location ?? locationFromEnv();
+  const url = opts?.url ?? caesarsLimitCandidateUrl(location);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), opts?.timeoutMs ?? 12_000);
+  try {
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: buildLiveHeaders(),
+    });
+    const contentType = response.headers.get('content-type') ?? '';
+    const text = await response.text();
+
+    if (!response.ok) {
+      if (response.status === 403 || isCaesarsWafHtmlBody(text)) {
+        return {
+          kind: 'waf',
+          url,
+          status: response.status,
+          data: null,
+          detail: 'CloudFront/AWS WAF blocked bets/configuration (need browser session)',
+        };
+      }
+      return {
+        kind: 'http_error',
+        url,
+        status: response.status,
+        data: null,
+        detail: `HTTP ${response.status}`,
+      };
+    }
+
+    if (isCaesarsWafHtmlBody(text)) {
+      return {
+        kind: 'waf',
+        url,
+        status: response.status,
+        data: null,
+        detail: 'WAF challenge HTML returned with 200',
+      };
+    }
+
+    if (
+      !contentType.includes('json') &&
+      !text.trim().startsWith('{') &&
+      !text.trim().startsWith('[')
+    ) {
+      return {
+        kind: 'empty',
+        url,
+        status: response.status,
+        data: null,
+        detail: `non-JSON content-type=${contentType}`,
+      };
+    }
+
+    try {
+      const data: unknown = JSON.parse(text);
+      return { kind: 'json', url, status: response.status, data, detail: null };
+    } catch {
+      return {
+        kind: 'empty',
+        url,
+        status: response.status,
+        data: null,
+        detail: 'JSON parse failed',
+      };
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return { kind: 'network', url, status: null, data: null, detail: message };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export function scrapeCaesarsHtmlStub(): CaesarsAgentResult {
   return {
     ok: false,
@@ -85,30 +211,13 @@ export function scrapeCaesarsHtmlStub(): CaesarsAgentResult {
   };
 }
 
-async function fetchLiveJson(timeoutMs: number): Promise<unknown | null> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const response = await fetch(CAESARS_LIVE_URL, { signal: controller.signal });
-    if (!response.ok) {
-      console.warn(`[caesars-agent] live HTTP ${response.status}`);
-      return null;
-    }
-    return await response.json();
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.warn(`[caesars-agent] live error: ${message}`);
-    return null;
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
 export type RunCaesarsAgentOptions = {
   live?: boolean;
   html?: boolean;
   timeoutMs?: number;
   observedAt?: string;
+  /** Override jurisdiction location segment (default CAESARS_SCRAPE_LOCATION or nj). */
+  location?: string;
 };
 
 export async function runCaesarsAgent(
@@ -123,18 +232,48 @@ export async function runCaesarsAgent(
   if (options.html) return scrapeCaesarsHtmlStub();
 
   if (live) {
-    const data = await fetchLiveJson(options.timeoutMs ?? 10_000);
-    if (data != null) {
-      const observations = parsePayloadToObservations(data, observedAt, 'live');
+    const location = options.location ?? locationFromEnv();
+    const jurisdiction = jurisdictionForLocation(location);
+    const liveResult = await fetchCaesarsBetsConfiguration({
+      location,
+      timeoutMs: options.timeoutMs,
+    });
+
+    if (liveResult.kind === 'json' && liveResult.data != null) {
+      const rows = parseCaesarsBetsConfiguration(liveResult.data, {
+        jurisdiction,
+        referenceUrl: liveResult.url,
+      });
+      const observations = rowsToObservations(rows, observedAt, jurisdiction, 'live');
       if (observations.length > 0) {
-        return { ok: true, mode: 'live', observations, error: null };
+        return {
+          ok: true,
+          mode: 'live',
+          observations,
+          error: null,
+          live: liveResult,
+        };
       }
+      return {
+        ok: true,
+        mode: 'fixture',
+        observations: fixtureObservations(observedAt),
+        error: 'live JSON had no parseable limit rows; used fixture fallback',
+        live: liveResult,
+      };
     }
+
+    const reason =
+      liveResult.kind === 'waf'
+        ? `WAF blocked (${liveResult.status ?? '?'}); used fixture fallback`
+        : `live unavailable (${liveResult.kind}: ${liveResult.detail ?? 'n/a'}); used fixture fallback`;
+    console.warn(`[caesars-agent] ${reason}`);
     return {
       ok: true,
       mode: 'fixture',
       observations: fixtureObservations(observedAt),
-      error: 'live unavailable; used fixture fallback',
+      error: reason,
+      live: liveResult,
     };
   }
 
@@ -152,3 +291,10 @@ export async function scrape(options: RunCaesarsAgentOptions = {}): Promise<Limi
   if (!result.ok) throw new Error(result.error ?? 'caesars scrape failed');
   return result.observations;
 }
+
+export {
+  caesarsBetsConfigurationUrl,
+  caesarsLimitCandidateUrl,
+  parseCaesarsBetsConfiguration,
+  isCaesarsWafHtmlBody,
+};

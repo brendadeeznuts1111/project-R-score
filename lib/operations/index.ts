@@ -443,12 +443,37 @@ export {
 } from './scrapers/books/betmgm.ts';
 export {
   CAESARS_AGENT_ID,
+  CAESARS_LIVE_URL,
   CAESARS_SPORTSBOOK,
+  caesarsBetsConfigurationUrl,
+  caesarsLimitCandidateUrl,
+  fetchCaesarsBetsConfiguration,
   runCaesarsAgent,
   scrape as scrapeCaesars,
   scrapeCaesarsHtmlStub,
   type CaesarsAgentResult,
+  type CaesarsLiveFetchKind,
+  type CaesarsLiveFetchResult,
 } from './scrapers/books/caesars.ts';
+export {
+  isCaesarsWafHtmlBody,
+  parseCaesarsBetsConfiguration,
+} from './scrapers/books/caesars-parse.ts';
+export {
+  CAESARS_AW_HOST,
+  CAESARS_BRAND,
+  CAESARS_BROWSER_HEADERS,
+  CAESARS_DEFAULT_LOCATION,
+  CAESARS_ENDPOINT_CATALOG,
+  CAESARS_SB_HOST,
+  caesarsEndpointsByRole,
+  resolveCaesarsEndpointTemplate,
+  summarizeCaesarsEndpointCatalog,
+  type CaesarsCatalogSummary,
+  type CaesarsEndpointEntry,
+  type CaesarsEndpointGate,
+  type CaesarsEndpointRole,
+} from './scrapers/catalogs/caesars-americanwagering.ts';
 export {
   ESPNBET_AGENT_ID,
   ESPNBET_SPORTSBOOK,

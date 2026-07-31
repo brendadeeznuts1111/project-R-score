@@ -1,0 +1,251 @@
+{
+  "kind": "caesars-scrape-endpoints",
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-31T10:54:10.706Z",
+  "host": {
+    "americanWagering": "https://api.americanwagering.com",
+    "sportsbook": "https://sportsbook.caesars.com",
+    "brand": "czr"
+  },
+  "primaryLiveUrl": "https://api.americanwagering.com/regions/us/locations/nj/brands/czr/sb/bets/configuration",
+  "summary": {
+    "total": 22,
+    "byRole": {
+      "limit_candidate": 1,
+      "feature_flags": 1,
+      "region_config": 4,
+      "odds_board": 7,
+      "cms": 2,
+      "waf": 1,
+      "geocomply": 2,
+      "consent": 1,
+      "telemetry": 1,
+      "noise": 2
+    },
+    "limitCandidates": [
+      "https://api.americanwagering.com/regions/us/locations/{location}/brands/{brand}/sb/bets/configuration"
+    ],
+    "publicTemplates": [
+      "https://api.americanwagering.com/regions/us/locations/{location}/brands/{brand}/sb/features",
+      "https://api.americanwagering.com/configs/sportsbook/{location}/splash",
+      "https://sportsbook.caesars.com/us/config/{brand}/{location}.json",
+      "https://sportsbook.caesars.com/us/config/appConfigs.json",
+      "https://sportsbook.caesars.com/us/config/{brand}/availableRegions.json",
+      "https://cdn.contentstack.io/v3/content_types/app_status_messaging/entries/bltb82d7078fae2addf?environment=website",
+      "https://cdn.cookielaw.org/consent/{consentId}/{consentId}.json",
+      "https://{analytics.host}/*"
+    ],
+    "wafTemplates": [
+      "https://api.americanwagering.com/regions/us/locations/{location}/brands/{brand}/sb/bets/configuration",
+      "https://api.americanwagering.com/regions/us/locations/{location}/brands/{brand}/sb/v4/home",
+      "https://api.americanwagering.com/regions/us/locations/{location}/brands/{brand}/sb/v3/sports-menu",
+      "https://api.americanwagering.com/regions/us/locations/{location}/brands/{brand}/sb/v4/navigation-items",
+      "https://api.americanwagering.com/regions/us/locations/{location}/brands/{brand}/sb/v4/sports/{sport}/competitions/{competitionId}/quick-picks",
+      "https://api.americanwagering.com/regions/us/locations/{location}/brands/{brand}/sb/v4/sports/{sport}/competitions/{competitionId}/tabs",
+      "https://api.americanwagering.com/regions/us/locations/{location}/brands/{brand}/sb/v3/teamMetadata",
+      "https://api.americanwagering.com/caesars-ui-assets/json/teams.json",
+      "https://api.americanwagering.com/regions/us/locations/{location}/brands/{brand}/gw/growth/v4/sports/{sport}/banners"
+    ]
+  },
+  "endpoints": [
+    {
+      "id": "sb-bets-configuration",
+      "role": "limit_candidate",
+      "template": "https://api.americanwagering.com/regions/us/locations/{location}/brands/{brand}/sb/bets/configuration",
+      "method": "GET",
+      "gate": "waf",
+      "observedInCapture": true,
+      "notes": "Best opening-limit candidate. CloudFront 403 without WAF/session. Set CAESARS_SCRAPE_COOKIE and/or CAESARS_WAF_TOKEN to attempt live."
+    },
+    {
+      "id": "sb-features",
+      "role": "feature_flags",
+      "template": "https://api.americanwagering.com/regions/us/locations/{location}/brands/{brand}/sb/features",
+      "method": "GET",
+      "gate": "public",
+      "observedInCapture": true,
+      "notes": "ff_* flags only (gaming-limits UX toggles). No dollar ceilings. Public with browser Origin."
+    },
+    {
+      "id": "sb-splash",
+      "role": "region_config",
+      "template": "https://api.americanwagering.com/configs/sportsbook/{location}/splash",
+      "method": "GET",
+      "gate": "public",
+      "observedInCapture": true,
+      "notes": "Splash enablement only."
+    },
+    {
+      "id": "sb-region-json",
+      "role": "region_config",
+      "template": "https://sportsbook.caesars.com/us/config/{brand}/{location}.json",
+      "method": "GET",
+      "gate": "public",
+      "observedInCapture": true,
+      "notes": "UI config (API_PREFIX, sockets, INPUT_TYPE_FOR_GAMING_LIMITS_FORM). No max wager USD."
+    },
+    {
+      "id": "sb-app-configs",
+      "role": "region_config",
+      "template": "https://sportsbook.caesars.com/us/config/appConfigs.json",
+      "method": "GET",
+      "gate": "public",
+      "observedInCapture": true,
+      "notes": "americanwagering_regions + gaming_limits_monthly_reminder_regions."
+    },
+    {
+      "id": "sb-available-regions",
+      "role": "region_config",
+      "template": "https://sportsbook.caesars.com/us/config/{brand}/availableRegions.json",
+      "method": "GET",
+      "gate": "public",
+      "observedInCapture": true,
+      "notes": "desktop/ios/android region allowlists for jurisdiction fan-out."
+    },
+    {
+      "id": "sb-v4-home",
+      "role": "odds_board",
+      "template": "https://api.americanwagering.com/regions/us/locations/{location}/brands/{brand}/sb/v4/home",
+      "method": "GET",
+      "gate": "waf",
+      "observedInCapture": true,
+      "notes": "Home board payload — WAF gated."
+    },
+    {
+      "id": "sb-v3-sports-menu",
+      "role": "odds_board",
+      "template": "https://api.americanwagering.com/regions/us/locations/{location}/brands/{brand}/sb/v3/sports-menu",
+      "method": "GET",
+      "gate": "waf",
+      "observedInCapture": true,
+      "notes": "Sports taxonomy menu — WAF gated."
+    },
+    {
+      "id": "sb-v4-navigation-items",
+      "role": "odds_board",
+      "template": "https://api.americanwagering.com/regions/us/locations/{location}/brands/{brand}/sb/v4/navigation-items",
+      "method": "GET",
+      "gate": "waf",
+      "observedInCapture": true,
+      "notes": "Nav items — WAF gated; polled while idle in capture."
+    },
+    {
+      "id": "sb-v4-quick-picks",
+      "role": "odds_board",
+      "template": "https://api.americanwagering.com/regions/us/locations/{location}/brands/{brand}/sb/v4/sports/{sport}/competitions/{competitionId}/quick-picks",
+      "method": "GET",
+      "gate": "waf",
+      "observedInCapture": true,
+      "notes": "Competition quick-picks (odds). Not opening limits."
+    },
+    {
+      "id": "sb-v4-tabs",
+      "role": "odds_board",
+      "template": "https://api.americanwagering.com/regions/us/locations/{location}/brands/{brand}/sb/v4/sports/{sport}/competitions/{competitionId}/tabs",
+      "method": "GET",
+      "gate": "waf",
+      "observedInCapture": true,
+      "notes": "Competition tabs — odds board."
+    },
+    {
+      "id": "sb-v3-team-metadata",
+      "role": "odds_board",
+      "template": "https://api.americanwagering.com/regions/us/locations/{location}/brands/{brand}/sb/v3/teamMetadata",
+      "method": "GET",
+      "gate": "waf",
+      "observedInCapture": true,
+      "notes": "Team metadata."
+    },
+    {
+      "id": "sb-teams-assets",
+      "role": "odds_board",
+      "template": "https://api.americanwagering.com/caesars-ui-assets/json/teams.json",
+      "method": "GET",
+      "gate": "waf",
+      "observedInCapture": true,
+      "notes": "Team asset map — often WAF-gated outside browser session."
+    },
+    {
+      "id": "growth-banners",
+      "role": "cms",
+      "template": "https://api.americanwagering.com/regions/us/locations/{location}/brands/{brand}/gw/growth/v4/sports/{sport}/banners",
+      "method": "GET",
+      "gate": "waf",
+      "observedInCapture": true,
+      "notes": "Promo banners."
+    },
+    {
+      "id": "contentstack-status",
+      "role": "cms",
+      "template": "https://cdn.contentstack.io/v3/content_types/app_status_messaging/entries/bltb82d7078fae2addf?environment=website",
+      "method": "GET",
+      "gate": "public",
+      "observedInCapture": true,
+      "notes": "CMS status messaging — ignore for limits."
+    },
+    {
+      "id": "aws-waf-telemetry",
+      "role": "waf",
+      "template": "https://b470c5d1aeb4.edge.sdk.awswaf.com/b470c5d1aeb4/telemetry",
+      "method": "GET",
+      "gate": "session",
+      "observedInCapture": true,
+      "notes": "AWS WAF browser SDK — explains 403 on sb/* board + bets/configuration."
+    },
+    {
+      "id": "geocomply-myip",
+      "role": "geocomply",
+      "template": "https://myip.geocomply.com/",
+      "method": "GET",
+      "gate": "session",
+      "observedInCapture": true,
+      "notes": "GeoComply IP check — not limits."
+    },
+    {
+      "id": "geocomply-wss-class",
+      "role": "geocomply",
+      "template": "wss://wss.plc-gc.com:{port}/check",
+      "method": "GET",
+      "gate": "session",
+      "observedInCapture": true,
+      "notes": "GeoComply WebSocket health pings (ports 9703–9705 in capture)."
+    },
+    {
+      "id": "onetrust-consent",
+      "role": "consent",
+      "template": "https://cdn.cookielaw.org/consent/{consentId}/{consentId}.json",
+      "method": "GET",
+      "gate": "public",
+      "observedInCapture": true,
+      "notes": "OneTrust consent — noise."
+    },
+    {
+      "id": "fullstory-class",
+      "role": "telemetry",
+      "template": "https://rs.fullstory.com/rec/*",
+      "method": "GET",
+      "gate": "session",
+      "observedInCapture": true,
+      "notes": "FullStory session replay — drop."
+    },
+    {
+      "id": "ga-newrelic-bing-class",
+      "role": "noise",
+      "template": "https://{analytics.host}/*",
+      "method": "GET",
+      "gate": "public",
+      "observedInCapture": true,
+      "notes": "GA / New Relic / Bing conversions — drop."
+    },
+    {
+      "id": "adobe-target",
+      "role": "noise",
+      "template": "https://harrahs.tt.omtrdc.net/rest/v1/delivery",
+      "method": "GET",
+      "gate": "session",
+      "observedInCapture": true,
+      "notes": "Adobe Target — drop."
+    }
+  ],
+  "captureNote": "Derived from sportsbook.caesars.com CO network capture 2026-07-31. Opening max USD not on public config; bets/configuration is WAF-gated."
+}

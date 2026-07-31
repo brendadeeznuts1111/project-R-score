@@ -166,7 +166,20 @@ See [`bun --filter` docs](https://bun.com/docs/cli/filter).
 | `bun run baseline:scrape-draftkings` / `fanduel` / `bet365` / `espnbet` / `betmgm` / `caesars` / `hardrock` / `fanatics` / `betrivers` / `circa` | Aliases for `baseline:scrape-book` (US top-10 Tier 4 fleet) |
 | `bun run baseline:scrape-cron` / `:once` | In-process [`Bun.cron`](https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process) · default `*/15 * * * *` UTC · no-overlap · JSONL + alert eval |
 | `bun run baseline:scrape-alert` | Evaluate consecutive agent fails → Slack/webhook (`BASELINE_SCRAPE_ALERT_WEBHOOK`, threshold default 3) |
+| `bun run baseline:caesars:probe` | Deep-probe Caesars/AW catalog (`--location=co` · `--live` · `--json`) — WAF vs public |
 | `bun run baseline:test-tier4`        | Tier 4 agent + registry + scrape unit tests                                                     |
+
+### Caesars / American Wagering live path
+
+Capture-derived catalog: [`lib/operations/scrapers/catalogs/caesars-americanwagering.ts`](../../../lib/operations/scrapers/catalogs/caesars-americanwagering.ts) · bake [`/registry/caesars-scrape-endpoints.json`](../../../public/registry/caesars-scrape-endpoints.json).
+
+| Piece | Detail |
+| ----- | ------ |
+| Primary live URL | `https://api.americanwagering.com/regions/us/locations/{nj\|co}/brands/czr/sb/bets/configuration` |
+| Gate | CloudFront / AWS WAF — plain `fetch` → 403 HTML; fixture fallback remains the default |
+| Public (no WAF) | `sb/features`, `configs/sportsbook/{loc}/splash`, `sportsbook.caesars.com/us/config/*` — **no opening max USD** |
+| Optional auth | `CAESARS_SCRAPE_COOKIE` · `CAESARS_WAF_TOKEN` · `CAESARS_SCRAPE_LOCATION` (default `nj`) · `BASELINE_SCRAPE_LIVE=1` |
+| Parser | [`caesars-parse.ts`](../../../lib/operations/scrapers/books/caesars-parse.ts) — flexible `maxBet` / `maxStake` / nested `limits[]` |
 | `bun run baseline:status`            | Tier coverage / row counts for committed baseline artifact                           |
 | `bun run baseline:sync-all`          | Tier 1+2+4+5 bake; Tier 3 / overrides stubbed                                        |
 | `bun run bake:sportsbook-opening-baseline:check` | Drift gate for `/registry/sportsbook-opening-baseline.json`                 |

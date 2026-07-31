@@ -110,7 +110,10 @@ export const DEFAULT_SCRAPE_TARGETS: readonly ScrapeTarget[] = [
   target(asSportsbookId('draftkings'), 'https://api.draftkings.com/odds/v1/limits?state=NJ'),
   target(asSportsbookId('fanduel'), 'https://api.fanduel.com/odds/v1/limits?state=NJ'),
   target(asSportsbookId('betmgm'), 'https://api.betmgm.com/odds/v1/limits?state=NJ'),
-  target(asSportsbookId('caesars'), 'https://api.caesars.com/odds/v1/limits?state=NJ'),
+  target(
+    asSportsbookId('caesars'),
+    'https://api.americanwagering.com/regions/us/locations/nj/brands/czr/sb/bets/configuration'
+  ),
   target(asSportsbookId('espnbet'), 'https://sportsbook.espn.com/apis/v1/limits?state=NJ'),
   target(asSportsbookId('bet365'), 'https://www.bet365.com/api/limits?state=NJ'),
   target(asSportsbookId('hardrock'), 'https://www.hardrock.bet/api/v1/limits?state=NJ'),
