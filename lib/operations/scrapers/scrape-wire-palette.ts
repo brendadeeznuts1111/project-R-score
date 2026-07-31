@@ -22,9 +22,9 @@ export const SCRAPE_WIRE_COLORS = {
   betrivers: '#1E40AF', // BetRivers navy
   circa: '#0D9488', // Circa teal
 
-  // ── Sports (stable hue per SPORT_KEYS) ───────────────────────────
+  // ── Sports (stable hue per SPORT_KEYS; hex unique vs books/leagues) ─
   american_football: '#92400E', // brown / leather
-  baseball: '#DC2626', // classic red
+  baseball: '#E11D48', // rose red (espnbet keeps #DC2626)
   basketball: '#EA580C', // orange
   hockey: '#0369A1', // ice blue
   soccer: '#16A34A', // pitch green
@@ -32,7 +32,7 @@ export const SCRAPE_WIRE_COLORS = {
   golf: '#15803D', // fairway green
   mma: '#7F1D1D', // octagon crimson
 
-  // ── Leagues (parent-sport hue, shifted lightness/chroma) ─────────
+  // ── Leagues (parent-sport hue, shifted; hex unique across palette) ─
   // basketball family
   nba: '#F97316',
   wnba: '#FB7185',
@@ -46,7 +46,7 @@ export const SCRAPE_WIRE_COLORS = {
   // soccer family
   mls: '#22C55E',
   epl: '#3F6212',
-  uefa_champions_league: '#1D4ED8',
+  uefa_champions_league: '#1E3A8A', // deep UEFA navy (fanatics keeps #1D4ED8)
   // tennis family
   atp: '#4169E1',
   wta: '#C71585',

@@ -282,12 +282,23 @@
       return el.innerHTML;
     }
 
-    function wireChip(label, key, conceptId, detail = '', hex = '') {
+    function isChipHex(hex) {
+      return typeof hex === 'string' && /^#[0-9A-Fa-f]{6}$/.test(hex);
+    }
+
+    function wireChip(label, key, conceptId, detail = '', hex = '', colorKey = '') {
       const body = `${esc(label)} <code>${esc(key)}</code>${detail ? ` · ${esc(detail)}` : ''}`;
-      const style = hex ? ` style="--chip-color:${esc(hex)}"` : '';
-      if (!conceptId) return `<span class="wire-chip"${style}>${body}</span>`;
+      const safeHex = isChipHex(hex) ? hex : '';
+      const style = safeHex ? ` style="--chip-color:${safeHex}"` : '';
+      const colorAttr = colorKey
+        ? ` data-color-key="${esc(colorKey)}"`
+        : key
+          ? ` data-color-key="${esc(key)}"`
+          : '';
+      const tagAttrs = `${style}${colorAttr}`;
+      if (!conceptId) return `<span class="wire-chip"${tagAttrs}>${body}</span>`;
       const href = `/portal/glossary/#glossary:${encodeURIComponent(conceptId)}`;
-      return `<a class="wire-chip" href="${href}" data-glossary-concept="${esc(conceptId)}"${style}>${body}</a>`;
+      return `<a class="wire-chip" href="${href}" data-glossary-concept="${esc(conceptId)}"${tagAttrs}>${body}</a>`;
     }
 
     function renderScrapeWire(payload) {
@@ -316,7 +327,14 @@
       $('wire-books').innerHTML = books.length
         ? books
             .map(row =>
-              wireChip(`#${row.rank} ${row.label}`, row.key, row.conceptId, '', row.hex || '')
+              wireChip(
+                `#${row.rank} ${row.label}`,
+                row.key,
+                row.conceptId,
+                '',
+                row.hex || '',
+                row.colorKey || row.key
+              )
             )
             .join('')
         : '<span class="wire-stat">No bookRegistry in bake</span>';
@@ -324,14 +342,32 @@
       const sports = Array.isArray(payload.sportRegistry) ? payload.sportRegistry : [];
       $('wire-sports').innerHTML = sports.length
         ? sports
-            .map(row => wireChip(row.label, row.key, row.conceptId, '', row.hex || ''))
+            .map(row =>
+              wireChip(
+                row.label,
+                row.key,
+                row.conceptId,
+                '',
+                row.hex || '',
+                row.colorKey || row.key
+              )
+            )
             .join('')
         : '<span class="wire-stat">No sportRegistry in bake</span>';
 
       const leagues = Array.isArray(payload.leagueRegistry) ? payload.leagueRegistry : [];
       $('wire-leagues').innerHTML = leagues.length
         ? leagues
-            .map(row => wireChip(row.label, row.key, row.conceptId, row.sport, row.hex || ''))
+            .map(row =>
+              wireChip(
+                row.label,
+                row.key,
+                row.conceptId,
+                row.sport,
+                row.hex || '',
+                row.colorKey || row.key
+              )
+            )
             .join('')
         : '<span class="wire-stat">No leagueRegistry in bake</span>';
 

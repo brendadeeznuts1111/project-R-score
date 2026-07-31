@@ -9,11 +9,13 @@ import {
   SCRAPE_WIRE_BOOK_COLOR_KEYS,
   SCRAPE_WIRE_COLORS,
   SCRAPE_WIRE_COLOR_ROLES,
+  SCRAPE_WIRE_HEX_RE,
   assertScrapeWireColorCoverage,
   bookColorKey,
   bookColorWire,
   buildScrapeWireTaxonomyArtifact,
   isScrapeWireColorKey,
+  isScrapeWireHex,
   leagueColorWire,
   resolveScrapeWireColor,
   scrapeWireAnsi16mColor,
@@ -31,20 +33,31 @@ describe('scrape-wire color kernel', () => {
     expect(Object.keys(SCRAPE_WIRE_COLOR_ROLES.sport)).toHaveLength(SCRAPE_SPORT_KEYS.length);
     expect(Object.keys(SCRAPE_WIRE_COLOR_ROLES.league)).toHaveLength(SCRAPE_LEAGUE_KEYS.length);
 
+    const hexes = new Set<string>();
     for (const book of SCRAPE_BOOK_KEYS) {
       expect(isScrapeWireColorKey(book)).toBe(true);
       expect(bookColorKey(book)).toBe(book);
-      expect(scrapeWireHexColor(book).startsWith('#')).toBe(true);
+      expect(isScrapeWireHex(scrapeWireHexColor(book))).toBe(true);
+      expect(SCRAPE_WIRE_HEX_RE.test(scrapeWireHexColor(book))).toBe(true);
       expect(Bun.color(SCRAPE_WIRE_COLORS[book], 'HEX')).toBe(scrapeWireHexColor(book));
+      hexes.add(scrapeWireHexColor(book).toUpperCase());
     }
     for (const sport of SCRAPE_SPORT_KEYS) {
       expect(sportColorWire(sport).colorKey).toBe(sport);
-      expect(sportColorWire(sport).hex.startsWith('#')).toBe(true);
+      expect(isScrapeWireHex(sportColorWire(sport).hex)).toBe(true);
+      hexes.add(sportColorWire(sport).hex.toUpperCase());
     }
     for (const league of SCRAPE_LEAGUE_KEYS) {
       expect(leagueColorWire(league).colorKey).toBe(league);
-      expect(leagueColorWire(league).hex.startsWith('#')).toBe(true);
+      expect(isScrapeWireHex(leagueColorWire(league).hex)).toBe(true);
+      hexes.add(leagueColorWire(league).hex.toUpperCase());
     }
+    expect(hexes.size).toBe(
+      SCRAPE_BOOK_KEYS.length + SCRAPE_SPORT_KEYS.length + SCRAPE_LEAGUE_KEYS.length
+    );
+    // Known prior collisions — must stay distinct after Bun.color normalize.
+    expect(scrapeWireHexColor('espnbet')).not.toBe(sportColorWire('baseball').hex);
+    expect(scrapeWireHexColor('fanatics')).not.toBe(leagueColorWire('uefa_champions_league').hex);
   });
 
   test('role paths and css vars resolve', () => {

@@ -72,11 +72,29 @@ const DETERMINISTIC_FORMATS = [
   'ansi-16m',
 ] as const satisfies readonly DeterministicFormat[];
 
+/** Strict baked chip hex — 6-digit RGB only (no alpha / named colors). */
+export const SCRAPE_WIRE_HEX_RE = /^#[0-9A-Fa-f]{6}$/;
+
+export function isScrapeWireHex(value: string): boolean {
+  return SCRAPE_WIRE_HEX_RE.test(value);
+}
+
 // Validate palette on module load — Bun.color returns null for bad input.
-for (const [key, value] of Object.entries(SCRAPE_WIRE_COLORS)) {
-  const hex = Bun.color(value, 'HEX');
-  if (typeof hex !== 'string' || !hex) {
-    throw new Error(`Invalid scrape-wire color for "${key}": ${value}`);
+// Every key must resolve to a unique HEX so catalog chips never collide visually.
+{
+  const seen = new Map<string, string>();
+  for (const [key, value] of Object.entries(SCRAPE_WIRE_COLORS)) {
+    const hex = Bun.color(value, 'HEX');
+    if (typeof hex !== 'string' || !isScrapeWireHex(hex)) {
+      throw new Error(`Invalid scrape-wire color for "${key}": ${value}`);
+    }
+    const prior = seen.get(hex.toUpperCase());
+    if (prior) {
+      throw new Error(
+        `Scrape-wire palette hex collision: ${prior} and ${key} both resolve to ${hex}`
+      );
+    }
+    seen.set(hex.toUpperCase(), key);
   }
 }
 
@@ -253,19 +271,24 @@ export function leagueColorWire(league: LeagueKey): ScrapeWireColorWire {
   return colorWire(leagueColorKey(league));
 }
 
-/** Assert every book / sport / league registry key has a role + valid HEX. */
+/** Assert every book / sport / league registry key has a role + unique valid HEX. */
 export function assertScrapeWireColorCoverage(): void {
+  const seen = new Map<string, string>();
+  const check = (role: string, key: ScrapeWireColorKey) => {
+    const hex = hexColor(key);
+    if (!isScrapeWireHex(hex)) throw new Error(`${role} missing strict HEX`);
+    const prior = seen.get(hex.toUpperCase());
+    if (prior) throw new Error(`${role} hex collision with ${prior}: ${hex}`);
+    seen.set(hex.toUpperCase(), role);
+  };
   for (const book of SCRAPE_WIRE_BOOK_COLOR_KEYS) {
-    const hex = hexColor(bookColorKey(book));
-    if (!hex.startsWith('#')) throw new Error(`book.${book} missing HEX`);
+    check(`book.${book}`, bookColorKey(book));
   }
   for (const sport of SPORT_KEYS) {
-    const hex = hexColor(sportColorKey(sport));
-    if (!hex.startsWith('#')) throw new Error(`sport.${sport} missing HEX`);
+    check(`sport.${sport}`, sportColorKey(sport));
   }
   for (const league of LEAGUE_KEYS) {
-    const hex = hexColor(leagueColorKey(league));
-    if (!hex.startsWith('#')) throw new Error(`league.${league} missing HEX`);
+    check(`league.${league}`, leagueColorKey(league));
   }
 }
 

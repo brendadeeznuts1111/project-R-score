@@ -55,11 +55,11 @@ describe('catalog scrape-wire static contract', () => {
 
   test('applies baked hex as --chip-color on book/sport/league chips', () => {
     expect(catalogHtml).toContain('--chip-color');
-    expect(catalogHtml).toContain('wireChip(`#${row.rank} ${row.label}`, row.key, row.conceptId, \'\', row.hex || \'\')');
-    expect(catalogHtml).toContain('wireChip(row.label, row.key, row.conceptId, \'\', row.hex || \'\')');
-    expect(catalogHtml).toContain(
-      'wireChip(row.label, row.key, row.conceptId, row.sport, row.hex || \'\')'
-    );
+    expect(catalogHtml).toContain('isChipHex');
+    expect(catalogHtml).toContain('data-color-key');
+    expect(catalogHtml).toContain('row.colorKey || row.key');
+    expect(catalogHtml).toContain('/^#[0-9A-Fa-f]{6}$/');
+    expect(catalogHtml).toContain('row.hex || \'\'');
   });
 });
 

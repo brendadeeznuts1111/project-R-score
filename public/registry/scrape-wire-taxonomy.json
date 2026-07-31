@@ -2,7 +2,7 @@
   "kind": "scrape-wire-taxonomy",
   "schemaVersion": 5,
   "path": "/registry/scrape-wire-taxonomy.json",
-  "generatedAt": "2026-07-31T13:08:01.578Z",
+  "generatedAt": "2026-07-31T13:18:42.491Z",
   "summary": {
     "books": 10,
     "sports": 8,
@@ -200,8 +200,8 @@
       "label": "Baseball",
       "conceptId": "sport.baseball",
       "colorKey": "baseball",
-      "hex": "#DC2626",
-      "css": "#dc2626"
+      "hex": "#E11D48",
+      "css": "#e11d48"
     },
     {
       "key": "basketball",
@@ -430,8 +430,8 @@
         "champions_league"
       ],
       "colorKey": "uefa_champions_league",
-      "hex": "#1D4ED8",
-      "css": "#1d4ed8"
+      "hex": "#1E3A8A",
+      "css": "#1e3a8a"
     },
     {
       "key": "atp",

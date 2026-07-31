@@ -31,6 +31,10 @@ import { listBookVendorAliasCoverage, SCRAPE_BOOK_VENDOR_ALIASES } from './book-
 import {
   SCRAPE_WIRE_BOOK_COLOR_KEYS,
   assertScrapeWireColorCoverage,
+  bookColorWire,
+  isScrapeWireHex,
+  leagueColorWire,
+  sportColorWire,
 } from './scrape-wire-color-kernel.ts';
 import {
   SCRAPE_BOOK_KEYS,
@@ -347,37 +351,71 @@ export function auditScrapeWireSchema(
       }
     }
     const artifact = buildScrapeWireTaxonomyArtifact(generatedAt);
+    const bakeWireOk = (
+      row: { key: string; colorKey?: string; hex?: string; css?: string },
+      wire: { colorKey: string; hex: string; css: string }
+    ): boolean =>
+      row.colorKey === row.key &&
+      row.colorKey === wire.colorKey &&
+      typeof row.hex === 'string' &&
+      isScrapeWireHex(row.hex) &&
+      row.hex.toUpperCase() === wire.hex.toUpperCase() &&
+      row.css === wire.css;
     for (const row of artifact.bookRegistry) {
-      if (!row.hex?.startsWith('#') || row.colorKey !== row.key) {
+      const wire = bookColorWire(row.key);
+      if (!bakeWireOk(row, wire)) {
         issues.push(
           issue(
             'color.book_bake',
-            `Book registry row ${row.key} missing valid color wire`,
+            `Book registry row ${row.key} missing valid color wire (want ${wire.hex})`,
             `scrape-wire-taxonomy.bookRegistry.${row.key}`
           )
         );
       }
     }
     for (const row of artifact.sportRegistry) {
-      if (!row.hex?.startsWith('#') || row.colorKey !== row.key) {
+      const wire = sportColorWire(row.key);
+      if (!bakeWireOk(row, wire)) {
         issues.push(
           issue(
             'color.sport_bake',
-            `Sport registry row ${row.key} missing valid color wire`,
+            `Sport registry row ${row.key} missing valid color wire (want ${wire.hex})`,
             `scrape-wire-taxonomy.sportRegistry.${row.key}`
           )
         );
       }
     }
     for (const row of artifact.leagueRegistry) {
-      if (!row.hex?.startsWith('#') || row.colorKey !== row.key) {
+      const wire = leagueColorWire(row.key);
+      if (!bakeWireOk(row, wire)) {
         issues.push(
           issue(
             'color.league_bake',
-            `League registry row ${row.key} missing valid color wire`,
+            `League registry row ${row.key} missing valid color wire (want ${wire.hex})`,
             `scrape-wire-taxonomy.leagueRegistry.${row.key}`
           )
         );
+      }
+    }
+    // Cross-registry hex uniqueness on baked rows (books ∪ sports ∪ leagues).
+    const bakedHex = new Map<string, string>();
+    for (const row of [
+      ...artifact.bookRegistry.map(r => ({ id: `book.${r.key}`, hex: r.hex })),
+      ...artifact.sportRegistry.map(r => ({ id: `sport.${r.key}`, hex: r.hex })),
+      ...artifact.leagueRegistry.map(r => ({ id: `league.${r.key}`, hex: r.hex })),
+    ]) {
+      const key = row.hex.toUpperCase();
+      const prior = bakedHex.get(key);
+      if (prior) {
+        issues.push(
+          issue(
+            'color.hex_collision',
+            `Baked hex collision: ${prior} and ${row.id} both ${row.hex}`,
+            'scrape-wire-color-kernel'
+          )
+        );
+      } else {
+        bakedHex.set(key, row.id);
       }
     }
   } catch (err) {
