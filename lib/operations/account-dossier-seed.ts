@@ -62,16 +62,42 @@ export type SeedAccountDossierResult = {
   } | null;
 };
 
-const NJ_DESKS: Record<string, { location: string; zip: string; age: number }> = {
-  partner: { location: 'Newark', zip: '07102', age: 34 },
-  account: { location: 'Jersey City', zip: '07302', age: 28 },
+type NjDesk = { location: string; zip: string; age: number };
+
+/** Distinct NJ desks so connected-tree location columns are non-uniform. */
+const NJ_DESKS_BY_SIGN: Record<string, NjDesk> = {
+  ASH: { location: 'Newark', zip: '07102', age: 34 },
+  'ASH-001': { location: 'Jersey City', zip: '07302', age: 28 },
+  'ASH-002': { location: 'Hoboken', zip: '07030', age: 31 },
+  'ASH-003': { location: 'Elizabeth', zip: '07201', age: 29 },
+  'ASH-004': { location: 'Paterson', zip: '07501', age: 33 },
 };
+
+const NJ_DESK_FALLBACK: Record<'partner' | 'account', NjDesk> = {
+  partner: NJ_DESKS_BY_SIGN.ASH!,
+  account: NJ_DESKS_BY_SIGN['ASH-001']!,
+};
+
+function deskForNode(role: 'partner' | 'account', callSign?: string): NjDesk {
+  if (callSign && NJ_DESKS_BY_SIGN[callSign]) return NJ_DESKS_BY_SIGN[callSign]!;
+  return NJ_DESK_FALLBACK[role];
+}
+
+function dossierLicenseNumber(partnerCode: string, callSign?: string, role?: string): string {
+  const sign = (callSign || role || partnerCode).replace(/[^A-Z0-9-]/gi, '').slice(0, 16);
+  // Prefer call-sign alone when it already carries the partner CODE (ASH / ASH-001).
+  if (sign.toUpperCase().startsWith(partnerCode.toUpperCase())) return `NJ-${sign}`;
+  return `NJ-${partnerCode}-${sign}`;
+}
 
 /** Stable Cascade/ASH UUID used by TOC board + account dossier demos. */
 export const DOSSIER_ASH_PARTNER_ID = '019f92bf-40d6-72e3-aa09-f0a9b8a95824';
+/** Downlines match TOC identity UUIDs so test DB ↔ ops DB dossiers stay aligned. */
 export const DOSSIER_ASH_ACCOUNTS = [
   { id: '019f92ee-5ef8-71e9-b207-5ae20c07d095', callSign: 'ASH-001', name: 'TOC ASH-001' },
   { id: '019f92ee-5ef9-728d-950c-6c02a59903a2', callSign: 'ASH-002', name: 'TOC ASH-002' },
+  { id: '019f92f9-2e3f-74f4-8262-720202846493', callSign: 'ASH-003', name: 'TOC ASH-003' },
+  { id: '019f930b-71e5-7729-91d6-a82589cf488c', callSign: 'ASH-004', name: 'TOC ASH-004' },
 ] as const;
 
 export type EnsureDossierDemoTreeOpts = {
@@ -198,13 +224,14 @@ export async function seedAccountDossierDemo(
       });
       continue;
     }
-    const desk = NJ_DESKS[node.role] ?? NJ_DESKS.account!;
+    const sign = node.callSign ?? (node.role === 'partner' ? node.partnerCode : undefined);
+    const desk = deskForNode(node.role, sign);
     const result = applyPartnerComplianceOnboard(db, asTreeNodeId(node.nodeId), {
       stateCode: 'NJ',
       location: desk.location,
       zipCode: desk.zip,
       age: desk.age,
-      licenseNumber: `DOSSIER-NJ-${node.partnerCode}-${(node.callSign || node.role).slice(0, 12)}`,
+      licenseNumber: dossierLicenseNumber(node.partnerCode, sign, node.role),
       licenseStatus: 'active',
       identityVerified: true,
     });

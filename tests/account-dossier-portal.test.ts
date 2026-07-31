@@ -211,9 +211,19 @@ describe('account dossier seed (test db)', () => {
       expect(dossier.found).toBe(true);
       expect(dossier.partnerCode).toBe('ASH');
       expect(dossier.location.state).toBe('NJ');
+      expect(dossier.location.city).toBe('Newark');
       expect(dossier.raiseCount).toBeGreaterThan(0);
-      expect(dossier.connected.length).toBeGreaterThan(0);
+      expect(dossier.connected.length).toBeGreaterThanOrEqual(5);
       expect(dossier.monitoringStatus).not.toBe('incomplete');
+      const cities = new Set(
+        dossier.connected.map(row => row.location).filter((c): c is string => Boolean(c))
+      );
+      expect(cities.size).toBeGreaterThanOrEqual(3);
+      expect(dossier.outs.length).toBeGreaterThan(0);
+      const license = limitRaises.accountProfiles?.profiles?.find(
+        (p: { treeNodeId: string }) => p.treeNodeId === DOSSIER_ASH_PARTNER_ID // brand-ok — profile wire
+      )?.license?.licenseNumber;
+      expect(String(license || '')).toMatch(/^NJ-ASH$/);
     } finally {
       db.close();
     }

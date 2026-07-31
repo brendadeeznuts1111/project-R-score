@@ -19,8 +19,50 @@
 import { basenamePath, dirnamePath } from '../lib/path-bun.ts';
 import { ensureDir } from '../scripts/lib/fs-bun.ts';
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
-import { seedAccountDossierDemo } from '../lib/operations/account-dossier-seed.ts';
+import {
+  DOSSIER_ASH_PARTNER_ID,
+  seedAccountDossierDemo,
+} from '../lib/operations/account-dossier-seed.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
+import { buildAccountDossier } from '../public/portal/account/account-dossier.js';
+
+async function dossierCompleteness(
+  accountId: string, // brand-ok — TreeNodeId wire for CLI summary
+  bakePath: string | undefined,
+  hours: number
+) {
+  if (!bakePath || !(await Bun.file(bakePath).exists())) return null;
+  const limitRaises = await Bun.file(bakePath).json();
+  const partnersOps = (await Bun.file('public/registry/partners-ops.json').exists())
+    ? await Bun.file('public/registry/partners-ops.json').json()
+    : null;
+  const d = buildAccountDossier({ accountId, limitRaises, partnersOps, hours });
+  const locationOk = Boolean(d.location.state && d.location.city && d.location.zip);
+  const licenseOk = Boolean(d.licenseStatus);
+  const monitoringOk = d.monitoringStatus != null && d.monitoringStatus !== 'incomplete';
+  return {
+    accountId,
+    partnerCode: d.partnerCode,
+    callSign: d.callSign,
+    locationOk,
+    licenseOk,
+    monitoringOk,
+    outs: d.outs.length,
+    connected: d.connected.length,
+    raises: d.raiseCount,
+    policies: d.policies.length,
+    cities: [...new Set(d.connected.map(row => row.location).filter(Boolean))],
+    complete:
+      locationOk &&
+      licenseOk &&
+      monitoringOk &&
+      d.outs.length > 0 &&
+      d.connected.length > 1 &&
+      d.raiseCount > 0 &&
+      d.policies.length > 0 &&
+      d.partnerCode != null,
+  };
+}
 
 function basenameNoExt(path: string): string {
   const base = basenamePath(path);
@@ -72,6 +114,10 @@ try {
     await Bun.write(opsSummaryPath, `${JSON.stringify(summary, null, 2)}\n`);
   }
 
+  const primaryId = result.toc.nodes[0]?.nodeId ?? DOSSIER_ASH_PARTNER_ID;
+  const resolvedBakePath = result.baked?.path ?? bakePath;
+  const completeness = await dossierCompleteness(primaryId, resolvedBakePath, lookbackHours);
+
   console.log(
     JSON.stringify(
       {
@@ -99,14 +145,17 @@ try {
           : null,
         baked: result.baked,
         opsSummaryPath,
-        open: result.toc.nodes[0]
-          ? `/portal/account/?account=${encodeURIComponent(result.toc.nodes[0]!.nodeId)}&hours=${lookbackHours}`
-          : '/portal/account/?partner=ASH',
+        completeness,
+        open: `/portal/account/?account=${encodeURIComponent(primaryId)}&hours=${lookbackHours}`,
       },
       null,
       2
     )
   );
+  if (completeness && !completeness.complete) {
+    exitCode = 1;
+    console.error('dossier completeness incomplete — re-run with --force --bake');
+  }
 } catch (err) {
   exitCode = 1;
   console.error(err instanceof Error ? err.message : String(err));
