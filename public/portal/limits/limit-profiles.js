@@ -60,6 +60,9 @@ function rulesLabel(rules) {
   if (rules?.max_daily_total != null) {
     labels.push(`${formatMoney(rules.max_daily_total)} daily`);
   }
+  if (rules?.max_weekly_total != null) {
+    labels.push(`${formatMoney(rules.max_weekly_total)} weekly`);
+  }
   if (rules?.require_identity_verification) labels.push('identity required');
   if (rules?.allowed_zip_prefixes?.length) {
     labels.push(`ZIP ${rules.allowed_zip_prefixes.join(', ')}`);
@@ -67,10 +70,11 @@ function rulesLabel(rules) {
   return labels.join(' · ') || 'standard';
 }
 
-function summaryCard(value, label, concept, tone = 'skip') {
+function summaryCard(value, label, concept, tone = 'skip', description = '') {
   return `<div class="profile-summary__item">
     <strong data-tone="${esc(tone)}">${esc(value)}</strong>
     <a class="semantic-label" href="${glossaryHref(concept)}">${esc(label)}</a>
+    ${description ? `<small>${esc(description)}</small>` : ''}
   </div>`;
 }
 
@@ -87,6 +91,14 @@ function renderSummary() {
     summaryCard(summary.policies, 'effective policies', 'ops.limits.policy_code'),
     summaryCard(summary.traceEvents, 'trace events', 'ops.limits.evidence_trace'),
   ].join('');
+}
+
+function renderComplianceKpis() {
+  const target = document.getElementById('compliance-policy-kpis');
+  if (!target || !projection) return;
+  target.innerHTML = projection.kpis
+    .map(kpi => summaryCard(kpi.value, kpi.label, kpi.key, kpi.tone, kpi.description))
+    .join('');
 }
 
 function renderJurisdictionOptions() {
@@ -217,16 +229,44 @@ function renderPolicies() {
       .map(
         policy => `<tr>
           <td><strong>${esc(policy.stateCode)}</strong></td>
-          <td><code class="policy-code">${esc(policy.policyCode)}</code></td>
+          <td>
+            <a class="semantic-label" href="${glossaryHref(policy.policyKey)}">${esc(policy.label)}</a>
+            <br><code class="policy-code">${esc(policy.policyCode)}</code>
+          </td>
+          <td>
+            <span class="status-token" data-tone="${policy.status === 'active' ? 'ok' : 'warn'}">${esc(policy.status)}</span>
+          </td>
+          <td>${esc(policy.authority)}<br><small>${esc(policy.risk)} risk</small></td>
           <td>${esc(policy.scope)}${policy.treeNodeId ? `<br><small>${esc(policy.treeNodeId)}</small>` : ''}</td>
           <td>${esc(policy.sportKey)}<br><small>${esc(policy.marketKey)}</small></td>
-          <td>${formatMoney(policy.maxWager)} max<br><small>${formatMoney(policy.minWager)} min</small></td>
-          <td>${esc(policy.allowedBetTypes.join(', ') || 'all')}</td>
-          <td>${esc(rulesLabel(policy.specialRules))}</td>
+          <td>
+            ${formatMoney(policy.maxWager)} max
+            <br><small>${formatMoney(policy.minWager)} min · ${formatMoney(policy.dailyLimit)} daily · ${formatMoney(policy.weeklyLimit)} weekly</small>
+            ${
+              policy.tieredLimits?.length
+                ? `<br><small>${esc(policy.tieredLimits.map(tier => `${tier.tier}: ${formatMoney(tier.maxWager)}`).join(' · '))}</small>`
+                : ''
+            }
+          </td>
+          <td>
+            <strong>${esc(policy.enforcement)}</strong>
+            <br><small>${esc(rulesLabel(policy.specialRules))}</small>
+            ${
+              policy.exclusionGroups?.length
+                ? `<br><small>excludes ${esc(policy.exclusionGroups.join(', '))}</small>`
+                : ''
+            }
+            <br><small>${esc(policy.allowedBetTypes.join(', ') || 'all bet types')}</small>
+          </td>
+          <td>
+            ${esc(policy.effectiveDate)}
+            ${policy.expirationDate ? `<br><small>expires ${esc(policy.expirationDate)}</small>` : ''}
+            <br><small>${esc(policy.sourceRef)}</small>
+          </td>
         </tr>`
       )
       .join('') ||
-    '<tr><td colspan="7" class="empty">No effective jurisdiction policies.</td></tr>';
+    '<tr><td colspan="9" class="empty">No effective jurisdiction policies.</td></tr>';
 }
 
 function renderError(message) {
@@ -241,12 +281,13 @@ async function loadProfiles() {
     const response = await fetch(PROFILE_URL, { cache: 'no-store' });
     if (!response.ok) throw new Error(`profile artifact returned HTTP ${response.status}`);
     const snapshot = await response.json();
-    if (snapshot.schemaVersion !== 2 || snapshot.accountProfiles?.schemaVersion !== 1) {
+    if (snapshot.schemaVersion !== 3 || snapshot.accountProfiles?.schemaVersion !== 2) {
       throw new Error('account profile projection is missing or stale');
     }
     projection = snapshot.accountProfiles;
     selectedAccount = accountFromUrl() ?? selectedAccount;
     renderSummary();
+    renderComplianceKpis();
     renderJurisdictionOptions();
     renderProfiles();
     renderPolicies();

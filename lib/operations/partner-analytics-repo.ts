@@ -490,7 +490,7 @@ export class PartnerAnalyticsRepository {
 }
 
 export type LimitRaisesSnapshot = {
-  schemaVersion: 2;
+  schemaVersion: 3;
   generatedAt: string;
   lookbackHours: number;
   byNode: Record<
@@ -588,7 +588,7 @@ export async function exportLimitRaisesSnapshot(
   );
 
   const snapshot: LimitRaisesSnapshot = {
-    schemaVersion: 2,
+    schemaVersion: 3,
     generatedAt: new Date().toISOString(),
     lookbackHours,
     byNode,

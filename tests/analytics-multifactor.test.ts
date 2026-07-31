@@ -117,11 +117,11 @@ describe('multi-factor limit raise context', () => {
         lookbackHours: 48,
         capture: false,
       });
-      expect(snap.schemaVersion).toBe(2);
+      expect(snap.schemaVersion).toBe(3);
       expect(snap.raises).toBeGreaterThanOrEqual(1);
       expect(snap.byNode[nodeId]?.raises.length).toBeGreaterThanOrEqual(1);
       expect(snap.accountProfiles).toMatchObject({
-        schemaVersion: 1,
+        schemaVersion: 2,
         kind: 'account-limit-profiles',
       });
       const file = await Bun.file(outPath).json();

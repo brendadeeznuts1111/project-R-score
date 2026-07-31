@@ -20,6 +20,8 @@ import {
   PORTAL_SEMANTIC_CONCEPTS,
   validatePortalSemanticVocabulary,
 } from '../lib/portal/semantic-vocabulary.ts';
+import { complianceKpiGlossaryConcepts } from '../lib/operations/compliance-policy-kpis.ts';
+import { regulationPolicyGlossaryConcepts } from '../lib/operations/regulation-policy-catalog.ts';
 import { FW_COLORS, type FactoryWagerColor } from '../lib/theme/colors.ts';
 
 export const DOMAIN_GLOSSARY_SOURCE_PATH = 'Kalshi-bot/research/registry/glossary-dump.json';
@@ -136,7 +138,30 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
     semanticType: concept.semanticType,
     uiRole: concept.uiRole,
   }));
-  const combinedConcepts = [...source.concepts, ...portalConcepts];
+  const governedConcepts: CanonicalConcept[] = [
+    ...regulationPolicyGlossaryConcepts(),
+    ...complianceKpiGlossaryConcepts(),
+  ].map(concept => ({
+    id: concept.id,
+    label: concept.label,
+    description: concept.description,
+    category: concept.category,
+    kind: concept.kind,
+    mapsTo: null,
+    synonyms: [...concept.synonyms],
+    values: concept.values ? [...concept.values] : null,
+    valueLabels: null,
+    seeAlso: [...concept.seeAlso],
+    status: concept.status,
+    deprecatedBy: null,
+    unit: null,
+    registryColumn: null,
+    source: concept.source,
+    featurePurpose: 'Governed compliance policy and KPI concept.',
+    semanticType: concept.semanticType,
+    uiRole: concept.uiRole,
+  }));
+  const combinedConcepts = [...source.concepts, ...portalConcepts, ...governedConcepts];
   const combinedIds = combinedConcepts.map(concept => concept.id);
   if (new Set(combinedIds).size !== combinedIds.length) {
     throw new Error('Domain and portal semantic authorities contain duplicate concept ids');
@@ -173,6 +198,8 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
     sources: {
       semanticAuthority: 'Kalshi-bot/src/institutions/glossary.ts',
       portalSemanticAuthority: 'lib/portal/semantic-vocabulary.ts',
+      regulationPolicyAuthority: 'lib/operations/regulation-policy-catalog.ts',
+      complianceKpiAuthority: 'lib/operations/compliance-policy-kpis.ts',
       canonicalDump: DOMAIN_GLOSSARY_SOURCE_PATH,
       portalProjection: 'tools/domain-glossary.ts',
       colorKernel: 'lib/theme/colors.ts',

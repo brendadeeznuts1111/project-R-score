@@ -197,6 +197,9 @@
       .profile-summary__item strong[data-tone='bad'] {
         color: var(--red, #f85149);
       }
+      .profile-summary__item strong[data-tone='info'] {
+        color: var(--accent, #58a6ff);
+      }
       .profile-summary__item strong[data-tone='skip'] {
         color: var(--text);
       }
@@ -594,6 +597,19 @@
         </div>
       </section>
 
+      <section id="compliance-kpi-control" class="card" aria-labelledby="compliance-kpi-title">
+        <h2 id="compliance-kpi-title">Compliance policy KPIs</h2>
+        <p class="sub">
+          Decision metrics derived from governed policies and blocked-wager evidence. Each label
+          opens its glossary definition.
+        </p>
+        <div
+          id="compliance-policy-kpis"
+          class="profile-summary"
+          aria-label="Compliance policy KPIs"
+        ></div>
+      </section>
+
       <section id="jurisdiction-control" class="card" aria-labelledby="jurisdiction-control-title">
         <h2 id="jurisdiction-control-title">
           <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.jurisdiction_policy"
@@ -611,20 +627,22 @@
                 <th>Jurisdiction</th>
                 <th>
                   <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.policy_code"
-                    >Policy code</a
+                    >Policy</a
                   >
                 </th>
+                <th>Status</th>
+                <th>Authority / risk</th>
                 <th>Scope</th>
                 <th>Sport / market</th>
                 <th>
                   <a
                     class="semantic-label"
                     href="/portal/glossary/#glossary:ops.limits.effective_limit"
-                    >Effective limit</a
+                    >Limits</a
                   >
                 </th>
-                <th>Bet types</th>
-                <th>Rules</th>
+                <th>Enforcement</th>
+                <th>Effective / source</th>
               </tr>
             </thead>
             <tbody id="jurisdiction-policy-body"></tbody>

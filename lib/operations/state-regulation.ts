@@ -19,6 +19,13 @@ import {
   type ZipCode,
 } from '../types/branded.ts';
 import { REGULATED_STATE_CODES } from '../types/branded/operations.ts';
+import {
+  findRegulationPolicy,
+  findRegulationPolicyForDimensions,
+  isPolicyEffective,
+  REGULATION_POLICY_CATALOG,
+  resolveRegulationPolicy,
+} from './regulation-policy-catalog.ts';
 
 // ── Schema ─────────────────────────────────────────────────────────
 
@@ -103,6 +110,8 @@ export function ensureStateRegulationSchema(db: Database): void {
   db.run(`
     CREATE TABLE IF NOT EXISTS regulatory_limits (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      policy_key TEXT,
+      status TEXT NOT NULL DEFAULT 'active',
       state_code TEXT NOT NULL,
       sport_id TEXT NOT NULL,
       market_id TEXT NOT NULL,
@@ -113,7 +122,8 @@ export function ensureStateRegulationSchema(db: Database): void {
       allowed_bet_types TEXT,
       special_rules TEXT,
       effective_from INTEGER NOT NULL DEFAULT (unixepoch()),
-      effective_to INTEGER
+      effective_to INTEGER,
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
     CREATE INDEX IF NOT EXISTS idx_reg_limits_state
       ON regulatory_limits(state_code, sport_id, market_id, effective_from);
@@ -157,6 +167,20 @@ export function ensureStateRegulationSchema(db: Database): void {
 
   // Legacy DBs created regulatory_violations without geo cols — backfill columns.
   ensureGeoColumns(db, 'regulatory_violations');
+  const limitColumns = columnNames(db, 'regulatory_limits');
+  if (!limitColumns.has('policy_key')) {
+    db.run(`ALTER TABLE regulatory_limits ADD COLUMN policy_key TEXT`);
+  }
+  if (!limitColumns.has('status')) {
+    db.run(`ALTER TABLE regulatory_limits ADD COLUMN status TEXT NOT NULL DEFAULT 'active'`);
+  }
+  if (!limitColumns.has('updated_at')) {
+    db.run(`ALTER TABLE regulatory_limits ADD COLUMN updated_at TEXT`);
+  }
+  db.run(
+    `CREATE UNIQUE INDEX IF NOT EXISTS idx_reg_limits_policy_key
+     ON regulatory_limits(policy_key) WHERE policy_key IS NOT NULL`
+  );
 }
 
 // ── Catalog normalization (play wire → regulatory keys) ────────────
@@ -205,79 +229,75 @@ export function normalizeMarketCatalogKey(market: string): string {
 
 // ── Seeds (MA / NJ reference limits) ───────────────────────────────
 
-/** Seed shared MA/NJ regulatory limits (idempotent on natural key). */
+/** Materialize the governed MA/NJ reference policy catalog into SQLite. */
 export function seedStateRegulations(db: Database): void {
   ensureStateRegulationSchema(db);
-  const rows: Array<{
-    state_code: string;
-    sport_id: string; // brand-ok — regulatory catalog key (matches plays.sport text)
-    market_id: string; // brand-ok — regulatory catalog key (matches plays.market text)
-    max_wager: number;
-    min_wager: number;
-    allowed_bet_types: string;
-    special_rules: string | null;
-  }> = [
-    {
-      state_code: 'MA',
-      sport_id: 'soccer',
-      market_id: 'match_winner',
-      max_wager: 5000,
-      min_wager: 0.5,
-      allowed_bet_types: '["straight","parlay"]',
-      special_rules: '{"max_daily_total":25000,"min_age":21}',
-    },
-    {
-      state_code: 'MA',
-      sport_id: 'basketball',
-      market_id: 'over_under',
-      max_wager: 10000,
-      min_wager: 1,
-      allowed_bet_types: '["straight"]',
-      special_rules: '{"max_daily_total":50000,"min_age":21}',
-    },
-    {
-      state_code: 'NJ',
-      sport_id: 'soccer',
-      market_id: 'match_winner',
-      max_wager: 10000,
-      min_wager: 1,
-      allowed_bet_types: '["straight","parlay","teaser"]',
-      special_rules: '{"require_identity_verification":true,"min_age":21}',
-    },
-    {
-      state_code: 'NJ',
-      sport_id: 'basketball',
-      market_id: 'over_under',
-      max_wager: 15000,
-      min_wager: 1,
-      allowed_bet_types: '["straight","parlay"]',
-      special_rules: '{"require_identity_verification":true,"max_daily_total":75000,"min_age":21}',
-    },
-  ];
-
-  for (const r of rows) {
-    const exists = db
+  for (const policy of REGULATION_POLICY_CATALOG) {
+    const resolved = resolveRegulationPolicy(policy);
+    const effectiveFrom = Math.floor(
+      new Date(`${policy.effectiveDate}T00:00:00.000Z`).getTime() / 1000
+    );
+    const effectiveTo = policy.expirationDate
+      ? Math.floor(new Date(`${policy.expirationDate}T00:00:00.000Z`).getTime() / 1000)
+      : null;
+    const rules = JSON.stringify({
+      ...(resolved.dailyLimit == null ? {} : { max_daily_total: resolved.dailyLimit }),
+      ...(resolved.weeklyLimit == null ? {} : { max_weekly_total: resolved.weeklyLimit }),
+      min_age: resolved.playerAgeMin,
+      require_identity_verification: resolved.identityRequired,
+    });
+    const existing = db
       .query(
-        `SELECT 1 AS ok FROM regulatory_limits
+        `SELECT id FROM regulatory_limits
          WHERE state_code = $st AND sport_id = $sp AND market_id = $mk
            AND node_id IS NULL
          LIMIT 1`
       )
-      .get({ $st: r.state_code, $sp: r.sport_id, $mk: r.market_id }) as { ok: number } | null;
-    if (exists) continue;
+      .get({
+        $st: policy.jurisdiction,
+        $sp: policy.sport,
+        $mk: policy.market,
+      }) as { id: number } | null; // brand-ok — SQLite row primary key
+    if (existing) {
+      db.run(
+        `UPDATE regulatory_limits
+         SET policy_key = $key, status = $status, max_wager = $max, min_wager = $min,
+             allowed_bet_types = $types, special_rules = $rules,
+             effective_from = $from, effective_to = $to, updated_at = datetime('now')
+         WHERE id = $id`,
+        {
+          $key: policy.key,
+          $status: policy.status,
+          $max: policy.maxBet,
+          $min: policy.minBet,
+          $types: JSON.stringify(policy.allowedBetTypes),
+          $rules: rules,
+          $from: effectiveFrom,
+          $to: effectiveTo,
+          $id: existing.id,
+        }
+      );
+      continue;
+    }
     db.run(
       `INSERT INTO regulatory_limits (
-         state_code, sport_id, market_id, node_id,
-         max_wager, min_wager, allowed_bet_types, special_rules
-       ) VALUES ($st, $sp, $mk, NULL, $max, $min, $types, $rules)`,
+         policy_key, status, state_code, sport_id, market_id, node_id,
+         max_wager, min_wager, allowed_bet_types, special_rules,
+         effective_from, effective_to, updated_at
+       ) VALUES ($key, $status, $st, $sp, $mk, NULL, $max, $min, $types, $rules,
+                 $from, $to, datetime('now'))`,
       {
-        $st: r.state_code,
-        $sp: r.sport_id,
-        $mk: r.market_id,
-        $max: r.max_wager,
-        $min: r.min_wager,
-        $types: r.allowed_bet_types,
-        $rules: r.special_rules,
+        $key: policy.key,
+        $status: policy.status,
+        $st: policy.jurisdiction,
+        $sp: policy.sport,
+        $mk: policy.market,
+        $max: policy.maxBet,
+        $min: policy.minBet,
+        $types: JSON.stringify(policy.allowedBetTypes),
+        $rules: rules,
+        $from: effectiveFrom,
+        $to: effectiveTo,
       }
     );
   }
@@ -542,12 +562,19 @@ export type BetComplianceInput = {
   location?: string | null;
   /** Discrete ZIP; falls back to partner profile. */
   zipCode?: ZipCode | string | null;
+  /** Optional account tier for governed tiered max-bet overrides. */
+  accountTier?: string;
+  /** Exclusion groups already present in the pending parlay or event bundle. */
+  exclusionGroups?: readonly string[];
 };
 
-export type BetComplianceResult = { allowed: true } | { allowed: false; reason: string };
+export type BetComplianceResult =
+  | { allowed: true; cappedWagerAmount?: number; warnings?: string[] }
+  | { allowed: false; reason: string };
 
 export type SpecialRules = {
   max_daily_total?: number;
+  max_weekly_total?: number;
   require_identity_verification?: boolean;
   /** Minimum legal age for wagers (MA/NJ sports: 21). */
   min_age?: number;
@@ -556,6 +583,7 @@ export type SpecialRules = {
 };
 
 type LimitsRow = {
+  policy_key: string | null;
   max_wager: number | null;
   min_wager: number | null;
   allowed_bet_types: string | null;
@@ -570,6 +598,9 @@ export function parseSpecialRules(raw: string | null | undefined): SpecialRules 
     const out: SpecialRules = {};
     if (typeof v.max_daily_total === 'number' && Number.isFinite(v.max_daily_total)) {
       out.max_daily_total = v.max_daily_total;
+    }
+    if (typeof v.max_weekly_total === 'number' && Number.isFinite(v.max_weekly_total)) {
+      out.max_weekly_total = v.max_weekly_total;
     }
     if (v.require_identity_verification === true) {
       out.require_identity_verification = true;
@@ -686,6 +717,29 @@ export function sumDailyStateWagerVolume(
   return Number(row?.total ?? 0);
 }
 
+export function sumRollingStateWagerVolume(
+  db: Database,
+  nodeId: TreeNodeId | string,
+  stateCode: StateCode | string,
+  days: number
+): number {
+  const nid = asTreeNodeId(nodeId);
+  const st = asStateCode(stateCode);
+  const safeDays = Math.max(1, Math.min(31, Math.trunc(days)));
+  const row = db
+    .query(
+      `SELECT COALESCE(SUM(d.stake_actual), 0) AS total
+       FROM play_distribution d
+       LEFT JOIN plays p ON p.id = d.play_id
+       WHERE d.node_id = $nid
+         AND COALESCE(d.state_code, p.state_code) = $st
+         AND d.received_at >= datetime('now', $window)
+         AND COALESCE(d.ack_status, d.status, 'pending') NOT IN ('passed', 'skipped', 'missed')`
+    )
+    .get({ $nid: nid, $st: st, $window: `-${safeDays} days` }) as { total: number };
+  return Number(row?.total ?? 0);
+}
+
 export class ComplianceRepository {
   constructor(private readonly db: Database) {
     ensureStateRegulationSchema(db);
@@ -722,12 +776,13 @@ export class ComplianceRepository {
     const now = Math.floor(Date.now() / 1000);
     const limits = this.db
       .query(
-        `SELECT max_wager, min_wager, allowed_bet_types, special_rules
+        `SELECT policy_key, max_wager, min_wager, allowed_bet_types, special_rules
          FROM regulatory_limits
          WHERE state_code = $st AND sport_id = $sp AND market_id = $mk
            AND (node_id IS NULL OR node_id = $nid)
            AND effective_from <= $now
            AND (effective_to IS NULL OR effective_to > $now)
+           AND COALESCE(status, 'active') = 'active'
          ORDER BY CASE WHEN node_id IS NOT NULL THEN 0 ELSE 1 END,
                   effective_from DESC
          LIMIT 1`
@@ -748,8 +803,34 @@ export class ComplianceRepository {
       return { allowed: true };
     }
 
-    if (limits.max_wager != null && params.wagerAmount > limits.max_wager) {
-      return { allowed: false, reason: `Exceeds max wager $${limits.max_wager}` };
+    const governed =
+      (limits.policy_key ? findRegulationPolicy(limits.policy_key) : null) ??
+      findRegulationPolicyForDimensions({
+        jurisdiction: stateCode,
+        sport: sportId,
+        market: marketId,
+        treeNodeId: nodeId,
+      });
+    const activeGoverned =
+      governed && isPolicyEffective(governed, new Date(now * 1000)) ? governed : null;
+    const tierLimit = activeGoverned?.tieredLimits.find(
+      tier => tier.tier === params.accountTier
+    )?.maxBet;
+    const effectiveMax = tierLimit ?? limits.max_wager;
+    if (effectiveMax != null && params.wagerAmount > effectiveMax) {
+      if (activeGoverned?.enforcementAction === 'cap') {
+        return { allowed: true, cappedWagerAmount: effectiveMax };
+      }
+      if (
+        activeGoverned?.enforcementAction === 'warn' ||
+        activeGoverned?.enforcementAction === 'report'
+      ) {
+        return {
+          allowed: true,
+          warnings: [`Exceeds governed max wager $${effectiveMax}`],
+        };
+      }
+      return { allowed: false, reason: `Exceeds max wager $${effectiveMax}` };
     }
     if (limits.min_wager != null && params.wagerAmount < limits.min_wager) {
       return { allowed: false, reason: `Below min wager $${limits.min_wager}` };
@@ -769,7 +850,9 @@ export class ComplianceRepository {
     }
 
     const rules = parseSpecialRules(limits.special_rules);
-    if (rules.require_identity_verification === true) {
+    const identityRequired =
+      activeGoverned?.identityRequired ?? rules.require_identity_verification === true;
+    if (identityRequired) {
       if (!isPartnerIdentityVerified(this.db, nodeId)) {
         return {
           allowed: false,
@@ -777,7 +860,7 @@ export class ComplianceRepository {
         };
       }
     }
-    const minAge = rules.min_age ?? 21;
+    const minAge = activeGoverned?.playerAgeMin ?? rules.min_age ?? 21;
     if (geo.age != null && geo.age < minAge) {
       return {
         allowed: false,
@@ -793,12 +876,31 @@ export class ComplianceRepository {
         };
       }
     }
+    if (
+      activeGoverned?.exclusionGroups.length &&
+      params.exclusionGroups?.some(group => activeGoverned.exclusionGroups.includes(group))
+    ) {
+      return {
+        allowed: false,
+        reason: `Policy exclusion group conflict: ${activeGoverned.exclusionGroups.join(', ')}`,
+      };
+    }
     if (rules.max_daily_total != null && rules.max_daily_total > 0) {
       const used = sumDailyStateWagerVolume(this.db, nodeId, stateCode);
       if (used + params.wagerAmount > rules.max_daily_total) {
         return {
           allowed: false,
           reason: `Exceeds max daily total $${rules.max_daily_total} (used $${used})`,
+        };
+      }
+    }
+    const weeklyLimit = activeGoverned?.weeklyLimit ?? rules.max_weekly_total;
+    if (weeklyLimit != null && weeklyLimit > 0) {
+      const used = sumRollingStateWagerVolume(this.db, nodeId, stateCode, 7);
+      if (used + params.wagerAmount > weeklyLimit) {
+        return {
+          allowed: false,
+          reason: `Exceeds rolling weekly total $${weeklyLimit} (used $${used})`,
         };
       }
     }
@@ -900,6 +1002,8 @@ export type PartnerRegulatoryStatus = {
     granted_at: number | null;
   } | null;
   limits: Array<{
+    policy_key: string | null;
+    status: string;
     sport_id: string; // brand-ok — regulatory catalog key
     market_id: string; // brand-ok — regulatory catalog key
     max_wager: number | null;
@@ -938,12 +1042,14 @@ export function getPartnerRegulatoryStatus(
   const now = Math.floor(Date.now() / 1000);
   // Limits are state-wide (optional partner override) — not pure node-scoped table.
   let limitsSql = `
-    SELECT sport_id, market_id, max_wager, min_wager, allowed_bet_types, special_rules, node_id
+    SELECT policy_key, status, sport_id, market_id, max_wager, min_wager,
+           allowed_bet_types, special_rules, node_id
     FROM regulatory_limits
     WHERE state_code = $st
       AND (node_id IS NULL OR node_id = $nid)
       AND effective_from <= $now
       AND (effective_to IS NULL OR effective_to > $now)
+      AND COALESCE(status, 'active') = 'active'
   `;
   const limitParams: Record<string, unknown> = { $st: st, $nid: nid, $now: now };
   if (opts?.sport) {
@@ -991,11 +1097,12 @@ export function renderRegulatoryPanelHtml(status: PartnerRegulatoryStatus): stri
   const licenseLabel = status.license?.status ?? 'none';
   const limitsRows =
     status.limits.length === 0
-      ? '<tr><td colspan="4">No active limits</td></tr>'
+      ? '<tr><td colspan="5">No active limits</td></tr>'
       : status.limits
           .map(
             l =>
-              `<tr><td>${escapeHtml(l.sport_id)}</td><td>${escapeHtml(l.market_id)}</td>` +
+              `<tr><td>${escapeHtml(l.policy_key ?? 'legacy')}</td>` +
+              `<td>${escapeHtml(l.sport_id)}</td><td>${escapeHtml(l.market_id)}</td>` +
               `<td>$${l.max_wager ?? '—'}</td><td>${escapeHtml(l.allowed_bet_types ?? '')}</td></tr>`
           )
           .join('');
@@ -1013,7 +1120,7 @@ export function renderRegulatoryPanelHtml(status: PartnerRegulatoryStatus): stri
     `<h3>Regulatory – ${escapeHtml(status.state)}</h3>`,
     `<p>License Status: ${escapeHtml(licenseLabel)}</p>`,
     `<h4>Active Limits</h4>`,
-    `<table><tr><th>Sport</th><th>Market</th><th>Max Wager</th><th>Allowed Bet Types</th></tr>`,
+    `<table><tr><th>Policy</th><th>Sport</th><th>Market</th><th>Max Wager</th><th>Allowed Bet Types</th></tr>`,
     limitsRows,
     `</table>`,
     `<h4>Recent Violations</h4>`,

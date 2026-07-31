@@ -87,9 +87,9 @@ describe('health-page limitRaises surface', () => {
 describe('account limit control surface', () => {
   test('committed artifact carries account profiles and jurisdiction policies', async () => {
     const artifact = await Bun.file(join(ROOT, 'public/registry/limit-raises.json')).json();
-    expect(artifact.schemaVersion).toBe(2);
+    expect(artifact.schemaVersion).toBe(3);
     expect(artifact.accountProfiles).toMatchObject({
-      schemaVersion: 1,
+      schemaVersion: 2,
       kind: 'account-limit-profiles',
       summary: {
         accounts: expect.any(Number),
@@ -106,8 +106,21 @@ describe('account limit control surface', () => {
     expect(artifact.accountProfiles.profiles.length).toBeGreaterThan(0);
     expect(artifact.accountProfiles.policies).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ stateCode: 'MA', source: 'regulatory_limits' }),
-        expect.objectContaining({ stateCode: 'NJ', source: 'regulatory_limits' }),
+        expect.objectContaining({
+          stateCode: 'MA',
+          source: 'regulation-policy-catalog',
+          policyKey: expect.stringMatching(/^policy\.MA\./),
+        }),
+        expect.objectContaining({
+          stateCode: 'NJ',
+          source: 'regulation-policy-catalog',
+          policyKey: expect.stringMatching(/^policy\.NJ\./),
+        }),
+      ])
+    );
+    expect(artifact.accountProfiles.kpis).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ key: 'kpi.compliance.active_policies' }),
       ])
     );
   });
@@ -119,11 +132,13 @@ describe('account limit control surface', () => {
     ]);
     expect(html).toContain('id="account-control"');
     expect(html).toContain('id="jurisdiction-policy-body"');
+    expect(html).toContain('id="compliance-policy-kpis"');
     expect(html).toContain('/portal/glossary/#glossary:ops.limits.profile');
     expect(html).toContain('/portal/limits/limit-profiles.js');
     expect(script).toContain("new URLPattern({ hash: 'account\\\\::account' })");
     expect(script).toContain('hash.groups.account');
     expect(script).toContain('snapshot.accountProfiles');
+    expect(script).toContain('policy.policyKey');
     expect(script).toContain("history.pushState({ account: treeNodeId }, '', url)");
     expect(script).not.toContain('location.hash.slice');
   });

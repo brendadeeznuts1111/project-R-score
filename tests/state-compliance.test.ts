@@ -119,6 +119,79 @@ describe('state compliance', () => {
     if (!badType.allowed) expect(badType.reason).toContain('not allowed');
   });
 
+  test('materialized policy lifecycle can revoke enforcement', () => {
+    const nodeId = 'ma-revoked-policy';
+    seedPartner(db, nodeId);
+    const repo = new ComplianceRepository(db);
+    repo.upsertLicense(nodeId, 'MA');
+    db.run(
+      `UPDATE regulatory_limits
+       SET status = 'revoked'
+       WHERE policy_key = 'policy.MA.soccer.match_winner'`
+    );
+
+    expect(
+      repo.isBetAllowed({
+        nodeId,
+        stateCode: 'MA',
+        sportId: 'soccer',
+        marketId: 'match_winner',
+        wagerAmount: 6_000,
+        betType: 'straight',
+      })
+    ).toEqual({ allowed: true });
+  });
+
+  test('account tier raises the governed basketball wager cap', () => {
+    const nodeId = 'ma-vip-tier';
+    seedPartner(db, nodeId);
+    const repo = new ComplianceRepository(db);
+    repo.upsertLicense(nodeId, 'MA');
+
+    expect(
+      repo.isBetAllowed({
+        nodeId,
+        stateCode: 'MA',
+        sportId: 'basketball',
+        marketId: 'over_under',
+        wagerAmount: 12_000,
+        betType: 'straight',
+        accountTier: 'vip',
+      })
+    ).toEqual({ allowed: true });
+    const blocked = repo.isBetAllowed({
+      nodeId,
+      stateCode: 'MA',
+      sportId: 'basketball',
+      marketId: 'over_under',
+      wagerAmount: 16_000,
+      betType: 'straight',
+      accountTier: 'vip',
+    });
+    expect(blocked.allowed).toBe(false);
+  });
+
+  test('composite exclusion groups block an otherwise valid wager', () => {
+    const nodeId = 'nj-exclusion';
+    seedPartner(db, nodeId);
+    const repo = new ComplianceRepository(db);
+    repo.upsertLicense(nodeId, 'NJ');
+    bindPartnerProfile(db, asTreeNodeId(nodeId));
+    setPartnerIdentityVerified(db, nodeId, true);
+
+    const result = repo.isBetAllowed({
+      nodeId,
+      stateCode: 'NJ',
+      sportId: 'soccer',
+      marketId: 'match_winner',
+      wagerAmount: 100,
+      betType: 'straight',
+      exclusionGroups: ['soccer_single_market'],
+    });
+    expect(result.allowed).toBe(false);
+    if (!result.allowed) expect(result.reason).toContain('exclusion group');
+  });
+
   test('NJ allows teaser; MA soccer does not (no cross-state leakage)', () => {
     const nodeId = 'dual-state';
     seedPartner(db, nodeId);
@@ -193,6 +266,7 @@ describe('state compliance', () => {
     expect(status.license?.status).toBe('active');
     expect(status.license?.license_number).toBe('MA-99');
     expect(status.limits.some(l => l.sport_id === 'soccer')).toBe(true);
+    expect(status.limits.some(l => l.policy_key?.startsWith('policy.MA.'))).toBe(true);
     expect(status.violations.some(v => v.reason === 'test violation')).toBe(true);
 
     const html = renderRegulatoryPanelHtml(status);

@@ -15,6 +15,8 @@ import {
   PORTAL_UI_ROLES,
   validatePortalSemanticVocabulary,
 } from '../lib/portal/semantic-vocabulary.ts';
+import { complianceKpiGlossaryConcepts } from '../lib/operations/compliance-policy-kpis.ts';
+import { regulationPolicyGlossaryConcepts } from '../lib/operations/regulation-policy-catalog.ts';
 
 describe('domain glossary portal', () => {
   test('registry projection is integral, bounded, and color-normalized', async () => {
@@ -29,13 +31,19 @@ describe('domain glossary portal', () => {
       sources: {
         semanticAuthority: 'Kalshi-bot/src/institutions/glossary.ts',
         portalSemanticAuthority: 'lib/portal/semantic-vocabulary.ts',
+        regulationPolicyAuthority: 'lib/operations/regulation-policy-catalog.ts',
+        complianceKpiAuthority: 'lib/operations/compliance-policy-kpis.ts',
         canonicalDump: 'Kalshi-bot/research/registry/glossary-dump.json',
         colorKernel: 'lib/theme/colors.ts',
       },
     });
     expect(payload.summary.concepts).toBe(payload.concepts.length);
     expect(payload.summary.concepts).toBeGreaterThan(115);
-    expect(payload.summary.portalSemantics).toBe(PORTAL_SEMANTIC_CONCEPTS.length);
+    expect(payload.summary.portalSemantics).toBe(
+      PORTAL_SEMANTIC_CONCEPTS.length +
+        regulationPolicyGlossaryConcepts().length +
+        complianceKpiGlossaryConcepts().length
+    );
     expect(payload.categories).toHaveLength(8);
     expect(payload.categories.every(category => /^#[0-9a-f]{6}$/i.test(category.color))).toBe(true);
     expect(new Set(payload.concepts.map(concept => concept.id)).size).toBe(
@@ -51,6 +59,23 @@ describe('domain glossary portal', () => {
       semanticType: 'classification',
       uiRole: 'chip',
       values: expect.arrayContaining(['edge-health', 'registry-bake', 'proof']),
+    });
+    expect(
+      payload.concepts.find(
+        concept => concept.id === 'policy.MA.basketball.over_under'
+      )
+    ).toMatchObject({
+      kind: 'policy',
+      semanticType: 'classification',
+      uiRole: 'code',
+    });
+    expect(
+      payload.concepts.find(
+        concept => concept.id === 'kpi.compliance.active_policies'
+      )
+    ).toMatchObject({
+      kind: 'kpi',
+      uiRole: 'badge',
     });
   });
 

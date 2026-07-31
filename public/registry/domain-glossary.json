@@ -8,44 +8,49 @@
   "sources": {
     "semanticAuthority": "Kalshi-bot/src/institutions/glossary.ts",
     "portalSemanticAuthority": "lib/portal/semantic-vocabulary.ts",
+    "regulationPolicyAuthority": "lib/operations/regulation-policy-catalog.ts",
+    "complianceKpiAuthority": "lib/operations/compliance-policy-kpis.ts",
     "canonicalDump": "Kalshi-bot/research/registry/glossary-dump.json",
     "portalProjection": "tools/domain-glossary.ts",
     "colorKernel": "lib/theme/colors.ts"
   },
   "summary": {
-    "concepts": 126,
-    "active": 125,
+    "concepts": 136,
+    "active": 135,
     "deprecated": 1,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 20,
+    "portalSemantics": 30,
     "categories": {
       "market": 19,
       "model": 15,
       "pipeline": 19,
       "tournament": 9,
-      "trading": 12,
+      "trading": 22,
       "ui": 31,
       "warehouse": 21
     },
     "kinds": {
       "composite": 12,
+      "jurisdiction": 2,
+      "kpi": 4,
+      "policy": 4,
       "registry": 33,
       "ui": 81
     },
     "semanticTypes": {
-      "classification": 5,
+      "classification": 11,
       "location": 3,
       "presentation": 1,
       "resource": 7,
-      "state": 3,
+      "state": 7,
       "version": 1
     },
     "uiRoles": {
-      "badge": 3,
-      "chip": 4,
-      "code": 4,
+      "badge": 7,
+      "chip": 6,
+      "code": 8,
       "heading": 2,
       "link": 6,
       "token": 1
@@ -3285,6 +3290,281 @@
       "semanticType": "state",
       "uiRole": "code",
       "color": "#60a5fa"
+    },
+    {
+      "id": "jurisdiction.MA",
+      "label": "Massachusetts",
+      "description": "Massachusetts internal jurisdiction defaults: age 21+ and identity policy-specific.",
+      "category": "trading",
+      "kind": "jurisdiction",
+      "mapsTo": null,
+      "synonyms": [
+        "MA",
+        "Massachusetts jurisdiction"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "policy.MA.soccer.match_winner",
+        "policy.MA.basketball.over_under"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/operations/regulation-policy-catalog.ts",
+      "featurePurpose": "Governed compliance policy and KPI concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "jurisdiction.NJ",
+      "label": "New Jersey",
+      "description": "New Jersey internal jurisdiction defaults: age 21+ and identity policy-specific.",
+      "category": "trading",
+      "kind": "jurisdiction",
+      "mapsTo": null,
+      "synonyms": [
+        "NJ",
+        "New Jersey jurisdiction"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "policy.NJ.soccer.match_winner",
+        "policy.NJ.basketball.over_under"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/operations/regulation-policy-catalog.ts",
+      "featurePurpose": "Governed compliance policy and KPI concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "policy.MA.soccer.match_winner",
+      "label": "MA Soccer Match Winner Limit",
+      "description": "FW-LIMIT-MA-SOCCER-MATCH-WINNER-JURISDICTION: $5,000 max, straight/parlay bets, age 21+, block enforcement.",
+      "category": "trading",
+      "kind": "policy",
+      "mapsTo": null,
+      "synonyms": [
+        "FW-LIMIT-MA-SOCCER-MATCH-WINNER-JURISDICTION",
+        "MA soccer match_winner"
+      ],
+      "values": [
+        "active",
+        "high",
+        "block"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "jurisdiction.MA"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/operations/regulation-policy-catalog.ts",
+      "featurePurpose": "Governed compliance policy and KPI concept.",
+      "semanticType": "classification",
+      "uiRole": "code",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "policy.MA.basketball.over_under",
+      "label": "MA Basketball Over/Under Limit",
+      "description": "FW-LIMIT-MA-BASKETBALL-OVER-UNDER-JURISDICTION: $10,000 max, straight bets, age 21+, block enforcement.",
+      "category": "trading",
+      "kind": "policy",
+      "mapsTo": null,
+      "synonyms": [
+        "FW-LIMIT-MA-BASKETBALL-OVER-UNDER-JURISDICTION",
+        "MA basketball over_under"
+      ],
+      "values": [
+        "active",
+        "high",
+        "block"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "jurisdiction.MA"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/operations/regulation-policy-catalog.ts",
+      "featurePurpose": "Governed compliance policy and KPI concept.",
+      "semanticType": "classification",
+      "uiRole": "code",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "policy.NJ.soccer.match_winner",
+      "label": "NJ Soccer Match Winner Limit",
+      "description": "FW-LIMIT-NJ-SOCCER-MATCH-WINNER-JURISDICTION: $10,000 max, straight/parlay/teaser bets, age 21+, block enforcement.",
+      "category": "trading",
+      "kind": "policy",
+      "mapsTo": null,
+      "synonyms": [
+        "FW-LIMIT-NJ-SOCCER-MATCH-WINNER-JURISDICTION",
+        "NJ soccer match_winner"
+      ],
+      "values": [
+        "active",
+        "critical",
+        "block"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "jurisdiction.NJ"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/operations/regulation-policy-catalog.ts",
+      "featurePurpose": "Governed compliance policy and KPI concept.",
+      "semanticType": "classification",
+      "uiRole": "code",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "policy.NJ.basketball.over_under",
+      "label": "NJ Basketball Over/Under Limit",
+      "description": "FW-LIMIT-NJ-BASKETBALL-OVER-UNDER-JURISDICTION: $15,000 max, straight/parlay bets, age 21+, block enforcement.",
+      "category": "trading",
+      "kind": "policy",
+      "mapsTo": null,
+      "synonyms": [
+        "FW-LIMIT-NJ-BASKETBALL-OVER-UNDER-JURISDICTION",
+        "NJ basketball over_under"
+      ],
+      "values": [
+        "active",
+        "critical",
+        "block"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "jurisdiction.NJ"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/operations/regulation-policy-catalog.ts",
+      "featurePurpose": "Governed compliance policy and KPI concept.",
+      "semanticType": "classification",
+      "uiRole": "code",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "kpi.compliance.blocked_bets",
+      "label": "Blocked bets today",
+      "description": "Number of wager attempts blocked by regulatory policy evidence since 00:00 UTC.",
+      "category": "trading",
+      "kind": "kpi",
+      "mapsTo": null,
+      "synonyms": [
+        "blocked wagers",
+        "policy blocks"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.evidence_trace"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/operations/compliance-policy-kpis.ts",
+      "featurePurpose": "Governed compliance policy and KPI concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "kpi.compliance.active_policies",
+      "label": "Active compliance policies",
+      "description": "Count of governed jurisdiction policies active at artifact generation time.",
+      "category": "trading",
+      "kind": "kpi",
+      "mapsTo": null,
+      "synonyms": [
+        "active policies"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.jurisdiction_policy"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/operations/compliance-policy-kpis.ts",
+      "featurePurpose": "Governed compliance policy and KPI concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "kpi.compliance.riskiest_jurisdiction",
+      "label": "Riskiest jurisdiction",
+      "description": "Jurisdiction with the highest summed active policy risk weights.",
+      "category": "trading",
+      "kind": "kpi",
+      "mapsTo": null,
+      "synonyms": [
+        "highest policy risk"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.jurisdiction_policy"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/operations/compliance-policy-kpis.ts",
+      "featurePurpose": "Governed compliance policy and KPI concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "kpi.compliance.policy_changes",
+      "label": "Compliance policy changes",
+      "description": "Count of policies effective within the trailing 30-day window.",
+      "category": "trading",
+      "kind": "kpi",
+      "mapsTo": null,
+      "synonyms": [
+        "recent policy changes"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.policy_code"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/operations/compliance-policy-kpis.ts",
+      "featurePurpose": "Governed compliance policy and KPI concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "color": "#f59e0b"
     }
   ]
 }

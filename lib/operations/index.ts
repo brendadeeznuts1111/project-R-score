@@ -278,3 +278,38 @@ export {
   LIMIT_CONTEXT_TABLE_PROPERTIES,
   LIMIT_PROOF_TABLE_PROPERTIES,
 } from './limit-raise-report.ts';
+export {
+  auditRegulationPolicyCatalog,
+  findRegulationPolicy,
+  findRegulationPolicyForDimensions,
+  generateRegulationPolicyCode,
+  isPolicyEffective,
+  resolveRegulationPolicy,
+  JURISDICTION_CATALOG,
+  REGULATION_POLICY_CATALOG,
+  type JurisdictionDefinition,
+  type RegulationAuthority,
+  type RegulationEnforcementAction,
+  type RegulationPolicyAudit,
+  type RegulationPolicyAuditIssue,
+  type RegulationPolicyDefinition,
+  type RegulationPolicyKey,
+  type RegulationPolicyScope,
+  type RegulationPolicyStatus,
+  type RegulationRiskTier,
+  type ResolvedRegulationPolicy,
+  type TieredLimit,
+} from './regulation-policy-catalog.ts';
+export {
+  buildCompliancePolicyKpis,
+  complianceKpiGlossaryConcepts,
+  type CompliancePolicyKpi,
+  type CompliancePolicyKpiKey,
+} from './compliance-policy-kpis.ts';
+export {
+  buildAccountLimitProfiles,
+  type AccountLimitProfile,
+  type AccountLimitProfilesProjection,
+  type AccountLimitTrace,
+  type AccountRegulationPolicy,
+} from './account-limit-profiles.ts';

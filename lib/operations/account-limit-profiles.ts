@@ -17,8 +17,20 @@ import {
   type TreeNodeId,
   type ZipCode,
 } from '../types/branded.ts';
+import { buildCompliancePolicyKpis, type CompliancePolicyKpi } from './compliance-policy-kpis.ts';
 import { parseSpecialRules, type SpecialRules } from './state-regulation.ts';
 import type { LimitPatternSnapshot } from './limit-patterns.ts';
+import {
+  findRegulationPolicy,
+  findRegulationPolicyForDimensions,
+  generateRegulationPolicyCode,
+  REGULATION_POLICY_CATALOG,
+  type RegulationAuthority,
+  type RegulationEnforcementAction,
+  type RegulationPolicyStatus,
+  type RegulationRiskTier,
+  type TieredLimit,
+} from './regulation-policy-catalog.ts';
 
 export type AccountLimitMonitoringStatus = 'monitored' | 'attention' | 'blocked' | 'incomplete';
 export type AccountLimitTone = 'ok' | 'warn' | 'bad' | 'skip';
@@ -31,9 +43,12 @@ export type AccountLimitTraceKind =
   | 'wager-blocked';
 
 export type AccountRegulationPolicy = {
+  policyKey: string;
   policyCode: string;
+  label: string;
+  status: RegulationPolicyStatus;
   stateCode: StateCode;
-  scope: 'jurisdiction' | 'account';
+  scope: 'jurisdiction' | 'account' | 'event';
   treeNodeId: TreeNodeId | null;
   sportKey: string;
   marketKey: string;
@@ -41,9 +56,23 @@ export type AccountRegulationPolicy = {
   minWager: number | null;
   allowedBetTypes: string[];
   specialRules: SpecialRules;
+  effectiveDate: string;
+  expirationDate: string | null;
   effectiveFrom: number;
   effectiveTo: number | null;
-  source: 'regulatory_limits';
+  sourceRef: string;
+  authority: RegulationAuthority;
+  riskTier: RegulationRiskTier;
+  enforcementAction: RegulationEnforcementAction;
+  dailyLimit: number | null;
+  weeklyLimit: number | null;
+  playerAgeMin: number;
+  identityRequired: boolean;
+  taxRate: number | null;
+  tags: readonly string[];
+  exclusionGroups: readonly string[];
+  tieredLimits: readonly TieredLimit[];
+  source: 'regulation-policy-catalog' | 'regulatory_limits:legacy';
 };
 
 export type AccountLimitTrace = {
@@ -85,7 +114,7 @@ export type AccountLimitProfile = {
 };
 
 export type AccountLimitProfilesProjection = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   kind: 'account-limit-profiles';
   generatedAt: string;
   summary: {
@@ -98,6 +127,7 @@ export type AccountLimitProfilesProjection = {
     policies: number;
     traceEvents: number;
   };
+  kpis: CompliancePolicyKpi[];
   policies: AccountRegulationPolicy[];
   profiles: AccountLimitProfile[];
   sources: string[];
@@ -132,6 +162,8 @@ type LicenseRow = {
 };
 
 type PolicyRow = {
+  policy_key: string | null;
+  status: string;
   state_code: string;
   sport_id: string; // brand-ok — regulatory catalog key
   market_id: string; // brand-ok — regulatory catalog key
@@ -186,22 +218,23 @@ function parseStringArray(raw: string | null): string[] {
   }
 }
 
-function policyCode(row: PolicyRow): string {
-  const segment = (value: string) =>
-    value
-      .trim()
-      .toUpperCase()
-      .replace(/[^A-Z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
-  const scope = row.node_id ? `ACCOUNT-${segment(row.node_id)}` : 'JURISDICTION';
-  return `FW-LIMIT-${segment(row.state_code)}-${segment(row.sport_id)}-${segment(row.market_id)}-${scope}`;
-}
-
 function toneFor(status: AccountLimitMonitoringStatus): AccountLimitTone {
   if (status === 'monitored') return 'ok';
   if (status === 'attention') return 'warn';
   if (status === 'blocked') return 'bad';
   return 'skip';
+}
+
+function policyStatus(value: string): RegulationPolicyStatus {
+  switch (value) {
+    case 'active':
+    case 'draft':
+    case 'revoked':
+    case 'suspended':
+      return value;
+    default:
+      return 'draft';
+  }
 }
 
 function statusFor(input: {
@@ -265,11 +298,12 @@ export function buildAccountLimitProfiles(
   const policies = tableExists(db, 'regulatory_limits')
     ? (db
         .query(
-          `SELECT state_code, sport_id, market_id, node_id, max_wager, min_wager,
+          `SELECT policy_key, status, state_code, sport_id, market_id, node_id, max_wager, min_wager,
                   allowed_bet_types, special_rules, effective_from, effective_to
            FROM regulatory_limits
            WHERE effective_from <= $now
              AND (effective_to IS NULL OR effective_to > $now)
+             AND COALESCE(status, 'active') = 'active'
            ORDER BY state_code, sport_id, market_id, node_id`
         )
         .all({ $now: nowSec }) as PolicyRow[])
@@ -295,21 +329,63 @@ export function buildAccountLimitProfiles(
         .all({ $since: since }) as ViolationRow[])
     : [];
 
-  const policyProjection: AccountRegulationPolicy[] = policies.map(row => ({
-    policyCode: policyCode(row),
-    stateCode: asStateCode(row.state_code),
-    scope: row.node_id ? 'account' : 'jurisdiction',
-    treeNodeId: row.node_id ? asTreeNodeId(row.node_id) : null,
-    sportKey: row.sport_id,
-    marketKey: row.market_id,
-    maxWager: row.max_wager,
-    minWager: row.min_wager,
-    allowedBetTypes: parseStringArray(row.allowed_bet_types),
-    specialRules: parseSpecialRules(row.special_rules),
-    effectiveFrom: row.effective_from,
-    effectiveTo: row.effective_to,
-    source: 'regulatory_limits',
-  }));
+  const policyProjection: AccountRegulationPolicy[] = policies.map(row => {
+    const stateCode = asStateCode(row.state_code);
+    const treeNodeId = row.node_id ? asTreeNodeId(row.node_id) : null;
+    const governed =
+      (row.policy_key ? findRegulationPolicy(row.policy_key) : null) ??
+      findRegulationPolicyForDimensions({
+        jurisdiction: stateCode,
+        sport: row.sport_id,
+        market: row.market_id,
+        treeNodeId,
+      });
+    const rules = parseSpecialRules(row.special_rules);
+    const scope = governed?.scope ?? (treeNodeId ? 'account' : 'jurisdiction');
+    return {
+      policyKey: governed?.key ?? `policy.${stateCode}.${row.sport_id}.${row.market_id}`,
+      policyCode:
+        governed?.policyCode ??
+        generateRegulationPolicyCode({
+          jurisdiction: stateCode,
+          sport: row.sport_id,
+          market: row.market_id,
+          scope,
+          ...(treeNodeId ? { treeNodeId } : {}),
+        }),
+      label: governed?.label ?? `${stateCode} ${row.sport_id} ${row.market_id} legacy policy`,
+      status: governed?.status ?? policyStatus(row.status),
+      stateCode,
+      scope,
+      treeNodeId,
+      sportKey: row.sport_id,
+      marketKey: row.market_id,
+      maxWager: row.max_wager,
+      minWager: row.min_wager,
+      allowedBetTypes: parseStringArray(row.allowed_bet_types),
+      specialRules: rules,
+      effectiveDate:
+        governed?.effectiveDate ?? new Date(row.effective_from * 1000).toISOString().slice(0, 10),
+      expirationDate:
+        governed?.expirationDate ??
+        (row.effective_to ? new Date(row.effective_to * 1000).toISOString().slice(0, 10) : null),
+      effectiveFrom: row.effective_from,
+      effectiveTo: row.effective_to,
+      sourceRef: governed?.sourceRef ?? `sqlite:regulatory_limits/${stateCode}`,
+      authority: governed?.authority ?? 'state',
+      riskTier: governed?.riskTier ?? 'medium',
+      enforcementAction: governed?.enforcementAction ?? 'block',
+      dailyLimit: governed?.dailyLimit ?? rules.max_daily_total ?? null,
+      weeklyLimit: governed?.weeklyLimit ?? rules.max_weekly_total ?? null,
+      playerAgeMin: governed?.playerAgeMin ?? rules.min_age ?? 21,
+      identityRequired: governed?.identityRequired ?? rules.require_identity_verification === true,
+      taxRate: governed?.taxRate ?? null,
+      tags: governed?.tags ?? [],
+      exclusionGroups: governed?.exclusionGroups ?? [],
+      tieredLimits: governed?.tieredLimits ?? [],
+      source: governed ? 'regulation-policy-catalog' : 'regulatory_limits:legacy',
+    };
+  });
 
   const treeById = new Map(trees.map(row => [row.id, row]));
   const bindingById = new Map(bindings.map(row => [row.tree_node_id, row]));
@@ -440,7 +516,7 @@ export function buildAccountLimitProfiles(
   });
 
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     kind: 'account-limit-profiles',
     generatedAt: now.toISOString(),
     summary: {
@@ -453,6 +529,11 @@ export function buildAccountLimitProfiles(
       policies: policyProjection.length,
       traceEvents: profiles.reduce((sum, profile) => sum + profile.traces.length, 0),
     },
+    kpis: buildCompliancePolicyKpis({
+      policies: REGULATION_POLICY_CATALOG,
+      violations,
+      now,
+    }),
     policies: policyProjection,
     profiles,
     sources,

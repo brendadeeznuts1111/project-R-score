@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 2,
-  "generatedAt": "2026-07-31T07:59:02.229Z",
+  "schemaVersion": 3,
+  "generatedAt": "2026-07-31T08:16:23.941Z",
   "lookbackHours": 48,
   "byNode": {},
   "partners": 0,
@@ -34,9 +34,9 @@
     }
   },
   "accountProfiles": {
-    "schemaVersion": 1,
+    "schemaVersion": 2,
     "kind": "account-limit-profiles",
-    "generatedAt": "2026-07-31T07:59:02.230Z",
+    "generatedAt": "2026-07-31T08:16:23.942Z",
     "summary": {
       "accounts": 26,
       "monitored": 2,
@@ -47,9 +47,50 @@
       "policies": 4,
       "traceEvents": 86
     },
+    "kpis": [
+      {
+        "key": "kpi.compliance.blocked_bets",
+        "label": "Blocked bets today",
+        "description": "Number of wager attempts blocked by regulatory policy evidence since 00:00 UTC.",
+        "value": 0,
+        "tone": "ok",
+        "source": "regulatory_violations.blocked_at",
+        "window": "today"
+      },
+      {
+        "key": "kpi.compliance.active_policies",
+        "label": "Active policies",
+        "description": "Count of governed jurisdiction policies active at the artifact generation time.",
+        "value": 4,
+        "tone": "info",
+        "source": "REGULATION_POLICY_CATALOG",
+        "window": "current"
+      },
+      {
+        "key": "kpi.compliance.riskiest_jurisdiction",
+        "label": "Riskiest jurisdiction",
+        "description": "Jurisdiction with the highest summed active policy risk weights; ties sort by state code.",
+        "value": "NJ",
+        "tone": "bad",
+        "source": "REGULATION_POLICY_CATALOG.riskTier",
+        "window": "current"
+      },
+      {
+        "key": "kpi.compliance.policy_changes",
+        "label": "Policy changes",
+        "description": "Count of policies whose governed effective date falls within the trailing 30 days.",
+        "value": 4,
+        "tone": "warn",
+        "source": "REGULATION_POLICY_CATALOG.effectiveDate",
+        "window": "trailing-30d"
+      }
+    ],
     "policies": [
       {
+        "policyKey": "policy.MA.basketball.over_under",
         "policyCode": "FW-LIMIT-MA-BASKETBALL-OVER-UNDER-JURISDICTION",
+        "label": "MA Basketball Over/Under Limit",
+        "status": "active",
         "stateCode": "MA",
         "scope": "jurisdiction",
         "treeNodeId": null,
@@ -64,12 +105,36 @@
           "max_daily_total": 50000,
           "min_age": 21
         },
+        "effectiveDate": "2026-07-28",
+        "expirationDate": null,
         "effectiveFrom": 1785211699,
         "effectiveTo": null,
-        "source": "regulatory_limits"
+        "sourceRef": "internal:state-regulation-reference-seed/MA",
+        "authority": "state",
+        "riskTier": "high",
+        "enforcementAction": "block",
+        "dailyLimit": 50000,
+        "weeklyLimit": null,
+        "playerAgeMin": 21,
+        "identityRequired": false,
+        "taxRate": null,
+        "tags": [
+          "basketball"
+        ],
+        "exclusionGroups": [],
+        "tieredLimits": [
+          {
+            "tier": "vip",
+            "maxBet": 15000
+          }
+        ],
+        "source": "regulation-policy-catalog"
       },
       {
+        "policyKey": "policy.MA.soccer.match_winner",
         "policyCode": "FW-LIMIT-MA-SOCCER-MATCH-WINNER-JURISDICTION",
+        "label": "MA Soccer Match Winner Limit",
+        "status": "active",
         "stateCode": "MA",
         "scope": "jurisdiction",
         "treeNodeId": null,
@@ -85,12 +150,31 @@
           "max_daily_total": 25000,
           "min_age": 21
         },
+        "effectiveDate": "2026-07-28",
+        "expirationDate": null,
         "effectiveFrom": 1785211699,
         "effectiveTo": null,
-        "source": "regulatory_limits"
+        "sourceRef": "internal:state-regulation-reference-seed/MA",
+        "authority": "state",
+        "riskTier": "high",
+        "enforcementAction": "block",
+        "dailyLimit": 25000,
+        "weeklyLimit": null,
+        "playerAgeMin": 21,
+        "identityRequired": false,
+        "taxRate": null,
+        "tags": [
+          "soccer"
+        ],
+        "exclusionGroups": [],
+        "tieredLimits": [],
+        "source": "regulation-policy-catalog"
       },
       {
+        "policyKey": "policy.NJ.basketball.over_under",
         "policyCode": "FW-LIMIT-NJ-BASKETBALL-OVER-UNDER-JURISDICTION",
+        "label": "NJ Basketball Over/Under Limit",
+        "status": "active",
         "stateCode": "NJ",
         "scope": "jurisdiction",
         "treeNodeId": null,
@@ -107,12 +191,32 @@
           "require_identity_verification": true,
           "min_age": 21
         },
+        "effectiveDate": "2026-07-28",
+        "expirationDate": null,
         "effectiveFrom": 1785211699,
         "effectiveTo": null,
-        "source": "regulatory_limits"
+        "sourceRef": "internal:state-regulation-reference-seed/NJ",
+        "authority": "state",
+        "riskTier": "critical",
+        "enforcementAction": "block",
+        "dailyLimit": 75000,
+        "weeklyLimit": null,
+        "playerAgeMin": 21,
+        "identityRequired": true,
+        "taxRate": null,
+        "tags": [
+          "basketball",
+          "identity-required"
+        ],
+        "exclusionGroups": [],
+        "tieredLimits": [],
+        "source": "regulation-policy-catalog"
       },
       {
+        "policyKey": "policy.NJ.soccer.match_winner",
         "policyCode": "FW-LIMIT-NJ-SOCCER-MATCH-WINNER-JURISDICTION",
+        "label": "NJ Soccer Match Winner Limit",
+        "status": "active",
         "stateCode": "NJ",
         "scope": "jurisdiction",
         "treeNodeId": null,
@@ -129,9 +233,28 @@
           "require_identity_verification": true,
           "min_age": 21
         },
+        "effectiveDate": "2026-07-28",
+        "expirationDate": null,
         "effectiveFrom": 1785211699,
         "effectiveTo": null,
-        "source": "regulatory_limits"
+        "sourceRef": "internal:state-regulation-reference-seed/NJ",
+        "authority": "state",
+        "riskTier": "critical",
+        "enforcementAction": "block",
+        "dailyLimit": null,
+        "weeklyLimit": null,
+        "playerAgeMin": 21,
+        "identityRequired": true,
+        "taxRate": null,
+        "tags": [
+          "soccer",
+          "identity-required"
+        ],
+        "exclusionGroups": [
+          "soccer_single_market"
+        ],
+        "tieredLimits": [],
+        "source": "regulation-policy-catalog"
       }
     ],
     "profiles": [
@@ -802,7 +925,7 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T07:59:02.230Z",
+            "at": "2026-07-31T08:16:23.942Z",
             "source": "regulatory_limits",
             "detail": "2 effective NJ policies"
           },
@@ -874,7 +997,7 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T07:59:02.230Z",
+            "at": "2026-07-31T08:16:23.942Z",
             "source": "regulatory_limits",
             "detail": "2 effective NJ policies"
           },
@@ -953,7 +1076,7 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T07:59:02.230Z",
+            "at": "2026-07-31T08:16:23.942Z",
             "source": "regulatory_limits",
             "detail": "2 effective MA policies"
           },
@@ -1025,7 +1148,7 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T07:59:02.230Z",
+            "at": "2026-07-31T08:16:23.942Z",
             "source": "regulatory_limits",
             "detail": "2 effective MA policies"
           },
@@ -1097,7 +1220,7 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T07:59:02.230Z",
+            "at": "2026-07-31T08:16:23.942Z",
             "source": "regulatory_limits",
             "detail": "2 effective NJ policies"
           },
@@ -1182,7 +1305,7 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T07:59:02.230Z",
+            "at": "2026-07-31T08:16:23.942Z",
             "source": "regulatory_limits",
             "detail": "2 effective NJ policies"
           },
@@ -1260,7 +1383,7 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T07:59:02.230Z",
+            "at": "2026-07-31T08:16:23.942Z",
             "source": "regulatory_limits",
             "detail": "2 effective NJ policies"
           },
@@ -1332,7 +1455,7 @@
         "traces": [
           {
             "kind": "policy-bound",
-            "at": "2026-07-31T07:59:02.230Z",
+            "at": "2026-07-31T08:16:23.942Z",
             "source": "regulatory_limits",
             "detail": "2 effective MA policies"
           },

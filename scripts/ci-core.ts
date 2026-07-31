@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * One local/CI envelope after `bun ci`: install proof + hygiene + ci:harness.
@@ -33,6 +34,14 @@ const CORE_STEPS: Array<{ name: string; cmd: string[] }> = [
   {
     name: 'import-graph',
     cmd: ['bun', 'scripts/check-import-graph.ts'],
+  },
+  {
+    name: 'policy-audit',
+    cmd: ['bun', 'tools/policy-audit.ts'],
+  },
+  {
+    name: 'jurisdictions-docs',
+    cmd: ['bun', 'tools/jurisdictions-docs.ts', '--check'],
   },
   {
     name: 'monorepo-health',

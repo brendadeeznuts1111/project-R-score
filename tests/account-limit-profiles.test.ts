@@ -54,7 +54,7 @@ describe('account limit profile projection', () => {
     const profile = result.profiles.find(row => row.treeNodeId === nodeId);
 
     expect(result).toMatchObject({
-      schemaVersion: 1,
+      schemaVersion: 2,
       kind: 'account-limit-profiles',
       summary: {
         accounts: 1,
@@ -88,6 +88,28 @@ describe('account limit profile projection', () => {
       expect.arrayContaining([
         'FW-LIMIT-MA-BASKETBALL-OVER-UNDER-JURISDICTION',
         'FW-LIMIT-MA-SOCCER-MATCH-WINNER-JURISDICTION',
+      ])
+    );
+    expect(result.kpis).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: 'kpi.compliance.active_policies',
+          value: 4,
+        }),
+      ])
+    );
+    expect(result.policies).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          policyKey: 'policy.MA.basketball.over_under',
+          status: 'active',
+          authority: 'state',
+          riskTier: 'high',
+          enforcementAction: 'block',
+          dailyLimit: 50_000,
+          tieredLimits: [{ tier: 'vip', maxBet: 15_000 }],
+          source: 'regulation-policy-catalog',
+        }),
       ])
     );
     expect(profile?.traces.map(trace => trace.kind)).toEqual(
