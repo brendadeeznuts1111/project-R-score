@@ -1,8 +1,21 @@
 {
   "plane": "harness-agents",
   "skillLoopRegistry": ".agents/skills/ast-grep/skill-loop-registry.json",
-  "scannedAt": "2026-07-28T16:41:42.056Z",
+  "scannedAt": "2026-07-31T11:03:32.314Z",
   "skills": [
+    {
+      "name": "agents-sdk",
+      "description": "Build AI agents on Cloudflare Workers using the Agents SDK. Load when creating stateful agents, durable workflows, real-time WebSocket apps, scheduled tasks, MCP servers, chat applications, voice agents, or browser automation. Covers Agent class, state management, callable RPC, Workflows, durable execution, queues, retries, observability, and React hooks. Biases towards retrieval from Cloudflare docs over pre-trained knowledge.",
+      "updatedAt": "2026-07-28T17:01:34.578Z",
+      "hasPackage": false,
+      "lineCount": 222,
+      "resources": {
+        "scripts": 0,
+        "references": 19,
+        "assets": 0
+      },
+      "validation": []
+    },
     {
       "name": "ast-grep",
       "description": "AST-aware code outline, structural search, rewrite, and rule scans via ast-grep 0.44+. Use when exploring unfamiliar code, mapping symbols/imports/exports before broad file reads, finding syntax-shaped patterns (calls, classes, JSX), writing codemods, or when rg is too noisy. Primary entry point: scripts/ast_grep_helper.py (outline, search, replace, scan, validate).",
@@ -31,16 +44,18 @@
     },
     {
       "name": "branded-ids",
-      "description": "Discover and apply FactoryWager branded ID types (SessionId, AccountId, …). Use when minting IDs, fixing unbranded string fields, or choosing as*/try*/parse* constructors. MANDATORY for any domain *Id — pre-commit blocks bare string.",
-      "updatedAt": "2026-07-20T14:39:53.018Z",
+      "description": "",
+      "updatedAt": "2026-07-28T23:34:28.784Z",
       "hasPackage": false,
-      "lineCount": 95,
+      "lineCount": 145,
       "resources": {
         "scripts": 0,
         "references": 0,
         "assets": 0
       },
-      "validation": []
+      "validation": [
+        "frontmatter missing description"
+      ]
     },
     {
       "name": "bun-v139-playground",
@@ -61,6 +76,58 @@
       "updatedAt": "2026-07-24T04:50:59.589Z",
       "hasPackage": false,
       "lineCount": 35,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "cloudflare",
+      "description": "Comprehensive Cloudflare platform skill covering Workers, Pages, storage (KV, D1, R2), AI (Workers AI, Vectorize, Agents SDK), feature flags (Flagship), networking (Tunnel, Spectrum), security (WAF, DDoS), and infrastructure-as-code (Terraform, Pulumi). Use for any Cloudflare development task. Biases towards retrieval from Cloudflare docs over pre-trained knowledge.",
+      "updatedAt": "2026-07-28T17:01:38.108Z",
+      "hasPackage": false,
+      "lineCount": 249,
+      "resources": {
+        "scripts": 0,
+        "references": 319,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "cloudflare-email-service",
+      "description": "Send and receive transactional emails with Cloudflare Email Service (Email Sending + Email Routing). Use when building email sending (Workers binding or REST API), email routing, Agents SDK email handling, or integrating email into any app — Workers, Node.js, Python, Go, etc. Also use for email deliverability, SPF/DKIM/DMARC, wrangler email setup, MCP email tools, or when a coding agent needs to send emails. Even for simple requests like \"add email to my Worker\" — this skill has critical config details.",
+      "updatedAt": "2026-07-28T17:01:38.494Z",
+      "hasPackage": false,
+      "lineCount": 104,
+      "resources": {
+        "scripts": 0,
+        "references": 5,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "cloudflare-one",
+      "description": "Guides Cloudflare One Zero Trust and SASE work across Access, Gateway, WARP, Tunnel, Cloudflare WAN, DLP, CASB, device posture, and identity. Use when designing, configuring, troubleshooting, or reviewing Cloudflare One deployments. Retrieval-first: use current Cloudflare docs/API schemas instead of embedded product docs.",
+      "updatedAt": "2026-07-28T17:01:38.733Z",
+      "hasPackage": false,
+      "lineCount": 177,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "cloudflare-one-migrations",
+      "description": "Plans migrations from Zscaler ZIA/ZPA, Palo Alto, legacy VPN, SWG, or SASE stacks to Cloudflare One. Use for migration assessments, policy mapping, rollout plans, and parity/gap analysis.",
+      "updatedAt": "2026-07-28T17:01:38.902Z",
+      "hasPackage": false,
+      "lineCount": 111,
       "resources": {
         "scripts": 0,
         "references": 0,
@@ -90,6 +157,19 @@
       "resources": {
         "scripts": 0,
         "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "durable-objects",
+      "description": "Create and review Cloudflare Durable Objects. Use when building stateful coordination (chat rooms, multiplayer games, booking systems), implementing RPC methods, SQLite storage, alarms, WebSockets, or reviewing DO code for best practices. Covers Workers integration, wrangler config, and testing with Vitest. Biases towards retrieval from Cloudflare docs over pre-trained knowledge.",
+      "updatedAt": "2026-07-28T17:01:39.145Z",
+      "hasPackage": false,
+      "lineCount": 187,
+      "resources": {
+        "scripts": 0,
+        "references": 3,
         "assets": 0
       },
       "validation": []
@@ -215,6 +295,19 @@
       "validation": []
     },
     {
+      "name": "sandbox-sdk",
+      "description": "Build sandboxed applications for secure code execution. Load when building AI code execution, code interpreters, CI/CD systems, interactive dev environments, or executing untrusted code. Covers Sandbox SDK lifecycle, commands, files, code interpreter, and preview URLs. Biases towards retrieval from Cloudflare docs over pre-trained knowledge.",
+      "updatedAt": "2026-07-28T17:01:39.399Z",
+      "hasPackage": false,
+      "lineCount": 178,
+      "resources": {
+        "scripts": 0,
+        "references": 2,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
       "name": "self-healing-domain",
       "description": "Automated diagnostic and healing workflows for SelfHealingDomain instances. Multi-step flows for health checks, diagnosis, treatment, and recovery.",
       "updatedAt": "2026-07-24T07:07:27.624Z",
@@ -304,7 +397,61 @@
         "assets": 0
       },
       "validation": []
+    },
+    {
+      "name": "turnstile-spin",
+      "description": "Set up Cloudflare Turnstile end-to-end in a project. Scan the codebase, create the widget via the Cloudflare API, embed it where user requests need bot verification (form submissions, SPA actions, API endpoints, download links, comment or vote submissions, etc.), wire canonical server-side siteverify in the customer's existing backend, validate, and persist the skill. Load this when a user asks to add Turnstile, set up CAPTCHA, protect a form or endpoint from bots, or fix a Turnstile integration. Mirrors developers.cloudflare.com/turnstile/spin.",
+      "updatedAt": "2026-07-28T17:01:39.644Z",
+      "hasPackage": false,
+      "lineCount": 331,
+      "resources": {
+        "scripts": 4,
+        "references": 6,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "web-perf",
+      "description": "Analyzes web performance using Chrome DevTools MCP. Measures Core Web Vitals (LCP, INP, CLS) and supplementary metrics (FCP, TBT, Speed Index), identifies render-blocking resources, network dependency chains, layout shifts, caching issues, and accessibility gaps. Use when asked to audit, profile, debug, or optimize page load performance, Lighthouse scores, or site speed. Biases towards retrieval from current documentation over pre-trained knowledge.",
+      "updatedAt": "2026-07-28T17:01:39.716Z",
+      "hasPackage": false,
+      "lineCount": 202,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "workers-best-practices",
+      "description": "Reviews and authors Cloudflare Workers code against production best practices. Load when writing new Workers, reviewing Worker code, configuring wrangler.jsonc, or checking for common Workers anti-patterns (streaming, floating promises, global state, secrets, bindings, observability). Biases towards retrieval from Cloudflare docs over pre-trained knowledge.",
+      "updatedAt": "2026-07-28T17:01:39.799Z",
+      "hasPackage": false,
+      "lineCount": 128,
+      "resources": {
+        "scripts": 0,
+        "references": 2,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "wrangler",
+      "description": "Cloudflare Workers CLI for deploying, developing, and managing Workers, KV, R2, D1, Vectorize, Hyperdrive, Workers AI, Containers, Queues, Workflows, Pipelines, and Secrets Store. Load before running wrangler commands to ensure correct syntax and best practices. Biases towards retrieval from Cloudflare docs over pre-trained knowledge.",
+      "updatedAt": "2026-07-28T17:01:39.846Z",
+      "hasPackage": false,
+      "lineCount": 923,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": [
+        "body too long (919 lines, want ≤500)"
+      ]
     }
   ],
-  "count": 23
+  "count": 34
 }
