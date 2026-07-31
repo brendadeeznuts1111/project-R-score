@@ -690,7 +690,7 @@
       "license": "MIT"
     },
     "performance": {
-      "max_concurrent_requests": 1e4,
+      "max_concurrent_requests": 10000,
       "request_timeout": "30s",
       "connection_pool_size": 100,
       "cache_ttl": "300s",
@@ -720,7 +720,7 @@
       "max_memory": "1gb",
       "eviction_policy": "lru",
       "compression": true,
-      "max_keys": 1e6,
+      "max_keys": 1000000,
       "cleanup_interval": "600s"
     },
     "api": {
@@ -761,7 +761,7 @@
     },
     "limits": {
       "max_file_upload_size": "100mb",
-      "max_api_calls_per_hour": 1e4,
+      "max_api_calls_per_hour": 10000,
       "max_concurrent_sessions": 1000,
       "max_storage_per_user": "10gb",
       "max_bandwidth_per_month": "1tb",
@@ -1819,6 +1819,8 @@
     "bake:sportsbook-opening-baseline:check": "bun tools/bake-sportsbook-opening-baseline.ts --check",
     "bake:scrape-wire-taxonomy": "bun tools/bake-scrape-wire-taxonomy.ts",
     "bake:scrape-wire-taxonomy:check": "bun tools/bake-scrape-wire-taxonomy.ts --check",
+    "tennis:agent-auth:bake": "bun tools/bake-tennis-agent-auth.ts",
+    "tennis:agent-auth:check": "bun tools/bake-tennis-agent-auth.ts --check",
     "baseline:sync-regulatory": "bun tools/baseline-sync.ts sync-regulatory",
     "baseline:sync-all": "bun tools/baseline-sync.ts sync-all",
     "baseline:status": "bun tools/baseline-sync.ts status",
@@ -2141,6 +2143,9 @@
     "monorepo:health:full": "bun tools/monorepo-health.ts --with-coverage --archive",
     "monorepo:health:watch": "bun tools/monorepo-health.ts --watch --interval=30",
     "monorepo:health:bake": "bun tools/bake-monorepo-health.ts",
+    "deps:outdated": "bun scripts/deps-outdated-workspaces.ts",
+    "deps:outdated:latest": "bun scripts/deps-outdated-workspaces.ts -- --latest",
+    "deps:outdated:json": "bun scripts/deps-outdated-workspaces.ts -- --json",
     "bake:capabilities": "bun tools/bake-capability-map.ts --write",
     "bake:capabilities:check": "bun tools/bake-capability-map.ts --check",
     "bake:capabilities:update": "bun run bake:capabilities && bun tools/bun-test-snapshots.ts --update --id capability-map",
