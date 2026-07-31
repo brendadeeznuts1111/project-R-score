@@ -1606,6 +1606,8 @@
     "ops:limits:lab": "bun tools/ops-limit-forecast-lab.ts",
     "ops:limits:lab:json": "bun tools/ops-limit-forecast-lab.ts --json --no-write",
     "ops:limits:lab:profile": "bun scripts/limit-forecast-lab-profile.ts",
+    "sports:taxonomy": "bun tools/sports-taxonomy.ts",
+    "sports:taxonomy:check": "bun tools/sports-taxonomy.ts --check",
     "ops:limits:analyze": "bun tools/ops-limit-analyze.ts",
     "ops:limits:analyze:json": "bun tools/ops-limit-analyze.ts --json",
     "ops:limits:seed-patterns": "bun tools/seed-limit-patterns.ts --force --bake",

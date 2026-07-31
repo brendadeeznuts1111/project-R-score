@@ -1,0 +1,2504 @@
+{
+  "schemaVersion": 1,
+  "kind": "sports-competition-taxonomy",
+  "path": "/registry/sports-taxonomy.json",
+  "generatedAt": "2026-07-31T09:59:44.453Z",
+  "sources": {
+    "authority": "lib/operations/sports-competition-catalog.ts",
+    "glossary": "/portal/glossary/"
+  },
+  "semantics": {
+    "hierarchy": [
+      "sport",
+      "league",
+      "competition",
+      "event_host_country"
+    ],
+    "flagOwner": "event_host_country",
+    "globalMarker": "🌐"
+  },
+  "summary": {
+    "sports": 8,
+    "regions": 5,
+    "countries": 24,
+    "leagues": 18,
+    "competitions": 13,
+    "glossaryConcepts": 63
+  },
+  "sports": [
+    {
+      "key": "american_football",
+      "label": "American football",
+      "conceptId": "sport.american_football"
+    },
+    {
+      "key": "baseball",
+      "label": "Baseball",
+      "conceptId": "sport.baseball"
+    },
+    {
+      "key": "basketball",
+      "label": "Basketball",
+      "conceptId": "sport.basketball"
+    },
+    {
+      "key": "hockey",
+      "label": "Hockey",
+      "conceptId": "sport.hockey"
+    },
+    {
+      "key": "soccer",
+      "label": "Soccer",
+      "conceptId": "sport.soccer"
+    },
+    {
+      "key": "tennis",
+      "label": "Tennis",
+      "conceptId": "sport.tennis"
+    },
+    {
+      "key": "golf",
+      "label": "Golf",
+      "conceptId": "sport.golf"
+    },
+    {
+      "key": "mma",
+      "label": "MMA",
+      "conceptId": "sport.mma"
+    }
+  ],
+  "regions": [
+    {
+      "key": "north_america",
+      "label": "North America"
+    },
+    {
+      "key": "south_america",
+      "label": "South America"
+    },
+    {
+      "key": "europe",
+      "label": "Europe"
+    },
+    {
+      "key": "asia_pacific",
+      "label": "Asia-Pacific"
+    },
+    {
+      "key": "africa_middle_east",
+      "label": "Africa & Middle East"
+    }
+  ],
+  "countries": [
+    {
+      "code": "US",
+      "label": "United States",
+      "region": "north_america",
+      "conceptId": "country.us",
+      "flagEmoji": "🇺🇸",
+      "flagAriaLabel": "United States flag"
+    },
+    {
+      "code": "CA",
+      "label": "Canada",
+      "region": "north_america",
+      "conceptId": "country.ca",
+      "flagEmoji": "🇨🇦",
+      "flagAriaLabel": "Canada flag"
+    },
+    {
+      "code": "GB",
+      "label": "United Kingdom",
+      "region": "europe",
+      "conceptId": "country.gb",
+      "flagEmoji": "🇬🇧",
+      "flagAriaLabel": "United Kingdom flag"
+    },
+    {
+      "code": "AU",
+      "label": "Australia",
+      "region": "asia_pacific",
+      "conceptId": "country.au",
+      "flagEmoji": "🇦🇺",
+      "flagAriaLabel": "Australia flag"
+    },
+    {
+      "code": "FR",
+      "label": "France",
+      "region": "europe",
+      "conceptId": "country.fr",
+      "flagEmoji": "🇫🇷",
+      "flagAriaLabel": "France flag"
+    },
+    {
+      "code": "DE",
+      "label": "Germany",
+      "region": "europe",
+      "conceptId": "country.de",
+      "flagEmoji": "🇩🇪",
+      "flagAriaLabel": "Germany flag"
+    },
+    {
+      "code": "IT",
+      "label": "Italy",
+      "region": "europe",
+      "conceptId": "country.it",
+      "flagEmoji": "🇮🇹",
+      "flagAriaLabel": "Italy flag"
+    },
+    {
+      "code": "ES",
+      "label": "Spain",
+      "region": "europe",
+      "conceptId": "country.es",
+      "flagEmoji": "🇪🇸",
+      "flagAriaLabel": "Spain flag"
+    },
+    {
+      "code": "NL",
+      "label": "Netherlands",
+      "region": "europe",
+      "conceptId": "country.nl",
+      "flagEmoji": "🇳🇱",
+      "flagAriaLabel": "Netherlands flag"
+    },
+    {
+      "code": "BE",
+      "label": "Belgium",
+      "region": "europe",
+      "conceptId": "country.be",
+      "flagEmoji": "🇧🇪",
+      "flagAriaLabel": "Belgium flag"
+    },
+    {
+      "code": "CH",
+      "label": "Switzerland",
+      "region": "europe",
+      "conceptId": "country.ch",
+      "flagEmoji": "🇨🇭",
+      "flagAriaLabel": "Switzerland flag"
+    },
+    {
+      "code": "CZ",
+      "label": "Czechia",
+      "region": "europe",
+      "conceptId": "country.cz",
+      "flagEmoji": "🇨🇿",
+      "flagAriaLabel": "Czechia flag"
+    },
+    {
+      "code": "PL",
+      "label": "Poland",
+      "region": "europe",
+      "conceptId": "country.pl",
+      "flagEmoji": "🇵🇱",
+      "flagAriaLabel": "Poland flag"
+    },
+    {
+      "code": "RS",
+      "label": "Serbia",
+      "region": "europe",
+      "conceptId": "country.rs",
+      "flagEmoji": "🇷🇸",
+      "flagAriaLabel": "Serbia flag"
+    },
+    {
+      "code": "GR",
+      "label": "Greece",
+      "region": "europe",
+      "conceptId": "country.gr",
+      "flagEmoji": "🇬🇷",
+      "flagAriaLabel": "Greece flag"
+    },
+    {
+      "code": "BR",
+      "label": "Brazil",
+      "region": "south_america",
+      "conceptId": "country.br",
+      "flagEmoji": "🇧🇷",
+      "flagAriaLabel": "Brazil flag"
+    },
+    {
+      "code": "AR",
+      "label": "Argentina",
+      "region": "south_america",
+      "conceptId": "country.ar",
+      "flagEmoji": "🇦🇷",
+      "flagAriaLabel": "Argentina flag"
+    },
+    {
+      "code": "MX",
+      "label": "Mexico",
+      "region": "north_america",
+      "conceptId": "country.mx",
+      "flagEmoji": "🇲🇽",
+      "flagAriaLabel": "Mexico flag"
+    },
+    {
+      "code": "JP",
+      "label": "Japan",
+      "region": "asia_pacific",
+      "conceptId": "country.jp",
+      "flagEmoji": "🇯🇵",
+      "flagAriaLabel": "Japan flag"
+    },
+    {
+      "code": "CN",
+      "label": "China",
+      "region": "asia_pacific",
+      "conceptId": "country.cn",
+      "flagEmoji": "🇨🇳",
+      "flagAriaLabel": "China flag"
+    },
+    {
+      "code": "KR",
+      "label": "South Korea",
+      "region": "asia_pacific",
+      "conceptId": "country.kr",
+      "flagEmoji": "🇰🇷",
+      "flagAriaLabel": "South Korea flag"
+    },
+    {
+      "code": "IN",
+      "label": "India",
+      "region": "asia_pacific",
+      "conceptId": "country.in",
+      "flagEmoji": "🇮🇳",
+      "flagAriaLabel": "India flag"
+    },
+    {
+      "code": "ZA",
+      "label": "South Africa",
+      "region": "africa_middle_east",
+      "conceptId": "country.za",
+      "flagEmoji": "🇿🇦",
+      "flagAriaLabel": "South Africa flag"
+    },
+    {
+      "code": "AE",
+      "label": "United Arab Emirates",
+      "region": "africa_middle_east",
+      "conceptId": "country.ae",
+      "flagEmoji": "🇦🇪",
+      "flagAriaLabel": "United Arab Emirates flag"
+    }
+  ],
+  "leagues": [
+    {
+      "key": "nba",
+      "label": "NBA",
+      "sport": "basketball",
+      "scope": "multi_country",
+      "countries": [
+        "US",
+        "CA"
+      ],
+      "conceptId": "league.nba",
+      "synonyms": [
+        "National Basketball Association"
+      ],
+      "flagEmoji": "🇺🇸 🇨🇦"
+    },
+    {
+      "key": "wnba",
+      "label": "WNBA",
+      "sport": "basketball",
+      "scope": "national",
+      "countries": [
+        "US"
+      ],
+      "conceptId": "league.wnba",
+      "synonyms": [
+        "Women's National Basketball Association"
+      ],
+      "flagEmoji": "🇺🇸"
+    },
+    {
+      "key": "nfl",
+      "label": "NFL",
+      "sport": "american_football",
+      "scope": "national",
+      "countries": [
+        "US"
+      ],
+      "conceptId": "league.nfl",
+      "synonyms": [
+        "National Football League"
+      ],
+      "flagEmoji": "🇺🇸"
+    },
+    {
+      "key": "ncaaf",
+      "label": "NCAA football",
+      "sport": "american_football",
+      "scope": "national",
+      "countries": [
+        "US"
+      ],
+      "conceptId": "league.ncaaf",
+      "synonyms": [
+        "NCAAF",
+        "college football"
+      ],
+      "flagEmoji": "🇺🇸"
+    },
+    {
+      "key": "ncaab",
+      "label": "NCAA basketball",
+      "sport": "basketball",
+      "scope": "national",
+      "countries": [
+        "US"
+      ],
+      "conceptId": "league.ncaab",
+      "synonyms": [
+        "NCAAB",
+        "college basketball",
+        "CBB"
+      ],
+      "flagEmoji": "🇺🇸"
+    },
+    {
+      "key": "mlb",
+      "label": "MLB",
+      "sport": "baseball",
+      "scope": "multi_country",
+      "countries": [
+        "US",
+        "CA"
+      ],
+      "conceptId": "league.mlb",
+      "synonyms": [
+        "Major League Baseball"
+      ],
+      "flagEmoji": "🇺🇸 🇨🇦"
+    },
+    {
+      "key": "nhl",
+      "label": "NHL",
+      "sport": "hockey",
+      "scope": "multi_country",
+      "countries": [
+        "US",
+        "CA"
+      ],
+      "conceptId": "league.nhl",
+      "synonyms": [
+        "National Hockey League"
+      ],
+      "flagEmoji": "🇺🇸 🇨🇦"
+    },
+    {
+      "key": "mls",
+      "label": "MLS",
+      "sport": "soccer",
+      "scope": "multi_country",
+      "countries": [
+        "US",
+        "CA"
+      ],
+      "conceptId": "league.mls",
+      "synonyms": [
+        "Major League Soccer"
+      ],
+      "flagEmoji": "🇺🇸 🇨🇦"
+    },
+    {
+      "key": "epl",
+      "label": "Premier League",
+      "sport": "soccer",
+      "scope": "national",
+      "countries": [
+        "GB"
+      ],
+      "conceptId": "league.epl",
+      "synonyms": [
+        "EPL",
+        "English Premier League"
+      ],
+      "flagEmoji": "🇬🇧"
+    },
+    {
+      "key": "uefa_champions_league",
+      "label": "UEFA Champions League",
+      "sport": "soccer",
+      "scope": "global",
+      "countries": [],
+      "conceptId": "league.uefa_champions_league",
+      "synonyms": [
+        "UCL",
+        "Champions League"
+      ],
+      "flagEmoji": "🌐"
+    },
+    {
+      "key": "atp",
+      "label": "ATP Tour",
+      "sport": "tennis",
+      "scope": "global",
+      "countries": [],
+      "conceptId": "league.atp",
+      "synonyms": [
+        "ATP",
+        "men's tennis"
+      ],
+      "flagEmoji": "🌐"
+    },
+    {
+      "key": "wta",
+      "label": "WTA Tour",
+      "sport": "tennis",
+      "scope": "global",
+      "countries": [],
+      "conceptId": "league.wta",
+      "synonyms": [
+        "WTA",
+        "women's tennis"
+      ],
+      "flagEmoji": "🌐"
+    },
+    {
+      "key": "itf",
+      "label": "ITF World Tennis Tour",
+      "sport": "tennis",
+      "scope": "global",
+      "countries": [],
+      "conceptId": "league.itf",
+      "synonyms": [
+        "ITF",
+        "ITF tennis"
+      ],
+      "flagEmoji": "🌐"
+    },
+    {
+      "key": "atp_challenger",
+      "label": "ATP Challenger Tour",
+      "sport": "tennis",
+      "scope": "global",
+      "countries": [],
+      "conceptId": "league.atp_challenger",
+      "synonyms": [
+        "Challenger Tour"
+      ],
+      "flagEmoji": "🌐"
+    },
+    {
+      "key": "wta_125",
+      "label": "WTA 125",
+      "sport": "tennis",
+      "scope": "global",
+      "countries": [],
+      "conceptId": "league.wta_125",
+      "synonyms": [
+        "WTA 125 Series"
+      ],
+      "flagEmoji": "🌐"
+    },
+    {
+      "key": "pga_tour",
+      "label": "PGA Tour",
+      "sport": "golf",
+      "scope": "global",
+      "countries": [],
+      "conceptId": "league.pga_tour",
+      "synonyms": [
+        "PGA"
+      ],
+      "flagEmoji": "🌐"
+    },
+    {
+      "key": "dp_world_tour",
+      "label": "DP World Tour",
+      "sport": "golf",
+      "scope": "global",
+      "countries": [],
+      "conceptId": "league.dp_world_tour",
+      "synonyms": [
+        "European Tour"
+      ],
+      "flagEmoji": "🌐"
+    },
+    {
+      "key": "ufc",
+      "label": "UFC",
+      "sport": "mma",
+      "scope": "global",
+      "countries": [],
+      "conceptId": "league.ufc",
+      "synonyms": [
+        "Ultimate Fighting Championship"
+      ],
+      "flagEmoji": "🌐"
+    }
+  ],
+  "competitions": [
+    {
+      "key": "itf_m15",
+      "label": "ITF Men M15",
+      "sport": "tennis",
+      "league": "itf",
+      "tier": "M15",
+      "conceptId": "competition.itf_m15"
+    },
+    {
+      "key": "itf_m25",
+      "label": "ITF Men M25",
+      "sport": "tennis",
+      "league": "itf",
+      "tier": "M25",
+      "conceptId": "competition.itf_m25"
+    },
+    {
+      "key": "itf_w15",
+      "label": "ITF Women W15",
+      "sport": "tennis",
+      "league": "itf",
+      "tier": "W15",
+      "conceptId": "competition.itf_w15"
+    },
+    {
+      "key": "itf_w35",
+      "label": "ITF Women W35",
+      "sport": "tennis",
+      "league": "itf",
+      "tier": "W35",
+      "conceptId": "competition.itf_w35"
+    },
+    {
+      "key": "itf_w50",
+      "label": "ITF Women W50",
+      "sport": "tennis",
+      "league": "itf",
+      "tier": "W50",
+      "conceptId": "competition.itf_w50"
+    },
+    {
+      "key": "itf_w75",
+      "label": "ITF Women W75",
+      "sport": "tennis",
+      "league": "itf",
+      "tier": "W75",
+      "conceptId": "competition.itf_w75"
+    },
+    {
+      "key": "itf_w100",
+      "label": "ITF Women W100",
+      "sport": "tennis",
+      "league": "itf",
+      "tier": "W100",
+      "conceptId": "competition.itf_w100"
+    },
+    {
+      "key": "atp_challenger_50",
+      "label": "ATP Challenger 50",
+      "sport": "tennis",
+      "league": "atp_challenger",
+      "tier": "50",
+      "conceptId": "competition.atp_challenger_50"
+    },
+    {
+      "key": "atp_challenger_75",
+      "label": "ATP Challenger 75",
+      "sport": "tennis",
+      "league": "atp_challenger",
+      "tier": "75",
+      "conceptId": "competition.atp_challenger_75"
+    },
+    {
+      "key": "atp_challenger_100",
+      "label": "ATP Challenger 100",
+      "sport": "tennis",
+      "league": "atp_challenger",
+      "tier": "100",
+      "conceptId": "competition.atp_challenger_100"
+    },
+    {
+      "key": "atp_challenger_125",
+      "label": "ATP Challenger 125",
+      "sport": "tennis",
+      "league": "atp_challenger",
+      "tier": "125",
+      "conceptId": "competition.atp_challenger_125"
+    },
+    {
+      "key": "atp_challenger_175",
+      "label": "ATP Challenger 175",
+      "sport": "tennis",
+      "league": "atp_challenger",
+      "tier": "175",
+      "conceptId": "competition.atp_challenger_175"
+    },
+    {
+      "key": "wta_125",
+      "label": "WTA 125",
+      "sport": "tennis",
+      "league": "wta_125",
+      "tier": "125",
+      "conceptId": "competition.wta_125"
+    }
+  ],
+  "glossaryConcepts": [
+    {
+      "id": "region",
+      "label": "Sports region",
+      "description": "Geographic grouping used for discovery and reporting; not a regulatory jurisdiction.",
+      "category": "tournament",
+      "kind": "region",
+      "synonyms": [
+        "geographic region",
+        "sports geography"
+      ],
+      "values": [
+        "north_america",
+        "south_america",
+        "europe",
+        "asia_pacific",
+        "africa_middle_east"
+      ],
+      "seeAlso": [
+        "country",
+        "competition"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global sports regions"
+    },
+    {
+      "id": "country",
+      "label": "Event host country",
+      "description": "ISO alpha-2 country for the venue hosting an event; this field owns the event flag.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "host country",
+        "event country",
+        "country code"
+      ],
+      "values": [
+        "US",
+        "CA",
+        "GB",
+        "AU",
+        "FR",
+        "DE",
+        "IT",
+        "ES",
+        "NL",
+        "BE",
+        "CH",
+        "CZ",
+        "PL",
+        "RS",
+        "GR",
+        "BR",
+        "AR",
+        "MX",
+        "JP",
+        "CN",
+        "KR",
+        "IN",
+        "ZA",
+        "AE"
+      ],
+      "seeAlso": [
+        "region",
+        "competition",
+        "event"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region",
+      "scope": null,
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Event host country"
+    },
+    {
+      "id": "competition.tier",
+      "label": "Competition tier",
+      "description": "Named level within a league or tour, such as ITF M15 or ATP Challenger 75.",
+      "category": "tournament",
+      "kind": "competition",
+      "synonyms": [
+        "tour level",
+        "tournament tier",
+        "competition level"
+      ],
+      "values": [
+        "itf_m15",
+        "itf_m25",
+        "itf_w15",
+        "itf_w35",
+        "itf_w50",
+        "itf_w75",
+        "itf_w100",
+        "atp_challenger_50",
+        "atp_challenger_75",
+        "atp_challenger_100",
+        "atp_challenger_125",
+        "atp_challenger_175",
+        "wta_125"
+      ],
+      "seeAlso": [
+        "competition",
+        "country",
+        "event"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "competition",
+      "scope": null,
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null
+    },
+    {
+      "id": "region.north_america",
+      "label": "North America",
+      "description": "North America reporting group for sports events and host countries.",
+      "category": "tournament",
+      "kind": "region",
+      "synonyms": [
+        "north_america"
+      ],
+      "values": [
+        "US",
+        "CA",
+        "MX"
+      ],
+      "seeAlso": [
+        "region",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "region",
+      "scope": null,
+      "countryCodes": [
+        "US",
+        "CA",
+        "MX"
+      ],
+      "region": "north_america",
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "North America region"
+    },
+    {
+      "id": "region.south_america",
+      "label": "South America",
+      "description": "South America reporting group for sports events and host countries.",
+      "category": "tournament",
+      "kind": "region",
+      "synonyms": [
+        "south_america"
+      ],
+      "values": [
+        "BR",
+        "AR"
+      ],
+      "seeAlso": [
+        "region",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "region",
+      "scope": null,
+      "countryCodes": [
+        "BR",
+        "AR"
+      ],
+      "region": "south_america",
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "South America region"
+    },
+    {
+      "id": "region.europe",
+      "label": "Europe",
+      "description": "Europe reporting group for sports events and host countries.",
+      "category": "tournament",
+      "kind": "region",
+      "synonyms": [
+        "europe"
+      ],
+      "values": [
+        "GB",
+        "FR",
+        "DE",
+        "IT",
+        "ES",
+        "NL",
+        "BE",
+        "CH",
+        "CZ",
+        "PL",
+        "RS",
+        "GR"
+      ],
+      "seeAlso": [
+        "region",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "region",
+      "scope": null,
+      "countryCodes": [
+        "GB",
+        "FR",
+        "DE",
+        "IT",
+        "ES",
+        "NL",
+        "BE",
+        "CH",
+        "CZ",
+        "PL",
+        "RS",
+        "GR"
+      ],
+      "region": "europe",
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Europe region"
+    },
+    {
+      "id": "region.asia_pacific",
+      "label": "Asia-Pacific",
+      "description": "Asia-Pacific reporting group for sports events and host countries.",
+      "category": "tournament",
+      "kind": "region",
+      "synonyms": [
+        "asia_pacific"
+      ],
+      "values": [
+        "AU",
+        "JP",
+        "CN",
+        "KR",
+        "IN"
+      ],
+      "seeAlso": [
+        "region",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "region",
+      "scope": null,
+      "countryCodes": [
+        "AU",
+        "JP",
+        "CN",
+        "KR",
+        "IN"
+      ],
+      "region": "asia_pacific",
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Asia-Pacific region"
+    },
+    {
+      "id": "region.africa_middle_east",
+      "label": "Africa & Middle East",
+      "description": "Africa & Middle East reporting group for sports events and host countries.",
+      "category": "tournament",
+      "kind": "region",
+      "synonyms": [
+        "africa_middle_east"
+      ],
+      "values": [
+        "ZA",
+        "AE"
+      ],
+      "seeAlso": [
+        "region",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "region",
+      "scope": null,
+      "countryCodes": [
+        "ZA",
+        "AE"
+      ],
+      "region": "africa_middle_east",
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Africa & Middle East region"
+    },
+    {
+      "id": "country.us",
+      "label": "United States",
+      "description": "United States as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "US",
+        "United States"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.north_america"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.north_america",
+      "scope": "national",
+      "countryCodes": [
+        "US"
+      ],
+      "region": "north_america",
+      "flagEmoji": "🇺🇸",
+      "flagAriaLabel": "United States flag"
+    },
+    {
+      "id": "country.ca",
+      "label": "Canada",
+      "description": "Canada as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "CA",
+        "Canada"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.north_america"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.north_america",
+      "scope": "national",
+      "countryCodes": [
+        "CA"
+      ],
+      "region": "north_america",
+      "flagEmoji": "🇨🇦",
+      "flagAriaLabel": "Canada flag"
+    },
+    {
+      "id": "country.gb",
+      "label": "United Kingdom",
+      "description": "United Kingdom as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "GB",
+        "United Kingdom"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.europe",
+      "scope": "national",
+      "countryCodes": [
+        "GB"
+      ],
+      "region": "europe",
+      "flagEmoji": "🇬🇧",
+      "flagAriaLabel": "United Kingdom flag"
+    },
+    {
+      "id": "country.au",
+      "label": "Australia",
+      "description": "Australia as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "AU",
+        "Australia"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.asia_pacific"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.asia_pacific",
+      "scope": "national",
+      "countryCodes": [
+        "AU"
+      ],
+      "region": "asia_pacific",
+      "flagEmoji": "🇦🇺",
+      "flagAriaLabel": "Australia flag"
+    },
+    {
+      "id": "country.fr",
+      "label": "France",
+      "description": "France as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "FR",
+        "France"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.europe",
+      "scope": "national",
+      "countryCodes": [
+        "FR"
+      ],
+      "region": "europe",
+      "flagEmoji": "🇫🇷",
+      "flagAriaLabel": "France flag"
+    },
+    {
+      "id": "country.de",
+      "label": "Germany",
+      "description": "Germany as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "DE",
+        "Germany"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.europe",
+      "scope": "national",
+      "countryCodes": [
+        "DE"
+      ],
+      "region": "europe",
+      "flagEmoji": "🇩🇪",
+      "flagAriaLabel": "Germany flag"
+    },
+    {
+      "id": "country.it",
+      "label": "Italy",
+      "description": "Italy as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "IT",
+        "Italy"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.europe",
+      "scope": "national",
+      "countryCodes": [
+        "IT"
+      ],
+      "region": "europe",
+      "flagEmoji": "🇮🇹",
+      "flagAriaLabel": "Italy flag"
+    },
+    {
+      "id": "country.es",
+      "label": "Spain",
+      "description": "Spain as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "ES",
+        "Spain"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.europe",
+      "scope": "national",
+      "countryCodes": [
+        "ES"
+      ],
+      "region": "europe",
+      "flagEmoji": "🇪🇸",
+      "flagAriaLabel": "Spain flag"
+    },
+    {
+      "id": "country.nl",
+      "label": "Netherlands",
+      "description": "Netherlands as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "NL",
+        "Netherlands"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.europe",
+      "scope": "national",
+      "countryCodes": [
+        "NL"
+      ],
+      "region": "europe",
+      "flagEmoji": "🇳🇱",
+      "flagAriaLabel": "Netherlands flag"
+    },
+    {
+      "id": "country.be",
+      "label": "Belgium",
+      "description": "Belgium as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "BE",
+        "Belgium"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.europe",
+      "scope": "national",
+      "countryCodes": [
+        "BE"
+      ],
+      "region": "europe",
+      "flagEmoji": "🇧🇪",
+      "flagAriaLabel": "Belgium flag"
+    },
+    {
+      "id": "country.ch",
+      "label": "Switzerland",
+      "description": "Switzerland as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "CH",
+        "Switzerland"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.europe",
+      "scope": "national",
+      "countryCodes": [
+        "CH"
+      ],
+      "region": "europe",
+      "flagEmoji": "🇨🇭",
+      "flagAriaLabel": "Switzerland flag"
+    },
+    {
+      "id": "country.cz",
+      "label": "Czechia",
+      "description": "Czechia as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "CZ",
+        "Czechia"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.europe",
+      "scope": "national",
+      "countryCodes": [
+        "CZ"
+      ],
+      "region": "europe",
+      "flagEmoji": "🇨🇿",
+      "flagAriaLabel": "Czechia flag"
+    },
+    {
+      "id": "country.pl",
+      "label": "Poland",
+      "description": "Poland as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "PL",
+        "Poland"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.europe",
+      "scope": "national",
+      "countryCodes": [
+        "PL"
+      ],
+      "region": "europe",
+      "flagEmoji": "🇵🇱",
+      "flagAriaLabel": "Poland flag"
+    },
+    {
+      "id": "country.rs",
+      "label": "Serbia",
+      "description": "Serbia as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "RS",
+        "Serbia"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.europe",
+      "scope": "national",
+      "countryCodes": [
+        "RS"
+      ],
+      "region": "europe",
+      "flagEmoji": "🇷🇸",
+      "flagAriaLabel": "Serbia flag"
+    },
+    {
+      "id": "country.gr",
+      "label": "Greece",
+      "description": "Greece as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "GR",
+        "Greece"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.europe"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.europe",
+      "scope": "national",
+      "countryCodes": [
+        "GR"
+      ],
+      "region": "europe",
+      "flagEmoji": "🇬🇷",
+      "flagAriaLabel": "Greece flag"
+    },
+    {
+      "id": "country.br",
+      "label": "Brazil",
+      "description": "Brazil as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "BR",
+        "Brazil"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.south_america"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.south_america",
+      "scope": "national",
+      "countryCodes": [
+        "BR"
+      ],
+      "region": "south_america",
+      "flagEmoji": "🇧🇷",
+      "flagAriaLabel": "Brazil flag"
+    },
+    {
+      "id": "country.ar",
+      "label": "Argentina",
+      "description": "Argentina as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "AR",
+        "Argentina"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.south_america"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.south_america",
+      "scope": "national",
+      "countryCodes": [
+        "AR"
+      ],
+      "region": "south_america",
+      "flagEmoji": "🇦🇷",
+      "flagAriaLabel": "Argentina flag"
+    },
+    {
+      "id": "country.mx",
+      "label": "Mexico",
+      "description": "Mexico as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "MX",
+        "Mexico"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.north_america"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.north_america",
+      "scope": "national",
+      "countryCodes": [
+        "MX"
+      ],
+      "region": "north_america",
+      "flagEmoji": "🇲🇽",
+      "flagAriaLabel": "Mexico flag"
+    },
+    {
+      "id": "country.jp",
+      "label": "Japan",
+      "description": "Japan as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "JP",
+        "Japan"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.asia_pacific"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.asia_pacific",
+      "scope": "national",
+      "countryCodes": [
+        "JP"
+      ],
+      "region": "asia_pacific",
+      "flagEmoji": "🇯🇵",
+      "flagAriaLabel": "Japan flag"
+    },
+    {
+      "id": "country.cn",
+      "label": "China",
+      "description": "China as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "CN",
+        "China"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.asia_pacific"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.asia_pacific",
+      "scope": "national",
+      "countryCodes": [
+        "CN"
+      ],
+      "region": "asia_pacific",
+      "flagEmoji": "🇨🇳",
+      "flagAriaLabel": "China flag"
+    },
+    {
+      "id": "country.kr",
+      "label": "South Korea",
+      "description": "South Korea as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "KR",
+        "South Korea"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.asia_pacific"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.asia_pacific",
+      "scope": "national",
+      "countryCodes": [
+        "KR"
+      ],
+      "region": "asia_pacific",
+      "flagEmoji": "🇰🇷",
+      "flagAriaLabel": "South Korea flag"
+    },
+    {
+      "id": "country.in",
+      "label": "India",
+      "description": "India as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "IN",
+        "India"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.asia_pacific"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.asia_pacific",
+      "scope": "national",
+      "countryCodes": [
+        "IN"
+      ],
+      "region": "asia_pacific",
+      "flagEmoji": "🇮🇳",
+      "flagAriaLabel": "India flag"
+    },
+    {
+      "id": "country.za",
+      "label": "South Africa",
+      "description": "South Africa as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "ZA",
+        "South Africa"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.africa_middle_east"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.africa_middle_east",
+      "scope": "national",
+      "countryCodes": [
+        "ZA"
+      ],
+      "region": "africa_middle_east",
+      "flagEmoji": "🇿🇦",
+      "flagAriaLabel": "South Africa flag"
+    },
+    {
+      "id": "country.ae",
+      "label": "United Arab Emirates",
+      "description": "United Arab Emirates as an event-host geography and flag-bearing sports dimension.",
+      "category": "tournament",
+      "kind": "country",
+      "synonyms": [
+        "AE",
+        "United Arab Emirates"
+      ],
+      "values": null,
+      "seeAlso": [
+        "country",
+        "region.africa_middle_east"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "region.africa_middle_east",
+      "scope": "national",
+      "countryCodes": [
+        "AE"
+      ],
+      "region": "africa_middle_east",
+      "flagEmoji": "🇦🇪",
+      "flagAriaLabel": "United Arab Emirates flag"
+    },
+    {
+      "id": "league.nba",
+      "label": "NBA",
+      "description": "NBA league or tour under Basketball; multi-country operating scope.",
+      "category": "tournament",
+      "kind": "league",
+      "synonyms": [
+        "National Basketball Association",
+        "nba"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition",
+        "sport.basketball",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.basketball",
+      "scope": "multi_country",
+      "countryCodes": [
+        "US",
+        "CA"
+      ],
+      "region": null,
+      "flagEmoji": "🇺🇸 🇨🇦",
+      "flagAriaLabel": "United States and Canada"
+    },
+    {
+      "id": "league.wnba",
+      "label": "WNBA",
+      "description": "WNBA league or tour under Basketball; national operating scope.",
+      "category": "tournament",
+      "kind": "league",
+      "synonyms": [
+        "Women's National Basketball Association",
+        "wnba"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition",
+        "sport.basketball",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.basketball",
+      "scope": "national",
+      "countryCodes": [
+        "US"
+      ],
+      "region": null,
+      "flagEmoji": "🇺🇸",
+      "flagAriaLabel": "United States"
+    },
+    {
+      "id": "league.nfl",
+      "label": "NFL",
+      "description": "NFL league or tour under American football; national operating scope.",
+      "category": "tournament",
+      "kind": "league",
+      "synonyms": [
+        "National Football League",
+        "nfl"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition",
+        "sport.american_football",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.american_football",
+      "scope": "national",
+      "countryCodes": [
+        "US"
+      ],
+      "region": null,
+      "flagEmoji": "🇺🇸",
+      "flagAriaLabel": "United States"
+    },
+    {
+      "id": "league.ncaaf",
+      "label": "NCAA football",
+      "description": "NCAA football league or tour under American football; national operating scope.",
+      "category": "tournament",
+      "kind": "league",
+      "synonyms": [
+        "NCAAF",
+        "college football",
+        "ncaaf"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition",
+        "sport.american_football",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.american_football",
+      "scope": "national",
+      "countryCodes": [
+        "US"
+      ],
+      "region": null,
+      "flagEmoji": "🇺🇸",
+      "flagAriaLabel": "United States"
+    },
+    {
+      "id": "league.ncaab",
+      "label": "NCAA basketball",
+      "description": "NCAA basketball league or tour under Basketball; national operating scope.",
+      "category": "tournament",
+      "kind": "league",
+      "synonyms": [
+        "NCAAB",
+        "college basketball",
+        "CBB",
+        "ncaab"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition",
+        "sport.basketball",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.basketball",
+      "scope": "national",
+      "countryCodes": [
+        "US"
+      ],
+      "region": null,
+      "flagEmoji": "🇺🇸",
+      "flagAriaLabel": "United States"
+    },
+    {
+      "id": "league.mlb",
+      "label": "MLB",
+      "description": "MLB league or tour under Baseball; multi-country operating scope.",
+      "category": "tournament",
+      "kind": "league",
+      "synonyms": [
+        "Major League Baseball",
+        "mlb"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition",
+        "sport.baseball",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.baseball",
+      "scope": "multi_country",
+      "countryCodes": [
+        "US",
+        "CA"
+      ],
+      "region": null,
+      "flagEmoji": "🇺🇸 🇨🇦",
+      "flagAriaLabel": "United States and Canada"
+    },
+    {
+      "id": "league.nhl",
+      "label": "NHL",
+      "description": "NHL league or tour under Hockey; multi-country operating scope.",
+      "category": "tournament",
+      "kind": "league",
+      "synonyms": [
+        "National Hockey League",
+        "nhl"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition",
+        "sport.hockey",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.hockey",
+      "scope": "multi_country",
+      "countryCodes": [
+        "US",
+        "CA"
+      ],
+      "region": null,
+      "flagEmoji": "🇺🇸 🇨🇦",
+      "flagAriaLabel": "United States and Canada"
+    },
+    {
+      "id": "league.mls",
+      "label": "MLS",
+      "description": "MLS league or tour under Soccer; multi-country operating scope.",
+      "category": "tournament",
+      "kind": "league",
+      "synonyms": [
+        "Major League Soccer",
+        "mls"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition",
+        "sport.soccer",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.soccer",
+      "scope": "multi_country",
+      "countryCodes": [
+        "US",
+        "CA"
+      ],
+      "region": null,
+      "flagEmoji": "🇺🇸 🇨🇦",
+      "flagAriaLabel": "United States and Canada"
+    },
+    {
+      "id": "league.epl",
+      "label": "Premier League",
+      "description": "Premier League league or tour under Soccer; national operating scope.",
+      "category": "tournament",
+      "kind": "league",
+      "synonyms": [
+        "EPL",
+        "English Premier League",
+        "epl"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition",
+        "sport.soccer",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.soccer",
+      "scope": "national",
+      "countryCodes": [
+        "GB"
+      ],
+      "region": null,
+      "flagEmoji": "🇬🇧",
+      "flagAriaLabel": "United Kingdom"
+    },
+    {
+      "id": "league.uefa_champions_league",
+      "label": "UEFA Champions League",
+      "description": "UEFA Champions League league or tour under Soccer; global operating scope.",
+      "category": "tournament",
+      "kind": "league",
+      "synonyms": [
+        "UCL",
+        "Champions League",
+        "uefa_champions_league"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition",
+        "sport.soccer",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.soccer",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global competition"
+    },
+    {
+      "id": "league.atp",
+      "label": "ATP Tour",
+      "description": "ATP Tour league or tour under Tennis; global operating scope.",
+      "category": "tournament",
+      "kind": "league",
+      "synonyms": [
+        "ATP",
+        "men's tennis",
+        "atp"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition",
+        "sport.tennis",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.tennis",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global competition"
+    },
+    {
+      "id": "league.wta",
+      "label": "WTA Tour",
+      "description": "WTA Tour league or tour under Tennis; global operating scope.",
+      "category": "tournament",
+      "kind": "league",
+      "synonyms": [
+        "WTA",
+        "women's tennis",
+        "wta"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition",
+        "sport.tennis",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.tennis",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global competition"
+    },
+    {
+      "id": "league.itf",
+      "label": "ITF World Tennis Tour",
+      "description": "ITF World Tennis Tour league or tour under Tennis; global operating scope.",
+      "category": "tournament",
+      "kind": "league",
+      "synonyms": [
+        "ITF",
+        "ITF tennis",
+        "itf"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition",
+        "sport.tennis",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.tennis",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global competition"
+    },
+    {
+      "id": "league.atp_challenger",
+      "label": "ATP Challenger Tour",
+      "description": "ATP Challenger Tour league or tour under Tennis; global operating scope.",
+      "category": "tournament",
+      "kind": "league",
+      "synonyms": [
+        "Challenger Tour",
+        "atp_challenger"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition",
+        "sport.tennis",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.tennis",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global competition"
+    },
+    {
+      "id": "league.wta_125",
+      "label": "WTA 125",
+      "description": "WTA 125 league or tour under Tennis; global operating scope.",
+      "category": "tournament",
+      "kind": "league",
+      "synonyms": [
+        "WTA 125 Series",
+        "wta_125"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition",
+        "sport.tennis",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.tennis",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global competition"
+    },
+    {
+      "id": "league.pga_tour",
+      "label": "PGA Tour",
+      "description": "PGA Tour league or tour under Golf; global operating scope.",
+      "category": "tournament",
+      "kind": "league",
+      "synonyms": [
+        "PGA",
+        "pga_tour"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition",
+        "sport.golf",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.golf",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global competition"
+    },
+    {
+      "id": "league.dp_world_tour",
+      "label": "DP World Tour",
+      "description": "DP World Tour league or tour under Golf; global operating scope.",
+      "category": "tournament",
+      "kind": "league",
+      "synonyms": [
+        "European Tour",
+        "dp_world_tour"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition",
+        "sport.golf",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.golf",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global competition"
+    },
+    {
+      "id": "league.ufc",
+      "label": "UFC",
+      "description": "UFC league or tour under MMA; global operating scope.",
+      "category": "tournament",
+      "kind": "league",
+      "synonyms": [
+        "Ultimate Fighting Championship",
+        "ufc"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition",
+        "sport.mma",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.mma",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global competition"
+    },
+    {
+      "id": "competition.itf_m15",
+      "label": "ITF Men M15",
+      "description": "ITF Men M15 tier within ITF World Tennis Tour. Event host country supplies the flag.",
+      "category": "tournament",
+      "kind": "competition",
+      "synonyms": [
+        "itf_m15",
+        "M15"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition.tier",
+        "league.itf",
+        "sport.tennis",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "league.itf",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global tour; event country supplies the flag"
+    },
+    {
+      "id": "competition.itf_m25",
+      "label": "ITF Men M25",
+      "description": "ITF Men M25 tier within ITF World Tennis Tour. Event host country supplies the flag.",
+      "category": "tournament",
+      "kind": "competition",
+      "synonyms": [
+        "itf_m25",
+        "M25"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition.tier",
+        "league.itf",
+        "sport.tennis",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "league.itf",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global tour; event country supplies the flag"
+    },
+    {
+      "id": "competition.itf_w15",
+      "label": "ITF Women W15",
+      "description": "ITF Women W15 tier within ITF World Tennis Tour. Event host country supplies the flag.",
+      "category": "tournament",
+      "kind": "competition",
+      "synonyms": [
+        "itf_w15",
+        "W15"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition.tier",
+        "league.itf",
+        "sport.tennis",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "league.itf",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global tour; event country supplies the flag"
+    },
+    {
+      "id": "competition.itf_w35",
+      "label": "ITF Women W35",
+      "description": "ITF Women W35 tier within ITF World Tennis Tour. Event host country supplies the flag.",
+      "category": "tournament",
+      "kind": "competition",
+      "synonyms": [
+        "itf_w35",
+        "W35"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition.tier",
+        "league.itf",
+        "sport.tennis",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "league.itf",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global tour; event country supplies the flag"
+    },
+    {
+      "id": "competition.itf_w50",
+      "label": "ITF Women W50",
+      "description": "ITF Women W50 tier within ITF World Tennis Tour. Event host country supplies the flag.",
+      "category": "tournament",
+      "kind": "competition",
+      "synonyms": [
+        "itf_w50",
+        "W50"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition.tier",
+        "league.itf",
+        "sport.tennis",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "league.itf",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global tour; event country supplies the flag"
+    },
+    {
+      "id": "competition.itf_w75",
+      "label": "ITF Women W75",
+      "description": "ITF Women W75 tier within ITF World Tennis Tour. Event host country supplies the flag.",
+      "category": "tournament",
+      "kind": "competition",
+      "synonyms": [
+        "itf_w75",
+        "W75"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition.tier",
+        "league.itf",
+        "sport.tennis",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "league.itf",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global tour; event country supplies the flag"
+    },
+    {
+      "id": "competition.itf_w100",
+      "label": "ITF Women W100",
+      "description": "ITF Women W100 tier within ITF World Tennis Tour. Event host country supplies the flag.",
+      "category": "tournament",
+      "kind": "competition",
+      "synonyms": [
+        "itf_w100",
+        "W100"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition.tier",
+        "league.itf",
+        "sport.tennis",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "league.itf",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global tour; event country supplies the flag"
+    },
+    {
+      "id": "competition.atp_challenger_50",
+      "label": "ATP Challenger 50",
+      "description": "ATP Challenger 50 tier within ATP Challenger Tour. Event host country supplies the flag.",
+      "category": "tournament",
+      "kind": "competition",
+      "synonyms": [
+        "atp_challenger_50",
+        "50"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition.tier",
+        "league.atp_challenger",
+        "sport.tennis",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "league.atp_challenger",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global tour; event country supplies the flag"
+    },
+    {
+      "id": "competition.atp_challenger_75",
+      "label": "ATP Challenger 75",
+      "description": "ATP Challenger 75 tier within ATP Challenger Tour. Event host country supplies the flag.",
+      "category": "tournament",
+      "kind": "competition",
+      "synonyms": [
+        "atp_challenger_75",
+        "75"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition.tier",
+        "league.atp_challenger",
+        "sport.tennis",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "league.atp_challenger",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global tour; event country supplies the flag"
+    },
+    {
+      "id": "competition.atp_challenger_100",
+      "label": "ATP Challenger 100",
+      "description": "ATP Challenger 100 tier within ATP Challenger Tour. Event host country supplies the flag.",
+      "category": "tournament",
+      "kind": "competition",
+      "synonyms": [
+        "atp_challenger_100",
+        "100"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition.tier",
+        "league.atp_challenger",
+        "sport.tennis",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "league.atp_challenger",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global tour; event country supplies the flag"
+    },
+    {
+      "id": "competition.atp_challenger_125",
+      "label": "ATP Challenger 125",
+      "description": "ATP Challenger 125 tier within ATP Challenger Tour. Event host country supplies the flag.",
+      "category": "tournament",
+      "kind": "competition",
+      "synonyms": [
+        "atp_challenger_125",
+        "125"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition.tier",
+        "league.atp_challenger",
+        "sport.tennis",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "league.atp_challenger",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global tour; event country supplies the flag"
+    },
+    {
+      "id": "competition.atp_challenger_175",
+      "label": "ATP Challenger 175",
+      "description": "ATP Challenger 175 tier within ATP Challenger Tour. Event host country supplies the flag.",
+      "category": "tournament",
+      "kind": "competition",
+      "synonyms": [
+        "atp_challenger_175",
+        "175"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition.tier",
+        "league.atp_challenger",
+        "sport.tennis",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "league.atp_challenger",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global tour; event country supplies the flag"
+    },
+    {
+      "id": "competition.wta_125",
+      "label": "WTA 125",
+      "description": "WTA 125 tier within WTA 125. Event host country supplies the flag.",
+      "category": "tournament",
+      "kind": "competition",
+      "synonyms": [
+        "wta_125",
+        "125"
+      ],
+      "values": null,
+      "seeAlso": [
+        "competition.tier",
+        "league.wta_125",
+        "sport.tennis",
+        "country"
+      ],
+      "status": "active",
+      "source": "lib/operations/sports-competition-catalog.ts",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "league.wta_125",
+      "scope": "global",
+      "countryCodes": [],
+      "region": null,
+      "flagEmoji": "🌐",
+      "flagAriaLabel": "Global tour; event country supplies the flag"
+    }
+  ]
+}
