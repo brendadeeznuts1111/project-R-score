@@ -589,6 +589,19 @@ export async function buildRegistrySnapshot(options?: {
       );
     }
 
+    try {
+      const { exportPartnersOpsRegistry } = await import('../lib/telegram/partner-ops-registry.ts');
+      const partnersOps = await exportPartnersOpsRegistry(root);
+      console.log(
+        `[ops-snapshot] partners-ops → ${partnersOps.summary.partners} partners · ${partnersOps.summary.outs} outs · validation ${partnersOps.validation.ok ? 'ok' : 'FAIL'}`
+      );
+    } catch (e) {
+      console.warn(
+        '[ops-snapshot] partners-ops export skipped:',
+        e instanceof Error ? e.message : e
+      );
+    }
+
     const payload = buildOpsSummary(db, 'snapshot');
     payload.telegramHandshake = telegramHandshakeSlice;
     payload.seatCapitalDesk = seatCapitalDeskSlice;

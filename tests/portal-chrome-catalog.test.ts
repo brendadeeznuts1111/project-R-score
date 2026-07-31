@@ -34,6 +34,8 @@ describe('portal-chrome-catalog', () => {
     expect(byId.failures?.href).toBe('/portal/failures/');
     expect(byId.packages?.cli).toContain('pm graph');
     expect(byId['prediction-report']?.href).toBe('/registry/prediction/report/');
+    expect(byId.partners?.href).toBe('/portal/partners/');
+    expect(byId.partners?.cli).toContain('telegram:handshake:catalog');
     expect(byId['partner-history']?.href).toBe('/portal/partner-history/');
   });
 

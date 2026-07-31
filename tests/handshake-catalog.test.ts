@@ -40,6 +40,8 @@ describe('handshake-catalog', () => {
       'scratch',
       'experiments',
     ]);
+    expect(c.colors.brand.hex).toMatch(/^#/);
+    expect(c.glossary.conceptIds).toContain('telegram.package_group');
   });
 
   test('lane ids are unique', () => {

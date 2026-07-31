@@ -51,6 +51,7 @@ describe('portal weave', () => {
     expect(hrefs).toContain('/portal/skills/');
     expect(hrefs).toContain('/portal/compliance/');
     expect(hrefs).toContain('/portal/limits/');
+    expect(hrefs).toContain('/portal/partners/');
     expect(hrefs).toContain('/portal/dashboard/');
     expect(hrefs).toContain('/portal/tools/');
     expect(hrefs).toContain('/portal/vault/');
@@ -71,6 +72,7 @@ describe('portal weave', () => {
     expect(arts).toContain('/registry/formdata-proof.json');
     expect(arts).toContain('/registry/package-info.json');
     expect(arts).toContain('/registry/seat-capital-desk.json');
+    expect(arts).toContain('/registry/partners-ops.json');
     expect(arts).toContain('/registry/compliance-board.json');
     expect(arts).toContain('/registry/compliance-enhancements.json');
     expect(arts).toContain('/registry/compliance-shadow.json');

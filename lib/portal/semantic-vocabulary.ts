@@ -78,6 +78,9 @@ export const PORTAL_SEMANTIC_CONCEPT_KEYS = [
   'section.recentLimitChanges',
   'section.perNodeBreakdown',
   'section.openingBaseline',
+  'section.partnersTelegram',
+  'section.partnersAccounting',
+  'section.partnersDeposits',
   'ui.filter.profile',
   'ui.filter.jurisdiction',
   'ui.filter.partnerId',
@@ -763,6 +766,36 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     ],
   },
   {
+    id: 'section.partnersTelegram',
+    label: 'Telegram package groups',
+    description:
+      'Partners board section for package-forum handshake readiness, membership tell, invite, and topic plan.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['package groups', 'telegram forums', 'handshake board'],
+    seeAlso: ['page.partners', 'section.partnersAccounting', 'section.partnersDeposits'],
+  },
+  {
+    id: 'section.partnersAccounting',
+    label: 'Accounting deals',
+    description:
+      'Partners board section for deposit/withdraw proof in the Accounting topic and all-accounting house rollup.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['accounting deals', 'accounting topic', 'fund status'],
+    seeAlso: ['page.partners', 'section.partnersTelegram', 'section.partnersDeposits'],
+  },
+  {
+    id: 'section.partnersDeposits',
+    label: 'Betting deposits',
+    description:
+      'Partners board section for seat capital desk deposit rails (book, method, send-to, max bet, freeplay %).',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['deposit rails', 'betting deposits', 'seat desk outs'],
+    seeAlso: ['page.partners', 'section.partnersAccounting', 'section.partnersTelegram'],
+  },
+  {
     id: 'ui.filter.profile',
     label: 'Profile filter',
     description: 'Filter limiting the account-control view to matching profile evidence.',
@@ -933,6 +966,13 @@ export const LIMIT_SURFACE_CONCEPTS = {
 export const PARTNER_HISTORY_SURFACE_CONCEPTS = {
   page: 'page.partnerHistory',
   openingBaseline: 'section.openingBaseline',
+} as const satisfies Record<string, PortalSemanticConceptKey>;
+
+export const PARTNERS_SURFACE_CONCEPTS = {
+  page: 'page.partners',
+  telegram: 'section.partnersTelegram',
+  accounting: 'section.partnersAccounting',
+  deposits: 'section.partnersDeposits',
 } as const satisfies Record<string, PortalSemanticConceptKey>;
 
 export function validatePortalSemanticVocabulary(): void {

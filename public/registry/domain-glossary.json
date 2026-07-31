@@ -15,6 +15,10 @@
     "sportsTaxonomyAuthority": "lib/operations/sports-competition-catalog.ts",
     "scrapeWireAuthority": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
     "sportsbookOpeningBaselineAuthority": "lib/operations/sportsbook-opening-baseline.ts",
+    "telegramAuthority": "lib/telegram/telegram-glossary.ts",
+    "telegramColorKernel": "lib/telegram/telegram-color-kernel.ts",
+    "partnerOpsAuthority": "lib/telegram/partner-ops-glossary.ts",
+    "partnerOpsColorKernel": "lib/telegram/partner-ops-color-kernel.ts",
     "canonicalDump": "Kalshi-bot/research/registry/glossary-dump.json",
     "portalProjection": "tools/domain-glossary.ts",
     "colorKernel": "lib/theme/colors.ts"
@@ -134,6 +138,15 @@
       "sections": {}
     },
     {
+      "path": "/portal/partners/",
+      "concept": "page.partners",
+      "sections": {
+        "telegram": "section.partnersTelegram",
+        "accounting": "section.partnersAccounting",
+        "deposits": "section.partnersDeposits"
+      }
+    },
+    {
       "path": "/portal/partner-history/",
       "concept": "page.partnerHistory",
       "sections": {
@@ -177,30 +190,30 @@
     }
   ],
   "summary": {
-    "concepts": 309,
-    "active": 308,
+    "concepts": 360,
+    "active": 359,
     "deprecated": 1,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 203,
+    "portalSemantics": 254,
     "categories": {
       "market": 33,
       "model": 18,
-      "pipeline": 19,
+      "pipeline": 29,
       "tournament": 86,
-      "trading": 28,
-      "ui": 101,
-      "warehouse": 24
+      "trading": 57,
+      "ui": 110,
+      "warehouse": 27
     },
     "kinds": {
       "baseline": 2,
       "competition": 14,
-      "composite": 12,
+      "composite": 14,
       "country": 25,
       "cross_market": 2,
       "event": 2,
-      "evidence": 4,
+      "evidence": 15,
       "jurisdiction": 2,
       "kpi": 4,
       "league": 20,
@@ -209,25 +222,25 @@
       "multi": 2,
       "policy": 4,
       "region": 7,
-      "registry": 33,
+      "registry": 62,
       "sport": 10,
-      "ui": 151
+      "ui": 160
     },
     "semanticTypes": {
-      "classification": 119,
+      "classification": 149,
       "location": 4,
       "presentation": 4,
-      "resource": 59,
-      "state": 16,
+      "resource": 68,
+      "state": 28,
       "version": 1
     },
     "uiRoles": {
-      "badge": 43,
-      "chip": 80,
-      "code": 17,
-      "heading": 48,
+      "badge": 63,
+      "chip": 100,
+      "code": 22,
+      "heading": 53,
       "link": 12,
-      "token": 3
+      "token": 4
     }
   },
   "categories": [
@@ -3447,6 +3460,36 @@
       "color": "#60a5fa"
     },
     {
+      "id": "page.partners",
+      "label": "Partners",
+      "description": "Portal page for partner package Telegram forums, Accounting topic deals, and seat-desk deposit rails.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "package groups",
+        "telegram partners",
+        "seat capital partners"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
       "id": "page.partnerHistory",
       "label": "Partner limit history",
       "description": "Portal page for account-specific limit observations and opening baselines.",
@@ -5350,6 +5393,96 @@
         "ops.limits.market_phase",
         "ops.limits.multi_structure",
         "ops.limits.sport"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "section.partnersTelegram",
+      "label": "Telegram package groups",
+      "description": "Partners board section for package-forum handshake readiness, membership tell, invite, and topic plan.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "package groups",
+        "telegram forums",
+        "handshake board"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.partners",
+        "section.partnersAccounting",
+        "section.partnersDeposits"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "section.partnersAccounting",
+      "label": "Accounting deals",
+      "description": "Partners board section for deposit/withdraw proof in the Accounting topic and all-accounting house rollup.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "accounting deals",
+        "accounting topic",
+        "fund status"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.partners",
+        "section.partnersTelegram",
+        "section.partnersDeposits"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "section.partnersDeposits",
+      "label": "Betting deposits",
+      "description": "Partners board section for seat capital desk deposit rails (book, method, send-to, max bet, freeplay %).",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "deposit rails",
+        "betting deposits",
+        "seat desk outs"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.partners",
+        "section.partnersAccounting",
+        "section.partnersTelegram"
       ],
       "status": "active",
       "deprecatedBy": null,
@@ -9983,6 +10116,1750 @@
       "flagEmoji": null,
       "flagAriaLabel": null,
       "color": "#f59e0b"
+    },
+    {
+      "id": "telegram.wire",
+      "label": "Telegram ops wire",
+      "description": "Factory Telegram plane for package forums, house surfaces, seat capital desks, and handshake readiness. Soft ledger mutations stay in toc-ops-repo ct.",
+      "category": "pipeline",
+      "kind": "evidence",
+      "mapsTo": null,
+      "synonyms": [
+        "telegram factory",
+        "package telegram",
+        "TOC Ops telegram"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.package_group",
+        "telegram.handshake",
+        "telegram.seat_desk",
+        "telegram.surface",
+        "scrape.book",
+        "page.partners"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/telegram-glossary.ts",
+      "featurePurpose": "Governed Telegram package-group, forum topic, seat desk, and handshake concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#ef4444"
+    },
+    {
+      "id": "telegram.package_group",
+      "label": "Partner package group",
+      "description": "One Telegram forum per partner CODE (title grammar TOC Ops · {CODE} · {DisplayName}). Linked via package_group_registry + TELEGRAM_SURFACES pkg-{code}.",
+      "category": "pipeline",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "package forum",
+        "partner forum",
+        "pkg group"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.wire",
+        "telegram.forum.topic",
+        "telegram.handshake",
+        "telegram.membership",
+        "page.partners"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/telegram-glossary.ts",
+      "featurePurpose": "Governed Telegram package-group, forum topic, seat desk, and handshake concept.",
+      "semanticType": "resource",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#ef4444"
+    },
+    {
+      "id": "telegram.forum.topic",
+      "label": "Package forum topic",
+      "description": "Identical topic plan on every partner package forum. Map keys are title.toLowerCase() (Liquidity/Outs → liquidity/outs).",
+      "category": "pipeline",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "forum topic",
+        "topicsThreadMap",
+        "package topic plan"
+      ],
+      "values": [
+        "General",
+        "Ops",
+        "Alerts",
+        "Liquidity/Outs",
+        "Accounting"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.package_group",
+        "telegram.forum.topic.accounting",
+        "telegram.forum.topic.liquidity_outs",
+        "telegram.topic_map",
+        "telegram.topic.general",
+        "telegram.topic.ops",
+        "telegram.topic.alerts",
+        "telegram.topic.liquidity",
+        "telegram.topic.accounting"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/telegram-glossary.ts",
+      "featurePurpose": "Governed Telegram package-group, forum topic, seat desk, and handshake concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#ef4444"
+    },
+    {
+      "id": "telegram.topic_map",
+      "label": "Forum topic map keys",
+      "description": "Canonical topicsThreadMap keys for partner package forums (general · ops · alerts · liquidity/outs · accounting).",
+      "category": "warehouse",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "topicsThreadMap",
+        "mapKey",
+        "topic key"
+      ],
+      "values": [
+        "general",
+        "ops",
+        "alerts",
+        "liquidity/outs",
+        "accounting"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.forum.topic",
+        "telegram.package_group"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/telegram-glossary.ts",
+      "featurePurpose": "Governed Telegram package-group, forum topic, seat desk, and handshake concept.",
+      "semanticType": "classification",
+      "uiRole": "code",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#06b6d4"
+    },
+    {
+      "id": "telegram.forum.topic.accounting",
+      "label": "Accounting topic",
+      "description": "Partner forum topic for deposit/withdraw proof. House rollup mirrors in all-accounting · Deposits/Withdrawals/Reconcile.",
+      "category": "trading",
+      "kind": "evidence",
+      "mapsTo": null,
+      "synonyms": [
+        "accounting thread",
+        "deposit proof topic"
+      ],
+      "values": [
+        "Accounting",
+        "Deposits",
+        "Withdrawals",
+        "Reconcile"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.forum.topic",
+        "telegram.deposit_rail",
+        "telegram.surface.all_accounting",
+        "telegram.seat_desk",
+        "section.partnersAccounting"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/telegram-glossary.ts",
+      "featurePurpose": "Governed Telegram package-group, forum topic, seat desk, and handshake concept.",
+      "semanticType": "resource",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "telegram.forum.topic.liquidity_outs",
+      "label": "Liquidity/Outs topic",
+      "description": "Partner forum topic hosting the pinned seat capital desk (deposit rails, max bet, freeplay %, Fill keyboard).",
+      "category": "trading",
+      "kind": "evidence",
+      "mapsTo": null,
+      "synonyms": [
+        "liquidity outs",
+        "seat desk topic",
+        "outs thread"
+      ],
+      "values": [
+        "Liquidity/Outs"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.forum.topic",
+        "telegram.seat_desk",
+        "telegram.deposit_rail",
+        "section.partnersDeposits"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/telegram-glossary.ts",
+      "featurePurpose": "Governed Telegram package-group, forum topic, seat desk, and handshake concept.",
+      "semanticType": "resource",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "telegram.surface",
+      "label": "House Telegram surface",
+      "description": "Concern-separated house groups (hq · ash-staging · all-accounting · sandbox). Not partner package forums.",
+      "category": "pipeline",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "TOC Ops surface",
+        "TELEGRAM_SURFACES",
+        "house group"
+      ],
+      "values": [
+        "hq",
+        "ash-staging",
+        "all-accounting",
+        "sandbox"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.wire",
+        "telegram.surface.all_accounting",
+        "telegram.package_group"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/telegram-glossary.ts",
+      "featurePurpose": "Governed Telegram package-group, forum topic, seat desk, and handshake concept.",
+      "semanticType": "classification",
+      "uiRole": "code",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#ef4444"
+    },
+    {
+      "id": "telegram.surface.all_accounting",
+      "label": "All-accounting surface",
+      "description": "Cross-partner accounting rollup supergroup (TOC Ops · Accounting) with Deposits · Withdrawals · Reconcile topics.",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "all-accounting",
+        "TELEGRAM_ACCOUNTING_CHAT_ID"
+      ],
+      "values": [
+        "Deposits",
+        "Withdrawals",
+        "Reconcile"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.surface",
+        "telegram.forum.topic.accounting",
+        "telegram.deposit_rail"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/telegram-glossary.ts",
+      "featurePurpose": "Governed Telegram package-group, forum topic, seat desk, and handshake concept.",
+      "semanticType": "resource",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "telegram.seat_desk",
+      "label": "Seat capital desk",
+      "description": "Pinned Liquidity/Outs message per call-sign: book · username · deposit method · send-to · max bet · freeplay %.",
+      "category": "trading",
+      "kind": "evidence",
+      "mapsTo": null,
+      "synonyms": [
+        "seat desk",
+        "capital desk",
+        "pinned outs table"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.forum.topic.liquidity_outs",
+        "telegram.deposit_rail",
+        "scrape.book",
+        "section.partnersDeposits",
+        "page.partners"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/telegram-glossary.ts",
+      "featurePurpose": "Governed Telegram package-group, forum topic, seat desk, and handshake concept.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "telegram.deposit_rail",
+      "label": "Betting deposit rail",
+      "description": "Per-out deposit method + send-to on the seat capital desk (Venmo, CashApp, …). Book passwords stay off the desk and portal board.",
+      "category": "trading",
+      "kind": "evidence",
+      "mapsTo": null,
+      "synonyms": [
+        "deposit method",
+        "send to",
+        "funding rail"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.seat_desk",
+        "telegram.forum.topic.accounting",
+        "scrape.book",
+        "section.partnersDeposits"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/telegram-glossary.ts",
+      "featurePurpose": "Governed Telegram package-group, forum topic, seat desk, and handshake concept.",
+      "semanticType": "classification",
+      "uiRole": "token",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "telegram.handshake",
+      "label": "Package-group handshake",
+      "description": "Factory ↔ Soft readiness for a partner CODE: registry, forum metadata, invite, DM seat, verify lanes.",
+      "category": "pipeline",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "handshake readiness",
+        "package group verify"
+      ],
+      "values": [
+        "blocked",
+        "forum_ready",
+        "designated",
+        "operator_ready"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.package_group",
+        "telegram.membership",
+        "section.partnersTelegram",
+        "page.partners"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/telegram-glossary.ts",
+      "featurePurpose": "Governed Telegram package-group, forum topic, seat desk, and handshake concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#ef4444"
+    },
+    {
+      "id": "telegram.membership",
+      "label": "Forum membership tell",
+      "description": "Member-count cell for package forums (2·house · 2·house! · 3·OK · N·ext) — partner-in-forum signal.",
+      "category": "pipeline",
+      "kind": "evidence",
+      "mapsTo": null,
+      "synonyms": [
+        "membershipCell",
+        "2·house",
+        "3·OK"
+      ],
+      "values": [
+        "unknown",
+        "understaffed",
+        "house_only",
+        "partner_present",
+        "extended"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.handshake",
+        "telegram.package_group"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/telegram-glossary.ts",
+      "featurePurpose": "Governed Telegram package-group, forum topic, seat desk, and handshake concept.",
+      "semanticType": "state",
+      "uiRole": "code",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#ef4444"
+    },
+    {
+      "id": "telegram.topic_plan_row",
+      "label": "Topic plan row",
+      "description": "One row of PARTNER_PACKAGE_FORUM_TOPIC_PLAN: title · mapKey · role · botCreated.",
+      "category": "warehouse",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "forum topic plan row"
+      ],
+      "values": [
+        "general",
+        "ops",
+        "alerts",
+        "liquidity/outs",
+        "accounting"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.forum.topic",
+        "telegram.topic_map"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/telegram-glossary.ts",
+      "featurePurpose": "Governed Telegram package-group, forum topic, seat desk, and handshake concept.",
+      "semanticType": "classification",
+      "uiRole": "code",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#06b6d4"
+    },
+    {
+      "id": "partner.phase.operator_ready",
+      "label": "Operator ready",
+      "description": "Handshake complete — partner forum linked, DM seat designated, operator can run desk.",
+      "category": "pipeline",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "operator ready",
+        "phase operator_ready"
+      ],
+      "values": [
+        "operator_ready"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.phase.onboarding",
+        "partner.phase.incomplete",
+        "telegram.handshake",
+        "section.partnersTelegram",
+        "page.partners"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#ef4444"
+    },
+    {
+      "id": "partner.phase.onboarding",
+      "label": "Onboarding",
+      "description": "Partner CODE registered or forum wiring in progress (forum_ready / designated).",
+      "category": "pipeline",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "onboarding",
+        "forum_ready",
+        "designated"
+      ],
+      "values": [
+        "onboarding",
+        "forum_ready",
+        "designated"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.phase.operator_ready",
+        "partner.phase.incomplete",
+        "telegram.handshake"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#ef4444"
+    },
+    {
+      "id": "partner.phase.incomplete",
+      "label": "Incomplete",
+      "description": "Blocked or missing gates — intake/handshake incomplete.",
+      "category": "pipeline",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "incomplete",
+        "blocked"
+      ],
+      "values": [
+        "incomplete",
+        "blocked"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.phase.onboarding",
+        "partner.phase.operator_ready"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#ef4444"
+    },
+    {
+      "id": "partner.phase.paused",
+      "label": "Paused",
+      "description": "Operator paused the partner seat (no FUND pressure).",
+      "category": "pipeline",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "paused"
+      ],
+      "values": [
+        "paused"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.phase.operator_ready",
+        "out.status.paused"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#ef4444"
+    },
+    {
+      "id": "book.type.legal",
+      "label": "Legal book",
+      "description": "US-regulated retail sportsbook (scrape-wire book registry class).",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "legal book",
+        "US book"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "book.type.offshore",
+        "scrape.book",
+        "telegram.deposit_rail"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "book.type.offshore",
+      "label": "Offshore book",
+      "description": "Offshore / non-US retail book (not in legal scrape-wire set).",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "offshore book"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "book.type.legal",
+        "book.type.pph",
+        "scrape.book"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "book.type.pph",
+      "label": "PPH desk",
+      "description": "Pay-per-head / agent desk book.",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "PPH",
+        "pay per head"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "book.type.offshore",
+        "book.type.legal"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "book.type.crypto",
+      "label": "Crypto book",
+      "description": "Crypto-settled sportsbook.",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "crypto book"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "book.type.offshore",
+        "deposit.method.crypto"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "deposit.method.venmo",
+      "label": "Venmo",
+      "description": "Venmo funding rail target on the seat capital desk.",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "Venmo"
+      ],
+      "values": [
+        "Venmo"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "deposit.method.cashapp",
+        "telegram.deposit_rail",
+        "accounting.deposit"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "deposit.method.crypto",
+      "label": "Crypto",
+      "description": "Crypto address funding rail.",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "crypto rail",
+        "BTC",
+        "USDC"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "book.type.crypto",
+        "telegram.deposit_rail",
+        "accounting.deposit"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "deposit.method.wire",
+      "label": "Wire transfer",
+      "description": "Bank wire funding rail.",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "wire",
+        "bank wire"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "deposit.method.credit",
+        "telegram.deposit_rail"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "deposit.method.credit",
+      "label": "Credit line",
+      "description": "House credit line (not a cash deposit).",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "credit line",
+        "house credit"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.credit",
+        "telegram.deposit_rail"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "deposit.method.cashapp",
+      "label": "Cash App",
+      "description": "Cash App — partner-ops taxonomy concept.",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "Cash App",
+        "CashApp"
+      ],
+      "values": [
+        "CashApp",
+        "Cash App"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "deposit.method.venmo",
+        "telegram.deposit_rail"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "deposit.method.paypal",
+      "label": "PayPal",
+      "description": "PayPal — partner-ops taxonomy concept.",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "PayPal"
+      ],
+      "values": [
+        "PayPal"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "deposit.method.venmo",
+        "telegram.deposit_rail"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "deposit.method.zelle",
+      "label": "Zelle",
+      "description": "Zelle — partner-ops taxonomy concept.",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "Zelle"
+      ],
+      "values": [
+        "Zelle"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "deposit.method.wire",
+        "telegram.deposit_rail"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "deposit.method.apple_pay",
+      "label": "Apple Pay",
+      "description": "Apple Pay — partner-ops taxonomy concept.",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "Apple Pay"
+      ],
+      "values": [
+        "Apple Pay"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "deposit.method.venmo",
+        "telegram.deposit_rail"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "deposit.method.unknown",
+      "label": "Unknown rail",
+      "description": "Unknown rail — partner-ops taxonomy concept.",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "unknown rail",
+        "TBD rail"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.deposit_rail"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "out.status.ready",
+      "label": "Ready",
+      "description": "Ready — partner-ops taxonomy concept.",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "out ready"
+      ],
+      "values": [
+        "ready"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "out.status.deferred",
+        "telegram.seat_desk",
+        "section.partnersDeposits"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "out.status.deferred",
+      "label": "Deferred",
+      "description": "Deferred — partner-ops taxonomy concept.",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "deferred out",
+        "warming"
+      ],
+      "values": [
+        "deferred"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "out.status.ready",
+        "out.status.paused",
+        "telegram.seat_desk"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "out.status.paused",
+      "label": "Paused",
+      "description": "Paused — partner-ops taxonomy concept.",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "paused out"
+      ],
+      "values": [
+        "paused"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "out.status.deferred",
+        "partner.phase.paused"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "out.status.blocked",
+      "label": "Blocked",
+      "description": "Blocked — partner-ops taxonomy concept.",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "blocked out"
+      ],
+      "values": [
+        "blocked"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "out.status.ready",
+        "partner.phase.incomplete"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "out.status.partial",
+      "label": "Partial",
+      "description": "Partial — partner-ops taxonomy concept.",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "partial out"
+      ],
+      "values": [
+        "partial"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "out.status.ready",
+        "out.status.blocked"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "out.status.funded",
+      "label": "Funded",
+      "description": "Funded — partner-ops taxonomy concept.",
+      "category": "trading",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "funded out"
+      ],
+      "values": [
+        "funded"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "out.status.ready",
+        "accounting.deposit"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "accounting.deposit",
+      "label": "Deposit received",
+      "description": "Incoming deposit confirmed against a funding target.",
+      "category": "trading",
+      "kind": "evidence",
+      "mapsTo": null,
+      "synonyms": [
+        "deposit received",
+        "DEPOSIT_RECEIVED"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.credit",
+        "accounting.free_roll",
+        "telegram.deposit_rail",
+        "page.partners"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "accounting.withdrawal",
+      "label": "Withdrawal processed",
+      "description": "Withdrawal processed — partner-ops taxonomy concept.",
+      "category": "trading",
+      "kind": "evidence",
+      "mapsTo": null,
+      "synonyms": [
+        "withdrawal",
+        "cashout"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.deposit",
+        "telegram.forum.topic.accounting"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "accounting.credit",
+      "label": "Credit extended",
+      "description": "Credit line extended — soft ledger detail stays in ct.",
+      "category": "trading",
+      "kind": "evidence",
+      "mapsTo": null,
+      "synonyms": [
+        "credit extended",
+        "CREDIT_EXTENDED"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.deposit",
+        "deposit.method.credit"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "accounting.free_roll",
+      "label": "Free-roll applied",
+      "description": "Freeplay / free-roll percent applied on a deposit or bet stake.",
+      "category": "trading",
+      "kind": "evidence",
+      "mapsTo": null,
+      "synonyms": [
+        "free-roll",
+        "freeplay",
+        "FREE_ROLL_APPLIED",
+        "FP%"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.deposit",
+        "telegram.seat_desk",
+        "section.partnersDeposits"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "accounting.settlement",
+      "label": "Settlement confirmed",
+      "description": "Settlement confirmed — factory mirror event only.",
+      "category": "trading",
+      "kind": "evidence",
+      "mapsTo": null,
+      "synonyms": [
+        "settlement",
+        "SETTLEMENT_PROCESSED"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.deposit",
+        "accounting.withdrawal"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "telegram.topic.general",
+      "label": "General topic",
+      "description": "General topic — partner-ops taxonomy concept.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "General"
+      ],
+      "values": [
+        "general"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.forum.topic",
+        "telegram.topic.ops",
+        "telegram.wire"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#60a5fa"
+    },
+    {
+      "id": "telegram.topic.ops",
+      "label": "Ops topic",
+      "description": "Ops topic — partner-ops taxonomy concept.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "Ops"
+      ],
+      "values": [
+        "ops"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.forum.topic",
+        "telegram.topic.alerts",
+        "telegram.wire"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#60a5fa"
+    },
+    {
+      "id": "telegram.topic.alerts",
+      "label": "Alerts topic",
+      "description": "Alerts topic — partner-ops taxonomy concept.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "Alerts"
+      ],
+      "values": [
+        "alerts"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.forum.topic",
+        "telegram.topic.ops",
+        "telegram.wire"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#60a5fa"
+    },
+    {
+      "id": "telegram.topic.liquidity",
+      "label": "Liquidity/Outs topic",
+      "description": "Package forum Liquidity/Outs topic — pinned seat capital desk home.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "Liquidity/Outs",
+        "liquidity/outs"
+      ],
+      "values": [
+        "liquidity/outs",
+        "liquidity"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.forum.topic.liquidity_outs",
+        "telegram.seat_desk",
+        "telegram.topic.accounting"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#60a5fa"
+    },
+    {
+      "id": "telegram.topic.accounting",
+      "label": "Accounting topic",
+      "description": "Package forum Accounting topic — deposit/withdraw proof thread.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "Accounting"
+      ],
+      "values": [
+        "accounting"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.forum.topic.accounting",
+        "telegram.surface.all_accounting",
+        "section.partnersAccounting"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#60a5fa"
+    },
+    {
+      "id": "partner.ops.event",
+      "label": "Partner-ops event code",
+      "description": "Factory mirror event codes for partner/out/deposit/credit/free-roll/telegram actions. Soft ledger stays in ct.",
+      "category": "warehouse",
+      "kind": "registry",
+      "mapsTo": null,
+      "synonyms": [
+        "event code",
+        "PARTNER_OPS_EVENT"
+      ],
+      "values": [
+        "PARTNER_REGISTERED",
+        "PARTNER_PHASE_CHANGE",
+        "OUT_CREATED",
+        "OUT_STATUS_CHANGE",
+        "DEPOSIT_RECEIVED",
+        "DEPOSIT_ALLOCATED",
+        "CREDIT_EXTENDED",
+        "FREE_ROLL_APPLIED",
+        "SETTLEMENT_PROCESSED",
+        "TELEGRAM_INVITE_SENT",
+        "TELEGRAM_MESSAGE_PINNED"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.deposit",
+        "accounting.credit",
+        "accounting.free_roll",
+        "telegram.wire",
+        "page.partners"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "code",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#06b6d4"
     }
   ]
 }

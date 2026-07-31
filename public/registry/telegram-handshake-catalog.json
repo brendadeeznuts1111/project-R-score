@@ -1,6 +1,6 @@
 {
   "schema": "factorywager.telegram-handshake-catalog.v1",
-  "generatedAt": "2026-07-28T16:41:42.836Z",
+  "generatedAt": "2026-07-31T12:43:45.214Z",
   "docs": {
     "runbook": "docs/harness/tenants/partner-package-group-handshake.md",
     "factoryBot": "docs/harness/tenants/telegram-factory.md",
@@ -313,6 +313,95 @@
         "templateId": "topic-rails"
       }
     }
+  },
+  "colors": {
+    "brand": {
+      "colorKey": "brand",
+      "hex": "#0F766E",
+      "css": "#0f766e"
+    },
+    "packageTopics": {
+      "general": {
+        "colorKey": "topicGeneral",
+        "hex": "#8B949E",
+        "css": "#8b949e",
+        "conceptId": "telegram.forum.topic"
+      },
+      "ops": {
+        "colorKey": "topicOps",
+        "hex": "#58A6FF",
+        "css": "#58a6ff",
+        "conceptId": "telegram.forum.topic"
+      },
+      "alerts": {
+        "colorKey": "topicAlerts",
+        "hex": "#F85149",
+        "css": "#f85149",
+        "conceptId": "telegram.forum.topic"
+      },
+      "liquidity/outs": {
+        "colorKey": "topicLiquidityOuts",
+        "hex": "#3FB950",
+        "css": "#3fb950",
+        "conceptId": "telegram.forum.topic.liquidity_outs"
+      },
+      "accounting": {
+        "colorKey": "topicAccounting",
+        "hex": "#D29922",
+        "css": "#d29922",
+        "conceptId": "telegram.forum.topic.accounting"
+      }
+    },
+    "allAccountingTopics": {
+      "Deposits": {
+        "colorKey": "topicDeposits",
+        "hex": "#3FB950",
+        "css": "#3fb950",
+        "conceptId": "telegram.surface.all_accounting"
+      },
+      "Withdrawals": {
+        "colorKey": "topicWithdrawals",
+        "hex": "#F85149",
+        "css": "#f85149",
+        "conceptId": "telegram.surface.all_accounting"
+      },
+      "Reconcile": {
+        "colorKey": "topicReconcile",
+        "hex": "#8B949E",
+        "css": "#8b949e",
+        "conceptId": "telegram.surface.all_accounting"
+      }
+    },
+    "forumIconColorHex": [
+      "#8B949E",
+      "#D29922",
+      "#F85149",
+      "#3FB950",
+      "#58A6FF",
+      "#A371F7",
+      "#F778BA"
+    ],
+    "scrapeWireTaxonomyPath": "/registry/scrape-wire-taxonomy.json",
+    "bookColorNote": "Deposit book chips resolve hex via scrape-wire bookRegistry colorKey/hex"
+  },
+  "glossary": {
+    "path": "/portal/glossary/",
+    "boardPath": "/portal/partners/",
+    "conceptIds": [
+      "telegram.wire",
+      "telegram.package_group",
+      "telegram.forum.topic",
+      "telegram.topic_map",
+      "telegram.forum.topic.accounting",
+      "telegram.forum.topic.liquidity_outs",
+      "telegram.surface",
+      "telegram.surface.all_accounting",
+      "telegram.seat_desk",
+      "telegram.deposit_rail",
+      "telegram.handshake",
+      "telegram.membership",
+      "telegram.topic_plan_row"
+    ]
   },
   "jsonlActions": [
     "create_package_group",

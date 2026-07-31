@@ -235,6 +235,14 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     cli: 'bun run ops:limits:demo',
   },
   {
+    id: 'partners',
+    label: 'Partners',
+    href: '/portal/partners/',
+    note: 'package groups · telegram forums · accounting · deposits',
+    group: 'ops',
+    cli: 'bun run telegram:handshake:catalog',
+  },
+  {
     id: 'partner-history',
     label: 'Partner history',
     href: '/portal/partner-history/',
@@ -399,6 +407,11 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     href: '/registry/seat-capital-desk.json',
     note: 'FUND status · outs · checklist',
   },
+  {
+    label: 'partners-ops',
+    href: '/registry/partners-ops.json',
+    note: 'v2 taxonomy · phases · book types · rails · events',
+  },
 ];
 
 /** Operator scripts linked from ops/monitoring panels. */
@@ -427,6 +440,11 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
   {
     label: 'Seat capital desk refresh',
     cmd: 'bun run seat:desk:refresh',
+    doc: 'docs/harness/tenants/seat-capital-desk.md',
+  },
+  {
+    label: 'Partners-ops registry bake',
+    cmd: 'bun run partners:build',
     doc: 'docs/harness/tenants/seat-capital-desk.md',
   },
   {

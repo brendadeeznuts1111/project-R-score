@@ -29,6 +29,8 @@ import { complianceKpiGlossaryConcepts } from '../lib/operations/compliance-poli
 import { regulationPolicyGlossaryConcepts } from '../lib/operations/regulation-policy-catalog.ts';
 import { sportsBettingGlossaryConcepts } from '../lib/operations/sports-betting-glossary.ts';
 import { sportsbookOpeningBaselineGlossaryConcepts } from '../lib/operations/sportsbook-opening-baseline.ts';
+import { telegramGlossaryConcepts } from '../lib/telegram/telegram-glossary.ts';
+import { partnerOpsGlossaryConcepts } from '../lib/telegram/partner-ops-glossary.ts';
 import { FW_COLORS, type FactoryWagerColor } from '../lib/theme/colors.ts';
 
 export const DOMAIN_GLOSSARY_SOURCE_PATH = 'Kalshi-bot/research/registry/glossary-dump.json';
@@ -161,6 +163,8 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
     ...complianceKpiGlossaryConcepts(),
     ...sportsBettingGlossaryConcepts(),
     ...sportsbookOpeningBaselineGlossaryConcepts(),
+    ...telegramGlossaryConcepts(),
+    ...partnerOpsGlossaryConcepts(),
   ].map(concept => ({
     id: concept.id,
     label: concept.label,
@@ -188,7 +192,11 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
             : concept.source === 'lib/operations/sportsbook-opening-baseline.ts' ||
                 concept.source === 'lib/operations/baseline-source-tiers.ts'
               ? 'Governed sportsbook opening-limit baseline concept.'
-              : 'Governed compliance policy and KPI concept.',
+              : concept.source === 'lib/telegram/telegram-glossary.ts'
+                ? 'Governed Telegram package-group, forum topic, seat desk, and handshake concept.'
+                : concept.source === 'lib/telegram/partner-ops-glossary.ts'
+                  ? 'Governed partner-ops phase, book type, funding rail, out status, and accounting concept.'
+                  : 'Governed compliance policy and KPI concept.',
     semanticType: concept.semanticType,
     uiRole: concept.uiRole,
     parentId: 'parentId' in concept ? (concept.parentId ?? null) : null,
@@ -257,6 +265,10 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
       sportsTaxonomyAuthority: 'lib/operations/sports-competition-catalog.ts',
       scrapeWireAuthority: 'lib/operations/scrapers/scrape-wire-taxonomy.ts',
       sportsbookOpeningBaselineAuthority: 'lib/operations/sportsbook-opening-baseline.ts',
+      telegramAuthority: 'lib/telegram/telegram-glossary.ts',
+      telegramColorKernel: 'lib/telegram/telegram-color-kernel.ts',
+      partnerOpsAuthority: 'lib/telegram/partner-ops-glossary.ts',
+      partnerOpsColorKernel: 'lib/telegram/partner-ops-color-kernel.ts',
       canonicalDump: DOMAIN_GLOSSARY_SOURCE_PATH,
       portalProjection: 'tools/domain-glossary.ts',
       colorKernel: 'lib/theme/colors.ts',

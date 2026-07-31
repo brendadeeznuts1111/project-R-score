@@ -1,0 +1,926 @@
+{
+  "schema": "factorywager.partners-ops.v2",
+  "version": "2",
+  "generatedAt": "2026-07-31T12:51:56.680Z",
+  "path": "/registry/partners-ops.json",
+  "sources": {
+    "seatCapitalDesk": "/registry/seat-capital-desk.json",
+    "handshake": "/registry/telegram-handshake.json",
+    "scrapeWireTaxonomy": "/registry/scrape-wire-taxonomy.json",
+    "events": "reports/telegram/partners-events.jsonl"
+  },
+  "glossary": {
+    "path": "/portal/glossary/",
+    "boardPath": "/portal/partners/",
+    "conceptIds": [
+      "partner.phase.operator_ready",
+      "partner.phase.onboarding",
+      "partner.phase.incomplete",
+      "partner.phase.paused",
+      "book.type.legal",
+      "book.type.offshore",
+      "book.type.pph",
+      "book.type.crypto",
+      "deposit.method.venmo",
+      "deposit.method.crypto",
+      "deposit.method.wire",
+      "deposit.method.credit",
+      "deposit.method.cashapp",
+      "deposit.method.paypal",
+      "deposit.method.zelle",
+      "deposit.method.apple_pay",
+      "deposit.method.unknown",
+      "out.status.ready",
+      "out.status.deferred",
+      "out.status.paused",
+      "out.status.blocked",
+      "out.status.partial",
+      "out.status.funded",
+      "accounting.deposit",
+      "accounting.withdrawal",
+      "accounting.credit",
+      "accounting.free_roll",
+      "accounting.settlement",
+      "telegram.topic.general",
+      "telegram.topic.ops",
+      "telegram.topic.alerts",
+      "telegram.topic.liquidity",
+      "telegram.topic.accounting",
+      "partner.ops.event",
+      "telegram.wire",
+      "telegram.package_group",
+      "telegram.forum.topic",
+      "telegram.topic_map",
+      "telegram.forum.topic.accounting",
+      "telegram.forum.topic.liquidity_outs",
+      "telegram.surface",
+      "telegram.surface.all_accounting",
+      "telegram.seat_desk",
+      "telegram.deposit_rail",
+      "telegram.handshake",
+      "telegram.membership",
+      "telegram.topic_plan_row"
+    ]
+  },
+  "colors": {
+    "partner.phase.operator_ready": {
+      "conceptId": "partner.phase.operator_ready",
+      "colorKey": "tennis",
+      "hex": "#3FB950",
+      "css": "#3fb950"
+    },
+    "partner.phase.onboarding": {
+      "conceptId": "partner.phase.onboarding",
+      "colorKey": "middleware",
+      "hex": "#D29922",
+      "css": "#d29922"
+    },
+    "partner.phase.incomplete": {
+      "conceptId": "partner.phase.incomplete",
+      "colorKey": "trading",
+      "hex": "#F85149",
+      "css": "#f85149"
+    },
+    "partner.phase.paused": {
+      "conceptId": "partner.phase.paused",
+      "colorKey": "env",
+      "hex": "#8B949E",
+      "css": "#8b949e"
+    },
+    "book.type.legal": {
+      "conceptId": "book.type.legal",
+      "colorKey": "kalshi",
+      "hex": "#58A6FF",
+      "css": "#58a6ff"
+    },
+    "book.type.offshore": {
+      "conceptId": "book.type.offshore",
+      "colorKey": "polymarket",
+      "hex": "#1F6FEB",
+      "css": "#1f6feb"
+    },
+    "book.type.pph": {
+      "conceptId": "book.type.pph",
+      "colorKey": "pinnacle",
+      "hex": "#A371F7",
+      "css": "#a371f7"
+    },
+    "book.type.crypto": {
+      "conceptId": "book.type.crypto",
+      "colorKey": "middleware",
+      "hex": "#D29922",
+      "css": "#d29922"
+    },
+    "deposit.method.venmo": {
+      "conceptId": "deposit.method.venmo",
+      "colorKey": "trading",
+      "hex": "#F85149",
+      "css": "#f85149"
+    },
+    "deposit.method.crypto": {
+      "conceptId": "deposit.method.crypto",
+      "colorKey": "tennis",
+      "hex": "#3FB950",
+      "css": "#3fb950"
+    },
+    "deposit.method.wire": {
+      "conceptId": "deposit.method.wire",
+      "colorKey": "kalshi",
+      "hex": "#58A6FF",
+      "css": "#58a6ff"
+    },
+    "deposit.method.credit": {
+      "conceptId": "deposit.method.credit",
+      "colorKey": "research",
+      "hex": "#F0883E",
+      "css": "#f0883e"
+    },
+    "deposit.method.cashapp": {
+      "conceptId": "deposit.method.cashapp",
+      "colorKey": "trading",
+      "hex": "#F85149",
+      "css": "#f85149"
+    },
+    "deposit.method.paypal": {
+      "conceptId": "deposit.method.paypal",
+      "colorKey": "kalshi",
+      "hex": "#58A6FF",
+      "css": "#58a6ff"
+    },
+    "deposit.method.zelle": {
+      "conceptId": "deposit.method.zelle",
+      "colorKey": "polymarket",
+      "hex": "#1F6FEB",
+      "css": "#1f6feb"
+    },
+    "deposit.method.apple_pay": {
+      "conceptId": "deposit.method.apple_pay",
+      "colorKey": "env",
+      "hex": "#8B949E",
+      "css": "#8b949e"
+    },
+    "deposit.method.unknown": {
+      "conceptId": "deposit.method.unknown",
+      "colorKey": "unknown",
+      "hex": "#8B949E",
+      "css": "#8b949e"
+    },
+    "out.status.ready": {
+      "conceptId": "out.status.ready",
+      "colorKey": "tennis",
+      "hex": "#3FB950",
+      "css": "#3fb950"
+    },
+    "out.status.deferred": {
+      "conceptId": "out.status.deferred",
+      "colorKey": "middleware",
+      "hex": "#D29922",
+      "css": "#d29922"
+    },
+    "out.status.paused": {
+      "conceptId": "out.status.paused",
+      "colorKey": "env",
+      "hex": "#8B949E",
+      "css": "#8b949e"
+    },
+    "out.status.blocked": {
+      "conceptId": "out.status.blocked",
+      "colorKey": "trading",
+      "hex": "#F85149",
+      "css": "#f85149"
+    },
+    "out.status.partial": {
+      "conceptId": "out.status.partial",
+      "colorKey": "middleware",
+      "hex": "#D29922",
+      "css": "#d29922"
+    },
+    "out.status.funded": {
+      "conceptId": "out.status.funded",
+      "colorKey": "tennis",
+      "hex": "#3FB950",
+      "css": "#3fb950"
+    },
+    "accounting.deposit": {
+      "conceptId": "accounting.deposit",
+      "colorKey": "tennis",
+      "hex": "#3FB950",
+      "css": "#3fb950"
+    },
+    "accounting.withdrawal": {
+      "conceptId": "accounting.withdrawal",
+      "colorKey": "trading",
+      "hex": "#F85149",
+      "css": "#f85149"
+    },
+    "accounting.credit": {
+      "conceptId": "accounting.credit",
+      "colorKey": "kalshi",
+      "hex": "#58A6FF",
+      "css": "#58a6ff"
+    },
+    "accounting.free_roll": {
+      "conceptId": "accounting.free_roll",
+      "colorKey": "research",
+      "hex": "#F0883E",
+      "css": "#f0883e"
+    },
+    "accounting.settlement": {
+      "conceptId": "accounting.settlement",
+      "colorKey": "polymarket",
+      "hex": "#1F6FEB",
+      "css": "#1f6feb"
+    },
+    "telegram.topic.general": {
+      "conceptId": "telegram.topic.general",
+      "colorKey": "env",
+      "hex": "#8B949E",
+      "css": "#8b949e"
+    },
+    "telegram.topic.ops": {
+      "conceptId": "telegram.topic.ops",
+      "colorKey": "kalshi",
+      "hex": "#58A6FF",
+      "css": "#58a6ff"
+    },
+    "telegram.topic.alerts": {
+      "conceptId": "telegram.topic.alerts",
+      "colorKey": "trading",
+      "hex": "#F85149",
+      "css": "#f85149"
+    },
+    "telegram.topic.liquidity": {
+      "conceptId": "telegram.topic.liquidity",
+      "colorKey": "polymarket",
+      "hex": "#1F6FEB",
+      "css": "#1f6feb"
+    },
+    "telegram.topic.accounting": {
+      "conceptId": "telegram.topic.accounting",
+      "colorKey": "tennis",
+      "hex": "#3FB950",
+      "css": "#3fb950"
+    }
+  },
+  "eventCodes": [
+    "PARTNER_REGISTERED",
+    "PARTNER_PHASE_CHANGE",
+    "OUT_CREATED",
+    "OUT_STATUS_CHANGE",
+    "DEPOSIT_RECEIVED",
+    "DEPOSIT_ALLOCATED",
+    "CREDIT_EXTENDED",
+    "FREE_ROLL_APPLIED",
+    "SETTLEMENT_PROCESSED",
+    "TELEGRAM_INVITE_SENT",
+    "TELEGRAM_MESSAGE_PINNED"
+  ],
+  "books": [
+    {
+      "id": "book-action92-com",
+      "slug": "action92-com",
+      "name": "action92.com",
+      "type": "offshore",
+      "typeConceptId": "book.type.offshore",
+      "color": {
+        "colorKey": "polymarket",
+        "hex": "#1F6FEB",
+        "css": "#1f6feb"
+      }
+    },
+    {
+      "id": "book-betvegas23-com",
+      "slug": "betvegas23-com",
+      "name": "betvegas23.com",
+      "type": "offshore",
+      "typeConceptId": "book.type.offshore",
+      "color": {
+        "colorKey": "polymarket",
+        "hex": "#1F6FEB",
+        "css": "#1f6feb"
+      }
+    },
+    {
+      "id": "book-hard-rock-florida",
+      "slug": "hard-rock-florida",
+      "name": "Hard Rock Florida",
+      "type": "legal",
+      "typeConceptId": "book.type.legal",
+      "color": {
+        "colorKey": "kalshi",
+        "hex": "#58A6FF",
+        "css": "#58a6ff"
+      }
+    },
+    {
+      "id": "book-lonestarwagering-com",
+      "slug": "lonestarwagering-com",
+      "name": "lonestarwagering.com",
+      "type": "offshore",
+      "typeConceptId": "book.type.offshore",
+      "color": {
+        "colorKey": "polymarket",
+        "hex": "#1F6FEB",
+        "css": "#1f6feb"
+      }
+    },
+    {
+      "id": "book-orange777",
+      "slug": "orange777",
+      "name": "Orange777",
+      "type": "offshore",
+      "typeConceptId": "book.type.offshore",
+      "color": {
+        "colorKey": "polymarket",
+        "hex": "#1F6FEB",
+        "css": "#1f6feb"
+      }
+    },
+    {
+      "id": "book-parlay21-com",
+      "slug": "parlay21-com",
+      "name": "parlay21.com",
+      "type": "offshore",
+      "typeConceptId": "book.type.offshore",
+      "color": {
+        "colorKey": "polymarket",
+        "hex": "#1F6FEB",
+        "css": "#1f6feb"
+      }
+    },
+    {
+      "id": "book-partner-book-tbd",
+      "slug": "partner-book-tbd",
+      "name": "Partner book TBD",
+      "type": "offshore",
+      "typeConceptId": "book.type.offshore",
+      "color": {
+        "colorKey": "polymarket",
+        "hex": "#1F6FEB",
+        "css": "#1f6feb"
+      }
+    },
+    {
+      "id": "book-southfl-pph-desk",
+      "slug": "southfl-pph-desk",
+      "name": "SouthFL PPH Desk",
+      "type": "pph",
+      "typeConceptId": "book.type.pph",
+      "color": {
+        "colorKey": "pinnacle",
+        "hex": "#A371F7",
+        "css": "#a371f7"
+      }
+    }
+  ],
+  "partners": [
+    {
+      "code": "ASH",
+      "callSign": "ASH-001",
+      "phase": "operator_ready",
+      "phaseConceptId": "partner.phase.operator_ready",
+      "phaseColor": {
+        "colorKey": "tennis",
+        "hex": "#3FB950",
+        "css": "#3fb950"
+      },
+      "telegram": {
+        "chatId": null,
+        "topicIds": {
+          "general": null,
+          "ops": null,
+          "alerts": null,
+          "liquidity": null,
+          "accounting": null
+        }
+      },
+      "outs": [
+        {
+          "id": "out-ASH-1",
+          "book": {
+            "id": "book-hard-rock-florida",
+            "slug": "hard-rock-florida",
+            "name": "Hard Rock Florida",
+            "type": "legal",
+            "typeConceptId": "book.type.legal",
+            "color": {
+              "colorKey": "kalshi",
+              "hex": "#58A6FF",
+              "css": "#58a6ff"
+            }
+          },
+          "credentials": {
+            "username": "ash1.staging"
+          },
+          "funding": {
+            "method": "venmo",
+            "methodConceptId": "deposit.method.venmo",
+            "target": "@ash.hr.fl",
+            "railId": "rail-venmo-ash-hr-fl",
+            "color": {
+              "colorKey": "trading",
+              "hex": "#F85149",
+              "css": "#f85149"
+            }
+          },
+          "maxBet": "500",
+          "freeRollPercent": 25,
+          "status": "ready",
+          "statusConceptId": "out.status.ready",
+          "statusColor": {
+            "colorKey": "tennis",
+            "hex": "#3FB950",
+            "css": "#3fb950"
+          },
+          "incomplete": false,
+          "note": "WARMED seat · limits stale — confirm rails before play · harness login — replace via Fill Username"
+        },
+        {
+          "id": "out-ASH-2",
+          "book": {
+            "id": "book-hard-rock-florida",
+            "slug": "hard-rock-florida",
+            "name": "Hard Rock Florida",
+            "type": "legal",
+            "typeConceptId": "book.type.legal",
+            "color": {
+              "colorKey": "kalshi",
+              "hex": "#58A6FF",
+              "css": "#58a6ff"
+            }
+          },
+          "credentials": {
+            "username": "—"
+          },
+          "funding": {
+            "method": "venmo",
+            "methodConceptId": "deposit.method.venmo",
+            "target": "@ash.hr.fl",
+            "railId": "rail-venmo-ash-hr-fl",
+            "color": {
+              "colorKey": "trading",
+              "hex": "#F85149",
+              "css": "#f85149"
+            }
+          },
+          "maxBet": "—",
+          "freeRollPercent": null,
+          "status": "deferred",
+          "statusConceptId": "out.status.deferred",
+          "statusColor": {
+            "colorKey": "middleware",
+            "hex": "#D29922",
+            "css": "#d29922"
+          },
+          "incomplete": false,
+          "note": "ASH-002 warming slot — assign after partner ack"
+        }
+      ],
+      "accounting": {
+        "fundStatus": "ready",
+        "incompleteOuts": 0,
+        "deposits": [],
+        "credits": [],
+        "freeRoll": {
+          "total": 25,
+          "used": 0
+        },
+        "ledger": []
+      }
+    },
+    {
+      "code": "BIL",
+      "callSign": "BIL-001",
+      "phase": "operator_ready",
+      "phaseConceptId": "partner.phase.operator_ready",
+      "phaseColor": {
+        "colorKey": "tennis",
+        "hex": "#3FB950",
+        "css": "#3fb950"
+      },
+      "telegram": {
+        "chatId": null,
+        "topicIds": {
+          "general": null,
+          "ops": null,
+          "alerts": null,
+          "liquidity": null,
+          "accounting": null
+        }
+      },
+      "outs": [
+        {
+          "id": "out-BIL-1",
+          "book": {
+            "id": "book-partner-book-tbd",
+            "slug": "partner-book-tbd",
+            "name": "Partner book TBD",
+            "type": "offshore",
+            "typeConceptId": "book.type.offshore",
+            "color": {
+              "colorKey": "polymarket",
+              "hex": "#1F6FEB",
+              "css": "#1f6feb"
+            }
+          },
+          "credentials": {
+            "username": "bil1.staging"
+          },
+          "funding": {
+            "method": "venmo",
+            "methodConceptId": "deposit.method.venmo",
+            "target": "@bil.newpartner",
+            "railId": "rail-venmo-bil-newpartner",
+            "color": {
+              "colorKey": "trading",
+              "hex": "#F85149",
+              "css": "#f85149"
+            }
+          },
+          "maxBet": "500",
+          "freeRollPercent": 25,
+          "status": "ready",
+          "statusConceptId": "out.status.ready",
+          "statusColor": {
+            "colorKey": "tennis",
+            "hex": "#3FB950",
+            "css": "#3fb950"
+          },
+          "incomplete": false,
+          "note": "Operator ready — partner assigns book + rails via desk Fill · harness login — replace via Fill Username"
+        }
+      ],
+      "accounting": {
+        "fundStatus": "ready",
+        "incompleteOuts": 0,
+        "deposits": [],
+        "credits": [],
+        "freeRoll": {
+          "total": 25,
+          "used": 0
+        },
+        "ledger": []
+      }
+    },
+    {
+      "code": "NOV",
+      "callSign": "NOV-001",
+      "phase": "operator_ready",
+      "phaseConceptId": "partner.phase.operator_ready",
+      "phaseColor": {
+        "colorKey": "tennis",
+        "hex": "#3FB950",
+        "css": "#3fb950"
+      },
+      "telegram": {
+        "chatId": null,
+        "topicIds": {
+          "general": null,
+          "ops": null,
+          "alerts": null,
+          "liquidity": null,
+          "accounting": null
+        }
+      },
+      "outs": [
+        {
+          "id": "out-NOV-1",
+          "book": {
+            "id": "book-hard-rock-florida",
+            "slug": "hard-rock-florida",
+            "name": "Hard Rock Florida",
+            "type": "legal",
+            "typeConceptId": "book.type.legal",
+            "color": {
+              "colorKey": "kalshi",
+              "hex": "#58A6FF",
+              "css": "#58a6ff"
+            }
+          },
+          "credentials": {
+            "username": "nov1.staging"
+          },
+          "funding": {
+            "method": "venmo",
+            "methodConceptId": "deposit.method.venmo",
+            "target": "@nov.newpartner",
+            "railId": "rail-venmo-nov-newpartner",
+            "color": {
+              "colorKey": "trading",
+              "hex": "#F85149",
+              "css": "#f85149"
+            }
+          },
+          "maxBet": "500",
+          "freeRollPercent": 25,
+          "status": "ready",
+          "statusConceptId": "out.status.ready",
+          "statusColor": {
+            "colorKey": "tennis",
+            "hex": "#3FB950",
+            "css": "#3fb950"
+          },
+          "incomplete": false,
+          "note": "SouthFL PPH · ONB seat — book login pending partner ack · harness login — replace via Fill Username"
+        },
+        {
+          "id": "out-NOV-2",
+          "book": {
+            "id": "book-southfl-pph-desk",
+            "slug": "southfl-pph-desk",
+            "name": "SouthFL PPH Desk",
+            "type": "pph",
+            "typeConceptId": "book.type.pph",
+            "color": {
+              "colorKey": "pinnacle",
+              "hex": "#A371F7",
+              "css": "#a371f7"
+            }
+          },
+          "credentials": {
+            "username": "—"
+          },
+          "funding": {
+            "method": "venmo",
+            "methodConceptId": "deposit.method.venmo",
+            "target": "@nov.newpartner",
+            "railId": "rail-venmo-nov-newpartner",
+            "color": {
+              "colorKey": "trading",
+              "hex": "#F85149",
+              "css": "#f85149"
+            }
+          },
+          "maxBet": "—",
+          "freeRollPercent": null,
+          "status": "deferred",
+          "statusConceptId": "out.status.deferred",
+          "statusColor": {
+            "colorKey": "middleware",
+            "hex": "#D29922",
+            "css": "#d29922"
+          },
+          "incomplete": false,
+          "note": "Second out slot — assign after ONB Ready"
+        }
+      ],
+      "accounting": {
+        "fundStatus": "ready",
+        "incompleteOuts": 0,
+        "deposits": [],
+        "credits": [],
+        "freeRoll": {
+          "total": 25,
+          "used": 0
+        },
+        "ledger": []
+      }
+    },
+    {
+      "code": "SPEN",
+      "callSign": "SPEN-001",
+      "phase": "operator_ready",
+      "phaseConceptId": "partner.phase.operator_ready",
+      "phaseColor": {
+        "colorKey": "tennis",
+        "hex": "#3FB950",
+        "css": "#3fb950"
+      },
+      "telegram": {
+        "chatId": null,
+        "topicIds": {
+          "general": null,
+          "ops": null,
+          "alerts": null,
+          "liquidity": null,
+          "accounting": null
+        }
+      },
+      "outs": [
+        {
+          "id": "out-SPEN-1",
+          "book": {
+            "id": "book-parlay21-com",
+            "slug": "parlay21-com",
+            "name": "parlay21.com",
+            "type": "offshore",
+            "typeConceptId": "book.type.offshore",
+            "color": {
+              "colorKey": "polymarket",
+              "hex": "#1F6FEB",
+              "css": "#1f6feb"
+            }
+          },
+          "credentials": {
+            "username": "vc2013"
+          },
+          "funding": {
+            "method": "venmo",
+            "methodConceptId": "deposit.method.venmo",
+            "target": "@spen.newpartner",
+            "railId": "rail-venmo-spen-newpartner",
+            "color": {
+              "colorKey": "trading",
+              "hex": "#F85149",
+              "css": "#f85149"
+            }
+          },
+          "maxBet": "500",
+          "freeRollPercent": 25,
+          "status": "ready",
+          "statusConceptId": "out.status.ready",
+          "statusColor": {
+            "colorKey": "tennis",
+            "hex": "#3FB950",
+            "css": "#3fb950"
+          },
+          "incomplete": false,
+          "note": ""
+        },
+        {
+          "id": "out-SPEN-2",
+          "book": {
+            "id": "book-lonestarwagering-com",
+            "slug": "lonestarwagering-com",
+            "name": "lonestarwagering.com",
+            "type": "offshore",
+            "typeConceptId": "book.type.offshore",
+            "color": {
+              "colorKey": "polymarket",
+              "hex": "#1F6FEB",
+              "css": "#1f6feb"
+            }
+          },
+          "credentials": {
+            "username": "Yungg1"
+          },
+          "funding": {
+            "method": "venmo",
+            "methodConceptId": "deposit.method.venmo",
+            "target": "@spen.newpartner",
+            "railId": "rail-venmo-spen-newpartner",
+            "color": {
+              "colorKey": "trading",
+              "hex": "#F85149",
+              "css": "#f85149"
+            }
+          },
+          "maxBet": "500",
+          "freeRollPercent": 25,
+          "status": "ready",
+          "statusConceptId": "out.status.ready",
+          "statusColor": {
+            "colorKey": "tennis",
+            "hex": "#3FB950",
+            "css": "#3fb950"
+          },
+          "incomplete": false,
+          "note": ""
+        },
+        {
+          "id": "out-SPEN-3",
+          "book": {
+            "id": "book-action92-com",
+            "slug": "action92-com",
+            "name": "action92.com",
+            "type": "offshore",
+            "typeConceptId": "book.type.offshore",
+            "color": {
+              "colorKey": "polymarket",
+              "hex": "#1F6FEB",
+              "css": "#1f6feb"
+            }
+          },
+          "credentials": {
+            "username": "action92"
+          },
+          "funding": {
+            "method": "venmo",
+            "methodConceptId": "deposit.method.venmo",
+            "target": "@spen.newpartner",
+            "railId": "rail-venmo-spen-newpartner",
+            "color": {
+              "colorKey": "trading",
+              "hex": "#F85149",
+              "css": "#f85149"
+            }
+          },
+          "maxBet": "500",
+          "freeRollPercent": 25,
+          "status": "ready",
+          "statusConceptId": "out.status.ready",
+          "statusColor": {
+            "colorKey": "tennis",
+            "hex": "#3FB950",
+            "css": "#3fb950"
+          },
+          "incomplete": false,
+          "note": "logged in ~$17,747 (backend.action92.com)"
+        },
+        {
+          "id": "out-SPEN-4",
+          "book": {
+            "id": "book-betvegas23-com",
+            "slug": "betvegas23-com",
+            "name": "betvegas23.com",
+            "type": "offshore",
+            "typeConceptId": "book.type.offshore",
+            "color": {
+              "colorKey": "polymarket",
+              "hex": "#1F6FEB",
+              "css": "#1f6feb"
+            }
+          },
+          "credentials": {
+            "username": "Henry019"
+          },
+          "funding": {
+            "method": "venmo",
+            "methodConceptId": "deposit.method.venmo",
+            "target": "@spen.newpartner",
+            "railId": "rail-venmo-spen-newpartner",
+            "color": {
+              "colorKey": "trading",
+              "hex": "#F85149",
+              "css": "#f85149"
+            }
+          },
+          "maxBet": "500",
+          "freeRollPercent": 25,
+          "status": "ready",
+          "statusConceptId": "out.status.ready",
+          "statusColor": {
+            "colorKey": "tennis",
+            "hex": "#3FB950",
+            "css": "#3fb950"
+          },
+          "incomplete": false,
+          "note": ""
+        },
+        {
+          "id": "out-SPEN-5",
+          "book": {
+            "id": "book-orange777",
+            "slug": "orange777",
+            "name": "Orange777",
+            "type": "offshore",
+            "typeConceptId": "book.type.offshore",
+            "color": {
+              "colorKey": "polymarket",
+              "hex": "#1F6FEB",
+              "css": "#1f6feb"
+            }
+          },
+          "credentials": {
+            "username": "dmk1064"
+          },
+          "funding": {
+            "method": "venmo",
+            "methodConceptId": "deposit.method.venmo",
+            "target": "@spen.newpartner",
+            "railId": "rail-venmo-spen-newpartner",
+            "color": {
+              "colorKey": "trading",
+              "hex": "#F85149",
+              "css": "#f85149"
+            }
+          },
+          "maxBet": "—",
+          "freeRollPercent": null,
+          "status": "deferred",
+          "statusConceptId": "out.status.deferred",
+          "statusColor": {
+            "colorKey": "middleware",
+            "hex": "#D29922",
+            "css": "#d29922"
+          },
+          "incomplete": false,
+          "note": "book label only — pass field was NO"
+        }
+      ],
+      "accounting": {
+        "fundStatus": "ready",
+        "incompleteOuts": 0,
+        "deposits": [],
+        "credits": [],
+        "freeRoll": {
+          "total": 100,
+          "used": 0
+        },
+        "ledger": []
+      }
+    }
+  ],
+  "summary": {
+    "partners": 4,
+    "outs": 10,
+    "books": 8,
+    "incompleteOuts": 0,
+    "validationErrors": 0,
+    "validationWarnings": 0
+  },
+  "validation": {
+    "ok": true,
+    "issues": []
+  }
+}

@@ -150,6 +150,14 @@ export const PORTAL_PAGE_CONCEPT_DEFINITIONS = [
     synonyms: ['package graph', 'packages board'],
   },
   {
+    path: '/portal/partners/',
+    id: 'page.partners',
+    label: 'Partners',
+    description:
+      'Portal page for partner package Telegram forums, Accounting topic deals, and seat-desk deposit rails.',
+    synonyms: ['package groups', 'telegram partners', 'seat capital partners'],
+  },
+  {
     path: '/portal/partner-history/',
     id: 'page.partnerHistory',
     label: 'Partner limit history',

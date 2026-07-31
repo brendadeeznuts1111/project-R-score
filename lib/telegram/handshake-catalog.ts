@@ -34,6 +34,11 @@ import {
 import type { ReadinessPhase } from './handshake-readiness.ts';
 import type { DmSeatStatus } from './dm-seat-designation.ts';
 import type { PackageGroupMembershipStatus } from './package-group-membership.ts';
+import {
+  TELEGRAM_FORUM_ICON_COLOR_HEX,
+  telegramColorWire,
+  telegramTopicColorWire,
+} from './telegram-color-kernel.ts';
 
 export const HANDSHAKE_CATALOG_SCHEMA = 'factorywager.telegram-handshake-catalog.v1' as const;
 
@@ -311,6 +316,60 @@ export const HANDSHAKE_ENV_KEYS = [
   { key: 'OPS_DB_PATH', plane: 'factory', purpose: 'SQLite ops db (registry + known chats)' },
 ] as const;
 
+/** Glossary concept ids owned by lib/telegram/telegram-glossary.ts (keep in sync). */
+export const TELEGRAM_GLOSSARY_CONCEPT_IDS = [
+  'telegram.wire',
+  'telegram.package_group',
+  'telegram.forum.topic',
+  'telegram.topic_map',
+  'telegram.forum.topic.accounting',
+  'telegram.forum.topic.liquidity_outs',
+  'telegram.surface',
+  'telegram.surface.all_accounting',
+  'telegram.seat_desk',
+  'telegram.deposit_rail',
+  'telegram.handshake',
+  'telegram.membership',
+  'telegram.topic_plan_row',
+] as const;
+
+export function buildHandshakeColorMap() {
+  const packageTopics = Object.fromEntries(
+    Object.values(PACKAGE_GROUP_FORUM_TOPIC_KEYS).map(mapKey => [
+      mapKey,
+      {
+        ...telegramTopicColorWire(mapKey),
+        conceptId:
+          mapKey === 'accounting'
+            ? 'telegram.forum.topic.accounting'
+            : mapKey === 'liquidity/outs'
+              ? 'telegram.forum.topic.liquidity_outs'
+              : 'telegram.forum.topic',
+      },
+    ])
+  );
+  const allAccountingTopics = Object.fromEntries(
+    ALL_ACCOUNTING_FORUM_TOPICS.map(title => {
+      const mapKey = title.toLowerCase();
+      return [
+        title,
+        {
+          ...telegramTopicColorWire(mapKey),
+          conceptId: 'telegram.surface.all_accounting',
+        },
+      ];
+    })
+  );
+  return {
+    brand: telegramColorWire('brand'),
+    packageTopics,
+    allAccountingTopics,
+    forumIconColorHex: [...TELEGRAM_FORUM_ICON_COLOR_HEX],
+    scrapeWireTaxonomyPath: '/registry/scrape-wire-taxonomy.json',
+    bookColorNote: 'Deposit book chips resolve hex via scrape-wire bookRegistry colorKey/hex',
+  } as const;
+}
+
 export type HandshakeCatalog = {
   schema: typeof HANDSHAKE_CATALOG_SCHEMA;
   generatedAt: string;
@@ -319,6 +378,12 @@ export type HandshakeCatalog = {
   packageForumTopics: typeof HANDSHAKE_PACKAGE_FORUM_TOPICS;
   houseForumTopics: typeof HANDSHAKE_HOUSE_FORUM_TOPICS;
   seatDeskTemplates: typeof HANDSHAKE_SEAT_DESK_TEMPLATES;
+  colors: ReturnType<typeof buildHandshakeColorMap>;
+  glossary: {
+    path: '/portal/glossary/';
+    boardPath: '/portal/partners/';
+    conceptIds: readonly (typeof TELEGRAM_GLOSSARY_CONCEPT_IDS)[number][];
+  };
   jsonlActions: readonly string[];
   readinessPhases: readonly ReadinessPhase[];
   dmSeatStatuses: readonly DmSeatStatus[];
@@ -338,6 +403,12 @@ export function buildHandshakeCatalog(now = new Date()): HandshakeCatalog {
     packageForumTopics: HANDSHAKE_PACKAGE_FORUM_TOPICS,
     houseForumTopics: HANDSHAKE_HOUSE_FORUM_TOPICS,
     seatDeskTemplates: HANDSHAKE_SEAT_DESK_TEMPLATES,
+    colors: buildHandshakeColorMap(),
+    glossary: {
+      path: '/portal/glossary/',
+      boardPath: '/portal/partners/',
+      conceptIds: [...TELEGRAM_GLOSSARY_CONCEPT_IDS],
+    },
     jsonlActions: [...HANDSHAKE_JSONL_ACTIONS],
     readinessPhases: [...HANDSHAKE_READINESS_PHASES],
     dmSeatStatuses: [...HANDSHAKE_DM_SEAT_STATUSES],

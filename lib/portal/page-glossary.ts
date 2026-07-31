@@ -2,6 +2,7 @@ import {
   LIMIT_FIELD_CONCEPTS,
   LIMIT_SURFACE_CONCEPTS,
   PARTNER_HISTORY_SURFACE_CONCEPTS,
+  PARTNERS_SURFACE_CONCEPTS,
   type PortalSemanticConceptKey,
 } from './semantic-vocabulary.ts';
 import { PORTAL_PAGE_CONCEPT_DEFINITIONS } from './page-concepts.ts';
@@ -33,6 +34,11 @@ const PAGE_SECTIONS: Readonly<
   },
   [PARTNER_HISTORY_SURFACE_CONCEPTS.page]: {
     'opening-baseline': PARTNER_HISTORY_SURFACE_CONCEPTS.openingBaseline,
+  },
+  [PARTNERS_SURFACE_CONCEPTS.page]: {
+    telegram: PARTNERS_SURFACE_CONCEPTS.telegram,
+    accounting: PARTNERS_SURFACE_CONCEPTS.accounting,
+    deposits: PARTNERS_SURFACE_CONCEPTS.deposits,
   },
 };
 

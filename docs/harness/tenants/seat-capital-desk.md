@@ -246,6 +246,20 @@ bun run ops:snapshot                    # bakes seat-capital-desk.json alongside
 bun test tests/seat-desk-snapshot.test.ts
 ```
 
+## Partners-ops taxonomy (v2 projection)
+
+Collision-free factory mirror over this desk + handshake — phases, book types, funding rails, out status, accounting/event codes, Telegram topic leaves. Soft ledger mutations stay in `ct`.
+
+| Piece | Path / command |
+|-------|----------------|
+| Glossary + colors | [`lib/telegram/partner-ops-glossary.ts`](../../../lib/telegram/partner-ops-glossary.ts) · [`partner-ops-color-kernel.ts`](../../../lib/telegram/partner-ops-color-kernel.ts) |
+| Registry bake | `/registry/partners-ops.json` · `bun run partners:build` |
+| Validate | `bun run partners:validate` |
+| Event append (factory mirror JSONL) | `bun run partners:ledger:append -- --code DEPOSIT_RECEIVED --partner ASH --amount 1000` |
+| Portal board | [`/portal/partners/`](../../../public/portal/partners/) |
+
+Intake SSOT remains `reports/telegram/seat-intake/` → `seat-capital-desk.json` (v1). The v2 registry is derived — never a second intake writer.
+
 ## Module map
 
 | Module | Role |
@@ -258,3 +272,7 @@ bun test tests/seat-desk-snapshot.test.ts
 | `seat-desk-reply.ts` | Reply + pipe-line intake |
 | `seat-desk-partner-message.ts` | Field manifest + partner paste builder + topic prompts + template SSOT + JSON summary |
 | `partner-forum-accounting.ts` | Auto-create Accounting topic + post prompt once per partner forum |
+| `partner-ops-registry.ts` | v2 taxonomy projection + collision validation |
+| `partner-ops-glossary.ts` | Phase / book / rail / out / accounting / topic concepts |
+| `partner-ops-events.ts` | Factory-mirror event codes |
+| `partner-ops-color-kernel.ts` | Bun.color palette for partner-ops concepts |

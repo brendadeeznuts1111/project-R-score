@@ -87,6 +87,15 @@ describe('portal route wiring', () => {
     expect(await Bun.file('functions/api/limits/predictions.ts').exists()).toBe(true);
   });
 
+  test('partners portal is first-class in route SSOT', async () => {
+    expect(PORTAL_HTML_ROUTES).toContain('/portal/partners/');
+    expect(PORTAL_TRAILING_SLASH_SOURCES).toContain('/portal/partners');
+    expect(PORTAL_MARKDOWN_SLUGS).toContain('partners');
+    expect(await Bun.file('public/portal/partners/index.html').exists()).toBe(true);
+    const redirects = await Bun.file('public/_redirects').text();
+    expect(redirects).toContain('/portal/partners');
+  });
+
   test('partner-history portal is first-class in route SSOT', async () => {
     expect(await Bun.file('public/portal/partner-history/index.html').exists()).toBe(true);
     const redirects = await Bun.file('public/_redirects').text();

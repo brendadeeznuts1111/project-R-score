@@ -2,9 +2,9 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-07-31T11:03:32.227Z",
+  "generated": "2026-07-31T12:32:07.369Z",
   "summary": {
-    "surfaces": 24,
+    "surfaces": 25,
     "artifacts": 34,
     "components": 13,
     "wiki": 6,
@@ -177,6 +177,14 @@
       "note": "account raises · multi-factor score · drivers",
       "group": "ops",
       "cli": "bun run ops:limits:demo"
+    },
+    {
+      "id": "partners",
+      "label": "Partners",
+      "href": "/portal/partners/",
+      "note": "package groups · telegram forums · accounting · deposits",
+      "group": "ops",
+      "cli": "bun run telegram:handshake:catalog"
     },
     {
       "id": "partner-history",

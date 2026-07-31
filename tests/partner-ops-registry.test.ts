@@ -1,0 +1,108 @@
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+import { describe, expect, test } from 'bun:test';
+import {
+  classifyBookType,
+  classifyDepositMethod,
+  classifyOutStatus,
+  mapHandshakePhase,
+  buildPartnersOpsRegistry,
+  exportPartnersOpsRegistry,
+  validatePartnersOpsRegistry,
+  PARTNERS_OPS_SCHEMA,
+} from '../lib/telegram/partner-ops-registry.ts';
+import { partnerOpsColorMap, partnerOpsConceptColorWire } from '../lib/telegram/partner-ops-color-kernel.ts';
+import { partnerOpsGlossaryConcepts } from '../lib/telegram/partner-ops-glossary.ts';
+import { PARTNER_OPS_EVENT_CODES, buildPartnerOpsEvent } from '../lib/telegram/partner-ops-events.ts';
+
+describe('partner-ops classifiers', () => {
+  test('book / rail / out / phase maps', () => {
+    expect(classifyBookType('Hard Rock Florida', new Set(['hardrock']))).toBe('legal');
+    expect(classifyBookType('Crypto Bet Co', new Set())).toBe('crypto');
+    expect(classifyBookType('Agent PPH Desk', new Set())).toBe('pph');
+    expect(classifyBookType('Mystery Book', new Set())).toBe('offshore');
+    expect(classifyDepositMethod('Venmo')).toBe('venmo');
+    expect(classifyDepositMethod('Cash App')).toBe('cashapp');
+    expect(classifyDepositMethod('house credit')).toBe('credit');
+    expect(classifyOutStatus('deferred')).toBe('deferred');
+    expect(classifyOutStatus('ready')).toBe('ready');
+    expect(mapHandshakePhase('operator_ready')).toBe('operator_ready');
+    expect(mapHandshakePhase('forum_ready')).toBe('onboarding');
+    expect(mapHandshakePhase('blocked')).toBe('incomplete');
+  });
+});
+
+describe('partner-ops color + glossary', () => {
+  test('every concept color resolves via Bun.color', () => {
+    const map = partnerOpsColorMap();
+    expect(Object.keys(map).length).toBeGreaterThan(20);
+    for (const wire of Object.values(map)) {
+      expect(wire.hex).toMatch(/^#[0-9A-F]{6}$/i);
+    }
+    expect(partnerOpsConceptColorWire('partner.phase.operator_ready').colorKey).toBe('tennis');
+  });
+
+  test('glossary ids are collision-free and namespaced', () => {
+    const concepts = partnerOpsGlossaryConcepts();
+    const ids = concepts.map(c => c.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ids.every(id => id.includes('.'))).toBe(true);
+    expect(ids).toContain('accounting.free_roll');
+    expect(ids).toContain('telegram.topic.liquidity');
+    expect(ids).toContain('partner.ops.event');
+    expect(PARTNER_OPS_EVENT_CODES).toContain('DEPOSIT_RECEIVED');
+    expect(buildPartnerOpsEvent('DEPOSIT_RECEIVED', { partnerCode: 'ASH', amount: 1 }).conceptId).toBe(
+      'accounting.deposit'
+    );
+  });
+});
+
+describe('partners-ops registry bake', () => {
+  test('builds v2 registry from seat + handshake without collisions', async () => {
+    const registry = await buildPartnersOpsRegistry();
+    expect(registry.schema).toBe(PARTNERS_OPS_SCHEMA);
+    expect(registry.version).toBe('2');
+    expect(registry.partners.length).toBeGreaterThan(0);
+    expect(registry.validation.ok).toBe(true);
+    expect(registry.eventCodes).toEqual([...PARTNER_OPS_EVENT_CODES]);
+    const codes = registry.partners.map(p => p.code);
+    expect(new Set(codes).size).toBe(codes.length);
+    const calls = registry.partners.map(p => p.callSign);
+    expect(new Set(calls).size).toBe(calls.length);
+    const ash = registry.partners.find(p => p.code === 'ASH');
+    expect(ash?.outs[0]?.id).toMatch(/^out-ASH-\d+$/);
+    expect(ash?.outs[0]?.funding.methodConceptId).toMatch(/^deposit\.method\./);
+    expect(ash?.phaseConceptId).toMatch(/^partner\.phase\./);
+  });
+
+  test('validate catches duplicate partner codes', () => {
+    const sample = {
+      code: 'ASH',
+      callSign: 'ASH-001',
+      phase: 'operator_ready' as const,
+      phaseConceptId: 'partner.phase.operator_ready' as const,
+      phaseColor: partnerOpsConceptColorWire('partner.phase.operator_ready'),
+      telegram: { chatId: null, topicIds: {} },
+      outs: [],
+      accounting: {
+        fundStatus: 'ready',
+        incompleteOuts: 0,
+        deposits: [],
+        credits: [],
+        freeRoll: { total: 0, used: 0 },
+        ledger: [],
+      },
+    };
+    const issues = validatePartnersOpsRegistry(
+      [sample, { ...sample, callSign: 'ASH-002' }],
+      new Set(['partner.phase.operator_ready'])
+    );
+    expect(issues.some(i => i.code === 'partner_code_dup')).toBe(true);
+  });
+
+  test('export writes public registry', async () => {
+    const registry = await exportPartnersOpsRegistry();
+    const baked = await Bun.file('public/registry/partners-ops.json').json();
+    expect(baked.schema).toBe(PARTNERS_OPS_SCHEMA);
+    expect(baked.partners.length).toBe(registry.partners.length);
+  });
+});

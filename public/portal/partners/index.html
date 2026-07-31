@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<!-- @see docs/portal-foundation.md · docs/harness/tenants/partner-package-group-handshake.md · docs/harness/tenants/seat-capital-desk.md -->
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Partner package groups · Telegram forum chats · Accounting topic deals · betting deposit rails from seat capital desk." />
+  <title>Partners · FactoryWager</title>
+  <meta name="theme-color" content="#0d1117" />
+  <meta name="application-name" content="FactoryWager" />
+  <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+  <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/portal/style.css" />
+  <style>
+    .partners-page { max-width: 1120px; margin: 0 auto; padding: 28px 24px 48px; }
+    .partners-hero { margin-bottom: 20px; }
+    .partners-title { margin: 0 0 8px; font-size: 28px; font-weight: 650; letter-spacing: -0.03em; }
+    .partners-lede { margin: 0 0 14px; font-size: 14px; color: var(--text-dim); line-height: 1.5; max-width: 62ch; }
+    .partners-lede code { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+    .partners-meta { font-size: 12px; color: var(--text-dim); margin: 0 0 16px; }
+    .partners-meta a { color: var(--accent); }
+    .partners-stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin: 0 0 22px; }
+    @media (max-width: 900px) { .partners-stats { grid-template-columns: repeat(2, 1fr); } }
+    .partners-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
+    .partners-stat .k { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
+    .partners-stat .v { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; }
+    .partners-stat.ok .v { color: var(--green, #3fb950); }
+    .partners-stat.warn .v { color: var(--yellow, #d29922); }
+    .partners-section { margin: 0 0 26px; }
+    .partners-section h2 {
+      margin: 0 0 6px; font-size: 12px; font-weight: 650;
+      letter-spacing: .06em; text-transform: uppercase; color: var(--text-dim);
+    }
+    .partners-section .blurb { margin: 0 0 12px; font-size: 13px; color: var(--text-dim); line-height: 1.4; }
+    .partners-panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px 16px; overflow-x: auto;
+    }
+    .partners-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 720px; }
+    .partners-table th {
+      text-align: left; padding: 7px 8px; color: var(--text-dim); font-weight: 600;
+      border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    .partners-table td { padding: 7px 8px; border-bottom: 1px solid rgba(48,54,61,.35); vertical-align: top; }
+    .partners-table code { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+    .tone-ok { color: var(--green, #3fb950); }
+    .tone-warn { color: var(--yellow, #d29922); }
+    .tone-bad { color: var(--red, #f85149); }
+    .topic-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+    .topic-chip {
+      font-size: 12px; padding: 4px 9px; border: 1px solid color-mix(in srgb, var(--chip-color, var(--border)) 55%, var(--border));
+      border-radius: 4px; background: color-mix(in srgb, var(--chip-color, var(--surface)) 14%, var(--surface)); color: var(--text);
+      text-decoration: none;
+    }
+    .topic-chip:hover, .topic-chip:focus-visible {
+      border-color: var(--chip-color, var(--accent));
+      background: color-mix(in srgb, var(--chip-color, var(--accent)) 22%, var(--surface));
+    }
+    .book-chip {
+      display: inline-block; font-size: 12px; padding: 2px 7px;
+      border: 1px solid color-mix(in srgb, var(--chip-color, var(--border)) 55%, var(--border));
+      border-radius: 4px; background: color-mix(in srgb, var(--chip-color, var(--surface)) 14%, var(--surface));
+      text-decoration: none; color: var(--text);
+    }
+    .cli-row { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); margin: 8px 0 0; }
+    .hidden { display: none; }
+    .ops-banner.error { margin: 0 0 16px; }
+  </style>
+</head>
+<body>
+  <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <h1 class="logo">
+        <span class="logo-icon" aria-hidden="true"></span>
+        <span class="brand-wordmark">FactoryWager</span>
+        <span class="brand-badge">ops</span>
+        <span class="logo-page">Partners</span>
+      </h1>
+      <nav class="topbar-nav" aria-label="Primary">
+        <a href="/" class="nav-link" data-group="other">Home</a>
+        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · bun run ops:snapshot" data-group="ops" data-cli="bun run ops:snapshot">Ops</a>
+        <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
+        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake">Health</a>
+        <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane">DOD</a>
+        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake">Compliance</a>
+        <div class="nav-overflow">
+          <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
+          <div class="nav-dropdown" role="menu">
+            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
+            <a href="/portal/packages/" class="nav-link" title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table" data-group="registry" data-cli="bun run portal-cli pm graph  # offline packages-graph-map table" role="menuitem">Packages</a>
+            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
+            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-cli="bun run glossary:portal" role="menuitem">Glossary</a>
+            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
+            <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
+            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
+            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
+            <a href="/portal/tools/" class="nav-link" title="portal-cli surface map · badges · capability subset · bun run portal-cli dashboard --view=tools" data-group="harness" data-cli="bun run portal-cli dashboard --view=tools" role="menuitem">CLI Tools</a>
+            <a href="/portal/failures/" class="nav-link" title="test failures bake · junit · nav badge = count · bun run failures:bake  # → /registry/failures.json" data-group="harness" data-cli="bun run failures:bake  # → /registry/failures.json" role="menuitem">Failures</a>
+            <a href="/portal/bunfig/" class="nav-link" title="bunfig install config provenance · portal-cli bunfig status · bun run bunfig:bake  # → /registry/bunfig-state.json" data-group="harness" data-cli="bun run bunfig:bake  # → /registry/bunfig-state.json" role="menuitem">Bunfig</a>
+            <a href="/portal/console-format/" class="nav-link" title="structured output gate · logTable/logDepth/jsonOut ratchet · bun run console-format:bake  # → /registry/console-format-state.json" data-group="harness" data-cli="bun run console-format:bake  # → /registry/console-format-state.json" role="menuitem">Console Format</a>
+            <a href="/portal/doctor/" class="nav-link" title="unified health gate · bunfig · catalog · linker · bun run portal:doctor --verbose" data-group="harness" data-cli="bun run portal:doctor --verbose" role="menuitem">Doctor</a>
+            <a href="/portal/install-hygiene/" class="nav-link" title="cache prune · npm-install policy · install:verify bake · bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" data-group="harness" data-cli="bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" role="menuitem">Install hygiene</a>
+            <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
+            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
+            <a href="/portal/limits/" class="nav-link" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
+            <a href="/portal/partners/" class="nav-link active" aria-current="page" title="package groups · telegram forums · accounting · deposits · bun run telegram:handshake:catalog" data-group="ops" data-cli="bun run telegram:handshake:catalog" role="menuitem">Partners</a>
+            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
+            <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
+            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
+            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub" data-group="other" role="menuitem">Wiki</a>
+          </div>
+        </div>
+      </nav>
+      <div class="topbar-status">
+        <a href="/portal/health/" class="topbar-health-link" title="System health">
+          <span id="health-dot" class="health-dot unknown"></span>
+          <span id="health-label" class="health-label">Connecting…</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="partners-page">
+    <header class="partners-hero">
+      <h2 class="partners-title">
+        <a class="semantic-label" href="/portal/glossary/#glossary:page.partners" data-glossary-concept="page.partners">Partners</a>
+      </h2>
+      <p class="partners-lede">
+        Package Telegram forums, Accounting topic deals, and betting deposit rails
+        from the seat capital desk. Soft ledger mutations stay in <code>ct</code>;
+        this board is the factory bake mirror.
+        Glossary:
+        <a href="/portal/glossary/#glossary:telegram.wire" data-glossary-concept="telegram.wire">telegram.wire</a>
+        · taxonomy
+        <a href="/registry/partners-ops.json"><code>partners-ops.json</code></a>
+        · <code>bun run partners:validate</code>.
+      </p>
+      <ul class="topic-chips" id="taxonomy-chips" aria-label="Partner-ops taxonomy"></ul>
+      <p class="partners-meta" id="partners-meta">Loading registry…</p>
+    </header>
+
+    <div id="error-banner" class="ops-banner error hidden"></div>
+    <div id="loading" class="ops-loading"><div class="spinner"></div><p>Loading partners…</p></div>
+    <div id="dashboard" class="hidden">
+      <div class="partners-stats" id="partners-stats"></div>
+
+      <section class="partners-section" id="section:telegram" aria-labelledby="telegram-heading" data-glossary-concept="section.partnersTelegram">
+        <h2 id="telegram-heading">
+          <a href="/portal/glossary/#glossary:section.partnersTelegram" data-glossary-concept="section.partnersTelegram">Telegram package groups</a>
+        </h2>
+        <p class="blurb">
+          One forum per partner CODE · invite + membership tell ·
+          topics: General · Ops · Alerts · Liquidity/Outs · Accounting
+          · <a href="/portal/glossary/#glossary:telegram.handshake" data-glossary-concept="telegram.handshake">handshake</a>
+        </p>
+        <ul class="topic-chips" id="topic-chips"></ul>
+        <div class="partners-panel" style="margin-top:12px">
+          <table class="partners-table">
+            <thead>
+              <tr>
+                <th>Partner</th>
+                <th>Phase</th>
+                <th>Taxonomy</th>
+                <th>Membership</th>
+                <th>Call sign</th>
+                <th>DM seat</th>
+                <th>Handshake</th>
+                <th>Invite</th>
+                <th>Next</th>
+              </tr>
+            </thead>
+            <tbody id="partners-tbody"></tbody>
+          </table>
+        </div>
+        <p class="cli-row">bun run telegram:handshake:catalog · telegram:handshake:invite-gap · telegram:ops -- link-package-group CODE chatId</p>
+      </section>
+
+      <section class="partners-section" id="section:accounting" aria-labelledby="accounting-heading" data-glossary-concept="section.partnersAccounting">
+        <h2 id="accounting-heading">
+          <a href="/portal/glossary/#glossary:section.partnersAccounting" data-glossary-concept="section.partnersAccounting">Accounting deals</a>
+        </h2>
+        <p class="blurb">
+          Deposit / withdraw proof lives in each package forum
+          <a href="/portal/glossary/#glossary:telegram.forum.topic.accounting" data-glossary-concept="telegram.forum.topic.accounting"><strong>Accounting</strong></a>
+          topic. House rollup:
+          <a href="/portal/glossary/#glossary:telegram.surface.all_accounting" data-glossary-concept="telegram.surface.all_accounting"><code>all-accounting</code></a>
+          surface.
+        </p>
+        <div class="partners-panel">
+          <table class="partners-table">
+            <thead>
+              <tr>
+                <th>Partner</th>
+                <th>Call sign</th>
+                <th>Fund status</th>
+                <th>Pinned desk</th>
+                <th>Incomplete outs</th>
+                <th>Checklist</th>
+                <th>CLI</th>
+              </tr>
+            </thead>
+            <tbody id="accounting-tbody"></tbody>
+          </table>
+        </div>
+        <p class="cli-row">bun run telegram:package-group:accounting · seat:desk:accounting-prompt · seat:desk:refresh CALL</p>
+      </section>
+
+      <section class="partners-section" id="section:deposits" aria-labelledby="deposits-heading" data-glossary-concept="section.partnersDeposits">
+        <h2 id="deposits-heading">
+          <a href="/portal/glossary/#glossary:section.partnersDeposits" data-glossary-concept="section.partnersDeposits">Betting deposits</a>
+        </h2>
+        <p class="blurb">
+          Per-out
+          <a href="/portal/glossary/#glossary:telegram.deposit_rail" data-glossary-concept="telegram.deposit_rail">deposit rails</a>
+          from
+          <a href="/portal/glossary/#glossary:telegram.seat_desk" data-glossary-concept="telegram.seat_desk">seat capital desk</a>
+          intake (Liquidity/Outs pinned table). Book colors from scrape-wire
+          <a href="/portal/glossary/#glossary:scrape.book" data-glossary-concept="scrape.book">book registry</a>.
+          Book passwords stay off this board.
+        </p>
+        <div class="partners-panel">
+          <table class="partners-table">
+            <thead>
+              <tr>
+                <th>Partner</th>
+                <th>Call</th>
+                <th>Out</th>
+                <th>Book</th>
+                <th>Username</th>
+                <th>Deposit method</th>
+                <th>Send to</th>
+                <th>Max bet</th>
+                <th>FP%</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="deposits-tbody"></tbody>
+          </table>
+        </div>
+        <p class="cli-row">bun run seat:desk:refresh · seat:desk:update · /registry/seat-capital-desk.json</p>
+      </section>
+    </div>
+  </main>
+
+  <notification-center aria-live="polite"></notification-center>
+  <footer class="footer" data-portal-chrome="footer">
+    <p>
+      <strong>FactoryWager</strong> ·
+      <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
+      <a href="/portal/ops/">Ops</a> ·
+      <a href="/portal/toc/">TOC</a> ·
+      <a href="/portal/partners/">Partners</a> ·
+      <a href="/portal/packages/">Packages</a> ·
+      <a href="/portal/brands/">Brands</a> ·
+      <a href="/portal/glossary/">Glossary</a> ·
+      <a href="/portal/surfaces/">Surfaces</a> ·
+      <a href="/portal/health/">Health</a> ·
+      <a href="/registry/portal-weave.json">Portal proof</a> ·
+      <a href="/portal/tools/">CLI Tools</a> ·
+      <a href="/portal/compliance/">Compliance</a> ·
+      <a href="/portal/limits/">Limits</a> ·
+      <a href="/portal/dod/">DOD</a> ·
+      <a href="/portal/env/">Env</a> ·
+      <a href="/portal/vault/">Vault</a> ·
+      <a href="/portal/failures/">Failures</a> ·
+      <a href="/portal/install-hygiene/">Install hygiene</a> ·
+      <a href="/registry/monorepo-health.json">Monorepo health</a> ·
+      <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </p>
+    <p class="footer-meta">
+      project-R-score · chrome <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a>
+      · <span data-footer-ts>…</span>
+    </p>
+  </footer>
+
+  <script type="module" src="/portal/data.js"></script>
+  <script type="module" src="/portal/topbar.js"></script>
+  <script type="module" src="/portal/components/sidebar.js"></script>
+  <script type="module" src="/portal/components/notification.js"></script>
+  <script type="module" src="/portal/components/footer.js"></script>
+  <script type="module">
+    import { bootGlossaryUx } from '/portal/components/glossary-ux.js';
+
+    const $ = (id) => document.getElementById(id);
+    /** @type {Map<string, { hex?: string, conceptId?: string, label?: string }>} */
+    let bookIndex = new Map();
+
+    function esc(value) {
+      const el = document.createElement('div');
+      el.textContent = value == null ? '' : String(value);
+      return el.innerHTML;
+    }
+
+    function glossaryHref(id) {
+      return `/portal/glossary/#glossary:${encodeURIComponent(id)}`;
+    }
+
+    function toneClass(ok) {
+      if (ok === true) return 'tone-ok';
+      if (ok === false) return 'tone-bad';
+      return 'tone-warn';
+    }
+
+    function fundTone(status) {
+      const s = String(status || '').toLowerCase();
+      if (s === 'ready' || s === 'funded') return 'tone-ok';
+      if (s === 'blocked' || s === 'incomplete') return 'tone-bad';
+      return 'tone-warn';
+    }
+
+    async function loadJson(path) {
+      const res = await fetch(path, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`${path} HTTP ${res.status}`);
+      return res.json();
+    }
+
+    function indexBooks(taxonomy) {
+      const map = new Map();
+      for (const book of taxonomy?.bookRegistry || []) {
+        const entry = {
+          hex: book.hex || book.css,
+          conceptId: book.conceptId || 'scrape.book',
+          label: book.label || book.id,
+        };
+        for (const key of [book.id, book.key, book.label, ...(book.aliases || [])]) {
+          const norm = String(key || '').trim().toLowerCase().replace(/[\s_-]+/g, '');
+          if (norm) map.set(norm, entry);
+        }
+      }
+      return map;
+    }
+
+    function resolveBook(label) {
+      const raw = String(label || '').trim();
+      if (!raw) return null;
+      const norm = raw.toLowerCase().replace(/[\s_-]+/g, '');
+      return bookIndex.get(norm) || bookIndex.get(raw.toLowerCase()) || null;
+    }
+
+    /** @type {Map<string, any>} */
+    let opsByPartner = new Map();
+
+    function conceptChip(conceptId, label, hex) {
+      const style = hex ? ` style="--chip-color:${esc(hex)}"` : '';
+      return `<a class="topic-chip" href="${glossaryHref(conceptId)}" data-glossary-concept="${esc(conceptId)}"${style}>${esc(label)}</a>`;
+    }
+
+    function renderTopics(catalog, ops) {
+      const topicLeaf = [
+        ['General', 'telegram.topic.general'],
+        ['Ops', 'telegram.topic.ops'],
+        ['Alerts', 'telegram.topic.alerts'],
+        ['Liquidity/Outs', 'telegram.topic.liquidity'],
+        ['Accounting', 'telegram.topic.accounting'],
+      ];
+      const colors = ops?.colors || {};
+      const packageColors = catalog?.colors?.packageTopics || {};
+      $('topic-chips').innerHTML = topicLeaf
+        .map(([title, conceptId]) => {
+          const mapKey = String(title).toLowerCase();
+          const hex = colors[conceptId]?.hex || packageColors[mapKey]?.hex || '';
+          return `<li>${conceptChip(conceptId, title, hex)}</li>`;
+        })
+        .join('');
+    }
+
+    function renderTaxonomyChips(ops) {
+      const ids = [
+        'partner.phase.operator_ready',
+        'book.type.legal',
+        'book.type.offshore',
+        'deposit.method.venmo',
+        'deposit.method.credit',
+        'out.status.ready',
+        'out.status.deferred',
+        'accounting.deposit',
+        'accounting.free_roll',
+      ];
+      const colors = ops?.colors || {};
+      $('taxonomy-chips').innerHTML = ids
+        .map((id) => {
+          const wire = colors[id] || {};
+          const label = String(id).split('.').slice(-1)[0].replace(/_/g, ' ');
+          return `<li>${conceptChip(id, label, wire.hex)}</li>`;
+        })
+        .join('');
+    }
+
+    function renderStats(handshake, seat, ops) {
+      const partners = ops?.summary?.partners ?? handshake?.partners ?? (handshake?.rows?.length || 0);
+      const ready = handshake?.operatorReady ?? 0;
+      const desks = seat?.desks ?? (seat?.rows?.length || 0);
+      const incomplete = ops?.summary?.incompleteOuts ?? seat?.incompleteOuts ?? 0;
+      const inviteGaps = handshake?.inviteGaps ?? 0;
+      const cells = [
+        ['Partners', partners, ''],
+        ['Operator ready', ready, ready === partners && partners > 0 ? 'ok' : ''],
+        ['Seat desks', desks, ''],
+        ['Incomplete outs', incomplete, incomplete > 0 ? 'warn' : 'ok'],
+        ['Invite gaps', inviteGaps, inviteGaps > 0 ? 'warn' : 'ok'],
+      ];
+      $('partners-stats').innerHTML = cells
+        .map(
+          ([k, v, tone]) =>
+            `<div class="partners-stat ${tone}"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div></div>`
+        )
+        .join('');
+    }
+
+    function phaseChip(code) {
+      const p = opsByPartner.get(String(code || '').toUpperCase());
+      if (!p) return '—';
+      return conceptChip(p.phaseConceptId, p.phase, p.phaseColor?.hex);
+    }
+
+    function renderPartners(handshake) {
+      const rows = Array.isArray(handshake?.rows) ? handshake.rows : [];
+      $('partners-tbody').innerHTML = rows.length
+        ? rows
+            .map((row) => {
+              const invite = row.inviteLink
+                ? `<a href="${esc(row.inviteLink)}" target="_blank" rel="noopener">invite</a>`
+                : '<span class="tone-warn">none</span>';
+              const verify = `${row.verifyPassed ?? '—'}/${row.verifyTotal ?? '—'}`;
+              const ops = opsByPartner.get(String(row.partnerCode || '').toUpperCase());
+              const tax = ops
+                ? `${ops.outs?.length || 0} outs · ${ops.phase}`
+                : '—';
+              return `<tr>
+                <td><code>${esc(row.partnerCode)}</code></td>
+                <td>${phaseChip(row.partnerCode)}</td>
+                <td>${esc(tax)}</td>
+                <td><code>${esc(row.membershipCell || '—')}</code></td>
+                <td><code>${esc(row.callSign || '—')}</code></td>
+                <td>${esc(row.dmSeatStatus || '—')}</td>
+                <td class="${toneClass(row.handshakeOk)}">${row.handshakeOk ? 'ok' : 'fail'} · ${esc(verify)}</td>
+                <td>${invite}</td>
+                <td>${esc((row.nextSteps && row.nextSteps[0]) || '—')}</td>
+              </tr>`;
+            })
+            .join('')
+        : '<tr><td colspan="9">No partners in telegram-handshake bake</td></tr>';
+    }
+
+    function deskByPartner(seat) {
+      const map = new Map();
+      for (const row of seat?.rows || []) {
+        const code = String(row.partnerCode || '').toUpperCase();
+        if (!code) continue;
+        if (!map.has(code)) map.set(code, row);
+      }
+      return map;
+    }
+
+    function renderAccounting(handshake, seat) {
+      const desks = deskByPartner(seat);
+      const partners = Array.isArray(handshake?.rows) ? handshake.rows : [];
+      const codes = partners.length
+        ? partners.map((p) => p.partnerCode)
+        : [...desks.keys()];
+      $('accounting-tbody').innerHTML = codes.length
+        ? codes
+            .map((code) => {
+              const desk = desks.get(String(code).toUpperCase());
+              const done = (desk?.checklist || []).filter((c) => c.done).length;
+              const total = (desk?.checklist || []).length;
+              const checklist = total ? `${done}/${total}` : '—';
+              return `<tr>
+                <td><code>${esc(code)}</code></td>
+                <td><code>${esc(desk?.callSign || '—')}</code></td>
+                <td class="${fundTone(desk?.fundStatus)}">${esc(desk?.fundStatus || 'no intake')}</td>
+                <td class="${desk?.hasTelegramDesk ? 'tone-ok' : 'tone-warn'}">${desk?.hasTelegramDesk ? 'pinned' : 'missing'}</td>
+                <td class="${(desk?.incompleteOuts || 0) > 0 ? 'tone-warn' : ''}">${esc(desk?.incompleteOuts ?? '—')}</td>
+                <td>${esc(checklist)}</td>
+                <td><code>telegram:package-group:accounting -- ${esc(code)}</code></td>
+              </tr>`;
+            })
+            .join('')
+        : '<tr><td colspan="7">No accounting rows</td></tr>';
+    }
+
+    function bookChip(label, opsOut) {
+      if (opsOut?.book) {
+        const hex = opsOut.book.scrapeHex || opsOut.book.color?.hex || '';
+        const conceptId = opsOut.book.typeConceptId || 'scrape.book';
+        return conceptChip(conceptId, opsOut.book.name || label || '—', hex).replace(
+          'topic-chip',
+          'book-chip'
+        );
+      }
+      const book = resolveBook(label);
+      const conceptId = book?.conceptId || 'scrape.book';
+      const hex = book?.hex || '';
+      const style = hex ? ` style="--chip-color:${esc(hex)}"` : '';
+      return `<a class="book-chip" href="${glossaryHref(conceptId)}" data-glossary-concept="${esc(conceptId)}"${style}>${esc(label || '—')}</a>`;
+    }
+
+    function railChip(label, opsOut) {
+      if (opsOut?.funding) {
+        return conceptChip(
+          opsOut.funding.methodConceptId,
+          label || opsOut.funding.method,
+          opsOut.funding.color?.hex
+        ).replace('topic-chip', 'book-chip');
+      }
+      return esc(label || '—');
+    }
+
+    function statusChip(label, opsOut) {
+      if (opsOut?.statusConceptId) {
+        return conceptChip(opsOut.statusConceptId, opsOut.status || label, opsOut.statusColor?.hex);
+      }
+      return `<span class="${fundTone(label)}">${esc(label)}</span>`;
+    }
+
+    function opsOutFor(partnerCode, outNum) {
+      const p = opsByPartner.get(String(partnerCode || '').toUpperCase());
+      if (!p) return null;
+      const id = `out-${String(partnerCode).toUpperCase()}-${outNum}`;
+      return (p.outs || []).find((o) => o.id === id) || null;
+    }
+
+    function renderDeposits(seat) {
+      const outs = [];
+      for (const desk of seat?.rows || []) {
+        for (const out of desk.outs || []) {
+          outs.push({
+            partnerCode: desk.partnerCode,
+            callSign: desk.callSign,
+            ...out,
+          });
+        }
+      }
+      $('deposits-tbody').innerHTML = outs.length
+        ? outs
+            .map((o) => {
+              const opsOut = opsOutFor(o.partnerCode, o.outNum);
+              return `<tr>
+                <td><code>${esc(o.partnerCode)}</code></td>
+                <td><code>${esc(o.callSign)}</code></td>
+                <td>${esc(o.outNum)}</td>
+                <td>${bookChip(o.book, opsOut)}</td>
+                <td><code>${esc(o.username)}</code></td>
+                <td>${railChip(o.depositMethod, opsOut)}</td>
+                <td><code>${esc(o.sendTo)}</code></td>
+                <td>${esc(o.maxBet)}</td>
+                <td><a href="${glossaryHref('accounting.free_roll')}" data-glossary-concept="accounting.free_roll">${esc(o.freeplayPct)}</a></td>
+                <td>${statusChip(o.status, opsOut)}</td>
+              </tr>`;
+            })
+            .join('')
+        : '<tr><td colspan="10">No deposit outs in seat-capital-desk bake</td></tr>';
+    }
+
+    async function load() {
+      try {
+        const [handshake, seat, catalog, taxonomy, ops] = await Promise.all([
+          loadJson('/registry/telegram-handshake.json'),
+          loadJson('/registry/seat-capital-desk.json'),
+          loadJson('/registry/telegram-handshake-catalog.json'),
+          loadJson('/registry/scrape-wire-taxonomy.json'),
+          loadJson('/registry/partners-ops.json'),
+        ]);
+        bookIndex = indexBooks(taxonomy);
+        opsByPartner = new Map(
+          (ops.partners || []).map((p) => [String(p.code || '').toUpperCase(), p])
+        );
+        $('partners-meta').innerHTML =
+          `Handshake <time>${esc(handshake.generatedAt || '—')}</time> · ` +
+          `Seat desk <time>${esc(seat.generatedAt || '—')}</time> · ` +
+          `Ops <time>${esc(ops.generatedAt || '—')}</time> · ` +
+          `<a href="/registry/telegram-handshake.json"><code>telegram-handshake.json</code></a> · ` +
+          `<a href="/registry/seat-capital-desk.json"><code>seat-capital-desk.json</code></a> · ` +
+          `<a href="/registry/partners-ops.json"><code>partners-ops.json</code></a> · ` +
+          `<a href="/portal/glossary/#glossary:telegram.wire"><code>telegram glossary</code></a>`;
+        renderTopics(catalog, ops);
+        renderTaxonomyChips(ops);
+        renderStats(handshake, seat, ops);
+        renderPartners(handshake);
+        renderAccounting(handshake, seat);
+        renderDeposits(seat);
+        $('loading').classList.add('hidden');
+        $('dashboard').classList.remove('hidden');
+        bootGlossaryUx(document);
+      } catch (err) {
+        $('loading').classList.add('hidden');
+        const banner = $('error-banner');
+        banner.classList.remove('hidden');
+        banner.textContent = err instanceof Error ? err.message : String(err);
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>

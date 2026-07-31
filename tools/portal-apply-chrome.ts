@@ -52,6 +52,7 @@ type PageKey =
   | 'toc'
   | 'compliance'
   | 'limits'
+  | 'partners'
   | 'partner-history'
   | 'doctor'
   | 'install-hygiene'
@@ -86,6 +87,12 @@ const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: st
     brandBadge: 'ops',
   },
   { file: 'limits/index.html', active: 'limits', pageLabel: 'Limits', brandBadge: 'ops' },
+  {
+    file: 'partners/index.html',
+    active: 'partners',
+    pageLabel: 'Partners',
+    brandBadge: 'ops',
+  },
   {
     file: 'partner-history/index.html',
     active: 'partner-history',

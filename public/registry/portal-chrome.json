@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-07-31T11:19:40.339Z",
+  "generated": "2026-07-31T12:32:07.368Z",
   "path": "/registry/portal-chrome.json",
   "summary": {
     "priorityNav": 6,
-    "overflowNav": 21,
-    "footerLinks": 19,
+    "overflowNav": 22,
+    "footerLinks": 20,
     "components": 13,
     "scripts": 5
   },
@@ -217,6 +217,15 @@
       "cli": "bun run ops:limits:demo"
     },
     {
+      "id": "partners",
+      "label": "Partners",
+      "href": "/portal/partners/",
+      "tier": "overflow",
+      "group": "ops",
+      "note": "package groups · telegram forums · accounting · deposits",
+      "cli": "bun run telegram:handshake:catalog"
+    },
+    {
       "id": "partner-history",
       "label": "Partner history",
       "href": "/portal/partner-history/",
@@ -264,6 +273,10 @@
     {
       "label": "TOC",
       "href": "/portal/toc/"
+    },
+    {
+      "label": "Partners",
+      "href": "/portal/partners/"
     },
     {
       "label": "Packages",

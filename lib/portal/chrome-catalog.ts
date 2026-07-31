@@ -259,6 +259,15 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     cli: 'bun run ops:limits:demo',
   },
   {
+    id: 'partners',
+    label: 'Partners',
+    href: '/portal/partners/',
+    tier: 'overflow',
+    group: 'ops',
+    note: 'package groups · telegram forums · accounting · deposits',
+    cli: 'bun run telegram:handshake:catalog',
+  },
+  {
     id: 'partner-history',
     label: 'Partner history',
     href: '/portal/partner-history/',
@@ -299,6 +308,7 @@ export const PORTAL_FOOTER_LINKS: PortalChromeCatalog['footerLinks'] = [
   { label: 'Dashboard', href: 'https://factory-wager.com', external: true },
   { label: 'Ops', href: '/portal/ops/' },
   { label: 'TOC', href: '/portal/toc/' },
+  { label: 'Partners', href: '/portal/partners/' },
   { label: 'Packages', href: '/portal/packages/' },
   { label: 'Brands', href: '/portal/brands/' },
   { label: 'Glossary', href: '/portal/glossary/' },

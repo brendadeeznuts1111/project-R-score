@@ -286,6 +286,15 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     note: 'multi-factor raises · ops-summary.limitChanges · /api/agents/v1/limits/raises',
   },
   {
+    path: '/portal/partners/',
+    name: 'Partners desk portal',
+    category: 'portal',
+    kind: 'file-static',
+    okStatuses: [200],
+    critical: true,
+    note: 'telegram-handshake · seat-capital-desk · accounting topic · deposit rails',
+  },
+  {
     path: '/portal/partner-history/',
     name: 'Partner history portal',
     category: 'portal',

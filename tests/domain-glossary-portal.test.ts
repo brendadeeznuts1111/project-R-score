@@ -25,6 +25,8 @@ import { complianceKpiGlossaryConcepts } from '../lib/operations/compliance-poli
 import { regulationPolicyGlossaryConcepts } from '../lib/operations/regulation-policy-catalog.ts';
 import { sportsBettingGlossaryConcepts } from '../lib/operations/sports-betting-glossary.ts';
 import { sportsbookOpeningBaselineGlossaryConcepts } from '../lib/operations/sportsbook-opening-baseline.ts';
+import { telegramGlossaryConcepts } from '../lib/telegram/telegram-glossary.ts';
+import { partnerOpsGlossaryConcepts } from '../lib/telegram/partner-ops-glossary.ts';
 
 describe('domain glossary portal', () => {
   test('registry projection is integral, bounded, and color-normalized', async () => {
@@ -44,6 +46,10 @@ describe('domain glossary portal', () => {
         complianceKpiAuthority: 'lib/operations/compliance-policy-kpis.ts',
         sportsBettingAuthority: 'lib/operations/sports-betting-glossary.ts',
         sportsbookOpeningBaselineAuthority: 'lib/operations/sportsbook-opening-baseline.ts',
+        telegramAuthority: 'lib/telegram/telegram-glossary.ts',
+        telegramColorKernel: 'lib/telegram/telegram-color-kernel.ts',
+        partnerOpsAuthority: 'lib/telegram/partner-ops-glossary.ts',
+        partnerOpsColorKernel: 'lib/telegram/partner-ops-color-kernel.ts',
         canonicalDump: 'Kalshi-bot/research/registry/glossary-dump.json',
         colorKernel: 'lib/theme/colors.ts',
       },
@@ -55,8 +61,13 @@ describe('domain glossary portal', () => {
         regulationPolicyGlossaryConcepts().length +
         complianceKpiGlossaryConcepts().length +
         sportsBettingGlossaryConcepts().length +
-        sportsbookOpeningBaselineGlossaryConcepts().length
+        sportsbookOpeningBaselineGlossaryConcepts().length +
+        telegramGlossaryConcepts().length +
+        partnerOpsGlossaryConcepts().length
     );
+    expect(payload.concepts.some(c => c.id === 'telegram.wire')).toBe(true);
+    expect(payload.concepts.some(c => c.id === 'accounting.free_roll')).toBe(true);
+    expect(payload.concepts.some(c => c.id === 'book.type.legal')).toBe(true);
     const conceptIds = new Set(payload.concepts.map(concept => concept.id));
     expect(
       payload.concepts.flatMap(concept =>
@@ -191,6 +202,13 @@ describe('domain glossary portal', () => {
     expect(
       PORTAL_GLOSSARY_SURFACES.find(surface => surface.path === '/portal/limits/')?.concept
     ).toBe(LIMIT_SURFACE_CONCEPTS.page);
+    expect(
+      PORTAL_GLOSSARY_SURFACES.find(surface => surface.path === '/portal/partners/')?.sections
+    ).toEqual({
+      telegram: 'section.partnersTelegram',
+      accounting: 'section.partnersAccounting',
+      deposits: 'section.partnersDeposits',
+    });
     expect(PORTAL_GLOSSARY_SURFACES).toHaveLength(PORTAL_PAGE_CONCEPT_DEFINITIONS.length);
     expect(new Set(PORTAL_GLOSSARY_SURFACES.map(surface => surface.path))).toEqual(
       new Set(PORTAL_PAGE_CONCEPT_DEFINITIONS.map(page => page.path))

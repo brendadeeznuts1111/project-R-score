@@ -1,0 +1,72 @@
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+import { describe, expect, test } from 'bun:test';
+import { PORTAL_HTML_ROUTES, PORTAL_MARKDOWN_SLUGS } from '../lib/http/portal-route-manifest.ts';
+import { PORTAL_OVERFLOW_NAV } from '../lib/portal/chrome-catalog.ts';
+
+const BOARD = 'public/portal/partners/index.html';
+
+describe('partners portal board', () => {
+  test('is registered in chrome, routes, and markdown slugs', () => {
+    expect(PORTAL_HTML_ROUTES).toContain('/portal/partners/');
+    expect(PORTAL_MARKDOWN_SLUGS).toContain('partners');
+    const nav = PORTAL_OVERFLOW_NAV.find(n => n.id === 'partners');
+    expect(nav?.href).toBe('/portal/partners/');
+    expect(nav?.cli).toContain('telegram:handshake:catalog');
+  });
+
+  test('board loads handshake, seat desk, and accounting/deposit sections', async () => {
+    const html = await Bun.file(BOARD).text();
+    expect(html).toContain('id="section:telegram"');
+    expect(html).toContain('id="section:accounting"');
+    expect(html).toContain('id="section:deposits"');
+    expect(html).toContain('/registry/telegram-handshake.json');
+    expect(html).toContain('/registry/seat-capital-desk.json');
+    expect(html).toContain('/registry/telegram-handshake-catalog.json');
+    expect(html).toContain('/registry/scrape-wire-taxonomy.json');
+    expect(html).toContain('/registry/partners-ops.json');
+    expect(html).toContain('depositMethod');
+    expect(html).toContain('telegram:package-group:accounting');
+    expect(html).toContain('Betting deposits');
+    expect(html).toContain('Accounting deals');
+  });
+
+  test('wires telegram glossary concepts and color kernel consumers', async () => {
+    const html = await Bun.file(BOARD).text();
+    expect(html).toContain('data-glossary-concept="page.partners"');
+    expect(html).toContain('data-glossary-concept="section.partnersTelegram"');
+    expect(html).toContain('data-glossary-concept="section.partnersAccounting"');
+    expect(html).toContain('data-glossary-concept="section.partnersDeposits"');
+    expect(html).toContain('data-glossary-concept="telegram.wire"');
+    expect(html).toContain('data-glossary-concept="telegram.handshake"');
+    expect(html).toContain('data-glossary-concept="telegram.deposit_rail"');
+    expect(html).toContain('data-glossary-concept="scrape.book"');
+    expect(html).toContain('telegram.topic.liquidity');
+    expect(html).toContain('accounting.free_roll');
+    expect(html).toContain('bootGlossaryUx');
+    expect(html).toContain('--chip-color');
+    expect(html).toContain('partners-ops.json');
+    expect(html).toContain('bookRegistry');
+  });
+
+  test('baked registry artifacts exist for the board consumers', async () => {
+    expect(await Bun.file('public/registry/telegram-handshake.json').exists()).toBe(true);
+    expect(await Bun.file('public/registry/seat-capital-desk.json').exists()).toBe(true);
+    expect(await Bun.file('public/registry/telegram-handshake-catalog.json').exists()).toBe(true);
+    expect(await Bun.file('public/registry/partners-ops.json').exists()).toBe(true);
+    const handshake = await Bun.file('public/registry/telegram-handshake.json').json();
+    const seat = await Bun.file('public/registry/seat-capital-desk.json').json();
+    const catalog = await Bun.file('public/registry/telegram-handshake-catalog.json').json();
+    const ops = await Bun.file('public/registry/partners-ops.json').json();
+    expect(Array.isArray(handshake.rows)).toBe(true);
+    expect(handshake.rows.length).toBeGreaterThan(0);
+    expect(Array.isArray(seat.rows)).toBe(true);
+    expect(seat.rows.some((r: { outs?: unknown[] }) => Array.isArray(r.outs) && r.outs.length > 0)).toBe(
+      true
+    );
+    expect(catalog.colors?.packageTopics?.accounting?.hex).toMatch(/^#/);
+    expect(catalog.glossary?.conceptIds).toContain('telegram.wire');
+    expect(ops.schema).toBe('factorywager.partners-ops.v2');
+    expect(ops.validation.ok).toBe(true);
+  });
+});
