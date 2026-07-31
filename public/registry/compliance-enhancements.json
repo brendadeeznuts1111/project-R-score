@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-28T16:41:38.376Z",
-  "consoleDepth": 4,
+  "generatedAt": "2026-07-31T11:04:28.214Z",
+  "consoleDepth": 6,
   "rows": [
     {
       "feature": "health.states",
@@ -127,5 +127,5 @@
   ],
   "passed": 8,
   "total": 8,
-  "signature": "c352712b355435ddbdeb4c8025dada318f3a893feb03b9fa455aab01db8d368f"
+  "signature": "ff2899a6365fc7a5dc441e6385d918dd7304ebe239bf01ea8bb5934aa05e7a40"
 }
