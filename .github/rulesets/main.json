@@ -22,19 +22,6 @@
         "required_approving_review_count": 0,
         "required_review_thread_resolution": true
       }
-    },
-    {
-      "type": "required_status_checks",
-      "parameters": {
-        "do_not_enforce_on_create": true,
-        "required_status_checks": [
-          { "context": "Harness (ratchets · lint · brands · test:changed)" },
-          { "context": "Type Check" },
-          { "context": "security-audit" },
-          { "context": "portal + registry isolation" }
-        ],
-        "strict_required_status_checks_policy": true
-      }
     }
   ]
 }

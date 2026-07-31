@@ -6,16 +6,18 @@ authorization selector. Proton Pass is the credential source for automation.
 
 ## Managed surfaces
 
-Live status (verified 2026-07-28 — see `.cloudflare-access.yml` header):
+Live status (verified 2026-07-31 — see `.cloudflare-access.yml` header):
 
 - `ledger.factory-wager.com` — whole hostname behind Access. **APPLIED** (302 → Access login).
 - ~~`reasonix.factory-wager.com` — whole hostname behind Access.~~ **DECOMMISSIONED 2026-07-28** (never provisioned; app removed from policy).
-- `score.factory-wager.com/portal` — portal path behind Access. **APPLIED** 2026-07-28 17:18 (302 → Access login; also `project-r-score.pages.dev/portal`).
+- `score.factory-wager.com/portal` — portal path behind Access. **APPLIED** (302 → Access login).
+- `project-r-score.pages.dev/portal` — production Pages portal behind Access. **APPLIED** (302 → Access login).
+- `*.project-r-score.pages.dev` — branch and hash preview hostnames. **TARGET**; sampled previews returned public 200 on 2026-07-31.
 - `score.factory-wager.com/registry` and public proof/API read routes stay
   outside this app so package and verification consumers remain non-interactive.
-- The Pages production `pages.dev` hostname and preview deployments should use the
-  Pages Access control in addition to the custom-domain application — **not yet
-  enforced**. A normal custom-domain Access app does not cover those hostnames.
+- Pages preview deployments are public by default. The wildcard app in policy is
+  the source-controlled protection target; the Pages dashboard preview-Access
+  switch is an equivalent fallback.
 
 The policy source is
 [`.cloudflare-access.yml`](../../../.cloudflare-access.yml). It is deliberately
@@ -30,8 +32,10 @@ deleting them.
    Omitting `account_id` selects the current account and keeps identifiers out
    of source.
 3. Email-domain one-time PIN is not the SSO contract.
-4. Sessions are capped at eight hours.
-5. App Launcher visibility is configured after the three application policies
+4. Interactive sessions are capped at four hours.
+5. Access authorization cookies remain `HttpOnly`. Do not enable a binding
+   cookie or change `SameSite` without browser-flow verification.
+6. App Launcher visibility is configured after the application policies
    pass authorized and unauthorized tests.
 
 Current Cloudflare references:
@@ -39,6 +43,8 @@ Current Cloudflare references:
 - [Cloudflare as identity provider](https://developers.cloudflare.com/cloudflare-one/integrations/identity-providers/cloudflare/)
 - [Access policies](https://developers.cloudflare.com/cloudflare-one/access-controls/policies/)
 - [Application paths](https://developers.cloudflare.com/cloudflare-one/access-controls/policies/app-paths/)
+- [Authorization cookies](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/authorization-cookie/)
+- [Preview deployment Access](https://developers.cloudflare.com/pages/configuration/preview-deployments/)
 - [App Launcher](https://developers.cloudflare.com/cloudflare-one/access-controls/access-settings/app-launcher/)
 
 ## Project lanes
@@ -76,14 +82,20 @@ evidence, then portal evidence.
 
 ## Token and vault lane
 
-The existing general Cloudflare token and DNS token do not have Access scope.
-Before a live plan:
+The general Cloudflare Pages token and DNS token do not have Access scope and
+are never used as a fallback. The dedicated vault item exists at
+`pass://factorywager/Cloudflare Access API Token/password`, but its current
+value failed Cloudflare authentication on 2026-07-31. Before a live plan:
 
-1. Mint a dedicated token with the current least-privilege Access read/write
-   permissions required for identity providers, apps, and policies.
-2. Store it as `Cloudflare Access API Token` in the `factorywager` Proton vault.
-3. Add a template reference only after `pass-cli` proves the item resolves.
-4. Run the plan with that injected token; do not copy it into the Kimi keychain
+1. Mint a replacement restricted to the FactoryWager account with Access Apps
+   and Policies Read/Edit plus Access Service Tokens Read. Do not add Pages
+   Edit, DNS Edit, or Service Tokens Edit.
+2. Replace the password field of `Cloudflare Access API Token` in Proton.
+3. Inject and run `bun run cloudflare:access:token:validate`; the read-only
+   probe checks app/service-token read health and expiry without printing the
+   credential. It does **not** prove Apps and Policies Edit.
+4. Run the plan with that injected token to prove the required Edit capability;
+   do not copy it into the Kimi keychain
    or a shell command.
 
 Token creation is a human Cloudflare-dashboard action. Source changes must not
@@ -103,13 +115,26 @@ bun tools/portal-cli.ts doctor --env ci --group infra
 bun tools/portal-cli.ts doctor --group infra --verbose
 ```
 
-### Live status (re-probed 2026-07-28)
+For the full Pages/Access boundary, use the general **Pages Read** token only to
+discover the newest preview, then probe all surfaces without credentials:
+
+```bash
+bun --env-file ~/.reasonix/.env run cloudflare:access:edge:validate
+```
+
+This command requires Ledger, both production portal hostnames, and the newest
+Pages preview to challenge with Access. It simultaneously requires the public
+registry route to remain JSON and carry the shared security-header contract.
+It never uses `CLOUDFLARE_ACCESS_API_TOKEN` and cannot mutate policy.
+
+### Live status (re-probed 2026-07-31)
 
 | Surface | Edge | Doctor |
 |---------|------|--------|
 | `ledger.factory-wager.com` | **Access 302** | `infra-ledger-access` PASS |
-| `score.factory-wager.com/portal` | **public 200** | `infra-portal-access` FAIL warn |
-| `project-r-score.pages.dev/portal` | **public 200** | (same) |
+| `score.factory-wager.com/portal` | **Access 302** | `infra-portal-access` PASS |
+| `project-r-score.pages.dev/portal` | **Access 302** | (same) |
+| sampled branch/hash preview hosts | **public 200** | not covered by production-path doctor |
 | `terminal.factory-wager.com` | **NXDOMAIN** (CNAME deleted 2026-07-28) | `infra-terminal-host` — host gone; see [tunnel-inventory](tunnel-inventory.md) · [brand-alignment](../../brand-alignment.md) |
 | `reasonix.factory-wager.com` | **NXDOMAIN** | `infra-reasonix-dns` info (expected) |
 
@@ -120,18 +145,20 @@ bun tools/portal-cli.ts doctor --group infra --offline --layout plain
 
 ### Apply blocker (Access API)
 
-`kimi-cloudflare-access plan` currently fails with **Cloudflare API 403** —
-`CLOUDFLARE_API_TOKEN` has no Access/Zero Trust scope; DNS token is Zone.DNS-only.
+The dedicated Proton item currently fails read-only probes with **Cloudflare API
+400 Authentication failed**. The general Pages token fails with 403 because it
+has no Access scope. This is a credential-value blocker, not permission to
+reuse or widen either existing token.
 
 **Human steps before apply:**
 
-1. Cloudflare dashboard → create API token with Access:Apps & Policies Edit (account).
-2. Proton Pass `factorywager` vault → item `Cloudflare Access API Token`.
-3. `bun run proton:inject:factorywager:reasonix` (or wire `CLOUDFLARE_ACCESS_API_TOKEN`).
-4. `bun run cloudflare:access:verify` then `kimi-cloudflare-access plan` (creates/updates only).
-5. Review plan → `kimi-cloudflare-access apply` only with rollback snapshot.
-6. Re-probe: `portal-cli doctor --group infra` → portal warn must go green.
-7. Pages: enable Access on production + preview in Pages project settings (custom-domain app alone does **not** cover `pages.dev`).
+1. Cloudflare dashboard → replace the token with the least-privilege permissions above.
+2. Proton Pass `factorywager` vault → update item `Cloudflare Access API Token`.
+3. `bun run proton:inject:factorywager:reasonix` (or use `portal-cli secret run`).
+4. Run `cloudflare:access:token:validate` and `cloudflare:access:verify`.
+5. Run `kimi-cloudflare-access plan` (creates/updates only).
+6. Review plan → apply only with a rollback snapshot.
+7. Confirm a preview URL returns Access 302, then re-run the infra doctor.
 
 Do **not** run apply until token + IdP + Pages Access + rollback exist.
 
@@ -139,8 +166,10 @@ Do **not** run apply until token + IdP + Pages Access + rollback exist.
 
 ```bash
 bun run cloudflare:access:verify
+bun run cloudflare:access:token:validate # read health; write scope remains unverified
+bun run cloudflare:access:edge:validate
 bun run proton:check
-kimi-cloudflare-access plan   # requires Access-scoped token
+kimi-cloudflare-access plan   # proves required Apps and Policies Edit scope
 ```
 
 After apply, verify:
@@ -151,3 +180,18 @@ After apply, verify:
 - public registry read routes remain reachable without interactive login;
 - Ledger protected; Reasonix only when DNS exists;
 - Pages production and preview enforce Pages Access.
+
+## Response-header contract
+
+Static assets use [`public/_headers`](../../../public/_headers). Pages Functions
+and static responses passing through the edge use root
+[`functions/_middleware.ts`](../../../functions/_middleware.ts), backed by
+[`lib/http/cloudflare-security-headers.ts`](../../../lib/http/cloudflare-security-headers.ts).
+Tests enforce parity while preserving route-specific CORS and cache headers.
+`bun run verify:pages-edge` checks the deployed contract on one static asset and
+one Pages Function response so `_headers`/middleware drift is visible after deploy.
+
+The contract sets a frame/object/base-restricted CSP, `DENY` framing,
+`nosniff`, no-referrer, a restrictive permissions policy, COOP, and one-year
+HSTS. HSTS omits `includeSubDomains` until every `factory-wager.com` hostname
+has an HTTPS inventory and owner.

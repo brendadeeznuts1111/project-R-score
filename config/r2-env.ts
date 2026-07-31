@@ -243,6 +243,18 @@ export const CLOUDFLARE_TOKEN_PERMISSIONS = {
   ],
 } as const;
 
+/** Dedicated Zero Trust token; intentionally separate from Pages and DNS credentials. */
+export const CLOUDFLARE_ACCESS_TOKEN_PERMISSIONS = {
+  accountId: CLOUDFLARE_DEFAULTS.accountId,
+  required: [
+    'Access: Apps and Policies Read',
+    'Access: Apps and Policies Edit',
+    'Access: Service Tokens Read',
+  ],
+  optional: ['Access: Audit Logs Read'],
+  forbidden: ['Zone:DNS:Edit', 'Cloudflare Pages:Edit', 'Access: Service Tokens Edit'],
+} as const;
+
 /** Desired Git-integration build_config (matches live project-r-score). */
 export function cloudflarePagesDesiredBuild() {
   return {

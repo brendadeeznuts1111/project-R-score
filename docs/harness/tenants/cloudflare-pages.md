@@ -143,6 +143,18 @@ Use Cloudflare MCP `execute` in Cursor to inspect failed builds (`deployments/{i
 
 Discovery manifest (Layer 5): `/.well-known/mcp.json` on Pages (see [`public/.well-known/mcp.json`](../../../public/.well-known/mcp.json)). Regenerate: `bun run sync:well-known-mcp`. Proof artifact: `bun run verify:cloudflare-token:save` → [`public/registry/cloudflare-token-scope-proof.json`](../../../public/registry/cloudflare-token-scope-proof.json).
 
+`verify:pages-edge` also checks the shared browser-security header contract on a
+static asset and a Pages Function response. `_headers` does not apply to
+Functions, so both checks are required.
+
+### Local CI and Pages deploys
+
+GitHub Actions is disabled repository-wide; `bun run bun:ci` is the merge proof.
+Cloudflare Pages remains an external Git integration and continues to build
+commits without GitHub-hosted runners. Do not use `[CI Skip]` or `[Skip CI]`
+when a Pages preview or production deployment is required because Cloudflare
+reserves those prefixes as deployment skips.
+
 Publish surface is `public/` (includes `index.html` + registry/robots/sitemaps + portal) plus root `functions/` (Pages Functions). Apex 404 means `index.html` is missing from that dir. Pack/release/changelog R2 URLs resolve via `r2BucketUrlFromEnv()` in `config/r2-env.ts`. Registry apps import root `lib/` / `config/` at **7** `../` levels from `apps/*/src` and `packages/*/src`.
 
 ### Ops portal + prediction (static)
@@ -159,7 +171,7 @@ Publish surface is `public/` (includes `index.html` + registry/robots/sitemaps +
 
 TOC tenant runbook: [`toc-ops.md`](toc-ops.md). **MCP does not serve TOC desk data** — use MCP for Pages deploy/logs; use `/portal/toc` or `ct` for partner ops.
 
-**Do not enable Pages “Single-page application” rewrites** (`/* → /index.html 200`). That serves the landing shell for every path (including `.json`) and hides the portal. Prefer real files + `public/_redirects` (trailing-slash only) + `public/_headers` (JSON content-type).
+**Do not enable Pages “Single-page application” rewrites** (`/* → /index.html 200`). That serves the landing shell for every path (including `.json`) and hides the portal. Prefer real files + `public/_redirects` (trailing-slash only) + `public/_headers` (JSON content-type and static security headers). Root `functions/_middleware.ts` applies the same browser-security contract to Pages Functions while preserving route CORS and cache headers.
 
 Before deploy (or in CI):
 
@@ -174,11 +186,13 @@ Local ops station chart PNG (optional): `bun run ops:prediction report --webview
 
 Root `functions/` is bundled by Wrangler for Workers — **no `bun:sqlite`**, **no `import 'bun'`**, **no `lib/verification/*` via `config/r2-env.ts`**. Guards: `tests/functions-edge-safety.test.ts` · `tests/functions-import-graph.test.ts` (static allowlist in `lib/verification/cloudflare-pages-preflight.ts`).
 
-**Allowed transitive imports (2026-07):** `lib/http/verification-scripts.ts` → `sha256.ts` + `repo-docs.ts` → `config/r2-env.ts`; `lib/http/portal-env-edge.ts`; `lib/factory/http-keys.ts`. Full inventory:
+**Allowed transitive imports (2026-07):** `lib/http/verification-scripts.ts` → `sha256.ts` + `repo-docs.ts` → `config/r2-env.ts`; `lib/http/portal-env-edge.ts`; `lib/factory/http-keys.ts`. Key inventory:
 
 | Path | Role |
 |------|------|
+| `functions/_middleware.ts` | Applies the shared browser-security headers to Pages Function responses |
 | `functions/api/operations/summary.ts` | Serves `public/registry/ops-summary.json` (C4/C5 portal data) |
+| `functions/api/agents/v1/limits/raises.ts` | Serves limit raises and CSV/JSONL betlog exports |
 | `functions/api/registry/[[path]].ts` | R2 registry proxy (`REGISTRY_BUCKET` binding) |
 | `functions/api/telegram/webhook/[[tenant]].ts` | Telegram edge enqueue → R2 `telegram-updates` (needs `TELEGRAM_WEBHOOK_SECRET`) |
 | `functions/api/registry/health.ts` | Registry health probe |
@@ -186,6 +200,8 @@ Root `functions/` is bundled by Wrangler for Workers — **no `bun:sqlite`**, **
 | `functions/health/index.ts` | Same snapshot as JSON at `/health` |
 | `functions/health/pre.ts` | Plain-text diagnostics at `/health/pre` (curl / Accept: text/plain) |
 | `lib/http/portal-health-edge.ts` | Shared edge collect + plain renderer + ETag |
+| `lib/http/cloudflare-security-headers.ts` | Shared static/Function browser-security header contract |
+| `lib/operations/limit-betlog-export.ts` | Edge-safe betlog export formatter used by the raises route |
 | `functions/api/env.ts` | Env-check table (redacted) |
 | `functions/api/monitoring.ts` | Monitoring snapshot |
 | `functions/api/content-type.ts` | Content-Type matrix |
@@ -197,7 +213,13 @@ Root `functions/` is bundled by Wrangler for Workers — **no `bun:sqlite`**, **
 | `functions/api/sqlite/version.ts` | SQLite version (edge-safe) |
 | `functions-bun-only/` | Local Bun handlers (auth/DOD/catalog) — **not** deployed to Pages |
 
-Static routing: [`public/_redirects`](../../../public/_redirects) (trailing-slash 301 only) · [`public/_headers`](../../../public/_headers) (JSON content-type, cache). **No SPA rewrite.**
+Static routing: [`public/_redirects`](../../../public/_redirects) (trailing-slash 301 only) · [`public/_headers`](../../../public/_headers) (JSON content-type, cache, security headers) · [`functions/_middleware.ts`](../../../functions/_middleware.ts) (edge parity). **No SPA rewrite.**
+
+Preview deployments are public by default. Protect `*.project-r-score.pages.dev`
+through the Access policy, then confirm a real branch/hash preview returns an
+Access 302 before treating previews as protected. `bun run
+cloudflare:access:edge:validate` discovers and checks the newest preview. See
+[`cloudflare-access.md`](cloudflare-access.md).
 
 Routing map: [`docs/platform-routing.md`](../../platform-routing.md).
 

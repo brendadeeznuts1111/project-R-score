@@ -65,6 +65,7 @@ const REQUIRED_DOMAINS: readonly AccessDomainId[] = [
   asAccessDomainId('score.factory-wager.com/portal'),
   asAccessDomainId('project-r-score.pages.dev/portal'),
 ];
+const REQUIRED_DOMAIN_PATTERNS = ['*.project-r-score.pages.dev'] as const; // brand-ok — Cloudflare wildcard Access domain pattern, not a concrete AccessDomainId
 
 function issue(
   issues: CloudflareAccessPolicyIssue[],
@@ -154,6 +155,7 @@ export function verifyCloudflareAccessPolicyText(text: string): CloudflareAccess
         domain.startsWith('score.factory-wager.com/') ||
         domain === 'factory-wager.com' ||
         domain.startsWith('project-r-score.pages.dev/') ||
+        domain === '*.project-r-score.pages.dev' ||
         domain === 'project-r-score.pages.dev';
       if (!allowed) {
         issue(
@@ -170,12 +172,12 @@ export function verifyCloudflareAccessPolicyText(text: string): CloudflareAccess
     }
 
     const hours = sessionHours(app.session_duration);
-    if (hours === null || hours > 8) {
+    if (hours === null || hours > 4) {
       issue(
         issues,
         'session-duration',
         `${path}.session_duration`,
-        'session duration must be an hour value no greater than 8h'
+        'session duration must be an hour value no greater than 4h'
       );
     }
 
@@ -232,7 +234,7 @@ export function verifyCloudflareAccessPolicyText(text: string): CloudflareAccess
     });
   });
 
-  for (const required of REQUIRED_DOMAINS) {
+  for (const required of [...REQUIRED_DOMAINS, ...REQUIRED_DOMAIN_PATTERNS]) {
     if (!domains.has(String(required))) {
       issue(
         issues,
