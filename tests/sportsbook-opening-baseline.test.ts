@@ -103,7 +103,7 @@ describe('sportsbook opening baseline', () => {
         rows: 600,
         regulatoryRows: 4,
         policyRows: 320,
-        scrapedRows: 96,
+        scrapedRows: 160,
       },
     });
     expect(artifact.sources.tiers[1].count).toBe(4);
@@ -111,12 +111,12 @@ describe('sportsbook opening baseline', () => {
     expect(artifact.sources.tiers[2].count).toBe(320);
     expect(artifact.sources.tiers[2].wired).toBe(true);
     expect(artifact.sources.tiers[2].decisionEligibleCount).toBe(0);
-    expect(artifact.sources.tiers[4].count).toBe(96);
+    expect(artifact.sources.tiers[4].count).toBe(160);
     expect(artifact.sources.tiers[4].wired).toBe(true);
     expect(artifact.sources.tiers[5].count).toBe(600);
     expect(artifact.regulatory).toHaveLength(4);
     expect(artifact.policies).toHaveLength(320);
-    expect(artifact.scraped).toHaveLength(96);
+    expect(artifact.scraped).toHaveLength(160);
     expect(artifact.books[0]).toMatchObject({ id: 'draftkings', rank: 1 });
     expect(artifact.summary.rowsWithCompliance).toBe(0);
     expect(artifact.summary.rowsWithPublishedPolicy).toBe(0);

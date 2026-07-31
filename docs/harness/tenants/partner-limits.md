@@ -163,7 +163,7 @@ See [`bun --filter` docs](https://bun.com/docs/cli/filter).
 | `bun run baseline:sync-policies`     | Tier 2 published-policy fixture + full opening-baseline bake                         |
 | `bun run baseline:sync-scraped` / `baseline:scrape-public` | Tier 4: run agents → JSONL · merge latest cells → `/registry/scraped-limits-observed.json` · fixture opening-baseline bake (CI-stable) |
 | `bun run baseline:scrape-book -- <bookId>` | One registry agent by `bookId` → `artifacts/raw-limits/{bookId}.jsonl` + health.json |
-| `bun run baseline:scrape-draftkings` / `fanduel` / `bet365` / `espnbet` / `betmgm` / `caesars` | Aliases for `baseline:scrape-book` |
+| `bun run baseline:scrape-draftkings` / `fanduel` / `bet365` / `espnbet` / `betmgm` / `caesars` / `hardrock` / `fanatics` / `betrivers` / `circa` | Aliases for `baseline:scrape-book` (US top-10 Tier 4 fleet) |
 | `bun run baseline:scrape-cron` / `:once` | In-process [`Bun.cron`](https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process) · default `*/15 * * * *` UTC · no-overlap · JSONL + alert eval |
 | `bun run baseline:scrape-alert` | Evaluate consecutive agent fails → Slack/webhook (`BASELINE_SCRAPE_ALERT_WEBHOOK`, threshold default 3) |
 | `bun run baseline:test-tier4`        | Tier 4 agent + registry + scrape unit tests                                                     |

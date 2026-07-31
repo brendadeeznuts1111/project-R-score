@@ -22,6 +22,10 @@ describe('book scrape registry contract', () => {
       'espnbet',
       'betmgm',
       'caesars',
+      'hardrock',
+      'fanatics',
+      'betrivers',
+      'circa',
     ]);
 
     for (const agent of BOOK_SCRAPE_AGENTS) {

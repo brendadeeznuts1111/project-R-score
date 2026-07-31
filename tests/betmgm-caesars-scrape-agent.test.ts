@@ -60,6 +60,10 @@ describe('BetMGM + Caesars Tier 4 scrape agents', () => {
       'espnbet',
       'betmgm',
       'caesars',
+      'hardrock',
+      'fanatics',
+      'betrivers',
+      'circa',
     ]);
     const runBooks =
       health?.books.filter(b => b.sportsbook === 'draftkings' || b.sportsbook === 'fanduel' || b.sportsbook === 'betmgm' || b.sportsbook === 'caesars') ??

@@ -12,6 +12,10 @@ import { ESPNBET_SPORTSBOOK, scrape as scrapeEspnBet } from './espnbet.ts';
 import { BET365_SPORTSBOOK, scrape as scrapeBet365 } from './bet365.ts';
 import { BETMGM_SPORTSBOOK, scrape as scrapeBetMgm } from './betmgm.ts';
 import { CAESARS_SPORTSBOOK, scrape as scrapeCaesars } from './caesars.ts';
+import { HARDROCK_SPORTSBOOK, scrape as scrapeHardRock } from './hardrock.ts';
+import { FANATICS_SPORTSBOOK, scrape as scrapeFanatics } from './fanatics.ts';
+import { BETRIVERS_SPORTSBOOK, scrape as scrapeBetRivers } from './betrivers.ts';
+import { CIRCA_SPORTSBOOK, scrape as scrapeCirca } from './circa.ts';
 
 /** Register each book once. Order = health status order. */
 export const BOOK_SCRAPE_AGENTS: readonly BookScrapeAgent[] = [
@@ -21,6 +25,10 @@ export const BOOK_SCRAPE_AGENTS: readonly BookScrapeAgent[] = [
   { bookId: ESPNBET_SPORTSBOOK, scrape: scrapeEspnBet },
   { bookId: BETMGM_SPORTSBOOK, scrape: scrapeBetMgm },
   { bookId: CAESARS_SPORTSBOOK, scrape: scrapeCaesars },
+  { bookId: HARDROCK_SPORTSBOOK, scrape: scrapeHardRock },
+  { bookId: FANATICS_SPORTSBOOK, scrape: scrapeFanatics },
+  { bookId: BETRIVERS_SPORTSBOOK, scrape: scrapeBetRivers },
+  { bookId: CIRCA_SPORTSBOOK, scrape: scrapeCirca },
 ];
 
 export function trackedScrapeBooks(): readonly SportsbookId[] {

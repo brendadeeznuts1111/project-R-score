@@ -113,4 +113,8 @@ export const DEFAULT_SCRAPE_TARGETS: readonly ScrapeTarget[] = [
   target(asSportsbookId('caesars'), 'https://api.caesars.com/odds/v1/limits?state=NJ'),
   target(asSportsbookId('espnbet'), 'https://sportsbook.espn.com/apis/v1/limits?state=NJ'),
   target(asSportsbookId('bet365'), 'https://www.bet365.com/api/limits?state=NJ'),
+  target(asSportsbookId('hardrock'), 'https://www.hardrock.bet/api/v1/limits?state=NJ'),
+  target(asSportsbookId('fanatics'), 'https://sportsbook.fanatics.com/api/v1/limits?state=NJ'),
+  target(asSportsbookId('betrivers'), 'https://nj.betrivers.com/api/v1/limits?state=NJ'),
+  target(asSportsbookId('circa'), 'https://www.circasports.com/api/v1/limits?state=NJ'),
 ] as const;

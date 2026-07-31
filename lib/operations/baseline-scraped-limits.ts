@@ -59,6 +59,10 @@ const SCRAPE_BOOK_ANCHORS: Record<string, number> = {
   espnbet: 1_200,
   betmgm: 1_100,
   caesars: 1_000,
+  hardrock: 1_200,
+  fanatics: 1_000,
+  betrivers: 1_000,
+  circa: 2_000,
 };
 
 const SCRAPE_SPORTS = ['basketball', 'soccer'] as const;

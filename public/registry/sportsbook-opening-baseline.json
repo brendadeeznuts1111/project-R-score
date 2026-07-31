@@ -2,7 +2,7 @@
   "schemaVersion": 3,
   "kind": "sportsbook-opening-baseline",
   "path": "/registry/sportsbook-opening-baseline.json",
-  "generatedAt": "2026-07-31T10:25:48.884Z",
+  "generatedAt": "2026-07-31T10:38:37.286Z",
   "disclaimer": "Internal Tier 1/Tier 2 seeds, the Tier 4 estimate, and the synthetic Tier 5 matrix are preview evidence only. A value becomes decision eligible only after its external citation is explicitly verified.",
   "dimensions": {
     "sportsbooks": 10,
@@ -37,7 +37,7 @@
         "wired": false
       },
       "4": {
-        "count": 96,
+        "count": 160,
         "label": "public_scrape",
         "wired": true
       },
@@ -54,10 +54,10 @@
     "rows": 600,
     "regulatoryRows": 4,
     "policyRows": 320,
-    "scrapedRows": 96,
+    "scrapedRows": 160,
     "rowsWithCompliance": 0,
     "rowsWithPublishedPolicy": 0,
-    "rowsWithScrapedEstimate": 96,
+    "rowsWithScrapedEstimate": 160,
     "decisionEligibleRows": 0,
     "eligibleRegulatoryRows": 0,
     "eligiblePolicyRows": 0,
@@ -9582,6 +9582,1606 @@
         "extractedAt": "2026-07-28T00:00:00.000Z",
         "notes": "Estimated from public-API fixture – may be stale"
       }
+    },
+    {
+      "sportsbook": "hardrock",
+      "sport": "basketball",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "pregame",
+      "openingMaxUsd": 1200,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 7200,
+      "weeklyLimitUsd": 24000,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/hardrock/nj/basketball",
+      "sourceRef": "scrape:fixture/hardrock-nj-basketball-match_winner-straight-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/hardrock-nj-basketball-match_winner-straight-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "hardrock",
+      "sport": "basketball",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "live",
+      "openingMaxUsd": 425,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 2550,
+      "weeklyLimitUsd": 8500,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/hardrock/nj/basketball",
+      "sourceRef": "scrape:fixture/hardrock-nj-basketball-match_winner-straight-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/hardrock-nj-basketball-match_winner-straight-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "hardrock",
+      "sport": "basketball",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "pregame",
+      "openingMaxUsd": 275,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 1650,
+      "weeklyLimitUsd": 5500,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/hardrock/nj/basketball",
+      "sourceRef": "scrape:fixture/hardrock-nj-basketball-match_winner-parlay-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/hardrock-nj-basketball-match_winner-parlay-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "hardrock",
+      "sport": "basketball",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "live",
+      "openingMaxUsd": 90,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 550,
+      "weeklyLimitUsd": 1800,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/hardrock/nj/basketball",
+      "sourceRef": "scrape:fixture/hardrock-nj-basketball-match_winner-parlay-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/hardrock-nj-basketball-match_winner-parlay-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "hardrock",
+      "sport": "basketball",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "pregame",
+      "openingMaxUsd": 950,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 5700,
+      "weeklyLimitUsd": 19000,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/hardrock/nj/basketball",
+      "sourceRef": "scrape:fixture/hardrock-nj-basketball-over_under-straight-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/hardrock-nj-basketball-over_under-straight-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "hardrock",
+      "sport": "basketball",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "live",
+      "openingMaxUsd": 325,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 1950,
+      "weeklyLimitUsd": 6500,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/hardrock/nj/basketball",
+      "sourceRef": "scrape:fixture/hardrock-nj-basketball-over_under-straight-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/hardrock-nj-basketball-over_under-straight-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "hardrock",
+      "sport": "basketball",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "pregame",
+      "openingMaxUsd": 200,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 1200,
+      "weeklyLimitUsd": 4000,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/hardrock/nj/basketball",
+      "sourceRef": "scrape:fixture/hardrock-nj-basketball-over_under-parlay-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/hardrock-nj-basketball-over_under-parlay-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "hardrock",
+      "sport": "basketball",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "live",
+      "openingMaxUsd": 75,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 450,
+      "weeklyLimitUsd": 1500,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/hardrock/nj/basketball",
+      "sourceRef": "scrape:fixture/hardrock-nj-basketball-over_under-parlay-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/hardrock-nj-basketball-over_under-parlay-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "hardrock",
+      "sport": "soccer",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "pregame",
+      "openingMaxUsd": 800,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 4800,
+      "weeklyLimitUsd": 16000,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/hardrock/nj/soccer",
+      "sourceRef": "scrape:fixture/hardrock-nj-soccer-match_winner-straight-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/hardrock-nj-soccer-match_winner-straight-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "hardrock",
+      "sport": "soccer",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "live",
+      "openingMaxUsd": 275,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 1650,
+      "weeklyLimitUsd": 5500,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/hardrock/nj/soccer",
+      "sourceRef": "scrape:fixture/hardrock-nj-soccer-match_winner-straight-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/hardrock-nj-soccer-match_winner-straight-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "hardrock",
+      "sport": "soccer",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "pregame",
+      "openingMaxUsd": 175,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 1050,
+      "weeklyLimitUsd": 3500,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/hardrock/nj/soccer",
+      "sourceRef": "scrape:fixture/hardrock-nj-soccer-match_winner-parlay-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/hardrock-nj-soccer-match_winner-parlay-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "hardrock",
+      "sport": "soccer",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "live",
+      "openingMaxUsd": 60,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 350,
+      "weeklyLimitUsd": 1200,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/hardrock/nj/soccer",
+      "sourceRef": "scrape:fixture/hardrock-nj-soccer-match_winner-parlay-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/hardrock-nj-soccer-match_winner-parlay-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "hardrock",
+      "sport": "soccer",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "pregame",
+      "openingMaxUsd": 600,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 3600,
+      "weeklyLimitUsd": 12000,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/hardrock/nj/soccer",
+      "sourceRef": "scrape:fixture/hardrock-nj-soccer-over_under-straight-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/hardrock-nj-soccer-over_under-straight-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "hardrock",
+      "sport": "soccer",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "live",
+      "openingMaxUsd": 225,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 1350,
+      "weeklyLimitUsd": 4500,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/hardrock/nj/soccer",
+      "sourceRef": "scrape:fixture/hardrock-nj-soccer-over_under-straight-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/hardrock-nj-soccer-over_under-straight-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "hardrock",
+      "sport": "soccer",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "pregame",
+      "openingMaxUsd": 125,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 750,
+      "weeklyLimitUsd": 2500,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/hardrock/nj/soccer",
+      "sourceRef": "scrape:fixture/hardrock-nj-soccer-over_under-parlay-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/hardrock-nj-soccer-over_under-parlay-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "hardrock",
+      "sport": "soccer",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "live",
+      "openingMaxUsd": 50,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 300,
+      "weeklyLimitUsd": 1000,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/hardrock/nj/soccer",
+      "sourceRef": "scrape:fixture/hardrock-nj-soccer-over_under-parlay-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/hardrock-nj-soccer-over_under-parlay-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "fanatics",
+      "sport": "basketball",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "pregame",
+      "openingMaxUsd": 1000,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 6000,
+      "weeklyLimitUsd": 20000,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/fanatics/nj/basketball",
+      "sourceRef": "scrape:fixture/fanatics-nj-basketball-match_winner-straight-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/fanatics-nj-basketball-match_winner-straight-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "fanatics",
+      "sport": "basketball",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "live",
+      "openingMaxUsd": 350,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 2100,
+      "weeklyLimitUsd": 7000,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/fanatics/nj/basketball",
+      "sourceRef": "scrape:fixture/fanatics-nj-basketball-match_winner-straight-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/fanatics-nj-basketball-match_winner-straight-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "fanatics",
+      "sport": "basketball",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "pregame",
+      "openingMaxUsd": 225,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 1350,
+      "weeklyLimitUsd": 4500,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/fanatics/nj/basketball",
+      "sourceRef": "scrape:fixture/fanatics-nj-basketball-match_winner-parlay-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/fanatics-nj-basketball-match_winner-parlay-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "fanatics",
+      "sport": "basketball",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "live",
+      "openingMaxUsd": 75,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 450,
+      "weeklyLimitUsd": 1500,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/fanatics/nj/basketball",
+      "sourceRef": "scrape:fixture/fanatics-nj-basketball-match_winner-parlay-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/fanatics-nj-basketball-match_winner-parlay-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "fanatics",
+      "sport": "basketball",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "pregame",
+      "openingMaxUsd": 800,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 4800,
+      "weeklyLimitUsd": 16000,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/fanatics/nj/basketball",
+      "sourceRef": "scrape:fixture/fanatics-nj-basketball-over_under-straight-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/fanatics-nj-basketball-over_under-straight-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "fanatics",
+      "sport": "basketball",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "live",
+      "openingMaxUsd": 275,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 1650,
+      "weeklyLimitUsd": 5500,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/fanatics/nj/basketball",
+      "sourceRef": "scrape:fixture/fanatics-nj-basketball-over_under-straight-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/fanatics-nj-basketball-over_under-straight-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "fanatics",
+      "sport": "basketball",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "pregame",
+      "openingMaxUsd": 175,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 1050,
+      "weeklyLimitUsd": 3500,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/fanatics/nj/basketball",
+      "sourceRef": "scrape:fixture/fanatics-nj-basketball-over_under-parlay-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/fanatics-nj-basketball-over_under-parlay-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "fanatics",
+      "sport": "basketball",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "live",
+      "openingMaxUsd": 60,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 350,
+      "weeklyLimitUsd": 1200,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/fanatics/nj/basketball",
+      "sourceRef": "scrape:fixture/fanatics-nj-basketball-over_under-parlay-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/fanatics-nj-basketball-over_under-parlay-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "fanatics",
+      "sport": "soccer",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "pregame",
+      "openingMaxUsd": 650,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 3900,
+      "weeklyLimitUsd": 13000,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/fanatics/nj/soccer",
+      "sourceRef": "scrape:fixture/fanatics-nj-soccer-match_winner-straight-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/fanatics-nj-soccer-match_winner-straight-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "fanatics",
+      "sport": "soccer",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "live",
+      "openingMaxUsd": 225,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 1350,
+      "weeklyLimitUsd": 4500,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/fanatics/nj/soccer",
+      "sourceRef": "scrape:fixture/fanatics-nj-soccer-match_winner-straight-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/fanatics-nj-soccer-match_winner-straight-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "fanatics",
+      "sport": "soccer",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "pregame",
+      "openingMaxUsd": 150,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 900,
+      "weeklyLimitUsd": 3000,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/fanatics/nj/soccer",
+      "sourceRef": "scrape:fixture/fanatics-nj-soccer-match_winner-parlay-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/fanatics-nj-soccer-match_winner-parlay-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "fanatics",
+      "sport": "soccer",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "live",
+      "openingMaxUsd": 50,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 300,
+      "weeklyLimitUsd": 1000,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/fanatics/nj/soccer",
+      "sourceRef": "scrape:fixture/fanatics-nj-soccer-match_winner-parlay-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/fanatics-nj-soccer-match_winner-parlay-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "fanatics",
+      "sport": "soccer",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "pregame",
+      "openingMaxUsd": 500,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 3000,
+      "weeklyLimitUsd": 10000,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/fanatics/nj/soccer",
+      "sourceRef": "scrape:fixture/fanatics-nj-soccer-over_under-straight-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/fanatics-nj-soccer-over_under-straight-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "fanatics",
+      "sport": "soccer",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "live",
+      "openingMaxUsd": 175,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 1050,
+      "weeklyLimitUsd": 3500,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/fanatics/nj/soccer",
+      "sourceRef": "scrape:fixture/fanatics-nj-soccer-over_under-straight-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/fanatics-nj-soccer-over_under-straight-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "fanatics",
+      "sport": "soccer",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "pregame",
+      "openingMaxUsd": 125,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 750,
+      "weeklyLimitUsd": 2500,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/fanatics/nj/soccer",
+      "sourceRef": "scrape:fixture/fanatics-nj-soccer-over_under-parlay-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/fanatics-nj-soccer-over_under-parlay-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "fanatics",
+      "sport": "soccer",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "live",
+      "openingMaxUsd": 40,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 250,
+      "weeklyLimitUsd": 800,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/fanatics/nj/soccer",
+      "sourceRef": "scrape:fixture/fanatics-nj-soccer-over_under-parlay-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/fanatics-nj-soccer-over_under-parlay-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "betrivers",
+      "sport": "basketball",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "pregame",
+      "openingMaxUsd": 1000,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 6000,
+      "weeklyLimitUsd": 20000,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/betrivers/nj/basketball",
+      "sourceRef": "scrape:fixture/betrivers-nj-basketball-match_winner-straight-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/betrivers-nj-basketball-match_winner-straight-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "betrivers",
+      "sport": "basketball",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "live",
+      "openingMaxUsd": 350,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 2100,
+      "weeklyLimitUsd": 7000,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/betrivers/nj/basketball",
+      "sourceRef": "scrape:fixture/betrivers-nj-basketball-match_winner-straight-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/betrivers-nj-basketball-match_winner-straight-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "betrivers",
+      "sport": "basketball",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "pregame",
+      "openingMaxUsd": 225,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 1350,
+      "weeklyLimitUsd": 4500,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/betrivers/nj/basketball",
+      "sourceRef": "scrape:fixture/betrivers-nj-basketball-match_winner-parlay-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/betrivers-nj-basketball-match_winner-parlay-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "betrivers",
+      "sport": "basketball",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "live",
+      "openingMaxUsd": 75,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 450,
+      "weeklyLimitUsd": 1500,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/betrivers/nj/basketball",
+      "sourceRef": "scrape:fixture/betrivers-nj-basketball-match_winner-parlay-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/betrivers-nj-basketball-match_winner-parlay-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "betrivers",
+      "sport": "basketball",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "pregame",
+      "openingMaxUsd": 800,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 4800,
+      "weeklyLimitUsd": 16000,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/betrivers/nj/basketball",
+      "sourceRef": "scrape:fixture/betrivers-nj-basketball-over_under-straight-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/betrivers-nj-basketball-over_under-straight-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "betrivers",
+      "sport": "basketball",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "live",
+      "openingMaxUsd": 275,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 1650,
+      "weeklyLimitUsd": 5500,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/betrivers/nj/basketball",
+      "sourceRef": "scrape:fixture/betrivers-nj-basketball-over_under-straight-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/betrivers-nj-basketball-over_under-straight-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "betrivers",
+      "sport": "basketball",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "pregame",
+      "openingMaxUsd": 175,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 1050,
+      "weeklyLimitUsd": 3500,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/betrivers/nj/basketball",
+      "sourceRef": "scrape:fixture/betrivers-nj-basketball-over_under-parlay-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/betrivers-nj-basketball-over_under-parlay-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "betrivers",
+      "sport": "basketball",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "live",
+      "openingMaxUsd": 60,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 350,
+      "weeklyLimitUsd": 1200,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/betrivers/nj/basketball",
+      "sourceRef": "scrape:fixture/betrivers-nj-basketball-over_under-parlay-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/betrivers-nj-basketball-over_under-parlay-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "betrivers",
+      "sport": "soccer",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "pregame",
+      "openingMaxUsd": 650,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 3900,
+      "weeklyLimitUsd": 13000,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/betrivers/nj/soccer",
+      "sourceRef": "scrape:fixture/betrivers-nj-soccer-match_winner-straight-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/betrivers-nj-soccer-match_winner-straight-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "betrivers",
+      "sport": "soccer",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "live",
+      "openingMaxUsd": 225,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 1350,
+      "weeklyLimitUsd": 4500,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/betrivers/nj/soccer",
+      "sourceRef": "scrape:fixture/betrivers-nj-soccer-match_winner-straight-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/betrivers-nj-soccer-match_winner-straight-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "betrivers",
+      "sport": "soccer",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "pregame",
+      "openingMaxUsd": 150,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 900,
+      "weeklyLimitUsd": 3000,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/betrivers/nj/soccer",
+      "sourceRef": "scrape:fixture/betrivers-nj-soccer-match_winner-parlay-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/betrivers-nj-soccer-match_winner-parlay-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "betrivers",
+      "sport": "soccer",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "live",
+      "openingMaxUsd": 50,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 300,
+      "weeklyLimitUsd": 1000,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/betrivers/nj/soccer",
+      "sourceRef": "scrape:fixture/betrivers-nj-soccer-match_winner-parlay-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/betrivers-nj-soccer-match_winner-parlay-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "betrivers",
+      "sport": "soccer",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "pregame",
+      "openingMaxUsd": 500,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 3000,
+      "weeklyLimitUsd": 10000,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/betrivers/nj/soccer",
+      "sourceRef": "scrape:fixture/betrivers-nj-soccer-over_under-straight-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/betrivers-nj-soccer-over_under-straight-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "betrivers",
+      "sport": "soccer",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "live",
+      "openingMaxUsd": 175,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 1050,
+      "weeklyLimitUsd": 3500,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/betrivers/nj/soccer",
+      "sourceRef": "scrape:fixture/betrivers-nj-soccer-over_under-straight-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/betrivers-nj-soccer-over_under-straight-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "betrivers",
+      "sport": "soccer",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "pregame",
+      "openingMaxUsd": 125,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 750,
+      "weeklyLimitUsd": 2500,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/betrivers/nj/soccer",
+      "sourceRef": "scrape:fixture/betrivers-nj-soccer-over_under-parlay-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/betrivers-nj-soccer-over_under-parlay-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "betrivers",
+      "sport": "soccer",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "live",
+      "openingMaxUsd": 40,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 250,
+      "weeklyLimitUsd": 800,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/betrivers/nj/soccer",
+      "sourceRef": "scrape:fixture/betrivers-nj-soccer-over_under-parlay-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/betrivers-nj-soccer-over_under-parlay-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "circa",
+      "sport": "basketball",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "pregame",
+      "openingMaxUsd": 2000,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 12000,
+      "weeklyLimitUsd": 40000,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/circa/nj/basketball",
+      "sourceRef": "scrape:fixture/circa-nj-basketball-match_winner-straight-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/circa-nj-basketball-match_winner-straight-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "circa",
+      "sport": "basketball",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "live",
+      "openingMaxUsd": 700,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 4200,
+      "weeklyLimitUsd": 14000,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/circa/nj/basketball",
+      "sourceRef": "scrape:fixture/circa-nj-basketball-match_winner-straight-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/circa-nj-basketball-match_winner-straight-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "circa",
+      "sport": "basketball",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "pregame",
+      "openingMaxUsd": 450,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 2700,
+      "weeklyLimitUsd": 9000,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/circa/nj/basketball",
+      "sourceRef": "scrape:fixture/circa-nj-basketball-match_winner-parlay-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/circa-nj-basketball-match_winner-parlay-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "circa",
+      "sport": "basketball",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "live",
+      "openingMaxUsd": 150,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 900,
+      "weeklyLimitUsd": 3000,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/circa/nj/basketball",
+      "sourceRef": "scrape:fixture/circa-nj-basketball-match_winner-parlay-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/circa-nj-basketball-match_winner-parlay-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "circa",
+      "sport": "basketball",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "pregame",
+      "openingMaxUsd": 1600,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 9600,
+      "weeklyLimitUsd": 32000,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/circa/nj/basketball",
+      "sourceRef": "scrape:fixture/circa-nj-basketball-over_under-straight-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/circa-nj-basketball-over_under-straight-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "circa",
+      "sport": "basketball",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "live",
+      "openingMaxUsd": 550,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 3300,
+      "weeklyLimitUsd": 11000,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/circa/nj/basketball",
+      "sourceRef": "scrape:fixture/circa-nj-basketball-over_under-straight-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/circa-nj-basketball-over_under-straight-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "circa",
+      "sport": "basketball",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "pregame",
+      "openingMaxUsd": 350,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 2100,
+      "weeklyLimitUsd": 7000,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/circa/nj/basketball",
+      "sourceRef": "scrape:fixture/circa-nj-basketball-over_under-parlay-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/circa-nj-basketball-over_under-parlay-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "circa",
+      "sport": "basketball",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "live",
+      "openingMaxUsd": 125,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 750,
+      "weeklyLimitUsd": 2500,
+      "vipLimitUsd": null,
+      "league": "nba",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/circa/nj/basketball",
+      "sourceRef": "scrape:fixture/circa-nj-basketball-over_under-parlay-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/circa-nj-basketball-over_under-parlay-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "circa",
+      "sport": "soccer",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "pregame",
+      "openingMaxUsd": 1300,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 7800,
+      "weeklyLimitUsd": 26000,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/circa/nj/soccer",
+      "sourceRef": "scrape:fixture/circa-nj-soccer-match_winner-straight-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/circa-nj-soccer-match_winner-straight-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "circa",
+      "sport": "soccer",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "live",
+      "openingMaxUsd": 450,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 2700,
+      "weeklyLimitUsd": 9000,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/circa/nj/soccer",
+      "sourceRef": "scrape:fixture/circa-nj-soccer-match_winner-straight-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/circa-nj-soccer-match_winner-straight-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "circa",
+      "sport": "soccer",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "pregame",
+      "openingMaxUsd": 275,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 1650,
+      "weeklyLimitUsd": 5500,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/circa/nj/soccer",
+      "sourceRef": "scrape:fixture/circa-nj-soccer-match_winner-parlay-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/circa-nj-soccer-match_winner-parlay-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "circa",
+      "sport": "soccer",
+      "market": "match_winner",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "live",
+      "openingMaxUsd": 100,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 600,
+      "weeklyLimitUsd": 2000,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/circa/nj/soccer",
+      "sourceRef": "scrape:fixture/circa-nj-soccer-match_winner-parlay-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/circa-nj-soccer-match_winner-parlay-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "circa",
+      "sport": "soccer",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "pregame",
+      "openingMaxUsd": 1050,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 6300,
+      "weeklyLimitUsd": 21000,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/circa/nj/soccer",
+      "sourceRef": "scrape:fixture/circa-nj-soccer-over_under-straight-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/circa-nj-soccer-over_under-straight-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "circa",
+      "sport": "soccer",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "straight",
+      "phase": "live",
+      "openingMaxUsd": 375,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 2250,
+      "weeklyLimitUsd": 7500,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/circa/nj/soccer",
+      "sourceRef": "scrape:fixture/circa-nj-soccer-over_under-straight-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/circa-nj-soccer-over_under-straight-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "circa",
+      "sport": "soccer",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "pregame",
+      "openingMaxUsd": 225,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 1350,
+      "weeklyLimitUsd": 4500,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/circa/nj/soccer",
+      "sourceRef": "scrape:fixture/circa-nj-soccer-over_under-parlay-pregame",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/circa-nj-soccer-over_under-parlay-pregame",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
+    },
+    {
+      "sportsbook": "circa",
+      "sport": "soccer",
+      "market": "over_under",
+      "jurisdiction": "NJ",
+      "structure": "parlay",
+      "phase": "live",
+      "openingMaxUsd": 80,
+      "openingMinUsd": 1,
+      "dailyLimitUsd": 475,
+      "weeklyLimitUsd": 1600,
+      "vipLimitUsd": null,
+      "league": "mls",
+      "eventType": "regular",
+      "referenceUrl": "internal:scrape-fixture/circa/nj/soccer",
+      "sourceRef": "scrape:fixture/circa-nj-soccer-over_under-parlay-live",
+      "source": {
+        "tier": 4,
+        "confidence": "medium",
+        "sourceType": "public_scrape",
+        "sourceRef": "scrape:fixture/circa-nj-soccer-over_under-parlay-live",
+        "extractedAt": "2026-07-28T00:00:00.000Z",
+        "notes": "Estimated from public-API fixture – may be stale"
+      }
     }
   ],
   "books": [
@@ -17518,7 +19118,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 1300,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 1000,
+      "scrapedReferenceUrl": "internal:scrape-fixture/fanatics/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 1000,
+          "referenceUrl": "internal:scrape-fixture/fanatics/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "fanatics",
@@ -17540,7 +19149,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 450,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 350,
+      "scrapedReferenceUrl": "internal:scrape-fixture/fanatics/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 350,
+          "referenceUrl": "internal:scrape-fixture/fanatics/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "fanatics",
@@ -17562,7 +19180,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 250,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 225,
+      "scrapedReferenceUrl": "internal:scrape-fixture/fanatics/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 225,
+          "referenceUrl": "internal:scrape-fixture/fanatics/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "fanatics",
@@ -17584,7 +19211,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 90,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 75,
+      "scrapedReferenceUrl": "internal:scrape-fixture/fanatics/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 75,
+          "referenceUrl": "internal:scrape-fixture/fanatics/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "fanatics",
@@ -17606,7 +19242,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 1100,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 800,
+      "scrapedReferenceUrl": "internal:scrape-fixture/fanatics/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 800,
+          "referenceUrl": "internal:scrape-fixture/fanatics/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "fanatics",
@@ -17628,7 +19273,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 375,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 275,
+      "scrapedReferenceUrl": "internal:scrape-fixture/fanatics/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 275,
+          "referenceUrl": "internal:scrape-fixture/fanatics/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "fanatics",
@@ -17650,7 +19304,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 225,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 175,
+      "scrapedReferenceUrl": "internal:scrape-fixture/fanatics/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 175,
+          "referenceUrl": "internal:scrape-fixture/fanatics/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "fanatics",
@@ -17672,7 +19335,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 75,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 60,
+      "scrapedReferenceUrl": "internal:scrape-fixture/fanatics/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 60,
+          "referenceUrl": "internal:scrape-fixture/fanatics/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "fanatics",
@@ -18046,7 +19718,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 900,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 650,
+      "scrapedReferenceUrl": "internal:scrape-fixture/fanatics/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 650,
+          "referenceUrl": "internal:scrape-fixture/fanatics/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "fanatics",
@@ -18068,7 +19749,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 325,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 225,
+      "scrapedReferenceUrl": "internal:scrape-fixture/fanatics/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 225,
+          "referenceUrl": "internal:scrape-fixture/fanatics/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "fanatics",
@@ -18090,7 +19780,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 175,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 150,
+      "scrapedReferenceUrl": "internal:scrape-fixture/fanatics/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 150,
+          "referenceUrl": "internal:scrape-fixture/fanatics/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "fanatics",
@@ -18112,7 +19811,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 65,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 50,
+      "scrapedReferenceUrl": "internal:scrape-fixture/fanatics/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 50,
+          "referenceUrl": "internal:scrape-fixture/fanatics/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "fanatics",
@@ -18134,7 +19842,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 750,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 500,
+      "scrapedReferenceUrl": "internal:scrape-fixture/fanatics/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 500,
+          "referenceUrl": "internal:scrape-fixture/fanatics/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "fanatics",
@@ -18156,7 +19873,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 275,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 175,
+      "scrapedReferenceUrl": "internal:scrape-fixture/fanatics/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 175,
+          "referenceUrl": "internal:scrape-fixture/fanatics/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "fanatics",
@@ -18178,7 +19904,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 150,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 125,
+      "scrapedReferenceUrl": "internal:scrape-fixture/fanatics/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 125,
+          "referenceUrl": "internal:scrape-fixture/fanatics/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "fanatics",
@@ -18200,7 +19935,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 55,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 40,
+      "scrapedReferenceUrl": "internal:scrape-fixture/fanatics/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 40,
+          "referenceUrl": "internal:scrape-fixture/fanatics/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "fanatics",
@@ -18838,7 +20582,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 1700,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 1200,
+      "scrapedReferenceUrl": "internal:scrape-fixture/hardrock/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 1200,
+          "referenceUrl": "internal:scrape-fixture/hardrock/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "hardrock",
@@ -18860,7 +20613,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 600,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 425,
+      "scrapedReferenceUrl": "internal:scrape-fixture/hardrock/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 425,
+          "referenceUrl": "internal:scrape-fixture/hardrock/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "hardrock",
@@ -18882,7 +20644,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 350,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 275,
+      "scrapedReferenceUrl": "internal:scrape-fixture/hardrock/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 275,
+          "referenceUrl": "internal:scrape-fixture/hardrock/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "hardrock",
@@ -18904,7 +20675,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 125,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 90,
+      "scrapedReferenceUrl": "internal:scrape-fixture/hardrock/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 90,
+          "referenceUrl": "internal:scrape-fixture/hardrock/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "hardrock",
@@ -18926,7 +20706,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 1450,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 950,
+      "scrapedReferenceUrl": "internal:scrape-fixture/hardrock/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 950,
+          "referenceUrl": "internal:scrape-fixture/hardrock/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "hardrock",
@@ -18948,7 +20737,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 500,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 325,
+      "scrapedReferenceUrl": "internal:scrape-fixture/hardrock/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 325,
+          "referenceUrl": "internal:scrape-fixture/hardrock/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "hardrock",
@@ -18970,7 +20768,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 300,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 200,
+      "scrapedReferenceUrl": "internal:scrape-fixture/hardrock/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 200,
+          "referenceUrl": "internal:scrape-fixture/hardrock/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "hardrock",
@@ -18992,7 +20799,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 100,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 75,
+      "scrapedReferenceUrl": "internal:scrape-fixture/hardrock/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 75,
+          "referenceUrl": "internal:scrape-fixture/hardrock/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "hardrock",
@@ -19366,7 +21182,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 1200,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 800,
+      "scrapedReferenceUrl": "internal:scrape-fixture/hardrock/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 800,
+          "referenceUrl": "internal:scrape-fixture/hardrock/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "hardrock",
@@ -19388,7 +21213,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 425,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 275,
+      "scrapedReferenceUrl": "internal:scrape-fixture/hardrock/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 275,
+          "referenceUrl": "internal:scrape-fixture/hardrock/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "hardrock",
@@ -19410,7 +21244,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 250,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 175,
+      "scrapedReferenceUrl": "internal:scrape-fixture/hardrock/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 175,
+          "referenceUrl": "internal:scrape-fixture/hardrock/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "hardrock",
@@ -19432,7 +21275,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 85,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 60,
+      "scrapedReferenceUrl": "internal:scrape-fixture/hardrock/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 60,
+          "referenceUrl": "internal:scrape-fixture/hardrock/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "hardrock",
@@ -19454,7 +21306,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 1000,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 600,
+      "scrapedReferenceUrl": "internal:scrape-fixture/hardrock/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 600,
+          "referenceUrl": "internal:scrape-fixture/hardrock/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "hardrock",
@@ -19476,7 +21337,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 350,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 225,
+      "scrapedReferenceUrl": "internal:scrape-fixture/hardrock/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 225,
+          "referenceUrl": "internal:scrape-fixture/hardrock/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "hardrock",
@@ -19498,7 +21368,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 200,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 125,
+      "scrapedReferenceUrl": "internal:scrape-fixture/hardrock/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 125,
+          "referenceUrl": "internal:scrape-fixture/hardrock/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "hardrock",
@@ -19520,7 +21399,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 70,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 50,
+      "scrapedReferenceUrl": "internal:scrape-fixture/hardrock/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 50,
+          "referenceUrl": "internal:scrape-fixture/hardrock/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "hardrock",
@@ -21622,7 +23510,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 1300,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 1000,
+      "scrapedReferenceUrl": "internal:scrape-fixture/betrivers/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 1000,
+          "referenceUrl": "internal:scrape-fixture/betrivers/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "betrivers",
@@ -21644,7 +23541,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 450,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 350,
+      "scrapedReferenceUrl": "internal:scrape-fixture/betrivers/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 350,
+          "referenceUrl": "internal:scrape-fixture/betrivers/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "betrivers",
@@ -21666,7 +23572,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 250,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 225,
+      "scrapedReferenceUrl": "internal:scrape-fixture/betrivers/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 225,
+          "referenceUrl": "internal:scrape-fixture/betrivers/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "betrivers",
@@ -21688,7 +23603,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 90,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 75,
+      "scrapedReferenceUrl": "internal:scrape-fixture/betrivers/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 75,
+          "referenceUrl": "internal:scrape-fixture/betrivers/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "betrivers",
@@ -21710,7 +23634,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 1100,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 800,
+      "scrapedReferenceUrl": "internal:scrape-fixture/betrivers/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 800,
+          "referenceUrl": "internal:scrape-fixture/betrivers/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "betrivers",
@@ -21732,7 +23665,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 375,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 275,
+      "scrapedReferenceUrl": "internal:scrape-fixture/betrivers/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 275,
+          "referenceUrl": "internal:scrape-fixture/betrivers/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "betrivers",
@@ -21754,7 +23696,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 225,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 175,
+      "scrapedReferenceUrl": "internal:scrape-fixture/betrivers/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 175,
+          "referenceUrl": "internal:scrape-fixture/betrivers/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "betrivers",
@@ -21776,7 +23727,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 75,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 60,
+      "scrapedReferenceUrl": "internal:scrape-fixture/betrivers/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 60,
+          "referenceUrl": "internal:scrape-fixture/betrivers/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "betrivers",
@@ -22150,7 +24110,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 900,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 650,
+      "scrapedReferenceUrl": "internal:scrape-fixture/betrivers/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 650,
+          "referenceUrl": "internal:scrape-fixture/betrivers/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "betrivers",
@@ -22172,7 +24141,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 325,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 225,
+      "scrapedReferenceUrl": "internal:scrape-fixture/betrivers/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 225,
+          "referenceUrl": "internal:scrape-fixture/betrivers/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "betrivers",
@@ -22194,7 +24172,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 175,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 150,
+      "scrapedReferenceUrl": "internal:scrape-fixture/betrivers/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 150,
+          "referenceUrl": "internal:scrape-fixture/betrivers/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "betrivers",
@@ -22216,7 +24203,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 65,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 50,
+      "scrapedReferenceUrl": "internal:scrape-fixture/betrivers/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 50,
+          "referenceUrl": "internal:scrape-fixture/betrivers/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "betrivers",
@@ -22238,7 +24234,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 750,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 500,
+      "scrapedReferenceUrl": "internal:scrape-fixture/betrivers/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 500,
+          "referenceUrl": "internal:scrape-fixture/betrivers/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "betrivers",
@@ -22260,7 +24265,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 275,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 175,
+      "scrapedReferenceUrl": "internal:scrape-fixture/betrivers/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 175,
+          "referenceUrl": "internal:scrape-fixture/betrivers/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "betrivers",
@@ -22282,7 +24296,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 150,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 125,
+      "scrapedReferenceUrl": "internal:scrape-fixture/betrivers/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 125,
+          "referenceUrl": "internal:scrape-fixture/betrivers/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "betrivers",
@@ -22304,7 +24327,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 55,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 40,
+      "scrapedReferenceUrl": "internal:scrape-fixture/betrivers/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 40,
+          "referenceUrl": "internal:scrape-fixture/betrivers/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "betrivers",
@@ -22942,7 +24974,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 8500,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 2000,
+      "scrapedReferenceUrl": "internal:scrape-fixture/circa/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 2000,
+          "referenceUrl": "internal:scrape-fixture/circa/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "circa",
@@ -22964,7 +25005,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 3000,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 700,
+      "scrapedReferenceUrl": "internal:scrape-fixture/circa/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 700,
+          "referenceUrl": "internal:scrape-fixture/circa/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "circa",
@@ -22986,7 +25036,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 1700,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 450,
+      "scrapedReferenceUrl": "internal:scrape-fixture/circa/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 450,
+          "referenceUrl": "internal:scrape-fixture/circa/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "circa",
@@ -23008,7 +25067,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 600,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 150,
+      "scrapedReferenceUrl": "internal:scrape-fixture/circa/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 150,
+          "referenceUrl": "internal:scrape-fixture/circa/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "circa",
@@ -23030,7 +25098,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 7200,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 1600,
+      "scrapedReferenceUrl": "internal:scrape-fixture/circa/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 1600,
+          "referenceUrl": "internal:scrape-fixture/circa/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "circa",
@@ -23052,7 +25129,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 2500,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 550,
+      "scrapedReferenceUrl": "internal:scrape-fixture/circa/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 550,
+          "referenceUrl": "internal:scrape-fixture/circa/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "circa",
@@ -23074,7 +25160,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 1450,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 350,
+      "scrapedReferenceUrl": "internal:scrape-fixture/circa/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 350,
+          "referenceUrl": "internal:scrape-fixture/circa/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "circa",
@@ -23096,7 +25191,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 500,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 125,
+      "scrapedReferenceUrl": "internal:scrape-fixture/circa/nj/basketball",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 125,
+          "referenceUrl": "internal:scrape-fixture/circa/nj/basketball"
+        }
+      ]
     },
     {
       "sportsbook": "circa",
@@ -23470,7 +25574,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 6000,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 1300,
+      "scrapedReferenceUrl": "internal:scrape-fixture/circa/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 1300,
+          "referenceUrl": "internal:scrape-fixture/circa/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "circa",
@@ -23492,7 +25605,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 2100,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 450,
+      "scrapedReferenceUrl": "internal:scrape-fixture/circa/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 450,
+          "referenceUrl": "internal:scrape-fixture/circa/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "circa",
@@ -23514,7 +25636,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 1200,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 275,
+      "scrapedReferenceUrl": "internal:scrape-fixture/circa/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 275,
+          "referenceUrl": "internal:scrape-fixture/circa/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "circa",
@@ -23536,7 +25667,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 425,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 100,
+      "scrapedReferenceUrl": "internal:scrape-fixture/circa/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 100,
+          "referenceUrl": "internal:scrape-fixture/circa/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "circa",
@@ -23558,7 +25698,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 5100,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 1050,
+      "scrapedReferenceUrl": "internal:scrape-fixture/circa/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 1050,
+          "referenceUrl": "internal:scrape-fixture/circa/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "circa",
@@ -23580,7 +25729,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 1800,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 375,
+      "scrapedReferenceUrl": "internal:scrape-fixture/circa/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 375,
+          "referenceUrl": "internal:scrape-fixture/circa/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "circa",
@@ -23602,7 +25760,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 1000,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 225,
+      "scrapedReferenceUrl": "internal:scrape-fixture/circa/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 225,
+          "referenceUrl": "internal:scrape-fixture/circa/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "circa",
@@ -23624,7 +25791,16 @@
       "evidenceStatus": "internal_seed",
       "decisionEligible": false,
       "commercialMaxUsd": 350,
-      "commercialSourceTier": 5
+      "commercialSourceTier": 5,
+      "scrapedMaxUsd": 80,
+      "scrapedReferenceUrl": "internal:scrape-fixture/circa/nj/soccer",
+      "scrapedByJurisdiction": [
+        {
+          "jurisdiction": "NJ",
+          "maxBetUsd": 80,
+          "referenceUrl": "internal:scrape-fixture/circa/nj/soccer"
+        }
+      ]
     },
     {
       "sportsbook": "circa",

@@ -21,14 +21,14 @@ import {
 describe('baseline scraped limits (Tier 4)', () => {
   test('offline fixture expands and projects Tier 4 provenance', async () => {
     const seeds = expandScrapedLimitSeeds();
-    // 6 books × 2 sports × 2 markets × 2 structures × 2 phases
+    // 10 books × 2 sports × 2 markets × 2 structures × 2 phases
     expect(seeds.length).toBeGreaterThanOrEqual(20);
-    expect(seeds).toHaveLength(96);
+    expect(seeds).toHaveLength(160);
     const rows = projectScrapedLimits(seeds);
     expect(rows.every(row => row.source.tier === 4)).toBe(true);
     expect(rows.every(row => row.source.confidence === 'medium')).toBe(true);
     expect(rows.every(row => row.source.sourceType === 'public_scrape')).toBe(true);
-    expect((await syncScrapedLimits()).count).toBe(96);
+    expect((await syncScrapedLimits()).count).toBe(160);
   });
 
   test('parser maps generic public payload (wire unknown)', () => {
@@ -97,8 +97,8 @@ describe('baseline scraped limits (Tier 4)', () => {
     expect(bb?.commercialSourceTier).toBe(5);
 
     const artifact = buildSportsbookOpeningBaselineArtifact(new Date('2026-07-31T00:00:00.000Z'));
-    expect(artifact.sources.tiers[4]).toMatchObject({ wired: true, count: 96 });
-    expect(artifact.summary.scrapedRows).toBe(96);
+    expect(artifact.sources.tiers[4]).toMatchObject({ wired: true, count: 160 });
+    expect(artifact.summary.scrapedRows).toBe(160);
     expect(artifact.summary.rowsWithScrapedEstimate).toBeGreaterThan(0);
   });
 

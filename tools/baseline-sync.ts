@@ -12,6 +12,7 @@
 
 import { joinPath } from '../lib/path-bun.ts';
 import { logDepth, jsonOut } from '../lib/console-depth.ts';
+import { parseSportsbookId } from '../lib/types/branded.ts';
 import {
   SPORTSBOOK_OPENING_BASELINE_PATH,
   buildSportsbookOpeningBaselineArtifact,
@@ -185,8 +186,12 @@ async function main(): Promise<void> {
     case 'scrape-bet365':
     case 'scrape-espnbet':
     case 'scrape-betmgm':
-    case 'scrape-caesars': {
-      const bookId = cmd.replace('scrape-', '');
+    case 'scrape-caesars':
+    case 'scrape-hardrock':
+    case 'scrape-fanatics':
+    case 'scrape-betrivers':
+    case 'scrape-circa': {
+      const bookId = parseSportsbookId(cmd.replace('scrape-', ''));
       const outcome = await runRegisteredAgent(root, getBookScrapeAgent(bookId), { live });
       if (!outcome.ok) process.exit(1);
       break;

@@ -368,6 +368,7 @@ export {
   projectRegulatoryBaseline,
   syncRegulatoryBaseline,
   type ComplianceAttach,
+  type RegulatoryCitationEvidence,
   type RegulatoryBaselineRow,
 } from './baseline-regulatory-seed.ts';
 export {
@@ -465,6 +466,38 @@ export {
   tryBet365PlaywrightHtml,
   type Bet365AgentResult,
 } from './scrapers/books/bet365.ts';
+export {
+  HARDROCK_AGENT_ID,
+  HARDROCK_SPORTSBOOK,
+  runHardRockAgent,
+  scrape as scrapeHardRock,
+  scrapeHardRockHtmlStub,
+  type HardRockAgentResult,
+} from './scrapers/books/hardrock.ts';
+export {
+  FANATICS_AGENT_ID,
+  FANATICS_SPORTSBOOK,
+  runFanaticsAgent,
+  scrape as scrapeFanatics,
+  scrapeFanaticsHtmlStub,
+  type FanaticsAgentResult,
+} from './scrapers/books/fanatics.ts';
+export {
+  BETRIVERS_AGENT_ID,
+  BETRIVERS_SPORTSBOOK,
+  runBetRiversAgent,
+  scrape as scrapeBetRivers,
+  scrapeBetRiversHtmlStub,
+  type BetRiversAgentResult,
+} from './scrapers/books/betrivers.ts';
+export {
+  CIRCA_AGENT_ID,
+  CIRCA_SPORTSBOOK,
+  runCircaAgent,
+  scrape as scrapeCirca,
+  scrapeCircaHtmlStub,
+  type CircaAgentResult,
+} from './scrapers/books/circa.ts';
 export {
   BOOK_SCRAPE_AGENTS,
   getBookScrapeAgent,
