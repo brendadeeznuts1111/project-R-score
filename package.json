@@ -29,7 +29,7 @@
     "@factorywager/guards": "workspace:*",
     "@factorywager/registry-client": "workspace:*",
     "@factorywager/rip": "workspace:*",
-    "@modelcontextprotocol/sdk": "1.29.0",
+    "@modelcontextprotocol/sdk": "1.30.0",
     "@pinecone-database/pinecone": "7.2.0",
     "@simplewebauthn/server": "13.3.2",
     "plaid": "42.2.0",
@@ -39,8 +39,8 @@
     "@socketsecurity/bun-security-scanner": "^1.1.2",
     "@types/bun": "catalog:",
     "@types/node": "25.9.0",
-    "@typescript-eslint/eslint-plugin": "8.59.3",
-    "@typescript-eslint/parser": "8.59.3",
+    "@typescript-eslint/eslint-plugin": "8.65.0",
+    "@typescript-eslint/parser": "8.65.0",
     "bun-types": "catalog:",
     "eslint": "9.39.4",
     "eslint-plugin-import": "2.32.0",
@@ -48,7 +48,7 @@
     "husky": "9.1.7",
     "prettier": "3.6.2",
     "typescript": "catalog:",
-    "typescript-eslint": "8.59.3",
+    "typescript-eslint": "8.65.0",
     "undici-types": "8.8.0"
   },
   "bin": {
@@ -2298,6 +2298,14 @@
     "access": "public"
   },
   "overrides": {
-    "bun-types": "1.4.0-canary.20260519T150915"
+    "@hono/node-server": "2.0.12",
+    "axios": "1.18.1",
+    "body-parser": "2.3.0",
+    "bun-types": "1.4.0-canary.20260519T150915",
+    "fast-uri": "3.1.4",
+    "form-data": "4.0.6",
+    "hono": "4.12.32",
+    "js-yaml": "4.3.0",
+    "postcss": "8.5.23"
   }
 }
