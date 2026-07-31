@@ -1,11 +1,19 @@
 import { describe, expect, test } from 'bun:test';
 import {
   PUBLIC_PERIMETER,
+  parsePublicSeverity,
   publicReportPasses,
   runPublicDiscovery,
 } from '../lib/public-discovery.ts';
 
 describe('public-discovery', () => {
+  test('parsePublicSeverity accepts warn/warning aliases', () => {
+    expect(parsePublicSeverity('warn')).toBe('warn');
+    expect(parsePublicSeverity('warning')).toBe('warn');
+    expect(parsePublicSeverity('errors')).toBe('error');
+    expect(parsePublicSeverity('info')).toBe('info');
+  });
+
   test('PUBLIC_PERIMETER covers portal and registry', () => {
     expect(PUBLIC_PERIMETER.some(p => p === 'public/portal')).toBe(true);
     expect(PUBLIC_PERIMETER.some(p => p === 'public/site.webmanifest')).toBe(true);

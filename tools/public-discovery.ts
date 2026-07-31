@@ -12,17 +12,18 @@
  * @see docs/harness/tenants/public-plane.md
  */
 import {
+  parsePublicSeverity,
   publicReportPasses,
   runPublicDiscovery,
-  type PublicSeverity,
 } from '../lib/public-discovery.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 
 const args = Bun.argv.slice(2);
 const asJson = args.includes('--json');
 const check = args.includes('--check');
-const minSeverity = (args.find((a, i) => args[i - 1] === '--min-severity') ??
-  'error') as PublicSeverity;
+const minSeverity = parsePublicSeverity(
+  args.find((a, i) => args[i - 1] === '--min-severity') ?? 'error'
+);
 
 const report = await runPublicDiscovery();
 

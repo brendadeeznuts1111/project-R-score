@@ -140,10 +140,11 @@ describe('snapshot-data-plane grep + flat manifest', () => {
   });
 
   test('termColor emits codes on a color TTY and plain text elsewhere', async () => {
-    // NOTE: this session exports NO_COLOR=1, which Bun.color honors — the
-    // color case must strip it from the child env or every check reads ''.
+    // NOTE: parent shells often export NO_COLOR=1 and/or FORCE_COLOR=0, both of
+    // which Bun.color honors — strip them from the child base env or the color
+    // case reads plain text even on a color TTY.
     const runInPty = async (env: Record<string, string>): Promise<string> => {
-      const { NO_COLOR: _drop, ...baseEnv } = Bun.env;
+      const { NO_COLOR: _drop, FORCE_COLOR: _fc, ...baseEnv } = Bun.env;
       let out = '';
       const proc = Bun.spawn(
         [

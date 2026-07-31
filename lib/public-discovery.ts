@@ -295,6 +295,15 @@ export async function runPublicDiscovery(
   };
 }
 
+/** Normalize CLI aliases (`warning` → `warn`, `errors` → `error`). */
+export function parsePublicSeverity(raw: string): PublicSeverity {
+  const key = raw.trim().toLowerCase();
+  if (key === 'warning' || key === 'warnings' || key === 'warn') return 'warn';
+  if (key === 'errors' || key === 'error') return 'error';
+  if (key === 'info' || key === 'infos') return 'info';
+  throw new Error(`Unknown public-discovery severity: ${raw} (use info|warn|error)`);
+}
+
 export function publicReportPasses(
   report: PublicDiscoveryReport,
   minSeverity: PublicSeverity = 'error'
