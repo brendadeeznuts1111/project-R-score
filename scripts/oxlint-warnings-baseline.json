@@ -42,7 +42,6 @@
     "lib/utils/enhanced-status-matrix.ts": 1,
     "tools/branded-id-check.ts": 3,
     "tools/verify-package-info.ts": 1,
-    "scripts/url-validator.ts": 2,
     "lib/shared/tools/bun-urls.ts": 1,
     "lib/factory/retry.ts": 1,
     "scripts/search-benchmark.ts": 2,

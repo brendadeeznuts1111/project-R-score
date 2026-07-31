@@ -72,12 +72,6 @@ export const CI_JOB_EXEMPTIONS: readonly CiJobExemption[] = [
     reason: 'Security audit workflow — separate security claim surface',
   },
   {
-    id: 'gha-url-validation',
-    source: 'gha-workflow',
-    match: 'url-validation.yml',
-    reason: 'URL validation — docs operate, not deploy tenant',
-  },
-  {
     id: 'gha-micro-enhancements',
     source: 'gha-workflow',
     match: 'micro-enhancements.yml',
