@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/portal/style.css" />
-  <script type="application/json" id="install-hygiene-embed">{"schemaVersion":1,"kind":"install-hygiene","generatedAt":"2026-07-29T01:35:09.194Z","bunVersion":"1.4.0","bunRevision":"a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88","installCache":{"available":true,"sizeBytes":3859976192,"sizeHuman":"3.59 GB","thresholdBytes":2147483648,"thresholdHuman":"2.00 GB","wouldPrune":true,"pruneReason":"over threshold (2.00 GB, current 3.59 GB)","cacheDir":"/Users/nolarose/.bun/install/cache","bunPmCachePath":"/Users/nolarose/.npm","bunPmCacheMismatch":"reported /Users/nolarose/.npm does not match expected /Users/nolarose/.bun/install/cache","collectedAt":"2026-07-29T01:34:52.342Z"},"npmInstall":{"ok":true,"violations":[],"violationCount":0,"allowedPaths":[".npmrc","tools/bun-docs-index.json","tools/bun-docs-catalog.json","tools/bun-docs-llms-full.txt","tools/bun-doc-refs.ts","tools/verify-guides.ts"]},"installVerify":{"ok":true,"failed":0,"strict":false,"dryRun":true,"checks":[{"ok":true,"label":"install policy","detail":"linker=isolated (inherited from ~/.bunfig.toml); globalStore=true (inherited from ~/.bunfig.toml); cache=/Users/nolarose/.bun/install/cache"},{"ok":true,"label":"install env","detail":"cache absolute, globalStore=1 (BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE)"},{"ok":true,"label":"install shell env","detail":"no BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE"},{"ok":true,"label":"cache dir","detail":"/Users/nolarose/.bun/install/cache (3.6G)"},{"ok":true,"label":"global store","detail":"/Users/nolarose/.bun/install/cache/links (1064 entries)"},{"ok":true,"label":"tilde drift","detail":"no literal ./~ cache dirs"},{"ok":true,"label":"trustedDependencies","detail":"explicitly empty and documented"},{"ok":true,"label":"lockfile","detail":"configVersion 1 (isolated)"},{"ok":true,"label":"node_modules layout","detail":"resolves into global store/cache"}]},"ok":false}</script>
+  <script type="application/json" id="install-hygiene-embed">{"schemaVersion":1,"kind":"install-hygiene","generatedAt":"2026-07-31T08:16:23.929Z","bunVersion":"1.4.0","bunRevision":"a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88","installCache":{"available":true,"sizeBytes":3891933184,"sizeHuman":"3.62 GB","thresholdBytes":2147483648,"thresholdHuman":"2.00 GB","wouldPrune":true,"pruneReason":"over threshold (2.00 GB, current 3.62 GB)","cacheDir":"/Users/nolarose/.bun/install/cache","bunPmCachePath":"/Users/nolarose/.bun/install/cache","bunPmCacheMismatch":null,"collectedAt":"2026-07-31T08:16:18.946Z"},"npmInstall":{"ok":true,"violations":[],"violationCount":0,"allowedPaths":[".npmrc","tools/bun-docs-index.json","tools/bun-docs-catalog.json","tools/bun-docs-llms-full.txt","tools/bun-doc-refs.ts","tools/verify-guides.ts"]},"installVerify":{"ok":true,"failed":0,"strict":false,"dryRun":true,"checks":[{"ok":true,"label":"install policy","detail":"linker=isolated (inherited from ~/.bunfig.toml); globalStore=true (inherited from ~/.bunfig.toml); cache=/Users/nolarose/.bun/install/cache"},{"ok":true,"label":"install env","detail":"cache absolute, globalStore=1 (BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE)"},{"ok":true,"label":"install shell env","detail":"no BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE"},{"ok":true,"label":"cache dir","detail":"/Users/nolarose/.bun/install/cache (3.6G)"},{"ok":true,"label":"global store","detail":"/Users/nolarose/.bun/install/cache/links (1065 entries)"},{"ok":true,"label":"tilde drift","detail":"no literal ./~ cache dirs"},{"ok":true,"label":"trustedDependencies","detail":"explicitly empty and documented"},{"ok":true,"label":"lockfile","detail":"configVersion 1 (isolated)"},{"ok":true,"label":"node_modules layout","detail":"resolves into global store/cache"}]},"ok":false}</script>
   <style>
     /* Color code: green=ok · yellow=attention · red=fail · neutral=info */
     .doc-wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px 48px; }
@@ -207,9 +207,10 @@
         <div class="nav-overflow">
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog/" class="nav-link" data-group="registry" role="menuitem">Catalog</a>
+            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
             <a href="/portal/packages/" class="nav-link" title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table" data-group="registry" data-cli="bun run portal-cli pm graph  # offline packages-graph-map table" role="menuitem">Packages</a>
             <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
+            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-cli="bun run glossary:portal" role="menuitem">Glossary</a>
             <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
             <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
             <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
@@ -245,7 +246,7 @@
       <h1>Install hygiene</h1>
       <span id="ih-tone" class="doc-badge yellow" data-tone="neutral">attention</span>
       <span id="ih-source">offline SSR</span>
-      <p class="dim" id="ih-meta">generated 2026-07-29T01:35:09.194Z · bun 1.4.0 · offline SSR bake</p>
+      <p class="dim" id="ih-meta">generated 2026-07-31T08:16:23.929Z · bun 1.4.0 · offline SSR bake</p>
     </div>
     <div class="ih-legend" aria-label="Color legend">
       <span><span class="ih-chip ih-chip--green">green</span> ok / pass / clean</span>
@@ -261,9 +262,9 @@
       <a class="btn" href="/registry/install-hygiene-report.json">JSON</a>
     </div>
     <pre id="ih-summary-text" class="ih-summary" aria-label="Install hygiene text summary">install-hygiene · attention (yellow)
-generated: 2026-07-29T01:35:09.194Z
+generated: 2026-07-31T08:16:23.929Z
 bun: 1.4.0
-cache: 3.59 GB / 2.00 GB prune=true
+cache: 3.62 GB / 2.00 GB prune=true
 npm: clean
 install:verify: pass
 reasons: cache over prune threshold</pre>
@@ -277,7 +278,7 @@ reasons: cache over prune threshold</pre>
       <a class="btn" href="/portal/packages/">Packages</a>
     </div>
 
-    <div class="doc-stats" id="ih-stats"><div class="doc-stat doc-stat--yellow" data-tone="yellow"><div class="k">overall</div><div class="v">attention</div></div><div class="doc-stat doc-stat--yellow" data-tone="yellow"><div class="k">cache size</div><div class="v">3.59 GB</div></div><div class="doc-stat doc-stat--yellow" data-tone="yellow"><div class="k">would prune</div><div class="v">yes</div></div><div class="doc-stat doc-stat--green" data-tone="green"><div class="k">npm install</div><div class="v">clean</div></div><div class="doc-stat doc-stat--green" data-tone="green"><div class="k">install:verify</div><div class="v">pass</div></div><div class="doc-stat doc-stat--neutral" data-tone="neutral"><div class="k">bun</div><div class="v">1.4.0</div></div></div>
+    <div class="doc-stats" id="ih-stats"><div class="doc-stat doc-stat--yellow" data-tone="yellow"><div class="k">overall</div><div class="v">attention</div></div><div class="doc-stat doc-stat--yellow" data-tone="yellow"><div class="k">cache size</div><div class="v">3.62 GB</div></div><div class="doc-stat doc-stat--yellow" data-tone="yellow"><div class="k">would prune</div><div class="v">yes</div></div><div class="doc-stat doc-stat--green" data-tone="green"><div class="k">npm install</div><div class="v">clean</div></div><div class="doc-stat doc-stat--green" data-tone="green"><div class="k">install:verify</div><div class="v">pass</div></div><div class="doc-stat doc-stat--neutral" data-tone="neutral"><div class="k">bun</div><div class="v">1.4.0</div></div></div>
 
     <div class="doc-panel doc-panel--neutral" id="ih-panel-actions" data-tone="neutral">
       <h2>Recommended actions</h2>
@@ -286,7 +287,7 @@ reasons: cache over prune threshold</pre>
 
     <div class="doc-panel doc-panel--neutral" id="ih-panel-cache" data-tone="neutral">
       <h2>Install cache</h2>
-      <div id="ih-cache-meter"><div class="ih-meter ih-meter--red" title="3.59 GB / 2.00 GB (180%)"><div class="ih-meter-track"><div class="ih-meter-fill" style="width:100%"></div><div class="ih-meter-mark" style="left:67%" title="threshold"></div></div><div class="ih-meter-label">3.59 GB / 2.00 GB (180%)</div></div></div>
+      <div id="ih-cache-meter"><div class="ih-meter ih-meter--red" title="3.62 GB / 2.00 GB (181%)"><div class="ih-meter-track"><div class="ih-meter-fill" style="width:100%"></div><div class="ih-meter-mark" style="left:67%" title="threshold"></div></div><div class="ih-meter-label">3.62 GB / 2.00 GB (181%)</div></div></div>
       <table class="doc-table">
         <thead><tr><th>Field</th><th>Value</th></tr></thead>
         <tbody id="ih-cache-body"><tr><td colspan="2" class="dim">Loading…</td></tr></tbody>
@@ -321,6 +322,7 @@ reasons: cache over prune threshold</pre>
       <a href="/portal/toc/">TOC</a> ·
       <a href="/portal/packages/">Packages</a> ·
       <a href="/portal/brands/">Brands</a> ·
+      <a href="/portal/glossary/">Glossary</a> ·
       <a href="/portal/surfaces/">Surfaces</a> ·
       <a href="/portal/health/">Health</a> ·
       <a href="/registry/portal-weave.json">Portal proof</a> ·

@@ -39,9 +39,10 @@
         <div class="nav-overflow">
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog/" class="nav-link" data-group="registry" role="menuitem">Catalog</a>
+            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
             <a href="/portal/packages/" class="nav-link" title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table" data-group="registry" data-cli="bun run portal-cli pm graph  # offline packages-graph-map table" role="menuitem">Packages</a>
             <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
+            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-cli="bun run glossary:portal" role="menuitem">Glossary</a>
             <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
             <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
             <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
@@ -187,6 +188,7 @@
       <a href="/portal/toc/">TOC</a> ·
       <a href="/portal/packages/">Packages</a> ·
       <a href="/portal/brands/">Brands</a> ·
+      <a href="/portal/glossary/">Glossary</a> ·
       <a href="/portal/surfaces/">Surfaces</a> ·
       <a href="/portal/health/">Health</a> ·
       <a href="/registry/portal-weave.json">Portal proof</a> ·
@@ -284,7 +286,7 @@ function renderKpis(metrics, regPkgCount, agentAuth) {
   const authStatus = agentAuth?.status === 'configured'
     ? 'configured'
     : agentAuth
-      ? (agentAuth.status || 'missing')
+      ? (agentAuth.status || 'unset')
       : '—';
   const authSub = agentAuth?.envKey
     ? `${agentAuth.envKey} · cloud agent`
@@ -299,8 +301,10 @@ function renderKpis(metrics, regPkgCount, agentAuth) {
   // tint first card by source
   const first = host.querySelector('[data-kpi="Source"] .val');
   if (first) first.className = `val st-${tone === 'ok' ? 'ok' : 'warn'}`;
-  const authValue = host.querySelector('[data-kpi="Registry token"] .val');
-  if (authValue) authValue.className = `val st-${authStatus === 'configured' ? 'ok' : 'warn'}`;
+  const authVal = host.querySelector('[data-kpi="Registry token"] .val');
+  if (authVal) {
+    authVal.className = `val st-${authStatus === 'configured' ? 'ok' : 'warn'}`;
+  }
 }
 
 function renderCharts(metrics) {
@@ -614,12 +618,7 @@ export async function load() {
     );
   } else {
     renderKpis(null, pkgCount, agentAuth);
-    setBanner(
-      'bad',
-      'Metrics unavailable',
-      'Run bun run tennis:board:bake' +
-        (agentAuth?.status === 'configured' ? ' · registry token configured' : '')
-    );
+    setBanner('bad', 'Metrics unavailable', 'Run bun run tennis:board:bake' + (agentAuth?.status === 'configured' ? ' · registry token configured' : ''));
   }
 }
 

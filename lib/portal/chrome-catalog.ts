@@ -113,6 +113,8 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/catalog/',
     tier: 'overflow',
     group: 'registry',
+    note: 'account catalog · scrape-wire sports/states registry',
+    cli: 'bun run bake:scrape-wire-taxonomy',
   },
   {
     id: 'packages',

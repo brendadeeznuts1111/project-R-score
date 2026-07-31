@@ -45,6 +45,20 @@
     .status-inactive { background: rgba(243,156,18,.15); color: var(--yellow); }
     .status-limited { background: rgba(231,76,60,.15); color: var(--red); }
     .partner-name { color: var(--text-dim); }
+    .wire-panel { margin: 28px 0 8px; padding: 18px 20px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+    .wire-panel h2 { margin: 0 0 6px; font-size: 15px; font-weight: 600; }
+    .wire-panel .wire-sub { margin: 0 0 14px; font-size: 12px; color: var(--text-dim); }
+    .wire-stats { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+    .wire-stat { font-size: 12px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 4px; color: var(--text-dim); }
+    .wire-stat strong { color: var(--text); font-family: var(--font-mono, monospace); }
+    .wire-section-label { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin: 12px 0 8px; }
+    .wire-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .wire-chip { font-size: 12px; padding: 4px 9px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg, var(--surface)); color: var(--text); }
+    .wire-chip code { font-size: 11px; color: var(--accent); }
+    .wire-states { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 6px; }
+    .wire-state { font-size: 12px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 4px; display: flex; justify-content: space-between; gap: 8px; }
+    .wire-state code { color: var(--accent); font-size: 11px; }
+    .wire-state span { color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     @media (max-width: 768px) { .stats-row { grid-template-columns: repeat(2, 1fr); } .account-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -68,9 +82,10 @@
         <div class="nav-overflow">
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog/" class="nav-link active" aria-current="page" data-group="registry" role="menuitem">Catalog</a>
+            <a href="/portal/catalog/" class="nav-link active" aria-current="page" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
             <a href="/portal/packages/" class="nav-link" title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table" data-group="registry" data-cli="bun run portal-cli pm graph  # offline packages-graph-map table" role="menuitem">Packages</a>
             <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
+            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-cli="bun run glossary:portal" role="menuitem">Glossary</a>
             <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
             <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
             <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
@@ -108,11 +123,16 @@
       <p class="meta" id="catalog-related" style="font-size:12px;color:var(--text-dim);margin:0 0 12px">
         Related registry:
         <a href="/registry/catalog-snapshot.json"><code>catalog-snapshot.json</code></a> ·
+        <a href="/registry/scrape-wire-taxonomy.json" title="Tier 4 scrape wire · sports + US states SSOT · bun run bake:scrape-wire-taxonomy"><code>scrape-wire-taxonomy.json</code></a>
+        <span id="scrape-wire-meta"></span> ·
+        <a href="/registry/scrape-wire-schema-audit.json" title="Governance gate · bun run schema:audit"><code>schema-audit</code></a> ·
+        <a href="/registry/sports-taxonomy.json" title="Sports competition taxonomy bake"><code>sports-taxonomy.json</code></a> ·
         <a href="/registry/content-type-matrix.json" title="Content-Type wire matrix bake"><code>content-type-matrix.json</code></a>
         <span id="ct-matrix-meta"></span> ·
         <a href="/registry/harness-skills-catalog.json" title="Harness agent skills catalog bake"><code>harness-skills-catalog.json</code></a>
         <span id="harness-skills-meta"></span> ·
-        <a href="/portal/skills/">Skills board</a>
+        <a href="/portal/skills/">Skills board</a> ·
+        <a href="/portal/glossary/#glossary:scrape.wire">Scrape wire glossary</a>
       </p>
       <div class="stats-row">
         <div class="stat-card"><div class="stat-num" id="stat-total">0</div><div class="stat-label">accounts</div></div>
@@ -130,6 +150,26 @@
         </select>
       </div>
       <div id="account-grid" class="account-grid"></div>
+      <section class="wire-panel" id="scrape-wire-panel" aria-labelledby="scrape-wire-heading">
+        <h2 id="scrape-wire-heading">Scrape wire registry</h2>
+        <p class="wire-sub">
+          Full sport + US state catalogs that Tier 4 agents normalize onto before limit observations.
+          Bake: <code>bun run bake:scrape-wire-taxonomy</code>
+        </p>
+        <div class="wire-stats" id="wire-stats">Loading scrape-wire-taxonomy…</div>
+        <div class="wire-section-label">Sportsbooks</div>
+        <div class="wire-chips" id="wire-books"></div>
+        <div class="wire-section-label">Sports</div>
+        <div class="wire-chips" id="wire-sports"></div>
+        <div class="wire-section-label">Leagues / codes</div>
+        <div class="wire-chips" id="wire-leagues"></div>
+        <div class="wire-section-label">Markets</div>
+        <div class="wire-chips" id="wire-markets"></div>
+        <div class="wire-section-label">Phases</div>
+        <div class="wire-chips" id="wire-phases"></div>
+        <div class="wire-section-label">States (US + DC)</div>
+        <div class="wire-states" id="wire-states"></div>
+      </section>
     </div>
   </main>
 
@@ -224,8 +264,112 @@
     $('sort-select').addEventListener('change', renderGrid);
     load();
 
+    function esc(value) {
+      const el = document.createElement('div');
+      el.textContent = value == null ? '' : String(value);
+      return el.innerHTML;
+    }
+
+    function renderScrapeWire(payload) {
+      const s = payload.summary || {};
+      if ($('scrape-wire-meta')) {
+        $('scrape-wire-meta').textContent =
+          ` (${s.books ?? '?'} books · ${s.sports ?? '?'} sports · ${s.markets ?? '?'} markets · ${s.phases ?? '2'} phases · ${s.states ?? '?'} states)`;
+      }
+      $('wire-stats').innerHTML = [
+        ['books', s.books],
+        ['sports', s.sports],
+        ['leagues', s.leagues],
+        ['markets', s.markets],
+        ['phases', s.phases],
+        ['states', s.states],
+        ['book aliases', s.bookAliases],
+        ['league aliases', s.leagueAliases],
+      ]
+        .map(
+          ([label, n]) =>
+            `<span class="wire-stat"><strong>${esc(n ?? '—')}</strong> ${esc(label)}</span>`
+        )
+        .join('');
+
+      const books = Array.isArray(payload.bookRegistry) ? payload.bookRegistry : [];
+      $('wire-books').innerHTML = books.length
+        ? books
+            .map(
+              row =>
+                `<span class="wire-chip">#${esc(row.rank)} ${esc(row.label)} <code>${esc(row.key)}</code></span>`
+            )
+            .join('')
+        : '<span class="wire-stat">No bookRegistry in bake</span>';
+
+      const sports = Array.isArray(payload.sportRegistry) ? payload.sportRegistry : [];
+      $('wire-sports').innerHTML = sports.length
+        ? sports
+            .map(
+              row =>
+                `<span class="wire-chip">${esc(row.label)} <code>${esc(row.key)}</code></span>`
+            )
+            .join('')
+        : '<span class="wire-stat">No sportRegistry in bake</span>';
+
+      const leagues = Array.isArray(payload.leagueRegistry) ? payload.leagueRegistry : [];
+      $('wire-leagues').innerHTML = leagues.length
+        ? leagues
+            .map(
+              row =>
+                `<span class="wire-chip">${esc(row.label)} <code>${esc(row.key)}</code> · ${esc(row.sport)}</span>`
+            )
+            .join('')
+        : '<span class="wire-stat">No leagueRegistry in bake</span>';
+
+      const markets = Array.isArray(payload.marketRegistry) ? payload.marketRegistry : [];
+      $('wire-markets').innerHTML = markets.length
+        ? markets
+            .map(
+              row =>
+                `<span class="wire-chip">${esc(row.label)} <code>${esc(row.key)}</code> · ${esc(row.tier)}</span>`
+            )
+            .join('')
+        : (Array.isArray(payload.markets) ? payload.markets : [])
+            .map(key => `<span class="wire-chip"><code>${esc(key)}</code></span>`)
+            .join('');
+
+      const phases = Array.isArray(payload.phaseRegistry) ? payload.phaseRegistry : [];
+      $('wire-phases').innerHTML = phases.length
+        ? phases
+            .map(
+              row =>
+                `<span class="wire-chip">${esc(row.label)} <code>${esc(row.key)}</code></span>`
+            )
+            .join('')
+        : ['pregame', 'live']
+            .map(key => `<span class="wire-chip"><code>${esc(key)}</code></span>`)
+            .join('');
+
+      const states = Array.isArray(payload.stateRegistry) ? payload.stateRegistry : [];
+      $('wire-states').innerHTML = states.length
+        ? states
+            .map(
+              row =>
+                `<div class="wire-state"><code>${esc(row.key || row.code)}</code><span>${esc(row.label)}</span></div>`
+            )
+            .join('')
+        : '<span class="wire-stat">No stateRegistry in bake</span>';
+    }
+
     // Related catalog-plane bakes (closes surfaces v3 wire-portal orphans)
     (async () => {
+      try {
+        const res = await fetch('/registry/scrape-wire-taxonomy.json', {
+          cache: 'no-store',
+          headers: { Accept: 'application/json' },
+        });
+        if (res.ok) renderScrapeWire(await res.json());
+        else $('wire-stats').textContent = `scrape-wire-taxonomy HTTP ${res.status}`;
+      } catch (err) {
+        $('wire-stats').textContent =
+          err instanceof Error ? err.message : 'Failed to load scrape-wire-taxonomy';
+      }
       try {
         const res = await fetch('/registry/content-type-matrix.json', {
           cache: 'no-store',
@@ -267,6 +411,7 @@
       <a href="/portal/toc/">TOC</a> ·
       <a href="/portal/packages/">Packages</a> ·
       <a href="/portal/brands/">Brands</a> ·
+      <a href="/portal/glossary/">Glossary</a> ·
       <a href="/portal/surfaces/">Surfaces</a> ·
       <a href="/portal/health/">Health</a> ·
       <a href="/registry/portal-weave.json">Portal proof</a> ·

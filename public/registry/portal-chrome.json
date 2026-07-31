@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-07-31T06:55:13.067Z",
+  "generated": "2026-07-31T11:19:40.339Z",
   "path": "/registry/portal-chrome.json",
   "summary": {
     "priorityNav": 6,
@@ -73,7 +73,9 @@
       "label": "Catalog",
       "href": "/portal/catalog/",
       "tier": "overflow",
-      "group": "registry"
+      "group": "registry",
+      "note": "account catalog · scrape-wire sports/states registry",
+      "cli": "bun run bake:scrape-wire-taxonomy"
     },
     {
       "id": "packages",
