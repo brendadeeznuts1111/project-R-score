@@ -250,9 +250,18 @@ bun test tests/seat-desk-snapshot.test.ts
 
 Collision-free factory mirror over this desk + handshake — phases, book types, funding rails, out status, accounting/event codes, Telegram topic leaves. Soft ledger mutations stay in `ct`.
 
+**Authority split**
+
+| Layer | Owner | Notes |
+|-------|-------|-------|
+| Shared cores (`partner.phase.*`, `book.type.*`, core rails/outs, `accounting.*`, `event.*`) | [`Kalshi-bot/src/institutions/glossary.ts`](../../../Kalshi-bot/src/institutions/glossary.ts) | `kind: ui\|composite`; ColorKeys from real `COLORS` (`tennis`/`middleware`/`trading`/`misc`/`research`/`polymarket` — not `tennisGreen`/`poly`) |
+| Factory overlay (extra rails, out statuses, `telegram.topic.*`) | [`lib/telegram/partner-ops-glossary.ts`](../../../lib/telegram/partner-ops-glossary.ts) | Must not re-declare Kalshi ids |
+| Chip palette | [`partner-ops-color-kernel.ts`](../../../lib/telegram/partner-ops-color-kernel.ts) | Bun.color closed palette for board chips |
+
 | Piece | Path / command |
 |-------|----------------|
-| Glossary + colors | [`lib/telegram/partner-ops-glossary.ts`](../../../lib/telegram/partner-ops-glossary.ts) · [`partner-ops-color-kernel.ts`](../../../lib/telegram/partner-ops-color-kernel.ts) |
+| Kalshi validate | `cd Kalshi-bot && bun run partners:validate` |
+| Glossary + colors | overlay + color kernel above |
 | Registry bake | `/registry/partners-ops.json` · `bun run partners:build` |
 | Validate | `bun run partners:validate` |
 | Event append (factory mirror JSONL) | `bun run partners:ledger:append -- --code DEPOSIT_RECEIVED --partner ASH --amount 1000` |
@@ -273,6 +282,6 @@ Intake SSOT remains `reports/telegram/seat-intake/` → `seat-capital-desk.json`
 | `seat-desk-partner-message.ts` | Field manifest + partner paste builder + topic prompts + template SSOT + JSON summary |
 | `partner-forum-accounting.ts` | Auto-create Accounting topic + post prompt once per partner forum |
 | `partner-ops-registry.ts` | v2 taxonomy projection + collision validation |
-| `partner-ops-glossary.ts` | Phase / book / rail / out / accounting / topic concepts |
+| `partner-ops-glossary.ts` | Factory overlay concepts (Kalshi owns shared cores) |
 | `partner-ops-events.ts` | Factory-mirror event codes |
 | `partner-ops-color-kernel.ts` | Bun.color palette for partner-ops concepts |

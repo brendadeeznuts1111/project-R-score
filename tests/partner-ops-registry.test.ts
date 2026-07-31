@@ -41,17 +41,20 @@ describe('partner-ops color + glossary', () => {
     expect(partnerOpsConceptColorWire('partner.phase.operator_ready').colorKey).toBe('tennis');
   });
 
-  test('glossary ids are collision-free and namespaced', () => {
+  test('Factory overlay glossary stays collision-free; events map to event.*', () => {
     const concepts = partnerOpsGlossaryConcepts();
     const ids = concepts.map(c => c.id);
     expect(new Set(ids).size).toBe(ids.length);
     expect(ids.every(id => id.includes('.'))).toBe(true);
-    expect(ids).toContain('accounting.free_roll');
+    // Shared cores live in Kalshi glossary — Factory only overlays extras.
+    expect(ids).not.toContain('accounting.free_roll');
+    expect(ids).not.toContain('partner.phase.operator_ready');
     expect(ids).toContain('telegram.topic.liquidity');
     expect(ids).toContain('partner.ops.event');
+    expect(ids).toContain('deposit.method.cashapp');
     expect(PARTNER_OPS_EVENT_CODES).toContain('DEPOSIT_RECEIVED');
     expect(buildPartnerOpsEvent('DEPOSIT_RECEIVED', { partnerCode: 'ASH', amount: 1 }).conceptId).toBe(
-      'accounting.deposit'
+      'event.deposit.received'
     );
   });
 });
