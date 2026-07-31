@@ -9,7 +9,12 @@ import {
   termColor,
   type SnapshotManifest,
 } from '../tools/snapshot-core.ts';
-import { isSnapshotScope, resolveSnapshotUrl, scopeConfigs } from '../tools/snapshot-scopes.ts';
+import {
+  DEFAULT_SNAPSHOT_DIR,
+  isSnapshotScope,
+  resolveSnapshotUrl,
+  scopeConfigs,
+} from '../tools/snapshot-scopes.ts';
 
 function sampleManifest(overrides: Partial<SnapshotManifest> = {}): SnapshotManifest {
   return {
@@ -34,6 +39,10 @@ function sampleManifest(overrides: Partial<SnapshotManifest> = {}): SnapshotMani
 }
 
 describe('snapshot-scopes', () => {
+  test('local data-plane output defaults beneath artifacts', () => {
+    expect(DEFAULT_SNAPSHOT_DIR).toBe('artifacts/snapshots');
+  });
+
   test('prediction assets use registry paths', () => {
     expect(scopeConfigs.prediction.assetPaths[0]).toBe('/registry/prediction/report/summary.json');
     expect(scopeConfigs.prediction.reportPath).toBe('/registry/prediction/report/');

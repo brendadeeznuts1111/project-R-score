@@ -9,17 +9,19 @@
  * Repo hygiene check — catches stray generated files before they get committed.
  *
  * Checks:
- *  1. No timestamped JSON/JSONL output files in root or utils/
+ *  1. No generated output files at the repository root
  *  2. No secrets staged (.bunfig.toml, .env files)
- *  3. No stray log files in root
+ *  3. No unexpected top-level directories outside the root policy
  *
  * Usage: bun scripts/repo-hygiene.ts          # full check
  *        bun scripts/repo-hygiene.ts --staged  # only check staged files (pre-commit)
  */
 
-// @see https://bun.com/docs/runtime/glob — Bun.Glob
-// @see https://bun.com/docs/runtime/file-io — Bun.file
-import { Glob } from 'bun';
+import {
+  ALLOWED_ROOT_DIRS,
+  rootOutputRoute,
+  type RootOutputRoute,
+} from '../config/repo-root-policy.ts';
 import { logTable } from '../lib/console-depth.ts';
 import { isDirectorySync, joinPath, listEntriesSync } from './lib/fs-bun';
 import { isTildeCachePath } from './lib/bun-install-env.ts';
@@ -76,42 +78,6 @@ const FORBIDDEN_STAGED = [
   'lib/profile.md',
 ];
 
-// Directories to scan for stray output files (skip if absent — root utils/ was retired)
-const SCAN_DIRS = ['.'];
-
-// Top-level dirs allowed at monorepo root (see STRUCTURE.md)
-const ALLOWED_ROOT_DIRS = new Set([
-  'archive',
-  'artifacts',
-  'assets',
-  'config',
-  'dashboard',
-  'database',
-  'docs',
-  'examples',
-  'functions',
-  'herdr-worktrees',
-  'Kalshi-bot',
-  'lib',
-  'logs',
-  'node_modules',
-  'packages',
-  'plannator',
-  'projects',
-  'public',
-  'reports',
-  'scratch',
-  'scripts',
-  'server',
-  'services',
-  'spine',
-  'src',
-  'tests',
-  'tools',
-  'utils',
-  'workers',
-]);
-
 // Dirs that must never exist at root (often created by misconfigured Bun cache)
 const FORBIDDEN_ROOT_DIRS = new Set(['~']);
 
@@ -121,30 +87,73 @@ const FORBIDDEN_ROOT_FILES = new Set(['index.html', 'index.ts']);
 interface Violation {
   file: string;
   rule: string;
+  owner: string;
+  action: string;
 }
 
-function isGitignored(relPath: string): boolean {
-  const probe = Bun.spawnSync(['git', 'check-ignore', '-q', '--', relPath], { cwd: ROOT });
-  return probe.exitCode === 0;
+const DEFAULT_ROUTE: RootOutputRoute = {
+  owner: 'repository',
+  target: 'an allowlisted owner directory',
+  action: 'move the entry or add a documented root integration',
+};
+
+function violation(file: string, rule: string): Violation {
+  const route = rootOutputRoute(file) ?? DEFAULT_ROUTE;
+  return {
+    file,
+    rule,
+    owner: route.owner,
+    action: `${route.action} → ${route.target}`,
+  };
+}
+
+/** Resolve all ignored candidates with one git process instead of one per entry. */
+function findGitignored(relPaths: string[], cwd = ROOT): Set<string> {
+  if (relPaths.length === 0) return new Set();
+  const probe = Bun.spawnSync(['git', 'check-ignore', '--', ...relPaths], {
+    cwd,
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
+  return new Set(
+    probe.stdout
+      .toString()
+      .split('\n')
+      .map(path => path.trim())
+      .filter(Boolean)
+  );
+}
+
+function dedupeViolations(violations: Violation[]): Violation[] {
+  const unique = new Map<string, Violation>();
+  for (const item of violations) {
+    const key = `${item.file}\0${item.rule}`;
+    if (!unique.has(key)) unique.set(key, item);
+  }
+  return [...unique.values()];
 }
 
 async function findRootClutter(): Promise<Violation[]> {
   const violations: Violation[] = [];
-  // Glob onlyFiles:false includes directories (bun-types GlobScanOptions)
   const rootEntries = listEntriesSync(ROOT, { dot: true });
+  const directoryNames = rootEntries.filter(name => isDirectorySync(joinPath(ROOT, name)));
+  const ignoreCandidates = directoryNames.filter(
+    name => !name.startsWith('.') && !FORBIDDEN_ROOT_DIRS.has(name) && !ALLOWED_ROOT_DIRS.has(name)
+  );
+  const ignored = findGitignored(ignoreCandidates);
 
   for (const name of rootEntries) {
     if (isDirectorySync(joinPath(ROOT, name))) {
       if (FORBIDDEN_ROOT_DIRS.has(name)) {
-        violations.push({ file: name + '/', rule: 'forbidden-root-dir' });
-      } else if (!name.startsWith('.') && !ALLOWED_ROOT_DIRS.has(name) && !isGitignored(name)) {
-        violations.push({ file: name + '/', rule: 'unexpected-root-dir' });
+        violations.push(violation(name + '/', 'forbidden-root-dir'));
+      } else if (!name.startsWith('.') && !ALLOWED_ROOT_DIRS.has(name) && !ignored.has(name)) {
+        violations.push(violation(name + '/', 'unexpected-root-dir'));
       }
       continue;
     }
 
     if (FORBIDDEN_ROOT_FILES.has(name)) {
-      violations.push({ file: name, rule: 'forbidden-root-file' });
+      violations.push(violation(name, 'forbidden-root-file'));
     }
   }
 
@@ -159,24 +168,8 @@ async function findStrayFiles(): Promise<Violation[]> {
     if (isDirectorySync(joinPath(ROOT, file))) continue;
     for (const pattern of STRAY_PATTERNS) {
       if (pattern.test(file)) {
-        violations.push({ file, rule: 'stray-output-root' });
+        violations.push(violation(file, 'stray-output-root'));
         break;
-      }
-    }
-  }
-
-  for (const dir of SCAN_DIRS) {
-    const absDir = joinPath(ROOT, dir);
-    if (dir !== '.' && !isDirectorySync(absDir)) continue;
-    const glob = new Glob('*.{json,jsonl,log,md}');
-
-    for await (const file of glob.scan({ cwd: absDir, absolute: false })) {
-      for (const pattern of STRAY_PATTERNS) {
-        if (pattern.test(file)) {
-          const rel = dir === '.' ? file : `${dir}/${file}`;
-          violations.push({ file: rel, rule: 'stray-output' });
-          break;
-        }
       }
     }
   }
@@ -195,7 +188,7 @@ async function checkStagedSecrets(): Promise<Violation[]> {
   for (const file of staged) {
     const basename = file.split('/').pop()!;
     if (SECRETS_FILES.includes(basename) || SECRETS_FILES.includes(file)) {
-      violations.push({ file, rule: 'secrets-staged' });
+      violations.push(violation(file, 'secrets-staged'));
     }
   }
 
@@ -215,7 +208,7 @@ async function checkStagedStray(): Promise<Violation[]> {
   for (const file of staged) {
     const basename = file.split('/').pop()!;
     if (isTildeCachePath(file)) {
-      violations.push({ file, rule: 'tilde-cache-staged' });
+      violations.push(violation(file, 'tilde-cache-staged'));
       continue;
     }
     if (
@@ -223,12 +216,12 @@ async function checkStagedStray(): Promise<Violation[]> {
         p => file === p || file.startsWith(p) || (p.endsWith('/') && file.startsWith(p))
       )
     ) {
-      violations.push({ file, rule: 'harness-regenerable-staged' });
+      violations.push(violation(file, 'harness-regenerable-staged'));
       continue;
     }
     for (const pattern of STRAY_PATTERNS) {
       if (pattern.test(basename)) {
-        violations.push({ file, rule: 'stray-output-staged' });
+        violations.push(violation(file, 'stray-output-staged'));
         break;
       }
     }
@@ -239,20 +232,21 @@ async function checkStagedStray(): Promise<Violation[]> {
 
 async function main() {
   const stagedOnly = Bun.argv.includes('--staged');
-  const violations: Violation[] = [];
+  const findings: Violation[] = [];
 
   if (stagedOnly) {
     // Pre-commit mode — evict drift first so ./~ never gets staged
     Bun.spawnSync(['bun', joinPath(ROOT, 'scripts/evict-root-tilde-cache.ts')], { cwd: ROOT });
-    violations.push(...(await checkStagedSecrets()));
-    violations.push(...(await checkStagedStray()));
+    findings.push(...(await checkStagedSecrets()));
+    findings.push(...(await checkStagedStray()));
   } else {
     // Full scan mode — auto-evict Bun tilde-cache drift before scanning
     Bun.spawnSync(['bun', joinPath(ROOT, 'scripts/evict-root-tilde-cache.ts')], { cwd: ROOT });
-    violations.push(...(await findRootClutter()));
-    violations.push(...(await findStrayFiles()));
-    violations.push(...(await checkStagedSecrets()));
+    findings.push(...(await findRootClutter()));
+    findings.push(...(await findStrayFiles()));
+    findings.push(...(await checkStagedSecrets()));
   }
+  const violations = dedupeViolations(findings);
 
   if (violations.length === 0) {
     console.info('✅ Repo hygiene: clean');
@@ -261,8 +255,13 @@ async function main() {
 
   console.info(`❌ Repo hygiene: ${violations.length} violation(s)\n`);
   logTable(
-    violations.map(v => ({ file: v.file, rule: v.rule })),
-    ['file', 'rule'],
+    violations.map(v => ({
+      file: v.file,
+      rule: v.rule,
+      owner: v.owner,
+      action: v.action,
+    })),
+    ['file', 'rule', 'owner', 'action'],
     { colors: true }
   );
 
@@ -275,9 +274,12 @@ export {
   SECRETS_FILES,
   ALLOWED_ROOT_DIRS,
   FORBIDDEN_ROOT_DIRS,
+  dedupeViolations,
+  findGitignored,
   findRootClutter,
   findStrayFiles,
   checkStagedSecrets,
+  type Violation,
 };
 
 // Only run when executed directly, not when imported by tests

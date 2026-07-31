@@ -6,8 +6,9 @@ import { Database } from 'bun:sqlite';
 import { getDatabase } from './init';
 import { logger } from '../utils/logger';
 import { existsSync, statSync } from 'fs';
+import { resolveDatabasePath } from './path';
 
-const DB_PATH = process.env.DATABASE_PATH || 'shortcuts.db';
+const DB_PATH = resolveDatabasePath();
 
 export interface HealthCheckResult {
   healthy: boolean;

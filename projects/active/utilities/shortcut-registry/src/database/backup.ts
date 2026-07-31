@@ -6,15 +6,18 @@ import { Database } from 'bun:sqlite';
 import { getDatabase, closeDatabase } from './init';
 import { logger } from '../utils/logger';
 import { existsSync, copyFileSync, readdirSync, statSync } from 'fs';
+import { dirname } from 'node:path';
+import { resolveBackupPath, resolveDatabasePath } from './path';
 
-const DB_PATH = process.env.DATABASE_PATH || 'shortcuts.db';
+const DB_PATH = resolveDatabasePath();
 
 /**
  * Create a backup of the database
  */
 export function backupDatabase(backupPath?: string): string {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const defaultBackupPath = backupPath || `shortcuts.backup.${timestamp}.db`;
+  const defaultBackupPath =
+    backupPath || resolveBackupPath(`shortcuts.backup.${timestamp}.db`);
 
   logger.info('Creating database backup', { source: DB_PATH, destination: defaultBackupPath });
 
@@ -70,11 +73,12 @@ export function restoreDatabase(backupPath: string): void {
  * List available backups
  */
 export function listBackups(): string[] {
-  const dir = process.cwd();
+  const dir = dirname(DB_PATH);
   const files = readdirSync(dir);
   
   return files
     .filter(file => file.startsWith('shortcuts.backup.') && file.endsWith('.db'))
+    .map(file => resolveBackupPath(file))
     .sort()
     .reverse(); // Most recent first
 }

@@ -79,7 +79,7 @@ Subcommands:
   grep      Search metadata; prints matching manifest paths
   last      Show most recent manifest JSON
   config    Show scope configurations
-  prune     Keep newest N per scope in local store (gitignored snapshots/)
+  prune     Keep newest N per scope in local artifact store
   cron      Bun.cron tenant tool passthrough (register|remove|preview)
 
 Options (all subcommands):
@@ -91,7 +91,7 @@ Options (all subcommands):
 
 Environment:
   PORTAL_SCOPE          Default scope when --scope omitted
-  PORTAL_SNAPSHOT_DIR   Snapshot root (default: snapshots) — local only, not R2
+  PORTAL_SNAPSHOT_DIR   Snapshot root (default: artifacts/snapshots) — local only, not R2
   SNAPSHOT_BASE_URL     Fetch origin for run
 
 Note:

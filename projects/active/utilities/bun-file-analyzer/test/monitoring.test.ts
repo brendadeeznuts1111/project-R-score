@@ -3,7 +3,22 @@
  * Tests security, performance tracking, and analytics components
  */
 
+// @see https://bun.com/docs/runtime/file-io — Bun.write / Bun.file.delete
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
+import { tmpdir } from "node:os";
+
+const TEMP_PREFIX = `${tmpdir()}/factorywager-bun-file-analyzer-${process.pid}`;
+const METAFILE_PATHS = {
+  bundle: `${TEMP_PREFIX}-bundle.json`,
+  appMonitor: `${TEMP_PREFIX}-app-monitor.json`,
+  integration: `${TEMP_PREFIX}-integration.json`,
+  large: `${TEMP_PREFIX}-large.json`,
+  nonexistent: `${TEMP_PREFIX}-nonexistent.json`
+} as const;
+
+async function removeTemporaryFile(path: string): Promise<void> {
+  await Bun.file(path).delete().catch(() => undefined);
+}
 
 describe("🔐 Security System Tests", () => {
   describe("SecureCookieManager", () => {
@@ -276,21 +291,16 @@ describe("📊 Performance Monitoring Tests", () => {
 
       // Write mock metafile to temporary location
       try {
-        Bun.write("./test-metafile.json", JSON.stringify(mockMetafile));
-        analyzer = new BundleAnalyzer("./test-metafile.json");
+        await Bun.write(METAFILE_PATHS.bundle, JSON.stringify(mockMetafile));
+        analyzer = new BundleAnalyzer(METAFILE_PATHS.bundle);
       } catch {
         console.info("BundleAnalyzer instantiation failed, skipping tests");
         analyzer = null;
       }
     });
 
-    afterEach(() => {
-      // Clean up test file
-      try {
-        Bun.remove("./test-metafile.json");
-      } catch {
-        // Ignore cleanup errors
-      }
+    afterEach(async () => {
+      await removeTemporaryFile(METAFILE_PATHS.bundle);
     });
 
     it("should calculate bundle metrics correctly", () => {
@@ -471,20 +481,16 @@ describe("📊 Performance Monitoring Tests", () => {
       };
 
       try {
-        Bun.write("./test-integration-metafile.json", JSON.stringify(mockMetafile));
-        monitor = new AppMonitor("./test-integration-metafile.json");
+        await Bun.write(METAFILE_PATHS.appMonitor, JSON.stringify(mockMetafile));
+        monitor = new AppMonitor(METAFILE_PATHS.appMonitor);
       } catch {
         console.info("AppMonitor instantiation failed, skipping tests");
         monitor = null;
       }
     });
 
-    afterEach(() => {
-      try {
-        Bun.remove("./test-integration-metafile.json");
-      } catch {
-        // Ignore cleanup errors
-      }
+    afterEach(async () => {
+      await removeTemporaryFile(METAFILE_PATHS.appMonitor);
     });
 
     it("should initialize all components", () => {
@@ -560,11 +566,11 @@ describe("🔄 Integration Tests", () => {
       }
     };
 
-    Bun.write("./integration-test-metafile.json", JSON.stringify(mockMetafile));
+    await Bun.write(METAFILE_PATHS.integration, JSON.stringify(mockMetafile));
 
     try {
       // Initialize monitoring
-      const monitor = new AppMonitor("./integration-test-metafile.json");
+      const monitor = new AppMonitor(METAFILE_PATHS.integration);
 
       // Analyze build
       await monitor.analyzeBuild();
@@ -598,12 +604,7 @@ describe("🔄 Integration Tests", () => {
       console.info("✅ Complete integration workflow successful!");
 
     } finally {
-      // Cleanup
-      try {
-        Bun.remove("./integration-test-metafile.json");
-      } catch {
-        // Ignore cleanup errors
-      }
+      await removeTemporaryFile(METAFILE_PATHS.integration);
     }
   });
 
@@ -615,7 +616,7 @@ describe("🔄 Integration Tests", () => {
 
     // Test with invalid metafile
     expect(() => {
-      new BundleAnalyzer("./nonexistent-metafile.json");
+      new BundleAnalyzer(METAFILE_PATHS.nonexistent);
     }).toThrow("Metafile not found or invalid");
 
     // Test security middleware with malicious request
@@ -702,11 +703,11 @@ describe("🎯 Performance Benchmarks", () => {
       };
     }
 
-    Bun.write("./large-metafile.json", JSON.stringify(largeMetafile));
+    await Bun.write(METAFILE_PATHS.large, JSON.stringify(largeMetafile));
 
     try {
       const startTime = performance.now();
-      const analyzer = new BundleAnalyzer("./large-metafile.json");
+      const analyzer = new BundleAnalyzer(METAFILE_PATHS.large);
       const duration = performance.now() - startTime;
 
       expect(duration).toBeLessThan(50); // Should process quickly
@@ -718,11 +719,7 @@ describe("🎯 Performance Benchmarks", () => {
       expect(metrics.totalSize).toBeGreaterThan(0);
 
     } finally {
-      try {
-        Bun.remove("./large-metafile.json");
-      } catch {
-        // Ignore cleanup errors
-      }
+      await removeTemporaryFile(METAFILE_PATHS.large);
     }
   });
 });

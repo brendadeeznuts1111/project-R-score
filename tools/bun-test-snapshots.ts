@@ -17,7 +17,7 @@
  *   bun tools/bun-test-snapshots.ts --prune-orphans --dry-run
  *
  * Never runs bare `bun test --update-snapshots` repo-wide (that thrash-updates every suite).
- * Data-plane local store (gitignored snapshots/) is separate — use:
+ * Data-plane local store (gitignored artifacts/snapshots/) is separate — use:
  *   portal-cli snapshot prune --keep=5
  */
 import { joinPath } from '../lib/path-bun.ts';

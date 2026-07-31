@@ -17,7 +17,7 @@ describe('🧪 SURGICAL PRECISION - Component Integration Tests', () => {
   let coordinator: ComponentCoordinator;
 
   beforeEach(() => {
-    coordinator = new ComponentCoordinator('./test-integration.db');
+    coordinator = new ComponentCoordinator(':memory:');
   });
 
   afterEach(() => {
@@ -409,7 +409,7 @@ describe('🧪 SURGICAL PRECISION - Component Integration Tests', () => {
 
       for (let i = 0; i < iterations; i++) {
         const startTime = performance.now();
-        new ComponentCoordinator('./temp-perf.db');
+        new ComponentCoordinator(':memory:');
         const duration = performance.now() - startTime;
         durations.push(duration);
       }

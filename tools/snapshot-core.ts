@@ -16,6 +16,7 @@ import { runPublicDiscovery } from '../lib/public-discovery.ts';
 import { resolvePath } from '../lib/path-bun.ts';
 import {
   DEFAULT_SNAPSHOT_BASE,
+  DEFAULT_SNAPSHOT_DIR,
   isSnapshotScope,
   repoRoot,
   resolveSnapshotUrl,
@@ -41,7 +42,7 @@ const SCOPE_MARKER = '.snapshot-scope';
 /** Snapshot root — override with PORTAL_SNAPSHOT_DIR. */
 export function getSnapshotDir(): string {
   const fromEnv = Bun.env.PORTAL_SNAPSHOT_DIR?.trim();
-  return fromEnv && fromEnv.length > 0 ? fromEnv : 'snapshots';
+  return fromEnv && fromEnv.length > 0 ? fromEnv : DEFAULT_SNAPSHOT_DIR;
 }
 
 function indexPath(): string {
@@ -583,7 +584,7 @@ export async function listSnapshots(opts: SnapshotFilterOptions = {}): Promise<v
 
 /**
  * Retain only the newest `keep` snapshots per scope in the local gitignored store
- * (`PORTAL_SNAPSHOT_DIR` / `snapshots/`). Rewrites index.jsonl and removes
+ * (`PORTAL_SNAPSHOT_DIR` / `artifacts/snapshots/`). Rewrites index.jsonl and removes
  * orphaned dirs + .json/.txt sidecars. Does not touch R2 — data-plane snaps are local.
  *
  *   portal-cli snapshot prune --keep=5
@@ -801,4 +802,4 @@ export async function ensureSnapshotDir(): Promise<void> {
   await Bun.$`mkdir -p ${getSnapshotDir()}`.quiet();
 }
 
-export { scopeConfigs, DEFAULT_SNAPSHOT_BASE } from './snapshot-scopes.ts';
+export { scopeConfigs, DEFAULT_SNAPSHOT_BASE, DEFAULT_SNAPSHOT_DIR } from './snapshot-scopes.ts';

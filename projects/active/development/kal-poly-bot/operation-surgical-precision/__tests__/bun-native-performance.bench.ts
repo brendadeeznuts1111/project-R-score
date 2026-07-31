@@ -78,7 +78,7 @@ describe('🔬 SURGICAL PRECISION - Bun-Native Performance Benchmarks', () => {
   let coordinator: ComponentCoordinator;
 
   beforeAll(() => {
-    coordinator = new ComponentCoordinator();
+    coordinator = new ComponentCoordinator(':memory:');
   });
 
   afterAll(() => {
@@ -87,7 +87,7 @@ describe('🔬 SURGICAL PRECISION - Bun-Native Performance Benchmarks', () => {
 
   describe('⚡ Component Coordination Performance', () => {
     bench('Component Registration (Bun-native)', async () => {
-      const testCoordinator = new ComponentCoordinator('./test-coordination.db');
+      const testCoordinator = new ComponentCoordinator(':memory:');
 
       try {
         const startTime = performance.now();
@@ -110,7 +110,7 @@ describe('🔬 SURGICAL PRECISION - Bun-Native Performance Benchmarks', () => {
     });
 
     bench('Health Check Operations (Bun-native SQLite)', async () => {
-      const testCoordinator = new ComponentCoordinator('./test-health.db');
+      const testCoordinator = new ComponentCoordinator(':memory:');
 
       // Register components for health checking
       testCoordinator.registerComponent('bench-observability', {

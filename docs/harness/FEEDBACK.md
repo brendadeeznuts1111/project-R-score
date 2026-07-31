@@ -92,6 +92,8 @@ Fresh-rerun is mandatory for improve-harness retain/revise/remove: run the affec
   *Ratchet* → prefer `https://bun.com/docs/...` from `bun tools/bun-doc-refs.ts url|suggest` (canonical map)
 - **Pages `functions/` unexpected-root-dir** (`script-gate`)  
   *Ratchet* → `ALLOWED_ROOT_DIRS` includes `functions` · `bun run hygiene`
+- **Root policy / runtime output drift** (`script-gate`)
+  *Ratchet* → `config/repo-root-policy.ts` owns integrations + routes · runtime snapshots default to `artifacts/snapshots/` · `bun run hygiene`
 - **Kalshi-bot orphan gitlink** (`ops`)  
   *Ratchet* → `.gitmodules` + `ALLOWED_ROOT_DIRS` includes `Kalshi-bot` · keep Jekyll exclude in `_config.yml`
 - **Portal `*.js` gitignored** (`script-gate`)  

@@ -21,6 +21,9 @@ export type SnapshotScopeConfig = {
 export const DEFAULT_SNAPSHOT_BASE =
   (typeof Bun !== 'undefined' ? Bun.env.SNAPSHOT_BASE_URL : undefined) ?? 'http://localhost:3000';
 
+/** Local data-plane output belongs in the artifact store, never at repository root. */
+export const DEFAULT_SNAPSHOT_DIR = 'artifacts/snapshots';
+
 export const scopeConfigs: Record<SnapshotScopeName, SnapshotScopeConfig> = {
   prediction: {
     label: 'Coverage prediction report',

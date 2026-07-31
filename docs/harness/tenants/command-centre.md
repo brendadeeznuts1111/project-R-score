@@ -35,7 +35,7 @@ Apex command centre — live glance at monorepo health, registry graph, snapshot
 | Doctor | `/registry/doctor-state.json` · loopback `POST /api/doctor/run` | `/portal/doctor/` |
 | Registry | `/registry/packages-graph-map.json` + `monitoring.json` | `/portal/packages/` |
 | Vault | `/registry/vault-health.json` | `/portal/vault/` |
-| Snapshots | local `snapshots/index.jsonl` (API) or `catalog-snapshot.json` fallback | `/portal/tools/#snapshots` |
+| Snapshots | local `artifacts/snapshots/index.jsonl` (API) or `catalog-snapshot.json` fallback | `/portal/tools/#snapshots` |
 | Capabilities | `/registry/capability-map-subset.json` | `/portal/tools/#capabilities` |
 | Bake freshness | Same `BAKE_SOURCES` as tools hub (includes `doctor-state`) | per-row board links |
 

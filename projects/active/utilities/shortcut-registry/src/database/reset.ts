@@ -6,8 +6,9 @@ import { Database } from 'bun:sqlite';
 import { closeDatabase } from './init';
 import { logger } from '../utils/logger';
 import { existsSync, unlinkSync } from 'fs';
+import { resolveDatabasePath } from './path';
 
-const DB_PATH = process.env.DATABASE_PATH || 'shortcuts.db';
+const DB_PATH = resolveDatabasePath();
 
 /**
  * Reset the database by dropping all tables and recreating schema

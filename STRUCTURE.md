@@ -26,6 +26,7 @@ Projects/
 ├── .agents/                 # Agent skills (SKILL.md + allowed skill assets; no node_modules)
 ├── .claude/                 # Claude commands / agents
 ├── .github/                 # Workflows, templates
+├── _includes/               # Jekyll includes for wiki.factory-wager.com
 ├── AGENTS.md                # Agent entrypoint → docs/AGENTS.md + docs/UNIFIED.md
 ├── .custom-instructions.md  # Coding standards SSOT → docs/DEVELOPMENT-STANDARDS.md
 ├── README.md                # Human hub
@@ -34,6 +35,8 @@ Projects/
 ├── registry-index.md        # Registry bake index (portal consumers)
 ├── archive/                 # Frozen local experiments (gitignored entire tree)
 ├── artifacts/               # Releases + local reports (reports/ largely ignored)
+│   ├── browser/             # Local browser exports (gitignored)
+│   └── snapshots/           # Portal data-plane snapshots (gitignored)
 ├── assets/                  # Logos, charts
 ├── config/                  # ports.ts, r2-env, registry, ci bunfig
 ├── dashboard/               # Dashboard servers & UIs
@@ -47,6 +50,7 @@ Projects/
 ├── examples/                # Demos & Bun feature showcases (opt-in context)
 ├── functions/               # Cloudflare Pages edge Functions (/api/* — edge-safe only, see tests/functions-edge-safety.test.ts)
 ├── functions-bun-only/      # Bun-runtime API modules (DOD review, telegram, catalog — not deployed to Pages edge)
+├── jobs/                    # Operator-scheduled runtime entrypoints
 ├── Kalshi-bot/              # Nested product submodule (own remote; see .gitmodules)
 ├── lib/                     # Shared library — README.md inventory + domain/*/README.md indexes
 │   └── docs/repo-docs.ts    # CANONICAL_REPO_DOCS path SSOT
@@ -68,6 +72,7 @@ Projects/
 ├── scratch/                 # Bun playground (curated; archive/scratch has older copies)
 ├── scripts/                 # Automation, CI, fix-* remediations
 ├── server/ · tests/ · tools/
+├── migrations/ · warehouse/ # SQL deployment source · image-pipeline source media
 ├── bunfig.toml · package.json · tsconfig*.json
 └── registry.config.json5    # → config/ (symlink)
 ```

@@ -1,5 +1,6 @@
 import { Database } from 'bun:sqlite';
 import type { ShortcutUsage } from '../types';
+import { resolveDatabasePath } from './path';
 
 let dbInstance: Database | null = null;
 
@@ -8,7 +9,7 @@ let dbInstance: Database | null = null;
  */
 export function getDatabase(): Database {
   if (!dbInstance) {
-    dbInstance = new Database('shortcuts.db');
+    dbInstance = new Database(resolveDatabasePath());
     initializeSchema(dbInstance);
   }
   return dbInstance;

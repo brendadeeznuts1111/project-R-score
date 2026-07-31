@@ -7,10 +7,12 @@
 
 import { Database } from 'bun:sqlite';
 import { createHash } from 'crypto';
+import { resolve } from 'node:path';
 
 interface ScannerConfig {
   vuln: {
     database: string;
+    databasePath?: string;
     updateFrequency?: number;
   };
   malware: {
@@ -59,6 +61,13 @@ interface VulnerabilityDatabase {
   updateDatabase(): Promise<void>;
 }
 
+export function resolveVulnerabilityDatabasePath(configuredPath?: string): string {
+  const configured = configuredPath?.trim();
+  return configured && configured.length > 0
+    ? resolve(configured)
+    : resolve(import.meta.dir, '../..', 'vulnerabilities.db');
+}
+
 export class Fire22SecurityScanner {
   private config: ScannerConfig;
   private vulnDB: Database;
@@ -66,7 +75,7 @@ export class Fire22SecurityScanner {
 
   constructor(config: ScannerConfig) {
     this.config = config;
-    this.vulnDB = new Database('vulnerabilities.db');
+    this.vulnDB = new Database(resolveVulnerabilityDatabasePath(config.vuln.databasePath));
     this.scanCache = new Map();
 
     this.initializeDatabase();

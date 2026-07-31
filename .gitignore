@@ -252,6 +252,7 @@ config/*
 !config/runtime-flags.json
 # Homebase harness SSOT (must clone into worktrees; not machine secrets)
 !config/bun-dx-catalog.ts
+!config/repo-root-policy.ts
 !config/eslint/
 !config/eslint/**
 
@@ -352,6 +353,9 @@ artifacts/*.zip
 # Harness / pre-commit regenerable (local only — never stage)
 # Docs: scripts/BUN_NATIVE.md · docs/harness/FEEDBACK.md
 artifacts/reports/
+/artifacts/browser/
+/artifacts/root-hygiene/
+/artifacts/snapshots/
 # reports/ already ignored above (harness-gate-timing · ci-*-timing · inventories)
 
 # Scratch: default-deny local dumps; curated Bun playground only
