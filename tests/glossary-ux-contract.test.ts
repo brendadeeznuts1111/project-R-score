@@ -18,5 +18,13 @@ describe('shared glossary UX contract', () => {
     expect(ux).toContain("'page.view': ['page', 'section']");
     expect(ux).not.toContain("'page.view': ['path'");
     expect(ux).not.toContain('detail: { name, ...detail');
+    expect(ux).toContain('export function surfaceByPath');
+    expect(ux).toContain('export function markPortalSurface');
+    expect(ux).toContain("const conceptId = surface?.concept ?? 'ui.semantic.surface'");
+    expect(ux).toContain("document.documentElement.dataset.brand = 'factorywager'");
+    expect(ux).toContain("link.dataset.portalGlossaryLink = 'true'");
+    expect(ux).toContain('/portal/glossary/#glossary:');
+    expect(ux).toContain('const tooltipRoots = new WeakSet()');
+    expect(ux).toContain('const trackedPageViews = new Set()');
   });
 });

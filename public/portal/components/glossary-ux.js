@@ -28,6 +28,8 @@ let glossaryCache = null;
 let glossaryInflight = null;
 let stylesReady = false;
 let autocompleteSequence = 0;
+const tooltipRoots = new WeakSet();
+const trackedPageViews = new Set();
 
 function ensureStyles() {
   if (stylesReady || document.getElementById('glossary-ux-styles')) {
@@ -46,7 +48,7 @@ function ensureStyles() {
       padding: 0;
       list-style: none;
       font: 500 12px/1.4 var(--font-sans, Inter, system-ui, sans-serif);
-      color: var(--text-muted, #8b949e);
+      color: var(--tone-skip, var(--text-dim));
     }
     .glossary-crumbs ol {
       display: flex;
@@ -68,7 +70,7 @@ function ensureStyles() {
       font-weight: 400;
     }
     .glossary-crumbs a {
-      color: var(--accent, #58a6ff);
+      color: var(--tone-info, var(--accent));
       text-decoration: none;
     }
     .glossary-crumbs a:hover,
@@ -126,11 +128,11 @@ function ensureStyles() {
     }
     .glossary-suggest__id {
       font: 500 11px/1.3 var(--font-mono, ui-monospace, monospace);
-      color: var(--text-muted, #8b949e);
+      color: var(--tone-skip, var(--text-dim));
     }
     .glossary-suggest__desc {
       font-size: 12px;
-      color: var(--text-muted, #8b949e);
+      color: var(--tone-skip, var(--text-dim));
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -159,7 +161,7 @@ function ensureStyles() {
       display: block;
       margin-bottom: 6px;
       font: 500 10px/1.3 var(--font-mono, ui-monospace, monospace);
-      color: var(--accent, #58a6ff);
+      color: var(--tone-info, var(--accent));
     }
     .glossary-status-dot {
       display: inline-block;
@@ -167,11 +169,11 @@ function ensureStyles() {
       height: 7px;
       margin-right: 6px;
       border-radius: 50%;
-      background: var(--success, #3fb950);
+      background: var(--tone-ok, var(--green));
       vertical-align: middle;
     }
-    .glossary-status-dot[data-status="deprecated"] { background: var(--warning, #d29922); }
-    .glossary-status-dot[data-status="draft"] { background: var(--text-muted, #8b949e); }
+    .glossary-status-dot[data-status="deprecated"] { background: var(--tone-warn, var(--yellow)); }
+    .glossary-status-dot[data-status="draft"] { background: var(--tone-skip, var(--text-dim)); }
   `;
   document.head.append(style);
   stylesReady = true;
@@ -546,11 +548,51 @@ export function mountGlossaryAutocomplete(input, glossary, options = {}) {
   return { close, renderList };
 }
 
-function findSurface(glossary, pathname) {
+export function surfaceByPath(glossary, pathname) {
   const normalized = pathname.endsWith('/') ? pathname : `${pathname}/`;
   return (glossary.surfaces ?? []).find(
     surface => surface.path === normalized || surface.path === pathname
   );
+}
+
+/**
+ * Mark every portal page with a governed glossary concept and a stable deep link.
+ * Rich registered pages use their page.* concept; other pages use the shared
+ * ui.semantic.surface concept until their dedicated page vocabulary is added.
+ * @param {ParentNode} root
+ * @param {object} glossary
+ * @param {{ pathname?: string }} [options]
+ */
+export function markPortalSurface(root, glossary, options = {}) {
+  const pathname = options.pathname ?? window.location.pathname;
+  const surface = surfaceByPath(glossary, pathname);
+  const conceptId = surface?.concept ?? 'ui.semantic.surface';
+  const heading = root.querySelector('main h1, main .hero h2, h1');
+
+  document.documentElement.dataset.brand = 'factorywager';
+  document.documentElement.dataset.glossarySurface = conceptId;
+  if (!(heading instanceof HTMLElement)) return { conceptId, surface };
+
+  heading.classList.add('portal-surface-heading');
+  heading.dataset.glossaryConcept = conceptId;
+  if (!heading.querySelector('[data-portal-glossary-link]')) {
+    const link = document.createElement('a');
+    link.className = 'surface-glossary-link';
+    link.dataset.portalGlossaryLink = 'true';
+    link.href = `/portal/glossary/#glossary:${encodeURIComponent(conceptId)}`;
+    link.textContent = 'Glossary';
+    link.setAttribute('aria-label', `Open ${conceptId} definition in the domain glossary`);
+    heading.append(link);
+  }
+  return { conceptId, surface };
+}
+
+function trackPageViewOnce(page, section = null) {
+  if (!page) return;
+  const key = `${page}:${section ?? ''}`;
+  if (trackedPageViews.has(key)) return;
+  trackedPageViews.add(key);
+  trackGlossaryEvent('page.view', { page, section });
 }
 
 /**
@@ -567,7 +609,7 @@ export function mountGlossaryBreadcrumbs(mount, glossary, options = {}) {
   function render() {
     const pathname = options.pathname ?? window.location.pathname;
     const crumbs = [{ label: 'Home', href: '/portal/' }];
-    const surface = findSurface(glossary, pathname);
+    const surface = surfaceByPath(glossary, pathname);
     const conceptId = fragmentGroup(glossaryConceptPattern, window.location.href, 'concept');
     const sectionId = fragmentGroup(sectionPattern, window.location.href, 'section');
 
@@ -632,10 +674,10 @@ export function mountGlossaryBreadcrumbs(mount, glossary, options = {}) {
     }
     mount.replaceChildren(list);
 
-    trackGlossaryEvent('page.view', {
-      page: surface?.concept ?? (pathname.includes('/glossary') ? 'page.glossary' : null),
-      section: sectionId ? (surface?.sections?.[sectionId] ?? null) : conceptId ? conceptId : null,
-    });
+    trackPageViewOnce(
+      surface?.concept ?? (pathname.includes('/glossary') ? 'ui.semantic.surface' : null),
+      sectionId ? (surface?.sections?.[sectionId] ?? null) : conceptId ? conceptId : null
+    );
   }
 
   render();
@@ -652,18 +694,19 @@ export function mountGlossaryBreadcrumbs(mount, glossary, options = {}) {
  *   tooltipRoot?: ParentNode,
  *   onAutocompleteSelect?: (concept: object) => void,
  *   trackPage?: boolean,
+ *   markSurface?: boolean,
  * }} [options]
  */
 export async function bootGlossaryUx(options = {}) {
   ensureStyles();
   const glossary = await loadDomainGlossary();
+  const marked = options.markSurface === false ? null : markPortalSurface(document, glossary);
   if (options.breadcrumbsMount) {
     mountGlossaryBreadcrumbs(options.breadcrumbsMount, glossary);
   } else if (options.trackPage !== false) {
-    const surface = findSurface(glossary, window.location.pathname);
-    trackGlossaryEvent('page.view', {
-      page: surface?.concept ?? null,
-    });
+    trackPageViewOnce(
+      marked?.conceptId ?? surfaceByPath(glossary, window.location.pathname)?.concept
+    );
   }
   if (options.searchInput) {
     mountGlossaryAutocomplete(options.searchInput, glossary, {
@@ -671,7 +714,11 @@ export async function bootGlossaryUx(options = {}) {
     });
   }
   if (options.tooltipRoot !== null) {
-    enhanceGlossaryTooltips(options.tooltipRoot ?? document, glossary);
+    const tooltipRoot = options.tooltipRoot ?? document;
+    if (!tooltipRoots.has(tooltipRoot)) {
+      tooltipRoots.add(tooltipRoot);
+      enhanceGlossaryTooltips(tooltipRoot, glossary);
+    }
   }
   return glossary;
 }

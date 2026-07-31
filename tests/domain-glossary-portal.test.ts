@@ -20,6 +20,7 @@ import {
   PORTAL_GLOSSARY_SURFACES,
   validatePortalGlossarySurfaces,
 } from '../lib/portal/page-glossary.ts';
+import { PORTAL_PAGE_CONCEPT_DEFINITIONS } from '../lib/portal/page-concepts.ts';
 import { complianceKpiGlossaryConcepts } from '../lib/operations/compliance-policy-kpis.ts';
 import { regulationPolicyGlossaryConcepts } from '../lib/operations/regulation-policy-catalog.ts';
 import { sportsBettingGlossaryConcepts } from '../lib/operations/sports-betting-glossary.ts';
@@ -187,7 +188,13 @@ describe('domain glossary portal', () => {
         new Set(PORTAL_SEMANTIC_CONCEPTS.map(concept => concept.id))
       )
     ).not.toThrow();
-    expect(PORTAL_GLOSSARY_SURFACES[0]?.concept).toBe(LIMIT_SURFACE_CONCEPTS.page);
+    expect(
+      PORTAL_GLOSSARY_SURFACES.find(surface => surface.path === '/portal/limits/')?.concept
+    ).toBe(LIMIT_SURFACE_CONCEPTS.page);
+    expect(PORTAL_GLOSSARY_SURFACES).toHaveLength(PORTAL_PAGE_CONCEPT_DEFINITIONS.length);
+    expect(new Set(PORTAL_GLOSSARY_SURFACES.map(surface => surface.path))).toEqual(
+      new Set(PORTAL_PAGE_CONCEPT_DEFINITIONS.map(page => page.path))
+    );
   });
 
   test('board uses URLPattern.hash deep links and shared portal chrome', async () => {

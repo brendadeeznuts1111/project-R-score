@@ -92,7 +92,7 @@ body {
   font-family: var(--font-brand);
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: var(--text);
+  color: var(--brand-wordmark);
 }
 
 .brand-badge {
@@ -101,8 +101,8 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding: 2px 6px;
-  background: #238636;
-  color: #fff;
+  background: var(--tone-ok);
+  color: var(--tone-on-strong);
   border-radius: 4px;
 }
 
@@ -238,20 +238,20 @@ body {
   color: var(--text-dim);
 }
 .nav-badge--ok {
-  background: color-mix(in srgb, var(--green, #3fb950) 22%, transparent);
-  color: var(--green, #3fb950);
+  background: var(--tone-ok-bg);
+  color: var(--tone-ok);
 }
 .nav-badge--bad {
-  background: color-mix(in srgb, var(--red, #f85149) 22%, transparent);
-  color: var(--red, #f85149);
+  background: var(--tone-bad-bg);
+  color: var(--tone-bad);
 }
 .nav-badge--warn {
-  background: color-mix(in srgb, var(--yellow, #d29922) 22%, transparent);
-  color: var(--yellow, #d29922);
+  background: var(--tone-warn-bg);
+  color: var(--tone-warn);
 }
 .nav-badge--neutral {
-  background: color-mix(in srgb, var(--accent, #58a6ff) 18%, transparent);
-  color: var(--accent, #58a6ff);
+  background: var(--tone-info-bg);
+  color: var(--tone-info);
 }
 .topbar-nav > .nav-link {
   display: inline-flex;
@@ -278,19 +278,19 @@ body {
   transition: background-color 0.3s, box-shadow 0.3s;
 
   &.ok {
-    background: var(--green);
-    box-shadow: 0 0 6px var(--green);
+    background: var(--tone-ok);
+    box-shadow: 0 0 6px var(--tone-ok);
     animation: pulse-glow 2s ease-in-out infinite;
   }
 
   &.degraded {
-    background: var(--yellow);
-    box-shadow: 0 0 6px var(--yellow);
+    background: var(--tone-warn);
+    box-shadow: 0 0 6px var(--tone-warn);
   }
 
   &.fail {
-    background: var(--red);
-    box-shadow: 0 0 6px var(--red);
+    background: var(--tone-bad);
+    box-shadow: 0 0 6px var(--tone-bad);
   }
 
   &.unknown { background: var(--text-dim); }
@@ -503,6 +503,36 @@ body {
 
 .hero-sub { color: var(--text-dim); font-size: 15px; margin-bottom: 20px; }
 
+/* Global surface semantics — injected by glossary-ux from the registry map. */
+.portal-surface-heading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.surface-glossary-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.35rem;
+  padding: 0.1rem 0.42rem;
+  border: 1px solid color-mix(in srgb, var(--brand-accent) 45%, var(--border));
+  border-radius: 999px;
+  background: var(--tone-info-bg);
+  color: var(--brand-accent);
+  font: 650 0.64rem/1 var(--font-sans);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.surface-glossary-link:is(:hover, :focus-visible) {
+  border-color: var(--brand-accent);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
 /* ── Board primitives (unification SSOT) ─────────────────────────────
  * Promote per-board forks (health-*, doc-*, vh-*, tf-*, live-*) here.
  * @see docs/portal-foundation.md#board-primitives
@@ -684,11 +714,11 @@ body {
 }
 
 .status-text.ok,
-.st-ok { color: var(--green, #3fb950); font-weight: 600; }
+.st-ok { color: var(--tone-ok); font-weight: 600; }
 .status-text.warn,
-.st-warn { color: var(--yellow, #d29922); font-weight: 600; }
+.st-warn { color: var(--tone-warn); font-weight: 600; }
 .status-text.bad,
-.st-bad { color: var(--red, #f85149); font-weight: 600; }
+.st-bad { color: var(--tone-bad); font-weight: 600; }
 
 .tone-chip,
 .kind-chip,
@@ -707,13 +737,13 @@ body {
 }
 
 .tone-chip.tone-ok,
-.tone-chip--ok { color: var(--green, #3fb950); border-color: #238636; }
+.tone-chip--ok { color: var(--tone-ok); border-color: var(--tone-ok); }
 .tone-chip.tone-warn,
-.tone-chip--warn { color: var(--yellow, #d29922); border-color: #9e6a03; }
+.tone-chip--warn { color: var(--tone-warn); border-color: var(--tone-warn); }
 .tone-chip.tone-bad,
-.tone-chip--bad { color: var(--red, #f85149); border-color: #da3633; }
+.tone-chip--bad { color: var(--tone-bad); border-color: var(--tone-bad); }
 .tone-chip.tone-neutral,
-.tone-chip--neutral { color: var(--text-dim); }
+.tone-chip--neutral { color: var(--tone-skip); }
 
 .kind-chip { color: var(--accent); border-radius: 4px; }
 .plane-chip { color: var(--text-dim); border-radius: 4px; }
@@ -771,9 +801,9 @@ body {
   flex-shrink: 0;
 }
 
-.portal-banner.ok .dot { background: var(--green, #3fb950); box-shadow: 0 0 8px var(--green, #3fb950); }
-.portal-banner.warn .dot { background: var(--yellow, #d29922); }
-.portal-banner.bad .dot { background: var(--red, #f85149); }
+.portal-banner.ok .dot { background: var(--tone-ok); box-shadow: 0 0 8px var(--tone-ok); }
+.portal-banner.warn .dot { background: var(--tone-warn); }
+.portal-banner.bad .dot { background: var(--tone-bad); }
 .portal-banner .title { font-weight: 600; font-size: 16px; }
 .portal-banner .meta { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
 

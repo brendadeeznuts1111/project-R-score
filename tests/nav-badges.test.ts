@@ -149,5 +149,9 @@ describe('nav-badges + tools-hub static modules', () => {
     const src = await Bun.file(resolvePath(ROOT, 'public/portal/topbar.js')).text();
     expect(src).toContain("from './nav-badges.js'");
     expect(src).toContain('bootstrapNavBadges');
+    expect(src).toContain("from './components/glossary-ux.js'");
+    expect(src).toContain('bootGlossaryUx');
+    expect(src).toContain("document.documentElement.dataset.brand = 'factorywager'");
+    expect(src).toContain("document.title = `${title.split(' · ')[0]} · FactoryWager`");
   });
 });

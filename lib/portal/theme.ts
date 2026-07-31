@@ -32,6 +32,19 @@ export type PortalTheme = {
     brand: string;
     mono: string;
   };
+  brand: {
+    name: 'FactoryWager';
+    accent: string;
+    wordmark: string;
+  };
+  tones: {
+    ok: string;
+    warn: string;
+    bad: string;
+    info: string;
+    skip: string;
+    onStrong: string;
+  };
   layout: {
     radius: string;
     max: string;
@@ -67,7 +80,7 @@ function paletteBlock(palette: PortalThemePalette, indent = '  '): string {
 
 /** Emit CSS custom properties from theme.jsonc (dark :root + light override). */
 export function renderThemeTokensCss(theme: PortalTheme = portalTheme): string {
-  const { fonts, layout, dark, light } = theme;
+  const { brand, fonts, layout, tones, dark, light } = theme;
   return [
     '/* GENERATED — do not edit. Source: public/portal/theme.jsonc */',
     '/* bun run portal:theme:sync */',
@@ -81,6 +94,19 @@ export function renderThemeTokensCss(theme: PortalTheme = portalTheme): string {
     `  --font-brand: ${fonts.brand};`,
     `  --font-mono: ${fonts.mono};`,
     '  --font: var(--font-sans);',
+    `  --brand-accent: ${brand.accent};`,
+    `  --brand-wordmark: ${brand.wordmark};`,
+    `  --tone-ok: ${tones.ok};`,
+    `  --tone-warn: ${tones.warn};`,
+    `  --tone-bad: ${tones.bad};`,
+    `  --tone-info: ${tones.info};`,
+    `  --tone-skip: ${tones.skip};`,
+    `  --tone-on-strong: ${tones.onStrong};`,
+    '  --tone-ok-bg: color-mix(in srgb, var(--tone-ok) 14%, transparent);',
+    '  --tone-warn-bg: color-mix(in srgb, var(--tone-warn) 14%, transparent);',
+    '  --tone-bad-bg: color-mix(in srgb, var(--tone-bad) 14%, transparent);',
+    '  --tone-info-bg: color-mix(in srgb, var(--tone-info) 14%, transparent);',
+    '  --tone-skip-bg: color-mix(in srgb, var(--tone-skip) 12%, transparent);',
     '  --glow-accent: 0 0 20px var(--accent-glow);',
     `  --layout-max: ${layout.max};`,
     `  --pad-inline: ${layout.padInline};`,

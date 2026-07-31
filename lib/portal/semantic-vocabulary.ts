@@ -6,6 +6,8 @@
  * operational values do not drift between boards.
  */
 
+import { PORTAL_PAGE_CONCEPT_DEFINITIONS } from './page-concepts.ts';
+
 export const PORTAL_SEMANTIC_TYPES = [
   'classification',
   'location',
@@ -63,8 +65,7 @@ export const PORTAL_SEMANTIC_CONCEPT_KEYS = [
   'ops.limits.data_coverage',
   'ops.limits.prediction',
   'api.agent',
-  'page.limitPatterns',
-  'page.partnerHistory',
+  ...PORTAL_PAGE_CONCEPT_DEFINITIONS.map(page => page.id),
   'section.accountLimitControl',
   'section.complianceKpis',
   'section.jurisdictionCatalog',
@@ -104,6 +105,15 @@ export type PortalSemanticConcept = {
 };
 
 export const PORTAL_SEMANTIC_CONCEPTS = [
+  ...PORTAL_PAGE_CONCEPT_DEFINITIONS.map(page => ({
+    id: page.id,
+    label: page.label,
+    description: page.description,
+    semanticType: 'resource' as const,
+    uiRole: 'heading' as const,
+    synonyms: page.synonyms,
+    seeAlso: ['ui.semantic.surface', 'ui.semantic.resources', 'ui.semantic.artifact'] as const,
+  })),
   {
     id: 'ui.semantic.surface',
     label: 'Surface',
@@ -608,35 +618,6 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'ops.limits.pattern_surface',
       'ui.semantic.surface',
       'ui.semantic.artifact',
-    ],
-  },
-  {
-    id: 'page.limitPatterns',
-    label: 'Partner limit patterns',
-    description:
-      'Portal page for account controls, jurisdiction policies, connected limit patterns, prediction evidence, and per-node movement.',
-    semanticType: 'resource',
-    uiRole: 'heading',
-    synonyms: ['partner limit control', 'limit patterns page'],
-    seeAlso: [
-      'ops.limits.pattern_surface',
-      'section.accountLimitControl',
-      'section.jurisdictionCatalog',
-    ],
-  },
-  {
-    id: 'page.partnerHistory',
-    label: 'Partner limit history',
-    description:
-      'Portal page for per-account limit change history, partner drill-down, and the top-10 US sportsbook opening-limit baseline.',
-    semanticType: 'resource',
-    uiRole: 'heading',
-    synonyms: ['partner history', 'limit history board'],
-    seeAlso: [
-      'page.limitPatterns',
-      'section.openingBaseline',
-      'ops.limits.account',
-      'ops.limits.node',
     ],
   },
   {

@@ -21,6 +21,91 @@
   },
   "surfaces": [
     {
+      "path": "/portal/",
+      "concept": "page.registry",
+      "sections": {}
+    },
+    {
+      "path": "/portal/brands/",
+      "concept": "page.brandKeymap",
+      "sections": {}
+    },
+    {
+      "path": "/portal/bunfig/",
+      "concept": "page.bunfig",
+      "sections": {}
+    },
+    {
+      "path": "/portal/catalog/",
+      "concept": "page.catalog",
+      "sections": {}
+    },
+    {
+      "path": "/portal/compliance/",
+      "concept": "page.compliance",
+      "sections": {}
+    },
+    {
+      "path": "/portal/console-format/",
+      "concept": "page.consoleFormat",
+      "sections": {}
+    },
+    {
+      "path": "/portal/dashboard/",
+      "concept": "page.dashboard",
+      "sections": {}
+    },
+    {
+      "path": "/portal/doctor/",
+      "concept": "page.doctor",
+      "sections": {}
+    },
+    {
+      "path": "/portal/dod/",
+      "concept": "page.dodReview",
+      "sections": {}
+    },
+    {
+      "path": "/portal/env/",
+      "concept": "page.environment",
+      "sections": {}
+    },
+    {
+      "path": "/portal/factory/",
+      "concept": "page.factoryRegistry",
+      "sections": {}
+    },
+    {
+      "path": "/portal/failures/",
+      "concept": "page.failures",
+      "sections": {}
+    },
+    {
+      "path": "/portal/glossary/",
+      "concept": "page.glossary",
+      "sections": {}
+    },
+    {
+      "path": "/portal/health/",
+      "concept": "page.health",
+      "sections": {}
+    },
+    {
+      "path": "/portal/identity/",
+      "concept": "page.identity",
+      "sections": {}
+    },
+    {
+      "path": "/portal/install-hygiene/",
+      "concept": "page.installHygiene",
+      "sections": {}
+    },
+    {
+      "path": "/portal/limits-lab/",
+      "concept": "page.limitForecastLab",
+      "sections": {}
+    },
+    {
       "path": "/portal/limits/",
       "concept": "page.limitPatterns",
       "sections": {
@@ -39,28 +124,73 @@
       }
     },
     {
+      "path": "/portal/ops/",
+      "concept": "page.operations",
+      "sections": {}
+    },
+    {
+      "path": "/portal/packages/",
+      "concept": "page.packages",
+      "sections": {}
+    },
+    {
       "path": "/portal/partner-history/",
       "concept": "page.partnerHistory",
       "sections": {
         "opening-baseline": "section.openingBaseline"
       }
+    },
+    {
+      "path": "/portal/science/",
+      "concept": "page.science",
+      "sections": {}
+    },
+    {
+      "path": "/portal/skills/",
+      "concept": "page.skills",
+      "sections": {}
+    },
+    {
+      "path": "/portal/surfaces/",
+      "concept": "page.surfaces",
+      "sections": {}
+    },
+    {
+      "path": "/portal/tennis/",
+      "concept": "page.tennis",
+      "sections": {}
+    },
+    {
+      "path": "/portal/toc/",
+      "concept": "page.toc",
+      "sections": {}
+    },
+    {
+      "path": "/portal/tools/",
+      "concept": "page.tools",
+      "sections": {}
+    },
+    {
+      "path": "/portal/vault/",
+      "concept": "page.vault",
+      "sections": {}
     }
   ],
   "summary": {
-    "concepts": 283,
-    "active": 282,
+    "concepts": 309,
+    "active": 308,
     "deprecated": 1,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 177,
+    "portalSemantics": 203,
     "categories": {
       "market": 33,
       "model": 18,
       "pipeline": 19,
       "tournament": 86,
       "trading": 28,
-      "ui": 75,
+      "ui": 101,
       "warehouse": 24
     },
     "kinds": {
@@ -81,13 +211,13 @@
       "region": 7,
       "registry": 33,
       "sport": 10,
-      "ui": 125
+      "ui": 151
     },
     "semanticTypes": {
       "classification": 119,
       "location": 4,
       "presentation": 4,
-      "resource": 33,
+      "resource": 59,
       "state": 16,
       "version": 1
     },
@@ -95,7 +225,7 @@
       "badge": 43,
       "chip": 80,
       "code": 17,
-      "heading": 22,
+      "heading": 48,
       "link": 12,
       "token": 3
     }
@@ -2737,6 +2867,818 @@
       "featurePurpose": null
     },
     {
+      "id": "page.registry",
+      "label": "Factory registry",
+      "description": "Portal home for registry packages, artifacts, proofs, and operating surfaces.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "registry home",
+        "portal home"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.brandKeymap",
+      "label": "Brand keymap",
+      "description": "Portal page for branded domain values, constructors, and adoption evidence.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "brand catalog",
+        "domain IDs"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.bunfig",
+      "label": "Bunfig",
+      "description": "Portal page for Bun installation policy, effective configuration, and drift checks.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "Bun config",
+        "installation policy"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.catalog",
+      "label": "Account catalog",
+      "description": "Portal page for governed account, source, and scrape-wire catalog evidence.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "catalog",
+        "scrape-wire registry"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.compliance",
+      "label": "Compliance",
+      "description": "Portal page for jurisdiction policy controls and compliance evidence.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "compliance board",
+        "regulatory controls"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.consoleFormat",
+      "label": "Console format",
+      "description": "Portal page for governed console output, depth, and formatting policy.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "console output",
+        "format gate"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.dashboard",
+      "label": "Executive dashboard",
+      "description": "Portal page summarizing operational, package, proof, and health signals.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "dashboard",
+        "executive summary"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.doctor",
+      "label": "Portal doctor",
+      "description": "Portal page for deterministic control-plane diagnostics and repair guidance.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "doctor",
+        "diagnostics"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.dodReview",
+      "label": "Definition-of-done review",
+      "description": "Portal page for reviewing completion evidence and proof integrity.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "DOD review",
+        "proof review"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.environment",
+      "label": "Environment inventory",
+      "description": "Portal page for environment-variable ownership, defaults, and vault mappings.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "environment",
+        "env inventory"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.factoryRegistry",
+      "label": "Factory registry surface",
+      "description": "Legacy-compatible FactoryWager registry surface using shared portal governance.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "factory page",
+        "registry surface"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.failures",
+      "label": "Test failures",
+      "description": "Portal page for failed checks, replay commands, and diagnostic evidence.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "failures board",
+        "test report"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.glossary",
+      "label": "Domain glossary",
+      "description": "Portal page for governed terminology, semantic types, UI roles, and relationships.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "glossary",
+        "terminology registry"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.health",
+      "label": "Health",
+      "description": "Portal page for system status, live checks, resources, and versioned evidence.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "health board",
+        "system status"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.identity",
+      "label": "Identity",
+      "description": "Portal page for authentication, identity, lockout, and anomaly controls.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "identity board",
+        "authentication controls"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.installHygiene",
+      "label": "Install hygiene",
+      "description": "Portal page for Bun package installation, cache, trust, and workspace hygiene.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "package hygiene",
+        "install policy"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.limitForecastLab",
+      "label": "Limits forecast lab",
+      "description": "Read-only laboratory for global and sportsbook-specific limit forecast candidates.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "limits lab",
+        "forecast sandbox"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.limitPatterns",
+      "label": "Partner limit patterns",
+      "description": "Portal page for account controls, policies, limit patterns, and prediction evidence.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "partner limit control",
+        "limit patterns page"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.operations",
+      "label": "Operations",
+      "description": "Portal page for operational summaries, throughput, and control-plane actions.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "ops board",
+        "operations summary"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.packages",
+      "label": "Packages map",
+      "description": "Portal page for package ownership, dependency roles, and artifact health.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "package graph",
+        "packages board"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.partnerHistory",
+      "label": "Partner limit history",
+      "description": "Portal page for account-specific limit observations and opening baselines.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "limit history",
+        "partner history"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.science",
+      "label": "Science lab",
+      "description": "Portal page for experimental analytical and model evidence.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "science",
+        "model lab"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.skills",
+      "label": "Skills",
+      "description": "Portal page for agent skill inventory, validation, and ownership.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "skill catalog",
+        "agent capabilities"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.surfaces",
+      "label": "Surface inventory",
+      "description": "Portal page for public hosts, access domains, backends, and edge surfaces.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "surfaces",
+        "edge inventory"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.tennis",
+      "label": "Tennis desk",
+      "description": "Portal page for tennis market, venue, competition, and live-event evidence.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "tennis board",
+        "tennis operations"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.toc",
+      "label": "TOC operations",
+      "description": "Portal page for Drum-Buffer-Rope flow, partner queues, and throughput evidence.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "TOC board",
+        "operations flow"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.tools",
+      "label": "CLI tools",
+      "description": "Portal page for governed operator commands and supporting artifacts.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "tools hub",
+        "CLI catalog"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "page.vault",
+      "label": "Vault",
+      "description": "Portal page for secret inventory health, ownership, and remediation actions.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "vault health",
+        "secret inventory"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
       "id": "ui.semantic.surface",
       "label": "Surface",
       "description": "Named portal, endpoint, board, or artifact being described or checked.",
@@ -4066,65 +5008,6 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "link",
-      "color": "#60a5fa"
-    },
-    {
-      "id": "page.limitPatterns",
-      "label": "Partner limit patterns",
-      "description": "Portal page for account controls, jurisdiction policies, connected limit patterns, prediction evidence, and per-node movement.",
-      "category": "ui",
-      "kind": "ui",
-      "mapsTo": null,
-      "synonyms": [
-        "partner limit control",
-        "limit patterns page"
-      ],
-      "values": null,
-      "valueLabels": null,
-      "seeAlso": [
-        "ops.limits.pattern_surface",
-        "section.accountLimitControl",
-        "section.jurisdictionCatalog"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/portal/semantic-vocabulary.ts",
-      "featurePurpose": "Cross-portal semantic field contract.",
-      "semanticType": "resource",
-      "uiRole": "heading",
-      "color": "#60a5fa"
-    },
-    {
-      "id": "page.partnerHistory",
-      "label": "Partner limit history",
-      "description": "Portal page for per-account limit change history, partner drill-down, and the top-10 US sportsbook opening-limit baseline.",
-      "category": "ui",
-      "kind": "ui",
-      "mapsTo": null,
-      "synonyms": [
-        "partner history",
-        "limit history board"
-      ],
-      "values": null,
-      "valueLabels": null,
-      "seeAlso": [
-        "page.limitPatterns",
-        "section.openingBaseline",
-        "ops.limits.account",
-        "ops.limits.node"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/portal/semantic-vocabulary.ts",
-      "featurePurpose": "Cross-portal semantic field contract.",
-      "semanticType": "resource",
-      "uiRole": "heading",
       "color": "#60a5fa"
     },
     {

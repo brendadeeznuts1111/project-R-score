@@ -11,6 +11,7 @@ import {
 } from './components/sidebar.js';
 import { markCurrentNavigation } from './navigation.js';
 import { bootstrapNavBadges } from './nav-badges.js';
+import { bootGlossaryUx } from './components/glossary-ux.js';
 import './components/notification.js';
 
 let pendingHealthRaf = 0;
@@ -64,7 +65,8 @@ document.addEventListener('portal:data', e => {
   if (status === 'loading') return;
 
   if (status === 'ok' || status === 'stale') {
-    const healthStatus = data?.status === 'degraded' ? 'degraded' : data?.status === 'ok' ? 'ok' : 'degraded';
+    const healthStatus =
+      data?.status === 'degraded' ? 'degraded' : data?.status === 'ok' ? 'ok' : 'degraded';
     scheduleHealthUpdate(healthStatus, status === 'stale');
     return;
   }
@@ -98,7 +100,9 @@ async function bootstrapSidebar() {
         const params = new URLSearchParams(location.search);
         params.set('tenant', id);
         history.replaceState(null, '', `${location.pathname}?${params.toString()}${location.hash}`);
-        document.dispatchEvent(new CustomEvent('portal:tenant', { detail: { tenantId: id, tenants } }));
+        document.dispatchEvent(
+          new CustomEvent('portal:tenant', { detail: { tenantId: id, tenants } })
+        );
         const nc = document.querySelector('notification-center');
         nc?.start?.(id);
       });
@@ -147,6 +151,7 @@ function bootstrapNavOverflow() {
 }
 
 function normalizeBrandChrome() {
+  document.documentElement.dataset.brand = 'factorywager';
   document.querySelectorAll('.logo-icon').forEach(mark => {
     mark.setAttribute('aria-hidden', 'true');
     mark.textContent = '';
@@ -154,6 +159,19 @@ function normalizeBrandChrome() {
 
   const wordmark = document.querySelector('.brand-wordmark');
   if (wordmark) wordmark.textContent = 'FactoryWager';
+
+  const title = document.title.trim();
+  if (title && !title.includes('FactoryWager')) {
+    document.title = `${title.split(' · ')[0]} · FactoryWager`;
+  }
+}
+
+async function bootstrapGlossarySurface() {
+  try {
+    await bootGlossaryUx();
+  } catch (error) {
+    console.warn('[portal:topbar] glossary surface unavailable:', error);
+  }
 }
 
 if (!window.__portalDataStarted) {
@@ -169,6 +187,7 @@ function onReady() {
   bootstrapSidebar();
   bootstrapNavOverflow();
   bootstrapNavBadges();
+  void bootstrapGlossarySurface();
 }
 
 if (document.readyState === 'loading') {
