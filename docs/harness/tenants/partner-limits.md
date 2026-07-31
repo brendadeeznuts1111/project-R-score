@@ -68,6 +68,8 @@ bun run serve:public:hot   # open /portal/limits/ · /registry/limit-raises.json
 # Agent (local live SQLite):
 #   GET /api/agents/v1/limits/raises?node_id=partner-42&hours=24
 #   GET /api/agents/v1/limits/raises?node_id=partner-42&format=table
+#   GET /api/agents/v1/limits/raises?node_id=partner-42&hours=168&format=csv   # account betlog
+#   GET /api/agents/v1/limits/raises?node_id=partner-42&hours=168&format=jsonl
 #   GET /api/limits/summary?format=table
 #   GET /api/limits/analyze
 #   POST /api/agents/v1/limits/record — JSON body: { node_id, sportsbook, sport_id, market_id, bet_type, max_wager }
@@ -257,6 +259,8 @@ bun run ops:limits:predict --partner partner-42 --inspect
 | Ops summary    | `ops-summary.limitChanges`                         | Live SQLite when baking summary                         |
 | Agent raises   | `GET /api/agents/v1/limits/raises?node_id=&hours=` | Local: SQLite · Pages: snapshot                         |
 | Agent table    | same + `?format=table\|text\|inspect`              | `LimitRaiseReport` text/plain (local + Pages)           |
+| Account betlog | same + `?format=csv\|jsonl`                        | Pattern log download (raises + factors) · portal links on `/portal/partner-history/` |
+| Export helper  | `lib/operations/limit-betlog-export.ts`            | CSV / JSONL flatten + `Content-Disposition`             |
 | Record         | `POST /api/agents/v1/limits/record`                | Local write · Pages **503** `plane=local-sqlite` · `reason=bun:sqlite` |
 | Public summary | `GET /api/limits/summary` · `?format=table`        | Local SQLite · Pages snapshot aggregate                 |
 | Analyze        | `GET /api/limits/analyze`                          | Local only · Pages **503** same contract                |

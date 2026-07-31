@@ -1067,6 +1067,7 @@
       } from '/portal/partner-history/glossary-map.js';
 
       const BASELINE_URL = '/registry/sportsbook-opening-baseline.json';
+      const PARTNERS_OPS_URL = '/registry/partners-ops.json';
       const sectionPattern = new URLPattern({ hash: 'section\\::section' });
       const tabPattern = new URLPattern({ hash: 'tab\\::tab' });
       const HISTORY_QUERY = Object.freeze({
@@ -1096,10 +1097,97 @@
 
       let filteredData = [];
       let opsData = null;
+      let partnersOps = null;
       let baseline = null;
       let activeTab = 'recent';
       let nodePatterns = new Map();
       let filtersInitialized = false;
+
+      /** Join growth.top + partners-ops accounting onto limit-change node ids. */
+      function buildNodeActivity(ops, partners) {
+        /** @type {Record<string, { deposits?: number; withdraws?: number; betVolume?: number; betsPlaced?: number; betsWon?: number; avgWager?: number }>} */
+        const byNode = {};
+        const ensure = id => {
+          if (!id) return null;
+          if (!byNode[id]) byNode[id] = {};
+          return byNode[id];
+        };
+
+        for (const row of ops?.growth?.top ?? []) {
+          const slot = ensure(row.nodeId || row.node_id);
+          if (!slot) continue;
+          const volume = Number(row.volume);
+          const placed = Number(row.playsPlaced);
+          const won = Number(row.playsWon ?? row.betsWon);
+          if (Number.isFinite(volume)) slot.betVolume = volume;
+          if (Number.isFinite(placed)) slot.betsPlaced = placed;
+          if (Number.isFinite(won)) slot.betsWon = won;
+          if (Number.isFinite(volume) && Number.isFinite(placed) && placed > 0) {
+            slot.avgWager = Math.round(volume / placed);
+          }
+        }
+
+        const nameToNode = new Map(
+          (ops?.limitPatterns?.nodePatterns ?? []).map(p => [
+            String(p.node_name || '')
+              .trim()
+              .toLowerCase(),
+            p.node_id,
+          ])
+        );
+
+        for (const partner of partners?.partners ?? []) {
+          const accounting = partner?.tracking?.accounting;
+          if (!accounting) continue;
+          const deposits = Number(accounting.depositVolume);
+          const withdraws = Number(accounting.withdrawalVolume ?? accounting.withdrawVolume ?? 0);
+          const candidates = [
+            partner.nodeId,
+            partner.node_id,
+            partner.code,
+            partner.callSign,
+          ].filter(Boolean);
+          const partnerName = String(partner.callSign || partner.code || '')
+            .trim()
+            .toLowerCase();
+          for (const [name, nodeId] of nameToNode) {
+            if (
+              partnerName &&
+              (name.includes(partnerName) ||
+                (partner.code && name.includes(String(partner.code).toLowerCase())))
+            ) {
+              candidates.push(nodeId);
+            }
+          }
+          for (const change of ops?.limitChanges ?? []) {
+            const nid = change.node_id;
+            if (!nid) continue;
+            const upper = String(nid).toUpperCase();
+            if (
+              candidates.some(c => upper.includes(String(c).toUpperCase())) ||
+              (partner.code && upper.startsWith(String(partner.code).toUpperCase()))
+            ) {
+              candidates.push(nid);
+            }
+          }
+          for (const id of new Set(candidates)) {
+            const slot = ensure(id);
+            if (!slot) continue;
+            if (Number.isFinite(deposits)) slot.deposits = deposits;
+            if (Number.isFinite(withdraws)) slot.withdraws = withdraws;
+          }
+        }
+
+        return byNode;
+      }
+
+      function withNodeActivity(ops) {
+        if (!ops) return ops;
+        return {
+          ...ops,
+          nodeActivity: buildNodeActivity(ops, partnersOps),
+        };
+      }
 
       function escapeHtml(value) {
         return String(value ?? '')
@@ -1238,22 +1326,47 @@
         hoursSelect.value = url.searchParams.get(HISTORY_QUERY.hours) || '48';
       }
 
+      /** Account betlog = pattern log (raises + influence factors), not Soft ticker rows. */
+      function betlogHref(accountId, format) {
+        const hours = hoursSelect?.value && hoursSelect.value !== '0' ? hoursSelect.value : '168';
+        const params = new URLSearchParams({
+          node_id: accountId,
+          hours,
+          format,
+        });
+        return `/api/agents/v1/limits/raises?${params.toString()}`;
+      }
+
+      function betlogLinksHtml(accountId) {
+        if (!accountId) return '';
+        return `<a class="btn" href="${betlogHref(accountId, 'csv')}" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.betlogCsv}" title="Download CSV pattern / betlog for this account">Betlog CSV</a>
+          <a class="btn" href="${betlogHref(accountId, 'jsonl')}" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.betlogJsonl}" title="Download JSONL pattern / betlog for this account">Betlog JSONL</a>`;
+      }
+
       function renderHistoryHubLinks() {
         const hub = document.getElementById('history-hub-links');
         if (!hub) return;
         const account = partnerSelect.value;
         const code = partnerCodeFromRef(account);
-        if (!code) {
+        if (!account && !code) {
           hub.innerHTML =
-            'Partner hub: <a href="/portal/partners/" data-glossary-concept="page.partners">All partners</a> · deep-link with <code>?partner=CODE</code> or <code>?account=CALL</code>';
+            'Partner hub: <a href="/portal/partners/" data-glossary-concept="page.partners">All partners</a> · deep-link with <code>?partner=CODE</code> or <code>?account=CALL</code> · pick an account for betlog CSV/JSONL';
           return;
         }
-        const call = account && account.toUpperCase() !== code ? account : `${code}-001`;
-        hub.innerHTML = `Partner hub · <strong><code>${escapeHtml(code)}</code></strong>:
-          <a href="/portal/partners/#partner/${encodeURIComponent(code)}" data-glossary-concept="page.partners">Profile</a> ·
-          <a href="/portal/limits/?partner=${encodeURIComponent(code)}" data-glossary-concept="page.limitPatterns">Limits</a> ·
-          <a href="/portal/partners/#partner/${encodeURIComponent(code)}/accounting" data-glossary-concept="section.partnersAccounting">Accounting</a> ·
+        const betlogAccount = account || (code ? `${code}-001` : '');
+        const call =
+          account && partnerCodeFromRef(account) && account.toUpperCase() !== partnerCodeFromRef(account)
+            ? account
+            : code
+              ? `${code}-001`
+              : account;
+        const codeLabel = code || partnerCodeFromRef(betlogAccount) || 'account';
+        hub.innerHTML = `Partner hub · <strong><code>${escapeHtml(codeLabel)}</code></strong>:
+          <a href="/portal/partners/#partner/${encodeURIComponent(codeLabel)}" data-glossary-concept="page.partners">Profile</a> ·
+          <a href="/portal/limits/?partner=${encodeURIComponent(codeLabel)}" data-glossary-concept="page.limitPatterns">Limits</a> ·
+          <a href="/portal/partners/#partner/${encodeURIComponent(codeLabel)}/accounting" data-glossary-concept="section.partnersAccounting">Accounting</a> ·
           <a href="/portal/toc/" data-glossary-concept="page.toc">TOC offers</a> ·
+          <span data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.betlog}">${betlogLinksHtml(betlogAccount)}</span> ·
           <code>bun run onboard:partner -- ${escapeHtml(call)} --dry-run</code>`;
       }
 
@@ -1416,10 +1529,20 @@
         }
       }
 
+      async function loadPartnersOps() {
+        try {
+          const res = await fetch(PARTNERS_OPS_URL);
+          if (res.ok) partnersOps = await res.json();
+        } catch {
+          partnersOps = partnersOps ?? null;
+        }
+      }
+
       async function load() {
         refreshBtn.disabled = true;
         refreshBtn.setAttribute('aria-busy', 'true');
         filterStatus.textContent = 'Refreshing partner history…';
+        await loadPartnersOps();
         try {
           const res = await fetch('/api/operations/summary');
           if (res.ok) {
@@ -1515,7 +1638,7 @@
           breakdownEl.innerHTML = '<p class="baseline-note">No account activity is present.</p>';
           sportsbookBreakdownEl.innerHTML =
             '<p class="baseline-note">No sportsbook activity is present.</p>';
-          card.data = { ...opsData, limitChanges: [] };
+          card.data = withNodeActivity({ ...opsData, limitChanges: [] });
           refreshBtn.disabled = false;
           refreshBtn.removeAttribute('aria-busy');
           return;
@@ -1587,7 +1710,7 @@
 
         card.removeAttribute('partner');
         card.setAttribute('hours', '0');
-        card.data = { ...opsData, limitChanges: filteredData };
+        card.data = withNodeActivity({ ...opsData, limitChanges: filteredData });
 
         const activeFilters = [
           partnerSelect.value,
@@ -1662,6 +1785,7 @@
         <div class="history-account-card__actions">
           <button class="partner-drill" data-partner="${escapeHtml(accountId)}">View timeline</button>
           <a class="btn" href="/portal/limits/#account:${encodeURIComponent(accountId)}">Account evidence</a>
+          ${betlogLinksHtml(accountId)}
           ${profileHref ? `<a class="btn" href="${profileHref}" data-glossary-concept="page.partners">Partner profile</a>` : ''}
           ${partnerCode ? `<a class="btn" href="/portal/partner-history/?partner=${encodeURIComponent(partnerCode)}">History CODE</a>` : ''}
         </div>

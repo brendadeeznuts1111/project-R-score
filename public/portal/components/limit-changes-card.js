@@ -12,12 +12,14 @@
  *   hours     — lookback window (default 48; 0 = all loaded)
  *   limit     — max rows (default 10)
  *   show-all  — show both raises and decreases (default shows raises only)
- *   compact   — omit score / factors columns
+ *   compact   — omit score / factors / activity columns
  */
 import {
   PARTNER_HISTORY_GLOSSARY,
   partnerHistoryGlossaryHref,
 } from '../partner-history/glossary-map.js';
+import { resolveSportsbook } from '../partner-history/sportsbook-catalog.js';
+import { resolveSportLeague } from '../partner-history/sport-league-map.js';
 
 const G = PARTNER_HISTORY_GLOSSARY;
 
@@ -89,7 +91,7 @@ const STYLE = `
     }
     .lcc-table {
       width: 100%;
-      min-width: 880px;
+      min-width: 1280px;
       border-collapse: collapse;
       font-size: 0.82em;
       margin: 0;
@@ -138,7 +140,37 @@ const STYLE = `
       text-decoration: none;
     }
     .lcc-account:hover { text-decoration: underline; }
-    .lcc-book { font-weight: 600; text-transform: capitalize; }
+    .lcc-book-cell {
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px 6px;
+    }
+    .lcc-book {
+      font-weight: 600;
+    }
+    .lcc-book-int,
+    .lcc-book-ext,
+    .lcc-book-type {
+      font-size: 0.85em;
+      color: var(--accent, #58a6ff);
+      text-decoration: none;
+      opacity: 0.85;
+    }
+    .lcc-book-type { font-weight: 500; }
+    .lcc-book-int:hover,
+    .lcc-book-ext:hover,
+    .lcc-book-type:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    .lcc-book-links {
+      display: inline-flex;
+      gap: 4px;
+      align-items: center;
+      font-weight: 400;
+    }
+    .lcc-book-sep { color: var(--lcc-muted); opacity: 0.7; }
     .lcc-market { color: var(--lcc-muted); font-size: 0.92em; }
     .lcc-meter {
       display: grid;
@@ -207,6 +239,11 @@ function shortAccount(nodeId) {
 function formatMoney(value) {
   if (value == null || Number.isNaN(Number(value))) return '—';
   return `$${Number(value).toLocaleString()}`;
+}
+
+function formatCount(value) {
+  if (value == null || Number.isNaN(Number(value))) return '—';
+  return Number(value).toLocaleString();
 }
 
 function formatDelta(previous, next) {
@@ -304,6 +341,63 @@ function structurePhaseCell(betType) {
 
 function columnHeader(label, concept, title) {
   return `<th scope="col"><a class="semantic-label" href="${partnerHistoryGlossaryHref(concept)}" data-glossary-concept="${concept}" title="${escapeText(title)}">${label}</a></th>`;
+}
+
+function sportsbookCell(sportsbookId) {
+  const book = resolveSportsbook(sportsbookId);
+  const links = [
+    `<a class="lcc-book-int" href="${book.internalHref}" title="Partners board · ${escapeText(book.id || 'book')}">Internal</a>`,
+  ];
+  if (book.externalUrl) {
+    links.push(
+      `<a class="lcc-book-ext" href="${escapeText(book.externalUrl)}" target="_blank" rel="noopener noreferrer" title="External sportsbook site">External</a>`
+    );
+  }
+  if (book.type && book.typeLabel) {
+    links.push(
+      `<a class="lcc-book-type" href="${book.typeGlossaryHref}" data-glossary-concept="${book.typeGlossaryId}" title="${escapeText(book.typeGlossaryId)} · wire ${escapeText(book.type)}">${escapeText(book.typeLabel)}</a>`
+    );
+  }
+  return `<span class="lcc-book-cell"><a class="semantic-label lcc-book" href="${book.glossaryHref}" data-glossary-concept="${G.sportsbookColumn}" title="scrape.book · ${escapeText(book.id || 'unknown')}">${escapeText(book.label)}</a><span class="lcc-book-links">${links.join('<span class="lcc-book-sep">·</span>')}</span></span>`;
+}
+
+function sportCell(sportId) {
+  const sl = resolveSportLeague(sportId);
+  return `<a class="semantic-label" href="${sl.sportHref}" data-glossary-concept="${sl.sportConcept}" title="${escapeText(sl.sportConcept)}">${escapeText(sl.sportLabel)}</a>`;
+}
+
+function leagueCell(sportId) {
+  const sl = resolveSportLeague(sportId);
+  if (!sl.leagueLabel || sl.leagueLabel === '—') {
+    return '<span class="lcc-muted">—</span>';
+  }
+  const href = sl.leagueHref ?? partnerHistoryGlossaryHref(G.leagueColumn);
+  const concept = sl.leagueConcept ?? G.leagueColumn;
+  return `<a class="semantic-label" href="${href}" data-glossary-concept="${concept}" title="${escapeText(concept)}">${escapeText(sl.leagueLabel)}</a>`;
+}
+
+function nodeActivity(payload, nodeId) {
+  if (!nodeId || !payload?.nodeActivity) return null;
+  return payload.nodeActivity[nodeId] ?? null;
+}
+
+function activityValueCell(value, concept, formatter = formatMoney) {
+  if (value == null || Number.isNaN(Number(value))) {
+    return `<td class="lcc-num lcc-muted" data-glossary-concept="${concept}">—</td>`;
+  }
+  return `<td class="lcc-num" data-glossary-concept="${concept}">${formatter(value)}</td>`;
+}
+
+function activityRowCells(activity) {
+  const a = activity ?? {};
+  return [
+    activityValueCell(a.deposits, G.depositsColumn),
+    activityValueCell(a.withdraws, G.withdrawsColumn),
+    activityValueCell(a.betVolume, G.betVolumeColumn),
+    activityValueCell(a.betsPlaced, G.betsPlacedColumn, formatCount),
+    activityValueCell(a.betsWon, G.betsWonColumn, formatCount),
+    activityValueCell(a.avgWager, G.avgWagerColumn),
+  ].join('');
 }
 
 export class LimitChangesCard extends HTMLElement {
@@ -446,10 +540,10 @@ export class LimitChangesCard extends HTMLElement {
       !isCompact &&
       filtered.some(c => Array.isArray(c.top_contributing_factors) && c.top_contributing_factors.length);
     const showScore = !isCompact;
+    const showActivity = !isCompact;
     const hasPredictions = !isCompact && filtered.some(c => c.predicted_raise_prob != null);
     const showEvidence = !isCompact && filtered.some(c => c.context_proof != null);
 
-    // Glossary-aligned labels — never bare Type / Book / When / Market alone.
     const headers = [
       [
         'Change',
@@ -462,9 +556,10 @@ export class LimitChangesCard extends HTMLElement {
       [
         'Sportsbook',
         G.sportsbookColumn,
-        'Sportsbook source · ui.filter.sportsbook',
+        'Sportsbook identity · scrape.book (glossary + partners board + external site)',
       ],
       ['Sport', G.sportColumn, 'Competition catalog sport · ops.limits.sport'],
+      ['League', G.leagueColumn, 'Competition catalog league · ops.limits.league'],
       [
         'Market type',
         G.marketTypeColumn,
@@ -486,6 +581,24 @@ export class LimitChangesCard extends HTMLElement {
         'Observed effective max wager after the change · ops.limits.effective_limit',
       ],
       ['Delta', G.deltaColumn, 'Signed USD change vs prior · ops.limits.limit_delta'],
+      showActivity
+        ? ['Deposits', G.depositsColumn, 'Account deposits · accounting.deposit']
+        : null,
+      showActivity
+        ? ['Withdraws', G.withdrawsColumn, 'Account withdrawals · accounting.withdrawal']
+        : null,
+      showActivity
+        ? ['Bet volume', G.betVolumeColumn, 'Total bet volume · ops.limits.pattern_surface']
+        : null,
+      showActivity
+        ? ['Bets', G.betsPlacedColumn, 'Bets placed · ops.limits.pattern_surface']
+        : null,
+      showActivity
+        ? ['Bets won', G.betsWonColumn, 'Winning bets · ops.limits.pattern_surface']
+        : null,
+      showActivity
+        ? ['Avg wager', G.avgWagerColumn, 'Average wager size · ops.limits.effective_limit']
+        : null,
       showScore
         ? [
             'Influence',
@@ -535,6 +648,7 @@ export class LimitChangesCard extends HTMLElement {
               c.context_available && c.multi_factor_score != null ? c.multi_factor_score : null;
             const structure = structurePhaseCell(c.bet_type);
             const proof = c.context_proof;
+            const activity = nodeActivity(payload, c.node_id);
             const evidenceCell = showEvidence
               ? `<td data-glossary-concept="${G.evidenceColumn}">${
                   proof?.valid === true
@@ -553,13 +667,15 @@ export class LimitChangesCard extends HTMLElement {
             return `<tr class="${rowCls}">
               <td class="${dirCls}" data-glossary-concept="${G.directionColumn}">${dirLabel}</td>
               ${showAccount ? `<td>${account}</td>` : ''}
-              <td class="lcc-book" data-glossary-concept="${G.sportsbookColumn}">${escapeText(c.sportsbook)}</td>
-              <td data-glossary-concept="${G.sportColumn}">${escapeText(c.sport_id)}</td>
+              <td>${sportsbookCell(c.sportsbook)}</td>
+              <td>${sportCell(c.sport_id)}</td>
+              <td>${leagueCell(c.sport_id)}</td>
               <td class="lcc-market" data-glossary-concept="${G.marketTypeColumn}">${escapeText(c.market_id)}</td>
               <td data-glossary-concept="${structure.concept}" title="${escapeText(structure.title)}">${escapeText(structure.label)}</td>
               <td class="lcc-num" data-glossary-concept="${G.priorLimitColumn}">${formatMoney(c.previous_max)}</td>
               <td class="lcc-num" data-glossary-concept="${G.newLimitColumn}"><strong>${formatMoney(c.new_limit)}</strong></td>
               <td class="lcc-num ${dirCls}" data-glossary-concept="${G.deltaColumn}">${formatDelta(c.previous_max, c.new_limit)}</td>
+              ${showActivity ? activityRowCells(activity) : ''}
               ${showScore ? `<td>${meterHtml(score)}</td>` : ''}
               ${showFactors ? `<td>${factorsHtml(c.top_contributing_factors)}</td>` : ''}
               ${evidenceCell}
@@ -576,34 +692,70 @@ export class LimitChangesCard extends HTMLElement {
 
   _exportCsv() {
     if (!this._data || this._data.length === 0) return;
+    const isCompact = this.hasAttribute('compact');
     const headers = [
       'direction',
       'node_id',
       'sportsbook',
+      'sportsbook_label',
       'sport_id',
+      'sport_concept',
+      'league_concept',
       'market_id',
       'bet_type',
       'previous_max',
       'new_limit',
       'delta',
+      ...(isCompact
+        ? []
+        : [
+            'deposits',
+            'withdraws',
+            'bet_volume',
+            'bets_placed',
+            'bets_won',
+            'avg_wager',
+          ]),
       'score',
       'top_factors',
       'increased_at',
     ];
-    const rows = this._data.map(c => [
-      c.direction,
-      c.node_id ?? '',
-      c.sportsbook,
-      c.sport_id,
-      c.market_id,
-      c.bet_type,
-      c.previous_max ?? '',
-      c.new_limit ?? '',
-      c.previous_max != null && c.new_limit != null ? c.new_limit - c.previous_max : '',
-      c.multi_factor_score ?? '',
-      Array.isArray(c.top_contributing_factors) ? c.top_contributing_factors.join('|') : '',
-      c.increased_at != null ? new Date(c.increased_at * 1000).toISOString() : '',
-    ]);
+    const rows = this._data.map(c => {
+      const book = resolveSportsbook(c.sportsbook);
+      const sl = resolveSportLeague(c.sport_id);
+      const activity = nodeActivity(this._payload, c.node_id) ?? {};
+      const base = [
+        c.direction,
+        c.node_id ?? '',
+        c.sportsbook ?? '',
+        book.label,
+        c.sport_id ?? '',
+        sl.sportConcept,
+        sl.leagueConcept ?? '',
+        c.market_id ?? '',
+        c.bet_type ?? '',
+        c.previous_max ?? '',
+        c.new_limit ?? '',
+        c.previous_max != null && c.new_limit != null ? c.new_limit - c.previous_max : '',
+      ];
+      const activityCols = isCompact
+        ? []
+        : [
+            activity.deposits ?? '',
+            activity.withdraws ?? '',
+            activity.betVolume ?? '',
+            activity.betsPlaced ?? '',
+            activity.betsWon ?? '',
+            activity.avgWager ?? '',
+          ];
+      return [
+        ...base,
+        ...activityCols,
+        c.multi_factor_score ?? '',
+        Array.isArray(c.top_contributing_factors) ? c.top_contributing_factors.join('|') : '',
+        c.increased_at != null ? new Date(c.increased_at * 1000).toISOString() : '',
+      ];
+    });
     const csv = [
       headers.join(','),
       ...rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')),

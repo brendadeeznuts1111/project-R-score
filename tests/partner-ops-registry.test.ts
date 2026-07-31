@@ -5,6 +5,8 @@ import {
   classifyDepositMethod,
   classifyOutStatus,
   mapHandshakePhase,
+  parseBookType,
+  bookTypeWire,
   buildPartnersOpsRegistry,
   exportPartnersOpsRegistry,
   validatePartnersOpsRegistry,
@@ -19,6 +21,10 @@ describe('partner-ops classifiers', () => {
     expect(classifyBookType('Hard Rock Florida', new Set(['hardrock']))).toBe('legal');
     expect(classifyBookType('Crypto Bet Co', new Set())).toBe('crypto');
     expect(classifyBookType('Agent PPH Desk', new Set())).toBe('pph');
+    expect(classifyBookType('Fliff Sweepstakes', new Set())).toBe('sweepstakes');
+    expect(classifyBookType('PrizePicks props', new Set())).toBe('sweepstakes');
+    expect(classifyBookType('Betfair Exchange', new Set())).toBe('exchange');
+    expect(classifyBookType('Kalshi markets', new Set())).toBe('exchange');
     expect(classifyBookType('Mystery Book', new Set())).toBe('offshore');
     expect(classifyDepositMethod('Venmo')).toBe('venmo');
     expect(classifyDepositMethod('Cash App')).toBe('cashapp');
@@ -28,6 +34,14 @@ describe('partner-ops classifiers', () => {
     expect(mapHandshakePhase('operator_ready')).toBe('operator_ready');
     expect(mapHandshakePhase('forum_ready')).toBe('onboarding');
     expect(mapHandshakePhase('blocked')).toBe('incomplete');
+    expect(parseBookType('legal-us')).toBe('legal');
+    expect(parseBookType('crpyto')).toBe('crypto');
+    expect(parseBookType('sweepstakes')).toBe('sweepstakes');
+    expect(parseBookType('exchange')).toBe('exchange');
+    expect(parseBookType('pph')).toBe('pph');
+    expect(bookTypeWire('legal')).toBe('legal-us');
+    expect(bookTypeWire('crypto')).toBe('crypto');
+    expect(bookTypeWire('exchange')).toBe('exchange');
   });
 });
 

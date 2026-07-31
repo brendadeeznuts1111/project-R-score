@@ -18,6 +18,7 @@ import { runLimitPredictionCycle } from '../prediction/limit-prediction.ts';
 import { getPredictionAccuracy } from '../prediction/tester.ts';
 import { LimitRaiseReport } from './limit-raise-report.ts';
 import { buildLimitPatternSnapshot, scopeLimitPatternSnapshot } from './limit-patterns.ts';
+import { betlogDownloadResponse } from './limit-betlog-export.ts';
 
 const DEFAULT_LOOKBACK_HOURS = 24;
 const MAX_LOOKBACK_HOURS = 24 * 30;
@@ -64,9 +65,12 @@ export function handleLimitRaiseAgentRequest(request: Request, db: Database): Re
       {
         error: 'node_id is required',
         example: '/api/agents/v1/limits/raises?node_id=partner-42&hours=24',
+        formats: ['json', 'table', 'csv', 'jsonl'],
         links: {
           summary: '/api/limits/summary',
-          portal: '/portal/limits/',
+          portal: '/portal/partner-history/',
+          betlogCsv: '/api/agents/v1/limits/raises?node_id=partner-42&hours=168&format=csv',
+          betlogJsonl: '/api/agents/v1/limits/raises?node_id=partner-42&hours=168&format=jsonl',
           tenant: 'docs/harness/tenants/partner-limits.md',
         },
       },
@@ -120,6 +124,16 @@ export function handleLimitRaiseAgentRequest(request: Request, db: Database): Re
           ? `${header}(no raises in window — try bun run ops:limits:demo)\n`
           : `${header}${Bun.inspect(report, { colors: false })}\n`;
       return tableResponse(body);
+    }
+
+    // Account betlog / pattern export — CSV or JSONL of raise rows + factors.
+    const format = (url.searchParams.get('format') ?? 'json').toLowerCase();
+    if (format === 'csv' || format === 'jsonl' || format === 'ndjson') {
+      return betlogDownloadResponse(
+        raises.map(row => ({ ...row, node_id: String(nodeId) })),
+        String(nodeId),
+        format === 'csv' ? 'csv' : 'jsonl'
+      );
     }
 
     const body = {
