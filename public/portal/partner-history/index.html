@@ -360,6 +360,17 @@
         border-radius: 50%;
         background: var(--partner-ops-operator-ready, var(--tone-ok));
       }
+      .history-freshness[data-freshness='freshnessStale']::before,
+      .history-freshness[data-freshness='freshnessOffline']::before {
+        background: var(--tone-bad, #f85149);
+      }
+      .history-freshness[data-freshness='freshnessSyncing']::before,
+      .history-freshness[data-freshness='freshnessCached']::before {
+        background: var(--tone-warn, #d29922);
+      }
+      .history-freshness[data-freshness='freshnessLive']::before {
+        background: var(--partner-ops-operator-ready, var(--tone-ok));
+      }
       .sr-only {
         position: absolute;
         width: 1px;
@@ -671,7 +682,15 @@
             context evidence across the partner tree.
           </p>
         </div>
-        <span class="history-freshness" id="history-freshness">Loading history…</span>
+        <span
+          class="history-freshness"
+          id="history-freshness"
+          role="status"
+          aria-live="polite"
+          data-freshness="freshnessSyncing"
+          data-glossary-concept="ui.semantic.status"
+          >Loading limit history…</span
+        >
       </div>
 
       <form
@@ -679,6 +698,7 @@
         class="history-filter-bar"
         role="search"
         aria-label="Partner history filters"
+        data-glossary-concept="ui.action.filter"
       >
         <label data-glossary-concept="ops.limits.account">
           <span
@@ -747,7 +767,13 @@
       ></p>
 
       <!-- Metric row -->
-      <div class="metric-row" id="metric-row">
+      <div
+        class="metric-row"
+        id="metric-row"
+        data-glossary-concept="section.recentLimitChanges"
+        aria-busy="true"
+        aria-label="Calculating aggregates…"
+      >
         <div class="metric-card">
           <div class="num" id="total-ct">—</div>
           <div class="label" data-glossary-concept="section.recentLimitChanges">
@@ -949,8 +975,13 @@
               >compliance ceilings</a
             >. Tier 4 is estimated and may be stale. Not live book quotes.
           </p>
-          <div id="baseline-sources" class="baseline-sources" aria-label="Baseline source tiers">
-            Loading sources…
+          <div
+            id="baseline-sources"
+            class="baseline-sources"
+            aria-label="Baseline source tiers"
+            data-glossary-concept="section.openingBaseline"
+          >
+            Loading opening baseline…
           </div>
           <div class="baseline-toolbar">
             <label
@@ -1015,7 +1046,9 @@
               </thead>
               <tbody id="baseline-body">
                 <tr>
-                  <td colspan="11">Loading baseline…</td>
+                  <td colspan="11" data-glossary-concept="section.openingBaseline">
+                    Loading opening baseline…
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -1052,8 +1085,11 @@
       </div>
 
       <div id="empty-state" class="empty-state" style="display: none">
-        <p>No limit changes detected.</p>
+        <p data-glossary-concept="section.recentLimitChanges">No limit changes detected.</p>
         <p>Seed demo data: <code>bun run ops:limits:demo</code></p>
+        <button type="button" id="history-retry" class="btn" data-glossary-concept="ui.action.filter">
+          Tap to retry
+        </button>
       </div>
     </div>
 
@@ -1063,6 +1099,8 @@
       import { bootGlossaryUx } from '/portal/components/glossary-ux.js';
       import {
         PARTNER_HISTORY_GLOSSARY,
+        PARTNER_HISTORY_COPY,
+        classifyFreshness,
         partnerHistoryGlossaryHref,
       } from '/portal/partner-history/glossary-map.js';
 
@@ -1088,12 +1126,15 @@
       const filterReset = document.getElementById('filter-reset');
       const filterStatus = document.getElementById('history-filter-status');
       const freshnessEl = document.getElementById('history-freshness');
+      const historyFilters = document.getElementById('history-filters');
+      const metricRow = document.getElementById('metric-row');
       const tabs = document.querySelectorAll('.tab');
       const card = document.getElementById('recent-card');
       const breakdownEl = document.getElementById('partner-breakdown');
       const sportsbookBreakdownEl = document.getElementById('sportsbook-breakdown');
       const emptyState = document.getElementById('empty-state');
       const baselineBody = document.getElementById('baseline-body');
+      let lastVisibleCount = null;
 
       let filteredData = [];
       let opsData = null;
@@ -1187,6 +1228,50 @@
           ...ops,
           nodeActivity: buildNodeActivity(ops, partnersOps),
         };
+      }
+
+      const FRESHNESS_CONCEPT = Object.freeze({
+        freshnessLive: PARTNER_HISTORY_GLOSSARY.freshnessLive,
+        freshnessRecent: PARTNER_HISTORY_GLOSSARY.freshnessRecent,
+        freshnessSyncing: PARTNER_HISTORY_GLOSSARY.freshnessSyncing,
+        freshnessStale: PARTNER_HISTORY_GLOSSARY.freshnessStale,
+        freshnessOffline: PARTNER_HISTORY_GLOSSARY.freshnessOffline,
+        freshnessCached: PARTNER_HISTORY_GLOSSARY.freshnessCached,
+        freshnessLastUpdated: PARTNER_HISTORY_GLOSSARY.freshnessLastUpdated,
+      });
+
+      function setFreshness(key, detail) {
+        const concept = FRESHNESS_CONCEPT[key] ?? FRESHNESS_CONCEPT.freshnessRecent;
+        const label = PARTNER_HISTORY_COPY[key] ?? PARTNER_HISTORY_COPY.freshnessRecent;
+        freshnessEl.dataset.freshness = key;
+        freshnessEl.setAttribute('data-glossary-concept', concept);
+        freshnessEl.textContent = detail ? `${label} · ${detail}` : label;
+      }
+
+      function setFilterSkeleton(messageKey) {
+        const concept =
+          PARTNER_HISTORY_GLOSSARY[messageKey] ?? PARTNER_HISTORY_GLOSSARY.skeletonFilters;
+        const copy = PARTNER_HISTORY_COPY[messageKey] ?? PARTNER_HISTORY_COPY.skeletonFilters;
+        filterStatus.setAttribute('data-glossary-concept', concept);
+        filterStatus.textContent = copy;
+      }
+
+      function renderFreshness(ops, flags = {}) {
+        const generated = ops?.generatedAt || ops?.generated || null;
+        const generatedDate = generated ? new Date(generated) : null;
+        const valid = generatedDate && !Number.isNaN(generatedDate.getTime());
+        const ageMs = valid ? Date.now() - generatedDate.getTime() : null;
+        const key = classifyFreshness(ageMs, flags);
+        const source = ops?.source || (flags.cached ? 'registry' : 'history');
+        const when = valid
+          ? generatedDate.toLocaleString()
+          : `refreshed ${new Date().toLocaleTimeString()}`;
+        setFreshness(key, `${source} · ${when}`);
+        // Last-updated presentation collapses onto ui.semantic.status
+        freshnessEl.setAttribute(
+          'title',
+          `Last updated ${when} · ${FRESHNESS_CONCEPT.freshnessLastUpdated}`
+        );
       }
 
       function escapeHtml(value) {
@@ -1503,6 +1588,15 @@
       }
 
       async function loadBaseline() {
+        const sourcesEl = document.getElementById('baseline-sources');
+        baselineBody.innerHTML = `<tr><td colspan="11" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.skeletonBaseline}">${PARTNER_HISTORY_COPY.skeletonBaseline}</td></tr>`;
+        if (sourcesEl) {
+          sourcesEl.setAttribute(
+            'data-glossary-concept',
+            PARTNER_HISTORY_GLOSSARY.skeletonBaseline
+          );
+          sourcesEl.textContent = PARTNER_HISTORY_COPY.skeletonBaseline;
+        }
         try {
           const res = await fetch(BASELINE_URL, { cache: 'no-store' });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -1524,8 +1618,15 @@
           );
           renderBaseline();
         } catch {
-          baselineBody.innerHTML =
-            '<tr><td colspan="11">Baseline unavailable. Run <code>bun run baseline:sync-scraped</code>.</td></tr>';
+          baselineBody.innerHTML = `<tr><td colspan="11" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.skeletonBaseline}">Baseline unavailable. Run <code>bun run baseline:sync-scraped</code>.</td></tr>`;
+          if (sourcesEl) {
+            sourcesEl.setAttribute(
+              'data-glossary-concept',
+              PARTNER_HISTORY_GLOSSARY.skeletonRetry
+            );
+            sourcesEl.innerHTML = `<button type="button" class="btn" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.skeletonRetry}">${PARTNER_HISTORY_COPY.skeletonRetry}</button>`;
+            sourcesEl.querySelector('button')?.addEventListener('click', () => loadBaseline());
+          }
         }
       }
 
@@ -1541,7 +1642,26 @@
       async function load() {
         refreshBtn.disabled = true;
         refreshBtn.setAttribute('aria-busy', 'true');
-        filterStatus.textContent = 'Refreshing partner history…';
+        metricRow?.setAttribute('aria-busy', 'true');
+        metricRow?.setAttribute(
+          'data-glossary-concept',
+          PARTNER_HISTORY_GLOSSARY.skeletonMetrics
+        );
+        metricRow?.setAttribute('aria-label', PARTNER_HISTORY_COPY.skeletonMetrics);
+        setFilterSkeleton('skeletonFilters');
+        setFreshness('freshnessSyncing', PARTNER_HISTORY_COPY.skeletonTable);
+        freshnessEl.setAttribute(
+          'aria-label',
+          `${PARTNER_HISTORY_COPY.skeletonTable} · ${PARTNER_HISTORY_GLOSSARY.skeletonTable}`
+        );
+        historyFilters?.setAttribute(
+          'aria-label',
+          `${PARTNER_HISTORY_COPY.skeletonFilters} · filter by account, sportsbook, direction`
+        );
+        historyFilters?.setAttribute(
+          'data-glossary-concept',
+          PARTNER_HISTORY_GLOSSARY.ariaFilterToggle
+        );
         await loadPartnersOps();
         try {
           const res = await fetch('/api/operations/summary');
@@ -1555,15 +1675,19 @@
           const res = await fetch('/registry/ops-summary.json');
           if (res.ok) {
             opsData = await res.json();
-            render();
+            render({ cached: true });
             return;
           }
         } catch {}
         emptyState.style.display = 'block';
-        emptyState.innerHTML = '<p>⚠️ Could not load data. Is the server running?</p>';
-        filterStatus.textContent = 'History data is unavailable.';
+        emptyState.innerHTML = `<p data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.skeletonTable}">⚠️ Could not load data. Is the server running?</p>
+        <button type="button" id="history-retry" class="btn" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.skeletonRetry}">${PARTNER_HISTORY_COPY.skeletonRetry}</button>`;
+        emptyState.querySelector('#history-retry')?.addEventListener('click', () => load());
+        setFilterSkeleton('skeletonRetry');
+        setFreshness('freshnessOffline', 'history unavailable');
         refreshBtn.disabled = false;
         refreshBtn.removeAttribute('aria-busy');
+        document.getElementById('metric-row')?.removeAttribute('aria-busy');
       }
 
       function signedCurrency(amount) {
@@ -1624,28 +1748,37 @@
           : '<p class="baseline-note">No sportsbook activity matches these filters.</p>';
       }
 
-      function render() {
+      function render(freshnessFlags = {}) {
         const changes = Array.isArray(opsData?.limitChanges) ? opsData.limitChanges : [];
         nodePatterns = new Map(
           (opsData?.limitPatterns?.nodePatterns || []).map(pattern => [pattern.node_id, pattern])
         );
+        metricRow?.setAttribute('data-glossary-concept', PARTNER_HISTORY_GLOSSARY.skeletonMetrics);
         if (changes.length === 0) {
           filteredData = [];
           emptyState.style.display = 'block';
-          document.getElementById('metric-row').style.display = 'none';
-          filterStatus.textContent = 'No limit changes are present in the loaded history window.';
-          freshnessEl.textContent = `${opsData?.source || 'snapshot'} · no changes`;
+          metricRow.style.display = 'none';
+          filterStatus.setAttribute(
+            'data-glossary-concept',
+            PARTNER_HISTORY_GLOSSARY.ariaLiveUpdate
+          );
+          filterStatus.textContent =
+            'No limit changes are present in the loaded history window.';
+          renderFreshness(opsData, freshnessFlags);
           breakdownEl.innerHTML = '<p class="baseline-note">No account activity is present.</p>';
           sportsbookBreakdownEl.innerHTML =
             '<p class="baseline-note">No sportsbook activity is present.</p>';
           card.data = withNodeActivity({ ...opsData, limitChanges: [] });
           refreshBtn.disabled = false;
           refreshBtn.removeAttribute('aria-busy');
+          metricRow?.removeAttribute('aria-busy');
           return;
         }
 
         emptyState.style.display = 'none';
-        document.getElementById('metric-row').style.display = 'grid';
+        metricRow.style.display = 'grid';
+        metricRow?.removeAttribute('aria-busy');
+        metricRow?.removeAttribute('aria-label');
 
         const accounts = [...new Set(changes.map(change => change.node_id).filter(Boolean))].sort(
           (left, right) => accountLabel(left).localeCompare(accountLabel(right))
@@ -1718,14 +1851,26 @@
           directionSelect.value,
           hoursSelect.value !== '48' ? hoursSelect.value : '',
         ].filter(Boolean).length;
-        filterStatus.innerHTML = `<strong>${total}</strong> of ${changes.length} changes · <a class="semantic-label" href="${glossaryHref(PARTNER_HISTORY_GLOSSARY.activeFilters)}" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.activeFilters}">${activeFilters} active filter${activeFilters === 1 ? '' : 's'}</a> · <a class="semantic-label" href="${glossaryHref(PARTNER_HISTORY_GLOSSARY.deltas)}" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.deltas}">deltas</a> are versus prior <a class="semantic-label" href="${glossaryHref(PARTNER_HISTORY_GLOSSARY.highWater)}" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.highWater}">high-water</a>`;
+        const liveDelta =
+          lastVisibleCount != null && total !== lastVisibleCount
+            ? `<span data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.ariaLiveUpdate}"> · ${Math.abs(total - lastVisibleCount)} change${Math.abs(total - lastVisibleCount) === 1 ? '' : 's'} since last refresh</span>`
+            : '';
+        lastVisibleCount = total;
+        filterStatus.setAttribute(
+          'data-glossary-concept',
+          PARTNER_HISTORY_GLOSSARY.ariaLiveUpdate
+        );
+        filterStatus.innerHTML = `<strong>${total}</strong> of ${changes.length} changes · <a class="semantic-label" href="${glossaryHref(PARTNER_HISTORY_GLOSSARY.activeFilters)}" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.activeFilters}">${activeFilters} active filter${activeFilters === 1 ? '' : 's'}</a> · <a class="semantic-label" href="${glossaryHref(PARTNER_HISTORY_GLOSSARY.deltas)}" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.deltas}">deltas</a> are versus prior <a class="semantic-label" href="${glossaryHref(PARTNER_HISTORY_GLOSSARY.highWater)}" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.highWater}">high-water</a>${liveDelta}`;
+        historyFilters?.setAttribute(
+          'aria-label',
+          `Filter by account${partnerSelect.value ? `, 1 selected` : ''}${sportsbookSelect.value ? `, sportsbook selected` : ''}${directionSelect.value ? `, direction selected` : ''}`
+        );
+        historyFilters?.setAttribute(
+          'data-glossary-concept',
+          PARTNER_HISTORY_GLOSSARY.ariaFilterToggle
+        );
         renderHistoryHubLinks();
-        const generated = opsData?.generatedAt || opsData?.generated || null;
-        const generatedDate = generated ? new Date(generated) : null;
-        freshnessEl.textContent =
-          generatedDate && !Number.isNaN(generatedDate.getTime())
-            ? `${opsData?.source || 'history'} · ${generatedDate.toLocaleString()}`
-            : `${opsData?.source || 'live operations'} · refreshed ${new Date().toLocaleTimeString()}`;
+        renderFreshness(opsData, freshnessFlags);
         syncFilterQuery();
 
         const byPartner = new Map();
@@ -1910,6 +2055,7 @@
         }
       });
 
+      document.getElementById('history-retry')?.addEventListener('click', () => load());
       load();
       loadBaseline();
     </script>

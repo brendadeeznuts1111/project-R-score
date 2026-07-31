@@ -83,7 +83,14 @@ describe('partner-history portal', () => {
     expect(source).toContain('.sort((left, right) => (right.increased_at ?? 0) - (left.increased_at ?? 0))');
     expect(source).toContain('filtered.some(c => c.predicted_raise_prob != null)');
     expect(source).toContain('G.predictionColumn');
-    expect(source).toContain('aria-label="Filtered partner limit changes"');
+    expect(source).toContain('G.ariaTableCaption');
+    expect(source).toContain('Partner limit changes, ${filtered.length} of ${totalAvailable} visible');
+    expect(source).toContain('G.skeletonTable');
+    expect(source).toContain('G.ariaEvidenceVerified');
+    expect(source).toContain('G.ariaProofMissing');
+    expect(source).toContain('G.ariaExportProgress');
+    expect(source).toContain('G.skeletonRowField');
+    expect(source).not.toContain('>Loading…<');
     expect(source).toContain('Prior limit');
     expect(source).toContain('Market type');
     expect(source).toContain('Structure / phase');
@@ -159,9 +166,49 @@ describe('partner-history portal', () => {
       'ops.panel.',
       'ops.filter.',
       'ops.metric.',
+      'ops.skeleton.',
+      'ops.aria.',
+      'ops.freshness.',
+      'ops.audit.',
+      'ops.bulk.',
+      'ops.search.',
+      'ops.print.',
+      'ops.intel.',
+      'ops.diff.',
+      'ops.time.',
+      'ops.role.',
       'ui.pagination.',
     ]) {
       expect(chrome.includes(prefix), prefix).toBe(false);
     }
+  });
+
+  test('collapses P1 skeleton / ARIA / freshness chrome onto existing concepts', async () => {
+    const html = await Bun.file(HISTORY_HTML).text();
+    const map = await Bun.file('public/portal/partner-history/glossary-map.js').text();
+
+    expect(PARTNER_HISTORY_GLOSSARY.skeletonTable).toBe('section.recentLimitChanges');
+    expect(PARTNER_HISTORY_GLOSSARY.skeletonFilters).toBe('ui.action.filter');
+    expect(PARTNER_HISTORY_GLOSSARY.skeletonBaseline).toBe('section.openingBaseline');
+    expect(PARTNER_HISTORY_GLOSSARY.ariaEvidenceVerified).toBe('ops.limits.evidence_trace');
+    expect(PARTNER_HISTORY_GLOSSARY.freshnessStale).toBe('alert.stale_feed');
+    expect(PARTNER_HISTORY_GLOSSARY.freshnessLive).toBe('ui.semantic.status');
+    expect(PARTNER_HISTORY_GLOSSARY.freshnessCached).toBe('ui.semantic.source');
+    expect(map).toContain("skeletonTable: 'section.recentLimitChanges'");
+    for (const concept of Object.values(PARTNER_HISTORY_GLOSSARY)) {
+      expect(concept.startsWith('ops.skeleton.')).toBe(false);
+      expect(concept.startsWith('ops.aria.')).toBe(false);
+      expect(concept.startsWith('ops.freshness.')).toBe(false);
+    }
+    expect(html).toContain('classifyFreshness');
+    expect(html).toContain('PARTNER_HISTORY_COPY');
+    expect(html).toContain('Loading limit history…');
+    expect(html).toContain('Loading opening baseline…');
+    expect(html).toContain('Tap to retry');
+    expect(html).toContain('id="history-freshness"');
+    expect(html).toContain('data-glossary-concept="ui.semantic.status"');
+    expect(html).toContain('PARTNER_HISTORY_GLOSSARY.skeletonMetrics');
+    expect(html).toContain('PARTNER_HISTORY_GLOSSARY.ariaLiveUpdate');
+    expect(html).toContain('PARTNER_HISTORY_GLOSSARY.ariaFilterToggle');
   });
 });

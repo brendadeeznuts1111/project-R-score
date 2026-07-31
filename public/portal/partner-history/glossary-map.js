@@ -80,8 +80,65 @@ export const PARTNER_HISTORY_GLOSSARY = Object.freeze({
   betlog: 'ops.limits.pattern_surface',
   betlogCsv: 'ui.semantic.artifact',
   betlogJsonl: 'ui.semantic.artifact',
+
+  // P1 chrome — collapse skeletons / ARIA / freshness onto existing owners.
+  // Presentation aliases only; do not mint parallel skeleton/aria/freshness IDs.
+  skeletonTable: 'section.recentLimitChanges',
+  skeletonFilters: 'ui.action.filter',
+  skeletonMetrics: 'section.recentLimitChanges',
+  skeletonEvidence: 'ops.limits.evidence_trace',
+  skeletonBaseline: 'section.openingBaseline',
+  skeletonRowField: 'ops.limits.account',
+  skeletonRetry: 'ui.action.filter',
+
+  ariaTableCaption: 'section.recentLimitChanges',
+  ariaFilterToggle: 'ui.action.filter',
+  ariaEvidenceVerified: 'ops.limits.evidence_trace',
+  ariaProofMissing: 'ops.limits.evidence_trace',
+  ariaExportProgress: 'ui.semantic.artifact',
+  ariaLiveUpdate: 'section.recentLimitChanges',
+
+  freshnessLive: 'ui.semantic.status',
+  freshnessRecent: 'ui.semantic.status',
+  freshnessSyncing: 'ui.semantic.status',
+  freshnessStale: 'alert.stale_feed',
+  freshnessOffline: 'alert.stale_feed',
+  freshnessCached: 'ui.semantic.source',
+  freshnessLastUpdated: 'ui.semantic.status',
+});
+
+/** Presentation copy for skeleton / freshness chrome (not separate glossary IDs). */
+export const PARTNER_HISTORY_COPY = Object.freeze({
+  skeletonTable: 'Loading limit history…',
+  skeletonFilters: 'Loading filters…',
+  skeletonMetrics: 'Calculating aggregates…',
+  skeletonEvidence: 'Verifying signatures…',
+  skeletonBaseline: 'Loading opening baseline…',
+  skeletonRetry: 'Tap to retry',
+  freshnessLive: 'Live',
+  freshnessRecent: 'Recent',
+  freshnessSyncing: 'Syncing',
+  freshnessStale: 'Stale',
+  freshnessOffline: 'Offline',
+  freshnessCached: 'Cached',
 });
 
 export function partnerHistoryGlossaryHref(concept) {
   return `/portal/glossary/#glossary:${encodeURIComponent(concept)}`;
+}
+
+/**
+ * Classify snapshot age into a freshness chrome key.
+ * @param {number | null | undefined} ageMs
+ * @param {{ offline?: boolean; syncing?: boolean; cached?: boolean }} [flags]
+ */
+export function classifyFreshness(ageMs, flags = {}) {
+  if (flags.offline) return 'freshnessOffline';
+  if (flags.syncing) return 'freshnessSyncing';
+  if (flags.cached) return 'freshnessCached';
+  if (ageMs == null || !Number.isFinite(ageMs) || ageMs < 0) return 'freshnessRecent';
+  if (ageMs < 5_000) return 'freshnessLive';
+  if (ageMs < 60_000) return 'freshnessRecent';
+  if (ageMs < 5 * 60_000) return 'freshnessStale';
+  return 'freshnessStale';
 }
