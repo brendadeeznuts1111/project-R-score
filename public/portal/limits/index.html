@@ -60,8 +60,28 @@
         border-bottom: 1px solid rgba(48, 54, 61, 0.35);
       }
       .limits-page th {
-        font-weight: 500;
+        font-weight: 700;
         color: var(--text-dim);
+        white-space: nowrap;
+      }
+      .limits-page tbody tr {
+        transition: background 120ms ease;
+      }
+      .limits-page tbody tr:hover {
+        background: color-mix(in srgb, var(--accent) 7%, transparent);
+      }
+      .limits-page .table-wrap {
+        overflow-x: auto;
+        scrollbar-color: var(--border) transparent;
+      }
+      .limits-page .table-wrap table {
+        min-width: 940px;
+      }
+      .limits-page .table-wrap thead {
+        background: var(--surface);
+        position: sticky;
+        top: 0;
+        z-index: 1;
       }
       .badge {
         display: inline-block;
@@ -149,8 +169,149 @@
         border-radius: 6px;
         background: var(--surface);
       }
+      .pattern-row[data-tone='ok'] {
+        border-left: 3px solid var(--green, #3fb950);
+      }
+      .pattern-row[data-tone='warn'] {
+        border-left: 3px solid var(--yellow, #d29922);
+      }
+      .pattern-row__label {
+        display: grid;
+        gap: 2px;
+      }
+      .pattern-row__metrics {
+        display: grid;
+        gap: 3px;
+      }
+      .pattern-row__value {
+        font: 700 12px/1.2 var(--font-mono, ui-monospace, monospace);
+        text-align: right;
+      }
       .pattern-row small {
         color: var(--text-dim);
+      }
+      .pattern-meter {
+        background: color-mix(in srgb, var(--border) 65%, transparent);
+        border-radius: 999px;
+        height: 4px;
+        overflow: hidden;
+      }
+      .pattern-meter > span {
+        background: var(--accent);
+        display: block;
+        height: 100%;
+      }
+      .pattern-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+        gap: 10px;
+      }
+      .pattern-summary__item {
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        display: grid;
+        gap: 5px;
+        padding: 11px;
+      }
+      .pattern-summary__item .metric {
+        font-size: 1.45rem;
+      }
+      .pattern-summary__item a {
+        color: var(--text);
+        font-size: 11px;
+      }
+      .pattern-summary__item small {
+        color: var(--text-dim);
+        font-size: 9px;
+      }
+      .prediction-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+        gap: 14px;
+      }
+      .prediction-formula {
+        background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        display: grid;
+        gap: 7px;
+        padding: 11px;
+      }
+      .prediction-formula code {
+        color: var(--accent);
+        font-size: 11px;
+        white-space: normal;
+      }
+      .prediction-formula small {
+        color: var(--text-dim);
+        line-height: 1.45;
+      }
+      .research-grid,
+      .node-breakdown-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 10px;
+      }
+      .research-finding,
+      .node-breakdown {
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--accent);
+        border-radius: 7px;
+        display: grid;
+        gap: 7px;
+        padding: 11px;
+      }
+      .research-finding[data-tone='warn'],
+      .node-breakdown[data-tone='warn'] {
+        border-left-color: var(--yellow, #d29922);
+      }
+      .research-finding__head,
+      .node-breakdown__head {
+        align-items: start;
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .research-finding p {
+        color: var(--text-dim);
+        font-size: 11px;
+        line-height: 1.45;
+        margin: 0;
+      }
+      .research-finding small,
+      .node-breakdown small {
+        color: var(--text-dim);
+      }
+      .node-breakdown__metrics {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+      }
+      .node-breakdown__metrics span {
+        border: 1px solid color-mix(in srgb, var(--border) 75%, transparent);
+        border-radius: 5px;
+        display: grid;
+        font-size: 9px;
+        gap: 2px;
+        padding: 6px;
+      }
+      .node-breakdown__metrics strong {
+        color: var(--text);
+        font: 700 12px/1 var(--font-mono, ui-monospace, monospace);
+      }
+      .section-heading-link {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .section-heading-link > a:first-child {
+        color: inherit;
+        text-decoration: none;
+      }
+      .section-heading-link > a:last-child {
+        color: var(--accent);
+        font-size: 10px;
       }
       .audit-grid {
         display: grid;
@@ -640,6 +801,9 @@
           order: -1;
           position: static;
         }
+        .prediction-layout {
+          grid-template-columns: 1fr;
+        }
       }
       @media (max-width: 760px) {
         .limit-actions {
@@ -917,11 +1081,15 @@
       </nav>
 
       <header class="portal-hero limits-hero">
-        <h2 class="portal-hero__title">Account limits and policy controls</h2>
+        <h2 class="portal-hero__title">
+          <a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.pattern_surface"
+            >Partner limit patterns</a
+          >
+        </h2>
         <p class="sub">
-          Monitor partner-tree accounts across observed sportsbook limits, governed jurisdiction
-          policy, license and identity readiness, and evidence history. The signal window covers 48
-          hours and refreshes every 30 seconds.
+          Trace observed limit movement from partner to downline, sportsbook, jurisdiction, and ZIP
+          cluster while keeping policy, license, prediction, and proof evidence directly
+          inspectable. The signal window covers 48 hours and refreshes every 30 seconds.
         </p>
       </header>
 
@@ -1034,107 +1202,223 @@
         </div>
       </section>
 
-      <div class="filter-bar">
-        <input
-          type="text"
-          id="filter-partner"
-          placeholder="Filter by partner ID..."
-          style="flex: 1"
-        />
-        <select id="filter-book">
-          <option value="">All sportsbooks</option>
-          <option value="draftkings">DraftKings</option>
-          <option value="fanduel">FanDuel</option>
-          <option value="hardrock">Hard Rock</option>
-          <option value="betmgm">BetMGM</option>
-          <option value="caesars">Caesars</option>
-        </select>
-        <select id="filter-state">
-          <option value="">All states</option>
-        </select>
-        <select id="filter-zip">
-          <option value="">All ZIP prefixes</option>
-        </select>
-        <button onclick="applyFilter()">Filter</button>
-        <span
-          id="count-badge"
-          style="margin-left: auto; font-size: 0.9em; color: var(--text-dim)"
-        ></span>
-      </div>
-
-      <div id="summary-section" class="card">
-        <h2>Summary</h2>
-        <div style="display: flex; gap: 2em; flex-wrap: wrap">
-          <div><span class="metric" id="total-raises">0</span><br />Total changes</div>
-          <div><span class="metric" id="unique-partners">0</span><br />Nodes with changes</div>
-          <div><span class="metric" id="unique-books">0</span><br />Sportsbooks</div>
-          <div><span class="metric" id="downline-nodes">0</span><br />Downline nodes</div>
-          <div><span class="metric" id="unique-states">0</span><br />States</div>
-          <div><span class="metric" id="unique-zips">0</span><br />ZIP clusters</div>
+      <section id="pattern-explorer" aria-label="Limit pattern explorer">
+        <div class="filter-bar" aria-label="Limit pattern filters">
+          <input
+            type="text"
+            id="filter-partner"
+            placeholder="Filter by account, partner, or downline…"
+            aria-label="Filter by account profile"
+            style="flex: 1"
+          />
+          <select id="filter-book" aria-label="Filter by sportsbook">
+            <option value="">All sportsbooks</option>
+            <option value="draftkings">DraftKings</option>
+            <option value="fanduel">FanDuel</option>
+            <option value="hardrock">Hard Rock</option>
+            <option value="betmgm">BetMGM</option>
+            <option value="caesars">Caesars</option>
+          </select>
+          <select id="filter-state" aria-label="Filter by state">
+            <option value="">All states</option>
+          </select>
+          <select id="filter-zip" aria-label="Filter by ZIP prefix">
+            <option value="">All ZIP prefixes</option>
+          </select>
+          <button onclick="applyFilter()">Apply filters</button>
+          <span
+            id="count-badge"
+            style="margin-left: auto; font-size: 0.9em; color: var(--text-dim)"
+          ></span>
         </div>
-      </div>
 
-      <div id="predict-section" class="card">
-        <h2>Limit raise prediction</h2>
-        <p id="predict-body" style="color: var(--text-dim, #666); margin: 0.25em 0">
-          Loading prediction accuracy…
-        </p>
-        <p class="empty" id="predict-hint" style="display: none; padding: 0.5em 0">
-          No limit_raise samples yet. Run <code>bun run ops:limits:predict</code>
-        </p>
-      </div>
+        <section id="pattern-summary" class="card">
+          <h2 class="section-heading-link">
+            <a href="#section:pattern-summary">Pattern summary</a>
+            <a href="/portal/glossary/#glossary:ops.limits.pattern_surface">Definition</a>
+          </h2>
+          <div class="pattern-summary">
+            <div class="pattern-summary__item">
+              <span class="metric" id="total-raises">0</span>
+              <a href="/portal/glossary/#glossary:ops.limits.change_direction">Changes</a>
+              <small>observed rows</small>
+            </div>
+            <div class="pattern-summary__item">
+              <span class="metric" id="raised-share">0%</span>
+              <a href="/portal/glossary/#glossary:ops.limits.change_direction">Raised share</a>
+              <small>upward movements</small>
+            </div>
+            <div class="pattern-summary__item">
+              <span class="metric" id="net-limit-delta">$0</span>
+              <a href="/portal/glossary/#glossary:ops.limits.limit_delta">Net delta</a>
+              <small>USD across selection</small>
+            </div>
+            <div class="pattern-summary__item">
+              <span class="metric" id="avg-influence">—</span>
+              <a href="/portal/glossary/#glossary:ops.limits.influence_score">Avg influence</a>
+              <small>scored changes</small>
+            </div>
+            <div class="pattern-summary__item">
+              <span class="metric" id="unique-partners">0</span>
+              <a href="/portal/glossary/#glossary:ops.limits.account">Nodes</a>
+              <small>with changes</small>
+            </div>
+            <div class="pattern-summary__item">
+              <span class="metric" id="unique-books">0</span>
+              <span>Sportsbooks</span>
+              <small>connected sources</small>
+            </div>
+            <div class="pattern-summary__item">
+              <span class="metric" id="downline-nodes">0</span>
+              <span>Downline nodes</span>
+              <small>agents and sub-agents</small>
+            </div>
+            <div class="pattern-summary__item">
+              <span class="metric" id="unique-states">0</span>
+              <a href="/portal/glossary/#glossary:ops.limits.jurisdiction_policy">States</a>
+              <small>licensed jurisdictions</small>
+            </div>
+            <div class="pattern-summary__item">
+              <span class="metric" id="unique-zips">0</span>
+              <span>ZIP clusters</span>
+              <small>three-digit prefixes</small>
+            </div>
+            <div class="pattern-summary__item">
+              <span class="metric" id="evidence-coverage">0%</span>
+              <a href="/portal/glossary/#glossary:ops.limits.data_coverage">Coverage</a>
+              <small>connected evidence</small>
+            </div>
+          </div>
+        </section>
 
-      <div class="pattern-grid">
-        <div class="card">
-          <h2>Sportsbook patterns</h2>
-          <div id="book-patterns" class="pattern-list"></div>
+        <section id="prediction" class="card">
+          <h2 class="section-heading-link">
+            <a href="#section:prediction">Limit raise prediction</a>
+            <a href="/portal/glossary/#glossary:ops.limits.prediction">Definition</a>
+          </h2>
+          <div class="prediction-layout">
+            <div>
+              <p id="predict-body" style="color: var(--text-dim); margin: 0.25em 0">
+                Loading prediction accuracy…
+              </p>
+              <p class="empty" id="predict-hint" style="display: none; padding: 0.5em 0">
+                No backtest samples yet. Run <code>bun run ops:limits:predict</code>.
+              </p>
+            </div>
+            <div class="prediction-formula" aria-label="Limit prediction formula">
+              <strong>Model formula · <code>bun-1.4.0-limit-v1</code></strong>
+              <code>P(raise) = clamp(5%, 95%, 0.30F + 0.25T + 0.30I + 0.15W)</code>
+              <small>
+                F = seven-day raise frequency · T = normalized daily limit trend · I = multi-factor
+                influence · W = UTC operating-window signal. Expected magnitude is the mean recent
+                raise divided by the current limit.
+              </small>
+            </div>
+          </div>
+        </section>
+
+        <section id="research-queue" class="card">
+          <h2 class="section-heading-link">
+            <a href="#section:research-queue">Pattern research queue</a>
+            <a href="/portal/glossary/#glossary:ops.limits.evidence_trace">Evidence semantics</a>
+          </h2>
+          <p class="sub">
+            Deterministic findings ranked from the connected 48-hour artifact; every finding names
+            its evidence and remains reproducible from <code>limit-raises.json</code>.
+          </p>
+          <div id="research-findings" class="research-grid"></div>
+        </section>
+
+        <div class="pattern-grid">
+          <section id="sportsbook-patterns" class="card">
+            <h2 class="section-heading-link">
+              <a href="#section:sportsbook-patterns">Sportsbook patterns</a>
+              <a href="/portal/glossary/#glossary:ops.limits.pattern_surface">Definition</a>
+            </h2>
+            <div id="book-patterns" class="pattern-list"></div>
+          </section>
+          <section id="geo-patterns-section" class="card">
+            <h2 class="section-heading-link">
+              <a href="#section:geo-patterns-section">State &amp; ZIP patterns</a>
+              <a href="/portal/glossary/#glossary:ops.limits.jurisdiction_policy">Jurisdiction</a>
+            </h2>
+            <div id="geo-patterns" class="pattern-list"></div>
+          </section>
         </div>
-        <div class="card">
-          <h2>State &amp; ZIP patterns</h2>
-          <div id="geo-patterns" class="pattern-list"></div>
-        </div>
-      </div>
 
-      <div class="card">
-        <h2>Partner → downline context</h2>
-        <div id="downline-patterns"></div>
-      </div>
+        <section id="downline-context" class="card">
+          <h2 class="section-heading-link">
+            <a href="#section:downline-context">Partner → downline context</a>
+            <a href="/portal/glossary/#glossary:ops.limits.account">Account semantics</a>
+          </h2>
+          <div id="downline-patterns" class="table-wrap"></div>
+        </section>
 
-      <div class="card">
-        <h2>Data connection audit</h2>
-        <div id="pattern-audit" class="audit-grid"></div>
-      </div>
+        <section id="connection-audit" class="card">
+          <h2 class="section-heading-link">
+            <a href="#section:connection-audit">Data connection audit</a>
+            <a href="/portal/glossary/#glossary:ops.limits.data_coverage">Coverage definition</a>
+          </h2>
+          <div id="pattern-audit" class="audit-grid"></div>
+        </section>
 
-      <div id="raises-table-section" class="card">
-        <h2>Recent limit changes</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Node / Downline</th>
-              <th>State / ZIP</th>
-              <th>Sportsbook</th>
-              <th>Sport</th>
-              <th>Market</th>
-              <th>Type</th>
-              <th>Previous</th>
-              <th>New</th>
-              <th>Raise</th>
-              <th>Influence</th>
-              <th>When</th>
-            </tr>
-          </thead>
-          <tbody id="raises-tbody"></tbody>
-        </table>
-        <div class="empty" id="empty-state">
-          No limit changes found. Seed connected data with
-          <code>bun tools/seed-limit-patterns.ts --force --bake</code>.
-        </div>
-      </div>
+        <section id="recent-changes" class="card">
+          <h2 class="section-heading-link">
+            <a href="#section:recent-changes">Recent limit changes</a>
+            <a href="/portal/glossary/#glossary:ops.limits.limit_delta">Limit delta</a>
+          </h2>
+          <div class="table-wrap">
+            <table aria-label="Recent limit changes">
+              <thead>
+                <tr>
+                  <th>Node / Downline</th>
+                  <th>State / ZIP</th>
+                  <th>Sportsbook</th>
+                  <th>Sport</th>
+                  <th>Market</th>
+                  <th>
+                    <a
+                      class="semantic-label"
+                      href="/portal/glossary/#glossary:ops.limits.market_phase"
+                      >Phase</a
+                    >
+                  </th>
+                  <th>Previous limit</th>
+                  <th>New limit</th>
+                  <th>
+                    <a
+                      class="semantic-label"
+                      href="/portal/glossary/#glossary:ops.limits.limit_delta"
+                      >Delta</a
+                    >
+                  </th>
+                  <th>
+                    <a
+                      class="semantic-label"
+                      href="/portal/glossary/#glossary:ops.limits.influence_score"
+                      >Influence</a
+                    >
+                  </th>
+                  <th>When</th>
+                </tr>
+              </thead>
+              <tbody id="raises-tbody"></tbody>
+            </table>
+          </div>
+          <div class="empty" id="empty-state">
+            No limit changes found. Seed connected data with
+            <code>bun tools/seed-limit-patterns.ts --force --bake</code>.
+          </div>
+        </section>
 
-      <div id="per-partner-section" class="card">
-        <h2>Per-node breakdown</h2>
-        <div id="partner-breakdown"></div>
-      </div>
+        <section id="node-breakdown" class="card">
+          <h2 class="section-heading-link">
+            <a href="#section:node-breakdown">Per-node breakdown</a>
+            <a href="/portal/glossary/#glossary:ops.limits.account">Account definition</a>
+          </h2>
+          <div id="partner-breakdown" class="node-breakdown-grid"></div>
+        </section>
+      </section>
 
       <script>
         const POLL_INTERVAL = 30_000;
@@ -1143,6 +1427,57 @@
         let filterBook = '';
         let filterState = '';
         let filterZip = '';
+        const PATTERN_QUERY_PARAMS = {
+          account: 'pattern',
+          sportsbook: 'book',
+          state: 'state',
+          zip: 'zip',
+        };
+
+        function hasConnectedPatterns(patterns) {
+          return Number(patterns?.audit?.changeRows ?? 0) > 0;
+        }
+
+        function pickPatterns(current, candidate) {
+          if (hasConnectedPatterns(candidate) && !hasConnectedPatterns(current)) return candidate;
+          return current ?? candidate;
+        }
+
+        function changeKey(change) {
+          return [
+            change?.node_id,
+            change?.sportsbook,
+            change?.sport_id,
+            change?.market_id,
+            change?.bet_type,
+            change?.previous_max,
+            change?.new_limit,
+          ].join('|');
+        }
+
+        function mergeChanges(current, enriched) {
+          if (!Array.isArray(current) || current.length === 0) return enriched ?? [];
+          if (!Array.isArray(enriched) || enriched.length === 0) return current;
+          const enrichmentByKey = new Map(enriched.map(change => [changeKey(change), change]));
+          return current.map(change => ({
+            ...(enrichmentByKey.get(changeKey(change)) ?? {}),
+            ...change,
+            multi_factor_score:
+              change.multi_factor_score ??
+              enrichmentByKey.get(changeKey(change))?.multi_factor_score ??
+              null,
+            top_contributing_factors:
+              change.top_contributing_factors ??
+              enrichmentByKey.get(changeKey(change))?.top_contributing_factors ??
+              [],
+            context_proof:
+              change.context_proof ?? enrichmentByKey.get(changeKey(change))?.context_proof ?? null,
+            context_available:
+              change.context_available ??
+              enrichmentByKey.get(changeKey(change))?.context_available ??
+              false,
+          }));
+        }
 
         async function load() {
           let summary = null;
@@ -1172,7 +1507,7 @@
                 summary = {
                   ...(summary ?? {}),
                   limitChanges: summary?.limitChanges?.length ? summary.limitChanges : lim.changes,
-                  limitPatterns: summary?.limitPatterns ?? lim.patterns,
+                  limitPatterns: pickPatterns(summary?.limitPatterns, lim.patterns),
                 };
               }
             } else if (res.status === 503 && !summary) {
@@ -1196,10 +1531,8 @@
               );
               summary = {
                 ...(summary ?? {}),
-                limitChanges: summary?.limitChanges?.length
-                  ? summary.limitChanges
-                  : snapshotChanges,
-                limitPatterns: summary?.limitPatterns ?? snapshot.patterns,
+                limitChanges: mergeChanges(summary?.limitChanges, snapshotChanges),
+                limitPatterns: pickPatterns(summary?.limitPatterns, snapshot.patterns),
               };
             }
           } catch (e) {
@@ -1247,9 +1580,10 @@
             const last = acc.lastPredicted
               ? ` · last predicted ${String(acc.lastPredicted).slice(0, 19)}`
               : '';
-            bodyEl.textContent = `n=${acc.n} · MAE ${Number(acc.mae ?? 0).toFixed(3)} · RMSE ${Number(acc.rmse ?? 0).toFixed(3)}${last}`;
+            bodyEl.textContent = `${acc.n} backtest samples · MAE ${Number(acc.mae ?? 0).toFixed(3)} · RMSE ${Number(acc.rmse ?? 0).toFixed(3)}${last}`;
           } else {
-            bodyEl.textContent = 'No limit_raise accuracy samples on this surface.';
+            bodyEl.textContent =
+              'The formula is active, but no completed prediction window is available for accuracy scoring.';
             hintEl.style.display = 'block';
           }
         }
@@ -1259,7 +1593,29 @@
           filterBook = document.getElementById('filter-book').value;
           filterState = document.getElementById('filter-state').value;
           filterZip = document.getElementById('filter-zip').value;
+          const url = new URL(window.location.href);
+          const values = {
+            [PATTERN_QUERY_PARAMS.account]: filterPartner,
+            [PATTERN_QUERY_PARAMS.sportsbook]: filterBook,
+            [PATTERN_QUERY_PARAMS.state]: filterState,
+            [PATTERN_QUERY_PARAMS.zip]: filterZip,
+          };
+          for (const [parameter, value] of Object.entries(values)) {
+            if (value) url.searchParams.set(parameter, value);
+            else url.searchParams.delete(parameter);
+          }
+          history.replaceState(history.state, '', url);
           render();
+        }
+
+        function syncPatternFiltersFromUrl() {
+          const url = new URL(window.location.href);
+          filterPartner = url.searchParams.get(PATTERN_QUERY_PARAMS.account)?.toLowerCase() ?? '';
+          filterBook = url.searchParams.get(PATTERN_QUERY_PARAMS.sportsbook) ?? '';
+          filterState = url.searchParams.get(PATTERN_QUERY_PARAMS.state) ?? '';
+          filterZip = url.searchParams.get(PATTERN_QUERY_PARAMS.zip) ?? '';
+          document.getElementById('filter-partner').value = filterPartner;
+          document.getElementById('filter-book').value = filterBook;
         }
 
         function esc(s) {
@@ -1287,8 +1643,8 @@
 
           const stateSelect = document.getElementById('filter-state');
           const zipSelect = document.getElementById('filter-zip');
-          const selectedState = stateSelect.value;
-          const selectedZip = zipSelect.value;
+          const selectedState = filterState || stateSelect.value;
+          const selectedZip = filterZip || zipSelect.value;
           stateSelect.innerHTML =
             '<option value="">All states</option>' +
             (patterns.states ?? [])
@@ -1317,12 +1673,35 @@
           // Summary counts
           const partners = new Set(filtered.map(r => r.node_id));
           const books = new Set(filtered.map(r => r.sportsbook));
+          const upward = filtered.filter(r => r.direction !== 'down').length;
+          const netDelta = filtered.reduce(
+            (sum, row) => sum + Number(row.new_limit ?? 0) - Number(row.previous_max ?? 0),
+            0
+          );
+          const influenceScores = filtered
+            .filter(row => row.context_available && row.multi_factor_score != null)
+            .map(row => Number(row.multi_factor_score))
+            .filter(Number.isFinite);
           document.getElementById('total-raises').textContent = filtered.length;
+          document.getElementById('raised-share').textContent =
+            filtered.length > 0 ? `${Math.round((upward / filtered.length) * 100)}%` : '0%';
+          document.getElementById('net-limit-delta').textContent =
+            `${netDelta >= 0 ? '+' : '−'}$${Math.abs(netDelta).toLocaleString()}`;
+          document.getElementById('avg-influence').textContent =
+            influenceScores.length > 0
+              ? `${Math.round(
+                  (influenceScores.reduce((sum, score) => sum + score, 0) /
+                    influenceScores.length) *
+                    100
+                )}%`
+              : '—';
           document.getElementById('unique-partners').textContent = partners.size;
           document.getElementById('unique-books').textContent = books.size;
           document.getElementById('downline-nodes').textContent = patterns.downlineNodes ?? 0;
           document.getElementById('unique-states').textContent = patterns.states?.length ?? 0;
           document.getElementById('unique-zips').textContent = patterns.zips?.length ?? 0;
+          document.getElementById('evidence-coverage').textContent =
+            `${patterns.audit?.coveragePct ?? 0}%`;
           document.getElementById('count-badge').textContent =
             `Showing ${filtered.length} of ${lims.length} total`;
 
@@ -1342,9 +1721,10 @@
                 const next = Number(r.new_limit ?? 0);
                 const raise = next - prev;
                 const pct = prev > 0 ? ((raise / prev) * 100).toFixed(0) : '∞';
-                const typeCls = r.bet_type === 'live' ? 'live' : 'pregame';
+                const typeCls =
+                  r.bet_type === 'live' ? 'live' : r.bet_type === 'pregame' ? 'pregame' : '';
                 const directionCls = r.direction === 'down' ? 'down' : 'up';
-                const directionLabel = r.direction === 'down' ? '↓' : '↑';
+                const directionLabel = r.direction === 'down' ? 'reduced' : 'raised';
                 const drivers = (r.top_contributing_factors ?? []).join(', ');
                 const proof = r.context_proof?.valid
                   ? 'context proof verified'
@@ -1370,7 +1750,7 @@
         <td><span class="badge ${typeCls}">${esc(r.bet_type ?? '—')}</span></td>
         <td>$${prev.toLocaleString()}</td>
         <td><strong>$${next.toLocaleString()}</strong></td>
-        <td><span class="badge ${directionCls}">${directionLabel} ${raise >= 0 ? '+' : '−'}$${Math.abs(raise).toLocaleString()} (${pct}%)</span></td>
+        <td><span class="badge ${directionCls}">${directionLabel}</span><br><strong>${raise >= 0 ? '+' : '−'}$${Math.abs(raise).toLocaleString()} (${pct}%)</strong></td>
         <td>${scoreBadge}</td>
         <td>${when}</td>
       </tr>`;
@@ -1390,37 +1770,62 @@
             Object.entries(byPartner)
               .slice(0, 20)
               .map(([pid, raises]) => {
+                const pattern = patternByNode.get(pid);
                 const total = raises.reduce(
                   (s, r) => s + (Number(r.new_limit ?? 0) - Number(r.previous_max ?? 0)),
                   0
                 );
-                return `<div style="margin:0.5em 0;padding:0.5em;background:var(--bg,#fafafa);border-radius:4px">
-      <div style="display:flex;justify-content:space-between;font-weight:600">
-        <span><code>${esc(pid.slice(0, 18))}</code></span>
-        <span>${raises.length} change(s) · ${total >= 0 ? '+' : '−'}$${Math.abs(total).toLocaleString()} net</span>
-      </div>
-      <div style="font-size:0.85em;margin-top:4px;color:var(--text-dim,#666)">
-        ${raises
-          .slice(0, 3)
-          .map(
-            r =>
-              `${esc(r.sportsbook ?? '—')} ${esc(r.sport_id ?? '—')}/${esc(r.market_id ?? '—')}: <strong>$${Number(r.new_limit ?? 0).toLocaleString()}</strong>`
-          )
-          .join(' · ')}
-        ${raises.length > 3 ? ` · +${raises.length - 3} more` : ''}
-      </div>
-    </div>`;
+                const scored = raises.filter(
+                  r =>
+                    r.context_available &&
+                    r.multi_factor_score != null &&
+                    Number.isFinite(Number(r.multi_factor_score))
+                );
+                const avgScore =
+                  scored.length > 0
+                    ? Math.round(
+                        (scored.reduce((sum, row) => sum + Number(row.multi_factor_score), 0) /
+                          scored.length) *
+                          100
+                      )
+                    : null;
+                const tone = Number(pattern?.violation_count_30d ?? 0) > 1 ? 'warn' : 'ok';
+                return `<article class="node-breakdown" data-tone="${tone}">
+                  <div class="node-breakdown__head">
+                    <div>
+                      <strong>${esc(pattern?.node_name ?? pid)}</strong><br>
+                      <small>${esc(pattern?.node_type ?? 'node')} · depth ${pattern?.downline_depth ?? 0} · ${esc(pattern?.state_code ?? 'unmapped')} ${esc(pattern?.zip_prefix ?? '')}</small>
+                    </div>
+                    <span class="badge ${total < 0 ? 'down' : 'up'}">${total < 0 ? 'reduced' : 'raised'}</span>
+                  </div>
+                  <div class="node-breakdown__metrics">
+                    <span><strong>${raises.length}</strong>changes</span>
+                    <span><strong>${total >= 0 ? '+' : '−'}$${Math.abs(total).toLocaleString()}</strong>net delta</span>
+                    <span><strong>${avgScore == null ? '—' : `${avgScore}%`}</strong>influence</span>
+                    <span><strong>${pattern?.sportsbooks?.length ?? 0}</strong>books</span>
+                    <span><strong>${pattern?.violation_count_30d ?? 0}</strong>violations</span>
+                    <span><strong>${pattern?.proof_verified_changes ?? 0}/${pattern?.changes ?? raises.length}</strong>proof</span>
+                  </div>
+                  <small>${esc((pattern?.sportsbooks ?? []).join(' · ') || 'No sportsbook source')} · top market ${esc(pattern?.top_market ?? 'not observed')}</small>
+                </article>`;
               })
-              .join('') || '<div class="empty">No data</div>';
+              .join('') || '<div class="empty">No nodes match the active filters.</div>';
 
           const bookPatterns = document.getElementById('book-patterns');
           bookPatterns.innerHTML =
             (patterns.books ?? [])
               .map(
-                row => `<div class="pattern-row">
-                <strong>${esc(row.key)}</strong>
-                <small>${row.changes} changes · ${row.raises} up / ${row.decreases} down · ${row.partners} partners · ${esc((row.states ?? []).join('/'))}</small>
-                <span class="badge score" title="Average multi-factor influence">${row.avg_influence_score == null ? 'pending' : Math.round(row.avg_influence_score * 100)}</span>
+                row => `<div class="pattern-row" data-tone="${row.decreases > 0 ? 'warn' : 'ok'}">
+                <div class="pattern-row__label">
+                  <strong>${esc(row.key)}</strong>
+                  <small>${row.nodes} nodes · ${row.partners} partner trees</small>
+                </div>
+                <div class="pattern-row__metrics">
+                  <small>${row.changes} changes · ${row.raises} raised / ${row.decreases} reduced · ${esc((row.states ?? []).join(' / '))}</small>
+                  <small>net ${row.net_delta >= 0 ? '+' : '−'}$${Math.abs(row.net_delta).toLocaleString()} · avg ${row.avg_delta_pct >= 0 ? '+' : ''}${row.avg_delta_pct}% · top ${esc(row.top_market ?? '—')}</small>
+                  <span class="pattern-meter"><span style="width:${Math.min(100, Math.abs(row.avg_delta_pct))}%"></span></span>
+                </div>
+                <span class="badge score" title="Average multi-factor influence">${row.avg_influence_score == null ? 'pending' : `${Math.round(row.avg_influence_score * 100)}%`}</span>
               </div>`
               )
               .join('') || '<div class="empty">No sportsbook patterns</div>';
@@ -1432,34 +1837,106 @@
               ...(patterns.zips ?? []).map(row => ({ ...row, kind: 'ZIP' })),
             ]
               .map(
-                row => `<div class="pattern-row">
-                <strong>${esc(row.key)} <small>${row.kind}</small></strong>
-                <small>${row.changes} changes · net ${row.net_delta >= 0 ? '+' : '−'}$${Math.abs(row.net_delta).toLocaleString()} · top ${esc(row.top_market ?? '—')}</small>
-                <span>${row.avg_delta_pct >= 0 ? '+' : ''}${row.avg_delta_pct}%</span>
+                row => `<div class="pattern-row" data-tone="${row.net_delta < 0 ? 'warn' : 'ok'}">
+                <div class="pattern-row__label">
+                  <strong>${esc(row.key)}</strong>
+                  <small>${row.kind} · ${row.nodes} nodes · ${row.partners} partner trees</small>
+                </div>
+                <div class="pattern-row__metrics">
+                  <small>${row.changes} changes · ${row.raises} raised / ${row.decreases} reduced · net ${row.net_delta >= 0 ? '+' : '−'}$${Math.abs(row.net_delta).toLocaleString()}</small>
+                  <small>top ${esc(row.top_market ?? '—')} · ZIP ${esc((row.zip_prefixes ?? []).join(', ') || row.key)}</small>
+                  <span class="pattern-meter"><span style="width:${Math.min(100, Math.abs(row.avg_delta_pct))}%"></span></span>
+                </div>
+                <span class="pattern-row__value">${row.avg_delta_pct >= 0 ? '+' : ''}${row.avg_delta_pct}%</span>
               </div>`
               )
               .join('') || '<div class="empty">No state or ZIP patterns</div>';
 
           const downlinePatterns = document.getElementById('downline-patterns');
           downlinePatterns.innerHTML =
-            `<table><thead><tr><th>Partner</th><th>Node</th><th>Depth</th><th>State</th><th>ZIP</th><th>License</th><th>Violations</th><th>Books</th><th>Changes</th><th>Influence</th></tr></thead><tbody>` +
+            `<table aria-label="Partner and downline limit patterns"><thead><tr>
+              <th>Partner tree</th>
+              <th><a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.account">Account</a></th>
+              <th>Jurisdiction</th>
+              <th>License</th>
+              <th>Risk</th>
+              <th>Sportsbooks</th>
+              <th>Movement</th>
+              <th><a class="semantic-label" href="/portal/glossary/#glossary:ops.limits.influence_score">Influence</a></th>
+              <th>Proof</th>
+            </tr></thead><tbody>` +
             (patterns.nodePatterns ?? [])
               .map(
                 row => `<tr>
-                <td><code>${esc(row.partner_node_id)}</code></td>
-                <td>${esc(row.node_name)}<br><small>${esc(row.node_type)}</small></td>
-                <td>${row.downline_depth}</td>
-                <td>${esc(row.state_code ?? '—')}</td>
-                <td><code>${esc(row.zip_code ?? '—')}</code></td>
-                <td>${esc(row.license_status ?? 'none')}</td>
-                <td>${row.violation_count_30d}</td>
+                <td><code title="${esc(row.partner_node_id)}">${esc(row.partner_node_id.replace('limit-demo-', ''))}</code></td>
+                <td><strong>${esc(row.node_name)}</strong><br><small>${esc(row.node_type)} · depth ${row.downline_depth}</small></td>
+                <td><strong>${esc(row.state_code ?? '—')}</strong> · <code>${esc(row.zip_code ?? '—')}</code><br><small>${esc(row.location ?? 'not observed')}</small></td>
+                <td><span class="badge ${row.license_status === 'active' ? 'pregame' : 'pending'}">${esc(row.license_status ?? 'none')}</span></td>
+                <td><span class="badge ${row.violation_count_30d > 1 ? 'live' : row.violation_count_30d > 0 ? 'pending' : 'pregame'}">${row.violation_count_30d} violations</span></td>
                 <td>${esc((row.sportsbooks ?? []).join(', '))}</td>
-                <td>${row.changes}</td>
-                <td>${row.avg_influence_score == null ? 'pending' : Math.round(row.avg_influence_score * 100)}</td>
+                <td>${row.changes} changes<br><strong>${row.net_delta >= 0 ? '+' : '−'}$${Math.abs(row.net_delta).toLocaleString()}</strong></td>
+                <td>${row.avg_influence_score == null ? '<span class="badge pending">pending</span>' : `<span class="badge score">${Math.round(row.avg_influence_score * 100)}%</span>`}</td>
+                <td>${row.proof_verified_changes}/${row.changes}<br><small>${row.scored_changes} scored</small></td>
               </tr>`
               )
               .join('') +
             '</tbody></table>';
+
+          const topBook = [...(patterns.books ?? [])].sort(
+            (left, right) =>
+              Math.abs(right.net_delta) - Math.abs(left.net_delta) || right.changes - left.changes
+          )[0];
+          const topGeo = [...(patterns.zips ?? [])].sort(
+            (left, right) =>
+              Math.abs(right.avg_delta_pct) - Math.abs(left.avg_delta_pct) ||
+              right.changes - left.changes
+          )[0];
+          const riskNode = [...(patterns.nodePatterns ?? [])].sort(
+            (left, right) =>
+              right.violation_count_30d - left.violation_count_30d ||
+              left.avg_influence_score - right.avg_influence_score
+          )[0];
+          const coverage = Number(patterns.audit?.coveragePct ?? 0);
+          const findings = [
+            topBook && {
+              title: `${topBook.key} carries the largest net movement`,
+              detail: `${topBook.changes} changes across ${topBook.nodes} nodes produced ${topBook.net_delta >= 0 ? '+' : '−'}$${Math.abs(topBook.net_delta).toLocaleString()} net movement.`,
+              evidence: `sportsbook aggregate · ${topBook.states.join('/')} · ${topBook.top_market ?? 'mixed markets'}`,
+              tone: topBook.decreases > 0 ? 'warn' : 'ok',
+            },
+            topGeo && {
+              title: `ZIP ${topGeo.key} has the strongest average move`,
+              detail: `${topGeo.avg_delta_pct >= 0 ? '+' : ''}${topGeo.avg_delta_pct}% average movement across ${topGeo.changes} changes and ${topGeo.nodes} nodes.`,
+              evidence: `ZIP aggregate · ${topGeo.states.join('/')} · net ${topGeo.net_delta >= 0 ? '+' : '−'}$${Math.abs(topGeo.net_delta).toLocaleString()}`,
+              tone: Math.abs(topGeo.avg_delta_pct) >= 100 ? 'warn' : 'ok',
+            },
+            riskNode && {
+              title: `${riskNode.node_name} is the priority review node`,
+              detail: `${riskNode.violation_count_30d} violations in 30 days with ${riskNode.proof_verified_changes}/${riskNode.changes} changes proof-verified.`,
+              evidence: `${riskNode.state_code ?? 'unmapped'} ${riskNode.zip_code ?? ''} · ${riskNode.sportsbooks.join(', ')}`,
+              tone: riskNode.violation_count_30d > 1 ? 'warn' : 'ok',
+            },
+            {
+              title: `${coverage}% of expected pattern evidence is connected`,
+              detail: `${patterns.audit?.hierarchyLinked ?? 0} hierarchy, ${patterns.audit?.geoLinked ?? 0} geo, ${patterns.audit?.licensed ?? 0} license, and ${patterns.audit?.proofVerified ?? 0} proof connections are available.`,
+              evidence: (patterns.audit?.sourceTables ?? []).join(' · '),
+              tone: coverage >= 90 ? 'ok' : 'warn',
+            },
+          ].filter(Boolean);
+          document.getElementById('research-findings').innerHTML =
+            findings
+              .map(
+                finding => `<article class="research-finding" data-tone="${finding.tone}">
+                  <div class="research-finding__head">
+                    <strong>${esc(finding.title)}</strong>
+                    <span class="status-token" data-tone="${finding.tone}">${finding.tone === 'warn' ? 'review' : 'observed'}</span>
+                  </div>
+                  <p>${esc(finding.detail)}</p>
+                  <small>${esc(finding.evidence)}</small>
+                </article>`
+              )
+              .join('') ||
+            '<div class="empty">No evidence-backed findings match the active filters.</div>';
 
           const audit = patterns.audit ?? {};
           const auditItems = [
@@ -1483,11 +1960,16 @@
         document.getElementById('filter-book').addEventListener('change', applyFilter);
         document.getElementById('filter-state').addEventListener('change', applyFilter);
         document.getElementById('filter-zip').addEventListener('change', applyFilter);
+        window.addEventListener('popstate', () => {
+          syncPatternFiltersFromUrl();
+          render();
+        });
 
+        syncPatternFiltersFromUrl();
         load();
         setInterval(load, POLL_INTERVAL);
       </script>
-    <script type="module" src="/portal/limits/limit-profiles.js?v=3"></script>
+      <script type="module" src="/portal/limits/limit-profiles.js?v=3"></script>
     </main>
     <footer class="footer" data-portal-chrome="footer">
       <p>

@@ -131,7 +131,7 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
     seeAlso: [...concept.seeAlso],
     status: 'active',
     deprecatedBy: null,
-    unit: null,
+    unit: concept.unit ?? null,
     registryColumn: null,
     source: 'lib/portal/semantic-vocabulary.ts',
     featurePurpose: 'Cross-portal semantic field contract.',

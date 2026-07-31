@@ -61,6 +61,17 @@ describe('domain glossary portal', () => {
       values: expect.arrayContaining(['edge-health', 'registry-bake', 'proof']),
     });
     expect(
+      payload.concepts.find(concept => concept.id === 'ops.limits.influence_score')
+    ).toMatchObject({
+      kind: 'ui',
+      semanticType: 'state',
+      uiRole: 'badge',
+      unit: 'percent',
+    });
+    expect(payload.concepts.find(concept => concept.id === 'ops.limits.limit_delta')).toMatchObject({
+      unit: 'usd',
+    });
+    expect(
       payload.concepts.find(
         concept => concept.id === 'policy.MA.basketball.over_under'
       )

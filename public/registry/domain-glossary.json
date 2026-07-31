@@ -15,20 +15,20 @@
     "colorKernel": "lib/theme/colors.ts"
   },
   "summary": {
-    "concepts": 136,
-    "active": 135,
+    "concepts": 143,
+    "active": 142,
     "deprecated": 1,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 30,
+    "portalSemantics": 37,
     "categories": {
       "market": 19,
       "model": 15,
       "pipeline": 19,
       "tournament": 9,
       "trading": 22,
-      "ui": 31,
+      "ui": 38,
       "warehouse": 21
     },
     "kinds": {
@@ -37,21 +37,21 @@
       "kpi": 4,
       "policy": 4,
       "registry": 33,
-      "ui": 81
+      "ui": 88
     },
     "semanticTypes": {
-      "classification": 11,
+      "classification": 12,
       "location": 3,
       "presentation": 1,
-      "resource": 7,
-      "state": 7,
+      "resource": 9,
+      "state": 11,
       "version": 1
     },
     "uiRoles": {
-      "badge": 7,
-      "chip": 6,
-      "code": 8,
-      "heading": 2,
+      "badge": 10,
+      "chip": 7,
+      "code": 9,
+      "heading": 4,
       "link": 6,
       "token": 1
     }
@@ -3289,6 +3289,210 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "state",
       "uiRole": "code",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ops.limits.pattern_surface",
+      "label": "Partner limit patterns",
+      "description": "Evidence surface grouping recent limit movement by partner tree, sportsbook, jurisdiction, and ZIP prefix.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "limit pattern board",
+        "partner limit board"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.limit_delta",
+        "ops.limits.influence_score",
+        "ops.limits.prediction"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ops.limits.change_direction",
+      "label": "Limit change direction",
+      "description": "Observed direction of a sportsbook limit change relative to the immediately previous limit.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "raise direction",
+        "limit movement"
+      ],
+      "values": [
+        "raised",
+        "reduced"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.limit_delta",
+        "ops.limits.effective_limit",
+        "ui.semantic.tone"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ops.limits.market_phase",
+      "label": "Market phase",
+      "description": "Trading phase attached to a limit observation: live, pregame, or phase-independent straight wagering.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "bet phase",
+        "wager phase"
+      ],
+      "values": [
+        "live",
+        "pregame",
+        "straight"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.effective_limit",
+        "ops.limits.change_direction",
+        "ui.semantic.kind"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ops.limits.limit_delta",
+      "label": "Limit delta",
+      "description": "Signed difference between the new sportsbook limit and its immediately previous value in USD.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "limit movement",
+        "net limit change"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.change_direction",
+        "ops.limits.effective_limit",
+        "ops.limits.pattern_surface"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": "usd",
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "state",
+      "uiRole": "code",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ops.limits.influence_score",
+      "label": "Multi-factor influence",
+      "description": "Normalized contribution score joining activity, profitability, risk, compliance, and sportsbook context for a limit change.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "influence",
+        "multi-factor score",
+        "raise score"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.prediction",
+        "ops.limits.data_coverage",
+        "ops.limits.evidence_trace"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": "percent",
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ops.limits.data_coverage",
+      "label": "Pattern evidence coverage",
+      "description": "Percentage of expected hierarchy, geography, license, score, and proof connections present in the limit-pattern read model.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "connection coverage",
+        "pattern coverage"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.evidence_trace",
+        "ops.limits.influence_score",
+        "ui.semantic.source"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": "percent",
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "ops.limits.prediction",
+      "label": "Limit raise prediction",
+      "description": "Forecast of the probability and expected magnitude of a future limit raise using frequency, trend, influence, and time-window features.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "raise forecast",
+        "limit forecast"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.influence_score",
+        "ops.limits.limit_delta",
+        "ops.limits.pattern_surface"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
       "color": "#60a5fa"
     },
     {

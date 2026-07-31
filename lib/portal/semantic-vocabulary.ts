@@ -42,6 +42,13 @@ export const PORTAL_SEMANTIC_CONCEPT_KEYS = [
   'ops.limits.monitoring_status',
   'ops.limits.evidence_trace',
   'ops.limits.effective_limit',
+  'ops.limits.pattern_surface',
+  'ops.limits.change_direction',
+  'ops.limits.market_phase',
+  'ops.limits.limit_delta',
+  'ops.limits.influence_score',
+  'ops.limits.data_coverage',
+  'ops.limits.prediction',
 ] as const;
 
 export type PortalSemanticConceptKey = (typeof PORTAL_SEMANTIC_CONCEPT_KEYS)[number];
@@ -54,6 +61,7 @@ export type PortalSemanticConcept = {
   uiRole: PortalUiRole;
   synonyms: readonly string[];
   values?: readonly string[];
+  unit?: string;
   seeAlso: readonly PortalSemanticConceptKey[];
 };
 
@@ -264,6 +272,85 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['current limit', 'applicable limit', 'max wager'],
     seeAlso: ['ops.limits.jurisdiction_policy', 'ops.limits.profile', 'ui.semantic.source'],
   },
+  {
+    id: 'ops.limits.pattern_surface',
+    label: 'Partner limit patterns',
+    description:
+      'Evidence surface grouping recent limit movement by partner tree, sportsbook, jurisdiction, and ZIP prefix.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['limit pattern board', 'partner limit board'],
+    seeAlso: ['ops.limits.limit_delta', 'ops.limits.influence_score', 'ops.limits.prediction'],
+  },
+  {
+    id: 'ops.limits.change_direction',
+    label: 'Limit change direction',
+    description:
+      'Observed direction of a sportsbook limit change relative to the immediately previous limit.',
+    semanticType: 'state',
+    uiRole: 'badge',
+    synonyms: ['raise direction', 'limit movement'],
+    values: ['raised', 'reduced'],
+    seeAlso: ['ops.limits.limit_delta', 'ops.limits.effective_limit', 'ui.semantic.tone'],
+  },
+  {
+    id: 'ops.limits.market_phase',
+    label: 'Market phase',
+    description:
+      'Trading phase attached to a limit observation: live, pregame, or phase-independent straight wagering.',
+    semanticType: 'classification',
+    uiRole: 'chip',
+    synonyms: ['bet phase', 'wager phase'],
+    values: ['live', 'pregame', 'straight'],
+    seeAlso: ['ops.limits.effective_limit', 'ops.limits.change_direction', 'ui.semantic.kind'],
+  },
+  {
+    id: 'ops.limits.limit_delta',
+    label: 'Limit delta',
+    description:
+      'Signed difference between the new sportsbook limit and its immediately previous value in USD.',
+    semanticType: 'state',
+    uiRole: 'code',
+    synonyms: ['limit movement', 'net limit change'],
+    unit: 'usd',
+    seeAlso: [
+      'ops.limits.change_direction',
+      'ops.limits.effective_limit',
+      'ops.limits.pattern_surface',
+    ],
+  },
+  {
+    id: 'ops.limits.influence_score',
+    label: 'Multi-factor influence',
+    description:
+      'Normalized contribution score joining activity, profitability, risk, compliance, and sportsbook context for a limit change.',
+    semanticType: 'state',
+    uiRole: 'badge',
+    synonyms: ['influence', 'multi-factor score', 'raise score'],
+    unit: 'percent',
+    seeAlso: ['ops.limits.prediction', 'ops.limits.data_coverage', 'ops.limits.evidence_trace'],
+  },
+  {
+    id: 'ops.limits.data_coverage',
+    label: 'Pattern evidence coverage',
+    description:
+      'Percentage of expected hierarchy, geography, license, score, and proof connections present in the limit-pattern read model.',
+    semanticType: 'state',
+    uiRole: 'badge',
+    synonyms: ['connection coverage', 'pattern coverage'],
+    unit: 'percent',
+    seeAlso: ['ops.limits.evidence_trace', 'ops.limits.influence_score', 'ui.semantic.source'],
+  },
+  {
+    id: 'ops.limits.prediction',
+    label: 'Limit raise prediction',
+    description:
+      'Forecast of the probability and expected magnitude of a future limit raise using frequency, trend, influence, and time-window features.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['raise forecast', 'limit forecast'],
+    seeAlso: ['ops.limits.influence_score', 'ops.limits.limit_delta', 'ops.limits.pattern_surface'],
+  },
 ] as const satisfies readonly PortalSemanticConcept[];
 
 export const HEALTH_FIELD_CONCEPTS = {
@@ -286,6 +373,13 @@ export const LIMIT_FIELD_CONCEPTS = {
   monitoringStatus: 'ops.limits.monitoring_status',
   evidenceTrace: 'ops.limits.evidence_trace',
   effectiveLimit: 'ops.limits.effective_limit',
+  patternSurface: 'ops.limits.pattern_surface',
+  changeDirection: 'ops.limits.change_direction',
+  marketPhase: 'ops.limits.market_phase',
+  limitDelta: 'ops.limits.limit_delta',
+  influenceScore: 'ops.limits.influence_score',
+  dataCoverage: 'ops.limits.data_coverage',
+  prediction: 'ops.limits.prediction',
 } as const satisfies Record<string, PortalSemanticConceptKey>;
 
 export function validatePortalSemanticVocabulary(): void {

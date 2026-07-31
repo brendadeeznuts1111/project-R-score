@@ -134,7 +134,16 @@ describe('account limit control surface', () => {
     expect(html).toContain('id="jurisdiction-policy-body"');
     expect(html).toContain('id="compliance-policy-kpis"');
     expect(html).toContain('Policy artifact');
-    expect(html).toContain('Account limits and policy controls');
+    expect(html).toContain('Partner limit patterns');
+    expect(html).toContain('id="pattern-summary"');
+    expect(html).toContain('id="research-findings"');
+    expect(html).toContain('id="node-breakdown"');
+    expect(html).toContain('P(raise) = clamp(5%, 95%, 0.30F + 0.25T + 0.30I + 0.15W)');
+    expect(html).toContain('/portal/glossary/#glossary:ops.limits.pattern_surface');
+    expect(html).toContain('/portal/glossary/#glossary:ops.limits.influence_score');
+    expect(html).toContain("new URL(window.location.href)");
+    expect(html).toContain("[PATTERN_QUERY_PARAMS.sportsbook]: filterBook");
+    expect(html).toContain('pickPatterns(summary?.limitPatterns, snapshot.patterns)');
     expect(html).toContain('href="#section:account-control"');
     expect(html).toContain('id="profile-filter-reset"');
     expect(html).toMatch(/#profile-jurisdiction\s*\{[^}]*font-weight:\s*700/s);
