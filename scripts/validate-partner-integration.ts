@@ -113,6 +113,42 @@ for (const id of partnerTelegramGlossaryIds()) {
   }
 }
 
+// ── Layer 5: registry data coherence (warnings only) ─────────────────────────
+// Hard data validation is owned by `bun run partners:validate` (registry gate);
+// these are the review's follow-ups (P4 ledger amounts, P5 free-roll) as soft
+// warnings so they never block the integration schema gate.
+const MONETARY_CODES = new Set<string>([
+  'DEPOSIT_RECEIVED',
+  'DEPOSIT_ALLOCATED',
+  'CREDIT_EXTENDED',
+  'SETTLEMENT_PROCESSED',
+]);
+
+try {
+  const { buildPartnersOpsRegistry } = await import('../lib/telegram/partner-ops-registry.ts');
+  const registry = await buildPartnersOpsRegistry();
+  for (const partner of registry.partners) {
+    for (const event of partner.accounting.ledger) {
+      if (MONETARY_CODES.has(event.code) && (event.amount === undefined || event.amount === null)) {
+        warns.push(
+          `ledger ${partner.code} ${event.code} @${event.at}: monetary event missing amount`
+        );
+      }
+    }
+    for (const out of partner.outs) {
+      if ((out.freeRollPercent ?? 0) > 0 && partner.accounting.freeRoll.total === 0) {
+        warns.push(
+          `partner ${partner.code} out ${out.id}: freeRollPercent > 0 but freeRoll.total is 0`
+        );
+      }
+    }
+  }
+} catch (error) {
+  warns.push(
+    `registry data layer unavailable (data-coherence warnings skipped): ${String(error).slice(0, 120)}`
+  );
+}
+
 const ok = errs.length === 0;
 console.log(
   `Partner integration validation: ${ok ? 'PASS' : 'FAIL'} · routes ${ROUTE_SAMPLES.length} · tables ${Object.keys(PARTNER_TABLE_SCHEMAS).length} · tags ${allPartnerTags().length} · topics ${partnerTelegramGlossaryIds().length}`
