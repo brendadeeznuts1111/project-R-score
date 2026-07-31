@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "kind": "limit-forecast-lab",
+  "generatedAt": "2026-07-31T09:12:47.758Z",
+  "source": {
+    "database": "data/operations.db",
+    "table": "partner_account_limits",
+    "mode": "read-only"
+  },
+  "dataset": {
+    "kind": "transitions-only",
+    "forecastEligible": false,
+    "reason": "Change snapshots do not provide unbiased no-change 48-hour outcome windows; scores are diagnostics only.",
+    "snapshots": 43,
+    "transitions": 22,
+    "raises": 19,
+    "cutsOrFlat": 3,
+    "sportsbooks": 5,
+    "earliestAt": 1785209600,
+    "latestAt": 1785447465,
+    "support": "insufficient"
+  },
+  "model": {
+    "id": "beta-binomial-transition-v0",
+    "globalRate": 0.847826,
+    "poolingStrength": 8,
+    "supportGates": {
+      "globalCompleted": 100,
+      "globalRaises": 20,
+      "bookCompleted": 50,
+      "bookRaises": 10
+    },
+    "candidates": [
+      {
+        "id": "global-base-rate-v0",
+        "label": "Global transition baseline",
+        "scope": "global",
+        "score": {
+          "samples": 13,
+          "positives": 10,
+          "brier": 0.203226,
+          "logLoss": 0.68223
+        }
+      },
+      {
+        "id": "pooled-book-beta-binomial-v0",
+        "label": "Pooled sportsbook transition baseline",
+        "scope": "sportsbook-partial-pooling",
+        "score": {
+          "samples": 13,
+          "positives": 10,
+          "brier": 0.211642,
+          "logLoss": 0.721266
+        }
+      }
+    ],
+    "books": [
+      {
+        "sportsbook": "draftkings",
+        "transitions": 9,
+        "raises": 9,
+        "cutsOrFlat": 0,
+        "observedRate": 1,
+        "pooledRate": 0.928389,
+        "globalWeight": 0.470588,
+        "support": "insufficient"
+      },
+      {
+        "sportsbook": "caesars",
+        "transitions": 4,
+        "raises": 3,
+        "cutsOrFlat": 1,
+        "observedRate": 0.75,
+        "pooledRate": 0.815217,
+        "globalWeight": 0.666667,
+        "support": "insufficient"
+      },
+      {
+        "sportsbook": "fanduel",
+        "transitions": 4,
+        "raises": 4,
+        "cutsOrFlat": 0,
+        "observedRate": 1,
+        "pooledRate": 0.898551,
+        "globalWeight": 0.666667,
+        "support": "insufficient"
+      },
+      {
+        "sportsbook": "hardrock",
+        "transitions": 3,
+        "raises": 2,
+        "cutsOrFlat": 1,
+        "observedRate": 0.666667,
+        "pooledRate": 0.798419,
+        "globalWeight": 0.727273,
+        "support": "insufficient"
+      },
+      {
+        "sportsbook": "betmgm",
+        "transitions": 2,
+        "raises": 1,
+        "cutsOrFlat": 1,
+        "observedRate": 0.5,
+        "pooledRate": 0.778261,
+        "globalWeight": 0.8,
+        "support": "insufficient"
+      }
+    ]
+  },
+  "promotion": {
+    "eligible": false,
+    "blockers": [
+      "No immutable issued-at forecast rows",
+      "No matured 48-hour no-change outcome windows",
+      "No leakage-safe rolling-origin calibration set"
+    ],
+    "nextModel": "regularized-global-logistic-with-pooled-book-effects"
+  },
+  "links": {
+    "lab": "/portal/limits-lab/",
+    "limits": "/portal/limits/#section:prediction",
+    "artifact": "/registry/limit-forecast-lab.json",
+    "glossary": "/portal/glossary/#glossary:ops.limits.prediction"
+  }
+}

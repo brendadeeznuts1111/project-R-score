@@ -55,3 +55,17 @@ export {
 } from './limit-prediction.ts';
 export { LimitPredictionReport, printLimitPredictionReport } from './limit-prediction-report.ts';
 export { runGranularAnalysis } from './granular-analysis.ts';
+export {
+  LIMIT_FORECAST_LAB_MODEL,
+  LIMIT_FORECAST_LAB_SCHEMA,
+  LIMIT_FORECAST_POOLING_STRENGTH,
+  LIMIT_FORECAST_SUPPORT_GATES,
+  buildLimitForecastLab,
+  buildLimitTransitions,
+  estimatePooledBookRates,
+  scoreWalkForward,
+  type LimitSnapshotSample,
+  type LimitTransition,
+  type RaiseRateEstimate,
+  type WalkForwardScore,
+} from './limit-forecast-lab.ts';

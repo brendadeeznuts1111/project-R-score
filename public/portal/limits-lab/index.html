@@ -1,0 +1,203 @@
+<!doctype html>
+<!-- @see docs/harness/tenants/limit-forecast-lab.md — read-only forecasting sandbox -->
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Limits Forecast Lab · FactoryWager</title>
+    <meta name="theme-color" content="#0d1117" />
+    <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+    <link rel="stylesheet" href="/portal/style.css" />
+    <style>
+      .lab-page {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 20px 24px 56px;
+      }
+      .lab-hero,
+      .lab-panel {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        margin-bottom: 16px;
+      }
+      .lab-hero {
+        border-left: 4px solid var(--yellow, #d29922);
+      }
+      .lab-hero h2,
+      .lab-panel h2 {
+        margin: 0 0 8px;
+      }
+      .lab-actions,
+      .lab-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .lab-actions {
+        margin-top: 14px;
+      }
+      .lab-actions a,
+      .lab-actions button {
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--bg);
+        color: var(--accent);
+        padding: 7px 10px;
+        font: inherit;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .lab-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        margin: 16px 0;
+      }
+      .lab-stat {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 12px 14px;
+      }
+      .lab-stat strong {
+        display: block;
+        font: 700 1.4rem var(--font-mono, ui-monospace, monospace);
+      }
+      .lab-stat span,
+      .lab-sub {
+        color: var(--text-dim);
+        font-size: 12px;
+      }
+      .lab-badge {
+        display: inline-block;
+        border: 1px solid var(--yellow, #d29922);
+        border-radius: 999px;
+        color: var(--yellow, #d29922);
+        padding: 3px 8px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .lab-table-wrap {
+        overflow-x: auto;
+      }
+      .lab-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+      .lab-table th,
+      .lab-table td {
+        border-bottom: 1px solid var(--border);
+        padding: 8px;
+        text-align: left;
+      }
+      .lab-table th {
+        color: var(--text-dim);
+      }
+      .lab-callout {
+        border: 1px solid color-mix(in srgb, var(--yellow, #d29922) 60%, var(--border));
+        border-radius: var(--radius);
+        padding: 12px 14px;
+        background: color-mix(in srgb, var(--yellow, #d29922) 8%, transparent);
+      }
+      code {
+        font-family: var(--font-mono, ui-monospace, monospace);
+      }
+    </style>
+    <script type="module" src="/portal/data.js"></script>
+    <script type="module" src="/portal/topbar.js"></script>
+  </head>
+  <body>
+    <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <h1 class="logo">
+          <span class="logo-icon" aria-hidden="true"></span>
+          <span class="brand-wordmark">FactoryWager</span>
+          <span class="brand-badge">lab</span>
+          <span class="logo-page">Limits Forecast</span>
+        </h1>
+        <nav class="topbar-nav" aria-label="Primary">
+          <a href="/portal/limits/" class="nav-link">Limits</a>
+          <a href="/portal/glossary/#glossary:ops.limits.prediction" class="nav-link">Glossary</a>
+          <a href="/registry/limit-forecast-lab.json" class="nav-link">JSON</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="lab-page">
+      <section class="lab-hero">
+        <span class="lab-badge">Research sandbox</span>
+        <h2>Limits Forecast Lab</h2>
+        <p>
+          Read-only model comparison for global and partially pooled sportsbook signals. This
+          surface never writes production forecasts or claims calibration from transition-only
+          evidence.
+        </p>
+        <div class="lab-actions">
+          <button type="button" class="copy-cli" data-cli="bun run ops:limits:lab">
+            Copy bake command
+          </button>
+          <button type="button" class="copy-cli" data-cli="bun run ops:limits:lab:profile">
+            Copy profiler command
+          </button>
+          <a href="/portal/limits/#section:prediction">Production prediction</a>
+        </div>
+      </section>
+
+      <div id="lab-stats" class="lab-stats" aria-label="Forecast lab summary"></div>
+
+      <section class="lab-panel">
+        <h2>Promotion gate</h2>
+        <div id="lab-promotion" class="lab-callout">Loading laboratory evidence…</div>
+      </section>
+
+      <section class="lab-panel">
+        <h2>Candidate diagnostics</h2>
+        <div class="lab-table-wrap">
+          <table class="lab-table">
+            <thead>
+              <tr>
+                <th>Candidate</th>
+                <th>Scope</th>
+                <th>Walk-forward samples</th>
+                <th>Brier</th>
+                <th>Log loss</th>
+              </tr>
+            </thead>
+            <tbody id="lab-candidates"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="lab-panel">
+        <h2>Sportsbook partial pooling</h2>
+        <p class="lab-sub">
+          Global weight shows how strongly a sparse sportsbook estimate shrinks toward the shared
+          population rate.
+        </p>
+        <div class="lab-table-wrap">
+          <table class="lab-table">
+            <thead>
+              <tr>
+                <th>Sportsbook</th>
+                <th>Transitions</th>
+                <th>Raises</th>
+                <th>Observed</th>
+                <th>Pooled</th>
+                <th>Global weight</th>
+                <th>Support</th>
+              </tr>
+            </thead>
+            <tbody id="lab-books"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/portal/limits-lab/limits-lab.js"></script>
+    <script type="module" src="/portal/components/footer.js"></script>
+    <footer class="footer" data-portal-chrome="footer"></footer>
+  </body>
+</html>
