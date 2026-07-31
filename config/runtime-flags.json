@@ -521,6 +521,19 @@
     "versionVerified": true
   },
   {
+    "flag": "--no-env-file",
+    "category": "Environment & Config",
+    "version": "Bun \u22651.0",
+    "description": "Disable automatic loading of .env files",
+    "url": "https://bun.com/docs/runtime/environment-variables#disabling-automatic-env-loading",
+    "takesValue": false,
+    "default": null,
+    "deprecated": false,
+    "behavior": "Skips Bun's automatic .env, .env.$NODE_ENV, and .env.local loading; explicit --env-file still loads",
+    "curated": false,
+    "versionVerified": true
+  },
+  {
     "flag": "--port",
     "category": "Execution",
     "version": "Bun \u22651.0",

@@ -6,6 +6,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
+// @see https://bun.com/docs/runtime/environment-variables#configuring-bun
 /**
  * Portal secret — thin wrapper over official Proton Pass CLI (`pass-cli`).
  *
@@ -29,6 +30,7 @@
  */
 import { jsonOut } from '../lib/console-depth.ts';
 import { safeJsonParse } from '../lib/core/index.ts';
+import { isBunRuntimeEnvName } from '../lib/bun-runtime-env.ts';
 import {
   buildVaultMapBundle,
   entryForVaultItem,
@@ -211,11 +213,11 @@ export function envNameFromTitle(title: string): string {
 /**
  * Env keys a vault item title must never set on the autofill child process:
  * PATH/HOME resolution hijack, dylib injection (DYLD_/LD_ prefixes), and
- * runtime option channels (BUN_/NODE_ prefixes). Titles are
- * operator-controlled strings.
+ * runtime option channels (BUN_/NODE_ prefixes plus Bun's unprefixed runtime
+ * controls). Titles are operator-controlled strings.
  */
 export function isReservedEnvKey(name: string): boolean {
-  return /^(PATH|HOME|DYLD_.*|LD_.*|BUN_.*|NODE_.*)$/.test(name);
+  return isBunRuntimeEnvName(name) || /^(PATH|HOME|DYLD_.*|LD_.*|BUN_.*|NODE_.*)$/.test(name);
 }
 
 /** Extract item titles from `item list --output json` payload. */
@@ -604,7 +606,7 @@ async function cmdAutofill(rest: string[]): Promise<void> {
       return row;
     }
     if (isReservedEnvKey(envKey)) {
-      // Never let a vault item title clobber PATH/DYLD_*/BUN_* on the child.
+      // Never let a vault item title clobber host/runtime controls on the child.
       row.error = `reserved env key "${envKey}" rejected`;
       return row;
     }

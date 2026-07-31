@@ -1,9 +1,11 @@
 // @see https://bun.com/docs/guides/runtime/timezone — TZ
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/environment-variables#configuring-bun
 /**
  * Pure Bun.env hygiene scanner — shared by check-env-defaults CLI + tests.
  * Classifies optional config reads that lack fallbacks (not secrets / ambient).
  */
+import { BUN_RUNTIME_ENV_NAMES } from '../../lib/bun-runtime-env.ts';
 import { isBunSecretsServiceEnv } from './env-secret-policy.ts';
 
 /** Process / host ambient — presence is optional by design. */
@@ -13,7 +15,6 @@ export const PROCESS_AMBIENT = new Set([
   'PWD',
   'USER',
   'SHELL',
-  'TMPDIR',
   'TEMP',
   'TMP',
   'TERM',
@@ -26,13 +27,10 @@ export const PROCESS_AMBIENT = new Set([
   'GITHUB_ACTIONS',
   'GITHUB_WORKSPACE',
   'RUNNER_OS',
-  'FORCE_COLOR',
-  'NO_COLOR',
   'DEBUG',
   'NODE_ENV',
   'NODE_OPTIONS',
   'BUN_DEBUG',
-  'BUN_CONFIG_VERBOSE_FETCH',
   'BUN_INSTALL',
   'BUN_INSTALL_CACHE_DIR',
   'EDITOR',
@@ -51,6 +49,7 @@ export const PROCESS_AMBIENT = new Set([
   'GITHUB_STATE',
   'RUNNER_TEMP',
   'RUNNER_TOOL_CACHE',
+  ...BUN_RUNTIME_ENV_NAMES,
 ]);
 
 /** Secrets/credentials — missing should fail loud or use vault inject. */

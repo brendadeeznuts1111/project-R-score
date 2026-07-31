@@ -148,6 +148,7 @@ describe('parseBunExecutionFlags', () => {
     expect(sets.valueFlags.has('-c')).toBe(true); // --config shortcode
     expect(sets.boolFlags.has('-i')).toBe(true); // standalone ≡ --install=fallback
     expect(sets.boolFlags.has('--no-install')).toBe(true);
+    expect(sets.boolFlags.has('--no-env-file')).toBe(true);
     // -i is NOT shortcode of --no-install
     const noInstall = RUNTIME_FLAGS.find(r => r.flag === '--no-install');
     expect(noInstall?.shortcode).toBeUndefined();
@@ -156,6 +157,7 @@ describe('parseBunExecutionFlags', () => {
     expect(BUN_BOOL_FLAGS.has('--watch')).toBe(true);
     expect(BUN_BOOL_FLAGS.has('-i')).toBe(true);
     expect(BUN_VALUE_FLAGS.has('--env-file')).toBe(true);
+    expect(BUN_BOOL_FLAGS.has('--no-env-file')).toBe(true);
 
     const health = assessRuntimeFlagsCatalog(RUNTIME_FLAGS);
     expect(health.ok).toBe(true);

@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/console#object-inspection-depth — --console-depth
 // @see https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files — --env-file
+// @see https://bun.com/docs/runtime/environment-variables#disabling-automatic-env-loading — --no-env-file
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/bunfig#run-silent-suppress-reporting-the-command-being-run — --silent
 // @see https://bun.com/docs/runtime/index#general-execution-options — bun run general flags
