@@ -1,3 +1,4 @@
+// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern
 /**
  * Portal semantic vocabulary.
  *
@@ -80,8 +81,13 @@ export const PORTAL_SEMANTIC_CONCEPT_KEYS = [
   'section.openingBaseline',
   'section.partnersTelegram',
   'section.partnersAccounting',
+  'section.partnersAccountsLimits',
   'section.partnersDeposits',
   'section.partnersPartnerMessage',
+  'section.partnersOuts',
+  'section.partnersBookDetail',
+  'section.partnersTags',
+  'ui.route.partnerHash',
   'ui.filter.profile',
   'ui.filter.jurisdiction',
   'ui.filter.partnerId',
@@ -777,6 +783,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     seeAlso: [
       'page.partners',
       'section.partnersAccounting',
+      'section.partnersAccountsLimits',
       'section.partnersDeposits',
       'section.partnersPartnerMessage',
     ],
@@ -792,8 +799,24 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     seeAlso: [
       'page.partners',
       'section.partnersTelegram',
+      'section.partnersAccountsLimits',
       'section.partnersDeposits',
       'section.partnersPartnerMessage',
+    ],
+  },
+  {
+    id: 'section.partnersAccountsLimits',
+    label: 'Accounts and limits',
+    description:
+      'Partners board section joining account readiness, effective max-bet coverage, accounting activity, and Telegram communication readiness by partner.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['partner accounts', 'limit tracking', 'communication readiness'],
+    seeAlso: [
+      'page.partners',
+      'section.partnersAccounting',
+      'section.partnersTelegram',
+      'section.partnersDeposits',
     ],
   },
   {
@@ -807,6 +830,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     seeAlso: [
       'page.partners',
       'section.partnersAccounting',
+      'section.partnersAccountsLimits',
       'section.partnersTelegram',
       'section.partnersPartnerMessage',
     ],
@@ -822,6 +846,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     seeAlso: [
       'page.partners',
       'section.partnersAccounting',
+      'section.partnersAccountsLimits',
       'section.partnersDeposits',
       'section.partnersTelegram',
     ],
@@ -899,6 +924,50 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'link',
     synonyms: ['profile search', 'find account profile'],
     seeAlso: ['ui.filter.profile', 'ops.limits.profile', 'section.accountLimitControl'],
+  },
+  {
+    id: 'section.partnersOuts',
+    label: 'Partner outs',
+    description: 'Partners board section for per-out book, funding, status, balance, and limits.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['out table', 'outs board', 'seat outs'],
+    seeAlso: ['page.partners', 'section.partnersDeposits', 'section.partnersBookDetail'],
+  },
+  {
+    id: 'section.partnersBookDetail',
+    label: 'Book detail',
+    description:
+      'Partners board section for a single book: type, location, max bet, free-roll percent.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['book card', 'book profile'],
+    seeAlso: ['page.partners', 'section.partnersOuts'],
+  },
+  {
+    id: 'section.partnersTags',
+    label: 'Partner tag filter bar',
+    description:
+      'Partners board section for phase, book-type, status, funding, and location filter tags.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['tag bar', 'filter taxonomy', 'tag-filter-bar'],
+    seeAlso: ['page.partners', 'ui.filter.partnerId'],
+  },
+  {
+    id: 'ui.route.partnerHash',
+    label: 'Partner hash route',
+    description:
+      'URLPattern hash route for partner deep links: #partners, #partner/:code, #partner/:code/out/:outId, #partner/:code/accounting, #partner/:code/telegram/:topic, #book/:bookId.',
+    semanticType: 'resource',
+    uiRole: 'link',
+    synonyms: ['hash router', 'partner deep link', 'URLPattern route'],
+    seeAlso: [
+      'page.partners',
+      'section.partnersOuts',
+      'section.partnersAccounting',
+      'section.partnersTelegram',
+    ],
   },
   {
     id: 'ui.action.filter',
@@ -1003,8 +1072,12 @@ export const PARTNERS_SURFACE_CONCEPTS = {
   page: 'page.partners',
   telegram: 'section.partnersTelegram',
   accounting: 'section.partnersAccounting',
+  accountsLimits: 'section.partnersAccountsLimits',
   deposits: 'section.partnersDeposits',
   partnerMessage: 'section.partnersPartnerMessage',
+  outs: 'section.partnersOuts',
+  bookDetail: 'section.partnersBookDetail',
+  tags: 'section.partnersTags',
 } as const satisfies Record<string, PortalSemanticConceptKey>;
 
 export function validatePortalSemanticVocabulary(): void {

@@ -107,7 +107,7 @@
         white-space: nowrap;
       }
       .brand-name {
-        color: var(--accent);
+        color: var(--brand-accent, var(--tone-info, var(--accent)));
         font-weight: 600;
       }
       .brand-description {
@@ -121,22 +121,46 @@
         border-radius: 999px;
         font: 500 11px/1.5 var(--font-mono);
       }
+      /* Design-kernel tone tokens (theme.jsonc → theme-tokens.css) */
       .brand-pill.covered,
       .brand-pill.adopted {
-        color: var(--green, #3dd68c);
-        border-color: color-mix(in srgb, var(--green, #3dd68c) 55%, var(--border));
+        color: var(--tone-ok);
+        border-color: color-mix(in srgb, var(--tone-ok) 55%, var(--border));
+        background: var(--tone-ok-bg);
       }
       .brand-pill.referenced-unconstructed,
       .brand-pill.types-only,
       .brand-pill.local-pattern {
-        color: var(--yellow, #e6b84d);
+        color: var(--tone-warn);
+        border-color: color-mix(in srgb, var(--tone-warn) 55%, var(--border));
+        background: var(--tone-warn-bg);
       }
       .brand-pill.unused,
       .brand-pill.governed-no-usage {
-        color: var(--text-dim);
+        color: var(--tone-skip);
+        border-color: color-mix(in srgb, var(--tone-skip) 45%, var(--border));
+        background: var(--tone-skip-bg);
       }
       .brand-pill.external-or-untracked {
-        color: var(--red, #f07178);
+        color: var(--tone-bad);
+        border-color: color-mix(in srgb, var(--tone-bad) 55%, var(--border));
+        background: var(--tone-bad-bg);
+      }
+      .brand-pill.domain {
+        color: var(--domain-color, var(--tone-info));
+        border-color: color-mix(in srgb, var(--domain-color, var(--tone-info)) 55%, var(--border));
+        background: color-mix(in srgb, var(--domain-color, var(--tone-info)) 14%, transparent);
+      }
+      .brand-glossary-link {
+        display: inline-block;
+        margin-top: 4px;
+        margin-right: 6px;
+        font: 500 11px/1.4 var(--font-mono);
+        color: var(--tone-info);
+        text-decoration: none;
+      }
+      .brand-glossary-link:hover {
+        text-decoration: underline;
       }
       .brand-tier-grid {
         display: grid;
@@ -155,7 +179,7 @@
         background: var(--bg);
       }
       .brand-tier code {
-        color: var(--accent);
+        color: var(--brand-accent, var(--tone-info, var(--accent)));
       }
       .brand-tier p {
         margin: 6px 0 0;
@@ -168,9 +192,10 @@
       }
       .brand-error {
         padding: 12px 14px;
-        border: 1px solid var(--red, #f07178);
+        border: 1px solid var(--tone-bad);
         border-radius: 7px;
-        color: var(--red, #f07178);
+        color: var(--tone-bad);
+        background: var(--tone-bad-bg);
       }
     </style>
   </head>

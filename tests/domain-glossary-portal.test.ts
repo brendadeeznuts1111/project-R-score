@@ -76,6 +76,20 @@ describe('domain glossary portal', () => {
     ).toEqual([]);
     expect(payload.categories).toHaveLength(8);
     expect(payload.categories.every(category => /^#[0-9a-f]{6}$/i.test(category.color))).toBe(true);
+    // Portal design kernel (theme.jsonc dark) — not the legacy FW Tailwind palette
+    expect(payload.categories.find(c => c.id === 'market')).toMatchObject({
+      colorKey: 'accent',
+      color: '#58a6ff',
+    });
+    expect(payload.categories.find(c => c.id === 'pipeline')).toMatchObject({
+      colorKey: 'red',
+      color: '#f85149',
+    });
+    // Partner-ops concept colors win over category defaults
+    expect(payload.concepts.find(c => c.id === 'partner.phase.operator_ready')?.color).toBe(
+      '#3fb950'
+    );
+    expect(payload.concepts.find(c => c.id === 'accounting.deposit')?.color).toBe('#3fb950');
     expect(new Set(payload.concepts.map(concept => concept.id)).size).toBe(
       payload.concepts.length
     );
@@ -207,7 +221,9 @@ describe('domain glossary portal', () => {
     ).toEqual({
       telegram: 'section.partnersTelegram',
       accounting: 'section.partnersAccounting',
+      'accounts-limits': 'section.partnersAccountsLimits',
       deposits: 'section.partnersDeposits',
+      'partner-message': 'section.partnersPartnerMessage',
     });
     expect(PORTAL_GLOSSARY_SURFACES).toHaveLength(PORTAL_PAGE_CONCEPT_DEFINITIONS.length);
     expect(new Set(PORTAL_GLOSSARY_SURFACES.map(surface => surface.path))).toEqual(

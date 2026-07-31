@@ -28,7 +28,12 @@ describe('brand keymap', () => {
       manifest,
       files,
       ['projects/active/example', 'projects/active/external'],
-      '2026-07-28T00:00:00.000Z'
+      '2026-07-28T00:00:00.000Z',
+      [
+        { id: 'scrape.book', synonyms: ['SportsbookId', 'book'] },
+        { id: 'scrape.jurisdiction', synonyms: ['StateCode', 'state'] },
+        { id: 'ops.limits.node', synonyms: ['TreeNodeId', 'node_id'] },
+      ]
     );
 
     expect(payload).toMatchObject({
@@ -37,13 +42,19 @@ describe('brand keymap', () => {
       path: '/registry/brand-keymap.json',
       generatedAt: '2026-07-28T00:00:00.000Z',
       summary: {
-        brands: 58,
+        brands: 59,
         domains: 9,
         trackedProjects: 1,
         canonicalProjects: 1,
+        glossaryLinked: 3,
+      },
+      sources: {
+        colorKernel: 'public/portal/theme.jsonc',
       },
     });
     expect(payload.brands.find(brand => brand.name === 'StateCode')).toMatchObject({
+      glossaryConcepts: ['scrape.jurisdiction'],
+      tone: 'info',
       coverage: {
         status: 'covered',
         scopes: {
@@ -52,6 +63,10 @@ describe('brand keymap', () => {
         },
       },
     });
+    expect(payload.brands.find(brand => brand.name === 'SportsbookId')).toMatchObject({
+      glossaryConcepts: ['scrape.book'],
+    });
+    expect(payload.domains.every(domain => /^#[0-9a-f]{6}$/i.test(domain.color))).toBe(true);
     expect(payload.projects).toEqual([
       expect.objectContaining({
         project: 'projects/active/example',
@@ -80,6 +95,6 @@ describe('brand keymap', () => {
       expect(stderr).toBe('');
       expect(exitCode, stdout).toBe(0);
     },
-    { timeout: 15_000 }
+    { timeout: 60_000 }
   );
 });

@@ -38,8 +38,12 @@ const PAGE_SECTIONS: Readonly<
   [PARTNERS_SURFACE_CONCEPTS.page]: {
     telegram: PARTNERS_SURFACE_CONCEPTS.telegram,
     accounting: PARTNERS_SURFACE_CONCEPTS.accounting,
+    'accounts-limits': PARTNERS_SURFACE_CONCEPTS.accountsLimits,
     deposits: PARTNERS_SURFACE_CONCEPTS.deposits,
     'partner-message': PARTNERS_SURFACE_CONCEPTS.partnerMessage,
+    outs: PARTNERS_SURFACE_CONCEPTS.outs,
+    'book-detail': PARTNERS_SURFACE_CONCEPTS.bookDetail,
+    tags: PARTNERS_SURFACE_CONCEPTS.tags,
   },
 };
 
