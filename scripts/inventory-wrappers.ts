@@ -14,7 +14,7 @@
  *
  * @see tools/bun-prefer-matrix.ts — TIER_A_AVOID_PACKAGES
  * @see docs/UNIFIED.md — Tier-A package.json gate
- * @see https://bun.com/docs/pm/cli/pm#list — bun pm ls / bun list --all
+ * @see https://bun.com/docs/pm/cli/pm#ls — bun pm ls / bun list --all
  * @see https://bun.com/docs/cli/why — bun why
  */
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
