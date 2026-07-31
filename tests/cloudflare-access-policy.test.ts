@@ -9,8 +9,8 @@ describe('Cloudflare Access policy', () => {
   test('repository config is scoped and uses Cloudflare account-member SSO', async () => {
     const report = verifyCloudflareAccessPolicyText(await Bun.file(configPath).text());
     expect(report.ok).toBe(true);
-    // ledger · score/portal · pages.dev/portal (reasonix decommissioned 2026-07-28)
-    expect(report.appCount).toBe(3);
+    // ledger · score/portal · pages.dev/portal · all Pages previews
+    expect(report.appCount).toBe(4);
     expect(report.issues).toEqual([]);
   });
 
@@ -43,6 +43,15 @@ describe('Cloudflare Access policy', () => {
         'domain: score.factory-wager.com/portal',
         'domain: score.factory-wager.com'
       )
+    );
+    expect(report.ok).toBe(false);
+    expect(report.issues.map(problem => problem.code)).toContain('missing-required-domain');
+  });
+
+  test('requires the wildcard Pages preview application', async () => {
+    const source = await Bun.file(configPath).text();
+    const report = verifyCloudflareAccessPolicyText(
+      source.replace('domain: "*.project-r-score.pages.dev"', 'domain: preview.example.com')
     );
     expect(report.ok).toBe(false);
     expect(report.issues.map(problem => problem.code)).toContain('missing-required-domain');

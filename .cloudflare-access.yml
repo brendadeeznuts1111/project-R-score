@@ -4,6 +4,7 @@
 #   · ledger.factory-wager.com     — APPLIED (existing app name "ledger" · 302 Access)
 #   · score.factory-wager.com/portal — APPLIED (app "FactoryWager Portal" · 302 Access)
 #   · project-r-score.pages.dev/portal — APPLIED (app "FactoryWager Portal (pages.dev)" · 302 Access)
+#   · *.project-r-score.pages.dev — TARGET (all branch/hash previews; public until apply)
 #     (policy-as-code app below; live was created 2026-07-28)
 #   · reasonix.factory-wager.com   — DECOMMISSIONED 2026-07-28 (no DNS, no tunnel; app + template removed)
 # Access token: Proton factorywager / Cloudflare Access API Token
@@ -21,7 +22,7 @@ apps:
   - name: ledger.factory-wager.com
     domain: ledger.factory-wager.com
     type: self_hosted
-    session_duration: 8h
+    session_duration: 4h
     policies:
       - name: Allow Cloudflare account members
         decision: allow
@@ -30,7 +31,7 @@ apps:
   - name: FactoryWager Portal
     domain: score.factory-wager.com/portal
     type: self_hosted
-    session_duration: 8h
+    session_duration: 4h
     policies:
       - name: Allow Cloudflare account members
         decision: allow
@@ -39,7 +40,16 @@ apps:
   - name: FactoryWager Portal (pages.dev)
     domain: project-r-score.pages.dev/portal
     type: self_hosted
-    session_duration: 8h
+    session_duration: 4h
+    policies:
+      - name: Allow Cloudflare account members
+        decision: allow
+        include:
+          - cloudflare_account_member: {}
+  - name: FactoryWager Pages previews
+    domain: "*.project-r-score.pages.dev"
+    type: self_hosted
+    session_duration: 4h
     policies:
       - name: Allow Cloudflare account members
         decision: allow

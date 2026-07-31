@@ -159,7 +159,7 @@ Publish surface is `public/` (includes `index.html` + registry/robots/sitemaps +
 
 TOC tenant runbook: [`toc-ops.md`](toc-ops.md). **MCP does not serve TOC desk data** — use MCP for Pages deploy/logs; use `/portal/toc` or `ct` for partner ops.
 
-**Do not enable Pages “Single-page application” rewrites** (`/* → /index.html 200`). That serves the landing shell for every path (including `.json`) and hides the portal. Prefer real files + `public/_redirects` (trailing-slash only) + `public/_headers` (JSON content-type).
+**Do not enable Pages “Single-page application” rewrites** (`/* → /index.html 200`). That serves the landing shell for every path (including `.json`) and hides the portal. Prefer real files + `public/_redirects` (trailing-slash only) + `public/_headers` (JSON content-type and static security headers). Root `functions/_middleware.ts` applies the same browser-security contract to Pages Functions while preserving route CORS and cache headers.
 
 Before deploy (or in CI):
 
@@ -197,7 +197,11 @@ Root `functions/` is bundled by Wrangler for Workers — **no `bun:sqlite`**, **
 | `functions/api/sqlite/version.ts` | SQLite version (edge-safe) |
 | `functions-bun-only/` | Local Bun handlers (auth/DOD/catalog) — **not** deployed to Pages |
 
-Static routing: [`public/_redirects`](../../../public/_redirects) (trailing-slash 301 only) · [`public/_headers`](../../../public/_headers) (JSON content-type, cache). **No SPA rewrite.**
+Static routing: [`public/_redirects`](../../../public/_redirects) (trailing-slash 301 only) · [`public/_headers`](../../../public/_headers) (JSON content-type, cache, security headers) · [`functions/_middleware.ts`](../../../functions/_middleware.ts) (edge parity). **No SPA rewrite.**
+
+Preview deployments are public by default. Protect `*.project-r-score.pages.dev`
+through the Access policy, then confirm a real branch/hash preview returns an
+Access 302 before treating previews as protected. See [`cloudflare-access.md`](cloudflare-access.md).
 
 Routing map: [`docs/platform-routing.md`](../../platform-routing.md).
 

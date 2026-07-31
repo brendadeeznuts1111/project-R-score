@@ -253,6 +253,7 @@ export const FUNCTIONS_LIB_IMPORT_ALLOWLIST = [
   'lib/docs/repo-docs.ts',
   'lib/factory/http-keys.ts',
   'lib/harness/monorepo-health.ts',
+  'lib/http/cloudflare-security-headers.ts',
   'lib/http/portal-cors.ts',
   'lib/http/portal-env-edge.ts',
   'lib/http/portal-health-edge.ts',
