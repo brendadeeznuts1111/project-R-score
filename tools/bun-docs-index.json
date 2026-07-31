@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-28T16:06:22.548Z",
+  "generated": "2026-07-31T11:07:18.974Z",
   "source": "https://bun.com/docs/llms.txt",
   "bunVersion": "1.4.0",
   "upstreamBunVersion": "1.4.0",
@@ -492,10 +492,7 @@
       "url": "https://bun.com/docs/feedback.md",
       "desc": "Share feedback, bug reports, and feature requests",
       "domain": "feedback",
-      "anchors": [
-        "reporting-issues",
-        "use-bun-feedback"
-      ]
+      "anchors": ["reporting-issues", "use-bun-feedback"]
     },
     {
       "section": "Docs",
@@ -819,10 +816,7 @@
       "url": "https://bun.com/docs/guides/ecosystem/nextjs.md",
       "desc": "",
       "domain": "guides/ecosystem",
-      "anchors": [
-        "hosting",
-        "templates"
-      ]
+      "anchors": ["hosting", "templates"]
     },
     {
       "section": "Docs",
@@ -838,10 +832,7 @@
       "url": "https://bun.com/docs/guides/ecosystem/pm2.md",
       "desc": "",
       "domain": "guides/ecosystem",
-      "anchors": [
-        "with-interpreter",
-        "with-a-configuration-file"
-      ]
+      "anchors": ["with-interpreter", "with-a-configuration-file"]
     },
     {
       "section": "Docs",
@@ -873,11 +864,7 @@
       "url": "https://bun.com/docs/guides/ecosystem/react.md",
       "desc": "",
       "domain": "guides/ecosystem",
-      "anchors": [
-        "hot-reloading",
-        "full-stack-app",
-        "static-site"
-      ]
+      "anchors": ["hot-reloading", "full-stack-app", "static-site"]
     },
     {
       "section": "Docs",
@@ -941,10 +928,7 @@
       "url": "https://bun.com/docs/guides/ecosystem/tanstack-start.md",
       "desc": "",
       "domain": "guides/ecosystem",
-      "anchors": [
-        "hosting",
-        "templates"
-      ]
+      "anchors": ["hosting", "templates"]
     },
     {
       "section": "Docs",
@@ -979,9 +963,7 @@
       "url": "https://bun.com/docs/guides/html-rewriter/extract-social-meta.md",
       "desc": "",
       "domain": "guides/html-rewriter",
-      "anchors": [
-        "extract-social-share-images-and-open-graph-tags"
-      ]
+      "anchors": ["extract-social-share-images-and-open-graph-tags"]
     },
     {
       "section": "Docs",
@@ -1013,9 +995,7 @@
       "url": "https://bun.com/docs/guides/http/file-uploads.md",
       "desc": "",
       "domain": "guides/http",
-      "anchors": [
-        "upload-files-via-http-using-formdata"
-      ]
+      "anchors": ["upload-files-via-http-using-formdata"]
     },
     {
       "section": "Docs",
@@ -1031,10 +1011,7 @@
       "url": "https://bun.com/docs/guides/http/proxy.md",
       "desc": "",
       "domain": "guides/http",
-      "anchors": [
-        "custom-proxy-headers",
-        "environment-variables"
-      ]
+      "anchors": ["custom-proxy-headers", "environment-variables"]
     },
     {
       "section": "Docs",
@@ -1058,10 +1035,7 @@
       "url": "https://bun.com/docs/guides/http/sse.md",
       "desc": "",
       "domain": "guides/http",
-      "anchors": [
-        "using-an-async-generator",
-        "using-a-readablestream"
-      ]
+      "anchors": ["using-an-async-generator", "using-a-readablestream"]
     },
     {
       "section": "Docs",
@@ -1203,9 +1177,7 @@
       "url": "https://bun.com/docs/guides/install/git-diff-bun-lockfile.md",
       "desc": "",
       "domain": "guides/install",
-      "anchors": [
-        "how-this-works"
-      ]
+      "anchors": ["how-this-works"]
     },
     {
       "section": "Docs",
@@ -1483,9 +1455,7 @@
       "url": "https://bun.com/docs/guides/runtime/heap-snapshot.md",
       "desc": "",
       "domain": "guides/runtime",
-      "anchors": [
-        "inspect-memory-in-chrome-devtools"
-      ]
+      "anchors": ["inspect-memory-in-chrome-devtools"]
     },
     {
       "section": "Docs",
@@ -1525,9 +1495,7 @@
       "url": "https://bun.com/docs/guides/runtime/import-yaml.md",
       "desc": "",
       "domain": "guides/runtime",
-      "anchors": [
-        "typescript-support"
-      ]
+      "anchors": ["typescript-support"]
     },
     {
       "section": "Docs",
@@ -1906,9 +1874,7 @@
       "url": "https://bun.com/docs/guides/util/file-url-to-path.md",
       "desc": "",
       "domain": "guides/util",
-      "anchors": [
-        "convert-a-file-url-to-an-absolute-path"
-      ]
+      "anchors": ["convert-a-file-url-to-an-absolute-path"]
     },
     {
       "section": "Docs",
@@ -1932,9 +1898,7 @@
       "url": "https://bun.com/docs/guides/util/import-meta-dir.md",
       "desc": "",
       "domain": "guides/util",
-      "anchors": [
-        "get-the-directory-of-the-current-file"
-      ]
+      "anchors": ["get-the-directory-of-the-current-file"]
     },
     {
       "section": "Docs",
@@ -1974,9 +1938,7 @@
       "url": "https://bun.com/docs/guides/util/path-to-file-url.md",
       "desc": "",
       "domain": "guides/util",
-      "anchors": [
-        "convert-an-absolute-path-to-a-file-url"
-      ]
+      "anchors": ["convert-an-absolute-path-to-a-file-url"]
     },
     {
       "section": "Docs",
@@ -2015,9 +1977,7 @@
       "url": "https://bun.com/docs/guides/util/which-path-to-executable-bin.md",
       "desc": "",
       "domain": "guides/util",
-      "anchors": [
-        "get-the-path-to-an-executable-bin-file"
-      ]
+      "anchors": ["get-the-path-to-an-executable-bin-file"]
     },
     {
       "section": "Docs",
@@ -2238,11 +2198,7 @@
       "url": "https://bun.com/docs/pm/cli/audit.md",
       "desc": "Check your installed packages for known security vulnerabilities",
       "domain": "pm/cli",
-      "anchors": [
-        "filtering-options",
-        "json",
-        "exit-code"
-      ]
+      "anchors": ["filtering-options", "json", "exit-code"]
     },
     {
       "section": "Docs",
@@ -2632,10 +2588,7 @@
       "url": "https://bun.com/docs/pm/overrides.md",
       "desc": "Control metadependency versions with npm overrides and Yarn resolutions",
       "domain": "pm/overrides",
-      "anchors": [
-        "overrides",
-        "resolutions"
-      ]
+      "anchors": ["overrides", "resolutions"]
     },
     {
       "section": "Docs",
@@ -2643,9 +2596,7 @@
       "url": "https://bun.com/docs/pm/scopes-registries.md",
       "desc": "Configure private registries and scoped packages",
       "domain": "pm/scopes-registries",
-      "anchors": [
-        "npmrc"
-      ]
+      "anchors": ["npmrc"]
     },
     {
       "section": "Docs",
@@ -2671,9 +2622,7 @@
       "url": "https://bun.com/docs/pm/workspaces.md",
       "desc": "Develop complex monorepos with multiple independent packages",
       "domain": "pm/workspaces",
-      "anchors": [
-        "share-versions-with-catalogs"
-      ]
+      "anchors": ["share-versions-with-catalogs"]
     },
     {
       "section": "Docs",
@@ -2795,10 +2744,7 @@
       "url": "https://bun.com/docs/quickstart.md",
       "desc": "Build your first app with Bun",
       "domain": "quickstart",
-      "anchors": [
-        "overview",
-        "run-a-script"
-      ],
+      "anchors": ["overview", "run-a-script"],
       "officialSection": "Get Started"
     },
     {
@@ -3046,10 +2992,7 @@
       "url": "https://bun.com/docs/runtime/console.md",
       "desc": "The console object in Bun",
       "domain": "runtime/console",
-      "anchors": [
-        "object-inspection-depth",
-        "reading-from-stdin"
-      ],
+      "anchors": ["object-inspection-depth", "reading-from-stdin"],
       "officialSection": "Interop & Tooling"
     },
     {
@@ -3240,10 +3183,7 @@
       "url": "https://bun.com/docs/runtime/file-system-router.md",
       "desc": "Bun provides a fast API for resolving routes against file-system paths",
       "domain": "runtime/file-system-router",
-      "anchors": [
-        "next-js-style",
-        "reference"
-      ],
+      "anchors": ["next-js-style", "reference"],
       "officialSection": "File & Module System"
     },
     {
@@ -3346,11 +3286,7 @@
       "url": "https://bun.com/docs/runtime/http/cookies.md",
       "desc": "Work with cookies in HTTP requests and responses using Bun's built-in Cookie API.",
       "domain": "runtime/http",
-      "anchors": [
-        "reading-cookies",
-        "setting-cookies",
-        "deleting-cookies"
-      ],
+      "anchors": ["reading-cookies", "setting-cookies", "deleting-cookies"],
       "officialSection": "Data & Storage"
     },
     {
@@ -3359,9 +3295,7 @@
       "url": "https://bun.com/docs/runtime/http/error-handling.md",
       "desc": "Learn how to handle errors in Bun's development server",
       "domain": "runtime/http",
-      "anchors": [
-        "error-callback"
-      ],
+      "anchors": ["error-callback"],
       "officialSection": "HTTP server"
     },
     {
@@ -4322,11 +4256,7 @@
       "url": "https://bun.com/docs/runtime/watch-mode.md",
       "desc": "Automatic reloading in Bun with --watch and --hot modes",
       "domain": "runtime/watch-mode",
-      "anchors": [
-        "watch-mode",
-        "hot-mode",
-        "http-servers"
-      ],
+      "anchors": ["watch-mode", "hot-mode", "http-servers"],
       "officialSection": "Core Runtime"
     },
     {
@@ -4846,10 +4776,7 @@
       "url": "https://bun.com/docs/typescript.md",
       "desc": "Using TypeScript with Bun, including type definitions and compiler options",
       "domain": "typescript",
-      "anchors": [
-        "suggested-compileroptions",
-        "typescript-6-and-7"
-      ],
+      "anchors": ["suggested-compileroptions", "typescript-6-and-7"],
       "officialSection": "Get Started"
     },
     {
