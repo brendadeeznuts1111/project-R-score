@@ -108,6 +108,7 @@ bun run scan:domains --limit-only
 | **Table formatter**         | [`lib/table-format.ts`](../../../lib/table-format.ts)                                                                                                                                                                                                | ANSI tables · LIMIT_CHANGE_COLUMNS · DIMENSION_COLUMNS · REGULATORY_COLUMNS · formatTableNative (Bun.inspect.table)                  |
 | **CLI — connected seed**    | [`tools/seed-limit-patterns.ts`](../../../tools/seed-limit-patterns.ts)                                                                                                                                                                              | `--force` replaces only `limit-demo-*` rows · `--bake` writes the limit registry snapshot                                            |
 | **CLI — TOC bridge seed**   | [`tools/seed-toc-limit-bridge.ts`](../../../tools/seed-toc-limit-bridge.ts) · [`lib/operations/toc-limit-bridge-seed.ts`](../../../lib/operations/toc-limit-bridge-seed.ts)                                                                          | Writes raises on ASH/PAT identity `treeNodeId` UUIDs so TOC board `raises 48h` join lights · scoped `--force` · optional `--bake`    |
+| **CLI — account dossier seed** | [`tools/seed-account-dossier.ts`](../../../tools/seed-account-dossier.ts) · [`lib/operations/account-dossier-seed.ts`](../../../lib/operations/account-dossier-seed.ts)                                                                            | Full dossier demo: TOC bridge + NJ geo/license + profiles + **168h** bake · optional disposable test DB                              |
 | **Bake**                    | `exportLimitRaisesSnapshot` (analytics) · [`tools/ops-snapshot.ts`](../../../tools/ops-snapshot.ts)                                                                                                                                                  | companion bake → [`public/registry/limit-raises.json`](../../../public/registry/limit-raises.json)                                   |
 | **Portal UI**               | [`public/portal/limits/index.html`](../../../public/portal/limits/index.html) · [`limit-profiles.js`](../../../public/portal/limits/limit-profiles.js) · [`glossary-ux.js`](../../../public/portal/components/glossary-ux.js)                      | account profiles · policy catalog · trace deep links · glossary tooltips/breadcrumbs · legacy pattern/change analysis                |
 | **Pages edge**              | [`functions/api/agents/v1/limits/raises.ts`](../../../functions/api/agents/v1/limits/raises.ts) · [`…/record.ts`](../../../functions/api/agents/v1/limits/record.ts) · [`functions/api/limits/summary.ts`](../../../functions/api/limits/summary.ts) | snapshot GET · record **503** stub · summary aggregate                                                                               |
@@ -155,6 +156,8 @@ See [`bun --filter` docs](https://bun.com/docs/cli/filter).
 | `bun run ops:limits:analyze:json`    | Analyze JSON only                                                                    |
 | `bun run ops:limits:seed-patterns`   | Connected multi-partner seed + registry bake (`seed-limit-patterns --force --bake`)  |
 | `bun run ops:limits:seed-toc-bridge` | Seed raises on TOC identity UUIDs (ASH/PAT) · `--reseed` · optional bake via `:bake` |
+| `bun run ops:dossier:seed`           | Enrich ASH (geo/license/profile) + fresh raises + **168h** `limit-raises` bake + ops-summary |
+| `bun run ops:dossier:seed:test-db`   | Same into disposable `data/account-dossier-test.db` (+ limit-demo fixtures); does not touch ops-summary |
 | `bun run ops:limits:smoke`           | Cross-surface test bundle (bridge · join · outbox · seat book-max · UI)              |
 | `bun run ops:snapshot:demo`          | `ops:seed:all` (includes toc-bridge) + snapshot bake                                 |
 | `bun run ops:snapshot`               | Bakes `limit-raises.json` (capture + 48h; runs toc-bridge unless `--no-toc-limits`)  |
@@ -255,7 +258,8 @@ bun run ops:limits:predict --partner partner-42 --inspect
 | Surface        | Path                                               | Mode                                                    |
 | -------------- | -------------------------------------------------- | ------------------------------------------------------- |
 | Portal board   | `/portal/limits/`                                  | Static HTML; prefers live summary / registry            |
-| Registry bake  | `/registry/limit-raises.json`                      | schema v3: 48h raises + `accountProfiles` v2 read model |
+| Registry bake  | `/registry/limit-raises.json`                      | schema v3: raises + `accountProfiles` v2 (`callSign` · `parentNodeId`) · dossier seed uses **168h** |
+| Account dossier | `/portal/account/?account={TreeNodeId}`           | Single-account join over limit-raises + partners-ops · seed via `ops:dossier:seed` |
 | Ops summary    | `ops-summary.limitChanges`                         | Live SQLite when baking summary                         |
 | Agent raises   | `GET /api/agents/v1/limits/raises?node_id=&hours=` | Local: SQLite · Pages: snapshot                         |
 | Agent table    | same + `?format=table\|text\|inspect`              | `LimitRaiseReport` text/plain (local + Pages)           |
@@ -336,6 +340,25 @@ Account dossier (full single-account breakdown — tree, location, monitoring,
 telemetry, outs, betlog): `/portal/account/?account={TreeNodeId}` (optional
 `&hours=`). Account links on partner-history and the limit-changes card open
 this board.
+
+Sparse dossiers (empty tree / location / outs) usually mean the bake window was
+too short for TOC bridge timestamps, or the UUID never got geo/license/profile
+enrichment. Prefer:
+
+```bash
+# Production ops DB + registry bake (168h) so Cascade/ASH UUID dossiers fill in
+bun run ops:dossier:seed
+
+# Disposable local SQLite for dossier UI work (gitignored under data/)
+bun run ops:dossier:seed:test-db
+# → data/account-dossier-test.db
+# → data/account-dossier-test-limit-raises.json  (does NOT overwrite public/registry)
+# Point local APIs at the test DB:
+#   OPERATIONS_DB=data/account-dossier-test.db bun run serve:public
+```
+
+`accountProfiles` includes `callSign` + `parentNodeId` so the dossier can join
+partners-ops outs (CODE `ASH`) even when the account id is a UUID.
 
 Account trace state on the limits board still uses
 `/portal/limits/#account:{TreeNodeId}` and is parsed by `URLPattern.hash`.

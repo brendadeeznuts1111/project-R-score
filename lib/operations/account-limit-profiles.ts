@@ -87,6 +87,9 @@ export type AccountLimitProfile = {
   profileKey: PartnerProfileKey | null;
   accountName: string;
   accountKind: string;
+  /** Partner CODE or call-sign from tree_nodes (e.g. ASH, ASH-001). */
+  callSign: string | null;
+  parentNodeId: TreeNodeId | null;
   lifecycleStatus: string | null;
   monitoringStatus: AccountLimitMonitoringStatus;
   tone: AccountLimitTone;
@@ -137,6 +140,8 @@ type TreeRow = {
   id: string; // brand-ok — tree_nodes.id wire
   name: string;
   type: string;
+  call_sign: string | null;
+  parent_id: string | null; // brand-ok — tree_nodes.parent_id wire
 };
 
 type BindingRow = {
@@ -270,7 +275,7 @@ export function buildAccountLimitProfiles(
   ].filter(table => tableExists(db, table));
 
   const trees = tableExists(db, 'tree_nodes')
-    ? (db.query(`SELECT id, name, type FROM tree_nodes`).all() as TreeRow[])
+    ? (db.query(`SELECT id, name, type, call_sign, parent_id FROM tree_nodes`).all() as TreeRow[])
     : [];
   const bindings = tableExists(db, 'partner_profile_bindings')
     ? (db
@@ -486,6 +491,8 @@ export function buildAccountLimitProfiles(
       profileKey: binding ? asPartnerProfileKey(binding.profile_key) : null,
       accountName: tree?.name ?? pattern?.node_name ?? accountId,
       accountKind: tree?.type ?? pattern?.node_type ?? 'account',
+      callSign: tree?.call_sign?.trim() ? String(tree.call_sign).trim() : null,
+      parentNodeId: tree?.parent_id ? asTreeNodeId(tree.parent_id) : null,
       lifecycleStatus: binding?.lifecycle_status ?? null,
       monitoringStatus,
       tone: toneFor(monitoringStatus),

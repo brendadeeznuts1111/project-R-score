@@ -279,6 +279,12 @@ export {
   type TocBridgePartnerTarget,
 } from './toc-limit-bridge-seed.ts';
 export {
+  seedAccountDossierDemo,
+  DOSSIER_DEMO_PARTNER_CODES,
+  type SeedAccountDossierOpts,
+  type SeedAccountDossierResult,
+} from './account-dossier-seed.ts';
+export {
   LimitRaiseReport,
   printLimitRaiseReport,
   LIMIT_RAISE_TABLE_PROPERTIES,
