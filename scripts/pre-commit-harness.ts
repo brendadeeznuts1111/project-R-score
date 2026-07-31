@@ -6,7 +6,8 @@
  * Pre-commit harness checks — staged root paths.
  * Parallelizes independent gates; auto-annotates Bun doc refs; records timings.
  */
-import { HARNESS_PATHS } from '../config/eslint/harness/rollout.ts';
+import { buildHarnessEslintArgs } from '../config/eslint/harness/command.ts';
+import { isHarnessLintPath } from '../config/eslint/harness/rollout.ts';
 import { hasFlag } from './lib/cli-args';
 import { ensureDir, writeJson } from './lib/fs-bun';
 
@@ -14,16 +15,6 @@ const repoRoot = `${import.meta.dir}/..`;
 const TIMING_PATH = `${repoRoot}/reports/harness-gate-timing.json`;
 
 type GateTiming = { name: string; ms: number; ok: boolean };
-
-function isHarnessPath(file: string): boolean {
-  const normalized = file.replace(/^\.\//, '');
-  if (normalized.startsWith('projects/')) return false;
-  if (!normalized.endsWith('.ts') && !normalized.endsWith('.tsx')) return false;
-  if (/\.(test|spec|bench)\.ts$/.test(normalized)) return false;
-
-  const prefixes = ['lib/', 'scripts/', 'packages/', 'server/', 'config/', 'tools/'];
-  return prefixes.some(prefix => normalized.startsWith(prefix));
-}
 
 const DOC_MAP_SSOT = new Set([
   'AGENTS.md',
@@ -220,7 +211,7 @@ async function main(): Promise<void> {
   const full = hasFlag('full');
   const timings: GateTiming[] = [];
   const staged = await getStagedFiles();
-  const harnessFiles = staged.filter(isHarnessPath);
+  const harnessFiles = staged.filter(isHarnessLintPath);
   const docMapFiles = staged.filter(isDocMapPath);
 
   if (docMapFiles.length > 0) {
@@ -408,18 +399,12 @@ async function main(): Promise<void> {
     'eslint',
     [
       'bun',
-      'eslint',
-      '--config',
-      'eslint.harness.config.ts',
-      '--cache',
-      '--cache-location',
-      `${repoRoot}/.cache/eslint-bun-native`,
-      '--cache-strategy',
-      'content',
-      '--fix',
-      '--max-warnings',
-      '0',
-      ...harnessFiles,
+      ...buildHarnessEslintArgs({
+        cacheLocation: `${repoRoot}/.cache/eslint-bun-native`,
+        files: harnessFiles,
+        fix: true,
+        maxWarnings: 0,
+      }),
     ],
     timings
   );
@@ -703,7 +688,6 @@ async function main(): Promise<void> {
 
   console.info('✅ Harness pre-commit checks passed');
   await writeTimings(timings, full);
-  void HARNESS_PATHS;
 }
 
 if (import.meta.main) {

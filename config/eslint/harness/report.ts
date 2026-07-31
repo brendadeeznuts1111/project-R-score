@@ -7,6 +7,7 @@
  */
 import { getBunDxEntry, mapRuleToCatalog, type FixTier } from '../../bun-dx-catalog.ts';
 import { checkBunFirstCompliance } from '@factorywager/guards';
+import { buildHarnessEslintArgs, HARNESS_ESLINT_CONFIG } from './command.ts';
 import { HARNESS_IGNORES, HARNESS_PATHS, STRICT_INVENTORY } from './rollout.ts';
 
 export type HarnessIssue = {
@@ -143,17 +144,14 @@ function issueKey(issue: HarnessIssue): string {
 
 export async function collectEslintIssues(
   repoRoot: string,
-  configPath = 'eslint.harness.config.ts'
+  configPath = HARNESS_ESLINT_CONFIG
 ): Promise<HarnessIssue[]> {
-  const args = [
-    'eslint',
-    '--config',
+  const args = buildHarnessEslintArgs({
     configPath,
-    '--format',
-    'json',
-    ...HARNESS_ESLINT_GLOBS,
-    ...HARNESS_ESLINT_IGNORES.flatMap(p => ['--ignore-pattern', p]),
-  ];
+    files: HARNESS_ESLINT_GLOBS,
+    format: 'json',
+    ignores: HARNESS_ESLINT_IGNORES,
+  });
 
   const proc = Bun.spawn(['bun', ...args], {
     cwd: repoRoot,

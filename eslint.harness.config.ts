@@ -11,11 +11,16 @@ import harnessPlugin, {
   harnessBoundaryUnknownParamRules,
 } from './config/eslint/plugin-harness/index.ts';
 import { bunNativeLintRollout } from './config/eslint/harness/bun-native.ts';
-import { HARNESS_BUN_GLOBALS, HARNESS_PATHS } from './config/eslint/harness/rollout.ts';
+import {
+  HARNESS_BUN_GLOBALS,
+  HARNESS_IGNORES,
+  HARNESS_PATHS,
+} from './config/eslint/harness/rollout.ts';
 
 export default tseslint.config(
   {
-    ignores: ['**/node_modules/**', '**/dist/**', '**/build/**', 'projects/**'],
+    name: 'factorywager/harness-global-ignores',
+    ignores: ['**/node_modules/**', '**/dist/**', '**/build/**', ...HARNESS_IGNORES],
   },
   {
     name: 'factorywager/harness-default',

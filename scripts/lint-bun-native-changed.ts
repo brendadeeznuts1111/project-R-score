@@ -9,13 +9,10 @@
  *   bun run lint:bun-native:changed -- --full
  *   bun run lint:bun-native:rollout   # explicit full tree
  */
+import { buildHarnessEslintArgs } from '../config/eslint/harness/command.ts';
+import { isHarnessLintPath } from '../config/eslint/harness/rollout.ts';
 import { hasFlag } from './lib/cli-args';
-import {
-  hasCodeLikeChange,
-  isHarnessLintPath,
-  listChangedFiles,
-  resolveMainHead,
-} from './lib/git-changed';
+import { hasCodeLikeChange, listChangedFiles, resolveMainHead } from './lib/git-changed';
 
 const repoRoot = `${import.meta.dir}/..`;
 const CACHE = `${repoRoot}/.cache/eslint-bun-native`;
@@ -26,18 +23,12 @@ const full =
 async function runEslint(files: string[]): Promise<number> {
   const cmd = [
     'bun',
-    'eslint',
-    '--config',
-    'eslint.harness.config.ts',
-    '--cache',
-    '--cache-location',
-    CACHE,
-    '--cache-strategy',
-    'content',
-    '--quiet',
-    '--max-warnings',
-    '0',
-    ...files,
+    ...buildHarnessEslintArgs({
+      cacheLocation: CACHE,
+      files,
+      maxWarnings: 0,
+      quiet: true,
+    }),
   ];
   const proc = Bun.spawn(cmd, {
     cwd: repoRoot,

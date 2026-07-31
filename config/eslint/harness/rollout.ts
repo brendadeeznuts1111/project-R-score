@@ -2,22 +2,32 @@
  * Harness path scopes and rollout tiers (root paths only, warn → error).
  */
 
-export const HARNESS_PATHS = [
-  'lib/**/*.ts',
-  'scripts/**/*.ts',
-  'packages/**/*.ts',
-  'server/**/*.ts',
-  'config/**/*.ts',
-  'tools/**/*.ts',
-] as const;
+export const HARNESS_ROOTS = ['lib', 'scripts', 'packages', 'server', 'config', 'tools'] as const;
+
+export const HARNESS_EXTENSIONS = ['ts', 'tsx'] as const;
+
+export const HARNESS_PATHS = HARNESS_ROOTS.map(root => `${root}/**/*.{ts,tsx}`);
 
 export const HARNESS_IGNORES = [
   '**/*.test.ts',
+  '**/*.test.tsx',
   '**/*.spec.ts',
+  '**/*.spec.tsx',
   '**/*.bench.ts',
+  '**/*.bench.tsx',
   '**/*.d.ts',
   'projects/**',
 ] as const;
+
+/** True when a repo-relative path belongs to the canonical harness lint scope. */
+export function isHarnessLintPath(file: string): boolean {
+  const normalized = file.replace(/\\/g, '/').replace(/^\.\//, '');
+  if (normalized.startsWith('projects/')) return false;
+  if (normalized.endsWith('.d.ts')) return false;
+  if (!HARNESS_EXTENSIONS.some(extension => normalized.endsWith(`.${extension}`))) return false;
+  if (/\.(?:test|spec|bench)\.tsx?$/.test(normalized)) return false;
+  return HARNESS_ROOTS.some(root => normalized.startsWith(`${root}/`));
+}
 
 /** Files already migrated — strict error tier. */
 export const STRICT_INVENTORY = [
