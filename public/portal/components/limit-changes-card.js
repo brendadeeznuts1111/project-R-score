@@ -642,7 +642,7 @@ export class LimitChangesCard extends HTMLElement {
             const dirLabel = isDown ? '↓ Cut' : '↑ Raise';
             const when = formatWhen(c.increased_at);
             const account = c.node_id
-              ? `<a class="lcc-account" href="/portal/partner-history/?partner=${encodeURIComponent(c.node_id)}" title="${escapeText(c.node_id)}" data-glossary-concept="${G.accountColumn}">${escapeText(shortAccount(c.node_id))}</a>`
+              ? `<a class="lcc-account" href="/portal/account/?account=${encodeURIComponent(c.node_id)}" title="${escapeText(c.node_id)}" data-glossary-concept="${G.accountColumn}">${escapeText(shortAccount(c.node_id))}</a>`
               : '<span class="lcc-muted">—</span>';
             const score =
               c.context_available && c.multi_factor_score != null ? c.multi_factor_score : null;

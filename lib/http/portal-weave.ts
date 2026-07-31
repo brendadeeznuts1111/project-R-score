@@ -243,6 +243,13 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     cli: 'bun run telegram:handshake:catalog',
   },
   {
+    id: 'account',
+    label: 'Account dossier',
+    href: '/portal/account/',
+    note: 'single-account identity · tree · telemetry · betlog',
+    group: 'ops',
+  },
+  {
     id: 'partner-history',
     label: 'Partner history',
     href: '/portal/partner-history/',

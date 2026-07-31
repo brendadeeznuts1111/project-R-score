@@ -268,6 +268,14 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     cli: 'bun run telegram:handshake:catalog',
   },
   {
+    id: 'account',
+    label: 'Account',
+    href: '/portal/account/',
+    tier: 'overflow',
+    group: 'ops',
+    note: 'single-account dossier · tree · telemetry · betlog',
+  },
+  {
     id: 'partner-history',
     label: 'Partner history',
     href: '/portal/partner-history/',

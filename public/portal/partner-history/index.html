@@ -1783,6 +1783,7 @@
           ${accountChanges.length > 3 ? ` · +${accountChanges.length - 3} more` : ''}
         </div>
         <div class="history-account-card__actions">
+          <a class="btn" href="/portal/account/?account=${encodeURIComponent(accountId)}" data-glossary-concept="page.accountDossier">Account dossier</a>
           <button class="partner-drill" data-partner="${escapeHtml(accountId)}">View timeline</button>
           <a class="btn" href="/portal/limits/#account:${encodeURIComponent(accountId)}">Account evidence</a>
           ${betlogLinksHtml(accountId)}

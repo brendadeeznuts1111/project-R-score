@@ -30,6 +30,11 @@
       "sections": {}
     },
     {
+      "path": "/portal/account/",
+      "concept": "page.accountDossier",
+      "sections": {}
+    },
+    {
       "path": "/portal/brands/",
       "concept": "page.brandKeymap",
       "sections": {}
@@ -195,20 +200,20 @@
     }
   ],
   "summary": {
-    "concepts": 379,
-    "active": 378,
+    "concepts": 380,
+    "active": 379,
     "deprecated": 1,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 242,
+    "portalSemantics": 243,
     "categories": {
       "market": 33,
       "model": 18,
       "pipeline": 41,
       "tournament": 86,
       "trading": 58,
-      "ui": 116,
+      "ui": 117,
       "warehouse": 27
     },
     "kinds": {
@@ -229,13 +234,13 @@
       "region": 7,
       "registry": 39,
       "sport": 10,
-      "ui": 191
+      "ui": 192
     },
     "semanticTypes": {
       "classification": 138,
       "location": 4,
       "presentation": 4,
-      "resource": 74,
+      "resource": 75,
       "state": 21,
       "version": 1
     },
@@ -243,7 +248,7 @@
       "badge": 51,
       "chip": 94,
       "code": 22,
-      "heading": 58,
+      "heading": 59,
       "link": 13,
       "token": 4
     }
@@ -3695,6 +3700,36 @@
       "synonyms": [
         "registry home",
         "portal home"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "page.accountDossier",
+      "label": "Account dossier",
+      "description": "Portal page for one partner-tree account: identity, connected nodes, location, monitoring, limit telemetry, outs, and betlog exports.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "account dossier",
+        "account breakdown",
+        "node dossier"
       ],
       "values": null,
       "valueLabels": null,

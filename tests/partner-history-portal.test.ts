@@ -62,6 +62,7 @@ describe('partner-history portal', () => {
     expect(html).toContain('nodeActivity');
     expect(html).toContain('const rows = filteredData.map(change => [');
     expect(html).toContain('JSON.stringify(filteredData, null, 2)');
+    expect(html).toContain('/portal/account/?account=${encodeURIComponent(accountId)}');
     expect(html).toContain('/portal/limits/#account:${encodeURIComponent(accountId)}');
     expect(html).toContain('/portal/partners/#partner/${encodeURIComponent(partnerCode)}');
     expect(html).toContain('id="coverage-ct"');

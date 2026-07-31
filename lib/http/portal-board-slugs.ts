@@ -23,6 +23,7 @@ export const PORTAL_BOARD_SLUGS = [
   'install-hygiene',
   'limits',
   'packages',
+  'account',
   'partner-history',
   'science',
   'surfaces',

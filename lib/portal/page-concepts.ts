@@ -13,6 +13,14 @@ export const PORTAL_PAGE_CONCEPT_DEFINITIONS = [
     synonyms: ['registry home', 'portal home'],
   },
   {
+    path: '/portal/account/',
+    id: 'page.accountDossier',
+    label: 'Account dossier',
+    description:
+      'Portal page for one partner-tree account: identity, connected nodes, location, monitoring, limit telemetry, outs, and betlog exports.',
+    synonyms: ['account dossier', 'account breakdown', 'node dossier'],
+  },
+  {
     path: '/portal/brands/',
     id: 'page.brandKeymap',
     label: 'Brand keymap',

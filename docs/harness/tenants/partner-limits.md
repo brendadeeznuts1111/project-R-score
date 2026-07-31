@@ -332,8 +332,13 @@ Glossary deep links:
 - `#glossary:policy.MA.basketball.over_under`
 - `#glossary:kpi.compliance.active_policies`
 
-Account trace state uses `/portal/limits/#account:{TreeNodeId}` and is parsed by
-`URLPattern.hash`; the fragment is the canonical selection state.
+Account dossier (full single-account breakdown — tree, location, monitoring,
+telemetry, outs, betlog): `/portal/account/?account={TreeNodeId}` (optional
+`&hours=`). Account links on partner-history and the limit-changes card open
+this board.
+
+Account trace state on the limits board still uses
+`/portal/limits/#account:{TreeNodeId}` and is parsed by `URLPattern.hash`.
 
 ## Failure paths (operator)
 
