@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/test — bun:test
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 import { describe, expect, test } from 'bun:test';
 import {
   buildLimitForecastLab,
@@ -28,6 +29,15 @@ function sample(
 }
 
 describe('Limits Forecast Lab', () => {
+  test('reopens direct-file visits on the local portal origin', async () => {
+    const shell = await Bun.file('public/portal/limits-lab/index.html').text();
+
+    expect(shell).toContain("window.location.protocol === 'file:'");
+    expect(shell).toContain("new URL(publicPath, 'http://localhost:3017')");
+    expect(shell).toContain('target.search = window.location.search');
+    expect(shell).toContain('target.hash = window.location.hash');
+  });
+
   test('builds ordered transitions within a complete dimension', () => {
     const transitions = buildLimitTransitions([
       sample('draftkings', 30, 1_500),

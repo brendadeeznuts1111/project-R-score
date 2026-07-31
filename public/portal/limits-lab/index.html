@@ -6,6 +6,17 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Limits Forecast Lab · FactoryWager</title>
     <meta name="theme-color" content="#0d1117" />
+    <script>
+      if (window.location.protocol === 'file:') {
+        const publicPath = window.location.pathname.split('/public')[1];
+        if (publicPath) {
+          const target = new URL(publicPath, 'http://localhost:3017');
+          target.search = window.location.search;
+          target.hash = window.location.hash;
+          window.location.replace(target.href);
+        }
+      }
+    </script>
     <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
     <link rel="stylesheet" href="/portal/style.css" />
     <style>
