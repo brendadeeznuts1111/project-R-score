@@ -65,7 +65,8 @@ export async function resolveTocOpsRepo(factoryRoot = root): Promise<string> {
       proc.exited,
     ]);
     if (exitCode === 0) {
-      const gitCommon = stdout.trim().replace(/\/$/, '');
+      // Strip trailing / or \ (Git for Windows) before joinPath.
+      const gitCommon = stdout.trim().replace(/[/\\]+$/, '');
       if (gitCommon) {
         // …/Projects/.git → …/Projects/toc-ops-repo
         candidates.push(joinPath(gitCommon, '..', 'toc-ops-repo'));
