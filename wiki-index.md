@@ -152,7 +152,7 @@ Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc: [`
 | Identity / auth | [`lib/identity/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/identity/README.md) · `bun test tests/identity-*.test.ts` |
 | Branded IDs | [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md) |
 | Wire boundary | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) |
-| Bun native | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) |
+| Bun native | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) · [Utilities guides map](docs/BUN_NATIVE_CAPABILITIES.md#utilities-guides-map) |
 
 ## Operator proof loop
 

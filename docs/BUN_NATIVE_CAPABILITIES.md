@@ -92,7 +92,7 @@ Workspace runtime knobs for gates / spawn chains (not install-machine SSOT). See
 | DX one-liners | `bun run dx:catalog` |
 | Wire / brands | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) |
 
-## Utilities guides → codebase map
+## Utilities guides map
 
 Sidebar cluster under [guides/util](https://bun.com/docs/guides/util/upgrade) (19 pages). Behavior → Factory owner → status.
 
@@ -112,7 +112,7 @@ Sidebar cluster under [guides/util](https://bun.com/docs/guides/util/upgrade) (1
 | [path-to-file-url](https://bun.com/docs/guides/util/path-to-file-url) | `Bun.pathToFileURL` | same | Implemented |
 | [deep-equals](https://bun.com/docs/guides/util/deep-equals) | `Bun.deepEquals(a,b,strict?)` | [`lib/deep-equals.ts`](../lib/deep-equals.ts) · proof [`lib/bun-utils-proof.ts`](../lib/bun-utils-proof.ts) | Implemented |
 | [escape-html](https://bun.com/docs/guides/util/escape-html) | `Bun.escapeHTML` (`"&'<>`) | [`lib/escape-html.ts`](../lib/escape-html.ts) · portal reports | Implemented |
-| [base64](https://bun.com/docs/guides/util/base64) | `Uint8Array.toBase64` / `fromBase64` (prefer over `btoa`/`atob`) | Prefer bytes APIs in new code; Buffer ok where already Node-shaped | Pattern — no dedicated lib |
+| [base64](https://bun.com/docs/guides/util/base64) | `Uint8Array.toBase64` / `Uint8Array.fromBase64` on bytes | **New code:** bytes APIs only. `Buffer` ok when already Node-shaped. Do **not** use `btoa`/`atob` (binary-string trap) | Pattern — no dedicated lib |
 | [gzip](https://bun.com/docs/guides/util/gzip) | `Bun.gzipSync` / `gunzipSync` | AGENTS capability row · artifact packs / oneliners | Available (call Bun directly) |
 | [deflate](https://bun.com/docs/guides/util/deflate) | `Bun.deflateSync` / `inflateSync` | Same; **exception:** PNG IDAT in `tools/generate-portal-icons.ts` needs `node:zlib` (Bun.deflateSync rejected by `Bun.Image` decode) | Available + documented exception |
 | [hash-a-password](https://bun.com/docs/guides/util/hash-a-password) | `Bun.password.hash` / `verify` (argon2id default) | [`SecurityUtils`](../lib/security/index.ts) · identity · claim `security-hash-boundaries` | Implemented |
@@ -120,12 +120,14 @@ Sidebar cluster under [guides/util](https://bun.com/docs/guides/util/upgrade) (1
 
 **Harness rules from this cluster**
 
-1. Nested `Bun.spawn` of bun → `resolveBunExecutable()` only (never bare `"bun"`).
-2. CLI `if` guard → `isModuleEntrypoint(import.meta)` / `import.meta.main` (entrypoint; pass **caller** meta); use `Bun.main` when you need the abs path string.
-3. HTML reports → `escapeHTML` wrapper; structural evidence compare → `deepEquals` wrapper.
-4. Password / API-key hashes → `SecurityUtils` / `Bun.password` (argon2id).
+1. Nested `Bun.spawn` of bun → `resolveBunExecutable()` only (never bare `"bun"`). PATH-keyed cache is built in; Soft `from-ct` passes `env: { ...Bun.env }` (shallow copy, no parent mutate).
+2. CLI `if` guard → `isModuleEntrypoint(import.meta)` / `import.meta.main` (pass **caller** meta). Use `Bun.main` / `entrypointPath()` for the abs path string. No CJS `require.main` fallback (ESM-first).
+3. Polling / retry delays → `sleep` / `sleepSync` in [`lib/time.ts`](../lib/time.ts) (`Bun.sleep`).
+4. HTML reports → `escapeHTML` wrapper; structural evidence compare → `deepEquals` wrapper.
+5. Password / API-key hashes → `SecurityUtils` / `Bun.password` (argon2id).
+6. Base64 → `Uint8Array.toBase64` / `fromBase64` (not `btoa`/`atob`).
 
-Smoke: `bun test tests/bun-executable.test.ts tests/bun-path-url.test.ts tests/bake-soft-accounting-export.test.ts`.
+Smoke: `bun test tests/bun-executable.test.ts tests/bun-path-url.test.ts tests/bake-soft-accounting-export.test.ts` · `tests/deep-equals.test.ts` · `tests/time.test.ts`.
 
 ## Release maps
 

@@ -57,7 +57,7 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | Ops snapshot / registry bake | [`docs/harness/tenants/ops-snapshot.md`](docs/harness/tenants/ops-snapshot.md) · `bun run ops:snapshot` |
 | Proton / vault deploy | [`docs/harness/tenants/proton-integration.md`](docs/harness/tenants/proton-integration.md) · `bun run proton:inject:factorywager:reasonix` |
 | Platform routing (local vs Pages) | [`docs/platform-routing.md`](docs/platform-routing.md) · `bun run check:routes` · `bun run verify:pages-edge` |
-| Bun native capabilities | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) (WebView, markdown.ansi, Terminal/PTY, Bun.Image, cron, UDP) |
+| Bun native capabilities | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) (WebView, markdown.ansi, Terminal/PTY, Bun.Image, cron, UDP) · [Utilities guides map](docs/BUN_NATIVE_CAPABILITIES.md#utilities-guides-map) (`lib/bun-executable.ts` · `lib/bun-path-url.ts`) |
 | Bun token/catalog operate | [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · [`lib/docs/docs-artifact-paths.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/docs-artifact-paths.ts) (`docs:refresh:fast` daily · `docs:feeds:refresh` · full `docs:refresh`) |
 | TokenRef (interior) / BunToken (export) | [`lib/docs/token-ref.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/token-ref.ts) · [`lib/docs/bun-token.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/bun-token.ts) |
 | Projects triage | [`projects/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/projects/README.md) |
