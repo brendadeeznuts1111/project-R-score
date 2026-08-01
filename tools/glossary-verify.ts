@@ -3,10 +3,18 @@
  * Verify glossary board routes, hash patterns, and DOM section mounts.
  *   bun run glossary:verify
  *   bun run glossary:verify --json
+ *   bun run glossary:verify --strict   # also fail on section-shaped orphan ids
  *
  * Offline probe: reads public/registry/domain-glossary.json and:
  *   1. Proves every section hash round-trips through URLPattern (#section:{hash})
- *   2. Scrapes each board HTML with HTMLRewriter and asserts every `domId` exists
+ *   2. Scrapes each board HTML with HTMLRewriter:
+ *      - every bake `domId` must exist
+ *      - duplicate ids on a board fail (getElementById only reaches the first)
+ *      - section-shaped orphans (`section:*` · `ad-section-*`) report as WARN;
+ *        with `--strict` they fail (stale mounts left after rename)
+ *
+ * GUI note: glossary-ux scrolls via document.getElementById(domId) — colon-safe.
+ * Do not use querySelector(`#${domId}`) for `section:…` ids (CSS pseudo delimiter).
  *
  * @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
  * @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
@@ -72,11 +80,42 @@ export interface DomIdMiss {
   file: string;
 }
 
+export interface DomIdDuplicate {
+  path: string;
+  file: string;
+  domId: string;
+  count: number;
+}
+
+export interface DomIdOrphan {
+  path: string;
+  file: string;
+  domId: string;
+  /** section:* / ad-section-* → section-shaped; else chrome */
+  kind: 'section-shaped' | 'chrome';
+}
+
 export interface DomIdCheckResult {
   domOk: number;
   domFail: number;
   boardsScanned: number;
   misses: DomIdMiss[];
+  duplicates: DomIdDuplicate[];
+  orphans: DomIdOrphan[];
+  /** Non-manifest ids that look like glossary mounts (strict cares about these). */
+  sectionOrphans: DomIdOrphan[];
+  /** Other page chrome ids not in the bake (reported only; never fail alone). */
+  chromeOrphans: number;
+}
+
+export interface IdOccurrenceReport {
+  /** Unique id values present at least once. */
+  unique: Set<string>;
+  /** Document-order list (multiplicity preserved). */
+  ordered: string[];
+  /** Ids that appear more than once (unique list). */
+  duplicates: string[];
+  counts: Map<string, number>;
 }
 
 /**
@@ -89,23 +128,41 @@ export function boardHtmlRelPath(surfacePath: string): string {
   return joinPath('public', dir, 'index.html');
 }
 
+/** Glossary / dossier section mount shapes (not general chrome like `tenant-sidebar`). */
+export function isSectionShapedDomId(id: string): boolean {
+  return id.startsWith('section:') || id.startsWith('ad-section-');
+}
+
 /**
  * Collect every element `id` from an HTML document via HTMLRewriter.
  * Attribute selector works for ids that contain `:` (e.g. `section:telegram`).
+ * Tracks multiplicity so duplicate ids are visible (invalid HTML / dead anchors).
  */
-export async function collectElementIds(html: string | Response): Promise<Set<string>> {
-  const found = new Set<string>();
+export async function scrapeElementIds(html: string | Response): Promise<IdOccurrenceReport> {
+  const ordered: string[] = [];
+  const counts = new Map<string, number>();
   const input = typeof html === 'string' ? new Response(html) : html;
   await new HTMLRewriter()
     .on('*[id]', {
       element(el) {
         const id = el.getAttribute('id');
-        if (id) found.add(id);
+        if (!id) return;
+        ordered.push(id);
+        counts.set(id, (counts.get(id) ?? 0) + 1);
       },
     })
     .transform(input)
     .arrayBuffer();
-  return found;
+
+  const unique = new Set(counts.keys());
+  const duplicates = [...counts.entries()].filter(([, n]) => n > 1).map(([id]) => id);
+  return { unique, ordered, duplicates, counts };
+}
+
+/** Unique set only (compat). Prefer {@link scrapeElementIds} when multiplicity matters. */
+export async function collectElementIds(html: string | Response): Promise<Set<string>> {
+  const report = await scrapeElementIds(html);
+  return report.unique;
 }
 
 /** Prove #section:{hash} URLPattern round-trips for every baked section. */
@@ -130,7 +187,46 @@ export function verifySectionHashes(surfaces: GlossarySurface[]): HashCheckResul
 }
 
 /**
+ * Diff expected bake domIds against HTMLRewriter scrape for one document.
+ * Pure helper for unit tests and {@link verifyDomIds}.
+ */
+export function diffDomIds(
+  expectedIds: string[],
+  scrape: IdOccurrenceReport
+): {
+  present: string[];
+  missing: string[];
+  duplicates: Array<{ domId: string; count: number }>;
+  sectionOrphans: string[];
+  chromeOrphans: string[];
+} {
+  const expected = new Set(expectedIds.filter(Boolean));
+  const present: string[] = [];
+  const missing: string[] = [];
+  for (const id of expected) {
+    if (scrape.unique.has(id)) present.push(id);
+    else missing.push(id);
+  }
+
+  const duplicates = scrape.duplicates.map(domId => ({
+    domId,
+    count: scrape.counts.get(domId) ?? 0,
+  }));
+
+  const sectionOrphans: string[] = [];
+  const chromeOrphans: string[] = [];
+  for (const id of scrape.unique) {
+    if (expected.has(id)) continue;
+    if (isSectionShapedDomId(id)) sectionOrphans.push(id);
+    else chromeOrphans.push(id);
+  }
+
+  return { present, missing, duplicates, sectionOrphans, chromeOrphans };
+}
+
+/**
  * For each section with a `domId`, load the board HTML and assert the id exists.
+ * Also flags duplicate ids and section-shaped orphans (stale mounts).
  * Offline — reads local public/ files only (no network).
  */
 export async function verifyDomIds(
@@ -140,22 +236,30 @@ export async function verifyDomIds(
   let domOk = 0;
   let domFail = 0;
   const misses: DomIdMiss[] = [];
-  const idCache = new Map<string, Set<string> | null>();
+  const duplicates: DomIdDuplicate[] = [];
+  const orphans: DomIdOrphan[] = [];
+  const sectionOrphans: DomIdOrphan[] = [];
+  let chromeOrphans = 0;
 
-  async function idsFor(surfacePath: string): Promise<{ file: string; ids: Set<string> | null }> {
+  type CacheEntry = IdOccurrenceReport | null;
+  const idCache = new Map<string, CacheEntry>();
+
+  async function scrapeFor(
+    surfacePath: string
+  ): Promise<{ file: string; scrape: IdOccurrenceReport | null }> {
     const rel = boardHtmlRelPath(surfacePath);
     const file = joinPath(root, rel);
     if (idCache.has(file)) {
-      return { file, ids: idCache.get(file) ?? null };
+      return { file, scrape: idCache.get(file) ?? null };
     }
     const bf = Bun.file(file);
     if (!(await bf.exists())) {
       idCache.set(file, null);
-      return { file, ids: null };
+      return { file, scrape: null };
     }
-    const ids = await collectElementIds(await bf.text());
-    idCache.set(file, ids);
-    return { file, ids };
+    const scrape = await scrapeElementIds(await bf.text());
+    idCache.set(file, scrape);
+    return { file, scrape };
   }
 
   for (const surface of surfaces) {
@@ -164,8 +268,10 @@ export async function verifyDomIds(
     const sections = (surface.sections ?? []).filter(s => s.domId);
     if (!sections.length) continue;
 
-    const { file, ids } = await idsFor(path);
-    if (!ids) {
+    const expectedIds = sections.map(s => s.domId!).filter(Boolean);
+    const { file, scrape } = await scrapeFor(path);
+
+    if (!scrape) {
       for (const section of sections) {
         domFail++;
         misses.push({
@@ -179,11 +285,15 @@ export async function verifyDomIds(
       continue;
     }
 
+    const diff = diffDomIds(expectedIds, scrape);
+
+    for (const id of diff.present) {
+      domOk++;
+      void id;
+    }
     for (const section of sections) {
       const domId = section.domId!;
-      if (ids.has(domId)) {
-        domOk++;
-      } else {
+      if (!scrape.unique.has(domId)) {
         domFail++;
         misses.push({
           path,
@@ -194,6 +304,19 @@ export async function verifyDomIds(
         });
       }
     }
+
+    for (const d of diff.duplicates) {
+      duplicates.push({ path, file, domId: d.domId, count: d.count });
+    }
+    for (const id of diff.sectionOrphans) {
+      const row: DomIdOrphan = { path, file, domId: id, kind: 'section-shaped' };
+      orphans.push(row);
+      sectionOrphans.push(row);
+    }
+    chromeOrphans += diff.chromeOrphans.length;
+    for (const id of diff.chromeOrphans) {
+      orphans.push({ path, file, domId: id, kind: 'chrome' });
+    }
   }
 
   return {
@@ -201,6 +324,10 @@ export async function verifyDomIds(
     domFail,
     boardsScanned: idCache.size,
     misses,
+    duplicates,
+    orphans,
+    sectionOrphans,
+    chromeOrphans,
   };
 }
 
@@ -208,12 +335,15 @@ export async function runGlossaryVerify(opts: {
   root: string;
   glossary?: GlossaryBake;
   json?: boolean;
+  /** Fail when section-shaped orphan ids remain in HTML (stale mounts). */
+  strict?: boolean;
 }): Promise<{
   exitCode: number;
   hash: HashCheckResult;
   dom: DomIdCheckResult;
   schemaVersion: number | undefined;
   surfaces: number;
+  strict: boolean;
 }> {
   const glossary =
     opts.glossary ??
@@ -222,6 +352,7 @@ export async function runGlossaryVerify(opts: {
   const surfaces = glossary.surfaces ?? [];
   const hash = verifySectionHashes(surfaces);
   const dom = await verifyDomIds(surfaces, opts.root);
+  const strict = opts.strict === true;
 
   const rows: Array<{ check: string; plane: string; status: string; detail: string }> = [];
 
@@ -265,6 +396,31 @@ export async function runGlossaryVerify(opts: {
         : ''),
   });
 
+  const firstDup = dom.duplicates[0];
+  rows.push({
+    check: 'glossary DOM id uniqueness',
+    plane: 'public',
+    status: coloredStatus(dom.duplicates.length === 0 ? 'LIVE' : 'STALE'),
+    detail:
+      dom.duplicates.length === 0
+        ? 'no duplicate ids on governed boards'
+        : `${dom.duplicates.length} duplicate id(s) — first: ${firstDup?.path}#${firstDup?.domId} ×${firstDup?.count}`,
+  });
+
+  const firstSecOrphan = dom.sectionOrphans[0];
+  const orphanStatus: Status =
+    dom.sectionOrphans.length === 0 ? 'LIVE' : strict ? 'STALE' : 'WARN';
+  rows.push({
+    check: `glossary section-shaped orphans${strict ? ' (strict)' : ''}`,
+    plane: 'public',
+    status: coloredStatus(orphanStatus),
+    detail:
+      `section-shaped=${dom.sectionOrphans.length} · chrome-unlisted=${dom.chromeOrphans}` +
+      (firstSecOrphan
+        ? ` — first: ${firstSecOrphan.path}#${firstSecOrphan.domId}`
+        : ' (chrome ids are expected outside the bake)'),
+  });
+
   let md = '| Check | Plane | Status | Detail |\n| :--- | :--- | :--- | :--- |\n';
   for (const row of rows) md += `| ${row.check} | ${row.plane} | ${row.status} | ${row.detail} |\n`;
 
@@ -275,6 +431,7 @@ export async function runGlossaryVerify(opts: {
     jsonOut({
       schemaVersion: glossary.schemaVersion,
       surfaces: surfaces.length,
+      strict,
       hashOk: hash.hashOk,
       hashFail: hash.hashFail,
       failures: hash.failures,
@@ -282,16 +439,27 @@ export async function runGlossaryVerify(opts: {
       domFail: dom.domFail,
       boardsScanned: dom.boardsScanned,
       misses: dom.misses,
+      duplicates: dom.duplicates,
+      sectionOrphans: dom.sectionOrphans,
+      chromeOrphans: dom.chromeOrphans,
     });
   }
 
-  const exitCode = hash.hashFail > 0 || dom.domFail > 0 ? 1 : 0;
+  const exitCode =
+    hash.hashFail > 0 ||
+    dom.domFail > 0 ||
+    dom.duplicates.length > 0 ||
+    (strict && dom.sectionOrphans.length > 0)
+      ? 1
+      : 0;
+
   return {
     exitCode,
     hash,
     dom,
     schemaVersion: glossary.schemaVersion,
     surfaces: surfaces.length,
+    strict,
   };
 }
 
@@ -300,6 +468,7 @@ async function main(): Promise<void> {
   const result = await runGlossaryVerify({
     root,
     json: Bun.argv.includes('--json'),
+    strict: Bun.argv.includes('--strict'),
   });
   if (result.exitCode !== 0) process.exit(result.exitCode);
 }

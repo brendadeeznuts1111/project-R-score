@@ -593,6 +593,8 @@ export function sectionHashFromLocation(href = window.location.href) {
 
 /**
  * Scroll to the bake-governed `domId` for `#section:{hash}` on a surface.
+ * Uses getElementById (colon-safe for `section:…` / `ad-section-…`).
+ * Do not use querySelector(`#${domId}`) — `:` is a CSS pseudo-class delimiter.
  * @returns {boolean} true when an element was found and scrolled
  */
 export function scrollGlossarySection(surface, sectionHash, options = {}) {

@@ -5,7 +5,10 @@ import { joinPath, resolvePath } from '../lib/path-bun.ts';
 import {
   boardHtmlRelPath,
   collectElementIds,
+  diffDomIds,
+  isSectionShapedDomId,
   runGlossaryVerify,
+  scrapeElementIds,
   verifyDomIds,
   verifySectionHashes,
   type GlossaryBake,
@@ -23,17 +26,42 @@ describe('glossary-verify', () => {
     );
   });
 
-  test('collectElementIds scrapes ids including colon-bearing section: ids', async () => {
+  test('isSectionShapedDomId distinguishes mounts from chrome', () => {
+    expect(isSectionShapedDomId('section:telegram')).toBe(true);
+    expect(isSectionShapedDomId('ad-section-identity')).toBe(true);
+    expect(isSectionShapedDomId('account-control')).toBe(false);
+    expect(isSectionShapedDomId('tenant-sidebar')).toBe(false);
+  });
+
+  test('scrapeElementIds scrapes colon ids and detects duplicates', async () => {
     const html = `<!doctype html><html><body>
       <div id="plain"></div>
       <section id="section:telegram"></section>
+      <div id="section:telegram"></div>
       <div id="ad-section-identity"></div>
     </body></html>`;
+    const scrape = await scrapeElementIds(html);
+    expect(scrape.unique.has('section:telegram')).toBe(true);
+    expect(scrape.duplicates).toContain('section:telegram');
+    expect(scrape.counts.get('section:telegram')).toBe(2);
+
     const ids = await collectElementIds(html);
-    expect(ids.has('plain')).toBe(true);
-    expect(ids.has('section:telegram')).toBe(true);
     expect(ids.has('ad-section-identity')).toBe(true);
-    expect(ids.has('missing')).toBe(false);
+  });
+
+  test('diffDomIds classifies missing, duplicates, section vs chrome orphans', async () => {
+    const scrape = await scrapeElementIds(`<!doctype html><body>
+      <div id="account-control"></div>
+      <div id="account-control"></div>
+      <section id="section:stale"></section>
+      <nav id="tenant-sidebar"></nav>
+    </body>`);
+    const diff = diffDomIds(['account-control', 'prediction'], scrape);
+    expect(diff.present).toEqual(['account-control']);
+    expect(diff.missing).toEqual(['prediction']);
+    expect(diff.duplicates.map(d => d.domId)).toContain('account-control');
+    expect(diff.sectionOrphans).toContain('section:stale');
+    expect(diff.chromeOrphans).toContain('tenant-sidebar');
   });
 
   test('verifySectionHashes counts ok/fail for URLPattern round-trip', () => {
@@ -46,20 +74,21 @@ describe('glossary-verify', () => {
     expect(ok.hashOk).toBe(2);
     expect(ok.hashFail).toBe(0);
 
-    // Empty hash skipped; still ok count only real hashes
-    const skip = verifySectionHashes([
-      { path: '/x/', sections: [{ hash: '' }, {}] },
-    ]);
+    const skip = verifySectionHashes([{ path: '/x/', sections: [{ hash: '' }, {}] }]);
     expect(skip.hashOk + skip.hashFail).toBe(0);
   });
 
-  test('verifyDomIds reports missing-id and missing-file', async () => {
+  test('verifyDomIds reports missing-id, missing-file, and duplicates', async () => {
     const tmp = joinPath(ROOT, '.tmp-glossary-verify-test');
     await Bun.$`rm -rf ${tmp}`.quiet();
     await Bun.$`mkdir -p ${tmp}/public/portal/limits`.quiet();
     await Bun.write(
       joinPath(tmp, 'public/portal/limits/index.html'),
-      '<!doctype html><html><body><section id="account-control"></section></body></html>'
+      `<!doctype html><html><body>
+        <section id="account-control"></section>
+        <section id="account-control"></section>
+        <section id="section:orphan"></section>
+      </body></html>`
     );
 
     const result = await verifyDomIds(
@@ -85,15 +114,19 @@ describe('glossary-verify', () => {
       true
     );
     expect(result.misses.some(m => m.reason === 'missing-file')).toBe(true);
+    expect(result.duplicates.some(d => d.domId === 'account-control' && d.count === 2)).toBe(true);
+    expect(result.sectionOrphans.some(o => o.domId === 'section:orphan')).toBe(true);
 
     await Bun.$`rm -rf ${tmp}`.quiet();
   });
 
-  test('committed domain-glossary board mounts all resolve in public HTML', async () => {
+  test('committed domain-glossary board mounts all resolve without dups', async () => {
     const result = await runGlossaryVerify({ root: ROOT, json: false });
     expect(result.schemaVersion).toBe(3);
     expect(result.hash.hashFail).toBe(0);
     expect(result.dom.domFail).toBe(0);
+    expect(result.dom.duplicates.length).toBe(0);
+    expect(result.dom.sectionOrphans.length).toBe(0);
     expect(result.dom.domOk).toBeGreaterThan(0);
     expect(result.exitCode).toBe(0);
   });
@@ -111,5 +144,39 @@ describe('glossary-verify', () => {
     const result = await runGlossaryVerify({ root: ROOT, glossary: bake, json: false });
     expect(result.dom.domFail).toBe(1);
     expect(result.exitCode).toBe(1);
+  });
+
+  test('strict mode fails on section-shaped orphans only', async () => {
+    const tmp = joinPath(ROOT, '.tmp-glossary-verify-strict');
+    await Bun.$`rm -rf ${tmp}`.quiet();
+    await Bun.$`mkdir -p ${tmp}/public/portal/partners`.quiet();
+    await Bun.write(
+      joinPath(tmp, 'public/portal/partners/index.html'),
+      `<!doctype html><body>
+        <div id="section:telegram"></div>
+        <div id="section:stale-left-behind"></div>
+        <nav id="tenant-sidebar"></nav>
+      </body>`
+    );
+
+    const bake: GlossaryBake = {
+      schemaVersion: 3,
+      surfaces: [
+        {
+          path: '/portal/partners/',
+          sections: [{ hash: 'telegram', domId: 'section:telegram' }],
+        },
+      ],
+    };
+
+    const loose = await runGlossaryVerify({ root: tmp, glossary: bake, json: false, strict: false });
+    expect(loose.dom.sectionOrphans.length).toBe(1);
+    expect(loose.dom.chromeOrphans).toBeGreaterThan(0);
+    expect(loose.exitCode).toBe(0); // WARN only
+
+    const strict = await runGlossaryVerify({ root: tmp, glossary: bake, json: false, strict: true });
+    expect(strict.exitCode).toBe(1);
+
+    await Bun.$`rm -rf ${tmp}`.quiet();
   });
 });
