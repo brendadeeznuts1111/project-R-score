@@ -1,4 +1,6 @@
 // @see https://bun.com/docs/runtime/environment-variables#configuring-bun
+// @see https://bun.com/docs/runtime/debugger#print-fetch-nodehttp-requests-as-curl-commands — BUN_CONFIG_VERBOSE_FETCH
+// @see https://bun.com/docs/runtime/networking/fetch#debugging — fetch({ verbose })
 /**
  * Bun/runtime control-plane environment variables.
  *
@@ -14,7 +16,10 @@ export const BUN_RUNTIME_ENV_CONTROLS = [
   {
     name: 'BUN_CONFIG_VERBOSE_FETCH',
     scope: 'network',
-    effect: 'Enables fetch diagnostics; curl adds curl-style request output.',
+    // Debugger plane: true|false|curl (1≡true, 0≡false for backward compat).
+    // Per-request plane is fetch({ verbose }) — not this env.
+    effect:
+      'Fetch/node:http diagnostics: true|1=headers, curl=copy-pasteable curl, false|0=off.',
   },
   {
     name: 'BUN_RUNTIME_TRANSPILER_CACHE_PATH',
@@ -142,11 +147,12 @@ export function assessBunRuntimeEnv(
     );
   }
 
+  // Debugger docs: true | curl | false. Compat: 1≡true, 0≡false, unset/''≡off.
   const verboseRaw = env.BUN_CONFIG_VERBOSE_FETCH;
   const verboseFetch =
-    verboseRaw === undefined || verboseRaw === ''
+    verboseRaw === undefined || verboseRaw === '' || verboseRaw === 'false' || verboseRaw === '0'
       ? ('off' as const)
-      : verboseRaw === '1'
+      : verboseRaw === 'true' || verboseRaw === '1'
         ? ('headers' as const)
         : verboseRaw === 'curl'
           ? ('curl' as const)
@@ -157,7 +163,7 @@ export function assessBunRuntimeEnv(
         'invalid-verbose-fetch',
         'BUN_CONFIG_VERBOSE_FETCH',
         'warn',
-        'Verbose fetch must be unset, 1, or curl.'
+        'BUN_CONFIG_VERBOSE_FETCH must be unset, true, false, curl (or 1/0).'
       )
     );
   }

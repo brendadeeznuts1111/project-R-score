@@ -1044,7 +1044,12 @@ export const CANONICAL_REFS: Record<string, string> = {
   'embedding-runtime-arguments':
     'https://bun.com/docs/bundler/executables#embedding-runtime-arguments',
   // Fetch performance knobs — locus is networking/fetch (env page only lists the names)
-  BUN_CONFIG_VERBOSE_FETCH: bunDocs('runtime/networking/fetch', 'debugging'),
+  // Env plane (debugger). Per-request fetch({ verbose }) → fetch#debugging.
+  BUN_CONFIG_VERBOSE_FETCH: bunDocs(
+    'runtime/debugger',
+    'print-fetch-nodehttp-requests-as-curl-commands'
+  ),
+  'fetch({ verbose })': bunDocs('runtime/networking/fetch', 'debugging'),
   BUN_CONFIG_MAX_HTTP_REQUESTS: bunDocs(
     'runtime/networking/fetch',
     'simultaneous-connection-limit'

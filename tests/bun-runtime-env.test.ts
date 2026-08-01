@@ -93,4 +93,27 @@ describe('Bun runtime environment control plane', () => {
     expect(assessment.effective.bunOptions).toBe('configured');
     expect(JSON.stringify(assessment)).not.toContain(secretishOptions);
   });
+
+  test('BUN_CONFIG_VERBOSE_FETCH matches debugger plane (true|false|curl; 1/0 compat)', () => {
+    expect(assessBunRuntimeEnv({ BUN_CONFIG_VERBOSE_FETCH: 'true' }).effective.verboseFetch).toBe(
+      'headers'
+    );
+    expect(assessBunRuntimeEnv({ BUN_CONFIG_VERBOSE_FETCH: '1' }).effective.verboseFetch).toBe(
+      'headers'
+    );
+    expect(assessBunRuntimeEnv({ BUN_CONFIG_VERBOSE_FETCH: 'curl' }).effective.verboseFetch).toBe(
+      'curl'
+    );
+    expect(assessBunRuntimeEnv({ BUN_CONFIG_VERBOSE_FETCH: 'false' }).effective.verboseFetch).toBe(
+      'off'
+    );
+    expect(assessBunRuntimeEnv({ BUN_CONFIG_VERBOSE_FETCH: '0' }).effective.verboseFetch).toBe(
+      'off'
+    );
+    expect(assessBunRuntimeEnv({ BUN_CONFIG_VERBOSE_FETCH: 'true' }).issues).toEqual([]);
+    expect(assessBunRuntimeEnv({ BUN_CONFIG_VERBOSE_FETCH: 'false' }).issues).toEqual([]);
+    const bad = assessBunRuntimeEnv({ BUN_CONFIG_VERBOSE_FETCH: 'yes' });
+    expect(bad.effective.verboseFetch).toBe('invalid');
+    expect(bad.issues.some(i => i.code === 'invalid-verbose-fetch')).toBe(true);
+  });
 });
