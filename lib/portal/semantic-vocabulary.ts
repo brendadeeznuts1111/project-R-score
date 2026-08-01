@@ -793,7 +793,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     id: 'section.partnersAccounting',
     label: 'Accounting deals',
     description:
-      'Partners board section for deposit/withdraw proof in the Accounting topic and all-accounting house rollup.',
+      'Partners board section for deposit/withdraw proof in the Accounting topic and all-accounting house rollup. Dossier #section:accounting keeps this surface id for bookmarks; per-account reporting chrome is ops.view.per_account (cross-plane seeAlso via domain-glossary bake).',
     semanticType: 'resource',
     uiRole: 'heading',
     synonyms: ['accounting deals', 'accounting topic', 'fund status'],
@@ -1083,6 +1083,7 @@ export const ACCOUNT_DOSSIER_SURFACE_CONCEPTS = {
   changes: 'section.recentLimitChanges',
   outs: 'section.partnersOuts',
   telegram: 'section.partnersTelegram',
+  /** Structural #section:accounting anchor — keep section.partnersAccounting for bookmarks. */
   accounting: 'section.partnersAccounting',
   /** Timeline of handshake / ledger / DM signals — collapses onto evidence traces. */
   activity: 'ops.limits.evidence_trace',

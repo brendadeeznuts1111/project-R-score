@@ -6298,7 +6298,7 @@
     {
       "id": "section.partnersAccounting",
       "label": "Accounting deals",
-      "description": "Partners board section for deposit/withdraw proof in the Accounting topic and all-accounting house rollup.",
+      "description": "Partners board section for deposit/withdraw proof in the Accounting topic and all-accounting house rollup. Dossier #section:accounting keeps this surface id for bookmarks; per-account reporting chrome is ops.view.per_account (cross-plane seeAlso via domain-glossary bake).",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
@@ -6315,7 +6315,8 @@
         "section.partnersTelegram",
         "section.partnersAccountsLimits",
         "section.partnersDeposits",
-        "section.partnersPartnerMessage"
+        "section.partnersPartnerMessage",
+        "ops.view.per_account"
       ],
       "status": "active",
       "deprecatedBy": null,

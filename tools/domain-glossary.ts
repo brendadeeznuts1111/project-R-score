@@ -159,28 +159,43 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
   validatePortalSemanticVocabulary();
   validatePortalGlossarySurfaces(new Set(PORTAL_SEMANTIC_CONCEPTS.map(concept => concept.id)));
 
+  // Portal vocabulary is closed under validatePortalSemanticVocabulary; append
+  // governed discovery edges here after the portal-only check (dossier keeps
+  // #section:accounting → section.partnersAccounting while field chrome uses
+  // ops.view.per_account).
+  const CROSS_PLANE_SEE_ALSO: Readonly<Record<string, readonly string[]>> = {
+    'section.partnersAccounting': ['ops.view.per_account'],
+  };
+
   const portalConcepts: CanonicalConcept[] = PORTAL_SEMANTIC_CONCEPTS.map(
-    (concept: PortalSemanticConcept) => ({
-      id: concept.id,
-      label: concept.label,
-      description: concept.description,
-      category: 'ui',
-      kind: 'ui',
-      mapsTo: null,
-      synonyms: [...(concept.synonyms ?? [])],
-      values: concept.values ? [...concept.values] : null,
-      valueLabels: null,
-      seeAlso: [...(concept.seeAlso ?? [])],
-      status: 'active',
-      deprecatedBy: null,
-      unit: concept.unit ?? null,
-      format: concept.format ?? null,
-      registryColumn: null,
-      source: 'lib/portal/semantic-vocabulary.ts',
-      featurePurpose: 'Cross-portal semantic field contract.',
-      semanticType: concept.semanticType,
-      uiRole: concept.uiRole,
-    })
+    (concept: PortalSemanticConcept) => {
+      const crossPlane = CROSS_PLANE_SEE_ALSO[concept.id] ?? [];
+      const seeAlso = [...(concept.seeAlso ?? [])];
+      for (const relatedId of crossPlane) {
+        if (!seeAlso.includes(relatedId)) seeAlso.push(relatedId);
+      }
+      return {
+        id: concept.id,
+        label: concept.label,
+        description: concept.description,
+        category: 'ui' as const,
+        kind: 'ui' as const,
+        mapsTo: null,
+        synonyms: [...(concept.synonyms ?? [])],
+        values: concept.values ? [...concept.values] : null,
+        valueLabels: null,
+        seeAlso,
+        status: 'active' as const,
+        deprecatedBy: null,
+        unit: concept.unit ?? null,
+        format: concept.format ?? null,
+        registryColumn: null,
+        source: 'lib/portal/semantic-vocabulary.ts',
+        featurePurpose: 'Cross-portal semantic field contract.',
+        semanticType: concept.semanticType,
+        uiRole: concept.uiRole,
+      };
+    }
   );
   const governedConcepts: CanonicalConcept[] = [
     ...regulationPolicyGlossaryConcepts(),
