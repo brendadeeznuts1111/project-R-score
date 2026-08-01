@@ -3,7 +3,7 @@
  *
  * Tooltips · search autocomplete · breadcrumbs · privacy-friendly usage tracking.
  * Consumes `/registry/domain-glossary.json` (schema v3) and page surface maps
- * baked from `lib/portal/page-glossary.ts` (`sections[]` = hash · domId · conceptId).
+ * baked from `lib/portal/page-glossary.ts` (`sections[]` = hash · domId · conceptId · title).
  *
  * Hash plane only (`URLPattern.hash`) — section + glossary concept.
  * Partner hashes are a separate plane (`partner-routes.js`). Pathname/registry/API
@@ -564,7 +564,7 @@ export function surfaceByPath(glossary, pathname) {
 
 /**
  * Resolve section concept id from URL hash key (`#section:{hash}`).
- * Schema v3 only: `sections[]` rows `{ hash, domId, conceptId }`.
+ * Schema v3 only: `sections[]` rows `{ hash, domId, conceptId, title }`.
  * @param {object|undefined} surface
  * @param {string} sectionHash
  * @returns {string|null}

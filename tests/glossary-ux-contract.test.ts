@@ -43,8 +43,18 @@ describe('shared glossary UX contract', () => {
       path: '/portal/account/',
       concept: 'page.accountDossier',
       sections: [
-        { hash: 'identity', domId: 'ad-section-identity', conceptId: 'ops.limits.account' },
-        { hash: 'outs', domId: 'ad-section-outs', conceptId: 'section.partnersOuts' },
+        {
+          hash: 'identity',
+          domId: 'ad-section-identity',
+          conceptId: 'ops.limits.account',
+          title: 'Identity',
+        },
+        {
+          hash: 'outs',
+          domId: 'ad-section-outs',
+          conceptId: 'section.partnersOuts',
+          title: 'Outs',
+        },
       ],
     };
     expect(sectionDomIdFromSurface(surface, 'identity')).toBe('ad-section-identity');

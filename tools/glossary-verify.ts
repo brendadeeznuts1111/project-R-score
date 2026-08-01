@@ -53,6 +53,8 @@ export interface GlossarySection {
   hash?: string;
   domId?: string;
   conceptId?: string;
+  /** Human heading from page-glossary bake (phase 1). */
+  title?: string;
 }
 
 export interface GlossarySurface {
