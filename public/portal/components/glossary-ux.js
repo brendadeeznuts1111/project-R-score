@@ -575,6 +575,48 @@ export function sectionConceptFromSurface(surface, sectionHash) {
   return row?.conceptId ?? null;
 }
 
+/** DOM id from v3 surface row (`section:{hash}` · `ad-section-{hash}` · bare). */
+export function sectionDomIdFromSurface(surface, sectionHash) {
+  if (!surface || !sectionHash) return null;
+  const sections = surface.sections;
+  if (!Array.isArray(sections)) return null;
+  const row = sections.find(s => s && s.hash === sectionHash);
+  return row?.domId ?? null;
+}
+
+/** Section hash key from `#section:{hash}` (null if not a section fragment). */
+export function sectionHashFromLocation(href = window.location.href) {
+  return fragmentGroup(sectionPattern, href, 'section');
+}
+
+/**
+ * Scroll to the bake-governed `domId` for `#section:{hash}` on a surface.
+ * @returns {boolean} true when an element was found and scrolled
+ */
+export function scrollGlossarySection(surface, sectionHash, options = {}) {
+  const domId = sectionDomIdFromSurface(surface, sectionHash);
+  if (!domId) return false;
+  const el = document.getElementById(domId);
+  if (!(el instanceof HTMLElement)) return false;
+  el.scrollIntoView({
+    behavior: options.behavior ?? 'auto',
+    block: options.block ?? 'start',
+  });
+  return true;
+}
+
+/** Resolve pathname surface + current `#section:` hash, then scroll via `domId`. */
+export function scrollGlossarySectionFromUrl(glossary, options = {}) {
+  const pathname = options.pathname ?? window.location.pathname;
+  const href = options.href ?? window.location.href;
+  const surface = surfaceByPath(glossary, pathname);
+  const sectionHash = sectionHashFromLocation(href);
+  if (!surface || !sectionHash) return false;
+  return scrollGlossarySection(surface, sectionHash, options);
+}
+
+const sectionScrollRoots = new WeakSet();
+
 /**
  * Mark every portal page with a governed glossary concept and a stable deep link.
  * Rich registered pages use their page.* concept; other pages use the shared
@@ -719,6 +761,7 @@ export function mountGlossaryBreadcrumbs(mount, glossary, options = {}) {
  *   onAutocompleteSelect?: (concept: object) => void,
  *   trackPage?: boolean,
  *   markSurface?: boolean,
+ *   scrollSections?: boolean,
  * }} [options]
  */
 export async function bootGlossaryUx(options = {}) {
@@ -742,6 +785,17 @@ export async function bootGlossaryUx(options = {}) {
     if (!tooltipRoots.has(tooltipRoot)) {
       tooltipRoots.add(tooltipRoot);
       enhanceGlossaryTooltips(tooltipRoot, glossary);
+    }
+  }
+  if (options.scrollSections) {
+    const runScroll = () => {
+      scrollGlossarySectionFromUrl(glossary, { pathname: options.pathname });
+    };
+    runScroll();
+    if (!sectionScrollRoots.has(window)) {
+      sectionScrollRoots.add(window);
+      window.addEventListener('hashchange', runScroll);
+      window.addEventListener('popstate', runScroll);
     }
   }
   return glossary;

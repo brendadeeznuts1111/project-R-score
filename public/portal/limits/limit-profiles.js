@@ -1,10 +1,13 @@
-import { bootGlossaryUx, trackGlossaryEvent } from '../components/glossary-ux.js';
+import {
+  bootGlossaryUx,
+  scrollGlossarySectionFromUrl,
+  trackGlossaryEvent,
+} from '../components/glossary-ux.js';
 
 const PROFILE_URL = '/registry/limit-raises.json';
 const PROFILE_POLL_INTERVAL = 30_000;
 const limitsPagePattern = new URLPattern({ pathname: '/portal/limits/' });
 const accountPattern = new URLPattern({ hash: 'account\\::account' });
-const sectionPattern = new URLPattern({ hash: 'section\\::section' });
 const PROFILE_QUERY_PARAMS = {
   query: 'profile',
   status: 'monitoring',
@@ -79,15 +82,11 @@ function accountFromUrl() {
   }
 }
 
-function sectionFromUrl() {
-  if (!limitsPagePattern.test(window.location.href)) return null;
-  return sectionPattern.exec(window.location.href)?.hash.groups.section ?? null;
-}
+let domainGlossary = null;
 
 function syncSectionFromUrl() {
-  const section = sectionFromUrl();
-  if (!section) return;
-  document.getElementById(section)?.scrollIntoView({ block: 'start' });
+  if (!domainGlossary) return;
+  scrollGlossarySectionFromUrl(domainGlossary);
 }
 
 function syncProfileFiltersFromUrl() {
@@ -471,13 +470,11 @@ document.getElementById('profile-filter-reset')?.addEventListener('click', () =>
 window.addEventListener('hashchange', () => {
   selectedAccount = accountFromUrl();
   renderProfiles();
-  syncSectionFromUrl();
 });
 window.addEventListener('popstate', () => {
   syncProfileFiltersFromUrl();
   selectedAccount = accountFromUrl();
   renderProfiles();
-  syncSectionFromUrl();
 });
 
 loadProfiles();
@@ -487,6 +484,11 @@ bootGlossaryUx({
   breadcrumbsMount: document.getElementById('limits-glossary-crumbs'),
   tooltipRoot: document.querySelector('main') ?? document.body,
   trackPage: false,
-}).catch(() => {
-  // Glossary UX is progressive enhancement; page data still loads.
-});
+  scrollSections: true,
+})
+  .then(glossary => {
+    domainGlossary = glossary;
+  })
+  .catch(() => {
+    // Glossary UX is progressive enhancement; page data still loads.
+  });

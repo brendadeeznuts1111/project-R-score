@@ -721,8 +721,8 @@
               <li>
                 Apply (optional compliance):
                 <code
-                  >bun run onboard:partner -- &lt;CODE&gt;-001 --state=NJ --age=28
-                  --location=Newark --zip=07102</code
+                  >bun run onboard:partner -- &lt;CODE&gt;-001 --state=NJ --age=28 --location=Newark
+                  --zip=07102</code
                 >
               </li>
               <li>
@@ -747,7 +747,8 @@
               </li>
             </ol>
             <p class="cli-row" id="onboard-cli-hint">
-              bun run onboard:partner -- ASH-001 --dry-run · docs/harness/tenants/partner-onboarding-package.md
+              bun run onboard:partner -- ASH-001 --dry-run ·
+              docs/harness/tenants/partner-onboarding-package.md
             </p>
           </div>
         </section>
@@ -779,12 +780,14 @@
               ><code>ops.view.per_play</code></a
             >
             from
-            <a href="/registry/soft-accounting-export.json" data-glossary-concept="ops.view.per_play"
+            <a
+              href="/registry/soft-accounting-export.json"
+              data-glossary-concept="ops.view.per_play"
               ><code>soft-accounting-export.json</code></a
             >
             (dossier:
-            <a href="/portal/account/" data-glossary-concept="page.accountDossier">account board</a>).
-            Deposit / withdraw proof lives in each package forum
+            <a href="/portal/account/" data-glossary-concept="page.accountDossier">account board</a
+            >). Deposit / withdraw proof lives in each package forum
             <a
               href="/portal/glossary/#glossary:telegram.forum.topic.accounting"
               data-glossary-concept="telegram.forum.topic.accounting"
@@ -816,10 +819,8 @@
             <h3 class="partners-subhead" style="margin-top: 16px">Event log</h3>
             <p class="blurb">
               Ledger-derived from
-              <code>partners:event</code> /
-              <code>partners:ledger:append</code> →
-              <code>bun run partners:build</code>. Shipped
-              <code>event.*</code> ids only.
+              <code>partners:event</code> / <code>partners:ledger:append</code> →
+              <code>bun run partners:build</code>. Shipped <code>event.*</code> ids only.
             </p>
             <table class="partners-table">
               <thead>
@@ -835,16 +836,20 @@
               </thead>
               <tbody id="accounting-events-tbody"></tbody>
             </table>
-            <h3 class="partners-subhead" style="margin-top: 16px" data-glossary-concept="ops.view.per_play">
+            <h3
+              class="partners-subhead"
+              style="margin-top: 16px"
+              data-glossary-concept="ops.view.per_play"
+            >
               Soft plays
             </h3>
             <p class="blurb">
-              Read-only slice from Soft export /
-              toc-ops fixture bake · dimension
-              <a href="/portal/glossary/#glossary:ops.view.per_play" data-glossary-concept="ops.view.per_play"
+              Read-only slice from Soft export / toc-ops fixture bake · dimension
+              <a
+                href="/portal/glossary/#glossary:ops.view.per_play"
+                data-glossary-concept="ops.view.per_play"
                 ><code>ops.view.per_play</code></a
-              >. Promote live with
-              <code>bun run soft:accounting:from-ct</code>.
+              >. Promote live with <code>bun run soft:accounting:from-ct</code>.
             </p>
             <table class="partners-table">
               <thead>
@@ -860,12 +865,18 @@
               </thead>
               <tbody id="soft-plays-tbody"></tbody>
             </table>
-            <h3 class="partners-subhead" style="margin-top: 16px" data-glossary-concept="ops.view.per_week">
+            <h3
+              class="partners-subhead"
+              style="margin-top: 16px"
+              data-glossary-concept="ops.view.per_week"
+            >
               Soft weeks
             </h3>
             <p class="blurb">
               Derived from Soft plays when export <code>weeks[]</code> is empty ·
-              <a href="/portal/glossary/#glossary:ops.view.per_week" data-glossary-concept="ops.view.per_week"
+              <a
+                href="/portal/glossary/#glossary:ops.view.per_week"
+                data-glossary-concept="ops.view.per_week"
                 ><code>ops.view.per_week</code></a
               >.
             </p>
@@ -881,16 +892,24 @@
               </thead>
               <tbody id="soft-weeks-tbody"></tbody>
             </table>
-            <h3 class="partners-subhead" style="margin-top: 16px" data-glossary-concept="ops.view.per_book_type">
+            <h3
+              class="partners-subhead"
+              style="margin-top: 16px"
+              data-glossary-concept="ops.view.per_book_type"
+            >
               Soft book types
             </h3>
             <p class="blurb">
               From Soft <code>byBookType[]</code> or tagged plays ·
-              <a href="/portal/glossary/#glossary:ops.view.per_book_type" data-glossary-concept="ops.view.per_book_type"
+              <a
+                href="/portal/glossary/#glossary:ops.view.per_book_type"
+                data-glossary-concept="ops.view.per_book_type"
                 ><code>ops.view.per_book_type</code></a
               >
               · leaves stay
-              <a href="/portal/glossary/#glossary:book.type.legal" data-glossary-concept="book.type.legal"
+              <a
+                href="/portal/glossary/#glossary:book.type.legal"
+                data-glossary-concept="book.type.legal"
                 ><code>book.type.*</code></a
               >.
             </p>
@@ -1162,7 +1181,8 @@
             };
             byKey.set(key, row);
           }
-          const stake = typeof play.stake === 'number' && Number.isFinite(play.stake) ? play.stake : 0;
+          const stake =
+            typeof play.stake === 'number' && Number.isFinite(play.stake) ? play.stake : 0;
           const pnl = typeof play.pnl === 'number' && Number.isFinite(play.pnl) ? play.pnl : 0;
           row.deposits += stake;
           if (play.result !== 'pending') row.settlements += Math.abs(pnl);
@@ -1528,8 +1548,7 @@
             ? events
                 .slice(0, 40)
                 .map(e => {
-                  const conceptId =
-                    e.conceptId || conceptIdForPartnerOpsEventCode(e.code);
+                  const conceptId = e.conceptId || conceptIdForPartnerOpsEventCode(e.code);
                   return `<tr data-partner-code="${esc(e.partnerCode)}">
                 <td>${partnerLink(e.partnerCode)}</td>
                 <td><time>${esc(e.at || '—')}</time></td>
@@ -1550,7 +1569,9 @@
           for (const [code, plays] of softPlaysByPartner) {
             for (const play of plays) softPlays.push({ partnerCode: code, ...play });
           }
-          softPlays.sort((a, b) => String(b.placedAt || '').localeCompare(String(a.placedAt || '')));
+          softPlays.sort((a, b) =>
+            String(b.placedAt || '').localeCompare(String(a.placedAt || ''))
+          );
           softBody.innerHTML = softPlays.length
             ? softPlays
                 .slice(0, 40)
@@ -1619,9 +1640,7 @@
         }
         const book = resolveBook(label);
         const conceptId = book?.conceptId || 'scrape.book';
-        const wire = book?.hex
-          ? { hex: book.hex, token: '', colorKey: '' }
-          : {};
+        const wire = book?.hex ? { hex: book.hex, token: '', colorKey: '' } : {};
         return conceptChip(conceptId, label || '—', wire).replace('topic-chip', 'book-chip');
       }
 
@@ -1968,6 +1987,7 @@
           bootGlossaryUx({
             breadcrumbsMount: $('partners-glossary-crumbs'),
             tooltipRoot: document,
+            scrollSections: true,
           });
           applyPartnerRoute(false);
         } catch (err) {

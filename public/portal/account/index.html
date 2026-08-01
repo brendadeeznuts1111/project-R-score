@@ -279,8 +279,7 @@
       <div id="ad-empty" class="ad-panel ad-empty" hidden>
         Pick an account to load its dossier. Deep-link with
         <code>?account=</code>, <code>?partner=CODE</code>, or limits-aligned
-        <code>#account:{TreeNodeId}</code>. Sections:
-        <code>#section:identity</code> …
+        <code>#account:{TreeNodeId}</code>. Sections: <code>#section:identity</code> …
       </div>
 
       <div id="ad-body" hidden>
@@ -400,7 +399,9 @@
           </h2>
           <p class="ad-meta">
             Collapses onto
-            <a href="/portal/glossary/#glossary:telegram.handshake" data-glossary-concept="telegram.handshake"
+            <a
+              href="/portal/glossary/#glossary:telegram.handshake"
+              data-glossary-concept="telegram.handshake"
               >telegram.handshake</a
             >
             ·
@@ -423,31 +424,45 @@
           </h2>
           <p class="ad-meta">
             View chrome
-            <a href="/portal/glossary/#glossary:ops.view.account_summary" data-glossary-concept="ops.view.account_summary"
+            <a
+              href="/portal/glossary/#glossary:ops.view.account_summary"
+              data-glossary-concept="ops.view.account_summary"
               >ops.view.account_summary</a
             >
             ·
-            <a href="/portal/glossary/#glossary:ops.view.account_deposits" data-glossary-concept="ops.view.account_deposits"
+            <a
+              href="/portal/glossary/#glossary:ops.view.account_deposits"
+              data-glossary-concept="ops.view.account_deposits"
               >ops.view.account_deposits</a
             >
             · Soft plays
-            <a href="/portal/glossary/#glossary:ops.view.per_play" data-glossary-concept="ops.view.per_play"
+            <a
+              href="/portal/glossary/#glossary:ops.view.per_play"
+              data-glossary-concept="ops.view.per_play"
               >ops.view.per_play</a
             >
             · Soft weeks
-            <a href="/portal/glossary/#glossary:ops.view.per_week" data-glossary-concept="ops.view.per_week"
+            <a
+              href="/portal/glossary/#glossary:ops.view.per_week"
+              data-glossary-concept="ops.view.per_week"
               >ops.view.per_week</a
             >
             · Soft book types
-            <a href="/portal/glossary/#glossary:ops.view.per_book_type" data-glossary-concept="ops.view.per_book_type"
+            <a
+              href="/portal/glossary/#glossary:ops.view.per_book_type"
+              data-glossary-concept="ops.view.per_book_type"
               >ops.view.per_book_type</a
             >
             · events stay
-            <a href="/portal/glossary/#glossary:accounting.deposit" data-glossary-concept="accounting.deposit"
+            <a
+              href="/portal/glossary/#glossary:accounting.deposit"
+              data-glossary-concept="accounting.deposit"
               >accounting.deposit</a
             >
             /
-            <a href="/portal/glossary/#glossary:event.deposit.received" data-glossary-concept="event.deposit.received"
+            <a
+              href="/portal/glossary/#glossary:event.deposit.received"
+              data-glossary-concept="event.deposit.received"
               >event.deposit.received</a
             >.
           </p>
@@ -465,15 +480,21 @@
           </h2>
           <p class="ad-meta">
             Handshake next-steps, DM seat, package chat, and partners-ops ledger events —
-            <a href="/portal/glossary/#glossary:telegram.message.alert" data-glossary-concept="telegram.message.alert"
+            <a
+              href="/portal/glossary/#glossary:telegram.message.alert"
+              data-glossary-concept="telegram.message.alert"
               >telegram.message.alert</a
             >
             ·
-            <a href="/portal/glossary/#glossary:telegram.message.command" data-glossary-concept="telegram.message.command"
+            <a
+              href="/portal/glossary/#glossary:telegram.message.command"
+              data-glossary-concept="telegram.message.command"
               >telegram.message.command</a
             >
             ·
-            <a href="/portal/glossary/#glossary:partner.ops.event" data-glossary-concept="partner.ops.event"
+            <a
+              href="/portal/glossary/#glossary:partner.ops.event"
+              data-glossary-concept="partner.ops.event"
               >partner.ops.event</a
             >. Bot: <code>/dossier CODE</code> · seat desk <code>📁 Dossier</code>.
           </p>
@@ -489,15 +510,15 @@
         buildAccountDossierHref,
         collectAccountIds,
         resolveAccountId,
-        sectionFromLocation,
       } from './account-dossier.js';
       import {
         ACCOUNT_DOSSIER_GLOSSARY as G,
-        ACCOUNT_DOSSIER_SECTIONS,
         ACCOUNT_DOSSIER_TOPIC_CONCEPTS,
         accountDossierGlossaryHref,
       } from './glossary-map.js';
-      import { bootGlossaryUx } from '../components/glossary-ux.js';
+      import { bootGlossaryUx, scrollGlossarySectionFromUrl } from '../components/glossary-ux.js';
+
+      let domainGlossary = null;
 
       const $ = id => document.getElementById(id);
       const esc = value =>
@@ -535,9 +556,8 @@
       }
 
       function scrollSectionFromUrl() {
-        const section = sectionFromLocation(window.location.href);
-        if (!section || !ACCOUNT_DOSSIER_SECTIONS.includes(section)) return;
-        document.getElementById(`ad-section-${section}`)?.scrollIntoView({ block: 'start' });
+        if (!domainGlossary) return;
+        scrollGlossarySectionFromUrl(domainGlossary);
       }
 
       function renderDossier(dossier) {
@@ -580,7 +600,12 @@
 
         const obs = dossier.observations || {};
         $('ad-metrics').innerHTML = [
-          ['Raises (window)', dossier.raiseCount, dossier.raiseCount > 0 ? 'info' : 'skip', G.changes],
+          [
+            'Raises (window)',
+            dossier.raiseCount,
+            dossier.raiseCount > 0 ? 'info' : 'skip',
+            G.changes,
+          ],
           [
             'Violations 30d',
             obs.violations30d ?? dossier.pattern?.violation_count_30d ?? '—',
@@ -602,7 +627,12 @@
             G.influence,
           ],
           ['Dimensions', obs.dimensions ?? '—', 'skip', G.telemetry],
-          ['Lifecycle', dossier.lifecycleStatus || '—', toneFor(dossier.lifecycleStatus), G.profile],
+          [
+            'Lifecycle',
+            dossier.lifecycleStatus || '—',
+            toneFor(dossier.lifecycleStatus),
+            G.profile,
+          ],
         ]
           .map(
             ([k, v, tone, concept]) =>
@@ -653,7 +683,8 @@
         </tbody></table>`;
 
         if (!dossier.traces.length) {
-          $('ad-traces').innerHTML = '<p class="ad-empty">No evidence traces on this account profile.</p>';
+          $('ad-traces').innerHTML =
+            '<p class="ad-empty">No evidence traces on this account profile.</p>';
         } else {
           $('ad-traces').innerHTML = `<table class="ad-table"><thead><tr>
             <th>When</th><th>Kind</th><th>Source</th><th>Detail</th>
@@ -870,7 +901,8 @@
             </p>`;
           }
           return '';
-        })();        if (!acctView && !acct) {
+        })();
+        if (!acctView && !acct) {
           $('ad-accounting').innerHTML = `${
             dossier.partnerCode
               ? `<p class="ad-empty">No accounting slice for CODE <code>${esc(dossier.partnerCode)}</code> in partners-ops.</p>`
@@ -941,8 +973,9 @@
       }
 
       async function boot() {
-        await bootGlossaryUx({
+        domainGlossary = await bootGlossaryUx({
           breadcrumbsMount: document.getElementById('account-glossary-crumbs'),
+          scrollSections: true,
         });
         const url = new URL(window.location.href);
         const hours = Number(url.searchParams.get('hours') || $('ad-hours').value || 168);

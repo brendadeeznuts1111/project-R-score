@@ -464,8 +464,11 @@ describe('account dossier portal wiring', () => {
     expect(html).toContain("from './account-dossier.js'");
     expect(html).toContain("from './glossary-map.js'");
     expect(html).toContain('bootGlossaryUx');
+    expect(html).toContain('scrollGlossarySectionFromUrl');
+    expect(html).toContain('scrollSections: true');
     expect(html).toContain('id="account-glossary-crumbs"');
     expect(html).toContain("breadcrumbsMount: document.getElementById('account-glossary-crumbs')");
+    expect(html).not.toContain('ad-section-${section}');
     expect(html).toContain('#account:');
     expect(html).toContain('section.partnersOuts');
     expect(html).toContain('section.partnersTelegram');

@@ -159,10 +159,11 @@ describe('account limit control surface', () => {
     expect(html).toContain('/portal/glossary/#glossary:ops.limits.profile');
     expect(html).toContain('/portal/limits/limit-profiles.js');
     expect(script).toContain("new URLPattern({ hash: 'account\\\\::account' })");
-    expect(script).toContain("new URLPattern({ hash: 'section\\\\::section' })");
     expect(script).toContain("new URLPattern({ pathname: '/portal/limits/' })");
     expect(script).toContain("from '../components/glossary-ux.js'");
     expect(script).toContain('bootGlossaryUx');
+    expect(script).toContain('scrollGlossarySectionFromUrl');
+    expect(script).toContain('scrollSections: true');
     expect(script).toContain('trackGlossaryEvent');
     expect(script).toContain('const GLOSSARY_CONCEPT_PATTERN =');
     expect(script).toContain("SPORT_GLOSSARY_CONCEPTS[sportKey] ?? 'ops.limits.sport'");
@@ -171,7 +172,6 @@ describe('account limit control surface', () => {
     );
     expect(script).toContain('encodeURIComponent(safeConcept)');
     expect(script).toContain('hash.groups.account');
-    expect(script).toContain('hash.groups.section');
     expect(script).toContain('url.searchParams.set(parameter, value)');
     expect(script).toContain('snapshot.accountProfiles');
     expect(script).toContain('policy.policyKey');
@@ -180,5 +180,6 @@ describe('account limit control surface', () => {
     expect(script).toContain("navigator.clipboard.writeText(url.href)");
     expect(script).toContain("history.pushState({ account: treeNodeId }, '', url)");
     expect(script).not.toContain('location.hash.slice');
+    expect(script).not.toContain('getElementById(section)');
   });
 });
