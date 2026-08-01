@@ -127,7 +127,8 @@ Policy: [`scripts/lib/env-secret-policy.ts`](../../../scripts/lib/env-secret-pol
 ## Secret Injection
 
 ```bash
-# Resolve env.template → project .env (loads agent PAT from .env.pass-tokens)
+# Resolve env.template → project .env. Linked worktrees reuse the primary
+# checkout's gitignored .env.pass-tokens; no PAT copy is required.
 bun run proton:inject:factorywager
 
 # Same + strip/replace derived keys in ~/.reasonix/.env (MCP / Reasonix)
@@ -225,7 +226,7 @@ source scripts/agent-env.sh <project>
 # Always set: PROTON_PASS_AGENT_REASON="why" on pass-cli calls
 ```
 
-Agent PATs (`pst_…`) live in gitignored **`.env.pass-tokens`** (or env). They are **not** the Cloudflare API token — they only authenticate `pass-cli` to vault shares via [`PROTON_PASS_PERSONAL_ACCESS_TOKEN`](https://protonpass.github.io/pass-cli/commands/login/#personal-access-token-login).
+Agent PATs (`pst_…`) live in gitignored **`.env.pass-tokens`** (or env). Linked Git worktrees discover the primary checkout's file through `git rev-parse --git-common-dir`; `PROTON_PASS_TOKEN_FILE` is the explicit machine-local override. PATs are **not** Cloudflare API tokens — they only authenticate `pass-cli` to vault shares via [`PROTON_PASS_PERSONAL_ACCESS_TOKEN`](https://protonpass.github.io/pass-cli/commands/login/#personal-access-token-login).
 
 Mint / grant (main account) — official [typical workflow](https://protonpass.github.io/pass-cli/commands/personal-access-token/#typical-workflow):
 

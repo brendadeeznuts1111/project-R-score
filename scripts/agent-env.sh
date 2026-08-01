@@ -1,4 +1,5 @@
 # Source this file for per-project Proton Pass agent access
+# shellcheck shell=bash
 # PATs should be set via environment variables or a .env file, NOT hardcoded here.
 #
 # Usage:
@@ -7,39 +8,51 @@
 #
 # Token sources (highest priority first):
 #   1. PROTON_PASS_<PROJECT>_TOKEN env var (e.g. PROTON_PASS_FACTORYWAGER_TOKEN)
-#   2. .env.pass-tokens file (gitignored)
+#   2. PROTON_PASS_TOKEN_FILE (explicit machine-local token file)
+#   3. .env.pass-tokens beside this checkout (gitignored)
+#   4. .env.pass-tokens beside the shared Git directory (worktree-safe)
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Load token overrides from .env.pass-tokens if it exists
-TOKEN_FILE="$SCRIPT_DIR/../.env.pass-tokens"
+# Load token overrides without copying a PAT into every Git worktree. A linked
+# worktree's common Git directory points back to the primary checkout, whose
+# sibling .env.pass-tokens remains the machine-local source.
+TOKEN_FILE="${PROTON_PASS_TOKEN_FILE:-$SCRIPT_DIR/../.env.pass-tokens}"
+if [ ! -f "$TOKEN_FILE" ] && command -v git >/dev/null 2>&1; then
+  COMMON_GIT_DIR="$(git -C "$SCRIPT_DIR/.." rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)"
+  if [ -n "$COMMON_GIT_DIR" ] && [ -f "$(dirname "$COMMON_GIT_DIR")/.env.pass-tokens" ]; then
+    TOKEN_FILE="$(dirname "$COMMON_GIT_DIR")/.env.pass-tokens"
+  fi
+fi
+# Machine-local token file selected above.
+# shellcheck disable=SC1090
 [ -f "$TOKEN_FILE" ] && source "$TOKEN_FILE"
 
 case "${1:-}" in
   factorywager)
     export PROTON_PASS_KEY_PROVIDER=fs
     export PROTON_PASS_SESSION_DIR="/tmp/pass-agent-factorywager"
-    TOKEN="${PROTON_PASS_FACTORYWAGER_TOKEN}"
+    TOKEN="${PROTON_PASS_FACTORYWAGER_TOKEN:-}"
     ;;
   cloudflare)
     export PROTON_PASS_KEY_PROVIDER=fs
     export PROTON_PASS_SESSION_DIR="/tmp/pass-agent-cloudflare"
-    TOKEN="${PROTON_PASS_CLOUDFLARE_TOKEN}"
+    TOKEN="${PROTON_PASS_CLOUDFLARE_TOKEN:-}"
     ;;
   bet-ticker)
     export PROTON_PASS_KEY_PROVIDER=fs
     export PROTON_PASS_SESSION_DIR="/tmp/pass-agent-bet-ticker"
-    TOKEN="${PROTON_PASS_BET_TICKER_TOKEN}"
+    TOKEN="${PROTON_PASS_BET_TICKER_TOKEN:-}"
     ;;
   cascade-mover)
     export PROTON_PASS_KEY_PROVIDER=fs
     export PROTON_PASS_SESSION_DIR="/tmp/pass-agent-cascade"
-    TOKEN="${PROTON_PASS_CASCADE_TOKEN}"
+    TOKEN="${PROTON_PASS_CASCADE_TOKEN:-}"
     ;;
   partners)
     export PROTON_PASS_KEY_PROVIDER=fs
     export PROTON_PASS_SESSION_DIR="/tmp/pass-agent-partners"
-    TOKEN="${PROTON_PASS_PARTNERS_TOKEN}"
+    TOKEN="${PROTON_PASS_PARTNERS_TOKEN:-}"
     ;;
   kalshi-bot|kalshi)
     export PROTON_PASS_KEY_PROVIDER=fs
