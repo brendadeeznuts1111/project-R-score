@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/guides/util/entrypoint — import.meta.main
 // @see https://bun.com/docs/bundler/bytecode#combining-with-other-optimizations — --minify
 /**
  * Optional portal CSS build — Bun lowers modern CSS (nesting, :lang/:is/:not,
@@ -27,6 +28,7 @@
  * @see https://bun.com/docs/bundler/html-static — HTML-entry auto-bundle (alt path)
  * @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
  */
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
 import { syncPortalTheme } from './sync-portal-theme.ts';
 
@@ -138,7 +140,7 @@ async function main(): Promise<void> {
   }
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   main().catch(e => {
     console.error(e instanceof Error ? e.message : e);
     process.exit(1);

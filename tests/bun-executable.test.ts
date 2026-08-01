@@ -12,6 +12,7 @@ import {
   isRunningUnderBun,
   resolveBunExecutable,
 } from '../lib/bun-executable.ts';
+import { joinPath } from '../lib/path-bun.ts';
 
 describe('lib/bun-executable (Utilities guides)', () => {
   test('resolveBunExecutable never returns bare bun', () => {
@@ -75,5 +76,20 @@ describe('lib/bun-executable (Utilities guides)', () => {
     const out = (await new Response(proc.stdout).text()).trim();
     await proc.exited;
     expect(out).toBe(Bun.version);
+  });
+});
+
+describe('entrypoint guard ratchet', () => {
+  test('check-entrypoint-guards passes baseline', async () => {
+    const proc = Bun.spawn(bunSpawnArgs(['scripts/check-entrypoint-guards.ts']), {
+      cwd: joinPath(import.meta.dir, '..'),
+      stdout: 'pipe',
+      stderr: 'pipe',
+      env: { ...Bun.env },
+    });
+    const code = await proc.exited;
+    const out = await new Response(proc.stdout).text();
+    expect(code).toBe(0);
+    expect(out).toContain('entrypoint guards OK');
   });
 });

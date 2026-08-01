@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/guides/util/entrypoint — import.meta.main
 // @see https://bun.com/docs/runtime/color#flexible-input — Bun.color (cli-chrome / shouldColor)
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth (doctor pretty)
 // @see https://bun.com/reference/bun/argv — Bun.argv
@@ -1479,4 +1480,4 @@ Examples:
   cliError(`Unknown command: ${cmd}\n\n${ROOT_HELP}`);
 }
 
-if (import.meta.main) main();
+if (isModuleEntrypoint(import.meta)) main();

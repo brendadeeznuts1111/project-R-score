@@ -121,7 +121,7 @@ Sidebar cluster under [guides/util](https://bun.com/docs/guides/util/upgrade) (1
 **Harness rules from this cluster**
 
 1. Nested `Bun.spawn` of bun → `resolveBunExecutable()` only (never bare `"bun"`). PATH-keyed cache is built in; Soft `from-ct` passes `env: { ...Bun.env }` (shallow copy, no parent mutate).
-2. CLI `if` guard → `isModuleEntrypoint(import.meta)` / `import.meta.main` (pass **caller** meta). Use `Bun.main` / `entrypointPath()` for the abs path string. No CJS `require.main` fallback (ESM-first).
+2. CLI `if` guard → `isModuleEntrypoint(import.meta)` / `import.meta.main` (pass **caller** meta). Use `Bun.main` / `entrypointPath()` for the abs path string. No CJS `require.main` fallback (ESM-first). New tools/: prefer `isModuleEntrypoint(import.meta)`; ratchet `bun scripts/check-entrypoint-guards.ts` (blocks new `import.meta.path === Bun.main`).
 3. Polling / retry delays → `sleep` / `sleepSync` in [`lib/time.ts`](../lib/time.ts) (`Bun.sleep`).
 4. HTML reports → `escapeHTML` wrapper; structural evidence compare → `deepEquals` wrapper.
 5. Password / API-key hashes → `SecurityUtils` / `Bun.password` (argon2id).

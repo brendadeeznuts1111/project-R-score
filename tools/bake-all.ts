@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/guides/util/entrypoint — import.meta.main
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
@@ -175,4 +176,4 @@ async function main(): Promise<void> {
   console.log('skipped (need vault session): ' + SKIPPED.join(' · '));
 }
 
-if (import.meta.main) await main();
+if (isModuleEntrypoint(import.meta)) await main();

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/guides/util/entrypoint — import.meta.main
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/reference/bun/semver/satisfies — Bun.semver.satisfies
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
@@ -494,6 +495,6 @@ async function main(): Promise<void> {
   process.exit(results.some(isHardFailure) ? 1 : 0);
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   await main();
 }

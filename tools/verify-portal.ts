@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/guides/util/entrypoint — import.meta.main
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
@@ -10,6 +11,7 @@
  *
  * @see docs/portal-foundation.md
  */
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { resolveServePublicVerifyBase } from '../lib/http/serve-public-bind.ts';
 import { collectPortalStaticViolations, PORTAL_ROOT_REL } from '../lib/portal-static-checks.ts';
@@ -256,7 +258,7 @@ async function main() {
   console.log('✅ portal verify passed');
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   main().catch(e => {
     console.error(e instanceof Error ? e.message : e);
     process.exit(1);
