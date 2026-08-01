@@ -1,3 +1,4 @@
+// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern
 import {
   ACCOUNT_DOSSIER_SURFACE_CONCEPTS,
   LIMIT_FIELD_CONCEPTS,
@@ -19,7 +20,7 @@ import { PORTAL_GLOSSARY_CONCEPT_HASH_INIT, PORTAL_SECTION_HASH_INIT } from './u
  */
 export type PortalGlossarySection = {
   hash: string;
-  domId: string;
+  domId: string; // brand-ok — HTML element id (board DOM), not a domain brand
   conceptId: PortalSemanticConceptKey;
 };
 
