@@ -22,6 +22,7 @@ Machine-readable proofs and operator bakes live on **Cloudflare Pages** (not thi
 | Telegram handshake | [telegram-handshake.json](https://score.factory-wager.com/registry/telegram-handshake.json) | `telegram:handshake:readiness --deep` |
 | Seat capital desk | [seat-capital-desk.json](https://score.factory-wager.com/registry/seat-capital-desk.json) | `seat:desk:refresh` |
 | TOC Ops | [toc-ops.json](https://score.factory-wager.com/registry/toc-ops.json) | `ops:seed:toc` |
+| Soft accounting export | [soft-accounting-export.json](https://score.factory-wager.com/registry/soft-accounting-export.json) | `soft:accounting:bake` · `:from-ct` · [`soft-handshake.md`](docs/design/soft-handshake.md) |
 | Monitoring | [monitoring.json](https://score.factory-wager.com/registry/monitoring.json) | `ops:snapshot` |
 | Limit raises | [limit-raises.json](https://score.factory-wager.com/registry/limit-raises.json) | `ops:snapshot` · multi-factor · [`partner-limits.md`](docs/harness/tenants/partner-limits.md) |
 | Doc index | [doc-index.json](https://score.factory-wager.com/registry/doc-index.json) | `bun run build:doc-index` |

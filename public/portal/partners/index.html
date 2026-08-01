@@ -772,6 +772,16 @@
               data-glossary-concept="ops.view.per_account"
               ><code>ops.view.per_account</code></a
             >
+            · Soft plays
+            <a
+              href="/portal/glossary/#glossary:ops.view.per_play"
+              data-glossary-concept="ops.view.per_play"
+              ><code>ops.view.per_play</code></a
+            >
+            from
+            <a href="/registry/soft-accounting-export.json" data-glossary-concept="ops.view.per_play"
+              ><code>soft-accounting-export.json</code></a
+            >
             (dossier:
             <a href="/portal/account/" data-glossary-concept="page.accountDossier">account board</a>).
             Deposit / withdraw proof lives in each package forum
@@ -786,7 +796,7 @@
               data-glossary-concept="telegram.surface.all_accounting"
               ><code>all-accounting</code></a
             >
-            surface.
+            surface. Soft Balance stays in toc-ops <code>ct</code>.
           </p>
           <div class="partners-panel" id="accounting-ledger">
             <table class="partners-table">
@@ -824,6 +834,52 @@
                 </tr>
               </thead>
               <tbody id="accounting-events-tbody"></tbody>
+            </table>
+            <h3 class="partners-subhead" style="margin-top: 16px" data-glossary-concept="ops.view.per_play">
+              Soft plays
+            </h3>
+            <p class="blurb">
+              Read-only slice from Soft export /
+              toc-ops fixture bake · dimension
+              <a href="/portal/glossary/#glossary:ops.view.per_play" data-glossary-concept="ops.view.per_play"
+                ><code>ops.view.per_play</code></a
+              >. Promote live with
+              <code>bun run soft:accounting:from-ct</code>.
+            </p>
+            <table class="partners-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>When</th>
+                  <th>Play</th>
+                  <th>Market</th>
+                  <th>Result</th>
+                  <th>Stake</th>
+                  <th>P&amp;L</th>
+                </tr>
+              </thead>
+              <tbody id="soft-plays-tbody"></tbody>
+            </table>
+            <h3 class="partners-subhead" style="margin-top: 16px" data-glossary-concept="ops.view.per_week">
+              Soft weeks
+            </h3>
+            <p class="blurb">
+              Derived from Soft plays when export <code>weeks[]</code> is empty ·
+              <a href="/portal/glossary/#glossary:ops.view.per_week" data-glossary-concept="ops.view.per_week"
+                ><code>ops.view.per_week</code></a
+              >.
+            </p>
+            <table class="partners-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>Week (UTC Mon)</th>
+                  <th>Stake Σ</th>
+                  <th>|P&amp;L| settled</th>
+                  <th>Net</th>
+                </tr>
+              </thead>
+              <tbody id="soft-weeks-tbody"></tbody>
             </table>
           </div>
           <p class="cli-row">
@@ -1035,8 +1091,62 @@
       let bookIndex = new Map();
       /** @type {Map<string, object>} */
       let opsByPartner = new Map();
+      /** @type {Map<string, object[]>} */
+      let softPlaysByPartner = new Map();
+      /** @type {object[]} */
+      let softWeekRows = [];
+      let softAccountingSource = 'unavailable';
+      /** @type {Record<string, string>} */
+      let colorsCache = {};
       let handshakeCache = null;
       let seatCache = null;
+
+      function weekStartIsoFromPlacedAt(placedAt) {
+        const ms = Date.parse(String(placedAt || ''));
+        if (!Number.isFinite(ms)) return null;
+        const d = new Date(ms);
+        const day = d.getUTCDay();
+        const mondayOffset = day === 0 ? -6 : 1 - day;
+        d.setUTCDate(d.getUTCDate() + mondayOffset);
+        const y = d.getUTCFullYear();
+        const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+        const dayNum = String(d.getUTCDate()).padStart(2, '0');
+        return `${y}-${m}-${dayNum}`;
+      }
+
+      /** Derive Soft week rows from plays when export.weeks is empty (dossier parity). */
+      function rollupSoftWeeksFromPlays(plays) {
+        const byKey = new Map();
+        for (const play of plays || []) {
+          const partnerCode = String(play?.partnerCode || '')
+            .trim()
+            .toUpperCase();
+          const weekStart = weekStartIsoFromPlacedAt(play?.placedAt);
+          if (!partnerCode || !weekStart) continue;
+          const key = `${partnerCode}|${weekStart}`;
+          let row = byKey.get(key);
+          if (!row) {
+            row = {
+              weekStart,
+              partnerCode,
+              deposits: 0,
+              settlements: 0,
+              net: 0,
+            };
+            byKey.set(key, row);
+          }
+          const stake = typeof play.stake === 'number' && Number.isFinite(play.stake) ? play.stake : 0;
+          const pnl = typeof play.pnl === 'number' && Number.isFinite(play.pnl) ? play.pnl : 0;
+          row.deposits += stake;
+          if (play.result !== 'pending') row.settlements += Math.abs(pnl);
+          row.net += pnl;
+        }
+        return [...byKey.values()].sort(
+          (a, b) =>
+            String(b.weekStart).localeCompare(String(a.weekStart)) ||
+            a.partnerCode.localeCompare(b.partnerCode)
+        );
+      }
 
       function esc(value) {
         const el = document.createElement('div');
@@ -1344,6 +1454,11 @@
         return map;
       }
 
+      function softPlayCount(partnerCode) {
+        const code = String(partnerCode || '').toUpperCase();
+        return softPlaysByPartner.get(code)?.length || 0;
+      }
+
       function renderAccounting(handshake, seat, ops) {
         const desks = deskByPartner(seat);
         const partners = Array.isArray(handshake?.rows) ? handshake.rows : [];
@@ -1355,13 +1470,18 @@
                 const done = (desk?.checklist || []).filter(c => c.done).length;
                 const total = (desk?.checklist || []).length;
                 const checklist = total ? `${done}/${total}` : '—';
+                const softN = softPlayCount(code);
                 return `<tr data-partner-code="${esc(code)}">
                 <td>${partnerLink(code)}</td>
                 <td><code>${esc(desk?.callSign || '—')}</code></td>
                 <td class="${fundTone(desk?.fundStatus)}">${esc(desk?.fundStatus || 'no intake')}</td>
                 <td class="${desk?.hasTelegramDesk ? 'tone-ok' : 'tone-warn'}">${desk?.hasTelegramDesk ? 'pinned' : 'missing'}</td>
                 <td class="${(desk?.incompleteOuts || 0) > 0 ? 'tone-warn' : ''}">${esc(desk?.incompleteOuts ?? '—')}</td>
-                <td>${esc(checklist)}</td>
+                <td>${esc(checklist)}${
+                  softN
+                    ? ` · ${conceptChip('ops.view.per_play', `${softN} soft plays`, colorsCache['ops.view.per_play'] || '')}`
+                    : ''
+                }</td>
                 <td><code>telegram:package-group:accounting -- ${esc(code)}</code></td>
               </tr>`;
               })
@@ -1395,6 +1515,49 @@
                 })
                 .join('')
             : '<tr><td colspan="7">No ledger events — bun run partners:event … then partners:build</td></tr>';
+        }
+
+        const softBody = $('soft-plays-tbody');
+        if (softBody) {
+          const softPlays = [];
+          for (const [code, plays] of softPlaysByPartner) {
+            for (const play of plays) softPlays.push({ partnerCode: code, ...play });
+          }
+          softPlays.sort((a, b) => String(b.placedAt || '').localeCompare(String(a.placedAt || '')));
+          softBody.innerHTML = softPlays.length
+            ? softPlays
+                .slice(0, 40)
+                .map(
+                  p => `<tr data-partner-code="${esc(p.partnerCode)}" data-glossary-concept="ops.view.per_play">
+                <td>${partnerLink(p.partnerCode)}</td>
+                <td><time>${esc(p.placedAt || '—')}</time></td>
+                <td><code>${esc(p.playId || '—')}</code></td>
+                <td>${esc(p.market || '—')}</td>
+                <td>${esc(p.result || '—')}</td>
+                <td>${esc(p.stake)}</td>
+                <td>${esc(p.pnl ?? '—')}</td>
+              </tr>`
+                )
+                .join('')
+            : `<tr><td colspan="7">No Soft plays — <code>bun run soft:accounting:bake</code> or <code>soft:accounting:from-ct</code> · source ${esc(softAccountingSource)}</td></tr>`;
+        }
+
+        const weeksBody = $('soft-weeks-tbody');
+        if (weeksBody) {
+          weeksBody.innerHTML = softWeekRows.length
+            ? softWeekRows
+                .slice(0, 40)
+                .map(
+                  w => `<tr data-partner-code="${esc(w.partnerCode)}" data-glossary-concept="ops.view.per_week">
+                <td>${partnerLink(w.partnerCode)}</td>
+                <td><code>${esc(w.weekStart || '—')}</code></td>
+                <td>${esc(w.deposits)}</td>
+                <td>${esc(w.settlements)}</td>
+                <td><strong>${esc(w.net)}</strong></td>
+              </tr>`
+                )
+                .join('')
+            : `<tr><td colspan="5">No Soft week rollups — bake Soft plays first · source ${esc(softAccountingSource)}</td></tr>`;
         }
       }
 
@@ -1534,7 +1697,11 @@
                 <td>${conceptChip('ops.limits.monitoring_status', `${limits.coveragePct || 0}% · ${limits.missing || 0} missing`, limitTone)}</td>
                 <td><span class="tracking-summary">${effectiveLimits.join('') || '—'}</span></td>
                 <td>${conceptChip('ops.view.account_freeplay', `${accounting.freeRollPercent || 0}% · ${accounting.freeRollApplied || 0} applied`, colors['ops.view.account_freeplay'] || colors['accounting.free_roll'])}</td>
-                <td><a href="${partnerAccountingHash(partner.code)}" data-glossary-concept="ops.view.account_summary">${esc(accounting.ledgerEvents || 0)} events</a></td>
+                <td><a href="${partnerAccountingHash(partner.code)}" data-glossary-concept="ops.view.account_summary">${esc(accounting.ledgerEvents || 0)} events</a>${
+                  softPlayCount(partner.code)
+                    ? ` · ${conceptChip('ops.view.per_play', `${softPlayCount(partner.code)} soft`, colors['ops.view.per_play'] || colors['telegram.topic.accounting'])}`
+                    : ''
+                }</td>
                 <td>${routeChip(partnerTelegramHash(partner.code, 'accounting'), `${communication.topicsConfigured || 0}/${communication.topicsRequired || 5} topics · ${communication.chatLinked ? 'linked' : 'unlinked'}`, communicationTone, 'telegram.handshake')}</td>
                 <td>${actions}</td>
               </tr>`;
@@ -1663,28 +1830,60 @@
 
       async function load() {
         try {
-          const [handshake, seat, catalog, taxonomy, ops, limitPatterns] = await Promise.all([
-            loadJson('/registry/telegram-handshake.json'),
-            loadJson('/registry/seat-capital-desk.json'),
-            loadJson('/registry/telegram-handshake-catalog.json'),
-            loadJson('/registry/scrape-wire-taxonomy.json'),
-            loadJson('/registry/partners-ops.json'),
-            loadJson('/registry/limit-raises.json'),
-          ]);
+          const [handshake, seat, catalog, taxonomy, ops, limitPatterns, softAccounting] =
+            await Promise.all([
+              loadJson('/registry/telegram-handshake.json'),
+              loadJson('/registry/seat-capital-desk.json'),
+              loadJson('/registry/telegram-handshake-catalog.json'),
+              loadJson('/registry/scrape-wire-taxonomy.json'),
+              loadJson('/registry/partners-ops.json'),
+              loadJson('/registry/limit-raises.json'),
+              loadJson('/registry/soft-accounting-export.json').catch(() => null),
+            ]);
           installColorTokens(ops.colors);
+          colorsCache = ops.colors || {};
           bookIndex = indexBooks(taxonomy);
           handshakeCache = handshake;
           seatCache = seat;
           opsByPartner = new Map(
             (ops.partners || []).map(p => [String(p.code || '').toUpperCase(), p])
           );
+          softAccountingSource = softAccounting?.source || 'unavailable';
+          softPlaysByPartner = new Map();
+          for (const play of softAccounting?.plays || []) {
+            const code = String(play?.partnerCode || '').toUpperCase();
+            if (!code) continue;
+            const list = softPlaysByPartner.get(code);
+            if (list) list.push(play);
+            else softPlaysByPartner.set(code, [play]);
+          }
+          const exportWeeks = Array.isArray(softAccounting?.weeks) ? softAccounting.weeks : [];
+          softWeekRows =
+            exportWeeks.length > 0
+              ? exportWeeks
+                  .map(w => ({
+                    weekStart: w.weekStart,
+                    partnerCode: String(w.partnerCode || '').toUpperCase(),
+                    deposits: w.deposits,
+                    settlements: w.settlements,
+                    net: w.net,
+                  }))
+                  .filter(w => w.partnerCode)
+                  .sort(
+                    (a, b) =>
+                      String(b.weekStart).localeCompare(String(a.weekStart)) ||
+                      a.partnerCode.localeCompare(b.partnerCode)
+                  )
+              : rollupSoftWeeksFromPlays(softAccounting?.plays || []);
           $('partners-meta').innerHTML =
             `Handshake <time>${esc(handshake.generatedAt || '—')}</time> · ` +
             `Seat desk <time>${esc(seat.generatedAt || '—')}</time> · ` +
             `Ops <time>${esc(ops.generatedAt || '—')}</time> · ` +
+            `Soft <time>${esc(softAccounting?.generatedAt || '—')}</time> (${esc(softAccountingSource)}) · ` +
             `<a href="/registry/telegram-handshake.json"><code>telegram-handshake.json</code></a> · ` +
             `<a href="/registry/seat-capital-desk.json"><code>seat-capital-desk.json</code></a> · ` +
             `<a href="/registry/partners-ops.json"><code>partners-ops.json</code></a> · ` +
+            `<a href="/registry/soft-accounting-export.json" data-glossary-concept="ops.view.per_play"><code>soft-accounting-export.json</code></a> · ` +
             `<a href="/registry/limit-raises.json"><code>limit-raises.json</code></a> · ` +
             `<a href="/portal/glossary/#glossary:telegram.wire"><code>telegram glossary</code></a>`;
           renderTopics(catalog, ops);
