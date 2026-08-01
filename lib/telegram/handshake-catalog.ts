@@ -356,6 +356,16 @@ export const TELEGRAM_GLOSSARY_CONCEPT_IDS = [
   'telegram.handshake',
   'telegram.membership',
   'telegram.topic_plan_row',
+  'telegram.message.incoming',
+  'telegram.message.outgoing',
+  'telegram.message.alert',
+  'telegram.message.command',
+  'telegram.message.receipt',
+  'telegram.status.delivered',
+  'telegram.status.failed',
+  'telegram.action.reply',
+  'telegram.action.forward',
+  'telegram.action.pin',
 ] as const;
 
 export function buildHandshakeColorMap() {

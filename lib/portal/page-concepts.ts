@@ -17,12 +17,13 @@ export const PORTAL_PAGE_CONCEPT_DEFINITIONS = [
     id: 'page.accountDossier',
     label: 'Account dossier',
     description:
-      'Portal page for one partner-tree account: identity, connected tree, location, monitoring, limit telemetry, outs, Telegram package-group readiness (handshake · topics · DM seat), and betlog exports. Bot: /dossier.',
+      'Portal page for one partner-tree account (ops.view.per_account): identity, connected tree, location, monitoring, limit telemetry, outs, Telegram package-group readiness, per-account accounting chrome, and betlog exports. Bot: /dossier.',
     synonyms: [
       'account dossier',
       'account breakdown',
       'node dossier',
       'telegram dossier',
+      'per-account accounting',
       '/dossier',
     ],
   },

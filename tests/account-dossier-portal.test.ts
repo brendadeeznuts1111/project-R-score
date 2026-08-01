@@ -54,6 +54,9 @@ describe('account dossier helpers', () => {
     expect(ACCOUNT_DOSSIER_SECTIONS).toContain('accounting');
     expect(ACCOUNT_DOSSIER_SECTIONS).toContain('activity');
     expect(ACCOUNT_DOSSIER_GLOSSARY.activity).toBe('partner.ops.event');
+    expect(ACCOUNT_DOSSIER_GLOSSARY.perAccount).toBe('ops.view.per_account');
+    expect(ACCOUNT_DOSSIER_GLOSSARY.accountDeposits).toBe('ops.view.account_deposits');
+    expect(ACCOUNT_DOSSIER_GLOSSARY.msgCommand).toBe('telegram.message.command');
   });
 
   test('resolves CODE / call-sign seeds onto account ids', () => {
@@ -125,6 +128,9 @@ describe('account dossier helpers', () => {
           row.kind === 'PACKAGE_CHAT' || row.kind === 'NEXT_STEP' || row.kind === 'DM_SEAT'
       )
     ).toBe(true);
+    expect(dossier.accountingView?.type).toBe('per_account');
+    expect(dossier.accountingView?.conceptIds.dimension).toBe('ops.view.per_account');
+    expect(dossier.accountingView?.conceptIds.deposits).toBe('ops.view.account_deposits');
   });
 
   test('includes depth-2 downlines from profile lineage when patterns are empty', () => {
@@ -326,6 +332,9 @@ describe('account dossier portal wiring', () => {
     expect(html).toContain('id="ad-section-accounting"');
     expect(html).toContain('id="ad-section-activity"');
     expect(html).toContain('/dossier CODE');
+    expect(html).toContain('ops.view.per_account');
+    expect(html).toContain('ops.view.account_deposits');
+    expect(html).toContain('telegram.message.command');
     expect(html).toContain('Connected tree');
     expect(html).toContain('Evidence traces');
     expect(html).toContain('Limit telemetry');

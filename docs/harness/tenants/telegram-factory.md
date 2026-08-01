@@ -141,8 +141,24 @@ is in `OPS_ADMIN_USER_IDS`. Seat capital desk root keyboard includes
 
 Board sections `#section:telegram` / `#section:accounting` / `#section:activity`
 join `partners-ops.json` + `telegram-handshake.json` (concepts:
-`page.accountDossier` · `section.partnersTelegram` · `telegram.handshake` ·
-`partner.ops.event`). Refresh bot menu after deploy: `bun run telegram:factory:setup`.
+`page.accountDossier` · `ops.view.per_account` · `section.partnersTelegram` ·
+`telegram.handshake` · `telegram.message.*` · `partner.ops.event`). Refresh bot
+menu after deploy: `bun run telegram:factory:setup`.
+
+### Ops reporting-view glossary (MVP)
+
+Factory overlay — events stay Kalshi-owned (`accounting.*` · `event.*`). Soft
+Balance / per-play ledgers stay in `toc-ops-repo`.
+
+| Shipped | Deferred |
+|---------|----------|
+| `ops.view.per_account` · `per_play` · `per_week` · `per_book_type` (dimensions) | Per-play field chrome (`play_stake`, …) |
+| `ops.view.account_summary` · `account_deposits` · `account_settlements` · `account_credit` · `account_freeplay` · `account_net` | Weekly composites / WoW / rolling windows |
+| `telegram.message.{incoming,outgoing,alert,command,receipt}` | Book-type deposit/settlement/fee rollups |
+| `telegram.status.{delivered,failed}` · `telegram.action.{reply,forward,pin}` | `telegram.status.read` · `ops.view.account_fees` · `account_high_water` |
+| Pure helper [`lib/telegram/ops-accounting-view.ts`](../../../lib/telegram/ops-accounting-view.ts) | `AccountingView` registry bake + validate-partners loops |
+
+Authority: [`lib/telegram/ops-view-glossary.ts`](../../../lib/telegram/ops-view-glossary.ts) · bake `bun run glossary:portal`.
 
 ## Bot API surface (this repo)
 

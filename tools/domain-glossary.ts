@@ -31,6 +31,7 @@ import { sportsBettingGlossaryConcepts } from '../lib/operations/sports-betting-
 import { sportsbookOpeningBaselineGlossaryConcepts } from '../lib/operations/sportsbook-opening-baseline.ts';
 import { telegramGlossaryConcepts } from '../lib/telegram/telegram-glossary.ts';
 import { partnerOpsGlossaryConcepts } from '../lib/telegram/partner-ops-glossary.ts';
+import { opsViewGlossaryConcepts } from '../lib/telegram/ops-view-glossary.ts';
 import {
   PARTNER_OPS_CONCEPT_COLORS,
   partnerOpsConceptColorWire,
@@ -188,6 +189,7 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
     ...sportsbookOpeningBaselineGlossaryConcepts(),
     ...telegramGlossaryConcepts(),
     ...partnerOpsGlossaryConcepts(),
+    ...opsViewGlossaryConcepts(),
   ].map(concept => ({
     id: concept.id,
     label: concept.label,
@@ -219,7 +221,9 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
                 ? 'Governed Telegram package-group, forum topic, seat desk, and handshake concept.'
                 : concept.source === 'lib/telegram/partner-ops-glossary.ts'
                   ? 'Governed partner-ops phase, book type, funding rail, out status, and accounting concept.'
-                  : 'Governed compliance policy and KPI concept.',
+                  : concept.source === 'lib/telegram/ops-view-glossary.ts'
+                    ? 'Governed ops reporting-view chrome (per-account / per-play / per-week / per-book-type).'
+                    : 'Governed compliance policy and KPI concept.',
     semanticType: concept.semanticType,
     uiRole: concept.uiRole,
     parentId: 'parentId' in concept ? (concept.parentId ?? null) : null,
@@ -302,6 +306,7 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
       telegramColorKernel: 'lib/telegram/telegram-color-kernel.ts',
       partnerOpsAuthority: 'lib/telegram/partner-ops-glossary.ts',
       partnerOpsColorKernel: 'lib/telegram/partner-ops-color-kernel.ts',
+      opsViewAuthority: 'lib/telegram/ops-view-glossary.ts',
       canonicalDump: DOMAIN_GLOSSARY_SOURCE_PATH,
       portalProjection: 'tools/domain-glossary.ts',
       colorKernel: 'public/portal/theme.jsonc',
