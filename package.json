@@ -2120,7 +2120,7 @@
     "validate:colors": "bun run portal:colors:check",
     "validate:colors:json": "bun tools/check-portal-color-kernels.ts --json",
     "validate:colors:strict": "bun tools/check-portal-color-kernels.ts --strict --ci",
-    "test:colors": "bun test tests/portal-color-kernel-align.test.ts && bun run validate:colors",
+    "test:colors": "bun test tests/portal-color-kernel-align.test.ts && bun run validate:colors:strict",
     "portal:theme:check": "bun tools/sync-portal-theme.ts --check && bun run portal:colors:check",
     "portal:css:build": "bun tools/build-portal-css.ts",
     "portal:css:build:minify": "bun tools/build-portal-css.ts --minify",

@@ -31,13 +31,19 @@ Required when this PR moves an owner of a [`CRITICAL_PROOF_PATHS`](../lib/harnes
 
 ## Color Kernel (when theme / kernels touched)
 
-- [ ] Theme-dark aliases align (`bun run validate:colors`)
+Required when this PR touches `theme.jsonc`, kernel palettes, or `claim-reporter` /
+`color-kernel-align` ([`color-kernel-paths.ts`](../lib/portal/color-kernel-paths.ts)).
+CI always runs `bun run validate:colors:strict` via `test:colors` (claim `color-kernel-theme-aliases`).
+
+- [ ] `bun run validate:colors` (or `validate:colors:strict`) exits 0
 - [ ] Extended keys left intentional (not forced onto theme SSOT)
+- [ ] Claim/Evidence paste below shows success
 
 ### Color Kernel Evidence
 
 ```text
 # paste: bun run validate:colors
+# expect: Claim: Color kernel theme-dark aliases are complete and conflict-free (theme v…).
 ```
 
 ## Checklist
