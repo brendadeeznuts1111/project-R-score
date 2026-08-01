@@ -110,6 +110,7 @@ on Bun **1.4.0** / this machine. Curated harvest for portal-cli:
 | `-b` / `--bun` | boolean | Force Bun for Node shebangs (symlink `node` → Bun) |
 | `--no-orphans` | boolean | Exit when parent dies; SIGKILL descendants (Linux/macOS) |
 | `--shell=<bun\|system>` | `bun` \| `system` | Shell for `package.json` scripts |
+| `--interactive` | boolean | Docs-listed: Node-compat REPL (`node:repl`). With `-e`, eval then REPL; `-e` is raw JS under this flag. **Not** `bun repl` (Bun-native). Absent from `bun run --help` on Bun 1.4.0 — verify before relying on it. |
 | `--smol` | boolean | Lower memory; GC more often |
 | `--expose-gc` | boolean | Expose `gc()` on global (no effect on `Bun.gc()`) |
 | `--no-deprecation` | boolean | Suppress custom deprecation reporting |
