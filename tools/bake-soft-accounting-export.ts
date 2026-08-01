@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/api/spawn#input — Bun.spawn
@@ -12,6 +13,7 @@
  *   bun run soft:accounting:from-ct  # ct soft-accounting-export → registry (soft-ct)
  *
  * Soft Balance mutations stay in toc-ops-repo `ct`.
+ * Override Soft checkout with `TOC_OPS_REPO=/abs/path/to/toc-ops-repo`.
  *
  * @see docs/design/soft-handshake.md
  * @see lib/telegram/soft-accounting-export.ts
@@ -30,7 +32,62 @@ import {
 const root = joinPath(import.meta.dir, '..');
 const outPath = joinPath(root, SOFT_ACCOUNTING_EXPORT_REL);
 const tocPath = joinPath(root, 'public/registry/toc-ops.json');
-const tocOpsRepo = joinPath(root, 'toc-ops-repo');
+
+/** Absolute bun binary — bare `bun` + missing cwd surfaces as posix_spawn ENOENT. */
+export function resolveBunExecutable(): string {
+  return Bun.which('bun') ?? process.execPath;
+}
+
+async function pathHasPackageJson(dir: string): Promise<boolean> {
+  return Bun.file(joinPath(dir, 'package.json')).exists();
+}
+
+/**
+ * Locate Soft `toc-ops-repo` for `ct soft-accounting-export`.
+ * Order: TOC_OPS_REPO → factoryRoot/toc-ops-repo → git common-dir sibling →
+ * `.codex-worktrees/<lane>/../../toc-ops-repo`.
+ */
+export async function resolveTocOpsRepo(factoryRoot = root): Promise<string> {
+  const tried: string[] = [];
+  const candidates: string[] = [];
+
+  const fromEnv = Bun.env.TOC_OPS_REPO?.trim();
+  if (fromEnv) candidates.push(fromEnv);
+  candidates.push(joinPath(factoryRoot, 'toc-ops-repo'));
+
+  try {
+    const proc = Bun.spawn(
+      ['git', '-C', factoryRoot, 'rev-parse', '--path-format=absolute', '--git-common-dir'],
+      { stdout: 'pipe', stderr: 'pipe', env: { ...Bun.env } }
+    );
+    const [stdout, exitCode] = await Promise.all([
+      new Response(proc.stdout).text(),
+      proc.exited,
+    ]);
+    if (exitCode === 0) {
+      const gitCommon = stdout.trim().replace(/\/$/, '');
+      if (gitCommon) {
+        // …/Projects/.git → …/Projects/toc-ops-repo
+        candidates.push(joinPath(gitCommon, '..', 'toc-ops-repo'));
+      }
+    }
+  } catch {
+    // git optional for env / sibling layouts
+  }
+
+  // Codex/agent worktrees: Projects/.codex-worktrees/<lane>
+  candidates.push(joinPath(factoryRoot, '..', '..', 'toc-ops-repo'));
+
+  for (const candidate of candidates) {
+    const abs = candidate;
+    tried.push(abs);
+    if (await pathHasPackageJson(abs)) return abs;
+  }
+
+  throw new Error(
+    `toc-ops-repo not found for soft:accounting:from-ct. Set TOC_OPS_REPO to the Soft checkout. Tried: ${tried.join(' · ')}`
+  );
+}
 
 function stableJson(value: SoftAccountingExport): string {
   return `${JSON.stringify(value, null, 2)}\n`;
@@ -136,12 +193,15 @@ export async function importSoftAccountingExportFromCt(): Promise<{
   available: boolean;
   source: 'soft-ct';
 }> {
+  const tocOpsRepo = await resolveTocOpsRepo(root);
+  const bunBin = resolveBunExecutable();
   const proc = Bun.spawn(
-    ['bun', 'run', 'ct', 'soft-accounting-export', '--out', outPath, '--json'],
+    [bunBin, 'run', 'ct', 'soft-accounting-export', '--out', outPath, '--json'],
     {
       cwd: tocOpsRepo,
       stdout: 'pipe',
       stderr: 'pipe',
+      env: { ...Bun.env },
     }
   );
   const [stdout, stderr, exitCode] = await Promise.all([
@@ -151,7 +211,7 @@ export async function importSoftAccountingExportFromCt(): Promise<{
   ]);
   if (exitCode !== 0) {
     throw new Error(
-      `ct soft-accounting-export failed (exit ${exitCode}): ${stderr || stdout}`.trim()
+      `ct soft-accounting-export failed (exit ${exitCode}) cwd=${tocOpsRepo} bun=${bunBin}: ${stderr || stdout}`.trim()
     );
   }
   const baked = (await Bun.file(outPath).json()) as SoftAccountingExport;

@@ -75,8 +75,9 @@ Committed demo bake uses `source: "toc-ops-fixture"`. Soft live export:
 ```bash
 # in toc-ops-repo (needs DATA_MODEL tip ≥ 2.30 — toc-ops#202)
 bun run ct soft-accounting-export --out ../public/registry/soft-accounting-export.json
-# or from FactoryWager root
+# or from FactoryWager root / worktree (resolves bun via Bun.which; Soft via TOC_OPS_REPO or git sibling)
 bun run soft:accounting:from-ct
+# TOC_OPS_REPO=/abs/path/to/toc-ops-repo bun run soft:accounting:from-ct
 ```
 
 `partners:governance` → `soft:accounting:check` accepts either exact fixture match
