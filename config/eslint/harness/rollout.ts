@@ -25,9 +25,13 @@ export const HARNESS_IGNORES = [
   'projects/**',
 ] as const;
 
+function normalizeRepoPath(file: string): string {
+  return file.replace(/\\/g, '/').replace(/^\.\//, '');
+}
+
 /** True when a repo-relative path belongs to the canonical harness lint scope. */
 export function isHarnessLintPath(file: string): boolean {
-  const normalized = file.replace(/\\/g, '/').replace(/^\.\//, '');
+  const normalized = normalizeRepoPath(file);
   if (normalized.startsWith('projects/')) return false;
   if (normalized.endsWith('.d.ts')) return false;
   if (!HARNESS_EXTENSIONS.some(extension => normalized.endsWith(`.${extension}`))) return false;
@@ -36,6 +40,26 @@ export function isHarnessLintPath(file: string): boolean {
     HARNESS_ENTRYPOINTS.some(entrypoint => normalized === entrypoint) ||
     HARNESS_ROOTS.some(root => normalized.startsWith(`${root}/`))
   );
+}
+
+/**
+ * Prettier write scope for pre-commit — lint paths plus tests that ESLint skips.
+ * Does not expand ESLint to tests; format-only.
+ */
+export function isHarnessFormatPath(file: string): boolean {
+  if (isHarnessLintPath(file)) return true;
+  const normalized = normalizeRepoPath(file);
+  if (normalized.startsWith('projects/')) return false;
+  if (normalized.endsWith('.d.ts')) return false;
+  if (!HARNESS_EXTENSIONS.some(extension => normalized.endsWith(`.${extension}`))) return false;
+  if (normalized.startsWith('tests/')) return true;
+  if (
+    HARNESS_ROOTS.some(root => normalized.startsWith(`${root}/`)) &&
+    /\.(?:test|spec|bench)\.tsx?$/.test(normalized)
+  ) {
+    return true;
+  }
+  return false;
 }
 
 /** Files already migrated — strict error tier. */
