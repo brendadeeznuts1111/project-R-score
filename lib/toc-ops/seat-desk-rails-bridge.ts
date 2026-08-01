@@ -101,10 +101,34 @@ export async function loadSeatDeskRailProjections(
   return out;
 }
 
+/** Recount confirmed/unconfirmed/seat-sourced rails across all partners. */
+function recomputeRailSummary(partners: readonly TocPartner[]): {
+  confirmedRails: number;
+  unconfirmedRails: number;
+  seatSourcedRails: number;
+} {
+  let confirmedRails = 0;
+  let unconfirmedRails = 0;
+  let seatSourcedRails = 0;
+  for (const p of partners) {
+    for (const r of p.rails) {
+      if (r.confirmed) confirmedRails++;
+      else unconfirmedRails++;
+      if (String(r.id).startsWith('seat-')) seatSourcedRails++;
+    }
+  }
+  return { confirmedRails, unconfirmedRails, seatSourcedRails };
+}
+
 /**
  * Overlay seat-derived rails onto TOC partners that share partnerCode.
  * Keeps Soft/demo rails that are not seat-sourced (`id` not starting with `seat-`).
  * Replaces prior `seat-*` rails from a previous bake.
+ *
+ * Also refreshes `summary.confirmedRails` / `unconfirmedRails` (previously
+ * computed pre-merge and undercounting seat rails) and adds
+ * `summary.seatSourcedRails` so ops/TOC glance can surface the overlay
+ * instead of leaving it invisible in the merged `partners[].rails[]` array.
  */
 export function mergeSeatDeskRailsIntoToc(
   snap: TocOpsSnapshot,
@@ -124,6 +148,10 @@ export function mergeSeatDeskRailsIntoToc(
   return {
     ...snap,
     partners,
+    summary: {
+      ...snap.summary,
+      ...recomputeRailSummary(partners),
+    },
     generatedAt: snap.generatedAt,
   };
 }

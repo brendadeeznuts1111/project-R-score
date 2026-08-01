@@ -1199,6 +1199,8 @@ function renderPartners(partners, assetBySign, limitBySign, raiseJoin) {
                 .map(
                   r =>
                     `<li><code>${esc(r.label)}</code> ${r.confirmed ? pill('confirmed', 'ok') : pill('unconfirmed', 'hot')}${
+                      String(r.id || '').startsWith('seat-') ? ` ${pill('seat desk', 'dim')}` : ''
+                    }${
                       r.dailyLimit != null
                         ? `<div class="toc-sub">daily ${money(r.dailyLimit)} · monthly ${money(r.monthlyLimit)}</div>`
                         : ''
@@ -1607,6 +1609,11 @@ function render(
         <div class="toc-stat"><span class="k">Onboarding</span><span class="v">${s.onboarding ?? 0}</span></div>
         <div class="toc-stat"><span class="k">Playable</span><span class="v">${buf.playableDrums ?? 0}</span></div>
         <div class="toc-stat"><span class="k">Rails ok / pending</span><span class="v">${s.confirmedRails ?? 0}/${s.unconfirmedRails ?? 0}</span></div>
+        ${
+          s.seatSourcedRails > 0
+            ? `<div class="toc-stat dim"><span class="k">Seat-desk rails</span><span class="v">${s.seatSourcedRails}</span></div>`
+            : ''
+        }
         <div class="toc-stat"><span class="k">ONB / LIMIT</span><span class="v">${s.openOnb ?? 0}/${s.openLimit ?? 0}</span></div>
         <div class="toc-stat"><span class="k">Plays pend / set</span><span class="v">${s.playsPending ?? 0}/${s.playsSettled ?? 0}</span></div>
         <div class="toc-stat ${enf?.failed ? 'hot' : ''}"><span class="k">Gate fails</span><span class="v">${enf?.failed ?? '—'}</span></div>
