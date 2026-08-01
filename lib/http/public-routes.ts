@@ -460,7 +460,7 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     category: 'portal',
     kind: 'file-static',
     okStatuses: [200],
-    note: '/registry/domain-glossary.json schema v2 · semantic-type search · URLPattern.hash deep links',
+    note: '/registry/domain-glossary.json schema v3 · sections[] hash/domId/conceptId · URLPattern.hash deep links',
   },
   {
     path: '/registry/domain-glossary.json',

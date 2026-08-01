@@ -3,14 +3,15 @@
 Portal: [/portal/glossary/](/portal/glossary/) Machine artifact:
 [/registry/domain-glossary.json](/registry/domain-glossary.json)
 
-The schema-v2 portal projection combines the canonical Kalshi-bot domain
+The schema-v3 portal projection combines the canonical Kalshi-bot domain
 glossary with the typed portal field vocabulary from
 `lib/portal/semantic-vocabulary.ts`, plus governed sports-betting concepts from
 `lib/operations/sports-betting-glossary.ts` (`sport.*` · `league.*` · `event.*`
 · `market.*` · `metric.*` · `cross_market.*` · `evidence.*` · `multi.*`). It
 includes market, model, tournament, warehouse, trading, UI, and pipeline
 concepts, plus registry-column lineage and cross-portal semantic types and UI
-roles.
+roles. Surface mounts are first-class: `surfaces[].sections` is
+`{ hash, domId, conceptId }[]` (SSOT: `lib/portal/page-glossary.ts`).
 
 `Concept kind` describes provenance (`ui`, `registry`, `composite`).
 `Semantic type` describes the stable data role. `UI role` describes rendering.
