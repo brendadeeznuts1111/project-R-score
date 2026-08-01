@@ -30,7 +30,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Repeat failure → earliest owner → [`FEEDBACK.md`](FEEDBACK.md)
 - Lanes / push / credentials / irreversible ops → [`AUTHORITY.md`](AUTHORITY.md)
 - Read this index in-terminal (zero-overhead) → `bun ./docs/harness/README.md` · `bun run docs:harness`
-- Discover day-loop + ratchet status (live) → `bun run harness:status` (local ratchets + timings SSOT · `ansiMarkdown`) · `--table` · `--show-actions-noise`
+- Discover day-loop + ratchet status (live) → `bun run harness:status` (local ratchets + timings SSOT · `Bun.markdown.ansi`) · `--table` · `--show-actions-noise`
 - Bun.cron (OS-persistent primary · in-process complement) → `bun run docs:cron` · [`cron.md`](cron.md) · `bun run test:cron` · `bun run test:cron-os`
 - Spine multi-tenant (docs-integrity + install-verify) → `bun run spine:schedule:once` · claim `spine-multi-tenant` · [`cron.md`](cron.md)
 - Spine maintenance runbooks (typed signal · intervention · proof · retirement) → `bun run test:tenant-runbooks` · [`spine-tenants.md`](spine-tenants.md) · claim `spine-maintenance-runbooks` · agent-operated discovery tenants (reference · public-plane) indexed there
@@ -166,7 +166,7 @@ Full map: [`day-loop.md`](day-loop.md) · curated Bun flags NOTE: [`../guides/bu
 
 ```bash
 bun run docs:harness            # this index → bun ./file.md (native ANSI, no VM)
-bun run harness:status          # local ratchets + timings SSOT (ansiMarkdown)
+bun run harness:status          # local ratchets + timings SSOT (Bun.markdown.ansi)
 #   bun run harness:status -- --table              # Bun.inspect family map + inspect.table
 #   bun run harness:status -- --show-actions-noise # unmute GHA 0-step / billing checks
 bun run help
@@ -193,7 +193,7 @@ bun run build:defines           # AST --define BUILD_* + DEBUG=false (prod DCE);
 
 `test:affected` = workspaces; `test:changed` = import-graph ([`bun-test-changed.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/scripts/bun-test-changed.ts)). Empty set exits 0. Docs: [v1.3.13 `--isolate` / `--parallel`](https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel) · [`--shard`](https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs) · [`--changed`](https://bun.com/blog/bun-v1.3.13#bun-test-changed).
 
-Terminal markdown: static files via `bun ./file.md`; live CLIs via `ansiMarkdown` / `Bun.markdown.ansi` ([`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md) · [markdown ANSI](https://bun.com/docs/runtime/markdown#ansi-terminal-output)). Opt-in inspect family: `bun run harness:status -- --table` ([`Bun.inspect`](https://bun.com/docs/runtime/utils#bun-inspect) · [`custom`](https://bun.com/docs/runtime/utils#bun-inspect-custom) · [`table`](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options)). Actions 0-step / billing checks stay muted; `--show-actions-noise` to show. When Actions is offline, local merge proof remains `bun run ci:core` ([AUTHORITY.md](AUTHORITY.md)).
+Terminal markdown: static files via `bun ./file.md`; live CLIs via `Bun.markdown.ansi` ([`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md) · [markdown ANSI](https://bun.com/docs/runtime/markdown#ansi-terminal-output)). Opt-in inspect family: `bun run harness:status -- --table` ([`Bun.inspect`](https://bun.com/docs/runtime/utils#bun-inspect) · [`custom`](https://bun.com/docs/runtime/utils#bun-inspect-custom) · [`table`](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options)). Actions 0-step / billing checks stay muted; `--show-actions-noise` to show. When Actions is offline, local merge proof remains `bun run ci:core` ([AUTHORITY.md](AUTHORITY.md)).
 
 ## Local theses (FactoryWager)
 

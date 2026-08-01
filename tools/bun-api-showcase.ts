@@ -78,7 +78,7 @@
 import { Database } from 'bun:sqlite';
 import { cc, FFIType, suffix } from 'bun:ffi';
 import { formatCliTable } from './cli-table.ts';
-import { ansiMarkdown, colorize, inspectTable } from '../lib/console-depth.ts';
+import { colorize, inspectTable } from '../lib/console-depth.ts';
 
 export type ShowcaseGate = 'offline' | 'network' | 'env' | 'ui';
 
@@ -320,7 +320,7 @@ export const SHOWCASE_DEMOS: readonly ShowcaseDemo[] = [
       const pkg = (await Bun.file(join(dir, 'package.json')).json()) as { version: string };
       const ok = Bun.semver.satisfies(pkg.version, '^1.0.0');
       const md = `# Release ${pkg.version}\n\n- Feature A\n- Fix B\n`;
-      const ansi = ansiMarkdown(md);
+      const ansi = Bun.markdown.ansi(md);
       const mark = ok ? '#00ff00' : '#ff0000';
       log(`${colorize('Semver', '#00ffff')} ${colorize(ok ? 'OK' : 'FAIL', mark)}\n${ansi}`);
       if (!ok) throw new Error('semver should satisfy ^1.0.0');

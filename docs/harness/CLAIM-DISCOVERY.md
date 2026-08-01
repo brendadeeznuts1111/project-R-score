@@ -180,7 +180,7 @@ List the new scripts and their commands.
 
 ```json
 "test:<id>": "bun test tests/journey/…",
-"docs:<id>": "bun run scripts/docs-…"
+"docs:<id>": "bun ./docs/harness/….md"
 ```
 
 ---

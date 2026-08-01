@@ -6,7 +6,6 @@
  *
  *   bun run docs:fresh-rerun
  */
-import { ansiMarkdown } from '../lib/console-depth';
 import { CRITICAL_PROOF_PATHS } from '../lib/harness/proof';
 import { joinPath } from '../lib/path-bun';
 
@@ -23,5 +22,5 @@ const catalog = [
   '',
 ].join('\n');
 
-process.stdout.write(ansiMarkdown(body + catalog));
+process.stdout.write(Bun.markdown.ansi(body + catalog));
 process.stdout.write('\n');

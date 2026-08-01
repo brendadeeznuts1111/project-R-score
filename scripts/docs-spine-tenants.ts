@@ -6,7 +6,6 @@
  *
  *   bun run docs:spine-tenants
  */
-import { ansiMarkdown } from '../lib/console-depth';
 import { MAINTENANCE_RUNBOOKS, RETIRED_TENANT_RUNBOOKS } from '../lib/harness/maintenance';
 import { joinPath } from '../lib/path-bun';
 import { SPINE_TENANTS } from '../spine/tenants';
@@ -48,5 +47,5 @@ const catalog = [
   '',
 ].join('\n');
 
-process.stdout.write(ansiMarkdown(body + catalog));
+process.stdout.write(Bun.markdown.ansi(body + catalog));
 process.stdout.write('\n');
