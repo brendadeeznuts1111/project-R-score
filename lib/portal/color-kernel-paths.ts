@@ -6,6 +6,7 @@
 const COLOR_KERNEL_EXACT = new Set([
   'public/portal/theme.jsonc',
   'public/portal/theme-tokens.css',
+  'lib/portal/claim-reporter.ts',
   'lib/portal/color-kernel-align.ts',
   'lib/portal/color-kernel-paths.ts',
   'lib/portal/portal-kernel-palette.ts',

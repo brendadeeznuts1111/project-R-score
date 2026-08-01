@@ -5,6 +5,8 @@ import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import {
   assessColorKernelAlign,
   COLOR_KERNEL_COUNT_FLOORS,
+  COLOR_KERNEL_THEME_SOURCE,
+  collectColorKernelEvidence,
   colorKernelClaimReport,
   formatColorKernelClaimReport,
   GLOSSARY_EXTENDED_KEYS,
@@ -36,19 +38,45 @@ describe('portal color-kernel align', () => {
     expect(PARTNER_OPS_COLORS.research).toBeTruthy();
   });
 
-  test('colorKernelClaimReport passes floors and status', () => {
-    const report = colorKernelClaimReport();
+  test('collectColorKernelEvidence is typed and populated', () => {
+    const ev = collectColorKernelEvidence();
+    expect(ev.chrome.version).toBe(portalTheme.version);
+    expect(ev.chrome.tokens.length).toBeGreaterThanOrEqual(
+      COLOR_KERNEL_COUNT_FLOORS['chrome.darkTokens']
+    );
+    expect(ev.glossary.aliases.length).toBeGreaterThanOrEqual(
+      COLOR_KERNEL_COUNT_FLOORS['glossary.themeAliases']
+    );
+    expect(ev.partnerOps.mappings).toBeGreaterThan(0);
+    expect(ev.telegram.topicRoles).toBeGreaterThan(0);
+  });
+
+  test('colorKernelClaimReport passes floors and ClaimReport shape', () => {
+    const report = colorKernelClaimReport(undefined, {
+      argv: ['bun', 'validate:colors'],
+      timestamp: '2026-08-01T00:00:00.000Z',
+    });
     expect(report.ok).toBe(true);
     expect(report.status).toBe('pass');
+    expect(report.timestamp).toBe('2026-08-01T00:00:00.000Z');
+    expect(report.meta.source).toBe(COLOR_KERNEL_THEME_SOURCE);
+    expect(report.meta.version).toBe(portalTheme.version);
     expect(report.claim).toContain('complete and conflict-free');
     expect(report.claim).toContain(`theme v${portalTheme.version}`);
     expect(report.evidence.length).toBeGreaterThanOrEqual(4);
+    expect(Array.isArray(report.checks)).toBe(true);
+
     for (const id of Object.keys(COLOR_KERNEL_COUNT_FLOORS) as ColorKernelCheckId[]) {
-      const check = report.checks[id];
-      expect(check.expectedMin).toBe(COLOR_KERNEL_COUNT_FLOORS[id]);
-      expect(check.actual).toBeGreaterThanOrEqual(check.expectedMin);
-      expect(check.ok).toBe(true);
+      const floor = report.floors[id];
+      expect(floor.expectedMin).toBe(COLOR_KERNEL_COUNT_FLOORS[id]);
+      expect(floor.actual).toBeGreaterThanOrEqual(floor.expectedMin);
+      expect(floor.ok).toBe(true);
+      const check = report.checks.find(c => c.id === id);
+      expect(check?.passed).toBe(true);
+      expect(check?.expected).toBe(COLOR_KERNEL_COUNT_FLOORS[id]);
     }
+    expect(report.checks.some(c => c.id === 'theme-dark-aliases' && c.passed)).toBe(true);
+
     const text = formatColorKernelClaimReport(report);
     expect(text).toContain('Claim:');
     expect(text).toContain('Evidence:');
@@ -68,7 +96,7 @@ describe('portal color-kernel align', () => {
     expect(out).toContain('complete and conflict-free');
   });
 
-  test('check CLI --json emits machine report', () => {
+  test('check CLI --json emits ClaimReport machine shape', () => {
     const proc = Bun.spawnSync(bunSpawnArgs(['tools/check-portal-color-kernels.ts', '--json']), {
       cwd: `${import.meta.dir}/..`,
       stdout: 'pipe',
@@ -78,15 +106,38 @@ describe('portal color-kernel align', () => {
     const parsed = JSON.parse(proc.stdout.toString()) as {
       status: string;
       ok: boolean;
-      checks: Record<string, { expectedMin: number; actual: number; ok: boolean }>;
+      timestamp: string;
+      checks: Array<{ id: string; expected: number; actual: number; passed: boolean; diff: number }>;
+      meta: { source: string; version: string; env: string };
+      floors: Record<string, { expectedMin: number; actual: number; ok: boolean }>;
     };
     expect(parsed.status).toBe('pass');
     expect(parsed.ok).toBe(true);
+    expect(parsed.meta.source).toBe(COLOR_KERNEL_THEME_SOURCE);
+    expect(parsed.timestamp).toBeTruthy();
+    expect(Array.isArray(parsed.checks)).toBe(true);
     for (const id of Object.keys(COLOR_KERNEL_COUNT_FLOORS)) {
-      expect(parsed.checks[id]?.ok).toBe(true);
-      expect(parsed.checks[id]?.expectedMin).toBe(
+      expect(parsed.floors[id]?.ok).toBe(true);
+      expect(parsed.floors[id]?.expectedMin).toBe(
         COLOR_KERNEL_COUNT_FLOORS[id as ColorKernelCheckId]
       );
+      const check = parsed.checks.find(c => c.id === id);
+      expect(check?.passed).toBe(true);
+      expect(check?.expected).toBe(COLOR_KERNEL_COUNT_FLOORS[id as ColorKernelCheckId]);
     }
+  });
+
+  test('lib entrypoint --json exits 0', () => {
+    const proc = Bun.spawnSync(
+      bunSpawnArgs(['lib/portal/color-kernel-align.ts', '--json']),
+      {
+        cwd: `${import.meta.dir}/..`,
+        stdout: 'pipe',
+        stderr: 'pipe',
+      }
+    );
+    expect(proc.exitCode).toBe(0);
+    const parsed = JSON.parse(proc.stdout.toString()) as { status: string };
+    expect(parsed.status).toBe('pass');
   });
 });

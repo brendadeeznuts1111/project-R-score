@@ -7,6 +7,7 @@ bun run help                 # categorized commands (SSOT)
 bun run help --verbose
 bun run cli:docs             # regenerate full docs/CLI.md from package.json
 bun run validate:colors      # color-kernel Claim/Evidence (theme-dark aliases)
+bun run validate:colors:json # ClaimReport JSON (Bun.write stdout)
 bun run test:colors          # unit + validate smoke (claim color-kernel-theme-aliases)
 ```
 

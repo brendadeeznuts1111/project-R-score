@@ -111,6 +111,8 @@ export const CLI_SPECIAL: Record<string, string> = {
   'portal:theme:check': 'theme-tokens.css stale + portal:colors:check (aliases + floors)',
   'portal:colors:check': 'Color kernel Claim/Evidence (theme-dark aliases · floors)',
   'validate:colors': 'Alias of portal:colors:check — PR paste / --json machine report',
+  'validate:colors:json': 'ClaimReport JSON via Bun.write(stdout) (status · checks · meta)',
+  'validate:colors:strict': 'validate:colors with --strict --ci (fail-closed)',
   'test:colors': 'Unit + validate:colors smoke (claim color-kernel-theme-aliases)',
   'docs:cron': 'Cron contract in-terminal (bun ./docs/harness/cron.md)',
   'docs:install-verify':
