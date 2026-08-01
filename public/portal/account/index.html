@@ -842,8 +842,7 @@
             </p>`;
           }
           return '';
-        })();
-        if (!acctView && !acct) {
+        })();        if (!acctView && !acct) {
           $('ad-accounting').innerHTML = `${
             dossier.partnerCode
               ? `<p class="ad-empty">No accounting slice for CODE <code>${esc(dossier.partnerCode)}</code> in partners-ops.</p>`

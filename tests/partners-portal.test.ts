@@ -49,6 +49,9 @@ describe('partners portal board', () => {
     expect(html).toContain('Accounting deals');
     expect(html).toContain('ops.view.per_account');
     expect(html).toContain('data-glossary-concept="ops.view.per_account"');
+    expect(html).toContain('ops.view.per_play');
+    expect(html).toContain('soft-plays-tbody');
+    expect(html).toContain('soft-accounting-export.json');
     expect(html).toContain('Partner messages');
     expect(html).toContain('seat:desk:partner-message');
     expect(html).toContain('renderPartnerMessages');
@@ -101,6 +104,7 @@ describe('partners portal board', () => {
     expect(await Bun.file('public/registry/seat-capital-desk.json').exists()).toBe(true);
     expect(await Bun.file('public/registry/telegram-handshake-catalog.json').exists()).toBe(true);
     expect(await Bun.file('public/registry/partners-ops.json').exists()).toBe(true);
+    expect(await Bun.file('public/registry/soft-accounting-export.json').exists()).toBe(true);
     const handshake = await Bun.file('public/registry/telegram-handshake.json').json();
     const seat = await Bun.file('public/registry/seat-capital-desk.json').json();
     const catalog = await Bun.file('public/registry/telegram-handshake-catalog.json').json();

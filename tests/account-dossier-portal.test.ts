@@ -172,6 +172,36 @@ describe('account dossier helpers', () => {
     expect(dossier.accountingView?.conceptIds.deposits).toBe('ops.view.account_deposits');
   });
 
+  test('weaves Soft plays from soft-accounting-export onto ASH dossier', async () => {
+    const [limitRaises, partnersOps, handshake, softAccounting] = await Promise.all([
+      Bun.file('public/registry/limit-raises.json').json(),
+      Bun.file('public/registry/partners-ops.json').json(),
+      Bun.file('public/registry/telegram-handshake.json').json(),
+      Bun.file('public/registry/soft-accounting-export.json').json(),
+    ]);
+    const ash = partnersOps.partners.find((row: { code: string }) => row.code === 'ASH');
+    const seed =
+      ash?.callSign ||
+      limitRaises.accountProfiles?.profiles?.find(
+        (row: { callSign?: string }) => String(row.callSign || '').startsWith('ASH')
+      )?.treeNodeId ||
+      'ASH';
+    const accountId = resolveAccountId(seed, collectAccountIds(limitRaises));
+    const dossier = buildAccountDossier({
+      accountId,
+      limitRaises,
+      partnersOps,
+      handshake,
+      softAccounting,
+      hours: 168,
+    });
+    expect(dossier.partnerCode).toBe('ASH');
+    expect(dossier.softPlays?.available).toBe(true);
+    expect(dossier.softPlays?.conceptId).toBe('ops.view.per_play');
+    expect(dossier.softPlays?.playCount).toBeGreaterThan(0);
+    expect(dossier.links.softAccounting).toBe('/registry/soft-accounting-export.json');
+  });
+
   test('includes depth-2 downlines from profile lineage when patterns are empty', () => {
     const partner = 'partner-root-id';
     const agent = 'agent-mid-id';
@@ -372,6 +402,8 @@ describe('account dossier portal wiring', () => {
     expect(html).toContain('id="ad-section-activity"');
     expect(html).toContain('/dossier CODE');
     expect(html).toContain('ops.view.per_account');
+    expect(html).toContain('ops.view.per_play');
+    expect(html).toContain('soft-accounting-export.json');
     expect(html).toContain('ops.view.account_deposits');
     expect(html).toContain('telegram.message.command');
     expect(html).toContain('Connected tree');

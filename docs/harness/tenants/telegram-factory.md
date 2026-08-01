@@ -156,11 +156,11 @@ Balance / per-play ledgers stay in `toc-ops-repo`.
 | `ops.view.account_summary` · `account_deposits` · `account_settlements` · `account_credit` · `account_freeplay` · `account_net` | Weekly composites / WoW / rolling windows |
 | `telegram.message.{incoming,outgoing,alert,command,receipt}` | Book-type deposit/settlement/fee rollups |
 | `telegram.status.{delivered,failed}` · `telegram.action.{reply,forward,pin}` | `telegram.status.read` · `ops.view.account_fees` · `account_high_water` |
-| Pure helper [`lib/telegram/ops-accounting-view.ts`](../../../lib/telegram/ops-accounting-view.ts) + `validateOpsAccountingViewShape` + `partners:validate` · dossier JS summary-parity | Full `AccountingView` registry bake / Soft play·week·book builders |
-| Dossier + partners ledger: event codes → `event.*` via generated [`partner-ops-event-concepts.js`](../../../public/portal/components/partner-ops-event-concepts.js) (`partners:event-concepts:bake`) | Soft MessageLog / play ledger surfaces |
+| Pure helper [`lib/telegram/ops-accounting-view.ts`](../../../lib/telegram/ops-accounting-view.ts) + `validateOpsAccountingViewShape` + Soft wire [`soft-accounting-export.ts`](../../../lib/telegram/soft-accounting-export.ts) · dossier/partners Soft plays chrome | Soft `byBookType` builders · live `source: soft-ct` bake when Soft DB aligned |
+| Dossier + partners ledger: event codes → `event.*` via generated [`partner-ops-event-concepts.js`](../../../public/portal/components/partner-ops-event-concepts.js) (`partners:event-concepts:bake`) | Soft MessageLog / Soft Balance mutations (stay in toc-ops `ct`) |
 
 Authority: [`lib/telegram/ops-view-glossary.ts`](../../../lib/telegram/ops-view-glossary.ts) · bake `bun run glossary:portal`.
-Soft wire v1 (read-only export + per-play dimension): [`docs/design/soft-handshake.md`](../../design/soft-handshake.md) · `soft:accounting:check` in `partners:governance`. Week/book builders + dossier chrome wait on Soft-tagged rows; **no new glossary IDs**.
+Soft handshake + board Soft plays chrome: [`docs/design/soft-handshake.md`](../../design/soft-handshake.md) · `soft:accounting:check` in `partners:governance`. Book-type builders wait on Soft `byBookType`; **no new glossary IDs** — collapse via `OPS_VIEW_COLLAPSE_BACKLOG`.
 
 ## Bot API surface (this repo)
 
