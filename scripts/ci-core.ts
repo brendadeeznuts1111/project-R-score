@@ -32,6 +32,10 @@ const CORE_STEPS: Array<{ name: string; cmd: string[] }> = [
     cmd: ['bun', 'run', 'hygiene'],
   },
   {
+    name: 'native-docs',
+    cmd: ['bun', 'run', 'docs:native:check'],
+  },
+  {
     name: 'import-graph',
     cmd: ['bun', 'scripts/check-import-graph.ts'],
   },

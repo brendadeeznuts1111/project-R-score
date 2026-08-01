@@ -47,6 +47,30 @@ function isDocMapPath(file: string): boolean {
   return DOC_MAP_SSOT.has(file.replace(/^\.\//, ''));
 }
 
+const NATIVE_CAPABILITIES_SYNC_PATHS = new Set([
+  'docs/BUN_NATIVE_CAPABILITIES.md',
+  'lib/docs/bun-native-capabilities-sync.ts',
+  'tools/bun-native-capabilities-sync.ts',
+  'tests/bun-native-capabilities-sync.test.ts',
+  '.agents/skills/ast-grep/bun-patterns.json',
+]);
+
+function isNativeCapabilitiesSyncPath(file: string): boolean {
+  return NATIVE_CAPABILITIES_SYNC_PATHS.has(file.replace(/^\.\//, ''));
+}
+
+async function stagedPatchIncludes(files: string[], needle: string): Promise<boolean> {
+  if (files.length === 0) return false;
+  const proc = Bun.spawn(['git', 'diff', '--cached', '-U0', '--', ...files], {
+    cwd: repoRoot,
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
+  const patch = await new Response(proc.stdout).text();
+  const code = await proc.exited;
+  return code === 0 && patch.includes(needle);
+}
+
 /** Pages static plane — portal/registry/monitoring shells. */
 function isPublicPlanePath(file: string): boolean {
   const n = file.replace(/^\.\//, '');
@@ -230,6 +254,10 @@ async function main(): Promise<void> {
   /** Lint scope ∪ tests / *.test.ts — Prettier only (ESLint stays on harnessFiles). */
   const formatFiles = staged.filter(isHarnessFormatPath);
   const docMapFiles = staged.filter(isDocMapPath);
+  const nativeCapabilitiesFiles = staged.filter(isNativeCapabilitiesSyncPath);
+  const nativeCapabilitiesTriggered =
+    nativeCapabilitiesFiles.length > 0 ||
+    (await stagedPatchIncludes(harnessFiles, 'Bun.markdown.'));
 
   async function runPrettierWrite(files: string[]): Promise<void> {
     if (files.length === 0) return;
@@ -253,6 +281,20 @@ async function main(): Promise<void> {
       console.error(
         '❌ Doc map check failed — fix broken links / CANONICAL_* paths\n' +
           '   bun tools/doc-map-check.ts'
+      );
+      await writeTimings(timings, full);
+      process.exit(1);
+    }
+  }
+
+  if (nativeCapabilitiesTriggered) {
+    console.info('📝 Bun native Markdown evidence...');
+    const code = await runGate('native-docs', ['bun', 'run', 'docs:native:check'], timings);
+    if (code !== 0) {
+      console.error(
+        '❌ Bun native Markdown evidence is stale\n' +
+          '   bun run docs:native:preview\n' +
+          '   bun run docs:native:sync'
       );
       await writeTimings(timings, full);
       process.exit(1);
@@ -461,10 +503,11 @@ async function main(): Promise<void> {
       doctorBunfigFiles.length > 0 ||
       doctorStateFiles.length > 0 ||
       tsconfigTypesFiles.length > 0 ||
-      formatFiles.length > 0
+      formatFiles.length > 0 ||
+      nativeCapabilitiesTriggered
     ) {
       console.info(
-        '✅ Harness pre-commit checks passed (doc/projects/lib/audit/public/flags/bunfig/doctor-state/tsconfig-types/format gates only)'
+        '✅ Harness pre-commit checks passed (doc/projects/lib/audit/public/flags/bunfig/doctor-state/tsconfig-types/format/native-docs gates only)'
       );
     } else {
       console.info('✅ No staged harness TypeScript or doc-map SSOT files');
