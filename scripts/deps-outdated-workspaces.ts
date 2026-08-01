@@ -20,6 +20,8 @@
  */
 import { join } from 'node:path';
 
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
+
 const root = join(import.meta.dir, '..');
 const json = Bun.argv.includes('--json');
 const preferLatest = Bun.argv.includes('--latest');
@@ -82,7 +84,7 @@ function parseTable(text: string, workspace: string): OutdatedRow[] {
 }
 
 async function outdatedIn(cwd: string, label: string): Promise<OutdatedRow[]> {
-  const proc = Bun.spawn(['bun', 'outdated'], {
+  const proc = Bun.spawn(bunSpawnArgs(['outdated']), {
     cwd,
     stdout: 'pipe',
     stderr: 'pipe',

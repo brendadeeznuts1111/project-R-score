@@ -8,6 +8,7 @@
  *   bun tools/telegram-bind-surface.ts sandbox --chat -100… --brand
  *   bun tools/telegram-bind-surface.ts all-accounting --chat -100… --brand --post-prompt
  */
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { ALL_ACCOUNTING_SURFACE_SLUG } from '../lib/telegram/surfaces.ts';
 import {
   bindHouseSurfaceInEnvFile,
@@ -98,7 +99,7 @@ const args = ['tools/house-forum-channel.ts', surface, '--chat', chatId];
 if (brand) args.push('--brand');
 if (postPrompt && surface === ALL_ACCOUNTING_SURFACE_SLUG) args.push('--post-prompt');
 
-const proc = Bun.spawn(['bun', ...args], {
+const proc = Bun.spawn(bunSpawnArgs(args), {
   stdout: 'inherit',
   stderr: 'inherit',
   env: {

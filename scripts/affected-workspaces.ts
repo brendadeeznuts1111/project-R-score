@@ -15,6 +15,7 @@
  *   bun scripts/affected-workspaces.ts test
  *   bun scripts/affected-workspaces.ts list
  */
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { positionalArgs } from './lib/cli-args';
 import { readJsonSync } from './lib/fs-bun';
 
@@ -136,10 +137,11 @@ async function main(): Promise<number> {
 
   const filters = runnable.flatMap(p => ['--filter', p.name]);
   console.info(`affected: ${runnable.map(p => p.name).join(', ')} → ${script}`);
-  const proc = Bun.spawn(['bun', 'run', ...filters, script], {
+  const proc = Bun.spawn(bunSpawnArgs(['run', ...filters, script]), {
     cwd: ROOT,
     stdout: 'inherit',
     stderr: 'inherit',
+    env: { ...Bun.env },
   });
   return proc.exited;
 }

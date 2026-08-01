@@ -12,6 +12,7 @@
 // eslint-disable-next-line no-restricted-imports
 import { mkdtemp, unlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
+import { bunSpawnArgs } from '../bun-executable.ts';
 import { joinPath } from '../path-bun.ts';
 import { pathToFileURL } from 'node:url';
 import {
@@ -144,7 +145,7 @@ async function spawnEval(
   env: Record<string, string | undefined> = {},
   timeoutMs = 15_000
 ): Promise<{ ok: boolean; note: string; json?: Record<string, unknown> }> {
-  const proc = Bun.spawn(['bun', '-e', script], {
+  const proc = Bun.spawn(bunSpawnArgs(['-e', script]), {
     stdout: 'pipe',
     stderr: 'pipe',
     stdin: 'ignore',

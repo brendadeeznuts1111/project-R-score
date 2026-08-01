@@ -7,6 +7,8 @@
  * Machine Bun policy + runtime health — delegates to kimi-toolchain machine-bun.
  */
 
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
+
 const ROOT = `${import.meta.dir}/..`;
 
 function joinPath(...parts: string[]): string {
@@ -36,11 +38,11 @@ if (!entry) {
   process.exit(1);
 }
 
-const proc = Bun.spawn(['bun', entry, ...Bun.argv.slice(2)], {
+const proc = Bun.spawn(bunSpawnArgs([entry, ...Bun.argv.slice(2)]), {
   stdin: 'inherit',
   stdout: 'inherit',
   stderr: 'inherit',
-  env: Bun.env as Record<string, string>,
+  env: { ...Bun.env },
 });
 
 process.exit(await proc.exited);

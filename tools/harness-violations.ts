@@ -23,6 +23,7 @@
  *
  * Docs: docs/WIRE_BOUNDARY.md · lib/types/branded/README.md
  */
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { resolvePath, relativePath } from '../lib/path-bun';
 
 const REPO = resolvePath(import.meta.dir, '..');
@@ -203,10 +204,11 @@ type BrandSmartJson = {
 };
 
 async function collectBrands(includeLegacy: boolean): Promise<Violation[]> {
-  const proc = Bun.spawn(['bun', 'tools/branded-id-check.ts', '--smart', '--json'], {
+  const proc = Bun.spawn(bunSpawnArgs(['tools/branded-id-check.ts', '--smart', '--json']), {
     cwd: REPO,
     stdout: 'pipe',
     stderr: 'pipe',
+    env: { ...Bun.env },
   });
   const out = await new Response(proc.stdout).text();
   await proc.exited;

@@ -22,6 +22,7 @@
  * Writes: tmp/test-file-report.json
  */
 import { Glob } from 'bun';
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { dirnamePath, joinPath, resolvePath } from '../lib/path-bun.ts';
 import {
   buildTestSuiteInventoryReport,
@@ -72,11 +73,11 @@ async function runOne(path: string, parallel: boolean): Promise<TestDurationRow>
   args.push(path);
   // Do not force BUN_CONSOLE_DEPTH — tests such as console-depth assert the
   // env/default precedence and would false-fail under a probe override.
-  const proc = Bun.spawn(['bun', ...args], {
+  const proc = Bun.spawn(bunSpawnArgs(args), {
     cwd: ROOT,
     stdout: 'pipe',
     stderr: 'pipe',
-    env: Bun.env,
+    env: { ...Bun.env },
   });
 
   const killer = setTimeout(() => {

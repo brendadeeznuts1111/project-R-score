@@ -9,6 +9,7 @@
  *
  * Absolute cache path avoids literal `./~/` dirs when nested bunfigs use unexpanded `~`.
  */
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { applyBunInstallEnv } from './lib/bun-install-env.ts';
 
 const verbose = Bun.argv.includes('--verbose') || Bun.env.BUN_INSTALL_ENV_VERBOSE === '1';
@@ -26,10 +27,10 @@ if (verbose) {
   );
 }
 
-const proc = Bun.spawn(['bun', ...args], {
+const proc = Bun.spawn(bunSpawnArgs(args), {
   stdin: 'inherit',
   stdout: 'inherit',
   stderr: 'inherit',
-  env: env as Record<string, string>,
+  env: { ...Bun.env, ...env } as Record<string, string>,
 });
 process.exit(await proc.exited);

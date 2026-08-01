@@ -500,8 +500,8 @@ export function load(path: string) {
     apis: ['Bun.spawn', 'Bun.inspect.table', 'Response'],
     gate: 'offline',
     async run({ log }) {
-      const p1 = Bun.spawn(['bun', '--version'], { stdout: 'pipe', stderr: 'pipe' });
-      const p2 = Bun.spawn(['bun', '--print', '1+1'], { stdout: 'pipe', stderr: 'pipe' });
+      const p1 = Bun.spawn(['bun', '--version'], { stdout: 'pipe', stderr: 'pipe' }); // bare-bun-ok — spawn demo
+      const p2 = Bun.spawn(['bun', '--print', '1+1'], { stdout: 'pipe', stderr: 'pipe' }); // bare-bun-ok
       const [v1, v2] = await Promise.all([
         new Response(p1.stdout).text(),
         new Response(p2.stdout).text(),
