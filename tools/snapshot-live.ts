@@ -6,20 +6,27 @@
 // @see https://bun.com/blog/bun-v1.3.14#bun-image — Bun.Image (v1.3.14)
 // @see https://bun.com/blog/bun-v1.3.14#terminal-methods — Bun.Image terminal methods
 // @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
+// @see https://bun.com/docs/runtime/color — Bun.color (via colorize)
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table — Bun.inspect.table (via logTable)
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals (via deepEquals)
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
  * Live enhancement probe — score.factory-wager.com vs origin/main.
  *
  * Bun-native: fetch · Bun.$ (git) · Bun.CryptoHasher · Bun.Image · HTMLRewriter
- * · import runSnapshot · Bun.write · logTable/jsonOut.
+ * · Bun.color (status via portal kernel palette) · import runSnapshot · logTable.
+ *
+ * Prefer this over ad-hoc `bun -e` one-liners — same checks, Access-aware,
+ * color-kernel hex, glossary shape deepEquals.
  *
  *   bun run snapshot:live
- *   bun --env-file ~/.reasonix/.env run snapshot:live
- *   bun run snapshot:live -- --thumb --strict-image
+ *   bun run snapshot:live:quick          # public plane only (Access 302 expected)
+ *   bun --env-file ~/.reasonix/.env run snapshot:live -- --thumb
  */
 import { $, Glob } from 'bun';
-import { jsonOut, logTable } from '../lib/console-depth.ts';
+import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
+import { deepEquals } from '../lib/deep-equals.ts';
+import { PORTAL_KERNEL_PALETTE } from '../lib/portal/portal-kernel-palette.ts';
 import { isCloudflareAccessEnforced } from '../lib/verification/cloudflare-access-live.ts';
 import {
   ensureSnapshotDir,
@@ -37,6 +44,42 @@ export type VerdictRow = {
   Status: VerdictStatus;
   Evidence: string;
 };
+
+/** Status → portal kernel palette hex (theme.jsonc / color-kernel align). */
+export const VERDICT_STATUS_PALETTE = {
+  LIVE: PORTAL_KERNEL_PALETTE.green,
+  STALE: PORTAL_KERNEL_PALETTE.red,
+  ACCESS_FAIL: PORTAL_KERNEL_PALETTE.red,
+  ACCESS_SKIP: PORTAL_KERNEL_PALETTE.yellow,
+  SKIP: PORTAL_KERNEL_PALETTE.muted,
+} as const satisfies Record<VerdictStatus, string>;
+
+/** Colorize a verdict status with Bun.color via console-depth (NO_COLOR-aware). */
+export function colorStatus(status: VerdictStatus): string {
+  return colorize(status, VERDICT_STATUS_PALETTE[status]);
+}
+
+/** Stable glossary shape for deepEquals (ignore bake noise outside surfaces). */
+export function glossaryShapeForEquals(glossary: {
+  schemaVersion?: number;
+  surfaces?: Array<{
+    path?: string;
+    sections?: Array<{ hash?: string; domId?: string; conceptId?: string }>;
+  }>;
+}): unknown {
+  const surfaces = Array.isArray(glossary.surfaces) ? glossary.surfaces : [];
+  return {
+    schemaVersion: glossary.schemaVersion,
+    surfaces: surfaces.map(s => ({
+      path: s.path,
+      sections: (Array.isArray(s.sections) ? s.sections : []).map(row => ({
+        hash: row.hash,
+        domId: row.domId,
+        conceptId: row.conceptId,
+      })),
+    })),
+  };
+}
 
 export type PortalProbe = {
   url: string;
@@ -394,12 +437,13 @@ async function probeRegistry(
     const mainHash = sha256Hex(mainText);
     const asserted = assertGlossaryEnhancements(live);
     const versionAlign = live.schemaVersion === main.schemaVersion;
-    const status: VerdictStatus = asserted.ok && versionAlign ? 'LIVE' : 'STALE';
+    const shapeEqual = deepEquals(glossaryShapeForEquals(live), glossaryShapeForEquals(main));
+    const status: VerdictStatus = asserted.ok && versionAlign && shapeEqual ? 'LIVE' : 'STALE';
     rows.push({
       Enhancement: 'glossary v3 (registry)',
       Plane: 'public',
       Status: status,
-      Evidence: `${asserted.evidence} · shaLive=${liveHash.slice(0, 12)} · shaMain=${mainHash.slice(0, 12)} · equal=${liveHash === mainHash}`,
+      Evidence: `${asserted.evidence} · shapeEqMain=${shapeEqual} · shaLive=${liveHash.slice(0, 12)} · shaMain=${mainHash.slice(0, 12)} · byteEq=${liveHash === mainHash}`,
     });
 
     for (const path of ['/registry/portal-weave.json', '/registry/ops-summary.json'] as const) {
@@ -451,6 +495,32 @@ async function probeRegistry(
       Evidence: e instanceof Error ? e.message : String(e),
     });
     return { glossaryLive: null };
+  }
+}
+
+/** Unauthenticated Access challenge — 302 / www-authenticate (redirect: manual). */
+export async function probeAccessProtection(base: string, rows: VerdictRow[]): Promise<void> {
+  const url = `${base.replace(/\/$/, '')}/portal/account/`;
+  try {
+    const res = await fetch(url, { redirect: 'manual' });
+    const enforced =
+      isCloudflareAccessEnforced(res.status, res.headers) ||
+      res.status === 302 ||
+      res.status === 401 ||
+      res.status === 403;
+    rows.push({
+      Enhancement: 'Access /portal/account/',
+      Plane: 'public',
+      Status: enforced ? 'LIVE' : 'STALE',
+      Evidence: `HTTP ${res.status} · accessEnforced=${enforced} (expect challenge without service token)`,
+    });
+  } catch (e) {
+    rows.push({
+      Enhancement: 'Access /portal/account/',
+      Plane: 'public',
+      Status: 'STALE',
+      Evidence: e instanceof Error ? e.message : String(e),
+    });
   }
 }
 
@@ -699,21 +769,24 @@ function parseArgs(argv: string[]): {
   strictImage: boolean;
   json: boolean;
   thumb: boolean;
+  quick: boolean;
   base?: string;
 } {
   let strictImage = false;
   let json = false;
   let thumb = false;
+  let quick = false;
   let base: string | undefined;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!;
     if (a === '--strict-image') strictImage = true;
     else if (a === '--json') json = true;
     else if (a === '--thumb') thumb = true;
+    else if (a === '--quick') quick = true;
     else if (a === '--base' && argv[i + 1]) base = argv[++i];
     else if (a.startsWith('--base=')) base = a.slice('--base='.length);
   }
-  return { strictImage, json, thumb, base };
+  return { strictImage, json, thumb, quick, base };
 }
 
 export async function runLiveSnapshot(
@@ -722,6 +795,8 @@ export async function runLiveSnapshot(
     strictImage?: boolean;
     json?: boolean;
     thumb?: boolean;
+    /** Public plane only: registry · Access 302 · weave/ops · skip portal token + image. */
+    quick?: boolean;
   } = {}
 ): Promise<{ rows: VerdictRow[]; failed: boolean; manifestPath: string }> {
   const base =
@@ -730,30 +805,42 @@ export async function runLiveSnapshot(
     Bun.env.SNAPSHOT_BASE_URL?.trim() ||
     DEFAULT_LIVE_BASE;
   const rows: VerdictRow[] = [];
+  const quick = options.quick === true;
 
   if (!options.json) {
-    console.log(`\n  Live enhancement snapshot → ${base}\n`);
+    console.log(`\n  Live enhancement snapshot → ${base}${quick ? ' (--quick)' : ''}\n`);
   }
 
   await probeRegistry(base, rows);
-  await probePortal(base, rows);
-  const manifests = await captureSnapshots(base, rows, { quiet: options.json === true });
-  const imageMeta = await probeImageMeta(rows, {
-    strictImage: options.strictImage === true,
-    thumb: options.thumb === true,
-  });
+  await probeAccessProtection(base, rows);
+  let manifests: SnapshotManifest[] = [];
+  let imageMeta: ImageMetaResult | null = null;
+  if (quick) {
+    // Still capture portal-scope registry assets (public); skip Access portal + Image.
+    manifests = await captureSnapshots(base, rows, { quiet: options.json === true });
+    // Drop limits scope noise in quick mode — keep only portal snapshot row
+    // (captureSnapshots always runs both; filter display by leaving as-is is fine)
+  } else {
+    await probePortal(base, rows);
+    manifests = await captureSnapshots(base, rows, { quiet: options.json === true });
+    imageMeta = await probeImageMeta(rows, {
+      strictImage: options.strictImage === true,
+      thumb: options.thumb === true,
+    });
+  }
 
   await ensureSnapshotDir();
   const manifestPath = `${getSnapshotDir()}/live-probe-manifest.json`;
 
   const failed = rows.some(r => r.Status === 'STALE' || r.Status === 'ACCESS_FAIL');
-  // ACCESS_SKIP fails the run (portal proof incomplete) per plan
-  const accessSkip = rows.some(r => r.Status === 'ACCESS_SKIP');
+  // Full mode: ACCESS_SKIP fails (portal unproven). Quick: public plane only.
+  const accessSkip = !quick && rows.some(r => r.Status === 'ACCESS_SKIP');
   const exitFail = failed || accessSkip;
 
   const payload = {
     capturedAt: new Date().toISOString(),
     base,
+    quick,
     bunVersion: Bun.version,
     bunRevision: Bun.revision,
     failed: exitFail,
@@ -767,11 +854,16 @@ export async function runLiveSnapshot(
   if (options.json) {
     jsonOut(payload);
   } else {
-    logTable(rows, ['Enhancement', 'Plane', 'Status', 'Evidence']);
+    const display = rows.map(r => ({
+      ...r,
+      Status: colorStatus(r.Status),
+    }));
+    logTable(display, ['Enhancement', 'Plane', 'Status', 'Evidence']);
+    const resultLine = exitFail
+      ? `Result: FAIL (${rows.filter(r => r.Status === 'STALE' || r.Status === 'ACCESS_FAIL' || (!quick && r.Status === 'ACCESS_SKIP')).length} blocking)`
+      : 'Result: OK — enhancements live';
     console.log(
-      exitFail
-        ? `\n  Result: FAIL (${rows.filter(r => r.Status === 'STALE' || r.Status === 'ACCESS_FAIL' || r.Status === 'ACCESS_SKIP').length} blocking)\n`
-        : `\n  Result: OK — enhancements live\n`
+      `\n  ${colorize(resultLine, exitFail ? PORTAL_KERNEL_PALETTE.red : PORTAL_KERNEL_PALETTE.green)}\n`
     );
     console.log(`  Manifest: ${manifestPath}\n`);
   }
@@ -780,8 +872,8 @@ export async function runLiveSnapshot(
 }
 
 async function main(): Promise<void> {
-  const { strictImage, json, thumb, base } = parseArgs(Bun.argv.slice(2));
-  const { failed } = await runLiveSnapshot({ strictImage, json, thumb, base });
+  const { strictImage, json, thumb, quick, base } = parseArgs(Bun.argv.slice(2));
+  const { failed } = await runLiveSnapshot({ strictImage, json, thumb, quick, base });
   process.exit(failed ? 1 : 0);
 }
 

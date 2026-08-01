@@ -1619,6 +1619,7 @@
     "snapshot:data-plane:gaps": "bun tools/snapshot-data-plane.ts --scope gaps",
     "snapshot:data-plane:vault": "bash scripts/proton-run.sh factorywager -- bun tools/snapshot-data-plane.ts --scope limits",
     "snapshot:live": "bun tools/snapshot-live.ts",
+    "snapshot:live:quick": "bun tools/snapshot-live.ts --quick",
     "portal-cli": "bun tools/portal-cli.ts",
     "scanner:ci": "bun run portal-cli scanner scan --oneshot --force",
     "scanner:policy": "bun run portal-cli scanner policy",

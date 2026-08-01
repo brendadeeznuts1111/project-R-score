@@ -2,14 +2,19 @@ import { describe, expect, test } from 'bun:test';
 import {
   assertGlossaryEnhancements,
   assertHtmlStructure,
+  colorStatus,
   getImageMetadata,
   gitShowText,
+  glossaryShapeForEquals,
   mapPortalUrlToGitPath,
   markersPresent,
   PORTAL_PROBES,
   sha256Hex,
   validateImageHealth,
+  VERDICT_STATUS_PALETTE,
 } from '../tools/snapshot-live.ts';
+import { PORTAL_KERNEL_PALETTE } from '../lib/portal/portal-kernel-palette.ts';
+import { deepEquals } from '../lib/deep-equals.ts';
 
 describe('snapshot-live helpers', () => {
   test('sha256Hex is stable', () => {
@@ -118,12 +123,39 @@ describe('snapshot-live helpers', () => {
     expect(json.schemaVersion).toBe(3);
   });
 
-  test('tool ships Bun.Image · HTMLRewriter · Bun.$ wiring', async () => {
+  test('verdict colors come from portal kernel palette', () => {
+    expect(VERDICT_STATUS_PALETTE.LIVE).toBe(PORTAL_KERNEL_PALETTE.green);
+    expect(VERDICT_STATUS_PALETTE.STALE).toBe(PORTAL_KERNEL_PALETTE.red);
+    expect(VERDICT_STATUS_PALETTE.ACCESS_SKIP).toBe(PORTAL_KERNEL_PALETTE.yellow);
+    // colorStatus returns plain text under NO_COLOR / non-TTY
+    expect(colorStatus('LIVE')).toContain('LIVE');
+  });
+
+  test('glossaryShapeForEquals is deepEquals-stable', () => {
+    const a = {
+      schemaVersion: 3,
+      surfaces: [{ path: '/portal/account/', sections: [{ hash: 'identity', domId: 'ad-section-identity' }] }],
+      extraBakeNoise: Date.now(),
+    };
+    const b = {
+      schemaVersion: 3,
+      surfaces: [{ path: '/portal/account/', sections: [{ hash: 'identity', domId: 'ad-section-identity' }] }],
+      extraBakeNoise: 0,
+    };
+    expect(deepEquals(glossaryShapeForEquals(a), glossaryShapeForEquals(b))).toBe(true);
+  });
+
+  test('tool ships Bun.Image · HTMLRewriter · Bun.$ · colorize wiring', async () => {
     const src = await Bun.file('tools/snapshot-live.ts').text();
     expect(src).toContain('file.image()');
     expect(src).toContain('.metadata()');
     expect(src).toContain('HTMLRewriter');
     expect(src).toContain("import { $, Glob } from 'bun'");
+    expect(src).toContain('PORTAL_KERNEL_PALETTE');
+    expect(src).toContain('colorize');
+    expect(src).toContain('deepEquals');
+    expect(src).toContain('probeAccessProtection');
+    expect(src).toContain('--quick');
     expect(src).toContain('ERR_IMAGE_FORMAT_UNSUPPORTED');
     expect(src).toContain('CF-Access-Client-Id');
     expect(src).toContain('runSnapshot');
