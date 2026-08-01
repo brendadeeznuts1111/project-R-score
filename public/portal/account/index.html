@@ -217,6 +217,8 @@
         <a href="/registry/limit-raises.json" target="_blank" rel="noopener">limit-raises.json</a>
       </div>
 
+      <nav id="account-glossary-crumbs" class="glossary-crumbs" aria-label="Breadcrumb"></nav>
+
       <div class="ad-hero portal-hero">
         <div>
           <h1>
@@ -939,7 +941,9 @@
       }
 
       async function boot() {
-        await bootGlossaryUx();
+        await bootGlossaryUx({
+          breadcrumbsMount: document.getElementById('account-glossary-crumbs'),
+        });
         const url = new URL(window.location.href);
         const hours = Number(url.searchParams.get('hours') || $('ad-hours').value || 168);
         $('ad-hours').value = String([24, 48, 168, 720].includes(hours) ? hours : 168);
@@ -983,7 +987,10 @@
           });
           renderDossier(dossier);
           scrollSectionFromUrl();
-          void bootGlossaryUx({ markSurface: false });
+          void bootGlossaryUx({
+            breadcrumbsMount: document.getElementById('account-glossary-crumbs'),
+            markSurface: false,
+          });
         };
 
         $('ad-picker').addEventListener('submit', event => {
