@@ -922,7 +922,7 @@
           loadJson('/registry/limit-raises.json'),
           loadJson('/registry/partners-ops.json'),
           loadJson('/registry/telegram-handshake.json'),
-          loadJson('/registry/soft-accounting-export.json'),
+          loadJson('/registry/soft-accounting-export.json').catch(() => null),
         ]);
 
         const ids = collectAccountIds(limitRaises || {});

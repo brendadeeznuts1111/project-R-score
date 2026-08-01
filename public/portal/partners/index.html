@@ -1851,7 +1851,9 @@
           softAccountingSource = softAccounting?.source || 'unavailable';
           softPlaysByPartner = new Map();
           for (const play of softAccounting?.plays || []) {
-            const code = String(play?.partnerCode || '').toUpperCase();
+            const code = String(play?.partnerCode || '')
+              .trim()
+              .toUpperCase();
             if (!code) continue;
             const list = softPlaysByPartner.get(code);
             if (list) list.push(play);
