@@ -67,17 +67,25 @@ Presentation chrome (`ops.view.*`, `telegram.message.*`) is Factory-only.
 | Demo projection | `projectSoftAccountingExportFromTocOps` over Pages [`toc-ops.json`](../../public/registry/toc-ops.json) `partners[].recentPlays` |
 | Per-play builder (dimension-only) | `buildPerPlayAccountingView` → `ops.view.per_play` |
 
-Committed bake uses `source: "toc-ops-fixture"` (demo bridge, not Soft Balance).
-`partners:governance` includes `soft:accounting:check`. Primary Soft export
-should overwrite the bake with `source: "soft-ct"`.
+Committed demo bake uses `source: "toc-ops-fixture"`. Soft live export:
+
+```bash
+# in toc-ops-repo
+bun run ct soft-accounting-export --out ../public/registry/soft-accounting-export.json
+# or from FactoryWager root
+bun run soft:accounting:from-ct
+```
+
+`partners:governance` → `soft:accounting:check` accepts either exact fixture match
+or a schema-valid `source: "soft-ct"` bake. Odds are `0` until Soft stores them.
 
 Week / book-type arrays ship empty in v1 until Soft tags those dimensions.
 
 ## Exit criteria for the next build phase
 
 1. Soft (or fixture) exports a versioned, read-only slice with stable keys for
-   playId / weekStart / bookType — **Factory wire v1 exists**; Soft `soft-ct`
-   bake still outstanding.
+   playId / weekStart / bookType — **Factory wire v1 + Soft `ct soft-accounting-export`
+   exist**; promote registry bake with `bun run soft:accounting:from-ct` when Soft DB has plays.
 2. Factory builders call `validateOpsAccountingViewShape` and map amounts onto
    existing `accounting.*` / `book.type.*` — **still no new glossary mint**
    unless a chip cannot collapse. Per-play dimension builder is in place;
