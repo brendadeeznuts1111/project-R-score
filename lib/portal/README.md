@@ -29,6 +29,6 @@ Portal-facing TypeScript SSOTs. **No barrel** (`index.ts`) — import modules di
 | `bun run test:colors` | Unit + validate smoke — claim `color-kernel-theme-aliases` |
 | `bun run portal:theme:check` | CSS tokens stale + color aliases |
 
-SSOT: [`color-kernel-align.ts`](./color-kernel-align.ts) · planes matrix in [`docs/portal-foundation.md`](../../docs/portal-foundation.md).
+SSOT: [`color-kernel-align.ts`](./color-kernel-align.ts) · path triggers [`color-kernel-paths.ts`](./color-kernel-paths.ts) · planes matrix in [`docs/portal-foundation.md`](../../docs/portal-foundation.md).
 
 Do **not** invent a parallel `colorkernal` CLI. Nested package scripts named `validate:colors` / `test:colors` under `projects/` are unrelated.

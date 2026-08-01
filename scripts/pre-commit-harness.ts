@@ -9,6 +9,7 @@
  */
 import { buildHarnessEslintArgs } from '../config/eslint/harness/command.ts';
 import { isHarnessFormatPath, isHarnessLintPath } from '../config/eslint/harness/rollout.ts';
+import { isColorKernelPath } from '../lib/portal/color-kernel-paths.ts';
 import { hasFlag } from './lib/cli-args';
 import { ensureDir, writeJson } from './lib/fs-bun';
 
@@ -335,6 +336,29 @@ async function main(): Promise<void> {
     }
   }
 
+
+  // Theme-dark color kernels — CSS stale + aliases/floors (claim color-kernel-theme-aliases).
+  // Escape: SKIP_COLOR_KERNEL=1
+  const colorKernelFiles = staged.filter(isColorKernelPath);
+  if (colorKernelFiles.length > 0) {
+    if (Bun.env.SKIP_COLOR_KERNEL === '1') {
+      console.info('⏭️  SKIP_COLOR_KERNEL=1 — portal:theme:check skipped');
+    } else {
+      console.info(`🎨 Color kernel theme check (${colorKernelFiles.length} path(s) staged)...`);
+      const code = await runGate('color-kernel', ['bun', 'run', 'portal:theme:check'], timings);
+      if (code !== 0) {
+        console.error(
+          '❌ Color kernel theme check failed — theme-tokens stale or alias/floor drift\n' +
+            '   bun run portal:theme:check\n' +
+            '   bun run validate:colors\n' +
+            '   escape: SKIP_COLOR_KERNEL=1\n' +
+            '   docs/portal-foundation.md · claim color-kernel-theme-aliases'
+        );
+        await writeTimings(timings, full);
+        process.exit(1);
+      }
+    }
+  }
   const runtimeFlagsFiles = staged.filter(isRuntimeFlagsPath);
   if (runtimeFlagsFiles.length > 0) {
     console.info(`🚩 Runtime flags catalog (${runtimeFlagsFiles.length} path(s) staged)...`);

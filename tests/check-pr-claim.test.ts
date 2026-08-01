@@ -1,5 +1,9 @@
 import { describe, expect, test } from 'bun:test';
 import {
+  colorKernelEvidenceFilled,
+  shouldWarnColorKernelEvidence,
+} from '../lib/portal/color-kernel-paths.ts';
+import {
   evaluatePrClaim,
   kindCellValid,
   mentionedProofIdsMissingFreshRerun,
@@ -89,6 +93,47 @@ Mentioned \`branded-ids\` without its freshRerun command.
     const r = evaluatePrClaim(softBody, { strict: true });
     expect(r.ok).toBe(true);
     expect(r.missingFreshRerun).toContain('branded-ids');
+  });
+
+  test('soft: color-kernel paths without Evidence paste warns but stays ok', () => {
+    const templateBody = `${filled}
+
+### Color Kernel Evidence
+
+\`\`\`text
+# paste: bun run validate:colors
+\`\`\`
+`;
+    expect(colorKernelEvidenceFilled(templateBody)).toBe(false);
+    expect(
+      shouldWarnColorKernelEvidence(templateBody, ['lib/portal/color-kernel-align.ts'])
+    ).toBe(true);
+    const r = evaluatePrClaim(templateBody, {
+      strict: true,
+      changedFiles: ['lib/portal/color-kernel-align.ts'],
+    });
+    expect(r.ok).toBe(true);
+    expect(r.missingColorKernelEvidence).toBe(true);
+
+    const pasted = `${filled}
+
+Claim: Color kernel theme-dark aliases are complete and conflict-free (theme v1.1.0).
+
+Evidence:
+  ✓ Portal chrome: theme v1.1.0 · 22 dark tokens (SSOT theme.jsonc)
+  ✓ Glossary chips: 5 theme aliases · 7 palette keys · 12 categories
+`;
+    expect(colorKernelEvidenceFilled(pasted)).toBe(true);
+    const r2 = evaluatePrClaim(pasted, {
+      strict: true,
+      changedFiles: ['public/portal/theme.jsonc'],
+    });
+    expect(r2.missingColorKernelEvidence).toBe(false);
+  });
+
+  test('soft: color-kernel Evidence check skipped when changedFiles omitted', () => {
+    const r = evaluatePrClaim(filled, { strict: true });
+    expect(r.missingColorKernelEvidence).toBe(false);
   });
 });
 

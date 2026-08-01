@@ -201,3 +201,17 @@ $ bun run …
 ---
 
 **When all questions are answered, the claim is ready to commit. No additional documentation or ceremony required — the answers are the plan, the design, and the audit trail.**
+
+---
+
+### Worked example (color kernel)
+
+Claim `color-kernel-theme-aliases` — theme.jsonc dark aliases ↔ glossary / partner-ops / telegram kernels + count floors.
+
+| Field | Value |
+|-------|--------|
+| freshRerun | `bun run test:colors` |
+| paste / soft PR | `bun run validate:colors` → **Color Kernel Evidence** |
+| owner | `lib/portal/color-kernel-align.ts` |
+| path triggers | `lib/portal/color-kernel-paths.ts` |
+| brief | [`docs/portal-foundation.md`](../portal-foundation.md) (Color kernel planes) |
