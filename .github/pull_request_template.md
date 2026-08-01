@@ -32,6 +32,7 @@ Required when this PR moves an owner of a [`CRITICAL_PROOF_PATHS`](../lib/harnes
 ## Checklist
 
 - [ ] Did **not** sweep a parallel lane (foreign dirty trees left out)
+- [ ] Prettier ran on every touched `lib/**/*.ts` file (`bun x prettier --write <file...>` or `bun run format:harness`)
 - [ ] Brands / wire: no new bare `*Id: string` or interior `unknown` params
 - [ ] Docs/JIT updated only when an owner moved (`docs/harness/`, `repo-docs`, AGENTS)
 - [ ] If spine touched: `bun run type-check` (`tsconfig.check.json`)
