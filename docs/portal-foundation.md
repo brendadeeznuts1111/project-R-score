@@ -268,16 +268,16 @@ Component readiness (static-fit): `bun run portal:css:score:components`.
 | Icons / images (future) | `file` | import in JS/CSS; Bun copies to `outdir` |
 | CSS Modules | `css` (+ modules) | Deferred until component library split |
 
-**Color kernel planes** (`colorKernel` = [`theme.jsonc`](../public/portal/theme.jsonc)):
+**Color kernel planes** — registry bake field `colorKernel` points at [`public/portal/theme.jsonc`](../public/portal/theme.jsonc). Do not invent a parallel `colorkernal` CLI.
 
-| Plane | Owner | Role |
-|-------|-------|------|
-| Portal chrome | `theme.jsonc` → [`lib/portal/theme.ts`](../lib/portal/theme.ts) | SSOT dark/light tokens · CSS via `portal:theme:sync` |
-| Glossary chips | [`lib/portal/portal-kernel-palette.ts`](../lib/portal/portal-kernel-palette.ts) | Dark tones from theme + extended `purple` / `blueDeep` |
-| Partner-ops | [`lib/telegram/partner-ops-color-kernel.ts`](../lib/telegram/partner-ops-color-kernel.ts) | Closed palette; intentional theme aliases |
-| Telegram topics | [`lib/telegram/telegram-color-kernel.ts`](../lib/telegram/telegram-color-kernel.ts) | Closed palette; intentional theme aliases + brand |
+| Plane | Owns | Source | Validation | Example Keys |
+|-------|------|--------|------------|--------------|
+| Portal chrome | Dark/light CSS vars + JS theme object | [`theme.jsonc`](../public/portal/theme.jsonc) → [`lib/portal/theme.ts`](../lib/portal/theme.ts) → `theme-tokens.css` | `bun run portal:theme:check` (CSS stale) · [`tests/portal-theme.test.ts`](../tests/portal-theme.test.ts) | `accent` · `green` · `yellow` · `red` · `textDim` · `bg` · `surface` |
+| Glossary chips | Category chip hex for domain-glossary bake | [`lib/portal/portal-kernel-palette.ts`](../lib/portal/portal-kernel-palette.ts) (dark tones from theme + extras) | `portal:colors:check` aliases · `bun run glossary:portal:check` | Theme-aliased: `accent` · `green` · `yellow` · `red` · `muted`. Extended (may diverge): `purple` · `blueDeep` |
+| Partner-ops | Concept / book / phase chip palette | [`lib/telegram/partner-ops-color-kernel.ts`](../lib/telegram/partner-ops-color-kernel.ts) | `portal:colors:check` aliases · Bun.color load assert · partner-ops / ops-view tests | Aliased: `kalshi`←accent · `tennis`←green · `middleware`←yellow · `trading`←red · `env`/`unknown`←textDim. Extended: `polymarket` · `pinnacle` · `research` |
+| Telegram topics | Package-forum / surface / brand marks | [`lib/telegram/telegram-color-kernel.ts`](../lib/telegram/telegram-color-kernel.ts) | `portal:colors:check` aliases · Bun.color load assert · telegram color-kernel tests | Aliased: `topicOps`/`surfacePartner`←accent · `topicLiquidityOuts`/`topicDeposits`←green · `topicAccounting`/`surfaceAllAccounting`←yellow · `topicAlerts`/`topicWithdrawals`←red · `unknown`/`topicGeneral`/`topicReconcile`←textDim. Extended: `brand` · `surfaceHq` · `surfaceSandbox` |
 
-`bun run portal:colors:check` (Bun.color HEX) enforces theme-dark aliases across glossary / partner-ops / telegram. Extended keys (purple, brand, research, …) may diverge. Check-only — no TypeScript rewrite. Chained from `portal:theme:check` after CSS stale check.
+`bun run portal:colors:check` (Bun.color HEX via [`lib/portal/color-kernel-align.ts`](../lib/portal/color-kernel-align.ts)) enforces the aliased columns only. Extended keys may diverge. Check-only — no TypeScript rewrite. Chained from `portal:theme:check` after CSS stale check.
 
 ```bash
 bun run portal:theme:sync          # theme.jsonc → theme-tokens.css
