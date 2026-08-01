@@ -294,7 +294,7 @@ Bun.which("bun");`,
     docs: 'https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn',
     snippet: `Bun.spawnSync(["bun", "--version"]);`,
     run: () => {
-      const sync = Bun.spawnSync(['bun', '--version']);
+      const sync = Bun.spawnSync(['bun', '--version']); // bare-bun-ok — docs snippet demo
       return new TextDecoder().decode(sync.stdout).trim();
     },
   },

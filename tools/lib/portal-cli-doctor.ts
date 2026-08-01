@@ -33,11 +33,12 @@
  * @see tools/lib/portal-cli-doctor-catalog.ts
  */
 
-import { joinPath } from '../../scripts/lib/fs-bun.ts';
+import { bunSpawnArgs } from '../../lib/bun-executable.ts';
 import {
   INSTALL_LINKER_DOCS,
   probeLockfileConfigVersion,
 } from '../../lib/docs/bun-install-linker-docs.ts';
+import { joinPath } from '../../scripts/lib/fs-bun.ts';
 import {
   readMachineBunfig,
   readProjectBunfig,
@@ -253,7 +254,8 @@ export function filterDoctorByScope(
 }
 
 async function defaultSpawn(argv: string[], opts?: { cwd?: string }): Promise<number> {
-  const proc = Bun.spawn(argv, {
+  const cmd = argv[0] === 'bun' ? bunSpawnArgs(argv.slice(1)) : argv;
+  const proc = Bun.spawn(cmd, {
     cwd: opts?.cwd ?? process.cwd(),
     stdout: 'pipe',
     stderr: 'pipe',
@@ -526,7 +528,7 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
 
   // 4) Optional full: spawn existing gates (no network assumed)
   if (full) {
-    const installVerify = await spawn(['bun', 'run', 'install:verify'], { cwd });
+    const installVerify = await spawn(bunSpawnArgs(['run', 'install:verify']), { cwd });
     checks.push(
       withMeta(
         {
@@ -547,7 +549,7 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
       )
     );
 
-    const vaultGate = await spawn(['bun', 'test', 'tests/vault-health.test.ts'], { cwd });
+    const vaultGate = await spawn(bunSpawnArgs(['test', 'tests/vault-health.test.ts']), { cwd });
     checks.push(
       withMeta(
         {
@@ -570,7 +572,9 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
       )
     );
 
-    const capGate = await spawn(['bun', 'test', 'tests/capability-map-subset.test.ts'], { cwd });
+    const capGate = await spawn(bunSpawnArgs(['test', 'tests/capability-map-subset.test.ts']), {
+      cwd,
+    });
     checks.push(
       withMeta(
         {
@@ -593,7 +597,9 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
       )
     );
 
-    const runtimeEnvGate = await spawn(['bun', 'test', 'tests/bun-env-loading.test.ts'], { cwd });
+    const runtimeEnvGate = await spawn(bunSpawnArgs(['test', 'tests/bun-env-loading.test.ts']), {
+      cwd,
+    });
     checks.push(
       withMeta(
         {
@@ -618,7 +624,9 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
       )
     );
 
-    const consoleFormatGate = await spawn(['bun', 'scripts/lint-console-format.ts'], { cwd });
+    const consoleFormatGate = await spawn(bunSpawnArgs(['scripts/lint-console-format.ts']), {
+      cwd,
+    });
     checks.push(
       withMeta(
         {

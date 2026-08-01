@@ -159,7 +159,9 @@ export function applyShellTransforms(source: string): { text: string; changes: s
 
   {
     const before = text;
-    text = mapCodeLines(text, line => line.replace(/(?<![.\w])fork\s*\(/g, "Bun.spawn(['bun', "));
+    text = mapCodeLines(text, line =>
+      line.replace(/(?<![.\w])fork\s*\(/g, "Bun.spawn(['bun', ") // bare-bun-ok — emit docs-shaped text
+    );
     if (text !== before) changes.push('fork→Bun.spawn');
   }
 

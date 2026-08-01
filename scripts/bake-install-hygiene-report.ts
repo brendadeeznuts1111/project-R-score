@@ -18,8 +18,9 @@
  *   offline embed into public/portal/install-hygiene/index.html
  */
 
-import { joinPath } from '../lib/path-bun.ts';
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { collectInstallCacheMonitoringSlice } from '../lib/monitoring/install-cache-slice.ts';
+import { joinPath } from '../lib/path-bun.ts';
 import { runNpmInstallCheck } from './check-npm-install.ts';
 
 const ROOT = `${import.meta.dir}/..`;
@@ -36,7 +37,7 @@ export type InstallVerifyDryRun = {
 };
 
 async function runInstallVerifyDryRun(): Promise<InstallVerifyDryRun> {
-  const proc = Bun.spawnSync(['bun', 'run', 'install:verify', '--dry-run', '--json'], {
+  const proc = Bun.spawnSync(bunSpawnArgs(['run', 'install:verify', '--dry-run', '--json']), {
     cwd: ROOT,
     stdout: 'pipe',
     stderr: 'pipe',

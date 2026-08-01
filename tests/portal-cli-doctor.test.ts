@@ -312,7 +312,8 @@ describe('portal-cli doctor pure', () => {
         return 0;
       },
     });
-    expect(spawned).toContain('bun test tests/bun-env-loading.test.ts');
+    expect(spawned.some(s => s.endsWith('test tests/bun-env-loading.test.ts'))).toBe(true);
+    expect(spawned.every(s => !s.startsWith('bun '))).toBe(true);
     expect(r.checks.find(c => c.id === 'runtime-env-native-gate')).toMatchObject({
       group: 'gates',
       level: 'fatal',
