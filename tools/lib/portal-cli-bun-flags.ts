@@ -5,11 +5,13 @@
 // @see https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files — --env-file
 // @see https://bun.com/docs/runtime/environment-variables#disabling-automatic-env-loading — --no-env-file
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/runtime/bunfig#run-silent-suppress-reporting-the-command-being-run — --silent
 // @see https://bun.com/docs/runtime/index#general-execution-options — bun run general flags
 // @see https://bun.com/docs/runtime/watch-mode — --watch · --hot · --no-clear-screen
 // @see https://bun.com/docs/runtime/debugger — --inspect · --inspect-wait · --inspect-brk
 // @see https://bun.com/docs/runtime/auto-install — --prefer-offline · --install=fallback
+import { resolveBunExecutable } from '../../lib/bun-executable.ts';
 import {
   BUN_API_REFERENCE_URL,
   BUN_REPOSITORY_URL,
@@ -276,16 +278,18 @@ export function parseBunExecutionFlags(argv: string[]): BunExecutionParse {
 }
 
 /**
- * Build `bun <bunFlags…> <args…>` argv for Bun.spawn.
+ * Build `<abs-bun> <bunFlags…> <args…>` argv for Bun.spawn.
+ * Uses {@link resolveBunExecutable} — never bare `"bun"` (worktree/CI PATH).
  * @param bunFlags from parseBunExecutionFlags
  * @param args e.g. ['test', 'tests/vault-health.test.ts'] or ['pm', 'ls']
  */
 export function bunSpawnArgv(bunFlags: string[], args: string[]): string[] {
-  return ['bun', ...bunFlags, ...args];
+  return [resolveBunExecutable(), ...bunFlags, ...args];
 }
 
 /**
  * Spawn bun with optional execution flags; inherit stdio.
+ * Child env is a shallow copy of Bun.env (no parent mutate).
  */
 export async function spawnBunWithFlags(
   bunFlags: string[],
@@ -297,6 +301,7 @@ export async function spawnBunWithFlags(
     stdout: 'inherit',
     stderr: 'inherit',
     stdin: 'inherit',
+    env: { ...Bun.env },
   });
   return (await proc.exited) ?? 1;
 }
@@ -538,7 +543,11 @@ export function assessRuntimeFlagsCatalog(
 
 /** Fetch live `bun --help` text (for parity checks). */
 export async function fetchBunHelpText(): Promise<string> {
-  const proc = Bun.spawn(['bun', '--help'], { stdout: 'pipe', stderr: 'pipe' });
+  const proc = Bun.spawn([resolveBunExecutable(), '--help'], {
+    stdout: 'pipe',
+    stderr: 'pipe',
+    env: { ...Bun.env },
+  });
   const text = await new Response(proc.stdout).text();
   await proc.exited;
   return text;

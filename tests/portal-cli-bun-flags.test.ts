@@ -21,6 +21,7 @@ import {
   BUN_REPOSITORY_URL,
   BUN_TYPES_SOURCE_URL,
 } from '../lib/docs/bun-source-links.ts';
+import { resolveBunExecutable } from '../lib/bun-executable.ts';
 
 describe('parseBunExecutionFlags', () => {
   test('harvests leading --smol before vault health', () => {
@@ -99,14 +100,16 @@ describe('parseBunExecutionFlags', () => {
     expect(p.rest[0]).toBe('--not-a-bun-flag');
   });
 
-  test('bunSpawnArgv prefixes bun + flags', () => {
+  test('bunSpawnArgv prefixes resolved bun executable + flags', () => {
+    const bunBin = resolveBunExecutable();
+    expect(bunBin).not.toBe('bun');
     expect(bunSpawnArgv(['--smol'], ['test', 'x.test.ts'])).toEqual([
-      'bun',
+      bunBin,
       '--smol',
       'test',
       'x.test.ts',
     ]);
-    expect(bunSpawnArgv([], ['pm', 'ls'])).toEqual(['bun', 'pm', 'ls']);
+    expect(bunSpawnArgv([], ['pm', 'ls'])).toEqual([bunBin, 'pm', 'ls']);
   });
 
   test('catalog SSOT drives parse sets and curated help', async () => {

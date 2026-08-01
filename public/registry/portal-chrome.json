@@ -1,20 +1,25 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-07-31T12:32:07.368Z",
+  "generated": "2026-08-01T02:46:32.972Z",
   "path": "/registry/portal-chrome.json",
+  "runtime": {
+    "bunVersion": "1.4.0",
+    "bunRevision": "a227ad99"
+  },
   "summary": {
     "priorityNav": 6,
-    "overflowNav": 22,
+    "overflowNav": 23,
     "footerLinks": 20,
-    "components": 13,
+    "components": 14,
     "scripts": 5
   },
   "related": {
     "weave": "/registry/portal-weave.json",
     "monorepoHealth": "/registry/monorepo-health.json",
     "packagesGraph": "/registry/packages-graph-map.json",
-    "opsSummary": "/registry/ops-summary.json"
+    "opsSummary": "/registry/ops-summary.json",
+    "glossary": "/registry/domain-glossary.json"
   },
   "priorityNav": [
     {
@@ -226,6 +231,14 @@
       "cli": "bun run telegram:handshake:catalog"
     },
     {
+      "id": "account",
+      "label": "Account",
+      "href": "/portal/account/",
+      "tier": "overflow",
+      "group": "ops",
+      "note": "single-account dossier · tree · telemetry · betlog"
+    },
+    {
       "id": "partner-history",
       "label": "Partner history",
       "href": "/portal/partner-history/",
@@ -384,7 +397,13 @@
     {
       "id": "footer",
       "path": "/portal/components/footer.js",
-      "role": "shared footer from portal-chrome registry",
+      "role": "shared footer from portal-chrome registry · bake-time Bun.version",
+      "kind": "module"
+    },
+    {
+      "id": "glossary-ux",
+      "path": "/portal/components/glossary-ux.js",
+      "role": "data-glossary-concept tooltips · #glossary: deep links · domain-glossary.json",
       "kind": "module"
     },
     {

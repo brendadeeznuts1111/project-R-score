@@ -39,11 +39,12 @@ describe('portal-chrome-catalog', () => {
     expect(byId['partner-history']?.href).toBe('/portal/partner-history/');
   });
 
-  test('components register topbar footer sidebar', () => {
+  test('components register topbar footer sidebar glossary-ux', () => {
     const ids = PORTAL_CHROME_COMPONENTS.map(c => c.id);
     expect(ids).toContain('topbar');
     expect(ids).toContain('footer');
     expect(ids).toContain('sidebar');
+    expect(ids).toContain('glossary-ux');
     expect(ids).toContain('brand-assets');
     expect(ids).toContain('operations-dashboard');
   });
@@ -58,15 +59,16 @@ describe('portal-chrome-catalog', () => {
     expect(html).toContain('nav-overflow');
   });
 
-  test('renderFooterHtml links monorepo health registry', () => {
+  test('renderFooterHtml links monorepo health registry + bun slot', () => {
     const html = renderFooterHtml();
     expect(html).toContain('/registry/monorepo-health.json');
     expect(html).toContain('/registry/portal-weave.json');
     expect(html).toContain('portal-chrome.json');
     expect(html).toContain('/portal/tools/');
+    expect(html).toContain('data-footer-bun');
   });
 
-  test('catalog schema v1 with summary + related', () => {
+  test('catalog schema v1 with summary + related + bake-time Bun runtime', () => {
     const c = buildPortalChromeCatalog('t');
     expect(c.schemaVersion).toBe(1);
     expect(c.kind).toBe('portal-chrome');
@@ -75,5 +77,8 @@ describe('portal-chrome-catalog', () => {
     expect(c.summary.priorityNav).toBe(c.priorityNav.length);
     expect(c.related.weave).toBe('/registry/portal-weave.json');
     expect(c.related.monorepoHealth).toBe('/registry/monorepo-health.json');
+    expect(c.related.glossary).toBe('/registry/domain-glossary.json');
+    expect(c.runtime.bunVersion).toBe(Bun.version);
+    expect(c.runtime.bunRevision).toBe(Bun.revision.slice(0, 8));
   });
 });
