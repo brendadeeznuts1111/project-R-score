@@ -6,7 +6,7 @@
  *
  *   bun run partners:integration:validate
  *
- * Four layers:
+ * Seven layers:
  *   1. Every route anchor resolves to a PORTAL_SEMANTIC_CONCEPT_KEYS member,
  *      and canonical hashes roundtrip through parsePartnerHash.
  *   2. Every table column glossary id is in the shipped inventory
@@ -14,6 +14,9 @@
  *   3. Every tag glossary id is in the shipped inventory; 🟠 proposed tags
  *      are skipped.
  *   4. Every telegram topic id is in the shipped inventory.
+ *   5. Registry data coherence (warnings only).
+ *   6. Per-account AccountingView shape.
+ *   7. partner-limit-history UI chrome coverage.
  *
  * Corrections vs the source proposal: colors resolve through the real
  * partner-ops color kernel, ids are the shipped forms (no accounting.*
@@ -211,6 +214,43 @@ try {
   }
 } catch (error) {
   errs.push(`per-account view layer unavailable: ${String(error).slice(0, 120)}`);
+}
+
+// ── Layer 7: partner-limit-history UI chrome coverage ────────────────────────
+// Every human-readable string in that UI is glossary-governed: these chrome
+// ids must resolve in PORTAL_SEMANTIC_CONCEPT_KEYS. Data values ($-950,
+// "3 of 13") are computed and use these labels — they are not concepts.
+const PARTNER_LIMIT_UI_CHROME_CONCEPTS = [
+  'ops.panel.partner_limit_history',
+  'ops.panel.limit_overview',
+  'ops.summary.partner_limit_trace',
+  'ops.filter.account.all',
+  'ops.filter.sportsbook.all',
+  'ops.filter.window',
+  'ops.filter.window.48h',
+  'ops.filter.window.7d',
+  'ops.filter.window.30d',
+  'ops.metric.visible_changes',
+  'ops.metric.raises',
+  'ops.metric.decreases',
+  'ops.metric.sportsbooks',
+  'ops.metric.high_water',
+  'ops.metric.deltas',
+  'ops.metric.active_filters',
+  'ops.metric.proof_coverage',
+  'ops.table.recent_changes',
+  'ops.table.per_account',
+  'ops.table.limit_changes',
+  'ui.action.refresh',
+  'ui.action.export',
+  'ui.export.csv',
+  'ui.export.json',
+] as const;
+
+for (const id of PARTNER_LIMIT_UI_CHROME_CONCEPTS) {
+  if (!KEYS.includes(id)) {
+    errs.push(`partner-limit-history chrome ${id} missing from PORTAL_SEMANTIC_CONCEPT_KEYS`);
+  }
 }
 
 const ok = errs.length === 0;
