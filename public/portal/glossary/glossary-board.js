@@ -431,6 +431,84 @@ function renderCategoryChips(payload) {
   target.replaceChildren(...chips);
 }
 
+/**
+ * Portal board section mounts from bake `surfaces[]` (hash · domId · conceptId · title).
+ * Distinct from concept cards, which use `concept.label`.
+ */
+function renderPortalSections(payload) {
+  const root = document.getElementById('glossary-surfaces');
+  const chip = document.getElementById('glossary-surfaces-chip');
+  if (!root) return;
+
+  const surfaces = (payload.surfaces ?? []).filter(
+    s => Array.isArray(s.sections) && s.sections.length > 0
+  );
+  const sectionCount = surfaces.reduce((n, s) => n + s.sections.length, 0);
+  if (chip) {
+    chip.textContent =
+      surfaces.length === 0
+        ? 'No board maps'
+        : `${surfaces.length} boards · ${sectionCount} sections`;
+  }
+
+  if (!surfaces.length) {
+    root.replaceChildren(
+      text(
+        'p',
+        'No surfaces with sections[] in this bake — run bun run glossary:portal after page-glossary mounts.',
+        'glossary-empty'
+      )
+    );
+    return;
+  }
+
+  const cards = surfaces.map(surface => {
+    const card = document.createElement('article');
+    card.className = 'glossary-surface-card';
+
+    const header = document.createElement('header');
+    const h3 = document.createElement('h3');
+    const boardLink = document.createElement('a');
+    boardLink.href = surface.path;
+    boardLink.textContent = surface.path;
+    h3.append(boardLink);
+    header.append(h3, text('span', `${surface.sections.length} sections`, 'glossary-surface-meta'));
+
+    const list = document.createElement('ul');
+    list.className = 'glossary-section-list';
+    for (const section of surface.sections) {
+      const li = document.createElement('li');
+      const titleWrap = document.createElement('div');
+      titleWrap.className = 'sec-title';
+      const deep = document.createElement('a');
+      deep.href = `${surface.path}#section:${encodeURIComponent(section.hash)}`;
+      deep.textContent = section.title || section.hash;
+      deep.title = `Open ${section.domId} on board`;
+      titleWrap.append(deep);
+
+      const conceptLink = document.createElement('a');
+      conceptLink.href = conceptHash(section.conceptId);
+      conceptLink.className = 'glossary-surface-meta';
+      conceptLink.textContent = section.conceptId;
+      conceptLink.title = 'Open concept definition';
+
+      const ids = text(
+        'div',
+        `domId=${section.domId} · #section:${section.hash}`,
+        'sec-ids'
+      );
+
+      li.append(titleWrap, conceptLink, ids);
+      list.append(li);
+    }
+
+    card.append(header, list);
+    return card;
+  });
+
+  root.replaceChildren(...cards);
+}
+
 function render(payload) {
   glossary = payload;
   const summary = payload.summary;
@@ -503,6 +581,7 @@ function render(payload) {
   addOptions('glossary-semantic-type', Object.keys(summary.semanticTypes));
   addOptions('glossary-status', ['active', 'deprecated', 'draft']);
   renderCategoryChips(payload);
+  renderPortalSections(payload);
   restoreFiltersFromUrl();
   renderConcepts({ syncUrl: false });
 }

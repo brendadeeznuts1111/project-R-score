@@ -485,6 +485,8 @@ bootGlossaryUx({
   tooltipRoot: document.querySelector('main') ?? document.body,
   trackPage: false,
   scrollSections: true,
+  // section.title → board <h2> anchors; concept.label stays on tooltips/chips
+  applySectionTitles: true,
 })
   .then(glossary => {
     domainGlossary = glossary;

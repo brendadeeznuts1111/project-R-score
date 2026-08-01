@@ -586,6 +586,107 @@ export function sectionDomIdFromSurface(surface, sectionHash) {
   return row?.domId ?? null;
 }
 
+/** Board heading title from v3 surface row (not concept.label). */
+export function sectionTitleFromSurface(surface, sectionHash) {
+  if (!surface || !sectionHash) return null;
+  const sections = surface.sections;
+  if (!Array.isArray(sections)) return null;
+  const row = sections.find(s => s && s.hash === sectionHash);
+  const title = row?.title;
+  return typeof title === 'string' && title.trim() ? title.trim() : null;
+}
+
+/**
+ * Pick the primary heading text node for a section mount.
+ * Limits pattern: h2 > a.section-anchor (title) + .section-heading__links (siblings).
+ * @param {Element} sectionEl
+ * @param {string} [conceptId]
+ * @returns {HTMLElement|null}
+ */
+export function primarySectionTitleEl(sectionEl, conceptId) {
+  if (!(sectionEl instanceof Element)) return null;
+  const labelledBy = sectionEl.getAttribute('aria-labelledby');
+  const heading =
+    (labelledBy && document.getElementById(labelledBy)) ||
+    sectionEl.querySelector(':scope > h1, :scope > h2, :scope > h3') ||
+    sectionEl.querySelector('h1, h2, h3');
+  if (!(heading instanceof HTMLElement)) return null;
+
+  const byConcept =
+    conceptId &&
+    heading.querySelector(`a.section-anchor[data-glossary-concept="${conceptId}"]`);
+  if (byConcept instanceof HTMLElement) return byConcept;
+
+  const sectionAnchor = heading.querySelector('a.section-anchor');
+  if (sectionAnchor instanceof HTMLElement) return sectionAnchor;
+
+  if (conceptId) {
+    const conceptLink = heading.querySelector(`a[data-glossary-concept="${conceptId}"]`);
+    if (conceptLink instanceof HTMLElement) return conceptLink;
+  }
+
+  const firstConcept = heading.querySelector('a[data-glossary-concept]');
+  if (firstConcept instanceof HTMLElement) return firstConcept;
+
+  return heading;
+}
+
+/**
+ * Apply bake `section.title` to board headings for the current surface.
+ * Leaves concept tooltips on `data-glossary-concept` using concept.label/description.
+ *
+ * @param {object} glossary domain-glossary payload
+ * @param {{ pathname?: string, root?: ParentNode }} [options]
+ * @returns {{ applied: number, missing: string[], surface: string|null }}
+ */
+export function applySectionTitles(glossary, options = {}) {
+  const pathname = options.pathname ?? (typeof window !== 'undefined' ? window.location.pathname : '');
+  const root = options.root ?? (typeof document !== 'undefined' ? document : null);
+  const surface = surfaceByPath(glossary, pathname);
+  if (!surface || !Array.isArray(surface.sections) || !root) {
+    return { applied: 0, missing: [], surface: surface?.path ?? null };
+  }
+
+  let applied = 0;
+  const missing = [];
+  for (const section of surface.sections) {
+    const title = typeof section.title === 'string' ? section.title.trim() : '';
+    if (!title || !section.domId) continue;
+
+    const sectionEl =
+      typeof document !== 'undefined' ? document.getElementById(section.domId) : null;
+    if (!(sectionEl instanceof HTMLElement)) {
+      missing.push(section.domId);
+      continue;
+    }
+
+    const target = primarySectionTitleEl(sectionEl, section.conceptId);
+    if (!(target instanceof HTMLElement)) {
+      missing.push(section.domId);
+      continue;
+    }
+
+    // Replace only the title text; drop nested markup inside the anchor (flags rare).
+    if (target.matches('a.section-anchor, a[data-glossary-concept]')) {
+      target.textContent = title;
+    } else {
+      // Heading with mixed children: set first text-bearing link or heading text carefully.
+      const anchor = target.querySelector?.('a.section-anchor, a[data-glossary-concept]');
+      if (anchor instanceof HTMLElement) {
+        anchor.textContent = title;
+      } else {
+        target.textContent = title;
+      }
+    }
+
+    sectionEl.dataset.sectionTitle = title;
+    sectionEl.dataset.sectionHash = section.hash ?? '';
+    applied++;
+  }
+
+  return { applied, missing, surface: surface.path };
+}
+
 /** Section hash key from `#section:{hash}` (null if not a section fragment). */
 export function sectionHashFromLocation(href = window.location.href) {
   return fragmentGroup(sectionPattern, href, 'section');
@@ -707,9 +808,11 @@ export function mountGlossaryBreadcrumbs(mount, glossary, options = {}) {
       });
       const sectionConceptId = sectionConceptFromSurface(surface, sectionId);
       if (sectionId && sectionConceptId) {
+        // Prefer section.title (board heading); fall back to concept.label for term id.
+        const sectionTitle = sectionTitleFromSurface(surface, sectionId);
         const sectionConcept = conceptById(glossary, sectionConceptId);
         crumbs.push({
-          label: sectionConcept?.label ?? sectionId,
+          label: sectionTitle ?? sectionConcept?.label ?? sectionId,
           href: `#section:${encodeURIComponent(sectionId)}`,
           current: true,
         });
@@ -766,12 +869,22 @@ export function mountGlossaryBreadcrumbs(mount, glossary, options = {}) {
  *   trackPage?: boolean,
  *   markSurface?: boolean,
  *   scrollSections?: boolean,
+ *   applySectionTitles?: boolean,
+ *   pathname?: string,
  * }} [options]
  */
 export async function bootGlossaryUx(options = {}) {
   ensureStyles();
   const glossary = await loadDomainGlossary();
   const marked = options.markSurface === false ? null : markPortalSurface(document, glossary);
+  // Default on: boards with surfaces[].sections get headings from section.title
+  // (concept.label stays on tooltips via enhanceGlossaryTooltips).
+  if (options.applySectionTitles !== false) {
+    applySectionTitles(glossary, {
+      pathname: options.pathname,
+      root: options.tooltipRoot ?? document,
+    });
+  }
   if (options.breadcrumbsMount) {
     mountGlossaryBreadcrumbs(options.breadcrumbsMount, glossary);
   } else if (options.trackPage !== false) {
