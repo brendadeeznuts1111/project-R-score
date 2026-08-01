@@ -13,6 +13,8 @@ describe('portal theme (jsonc loader)', () => {
     expect(portalTheme.light.accent).toBe('#0969da');
     expect(portalTheme.light.orange).toBe('#bc4c00');
     expect(portalTheme.light.neutral[200]).toBe('#d0d7de');
+    expect(portalTheme.card.accent).toBe('#0969da');
+    expect(portalTheme.card.healthOk).toBe('#1a7f37');
     expect(portalTheme.brand.name).toBe('FactoryWager');
     expect(portalTheme.tones.ok).toBe('var(--green)');
     expect(portalTheme.tones.old).toBe('var(--orange)');

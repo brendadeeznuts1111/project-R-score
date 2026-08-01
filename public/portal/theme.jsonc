@@ -74,6 +74,27 @@
     "wordmark": "var(--text)",
   },
 
+  "card": {
+    // Component card palette — intentional light surface on dark pages.
+    // Kernel-grounded: values alias the light-scheme tokens (accent, green,
+    // yellow, red, text, textDim, border). accentHover is the Primer-derived
+    // emphasis step of light.accent. Enforced by portal:colors:check
+    // (component plane, Bun.color HEX).
+    "bg": "#ffffff",
+    "border": "#d0d7de",
+    "textMain": "#1f2328",
+    "textDim": "#656d76",
+    "textInv": "#ffffff",
+    "healthOk": "#1a7f37",
+    "healthWarn": "#9a6700",
+    "healthBad": "#cf222e",
+    "accent": "#0969da",
+    "accentHover": "#0550ae",
+    "skeletonBg": "#d0d7de",
+    "errorBg": "#fef2f2",
+    "errorBorder": "#fecaca",
+  },
+
   // Core semantic tones (shared by status chips, doctor, registry banners).
   // ok=fresh · warn=stale · old=≥7d · bad=missing/fail · info=accent · skip=neutral
   "tones": {
