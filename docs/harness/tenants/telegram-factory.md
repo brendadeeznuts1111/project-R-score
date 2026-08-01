@@ -156,7 +156,7 @@ Balance / per-play ledgers stay in `toc-ops-repo`.
 | `ops.view.account_summary` · `account_deposits` · `account_settlements` · `account_credit` · `account_freeplay` · `account_net` | Weekly composites / WoW / rolling windows |
 | `telegram.message.{incoming,outgoing,alert,command,receipt}` | Book-type deposit/settlement/fee rollups |
 | `telegram.status.{delivered,failed}` · `telegram.action.{reply,forward,pin}` | `telegram.status.read` · `ops.view.account_fees` · `account_high_water` |
-| Pure helper [`lib/telegram/ops-accounting-view.ts`](../../../lib/telegram/ops-accounting-view.ts) + `partners:validate` per-account checks | Full `AccountingView` registry bake for per_play / per_week / per_book_type |
+| Pure helper [`lib/telegram/ops-accounting-view.ts`](../../../lib/telegram/ops-accounting-view.ts) + `validateOpsAccountingViewShape` + `partners:validate` · dossier JS summary-parity | Full `AccountingView` registry bake / Soft play·week·book builders |
 | Dossier + partners ledger: event codes → `event.*` via generated [`partner-ops-event-concepts.js`](../../../public/portal/components/partner-ops-event-concepts.js) (`partners:event-concepts:bake`) | Soft MessageLog / play ledger surfaces |
 
 Authority: [`lib/telegram/ops-view-glossary.ts`](../../../lib/telegram/ops-view-glossary.ts) · bake `bun run glossary:portal`.
