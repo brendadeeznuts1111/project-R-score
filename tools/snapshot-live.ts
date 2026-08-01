@@ -1,23 +1,24 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — fetch
-// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
 // @see https://bun.com/blog/bun-v1.3.14#bun-image — Bun.Image (v1.3.14)
 // @see https://bun.com/blog/bun-v1.3.14#terminal-methods — Bun.Image terminal methods
+// @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table — Bun.inspect.table (via logTable)
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
  * Live enhancement probe — score.factory-wager.com vs origin/main.
  *
- * Bun-native only: fetch · Bun.spawn(git) · Bun.CryptoHasher · Bun.Image
- * (Bun.file().image() shorthand · metadata · resize/webp/write) · Bun.write · logTable.
+ * Bun-native: fetch · Bun.$ (git) · Bun.CryptoHasher · Bun.Image · HTMLRewriter
+ * · import runSnapshot · Bun.write · logTable/jsonOut.
  *
  *   bun run snapshot:live
  *   bun --env-file ~/.reasonix/.env run snapshot:live
  *   bun run snapshot:live -- --thumb --strict-image
  */
-import { Glob } from 'bun';
+import { $, Glob } from 'bun';
 import { jsonOut, logTable } from '../lib/console-depth.ts';
 import { isCloudflareAccessEnforced } from '../lib/verification/cloudflare-access-live.ts';
 import {
@@ -41,6 +42,10 @@ export type PortalProbe = {
   url: string;
   gitPath: string | null;
   markers: readonly string[];
+  /** HTML only — DOM ids verified via HTMLRewriter (robust vs string includes). */
+  domIds?: readonly string[];
+  /** HTML only — `data-glossary-concept` values that must appear. */
+  glossaryConcepts?: readonly string[];
 };
 
 export const DEFAULT_LIVE_BASE = 'https://score.factory-wager.com';
@@ -56,6 +61,7 @@ export const PORTAL_PROBES: readonly PortalProbe[] = Object.freeze([
     url: '/portal/account/',
     gitPath: 'public/portal/account/index.html',
     markers: ['scrollSections: true', 'account-glossary-crumbs'] as const,
+    domIds: ['account-glossary-crumbs', 'ad-section-identity'] as const,
   },
   {
     url: '/portal/limits/limit-profiles.js',
@@ -66,11 +72,14 @@ export const PORTAL_PROBES: readonly PortalProbe[] = Object.freeze([
     url: '/portal/partners/',
     gitPath: 'public/portal/partners/index.html',
     markers: ['scrollSections: true', 'id="section:onboard"'] as const,
+    domIds: ['section:onboard'] as const,
+    glossaryConcepts: ['section.partnersOnboard'] as const,
   },
   {
     url: '/portal/partner-history/',
     gitPath: 'public/portal/partner-history/index.html',
     markers: ['scrollGlossarySectionFromUrl'] as const,
+    domIds: ['opening-baseline', 'recent-changes', 'node-breakdown'] as const,
   },
 ]);
 
@@ -87,8 +96,18 @@ export type ImageMetaResult =
       height: number;
       format: string;
       thumbPath?: string;
+      healthy: boolean;
+      healthEvidence: string;
     }
   | { ok: false; path: string; error: string; code: string };
+
+export type ImageHealthExpectations = {
+  formats?: readonly string[];
+  minWidth?: number;
+  minHeight?: number;
+  /** Accept 1×1 probe PNGs used when chart rasterization is unsupported. */
+  allowTiny?: boolean;
+};
 
 /** Stable Bun.Image error codes we branch on (see docs/IMAGES.md · v1.3.14). */
 const IMAGE_ERROR_CODES = new Set([
@@ -103,28 +122,59 @@ const PNG_1x1_BYTES = Buffer.from(
   'base64'
 );
 
+/** Format/dimension health check after Bun.Image.metadata(). */
+export function validateImageHealth(
+  meta: { width: number; height: number; format: string },
+  expectations: ImageHealthExpectations = {}
+): { ok: boolean; evidence: string } {
+  const formats = expectations.formats ?? ['png', 'webp', 'jpeg', 'jpg'];
+  const format = meta.format.toLowerCase();
+  const formatOk = formats.includes(format);
+  const tiny = meta.width <= 1 && meta.height <= 1;
+  if (expectations.allowTiny !== false && tiny && formatOk) {
+    return { ok: true, evidence: `probe ${format} ${meta.width}x${meta.height}` };
+  }
+  const minW = expectations.minWidth ?? 1;
+  const minH = expectations.minHeight ?? 1;
+  const sizeOk = meta.width >= minW && meta.height >= minH;
+  const ok = formatOk && sizeOk;
+  return {
+    ok,
+    evidence: ok
+      ? `${format} ${meta.width}x${meta.height} (≥${minW}x${minH})`
+      : `unhealthy format=${format} size=${meta.width}x${meta.height} need≥${minW}x${minH}`,
+  };
+}
+
 /**
  * Read image metadata via Bun.file().image() (shorthand for `new Bun.Image(file)`).
  * `metadata()` runs on the main thread and is the fast path (~70× vs sharp per Bun 1.3.14).
  */
 export async function getImageMetadata(
   path: string,
-  options: { thumb?: boolean; thumbMax?: number } = {}
+  options: {
+    thumb?: boolean;
+    thumbMax?: number;
+    health?: ImageHealthExpectations;
+  } = {}
 ): Promise<ImageMetaResult> {
   const file = Bun.file(path);
   if (!(await file.exists())) {
     return { ok: false, path, error: 'File not found', code: 'ENOENT' };
   }
   try {
-    const img = file.image();
-    const meta = await img.metadata();
+    const meta = await file.image().metadata();
     let thumbPath: string | undefined;
     if (options.thumb) {
       const max = options.thumbMax ?? 200;
       thumbPath = path.replace(/\.[^.]+$/i, '') + `-thumb-${max}.webp`;
-      // Terminal methods run off the main thread; chain resize → webp → write.
-      await file.image().resize(max).webp({ quality: 80 }).write(thumbPath);
+      // fit:"inside" keeps aspect; terminal methods run off the main thread.
+      await file.image().resize(max, max, { fit: 'inside' }).webp({ quality: 80 }).write(thumbPath);
     }
+    const health = validateImageHealth(
+      { width: meta.width, height: meta.height, format: String(meta.format) },
+      options.health ?? { allowTiny: true }
+    );
     return {
       ok: true,
       path,
@@ -132,6 +182,8 @@ export async function getImageMetadata(
       height: meta.height,
       format: String(meta.format),
       thumbPath,
+      healthy: health.ok,
+      healthEvidence: health.evidence,
     };
   } catch (e) {
     const err = e as Error & { code?: string };
@@ -177,6 +229,53 @@ export function mapPortalUrlToGitPath(url: string): string | null {
   return hit?.gitPath ?? null;
 }
 
+/**
+ * Structural HTML checks via HTMLRewriter (DOM id + data-glossary-concept).
+ * Prefer this over string includes for board HTML.
+ */
+export async function assertHtmlStructure(
+  html: string,
+  options: {
+    domIds?: readonly string[];
+    glossaryConcepts?: readonly string[];
+  } = {}
+): Promise<{ ok: boolean; foundIds: string[]; foundConcepts: string[]; missing: string[] }> {
+  const wantIds = [...(options.domIds ?? [])];
+  const wantConcepts = [...(options.glossaryConcepts ?? [])];
+  const foundIds = new Set<string>();
+  const foundConcepts = new Set<string>();
+
+  let rewriter = new HTMLRewriter();
+  for (const id of wantIds) {
+    const selector = `[id="${id.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"]`;
+    rewriter = rewriter.on(selector, {
+      element() {
+        foundIds.add(id);
+      },
+    });
+  }
+  if (wantConcepts.length > 0) {
+    rewriter = rewriter.on('[data-glossary-concept]', {
+      element(el) {
+        const value = el.getAttribute('data-glossary-concept');
+        if (value && wantConcepts.includes(value)) foundConcepts.add(value);
+      },
+    });
+  }
+  await rewriter.transform(new Response(html)).text();
+
+  const missing = [
+    ...wantIds.filter(id => !foundIds.has(id)).map(id => `id:${id}`),
+    ...wantConcepts.filter(c => !foundConcepts.has(c)).map(c => `concept:${c}`),
+  ];
+  return {
+    ok: missing.length === 0,
+    foundIds: [...foundIds],
+    foundConcepts: [...foundConcepts],
+    missing,
+  };
+}
+
 export function accessHeadersFromEnv(
   env: NodeJS.ProcessEnv | typeof Bun.env = Bun.env
 ): Headers | null {
@@ -189,23 +288,14 @@ export function accessHeadersFromEnv(
   });
 }
 
-/** Read a blob from git without shell. */
+/** Read a blob from git via Bun.$ (concise vs Bun.spawn). */
 export async function gitShowText(refPath: string): Promise<string> {
-  const proc = Bun.spawn(['git', 'show', refPath], {
-    stdout: 'pipe',
-    stderr: 'pipe',
-  });
-  const [stdout, stderr, code] = await Promise.all([
-    new Response(proc.stdout).text(),
-    new Response(proc.stderr).text(),
-    proc.exited,
-  ]);
-  if (code !== 0) {
-    throw new Error(
-      `git show ${refPath} failed (${code}): ${stderr.trim() || stdout.slice(0, 200)}`
-    );
+  const result = await $`git show ${refPath}`.quiet().nothrow();
+  if (result.exitCode !== 0) {
+    const err = result.stderr.toString().trim() || result.stdout.toString().slice(0, 200);
+    throw new Error(`git show ${refPath} failed (${result.exitCode}): ${err}`);
   }
-  return stdout;
+  return result.stdout.toString();
 }
 
 type GlossarySurface = {
@@ -400,7 +490,19 @@ async function probePortal(base: string, rows: VerdictRow[]): Promise<void> {
         });
         continue;
       }
-      const has = markersPresent(hit.body, p.markers);
+      const hasMarkers = markersPresent(hit.body, p.markers);
+      let domOk = true;
+      let domEvidence = 'dom=n/a';
+      if (p.domIds?.length || p.glossaryConcepts?.length) {
+        const structure = await assertHtmlStructure(hit.body, {
+          domIds: p.domIds,
+          glossaryConcepts: p.glossaryConcepts,
+        });
+        domOk = structure.ok;
+        domEvidence = structure.ok
+          ? `dom=${structure.foundIds.join(',') || 'ok'}${structure.foundConcepts.length ? ` · concepts=${structure.foundConcepts.join(',')}` : ''}`
+          : `dom-missing=${structure.missing.join(',')}`;
+      }
       const liveHash = sha256Hex(hit.body);
       let shaEq = 'n/a';
       if (p.gitPath) {
@@ -412,13 +514,14 @@ async function probePortal(base: string, rows: VerdictRow[]): Promise<void> {
         }
       }
       const missing = p.markers.filter(m => !hit.body.includes(m));
+      const ok = hasMarkers && domOk;
       rows.push({
         Enhancement: p.url,
         Plane: 'portal',
-        Status: has ? 'LIVE' : 'STALE',
-        Evidence: has
-          ? `markers ok · sha=${liveHash.slice(0, 12)} · shaEqMain=${shaEq}`
-          : `missing: ${missing.join(', ')} · sha=${liveHash.slice(0, 12)}`,
+        Status: ok ? 'LIVE' : 'STALE',
+        Evidence: ok
+          ? `markers+HTMLRewriter ok · ${domEvidence} · sha=${liveHash.slice(0, 12)} · shaEqMain=${shaEq}`
+          : `missing: ${[...missing, ...(domOk ? [] : [domEvidence])].join(', ')} · sha=${liveHash.slice(0, 12)}`,
       });
     } catch (e) {
       rows.push({
@@ -572,11 +675,10 @@ async function probeImageMeta(
     rows.push({
       Enhancement: 'PNG metadata (Bun.Image)',
       Plane: 'artifact',
-      Status: 'LIVE',
+      Status: meta.healthy ? 'LIVE' : options.strictImage ? 'STALE' : 'SKIP',
       Evidence: [
         `${meta.path}`,
-        `format=${meta.format}`,
-        `${meta.width}x${meta.height}`,
+        meta.healthEvidence,
         meta.thumbPath ? `thumb=${meta.thumbPath}` : null,
       ]
         .filter(Boolean)

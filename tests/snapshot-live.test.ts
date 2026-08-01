@@ -1,11 +1,14 @@
 import { describe, expect, test } from 'bun:test';
 import {
   assertGlossaryEnhancements,
+  assertHtmlStructure,
   getImageMetadata,
+  gitShowText,
   mapPortalUrlToGitPath,
   markersPresent,
   PORTAL_PROBES,
   sha256Hex,
+  validateImageHealth,
 } from '../tools/snapshot-live.ts';
 
 describe('snapshot-live helpers', () => {
@@ -71,6 +74,7 @@ describe('snapshot-live helpers', () => {
       expect(meta.format).toBe('png');
       expect(meta.width).toBe(1);
       expect(meta.height).toBe(1);
+      expect(meta.healthy).toBe(true);
       expect(meta.thumbPath).toBeTruthy();
       expect(await Bun.file(meta.thumbPath!).exists()).toBe(true);
     }
@@ -79,10 +83,47 @@ describe('snapshot-live helpers', () => {
     if (!missing.ok) expect(missing.code).toBe('ENOENT');
   });
 
-  test('tool ships Bun.Image pipeline and Access header wiring', async () => {
+  test('validateImageHealth rejects undersized non-probe images', () => {
+    expect(validateImageHealth({ width: 1, height: 1, format: 'png' }, { allowTiny: true }).ok).toBe(
+      true
+    );
+    expect(
+      validateImageHealth(
+        { width: 50, height: 50, format: 'png' },
+        { allowTiny: false, minWidth: 100, minHeight: 100 }
+      ).ok
+    ).toBe(false);
+  });
+
+  test('assertHtmlStructure finds section ids and glossary concepts', async () => {
+    const html = `
+      <main>
+        <div id="section:onboard" data-glossary-concept="section.partnersOnboard"></div>
+        <div id="account-glossary-crumbs"></div>
+      </main>`;
+    const ok = await assertHtmlStructure(html, {
+      domIds: ['section:onboard', 'account-glossary-crumbs'],
+      glossaryConcepts: ['section.partnersOnboard'],
+    });
+    expect(ok.ok).toBe(true);
+    expect(ok.foundIds).toContain('section:onboard');
+    const bad = await assertHtmlStructure(html, { domIds: ['missing-mount'] });
+    expect(bad.ok).toBe(false);
+    expect(bad.missing).toContain('id:missing-mount');
+  });
+
+  test('gitShowText reads origin/main glossary via Bun.$', async () => {
+    const text = await gitShowText('origin/main:public/registry/domain-glossary.json');
+    const json = JSON.parse(text) as { schemaVersion?: number };
+    expect(json.schemaVersion).toBe(3);
+  });
+
+  test('tool ships Bun.Image · HTMLRewriter · Bun.$ wiring', async () => {
     const src = await Bun.file('tools/snapshot-live.ts').text();
     expect(src).toContain('file.image()');
     expect(src).toContain('.metadata()');
+    expect(src).toContain('HTMLRewriter');
+    expect(src).toContain("import { $, Glob } from 'bun'");
     expect(src).toContain('ERR_IMAGE_FORMAT_UNSUPPORTED');
     expect(src).toContain('CF-Access-Client-Id');
     expect(src).toContain('runSnapshot');
