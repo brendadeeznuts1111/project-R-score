@@ -87,7 +87,7 @@ Freeform topic lines: `SPEN-1 | Venmo | @handle` or `2 | Venmo | @handle` (same 
 
 **Copy reply** button targets the first incomplete out number (not always `1`).
 
-## Dashboard integration (today vs planned)
+## Dashboard integration (shipped)
 
 ```text
 ┌─────────────────────────┐     ┌──────────────────────────────┐
@@ -288,3 +288,16 @@ Intake SSOT remains `reports/telegram/seat-intake/` → `seat-capital-desk.json`
 | `partner-ops-glossary.ts` | Factory overlay concepts (Kalshi owns shared cores) |
 | `partner-ops-events.ts` | Factory-mirror event codes |
 | `partner-ops-color-kernel.ts` | Bun.color palette for partner-ops concepts |
+
+
+## Portal wiring exit (Wave 1)
+
+Shipped on main: ops wide panel + partner-message tables + dashboard plane-card +
+TOC seat-rails overlay via `seat-desk-rails-bridge` (read-only; Soft untouched).
+
+Proof:
+
+```bash
+bun test tests/seat-desk-snapshot.test.ts tests/seat-desk-rails-bridge.test.ts tests/partners-portal.test.ts
+bun run seat:desk:refresh   # when intake present
+```
