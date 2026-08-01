@@ -7,10 +7,7 @@ import {
   type PortalSemanticConceptKey,
 } from './semantic-vocabulary.ts';
 import { PORTAL_PAGE_CONCEPT_DEFINITIONS } from './page-concepts.ts';
-import {
-  PORTAL_GLOSSARY_CONCEPT_HASH_INIT,
-  PORTAL_SECTION_HASH_INIT,
-} from './url-planes.ts';
+import { PORTAL_GLOSSARY_CONCEPT_HASH_INIT, PORTAL_SECTION_HASH_INIT } from './url-planes.ts';
 
 /**
  * First-class section mount for glossary ↔ URL bar ↔ DOM.
@@ -36,10 +33,7 @@ export type PortalGlossarySurface = {
 };
 
 /** Partners / most boards: `id="section:{hash}"` (matches PORTAL_SECTION_HASH_INIT). */
-function sectionMount(
-  hash: string,
-  conceptId: PortalSemanticConceptKey
-): PortalGlossarySection {
+function sectionMount(hash: string, conceptId: PortalSemanticConceptKey): PortalGlossarySection {
   const domId = `section:${hash}`;
   if (!new URLPattern(PORTAL_SECTION_HASH_INIT).test({ hash: domId })) {
     throw new Error(`sectionMount: hash ${hash} does not satisfy PORTAL_SECTION_HASH_INIT`);
@@ -48,10 +42,7 @@ function sectionMount(
 }
 
 /** Account dossier: `id="ad-section-{hash}"`. */
-function adSectionMount(
-  hash: string,
-  conceptId: PortalSemanticConceptKey
-): PortalGlossarySection {
+function adSectionMount(hash: string, conceptId: PortalSemanticConceptKey): PortalGlossarySection {
   return { hash, domId: `ad-section-${hash}`, conceptId };
 }
 

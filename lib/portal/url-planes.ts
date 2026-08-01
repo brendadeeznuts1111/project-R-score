@@ -59,10 +59,9 @@ export const PORTAL_API_PATH_PREFIXES = [
   '/api/doctor',
 ] as const;
 
-export function classifyPortalPathname(pathname: string): Extract<
-  PortalUrlPlane,
-  'page' | 'registry' | 'api' | 'other'
-> {
+export function classifyPortalPathname(
+  pathname: string
+): Extract<PortalUrlPlane, 'page' | 'registry' | 'api' | 'other'> {
   const path = pathname.endsWith('/') || pathname.includes('.') ? pathname : `${pathname}/`;
   if (path.startsWith('/registry/') && path.endsWith('.json')) return 'registry';
   if (path.startsWith('/portal/')) return 'page';
@@ -77,10 +76,9 @@ const glossaryConceptPattern = new URLPattern(PORTAL_GLOSSARY_CONCEPT_HASH_INIT)
 const partnerPatterns = Object.values(PARTNER_HASH_PATTERN_INITS).map(init => new URLPattern(init));
 
 /** Classify `location.hash` (with or without `#`). Server never sees this plane. */
-export function classifyPortalHash(hash: string): Extract<
-  PortalUrlPlane,
-  'hash-section' | 'hash-partner' | 'hash-glossary' | 'empty' | 'other'
-> {
+export function classifyPortalHash(
+  hash: string
+): Extract<PortalUrlPlane, 'hash-section' | 'hash-partner' | 'hash-glossary' | 'empty' | 'other'> {
   const clean = hash.replace(/^#/, '');
   if (!clean) return 'empty';
   if (sectionPattern.test({ hash: clean })) return 'hash-section';
