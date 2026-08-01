@@ -15,7 +15,8 @@
  * @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options
  * @see https://bun.com/docs/runtime/utils#bun-version
  */
-import { inspectTable, padEndWidth, truncateWidth, widthOf } from '../lib/console-depth.ts';
+import { stringWidth } from 'bun';
+import { inspectTable, padEndWidth, truncateWidth } from '../lib/console-depth.ts';
 
 export type CliColumnAlign = 'left' | 'right';
 
@@ -59,7 +60,7 @@ export type CliTableOpts = {
 function cell(text: string, width: number, align: CliColumnAlign): string {
   const t = truncateWidth(String(text ?? ''), width);
   if (align === 'right') {
-    const missing = width - widthOf(t);
+    const missing = width - stringWidth(t);
     return missing > 0 ? `${' '.repeat(missing)}${t}` : t;
   }
   return padEndWidth(t, width);
@@ -72,9 +73,9 @@ function resolveWidths<K extends string>(
   return columns.map(col => {
     if (col.width != null) return col.width;
     const maxW = col.maxWidth ?? 48;
-    let w = widthOf(col.header);
+    let w = stringWidth(col.header);
     for (const row of rows) {
-      w = Math.max(w, widthOf(String(row[col.key] ?? '')));
+      w = Math.max(w, stringWidth(String(row[col.key] ?? '')));
     }
     return Math.min(Math.max(w, 1), maxW);
   });

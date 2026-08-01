@@ -58,7 +58,7 @@ Inline **Fill** buttons live in `reply_markup` under the message — not inside 
 | API | Use in desk |
 |-----|-------------|
 | [`Bun.file`](https://bun.com/docs/runtime/file-io#reading-files-bun-file) | Load/save intake + pending JSON |
-| [`Bun.stringWidth`](https://bun.com/docs/runtime/utils#bun-stringwidth) | Legacy `<pre>` column width via [`fitVisible` / `widthOf`](../../../lib/console-depth.ts) |
+| [`Bun.stringWidth`](https://bun.com/docs/runtime/utils#bun-stringwidth) | Legacy `<pre>` column width via `import { stringWidth } from 'bun'` + [`fitVisible`](../../../lib/console-depth.ts) |
 | [`Bun.sliceAnsi`](https://bun.com/reference/bun/sliceAnsi) | Truncate cells in `fitVisible` (emoji-safe ellipsis) |
 
 Rich mode does not use string width — Telegram lays out HTML tables.

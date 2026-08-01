@@ -3,8 +3,9 @@
 /**
  * Server-rendered monitoring HTML using Bun.inspect.table.
  */
+import { stripANSI } from 'bun';
 import type { MonitoringPayload } from './collect.ts';
-import { inspectTable, stripANSI } from '../console-depth.ts';
+import { inspectTable } from '../console-depth.ts';
 
 function escapeHtml(text: string): string {
   return text

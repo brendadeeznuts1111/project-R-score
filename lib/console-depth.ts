@@ -1,66 +1,43 @@
+// @see https://bun.com/reference/bun/BunInspectOptions — BunInspectOptions
 // @see https://bun.com/reference/bun/argv — Bun.argv
-/**
- * console-depth.ts — project-wide SSOT for object-inspection verbosity.
- *
- * Official Bun references:
- *   - Depth control (`--console-depth`, bunfig `[console] depth`):
- *     https://bun.com/docs/runtime/console
- *   - CLI flag reference: https://bun.com/docs/runtime
- *   - Bun.inspect (#bun-inspect) / .custom (#bun-inspect-custom) /
- *     .table (#bun-inspect-table-…) / Bun.stringWidth /
- *     Bun.stripANSI / Bun.wrapAnsi: https://bun.com/docs/runtime/utils
- *   - Bun.color: https://bun.com/docs/runtime/color
- *   - Bun.env / .env files: https://bun.com/docs/runtime/environment-variables
- *   - Bun.sliceAnsi: https://bun.com/reference/bun/sliceAnsi
- *   - TTY primitives (isTTY, columns): https://bun.com/docs/runtime/nodejs-compat#nodetty
- *   - Type definitions (pinned commit):
- *     https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types
- *     (tracking branch: https://github.com/oven-sh/bun/tree/main/packages/bun-types)
- *
- * Native layers (for plain console.log):
- *   --console-depth=N flag  >  bunfig.toml [console] depth (= 6 in this repo)
- *   >  Bun default (2). The runtime does NOT read BUN_CONSOLE_DEPTH itself,
- *   and util.inspect.defaultOptions.depth is a no-op in Bun 1.4.
- *
- * This module covers the gaps the native layers don't reach: explicit
- * Bun.inspect calls, TTY-aware colors, compact/table modes, and forwarding
- * depth to child processes.
- *
- * Control plane (highest wins):
- *   1. explicit `depth` argument
- *   2. `--console-depth=N` in process args
- *   3. `BUN_CONSOLE_DEPTH` env (repo-local override; the runtime ignores it,
- *      only these wrappers read it)
- *   4. bunfig.toml `[console] depth` (statically imported below — the single
- *      persistent knob shared with plain console.log)
- *   5. DEFAULT_DEPTH (2 = Bun's native default, last resort)
- *
- * .env note: Bun auto-loads .env with precedence .env < .env.{NODE_ENV}
- * < .env.local — a local override of BUN_CONSOLE_DEPTH wins silently.
- * NO_COLOR / FORCE_COLOR are official Bun env vars (documented on the
- * environment-variables page); Bun's precedence is FORCE_COLOR > NO_COLOR,
- * matching shouldColor() below.
- * https://bun.com/docs/runtime/environment-variables
- *
- * For class-level customization of printed output, implement
- * `[Bun.inspect.custom]()` on the class (see utils docs above).
- */
-
-// bunfig.toml [console] depth — the single persistent knob for BOTH plain
-// console.log (native layer) and the wrappers below. Static TOML import:
-// sync, zero fs, resolved relative to this module (repo root = ../).
-// @see https://bun.com/docs/runtime/console#object-inspection-depth — console.depth
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
+// @see https://bun.com/reference/bun/sliceAnsi — Bun.sliceAnsi
+// @see https://bun.com/docs/runtime/color — Bun.color
+// @see https://bun.com/docs/runtime/console — --console-depth / [console] depth
 // @see https://bun.com/docs/bundler/loaders#toml — TOML import attribute
-import bunfig from '../bunfig.toml' with { type: 'toml' };
-
 /**
- * Last-resort depth when no layer above provides one. Mirrors Bun's native
- * default (2) so the wrapper chain degrades exactly like plain console.log.
- * @see https://bun.com/docs/runtime/console#object-inspection-depth — default 2
+ * console-depth.ts — policy layer over Bun natives for harness output.
+ *
+ * Prefer `import { stringWidth, stripANSI, wrapAnsi, sliceAnsi } from 'bun'`
+ * for raw TTY primitives. This module only owns what Bun does not:
+ *   - inspect depth (flag → bunfig → 2; optional BUN_CONSOLE_DEPTH escape)
+ *   - ANSI gate via Bun.enableANSIColors
+ *   - jsonOut choke · logDepth / logTable · colorize
+ *   - padEndWidth / truncateWidth / fitVisible (layout over stringWidth/sliceAnsi)
+ *
+ * Markdown ANSI: call `Bun.markdown.ansi` directly (no wrapper).
+ * Guide: ./bun-runtime.md · note: ./console-depth.md
+ *
+ * Depth: explicit option > `--console-depth` > `BUN_CONSOLE_DEPTH` (escape) >
+ * bunfig `[console] depth` (repo pin 6) > 2.
+ * Color: `shouldColor()` === `Bun.enableANSIColors` (process-start / assignment;
+ * not mid-process env mutation). Never `import { enableANSIColors }` — frozen snapshot.
  */
+
+import bunfig from '../bunfig.toml' with { type: 'toml' };
+import {
+  argv,
+  color as bunColor,
+  env as bunEnv,
+  inspect as bunInspect,
+  sliceAnsi,
+  stringWidth,
+} from 'bun';
+import type { BunInspectOptions } from 'bun';
+
 const DEFAULT_DEPTH = 2;
 
-/** bunfig.toml `[console] depth`, validated. `null` when absent/invalid. */
 const BUNFIG_DEPTH = (() => {
   const raw = (bunfig as { console?: { depth?: unknown } }).console?.depth;
   return typeof raw === 'number' && Number.isFinite(raw) && raw >= 0 ? Math.floor(raw) : null;
@@ -79,155 +56,74 @@ function depthFromArgList(args: readonly string[]): number | null {
   return eq ? parseDepth(eq.split('=')[1]) : null;
 }
 
-/**
- * CLI flag may appear on Bun.argv **or** process.execArgv.
- * Bun often strips `--console-depth` from Bun.argv after applying it to
- * native console.log — execArgv still carries the flag for wrappers.
- * @see https://bun.com/docs/runtime/console — --console-depth
- */
+/** `--console-depth` may live on argv or execArgv (Bun strips it from argv after apply). */
 function argDepth(): number | null {
   return (
-    depthFromArgList(Bun.argv) ??
+    depthFromArgList(argv) ??
     depthFromArgList(typeof process !== 'undefined' ? process.execArgv : [])
   );
 }
 
 /**
- * Effective console depth for this process.
- * Precedence: explicit option > `--console-depth` flag > BUN_CONSOLE_DEPTH env
- * > bunfig `[console] depth` > DEFAULT_DEPTH (2).
+ * Effective inspect depth for wrappers.
  * @see https://bun.com/docs/runtime/console — depth precedence (flag > bunfig)
- * @see https://bun.com/docs/runtime — `--console-depth` CLI flag
  */
 export function getConsoleDepth(): number {
-  return argDepth() ?? parseDepth(Bun.env.BUN_CONSOLE_DEPTH) ?? BUNFIG_DEPTH ?? DEFAULT_DEPTH;
+  return argDepth() ?? parseDepth(bunEnv.BUN_CONSOLE_DEPTH) ?? BUNFIG_DEPTH ?? DEFAULT_DEPTH;
 }
 
 /**
- * TTY-aware color decision, honoring the standard FORCE_COLOR / NO_COLOR
- * env conventions (Bun documents both as official env vars, precedence
- * FORCE_COLOR > NO_COLOR). Never emit ANSI when piped unless forced.
- * @see https://bun.com/docs/runtime/environment-variables#configuring-bun — NO_COLOR / FORCE_COLOR
- * @see https://bun.com/docs/runtime/nodejs-compat#nodetty — process.stdout.isTTY
+ * ANSI gate — `Bun.enableANSIColors` (startup env/TTY, or explicit assignment).
+ * @see https://bun.com/docs/runtime/console — Bun.enableANSIColors
  */
 export function shouldColor(): boolean {
-  if (Bun.env.FORCE_COLOR && Bun.env.FORCE_COLOR !== '0') return true;
-  if (Bun.env.NO_COLOR) return false;
-  return process.stdout.isTTY === true;
+  return Bun.enableANSIColors;
 }
 
-/**
- * Terminal width in columns (fallback 80).
- * @see https://bun.com/docs/runtime/nodejs-compat#nodetty — tty.WriteStream.columns
- */
+/** Terminal columns (fallback 80). Bun.stdout has no `.columns`. */
 export function termWidth(): number {
   return process.stdout.columns ?? 80;
 }
 
-export type InspectOptions = {
-  depth?: number;
-  colors?: boolean;
-  /** Single-line output. NOTE: the official BunInspectOptions surface is
-   *  exactly {colors, depth, sorted, compact} — boolean compact only.
-   *  https://bun.com/reference/bun/BunInspectOptions */
-  compact?: boolean;
-  /** Sort object keys alphabetically, recursively — deterministic output
-   *  for snapshots/diffs. https://bun.com/reference/bun/BunInspectOptions */
-  sorted?: boolean;
-};
+/** Official Bun.inspect options only. */
+export type InspectOptions = Pick<BunInspectOptions, 'colors' | 'depth' | 'sorted' | 'compact'>;
 
-/**
- * Wire-edge Bun.inspect — accepts runtime `unknown` before typed use inward.
- * Only official BunInspectOptions fields are exposed — runtime-verified
- * on Bun 1.4.0: `getters`, `maxArrayLength`, `maxStringLength`, `showProxy`,
- * and `numericSeparator` are silently ignored by Bun.inspect, so they are
- * deliberately absent.
- * @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
- * @see https://bun.com/reference/bun/BunInspectOptions — colors / depth / sorted / compact
- */
-export function inspectFromUnknown(value: unknown, options: InspectOptions = {}): string {
-  return Bun.inspect(value, {
+function resolveInspectOptions(options: InspectOptions = {}): BunInspectOptions {
+  return {
     depth: options.depth ?? getConsoleDepth(),
     colors: options.colors ?? shouldColor(),
     compact: options.compact,
     sorted: options.sorted,
-  });
+  };
 }
 
-/** Bun.inspect with the project depth + TTY-aware colors applied. */
+/** Bun.inspect with project depth + ANSI gate. */
 export function inspect<T>(value: T, options: InspectOptions = {}): string {
-  return inspectFromUnknown(value, options);
+  return bunInspect(value, resolveInspectOptions(options));
 }
 
-/**
- * console.log replacement: project depth, colors only on a real TTY.
- * @see https://bun.com/docs/runtime/utils#bun-inspect
- * @see https://bun.com/docs/runtime/console
- */
-export function logDepthFromUnknown(value: unknown, options: InspectOptions = {}): void {
-  console.info(inspectFromUnknown(value, options));
-}
-
+/** console.log replacement with project depth. */
 export function logDepth<T>(value: T, options: InspectOptions = {}): void {
-  logDepthFromUnknown(value, options);
+  console.info(inspect(value, options));
 }
 
-/**
- * Single-line compact log for high-frequency output (hot paths, watch loops).
- * @see https://bun.com/docs/runtime/utils#bun-inspect — `compact` option
- */
-export function logCompactFromUnknown(value: unknown, options: InspectOptions = {}): void {
-  console.info(inspectFromUnknown(value, { compact: true, ...options }));
-}
-
+/** Single-line compact log (`compact: true`). */
 export function logCompact<T>(value: T, options: InspectOptions = {}): void {
-  logCompactFromUnknown(value, options);
+  console.info(inspect(value, { compact: true, ...options }));
 }
 
 /**
- * Deterministic log with keys sorted alphabetically (recursive) — stable
- * output for snapshots, diffs, and golden-file comparisons.
- * @see https://bun.com/reference/bun/BunInspectOptions — `sorted`
- */
-export function logSortedFromUnknown(value: unknown, options: InspectOptions = {}): void {
-  console.info(inspectFromUnknown(value, { sorted: true, ...options }));
-}
-
-export function logSorted<T>(value: T, options: InspectOptions = {}): void {
-  logSortedFromUnknown(value, options);
-}
-
-/**
- * Bun.inspect.table(tabularData, properties?, options?) — returns a string (unlike console.table).
- * Overloads match docs: options alone as 2nd arg, or properties then options.
+ * Bun.inspect.table string (unlike console.table).
  * @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options
  */
-export function inspectTableFromUnknown(
-  data: unknown,
-  columns?: string[],
-  options: { colors?: boolean } = {}
-): string {
-  const rows = (Array.isArray(data) ? data : [data]) as object[];
-  const opts = { colors: options.colors ?? shouldColor() };
-  // Docs: (data, options) OR (data, properties, options) — never pass undefined properties.
-  return columns?.length ? Bun.inspect.table(rows, columns, opts) : Bun.inspect.table(rows, opts);
-}
-
-/** String-returning table for report/HTML/file contexts (logTable prints). */
 export function inspectTable<T extends object>(
   data: T | T[],
   columns?: string[],
   options: { colors?: boolean } = {}
 ): string {
-  return inspectTableFromUnknown(data, columns, options);
-}
-
-export function logTableFromUnknown(
-  data: unknown,
-  columns?: string[],
-  options: { colors?: boolean } = {}
-): void {
-  console.info(inspectTableFromUnknown(data, columns, options));
+  const rows = (Array.isArray(data) ? data : [data]) as object[];
+  const opts = { colors: options.colors ?? shouldColor() };
+  return columns?.length ? bunInspect.table(rows, columns, opts) : bunInspect.table(rows, opts);
 }
 
 export function logTable<T extends object>(
@@ -235,136 +131,76 @@ export function logTable<T extends object>(
   columns?: string[],
   options: { colors?: boolean } = {}
 ): void {
-  logTableFromUnknown(data, columns, options);
+  console.info(inspectTable(data, columns, options));
 }
 
 /**
- * Machine JSON output for `--json` branches — pretty-printed object dump
- * (2-space indent, trailing newline via console.info). Single choke point
- * so machine output stays parseable and greppable behind one symbol.
- * Pass `{ compact: true }` for single-line JSON (byte-identical to
- * `console.log(JSON.stringify(value))`) — logs, JSONL streams, pipes.
+ * Machine JSON for `--json` branches (pretty by default; `{ compact: true }` → JSONL).
  */
 export function jsonOut<T>(value: T, options: { compact?: boolean } = {}): void {
   console.info(options.compact ? JSON.stringify(value) : JSON.stringify(value, null, 2)); // console-ok — --json choke point
 }
 
-/**
- * The symbol Bun uses to implement Bun.inspect. Override via `[inspectCustom]()`
- * on a class to customize how objects are printed (identical to util.inspect.custom).
- * @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
- */
-export const inspectCustom = Bun.inspect.custom;
+/** Alias of Bun.inspect.custom for `[inspectCustom]()` overrides. */
+export const inspectCustom = bunInspect.custom;
 
 const ANSI_RESET = '\x1b[0m';
 
 /**
- * Colorize text via Bun.color. Uses the "ansi" output format, which
- * auto-detects the terminal's color depth (ansi-16m / ansi-256 / ansi-16)
- * from the environment and returns "" when stdout supports no color —
- * the docs-recommended form. No explicit-format fallback: an ansi-256
- * fallback would bypass auto-detection and colorize under TERM=dumb,
- * which runtime tests pin as plain output.
- * @see https://bun.com/docs/runtime/color — "ansi" auto-detection
+ * Colorize via Bun.color `"ansi"` when `shouldColor()`.
+ * @see https://bun.com/docs/runtime/color
  */
-export function colorize(text: string, color: string): string {
+export function colorize(text: string, swatch: string): string {
   if (!shouldColor()) return text;
-  const code = Bun.color(color, 'ansi') || '';
+  const code = bunColor(swatch, 'ansi') || '';
   return code ? `${code}${text}${ANSI_RESET}` : text;
 }
 
-/** Options shared by width / pad / fit (keep ambiguousIsNarrow consistent in one layout). */
-export type StringWidthOptions = {
-  countAnsiEscapeCodes?: boolean;
-  ambiguousIsNarrow?: boolean;
-};
+type NarrowOpts = { ambiguousIsNarrow?: boolean };
 
 /**
- * Visual width of a string (ANSI-aware, emoji = 2). Thin alias of Bun.stringWidth.
- * Default ignores CSI so Bun.color / styleText labels still align.
+ * Pad end by visible columns (ANSI/emoji safe).
  * @see https://bun.com/docs/runtime/utils#bun-stringwidth
  */
-export function widthOf(text: string, options: StringWidthOptions = {}): number {
-  return Bun.stringWidth(text, options);
-}
-
-/**
- * Pad end by visible columns (ANSI/emoji safe). Prefer over String#padEnd when
- * the string may contain CSI from Bun.color / styleText.
- * @see https://bun.com/docs/runtime/utils#bun-stringwidth
- */
-export function padEndWidth(
-  text: string,
-  width: number,
-  fill = ' ',
-  options?: Pick<StringWidthOptions, 'ambiguousIsNarrow'>
-): string {
-  const missing = width - Bun.stringWidth(text, options);
+export function padEndWidth(text: string, width: number, fill = ' ', options?: NarrowOpts): string {
+  const missing = width - stringWidth(text, options);
   return missing > 0 ? text + fill.repeat(missing) : text;
 }
 
-/** Alias — visible-column pad end. */
-export const padEndVisible = padEndWidth;
-
-/**
- * Pad start by visible columns (ANSI/emoji safe).
- * @see https://bun.com/docs/runtime/utils#bun-stringwidth
- */
-export function padStartWidth(
-  text: string,
-  width: number,
-  fill = ' ',
-  options?: Pick<StringWidthOptions, 'ambiguousIsNarrow'>
-): string {
-  const missing = width - Bun.stringWidth(text, options);
+function padStartWidth(text: string, width: number, fill = ' ', options?: NarrowOpts): string {
+  const missing = width - stringWidth(text, options);
   return missing > 0 ? fill.repeat(missing) + text : text;
 }
 
-/** Alias — visible-column pad start. */
-export const padStartVisible = padStartWidth;
-
-/**
- * Center in a visible column width (ANSI/emoji safe).
- * @see https://bun.com/docs/runtime/utils#bun-stringwidth
- */
-export function padCenterWidth(
-  text: string,
-  width: number,
-  fill = ' ',
-  options?: Pick<StringWidthOptions, 'ambiguousIsNarrow'>
-): string {
-  const missing = width - Bun.stringWidth(text, options);
+function padCenterWidth(text: string, width: number, fill = ' ', options?: NarrowOpts): string {
+  const missing = width - stringWidth(text, options);
   if (missing <= 0) return text;
   const left = Math.floor(missing / 2);
   return fill.repeat(left) + text + fill.repeat(missing - left);
 }
 
-/** Alias — visible-column center. */
-export const padCenterVisible = padCenterWidth;
-
 /**
- * Truncate to a visual column width without breaking ANSI codes or graphemes.
- * @see https://bun.com/reference/bun/sliceAnsi — Bun.sliceAnsi semantics
+ * Truncate to visible columns without breaking ANSI / graphemes.
+ * @see https://bun.com/reference/bun/sliceAnsi
  */
 export function truncateWidth(
   text: string,
   width: number,
-  options?: Pick<StringWidthOptions, 'ambiguousIsNarrow'> & { ellipsis?: string }
+  options?: NarrowOpts & { ellipsis?: string }
 ): string {
   const { ellipsis, ...sw } = options ?? {};
-  if (Bun.stringWidth(text, sw) <= width) return text;
+  if (stringWidth(text, sw) <= width) return text;
   return ellipsis !== undefined
-    ? Bun.sliceAnsi(text, 0, width, { ellipsis, ...sw })
-    : Bun.sliceAnsi(text, 0, width, sw);
+    ? sliceAnsi(text, 0, width, { ellipsis, ...sw })
+    : sliceAnsi(text, 0, width, sw);
 }
 
 /**
- * Fit = sliceAnsi (overflow) then pad to exact column width.
- * Pair with pad*Visible for banners / probe columns; prefer Bun.inspect.table for box chrome.
+ * Truncate-then-pad to an exact column width.
  * @see https://bun.com/docs/runtime/utils#bun-stringwidth
  * @see https://bun.com/reference/bun/sliceAnsi
  */
-export function fitWidth(
+export function fitVisible(
   text: string,
   cols: number,
   opts?: {
@@ -380,8 +216,8 @@ export function fitWidth(
       : { ambiguousIsNarrow: opts.ambiguousIsNarrow };
   const fill = opts?.fill ?? ' ';
   const clipped =
-    Bun.stringWidth(text, sw) > cols
-      ? Bun.sliceAnsi(text, 0, cols, { ellipsis: opts?.ellipsis ?? '…', ...sw })
+    stringWidth(text, sw) > cols
+      ? sliceAnsi(text, 0, cols, { ellipsis: opts?.ellipsis ?? '…', ...sw })
       : text;
   switch (opts?.align ?? 'left') {
     case 'right':
@@ -391,49 +227,4 @@ export function fitWidth(
     default:
       return padEndWidth(clipped, cols, fill, sw);
   }
-}
-
-/** Alias — truncate-then-pad for fixed columns. */
-export const fitVisible = fitWidth;
-
-/**
- * Wrap text to a column width, ANSI- and grapheme-safe: Bun.wrapAnsi
- * closes and re-opens styles per row so every line renders standalone —
- * doing this by hand is error-prone, so always prefer it over manual
- * slicing for multi-line layout. Defaults match Bun (word boundaries, trim).
- * @see https://bun.com/docs/runtime/utils#bun-wrapansi
- */
-export function wrapText(
-  text: string,
-  columns: number,
-  options: { hard?: boolean; wordWrap?: boolean; trim?: boolean; ambiguousIsNarrow?: boolean } = {}
-): string {
-  return Bun.wrapAnsi(text, columns, options);
-}
-
-/**
- * Remove ANSI escape codes. Thin alias of Bun.stripANSI — completes the
- * ANSI family (width / pad / truncate / wrap / strip) behind one import.
- * @see https://bun.com/docs/runtime/utils#bun-stripansi
- */
-export function stripANSI(text: string): string {
-  return Bun.stripANSI(text);
-}
-
-/**
- * CLI args to forward the effective depth to a child `bun` process.
- * @see https://bun.com/docs/runtime/console — `--console-depth` flag
- */
-export function depthArgs(): string[] {
-  return [`--console-depth=${getConsoleDepth()}`];
-}
-
-/**
- * Env overlay to forward the effective depth to a child process.
- * @see https://bun.com/docs/runtime/console
- */
-export function withConsoleDepth<T extends Record<string, string | undefined>>(
-  env: T
-): T & { BUN_CONSOLE_DEPTH: string } {
-  return { ...env, BUN_CONSOLE_DEPTH: String(getConsoleDepth()) };
 }

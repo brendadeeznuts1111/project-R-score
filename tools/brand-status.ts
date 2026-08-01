@@ -31,12 +31,12 @@
  *   bun tools/brand-status.ts --json --once
  */
 
+import { stripANSI } from 'bun';
 import {
   getConsoleDepth,
   logDepth,
   logTable,
   shouldColor,
-  stripANSI,
   termWidth,
   truncateWidth,
 } from '../lib/console-depth.ts';
