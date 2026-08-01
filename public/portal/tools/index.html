@@ -16,95 +16,290 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/portal/style.css" />
   <style>
-    .tools-wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px 48px; }
-    .tools-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 16px; }
-    .tools-panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin: 0 0 12px; }
-    .tools-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .tools-table th { text-align: left; padding: 8px 10px; color: var(--text-dim); font-weight: 500; border-bottom: 1px solid var(--border); }
-    .tools-table td { padding: 8px 10px; border-bottom: 1px solid rgba(48,54,61,.4); vertical-align: top; }
-    .tools-table code { font-size: 11px; }
-    .dim { color: var(--text-dim); font-size: 12px; }
-    .group-tag { font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-dim); }
-    .quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 0; }
+    /* Tools hub — consumes theme.jsonc design-system tokens (portal:theme:sync) */
+    .tools-wrap {
+      max-width: var(--layout-max-width, var(--layout-max, 75rem));
+      margin: 0 auto;
+      padding: 0 var(--space-6, 1.5rem) var(--space-12, 3rem);
+    }
+    .tools-panel {
+      background: var(--bg-card, var(--surface));
+      border: 1px solid var(--layer-border, var(--border));
+      border-radius: var(--radius-md, var(--radius));
+      padding: var(--space-4, 1rem) calc(var(--space-4, 1rem) + 2px);
+      margin-bottom: var(--space-4, 1rem);
+      box-shadow: var(--shadow-sm);
+      transition: border-color var(--duration-fast, 150ms) var(--ease-out, ease);
+    }
+    .tools-panel h2 {
+      font-size: var(--text-sm, 0.75rem);
+      font-weight: var(--font-weight-semibold, 600);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--text-dim);
+      margin: 0 0 var(--space-3, 0.75rem);
+      line-height: var(--leading-tight, 1.25);
+    }
+    .tools-table { width: 100%; border-collapse: collapse; font-size: var(--text-base, 0.8125rem); }
+    .tools-table th {
+      text-align: left; padding: var(--space-2, 0.5rem) 10px;
+      color: var(--text-dim); font-weight: var(--font-weight-medium, 500);
+      border-bottom: 1px solid var(--border);
+      font-size: var(--text-xs, 0.625rem);
+      text-transform: uppercase; letter-spacing: .04em;
+    }
+    .tools-table td {
+      padding: var(--space-2, 0.5rem) 10px;
+      border-bottom: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+      vertical-align: top;
+      line-height: var(--leading-normal, 1.45);
+    }
+    .tools-table code { font-size: var(--text-xs, 0.625rem); font-family: var(--font-mono); }
+    .dim { color: var(--text-dim); font-size: var(--text-sm, 0.75rem); }
+    .group-tag {
+      font-size: var(--text-xs, 0.625rem);
+      text-transform: uppercase; letter-spacing: .04em; color: var(--text-dim);
+    }
+    .quick-actions {
+      display: flex; flex-wrap: wrap;
+      gap: var(--space-2, 0.5rem);
+      margin: var(--space-2, 0.5rem) 0 0;
+    }
     .copy-cli, .qa-btn {
-      font: inherit; font-size: 11px; font-family: ui-monospace, monospace;
-      padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border);
-      background: var(--bg, #0d1117); color: var(--text); cursor: pointer;
+      font: inherit;
+      font-size: var(--text-xs, 0.625rem);
+      font-family: var(--font-mono);
+      font-weight: var(--font-weight-medium, 500);
+      padding: 6px 10px;
+      border-radius: var(--radius-sm, 4px);
+      border: 1px solid var(--border);
+      background: var(--bg-canvas, var(--bg));
+      color: var(--text);
+      cursor: pointer;
+      transition:
+        border-color var(--duration-fast, 150ms) var(--ease-out, ease),
+        color var(--duration-fast, 150ms) var(--ease-out, ease),
+        background var(--duration-fast, 150ms) var(--ease-out, ease),
+        box-shadow var(--duration-fast, 150ms) var(--ease-out, ease);
     }
-    .copy-cli:hover, .qa-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .snap-list { margin: 0; padding-inline-start: 18px; font-size: 12px; }
-    #capability-filter {
-      width: 100%; max-width: 320px; margin-bottom: 10px; padding: 6px 10px;
-      border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text);
+    .copy-cli:hover, .qa-btn:hover {
+      border-color: var(--link-hover, var(--accent));
+      color: var(--link-hover, var(--accent));
+      background: var(--badge-hover, var(--surface-hover));
     }
-    tr.warn td { color: var(--yellow, #d29922); }
-    tr.missing td { color: var(--red, #f85149); }
-    tr.stale td { color: var(--yellow, #d29922); }
+    .copy-cli[data-copy-state="copied"] {
+      color: var(--status-fresh);
+      border-color: color-mix(in srgb, var(--status-fresh) 50%, var(--border));
+      background: var(--status-fresh-bg);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--status-fresh) 25%, transparent);
+    }
+    .copy-cli[data-copy-state="failed"] {
+      color: var(--status-critical);
+      border-color: color-mix(in srgb, var(--status-critical) 50%, var(--border));
+      background: var(--status-critical-bg);
+    }
+    .snap-list { margin: 0; padding-inline-start: 18px; font-size: var(--text-sm, 0.75rem); }
+    #capability-filter, .cli-ref-search {
+      width: 100%; max-width: 320px;
+      margin-bottom: var(--space-3, 0.75rem);
+      padding: 6px 10px;
+      border-radius: var(--radius-sm, 4px);
+      border: 1px solid var(--border);
+      background: var(--bg-canvas, transparent);
+      color: var(--text);
+      font-size: var(--text-base, 0.8125rem);
+      font-family: var(--font-sans);
+      transition: border-color var(--duration-fast, 150ms) var(--ease-out, ease);
+    }
+    #capability-filter:focus, .cli-ref-search:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    tr.warn td { color: var(--status-stale); }
+    tr.missing td { color: var(--status-critical); }
+    tr.stale td { color: var(--status-stale); }
     a.cap-source {
-      display: inline-block; margin-left: 4px; font-size: 11px;
-      color: var(--accent, #58a6ff); text-decoration: none; opacity: .85;
+      display: inline-block; margin-left: var(--space-1, 0.25rem);
+      font-size: var(--text-xs, 0.625rem);
+      color: var(--link-default, var(--accent)); text-decoration: none; opacity: .85;
     }
-    a.cap-source:hover { opacity: 1; text-decoration: underline; }
-    .bake-filters { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+    a.cap-source:hover { opacity: 1; text-decoration: underline; color: var(--link-hover, var(--accent)); }
+    .bake-filters {
+      display: flex; flex-wrap: wrap;
+      gap: 6px;
+      margin: 0 0 var(--space-3, 0.75rem);
+    }
     .bake-filter-btn {
-      font: inherit; font-size: 11px; padding: 4px 10px; border-radius: 999px;
-      border: 1px solid var(--border); background: transparent; color: var(--text-dim); cursor: pointer;
+      font: inherit;
+      font-size: var(--text-xs, 0.625rem);
+      font-weight: var(--font-weight-medium, 500);
+      padding: 4px 10px;
+      border-radius: var(--radius-full, 999px);
+      border: 1px solid var(--border);
+      background: var(--badge-default, transparent);
+      color: var(--text-dim);
+      cursor: pointer;
+      transition:
+        border-color var(--duration-fast, 150ms) var(--ease-out, ease),
+        color var(--duration-fast, 150ms) var(--ease-out, ease),
+        background var(--duration-fast, 150ms) var(--ease-out, ease);
     }
-    .bake-filter-btn:hover, .bake-filter-btn.active {
-      border-color: var(--accent); color: var(--accent);
+    .bake-filter-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--badge-hover, var(--surface-hover));
     }
+    .bake-filter-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--badge-active, var(--accent-glow));
+    }
+    .bake-filter-btn[data-group="registry"].active { border-color: var(--group-registry); color: var(--group-registry); }
+    .bake-filter-btn[data-group="ops"].active { border-color: var(--group-ops); color: var(--group-ops); }
+    .bake-filter-btn[data-group="harness"].active { border-color: var(--group-harness); color: var(--group-harness); }
+    .bake-filter-btn[data-group="secrets"].active { border-color: var(--group-secrets); color: var(--group-secrets); }
+    /* Status pills — semantic status tokens from theme.jsonc */
     .bake-status-pill {
-      display: inline-block; font-size: 10px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: .04em; padding: 2px 7px; border-radius: 999px; border: 1px solid var(--border);
+      display: inline-block;
+      font-size: var(--text-xs, 0.625rem);
+      font-weight: var(--font-weight-semibold, 600);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      padding: 2px 7px;
+      border-radius: var(--radius-full, 999px);
+      border: 1px solid var(--border);
+      background: transparent;
+      line-height: var(--leading-tight, 1.25);
     }
-    .bake-status-pill.ok { color: var(--green, #3fb950); border-color: color-mix(in srgb, var(--green, #3fb950) 45%, var(--border)); }
-    .bake-status-pill.stale { color: var(--yellow, #d29922); border-color: color-mix(in srgb, var(--yellow, #d29922) 45%, var(--border)); }
-    .bake-status-pill.old { color: var(--orange, #db6d28); border-color: color-mix(in srgb, var(--orange, #db6d28) 45%, var(--border)); }
-    .bake-status-pill.missing { color: var(--red, #f85149); border-color: color-mix(in srgb, var(--red, #f85149) 45%, var(--border)); }
+    .bake-status-pill.ok {
+      color: var(--status-fresh);
+      background: var(--status-fresh-bg);
+      border-color: color-mix(in srgb, var(--status-fresh) 45%, var(--border));
+    }
+    .bake-status-pill.stale {
+      color: var(--status-stale);
+      background: var(--status-stale-bg);
+      border-color: color-mix(in srgb, var(--status-stale) 45%, var(--border));
+    }
+    .bake-status-pill.old {
+      color: var(--status-old);
+      background: var(--status-old-bg);
+      border-color: color-mix(in srgb, var(--status-old) 45%, var(--border));
+    }
+    .bake-status-pill.missing {
+      color: var(--status-critical);
+      background: var(--status-critical-bg);
+      border-color: color-mix(in srgb, var(--status-critical) 45%, var(--border));
+    }
     .bake-group-tag {
-      font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-dim);
+      font-size: var(--text-xs, 0.625rem);
+      text-transform: uppercase; letter-spacing: .04em; color: var(--text-dim);
     }
     .bake-status-table code.bake-cli {
       display: inline-block; max-width: 22rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-      vertical-align: middle; font-size: 10px;
+      vertical-align: middle; font-size: var(--text-xs, 0.625rem);
     }
     #bake-status-meta strong { color: var(--text); }
-    /* Bun CLI reference (collapsible groups) */
-    .cli-ref-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 10px; }
-    .cli-ref-search {
-      width: 100%; max-width: 280px; margin-bottom: 10px; padding: 6px 10px;
-      border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text);
+    /* Age / summary panel */
+    .bake-age-table td.bake-age-cell {
+      white-space: nowrap;
+      font-family: var(--font-mono);
+      font-size: var(--text-sm, 0.75rem);
+      font-weight: var(--font-weight-medium, 500);
+    }
+    .bake-age-table td.bake-summary-cell {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs, 0.625rem);
+      color: var(--text-dim);
+      max-width: 28rem;
+      word-break: break-word;
+    }
+    .bake-age-table tr[data-status="ok"] td.bake-age-cell { color: var(--status-fresh); }
+    .bake-age-table tr[data-status="stale"] td.bake-age-cell { color: var(--status-stale); }
+    .bake-age-table tr[data-status="old"] td.bake-age-cell { color: var(--status-old); }
+    .bake-age-table tr[data-status="missing"] td.bake-age-cell { color: var(--status-critical); }
+    .bake-age-legend {
+      display: flex; flex-wrap: wrap;
+      gap: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+      margin: 0 0 var(--space-3, 0.75rem);
+      font-size: var(--text-xs, 0.625rem);
+      color: var(--text-dim);
+    }
+    .bake-age-legend span { display: inline-flex; align-items: center; gap: 5px; }
+    .bake-age-legend .dot {
+      width: 7px; height: 7px; border-radius: var(--radius-full, 50%); background: currentColor;
+    }
+    .bake-age-legend .leg-ok { color: var(--status-fresh); }
+    .bake-age-legend .leg-stale { color: var(--status-stale); }
+    .bake-age-legend .leg-old { color: var(--status-old); }
+    .bake-age-legend .leg-missing { color: var(--status-critical); }
+    /* Bun CLI reference */
+    .cli-ref-header {
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline;
+      gap: var(--space-2, 0.5rem); margin-bottom: var(--space-3, 0.75rem);
     }
     .cli-group {
-      border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; overflow: hidden;
-      background: color-mix(in srgb, var(--surface) 85%, transparent);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md, 8px);
+      margin-bottom: var(--space-2, 0.5rem);
+      overflow: hidden;
+      background: color-mix(in srgb, var(--bg-card, var(--surface)) 85%, transparent);
+      transition: border-color var(--duration-fast, 150ms) var(--ease-out, ease);
     }
     .cli-group-header {
-      padding: 10px 12px; cursor: pointer; display: flex; justify-content: space-between; gap: 12px;
-      font-size: 13px; font-weight: 600; color: var(--text); user-select: none;
+      padding: 10px 12px; cursor: pointer;
+      display: flex; justify-content: space-between; gap: var(--space-3, 0.75rem);
+      font-size: var(--text-base, 0.8125rem);
+      font-weight: var(--font-weight-semibold, 600);
+      color: var(--text); user-select: none;
+      transition: background var(--duration-fast, 150ms) var(--ease-out, ease);
     }
-    .cli-group-header:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); }
-    .cli-group-header .chev { opacity: .7; font-family: ui-monospace, monospace; width: 1rem; }
-    .cli-group-body { display: none; padding: 0 8px 10px; border-top: 1px solid var(--border); }
+    .cli-group-header:hover { background: var(--badge-active, var(--accent-glow)); }
+    .cli-group-header .chev { opacity: .7; font-family: var(--font-mono); width: 1rem; }
+    .cli-group-body { display: none; padding: 0 var(--space-2, 0.5rem) 10px; border-top: 1px solid var(--border); }
     .cli-group-body.open { display: block; }
-    .cli-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .cli-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm, 0.75rem); }
     .cli-table th {
-      text-align: left; padding: 8px 8px; color: var(--text-dim); font-weight: 500;
-      border-bottom: 1px solid var(--border); font-size: 10px; text-transform: uppercase; letter-spacing: .04em;
+      text-align: left; padding: var(--space-2, 0.5rem);
+      color: var(--text-dim); font-weight: var(--font-weight-medium, 500);
+      border-bottom: 1px solid var(--border);
+      font-size: var(--text-xs, 0.625rem);
+      text-transform: uppercase; letter-spacing: .04em;
     }
-    .cli-table td { padding: 6px 8px; border-bottom: 1px solid rgba(48,54,61,.35); vertical-align: top; }
+    .cli-table td {
+      padding: 6px 8px;
+      border-bottom: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+      vertical-align: top;
+    }
     .cli-table tr:last-child td { border-bottom: none; }
     .flag-badge {
-      font-family: ui-monospace, monospace; font-size: 11px;
-      background: color-mix(in srgb, var(--accent) 14%, transparent);
-      color: var(--accent); padding: 2px 6px; border-radius: 4px; white-space: nowrap;
+      font-family: var(--font-mono);
+      font-size: var(--text-xs, 0.625rem);
+      background: var(--tone-info-bg, var(--accent-glow));
+      color: var(--accent);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm, 4px);
+      white-space: nowrap;
     }
     .type-badge {
-      font-size: 10px; text-transform: uppercase; letter-spacing: .03em;
-      background: var(--bg, #0d1117); border: 1px solid var(--border);
-      padding: 1px 6px; border-radius: 999px; color: var(--text-dim);
+      font-size: var(--text-xs, 0.625rem);
+      text-transform: uppercase; letter-spacing: .03em;
+      background: var(--bg-canvas, var(--bg));
+      border: 1px solid var(--border);
+      padding: 1px 6px;
+      border-radius: var(--radius-full, 999px);
+      color: var(--text-dim);
     }
-    .default-val { font-family: ui-monospace, monospace; font-size: 11px; color: var(--text-dim); }
+    .default-val {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs, 0.625rem);
+      color: var(--text-dim);
+    }
+    @media (max-width: 768px) {
+      .tools-wrap { padding-inline: var(--space-4, 1rem); }
+      .bake-status-table code.bake-cli { max-width: 10rem; }
+    }
   </style>
 </head>
 <body>
@@ -191,12 +386,53 @@
             <th>Status</th>
             <th>Group</th>
             <th>Artifact</th>
-            <th>Age / summary</th>
             <th>Board</th>
             <th>CLI</th>
           </tr>
         </thead>
-        <tbody id="bake-status-body"><tr><td colspan="6" class="dim">Loading…</td></tr></tbody>
+        <tbody id="bake-status-body"><tr><td colspan="5" class="dim">Loading…</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="tools-panel" id="bake-age-panel">
+      <h2 id="bake-age">Age / summary</h2>
+      <p class="dim">
+        Per-artifact age + payload highlights · shared group filter above · semantic status from
+        <code>theme.jsonc</code> (<code>--status-fresh</code> · <code>--status-stale</code> · <code>--status-old</code> · <code>--status-critical</code>).
+      </p>
+      <div class="bake-age-legend" aria-label="Freshness legend">
+        <span class="leg-ok"><span class="dot" aria-hidden="true"></span>fresh &lt;24h</span>
+        <span class="leg-stale"><span class="dot" aria-hidden="true"></span>stale &lt;7d</span>
+        <span class="leg-old"><span class="dot" aria-hidden="true"></span>old ≥7d</span>
+        <span class="leg-missing"><span class="dot" aria-hidden="true"></span>missing</span>
+      </div>
+      <table class="tools-table bake-age-table">
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Artifact</th>
+            <th>Age</th>
+            <th>Summary</th>
+          </tr>
+        </thead>
+        <tbody id="bake-age-body"><tr><td colspan="4" class="dim">Loading…</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="tools-panel" id="surface-map-panel">
+      <h2 id="surfaces-map">Board → artifact map</h2>
+      <p class="dim" id="surface-map-meta">From weave <code>surfaces[]</code> optional fields (<code>artifact</code> · <code>category</code> · <code>description</code>) · schema v2 non-breaking.</p>
+      <table class="tools-table">
+        <thead>
+          <tr>
+            <th>Board</th>
+            <th>Category</th>
+            <th>Artifact</th>
+            <th>CLI</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody id="surface-map-body"><tr><td colspan="5" class="dim">Loading…</td></tr></tbody>
       </table>
     </div>
 
@@ -396,3 +632,4 @@
 </html>
 <!-- force-upload 1785619313 -->
 <!-- force 1785619491 -->
+<!-- force 1785620343 -->

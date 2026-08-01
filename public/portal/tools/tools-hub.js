@@ -164,14 +164,19 @@ function summarizeBake(id, data) {
 let bakeRowsCache = [];
 let bakeFilterGroup = 'all';
 
+function filteredBakeRows() {
+  return bakeRowsCache.filter(
+    r => bakeFilterGroup === 'all' || r.b.group === bakeFilterGroup
+  );
+}
+
 function renderBakeRows() {
   const tbody = document.getElementById('bake-status-body');
   if (!tbody) return;
-  const rows = bakeRowsCache.filter(
-    r => bakeFilterGroup === 'all' || r.b.group === bakeFilterGroup
-  );
+  const rows = filteredBakeRows();
   if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="6" class="dim">No bakes in this group</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" class="dim">No bakes in this group</td></tr>`;
+    renderBakeAgeRows();
     return;
   }
   tbody.innerHTML = rows
@@ -184,15 +189,11 @@ function renderBakeRows() {
       const art = r.ok
         ? `<a href="${escapeHtml(r.b.href)}">${escapeHtml(r.b.label)}</a>`
         : escapeHtml(r.b.label);
-      const age = r.ok
-        ? `${escapeHtml(ageLabel(r.at))}${escapeHtml(r.extra)}`
-        : `<span class="dim">missing (${escapeHtml(String(r.httpStatus ?? 'err'))})</span>`;
       const cli = escapeHtml(r.b.cli || '');
       return `<tr class="${rowClass}" data-group="${escapeHtml(g)}" data-status="${escapeHtml(r.status)}">
         <td>${pill}</td>
         <td><span class="bake-group-tag">${escapeHtml(gLabel)}</span></td>
         <td>${art}</td>
-        <td>${age}</td>
         <td><a href="${escapeHtml(r.b.board)}">board</a></td>
         <td>
           <button type="button" class="copy-cli" data-cli="${cli}" title="Copy rebake CLI">copy</button>
@@ -201,7 +202,39 @@ function renderBakeRows() {
       </tr>`;
     })
     .join('');
+  renderBakeAgeRows();
   bindCopyButtons();
+}
+
+/** Age + payload summary — separate panel, theme tone colors. */
+function renderBakeAgeRows() {
+  const tbody = document.getElementById('bake-age-body');
+  if (!tbody) return;
+  const rows = filteredBakeRows();
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="4" class="dim">No bakes in this group</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows
+    .map(r => {
+      const pill = `<span class="bake-status-pill ${escapeHtml(r.status)}">${escapeHtml(r.statusLabel)}</span>`;
+      const art = r.ok
+        ? `<a href="${escapeHtml(r.b.href)}">${escapeHtml(r.b.label)}</a>`
+        : escapeHtml(r.b.label);
+      const age = r.ok
+        ? escapeHtml(ageLabel(r.at))
+        : `missing (${escapeHtml(String(r.httpStatus ?? 'err'))})`;
+      const summary = r.ok
+        ? escapeHtml((r.extra || '').replace(/^\s*·\s*/, '') || '—')
+        : '<span class="dim">—</span>';
+      return `<tr data-status="${escapeHtml(r.status)}" data-group="${escapeHtml(r.b.group || 'other')}">
+        <td>${pill}</td>
+        <td>${art}</td>
+        <td class="bake-age-cell">${age}</td>
+        <td class="bake-summary-cell">${summary}</td>
+      </tr>`;
+    })
+    .join('');
 }
 
 function renderBakeMeta() {
@@ -238,7 +271,7 @@ function renderBakeFilters() {
     .map(g => {
       const label = g === 'all' ? 'All' : GROUP_LABEL[g] || g;
       const active = bakeFilterGroup === g ? ' active' : '';
-      return `<button type="button" class="bake-filter-btn${active}" data-group="${g}">${label} (${counts[g] || 0})</button>`;
+      return `<button type="button" class="bake-filter-btn${active}" data-group="${escapeHtml(g)}">${escapeHtml(label)} (${counts[g] || 0})</button>`;
     })
     .join('');
   el.querySelectorAll('.bake-filter-btn').forEach(btn => {
@@ -578,8 +611,60 @@ async function fillBunCliReference() {
   });
 }
 
+/**
+ * Board → artifact glossary from weave surfaces (optional artifact/category/description).
+ */
+async function fillSurfaceMap() {
+  const tbody = document.getElementById('surface-map-body');
+  const meta = document.getElementById('surface-map-meta');
+  if (!tbody) return;
+  const r = await fetchJsonResult('/registry/portal-weave.json');
+  if (!r.ok || !Array.isArray(r.data?.surfaces)) {
+    tbody.innerHTML = `<tr><td colspan="5" class="dim">portal-weave.json missing or stale</td></tr>`;
+    return;
+  }
+  const related = r.data.related || {};
+  const rows = r.data.surfaces
+    .filter(s => s.href && (s.artifact || s.cli || s.description || s.note))
+    .map(s => {
+      let art = s.artifact || '';
+      if (art && !art.startsWith('/') && related[art]) art = related[art];
+      const cat = s.category || s.group || '—';
+      const desc = s.description || s.note || '—';
+      const cli = s.cli || '';
+      const title = s.title || s.label || s.id || '—';
+      const board = `<a href="${escapeHtml(s.href)}">${escapeHtml(title)}</a>`;
+      const artCell = art
+        ? `<a href="${escapeHtml(art)}"><code>${escapeHtml(art)}</code></a>`
+        : '<span class="dim">—</span>';
+      const cliCell = cli
+        ? `<button type="button" class="copy-cli" data-cli="${escapeHtml(cli)}">copy</button> <code class="bake-cli" title="${escapeHtml(cli)}">${escapeHtml(cli)}</code>`
+        : '<span class="dim">—</span>';
+      return `<tr data-category="${escapeHtml(cat)}">
+        <td>${board}</td>
+        <td><span class="bake-group-tag">${escapeHtml(cat)}</span></td>
+        <td>${artCell}</td>
+        <td>${cliCell}</td>
+        <td class="dim">${escapeHtml(desc)}</td>
+      </tr>`;
+    });
+  tbody.innerHTML = rows.length
+    ? rows.join('')
+    : `<tr><td colspan="5" class="dim">No surfaces with artifact/cli yet — rebake portal-weave</td></tr>`;
+  if (meta) {
+    const withArt = r.data.surfaces.filter(s => s.artifact).length;
+    meta.innerHTML =
+      `From weave · <strong>${r.data.surfaces.length} surfaces</strong> · ` +
+      `<strong>${withArt} with artifact</strong> · schema v${r.data.schemaVersion ?? 2} · ` +
+      `baked ${escapeHtml(String(r.data.generated || '').slice(0, 19))} · ` +
+      `<a href="/registry/portal-weave.json">portal-weave.json</a>`;
+  }
+  bindCopyButtons();
+}
+
 export async function initToolsHub() {
   await fillBakeStatus();
+  await fillSurfaceMap();
   await fillSnapshotWidget();
   await fillBunCliReference();
   await loadCapabilityRows();
@@ -590,6 +675,8 @@ export async function initToolsHub() {
   const observer = new MutationObserver(() => bindCopyButtons());
   const bake = document.getElementById('bake-status-body');
   if (bake) observer.observe(bake, { childList: true });
+  const bakeAge = document.getElementById('bake-age-body');
+  if (bakeAge) observer.observe(bakeAge, { childList: true });
   const snap = document.getElementById('snapshot-widget');
   if (snap) observer.observe(snap, { childList: true });
 }
@@ -608,3 +695,4 @@ if (typeof document !== 'undefined') {
 // force-upload 1785619291
 /* force 1785619491 */
 // force 1785619628
+// force 1785620343

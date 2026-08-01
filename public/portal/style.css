@@ -1102,19 +1102,46 @@ body {
 }
 
 .registry-freshness--fresh {
-  color: var(--green);
-  border-color: rgba(63, 185, 80, 0.35);
-  background: rgba(63, 185, 80, 0.08);
+  color: var(--status-fresh, var(--tone-ok));
+  border-color: color-mix(in srgb, var(--status-fresh, var(--tone-ok)) 40%, var(--border));
+  background: var(--status-fresh-bg, var(--tone-ok-bg));
 }
 
 .registry-freshness--stale {
-  color: var(--yellow);
-  border-color: rgba(210, 153, 34, 0.4);
-  background: rgba(210, 153, 34, 0.09);
+  color: var(--status-stale, var(--tone-warn));
+  border-color: color-mix(in srgb, var(--status-stale, var(--tone-warn)) 40%, var(--border));
+  background: var(--status-stale-bg, var(--tone-warn-bg));
+}
+
+.registry-freshness--old {
+  color: var(--status-old, var(--tone-old));
+  border-color: color-mix(in srgb, var(--status-old, var(--tone-old)) 40%, var(--border));
+  background: var(--status-old-bg, var(--tone-old-bg));
 }
 
 .registry-freshness--unknown {
-  color: var(--text-dim);
+  color: var(--tone-skip);
+  border-color: color-mix(in srgb, var(--tone-skip) 35%, var(--border));
+  background: var(--tone-skip-bg);
+}
+
+/* Copy CLI feedback — theme motion + semantic status */
+.copy-cli {
+  transition:
+    border-color var(--duration-fast, 150ms) var(--ease-out, ease),
+    color var(--duration-fast, 150ms) var(--ease-out, ease),
+    background var(--duration-fast, 150ms) var(--ease-out, ease),
+    box-shadow var(--duration-fast, 150ms) var(--ease-out, ease);
+}
+.copy-cli[data-copy-state="copied"] {
+  color: var(--status-fresh, var(--tone-ok));
+  border-color: color-mix(in srgb, var(--status-fresh, var(--tone-ok)) 50%, var(--border));
+  background: var(--status-fresh-bg, var(--tone-ok-bg));
+}
+.copy-cli[data-copy-state="failed"] {
+  color: var(--status-critical, var(--tone-bad));
+  border-color: color-mix(in srgb, var(--status-critical, var(--tone-bad)) 50%, var(--border));
+  background: var(--status-critical-bg, var(--tone-bad-bg));
 }
 
 .ops-callout {
