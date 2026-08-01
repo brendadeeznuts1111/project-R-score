@@ -20,6 +20,8 @@
  * renames), and proposed-new concepts are flagged, never gated.
  */
 import { PARTNER_OPS_GLOSSARY_CONCEPT_IDS } from '../lib/telegram/partner-ops-glossary.ts';
+import { OPS_VIEW_MVP_CONCEPT_IDS } from '../lib/telegram/ops-view-glossary.ts';
+import { buildPerAccountAccountingView } from '../lib/telegram/ops-accounting-view.ts';
 import { PORTAL_SEMANTIC_CONCEPT_KEYS } from '../lib/portal/semantic-vocabulary.ts';
 import {
   anchorConceptId,
@@ -31,7 +33,7 @@ import { PARTNER_TABLE_SCHEMAS } from '../lib/portal/partner-tables.ts';
 import { allPartnerTags } from '../lib/portal/partner-tags.ts';
 import { isTelegramTopicSlug, partnerTelegramGlossaryIds } from '../lib/portal/partner-telegram.ts';
 
-const SHIPPED = new Set<string>(PARTNER_OPS_GLOSSARY_CONCEPT_IDS);
+const SHIPPED = new Set<string>([...PARTNER_OPS_GLOSSARY_CONCEPT_IDS, ...OPS_VIEW_MVP_CONCEPT_IDS]);
 const errs: string[] = [];
 const warns: string[] = [];
 
@@ -182,6 +184,33 @@ try {
   warns.push(
     `registry data layer unavailable (data-coherence warnings skipped): ${String(error).slice(0, 120)}`
   );
+}
+
+// ── Layer 6: per-account AccountingView shape ────────────────────────────────
+try {
+  const { buildPartnersOpsRegistry } = await import('../lib/telegram/partner-ops-registry.ts');
+  const registry = await buildPartnersOpsRegistry();
+  for (const partner of registry.partners) {
+    if (!partner.code) {
+      errs.push('per-account view: partner missing code');
+      continue;
+    }
+    const view = buildPerAccountAccountingView(partner);
+    if (!view) {
+      errs.push(`per-account view: missing for ${partner.code}`);
+      continue;
+    }
+    if (view.type !== 'per_account' || view.partnerCode !== partner.code) {
+      errs.push(`per-account view: shape mismatch for ${partner.code}`);
+    }
+    for (const conceptId of Object.values(view.conceptIds)) {
+      if (!SHIPPED.has(conceptId)) {
+        errs.push(`per-account view: ${partner.code} concept ${conceptId} not shipped`);
+      }
+    }
+  }
+} catch (error) {
+  errs.push(`per-account view layer unavailable: ${String(error).slice(0, 120)}`);
 }
 
 const ok = errs.length === 0;

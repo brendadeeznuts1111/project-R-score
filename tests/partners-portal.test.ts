@@ -47,6 +47,8 @@ describe('partners portal board', () => {
     expect(html).toContain('telegram:package-group:accounting');
     expect(html).toContain('Betting deposits');
     expect(html).toContain('Accounting deals');
+    expect(html).toContain('ops.view.per_account');
+    expect(html).toContain('data-glossary-concept="ops.view.per_account"');
     expect(html).toContain('Partner messages');
     expect(html).toContain('seat:desk:partner-message');
     expect(html).toContain('renderPartnerMessages');
@@ -118,6 +120,8 @@ describe('partners portal board', () => {
     expect(ops.summary.accounts).toBeGreaterThan(0);
     expect(ops.summary.trackedLimits).toBeGreaterThan(0);
     expect(ops.partners.every((partner: { tracking?: unknown }) => partner.tracking)).toBe(true);
+    expect(ops.glossary.conceptIds).toContain('ops.view.per_account');
+    expect(ops.colors?.['ops.view.per_account']?.hex).toMatch(/^#/);
   });
 
   test('URLPattern routes keep partner, out, accounting, and Telegram anchors aligned', () => {

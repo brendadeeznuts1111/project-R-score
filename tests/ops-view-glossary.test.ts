@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/test — bun:test
 import { describe, expect, test } from 'bun:test';
 import {
+  OPS_VIEW_COLLAPSE_BACKLOG,
   OPS_VIEW_MVP_CONCEPT_IDS,
   opsViewGlossaryConcepts,
 } from '../lib/telegram/ops-view-glossary.ts';
@@ -82,5 +83,16 @@ describe('ops-view glossary MVP', () => {
     expect(ids.has('telegram.message.command')).toBe(true);
     expect(ids.has('telegram.action.pin')).toBe(true);
     expect(bake.sources.opsViewAuthority).toBe('lib/telegram/ops-view-glossary.ts');
+  });
+
+  test('collapse backlog never mints deferred ids and targets exist in bake', async () => {
+    const minted = new Set<string>(OPS_VIEW_MVP_CONCEPT_IDS);
+    const bake = await Bun.file('public/registry/domain-glossary.json').json();
+    const bakeIds = new Set(bake.concepts.map((c: { id: string }) => c.id)); // brand-ok — glossary concept keys
+    for (const [deferred, target] of Object.entries(OPS_VIEW_COLLAPSE_BACKLOG)) {
+      expect(minted.has(deferred)).toBe(false);
+      expect(bakeIds.has(deferred)).toBe(false);
+      expect(bakeIds.has(target)).toBe(true);
+    }
   });
 });
