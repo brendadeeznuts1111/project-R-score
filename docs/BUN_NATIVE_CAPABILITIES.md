@@ -92,6 +92,27 @@ Workspace runtime knobs for gates / spawn chains (not install-machine SSOT). See
 | DX one-liners | `bun run dx:catalog` |
 | Wire / brands | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) |
 
+## File & Module System
+
+Sidebar under [runtime/module-resolution](https://bun.com/docs/runtime/module-resolution). Concept page SSOT — **no glossary**. Guides for `import.meta.*` / entrypoint live in [Utilities guides map](#utilities-guides-map); programmatic `Bun.resolveSync` stays on [utils](https://bun.com/docs/runtime/utils#bun-resolvesync).
+
+| Bun section | Behavior | Factory |
+|-------------|----------|---------|
+| Extension / ESM·CJS | Extensionless OK at runtime; prefer explicit `.ts` in new harness code | Import style · `bun run check:import-graph` · [`IMPORT_BOUNDARIES.md`](./IMPORT_BOUNDARIES.md) |
+| Packages / `exports` / `"bun"` | Node algorithm + `exports` conditions (`bun` · `import` · `require` · …) | Workspace packages · [`UNIFIED.md`](./UNIFIED.md) |
+| Path remaps | `tsconfig` `paths` / package.json `#` imports | Root / `lib` tsconfigs |
+| `import.meta` | dir / file / path / main / url | [`lib/bun-path-url.ts`](../lib/bun-path-url.ts) · [`isModuleEntrypoint`](../lib/bun-executable.ts) · see Utilities rows |
+| Programmatic resolve | `Bun.resolveSync(spec, root)` | Package/path probes (not everyday imports) · AGENTS capability row |
+
+**Harness rules**
+
+1. New `lib/` / `tools/` relative imports: prefer `./foo.ts` (Bun still allows extensionless).
+2. CLI entry: `isModuleEntrypoint(import.meta)` — never invent `NODE_PATH`.
+3. Spec → abs path for probes: `Bun.resolveSync`; module self-location: `import.meta` / path-url helpers.
+4. Deep relatives / cycles: `bun run check:import-graph`.
+
+Smoke: `bun test tests/bun-path-url.test.ts tests/bun-executable.test.ts` · `bun run check:import-graph`.
+
 ## Runtime env guides
 
 Sidebar under [runtime/environment-variables](https://bun.com/docs/runtime/environment-variables). Infra only — **no glossary**.
