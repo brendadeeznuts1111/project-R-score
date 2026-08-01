@@ -1,0 +1,215 @@
+{
+  "schema": "factorywager.soft-accounting-export.v1",
+  "version": "1",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "source": "toc-ops-fixture",
+  "available": true,
+  "path": "/registry/soft-accounting-export.json",
+  "plays": [
+    {
+      "playId": "play-pat-001-prior-cycle-001",
+      "partnerCode": "PAT",
+      "stake": 1100,
+      "odds": -110,
+      "result": "win",
+      "pnl": 800,
+      "placedAt": "2026-07-12T16:10:00.000Z",
+      "settledAt": "2026-07-12T22:00:00.000Z",
+      "market": "NFL"
+    },
+    {
+      "playId": "play-ash-001-nfl-deep-002",
+      "partnerCode": "ASH",
+      "stake": 800,
+      "odds": -130,
+      "result": "loss",
+      "pnl": -800,
+      "placedAt": "2026-07-13T17:10:00.000Z",
+      "settledAt": "2026-07-13T21:00:00.000Z",
+      "market": "NFL"
+    },
+    {
+      "playId": "play-pat-001-mlb-loss-001",
+      "partnerCode": "PAT",
+      "stake": 180,
+      "odds": 105,
+      "result": "loss",
+      "pnl": -180,
+      "placedAt": "2026-07-14T18:05:00.000Z",
+      "settledAt": "2026-07-14T23:00:00.000Z",
+      "market": "MLB"
+    },
+    {
+      "playId": "play-pat-001-tennis-deep-001",
+      "partnerCode": "PAT",
+      "stake": 1100,
+      "odds": 105,
+      "result": "win",
+      "pnl": 720,
+      "placedAt": "2026-07-16T14:20:00.000Z",
+      "settledAt": "2026-07-16T18:40:00.000Z",
+      "market": "Tennis"
+    },
+    {
+      "playId": "play-ash-001-nfl-ml-001",
+      "partnerCode": "ASH",
+      "stake": 1200,
+      "odds": -110,
+      "result": "win",
+      "pnl": 240,
+      "placedAt": "2026-07-17T19:10:00.000Z",
+      "settledAt": "2026-07-17T23:40:00.000Z",
+      "market": "NFL"
+    },
+    {
+      "playId": "play-ash-001-nba-deep-001",
+      "partnerCode": "ASH",
+      "stake": 1000,
+      "odds": -108,
+      "result": "win",
+      "pnl": 420,
+      "placedAt": "2026-07-18T20:05:00.000Z",
+      "settledAt": "2026-07-18T23:20:00.000Z",
+      "market": "NBA"
+    },
+    {
+      "playId": "play-pat-001-nba-deep-002",
+      "partnerCode": "PAT",
+      "stake": 1300,
+      "odds": -110,
+      "result": "push",
+      "pnl": 0,
+      "placedAt": "2026-07-19T01:05:00.000Z",
+      "settledAt": "2026-07-19T03:40:00.000Z",
+      "market": "NBA"
+    },
+    {
+      "playId": "play-pat-004-crypto-deep-001",
+      "partnerCode": "PAT",
+      "stake": 500,
+      "odds": -115,
+      "result": "loss",
+      "pnl": -500,
+      "placedAt": "2026-07-19T11:00:00.000Z",
+      "settledAt": "2026-07-19T12:00:00.000Z",
+      "market": "Crypto"
+    },
+    {
+      "playId": "play-ash-001-mlb-loss-001",
+      "partnerCode": "ASH",
+      "stake": 600,
+      "odds": 140,
+      "result": "loss",
+      "pnl": -600,
+      "placedAt": "2026-07-19T17:20:00.000Z",
+      "settledAt": "2026-07-19T22:05:00.000Z",
+      "market": "MLB"
+    },
+    {
+      "playId": "play-ash-002-blocked-001",
+      "partnerCode": "ASH",
+      "stake": 800,
+      "odds": -105,
+      "result": "blocked",
+      "pnl": null,
+      "placedAt": "2026-07-19T18:00:00.000Z",
+      "market": "NBA"
+    },
+    {
+      "playId": "play-pat-001-nfl-spread-001",
+      "partnerCode": "PAT",
+      "stake": 1500,
+      "odds": -115,
+      "result": "win",
+      "pnl": 1200,
+      "placedAt": "2026-07-20T16:05:00.000Z",
+      "settledAt": "2026-07-20T22:10:00.000Z",
+      "market": "NFL"
+    },
+    {
+      "playId": "play-pat-002-kalshi-pol-001",
+      "partnerCode": "PAT",
+      "stake": 2000,
+      "odds": -120,
+      "result": "win",
+      "pnl": 800,
+      "placedAt": "2026-07-21T14:10:00.000Z",
+      "settledAt": "2026-07-21T15:55:00.000Z",
+      "market": "Politics"
+    },
+    {
+      "playId": "play-ash-001-tennis-001",
+      "partnerCode": "ASH",
+      "stake": 900,
+      "odds": -125,
+      "result": "win",
+      "pnl": 336,
+      "placedAt": "2026-07-21T15:05:00.000Z",
+      "settledAt": "2026-07-21T20:40:00.000Z",
+      "market": "Tennis"
+    },
+    {
+      "playId": "play-pat-004-stake-soccer-001",
+      "partnerCode": "PAT",
+      "stake": 900,
+      "odds": 110,
+      "result": "win",
+      "pnl": 600,
+      "placedAt": "2026-07-22T07:15:00.000Z",
+      "settledAt": "2026-07-22T08:10:00.000Z",
+      "market": "Soccer"
+    },
+    {
+      "playId": "play-pat-002-limit-reject-001",
+      "partnerCode": "PAT",
+      "stake": 2500,
+      "odds": 145,
+      "result": "blocked",
+      "pnl": null,
+      "placedAt": "2026-07-22T12:00:00.000Z",
+      "market": "MLB"
+    },
+    {
+      "playId": "play-pat-001-nba-open-001",
+      "partnerCode": "PAT",
+      "stake": 900,
+      "odds": 130,
+      "result": "pending",
+      "pnl": null,
+      "placedAt": "2026-07-22T15:20:00.000Z",
+      "market": "NBA"
+    },
+    {
+      "playId": "play-pat-004-stake-open-001",
+      "partnerCode": "PAT",
+      "stake": 800,
+      "odds": -105,
+      "result": "pending",
+      "pnl": null,
+      "placedAt": "2026-07-23T10:05:00.000Z",
+      "market": "Soccer"
+    },
+    {
+      "playId": "play-pat-002-kalshi-deep-002",
+      "partnerCode": "PAT",
+      "stake": 1500,
+      "odds": 140,
+      "result": "pending",
+      "pnl": null,
+      "placedAt": "2026-07-23T13:10:00.000Z",
+      "market": "Politics"
+    },
+    {
+      "playId": "play-ash-001-pending-deep",
+      "partnerCode": "ASH",
+      "stake": 700,
+      "odds": 135,
+      "result": "pending",
+      "pnl": null,
+      "placedAt": "2026-07-23T19:00:00.000Z",
+      "market": "MLB"
+    }
+  ],
+  "weeks": [],
+  "byBookType": []
+}

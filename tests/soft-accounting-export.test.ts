@@ -35,10 +35,17 @@ describe('soft-accounting-export wire', () => {
     expect(typeof ash?.stake).toBe('number');
   });
 
-  test('load without bake returns unavailable; projectFromTocOps fills plays', async () => {
-    const missing = await loadSoftAccountingExport(process.cwd(), { projectFromTocOps: false });
-    expect(missing.available).toBe(false);
-    expect(missing.source).toBe('unavailable');
+  test('load prefers committed bake; projectFromTocOps still works as fallback', async () => {
+    const baked = await loadSoftAccountingExport(process.cwd(), { projectFromTocOps: false });
+    if (await Bun.file('public/registry/soft-accounting-export.json').exists()) {
+      expect(baked.available).toBe(true);
+      expect(baked.schema).toBe(SOFT_ACCOUNTING_EXPORT_SCHEMA);
+      expect(baked.source).toBe('toc-ops-fixture');
+      expect(baked.plays.length).toBeGreaterThan(0);
+    } else {
+      expect(baked.available).toBe(false);
+      expect(baked.source).toBe('unavailable');
+    }
 
     const projected = await loadSoftAccountingExport(process.cwd(), { projectFromTocOps: true });
     expect(projected.available).toBe(true);
