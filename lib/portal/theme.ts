@@ -160,11 +160,28 @@ export type PortalThemeAnimation = {
   };
 };
 
+export type PortalCardPalette = {
+  bg: string;
+  border: string;
+  textMain: string;
+  textDim: string;
+  textInv: string;
+  healthOk: string;
+  healthWarn: string;
+  healthBad: string;
+  accent: string;
+  accentHover: string;
+  skeletonBg: string;
+  errorBg: string;
+  errorBorder: string;
+};
+
 export type PortalTheme = {
   version: string;
   colorSchemeDefault: 'dark' | 'light';
   dark: PortalThemePalette;
   light: PortalThemePalette;
+  card: PortalCardPalette;
   fonts: {
     sans: string;
     brand: string;
@@ -209,6 +226,21 @@ function indentLine(indent: string, line: string): string {
   return `${indent}${line}`;
 }
 
+const CARD_TO_CSS: Record<keyof PortalCardPalette, string> = {
+  bg: '--portal-card-bg',
+  border: '--portal-card-border',
+  textMain: '--portal-text-main',
+  textDim: '--portal-text-dim',
+  textInv: '--portal-text-inv',
+  healthOk: '--portal-health-ok',
+  healthWarn: '--portal-health-warn',
+  healthBad: '--portal-health-bad',
+  accent: '--portal-accent',
+  accentHover: '--portal-accent-hover',
+  skeletonBg: '--portal-skeleton-bg',
+  errorBg: '--portal-error-bg',
+  errorBorder: '--portal-error-border',
+};
 function paletteBlock(palette: PortalThemePalette, indent = '  '): string {
   const flat = (Object.keys(FLAT_PALETTE_TO_CSS) as Array<keyof typeof FLAT_PALETTE_TO_CSS>)
     .map(k => indentLine(indent, `${FLAT_PALETTE_TO_CSS[k]}: ${palette[k]};`))
@@ -230,6 +262,12 @@ function mapEntries(
 }
 
 /** Emit CSS custom properties from theme.jsonc (dark :root + light override). */
+function cardBlock(card: PortalCardPalette, indent = '  '): string {
+  return (Object.keys(CARD_TO_CSS) as Array<keyof PortalCardPalette>)
+    .map(k => `${indent}${CARD_TO_CSS[k]}: ${card[k]};`)
+    .join('\n');
+}
+
 export function renderThemeTokensCss(theme: PortalTheme = portalTheme): string {
   const {
     brand,
@@ -243,10 +281,12 @@ export function renderThemeTokensCss(theme: PortalTheme = portalTheme): string {
     animation,
     dark,
     light,
+    card,
   } = theme;
 
   const rootBody = [
     paletteBlock(dark),
+    cardBlock(card),
     // Legacy board chrome
     `  --radius: ${layout.radius};`,
     `  --font-sans: ${fonts.sans};`,

@@ -28,18 +28,18 @@ const STYLE = `
   <style>
     :host {
       display: block;
-      --card-bg: var(--portal-card-bg, #fff);
-      --card-border: var(--portal-card-border, #e2e8f0);
+      --card-bg: var(--portal-card-bg, #ffffff);
+      --card-border: var(--portal-card-border, #d0d7de);
       --card-radius: var(--portal-card-radius, 8px);
-      --text-main: var(--portal-text-main, #1a202c);
-      --text-dim: var(--portal-text-dim, #718096);
+      --text-main: var(--portal-text-main, #1f2328);
+      --text-dim: var(--portal-text-dim, #656d76);
       --text-inv: var(--portal-text-inv, #fff);
-      --health-ok: var(--portal-health-ok, #10b981);
-      --health-warn: var(--portal-health-warn, #f59e0b);
-      --health-bad: var(--portal-health-bad, #ef4444);
-      --accent: var(--portal-accent, #3b82f6);
-      --accent-hover: var(--portal-accent-hover, #2563eb);
-      --skeleton-bg: var(--portal-skeleton-bg, #e2e8f0);
+      --health-ok: var(--portal-health-ok, #1a7f37);
+      --health-warn: var(--portal-health-warn, #9a6700);
+      --health-bad: var(--portal-health-bad, #cf222e);
+      --accent: var(--portal-accent, #0969da);
+      --accent-hover: var(--portal-accent-hover, #0550ae);
+      --skeleton-bg: var(--portal-skeleton-bg, #d0d7de);
       --error-bg: var(--portal-error-bg, #fef2f2);
       --error-border: var(--portal-error-border, #fecaca);
     }
@@ -100,7 +100,7 @@ const STYLE = `
       flex: 1;
       height: 6px;
       border-radius: 3px;
-      background: #e2e8f0;
+      background: var(--skeleton-bg);
       overflow: hidden;
     }
     .health-fill {

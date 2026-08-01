@@ -126,7 +126,7 @@ function ensureStyles() {
     .glossary-suggest__item[aria-selected="true"],
     .glossary-suggest__item:hover,
     .glossary-suggest__item:focus-visible {
-      background: rgb(88 166 255 / 12%);
+      background: var(--accent-glow, rgba(88, 166, 255, 0.15));
       outline: none;
     }
     .glossary-suggest__label {
