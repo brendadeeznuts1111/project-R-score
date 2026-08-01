@@ -28,6 +28,8 @@ describe('portal weave', () => {
     expect(p.scripts.some(s => s.cmd.includes('public:audit:verify'))).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('ops:seed:toc'))).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('portal:chrome:bake'))).toBe(true);
+    expect(p.scripts.some(s => s.cmd.includes('ssot:publish:r2'))).toBe(true);
+    expect(p.scripts.some(s => s.cmd.includes('factory:health'))).toBe(true);
     const pred = p.surfaces.find(s => s.label === 'Prediction report');
     expect(pred?.href).toBe('/registry/prediction/report/');
     expect(pred?.id).toBe('prediction-report');
@@ -56,6 +58,7 @@ describe('portal weave', () => {
     expect(hrefs).toContain('/portal/tools/');
     expect(hrefs).toContain('/portal/vault/');
     expect(hrefs).toContain('/portal/failures/');
+    expect(hrefs).toContain('/portal/tennis/');
     // unique ids / no duplicate env
     const ids = PORTAL_WEAVE_SURFACES.map(s => s.id);
     expect(new Set(ids).size).toBe(ids.length);
@@ -73,6 +76,7 @@ describe('portal weave', () => {
     expect(arts).toContain('/registry/package-info.json');
     expect(arts).toContain('/registry/seat-capital-desk.json');
     expect(arts).toContain('/registry/partners-ops.json');
+    expect(arts).toContain('/registry/tennis/agent-auth.json');
     expect(arts).toContain('/registry/compliance-board.json');
     expect(arts).toContain('/registry/compliance-enhancements.json');
     expect(arts).toContain('/registry/compliance-shadow.json');

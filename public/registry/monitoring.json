@@ -1,7 +1,7 @@
 {
   "source": "snapshot",
-  "uptime": "0d 0h 0m 6s",
-  "uptimeMs": 6518,
+  "uptime": "0d 0h 0m 20s",
+  "uptimeMs": 20045,
   "packageCount": 17,
   "versionCount": 23,
   "lastIntegrity": {
@@ -26,8 +26,8 @@
   },
   "experimentsActive": 1,
   "predictionN": 30,
-  "timestamp": "2026-07-28T16:41:44.074Z",
-  "snapshotAt": "2026-07-28T16:41:44.074Z",
+  "timestamp": "2026-08-01T21:28:48.846Z",
+  "snapshotAt": "2026-08-01T21:28:48.846Z",
   "compliance": {
     "available": true,
     "ok": true,
@@ -43,25 +43,51 @@
       "MA",
       "NJ"
     ],
-    "generatedAt": "2026-07-28T16:41:38.413Z",
+    "generatedAt": "2026-08-01T21:28:29.678Z",
     "path": "/registry/compliance-board.json",
     "portal": "/portal/compliance/"
   },
   "limitRaises": {
     "available": true,
     "ok": true,
-    "partners": 15,
-    "raises": 19,
+    "partners": 7,
+    "raises": 13,
     "lookbackHours": 48,
-    "patternNodes": 15,
-    "generatedAt": "2026-07-28T16:41:42.833Z",
+    "patternNodes": 8,
+    "generatedAt": "2026-08-01T21:28:46.600Z",
     "path": "/registry/limit-raises.json",
     "portal": "/portal/limits/"
+  },
+  "installCache": {
+    "available": true,
+    "sizeBytes": 4940517376,
+    "sizeHuman": "4.60 GB",
+    "thresholdBytes": 2147483648,
+    "thresholdHuman": "2.00 GB",
+    "wouldPrune": true,
+    "pruneReason": "over threshold (2.00 GB, current 4.60 GB)",
+    "cacheDir": "/Users/nolarose/.bun/install/cache",
+    "bunPmCachePath": "/Users/nolarose/.bun/install/cache",
+    "bunPmCacheMismatch": null,
+    "collectedAt": "2026-08-01T21:28:48.846Z"
+  },
+  "installHygiene": {
+    "available": true,
+    "ok": false,
+    "cacheAvailable": true,
+    "cacheWouldPrune": true,
+    "npmInstallOk": true,
+    "npmInstallViolations": 0,
+    "installVerifyOk": true,
+    "installVerifyFailed": 0,
+    "generatedAt": "2026-08-01T21:28:46.574Z",
+    "path": "/registry/install-hygiene-report.json",
+    "portal": "/portal/install-hygiene/"
   },
   "env": {
     "ok": true,
     "source": "env-check",
-    "checkedAt": "2026-07-28T16:41:44.075Z",
+    "checkedAt": "2026-08-01T21:28:53.766Z",
     "summary": {
       "total": 26,
       "ok": 26,
@@ -131,7 +157,7 @@
         "Group": "r2",
         "Severity": "recommended",
         "Status": "set",
-        "Detail": "bun-secrets · via R2_BUCKET_NAME · factory-wager-registry"
+        "Detail": "scanner-cookies · via R2_BUCKET · factory-wager-registry"
       },
       {
         "Key": "REGISTRY_URL",
@@ -417,7 +443,7 @@
     "demosPassed": 30,
     "demosTotal": 30,
     "demoPassRate": "100.0%",
-    "generated": "2026-07-28T16:41:44.072Z",
+    "generated": "2026-08-01T21:28:48.836Z",
     "apisVerified": 30
   },
   "registryClientProof": {
@@ -428,7 +454,7 @@
     "status": "pass",
     "subsystem": "package-manager",
     "proofHash": "38542ede96aad679d33a4c8baec9651ad940db3cd75a80f2cb10fc714f116c1f",
-    "timestamp": "2026-07-24T04:59:00.755Z",
+    "timestamp": "2026-07-28T20:27:22.349Z",
     "path": "/registry/registry-client-proof.json"
   },
   "docsCoverageProof": {
@@ -444,7 +470,7 @@
     "referencePageCount": 57,
     "indexStale": false,
     "proofHash": "9820d84a3f27f610657f8b00c2e3a51272423b881242ff672d4fed3675d1e1ee",
-    "timestamp": "2026-07-27T00:55:47.957Z",
+    "timestamp": "2026-07-28T20:27:22.956Z",
     "path": "/registry/docs-coverage-proof.json"
   }
 }

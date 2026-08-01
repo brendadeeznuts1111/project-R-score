@@ -376,6 +376,7 @@ Wired into `ci:harness` as gate `portal-foundation` and appended to `verify-all`
 - Surfaces: **Operate planes** (TOC Ops + tree/loop from `ops-summary`), proof KPIs, subsystem rollup, `<channel-filter>` release cards, Bun defaults, taxonomy audit
 - Soft refresh via Refresh control; deep links to `/portal/ops/` and `/portal/toc/`
 - Cross-surface map: [`portal-weave.json`](../public/registry/portal-weave.json) from [`lib/http/portal-weave.ts`](../lib/http/portal-weave.ts) (`ops:snapshot`)
+- Operator guide (scannable): [`portal-ops-board-map.md`](portal-ops-board-map.md) — bake with `bun tools/bake-portal-ops-map.ts`
 
 ### Ops dashboard (`/portal/ops/`)
 

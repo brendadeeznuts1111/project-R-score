@@ -38,11 +38,73 @@
       border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text);
     }
     tr.warn td { color: var(--yellow, #d29922); }
+    tr.missing td { color: var(--red, #f85149); }
+    tr.stale td { color: var(--yellow, #d29922); }
     a.cap-source {
       display: inline-block; margin-left: 4px; font-size: 11px;
       color: var(--accent, #58a6ff); text-decoration: none; opacity: .85;
     }
     a.cap-source:hover { opacity: 1; text-decoration: underline; }
+    .bake-filters { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+    .bake-filter-btn {
+      font: inherit; font-size: 11px; padding: 4px 10px; border-radius: 999px;
+      border: 1px solid var(--border); background: transparent; color: var(--text-dim); cursor: pointer;
+    }
+    .bake-filter-btn:hover, .bake-filter-btn.active {
+      border-color: var(--accent); color: var(--accent);
+    }
+    .bake-status-pill {
+      display: inline-block; font-size: 10px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .04em; padding: 2px 7px; border-radius: 999px; border: 1px solid var(--border);
+    }
+    .bake-status-pill.ok { color: var(--green, #3fb950); border-color: color-mix(in srgb, var(--green, #3fb950) 45%, var(--border)); }
+    .bake-status-pill.stale { color: var(--yellow, #d29922); border-color: color-mix(in srgb, var(--yellow, #d29922) 45%, var(--border)); }
+    .bake-status-pill.old { color: var(--orange, #db6d28); border-color: color-mix(in srgb, var(--orange, #db6d28) 45%, var(--border)); }
+    .bake-status-pill.missing { color: var(--red, #f85149); border-color: color-mix(in srgb, var(--red, #f85149) 45%, var(--border)); }
+    .bake-group-tag {
+      font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-dim);
+    }
+    .bake-status-table code.bake-cli {
+      display: inline-block; max-width: 22rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      vertical-align: middle; font-size: 10px;
+    }
+    #bake-status-meta strong { color: var(--text); }
+    /* Bun CLI reference (collapsible groups) */
+    .cli-ref-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+    .cli-ref-search {
+      width: 100%; max-width: 280px; margin-bottom: 10px; padding: 6px 10px;
+      border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text);
+    }
+    .cli-group {
+      border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; overflow: hidden;
+      background: color-mix(in srgb, var(--surface) 85%, transparent);
+    }
+    .cli-group-header {
+      padding: 10px 12px; cursor: pointer; display: flex; justify-content: space-between; gap: 12px;
+      font-size: 13px; font-weight: 600; color: var(--text); user-select: none;
+    }
+    .cli-group-header:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+    .cli-group-header .chev { opacity: .7; font-family: ui-monospace, monospace; width: 1rem; }
+    .cli-group-body { display: none; padding: 0 8px 10px; border-top: 1px solid var(--border); }
+    .cli-group-body.open { display: block; }
+    .cli-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .cli-table th {
+      text-align: left; padding: 8px 8px; color: var(--text-dim); font-weight: 500;
+      border-bottom: 1px solid var(--border); font-size: 10px; text-transform: uppercase; letter-spacing: .04em;
+    }
+    .cli-table td { padding: 6px 8px; border-bottom: 1px solid rgba(48,54,61,.35); vertical-align: top; }
+    .cli-table tr:last-child td { border-bottom: none; }
+    .flag-badge {
+      font-family: ui-monospace, monospace; font-size: 11px;
+      background: color-mix(in srgb, var(--accent) 14%, transparent);
+      color: var(--accent); padding: 2px 6px; border-radius: 4px; white-space: nowrap;
+    }
+    .type-badge {
+      font-size: 10px; text-transform: uppercase; letter-spacing: .03em;
+      background: var(--bg, #0d1117); border: 1px solid var(--border);
+      padding: 1px 6px; border-radius: 999px; color: var(--text-dim);
+    }
+    .default-val { font-family: ui-monospace, monospace; font-size: 11px; color: var(--text-dim); }
   </style>
 </head>
 <body>
@@ -119,18 +181,43 @@
       </div>
     </div>
 
-    <div class="tools-panel">
+    <div class="tools-panel" id="bake-status-panel">
       <h2 id="bakes">Baked data status</h2>
-      <p class="dim">Freshness from public registry artifacts (same sources as nav badges).</p>
-      <table class="tools-table">
-        <thead><tr><th>Artifact</th><th>Age / summary</th><th>Board</th><th>CLI</th></tr></thead>
-        <tbody id="bake-status-body"><tr><td colspan="4" class="dim">Loading…</td></tr></tbody>
+      <p class="dim" id="bake-status-meta">Freshness from public registry artifacts (same sources as nav badges) · CLI = copy rebake.</p>
+      <div class="bake-filters" id="bake-filters" aria-label="Filter bakes by group"></div>
+      <table class="tools-table bake-status-table">
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Group</th>
+            <th>Artifact</th>
+            <th>Age / summary</th>
+            <th>Board</th>
+            <th>CLI</th>
+          </tr>
+        </thead>
+        <tbody id="bake-status-body"><tr><td colspan="6" class="dim">Loading…</td></tr></tbody>
       </table>
     </div>
 
     <div class="tools-panel">
       <h2 id="snapshots">Last snapshot (widget)</h2>
       <div id="snapshot-widget"><p class="dim">Loading…</p></div>
+    </div>
+
+    <div class="tools-panel" id="bun-cli-panel">
+      <div class="cli-ref-header">
+        <h2 id="bun-cli" style="margin:0">Bun CLI reference</h2>
+        <span class="dim" id="bun-cli-meta">Loading flags…</span>
+      </div>
+      <p class="dim">
+        Live-grouped flags from <code>bun --help</code> bake ·
+        <a href="/registry/bun-cli-reference.json">JSON</a> ·
+        rebake <button type="button" class="copy-cli" data-cli="bun tools/bake-bun-cli-reference.ts">copy</button>
+        <code>bun tools/bake-bun-cli-reference.ts</code>
+      </p>
+      <input type="search" class="cli-ref-search" id="bun-cli-filter" placeholder="Filter flags…" aria-label="Filter Bun CLI flags" />
+      <div id="bun-cli-accordion"><p class="dim">Loading…</p></div>
     </div>
 
     <div class="tools-panel">
@@ -307,3 +394,5 @@
   </footer>
 </body>
 </html>
+<!-- force-upload 1785619313 -->
+<!-- force 1785619491 -->

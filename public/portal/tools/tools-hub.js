@@ -1,28 +1,53 @@
 /**
+// deploy-stamp: 20260801T212029Z
  * Tools hub — baked-data freshness, last snapshot widget, copy-to-clipboard for CLI.
  * Static Pages only: no Bun.spawn from the browser.
+ *
+ * Baked data status: status pills · group filters · full CLI + copy · tenant chip.
  */
 
 import { bindCopyButtons } from '../copy-cli.js';
 import { fetchJsonResult } from '../fetch-json.js';
 import { BAKE_SOURCES, ageLabel, pickGeneratedAt } from '../command-centre-core.js';
 
-/** Shared bakes plus tools-hub-only vault-map row. */
+/** Freshness thresholds (ms). */
+const FRESH_MS = 24 * 60 * 60 * 1000;
+const STALE_MS = 7 * 24 * 60 * 60 * 1000;
+
+const GROUP_LABEL = {
+  registry: 'Registry',
+  ops: 'Ops',
+  harness: 'Harness',
+  secrets: 'Secrets',
+  other: 'Other',
+};
+
+/** Shared bakes plus tools-hub-only rows. */
 const BAKES = [
   ...BAKE_SOURCES,
+  {
+    id: 'portal-weave',
+    label: 'portal-weave',
+    href: '/registry/portal-weave.json',
+    board: '/portal/ops/#portal-weave-panel',
+    cli: 'bun run ops:snapshot --no-routing',
+    group: 'ops',
+  },
   {
     id: 'vault-map',
     label: 'vault-map',
     href: '/registry/vault-map.json',
     board: '/portal/env/',
     cli: 'bun run portal-cli secret map',
+    group: 'secrets',
   },
   {
     id: 'capability-map',
     label: 'capability-map-subset',
     href: '/registry/capability-map-subset.json',
     board: '/portal/tools/#capabilities',
-    cli: 'bun run portal-cli dashboard --view=capabilities',
+    cli: 'bun run portal-cli capabilities health',
+    group: 'harness',
   },
   {
     id: 'doctor-state',
@@ -30,48 +55,249 @@ const BAKES = [
     href: '/registry/doctor-state.json',
     board: '/portal/doctor/',
     cli: 'bun run bake:doctor',
+    group: 'harness',
+  },
+  {
+    id: 'tennis-agent-auth',
+    label: 'tennis/agent-auth',
+    href: '/registry/tennis/agent-auth.json',
+    board: '/portal/tennis/',
+    cli: 'bun run tennis:agent-auth:bake',
+    group: 'ops',
+  },
+  {
+    id: 'env-inventory',
+    label: 'env-inventory',
+    href: '/registry/env-inventory.json',
+    board: '/portal/env/',
+    cli: 'bun run env:inventory:bake',
+    group: 'secrets',
+  },
+  {
+    id: 'bun-cli-reference',
+    label: 'bun-cli-reference',
+    href: '/registry/bun-cli-reference.json',
+    board: '/portal/tools/#bun-cli',
+    cli: 'bun tools/bake-bun-cli-reference.ts',
+    group: 'harness',
   },
 ].filter((b, i, arr) => arr.findIndex(x => x.id === b.id) === i);
+
+function activeTenant() {
+  try {
+    return new URLSearchParams(location.search).get('tenant') || 'factory';
+  } catch {
+    return 'factory';
+  }
+}
+
+/** @param {string|null|undefined} iso */
+function ageStatus(iso) {
+  if (!iso) return { key: 'missing', label: 'no date' };
+  const t = Date.parse(iso);
+  if (Number.isNaN(t)) return { key: 'old', label: 'unknown' };
+  const age = Date.now() - t;
+  if (age < FRESH_MS) return { key: 'ok', label: 'fresh' };
+  if (age < STALE_MS) return { key: 'stale', label: 'stale' };
+  return { key: 'old', label: 'old' };
+}
+
+function escapeHtml(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function summarizeBake(id, data) {
+  if (!data) return '';
+  if (id === 'failures' && data.totals) {
+    return ` · failures=${data.totals.failures ?? 0}`;
+  }
+  if (id === 'packages' && Array.isArray(data.packages)) {
+    return ` · pkgs=${data.packages.length} · grade=${data.grade ?? '—'}`;
+  }
+  if (id === 'vault-health' && data.summary) {
+    const s = data.summary;
+    return ` · active=${s.activeItems ?? '—'} · healthy=${s.healthy ?? '—'}`;
+  }
+  if (id === 'capability-map') {
+    const n = data.rowCount ?? data.rows?.length ?? '—';
+    const pc = data.summary?.protocolCounts;
+    const proto = pc
+      ? Object.entries(pc)
+          .map(([k, v]) => `${k}=${v}`)
+          .join(' ')
+      : '';
+    return ` · rows=${n}${proto ? ` · ${proto}` : ''} · schema v${data.schemaVersion ?? '?'}`;
+  }
+  if (id === 'doctor-state') {
+    const s = data.summary || {};
+    return ` · tone=${data.tone ?? '—'} · ${s.passed ?? '?'}/${s.checkCount ?? '?'} passed · fatalFail=${s.failedFatal ?? 0}`;
+  }
+  if (id === 'portal-weave' && data.summary) {
+    const s = data.summary;
+    return ` · schema v${data.schemaVersion ?? 2} · scripts=${s.scripts ?? '—'} · surfaces=${s.surfaces ?? '—'}`;
+  }
+  if (id === 'monorepo-health') {
+    return ` · score=${data.score ?? '—'} · grade=${data.grade ?? '—'}`;
+  }
+  if (id === 'ops-summary') {
+    const p = data.tree?.partners ?? data.partners ?? '—';
+    return ` · partners=${p} · source=${data.source ?? '—'}`;
+  }
+  if (id === 'tennis-agent-auth') {
+    return ` · status=${data.status ?? data.configured ?? '—'}`;
+  }
+  if (id === 'env-inventory') {
+    const n = data.keys?.length ?? data.summary?.keyCount ?? data.count ?? '—';
+    return ` · keys=${n}`;
+  }
+  if (id === 'bun-cli-reference' && data.summary) {
+    return ` · flags=${data.summary.flags ?? '—'} · groups=${data.summary.groups ?? '—'} · bun ${data.bunVersion ?? '?'}`;
+  }
+  return '';
+}
+
+/** @type {{ b: object, ok: boolean, status: string, statusLabel: string, at: string|null, extra: string, sort: number }[]} */
+let bakeRowsCache = [];
+let bakeFilterGroup = 'all';
+
+function renderBakeRows() {
+  const tbody = document.getElementById('bake-status-body');
+  if (!tbody) return;
+  const rows = bakeRowsCache.filter(
+    r => bakeFilterGroup === 'all' || r.b.group === bakeFilterGroup
+  );
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="dim">No bakes in this group</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows
+    .map(r => {
+      const g = r.b.group || 'other';
+      const gLabel = GROUP_LABEL[g] || g;
+      const rowClass =
+        r.status === 'missing' ? 'missing' : r.status === 'stale' || r.status === 'old' ? 'stale' : '';
+      const pill = `<span class="bake-status-pill ${escapeHtml(r.status)}">${escapeHtml(r.statusLabel)}</span>`;
+      const art = r.ok
+        ? `<a href="${escapeHtml(r.b.href)}">${escapeHtml(r.b.label)}</a>`
+        : escapeHtml(r.b.label);
+      const age = r.ok
+        ? `${escapeHtml(ageLabel(r.at))}${escapeHtml(r.extra)}`
+        : `<span class="dim">missing (${escapeHtml(String(r.httpStatus ?? 'err'))})</span>`;
+      const cli = escapeHtml(r.b.cli || '');
+      return `<tr class="${rowClass}" data-group="${escapeHtml(g)}" data-status="${escapeHtml(r.status)}">
+        <td>${pill}</td>
+        <td><span class="bake-group-tag">${escapeHtml(gLabel)}</span></td>
+        <td>${art}</td>
+        <td>${age}</td>
+        <td><a href="${escapeHtml(r.b.board)}">board</a></td>
+        <td>
+          <button type="button" class="copy-cli" data-cli="${cli}" title="Copy rebake CLI">copy</button>
+          <code class="bake-cli" title="${cli}">${cli}</code>
+        </td>
+      </tr>`;
+    })
+    .join('');
+  bindCopyButtons();
+}
+
+function renderBakeMeta() {
+  const meta = document.getElementById('bake-status-meta');
+  if (!meta) return;
+  const tenant = activeTenant();
+  const total = bakeRowsCache.length;
+  const ok = bakeRowsCache.filter(r => r.status === 'ok').length;
+  const stale = bakeRowsCache.filter(r => r.status === 'stale' || r.status === 'old').length;
+  const missing = bakeRowsCache.filter(r => r.status === 'missing').length;
+  const groups = [...new Set(bakeRowsCache.map(r => r.b.group || 'other'))];
+  meta.innerHTML =
+    `<strong>${total} artifacts</strong> · ` +
+    `<strong>${ok} fresh</strong> · ` +
+    `<strong>${stale} stale/old</strong> · ` +
+    `<strong>${missing} missing</strong> · ` +
+    `tenant=<code>${escapeHtml(tenant)}</code> · ` +
+    `groups: ${groups.map(g => GROUP_LABEL[g] || g).join(' · ')} · ` +
+    `thresholds: fresh &lt;24h · stale &lt;7d · old ≥7d · ` +
+    `<a href="/registry/portal-weave.json">weave</a>`;
+}
+
+function renderBakeFilters() {
+  const el = document.getElementById('bake-filters');
+  if (!el) return;
+  const counts = { all: bakeRowsCache.length };
+  for (const r of bakeRowsCache) {
+    const g = r.b.group || 'other';
+    counts[g] = (counts[g] || 0) + 1;
+  }
+  const order = ['all', 'registry', 'ops', 'harness', 'secrets', 'other'];
+  el.innerHTML = order
+    .filter(g => g === 'all' || counts[g])
+    .map(g => {
+      const label = g === 'all' ? 'All' : GROUP_LABEL[g] || g;
+      const active = bakeFilterGroup === g ? ' active' : '';
+      return `<button type="button" class="bake-filter-btn${active}" data-group="${g}">${label} (${counts[g] || 0})</button>`;
+    })
+    .join('');
+  el.querySelectorAll('.bake-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      bakeFilterGroup = btn.getAttribute('data-group') || 'all';
+      renderBakeFilters();
+      renderBakeRows();
+    });
+  });
+}
 
 async function fillBakeStatus() {
   const tbody = document.getElementById('bake-status-body');
   if (!tbody) return;
-  const rows = await Promise.all(
+
+  const results = await Promise.all(
     BAKES.map(async b => {
       const r = await fetchJsonResult(b.href);
       if (!r.ok) {
-        return `<tr class="warn"><td>${b.label}</td><td class="dim">missing (${r.status ?? 'err'})</td><td><a href="${b.board}">board</a></td><td><button type="button" class="copy-cli" data-cli="${b.cli}">copy bake</button></td></tr>`;
+        return {
+          b,
+          ok: false,
+          status: 'missing',
+          statusLabel: 'missing',
+          at: null,
+          extra: '',
+          httpStatus: r.status,
+          sort: 0,
+        };
       }
       const at = pickGeneratedAt(r.data);
-      let extra = '';
-      if (b.id === 'failures' && r.data?.totals) {
-        extra = ` · failures=${r.data.totals.failures ?? 0}`;
-      }
-      if (b.id === 'packages' && Array.isArray(r.data?.packages)) {
-        extra = ` · pkgs=${r.data.packages.length} · grade=${r.data.grade ?? '—'}`;
-      }
-      if (b.id === 'vault-health' && r.data?.summary) {
-        const s = r.data.summary;
-        extra = ` · active=${s.activeItems ?? '—'} · healthy=${s.healthy ?? '—'}`;
-      }
-      if (b.id === 'capability-map' && r.data) {
-        const n = r.data.rowCount ?? r.data.rows?.length ?? '—';
-        const pc = r.data.summary?.protocolCounts;
-        const proto = pc
-          ? Object.entries(pc)
-              .map(([k, v]) => `${k}=${v}`)
-              .join(' ')
-          : '';
-        extra = ` · rows=${n}${proto ? ` · ${proto}` : ''} · schema v${r.data.schemaVersion ?? '?'}`;
-      }
-      if (b.id === 'doctor-state' && r.data) {
-        const s = r.data.summary || {};
-        extra = ` · tone=${r.data.tone ?? '—'} · ${s.passed ?? '?'}/${s.checkCount ?? '?'} passed · fatalFail=${s.failedFatal ?? 0}`;
-      }
-      return `<tr><td><a href="${b.href}">${b.label}</a></td><td>${ageLabel(at)}${extra}</td><td><a href="${b.board}">board</a></td><td><button type="button" class="copy-cli" data-cli="${b.cli}">copy</button></td></tr>`;
+      const st = ageStatus(at);
+      const sort =
+        st.key === 'missing' ? 0 : st.key === 'old' ? 1 : st.key === 'stale' ? 2 : 3;
+      return {
+        b,
+        ok: true,
+        status: st.key,
+        statusLabel: st.label,
+        at,
+        extra: summarizeBake(b.id, r.data),
+        httpStatus: 200,
+        sort,
+      };
     })
   );
-  tbody.innerHTML = rows.join('');
+
+  // Attention first: missing → old → stale → fresh; then by group label
+  bakeRowsCache = results.sort((a, b) => {
+    if (a.sort !== b.sort) return a.sort - b.sort;
+    const ga = a.b.group || 'other';
+    const gb = b.b.group || 'other';
+    if (ga !== gb) return ga.localeCompare(gb);
+    return String(a.b.label).localeCompare(String(b.b.label));
+  });
+
+  renderBakeMeta();
+  renderBakeFilters();
+  renderBakeRows();
 }
 
 /**
@@ -145,14 +371,6 @@ const CAPABILITY_FALLBACK = [
 let capabilityRows = CAPABILITY_FALLBACK.map(padCapabilityRow);
 /** @type {{ generatedAt?: string, source?: string, schemaVersion?: number, summary?: object }|null} */
 let capabilityMeta = null;
-
-function escapeHtml(s) {
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
 
 /**
  * Normalize registry JSON rows to
@@ -263,9 +481,107 @@ function fillCapabilityTable() {
   }
 }
 
+/** @type {object|null} */
+let bunCliRef = null;
+
+function renderBunCliReference(filter = '') {
+  const root = document.getElementById('bun-cli-accordion');
+  const meta = document.getElementById('bun-cli-meta');
+  if (!root) return;
+  if (!bunCliRef?.groups?.length) {
+    root.innerHTML = `<p class="dim">Missing <a href="/registry/bun-cli-reference.json">bun-cli-reference.json</a> · run <code>bun tools/bake-bun-cli-reference.ts</code></p>`;
+    if (meta) meta.textContent = 'not baked';
+    return;
+  }
+  const q = filter.trim().toLowerCase();
+  let total = 0;
+  const openFirst = !q;
+  root.innerHTML = bunCliRef.groups
+    .map((group, idx) => {
+      const flags = (group.flags || []).filter(f => {
+        if (!q) return true;
+        const hay = `${f.flag} ${f.short || ''} ${f.description || ''} ${f.type || ''}`.toLowerCase();
+        return hay.includes(q);
+      });
+      if (!flags.length) return '';
+      total += flags.length;
+      const open = openFirst ? idx === 0 : true;
+      const chev = open ? '▾' : '▸';
+      const rows = flags
+        .map(f => {
+          const flagLabel = f.short ? `${f.short}, ${f.flag}` : f.flag;
+          const type = f.type || 'boolean';
+          let def = f.default;
+          if ((def == null || def === '') && type === 'boolean') def = 'false';
+          const defText = def == null || def === '' ? '—' : String(def);
+          const docs = f.url
+            ? ` <a class="cap-source" href="${escapeHtml(f.url)}" target="_blank" rel="noopener noreferrer" title="docs">↗</a>`
+            : '';
+          // curated is a catalog badge, not part of the description
+          const curatedTitle = f.curated ? ' title="Curated in config/runtime-flags.json"' : '';
+          const curatedDot = f.curated
+            ? ' <span class="type-badge" title="Curated in config/runtime-flags.json">★</span>'
+            : '';
+          return `<tr${curatedTitle}>
+            <td><span class="flag-badge">${escapeHtml(flagLabel)}</span>${docs}${curatedDot}</td>
+            <td><span class="type-badge">${escapeHtml(type)}</span></td>
+            <td><span class="default-val">${escapeHtml(defText)}</span></td>
+            <td>${escapeHtml(f.description || '')}</td>
+          </tr>`;
+        })
+        .join('');
+      return `<div class="cli-group" data-group="${escapeHtml(group.id)}">
+        <div class="cli-group-header" role="button" tabindex="0" aria-expanded="${open}">
+          <span><span class="chev">${chev}</span> ${escapeHtml(group.label)}</span>
+          <span class="dim">${flags.length} flags</span>
+        </div>
+        <div class="cli-group-body${open ? ' open' : ''}">
+          <table class="cli-table">
+            <thead><tr><th>Flag</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>`;
+    })
+    .join('');
+
+  if (meta) {
+    const s = bunCliRef.summary || {};
+    meta.textContent = `${total} shown · ${s.flags ?? '—'} total · ${s.groups ?? '—'} groups · bun ${bunCliRef.bunVersion || '?'} · baked ${String(bunCliRef.generated || '').slice(0, 19)}`;
+  }
+
+  root.querySelectorAll('.cli-group-header').forEach(header => {
+    const toggle = () => {
+      const body = header.nextElementSibling;
+      if (!body) return;
+      const open = body.classList.toggle('open');
+      header.setAttribute('aria-expanded', open ? 'true' : 'false');
+      const chev = header.querySelector('.chev');
+      if (chev) chev.textContent = open ? '▾' : '▸';
+    };
+    header.addEventListener('click', toggle);
+    header.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggle();
+      }
+    });
+  });
+}
+
+async function fillBunCliReference() {
+  const r = await fetchJsonResult('/registry/bun-cli-reference.json');
+  bunCliRef = r.ok ? r.data : null;
+  renderBunCliReference('');
+  document.getElementById('bun-cli-filter')?.addEventListener('input', e => {
+    renderBunCliReference(e.target?.value || '');
+  });
+}
+
 export async function initToolsHub() {
   await fillBakeStatus();
   await fillSnapshotWidget();
+  await fillBunCliReference();
   await loadCapabilityRows();
   fillCapabilityTable();
   document.getElementById('capability-filter')?.addEventListener('input', fillCapabilityTable);
@@ -288,3 +604,7 @@ if (typeof document !== 'undefined') {
     void initToolsHub();
   }
 }
+
+// force-upload 1785619291
+/* force 1785619491 */
+// force 1785619628

@@ -1,4 +1,5 @@
 /**
+// deploy-stamp: '20260801T211729Z'
  * Operations dashboard — live `/api/operations/summary` or static
  * `/registry/ops-summary.json` (Cloudflare Pages snapshot from `ops:snapshot`).
  * Includes factorial experiments (C4), coverage prediction (C5),
@@ -449,7 +450,8 @@ class OperationsDashboard extends HTMLElement {
             <h3 class="ops-weave-h3">Wiki (GitHub Pages)</h3>
             <div id="portal-weave-wiki" class="ops-weave-links ops-weave-wiki"></div>
             <h3 class="ops-weave-h3">Operator scripts</h3>
-            <ul id="portal-weave-scripts" class="ops-weave-scripts"></ul>
+            <div class="ops-sub" id="portal-weave-scripts-meta">Grounded package.json / portal-cli commands · group by plane</div>
+            <div id="portal-weave-scripts" class="ops-weave-scripts"></div>
           </section>
         </div>
       </div>
@@ -2477,19 +2479,93 @@ class OperationsDashboard extends HTMLElement {
         : '<span class="ops-muted">Rebake portal-weave.json for wiki links</span>';
     }
     const weaveScripts = this.querySelector('#portal-weave-scripts');
+    const weaveScriptsMeta = this.querySelector('#portal-weave-scripts-meta');
     if (weaveScripts) {
       const scripts = weave?.scripts?.length
         ? weave.scripts
         : [
-            { label: 'Demo snapshot', cmd: 'bun run ops:snapshot:demo' },
-            { label: 'Reference discovery', cmd: 'bun run reference:discover:check' },
+            { label: 'Demo snapshot', cmd: 'bun run ops:snapshot:demo', group: 'ops' },
+            { label: 'Reference discovery', cmd: 'bun run reference:discover:check', group: 'harness' },
           ];
-      weaveScripts.innerHTML = scripts
-        .map(
-          s =>
-            `<li data-group="${esc(s.group || 'other')}"><strong>${esc(s.label || '')}</strong> · <code>${esc(s.cmd)}</code>${s.doc ? ` · <a class="ops-link" href="/${esc(s.doc)}">doc</a>` : ''}</li>`
-        )
+      /** Group order for operator scan (registry R2 first, then ops plane). */
+      const GROUP_ORDER = ['registry', 'ops', 'harness', 'secrets', 'plane', 'wiki', 'other'];
+      const groupLabel = g =>
+        ({
+          registry: 'Registry / R2',
+          ops: 'Ops',
+          harness: 'Harness',
+          secrets: 'Secrets / vault',
+          plane: 'Plane',
+          wiki: 'Wiki',
+          other: 'Other',
+        })[g] || g;
+      const buckets = new Map();
+      for (const s of scripts) {
+        const g = s.group && GROUP_ORDER.includes(s.group) ? s.group : 'other';
+        if (!buckets.has(g)) buckets.set(g, []);
+        buckets.get(g).push(s);
+      }
+      const ordered = GROUP_ORDER.filter(g => buckets.has(g));
+      if (weaveScriptsMeta) {
+        const ver = weave?.schemaVersion ?? 2;
+        const baked = weave?.generated
+          ? ` · baked ${esc(String(weave.generated).replace(/\.\d{3}Z$/, 'Z'))}`
+          : '';
+        const groupNames = ordered.map(g => groupLabel(g)).join(' · ');
+        weaveScriptsMeta.innerHTML =
+          `<strong>${scripts.length} commands</strong> · <strong>${ordered.length} groups</strong>` +
+          ` (${esc(groupNames)}) · schema v${ver}${baked}` +
+          ` · <a class="ops-link" href="/registry/portal-weave.json">portal-weave.json</a>` +
+          ` · <a class="ops-link" href="/docs/portal-ops-board-map.md">map</a>`;
+      }
+      const docHref = doc => {
+        if (!doc) return '';
+        if (/^https?:\/\//i.test(doc)) return doc;
+        // Prefer site-relative (Pages may serve docs/ tree)
+        return doc.startsWith('/') ? doc : `/${doc}`;
+      };
+      /** First flag tokens after the package script name (for tooltips). */
+      const flagsOf = cmd => {
+        const parts = String(cmd || '')
+          .split(/\s+/)
+          .filter(Boolean);
+        const flags = parts.filter(p => p.startsWith('-'));
+        return flags.length ? flags.join(' ') : '—';
+      };
+      weaveScripts.innerHTML = ordered
+        .map(g => {
+          const rows = buckets.get(g);
+          const items = rows
+            .map(s => {
+              const cmd = s.cmd || '';
+              const shortId = s.id || '';
+              const flags = flagsOf(cmd);
+              const doc = s.doc
+                ? ` · <a class="ops-link" href="${esc(docHref(s.doc))}" title="${esc(s.doc)}">doc</a>`
+                : '';
+              const idChip = shortId
+                ? `<code class="ops-script-id" title="short id">${esc(shortId)}</code> `
+                : '';
+              return `<li data-group="${esc(g)}" data-script-id="${esc(shortId)}" title="flags: ${esc(flags)}">${idChip}<strong>${esc(s.label || '')}</strong> · <code class="ops-cmd">${esc(cmd)}</code>${doc} <button type="button" class="ops-copy-cmd" data-cli="${esc(cmd)}" title="Copy command">copy</button></li>`;
+            })
+            .join('');
+          return `<div class="ops-weave-script-group" data-group="${esc(g)}"><h4 class="ops-weave-group-h">${esc(groupLabel(g))} <span class="ops-muted">(${rows.length})</span></h4><ul class="ops-weave-scripts">${items}</ul></div>`;
+        })
         .join('');
+      weaveScripts.querySelectorAll('.ops-copy-cmd').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const cli = btn.getAttribute('data-cli') || '';
+          try {
+            await navigator.clipboard.writeText(cli);
+            btn.textContent = 'copied';
+            setTimeout(() => {
+              btn.textContent = 'copy';
+            }, 1200);
+          } catch {
+            btn.textContent = 'fail';
+          }
+        });
+      });
     }
   }
 }
