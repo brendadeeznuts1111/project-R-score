@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-07-31T14:44:06.724Z",
+  "generatedAt": "2026-08-01T03:09:13.836Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -553,9 +553,9 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 24,
+        "references": 29,
         "constructors": {
-          "as": 5,
+          "as": 7,
           "try": 2,
           "parse": 0
         },
@@ -567,6 +567,8 @@
           "lib/r2/r2-storage-enhanced.ts",
           "lib/security/infra-secrets.ts",
           "lib/security/r2-credentials.ts",
+          "lib/verification/cloudflare-access-live.ts",
+          "lib/verification/cloudflare-access-token.ts",
           "lib/verification/cloudflare-token-scope.ts",
           "lib/verification/proof-consistency.ts",
           "lib/verification/proof-taxonomy.ts"
@@ -574,8 +576,8 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 24,
-            "constructionCalls": 7,
+            "references": 29,
+            "constructionCalls": 9,
             "guardCalls": 0,
             "files": [
               "lib/mcp/cloudflare-domain-manager.ts",
@@ -584,6 +586,8 @@
               "lib/r2/r2-storage-enhanced.ts",
               "lib/security/infra-secrets.ts",
               "lib/security/r2-credentials.ts",
+              "lib/verification/cloudflare-access-live.ts",
+              "lib/verification/cloudflare-access-token.ts",
               "lib/verification/cloudflare-token-scope.ts",
               "lib/verification/proof-consistency.ts",
               "lib/verification/proof-taxonomy.ts"
@@ -2271,9 +2275,9 @@
       ],
       "coverage": {
         "status": "covered",
-        "references": 263,
+        "references": 266,
         "constructors": {
-          "as": 100,
+          "as": 103,
           "try": 2,
           "parse": 7
         },
@@ -2288,15 +2292,15 @@
           "lib/experiments/outcomes.ts",
           "lib/experiments/runner.ts",
           "lib/experiments/switchback.ts",
+          "lib/http/public-routes.ts",
           "lib/identity/anomaly.ts",
-          "lib/identity/board.ts",
-          "lib/identity/export.ts"
+          "lib/identity/board.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 263,
-            "constructionCalls": 109,
+            "references": 266,
+            "constructionCalls": 112,
             "guardCalls": 0,
             "files": [
               "lib/accounts/accounts.ts",
@@ -2308,9 +2312,9 @@
               "lib/experiments/outcomes.ts",
               "lib/experiments/runner.ts",
               "lib/experiments/switchback.ts",
+              "lib/http/public-routes.ts",
               "lib/identity/anomaly.ts",
-              "lib/identity/board.ts",
-              "lib/identity/export.ts"
+              "lib/identity/board.ts"
             ]
           },
           "projects": {
@@ -3211,7 +3215,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 20,
+        "references": 21,
         "constructors": {
           "as": 9,
           "try": 0,
@@ -3234,7 +3238,7 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 20,
+            "references": 21,
             "constructionCalls": 9,
             "guardCalls": 0,
             "files": [
@@ -3716,7 +3720,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "referenced-unconstructed",
-        "references": 6,
+        "references": 9,
         "constructors": {
           "as": 0,
           "try": 0,
@@ -3725,17 +3729,19 @@
         "guards": 0,
         "files": [
           "lib/http/host-planes.ts",
-          "lib/surfaces/inventory.ts"
+          "lib/surfaces/inventory.ts",
+          "lib/verification/cloudflare-access-live.ts"
         ],
         "scopes": {
           "spine": {
             "status": "referenced-unconstructed",
-            "references": 6,
+            "references": 9,
             "constructionCalls": 0,
             "guardCalls": 0,
             "files": [
               "lib/http/host-planes.ts",
-              "lib/surfaces/inventory.ts"
+              "lib/surfaces/inventory.ts",
+              "lib/verification/cloudflare-access-live.ts"
             ]
           },
           "projects": {
