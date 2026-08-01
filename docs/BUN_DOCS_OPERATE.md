@@ -42,6 +42,8 @@ Dry-run step plan: `bun tools/bun-docs-refresh.ts --dry-run --fast`
 
 **Coverage model:** RSS = *what shipped* · reference index = *what exists on bun.com/reference* · `canonical-helpers` = *traceability* · `verify-docs-coverage` = *strict gate on FactoryWager-tracked tokens* (not every generated symbol).
 
+**Terminal / PTY north-star (three planes):** guide [`child-process#terminal-pty-support`](https://bun.com/docs/runtime/child-process#terminal-pty-support) · reference [`/reference/bun/Terminal`](https://bun.com/reference/bun/Terminal) · types [`packages/bun-types`](https://github.com/oven-sh/bun/tree/main/packages/bun-types). Host TTY (`process.stdout.isTTY`) is not `Bun.Terminal`. Factory helpers: [`lib/terminal.ts`](../lib/terminal.ts). After curated path edits prefer `bun run docs:catalog:build` (notes etag cache) — not `docs:refresh:fast` (llms index re-fetches every page).
+
 ## When integrity fails
 
 1. `status` — staleness / Bun pin

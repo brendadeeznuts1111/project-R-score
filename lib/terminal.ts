@@ -2,20 +2,39 @@
  * Bun.Terminal (PTY) helpers — spawn interactive TTY children and capture output.
  *
  * Prefer this over ad-hoc `terminal:` option literals so docs anchors stay annotated.
+ * Host TTY detection is NOT this API — use process.stdout.isTTY / lib/console-depth.ts.
+ *
+ * North-star planes (all Bun-owned):
+ *   guide → bun.com/docs/runtime/child-process#terminal-pty-support
+ *   reference → bun.com/reference/bun/Terminal (+ TerminalOptions)
+ *   types → github.com/oven-sh/bun/tree/main/packages/bun-types
  *
  * @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal
  * @see https://bun.com/docs/runtime/child-process#terminal-options — spawn terminal options
  * @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+ * @see https://bun.com/reference/bun/Terminal — API reference (from bun-types)
+ * @see https://bun.com/reference/bun/TerminalOptions — TerminalOptions
+ * @see https://github.com/oven-sh/bun/tree/main/packages/bun-types — bun-types source
  * @see https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support
  */
 
-import { bunDocs } from './docs/bun-site-url.ts';
+import { bunDocs, bunReference } from './docs/bun-site-url.ts';
+import { BUN_TYPES_SOURCE_URL } from './docs/bun-source-links.ts';
 
-/** Canonical docs locus for PTY support (child-process page). */
+/** Canonical docs locus for PTY support (child-process guide). */
 export const BUN_TERMINAL_PTY_DOCS = bunDocs('runtime/child-process', 'terminal-pty-support');
 
-/** Terminal options subsection on the same page. */
+/** Terminal options subsection on the same guide page. */
 export const BUN_TERMINAL_OPTIONS_DOCS = bunDocs('runtime/child-process', 'terminal-options');
+
+/** Types-generated API reference for `Bun.Terminal`. */
+export const BUN_TERMINAL_REFERENCE = bunReference('bun/Terminal');
+
+/** Types-generated API reference for `TerminalOptions`. */
+export const BUN_TERMINAL_OPTIONS_REFERENCE = bunReference('bun/TerminalOptions');
+
+/** Upstream bun-types package tree (declarations + embedded child-process MDX). */
+export const BUN_TERMINAL_TYPES_SOURCE = BUN_TYPES_SOURCE_URL;
 
 export const DEFAULT_TERMINAL_COLS = 80;
 export const DEFAULT_TERMINAL_ROWS = 24;

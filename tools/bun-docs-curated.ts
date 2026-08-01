@@ -1,3 +1,4 @@
+// @see https://bun.com/reference/bun/TerminalOptions — Bun.TerminalOptions
 // @see https://bun.com/reference/bun/sliceAnsi — Bun.sliceAnsi
 // @see https://bun.com/reference/bun/SQL — Bun.SQL
 // @see https://bun.com/reference/bun/Transpiler — Bun.Transpiler
@@ -395,12 +396,14 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   {
     term: 'Bun.Terminal',
-    path: 'runtime/terminal',
+    // Guide locus (not /docs/runtime/terminal — that path 404s). Reference: bun.com/reference/bun/Terminal
+    path: 'runtime/child-process#terminal-pty-support',
     // Shipped 1.3.5 (POSIX PTY); Windows ConPTY later (1.3.14 notes)
     // https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support
-    description: 'PTY terminal for spawned processes (new Bun.Terminal + spawn terminal)',
+    description:
+      'PTY for spawned processes (new Bun.Terminal + spawn terminal); types → reference/bun/Terminal',
     minVersion: '1.3.5',
-    related: ['runtime/child-process'],
+    relatedTokens: ['Bun.spawn terminal (PTY)', 'Bun.TerminalOptions'],
   },
   {
     term: 'Bun.cron',
