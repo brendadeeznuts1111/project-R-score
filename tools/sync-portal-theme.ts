@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/guides/util/entrypoint — import.meta.main
 /**
  * Sync public/portal/theme.jsonc → theme-tokens.css (Bun jsonc loader).
  *
@@ -9,6 +10,7 @@
  * @see https://bun.com/docs/bundler/loaders#jsonc
  * @see https://bun.com/docs/runtime/file-io — Bun.write
  */
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
 import { portalTheme, renderThemeTokensCss } from '../lib/portal/theme.ts';
 
@@ -41,7 +43,7 @@ async function main(): Promise<void> {
   console.log('  Import in style.css: @import "./theme-tokens.css";');
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   main().catch(e => {
     console.error(e instanceof Error ? e.message : e);
     process.exit(1);
