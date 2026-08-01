@@ -1084,6 +1084,8 @@ export const ACCOUNT_DOSSIER_SURFACE_CONCEPTS = {
   outs: 'section.partnersOuts',
   telegram: 'section.partnersTelegram',
   accounting: 'section.partnersAccounting',
+  /** Timeline of handshake / ledger / DM signals — collapses onto evidence traces. */
+  activity: 'ops.limits.evidence_trace',
   monitoring: 'ops.limits.monitoring_status',
   profile: 'ops.limits.profile',
   window: 'section.recentLimitChanges',

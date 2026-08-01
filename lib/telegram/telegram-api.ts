@@ -76,7 +76,7 @@ export const FACTORY_BOT_COMMANDS: BotCommandDef[] = [
   { command: 'link', description: 'How to link Telegram to portal' },
   { command: 'help', description: 'List commands' },
   { command: 'status', description: 'Ops status or registry health' },
-  { command: 'dossier', description: 'Account dossier portal link + readiness' },
+  { command: 'dossier', description: 'Account dossier · /dossier [CODE|seat]' },
   { command: 'limits', description: 'Recent limit raises / decreases' },
   { command: 'balances', description: 'Liquidity / Soft balances' },
   { command: 'accounts', description: 'Sportsbook accounts' },

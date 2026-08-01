@@ -119,6 +119,8 @@ describe('buildSeatDeskPartnerMessage', () => {
     expect(msg).toContain('Out 3 only (action92.com)');
     expect(msg).toContain('book login');
     expect(msg).not.toContain('| # | Book |');
+    expect(msg).toContain('/portal/account/?account=SPEN');
+    expect(msg).toContain('/dossier SPEN');
   });
 
   test('todo template lists active outs only', () => {

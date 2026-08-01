@@ -6,7 +6,7 @@
  *
  * Hash routes (aligned with limits board):
  *   #account:{TreeNodeId}
- *   #section:{identity|tree|location|traces|policies|telemetry|changes|outs|telegram|accounting}
+ *   #section:{identity|tree|location|traces|policies|telemetry|changes|outs|telegram|accounting|activity}
  * Query stays the form SSOT: ?account= · ?hours=
  */
 export const ACCOUNT_DOSSIER_GLOSSARY = Object.freeze({
@@ -35,8 +35,10 @@ export const ACCOUNT_DOSSIER_GLOSSARY = Object.freeze({
   outs: 'section.partnersOuts',
   telegram: 'section.partnersTelegram',
   accounting: 'section.partnersAccounting',
+  activity: 'partner.ops.event',
   handshake: 'telegram.handshake',
   wire: 'telegram.wire',
+  seatDesk: 'telegram.seat_desk',
   topicGeneral: 'telegram.topic.general',
   topicOps: 'telegram.topic.ops',
   topicAlerts: 'telegram.topic.alerts',
@@ -64,6 +66,7 @@ export const ACCOUNT_DOSSIER_SECTIONS = Object.freeze([
   'outs',
   'telegram',
   'accounting',
+  'activity',
 ]);
 
 /** Forum topic → glossary concept (partner package plan). */

@@ -42,7 +42,8 @@
         "changes": "section.recentLimitChanges",
         "outs": "section.partnersOuts",
         "telegram": "section.partnersTelegram",
-        "accounting": "section.partnersAccounting"
+        "accounting": "section.partnersAccounting",
+        "activity": "ops.limits.evidence_trace"
       }
     },
     {

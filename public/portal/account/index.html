@@ -416,6 +416,24 @@
           </h2>
           <div id="ad-accounting"></div>
         </div>
+
+        <div class="ad-panel" id="ad-section-activity">
+          <h2>
+            <a
+              class="semantic-label"
+              href="/portal/glossary/#glossary:ops.limits.evidence_trace"
+              data-glossary-concept="ops.limits.evidence_trace"
+              >Telegram & ops activity</a
+            >
+          </h2>
+          <p class="ad-meta">
+            Handshake next-steps, DM seat, package chat, and partners-ops ledger events
+            (<a href="/portal/glossary/#glossary:partner.ops.event" data-glossary-concept="partner.ops.event"
+              >partner.ops.event</a
+            >). Bot: <code>/dossier CODE</code> · seat desk <code>📁 Dossier</code>.
+          </p>
+          <div id="ad-activity"></div>
+        </div>
       </div>
     </main>
 
@@ -753,6 +771,29 @@
             <div class="ad-actions">
               <a href="${esc(dossier.links.partnersAccounting)}" data-glossary-concept="${G.accounting}">Open partners accounting</a>
             </div>`;
+        }
+
+        const activity = dossier.activity || [];
+        if (!activity.length) {
+          $('ad-activity').innerHTML =
+            '<p class="ad-empty">No handshake / ledger activity projected for this CODE yet.</p>';
+        } else {
+          $('ad-activity').innerHTML = `<table class="ad-table"><thead><tr>
+            <th>When</th><th>Kind</th><th>Detail</th>
+          </tr></thead><tbody>${activity
+            .map(row => {
+              const concept = row.conceptId || G.activity;
+              return `<tr>
+              <td class="ad-meta">${esc(row.at || '—')}</td>
+              <td><a class="semantic-label" href="${accountDossierGlossaryHref(concept)}" data-glossary-concept="${concept}">${esc(row.label || row.kind)}</a></td>
+              <td>${esc(row.detail || '—')}</td>
+            </tr>`;
+            })
+            .join('')}</tbody></table>
+            <p class="ad-meta" style="margin-top:10px">
+              Bot: <code>/dossier ${esc(dossier.partnerCode || '')}</code> ·
+              seat desk opens the same board via <span data-glossary-concept="${G.seatDesk || G.telegram}">📁 Dossier</span>
+            </p>`;
         }
 
         $('ad-freshness').textContent = [

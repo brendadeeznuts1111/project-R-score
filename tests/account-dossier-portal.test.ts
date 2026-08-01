@@ -52,6 +52,8 @@ describe('account dossier helpers', () => {
     expect(ACCOUNT_DOSSIER_SECTIONS).toContain('outs');
     expect(ACCOUNT_DOSSIER_SECTIONS).toContain('telegram');
     expect(ACCOUNT_DOSSIER_SECTIONS).toContain('accounting');
+    expect(ACCOUNT_DOSSIER_SECTIONS).toContain('activity');
+    expect(ACCOUNT_DOSSIER_GLOSSARY.activity).toBe('partner.ops.event');
   });
 
   test('resolves CODE / call-sign seeds onto account ids', () => {
@@ -116,6 +118,13 @@ describe('account dossier helpers', () => {
     if (dossier.telegram.handshakeOk != null) {
       expect(typeof dossier.telegram.handshakeOk).toBe('boolean');
     }
+    expect(dossier.activity.length).toBeGreaterThan(0);
+    expect(
+      dossier.activity.some(
+        (row: { kind: string }) =>
+          row.kind === 'PACKAGE_CHAT' || row.kind === 'NEXT_STEP' || row.kind === 'DM_SEAT'
+      )
+    ).toBe(true);
   });
 
   test('includes depth-2 downlines from profile lineage when patterns are empty', () => {
@@ -315,6 +324,8 @@ describe('account dossier portal wiring', () => {
     expect(html).toContain('id="ad-section-outs"');
     expect(html).toContain('id="ad-section-telegram"');
     expect(html).toContain('id="ad-section-accounting"');
+    expect(html).toContain('id="ad-section-activity"');
+    expect(html).toContain('/dossier CODE');
     expect(html).toContain('Connected tree');
     expect(html).toContain('Evidence traces');
     expect(html).toContain('Limit telemetry');
@@ -340,6 +351,7 @@ describe('account dossier portal wiring', () => {
     expect(surface?.sections.outs).toBe('section.partnersOuts');
     expect(surface?.sections.telegram).toBe('section.partnersTelegram');
     expect(surface?.sections.accounting).toBe('section.partnersAccounting');
+    expect(surface?.sections.activity).toBe('ops.limits.evidence_trace');
   });
 
   test('account clicks on history cards and limit card target the dossier', async () => {

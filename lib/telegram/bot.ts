@@ -388,7 +388,7 @@ export function registerFactoryCommands(bot: TelegramBot): void {
   });
 
   const opsOnly = [
-    { command: '/dossier', description: 'Account dossier portal link + readiness' },
+    { command: '/dossier', description: 'Account dossier · /dossier [CODE|seat]' },
     { command: '/limits', description: 'Recent limit raises / decreases' },
     { command: '/accounts', description: 'Sportsbook accounts' },
     { command: '/plays', description: 'Pending plays' },

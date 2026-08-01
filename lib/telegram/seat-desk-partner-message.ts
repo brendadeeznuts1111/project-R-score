@@ -672,5 +672,13 @@ export function buildSeatDeskPartnerMessage(
     parts.push('', 'Or use **Fill** / **Copy todo** on the pinned desk.');
   }
 
+  const code = (view.partnerCode || record.partnerCode || '').trim().toUpperCase();
+  if (code) {
+    parts.push(
+      '',
+      `Portal dossier: \`/portal/account/?account=${code}\` · bot \`/dossier ${code}\``
+    );
+  }
+
   return parts.join('\n');
 }

@@ -17,9 +17,16 @@ import { enqueuePartnerWelcomeEvent } from '../channels/outbox.ts';
 import { flowOutputToPlainText } from './flows/deliver.ts';
 import { commandToFlowId, runFlow } from './flows/registry.ts';
 import { linkTelegramChat, getChatChannelMeta } from './flows/channel-meta.ts';
-import { handleOpsSeatCommand, resolveFlowNodeForTelegram } from './flows/seat-telegram.ts';
+import {
+  handleOpsSeatCommand,
+  listCallSignsForTelegramUser,
+  resolveFlowNodeForTelegram,
+  seatAuthorizedForTelegramUser,
+} from './flows/seat-telegram.ts';
 import type { FlowOutput } from './flows/types.ts';
+import { partnerCodeFromCallSign, tryPartnerCodeArg } from './handshake-ref.ts';
 import { gateFactoryCommand } from './ops-acl.ts';
+import { isOpsAdminUserId, loadTelegramEnv } from './telegram-config.ts';
 import { AccountLimitsRepository } from '../account-limits-repo.ts';
 import { PartnerAnalyticsRepository } from '../operations/partner-analytics-repo.ts';
 
@@ -29,9 +36,12 @@ export type OpsTreeNode = {
   parent_id: string | null; // brand-ok
   expert_id: string | null; // brand-ok
   name: string;
-  telegram_id: string; // brand-ok
+  telegram_id: string | null; // brand-ok
   call_sign?: string | null;
 };
+
+const DOSSIER_NODE_SELECT = `SELECT id, type, parent_id, expert_id, name, telegram_id, call_sign
+  FROM tree_nodes WHERE active = 1`;
 
 export type OpsCommandInput = {
   telegramUserId: string; // brand-ok
@@ -74,7 +84,7 @@ export function handleOpsStart(db: Database, node: OpsTreeNode | null): string {
     `Type: *${node.type.toUpperCase()}*`,
     '',
     '/status — Your status',
-    '/dossier — Account dossier portal link',
+    '/dossier [CODE|seat] — Account dossier portal link',
     '/limits — Recent limit changes',
     '/accounts — Sportsbook accounts',
     "/plays — Today's plays",
@@ -263,23 +273,116 @@ export function handleOpsLimits(db: Database, node: OpsTreeNode | null): string 
   return lines.join('\n');
 }
 
+/** Resolve TreeNodeId / call-sign / partner CODE onto an active seat. */
+export function resolveOpsDossierNode(db: Database, seed: string): OpsTreeNode | null {
+  const raw = seed.trim();
+  if (!raw) return null;
+
+  const byId = db
+    .query(`${DOSSIER_NODE_SELECT} AND id = $id LIMIT 1`)
+    .get({ $id: raw }) as OpsTreeNode | null;
+  if (byId) return byId;
+
+  const upper = raw.toUpperCase();
+  const byCallSign = db
+    .query(`${DOSSIER_NODE_SELECT} AND call_sign = $cs LIMIT 1`)
+    .get({ $cs: upper }) as OpsTreeNode | null;
+  if (byCallSign) return byCallSign;
+
+  const code = tryPartnerCodeArg(upper);
+  if (!code) return null;
+
+  const preferred = db
+    .query(`${DOSSIER_NODE_SELECT} AND call_sign = $cs LIMIT 1`)
+    .get({ $cs: `${code}-001` }) as OpsTreeNode | null;
+  if (preferred) return preferred;
+
+  const underCode = db
+    .query(`${DOSSIER_NODE_SELECT} AND call_sign LIKE $prefix ORDER BY call_sign ASC LIMIT 1`)
+    .get({ $prefix: `${code}-%` }) as OpsTreeNode | null;
+  if (underCode) return underCode;
+
+  return (
+    (db
+      .query(`${DOSSIER_NODE_SELECT} AND call_sign = $code LIMIT 1`)
+      .get({ $code: code }) as OpsTreeNode | null) ?? null
+  );
+}
+
+/** Own seat, same-CODE linked seats, or OPS_ADMIN_USER_IDS. */
+export function canAccessDossierTarget(
+  db: Database,
+  telegramUserId: string, // brand-ok
+  target: OpsTreeNode,
+  linkedNode: OpsTreeNode | null
+): boolean {
+  if (linkedNode?.id === target.id) return true;
+  if (seatAuthorizedForTelegramUser(db, telegramUserId, target.id)) return true;
+
+  const targetCode =
+    partnerCodeFromCallSign(target.call_sign ?? null) ??
+    tryPartnerCodeArg(target.call_sign ?? '') ??
+    tryPartnerCodeArg(target.name);
+  if (targetCode) {
+    const signs = listCallSignsForTelegramUser(db, telegramUserId);
+    if (signs.some(cs => partnerCodeFromCallSign(cs) === targetCode)) return true;
+  }
+
+  const uid = Number(telegramUserId);
+  return Number.isFinite(uid) && isOpsAdminUserId(uid, loadTelegramEnv().opsAdminUserIds);
+}
+
+/** Absolute portal dossier URL for a seat / CODE seed. */
+export function accountDossierPortalUrl(accountSeed: string): string {
+  return `${factoryWagerPagesCustomUrl()}/portal/account/?account=${encodeURIComponent(accountSeed)}`;
+}
+
 /** `/dossier` — portal account dossier deep-link + seat readiness summary. */
-export function handleOpsDossier(db: Database, node: OpsTreeNode | null): string {
-  if (!node) {
+export function handleOpsDossier(
+  db: Database,
+  node: OpsTreeNode | null,
+  opts: { args?: string[]; telegramUserId?: TelegramUserId } = {}
+): string {
+  const seed = opts.args?.[0]?.trim() ?? '';
+  let target = node;
+
+  if (seed) {
+    const resolved = resolveOpsDossierNode(db, seed);
+    if (!resolved) {
+      return [
+        `❌ No active seat for \`${seed}\`.`,
+        '',
+        'Try partner CODE, `CODE-001`, or TreeNodeId.',
+        'Usage: `/dossier` · `/dossier ASH` · `/dossier ASH-001`',
+      ].join('\n');
+    }
+    const uid = opts.telegramUserId;
+    if (!uid || !canAccessDossierTarget(db, uid as string, resolved, node)) {
+      return [
+        '❌ Not authorized for that dossier.',
+        '',
+        'Link a seat under the same CODE, or set `OPS_ADMIN_USER_IDS` for cross-CODE lookup.',
+      ].join('\n');
+    }
+    target = resolved;
+  }
+
+  if (!target) {
     return [
       '❌ Not registered.',
       '',
       'Link portal account: complete onboarding then `/start link_<nonce>`',
       'Or: `bun tools/telegram-link-chat.ts CODE-001 <telegram_user_id>`',
+      'Ops: `/dossier ASH` when `OPS_ADMIN_USER_IDS` includes your Telegram id.',
     ].join('\n');
   }
 
   const portalBase = factoryWagerPagesCustomUrl();
-  const dossierUrl = `${portalBase}/portal/account/?account=${encodeURIComponent(node.id)}`;
-  const limitsUrl = `${portalBase}/portal/limits/#account:${encodeURIComponent(node.id)}`;
-  const historyUrl = `${portalBase}/portal/partner-history/?account=${encodeURIComponent(node.id)}`;
-  const callSign = node.call_sign?.trim() || null;
-  const code = callSign?.split('-')[0] ?? null;
+  const dossierUrl = accountDossierPortalUrl(target.id);
+  const limitsUrl = `${portalBase}/portal/limits/#account:${encodeURIComponent(target.id)}`;
+  const historyUrl = `${portalBase}/portal/partner-history/?account=${encodeURIComponent(target.id)}`;
+  const callSign = target.call_sign?.trim() || null;
+  const code = partnerCodeFromCallSign(callSign) ?? tryPartnerCodeArg(callSign ?? '') ?? null;
   const partnersUrl = code
     ? `${portalBase}/portal/partners/#partner/${encodeURIComponent(code)}/telegram/general`
     : `${portalBase}/portal/partners/`;
@@ -287,7 +390,7 @@ export function handleOpsDossier(db: Database, node: OpsTreeNode | null): string
   const since = Math.floor(Date.now() / 1000) - 168 * 3600;
   let raiseCount = 0;
   try {
-    raiseCount = new AccountLimitsRepository(db).detectRaises(node.id, since).length;
+    raiseCount = new AccountLimitsRepository(db).detectRaises(target.id, since).length;
   } catch {
     // optional — dossier link still useful without raise counts
   }
@@ -295,18 +398,19 @@ export function handleOpsDossier(db: Database, node: OpsTreeNode | null): string
   return [
     '📁 *Account dossier*',
     '',
-    `Seat: \`${callSign || node.name}\``,
-    `Type: *${node.type.toUpperCase()}*`,
-    `Node: \`${node.id}\``,
+    `Seat: \`${callSign || target.name}\``,
+    `Type: *${target.type.toUpperCase()}*`,
+    `Node: \`${target.id}\``,
     code ? `CODE: *${code}*` : null,
     `Raises (168h): *${raiseCount}*`,
+    seed ? `_Resolved from_ \`${seed}\`` : null,
     '',
     `Dossier: ${dossierUrl}`,
     `Limits: ${limitsUrl}`,
     `History: ${historyUrl}`,
     `Telegram desk: ${partnersUrl}`,
     '',
-    'Also: `/limits` · `/status` · `/tree`',
+    'Also: `/limits` · `/status` · `/tree` · `/dossier CODE`',
     'Concepts: page.accountDossier · section.partnersTelegram · telegram.handshake',
   ]
     .filter(Boolean)
@@ -356,7 +460,10 @@ export function dispatchOpsCommand(db: Database, dbPath: string, input: OpsComma
     case '/limits':
       return handleOpsLimits(db, node);
     case '/dossier':
-      return handleOpsDossier(db, node);
+      return handleOpsDossier(db, node, {
+        args: input.args,
+        telegramUserId,
+      });
     default:
       return 'Unknown command. Try /help';
   }
