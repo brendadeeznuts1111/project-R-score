@@ -31,4 +31,12 @@ describe('soft:accounting:from-ct spawn resolution', () => {
       /toc-ops-repo not found/
     );
   });
+
+  test('edge: Bun.which null falls back to process.execPath (PATH miss)', () => {
+    // Documented contract: never return bare "bun" — spawn argv0 must be absolute/resolvable.
+    const which = Bun.which('bun');
+    const bin = resolveBunExecutable();
+    if (which == null) expect(bin).toBe(process.execPath);
+    else expect(bin).toBe(which);
+  });
 });
