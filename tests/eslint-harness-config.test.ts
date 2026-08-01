@@ -9,6 +9,7 @@ import {
   HARNESS_IGNORES,
   HARNESS_PATHS,
   HARNESS_ROOTS,
+  isHarnessFormatPath,
   isHarnessLintPath,
 } from '../config/eslint/harness/rollout.ts';
 import { parseHarnessLintArgs } from '../scripts/lint-harness.ts';
@@ -37,6 +38,16 @@ describe('harness ESLint scope', () => {
     expect(isHarnessLintPath('lib/example.d.ts')).toBe(false);
     expect(isHarnessLintPath('projects/example.ts')).toBe(false);
     expect(isHarnessLintPath('lib/example.js')).toBe(false);
+  });
+
+  test('format path includes lint scope plus tests ESLint skips', () => {
+    expect(isHarnessFormatPath('lib/example.ts')).toBe(true);
+    expect(isHarnessFormatPath('tests/portal-url-planes.test.ts')).toBe(true);
+    expect(isHarnessFormatPath('lib/example.test.ts')).toBe(true);
+    expect(isHarnessFormatPath('scripts/foo.spec.ts')).toBe(true);
+    expect(isHarnessFormatPath('lib/example.d.ts')).toBe(false);
+    expect(isHarnessFormatPath('projects/example.test.ts')).toBe(false);
+    expect(isHarnessFormatPath('public/portal/foo.js')).toBe(false);
   });
 
   test('ESLint resolves entrypoints and TSX while ignoring declaration files', async () => {

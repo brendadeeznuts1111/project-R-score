@@ -285,7 +285,7 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
   {
     label: 'domain-glossary',
     href: '/registry/domain-glossary.json',
-    note: 'schema v2 · domain concepts + typed portal semantics · deep-link projection',
+    note: 'schema v3 · domain concepts + sections[] hash/domId/conceptId · deep-link projection',
   },
   {
     label: 'surfaces-state',

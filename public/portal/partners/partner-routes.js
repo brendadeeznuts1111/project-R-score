@@ -1,6 +1,8 @@
-// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern
+// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern.hash
+// @see lib/portal/url-planes.ts — PARTNER_HASH_PATTERN_INITS (keep hash strings in sync)
 /**
- * Client-side partner hash router — mirrors lib/portal/partner-routes.ts.
+ * Client-side partner **hash** router — mirrors lib/portal/partner-routes.ts.
+ * Hash plane only; pathname `/portal/partners/` is separate.
  * Fragment grammar WITHOUT leading "#".
  *
  * Contract: parsePartnerHash('#partners') returns type "partners" (same as TS).

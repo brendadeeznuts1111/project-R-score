@@ -65,6 +65,25 @@ Portal labels link to durable glossary fragments such as
 `/portal/glossary/#glossary:ui.semantic.status`. Prefer the canonical
 `Hostname` label; `host` remains a search synonym.
 
+### Portal URL planes ([URLPattern](https://bun.com/blog/bun-v1.3.4#urlpattern-api))
+
+Bun matches **components independently** (`protocol` · `hostname` · `pathname` · `search` · `hash`).
+SSOT classifiers + hash inits: [`lib/portal/url-planes.ts`](../lib/portal/url-planes.ts).
+
+| Component | Plane | Provable by | Examples |
+|-----------|-------|-------------|----------|
+| `hostname` | Host | DNS / Access | `score.factory-wager.com` |
+| `pathname` | Page | HTTP | `/portal/partners/` · `/portal/glossary/` |
+| `pathname` | Registry | HTTP JSON | `/registry/domain-glossary.json` · `/registry/partners-ops.json` |
+| `pathname` | API | HTTP JSON | `/api/health` · `/api/env` — **not** `/api/glossary` |
+| `hash` | Section | Browser only | `#section:onboard` → `page-glossary` mounts |
+| `hash` | Partner | Browser only | `#partner/ASH/out/out-ASH-1` → `partner-routes` |
+| `hash` | Glossary concept | Browser only | `#glossary:section.partnersOnboard` |
+
+Do **not** curl a hash as a path, route partner deep links via `pathname` patterns, or invent
+`/api/parse-hash` — `URLPattern({ hash })` is the parser. Board JS must mirror
+`PARTNER_HASH_PATTERN_INITS` / section·glossary inits (gated by `tests/portal-url-planes.test.ts`).
+
 ---
 
 ## API contracts

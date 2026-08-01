@@ -14,26 +14,16 @@
 
 import type { PartnerOpsPhase } from '../telegram/partner-ops-registry.ts';
 import { partnerHash } from './partner-routes.ts';
+import {
+  TELEGRAM_TOPICS,
+  isTelegramTopicSlug,
+  type TelegramTopicSlug,
+} from './partner-telegram-topics.ts';
 
-export type TelegramTopicSlug = 'general' | 'ops' | 'alerts' | 'liquidity' | 'accounting';
+export { TELEGRAM_TOPICS, isTelegramTopicSlug, type TelegramTopicSlug };
 
 const BOT_USERNAME_RE = /^[A-Za-z][A-Za-z0-9_]{4,31}$/;
 const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
-
-export const TELEGRAM_TOPICS: Record<
-  TelegramTopicSlug,
-  { id: number; glossaryId: string /* brand-ok — glossary concept key */; name: string }
-> = {
-  general: { id: 1, glossaryId: 'telegram.topic.general', name: 'General' },
-  ops: { id: 2, glossaryId: 'telegram.topic.ops', name: 'Ops' },
-  alerts: { id: 3, glossaryId: 'telegram.topic.alerts', name: 'Alerts' },
-  liquidity: { id: 4, glossaryId: 'telegram.topic.liquidity', name: 'Liquidity' },
-  accounting: { id: 5, glossaryId: 'telegram.topic.accounting', name: 'Accounting' },
-} as const;
-
-export function isTelegramTopicSlug(value: string): value is TelegramTopicSlug {
-  return Object.hasOwn(TELEGRAM_TOPICS, value);
-}
 
 /** Topic permissions by partner phase (shipped overlay topic ids). */
 export const TOPIC_PERMISSIONS: Record<PartnerOpsPhase, readonly TelegramTopicSlug[]> = {

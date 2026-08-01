@@ -7,7 +7,7 @@
  * Parallelizes independent gates; auto-annotates Bun doc refs; records timings.
  */
 import { buildHarnessEslintArgs } from '../config/eslint/harness/command.ts';
-import { isHarnessLintPath } from '../config/eslint/harness/rollout.ts';
+import { isHarnessFormatPath, isHarnessLintPath } from '../config/eslint/harness/rollout.ts';
 import { hasFlag } from './lib/cli-args';
 import { ensureDir, writeJson } from './lib/fs-bun';
 
@@ -212,7 +212,24 @@ async function main(): Promise<void> {
   const timings: GateTiming[] = [];
   const staged = await getStagedFiles();
   const harnessFiles = staged.filter(isHarnessLintPath);
+  /** Lint scope ∪ tests / *.test.ts — Prettier only (ESLint stays on harnessFiles). */
+  const formatFiles = staged.filter(isHarnessFormatPath);
   const docMapFiles = staged.filter(isDocMapPath);
+
+  async function runPrettierWrite(files: string[]): Promise<void> {
+    if (files.length === 0) return;
+    console.info(`✨ Harness format (${files.length} staged file(s))...`);
+    const formatCode = await runGate(
+      'prettier',
+      ['bun', 'x', 'prettier', '--write', ...files],
+      timings
+    );
+    if (formatCode !== 0) {
+      console.error('❌ Harness Prettier check failed');
+      await writeTimings(timings, full);
+      process.exit(1);
+    }
+  }
 
   if (docMapFiles.length > 0) {
     console.info(`🗺️  Doc map check (${docMapFiles.length} SSOT path(s) staged)...`);
@@ -373,6 +390,11 @@ async function main(): Promise<void> {
   }
 
   if (harnessFiles.length === 0) {
+    // Tests / *.test.ts are outside ESLint scope but still get Prettier.
+    if (formatFiles.length > 0) {
+      await runPrettierWrite(formatFiles);
+      await assertStagedMatchesWorktree(formatFiles, timings, full);
+    }
     if (
       docMapFiles.length > 0 ||
       projectsFiles.length > 0 ||
@@ -382,10 +404,11 @@ async function main(): Promise<void> {
       runtimeFlagsFiles.length > 0 ||
       doctorBunfigFiles.length > 0 ||
       doctorStateFiles.length > 0 ||
-      tsconfigTypesFiles.length > 0
+      tsconfigTypesFiles.length > 0 ||
+      formatFiles.length > 0
     ) {
       console.info(
-        '✅ Harness pre-commit checks passed (doc/projects/lib/audit/public/flags/bunfig/doctor-state/tsconfig-types gates only)'
+        '✅ Harness pre-commit checks passed (doc/projects/lib/audit/public/flags/bunfig/doctor-state/tsconfig-types/format gates only)'
       );
     } else {
       console.info('✅ No staged harness TypeScript or doc-map SSOT files');
@@ -414,19 +437,9 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  console.info('✨ Harness format...');
-  const formatCode = await runGate(
-    'prettier',
-    ['bun', 'x', 'prettier', '--write', ...harnessFiles],
-    timings
-  );
-  if (formatCode !== 0) {
-    console.error('❌ Harness Prettier check failed');
-    await writeTimings(timings, full);
-    process.exit(1);
-  }
+  await runPrettierWrite(formatFiles);
 
-  // Annotate-on-write — staged paths only (never defaultPaths fan-out).
+  // Annotate-on-write — staged lint paths only (never defaultPaths fan-out; skip tests).
   console.info('🔗 Doc refs (annotate-on-write, staged only)...');
   const absFiles = harnessFiles.map(f => `${repoRoot}/${f}`);
   await runGate(
@@ -449,7 +462,7 @@ async function main(): Promise<void> {
   }
 
   // Kill green-commit / dirty-tree / amend thrash (eslint --fix · prettier · annotate).
-  await assertStagedMatchesWorktree(harnessFiles, timings, full);
+  await assertStagedMatchesWorktree(formatFiles, timings, full);
 
   console.info('🏷️  Brand manifest...');
   if (

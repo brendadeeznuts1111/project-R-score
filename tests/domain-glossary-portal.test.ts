@@ -324,6 +324,8 @@ describe('domain glossary portal', () => {
     expect(ux).toContain('trackGlossaryEvent');
     expect(ux).toContain('schemaVersion !== 3');
     expect(ux).toContain('sectionConceptFromSurface');
+    expect(ux).toContain('Schema v3 only');
+    expect(ux).not.toContain('legacy Record');
   });
 
   test('shared glossary UX keeps DOM, fragments, focus, and telemetry bounded', async () => {
