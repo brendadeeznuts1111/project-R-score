@@ -42,7 +42,7 @@ import type { TocOpsSnapshot } from '../lib/toc-ops/types.ts';
 import {
   SOFT_ACCOUNTING_EXPORT_REL,
   SOFT_ACCOUNTING_EXPORT_SCHEMA,
-  enrichSoftExportWithPartnerBookTypes,
+  finalizeSoftAccountingExport,
   projectSoftAccountingExportFromTocOps,
   softBookTypeConceptId,
   type SoftAccountingExport,
@@ -210,10 +210,9 @@ export async function bakeSoftAccountingExport(
     generatedAt: options.generatedAt ?? '1970-01-01T00:00:00.000Z',
     source: 'toc-ops-fixture',
   });
-  const next = enrichSoftExportWithPartnerBookTypes(
-    projected,
-    await partnerBookTypeMapFromPartnersOps()
-  );
+  const next = finalizeSoftAccountingExport(projected, {
+    partnerBookTypeByCode: await partnerBookTypeMapFromPartnersOps(),
+  });
   const rendered = stableJson(next);
 
   if (check) {
@@ -280,7 +279,9 @@ export async function importSoftAccountingExportFromCt(options: { force?: boolea
   }
   let baked: SoftAccountingExport;
   try {
-    baked = (await Bun.file(tmpOut).json()) as SoftAccountingExport;
+    const raw = (await Bun.file(tmpOut).json()) as SoftAccountingExport;
+    // Live soft-ct: Soft-authored odds/bookType → Factory rollups; no partners-ops enrich.
+    baked = finalizeSoftAccountingExport({ ...raw, source: 'soft-ct' });
     if (force) validateSoftCtExport(baked);
     else assertSoftCtNonEmpty(baked);
     await Bun.write(outPath, `${JSON.stringify(baked, null, 2)}\n`);

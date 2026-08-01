@@ -308,6 +308,66 @@ export function enrichSoftExportWithPartnerBookTypes(
   return { ...exported, plays, byBookType };
 }
 
+function normalizeSoftCtPlayRow(play: SoftAccountingPlayRow): SoftAccountingPlayRow {
+  const partnerCode = normalizeSoftPartnerCode(play.partnerCode);
+  const bookType = softBookTypeConceptId(play.bookType);
+  const odds = typeof play.odds === 'number' && Number.isFinite(play.odds) ? play.odds : 0;
+  return {
+    ...play,
+    partnerCode,
+    odds,
+    ...(bookType ? { bookType } : { bookType: undefined }),
+  };
+}
+
+/**
+ * Finalize Soft wire for Factory boards after Soft ct / fixture projection.
+ *
+ * - `soft-ct`: Soft-authored odds + bookType on plays; fill empty `weeks` /
+ *   `byBookType` via the same Factory rollups. Never partners-ops enrich.
+ * - `toc-ops-fixture`: optional partners-ops primary-out enrich (demo only).
+ */
+export function finalizeSoftAccountingExport(
+  exported: SoftAccountingExport,
+  opts: {
+    partnerBookTypeByCode?: ReadonlyMap<string, string> | Record<string, string>;
+  } = {}
+): SoftAccountingExport {
+  if (exported.source === 'soft-ct') {
+    const plays = exported.plays.map(normalizeSoftCtPlayRow);
+    const weeks =
+      exported.weeks.length > 0
+        ? exported.weeks.map(w => ({
+            ...w,
+            partnerCode: normalizeSoftPartnerCode(w.partnerCode),
+          }))
+        : rollupWeeksFromPlays(plays);
+    const byBookType =
+      exported.byBookType.length > 0
+        ? exported.byBookType.map(row => ({
+            ...row,
+            bookType: softBookTypeConceptId(row.bookType) ?? row.bookType,
+            partnerCode: normalizeSoftPartnerCode(row.partnerCode),
+          }))
+        : rollupByBookTypeFromPlays(plays);
+    return {
+      ...exported,
+      path: SOFT_ACCOUNTING_EXPORT_PATH,
+      available: plays.length > 0,
+      plays,
+      weeks,
+      byBookType,
+    };
+  }
+
+  if (exported.source === 'toc-ops-fixture' && opts.partnerBookTypeByCode) {
+    // Demo only — partners-ops primary-out stamps; weeks stay empty (board derives).
+    return enrichSoftExportWithPartnerBookTypes(exported, opts.partnerBookTypeByCode);
+  }
+
+  return exported;
+}
+
 export function unavailableSoftAccountingExport(
   generatedAt = new Date().toISOString()
 ): SoftAccountingExport {

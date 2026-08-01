@@ -163,4 +163,47 @@ describe('partners portal board', () => {
     expect(parsePartnerHash('#book/not-a-book')).toBeNull();
     expect(partnerBookHash('book-dk-nj')).toBe('#book/book-dk-nj');
   });
+
+  test('partners Soft book-type table wires live soft-ct byBookType into ops.view.per_book_type', async () => {
+    const {
+      finalizeSoftAccountingExport,
+      buildPartnerSoftPlayChrome,
+      SOFT_ACCOUNTING_EXPORT_SCHEMA,
+    } = await import('../lib/telegram/soft-accounting-export.ts');
+    const live = finalizeSoftAccountingExport({
+      schema: SOFT_ACCOUNTING_EXPORT_SCHEMA,
+      version: '1',
+      generatedAt: '2026-07-31T18:00:00.000Z',
+      source: 'soft-ct',
+      available: true,
+      path: '/registry/soft-accounting-export.json',
+      plays: [
+        {
+          playId: 'epr-live-ash',
+          partnerCode: 'ASH',
+          stake: 1000,
+          odds: -110,
+          result: 'win',
+          pnl: 909.09,
+          placedAt: '2026-07-17T19:10:00.000Z',
+          settledAt: '2026-07-18T02:00:00.000Z',
+          bookType: 'book.type.legal',
+          market: 'NFL moneyline',
+        },
+      ],
+      weeks: [],
+      byBookType: [],
+    });
+    const chrome = buildPartnerSoftPlayChrome(live, 'ASH');
+    expect(chrome?.bookConceptId).toBe('ops.view.per_book_type');
+    expect(chrome?.byBookType.some(b => b.bookType === 'book.type.legal')).toBe(true);
+    expect(chrome?.bookViews.every(v => v.conceptIds.dimension === 'ops.view.per_book_type')).toBe(
+      true
+    );
+
+    const html = await Bun.file('public/portal/partners/index.html').text();
+    expect(html).toContain('soft-book-types-tbody');
+    expect(html).toContain('softAccounting?.byBookType');
+    expect(html).toContain('ops.view.per_book_type');
+  });
 });

@@ -524,4 +524,65 @@ describe('account dossier portal wiring', () => {
     expect(html).toContain('ops.view.per_week');
     expect(html).toContain('ops.view.per_book_type');
   });
+
+  test('dossier Soft book-type chrome renders live soft-ct ops.view.per_book_type rows', async () => {
+    const { finalizeSoftAccountingExport, SOFT_ACCOUNTING_EXPORT_SCHEMA } = await import(
+      '../lib/telegram/soft-accounting-export.ts'
+    );
+    const live = finalizeSoftAccountingExport({
+      schema: SOFT_ACCOUNTING_EXPORT_SCHEMA,
+      version: '1',
+      generatedAt: '2026-07-31T18:00:00.000Z',
+      source: 'soft-ct',
+      available: true,
+      path: '/registry/soft-accounting-export.json',
+      plays: [
+        {
+          playId: 'epr-live-ash',
+          partnerCode: 'ASH',
+          stake: 1000,
+          odds: -110,
+          result: 'win',
+          pnl: 909.09,
+          placedAt: '2026-07-17T19:10:00.000Z',
+          settledAt: '2026-07-18T02:00:00.000Z',
+          bookType: 'book.type.legal',
+          market: 'NFL moneyline',
+        },
+      ],
+      weeks: [],
+      byBookType: [],
+    });
+    expect(live.byBookType.some(b => b.bookType === 'book.type.legal')).toBe(true);
+
+    const [limitRaises, partnersOps, handshake] = await Promise.all([
+      Bun.file('public/registry/limit-raises.json').json(),
+      Bun.file('public/registry/partners-ops.json').json(),
+      Bun.file('public/registry/telegram-handshake.json').json(),
+    ]);
+    const ash = partnersOps.partners.find((row: { code: string }) => row.code === 'ASH');
+    const seed =
+      ash?.callSign ||
+      limitRaises.accountProfiles?.profiles?.find(
+        (row: { callSign?: string }) => String(row.callSign || '').startsWith('ASH')
+      )?.treeNodeId ||
+      'ASH';
+    const accountId = resolveAccountId(seed, collectAccountIds(limitRaises));
+    const dossier = buildAccountDossier({
+      accountId,
+      limitRaises,
+      partnersOps,
+      handshake,
+      softAccounting: live,
+      hours: 168,
+    });
+    expect(dossier.softPlays?.source).toBe('soft-ct');
+    expect(dossier.softPlays?.bookConceptId).toBe('ops.view.per_book_type');
+    expect(dossier.softPlays?.byBookType?.some(b => b.bookType === 'book.type.legal')).toBe(true);
+    expect(dossier.softPlays?.plays?.some(p => p.odds === -110)).toBe(true);
+
+    const html = await Bun.file(ACCOUNT_HTML).text();
+    expect(html).toContain('Soft book types');
+    expect(html).toContain('ops.view.per_book_type');
+  });
 });
