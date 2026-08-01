@@ -1,6 +1,7 @@
 // lib/performance/cache-manager.ts — Cache manager with LRU eviction and TTL support
 
 import { ConcurrencyManagers } from '../core/safe-concurrency';
+import { estimateCacheValueMemory } from './memory-estimate';
 
 interface CacheEntry<T> {
   value: T;
@@ -9,6 +10,7 @@ interface CacheEntry<T> {
   accessCount: number;
   lastAccessed: number;
   size: number;
+  shallowSize: number;
 }
 
 interface CacheStats {
@@ -21,6 +23,7 @@ interface CacheStats {
   maxSize: number;
   hitRate: number;
   memoryUsage: number;
+  shallowMemoryUsage: number;
 }
 
 interface CacheOptions {
@@ -44,11 +47,13 @@ export class CacheManager<K = string, V = any> {
     maxSize: 0,
     hitRate: 0,
     memoryUsage: 0,
+    shallowMemoryUsage: 0,
   };
 
   private options: Required<CacheOptions>;
   private cleanupTimer?: ReturnType<typeof setInterval>;
   private currentMemoryUsage = 0;
+  private currentShallowMemoryUsage = 0;
 
   constructor(options: CacheOptions = {}) {
     this.options = {
@@ -85,7 +90,7 @@ export class CacheManager<K = string, V = any> {
       if (entry.ttl && Date.now() - entry.timestamp > entry.ttl) {
         this.cache.delete(key);
         this.removeFromAccessOrder(key);
-        this.updateMemoryUsage(-entry.size);
+        this.updateMemoryUsage(-entry.size, -entry.shallowSize);
 
         if (this.options.enableMetrics) {
           this.stats.misses++;
@@ -114,7 +119,8 @@ export class CacheManager<K = string, V = any> {
    */
   async set(key: K, value: V, ttl?: number): Promise<void> {
     return await ConcurrencyManagers.fileOperations.withLock(async () => {
-      const size = this.calculateSize(value);
+      const memory = estimateCacheValueMemory(value);
+      const size = memory.capacityBytes;
       const now = Date.now();
 
       // Check if we need to evict entries
@@ -127,18 +133,19 @@ export class CacheManager<K = string, V = any> {
         accessCount: 1,
         lastAccessed: now,
         size,
+        shallowSize: memory.shallowBytes,
       };
 
       // Remove old entry if exists
       const oldEntry = this.cache.get(key);
       if (oldEntry) {
-        this.updateMemoryUsage(-oldEntry.size);
+        this.updateMemoryUsage(-oldEntry.size, -oldEntry.shallowSize);
         this.removeFromAccessOrder(key);
       }
 
       this.cache.set(key, entry);
       this.updateAccessOrder(key);
-      this.updateMemoryUsage(size);
+      this.updateMemoryUsage(size, memory.shallowBytes);
 
       if (this.options.enableMetrics) {
         this.stats.sets++;
@@ -158,7 +165,7 @@ export class CacheManager<K = string, V = any> {
 
       this.cache.delete(key);
       this.removeFromAccessOrder(key);
-      this.updateMemoryUsage(-entry.size);
+      this.updateMemoryUsage(-entry.size, -entry.shallowSize);
 
       if (this.options.enableMetrics) {
         this.stats.deletes++;
@@ -194,10 +201,12 @@ export class CacheManager<K = string, V = any> {
       this.cache.clear();
       this.accessOrder = [];
       this.currentMemoryUsage = 0;
+      this.currentShallowMemoryUsage = 0;
 
       if (this.options.enableMetrics) {
         this.stats.currentSize = 0;
         this.stats.memoryUsage = 0;
+        this.stats.shallowMemoryUsage = 0;
       }
     });
   }
@@ -248,7 +257,7 @@ export class CacheManager<K = string, V = any> {
         const entry = this.cache.get(key)!;
         this.cache.delete(key);
         this.removeFromAccessOrder(key);
-        this.updateMemoryUsage(-entry.size);
+        this.updateMemoryUsage(-entry.size, -entry.shallowSize);
 
         if (this.options.enableMetrics) {
           this.stats.evictions++;
@@ -265,6 +274,7 @@ export class CacheManager<K = string, V = any> {
   getCacheInfo(): Array<{
     key: K;
     size: number;
+    shallowSize: number;
     accessCount: number;
     age: number;
     ttl?: number;
@@ -275,6 +285,7 @@ export class CacheManager<K = string, V = any> {
     return Array.from(this.cache.entries()).map(([key, entry]) => ({
       key,
       size: entry.size,
+      shallowSize: entry.shallowSize,
       accessCount: entry.accessCount,
       age: now - entry.timestamp,
       ttl: entry.ttl,
@@ -313,7 +324,7 @@ export class CacheManager<K = string, V = any> {
 
     if (entry) {
       this.cache.delete(lruKey);
-      this.updateMemoryUsage(-entry.size);
+      this.updateMemoryUsage(-entry.size, -entry.shallowSize);
 
       if (this.options.enableMetrics) {
         this.stats.evictions++;
@@ -344,11 +355,13 @@ export class CacheManager<K = string, V = any> {
   /**
    * Update memory usage
    */
-  private updateMemoryUsage(delta: number): void {
-    this.currentMemoryUsage += delta;
+  private updateMemoryUsage(delta: number, shallowDelta: number): void {
+    this.currentMemoryUsage = Math.max(0, this.currentMemoryUsage + delta);
+    this.currentShallowMemoryUsage = Math.max(0, this.currentShallowMemoryUsage + shallowDelta);
     if (this.options.enableMetrics) {
       this.stats.currentSize = this.cache.size;
       this.stats.memoryUsage = this.currentMemoryUsage;
+      this.stats.shallowMemoryUsage = this.currentShallowMemoryUsage;
     }
   }
 
@@ -358,25 +371,6 @@ export class CacheManager<K = string, V = any> {
   private updateHitRate(): void {
     const total = this.stats.hits + this.stats.misses;
     this.stats.hitRate = total > 0 ? this.stats.hits / total : 0;
-  }
-
-  /**
-   * Calculate approximate size of value
-   */
-  private calculateSize(value: V): number {
-    if (typeof value === 'string') {
-      return value.length * 2; // UTF-16
-    } else if (typeof value === 'number') {
-      return 8; // 64-bit number
-    } else if (typeof value === 'boolean') {
-      return 4;
-    } else if (value === null || value === undefined) {
-      return 0;
-    } else if (typeof value === 'object') {
-      return JSON.stringify(value).length * 2;
-    } else {
-      return 64; // Default estimate
-    }
   }
 
   /**
