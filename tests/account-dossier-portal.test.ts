@@ -474,11 +474,14 @@ describe('account dossier portal wiring', () => {
     const { PORTAL_GLOSSARY_SURFACES } = await import('../lib/portal/page-glossary.ts');
     const surface = PORTAL_GLOSSARY_SURFACES.find(row => row.path === '/portal/account/');
     expect(surface?.concept).toBe('page.accountDossier');
-    expect(surface?.sections.identity).toBe('ops.limits.account');
-    expect(surface?.sections.outs).toBe('section.partnersOuts');
-    expect(surface?.sections.telegram).toBe('section.partnersTelegram');
-    expect(surface?.sections.accounting).toBe('section.partnersAccounting');
-    expect(surface?.sections.activity).toBe('ops.limits.evidence_trace');
+    const { sectionsByHash } = await import('../lib/portal/page-glossary.ts');
+    const byHash = sectionsByHash(surface);
+    expect(byHash.identity).toBe('ops.limits.account');
+    expect(byHash.outs).toBe('section.partnersOuts');
+    expect(byHash.telegram).toBe('section.partnersTelegram');
+    expect(byHash.accounting).toBe('section.partnersAccounting');
+    expect(byHash.activity).toBe('ops.limits.evidence_trace');
+    expect(surface?.sections.find(s => s.hash === 'identity')?.domId).toBe('ad-section-identity');
   });
 
   test('account clicks on history cards and limit card target the dossier', async () => {

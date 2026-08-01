@@ -17,8 +17,10 @@ import {
   validatePortalSemanticVocabulary,
 } from '../lib/portal/semantic-vocabulary.ts';
 import {
+  missingDomSectionMounts,
   orphanDomSectionHashes,
   PORTAL_GLOSSARY_SURFACES,
+  sectionsByHash,
   validatePortalGlossarySurfaces,
 } from '../lib/portal/page-glossary.ts';
 import { PORTAL_PAGE_CONCEPT_DEFINITIONS } from '../lib/portal/page-concepts.ts';
@@ -35,7 +37,7 @@ describe('domain glossary portal', () => {
     const payload = await Bun.file('public/registry/domain-glossary.json').json();
 
     expect(payload).toMatchObject({
-      schemaVersion: 2,
+      schemaVersion: 3,
       sourceSchemaVersion: 5,
       kind: 'domain-glossary',
       path: '/registry/domain-glossary.json',
@@ -186,21 +188,37 @@ describe('domain glossary portal', () => {
       values: expect.arrayContaining(['1', '5']),
     });
 
-    expect(payload.surfaces).toContainEqual({
-      path: '/portal/partner-history/',
-      concept: 'page.partnerHistory',
-      sections: expect.objectContaining({
-        'opening-baseline': 'section.openingBaseline',
-      }),
-    });
-    expect(payload.surfaces).toContainEqual({
-      path: '/portal/limits/',
-      concept: 'page.limitPatterns',
-      sections: expect.objectContaining({
-        'account-control': 'section.accountLimitControl',
-        'recent-changes': 'section.recentLimitChanges',
-      }),
-    });
+    expect(payload.surfaces).toContainEqual(
+      expect.objectContaining({
+        path: '/portal/partner-history/',
+        concept: 'page.partnerHistory',
+        sections: expect.arrayContaining([
+          {
+            hash: 'opening-baseline',
+            domId: 'opening-baseline',
+            conceptId: 'section.openingBaseline',
+          },
+        ]),
+      })
+    );
+    expect(payload.surfaces).toContainEqual(
+      expect.objectContaining({
+        path: '/portal/limits/',
+        concept: 'page.limitPatterns',
+        sections: expect.arrayContaining([
+          {
+            hash: 'account-control',
+            domId: 'account-control',
+            conceptId: 'section.accountLimitControl',
+          },
+          {
+            hash: 'recent-changes',
+            domId: 'recent-changes',
+            conceptId: 'section.recentLimitChanges',
+          },
+        ]),
+      })
+    );
   });
 
   test('portal vocabulary separates concept kind, semantic type, and UI role', () => {
@@ -220,9 +238,8 @@ describe('domain glossary portal', () => {
     expect(
       PORTAL_GLOSSARY_SURFACES.find(surface => surface.path === '/portal/limits/')?.concept
     ).toBe(LIMIT_SURFACE_CONCEPTS.page);
-    expect(
-      PORTAL_GLOSSARY_SURFACES.find(surface => surface.path === '/portal/partners/')?.sections
-    ).toEqual({
+    const partners = PORTAL_GLOSSARY_SURFACES.find(surface => surface.path === '/portal/partners/');
+    expect(sectionsByHash(partners)).toEqual({
       telegram: 'section.partnersTelegram',
       accounting: 'section.partnersAccounting',
       'accounts-limits': 'section.partnersAccountsLimits',
@@ -232,6 +249,11 @@ describe('domain glossary portal', () => {
       outs: 'section.partnersOuts',
       books: 'section.partnersBookDetail',
       'tag-filter-bar': 'section.partnersTags',
+    });
+    expect(partners?.sections.find(s => s.hash === 'onboard')).toEqual({
+      hash: 'onboard',
+      domId: 'section:onboard',
+      conceptId: 'section.partnersOnboard',
     });
     expect(PORTAL_GLOSSARY_SURFACES).toHaveLength(PORTAL_PAGE_CONCEPT_DEFINITIONS.length);
     expect(new Set(PORTAL_GLOSSARY_SURFACES.map(surface => surface.path))).toEqual(
@@ -250,6 +272,7 @@ describe('domain glossary portal', () => {
       const file = `public${path}index.html`;
       const html = await Bun.file(file).text();
       expect(orphanDomSectionHashes(path, html), `${path} orphaned #section:`).toEqual([]);
+      expect(missingDomSectionMounts(path, html), `${path} missing domId mounts`).toEqual([]);
     }
   });
 
@@ -299,7 +322,8 @@ describe('domain glossary portal', () => {
     expect(ux).toContain('mountGlossaryAutocomplete');
     expect(ux).toContain('mountGlossaryBreadcrumbs');
     expect(ux).toContain('trackGlossaryEvent');
-    expect(ux).toContain('schemaVersion !== 2');
+    expect(ux).toContain('schemaVersion !== 3');
+    expect(ux).toContain('sectionConceptFromSurface');
   });
 
   test('shared glossary UX keeps DOM, fragments, focus, and telemetry bounded', async () => {
@@ -348,9 +372,9 @@ describe('domain glossary portal', () => {
     const surface = PORTAL_GLOSSARY_SURFACES.find(row => row.path === '/portal/limits/');
     expect(surface).toBeDefined();
     expect(html).toContain(`/portal/glossary/#glossary:${surface?.concept}`);
-    for (const [sectionId, concept] of Object.entries(surface?.sections ?? {})) {
-      expect(html).toContain(`id="${sectionId}"`);
-      expect(html).toContain(`/portal/glossary/#glossary:${concept}`);
+    for (const section of surface?.sections ?? []) {
+      expect(html).toContain(`id="${section.domId}"`);
+      expect(html).toContain(`/portal/glossary/#glossary:${section.conceptId}`);
     }
 
     const knownConcepts = new Set(payload.concepts.map(concept => concept.id));

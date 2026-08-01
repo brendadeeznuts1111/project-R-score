@@ -279,7 +279,8 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
   });
 
   return {
-    schemaVersion: 2,
+    // v3: surfaces[].sections is PortalGlossarySection[] ({ hash, domId, conceptId }).
+    schemaVersion: 3,
     sourceSchemaVersion: source.schemaVersion,
     kind: 'domain-glossary',
     path: DOMAIN_GLOSSARY_URL,
