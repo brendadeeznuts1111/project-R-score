@@ -75,42 +75,146 @@ bins → (run only) system commands. Absolute / `./` paths always run as files.
 
 ---
 
-### General execution options (common)
+### General execution options
 
-Full list: [General Execution Options](https://bun.com/docs/runtime#general-execution-options).
-Harvest subset: `config/runtime-flags.json`.
+Canonical docs: [General Execution Options](https://bun.com/docs/runtime#general-execution-options)
+([`bun run` CLI](https://bun.com/docs/cli/run)). Shapes below match `bun run --help`
+on Bun **1.4.0** / this machine. Curated harvest for portal-cli:
+[`../config/runtime-flags.json`](../config/runtime-flags.json).
+
+#### General
+
+| Flag | Shape / values | Description |
+|------|----------------|-------------|
+| `--silent` | boolean | Don't print the script command |
+| `--if-present` | boolean | Exit 0 if the entrypoint does not exist |
+| `-e` / `--eval <code>` | `string` | Evaluate argument as a script |
+| `-p` / `--print <code>` | `string` | Eval and print result |
+| `-h` / `--help` | boolean | Help menu |
+
+#### Workspace management
+
+| Flag | Shape / values | Description |
+|------|----------------|-------------|
+| `--elide-lines=<n>` | `number` (default `10`; `0` = all) | Lines of script output when using `--filter` |
+| `-F` / `--filter <pattern>` | `string` | Run script in matching workspace packages |
+| `--workspaces` | boolean | Run in all `package.json` workspaces |
+| `--parallel` | boolean | Run multiple scripts concurrently (prefixed output) |
+| `--sequential` | boolean | Run multiple scripts one after another (prefixed) |
+| `--no-exit-on-error` | boolean | With parallel/sequential, continue after a failure |
+
+#### Runtime & process control
+
+| Flag | Shape / values | Description |
+|------|----------------|-------------|
+| `-b` / `--bun` | boolean | Force Bun for Node shebangs (symlink `node` → Bun) |
+| `--no-orphans` | boolean | Exit when parent dies; SIGKILL descendants (Linux/macOS) |
+| `--shell=<bun\|system>` | `bun` \| `system` | Shell for `package.json` scripts |
+| `--smol` | boolean | Lower memory; GC more often |
+| `--expose-gc` | boolean | Expose `gc()` on global (no effect on `Bun.gc()`) |
+| `--no-deprecation` | boolean | Suppress custom deprecation reporting |
+| `--throw-deprecation` | boolean | Deprecation warnings become errors |
+| `--title <name>` | `string` | Set process title |
+| `--zero-fill-buffers` | boolean | Force `Buffer.allocUnsafe` to zero-fill |
+| `--no-addons` | boolean | Error on `process.dlopen`; disable `node-addons` condition |
+| `--unhandled-rejections=<mode>` | `strict` \| `throw` \| `warn` \| `none` \| `warn-with-error-code` | Unhandled rejection policy |
+| `--console-depth=<n>` | `number` (default `2`) | Default depth for `console.log` object inspection |
+| `--cron-title <title>` | `string` | Title for cron execution mode |
+| `--cron-period <spec>` | `string` | Cron period for cron execution mode |
+
+#### Development workflow
 
 | Flag | Shape / values | Description |
 |------|----------------|-------------|
 | `--watch` | boolean | Restart when imported files change |
-| `--hot` | boolean | HMR / soft reload (preserves state when possible) |
+| `--hot` | boolean | Soft reload (test runner / bundler / runtime) |
 | `--no-clear-screen` | boolean | Keep terminal output on `--watch` / `--hot` reload |
-| `--bun` / `-b` | boolean | Force Bun runtime for Node shebangs |
-| `-e` / `--eval <code>` | `string` | Evaluate argument as a script |
-| `-p` / `--print <code>` | `string` | Eval and print result |
-| `--smol` | boolean | Reduce memory; GC more often |
-| `--inspect` / `--inspect-wait` / `--inspect-brk` | optional `host:port` | Debugger |
-| `-r` / `--preload <module>` | `string` (repeatable) | Load module(s) before execution |
-| `--env-file <path>` | `string` (repeatable) | Load specific `.env` file(s) |
-| `--cwd <path>` | `string` | Absolute cwd for resolution |
-| `-c` / `--config <path>` | `string` | Bun config file (default `$cwd/bunfig.toml`) |
-| `--filter` / `-F <pattern>` | `string` | Run script in matching workspaces |
-| `--workspaces` | boolean | Run in all workspace packages |
-| `--parallel` / `--sequential` | boolean | Multi-script / workspace orchestration |
-| `--no-exit-on-error` | boolean | With parallel/sequential, continue after a failure |
-| `--console-depth <n>` | `number` (default `2`) | Object inspection depth for console |
-| `--install=<mode>` | `auto` \| `fallback` \| `force` | Runtime auto-install |
+
+#### Debugging
+
+| Flag | Shape / values | Description |
+|------|----------------|-------------|
+| `--inspect[=host:port]` | optional `host:port` | Activate debugger |
+| `--inspect-wait[=host:port]` | optional `host:port` | Wait for debugger before executing |
+| `--inspect-brk[=host:port]` | optional `host:port` | Break on first line and wait |
+| `--cpu-prof` | boolean | CPU profile on exit |
+| `--cpu-prof-name <file>` | `string` | CPU profile filename |
+| `--cpu-prof-dir <dir>` | `string` | CPU profile directory |
+| `--cpu-prof-md` | boolean | CPU profile as markdown (LLM-friendly) |
+| `--cpu-prof-interval=<µs>` | `number` (default `1000`) | CPU sampling interval |
+| `--heap-prof` | boolean | V8 `.heapsnapshot` on exit |
+| `--heap-prof-name <file>` | `string` | Heap profile filename |
+| `--heap-prof-dir <dir>` | `string` | Heap profile directory |
+| `--heap-prof-md` | boolean | Markdown heap profile on exit |
+
+#### Dependency & module resolution
+
+| Flag | Shape / values | Description |
+|------|----------------|-------------|
+| `-r` / `--preload <module>` | `string` (repeatable) | Import module(s) before other modules load |
+| `--require <module>` | `string` | Alias of `--preload` (Node compat) |
+| `--import <module>` | `string` | Alias of `--preload` (Node compat) |
+| `--no-install` | boolean | Disable runtime auto-install |
+| `--install=<mode>` | `auto` \| `fallback` \| `force` | Runtime auto-install policy |
 | `-i` | boolean | ≡ `--install=fallback` (not `--no-install`) |
-| `--define` / `-d` | `K:V` (JSON values) | Compile-time substitutes |
-| `--conditions` | `string` | Custom export conditions |
-| `-h` / `--help` | boolean | Help menu |
+| `--prefer-offline` | boolean | Skip staleness checks; resolve from disk |
+| `--prefer-latest` | boolean | Always check npm for latest matching versions |
+| `--conditions <cond>` | `string` | Custom export conditions |
+| `--main-fields <fields>` | `string` | `package.json` main fields (`--target` dependent default) |
+| `--preserve-symlinks` | boolean | Preserve symlinks when resolving files |
+| `--preserve-symlinks-main` | boolean | Preserve symlinks for the main entrypoint |
+| `--extension-order <list>` | CSV extensions | Default `.tsx,.ts,.jsx,.js,.json` |
+
+#### Transpilation & language features
+
+| Flag | Shape / values | Description |
+|------|----------------|-------------|
+| `--tsconfig-override <path>` | `string` | Custom `tsconfig.json` (default `$cwd/tsconfig.json`) |
+| `-d` / `--define <K:V>` | `K:V` (JSON values) | Compile-time substitutes |
+| `--drop <fn>` | `string` (e.g. `console`) | Remove matching function calls |
+| `--feature <name>` | `string` | Feature flag for DCE |
+| `-l` / `--loader <ext:loader>` | e.g. `.js:jsx` | Loaders: `js` `jsx` `ts` `tsx` `json` `toml` `text` `file` `wasm` `napi` |
+| `--no-macros` | boolean | Disable macros in bundler / transpiler / runtime |
+| `--jsx-factory <id>` | `string` | Classic JSX factory |
+| `--jsx-fragment <id>` | `string` | Classic JSX fragment |
+| `--jsx-import-source <spec>` | `string` (default `react`) | Automatic JSX import source |
+| `--jsx-runtime=<mode>` | `automatic` \| `classic` | JSX runtime |
+| `--jsx-side-effects` | boolean | Treat JSX as having side effects |
+| `--ignore-dce-annotations` | boolean | Ignore `@__PURE__` etc. |
+
+#### Networking & security
+
+| Flag | Shape / values | Description |
+|------|----------------|-------------|
+| `--port <n>` | `number` | Default port for `Bun.serve` |
+| `--fetch-preconnect <url>` | `string` | Preconnect while code loads |
+| `--max-http-header-size=<bytes>` | `number` (default 16KiB) | Max HTTP header size |
+| `--dns-result-order=<order>` | `verbatim` \| `ipv4first` \| `ipv6first` | DNS lookup order |
+| `--use-system-ca` | boolean | System trusted CAs |
+| `--use-openssl-ca` | boolean | OpenSSL default CA store |
+| `--use-bundled-ca` | boolean | Bundled CA store |
+| `--redis-preconnect` | boolean | Preconnect to `$REDIS_URL` at startup |
+| `--sql-preconnect` | boolean | Preconnect to PostgreSQL at startup |
+| `--user-agent <ua>` | `string` | Default `User-Agent` for HTTP |
+| `--experimental-http2-fetch` | boolean | Offer h2 in `fetch()` TLS ALPN |
+| `--experimental-http3-fetch` | boolean | Honor `Alt-Svc: h3` / upgrade to HTTP/3 |
+| `--experimental-stream-iter` | boolean | Enable experimental `stream/iter` APIs |
+
+#### Global configuration & context
+
+| Flag | Shape / values | Description |
+|------|----------------|-------------|
+| `--env-file <path>` | `string` (repeatable) | Load specific `.env` file(s) |
+| `--no-env-file` | boolean | Disable automatic `.env` loading |
+| `--cwd <path>` | `string` | Absolute cwd for resolution |
+| `-c` / `--config <path>` | `string` | Bun config (default `$cwd/bunfig.toml`) |
 
 Harness tips:
 
 - Prefer `bun --console-depth=N run …` over trailing flags.
 - Child processes: pass `--console-depth=${getConsoleDepth()}` (or rely on bunfig).
 - Do not put lifecycle `pre*` / `post*` on `check:harness-*` (steals stdin).
-
+- Portal harvest / shortcodes stay in `runtime-flags.json` — this table is the full `bun run` surface.
 ---
 
 ### Package management
