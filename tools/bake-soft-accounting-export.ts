@@ -9,11 +9,17 @@
 // @see https://bun.com/docs/api/spawn#input — Bun.spawn
 // @see https://bun.com/reference/bun/argv — Bun.argv
 /**
- * Bake / validate Soft→Factory accounting export.
+ * Soft bake CLI — Factory registry export from Soft / toc-ops fixture.
  *
  *   bun run soft:accounting:bake     # regenerate toc-ops-fixture demo bake
  *   bun run soft:accounting:check    # fixture exact-match OR soft-ct schema gate
  *   bun run soft:accounting:from-ct  # ct soft-accounting-export → registry (soft-ct)
+ *
+ * Bun native utils:
+ * - Bun.which(+ PATH) → locate bun for nested spawn (never bare `"bun"`)
+ * - Bun.env → PATH source + child `env: { ...Bun.env }` (shallow copy, no mutate)
+ * - Bun.main → CLI guard (`import.meta.path === Bun.main`)
+ * - Bun.version / Bun.revision → TTY + `--json` provenance
  *
  * Soft Balance mutations stay in toc-ops-repo `ct`.
  * Override Soft checkout with `TOC_OPS_REPO=/abs/path/to/toc-ops-repo`.
@@ -36,6 +42,14 @@ const root = joinPath(import.meta.dir, '..');
 const outPath = joinPath(root, SOFT_ACCOUNTING_EXPORT_REL);
 const tocPath = joinPath(root, 'public/registry/toc-ops.json');
 
+/** PATH-keyed cache for resolveBunExecutable (tests may clear). */
+const bunExecutableCache = new Map<string, string>();
+
+/** Clear Bun.which cache (tests). */
+export function clearBunExecutableCache(): void {
+  bunExecutableCache.clear();
+}
+
 /**
  * Absolute bun binary for nested spawn.
  * Uses Bun.which with an explicit PATH from Bun.env (docs: which PATH option).
@@ -44,11 +58,22 @@ const tocPath = joinPath(root, 'public/registry/toc-ops.json');
  */
 export function resolveBunExecutable(opts: { PATH?: string } = {}): string {
   const PATH = opts.PATH ?? Bun.env.PATH;
+  const cacheKey = PATH === undefined ? '\0default' : PATH;
+  const hit = bunExecutableCache.get(cacheKey);
+  if (hit) return hit;
+
   const found =
     PATH !== undefined && PATH !== ''
       ? Bun.which('bun', { PATH })
       : Bun.which('bun');
-  return found ?? process.execPath;
+  const resolved = (found ?? process.execPath).trim();
+  if (!resolved) {
+    throw new Error(
+      'Could not resolve bun executable (Bun.which returned null and process.execPath is empty)'
+    );
+  }
+  bunExecutableCache.set(cacheKey, resolved);
+  return resolved;
 }
 
 async function pathHasPackageJson(dir: string): Promise<boolean> {
