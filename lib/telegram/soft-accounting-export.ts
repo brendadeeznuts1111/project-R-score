@@ -16,6 +16,7 @@ import {
   type OpsPerAccountAccountingView,
   validateOpsAccountingViewShape,
 } from './ops-accounting-view.ts';
+import { parseBookType } from './partner-ops-registry.ts';
 
 export const SOFT_ACCOUNTING_EXPORT_SCHEMA = 'factorywager.soft-accounting-export.v1' as const;
 export const SOFT_ACCOUNTING_EXPORT_REL = 'public/registry/soft-accounting-export.json';
@@ -90,6 +91,17 @@ export type SoftPerWeekAccountingView = {
   week: SoftAccountingWeekRow;
 };
 
+export type SoftPerBookTypeAccountingView = {
+  type: 'per_book_type';
+  bookType: string; // brand-ok — book.type.*
+  partnerCode: string; // brand-ok — partner CODE
+  summary: OpsAccountingViewSummary;
+  conceptIds: {
+    dimension: 'ops.view.per_book_type';
+  };
+  book: SoftAccountingBookTypeRow;
+};
+
 /** Portal/dossier chrome over Soft export plays for one partner CODE. */
 export type SoftPartnerPlayChrome = {
   partnerCode: string; // brand-ok — partner CODE
@@ -99,6 +111,7 @@ export type SoftPartnerPlayChrome = {
   playCount: number;
   conceptId: 'ops.view.per_play';
   weekConceptId: 'ops.view.per_week';
+  bookConceptId: 'ops.view.per_book_type';
   /** Newest-first, capped for board render. */
   plays: readonly SoftAccountingPlayRow[];
   /** Per-play AccountingViews (same order as `plays`). */
@@ -106,6 +119,9 @@ export type SoftPartnerPlayChrome = {
   /** Week rollups (export weeks when present, else derived from plays). */
   weeks: readonly SoftAccountingWeekRow[];
   weekViews: readonly SoftPerWeekAccountingView[];
+  /** Book-type rollups (export byBookType when present, else derived from tagged plays). */
+  byBookType: readonly SoftAccountingBookTypeRow[];
+  bookViews: readonly SoftPerBookTypeAccountingView[];
 };
 
 function emptySummary(): OpsAccountingViewSummary {
@@ -124,6 +140,20 @@ export function normalizeSoftPartnerCode(code: string | null | undefined): strin
   return String(code || '')
     .trim()
     .toUpperCase();
+}
+
+/**
+ * Normalize Soft/partners-ops book class onto `book.type.*` glossary ids.
+ * Accepts `legal`, `legal-us`, `book.type.legal`, etc.
+ */
+export function softBookTypeConceptId(
+  raw: string | null | undefined
+): `book.type.${string}` | undefined {
+  const s = String(raw || '').trim();
+  if (!s) return undefined;
+  const token = s.startsWith('book.type.') ? s.slice('book.type.'.length) : s;
+  const parsed = parseBookType(token);
+  return parsed ? (`book.type.${parsed}` as const) : undefined;
 }
 
 /** UTC Monday (YYYY-MM-DD) for a placedAt ISO timestamp. */
@@ -207,6 +237,75 @@ export function rollupWeeksFromPlays(
   return [...byKey.values()].sort(
     (a, b) => a.weekStart.localeCompare(b.weekStart) || a.partnerCode.localeCompare(b.partnerCode)
   );
+}
+
+/**
+ * Derive per-book-type Soft rows from plays that carry `bookType`.
+ * Plays without a resolvable book.type.* are skipped (no invented venues).
+ */
+export function rollupByBookTypeFromPlays(
+  plays: readonly SoftAccountingPlayRow[]
+): SoftAccountingBookTypeRow[] {
+  const byKey = new Map<string, SoftAccountingBookTypeRow>();
+  for (const play of plays) {
+    const partnerCode = normalizeSoftPartnerCode(play.partnerCode);
+    const bookType = softBookTypeConceptId(play.bookType);
+    if (!partnerCode || !bookType) continue;
+    const key = `${partnerCode}|${bookType}`;
+    let row = byKey.get(key);
+    if (!row) {
+      row = {
+        bookType,
+        partnerCode,
+        deposits: 0,
+        settlements: 0,
+        fees: 0,
+        net: 0,
+      };
+      byKey.set(key, row);
+    }
+    const stake = typeof play.stake === 'number' && Number.isFinite(play.stake) ? play.stake : 0;
+    const pnl = typeof play.pnl === 'number' && Number.isFinite(play.pnl) ? play.pnl : 0;
+    row.deposits += stake;
+    if (play.result !== 'pending') row.settlements += Math.abs(pnl);
+    row.net += pnl;
+  }
+  return [...byKey.values()].sort(
+    (a, b) => a.partnerCode.localeCompare(b.partnerCode) || a.bookType.localeCompare(b.bookType)
+  );
+}
+
+/**
+ * Demo / Soft enrichment: stamp plays missing bookType from a partner→book.type map
+ * (e.g. partners-ops primary out). Never invents classes Soft did not resolve.
+ */
+export function enrichSoftExportWithPartnerBookTypes(
+  exported: SoftAccountingExport,
+  partnerBookTypeByCode: ReadonlyMap<string, string> | Record<string, string>
+): SoftAccountingExport {
+  const lookup =
+    partnerBookTypeByCode instanceof Map
+      ? partnerBookTypeByCode
+      : new Map(
+          Object.entries(partnerBookTypeByCode).map(([k, v]) => [normalizeSoftPartnerCode(k), v])
+        );
+  const plays = exported.plays.map(play => {
+    const existing = softBookTypeConceptId(play.bookType);
+    if (existing) return { ...play, bookType: existing };
+    const fromPartner = softBookTypeConceptId(
+      lookup.get(normalizeSoftPartnerCode(play.partnerCode))
+    );
+    return fromPartner ? { ...play, bookType: fromPartner } : play;
+  });
+  const byBookType =
+    exported.byBookType.length > 0
+      ? exported.byBookType.map(row => ({
+          ...row,
+          bookType: softBookTypeConceptId(row.bookType) ?? row.bookType,
+          partnerCode: normalizeSoftPartnerCode(row.partnerCode),
+        }))
+      : rollupByBookTypeFromPlays(plays);
+  return { ...exported, plays, byBookType };
 }
 
 export function unavailableSoftAccountingExport(
@@ -369,6 +468,39 @@ export function buildPerWeekAccountingView(
   return view;
 }
 
+/**
+ * Dimension-only per-book-type view from a Soft book-type row.
+ * Field chrome collapses onto book.type.* / accounting.* via OPS_VIEW_COLLAPSE_BACKLOG.
+ */
+export function buildPerBookTypeAccountingView(
+  book: SoftAccountingBookTypeRow | null | undefined
+): SoftPerBookTypeAccountingView | null {
+  const bookType = softBookTypeConceptId(book?.bookType) ?? String(book?.bookType || '').trim();
+  const partnerCode = normalizeSoftPartnerCode(book?.partnerCode);
+  if (!bookType || !partnerCode || !book) return null;
+
+  const num = (v: number | undefined) => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
+  const summary: OpsAccountingViewSummary = {
+    ...emptySummary(),
+    deposits: num(book.deposits),
+    settlements: num(book.settlements),
+    fees: num(book.fees),
+    net: num(book.net),
+  };
+
+  const view: SoftPerBookTypeAccountingView = {
+    type: 'per_book_type',
+    bookType,
+    partnerCode,
+    summary,
+    conceptIds: { dimension: 'ops.view.per_book_type' },
+    book: { ...book, bookType, partnerCode },
+  };
+  const issues = validateOpsAccountingViewShape(view);
+  if (issues.length > 0) return null;
+  return view;
+}
+
 const DEFAULT_SOFT_PLAY_CHROME_LIMIT = 8;
 
 /**
@@ -404,6 +536,16 @@ export function buildPartnerSoftPlayChrome(
     .map(w => buildPerWeekAccountingView(w))
     .filter((v): v is SoftPerWeekAccountingView => v != null);
 
+  const exportBooks = (exported?.byBookType ?? []).filter(
+    b => normalizeSoftPartnerCode(b.partnerCode) === code
+  );
+  const byBookType =
+    exportBooks.length > 0 ? exportBooks.slice() : rollupByBookTypeFromPlays(allPlays);
+  byBookType.sort((a, b) => a.bookType.localeCompare(b.bookType));
+  const bookViews = byBookType
+    .map(b => buildPerBookTypeAccountingView(b))
+    .filter((v): v is SoftPerBookTypeAccountingView => v != null);
+
   return {
     partnerCode: code,
     available: allPlays.length > 0,
@@ -412,10 +554,13 @@ export function buildPartnerSoftPlayChrome(
     playCount: allPlays.length,
     conceptId: 'ops.view.per_play',
     weekConceptId: 'ops.view.per_week',
+    bookConceptId: 'ops.view.per_book_type',
     plays,
     views,
     weeks,
     weekViews,
+    byBookType,
+    bookViews,
   };
 }
 

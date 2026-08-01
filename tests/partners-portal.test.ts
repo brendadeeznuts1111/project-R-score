@@ -53,6 +53,8 @@ describe('partners portal board', () => {
     expect(html).toContain('ops.view.per_week');
     expect(html).toContain('soft-plays-tbody');
     expect(html).toContain('soft-weeks-tbody');
+    expect(html).toContain('soft-book-types-tbody');
+    expect(html).toContain('ops.view.per_book_type');
     expect(html).toContain('soft-accounting-export.json');
     expect(html).toMatch(
       /String\(play\?\.partnerCode \|\| ''\)\s*\.trim\(\)\s*\.toUpperCase\(\)/

@@ -436,6 +436,10 @@
             <a href="/portal/glossary/#glossary:ops.view.per_week" data-glossary-concept="ops.view.per_week"
               >ops.view.per_week</a
             >
+            · Soft book types
+            <a href="/portal/glossary/#glossary:ops.view.per_book_type" data-glossary-concept="ops.view.per_book_type"
+              >ops.view.per_book_type</a
+            >
             · events stay
             <a href="/portal/glossary/#glossary:accounting.deposit" data-glossary-concept="accounting.deposit"
               >accounting.deposit</a
@@ -822,6 +826,27 @@
               <th>Week (UTC Mon)</th><th>Stake Σ</th><th>|P&amp;L| settled</th><th>Net</th>
             </tr></thead><tbody>${weekRows}</tbody></table>`
               : '';
+            const bookRows = (soft.byBookType || [])
+              .slice(0, 8)
+              .map(
+                b =>
+                  `<tr data-glossary-concept="${soft.bookConceptId || G.perBookType}">
+                <td><a class="semantic-label" href="${accountDossierGlossaryHref(b.bookType)}" data-glossary-concept="${esc(b.bookType)}"><code>${esc(b.bookType)}</code></a></td>
+                <td>${esc(b.deposits)}</td>
+                <td>${esc(b.settlements)}</td>
+                <td><strong>${esc(b.net)}</strong></td>
+              </tr>`
+              )
+              .join('');
+            const bookBlock = bookRows
+              ? `<h3 style="margin:16px 0 8px;font-size:0.95rem">
+              <a class="semantic-label" href="${accountDossierGlossaryHref(soft.bookConceptId || G.perBookType)}" data-glossary-concept="${soft.bookConceptId || G.perBookType}">Soft book types</a>
+              <span class="ad-meta"> · tagged plays / partners-ops primary out</span>
+            </h3>
+            <table class="ad-table" data-glossary-concept="${soft.bookConceptId || G.perBookType}"><thead><tr>
+              <th>Book type</th><th>Stake Σ</th><th>|P&amp;L| settled</th><th>Net</th>
+            </tr></thead><tbody>${bookRows}</tbody></table>`
+              : '';
             return `
             <h3 style="margin:16px 0 8px;font-size:0.95rem">
               <a class="semantic-label" href="${accountDossierGlossaryHref(soft.conceptId || G.perPlay)}" data-glossary-concept="${soft.conceptId || G.perPlay}">Soft plays</a>
@@ -831,6 +856,7 @@
               <th>When</th><th>Play</th><th>Market</th><th>Result</th><th>Stake</th><th>P&amp;L</th>
             </tr></thead><tbody>${playRows}</tbody></table>
             ${weekBlock}
+            ${bookBlock}
             <p class="ad-meta" style="margin-top:8px">Read-only Soft export — Soft Balance stays in toc-ops <code>ct</code>.</p>`;
           }
           if (soft && dossier.partnerCode) {
