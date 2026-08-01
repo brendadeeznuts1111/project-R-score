@@ -24,7 +24,7 @@
  *   bun --env-file ~/.reasonix/.env run snapshot:live -- --thumb
  */
 import { $, Glob } from 'bun';
-import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
+import { colorize, jsonOut, padEndWidth } from '../lib/console-depth.ts';
 import { deepEquals } from '../lib/deep-equals.ts';
 import { PORTAL_KERNEL_PALETTE } from '../lib/portal/portal-kernel-palette.ts';
 import { isCloudflareAccessEnforced } from '../lib/verification/cloudflare-access-live.ts';
@@ -57,6 +57,64 @@ export const VERDICT_STATUS_PALETTE = {
 /** Colorize a verdict status with Bun.color via console-depth (NO_COLOR-aware). */
 export function colorStatus(status: VerdictStatus): string {
   return colorize(status, VERDICT_STATUS_PALETTE[status]);
+}
+
+/** Short Detail column — full Evidence stays in the JSON manifest. */
+export function shortenDetail(evidence: string, max = 40): string {
+  if (evidence.includes('shapeEqMain=true')) {
+    const surfaces = evidence.match(/surfaces=(\d+)/)?.[1];
+    return surfaces ? `schema=3 surfaces=${surfaces} shape=ok` : 'shape=ok';
+  }
+  if (evidence.includes('shapeEqMain=false')) return 'shape≠main';
+  if (evidence.includes('accessEnforced=true')) return '302 ok';
+  if (/HTTP 200/.test(evidence) && evidence.includes('shaEqMain=true')) return '200 · sha=ok';
+  if (/HTTP 200/.test(evidence)) return 'HTTP 200';
+  if (/status=ok/.test(evidence)) {
+    const files = evidence.match(/files=(\d+)/)?.[1];
+    return files ? `ok · files=${files}` : 'ok';
+  }
+  if (evidence.startsWith('missing CF_ACCESS')) return 'need Access token';
+  if (/probe png|1x1/i.test(evidence)) return '1×1 png ok';
+  if (/format=png/i.test(evidence)) {
+    const dim = evidence.match(/(\d+)x(\d+)/);
+    return dim ? `png ${dim[1]}x${dim[2]}` : 'png ok';
+  }
+  const one = evidence.split(' · ')[0] ?? evidence;
+  return one.length > max ? `${one.slice(0, max - 1)}…` : one;
+}
+
+/**
+ * Compact human verdict (not Bun.inspect.table — no index column, short Detail).
+ * Full Evidence remains in live-probe-manifest.json.
+ */
+export function printVerdictTable(
+  rows: VerdictRow[],
+  options: { failed: boolean; quick?: boolean; manifestPath?: string }
+): void {
+  const blocking = rows.filter(
+    r =>
+      r.Status === 'STALE' ||
+      r.Status === 'ACCESS_FAIL' ||
+      (!options.quick && r.Status === 'ACCESS_SKIP')
+  ).length;
+  const headline = options.failed
+    ? `FAIL — ${blocking} blocking`
+    : 'LIVE — All checks passed';
+  console.log(colorize(headline, options.failed ? PORTAL_KERNEL_PALETTE.red : PORTAL_KERNEL_PALETTE.green));
+  console.log(
+    `${padEndWidth('Check', 28)} ${padEndWidth('Plane', 8)} ${padEndWidth('Status', 8)} Detail`
+  );
+  for (const r of rows) {
+    const statusPad = padEndWidth(r.Status, 8);
+    const statusColored = colorize(r.Status, VERDICT_STATUS_PALETTE[r.Status]);
+    const statusCol = statusColored + ' '.repeat(Math.max(0, statusPad.length - r.Status.length));
+    console.log(
+      `${padEndWidth(r.Enhancement, 28)} ${padEndWidth(r.Plane, 8)} ${statusCol} ${shortenDetail(r.Evidence)}`
+    );
+  }
+  if (options.manifestPath) {
+    console.log(`\nManifest: ${options.manifestPath}`);
+  }
 }
 
 /** Stable glossary shape for deepEquals (ignore bake noise outside surfaces). */
@@ -808,21 +866,20 @@ export async function runLiveSnapshot(
   const quick = options.quick === true;
 
   if (!options.json) {
-    console.log(`\n  Live enhancement snapshot → ${base}${quick ? ' (--quick)' : ''}\n`);
+    console.log(`Live enhancement snapshot → ${base}${quick ? ' (--quick)' : ''}\n`);
   }
 
+  // Always quiet snapshot-core chatter so the compact verdict is the signal.
+  const quietCapture = true;
   await probeRegistry(base, rows);
   await probeAccessProtection(base, rows);
   let manifests: SnapshotManifest[] = [];
   let imageMeta: ImageMetaResult | null = null;
   if (quick) {
-    // Still capture portal-scope registry assets (public); skip Access portal + Image.
-    manifests = await captureSnapshots(base, rows, { quiet: options.json === true });
-    // Drop limits scope noise in quick mode — keep only portal snapshot row
-    // (captureSnapshots always runs both; filter display by leaving as-is is fine)
+    manifests = await captureSnapshots(base, rows, { quiet: quietCapture });
   } else {
     await probePortal(base, rows);
-    manifests = await captureSnapshots(base, rows, { quiet: options.json === true });
+    manifests = await captureSnapshots(base, rows, { quiet: quietCapture });
     imageMeta = await probeImageMeta(rows, {
       strictImage: options.strictImage === true,
       thumb: options.thumb === true,
@@ -854,18 +911,7 @@ export async function runLiveSnapshot(
   if (options.json) {
     jsonOut(payload);
   } else {
-    const display = rows.map(r => ({
-      ...r,
-      Status: colorStatus(r.Status),
-    }));
-    logTable(display, ['Enhancement', 'Plane', 'Status', 'Evidence']);
-    const resultLine = exitFail
-      ? `Result: FAIL (${rows.filter(r => r.Status === 'STALE' || r.Status === 'ACCESS_FAIL' || (!quick && r.Status === 'ACCESS_SKIP')).length} blocking)`
-      : 'Result: OK — enhancements live';
-    console.log(
-      `\n  ${colorize(resultLine, exitFail ? PORTAL_KERNEL_PALETTE.red : PORTAL_KERNEL_PALETTE.green)}\n`
-    );
-    console.log(`  Manifest: ${manifestPath}\n`);
+    printVerdictTable(rows, { failed: exitFail, quick, manifestPath });
   }
 
   return { rows, failed: exitFail, manifestPath };

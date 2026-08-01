@@ -10,6 +10,7 @@ import {
   markersPresent,
   PORTAL_PROBES,
   sha256Hex,
+  shortenDetail,
   validateImageHealth,
   VERDICT_STATUS_PALETTE,
 } from '../tools/snapshot-live.ts';
@@ -134,18 +135,38 @@ describe('snapshot-live helpers', () => {
   test('glossaryShapeForEquals is deepEquals-stable', () => {
     const a = {
       schemaVersion: 3,
-      surfaces: [{ path: '/portal/account/', sections: [{ hash: 'identity', domId: 'ad-section-identity' }] }],
+      surfaces: [
+        {
+          path: '/portal/account/',
+          sections: [{ hash: 'identity', domId: 'ad-section-identity' }],
+        },
+      ],
       extraBakeNoise: Date.now(),
     };
     const b = {
       schemaVersion: 3,
-      surfaces: [{ path: '/portal/account/', sections: [{ hash: 'identity', domId: 'ad-section-identity' }] }],
+      surfaces: [
+        {
+          path: '/portal/account/',
+          sections: [{ hash: 'identity', domId: 'ad-section-identity' }],
+        },
+      ],
       extraBakeNoise: 0,
     };
     expect(deepEquals(glossaryShapeForEquals(a), glossaryShapeForEquals(b))).toBe(true);
   });
 
-  test('tool ships Bun.Image · HTMLRewriter · Bun.$ · colorize wiring', async () => {
+  test('shortenDetail keeps Detail column scannable', () => {
+    expect(shortenDetail('HTTP 200 · bytes=23076 · shaEqMain=true')).toBe('200 · sha=ok');
+    expect(shortenDetail('HTTP 302 · accessEnforced=true (expect challenge)')).toBe('302 ok');
+    expect(
+      shortenDetail(
+        'schema=3 · surfaces=30 · identity.domId=ad-section-identity · shapeEqMain=true · shaLive=abc'
+      )
+    ).toBe('schema=3 surfaces=30 shape=ok');
+  });
+
+  test('tool ships Bun.Image · HTMLRewriter · Bun.$ · compact verdict', async () => {
     const src = await Bun.file('tools/snapshot-live.ts').text();
     expect(src).toContain('file.image()');
     expect(src).toContain('.metadata()');
@@ -153,13 +174,15 @@ describe('snapshot-live helpers', () => {
     expect(src).toContain("import { $, Glob } from 'bun'");
     expect(src).toContain('PORTAL_KERNEL_PALETTE');
     expect(src).toContain('colorize');
+    expect(src).toContain('printVerdictTable');
+    expect(src).toContain('shortenDetail');
     expect(src).toContain('deepEquals');
     expect(src).toContain('probeAccessProtection');
     expect(src).toContain('--quick');
+    expect(src).not.toContain('logTable(display');
     expect(src).toContain('ERR_IMAGE_FORMAT_UNSUPPORTED');
     expect(src).toContain('CF-Access-Client-Id');
     expect(src).toContain('runSnapshot');
-    expect(src).toContain('logTable');
     expect(src).toContain('Bun.write');
     expect(src).toContain('bun-v1.3.14');
   });
