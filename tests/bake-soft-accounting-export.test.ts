@@ -2,23 +2,39 @@
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 import { describe, expect, test } from 'bun:test';
 import {
+  clearBunExecutableCache,
   resolveBunExecutable,
   resolveTocOpsRepo,
 } from '../tools/bake-soft-accounting-export.ts';
 
 describe('soft:accounting:from-ct spawn resolution', () => {
   test('resolveBunExecutable prefers Bun.which or process.execPath', () => {
+    clearBunExecutableCache();
     const bin = resolveBunExecutable();
     expect(bin.length).toBeGreaterThan(0);
     expect(bin).not.toBe('bun');
     expect(bin === Bun.which('bun') || bin === process.execPath).toBe(true);
   });
 
+  test('resolveBunExecutable caches per PATH key', () => {
+    clearBunExecutableCache();
+    const a = resolveBunExecutable();
+    const b = resolveBunExecutable();
+    expect(a).toBe(b);
+    clearBunExecutableCache();
+    const empty = resolveBunExecutable({ PATH: '' });
+    expect(empty).toBe(process.execPath);
+    // Default PATH cache must not poison empty-PATH resolution
+    expect(resolveBunExecutable({ PATH: '' })).toBe(process.execPath);
+  });
+
   test('resolveBunExecutable honors Bun.which PATH option (docs)', () => {
+    clearBunExecutableCache();
     // Empty PATH → which miss → execPath fallback (same as Bun.which docs cwd+PATH:"").
     const bin = resolveBunExecutable({ PATH: '' });
     expect(bin).toBe(process.execPath);
     if (Bun.env.PATH) {
+      clearBunExecutableCache();
       const viaEnv = resolveBunExecutable({ PATH: Bun.env.PATH });
       expect(viaEnv === Bun.which('bun', { PATH: Bun.env.PATH }) || viaEnv === process.execPath).toBe(
         true
@@ -45,6 +61,7 @@ describe('soft:accounting:from-ct spawn resolution', () => {
   });
 
   test('edge: Bun.which null falls back to process.execPath (PATH miss)', () => {
+    clearBunExecutableCache();
     // Documented contract: never return bare "bun" — spawn argv0 must be absolute/resolvable.
     const which = Bun.which('bun');
     const bin = resolveBunExecutable();
