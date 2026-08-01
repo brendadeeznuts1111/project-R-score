@@ -1541,6 +1541,24 @@
                 .join('')
             : `<tr><td colspan="7">No Soft plays — <code>bun run soft:accounting:bake</code> or <code>soft:accounting:from-ct</code> · source ${esc(softAccountingSource)}</td></tr>`;
         }
+
+        const weeksBody = $('soft-weeks-tbody');
+        if (weeksBody) {
+          weeksBody.innerHTML = softWeekRows.length
+            ? softWeekRows
+                .slice(0, 40)
+                .map(
+                  w => `<tr data-partner-code="${esc(w.partnerCode)}" data-glossary-concept="ops.view.per_week">
+                <td>${partnerLink(w.partnerCode)}</td>
+                <td><code>${esc(w.weekStart || '—')}</code></td>
+                <td>${esc(w.deposits)}</td>
+                <td>${esc(w.settlements)}</td>
+                <td><strong>${esc(w.net)}</strong></td>
+              </tr>`
+                )
+                .join('')
+            : `<tr><td colspan="5">No Soft week rollups — bake Soft plays first · source ${esc(softAccountingSource)}</td></tr>`;
+        }
       }
 
       function bookChip(label, opsOut) {
@@ -1839,6 +1857,24 @@
             if (list) list.push(play);
             else softPlaysByPartner.set(code, [play]);
           }
+          const exportWeeks = Array.isArray(softAccounting?.weeks) ? softAccounting.weeks : [];
+          softWeekRows =
+            exportWeeks.length > 0
+              ? exportWeeks
+                  .map(w => ({
+                    weekStart: w.weekStart,
+                    partnerCode: String(w.partnerCode || '').toUpperCase(),
+                    deposits: w.deposits,
+                    settlements: w.settlements,
+                    net: w.net,
+                  }))
+                  .filter(w => w.partnerCode)
+                  .sort(
+                    (a, b) =>
+                      String(b.weekStart).localeCompare(String(a.weekStart)) ||
+                      a.partnerCode.localeCompare(b.partnerCode)
+                  )
+              : rollupSoftWeeksFromPlays(softAccounting?.plays || []);
           $('partners-meta').innerHTML =
             `Handshake <time>${esc(handshake.generatedAt || '—')}</time> · ` +
             `Seat desk <time>${esc(seat.generatedAt || '—')}</time> · ` +
