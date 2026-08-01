@@ -782,6 +782,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['package groups', 'telegram forums', 'handshake board'],
     seeAlso: [
       'page.partners',
+      'page.accountDossier',
       'section.partnersAccounting',
       'section.partnersAccountsLimits',
       'section.partnersDeposits',
@@ -798,6 +799,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['accounting deals', 'accounting topic', 'fund status'],
     seeAlso: [
       'page.partners',
+      'page.accountDossier',
       'section.partnersTelegram',
       'section.partnersAccountsLimits',
       'section.partnersDeposits',
@@ -814,6 +816,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['partner accounts', 'limit tracking', 'communication readiness'],
     seeAlso: [
       'page.partners',
+      'page.accountDossier',
       'section.partnersAccounting',
       'section.partnersTelegram',
       'section.partnersDeposits',
@@ -1079,6 +1082,8 @@ export const ACCOUNT_DOSSIER_SURFACE_CONCEPTS = {
   telemetry: 'ops.limits.pattern_surface',
   changes: 'section.recentLimitChanges',
   outs: 'section.partnersOuts',
+  telegram: 'section.partnersTelegram',
+  accounting: 'section.partnersAccounting',
   monitoring: 'ops.limits.monitoring_status',
   profile: 'ops.limits.profile',
   window: 'section.recentLimitChanges',

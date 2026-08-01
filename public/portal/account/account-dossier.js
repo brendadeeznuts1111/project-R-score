@@ -1,6 +1,6 @@
 /**
  * Account dossier join helpers — scope one TreeNodeId + connected partner-tree nodes.
- * Pure functions over baked registries (limit-raises · partners-ops).
+ * Pure functions over baked registries (limit-raises · partners-ops · telegram-handshake).
  *
  * Deep-link parity with limits board:
  *   query ?account= (form SSOT) · hash #account:{TreeNodeId} (limits pattern)
@@ -9,6 +9,7 @@
 const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
 /** Call-sign only — avoids treating slug ids like LIMIT-DEMO-ATLANTIC as CODE LIMIT. */
 const CALL_SIGN_RE = /^([A-Z]{3,6})-\d{3}(?:-SUB\d{2}){0,2}$/;
+const DOSSIER_TOPIC_KEYS = ['general', 'ops', 'alerts', 'liquidity', 'accounting'];
 
 const accountHashPattern = new URLPattern({ hash: 'account\\::account' });
 const sectionHashPattern = new URLPattern({ hash: 'section\\::section' });
@@ -236,15 +237,63 @@ function buildConnectedTree(accountId, partnerNodeId, patterns, profiles) {
 }
 
 /**
+ * Project telegram + handshake readiness for one partner CODE.
+ * @param {object | null} partnerRow
+ * @param {object | null} handshakeRow
+ */
+export function buildDossierTelegram(partnerRow, handshakeRow = null) {
+  const tg = partnerRow?.telegram ?? null;
+  const topicIds = tg?.topicIds && typeof tg.topicIds === 'object' ? tg.topicIds : {};
+  const communication = partnerRow?.tracking?.communication ?? null;
+  const topicsConfigured =
+    communication?.topicsConfigured ??
+    DOSSIER_TOPIC_KEYS.filter(key => topicIds[key] != null && topicIds[key] !== '').length;
+  const topicsRequired = communication?.topicsRequired ?? DOSSIER_TOPIC_KEYS.length;
+  const chatId = tg?.chatId != null ? String(tg.chatId) : null;
+  const chatLinked = Boolean(communication?.chatLinked ?? chatId);
+  const topics = DOSSIER_TOPIC_KEYS.map(key => ({
+    key,
+    threadId: topicIds[key] != null ? topicIds[key] : null,
+    configured: topicIds[key] != null && topicIds[key] !== '',
+  }));
+
+  return {
+    chatId,
+    chatLinked,
+    topics,
+    topicsConfigured,
+    topicsRequired,
+    ready: Boolean(communication?.ready ?? (chatLinked && topicsConfigured >= topicsRequired)),
+    phase: partnerRow?.phase ?? null,
+    phaseConceptId: partnerRow?.phaseConceptId ?? null,
+    callSign: handshakeRow?.callSign ?? partnerRow?.callSign ?? null,
+    handshakeOk: handshakeRow?.handshakeOk ?? null,
+    dmSeatStatus: handshakeRow?.dmSeatStatus ?? null,
+    inviteLink: handshakeRow?.inviteLink ?? null,
+    nextSteps: Array.isArray(handshakeRow?.nextSteps) ? handshakeRow.nextSteps : [],
+    verifyPassed: handshakeRow?.verifyPassed ?? null,
+    verifyTotal: handshakeRow?.verifyTotal ?? null,
+    membershipCell: handshakeRow?.membershipCell ?? null,
+  };
+}
+
+/**
  * Build a single-account dossier view-model from baked registries.
  * @param {{
  *   accountId: string;
  *   limitRaises: object;
  *   partnersOps?: object | null;
+ *   handshake?: object | null;
  *   hours?: number;
  * }} input
  */
-export function buildAccountDossier({ accountId, limitRaises, partnersOps = null, hours = 168 }) {
+export function buildAccountDossier({
+  accountId,
+  limitRaises,
+  partnersOps = null,
+  handshake = null,
+  hours = 168,
+}) {
   const id = String(accountId || '').trim();
   const patterns = limitRaises?.patterns?.nodePatterns ?? [];
   const profiles = limitRaises?.accountProfiles?.profiles ?? [];
@@ -272,6 +321,11 @@ export function buildAccountDossier({ accountId, limitRaises, partnersOps = null
       ? (partnersOps.partners.find(row => String(row.code).toUpperCase() === code) ?? null)
       : null;
 
+  const handshakeRow =
+    code && Array.isArray(handshake?.rows)
+      ? (handshake.rows.find(row => String(row.partnerCode).toUpperCase() === code) ?? null)
+      : null;
+
   const statePolicies = (limitRaises?.accountProfiles?.policies ?? []).filter(policy => {
     if (policy?.treeNodeId && String(policy.treeNodeId) === id) return true;
     if (!policy?.stateCode) return false;
@@ -279,7 +333,27 @@ export function buildAccountDossier({ accountId, limitRaises, partnersOps = null
     return state != null && String(policy.stateCode) === String(state);
   });
 
+  const telegram = buildDossierTelegram(partnerRow, handshakeRow);
+  const accounting = partnerRow?.accounting
+    ? {
+        fundStatus: partnerRow.accounting.fundStatus ?? null,
+        incompleteOuts: partnerRow.accounting.incompleteOuts ?? 0,
+        deposits: Array.isArray(partnerRow.accounting.deposits)
+          ? partnerRow.accounting.deposits
+          : [],
+        credits: Array.isArray(partnerRow.accounting.credits) ? partnerRow.accounting.credits : [],
+        freeRoll: partnerRow.accounting.freeRoll ?? null,
+        tracking: partnerRow.tracking?.accounting ?? null,
+      }
+    : null;
+
   const betlogBase = `/api/agents/v1/limits/raises?node_id=${encodeURIComponent(id)}&hours=${encodeURIComponent(String(hours || 168))}`;
+  const partnersTelegram = code
+    ? `/portal/partners/#partner/${encodeURIComponent(code)}/telegram/general`
+    : '/portal/partners/#section:telegram';
+  const partnersAccounting = code
+    ? `/portal/partners/#partner/${encodeURIComponent(code)}/accounting`
+    : '/portal/partners/#section:accounting';
 
   return {
     accountId: id,
@@ -290,7 +364,7 @@ export function buildAccountDossier({ accountId, limitRaises, partnersOps = null
     role: pattern?.node_type ?? profile?.accountKind ?? 'node',
     depth: pattern?.downline_depth ?? 0,
     parentNodeId: pattern?.parent_node_id ?? profile?.parentNodeId ?? null,
-    callSign: profile?.callSign ?? null,
+    callSign: profile?.callSign ?? telegram.callSign ?? null,
     location: {
       state: pattern?.state_code ?? profile?.jurisdiction?.stateCode ?? null,
       city: pattern?.location ?? profile?.jurisdiction?.location ?? null,
@@ -312,13 +386,19 @@ export function buildAccountDossier({ accountId, limitRaises, partnersOps = null
     policies: statePolicies,
     partner: partnerRow,
     outs: Array.isArray(partnerRow?.outs) ? partnerRow.outs : [],
+    telegram,
+    accounting,
     links: {
       history: `/portal/partner-history/?account=${encodeURIComponent(id)}`,
       limits: `/portal/limits/#account:${encodeURIComponent(id)}`,
       partners: code ? `/portal/partners/#partner/${encodeURIComponent(code)}` : '/portal/partners/',
+      partnersTelegram,
+      partnersAccounting,
       betlogCsv: `${betlogBase}&format=csv`,
       betlogJsonl: `${betlogBase}&format=jsonl`,
       registry: '/registry/limit-raises.json',
+      partnersOps: '/registry/partners-ops.json',
+      handshake: '/registry/telegram-handshake.json',
     },
     lookbackHours: hours,
     generatedAt: limitRaises?.generatedAt ?? null,

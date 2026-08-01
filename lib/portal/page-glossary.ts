@@ -46,6 +46,8 @@ const PAGE_SECTIONS: Readonly<
     telemetry: ACCOUNT_DOSSIER_SURFACE_CONCEPTS.telemetry,
     changes: ACCOUNT_DOSSIER_SURFACE_CONCEPTS.changes,
     outs: ACCOUNT_DOSSIER_SURFACE_CONCEPTS.outs,
+    telegram: ACCOUNT_DOSSIER_SURFACE_CONCEPTS.telegram,
+    accounting: ACCOUNT_DOSSIER_SURFACE_CONCEPTS.accounting,
   },
   [PARTNERS_SURFACE_CONCEPTS.page]: {
     telegram: PARTNERS_SURFACE_CONCEPTS.telegram,

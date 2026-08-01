@@ -126,6 +126,20 @@ All `sendMessage` calls go through [`sendTelegramBotMessage`](../../../lib/teleg
 
 No rate limiter on `getMe` / webhook setup (infrequent).
 
+## Account dossier (bot ↔ portal)
+
+Linked seats can open the single-account portal board from Telegram:
+
+| Command | Handler | Portal |
+|---------|---------|--------|
+| `/dossier` | [`handleOpsDossier`](../../../lib/telegram/ops-commands.ts) | `https://score.factory-wager.com/portal/account/?account={TreeNodeId}` |
+| `/limits` | [`handleOpsLimits`](../../../lib/telegram/ops-commands.ts) | `/portal/limits/#account:{TreeNodeId}` (+ dossier link) |
+
+Board sections `#section:telegram` / `#section:accounting` join
+`partners-ops.json` + `telegram-handshake.json` (concepts:
+`page.accountDossier` · `section.partnersTelegram` · `telegram.handshake`).
+Refresh bot menu after deploy: `bun run telegram:factory:setup`.
+
 ## Bot API surface (this repo)
 
 | Method | Module | Used for |

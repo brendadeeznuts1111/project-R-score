@@ -4,6 +4,7 @@
  */
 import type { Database } from 'bun:sqlite';
 import { randomUUIDv7 } from 'bun';
+import { factoryWagerPagesCustomUrl } from '../../config/r2-env.ts';
 import { DODVerifier } from '../dod/verifier.ts';
 import { asTreeNodeId } from '../types/branded/operations.ts';
 import { asTelegramUserId, type TelegramUserId } from '../types/branded/portal.ts';
@@ -29,6 +30,7 @@ export type OpsTreeNode = {
   expert_id: string | null; // brand-ok
   name: string;
   telegram_id: string; // brand-ok
+  call_sign?: string | null;
 };
 
 export type OpsCommandInput = {
@@ -72,6 +74,8 @@ export function handleOpsStart(db: Database, node: OpsTreeNode | null): string {
     `Type: *${node.type.toUpperCase()}*`,
     '',
     '/status — Your status',
+    '/dossier — Account dossier portal link',
+    '/limits — Recent limit changes',
     '/accounts — Sportsbook accounts',
     "/plays — Today's plays",
     '/tree — Your down-tree',
@@ -193,11 +197,13 @@ export function handleOpsLimits(db: Database, node: OpsTreeNode | null): string 
   const raises = repo.detectRaises(node.id, since);
   const decreases = repo.detectDecreases(node.id, since);
   if (raises.length === 0 && decreases.length === 0) {
+    const portalBase = factoryWagerPagesCustomUrl();
     return [
       '📋 No recent limit changes in the last 48h.',
       '',
       'Use `/limits` again to re-check or `bun run ops:limits:demo` to seed test data.',
-      'Portal: /portal/limits/ · /portal/partner-history/',
+      `Portal: ${portalBase}/portal/limits/#account:${encodeURIComponent(node.id)}`,
+      `Dossier: ${portalBase}/portal/account/?account=${encodeURIComponent(node.id)} · /dossier`,
     ].join('\n');
   }
   const lines: string[] = ['📊 *Limit Changes* (48h)'];
@@ -247,13 +253,66 @@ export function handleOpsLimits(db: Database, node: OpsTreeNode | null): string 
   }
   const total = raises.length + decreases.length;
   lines.push('', `Total: ${total} change(s) · 🚀${raises.length} ⬇️${decreases.length}`);
+  const portalBase = factoryWagerPagesCustomUrl();
   lines.push(
     '',
     'Use `/limits` again to refresh.',
-    'Portal: /portal/limits/ · history: /portal/partner-history/'
+    `Portal: ${portalBase}/portal/limits/#account:${encodeURIComponent(node.id)}`,
+    `Dossier: ${portalBase}/portal/account/?account=${encodeURIComponent(node.id)} · /dossier`
   );
   return lines.join('\n');
 }
+
+/** `/dossier` — portal account dossier deep-link + seat readiness summary. */
+export function handleOpsDossier(db: Database, node: OpsTreeNode | null): string {
+  if (!node) {
+    return [
+      '❌ Not registered.',
+      '',
+      'Link portal account: complete onboarding then `/start link_<nonce>`',
+      'Or: `bun tools/telegram-link-chat.ts CODE-001 <telegram_user_id>`',
+    ].join('\n');
+  }
+
+  const portalBase = factoryWagerPagesCustomUrl();
+  const dossierUrl = `${portalBase}/portal/account/?account=${encodeURIComponent(node.id)}`;
+  const limitsUrl = `${portalBase}/portal/limits/#account:${encodeURIComponent(node.id)}`;
+  const historyUrl = `${portalBase}/portal/partner-history/?account=${encodeURIComponent(node.id)}`;
+  const callSign = node.call_sign?.trim() || null;
+  const code = callSign?.split('-')[0] ?? null;
+  const partnersUrl = code
+    ? `${portalBase}/portal/partners/#partner/${encodeURIComponent(code)}/telegram/general`
+    : `${portalBase}/portal/partners/`;
+
+  const since = Math.floor(Date.now() / 1000) - 168 * 3600;
+  let raiseCount = 0;
+  try {
+    raiseCount = new AccountLimitsRepository(db).detectRaises(node.id, since).length;
+  } catch {
+    // optional — dossier link still useful without raise counts
+  }
+
+  return [
+    '📁 *Account dossier*',
+    '',
+    `Seat: \`${callSign || node.name}\``,
+    `Type: *${node.type.toUpperCase()}*`,
+    `Node: \`${node.id}\``,
+    code ? `CODE: *${code}*` : null,
+    `Raises (168h): *${raiseCount}*`,
+    '',
+    `Dossier: ${dossierUrl}`,
+    `Limits: ${limitsUrl}`,
+    `History: ${historyUrl}`,
+    `Telegram desk: ${partnersUrl}`,
+    '',
+    'Also: `/limits` · `/status` · `/tree`',
+    'Concepts: page.accountDossier · section.partnersTelegram · telegram.handshake',
+  ]
+    .filter(Boolean)
+    .join('\n');
+}
+
 export function dispatchOpsFlowOutput(
   db: Database,
   dbPath: string,
@@ -296,6 +355,8 @@ export function dispatchOpsCommand(db: Database, dbPath: string, input: OpsComma
       return handleOpsVerifyDod(db, dbPath, node, input.args);
     case '/limits':
       return handleOpsLimits(db, node);
+    case '/dossier':
+      return handleOpsDossier(db, node);
     default:
       return 'Unknown command. Try /help';
   }

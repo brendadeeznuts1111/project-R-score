@@ -229,7 +229,8 @@
           </h1>
           <p class="ad-kicker" data-glossary-concept="ops.limits.account">
             One partner-tree account at a time — identity, connected nodes, location, monitoring,
-            limit telemetry, outs, and betlog exports.
+            limit telemetry, outs, Telegram package readiness, and betlog exports. Bot:
+            <code>/dossier</code>.
           </p>
         </div>
         <span class="ad-meta" id="ad-freshness">Loading…</span>
@@ -380,6 +381,41 @@
           </h2>
           <div id="ad-outs"></div>
         </div>
+
+        <div class="ad-panel" id="ad-section-telegram">
+          <h2>
+            <a
+              class="semantic-label"
+              href="/portal/glossary/#glossary:section.partnersTelegram"
+              data-glossary-concept="section.partnersTelegram"
+              >Telegram package group</a
+            >
+          </h2>
+          <p class="ad-meta">
+            Collapses onto
+            <a href="/portal/glossary/#glossary:telegram.handshake" data-glossary-concept="telegram.handshake"
+              >telegram.handshake</a
+            >
+            ·
+            <a href="/portal/glossary/#glossary:telegram.wire" data-glossary-concept="telegram.wire"
+              >telegram.wire</a
+            >
+            · factory bot <code>/dossier</code>.
+          </p>
+          <div id="ad-telegram"></div>
+        </div>
+
+        <div class="ad-panel" id="ad-section-accounting">
+          <h2>
+            <a
+              class="semantic-label"
+              href="/portal/glossary/#glossary:section.partnersAccounting"
+              data-glossary-concept="section.partnersAccounting"
+              >Accounting readiness</a
+            >
+          </h2>
+          <div id="ad-accounting"></div>
+        </div>
       </div>
     </main>
 
@@ -395,6 +431,7 @@
       import {
         ACCOUNT_DOSSIER_GLOSSARY as G,
         ACCOUNT_DOSSIER_SECTIONS,
+        ACCOUNT_DOSSIER_TOPIC_CONCEPTS,
         accountDossierGlossaryHref,
       } from './glossary-map.js';
       import { bootGlossaryUx } from '../components/glossary-ux.js';
@@ -472,6 +509,8 @@
           `<a href="${esc(dossier.links.history)}" data-glossary-concept="${G.history}">History filter</a>`,
           `<a href="${esc(dossier.links.limits)}" data-glossary-concept="${G.limits}">Limits evidence</a>`,
           `<a href="${esc(dossier.links.partners)}" data-glossary-concept="${G.partners}">Partner profile</a>`,
+          `<a href="${esc(dossier.links.partnersTelegram)}" data-glossary-concept="${G.telegram}">Telegram desk</a>`,
+          `<a href="${esc(dossier.links.partnersAccounting)}" data-glossary-concept="${G.accounting}">Accounting desk</a>`,
           `<a href="${esc(dossier.links.betlogCsv)}" data-glossary-concept="${G.betlogCsv}">Betlog CSV</a>`,
           `<a href="${esc(dossier.links.betlogJsonl)}" data-glossary-concept="${G.betlogJsonl}">Betlog JSONL</a>`,
         ].join('');
@@ -641,6 +680,81 @@
             .join('')}</tbody></table>`;
         }
 
+        const tg = dossier.telegram || {};
+        if (!dossier.partnerCode) {
+          $('ad-telegram').innerHTML =
+            '<p class="ad-empty">No partner CODE resolved — Telegram package group unavailable.</p>';
+        } else {
+          const topicRows = (tg.topics || [])
+            .map(topic => {
+              const concept = ACCOUNT_DOSSIER_TOPIC_CONCEPTS[topic.key] || G.telegram;
+              const href = `/portal/partners/#partner/${encodeURIComponent(dossier.partnerCode)}/telegram/${encodeURIComponent(topic.key)}`;
+              return `<tr>
+                <td><a class="semantic-label" href="${accountDossierGlossaryHref(concept)}" data-glossary-concept="${concept}">${esc(topic.key)}</a></td>
+                <td>${topic.configured ? esc(topic.threadId) : '—'}</td>
+                <td><a href="${href}" data-glossary-concept="${concept}">partners desk</a></td>
+              </tr>`;
+            })
+            .join('');
+          const nextSteps = (tg.nextSteps || [])
+            .slice(0, 4)
+            .map(step => `<li>${esc(step)}</li>`)
+            .join('');
+          $('ad-telegram').innerHTML = `
+            <table class="ad-table"><tbody>
+              <tr><th data-glossary-concept="${G.handshake}">Phase</th><td>${esc(tg.phase || '—')}${tg.phaseConceptId ? ` <span class="ad-meta">(${esc(tg.phaseConceptId)})</span>` : ''}</td></tr>
+              <tr><th data-glossary-concept="${G.wire}">Package chat</th><td class="ad-id">${esc(tg.chatId || 'unlinked')}</td></tr>
+              <tr><th data-glossary-concept="${G.handshake}">Comm ready</th><td>${tg.ready ? 'ready' : 'incomplete'} · topics ${esc(tg.topicsConfigured)}/${esc(tg.topicsRequired)}</td></tr>
+              <tr><th data-glossary-concept="${G.handshake}">Handshake</th><td>${tg.handshakeOk == null ? '—' : tg.handshakeOk ? 'ok' : 'gap'}${tg.membershipCell ? ` · ${esc(tg.membershipCell)}` : ''}${tg.verifyTotal != null ? ` · verify ${esc(tg.verifyPassed)}/${esc(tg.verifyTotal)}` : ''}</td></tr>
+              <tr><th data-glossary-concept="${G.wire}">DM seat</th><td>${esc(tg.dmSeatStatus || '—')}${tg.callSign ? ` · ${esc(tg.callSign)}` : ''}</td></tr>
+              <tr><th>Invite</th><td>${tg.inviteLink ? `<a href="${esc(tg.inviteLink)}" rel="noopener" target="_blank">open invite</a>` : '—'}</td></tr>
+            </tbody></table>
+            <table class="ad-table" style="margin-top:12px"><thead><tr>
+              <th>Topic</th><th>thread_id</th><th>Board</th>
+            </tr></thead><tbody>${topicRows}</tbody></table>
+            <p class="ad-meta" style="margin-top:10px">
+              CLI:
+              <code>bun run telegram:handshake:catalog</code> ·
+              <code>bun run telegram:ops -- link-chat ${esc(tg.callSign || `${dossier.partnerCode}-001`)} &lt;tgUserId&gt;</code> ·
+              <code>bun run telegram:ops:consume</code>
+            </p>
+            ${nextSteps ? `<ul class="ad-meta">${nextSteps}</ul>` : ''}
+            <div class="ad-actions">
+              <a href="${esc(dossier.links.partnersTelegram)}" data-glossary-concept="${G.telegram}">Open partners Telegram</a>
+              <a href="${esc(dossier.links.handshake)}" data-glossary-concept="${G.handshake}">telegram-handshake.json</a>
+              <a href="${esc(dossier.links.partnersOps)}" data-glossary-concept="${G.partners}">partners-ops.json</a>
+            </div>`;
+        }
+
+        const acct = dossier.accounting;
+        if (!acct) {
+          $('ad-accounting').innerHTML = dossier.partnerCode
+            ? `<p class="ad-empty">No accounting slice for CODE <code>${esc(dossier.partnerCode)}</code> in partners-ops.</p>`
+            : '<p class="ad-empty">No partner CODE resolved — accounting unavailable.</p>';
+        } else {
+          const deposits = (acct.deposits || [])
+            .slice(0, 5)
+            .map(
+              d =>
+                `<tr><td>${esc(d.date || '—')}</td><td>${esc(d.amount)}</td><td>${esc(d.rail || '—')}</td></tr>`
+            )
+            .join('');
+          $('ad-accounting').innerHTML = `
+            <table class="ad-table"><tbody>
+              <tr><th>Fund status</th><td>${esc(acct.fundStatus || '—')}</td></tr>
+              <tr><th>Incomplete outs</th><td>${esc(acct.incompleteOuts ?? 0)}</td></tr>
+              <tr><th>Free-roll</th><td>${acct.freeRoll ? `${esc(acct.freeRoll.used)} / ${esc(acct.freeRoll.total)}` : '—'}</td></tr>
+            </tbody></table>
+            ${
+              deposits
+                ? `<table class="ad-table" style="margin-top:12px"><thead><tr><th>Deposit</th><th>Amount</th><th>Rail</th></tr></thead><tbody>${deposits}</tbody></table>`
+                : '<p class="ad-empty" style="margin-top:12px">No deposit rows in bake.</p>'
+            }
+            <div class="ad-actions">
+              <a href="${esc(dossier.links.partnersAccounting)}" data-glossary-concept="${G.accounting}">Open partners accounting</a>
+            </div>`;
+        }
+
         $('ad-freshness').textContent = [
           dossier.found ? 'evidence found' : 'sparse / missing bake rows',
           dossier.generatedAt ? `bake ${dossier.generatedAt}` : null,
@@ -656,9 +770,10 @@
         const hours = Number(url.searchParams.get('hours') || $('ad-hours').value || 168);
         $('ad-hours').value = String([24, 48, 168, 720].includes(hours) ? hours : 168);
 
-        const [limitRaises, partnersOps] = await Promise.all([
+        const [limitRaises, partnersOps, handshake] = await Promise.all([
           loadJson('/registry/limit-raises.json'),
           loadJson('/registry/partners-ops.json'),
+          loadJson('/registry/telegram-handshake.json'),
         ]);
 
         const ids = collectAccountIds(limitRaises || {});
@@ -687,6 +802,7 @@
             accountId: nextId,
             limitRaises: limitRaises || {},
             partnersOps,
+            handshake,
             hours: nextHours,
           });
           renderDossier(dossier);

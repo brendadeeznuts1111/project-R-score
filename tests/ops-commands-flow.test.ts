@@ -7,10 +7,13 @@ import { initSchema } from '../lib/operations/schema.ts';
 import { getPartnerGeoProfile } from '../lib/operations/state-regulation.ts';
 import { getChatChannelMeta } from '../lib/telegram/flows/channel-meta.ts';
 import {
+  dispatchOpsCommand,
   dispatchOpsFlowOutput,
+  handleOpsDossier,
   handleOpsRegister,
 } from '../lib/telegram/ops-commands.ts';
 import { asTelegramUserId } from '../lib/types/branded/portal.ts';
+import { FACTORY_BOT_COMMANDS } from '../lib/telegram/telegram-api.ts';
 
 describe('ops-commands flow dispatch', () => {
   test('dispatchOpsFlowOutput returns HTML template card with keyboard', async () => {
@@ -45,6 +48,46 @@ describe('ops-commands flow dispatch', () => {
     expect(output?.templateId).toBe('status.v1');
     expect(output?.keyboard?.rows.length).toBeGreaterThan(0);
     db.close();
+  });
+
+  test('handleOpsDossier returns portal deep-link for linked seat', async () => {
+    const db = new (await import('bun:sqlite')).Database(':memory:');
+    initSchema(db);
+    const now = new Date().toISOString();
+    const agentId = randomUUIDv7();
+    db.run(
+      `INSERT INTO tree_nodes (id, type, name, call_sign, telegram_id, active, created_at)
+       VALUES ($id, 'agent', 'Ash Agent', 'ASH-001', '4242', 1, $now)`,
+      { $id: agentId, $now: now }
+    );
+    const reply = handleOpsDossier(db, {
+      id: agentId,
+      type: 'agent',
+      parent_id: null,
+      expert_id: null,
+      name: 'Ash Agent',
+      telegram_id: '4242',
+      call_sign: 'ASH-001',
+    });
+    expect(reply).toContain('Account dossier');
+    expect(reply).toContain(`/portal/account/?account=${encodeURIComponent(agentId)}`);
+    expect(reply).toContain('#partner/ASH/telegram/general');
+    expect(reply).toContain('page.accountDossier');
+
+    const dispatched = dispatchOpsCommand(db, ':memory:', {
+      telegramUserId: '4242',
+      command: '/dossier',
+      args: [],
+      chatType: 'private',
+    });
+    expect(dispatched).toContain('/portal/account/?account=');
+    db.close();
+  });
+
+  test('FACTORY_BOT_COMMANDS catalogs dossier and limits', () => {
+    const cmds = FACTORY_BOT_COMMANDS.map(c => c.command);
+    expect(cmds).toContain('dossier');
+    expect(cmds).toContain('limits');
   });
 
   test('handleOpsRegister upserts ChatChannelMeta', async () => {

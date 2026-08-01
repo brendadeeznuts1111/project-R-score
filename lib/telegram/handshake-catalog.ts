@@ -127,7 +127,11 @@ export const HANDSHAKE_LANE_CATALOG = [
   { id: 'dm_designated', group: 'operator', summary: 'registry requested_by / designate-dm-seat' },
   { id: 'dm_telegram', group: 'operator', summary: 'tree_nodes.telegram_id linked' },
   { id: 'welcome_dm', group: 'operator', summary: 'package-room welcome can send' },
-  { id: 'bot_commands', group: 'operator', summary: '/status · /seat · play callbacks' },
+  {
+    id: 'bot_commands',
+    group: 'operator',
+    summary: '/status · /dossier · /limits · /seat · play callbacks',
+  },
 ] as const;
 
 export const HANDSHAKE_CLI_CATALOG = [
