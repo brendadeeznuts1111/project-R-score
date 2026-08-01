@@ -42,17 +42,15 @@ Claim / evidence / owner: **[`docs/harness/cron.md`](./harness/cron.md)**. OS-pe
 
 Bun exposes **parallel** HTTP stacks. Prefer the native path in harness code; do not treat `fetch` as a wrapper around `node:http`.
 
-| Role | Use | Docs |
-|------|-----|------|
-| **Client** | Native `fetch` / `Bun.fetch` (Bun’s own HTTP client) | [networking/fetch](https://bun.com/docs/runtime/networking/fetch#sending-an-http-request) |
-| **Server** | Native `Bun.serve` | [http/server](https://bun.com/docs/runtime/http/server#basic-setup) |
-| **Node compat** | `node:http` / `node:https` (and bare `http` / `https`) | Compatibility layer — **not** the harness default |
+| Stack | Role | Use | Docs |
+|-------|------|-----|------|
+| **Bun Native** | Client | `fetch()` / `Bun.fetch` | [networking/fetch](https://bun.com/docs/runtime/networking/fetch#sending-an-http-request) |
+| **Bun Native** | Server | `Bun.serve` | [http/server](https://bun.com/docs/runtime/http/server#basic-setup) |
+| **Node Compat** | Client / Server | `node:http` / `node:https` (and bare `http` / `https`) | [nodejs-compat](https://bun.com/docs/runtime/nodejs-compat) · [Node http](https://nodejs.org/api/http.html) |
 
-**Harness policy**
+**Harness rule:** Code under `lib/` · `scripts/` · `tools/` · `packages/` · `server/` · `config/` (`HARNESS_PATHS` in [`config/eslint/harness/rollout.ts`](../config/eslint/harness/rollout.ts)) must use the **Bun Native** stack. `node:http` / `node:https` / bare `http`/`https` are **banned** there at ESLint error via [`config/eslint/harness/bun-native.ts`](../config/eslint/harness/bun-native.ts) (`no-restricted-imports`; axios / `node-fetch` banned the same way). `projects/**` is **exempt** for intentional Node-compat demos.
 
-- `lib/` · `scripts/` · `tools/` · `packages/` · `server/` · `config/` (see `HARNESS_PATHS` in [`config/eslint/harness/rollout.ts`](../config/eslint/harness/rollout.ts)): `node:http` / `node:https` / bare `http`/`https` imports are **banned** at ESLint error via [`config/eslint/harness/bun-native.ts`](../config/eslint/harness/bun-native.ts) (`no-restricted-imports`). Axios / `node-fetch` are banned the same way.
-- `projects/**` is **exempt** from that rollout (intentional Node-compat demos and nested apps may import `node:http`).
-- Request logging: env `BUN_CONFIG_VERBOSE_FETCH` is the [debugger plane](https://bun.com/docs/runtime/debugger#print-fetch-nodehttp-requests-as-curl-commands) (`true` \| `curl` \| `false`; `1`/`0` aliases). Per-call `fetch(url, { verbose })` is the [fetch#debugging](https://bun.com/docs/runtime/networking/fetch#debugging) plane — see [`lib/bun-runtime-env.ts`](../lib/bun-runtime-env.ts) · `bun test tests/bun-runtime-env.test.ts`.
+Request logging: env `BUN_CONFIG_VERBOSE_FETCH` is the [debugger plane](https://bun.com/docs/runtime/debugger#print-fetch-nodehttp-requests-as-curl-commands) (`true` \| `curl` \| `false`; `1`/`0` aliases). Per-call `fetch(url, { verbose })` is the [fetch#debugging](https://bun.com/docs/runtime/networking/fetch#debugging) plane — see [`lib/bun-runtime-env.ts`](../lib/bun-runtime-env.ts) · `bun test tests/bun-runtime-env.test.ts`.
 
 ## Harness control plane
 
