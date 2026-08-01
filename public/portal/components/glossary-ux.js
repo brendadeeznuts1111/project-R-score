@@ -5,7 +5,12 @@
  * Consumes `/registry/domain-glossary.json` (schema v3) and page surface maps
  * baked from `lib/portal/page-glossary.ts` (`sections[]` = hash · domId · conceptId).
  *
+ * Hash plane only (`URLPattern.hash`) — section + glossary concept.
+ * Partner hashes are a separate plane (`partner-routes.js`). Pathname/registry/API
+ * planes: `lib/portal/url-planes.ts`.
+ *
  * @see tools/domain-glossary.ts
+ * @see lib/portal/url-planes.ts
  * @see https://bun.com/blog/bun-v1.3.4#urlpattern-api
  */
 

@@ -1,6 +1,10 @@
-// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern
+// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern.hash
+// @see ./url-planes.ts — pathname vs hash planes (do not route partner hashes via pathname)
 /**
- * Partner domain URLPattern hash routing.
+ * Partner domain URLPattern **hash** routing (hash plane only).
+ *
+ * Pathname plane (`/portal/partners/`, `/registry/*.json`) is separate — see
+ * `classifyPortalPathname` in url-planes.ts. This module never matches pathname.
  *
  * Reconciliation with the portal framework:
  * - Page-level navigation exists (chrome-catalog hrefs, page-glossary surfaces)
@@ -16,11 +20,11 @@
  *   accounting.credit_repaid/fee_deducted, telegram.bot) are NOT implemented
  *   and do not appear here.
  *
- * URLPattern hash patterns match the fragment WITHOUT the leading "#"
- * (per the URLPattern spec — see Kalshi-bot glossary `hash: "glossary\\::concept"`).
+ * URLPattern hash patterns match the fragment WITHOUT the leading "#".
  */
 
 import type { PortalSemanticConceptKey } from './semantic-vocabulary.ts';
+import { PARTNER_HASH_PATTERN_INITS } from './url-planes.ts';
 
 const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
 const OUT_ID_RE = /^out-[A-Z0-9-]+$/;
@@ -39,15 +43,13 @@ export type PartnerRoute =
 
 /** Constructor-time validation: invalid patterns throw on import (Bun URLPattern). */
 const PARTNER_PATTERNS = {
-  // Most-specific first: out / accounting / telegram before bare partner.
-  out: new URLPattern({ hash: 'partner/:code/out/:outId' }),
-  accounting: new URLPattern({ hash: 'partner/:code/accounting' }),
-  telegram: new URLPattern({ hash: 'partner/:code/telegram/:topic' }),
-  partner: new URLPattern({ hash: 'partner/:code' }),
-  book: new URLPattern({ hash: 'book/:bookId' }),
-  partners: new URLPattern({ hash: 'partners' }),
+  out: new URLPattern(PARTNER_HASH_PATTERN_INITS.out),
+  accounting: new URLPattern(PARTNER_HASH_PATTERN_INITS.accounting),
+  telegram: new URLPattern(PARTNER_HASH_PATTERN_INITS.telegram),
+  partner: new URLPattern(PARTNER_HASH_PATTERN_INITS.partner),
+  book: new URLPattern(PARTNER_HASH_PATTERN_INITS.book),
+  partners: new URLPattern(PARTNER_HASH_PATTERN_INITS.partners),
 } as const;
-
 function decode(value: string | undefined): string {
   try {
     return decodeURIComponent(value || '');
