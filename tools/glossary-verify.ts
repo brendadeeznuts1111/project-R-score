@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 /**
  * Verify glossary board routes and hash patterns against the baked glossary.
  *   bun run glossary:verify
@@ -41,8 +42,6 @@ const sectionPattern = new URLPattern({ hash: 'section\\::section' });
 
 interface GlossarySection {
   hash?: string;
-  domId?: string;
-  conceptId?: string;
 }
 
 interface GlossarySurface {
@@ -52,10 +51,9 @@ interface GlossarySurface {
 }
 
 async function main() {
+  const dryRun = Bun.argv.includes('--dry-run');
   const root = joinPath(import.meta.dir, '..');
-  const glossary = await Bun.file(
-    joinPath(root, 'public/registry/domain-glossary.json')
-  ).json();
+  const glossary = await Bun.file(joinPath(root, 'public/registry/domain-glossary.json')).json();
 
   const rows: Array<{ check: string; plane: string; status: string; detail: string }> = [];
 
@@ -103,22 +101,24 @@ async function main() {
     plane: 'public',
     status: coloredStatus(hashFail === 0 ? 'LIVE' : 'WARN'),
     detail:
-      `${hashOk} ok, ${hashFail} unparseable` +
-      (failures.length ? ` — first: ${failures[0]}` : ''),
+      `${hashOk} ok, ${hashFail} unparseable` + (failures.length ? ` — first: ${failures[0]}` : ''),
   });
 
   // Render verdict
   let md = '| Check | Plane | Status | Detail |\n| :--- | :--- | :--- | :--- |\n';
   for (const row of rows) md += `| ${row.check} | ${row.plane} | ${row.status} | ${row.detail} |\n`;
 
-  const output = Bun.markdown.ansi(`# Glossary Route Verification\n\n${md}`);
+  const title = dryRun
+    ? '# Glossary Route Verification (dry-run — exit code forced 0)'
+    : '# Glossary Route Verification';
+  const output = Bun.markdown.ansi(`${title}\n\n${md}`);
   console.log(output);
 
   if (Bun.argv.includes('--json')) {
     jsonOut({ hashOk, hashFail, failures, surfaces: glossary.surfaces?.length ?? 0 });
   }
 
-  if (hashFail > 0) process.exit(1);
+  if (hashFail > 0 && !dryRun) process.exit(1);
 }
 
 if (import.meta.main) {
