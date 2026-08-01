@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-08-01T02:46:32.972Z",
+  "generated": "2026-08-01T08:35:06.897Z",
   "summary": {
     "surfaces": 26,
     "artifacts": 35,
@@ -231,7 +231,7 @@
     {
       "label": "domain-glossary",
       "href": "/registry/domain-glossary.json",
-      "note": "schema v2 · domain concepts + typed portal semantics · deep-link projection",
+      "note": "schema v3 · domain concepts + sections[] hash/domId/conceptId · deep-link projection",
       "id": "artifact-2-domain-glossary"
     },
     {
