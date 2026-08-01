@@ -160,7 +160,7 @@ Balance / per-play ledgers stay in `toc-ops-repo`.
 | Dossier + partners ledger: event codes → `event.*` via generated [`partner-ops-event-concepts.js`](../../../public/portal/components/partner-ops-event-concepts.js) (`partners:event-concepts:bake`) | Soft MessageLog / play ledger surfaces |
 
 Authority: [`lib/telegram/ops-view-glossary.ts`](../../../lib/telegram/ops-view-glossary.ts) · bake `bun run glossary:portal`.
-Next phase (Soft play/week/book rows): [`docs/design/soft-handshake.md`](../../design/soft-handshake.md) — no new glossary IDs until Soft exports a read-only slice.
+Soft wire v1 (read-only export + per-play dimension): [`docs/design/soft-handshake.md`](../../design/soft-handshake.md) · `soft:accounting:check` in `partners:governance`. Week/book builders + dossier chrome wait on Soft-tagged rows; **no new glossary IDs**.
 
 ## Bot API surface (this repo)
 

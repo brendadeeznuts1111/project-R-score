@@ -1,8 +1,9 @@
 # Soft ↔ Factory accounting handshake
 
-Short design note for the next reporting-view phase. **No new glossary IDs.**
+Short design note for Soft↔Factory reporting views. **No new glossary IDs.**
 Ops-view MVP is done (`ops.view.*` + per-account builders + shape gate). Soft
-play / week / book-type rows are not wired yet.
+export wire v1 + per-play dimension are shipped; week / book-type rows wait on
+Soft-tagged dimensions.
 
 Related authority: [`docs/harness/AUTHORITY.md`](../harness/AUTHORITY.md) ·
 tenants [`toc-ops.md`](../harness/tenants/toc-ops.md) ·
