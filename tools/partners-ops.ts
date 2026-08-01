@@ -22,6 +22,7 @@ import {
   exportPartnersOpsRegistry,
   PARTNERS_OPS_REGISTRY_PATH,
 } from '../lib/telegram/partner-ops-registry.ts';
+import { bakePartnerOpsEventConcepts } from './bake-partner-ops-event-concepts.ts';
 
 const argv = Bun.argv.slice(2);
 const cmd = argv.find(a => !a.startsWith('-')) ?? 'validate';
@@ -58,6 +59,14 @@ async function runValidate(): Promise<number> {
 }
 
 async function runBuild(): Promise<number> {
+  const eventConcepts = await bakePartnerOpsEventConcepts();
+  if (!wantJson) {
+    console.log(
+      eventConcepts.wrote
+        ? `wrote ${eventConcepts.path} · ${eventConcepts.codes} event codes`
+        : `${eventConcepts.path} current · ${eventConcepts.codes} event codes`
+    );
+  }
   const registry = await exportPartnersOpsRegistry();
   if (wantJson) {
     jsonOut({
@@ -66,6 +75,7 @@ async function runBuild(): Promise<number> {
       generatedAt: registry.generatedAt,
       summary: registry.summary,
       issues: registry.validation.issues,
+      eventConcepts,
     });
   } else {
     console.log(
@@ -105,7 +115,7 @@ if (argv.includes('--help') || argv.includes('-h')) {
   console.log(`Usage: bun tools/partners-ops.ts <validate|build|ledger:append> [--json]
 
 validate  Check seat-desk + handshake projection for collisions / glossary IDs
-build     Write ${PARTNERS_OPS_REGISTRY_PATH}
+build     Bake portal event-concepts JS + write ${PARTNERS_OPS_REGISTRY_PATH}
 ledger:append  Append factory-mirror event JSONL (not soft ledger)
 `);
   process.exit(0);

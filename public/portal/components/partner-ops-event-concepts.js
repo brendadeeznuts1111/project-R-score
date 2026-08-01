@@ -1,7 +1,8 @@
 /**
+ * GENERATED — bun run partners:event-concepts:bake
+ * Do not edit by hand. Source: lib/telegram/partner-ops-events.ts (PARTNER_OPS_EVENT_GLOSSARY).
+ *
  * Partners-ops ledger code → Kalshi `event.*` leaf (static portal SSOT).
- * Keep in sync with `PARTNER_OPS_EVENT_GLOSSARY` in lib/telegram/partner-ops-events.ts
- * (static boards cannot import TS).
  *
  * @see lib/telegram/partner-ops-events.ts
  * @see public/portal/account/glossary-map.js
