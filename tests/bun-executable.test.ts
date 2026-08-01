@@ -5,6 +5,7 @@
 import { describe, expect, test } from 'bun:test';
 import {
   bunRuntimeProvenance,
+  bunSpawnArgs,
   clearBunExecutableCache,
   entrypointPath,
   isModuleEntrypoint,
@@ -54,5 +55,13 @@ describe('lib/bun-executable (Utilities guides)', () => {
     expect(p.bunRevision).toBe(Bun.revision.slice(0, 8));
     expect(p.bunExecutable).toBe(resolveBunExecutable());
     expect(p.bunMain).toBe(Bun.main);
+  });
+
+  test('bunSpawnArgs prefixes absolute bun never bare name', () => {
+    clearBunExecutableCache();
+    const argv = bunSpawnArgs(['run', 'portal:chrome:bake']);
+    expect(argv[0]).toBe(resolveBunExecutable());
+    expect(argv[0]).not.toBe('bun');
+    expect(argv.slice(1)).toEqual(['run', 'portal:chrome:bake']);
   });
 });
