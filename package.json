@@ -1878,6 +1878,7 @@
     "glossary:verify": "bun tools/glossary-verify.ts",
     "glossary:verify:json": "bun tools/glossary-verify.ts --json",
     "glossary:verify:strict": "bun tools/glossary-verify.ts --strict",
+    "glossary:verify:dry-run": "bun tools/glossary-verify.ts --dry-run",
     "schema:audit": "bun tools/schema-audit.ts --write",
     "schema:audit:check": "bun tools/schema-audit.ts",
     "schema:audit:json": "bun tools/schema-audit.ts --json",

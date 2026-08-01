@@ -1,9 +1,11 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 /**
  * Verify glossary board routes, hash patterns, and DOM section mounts.
  *   bun run glossary:verify
  *   bun run glossary:verify --json
  *   bun run glossary:verify --strict   # also fail on section-shaped orphan ids
+ *   bun run glossary:verify --dry-run  # report the verdict but never fail the exit code
  *
  * Offline probe: reads public/registry/domain-glossary.json and:
  *   1. Proves every section hash round-trips through URLPattern (#section:{hash})
@@ -339,6 +341,8 @@ export async function runGlossaryVerify(opts: {
   json?: boolean;
   /** Fail when section-shaped orphan ids remain in HTML (stale mounts). */
   strict?: boolean;
+  /** Report the verdict table but force exit code 0 (watch/explore flows). */
+  dryRun?: boolean;
 }): Promise<{
   exitCode: number;
   hash: HashCheckResult;
@@ -349,12 +353,15 @@ export async function runGlossaryVerify(opts: {
 }> {
   const glossary =
     opts.glossary ??
-    ((await Bun.file(joinPath(opts.root, 'public/registry/domain-glossary.json')).json()) as GlossaryBake);
+    ((await Bun.file(
+      joinPath(opts.root, 'public/registry/domain-glossary.json')
+    ).json()) as GlossaryBake);
 
   const surfaces = glossary.surfaces ?? [];
   const hash = verifySectionHashes(surfaces);
   const dom = await verifyDomIds(surfaces, opts.root);
   const strict = opts.strict === true;
+  const dryRun = opts.dryRun === true;
 
   const rows: Array<{ check: string; plane: string; status: string; detail: string }> = [];
 
@@ -393,9 +400,7 @@ export async function runGlossaryVerify(opts: {
     status: coloredStatus(dom.domFail === 0 ? 'LIVE' : 'STALE'),
     detail:
       `${dom.domOk} present, ${dom.domFail} missing · boards=${dom.boardsScanned}` +
-      (firstMiss
-        ? ` — first: ${firstMiss.path}#${firstMiss.domId} (${firstMiss.reason})`
-        : ''),
+      (firstMiss ? ` — first: ${firstMiss.path}#${firstMiss.domId} (${firstMiss.reason})` : ''),
   });
 
   const firstDup = dom.duplicates[0];
@@ -410,8 +415,7 @@ export async function runGlossaryVerify(opts: {
   });
 
   const firstSecOrphan = dom.sectionOrphans[0];
-  const orphanStatus: Status =
-    dom.sectionOrphans.length === 0 ? 'LIVE' : strict ? 'STALE' : 'WARN';
+  const orphanStatus: Status = dom.sectionOrphans.length === 0 ? 'LIVE' : strict ? 'STALE' : 'WARN';
   rows.push({
     check: `glossary section-shaped orphans${strict ? ' (strict)' : ''}`,
     plane: 'public',
@@ -426,7 +430,10 @@ export async function runGlossaryVerify(opts: {
   let md = '| Check | Plane | Status | Detail |\n| :--- | :--- | :--- | :--- |\n';
   for (const row of rows) md += `| ${row.check} | ${row.plane} | ${row.status} | ${row.detail} |\n`;
 
-  const output = Bun.markdown.ansi(`# Glossary Route Verification\n\n${md}`);
+  const title = dryRun
+    ? '# Glossary Route Verification (dry-run — exit code forced 0)'
+    : '# Glossary Route Verification';
+  const output = Bun.markdown.ansi(`${title}\n\n${md}`);
   console.log(output);
 
   if (opts.json) {
@@ -448,10 +455,11 @@ export async function runGlossaryVerify(opts: {
   }
 
   const exitCode =
-    hash.hashFail > 0 ||
-    dom.domFail > 0 ||
-    dom.duplicates.length > 0 ||
-    (strict && dom.sectionOrphans.length > 0)
+    !dryRun &&
+    (hash.hashFail > 0 ||
+      dom.domFail > 0 ||
+      dom.duplicates.length > 0 ||
+      (strict && dom.sectionOrphans.length > 0))
       ? 1
       : 0;
 
@@ -471,6 +479,7 @@ async function main(): Promise<void> {
     root,
     json: Bun.argv.includes('--json'),
     strict: Bun.argv.includes('--strict'),
+    dryRun: Bun.argv.includes('--dry-run'),
   });
   if (result.exitCode !== 0) process.exit(result.exitCode);
 }
