@@ -12,6 +12,7 @@
  * Kind cell must be ProofKind allowlist (unit|boundary|journey|deployed), optionally joined with +.
  * Soft: if body mentions `` `proof-id` ``, warn when that path’s freshRerun command is absent (never fails CI).
  * Soft: when changed files touch color-kernel owners and Color Kernel Evidence is empty/template, warn (never fails CI).
+ * Soft: when body pastes a failing validate:colors Claim line, warn (never fails CI).
  *
  *   bun scripts/check-pr-claim.ts --body-file PATH
  *   bun scripts/check-pr-claim.ts --event "$GITHUB_EVENT_PATH"
@@ -19,7 +20,10 @@
  *   echo "$BODY" | bun scripts/check-pr-claim.ts --stdin
  */
 import { CRITICAL_PROOF_PATHS } from '../lib/harness/proof';
-import { shouldWarnColorKernelEvidence } from '../lib/portal/color-kernel-paths.ts';
+import {
+  assessColorKernelEvidenceSoft,
+  type ColorKernelEvidenceSoft,
+} from '../lib/portal/color-kernel-paths.ts';
 import { flagValue, hasFlag } from './lib/cli-args';
 import { listChangedFiles, resolveMainHead } from './lib/git-changed';
 
@@ -41,6 +45,8 @@ export type Result = {
   missingFreshRerun: string[];
   /** Soft: color-kernel paths changed but Color Kernel Evidence paste still empty/template */
   missingColorKernelEvidence: boolean;
+  /** Soft: PR body contains a failing validate:colors Claim line */
+  failingColorKernelEvidence: boolean;
   message: string;
 };
 
@@ -151,6 +157,7 @@ export function evaluatePrClaim(
       invalidKind: false,
       missingFreshRerun: [],
       missingColorKernelEvidence: false,
+      failingColorKernelEvidence: false,
       message: 'draft PR — claim→evidence check skipped',
     };
   }
@@ -158,9 +165,12 @@ export function evaluatePrClaim(
   const text = body ?? '';
   const { missingSection, emptyClaimRow, invalidKind } = parseClaimTable(text);
   const missingFreshRerun = mentionedProofIdsMissingFreshRerun(text);
-  const missingColorKernelEvidence =
-    opts.changedFiles !== undefined &&
-    shouldWarnColorKernelEvidence(text, opts.changedFiles);
+  const colorSoft: ColorKernelEvidenceSoft =
+    opts.changedFiles !== undefined
+      ? assessColorKernelEvidenceSoft(text, opts.changedFiles)
+      : { touches: false, missingPaste: false, failingPaste: colorKernelFailFromBody(text) };
+  const missingColorKernelEvidence = colorSoft.missingPaste;
+  const failingColorKernelEvidence = colorSoft.failingPaste;
   const warnOnly = warnOnlyMode(opts.strict === true, opts.nowMs);
   const bad = missingSection || emptyClaimRow;
   const message = missingSection
@@ -180,8 +190,13 @@ export function evaluatePrClaim(
     invalidKind,
     missingFreshRerun,
     missingColorKernelEvidence,
+    failingColorKernelEvidence,
     message,
   };
+}
+
+function colorKernelFailFromBody(body: string): boolean {
+  return assessColorKernelEvidenceSoft(body, []).failingPaste;
 }
 
 async function readBody(): Promise<{ body: string; draft: boolean }> {
@@ -218,13 +233,25 @@ function warnMissingFreshRerun(ids: string[]): void {
   console.warn('   repair: paste that claim’s freshRerun output (docs/harness/FRESH-RERUN.md)');
 }
 
-function warnMissingColorKernelEvidence(missing: boolean): void {
-  if (!missing) return;
-  console.warn(
-    '⚠️  soft: color-kernel paths changed but Color Kernel Evidence paste is empty/template'
-  );
-  console.warn('   repair: bun run validate:colors → paste under ### Color Kernel Evidence');
-  console.warn('   claim: color-kernel-theme-aliases · docs/portal-foundation.md');
+function warnColorKernelEvidence(result: Result): void {
+  if (result.failingColorKernelEvidence) {
+    console.warn(
+      '⚠️  soft: Color Kernel Evidence paste shows a failing validate:colors Claim'
+    );
+    console.warn(
+      '   repair: bun run validate:colors:strict → paste success Claim under ### Color Kernel Evidence'
+    );
+    console.warn('   claim: color-kernel-theme-aliases · docs/portal-foundation.md');
+  }
+  if (result.missingColorKernelEvidence) {
+    console.warn(
+      '⚠️  soft: color-kernel paths changed but Color Kernel Evidence paste is empty/template'
+    );
+    console.warn(
+      '   repair: bun run validate:colors → paste success Claim under ### Color Kernel Evidence'
+    );
+    console.warn('   claim: color-kernel-theme-aliases · docs/portal-foundation.md');
+  }
 }
 
 async function resolveChangedFilesForSoftChecks(): Promise<string[]> {
@@ -255,7 +282,7 @@ async function main(): Promise<void> {
     const wouldFail = result.missingSection || result.emptyClaimRow;
     console.info(`${wouldFail ? 'WOULD_FAIL' : 'WOULD_PASS'} · ${result.message}`);
     warnMissingFreshRerun(result.missingFreshRerun);
-    warnMissingColorKernelEvidence(result.missingColorKernelEvidence);
+    warnColorKernelEvidence(result);
     process.exit(0);
   }
 
@@ -269,7 +296,7 @@ async function main(): Promise<void> {
     console.warn(`   warn-only until ${WARN_UNTIL_ISO} — then this fails (or pass --strict now)`);
     console.warn('   repair: fill Claim → evidence in the PR body (docs/harness/PROOF.md)');
     warnMissingFreshRerun(result.missingFreshRerun);
-    warnMissingColorKernelEvidence(result.missingColorKernelEvidence);
+    warnColorKernelEvidence(result);
     process.exit(0);
   }
 
@@ -283,7 +310,7 @@ async function main(): Promise<void> {
 
   console.info(`✅ ${result.message}`);
   warnMissingFreshRerun(result.missingFreshRerun);
-  warnMissingColorKernelEvidence(result.missingColorKernelEvidence);
+  warnColorKernelEvidence(result);
 }
 if (import.meta.main) {
   await main();

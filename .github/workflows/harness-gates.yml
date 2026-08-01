@@ -68,7 +68,8 @@ jobs:
         run: bun run machine:bunfig:ensure -- --overwrite
 
       # Color kernel theme-dark aliases + count floors (claim color-kernel-theme-aliases).
-      - name: Color kernel (validate:colors)
+      # test:colors = unit suite + validate:colors:strict (always on main/PRs).
+      - name: Color kernel (validate:colors:strict)
         run: bun run test:colors
 
       # Portal doctor offline pure checks (linker · bakes · catalog · bunfig · infra offline).

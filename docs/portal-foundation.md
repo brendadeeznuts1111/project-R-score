@@ -344,7 +344,7 @@ flowchart LR
   textDim --> tUnk["telegram.unknown / topicGeneral / topicReconcile"]
 ```
 
-> **Color kernel claim:** When theme / kernels are touched, run `bun run validate:colors` and paste the Claim / Evidence block into the PR **Color Kernel Evidence** slot. Machines use `bun run validate:colors -- --json` (`status` · `checks`). Human paste stays the default text form. Evidence is per-plane coverage + floors — not extended-key uniqueness or CSS contrast.
+> **Color kernel claim workflow:** CI always validates the kernel via `bun run validate:colors:strict` (Harness Gates · `test:colors` · claim `color-kernel-theme-aliases`). When a PR touches theme / kernels, paste `bun run validate:colors` into the **Color Kernel Evidence** slot — success looks like `Claim: Color kernel theme-dark aliases are complete and conflict-free (theme v…)`. `check-pr-claim` soft-warns if that paste is missing/template or shows an inconsistent Claim (never fails CI by itself). Machines: `bun run validate:colors:json` (`ClaimReport` · `status` · `checks[]`). Evidence is per-plane coverage + floors — not extended-key uniqueness or CSS contrast.
 
 ```bash
 bun run portal:theme:sync          # theme.jsonc → theme-tokens.css

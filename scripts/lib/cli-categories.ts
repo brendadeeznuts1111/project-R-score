@@ -113,7 +113,7 @@ export const CLI_SPECIAL: Record<string, string> = {
   'validate:colors': 'Alias of portal:colors:check — PR paste / --json machine report',
   'validate:colors:json': 'ClaimReport JSON via Bun.write(stdout) (status · checks · meta)',
   'validate:colors:strict': 'validate:colors with --strict --ci (fail-closed)',
-  'test:colors': 'Unit + validate:colors smoke (claim color-kernel-theme-aliases)',
+  'test:colors': 'Unit + validate:colors:strict (claim color-kernel-theme-aliases)',
   'docs:cron': 'Cron contract in-terminal (bun ./docs/harness/cron.md)',
   'docs:install-verify':
     'Install-verify WebView journey brief (bun ./docs/harness/install-verify.md)',

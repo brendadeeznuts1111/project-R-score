@@ -114,6 +114,7 @@ Mentioned \`branded-ids\` without its freshRerun command.
     });
     expect(r.ok).toBe(true);
     expect(r.missingColorKernelEvidence).toBe(true);
+    expect(r.failingColorKernelEvidence).toBe(false);
 
     const pasted = `${filled}
 
@@ -129,11 +130,26 @@ Evidence:
       changedFiles: ['public/portal/theme.jsonc'],
     });
     expect(r2.missingColorKernelEvidence).toBe(false);
+    expect(r2.failingColorKernelEvidence).toBe(false);
   });
 
-  test('soft: color-kernel Evidence check skipped when changedFiles omitted', () => {
+  test('soft: failing validate:colors Claim in body warns but stays ok', () => {
+    const failBody = `${filled}
+
+Claim: Color kernel theme-dark aliases are inconsistent (theme v1.1.0, 2 mismatch(es), floors ok).
+`;
+    expect(colorKernelEvidenceFilled(failBody)).toBe(false);
+    expect(shouldWarnColorKernelEvidence(failBody, [])).toBe(true);
+    const r = evaluatePrClaim(failBody, { strict: true, changedFiles: [] });
+    expect(r.ok).toBe(true);
+    expect(r.failingColorKernelEvidence).toBe(true);
+    expect(r.missingColorKernelEvidence).toBe(false);
+  });
+
+  test('soft: color-kernel missing-paste skipped when changedFiles omitted', () => {
     const r = evaluatePrClaim(filled, { strict: true });
     expect(r.missingColorKernelEvidence).toBe(false);
+    expect(r.failingColorKernelEvidence).toBe(false);
   });
 });
 
