@@ -284,7 +284,7 @@ export function parseBunExecutionFlags(argv: string[]): BunExecutionParse {
  * @param args e.g. ['test', 'tests/vault-health.test.ts'] or ['pm', 'ls']
  */
 export function bunSpawnArgv(bunFlags: string[], args: string[]): string[] {
-  return [resolveBunExecutable(), ...bunFlags, ...args];
+  return bunSpawnArgs([...bunFlags, ...args]);
 }
 
 /**
