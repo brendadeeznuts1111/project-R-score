@@ -63,13 +63,13 @@ Presentation chrome (`ops.view.*`, `telegram.message.*`) is Factory-only.
 | Piece | Path |
 |-------|------|
 | Types + load/project | [`lib/telegram/soft-accounting-export.ts`](../../lib/telegram/soft-accounting-export.ts) |
-| Optional bake (not required yet) | `/registry/soft-accounting-export.json` · schema `factorywager.soft-accounting-export.v1` |
+| Committed demo bake | `/registry/soft-accounting-export.json` · schema `factorywager.soft-accounting-export.v1` · `bun run soft:accounting:bake` / `:check` |
 | Demo projection | `projectSoftAccountingExportFromTocOps` over Pages [`toc-ops.json`](../../public/registry/toc-ops.json) `partners[].recentPlays` |
 | Per-play builder (dimension-only) | `buildPerPlayAccountingView` → `ops.view.per_play` |
 
-`loadSoftAccountingExport({ projectFromTocOps: true })` fills plays from the TOC
-fixture when the Soft bake file is absent. That is a **demo bridge**, not Soft
-Balance. Primary Soft export should write the JSON bake with `source: "soft-ct"`.
+Committed bake uses `source: "toc-ops-fixture"` (demo bridge, not Soft Balance).
+`partners:governance` includes `soft:accounting:check`. Primary Soft export
+should overwrite the bake with `source: "soft-ct"`.
 
 Week / book-type arrays ship empty in v1 until Soft tags those dimensions.
 
