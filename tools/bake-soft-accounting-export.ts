@@ -1,6 +1,9 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
-// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which (PATH / cwd options)
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main vs import
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/api/spawn#input — Bun.spawn
@@ -33,9 +36,19 @@ const root = joinPath(import.meta.dir, '..');
 const outPath = joinPath(root, SOFT_ACCOUNTING_EXPORT_REL);
 const tocPath = joinPath(root, 'public/registry/toc-ops.json');
 
-/** Absolute bun binary — bare `bun` + missing cwd surfaces as posix_spawn ENOENT. */
-export function resolveBunExecutable(): string {
-  return Bun.which('bun') ?? process.execPath;
+/**
+ * Absolute bun binary for nested spawn.
+ * Uses Bun.which with an explicit PATH from Bun.env (docs: which PATH option).
+ * Falls back to process.execPath when which misses (PATH empty / not installed as `bun`).
+ * Bare `"bun"` + missing Soft cwd surfaces as posix_spawn ENOENT — never return bare name.
+ */
+export function resolveBunExecutable(opts: { PATH?: string } = {}): string {
+  const PATH = opts.PATH ?? Bun.env.PATH;
+  const found =
+    PATH !== undefined && PATH !== ''
+      ? Bun.which('bun', { PATH })
+      : Bun.which('bun');
+  return found ?? process.execPath;
 }
 
 async function pathHasPackageJson(dir: string): Promise<boolean> {
@@ -225,7 +238,8 @@ export async function importSoftAccountingExportFromCt(): Promise<{
   };
 }
 
-if (import.meta.main) {
+// Direct CLI entry (Bun.main) — not when this module is imported by tests.
+if (import.meta.path === Bun.main) {
   const check = Bun.argv.includes('--check');
   const fromCt = Bun.argv.includes('--from-ct');
   const wantJson = Bun.argv.includes('--json');
@@ -233,8 +247,14 @@ if (import.meta.main) {
     const result = fromCt
       ? await importSoftAccountingExportFromCt()
       : await bakeSoftAccountingExport({ check });
-    if (wantJson) jsonOut(result);
-    else {
+    if (wantJson) {
+      jsonOut({
+        ...result,
+        bunVersion: Bun.version,
+        bunRevision: Bun.revision.slice(0, 8),
+        bunExecutable: resolveBunExecutable(),
+      });
+    } else {
       const verb = fromCt
         ? 'imported soft-ct'
         : check
@@ -243,7 +263,7 @@ if (import.meta.main) {
             ? 'wrote'
             : 'unchanged';
       console.log(
-        `✅ soft accounting export ${verb} (${result.plays} plays · available=${result.available} · ${result.path})`
+        `✅ soft accounting export ${verb} (${result.plays} plays · available=${result.available} · ${result.path}) · bun ${Bun.version}`
       );
     }
   } catch (error) {

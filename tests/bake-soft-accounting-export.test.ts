@@ -14,6 +14,18 @@ describe('soft:accounting:from-ct spawn resolution', () => {
     expect(bin === Bun.which('bun') || bin === process.execPath).toBe(true);
   });
 
+  test('resolveBunExecutable honors Bun.which PATH option (docs)', () => {
+    // Empty PATH → which miss → execPath fallback (same as Bun.which docs cwd+PATH:"").
+    const bin = resolveBunExecutable({ PATH: '' });
+    expect(bin).toBe(process.execPath);
+    if (Bun.env.PATH) {
+      const viaEnv = resolveBunExecutable({ PATH: Bun.env.PATH });
+      expect(viaEnv === Bun.which('bun', { PATH: Bun.env.PATH }) || viaEnv === process.execPath).toBe(
+        true
+      );
+    }
+  });
+
   test('resolveTocOpsRepo finds Soft checkout from factory root or worktree', async () => {
     const repo = await resolveTocOpsRepo();
     expect(await Bun.file(`${repo}/package.json`).exists()).toBe(true);
