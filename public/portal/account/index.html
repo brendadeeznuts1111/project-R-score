@@ -227,10 +227,15 @@
               >Account dossier</a
             >
           </h1>
-          <p class="ad-kicker" data-glossary-concept="ops.limits.account">
-            One partner-tree account at a time — identity, connected nodes, location, monitoring,
-            limit telemetry, outs, Telegram package readiness, and betlog exports. Bot:
-            <code>/dossier</code>.
+          <p class="ad-kicker" data-glossary-concept="ops.view.per_account">
+            <a
+              class="semantic-label"
+              href="/portal/glossary/#glossary:ops.view.per_account"
+              data-glossary-concept="ops.view.per_account"
+              >Per-account</a
+            >
+            reporting view — identity, tree, limits, outs, Telegram readiness, accounting chrome,
+            and betlog exports. Bot: <code>/dossier</code>.
           </p>
         </div>
         <span class="ad-meta" id="ad-freshness">Loading…</span>
@@ -409,11 +414,29 @@
           <h2>
             <a
               class="semantic-label"
-              href="/portal/glossary/#glossary:section.partnersAccounting"
-              data-glossary-concept="section.partnersAccounting"
-              >Accounting readiness</a
+              href="/portal/glossary/#glossary:ops.view.per_account"
+              data-glossary-concept="ops.view.per_account"
+              >Per-account accounting</a
             >
           </h2>
+          <p class="ad-meta">
+            View chrome
+            <a href="/portal/glossary/#glossary:ops.view.account_summary" data-glossary-concept="ops.view.account_summary"
+              >ops.view.account_summary</a
+            >
+            ·
+            <a href="/portal/glossary/#glossary:ops.view.account_deposits" data-glossary-concept="ops.view.account_deposits"
+              >ops.view.account_deposits</a
+            >
+            · events stay
+            <a href="/portal/glossary/#glossary:accounting.deposit" data-glossary-concept="accounting.deposit"
+              >accounting.deposit</a
+            >
+            /
+            <a href="/portal/glossary/#glossary:event.deposit.received" data-glossary-concept="event.deposit.received"
+              >event.deposit.received</a
+            >.
+          </p>
           <div id="ad-accounting"></div>
         </div>
 
@@ -427,10 +450,18 @@
             >
           </h2>
           <p class="ad-meta">
-            Handshake next-steps, DM seat, package chat, and partners-ops ledger events
-            (<a href="/portal/glossary/#glossary:partner.ops.event" data-glossary-concept="partner.ops.event"
+            Handshake next-steps, DM seat, package chat, and partners-ops ledger events —
+            <a href="/portal/glossary/#glossary:telegram.message.alert" data-glossary-concept="telegram.message.alert"
+              >telegram.message.alert</a
+            >
+            ·
+            <a href="/portal/glossary/#glossary:telegram.message.command" data-glossary-concept="telegram.message.command"
+              >telegram.message.command</a
+            >
+            ·
+            <a href="/portal/glossary/#glossary:partner.ops.event" data-glossary-concept="partner.ops.event"
               >partner.ops.event</a
-            >). Bot: <code>/dossier CODE</code> · seat desk <code>📁 Dossier</code>.
+            >. Bot: <code>/dossier CODE</code> · seat desk <code>📁 Dossier</code>.
           </p>
           <div id="ad-activity"></div>
         </div>
@@ -744,32 +775,40 @@
             </div>`;
         }
 
+        const acctView = dossier.accountingView;
         const acct = dossier.accounting;
-        if (!acct) {
+        if (!acctView && !acct) {
           $('ad-accounting').innerHTML = dossier.partnerCode
             ? `<p class="ad-empty">No accounting slice for CODE <code>${esc(dossier.partnerCode)}</code> in partners-ops.</p>`
             : '<p class="ad-empty">No partner CODE resolved — accounting unavailable.</p>';
         } else {
-          const deposits = (acct.deposits || [])
+          const ids = acctView?.conceptIds || {};
+          const summary = acctView?.summary || {};
+          const deposits = (acctView?.depositsRows || acct?.deposits || [])
             .slice(0, 5)
             .map(
               d =>
-                `<tr><td>${esc(d.date || '—')}</td><td>${esc(d.amount)}</td><td>${esc(d.rail || '—')}</td></tr>`
+                `<tr data-glossary-concept="${ids.deposits || G.accountDeposits}"><td>${esc(d.date || '—')}</td><td>${esc(d.amount)}</td><td>${esc(d.rail || '—')}</td></tr>`
             )
             .join('');
           $('ad-accounting').innerHTML = `
             <table class="ad-table"><tbody>
-              <tr><th>Fund status</th><td>${esc(acct.fundStatus || '—')}</td></tr>
-              <tr><th>Incomplete outs</th><td>${esc(acct.incompleteOuts ?? 0)}</td></tr>
-              <tr><th>Free-roll</th><td>${acct.freeRoll ? `${esc(acct.freeRoll.used)} / ${esc(acct.freeRoll.total)}` : '—'}</td></tr>
+              <tr data-glossary-concept="${ids.summary || G.accountSummary}"><th><a class="semantic-label" href="${accountDossierGlossaryHref(ids.summary || G.accountSummary)}" data-glossary-concept="${ids.summary || G.accountSummary}">Fund status</a></th><td>${esc(acctView?.fundStatus || acct?.fundStatus || '—')}</td></tr>
+              <tr data-glossary-concept="${ids.summary || G.accountSummary}"><th>Incomplete outs</th><td>${esc(acctView?.incompleteOuts ?? acct?.incompleteOuts ?? 0)}</td></tr>
+              <tr data-glossary-concept="${ids.deposits || G.accountDeposits}"><th><a class="semantic-label" href="${accountDossierGlossaryHref(ids.deposits || G.accountDeposits)}" data-glossary-concept="${ids.deposits || G.accountDeposits}">Deposits</a></th><td>${esc(summary.deposits ?? '—')}</td></tr>
+              <tr data-glossary-concept="${ids.credit || G.accountCredit}"><th><a class="semantic-label" href="${accountDossierGlossaryHref(ids.credit || G.accountCredit)}" data-glossary-concept="${ids.credit || G.accountCredit}">Credits</a></th><td>${esc(summary.credits ?? '—')}</td></tr>
+              <tr data-glossary-concept="${ids.settlements || G.accountSettlements}"><th><a class="semantic-label" href="${accountDossierGlossaryHref(ids.settlements || G.accountSettlements)}" data-glossary-concept="${ids.settlements || G.accountSettlements}">Settlements</a></th><td>${esc(summary.settlements ?? '—')}</td></tr>
+              <tr data-glossary-concept="${ids.freeplay || G.accountFreeplay}"><th><a class="semantic-label" href="${accountDossierGlossaryHref(ids.freeplay || G.accountFreeplay)}" data-glossary-concept="${ids.freeplay || G.accountFreeplay}">Freeplay applied</a></th><td>${esc(summary.freeRollApplied ?? '—')}${acct?.freeRoll ? ` <span class="ad-meta">(${esc(acct.freeRoll.used)} / ${esc(acct.freeRoll.total)})</span>` : ''}</td></tr>
+              <tr data-glossary-concept="${ids.net || G.accountNet}"><th><a class="semantic-label" href="${accountDossierGlossaryHref(ids.net || G.accountNet)}" data-glossary-concept="${ids.net || G.accountNet}">Account net</a></th><td><strong>${esc(summary.net ?? '—')}</strong></td></tr>
             </tbody></table>
             ${
               deposits
-                ? `<table class="ad-table" style="margin-top:12px"><thead><tr><th>Deposit</th><th>Amount</th><th>Rail</th></tr></thead><tbody>${deposits}</tbody></table>`
+                ? `<table class="ad-table" style="margin-top:12px" data-glossary-concept="${ids.deposits || G.accountDeposits}"><thead><tr><th>Deposit</th><th>Amount</th><th>Rail</th></tr></thead><tbody>${deposits}</tbody></table>`
                 : '<p class="ad-empty" style="margin-top:12px">No deposit rows in bake.</p>'
             }
             <div class="ad-actions">
               <a href="${esc(dossier.links.partnersAccounting)}" data-glossary-concept="${G.accounting}">Open partners accounting</a>
+              <a href="${accountDossierGlossaryHref(ids.dimension || G.perAccount)}" data-glossary-concept="${ids.dimension || G.perAccount}">ops.view.per_account</a>
             </div>`;
         }
 

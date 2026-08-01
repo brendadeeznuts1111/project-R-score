@@ -237,6 +237,84 @@ function buildConnectedTree(accountId, partnerNodeId, patterns, profiles) {
 }
 
 /**
+ * Per-account accounting view chrome over a partners-ops partner row.
+ * Mirrors lib/telegram/ops-accounting-view.ts for the static board (no Soft sync).
+ * @param {object | null} partnerRow
+ */
+export function buildDossierAccountingView(partnerRow) {
+  const partnerCode = String(partnerRow?.code || '')
+    .trim()
+    .toUpperCase();
+  if (!partnerCode) return null;
+
+  const ledger = Array.isArray(partnerRow?.accounting?.ledger)
+    ? partnerRow.accounting.ledger
+    : [];
+  const depositsRows = Array.isArray(partnerRow?.accounting?.deposits)
+    ? partnerRow.accounting.deposits
+    : [];
+  const creditsRows = Array.isArray(partnerRow?.accounting?.credits)
+    ? partnerRow.accounting.credits
+    : [];
+  const tracking = partnerRow?.tracking?.accounting ?? null;
+
+  const sumRows = rows =>
+    rows.reduce((n, row) => n + (Number.isFinite(Number(row?.amount)) ? Number(row.amount) : 0), 0);
+  const sumLedger = codes =>
+    ledger.reduce((n, event) => {
+      if (!codes.has(String(event?.code || ''))) return n;
+      const amount = Number(event?.amount);
+      return n + (Number.isFinite(amount) ? amount : 0);
+    }, 0);
+
+  const depositsLedger = sumLedger(new Set(['DEPOSIT_RECEIVED', 'DEPOSIT_ALLOCATED']));
+  const deposits =
+    depositsLedger ||
+    sumRows(depositsRows) ||
+    Number(tracking?.depositVolume ?? 0) ||
+    0;
+  const creditsLedger = sumLedger(new Set(['CREDIT_EXTENDED']));
+  const credits =
+    creditsLedger || sumRows(creditsRows) || Number(tracking?.creditVolume ?? 0) || 0;
+  const settlements = sumLedger(new Set(['SETTLEMENT_PROCESSED']));
+  const freeRollApplied =
+    sumLedger(new Set(['FREE_ROLL_APPLIED'])) ||
+    Number(partnerRow?.accounting?.freeRoll?.used ?? tracking?.freeRollApplied ?? 0) ||
+    0;
+  const withdrawals = 0;
+  const fees = 0;
+  const net = deposits + credits + settlements - withdrawals - fees;
+
+  return {
+    type: 'per_account',
+    partnerCode,
+    fundStatus: partnerRow?.accounting?.fundStatus ?? null,
+    incompleteOuts: partnerRow?.accounting?.incompleteOuts ?? 0,
+    depositsRows,
+    creditsRows,
+    ledger,
+    summary: {
+      deposits,
+      withdrawals,
+      settlements,
+      fees,
+      credits,
+      freeRollApplied,
+      net,
+    },
+    conceptIds: {
+      dimension: 'ops.view.per_account',
+      summary: 'ops.view.account_summary',
+      deposits: 'ops.view.account_deposits',
+      settlements: 'ops.view.account_settlements',
+      credit: 'ops.view.account_credit',
+      freeplay: 'ops.view.account_freeplay',
+      net: 'ops.view.account_net',
+    },
+  };
+}
+
+/**
  * Timeline rows from partners-ops ledger + handshake readiness signals.
  * @param {object | null} partnerRow
  * @param {object | null} handshakeRow
@@ -249,14 +327,21 @@ export function buildDossierActivity(partnerRow, handshakeRow = null, telegram =
     ? partnerRow.accounting.ledger
     : [];
   for (const event of ledger.slice(0, 20)) {
+    const code = String(event?.code || 'event');
+    const receipt =
+      code.includes('DEPOSIT') || code.includes('SETTLEMENT') || code.includes('CREDIT');
     rows.push({
       at: String(event?.at || ''),
-      kind: String(event?.code || 'event'),
-      label: String(event?.code || 'event').replaceAll('_', ' '),
+      kind: code,
+      label: code.replaceAll('_', ' '),
       detail: [event?.note, event?.rail, event?.amount != null ? `$${event.amount}` : null]
         .filter(Boolean)
         .join(' · '),
-      conceptId: event?.conceptId ? String(event.conceptId) : 'partner.ops.event',
+      conceptId: event?.conceptId
+        ? String(event.conceptId)
+        : receipt
+          ? 'telegram.message.receipt'
+          : 'partner.ops.event',
     });
   }
 
@@ -266,7 +351,7 @@ export function buildDossierActivity(partnerRow, handshakeRow = null, telegram =
       kind: 'TELEGRAM_INVITE',
       label: 'Forum invite',
       detail: handshakeRow.inviteSentAt ? 'invite stored' : 'invite link available',
-      conceptId: 'telegram.handshake',
+      conceptId: 'telegram.message.alert',
     });
   }
   if (telegram?.dmSeatStatus) {
@@ -275,7 +360,7 @@ export function buildDossierActivity(partnerRow, handshakeRow = null, telegram =
       kind: 'DM_SEAT',
       label: 'DM seat',
       detail: `${telegram.dmSeatStatus}${telegram.callSign ? ` · ${telegram.callSign}` : ''}`,
-      conceptId: 'telegram.wire',
+      conceptId: 'telegram.message.incoming',
     });
   }
   if (telegram?.chatLinked != null) {
@@ -286,7 +371,7 @@ export function buildDossierActivity(partnerRow, handshakeRow = null, telegram =
       detail: telegram.chatLinked
         ? `linked · topics ${telegram.topicsConfigured}/${telegram.topicsRequired}`
         : 'unlinked',
-      conceptId: 'section.partnersTelegram',
+      conceptId: 'telegram.message.outgoing',
     });
   }
   for (const fail of handshakeRow?.verifyFails || []) {
@@ -295,7 +380,7 @@ export function buildDossierActivity(partnerRow, handshakeRow = null, telegram =
       kind: 'VERIFY_FAIL',
       label: 'Handshake verify gap',
       detail: String(fail),
-      conceptId: 'telegram.handshake',
+      conceptId: 'telegram.status.failed',
     });
   }
   for (const step of handshakeRow?.nextSteps || []) {
@@ -304,7 +389,7 @@ export function buildDossierActivity(partnerRow, handshakeRow = null, telegram =
       kind: 'NEXT_STEP',
       label: 'Next step',
       detail: String(step),
-      conceptId: 'telegram.handshake',
+      conceptId: 'telegram.message.command',
     });
   }
 
@@ -410,6 +495,7 @@ export function buildAccountDossier({
 
   const telegram = buildDossierTelegram(partnerRow, handshakeRow);
   const activity = buildDossierActivity(partnerRow, handshakeRow, telegram);
+  const accountingView = buildDossierAccountingView(partnerRow);
   const accounting = partnerRow?.accounting
     ? {
         fundStatus: partnerRow.accounting.fundStatus ?? null,
@@ -464,6 +550,7 @@ export function buildAccountDossier({
     outs: Array.isArray(partnerRow?.outs) ? partnerRow.outs : [],
     telegram,
     accounting,
+    accountingView,
     activity,
     links: {
       history: `/portal/partner-history/?account=${encodeURIComponent(id)}`,

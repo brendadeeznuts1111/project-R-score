@@ -48,6 +48,27 @@ export const ACCOUNT_DOSSIER_GLOSSARY = Object.freeze({
   delta: 'ops.limits.limit_delta',
   effectiveLimit: 'ops.limits.effective_limit',
 
+  /** Ops reporting-view MVP (see lib/telegram/ops-view-glossary.ts). */
+  perAccount: 'ops.view.per_account',
+  accountSummary: 'ops.view.account_summary',
+  accountDeposits: 'ops.view.account_deposits',
+  accountSettlements: 'ops.view.account_settlements',
+  accountCredit: 'ops.view.account_credit',
+  accountFreeplay: 'ops.view.account_freeplay',
+  accountNet: 'ops.view.account_net',
+
+  /** Telegram message chrome MVP. */
+  msgIncoming: 'telegram.message.incoming',
+  msgOutgoing: 'telegram.message.outgoing',
+  msgAlert: 'telegram.message.alert',
+  msgCommand: 'telegram.message.command',
+  msgReceipt: 'telegram.message.receipt',
+  statusDelivered: 'telegram.status.delivered',
+  statusFailed: 'telegram.status.failed',
+  actionReply: 'telegram.action.reply',
+  actionForward: 'telegram.action.forward',
+  actionPin: 'telegram.action.pin',
+
   betlog: 'ops.limits.pattern_surface',
   betlogCsv: 'ui.semantic.artifact',
   betlogJsonl: 'ui.semantic.artifact',

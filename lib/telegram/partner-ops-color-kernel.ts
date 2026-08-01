@@ -101,6 +101,30 @@ export const PARTNER_OPS_CONCEPT_COLORS = {
   'ops.limits.effective_limit': 'research',
   'ops.limits.monitoring_status': 'middleware',
   'ops.limits.evidence_trace': 'polymarket',
+
+  // Ops reporting-view MVP (Factory overlay).
+  'ops.view.per_account': 'kalshi',
+  'ops.view.per_play': 'polymarket',
+  'ops.view.per_week': 'middleware',
+  'ops.view.per_book_type': 'pinnacle',
+  'ops.view.account_summary': 'kalshi',
+  'ops.view.account_deposits': 'tennis',
+  'ops.view.account_settlements': 'polymarket',
+  'ops.view.account_credit': 'kalshi',
+  'ops.view.account_freeplay': 'research',
+  'ops.view.account_net': 'trading',
+
+  // Telegram message chrome MVP.
+  'telegram.message.incoming': 'tennis',
+  'telegram.message.outgoing': 'kalshi',
+  'telegram.message.alert': 'trading',
+  'telegram.message.command': 'middleware',
+  'telegram.message.receipt': 'tennis',
+  'telegram.status.delivered': 'tennis',
+  'telegram.status.failed': 'trading',
+  'telegram.action.reply': 'kalshi',
+  'telegram.action.forward': 'polymarket',
+  'telegram.action.pin': 'pinnacle',
 } as const satisfies Readonly<Record<string, PartnerOpsColorKey>>;
 
 export type PartnerOpsConceptColorId = keyof typeof PARTNER_OPS_CONCEPT_COLORS;

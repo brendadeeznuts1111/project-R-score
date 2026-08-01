@@ -27,6 +27,7 @@ import { sportsBettingGlossaryConcepts } from '../lib/operations/sports-betting-
 import { sportsbookOpeningBaselineGlossaryConcepts } from '../lib/operations/sportsbook-opening-baseline.ts';
 import { telegramGlossaryConcepts } from '../lib/telegram/telegram-glossary.ts';
 import { partnerOpsGlossaryConcepts } from '../lib/telegram/partner-ops-glossary.ts';
+import { opsViewGlossaryConcepts } from '../lib/telegram/ops-view-glossary.ts';
 
 describe('domain glossary portal', () => {
   test('registry projection is integral, bounded, and color-normalized', async () => {
@@ -50,6 +51,7 @@ describe('domain glossary portal', () => {
         telegramColorKernel: 'lib/telegram/telegram-color-kernel.ts',
         partnerOpsAuthority: 'lib/telegram/partner-ops-glossary.ts',
         partnerOpsColorKernel: 'lib/telegram/partner-ops-color-kernel.ts',
+        opsViewAuthority: 'lib/telegram/ops-view-glossary.ts',
         canonicalDump: 'Kalshi-bot/research/registry/glossary-dump.json',
         colorKernel: 'public/portal/theme.jsonc',
       },
@@ -63,7 +65,8 @@ describe('domain glossary portal', () => {
         sportsBettingGlossaryConcepts().length +
         sportsbookOpeningBaselineGlossaryConcepts().length +
         telegramGlossaryConcepts().length +
-        partnerOpsGlossaryConcepts().length
+        partnerOpsGlossaryConcepts().length +
+        opsViewGlossaryConcepts().length
     );
     expect(payload.concepts.some(c => c.id === 'telegram.wire')).toBe(true);
     expect(payload.concepts.some(c => c.id === 'accounting.free_roll')).toBe(true);

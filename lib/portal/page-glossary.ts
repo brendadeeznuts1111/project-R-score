@@ -38,6 +38,8 @@ const PAGE_SECTIONS: Readonly<
   },
   [ACCOUNT_DOSSIER_SURFACE_CONCEPTS.page]: {
     // Keys match board `id="ad-section-…"` / hash `#section:key` (glossary UX).
+    // Section hashes (#section:accounting) use legacy surface concepts to preserve bookmarks.
+    // The rendered heading uses ops.view.per_account. See also: ops.view.per_account.
     identity: ACCOUNT_DOSSIER_SURFACE_CONCEPTS.identity,
     tree: ACCOUNT_DOSSIER_SURFACE_CONCEPTS.tree,
     location: ACCOUNT_DOSSIER_SURFACE_CONCEPTS.location,
