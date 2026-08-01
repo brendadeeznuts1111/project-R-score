@@ -14,15 +14,16 @@ Non-draft PRs fail CI when this table has no filled row (`bun scripts/check-pr-c
 | Claim (one sentence) | Kind (`unit` / `boundary` / `journey` / `deployed`) | Evidence (command or path that exited 0) |
 |----------------------|-----------------------------------------------------|------------------------------------------|
 | | | |
-<!-- Example (replace the blank row above; do not leave only this comment):
-| Terminal markdown uses Bun.markdown.ansi / bun ./file.md | unit | bun test tests/bun-markdown-ansi.test.ts |
+
+<!-- Fill shape (replace the blank row above — do not paste this as a table line):
+     Terminal markdown uses Bun native ANSI · unit · bun test tests/bun-markdown-ansi.test.ts
 -->
 
 Install/layout touched: also run `bun run proof:install`.
 
 ## Fresh-rerun paste
 
-Required when this PR moves an owner of a [`CRITICAL_PROOF_PATHS`](../lib/harness/proof.ts) claim — look up the command with `bun run docs:fresh-rerun` ([FRESH-RERUN.md](../docs/harness/FRESH-RERUN.md)). Paste stdout/stderr below. Soft tip: if the body mentions a proof id in backticks (`` `branded-ids` ``), include that claim’s `freshRerun` command string too.
+Required when this PR moves an owner of a [`CRITICAL_PROOF_PATHS`](../lib/harness/proof.ts) claim — look up the command with `bun run docs:fresh-rerun` ([FRESH-RERUN.md](../docs/harness/FRESH-RERUN.md)). Paste stdout/stderr below. Soft tip: if the body mentions a proof id in backticks, include that claim’s `freshRerun` command string too.
 
 ```text
 # paste fresh-rerun / claim re-proof output here
