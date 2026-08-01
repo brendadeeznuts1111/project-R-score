@@ -1,20 +1,20 @@
 ---
-description: Portal ship hygiene — Prettier before commit; PR bodies use repo template (not Cursor HEREDOC)
-globs: lib/portal/**/*.ts,public/portal/**/*,tests/**/*portal*,docs/portal-foundation.md,lib/portal/README.md
+description: Portal ship hygiene — Prettier before commit on lib/**/*.ts; PR bodies use repo template (not Cursor HEREDOC)
+globs: lib/**/*.ts,public/portal/**/*,tests/**/*portal*,docs/portal-foundation.md,lib/portal/README.md,.github/pull_request_template.md,AGENTS.md
 alwaysApply: false
 ---
 
-# Portal ship: Prettier + PR template
+# Portal ship: Keep Prettier + PR template
 
 Keep **Prettier** as the only code formatter for FactoryWager root/portal work. Do not invent or switch to Biome/oxfmt/dprint for these paths.
 
-## Before commit (touched TypeScript)
+## Before commit (touched `lib/**/*.ts`)
 
-On any changed harness/portal TS (especially `lib/portal/**/*.ts`, and when touching related `tools/` / `scripts/`):
+On every changed library TypeScript file (portal work included; also when touching related `tools/` / `scripts/` / `tests/`):
 
 ```bash
 bun x prettier --write <file>…
-# or broader harness write:
+# or broader harness write (includes tests/**/*.ts):
 bun run format:harness
 ```
 
@@ -26,13 +26,15 @@ bun x prettier --check <file>…
 
 `format` / `format:harness` / `format:check*` are the same Prettier — different globs only.
 
+**Pre-commit (already):** `scripts/pre-commit-harness.ts` runs Prettier `--write` on staged `isHarnessFormatPath` files (lint scope ∪ `tests/**` ∪ `*.test.ts` under harness roots). ESLint stays lint-scope only — do **not** add lint-staged.
+
 ## Pull requests
 
 PR bodies **must** follow [`.github/pull_request_template.md`](.github/pull_request_template.md).
 
-- Include filled **Claim → evidence** table (`unit` | `boundary` | `journey` | `deployed`) — gated by `bun scripts/check-pr-claim.ts`.
-- Include Checklist, Test plan, Notes for reviewers as in the template.
-- **Do not** use the Cursor user-rule Summary/Test-plan-only HEREDOC as the PR body.
+- Fill Summary, **Claim → evidence** (`unit` | `boundary` | `journey` | `deployed`), Checklist (incl. Prettier item), Test plan, Notes for reviewers.
+- **Do not** construct or send PR bodies via shell HEREDOC Summary/Test-plan-only output — that Cursor default is superseded here.
+- Prefer: read the template, write a filled body to a temp file, then `gh pr create --body-file <path>` (or edit an existing PR the same way).
 
 Validate locally:
 
