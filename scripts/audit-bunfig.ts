@@ -20,7 +20,7 @@
  * @see docs/UNIFIED.md
  * @see lib/install/machine-bunfig-policy.ts
  */
-import { bunSpawnArgs } from '../lib/bun-executable.ts';
+import { bunSpawnArgs, isModuleEntrypoint } from '../lib/bun-executable.ts';
 import {
   FORBIDDEN_INSTALL_ENV_VARS,
   isEphemeralCiInstallEnv,
@@ -329,7 +329,7 @@ export async function auditBunfig(opts: AuditBunfigOptions = {}): Promise<AuditB
   };
 }
 
-if (import.meta.path === Bun.main) {
+if (isModuleEntrypoint(import.meta)) {
   const { strict, useDoctor } = parseArgs(Bun.argv.slice(2));
   const result = await auditBunfig({ strict, useDoctor });
   process.exit(result.exitCode);

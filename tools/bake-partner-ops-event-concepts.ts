@@ -11,6 +11,7 @@
  * @see lib/telegram/partner-ops-events.ts
  * @see public/portal/components/partner-ops-event-concepts.js
  */
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import {
   PARTNER_OPS_EVENT_CODES,
@@ -88,7 +89,7 @@ export async function bakePartnerOpsEventConcepts(
   };
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   const check = Bun.argv.includes('--check');
   try {
     const result = await bakePartnerOpsEventConcepts({ check });

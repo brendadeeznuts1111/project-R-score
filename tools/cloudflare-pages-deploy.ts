@@ -13,6 +13,7 @@
  * @see docs/harness/tenants/cloudflare-pages.md
  * @see scripts/cloudflare-pages-deploy.sh — thin wrapper
  */
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
 import { PROOF_TAXONOMY_CONTRACT_COUNT } from '../lib/verification/proof-taxonomy.ts';
 
@@ -160,7 +161,7 @@ async function main() {
   }
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   main().catch(e => {
     console.error(e instanceof Error ? e.message : e);
     process.exit(1);

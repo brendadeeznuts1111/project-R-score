@@ -25,6 +25,7 @@
  * Check report (when --report, or GITHUB_ACTIONS / GITHUB_STEP_SUMMARY set):
  *   reports/doctor-state-check.json · step summary · ::error title=doctor-state::
  */
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { dirnamePath, ensureDir, joinPath, resolvePath } from '../scripts/lib/fs-bun.ts';
 import {
   runPortalDoctor,
@@ -654,7 +655,7 @@ export function shouldEmitDoctorStateCheckReport(forceReport: boolean): boolean 
   return typeof summary === 'string' && summary.length > 0;
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   const full = Bun.argv.includes('--full');
   const check = Bun.argv.includes('--check');
   // Portable fingerprint is default; --no-portable includes infra|gates in hash.

@@ -30,7 +30,7 @@
  *   bun tools/portal-probe.ts --json          # machine-readable (all or one)
  *   bun run portal:probe
  */
-import { bunSpawnArgs } from '../lib/bun-executable.ts';
+import { bunSpawnArgs, isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { jsonOut, logTable } from '../lib/console-depth.ts';
 

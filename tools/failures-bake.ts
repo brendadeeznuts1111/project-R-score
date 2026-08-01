@@ -12,6 +12,7 @@
  *   bun run failures:bake
  *   bun test tests/ --reporter=junit --reporter-outfile=tmp/junit.xml; bun run failures:bake
  */
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { escapeHtml } from '../lib/escape-html.ts';
 import { buildFailuresReport, type TestFailuresReport } from '../lib/failure-report.ts';
@@ -175,6 +176,6 @@ async function main(): Promise<void> {
   if (!report.healthy && !NO_FAIL) process.exit(1);
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   await main();
 }

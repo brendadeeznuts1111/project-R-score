@@ -20,6 +20,7 @@
  *
  * Values only — no tokens; scope entries record url + token-env NAME, never values.
  */
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { homedir } from 'node:os';
 import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
 import { resolvePath } from './lib/fs-bun';
@@ -196,4 +197,4 @@ async function main(): Promise<void> {
   }
 }
 
-if (import.meta.main) await main();
+if (isModuleEntrypoint(import.meta)) await main();

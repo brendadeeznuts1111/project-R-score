@@ -68,7 +68,7 @@ import {
   spawnBunWithFlags,
   type RuntimeFlagsJsonReport,
 } from './lib/portal-cli-bun-flags.ts';
-import { bunSpawnArgs } from '../lib/bun-executable.ts';
+import { bunSpawnArgs, isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { dispatchScanner } from './lib/portal-cli-scanner.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 
