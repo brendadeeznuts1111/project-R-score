@@ -13,6 +13,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/guides/process/argv — Bun.argv
 // @see https://bun.com/docs/guides/process/argv — util.parseArgs
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
@@ -33,12 +34,13 @@
  */
 
 import { parseArgs } from 'util';
+import { bunSpawnArgs } from '../bun-executable.ts';
+import { colorize, jsonOut, logTable, shouldColor, stripANSI } from '../console-depth';
+import { tomlStringify } from '../toml-stringify';
 import { buildRegistryHealthReport } from './health';
 import { runIntegrityCycle } from './monitoring';
 import { registry } from './registry';
 import { type ArtifactType } from './artifact';
-import { colorize, jsonOut, logTable, shouldColor, stripANSI } from '../console-depth';
-import { tomlStringify } from '../toml-stringify';
 
 const VERSION = '0.1.0';
 
@@ -474,10 +476,14 @@ async function cmdProof(args: string[]): Promise<void> {
   const results: Array<{ claim: string; status: string; color: string; detail: string }> = [];
 
   try {
-    const proc = Bun.spawn(['bun', 'test', 'tests/registry.test.ts', 'tests/cli.test.ts'], {
-      stdout: 'pipe',
-      stderr: 'pipe',
-    });
+    const proc = Bun.spawn(
+      bunSpawnArgs(['test', 'tests/registry.test.ts', 'tests/cli.test.ts']),
+      {
+        stdout: 'pipe',
+        stderr: 'pipe',
+        env: { ...Bun.env },
+      }
+    );
     const ok = (await proc.exited) === 0;
     results.push({
       claim: 'factory-registry-cli-v1',
@@ -663,10 +669,11 @@ async function cmdCreate(args: string[]): Promise<void> {
   bunArgs.push(...extraArgs);
 
   // Delegate to bun create via Bun.spawn with full user interactivity
-  const proc = Bun.spawn(['bun', ...bunArgs], {
+  const proc = Bun.spawn(bunSpawnArgs(bunArgs), {
     stdout: 'inherit',
     stderr: 'inherit',
     stdin: 'inherit',
+    env: { ...Bun.env },
   });
 
   const exitCode = await proc.exited;

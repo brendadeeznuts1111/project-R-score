@@ -20,6 +20,7 @@
  * Import graph: Bun.Transpiler.scan / scanImports (not regex).
  * Target: score ≥ 90. CLI: `bun tools/monorepo-health.ts`
  */
+import { bunSpawnArgs } from '../bun-executable.ts';
 import { joinPath } from '../path-bun.ts';
 
 export const MONOREPO_HEALTH_FORMULA_VERSION = 1 as const;
@@ -541,10 +542,11 @@ export async function collectMonorepoHealth(
     const baseArgs = opts.testArgs ?? ['test', 'tests/monorepo-health.test.ts', '--timeout=30000'];
     const args =
       withCoverage && !baseArgs.includes('--coverage') ? [...baseArgs, '--coverage'] : baseArgs;
-    const proc = Bun.spawn(['bun', ...args], {
+    const proc = Bun.spawn(bunSpawnArgs(args), {
       cwd: root,
       stdout: 'pipe',
       stderr: 'pipe',
+      env: { ...Bun.env },
     });
     const out = await new Response(proc.stdout).text();
     const err = await new Response(proc.stderr).text();
