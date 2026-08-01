@@ -881,6 +881,31 @@
               </thead>
               <tbody id="soft-weeks-tbody"></tbody>
             </table>
+            <h3 class="partners-subhead" style="margin-top: 16px" data-glossary-concept="ops.view.per_book_type">
+              Soft book types
+            </h3>
+            <p class="blurb">
+              From Soft <code>byBookType[]</code> or tagged plays ·
+              <a href="/portal/glossary/#glossary:ops.view.per_book_type" data-glossary-concept="ops.view.per_book_type"
+                ><code>ops.view.per_book_type</code></a
+              >
+              · leaves stay
+              <a href="/portal/glossary/#glossary:book.type.legal" data-glossary-concept="book.type.legal"
+                ><code>book.type.*</code></a
+              >.
+            </p>
+            <table class="partners-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>Book type</th>
+                  <th>Stake Σ</th>
+                  <th>|P&amp;L| settled</th>
+                  <th>Net</th>
+                </tr>
+              </thead>
+              <tbody id="soft-book-types-tbody"></tbody>
+            </table>
           </div>
           <p class="cli-row">
             bun run partners:event -- deposit_received --partner ASH --amount 1000 --rail venmo ·
@@ -1095,6 +1120,8 @@
       let softPlaysByPartner = new Map();
       /** @type {object[]} */
       let softWeekRows = [];
+      /** @type {object[]} */
+      let softBookTypeRows = [];
       let softAccountingSource = 'unavailable';
       /** @type {Record<string, string>} */
       let colorsCache = {};
@@ -1559,6 +1586,24 @@
                 .join('')
             : `<tr><td colspan="5">No Soft week rollups — bake Soft plays first · source ${esc(softAccountingSource)}</td></tr>`;
         }
+
+        const booksBody = $('soft-book-types-tbody');
+        if (booksBody) {
+          booksBody.innerHTML = softBookTypeRows.length
+            ? softBookTypeRows
+                .slice(0, 40)
+                .map(
+                  b => `<tr data-partner-code="${esc(b.partnerCode)}" data-glossary-concept="ops.view.per_book_type">
+                <td>${partnerLink(b.partnerCode)}</td>
+                <td><a href="${glossaryHref(b.bookType)}" data-glossary-concept="${esc(b.bookType)}"><code>${esc(b.bookType)}</code></a></td>
+                <td>${esc(b.deposits)}</td>
+                <td>${esc(b.settlements)}</td>
+                <td><strong>${esc(b.net)}</strong></td>
+              </tr>`
+                )
+                .join('')
+            : `<tr><td colspan="5">No Soft book-type rollups — tag plays with bookType or enrich via partners-ops · source ${esc(softAccountingSource)}</td></tr>`;
+        }
       }
 
       function bookChip(label, opsOut) {
@@ -1877,6 +1922,26 @@
                       a.partnerCode.localeCompare(b.partnerCode)
                   )
               : rollupSoftWeeksFromPlays(softAccounting?.plays || []);
+          const exportBooks = Array.isArray(softAccounting?.byBookType)
+            ? softAccounting.byBookType
+            : [];
+          softBookTypeRows =
+            exportBooks.length > 0
+              ? exportBooks
+                  .map(b => ({
+                    bookType: b.bookType,
+                    partnerCode: String(b.partnerCode || '').toUpperCase(),
+                    deposits: b.deposits,
+                    settlements: b.settlements,
+                    net: b.net,
+                  }))
+                  .filter(b => b.partnerCode && String(b.bookType || '').startsWith('book.type.'))
+                  .sort(
+                    (a, b) =>
+                      a.partnerCode.localeCompare(b.partnerCode) ||
+                      String(a.bookType).localeCompare(String(b.bookType))
+                  )
+              : [];
           $('partners-meta').innerHTML =
             `Handshake <time>${esc(handshake.generatedAt || '—')}</time> · ` +
             `Seat desk <time>${esc(seat.generatedAt || '—')}</time> · ` +

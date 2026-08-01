@@ -64,14 +64,15 @@ Presentation chrome (`ops.view.*`, `telegram.message.*`) is Factory-only.
 | Piece | Path |
 |-------|------|
 | Types + load/project | [`lib/telegram/soft-accounting-export.ts`](../../lib/telegram/soft-accounting-export.ts) |
-| Partner chrome helper | `buildPartnerSoftPlayChrome` · `playsForPartner` · `rollupWeeksFromPlays` |
+| Partner chrome helper | `buildPartnerSoftPlayChrome` · `playsForPartner` · `rollupWeeksFromPlays` · `rollupByBookTypeFromPlays` |
 | Committed demo bake | `/registry/soft-accounting-export.json` · schema `factorywager.soft-accounting-export.v1` · `bun run soft:accounting:bake` / `:check` |
-| Demo projection | `projectSoftAccountingExportFromTocOps` over Pages [`toc-ops.json`](../../public/registry/toc-ops.json) `partners[].recentPlays` |
+| Demo projection | `projectSoftAccountingExportFromTocOps` + partners-ops primary-out bookType enrich |
 | Per-play builder | `buildPerPlayAccountingView` → `ops.view.per_play` |
 | Per-week builder | `buildPerWeekAccountingView` + `rollupWeeksFromPlays` → `ops.view.per_week` |
+| Per-book-type builder | `buildPerBookTypeAccountingView` + `rollupByBookTypeFromPlays` → `ops.view.per_book_type` |
 | Partner chrome | `buildPartnerSoftPlayChrome` · portal `buildDossierSoftPlays` |
-| Dossier consumer | [`public/portal/account/`](../../public/portal/account/) Soft plays + derived Soft weeks |
-| Partners consumer | [`public/portal/partners/`](../../public/portal/partners/) Soft plays table + play-count chips |
+| Dossier consumer | [`public/portal/account/`](../../public/portal/account/) Soft plays + weeks + book types |
+| Partners consumer | [`public/portal/partners/`](../../public/portal/partners/) Soft plays / weeks / book-type tables |
 
 Committed demo bake uses `source: "toc-ops-fixture"`. Soft live export:
 
@@ -90,16 +91,16 @@ or a schema-valid non-empty `source: "soft-ct"` bake (0 plays fails check and
 export; fixture may carry odds from toc-ops demo plays).
 
 `weeks[]` / `byBookType[]` may ship empty from Soft; Factory derives week rollups from
-plays for chrome (`ops.view.per_week`). Book-type rows wait until Soft tags venues.
-Soft DB migrations must match Soft `ct` expectations (schema tip ≥ 2.30) before
-`soft:accounting:from-ct` succeeds.
+plays (`ops.view.per_week`) and book-type rollups from tagged plays
+(`ops.view.per_book_type`). Fixture bake stamps partner primary-out `book.type.*`
+from partners-ops when Soft plays omit `bookType`. Soft-authored venue tags remain
+the live path. Soft DB tip ≥ 2.30 before `soft:accounting:from-ct` succeeds.
 
 ## Exit criteria (remaining)
 
 1. Promote registry bake with `bun run soft:accounting:from-ct` when Soft DB
-   has plays (`source: "soft-ct"`, schema tip ≥ 2.30) — wire + Soft `ct` exist.
-2. Factory builders call `validateOpsAccountingViewShape` — **still no new
-   glossary mint**. Per-play + derived per-week + dossier/partners Soft chrome
-   are in place; Soft-authored `byBookType` wait on Soft venue tags.
+   has plays (`source: "soft-ct"`) — empty soft-ct is rejected without `--force`.
+2. Soft should eventually write per-play `bookType` (and odds); Factory already
+   shapes `ops.view.per_book_type` without new glossary mints.
 3. Local proof: `bun run partners:governance` + lane tests; merge authority
    remains `bun run bun:ci` (GitHub Actions is not a gate).

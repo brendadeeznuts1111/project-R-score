@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which (PATH / cwd options)
 // @see https://bun.com/docs/runtime/utils#bun-main — Bun.main vs import
@@ -30,7 +31,6 @@
  * @see lib/telegram/soft-accounting-export.ts
  * @see lib/bun-executable.ts
  */
-import { unlinkSync } from 'node:fs';
 import {
   bunRuntimeProvenance,
   isModuleEntrypoint,
@@ -42,19 +42,47 @@ import type { TocOpsSnapshot } from '../lib/toc-ops/types.ts';
 import {
   SOFT_ACCOUNTING_EXPORT_REL,
   SOFT_ACCOUNTING_EXPORT_SCHEMA,
+  enrichSoftExportWithPartnerBookTypes,
   projectSoftAccountingExportFromTocOps,
+  softBookTypeConceptId,
   type SoftAccountingExport,
   type SoftAccountingPlayRow,
 } from '../lib/telegram/soft-accounting-export.ts';
 
-export {
-  clearBunExecutableCache,
-  resolveBunExecutable,
-} from '../lib/bun-executable.ts';
+export { clearBunExecutableCache, resolveBunExecutable } from '../lib/bun-executable.ts';
 
 const root = joinPath(import.meta.dir, '..');
 const outPath = joinPath(root, SOFT_ACCOUNTING_EXPORT_REL);
 const tocPath = joinPath(root, 'public/registry/toc-ops.json');
+const partnersOpsPath = joinPath(root, 'public/registry/partners-ops.json');
+
+/** Primary out book.type.* per partner CODE (demo enrichment for fixture bake). */
+async function partnerBookTypeMapFromPartnersOps(): Promise<Map<string, string>> {
+  const map = new Map<string, string>();
+  if (!(await Bun.file(partnersOpsPath).exists())) return map;
+  const ops = (await Bun.file(partnersOpsPath).json()) as {
+    partners?: {
+      code?: string; // brand-ok — partner CODE wire from partners-ops bake
+      outs?: {
+        book?: {
+          typeConceptId?: string; // brand-ok — book.type.* glossary key from bake
+          type?: string; // brand-ok — BookType token from bake
+        };
+      }[];
+    }[];
+  };
+  for (const partner of ops.partners ?? []) {
+    const code = String(partner.code || '')
+      .trim()
+      .toUpperCase();
+    if (!code) continue;
+    const primary = partner.outs?.[0]?.book;
+    const concept =
+      softBookTypeConceptId(primary?.typeConceptId) || softBookTypeConceptId(primary?.type);
+    if (concept) map.set(code, concept);
+  }
+  return map;
+}
 
 async function pathHasPackageJson(dir: string): Promise<boolean> {
   return Bun.file(joinPath(dir, 'package.json')).exists();
@@ -78,10 +106,7 @@ export async function resolveTocOpsRepo(factoryRoot = root): Promise<string> {
       ['git', '-C', factoryRoot, 'rev-parse', '--path-format=absolute', '--git-common-dir'],
       { stdout: 'pipe', stderr: 'pipe', env: { ...Bun.env } }
     );
-    const [stdout, exitCode] = await Promise.all([
-      new Response(proc.stdout).text(),
-      proc.exited,
-    ]);
+    const [stdout, exitCode] = await Promise.all([new Response(proc.stdout).text(), proc.exited]);
     if (exitCode === 0) {
       // Strip trailing / or \ (Git for Windows) before joinPath.
       const gitCommon = stdout.trim().replace(/[/\\]+$/, '');
@@ -181,10 +206,14 @@ export async function bakeSoftAccountingExport(
   }
 
   const toc = (await Bun.file(tocPath).json()) as TocOpsSnapshot;
-  const next = projectSoftAccountingExportFromTocOps(toc, {
+  const projected = projectSoftAccountingExportFromTocOps(toc, {
     generatedAt: options.generatedAt ?? '1970-01-01T00:00:00.000Z',
     source: 'toc-ops-fixture',
   });
+  const next = enrichSoftExportWithPartnerBookTypes(
+    projected,
+    await partnerBookTypeMapFromPartnersOps()
+  );
   const rendered = stableJson(next);
 
   if (check) {
@@ -220,9 +249,7 @@ export async function bakeSoftAccountingExport(
 }
 
 /** Run toc-ops `ct soft-accounting-export` into the Factory registry path. */
-export async function importSoftAccountingExportFromCt(
-  options: { force?: boolean } = {}
-): Promise<{
+export async function importSoftAccountingExportFromCt(options: { force?: boolean } = {}): Promise<{
   path: string;
   plays: number;
   available: boolean;
@@ -258,8 +285,9 @@ export async function importSoftAccountingExportFromCt(
     else assertSoftCtNonEmpty(baked);
     await Bun.write(outPath, `${JSON.stringify(baked, null, 2)}\n`);
   } finally {
+    // @see https://bun.com/docs/guides/write-file/unlink — Bun.file().unlink()
     try {
-      unlinkSync(tmpOut);
+      await Bun.file(tmpOut).unlink();
     } catch {
       /* tmp may be absent */
     }

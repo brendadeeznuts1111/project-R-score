@@ -509,6 +509,36 @@ export function rollupWeeksFromPlays(plays) {
 }
 
 /**
+ * Derive Soft book-type rows from tagged plays (mirrors rollupByBookTypeFromPlays).
+ * @param {object[]} plays
+ */
+export function rollupByBookTypeFromPlays(plays) {
+  /** @type {Map<string, { bookType: string, partnerCode: string, deposits: number, settlements: number, fees: number, net: number }>} */
+  const byKey = new Map();
+  for (const play of plays || []) {
+    const partnerCode = String(play?.partnerCode || '')
+      .trim()
+      .toUpperCase();
+    const bookType = String(play?.bookType || '').trim();
+    if (!partnerCode || !bookType.startsWith('book.type.')) continue;
+    const key = `${partnerCode}|${bookType}`;
+    let row = byKey.get(key);
+    if (!row) {
+      row = { bookType, partnerCode, deposits: 0, settlements: 0, fees: 0, net: 0 };
+      byKey.set(key, row);
+    }
+    const stake = typeof play.stake === 'number' && Number.isFinite(play.stake) ? play.stake : 0;
+    const pnl = typeof play.pnl === 'number' && Number.isFinite(play.pnl) ? play.pnl : 0;
+    row.deposits += stake;
+    if (play.result !== 'pending') row.settlements += Math.abs(pnl);
+    row.net += pnl;
+  }
+  return [...byKey.values()].sort(
+    (a, b) => a.partnerCode.localeCompare(b.partnerCode) || a.bookType.localeCompare(b.bookType)
+  );
+}
+
+/**
  * Soft play chrome for one partner CODE (mirrors lib/telegram/soft-accounting-export.ts
  * buildPartnerSoftPlayChrome — ops.view.per_play + derived ops.view.per_week; no Soft mutation).
  * @param {object | null} softExport
@@ -543,6 +573,13 @@ export function buildDossierSoftPlays(softExport, partnerCode, opts = {}) {
       : rollupWeeksFromPlays(all)
           .slice()
           .sort((a, b) => b.weekStart.localeCompare(a.weekStart));
+  const exportBooks = Array.isArray(softExport?.byBookType)
+    ? softExport.byBookType.filter(b => String(b?.partnerCode || '').toUpperCase() === code)
+    : [];
+  const byBookType =
+    exportBooks.length > 0
+      ? exportBooks.slice().sort((a, b) => String(a.bookType || '').localeCompare(String(b.bookType || '')))
+      : rollupByBookTypeFromPlays(all);
   return {
     partnerCode: code,
     available: all.length > 0,
@@ -551,8 +588,10 @@ export function buildDossierSoftPlays(softExport, partnerCode, opts = {}) {
     playCount: all.length,
     conceptId: 'ops.view.per_play',
     weekConceptId: 'ops.view.per_week',
+    bookConceptId: 'ops.view.per_book_type',
     plays,
     weeks,
+    byBookType,
   };
 }
 

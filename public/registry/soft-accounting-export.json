@@ -26,7 +26,8 @@
       "pnl": -800,
       "placedAt": "2026-07-13T17:10:00.000Z",
       "settledAt": "2026-07-13T21:00:00.000Z",
-      "market": "NFL"
+      "market": "NFL",
+      "bookType": "book.type.legal"
     },
     {
       "playId": "play-pat-001-mlb-loss-001",
@@ -59,7 +60,8 @@
       "pnl": 240,
       "placedAt": "2026-07-17T19:10:00.000Z",
       "settledAt": "2026-07-17T23:40:00.000Z",
-      "market": "NFL"
+      "market": "NFL",
+      "bookType": "book.type.legal"
     },
     {
       "playId": "play-ash-001-nba-deep-001",
@@ -70,7 +72,8 @@
       "pnl": 420,
       "placedAt": "2026-07-18T20:05:00.000Z",
       "settledAt": "2026-07-18T23:20:00.000Z",
-      "market": "NBA"
+      "market": "NBA",
+      "bookType": "book.type.legal"
     },
     {
       "playId": "play-pat-001-nba-deep-002",
@@ -103,7 +106,8 @@
       "pnl": -600,
       "placedAt": "2026-07-19T17:20:00.000Z",
       "settledAt": "2026-07-19T22:05:00.000Z",
-      "market": "MLB"
+      "market": "MLB",
+      "bookType": "book.type.legal"
     },
     {
       "playId": "play-ash-002-blocked-001",
@@ -113,7 +117,8 @@
       "result": "blocked",
       "pnl": null,
       "placedAt": "2026-07-19T18:00:00.000Z",
-      "market": "NBA"
+      "market": "NBA",
+      "bookType": "book.type.legal"
     },
     {
       "playId": "play-pat-001-nfl-spread-001",
@@ -146,7 +151,8 @@
       "pnl": 336,
       "placedAt": "2026-07-21T15:05:00.000Z",
       "settledAt": "2026-07-21T20:40:00.000Z",
-      "market": "Tennis"
+      "market": "Tennis",
+      "bookType": "book.type.legal"
     },
     {
       "playId": "play-pat-004-stake-soccer-001",
@@ -207,9 +213,19 @@
       "result": "pending",
       "pnl": null,
       "placedAt": "2026-07-23T19:00:00.000Z",
-      "market": "MLB"
+      "market": "MLB",
+      "bookType": "book.type.legal"
     }
   ],
   "weeks": [],
-  "byBookType": []
+  "byBookType": [
+    {
+      "bookType": "book.type.legal",
+      "partnerCode": "ASH",
+      "deposits": 6000,
+      "settlements": 2396,
+      "fees": 0,
+      "net": -404
+    }
+  ]
 }

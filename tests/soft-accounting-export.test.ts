@@ -3,13 +3,17 @@ import { describe, expect, test } from 'bun:test';
 import {
   SOFT_ACCOUNTING_EXPORT_SCHEMA,
   buildPartnerSoftPlayChrome,
+  buildPerBookTypeAccountingView,
   buildPerPlayAccountingView,
   buildPerWeekAccountingView,
+  enrichSoftExportWithPartnerBookTypes,
   indexSoftPlaysByPartner,
   loadSoftAccountingExport,
   playsForPartner,
   projectSoftAccountingExportFromTocOps,
+  rollupByBookTypeFromPlays,
   rollupWeeksFromPlays,
+  softBookTypeConceptId,
   unavailableSoftAccountingExport,
   weekStartIsoFromPlacedAt,
 } from '../lib/telegram/soft-accounting-export.ts';
@@ -95,5 +99,32 @@ describe('soft-accounting-export wire', () => {
     expect(chrome!.views.length).toBe(chrome!.plays.length);
     expect(chrome!.weekViews.length).toBe(chrome!.weeks.length);
     expect(chrome!.conceptId).toBe('ops.view.per_play');
+  });
+
+  test('book-type normalize + rollup + chrome when plays are tagged', async () => {
+    expect(softBookTypeConceptId('legal-us')).toBe('book.type.legal');
+    expect(softBookTypeConceptId('book.type.crypto')).toBe('book.type.crypto');
+    expect(softBookTypeConceptId('nope')).toBeUndefined();
+
+    const toc = (await Bun.file('public/registry/toc-ops.json').json()) as TocOpsSnapshot;
+    const projected = projectSoftAccountingExportFromTocOps(toc);
+    const enriched = enrichSoftExportWithPartnerBookTypes(projected, {
+      ASH: 'book.type.legal',
+      PAT: 'crypto',
+    });
+    expect(enriched.plays.every(p => p.partnerCode !== 'ASH' || p.bookType === 'book.type.legal')).toBe(
+      true
+    );
+    expect(enriched.byBookType.length).toBeGreaterThan(0);
+    const books = rollupByBookTypeFromPlays(enriched.plays);
+    expect(books.some(b => b.bookType === 'book.type.legal' && b.partnerCode === 'ASH')).toBe(true);
+    const bookView = buildPerBookTypeAccountingView(books.find(b => b.partnerCode === 'ASH'));
+    expect(bookView).not.toBeNull();
+    expect(validateOpsAccountingViewShape(bookView)).toEqual([]);
+    expect(bookView!.conceptIds.dimension).toBe('ops.view.per_book_type');
+
+    const chrome = buildPartnerSoftPlayChrome(enriched, 'ASH');
+    expect(chrome!.byBookType.length).toBeGreaterThan(0);
+    expect(chrome!.bookConceptId).toBe('ops.view.per_book_type');
   });
 });

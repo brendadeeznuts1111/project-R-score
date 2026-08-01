@@ -199,6 +199,8 @@ describe('account dossier helpers', () => {
     expect(dossier.softPlays?.available).toBe(true);
     expect(dossier.softPlays?.conceptId).toBe('ops.view.per_play');
     expect(dossier.softPlays?.playCount).toBeGreaterThan(0);
+    expect(dossier.softPlays?.bookConceptId).toBe('ops.view.per_book_type');
+    expect(dossier.softPlays?.byBookType?.some(b => b.bookType === 'book.type.legal')).toBe(true);
     expect(dossier.links.softAccounting).toBe('/registry/soft-accounting-export.json');
   });
 
@@ -484,7 +486,7 @@ describe('account dossier portal wiring', () => {
     const card = await Bun.file(LIMIT_CARD).text();
     expect(history).toContain('/portal/account/?account=');
     expect(history).toContain('page.accountDossier');
-    expect(card).toContain('/portal/account/?account=${encodeURIComponent(c.node_id)}');
+    expect(card).toContain('/portal/account/?account=${encodeURIComponent(nodeId)}');
     expect(card).not.toContain('/portal/partner-history/?partner=${encodeURIComponent(c.node_id)}');
   });
 
@@ -510,13 +512,16 @@ describe('account dossier portal wiring', () => {
     expect(chrome?.weekConceptId).toBe('ops.view.per_week');
     expect(chrome?.plays.length).toBeGreaterThan(0);
     expect(chrome?.weeks.length).toBeGreaterThan(0);
+    expect(chrome?.byBookType?.length).toBeGreaterThan(0);
     expect(rollupWeeksFromPlays(soft.plays.filter(p => p.partnerCode === 'ASH')).length).toBe(
       chrome!.weeks.length
     );
 
     const html = await Bun.file(ACCOUNT_HTML).text();
     expect(html).toContain('Soft weeks');
+    expect(html).toContain('Soft book types');
     expect(html).toContain('soft-accounting-export.json');
     expect(html).toContain('ops.view.per_week');
+    expect(html).toContain('ops.view.per_book_type');
   });
 });

@@ -52,6 +52,7 @@ export const ACCOUNT_DOSSIER_GLOSSARY = Object.freeze({
   perAccount: 'ops.view.per_account',
   perPlay: 'ops.view.per_play',
   perWeek: 'ops.view.per_week',
+  perBookType: 'ops.view.per_book_type',
   accountSummary: 'ops.view.account_summary',
   accountDeposits: 'ops.view.account_deposits',
   accountSettlements: 'ops.view.account_settlements',
