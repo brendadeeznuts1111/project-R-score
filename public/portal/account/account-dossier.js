@@ -6,6 +6,8 @@
  *   query ?account= (form SSOT) · hash #account:{TreeNodeId} (limits pattern)
  */
 
+import { conceptIdForPartnerOpsEventCode } from './glossary-map.js';
+
 const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
 /** Call-sign only — avoids treating slug ids like LIMIT-DEMO-ATLANTIC as CODE LIMIT. */
 const CALL_SIGN_RE = /^([A-Z]{3,6})-\d{3}(?:-SUB\d{2}){0,2}$/;
@@ -328,8 +330,6 @@ export function buildDossierActivity(partnerRow, handshakeRow = null, telegram =
     : [];
   for (const event of ledger.slice(0, 20)) {
     const code = String(event?.code || 'event');
-    const receipt =
-      code.includes('DEPOSIT') || code.includes('SETTLEMENT') || code.includes('CREDIT');
     rows.push({
       at: String(event?.at || ''),
       kind: code,
@@ -339,9 +339,7 @@ export function buildDossierActivity(partnerRow, handshakeRow = null, telegram =
         .join(' · '),
       conceptId: event?.conceptId
         ? String(event.conceptId)
-        : receipt
-          ? 'telegram.message.receipt'
-          : 'partner.ops.event',
+        : conceptIdForPartnerOpsEventCode(code),
     });
   }
 

@@ -5,6 +5,7 @@ import {
   accountIdFromLocation,
   buildAccountDossier,
   buildAccountDossierHref,
+  buildDossierActivity,
   collectAccountIds,
   partnerCodeFromRef,
   resolveAccountId,
@@ -13,7 +14,14 @@ import {
 import {
   ACCOUNT_DOSSIER_GLOSSARY,
   ACCOUNT_DOSSIER_SECTIONS,
+  PARTNER_OPS_EVENT_CODE_CONCEPTS,
+  conceptIdForPartnerOpsEventCode,
 } from '../public/portal/account/glossary-map.js';
+import {
+  PARTNER_OPS_EVENT_CODES,
+  PARTNER_OPS_EVENT_GLOSSARY,
+} from '../lib/telegram/partner-ops-events.ts';
+import { conceptIdForPartnerOpsEvent } from '../lib/telegram/ops-accounting-view.ts';
 
 const ACCOUNT_HTML = 'public/portal/account/index.html';
 const LIMIT_CARD = 'public/portal/components/limit-changes-card.js';
@@ -57,6 +65,34 @@ describe('account dossier helpers', () => {
     expect(ACCOUNT_DOSSIER_GLOSSARY.perAccount).toBe('ops.view.per_account');
     expect(ACCOUNT_DOSSIER_GLOSSARY.accountDeposits).toBe('ops.view.account_deposits');
     expect(ACCOUNT_DOSSIER_GLOSSARY.msgCommand).toBe('telegram.message.command');
+  });
+
+  test('ledger activity maps codes to event.* (aligned with TS glossary)', () => {
+    expect(Object.keys(PARTNER_OPS_EVENT_CODE_CONCEPTS).sort()).toEqual(
+      [...PARTNER_OPS_EVENT_CODES].sort()
+    );
+    for (const code of PARTNER_OPS_EVENT_CODES) {
+      expect(PARTNER_OPS_EVENT_CODE_CONCEPTS[code]).toBe(PARTNER_OPS_EVENT_GLOSSARY[code]);
+      expect(conceptIdForPartnerOpsEventCode(code)).toBe(conceptIdForPartnerOpsEvent(code));
+    }
+    expect(conceptIdForPartnerOpsEventCode('UNKNOWN_CODE')).toBe('partner.ops.event');
+
+    const activity = buildDossierActivity({
+      code: 'ASH',
+      accounting: {
+        ledger: [
+          {
+            at: '2026-07-01T00:00:00.000Z',
+            code: 'DEPOSIT_RECEIVED',
+            amount: 100,
+            rail: 'venmo',
+          },
+        ],
+      },
+    });
+    expect(activity[0]?.kind).toBe('DEPOSIT_RECEIVED');
+    expect(activity[0]?.conceptId).toBe('event.deposit.received');
+    expect(activity[0]?.conceptId).not.toBe('telegram.message.receipt');
   });
 
   test('resolves CODE / call-sign seeds onto account ids', () => {
