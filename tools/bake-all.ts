@@ -21,7 +21,7 @@
  *   bun run bake:all -- --dry-run    # print commands without running
  *   bun run bake:all -- --only=capabilities,packages
  */
-import { resolveBunExecutable } from '../lib/bun-executable.ts';
+import { isModuleEntrypoint, resolveBunExecutable } from '../lib/bun-executable.ts';
 import { resolvePath } from '../scripts/lib/fs-bun';
 import { logTable } from '../lib/console-depth';
 

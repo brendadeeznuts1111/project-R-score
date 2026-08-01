@@ -17,6 +17,7 @@
  * No secrets required for bake (in-process mock). Optional:
  *   COMPLIANCE_URL — hit live mock instead of embed for shadow matrix
  */
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { bakeJsonEmbed } from '../lib/http/portal-embed-bake.ts';
 import { buildReportProofFromValue, type ReportProof } from '../lib/security/report-proof.ts';
@@ -407,6 +408,6 @@ async function main(): Promise<void> {
   if (!result.ok) process.exitCode = 1;
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   await main();
 }

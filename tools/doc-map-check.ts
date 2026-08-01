@@ -13,6 +13,7 @@
  *   bun tools/doc-map-check.ts --open        # open first broken target
  *   bun tools/doc-map-check.ts --json
  */
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { resolvePath, relativePath, dirnamePath } from '../lib/path-bun';
 import {
   CANONICAL_REPO_DOCS,
@@ -187,6 +188,6 @@ async function main(): Promise<void> {
   if (issues.length > 0) process.exitCode = 1;
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   await main();
 }

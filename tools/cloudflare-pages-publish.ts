@@ -12,6 +12,7 @@
  *
  * @see docs/harness/tenants/cloudflare-pages.md
  */
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { resolvePath } from '../lib/path-bun.ts';
 import { PROOF_TAXONOMY_CONTRACT_COUNT } from '../lib/verification/proof-taxonomy.ts';
 
@@ -84,7 +85,7 @@ async function main() {
   await run(['bun', 'tools/cloudflare-pages-deploy.ts', '--wait', '--verify', '--taxonomy']);
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   main().catch(e => {
     console.error(e instanceof Error ? e.message : e);
     process.exit(1);

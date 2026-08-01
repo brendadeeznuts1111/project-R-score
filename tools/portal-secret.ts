@@ -28,6 +28,7 @@
  *   bun tools/portal-cli.ts secret get 'pass://factorywager/Cloudflare API Token/password'
  *   bun run portal:secret autofill --vault factorywager -- bun run cloudflare:env:validate
  */
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 import { safeJsonParse } from '../lib/core/index.ts';
 import { isBunRuntimeEnvName } from '../lib/bun-runtime-env.ts';
@@ -938,7 +939,7 @@ async function main(): Promise<void> {
   await dispatchSecret(argv[0], argv.slice(1));
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   main().catch(err => {
     console.error(err instanceof Error ? err.message : err);
     process.exit(1);

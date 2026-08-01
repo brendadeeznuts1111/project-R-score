@@ -101,7 +101,7 @@ Sidebar cluster under [guides/util](https://bun.com/docs/guides/util/upgrade) (1
 | [upgrade](https://bun.com/docs/guides/util/upgrade) | `bun upgrade` / `--canary` / `--stable` / install-script pin | Operator / machine Bun pin in [UNIFIED.md](./UNIFIED.md) · `packageManager` · not app code | Ops only — no lib wrapper |
 | [version](https://bun.com/docs/guides/util/version) | `Bun.version` semver · `Bun.revision` git SHA | [`lib/time.ts`](../lib/time.ts) · [`lib/bun-executable.ts`](../lib/bun-executable.ts) `bunRuntimeProvenance` · Soft bake `--json` · capability / doctor rows | Implemented |
 | [main](https://bun.com/docs/guides/util/main) | `Bun.main` = abs path of process entry | `bunRuntimeProvenance().bunMain` · Soft `--json` | Implemented |
-| [entrypoint](https://bun.com/docs/guides/util/entrypoint) | `import.meta.main` CLI guard | [`isModuleEntrypoint`](../lib/bun-executable.ts) · Soft bake CLI · most tools still use bare `import.meta.main` (~220) | Implemented (shared helper); migrate call sites lazily |
+| [entrypoint](https://bun.com/docs/guides/util/entrypoint) | `import.meta.main` CLI guard | [`isModuleEntrypoint`](../lib/bun-executable.ts) · portal/bake CLIs (ratcheted) · `scripts/check-entrypoint-guards.ts` blocks new `path === Bun.main` in tools/ | Implemented (shared helper); migrate new CLIs to helper |
 | [which-path-to-executable-bin](https://bun.com/docs/guides/util/which-path-to-executable-bin) | `Bun.which(bin)` → abs path \| `null` | [`resolveBunExecutable`](../lib/bun-executable.ts) (PATH-keyed cache · never bare `"bun"`) · Soft `from-ct` spawn · portal-cli `pass-cli` which | Implemented |
 | [sleep](https://bun.com/docs/guides/util/sleep) | `await Bun.sleep(ms\|Date)` | [`lib/time.ts`](../lib/time.ts) `sleep` / `sleepSync` · telegram / ops rate limits | Implemented |
 | [detect-bun](https://bun.com/docs/guides/util/detect-bun) | `process.versions.bun` or `typeof Bun` | [`isRunningUnderBun`](../lib/bun-executable.ts) | Implemented |
@@ -121,7 +121,7 @@ Sidebar cluster under [guides/util](https://bun.com/docs/guides/util/upgrade) (1
 **Harness rules from this cluster**
 
 1. Nested `Bun.spawn` of bun → `resolveBunExecutable()` only (never bare `"bun"`). PATH-keyed cache is built in; Soft `from-ct` passes `env: { ...Bun.env }` (shallow copy, no parent mutate).
-2. CLI `if` guard → `isModuleEntrypoint(import.meta)` / `import.meta.main` (pass **caller** meta). Use `Bun.main` / `entrypointPath()` for the abs path string. No CJS `require.main` fallback (ESM-first). New tools/: prefer `isModuleEntrypoint(import.meta)`; ratchet `bun scripts/check-entrypoint-guards.ts` (blocks new `import.meta.path === Bun.main`).
+2. CLI `if` guard → **`isModuleEntrypoint(import.meta)`** (pass **caller's** `import.meta` — never a default param in helpers; equivalent to `import.meta.main` / `meta.path === Bun.main`). Use `Bun.main` / `entrypointPath()` for the abs path string. New/edited portal-adjacent CLIs in `tools/` and `scripts/bake-*` must use the helper; ratchet: `bun scripts/check-entrypoint-guards.ts`. New tools/: prefer `isModuleEntrypoint(import.meta)`; ratchet `bun scripts/check-entrypoint-guards.ts` (blocks new `import.meta.path === Bun.main`).
 3. Polling / retry delays → `sleep` / `sleepSync` in [`lib/time.ts`](../lib/time.ts) (`Bun.sleep`).
 4. HTML reports → `escapeHTML` wrapper; structural evidence compare → `deepEquals` wrapper.
 5. Password / API-key hashes → `SecurityUtils` / `Bun.password` (argon2id).

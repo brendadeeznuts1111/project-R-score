@@ -14,6 +14,7 @@
  * CI gate (no live vault): portal-cli vault health → tests/vault-health.test.ts
  * snapshots (inventory + report shape). Dashboard reflects bake; gate is snap.
  */
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { escapeHtml } from '../lib/escape-html.ts';
 import { buildVaultMapBundle } from '../lib/security/vault-map.ts';
@@ -178,6 +179,6 @@ async function main(): Promise<void> {
   }
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   await main();
 }

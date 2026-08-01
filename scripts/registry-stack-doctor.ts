@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files — --env-file
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { CLOUDFLARE_DEFAULTS, factoryWagerRegistryUrlFromEnv } from '../config/r2-env.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 import { fileExistsSync, joinPath, readText, resolvePath, writeText } from './lib/fs-bun';
@@ -215,7 +216,7 @@ async function runDoctor(options: Options) {
   };
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   const options = parseArgs(Bun.argv.slice(2));
   const result = await runDoctor(options);
   if (options.json) {

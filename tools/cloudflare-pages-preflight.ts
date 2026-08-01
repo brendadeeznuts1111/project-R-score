@@ -9,6 +9,7 @@
  * @see docs/harness/tenants/cloudflare-pages.md
  * @see lib/verification/cloudflare-pages-preflight.ts
  */
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import {
   runCloudflarePagesPreflight,
   saveCloudflarePagesPreflight,
@@ -40,7 +41,7 @@ async function main() {
   console.log(`   ${report.commands.deployVerify}`);
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   main().catch(e => {
     console.error(e instanceof Error ? e.message : e);
     process.exit(1);
