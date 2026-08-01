@@ -6,10 +6,13 @@ import {
   buildAccountDossier,
   buildAccountDossierHref,
   buildDossierActivity,
+  buildDossierSoftPlays,
   collectAccountIds,
   partnerCodeFromRef,
   resolveAccountId,
+  rollupWeeksFromPlays,
   sectionFromLocation,
+  weekStartIsoFromPlacedAt,
 } from '../public/portal/account/account-dossier.js';
 import {
   ACCOUNT_DOSSIER_GLOSSARY,
@@ -415,5 +418,28 @@ describe('account dossier portal wiring', () => {
     expect(PORTAL_PAGE_CONCEPT_DEFINITIONS.some(row => row.id === 'page.accountDossier')).toBe(
       true
     );
+  });
+
+  test('Soft dossier chrome derives weeks when export.weeks empty', async () => {
+    expect(ACCOUNT_DOSSIER_GLOSSARY.perPlay).toBe('ops.view.per_play');
+    expect(ACCOUNT_DOSSIER_GLOSSARY.perWeek).toBe('ops.view.per_week');
+    expect(weekStartIsoFromPlacedAt('2026-07-31T15:00:00.000Z')).toBe('2026-07-27');
+
+    const soft = await Bun.file('public/registry/soft-accounting-export.json').json();
+    expect(soft.weeks).toEqual([]);
+    const chrome = buildDossierSoftPlays(soft, 'ASH');
+    expect(chrome?.available).toBe(true);
+    expect(chrome?.conceptId).toBe('ops.view.per_play');
+    expect(chrome?.weekConceptId).toBe('ops.view.per_week');
+    expect(chrome?.plays.length).toBeGreaterThan(0);
+    expect(chrome?.weeks.length).toBeGreaterThan(0);
+    expect(rollupWeeksFromPlays(soft.plays.filter(p => p.partnerCode === 'ASH')).length).toBe(
+      chrome!.weeks.length
+    );
+
+    const html = await Bun.file(ACCOUNT_HTML).text();
+    expect(html).toContain('Soft weeks');
+    expect(html).toContain('soft-accounting-export.json');
+    expect(html).toContain('ops.view.per_week');
   });
 });

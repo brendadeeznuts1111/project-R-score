@@ -428,6 +428,14 @@
             <a href="/portal/glossary/#glossary:ops.view.account_deposits" data-glossary-concept="ops.view.account_deposits"
               >ops.view.account_deposits</a
             >
+            · Soft plays
+            <a href="/portal/glossary/#glossary:ops.view.per_play" data-glossary-concept="ops.view.per_play"
+              >ops.view.per_play</a
+            >
+            · Soft weeks
+            <a href="/portal/glossary/#glossary:ops.view.per_week" data-glossary-concept="ops.view.per_week"
+              >ops.view.per_week</a
+            >
             · events stay
             <a href="/portal/glossary/#glossary:accounting.deposit" data-glossary-concept="accounting.deposit"
               >accounting.deposit</a
@@ -777,10 +785,70 @@
 
         const acctView = dossier.accountingView;
         const acct = dossier.accounting;
+        const soft = dossier.softPlays;
+        const softPlayBlock = (() => {
+          if (soft?.available && soft.plays?.length) {
+            const playRows = soft.plays
+              .map(
+                p =>
+                  `<tr data-glossary-concept="${soft.conceptId || G.perPlay}">
+                <td class="ad-meta">${esc(p.placedAt || '—')}</td>
+                <td><code>${esc(p.playId || '—')}</code></td>
+                <td>${esc(p.market || '—')}</td>
+                <td>${esc(p.result || '—')}</td>
+                <td>${esc(p.stake)}</td>
+                <td>${esc(p.pnl ?? '—')}</td>
+              </tr>`
+              )
+              .join('');
+            const weekRows = (soft.weeks || [])
+              .slice(0, 8)
+              .map(
+                w =>
+                  `<tr data-glossary-concept="${soft.weekConceptId || G.perWeek}">
+                <td><code>${esc(w.weekStart || '—')}</code></td>
+                <td>${esc(w.deposits)}</td>
+                <td>${esc(w.settlements)}</td>
+                <td><strong>${esc(w.net)}</strong></td>
+              </tr>`
+              )
+              .join('');
+            const weekBlock = weekRows
+              ? `<h3 style="margin:16px 0 8px;font-size:0.95rem">
+              <a class="semantic-label" href="${accountDossierGlossaryHref(soft.weekConceptId || G.perWeek)}" data-glossary-concept="${soft.weekConceptId || G.perWeek}">Soft weeks</a>
+              <span class="ad-meta"> · derived from plays when export.weeks empty</span>
+            </h3>
+            <table class="ad-table" data-glossary-concept="${soft.weekConceptId || G.perWeek}"><thead><tr>
+              <th>Week (UTC Mon)</th><th>Stake Σ</th><th>|P&amp;L| settled</th><th>Net</th>
+            </tr></thead><tbody>${weekRows}</tbody></table>`
+              : '';
+            return `
+            <h3 style="margin:16px 0 8px;font-size:0.95rem">
+              <a class="semantic-label" href="${accountDossierGlossaryHref(soft.conceptId || G.perPlay)}" data-glossary-concept="${soft.conceptId || G.perPlay}">Soft plays</a>
+              <span class="ad-meta"> · ${esc(soft.playCount)} · source ${esc(soft.source)}</span>
+            </h3>
+            <table class="ad-table" data-glossary-concept="${soft.conceptId || G.perPlay}"><thead><tr>
+              <th>When</th><th>Play</th><th>Market</th><th>Result</th><th>Stake</th><th>P&amp;L</th>
+            </tr></thead><tbody>${playRows}</tbody></table>
+            ${weekBlock}
+            <p class="ad-meta" style="margin-top:8px">Read-only Soft export — Soft Balance stays in toc-ops <code>ct</code>.</p>`;
+          }
+          if (soft && dossier.partnerCode) {
+            return `
+            <p class="ad-empty" style="margin-top:12px" data-glossary-concept="${G.perPlay || 'ops.view.per_play'}">
+              No Soft plays for <code>${esc(dossier.partnerCode)}</code> in
+              <a href="${esc(dossier.links.softAccounting)}" data-glossary-concept="${G.perPlay || 'ops.view.per_play'}">soft-accounting-export</a>
+              (${esc(soft.source || 'unavailable')}).
+            </p>`;
+          }
+          return '';
+        })();
         if (!acctView && !acct) {
-          $('ad-accounting').innerHTML = dossier.partnerCode
-            ? `<p class="ad-empty">No accounting slice for CODE <code>${esc(dossier.partnerCode)}</code> in partners-ops.</p>`
-            : '<p class="ad-empty">No partner CODE resolved — accounting unavailable.</p>';
+          $('ad-accounting').innerHTML = `${
+            dossier.partnerCode
+              ? `<p class="ad-empty">No accounting slice for CODE <code>${esc(dossier.partnerCode)}</code> in partners-ops.</p>`
+              : '<p class="ad-empty">No partner CODE resolved — accounting unavailable.</p>'
+          }${softPlayBlock}`;
         } else {
           const ids = acctView?.conceptIds || {};
           const summary = acctView?.summary || {};
@@ -809,7 +877,8 @@
             <div class="ad-actions">
               <a href="${esc(dossier.links.partnersAccounting)}" data-glossary-concept="${G.accounting}">Open partners accounting</a>
               <a href="${accountDossierGlossaryHref(ids.dimension || G.perAccount)}" data-glossary-concept="${ids.dimension || G.perAccount}">ops.view.per_account</a>
-            </div>`;
+              <a href="${esc(dossier.links.softAccounting)}" data-glossary-concept="${G.perPlay || 'ops.view.per_play'}">soft-accounting-export.json</a>
+            </div>${softPlayBlock}`;
         }
 
         const activity = dossier.activity || [];
@@ -850,10 +919,11 @@
         const hours = Number(url.searchParams.get('hours') || $('ad-hours').value || 168);
         $('ad-hours').value = String([24, 48, 168, 720].includes(hours) ? hours : 168);
 
-        const [limitRaises, partnersOps, handshake] = await Promise.all([
+        const [limitRaises, partnersOps, handshake, softAccounting] = await Promise.all([
           loadJson('/registry/limit-raises.json'),
           loadJson('/registry/partners-ops.json'),
           loadJson('/registry/telegram-handshake.json'),
+          loadJson('/registry/soft-accounting-export.json'),
         ]);
 
         const ids = collectAccountIds(limitRaises || {});
@@ -883,6 +953,7 @@
             limitRaises: limitRaises || {},
             partnersOps,
             handshake,
+            softAccounting,
             hours: nextHours,
           });
           renderDossier(dossier);
