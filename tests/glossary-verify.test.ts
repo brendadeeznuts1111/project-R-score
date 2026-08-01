@@ -11,6 +11,7 @@ import {
   scrapeElementIds,
   verifyDomIds,
   verifySectionHashes,
+  verifySectionTitles,
   type GlossaryBake,
 } from '../tools/glossary-verify.ts';
 
@@ -78,6 +79,34 @@ describe('glossary-verify', () => {
     expect(skip.hashOk + skip.hashFail).toBe(0);
   });
 
+  test('verifySectionTitles requires non-empty title on bake mounts', () => {
+    const ok = verifySectionTitles([
+      {
+        path: '/portal/limits/',
+        sections: [
+          { hash: 'a', domId: 'a', title: 'Account control' },
+          { hash: 'b', domId: 'b', title: '  Prediction  ' },
+        ],
+      },
+    ]);
+    expect(ok.titleOk).toBe(2);
+    expect(ok.titleFail).toBe(0);
+
+    const bad = verifySectionTitles([
+      {
+        path: '/portal/limits/',
+        sections: [
+          { hash: 'a', domId: 'a', title: 'Ok' },
+          { hash: 'b', domId: 'b' },
+          { hash: 'c', domId: 'c', title: '   ' },
+        ],
+      },
+    ]);
+    expect(bad.titleOk).toBe(1);
+    expect(bad.titleFail).toBe(2);
+    expect(bad.failures.some(f => f.includes('#b'))).toBe(true);
+  });
+
   test('verifyDomIds reports missing-id, missing-file, and duplicates', async () => {
     const tmp = joinPath(ROOT, '.tmp-glossary-verify-test');
     await Bun.$`rm -rf ${tmp}`.quiet();
@@ -137,12 +166,29 @@ describe('glossary-verify', () => {
       surfaces: [
         {
           path: '/portal/limits/',
-          sections: [{ hash: 'nope', domId: 'this-id-does-not-exist-xyz' }],
+          sections: [
+            { hash: 'nope', domId: 'this-id-does-not-exist-xyz', title: 'Nope' },
+          ],
         },
       ],
     };
     const result = await runGlossaryVerify({ root: ROOT, glossary: bake, json: false });
     expect(result.dom.domFail).toBe(1);
+    expect(result.exitCode).toBe(1);
+  });
+
+  test('runGlossaryVerify exits 1 when section title missing', async () => {
+    const bake: GlossaryBake = {
+      schemaVersion: 3,
+      surfaces: [
+        {
+          path: '/portal/limits/',
+          sections: [{ hash: 'account-control', domId: 'account-control' }],
+        },
+      ],
+    };
+    const result = await runGlossaryVerify({ root: ROOT, glossary: bake, json: false });
+    expect(result.titles?.titleFail).toBe(1);
     expect(result.exitCode).toBe(1);
   });
 
@@ -164,7 +210,13 @@ describe('glossary-verify', () => {
       surfaces: [
         {
           path: '/portal/partners/',
-          sections: [{ hash: 'telegram', domId: 'section:telegram' }],
+          sections: [
+            {
+              hash: 'telegram',
+              domId: 'section:telegram',
+              title: 'Telegram package groups',
+            },
+          ],
         },
       ],
     };
@@ -172,7 +224,8 @@ describe('glossary-verify', () => {
     const loose = await runGlossaryVerify({ root: tmp, glossary: bake, json: false, strict: false });
     expect(loose.dom.sectionOrphans.length).toBe(1);
     expect(loose.dom.chromeOrphans).toBeGreaterThan(0);
-    expect(loose.exitCode).toBe(0); // WARN only
+    expect(loose.titles?.titleFail ?? 0).toBe(0);
+    expect(loose.exitCode).toBe(0); // WARN only (orphan, not fail)
 
     const strict = await runGlossaryVerify({ root: tmp, glossary: bake, json: false, strict: true });
     expect(strict.exitCode).toBe(1);
