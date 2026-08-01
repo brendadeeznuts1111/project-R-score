@@ -92,6 +92,16 @@ Workspace runtime knobs for gates / spawn chains (not install-machine SSOT). See
 | DX one-liners | `bun run dx:catalog` |
 | Wire / brands | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) |
 
+## Runtime env guides
+
+Sidebar under [runtime/environment-variables](https://bun.com/docs/runtime/environment-variables). Infra only — **no glossary**.
+
+| Guide | Behavior | Factory |
+|-------|----------|---------|
+| [read-env](https://bun.com/docs/guides/runtime/read-env) | Auto `.env` / `.env.$NODE_ENV` / `.env.local`; read via `Bun.env` | Prefer `Bun.env`; vault → `.env` via `proton:inject` / `portal secret run` — **no** harness `dotenv` |
+| [set-env](https://bun.com/docs/guides/runtime/set-env) | CLI / `process.env.FOO = …` | Nested spawn `{ ...Bun.env }` (shallow copy); never mutate parent |
+| [environment-variables](https://bun.com/docs/runtime/environment-variables) | `--env-file` · `--no-env-file` · bunfig `env = false` · expansion / quotes | `config/runtime-flags.json` · [`lib/bun-runtime-env.ts`](../lib/bun-runtime-env.ts) · [`lib/env-check.ts`](../lib/env-check.ts) · doctor `--group runtime` |
+
 ## Utilities guides map
 
 Sidebar cluster under [guides/util](https://bun.com/docs/guides/util/upgrade) (19 pages). Behavior → Factory owner → status.

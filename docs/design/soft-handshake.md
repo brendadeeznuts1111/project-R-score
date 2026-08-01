@@ -26,7 +26,7 @@ Factory view concept ids for internal calculations.
 |-------|--------------------------|------------------|
 | Per-play | Play / wager ledger rows (stake, odds, result, settledAt) | `buildPerPlayAccountingView` → `ops.view.per_play` · dossier Soft plays · partners Soft plays table |
 | Per-week | Soft `weeks[]` when tagged; else Factory `rollupWeeksFromPlays` | `buildPerWeekAccountingView` → `ops.view.per_week` |
-| Per-book-type | Rows tagged with Soft book class | Filter onto shipped `book.type.*` × `accounting.*` (still empty in v1) |
+| Per-book-type | Soft-authored `bookType` on plays (+ Soft `byBookType[]`) | `buildPerBookTypeAccountingView` → `ops.view.per_book_type` |
 | Per-account (today) | Soft may enrich; Factory already sums partners-ops deposits/credits/ledger | `buildPerAccountAccountingView` (shipped) |
 
 Wire shape (Factory-side, already gated): `type` + required key
@@ -77,7 +77,7 @@ Presentation chrome (`ops.view.*`, `telegram.message.*`) is Factory-only.
 Committed demo bake uses `source: "toc-ops-fixture"`. Soft live export:
 
 ```bash
-# in toc-ops-repo (needs DATA_MODEL tip ≥ 2.30 — toc-ops#202)
+# in toc-ops-repo (needs DATA_MODEL tip ≥ 2.31 — Soft-authored odds/book_type)
 bun run ct soft-accounting-export --out ../public/registry/soft-accounting-export.json
 # or from FactoryWager root / worktree (resolves bun via Bun.which; Soft via TOC_OPS_REPO or git sibling)
 bun run soft:accounting:from-ct
@@ -87,20 +87,21 @@ bun run soft:accounting:from-ct
 `partners:governance` → `soft:accounting:check` accepts either exact fixture match
 or a schema-valid non-empty `source: "soft-ct"` bake (0 plays fails check and
 `soft:accounting:from-ct` unless `--force`; restore fixture with
-`bun run soft:accounting:bake`). Odds are `0` until Soft stores them (on live Soft
-export; fixture may carry odds from toc-ops demo plays).
+`bun run soft:accounting:bake`). Soft ≥ 2.31 authors per-play `odds` + `bookType`
+on the wire; fixture may still carry odds from toc-ops demo plays.
 
-`weeks[]` / `byBookType[]` may ship empty from Soft; Factory derives week rollups from
-plays (`ops.view.per_week`) and book-type rollups from tagged plays
-(`ops.view.per_book_type`). Fixture bake stamps partner primary-out `book.type.*`
-from partners-ops when Soft plays omit `bookType`. Soft-authored venue tags remain
-the live path. Soft DB tip ≥ 2.30 before `soft:accounting:from-ct` succeeds.
+`finalizeSoftAccountingExport` is the Factory choke point after Soft write:
+- **soft-ct** — normalize Soft-authored bookType/odds; fill empty `weeks` /
+  `byBookType` via `rollupWeeksFromPlays` / `rollupByBookTypeFromPlays`. Never
+  partners-ops enrich (Soft owns venue tags).
+- **toc-ops-fixture** — partners-ops primary-out enrich when Soft plays omit
+  `bookType` (demo only).
 
 ## Exit criteria (remaining)
 
 1. Promote registry bake with `bun run soft:accounting:from-ct` when Soft DB
    has plays (`source: "soft-ct"`) — empty soft-ct is rejected without `--force`.
-2. Soft should eventually write per-play `bookType` (and odds); Factory already
-   shapes `ops.view.per_book_type` without new glossary mints.
+2. Soft DATA_MODEL ≥ 2.31 lands Soft-authored odds/`book_type` columns + export
+   classifier; Factory consumes via `finalizeSoftAccountingExport` (no new glossary).
 3. Local proof: `bun run partners:governance` + lane tests; merge authority
    remains `bun run bun:ci` (GitHub Actions is not a gate).

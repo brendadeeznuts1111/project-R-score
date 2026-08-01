@@ -7,6 +7,7 @@ import {
   buildPerPlayAccountingView,
   buildPerWeekAccountingView,
   enrichSoftExportWithPartnerBookTypes,
+  finalizeSoftAccountingExport,
   indexSoftPlaysByPartner,
   loadSoftAccountingExport,
   playsForPartner,
@@ -16,9 +17,52 @@ import {
   softBookTypeConceptId,
   unavailableSoftAccountingExport,
   weekStartIsoFromPlacedAt,
+  type SoftAccountingExport,
+  type SoftAccountingPlayRow,
 } from '../lib/telegram/soft-accounting-export.ts';
 import { validateOpsAccountingViewShape } from '../lib/telegram/ops-accounting-view.ts';
 import type { TocOpsSnapshot } from '../lib/toc-ops/types.ts';
+
+/** Live Soft-ct play shape after Soft softAuthoredOdds / softAuthoredBookType. */
+function softCtPlays(): SoftAccountingPlayRow[] {
+  return [
+    {
+      playId: 'epr-ash-1',
+      partnerCode: 'ASH',
+      stake: 1000,
+      odds: -110,
+      result: 'win',
+      pnl: 909.09,
+      placedAt: '2026-07-17T19:10:00.000Z',
+      settledAt: '2026-07-18T02:00:00.000Z',
+      bookType: 'book.type.legal',
+      market: 'NFL moneyline',
+    },
+    {
+      playId: 'epr-ash-2',
+      partnerCode: 'ASH',
+      stake: 500,
+      odds: -105,
+      result: 'loss',
+      pnl: -500,
+      placedAt: '2026-07-18T15:00:00.000Z',
+      settledAt: '2026-07-18T22:00:00.000Z',
+      bookType: 'legal', // Soft may emit short token; Factory normalizes to book.type.legal
+      market: 'NBA spread',
+    },
+    {
+      playId: 'epr-pat-1',
+      partnerCode: 'PAT',
+      stake: 250,
+      odds: 150,
+      result: 'pending',
+      pnl: null,
+      placedAt: '2026-07-20T12:00:00.000Z',
+      bookType: 'book.type.crypto',
+      market: 'MLB total',
+    },
+  ];
+}
 
 describe('soft-accounting-export wire', () => {
   test('unavailable stub is schema-valid and empty', () => {
@@ -126,5 +170,65 @@ describe('soft-accounting-export wire', () => {
     const chrome = buildPartnerSoftPlayChrome(enriched, 'ASH');
     expect(chrome!.byBookType.length).toBeGreaterThan(0);
     expect(chrome!.bookConceptId).toBe('ops.view.per_book_type');
+  });
+
+  test('rollupByBookTypeFromPlays aggregates Soft-authored live play shapes', () => {
+    const plays = softCtPlays().map(p => ({
+      ...p,
+      bookType: softBookTypeConceptId(p.bookType) ?? p.bookType,
+    }));
+    const books = rollupByBookTypeFromPlays(plays);
+    const ashLegal = books.find(b => b.partnerCode === 'ASH' && b.bookType === 'book.type.legal');
+    expect(ashLegal).toBeDefined();
+    expect(ashLegal!.deposits).toBe(1500);
+    expect(ashLegal!.settlements).toBeCloseTo(909.09 + 500, 2);
+    expect(ashLegal!.net).toBeCloseTo(909.09 - 500, 2);
+
+    const patCrypto = books.find(b => b.partnerCode === 'PAT' && b.bookType === 'book.type.crypto');
+    expect(patCrypto).toBeDefined();
+    expect(patCrypto!.deposits).toBe(250);
+    expect(patCrypto!.settlements).toBe(0); // pending
+    expect(patCrypto!.net).toBe(0);
+
+    const view = buildPerBookTypeAccountingView(ashLegal);
+    expect(view).not.toBeNull();
+    expect(validateOpsAccountingViewShape(view)).toEqual([]);
+    expect(view!.conceptIds.dimension).toBe('ops.view.per_book_type');
+    expect(view!.summary.deposits).toBe(1500);
+    expect(view!.summary.net).toBeCloseTo(409.09, 2);
+  });
+
+  test('finalizeSoftAccountingExport soft-ct rolls weeks/byBookType without partners-ops enrich', () => {
+    const raw: SoftAccountingExport = {
+      schema: SOFT_ACCOUNTING_EXPORT_SCHEMA,
+      version: '1',
+      generatedAt: '2026-07-31T18:00:00.000Z',
+      source: 'soft-ct',
+      available: true,
+      path: '/registry/soft-accounting-export.json',
+      plays: softCtPlays(),
+      weeks: [],
+      byBookType: [],
+    };
+    const finalized = finalizeSoftAccountingExport(raw, {
+      // Must be ignored for soft-ct — Soft authors bookType; no fixture enrich.
+      partnerBookTypeByCode: { ASH: 'book.type.offshore', PAT: 'book.type.pph' },
+    });
+    expect(finalized.source).toBe('soft-ct');
+    expect(finalized.plays.find(p => p.playId === 'epr-ash-1')?.bookType).toBe('book.type.legal');
+    expect(finalized.plays.find(p => p.playId === 'epr-ash-2')?.bookType).toBe('book.type.legal');
+    expect(finalized.plays.find(p => p.playId === 'epr-ash-1')?.odds).toBe(-110);
+    expect(finalized.plays.find(p => p.playId === 'epr-pat-1')?.bookType).toBe('book.type.crypto');
+    expect(finalized.weeks.length).toBeGreaterThan(0);
+    expect(finalized.byBookType.some(b => b.bookType === 'book.type.legal' && b.partnerCode === 'ASH')).toBe(
+      true
+    );
+    expect(finalized.byBookType.some(b => b.bookType === 'book.type.offshore')).toBe(false);
+
+    const chrome = buildPartnerSoftPlayChrome(finalized, 'ASH');
+    expect(chrome!.available).toBe(true);
+    expect(chrome!.bookConceptId).toBe('ops.view.per_book_type');
+    expect(chrome!.byBookType.some(b => b.bookType === 'book.type.legal')).toBe(true);
+    expect(chrome!.plays.some(p => p.odds === -110)).toBe(true);
   });
 });
