@@ -1,5 +1,6 @@
 // @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern components
 // @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — pathname vs hash matching
+// @see https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster — test/exec fast paths
 /**
  * Portal URL planes — separate URLPattern components so host/path/API/hash
  * never collapse into one router.
@@ -71,17 +72,40 @@ export function classifyPortalPathname(
   return 'other';
 }
 
+/**
+ * Compile once at module load. Classification uses `test()`; consumers that
+ * need a captured value use the matching `exec()` helper below.
+ */
 const sectionPattern = new URLPattern(PORTAL_SECTION_HASH_INIT);
 const glossaryConceptPattern = new URLPattern(PORTAL_GLOSSARY_CONCEPT_HASH_INIT);
 const partnerPatterns = Object.values(PARTNER_HASH_PATTERN_INITS).map(init => new URLPattern(init));
+
+function cleanPortalHash(hash: string): string {
+  return hash.replace(/^#/, '');
+}
+
+/** Fast boolean check for `#section:{hash}` without allocating match groups. */
+export function isPortalSectionHash(hash: string): boolean {
+  return sectionPattern.test({ hash: cleanPortalHash(hash) });
+}
+
+/** Extract the section group only when a consumer needs it. */
+export function portalSectionFromHash(hash: string): string | undefined {
+  return sectionPattern.exec({ hash: cleanPortalHash(hash) })?.hash.groups.section;
+}
+
+/** Extract the glossary concept group only when a consumer needs it. */
+export function portalGlossaryConceptFromHash(hash: string): string | undefined {
+  return glossaryConceptPattern.exec({ hash: cleanPortalHash(hash) })?.hash.groups.concept;
+}
 
 /** Classify `location.hash` (with or without `#`). Server never sees this plane. */
 export function classifyPortalHash(
   hash: string
 ): Extract<PortalUrlPlane, 'hash-section' | 'hash-partner' | 'hash-glossary' | 'empty' | 'other'> {
-  const clean = hash.replace(/^#/, '');
+  const clean = cleanPortalHash(hash);
   if (!clean) return 'empty';
-  if (sectionPattern.test({ hash: clean })) return 'hash-section';
+  if (isPortalSectionHash(clean)) return 'hash-section';
   if (glossaryConceptPattern.test({ hash: clean })) return 'hash-glossary';
   for (const pattern of partnerPatterns) {
     if (pattern.test({ hash: clean })) return 'hash-partner';

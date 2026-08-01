@@ -252,6 +252,7 @@ const CATEGORY_BY_TYPE: Readonly<Record<string, string>> = {
   output: 'Runtime',
   perf: 'Runtime',
   pkg: 'Package',
+  routing: 'Runtime',
   runtime: 'Runtime',
   secrets: 'Secrets',
   security: 'Governance',

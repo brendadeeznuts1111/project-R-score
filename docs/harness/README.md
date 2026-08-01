@@ -79,7 +79,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - `bun-shell-boundaries` → `bun test tests/fixtures/bun-shell/`
 - `fs-native-boundaries` → `bun test tests/fs-bun.test.ts tests/bun-glob-scan.test.ts`
 - `security-hash-boundaries` → `bun test tests/fixtures/security-hash/`
-- `url-pattern-boundaries` → `bun test tests/bun-site-url.test.ts`
+- `url-pattern-boundaries` → `bun test tests/bun-urlpattern.test.ts tests/bun-site-url.test.ts tests/factory-production.test.ts tests/portal-url-planes.test.ts`
 - `social-metadata-boundaries` → `bun test tests/fixtures/social-metadata/`
 - `blog-extraction-boundaries` → `bun test tests/fixtures/blog-extraction/`
 - `fetch-page-boundaries` → `bun test tests/fixtures/fetch-page/`

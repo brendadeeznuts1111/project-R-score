@@ -26,6 +26,7 @@
 import type { PortalSemanticConceptKey } from './semantic-vocabulary.ts';
 import { isTelegramTopicSlug, type TelegramTopicSlug } from './partner-telegram-topics.ts';
 import { PARTNER_HASH_PATTERN_INITS } from './url-planes.ts';
+import { asDomId, type DomId } from '../types/branded/portal.ts';
 
 const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
 const OUT_ID_RE = /^out-[A-Z0-9-]+$/;
@@ -112,20 +113,20 @@ export function parsePartnerHash(hash: string): PartnerRoute | null {
 }
 
 /** DOM mount id for a parsed route (hash → anchor). */
-export function anchorDomId(route: PartnerRoute): string {
+export function anchorDomId(route: PartnerRoute): DomId {
   switch (route.type) {
     case 'partners':
-      return 'partner-panel';
+      return asDomId('partner-panel');
     case 'partner':
-      return `partner-detail-${route.code}`;
+      return asDomId(`partner-detail-${route.code}`);
     case 'out':
-      return `out-card-${route.outId}`;
+      return asDomId(`out-card-${route.outId}`);
     case 'accounting':
-      return 'accounting-ledger';
+      return asDomId('accounting-ledger');
     case 'telegram':
-      return 'telegram-thread';
+      return asDomId('telegram-thread');
     case 'book':
-      return `book-card-${route.bookId}`;
+      return asDomId(`book-card-${route.bookId}`);
   }
 }
 

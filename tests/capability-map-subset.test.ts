@@ -186,6 +186,9 @@ describe('capability-map-subset parse', () => {
       );
     }
     expect(rows.filter(row => row.capability === 'Debugger')).toHaveLength(1);
+    expect(rows.find(row => row.capability === 'URLPattern portal routing')?.category).toBe(
+      'Runtime'
+    );
     expect(rows.some(row => row.capability === 'Runtime inspect')).toBe(false);
     expect(rows.every(r => !/\bitem get\b/i.test(r.api))).toBe(true);
     for (const row of rows) assertApiIntegrity(row);
