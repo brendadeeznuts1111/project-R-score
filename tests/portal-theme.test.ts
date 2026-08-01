@@ -5,10 +5,12 @@ import { portalTheme, renderThemeTokensCss } from '../lib/portal/theme.ts';
 
 describe('portal theme (jsonc loader)', () => {
   test('theme.jsonc loads with comments stripped', () => {
-    expect(portalTheme.version).toBe('1.1.0');
+    expect(portalTheme.version).toBe('1.2.0');
     expect(portalTheme.colorSchemeDefault).toBe('dark');
     expect(portalTheme.dark.bg).toBe('#0d1117');
     expect(portalTheme.light.accent).toBe('#0969da');
+    expect(portalTheme.card.accent).toBe('#0969da');
+    expect(portalTheme.card.healthOk).toBe('#1a7f37');
     expect(portalTheme.brand.name).toBe('FactoryWager');
     expect(portalTheme.tones.ok).toBe('var(--green)');
     expect(portalTheme.layout.padInline).toContain('clamp(');
