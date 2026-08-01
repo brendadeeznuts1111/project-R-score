@@ -157,6 +157,7 @@ Balance / per-play ledgers stay in `toc-ops-repo`.
 | `telegram.message.{incoming,outgoing,alert,command,receipt}` | Book-type deposit/settlement/fee rollups |
 | `telegram.status.{delivered,failed}` · `telegram.action.{reply,forward,pin}` | `telegram.status.read` · `ops.view.account_fees` · `account_high_water` |
 | Pure helper [`lib/telegram/ops-accounting-view.ts`](../../../lib/telegram/ops-accounting-view.ts) + `partners:validate` per-account checks | Full `AccountingView` registry bake for per_play / per_week / per_book_type |
+| Dossier + partners ledger: event codes → `event.*` via [`partner-ops-event-concepts.js`](../../../public/portal/components/partner-ops-event-concepts.js) | Soft MessageLog / play ledger surfaces |
 
 Authority: [`lib/telegram/ops-view-glossary.ts`](../../../lib/telegram/ops-view-glossary.ts) · bake `bun run glossary:portal`.
 
