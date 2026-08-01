@@ -20,18 +20,14 @@
  * @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
  */
 
-import {
-  inspectCustom,
-  inspectTable as inspectTableCore,
-  shouldColor,
-  widthOf,
-} from '../console-depth.ts';
+import { stringWidth } from 'bun';
+import { inspectCustom, inspectTable as inspectTableCore, shouldColor } from '../console-depth.ts';
 import { BUN_DEEP_EQUALS_DOCS, deepEquals } from '../deep-equals.ts';
 import type { HealthRouteObjects, PublicRouteDef } from './public-routes.ts';
 
 export { BUN_DEEP_EQUALS_DOCS };
 
-/** Canonical docs locus for Bun.stringWidth (via {@link widthOf}). */
+/** Canonical docs locus for Bun.stringWidth (`import { stringWidth } from 'bun'`). */
 export const BUN_STRING_WIDTH_DOCS = 'https://bun.com/docs/runtime/utils#bun-stringwidth';
 
 /** Explicit Bun.inspect.table `properties` for route probe tables (--routes). */
@@ -99,10 +95,10 @@ export function tableColumnWidths(
 ): TableColumnWidths {
   const widths: TableColumnWidths = {};
   for (const prop of properties) {
-    let max = widthOf(String(prop));
+    let max = stringWidth(String(prop));
     for (const row of rows) {
       const cell = row[prop];
-      max = Math.max(max, widthOf(cell == null ? '' : String(cell)));
+      max = Math.max(max, stringWidth(cell == null ? '' : String(cell)));
     }
     widths[prop] = max;
   }

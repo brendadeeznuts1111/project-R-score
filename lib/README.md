@@ -30,7 +30,8 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | Install | [`../docs/UNIFIED.md`](../docs/UNIFIED.md) |
 | Wire | [`../docs/WIRE_BOUNDARY.md`](../docs/WIRE_BOUNDARY.md) |
 | Brands | [`types/branded/README.md`](./types/branded/README.md) |
-| Console depth | [`console-depth.ts`](./console-depth.ts) |
+| Console depth | [`console-depth.ts`](./console-depth.ts) · note [`console-depth.md`](./console-depth.md) |
+| Bun runtime hub (CLI · depth · utilities) | [`bun-runtime.md`](./bun-runtime.md) · flags [`../config/runtime-flags.json`](../config/runtime-flags.json) |
 | Terminal / PTY | [`terminal.ts`](./terminal.ts) |
 | Deep equals | [`deep-equals.ts`](./deep-equals.ts) |
 | Peek settle | [`peek-settle.ts`](./peek-settle.ts) |
@@ -45,7 +46,7 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 |--------|---------|
 | [`index.ts`](./index.ts) | Public barrel (`LIB_INFO`, `FW`) |
 | [`path-bun.ts`](./path-bun.ts) | Bun-native path helpers (ratchet: no `node:path` in `lib/`) |
-| [`console-depth.ts`](./console-depth.ts) | Inspect depth SSOT (`--console-depth` / `BUN_CONSOLE_DEPTH`) |
+| [`console-depth.ts`](./console-depth.ts) | Inspect depth SSOT · hub [`bun-runtime.md`](./bun-runtime.md) · note [`console-depth.md`](./console-depth.md) |
 | [`terminal.ts`](./terminal.ts) | `Bun.Terminal` PTY helpers (`spawnWithTerminal`) |
 | [`deep-equals.ts`](./deep-equals.ts) | `Bun.deepEquals` · strict · changed-index |
 | [`peek-settle.ts`](./peek-settle.ts) | `Bun.peek` · `awaitSettled` · `awaitAllSettled` · `peekIfSettled` |

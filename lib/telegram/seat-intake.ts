@@ -1,6 +1,6 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
-// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth (via fitVisible / widthOf)
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth (via fitVisible / Bun.stringWidth)
 /**
  * Seat intake model — record types, parsing, normalization, and pure desk helpers.
  *
@@ -10,11 +10,12 @@
  * re-exports everything here for backward compatibility.
  *
  * **Bun natives (legacy pre path only)**
- * - [`fitVisible` / `widthOf`](../console-depth.ts) → [`Bun.stringWidth`](https://bun.com/docs/runtime/utils#bun-stringwidth)
+ * - [`fitVisible`](../console-depth.ts) · [`stringWidth`](https://bun.com/docs/runtime/utils#bun-stringwidth) from `bun`
  *   for column pad/truncate (emoji / wide chars).
  * - [`Bun.file`](https://bun.com/docs/runtime/file-io#reading-files-bun-file) for intake JSON under `reports/telegram/seat-intake/`.
  */
-import { fitVisible, widthOf } from '../console-depth.ts';
+import { stringWidth } from 'bun';
+import { fitVisible } from '../console-depth.ts';
 import { joinPath } from '../path-bun.ts';
 import { bold, escapeHtml } from './templates/escape.ts';
 
@@ -761,25 +762,35 @@ export function buildSeatOutDeskLines(record: SeatIntakeRecord): string[] {
 
   const wNum = Math.min(
     3,
-    Math.max(2, widthOf(SEAT_DESK_OUT_NUM_COL), ...rows.map(r => widthOf(r.num)))
+    Math.max(2, stringWidth(SEAT_DESK_OUT_NUM_COL), ...rows.map(r => stringWidth(r.num)))
   );
-  const wBook = Math.min(18, Math.max(4, widthOf('BOOK'), ...rows.map(r => widthOf(r.book))));
+  const wBook = Math.min(
+    18,
+    Math.max(4, stringWidth('BOOK'), ...rows.map(r => stringWidth(r.book)))
+  );
   const wUser = Math.min(
     10,
-    Math.max(8, widthOf('USERNAME'), ...rows.map(r => widthOf(r.username)))
+    Math.max(8, stringWidth('USERNAME'), ...rows.map(r => stringWidth(r.username)))
   );
   const wRail = Math.min(
     12,
-    Math.max(7, widthOf(SEAT_DESK_DEPOSIT_METHOD_COL), ...rows.map(r => widthOf(r.rail)))
+    Math.max(7, stringWidth(SEAT_DESK_DEPOSIT_METHOD_COL), ...rows.map(r => stringWidth(r.rail)))
   );
-  const wSend = Math.min(12, Math.max(7, widthOf('SEND TO'), ...rows.map(r => widthOf(r.sendTo))));
+  const wSend = Math.min(
+    12,
+    Math.max(7, stringWidth('SEND TO'), ...rows.map(r => stringWidth(r.sendTo)))
+  );
   const wMaxBet = Math.min(
     8,
-    Math.max(7, widthOf(SEAT_DESK_MAX_BET_COL), ...rows.map(r => widthOf(r.maxBet)))
+    Math.max(7, stringWidth(SEAT_DESK_MAX_BET_COL), ...rows.map(r => stringWidth(r.maxBet)))
   );
   const wFreeplay = Math.min(
     8,
-    Math.max(7, widthOf(SEAT_DESK_FREEPLAY_PCT_COL), ...rows.map(r => widthOf(r.freeplayPct)))
+    Math.max(
+      7,
+      stringWidth(SEAT_DESK_FREEPLAY_PCT_COL),
+      ...rows.map(r => stringWidth(r.freeplayPct))
+    )
   );
 
   const rowLine = (

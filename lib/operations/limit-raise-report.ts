@@ -12,12 +12,12 @@
  * @see lib/http/networking-report.ts — RouteProbeReport pattern
  * @see lib/console-depth.ts — getConsoleDepth · inspectCustom · shouldColor
  */
+import { stringWidth } from 'bun';
 import {
   getConsoleDepth,
   inspectCustom,
   inspectTable as inspectTableCore,
   shouldColor,
-  widthOf,
 } from '../console-depth.ts';
 import { deepEquals } from '../deep-equals.ts';
 import {
@@ -446,9 +446,9 @@ export class LimitRaiseReport {
       columnWidths: Object.fromEntries(
         LIMIT_RAISE_TABLE_PROPERTIES.map(p => {
           const rows = this.raiseRows() as unknown as TableRow[];
-          let max = widthOf(p);
+          let max = stringWidth(p);
           for (const row of rows) {
-            max = Math.max(max, widthOf(String((row as Record<string, unknown>)[p] ?? '')));
+            max = Math.max(max, stringWidth(String((row as Record<string, unknown>)[p] ?? '')));
           }
           return [p, max];
         })

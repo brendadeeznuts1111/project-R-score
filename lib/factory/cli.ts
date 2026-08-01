@@ -35,7 +35,8 @@
 
 import { parseArgs } from 'util';
 import { bunSpawnArgs } from '../bun-executable.ts';
-import { colorize, jsonOut, logTable, shouldColor, stripANSI } from '../console-depth';
+import { stripANSI } from 'bun';
+import { colorize, jsonOut, logTable, shouldColor } from '../console-depth';
 import { tomlStringify } from '../toml-stringify';
 import { buildRegistryHealthReport } from './health';
 import { runIntegrityCycle } from './monitoring';
@@ -476,14 +477,11 @@ async function cmdProof(args: string[]): Promise<void> {
   const results: Array<{ claim: string; status: string; color: string; detail: string }> = [];
 
   try {
-    const proc = Bun.spawn(
-      bunSpawnArgs(['test', 'tests/registry.test.ts', 'tests/cli.test.ts']),
-      {
-        stdout: 'pipe',
-        stderr: 'pipe',
-        env: { ...Bun.env },
-      }
-    );
+    const proc = Bun.spawn(bunSpawnArgs(['test', 'tests/registry.test.ts', 'tests/cli.test.ts']), {
+      stdout: 'pipe',
+      stderr: 'pipe',
+      env: { ...Bun.env },
+    });
     const ok = (await proc.exited) === 0;
     results.push({
       claim: 'factory-registry-cli-v1',
