@@ -197,6 +197,7 @@ describe('domain glossary portal', () => {
             hash: 'opening-baseline',
             domId: 'opening-baseline',
             conceptId: 'section.openingBaseline',
+            title: 'Sportsbook opening baseline',
           },
         ]),
       })
@@ -210,11 +211,13 @@ describe('domain glossary portal', () => {
             hash: 'account-control',
             domId: 'account-control',
             conceptId: 'section.accountLimitControl',
+            title: 'Account limit control',
           },
           {
             hash: 'recent-changes',
             domId: 'recent-changes',
             conceptId: 'section.recentLimitChanges',
+            title: 'Recent limit changes',
           },
         ]),
       })
@@ -254,7 +257,13 @@ describe('domain glossary portal', () => {
       hash: 'onboard',
       domId: 'section:onboard',
       conceptId: 'section.partnersOnboard',
+      title: 'Onboarding flow',
     });
+    for (const surface of PORTAL_GLOSSARY_SURFACES) {
+      for (const section of surface.sections) {
+        expect(section.title?.trim().length, `${surface.path}#${section.hash}`).toBeGreaterThan(0);
+      }
+    }
     expect(PORTAL_GLOSSARY_SURFACES).toHaveLength(PORTAL_PAGE_CONCEPT_DEFINITIONS.length);
     expect(new Set(PORTAL_GLOSSARY_SURFACES.map(surface => surface.path))).toEqual(
       new Set(PORTAL_PAGE_CONCEPT_DEFINITIONS.map(page => page.path))

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/file-io — Bun.write
@@ -56,6 +57,19 @@ function isPublicPlanePath(file: string): boolean {
     n === 'public/_redirects' ||
     n === 'public/_headers'
   );
+}
+
+/**
+ * Glossary section mounts — offline HTMLRewriter probe when bake/boards change.
+ * Escape: SKIP_GLOSSARY_VERIFY=1
+ */
+export function isGlossaryVerifyPath(file: string): boolean {
+  const n = file.replace(/^\.\//, '');
+  if (n === 'public/registry/domain-glossary.json') return true;
+  if (n === 'lib/portal/page-glossary.ts') return true;
+  if (n === 'tools/glossary-verify.ts') return true;
+  if (n === 'tests/glossary-verify.test.ts') return true;
+  return /^public\/portal\/(account|limits|partners|partner-history)\//.test(n);
 }
 
 /** Runtime flags catalog SSOT — keep JSON valid and in sync with live bun --help. */
@@ -297,6 +311,24 @@ async function main(): Promise<void> {
           '   bun run public:discover:check\n' +
           '   bun run verify:portal:static\n' +
           '   docs/harness/tenants/public-plane.md'
+      );
+      await writeTimings(timings, full);
+      process.exit(1);
+    }
+  }
+
+  const glossaryVerifyFiles = staged.filter(isGlossaryVerifyPath);
+  if (glossaryVerifyFiles.length > 0 && Bun.env.SKIP_GLOSSARY_VERIFY !== '1') {
+    console.info(
+      `📖 Glossary DOM mounts (${glossaryVerifyFiles.length} path(s) staged) · HTMLRewriter…`
+    );
+    const code = await runGate('glossary-verify', ['bun', 'run', 'glossary:verify'], timings);
+    if (code !== 0) {
+      console.error(
+        '❌ Glossary verify failed — missing/duplicate section domId or unparseable hash\n' +
+          '   bun run glossary:verify\n' +
+          '   bun run glossary:verify:strict  # also fail section-shaped orphans\n' +
+          '   Escape: SKIP_GLOSSARY_VERIFY=1 with reason in commit message'
       );
       await writeTimings(timings, full);
       process.exit(1);

@@ -20,6 +20,7 @@ import {
  * URL fragment matches {@link PORTAL_SECTION_HASH_INIT} (`#section:{hash}`).
  * Concept deep links use {@link PORTAL_GLOSSARY_CONCEPT_HASH_INIT}.
  * `domId` is the board element id (varies by board — section: / ad-section- / bare).
+ * `title` is the human heading SSOT (boards may still hardcode h2 until phase 2).
  *
  * @see ./url-planes.ts — pathname vs hash planes
  */
@@ -27,6 +28,8 @@ export type PortalGlossarySection = {
   hash: string;
   domId: DomId;
   conceptId: PortalSemanticConceptKey;
+  /** Human-readable section heading (bake SSOT; phase 1 optional for HTML). */
+  title: string;
 };
 
 /** Re-export hash URLPattern inits so mounts and routers share one named owner. */
@@ -39,70 +42,146 @@ export type PortalGlossarySurface = {
 };
 
 /** Partners / most boards: `id="section:{hash}"` (matches PORTAL_SECTION_HASH_INIT). */
-function sectionMount(hash: string, conceptId: PortalSemanticConceptKey): PortalGlossarySection {
+function sectionMount(
+  hash: string,
+  conceptId: PortalSemanticConceptKey,
+  title: string
+): PortalGlossarySection {
   const domId = asDomId(`section:${hash}`);
   if (!isPortalSectionHash(domId)) {
     throw new Error(`sectionMount: hash ${hash} does not satisfy PORTAL_SECTION_HASH_INIT`);
   }
-  return { hash, domId, conceptId };
+  return { hash, domId, conceptId, title };
 }
 
 /** Account dossier: `id="ad-section-{hash}"`. */
-function adSectionMount(hash: string, conceptId: PortalSemanticConceptKey): PortalGlossarySection {
-  return { hash, domId: asDomId(`ad-section-${hash}`), conceptId };
+function adSectionMount(
+  hash: string,
+  conceptId: PortalSemanticConceptKey,
+  title: string
+): PortalGlossarySection {
+  return { hash, domId: asDomId(`ad-section-${hash}`), conceptId, title };
 }
 
 /** Limits / partner-history: bare `id="{hash}"` with URL `#section:{hash}`. */
-function bareMount(hash: string, conceptId: PortalSemanticConceptKey): PortalGlossarySection {
-  return { hash, domId: asDomId(hash), conceptId };
+function bareMount(
+  hash: string,
+  conceptId: PortalSemanticConceptKey,
+  title: string
+): PortalGlossarySection {
+  return { hash, domId: asDomId(hash), conceptId, title };
 }
 
+/**
+ * Section mounts + titles — SSOT for domain-glossary bake `surfaces[].sections`.
+ * Titles match current board headings (limits / partners / partner-history / account).
+ */
 const PAGE_SECTIONS: Readonly<
   Partial<Record<PortalSemanticConceptKey, readonly PortalGlossarySection[]>>
 > = {
   [LIMIT_SURFACE_CONCEPTS.page]: [
-    bareMount('account-control', LIMIT_SURFACE_CONCEPTS.accountControl),
-    bareMount('compliance-kpi-control', LIMIT_SURFACE_CONCEPTS.complianceKpis),
-    bareMount('jurisdiction-control', LIMIT_SURFACE_CONCEPTS.jurisdictionCatalog),
-    bareMount('pattern-summary', LIMIT_SURFACE_CONCEPTS.patternSummary),
-    bareMount('prediction', LIMIT_SURFACE_CONCEPTS.prediction),
-    bareMount('research-queue', LIMIT_FIELD_CONCEPTS.evidenceTrace),
-    bareMount('sportsbook-patterns', LIMIT_SURFACE_CONCEPTS.sportsbookPatterns),
-    bareMount('geo-patterns-section', LIMIT_SURFACE_CONCEPTS.stateZipPatterns),
-    bareMount('downline-context', LIMIT_SURFACE_CONCEPTS.downlineContext),
-    bareMount('connection-audit', LIMIT_SURFACE_CONCEPTS.dataConnectionAudit),
-    bareMount('recent-changes', LIMIT_SURFACE_CONCEPTS.recentLimitChanges),
-    bareMount('node-breakdown', LIMIT_SURFACE_CONCEPTS.perNodeBreakdown),
+    bareMount('account-control', LIMIT_SURFACE_CONCEPTS.accountControl, 'Account limit control'),
+    bareMount(
+      'compliance-kpi-control',
+      LIMIT_SURFACE_CONCEPTS.complianceKpis,
+      'Compliance policy KPIs'
+    ),
+    bareMount(
+      'jurisdiction-control',
+      LIMIT_SURFACE_CONCEPTS.jurisdictionCatalog,
+      'Jurisdiction policy catalog'
+    ),
+    bareMount('pattern-summary', LIMIT_SURFACE_CONCEPTS.patternSummary, 'Pattern summary'),
+    bareMount('prediction', LIMIT_SURFACE_CONCEPTS.prediction, 'Limit raise prediction'),
+    bareMount('research-queue', LIMIT_FIELD_CONCEPTS.evidenceTrace, 'Pattern research queue'),
+    bareMount(
+      'sportsbook-patterns',
+      LIMIT_SURFACE_CONCEPTS.sportsbookPatterns,
+      'Sportsbook patterns'
+    ),
+    bareMount(
+      'geo-patterns-section',
+      LIMIT_SURFACE_CONCEPTS.stateZipPatterns,
+      'State & ZIP patterns'
+    ),
+    bareMount(
+      'downline-context',
+      LIMIT_SURFACE_CONCEPTS.downlineContext,
+      'Partner → downline context'
+    ),
+    bareMount(
+      'connection-audit',
+      LIMIT_SURFACE_CONCEPTS.dataConnectionAudit,
+      'Data connection audit'
+    ),
+    bareMount(
+      'recent-changes',
+      LIMIT_SURFACE_CONCEPTS.recentLimitChanges,
+      'Recent limit changes'
+    ),
+    bareMount('node-breakdown', LIMIT_SURFACE_CONCEPTS.perNodeBreakdown, 'Per-node breakdown'),
   ],
   [PARTNER_HISTORY_SURFACE_CONCEPTS.page]: [
-    bareMount('opening-baseline', PARTNER_HISTORY_SURFACE_CONCEPTS.openingBaseline),
+    bareMount(
+      'opening-baseline',
+      PARTNER_HISTORY_SURFACE_CONCEPTS.openingBaseline,
+      'Sportsbook opening baseline'
+    ),
     // Same board also mounts recent/node panels (hrefs + ids); govern them.
-    bareMount('recent-changes', LIMIT_SURFACE_CONCEPTS.recentLimitChanges),
-    bareMount('node-breakdown', LIMIT_SURFACE_CONCEPTS.perNodeBreakdown),
+    bareMount(
+      'recent-changes',
+      LIMIT_SURFACE_CONCEPTS.recentLimitChanges,
+      'Recent limit changes'
+    ),
+    bareMount(
+      'node-breakdown',
+      LIMIT_SURFACE_CONCEPTS.perNodeBreakdown,
+      'Per-account breakdown'
+    ),
   ],
   [ACCOUNT_DOSSIER_SURFACE_CONCEPTS.page]: [
-    adSectionMount('identity', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.identity),
-    adSectionMount('tree', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.tree),
-    adSectionMount('location', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.location),
-    adSectionMount('traces', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.traces),
-    adSectionMount('policies', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.policies),
-    adSectionMount('telemetry', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.telemetry),
-    adSectionMount('changes', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.changes),
-    adSectionMount('outs', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.outs),
-    adSectionMount('telegram', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.telegram),
-    adSectionMount('accounting', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.accounting),
-    adSectionMount('activity', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.activity),
+    adSectionMount('identity', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.identity, 'Identity'),
+    adSectionMount('tree', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.tree, 'Connected tree'),
+    adSectionMount('location', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.location, 'Location & license'),
+    adSectionMount('traces', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.traces, 'Evidence traces'),
+    adSectionMount('policies', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.policies, 'Applicable policies'),
+    adSectionMount('telemetry', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.telemetry, 'Limit telemetry'),
+    adSectionMount('changes', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.changes, 'Limit changes'),
+    adSectionMount('outs', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.outs, 'Partner outs & books'),
+    adSectionMount(
+      'telegram',
+      ACCOUNT_DOSSIER_SURFACE_CONCEPTS.telegram,
+      'Telegram package group'
+    ),
+    adSectionMount(
+      'accounting',
+      ACCOUNT_DOSSIER_SURFACE_CONCEPTS.accounting,
+      'Per-account accounting'
+    ),
+    adSectionMount(
+      'activity',
+      ACCOUNT_DOSSIER_SURFACE_CONCEPTS.activity,
+      'Telegram & ops activity'
+    ),
   ],
   [PARTNERS_SURFACE_CONCEPTS.page]: [
-    sectionMount('telegram', PARTNERS_SURFACE_CONCEPTS.telegram),
-    sectionMount('accounting', PARTNERS_SURFACE_CONCEPTS.accounting),
-    sectionMount('accounts-limits', PARTNERS_SURFACE_CONCEPTS.accountsLimits),
-    sectionMount('onboard', PARTNERS_SURFACE_CONCEPTS.onboard),
-    sectionMount('deposits', PARTNERS_SURFACE_CONCEPTS.deposits),
-    sectionMount('partner-message', PARTNERS_SURFACE_CONCEPTS.partnerMessage),
-    sectionMount('outs', PARTNERS_SURFACE_CONCEPTS.outs),
-    sectionMount('books', PARTNERS_SURFACE_CONCEPTS.bookDetail),
-    sectionMount('tag-filter-bar', PARTNERS_SURFACE_CONCEPTS.tags),
+    sectionMount('telegram', PARTNERS_SURFACE_CONCEPTS.telegram, 'Telegram package groups'),
+    sectionMount('accounting', PARTNERS_SURFACE_CONCEPTS.accounting, 'Accounting deals'),
+    sectionMount(
+      'accounts-limits',
+      PARTNERS_SURFACE_CONCEPTS.accountsLimits,
+      'Accounts and limits'
+    ),
+    sectionMount('onboard', PARTNERS_SURFACE_CONCEPTS.onboard, 'Onboarding flow'),
+    sectionMount('deposits', PARTNERS_SURFACE_CONCEPTS.deposits, 'Betting deposits'),
+    sectionMount(
+      'partner-message',
+      PARTNERS_SURFACE_CONCEPTS.partnerMessage,
+      'Partner messages'
+    ),
+    sectionMount('outs', PARTNERS_SURFACE_CONCEPTS.outs, 'Outs'),
+    sectionMount('books', PARTNERS_SURFACE_CONCEPTS.bookDetail, 'Books'),
+    sectionMount('tag-filter-bar', PARTNERS_SURFACE_CONCEPTS.tags, 'Partner tags'),
   ],
 };
 
@@ -119,6 +198,14 @@ export function sectionConceptId(
   hash: string
 ): PortalSemanticConceptKey | undefined {
   return surface?.sections.find(s => s.hash === hash)?.conceptId;
+}
+
+/** Lookup section title by URL section hash. */
+export function sectionTitle(
+  surface: PortalGlossarySurface | undefined,
+  hash: string
+): string | undefined {
+  return surface?.sections.find(s => s.hash === hash)?.title;
 }
 
 /** Legacy Record view (hash → conceptId) for tests / simple maps. */
@@ -147,6 +234,9 @@ export function validatePortalGlossarySurfaces(
         throw new Error(
           `Unknown section glossary concept: ${surface.path}#${section.hash} → ${section.conceptId}`
         );
+      }
+      if (!section.title?.trim()) {
+        throw new Error(`Empty section title: ${surface.path}#${section.hash}`);
       }
       if (hashes.has(section.hash)) {
         throw new Error(`Duplicate section hash on ${surface.path}: ${section.hash}`);

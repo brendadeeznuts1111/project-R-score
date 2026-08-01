@@ -37,57 +37,68 @@
         {
           "hash": "identity",
           "domId": "ad-section-identity",
-          "conceptId": "ops.limits.account"
+          "conceptId": "ops.limits.account",
+          "title": "Identity"
         },
         {
           "hash": "tree",
           "domId": "ad-section-tree",
-          "conceptId": "section.downlineContext"
+          "conceptId": "section.downlineContext",
+          "title": "Connected tree"
         },
         {
           "hash": "location",
           "domId": "ad-section-location",
-          "conceptId": "ops.limits.jurisdiction_policy"
+          "conceptId": "ops.limits.jurisdiction_policy",
+          "title": "Location & license"
         },
         {
           "hash": "traces",
           "domId": "ad-section-traces",
-          "conceptId": "ops.limits.evidence_trace"
+          "conceptId": "ops.limits.evidence_trace",
+          "title": "Evidence traces"
         },
         {
           "hash": "policies",
           "domId": "ad-section-policies",
-          "conceptId": "ops.limits.policy_code"
+          "conceptId": "ops.limits.policy_code",
+          "title": "Applicable policies"
         },
         {
           "hash": "telemetry",
           "domId": "ad-section-telemetry",
-          "conceptId": "ops.limits.pattern_surface"
+          "conceptId": "ops.limits.pattern_surface",
+          "title": "Limit telemetry"
         },
         {
           "hash": "changes",
           "domId": "ad-section-changes",
-          "conceptId": "section.recentLimitChanges"
+          "conceptId": "section.recentLimitChanges",
+          "title": "Limit changes"
         },
         {
           "hash": "outs",
           "domId": "ad-section-outs",
-          "conceptId": "section.partnersOuts"
+          "conceptId": "section.partnersOuts",
+          "title": "Partner outs & books"
         },
         {
           "hash": "telegram",
           "domId": "ad-section-telegram",
-          "conceptId": "section.partnersTelegram"
+          "conceptId": "section.partnersTelegram",
+          "title": "Telegram package group"
         },
         {
           "hash": "accounting",
           "domId": "ad-section-accounting",
-          "conceptId": "section.partnersAccounting"
+          "conceptId": "section.partnersAccounting",
+          "title": "Per-account accounting"
         },
         {
           "hash": "activity",
           "domId": "ad-section-activity",
-          "conceptId": "ops.limits.evidence_trace"
+          "conceptId": "ops.limits.evidence_trace",
+          "title": "Telegram & ops activity"
         }
       ]
     },
@@ -178,62 +189,74 @@
         {
           "hash": "account-control",
           "domId": "account-control",
-          "conceptId": "section.accountLimitControl"
+          "conceptId": "section.accountLimitControl",
+          "title": "Account limit control"
         },
         {
           "hash": "compliance-kpi-control",
           "domId": "compliance-kpi-control",
-          "conceptId": "section.complianceKpis"
+          "conceptId": "section.complianceKpis",
+          "title": "Compliance policy KPIs"
         },
         {
           "hash": "jurisdiction-control",
           "domId": "jurisdiction-control",
-          "conceptId": "section.jurisdictionCatalog"
+          "conceptId": "section.jurisdictionCatalog",
+          "title": "Jurisdiction policy catalog"
         },
         {
           "hash": "pattern-summary",
           "domId": "pattern-summary",
-          "conceptId": "section.patternSummary"
+          "conceptId": "section.patternSummary",
+          "title": "Pattern summary"
         },
         {
           "hash": "prediction",
           "domId": "prediction",
-          "conceptId": "section.limitRaisePrediction"
+          "conceptId": "section.limitRaisePrediction",
+          "title": "Limit raise prediction"
         },
         {
           "hash": "research-queue",
           "domId": "research-queue",
-          "conceptId": "ops.limits.evidence_trace"
+          "conceptId": "ops.limits.evidence_trace",
+          "title": "Pattern research queue"
         },
         {
           "hash": "sportsbook-patterns",
           "domId": "sportsbook-patterns",
-          "conceptId": "section.sportsbookPatterns"
+          "conceptId": "section.sportsbookPatterns",
+          "title": "Sportsbook patterns"
         },
         {
           "hash": "geo-patterns-section",
           "domId": "geo-patterns-section",
-          "conceptId": "section.stateZipPatterns"
+          "conceptId": "section.stateZipPatterns",
+          "title": "State & ZIP patterns"
         },
         {
           "hash": "downline-context",
           "domId": "downline-context",
-          "conceptId": "section.downlineContext"
+          "conceptId": "section.downlineContext",
+          "title": "Partner → downline context"
         },
         {
           "hash": "connection-audit",
           "domId": "connection-audit",
-          "conceptId": "section.dataConnectionAudit"
+          "conceptId": "section.dataConnectionAudit",
+          "title": "Data connection audit"
         },
         {
           "hash": "recent-changes",
           "domId": "recent-changes",
-          "conceptId": "section.recentLimitChanges"
+          "conceptId": "section.recentLimitChanges",
+          "title": "Recent limit changes"
         },
         {
           "hash": "node-breakdown",
           "domId": "node-breakdown",
-          "conceptId": "section.perNodeBreakdown"
+          "conceptId": "section.perNodeBreakdown",
+          "title": "Per-node breakdown"
         }
       ]
     },
@@ -254,47 +277,56 @@
         {
           "hash": "telegram",
           "domId": "section:telegram",
-          "conceptId": "section.partnersTelegram"
+          "conceptId": "section.partnersTelegram",
+          "title": "Telegram package groups"
         },
         {
           "hash": "accounting",
           "domId": "section:accounting",
-          "conceptId": "section.partnersAccounting"
+          "conceptId": "section.partnersAccounting",
+          "title": "Accounting deals"
         },
         {
           "hash": "accounts-limits",
           "domId": "section:accounts-limits",
-          "conceptId": "section.partnersAccountsLimits"
+          "conceptId": "section.partnersAccountsLimits",
+          "title": "Accounts and limits"
         },
         {
           "hash": "onboard",
           "domId": "section:onboard",
-          "conceptId": "section.partnersOnboard"
+          "conceptId": "section.partnersOnboard",
+          "title": "Onboarding flow"
         },
         {
           "hash": "deposits",
           "domId": "section:deposits",
-          "conceptId": "section.partnersDeposits"
+          "conceptId": "section.partnersDeposits",
+          "title": "Betting deposits"
         },
         {
           "hash": "partner-message",
           "domId": "section:partner-message",
-          "conceptId": "section.partnersPartnerMessage"
+          "conceptId": "section.partnersPartnerMessage",
+          "title": "Partner messages"
         },
         {
           "hash": "outs",
           "domId": "section:outs",
-          "conceptId": "section.partnersOuts"
+          "conceptId": "section.partnersOuts",
+          "title": "Outs"
         },
         {
           "hash": "books",
           "domId": "section:books",
-          "conceptId": "section.partnersBookDetail"
+          "conceptId": "section.partnersBookDetail",
+          "title": "Books"
         },
         {
           "hash": "tag-filter-bar",
           "domId": "section:tag-filter-bar",
-          "conceptId": "section.partnersTags"
+          "conceptId": "section.partnersTags",
+          "title": "Partner tags"
         }
       ]
     },
@@ -305,17 +337,20 @@
         {
           "hash": "opening-baseline",
           "domId": "opening-baseline",
-          "conceptId": "section.openingBaseline"
+          "conceptId": "section.openingBaseline",
+          "title": "Sportsbook opening baseline"
         },
         {
           "hash": "recent-changes",
           "domId": "recent-changes",
-          "conceptId": "section.recentLimitChanges"
+          "conceptId": "section.recentLimitChanges",
+          "title": "Recent limit changes"
         },
         {
           "hash": "node-breakdown",
           "domId": "node-breakdown",
-          "conceptId": "section.perNodeBreakdown"
+          "conceptId": "section.perNodeBreakdown",
+          "title": "Per-account breakdown"
         }
       ]
     },
