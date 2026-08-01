@@ -1,3 +1,4 @@
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#bun-write — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/guides/util/entrypoint — import.meta.main
@@ -14,7 +15,7 @@ export type ClaimEnv = 'test' | 'ci' | 'development';
 
 export type ClaimCheck = {
   /** Stable machine id (e.g. `chrome.darkTokens`). */
-  id: string;
+  id: string; // brand-ok — opaque check identifier, not a domain entity id
   description: string;
   /** Floor / expected count (minimum unless domain docs say otherwise). */
   expected: number;
@@ -54,11 +55,7 @@ export type ClaimReporterOptions = {
 };
 
 function defaultHuman(report: ClaimReport): string {
-  const lines = [
-    `Claim: ${report.claim}`,
-    `Status: ${report.status.toUpperCase()}`,
-    'Evidence:',
-  ];
+  const lines = [`Claim: ${report.claim}`, `Status: ${report.status.toUpperCase()}`, 'Evidence:'];
   for (const check of report.checks) {
     const icon = check.passed ? '✓' : '✗';
     lines.push(
@@ -82,7 +79,7 @@ export function resolveClaimEnv(argv: readonly string[] = Bun.argv): ClaimEnv {
 }
 
 export function mkFloorCheck(
-  id: string,
+  id: string, // brand-ok — opaque check identifier, not a domain entity id
   description: string,
   expectedMin: number,
   actual: number,
