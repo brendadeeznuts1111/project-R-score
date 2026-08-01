@@ -251,6 +251,11 @@ credentials/
 !functions/api/auth/**
 !functions-bun-only/api/auth/
 !functions-bun-only/api/auth/**
+!lib/auth/
+lib/auth/*
+!lib/auth/session.ts
+!lib/auth/oidc.ts
+!lib/auth/README.md
 **/credentials/
 !config/
 config/*

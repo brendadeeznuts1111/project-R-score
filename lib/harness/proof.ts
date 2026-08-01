@@ -450,20 +450,22 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'url-pattern-boundaries',
     claim:
-      'URLPattern protocol/username/password/hostname/port/pathname/search/hash components drive site URL and parameterized HTTP routing',
+      'Precompiled URLPattern components drive site URLs, HTTP routes, and portal hash classification/extraction without RegExp static leakage',
     kinds: ['boundary'],
     gateClass: 'continuous',
     gateRef: 'ci:harness',
     evidence: [
-      'bun test tests/bun-urlpattern.test.ts tests/bun-site-url.test.ts tests/factory-production.test.ts',
+      'bun test tests/bun-urlpattern.test.ts tests/bun-site-url.test.ts tests/factory-production.test.ts tests/portal-url-planes.test.ts',
       'tests/bun-urlpattern.test.ts',
       'tests/bun-site-url.test.ts',
       'tests/factory-production.test.ts',
+      'tests/portal-url-planes.test.ts',
     ],
     freshRerun:
-      'bun test tests/bun-urlpattern.test.ts tests/bun-site-url.test.ts tests/factory-production.test.ts',
+      'bun test tests/bun-urlpattern.test.ts tests/bun-site-url.test.ts tests/factory-production.test.ts tests/portal-url-planes.test.ts',
     freshRerunKind: 'claim',
-    owner: 'lib/docs/bun-site-url.ts · lib/factory/server.ts · lib/http/portal-nav.ts',
+    owner:
+      'lib/docs/bun-site-url.ts · lib/factory/server.ts · lib/http/portal-nav.ts · lib/portal/url-planes.ts',
   },
   {
     id: 'social-metadata-boundaries',

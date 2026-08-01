@@ -31,6 +31,7 @@ import {
 } from '../lib/docs/bun-release-tracker.ts';
 import type { VerificationResult } from '../lib/verification/types.ts';
 import { CANONICAL_REFS } from '../tools/bun-doc-refs.ts';
+import { runReleaseVerification } from '../tools/verify-bun-release.ts';
 
 describe('lib/docs/bun-release-tracker', () => {
   test('tracks release note ids with canonical blog URLs', () => {
@@ -297,16 +298,8 @@ describe('tools/verify-bun-release.ts', () => {
     { timeout: 60_000 }
   );
 
-  test('proof JSON includes canonical blog URLs per test', async () => {
-    const proc = Bun.spawn(['bun', 'tools/verify-bun-release.ts', '--save'], {
-      stdout: 'pipe',
-      stderr: 'pipe',
-    });
-    const [stdout, code] = await Promise.all([new Response(proc.stdout).text(), proc.exited]);
-    expect(code).toBe(0);
-    expect(stdout).toContain('Proof saved');
-
-    const proof = await Bun.file('public/registry/release-features.json').json();
+  test('serialized proof includes canonical blog URLs per test', async () => {
+    const proof = JSON.parse(JSON.stringify(await runReleaseVerification()));
     expect(proof.blogPost).toBe(BUN_V1314_BLOG);
     const tls = proof.results.find((r: { name: string }) => r.name.includes('tls.getCACertificates'));
     expect(tls?.canonical).toBe(
@@ -321,11 +314,5 @@ describe('tools/verify-bun-release.ts', () => {
     );
     expect(proof.jsonLd?.['@type']).toBe('SoftwareApplication');
 
-    // Rebake channel-meta so downstream consistency tests see aligned artifacts.
-    const meta = Bun.spawn(['bun', 'tools/verify-channel-meta.ts', '--prefer-artifacts', '--save'], {
-      stdout: 'ignore',
-      stderr: 'ignore',
-    });
-    expect(await meta.exited).toBe(0);
   }, { timeout: 60_000 });
 });

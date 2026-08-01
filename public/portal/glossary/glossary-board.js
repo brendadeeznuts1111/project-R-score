@@ -2,6 +2,7 @@
  * Domain glossary board.
  * @see tools/domain-glossary.ts
  * @see https://bun.com/blog/bun-v1.3.4#urlpattern-api
+ * @see https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster
  * @see ../components/glossary-ux.js
  */
 
@@ -11,6 +12,7 @@ import {
   trackGlossaryEvent,
 } from '../components/glossary-ux.js';
 
+// Precompile once; exec() is required here to extract the concept group.
 const glossaryPattern = new URLPattern({ hash: 'glossary\\::concept' });
 
 let glossary;

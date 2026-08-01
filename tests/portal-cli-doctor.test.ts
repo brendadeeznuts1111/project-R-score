@@ -104,8 +104,8 @@ describe('portal-cli doctor pure', () => {
     expect(s.failed).toBe(1);
     expect(s.autoFixableFailed).toBe(1);
     expect(s.suggested).toEqual(['bun run bake:capabilities']);
-    expect(formatDoctorSummaryFooter(s)).toContain('passed=2/3');
-    expect(formatDoctorSummaryFooter(s)).toContain('bake:capabilities');
+    expect(formatDoctorSummaryFooter(s, false, 'plain')).toContain('passed=2/3');
+    expect(formatDoctorSummaryFooter(s, false, 'plain')).toContain('bake:capabilities');
   });
 
   test('filterDoctorChecks failed-only keeps failures', () => {
@@ -158,7 +158,7 @@ describe('portal-cli doctor pure', () => {
     expect(r.summary.failedFatal).toBe(0);
     expect(r.ok).toBe(true);
     expect(r.summary.failed).toBe(0);
-    const text = formatPortalDoctor(r);
+    const text = formatPortalDoctor(r, { format: 'plain' });
     expect(text).toContain('portal-doctor');
     expect(text).toMatch(/result=ok/);
     expect(text).toContain('Linker policy');
@@ -173,7 +173,7 @@ describe('portal-cli doctor pure', () => {
 
   test('verbose format includes full fields and remediation section', async () => {
     const r = await runPortalDoctor({ cwd: ROOT, full: false, verbose: true, skipLiveAccess: true });
-    const text = formatPortalDoctorVerbose(r);
+    const text = formatPortalDoctorVerbose(r, { format: 'plain' });
     expect(text).toContain('portal-doctor');
     expect(text).toMatch(/result=ok/);
     expect(text).toContain('## checks');
@@ -551,7 +551,7 @@ describe('portal-cli doctor pure', () => {
 
 describe('portal-cli doctor CLI', () => {
   test('doctor exits 0 and reports linker configVersion', async () => {
-    const proc = Bun.spawn(['bun', CLI, 'doctor'], {
+    const proc = Bun.spawn(['bun', CLI, 'doctor', '--no-write'], {
       cwd: ROOT,
       stdout: 'pipe',
       stderr: 'pipe',

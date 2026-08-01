@@ -10,7 +10,7 @@ import { openOperationsDb } from '../lib/operations/db.ts';
 describe('enrichMonitoringForSnapshot', () => {
   test('merges routing and bun utils slices', async () => {
     const db = openOperationsDb({ path: ':memory:' });
-    const base = await collectMonitoring(db, { source: 'snapshot' });
+    const base = await collectMonitoring(db, { source: 'snapshot', includeInstallCache: false });
     db.close();
 
     const enriched = enrichMonitoringForSnapshot(base, {
@@ -33,7 +33,7 @@ describe('enrichMonitoringForSnapshot', () => {
 
   test('snapshot collect retains compliance slice through enrich', async () => {
     const db = openOperationsDb({ path: ':memory:' });
-    const base = await collectMonitoring(db, { source: 'snapshot' });
+    const base = await collectMonitoring(db, { source: 'snapshot', includeInstallCache: false });
     db.close();
 
     // Board may be present in workspace; if so, freeze shape must round-trip enrich.

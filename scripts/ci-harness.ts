@@ -260,7 +260,10 @@ const BOUNDARY_FIXTURES: Step = {
     'tests/fixtures/blog-extraction/',
     'tests/fixtures/fetch-page/',
     'tests/fetch-proxy-keepalive.test.ts',
+    'tests/bun-urlpattern.test.ts',
     'tests/bun-site-url.test.ts',
+    'tests/factory-production.test.ts',
+    'tests/portal-url-planes.test.ts',
     'tests/bun-docs-catalog.test.ts',
     'tests/fs-bun.test.ts',
     'tests/bun-glob-scan.test.ts',
@@ -268,7 +271,7 @@ const BOUNDARY_FIXTURES: Step = {
   owner:
     'runtime-cli · bun-shell · security-hash · social-metadata · blog-extraction · fetch-page · https-proxy-connect-reuse · url-pattern · bun-http-server-docs · fs-native ProofPaths',
   repair:
-    'bun test tests/fixtures/runtime-cli/ tests/fixtures/bun-shell/ tests/fixtures/security-hash/ tests/fixtures/social-metadata/ tests/fixtures/blog-extraction/ tests/fixtures/fetch-page/ tests/fetch-proxy-keepalive.test.ts tests/bun-site-url.test.ts tests/bun-docs-catalog.test.ts tests/fs-bun.test.ts tests/bun-glob-scan.test.ts',
+    'bun test tests/fixtures/runtime-cli/ tests/fixtures/bun-shell/ tests/fixtures/security-hash/ tests/fixtures/social-metadata/ tests/fixtures/blog-extraction/ tests/fixtures/fetch-page/ tests/fetch-proxy-keepalive.test.ts tests/bun-urlpattern.test.ts tests/bun-site-url.test.ts tests/factory-production.test.ts tests/portal-url-planes.test.ts tests/bun-docs-catalog.test.ts tests/fs-bun.test.ts tests/bun-glob-scan.test.ts',
 };
 
 /** Channel meta-verification — bake/release drift + suite isolation (claim channel-meta-verification-v1). */

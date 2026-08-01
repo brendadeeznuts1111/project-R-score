@@ -199,10 +199,17 @@ describe("dod batch 2 — liquidity hook", () => {
 
 describe("dod batch 2 — review API auth", () => {
   const savedToken = Bun.env.DOD_REVIEW_TOKEN;
+  const savedDbPath = Bun.env.DOD_DB_PATH;
+
+  beforeEach(() => {
+    Bun.env.DOD_DB_PATH = `${SCRATCH}/review-api.db`;
+  });
 
   afterEach(() => {
     if (savedToken == null) delete Bun.env.DOD_REVIEW_TOKEN;
     else Bun.env.DOD_REVIEW_TOKEN = savedToken;
+    if (savedDbPath == null) delete Bun.env.DOD_DB_PATH;
+    else Bun.env.DOD_DB_PATH = savedDbPath;
   });
 
   test.serial("401 without bearer token when DOD_REVIEW_TOKEN is set", async () => {

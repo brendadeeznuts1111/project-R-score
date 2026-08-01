@@ -27,6 +27,7 @@ export const CATALOG_ENHANCEMENTS_REL = 'reports/telegram/catalog-enhancements.j
 export type LoadCatalogResearchContextOpts = {
   db?: Database;
   forumsMetaDir?: string;
+  houseForumsMetaDir?: string;
   /** Registry partner codes when db omitted (tests). */
   partnerCodes?: readonly string[];
 };
@@ -40,6 +41,7 @@ export async function loadCatalogResearchContext(
 ): Promise<{ catalog: HandshakeCatalog; context: CatalogResearchContext }> {
   const catalog = await loadHandshakeCatalogSnapshot();
   const forumsMetaDir = opts.forumsMetaDir ?? PACKAGE_GROUP_FORUMS_META_DIR;
+  const houseForumsMetaDir = opts.houseForumsMetaDir ?? HOUSE_FORUMS_META_DIR;
 
   const partnerCodes =
     opts.partnerCodes ?? (opts.db ? listPackageGroupRegistry(opts.db).map(r => r.partnerCode) : []);
@@ -55,7 +57,7 @@ export async function loadCatalogResearchContext(
   >();
 
   for (const slug of ['hq', ALL_ACCOUNTING_SURFACE_SLUG, 'sandbox'] as const) {
-    const meta = await loadHouseForumMetadata(slug, { rootDir: HOUSE_FORUMS_META_DIR });
+    const meta = await loadHouseForumMetadata(slug, { rootDir: houseForumsMetaDir });
     houseMetaBySurface.set(slug, {
       chatId: meta?.chatId?.trim() ?? null,
       welcomePromptPosted: Boolean(meta?.welcomePromptMessageId),

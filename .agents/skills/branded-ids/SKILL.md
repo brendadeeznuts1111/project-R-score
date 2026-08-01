@@ -37,12 +37,12 @@ bun tools/brand-catalog.ts AccountId
 bun tools/brand-catalog.ts StateCode --json
 ```
 
-The current contract is 59 branded values across 9 domains:
+The current contract is 61 branded values across 9 domains:
 
-- 53 IDs represented by `AnyId` (includes `SportsbookId`; surfaces: `HostId`, `ApexDomainId`, `SubdomainId`, `SurfaceId`, `PagesProjectId`, `PublishLaneId`, `AccessDomainId`)
+- 55 IDs represented by `AnyId` (includes `OidcClientId`, `SportsbookId`, and portal `DomId`; surfaces: `HostId`, `ApexDomainId`, `SubdomainId`, `SurfaceId`, `PagesProjectId`, `PublishLaneId`, `AccessDomainId`)
 - `PartnerProfileKey`
 - codes: `StateCode`, `ZipCode`, `SurfaceStatusCode`, `SurfaceAccessCode`, `SurfaceBackendCode`
-- all 59 represented by `AnyBrandedValue`
+- all 61 represented by `AnyBrandedValue`
 - Portal keymap joins glossary synonyms (`scrape.book` ↔ `SportsbookId`, `scrape.jurisdiction` ↔ `StateCode`) and design-kernel domain colors
 
 `lib/types/branded/index.ts#BRAND_CATALOG` is the source catalog.

@@ -16,9 +16,19 @@ describe('limit-raises slice', () => {
     expect(art.portal).toBe(LIMIT_RAISES_PORTAL_PATH);
   });
 
-  test('projectLimitRaisesHealthArtifact rejects non-v1 schema', () => {
+  test('projectLimitRaisesHealthArtifact rejects unsupported schema', () => {
     const art = projectLimitRaisesHealthArtifact({ schemaVersion: 2, byNode: {} });
     expect(art.exists).toBe(false);
+  });
+
+  test('projectLimitRaisesHealthArtifact accepts current v3 schema', () => {
+    const art = projectLimitRaisesHealthArtifact({
+      schemaVersion: 3,
+      byNode: { 'partner-v3': { raises: [{ new_limit: 2000 }] } },
+    });
+    expect(art.exists).toBe(true);
+    expect(art.partners).toBe(1);
+    expect(art.raises).toBe(1);
   });
 
   test('projectLimitRaisesHealthArtifact counts byNode raises', () => {

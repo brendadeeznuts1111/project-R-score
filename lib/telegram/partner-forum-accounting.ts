@@ -60,12 +60,20 @@ export async function loadSeatIntakeForPartner(
   const dir = opts?.intakeDir ?? SEAT_INTAKE_DIR;
   const glob = new Bun.Glob('*.json');
   let fallback: SeatIntakeRecord | null = null;
-  for await (const file of glob.scan({ cwd: dir, onlyFiles: true })) {
-    const callSign = file.replace(/\.json$/i, '');
-    const record = await loadSeatIntake(callSign, dir);
-    if (!record || record.partnerCode.toUpperCase() !== code) continue;
-    if (record.desk?.messageId) return record;
-    if (!fallback) fallback = record;
+  try {
+    for await (const file of glob.scan({ cwd: dir, onlyFiles: true })) {
+      const callSign = file.replace(/\.json$/i, '');
+      const record = await loadSeatIntake(callSign, dir);
+      if (!record || record.partnerCode.toUpperCase() !== code) continue;
+      if (record.desk?.messageId) return record;
+      if (!fallback) fallback = record;
+    }
+  } catch (error) {
+    const code =
+      error && typeof error === 'object' && 'code' in error
+        ? Reflect.get(error, 'code')
+        : undefined;
+    if (code !== 'ENOENT') throw error;
   }
   return fallback;
 }
