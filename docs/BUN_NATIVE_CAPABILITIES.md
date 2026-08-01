@@ -129,6 +129,18 @@ Sidebar cluster under [guides/util](https://bun.com/docs/guides/util/upgrade) (1
 
 Smoke: `bun test tests/bun-executable.test.ts tests/bun-path-url.test.ts tests/bake-soft-accounting-export.test.ts` · `tests/deep-equals.test.ts` · `tests/time.test.ts`.
 
+## Portal · glossary · registry
+
+Static portal boards on Pages do not have a Bun global. Bake-time utilities land in registry JSON; browser chrome reads them.
+
+| Surface | Bun util / pattern | Owner |
+|---------|-------------------|--------|
+| Portal footer | Bake `runtime.bunVersion` / `bunRevision` into [`portal-chrome.json`](../public/registry/portal-chrome.json) · hydrate [`footer.js`](../public/portal/components/footer.js) (`Bun v…`) | `bun run portal:chrome:bake` · [`lib/portal/chrome-catalog.ts`](../lib/portal/chrome-catalog.ts) |
+| Glossary UX | `data-glossary-concept` · `href="#glossary:…"` · [`glossary-ux.js`](../public/portal/components/glossary-ux.js) (chrome component) | [`/portal/glossary/`](../public/portal/glossary/) · bake `glossary:portal` → [`domain-glossary.json`](../public/registry/domain-glossary.json) |
+| Registry | Glossary concept IDs validate partner / history rows (`partners:validate`) | Wave 1 · [`docs/portal-foundation.md`](./portal-foundation.md) |
+| Bake spawn | `bake:all` + portal-cli nested bun → `resolveBunExecutable()` + `{ ...Bun.env }` | [`tools/bake-all.ts`](../tools/bake-all.ts) · [`tools/lib/portal-cli-bun-flags.ts`](../tools/lib/portal-cli-bun-flags.ts) |
+| File I/O | `Bun.file` / `Bun.write` for registry bakes (chrome, glossary, schema audit) | bake tools under `tools/` |
+
 ## Release maps
 
 Upstream: [v1.3.12](https://bun.com/blog/bun-v1.3.12) · [v1.3.13](https://bun.com/blog/bun-v1.3.13) (`--isolate` · `--parallel` · `--shard` · `--changed` — curated TOC [bun-test-flags-1.3.13.md](./guides/bun-test-flags-1.3.13.md)). Day-loop wrappers: [harness/day-loop.md](./harness/day-loop.md). Pin **1.4.0** is a superset — do not re-document every bugfix bullet.

@@ -1,6 +1,8 @@
 /**
  * Shared portal footer — hydrate from /registry/portal-chrome.json when available.
+ * Shows bake-time Bun.version from chrome.runtime (Pages has no Bun global).
  * @see docs/portal-foundation.md
+ * @see docs/BUN_NATIVE_CAPABILITIES.md#portal--glossary--registry
  * @see public/registry/portal-chrome.json
  */
 
@@ -21,18 +23,24 @@ const FALLBACK_LINKS = [
 
 /**
  * @param {Array<{label:string,href:string,external?:boolean}>} links
+ * @param {{ bunVersion?: string, bunRevision?: string } | null} [runtime]
  */
-function footerInnerHtml(links) {
+function footerInnerHtml(links, runtime = null) {
   const parts = links.map(l => {
     const ext = l.external ? ' target="_blank" rel="noopener noreferrer"' : '';
     return `<a href="${l.href}"${ext}>${l.label}</a>`;
   });
+  const bunLabel =
+    runtime?.bunVersion != null && runtime.bunVersion !== ''
+      ? `Bun v${runtime.bunVersion}`
+      : '';
   return `<p>
       <strong>FactoryWager</strong> ·
       ${parts.join(' ·\n      ')}
     </p>
     <p class="footer-meta">
       project-R-score · chrome <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a>
+      · <span data-footer-bun>${bunLabel}</span>
       · <span data-footer-ts></span>
     </p>`;
 }
@@ -53,6 +61,8 @@ export async function mountPortalFooter(root = document) {
   footer.dataset.portalChrome = 'footer';
 
   let links = FALLBACK_LINKS;
+  /** @type {{ bunVersion?: string, bunRevision?: string } | null} */
+  let runtime = null;
   try {
     const res = await fetch('/registry/portal-chrome.json', {
       headers: { Accept: 'application/json' },
@@ -63,14 +73,21 @@ export async function mountPortalFooter(root = document) {
       if (Array.isArray(cat.footerLinks) && cat.footerLinks.length) {
         links = cat.footerLinks;
       }
+      if (cat.runtime && typeof cat.runtime.bunVersion === 'string') {
+        runtime = cat.runtime;
+      }
     }
   } catch {
     /* offline / missing bake */
   }
 
-  footer.innerHTML = footerInnerHtml(links);
+  footer.innerHTML = footerInnerHtml(links, runtime);
   const ts = footer.querySelector('[data-footer-ts]');
   if (ts) ts.textContent = new Date().toISOString().slice(0, 19) + 'Z';
+  const bunEl = footer.querySelector('[data-footer-bun]');
+  if (bunEl && !bunEl.textContent?.trim() && runtime?.bunVersion) {
+    bunEl.textContent = `Bun v${runtime.bunVersion}`;
+  }
 }
 
 if (typeof document !== 'undefined') {

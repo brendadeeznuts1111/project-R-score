@@ -1,4 +1,6 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @see https://bun.com/docs/guides/util/version — version / revision
 /**
  * Portal chrome SSOT — topbar priority/overflow nav, footer links, component registry.
  * Baked to public/registry/portal-chrome.json · applied via tools/portal-apply-chrome.ts.
@@ -6,6 +8,7 @@
  * @see docs/portal-foundation.md
  * @see public/portal/components/
  */
+import { bunRuntimeProvenance } from '../bun-executable.ts';
 import { PORTAL_WIKI_DROPDOWN_HREF } from '../http/wiki-nav.ts';
 
 export const PORTAL_CHROME_REGISTRY_REL = 'public/registry/portal-chrome.json';
@@ -40,6 +43,11 @@ export type PortalChromeCatalog = {
   kind: 'portal-chrome';
   generated: string;
   path: typeof PORTAL_CHROME_REGISTRY_PATH;
+  /** Bake-time Bun fingerprint (footer / audit). Pages has no runtime Bun. */
+  runtime: {
+    bunVersion: string;
+    bunRevision: string;
+  };
   summary: {
     priorityNav: number;
     overflowNav: number;
@@ -52,6 +60,7 @@ export type PortalChromeCatalog = {
     monorepoHealth: '/registry/monorepo-health.json';
     packagesGraph: '/registry/packages-graph-map.json';
     opsSummary: '/registry/ops-summary.json';
+    glossary: '/registry/domain-glossary.json';
   };
   priorityNav: PortalChromeNavItem[];
   overflowNav: PortalChromeNavItem[];
@@ -380,7 +389,13 @@ export const PORTAL_CHROME_COMPONENTS: PortalChromeComponent[] = [
   {
     id: 'footer',
     path: '/portal/components/footer.js',
-    role: 'shared footer from portal-chrome registry',
+    role: 'shared footer from portal-chrome registry · bake-time Bun.version',
+    kind: 'module',
+  },
+  {
+    id: 'glossary-ux',
+    path: '/portal/components/glossary-ux.js',
+    role: 'data-glossary-concept tooltips · #glossary: deep links · domain-glossary.json',
     kind: 'module',
   },
   {
@@ -435,11 +450,16 @@ export function buildPortalChromeCatalog(
     { label: 'monorepo health bake', cmd: 'bun run monorepo:health:bake' },
     { label: 'ops snapshot', cmd: 'bun run ops:snapshot --no-routing' },
   ];
+  const provenance = bunRuntimeProvenance();
   return {
     schemaVersion: 1,
     kind: 'portal-chrome',
     generated,
     path: PORTAL_CHROME_REGISTRY_PATH,
+    runtime: {
+      bunVersion: provenance.bunVersion,
+      bunRevision: provenance.bunRevision,
+    },
     summary: {
       priorityNav: PORTAL_PRIORITY_NAV.length,
       overflowNav: PORTAL_OVERFLOW_NAV.length,
@@ -452,6 +472,7 @@ export function buildPortalChromeCatalog(
       monorepoHealth: '/registry/monorepo-health.json',
       packagesGraph: '/registry/packages-graph-map.json',
       opsSummary: '/registry/ops-summary.json',
+      glossary: '/registry/domain-glossary.json',
     },
     priorityNav: PORTAL_PRIORITY_NAV,
     overflowNav: PORTAL_OVERFLOW_NAV,
@@ -514,6 +535,7 @@ export function renderFooterHtml(): string {
     </p>
     <p class="footer-meta">
       project-R-score · chrome <a href="${PORTAL_CHROME_REGISTRY_PATH}"><code>portal-chrome.json</code></a>
+      · <span data-footer-bun></span>
       · <span data-footer-ts>…</span>
     </p>
   </footer>`;
