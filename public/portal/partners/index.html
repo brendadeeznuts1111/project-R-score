@@ -1017,6 +1017,7 @@
     <script type="module" src="/portal/components/footer.js"></script>
     <script type="module">
       import { bootGlossaryUx } from '/portal/components/glossary-ux.js';
+      import { conceptIdForPartnerOpsEventCode } from '/portal/components/partner-ops-event-concepts.js';
       import {
         parsePartnerHash,
         partnerAccountingHash,
@@ -1379,17 +1380,19 @@
           eventsBody.innerHTML = events.length
             ? events
                 .slice(0, 40)
-                .map(
-                  e => `<tr data-partner-code="${esc(e.partnerCode)}">
+                .map(e => {
+                  const conceptId =
+                    e.conceptId || conceptIdForPartnerOpsEventCode(e.code);
+                  return `<tr data-partner-code="${esc(e.partnerCode)}">
                 <td>${partnerLink(e.partnerCode)}</td>
                 <td><time>${esc(e.at || '—')}</time></td>
                 <td><code>${esc(e.code || '—')}</code></td>
-                <td><a href="${glossaryHref(e.conceptId || 'accounting.deposit')}" data-glossary-concept="${esc(e.conceptId || '')}">${esc(e.conceptId || '—')}</a></td>
+                <td><a href="${glossaryHref(conceptId)}" data-glossary-concept="${esc(conceptId)}">${esc(conceptId)}</a></td>
                 <td>${e.amount != null ? esc(String(e.amount)) : '—'}</td>
                 <td>${esc([e.rail, e.outId].filter(Boolean).join(' · ') || '—')}</td>
                 <td>${esc(e.note || '—')}</td>
-              </tr>`
-                )
+              </tr>`;
+                })
                 .join('')
             : '<tr><td colspan="7">No ledger events — bun run partners:event … then partners:build</td></tr>';
         }

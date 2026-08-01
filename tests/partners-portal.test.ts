@@ -63,6 +63,8 @@ describe('partners portal board', () => {
     expect(html).toContain('telegramDeepLink');
     expect(html).toContain('accounting-events-tbody');
     expect(html).toContain('partners:event');
+    expect(html).toContain('/portal/components/partner-ops-event-concepts.js');
+    expect(html).toContain('conceptIdForPartnerOpsEventCode');
     expect(html).toContain('data-glossary-concept="section.partnersTags"');
     expect(html).toContain('data-glossary-concept="section.partnersOuts"');
     expect(html).toContain('data-glossary-concept="section.partnersBookDetail"');
