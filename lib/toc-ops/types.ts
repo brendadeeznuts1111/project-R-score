@@ -1392,6 +1392,8 @@ export type TocOpsSnapshot = {
     onboarding: number;
     confirmedRails: number;
     unconfirmedRails: number;
+    /** Rails overlaid from Factory seat-intake (`seat-*` ids) — subset of confirmedRails+unconfirmedRails. */
+    seatSourcedRails?: number;
     openTasks: number;
     openOnb: number;
     openLimit: number;
@@ -1484,6 +1486,8 @@ export type TocOpsSummarySlice = {
   openBottlenecks: number;
   criticalBottlenecks: number;
   principalOutstandingTotal: number;
+  /** Rails overlaid from Factory seat-intake (`seat-*` ids) — see [`seat-desk-rails-bridge.ts`](./seat-desk-rails-bridge.ts). */
+  seatSourcedRails?: number;
   throttleOnboarding: boolean;
   primedDrums: number;
   playableDrums: number;

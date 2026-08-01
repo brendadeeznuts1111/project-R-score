@@ -118,6 +118,8 @@ Freeform topic lines: `SPEN-1 | Venmo | @handle` or `2 | Venmo | @handle` (same 
 | Partners `/portal/partners/#section:partner-message` | Yes (same bake) | Templates + common/out-specific missing |
 | Flow cards (`renderForNode`) | No (tree_nodes) | balances.v1, status.v1, etc. |
 
+**TOC glance** — `mergeSeatDeskRailsIntoToc` ([`seat-desk-rails-bridge.ts`](../../../lib/toc-ops/seat-desk-rails-bridge.ts)) overlaid `seat-*` rails onto `partners[].rails[]` but never refreshed `summary.confirmedRails`/`unconfirmedRails` (undercounted the overlay) and left it invisible at a glance. Now: recomputes both counts post-merge, adds `summary.seatSourcedRails` (mirrored on `TocOpsSummarySlice.seatSourcedRails`), tags each `seat-*` rail with a **seat desk** pill on `/portal/toc/`, and appends `N seat-desk rails` to the `/portal/ops/` TOC glance line when `> 0`.
+
 **Field visibility SSOT:** `SEAT_DESK_FIELD_MANIFEST` in [`seat-desk-partner-message.ts`](../../../lib/telegram/seat-desk-partner-message.ts) — which fields are intake-only, desk-table, rich details, partner message, fund gate, or internal (password).
 
 | Field | Desk table | Partner msg | Fund gate | Internal |

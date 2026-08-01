@@ -792,11 +792,15 @@ class OperationsDashboard extends HTMLElement {
             d.toc.principalOutstandingTotal != null
               ? `principal $${Math.round(d.toc.principalOutstandingTotal)}`
               : '';
+          const seatRails =
+            d.toc.seatSourcedRails != null && d.toc.seatSourcedRails > 0
+              ? `${d.toc.seatSourcedRails} seat-desk rails`
+              : '';
           const settled = d.toc.playsSettled != null ? `${d.toc.playsSettled} settled` : '';
           const openTasks = d.toc.openTasks != null ? `${d.toc.openTasks} open tasks` : '';
           const bn = d.toc.openBottlenecks != null ? `${d.toc.openBottlenecks} bottlenecks` : '';
           tocDetail.textContent =
-            `DEMO · ${idLink} · ${focus}${fails ? ` · ${fails}` : ''}${topProc ? ` · ${topProc}` : ''}${settle ? ` · ${settle}` : ''}${principal ? ` · ${principal}` : ''} · ` +
+            `DEMO · ${idLink} · ${focus}${fails ? ` · ${fails}` : ''}${topProc ? ` · ${topProc}` : ''}${settle ? ` · ${settle}` : ''}${principal ? ` · ${principal}` : ''}${seatRails ? ` · ${seatRails}` : ''} · ` +
             `${d.toc.warming ?? 0} warming · ${d.toc.onboarding ?? 0} onboarding · ` +
             `${d.toc.openOnb ?? 0} ONB · ${d.toc.playsPending ?? 0} plays` +
             `${settled ? ` · ${settled}` : ''}` +

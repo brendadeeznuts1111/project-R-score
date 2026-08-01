@@ -6,6 +6,7 @@ import {
   projectSeatIntakeToTocRails,
 } from '../lib/toc-ops/seat-desk-rails-bridge.ts';
 import { buildDemoTocOpsFixture } from '../lib/toc-ops/fixture.ts';
+import { tocOpsToSummarySlice } from '../lib/toc-ops/export-snapshot.ts';
 
 const ashIntake: SeatIntakeRecord = {
   partnerCode: 'ASH',
@@ -69,5 +70,35 @@ describe('seat-desk-rails-bridge', () => {
     const twice = mergeSeatDeskRailsIntoToc(once, [proj]);
     const ash = twice.partners.find(p => p.partnerCode === 'ASH')!;
     expect(ash.rails.filter(r => String(r.id).startsWith('seat-')).length).toBe(2);
+  });
+
+  test('merge surfaces summary.seatSourcedRails and refreshes confirmed/unconfirmed counts', () => {
+    const base = buildDemoTocOpsFixture();
+    const totalRailsBefore = base.partners.reduce((n, p) => n + p.rails.length, 0);
+    const merged = mergeSeatDeskRailsIntoToc(base, [projectSeatIntakeToTocRails(ashIntake)]);
+    const ash = merged.partners.find(p => p.partnerCode === 'ASH')!;
+    const seatRailsOnAsh = ash.rails.filter(r => String(r.id).startsWith('seat-'));
+    const totalRailsAfter = merged.partners.reduce((n, p) => n + p.rails.length, 0);
+
+    // seatSourcedRails counts exactly the seat-* rails across all partners
+    expect(merged.summary.seatSourcedRails).toBe(seatRailsOnAsh.length);
+    // confirmedRails + unconfirmedRails must equal total rails post-merge
+    // (previously computed pre-merge, undercounting the seat overlay)
+    expect(merged.summary.confirmedRails + merged.summary.unconfirmedRails).toBe(totalRailsAfter);
+    expect(totalRailsAfter).toBeGreaterThan(totalRailsBefore);
+  });
+
+  test('no-op merge (empty projections) leaves summary untouched', () => {
+    const base = buildDemoTocOpsFixture();
+    const merged = mergeSeatDeskRailsIntoToc(base, []);
+    expect(merged).toBe(base);
+    expect(merged.summary.seatSourcedRails ?? 0).toBe(0);
+  });
+
+  test('tocOpsToSummarySlice surfaces seatSourcedRails for ops/TOC glance', () => {
+    const base = buildDemoTocOpsFixture();
+    const merged = mergeSeatDeskRailsIntoToc(base, [projectSeatIntakeToTocRails(ashIntake)]);
+    const slice = tocOpsToSummarySlice(merged);
+    expect(slice.seatSourcedRails).toBe(2);
   });
 });
