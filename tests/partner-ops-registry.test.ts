@@ -15,6 +15,7 @@ import {
 import { partnerOpsColorMap, partnerOpsConceptColorWire } from '../lib/telegram/partner-ops-color-kernel.ts';
 import { partnerOpsGlossaryConcepts } from '../lib/telegram/partner-ops-glossary.ts';
 import { PARTNER_OPS_EVENT_CODES, buildPartnerOpsEvent } from '../lib/telegram/partner-ops-events.ts';
+import { createTestWorkspace } from './harness.ts';
 
 describe('partner-ops classifiers', () => {
   test('book / rail / out / phase maps', () => {
@@ -141,8 +142,9 @@ describe('partners-ops registry bake', () => {
   });
 
   test('export writes public registry', async () => {
-    const registry = await exportPartnersOpsRegistry();
-    const baked = await Bun.file('public/registry/partners-ops.json').json();
+    await using workspace = await createTestWorkspace('partner-ops-registry-');
+    const registry = await exportPartnersOpsRegistry(process.cwd(), workspace.root);
+    const baked = await Bun.file(workspace.resolve('public/registry/partners-ops.json')).json();
     expect(baked.schema).toBe(PARTNERS_OPS_SCHEMA);
     expect(baked.partners.length).toBe(registry.partners.length);
   });

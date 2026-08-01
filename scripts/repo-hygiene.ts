@@ -79,6 +79,12 @@ const FORBIDDEN_STAGED = [
   'lib/profile.md',
 ];
 
+/** Skill-owned test entrypoints intentionally named with the guarded test-* prefix. */
+const ALLOWED_STAGED_ENTRYPOINTS = new Set([
+  '.agents/skills/ast-grep/scripts/test-cli.ts',
+  '.agents/skills/ast-grep/scripts/scan/transpiler/test-runner.ts',
+]);
+
 // Dirs that must never exist at root (often created by misconfigured Bun cache)
 const FORBIDDEN_ROOT_DIRS = new Set(['~']);
 
@@ -208,6 +214,7 @@ async function checkStagedStray(): Promise<Violation[]> {
 
   for (const file of staged) {
     const basename = file.split('/').pop()!;
+    if (ALLOWED_STAGED_ENTRYPOINTS.has(file)) continue;
     if (isTildeCachePath(file)) {
       violations.push(violation(file, 'tilde-cache-staged'));
       continue;
@@ -322,6 +329,7 @@ export {
   SECRETS_FILES,
   ALLOWED_ROOT_DIRS,
   FORBIDDEN_ROOT_DIRS,
+  ALLOWED_STAGED_ENTRYPOINTS,
   dedupeViolations,
   findGitignored,
   findRootClutter,

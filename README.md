@@ -17,6 +17,7 @@
 | Wire boundary (parse once) | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) |
 | Portal foundation | [`docs/portal-foundation.md`](docs/portal-foundation.md) |
 | Harness JIT index | [`docs/harness/`](docs/harness/) · `bun run harness:status` |
+| Local merge + Cloudflare delivery (key reference) | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) · [`docs/harness/tenants/cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) · `bun run bun:ci` |
 | Projects triage | [projects/README.md](https://github.com/brendadeeznuts1111/project-R-score/blob/main/projects/README.md) (repo) |
 | Docs index | [`docs/`](docs/) |
 | Path SSOT (code) | [`lib/docs/repo-docs.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/repo-docs.ts) (`CANONICAL_REPO_DOCS`) |

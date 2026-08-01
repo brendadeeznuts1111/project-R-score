@@ -823,12 +823,13 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
 }
 
 export async function exportPartnersOpsRegistry(
-  root = process.cwd()
+  root = process.cwd(),
+  outputRoot = root
 ): Promise<PartnersOpsRegistry> {
   const registry = await buildPartnersOpsRegistry(root);
-  const abs = root.endsWith('/')
-    ? `${root}${PARTNERS_OPS_REGISTRY_REL}`
-    : `${root}/${PARTNERS_OPS_REGISTRY_REL}`;
+  const abs = outputRoot.endsWith('/')
+    ? `${outputRoot}${PARTNERS_OPS_REGISTRY_REL}`
+    : `${outputRoot}/${PARTNERS_OPS_REGISTRY_REL}`;
   const dir = abs.slice(0, abs.lastIndexOf('/'));
   if (dir) await Bun.$`mkdir -p ${dir}`.quiet();
   await Bun.write(abs, `${JSON.stringify(registry, null, 2)}\n`);

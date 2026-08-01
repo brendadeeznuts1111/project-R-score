@@ -7,6 +7,7 @@ import {
   rootOutputRoute,
 } from '../config/repo-root-policy.ts';
 import {
+  ALLOWED_STAGED_ENTRYPOINTS,
   dedupeViolations,
   findGitignored,
   findStrayFiles,
@@ -44,6 +45,15 @@ describe('repository root policy', () => {
 });
 
 describe('repo hygiene mechanics', () => {
+  test('allows canonical ast-grep test entrypoints', () => {
+    expect(ALLOWED_STAGED_ENTRYPOINTS).toEqual(
+      new Set([
+        '.agents/skills/ast-grep/scripts/test-cli.ts',
+        '.agents/skills/ast-grep/scripts/scan/transpiler/test-runner.ts',
+      ])
+    );
+  });
+
   test('checks ignored candidates in one batch', () => {
     const ignored = findGitignored(['temp-perf.db', 'test-metafile.json']);
     expect(ignored).toEqual(new Set(['temp-perf.db', 'test-metafile.json']));

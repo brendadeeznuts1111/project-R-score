@@ -127,7 +127,7 @@ export class BusinessContinuity {
       throw new Error('Old business data not found');
     }
 
-    await redis.hset(`business:${oldBusinessId}`, [
+    await redis.hmset(`business:${oldBusinessId}`, [
       'endDate',
       new Date().toISOString(),
       'current',

@@ -2,6 +2,8 @@
  * Three-source Bun API verification harness tests.
  * @see ../tools/bun-api-verify.ts
  * @see ../lib/bun-api-proof.ts
+ * @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+ * @see https://bun.com/docs/runtime/utils#bun-resolvesync — Bun.resolveSync
  */
 import { describe, expect, test } from 'bun:test';
 import {
@@ -129,8 +131,11 @@ describe('verifyBunApis (offline)', () => {
       catalog: Record<string, string>;
     };
     const metadata = await readBunTypesPackageMetadata();
+    const typesBunMetadata = (await Bun.file(
+      Bun.resolveSync('@types/bun/package.json', process.cwd())
+    ).json()) as { version: string };
     expect(metadata.version).toBe(root.catalog['bun-types']);
-    expect(root.catalog['@types/bun']).toBe(metadata.version);
+    expect(typesBunMetadata.version).toBe(root.catalog['@types/bun']);
     expect(metadata.repositoryUrl).toBe(BUN_REPOSITORY_URL);
     expect(metadata.repositoryDirectory).toBe('packages/bun-types');
   });

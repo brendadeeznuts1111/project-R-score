@@ -6,6 +6,6 @@
     "incremental": true,
     "tsBuildInfoFile": "../../.cache/tsbuildinfo/packages-guards.tsbuildinfo"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../../config/bun-dx-catalog.ts"],
   "exclude": ["node_modules", "dist", "build"]
 }

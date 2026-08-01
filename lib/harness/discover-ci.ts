@@ -33,6 +33,9 @@ export const CI_JOB_OWNERS: Readonly<Record<string, string>> = {
   'ci:validate': 'ci-core',
   'ci:bun:check': 'ci-core',
   'ci:r2:version:check': 'ci-core',
+  'ci:security': 'ci-core',
+  'ci:portal-registry': 'ci-core',
+  'ci:types': 'typescript-ci',
   'build:affected': 'ci-core',
   'build:defines': 'ci-core',
   'build:defines:dev': 'ci-core',
@@ -47,6 +50,7 @@ export const CI_JOB_OWNERS: Readonly<Record<string, string>> = {
   'harness-gates.yml': 'ci-core',
   'typescript-checks.yml': 'typescript-ci',
   'repo-hygiene.yml': 'ci-core',
+  'security-scanner.yml': 'ci-core',
 };
 
 /**
