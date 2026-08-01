@@ -11,6 +11,7 @@ the registry bake.
 | FactoryWager | `lib/telegram/partner-ops-glossary.ts` | Factory overlay: `deposit.method.{cashapp,paypal,zelle,apple_pay,unknown}`, `out.status.{blocked,partial,funded}`, `telegram.topic.*`, `partner.ops.event` (14 ids) |
 | FactoryWager | `lib/telegram/ops-view-glossary.ts` | Reporting-view chrome: `ops.view.per_*` dimensions + per-account MVP (10 ids). Collapse backlog for deferred play/week/book columns |
 | FactoryWager | `lib/telegram/ops-accounting-view.ts` | Pure `buildPerAccountAccountingView` + shape gate (Soft Balance stays in toc-ops `ct`) · handshake note [`docs/design/soft-handshake.md`](../../design/soft-handshake.md) |
+| FactoryWager | `lib/telegram/soft-accounting-export.ts` | Soft→Factory read-only export wire v1 + toc-ops fixture projection + `buildPerPlayAccountingView` (no Soft mutation) |
 | FactoryWager | `lib/telegram/telegram-glossary.ts` | Wire/topics + message chrome MVP: `telegram.message.*` · `telegram.status.{delivered,failed}` · `telegram.action.{reply,forward,pin}` |
 | FactoryWager | `lib/telegram/partner-ops-color-kernel.ts` | `PARTNER_OPS_COLORS` (9-key closed palette, Bun.color-validated) + `PARTNER_OPS_CONCEPT_COLORS` (61 concept→key) |
 | FactoryWager | `lib/telegram/partner-ops-events.ts` | 11 event codes (`PARTNER_OPS_EVENT_CODES`) + `PARTNER_OPS_EVENT_GLOSSARY` → `event.*` |

@@ -58,14 +58,32 @@ Shared vocabulary Soft and Factory **may** both name (Kalshi cores):
 `accounting.*`, `event.*`, `book.type.*`, `partner.phase.*`, `out.status.*`.
 Presentation chrome (`ops.view.*`, `telegram.message.*`) is Factory-only.
 
+## Factory wire (v1) — ready for Soft to target
+
+| Piece | Path |
+|-------|------|
+| Types + load/project | [`lib/telegram/soft-accounting-export.ts`](../../lib/telegram/soft-accounting-export.ts) |
+| Optional bake (not required yet) | `/registry/soft-accounting-export.json` · schema `factorywager.soft-accounting-export.v1` |
+| Demo projection | `projectSoftAccountingExportFromTocOps` over Pages [`toc-ops.json`](../../public/registry/toc-ops.json) `partners[].recentPlays` |
+| Per-play builder (dimension-only) | `buildPerPlayAccountingView` → `ops.view.per_play` |
+
+`loadSoftAccountingExport({ projectFromTocOps: true })` fills plays from the TOC
+fixture when the Soft bake file is absent. That is a **demo bridge**, not Soft
+Balance. Primary Soft export should write the JSON bake with `source: "soft-ct"`.
+
+Week / book-type arrays ship empty in v1 until Soft tags those dimensions.
+
 ## Exit criteria for the next build phase
 
-1. Soft exports a versioned, read-only slice (path or bake) with stable keys for
-   playId / weekStart / bookType.
-2. Factory adds builders that call `validateOpsAccountingViewShape` and map
-   amounts onto existing `accounting.*` / `book.type.*` — **still no new
-   glossary mint** unless a chip cannot collapse.
+1. Soft (or fixture) exports a versioned, read-only slice with stable keys for
+   playId / weekStart / bookType — **Factory wire v1 exists**; Soft `soft-ct`
+   bake still outstanding.
+2. Factory builders call `validateOpsAccountingViewShape` and map amounts onto
+   existing `accounting.*` / `book.type.*` — **still no new glossary mint**
+   unless a chip cannot collapse. Per-play dimension builder is in place;
+   week/book builders wait on Soft rows.
 3. Local proof: `bun run partners:governance` + lane tests; merge authority
    remains `bun run bun:ci` (GitHub Actions is not a gate).
 
-Until (1), park consumer UX polish on play/week/book chrome.
+Until Soft writes `source: "soft-ct"`, park dossier/partners consumer polish on
+play/week/book chrome (fixture projection is for tests + future bake only).
