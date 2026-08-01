@@ -3,7 +3,10 @@
 import { describe, expect, test } from 'bun:test';
 import {
   BUN_TERMINAL_OPTIONS_DOCS,
+  BUN_TERMINAL_OPTIONS_REFERENCE,
   BUN_TERMINAL_PTY_DOCS,
+  BUN_TERMINAL_REFERENCE,
+  BUN_TERMINAL_TYPES_SOURCE,
   DEFAULT_TERMINAL_COLS,
   DEFAULT_TERMINAL_ROWS,
   createCapturingTerminal,
@@ -12,12 +15,19 @@ import {
 } from '../lib/terminal.ts';
 
 describe('lib/terminal', () => {
-  test('canonical docs URLs point at child-process PTY anchors', () => {
+  test('canonical docs URLs point at Bun guide + reference + bun-types', () => {
     expect(BUN_TERMINAL_PTY_DOCS).toBe(
       'https://bun.com/docs/runtime/child-process#terminal-pty-support',
     );
     expect(BUN_TERMINAL_OPTIONS_DOCS).toBe(
       'https://bun.com/docs/runtime/child-process#terminal-options',
+    );
+    expect(BUN_TERMINAL_REFERENCE).toBe('https://bun.com/reference/bun/Terminal');
+    expect(BUN_TERMINAL_OPTIONS_REFERENCE).toBe(
+      'https://bun.com/reference/bun/TerminalOptions',
+    );
+    expect(BUN_TERMINAL_TYPES_SOURCE).toBe(
+      'https://github.com/oven-sh/bun/tree/main/packages/bun-types',
     );
   });
 

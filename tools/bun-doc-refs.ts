@@ -822,7 +822,10 @@ export const CANONICAL_REFS: Record<string, string> = {
   // ── Process & spawn ─────────────────────────────────────────────────────
   'Bun.argv': 'https://bun.com/reference/bun/argv',
   'Bun.spawnSync': 'https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync',
+  // Guide primary for Bun.Terminal; types-generated reference is separate suggest key
   'Bun.Terminal': 'https://bun.com/docs/runtime/child-process#terminal-pty-support',
+  'Bun.TerminalOptions': 'https://bun.com/reference/bun/TerminalOptions',
+  'Bun.Terminal (reference)': 'https://bun.com/reference/bun/Terminal',
   'Bun.Terminal (v1.3.5 ship)':
     'https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support',
   'Bun.build': 'https://bun.com/docs/bundler/index#basic-example',
