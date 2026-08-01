@@ -268,9 +268,21 @@ Component readiness (static-fit): `bun run portal:css:score:components`.
 | Icons / images (future) | `file` | import in JS/CSS; Bun copies to `outdir` |
 | CSS Modules | `css` (+ modules) | Deferred until component library split |
 
+**Color kernel planes** (`colorKernel` = [`theme.jsonc`](../public/portal/theme.jsonc)):
+
+| Plane | Owner | Role |
+|-------|-------|------|
+| Portal chrome | `theme.jsonc` → [`lib/portal/theme.ts`](../lib/portal/theme.ts) | SSOT dark/light tokens · CSS via `portal:theme:sync` |
+| Glossary chips | [`lib/portal/portal-kernel-palette.ts`](../lib/portal/portal-kernel-palette.ts) | Dark tones from theme + extended `purple` / `blueDeep` |
+| Partner-ops | [`lib/telegram/partner-ops-color-kernel.ts`](../lib/telegram/partner-ops-color-kernel.ts) | Closed palette; intentional theme aliases |
+| Telegram topics | [`lib/telegram/telegram-color-kernel.ts`](../lib/telegram/telegram-color-kernel.ts) | Closed palette; intentional theme aliases + brand |
+
+`bun run portal:colors:check` (Bun.color HEX) enforces theme-dark aliases across glossary / partner-ops / telegram. Extended keys (purple, brand, research, …) may diverge. Check-only — no TypeScript rewrite. Chained from `portal:theme:check` after CSS stale check.
+
 ```bash
 bun run portal:theme:sync          # theme.jsonc → theme-tokens.css
-bun run portal:theme:check         # fail if tokens CSS stale
+bun run portal:theme:check         # tokens CSS stale + color-kernel aliases
+bun run portal:colors:check        # theme ↔ glossary / telegram kernel aliases only
 bun run portal:css:build           # sync theme + lower CSS → dist/style.css
 bun run portal:css:build:minify    # → also dist/style.min.css
 bun run portal:css:check

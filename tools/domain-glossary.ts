@@ -36,41 +36,17 @@ import {
   PARTNER_OPS_CONCEPT_COLORS,
   partnerOpsConceptColorWire,
 } from '../lib/telegram/partner-ops-color-kernel.ts';
-import { portalTheme } from '../lib/portal/theme.ts';
+import {
+  CATEGORY_COLOR_KEYS,
+  PORTAL_KERNEL_PALETTE,
+} from '../lib/portal/portal-kernel-palette.ts';
 
 export const DOMAIN_GLOSSARY_SOURCE_PATH = 'Kalshi-bot/research/registry/glossary-dump.json';
 export const DOMAIN_GLOSSARY_PATH = 'public/registry/domain-glossary.json';
 export const DOMAIN_GLOSSARY_URL = '/registry/domain-glossary.json';
 
-/**
- * Glossary category → portal design-kernel colorKey.
- * Hex values come from theme.jsonc (dark) plus the closed partner-ops extended
- * keys (purple/deep blue) so chips match `/portal` tone tokens and Telegram
- * partner-ops kernels instead of the older FW_COLORS Tailwind palette.
- */
-const CATEGORY_COLOR_KEYS = {
-  market: 'accent',
-  model: 'purple',
-  tournament: 'green',
-  warehouse: 'blueDeep',
-  trading: 'yellow',
-  ui: 'accent',
-  pipeline: 'red',
-  other: 'muted',
-} as const satisfies Record<string, string>;
-
-/** Closed portal + partner-ops palette used for category tokens. */
-const PORTAL_KERNEL_PALETTE = {
-  accent: portalTheme.dark.accent,
-  green: portalTheme.dark.green,
-  yellow: portalTheme.dark.yellow,
-  red: portalTheme.dark.red,
-  muted: portalTheme.dark.textDim,
-  /** partner-ops `pinnacle` — model / calibration */
-  purple: '#a371f7',
-  /** partner-ops `polymarket` — warehouse / profiles */
-  blueDeep: '#1f6feb',
-} as const satisfies Record<(typeof CATEGORY_COLOR_KEYS)[keyof typeof CATEGORY_COLOR_KEYS], string>;
+/** Re-export shared palette for bake consumers / align checks. */
+export { CATEGORY_COLOR_KEYS, PORTAL_KERNEL_PALETTE };
 
 type CanonicalConcept = {
   id: string; // brand-ok — glossary concept key, not an entity identity
