@@ -14,17 +14,28 @@ import { isReservedEnvKey } from '../tools/portal-secret.ts';
 const VERBOSE_FETCH_SMOKE_TIMEOUT_MS = 5_000;
 
 /**
- * Child Bun: in-process serve + fetch under BUN_CONFIG_VERBOSE_FETCH (loopback only).
- * Serve lives inside the child so cleanup is `s.stop(true)` there — no shared port races.
- *
- * `1`/`0` are Bun runtime aliases for true/false (not assessor-only); see debugger docs.
+ * Docs (debugger sample, UA Bun/1.3.3) label lines as `[fetch] $` / `[fetch] >` / `[fetch] <`.
+ * Bun 1.4 may omit the `[fetch]` tag and the `$` before curl. Match both shapes.
  */
-async function runWithVerboseFetch(
-  value: string | undefined
+const FETCH_TAG = '(?:\\[fetch\\]\\s*)?';
+const RE_CURL_LINE = new RegExp(`${FETCH_TAG}\\$?\\s*curl --http`);
+const RE_REQUEST_LINE = new RegExp(`${FETCH_TAG}>?\\s*HTTP/1\\.1`);
+const RE_RESPONSE_OK = new RegExp(`${FETCH_TAG}<?\\s*200`);
+
+async function runChildFetchSmoke(
+  label: string,
+  opts: { envValue?: string | undefined; fetchVerbose?: true | 'curl' | undefined }
 ): Promise<{ out: string; exitCode: number }> {
   const env: Record<string, string | undefined> = { ...Bun.env };
-  if (value === undefined) delete env.BUN_CONFIG_VERBOSE_FETCH;
-  else env.BUN_CONFIG_VERBOSE_FETCH = value;
+  delete env.BUN_CONFIG_VERBOSE_FETCH;
+  if (opts.envValue !== undefined) env.BUN_CONFIG_VERBOSE_FETCH = opts.envValue;
+
+  const verboseArg =
+    opts.fetchVerbose === undefined
+      ? ''
+      : opts.fetchVerbose === true
+        ? ', verbose: true'
+        : ', verbose: "curl"';
 
   const proc = Bun.spawn({
     cmd: [
@@ -32,7 +43,12 @@ async function runWithVerboseFetch(
       '-e',
       `
 const s = Bun.serve({ port: 0, fetch() { return new Response("ok"); } });
-await fetch("http://127.0.0.1:" + s.port + "/");
+await fetch("http://127.0.0.1:" + s.port + "/", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ foo: "bar" })
+  ${verboseArg}
+});
 s.stop(true);
 `,
     ],
@@ -53,55 +69,73 @@ s.stop(true);
   const timed = Bun.sleep(VERBOSE_FETCH_SMOKE_TIMEOUT_MS).then(async () => {
     proc.kill();
     throw new Error(
-      `verbose-fetch smoke timed out after ${VERBOSE_FETCH_SMOKE_TIMEOUT_MS}ms (value=${JSON.stringify(value)})`
+      `verbose-fetch smoke timed out after ${VERBOSE_FETCH_SMOKE_TIMEOUT_MS}ms (${label})`
     );
   });
 
   return await Promise.race([read, timed]);
 }
 
-/** Bun 1.4 live shapes (docs sometimes show a `[fetch]` prefix — runtime may omit it). */
-const VERBOSE_FETCH_SMOKE_CASES = [
+/** Env plane — `1`/`0` are Bun runtime aliases for true/false. */
+const VERBOSE_FETCH_ENV_CASES = [
   {
     value: 'curl' as const,
-    // Bun runtime alias note: curl is the documented copy-pasteable form
-    expectMatch: [/curl --http/, /HTTP\/1\.1 GET/, /200/],
-    expectNotMatch: [] as RegExp[],
+    expectCurl: true,
+    expectTraffic: true,
     expectEmpty: false,
   },
   {
     value: 'true' as const,
-    expectMatch: [/HTTP\/1\.1 GET/, /200/],
-    expectNotMatch: [/curl --http/],
+    expectCurl: false,
+    expectTraffic: true,
     expectEmpty: false,
   },
   {
-    // Alias for true — accepted by Bun runtime, not only assessBunRuntimeEnv
     value: '1' as const,
-    expectMatch: [/HTTP\/1\.1 GET/, /200/],
-    expectNotMatch: [/curl --http/],
+    expectCurl: false,
+    expectTraffic: true,
     expectEmpty: false,
   },
   {
     value: 'false' as const,
-    expectMatch: [] as RegExp[],
-    expectNotMatch: [/curl --http/, /HTTP\/1\.1/, /GET http/],
+    expectCurl: false,
+    expectTraffic: false,
     expectEmpty: true,
   },
   {
-    // Alias for false — accepted by Bun runtime
     value: '0' as const,
-    expectMatch: [] as RegExp[],
-    expectNotMatch: [/curl --http/, /HTTP\/1\.1/, /GET http/],
+    expectCurl: false,
+    expectTraffic: false,
     expectEmpty: true,
   },
   {
     value: undefined,
-    expectMatch: [] as RegExp[],
-    expectNotMatch: [/curl --http/, /HTTP\/1\.1/, /GET http/],
+    expectCurl: false,
+    expectTraffic: false,
     expectEmpty: true,
   },
 ] as const;
+
+function assertVerboseTraffic(
+  out: string,
+  opts: { expectCurl: boolean; expectTraffic: boolean; expectEmpty: boolean }
+): void {
+  if (opts.expectEmpty) {
+    expect(out).toBe('');
+    return;
+  }
+  if (opts.expectCurl) {
+    expect(out).toMatch(RE_CURL_LINE);
+  } else {
+    expect(out).not.toMatch(RE_CURL_LINE);
+  }
+  if (opts.expectTraffic) {
+    expect(out).toMatch(RE_REQUEST_LINE);
+    expect(out).toMatch(RE_RESPONSE_OK);
+  } else {
+    expect(out).not.toMatch(RE_REQUEST_LINE);
+  }
+}
 
 describe('Bun runtime environment control plane', () => {
   test('catalogs the documented configuring-Bun variables exactly once', () => {
@@ -211,20 +245,28 @@ describe('Bun runtime environment control plane', () => {
     expect(bad.issues.some(i => i.code === 'invalid-verbose-fetch')).toBe(true);
   });
 
-  test('smoke: BUN_CONFIG_VERBOSE_FETCH child fetch matches debugger plane (incl. 1/0)', async () => {
-    // HTTP loopback only — TLS verbose path is the same logger; cert fixtures omitted.
-    for (const c of VERBOSE_FETCH_SMOKE_CASES) {
-      const { out, exitCode } = await runWithVerboseFetch(c.value);
+  test('smoke: BUN_CONFIG_VERBOSE_FETCH env plane (docs [fetch] tag optional; 1/0 aliases)', async () => {
+    // HTTP loopback only — TLS uses the same logger; cert fixtures omitted.
+    for (const c of VERBOSE_FETCH_ENV_CASES) {
+      const { out, exitCode } = await runChildFetchSmoke(`env=${JSON.stringify(c.value)}`, {
+        envValue: c.value,
+      });
       expect(exitCode).toBe(0);
-      if (c.expectEmpty) {
-        expect(out).toBe('');
-      }
-      for (const re of c.expectMatch) {
-        expect(out).toMatch(re);
-      }
-      for (const re of c.expectNotMatch) {
-        expect(out).not.toMatch(re);
-      }
+      assertVerboseTraffic(out, c);
+    }
+  });
+
+  test('smoke: fetch({ verbose }) per-request plane (no env)', async () => {
+    for (const verbose of [true, 'curl'] as const) {
+      const { out, exitCode } = await runChildFetchSmoke(`fetchVerbose=${JSON.stringify(verbose)}`, {
+        fetchVerbose: verbose,
+      });
+      expect(exitCode).toBe(0);
+      assertVerboseTraffic(out, {
+        expectCurl: verbose === 'curl',
+        expectTraffic: true,
+        expectEmpty: false,
+      });
     }
   });
 });
