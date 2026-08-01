@@ -159,5 +159,7 @@ describe('telegram flow enhance', () => {
     const cmds = FACTORY_BOT_COMMANDS.map(c => c.command);
     expect(cmds).toContain('balances');
     expect(cmds).toContain('verifydod');
+    expect(cmds).toContain('dossier');
+    expect(cmds).toContain('limits');
   });
 });

@@ -40,7 +40,9 @@
         "policies": "ops.limits.policy_code",
         "telemetry": "ops.limits.pattern_surface",
         "changes": "section.recentLimitChanges",
-        "outs": "section.partnersOuts"
+        "outs": "section.partnersOuts",
+        "telegram": "section.partnersTelegram",
+        "accounting": "section.partnersAccounting"
       }
     },
     {
@@ -3731,14 +3733,16 @@
     {
       "id": "page.accountDossier",
       "label": "Account dossier",
-      "description": "Portal page for one partner-tree account: identity, connected nodes, location, monitoring, limit telemetry, outs, and betlog exports.",
+      "description": "Portal page for one partner-tree account: identity, connected tree, location, monitoring, limit telemetry, outs, Telegram package-group readiness (handshake · topics · DM seat), and betlog exports. Bot: /dossier.",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
       "synonyms": [
         "account dossier",
         "account breakdown",
-        "node dossier"
+        "node dossier",
+        "telegram dossier",
+        "/dossier"
       ],
       "values": null,
       "valueLabels": null,
@@ -6271,6 +6275,7 @@
       "valueLabels": null,
       "seeAlso": [
         "page.partners",
+        "page.accountDossier",
         "section.partnersAccounting",
         "section.partnersAccountsLimits",
         "section.partnersDeposits",
@@ -6303,6 +6308,7 @@
       "valueLabels": null,
       "seeAlso": [
         "page.partners",
+        "page.accountDossier",
         "section.partnersTelegram",
         "section.partnersAccountsLimits",
         "section.partnersDeposits",
@@ -6335,6 +6341,7 @@
       "valueLabels": null,
       "seeAlso": [
         "page.partners",
+        "page.accountDossier",
         "section.partnersAccounting",
         "section.partnersTelegram",
         "section.partnersDeposits"

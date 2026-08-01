@@ -46,8 +46,12 @@ describe('account dossier helpers', () => {
     expect(ACCOUNT_DOSSIER_GLOSSARY.page).toBe('page.accountDossier');
     expect(ACCOUNT_DOSSIER_GLOSSARY.identity).toBe('ops.limits.account');
     expect(ACCOUNT_DOSSIER_GLOSSARY.outs).toBe('section.partnersOuts');
+    expect(ACCOUNT_DOSSIER_GLOSSARY.telegram).toBe('section.partnersTelegram');
+    expect(ACCOUNT_DOSSIER_GLOSSARY.handshake).toBe('telegram.handshake');
     expect(ACCOUNT_DOSSIER_SECTIONS).toContain('identity');
     expect(ACCOUNT_DOSSIER_SECTIONS).toContain('outs');
+    expect(ACCOUNT_DOSSIER_SECTIONS).toContain('telegram');
+    expect(ACCOUNT_DOSSIER_SECTIONS).toContain('accounting');
   });
 
   test('resolves CODE / call-sign seeds onto account ids', () => {
@@ -78,6 +82,40 @@ describe('account dossier helpers', () => {
     expect(dossier.location.state).toBe('NJ');
     expect(dossier.links.betlogCsv).toContain('format=csv');
     expect(dossier.links.history).toContain('/portal/partner-history/?account=');
+  });
+
+  test('joins partners-ops telegram + handshake for ASH CODE', async () => {
+    const limitRaises = await Bun.file('public/registry/limit-raises.json').json();
+    const partnersOps = await Bun.file('public/registry/partners-ops.json').json();
+    const handshake = await Bun.file('public/registry/telegram-handshake.json').json();
+    const ash = partnersOps.partners.find((row: { code: string }) => row.code === 'ASH');
+    expect(ash?.telegram?.chatId).toBeTruthy();
+
+    const seed =
+      ash?.callSign ||
+      limitRaises.accountProfiles?.profiles?.find(
+        (row: { callSign?: string }) => String(row.callSign || '').startsWith('ASH')
+      )?.treeNodeId ||
+      'ASH';
+    const accountId = resolveAccountId(seed, collectAccountIds(limitRaises));
+    const dossier = buildAccountDossier({
+      accountId,
+      limitRaises,
+      partnersOps,
+      handshake,
+      hours: 168,
+    });
+    expect(dossier.partnerCode).toBe('ASH');
+    expect(dossier.telegram.chatLinked).toBe(true);
+    expect(dossier.telegram.topicsConfigured).toBeGreaterThanOrEqual(1);
+    expect(dossier.telegram.topics.some((t: { key: string }) => t.key === 'accounting')).toBe(
+      true
+    );
+    expect(dossier.links.partnersTelegram).toContain('#partner/ASH/telegram/general');
+    expect(dossier.links.handshake).toBe('/registry/telegram-handshake.json');
+    if (dossier.telegram.handshakeOk != null) {
+      expect(typeof dossier.telegram.handshakeOk).toBe('boolean');
+    }
   });
 
   test('includes depth-2 downlines from profile lineage when patterns are empty', () => {
@@ -275,9 +313,14 @@ describe('account dossier portal wiring', () => {
     expect(html).toContain('id="ad-account-select"');
     expect(html).toContain('id="ad-section-identity"');
     expect(html).toContain('id="ad-section-outs"');
+    expect(html).toContain('id="ad-section-telegram"');
+    expect(html).toContain('id="ad-section-accounting"');
     expect(html).toContain('Connected tree');
     expect(html).toContain('Evidence traces');
     expect(html).toContain('Limit telemetry');
+    expect(html).toContain('Telegram package group');
+    expect(html).toContain('/dossier');
+    expect(html).toContain('telegram-handshake.json');
     expect(html).toContain('Betlog CSV');
     expect(html).toContain('limit-changes-card');
     expect(html).toContain("from './account-dossier.js'");
@@ -285,6 +328,7 @@ describe('account dossier portal wiring', () => {
     expect(html).toContain('bootGlossaryUx');
     expect(html).toContain('#account:');
     expect(html).toContain('section.partnersOuts');
+    expect(html).toContain('section.partnersTelegram');
     expect(html).toContain('ops.limits.policy_code');
   });
 
@@ -294,6 +338,8 @@ describe('account dossier portal wiring', () => {
     expect(surface?.concept).toBe('page.accountDossier');
     expect(surface?.sections.identity).toBe('ops.limits.account');
     expect(surface?.sections.outs).toBe('section.partnersOuts');
+    expect(surface?.sections.telegram).toBe('section.partnersTelegram');
+    expect(surface?.sections.accounting).toBe('section.partnersAccounting');
   });
 
   test('account clicks on history cards and limit card target the dossier', async () => {
