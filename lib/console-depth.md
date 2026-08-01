@@ -1,23 +1,17 @@
 # console-depth — module note
 
-Code SSOT: [`console-depth.ts`](./console-depth.ts).
+Code: [`console-depth.ts`](./console-depth.ts). Hub: [`bun-runtime.md`](./bun-runtime.md).
 
-Hub (CLI · depth/stdin · utilities table): [`bun-runtime.md`](./bun-runtime.md).
-
-**Prefer Bun natives** for TTY primitives:
-
-```ts
-import { stringWidth, stripANSI, wrapAnsi, sliceAnsi } from 'bun';
-```
-
-This module owns policy Bun does not:
+TTY primitives → `import { stringWidth, stripANSI, wrapAnsi, sliceAnsi } from 'bun'`.
+Markdown ANSI → `Bun.markdown.ansi` (no wrapper).
 
 | Export | Role |
 |--------|------|
-| `getConsoleDepth` / `inspect` / `logDepth` / `logCompact` | Depth: option → `--console-depth` → `BUN_CONSOLE_DEPTH` (escape) → bunfig → `2` |
-| `shouldColor` / `colorize` | `Bun.enableANSIColors` gate |
+| `getConsoleDepth` / `inspect` / `logDepth` / `logCompact` | Depth: option → `--console-depth` → `BUN_CONSOLE_DEPTH` → bunfig → `2` |
+| `shouldColor` / `colorize` | `Bun.enableANSIColors` (startup / assignment — not mid-process `FORCE_COLOR`) |
 | `inspectTable` / `logTable` / `jsonOut` | Table string + `--json` choke |
-| `inspectCustom` | `Bun.inspect.custom` symbol alias |
+| `inspectCustom` | `Bun.inspect.custom` |
 | `padEndWidth` / `truncateWidth` / `fitVisible` | Layout over `stringWidth` / `sliceAnsi` |
+| `termWidth` | `process.stdout.columns ?? 80` |
 
 Proof: `bun test tests/console-depth.test.ts` · claim `console-depth-boundaries`.

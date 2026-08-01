@@ -3,21 +3,30 @@
 Single hub for Bun CLI execution options, console depth / stdin, and the utilities
 master table (shapes verified on Bun **1.4.0** / `bun-types`).
 
+1. [CLI & execution options](#cli--execution-options)
+2. [Console depth & stdin](#console-depth--stdin)
+3. [Bun API Reference — module map](#bun-api-reference--module-map)
+4. [Master table](#master-table)
+5. [Depth & runtime legends](#depth--runtime-legends)
+
 | Plane | URL |
 |-------|-----|
 | API Reference (types) | [bun.com/reference](https://bun.com/reference) → [Bun module](https://bun.com/reference/bun) |
-| Runtime guide / CLI flags | [bun.com/docs/runtime](https://bun.com/docs/runtime#general-execution-options) |
+| Runtime / CLI flags | [bun.com/docs/runtime](https://bun.com/docs/runtime#general-execution-options) · [`bun run` CLI](https://bun.com/docs/cli/run) |
 | Console guide | [bun.com/docs/runtime/console](https://bun.com/docs/runtime/console) |
 | Docs index | [bun.com/docs/llms.txt](https://bun.com/docs/llms.txt) |
 | Local lookup | `bun tools/bun-doc-refs.ts suggest "<api>"` |
 | Curated flags | [`../config/runtime-flags.json`](../config/runtime-flags.json) · `bun run portal:flags` |
-| Module SSOT | [`console-depth.ts`](./console-depth.ts) · short note [`console-depth.md`](./console-depth.md) |
+| Module SSOT | [`console-depth.ts`](./console-depth.ts) · note [`console-depth.md`](./console-depth.md) |
 | Capabilities map | [`../docs/BUN_NATIVE_CAPABILITIES.md`](../docs/BUN_NATIVE_CAPABILITIES.md) |
 
-**Harness defaults:** `import { stringWidth, stripANSI, … } from 'bun'` for TTY
-primitives. Use [`console-depth.ts`](./console-depth.ts) only for depth policy,
-`jsonOut` / `logTable` / `logDepth` / `colorize` / layout helpers — never raw
-`console.table` / `console.dir` / `util.inspect` (`bun run check:console-format`).
+`bun.sh/docs/…` is the same Mintlify site as `bun.com/docs/…` — prefer **bun.com**
+(repo SSOT / `bun-doc-refs`).
+
+**Harness defaults:** `import { stringWidth, stripANSI, wrapAnsi, sliceAnsi } from 'bun'`
+for TTY primitives. Use [`console-depth.ts`](./console-depth.ts) only for depth
+policy, `jsonOut` / `logTable` / `logDepth` / `colorize` / layout helpers — never
+raw `console.table` / `console.dir` / `util.inspect` (`bun run check:console-format`).
 
 ---
 
@@ -110,7 +119,7 @@ on Bun **1.4.0** / this machine. Curated harvest for portal-cli:
 | `-b` / `--bun` | boolean | Force Bun for Node shebangs (symlink `node` → Bun) |
 | `--no-orphans` | boolean | Exit when parent dies; SIGKILL descendants (Linux/macOS) |
 | `--shell=<bun\|system>` | `bun` \| `system` | Shell for `package.json` scripts |
-| `--interactive` | boolean | Docs-listed: Node-compat REPL (`node:repl`). With `-e`, eval then REPL; `-e` is raw JS under this flag. **Not** `bun repl` (Bun-native). Absent from `bun run --help` on Bun 1.4.0 — verify before relying on it. |
+| `--interactive` | boolean | See note below (docs ↔ help gap) |
 | `--smol` | boolean | Lower memory; GC more often |
 | `--expose-gc` | boolean | Expose `gc()` on global (no effect on `Bun.gc()`) |
 | `--no-deprecation` | boolean | Suppress custom deprecation reporting |
@@ -122,6 +131,11 @@ on Bun **1.4.0** / this machine. Curated harvest for portal-cli:
 | `--console-depth=<n>` | `number` (default `2`) | Default depth for `console.log` object inspection |
 | `--cron-title <title>` | `string` | Title for cron execution mode |
 | `--cron-period <spec>` | `string` | Cron period for cron execution mode |
+
+**`--interactive` (docs gap):** [General Execution Options](https://bun.com/docs/runtime#general-execution-options)
+lists a Node-compat REPL (`node:repl`; with `-e`, eval then REPL — raw JS, not
+TypeScript). Distinct from `bun repl` (Bun-native). **Not** printed by
+`bun run --help` on Bun 1.4.0 here; treat as unverified until `bun --help` shows it.
 
 #### Development workflow
 
@@ -210,12 +224,13 @@ on Bun **1.4.0** / this machine. Curated harvest for portal-cli:
 | `--cwd <path>` | `string` | Absolute cwd for resolution |
 | `-c` / `--config <path>` | `string` | Bun config (default `$cwd/bunfig.toml`) |
 
-Harness tips:
+**Harness tips**
 
 - Prefer `bun --console-depth=N run …` over trailing flags.
 - Child processes: pass `--console-depth=${getConsoleDepth()}` (or rely on bunfig).
 - Do not put lifecycle `pre*` / `post*` on `check:harness-*` (steals stdin).
-- Portal harvest / shortcodes stay in `runtime-flags.json` — this table is the full `bun run` surface.
+- Portal harvest / shortcodes stay in `runtime-flags.json` — this section is the full `bun run` surface.
+
 ---
 
 ### Package management
@@ -284,11 +299,9 @@ This repo: `bun test tests/console-depth.test.ts` · claim `console-depth-bounda
 | `bun init` | Scaffold a Bun project |
 | `bun build` | Production bundler |
 | `bun --help` | Full CLI help |
-| `bun repl` | Bun native REPL (TS); distinct from `bun run --interactive` / `node:repl` |
+| `bun repl` | Bun-native REPL (TypeScript). Prefer this over docs-only `--interactive` / `node:repl`. |
 
 Shebang: `#!/usr/bin/env bun`. Persistent knobs: `bunfig.toml`.
-
----
 
 ---
 
@@ -415,8 +428,6 @@ path-list reader. Path lists and probes that need file contents should use
 
 ---
 
----
-
 ## Bun API Reference — module map
 
 From the [reference index](https://bun.com/reference) (sidebar / cards). Prefer the
@@ -473,8 +484,6 @@ Path pattern: `https://bun.com/reference/bun/<Name>` (generated from bun-types).
 
 ---
 
----
-
 ## Master table
 
 | Category | API / Method | Property / Shape | Runtime | Depth | Repo SSOT | Description |
@@ -513,7 +522,7 @@ Path pattern: `https://bun.com/reference/bun/<Name>` (generated from bun-types).
 | Utilities | `Bun.stringWidth(input, options?)` | `(input: string, options?: StringWidthOptions) => number` | Sync | N/A | import from `'bun'` | Terminal column width. |
 | Utilities | `Bun.stripANSI(input)` | `(input: string) => string` | Sync | N/A | import from `'bun'` | Strip ANSI / OSC sequences. |
 | Utilities | `Bun.wrapAnsi(input, columns, options?)` | `(input: string, columns: number, options?: WrapAnsiOptions) => string` | Sync | N/A | import from `'bun'` | Wrap preserving ANSI + Unicode width. |
-| Utilities | `Bun.sliceAnsi(input, start?, end?, options?, ambiguousIsNarrow?)` | `(input, start?, end?, options?: string \| boolean \| SliceAnsiOptions, ambiguousIsNarrow?: boolean) => string` | Sync | N/A | `truncateWidth` / `fitWidth` | Column-safe slice (4th arg may be ellipsis string). |
+| Utilities | `Bun.sliceAnsi(input, start?, end?, options?, ambiguousIsNarrow?)` | `(input, start?, end?, options?: string \| boolean \| SliceAnsiOptions, ambiguousIsNarrow?: boolean) => string` | Sync | N/A | import from `'bun'` · used by `truncateWidth` / `fitVisible` | Column-safe slice (4th arg may be ellipsis string). |
 | Utilities | `Bun.fileURLToPath(url)` | `(url: URL \| string) => string` | Sync | N/A | [`path-bun.ts`](./path-bun.ts) | `file://` → absolute path. |
 | Utilities | `Bun.pathToFileURL(path)` | `(path: string) => URL` | Sync | N/A | [`path-bun.ts`](./path-bun.ts) | Absolute path → `file://` URL. |
 | Utilities | `Bun.nanoseconds()` | `() => number` | Sync | N/A | [`time.ts`](./time.ts) | ns since process start. |
@@ -533,8 +542,6 @@ Path pattern: `https://bun.com/reference/bun/<Name>` (generated from bun-types).
 | HTML Rewriter | `HTMLRewriter.on(selector, handlers)` | `(selector, ElementHandlers) => HTMLRewriter` | Async transform | N/A | — | Stream HTML parse/rewrite. |
 | JSC | `serialize` / `deserialize` from `"bun:jsc"` | `(value) => Buffer` / `(Buffer) => any` | Sync | N/A | — | Structured clone to/from `Buffer`. |
 | JSC | `estimateShallowMemoryUsageOf` from `"bun:jsc"` | `(value) => number` | Sync | N/A | — | Best-effort shallow byte estimate. |
-
----
 
 ---
 
