@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/file-io — Bun.write
@@ -317,7 +318,7 @@ async function main(): Promise<void> {
   }
 
   const glossaryVerifyFiles = staged.filter(isGlossaryVerifyPath);
-  if (glossaryVerifyFiles.length > 0 && process.env.SKIP_GLOSSARY_VERIFY !== '1') {
+  if (glossaryVerifyFiles.length > 0 && Bun.env.SKIP_GLOSSARY_VERIFY !== '1') {
     console.info(
       `📖 Glossary DOM mounts (${glossaryVerifyFiles.length} path(s) staged) · HTMLRewriter…`
     );
