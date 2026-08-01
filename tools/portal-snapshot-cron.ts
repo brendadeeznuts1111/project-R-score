@@ -9,6 +9,7 @@
  *   bun run portal:snapshot:cron:preview
  *   bun run portal:snapshot:cron:remove
  */
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { parseCron, registerOsCron, removeOsCron } from '../lib/harness/cron.ts';
 import {
   PORTAL_SNAPSHOT_CRON_TITLE,
@@ -114,4 +115,4 @@ In-process complement (while serve-public runs):
   }
 }
 
-if (import.meta.main) main();
+if (isModuleEntrypoint(import.meta)) main();

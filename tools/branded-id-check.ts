@@ -31,6 +31,8 @@
  * Baseline: tools/branded-id-baseline.json (legacy mid-line only; staged ignores it)
  */
 
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
+
 // ID-shaped field names: exact `id`, *Id/*ID, *_id. Not guid/valid/correlationIdHeader.
 const ID_FIELD_NAME = String.raw`(id|[a-zA-Z]+(?:Id|ID)|[a-zA-Z_]*_id)`;
 /** Line-leading property / param-alone lines (historical pattern). */
@@ -811,6 +813,6 @@ async function main(): Promise<void> {
   if (strict && total > 0) process.exit(1);
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   await main();
 }

@@ -9,6 +9,7 @@
  *   bun run bake:sportsbook-opening-baseline --check
  */
 
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import {
   SPORTSBOOK_OPENING_BASELINE_PATH,
@@ -55,6 +56,6 @@ async function main(): Promise<void> {
   );
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   await main();
 }

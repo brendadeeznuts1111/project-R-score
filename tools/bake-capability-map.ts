@@ -13,6 +13,7 @@
  *   public/registry/capability-map-subset.json  (tools hub / packages panel)
  *   public/registry/capability-map-full.json    (debug / portal docs)
  */
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import {
   buildCapabilityMapFull,
@@ -101,6 +102,6 @@ async function main(): Promise<void> {
   }
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   await main();
 }

@@ -12,6 +12,7 @@
  *   bun tools/brand-manifest.ts --json    # print to stdout only
  */
 
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import {
   BRAND_CATALOG,
   brandKindFromName,
@@ -155,6 +156,6 @@ async function main(): Promise<void> {
   );
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   await main();
 }

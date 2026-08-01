@@ -24,6 +24,7 @@
  * @see https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands
  */
 
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { dirnamePath, ensureDir, resolvePath } from './lib/fs-bun.ts';
 import {
   formatPortalDoctorPlain,
@@ -281,6 +282,6 @@ async function main(): Promise<number> {
   return exitCode;
 }
 
-if (import.meta.main) {
+if (isModuleEntrypoint(import.meta)) {
   process.exit(await main());
 }

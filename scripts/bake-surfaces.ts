@@ -22,6 +22,7 @@
  *   bun run surfaces:bake -- --probe --check  # fail on live drift vs TOML status
  *   bun run surfaces:bake -- --zone-check     # CF API: TOML dnsTarget/mail vs live zone
  */
+import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
 import {
   appliedAccessDomains,
@@ -314,4 +315,4 @@ async function main(): Promise<void> {
   }
 }
 
-if (import.meta.main) await main();
+if (isModuleEntrypoint(import.meta)) await main();
