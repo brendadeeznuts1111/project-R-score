@@ -261,7 +261,7 @@ Collision-free factory mirror over this desk + handshake — phases, book types,
 |-------|-------|-------|
 | Shared cores (`partner.phase.*`, `book.type.*`, core rails/outs, `accounting.*`, `event.*`) | [`Kalshi-bot/src/institutions/glossary.ts`](../../../Kalshi-bot/src/institutions/glossary.ts) | `kind: ui\|composite`; ColorKeys from real `COLORS` (`tennis`/`middleware`/`trading`/`misc`/`research`/`polymarket` — not `tennisGreen`/`poly`) |
 | Factory overlay (extra rails, out statuses, `telegram.topic.*`) | [`lib/telegram/partner-ops-glossary.ts`](../../../lib/telegram/partner-ops-glossary.ts) | Must not re-declare Kalshi ids |
-| Chip palette | [`partner-ops-color-kernel.ts`](../../../lib/telegram/partner-ops-color-kernel.ts) | Bun.color closed palette for board chips |
+| Chip palette | [`partner-ops-color-kernel.ts`](../../../lib/telegram/partner-ops-color-kernel.ts) | Bun.color closed palette for board chips · gate `bun run validate:colors` |
 
 | Piece | Path / command |
 |-------|----------------|

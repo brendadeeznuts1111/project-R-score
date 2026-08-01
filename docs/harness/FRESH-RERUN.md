@@ -47,6 +47,8 @@ Non-draft PRs: after **2026-07-28 UTC**, empty Claim→evidence tables fail CI (
 
 **Soft paste tip:** if the PR body mentions a proof id in backticks (`` `branded-ids` ``), `check-pr-claim` warns when that claim’s `freshRerun` command string is absent from the body. Soft only — does not fail CI.
 
+**Color kernel:** when the change set touches theme/kernel owners (`lib/portal/color-kernel-paths.ts`), paste `bun run validate:colors` under **Color Kernel Evidence**. `check-pr-claim` soft-warns if that slot is still the template stub. Fresh-rerun for claim `color-kernel-theme-aliases` is `bun run test:colors`.
+
 ## Lookup
 
 ```bash

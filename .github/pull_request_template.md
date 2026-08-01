@@ -29,6 +29,17 @@ Required when this PR moves an owner of a [`CRITICAL_PROOF_PATHS`](../lib/harnes
 # paste fresh-rerun / claim re-proof output here
 ```
 
+## Color Kernel (when theme / kernels touched)
+
+- [ ] Theme-dark aliases align (`bun run validate:colors`)
+- [ ] Extended keys left intentional (not forced onto theme SSOT)
+
+### Color Kernel Evidence
+
+```text
+# paste: bun run validate:colors
+```
+
 ## Checklist
 
 - [ ] Did **not** sweep a parallel lane (foreign dirty trees left out)

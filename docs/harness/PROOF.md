@@ -91,6 +91,12 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   `bun test tests/console-depth.test.ts` · evidence
   [`lib/console-depth.ts`](../../lib/console-depth.ts) · CLI flag also under
   `runtime-cli-boundaries` fixture `console-depth/`
+- **`color-kernel-theme-aliases`** — theme.jsonc dark aliases ↔ glossary /
+  partner-ops / telegram kernels + count floors (`unit` + `boundary`) _Ratchet_ →
+  `bun run test:colors` · evidence
+  [`lib/portal/color-kernel-align.ts`](../../lib/portal/color-kernel-align.ts) ·
+  [`docs/portal-foundation.md`](../portal-foundation.md) · gate
+  `harness-gates.yml`
 - **`monorepo-health-score`** — monorepo health collect + schema + metric
   floors (`unit` + `boundary` + `journey`) _Ratchet_ →
   `bun run check:monorepo-health` · pre-commit tests-only when health sources
@@ -328,6 +334,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 | `cloudflare-pages-env-ssot`        | human-only | `bun test tests/r2-env.test.ts`                                                               |
 | `terminal-pty-boundaries`          | human-only | `bun test ./tests/terminal.test.ts`                                                           |
 | `console-depth-boundaries`         | human-only | `bun test tests/console-depth.test.ts`                                                        |
+| `color-kernel-theme-aliases`       | workflow   | `harness-gates.yml` · `bun run test:colors`                                                   |
 | `monorepo-health-score`            | continuous | `ci:core` · `check:monorepo-health` · pre-commit `--tests-only` when health sources staged    |
 | `github-repository-ref-boundaries` | human-only | `bun test tests/github-repository-ref.test.ts`                                                |
 | `macros-embed-boundaries`          | human-only | `bun test tests/macros/embed-commit.test.ts`                                                  |
@@ -384,7 +391,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 
 Counts (must match `gateClass` tallies):
 
-continuous 30 · workflow 8 · human-only 32.
+continuous 30 · workflow 9 · human-only 32.
 
 Discover (display only, not gates): `bun run harness:status` ·
 `bun run docs:fresh-rerun`.

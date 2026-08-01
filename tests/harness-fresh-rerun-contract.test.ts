@@ -310,6 +310,14 @@ describe('fresh-rerun contract', () => {
     expect(p?.evidence).toContain('lib/verification/proof-consistency.ts');
   });
 
+  test('color-kernel-theme-aliases freshRerun is test:colors', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'color-kernel-theme-aliases');
+    expect(p?.freshRerun).toBe('bun run test:colors');
+    expect(p?.gateRef).toBe('harness-gates.yml');
+    expect(p?.gateClass).toBe('workflow');
+    expect(p?.owner).toBe('lib/portal/color-kernel-align.ts');
+  });
+
   test('console-depth-boundaries freshRerun is console-depth suite', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'console-depth-boundaries');
     expect(p?.freshRerun).toBe('bun test tests/console-depth.test.ts');

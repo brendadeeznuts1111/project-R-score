@@ -19,7 +19,7 @@
 | Harness JIT | [harness/README.md](harness/) · `bun run harness:status` |
 | Path SSOT | [`../lib/docs/repo-docs.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/repo-docs.ts) |
 | Platform routing | [platform-routing.md](./platform-routing.md) · `bun run verify:pages-edge` |
-| Portal foundation | [portal-foundation.md](./portal-foundation.md) · `bun run verify:portal:static` |
+| Portal foundation | [portal-foundation.md](./portal-foundation.md) · `bun run verify:portal:static` · color kernel: `bun run validate:colors` / `test:colors` (claim `color-kernel-theme-aliases`) |
 
 ## Operator · portal · Telegram
 
