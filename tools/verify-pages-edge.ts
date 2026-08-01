@@ -12,6 +12,7 @@
  */
 import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
 import { inspectCloudflareSecurityHeaders } from '../lib/http/cloudflare-security-headers.ts';
+import { isCloudflareAccessEnforced } from '../lib/verification/cloudflare-access-live.ts';
 import { PROOF_TAXONOMY_CONTRACT_COUNT } from '../lib/verification/proof-taxonomy.ts';
 
 const BASE = Bun.env.PAGES_VERIFY_BASE?.trim() || `https://${CLOUDFLARE_DEFAULTS.pages.subdomain}`;
@@ -37,8 +38,11 @@ async function check(
   }
 }
 
-async function expectJs(path: string) {
-  const res = await fetch(`${BASE}${path}`, { redirect: 'follow' });
+export async function expectJs(path: string, fetchImpl: typeof fetch = fetch) {
+  const res = await fetchImpl(`${BASE}${path}`, { redirect: 'manual' });
+  if (isCloudflareAccessEnforced(res.status, res.headers)) {
+    return `${path} ${res.status} Access`;
+  }
   const ct = res.headers.get('content-type') ?? '';
   const head = (await res.text()).slice(0, 40);
   if (!res.ok) throw new Error(`${path} → ${res.status}`);
@@ -48,6 +52,18 @@ async function expectJs(path: string) {
     throw new Error(`${path} → unexpected body: ${head}`);
   }
   return `${path} ${ct.split(';')[0]}`;
+}
+
+export async function expectPortalPage(path: string, fetchImpl: typeof fetch = fetch) {
+  const res = await fetchImpl(`${BASE}${path}`, { redirect: 'manual' });
+  if (isCloudflareAccessEnforced(res.status, res.headers)) {
+    return `${path} ${res.status} Access`;
+  }
+  const html = await res.text();
+  if (!res.ok) throw new Error(String(res.status));
+  if (!html.includes('/portal/data.js')) throw new Error('missing data.js script tag');
+  if (!html.includes('/portal/topbar.js')) throw new Error('missing topbar.js script tag');
+  return 'includes shared portal scripts';
 }
 
 async function expectJson(path: string, assert: (j: Record<string, unknown>) => void) {
@@ -99,14 +115,7 @@ async function main() {
         if (!Array.isArray(j.rows)) throw new Error('missing rows');
       })
     ),
-    check('/portal/env/ page', 'core', async () => {
-      const res = await fetch(`${BASE}/portal/env/`, { redirect: 'follow' });
-      const html = await res.text();
-      if (!res.ok) throw new Error(String(res.status));
-      if (!html.includes('/portal/data.js')) throw new Error('missing data.js script tag');
-      if (!html.includes('/portal/topbar.js')) throw new Error('missing topbar.js script tag');
-      return 'includes shared portal scripts';
-    }),
+    check('/portal/env/ page', 'core', () => expectPortalPage('/portal/env/')),
     check('well-known/mcp.json', 'core', () =>
       expectJson('/.well-known/mcp.json', j => {
         if (!Array.isArray(j.servers) || j.servers.length < 5) throw new Error('missing servers[]');

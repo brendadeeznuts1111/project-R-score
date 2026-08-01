@@ -5,6 +5,7 @@ import {
   discoverLatestPagesPreview,
   isCloudflareAccessEnforced,
   probeCloudflareAccess,
+  probePublicCloudflareRoute,
   probePortalAccess,
   runCloudflareAccessEdgeProbe,
 } from '../lib/verification/cloudflare-access-live.ts';
@@ -74,6 +75,25 @@ describe('cloudflare-access-live', () => {
     expect(mixed.ok).toBe(false);
     expect(mixed.custom.accessEnforced).toBe(true);
     expect(mixed.pages.accessEnforced).toBe(false);
+  });
+
+  test('public route probe cache-busts header validation without changing evidence URL', async () => {
+    const requested: string[] = [];
+    const report = await probePublicCloudflareRoute(
+      'https://score.factory-wager.com/registry/ops-summary.json',
+      {
+        fetch: async (input, init) => {
+          requested.push(String(input));
+          expect(new Headers(init?.headers).get('Cache-Control')).toBe('no-cache');
+          expect(new Headers(init?.headers).get('Pragma')).toBe('no-cache');
+          return withCloudflareSecurityHeaders(Response.json({ ok: true }));
+        },
+      }
+    );
+
+    expect(new URL(requested[0]).searchParams.has('_cf_probe')).toBe(true);
+    expect(report.url).toBe('https://score.factory-wager.com/registry/ops-summary.json');
+    expect(report.ok).toBe(true);
   });
 
   test('discovers the newest successful Pages preview without exposing the API token', async () => {
