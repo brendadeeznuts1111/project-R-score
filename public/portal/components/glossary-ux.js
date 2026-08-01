@@ -562,7 +562,7 @@ export function surfaceByPath(glossary, pathname) {
 
 /**
  * Resolve section concept id from URL hash key (`#section:{hash}`).
- * Supports schema v3 `sections[]` rows and legacy Record maps.
+ * Schema v3 only: `sections[]` rows `{ hash, domId, conceptId }`.
  * @param {object|undefined} surface
  * @param {string} sectionHash
  * @returns {string|null}
@@ -570,14 +570,9 @@ export function surfaceByPath(glossary, pathname) {
 export function sectionConceptFromSurface(surface, sectionHash) {
   if (!surface || !sectionHash) return null;
   const sections = surface.sections;
-  if (Array.isArray(sections)) {
-    const row = sections.find(s => s && s.hash === sectionHash);
-    return row?.conceptId ?? null;
-  }
-  if (sections && typeof sections === 'object') {
-    return sections[sectionHash] ?? null;
-  }
-  return null;
+  if (!Array.isArray(sections)) return null;
+  const row = sections.find(s => s && s.hash === sectionHash);
+  return row?.conceptId ?? null;
 }
 
 /**

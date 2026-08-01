@@ -7,10 +7,18 @@ import {
   type PortalSemanticConceptKey,
 } from './semantic-vocabulary.ts';
 import { PORTAL_PAGE_CONCEPT_DEFINITIONS } from './page-concepts.ts';
+import {
+  PORTAL_GLOSSARY_CONCEPT_HASH_INIT,
+  PORTAL_SECTION_HASH_INIT,
+} from './url-planes.ts';
 
 /**
  * First-class section mount for glossary ↔ URL bar ↔ DOM.
- * URL is always `#section:{hash}`; `domId` is the board element id (varies by board).
+ * URL fragment matches {@link PORTAL_SECTION_HASH_INIT} (`#section:{hash}`).
+ * Concept deep links use {@link PORTAL_GLOSSARY_CONCEPT_HASH_INIT}.
+ * `domId` is the board element id (varies by board — section: / ad-section- / bare).
+ *
+ * @see ./url-planes.ts — pathname vs hash planes
  */
 export type PortalGlossarySection = {
   hash: string;
@@ -18,18 +26,25 @@ export type PortalGlossarySection = {
   conceptId: PortalSemanticConceptKey;
 };
 
+/** Re-export hash URLPattern inits so mounts and routers share one named owner. */
+export { PORTAL_SECTION_HASH_INIT, PORTAL_GLOSSARY_CONCEPT_HASH_INIT };
+
 export type PortalGlossarySurface = {
   path: `/${string}/`;
   concept: PortalSemanticConceptKey;
   sections: readonly PortalGlossarySection[];
 };
 
-/** Partners / most boards: `id="section:{hash}"`. */
+/** Partners / most boards: `id="section:{hash}"` (matches PORTAL_SECTION_HASH_INIT). */
 function sectionMount(
   hash: string,
   conceptId: PortalSemanticConceptKey
 ): PortalGlossarySection {
-  return { hash, domId: `section:${hash}`, conceptId };
+  const domId = `section:${hash}`;
+  if (!new URLPattern(PORTAL_SECTION_HASH_INIT).test({ hash: domId })) {
+    throw new Error(`sectionMount: hash ${hash} does not satisfy PORTAL_SECTION_HASH_INIT`);
+  }
+  return { hash, domId, conceptId };
 }
 
 /** Account dossier: `id="ad-section-{hash}"`. */

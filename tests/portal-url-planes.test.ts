@@ -1,5 +1,6 @@
 // @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern
 import { describe, expect, test } from 'bun:test';
+import { parsePartnerHash, partnerHash, type PartnerRoute } from '../lib/portal/partner-routes.ts';
 import {
   PARTNER_HASH_PATTERN_INITS,
   PORTAL_GLOSSARY_CONCEPT_HASH_INIT,
@@ -8,6 +9,17 @@ import {
   classifyPortalLocation,
   classifyPortalPathname,
 } from '../lib/portal/url-planes.ts';
+
+/** One fixture per PARTNER_HASH_PATTERN_INITS key (parse + partnerHash round-trip). */
+const PARTNER_HASH_FIXTURES: readonly { initKey: keyof typeof PARTNER_HASH_PATTERN_INITS; route: PartnerRoute }[] =
+  [
+    { initKey: 'partners', route: { type: 'partners' } },
+    { initKey: 'partner', route: { type: 'partner', code: 'ASH' } },
+    { initKey: 'out', route: { type: 'out', code: 'ASH', outId: 'out-ASH-1' } },
+    { initKey: 'accounting', route: { type: 'accounting', code: 'ASH' } },
+    { initKey: 'telegram', route: { type: 'telegram', code: 'ASH', topic: 'ops' } },
+    { initKey: 'book', route: { type: 'book', bookId: 'book-dk-nj' } },
+  ];
 
 describe('portal url planes', () => {
   test('pathname plane separates page, registry, and real APIs', () => {
@@ -74,5 +86,21 @@ describe('portal url planes', () => {
     const out = partner.exec({ hash: 'partner/ASH/out/out-ASH-1' });
     expect(out?.hash.groups.code).toBe('ASH');
     expect(out?.hash.groups.outId).toBe('out-ASH-1');
+  });
+
+  test('every partner hash init has TS↔JS parse parity and partnerHash round-trip', async () => {
+    expect(new Set(PARTNER_HASH_FIXTURES.map(f => f.initKey))).toEqual(
+      new Set(Object.keys(PARTNER_HASH_PATTERN_INITS))
+    );
+
+    const board = await import('../public/portal/partners/partner-routes.js');
+    for (const { route } of PARTNER_HASH_FIXTURES) {
+      const hash = partnerHash(route);
+      const ts = parsePartnerHash(hash);
+      const js = board.parsePartnerHash(hash) as PartnerRoute | null;
+      expect(ts, hash).toEqual(route);
+      expect(js, `JS ${hash}`).toEqual(route);
+      expect(parsePartnerHash(partnerHash(ts!)), `round-trip ${hash}`).toEqual(route);
+    }
   });
 });
