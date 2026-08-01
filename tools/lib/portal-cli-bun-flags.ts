@@ -11,7 +11,7 @@
 // @see https://bun.com/docs/runtime/watch-mode — --watch · --hot · --no-clear-screen
 // @see https://bun.com/docs/runtime/debugger — --inspect · --inspect-wait · --inspect-brk
 // @see https://bun.com/docs/runtime/auto-install — --prefer-offline · --install=fallback
-import { resolveBunExecutable } from '../../lib/bun-executable.ts';
+import { bunSpawnArgs, resolveBunExecutable } from '../../lib/bun-executable.ts';
 import {
   BUN_API_REFERENCE_URL,
   BUN_REPOSITORY_URL,
@@ -284,7 +284,7 @@ export function parseBunExecutionFlags(argv: string[]): BunExecutionParse {
  * @param args e.g. ['test', 'tests/vault-health.test.ts'] or ['pm', 'ls']
  */
 export function bunSpawnArgv(bunFlags: string[], args: string[]): string[] {
-  return [resolveBunExecutable(), ...bunFlags, ...args];
+  return bunSpawnArgs([...bunFlags, ...args]);
 }
 
 /**

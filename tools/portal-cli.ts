@@ -8,6 +8,7 @@
 // @see https://bun.com/docs/runtime/environment-variables#configuring-bun — Bun runtime environment controls
 // @see https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files — --env-file
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/index#general-execution-options — Bun runtime CLI flags
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
@@ -66,6 +67,7 @@ import {
   spawnBunWithFlags,
   type RuntimeFlagsJsonReport,
 } from './lib/portal-cli-bun-flags.ts';
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { dispatchScanner } from './lib/portal-cli-scanner.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 
@@ -969,10 +971,11 @@ async function dispatchSnapshot(sub: string | undefined, rest: string[]): Promis
       const cronTool = (await Bun.file(absCron).exists())
         ? absCron
         : 'tools/portal-snapshot-cron.ts';
-      const proc = Bun.spawn(['bun', cronTool, ...rest], {
+      const proc = Bun.spawn(bunSpawnArgs([cronTool, ...rest]), {
         stdout: 'inherit',
         stderr: 'inherit',
         stdin: 'inherit',
+        env: { ...Bun.env },
       });
       process.exit((await proc.exited) ?? 1);
     }

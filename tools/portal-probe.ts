@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/reference/bun/semver/satisfies — Bun.semver.satisfies
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean — Bun.semver
@@ -28,6 +29,7 @@
  *   bun tools/portal-probe.ts --json          # machine-readable (all or one)
  *   bun run portal:probe
  */
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { jsonOut, logTable } from '../lib/console-depth.ts';
 
@@ -95,10 +97,11 @@ export async function listWorkspacePackageJsons(): Promise<string[]> {
 }
 
 async function probeLockfile(): Promise<ProbeResult> {
-  const proc = Bun.spawn(['bun', 'install', '--frozen-lockfile', '--dry-run'], {
+  const proc = Bun.spawn(bunSpawnArgs(['install', '--frozen-lockfile', '--dry-run']), {
     cwd: ROOT,
     stdout: 'pipe',
     stderr: 'pipe',
+    env: { ...Bun.env },
   });
   const [stdout, stderr, code] = await Promise.all([
     new Response(proc.stdout).text(),

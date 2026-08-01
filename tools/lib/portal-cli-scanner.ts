@@ -9,6 +9,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/pm/cli/install#dry-run — dry-run install flag
 /**
@@ -36,6 +37,7 @@
  *   portal-cli scanner configure|clear|install|init
  */
 
+import { bunSpawnArgs } from '../../lib/bun-executable.ts';
 import { jsonOut } from '../../lib/console-depth.ts';
 
 export const SECURITY_SCANNER_DOCS = 'https://bun.com/docs/pm/security-scanner-api';
@@ -1060,11 +1062,12 @@ function positionals(args: string[]): string[] {
 }
 
 async function defaultSpawnBun(args: string[], opts?: { cwd?: string }): Promise<number> {
-  const proc = Bun.spawn(['bun', ...args], {
+  const proc = Bun.spawn(bunSpawnArgs(args), {
     cwd: opts?.cwd ?? process.cwd(),
     stdout: 'inherit',
     stderr: 'inherit',
     stdin: 'inherit',
+    env: { ...Bun.env },
   });
   return (await proc.exited) ?? 1;
 }

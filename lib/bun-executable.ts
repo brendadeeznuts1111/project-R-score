@@ -97,3 +97,11 @@ export function bunRuntimeProvenance(opts: { PATH?: string } = {}): BunRuntimePr
     bunMain: Bun.main,
   };
 }
+
+/**
+ * Absolute bun + args for `Bun.spawn` — never bare `"bun"`.
+ * Pair with `env: { ...Bun.env }` at the spawn site.
+ */
+export function bunSpawnArgs(args: string[], opts?: { PATH?: string }): string[] {
+  return [resolveBunExecutable(opts), ...args];
+}
