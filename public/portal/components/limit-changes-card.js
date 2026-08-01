@@ -15,6 +15,7 @@
  *   compact   — omit score / factors / activity columns
  */
 import {
+  PARTNER_HISTORY_COPY,
   PARTNER_HISTORY_GLOSSARY,
   partnerHistoryGlossaryHref,
 } from '../partner-history/glossary-map.js';
@@ -22,6 +23,7 @@ import { resolveSportsbook } from '../partner-history/sportsbook-catalog.js';
 import { resolveSportLeague } from '../partner-history/sport-league-map.js';
 
 const G = PARTNER_HISTORY_GLOSSARY;
+const COPY = PARTNER_HISTORY_COPY;
 
 const STYLE = `
   <style>
@@ -218,14 +220,14 @@ const TEMPLATE = `
   ${STYLE}
   <div class="lcc-toolbar">
     <a id="lcc-title" class="semantic-label" href="${partnerHistoryGlossaryHref(G.limitChanges)}" data-glossary-concept="${G.limitChanges}">Limit changes</a>
-    <button id="lcc-export" type="button" title="Download CSV" data-glossary-concept="${G.csv}">CSV</button>
+    <button id="lcc-export" type="button" title="Download CSV" data-glossary-concept="${G.csv}" aria-label="Export CSV">CSV</button>
     <a id="lcc-link" href="/portal/limits/" title="Limits board" data-glossary-concept="${G.limitOverview}">Limits</a>
     <a href="/portal/partner-history/" title="Partner history" data-glossary-concept="${G.page}">History</a>
     <a href="/registry/limit-raises.json" title="Baked registry JSON" data-glossary-concept="${G.json}">JSON</a>
   </div>
   <div id="lcc-summary" class="lcc-summary" role="status" aria-live="polite"></div>
   <div id="lcc-table-wrap"></div>
-  <div id="lcc-empty" class="lcc-empty" data-glossary-concept="${G.recentChanges}">Loading…</div>
+  <div id="lcc-empty" class="lcc-empty" data-glossary-concept="${G.skeletonTable}" aria-busy="true">${COPY.skeletonTable}</div>
 `;
 
 function shortAccount(nodeId) {
@@ -234,6 +236,23 @@ function shortAccount(nodeId) {
   if (raw.length <= 14) return raw;
   if (/^[0-9a-f-]{20,}$/i.test(raw)) return `${raw.slice(0, 8)}…${raw.slice(-4)}`;
   return `${raw.slice(0, 12)}…`;
+}
+
+function accountCell(nodeId) {
+  if (!nodeId) return '<span class="lcc-muted">—</span>';
+  const masked = shortAccount(nodeId);
+  const isMasked = masked !== String(nodeId);
+  return `<a class="lcc-account" href="/portal/account/?account=${encodeURIComponent(nodeId)}" title="${escapeText(nodeId)}" data-glossary-concept="${isMasked ? G.skeletonRowField : G.accountColumn}">${escapeText(masked)}</a>`;
+}
+
+function evidenceCellHtml(proof) {
+  if (proof?.valid === true) {
+    return `<td data-glossary-concept="${G.evidenceColumn}"><span class="lcc-up" data-glossary-concept="${G.ariaEvidenceVerified}" aria-label="Signature valid">Signed</span></td>`;
+  }
+  if (proof) {
+    return `<td data-glossary-concept="${G.evidenceColumn}"><span class="lcc-down" data-glossary-concept="${G.ariaProofMissing}" aria-label="Warning, invalid signed context evidence">Invalid</span></td>`;
+  }
+  return `<td data-glossary-concept="${G.evidenceColumn}"><span class="lcc-muted" data-glossary-concept="${G.ariaProofMissing}" aria-label="Warning, no signed context evidence">—</span></td>`;
 }
 
 function formatMoney(value) {
@@ -266,12 +285,12 @@ function formatWhen(unixSeconds) {
   };
 }
 
-function meterHtml(score) {
+function meterHtml(score, concept = G.influenceColumn, label = 'influence') {
   if (score == null || Number.isNaN(Number(score))) {
     return '<span class="lcc-muted">—</span>';
   }
   const pct = Math.max(0, Math.min(100, Math.round(Number(score) * 100)));
-  return `<div class="lcc-meter" title="${pct}% influence" data-glossary-concept="${G.influenceColumn}">
+  return `<div class="lcc-meter" title="${pct}% ${escapeText(label)}" data-glossary-concept="${concept}">
     <div class="lcc-meter-track"><div class="lcc-meter-fill" style="width:${pct}%"></div></div>
     <span class="lcc-meter-label">${pct}%</span>
   </div>`;
@@ -437,6 +456,9 @@ export class LimitChangesCard extends HTMLElement {
     this._loading = true;
     const loadVersion = ++this._loadVersion;
     const empty = this.shadowRoot.getElementById('lcc-empty');
+    empty.setAttribute('data-glossary-concept', G.skeletonTable);
+    empty.setAttribute('aria-busy', 'true');
+    empty.textContent = COPY.skeletonTable;
     try {
       const res = await fetch('/api/operations/summary');
       if (res.ok) {
@@ -456,7 +478,13 @@ export class LimitChangesCard extends HTMLElement {
       }
     } catch {}
     if (loadVersion !== this._loadVersion) return;
-    empty.textContent = 'Could not load limit data.';
+    empty.removeAttribute('aria-busy');
+    empty.setAttribute('data-glossary-concept', G.skeletonRetry);
+    empty.innerHTML = `Could not load limit data. <button type="button" data-glossary-concept="${G.skeletonRetry}">${COPY.skeletonRetry}</button>`;
+    empty.querySelector('button')?.addEventListener('click', () => {
+      this._loading = false;
+      this.load();
+    });
     this._loading = false;
   }
 
@@ -477,6 +505,8 @@ export class LimitChangesCard extends HTMLElement {
 
     if (changes.length === 0) {
       this._data = [];
+      empty.removeAttribute('aria-busy');
+      empty.setAttribute('data-glossary-concept', G.recentChanges);
       empty.textContent = 'No limit changes found.';
       summary.textContent = '';
       wrap.innerHTML = '';
@@ -507,12 +537,15 @@ export class LimitChangesCard extends HTMLElement {
 
     if (filtered.length === 0) {
       this._data = [];
+      empty.removeAttribute('aria-busy');
+      empty.setAttribute('data-glossary-concept', G.recentChanges);
       empty.textContent = 'No matching limit changes.';
       summary.textContent = '';
       wrap.innerHTML = '';
       return;
     }
 
+    empty.removeAttribute('aria-busy');
     empty.textContent = '';
     this._data = filtered;
 
@@ -614,7 +647,11 @@ export class LimitChangesCard extends HTMLElement {
           ]
         : null,
       showEvidence
-        ? ['Evidence', G.evidenceColumn, 'Signed context proof · ops.limits.evidence_trace']
+        ? [
+            'Evidence',
+            G.evidenceColumn,
+            `Signed context proof · ${G.evidenceColumn} · ${COPY.skeletonEvidence} (${G.skeletonEvidence})`,
+          ]
         : null,
       hasPredictions
         ? [
@@ -630,9 +667,11 @@ export class LimitChangesCard extends HTMLElement {
       ],
     ].filter(Boolean);
 
+    const totalAvailable = changes.length;
+    const caption = `Partner limit changes, ${filtered.length} of ${totalAvailable} visible`;
     wrap.innerHTML = `
-      <table class="lcc-table" aria-label="Filtered partner limit changes">
-        <caption>Limit changes sorted newest first. Structure / phase is wire bet_type: straight/parlay or pregame/live.</caption>
+      <table class="lcc-table" aria-label="${escapeText(caption)}" data-glossary-concept="${G.ariaTableCaption}">
+        <caption data-glossary-concept="${G.ariaTableCaption}">${escapeText(caption)}. Sorted newest first. Structure / phase is wire bet_type: straight/parlay or pregame/live.</caption>
         <thead><tr>${headers.map(([label, concept, title]) => columnHeader(label, concept, title)).join('')}</tr></thead>
         <tbody>${filtered
           .map(c => {
@@ -641,32 +680,22 @@ export class LimitChangesCard extends HTMLElement {
             const rowCls = isDown ? 'lcc-row-down' : 'lcc-row-up';
             const dirLabel = isDown ? '↓ Cut' : '↑ Raise';
             const when = formatWhen(c.increased_at);
-            const account = c.node_id
-              ? `<a class="lcc-account" href="/portal/account/?account=${encodeURIComponent(c.node_id)}" title="${escapeText(c.node_id)}" data-glossary-concept="${G.accountColumn}">${escapeText(shortAccount(c.node_id))}</a>`
-              : '<span class="lcc-muted">—</span>';
             const score =
               c.context_available && c.multi_factor_score != null ? c.multi_factor_score : null;
             const structure = structurePhaseCell(c.bet_type);
-            const proof = c.context_proof;
             const activity = nodeActivity(payload, c.node_id);
-            const evidenceCell = showEvidence
-              ? `<td data-glossary-concept="${G.evidenceColumn}">${
-                  proof?.valid === true
-                    ? '<span class="lcc-up">Signed</span>'
-                    : proof
-                      ? '<span class="lcc-down">Invalid</span>'
-                      : '<span class="lcc-muted">—</span>'
-                }</td>`
-              : '';
+            const evidenceCell = showEvidence ? evidenceCellHtml(c.context_proof) : '';
             const predRaise = c.predicted_raise_prob;
             const predCell = hasPredictions
               ? `<td data-glossary-concept="${G.predictionColumn}">${
-                  predRaise != null ? meterHtml(predRaise) : '<span class="lcc-muted">—</span>'
+                  predRaise != null
+                    ? meterHtml(predRaise, G.predictionColumn, 'prediction')
+                    : '<span class="lcc-muted">—</span>'
                 }</td>`
               : '';
             return `<tr class="${rowCls}">
               <td class="${dirCls}" data-glossary-concept="${G.directionColumn}">${dirLabel}</td>
-              ${showAccount ? `<td>${account}</td>` : ''}
+              ${showAccount ? `<td>${accountCell(c.node_id)}</td>` : ''}
               <td>${sportsbookCell(c.sportsbook)}</td>
               <td>${sportCell(c.sport_id)}</td>
               <td>${leagueCell(c.sport_id)}</td>
@@ -692,6 +721,14 @@ export class LimitChangesCard extends HTMLElement {
 
   _exportCsv() {
     if (!this._data || this._data.length === 0) return;
+    const exportBtn = this.shadowRoot.getElementById('lcc-export');
+    const rowCount = this._data.length;
+    exportBtn?.setAttribute('aria-busy', 'true');
+    exportBtn?.setAttribute(
+      'aria-label',
+      `Exporting ${rowCount} rows · ${G.ariaExportProgress}`
+    );
+    exportBtn?.setAttribute('data-glossary-concept', G.ariaExportProgress);
     const isCompact = this.hasAttribute('compact');
     const headers = [
       'direction',
@@ -767,6 +804,9 @@ export class LimitChangesCard extends HTMLElement {
     a.download = `limit-changes-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+    exportBtn?.removeAttribute('aria-busy');
+    exportBtn?.setAttribute('aria-label', 'Export CSV');
+    exportBtn?.setAttribute('data-glossary-concept', G.csv);
   }
 }
 
