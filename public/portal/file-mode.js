@@ -4,24 +4,58 @@
  * The real portal remains HTTP-only: root-relative assets, APIs, Access, and
  * registry fetches need an origin. This classic relative script still loads
  * under file:// and replaces the broken-looking shell with actionable routes.
+ *
+ * @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern component routing
+ * @see https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster — test/exec fast path
  */
 (function installFileModeHandoff() {
   if (location.protocol !== 'file:') return;
 
   const LOCAL_PORTAL_ORIGIN = 'http://localhost:3000';
   const DEPLOYED_PORTAL_ORIGIN = 'https://score.factory-wager.com';
+  const portalDestinationPatterns =
+    typeof URLPattern === 'function'
+      ? {
+          local: new URLPattern({
+            protocol: 'http',
+            hostname: 'localhost',
+            port: '3000',
+            pathname: '/portal/:surface(.*)',
+          }),
+          deployed: new URLPattern({
+            protocol: 'https',
+            hostname: 'score.factory-wager.com',
+            pathname: '/portal/:surface(.*)',
+          }),
+        }
+      : null;
 
   document.documentElement.dataset.portalRuntime = 'file';
 
   function portalRoute() {
-    const path = decodeURIComponent(location.pathname);
+    const path = location.pathname;
     const publicMarker = '/public/';
     const markerAt = path.lastIndexOf(publicMarker);
     if (markerAt < 0) return '/portal/';
 
     let route = `/${path.slice(markerAt + publicMarker.length)}`;
     route = route.replace(/\/index\.html$/, '/');
-    return route.startsWith('/portal/') ? route : '/portal/';
+    return route;
+  }
+
+  function portalUrl(origin, destination) {
+    let target = new URL(portalRoute(), origin);
+    const pattern = portalDestinationPatterns?.[destination];
+    const matches = pattern
+      ? pattern.test(target)
+      : target.origin === origin && target.pathname.startsWith('/portal/');
+
+    if (!matches) target = new URL('/portal/', origin);
+
+    // Hashes are client-side semantic routes. Queries are intentionally not
+    // forwarded because they cross the HTTP boundary and require allowlisting.
+    target.hash = location.hash;
+    return target;
   }
 
   function element(tag, className, text) {
@@ -43,9 +77,8 @@
   function mount() {
     if (!document.body || document.querySelector('.file-mode-guard')) return;
 
-    const route = portalRoute();
-    const localUrl = new URL(route, LOCAL_PORTAL_ORIGIN);
-    const deployedUrl = new URL(route, DEPLOYED_PORTAL_ORIGIN);
+    const localUrl = portalUrl(LOCAL_PORTAL_ORIGIN, 'local');
+    const deployedUrl = portalUrl(DEPLOYED_PORTAL_ORIGIN, 'deployed');
     const guard = element('main', 'file-mode-guard');
     guard.setAttribute('aria-labelledby', 'file-mode-title');
 
