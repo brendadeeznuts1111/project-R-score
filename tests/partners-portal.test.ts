@@ -98,6 +98,7 @@ describe('partners portal board', () => {
     expect(html).toContain('telegram.topic.liquidity');
     expect(html).toContain('accounting.free_roll');
     expect(html).toContain('bootGlossaryUx');
+    expect(html).toContain('scrollSections: true');
     expect(html).toContain('--chip-color');
     expect(html).toContain('--partner-ops-');
     expect(html).toContain('installColorTokens');

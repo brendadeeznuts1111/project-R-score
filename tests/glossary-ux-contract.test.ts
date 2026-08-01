@@ -20,11 +20,36 @@ describe('shared glossary UX contract', () => {
     expect(ux).not.toContain('detail: { name, ...detail');
     expect(ux).toContain('export function surfaceByPath');
     expect(ux).toContain('export function markPortalSurface');
+    expect(ux).toContain('export function sectionDomIdFromSurface');
+    expect(ux).toContain('export function sectionHashFromLocation');
+    expect(ux).toContain('export function scrollGlossarySection');
+    expect(ux).toContain('export function scrollGlossarySectionFromUrl');
+    expect(ux).toContain('scrollSections');
+    expect(ux).toContain('el.scrollIntoView');
     expect(ux).toContain("const conceptId = surface?.concept ?? 'ui.semantic.surface'");
     expect(ux).toContain("document.documentElement.dataset.brand = 'factorywager'");
     expect(ux).toContain("link.dataset.portalGlossaryLink = 'true'");
     expect(ux).toContain('/portal/glossary/#glossary:');
     expect(ux).toContain('const tooltipRoots = new WeakSet()');
+    expect(ux).toContain('const sectionScrollRoots = new WeakSet()');
     expect(ux).toContain('const trackedPageViews = new Set()');
+  });
+
+  test('resolves v3 surface domId without board-local id inventing', async () => {
+    const { sectionDomIdFromSurface, sectionConceptFromSurface } = await import(
+      '../public/portal/components/glossary-ux.js'
+    );
+    const surface = {
+      path: '/portal/account/',
+      concept: 'page.accountDossier',
+      sections: [
+        { hash: 'identity', domId: 'ad-section-identity', conceptId: 'ops.limits.account' },
+        { hash: 'outs', domId: 'ad-section-outs', conceptId: 'section.partnersOuts' },
+      ],
+    };
+    expect(sectionDomIdFromSurface(surface, 'identity')).toBe('ad-section-identity');
+    expect(sectionDomIdFromSurface(surface, 'missing')).toBeNull();
+    expect(sectionConceptFromSurface(surface, 'outs')).toBe('section.partnersOuts');
+    expect(sectionDomIdFromSurface({ sections: 'legacy' }, 'identity')).toBeNull();
   });
 });

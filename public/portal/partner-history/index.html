@@ -1012,7 +1012,9 @@
                 data-glossary-concept="ops.limits.market_phase"
               >
                 <option value="">All</option>
-                <option value="pregame" data-glossary-concept="ops.limits.market_phase">pregame</option>
+                <option value="pregame" data-glossary-concept="ops.limits.market_phase">
+                  pregame
+                </option>
                 <option value="live" data-glossary-concept="ops.limits.market_phase">live</option>
               </select>
             </label>
@@ -1087,7 +1089,12 @@
       <div id="empty-state" class="empty-state" style="display: none">
         <p data-glossary-concept="section.recentLimitChanges">No limit changes detected.</p>
         <p>Seed demo data: <code>bun run ops:limits:demo</code></p>
-        <button type="button" id="history-retry" class="btn" data-glossary-concept="ui.action.filter">
+        <button
+          type="button"
+          id="history-retry"
+          class="btn"
+          data-glossary-concept="ui.action.filter"
+        >
           Tap to retry
         </button>
       </div>
@@ -1096,7 +1103,10 @@
     <notification-center></notification-center>
     <script type="module">
       import { startDataService } from '/portal/data.js';
-      import { bootGlossaryUx } from '/portal/components/glossary-ux.js';
+      import {
+        bootGlossaryUx,
+        scrollGlossarySectionFromUrl,
+      } from '/portal/components/glossary-ux.js';
       import {
         PARTNER_HISTORY_GLOSSARY,
         PARTNER_HISTORY_COPY,
@@ -1309,11 +1319,22 @@
       }
 
       startDataService();
-      bootGlossaryUx({
+      let domainGlossary = null;
+      const glossaryReady = bootGlossaryUx({
         breadcrumbsMount: document.getElementById('partner-history-crumbs'),
         tooltipRoot: document.querySelector('.partner-page') ?? document.body,
         trackPage: false,
-      }).catch(() => {});
+      })
+        .then(glossary => {
+          domainGlossary = glossary;
+          return glossary;
+        })
+        .catch(() => {});
+
+      function scrollSectionFromUrl() {
+        if (!domainGlossary) return;
+        scrollGlossarySectionFromUrl(domainGlossary);
+      }
 
       function glossaryHref(concept) {
         return partnerHistoryGlossaryHref(concept);
@@ -1450,7 +1471,9 @@
         }
         const betlogAccount = account || (code ? `${code}-001` : '');
         const call =
-          account && partnerCodeFromRef(account) && account.toUpperCase() !== partnerCodeFromRef(account)
+          account &&
+          partnerCodeFromRef(account) &&
+          account.toUpperCase() !== partnerCodeFromRef(account)
             ? account
             : code
               ? `${code}-001`
@@ -1630,10 +1653,7 @@
         } catch {
           baselineBody.innerHTML = `<tr><td colspan="11" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.skeletonBaseline}">Baseline unavailable. Run <code>bun run baseline:sync-scraped</code>.</td></tr>`;
           if (sourcesEl) {
-            sourcesEl.setAttribute(
-              'data-glossary-concept',
-              PARTNER_HISTORY_GLOSSARY.skeletonRetry
-            );
+            sourcesEl.setAttribute('data-glossary-concept', PARTNER_HISTORY_GLOSSARY.skeletonRetry);
             sourcesEl.innerHTML = `<button type="button" class="btn" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.skeletonRetry}">${PARTNER_HISTORY_COPY.skeletonRetry}</button>`;
             sourcesEl.querySelector('button')?.addEventListener('click', () => loadBaseline());
           }
@@ -1653,10 +1673,7 @@
         refreshBtn.disabled = true;
         refreshBtn.setAttribute('aria-busy', 'true');
         metricRow?.setAttribute('aria-busy', 'true');
-        metricRow?.setAttribute(
-          'data-glossary-concept',
-          PARTNER_HISTORY_GLOSSARY.skeletonMetrics
-        );
+        metricRow?.setAttribute('data-glossary-concept', PARTNER_HISTORY_GLOSSARY.skeletonMetrics);
         metricRow?.setAttribute('aria-label', PARTNER_HISTORY_COPY.skeletonMetrics);
         setFilterSkeleton('skeletonFilters');
         setFreshness('freshnessSyncing', PARTNER_HISTORY_COPY.skeletonTable, {
@@ -1779,8 +1796,7 @@
             'data-glossary-concept',
             PARTNER_HISTORY_GLOSSARY.ariaLiveUpdate
           );
-          filterStatus.textContent =
-            'No limit changes are present in the loaded history window.';
+          filterStatus.textContent = 'No limit changes are present in the loaded history window.';
           renderFreshness(opsData, resolvedFreshness);
           breakdownEl.innerHTML = '<p class="baseline-note">No account activity is present.</p>';
           sportsbookBreakdownEl.innerHTML =
@@ -1875,10 +1891,7 @@
             ? `<span data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.ariaLiveUpdate}"> · ${Math.abs(total - lastVisibleCount)} change${Math.abs(total - lastVisibleCount) === 1 ? '' : 's'} since last refresh</span>`
             : '';
         lastVisibleCount = total;
-        filterStatus.setAttribute(
-          'data-glossary-concept',
-          PARTNER_HISTORY_GLOSSARY.ariaLiveUpdate
-        );
+        filterStatus.setAttribute('data-glossary-concept', PARTNER_HISTORY_GLOSSARY.ariaLiveUpdate);
         filterStatus.innerHTML = `<strong>${total}</strong> of ${changes.length} changes · <a class="semantic-label" href="${glossaryHref(PARTNER_HISTORY_GLOSSARY.activeFilters)}" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.activeFilters}">${activeFilters} active filter${activeFilters === 1 ? '' : 's'}</a> · <a class="semantic-label" href="${glossaryHref(PARTNER_HISTORY_GLOSSARY.deltas)}" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.deltas}">deltas</a> are versus prior <a class="semantic-label" href="${glossaryHref(PARTNER_HISTORY_GLOSSARY.highWater)}" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.highWater}">high-water</a>${liveDelta}`;
         historyFilters?.setAttribute(
           'aria-label',
@@ -2059,7 +2072,10 @@
         activateTab('baseline', { syncHash: false });
       } else if (initialSection === 'node-breakdown') {
         activateTab('partner', { syncHash: false });
+      } else if (initialSection === 'recent-changes') {
+        activateTab('recent', { syncHash: false });
       }
+      void glossaryReady.then(() => scrollSectionFromUrl());
       window.addEventListener('hashchange', () => {
         const routedTab = tabPattern.exec(window.location.href)?.hash.groups.tab;
         const routedSection = sectionPattern.exec(window.location.href)?.hash.groups.section;
@@ -2069,9 +2085,12 @@
           activateTab('baseline', { syncHash: false });
         } else if (routedSection === 'node-breakdown') {
           activateTab('partner', { syncHash: false });
-        } else {
+        } else if (routedSection === 'recent-changes') {
+          activateTab('recent', { syncHash: false });
+        } else if (!routedSection) {
           activateTab('recent', { syncHash: false });
         }
+        scrollSectionFromUrl();
       });
 
       document.getElementById('history-retry')?.addEventListener('click', () => load());
