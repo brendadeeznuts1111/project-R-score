@@ -287,7 +287,30 @@ bun run portal:css:build           # sync theme + lower CSS → dist/style.css
 bun run portal:css:build:minify    # → also dist/style.min.css
 bun run portal:css:check
 bun run portal:css:score:power     # 5-pillar Power UI matrix
+bun run docs:portal                # ANSI preview this file (bun ./docs/portal-foundation.md)
 ```
+
+### Terminal preview (`bun ./file.md`)
+
+Ship note: [Bun v1.3.12 — render markdown in the terminal](https://bun.com/blog/bun-v1.3.12#render-markdown-in-the-terminal-with-bun-file-md). Canonical API: [`Bun.markdown.ansi`](https://bun.com/docs/runtime/markdown#ansi-terminal-output) (`AnsiTheme`).
+
+| Mode | How | Factory |
+|------|-----|---------|
+| File path (zero VM overhead) | `bun ./docs/portal-foundation.md` · `bun run docs:portal` | Same pattern as `bun run docs:harness` |
+| Programmatic string | `Bun.markdown.ansi(md, theme?)` | [`ansiMarkdown`](../lib/console-depth.ts) — TTY columns, `NO_COLOR`-aware `colors`, OSC 8 `hyperlinks` on by default; `kittyGraphics` **opt-in** |
+| Proof | — | `bun test tests/bun-markdown-ansi.test.ts` · harness `bun run harness:status` |
+
+`AnsiTheme` knobs (blog / docs) → Factory defaults:
+
+| Option | Bun blog intent | `ansiMarkdown` default |
+|--------|-----------------|------------------------|
+| `colors` | Plain vs ANSI | `shouldColor()` (respects `NO_COLOR` / TTY) |
+| `hyperlinks` | Clickable OSC 8 links | `true` |
+| `columns` | Wrap width | `termWidth()` (not fixed 80) |
+| `kittyGraphics` | Inline images (Kitty / WezTerm / Ghostty) | `false` (opt-in) |
+| `light` | Light terminal palette | unset unless passed |
+
+Static portal boards still ship HTML/CSS from `theme.jsonc` — terminal ANSI is for **operator/doc preview**, not a second colorKernel SSOT.
 
 Default pages keep `<link href="/portal/style.css">` (which `@import`s `theme-tokens.css`). Opt in to `/portal/dist/style.css` for Bun-lowered CSS. **No browserslist dual-file API** — one `Bun.build` pass already emits legacy-safe CSS; source vs `dist/` is the modern/lowered pair.
 
