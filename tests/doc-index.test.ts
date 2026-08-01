@@ -4,7 +4,6 @@ import {
   buildDefaultsDocCoverage,
   buildDocIndex,
   DEFAULTS_VERIFY_DOC_KEYS,
-  DOC_INDEX_PATH,
 } from '../lib/docs/doc-index.ts';
 import { CANONICAL_REFS } from '../tools/bun-doc-refs.ts';
 
@@ -43,9 +42,9 @@ describe('lib/docs/doc-index', () => {
 });
 
 describe('tools/build-doc-index.ts', () => {
-  test('--save writes public/registry/doc-index.json', async () => {
+  test('CLI reports the generated index without mutating the registry', async () => {
     const proc = Bun.spawn({
-      cmd: ['bun', 'tools/build-doc-index.ts', '--save'],
+      cmd: ['bun', 'tools/build-doc-index.ts'],
       stdout: 'pipe',
       stderr: 'pipe',
     });
@@ -56,9 +55,6 @@ describe('tools/build-doc-index.ts', () => {
     ]);
     expect(code).toBe(0);
     expect(stdout).toContain('Doc index:');
-    expect(await Bun.file(DOC_INDEX_PATH).exists()).toBe(true);
-    const saved = (await Bun.file(DOC_INDEX_PATH).json()) as { totalEntries: number };
-    expect(saved.totalEntries).toBeGreaterThan(0);
     if (stderr.trim()) expect(stderr).not.toContain('Error');
   });
 });

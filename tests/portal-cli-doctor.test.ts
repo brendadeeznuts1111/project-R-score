@@ -551,7 +551,7 @@ describe('portal-cli doctor pure', () => {
 
 describe('portal-cli doctor CLI', () => {
   test('doctor exits 0 and reports linker configVersion', async () => {
-    const proc = Bun.spawn(['bun', CLI, 'doctor'], {
+    const proc = Bun.spawn(['bun', CLI, 'doctor', '--no-write'], {
       cwd: ROOT,
       stdout: 'pipe',
       stderr: 'pipe',
