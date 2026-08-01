@@ -422,7 +422,7 @@
       "group": "display",
       "outline": true,
       "tier": "extended",
-      "description": "CSS color parse/normalize — css, ansi, hex, number, {rgba}, [rgb]",
+      "description": "CSS color parse/normalize \u2014 css, ansi, hex, number, {rgba}, [rgb]",
       "docs_url": "https://bun.com/docs/runtime/color",
       "supply_chain": {
         "module": "scripts/scan/transpiler/color-matcher.ts",
@@ -438,7 +438,7 @@
       "group": "display",
       "outline": true,
       "tier": "extended",
-      "description": "Markdown → HTML (GFM tables, strikethrough, task lists)",
+      "description": "Markdown \u2192 HTML (GFM tables, strikethrough, task lists)",
       "docs_url": "https://bun.com/docs/runtime/markdown",
       "supply_chain": {
         "module": "scripts/scan/transpiler/markdown-reporter.ts",
@@ -453,7 +453,7 @@
       "group": "display",
       "outline": true,
       "tier": "extended",
-      "description": "Markdown → ANSI terminal output",
+      "description": "Markdown \u2192 ANSI terminal output",
       "docs_url": "https://bun.com/docs/runtime/markdown"
     },
     {
@@ -475,7 +475,7 @@
       "group": "display",
       "outline": true,
       "tier": "extended",
-      "description": "Markdown → React elements with component overrides",
+      "description": "Markdown \u2192 React elements with component overrides",
       "docs_url": "https://bun.com/docs/runtime/markdown"
     },
     {
@@ -1160,7 +1160,7 @@
       "docs_path": "/runtime/semver",
       "security": {
         "priority": "high",
-        "use_case": "SemverMatcher — threat-feed CVE correlation against bun.lock versions",
+        "use_case": "SemverMatcher \u2014 threat-feed CVE correlation against bun.lock versions",
         "integration": "integrated"
       }
     },
@@ -1890,12 +1890,15 @@
       "id": "module-resolution",
       "topic": "Module Resolution",
       "apis": [
+        "import.meta",
         "Bun.resolveSync"
       ],
       "patterns": [
-        "bun-resolve-sync"
+        "import-meta",
+        "bun-resolve-sync",
+        "bun-main"
       ],
-      "docs_path": "/runtime/utils"
+      "docs_path": "/runtime/module-resolution"
     },
     {
       "id": "parsing-formatting",
@@ -2042,7 +2045,7 @@
         "pattern": "bun-semver",
         "api": "Bun.semver",
         "priority": "high",
-        "use_case": "SemverMatcher — CVE range checks via threat-feed.json",
+        "use_case": "SemverMatcher \u2014 CVE range checks via threat-feed.json",
         "integration": "integrated"
       },
       {
