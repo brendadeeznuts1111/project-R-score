@@ -145,7 +145,9 @@ Discovery manifest (Layer 5): `/.well-known/mcp.json` on Pages (see [`public/.we
 
 `verify:pages-edge` also checks the shared browser-security header contract on a
 static asset and a Pages Function response. `_headers` does not apply to
-Functions, so both checks are required.
+Functions, so both checks are required. The shared contract also restricts
+form targets and frames through CSP and disables unused motion, capture, camera,
+location, microphone, payment, and USB capabilities through Permissions Policy.
 
 ### Local CI and Pages deploys
 

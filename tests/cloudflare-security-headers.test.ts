@@ -17,6 +17,21 @@ describe('Cloudflare security headers', () => {
     }
   });
 
+  test('contract blocks form, frame, and unused browser capabilities', () => {
+    expect(CLOUDFLARE_SECURITY_HEADERS['Content-Security-Policy']).toContain(
+      "form-action 'self'"
+    );
+    expect(CLOUDFLARE_SECURITY_HEADERS['Content-Security-Policy']).toContain(
+      "frame-src 'none'"
+    );
+    expect(CLOUDFLARE_SECURITY_HEADERS['Permissions-Policy']).toContain(
+      'display-capture=()'
+    );
+    expect(CLOUDFLARE_SECURITY_HEADERS['Permissions-Policy']).toContain(
+      'gyroscope=()'
+    );
+  });
+
   test('middleware preserves route headers and applies browser protections', async () => {
     const response = await onRequest({
       next: async () =>

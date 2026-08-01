@@ -10,9 +10,10 @@
 
 export const CLOUDFLARE_SECURITY_HEADERS = {
   'Content-Security-Policy':
-    "base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests",
+    "base-uri 'self'; form-action 'self'; frame-ancestors 'none'; frame-src 'none'; object-src 'none'; upgrade-insecure-requests",
   'Cross-Origin-Opener-Policy': 'same-origin',
-  'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
+  'Permissions-Policy':
+    'accelerometer=(), autoplay=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()',
   'Referrer-Policy': 'no-referrer',
   // The Pages project also serves the apex. Do not assert includeSubDomains
   // until every factory-wager.com hostname has an HTTPS inventory and owner.
