@@ -22,7 +22,9 @@ function parseList(params, key) {
  * @returns {{ query: string, types: string[], scopes: string[], tags: string[], sort: string, project: string }}
  */
 export function parseHashState(rawHash = '') {
-  const params = new URLSearchParams(rawHash.replace(/^#/, ''));
+  // Strip the fragment directive (#:~:text=… scroll-to-text) before parsing —
+  // browsers that don't strip it from location.hash must not leak it into filters.
+  const params = new URLSearchParams(rawHash.replace(/^#/, '').split(':~:')[0]);
   return {
     query: params.get('q') || DEFAULT_STATE.query,
     types: parseList(params, 'type'),

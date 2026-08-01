@@ -428,7 +428,7 @@
     "regions": {
       "us-east": "https://cdn-us-east.factory-wager.com",
       "us-west": "https://cdn-us-west.factory-wager.com",
-      "eu-west": "https://cdn-eu-west.factory-wager.com",
+      "eu-west": "https://cdn-eu.factory-wager.com",
       "asia-pacific": "https://cdn-ap.factory-wager.com"
     },
     "cache": {
@@ -2146,6 +2146,8 @@
     "verify:channel:meta": "bun tools/verify-channel-meta.ts --prefer-artifacts --save",
     "verify:channel:bundler": "bun tools/verify-channel.ts --channel=runtime --suite=bundler --save",
     "verify:channel:networking": "bun tools/verify-channel.ts --channel=runtime --suite=networking --save",
+    "verify:bundler": "bun tools/verify-bundler.ts",
+    "verify:bundler:save": "bun tools/verify-bundler.ts --save",
     "verify:channel:diff": "bun tools/verify-channel.ts --diff=public/registry/verification-stable-1.4.0.json --diff-against=public/registry/verification-pinned-1.3.14.json",
     "env:check:channel-auth": "bun tools/env-check.ts --channel-auth",
     "verify:package-info": "bun tools/verify-package-info.ts",

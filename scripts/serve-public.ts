@@ -1823,9 +1823,11 @@ function portalBoardRoutes(
   const out: Record<string, (req: Request) => Promise<Response>> = {};
   for (const slug of slugs) {
     const dir = `/portal/${slug}/`;
-    const handler = portalPage(dir);
-    out[`/portal/${slug}`] = handler;
-    out[dir] = handler;
+    // Canonical form is the trailing-slash directory index; the bare slug 301s
+    // to it so relative URLs and nav active-state never see duplicate paths.
+    out[`/portal/${slug}`] = () =>
+      Promise.resolve(new Response(null, { status: 301, headers: { Location: dir } }));
+    out[dir] = portalPage(dir);
   }
   return out;
 }
@@ -2248,7 +2250,8 @@ function buildPublicRoutes() {
     },
 
     // Portal home + every board index (SIMD exact routes; fetch for unmatched only)
-    '/portal': portalPage('/portal/index.html'),
+    '/portal': () =>
+      Promise.resolve(new Response(null, { status: 301, headers: { Location: '/portal/' } })),
     '/portal/': portalPage('/portal/index.html'),
     ...portalBoardRoutes(portalPage, PORTAL_BOARD_SLUGS),
   };

@@ -10,12 +10,10 @@ export async function loadTenantManifest() {
 }
 
 export function resolveTenantId() {
+  // Tenant comes from ?tenant= only — the hash is reserved for search filters
+  // and browser text fragments (#:~:text=…), never for routing.
   const params = new URLSearchParams(location.search);
-  const fromQuery = params.get('tenant');
-  if (fromQuery) return fromQuery;
-  const hash = location.hash.replace(/^#\/?/, '');
-  if (hash && !hash.includes('=')) return hash.split('/')[0];
-  return 'factory';
+  return params.get('tenant') || 'factory';
 }
 
 function tenantIconHtml(t) {
