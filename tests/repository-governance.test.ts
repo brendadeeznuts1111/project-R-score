@@ -26,11 +26,17 @@ describe('repository governance', () => {
 
     expect(mainRuleset.rules.find(rule => rule.type === 'required_status_checks')).toBeUndefined();
     expect(packageJson.scripts['bun:ci']).toContain('scripts/bun-ci.ts');
+    expect(packageJson.scripts['bun:ci']).toContain('--env-file ~/.reasonix/.env');
+    expect(packageJson.scripts['bun:ci']).not.toContain('R2_BUCKET_NAME=');
     const localCi = await Bun.file(`${import.meta.dir}/../scripts/bun-ci.ts`).text();
     expect(localCi).toContain("['bun', 'run', 'ci:core']");
     expect(localCi).toContain("['bun', 'run', 'ci:types']");
     expect(localCi).toContain("['bun', 'run', 'ci:security']");
     expect(localCi).toContain("['bun', 'run', 'ci:portal-registry']");
+    expect(localCi).toContain("from '../lib/macros/git-commit.ts'");
+    expect(localCi).not.toContain("type: 'macro'");
+    expect(localCi).toContain("Bun.env.R2_BUCKET_NAME");
+    expect(localCi).toContain('factory-wager-wiki');
   });
 
   test('release tags in the v* namespace are immutable', () => {

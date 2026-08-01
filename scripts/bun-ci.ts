@@ -1,8 +1,32 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
-/** Local-only merge proof. GitHub Actions is intentionally disabled. */
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/environment-variables — --env-file · Bun.env
+// @see https://bun.com/docs/bundler/macros — macros inline only under bun build
+/**
+ * Local-only merge proof. GitHub Actions is intentionally disabled.
+ *
+ * Env: package.json loads `~/.reasonix/.env` via `--env-file`. Non-secret
+ * `R2_BUCKET_NAME` defaults here when unset (same as config/r2-env.ts).
+ * Git identity uses lib/macros helpers at runtime (not `type: "macro"`).
+ */
+import { getGitBranch, getGitCommitHash } from '../lib/macros/git-commit.ts';
+
+const DEFAULT_R2_BUCKET_NAME = 'factory-wager-wiki';
+
+if (!Bun.env.R2_BUCKET_NAME?.trim()) {
+  Bun.env.R2_BUCKET_NAME = DEFAULT_R2_BUCKET_NAME;
+}
 
 const repoRoot = `${import.meta.dir}/..`;
+const sha = getGitCommitHash();
+const branch = getGitBranch();
+const shortSha = sha ? sha.slice(0, 8) : 'unknown';
+const ciNote = Bun.env.CI === 'true' || Bun.env.CI === '1' ? ' · CI=1' : '';
+
+console.info(
+  `bun:ci · ${shortSha} · ${branch || 'unknown'}${ciNote} · R2_BUCKET_NAME=${Bun.env.R2_BUCKET_NAME}`
+);
 
 const steps = [
   {
@@ -27,6 +51,7 @@ for (const step of steps) {
     stdin: 'inherit',
     stdout: 'inherit',
     stderr: 'inherit',
+    env: { ...Bun.env },
   });
   const exitCode = (await proc.exited) ?? 1;
   if (exitCode !== 0) {
