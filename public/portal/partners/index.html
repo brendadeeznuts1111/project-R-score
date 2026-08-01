@@ -766,6 +766,14 @@
             >
           </h2>
           <p class="blurb">
+            Per-partner ledger chrome:
+            <a
+              href="/portal/glossary/#glossary:ops.view.per_account"
+              data-glossary-concept="ops.view.per_account"
+              ><code>ops.view.per_account</code></a
+            >
+            (dossier:
+            <a href="/portal/account/" data-glossary-concept="page.accountDossier">account board</a>).
             Deposit / withdraw proof lives in each package forum
             <a
               href="/portal/glossary/#glossary:telegram.forum.topic.accounting"
@@ -1504,8 +1512,8 @@
                   routeChip(
                     partnerAccountingHash(partner.code),
                     'Accounting',
-                    colors['telegram.topic.accounting'],
-                    'accounting.deposit'
+                    colors['ops.view.per_account'] || colors['telegram.topic.accounting'],
+                    'ops.view.per_account'
                   ),
                   routeChip(
                     partnerTelegramHash(partner.code, 'ops'),
@@ -1522,8 +1530,8 @@
                 <td>${conceptChip('ops.limits.account', `${accounts.ready || 0}/${accounts.total || 0} ready`, colors['ops.limits.account'])}</td>
                 <td>${conceptChip('ops.limits.monitoring_status', `${limits.coveragePct || 0}% · ${limits.missing || 0} missing`, limitTone)}</td>
                 <td><span class="tracking-summary">${effectiveLimits.join('') || '—'}</span></td>
-                <td>${conceptChip('accounting.free_roll', `${accounting.freeRollPercent || 0}% · ${accounting.freeRollApplied || 0} applied`, colors['accounting.free_roll'])}</td>
-                <td><a href="${partnerAccountingHash(partner.code)}">${esc(accounting.ledgerEvents || 0)} events</a></td>
+                <td>${conceptChip('ops.view.account_freeplay', `${accounting.freeRollPercent || 0}% · ${accounting.freeRollApplied || 0} applied`, colors['ops.view.account_freeplay'] || colors['accounting.free_roll'])}</td>
+                <td><a href="${partnerAccountingHash(partner.code)}" data-glossary-concept="ops.view.account_summary">${esc(accounting.ledgerEvents || 0)} events</a></td>
                 <td>${routeChip(partnerTelegramHash(partner.code, 'accounting'), `${communication.topicsConfigured || 0}/${communication.topicsRequired || 5} topics · ${communication.chatLinked ? 'linked' : 'unlinked'}`, communicationTone, 'telegram.handshake')}</td>
                 <td>${actions}</td>
               </tr>`;

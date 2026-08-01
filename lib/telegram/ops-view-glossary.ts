@@ -5,17 +5,12 @@
  *
  * Soft Balance / MessageLog stay in toc-ops-repo `ct`.
  *
- * Deferred (full-spec backlog — do not invent until Soft/play bake exists):
- *   ops.view.account_fees · account_high_water
- *   ops.view.play_id · play_stake · play_odds · play_result · play_gross ·
- *     play_juice · play_net · play_settlement_time
- *   ops.view.week_of · weekly_* · week_over_week · rolling_7d · rolling_30d
- *   ops.view.legal_deposits · crypto_deposits · legal_settlements ·
- *     crypto_settlements · legal_fees · crypto_fees · sweepstakes_accounting
- *   AccountingView registry bake + validate-partners loops
+ * Deferred labels collapse via OPS_VIEW_COLLAPSE_BACKLOG (do not mint).
+ * Soft Balance / per-play ledgers stay in toc-ops-repo `ct`.
  *
  * @see lib/telegram/partner-ops-glossary.ts
  * @see docs/harness/tenants/telegram-factory.md
+ * @see docs/harness/tenants/partner-domain-map.md
  */
 
 const SOURCE = 'lib/telegram/ops-view-glossary.ts';
@@ -50,6 +45,46 @@ export const OPS_VIEW_MVP_CONCEPT_IDS = [
 ] as const;
 
 export type OpsViewMvpConceptId = (typeof OPS_VIEW_MVP_CONCEPT_IDS)[number];
+
+/**
+ * Deferred reporting-view labels → existing concepts (collapse, don't mint).
+ * Keys are speculative ids from the full reporting-view spec; values are
+ * shipped glossary targets. Never add a backlog key to OPS_VIEW_MVP_CONCEPT_IDS.
+ */
+export const OPS_VIEW_COLLAPSE_BACKLOG = Object.freeze({
+  'ops.view.account_fees': 'accounting.settlement',
+  'ops.view.account_high_water': 'ops.view.account_net',
+  'ops.view.play_id': 'ops.view.per_play',
+  'ops.view.play_stake': 'ops.view.per_play',
+  'ops.view.play_odds': 'evidence.bookmaker_odds',
+  'ops.view.play_result': 'ops.view.per_play',
+  'ops.view.play_gross': 'ops.view.account_net',
+  'ops.view.play_juice': 'metric.overround',
+  'ops.view.play_net': 'ops.view.account_net',
+  'ops.view.play_settlement_time': 'accounting.settlement',
+  'ops.view.week_of': 'ops.view.per_week',
+  'ops.view.weekly_deposits': 'accounting.deposit',
+  'ops.view.weekly_withdrawals': 'accounting.withdrawal',
+  'ops.view.weekly_settlements': 'accounting.settlement',
+  'ops.view.weekly_fees': 'accounting.settlement',
+  'ops.view.weekly_net': 'ops.view.account_net',
+  'ops.view.week_over_week': 'ops.view.per_week',
+  'ops.view.rolling_7d': 'ops.view.per_week',
+  'ops.view.rolling_30d': 'ops.view.per_week',
+  'ops.view.legal_accounting': 'book.type.legal',
+  'ops.view.crypto_accounting': 'book.type.crypto',
+  'ops.view.pph_accounting': 'book.type.pph',
+  'ops.view.sweepstakes_accounting': 'book.type.sweepstakes',
+  'ops.view.legal_deposits': 'accounting.deposit',
+  'ops.view.crypto_deposits': 'accounting.deposit',
+  'ops.view.legal_settlements': 'accounting.settlement',
+  'ops.view.crypto_settlements': 'accounting.settlement',
+  'ops.view.legal_fees': 'book.type.legal',
+  'ops.view.crypto_fees': 'book.type.crypto',
+  'telegram.status.read': 'telegram.status.delivered',
+} as const);
+
+export type OpsViewCollapseBacklogId = keyof typeof OPS_VIEW_COLLAPSE_BACKLOG;
 
 function view(
   id: OpsViewMvpConceptId,

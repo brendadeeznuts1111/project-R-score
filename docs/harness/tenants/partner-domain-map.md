@@ -9,10 +9,25 @@ the registry bake.
 | Kalshi-bot | `src/institutions/glossary.ts` | Shared cores: `partner.phase.*`, `book.type.*`, `deposit.method.{venmo,crypto,wire,credit}`, `out.status.{ready,deferred,paused}`, `accounting.*`, `event.*` (31 ids) |
 | Kalshi-bot | `scripts/partners-validate.ts` | Gate: core ids exist, correct kind, valid ColorKey, on `PAGE_SURFACES.ops` |
 | FactoryWager | `lib/telegram/partner-ops-glossary.ts` | Factory overlay: `deposit.method.{cashapp,paypal,zelle,apple_pay,unknown}`, `out.status.{blocked,partial,funded}`, `telegram.topic.*`, `partner.ops.event` (14 ids) |
-| FactoryWager | `lib/telegram/partner-ops-color-kernel.ts` | `PARTNER_OPS_COLORS` (9-key closed palette, Bun.color-validated) + `PARTNER_OPS_CONCEPT_COLORS` (39 concept→key) |
+| FactoryWager | `lib/telegram/ops-view-glossary.ts` | Reporting-view chrome: `ops.view.per_*` dimensions + per-account MVP (10 ids). Collapse backlog for deferred play/week/book columns |
+| FactoryWager | `lib/telegram/ops-accounting-view.ts` | Pure `buildPerAccountAccountingView` (Soft Balance stays in toc-ops `ct`) |
+| FactoryWager | `lib/telegram/telegram-glossary.ts` | Wire/topics + message chrome MVP: `telegram.message.*` · `telegram.status.{delivered,failed}` · `telegram.action.{reply,forward,pin}` |
+| FactoryWager | `lib/telegram/partner-ops-color-kernel.ts` | `PARTNER_OPS_COLORS` (9-key closed palette, Bun.color-validated) + `PARTNER_OPS_CONCEPT_COLORS` (61 concept→key) |
 | FactoryWager | `lib/telegram/partner-ops-events.ts` | 11 event codes (`PARTNER_OPS_EVENT_CODES`) |
-| FactoryWager | `lib/telegram/partner-ops-registry.ts` | Registry bake (`factorywager.partners-ops.v2` → `/registry/partners-ops.json`) |
+| FactoryWager | `lib/telegram/partner-ops-registry.ts` | Registry bake (`factorywager.partners-ops.v2` → `/registry/partners-ops.json`) · per-account view validate |
 | FactoryWager | `tools/partners-ops.ts` | CLI: `bun run partners:validate` / `partners:build` / `partners:ledger:append` |
+| FactoryWager | `tools/domain-glossary.ts` | Bake merge of Kalshi + partner-ops + ops-view + telegram + page concepts → `/registry/domain-glossary.json` |
+
+### Authority inventory (id prefixes)
+
+| Authority | Module | Id prefix / owns | Must not |
+|-----------|--------|------------------|----------|
+| Kalshi cores | `Kalshi-bot/src/institutions/glossary.ts` | `partner.phase.*` · `book.type.{legal,offshore,pph,crypto}` · `deposit.method.{venmo,crypto,wire,credit}` · `out.status.{ready,deferred,paused}` · `accounting.*` · `event.*` | Re-declare in Factory overlays |
+| Partner-ops overlay | `lib/telegram/partner-ops-glossary.ts` | Extra rails/out statuses · `telegram.topic.*` · `partner.ops.event` | Mint Kalshi cores or `ops.view.*` |
+| Ops-view | `lib/telegram/ops-view-glossary.ts` | `ops.view.*` (MVP + collapse backlog aliases) | Mint play/week/book field chrome until Soft/play bake |
+| Telegram surface | `lib/telegram/telegram-glossary.ts` | `telegram.wire` · forum/surface · `telegram.message.*` / status / action MVP | Mint Soft MessageLog concepts; `telegram.status.read` deferred |
+| Pages | `lib/portal/page-concepts.ts` | `page.*` · `section.*` | Parallel `ops.field.*` / `ops.table.*` vocabularies |
+| Color kernel | `lib/telegram/partner-ops-color-kernel.ts` | conceptId → closed 9-key palette | Invent new hex tokens |
 
 **Status legend:** 🟢 shipped · 🟡 rename→deprecate (proposed) · 🟠 proposed-new (not implemented) · ⚪ doc-missed (shipped, omitted by source doc)
 
@@ -98,7 +113,7 @@ Depicts `accounting.*` renamed to the doc's `*_received|_processed|_extended|_ap
 |-------|---------|
 | 47 new glossary entries | 40 listed (internal inconsistency); 21 already shipped, 5 renames, 13 new |
 | 10 funding methods (§4) | 9 listed |
-| 36 color-mapped ids | **39** in `PARTNER_OPS_CONCEPT_COLORS` (33 partner-ops cores + `telegram.handshake` / `telegram.membership` + 4 `ops.limits.*` control-plane projections) |
+| 36 color-mapped ids | **61** in `PARTNER_OPS_CONCEPT_COLORS` (partner-ops cores + handshake/membership + `ops.limits.*` projections + 10 `ops.view.*` + 10 telegram message/status/action MVP) |
 | `category: "ops"` | not a valid category in either taxonomy |
 
 ---

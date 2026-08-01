@@ -20,6 +20,8 @@ import {
 } from './partner-ops-events.ts';
 import { PARTNER_OPS_GLOSSARY_CONCEPT_IDS } from './partner-ops-glossary.ts';
 import { TELEGRAM_GLOSSARY_CONCEPT_IDS } from './handshake-catalog.ts';
+import { buildPerAccountAccountingView } from './ops-accounting-view.ts';
+import { OPS_VIEW_MVP_CONCEPT_IDS } from './ops-view-glossary.ts';
 import {
   PACKAGE_GROUP_FORUMS_META_DIR,
   loadPackageGroupForumMetadata,
@@ -531,6 +533,33 @@ export function validatePartnersOpsRegistry(
         }
       }
     }
+
+    // Per-account AccountingView (ops.view.*) — Soft Balance stays in toc-ops `ct`.
+    const accountingView = buildPerAccountAccountingView(p);
+    if (!accountingView) {
+      issues.push({
+        level: 'error',
+        code: 'accounting_view_missing',
+        message: `${p.code}: per-account AccountingView failed (partner CODE required)`,
+      });
+    } else {
+      if (accountingView.type !== 'per_account' || accountingView.partnerCode !== p.code) {
+        issues.push({
+          level: 'error',
+          code: 'accounting_view_shape',
+          message: `${p.code}: AccountingView type/partnerCode mismatch`,
+        });
+      }
+      for (const conceptId of Object.values(accountingView.conceptIds)) {
+        if (!knownGlossaryIds.has(conceptId)) {
+          issues.push({
+            level: 'error',
+            code: 'accounting_view_glossary',
+            message: `${p.code}: AccountingView concept ${conceptId} missing from glossary inventory`,
+          });
+        }
+      }
+    }
   }
 
   for (const code of PARTNER_OPS_EVENT_CODES) {
@@ -732,6 +761,7 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
   const knownGlossaryIds = new Set<string>([
     ...PARTNER_OPS_GLOSSARY_CONCEPT_IDS,
     ...TELEGRAM_GLOSSARY_CONCEPT_IDS,
+    ...OPS_VIEW_MVP_CONCEPT_IDS,
     'page.partners',
     'section.partnersTelegram',
     'section.partnersAccounting',
@@ -759,7 +789,11 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
     glossary: {
       path: '/portal/glossary/',
       boardPath: '/portal/partners/',
-      conceptIds: [...PARTNER_OPS_GLOSSARY_CONCEPT_IDS, ...TELEGRAM_GLOSSARY_CONCEPT_IDS],
+      conceptIds: [
+        ...PARTNER_OPS_GLOSSARY_CONCEPT_IDS,
+        ...TELEGRAM_GLOSSARY_CONCEPT_IDS,
+        ...OPS_VIEW_MVP_CONCEPT_IDS,
+      ],
     },
     colors: partnerOpsColorMap(),
     eventCodes: [...PARTNER_OPS_EVENT_CODES],

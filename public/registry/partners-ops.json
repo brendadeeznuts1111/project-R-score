@@ -1,7 +1,7 @@
 {
   "schema": "factorywager.partners-ops.v2",
   "version": "2",
-  "generatedAt": "2026-07-31T22:49:07.497Z",
+  "generatedAt": "2026-08-01T01:00:20.270Z",
   "path": "/registry/partners-ops.json",
   "sources": {
     "seatCapitalDesk": "/registry/seat-capital-desk.json",
@@ -77,7 +77,27 @@
       "telegram.deposit_rail",
       "telegram.handshake",
       "telegram.membership",
-      "telegram.topic_plan_row"
+      "telegram.topic_plan_row",
+      "telegram.message.incoming",
+      "telegram.message.outgoing",
+      "telegram.message.alert",
+      "telegram.message.command",
+      "telegram.message.receipt",
+      "telegram.status.delivered",
+      "telegram.status.failed",
+      "telegram.action.reply",
+      "telegram.action.forward",
+      "telegram.action.pin",
+      "ops.view.per_account",
+      "ops.view.per_play",
+      "ops.view.per_week",
+      "ops.view.per_book_type",
+      "ops.view.account_summary",
+      "ops.view.account_deposits",
+      "ops.view.account_settlements",
+      "ops.view.account_credit",
+      "ops.view.account_freeplay",
+      "ops.view.account_net"
     ]
   },
   "colors": {
@@ -367,6 +387,146 @@
       "token": "--partner-ops-polymarket",
       "hex": "#1F6FEB",
       "css": "#1f6feb"
+    },
+    "ops.view.per_account": {
+      "conceptId": "ops.view.per_account",
+      "colorKey": "kalshi",
+      "token": "--partner-ops-kalshi",
+      "hex": "#58A6FF",
+      "css": "#58a6ff"
+    },
+    "ops.view.per_play": {
+      "conceptId": "ops.view.per_play",
+      "colorKey": "polymarket",
+      "token": "--partner-ops-polymarket",
+      "hex": "#1F6FEB",
+      "css": "#1f6feb"
+    },
+    "ops.view.per_week": {
+      "conceptId": "ops.view.per_week",
+      "colorKey": "middleware",
+      "token": "--partner-ops-middleware",
+      "hex": "#D29922",
+      "css": "#d29922"
+    },
+    "ops.view.per_book_type": {
+      "conceptId": "ops.view.per_book_type",
+      "colorKey": "pinnacle",
+      "token": "--partner-ops-pinnacle",
+      "hex": "#A371F7",
+      "css": "#a371f7"
+    },
+    "ops.view.account_summary": {
+      "conceptId": "ops.view.account_summary",
+      "colorKey": "kalshi",
+      "token": "--partner-ops-kalshi",
+      "hex": "#58A6FF",
+      "css": "#58a6ff"
+    },
+    "ops.view.account_deposits": {
+      "conceptId": "ops.view.account_deposits",
+      "colorKey": "tennis",
+      "token": "--partner-ops-tennis",
+      "hex": "#3FB950",
+      "css": "#3fb950"
+    },
+    "ops.view.account_settlements": {
+      "conceptId": "ops.view.account_settlements",
+      "colorKey": "polymarket",
+      "token": "--partner-ops-polymarket",
+      "hex": "#1F6FEB",
+      "css": "#1f6feb"
+    },
+    "ops.view.account_credit": {
+      "conceptId": "ops.view.account_credit",
+      "colorKey": "kalshi",
+      "token": "--partner-ops-kalshi",
+      "hex": "#58A6FF",
+      "css": "#58a6ff"
+    },
+    "ops.view.account_freeplay": {
+      "conceptId": "ops.view.account_freeplay",
+      "colorKey": "research",
+      "token": "--partner-ops-research",
+      "hex": "#F0883E",
+      "css": "#f0883e"
+    },
+    "ops.view.account_net": {
+      "conceptId": "ops.view.account_net",
+      "colorKey": "trading",
+      "token": "--partner-ops-trading",
+      "hex": "#F85149",
+      "css": "#f85149"
+    },
+    "telegram.message.incoming": {
+      "conceptId": "telegram.message.incoming",
+      "colorKey": "tennis",
+      "token": "--partner-ops-tennis",
+      "hex": "#3FB950",
+      "css": "#3fb950"
+    },
+    "telegram.message.outgoing": {
+      "conceptId": "telegram.message.outgoing",
+      "colorKey": "kalshi",
+      "token": "--partner-ops-kalshi",
+      "hex": "#58A6FF",
+      "css": "#58a6ff"
+    },
+    "telegram.message.alert": {
+      "conceptId": "telegram.message.alert",
+      "colorKey": "trading",
+      "token": "--partner-ops-trading",
+      "hex": "#F85149",
+      "css": "#f85149"
+    },
+    "telegram.message.command": {
+      "conceptId": "telegram.message.command",
+      "colorKey": "middleware",
+      "token": "--partner-ops-middleware",
+      "hex": "#D29922",
+      "css": "#d29922"
+    },
+    "telegram.message.receipt": {
+      "conceptId": "telegram.message.receipt",
+      "colorKey": "tennis",
+      "token": "--partner-ops-tennis",
+      "hex": "#3FB950",
+      "css": "#3fb950"
+    },
+    "telegram.status.delivered": {
+      "conceptId": "telegram.status.delivered",
+      "colorKey": "tennis",
+      "token": "--partner-ops-tennis",
+      "hex": "#3FB950",
+      "css": "#3fb950"
+    },
+    "telegram.status.failed": {
+      "conceptId": "telegram.status.failed",
+      "colorKey": "trading",
+      "token": "--partner-ops-trading",
+      "hex": "#F85149",
+      "css": "#f85149"
+    },
+    "telegram.action.reply": {
+      "conceptId": "telegram.action.reply",
+      "colorKey": "kalshi",
+      "token": "--partner-ops-kalshi",
+      "hex": "#58A6FF",
+      "css": "#58a6ff"
+    },
+    "telegram.action.forward": {
+      "conceptId": "telegram.action.forward",
+      "colorKey": "polymarket",
+      "token": "--partner-ops-polymarket",
+      "hex": "#1F6FEB",
+      "css": "#1f6feb"
+    },
+    "telegram.action.pin": {
+      "conceptId": "telegram.action.pin",
+      "colorKey": "pinnacle",
+      "token": "--partner-ops-pinnacle",
+      "hex": "#A371F7",
+      "css": "#a371f7"
     }
   },
   "eventCodes": [
