@@ -38,6 +38,20 @@
 
 Claim / evidence / owner: **[`docs/harness/cron.md`](./harness/cron.md)**. OS-persistent is primary; in-process is the complement. Spine daemon: `bun tools/bun-doc-refs.ts schedule` / `bun spine/scheduler.ts`.
 
+## HTTP stacks (native vs Node compat)
+
+Bun exposes **parallel** HTTP stacks. Prefer the native path in harness code; do not treat `fetch` as a wrapper around `node:http`.
+
+| Stack | Role | Use | Docs |
+|-------|------|-----|------|
+| **Bun Native** | Client | `fetch()` / `Bun.fetch` | [networking/fetch](https://bun.com/docs/runtime/networking/fetch) |
+| **Bun Native** | Server | `Bun.serve` | [http/server](https://bun.com/docs/runtime/http/server) |
+| **Node Compat** | Client / Server | `node:http` / `node:https` | [node:http](https://nodejs.org/api/http.html) |
+
+**Harness rule:** All code under `lib/`, `scripts/`, `tools/` must use the **Bun Native** stack. `node:http` / `node:https` is banned there ([`config/eslint/harness/bun-native.ts`](../config/eslint/harness/bun-native.ts); full `HARNESS_PATHS` also covers `packages/` · `server/` · `config/`). `projects/**` is exempt for intentional Node-compat demos.
+
+Request logging: env `BUN_CONFIG_VERBOSE_FETCH` is the [debugger plane](https://bun.com/docs/runtime/debugger#print-fetch-nodehttp-requests-as-curl-commands) (`true` \| `curl` \| `false`; `1`/`0` aliases). Per-call `fetch(url, { verbose })` is the [fetch#debugging](https://bun.com/docs/runtime/networking/fetch#debugging) plane — see [`lib/bun-runtime-env.ts`](../lib/bun-runtime-env.ts) · `bun test tests/bun-runtime-env.test.ts`.
+
 ## Harness control plane
 
 Workspace runtime knobs for gates / spawn chains (not install-machine SSOT). See [UNIFIED.md](./UNIFIED.md) matrix · [runtime CLI](https://bun.com/docs/runtime#cli-usage).
