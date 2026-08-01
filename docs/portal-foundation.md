@@ -423,15 +423,6 @@ Verify helper: `resolveBunServeDefaultPort()` in `lib/http/bun-serve-shape.ts` (
 
 **Routing:** [`buildPublicRoutes`](../scripts/serve-public.ts) registers exact SIMD `routes` for `/ready`, APIs (method maps), and **every** `public/portal/<board>/` index via `portalBoardRoutes` / `PORTAL_BOARD_SLUGS`. JSON GET APIs use `jsonETag` (data-ETag + 304). Unmatched traffic (npm publish `PUT`, multi-segment static, skill detail pages) stays on `fetch` — [Bun routing](https://bun.com/docs/runtime/http/routing).
 
-### Direct-file handoff
-
-Portal boards are HTTP artifacts, not standalone `file://` applications. Root-relative chrome, registry fetches, Access, and `/api/*` routes require an origin. The page template loads [`file-mode.js`](../public/portal/file-mode.js) and [`file-mode.css`](../public/portal/file-mode.css) through relative paths so they still load when an operator double-clicks an HTML file. In file mode they replace the incomplete shell with a focused handoff to the equivalent route on:
-
-- `http://localhost:3000` after `bun run serve:public:hot`
-- `https://project-r-score.pages.dev` for the deployed Pages surface
-
-The handoff never auto-redirects: an unavailable local server must not replace useful guidance with a browser connection error. Normal HTTP rendering is unchanged.
-
 ### Dev reload (`--watch`, `--hot`, browser SSE)
 
 Three independent layers — do not conflate them. See [Bun watch mode](https://bun.com/docs/runtime/watch-mode) and [runtime `--watch`](https://bun.com/docs/runtime#watch).
