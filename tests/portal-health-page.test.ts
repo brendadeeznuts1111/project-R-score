@@ -42,4 +42,21 @@ describe('portal health page', () => {
     expect(script).toContain('>Package</a>');
     expect(script).toContain('>Artifact</a>');
   });
+
+  test('keeps operator signal visible and archives verbose evidence by default', async () => {
+    const [html, script] = await Promise.all([
+      Bun.file('public/portal/health/index.html').text(),
+      Bun.file('public/portal/health-page.js').text(),
+    ]);
+
+    expect(html).toContain('id="evidence-archive-heading"');
+    expect(html).toContain('class="health-action-menu"');
+    expect(html).toContain('id="live-evidence"');
+    expect(html).toContain('id="live-archive-summary"');
+    expect(html).toContain('id="limit-changes-evidence"');
+    expect(html).toMatch(/<details class="archive-detail hidden" id="routing-section">/);
+    expect(html).not.toMatch(/<details class="archive-detail[^>]*\sopen(?:\s|>)/);
+    expect(script).toContain("const archiveSummary = $('live-archive-summary')");
+    expect(script).toContain("archiveSummary.dataset.tone = counts.bad ? 'bad'");
+  });
 });
