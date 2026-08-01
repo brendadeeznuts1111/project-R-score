@@ -59,4 +59,24 @@ describe('portal health page', () => {
     expect(script).toContain("const archiveSummary = $('live-archive-summary')");
     expect(script).toContain("archiveSummary.dataset.tone = counts.bad ? 'bad'");
   });
+
+  test('exposes Bun fetch protocol and transport proof without crossing the browser boundary', async () => {
+    const [html, script] = await Promise.all([
+      Bun.file('public/portal/health/index.html').text(),
+      Bun.file('public/portal/health-page.js').text(),
+    ]);
+
+    expect(html).toContain('id="fetch-protocol-evidence"');
+    expect(html).toContain('id="fetch-protocol-body"');
+    expect(html).toContain('id="fetch-transport-body"');
+    expect(html).toContain('The browser portal remains');
+    expect(script).toContain("fetchJson('/registry/release-features.json')");
+    expect(script).toContain("fetchJson('/registry/networking-proof.json')");
+    expect(script).toContain('function renderFetchProtocolEvidence(release, networking)');
+    expect(script).toContain("key.startsWith('fetch protocol (')");
+    expect(script).toContain("String(row?.actual || '').startsWith('skipped')");
+    expect(script).toContain("summary.dataset.tone = failed ? 'bad' : skipped ? 'warn'");
+    expect(script).toContain('BUN_CONFIG_MAX_HTTP_REQUESTS');
+    expect(script).toContain('BUN_CONFIG_VERBOSE_FETCH');
+  });
 });
