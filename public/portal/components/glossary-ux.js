@@ -2,8 +2,8 @@
  * Shared glossary UX helpers for the static portal.
  *
  * Tooltips · search autocomplete · breadcrumbs · privacy-friendly usage tracking.
- * Consumes `/registry/domain-glossary.json` (schema v2) and page surface maps
- * baked from `lib/portal/page-glossary.ts`.
+ * Consumes `/registry/domain-glossary.json` (schema v3) and page surface maps
+ * baked from `lib/portal/page-glossary.ts` (`sections[]` = hash · domId · conceptId).
  *
  * @see tools/domain-glossary.ts
  * @see https://bun.com/blog/bun-v1.3.4#urlpattern-api
@@ -194,7 +194,7 @@ export async function loadDomainGlossary() {
     .then(async response => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const payload = await response.json();
-      if (payload.schemaVersion !== 2 || payload.kind !== 'domain-glossary') {
+      if (payload.schemaVersion !== 3 || payload.kind !== 'domain-glossary') {
         throw new Error(`unsupported domain glossary schema: ${String(payload.schemaVersion)}`);
       }
       glossaryCache = payload;
@@ -556,6 +556,26 @@ export function surfaceByPath(glossary, pathname) {
 }
 
 /**
+ * Resolve section concept id from URL hash key (`#section:{hash}`).
+ * Supports schema v3 `sections[]` rows and legacy Record maps.
+ * @param {object|undefined} surface
+ * @param {string} sectionHash
+ * @returns {string|null}
+ */
+export function sectionConceptFromSurface(surface, sectionHash) {
+  if (!surface || !sectionHash) return null;
+  const sections = surface.sections;
+  if (Array.isArray(sections)) {
+    const row = sections.find(s => s && s.hash === sectionHash);
+    return row?.conceptId ?? null;
+  }
+  if (sections && typeof sections === 'object') {
+    return sections[sectionHash] ?? null;
+  }
+  return null;
+}
+
+/**
  * Mark every portal page with a governed glossary concept and a stable deep link.
  * Rich registered pages use their page.* concept; other pages use the shared
  * ui.semantic.surface concept until their dedicated page vocabulary is added.
@@ -639,8 +659,8 @@ export function mountGlossaryBreadcrumbs(mount, glossary, options = {}) {
         href: surface.path,
         current: !sectionId,
       });
-      if (sectionId && surface.sections?.[sectionId]) {
-        const sectionConceptId = surface.sections[sectionId];
+      const sectionConceptId = sectionConceptFromSurface(surface, sectionId);
+      if (sectionId && sectionConceptId) {
         const sectionConcept = conceptById(glossary, sectionConceptId);
         crumbs.push({
           label: sectionConcept?.label ?? sectionId,
@@ -676,7 +696,11 @@ export function mountGlossaryBreadcrumbs(mount, glossary, options = {}) {
 
     trackPageViewOnce(
       surface?.concept ?? (pathname.includes('/glossary') ? 'ui.semantic.surface' : null),
-      sectionId ? (surface?.sections?.[sectionId] ?? null) : conceptId ? conceptId : null
+      sectionId
+        ? (sectionConceptFromSurface(surface, sectionId) ?? null)
+        : conceptId
+          ? conceptId
+          : null
     );
   }
 

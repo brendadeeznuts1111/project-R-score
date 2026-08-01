@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "sourceSchemaVersion": 5,
   "kind": "domain-glossary",
   "path": "/registry/domain-glossary.json",
@@ -28,205 +28,348 @@
     {
       "path": "/portal/",
       "concept": "page.registry",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/account/",
       "concept": "page.accountDossier",
-      "sections": {
-        "identity": "ops.limits.account",
-        "tree": "section.downlineContext",
-        "location": "ops.limits.jurisdiction_policy",
-        "traces": "ops.limits.evidence_trace",
-        "policies": "ops.limits.policy_code",
-        "telemetry": "ops.limits.pattern_surface",
-        "changes": "section.recentLimitChanges",
-        "outs": "section.partnersOuts",
-        "telegram": "section.partnersTelegram",
-        "accounting": "section.partnersAccounting",
-        "activity": "ops.limits.evidence_trace"
-      }
+      "sections": [
+        {
+          "hash": "identity",
+          "domId": "ad-section-identity",
+          "conceptId": "ops.limits.account"
+        },
+        {
+          "hash": "tree",
+          "domId": "ad-section-tree",
+          "conceptId": "section.downlineContext"
+        },
+        {
+          "hash": "location",
+          "domId": "ad-section-location",
+          "conceptId": "ops.limits.jurisdiction_policy"
+        },
+        {
+          "hash": "traces",
+          "domId": "ad-section-traces",
+          "conceptId": "ops.limits.evidence_trace"
+        },
+        {
+          "hash": "policies",
+          "domId": "ad-section-policies",
+          "conceptId": "ops.limits.policy_code"
+        },
+        {
+          "hash": "telemetry",
+          "domId": "ad-section-telemetry",
+          "conceptId": "ops.limits.pattern_surface"
+        },
+        {
+          "hash": "changes",
+          "domId": "ad-section-changes",
+          "conceptId": "section.recentLimitChanges"
+        },
+        {
+          "hash": "outs",
+          "domId": "ad-section-outs",
+          "conceptId": "section.partnersOuts"
+        },
+        {
+          "hash": "telegram",
+          "domId": "ad-section-telegram",
+          "conceptId": "section.partnersTelegram"
+        },
+        {
+          "hash": "accounting",
+          "domId": "ad-section-accounting",
+          "conceptId": "section.partnersAccounting"
+        },
+        {
+          "hash": "activity",
+          "domId": "ad-section-activity",
+          "conceptId": "ops.limits.evidence_trace"
+        }
+      ]
     },
     {
       "path": "/portal/brands/",
       "concept": "page.brandKeymap",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/bunfig/",
       "concept": "page.bunfig",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/catalog/",
       "concept": "page.catalog",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/compliance/",
       "concept": "page.compliance",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/console-format/",
       "concept": "page.consoleFormat",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/dashboard/",
       "concept": "page.dashboard",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/doctor/",
       "concept": "page.doctor",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/dod/",
       "concept": "page.dodReview",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/env/",
       "concept": "page.environment",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/factory/",
       "concept": "page.factoryRegistry",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/failures/",
       "concept": "page.failures",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/glossary/",
       "concept": "page.glossary",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/health/",
       "concept": "page.health",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/identity/",
       "concept": "page.identity",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/install-hygiene/",
       "concept": "page.installHygiene",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/limits-lab/",
       "concept": "page.limitForecastLab",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/limits/",
       "concept": "page.limitPatterns",
-      "sections": {
-        "account-control": "section.accountLimitControl",
-        "compliance-kpi-control": "section.complianceKpis",
-        "jurisdiction-control": "section.jurisdictionCatalog",
-        "pattern-summary": "section.patternSummary",
-        "prediction": "section.limitRaisePrediction",
-        "research-queue": "ops.limits.evidence_trace",
-        "sportsbook-patterns": "section.sportsbookPatterns",
-        "geo-patterns-section": "section.stateZipPatterns",
-        "downline-context": "section.downlineContext",
-        "connection-audit": "section.dataConnectionAudit",
-        "recent-changes": "section.recentLimitChanges",
-        "node-breakdown": "section.perNodeBreakdown"
-      }
+      "sections": [
+        {
+          "hash": "account-control",
+          "domId": "account-control",
+          "conceptId": "section.accountLimitControl"
+        },
+        {
+          "hash": "compliance-kpi-control",
+          "domId": "compliance-kpi-control",
+          "conceptId": "section.complianceKpis"
+        },
+        {
+          "hash": "jurisdiction-control",
+          "domId": "jurisdiction-control",
+          "conceptId": "section.jurisdictionCatalog"
+        },
+        {
+          "hash": "pattern-summary",
+          "domId": "pattern-summary",
+          "conceptId": "section.patternSummary"
+        },
+        {
+          "hash": "prediction",
+          "domId": "prediction",
+          "conceptId": "section.limitRaisePrediction"
+        },
+        {
+          "hash": "research-queue",
+          "domId": "research-queue",
+          "conceptId": "ops.limits.evidence_trace"
+        },
+        {
+          "hash": "sportsbook-patterns",
+          "domId": "sportsbook-patterns",
+          "conceptId": "section.sportsbookPatterns"
+        },
+        {
+          "hash": "geo-patterns-section",
+          "domId": "geo-patterns-section",
+          "conceptId": "section.stateZipPatterns"
+        },
+        {
+          "hash": "downline-context",
+          "domId": "downline-context",
+          "conceptId": "section.downlineContext"
+        },
+        {
+          "hash": "connection-audit",
+          "domId": "connection-audit",
+          "conceptId": "section.dataConnectionAudit"
+        },
+        {
+          "hash": "recent-changes",
+          "domId": "recent-changes",
+          "conceptId": "section.recentLimitChanges"
+        },
+        {
+          "hash": "node-breakdown",
+          "domId": "node-breakdown",
+          "conceptId": "section.perNodeBreakdown"
+        }
+      ]
     },
     {
       "path": "/portal/ops/",
       "concept": "page.operations",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/packages/",
       "concept": "page.packages",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/partners/",
       "concept": "page.partners",
-      "sections": {
-        "telegram": "section.partnersTelegram",
-        "accounting": "section.partnersAccounting",
-        "accounts-limits": "section.partnersAccountsLimits",
-        "deposits": "section.partnersDeposits",
-        "partner-message": "section.partnersPartnerMessage",
-        "outs": "section.partnersOuts",
-        "books": "section.partnersBookDetail",
-        "tag-filter-bar": "section.partnersTags"
-      }
+      "sections": [
+        {
+          "hash": "telegram",
+          "domId": "section:telegram",
+          "conceptId": "section.partnersTelegram"
+        },
+        {
+          "hash": "accounting",
+          "domId": "section:accounting",
+          "conceptId": "section.partnersAccounting"
+        },
+        {
+          "hash": "accounts-limits",
+          "domId": "section:accounts-limits",
+          "conceptId": "section.partnersAccountsLimits"
+        },
+        {
+          "hash": "onboard",
+          "domId": "section:onboard",
+          "conceptId": "section.partnersOnboard"
+        },
+        {
+          "hash": "deposits",
+          "domId": "section:deposits",
+          "conceptId": "section.partnersDeposits"
+        },
+        {
+          "hash": "partner-message",
+          "domId": "section:partner-message",
+          "conceptId": "section.partnersPartnerMessage"
+        },
+        {
+          "hash": "outs",
+          "domId": "section:outs",
+          "conceptId": "section.partnersOuts"
+        },
+        {
+          "hash": "books",
+          "domId": "section:books",
+          "conceptId": "section.partnersBookDetail"
+        },
+        {
+          "hash": "tag-filter-bar",
+          "domId": "section:tag-filter-bar",
+          "conceptId": "section.partnersTags"
+        }
+      ]
     },
     {
       "path": "/portal/partner-history/",
       "concept": "page.partnerHistory",
-      "sections": {
-        "opening-baseline": "section.openingBaseline"
-      }
+      "sections": [
+        {
+          "hash": "opening-baseline",
+          "domId": "opening-baseline",
+          "conceptId": "section.openingBaseline"
+        },
+        {
+          "hash": "recent-changes",
+          "domId": "recent-changes",
+          "conceptId": "section.recentLimitChanges"
+        },
+        {
+          "hash": "node-breakdown",
+          "domId": "node-breakdown",
+          "conceptId": "section.perNodeBreakdown"
+        }
+      ]
     },
     {
       "path": "/portal/science/",
       "concept": "page.science",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/skills/",
       "concept": "page.skills",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/surfaces/",
       "concept": "page.surfaces",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/tennis/",
       "concept": "page.tennis",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/toc/",
       "concept": "page.toc",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/tools/",
       "concept": "page.tools",
-      "sections": {}
+      "sections": []
     },
     {
       "path": "/portal/vault/",
       "concept": "page.vault",
-      "sections": {}
+      "sections": []
     }
   ],
   "summary": {
-    "concepts": 424,
-    "active": 423,
+    "concepts": 425,
+    "active": 424,
     "deprecated": 1,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 287,
+    "portalSemantics": 288,
     "categories": {
       "market": 33,
       "model": 18,
       "pipeline": 41,
       "tournament": 86,
       "trading": 58,
-      "ui": 161,
+      "ui": 162,
       "warehouse": 27
     },
     "kinds": {
@@ -247,13 +390,13 @@
       "region": 7,
       "registry": 39,
       "sport": 10,
-      "ui": 235
+      "ui": 236
     },
     "semanticTypes": {
       "classification": 149,
       "location": 4,
       "presentation": 14,
-      "resource": 88,
+      "resource": 89,
       "state": 31,
       "version": 1
     },
@@ -261,7 +404,7 @@
       "badge": 55,
       "chip": 110,
       "code": 33,
-      "heading": 67,
+      "heading": 68,
       "link": 18,
       "token": 4
     }
@@ -6348,7 +6491,40 @@
         "page.accountDossier",
         "section.partnersAccounting",
         "section.partnersTelegram",
+        "section.partnersOnboard",
         "section.partnersDeposits"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "section.partnersOnboard",
+      "label": "Onboard",
+      "description": "Partners board section for partner onboarding checklist and CLI next steps (#section:onboard). Phase vocabulary lives on partner.phase.onboarding (cross-plane seeAlso via domain-glossary bake).",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "onboarding",
+        "onboard checklist",
+        "package onboarding"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.partners",
+        "section.partnersAccountsLimits",
+        "section.partnersTelegram",
+        "section.partnersAccounting",
+        "partner.phase.onboarding"
       ],
       "status": "active",
       "deprecatedBy": null,

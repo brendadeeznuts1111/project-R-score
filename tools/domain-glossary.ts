@@ -141,6 +141,8 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
   // ops.view.per_account).
   const CROSS_PLANE_SEE_ALSO: Readonly<Record<string, readonly string[]>> = {
     'section.partnersAccounting': ['ops.view.per_account'],
+    // Structural #section:onboard ↔ phase vocabulary (partner-ops authority).
+    'section.partnersOnboard': ['partner.phase.onboarding'],
   };
 
   const portalConcepts: CanonicalConcept[] = PORTAL_SEMANTIC_CONCEPTS.map(
@@ -277,7 +279,8 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
   });
 
   return {
-    schemaVersion: 2,
+    // v3: surfaces[].sections is PortalGlossarySection[] ({ hash, domId, conceptId }).
+    schemaVersion: 3,
     sourceSchemaVersion: source.schemaVersion,
     kind: 'domain-glossary',
     path: DOMAIN_GLOSSARY_URL,
