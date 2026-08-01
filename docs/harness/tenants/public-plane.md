@@ -13,6 +13,7 @@ Pages static artifact plane — portal UI, registry bake, monitoring shells. Dis
 |------|---------|
 | `public:discover:check` | Broken `/registry/` ref, missing portal chrome, TS in `.js`, inline `/api/health` |
 | `verify:portal:static` | Portal foundation contract (data.js, topbar, redirects) |
+| `portal:theme:check` / `validate:colors` | Theme-tokens stale or color-kernel theme-dark alias / floor drift (claim `color-kernel-theme-aliases`) |
 | `audit:verify` | Audit catalog graph/evidence drift |
 
 ## Intervention (repair)
@@ -21,7 +22,8 @@ Pages static artifact plane — portal UI, registry bake, monitoring shells. Dis
 2. Fix **errors** first (`broken-registry-ref`, portal anti-patterns)
 3. Rebake when registry missing: `bun run ops:snapshot --no-routing`
 4. Portal chrome: `bun tools/portal-apply-chrome.ts` · [`docs/portal-foundation.md`](../../portal-foundation.md)
-5. Re-run: `bun run public:audit:verify`
+5. Theme / kernels: `bun run portal:theme:check` or `bun run validate:colors` (paste Claim/Evidence when PR touches them)
+6. Re-run: `bun run public:audit:verify`
 
 ## Gap map
 

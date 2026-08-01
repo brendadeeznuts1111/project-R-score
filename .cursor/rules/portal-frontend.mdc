@@ -23,6 +23,7 @@ This rule **overrides** generic “avoid Inter / system-only” user guidance fo
 - Define `--font-sans`, `--font-brand`, `--font-mono` in [`public/portal/style.css`](public/portal/style.css) (not a parallel `tokens.css` tree unless you migrate the whole portal).
 - Prefer static-safe Bun CSS: **logical + nesting + `:lang()` / `:not()` + shorthands + `clamp()`**; `:is()` / `system-ui` / media ranges ok; defer `light-dark()` / `color-mix()` / relative colors / CSS Modules in the static source.
 - Theme tokens SSOT: [`public/portal/theme.jsonc`](public/portal/theme.jsonc) (Bun **jsonc** loader) → `bun run portal:theme:sync` → `theme-tokens.css` (`@import`ed by `style.css`). Do not hand-edit `theme-tokens.css`.
+- After theme/kernel edits: `bun run portal:theme:check` (CSS stale + aliases) or `bun run validate:colors` / `test:colors` (claim `color-kernel-theme-aliases`).
 - Power UI pillars: `bun run portal:css:score:power` ([`lib/portal/power-ui-score.ts`](lib/portal/power-ui-score.ts)).
 - Optional lowering: `bun run portal:css:build` (syncs theme, then **css** loader) → `/portal/dist/style.css`. See `docs/portal-foundation.md`.
 - Load fonts once via shared head pattern on **all** portal pages / [`_page-template.html`](public/portal/_page-template.html) — Google Fonts CDN from brand config, or self-hosted under `public/portal/fonts/`.
@@ -33,7 +34,7 @@ This rule **overrides** generic “avoid Inter / system-only” user guidance fo
 
 - Append fonts to only `index.html`.
 - Rely on `document.fonts` inside `bun -e` (no DOM) — check in browser or via installed font paths.
-- Invent a second palette; keep GitHub-dark tokens (`--bg`, `--surface`, `--accent`).
+- Invent a second palette or a parallel `colorkernal` CLI; keep GitHub-dark tokens (`--bg`, `--surface`, `--accent`) and theme-dark alias planes.
 
 ## UX polish (preferred)
 
@@ -56,4 +57,5 @@ This rule **overrides** generic “avoid Inter / system-only” user guidance fo
 ```bash
 bun tools/portal-apply-chrome.ts
 bun run verify:portal:static
+bun run portal:theme:check   # or: bun run validate:colors / test:colors
 ```
