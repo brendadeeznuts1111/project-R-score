@@ -662,6 +662,18 @@ function renderLiveContext(results) {
   for (const r of results) counts[r.tone] = (counts[r.tone] || 0) + 1;
   const origin = typeof location !== 'undefined' ? location.origin : '—';
   const when = new Date().toISOString().slice(0, 19) + 'Z';
+  const archiveSummary = $('live-archive-summary');
+  if (archiveSummary) {
+    archiveSummary.textContent = [
+      `${results.length} checks`,
+      `${counts.bad} fail`,
+      `${counts.warn} attention`,
+      counts.skip ? `${counts.skip} skip` : null,
+    ]
+      .filter(Boolean)
+      .join(' · ');
+    archiveSummary.dataset.tone = counts.bad ? 'bad' : counts.warn ? 'warn' : 'ok';
+  }
   el.innerHTML = `
     <span><strong>Origin</strong> <code>${esc(origin)}</code></span>
     <span><strong>Probed</strong> ${esc(when)}</span>

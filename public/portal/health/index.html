@@ -213,7 +213,8 @@
         margin: 12px 0 8px;
       }
       .health-actions a,
-      .health-actions button {
+      .health-actions button,
+      .health-action-menu > summary {
         font-size: 13px;
         font-family: inherit;
         padding: 6px 12px;
@@ -225,8 +226,18 @@
         cursor: pointer;
       }
       .health-actions a:hover,
-      .health-actions button:hover {
+      .health-actions button:hover,
+      .health-action-menu > summary:hover {
         border-color: var(--accent);
+      }
+      .health-action-menu > summary {
+        list-style-position: inside;
+      }
+      .health-action-menu__items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-top: 8px;
       }
       .health-pre {
         background: var(--surface);
@@ -284,6 +295,62 @@
         color: var(--text-dim);
         margin: 0 0 12px;
         line-height: 1.4;
+      }
+      .evidence-archive {
+        display: grid;
+        gap: 10px;
+      }
+      .evidence-archive > h2,
+      .evidence-archive > .section-sub {
+        margin-bottom: 0;
+      }
+      .archive-detail {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+        overflow: clip;
+      }
+      .archive-detail > summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 14px;
+        cursor: pointer;
+        color: var(--text);
+      }
+      .archive-detail > summary:hover,
+      .archive-detail > summary:focus-visible {
+        background: var(--surface-hover, rgba(255, 255, 255, 0.03));
+        outline: none;
+      }
+      .archive-detail[open] > summary {
+        border-bottom: 1px solid var(--border);
+      }
+      .archive-detail-title {
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .archive-detail-meta {
+        color: var(--text-dim);
+        font: 11px/1.35 var(--font-mono, ui-monospace, monospace);
+        text-align: right;
+      }
+      .archive-detail-meta[data-tone='ok'] { color: var(--green, #3fb950); }
+      .archive-detail-meta[data-tone='warn'] { color: var(--yellow, #d29922); }
+      .archive-detail-meta[data-tone='bad'] { color: var(--red, #f85149); }
+      .archive-detail-body {
+        padding: 14px;
+      }
+      .archive-detail-body > :first-child { margin-top: 0; }
+      .archive-detail-body > :last-child { margin-bottom: 0; }
+      @media (max-width: 700px) {
+        .archive-detail > summary {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 4px;
+        }
+        .archive-detail-meta { text-align: left; }
       }
       .env-table,
       .ops-table {
@@ -772,10 +839,8 @@
       <div class="health-hero">
         <h1>Health</h1>
         <p class="sub">
-          Diagnostic probe for edge <code>/api/health</code> — summary cards, multi-column
-          <strong>Live check</strong> (hostname · port · status · source · version · resources),
-          routing proof, env checklist, and operate glance. Topbar status stays on
-          <code>data.js</code> (this page does not own the dot).
+          Operator summary for edge health and current operations. Detailed probes, routing,
+          environment, infrastructure, and raw payloads stay in the evidence archive below.
         </p>
       </div>
 
@@ -788,15 +853,20 @@
       </div>
 
       <div class="health-actions">
-        <a href="/api/health" target="_blank" rel="noopener">API JSON</a>
-        <a href="/health" target="_blank" rel="noopener">Raw /health</a>
-        <a href="/health/pre" target="_blank" rel="noopener">Plain /health/pre</a>
-        <a href="/registry/ops-summary.json" target="_blank" rel="noopener">ops-summary</a>
-        <a href="/registry/toc-ops.json" target="_blank" rel="noopener">toc-ops</a>
-        <a href="/registry/static.json" target="_blank" rel="noopener">static aggregate</a>
+        <button type="button" id="btn-refresh">Refresh</button>
         <a href="/portal/dashboard/">Dashboard</a>
         <a href="/portal/toc/">TOC board</a>
-        <button type="button" id="btn-refresh">Refresh</button>
+        <details class="health-action-menu">
+          <summary>Evidence links</summary>
+          <div class="health-action-menu__items">
+            <a href="/api/health" target="_blank" rel="noopener">API JSON</a>
+            <a href="/health" target="_blank" rel="noopener">Raw /health</a>
+            <a href="/health/pre" target="_blank" rel="noopener">Plain /health/pre</a>
+            <a href="/registry/ops-summary.json" target="_blank" rel="noopener">ops-summary</a>
+            <a href="/registry/toc-ops.json" target="_blank" rel="noopener">toc-ops</a>
+            <a href="/registry/static.json" target="_blank" rel="noopener">static aggregate</a>
+          </div>
+        </details>
       </div>
 
       <div class="health-grid" id="cards" aria-live="polite"></div>
@@ -804,14 +874,19 @@
       <section class="section" aria-labelledby="live-heading">
         <h2 id="live-heading">Live check</h2>
         <p class="section-sub">
-          Browser probes of known surfaces — hostname, port, source path, and status are independent
-          fields. Status derives from the shared tone token contract; version and resource mappings
-          bind every probe to its artifact, package catalog, and wiki owner.
+          Current same-origin surface status. Open the evidence table only when you need host,
+          source, version, or resource-mapping detail.
         </p>
         <div class="live-context" id="live-context" role="status">
           <span>Probing…</span>
         </div>
-        <div class="live-legend" aria-label="Column legend">
+        <details class="archive-detail" id="live-evidence">
+          <summary>
+            <span class="archive-detail-title">Surface evidence table</span>
+            <span class="archive-detail-meta" id="live-archive-summary">13 checks</span>
+          </summary>
+          <div class="archive-detail-body">
+            <div class="live-legend" aria-label="Column legend">
           <span class="live-pill"><b>Kind</b> check type</span>
           <span class="live-pill"
             ><b>Plane</b> edge · public · document · operate · harness · infra</span
@@ -821,9 +896,9 @@
           <span class="live-pill"><b>Status</b> live HTTP + token tone</span>
           <span class="live-pill"><b>Resources</b> artifact · package · wiki</span>
           <span class="live-pill"><b>Detail</b> payload / age / score</span>
-        </div>
-        <div class="table-wrap">
-          <table class="live-table" id="live-table">
+            </div>
+            <div class="table-wrap">
+              <table class="live-table" id="live-table">
             <thead>
               <tr>
                 <th scope="col">
@@ -879,17 +954,10 @@
                 <td colspan="10">Loading live probes…</td>
               </tr>
             </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="section" aria-labelledby="proof-index-heading">
-        <h2 id="proof-index-heading">Verification · proof pins</h2>
-        <div id="proof-index-host">
-          <p class="section-sub">
-            Document-plane bakes (FormData, networking, stable/pinned verification).
-          </p>
-        </div>
+              </table>
+            </div>
+          </div>
+        </details>
       </section>
 
       <section class="section" aria-labelledby="limits-heading">
@@ -898,7 +966,15 @@
           Recent partner limit raises from ops-summary · full board
           <a class="ops-link" href="/portal/limits/">/portal/limits/</a>.
         </p>
-        <limit-changes-card limit="5" compact></limit-changes-card>
+        <details class="archive-detail" id="limit-changes-evidence">
+          <summary>
+            <span class="archive-detail-title">Recent limit-change rows</span>
+            <span class="archive-detail-meta">5 rows · audit table</span>
+          </summary>
+          <div class="archive-detail-body">
+            <limit-changes-card limit="5" compact></limit-changes-card>
+          </div>
+        </details>
       </section>
 
       <section class="section" aria-labelledby="plane-heading">
@@ -909,61 +985,94 @@
         <div class="plane" id="ops-plane"></div>
       </section>
 
-      <section class="section hidden" id="routing-section" aria-labelledby="routing-heading">
-        <h2 id="routing-heading">Routing proof</h2>
-        <p class="section-sub" id="routing-summary">—</p>
-        <div class="table-wrap">
-          <table class="ops-table">
-            <thead>
-              <tr>
-                <th>Path</th>
-                <th>Status</th>
-                <th>Critical</th>
-                <th>ms</th>
-                <th>Result</th>
-              </tr>
-            </thead>
-            <tbody id="routing-body"></tbody>
-          </table>
-        </div>
-      </section>
+      <section class="section evidence-archive" aria-labelledby="evidence-archive-heading">
+        <h2 id="evidence-archive-heading">Evidence archive</h2>
+        <p class="section-sub">
+          Detailed proof stays available without crowding the operator view. Open only the evidence
+          needed for diagnosis or audit.
+        </p>
 
-      <section class="section" aria-labelledby="env-heading">
-        <h2 id="env-heading">Environment checklist</h2>
-        <p class="section-sub" id="env-summary">—</p>
-        <div class="table-wrap">
-          <table class="env-table" id="env-table">
-            <thead>
-              <tr>
-                <th>Key</th>
-                <th>Group</th>
-                <th>Severity</th>
-                <th>Status</th>
-                <th>Detail</th>
-              </tr>
-            </thead>
-            <tbody id="env-body">
-              <tr>
-                <td colspan="5">Loading…</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+        <details class="archive-detail">
+          <summary>
+            <span class="archive-detail-title">Verification · proof pins</span>
+            <span class="archive-detail-meta">document-plane artifacts</span>
+          </summary>
+          <div class="archive-detail-body" id="proof-index-host">
+            <p class="section-sub">
+              Document-plane bakes (FormData, networking, stable/pinned verification).
+            </p>
+          </div>
+        </details>
 
-      <section class="section" aria-labelledby="vps-heading">
-        <h2 id="vps-heading">
-          VPS Infrastructure
-          <a class="permalink" href="#vps-heading" aria-label="permalink">¶</a>
-        </h2>
-        <div id="vps-panel">
-          <p class="loading">Loading VPS status…</p>
-        </div>
-      </section>
+        <details class="archive-detail hidden" id="routing-section">
+          <summary>
+            <span class="archive-detail-title">Routing proof history</span>
+            <span class="archive-detail-meta" id="routing-summary">—</span>
+          </summary>
+          <div class="archive-detail-body">
+            <div class="table-wrap">
+              <table class="ops-table">
+                <thead>
+                  <tr>
+                    <th>Path</th>
+                    <th>Status</th>
+                    <th>Critical</th>
+                    <th>ms</th>
+                    <th>Result</th>
+                  </tr>
+                </thead>
+                <tbody id="routing-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </details>
 
-      <section class="section" aria-labelledby="raw-heading">
-        <h2 id="raw-heading">Raw payload</h2>
-        <pre class="health-pre" id="raw">Loading…</pre>
+        <details class="archive-detail">
+          <summary>
+            <span class="archive-detail-title">Environment checklist</span>
+            <span class="archive-detail-meta" id="env-summary">—</span>
+          </summary>
+          <div class="archive-detail-body">
+            <div class="table-wrap">
+              <table class="env-table" id="env-table">
+                <thead>
+                  <tr>
+                    <th>Key</th>
+                    <th>Group</th>
+                    <th>Severity</th>
+                    <th>Status</th>
+                    <th>Detail</th>
+                  </tr>
+                </thead>
+                <tbody id="env-body">
+                  <tr>
+                    <td colspan="5">Loading…</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </details>
+
+        <details class="archive-detail">
+          <summary>
+            <span class="archive-detail-title" id="vps-heading">VPS infrastructure</span>
+            <span class="archive-detail-meta">host and service status</span>
+          </summary>
+          <div class="archive-detail-body" id="vps-panel">
+            <p class="loading">Loading VPS status…</p>
+          </div>
+        </details>
+
+        <details class="archive-detail">
+          <summary>
+            <span class="archive-detail-title" id="raw-heading">Raw health payload</span>
+            <span class="archive-detail-meta">JSON · complete edge response</span>
+          </summary>
+          <div class="archive-detail-body">
+            <pre class="health-pre" id="raw">Loading…</pre>
+          </div>
+        </details>
       </section>
     </main>
 
