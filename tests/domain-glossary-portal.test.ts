@@ -17,6 +17,7 @@ import {
   validatePortalSemanticVocabulary,
 } from '../lib/portal/semantic-vocabulary.ts';
 import {
+  orphanDomSectionHashes,
   PORTAL_GLOSSARY_SURFACES,
   validatePortalGlossarySurfaces,
 } from '../lib/portal/page-glossary.ts';
@@ -225,6 +226,7 @@ describe('domain glossary portal', () => {
       telegram: 'section.partnersTelegram',
       accounting: 'section.partnersAccounting',
       'accounts-limits': 'section.partnersAccountsLimits',
+      onboard: 'section.partnersOnboard',
       deposits: 'section.partnersDeposits',
       'partner-message': 'section.partnersPartnerMessage',
       outs: 'section.partnersOuts',
@@ -235,6 +237,20 @@ describe('domain glossary portal', () => {
     expect(new Set(PORTAL_GLOSSARY_SURFACES.map(surface => surface.path))).toEqual(
       new Set(PORTAL_PAGE_CONCEPT_DEFINITIONS.map(page => page.path))
     );
+  });
+
+  test('board DOM section ids are governed by page-glossary surfaces', async () => {
+    const boards = [
+      '/portal/partners/',
+      '/portal/account/',
+      '/portal/limits/',
+      '/portal/partner-history/',
+    ] as const;
+    for (const path of boards) {
+      const file = `public${path}index.html`;
+      const html = await Bun.file(file).text();
+      expect(orphanDomSectionHashes(path, html), `${path} orphaned #section:`).toEqual([]);
+    }
   });
 
   test('board uses URLPattern.hash deep links and shared portal chrome', async () => {

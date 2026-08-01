@@ -56,6 +56,7 @@ const PAGE_SECTIONS: Readonly<
     telegram: PARTNERS_SURFACE_CONCEPTS.telegram,
     accounting: PARTNERS_SURFACE_CONCEPTS.accounting,
     'accounts-limits': PARTNERS_SURFACE_CONCEPTS.accountsLimits,
+    onboard: PARTNERS_SURFACE_CONCEPTS.onboard,
     deposits: PARTNERS_SURFACE_CONCEPTS.deposits,
     'partner-message': PARTNERS_SURFACE_CONCEPTS.partnerMessage,
     // Keys must match board `id="section:…"` / mount ids (glossary UX → #section:key).
@@ -90,4 +91,18 @@ export function validatePortalGlossarySurfaces(
       }
     }
   }
+}
+
+/**
+ * Section hash keys present as `id="section:…"` / `id="ad-section-…"` in board HTML
+ * but missing from {@link PORTAL_GLOSSARY_SURFACES} for that path.
+ * Ungoverned hashes break glossary breadcrumb sync.
+ */
+export function orphanDomSectionHashes(path: `/${string}/`, html: string): string[] {
+  const surface = PORTAL_GLOSSARY_SURFACES.find(s => s.path === path);
+  const mapped = new Set(Object.keys(surface?.sections ?? {}));
+  const keys = new Set<string>();
+  for (const m of html.matchAll(/\bid="section:([^"]+)"/g)) keys.add(m[1]!);
+  for (const m of html.matchAll(/\bid="ad-section-([^"]+)"/g)) keys.add(m[1]!);
+  return [...keys].filter(k => !mapped.has(k)).sort();
 }

@@ -162,6 +162,7 @@
         "telegram": "section.partnersTelegram",
         "accounting": "section.partnersAccounting",
         "accounts-limits": "section.partnersAccountsLimits",
+        "onboard": "section.partnersOnboard",
         "deposits": "section.partnersDeposits",
         "partner-message": "section.partnersPartnerMessage",
         "outs": "section.partnersOuts",
@@ -213,20 +214,20 @@
     }
   ],
   "summary": {
-    "concepts": 424,
-    "active": 423,
+    "concepts": 425,
+    "active": 424,
     "deprecated": 1,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 287,
+    "portalSemantics": 288,
     "categories": {
       "market": 33,
       "model": 18,
       "pipeline": 41,
       "tournament": 86,
       "trading": 58,
-      "ui": 161,
+      "ui": 162,
       "warehouse": 27
     },
     "kinds": {
@@ -247,13 +248,13 @@
       "region": 7,
       "registry": 39,
       "sport": 10,
-      "ui": 235
+      "ui": 236
     },
     "semanticTypes": {
       "classification": 149,
       "location": 4,
       "presentation": 14,
-      "resource": 88,
+      "resource": 89,
       "state": 31,
       "version": 1
     },
@@ -261,7 +262,7 @@
       "badge": 55,
       "chip": 110,
       "code": 33,
-      "heading": 67,
+      "heading": 68,
       "link": 18,
       "token": 4
     }
@@ -6348,7 +6349,40 @@
         "page.accountDossier",
         "section.partnersAccounting",
         "section.partnersTelegram",
+        "section.partnersOnboard",
         "section.partnersDeposits"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "section.partnersOnboard",
+      "label": "Onboard",
+      "description": "Partners board section for partner onboarding checklist and CLI next steps (#section:onboard). Phase vocabulary lives on partner.phase.onboarding (cross-plane seeAlso via domain-glossary bake).",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "onboarding",
+        "onboard checklist",
+        "package onboarding"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.partners",
+        "section.partnersAccountsLimits",
+        "section.partnersTelegram",
+        "section.partnersAccounting",
+        "partner.phase.onboarding"
       ],
       "status": "active",
       "deprecatedBy": null,
