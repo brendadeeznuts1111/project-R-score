@@ -8,6 +8,9 @@
 (function installFileModeHandoff() {
   if (location.protocol !== 'file:') return;
 
+  const LOCAL_PORTAL_ORIGIN = 'http://localhost:3000';
+  const DEPLOYED_PORTAL_ORIGIN = 'https://score.factory-wager.com';
+
   document.documentElement.dataset.portalRuntime = 'file';
 
   function portalRoute() {
@@ -28,9 +31,12 @@
     return node;
   }
 
-  function action(label, href, primary) {
+  function action(label, href, primary, origin) {
     const link = element('a', primary ? 'file-mode-action primary' : 'file-mode-action', label);
     link.href = href;
+    link.referrerPolicy = 'no-referrer';
+    link.rel = 'noreferrer';
+    link.dataset.portalOrigin = origin;
     return link;
   }
 
@@ -38,8 +44,8 @@
     if (!document.body || document.querySelector('.file-mode-guard')) return;
 
     const route = portalRoute();
-    const localUrl = new URL(route, 'http://localhost:3000');
-    const deployedUrl = new URL(route, 'https://project-r-score.pages.dev');
+    const localUrl = new URL(route, LOCAL_PORTAL_ORIGIN);
+    const deployedUrl = new URL(route, DEPLOYED_PORTAL_ORIGIN);
     const guard = element('main', 'file-mode-guard');
     guard.setAttribute('aria-labelledby', 'file-mode-title');
 
@@ -60,8 +66,8 @@
     const actions = element('nav', 'file-mode-actions');
     actions.setAttribute('aria-label', 'Portal origins');
     actions.append(
-      action('Open local portal', localUrl.href, true),
-      action('Open deployed portal', deployedUrl.href, false)
+      action('Open local portal', localUrl.href, true, 'local'),
+      action('Open deployed portal', deployedUrl.href, false, 'deployed')
     );
     panel.append(actions);
 
@@ -79,6 +85,12 @@
         'p',
         '',
         'Browser file mode has no HTTP origin. Paths such as /portal/style.css and /api/health cannot resolve to this repository’s public root.'
+      ),
+      element('strong', '', 'Deployed security'),
+      element(
+        'p',
+        '',
+        'Cloudflare Access handles authorized sign-in and the edge session before the deployed portal loads. Authentication responses stay private and no-store; portal assets retain their explicit cache policy.'
       )
     );
     panel.append(boundary);

@@ -153,6 +153,11 @@ html[data-portal-runtime="file"] .file-mode-guard {
   color: #c9d1d9;
 }
 
+.file-mode-boundary strong:not(:first-child) {
+  display: block;
+  margin-top: 14px;
+}
+
 .file-mode-boundary p {
   margin: 4px 0 0;
 }
