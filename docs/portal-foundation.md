@@ -351,7 +351,8 @@ bun run portal:theme:sync          # theme.jsonc → theme-tokens.css
 bun run portal:theme:check         # tokens CSS stale + color-kernel aliases
 bun run portal:colors:check        # alias Claim/Evidence (same as validate:colors)
 bun run validate:colors            # alias of portal:colors:check — paste for PRs
-bun run validate:colors -- --json  # machine report (status · checks · floors)
+bun run validate:colors:json       # ClaimReport JSON (status · checks[] · meta · floors)
+bun run validate:colors:strict     # fail-closed + --ci env tag
 bun run test:colors                # unit + validate:colors smoke
 bun run portal:css:build           # sync theme + lower CSS → dist/style.css
 bun run portal:css:build:minify    # → also dist/style.min.css

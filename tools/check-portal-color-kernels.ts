@@ -79,7 +79,7 @@ export async function main(): Promise<void> {
   );
 
   await createClaimReporter(report, {
-    formatHuman: r => formatColorKernelClaimReport(report),
+    formatHuman: () => formatColorKernelClaimReport(report),
   });
 }
 
