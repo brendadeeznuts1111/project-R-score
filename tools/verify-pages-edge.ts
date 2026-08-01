@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 /**
  * Post-deploy smoke for Cloudflare Pages (production or preview URL).
  *
@@ -92,8 +93,18 @@ async function expectSecurityHeaders(path: string, responseKind: 'static' | 'fun
 interface CfDeployment {
   environment?: string;
   url?: string;
-  latest_stage?: { status?: string };
+  latest_stage?: { name?: string; status?: string };
   deployment_trigger?: { metadata?: { commit_hash?: string } };
+}
+
+/** Immutable origins can 404 for a minute or two right after `deploy:success`. */
+async function fetchWithRetry(url: string, attempts = 3): Promise<Response> {
+  let res = await fetch(url);
+  for (let i = 1; !res.ok && i < attempts; i++) {
+    await Bun.sleep(5000);
+    res = await fetch(url);
+  }
+  return res;
 }
 
 /**
@@ -114,19 +125,22 @@ async function expectImmutableDeployProof() {
   if (!api.ok) throw new Error(`deployments API → ${api.status}`);
   const payload = (await api.json()) as { success?: boolean; result?: CfDeployment[] };
   const prod = (payload.result ?? []).find(
-    d => d.environment === 'production' && d.latest_stage?.status === 'success'
+    d =>
+      d.environment === 'production' &&
+      d.latest_stage?.name === 'deploy' &&
+      d.latest_stage?.status === 'success'
   );
   if (!prod?.url) throw new Error('no successful production deployment');
   const commit = prod.deployment_trigger?.metadata?.commit_hash?.slice(0, 9) ?? '?';
 
-  const js = await fetch(`${prod.url}/portal/components/glossary-ux.js`);
+  const js = await fetchWithRetry(`${prod.url}/portal/components/glossary-ux.js`);
   if (!js.ok) throw new Error(`glossary-ux.js → ${js.status}`);
   const body = await js.text();
   const markers = ['getElementByIdInRoot', 'applySectionTitles', 'sectionTitleFromSurface'];
   const missing = markers.filter(m => !body.includes(m));
   if (missing.length) throw new Error(`P1 markers missing: ${missing.join(', ')}`);
 
-  const reg = await fetch(`${prod.url}/registry/domain-glossary.json`);
+  const reg = await fetchWithRetry(`${prod.url}/registry/domain-glossary.json`);
   if (!reg.ok) throw new Error(`domain-glossary.json → ${reg.status}`);
   const glossary = (await reg.json()) as {
     surfaces?: Array<{ sections?: Array<{ title?: string }> }>;
