@@ -157,6 +157,16 @@ const CANONICAL_URLS = {
   'Bun.CryptoHasher': 'https://bun.com/docs/runtime/hashing',
 };
 
+const BUN_FETCH_DOCS = {
+  protocols: 'https://bun.com/docs/runtime/networking/fetch#protocol-support',
+  dnsPrefetch: 'https://bun.com/docs/runtime/networking/dns#dns-prefetch',
+  dnsCache: 'https://bun.com/docs/runtime/networking/dns#dns-caching',
+  preconnect: 'https://bun.com/docs/runtime/networking/fetch#preconnect-to-a-host',
+  pooling: 'https://bun.com/docs/runtime/networking/fetch#connection-pooling-http-keep-alive',
+  requestLimit: 'https://bun.com/docs/runtime/networking/fetch#simultaneous-connection-limit',
+  debugging: 'https://bun.com/docs/runtime/networking/fetch#debugging',
+};
+
 const WIKI_BASE = 'https://wiki.factory-wager.com';
 const PACKAGE_MAP_URL = '/portal/packages/';
 const HEALTH_FIELD_CONCEPTS = {
@@ -765,6 +775,119 @@ async function fetchJson(url) {
   }
 }
 
+function fetchProtocolLabel(name) {
+  if (name.includes('data:')) return 'data:';
+  if (name.includes('blob:')) return 'blob:';
+  if (name.includes('file://')) return 'file://';
+  if (name.includes('explicit')) return 's3:// explicit';
+  if (name.includes('env credentials')) return 's3:// environment';
+  if (name.includes('Bun.file')) return 's3:// Bun.file';
+  return name;
+}
+
+function fetchProtocolMode(name) {
+  if (name.includes('s3://')) return 'credentialed runtime';
+  return 'offline runtime';
+}
+
+function renderFetchProtocolEvidence(release, networking) {
+  const protocolBody = $('fetch-protocol-body');
+  const transportBody = $('fetch-transport-body');
+  const summary = $('fetch-protocol-summary');
+  if (!protocolBody || !transportBody || !summary) return;
+
+  const results = Array.isArray(release?.results) ? release.results : [];
+  const protocols = results.filter(row => {
+    const key = String(row?.canonicalKey || '');
+    return key.startsWith('fetch protocol (') || key.startsWith('fetch s3://');
+  });
+  const isSkipped = row => String(row?.actual || '').startsWith('skipped');
+  const skipped = protocols.filter(isSkipped).length;
+  const passed = protocols.filter(row => row?.passed && !isSkipped(row)).length;
+  const failed = protocols.length - passed - skipped;
+  const target = Array.isArray(networking?.targets)
+    ? networking.targets.find(row => row?.name === 'Health') || networking.targets[0]
+    : null;
+  const optimizations = target?.optimizations || {};
+  const optimizationRows = ['DNS Prefetch', 'DNS Cache', 'Preconnect', 'Warm Fetch']
+    .map(name => ({ name, ...(optimizations[name] || {}) }))
+    .filter(row => row.status || row.metric || row.detail);
+
+  summary.textContent = protocols.length
+    ? `${passed} pass · ${skipped} skip · ${protocols.length} protocols · ${networking?.global?.checksPassed ?? '—'}/${networking?.global?.checksTotal ?? '—'} network checks`
+    : 'protocol proof unavailable';
+  summary.dataset.tone = failed ? 'bad' : skipped ? 'warn' : protocols.length ? 'ok' : 'warn';
+
+  protocolBody.innerHTML = protocols.length
+    ? protocols
+        .map(row => {
+          const canonical = row.canonical || row._links?.docs || BUN_FETCH_DOCS.protocols;
+          const skipped = isSkipped(row);
+          return `<tr>
+            <td class="mono">${esc(fetchProtocolLabel(String(row.name || 'unknown')))}</td>
+            <td>${esc(fetchProtocolMode(String(row.name || '')))}</td>
+            <td class="${skipped ? 'st-warn' : row.passed ? 'st-ok' : 'st-bad'}">${skipped ? 'skip' : row.passed ? 'pass' : 'fail'}</td>
+            <td>${esc(String(row.actual || row.expected || '—'))}</td>
+            <td><a href="${esc(canonical)}" target="_blank" rel="noopener noreferrer">Bun docs</a></td>
+          </tr>`;
+        })
+        .join('')
+    : '<tr><td colspan="5">No protocol rows in release-features.json.</td></tr>';
+
+  const controlRows = [
+    ...optimizationRows.map(row => ({
+      control: row.name,
+      state: row.status || 'observed',
+      evidence: [row.metric, row.detail].filter(Boolean).join(' · '),
+      docs:
+        row.name === 'DNS Prefetch'
+          ? BUN_FETCH_DOCS.dnsPrefetch
+          : row.name === 'DNS Cache'
+            ? BUN_FETCH_DOCS.dnsCache
+            : row.name === 'Preconnect'
+              ? BUN_FETCH_DOCS.preconnect
+              : BUN_FETCH_DOCS.pooling,
+    })),
+    {
+      control: 'Connection pool',
+      state: 'automatic',
+      evidence: 'same-origin HTTP keep-alive reuse',
+      docs: BUN_FETCH_DOCS.pooling,
+    },
+    {
+      control: 'Request limit',
+      state: '256 default',
+      evidence: 'BUN_CONFIG_MAX_HTTP_REQUESTS raises the runtime ceiling',
+      docs: BUN_FETCH_DOCS.requestLimit,
+    },
+    {
+      control: 'Fetch diagnostics',
+      state: 'opt-in',
+      evidence: 'verbose: true per request · BUN_CONFIG_VERBOSE_FETCH process-wide',
+      docs: BUN_FETCH_DOCS.debugging,
+    },
+  ];
+
+  transportBody.innerHTML = controlRows
+    .map(
+      row => `<tr>
+        <td>${esc(row.control)}</td>
+        <td class="${row.state === 'PASS' ? 'st-ok' : ''}">${esc(row.state)}</td>
+        <td>${esc(row.evidence || '—')}</td>
+        <td><a href="${esc(row.docs)}" target="_blank" rel="noopener noreferrer">Bun docs</a></td>
+      </tr>`
+    )
+    .join('');
+}
+
+async function loadFetchProtocolEvidence() {
+  const [releaseHit, networkingHit] = await Promise.all([
+    fetchJson('/registry/release-features.json'),
+    fetchJson('/registry/networking-proof.json'),
+  ]);
+  renderFetchProtocolEvidence(releaseHit?.data, networkingHit?.data);
+}
+
 async function fetchHealth() {
   for (const url of ['/api/health', '/health']) {
     const hit = await fetchJson(url);
@@ -1355,13 +1478,14 @@ export async function load() {
 
   // Live check table runs in parallel with edge health rollup.
   const livePromise = runLiveChecks();
+  const fetchProtocolPromise = loadFetchProtocolEvidence();
 
   const payload = await fetchHealth();
   if (payload?.data) {
     payload.data = await enrichFromOpsSummary(payload.data);
   }
   render(payload);
-  await livePromise;
+  await Promise.all([livePromise, fetchProtocolPromise]);
   document.dispatchEvent(new CustomEvent('portal:health-ready', { detail: payload }));
 }
 
