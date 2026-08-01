@@ -649,7 +649,7 @@ export function mountGlossaryBreadcrumbs(mount, glossary, options = {}) {
       }
     } else if (surface) {
       const pageConcept = conceptById(glossary, surface.concept);
-      if (pathname.includes('/portal/partner-history')) {
+      if (pathname.includes('/portal/partner-history') || pathname.includes('/portal/account')) {
         crumbs.push({ label: 'Limits', href: '/portal/limits/' });
       } else if (pathname.includes('/portal/limits')) {
         crumbs.push({ label: 'Ops', href: '/portal/ops/' });
