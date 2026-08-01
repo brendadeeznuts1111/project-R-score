@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "generatedAt": "2026-07-31T10:27:06.107Z",
+  "generatedAt": "2026-08-01T19:46:02.065Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
-  "brandCount": 59,
+  "brandCount": 61,
   "domainCount": 9,
   "domains": [
     "audit",
@@ -16,7 +16,7 @@
     "surfaces"
   ],
   "kinds": {
-    "id": 53,
+    "id": 55,
     "key": 1,
     "code": 5
   },
@@ -39,7 +39,7 @@
     {
       "name": "identity",
       "module": "lib/types/branded/identity.ts",
-      "brandCount": 5
+      "brandCount": 6
     },
     {
       "name": "operations",
@@ -49,7 +49,7 @@
     {
       "name": "portal",
       "module": "lib/types/branded/portal.ts",
-      "brandCount": 4
+      "brandCount": 5
     },
     {
       "name": "security",
@@ -293,6 +293,33 @@
       "guard": "BRAND_GUARDS.isIdentityId",
       "shortName": "identityId",
       "envName": "IDENTITY_ID"
+    },
+    {
+      "name": "OidcClientId",
+      "domain": "identity",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input"
+      ],
+      "description": "OIDC relying-party client identifier parsed from deployment configuration",
+      "kind": "id",
+      "module": "lib/types/branded/identity.ts",
+      "constructors": {
+        "as": "asOidcClientId",
+        "try": "tryOidcClientId",
+        "parse": "parseOidcClientId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isOidcClientId",
+      "shortName": "oidcClientId",
+      "envName": "OIDC_CLIENT_ID"
     },
     {
       "name": "AccessKeyId",
@@ -1433,6 +1460,33 @@
       "guard": "BRAND_GUARDS.isLinkNonceId",
       "shortName": "linkNonceId",
       "envName": "LINK_NONCE_ID"
+    },
+    {
+      "name": "DomId",
+      "domain": "portal",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Owned portal DOM mount id used by glossary section routing",
+      "kind": "id",
+      "module": "lib/types/branded/portal.ts",
+      "constructors": {
+        "as": "asDomId",
+        "try": "tryDomId",
+        "parse": "parseDomId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isDomId",
+      "shortName": "domId",
+      "envName": "DOM_ID"
     },
     {
       "name": "HostId",
