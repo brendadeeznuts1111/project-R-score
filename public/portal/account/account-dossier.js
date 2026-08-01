@@ -6,7 +6,10 @@
  *   query ?account= (form SSOT) · hash #account:{TreeNodeId} (limits pattern)
  */
 
-import { conceptIdForPartnerOpsEventCode } from './glossary-map.js';
+import {
+  PARTNER_OPS_EVENT_CODE_CONCEPTS,
+  conceptIdForPartnerOpsEventCode,
+} from './glossary-map.js';
 
 const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
 /** Call-sign only — avoids treating slug ids like LIMIT-DEMO-ATLANTIC as CODE LIMIT. */
@@ -249,9 +252,13 @@ export function buildDossierAccountingView(partnerRow) {
     .toUpperCase();
   if (!partnerCode) return null;
 
-  const ledger = Array.isArray(partnerRow?.accounting?.ledger)
+  const EVENT_CODES = new Set(Object.keys(PARTNER_OPS_EVENT_CODE_CONCEPTS));
+  const rawLedger = Array.isArray(partnerRow?.accounting?.ledger)
     ? partnerRow.accounting.ledger
     : [];
+  const ledger = rawLedger.filter(
+    row => row && typeof row === 'object' && EVENT_CODES.has(String(row.code || ''))
+  );
   const depositsRows = Array.isArray(partnerRow?.accounting?.deposits)
     ? partnerRow.accounting.deposits
     : [];
@@ -260,24 +267,35 @@ export function buildDossierAccountingView(partnerRow) {
     : [];
   const tracking = partnerRow?.tracking?.accounting ?? null;
 
+  // Mirror lib/telegram/ops-accounting-view.ts — only finite number amounts (no string coerce).
   const sumRows = rows =>
-    rows.reduce((n, row) => n + (Number.isFinite(Number(row?.amount)) ? Number(row.amount) : 0), 0);
+    rows.reduce((n, row) => {
+      const amount = row?.amount;
+      return n + (typeof amount === 'number' && Number.isFinite(amount) ? amount : 0);
+    }, 0);
   const sumLedger = codes =>
     ledger.reduce((n, event) => {
       if (!codes.has(String(event?.code || ''))) return n;
-      const amount = Number(event?.amount);
-      return n + (Number.isFinite(amount) ? amount : 0);
+      const amount = event?.amount;
+      return n + (typeof amount === 'number' && Number.isFinite(amount) ? amount : 0);
     }, 0);
 
   const depositsLedger = sumLedger(new Set(['DEPOSIT_RECEIVED', 'DEPOSIT_ALLOCATED']));
+  const depositsRowsTotal = sumRows(depositsRows);
   const deposits =
-    depositsLedger ||
-    sumRows(depositsRows) ||
-    Number(tracking?.depositVolume ?? 0) ||
-    0;
+    depositsLedger > 0
+      ? depositsLedger
+      : depositsRowsTotal > 0
+        ? depositsRowsTotal
+        : Number(tracking?.depositVolume ?? 0) || 0;
   const creditsLedger = sumLedger(new Set(['CREDIT_EXTENDED']));
+  const creditsRowsTotal = sumRows(creditsRows);
   const credits =
-    creditsLedger || sumRows(creditsRows) || Number(tracking?.creditVolume ?? 0) || 0;
+    creditsLedger > 0
+      ? creditsLedger
+      : creditsRowsTotal > 0
+        ? creditsRowsTotal
+        : Number(tracking?.creditVolume ?? 0) || 0;
   const settlements = sumLedger(new Set(['SETTLEMENT_PROCESSED']));
   const freeRollApplied =
     sumLedger(new Set(['FREE_ROLL_APPLIED'])) ||

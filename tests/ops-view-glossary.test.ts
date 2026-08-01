@@ -8,7 +8,9 @@ import {
 import {
   buildPerAccountAccountingView,
   conceptIdForPartnerOpsEvent,
+  validateOpsAccountingViewShape,
 } from '../lib/telegram/ops-accounting-view.ts';
+import { buildDossierAccountingView } from '../public/portal/account/account-dossier.js';
 import { telegramGlossaryConcepts } from '../lib/telegram/telegram-glossary.ts';
 import { TELEGRAM_GLOSSARY_CONCEPT_IDS } from '../lib/telegram/handshake-catalog.ts';
 import { PARTNER_OPS_CONCEPT_COLORS } from '../lib/telegram/partner-ops-color-kernel.ts';
@@ -94,5 +96,53 @@ describe('ops-view glossary MVP', () => {
       expect(bakeIds.has(deferred)).toBe(false);
       expect(bakeIds.has(target)).toBe(true);
     }
+  });
+
+  test('dossier JS accounting view stays summary-parity with ops-accounting-view.ts', () => {
+    const fixture = {
+      code: 'ASH',
+      accounting: {
+        fundStatus: 'open',
+        incompleteOuts: 0,
+        deposits: [
+          { amount: 100, date: '2026-07-01', rail: 'venmo' },
+          { amount: '50' as unknown as number, date: '2026-07-02', rail: 'zelle' },
+        ],
+        credits: [{ amount: 25, date: '2026-07-03' }],
+        freeRoll: { total: 100, used: 10 },
+        ledger: [
+          {
+            at: '2026-07-04T00:00:00.000Z',
+            code: 'DEPOSIT_RECEIVED',
+            amount: 200,
+            conceptId: 'event.deposit.received',
+          },
+          {
+            at: '2026-07-05T00:00:00.000Z',
+            code: 'NOT_A_REAL_CODE',
+            amount: 999,
+            conceptId: 'partner.ops.event',
+          },
+        ],
+      },
+    };
+    const tsView = buildPerAccountAccountingView(fixture as never);
+    const jsView = buildDossierAccountingView(fixture);
+    expect(tsView).not.toBeNull();
+    expect(jsView).not.toBeNull();
+    expect(jsView!.summary).toEqual(tsView!.summary);
+    expect(jsView!.conceptIds).toEqual(tsView!.conceptIds);
+    expect(jsView!.type).toBe(tsView!.type);
+    expect(jsView!.partnerCode).toBe(tsView!.partnerCode);
+    expect(validateOpsAccountingViewShape(tsView)).toEqual([]);
+    expect(validateOpsAccountingViewShape({ type: 'per_play' })).toEqual([
+      { code: 'play_id', message: 'Per-play view missing playId' },
+    ]);
+    expect(validateOpsAccountingViewShape({ type: 'per_week' })).toEqual([
+      { code: 'week_start', message: 'Per-week view missing weekStart' },
+    ]);
+    expect(validateOpsAccountingViewShape({ type: 'per_book_type' })).toEqual([
+      { code: 'book_type', message: 'Per-book-type view missing bookType' },
+    ]);
   });
 });

@@ -169,3 +169,77 @@ export function conceptIdForPartnerOpsEvent(code: string): string {
   if (isPartnerOpsEventCode(code)) return PARTNER_OPS_EVENT_GLOSSARY[code];
   return 'partner.ops.event';
 }
+
+/** Wire/unknown AccountingView shape (boundary). Soft play/week/book builds stay deferred. */
+export type OpsAccountingViewWire = {
+  type?: string;
+  partnerCode?: string; // brand-ok — partner CODE wire
+  playId?: string; // brand-ok — Soft play token (deferred; no PlayId brand yet)
+  weekStart?: string;
+  bookType?: string;
+  summary?: Partial<OpsAccountingViewSummary> | null;
+  conceptIds?: Record<string, string> | null; // brand-ok — glossary concept keys
+};
+
+export type OpsAccountingViewShapeIssue = {
+  code: string; // brand-ok — validation issue code
+  message: string;
+};
+
+/**
+ * Structural gate for AccountingView rows (per-account shipped; other types
+ * require dimension keys only — builders deferred until Soft/play bake).
+ */
+export function validateOpsAccountingViewShape(
+  view: OpsAccountingViewWire | null | undefined
+): OpsAccountingViewShapeIssue[] {
+  const issues: OpsAccountingViewShapeIssue[] = [];
+  if (!view || typeof view !== 'object') {
+    return [{ code: 'view_missing', message: 'AccountingView missing' }];
+  }
+  const type = view.type;
+  if (
+    type !== 'per_account' &&
+    type !== 'per_play' &&
+    type !== 'per_week' &&
+    type !== 'per_book_type'
+  ) {
+    issues.push({
+      code: 'view_type',
+      message: `AccountingView type must be per_account|per_play|per_week|per_book_type (got ${String(type)})`,
+    });
+    return issues;
+  }
+  if (type === 'per_account' && !String(view.partnerCode || '').trim()) {
+    issues.push({ code: 'partner_code', message: 'Per-account view missing partnerCode' });
+  }
+  if (type === 'per_play' && !String(view.playId || '').trim()) {
+    issues.push({ code: 'play_id', message: 'Per-play view missing playId' });
+  }
+  if (type === 'per_week' && !String(view.weekStart || '').trim()) {
+    issues.push({ code: 'week_start', message: 'Per-week view missing weekStart' });
+  }
+  if (type === 'per_book_type' && !String(view.bookType || '').trim()) {
+    issues.push({ code: 'book_type', message: 'Per-book-type view missing bookType' });
+  }
+  if (type === 'per_account') {
+    const ids = view.conceptIds ?? {};
+    for (const key of [
+      'dimension',
+      'summary',
+      'deposits',
+      'settlements',
+      'credit',
+      'freeplay',
+      'net',
+    ] as const) {
+      if (!ids[key]?.startsWith('ops.view.')) {
+        issues.push({
+          code: 'concept_ids',
+          message: `Per-account view conceptIds.${key} must be ops.view.*`,
+        });
+      }
+    }
+  }
+  return issues;
+}

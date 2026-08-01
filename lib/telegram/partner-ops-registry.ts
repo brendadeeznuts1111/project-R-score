@@ -20,7 +20,10 @@ import {
 } from './partner-ops-events.ts';
 import { PARTNER_OPS_GLOSSARY_CONCEPT_IDS } from './partner-ops-glossary.ts';
 import { TELEGRAM_GLOSSARY_CONCEPT_IDS } from './handshake-catalog.ts';
-import { buildPerAccountAccountingView } from './ops-accounting-view.ts';
+import {
+  buildPerAccountAccountingView,
+  validateOpsAccountingViewShape,
+} from './ops-accounting-view.ts';
 import { OPS_VIEW_MVP_CONCEPT_IDS } from './ops-view-glossary.ts';
 import {
   PACKAGE_GROUP_FORUMS_META_DIR,
@@ -543,11 +546,18 @@ export function validatePartnersOpsRegistry(
         message: `${p.code}: per-account AccountingView failed (partner CODE required)`,
       });
     } else {
-      if (accountingView.type !== 'per_account' || accountingView.partnerCode !== p.code) {
+      for (const shapeIssue of validateOpsAccountingViewShape(accountingView)) {
+        issues.push({
+          level: 'error',
+          code: `accounting_view_${shapeIssue.code}`,
+          message: `${p.code}: ${shapeIssue.message}`,
+        });
+      }
+      if (accountingView.partnerCode !== p.code) {
         issues.push({
           level: 'error',
           code: 'accounting_view_shape',
-          message: `${p.code}: AccountingView type/partnerCode mismatch`,
+          message: `${p.code}: AccountingView partnerCode mismatch`,
         });
       }
       for (const conceptId of Object.values(accountingView.conceptIds)) {
