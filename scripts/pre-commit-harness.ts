@@ -572,6 +572,8 @@ async function main(): Promise<void> {
   }
   // Tier-A package gate always runs (sole successor to check-banned-wrappers).
   parallelJobs.push(spawnGate('bun-deps-tier-a', ['bun', 'scripts/check-bun-deps-tier-a.ts']));
+  // Mixed-lane guard (warn-only): bakes staged together with source files.
+  parallelJobs.push(spawnGate('mixed-lane', ['bun', 'scripts/check-mixed-lane.ts']));
   if (libStaged || scriptsStaged || toolsStaged) {
     parallelJobs.push(spawnGate('oxlint-ratchet', ['bun', 'scripts/check-oxlint-ratchet.ts']));
     parallelJobs.push(
