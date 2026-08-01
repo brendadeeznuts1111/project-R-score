@@ -60,24 +60,38 @@ describe('ops-commands flow dispatch', () => {
        VALUES ($id, 'agent', 'Ash Agent', 'ASH-001', '4242', 1, $now)`,
       { $id: agentId, $now: now }
     );
-    const reply = handleOpsDossier(db, {
+    const linked = {
       id: agentId,
-      type: 'agent',
+      type: 'agent' as const,
       parent_id: null,
       expert_id: null,
       name: 'Ash Agent',
       telegram_id: '4242',
       call_sign: 'ASH-001',
-    });
+    };
+    const reply = handleOpsDossier(db, linked);
     expect(reply).toContain('Account dossier');
     expect(reply).toContain(`/portal/account/?account=${encodeURIComponent(agentId)}`);
     expect(reply).toContain('#partner/ASH/telegram/general');
     expect(reply).toContain('page.accountDossier');
 
+    const byCode = handleOpsDossier(db, linked, {
+      args: ['ASH'],
+      telegramUserId: '4242',
+    });
+    expect(byCode).toContain(agentId);
+    expect(byCode).toContain('Resolved from');
+
+    const denied = handleOpsDossier(db, null, {
+      args: ['ASH'],
+      telegramUserId: '9999',
+    });
+    expect(denied).toContain('Not authorized');
+
     const dispatched = dispatchOpsCommand(db, ':memory:', {
       telegramUserId: '4242',
       command: '/dossier',
-      args: [],
+      args: ['ASH-001'],
       chatType: 'private',
     });
     expect(dispatched).toContain('/portal/account/?account=');

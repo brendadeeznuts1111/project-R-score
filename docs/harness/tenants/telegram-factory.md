@@ -132,13 +132,17 @@ Linked seats can open the single-account portal board from Telegram:
 
 | Command | Handler | Portal |
 |---------|---------|--------|
-| `/dossier` | [`handleOpsDossier`](../../../lib/telegram/ops-commands.ts) | `https://score.factory-wager.com/portal/account/?account={TreeNodeId}` |
+| `/dossier` · `/dossier CODE` · `/dossier CODE-001` | [`handleOpsDossier`](../../../lib/telegram/ops-commands.ts) | `https://score.factory-wager.com/portal/account/?account={TreeNodeId\|CODE}` |
 | `/limits` | [`handleOpsLimits`](../../../lib/telegram/ops-commands.ts) | `/portal/limits/#account:{TreeNodeId}` (+ dossier link) |
 
-Board sections `#section:telegram` / `#section:accounting` join
-`partners-ops.json` + `telegram-handshake.json` (concepts:
-`page.accountDossier` · `section.partnersTelegram` · `telegram.handshake`).
-Refresh bot menu after deploy: `bun run telegram:factory:setup`.
+`/dossier CODE` is allowed for linked seats under that CODE, or when the caller
+is in `OPS_ADMIN_USER_IDS`. Seat capital desk root keyboard includes
+**📁 Dossier** (URL button → same portal board).
+
+Board sections `#section:telegram` / `#section:accounting` / `#section:activity`
+join `partners-ops.json` + `telegram-handshake.json` (concepts:
+`page.accountDossier` · `section.partnersTelegram` · `telegram.handshake` ·
+`partner.ops.event`). Refresh bot menu after deploy: `bun run telegram:factory:setup`.
 
 ## Bot API surface (this repo)
 

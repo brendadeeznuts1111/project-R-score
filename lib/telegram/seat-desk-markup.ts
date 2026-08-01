@@ -2,7 +2,9 @@
  * Seat capital desk inline keyboards — sd:* callback grammar (≤64 UTF-8 bytes).
  * @see https://core.telegram.org/bots/api#inlinekeyboardbutton — callback_data limit
  * @see https://core.telegram.org/bots/api#copytextbutton — Copy table buttons (≤256 UTF-8 bytes)
+ * @see https://core.telegram.org/bots/api#inlinekeyboardbutton — url buttons (dossier portal)
  */
+import { factoryWagerPagesCustomUrl } from '../../config/r2-env.ts';
 import {
   formatAdoptBookMaxButtonLabel,
   formatAdoptBookMaxConfirmLabel,
@@ -24,6 +26,13 @@ import {
 
 /** Telegram CopyTextButton payload limit (Bot API 7.11+). */
 export const TELEGRAM_COPY_TEXT_MAX = 256;
+
+/** Portal account dossier deep-link for a seat / CODE seed. */
+export function seatDeskDossierPortalUrl(seed: string): string {
+  const account = String(seed || '').trim();
+  if (!account) return `${factoryWagerPagesCustomUrl()}/portal/account/`;
+  return `${factoryWagerPagesCustomUrl()}/portal/account/?account=${encodeURIComponent(account)}`;
+}
 
 /** Split text into chunks ≤ max UTF-8 bytes for InlineKeyboardButton.copy_text. */
 export function splitTelegramCopyText(text: string, max = TELEGRAM_COPY_TEXT_MAX): string[] {
@@ -49,7 +58,8 @@ export function splitTelegramCopyText(text: string, max = TELEGRAM_COPY_TEXT_MAX
 
 export type InlineCallbackBtn = { text: string; callback_data: string };
 export type InlineCopyBtn = { text: string; copy_text: { text: string } };
-export type InlineBtn = InlineCallbackBtn | InlineCopyBtn;
+export type InlineUrlBtn = { text: string; url: string };
+export type InlineBtn = InlineCallbackBtn | InlineCopyBtn | InlineUrlBtn;
 
 /** Short rail codes for sd:rail: callbacks. */
 export const SEAT_DESK_RAIL_CODES: Record<string, string> = {
@@ -219,7 +229,11 @@ export function buildSeatDeskRootMarkup(record: SeatIntakeRecord): Record<string
     ]);
   }
 
-  rows.push([{ text: '↻ Refresh', callback_data: `sd:r:${callSign}` }]);
+  const dossierSeed = (record.partnerCode || callSign.split('-')[0] || callSign).trim();
+  rows.push([
+    { text: '↻ Refresh', callback_data: `sd:r:${callSign}` },
+    { text: '📁 Dossier', url: seatDeskDossierPortalUrl(dossierSeed) },
+  ]);
   return inlineKeyboard(rows);
 }
 

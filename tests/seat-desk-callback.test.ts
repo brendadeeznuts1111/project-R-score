@@ -196,6 +196,17 @@ describe('seat-desk Fill markup', () => {
     }
   });
 
+  test('buildSeatDeskRootMarkup includes portal dossier URL beside Refresh', () => {
+    const kb = buildSeatDeskRootMarkup(fixture) as {
+      inline_keyboard: Array<Array<{ text: string; url?: string; callback_data?: string }>>;
+    };
+    const dossier = kb.inline_keyboard.flat().find(b => b.text === '📁 Dossier');
+    expect(dossier?.url).toContain('/portal/account/?account=');
+    expect(dossier?.url).toMatch(/account=SPEN|account=SPEN-001/);
+    const refresh = kb.inline_keyboard.flat().find(b => b.text === '↻ Refresh');
+    expect(refresh?.callback_data).toMatch(/^sd:r:/);
+  });
+
   test('Fill buttons use out number not SPEN-N', () => {
     const kb = buildSeatDeskRootMarkup(fixture) as {
       inline_keyboard: Array<Array<{ text: string }>>;

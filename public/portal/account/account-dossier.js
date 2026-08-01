@@ -237,6 +237,81 @@ function buildConnectedTree(accountId, partnerNodeId, patterns, profiles) {
 }
 
 /**
+ * Timeline rows from partners-ops ledger + handshake readiness signals.
+ * @param {object | null} partnerRow
+ * @param {object | null} handshakeRow
+ * @param {ReturnType<typeof buildDossierTelegram>} telegram
+ */
+export function buildDossierActivity(partnerRow, handshakeRow = null, telegram = null) {
+  /** @type {Array<{ at: string; kind: string; label: string; detail: string; conceptId: string | null }>} */
+  const rows = [];
+  const ledger = Array.isArray(partnerRow?.accounting?.ledger)
+    ? partnerRow.accounting.ledger
+    : [];
+  for (const event of ledger.slice(0, 20)) {
+    rows.push({
+      at: String(event?.at || ''),
+      kind: String(event?.code || 'event'),
+      label: String(event?.code || 'event').replaceAll('_', ' '),
+      detail: [event?.note, event?.rail, event?.amount != null ? `$${event.amount}` : null]
+        .filter(Boolean)
+        .join(' · '),
+      conceptId: event?.conceptId ? String(event.conceptId) : 'partner.ops.event',
+    });
+  }
+
+  if (handshakeRow?.inviteLink) {
+    rows.push({
+      at: handshakeRow.inviteSentAt ? String(handshakeRow.inviteSentAt) : '',
+      kind: 'TELEGRAM_INVITE',
+      label: 'Forum invite',
+      detail: handshakeRow.inviteSentAt ? 'invite stored' : 'invite link available',
+      conceptId: 'telegram.handshake',
+    });
+  }
+  if (telegram?.dmSeatStatus) {
+    rows.push({
+      at: '',
+      kind: 'DM_SEAT',
+      label: 'DM seat',
+      detail: `${telegram.dmSeatStatus}${telegram.callSign ? ` · ${telegram.callSign}` : ''}`,
+      conceptId: 'telegram.wire',
+    });
+  }
+  if (telegram?.chatLinked != null) {
+    rows.push({
+      at: '',
+      kind: 'PACKAGE_CHAT',
+      label: 'Package chat',
+      detail: telegram.chatLinked
+        ? `linked · topics ${telegram.topicsConfigured}/${telegram.topicsRequired}`
+        : 'unlinked',
+      conceptId: 'section.partnersTelegram',
+    });
+  }
+  for (const fail of handshakeRow?.verifyFails || []) {
+    rows.push({
+      at: '',
+      kind: 'VERIFY_FAIL',
+      label: 'Handshake verify gap',
+      detail: String(fail),
+      conceptId: 'telegram.handshake',
+    });
+  }
+  for (const step of handshakeRow?.nextSteps || []) {
+    rows.push({
+      at: '',
+      kind: 'NEXT_STEP',
+      label: 'Next step',
+      detail: String(step),
+      conceptId: 'telegram.handshake',
+    });
+  }
+
+  return rows.slice(0, 30);
+}
+
+/**
  * Project telegram + handshake readiness for one partner CODE.
  * @param {object | null} partnerRow
  * @param {object | null} handshakeRow
@@ -334,6 +409,7 @@ export function buildAccountDossier({
   });
 
   const telegram = buildDossierTelegram(partnerRow, handshakeRow);
+  const activity = buildDossierActivity(partnerRow, handshakeRow, telegram);
   const accounting = partnerRow?.accounting
     ? {
         fundStatus: partnerRow.accounting.fundStatus ?? null,
@@ -388,6 +464,7 @@ export function buildAccountDossier({
     outs: Array.isArray(partnerRow?.outs) ? partnerRow.outs : [],
     telegram,
     accounting,
+    activity,
     links: {
       history: `/portal/partner-history/?account=${encodeURIComponent(id)}`,
       limits: `/portal/limits/#account:${encodeURIComponent(id)}`,

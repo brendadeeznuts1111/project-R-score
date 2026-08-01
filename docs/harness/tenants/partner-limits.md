@@ -340,9 +340,10 @@ Account dossier (full single-account breakdown — tree, location, monitoring,
 telemetry, outs, Telegram package readiness, accounting, betlog):
 `/portal/account/?account={TreeNodeId}` (optional `&hours=`) · limits-aligned
 hash `#account:{TreeNodeId}` · section scroll
-`#section:identity|tree|location|traces|policies|telemetry|changes|outs|telegram|accounting`.
-Joins `partners-ops.json` + `telegram-handshake.json`. Factory bot: `/dossier`
-(+ `/limits`). Glossary ownership: `page.accountDossier` +
+`#section:identity|tree|location|traces|policies|telemetry|changes|outs|telegram|accounting|activity`.
+Joins `partners-ops.json` + `telegram-handshake.json`. Factory bot:
+`/dossier` · `/dossier CODE` (+ `/limits`); seat desk **📁 Dossier** URL.
+Glossary ownership: `page.accountDossier` +
 `public/portal/account/glossary-map.js` (collapses onto `ops.limits.*` /
 `section.*`). Account links on partner-history and the limit-changes card open
 this board.
