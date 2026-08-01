@@ -266,6 +266,11 @@ function scrollToConcept(concept) {
   }
 }
 
+function handleGlossaryHash() {
+  const glossary = parseGlossaryHash(window.location.href);
+  if (glossary) scrollToConcept(glossary.concept);
+}
+
 // ── Debounced search ────────────────────────────────────────────────────
 
 let searchTimer = 0;
@@ -365,6 +370,7 @@ async function init() {
 
     $('search').addEventListener('input', debouncedSearch);
     window.addEventListener('hashchange', syncFiltersFromHash);
+    window.addEventListener('hashchange', handleGlossaryHash);
 
     // Deep-link: auto-open modal if hash contains project=foo
     const hashState = readHashState();
@@ -376,10 +382,7 @@ async function init() {
     }
 
     // Deep-link: glossary hash routing
-    const glossary = parseGlossaryHash(window.location.href);
-    if (glossary) {
-      scrollToConcept(glossary.concept);
-    }
+    handleGlossaryHash();
 
     // ── Keyboard navigation ──────────────────────────────────────────
 
@@ -460,7 +463,7 @@ async function init() {
     });
   } catch (err) {
     $('loading').classList.add('hidden');
-    $('error-banner').classList.remove('hidden');
+    $('error-banner')?.classList.remove('hidden');
     $('error-text').textContent = err.message;
   }
 }
