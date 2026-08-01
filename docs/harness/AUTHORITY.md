@@ -66,6 +66,16 @@ an open, disjoint lane owns an existing failure, the commit must record the
 failing command, exact evidence, and owning lane; GitHub status is never a
 substitute for that local evidence.
 
+**bun:ci env + macros**
+
+| Concern | Contract |
+|---------|----------|
+| Env load | `bun --env-file ~/.reasonix/.env scripts/bun-ci.ts` ([Bun env files](https://bun.com/docs/runtime/environment-variables)) |
+| Bucket default | `Bun.env.R2_BUCKET_NAME` defaults to `factory-wager-wiki` inside [`scripts/bun-ci.ts`](../../scripts/bun-ci.ts) when unset (same as [`config/r2-env.ts`](../../config/r2-env.ts)); typed in [`env.d.ts`](../../env.d.ts) |
+| Identity banner | Runtime `getGitCommitHash` / `getGitBranch` from [`lib/macros/git-commit.ts`](../../lib/macros/git-commit.ts) — **not** `with { type: "macro" }` (macros only inline under [`bun build`](https://bun.com/docs/bundler/macros)) |
+| Build-time macro proof | claim `macros-embed-boundaries` · `bun test tests/macros/embed-commit.test.ts` |
+| Color | Bun-native `NO_COLOR` / `FORCE_COLOR` — no custom color layer in bun:ci |
+
 **Delivery:**
 
 | Setting | Status |

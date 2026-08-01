@@ -5,24 +5,31 @@ declare module "bun" {
   interface Env {
     // Core Environment
     NODE_ENV: "development" | "production" | "test";
-    
+    /** Hosted CI signal (`true` / `1`); bun:ci banner notes when set. */
+    CI?: string;
+    /** Disable ANSI color (https://no-color.org/). Bun-native. */
+    NO_COLOR?: string;
+    /** Force ANSI color even when NO_COLOR is set. Bun-native. */
+    FORCE_COLOR?: string;
+
     // R2 Configuration (Required)
     R2_ACCOUNT_ID: string;
     R2_ACCESS_KEY_ID: string;
     R2_SECRET_ACCESS_KEY: string;
+    /** Wiki / registry bucket; bun:ci defaults to factory-wager-wiki when unset. */
     R2_BUCKET_NAME?: string;
-    
+
     // Security Configuration
     LOG_LEVEL: "error" | "warn" | "info" | "debug";
     AUDIT_LOG_RETENTION_DAYS?: string;
     MAX_RETRY_ATTEMPTS?: string;
     CACHE_TTL?: string;
-    
+
     // Feature Flags
     ENABLE_SECURITY_MONITORING?: string;
     ENABLE_ADVANCED_AUDITING?: string;
     ENABLE_REAL_TIME_ALERTS?: string;
-    
+
     // Development Settings
     DEBUG_SECURITY?: string;
     MOCK_R2_ENDPOINT?: string;
