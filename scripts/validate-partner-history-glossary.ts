@@ -1,7 +1,10 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 
-import { PARTNER_HISTORY_GLOSSARY } from '../public/portal/partner-history/glossary-map.js';
+import {
+  PARTNER_HISTORY_COLLAPSE_BACKLOG,
+  PARTNER_HISTORY_GLOSSARY,
+} from '../public/portal/partner-history/glossary-map.js';
 
 const REGISTRY_PATH = 'public/registry/domain-glossary.json';
 const HISTORY_PATH = 'public/portal/partner-history/index.html';
@@ -21,6 +24,33 @@ const failures: string[] = [];
 
 for (const concept of new Set(Object.values(PARTNER_HISTORY_GLOSSARY))) {
   if (!conceptIds.has(concept)) failures.push(`unknown canonical concept: ${concept}`);
+}
+
+const mintBanPrefixes = [
+  'ops.skeleton.',
+  'ops.aria.',
+  'ops.freshness.',
+  'ops.audit.',
+  'ops.bulk.',
+  'ops.search.',
+  'ops.print.',
+  'ops.intel.',
+  'ops.diff.',
+  'ops.time.',
+  'ops.role.',
+  'ops.alert.',
+] as const;
+
+for (const [key, concept] of Object.entries(PARTNER_HISTORY_COLLAPSE_BACKLOG)) {
+  if (!conceptIds.has(concept)) {
+    failures.push(`backlog unknown canonical concept: ${key} -> ${concept}`);
+  }
+  if (mintBanPrefixes.some(prefix => concept.startsWith(prefix))) {
+    failures.push(`backlog mints banned namespace as value: ${key} -> ${concept}`);
+  }
+  if (key in PARTNER_HISTORY_GLOSSARY) {
+    failures.push(`backlog key collides with live glossary chrome: ${key}`);
+  }
 }
 
 for (const [key, concept] of Object.entries(PARTNER_HISTORY_GLOSSARY)) {
@@ -63,6 +93,10 @@ const visibleContract = [
   ['Avg wager', PARTNER_HISTORY_GLOSSARY.avgWagerColumn],
   ['Betlog CSV', PARTNER_HISTORY_GLOSSARY.betlogCsv],
   ['Betlog JSONL', PARTNER_HISTORY_GLOSSARY.betlogJsonl],
+  ['Loading limit history…', PARTNER_HISTORY_GLOSSARY.skeletonTable],
+  ['Loading opening baseline…', PARTNER_HISTORY_GLOSSARY.skeletonBaseline],
+  ['Tap to retry', PARTNER_HISTORY_GLOSSARY.skeletonRetry],
+  ['Calculating aggregates…', PARTNER_HISTORY_GLOSSARY.skeletonMetrics],
 ] as const;
 
 for (const [label, concept] of visibleContract) {
@@ -93,6 +127,18 @@ const duplicateNamespaces = [
   'ops.metric.',
   'ops.table.',
   'ops.action.',
+  'ops.skeleton.',
+  'ops.aria.',
+  'ops.freshness.',
+  'ops.audit.',
+  'ops.bulk.',
+  'ops.search.',
+  'ops.print.',
+  'ops.intel.',
+  'ops.diff.',
+  'ops.time.',
+  'ops.role.',
+  'ops.alert.',
   'ui.action.refresh',
   'ui.action.export',
   'ui.export.csv',
@@ -108,6 +154,6 @@ if (failures.length > 0) {
   process.exitCode = 1;
 } else {
   console.log(
-    `Partner History glossary coverage: PASS (${Object.keys(PARTNER_HISTORY_GLOSSARY).length} labels, ${new Set(Object.values(PARTNER_HISTORY_GLOSSARY)).size} canonical concepts)`
+    `Partner History glossary coverage: PASS (${Object.keys(PARTNER_HISTORY_GLOSSARY).length} live labels, ${new Set(Object.values(PARTNER_HISTORY_GLOSSARY)).size} live concepts, ${Object.keys(PARTNER_HISTORY_COLLAPSE_BACKLOG).length} backlog aliases)`
   );
 }

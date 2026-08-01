@@ -80,8 +80,152 @@ export const PARTNER_HISTORY_GLOSSARY = Object.freeze({
   betlog: 'ops.limits.pattern_surface',
   betlogCsv: 'ui.semantic.artifact',
   betlogJsonl: 'ui.semantic.artifact',
+
+  // P1 chrome — collapse skeletons / ARIA / freshness onto existing owners.
+  // Presentation aliases only; do not mint parallel skeleton/aria/freshness IDs.
+  skeletonTable: 'section.recentLimitChanges',
+  skeletonFilters: 'ui.action.filter',
+  skeletonMetrics: 'section.recentLimitChanges',
+  skeletonEvidence: 'ops.limits.evidence_trace',
+  skeletonBaseline: 'section.openingBaseline',
+  skeletonRowField: 'ops.limits.account',
+  skeletonRetry: 'ui.action.filter',
+
+  ariaTableCaption: 'section.recentLimitChanges',
+  ariaFilterToggle: 'ui.action.filter',
+  ariaEvidenceVerified: 'ops.limits.evidence_trace',
+  ariaProofMissing: 'ops.limits.evidence_trace',
+  ariaExportProgress: 'ui.semantic.artifact',
+  ariaLiveUpdate: 'section.recentLimitChanges',
+
+  freshnessLive: 'ui.semantic.status',
+  freshnessRecent: 'ui.semantic.status',
+  freshnessSyncing: 'ui.semantic.status',
+  freshnessStale: 'alert.stale_feed',
+  freshnessOffline: 'alert.stale_feed',
+  freshnessCached: 'ui.semantic.source',
+  freshnessLastUpdated: 'ui.semantic.status',
+});
+
+/** Presentation copy for skeleton / freshness chrome (not separate glossary IDs). */
+export const PARTNER_HISTORY_COPY = Object.freeze({
+  skeletonTable: 'Loading limit history…',
+  skeletonFilters: 'Loading filters…',
+  skeletonMetrics: 'Calculating aggregates…',
+  skeletonEvidence: 'Verifying signatures…',
+  skeletonBaseline: 'Loading opening baseline…',
+  skeletonRetry: 'Tap to retry',
+  freshnessLive: 'Live',
+  freshnessRecent: 'Recent',
+  freshnessSyncing: 'Syncing',
+  freshnessStale: 'Stale',
+  freshnessOffline: 'Offline',
+  freshnessCached: 'Cached',
+});
+
+/**
+ * Future P2/P3 chrome aliases → existing owners.
+ * Not wired into PARTNER_HISTORY_GLOSSARY until the UI exists (wiring gate).
+ * Do not use parallel mint IDs as values.
+ */
+export const PARTNER_HISTORY_COLLAPSE_BACKLOG = Object.freeze({
+  // Audit trail / changelog
+  auditLimitDecreased: 'ops.limits.change_direction',
+  auditLimitIncreased: 'ops.limits.change_direction',
+  auditLimitFrozen: 'ops.limits.influence_score',
+  auditEvidenceSigned: 'ops.limits.evidence_trace',
+  auditEvidenceRevoked: 'ops.limits.evidence_trace',
+  auditExportDownloaded: 'ui.semantic.artifact',
+  auditFilterSaved: 'ui.action.filter',
+  auditViewedAccount: 'ops.limits.account',
+  auditFlaggedReview: 'ops.limits.influence_score',
+  auditNoteAdded: 'ops.limits.account',
+
+  // Bulk actions
+  bulkSelectAll: 'ui.action.filter',
+  bulkSelectPage: 'ui.action.filter',
+  bulkDeselectAll: 'ui.action.reset',
+  bulkSelectedCount: 'ui.action.filter',
+  bulkExportSelected: 'ui.semantic.artifact',
+  bulkSignEvidence: 'ops.limits.evidence_trace',
+  bulkFreezeLimits: 'ops.limits.effective_limit',
+  bulkApplyTag: 'ui.action.filter',
+  bulkRemoveTag: 'ui.action.reset',
+  bulkCompare: 'ops.limits.limit_delta',
+
+  // Search / query
+  searchPlaceholder: 'ui.action.searchProfiles',
+  searchSyntaxHelp: 'ui.action.searchProfiles',
+  searchNoResults: 'ui.action.filter',
+  searchDidYouMean: 'ui.action.searchProfiles',
+  searchRecentQuery: 'ui.action.filter',
+  searchSavedQuery: 'ui.action.filter',
+  searchQueryError: 'ui.action.searchProfiles',
+
+  // Print
+  printHeader: 'ui.semantic.artifact',
+  printFooter: 'ui.semantic.artifact',
+  printPageNumber: 'ui.semantic.artifact',
+  printGeneratedAt: 'ui.semantic.status',
+  printConfidential: 'ui.semantic.artifact',
+  printOperatorId: 'ops.limits.roleType',
+
+  // Alerts (reuse existing alert.* / telegram topic)
+  alertSlackLimit: 'alert.severity',
+  alertEmailDigest: 'alert.delivery',
+  alertTelegramUrgent: 'telegram.topic.alerts',
+  alertDashboardBadge: 'alert.severity',
+  alertPush: 'alert.delivery',
+
+  // Intelligence badges
+  intelUnusualPattern: 'ops.limits.influence_score',
+  intelCluster: 'ops.limits.pattern_surface',
+  intelVelocity: 'ops.limits.influence_score',
+  intelCorrelated: 'ops.limits.influence_score',
+  intelManualOverride: 'ops.limits.prediction',
+  intelSystemRecommendation: 'ops.limits.prediction',
+
+  // Diff / compare
+  diffCompareMode: 'ops.limits.limit_delta',
+  diffBefore: 'ops.limits.effective_limit',
+  diffAfter: 'ops.limits.effective_limit',
+  diffDelta: 'ops.limits.limit_delta',
+  diffSideBySide: 'ops.limits.limit_delta',
+  diffOverlay: 'ops.limits.limit_delta',
+
+  // Time formatting (presentation of observed window)
+  timeNow: 'section.recentLimitChanges',
+  timeMinutesAgo: 'section.recentLimitChanges',
+  timeHoursAgo: 'section.recentLimitChanges',
+  timeDaysAgo: 'section.recentLimitChanges',
+  timeAbsoluteShort: 'section.recentLimitChanges',
+  timeAbsoluteLong: 'section.recentLimitChanges',
+  timeIsoTooltip: 'section.recentLimitChanges',
+
+  // Permission gates
+  roleAdmin: 'ops.limits.roleType',
+  roleOperator: 'ops.limits.roleType',
+  roleAnalyst: 'ops.limits.roleType',
+  roleViewer: 'ops.limits.roleType',
+  roleSystem: 'ops.limits.roleType',
 });
 
 export function partnerHistoryGlossaryHref(concept) {
   return `/portal/glossary/#glossary:${encodeURIComponent(concept)}`;
+}
+
+/**
+ * Classify snapshot age into a freshness chrome key.
+ * @param {number | null | undefined} ageMs
+ * @param {{ offline?: boolean; syncing?: boolean; cached?: boolean }} [flags]
+ */
+export function classifyFreshness(ageMs, flags = {}) {
+  if (flags.offline) return 'freshnessOffline';
+  if (flags.syncing) return 'freshnessSyncing';
+  if (flags.cached) return 'freshnessCached';
+  if (ageMs == null || !Number.isFinite(ageMs) || ageMs < 0) return 'freshnessRecent';
+  if (ageMs < 5_000) return 'freshnessLive';
+  if (ageMs < 60_000) return 'freshnessRecent';
+  if (ageMs < 5 * 60_000) return 'freshnessStale';
+  return 'freshnessStale';
 }
