@@ -1,7 +1,7 @@
 # FactoryWager Brand & Infrastructure Alignment
 
-**Role** Domain map · email · naming · vaults (human SSOT for brand plane).  
-**Tunnels / machine cloudflared** → [`docs/harness/tenants/tunnel-inventory.md`](harness/tenants/tunnel-inventory.md) (not duplicated here).  
+**Role** Domain map · email · naming · vaults (human SSOT for brand plane).
+**Tunnels / machine cloudflared** → [`docs/harness/tenants/tunnel-inventory.md`](harness/tenants/tunnel-inventory.md) (not duplicated here).
 **Routing (local vs Pages)** → [`docs/platform-routing.md`](platform-routing.md).
 
 ## Domain Structure

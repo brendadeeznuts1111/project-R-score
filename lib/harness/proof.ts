@@ -101,6 +101,25 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'platform / harness',
   },
   {
+    id: 'bun-brand-cross-map',
+    claim:
+      'Reviewed Bun API → wrapper → brand → consumer declarations bake to bun-brand-map.json with proof states',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
+    evidence: [
+      'bun run bun:brand-map:check',
+      'bun run bun:brand-map',
+      'lib/docs/bun-brand-usages.ts',
+      'tools/bun-brand-map.ts',
+      'docs/harness/tenants/bun-brand-cross-map.md',
+      'tests/bun-brand-map.test.ts',
+    ],
+    freshRerun: 'bun run bun:brand-map:check',
+    freshRerunKind: 'claim',
+    owner: 'runtime-tooling',
+  },
+  {
     id: 'install-verify',
     claim: 'Factory install produces a working Bun workspace',
     kinds: ['journey', 'deployed'],

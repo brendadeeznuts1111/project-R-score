@@ -21,6 +21,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Domain `*Id` / bare string IDs → [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md) · skill `.agents/skills/branded-ids/`
 - `unknown` / decode / wire vs interior → [`docs/WIRE_BOUNDARY.md`](../WIRE_BOUNDARY.md)
 - Bun API usage / `@see` refs → `bun tools/bun-doc-refs.ts suggest "<api>"` · [`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md)
+- Bun API → wrapper → brand → project/proof relationships → [`tenants/bun-brand-cross-map.md`](tenants/bun-brand-cross-map.md) · `/portal/brands/` · `bun run bun:brand-map:check` · claim `bun-brand-cross-map`
 - Install / bunfig / machine Bun → [`docs/UNIFIED.md`](../UNIFIED.md) · hybrid workspaces/catalog → [`tenants/monorepo-workspaces.md`](tenants/monorepo-workspaces.md) · `bun run validate:workspaces`
 - Day loop / affected / type-check honesty → [`docs/organization/VELOCITY_BASELINE.md`](../organization/VELOCITY_BASELINE.md)
 - Claim vs evidence (“done?”) → [`PROOF.md`](PROOF.md) · lib docs/Bun/other map → [Lib surface](PROOF.md#lib-surface--docs-vs-bun-vs-other-external) · `bun run proof:install`

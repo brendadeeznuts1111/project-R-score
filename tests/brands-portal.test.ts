@@ -41,21 +41,28 @@ describe('brand keymap portal', () => {
   });
 
   test('shell and board load the keymap through shared portal chrome', async () => {
-    const [html, script] = await Promise.all([
+    const [html, script, css] = await Promise.all([
       Bun.file('public/portal/brands/index.html').text(),
       Bun.file('public/portal/brands/brands-board.js').text(),
+      Bun.file('public/portal/brands/brands.css').text(),
     ]);
 
-    expect(html).toContain('Branded domain-value keymap');
+    expect(html).toContain('Bun capability × FactoryWager brand map');
+    expect(html).toContain('data-view="relationships"');
+    expect(html).toContain('data-view="glossary"');
     expect(html).toContain('/portal/data.js');
     expect(html).toContain('/portal/topbar.js');
     expect(html).toContain('/portal/components/footer.js');
     expect(html).toContain('/portal/brands/brands-board.js');
-    expect(html).toContain('var(--tone-ok)');
-    expect(html).toContain('var(--tone-warn)');
-    expect(html).toContain('var(--tone-bad)');
-    expect(html).toContain('var(--tone-info)');
-    expect(script).toContain("const KEYMAP_URL = '/registry/brand-keymap.json'");
+    expect(html).toContain('/portal/brands/brands.css');
+    expect(html).toContain('/registry/bun-brand-map.json');
+    expect(html).toContain('/registry/brand-keymap.json');
+    expect(css).toContain('.brand-pill.domain');
+    expect(css).toContain('--domain-color');
+    expect(css).toContain('.brand-glossary-link');
+    expect(css).toContain('var(--accent)');
+    expect(script).toContain("const BRAND_KEYMAP_URL = '/registry/brand-keymap.json'");
+    expect(script).toContain("const BUN_BRAND_MAP_URL = '/registry/bun-brand-map.json'");
     expect(script).toContain('domainPill');
     expect(script).toContain('glossaryLinks');
     expect(script).toContain('/portal/glossary/#glossary:');

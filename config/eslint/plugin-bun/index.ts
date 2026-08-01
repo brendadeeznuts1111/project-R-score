@@ -30,13 +30,23 @@ const preferImportMetaMain: Rule.RuleModule = {
 
     return {
       IfStatement(node) {
+        const test = node.test;
         if (
-          node.test.type === 'MemberExpression' &&
-          node.test.object.type === 'MetaProperty' &&
-          node.test.object.meta.name === 'import' &&
-          node.test.object.property.name === 'meta' &&
-          node.test.property.type === 'Identifier' &&
-          node.test.property.name === 'main'
+          test.type === 'MemberExpression' &&
+          test.object.type === 'MetaProperty' &&
+          test.object.meta.name === 'import' &&
+          test.object.property.name === 'meta' &&
+          test.property.type === 'Identifier' &&
+          test.property.name === 'main'
+        ) {
+          hasMainGuard = true;
+          return;
+        }
+        // Repo CLI pattern: if (isModuleEntrypoint(import.meta)) await main();
+        if (
+          test.type === 'CallExpression' &&
+          test.callee.type === 'Identifier' &&
+          test.callee.name === 'isModuleEntrypoint'
         ) {
           hasMainGuard = true;
         }
@@ -49,7 +59,7 @@ const preferImportMetaMain: Rule.RuleModule = {
       'Program:exit'(node) {
         if (hasMainGuard || !hasTopLevelAwaitMain) return;
         const source = context.sourceCode.getText(node);
-        if (!source.includes('import.meta.main')) {
+        if (!source.includes('import.meta.main') && !source.includes('isModuleEntrypoint')) {
           context.report({
             node,
             messageId: 'preferMain',

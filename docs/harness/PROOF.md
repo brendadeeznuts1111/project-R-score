@@ -29,6 +29,10 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   (`boundary` + `unit`) _Ratchet_ →
   `bun tools/branded-id-check.ts --staged --strict`,
   `bun run check:brands:types`
+- **`bun-brand-cross-map`** — reviewed Bun API → wrapper → brand → consumer
+  declarations bake to `bun-brand-map.json` (`unit` + `boundary`) _Ratchet_ →
+  `bun run bun:brand-map:check` ·
+  [`tenants/bun-brand-cross-map.md`](tenants/bun-brand-cross-map.md)
 - **`install-verify`** — Factory install produces a working Bun workspace
   (`journey` + `deployed`) _Ratchet_ → `bun run proof:install` ·
   `bun run install:verify` (CI: `repo-hygiene.yml`)
@@ -300,6 +304,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 | id                                 | class      | gate / workflow                                                                               |
 | ---------------------------------- | ---------- | --------------------------------------------------------------------------------------------- |
 | `branded-ids`                      | continuous | pre-commit brands staged‖smart; `ci:harness` smart; types when branded staged or `--full`     |
+| `bun-brand-cross-map`              | continuous | `ci:harness` · `bun run bun:brand-map:check`                                                  |
 | `install-verify`                   | continuous | `ci:core` · harness-gates                                                                     |
 | `install-verify-journey`           | human-only | `bun run test:install-verify`                                                                 |
 | `test-changed`                     | continuous | `ci:harness` · harness-gates                                                                  |
@@ -370,7 +375,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 
 Counts (must match `gateClass` tallies):
 
-continuous 28 · workflow 8 · human-only 32.
+continuous 29 · workflow 8 · human-only 32.
 
 Discover (display only, not gates): `bun run harness:status` ·
 `bun run docs:fresh-rerun`.
