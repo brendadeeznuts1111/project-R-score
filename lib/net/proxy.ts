@@ -28,22 +28,23 @@ export type FetchProxyOptions =
       /** Proxy URL, `http://` or `https://`; may embed username:password. */
       url: string | URL;
       /** Headers sent to the proxy (Proxy-Authorization overrides URL credentials). */
-      headers?: Record<string, string> | Headers;
+      headers?: Bun.HeadersInit;
     };
 
-/** Runtime-owned dimensions in Bun's HTTPS CONNECT tunnel pool key. */
-export const HTTPS_PROXY_TUNNEL_REUSE_DIMENSIONS = [
+/** Pool-key dimensions documented by Bun's v1.3.12 HTTPS CONNECT release note. */
+export const BUN_V1_3_12_HTTPS_PROXY_POOL_KEY_DIMENSIONS = [
   'proxy-host-port',
   'proxy-credentials',
   'target-host-port',
   'tls-configuration',
 ] as const;
 
-export type HttpsProxyTunnelReuseDimension = (typeof HTTPS_PROXY_TUNNEL_REUSE_DIMENSIONS)[number];
+export type BunV1312HttpsProxyPoolKeyDimension =
+  (typeof BUN_V1_3_12_HTTPS_PROXY_POOL_KEY_DIMENSIONS)[number];
 
 /** Type guard for the object form. */
 export function isProxyObjectForm(
   proxy: FetchProxyOptions
-): proxy is { url: string | URL; headers?: Record<string, string> | Headers } {
+): proxy is { url: string | URL; headers?: Bun.HeadersInit } {
   return typeof proxy === 'object' && proxy !== null && 'url' in proxy;
 }

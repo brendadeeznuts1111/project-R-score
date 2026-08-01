@@ -266,7 +266,7 @@ const BOUNDARY_FIXTURES: Step = {
     'tests/bun-glob-scan.test.ts',
   ],
   owner:
-    'runtime-cli · bun-shell · security-hash · social-metadata · blog-extraction · fetch-page · fetch-proxy · url-pattern · bun-http-server-docs · fs-native ProofPaths',
+    'runtime-cli · bun-shell · security-hash · social-metadata · blog-extraction · fetch-page · https-proxy-connect-reuse · url-pattern · bun-http-server-docs · fs-native ProofPaths',
   repair:
     'bun test tests/fixtures/runtime-cli/ tests/fixtures/bun-shell/ tests/fixtures/security-hash/ tests/fixtures/social-metadata/ tests/fixtures/blog-extraction/ tests/fixtures/fetch-page/ tests/fetch-proxy-keepalive.test.ts tests/bun-site-url.test.ts tests/bun-docs-catalog.test.ts tests/fs-bun.test.ts tests/bun-glob-scan.test.ts',
 };

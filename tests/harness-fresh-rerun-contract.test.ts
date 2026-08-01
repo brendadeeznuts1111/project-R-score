@@ -239,6 +239,13 @@ describe('fresh-rerun contract', () => {
     expect(result.exitCode).toBe(0);
   });
 
+  test('https-proxy-connect-reuse freshRerun is the loopback CONNECT proof', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'https-proxy-connect-reuse');
+    expect(p?.freshRerun).toBe('bun test tests/fetch-proxy-keepalive.test.ts');
+    expect(p?.gateClass).toBe('continuous');
+    expect(p?.gateRef).toBe('ci:harness');
+  });
+
   test('blog-extraction-journey freshRerun is the live ingestion test', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'blog-extraction-journey');
     expect(p?.freshRerun).toBe('bun test tests/journey/blog-extraction.test.ts');

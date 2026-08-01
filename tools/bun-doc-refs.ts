@@ -748,8 +748,6 @@ export const CANONICAL_REFS: Record<string, string> = {
   'fetch POST': bunDocs('runtime/networking/fetch', 'sending-a-post-request'),
   'proxying-requests': bunDocs('runtime/networking/fetch', 'proxying-requests'),
   'fetch proxy': bunDocs('runtime/networking/fetch', 'proxying-requests'),
-  'fetch proxy CONNECT keep-alive':
-    'https://bun.com/blog/bun-v1.3.12#keep-alive-for-https-proxy-connect-tunnels',
   'fetch proxy guide': 'https://bun.com/docs/guides/http/proxy',
   'guides/http/proxy': 'https://bun.com/docs/guides/http/proxy',
   'fetch proxy env': 'https://bun.com/docs/guides/http/proxy',
