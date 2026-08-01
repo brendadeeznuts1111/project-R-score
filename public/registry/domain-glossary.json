@@ -213,20 +213,20 @@
     }
   ],
   "summary": {
-    "concepts": 400,
-    "active": 399,
+    "concepts": 424,
+    "active": 423,
     "deprecated": 1,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 263,
+    "portalSemantics": 287,
     "categories": {
       "market": 33,
       "model": 18,
       "pipeline": 41,
       "tournament": 86,
       "trading": 58,
-      "ui": 137,
+      "ui": 161,
       "warehouse": 27
     },
     "kinds": {
@@ -247,22 +247,22 @@
       "region": 7,
       "registry": 39,
       "sport": 10,
-      "ui": 211
+      "ui": 235
     },
     "semanticTypes": {
-      "classification": 143,
+      "classification": 149,
       "location": 4,
-      "presentation": 7,
-      "resource": 85,
-      "state": 23,
+      "presentation": 14,
+      "resource": 88,
+      "state": 31,
       "version": 1
     },
     "uiRoles": {
       "badge": 55,
-      "chip": 104,
-      "code": 23,
-      "heading": 61,
-      "link": 16,
+      "chip": 110,
+      "code": 33,
+      "heading": 67,
+      "link": 18,
       "token": 4
     }
   },
@@ -6773,6 +6773,672 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "link",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.panel.partner_limit_history",
+      "label": "Partner limit history",
+      "description": "Partner Limit History UI chrome: page panel for account-level limit movement traces.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "limit history panel",
+        "partner limit history page"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.partnerHistory",
+        "section.openingBaseline",
+        "ops.limits.pattern_surface"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.panel.limit_overview",
+      "label": "Limit overview",
+      "description": "Partner Limit History UI chrome: summary panel of current limit state per account.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "overview panel",
+        "limit summary"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.panel.partner_limit_history",
+        "ops.limits.effective_limit"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.summary.partner_limit_trace",
+      "label": "Partner limit trace",
+      "description": "Partner Limit History UI chrome: trace of account-level limit movement with evidence links.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "limit trace",
+        "movement trace"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.evidence_trace",
+        "ops.limits.limit_delta",
+        "ops.metric.deltas"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.filter.account.all",
+      "label": "All accounts",
+      "description": "Partner Limit History filter value: no account narrowing (all downline accounts).",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "all accounts",
+        "every account"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.filter.partnerId",
+        "ops.filter.window"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.filter.sportsbook.all",
+      "label": "All sportsbooks",
+      "description": "Partner Limit History filter value: no sportsbook narrowing.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "all books",
+        "every sportsbook"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.filter.sportsbook",
+        "ops.filter.window"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.filter.window",
+      "label": "Window filter",
+      "description": "Partner Limit History filter: time window for limit movement evidence.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "time window",
+        "lookback"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.action.filter",
+        "ops.filter.window.48h"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.filter.window.48h",
+      "label": "48 hours",
+      "description": "Partner Limit History window value: last 48 hours of movement.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "48h",
+        "last 48 hours"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.filter.window"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.filter.window.7d",
+      "label": "7 days",
+      "description": "Partner Limit History window value: last 7 days of movement.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "7d",
+        "last week"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.filter.window"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.filter.window.30d",
+      "label": "30 days",
+      "description": "Partner Limit History window value: last 30 days of movement.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "30d",
+        "last month"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.filter.window"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.metric.visible_changes",
+      "label": "Visible changes",
+      "description": "Partner Limit History metric: count of filtered limit-change rows.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "change count",
+        "filtered rows"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.limit_delta",
+        "ops.metric.active_filters"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "state",
+      "uiRole": "code",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.metric.raises",
+      "label": "Raises",
+      "description": "Partner Limit History metric: count of positive limit deltas (raised direction).",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "limit raises",
+        "increases"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.change_direction",
+        "ops.limits.limit_delta"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "state",
+      "uiRole": "code",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.metric.decreases",
+      "label": "Decreases",
+      "description": "Partner Limit History metric: count of negative limit deltas (reduced direction).",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "limit decreases",
+        "reductions"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.change_direction",
+        "ops.limits.limit_delta"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "state",
+      "uiRole": "code",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.metric.sportsbooks",
+      "label": "Sportsbooks",
+      "description": "Partner Limit History metric: unique sportsbook count among visible changes.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "book count",
+        "unique books"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.filter.sportsbook",
+        "ops.metric.visible_changes"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "state",
+      "uiRole": "code",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.metric.high_water",
+      "label": "High-water",
+      "description": "Partner Limit History metric: prior peak limit for an account within the window.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "prior peak",
+        "max limit"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.effective_limit",
+        "ops.limits.limit_delta"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "state",
+      "uiRole": "code",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.metric.deltas",
+      "label": "Deltas",
+      "description": "Partner Limit History metric: change amounts across visible rows.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.limit_delta",
+        "ops.metric.visible_changes"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": "usd",
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "state",
+      "uiRole": "code",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.metric.active_filters",
+      "label": "Active filters",
+      "description": "Partner Limit History metric: count of applied filters in the filter bar.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "applied filters",
+        "filter count"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.action.filter",
+        "ui.action.reset"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "state",
+      "uiRole": "code",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.metric.proof_coverage",
+      "label": "Proof coverage",
+      "description": "Partner Limit History metric: percent of visible changes with signed evidence context.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "evidence coverage",
+        "signed coverage"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.evidence_trace",
+        "ops.limits.data_coverage"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": "percent",
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "state",
+      "uiRole": "code",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.table.recent_changes",
+      "label": "Recent changes",
+      "description": "Partner Limit History table tab: recent limit-change rows.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "changes tab",
+        "recent tab"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "section.recentLimitChanges",
+        "ops.metric.visible_changes"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "presentation",
+      "uiRole": "heading",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.table.per_account",
+      "label": "Per account",
+      "description": "Partner Limit History table tab: limit movement grouped by account.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "account tab",
+        "per-account view"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.account",
+        "ops.limits.downline"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "presentation",
+      "uiRole": "heading",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.table.limit_changes",
+      "label": "Limit changes",
+      "description": "Partner Limit History table tab: raw limit-change evidence rows.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "changes table",
+        "limit movement table"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.limit_delta",
+        "section.dataConnectionAudit"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "presentation",
+      "uiRole": "heading",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ui.action.refresh",
+      "label": "Refresh",
+      "description": "Action re-running the current portal section fetch.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "reload",
+        "re-run"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.action.filter",
+        "ui.semantic.source"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "presentation",
+      "uiRole": "link",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ui.action.export",
+      "label": "Export",
+      "description": "Action exporting the current portal section data.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "download",
+        "export data"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.export.csv",
+        "ui.export.json"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "presentation",
+      "uiRole": "link",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ui.export.csv",
+      "label": "CSV export",
+      "description": "Export format: comma-separated values of the current section.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "csv",
+        "spreadsheet export"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.action.export"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "presentation",
+      "uiRole": "code",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ui.export.json",
+      "label": "JSON export",
+      "description": "Export format: JSON payload of the current section.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "json",
+        "api export"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.action.export"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "presentation",
+      "uiRole": "code",
       "color": "#58a6ff"
     },
     {
