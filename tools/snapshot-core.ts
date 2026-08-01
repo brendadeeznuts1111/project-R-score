@@ -331,13 +331,23 @@ function extractPortalMetadata(data: Record<string, unknown>, meta: Record<strin
   if (pred?.coverage?.n != null) meta.predictionN = String(pred.coverage.n);
 }
 
+/**
+ * Persist a fetch Response body. Prefer bytes over `Bun.write(path, response)` —
+ * writing a Response stream can hang indefinitely on some Bun builds (observed
+ * on score.factory-wager.com registry JSON captures).
+ */
+async function writeFetchBody(destPath: string, resp: Response): Promise<void> {
+  const bytes = new Uint8Array(await resp.arrayBuffer());
+  await write(destPath, bytes);
+}
+
 async function fetchAsset(url: string, destPath: string): Promise<boolean> {
   const resp = await fetch(url);
   if (!resp.ok) {
     warn(`${url}: ${resp.status}`);
     return false;
   }
-  await write(destPath, resp);
+  await writeFetchBody(destPath, resp);
   return true;
 }
 
@@ -470,7 +480,7 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
       if (resp.ok) {
         const ext = config.reportKind === 'html' ? 'html' : 'json';
         const reportPath = `${snapDir}/${id}/report.${ext}`;
-        await write(reportPath, resp);
+        await writeFetchBody(reportPath, resp);
         capturedFiles.push(reportPath);
         manifest.metadata.status = 'ok';
 
