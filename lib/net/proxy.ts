@@ -1,5 +1,6 @@
 // @see https://bun.com/docs/runtime/networking/fetch#proxying-requests — fetch proxy option
 // @see https://bun.com/docs/guides/http/proxy — proxy guide (env vars, custom headers)
+// @see https://bun.com/blog/bun-v1.3.12#keep-alive-for-https-proxy-connect-tunnels — CONNECT tunnel pooling
 /**
  * Bun fetch `proxy` option — all three documented forms.
  *
@@ -18,6 +19,7 @@
  * - `Proxy-Authorization` in `headers` overrides credentials embedded in the URL.
  * - Custom headers go to the proxy: in the request for HTTP targets, in CONNECT for HTTPS.
  * - `http://` and `https://` proxies are both supported.
+ * - Bun ≥1.3.12 pools HTTPS CONNECT tunnels only when every reuse dimension below is equal.
  */
 export type FetchProxyOptions =
   | string
@@ -28,6 +30,16 @@ export type FetchProxyOptions =
       /** Headers sent to the proxy (Proxy-Authorization overrides URL credentials). */
       headers?: Record<string, string> | Headers;
     };
+
+/** Runtime-owned dimensions in Bun's HTTPS CONNECT tunnel pool key. */
+export const HTTPS_PROXY_TUNNEL_REUSE_DIMENSIONS = [
+  'proxy-host-port',
+  'proxy-credentials',
+  'target-host-port',
+  'tls-configuration',
+] as const;
+
+export type HttpsProxyTunnelReuseDimension = (typeof HTTPS_PROXY_TUNNEL_REUSE_DIMENSIONS)[number];
 
 /** Type guard for the object form. */
 export function isProxyObjectForm(

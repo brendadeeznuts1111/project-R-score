@@ -52,6 +52,8 @@ Bun exposes **parallel** HTTP stacks. Prefer the native path in harness code; do
 
 Request logging: env `BUN_CONFIG_VERBOSE_FETCH` is the [debugger plane](https://bun.com/docs/runtime/debugger#print-fetch-nodehttp-requests-as-curl-commands) (`true` \| `curl` \| `false`; `1`/`0` aliases). Per-call `fetch(url, { verbose })` is the [fetch#debugging](https://bun.com/docs/runtime/networking/fetch#debugging) plane — see [`lib/bun-runtime-env.ts`](../lib/bun-runtime-env.ts) · `bun test tests/bun-runtime-env.test.ts`.
 
+HTTPS proxy pooling: Bun ≥1.3.12 reuses the CONNECT tunnel and inner TLS session for sequential `fetch({ proxy })` calls only when proxy host/port, proxy credentials, target host/port, and TLS configuration are equal. FactoryWager keeps the option shape and reuse dimensions in [`lib/net/proxy.ts`](../lib/net/proxy.ts); the loopback proof asserts one tunnel for three equal-key requests and a second tunnel after credentials change: `bun test tests/fetch-proxy-keepalive.test.ts`. [Proxy guide](https://bun.com/docs/guides/http/proxy) · [1.3.12 ship note](https://bun.com/blog/bun-v1.3.12#keep-alive-for-https-proxy-connect-tunnels).
+
 **Output shape:** Docs samples (UA Bun/1.3.3) prefix lines with `[fetch] $` / `[fetch] >` / `[fetch] <`. Bun 1.4 may omit the `[fetch]` tag (and the `$` before curl) while keeping the same substance (`curl --http…`, `HTTP/1.1…`, status). Harness smoke accepts both.
 
 ## Harness control plane
