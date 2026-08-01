@@ -50,6 +50,8 @@ export const ACCOUNT_DOSSIER_GLOSSARY = Object.freeze({
 
   /** Ops reporting-view MVP (see lib/telegram/ops-view-glossary.ts). */
   perAccount: 'ops.view.per_account',
+  perPlay: 'ops.view.per_play',
+  perWeek: 'ops.view.per_week',
   accountSummary: 'ops.view.account_summary',
   accountDeposits: 'ops.view.account_deposits',
   accountSettlements: 'ops.view.account_settlements',

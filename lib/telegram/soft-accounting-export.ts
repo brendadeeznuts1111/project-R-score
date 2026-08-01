@@ -79,6 +79,35 @@ export type SoftPerPlayAccountingView = {
   play: SoftAccountingPlayRow;
 };
 
+export type SoftPerWeekAccountingView = {
+  type: 'per_week';
+  weekStart: string;
+  partnerCode: string; // brand-ok — partner CODE
+  summary: OpsAccountingViewSummary;
+  conceptIds: {
+    dimension: 'ops.view.per_week';
+  };
+  week: SoftAccountingWeekRow;
+};
+
+/** Portal/dossier chrome over Soft export plays for one partner CODE. */
+export type SoftPartnerPlayChrome = {
+  partnerCode: string; // brand-ok — partner CODE
+  available: boolean;
+  source: SoftAccountingExportSource;
+  path: typeof SOFT_ACCOUNTING_EXPORT_PATH;
+  playCount: number;
+  conceptId: 'ops.view.per_play';
+  weekConceptId: 'ops.view.per_week';
+  /** Newest-first, capped for board render. */
+  plays: readonly SoftAccountingPlayRow[];
+  /** Per-play AccountingViews (same order as `plays`). */
+  views: readonly SoftPerPlayAccountingView[];
+  /** Week rollups (export weeks when present, else derived from plays). */
+  weeks: readonly SoftAccountingWeekRow[];
+  weekViews: readonly SoftPerWeekAccountingView[];
+};
+
 function emptySummary(): OpsAccountingViewSummary {
   return {
     deposits: 0,
@@ -89,6 +118,95 @@ function emptySummary(): OpsAccountingViewSummary {
     freeRollApplied: 0,
     net: 0,
   };
+}
+
+export function normalizeSoftPartnerCode(code: string | null | undefined): string {
+  return String(code || '')
+    .trim()
+    .toUpperCase();
+}
+
+/** UTC Monday (YYYY-MM-DD) for a placedAt ISO timestamp. */
+export function weekStartIsoFromPlacedAt(placedAt: string): string | null {
+  const ms = Date.parse(placedAt);
+  if (!Number.isFinite(ms)) return null;
+  const d = new Date(ms);
+  const day = d.getUTCDay(); // 0=Sun … 6=Sat
+  const mondayOffset = day === 0 ? -6 : 1 - day;
+  d.setUTCDate(d.getUTCDate() + mondayOffset);
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const dayNum = String(d.getUTCDate()).padStart(2, '0');
+  return `${y}-${m}-${dayNum}`;
+}
+
+/** Plays for one partner CODE (stable order: placedAt ascending). */
+export function playsForPartner(
+  exported: SoftAccountingExport | null | undefined,
+  partnerCode: string | null | undefined
+): SoftAccountingPlayRow[] {
+  const code = normalizeSoftPartnerCode(partnerCode);
+  if (!code || !exported?.plays?.length) return [];
+  return exported.plays
+    .filter(p => normalizeSoftPartnerCode(p.partnerCode) === code)
+    .slice()
+    .sort((a, b) => a.placedAt.localeCompare(b.placedAt));
+}
+
+/** Index Soft plays by partner CODE. */
+export function indexSoftPlaysByPartner(
+  exported: SoftAccountingExport | null | undefined
+): Map<string, SoftAccountingPlayRow[]> {
+  const map = new Map<string, SoftAccountingPlayRow[]>();
+  if (!exported?.plays?.length) return map;
+  for (const play of exported.plays) {
+    const code = normalizeSoftPartnerCode(play.partnerCode);
+    if (!code) continue;
+    const list = map.get(code);
+    if (list) list.push(play);
+    else map.set(code, [play]);
+  }
+  for (const [, list] of map) {
+    list.sort((a, b) => a.placedAt.localeCompare(b.placedAt));
+  }
+  return map;
+}
+
+/**
+ * Derive per-week Soft rows from plays when Soft weeks[] is empty.
+ * deposits = sum stake · settlements = sum |pnl| (non-pending) · net = sum pnl.
+ */
+export function rollupWeeksFromPlays(
+  plays: readonly SoftAccountingPlayRow[]
+): SoftAccountingWeekRow[] {
+  const byKey = new Map<string, SoftAccountingWeekRow>();
+  for (const play of plays) {
+    const partnerCode = normalizeSoftPartnerCode(play.partnerCode);
+    const weekStart = weekStartIsoFromPlacedAt(play.placedAt);
+    if (!partnerCode || !weekStart) continue;
+    const key = `${partnerCode}|${weekStart}`;
+    let row = byKey.get(key);
+    if (!row) {
+      row = {
+        weekStart,
+        partnerCode,
+        deposits: 0,
+        withdrawals: 0,
+        settlements: 0,
+        fees: 0,
+        net: 0,
+      };
+      byKey.set(key, row);
+    }
+    const stake = typeof play.stake === 'number' && Number.isFinite(play.stake) ? play.stake : 0;
+    const pnl = typeof play.pnl === 'number' && Number.isFinite(play.pnl) ? play.pnl : 0;
+    row.deposits += stake;
+    if (play.result !== 'pending') row.settlements += Math.abs(pnl);
+    row.net += pnl;
+  }
+  return [...byKey.values()].sort(
+    (a, b) => a.weekStart.localeCompare(b.weekStart) || a.partnerCode.localeCompare(b.partnerCode)
+  );
 }
 
 export function unavailableSoftAccountingExport(
@@ -215,6 +333,90 @@ export function buildPerPlayAccountingView(
   const issues = validateOpsAccountingViewShape(view);
   if (issues.length > 0) return null;
   return view;
+}
+
+/**
+ * Dimension-only per-week view from a Soft week row (export or play rollup).
+ * Field chrome stays in OPS_VIEW_COLLAPSE_BACKLOG (weekly_* → accounting.*).
+ */
+export function buildPerWeekAccountingView(
+  week: SoftAccountingWeekRow | null | undefined
+): SoftPerWeekAccountingView | null {
+  const weekStart = String(week?.weekStart || '').trim();
+  const partnerCode = normalizeSoftPartnerCode(week?.partnerCode);
+  if (!weekStart || !partnerCode || !week) return null;
+
+  const num = (v: number | undefined) => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
+  const summary: OpsAccountingViewSummary = {
+    ...emptySummary(),
+    deposits: num(week.deposits),
+    withdrawals: num(week.withdrawals),
+    settlements: num(week.settlements),
+    fees: num(week.fees),
+    net: num(week.net),
+  };
+
+  const view: SoftPerWeekAccountingView = {
+    type: 'per_week',
+    weekStart,
+    partnerCode,
+    summary,
+    conceptIds: { dimension: 'ops.view.per_week' },
+    week,
+  };
+  const issues = validateOpsAccountingViewShape(view);
+  if (issues.length > 0) return null;
+  return view;
+}
+
+const DEFAULT_SOFT_PLAY_CHROME_LIMIT = 8;
+
+/**
+ * Partner-scoped Soft play chrome for dossier / partners boards.
+ * Read-only over the export bake — never mutates Soft.
+ */
+export function buildPartnerSoftPlayChrome(
+  exported: SoftAccountingExport | null | undefined,
+  partnerCode: string | null | undefined,
+  opts: { limit?: number } = {}
+): SoftPartnerPlayChrome | null {
+  const code = normalizeSoftPartnerCode(partnerCode);
+  if (!code) return null;
+  const limit =
+    typeof opts.limit === 'number' && opts.limit > 0
+      ? Math.floor(opts.limit)
+      : DEFAULT_SOFT_PLAY_CHROME_LIMIT;
+
+  const source: SoftAccountingExportSource = exported?.source ?? 'unavailable';
+  const allPlays = playsForPartner(exported, code);
+  const newestFirst = allPlays.slice().reverse();
+  const plays = newestFirst.slice(0, limit);
+  const views = plays
+    .map(p => buildPerPlayAccountingView(p))
+    .filter((v): v is SoftPerPlayAccountingView => v != null);
+
+  const exportWeeks = (exported?.weeks ?? []).filter(
+    w => normalizeSoftPartnerCode(w.partnerCode) === code
+  );
+  const weeks = exportWeeks.length > 0 ? exportWeeks.slice() : rollupWeeksFromPlays(allPlays);
+  weeks.sort((a, b) => b.weekStart.localeCompare(a.weekStart));
+  const weekViews = weeks
+    .map(w => buildPerWeekAccountingView(w))
+    .filter((v): v is SoftPerWeekAccountingView => v != null);
+
+  return {
+    partnerCode: code,
+    available: allPlays.length > 0,
+    source,
+    path: SOFT_ACCOUNTING_EXPORT_PATH,
+    playCount: allPlays.length,
+    conceptId: 'ops.view.per_play',
+    weekConceptId: 'ops.view.per_week',
+    plays,
+    views,
+    weeks,
+    weekViews,
+  };
 }
 
 /** Re-export per-account view type for handshake consumers. */

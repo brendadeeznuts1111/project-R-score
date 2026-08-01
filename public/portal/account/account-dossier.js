@@ -1,6 +1,7 @@
 /**
  * Account dossier join helpers — scope one TreeNodeId + connected partner-tree nodes.
- * Pure functions over baked registries (limit-raises · partners-ops · telegram-handshake).
+ * Pure functions over baked registries (limit-raises · partners-ops · telegram-handshake ·
+ * soft-accounting-export). Soft Balance mutations stay in toc-ops `ct`.
  *
  * Deep-link parity with limits board:
  *   query ?account= (form SSOT) · hash #account:{TreeNodeId} (limits pattern)
@@ -453,6 +454,103 @@ export function buildDossierTelegram(partnerRow, handshakeRow = null) {
   };
 }
 
+/** UTC Monday (YYYY-MM-DD) for a placedAt ISO — mirrors weekStartIsoFromPlacedAt. */
+export function weekStartIsoFromPlacedAt(placedAt) {
+  const ms = Date.parse(String(placedAt || ''));
+  if (!Number.isFinite(ms)) return null;
+  const d = new Date(ms);
+  const day = d.getUTCDay();
+  const mondayOffset = day === 0 ? -6 : 1 - day;
+  d.setUTCDate(d.getUTCDate() + mondayOffset);
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const dayNum = String(d.getUTCDate()).padStart(2, '0');
+  return `${y}-${m}-${dayNum}`;
+}
+
+/**
+ * Derive per-week Soft rows from plays when export.weeks is empty.
+ * mirrors lib/telegram/soft-accounting-export.ts rollupWeeksFromPlays.
+ * @param {object[]} plays
+ */
+export function rollupWeeksFromPlays(plays) {
+  /** @type {Map<string, { weekStart: string, partnerCode: string, deposits: number, withdrawals: number, settlements: number, fees: number, net: number }>} */
+  const byKey = new Map();
+  for (const play of plays || []) {
+    const partnerCode = String(play?.partnerCode || '')
+      .trim()
+      .toUpperCase();
+    const weekStart = weekStartIsoFromPlacedAt(play?.placedAt);
+    if (!partnerCode || !weekStart) continue;
+    const key = `${partnerCode}|${weekStart}`;
+    let row = byKey.get(key);
+    if (!row) {
+      row = {
+        weekStart,
+        partnerCode,
+        deposits: 0,
+        withdrawals: 0,
+        settlements: 0,
+        fees: 0,
+        net: 0,
+      };
+      byKey.set(key, row);
+    }
+    const stake = typeof play.stake === 'number' && Number.isFinite(play.stake) ? play.stake : 0;
+    const pnl = typeof play.pnl === 'number' && Number.isFinite(play.pnl) ? play.pnl : 0;
+    row.deposits += stake;
+    if (play.result !== 'pending') row.settlements += Math.abs(pnl);
+    row.net += pnl;
+  }
+  return [...byKey.values()].sort(
+    (a, b) =>
+      a.weekStart.localeCompare(b.weekStart) || a.partnerCode.localeCompare(b.partnerCode)
+  );
+}
+
+/**
+ * Soft play chrome for one partner CODE (mirrors lib/telegram/soft-accounting-export.ts
+ * buildPartnerSoftPlayChrome — ops.view.per_play + derived ops.view.per_week; no Soft mutation).
+ * @param {object | null} softExport
+ * @param {string | null | undefined} partnerCode
+ * @param {{ limit?: number }} [opts]
+ */
+export function buildDossierSoftPlays(softExport, partnerCode, opts = {}) {
+  const code = String(partnerCode || '')
+    .trim()
+    .toUpperCase();
+  if (!code) return null;
+  const limit =
+    typeof opts.limit === 'number' && opts.limit > 0 ? Math.floor(opts.limit) : 8;
+  const source = softExport?.source || 'unavailable';
+  const path = softExport?.path || '/registry/soft-accounting-export.json';
+  const all = Array.isArray(softExport?.plays)
+    ? softExport.plays.filter(p => String(p?.partnerCode || '').toUpperCase() === code)
+    : [];
+  all.sort((a, b) => String(a.placedAt || '').localeCompare(String(b.placedAt || '')));
+  const plays = all.slice().reverse().slice(0, limit);
+  const exportWeeks = Array.isArray(softExport?.weeks)
+    ? softExport.weeks.filter(w => String(w?.partnerCode || '').toUpperCase() === code)
+    : [];
+  const weeks =
+    exportWeeks.length > 0
+      ? exportWeeks.slice().sort((a, b) => String(b.weekStart || '').localeCompare(String(a.weekStart || '')))
+      : rollupWeeksFromPlays(all)
+          .slice()
+          .sort((a, b) => b.weekStart.localeCompare(a.weekStart));
+  return {
+    partnerCode: code,
+    available: all.length > 0,
+    source,
+    path,
+    playCount: all.length,
+    conceptId: 'ops.view.per_play',
+    weekConceptId: 'ops.view.per_week',
+    plays,
+    weeks,
+  };
+}
+
 /**
  * Build a single-account dossier view-model from baked registries.
  * @param {{
@@ -460,6 +558,7 @@ export function buildDossierTelegram(partnerRow, handshakeRow = null) {
  *   limitRaises: object;
  *   partnersOps?: object | null;
  *   handshake?: object | null;
+ *   softAccounting?: object | null;
  *   hours?: number;
  * }} input
  */
@@ -468,6 +567,7 @@ export function buildAccountDossier({
   limitRaises,
   partnersOps = null,
   handshake = null,
+  softAccounting = null,
   hours = 168,
 }) {
   const id = String(accountId || '').trim();
@@ -512,6 +612,7 @@ export function buildAccountDossier({
   const telegram = buildDossierTelegram(partnerRow, handshakeRow);
   const activity = buildDossierActivity(partnerRow, handshakeRow, telegram);
   const accountingView = buildDossierAccountingView(partnerRow);
+  const softPlays = buildDossierSoftPlays(softAccounting, code);
   const accounting = partnerRow?.accounting
     ? {
         fundStatus: partnerRow.accounting.fundStatus ?? null,
@@ -567,6 +668,7 @@ export function buildAccountDossier({
     telegram,
     accounting,
     accountingView,
+    softPlays,
     activity,
     links: {
       history: `/portal/partner-history/?account=${encodeURIComponent(id)}`,
@@ -579,6 +681,7 @@ export function buildAccountDossier({
       registry: '/registry/limit-raises.json',
       partnersOps: '/registry/partners-ops.json',
       handshake: '/registry/telegram-handshake.json',
+      softAccounting: '/registry/soft-accounting-export.json',
     },
     lookbackHours: hours,
     generatedAt: limitRaises?.generatedAt ?? null,

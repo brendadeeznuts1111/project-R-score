@@ -67,11 +67,13 @@ Presentation chrome (`ops.view.*`, `telegram.message.*`) is Factory-only.
 | Committed demo bake | `/registry/soft-accounting-export.json` · schema `factorywager.soft-accounting-export.v1` · `bun run soft:accounting:bake` / `:check` |
 | Demo projection | `projectSoftAccountingExportFromTocOps` over Pages [`toc-ops.json`](../../public/registry/toc-ops.json) `partners[].recentPlays` |
 | Per-play builder (dimension-only) | `buildPerPlayAccountingView` → `ops.view.per_play` |
+| Per-week builder (export or derived) | `buildPerWeekAccountingView` + `rollupWeeksFromPlays` → `ops.view.per_week` |
+| Partner chrome | `buildPartnerSoftPlayChrome` · portal `buildDossierSoftPlays` (dossier + partners boards) |
 
 Committed demo bake uses `source: "toc-ops-fixture"`. Soft live export:
 
 ```bash
-# in toc-ops-repo
+# in toc-ops-repo (needs DATA_MODEL tip ≥ 2.30 — toc-ops#202)
 bun run ct soft-accounting-export --out ../public/registry/soft-accounting-export.json
 # or from FactoryWager root
 bun run soft:accounting:from-ct
@@ -80,19 +82,17 @@ bun run soft:accounting:from-ct
 `partners:governance` → `soft:accounting:check` accepts either exact fixture match
 or a schema-valid `source: "soft-ct"` bake. Odds are `0` until Soft stores them.
 
-Week / book-type arrays ship empty in v1 until Soft tags those dimensions.
+`weeks[]` / `byBookType[]` may ship empty from Soft; Factory derives week rollups from
+plays for chrome (`ops.view.per_week`). Book-type rows wait until Soft tags venues.
 
 ## Exit criteria for the next build phase
 
-1. Soft (or fixture) exports a versioned, read-only slice with stable keys for
-   playId / weekStart / bookType — **Factory wire v1 + Soft `ct soft-accounting-export`
-   exist**; promote registry bake with `bun run soft:accounting:from-ct` when Soft DB has plays.
+1. Soft (or fixture) exports a versioned, read-only slice with stable play keys —
+   **done** (wire v1 + Soft `ct soft-accounting-export`). Promote with
+   `bun run soft:accounting:from-ct` when Soft DB has plays (schema tip ≥ 2.30).
 2. Factory builders call `validateOpsAccountingViewShape` and map amounts onto
-   existing `accounting.*` / `book.type.*` — **still no new glossary mint**
-   unless a chip cannot collapse. Per-play dimension builder is in place;
-   week/book builders wait on Soft rows.
+   existing `accounting.*` / `book.type.*` — **still no new glossary mint**.
+   Per-play + derived per-week builders + dossier Soft chrome are in place;
+   Soft-authored week/book arrays remain optional.
 3. Local proof: `bun run partners:governance` + lane tests; merge authority
    remains `bun run bun:ci` (GitHub Actions is not a gate).
-
-Until Soft writes `source: "soft-ct"`, park dossier/partners consumer polish on
-play/week/book chrome (fixture projection is for tests + future bake only).

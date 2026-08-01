@@ -2,10 +2,16 @@
 import { describe, expect, test } from 'bun:test';
 import {
   SOFT_ACCOUNTING_EXPORT_SCHEMA,
+  buildPartnerSoftPlayChrome,
   buildPerPlayAccountingView,
+  buildPerWeekAccountingView,
+  indexSoftPlaysByPartner,
   loadSoftAccountingExport,
+  playsForPartner,
   projectSoftAccountingExportFromTocOps,
+  rollupWeeksFromPlays,
   unavailableSoftAccountingExport,
+  weekStartIsoFromPlacedAt,
 } from '../lib/telegram/soft-accounting-export.ts';
 import { validateOpsAccountingViewShape } from '../lib/telegram/ops-accounting-view.ts';
 import type { TocOpsSnapshot } from '../lib/toc-ops/types.ts';
@@ -63,5 +69,31 @@ describe('soft-accounting-export wire', () => {
     expect(validateOpsAccountingViewShape(view)).toEqual([]);
     expect(view!.conceptIds.dimension).toBe('ops.view.per_play');
     expect(view!.summary.deposits).toBe(play!.stake);
+  });
+
+  test('indexes plays by partner and rolls weeks from placedAt', async () => {
+    const toc = (await Bun.file('public/registry/toc-ops.json').json()) as TocOpsSnapshot;
+    const exported = projectSoftAccountingExportFromTocOps(toc);
+    const byPartner = indexSoftPlaysByPartner(exported);
+    expect(byPartner.has('ASH')).toBe(true);
+    expect(playsForPartner(exported, 'ash').length).toBe(byPartner.get('ASH')!.length);
+
+    expect(weekStartIsoFromPlacedAt('2026-07-17T19:10:00.000Z')).toBe('2026-07-13');
+    const weeks = rollupWeeksFromPlays(playsForPartner(exported, 'ASH'));
+    expect(weeks.length).toBeGreaterThan(0);
+    expect(weeks.every(w => w.partnerCode === 'ASH')).toBe(true);
+    const weekView = buildPerWeekAccountingView(weeks[0]);
+    expect(weekView).not.toBeNull();
+    expect(validateOpsAccountingViewShape(weekView)).toEqual([]);
+    expect(weekView!.conceptIds.dimension).toBe('ops.view.per_week');
+
+    const chrome = buildPartnerSoftPlayChrome(exported, 'ASH', { limit: 3 });
+    expect(chrome).not.toBeNull();
+    expect(chrome!.available).toBe(true);
+    expect(chrome!.playCount).toBeGreaterThan(0);
+    expect(chrome!.plays.length).toBeLessThanOrEqual(3);
+    expect(chrome!.views.length).toBe(chrome!.plays.length);
+    expect(chrome!.weekViews.length).toBe(chrome!.weeks.length);
+    expect(chrome!.conceptId).toBe('ops.view.per_play');
   });
 });
