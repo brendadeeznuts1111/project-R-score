@@ -299,7 +299,7 @@ Component readiness (static-fit): `bun run portal:css:score:components`.
 
 | Plane | Owns | Source | Validation | Example Keys |
 |-------|------|--------|------------|--------------|
-| Portal chrome | Dark/light CSS vars + JS theme object | [`theme.jsonc`](../public/portal/theme.jsonc) → [`lib/portal/theme.ts`](../lib/portal/theme.ts) → `theme-tokens.css` | `bun run portal:theme:check` (CSS stale) · [`tests/portal-theme.test.ts`](../tests/portal-theme.test.ts) | `accent` · `green` · `yellow` · `red` · `textDim` · `bg` · `surface` |
+| Portal chrome | Dark/light CSS vars + design-system layers | [`theme.jsonc`](../public/portal/theme.jsonc) → [`lib/portal/theme.ts`](../lib/portal/theme.ts) → `theme-tokens.css` | `bun run portal:theme:check` (CSS stale) · [`tests/portal-theme.test.ts`](../tests/portal-theme.test.ts) | Flat: `accent` · `green` · `yellow` · `orange` · `red` · `textDim` · `bg` · `surface`. Semantic: `--status-fresh/stale/old/critical` · `--group-*`. Scales: `--text-*` · `--space-*` · `--radius-*` · `--duration-*` |
 | Glossary chips | Category chip hex for domain-glossary bake | [`lib/portal/portal-kernel-palette.ts`](../lib/portal/portal-kernel-palette.ts) (dark tones from theme + extras) | `portal:colors:check` aliases · `bun run glossary:portal:check` | Theme-aliased: `accent` · `green` · `yellow` · `red` · `muted`. Extended (may diverge): `purple` · `blueDeep` |
 | Partner-ops | Concept / book / phase chip palette | [`lib/telegram/partner-ops-color-kernel.ts`](../lib/telegram/partner-ops-color-kernel.ts) | `portal:colors:check` aliases · Bun.color load assert · partner-ops / ops-view tests | Aliased: `kalshi`←accent · `tennis`←green · `middleware`←yellow · `trading`←red · `env`/`unknown`←textDim. Extended: `polymarket` · `pinnacle` · `research` |
 | Telegram topics | Package-forum / surface / brand marks | [`lib/telegram/telegram-color-kernel.ts`](../lib/telegram/telegram-color-kernel.ts) | `portal:colors:check` aliases · Bun.color load assert · telegram color-kernel tests | Aliased: `topicOps`/`surfacePartner`←accent · `topicLiquidityOuts`/`topicDeposits`←green · `topicAccounting`/`surfaceAllAccounting`←yellow · `topicAlerts`/`topicWithdrawals`←red · `unknown`/`topicGeneral`/`topicReconcile`←textDim. Extended: `brand` · `surfaceHq` · `surfaceSandbox` |
@@ -378,6 +378,7 @@ Wired into `ci:harness` as gate `portal-foundation` and appended to `verify-all`
 - Surfaces: **Operate planes** (TOC Ops + tree/loop from `ops-summary`), proof KPIs, subsystem rollup, `<channel-filter>` release cards, Bun defaults, taxonomy audit
 - Soft refresh via Refresh control; deep links to `/portal/ops/` and `/portal/toc/`
 - Cross-surface map: [`portal-weave.json`](../public/registry/portal-weave.json) from [`lib/http/portal-weave.ts`](../lib/http/portal-weave.ts) (`ops:snapshot`)
+- Operator guide (scannable): [`portal-ops-board-map.md`](portal-ops-board-map.md) — bake with `bun tools/bake-portal-ops-map.ts`
 
 ### Ops dashboard (`/portal/ops/`)
 

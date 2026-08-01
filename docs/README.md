@@ -26,6 +26,7 @@ here.
 | Portal              | [score.factory-wager.com/portal/](https://score.factory-wager.com/portal/)      |
 | Registry            | [score.factory-wager.com/registry/](https://score.factory-wager.com/registry/)  |
 | Portal weave (JSON) | [portal-weave.json](https://score.factory-wager.com/registry/portal-weave.json) |
+| Ops board map (operator guide) | [portal-ops-board-map.md](portal-ops-board-map.md) · `bun tools/bake-portal-ops-map.ts` |
 
 ## Boundaries and install
 

@@ -1,10 +1,14 @@
 {
-  // Portal design tokens — SSOT for CSS vars + JS consumers.
+  // Portal design system — SSOT for CSS vars + JS consumers.
   // Loaded via Bun's jsonc loader (comments + trailing commas OK).
   // @see https://bun.com/docs/bundler/loaders#jsonc
   // Sync → theme-tokens.css: bun run portal:theme:sync
+  //
+  // Flat palette keys (bg, surface, accent, …) stay stable for color-kernel
+  // and existing boards. Nested scales (neutral, semantic, typography, …)
+  // are additive design-system layers.
 
-  "version": "1.2.0",
+  "version": "1.3.0",
   "colorSchemeDefault": "dark",
 
   "dark": {
@@ -18,8 +22,19 @@
     "accentGlow": "rgba(88, 166, 255, 0.15)",
     "green": "#3fb950",
     "yellow": "#d29922",
+    "orange": "#db6d28",
     "red": "#f85149",
     "gradientSubtle": "radial-gradient(ellipse at top, #1a2332 0%, var(--bg) 55%)",
+    // Neutral greys (Primer-ish) — borders, chips, elevated chrome
+    "neutral": {
+      "50": "#f0f6fc",
+      "100": "#c9d1d9",
+      "200": "#b1bac4",
+      "300": "#8b949e",
+      "500": "#484f58",
+      "700": "#21262d",
+      "900": "#0d1117",
+    },
   },
 
   "light": {
@@ -33,8 +48,18 @@
     "accentGlow": "rgba(9, 105, 218, 0.12)",
     "green": "#1a7f37",
     "yellow": "#9a6700",
+    "orange": "#bc4c00",
     "red": "#cf222e",
     "gradientSubtle": "radial-gradient(ellipse at top, #eef2f7 0%, var(--bg) 55%)",
+    "neutral": {
+      "50": "#f6f8fa",
+      "100": "#eaeef2",
+      "200": "#d0d7de",
+      "300": "#afb8c1",
+      "500": "#656d76",
+      "700": "#424a53",
+      "900": "#1f2328",
+    },
   },
 
   "fonts": {
@@ -70,21 +95,139 @@
     "errorBorder": "#fecaca",
   },
 
+  // Core semantic tones (shared by status chips, doctor, registry banners).
+  // ok=fresh · warn=stale · old=≥7d · bad=missing/fail · info=accent · skip=neutral
   "tones": {
     "ok": "var(--green)",
     "warn": "var(--yellow)",
+    "old": "var(--orange)",
     "bad": "var(--red)",
     "info": "var(--accent)",
     "skip": "var(--text-dim)",
     "onStrong": "var(--bg)",
   },
 
+  // Applied UI contexts — boards should prefer these over raw tones when possible.
+  "semantic": {
+    "status": {
+      "fresh": "var(--tone-ok)",
+      "stale": "var(--tone-warn)",
+      "old": "var(--tone-old)",
+      "critical": "var(--tone-bad)",
+    },
+    "badge": {
+      "default": "var(--surface)",
+      "hover": "var(--surface-hover)",
+      "active": "var(--accent-glow)",
+    },
+    "link": {
+      "default": "var(--accent)",
+      "visited": "var(--accent)",
+      "hover": "var(--accent)",
+    },
+    // Group accents (tools bake filters · weave categories)
+    "group": {
+      "registry": "var(--accent)",
+      "ops": "var(--green)",
+      "harness": "var(--yellow)",
+      "secrets": "var(--orange)",
+      "other": "var(--text-dim)",
+    },
+  },
+
+  // Background / surface layers as aliases (scheme-aware via palette vars).
+  "layers": {
+    "canvas": "var(--bg)",
+    "card": "var(--surface)",
+    "elevated": "var(--surface-hover)",
+    "inverse": "var(--text)",
+    "border": "var(--border)",
+  },
+
+  "typography": {
+    "fontSizes": {
+      "xs": "0.625rem",
+      "sm": "0.75rem",
+      "base": "0.8125rem",
+      "lg": "0.9375rem",
+      "xl": "1.125rem",
+      "2xl": "1.35rem",
+      "3xl": "1.75rem",
+    },
+    "fontWeights": {
+      "normal": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700,
+    },
+    "lineHeights": {
+      "tight": 1.25,
+      "normal": 1.45,
+      "relaxed": 1.65,
+    },
+  },
+
   "layout": {
+    // Legacy board chrome (keep names stable)
     "radius": "8px",
     "max": "75rem",
     "padInline": "clamp(1rem, 3vw, 1.5rem)",
     "padBlock": "clamp(1.25rem, 4vw, 2rem)",
     "fontHero": "clamp(1.35rem, 1.15rem + 1.1vw, 1.75rem)",
     "fontMetric": "clamp(1.35rem, 1.1rem + 1vw, 1.75rem)",
+    // Shell metrics
+    "maxWidth": "75rem",
+    "sidebarWidth": "15rem",
+    "headerHeight": "3.5rem",
+    "gap": "1rem",
+    "spacing": {
+      "0": "0",
+      "1": "0.25rem",
+      "2": "0.5rem",
+      "3": "0.75rem",
+      "4": "1rem",
+      "6": "1.5rem",
+      "8": "2rem",
+      "12": "3rem",
+      "16": "4rem",
+      "24": "6rem",
+      "32": "8rem",
+      "48": "12rem",
+      "64": "16rem",
+    },
+    "radii": {
+      "none": "0",
+      "sm": "4px",
+      "md": "8px",
+      "lg": "12px",
+      "full": "999px",
+    },
+    "shadows": {
+      "sm": "0 1px 2px rgba(0, 0, 0, 0.24)",
+      "md": "0 4px 12px rgba(0, 0, 0, 0.28)",
+      "lg": "0 8px 24px rgba(0, 0, 0, 0.32)",
+      "xl": "0 16px 48px rgba(0, 0, 0, 0.4)",
+    },
+  },
+
+  "breakpoints": {
+    "sm": "640px",
+    "md": "768px",
+    "lg": "1024px",
+    "xl": "1280px",
+  },
+
+  "animation": {
+    "duration": {
+      "fast": "150ms",
+      "normal": "300ms",
+      "slow": "500ms",
+    },
+    "easing": {
+      "ease": "ease",
+      "easeIn": "cubic-bezier(0.4, 0, 1, 1)",
+      "easeOut": "cubic-bezier(0, 0, 0.2, 1)",
+      "easeInOut": "cubic-bezier(0.4, 0, 0.2, 1)",
+    },
   },
 }

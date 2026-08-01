@@ -2,13 +2,13 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-08-01T08:35:06.897Z",
+  "generated": "2026-08-01T21:28:48.791Z",
   "summary": {
-    "surfaces": 26,
-    "artifacts": 35,
+    "surfaces": 27,
+    "artifacts": 36,
     "components": 14,
     "wiki": 6,
-    "scripts": 34
+    "scripts": 37
   },
   "related": {
     "chrome": "/registry/portal-chrome.json",
@@ -207,6 +207,14 @@
       "note": "latest prediction report HTML",
       "group": "ops",
       "cli": "bun run portal-cli snapshot last --scope prediction"
+    },
+    {
+      "id": "tennis",
+      "label": "Tennis HQ",
+      "href": "/portal/tennis/",
+      "note": "agent-auth KPI · FACTORY_WAGER_TOKEN status · @tennis-hq/ssot R2",
+      "group": "ops",
+      "cli": "bun run tennis:agent-auth:bake"
     },
     {
       "id": "dod",
@@ -423,6 +431,14 @@
       "href": "/registry/partners-ops.json",
       "note": "v2 taxonomy · phases · book types · rails · events",
       "id": "artifact-34-partners-ops"
+    },
+    {
+      "label": "tennis agent-auth",
+      "href": "/registry/tennis/agent-auth.json",
+      "note": "cloud agent token status (no secret) · FACTORY_WAGER_TOKEN configured mark",
+      "group": "ops",
+      "cli": "bun run tennis:agent-auth:bake",
+      "id": "artifact-35-tennis-agent-auth"
     }
   ],
   "components": [
@@ -557,196 +573,246 @@
   ],
   "scripts": [
     {
+      "label": "Tennis HQ SSOT → R2",
+      "cmd": "bun run --cwd king-zippy-umbra-acre ssot:publish:r2",
+      "doc": "docs/harness/tenants/tennis-hq-registry.md",
+      "group": "registry",
+      "id": "script-0-tennis-hq-ssot-r2"
+    },
+    {
+      "label": "Factory R2 health",
+      "cmd": "bun run factory:health",
+      "doc": "docs/guides/REGISTRY_PRODUCTION_READINESS.md",
+      "group": "registry",
+      "id": "script-1-factory-r2-health"
+    },
+    {
+      "label": "Factory R2 list packages",
+      "cmd": "bun run factory:list",
+      "doc": "docs/registry-client.md",
+      "group": "registry",
+      "id": "script-2-factory-r2-list-packages"
+    },
+    {
+      "label": "Sync R2 registry index",
+      "cmd": "bun run registry:sync-index-r2",
+      "group": "registry",
+      "id": "script-3-sync-r2-registry-index"
+    },
+    {
+      "label": "Pages edge verify",
+      "cmd": "bun run verify:pages-edge --taxonomy",
+      "group": "registry",
+      "id": "script-4-pages-edge-verify"
+    },
+    {
       "label": "Domain glossary bake",
       "cmd": "bun run glossary:portal",
       "doc": "docs/portal-foundation.md",
-      "id": "script-0-domain-glossary-bake"
-    },
-    {
-      "label": "Demo snapshot",
-      "cmd": "bun run ops:snapshot:demo",
-      "doc": "docs/harness/tenants/ops-snapshot.md",
-      "id": "script-1-demo-snapshot"
-    },
-    {
-      "label": "Prediction seed",
-      "cmd": "bun run ops:seed:prediction",
-      "id": "script-2-prediction-seed"
-    },
-    {
-      "label": "TOC Ops seed",
-      "cmd": "bun run ops:seed:toc",
-      "doc": "docs/harness/tenants/toc-ops.md",
-      "id": "script-3-toc-ops-seed"
-    },
-    {
-      "label": "Telegram handshake gap",
-      "cmd": "bun run telegram:handshake:invite-gap",
-      "doc": "docs/harness/tenants/partner-package-group-handshake.md",
-      "id": "script-4-telegram-handshake-gap"
-    },
-    {
-      "label": "Seat capital desk refresh",
-      "cmd": "bun run seat:desk:refresh",
-      "doc": "docs/harness/tenants/seat-capital-desk.md",
-      "id": "script-5-seat-capital-desk-refresh"
-    },
-    {
-      "label": "Partners-ops registry bake",
-      "cmd": "bun run partners:build",
-      "doc": "docs/harness/tenants/seat-capital-desk.md",
-      "id": "script-6-partners-ops-registry-bake"
-    },
-    {
-      "label": "Compliance board bake",
-      "cmd": "bun run compliance:bake",
-      "doc": "docs/harness/tenants/compliance-portal.md",
-      "id": "script-7-compliance-board-bake"
-    },
-    {
-      "label": "Compliance verify (bake + tests)",
-      "cmd": "bun run compliance:verify",
-      "doc": "docs/harness/tenants/compliance-portal.md",
-      "id": "script-8-compliance-verify-bake-tests"
+      "group": "registry",
+      "id": "script-5-domain-glossary-bake"
     },
     {
       "label": "Ops snapshot (includes compliance)",
       "cmd": "bun run ops:snapshot",
       "doc": "docs/harness/tenants/ops-snapshot.md",
-      "id": "script-9-ops-snapshot-includes-compliance"
+      "group": "ops",
+      "id": "script-6-ops-snapshot-includes-compliance"
     },
     {
-      "label": "Compliance bake (Proton vault)",
-      "cmd": "bun run compliance:bake:vault",
-      "doc": "docs/harness/tenants/proton-integration.md",
-      "id": "script-10-compliance-bake-proton-vault"
+      "label": "Demo snapshot",
+      "cmd": "bun run ops:snapshot:demo",
+      "doc": "docs/harness/tenants/ops-snapshot.md",
+      "group": "ops",
+      "id": "script-7-demo-snapshot"
     },
     {
-      "label": "Vault health gate (snapshots)",
-      "cmd": "bun run vault:health",
-      "doc": "docs/harness/tenants/proton-integration.md",
-      "id": "script-11-vault-health-gate-snapshots"
+      "label": "Prediction seed",
+      "cmd": "bun run ops:seed:prediction",
+      "group": "ops",
+      "id": "script-8-prediction-seed"
+    },
+    {
+      "label": "TOC Ops seed",
+      "cmd": "bun run ops:seed:toc",
+      "doc": "docs/harness/tenants/toc-ops.md",
+      "group": "ops",
+      "id": "script-9-toc-ops-seed"
+    },
+    {
+      "label": "Telegram handshake gap",
+      "cmd": "bun run telegram:handshake:invite-gap",
+      "doc": "docs/harness/tenants/partner-package-group-handshake.md",
+      "group": "ops",
+      "id": "script-10-telegram-handshake-gap"
+    },
+    {
+      "label": "Seat capital desk refresh",
+      "cmd": "bun run seat:desk:refresh",
+      "doc": "docs/harness/tenants/seat-capital-desk.md",
+      "group": "ops",
+      "id": "script-11-seat-capital-desk-refresh"
+    },
+    {
+      "label": "Partners-ops registry bake",
+      "cmd": "bun run partners:build",
+      "doc": "docs/harness/tenants/seat-capital-desk.md",
+      "group": "ops",
+      "id": "script-12-partners-ops-registry-bake"
+    },
+    {
+      "label": "Compliance board bake",
+      "cmd": "bun run compliance:bake",
+      "doc": "docs/harness/tenants/compliance-portal.md",
+      "group": "ops",
+      "id": "script-13-compliance-board-bake"
+    },
+    {
+      "label": "Compliance verify (bake + tests)",
+      "cmd": "bun run compliance:verify",
+      "doc": "docs/harness/tenants/compliance-portal.md",
+      "group": "ops",
+      "id": "script-14-compliance-verify-bake-tests"
+    },
+    {
+      "label": "Limit raises multi-factor demo",
+      "cmd": "bun run ops:limits:demo",
+      "doc": "docs/harness/tenants/partner-limits.md",
+      "group": "ops",
+      "id": "script-15-limit-raises-multi-factor-demo"
+    },
+    {
+      "label": "Capture raise context",
+      "cmd": "bun run ops:limits:capture",
+      "doc": "docs/harness/tenants/partner-limits.md",
+      "group": "ops",
+      "id": "script-16-capture-raise-context"
+    },
+    {
+      "label": "Limit raise predict",
+      "cmd": "bun run ops:limits:predict",
+      "doc": "docs/harness/tenants/partner-limits.md",
+      "group": "ops",
+      "id": "script-17-limit-raise-predict"
+    },
+    {
+      "label": "Limit raises multi check",
+      "cmd": "bun run ops:limits:check:multi",
+      "doc": "docs/harness/tenants/partner-limits.md",
+      "group": "ops",
+      "id": "script-18-limit-raises-multi-check"
+    },
+    {
+      "label": "Limit raise analyze",
+      "cmd": "bun run ops:limits:analyze",
+      "doc": "docs/harness/tenants/partner-limits.md",
+      "group": "ops",
+      "id": "script-19-limit-raise-analyze"
+    },
+    {
+      "label": "Limit pattern seed + bake",
+      "cmd": "bun run ops:limits:seed-patterns",
+      "doc": "docs/harness/tenants/partner-limits.md",
+      "group": "ops",
+      "id": "script-20-limit-pattern-seed-bake"
+    },
+    {
+      "label": "Limit raise alerts",
+      "cmd": "bun run ops:limits:alerts",
+      "doc": "docs/harness/tenants/partner-limits.md",
+      "group": "ops",
+      "id": "script-21-limit-raise-alerts"
     },
     {
       "label": "Portal doctor (all groups)",
       "cmd": "bun run portal:doctor --verbose",
       "doc": "docs/harness/tenants/portal-doctor.md",
       "group": "harness",
-      "id": "script-12-portal-doctor-all-groups"
+      "id": "script-22-portal-doctor-all-groups"
     },
     {
       "label": "Portal doctor (bunfig only)",
       "cmd": "bun run portal:doctor --group bunfig --verbose",
       "doc": "docs/UNIFIED.md",
       "group": "harness",
-      "id": "script-13-portal-doctor-bunfig-only"
+      "id": "script-23-portal-doctor-bunfig-only"
     },
     {
       "label": "Bake doctor-state",
       "cmd": "bun run bake:doctor",
       "doc": "docs/harness/tenants/portal-doctor.md",
       "group": "harness",
-      "id": "script-14-bake-doctor-state"
-    },
-    {
-      "label": "Vault health live bake",
-      "cmd": "bun run vault:health:bake",
-      "doc": "docs/harness/tenants/proton-integration.md",
-      "id": "script-15-vault-health-live-bake"
-    },
-    {
-      "label": "Vault map resolve (list)",
-      "cmd": "bun run vault:resolve",
-      "doc": "docs/harness/tenants/proton-integration.md",
-      "id": "script-16-vault-map-resolve-list"
-    },
-    {
-      "label": "Limit raises multi-factor demo",
-      "cmd": "bun run ops:limits:demo",
-      "doc": "docs/harness/tenants/partner-limits.md",
-      "id": "script-17-limit-raises-multi-factor-demo"
-    },
-    {
-      "label": "Capture raise context",
-      "cmd": "bun run ops:limits:capture",
-      "doc": "docs/harness/tenants/partner-limits.md",
-      "id": "script-18-capture-raise-context"
-    },
-    {
-      "label": "Limit raise predict",
-      "cmd": "bun run ops:limits:predict",
-      "doc": "docs/harness/tenants/partner-limits.md",
-      "id": "script-19-limit-raise-predict"
-    },
-    {
-      "label": "Limit raises multi check",
-      "cmd": "bun run ops:limits:check:multi",
-      "doc": "docs/harness/tenants/partner-limits.md",
-      "id": "script-20-limit-raises-multi-check"
-    },
-    {
-      "label": "Limit raise analyze",
-      "cmd": "bun run ops:limits:analyze",
-      "doc": "docs/harness/tenants/partner-limits.md",
-      "id": "script-21-limit-raise-analyze"
-    },
-    {
-      "label": "Limit pattern seed + bake",
-      "cmd": "bun run ops:limits:seed-patterns",
-      "doc": "docs/harness/tenants/partner-limits.md",
-      "id": "script-22-limit-pattern-seed-bake"
-    },
-    {
-      "label": "Limit raise alerts",
-      "cmd": "bun run ops:limits:alerts",
-      "doc": "docs/harness/tenants/partner-limits.md",
-      "id": "script-23-limit-raise-alerts"
+      "id": "script-24-bake-doctor-state"
     },
     {
       "label": "Reference discovery",
       "cmd": "bun run reference:discover:check",
       "doc": "docs/harness/tenants/reference-discovery.md",
-      "id": "script-24-reference-discovery"
+      "group": "harness",
+      "id": "script-25-reference-discovery"
     },
     {
       "label": "Public plane discovery",
       "cmd": "bun run public:discover:check",
       "doc": "docs/harness/tenants/public-plane.md",
-      "id": "script-25-public-plane-discovery"
+      "group": "harness",
+      "id": "script-26-public-plane-discovery"
     },
     {
       "label": "Public audit bundle",
       "cmd": "bun run public:audit:verify",
       "doc": "docs/harness/tenants/public-plane.md",
-      "id": "script-26-public-audit-bundle"
+      "group": "harness",
+      "id": "script-27-public-audit-bundle"
     },
     {
       "label": "Discovery compose",
       "cmd": "bun run discover:compose:check",
       "doc": "docs/harness/tenants/reference-discovery.md",
-      "id": "script-27-discovery-compose"
-    },
-    {
-      "label": "Sync R2 registry index",
-      "cmd": "bun run registry:sync-index-r2",
-      "id": "script-28-sync-r2-registry-index"
-    },
-    {
-      "label": "Pages edge verify",
-      "cmd": "bun run verify:pages-edge --taxonomy",
-      "id": "script-29-pages-edge-verify"
+      "group": "harness",
+      "id": "script-28-discovery-compose"
     },
     {
       "label": "Doc map check",
       "cmd": "bun run docs:map:check",
       "doc": "docs/README.md",
-      "id": "script-30-doc-map-check"
+      "group": "harness",
+      "id": "script-29-doc-map-check"
     },
     {
       "label": "Doc index bake",
       "cmd": "bun run build:doc-index",
       "doc": "lib/docs/doc-index.ts",
-      "id": "script-31-doc-index-bake"
+      "group": "harness",
+      "id": "script-30-doc-index-bake"
+    },
+    {
+      "label": "Compliance bake (Proton vault)",
+      "cmd": "bun run compliance:bake:vault",
+      "doc": "docs/harness/tenants/proton-integration.md",
+      "group": "secrets",
+      "id": "script-31-compliance-bake-proton-vault"
+    },
+    {
+      "label": "Vault health gate (snapshots)",
+      "cmd": "bun run vault:health",
+      "doc": "docs/harness/tenants/proton-integration.md",
+      "group": "secrets",
+      "id": "script-32-vault-health-gate-snapshots"
+    },
+    {
+      "label": "Vault health live bake",
+      "cmd": "bun run vault:health:bake",
+      "doc": "docs/harness/tenants/proton-integration.md",
+      "group": "secrets",
+      "id": "script-33-vault-health-live-bake"
+    },
+    {
+      "label": "Vault map resolve (list)",
+      "cmd": "bun run vault:resolve",
+      "doc": "docs/harness/tenants/proton-integration.md",
+      "group": "secrets",
+      "id": "script-34-vault-map-resolve-list"
     },
     {
       "id": "portal-chrome-bake-apply",

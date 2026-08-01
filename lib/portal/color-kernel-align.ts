@@ -12,10 +12,15 @@ import { portalTheme } from './theme.ts';
 
 export type ColorKernelConsumer = 'glossary' | 'partner-ops' | 'telegram';
 
+/** Flat dark-palette color keys only — excludes nested objects (e.g. `neutral`). */
+export type AlignColorKey = {
+  [K in keyof typeof portalTheme.dark]: (typeof portalTheme.dark)[K] extends string ? K : never;
+}[keyof typeof portalTheme.dark];
+
 export type ColorKernelMismatch = {
   consumer: ColorKernelConsumer;
   key: string;
-  themeKey: keyof typeof portalTheme.dark;
+  themeKey: AlignColorKey;
   expected: string;
   actual: string;
 };
@@ -36,7 +41,7 @@ function asHex(input: string, label: string): string {
 
 /** Intentional theme-dark aliases (case-normalized via Bun.color HEX). */
 export const THEME_DARK_ALIAS_CHECKS: readonly {
-  themeKey: keyof typeof portalTheme.dark;
+  themeKey: AlignColorKey;
   consumer: ColorKernelConsumer;
   key: string;
   value: string;

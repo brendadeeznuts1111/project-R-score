@@ -101,7 +101,9 @@ if [ "$DRY_RUN" -eq 1 ]; then
   fi
 else
   if git diff --cached --name-only --diff-filter=ACMR | grep -qE '^tools/'; then
-    bun run type-check:tools 2>&1 | tail -5 || echo "  ⚠️  type-check:tools failed (non-blocking)"
+    # Fully skip: canary bun-types produce hundreds of errors and tsc|tail can
+    # SIGPIPE under set -e. CI owns type-check:tools. Do not run here.
+    echo "  ⏭️  type-check:tools deferred to CI (canary types noise; non-blocking)"
   else
     echo "  ⏭️  no tools/ staged — skip type-check:tools"
   fi

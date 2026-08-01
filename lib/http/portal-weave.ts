@@ -264,6 +264,14 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     group: 'ops',
     cli: 'bun run portal-cli snapshot last --scope prediction',
   },
+  {
+    id: 'tennis',
+    label: 'Tennis HQ',
+    href: '/portal/tennis/',
+    note: 'agent-auth KPI · FACTORY_WAGER_TOKEN status · @tennis-hq/ssot R2',
+    group: 'ops',
+    cli: 'bun run tennis:agent-auth:bake',
+  },
   // ── Plane ──
   {
     id: 'dod',
@@ -419,66 +427,152 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     href: '/registry/partners-ops.json',
     note: 'v2 taxonomy · phases · book types · rails · events',
   },
+  {
+    label: 'tennis agent-auth',
+    href: '/registry/tennis/agent-auth.json',
+    note: 'cloud agent token status (no secret) · FACTORY_WAGER_TOKEN configured mark',
+    group: 'ops',
+    cli: 'bun run tennis:agent-auth:bake',
+  },
 ];
 
-/** Operator scripts linked from ops/monitoring panels. */
+/**
+ * Operator scripts linked from ops/monitoring panels.
+ * Assign `group` so the ops board can cluster Registry/R2 · Ops · Harness · Secrets.
+ */
 export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
+  // ── Registry / R2 ──
+  {
+    label: 'Tennis HQ SSOT → R2',
+    cmd: 'bun run --cwd king-zippy-umbra-acre ssot:publish:r2',
+    doc: 'docs/harness/tenants/tennis-hq-registry.md',
+    group: 'registry',
+  },
+  {
+    label: 'Factory R2 health',
+    cmd: 'bun run factory:health',
+    doc: 'docs/guides/REGISTRY_PRODUCTION_READINESS.md',
+    group: 'registry',
+  },
+  {
+    label: 'Factory R2 list packages',
+    cmd: 'bun run factory:list',
+    doc: 'docs/registry-client.md',
+    group: 'registry',
+  },
+  {
+    label: 'Sync R2 registry index',
+    cmd: 'bun run registry:sync-index-r2',
+    group: 'registry',
+  },
+  {
+    label: 'Pages edge verify',
+    cmd: 'bun run verify:pages-edge --taxonomy',
+    group: 'registry',
+  },
   {
     label: 'Domain glossary bake',
     cmd: 'bun run glossary:portal',
     doc: 'docs/portal-foundation.md',
+    group: 'registry',
+  },
+  // ── Ops ──
+  {
+    label: 'Ops snapshot (includes compliance)',
+    cmd: 'bun run ops:snapshot',
+    doc: 'docs/harness/tenants/ops-snapshot.md',
+    group: 'ops',
   },
   {
     label: 'Demo snapshot',
     cmd: 'bun run ops:snapshot:demo',
     doc: 'docs/harness/tenants/ops-snapshot.md',
+    group: 'ops',
   },
-  { label: 'Prediction seed', cmd: 'bun run ops:seed:prediction' },
+  {
+    label: 'Prediction seed',
+    cmd: 'bun run ops:seed:prediction',
+    group: 'ops',
+  },
   {
     label: 'TOC Ops seed',
     cmd: 'bun run ops:seed:toc',
     doc: 'docs/harness/tenants/toc-ops.md',
+    group: 'ops',
   },
   {
     label: 'Telegram handshake gap',
     cmd: 'bun run telegram:handshake:invite-gap',
     doc: 'docs/harness/tenants/partner-package-group-handshake.md',
+    group: 'ops',
   },
   {
     label: 'Seat capital desk refresh',
     cmd: 'bun run seat:desk:refresh',
     doc: 'docs/harness/tenants/seat-capital-desk.md',
+    group: 'ops',
   },
   {
     label: 'Partners-ops registry bake',
     cmd: 'bun run partners:build',
     doc: 'docs/harness/tenants/seat-capital-desk.md',
+    group: 'ops',
   },
   {
     label: 'Compliance board bake',
     cmd: 'bun run compliance:bake',
     doc: 'docs/harness/tenants/compliance-portal.md',
+    group: 'ops',
   },
   {
     label: 'Compliance verify (bake + tests)',
     cmd: 'bun run compliance:verify',
     doc: 'docs/harness/tenants/compliance-portal.md',
+    group: 'ops',
   },
   {
-    label: 'Ops snapshot (includes compliance)',
-    cmd: 'bun run ops:snapshot',
-    doc: 'docs/harness/tenants/ops-snapshot.md',
+    label: 'Limit raises multi-factor demo',
+    cmd: 'bun run ops:limits:demo',
+    doc: 'docs/harness/tenants/partner-limits.md',
+    group: 'ops',
   },
   {
-    label: 'Compliance bake (Proton vault)',
-    cmd: 'bun run compliance:bake:vault',
-    doc: 'docs/harness/tenants/proton-integration.md',
+    label: 'Capture raise context',
+    cmd: 'bun run ops:limits:capture',
+    doc: 'docs/harness/tenants/partner-limits.md',
+    group: 'ops',
   },
   {
-    label: 'Vault health gate (snapshots)',
-    cmd: 'bun run vault:health',
-    doc: 'docs/harness/tenants/proton-integration.md',
+    label: 'Limit raise predict',
+    cmd: 'bun run ops:limits:predict',
+    doc: 'docs/harness/tenants/partner-limits.md',
+    group: 'ops',
   },
+  {
+    label: 'Limit raises multi check',
+    cmd: 'bun run ops:limits:check:multi',
+    doc: 'docs/harness/tenants/partner-limits.md',
+    group: 'ops',
+  },
+  {
+    label: 'Limit raise analyze',
+    cmd: 'bun run ops:limits:analyze',
+    doc: 'docs/harness/tenants/partner-limits.md',
+    group: 'ops',
+  },
+  {
+    label: 'Limit pattern seed + bake',
+    cmd: 'bun run ops:limits:seed-patterns',
+    doc: 'docs/harness/tenants/partner-limits.md',
+    group: 'ops',
+  },
+  {
+    label: 'Limit raise alerts',
+    cmd: 'bun run ops:limits:alerts',
+    doc: 'docs/harness/tenants/partner-limits.md',
+    group: 'ops',
+  },
+  // ── Harness ──
   {
     label: 'Portal doctor (all groups)',
     cmd: 'bun run portal:doctor --verbose',
@@ -498,81 +592,65 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
     group: 'harness',
   },
   {
-    label: 'Vault health live bake',
-    cmd: 'bun run vault:health:bake',
-    doc: 'docs/harness/tenants/proton-integration.md',
-  },
-  {
-    label: 'Vault map resolve (list)',
-    cmd: 'bun run vault:resolve',
-    doc: 'docs/harness/tenants/proton-integration.md',
-  },
-  {
-    label: 'Limit raises multi-factor demo',
-    cmd: 'bun run ops:limits:demo',
-    doc: 'docs/harness/tenants/partner-limits.md',
-  },
-  {
-    label: 'Capture raise context',
-    cmd: 'bun run ops:limits:capture',
-    doc: 'docs/harness/tenants/partner-limits.md',
-  },
-  {
-    label: 'Limit raise predict',
-    cmd: 'bun run ops:limits:predict',
-    doc: 'docs/harness/tenants/partner-limits.md',
-  },
-  {
-    label: 'Limit raises multi check',
-    cmd: 'bun run ops:limits:check:multi',
-    doc: 'docs/harness/tenants/partner-limits.md',
-  },
-  {
-    label: 'Limit raise analyze',
-    cmd: 'bun run ops:limits:analyze',
-    doc: 'docs/harness/tenants/partner-limits.md',
-  },
-  {
-    label: 'Limit pattern seed + bake',
-    cmd: 'bun run ops:limits:seed-patterns',
-    doc: 'docs/harness/tenants/partner-limits.md',
-  },
-  {
-    label: 'Limit raise alerts',
-    cmd: 'bun run ops:limits:alerts',
-    doc: 'docs/harness/tenants/partner-limits.md',
-  },
-  {
     label: 'Reference discovery',
     cmd: 'bun run reference:discover:check',
     doc: 'docs/harness/tenants/reference-discovery.md',
+    group: 'harness',
   },
   {
     label: 'Public plane discovery',
     cmd: 'bun run public:discover:check',
     doc: 'docs/harness/tenants/public-plane.md',
+    group: 'harness',
   },
   {
     label: 'Public audit bundle',
     cmd: 'bun run public:audit:verify',
     doc: 'docs/harness/tenants/public-plane.md',
+    group: 'harness',
   },
   {
     label: 'Discovery compose',
     cmd: 'bun run discover:compose:check',
     doc: 'docs/harness/tenants/reference-discovery.md',
+    group: 'harness',
   },
-  { label: 'Sync R2 registry index', cmd: 'bun run registry:sync-index-r2' },
-  { label: 'Pages edge verify', cmd: 'bun run verify:pages-edge --taxonomy' },
   {
     label: 'Doc map check',
     cmd: 'bun run docs:map:check',
     doc: 'docs/README.md',
+    group: 'harness',
   },
   {
     label: 'Doc index bake',
     cmd: 'bun run build:doc-index',
     doc: 'lib/docs/doc-index.ts',
+    group: 'harness',
+  },
+  // ── Secrets ──
+  {
+    label: 'Compliance bake (Proton vault)',
+    cmd: 'bun run compliance:bake:vault',
+    doc: 'docs/harness/tenants/proton-integration.md',
+    group: 'secrets',
+  },
+  {
+    label: 'Vault health gate (snapshots)',
+    cmd: 'bun run vault:health',
+    doc: 'docs/harness/tenants/proton-integration.md',
+    group: 'secrets',
+  },
+  {
+    label: 'Vault health live bake',
+    cmd: 'bun run vault:health:bake',
+    doc: 'docs/harness/tenants/proton-integration.md',
+    group: 'secrets',
+  },
+  {
+    label: 'Vault map resolve (list)',
+    cmd: 'bun run vault:resolve',
+    doc: 'docs/harness/tenants/proton-integration.md',
+    group: 'secrets',
   },
 ];
 

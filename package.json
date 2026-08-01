@@ -1629,6 +1629,8 @@
     "portal:flags": "bun tools/portal-cli.ts flags",
     "portal:flags:all": "bun tools/portal-cli.ts flags --all",
     "portal:flags:check": "bun tools/portal-flags-check.ts",
+    "bake:bun-cli-reference": "bun tools/bake-bun-cli-reference.ts",
+    "bake:bun-cli-reference:check": "bun tools/bake-bun-cli-reference.ts --check",
     "portal:flags:migrate": "bun tools/portal-flags-migrate.ts",
     "portal:doctor:catalog": "bun tools/portal-cli.ts doctor --group catalog --verbose",
     "portal:doctor:bunfig": "bun tools/portal-cli.ts doctor --group bunfig --verbose",

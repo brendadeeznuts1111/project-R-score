@@ -15,7 +15,10 @@ import {
   toneVaultBadge,
 } from './nav-badges.js';
 
-/** Shared bake sources — tools hub and command centre freshness strip. */
+/**
+ * Shared bake sources — tools hub and command centre freshness strip.
+ * Optional `group`: registry | ops | harness | secrets (tools board clusters).
+ */
 export const BAKE_SOURCES = [
   {
     id: 'packages',
@@ -23,6 +26,7 @@ export const BAKE_SOURCES = [
     href: '/registry/packages-graph-map.json',
     board: '/portal/packages/',
     cli: 'bun run portal-cli pm graph',
+    group: 'registry',
   },
   {
     id: 'failures',
@@ -30,6 +34,7 @@ export const BAKE_SOURCES = [
     href: '/registry/failures.json',
     board: '/portal/failures/',
     cli: 'bun run failures:bake',
+    group: 'harness',
   },
   {
     id: 'vault-health',
@@ -37,6 +42,7 @@ export const BAKE_SOURCES = [
     href: '/registry/vault-health.json',
     board: '/portal/vault/',
     cli: 'bun run vault:health:bake',
+    group: 'secrets',
   },
   {
     id: 'monorepo-health',
@@ -44,6 +50,7 @@ export const BAKE_SOURCES = [
     href: '/registry/monorepo-health.json',
     board: '/portal/health/',
     cli: 'bun run monorepo:health:bake',
+    group: 'harness',
   },
   {
     id: 'ops-summary',
@@ -51,6 +58,7 @@ export const BAKE_SOURCES = [
     href: '/registry/ops-summary.json',
     board: '/portal/ops/',
     cli: 'bun run ops:snapshot --no-routing',
+    group: 'ops',
   },
   {
     id: 'capability-map',
@@ -58,6 +66,7 @@ export const BAKE_SOURCES = [
     href: '/registry/capability-map-subset.json',
     board: '/portal/tools/#capabilities',
     cli: 'bun run portal-cli capabilities health',
+    group: 'harness',
   },
   {
     id: 'doctor-state',
@@ -65,6 +74,7 @@ export const BAKE_SOURCES = [
     href: '/registry/doctor-state.json',
     board: '/portal/doctor/',
     cli: 'bun run bake:doctor',
+    group: 'harness',
   },
 ];
 
@@ -499,3 +509,4 @@ export function aggregateCommandCentre(input) {
     linkGroups: LINK_GROUPS,
   };
 }
+/* force-upload 1785619313 */

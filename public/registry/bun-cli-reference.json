@@ -1,0 +1,780 @@
+{
+  "schemaVersion": 1,
+  "kind": "bun-cli-reference",
+  "path": "/registry/bun-cli-reference.json",
+  "generated": "2026-08-01T21:29:28.991Z",
+  "bunVersion": "1.4.0",
+  "source": "bun --help",
+  "summary": {
+    "groups": 8,
+    "flags": 84,
+    "curated": 14
+  },
+  "groups": [
+    {
+      "id": "general-execution",
+      "label": "General execution",
+      "flags": [
+        {
+          "flag": "--bun",
+          "short": "-b",
+          "type": "boolean",
+          "default": "false",
+          "description": "Force Bun as the runtime for package scripts",
+          "category": "Execution",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#general-execution-options"
+        },
+        {
+          "flag": "--config",
+          "short": "-c",
+          "type": "string",
+          "default": null,
+          "description": "Use a custom bunfig.toml",
+          "category": "Environment & Config",
+          "curated": true,
+          "url": "https://bun.com/docs/runtime/index#global-configuration-context"
+        },
+        {
+          "flag": "--console-depth",
+          "short": null,
+          "type": "number",
+          "default": "2",
+          "description": "Object inspection depth for console output",
+          "category": "Output Control",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/console#object-inspection-depth"
+        },
+        {
+          "flag": "--cron-period",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Cron period for cron execution mode"
+        },
+        {
+          "flag": "--cron-title",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Title for cron execution mode"
+        },
+        {
+          "flag": "--cwd",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Set the working directory",
+          "category": "Environment & Config",
+          "curated": true,
+          "url": "https://bun.com/docs/runtime/index#global-configuration-context"
+        },
+        {
+          "flag": "--eval",
+          "short": "-e",
+          "type": "string",
+          "default": null,
+          "description": "Evaluate a script string",
+          "category": "Execution",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#general-execution-options"
+        },
+        {
+          "flag": "--help",
+          "short": "-h",
+          "type": "boolean",
+          "default": "false",
+          "description": "Display this menu and exit"
+        },
+        {
+          "flag": "--if-present",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Exit 0 if the script is missing",
+          "category": "Execution",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#general-execution-options"
+        },
+        {
+          "flag": "--no-orphans",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Exit when the parent process dies, and on exit SIGKILL every descendant. Linux/macOS only."
+        },
+        {
+          "flag": "--print",
+          "short": "-p",
+          "type": "string",
+          "default": null,
+          "description": "Evaluate and print the result",
+          "category": "Execution",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#general-execution-options"
+        },
+        {
+          "flag": "--revision",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Print version with revision and exit"
+        },
+        {
+          "flag": "--shell",
+          "short": null,
+          "type": "number",
+          "default": null,
+          "description": "Shell for package scripts (bun|system)",
+          "category": "Execution",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#general-execution-options"
+        },
+        {
+          "flag": "--silent",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Suppress Bun's script-command echo",
+          "category": "Output Control",
+          "curated": true,
+          "url": "https://bun.com/docs/runtime/index#general-execution-options"
+        },
+        {
+          "flag": "--title",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Set the process title",
+          "category": "Execution",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#general-execution-options"
+        },
+        {
+          "flag": "--version",
+          "short": "-v",
+          "type": "boolean",
+          "default": "false",
+          "description": "Print version and exit"
+        }
+      ]
+    },
+    {
+      "id": "workspace-management",
+      "label": "Workspace management",
+      "flags": [
+        {
+          "flag": "--elide-lines",
+          "short": null,
+          "type": "number",
+          "default": "10",
+          "description": "Number of lines of script output shown when using --filter (default: 10). Set to 0 to show all lines."
+        },
+        {
+          "flag": "--filter",
+          "short": "-F",
+          "type": "string",
+          "default": null,
+          "description": "Run a script in all workspace packages matching the pattern"
+        },
+        {
+          "flag": "--no-exit-on-error",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Continue running other scripts when one fails (with --parallel/--sequential)"
+        },
+        {
+          "flag": "--parallel",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Run multiple scripts concurrently with Foreman-style output"
+        },
+        {
+          "flag": "--sequential",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Run multiple scripts sequentially with Foreman-style output"
+        },
+        {
+          "flag": "--workspaces",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Run a script in all workspace packages (from the \"workspaces\" field in package.json)"
+        }
+      ]
+    },
+    {
+      "id": "development",
+      "label": "Development",
+      "flags": [
+        {
+          "flag": "--hot",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Soft-reload modules while preserving global state",
+          "category": "Development",
+          "curated": true,
+          "url": "https://bun.com/docs/runtime/watch-mode"
+        },
+        {
+          "flag": "--import",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Import a module before the entrypoint",
+          "category": "Module Resolution",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#general-execution-options"
+        },
+        {
+          "flag": "--no-clear-screen",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Keep terminal output visible during reloads",
+          "category": "Development",
+          "curated": true,
+          "url": "https://bun.com/docs/runtime/watch-mode"
+        },
+        {
+          "flag": "--preload",
+          "short": "-r",
+          "type": "number",
+          "default": null,
+          "description": "Preload a module before the entrypoint",
+          "category": "Module Resolution",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#general-execution-options"
+        },
+        {
+          "flag": "--require",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Require a module before the entrypoint (CJS-style)",
+          "category": "Module Resolution",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#general-execution-options"
+        },
+        {
+          "flag": "--smol",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Lower memory usage with more frequent garbage collection",
+          "category": "Performance",
+          "curated": true,
+          "url": "https://bun.com/docs/runtime/index#runtime-process-control"
+        },
+        {
+          "flag": "--watch",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Restart on imported file changes",
+          "category": "Development",
+          "curated": true,
+          "url": "https://bun.com/docs/runtime/watch-mode"
+        }
+      ]
+    },
+    {
+      "id": "debug",
+      "label": "Debug & profiling",
+      "flags": [
+        {
+          "flag": "--cpu-prof",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Start CPU profiler and write profile to disk on exit"
+        },
+        {
+          "flag": "--cpu-prof-dir",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Specify the directory where the CPU profile will be saved"
+        },
+        {
+          "flag": "--cpu-prof-interval",
+          "short": null,
+          "type": "number",
+          "default": "1000",
+          "description": "Specify the sampling interval in microseconds for CPU profiling (default: 1000)"
+        },
+        {
+          "flag": "--cpu-prof-md",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Output CPU profile in markdown format (grep-friendly, designed for LLM analysis)"
+        },
+        {
+          "flag": "--cpu-prof-name",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Specify the name of the CPU profile file"
+        },
+        {
+          "flag": "--expose-gc",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Expose global gc() for manual collection",
+          "category": "Performance",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#runtime-process-control"
+        },
+        {
+          "flag": "--heap-prof",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Generate V8 heap snapshot on exit (.heapsnapshot)"
+        },
+        {
+          "flag": "--heap-prof-dir",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Specify the directory where the heap profile will be saved"
+        },
+        {
+          "flag": "--heap-prof-md",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Generate markdown heap profile on exit (for CLI analysis)"
+        },
+        {
+          "flag": "--heap-prof-name",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Specify the name of the heap profile file"
+        },
+        {
+          "flag": "--inspect",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Attach the debugger on an available port",
+          "category": "Debugging",
+          "curated": true,
+          "url": "https://bun.com/docs/runtime/debugger"
+        },
+        {
+          "flag": "--inspect-brk",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Break on the first line and wait",
+          "category": "Debugging",
+          "curated": true,
+          "url": "https://bun.com/docs/runtime/debugger"
+        },
+        {
+          "flag": "--inspect-wait",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Wait for the debugger before executing",
+          "category": "Debugging",
+          "curated": true,
+          "url": "https://bun.com/docs/runtime/debugger"
+        },
+        {
+          "flag": "--no-deprecation",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Silence deprecation warnings",
+          "category": "Runtime Process",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#general-execution-options"
+        },
+        {
+          "flag": "--throw-deprecation",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Throw on deprecation warnings",
+          "category": "Runtime Process",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#general-execution-options"
+        }
+      ]
+    },
+    {
+      "id": "deps",
+      "label": "Dependencies & install",
+      "flags": [
+        {
+          "flag": "--install",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Install packages only when missing locally",
+          "category": "Dependency Resolution",
+          "curated": true,
+          "url": "https://bun.com/docs/runtime/auto-install"
+        },
+        {
+          "flag": "--no-install",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Disable auto-install of missing packages",
+          "category": "Dependency Resolution",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/auto-install"
+        },
+        {
+          "flag": "--prefer-latest",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Prefer the latest matching version when resolving",
+          "category": "Dependency Resolution",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/auto-install"
+        },
+        {
+          "flag": "--prefer-offline",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Skip package-cache staleness checks and resolve from disk",
+          "category": "Dependency Resolution",
+          "curated": true,
+          "url": "https://bun.com/docs/runtime/auto-install"
+        },
+        {
+          "flag": "-i",
+          "short": "-i",
+          "type": "boolean",
+          "default": "false",
+          "description": "Auto-install missing packages during execution (≡ --install=fallback)",
+          "category": "Dependency Resolution",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/auto-install"
+        }
+      ]
+    },
+    {
+      "id": "transpile",
+      "label": "Transpile & JSX",
+      "flags": [
+        {
+          "flag": "--conditions",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Pass custom export conditions",
+          "category": "Environment & Config",
+          "curated": true,
+          "url": "https://bun.com/docs/runtime/index#dependency-module-resolution"
+        },
+        {
+          "flag": "--define",
+          "short": "-d",
+          "type": "string",
+          "default": null,
+          "description": "Substitute a constant at parse time",
+          "category": "Environment & Config",
+          "curated": true,
+          "url": "https://bun.com/docs/guides/runtime/define-constant"
+        },
+        {
+          "flag": "--drop",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Drop calls to a global identifier at build time",
+          "category": "Environment & Config",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#general-execution-options"
+        },
+        {
+          "flag": "--extension-order",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "File extension resolution order",
+          "category": "Module Resolution",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#dependency-module-resolution"
+        },
+        {
+          "flag": "--feature",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Enable a feature flag for dead-code elimination, e.g. --feature=SUPER_SECRET"
+        },
+        {
+          "flag": "--ignore-dce-annotations",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Ignore tree-shaking annotations such as @__PURE__"
+        },
+        {
+          "flag": "--jsx-factory",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Changes the function called when compiling JSX elements using the classic JSX runtime"
+        },
+        {
+          "flag": "--jsx-fragment",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Changes the function called when compiling JSX fragments"
+        },
+        {
+          "flag": "--jsx-import-source",
+          "short": null,
+          "type": "number",
+          "default": null,
+          "description": "Declares the module specifier to be used for importing the jsx and jsxs factory functions. Default: \"react\""
+        },
+        {
+          "flag": "--jsx-runtime",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "\"automatic\" (default) or \"classic\""
+        },
+        {
+          "flag": "--jsx-side-effects",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Treat JSX elements as having side effects (disable pure annotations)"
+        },
+        {
+          "flag": "--loader",
+          "short": "-l",
+          "type": "string",
+          "default": null,
+          "description": "Map an extension to a loader",
+          "category": "Module Resolution",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#general-execution-options"
+        },
+        {
+          "flag": "--main-fields",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "package.json main fields resolution order",
+          "category": "Module Resolution",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#dependency-module-resolution"
+        },
+        {
+          "flag": "--no-macros",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Disable macros from being executed in the bundler, transpiler and runtime"
+        },
+        {
+          "flag": "--preserve-symlinks",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Preserve symlinks when resolving modules",
+          "category": "Module Resolution",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#dependency-module-resolution"
+        },
+        {
+          "flag": "--preserve-symlinks-main",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Preserve symlinks for the main entry",
+          "category": "Module Resolution",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#dependency-module-resolution"
+        },
+        {
+          "flag": "--tsconfig-override",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Use an alternate tsconfig path",
+          "category": "Module Resolution",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#general-execution-options"
+        }
+      ]
+    },
+    {
+      "id": "networking",
+      "label": "Networking & HTTP",
+      "flags": [
+        {
+          "flag": "--dns-result-order",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Set the default order of DNS lookup results. Valid orders: verbatim (default), ipv4first, ipv6first"
+        },
+        {
+          "flag": "--experimental-http2-fetch",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Offer h2 in fetch() TLS ALPN. Same as BUN_FEATURE_FLAG_EXPERIMENTAL_HTTP2_CLIENT=1"
+        },
+        {
+          "flag": "--experimental-http3-fetch",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Honor Alt-Svc: h3 in fetch() and upgrade to HTTP/3. Same as BUN_FEATURE_FLAG_EXPERIMENTAL_HTTP3_CLIENT=1"
+        },
+        {
+          "flag": "--fetch-preconnect",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Preconnect to a URL while code is loading"
+        },
+        {
+          "flag": "--max-http-header-size",
+          "short": null,
+          "type": "number",
+          "default": null,
+          "description": "Set the maximum size of HTTP headers in bytes. Default is 16KiB"
+        },
+        {
+          "flag": "--port",
+          "short": null,
+          "type": "number",
+          "default": null,
+          "description": "Set the default server port",
+          "category": "Execution",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/http/server#configuring-a-default-port"
+        },
+        {
+          "flag": "--redis-preconnect",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Preconnect to $REDIS_URL at startup"
+        },
+        {
+          "flag": "--sql-preconnect",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Preconnect to PostgreSQL at startup"
+        },
+        {
+          "flag": "--use-bundled-ca",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Use bundled CA store"
+        },
+        {
+          "flag": "--use-openssl-ca",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Use OpenSSL's default CA store"
+        },
+        {
+          "flag": "--use-system-ca",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Use the system's trusted certificate authorities"
+        },
+        {
+          "flag": "--user-agent",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Set the default User-Agent header for HTTP requests"
+        }
+      ]
+    },
+    {
+      "id": "runtime",
+      "label": "Runtime environment",
+      "flags": [
+        {
+          "flag": "--env-file",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Load environment variables from a file",
+          "category": "Environment & Config",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files"
+        },
+        {
+          "flag": "--experimental-stream-iter",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Enable the experimental stream/iter API (node:stream/iter, node:zlib/iter)."
+        },
+        {
+          "flag": "--no-addons",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Disallow loading native addons",
+          "category": "Runtime Process",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#general-execution-options"
+        },
+        {
+          "flag": "--no-env-file",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Disable automatic loading of .env files",
+          "category": "Environment & Config",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/environment-variables#disabling-automatic-env-loading"
+        },
+        {
+          "flag": "--unhandled-rejections",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "How to treat unhandled promise rejections",
+          "category": "Runtime Process",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#general-execution-options"
+        },
+        {
+          "flag": "--zero-fill-buffers",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Zero-fill Buffer allocations",
+          "category": "Runtime Process",
+          "curated": false,
+          "url": "https://bun.com/docs/runtime/index#general-execution-options"
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
-  "source": "live",
-  "generated": "2026-07-31T23:41:59.281Z",
+  "source": "snapshot",
+  "generated": "2026-08-01T21:28:48.791Z",
   "liquidity": {
     "total": 108210
   },
@@ -110,58 +110,22 @@
     }
   },
   "growth": {
-    "period": "2026-07",
-    "playsReceived": 56,
-    "playsPlaced": 32,
-    "volume": 158500,
-    "pnl": 15800,
-    "nodes": 6,
-    "top": [
-      {
-        "nodeId": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
-        "playsReceived": 20,
-        "playsPlaced": 14,
-        "volume": 70000,
-        "pnl": 7900
-      },
-      {
-        "nodeId": "019f92bf-40d6-72e5-80da-8aaa4cd7e0d2",
-        "playsReceived": 15,
-        "playsPlaced": 9,
-        "volume": 48000,
-        "pnl": 6200
-      },
-      {
-        "nodeId": "019f92bf-40d6-72e6-9a91-8f3f3c099c7b",
-        "playsReceived": 11,
-        "playsPlaced": 5,
-        "volume": 22000,
-        "pnl": -1100
-      },
-      {
-        "nodeId": "019f92bf-40d6-72e7-8927-9528b1e3aff6",
-        "playsReceived": 6,
-        "playsPlaced": 4,
-        "volume": 18500,
-        "pnl": 2800
-      },
-      {
-        "nodeId": "019f92bf-40d6-72e8-96ba-f05db1d93df0",
-        "playsReceived": 3,
-        "playsPlaced": 0,
-        "volume": 0,
-        "pnl": 0
-      }
-    ]
+    "period": "2026-08",
+    "playsReceived": 0,
+    "playsPlaced": 0,
+    "volume": 0,
+    "pnl": 0,
+    "nodes": 0,
+    "top": []
   },
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "1149bf2e85bb074f2a6280c9ab8d5319e1fe959f6beebdf533d39a3600f94153",
+    "proofHash": "3ae419d0e1828e29bdaf08e637c3f6031e44338e3154d9f3bddb1cbd4610463a",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-31T23:41:59.283Z"
+    "timestamp": "2026-08-01T21:28:48.794Z"
   },
   "registryClient": {
     "available": true,
@@ -235,7 +199,7 @@
         "detail": "13 contracts · 20 consistency"
       }
     ],
-    "timestamp": "2026-07-31T11:05:00.618Z",
+    "timestamp": "2026-08-01T21:28:29.555Z",
     "pagesUrl": "https://project-r-score.pages.dev",
     "path": "/registry/cloudflare-pages-preflight.json"
   },
@@ -421,8 +385,8 @@
         "ok": true
       }
     ],
-    "proofHash": "99a4776922c18ec56bc09b14baff0d3fcae87f2171b3681cbba55ea175a73213",
-    "timestamp": "2026-07-31T11:04:59.845Z",
+    "proofHash": "b4e82b412835fd9221aba623fc05b4fb6aaddbcc938fa8232692a63722014fdb",
+    "timestamp": "2026-08-01T21:28:28.815Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "channelMeta": {
@@ -432,8 +396,8 @@
     "passed": 74,
     "total": 74,
     "status": "pass",
-    "proofHash": "4d40f1633c3bb1826b3aea148f05db041cc8451d415ba660c5f0e64c169604bc",
-    "updatedAt": "2026-07-31T10:59:08.029Z",
+    "proofHash": "866911a0dd724ca75db87bd570f9421523ce86853b4d7bcf45ceedd56b511a46",
+    "updatedAt": "2026-08-01T21:28:28.811Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -714,7 +678,7 @@
     ]
   },
   "channels": {
-    "pending": 522,
+    "pending": 594,
     "failed": 0,
     "sent": 1039,
     "oldestPendingAt": "2026-07-28T17:03:21.207Z",
@@ -723,12 +687,13 @@
   "toc": {
     "available": true,
     "path": "/registry/toc-ops.json",
-    "generatedAt": "2026-07-31T14:04:15.832Z",
+    "generatedAt": "2026-08-01T21:28:29.624Z",
     "partners": 3,
     "warmed": 4,
     "warming": 2,
     "onboarding": 1,
-    "confirmedRails": 5,
+    "confirmedRails": 7,
+    "seatSourcedRails": 2,
     "openTasks": 11,
     "openOnb": 1,
     "openLimit": 2,
@@ -742,8 +707,8 @@
     "playsSettled": 13,
     "activeExperiments": 2,
     "plane": "demo-readonly",
-    "identityLinked": false,
-    "identityPartners": 0,
+    "identityLinked": true,
+    "identityPartners": 3,
     "enforcementFocus": "rope",
     "enforcementFailed": 13,
     "enforcementCritical": 6,
@@ -751,7 +716,7 @@
     "throughputI": 47810,
     "throughputOE": 1655,
     "topRankedProcess": "LIMIT",
-    "avgRP": 5.658763615227704,
+    "avgRP": 4.9976529618623236,
     "settlementFloatRatio": 0.5103534825350345,
     "presencePartners": 3,
     "presenceIpv6": 31,
@@ -821,9 +786,9 @@
     "settledViaFullLoop": 29,
     "outboxSent": 1039,
     "outboxFailed": 0,
-    "outboxPending": 522,
-    "oldestPendingAgeSec": 283118,
-    "manualStepsPerCycle": 522,
+    "outboxPending": 594,
+    "oldestPendingAgeSec": 361527,
+    "manualStepsPerCycle": 594,
     "loopCompletionRate": 1,
     "distinctPlaysDispatched": 7,
     "settledPlaysViaFullLoop": 7,
@@ -838,7 +803,7 @@
   "telegramHandshake": {
     "available": true,
     "path": "/registry/telegram-handshake.json",
-    "generatedAt": "2026-07-28T16:41:44.049Z",
+    "generatedAt": "2026-08-01T21:28:48.765Z",
     "partners": 4,
     "inviteGaps": 0,
     "blocked": 0,
@@ -952,7 +917,7 @@
   "seatCapitalDesk": {
     "available": true,
     "path": "/registry/seat-capital-desk.json",
-    "generatedAt": "2026-07-31T14:04:15.824Z",
+    "generatedAt": "2026-08-01T21:28:48.779Z",
     "desks": 4,
     "blocked": 0,
     "partial": 0,
@@ -977,7 +942,7 @@
             "status": "ready",
             "incomplete": false,
             "note": "WARMED seat · limits stale — confirm rails before play · harness login — replace via Fill Username",
-            "bookMaxLine": "Book max (last known): no book history"
+            "bookMaxLine": "Book max (last known): $1,000 · desk maxBet: 500 · Δ −$500"
           },
           {
             "outNum": "2",
@@ -990,7 +955,7 @@
             "status": "deferred",
             "incomplete": false,
             "note": "ASH-002 warming slot — assign after partner ack",
-            "bookMaxLine": "Book max (last known): no book history"
+            "bookMaxLine": "Book max (last known): $1,000 · desk maxBet: —"
           }
         ],
         "checklist": [
@@ -1493,30 +1458,38 @@
       "MA",
       "NJ"
     ],
-    "generatedAt": "2026-07-31T11:04:28.249Z",
+    "generatedAt": "2026-08-01T21:28:29.678Z",
     "path": "/registry/compliance-board.json",
     "portal": "/portal/compliance/"
   },
   "monorepoHealth": {
     "available": true,
     "ok": false,
-    "score": 34.5,
+    "score": 33.2,
     "grade": "critical",
     "formulaVersion": 1,
     "bunVersion": "1.4.0",
-    "fileCount": 835,
-    "largeFileCount": 338,
-    "deadFileCount": 41,
+    "fileCount": 1011,
+    "largeFileCount": 428,
+    "deadFileCount": 44,
     "cyclicDependencyCount": 14,
     "duplicateDepCount": 0,
-    "deadCodePercent": 8.1,
-    "largeFilePercent": 40.5,
+    "deadCodePercent": 7,
+    "largeFilePercent": 42.3,
     "testCoveragePercent": 0,
-    "generatedAt": "2026-07-28T16:41:42.786Z",
+    "generatedAt": "2026-08-01T21:28:30.151Z",
     "path": "/registry/monorepo-health.json",
     "portal": "/portal/packages/",
     "claim": "monorepo-health-score",
     "gate": "check:monorepo-health"
+  },
+  "bunBrandMap": {
+    "available": true,
+    "ok": true,
+    "warnings": 307,
+    "errors": 0,
+    "stale": false,
+    "path": "/registry/bun-brand-map.json"
   },
   "limitChanges": [
     {
@@ -1886,275 +1859,25 @@
         "hmacValid": true,
         "valid": true
       }
-    },
-    {
-      "limit_id": 192,
-      "node_id": "limit-demo-worcester-sub",
-      "sportsbook": "caesars",
-      "sport_id": "soccer",
-      "market_id": "match_winner",
-      "bet_type": "straight",
-      "previous_max": 700,
-      "new_limit": 1100,
-      "increased_at": 1785446565,
-      "direction": "up",
-      "message": "caesars soccer/match_winner straight: $700 → $1100",
-      "context_available": true,
-      "multi_factor_score": 0.43294000000000005,
-      "top_contributing_factors": [
-        "chargeback_count_30d",
-        "kyc_pass_rate",
-        "violation_count_30d"
-      ],
-      "context_proof": {
-        "algorithm": "sha3-256",
-        "digestValid": true,
-        "signed": true,
-        "hmacValid": true,
-        "valid": true
-      }
-    },
-    {
-      "limit_id": 184,
-      "node_id": "limit-demo-jersey-sub",
-      "sportsbook": "hardrock",
-      "sport_id": "basketball",
-      "market_id": "over_under",
-      "bet_type": "straight",
-      "previous_max": 1000,
-      "new_limit": 800,
-      "increased_at": 1785446205,
-      "direction": "down",
-      "message": "hardrock basketball/over_under straight: $1000 → $800",
-      "context_available": false,
-      "multi_factor_score": 0,
-      "top_contributing_factors": [],
-      "context_proof": null
-    },
-    {
-      "limit_id": 190,
-      "node_id": "limit-demo-boston-agent",
-      "sportsbook": "draftkings",
-      "sport_id": "basketball",
-      "market_id": "over_under",
-      "bet_type": "live",
-      "previous_max": 600,
-      "new_limit": 1300,
-      "increased_at": 1785446145,
-      "direction": "up",
-      "message": "draftkings basketball/over_under live: $600 → $1300",
-      "context_available": true,
-      "multi_factor_score": 0.57558,
-      "top_contributing_factors": [
-        "chargeback_count_30d",
-        "violation_count_30d",
-        "kyc_pass_rate"
-      ],
-      "context_proof": {
-        "algorithm": "sha3-256",
-        "digestValid": true,
-        "signed": true,
-        "hmacValid": true,
-        "valid": true
-      }
-    },
-    {
-      "limit_id": 188,
-      "node_id": "limit-demo-baystate",
-      "sportsbook": "caesars",
-      "sport_id": "soccer",
-      "market_id": "match_winner",
-      "bet_type": "pregame",
-      "previous_max": 800,
-      "new_limit": 1400,
-      "increased_at": 1785445845,
-      "direction": "up",
-      "message": "caesars soccer/match_winner pregame: $800 → $1400",
-      "context_available": true,
-      "multi_factor_score": 0.6959,
-      "top_contributing_factors": [
-        "total_handle_7d",
-        "violation_count_30d",
-        "chargeback_count_30d"
-      ],
-      "context_proof": {
-        "algorithm": "sha3-256",
-        "digestValid": true,
-        "signed": true,
-        "hmacValid": true,
-        "valid": true
-      }
-    },
-    {
-      "limit_id": 186,
-      "node_id": "limit-demo-baystate",
-      "sportsbook": "betmgm",
-      "sport_id": "basketball",
-      "market_id": "over_under",
-      "bet_type": "straight",
-      "previous_max": 1000,
-      "new_limit": 2200,
-      "increased_at": 1785445725,
-      "direction": "up",
-      "message": "betmgm basketball/over_under straight: $1000 → $2200",
-      "context_available": true,
-      "multi_factor_score": 0.6959,
-      "top_contributing_factors": [
-        "total_handle_7d",
-        "violation_count_30d",
-        "chargeback_count_30d"
-      ],
-      "context_proof": {
-        "algorithm": "sha3-256",
-        "digestValid": true,
-        "signed": true,
-        "hmacValid": true,
-        "valid": true
-      }
-    },
-    {
-      "limit_id": 183,
-      "node_id": "limit-demo-jersey-sub",
-      "sportsbook": "hardrock",
-      "sport_id": "basketball",
-      "market_id": "over_under",
-      "bet_type": "straight",
-      "previous_max": 500,
-      "new_limit": 1000,
-      "increased_at": 1785445305,
-      "direction": "up",
-      "message": "hardrock basketball/over_under straight: $500 → $1000",
-      "context_available": true,
-      "multi_factor_score": 0.47986000000000006,
-      "top_contributing_factors": [
-        "violation_count_30d",
-        "chargeback_count_30d",
-        "kyc_pass_rate"
-      ],
-      "context_proof": {
-        "algorithm": "sha3-256",
-        "digestValid": true,
-        "signed": true,
-        "hmacValid": true,
-        "valid": true
-      }
-    },
-    {
-      "limit_id": 181,
-      "node_id": "limit-demo-newark-agent",
-      "sportsbook": "betmgm",
-      "sport_id": "soccer",
-      "market_id": "match_winner",
-      "bet_type": "straight",
-      "previous_max": 1200,
-      "new_limit": 900,
-      "increased_at": 1785445005,
-      "direction": "down",
-      "message": "betmgm soccer/match_winner straight: $1200 → $900",
-      "context_available": false,
-      "multi_factor_score": 0,
-      "top_contributing_factors": [],
-      "context_proof": null
-    },
-    {
-      "limit_id": 179,
-      "node_id": "limit-demo-newark-agent",
-      "sportsbook": "fanduel",
-      "sport_id": "basketball",
-      "market_id": "over_under",
-      "bet_type": "live",
-      "previous_max": 750,
-      "new_limit": 1750,
-      "increased_at": 1785444885,
-      "direction": "up",
-      "message": "fanduel basketball/over_under live: $750 → $1750",
-      "context_available": true,
-      "multi_factor_score": 0.59568,
-      "top_contributing_factors": [
-        "violation_count_30d",
-        "chargeback_count_30d",
-        "total_handle_7d"
-      ],
-      "context_proof": {
-        "algorithm": "sha3-256",
-        "digestValid": true,
-        "signed": true,
-        "hmacValid": true,
-        "valid": true
-      }
-    },
-    {
-      "limit_id": 177,
-      "node_id": "limit-demo-atlantic",
-      "sportsbook": "fanduel",
-      "sport_id": "soccer",
-      "market_id": "match_winner",
-      "bet_type": "pregame",
-      "previous_max": 1500,
-      "new_limit": 2000,
-      "increased_at": 1785444585,
-      "direction": "up",
-      "message": "fanduel soccer/match_winner pregame: $1500 → $2000",
-      "context_available": true,
-      "multi_factor_score": 0.7376000000000001,
-      "top_contributing_factors": [
-        "total_handle_7d",
-        "violation_count_30d",
-        "chargeback_count_30d"
-      ],
-      "context_proof": {
-        "algorithm": "sha3-256",
-        "digestValid": true,
-        "signed": true,
-        "hmacValid": true,
-        "valid": true
-      }
-    },
-    {
-      "limit_id": 175,
-      "node_id": "limit-demo-atlantic",
-      "sportsbook": "draftkings",
-      "sport_id": "basketball",
-      "market_id": "over_under",
-      "bet_type": "straight",
-      "previous_max": 1000,
-      "new_limit": 2500,
-      "increased_at": 1785444465,
-      "direction": "up",
-      "message": "draftkings basketball/over_under straight: $1000 → $2500",
-      "context_available": true,
-      "multi_factor_score": 0.7376000000000001,
-      "top_contributing_factors": [
-        "total_handle_7d",
-        "violation_count_30d",
-        "chargeback_count_30d"
-      ],
-      "context_proof": {
-        "algorithm": "sha3-256",
-        "digestValid": true,
-        "signed": true,
-        "hmacValid": true,
-        "valid": true
-      }
     }
   ],
   "limitPatterns": {
     "schemaVersion": 1,
     "lookbackHours": 48,
-    "partners": 4,
-    "nodes": 13,
-    "downlineNodes": 9,
+    "partners": 3,
+    "nodes": 8,
+    "downlineNodes": 6,
     "books": [
       {
         "key": "hardrock",
-        "changes": 8,
-        "raises": 7,
-        "decreases": 1,
-        "net_delta": 5050,
-        "avg_delta_pct": 121.25,
-        "avg_influence_score": 0.5132,
-        "partners": 3,
-        "nodes": 7,
+        "changes": 6,
+        "raises": 6,
+        "decreases": 0,
+        "net_delta": 4750,
+        "avg_delta_pct": 148.33,
+        "avg_influence_score": 0.6043,
+        "partners": 2,
+        "nodes": 6,
         "states": [
           "NJ"
         ],
@@ -2170,20 +1893,18 @@
       },
       {
         "key": "draftkings",
-        "changes": 7,
-        "raises": 7,
+        "changes": 5,
+        "raises": 5,
         "decreases": 0,
-        "net_delta": 7200,
-        "avg_delta_pct": 180.95,
-        "avg_influence_score": 0.628,
-        "partners": 3,
-        "nodes": 7,
+        "net_delta": 5000,
+        "avg_delta_pct": 200,
+        "avg_influence_score": 0.6166,
+        "partners": 1,
+        "nodes": 5,
         "states": [
-          "MA",
           "NJ"
         ],
         "zip_prefixes": [
-          "021",
           "070",
           "071",
           "072",
@@ -2194,51 +1915,12 @@
       },
       {
         "key": "caesars",
-        "changes": 4,
-        "raises": 3,
-        "decreases": 1,
-        "net_delta": 1250,
-        "avg_delta_pct": 42.25,
-        "avg_influence_score": 0.4114,
-        "partners": 2,
-        "nodes": 3,
-        "states": [
-          "MA",
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "016",
-          "021",
-          "084"
-        ],
-        "top_market": "match_winner"
-      },
-      {
-        "key": "fanduel",
-        "changes": 3,
-        "raises": 3,
-        "decreases": 0,
-        "net_delta": 1900,
-        "avg_delta_pct": 72.22,
-        "avg_influence_score": 0.6423,
-        "partners": 2,
-        "nodes": 3,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "071"
-        ],
-        "top_market": "match_winner"
-      },
-      {
-        "key": "betmgm",
         "changes": 2,
         "raises": 1,
         "decreases": 1,
-        "net_delta": 900,
-        "avg_delta_pct": 47.5,
-        "avg_influence_score": 0.348,
+        "net_delta": 250,
+        "avg_delta_pct": 18.43,
+        "avg_influence_score": 0.2583,
         "partners": 2,
         "nodes": 2,
         "states": [
@@ -2246,23 +1928,41 @@
           "NJ"
         ],
         "zip_prefixes": [
-          "021",
-          "071"
+          "016",
+          "084"
         ],
         "top_market": "match_winner"
+      },
+      {
+        "key": "fanduel",
+        "changes": 1,
+        "raises": 1,
+        "decreases": 0,
+        "net_delta": 400,
+        "avg_delta_pct": 50,
+        "avg_influence_score": 0.5936,
+        "partners": 1,
+        "nodes": 1,
+        "states": [
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "071"
+        ],
+        "top_market": "spread"
       }
     ],
     "states": [
       {
         "key": "NJ",
-        "changes": 19,
-        "raises": 17,
-        "decreases": 2,
-        "net_delta": 13850,
-        "avg_delta_pct": 125.76,
-        "avg_influence_score": 0.5458,
-        "partners": 3,
-        "nodes": 10,
+        "changes": 13,
+        "raises": 13,
+        "decreases": 0,
+        "net_delta": 10850,
+        "avg_delta_pct": 155.21,
+        "avg_influence_score": 0.6015,
+        "partners": 2,
+        "nodes": 7,
         "states": [
           "NJ"
         ],
@@ -2278,87 +1978,12 @@
       },
       {
         "key": "MA",
-        "changes": 5,
-        "raises": 4,
+        "changes": 1,
+        "raises": 0,
         "decreases": 1,
-        "net_delta": 2450,
-        "avg_delta_pct": 65.58,
-        "avg_influence_score": 0.4801,
-        "partners": 1,
-        "nodes": 3,
-        "states": [
-          "MA"
-        ],
-        "zip_prefixes": [
-          "016",
-          "021"
-        ],
-        "top_market": "match_winner"
-      }
-    ],
-    "zips": [
-      {
-        "key": "071",
-        "changes": 7,
-        "raises": 6,
-        "decreases": 1,
-        "net_delta": 4700,
-        "avg_delta_pct": 98.81,
-        "avg_influence_score": 0.5568,
-        "partners": 2,
-        "nodes": 3,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "071"
-        ],
-        "top_market": "match_winner"
-      },
-      {
-        "key": "073",
-        "changes": 4,
-        "raises": 3,
-        "decreases": 1,
-        "net_delta": 1900,
-        "avg_delta_pct": 107.5,
-        "avg_influence_score": 0.4225,
-        "partners": 2,
-        "nodes": 2,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "073"
-        ],
-        "top_market": "over_under"
-      },
-      {
-        "key": "021",
-        "changes": 3,
-        "raises": 3,
-        "decreases": 0,
-        "net_delta": 2500,
-        "avg_delta_pct": 103.89,
-        "avg_influence_score": 0.6558,
-        "partners": 1,
-        "nodes": 2,
-        "states": [
-          "MA"
-        ],
-        "zip_prefixes": [
-          "021"
-        ],
-        "top_market": "over_under"
-      },
-      {
-        "key": "016",
-        "changes": 2,
-        "raises": 1,
-        "decreases": 1,
-        "net_delta": -50,
-        "avg_delta_pct": 8.12,
-        "avg_influence_score": 0.2165,
+        "net_delta": -450,
+        "avg_delta_pct": -40.91,
+        "avg_influence_score": 0,
         "partners": 1,
         "nodes": 1,
         "states": [
@@ -2368,6 +1993,26 @@
           "016"
         ],
         "top_market": "match_winner"
+      }
+    ],
+    "zips": [
+      {
+        "key": "071",
+        "changes": 3,
+        "raises": 3,
+        "decreases": 0,
+        "net_delta": 2000,
+        "avg_delta_pct": 133.33,
+        "avg_influence_score": 0.6089,
+        "partners": 1,
+        "nodes": 1,
+        "states": [
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "071"
+        ],
+        "top_market": "spread"
       },
       {
         "key": "070",
@@ -2406,6 +2051,24 @@
         "top_market": "spread"
       },
       {
+        "key": "073",
+        "changes": 2,
+        "raises": 2,
+        "decreases": 0,
+        "net_delta": 1600,
+        "avg_delta_pct": 175,
+        "avg_influence_score": 0.6051,
+        "partners": 1,
+        "nodes": 1,
+        "states": [
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "073"
+        ],
+        "top_market": "spread"
+      },
+      {
         "key": "075",
         "changes": 2,
         "raises": 2,
@@ -2438,6 +2101,24 @@
         ],
         "zip_prefixes": [
           "084"
+        ],
+        "top_market": "match_winner"
+      },
+      {
+        "key": "016",
+        "changes": 1,
+        "raises": 0,
+        "decreases": 1,
+        "net_delta": -450,
+        "avg_delta_pct": -40.91,
+        "avg_influence_score": 0,
+        "partners": 1,
+        "nodes": 1,
+        "states": [
+          "MA"
+        ],
+        "zip_prefixes": [
+          "016"
         ],
         "top_market": "match_winner"
       }
@@ -2580,139 +2261,6 @@
         "top_market": "spread"
       },
       {
-        "node_id": "limit-demo-atlantic",
-        "partner_node_id": "limit-demo-atlantic",
-        "parent_node_id": null,
-        "node_name": "Atlantic Partner Desk",
-        "node_type": "partner",
-        "downline_depth": 0,
-        "state_code": "NJ",
-        "location": "Newark",
-        "zip_code": "07102",
-        "zip_prefix": "071",
-        "license_status": "active",
-        "violation_count_30d": 0,
-        "changes": 2,
-        "scored_changes": 2,
-        "proof_verified_changes": 2,
-        "raises": 2,
-        "decreases": 0,
-        "net_delta": 2000,
-        "avg_delta_pct": 91.67,
-        "avg_influence_score": 0.7376,
-        "sportsbooks": [
-          "draftkings",
-          "fanduel"
-        ],
-        "top_market": "match_winner"
-      },
-      {
-        "node_id": "limit-demo-newark-agent",
-        "partner_node_id": "limit-demo-atlantic",
-        "parent_node_id": "limit-demo-atlantic",
-        "node_name": "Newark Agent Lane",
-        "node_type": "agent",
-        "downline_depth": 1,
-        "state_code": "NJ",
-        "location": "Newark",
-        "zip_code": "07103",
-        "zip_prefix": "071",
-        "license_status": "active",
-        "violation_count_30d": 1,
-        "changes": 2,
-        "scored_changes": 2,
-        "proof_verified_changes": 1,
-        "raises": 1,
-        "decreases": 1,
-        "net_delta": 700,
-        "avg_delta_pct": 54.17,
-        "avg_influence_score": 0.2978,
-        "sportsbooks": [
-          "betmgm",
-          "fanduel"
-        ],
-        "top_market": "match_winner"
-      },
-      {
-        "node_id": "limit-demo-jersey-sub",
-        "partner_node_id": "limit-demo-atlantic",
-        "parent_node_id": "limit-demo-newark-agent",
-        "node_name": "Jersey City Sub-Agent",
-        "node_type": "sub_agent",
-        "downline_depth": 2,
-        "state_code": "NJ",
-        "location": "Jersey City",
-        "zip_code": "07302",
-        "zip_prefix": "073",
-        "license_status": "active",
-        "violation_count_30d": 2,
-        "changes": 2,
-        "scored_changes": 2,
-        "proof_verified_changes": 1,
-        "raises": 1,
-        "decreases": 1,
-        "net_delta": 300,
-        "avg_delta_pct": 40,
-        "avg_influence_score": 0.2399,
-        "sportsbooks": [
-          "hardrock"
-        ],
-        "top_market": "over_under"
-      },
-      {
-        "node_id": "limit-demo-baystate",
-        "partner_node_id": "limit-demo-baystate",
-        "parent_node_id": null,
-        "node_name": "Bay State Partner Desk",
-        "node_type": "partner",
-        "downline_depth": 0,
-        "state_code": "MA",
-        "location": "Boston",
-        "zip_code": "02108",
-        "zip_prefix": "021",
-        "license_status": "active",
-        "violation_count_30d": 0,
-        "changes": 2,
-        "scored_changes": 2,
-        "proof_verified_changes": 2,
-        "raises": 2,
-        "decreases": 0,
-        "net_delta": 1800,
-        "avg_delta_pct": 97.5,
-        "avg_influence_score": 0.6959,
-        "sportsbooks": [
-          "betmgm",
-          "caesars"
-        ],
-        "top_market": "match_winner"
-      },
-      {
-        "node_id": "limit-demo-boston-agent",
-        "partner_node_id": "limit-demo-baystate",
-        "parent_node_id": "limit-demo-baystate",
-        "node_name": "Boston Agent Lane",
-        "node_type": "agent",
-        "downline_depth": 1,
-        "state_code": "MA",
-        "location": "Boston",
-        "zip_code": "02111",
-        "zip_prefix": "021",
-        "license_status": "active",
-        "violation_count_30d": 1,
-        "changes": 1,
-        "scored_changes": 1,
-        "proof_verified_changes": 1,
-        "raises": 1,
-        "decreases": 0,
-        "net_delta": 700,
-        "avg_delta_pct": 116.67,
-        "avg_influence_score": 0.5756,
-        "sportsbooks": [
-          "draftkings"
-        ],
-        "top_market": "over_under"
-      },
-      {
         "node_id": "limit-demo-worcester-sub",
         "partner_node_id": "limit-demo-baystate",
         "parent_node_id": "limit-demo-boston-agent",
@@ -2725,14 +2273,14 @@
         "zip_prefix": "016",
         "license_status": "active",
         "violation_count_30d": 3,
-        "changes": 2,
-        "scored_changes": 2,
-        "proof_verified_changes": 1,
-        "raises": 1,
+        "changes": 1,
+        "scored_changes": 1,
+        "proof_verified_changes": 0,
+        "raises": 0,
         "decreases": 1,
-        "net_delta": -50,
-        "avg_delta_pct": 8.12,
-        "avg_influence_score": 0.2165,
+        "net_delta": -450,
+        "avg_delta_pct": -40.91,
+        "avg_influence_score": 0,
         "sportsbooks": [
           "caesars"
         ],
@@ -2792,13 +2340,13 @@
       }
     ],
     "audit": {
-      "changeRows": 24,
-      "hierarchyLinked": 13,
-      "geoLinked": 13,
-      "licensed": 13,
-      "scored": 24,
-      "proofVerified": 21,
-      "coveragePct": 96.6,
+      "changeRows": 14,
+      "hierarchyLinked": 8,
+      "geoLinked": 8,
+      "licensed": 8,
+      "scored": 14,
+      "proofVerified": 13,
+      "coveragePct": 98.1,
       "sourceTables": [
         "tree_nodes",
         "partner_account_limits",
