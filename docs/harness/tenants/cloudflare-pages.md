@@ -148,6 +148,9 @@ static asset and a Pages Function response. `_headers` does not apply to
 Functions, so both checks are required. The shared contract also restricts
 form targets and frames through CSP and disables unused motion, capture, camera,
 location, microphone, payment, and USB capabilities through Permissions Policy.
+Portal asset checks accept an unauthenticated Cloudflare Access 302 as protected;
+public-plane header probes add a cache-busting query so a just-deployed contract
+is not compared with a stale 60-second registry response.
 
 ### Local CI and Pages deploys
 

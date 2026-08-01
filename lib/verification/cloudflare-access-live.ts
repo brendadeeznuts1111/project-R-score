@@ -316,11 +316,17 @@ export async function probePublicCloudflareRoute(
   const ac = new AbortController();
   const timer = setTimeout(() => ac.abort(), opts?.timeoutMs ?? 10_000);
   try {
-    const response = await fetchImpl(url, {
+    const probeUrl = new URL(url);
+    probeUrl.searchParams.set('_cf_probe', Date.now().toString(36));
+    const response = await fetchImpl(probeUrl.toString(), {
       method: 'GET',
       redirect: 'manual',
       signal: ac.signal,
-      headers: { Accept: 'application/json', 'Cache-Control': 'no-cache' },
+      headers: {
+        Accept: 'application/json',
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+      },
     });
     const accessEnforced = isCloudflareAccessEnforced(response.status, response.headers);
     const contentType = response.headers.get('content-type');
