@@ -247,9 +247,11 @@ export async function functionsLibImportClosure(rootDir: string): Promise<string
 
 export const FUNCTIONS_LIB_IMPORT_ALLOWLIST = [
   'config/r2-env.ts',
+  'lib/bun-executable.ts',
   'lib/channels/channels.ts',
   'lib/core/core-errors.ts',
   'lib/core/core-types.ts',
+  'lib/docs/bun-site-url.ts',
   'lib/docs/repo-docs.ts',
   'lib/factory/http-keys.ts',
   'lib/harness/monorepo-health.ts',

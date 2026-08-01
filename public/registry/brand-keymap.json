@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-01T03:09:13.836Z",
+  "generatedAt": "2026-08-01T03:57:26.691Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -966,24 +966,28 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 2,
+        "references": 4,
         "constructors": {
-          "as": 1,
+          "as": 20,
           "try": 0,
           "parse": 0
         },
         "guards": 0,
         "files": [
+          "lib/docs/bun-brand-contract.ts",
+          "lib/docs/bun-brand-usages.ts",
           "lib/docs/token-ref-adapter.ts",
           "lib/docs/token-ref.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 2,
-            "constructionCalls": 1,
+            "references": 4,
+            "constructionCalls": 20,
             "guardCalls": 0,
             "files": [
+              "lib/docs/bun-brand-contract.ts",
+              "lib/docs/bun-brand-usages.ts",
               "lib/docs/token-ref-adapter.ts",
               "lib/docs/token-ref.ts"
             ]
@@ -1543,7 +1547,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 11,
+        "references": 16,
         "constructors": {
           "as": 3,
           "try": 0,
@@ -1551,6 +1555,7 @@
         },
         "guards": 0,
         "files": [
+          "lib/docs/bun-brand-usages.ts",
           "lib/dod/evidence.ts",
           "lib/screenshot-remediation.ts",
           "lib/time.ts"
@@ -1558,10 +1563,11 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 11,
+            "references": 16,
             "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
+              "lib/docs/bun-brand-usages.ts",
               "lib/dod/evidence.ts",
               "lib/screenshot-remediation.ts",
               "lib/time.ts"
@@ -2832,7 +2838,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 3,
+        "references": 5,
         "constructors": {
           "as": 3,
           "try": 0,
@@ -2840,15 +2846,17 @@
         },
         "guards": 0,
         "files": [
+          "lib/docs/bun-brand-usages.ts",
           "lib/prediction/limit-forecast-evidence.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 3,
+            "references": 5,
             "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
+              "lib/docs/bun-brand-usages.ts",
               "lib/prediction/limit-forecast-evidence.ts"
             ]
           },

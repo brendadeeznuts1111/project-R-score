@@ -54,6 +54,11 @@ const STEPS: BakeStep[] = [
     note: 'brand-keymap.json',
   },
   {
+    id: 'bun-brand-map',
+    bunArgs: ['run', 'bun:brand-map'],
+    note: 'bun-brand-map.json (Bun API × brand cross-map)',
+  },
+  {
     id: 'glossary',
     bunArgs: ['run', 'glossary:portal'],
     note: 'domain-glossary.json',
