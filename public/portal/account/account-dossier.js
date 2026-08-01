@@ -525,7 +525,12 @@ export function buildDossierSoftPlays(softExport, partnerCode, opts = {}) {
   const source = softExport?.source || 'unavailable';
   const path = softExport?.path || '/registry/soft-accounting-export.json';
   const all = Array.isArray(softExport?.plays)
-    ? softExport.plays.filter(p => String(p?.partnerCode || '').toUpperCase() === code)
+    ? softExport.plays.filter(
+        p =>
+          String(p?.partnerCode || '')
+            .trim()
+            .toUpperCase() === code
+      )
     : [];
   all.sort((a, b) => String(a.placedAt || '').localeCompare(String(b.placedAt || '')));
   const plays = all.slice().reverse().slice(0, limit);

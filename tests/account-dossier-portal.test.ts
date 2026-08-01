@@ -202,6 +202,48 @@ describe('account dossier helpers', () => {
     expect(dossier.links.softAccounting).toBe('/registry/soft-accounting-export.json');
   });
 
+  test('normalizes padded Soft partner codes before joining', () => {
+    const softPlays = buildDossierSoftPlays(
+      {
+        source: 'soft-ct',
+        path: '/registry/soft-accounting-export.json',
+        plays: [{ partnerCode: ' ASH ', placedAt: '2026-07-31T00:00:00.000Z' }],
+      },
+      'ASH'
+    );
+
+    expect(softPlays?.available).toBe(true);
+    expect(softPlays?.playCount).toBe(1);
+  });
+
+  test('keeps the dossier available when optional Soft accounting is absent', async () => {
+    const [limitRaises, partnersOps, handshake] = await Promise.all([
+      Bun.file('public/registry/limit-raises.json').json(),
+      Bun.file('public/registry/partners-ops.json').json(),
+      Bun.file('public/registry/telegram-handshake.json').json(),
+    ]);
+    const ash = partnersOps.partners.find((row: { code: string }) => row.code === 'ASH');
+    const seed =
+      ash?.callSign ||
+      limitRaises.accountProfiles?.profiles?.find(
+        (row: { callSign?: string }) => String(row.callSign || '').startsWith('ASH')
+      )?.treeNodeId ||
+      'ASH';
+    const accountId = resolveAccountId(seed, collectAccountIds(limitRaises));
+    const dossier = buildAccountDossier({
+      accountId,
+      limitRaises,
+      partnersOps,
+      handshake,
+      softAccounting: null,
+      hours: 168,
+    });
+
+    expect(dossier.partnerCode).toBe('ASH');
+    expect(dossier.softPlays?.available).toBe(false);
+    expect(dossier.softPlays?.playCount).toBe(0);
+  });
+
   test('includes depth-2 downlines from profile lineage when patterns are empty', () => {
     const partner = 'partner-root-id';
     const agent = 'agent-mid-id';
@@ -404,6 +446,9 @@ describe('account dossier portal wiring', () => {
     expect(html).toContain('ops.view.per_account');
     expect(html).toContain('ops.view.per_play');
     expect(html).toContain('soft-accounting-export.json');
+    expect(html).toContain(
+      "loadJson('/registry/soft-accounting-export.json').catch(() => null)"
+    );
     expect(html).toContain('ops.view.account_deposits');
     expect(html).toContain('telegram.message.command');
     expect(html).toContain('Connected tree');
