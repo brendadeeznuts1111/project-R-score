@@ -21,10 +21,14 @@ describe('shared glossary UX contract', () => {
     expect(ux).toContain('export function surfaceByPath');
     expect(ux).toContain('export function markPortalSurface');
     expect(ux).toContain('export function sectionDomIdFromSurface');
+    expect(ux).toContain('export function sectionTitleFromSurface');
+    expect(ux).toContain('export function applySectionTitles');
+    expect(ux).toContain('export function primarySectionTitleEl');
     expect(ux).toContain('export function sectionHashFromLocation');
     expect(ux).toContain('export function scrollGlossarySection');
     expect(ux).toContain('export function scrollGlossarySectionFromUrl');
     expect(ux).toContain('scrollSections');
+    expect(ux).toContain('applySectionTitles');
     expect(ux).toContain('el.scrollIntoView');
     expect(ux).toContain("const conceptId = surface?.concept ?? 'ui.semantic.surface'");
     expect(ux).toContain("document.documentElement.dataset.brand = 'factorywager'");
@@ -36,9 +40,11 @@ describe('shared glossary UX contract', () => {
   });
 
   test('resolves v3 surface domId without board-local id inventing', async () => {
-    const { sectionDomIdFromSurface, sectionConceptFromSurface } = await import(
-      '../public/portal/components/glossary-ux.js'
-    );
+    const {
+      sectionDomIdFromSurface,
+      sectionConceptFromSurface,
+      sectionTitleFromSurface,
+    } = await import('../public/portal/components/glossary-ux.js');
     const surface = {
       path: '/portal/account/',
       concept: 'page.accountDossier',
@@ -60,6 +66,20 @@ describe('shared glossary UX contract', () => {
     expect(sectionDomIdFromSurface(surface, 'identity')).toBe('ad-section-identity');
     expect(sectionDomIdFromSurface(surface, 'missing')).toBeNull();
     expect(sectionConceptFromSurface(surface, 'outs')).toBe('section.partnersOuts');
+    expect(sectionTitleFromSurface(surface, 'identity')).toBe('Identity');
+    expect(sectionTitleFromSurface(surface, 'missing')).toBeNull();
     expect(sectionDomIdFromSurface({ sections: 'legacy' }, 'identity')).toBeNull();
+  });
+
+  test('applySectionTitles is wireable without inventing concept.label as heading', async () => {
+    const ux = await Bun.file('public/portal/components/glossary-ux.js').text();
+    // Board heading path uses section.title; tooltips still use concept label/description
+    expect(ux).toContain('target.textContent = title');
+    expect(ux).toContain('sectionEl.dataset.sectionTitle = title');
+    expect(ux).toContain('a.section-anchor');
+    expect(ux).toContain('options.applySectionTitles !== false');
+    // Limits explicitly enables the PoC
+    const limits = await Bun.file('public/portal/limits/limit-profiles.js').text();
+    expect(limits).toContain('applySectionTitles: true');
   });
 });
