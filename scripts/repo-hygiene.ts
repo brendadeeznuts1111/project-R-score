@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
@@ -279,6 +280,28 @@ async function findTrackedViolations(): Promise<Violation[]> {
   return dedupeViolations(violations);
 }
 
+/**
+ * Flag a stale .git/index.lock: a crashed git process leaves a zero-byte
+ * lock behind that blocks every subsequent git write until removed.
+ * A lock younger than 30 min is treated as a live operation (pre-commit
+ * hooks can hold the index for minutes).
+ */
+async function checkStaleIndexLock(): Promise<Violation[]> {
+  const lock = joinPath(ROOT, '.git/index.lock');
+  const lockFile = Bun.file(lock);
+  if (!(await lockFile.exists())) return [];
+  const ageMin = (Date.now() - lockFile.lastModified) / 60_000;
+  if (ageMin <= 30) return [];
+  return [
+    {
+      file: '.git/index.lock',
+      rule: 'stale-index-lock',
+      owner: 'repository',
+      action: `lock is ${Math.round(ageMin)} min old and blocks all git writes — confirm no git process is running, then: rm .git/index.lock`,
+    },
+  ];
+}
+
 async function main() {
   const stagedOnly = Bun.argv.includes('--staged');
   const trackedOnly = Bun.argv.includes('--tracked');
@@ -305,6 +328,7 @@ async function main() {
     findings.push(...(await findRootClutter()));
     findings.push(...(await findStrayFiles()));
     findings.push(...(await checkStagedSecrets()));
+    findings.push(...(await checkStaleIndexLock()));
   }
   const violations = dedupeViolations(findings);
 
