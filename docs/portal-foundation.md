@@ -305,15 +305,48 @@ Component readiness (static-fit): `bun run portal:css:score:components`.
 | Telegram topics | Package-forum / surface / brand marks | [`lib/telegram/telegram-color-kernel.ts`](../lib/telegram/telegram-color-kernel.ts) | `portal:colors:check` aliases · Bun.color load assert · telegram color-kernel tests | Aliased: `topicOps`/`surfacePartner`←accent · `topicLiquidityOuts`/`topicDeposits`←green · `topicAccounting`/`surfaceAllAccounting`←yellow · `topicAlerts`/`topicWithdrawals`←red · `unknown`/`topicGeneral`/`topicReconcile`←textDim. Extended: `brand` · `surfaceHq` · `surfaceSandbox`. Fallback: missing / unknown → `TELEGRAM_COLORS.unknown` |
 | Components | `var(--token, <fallback>)` pairs in injected component styles (the fallback IS the live color when no page override exists) | [`theme.jsonc`](../public/portal/theme.jsonc) `card` block (light-surface card palette, kernel-aliased to light tokens) → `--portal-card-*` CSS vars | `portal:colors:check` component plane via [`lib/portal/component-color-align.ts`](../lib/portal/component-color-align.ts) · [`tests/portal-component-color-align.test.ts`](../tests/portal-component-color-align.test.ts) | `--portal-health-ok`←`card.healthOk` · `--portal-accent`←`card.accent` · `--tone-ok`←`dark.green` · `--accent-glow`←`dark.accentGlow` |
 
-`bun run portal:colors:check` / `bun run validate:colors` (Bun.color via [`lib/portal/color-kernel-align.ts`](../lib/portal/color-kernel-align.ts) for aliases, [`lib/portal/component-color-align.ts`](../lib/portal/component-color-align.ts) for components) enforces the aliased columns only. Extended keys may diverge. Check-only — no TypeScript rewrite. Chained from `portal:theme:check` after CSS stale check. Component comparison uses Bun.color `{rgba}` (not `HEX` — HEX drops the alpha channel, so `accent-glow` alpha drift would be invisible). Unmapped component vars warn for triage into `COMPONENT_VAR_TOKEN_MAP`.
+`bun run portal:colors:check` / `bun run validate:colors` (Bun.color via [`lib/portal/color-kernel-align.ts`](../lib/portal/color-kernel-align.ts) for aliases, [`lib/portal/component-color-align.ts`](../lib/portal/component-color-align.ts) for components) enforces the aliased columns plus **minimum count floors** (`COLOR_KERNEL_COUNT_FLOORS`). Extended keys may diverge. Check-only — no TypeScript rewrite. Chained from `portal:theme:check` after CSS stale check. Component comparison uses Bun.color `{rgba}` (not `HEX` — HEX drops the alpha channel, so `accent-glow` alpha drift would be invisible). Unmapped component vars warn for triage into `COMPONENT_VAR_TOKEN_MAP`.
 
-> **Color kernel claim:** When theme / kernels are touched, run `bun run validate:colors` and paste the Claim / Evidence block into the PR **Color Kernel Evidence** slot. The claim should read that theme-dark aliases are complete and conflict-free. Evidence lines are per-plane coverage counts (not extended-key uniqueness or CSS contrast).
+These **planes are not UI elevation layers** (not Base / Raised / Overlay / Modal). They are color SSOTs: chrome tokens · glossary palette · partner-ops concepts · telegram topic/surface roles.
+
+### Theme-dark alias hub
+
+What `validate:colors` fail-closes (plus floors): `theme.dark` semantic tokens fan out to consumer keys.
+
+```mermaid
+flowchart LR
+  theme["theme.jsonc dark"]
+  theme --> accent["accent"]
+  theme --> green["green"]
+  theme --> yellow["yellow"]
+  theme --> red["red"]
+  theme --> textDim["textDim"]
+  accent --> gAccent["glossary.accent"]
+  accent --> pKalshi["partner-ops.kalshi"]
+  accent --> tOps["telegram.topicOps / surfacePartner"]
+  green --> gGreen["glossary.green"]
+  green --> pTennis["partner-ops.tennis"]
+  green --> tLiq["telegram.topicLiquidityOuts / topicDeposits"]
+  yellow --> gYellow["glossary.yellow"]
+  yellow --> pMid["partner-ops.middleware"]
+  yellow --> tAcct["telegram.topicAccounting / surfaceAllAccounting"]
+  red --> gRed["glossary.red"]
+  red --> pTrade["partner-ops.trading"]
+  red --> tAlert["telegram.topicAlerts / topicWithdrawals"]
+  textDim --> gMuted["glossary.muted"]
+  textDim --> pEnv["partner-ops.env / unknown"]
+  textDim --> tUnk["telegram.unknown / topicGeneral / topicReconcile"]
+```
+
+> **Color kernel claim:** When theme / kernels are touched, run `bun run validate:colors` and paste the Claim / Evidence block into the PR **Color Kernel Evidence** slot. Machines use `bun run validate:colors -- --json` (`status` · `checks`). Human paste stays the default text form. Evidence is per-plane coverage + floors — not extended-key uniqueness or CSS contrast.
 
 ```bash
 bun run portal:theme:sync          # theme.jsonc → theme-tokens.css
 bun run portal:theme:check         # tokens CSS stale + color-kernel aliases
 bun run portal:colors:check        # alias Claim/Evidence (same as validate:colors)
 bun run validate:colors            # alias of portal:colors:check — paste for PRs
+bun run validate:colors -- --json  # machine report (status · checks · floors)
+bun run test:colors                # unit + validate:colors smoke
 bun run portal:css:build           # sync theme + lower CSS → dist/style.css
 bun run portal:css:build:minify    # → also dist/style.min.css
 bun run portal:css:check

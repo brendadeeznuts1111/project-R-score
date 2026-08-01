@@ -4,10 +4,12 @@ import { describe, expect, test } from 'bun:test';
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import {
   assessColorKernelAlign,
+  COLOR_KERNEL_COUNT_FLOORS,
   colorKernelClaimReport,
   formatColorKernelClaimReport,
   GLOSSARY_EXTENDED_KEYS,
   THEME_DARK_ALIAS_CHECKS,
+  type ColorKernelCheckId,
 } from '../lib/portal/color-kernel-align.ts';
 import { PORTAL_KERNEL_PALETTE } from '../lib/portal/portal-kernel-palette.ts';
 import { portalTheme } from '../lib/portal/theme.ts';
@@ -29,22 +31,24 @@ describe('portal color-kernel align', () => {
       expect(aliasKeys.has(key)).toBe(false);
       expect(Bun.color(PORTAL_KERNEL_PALETTE[key], 'HEX')).toMatch(/^#[0-9A-F]{6}$/i);
     }
-    // Partner-ops extras that must not be forced onto theme dark SSOT
     expect(PARTNER_OPS_COLORS.polymarket).toBeTruthy();
     expect(PARTNER_OPS_COLORS.pinnacle).toBeTruthy();
     expect(PARTNER_OPS_COLORS.research).toBeTruthy();
   });
 
-  test('colorKernelClaimReport is paste-ready when aligned', () => {
+  test('colorKernelClaimReport passes floors and status', () => {
     const report = colorKernelClaimReport();
     expect(report.ok).toBe(true);
+    expect(report.status).toBe('pass');
     expect(report.claim).toContain('complete and conflict-free');
     expect(report.claim).toContain(`theme v${portalTheme.version}`);
     expect(report.evidence.length).toBeGreaterThanOrEqual(4);
-    expect(report.evidence.some(l => l.startsWith('✓ Portal chrome:'))).toBe(true);
-    expect(report.evidence.some(l => l.startsWith('✓ Glossary chips:'))).toBe(true);
-    expect(report.evidence.some(l => l.startsWith('✓ Partner-ops:'))).toBe(true);
-    expect(report.evidence.some(l => l.startsWith('✓ Telegram topics:'))).toBe(true);
+    for (const id of Object.keys(COLOR_KERNEL_COUNT_FLOORS) as ColorKernelCheckId[]) {
+      const check = report.checks[id];
+      expect(check.expectedMin).toBe(COLOR_KERNEL_COUNT_FLOORS[id]);
+      expect(check.actual).toBeGreaterThanOrEqual(check.expectedMin);
+      expect(check.ok).toBe(true);
+    }
     const text = formatColorKernelClaimReport(report);
     expect(text).toContain('Claim:');
     expect(text).toContain('Evidence:');
@@ -62,5 +66,27 @@ describe('portal color-kernel align', () => {
     expect(out).toContain('Evidence:');
     expect(out).toContain('Portal chrome:');
     expect(out).toContain('complete and conflict-free');
+  });
+
+  test('check CLI --json emits machine report', () => {
+    const proc = Bun.spawnSync(bunSpawnArgs(['tools/check-portal-color-kernels.ts', '--json']), {
+      cwd: `${import.meta.dir}/..`,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    expect(proc.exitCode).toBe(0);
+    const parsed = JSON.parse(proc.stdout.toString()) as {
+      status: string;
+      ok: boolean;
+      checks: Record<string, { expectedMin: number; actual: number; ok: boolean }>;
+    };
+    expect(parsed.status).toBe('pass');
+    expect(parsed.ok).toBe(true);
+    for (const id of Object.keys(COLOR_KERNEL_COUNT_FLOORS)) {
+      expect(parsed.checks[id]?.ok).toBe(true);
+      expect(parsed.checks[id]?.expectedMin).toBe(
+        COLOR_KERNEL_COUNT_FLOORS[id as ColorKernelCheckId]
+      );
+    }
   });
 });

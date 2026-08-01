@@ -157,35 +157,60 @@ export function assessColorKernelAlign(): ColorKernelAlignResult {
   };
 }
 
+/** Minimum counts — actual may grow; dropping below floor fails the claim. */
+export const COLOR_KERNEL_COUNT_FLOORS = {
+  'chrome.darkTokens': 12,
+  'glossary.themeAliases': 5,
+  'partnerOps.themeAliases': 6,
+  'telegram.themeAliases': 11,
+} as const;
+
+export type ColorKernelCheckId = keyof typeof COLOR_KERNEL_COUNT_FLOORS;
+
+export type ColorKernelCheck = {
+  expectedMin: number;
+  actual: number;
+  ok: boolean;
+};
+
 export type ColorKernelClaimReport = {
   ok: boolean;
+  status: 'pass' | 'fail';
   claim: string;
   /** Paste lines for PR Color Kernel Evidence (includes per-plane ✓/✗). */
   evidence: string[];
   themeVersion: string;
   mismatches: ColorKernelMismatch[];
+  checks: Record<ColorKernelCheckId, ColorKernelCheck>;
 };
 
 function aliasCount(consumer: ColorKernelConsumer): number {
   return THEME_DARK_ALIAS_CHECKS.filter(r => r.consumer === consumer).length;
 }
 
+function mkCheck(id: ColorKernelCheckId, actual: number): ColorKernelCheck {
+  const expectedMin = COLOR_KERNEL_COUNT_FLOORS[id];
+  return { expectedMin, actual, ok: actual >= expectedMin };
+}
+
 function planeMark(
   consumer: ColorKernelConsumer | 'chrome',
-  mismatches: readonly ColorKernelMismatch[]
+  mismatches: readonly ColorKernelMismatch[],
+  floorOk: boolean
 ): '✓' | '✗' {
+  if (!floorOk) return '✗';
   if (consumer === 'chrome') return '✓';
   return mismatches.some(m => m.consumer === consumer) ? '✗' : '✓';
 }
 
 /**
- * Paste-ready Claim → evidence for theme-dark alias alignment.
- * `ok` is alias-align only; evidence lines include live counts from each plane.
+ * Claim → evidence for theme-dark alias alignment + count floors.
+ * `ok` / `status` require alias-align AND every floor (actual ≥ expectedMin).
  */
 export function colorKernelClaimReport(
   result: ColorKernelAlignResult = assessColorKernelAlign()
 ): ColorKernelClaimReport {
-  const { ok, mismatches, themeVersion } = result;
+  const { ok: alignOk, mismatches, themeVersion } = result;
   const darkTokenCount = Object.keys(portalTheme.dark).length;
   const glossAliases = aliasCount('glossary');
   const partnerAliases = aliasCount('partner-ops');
@@ -197,14 +222,32 @@ export function colorKernelClaimReport(
   const telegramKeys = Object.keys(TELEGRAM_COLORS).length;
   const topicRoles = Object.keys(TELEGRAM_COLOR_ROLES.topic).length;
 
+  const checks: Record<ColorKernelCheckId, ColorKernelCheck> = {
+    'chrome.darkTokens': mkCheck('chrome.darkTokens', darkTokenCount),
+    'glossary.themeAliases': mkCheck('glossary.themeAliases', glossAliases),
+    'partnerOps.themeAliases': mkCheck('partnerOps.themeAliases', partnerAliases),
+    'telegram.themeAliases': mkCheck('telegram.themeAliases', telegramAliases),
+  };
+  const floorsOk = Object.values(checks).every(c => c.ok);
+  const ok = alignOk && floorsOk;
+  const status: 'pass' | 'fail' = ok ? 'pass' : 'fail';
+
   const evidence: string[] = [
-    `${planeMark('chrome', mismatches)} Portal chrome: theme v${themeVersion} · ${darkTokenCount} dark tokens (SSOT theme.jsonc)`,
-    `${planeMark('glossary', mismatches)} Glossary chips: ${glossAliases} theme aliases · ${paletteKeys} palette keys · ${categories} categories`,
-    `${planeMark('partner-ops', mismatches)} Partner-ops: ${partnerAliases} theme aliases · ${partnerPalette} palette keys · ${concepts} concept→key mappings (fallback unknown)`,
-    `${planeMark('telegram', mismatches)} Telegram topics: ${telegramAliases} theme aliases · ${telegramKeys} color keys · ${topicRoles} topic roles (fallback unknown)`,
+    `${planeMark('chrome', mismatches, checks['chrome.darkTokens'].ok)} Portal chrome: theme v${themeVersion} · ${darkTokenCount} dark tokens (SSOT theme.jsonc)`,
+    `${planeMark('glossary', mismatches, checks['glossary.themeAliases'].ok)} Glossary chips: ${glossAliases} theme aliases · ${paletteKeys} palette keys · ${categories} categories`,
+    `${planeMark('partner-ops', mismatches, checks['partnerOps.themeAliases'].ok)} Partner-ops: ${partnerAliases} theme aliases · ${partnerPalette} palette keys · ${concepts} concept→key mappings (fallback unknown)`,
+    `${planeMark('telegram', mismatches, checks['telegram.themeAliases'].ok)} Telegram topics: ${telegramAliases} theme aliases · ${telegramKeys} color keys · ${topicRoles} topic roles (fallback unknown)`,
   ];
 
-  if (!ok) {
+  if (!floorsOk) {
+    for (const [id, c] of Object.entries(checks) as [ColorKernelCheckId, ColorKernelCheck][]) {
+      if (!c.ok) {
+        evidence.push(`✗ floor ${id}: actual ${c.actual} < min ${c.expectedMin}`);
+      }
+    }
+  }
+
+  if (!alignOk) {
     for (const m of mismatches) {
       evidence.push(
         `✗ ${m.consumer}.${m.key}: theme.dark.${String(m.themeKey)} ${m.expected}≠${m.actual}`
@@ -214,9 +257,9 @@ export function colorKernelClaimReport(
 
   const claim = ok
     ? `Color kernel theme-dark aliases are complete and conflict-free (theme v${themeVersion}).`
-    : `Color kernel theme-dark aliases are inconsistent (theme v${themeVersion}, ${mismatches.length} mismatch(es)).`;
+    : `Color kernel theme-dark aliases are inconsistent (theme v${themeVersion}, ${mismatches.length} mismatch(es), floors ${floorsOk ? 'ok' : 'fail'}).`;
 
-  return { ok, claim, evidence, themeVersion, mismatches };
+  return { ok, status, claim, evidence, themeVersion, mismatches, checks };
 }
 
 /** Stdout paste block for `bun run validate:colors` / `portal:colors:check`. */

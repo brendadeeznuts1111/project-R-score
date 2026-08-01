@@ -8,37 +8,47 @@
  *
  *   bun run portal:colors:check
  *   bun run validate:colors
- *   bun tools/check-portal-color-kernels.ts
+ *   bun run validate:colors -- --json
+ *   bun tools/check-portal-color-kernels.ts --json
  *
- * Prints Claim / Evidence for PR paste. Check-only — never rewrites
- * TypeScript kernels or components.
+ * Default: Claim / Evidence paste. `--json`: machine report via jsonOut.
+ * Check-only — never rewrites TypeScript kernels or components.
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
-import { logTable } from '../lib/console-depth.ts';
+import { jsonOut, logTable } from '../lib/console-depth.ts';
 import {
   THEME_DARK_ALIAS_CHECKS,
   colorKernelClaimReport,
   formatColorKernelClaimReport,
 } from '../lib/portal/color-kernel-align.ts';
 import { assessComponentColorAlign } from '../lib/portal/component-color-align.ts';
+import { hasFlag } from '../scripts/lib/cli-args.ts';
 
 export async function main(): Promise<void> {
   const report = colorKernelClaimReport();
-  console.log(formatColorKernelClaimReport(report));
-  if (!report.ok) {
-    console.error(
-      `portal color kernels drift from theme.jsonc v${report.themeVersion} (${report.mismatches.length} mismatch(es))`
-    );
-    logTable(
-      report.mismatches.map(m => ({
-        consumer: m.consumer,
-        key: m.key,
-        theme: m.themeKey,
-        expected: m.expected,
-        actual: m.actual,
-      })),
-      ['consumer', 'key', 'theme', 'expected', 'actual']
-    );
+  if (hasFlag('json')) {
+    jsonOut(report);
+  } else {
+    console.log(formatColorKernelClaimReport(report));
+  }
+  if (report.status !== 'pass') {
+    if (!hasFlag('json')) {
+      console.error(
+        `portal color kernels drift from theme.jsonc v${report.themeVersion} (${report.mismatches.length} mismatch(es), status=${report.status})`
+      );
+      if (report.mismatches.length > 0) {
+        logTable(
+          report.mismatches.map(m => ({
+            consumer: m.consumer,
+            key: m.key,
+            theme: m.themeKey,
+            expected: m.expected,
+            actual: m.actual,
+          })),
+          ['consumer', 'key', 'theme', 'expected', 'actual']
+        );
+      }
+    }
     process.exit(1);
   }
 
