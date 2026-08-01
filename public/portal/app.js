@@ -21,6 +21,7 @@ import {
 } from './search.js';
 import { computeHealth, healthClass } from './health.js';
 import { tenantRegistryPaths, resolveTenantId } from './components/sidebar.js';
+import { parseGlossaryHash } from './scripts/glossary-router.js';
 
 const REGISTRY_FRESHNESS_THRESHOLD_MS = 24 * 60 * 60 * 1000;
 
@@ -254,6 +255,17 @@ function syncFiltersFromHash() {
   renderGrid(packages);
 }
 
+// ── Glossary hash routing ────────────────────────────────────────────────
+
+function scrollToConcept(concept) {
+  const el = document.getElementById(concept) || document.querySelector(`[data-concept="${concept}"]`);
+  if (el) {
+    el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    el.classList.add('concept-highlight');
+    setTimeout(() => el.classList.remove('concept-highlight'), 2000);
+  }
+}
+
 // ── Debounced search ────────────────────────────────────────────────────
 
 let searchTimer = 0;
@@ -361,6 +373,12 @@ async function init() {
       : hashState.project;
     if (deepProject && registryIndex?.packages?.[deepProject]) {
       showDetail(deepProject, registryIndex.packages[deepProject]);
+    }
+
+    // Deep-link: glossary hash routing
+    const glossary = parseGlossaryHash(window.location.href);
+    if (glossary) {
+      scrollToConcept(glossary.concept);
     }
 
     // ── Keyboard navigation ──────────────────────────────────────────
