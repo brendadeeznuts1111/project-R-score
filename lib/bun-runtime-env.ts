@@ -16,10 +16,10 @@ export const BUN_RUNTIME_ENV_CONTROLS = [
   {
     name: 'BUN_CONFIG_VERBOSE_FETCH',
     scope: 'network',
-    // Debugger plane: true|false|curl (1≡true, 0≡false for backward compat).
-    // Per-request plane is fetch({ verbose }) — not this env.
+    // Debugger plane docs: true|false|curl. Bun also accepts 1≡true and 0≡false
+    // (assessor + runtime smoke). Per-request plane is fetch({ verbose }) — not this env.
     effect:
-      'Fetch/node:http diagnostics: true|1=headers, curl=copy-pasteable curl, false|0=off.',
+      'Fetch/node:http diagnostics: true|1=headers, curl=copy-pasteable curl, false|0=off (1/0 Bun aliases).',
   },
   {
     name: 'BUN_RUNTIME_TRANSPILER_CACHE_PATH',
