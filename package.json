@@ -1976,6 +1976,7 @@
     "search:policy:check": "bun run scripts/check-search-policy-governance.ts",
     "rules": "bun run scripts/bun-rules.ts",
     "prelint": "bun run ci:bun:check",
+    "lane:status": "bun tools/lane-status.ts",
     "lint": "bun scripts/lint-harness.ts --scope=lib --max-warnings=0",
     "lint:fix": "bun scripts/lint-harness.ts --scope=lib --fix --max-warnings=0",
     "lint:bun-native:changed": "bun scripts/lint-bun-native-changed.ts",
