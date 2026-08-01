@@ -92,6 +92,41 @@ Workspace runtime knobs for gates / spawn chains (not install-machine SSOT). See
 | DX one-liners | `bun run dx:catalog` |
 | Wire / brands | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) |
 
+## Utilities guides → codebase map
+
+Sidebar cluster under [guides/util](https://bun.com/docs/guides/util/upgrade) (19 pages). Behavior → Factory owner → status.
+
+| Guide | Behavior | Codebase | Status |
+|-------|----------|----------|--------|
+| [upgrade](https://bun.com/docs/guides/util/upgrade) | `bun upgrade` / `--canary` / `--stable` / install-script pin | Operator / machine Bun pin in [UNIFIED.md](./UNIFIED.md) · `packageManager` · not app code | Ops only — no lib wrapper |
+| [version](https://bun.com/docs/guides/util/version) | `Bun.version` semver · `Bun.revision` git SHA | [`lib/time.ts`](../lib/time.ts) · [`lib/bun-executable.ts`](../lib/bun-executable.ts) `bunRuntimeProvenance` · Soft bake `--json` · capability / doctor rows | Implemented |
+| [main](https://bun.com/docs/guides/util/main) | `Bun.main` = abs path of process entry | `bunRuntimeProvenance().bunMain` · Soft `--json` | Implemented |
+| [entrypoint](https://bun.com/docs/guides/util/entrypoint) | `import.meta.main` CLI guard | [`isModuleEntrypoint`](../lib/bun-executable.ts) · Soft bake CLI · most tools still use bare `import.meta.main` (~220) | Implemented (shared helper); migrate call sites lazily |
+| [which-path-to-executable-bin](https://bun.com/docs/guides/util/which-path-to-executable-bin) | `Bun.which(bin)` → abs path \| `null` | [`resolveBunExecutable`](../lib/bun-executable.ts) (PATH-keyed cache · never bare `"bun"`) · Soft `from-ct` spawn · portal-cli `pass-cli` which | Implemented |
+| [sleep](https://bun.com/docs/guides/util/sleep) | `await Bun.sleep(ms\|Date)` | [`lib/time.ts`](../lib/time.ts) `sleep` / `sleepSync` · telegram / ops rate limits | Implemented |
+| [detect-bun](https://bun.com/docs/guides/util/detect-bun) | `process.versions.bun` or `typeof Bun` | [`isRunningUnderBun`](../lib/bun-executable.ts) | Implemented |
+| [import-meta-dir](https://bun.com/docs/guides/util/import-meta-dir) | `import.meta.dir` abs directory | Widespread (`joinPath(import.meta.dir, …)`) · [`moduleDir`](../lib/bun-path-url.ts) | Implemented (native + thin helper) |
+| [import-meta-file](https://bun.com/docs/guides/util/import-meta-file) | `import.meta.file` basename | [`moduleFile`](../lib/bun-path-url.ts) | Thin helper |
+| [import-meta-path](https://bun.com/docs/guides/util/import-meta-path) | `import.meta.path` abs file path | Widespread · [`modulePath`](../lib/bun-path-url.ts) | Implemented (native + thin helper) |
+| [file-url-to-path](https://bun.com/docs/guides/util/file-url-to-path) | `Bun.fileURLToPath` | [`lib/bun-path-url.ts`](../lib/bun-path-url.ts) — prefer over `node:url` | Implemented |
+| [path-to-file-url](https://bun.com/docs/guides/util/path-to-file-url) | `Bun.pathToFileURL` | same | Implemented |
+| [deep-equals](https://bun.com/docs/guides/util/deep-equals) | `Bun.deepEquals(a,b,strict?)` | [`lib/deep-equals.ts`](../lib/deep-equals.ts) · proof [`lib/bun-utils-proof.ts`](../lib/bun-utils-proof.ts) | Implemented |
+| [escape-html](https://bun.com/docs/guides/util/escape-html) | `Bun.escapeHTML` (`"&'<>`) | [`lib/escape-html.ts`](../lib/escape-html.ts) · portal reports | Implemented |
+| [base64](https://bun.com/docs/guides/util/base64) | `Uint8Array.toBase64` / `fromBase64` (prefer over `btoa`/`atob`) | Prefer bytes APIs in new code; Buffer ok where already Node-shaped | Pattern — no dedicated lib |
+| [gzip](https://bun.com/docs/guides/util/gzip) | `Bun.gzipSync` / `gunzipSync` | AGENTS capability row · artifact packs / oneliners | Available (call Bun directly) |
+| [deflate](https://bun.com/docs/guides/util/deflate) | `Bun.deflateSync` / `inflateSync` | Same; **exception:** PNG IDAT in `tools/generate-portal-icons.ts` needs `node:zlib` (Bun.deflateSync rejected by `Bun.Image` decode) | Available + documented exception |
+| [hash-a-password](https://bun.com/docs/guides/util/hash-a-password) | `Bun.password.hash` / `verify` (argon2id default) | [`SecurityUtils`](../lib/security/index.ts) · identity · claim `security-hash-boundaries` | Implemented |
+| [javascript-uuid](https://bun.com/docs/guides/util/javascript-uuid) | `crypto.randomUUID()` v4 · `Bun.randomUUIDv7()` | [`lib/time.ts`](../lib/time.ts) `randomUUIDv7` · evidence / telegram ids | Implemented (v7 preferred in harness) |
+
+**Harness rules from this cluster**
+
+1. Nested `Bun.spawn` of bun → `resolveBunExecutable()` only (never bare `"bun"`).
+2. CLI `if` guard → `isModuleEntrypoint(import.meta)` / `import.meta.main` (entrypoint; pass **caller** meta); use `Bun.main` when you need the abs path string.
+3. HTML reports → `escapeHTML` wrapper; structural evidence compare → `deepEquals` wrapper.
+4. Password / API-key hashes → `SecurityUtils` / `Bun.password` (argon2id).
+
+Smoke: `bun test tests/bun-executable.test.ts tests/bun-path-url.test.ts tests/bake-soft-accounting-export.test.ts`.
+
 ## Release maps
 
 Upstream: [v1.3.12](https://bun.com/blog/bun-v1.3.12) · [v1.3.13](https://bun.com/blog/bun-v1.3.13) (`--isolate` · `--parallel` · `--shard` · `--changed` — curated TOC [bun-test-flags-1.3.13.md](./guides/bun-test-flags-1.3.13.md)). Day-loop wrappers: [harness/day-loop.md](./harness/day-loop.md). Pin **1.4.0** is a superset — do not re-document every bugfix bullet.

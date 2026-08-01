@@ -8,6 +8,8 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/api/spawn#input — Bun.spawn
 // @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/guides/util/entrypoint — import.meta.main
+// @see https://bun.com/docs/guides/util/which-path-to-executable-bin — Bun.which
 /**
  * Soft bake CLI — Factory registry export from Soft / toc-ops fixture.
  *
@@ -15,10 +17,10 @@
  *   bun run soft:accounting:check    # fixture exact-match OR soft-ct schema gate
  *   bun run soft:accounting:from-ct  # ct soft-accounting-export → registry (soft-ct)
  *
- * Bun native utils:
+ * Bun native utils (see `lib/bun-executable.ts` + docs/BUN_NATIVE_CAPABILITIES.md Utilities):
  * - Bun.which(+ PATH) → locate bun for nested spawn (never bare `"bun"`)
  * - Bun.env → PATH source + child `env: { ...Bun.env }` (shallow copy, no mutate)
- * - Bun.main → CLI guard (`import.meta.path === Bun.main`)
+ * - import.meta.main → CLI guard (entrypoint guide; equiv. path === Bun.main)
  * - Bun.version / Bun.revision → TTY + `--json` provenance
  *
  * Soft Balance mutations stay in toc-ops-repo `ct`.
@@ -26,7 +28,13 @@
  *
  * @see docs/design/soft-handshake.md
  * @see lib/telegram/soft-accounting-export.ts
+ * @see lib/bun-executable.ts
  */
+import {
+  bunRuntimeProvenance,
+  isModuleEntrypoint,
+  resolveBunExecutable,
+} from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 import type { TocOpsSnapshot } from '../lib/toc-ops/types.ts';
@@ -38,43 +46,14 @@ import {
   type SoftAccountingPlayRow,
 } from '../lib/telegram/soft-accounting-export.ts';
 
+export {
+  clearBunExecutableCache,
+  resolveBunExecutable,
+} from '../lib/bun-executable.ts';
+
 const root = joinPath(import.meta.dir, '..');
 const outPath = joinPath(root, SOFT_ACCOUNTING_EXPORT_REL);
 const tocPath = joinPath(root, 'public/registry/toc-ops.json');
-
-/** PATH-keyed cache for resolveBunExecutable (tests may clear). */
-const bunExecutableCache = new Map<string, string>();
-
-/** Clear Bun.which cache (tests). */
-export function clearBunExecutableCache(): void {
-  bunExecutableCache.clear();
-}
-
-/**
- * Absolute bun binary for nested spawn.
- * Uses Bun.which with an explicit PATH from Bun.env (docs: which PATH option).
- * Falls back to process.execPath when which misses (PATH empty / not installed as `bun`).
- * Bare `"bun"` + missing Soft cwd surfaces as posix_spawn ENOENT — never return bare name.
- */
-export function resolveBunExecutable(opts: { PATH?: string } = {}): string {
-  const PATH = opts.PATH ?? Bun.env.PATH;
-  const cacheKey = PATH === undefined ? '\0default' : PATH;
-  const hit = bunExecutableCache.get(cacheKey);
-  if (hit) return hit;
-
-  const found =
-    PATH !== undefined && PATH !== ''
-      ? Bun.which('bun', { PATH })
-      : Bun.which('bun');
-  const resolved = (found ?? process.execPath).trim();
-  if (!resolved) {
-    throw new Error(
-      'Could not resolve bun executable (Bun.which returned null and process.execPath is empty)'
-    );
-  }
-  bunExecutableCache.set(cacheKey, resolved);
-  return resolved;
-}
 
 async function pathHasPackageJson(dir: string): Promise<boolean> {
   return Bun.file(joinPath(dir, 'package.json')).exists();
@@ -263,8 +242,8 @@ export async function importSoftAccountingExportFromCt(): Promise<{
   };
 }
 
-// Direct CLI entry (Bun.main) — not when this module is imported by tests.
-if (import.meta.path === Bun.main) {
+// Direct CLI entry (entrypoint guide) — not when this module is imported by tests.
+if (isModuleEntrypoint(import.meta)) {
   const check = Bun.argv.includes('--check');
   const fromCt = Bun.argv.includes('--from-ct');
   const wantJson = Bun.argv.includes('--json');
@@ -275,9 +254,7 @@ if (import.meta.path === Bun.main) {
     if (wantJson) {
       jsonOut({
         ...result,
-        bunVersion: Bun.version,
-        bunRevision: Bun.revision.slice(0, 8),
-        bunExecutable: resolveBunExecutable(),
+        ...bunRuntimeProvenance(),
       });
     } else {
       const verb = fromCt
