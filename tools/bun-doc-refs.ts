@@ -51,6 +51,7 @@
  * Operate runbook: docs/BUN_DOCS_OPERATE.md
  */
 
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 import {
   catalogMissingRefCount,
@@ -2732,10 +2733,11 @@ async function regenIndex(): Promise<{
   error?: string;
 }> {
   try {
-    const proc = Bun.spawn(['bun', 'tools/bun-docs-index-gen.ts'], {
+    const proc = Bun.spawn(bunSpawnArgs(['tools/bun-docs-index-gen.ts']), {
       cwd: REPO_ROOT,
       stdout: 'pipe',
       stderr: 'pipe',
+      env: { ...Bun.env },
     });
     const [stdout, stderr, exitCode] = await Promise.all([
       new Response(proc.stdout).text(),
@@ -3196,19 +3198,23 @@ async function mainCli(): Promise<void> {
       const getIdx = rest.indexOf('get');
       if (getIdx !== -1) {
         const name = rest.slice(getIdx + 1).join(' ');
-        const proc = Bun.spawn(['bun', 'tools/bun-docs-catalog.ts', 'get', name], {
+        const proc = Bun.spawn(bunSpawnArgs(['tools/bun-docs-catalog.ts', 'get', name]), {
           cwd: import.meta.dir + '/..',
           stdout: 'inherit',
           stderr: 'inherit',
+          env: { ...Bun.env },
         });
         process.exit((await proc.exited) === 0 ? 0 : 1);
       }
-      const args = ['bun', 'tools/bun-docs-catalog.ts', 'list', ...rest.filter(a => a !== 'list')];
-      const proc = Bun.spawn(args, {
-        cwd: import.meta.dir + '/..',
-        stdout: 'inherit',
-        stderr: 'inherit',
-      });
+      const proc = Bun.spawn(
+        bunSpawnArgs(['tools/bun-docs-catalog.ts', 'list', ...rest.filter(a => a !== 'list')]),
+        {
+          cwd: import.meta.dir + '/..',
+          stdout: 'inherit',
+          stderr: 'inherit',
+          env: { ...Bun.env },
+        }
+      );
       process.exit((await proc.exited) === 0 ? 0 : 1);
       break;
     }
@@ -3223,10 +3229,11 @@ async function mainCli(): Promise<void> {
       break;
     }
     case 'index-audit': {
-      const proc = Bun.spawn(['bun', 'tools/audit-catalog.ts', 'build'], {
+      const proc = Bun.spawn(bunSpawnArgs(['tools/audit-catalog.ts', 'build']), {
         cwd: import.meta.dir + '/..',
         stdout: 'inherit',
         stderr: 'inherit',
+        env: { ...Bun.env },
       });
       process.exit((await proc.exited) === 0 ? 0 : 1);
       break;

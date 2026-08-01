@@ -7,6 +7,7 @@
  *   bun scripts/lint-harness.ts --scope=lib --max-warnings=0
  *   bun scripts/lint-harness.ts --quiet --cache-location=.cache/eslint-bun-native
  */
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import {
   buildHarnessEslintArgs,
   type HarnessEslintOptions,
@@ -75,11 +76,12 @@ export function parseHarnessLintArgs(args: string[]): HarnessEslintOptions {
 
 async function main(): Promise<void> {
   const options = parseHarnessLintArgs(positionalArgs());
-  const proc = Bun.spawn(['bun', ...buildHarnessEslintArgs(options)], {
+  const proc = Bun.spawn(bunSpawnArgs(buildHarnessEslintArgs(options)), {
     cwd: repoRoot,
     stdin: 'inherit',
     stdout: 'inherit',
     stderr: 'inherit',
+    env: { ...Bun.env },
   });
   process.exit((await proc.exited) ?? 1);
 }

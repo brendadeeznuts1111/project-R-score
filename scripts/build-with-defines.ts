@@ -13,6 +13,7 @@
  *
  * Runtime config stays Bun.env. Do not put secrets in --define.
  */
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun';
 import { hasFlag } from './lib/cli-args';
 
@@ -69,10 +70,11 @@ if (wantCompile) {
     `DEBUG=${define.DEBUG}`,
   ];
   if (debug) args.push('--feature=DEBUG');
-  const proc = Bun.spawn(['bun', ...args], {
+  const proc = Bun.spawn(bunSpawnArgs(args), {
     cwd: ROOT,
     stdout: 'inherit',
     stderr: 'inherit',
+    env: { ...Bun.env },
   });
   const code = await proc.exited;
   if (code !== 0) process.exit(code ?? 1);

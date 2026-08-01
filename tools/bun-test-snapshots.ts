@@ -20,6 +20,7 @@
  * Data-plane local store (gitignored artifacts/snapshots/) is separate — use:
  *   portal-cli snapshot prune --keep=5
  */
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 import {
@@ -154,11 +155,12 @@ async function main(): Promise<void> {
     }
     const args = bunTestArgsForSuites(suites, true);
     console.log(`  → bun ${args.join(' ')}`);
-    const proc = Bun.spawn(['bun', ...args], {
+    const proc = Bun.spawn(bunSpawnArgs(args), {
       cwd: ROOT,
       stdout: 'inherit',
       stderr: 'inherit',
       stdin: 'inherit',
+      env: { ...Bun.env },
     });
     const code = await proc.exited;
     if (code === 0) {

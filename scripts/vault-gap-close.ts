@@ -20,6 +20,7 @@
  * Note: pass-cli may be Killed:9 in restricted agent hosts — use mint-local path.
  */
 import { resolve } from 'node:path';
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { logDepth } from '../lib/console-depth.ts';
 import {
   mintLocalAll,
@@ -268,10 +269,11 @@ async function closeAll(): Promise<void> {
   }
   console.log('');
   console.log('Re-baselining inventory…');
-  const re = Bun.spawn(['bun', 'scripts/env-inventory.ts', '--write-baseline'], {
+  const re = Bun.spawn(bunSpawnArgs(['scripts/env-inventory.ts', '--write-baseline']), {
     cwd: ROOT,
     stdout: 'inherit',
     stderr: 'inherit',
+    env: { ...Bun.env },
   });
   await re.exited;
   console.log('Done. Human still needed: OPENAI_API_KEY, SLACK_WEBHOOK_URL');

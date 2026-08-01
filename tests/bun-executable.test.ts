@@ -64,4 +64,16 @@ describe('lib/bun-executable (Utilities guides)', () => {
     expect(argv[0]).not.toBe('bun');
     expect(argv.slice(1)).toEqual(['run', 'portal:chrome:bake']);
   });
+
+  test('bunSpawnArgs nested spawn resolves --version', async () => {
+    clearBunExecutableCache();
+    const proc = Bun.spawn(bunSpawnArgs(['--version']), {
+      stdout: 'pipe',
+      stderr: 'pipe',
+      env: { ...Bun.env },
+    });
+    const out = (await new Response(proc.stdout).text()).trim();
+    await proc.exited;
+    expect(out).toBe(Bun.version);
+  });
 });

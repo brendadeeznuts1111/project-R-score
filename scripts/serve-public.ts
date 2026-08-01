@@ -59,6 +59,7 @@
  */
 import type { BunRequest } from 'bun';
 import { Database } from 'bun:sqlite';
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
 import {
@@ -1689,7 +1690,7 @@ async function packagesGraphRebake(req: Request, server?: RouteServer): Promise<
     );
   }
   const root = Bun.env.PWD || '.';
-  const proc = Bun.spawn(['bun', 'run', 'audit:packages', '--', '--bake'], {
+  const proc = Bun.spawn(bunSpawnArgs(['run', 'audit:packages', '--', '--bake']), {
     cwd: root,
     stdout: 'pipe',
     stderr: 'pipe',

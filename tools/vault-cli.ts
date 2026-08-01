@@ -18,6 +18,7 @@
  * Continuous validation:
  *   bun run test:secrets:watch
  */
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { inspect } from '../lib/console-depth.ts';
 import { getGapList, getVaultGapReport, secretRatchetOk } from '../scripts/lib/vault-gap-status.ts';
 
@@ -64,7 +65,7 @@ async function main(): Promise<void> {
     process.exit(2);
   }
 
-  const proc = Bun.spawn(['bun', 'scripts/vault-gap-close.ts', cmd, ...argv.slice(1)], {
+  const proc = Bun.spawn(bunSpawnArgs(['scripts/vault-gap-close.ts', cmd, ...argv.slice(1)]), {
     cwd: new URL('..', import.meta.url).pathname,
     stdout: 'inherit',
     stderr: 'inherit',

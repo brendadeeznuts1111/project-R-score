@@ -9,6 +9,7 @@
  *   bun run lint:bun-native:changed -- --full
  *   bun run lint:bun-native:rollout   # explicit full tree
  */
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { buildHarnessEslintArgs } from '../config/eslint/harness/command.ts';
 import { isHarnessLintPath } from '../config/eslint/harness/rollout.ts';
 import { hasFlag } from './lib/cli-args';
@@ -21,25 +22,25 @@ const full =
   hasFlag('full') || Bun.env.HARNESS_FULL_LINT === '1' || Bun.env.HARNESS_FULL_LINT === 'true';
 
 async function runEslint(files: string[]): Promise<number> {
-  const cmd = [
-    'bun',
-    ...buildHarnessEslintArgs({
+  const cmd = bunSpawnArgs(
+    buildHarnessEslintArgs({
       cacheLocation: CACHE,
       files,
       maxWarnings: 0,
       quiet: true,
-    }),
-  ];
+    })
+  );
   const proc = Bun.spawn(cmd, {
     cwd: repoRoot,
     stdout: 'inherit',
     stderr: 'inherit',
+    env: { ...Bun.env },
   });
   return (await proc.exited) ?? 1;
 }
 
 if (full) {
-  const proc = Bun.spawn(['bun', 'run', 'lint:bun-native:rollout'], {
+  const proc = Bun.spawn(bunSpawnArgs(['run', 'lint:bun-native:rollout']), {
     cwd: repoRoot,
     stdout: 'inherit',
     stderr: 'inherit',

@@ -24,6 +24,7 @@
  * Short-circuit: if the change set has no code-like files, exit 0 without
  * booting the Bun test import graph (~1–2s saved on docs-only diffs).
  */
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { hasCodeLikeChange, listChangedFiles, resolveMainHead } from './lib/git-changed';
 
 export type TestChangedShard = {
@@ -206,10 +207,11 @@ export async function runTestChanged(
     }
   }
 
-  const proc = Bun.spawn(['bun', ...bunArgs], {
+  const proc = Bun.spawn(bunSpawnArgs(bunArgs), {
     stdout: 'inherit',
     stderr: 'inherit',
     stdin: 'inherit',
+    env: { ...Bun.env },
   });
   return (await proc.exited) ?? 1;
 }

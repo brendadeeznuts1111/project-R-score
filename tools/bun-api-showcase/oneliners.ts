@@ -422,9 +422,9 @@ export const demos: ShowcaseDemo[] = [
     title: 'spawn & spawnSync',
     apis: ['Bun.spawn', 'Bun.spawnSync'],
     async run() {
-      const p = Bun.spawn(['bun', '--version']);
+      const p = Bun.spawn(['bun', '--version']); // bare-bun-ok — spawn demo
       const asyncVer = (await new Response(p.stdout).text()).trim();
-      const syncVer = Bun.spawnSync(['bun', '--version']).stdout.toString().trim();
+      const syncVer = Bun.spawnSync(['bun', '--version']).stdout.toString().trim(); // bare-bun-ok
       console.log(`  async=${asyncVer} sync=${syncVer}`);
     },
   },

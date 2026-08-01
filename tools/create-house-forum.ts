@@ -7,6 +7,7 @@
  *   bun tools/create-house-forum.ts sandbox
  *   bun tools/create-house-forum.ts --all
  */
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { loadReasonixEnv } from '../lib/telegram/catalog-research/load-reasonix-env.ts';
 import {
   ALL_ACCOUNTING_FORUM_TOPICS,
@@ -126,10 +127,11 @@ for (const surfaceSlug of surfaces) {
   const bindArgs = ['tools/telegram-bind-surface.ts', surfaceSlug, '--chat', id, '--brand'];
   if (surfaceSlug === ALL_ACCOUNTING_SURFACE_SLUG) bindArgs.push('--post-prompt');
 
-  const proc = Bun.spawn(['bun', ...bindArgs], {
+  const proc = Bun.spawn(bunSpawnArgs(bindArgs), {
     stdout: 'inherit',
     stderr: 'inherit',
     cwd: import.meta.dir + '/..',
+    env: { ...Bun.env },
   });
   const code = await proc.exited;
   if (code !== 0) exitCode = code;

@@ -20,6 +20,7 @@
  * @see docs/UNIFIED.md
  * @see lib/install/machine-bunfig-policy.ts
  */
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import {
   FORBIDDEN_INSTALL_ENV_VARS,
   isEphemeralCiInstallEnv,
@@ -229,10 +230,11 @@ export async function auditBunfig(opts: AuditBunfigOptions = {}): Promise<AuditB
   if (!opts.quietPm && (await whichOnPath('bun'))) {
     log('── Project identity (bun pm pkg get) ──');
     try {
-      const proc = Bun.spawn(['bun', 'pm', 'pkg', 'get', 'name', 'version', 'private'], {
+      const proc = Bun.spawn(bunSpawnArgs(['pm', 'pkg', 'get', 'name', 'version', 'private']), {
         cwd: root,
         stdout: 'pipe',
         stderr: 'pipe',
+        env: { ...Bun.env },
       });
       const out = await new Response(proc.stdout).text();
       await proc.exited;
@@ -247,10 +249,11 @@ export async function auditBunfig(opts: AuditBunfigOptions = {}): Promise<AuditB
     log('');
     log('── Trust surface (bun pm untrusted) ──');
     try {
-      const proc = Bun.spawn(['bun', 'pm', 'untrusted'], {
+      const proc = Bun.spawn(bunSpawnArgs(['pm', 'untrusted']), {
         cwd: root,
         stdout: 'pipe',
         stderr: 'pipe',
+        env: { ...Bun.env },
       });
       const out = await new Response(proc.stdout).text();
       await proc.exited;
