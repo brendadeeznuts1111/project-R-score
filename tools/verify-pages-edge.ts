@@ -89,6 +89,63 @@ async function expectSecurityHeaders(path: string, responseKind: 'static' | 'fun
   return `${responseKind} · shared contract`;
 }
 
+interface CfDeployment {
+  environment?: string;
+  url?: string;
+  latest_stage?: { status?: string };
+  deployment_trigger?: { metadata?: { commit_hash?: string } };
+}
+
+/**
+ * Content proof for the Access-gated portal plane. The alias hostname sits
+ * behind Cloudflare Access (302), but the immutable per-deploy origin is
+ * Access-free — so the deployed portal code is provable without a service
+ * token. Degrades to an ok-skip when no CF API token is in the environment.
+ */
+async function expectImmutableDeployProof() {
+  const token = Bun.env.CLOUDFLARE_API_TOKEN?.trim();
+  if (!token) return 'skipped (CLOUDFLARE_API_TOKEN not set)';
+  const account = Bun.env.CLOUDFLARE_ACCOUNT_ID?.trim() || CLOUDFLARE_DEFAULTS.accountId;
+  const project = CLOUDFLARE_DEFAULTS.pages.project;
+  const api = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${account}/pages/projects/${project}/deployments?per_page=10`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (!api.ok) throw new Error(`deployments API → ${api.status}`);
+  const payload = (await api.json()) as { success?: boolean; result?: CfDeployment[] };
+  const prod = (payload.result ?? []).find(
+    d => d.environment === 'production' && d.latest_stage?.status === 'success'
+  );
+  if (!prod?.url) throw new Error('no successful production deployment');
+  const commit = prod.deployment_trigger?.metadata?.commit_hash?.slice(0, 9) ?? '?';
+
+  const js = await fetch(`${prod.url}/portal/components/glossary-ux.js`);
+  if (!js.ok) throw new Error(`glossary-ux.js → ${js.status}`);
+  const body = await js.text();
+  const markers = ['getElementByIdInRoot', 'applySectionTitles', 'sectionTitleFromSurface'];
+  const missing = markers.filter(m => !body.includes(m));
+  if (missing.length) throw new Error(`P1 markers missing: ${missing.join(', ')}`);
+
+  const reg = await fetch(`${prod.url}/registry/domain-glossary.json`);
+  if (!reg.ok) throw new Error(`domain-glossary.json → ${reg.status}`);
+  const glossary = (await reg.json()) as {
+    surfaces?: Array<{ sections?: Array<{ title?: string }> }>;
+  };
+  let sections = 0;
+  let titled = 0;
+  for (const surf of glossary.surfaces ?? []) {
+    for (const row of surf.sections ?? []) {
+      sections++;
+      if (typeof row.title === 'string' && row.title.trim()) titled++;
+    }
+  }
+  if (sections === 0 || titled !== sections) {
+    throw new Error(`sections titled ${titled}/${sections}`);
+  }
+  const deployId = prod.url.split('//')[1]?.split('.')[0] ?? '?';
+  return `deploy ${deployId} @ ${commit} · P1 markers ok · sections ${titled}/${sections}`;
+}
+
 async function main() {
   console.log(`Pages edge verify → ${BASE}${TAXONOMY ? ' (--taxonomy)' : ''}`);
   const checks = await Promise.all([
@@ -116,6 +173,7 @@ async function main() {
       })
     ),
     check('/portal/env/ page', 'core', () => expectPortalPage('/portal/env/')),
+    check('immutable deploy proof', 'core', () => expectImmutableDeployProof()),
     check('well-known/mcp.json', 'core', () =>
       expectJson('/.well-known/mcp.json', j => {
         if (!Array.isArray(j.servers) || j.servers.length < 5) throw new Error('missing servers[]');
