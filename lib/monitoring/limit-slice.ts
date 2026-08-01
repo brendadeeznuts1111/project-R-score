@@ -41,6 +41,12 @@ type LimitRaisesFile = {
   patterns?: { nodes?: number; partners?: number };
 };
 
+const SUPPORTED_LIMIT_RAISES_SCHEMA_VERSIONS = new Set([1, 3]);
+
+function isSupportedLimitRaisesSchema(schemaVersion: number | undefined): boolean {
+  return schemaVersion !== undefined && SUPPORTED_LIMIT_RAISES_SCHEMA_VERSIONS.has(schemaVersion);
+}
+
 /**
  * Edge `/api/health` + local serve-public artifacts.limitRaises shape.
  * Missing bake → exists:false (does not degrade). Present + schema ok → ok:true.
@@ -97,7 +103,7 @@ function countFromByNode(byNode: LimitRaisesFile['byNode']): {
 }
 
 function projectFile(raw: LimitRaisesFile): LimitRaisesMonitoringSlice {
-  if (raw.schemaVersion !== 1) return emptyUnavailable();
+  if (!isSupportedLimitRaisesSchema(raw.schemaVersion)) return emptyUnavailable();
   const counted = countFromByNode(raw.byNode);
   const partners =
     typeof raw.partners === 'number' && Number.isFinite(raw.partners)
@@ -136,7 +142,7 @@ function projectFile(raw: LimitRaisesFile): LimitRaisesMonitoringSlice {
 export function projectLimitRaisesHealthArtifact(board: unknown): LimitRaisesHealthArtifact {
   if (!board || typeof board !== 'object') return emptyHealthArtifact();
   const raw = board as LimitRaisesFile;
-  if (raw.schemaVersion !== 1) return emptyHealthArtifact();
+  if (!isSupportedLimitRaisesSchema(raw.schemaVersion)) return emptyHealthArtifact();
   const slice = projectFile(raw);
   return {
     exists: true,

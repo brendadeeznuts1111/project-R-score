@@ -160,7 +160,7 @@ describe('prediction report', () => {
     );
     runCoverageBacktest(db, '2024-01-01', '2024-12-31');
 
-    const outDir = `/tmp/pred-report-${Bun.randomUUIDv7().slice(0, 8)}`;
+    const outDir = `/tmp/pred-report-${Bun.randomUUIDv7()}`;
     const report = await writePredictionReport(db, { outDir, webview: false });
     expect(report.points).toBe(2);
     expect(await Bun.file(report.svgPath).exists()).toBe(true);

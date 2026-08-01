@@ -266,7 +266,13 @@ export function mergeIntegritySnapshots(
 
 export async function collectMonitoring(
   db: Database,
-  opts?: { source?: 'live' | 'snapshot'; registryPath?: string; uptimeOriginMs?: number }
+  opts?: {
+    source?: 'live' | 'snapshot';
+    registryPath?: string;
+    uptimeOriginMs?: number;
+    /** Skip the machine-wide Bun cache scan for deterministic focused tests. */
+    includeInstallCache?: boolean;
+  }
 ): Promise<MonitoringPayload> {
   const origin = opts?.uptimeOriginMs ?? processStart;
   const uptimeMs = Date.now() - origin;
@@ -341,7 +347,9 @@ export async function collectMonitoring(
   const [compliance, limitRaises, installCache, installHygiene] = await Promise.all([
     loadComplianceMonitoringSlice(),
     loadLimitRaisesMonitoringSlice(),
-    collectInstallCacheMonitoringSlice(),
+    opts?.includeInstallCache === false
+      ? Promise.resolve(null)
+      : collectInstallCacheMonitoringSlice(),
     loadInstallHygieneMonitoringSlice(),
   ]);
 

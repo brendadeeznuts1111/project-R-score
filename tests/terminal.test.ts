@@ -55,6 +55,7 @@ describe('lib/terminal', () => {
     await first.exited;
     const second = Bun.spawn(['echo', 'two'], { terminal: capture.terminal });
     await second.exited;
+    await Bun.sleep(10);
 
     const text = capture.text().replace(/\r/g, '');
     expect(text).toContain('one');
