@@ -112,6 +112,33 @@ export interface DomIdCheckResult {
   chromeOrphans: number;
 }
 
+export interface TitleCheckResult {
+  titleOk: number;
+  titleFail: number;
+  failures: string[];
+}
+
+/** Every bake section with a mount must carry a non-empty title (page-glossary SSOT). */
+export function verifySectionTitles(surfaces: GlossarySurface[]): TitleCheckResult {
+  let titleOk = 0;
+  let titleFail = 0;
+  const failures: string[] = [];
+  for (const surface of surfaces) {
+    const path = surface.path || '/';
+    for (const section of surface.sections ?? []) {
+      if (!section.domId && !section.hash) continue;
+      const title = typeof section.title === 'string' ? section.title.trim() : '';
+      if (!title) {
+        titleFail++;
+        failures.push(`${path}#${section.hash || section.domId || '?'}: missing title`);
+      } else {
+        titleOk++;
+      }
+    }
+  }
+  return { titleOk, titleFail, failures };
+}
+
 export interface IdOccurrenceReport {
   /** Unique id values present at least once. */
   unique: Set<string>;
@@ -359,6 +386,7 @@ export async function runGlossaryVerify(opts: {
 
   const surfaces = glossary.surfaces ?? [];
   const hash = verifySectionHashes(surfaces);
+  const titles = verifySectionTitles(surfaces);
   const dom = await verifyDomIds(surfaces, opts.root);
   const strict = opts.strict === true;
   const dryRun = opts.dryRun === true;
@@ -391,6 +419,15 @@ export async function runGlossaryVerify(opts: {
     detail:
       `${hash.hashOk} ok, ${hash.hashFail} unparseable` +
       (hash.failures.length ? ` — first: ${hash.failures[0]}` : ''),
+  });
+
+  rows.push({
+    check: 'glossary section titles (bake SSOT)',
+    plane: 'public',
+    status: coloredStatus(titles.titleFail === 0 ? 'LIVE' : 'STALE'),
+    detail:
+      `${titles.titleOk} titled, ${titles.titleFail} missing` +
+      (titles.failures.length ? ` — first: ${titles.failures[0]}` : ''),
   });
 
   const firstMiss = dom.misses[0];
@@ -444,6 +481,9 @@ export async function runGlossaryVerify(opts: {
       hashOk: hash.hashOk,
       hashFail: hash.hashFail,
       failures: hash.failures,
+      titleOk: titles.titleOk,
+      titleFail: titles.titleFail,
+      titleFailures: titles.failures,
       domOk: dom.domOk,
       domFail: dom.domFail,
       boardsScanned: dom.boardsScanned,
@@ -457,6 +497,7 @@ export async function runGlossaryVerify(opts: {
   const exitCode =
     !dryRun &&
     (hash.hashFail > 0 ||
+      titles.titleFail > 0 ||
       dom.domFail > 0 ||
       dom.duplicates.length > 0 ||
       (strict && dom.sectionOrphans.length > 0))
@@ -466,6 +507,7 @@ export async function runGlossaryVerify(opts: {
   return {
     exitCode,
     hash,
+    titles,
     dom,
     schemaVersion: glossary.schemaVersion,
     surfaces: surfaces.length,
