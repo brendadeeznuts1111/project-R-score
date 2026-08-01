@@ -28,6 +28,12 @@
 /portal/doctor           /portal/doctor/           301
 /portal/install-hygiene  /portal/install-hygiene/  301
 /portal/surfaces         /portal/surfaces/         301
+/portal/console-format   /portal/console-format/   301
+/portal/limits-lab       /portal/limits-lab/       301
+/portal/account          /portal/account/          301
+/portal/identity         /portal/identity/         301
+/portal/factory          /portal/factory/          301
+/portal/science          /portal/science/          301
 # legacy flat report path → directory index (ops:prediction / Pages pretty URL)
 /registry/prediction/report.html  /registry/prediction/report/  301
 # bare /health → Functions JSON (functions/health/index.ts); /health/ → portal UI redirect

@@ -1680,6 +1680,7 @@
     "serve:public": "bun scripts/serve-public.ts",
     "serve:public:hot": "bun --hot scripts/serve-public.ts",
     "serve:public:watch": "bun --watch scripts/serve-public.ts",
+    "dev:portal": "bun run serve:public:hot",
     "audit:bunfig": "bash scripts/audit-bunfig.sh",
     "audit:bunfig:strict": "bash scripts/audit-bunfig.sh --strict",
     "build:affected": "bun scripts/affected-workspaces.ts build",

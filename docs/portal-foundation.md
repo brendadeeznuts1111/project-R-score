@@ -506,6 +506,10 @@ bun run serve:public
 
 Then `curl -s http://localhost:3000/ | head -1` should show `<!doctype html>`, not JSON.
 
+> **`bun run dev` is NOT the portal.** `dev`/`start` boot `server/server-enhanced.ts` (the Bun-docs
+> demo server: RSS feeds, typed-array examples) on the same `:3000` — visiting `/portal` there is a
+> 404. For the portal, run `bun run dev:portal` (= `serve:public:hot`) after clearing `:3000`.
+
 ### Port configuration
 
 `serve-public` omits `port` and `hostname` on `Bun.serve` so bind matches [Bun’s server docs](https://bun.com/docs/runtime/http/server#configuration) mechanically:
