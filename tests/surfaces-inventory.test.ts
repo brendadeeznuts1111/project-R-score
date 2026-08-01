@@ -60,10 +60,10 @@ describe('lib/surfaces/inventory', () => {
     expect(applied).toContain('ledger.factory-wager.com');
     expect(applied).toContain('score.factory-wager.com/portal');
     expect(applied).toContain('project-r-score.pages.dev/portal');
-    // staged reasonix is declared but not applied
+    // Decommissioned reasonix is retained as retired inventory only; it owns no Access domain.
     expect(applied).not.toContain('reasonix.factory-wager.com');
     const declared = declaredAccessDomains(inv).map(String);
-    expect(declared).toContain('reasonix.factory-wager.com');
+    expect(declared).not.toContain('reasonix.factory-wager.com');
   });
 
   test('accessDomainsForSurface keeps HostId out of path-bearing values', async () => {
