@@ -14,6 +14,7 @@
  * https://bun.sh/docs/pm/global-store
  * @see docs/UNIFIED.md
  */
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import {
   FORBIDDEN_INSTALL_ENV_VARS,
   isEphemeralCiInstallEnv,
@@ -295,7 +296,7 @@ function checkNodeModulesLayout(): Check {
 
 async function main() {
   if (!dryRun) {
-    Bun.spawnSync(['bun', `${ROOT}/scripts/evict-root-tilde-cache.ts`], { cwd: ROOT });
+    Bun.spawnSync(bunSpawnArgs([`${ROOT}/scripts/evict-root-tilde-cache.ts`]), { cwd: ROOT });
   }
 
   const checks = [

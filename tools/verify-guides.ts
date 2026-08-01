@@ -19,8 +19,9 @@
  * Proof: public/registry/guides-proof.json
  */
 
-import { CANONICAL_GUIDES_TOKENS } from './bun-doc-refs.ts';
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { logTable } from '../lib/console-depth.ts';
+import { CANONICAL_GUIDES_TOKENS } from './bun-doc-refs.ts';
 
 export type GuideCheck = {
   name: string;
@@ -64,7 +65,7 @@ export async function runGuideChecks(): Promise<GuideCheck[]> {
   }
 
   // Install guide command validation: bun install is a drop-in for npm install
-  const dry = Bun.spawnSync(['bun', 'install', '--dry-run'], {
+  const dry = Bun.spawnSync(bunSpawnArgs(['install', '--dry-run']), {
     stdout: 'pipe',
     stderr: 'pipe',
   });
@@ -76,7 +77,7 @@ export async function runGuideChecks(): Promise<GuideCheck[]> {
     canonical: CANONICAL_GUIDES_TOKENS['Bun Install Guide']!.url,
   });
 
-  const prod = Bun.spawnSync(['bun', 'install', '--production', '--dry-run'], {
+  const prod = Bun.spawnSync(bunSpawnArgs(['install', '--production', '--dry-run']), {
     stdout: 'pipe',
     stderr: 'pipe',
   });

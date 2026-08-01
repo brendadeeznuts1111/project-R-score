@@ -8,6 +8,7 @@
  * `scripts/lib/bun-cache-metrics.ts` so the portal can show cache size
  * and threshold status without importing across the scripts/ boundary.
  */
+import { bunSpawnArgs } from '../bun-executable.ts';
 
 export type InstallCacheMonitoringSlice = {
   available: boolean;
@@ -68,7 +69,10 @@ function parseDuBytes(cacheDir: string): number | null {
 }
 
 function readBunPmCachePath(): string | null {
-  const pmCache = Bun.spawnSync(['bun', 'pm', 'cache'], { stdout: 'pipe', stderr: 'pipe' });
+  const pmCache = Bun.spawnSync(bunSpawnArgs(['pm', 'cache']), {
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
   if (pmCache.exitCode !== 0 || !pmCache.stdout) return null;
   return (
     new TextDecoder()

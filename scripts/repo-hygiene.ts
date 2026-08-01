@@ -23,6 +23,7 @@ import {
   rootOutputRoute,
   type RootOutputRoute,
 } from '../config/repo-root-policy.ts';
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { logTable } from '../lib/console-depth.ts';
 import { isDirectorySync, joinPath, listEntriesSync } from './lib/fs-bun';
 import { isTildeCachePath } from './lib/bun-install-env.ts';
@@ -291,12 +292,16 @@ async function main() {
     findings.push(...(await findTrackedViolations()));
   } else if (stagedOnly) {
     // Pre-commit mode — evict drift first so ./~ never gets staged
-    Bun.spawnSync(['bun', joinPath(ROOT, 'scripts/evict-root-tilde-cache.ts')], { cwd: ROOT });
+    Bun.spawnSync(bunSpawnArgs([joinPath(ROOT, 'scripts/evict-root-tilde-cache.ts')]), {
+      cwd: ROOT,
+    });
     findings.push(...(await checkStagedSecrets()));
     findings.push(...(await checkStagedStray()));
   } else {
     // Full scan mode — auto-evict Bun tilde-cache drift before scanning
-    Bun.spawnSync(['bun', joinPath(ROOT, 'scripts/evict-root-tilde-cache.ts')], { cwd: ROOT });
+    Bun.spawnSync(bunSpawnArgs([joinPath(ROOT, 'scripts/evict-root-tilde-cache.ts')]), {
+      cwd: ROOT,
+    });
     findings.push(...(await findRootClutter()));
     findings.push(...(await findStrayFiles()));
     findings.push(...(await checkStagedSecrets()));

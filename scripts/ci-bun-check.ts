@@ -5,6 +5,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { resolveVerificationBunBinary } from '../lib/verification/resolve-bun-binary.ts';
 
 function parseSemver(version: string): { major: number; minor: number; patch: number } | null {
@@ -59,7 +60,7 @@ try {
     `resolveVerificationBunBinary failed: ${e instanceof Error ? e.message : String(e)} — falling back to bare bun spawn`
   );
   try {
-    const versionProc = Bun.spawnSync(['bun', '--version'], {
+    const versionProc = Bun.spawnSync(bunSpawnArgs(['--version']), {
       stdout: 'pipe',
       stderr: 'pipe',
     });

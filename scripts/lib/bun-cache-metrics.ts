@@ -3,13 +3,14 @@
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
-import { formatBytes } from './format';
-import { joinPath } from './fs-bun';
+import { bunSpawnArgs } from '../../lib/bun-executable.ts';
 import {
   applyBunInstallEnv,
   globalStoreLinksDir,
   resolveBunInstallCacheDir,
 } from './bun-install-env.ts';
+import { formatBytes } from './format';
+import { joinPath } from './fs-bun';
 
 export type BunCacheMetrics = {
   collectedAt: string;
@@ -65,7 +66,10 @@ export async function collectBunCacheMetrics(): Promise<BunCacheMetrics> {
   const linksEntries = linksDir && cacheDirExists ? countLinksEntries(linksDir) : 0;
 
   let bunPmCachePath: string | null = null;
-  const pmCache = Bun.spawnSync(['bun', 'pm', 'cache'], { stdout: 'pipe', stderr: 'pipe' });
+  const pmCache = Bun.spawnSync(bunSpawnArgs(['pm', 'cache']), {
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
   if (pmCache.exitCode === 0 && pmCache.stdout) {
     bunPmCachePath =
       new TextDecoder()
@@ -140,7 +144,7 @@ export function pruneAllowed(): boolean {
 
 /** Run `bun pm cache rm` (Bun 1.4 has no safe --dry-run; use mode=dry-run for metrics only). */
 export async function runCachePrune(): Promise<{ ok: boolean; output: string }> {
-  const proc = Bun.spawnSync(['bun', 'pm', 'cache', 'rm'], {
+  const proc = Bun.spawnSync(bunSpawnArgs(['pm', 'cache', 'rm']), {
     stdout: 'pipe',
     stderr: 'pipe',
     env: applyBunInstallEnv() as Record<string, string>,
