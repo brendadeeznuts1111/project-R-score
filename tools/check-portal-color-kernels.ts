@@ -7,26 +7,30 @@
  * public/portal/components must equal the theme token they mirror).
  *
  *   bun run portal:colors:check
+ *   bun run validate:colors
  *   bun tools/check-portal-color-kernels.ts
  *
- * Check-only — never rewrites TypeScript kernels or components.
+ * Prints Claim / Evidence for PR paste. Check-only — never rewrites
+ * TypeScript kernels or components.
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { logTable } from '../lib/console-depth.ts';
 import {
-  assessColorKernelAlign,
   THEME_DARK_ALIAS_CHECKS,
+  colorKernelClaimReport,
+  formatColorKernelClaimReport,
 } from '../lib/portal/color-kernel-align.ts';
 import { assessComponentColorAlign } from '../lib/portal/component-color-align.ts';
 
 export async function main(): Promise<void> {
-  const result = assessColorKernelAlign();
-  if (!result.ok) {
+  const report = colorKernelClaimReport();
+  console.log(formatColorKernelClaimReport(report));
+  if (!report.ok) {
     console.error(
-      `portal color kernels drift from theme.jsonc v${result.themeVersion} (${result.mismatches.length} mismatch(es))`
+      `portal color kernels drift from theme.jsonc v${report.themeVersion} (${report.mismatches.length} mismatch(es))`
     );
     logTable(
-      result.mismatches.map(m => ({
+      report.mismatches.map(m => ({
         consumer: m.consumer,
         key: m.key,
         theme: m.themeKey,
@@ -65,7 +69,7 @@ export async function main(): Promise<void> {
   }
 
   console.log(
-    `OK portal color kernels align with theme.jsonc v${result.themeVersion} (${THEME_DARK_ALIAS_CHECKS.length} aliases · ${components.checked} component fallbacks)`
+    `OK portal color kernels align with theme.jsonc v${report.themeVersion} (${THEME_DARK_ALIAS_CHECKS.length} aliases · ${components.checked} component fallbacks)`
   );
 }
 

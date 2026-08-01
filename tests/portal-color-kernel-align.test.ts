@@ -4,6 +4,8 @@ import { describe, expect, test } from 'bun:test';
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import {
   assessColorKernelAlign,
+  colorKernelClaimReport,
+  formatColorKernelClaimReport,
   GLOSSARY_EXTENDED_KEYS,
   THEME_DARK_ALIAS_CHECKS,
 } from '../lib/portal/color-kernel-align.ts';
@@ -33,13 +35,32 @@ describe('portal color-kernel align', () => {
     expect(PARTNER_OPS_COLORS.research).toBeTruthy();
   });
 
-  test('check CLI exits 0 when aligned', () => {
+  test('colorKernelClaimReport is paste-ready when aligned', () => {
+    const report = colorKernelClaimReport();
+    expect(report.ok).toBe(true);
+    expect(report.claim).toContain('complete and conflict-free');
+    expect(report.claim).toContain(`theme v${portalTheme.version}`);
+    expect(report.evidence.length).toBeGreaterThanOrEqual(4);
+    expect(report.evidence.some(l => l.startsWith('✓ Portal chrome:'))).toBe(true);
+    expect(report.evidence.some(l => l.startsWith('✓ Glossary chips:'))).toBe(true);
+    expect(report.evidence.some(l => l.startsWith('✓ Partner-ops:'))).toBe(true);
+    expect(report.evidence.some(l => l.startsWith('✓ Telegram topics:'))).toBe(true);
+    const text = formatColorKernelClaimReport(report);
+    expect(text).toContain('Claim:');
+    expect(text).toContain('Evidence:');
+  });
+
+  test('check CLI exits 0 and prints Claim / Evidence', () => {
     const proc = Bun.spawnSync(bunSpawnArgs(['tools/check-portal-color-kernels.ts']), {
       cwd: `${import.meta.dir}/..`,
       stdout: 'pipe',
       stderr: 'pipe',
     });
     expect(proc.exitCode).toBe(0);
-    expect(proc.stdout.toString()).toContain('OK portal color kernels');
+    const out = proc.stdout.toString();
+    expect(out).toContain('Claim:');
+    expect(out).toContain('Evidence:');
+    expect(out).toContain('Portal chrome:');
+    expect(out).toContain('complete and conflict-free');
   });
 });

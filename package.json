@@ -2117,6 +2117,7 @@
     "verify:portal:static": "bun tools/verify-portal.ts --static-only",
     "portal:theme:sync": "bun tools/sync-portal-theme.ts",
     "portal:colors:check": "bun tools/check-portal-color-kernels.ts",
+    "validate:colors": "bun run portal:colors:check",
     "portal:theme:check": "bun tools/sync-portal-theme.ts --check && bun run portal:colors:check",
     "portal:css:build": "bun tools/build-portal-css.ts",
     "portal:css:build:minify": "bun tools/build-portal-css.ts --minify",
