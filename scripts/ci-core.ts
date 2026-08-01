@@ -57,7 +57,7 @@ const CORE_STEPS: Array<{ name: string; cmd: string[] }> = [
   },
   {
     name: 'monorepo-health',
-    cmd: ['bun', 'scripts/check-monorepo-health.ts', '--no-history'],
+    cmd: ['bun', 'scripts/check-monorepo-health.ts', '--no-history', '--no-write'],
   },
 ];
 

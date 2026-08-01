@@ -44,6 +44,11 @@ Macros do **not** substitute under a plain `bun scripts/foo.ts` run. Keep runtim
 
 ## Local CI authority (`main`)
 
+**Key reference:** this section is the repository authority for local-only merge
+proof and Cloudflare Pages delivery. Root [`AGENTS.md`](../../AGENTS.md), the
+human [`README.md`](../../README.md), and the machine-global
+`/Users/nolarose/.config/dx/AGENTS.md` point here instead of redefining policy.
+
 GitHub Actions is disabled for this repository. Hosted-runner billing locks jobs
 before step 1, so a GitHub check cannot prove artifact health and must never be
 a merge dependency. The canonical merge proof runs on the operator machine:
@@ -80,6 +85,8 @@ substitute for that local evidence.
 - `ci:types` = config/import verification plus CI and full type scopes.
 - `ci:security` = dependency guard plus security audit.
 - `ci:portal-registry` = isolated writer tests plus clean-public-tree proof.
+- `security-scanner.yml` is retained reference-only and maps to the local
+  `ci:security` boundary inside `bun:ci`.
 - Day loop: `bun run ci:harness:fast` · husky pre-commit / pre-push
 - Status discover: `bun run harness:status`; hosted Actions state is not merge evidence.
 - Main governance still requires a PR, resolved review threads, linear history,

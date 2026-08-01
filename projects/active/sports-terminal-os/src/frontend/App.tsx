@@ -20,7 +20,7 @@
  */
 
 import React, { useEffect, useState, createContext, useContext } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router";
 import PageLayout from "./components/PageLayout";
 import { useWebSocket } from "./hooks/useWebSocket";
 

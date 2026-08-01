@@ -82,8 +82,11 @@ export function stripChannelMetaRows(results: VerificationResult[]): Verificatio
  * Mark bake sidecar invalid after a release-only write to release-features.json.
  * Prevents Pages/ops from advertising a green meta bake that no longer matches.
  */
-export async function invalidateChannelMetaBake(reason: string): Promise<void> {
-  const file = Bun.file(CHANNEL_META_BAKE_PATH);
+export async function invalidateChannelMetaBake(
+  reason: string,
+  bakePath = CHANNEL_META_BAKE_PATH
+): Promise<void> {
+  const file = Bun.file(bakePath);
   if (!(await file.exists())) return;
   const tombstone = {
     type: 'ChannelMetaBakeInvalid' as const,
@@ -91,7 +94,7 @@ export async function invalidateChannelMetaBake(reason: string): Promise<void> {
     invalidatedAt: new Date().toISOString(),
     reason,
   };
-  await Bun.write(CHANNEL_META_BAKE_PATH, `${JSON.stringify(tombstone, null, 2)}\n`);
+  await Bun.write(bakePath, `${JSON.stringify(tombstone, null, 2)}\n`);
 }
 
 export function nitsRowsToChannelMeta(results: VerificationResult[]): VerificationResult[] {
@@ -277,28 +280,37 @@ export async function refreshChannelMetaProof(
 /** Persist meta-proof + snapshot index + bake sidecar (suite=all paths). */
 export async function saveChannelMetaProof(
   report: ChannelAwareVerificationReport,
-  sources?: ChannelMetaRefreshResult['sources']
+  sources?: ChannelMetaRefreshResult['sources'],
+  paths?: {
+    savePath?: string;
+    snapshotPath?: string;
+    bakePath?: string;
+    updateIndex?: boolean;
+  }
 ): Promise<{ savePath: string; snapshotPath: string; bakePath: string }> {
   const suite = 'all' as const;
-  const savePath = channelSuiteCanonicalSavePath(suite);
+  const savePath = paths?.savePath ?? channelSuiteCanonicalSavePath(suite);
   await Bun.write(savePath, `${JSON.stringify(report, null, 2)}\n`);
 
-  const snapshotPath = verificationSnapshotFilename(report.semanticTags, suite);
+  const snapshotPath =
+    paths?.snapshotPath ?? verificationSnapshotFilename(report.semanticTags, suite);
   if (snapshotPath !== savePath) {
     await Bun.write(snapshotPath, `${JSON.stringify(report, null, 2)}\n`);
   }
 
-  await upsertVerificationSnapshotIndex({
-    channel: String(report.semanticTags.channel),
-    targetVersion: report.semanticTags.targetVersion,
-    suite,
-    runtimeVersion: report.semanticTags.runtimeVersion,
-    path: snapshotPath,
-    proofHash: report.proofHash,
-    testedAt: report.semanticTags.testedAt,
-    status: report.summary.status,
-    updateCanonical: channelSuiteUpdatesCanonicalIndex(suite),
-  });
+  if (paths?.updateIndex !== false) {
+    await upsertVerificationSnapshotIndex({
+      channel: String(report.semanticTags.channel),
+      targetVersion: report.semanticTags.targetVersion,
+      suite,
+      runtimeVersion: report.semanticTags.runtimeVersion,
+      path: snapshotPath,
+      proofHash: report.proofHash,
+      testedAt: report.semanticTags.testedAt,
+      status: report.summary.status,
+      updateCanonical: channelSuiteUpdatesCanonicalIndex(suite),
+    });
+  }
 
   const bake: ChannelMetaBakeRecord = {
     type: 'ChannelMetaBake',
@@ -320,9 +332,10 @@ export async function saveChannelMetaProof(
     },
     path: '/registry/release-features.json',
   };
-  await Bun.write(CHANNEL_META_BAKE_PATH, `${JSON.stringify(bake, null, 2)}\n`);
+  const bakePath = paths?.bakePath ?? CHANNEL_META_BAKE_PATH;
+  await Bun.write(bakePath, `${JSON.stringify(bake, null, 2)}\n`);
 
-  return { savePath, snapshotPath, bakePath: CHANNEL_META_BAKE_PATH };
+  return { savePath, snapshotPath, bakePath };
 }
 
 /** Compact ops / static.json slice from bake sidecar (falls back to release-features). */

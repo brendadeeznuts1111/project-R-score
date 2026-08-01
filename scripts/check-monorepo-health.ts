@@ -9,6 +9,7 @@
  *   bun run check:monorepo-health              # tests + collect + ratchet (ci:core)
  *   bun scripts/check-monorepo-health.ts --tests-only   # pre-commit when health files staged
  *   bun scripts/check-monorepo-health.ts --write-baseline
+ *   bun scripts/check-monorepo-health.ts --no-write        # CI ratchet without artifact mutation
  *   bun scripts/check-monorepo-health.ts --json
  *
  * Does **not** fail solely on grade=critical (repo score is currently mid-30s);
@@ -32,6 +33,7 @@ const WRITE_BASELINE = Bun.argv.includes('--write-baseline');
 const TESTS_ONLY = Bun.argv.includes('--tests-only');
 const JSON_OUT = Bun.argv.includes('--json');
 const NO_HISTORY = Bun.argv.includes('--no-history') || Bun.env.CI === 'true';
+const NO_WRITE = Bun.argv.includes('--no-write');
 
 export type MonorepoHealthBaseline = {
   formulaVersion: number;
@@ -151,21 +153,23 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  await writeMonorepoHealthArtifacts(report, { archive: false });
-  // Pages-facing registry bake (ops-summary + TOC + /api/health consume this).
-  try {
-    const { reportToRegistryBake, MONOREPO_HEALTH_REGISTRY_REL } = await import(
-      '../lib/monitoring/monorepo-health-slice.ts'
-    );
-    const bake = reportToRegistryBake(report);
-    await Bun.write(
-      joinPath(ROOT, MONOREPO_HEALTH_REGISTRY_REL),
-      JSON.stringify(bake, null, 2) + '\n'
-    );
-  } catch {
-    /* registry bake optional when public/ not writable */
+  if (!NO_WRITE) {
+    await writeMonorepoHealthArtifacts(report, { archive: false });
+    // Pages-facing registry bake (ops-summary + TOC + /api/health consume this).
+    try {
+      const { reportToRegistryBake, MONOREPO_HEALTH_REGISTRY_REL } = await import(
+        '../lib/monitoring/monorepo-health-slice.ts'
+      );
+      const bake = reportToRegistryBake(report);
+      await Bun.write(
+        joinPath(ROOT, MONOREPO_HEALTH_REGISTRY_REL),
+        JSON.stringify(bake, null, 2) + '\n'
+      );
+    } catch {
+      /* registry bake optional when public/ not writable */
+    }
   }
-  if (!NO_HISTORY) {
+  if (!NO_HISTORY && !NO_WRITE) {
     try {
       await appendHealthHistory(report);
     } catch {

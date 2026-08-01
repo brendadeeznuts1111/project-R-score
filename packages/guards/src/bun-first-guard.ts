@@ -18,6 +18,8 @@ export type GuardViolation = {
   catalogId?: string;
 };
 
+type RuntimeRequire = (moduleSpecifier: string) => unknown;
+
 const MODULE_VIOLATIONS = getGuardModuleViolations();
 const API_PATTERNS = getGuardApiPatterns();
 
@@ -103,20 +105,21 @@ export function checkBunFirstCompliance(
  * Guard function to use at module load time
  */
 export function guardBunFirst(): void {
-  const originalRequire = (globalThis as { require?: NodeRequire }).require;
+  const runtimeGlobal = globalThis as { require?: RuntimeRequire };
+  const originalRequire = runtimeGlobal.require;
 
   if (originalRequire) {
-    (globalThis as { require: NodeRequire }).require = function (id: string) {
-      const violation = MODULE_VIOLATIONS[id];
+    runtimeGlobal.require = function (moduleSpecifier: string): unknown {
+      const violation = MODULE_VIOLATIONS[moduleSpecifier];
       if (violation) {
-        const message = `🛡️ BUN-FIRST GUARD: "${id}" is blocked. ${formatBunMessage(violation.catalogId, violation.replacement)}`;
+        const message = `🛡️ BUN-FIRST GUARD: "${moduleSpecifier}" is blocked. ${formatBunMessage(violation.catalogId, violation.replacement)}`;
 
         if (violation.severity === 'error') {
           throw new Error(message);
         }
         console.warn(`⚠️ ${message}`);
       }
-      return originalRequire.apply(this, arguments as unknown as Parameters<NodeRequire>);
+      return originalRequire(moduleSpecifier);
     };
   }
 }

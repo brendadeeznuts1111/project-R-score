@@ -189,6 +189,8 @@ example*-*
 test*-*
 !scripts/test-*.ts
 !.github/workflows/test-*.yml
+!.agents/skills/ast-grep/scripts/test-cli.ts
+!.agents/skills/ast-grep/scripts/scan/transpiler/test-runner.ts
 *.tmp
 
 # Generated files

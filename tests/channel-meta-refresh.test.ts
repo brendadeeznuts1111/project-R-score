@@ -2,7 +2,6 @@
 import { describe, expect, test } from 'bun:test';
 import { resolvePath } from '../lib/path-bun.ts';
 import {
-  CHANNEL_META_BAKE_PATH,
   channelMetaToOpsSlice,
   invalidateChannelMetaBake,
   isChannelMetaMergedRow,
@@ -14,6 +13,7 @@ import {
 } from '../lib/verification/channel-meta-refresh.ts';
 import { loadChannelMetaSlice } from '../lib/operations/ops-summary.ts';
 import type { VerificationResult } from '../lib/verification/types.ts';
+import { createTestWorkspace } from './harness.ts';
 
 describe('lib/verification/channel-meta-refresh', () => {
   test('stripChannelMetaRows is idempotent on meta prefixes', () => {
@@ -76,15 +76,24 @@ describe('lib/verification/channel-meta-refresh', () => {
   });
 
   test('saveChannelMetaProof writes bake sidecar and ops slice loads it', async () => {
+    await using workspace = await createTestWorkspace('channel-meta-save-');
     const root = resolvePath(import.meta.dir, '..');
     const { report, sources } = await refreshChannelMetaProof({
       root,
       preferArtifacts: true,
     });
     expect(releaseHasChannelMetaEmbeds(report.results)).toBe(true);
-    const { bakePath } = await saveChannelMetaProof(report, sources);
-    expect(bakePath).toBe(CHANNEL_META_BAKE_PATH);
-    const bakeFile = Bun.file(CHANNEL_META_BAKE_PATH);
+    const savePath = workspace.resolve('release-features.json');
+    const snapshotPath = workspace.resolve('verification-snapshot.json');
+    const expectedBakePath = workspace.resolve('channel-meta-bake.json');
+    const { bakePath } = await saveChannelMetaProof(report, sources, {
+      savePath,
+      snapshotPath,
+      bakePath: expectedBakePath,
+      updateIndex: false,
+    });
+    expect(bakePath).toBe(expectedBakePath);
+    const bakeFile = Bun.file(bakePath);
     expect(await bakeFile.exists()).toBe(true);
     const bake = await bakeFile.json();
     expect(bake.type).toBe('ChannelMetaBake');
@@ -92,7 +101,7 @@ describe('lib/verification/channel-meta-refresh', () => {
     const slice = channelMetaToOpsSlice(bake, report);
     expect(slice.available).toBe(true);
     expect(slice.sources?.networking).toBe('artifact');
-    const loaded = loadChannelMetaSlice();
+    const loaded = loadChannelMetaSlice(bakePath, savePath);
     expect(loaded.available).toBe(true);
     expect(loaded.total).toBe(report.summary.total);
     expect(loaded.sources?.release).toBe('artifact');
@@ -100,20 +109,24 @@ describe('lib/verification/channel-meta-refresh', () => {
   });
 
   test('invalidateChannelMetaBake tombstones sidecar; load falls back', async () => {
+    await using workspace = await createTestWorkspace('channel-meta-invalidate-');
     const root = resolvePath(import.meta.dir, '..');
     const { report, sources } = await refreshChannelMetaProof({
       root,
       preferArtifacts: true,
     });
-    await saveChannelMetaProof(report, sources);
-    await invalidateChannelMetaBake('unit-test');
-    const tomb = await Bun.file(CHANNEL_META_BAKE_PATH).json();
+    const savePath = workspace.resolve('release-features.json');
+    const snapshotPath = workspace.resolve('verification-snapshot.json');
+    const bakePath = workspace.resolve('channel-meta-bake.json');
+    const savePaths = { savePath, snapshotPath, bakePath, updateIndex: false };
+    await saveChannelMetaProof(report, sources, savePaths);
+    await invalidateChannelMetaBake('unit-test', bakePath);
+    const tomb = await Bun.file(bakePath).json();
     expect(tomb.type).toBe('ChannelMetaBakeInvalid');
     expect(tomb.reason).toBe('unit-test');
-    const loaded = loadChannelMetaSlice();
+    const loaded = loadChannelMetaSlice(bakePath, savePath);
     expect(loaded.available).toBe(true);
     expect(loaded.sources).toBeUndefined();
-    // Restore valid bake for other tests / disk hygiene
-    await saveChannelMetaProof(report, sources);
+    await saveChannelMetaProof(report, sources, savePaths);
   });
 });

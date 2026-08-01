@@ -16,6 +16,7 @@ import {
 import {
   assertCICoverage,
   assertEveryRunbookHasJobOwner,
+  CI_JOB_OWNERS,
   discoverCiJobs,
 } from '../lib/harness/discover-ci';
 import { argvFromCommand } from '../lib/harness/maintenance';
@@ -43,6 +44,13 @@ describe('CI / deploy runbooks', () => {
 
   test('every CI_RUNBOOKS id appears in CI_JOB_OWNERS values', () => {
     expect(assertEveryRunbookHasJobOwner()).toEqual([]);
+  });
+
+  test('local bun:ci boundaries have explicit runbook owners', () => {
+    expect(CI_JOB_OWNERS['ci:types']).toBe('typescript-ci');
+    expect(CI_JOB_OWNERS['ci:security']).toBe('ci-core');
+    expect(CI_JOB_OWNERS['ci:portal-registry']).toBe('ci-core');
+    expect(CI_JOB_OWNERS['security-scanner.yml']).toBe('ci-core');
   });
 
   test('discovery finds package CI scripts and GHA workflows', async () => {
