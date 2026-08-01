@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-01T03:57:26.691Z",
+  "generatedAt": "2026-08-01T19:54:14.117Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -12,13 +12,13 @@
     "colorKernel": "public/portal/theme.jsonc"
   },
   "summary": {
-    "brands": 59,
+    "brands": 61,
     "domains": 9,
-    "ids": 53,
+    "ids": 55,
     "keys": 1,
     "codes": 5,
-    "covered": 39,
-    "referencedUnconstructed": 5,
+    "covered": 40,
+    "referencedUnconstructed": 6,
     "unused": 15,
     "cataloguedProjects": 35,
     "trackedProjects": 32,
@@ -79,7 +79,7 @@
     {
       "name": "identity",
       "module": "lib/types/branded/identity.ts",
-      "brandCount": 5,
+      "brandCount": 6,
       "colorKey": "purple",
       "color": "#a371f7",
       "tone": "info"
@@ -95,7 +95,7 @@
     {
       "name": "portal",
       "module": "lib/types/branded/portal.ts",
-      "brandCount": 4,
+      "brandCount": 5,
       "colorKey": "green",
       "color": "#3fb950",
       "tone": "ok"
@@ -658,6 +658,68 @@
               "lib/identity/identity.ts",
               "lib/identity/timeline.ts",
               "lib/security/zero-trust-manager.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "OidcClientId",
+      "domain": "identity",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input"
+      ],
+      "description": "OIDC relying-party client identifier parsed from deployment configuration",
+      "kind": "id",
+      "module": "lib/types/branded/identity.ts",
+      "constructors": {
+        "as": "asOidcClientId",
+        "try": "tryOidcClientId",
+        "parse": "parseOidcClientId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isOidcClientId",
+      "shortName": "oidcClientId",
+      "envName": "OIDC_CLIENT_ID",
+      "colorKey": "purple",
+      "color": "#a371f7",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "referenced-unconstructed",
+        "references": 4,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/auth/oidc.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "referenced-unconstructed",
+            "references": 4,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": [
+              "lib/auth/oidc.ts"
             ]
           },
           "projects": {
@@ -3147,19 +3209,20 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 28,
+        "references": 31,
         "constructors": {
           "as": 7,
           "try": 0,
           "parse": 0
         },
-        "guards": 0,
+        "guards": 1,
         "files": [
           "config/tenants.ts",
           "lib/accounts/account-r2-store.ts",
           "lib/accounts/account-types.ts",
           "lib/accounts/accounts.ts",
           "lib/accounts/memory-account-store.ts",
+          "lib/auth/session.ts",
           "lib/channels/channels.ts",
           "lib/identity/identity.ts",
           "lib/telegram/link-nonce.ts"
@@ -3167,15 +3230,16 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 28,
+            "references": 31,
             "constructionCalls": 7,
-            "guardCalls": 0,
+            "guardCalls": 1,
             "files": [
               "config/tenants.ts",
               "lib/accounts/account-r2-store.ts",
               "lib/accounts/account-types.ts",
               "lib/accounts/accounts.ts",
               "lib/accounts/memory-account-store.ts",
+              "lib/auth/session.ts",
               "lib/channels/channels.ts",
               "lib/identity/identity.ts",
               "lib/telegram/link-nonce.ts"
@@ -3305,29 +3369,31 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 15,
+        "references": 18,
         "constructors": {
           "as": 4,
           "try": 0,
           "parse": 0
         },
-        "guards": 0,
+        "guards": 1,
         "files": [
           "lib/accounts/account-r2-store.ts",
           "lib/accounts/account-types.ts",
           "lib/accounts/memory-account-store.ts",
+          "lib/auth/session.ts",
           "lib/telegram/link-nonce.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 15,
+            "references": 18,
             "constructionCalls": 4,
-            "guardCalls": 0,
+            "guardCalls": 1,
             "files": [
               "lib/accounts/account-r2-store.ts",
               "lib/accounts/account-types.ts",
               "lib/accounts/memory-account-store.ts",
+              "lib/auth/session.ts",
               "lib/telegram/link-nonce.ts"
             ]
           },
@@ -3388,6 +3454,70 @@
             "constructionCalls": 0,
             "guardCalls": 0,
             "files": []
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "DomId",
+      "domain": "portal",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Owned portal DOM mount id used by glossary section routing",
+      "kind": "id",
+      "module": "lib/types/branded/portal.ts",
+      "constructors": {
+        "as": "asDomId",
+        "try": "tryDomId",
+        "parse": "parseDomId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isDomId",
+      "shortName": "domId",
+      "envName": "DOM_ID",
+      "colorKey": "green",
+      "color": "#3fb950",
+      "tone": "ok",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 4,
+        "constructors": {
+          "as": 9,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/portal/page-glossary.ts",
+          "lib/portal/partner-routes.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 4,
+            "constructionCalls": 9,
+            "guardCalls": 0,
+            "files": [
+              "lib/portal/page-glossary.ts",
+              "lib/portal/partner-routes.ts"
+            ]
           },
           "projects": {
             "status": "unused",

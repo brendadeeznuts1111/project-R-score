@@ -7,6 +7,7 @@
 import { devClaimsFromCode, exchangeAuthorizationCode } from '../../../lib/auth/oidc.ts';
 import { signSession, sessionCookieHeader } from '../../../lib/auth/session.ts';
 import { AccountR2Store } from '../../../lib/accounts/account-r2-store.ts';
+import { tryOidcClientId } from '../../../lib/types/branded.ts';
 import {
   jsonResponse,
   requireBucket,
@@ -47,10 +48,12 @@ export async function onRequest(context: PagesContext): Promise<Response> {
   let email: string;
 
   if (oidcConfigured(env)) {
+    const clientId = tryOidcClientId(env.OIDC_CLIENT_ID);
+    if (!clientId) return jsonResponse({ error: 'OIDC not configured' }, 503);
     const redirectUri = env.OIDC_REDIRECT_URI ?? `${url.origin}/api/auth/callback`;
     const claims = await exchangeAuthorizationCode({
       code,
-      clientId: env.OIDC_CLIENT_ID!,
+      clientId,
       clientSecret: env.OIDC_CLIENT_SECRET!,
       tokenUrl: env.OIDC_TOKEN_URL!,
       redirectUri,

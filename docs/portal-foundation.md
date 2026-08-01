@@ -37,7 +37,7 @@ Exception: [`public/portal/health-page.js`](../public/portal/health-page.js) (sh
 | Brand assets | [`public/site.webmanifest`](../public/site.webmanifest) · [`public/icons/factory/`](../public/icons/factory/) | canonical mark, favicon/install metadata, theme colors |
 | CLI hub | [`/portal/tools/`](../public/portal/tools/) | copy-CLI · bake freshness · capability subset · `#capabilities` |
 | Packages board | [`/portal/packages/`](../public/portal/packages/) | SVG dependency graph · role filter · detail panel · claim `packages-graph-map-v13` |
-| Brand keymap | [`/portal/brands/`](../public/portal/brands/) | 59-value glossary · constructor tiers · glossary concept links · design-kernel domain colors · tracked-project adoption · `/registry/brand-keymap.json` |
+| Brand keymap | [`/portal/brands/`](../public/portal/brands/) | 61-value glossary · constructor tiers · glossary concept links · design-kernel domain colors · tracked-project adoption · `/registry/brand-keymap.json` |
 | Domain glossary | [`/portal/glossary/`](../public/portal/glossary/) | schema v3 · canonical market/model/trading vocabulary + typed portal field semantics · surface `sections[]` as `{ hash, domId, conceptId }` · `URLPattern.hash` deep links · portal design-kernel category tokens + partner-ops concept colors · `/registry/domain-glossary.json` |
 | Vault board | [`/portal/vault/`](../public/portal/vault/) | live bake visual; gate = `portal-cli vault health` (offline snaps) |
 | Failures board | [`/portal/failures/`](../public/portal/failures/) | junit bake · nav badge = failure count |
@@ -83,6 +83,14 @@ SSOT classifiers + hash inits: [`lib/portal/url-planes.ts`](../lib/portal/url-pl
 Do **not** curl a hash as a path, route partner deep links via `pathname` patterns, or invent
 `/api/parse-hash` — `URLPattern({ hash })` is the parser. Board JS must mirror
 `PARTNER_HASH_PATTERN_INITS` / section·glossary inits (gated by `tests/portal-url-planes.test.ts`).
+
+Compile repeated patterns once at module scope. Use `test()` for classification/allowlist matching
+when no captures are needed; use `exec()` only when reading named groups. The shared kernel does
+this in `lib/portal/url-planes.ts`, and browser glossary modules mirror it. `URLPatternInit.search`
+and `.hash` match component text without the leading `?` / `#`; escape a literal colon before a
+named group (`glossary\\::concept`). URLPattern grammar is not a JavaScript named-capture regexp.
+The Bun 1.3.12 speedups are release evidence, not a timing threshold for CI:
+[`test()` / `exec()` performance](https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster).
 
 ---
 

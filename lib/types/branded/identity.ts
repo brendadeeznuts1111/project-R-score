@@ -13,12 +13,14 @@ import { defineBrandConstructors, type BrandSpec, type BrandedString } from './_
 export type UserId = BrandedString<'UserId'>;
 export type AccountId = BrandedString<'AccountId'>;
 export type IdentityId = BrandedString<'IdentityId'>;
+export type OidcClientId = BrandedString<'OidcClientId'>;
 export type AccessKeyId = BrandedString<'AccessKeyId'>;
 export type TokenId = BrandedString<'TokenId'>;
 
 const user = defineBrandConstructors('UserId');
 const account = defineBrandConstructors('AccountId');
 const identity = defineBrandConstructors('IdentityId');
+const oidcClient = defineBrandConstructors('OidcClientId');
 const accessKey = defineBrandConstructors('AccessKeyId');
 const token = defineBrandConstructors('TokenId');
 
@@ -33,6 +35,10 @@ export const parseAccountId = account.parse;
 export const asIdentityId = identity.as;
 export const tryIdentityId = identity.try;
 export const parseIdentityId = identity.parse;
+
+export const asOidcClientId = oidcClient.as;
+export const tryOidcClientId = oidcClient.try;
+export const parseOidcClientId = oidcClient.parse;
 
 export const asAccessKeyId = accessKey.as;
 export const tryAccessKeyId = accessKey.try;
@@ -63,6 +69,13 @@ export const IDENTITY_BRAND_SPECS = [
     tiers: ['as', 'try', 'parse'],
     mint: ['system-internal', 'wire-input'],
     description: 'Zero-trust / federated identity record',
+  },
+  {
+    name: 'OidcClientId',
+    domain: 'identity',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['wire-input'],
+    description: 'OIDC relying-party client identifier parsed from deployment configuration',
   },
   {
     name: 'AccessKeyId',

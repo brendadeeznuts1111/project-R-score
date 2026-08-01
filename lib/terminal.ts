@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 /**
  * Bun.Terminal (PTY) helpers — spawn interactive TTY children and capture output.
  *
@@ -149,6 +150,9 @@ export async function spawnWithTerminal(
       terminal: capture.terminal,
     });
     const exitCode = await proc.exited;
+    // `proc.exited` can resolve before the PTY's final data callback under parallel load.
+    // Yield once more before reading the capture so buffered terminal output can drain.
+    await Bun.sleep(10);
     return {
       exitCode,
       output: capture.text(),

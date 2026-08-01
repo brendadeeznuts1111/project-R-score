@@ -1,4 +1,7 @@
 // @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern
+// @see https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster — test/exec fast paths
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/test/index#run-tests — bun:test
 import { describe, expect, test } from 'bun:test';
 import { parsePartnerHash, partnerHash, type PartnerRoute } from '../lib/portal/partner-routes.ts';
 import {
@@ -8,6 +11,9 @@ import {
   classifyPortalHash,
   classifyPortalLocation,
   classifyPortalPathname,
+  isPortalSectionHash,
+  portalGlossaryConceptFromHash,
+  portalSectionFromHash,
 } from '../lib/portal/url-planes.ts';
 
 /** One fixture per PARTNER_HASH_PATTERN_INITS key (parse + partnerHash round-trip). */
@@ -86,6 +92,17 @@ describe('portal url planes', () => {
     const out = partner.exec({ hash: 'partner/ASH/out/out-ASH-1' });
     expect(out?.hash.groups.code).toBe('ASH');
     expect(out?.hash.groups.outId).toBe('out-ASH-1');
+  });
+
+  test('shared precompiled patterns separate test-only checks from group extraction', () => {
+    expect(isPortalSectionHash('#section:onboard')).toBe(true);
+    expect(isPortalSectionHash('#glossary:ops.view.account_net')).toBe(false);
+    expect(portalSectionFromHash('#section:accounts-limits')).toBe('accounts-limits');
+    expect(portalSectionFromHash('#section:')).toBeUndefined();
+    expect(portalGlossaryConceptFromHash('#glossary:ops.view.account_net')).toBe(
+      'ops.view.account_net'
+    );
+    expect(portalGlossaryConceptFromHash('#section:onboard')).toBeUndefined();
   });
 
   test('every partner hash init has TS↔JS parse parity and partnerHash round-trip', async () => {

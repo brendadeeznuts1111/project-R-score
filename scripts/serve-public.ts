@@ -139,6 +139,7 @@ import {
   type ServeBindSnapshot,
 } from '../lib/http/bun-server.ts';
 import { PORTAL_BOARD_SLUGS } from '../lib/http/portal-board-slugs.ts';
+import { canonicalSlashRedirect } from '../lib/http/canonical-redirect.ts';
 import { formatServePublicBindLines } from '../lib/http/serve-public-bind.ts';
 import { resolveServePublicBindPrefs } from '../lib/http/serve-public-config.ts';
 import { attachServePublicErrorHandler } from '../lib/http/serve-public-error.ts';
@@ -1823,9 +1824,10 @@ function portalBoardRoutes(
   const out: Record<string, (req: Request) => Promise<Response>> = {};
   for (const slug of slugs) {
     const dir = `/portal/${slug}/`;
-    const handler = portalPage(dir);
-    out[`/portal/${slug}`] = handler;
-    out[dir] = handler;
+    // Canonical form is the trailing-slash directory index; the bare slug 301s
+    // to it so relative URLs and nav active-state never see duplicate paths.
+    out[`/portal/${slug}`] = (req: Request) => Promise.resolve(canonicalSlashRedirect(req, dir));
+    out[dir] = portalPage(dir);
   }
   return out;
 }
@@ -2248,7 +2250,7 @@ function buildPublicRoutes() {
     },
 
     // Portal home + every board index (SIMD exact routes; fetch for unmatched only)
-    '/portal': portalPage('/portal/index.html'),
+    '/portal': (req: Request) => Promise.resolve(canonicalSlashRedirect(req, '/portal/')),
     '/portal/': portalPage('/portal/index.html'),
     ...portalBoardRoutes(portalPage, PORTAL_BOARD_SLUGS),
   };

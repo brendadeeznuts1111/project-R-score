@@ -12,6 +12,7 @@
  * @see tools/domain-glossary.ts
  * @see lib/portal/url-planes.ts
  * @see https://bun.com/blog/bun-v1.3.4#urlpattern-api
+ * @see https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster
  */
 
 const GLOSSARY_URL = '/registry/domain-glossary.json';
@@ -26,6 +27,7 @@ const TRACK_DETAIL_KEYS = Object.freeze({
 });
 const TRACK_TOKEN_PATTERN = /^[a-z0-9][a-z0-9_.:-]{0,127}$/i;
 
+// Precompile once; this consumer needs exec() because it extracts named groups.
 const sectionPattern = new URLPattern({ hash: 'section\\::section' });
 const glossaryConceptPattern = new URLPattern({ hash: 'glossary\\::concept' });
 

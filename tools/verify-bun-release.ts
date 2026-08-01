@@ -422,7 +422,7 @@ export async function runReleaseVerification(
     const b64 = await resized.webp({ quality: 80 }).toBase64();
     const dataurl = await resized.webp({ quality: 80 }).dataurl();
     const placeholder = await img.placeholder();
-    const tmpPath = '/tmp/bun-image-test.webp';
+    const tmpPath = `/tmp/bun-image-test-${process.pid}.webp`;
     await resized.webp({ quality: 80 }).write(tmpPath);
     const written = await Bun.file(tmpPath).exists();
     if (written) await Bun.file(tmpPath).delete();

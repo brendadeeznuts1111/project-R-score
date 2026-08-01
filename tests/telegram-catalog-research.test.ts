@@ -136,7 +136,9 @@ describe('telegram-catalog-research', () => {
   test('loadCatalogResearchContext reads partner forum gaps', async () => {
     const dir = join(tmpdir(), `ctx-${Date.now()}`);
     const forumsDir = join(dir, 'forums');
+    const houseForumsDir = join(dir, 'house');
     await mkdir(forumsDir, { recursive: true });
+    await mkdir(houseForumsDir, { recursive: true });
     await writeFile(
       join(forumsDir, 'GAP.json'),
       `${JSON.stringify({
@@ -154,10 +156,26 @@ describe('telegram-catalog-research', () => {
         createdAt: '2026-01-01T00:00:00.000Z',
       })}\n`
     );
+    await writeFile(
+      join(houseForumsDir, 'hq.json'),
+      `${JSON.stringify({
+        surfaceSlug: 'hq',
+        title: 'HQ',
+        chatId: '-2',
+        chatRef: 'tg:chat:-2',
+        topics: [],
+        topicsThreadMap: { general: 1 },
+        welcomePromptMessageId: 7,
+        topicsComplete: true,
+        createdAt: '2026-01-01T00:00:00.000Z',
+        updatedAt: '2026-01-01T00:00:00.000Z',
+      })}\n`
+    );
 
     const { context } = await loadCatalogResearchContext({
       partnerCodes: ['GAP'],
       forumsMetaDir: forumsDir,
+      houseForumsMetaDir: houseForumsDir,
     });
     const live = context.forumMetaByPartner.get('GAP');
     expect(live?.missingTopics).toContain('Alerts');

@@ -12,7 +12,7 @@ describe('brand keymap portal', () => {
       kind: 'brand-keymap',
       path: '/registry/brand-keymap.json',
       summary: {
-        brands: 59,
+        brands: 61,
         domains: 9,
       },
       sources: {
@@ -23,7 +23,9 @@ describe('brand keymap portal', () => {
         stagedGate: 'bun tools/branded-id-check.ts --staged --strict',
       },
     });
-    expect(payload.brands).toHaveLength(59);
+    expect(payload.brands).toHaveLength(61);
+    expect(payload.brands.some((b: { name: string }) => b.name === 'OidcClientId')).toBe(true);
+    expect(payload.brands.some((b: { name: string }) => b.name === 'DomId')).toBe(true);
     expect(payload.brands.some((b: { name: string }) => b.name === 'HostId')).toBe(true);
     expect(payload.brands.some((b: { name: string }) => b.name === 'AccessDomainId')).toBe(true);
     expect(payload.brands.some((b: { name: string }) => b.name === 'PagesProjectId')).toBe(true);

@@ -20,7 +20,11 @@ describe('monitoring', () => {
   test('collectMonitoring returns live payload shape', async () => {
     const db = openOperationsDb({ path: ':memory:' });
     recordIntegrityCheck(db, { status: 'ok', failures: 0 });
-    const data = await collectMonitoring(db, { source: 'live', uptimeOriginMs: Date.now() - 5000 });
+    const data = await collectMonitoring(db, {
+      source: 'live',
+      uptimeOriginMs: Date.now() - 5000,
+      includeInstallCache: false,
+    });
     expect(data.source).toBe('live');
     expect(data.uptimeMs).toBeGreaterThanOrEqual(4000);
     expect(typeof data.packageCount).toBe('number');
@@ -38,7 +42,7 @@ describe('monitoring', () => {
       return;
     }
     const db = openOperationsDb({ path: ':memory:' });
-    const data = await collectMonitoring(db, { source: 'snapshot' });
+    const data = await collectMonitoring(db, { source: 'snapshot', includeInstallCache: false });
     db.close();
 
     expect(data.compliance).toBeDefined();
@@ -54,7 +58,7 @@ describe('monitoring', () => {
     const bake = Bun.file('public/registry/limit-raises.json');
     if (!(await bake.exists())) return;
     const db = openOperationsDb({ path: ':memory:' });
-    const data = await collectMonitoring(db, { source: 'snapshot' });
+    const data = await collectMonitoring(db, { source: 'snapshot', includeInstallCache: false });
     db.close();
 
     expect(data.limitRaises).toBeDefined();
@@ -66,7 +70,7 @@ describe('monitoring', () => {
 
   test('renderMonitoringHtml embeds Bun.inspect.table output', async () => {
     const db = openOperationsDb({ path: ':memory:' });
-    const data = await collectMonitoring(db, { source: 'live' });
+    const data = await collectMonitoring(db, { source: 'live', includeInstallCache: false });
     const html = renderMonitoringHtml(data);
     expect(html).toContain('Registry overview');
     expect(html).toContain('<pre>');

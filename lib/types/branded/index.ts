@@ -60,7 +60,14 @@ import { PORTAL_BRAND_SPECS } from './portal.ts';
 import { SURFACES_BRAND_SPECS } from './surfaces.ts';
 
 import type { SessionId, TerminalId, RequestId, CorrelationId, SnapshotId } from './session.ts';
-import type { UserId, AccountId, IdentityId, AccessKeyId, TokenId } from './identity.ts';
+import type {
+  UserId,
+  AccountId,
+  IdentityId,
+  OidcClientId,
+  AccessKeyId,
+  TokenId,
+} from './identity.ts';
 import type { DocumentId, ZoneId, DocTokenId } from './documents.ts';
 import type { ChallengeId, PolicyId } from './security.ts';
 import type { DeploymentId } from './deployment.ts';
@@ -97,7 +104,13 @@ import type {
   StateCode,
   ZipCode,
 } from './operations.ts';
-import type { PortalTenantId, TelegramUserId, PortalAccountId, LinkNonceId } from './portal.ts';
+import type {
+  PortalTenantId,
+  TelegramUserId,
+  PortalAccountId,
+  LinkNonceId,
+  DomId,
+} from './portal.ts';
 import type {
   HostId,
   ApexDomainId,
@@ -152,6 +165,7 @@ export type AnyId =
   | UserId
   | AccountId
   | IdentityId
+  | OidcClientId
   | AccessKeyId
   | TokenId
   | DocumentId
@@ -190,6 +204,7 @@ export type AnyId =
   | TelegramUserId
   | PortalAccountId
   | LinkNonceId
+  | DomId
   | HostId
   | ApexDomainId
   | SubdomainId

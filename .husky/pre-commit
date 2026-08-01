@@ -43,6 +43,19 @@ if [ "$p_code" -ne 0 ]; then
   exit "$p_code"
 fi
 
+echo ""
+echo "== pre-commit: package.json scripts guard =="
+# Hard fail on silent script removals (PR #149 deleted ~70 ops scripts in an
+# unrelated diff). Escape: SKIP_SCRIPTS_GUARD=1 + reason in commit message.
+if [ "$DRY_RUN" -eq 1 ]; then
+  echo "  [dry-run] bun scripts/check-package-scripts.ts"
+else
+  bun scripts/check-package-scripts.ts || {
+    echo "❌ package-scripts guard failed"
+    exit 1
+  }
+fi
+
 # Keep generated .vscode/mcp.json in lockstep when the MCP SSOT changes.
 if git diff --cached --name-only | grep -q '^\.mcp\.json$'; then
   echo ""

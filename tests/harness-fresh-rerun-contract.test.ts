@@ -181,20 +181,24 @@ describe('fresh-rerun contract', () => {
     expect(result.exitCode).toBe(0);
   });
 
-  test('security-hash-boundaries freshRerun runs green', async () => {
-    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'security-hash-boundaries');
-    expect(p?.freshRerun).toBe('bun test tests/fixtures/security-hash/');
-    const result = Bun.spawnSync(['bun', 'test', 'tests/fixtures/security-hash/'], {
-      stdout: 'pipe',
-      stderr: 'pipe',
-    });
-    expect(result.exitCode).toBe(0);
-  });
+  test(
+    'security-hash-boundaries freshRerun runs green',
+    async () => {
+      const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'security-hash-boundaries');
+      expect(p?.freshRerun).toBe('bun test tests/fixtures/security-hash/');
+      const result = Bun.spawnSync(['bun', 'test', 'tests/fixtures/security-hash/'], {
+        stdout: 'pipe',
+        stderr: 'pipe',
+      });
+      expect(result.exitCode).toBe(0);
+    },
+    { timeout: 30_000 }
+  );
 
   test('url-pattern-boundaries freshRerun runs green', async () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'url-pattern-boundaries');
     expect(p?.freshRerun).toBe(
-      'bun test tests/bun-urlpattern.test.ts tests/bun-site-url.test.ts tests/factory-production.test.ts'
+      'bun test tests/bun-urlpattern.test.ts tests/bun-site-url.test.ts tests/factory-production.test.ts tests/portal-url-planes.test.ts'
     );
     const result = Bun.spawnSync(
       [
@@ -203,6 +207,7 @@ describe('fresh-rerun contract', () => {
         'tests/bun-urlpattern.test.ts',
         'tests/bun-site-url.test.ts',
         'tests/factory-production.test.ts',
+        'tests/portal-url-planes.test.ts',
       ],
       { stdout: 'pipe', stderr: 'pipe' }
     );

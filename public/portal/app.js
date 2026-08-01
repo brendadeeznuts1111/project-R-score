@@ -21,6 +21,7 @@ import {
 } from './search.js';
 import { computeHealth, healthClass } from './health.js';
 import { tenantRegistryPaths, resolveTenantId } from './components/sidebar.js';
+import { parseGlossaryHash } from './scripts/glossary-router.js';
 
 const REGISTRY_FRESHNESS_THRESHOLD_MS = 24 * 60 * 60 * 1000;
 
@@ -254,6 +255,22 @@ function syncFiltersFromHash() {
   renderGrid(packages);
 }
 
+// ── Glossary hash routing ────────────────────────────────────────────────
+
+function scrollToConcept(concept) {
+  const el = document.getElementById(concept) || document.querySelector(`[data-concept="${concept}"]`);
+  if (el) {
+    el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    el.classList.add('concept-highlight');
+    setTimeout(() => el.classList.remove('concept-highlight'), 2000);
+  }
+}
+
+function handleGlossaryHash() {
+  const glossary = parseGlossaryHash(window.location.href);
+  if (glossary) scrollToConcept(glossary.concept);
+}
+
 // ── Debounced search ────────────────────────────────────────────────────
 
 let searchTimer = 0;
@@ -353,6 +370,7 @@ async function init() {
 
     $('search').addEventListener('input', debouncedSearch);
     window.addEventListener('hashchange', syncFiltersFromHash);
+    window.addEventListener('hashchange', handleGlossaryHash);
 
     // Deep-link: auto-open modal if hash contains project=foo
     const hashState = readHashState();
@@ -362,6 +380,9 @@ async function init() {
     if (deepProject && registryIndex?.packages?.[deepProject]) {
       showDetail(deepProject, registryIndex.packages[deepProject]);
     }
+
+    // Deep-link: glossary hash routing
+    handleGlossaryHash();
 
     // ── Keyboard navigation ──────────────────────────────────────────
 
@@ -442,7 +463,7 @@ async function init() {
     });
   } catch (err) {
     $('loading').classList.add('hidden');
-    $('error-banner').classList.remove('hidden');
+    $('error-banner')?.classList.remove('hidden');
     $('error-text').textContent = err.message;
   }
 }

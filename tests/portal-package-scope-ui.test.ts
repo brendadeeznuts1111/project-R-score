@@ -76,6 +76,24 @@ describe('registry package scope state', () => {
     });
   });
 
+  test('ignores scroll-to-text fragment directives in the hash', () => {
+    const defaults = {
+      query: '',
+      types: [],
+      scopes: [],
+      tags: [],
+      sort: 'name',
+      project: '',
+    };
+
+    expect(parseHashState('#:~:text=Ops-,Registry,-Health')).toEqual(defaults);
+    // Filter state before the directive survives; directive params never leak in.
+    expect(parseHashState('#q=registry&:~:text=q%3Dinjected')).toEqual({
+      ...defaults,
+      query: 'registry',
+    });
+  });
+
   test('composes scope with query, type, tag, and sorting', () => {
     const filtered = applyFilters(packages, {
       query: 'registry',

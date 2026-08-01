@@ -1,4 +1,7 @@
+// @see https://bun.com/docs/test/index#run-tests — bun:test
 import { describe, expect, test } from 'bun:test';
+
+import { BRAND_CATALOG } from '../lib/types/branded.ts';
 
 import {
   analyzeBrandCoverage,
@@ -47,7 +50,7 @@ describe('brand coverage reporter', () => {
     ];
 
     const rows = analyzeBrandCoverage(files);
-    expect(rows).toHaveLength(58);
+    expect(rows).toHaveLength(BRAND_CATALOG.length);
     expect(row(rows, 'SessionId')).toMatchObject({
       references: 0,
       asCalls: 2,
