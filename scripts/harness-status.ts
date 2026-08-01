@@ -4,7 +4,7 @@
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed / --watch
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate / --parallel
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs — --shard
-// @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi / ansiMarkdown
+// @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
@@ -14,7 +14,7 @@
  * Tool-legibility surface for the day loop + ratchets (compact).
  *
  *   bun run docs:harness              # zero-overhead: bun ./docs/harness/README.md
- *   bun run harness:status            # live ratchets + timings via ansiMarkdown
+ *   bun run harness:status            # live ratchets + timings via Bun.markdown.ansi
  *   bun run harness:status -- --table # also emit Bun.inspect.table
  *   bun run harness:status -- --actions              # non-noise GHA checks table
  *   bun run harness:status -- --show-actions-noise   # full GHA class table
@@ -33,7 +33,7 @@ import {
   type ClassifiedActionsCheck,
 } from '../lib/harness/actions-check-noise';
 import { CRITICAL_PROOF_PATHS } from '../lib/harness/proof';
-import { ansiMarkdown, inspect, logTable } from '../lib/console-depth';
+import { inspect, logTable } from '../lib/console-depth';
 import { hasFlag } from './lib/cli-args';
 
 const ROOT = `${import.meta.dir}/..`;
@@ -125,7 +125,7 @@ async function showActionsChecks(): Promise<void> {
   const summary = summarizeActionsChecks(classified);
 
   if (summary.knownOffline > 0) {
-    console.info(ansiMarkdown(`_${actionsNoiseSummaryLine(summary.knownOffline)}_`));
+    console.info(Bun.markdown.ansi(`_${actionsNoiseSummaryLine(summary.knownOffline)}_`));
   }
 
   if (showNoise) {
@@ -177,7 +177,7 @@ const md = [
   ),
 ].join('\n');
 
-process.stdout.write(ansiMarkdown(md));
+process.stdout.write(Bun.markdown.ansi(md));
 process.stdout.write('\n');
 
 if (hasFlag('table')) {
@@ -228,7 +228,7 @@ async function showTiming(label: string, path: string): Promise<void> {
       ? gates.map(g => `- ${g.ok ? '✓' : '✗'} **${g.name}** — ${g.ms}ms`)
       : ['_no gate timings_']),
   ].join('\n');
-  process.stdout.write(ansiMarkdown(timingMd));
+  process.stdout.write(Bun.markdown.ansi(timingMd));
   process.stdout.write('\n');
 }
 
@@ -238,5 +238,5 @@ await showTiming('Last ci:core', CORE_TIMING);
 await showActionsChecks();
 
 console.info(
-  ansiMarkdown('_tip:_ `bun run docs:harness` · zero-overhead `bun ./docs/harness/README.md`')
+  Bun.markdown.ansi('_tip:_ `bun run docs:harness` · zero-overhead `bun ./docs/harness/README.md`')
 );

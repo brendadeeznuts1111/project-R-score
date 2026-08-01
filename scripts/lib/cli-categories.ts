@@ -107,9 +107,9 @@ export const CLI_SPECIAL: Record<string, string> = {
   'build:defines:compile': 'build:defines --compile → dist/fw-build-info',
   'harness:status': 'Discover (display only): day-loop + proof catalog — not a gate',
   'docs:harness': 'Render docs/harness/README.md via bun ./file.md (native ANSI, no VM)',
-  'docs:cron': 'Cron contract in-terminal (ansiMarkdown · docs/harness/cron.md)',
+  'docs:cron': 'Cron contract in-terminal (bun ./docs/harness/cron.md)',
   'docs:install-verify':
-    'Install-verify WebView journey brief (ansiMarkdown · docs/harness/install-verify.md)',
+    'Install-verify WebView journey brief (bun ./docs/harness/install-verify.md)',
   'docs:claim-discovery':
     'Claim discovery questionnaire (new ProofPath · docs/harness/CLAIM-DISCOVERY.md)',
   'docs:spine-tenants': 'Spine tenants index + typed MAINTENANCE_RUNBOOKS catalog',
@@ -128,12 +128,12 @@ export const CLI_SPECIAL: Record<string, string> = {
   'check:harness-complexity:staged':
     'Complexity floor on staged lib/harness files (git diff | Bun.stdin)',
   'test:code-quality:smol': 'test:code-quality under bun --smol (eager GC for tight CI)',
-  'docs:code-quality': 'Code-quality tenants index (ansiMarkdown)',
-  'docs:ci-deploy': 'CI/deploy runbooks index (ansiMarkdown)',
+  'docs:code-quality': 'Code-quality tenants index (Bun.markdown.ansi + live catalog)',
+  'docs:ci-deploy': 'CI/deploy runbooks index (Bun.markdown.ansi + live catalog)',
   'docs:fresh-rerun':
-    'Discover (display only): fresh-rerun contract + catalog — not a gate (ansiMarkdown · FRESH-RERUN.md)',
+    'Discover (display only): fresh-rerun contract + catalog — not a gate (Bun.markdown.ansi · FRESH-RERUN.md)',
   'docs:search-governance':
-    'Search-governance WebView journey brief (ansiMarkdown · docs/harness/search-governance.md)',
+    'Search-governance WebView journey brief (bun ./docs/harness/search-governance.md)',
   'test:cron':
     'Cron contract ratchet (OS-persistent primary / in-process complement · docs/harness/cron.md)',
   'test:cron-os':

@@ -32,7 +32,6 @@
  */
 
 import {
-  ansiMarkdown,
   getConsoleDepth,
   logDepth,
   logTable,
@@ -563,7 +562,7 @@ async function printLineageDocs(): Promise<void> {
     cliTone.accent('\nLINEAGE DOCS') +
       cliTone.dim('  lib/types/branded/README.md · Bun.markdown.ansi')
   );
-  process.stdout.write(ansiMarkdown(md.slice(a, b).trimEnd() + '\n'));
+  process.stdout.write(Bun.markdown.ansi(md.slice(a, b).trimEnd() + '\n'));
 }
 
 function printLineageTransitions(rawHost: string): void {

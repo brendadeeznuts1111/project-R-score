@@ -4,7 +4,6 @@
 /**
  *   bun run docs:ci-deploy
  */
-import { ansiMarkdown } from '../lib/console-depth';
 import { CI_RUNBOOKS } from '../lib/harness/ci-deploy';
 import { joinPath } from '../lib/path-bun';
 
@@ -22,5 +21,5 @@ const catalog = [
   ),
   '',
 ].join('\n');
-process.stdout.write(ansiMarkdown(body + catalog));
+process.stdout.write(Bun.markdown.ansi(body + catalog));
 process.stdout.write('\n');

@@ -4,7 +4,6 @@
 /**
  *   bun run docs:code-quality
  */
-import { ansiMarkdown } from '../lib/console-depth';
 import { CODE_QUALITY_TENANTS } from '../lib/harness/code-quality';
 import { joinPath } from '../lib/path-bun';
 
@@ -22,5 +21,5 @@ const catalog = [
   ),
   '',
 ].join('\n');
-process.stdout.write(ansiMarkdown(body + catalog));
+process.stdout.write(Bun.markdown.ansi(body + catalog));
 process.stdout.write('\n');
