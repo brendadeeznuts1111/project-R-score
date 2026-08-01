@@ -140,7 +140,7 @@ Depicts `accounting.*` renamed to the doc's `*_received|_processed|_extended|_ap
 
 ## 3. Color legend (real kernel — `PARTNER_OPS_CONCEPT_COLORS` → `partnerOpsColorWire()`)
 
-Verified by importing `lib/telegram/partner-ops-color-kernel.ts` (module-level `Bun.color` checks pass).
+Verified by importing `lib/telegram/partner-ops-color-kernel.ts` (module-level `Bun.color` checks pass) and by `bun run validate:colors` (theme-dark alias Claim/Evidence · claim `color-kernel-theme-aliases`).
 
 ### 3.1 Closed palette (9 keys)
 

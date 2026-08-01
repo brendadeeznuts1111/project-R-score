@@ -67,6 +67,10 @@ jobs:
       - name: Machine bunfig SSOT
         run: bun run machine:bunfig:ensure -- --overwrite
 
+      # Color kernel theme-dark aliases + count floors (claim color-kernel-theme-aliases).
+      - name: Color kernel (validate:colors)
+        run: bun run test:colors
+
       # Portal doctor offline pure checks (linker · bakes · catalog · bunfig · infra offline).
       # One process: plain CI log + reports/portal-doctor-ci.json + GITHUB_STEP_SUMMARY.
       - name: Portal doctor (offline)

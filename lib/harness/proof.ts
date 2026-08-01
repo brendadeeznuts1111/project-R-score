@@ -375,6 +375,25 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'lib/console-depth.ts',
   },
   {
+    id: 'color-kernel-theme-aliases',
+    claim:
+      'theme.jsonc dark aliases align with glossary / partner-ops / telegram kernels and COLOR_KERNEL_COUNT_FLOORS hold',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'workflow',
+    gateRef: 'harness-gates.yml',
+    evidence: [
+      'bun run test:colors',
+      'bun run validate:colors',
+      'bun run validate:colors -- --json',
+      'lib/portal/color-kernel-align.ts',
+      'tools/check-portal-color-kernels.ts',
+      'docs/portal-foundation.md',
+    ],
+    freshRerun: 'bun run test:colors',
+    freshRerunKind: 'claim',
+    owner: 'lib/portal/color-kernel-align.ts',
+  },
+  {
     id: 'monorepo-health-score',
     claim:
       'Monorepo health score collects via Bun.Transpiler/Glob, schema-validates, and ratchets floors (minScore / max dead·large·cycles) in ci:core; pre-commit runs unit tests when health sources staged; import-graph shares scanSourceImports SSOT',

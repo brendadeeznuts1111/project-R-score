@@ -19,3 +19,16 @@ Portal-facing TypeScript SSOTs. **No barrel** (`index.ts`) — import modules di
 - Pattern inits: [`url-planes.ts`](./url-planes.ts) (`PARTNER_HASH_PATTERN_INITS`, section/glossary inits).
 - Mounts: [`page-glossary.ts`](./page-glossary.ts) (re-exports section/glossary inits).
 - Board JS mirrors hash strings: `public/portal/partners/partner-routes.js` · `public/portal/components/glossary-ux.js` (gated by `tests/portal-url-planes.test.ts`).
+
+## Color kernel Claim / Evidence
+
+| Script | Role |
+|--------|------|
+| `bun run validate:colors` | Claim/Evidence paste (alias of `portal:colors:check`) |
+| `bun run validate:colors -- --json` | Machine report (`status` · `checks` · floors) |
+| `bun run test:colors` | Unit + validate smoke — claim `color-kernel-theme-aliases` |
+| `bun run portal:theme:check` | CSS tokens stale + color aliases |
+
+SSOT: [`color-kernel-align.ts`](./color-kernel-align.ts) · planes matrix in [`docs/portal-foundation.md`](../../docs/portal-foundation.md).
+
+Do **not** invent a parallel `colorkernal` CLI. Nested package scripts named `validate:colors` / `test:colors` under `projects/` are unrelated.

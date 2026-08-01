@@ -52,6 +52,11 @@ type Timing = {
 const ratchets: Array<{ cmd: string; purpose: string }> = [
   { cmd: 'bun run docs:harness', purpose: 'bun ./docs/harness/README.md (native ANSI)' },
   { cmd: 'bun run docs:fresh-rerun', purpose: 'fresh-rerun contract + catalog' },
+  {
+    cmd: 'bun run validate:colors',
+    purpose: 'color kernel Claim/Evidence (theme-dark aliases + floors)',
+  },
+  { cmd: 'bun run test:colors', purpose: 'color-kernel unit + validate:colors smoke' },
   { cmd: 'bun run type-check', purpose: 'tsc spine (tsconfig.check.json)' },
   { cmd: 'bun run test:changed', purpose: '--changed dirty tree' },
   { cmd: 'bun run test:changed:main', purpose: '--changed=origin/main|--main-head' },
