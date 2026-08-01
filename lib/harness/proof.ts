@@ -512,6 +512,22 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'lib/docs/fetch-page.ts',
   },
   {
+    id: 'https-proxy-connect-reuse',
+    claim:
+      'Bun reuses HTTPS proxy CONNECT tunnels only while proxy host/port, proxy credentials, target host/port, and TLS configuration remain equal',
+    kinds: ['boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
+    evidence: [
+      'bun test tests/fetch-proxy-keepalive.test.ts',
+      'tests/fetch-proxy-keepalive.test.ts',
+      'lib/net/proxy.ts',
+    ],
+    freshRerun: 'bun test tests/fetch-proxy-keepalive.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'lib/net/proxy.ts',
+  },
+  {
     id: 'blog-codeblocks-boundaries',
     claim:
       'Blog div.CodeBlock extraction: Shiki strip, CodeBlockTab skip, bunBlog URL round-trip, token join fixture',
