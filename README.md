@@ -13,6 +13,7 @@
 | Workspace map | [`STRUCTURE.md`](STRUCTURE.md) |
 | Coding standards | [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) · full [custom-instructions.md](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md) (repo) |
 | Bun install policy | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
+| Bun native capabilities | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) · [Utilities guides map](docs/BUN_NATIVE_CAPABILITIES.md#utilities-guides-map) |
 | Import boundaries | [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md) |
 | Wire boundary (parse once) | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) |
 | Portal foundation | [`docs/portal-foundation.md`](docs/portal-foundation.md) |
