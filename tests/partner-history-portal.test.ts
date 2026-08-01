@@ -214,6 +214,10 @@ describe('partner-history portal', () => {
     expect(html).toContain('PARTNER_HISTORY_GLOSSARY.skeletonMetrics');
     expect(html).toContain('PARTNER_HISTORY_GLOSSARY.ariaLiveUpdate');
     expect(html).toContain('PARTNER_HISTORY_GLOSSARY.ariaFilterToggle');
+    expect(html).toContain('fromRefresh');
+    expect(html).toContain('freshnessProvenance');
+    expect(html).toContain('freshnessFlags instanceof Event');
+    expect(html).toContain('removeAttribute(\'aria-label\')');
   });
 
   test('records P2-P3 collapse backlog onto existing owners without minting', async () => {

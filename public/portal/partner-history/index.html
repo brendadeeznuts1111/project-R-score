@@ -1135,6 +1135,8 @@
       const emptyState = document.getElementById('empty-state');
       const baselineBody = document.getElementById('baseline-body');
       let lastVisibleCount = null;
+      /** Provenance from last successful load — survives filter-only re-renders. */
+      let freshnessProvenance = { cached: false };
 
       let filteredData = [];
       let opsData = null;
@@ -1240,12 +1242,20 @@
         freshnessLastUpdated: PARTNER_HISTORY_GLOSSARY.freshnessLastUpdated,
       });
 
-      function setFreshness(key, detail) {
+      function setFreshness(key, detail, { loadingLabel = false } = {}) {
         const concept = FRESHNESS_CONCEPT[key] ?? FRESHNESS_CONCEPT.freshnessRecent;
         const label = PARTNER_HISTORY_COPY[key] ?? PARTNER_HISTORY_COPY.freshnessRecent;
         freshnessEl.dataset.freshness = key;
         freshnessEl.setAttribute('data-glossary-concept', concept);
         freshnessEl.textContent = detail ? `${label} · ${detail}` : label;
+        if (loadingLabel) {
+          freshnessEl.setAttribute(
+            'aria-label',
+            `${PARTNER_HISTORY_COPY.skeletonTable} · ${PARTNER_HISTORY_GLOSSARY.skeletonTable}`
+          );
+        } else {
+          freshnessEl.removeAttribute('aria-label');
+        }
       }
 
       function setFilterSkeleton(messageKey) {
@@ -1649,11 +1659,9 @@
         );
         metricRow?.setAttribute('aria-label', PARTNER_HISTORY_COPY.skeletonMetrics);
         setFilterSkeleton('skeletonFilters');
-        setFreshness('freshnessSyncing', PARTNER_HISTORY_COPY.skeletonTable);
-        freshnessEl.setAttribute(
-          'aria-label',
-          `${PARTNER_HISTORY_COPY.skeletonTable} · ${PARTNER_HISTORY_GLOSSARY.skeletonTable}`
-        );
+        setFreshness('freshnessSyncing', PARTNER_HISTORY_COPY.skeletonTable, {
+          loadingLabel: true,
+        });
         historyFilters?.setAttribute(
           'aria-label',
           `${PARTNER_HISTORY_COPY.skeletonFilters} · filter by account, sportsbook, direction`
@@ -1667,7 +1675,8 @@
           const res = await fetch('/api/operations/summary');
           if (res.ok) {
             opsData = await res.json();
-            render();
+            freshnessProvenance = { cached: false };
+            render({}, { fromRefresh: true });
             return;
           }
         } catch {}
@@ -1675,7 +1684,8 @@
           const res = await fetch('/registry/ops-summary.json');
           if (res.ok) {
             opsData = await res.json();
-            render({ cached: true });
+            freshnessProvenance = { cached: true };
+            render({ cached: true }, { fromRefresh: true });
             return;
           }
         } catch {}
@@ -1748,7 +1758,14 @@
           : '<p class="baseline-note">No sportsbook activity matches these filters.</p>';
       }
 
-      function render(freshnessFlags = {}) {
+      function render(freshnessFlags = {}, options = {}) {
+        // Filter `<select change>` listeners pass an Event as the first arg.
+        if (freshnessFlags instanceof Event) {
+          options = {};
+          freshnessFlags = {};
+        }
+        const fromRefresh = options.fromRefresh === true;
+        const resolvedFreshness = { ...freshnessProvenance, ...freshnessFlags };
         const changes = Array.isArray(opsData?.limitChanges) ? opsData.limitChanges : [];
         nodePatterns = new Map(
           (opsData?.limitPatterns?.nodePatterns || []).map(pattern => [pattern.node_id, pattern])
@@ -1764,11 +1781,12 @@
           );
           filterStatus.textContent =
             'No limit changes are present in the loaded history window.';
-          renderFreshness(opsData, freshnessFlags);
+          renderFreshness(opsData, resolvedFreshness);
           breakdownEl.innerHTML = '<p class="baseline-note">No account activity is present.</p>';
           sportsbookBreakdownEl.innerHTML =
             '<p class="baseline-note">No sportsbook activity is present.</p>';
           card.data = withNodeActivity({ ...opsData, limitChanges: [] });
+          if (fromRefresh) lastVisibleCount = 0;
           refreshBtn.disabled = false;
           refreshBtn.removeAttribute('aria-busy');
           metricRow?.removeAttribute('aria-busy');
@@ -1851,8 +1869,9 @@
           directionSelect.value,
           hoursSelect.value !== '48' ? hoursSelect.value : '',
         ].filter(Boolean).length;
+        // Only announce count deltas after a real refresh — not filter-only re-renders.
         const liveDelta =
-          lastVisibleCount != null && total !== lastVisibleCount
+          fromRefresh && lastVisibleCount != null && total !== lastVisibleCount
             ? `<span data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.ariaLiveUpdate}"> · ${Math.abs(total - lastVisibleCount)} change${Math.abs(total - lastVisibleCount) === 1 ? '' : 's'} since last refresh</span>`
             : '';
         lastVisibleCount = total;
@@ -1870,7 +1889,7 @@
           PARTNER_HISTORY_GLOSSARY.ariaFilterToggle
         );
         renderHistoryHubLinks();
-        renderFreshness(opsData, freshnessFlags);
+        renderFreshness(opsData, resolvedFreshness);
         syncFilterQuery();
 
         const byPartner = new Map();
