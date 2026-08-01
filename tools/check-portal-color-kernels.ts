@@ -74,9 +74,11 @@ export async function main(): Promise<void> {
     process.exit(1);
   }
 
-  console.log(
-    `OK portal color kernels align with theme.jsonc v${report.themeVersion} (${THEME_DARK_ALIAS_CHECKS.length} aliases · ${components.checked} component fallbacks)`
-  );
+  if (!hasFlag('json')) {
+    console.log(
+      `OK portal color kernels align with theme.jsonc v${report.themeVersion} (${THEME_DARK_ALIAS_CHECKS.length} aliases · ${components.checked} component fallbacks)`
+    );
+  }
 
   await createClaimReporter(report, {
     formatHuman: () => formatColorKernelClaimReport(report),
