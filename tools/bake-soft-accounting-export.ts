@@ -30,6 +30,7 @@
  * @see lib/telegram/soft-accounting-export.ts
  * @see lib/bun-executable.ts
  */
+import { unlinkSync } from 'node:fs';
 import {
   bunRuntimeProvenance,
   isModuleEntrypoint,
@@ -123,7 +124,8 @@ function assertPlayRow(row: SoftAccountingPlayRow, index: number): void {
   if (!row.placedAt?.trim()) throw new Error(`plays[${index}].placedAt required`);
 }
 
-function validateSoftCtExport(raw: SoftAccountingExport): void {
+/** Schema gate for soft-ct exports (allows empty plays — use {@link assertSoftCtNonEmpty} for governance). */
+export function validateSoftCtExport(raw: SoftAccountingExport): void {
   if (raw.schema !== SOFT_ACCOUNTING_EXPORT_SCHEMA) {
     throw new Error(`expected schema ${SOFT_ACCOUNTING_EXPORT_SCHEMA}`);
   }
@@ -136,6 +138,19 @@ function validateSoftCtExport(raw: SoftAccountingExport): void {
   raw.plays.forEach(assertPlayRow);
   if (raw.available !== raw.plays.length > 0) {
     throw new Error('available must equal plays.length > 0');
+  }
+}
+
+/**
+ * Governance: empty soft-ct must not pass check / overwrite the fixture bake.
+ * Opt in with `--force` on from-ct only when an intentional empty snapshot is required.
+ */
+export function assertSoftCtNonEmpty(raw: SoftAccountingExport): void {
+  validateSoftCtExport(raw);
+  if (raw.plays.length === 0) {
+    throw new Error(
+      'soft-ct export has 0 plays (Soft DB empty or no Soft rows). Keep toc-ops-fixture: bun run soft:accounting:bake. from-ct: pass --force only for intentional empty snapshot.'
+    );
   }
 }
 
@@ -154,7 +169,7 @@ export async function bakeSoftAccountingExport(
   if (check && existingText) {
     const existing = JSON.parse(existingText) as SoftAccountingExport;
     if (existing.source === 'soft-ct') {
-      validateSoftCtExport(existing);
+      assertSoftCtNonEmpty(existing);
       return {
         wrote: false,
         path: SOFT_ACCOUNTING_EXPORT_REL,
@@ -205,16 +220,20 @@ export async function bakeSoftAccountingExport(
 }
 
 /** Run toc-ops `ct soft-accounting-export` into the Factory registry path. */
-export async function importSoftAccountingExportFromCt(): Promise<{
+export async function importSoftAccountingExportFromCt(
+  options: { force?: boolean } = {}
+): Promise<{
   path: string;
   plays: number;
   available: boolean;
   source: 'soft-ct';
 }> {
+  const force = options.force === true;
   const tocOpsRepo = await resolveTocOpsRepo(root);
   const bunBin = resolveBunExecutable();
+  const tmpOut = joinPath(root, 'public/registry/.soft-accounting-export.from-ct.tmp.json');
   const proc = Bun.spawn(
-    [bunBin, 'run', 'ct', 'soft-accounting-export', '--out', outPath, '--json'],
+    [bunBin, 'run', 'ct', 'soft-accounting-export', '--out', tmpOut, '--json'],
     {
       cwd: tocOpsRepo,
       stdout: 'pipe',
@@ -232,8 +251,19 @@ export async function importSoftAccountingExportFromCt(): Promise<{
       `ct soft-accounting-export failed (exit ${exitCode}) cwd=${tocOpsRepo} bun=${bunBin}: ${stderr || stdout}`.trim()
     );
   }
-  const baked = (await Bun.file(outPath).json()) as SoftAccountingExport;
-  validateSoftCtExport(baked);
+  let baked: SoftAccountingExport;
+  try {
+    baked = (await Bun.file(tmpOut).json()) as SoftAccountingExport;
+    if (force) validateSoftCtExport(baked);
+    else assertSoftCtNonEmpty(baked);
+    await Bun.write(outPath, `${JSON.stringify(baked, null, 2)}\n`);
+  } finally {
+    try {
+      unlinkSync(tmpOut);
+    } catch {
+      /* tmp may be absent */
+    }
+  }
   return {
     path: SOFT_ACCOUNTING_EXPORT_REL,
     plays: baked.plays.length,
@@ -246,10 +276,11 @@ export async function importSoftAccountingExportFromCt(): Promise<{
 if (isModuleEntrypoint(import.meta)) {
   const check = Bun.argv.includes('--check');
   const fromCt = Bun.argv.includes('--from-ct');
+  const force = Bun.argv.includes('--force');
   const wantJson = Bun.argv.includes('--json');
   try {
     const result = fromCt
-      ? await importSoftAccountingExportFromCt()
+      ? await importSoftAccountingExportFromCt({ force })
       : await bakeSoftAccountingExport({ check });
     if (wantJson) {
       jsonOut({

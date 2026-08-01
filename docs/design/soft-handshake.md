@@ -84,8 +84,10 @@ bun run soft:accounting:from-ct
 ```
 
 `partners:governance` → `soft:accounting:check` accepts either exact fixture match
-or a schema-valid `source: "soft-ct"` bake. Odds are `0` until Soft stores them
-(on live Soft export; fixture may carry odds from toc-ops demo plays).
+or a schema-valid non-empty `source: "soft-ct"` bake (0 plays fails check and
+`soft:accounting:from-ct` unless `--force`; restore fixture with
+`bun run soft:accounting:bake`). Odds are `0` until Soft stores them (on live Soft
+export; fixture may carry odds from toc-ops demo plays).
 
 `weeks[]` / `byBookType[]` may ship empty from Soft; Factory derives week rollups from
 plays for chrome (`ops.view.per_week`). Book-type rows wait until Soft tags venues.

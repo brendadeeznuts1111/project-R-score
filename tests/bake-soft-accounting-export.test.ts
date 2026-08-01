@@ -2,10 +2,58 @@
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 import { describe, expect, test } from 'bun:test';
 import {
+  assertSoftCtNonEmpty,
   clearBunExecutableCache,
   resolveBunExecutable,
   resolveTocOpsRepo,
+  validateSoftCtExport,
 } from '../tools/bake-soft-accounting-export.ts';
+import {
+  SOFT_ACCOUNTING_EXPORT_SCHEMA,
+  type SoftAccountingExport,
+} from '../lib/telegram/soft-accounting-export.ts';
+
+function emptySoftCtExport(): SoftAccountingExport {
+  return {
+    schema: SOFT_ACCOUNTING_EXPORT_SCHEMA,
+    version: '1',
+    generatedAt: '2026-07-31T00:00:00.000Z',
+    source: 'soft-ct',
+    available: false,
+    path: '/registry/soft-accounting-export.json',
+    plays: [],
+    weeks: [],
+    byBookType: [],
+  };
+}
+
+describe('soft-ct empty export governance', () => {
+  test('validateSoftCtExport allows schema-valid empty soft-ct', () => {
+    expect(() => validateSoftCtExport(emptySoftCtExport())).not.toThrow();
+  });
+
+  test('assertSoftCtNonEmpty rejects empty soft-ct for check / from-ct promote', () => {
+    expect(() => assertSoftCtNonEmpty(emptySoftCtExport())).toThrow(/0 plays/);
+    expect(() => assertSoftCtNonEmpty(emptySoftCtExport())).toThrow(/soft:accounting:bake/);
+  });
+
+  test('assertSoftCtNonEmpty accepts non-empty soft-ct', () => {
+    const withPlay = {
+      ...emptySoftCtExport(),
+      available: true,
+      plays: [
+        {
+          playId: 'play-test-001',
+          partnerCode: 'ASH',
+          stake: 100,
+          odds: -110,
+          placedAt: '2026-07-13T17:10:00.000Z',
+        },
+      ],
+    } satisfies SoftAccountingExport;
+    expect(() => assertSoftCtNonEmpty(withPlay)).not.toThrow();
+  });
+});
 
 describe('soft:accounting:from-ct spawn resolution', () => {
   test('resolveBunExecutable prefers Bun.which or process.execPath', () => {
