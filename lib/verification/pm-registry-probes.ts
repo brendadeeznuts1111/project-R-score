@@ -1,0 +1,334 @@
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
+// @see https://bun.com/docs/api/spawn — Bun.spawnSync
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/pm/cli/pm — bun pm pkg / pack / ls
+/**
+ * Package-manager weave probes for the publish-plane:
+ * local `bun pm` state ↔ private npm registry (`registry.factory-wager.com`)
+ * parity for the one publishable workspace package.
+ *
+ * Network probes are fail-soft: an unreachable registry or a missing
+ * `FACTORY_WAGER_TOKEN` yields `{ skipped: true }` rows, never hard failures.
+ * The tool layer (`verify-pages-edge --pm --strict-pm`) promotes skips.
+ *
+ * @see docs/harness/tenants/monorepo-workspaces.md
+ */
+
+export const PM_PACKAGE_NAME = '@factorywager/registry-client';
+export const PM_PACKAGE_DIR = 'packages/registry-client';
+export const PM_REGISTRY_ENV = 'PM_VERIFY_REGISTRY';
+export const PM_REGISTRY_TOKEN_ENV = 'FACTORY_WAGER_TOKEN';
+
+const REPO_ROOT = new URL('../../', import.meta.url).pathname;
+const DEFAULT_REGISTRY = 'https://registry.factory-wager.com/';
+
+export interface PmSpawnResult {
+  exitCode: number;
+  stdout: string;
+  stderr: string;
+}
+
+export type PmSpawn = (cmd: string[], cwd: string) => PmSpawnResult;
+
+export interface PmProbeRow {
+  name: string;
+  ok: boolean;
+  skipped: boolean;
+  detail: string;
+}
+
+const defaultSpawn: PmSpawn = (cmd, cwd) => {
+  const proc = Bun.spawnSync({ cmd, cwd, stdout: 'pipe', stderr: 'pipe' });
+  return {
+    exitCode: proc.exitCode,
+    stdout: proc.stdout.toString(),
+    stderr: proc.stderr.toString(),
+  };
+};
+
+function row(name: string, ok: boolean, detail: string, skipped = false): PmProbeRow {
+  return { name, ok, skipped, detail };
+}
+
+/** Last non-empty stdout line, JSON-parsed when quoted (bun pm pkg get prints JSON values). */
+export function parsePmPkgValue(stdout: string): string {
+  const lines = stdout
+    .split('\n')
+    .map(l => l.trim())
+    .filter(l => l.length > 0 && !l.startsWith('['));
+  const last = lines.at(-1) ?? '';
+  try {
+    const parsed: unknown = JSON.parse(last);
+    return typeof parsed === 'string' ? parsed : String(parsed);
+  } catch {
+    return last;
+  }
+}
+
+/** File paths from `bun pm pack --dry-run` output (`packed <size> <path>` lines). */
+export function parsePackDryRunFiles(stdout: string): string[] {
+  const files: string[] = [];
+  for (const line of stdout.split('\n')) {
+    const m = line.trim().match(/^packed\s+\S+\s+(.+)$/);
+    if (m?.[1]) files.push(m[1].trim());
+  }
+  return files;
+}
+
+/** Publish-relevant manifest subset compared local ↔ registry. */
+export function cleanManifest(manifest: Record<string, unknown>): Record<string, unknown> {
+  const keys = [
+    'name',
+    'version',
+    'type',
+    'main',
+    'module',
+    'types',
+    'exports',
+    'files',
+    'sideEffects',
+  ];
+  const out: Record<string, unknown> = {};
+  for (const k of keys) {
+    if (k in manifest) out[k] = manifest[k];
+  }
+  return out;
+}
+
+export function manifestsEqual(
+  local: Record<string, unknown>,
+  published: Record<string, unknown>
+): boolean {
+  return Bun.deepEquals(cleanManifest(local), cleanManifest(published), true);
+}
+
+/** Registry base URL: env override → root package.json publishConfig → default. */
+export async function resolveRegistryUrl(
+  env: Record<string, string | undefined> = Bun.env,
+  readRootPkg: () => Promise<Record<string, unknown>> = readRootPackageJson
+): Promise<string> {
+  const fromEnv = env[PM_REGISTRY_ENV]?.trim();
+  if (fromEnv) return fromEnv.replace(/\/$/, '');
+  try {
+    const pkg = await readRootPkg();
+    const publishConfig = pkg.publishConfig as { registry?: string } | undefined;
+    if (publishConfig?.registry) return publishConfig.registry.replace(/\/$/, '');
+  } catch {
+    // fall through to default
+  }
+  return DEFAULT_REGISTRY.replace(/\/$/, '');
+}
+
+async function readRootPackageJson(): Promise<Record<string, unknown>> {
+  return (await Bun.file(`${REPO_ROOT}package.json`).json()) as Record<string, unknown>;
+}
+
+export function scopedPackumentUrl(registry: string, pkg: string): string {
+  if (pkg.startsWith('@')) {
+    const slash = pkg.indexOf('/');
+    if (slash > 0) return `${registry}/${pkg.slice(0, slash)}%2f${pkg.slice(slash + 1)}`;
+  }
+  return `${registry}/${pkg}`;
+}
+
+export interface NpmPackumentVersion {
+  version?: string;
+  dist?: { tarball?: string; integrity?: string; shasum?: string };
+  [key: string]: unknown;
+}
+
+export interface NpmPackument {
+  name?: string;
+  'dist-tags'?: { latest?: string };
+  versions?: Record<string, NpmPackumentVersion>;
+}
+
+/** 1 — `bun pm pkg get` name/version parity for the publishable package. */
+export function pmPkgParity(spawn: PmSpawn = defaultSpawn): PmProbeRow {
+  const cwd = `${REPO_ROOT}${PM_PACKAGE_DIR}`;
+  const name = spawn(['bun', 'pm', 'pkg', 'get', 'name'], cwd);
+  const version = spawn(['bun', 'pm', 'pkg', 'get', 'version'], cwd);
+  if (name.exitCode !== 0 || version.exitCode !== 0) {
+    return row(
+      'pm pkg parity',
+      false,
+      `bun pm pkg failed (rc=${name.exitCode}/${version.exitCode})`
+    );
+  }
+  const gotName = parsePmPkgValue(name.stdout);
+  const gotVersion = parsePmPkgValue(version.stdout);
+  if (gotName !== PM_PACKAGE_NAME) return row('pm pkg parity', false, `name=${gotName}`);
+  if (!/^\d+\.\d+\.\d+/.test(gotVersion)) {
+    return row('pm pkg parity', false, `version=${gotVersion} not semver`);
+  }
+  return row('pm pkg parity', true, `${gotName}@${gotVersion}`);
+}
+
+/** 2 — npm registry packument reachable (fail-soft; Pages SPA HTML fallback = skip). */
+export async function npmRegistryMetadata(
+  fetchImpl: typeof fetch = fetch,
+  registry?: string
+): Promise<{ row: PmProbeRow; packument?: NpmPackument }> {
+  const base = registry ?? (await resolveRegistryUrl());
+  const url = scopedPackumentUrl(base, PM_PACKAGE_NAME);
+  try {
+    const res = await fetchImpl(url, { signal: AbortSignal.timeout(8_000) });
+    if (!res.ok) {
+      return { row: row('npm registry metadata', true, `skipped — ${url} → ${res.status}`, true) };
+    }
+    const ct = res.headers.get('content-type') ?? '';
+    if (!ct.includes('json')) {
+      return {
+        row: row(
+          'npm registry metadata',
+          true,
+          `skipped — no npm packument (${ct.split(';')[0]} fallback)`,
+          true
+        ),
+      };
+    }
+    const packument = (await res.json()) as NpmPackument;
+    const latest = packument['dist-tags']?.latest ?? 'unknown';
+    const count = Object.keys(packument.versions ?? {}).length;
+    return {
+      row: row('npm registry metadata', true, `latest=${latest} · ${count} version(s)`),
+      packument,
+    };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return { row: row('npm registry metadata', true, `skipped — ${msg.slice(0, 60)}`, true) };
+  }
+}
+
+/** 2b — artifact registry API live on the registry host (`/api/registry/health`). */
+export async function artifactRegistryApi(
+  fetchImpl: typeof fetch = fetch,
+  registry?: string
+): Promise<PmProbeRow> {
+  const base = registry ?? (await resolveRegistryUrl());
+  const url = `${base}/api/registry/health`;
+  try {
+    const res = await fetchImpl(url, { signal: AbortSignal.timeout(8_000) });
+    if (!res.ok) return row('artifact registry api', false, `${url} → ${res.status}`);
+    const ct = res.headers.get('content-type') ?? '';
+    if (!ct.includes('json')) {
+      return row('artifact registry api', false, `${url} → ${ct.split(';')[0]} (expected JSON)`);
+    }
+    await res.json();
+    return row('artifact registry api', true, `${url} ok`);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return row('artifact registry api', true, `skipped — ${msg.slice(0, 60)}`, true);
+  }
+}
+
+/** 3 — local manifest ↔ published manifest parity for the shared version. */
+export async function manifestParity(
+  packument: NpmPackument | undefined,
+  readLocal: () => Promise<Record<string, unknown>> = readLocalPackageManifest
+): Promise<PmProbeRow> {
+  if (!packument?.versions) {
+    return row('manifest parity', true, 'skipped — no packument', true);
+  }
+  const local = await readLocal();
+  const localVersion = typeof local.version === 'string' ? local.version : '';
+  const published = packument.versions[localVersion];
+  if (!published) {
+    return row(
+      'manifest parity',
+      true,
+      `skipped — local ${localVersion} not published (${Object.keys(packument.versions).join(', ') || 'none'})`,
+      true
+    );
+  }
+  if (manifestsEqual(local, published as Record<string, unknown>)) {
+    return row('manifest parity', true, `v${localVersion} manifest matches registry`);
+  }
+  return row('manifest parity', false, `v${localVersion} manifest drift vs registry`);
+}
+
+async function readLocalPackageManifest(): Promise<Record<string, unknown>> {
+  return (await Bun.file(`${REPO_ROOT}${PM_PACKAGE_DIR}/package.json`).json()) as Record<
+    string,
+    unknown
+  >;
+}
+
+/** 4 — `bun pm pack --dry-run` file set + dependency protocols. */
+export async function packDryRun(
+  spawn: PmSpawn = defaultSpawn,
+  readLocal: () => Promise<Record<string, unknown>> = readLocalPackageManifest,
+  distExists: () => Promise<boolean> = defaultDistExists
+): Promise<PmProbeRow> {
+  if (!(await distExists())) {
+    return row(
+      'pack dry-run',
+      true,
+      'skipped — dist not built (bun run build in registry-client)',
+      true
+    );
+  }
+  const cwd = `${REPO_ROOT}${PM_PACKAGE_DIR}`;
+  const res = spawn(['bun', 'pm', 'pack', '--dry-run', '--ignore-scripts'], cwd);
+  if (res.exitCode !== 0) {
+    return row('pack dry-run', false, `bun pm pack rc=${res.exitCode}`);
+  }
+  const files = parsePackDryRunFiles(res.stdout);
+  const required = ['package.json', 'README.md', 'dist/index.js', 'dist/index.d.ts'];
+  const missing = required.filter(f => !files.includes(f));
+  if (missing.length > 0) {
+    return row('pack dry-run', false, `missing: ${missing.join(', ')}`);
+  }
+  const local = await readLocal();
+  const deps = (local.dependencies ?? {}) as Record<string, string>;
+  const bad = Object.entries(deps).filter(([, v]) => /^(workspace|catalog):/.test(v));
+  if (bad.length > 0) {
+    return row('pack dry-run', false, `unstripped protocols: ${bad.map(([k]) => k).join(', ')}`);
+  }
+  return row('pack dry-run', true, `${files.length} files · required set present`);
+}
+
+async function defaultDistExists(): Promise<boolean> {
+  return Bun.file(`${REPO_ROOT}${PM_PACKAGE_DIR}/dist/index.js`).exists();
+}
+
+/** 5 — `bun pm ls --all` resolves clean at the workspace root. */
+export function pmLsSanity(spawn: PmSpawn = defaultSpawn): PmProbeRow {
+  const res = spawn(['bun', 'pm', 'ls', '--all'], REPO_ROOT);
+  if (res.exitCode !== 0) {
+    return row('pm ls sanity', false, `bun pm ls --all rc=${res.exitCode}`);
+  }
+  return row('pm ls sanity', true, 'dependency tree resolves');
+}
+
+/** 6 — scoped-registry token presence (never fails unauthenticated runs). */
+export function scopeTokenPresence(env: Record<string, string | undefined> = Bun.env): PmProbeRow {
+  const token = env[PM_REGISTRY_TOKEN_ENV]?.trim();
+  if (token) return row('scope token presence', true, `${PM_REGISTRY_TOKEN_ENV} set`);
+  return row(
+    'scope token presence',
+    true,
+    `${PM_REGISTRY_TOKEN_ENV} absent (read-only probes only)`,
+    true
+  );
+}
+
+export async function runPmProbes(opts?: {
+  spawn?: PmSpawn;
+  fetchImpl?: typeof fetch;
+  registry?: string;
+}): Promise<PmProbeRow[]> {
+  const rows: PmProbeRow[] = [];
+  rows.push(pmPkgParity(opts?.spawn));
+  const { row: metaRow, packument } = await npmRegistryMetadata(opts?.fetchImpl, opts?.registry);
+  rows.push(metaRow);
+  rows.push(await artifactRegistryApi(opts?.fetchImpl, opts?.registry));
+  rows.push(await manifestParity(packument));
+  rows.push(await packDryRun(opts?.spawn));
+  rows.push(pmLsSanity(opts?.spawn));
+  rows.push(scopeTokenPresence());
+  return rows;
+}

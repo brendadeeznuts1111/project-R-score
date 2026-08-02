@@ -8,6 +8,8 @@
  *
  *   bun tools/verify-pages-edge.ts
  *   bun tools/verify-pages-edge.ts --taxonomy   # also gate proof subsystem fields
+ *   bun tools/verify-pages-edge.ts --pm         # package-manager publish-plane probes
+ *   bun tools/verify-pages-edge.ts --pm --strict-pm  # promote pm skips to failures
  *   PAGES_VERIFY_BASE=https://project-r-score.pages.dev bun tools/verify-pages-edge.ts
  *
  * @see docs/harness/tenants/cloudflare-pages.md
@@ -16,6 +18,7 @@ import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
 import { inspectTable } from '../lib/console-depth.ts';
 import { inspectCloudflareSecurityHeaders } from '../lib/http/cloudflare-security-headers.ts';
 import { isCloudflareAccessEnforced } from '../lib/verification/cloudflare-access-live.ts';
+import { runPmProbes } from '../lib/verification/pm-registry-probes.ts';
 import { PROOF_TAXONOMY_CONTRACT_COUNT } from '../lib/verification/proof-taxonomy.ts';
 
 const BASE = Bun.env.PAGES_VERIFY_BASE?.trim() || `https://${CLOUDFLARE_DEFAULTS.pages.subdomain}`;
@@ -379,6 +382,34 @@ async function weaveMain() {
   console.log('\n✅ Weave verify passed');
 }
 
+async function pmMain() {
+  const strict = Bun.argv.includes('--strict-pm');
+  console.log(`PM publish-plane verify${strict ? ' (--strict-pm)' : ''}`);
+  const probes = await runPmProbes();
+  const rows: WeaveProbeRow[] = probes.map(p => ({
+    group: 'publish-plane',
+    path: p.name,
+    status: p.ok ? 'pass' : 'fail',
+    latencyMs: 0,
+    detail: p.detail,
+  }));
+  for (const p of probes) {
+    const mark = p.ok ? (p.skipped ? '○' : '✓') : '✗';
+    console.log(`${mark} ${p.name}: ${p.detail}`);
+  }
+  console.log(`\n📊 PM coverage (${rows.length} probes)`);
+  console.log(renderWeaveMatrix(rows));
+  const failed = probes.filter(p => !p.ok || (strict && p.skipped));
+  if (failed.length) {
+    console.error(
+      `\n❌ ${failed.length} pm check(s) failed${strict ? ' (strict: skips count)' : ''}`
+    );
+    process.exit(1);
+  }
+  const skipped = probes.filter(p => p.skipped).length;
+  console.log(`\n✅ PM verify passed${skipped > 0 ? ` (${skipped} skipped — fail-soft)` : ''}`);
+}
+
 async function main() {
   console.log(`Pages edge verify → ${BASE}${TAXONOMY ? ' (--taxonomy)' : ''}`);
   const checks = await Promise.all([
@@ -527,7 +558,11 @@ async function main() {
 }
 
 if (import.meta.main) {
-  const entry = Bun.argv.includes('--weave') ? weaveMain : main;
+  const entry = Bun.argv.includes('--weave')
+    ? weaveMain
+    : Bun.argv.includes('--pm')
+      ? pmMain
+      : main;
   entry().catch(e => {
     console.error(e instanceof Error ? e.message : e);
     process.exit(1);
