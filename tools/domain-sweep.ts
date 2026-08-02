@@ -214,6 +214,7 @@ async function probeApi() {
 async function runGates() {
   const gates: Array<[string, string[]]> = [
     ['verify:pages-edge', ['bun', 'tools/verify-pages-edge.ts']],
+    ['verify:weave', ['bun', 'tools/verify-pages-edge.ts', '--weave']],
     ['validate:colors', ['bun', 'tools/check-portal-color-kernels.ts']],
     ['glossary:verify', ['bun', 'run', 'glossary:verify']],
     ['telegram:verify', ['bun', 'tools/telegram-verify-env.ts']],
