@@ -19,32 +19,40 @@ const PACKUMENT_SHAPE_KEYS = ['name', 'dist-tags', 'versions', 'time'] as const;
 
 describe('bake-npm-packument output', () => {
   test('baked packument matches packages/registry-client manifest', async () => {
-    const proc = Bun.spawnSync({
-      cmd: ['bun', 'scripts/bake-npm-packument.ts'],
-      cwd: `${import.meta.dir}/..`,
-      stdout: 'pipe',
-      stderr: 'pipe',
-    });
-    expect(proc.exitCode).toBe(0);
+    // The bake stamps `time` with wall-clock now — snapshot and restore the
+    // committed artifact so a test run never dirties the tree.
+    const outPath = `${import.meta.dir}/../public/registry/npm/@factorywager/registry-client.json`;
+    const before = await Bun.file(outPath).bytes();
+    try {
+      const proc = Bun.spawnSync({
+        cmd: ['bun', 'scripts/bake-npm-packument.ts'],
+        cwd: `${import.meta.dir}/..`,
+        stdout: 'pipe',
+        stderr: 'pipe',
+      });
+      expect(proc.exitCode).toBe(0);
 
-    const baked = (await Bun.file(
-      `${import.meta.dir}/../public/registry/npm/@factorywager/registry-client.json`
-    ).json()) as Record<string, unknown>;
-    const manifest = (await Bun.file(
-      `${import.meta.dir}/../packages/registry-client/package.json`
-    ).json()) as { name: string; version: string };
+      const baked = (await Bun.file(outPath).json()) as Record<string, unknown>;
+      const manifest = (await Bun.file(
+        `${import.meta.dir}/../packages/registry-client/package.json`
+      ).json()) as { name: string; version: string };
 
-    for (const key of PACKUMENT_SHAPE_KEYS) expect(baked).toHaveProperty(key);
-    expect(baked.name).toBe(manifest.name);
-    expect((baked['dist-tags'] as { latest: string }).latest).toBe(manifest.version);
+      for (const key of PACKUMENT_SHAPE_KEYS) expect(baked).toHaveProperty(key);
+      expect(baked.name).toBe(manifest.name);
+      expect((baked['dist-tags'] as { latest: string }).latest).toBe(manifest.version);
 
-    const entry = (baked.versions as Record<string, Record<string, unknown>>)[manifest.version];
-    expect(entry).toBeDefined();
-    expect(entry.name).toBe(manifest.name);
-    expect(typeof entry.readme).toBe('string');
-    expect((entry.readme as string).length).toBeGreaterThan(0);
-    expect(entry.readmeFilename).toBe('README.md');
-    expect(typeof (entry.dist as { tarball: string }).tarball).toBe('string');
+      const entry = (baked.versions as Record<string, Record<string, unknown>>)[
+        manifest.version
+      ];
+      expect(entry).toBeDefined();
+      expect(entry.name).toBe(manifest.name);
+      expect(typeof entry.readme).toBe('string');
+      expect((entry.readme as string).length).toBeGreaterThan(0);
+      expect(entry.readmeFilename).toBe('README.md');
+      expect(typeof (entry.dist as { tarball: string }).tarball).toBe('string');
+    } finally {
+      await Bun.write(outPath, before);
+    }
   });
 });
 
