@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --format
@@ -10,11 +11,17 @@
  *   bun run check:oxlint-ratchet                 # enforce (pre-commit runs this)
  *   bun scripts/check-oxlint-ratchet.ts --write-baseline   # owners: re-pin after burn-down
  *
+ * Scans the git index tree (HEAD ∪ staged, via scripts/lib/index-tree.ts) —
+ * NOT the worktree — so another lane's uncommitted dirty files can never
+ * fail your commit. Re-pins likewise record the committed state.
+ *
  * Why oxlint (not the repo's eslint pipeline): 95 rules in ~30ms with no config
  * surface — a cheap smoke layer. The eslint pipeline stays the semantic one.
  * Warnings (not errors) are invisible without a ratchet: they only ever grow.
  */
 export {};
+
+import { withIndexTree } from './lib/index-tree.ts';
 
 const ROOT = process.cwd();
 const BASELINE_PATH = `${ROOT}/scripts/oxlint-warnings-baseline.json`;
@@ -25,13 +32,20 @@ interface Baseline {
   files: Record<string, number>;
 }
 
-const proc = Bun.spawn(['bunx', 'oxlint', '--format', 'unix', 'lib', 'scripts', 'tools'], {
-  cwd: ROOT,
-  stdout: 'pipe',
-  stderr: 'pipe',
+const out = await withIndexTree(['lib', 'scripts', 'tools'], async dir => {
+  const proc = Bun.spawn(
+    ['bunx', 'oxlint', '--format', 'unix', `${dir}/lib`, `${dir}/scripts`, `${dir}/tools`],
+    {
+      cwd: ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    }
+  );
+  const text = await new Response(proc.stdout).text();
+  await proc.exited;
+  // oxlint prints paths as passed (abs tmp root) — strip back to repo-relative.
+  return text.split(`${dir}/`).join('');
 });
-const out = await new Response(proc.stdout).text();
-await proc.exited;
 
 const files: Record<string, number> = {};
 let total = 0;
