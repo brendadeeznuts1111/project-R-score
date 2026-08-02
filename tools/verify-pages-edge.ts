@@ -9,6 +9,7 @@
  *   bun tools/verify-pages-edge.ts
  *   bun tools/verify-pages-edge.ts --taxonomy   # also gate proof subsystem fields
  *   bun tools/verify-pages-edge.ts --pm         # package-manager publish-plane probes
+ *   bun tools/verify-pages-edge.ts --pm --save  # write public/registry/pm-proof.json
  *   bun tools/verify-pages-edge.ts --pm --strict-pm  # promote pm skips to failures
  *   bun run verify:weave
  *   bun tools/verify-pages-edge.ts --weave [--retries N] [--backoff MS] [--output table|json] [--summary]
@@ -28,7 +29,11 @@ import {
   runWeaveVerify,
   type WeaveProbeRow,
 } from '../lib/verification/pages-edge-weave.ts';
-import { runPmProbes } from '../lib/verification/pm-registry-probes.ts';
+import {
+  buildPmProofReport,
+  PM_PROOF_REL,
+  runPmProbes,
+} from '../lib/verification/pm-registry-probes.ts';
 import { PROOF_TAXONOMY_CONTRACT_COUNT } from '../lib/verification/proof-taxonomy.ts';
 
 const BASE = Bun.env.PAGES_VERIFY_BASE?.trim() || `https://${CLOUDFLARE_DEFAULTS.pages.subdomain}`;
@@ -184,6 +189,7 @@ async function weaveMain() {
 
 async function pmMain() {
   const strict = Bun.argv.includes('--strict-pm');
+  const shouldSave = Bun.argv.includes('--save');
   console.log(`PM publish-plane verify${strict ? ' (--strict-pm)' : ''}`);
   const probes = await runPmProbes();
   const rows: WeaveProbeRow[] = probes.map(p => ({
@@ -199,6 +205,11 @@ async function pmMain() {
   }
   console.log(`\n📊 PM coverage (${rows.length} probes)`);
   console.log(renderWeaveMatrix(rows));
+  const proof = buildPmProofReport(probes, { strict });
+  if (shouldSave) {
+    await Bun.write(PM_PROOF_REL, `${JSON.stringify(proof, null, 2)}\n`);
+    console.log(`\n💾 Proof saved to ${PM_PROOF_REL}`);
+  }
   const failed = probes.filter(p => !p.ok || (strict && p.skipped));
   if (failed.length) {
     console.error(

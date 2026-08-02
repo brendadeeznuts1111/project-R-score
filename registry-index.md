@@ -17,12 +17,14 @@ Machine-readable proofs and operator bakes live on **Cloudflare Pages** (not thi
 | Artifact | JSON | Bake |
 |----------|------|------|
 | Ops summary | [ops-summary.json](https://score.factory-wager.com/registry/ops-summary.json) | `bun run ops:snapshot` |
-| Portal weave | [portal-weave.json](https://score.factory-wager.com/registry/portal-weave.json) | `ops:snapshot` / `compliance:bake` |
+| Portal weave | [portal-weave.json](https://score.factory-wager.com/registry/portal-weave.json) | `ops:snapshot` / `compliance:bake` · `publishPlane` block · related `ssotFlowSoft` / `pmProof` · soft-pass parity via `verify:weave` |
 | Compliance board | [compliance-board.json](https://score.factory-wager.com/registry/compliance-board.json) | `bun run compliance:bake` |
 | Telegram handshake | [telegram-handshake.json](https://score.factory-wager.com/registry/telegram-handshake.json) | `telegram:handshake:readiness --deep` |
 | Seat capital desk | [seat-capital-desk.json](https://score.factory-wager.com/registry/seat-capital-desk.json) | `seat:desk:refresh` |
 | TOC Ops | [toc-ops.json](https://score.factory-wager.com/registry/toc-ops.json) | `ops:seed:toc` |
 | Soft accounting export | [soft-accounting-export.json](https://score.factory-wager.com/registry/soft-accounting-export.json) | `soft:accounting:bake` · `:from-ct` · [`soft-handshake.md`](docs/design/soft-handshake.md) |
+| SSOT soft-pass (`artifactId` `ssot-flow-soft`) | [ssot-flow-soft.json](https://score.factory-wager.com/registry/ssot-flow-soft.json) | `bun run ssot:flow:soft` · Tennis HQ pack offline · [`tennis-hq-registry.md`](docs/harness/tenants/tennis-hq-registry.md) |
+| PM publish-plane proof (`artifactId` `pm-proof`) | [pm-proof.json](https://score.factory-wager.com/registry/pm-proof.json) | `bun run verify:pm:save` · soft-pass skips stay green |
 | Monitoring | [monitoring.json](https://score.factory-wager.com/registry/monitoring.json) | `ops:snapshot` |
 | Limit raises | [limit-raises.json](https://score.factory-wager.com/registry/limit-raises.json) | `ops:snapshot` · multi-factor · [`partner-limits.md`](docs/harness/tenants/partner-limits.md) |
 | Doc index | [doc-index.json](https://score.factory-wager.com/registry/doc-index.json) | `bun run build:doc-index` |

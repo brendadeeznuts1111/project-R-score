@@ -56,6 +56,11 @@ describe('partner-ops color + glossary', () => {
     }
     expect(partnerOpsConceptColorWire('partner.phase.operator_ready').colorKey).toBe('tennis');
     expect(partnerOpsConceptColorWire('ops.limits.effective_limit').colorKey).toBe('research');
+    expect(partnerOpsConceptColorWire('publish.ssot_flow_soft').colorKey).toBe('tennis');
+    expect(partnerOpsConceptColorWire('publish.pm_proof').colorKey).toBe('kalshi');
+    expect(partnerOpsConceptColorWire('publish.mode.soft').colorKey).toBe('middleware');
+    expect(partnerOpsConceptColorWire('publish.mode.strict').colorKey).toBe('trading');
+    expect(Object.keys(map).length).toBe(65);
   });
 
   test('Factory overlay glossary stays collision-free; events map to event.*', () => {

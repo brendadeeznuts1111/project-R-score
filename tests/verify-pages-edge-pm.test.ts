@@ -2,6 +2,7 @@
 import { describe, expect, test } from 'bun:test';
 import {
   artifactRegistryApi,
+  buildPmProofReport,
   cleanManifest,
   manifestParity,
   manifestsEqual,
@@ -11,6 +12,8 @@ import {
   parsePmPkgValue,
   pmLsSanity,
   pmPkgParity,
+  PM_PROOF_REPORT_PATH,
+  PM_PROOF_SCHEMA,
   readmeMetadata,
   scopeTokenPresence,
   scopedPackumentUrl,
@@ -288,8 +291,35 @@ describe('verify-pages-edge --pm wiring', () => {
     const text = await Bun.file('tools/verify-pages-edge.ts').text();
     expect(text).toContain("Bun.argv.includes('--pm')");
     expect(text).toContain("Bun.argv.includes('--strict-pm')");
+    expect(text).toContain("Bun.argv.includes('--save')");
     expect(text).toContain('runPmProbes');
+    expect(text).toContain('buildPmProofReport');
     expect(text).toContain('pmMain');
+  });
+
+  test('buildPmProofReport schema pins', () => {
+    const proof = buildPmProofReport(
+      [{ name: 'x', ok: true, skipped: false, detail: 'ok' }],
+      { bunVersion: '1.4.0', bunRevision: 'abc' }
+    );
+    expect(proof.schema).toBe(PM_PROOF_SCHEMA);
+    expect(proof.reportPath).toBe(PM_PROOF_REPORT_PATH);
+    expect(proof.artifactId).toBe('pm-proof');
+    expect(proof.artifactName).toBe('PM publish-plane proof');
+    expect(proof.artifactId).not.toBe(proof.artifactName);
+    expect(proof.plane).toBe('publish');
+    expect(proof.purpose).toBe('audit');
+    expect(proof.cli).toBe('bun run verify:pm:save');
+    expect(proof.conceptId).toBe('publish.pm_proof');
+    expect(proof.color.colorKey).toBe('kalshi');
+    expect(proof.color.hex).toMatch(/^#[0-9A-F]{6}$/i);
+    expect(proof.modeColor.conceptId).toBe('publish.mode.soft');
+    expect(proof.links).toEqual({
+      json: '/registry/pm-proof.json',
+      board: '/portal/packages/',
+      weave: '/registry/portal-weave.json',
+    });
+    expect(proof.summary.status).toBe('pass');
   });
 
   test('domain sweep runs verify:pm gate', async () => {
@@ -298,8 +328,10 @@ describe('verify-pages-edge --pm wiring', () => {
     expect(text).toContain("'--pm'");
   });
 
-  test('package.json exposes verify:pm script', async () => {
+  test('package.json exposes verify:pm + save + ssot:flow:soft', async () => {
     const pkg = (await Bun.file('package.json').json()) as { scripts?: Record<string, string> };
     expect(pkg.scripts?.['verify:pm']).toBe('bun tools/verify-pages-edge.ts --pm');
+    expect(pkg.scripts?.['verify:pm:save']).toBe('bun tools/verify-pages-edge.ts --pm --save');
+    expect(pkg.scripts?.['ssot:flow:soft']).toBe('bun tools/bake-ssot-flow-soft.ts');
   });
 });

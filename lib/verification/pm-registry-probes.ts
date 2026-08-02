@@ -16,11 +16,29 @@
  *
  * @see docs/harness/tenants/monorepo-workspaces.md
  */
+import {
+  PUBLISH_PM_PROOF_CONCEPT_ID,
+  publishPlaneColorForConcept,
+  publishPlaneModeConceptId,
+  type PublishPlaneColorBlock,
+} from './publish-plane-color.ts';
 
 export const PM_PACKAGE_NAME = '@factorywager/registry-client';
 export const PM_PACKAGE_DIR = 'packages/registry-client';
 export const PM_REGISTRY_ENV = 'PM_VERIFY_REGISTRY';
 export const PM_REGISTRY_TOKEN_ENV = 'FACTORY_WAGER_TOKEN';
+export const PM_PROOF_REL = 'public/registry/pm-proof.json' as const;
+export const PM_PROOF_REPORT_PATH = '/registry/pm-proof.json' as const;
+export const PM_PROOF_SCHEMA = 'factorywager.pm-proof.v1' as const;
+/** Stable machine id (slug) — not the human title. */
+export const PM_PROOF_ARTIFACT_ID = 'pm-proof' as const;
+/** Human title — never used as a key. */
+export const PM_PROOF_ARTIFACT_NAME = 'PM publish-plane proof' as const;
+export const PM_PROOF_PLANE = 'publish' as const;
+export const PM_PROOF_PURPOSE = 'audit' as const;
+export const PM_PROOF_CLI = 'bun run verify:pm:save' as const;
+export const PM_PROOF_BOARD_PATH = '/portal/packages/' as const;
+export const PM_PROOF_WEAVE_PATH = '/registry/portal-weave.json' as const;
 
 const REPO_ROOT = new URL('../../', import.meta.url).pathname;
 const DEFAULT_REGISTRY = 'https://registry.factory-wager.com/';
@@ -362,4 +380,88 @@ export async function runPmProbes(opts?: {
   rows.push(pmLsSanity(opts?.spawn));
   rows.push(scopeTokenPresence());
   return rows;
+}
+
+export type PmProofReport = {
+  schema: typeof PM_PROOF_SCHEMA;
+  /** Stable slug — keys weave / registry / CLI. */
+  artifactId: typeof PM_PROOF_ARTIFACT_ID;
+  /** Human title — display only. */
+  artifactName: typeof PM_PROOF_ARTIFACT_NAME;
+  /** Partner-ops color kernel concept id (`publish.*`). */
+  conceptId: typeof PUBLISH_PM_PROOF_CONCEPT_ID;
+  /** Resolved palette wire (colorKey · token · hex · css). */
+  color: PublishPlaneColorBlock;
+  /** Mode chip concept + wire (`publish.mode.soft` / `.strict`). */
+  modeColor: PublishPlaneColorBlock;
+  plane: typeof PM_PROOF_PLANE;
+  purpose: typeof PM_PROOF_PURPOSE;
+  cli: typeof PM_PROOF_CLI;
+  type: 'PmPublishPlaneProof';
+  version: '1.0.0';
+  mode: 'soft' | 'strict';
+  timestamp: string;
+  bunVersion: string;
+  bunRevision: string;
+  reportPath: typeof PM_PROOF_REPORT_PATH;
+  links: {
+    json: typeof PM_PROOF_REPORT_PATH;
+    board: typeof PM_PROOF_BOARD_PATH;
+    weave: typeof PM_PROOF_WEAVE_PATH;
+  };
+  package: typeof PM_PACKAGE_NAME;
+  probes: PmProbeRow[];
+  summary: {
+    passed: number;
+    skipped: number;
+    failed: number;
+    total: number;
+    status: 'pass' | 'fail';
+  };
+};
+
+/** Build portal-visible soft-pass (or strict) proof from probe rows. */
+export function buildPmProofReport(
+  probes: PmProbeRow[],
+  opts?: { strict?: boolean; bunVersion?: string; bunRevision?: string }
+): PmProofReport {
+  const strict = opts?.strict === true;
+  const mode = strict ? ('strict' as const) : ('soft' as const);
+  const failed = probes.filter(p => !p.ok || (strict && p.skipped));
+  const skipped = probes.filter(p => p.skipped).length;
+  const passed = probes.filter(p => p.ok && !(strict && p.skipped)).length;
+  const color = publishPlaneColorForConcept(PUBLISH_PM_PROOF_CONCEPT_ID);
+  const modeColor = publishPlaneColorForConcept(publishPlaneModeConceptId(mode));
+  return {
+    schema: PM_PROOF_SCHEMA,
+    artifactId: PM_PROOF_ARTIFACT_ID,
+    artifactName: PM_PROOF_ARTIFACT_NAME,
+    conceptId: PUBLISH_PM_PROOF_CONCEPT_ID,
+    color,
+    modeColor,
+    plane: PM_PROOF_PLANE,
+    purpose: PM_PROOF_PURPOSE,
+    cli: PM_PROOF_CLI,
+    type: 'PmPublishPlaneProof',
+    version: '1.0.0',
+    mode,
+    timestamp: new Date().toISOString(),
+    bunVersion: opts?.bunVersion ?? Bun.version,
+    bunRevision: opts?.bunRevision ?? ((Bun.revision || '').slice(0, 12) || 'unknown'),
+    reportPath: PM_PROOF_REPORT_PATH,
+    links: {
+      json: PM_PROOF_REPORT_PATH,
+      board: PM_PROOF_BOARD_PATH,
+      weave: PM_PROOF_WEAVE_PATH,
+    },
+    package: PM_PACKAGE_NAME,
+    probes,
+    summary: {
+      passed,
+      skipped,
+      failed: failed.length,
+      total: probes.length,
+      status: failed.length === 0 ? 'pass' : 'fail',
+    },
+  };
 }

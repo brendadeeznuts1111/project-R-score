@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-08-02T20:11:09.586Z",
+  "generated": "2026-08-02T21:10:02.803Z",
   "path": "/registry/portal-chrome.json",
   "runtime": {
     "bunVersion": "1.4.0",
@@ -88,8 +88,8 @@
       "href": "/portal/packages/",
       "tier": "overflow",
       "group": "registry",
-      "note": "graph map · portal-cli pm graph",
-      "cli": "bun run portal-cli pm graph  # offline packages-graph-map table"
+      "note": "graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.*",
+      "cli": "bun run ssot:flow:soft && bun run verify:pm:save"
     },
     {
       "id": "brands",

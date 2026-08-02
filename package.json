@@ -2137,6 +2137,8 @@
     "verify:pages-edge:taxonomy": "bun tools/verify-pages-edge.ts --taxonomy",
     "verify:weave": "bun tools/verify-pages-edge.ts --weave",
     "verify:pm": "bun tools/verify-pages-edge.ts --pm",
+    "verify:pm:save": "bun tools/verify-pages-edge.ts --pm --save",
+    "ssot:flow:soft": "bun tools/bake-ssot-flow-soft.ts",
     "verify:flag-order": "bun tools/verify-script-flags.ts",
     "verify:install-env:save": "bun tools/verify-install-env.ts --save",
     "verify:registry-client": "bun tools/verify-registry-client.ts",

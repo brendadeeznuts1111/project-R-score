@@ -1,0 +1,76 @@
+{
+  "schema": "factorywager.ssot-flow-soft.v1",
+  "artifactId": "ssot-flow-soft",
+  "artifactName": "SSOT soft-pass",
+  "conceptId": "publish.ssot_flow_soft",
+  "color": {
+    "conceptId": "publish.ssot_flow_soft",
+    "colorKey": "tennis",
+    "token": "--partner-ops-tennis",
+    "hex": "#3FB950",
+    "css": "#3fb950"
+  },
+  "modeColor": {
+    "conceptId": "publish.mode.soft",
+    "colorKey": "middleware",
+    "token": "--partner-ops-middleware",
+    "hex": "#D29922",
+    "css": "#d29922"
+  },
+  "plane": "publish",
+  "purpose": "audit",
+  "cli": "bun run ssot:flow:soft",
+  "mode": "soft",
+  "ok": true,
+  "timestamp": "2026-08-02T21:08:17.375Z",
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62",
+  "reportPath": "/registry/ssot-flow-soft.json",
+  "links": {
+    "json": "/registry/ssot-flow-soft.json",
+    "board": "/portal/packages/",
+    "weave": "/registry/portal-weave.json"
+  },
+  "tennisHqRoot": "king-zippy-umbra-acre",
+  "package": {
+    "name": "@tennis-hq/ssot",
+    "version": "1.4.0"
+  },
+  "tarball": {
+    "path": "artifacts/publish/tennis-hq-ssot-1.4.0.tgz",
+    "fileCount": 7,
+    "sha256": "8f7cb1d9a29d4e92a13d3efb383e377c62e89acc5418837305b77b276dd3bff7"
+  },
+  "steps": [
+    {
+      "name": "ssot:build",
+      "ok": true,
+      "exitCode": 0,
+      "detail": "  access: public ·   dist:   packages/tennis-hq-ssot/dist/ · ════════════════════════════════════════════════════"
+    },
+    {
+      "name": "ssot:check",
+      "ok": true,
+      "exitCode": 0,
+      "detail": "✅ ssot:check PASS ·    offline:  bun run ssot:pack ·    registry: bun run ssot:publish  (needs NPM_TOKEN / npm login)"
+    },
+    {
+      "name": "ssot:pack",
+      "ok": true,
+      "exitCode": 0,
+      "detail": "   king-zippy-umbra-acre/artifacts/publish/tennis-hq-ssot-1.4.0.tgz ·    files: 7 · ════════════════════════════════════════════════════"
+    },
+    {
+      "name": "tarball",
+      "ok": true,
+      "detail": "artifacts/publish/tennis-hq-ssot-1.4.0.tgz · 7 files · sha256=8f7cb1d9a29d…"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "status": "pass"
+  },
+  "gitSha": "b83c128"
+}

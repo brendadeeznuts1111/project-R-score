@@ -31,6 +31,14 @@ import {
   loadSubdomainsConfig,
   runSubdomainProbes,
 } from './pages-edge-weave-subdomains.ts';
+import {
+  collectPublishPlaneParityIssues,
+  formatPublishPlaneParityDetail,
+  formatPublishPlaneRolloutSkip,
+  isPublishPlaneRolloutPending,
+  type PublishPlaneProofSlice,
+  type PublishPlaneWeaveBlock,
+} from './publish-plane-weave.ts';
 
 export type WeaveCheckTier = 'core';
 
@@ -171,16 +179,40 @@ export type WeaveGroupSummary = {
 
 export type WeavePayload = {
   summary?: Record<string, number>;
-  surfaces?: Array<{ id?: string; href?: string }>; // brand-ok — opaque wire DTO id
+  surfaces?: Array<{
+    id?: string; // brand-ok — opaque wire DTO id
+    href?: string;
+    relatedArtifactIds?: string[]; // brand-ok — weave artifact slugs
+  }>;
   artifacts?: Array<{
     id?: string; // brand-ok — opaque wire DTO id
     href?: string;
     purpose?: string; // brand-ok — wire purpose enum; filtered via isIntentionalOrphanPurpose
+    artifactId?: string; // brand-ok — publish-plane slug
+    artifactName?: string;
+    conceptId?: string; // brand-ok — color kernel concept
+    colorKey?: string; // brand-ok — PartnerOpsColorKey wire
+    cli?: string;
   }>;
   components?: Array<{ id?: string; path?: string }>; // brand-ok — opaque wire DTO id
   wiki?: Array<{ id?: string; href?: string }>; // brand-ok — opaque wire DTO id
-  scripts?: Array<{ id?: string; label?: string; doc?: string }>; // brand-ok — opaque wire DTO id
+  scripts?: Array<{ id?: string; label?: string; doc?: string; cmd?: string }>; // brand-ok — opaque wire DTO id
   related?: Record<string, string>;
+  publishPlane?: {
+    board?: string;
+    colorKernel?: string;
+    artifacts?: Array<{
+      artifactId?: string; // brand-ok — publish-plane slug
+      artifactName?: string;
+      conceptId?: string; // brand-ok — color kernel concept
+      colorKey?: string;
+      href?: string;
+      cli?: string;
+      purpose?: string;
+    }>;
+    scripts?: string[];
+    related?: Record<string, string>;
+  };
 };
 
 export type WeaveRunResult = {
@@ -759,6 +791,49 @@ export async function runWeaveChecks(
         return Object.entries(actual)
           .map(([k, v]) => `${k}=${v}`)
           .join(' · ');
+      })
+    );
+  }
+
+  if (weave && options.checks.artifacts) {
+    out.push(
+      await check('publish-plane soft-pass', async () => {
+        const block = weave.publishPlane as PublishPlaneWeaveBlock | undefined;
+        // Rollout soft-skip: live Pages may lag until weave + proofs ship together.
+        if (isPublishPlaneRolloutPending(block)) {
+          return formatPublishPlaneRolloutSkip();
+        }
+        const loadProof = async (href: string): Promise<PublishPlaneProofSlice | null> => {
+          try {
+            const res = await fetch(`${base}${href}`, {
+              signal: AbortSignal.timeout(8_000),
+              headers: { Accept: 'application/json' },
+            });
+            if (!res.ok) return null;
+            const text = await res.text();
+            const trimmed = text.trimStart();
+            // SPA HTML fallback often advertises application/json — reject non-JSON bodies.
+            if (!trimmed || trimmed.startsWith('<') || trimmed.startsWith('<!')) return null;
+            return JSON.parse(text) as PublishPlaneProofSlice;
+          } catch {
+            return null;
+          }
+        };
+        const ssotHref =
+          block?.related?.ssotFlowSoft ??
+          weave.related?.ssotFlowSoft ??
+          '/registry/ssot-flow-soft.json';
+        const pmHref =
+          block?.related?.pmProof ?? weave.related?.pmProof ?? '/registry/pm-proof.json';
+        const [ssot, pm] = await Promise.all([loadProof(ssotHref), loadProof(pmHref)]);
+        const issues = collectPublishPlaneParityIssues(block, { ssot, pm });
+        if (issues.length) throw new Error(formatPublishPlaneParityDetail(issues));
+        const packages = (weave.surfaces ?? []).find(s => s.id === 'packages');
+        const owns = new Set(packages?.relatedArtifactIds ?? []);
+        if (!owns.has('ssot-flow-soft') || !owns.has('pm-proof')) {
+          throw new Error('packages.relatedArtifactIds missing ssot-flow-soft / pm-proof');
+        }
+        return formatPublishPlaneParityDetail([]);
       })
     );
   }
