@@ -294,6 +294,15 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     cli: 'bun run ops:limits:demo',
   },
   {
+    id: 'bookmakers',
+    label: 'Bookmakers',
+    href: '/portal/bookmakers/',
+    tier: 'overflow',
+    group: 'ops',
+    note: '@factorywager/bookmakers artifact · canonical bookmaker registry',
+    cli: 'bun run bookmakers:bake',
+  },
+  {
     id: 'monitoring',
     label: 'Monitoring',
     href: '/monitoring/',

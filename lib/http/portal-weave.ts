@@ -324,6 +324,14 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     group: 'ops',
     cli: 'bun run tennis:agent-auth:bake',
   },
+  {
+    id: 'bookmakers',
+    label: 'Bookmakers',
+    href: '/portal/bookmakers/',
+    note: '@factorywager/bookmakers artifact · canonical bookmaker registry · weave runbook',
+    group: 'ops',
+    cli: 'bun run bookmakers:bake',
+  },
   // ── Plane ──
   {
     id: 'dod',
@@ -338,6 +346,14 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
 export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveArtifact[] = [
   // ── ui (also listed in related) ──
   { label: 'ops-summary', href: '/registry/ops-summary.json', purpose: 'ui' },
+  {
+    id: 'bookmakers-registry', // brand-ok — weave artifact slug, not a domain *Id
+    label: 'bookmakers',
+    href: '/registry/bookmakers.json',
+    note: '@factorywager/bookmakers artifact mirror · canonical bookmaker registry · weave runbook',
+    purpose: 'ui',
+    cli: 'bun run bookmakers:bake',
+  },
   {
     label: 'toc-ops',
     href: '/registry/toc-ops.json',

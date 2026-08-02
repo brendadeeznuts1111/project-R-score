@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-02T22:49:48.656Z",
+  "artifact": {
+    "name": "@factorywager/bookmakers",
+    "version": "0.2.0",
+    "checksum": "60fb4099d768cdcd145028b11afba2da907288ac738d854e17561c8876046913",
+    "source": "artifact-registry"
+  },
+  "bookmakers": {
+    "pinnacle": {
+      "id": "pinnacle",
+      "label": "Pinnacle",
+      "domain": "www.pinnacle.com",
+      "fetcherType": "rest",
+      "restBaseUrl": "https://api.pinnacle.com/v1",
+      "restProtocol": "http2",
+      "apiKeyEnv": "PINNACLE_API_KEY",
+      "envVars": ["PINNACLE_API_KEY"],
+      "supportedSports": ["tennis", "tabletennis", "soccer"],
+      "regions": [
+        {
+          "country": "US"
+        },
+        {
+          "country": "GB"
+        },
+        {
+          "country": "CA"
+        }
+      ],
+      "color": "#f59e0b"
+    },
+    "caesars": {
+      "id": "caesars",
+      "label": "Caesars Sportsbook",
+      "domain": "sportsbook.caesars.com",
+      "fetcherType": "webview",
+      "color": "#1a1a2e",
+      "webViewConfig": {
+        "waitForSelector": "[class*=competitor], [class*=market-button]",
+        "timeout": 30000,
+        "emptyMarker": "MARKETS NOT AVAILABLE"
+      },
+      "note": "Event content only renders on state-scoped paths (/us/{state}/bet/{sport}); the /{sport}?id={eventId} link shape returns a shell page with no markets.",
+      "supportedSports": [
+        "tennis",
+        "tabletennis",
+        "soccer",
+        "basketball",
+        "american-football"
+      ],
+      "regions": [
+        {
+          "country": "US",
+          "stateCode": "NY"
+        }
+      ]
+    },
+    "fanduel": {
+      "id": "fanduel",
+      "label": "FanDuel",
+      "domain": "sportsbook.fanduel.com",
+      "fetcherType": "webview",
+      "webViewConfig": {
+        "waitForSelector": "main a[href*='-v-'], main a[href*='-@-']",
+        "timeout": 30000
+      },
+      "note": "Event rows are lazy-rendered below the fold — nothing renders without scroll pumping, and all classes are hashed atomic CSS (unusable as selectors). Extraction (see fanDuelScrapeScript) uses deploy-independent hooks: a JSON-LD schema.org SportsEvent[] blob (names, startDate, canonical url) correlated with match-link rows (a[href*='-v-'], slug ends in the numeric event id) whose li leaf texts carry names and the two moneyline prices in order. Event pages (/{sport}/{league}/{slug}-{id}) take a separate branch (fanDuelEventScrapeScript): JSON-LD single SportsEvent + outcome buttons with aria-labels ending in ' Odds' (\"Rafael Jodar to win, -130 Odds\", \"Spread, X, -9.5, -122 Odds\"); ended matchups render no outcome buttons, so they still fail with SelectorTimeoutError.",
+      "supportedSports": [
+        "tennis",
+        "american-football",
+        "basketball",
+        "hockey",
+        "mma",
+        "boxing",
+        "baseball"
+      ],
+      "regions": [
+        {
+          "country": "US",
+          "stateCode": "NY"
+        }
+      ],
+      "color": "#0d9488"
+    },
+    "draftkings": {
+      "id": "draftkings",
+      "label": "DraftKings",
+      "domain": "sportsbook.draftkings.com",
+      "fetcherType": "webview",
+      "webViewConfig": {
+        "waitForSelector": ".cb-market__button-odds",
+        "timeout": 30000
+      },
+      "note": "Sport landing pages (/sports/{sport}) are nav-only; odds live on league and event pages. On event pages participant names appear in the h1 (\"A vs B Odds\"), not in cb-market__label-team. Prices use U+2212 minus, not ASCII '-'.",
+      "supportedSports": [
+        "tennis",
+        "american-football",
+        "basketball",
+        "baseball",
+        "mma",
+        "boxing"
+      ],
+      "regions": [
+        {
+          "country": "US",
+          "stateCode": "NY"
+        }
+      ],
+      "color": "#2563eb"
+    },
+    "betmgm": {
+      "id": "betmgm",
+      "label": "BetMGM",
+      "domain": "sports.betmgm.com",
+      "fetcherType": "webview",
+      "webViewConfig": {
+        "waitForSelector": ".option-indicator",
+        "timeout": 30000
+      },
+      "note": "Geo-redirects unpredictably (observed www.la.betmgm.com; also an nj geolocator interstitial that hangs scrapes) — discovery pins www.ny.betmgm.com directly (BETMGM_DEFAULT_STATE, verified live 2026-08-01). Plain HTTP clients get a Cloudflare 403, but WKWebView renders fine. .participant text includes a trailing country code in .participant-country.",
+      "supportedSports": [
+        "tennis",
+        "american-football",
+        "basketball",
+        "hockey",
+        "mma",
+        "boxing",
+        "baseball"
+      ],
+      "regions": [
+        {
+          "country": "US",
+          "stateCode": "NY"
+        }
+      ],
+      "color": "#b91c1c",
+      "envVars": ["BETMGM_DEFAULT_STATE"]
+    }
+  },
+  "audit": {
+    "ok": true,
+    "issues": []
+  },
+  "summary": {
+    "count": 5,
+    "webview": 4,
+    "rest": 1,
+    "sports": [
+      "american-football",
+      "baseball",
+      "basketball",
+      "boxing",
+      "hockey",
+      "mma",
+      "soccer",
+      "tabletennis",
+      "tennis"
+    ]
+  }
+}
