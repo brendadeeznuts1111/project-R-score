@@ -73,14 +73,22 @@ echo "== pre-commit: ast-grep + semver =="
 bun scripts/pre-commit-ast-grep.ts --staged
 
 echo ""
-echo "== pre-commit: gitleaks secret scan =="
-if command -v gitleaks &>/dev/null; then
+echo "== pre-commit: gitleaks secret scan (staged) =="
+# Staged-scoped: full-tree `detect --no-git` scans 2.6GB / ~4min and reports
+# hundreds of pre-existing fixture findings, which would block every commit on
+# foreign content (and is why the gate was silently skipped — nobody could
+# install it). protect --staged gates NEW staged content only (~0.02s).
+# Full-tree audit stays a manual command: bun run check:secrets
+# Escape: SKIP_GITLEAKS=1 + reason in commit message.
+if [ "${SKIP_GITLEAKS:-}" = "1" ]; then
+  echo "  ⏭️  SKIP_GITLEAKS=1"
+elif command -v gitleaks &>/dev/null; then
   if [ "$DRY_RUN" -eq 1 ]; then
-    echo "  [dry-run] gitleaks detect --source . --no-git --config .gitleaks.toml -v"
+    echo "  [dry-run] gitleaks protect --staged --config .gitleaks.toml --verbose"
   else
     # Installed scanners are hard gates. Never turn a credential finding into
     # a successful commit through a trailing `|| true` or non-pipefail shell.
-    gitleaks detect --source . --no-git --config .gitleaks.toml --verbose
+    gitleaks protect --staged --config .gitleaks.toml --verbose
   fi
 else
   if [ "$DRY_RUN" -eq 1 ]; then

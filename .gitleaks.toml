@@ -3,7 +3,11 @@
 [allowlist]
 paths = [
   '''node_modules''',
-  '''.git''',
+  # Literal .git dirs only — the previous '''.git''' regex (any-char + "git")
+  # silently excluded .github/**, .gitignore, .gitleaks.toml, .githooks/**
+  # from every scan. Escaped dot + trailing slash keeps VCS internals skipped
+  # while security-relevant dotfiles (.github/workflows) are scanned again.
+  '''(^|/)\.git/''',
   '''.cache''',
   '''bun.lock''',
   '''package-lock.json''',
@@ -12,6 +16,16 @@ paths = [
   '''tools/bun-docs-catalog.json''',
   '''tools/bun-docs-index.json''',
   '''tools/bun-docs-token-supplement.json''',
+  # Nested gitignored checkouts + generated/worktree trees — not monorepo source.
+  # Keeps the manual full-tree audit (detect --no-git) meaningful; tracked
+  # trees (lib/, tests/, projects/, public/, archive/) stay scannable.
+  '''.codex-worktrees/''',
+  '''artifacts/''',
+  '''kimi-toolchain/''',
+  '''king-zippy-umbra-acre/''',
+  '''toc-ops-repo/''',
+  '''Proton-workspace/''',
+  '''bradley-terry/''',
 ]
 
 [[rules]]
