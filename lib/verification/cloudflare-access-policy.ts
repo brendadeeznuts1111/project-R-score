@@ -7,15 +7,18 @@
  * Required domains use AccessDomainId (surfaces brand) — host vs host/path stay
  * separated from HostId.
  *
- * @see https://developers.cloudflare.com/cloudflare-one/integrations/identity-providers/cloudflare/
+ * Human SSO contract (aligned live 2026-08-02): explicit `email:` allowlist
+ * (Google / One-time PIN IdPs). Domain-wide `email_domain` OTP is rejected.
+ *
+ * @see https://developers.cloudflare.com/cloudflare-one/access-controls/policies/
  * @see https://developers.cloudflare.com/cloudflare-one/access-controls/policies/app-paths/
  */
 import { parse } from 'yaml';
 import { asAccessDomainId, type AccessDomainId } from '../types/branded.ts';
 
-type AccountMemberRule = {
-  cloudflare_account_member?: {
-    account_id?: string; // brand-ok — raw Cloudflare policy wire field; verifier rejects persistence
+type AccessIncludeRule = {
+  email?: {
+    email?: string;
   };
   email_domain?: {
     domain?: string;
@@ -23,14 +26,21 @@ type AccountMemberRule = {
   auth_method?: {
     auth_method?: string;
   };
+  cloudflare_account_member?: {
+    account_id?: string; // brand-ok — raw Cloudflare policy wire field; verifier rejects persistence
+  };
+  everyone?: Record<string, never>;
+  service_token?: {
+    token_id?: string; // brand-ok — Access service token id wire field
+  };
 };
 
 type AccessPolicy = {
   name?: string;
   decision?: string;
-  include?: AccountMemberRule[];
-  require?: AccountMemberRule[];
-  exclude?: AccountMemberRule[];
+  include?: AccessIncludeRule[];
+  require?: AccessIncludeRule[];
+  exclude?: AccessIncludeRule[];
 };
 
 type AccessApp = {
@@ -66,6 +76,8 @@ const REQUIRED_DOMAINS: readonly AccessDomainId[] = [
   asAccessDomainId('project-r-score.pages.dev/portal'),
 ];
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function issue(
   issues: CloudflareAccessPolicyIssue[],
   code: string,
@@ -81,13 +93,18 @@ function sessionHours(value: string | undefined): number | null {
   return match ? Number(match[1]) : null;
 }
 
-function hasLegacyOtpRule(rules: AccountMemberRule[] | undefined): boolean {
+function hasLegacyOtpRule(rules: AccessIncludeRule[] | undefined): boolean {
   return Boolean(
     rules?.some(
       rule =>
         rule.email_domain !== undefined || rule.auth_method?.auth_method?.toLowerCase() === 'otp'
     )
   );
+}
+
+function emailFromRule(rule: AccessIncludeRule): string | null {
+  const raw = rule.email?.email?.trim().toLowerCase();
+  return raw && EMAIL_RE.test(raw) ? raw : null;
 }
 
 export function verifyCloudflareAccessPolicyText(text: string): CloudflareAccessPolicyReport {
@@ -204,25 +221,41 @@ export function verifyCloudflareAccessPolicyText(text: string): CloudflareAccess
       }
 
       const include = Array.isArray(policy.include) ? policy.include : [];
+      const emails = include.map(emailFromRule).filter((e): e is string => e != null);
       const accountMemberRules = include.filter(
         rule => rule.cloudflare_account_member !== undefined
       );
-      if (accountMemberRules.length !== 1) {
+
+      if (emails.length === 0) {
+        issue(
+          issues,
+          'email-allowlist',
+          `${policyPath}.include`,
+          'include at least one explicit email: { email } allowlist entry'
+        );
+      }
+      if (new Set(emails).size !== emails.length) {
+        issue(
+          issues,
+          'duplicate-email',
+          `${policyPath}.include`,
+          'email allowlist entries must be unique'
+        );
+      }
+      if (include.some(rule => rule.everyone !== undefined)) {
+        issue(
+          issues,
+          'everyone-include',
+          `${policyPath}.include`,
+          'managed human SSO policies must not use everyone: {}'
+        );
+      }
+      if (accountMemberRules.length > 0) {
         issue(
           issues,
           'account-member-selector',
           `${policyPath}.include`,
-          'include exactly one cloudflare_account_member selector'
-        );
-      }
-      if (
-        accountMemberRules.some(rule => rule.cloudflare_account_member?.account_id !== undefined)
-      ) {
-        issue(
-          issues,
-          'embedded-account-id',
-          `${policyPath}.include`,
-          'omit account_id to select the current Cloudflare account without embedding identifiers'
+          'managed SSO uses explicit email allowlist (not cloudflare_account_member) — align with live Access'
         );
       }
       if (
