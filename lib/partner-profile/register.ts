@@ -90,6 +90,8 @@ function escapeToml(value: string): string {
 }
 
 /** Build (or merge into) the profile TOML for books.<bookKey>. */
+// @see https://bun.com/docs/runtime/toml#bun-toml-parse — Bun.TOML.parse
+// @see https://bun.com/docs/runtime/toml#bun-toml-stringify — Bun.TOML.stringify
 export async function upsertProfileToml(
   profilesDir: string,
   code: string,
@@ -99,46 +101,31 @@ export async function upsertProfileToml(
   vaultKey: string
 ): Promise<string> {
   const path = joinPath(profilesDir, `${code}.toml`);
-  let text = '';
+  // Parse/merge/stringify: object-level merge avoids TOML table-redefinition
+  // errors from string surgery on nested tables.
+  let profile: Record<string, unknown> = {};
   try {
-    text = await Bun.file(path).text();
+    profile = Bun.TOML.parse(await Bun.file(path).text()) as Record<string, unknown>;
   } catch {
-    // new profile — minimal skeleton
+    // new profile — minimal skeleton below
   }
-  const bookBlock = `[books.${bookKey}]
-type = ${escapeToml(input.type ?? 'pph')}
-[books.${bookKey}.account]
-username = ${escapeToml(input.username)}
-vaultKey = ${escapeToml(vaultKey)}
-${input.maxBet ? `[books.${bookKey}.limits]\nmaxBet = ${input.maxBet}\n` : ''}`;
-  if (text.includes(`[books.${bookKey}]`)) {
-    // replace the existing book block up to the next top-level section
-    const start = text.indexOf(`[books.${bookKey}]`);
-    const rest = text.slice(start);
-    const nextSection = rest.indexOf('\n[');
-    const end = nextSection === -1 ? rest.length : nextSection;
-    text = text.slice(0, start) + bookBlock + rest.slice(end);
-  } else {
-    const skeleton = `[meta]
-templateId = "partner-active"
-name = ${escapeToml(code)}
-version = "1.0.0"
-source = "telegram"
-
-[identity]
-code = ${escapeToml(code)}
-callSign = ${escapeToml(callSign)}
-status = "onboarded"
-
-[lifecycle]
-status = "active"
-phase = "operator_ready"
-${input.chatId ? `\n[telegram]\nchatId = ${escapeToml(input.chatId)}\n` : ''}
-`;
-    text = text.trim() === '' ? skeleton : `${text.trimEnd()}\n\n`;
-    text += bookBlock;
-  }
-  await Bun.write(path, `${text.trimEnd()}\n`);
+  profile.meta ??= {
+    templateId: 'partner-active',
+    name: code,
+    version: '1.0.0',
+    source: 'telegram',
+  };
+  profile.identity ??= { code, callSign, status: 'onboarded' };
+  profile.lifecycle ??= { status: 'active', phase: 'operator_ready' };
+  if (input.chatId && !profile.telegram) profile.telegram = { chatId: input.chatId };
+  const books = (profile.books as Record<string, unknown> | undefined) ?? {};
+  books[bookKey] = {
+    type: input.type ?? 'pph',
+    account: { username: input.username, vaultKey },
+    ...(input.maxBet ? { limits: { maxBet: input.maxBet } } : {}),
+  };
+  profile.books = books;
+  await Bun.write(path, `${Bun.TOML.stringify(profile).trimEnd()}\n`);
   return path;
 }
 
