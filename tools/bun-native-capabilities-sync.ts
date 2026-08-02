@@ -1,10 +1,9 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
-// @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi via ansiMarkdown
+// @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
 // @see https://bun.com/reference/bun/argv — Bun.argv
 /** Check, update, or preview the generated Bun Markdown adoption block. */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
-import { ansiMarkdown } from '../lib/console-depth.ts';
 import {
   createAstGrepSearch,
   syncBunNativeCapabilities,
@@ -55,7 +54,7 @@ export async function main(argv: string[] = Bun.argv.slice(2)): Promise<void> {
   const result = await syncBunNativeCapabilities(current, createAstGrepSearch(repoRoot));
 
   if (mode === 'preview') {
-    console.info(ansiMarkdown(result.generatedSection));
+    console.info(Bun.markdown.ansi(result.generatedSection));
     console.info(
       result.changed ? 'Candidate differs from the saved document.' : 'Saved document is current.'
     );
