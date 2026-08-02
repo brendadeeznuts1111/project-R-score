@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastUpdated": "2026-08-02T19:59:26.757Z",
+  "lastUpdated": "2026-08-02T22:36:48.827Z",
   "packages": {
     "event-store": {
       "versions": [
@@ -687,10 +687,11 @@
     },
     "@factorywager/bookmakers": {
       "versions": [
+        "0.2.0",
         "0.1.0"
       ],
       "dist-tags": {
-        "latest": "0.1.0"
+        "latest": "0.2.0"
       },
       "releases": {
         "0.1.0": {
@@ -712,6 +713,28 @@
             "r2Key": "@factorywager/bookmakers/0.1.0.tgz",
             "size": 4900,
             "checksum": "33a40ab65298a7e05860de2b5b69dfa562cfb9d7c12c90902808a37dc24da035",
+            "contentType": "application/gzip"
+          }
+        },
+        "0.2.0": {
+          "id": "@factorywager/bookmakers@0.2.0",
+          "name": "@factorywager/bookmakers",
+          "version": "0.2.0",
+          "type": "library",
+          "description": "Canonical bookmaker registry (deep-link pipeline) — dist layout",
+          "author": {
+            "name": "FactoryWager Team",
+            "email": "team@factory-wager.com",
+            "url": "https://factory-wager.com"
+          },
+          "tags": [],
+          "readme": "# @factorywager/bookmakers\n\nCanonical bookmaker registry for the sportsbook deep-link pipeline — published to\nthe FactoryWager **artifact registry** (`registry.factory-wager.com`, R2-backed),\nnot npm.\n\n## Schema\n\nEach entry key is the canonical bookmaker id; the value is a `BookmakerEntry`:\n\n| Field | Type | Required | Meaning |\n|-------|------|----------|---------|\n| `id` | `string` | yes | Canonical id (`pinnacle`, `fanduel`, …) |\n| `label` | `string` | yes | Display name |\n| `domain` | `string` | yes | Bookmaker site domain |\n| `fetcherType` | `\"rest\" \\| \"webview\"` | yes | Fetch strategy |\n| `restBaseUrl` / `restProtocol` | `string` | for `rest` | REST base URL + HTTP protocol pin |\n| `webViewConfig` | `object` | for `webview` | `waitForSelector`, `timeout`, `emptyMarker` |\n| `supportedSports` | `string[]` | yes | Canonical sport ids |\n| `supportedLeagues` | `string[]` | no | Canonical league allow-list |\n| `regions` | `string[]` | yes | Regions the book operates in |\n| `color` | `string` | yes | Brand chip color (CSS hex) |\n| `apiKeyEnv` / `envVars` | `string` | no | Environment plumbing for keys |\n\n## Usage (on-demand, no install)\n\n```bash\n# From the deeplink-automation repo — resolves @factorywager/bookmakers from the\n# artifact registry, downloads, validates, and renders:\nbun run weave --package @factorywager/bookmakers --depth 5 --table\nbun run weave --package @factorywager/bookmakers@0.1.0 --json\n```\n\n`FACTORY_REGISTRY_URL` overrides the registry base URL (default\n`https://registry.factory-wager.com`).\n\n## Publish (runbook)\n\nThe artifact registry is R2-backed; publishing requires R2 credentials\n(`R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY`) — run from the factory monorepo\n(`~/Projects`) after sourcing its `.env`:\n\n```bash\n# 1. build the dist/ bundle (index.js + index.d.ts) and an npm-style tarball\nbun run build:bookmakers\ntar -czf /tmp/bookmakers.tgz -C packages/bookmakers .\n\n# 2. publish to R2 (name must be @factorywager/* — the registry rejects other scopes)\nbun lib/factory/cli.ts publish /tmp/bookmakers.tgz \\\n  --name @factorywager/bookmakers --version 0.1.0 \\\n  --type library --description \"Canonical bookmaker registry (deep-link pipeline)\"\n\n# 3. refresh the static read-plane index and deploy it (commit + push Pages)\nbun lib/factory/cli.ts snapshot public/registry/registry.json\n```\n\nThe tarball object is immediately readable at\n`/api/registry/%40factorywager/bookmakers/<version>.tgz`; the index (dist-tag\nresolution + checksums) needs the snapshot commit to reach Pages.\n\n## Regenerate\n\n`bookmakers.ts` is a snapshot of the repo's `lib/bookmakers.ts`:\n\n```bash\ncp lib/bookmakers.ts packages/bookmakers/bookmakers.ts\n```\n\n`bookmakers-package.unit.test.ts` fails when the two drift.\n",
+          "publishedAt": "2026-08-02T22:36:48.438Z",
+          "publisher": "deeplink-automation",
+          "storage": {
+            "r2Key": "@factorywager/bookmakers/0.2.0.tgz",
+            "size": 6626,
+            "checksum": "60fb4099d768cdcd145028b11afba2da907288ac738d854e17561c8876046913",
             "contentType": "application/gzip"
           }
         }
