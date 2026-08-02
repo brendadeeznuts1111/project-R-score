@@ -97,6 +97,9 @@ describe('portal weave', () => {
     expect(p.scripts.some(s => s.cmd === 'bun run ssot:flow:soft')).toBe(true);
     expect(p.scripts.some(s => s.cmd === 'bun run verify:pm:save')).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('verify:weave'))).toBe(true);
+    expect(p.scripts.some(s => s.cmd === 'bun run verify:bun-runtime-nits')).toBe(true);
+    expect(p.scripts.some(s => s.cmd === 'bun run verify:bun-runtime-nits:save')).toBe(true);
+    expect(arts).toContain('/registry/bun-runtime-nits-proof.json');
   });
 
   test('publish-plane weave artifacts carry name/id + color kernel keys', () => {

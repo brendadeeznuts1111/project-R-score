@@ -424,6 +424,15 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveArtifact[] = [
     purpose: 'shared',
   },
   {
+    id: 'bun-runtime-nits-proof',
+    label: 'bun-runtime-nits-proof',
+    href: '/registry/bun-runtime-nits-proof.json',
+    note: 'Phase 1 inspect · streams · url · file-io truth probes (18) · verify:bun-runtime-nits:save',
+    group: 'harness',
+    cli: 'bun run verify:bun-runtime-nits:save',
+    purpose: 'audit',
+  },
+  {
     label: 'doc-index',
     href: '/registry/doc-index.json',
     note: 'CANONICAL_REFS · bun docs catalog coverage',
@@ -795,6 +804,20 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
     label: 'Native Markdown docs check',
     cmd: 'bun run docs:native:check',
     doc: 'docs/BUN_NATIVE_CAPABILITIES.md',
+    group: 'harness',
+  },
+  {
+    id: 'verify-bun-runtime-nits',
+    label: 'Bun runtime nits (Phase 1)',
+    cmd: 'bun run verify:bun-runtime-nits',
+    doc: 'docs/bun-runtime-nits.md',
+    group: 'harness',
+  },
+  {
+    id: 'verify-bun-runtime-nits-save',
+    label: 'Bun runtime nits save proof',
+    cmd: 'bun run verify:bun-runtime-nits:save',
+    doc: 'docs/bun-runtime-nits.md',
     group: 'harness',
   },
   // ── Secrets ──
