@@ -293,3 +293,32 @@ bun run verify:pages-edge
 ```
 
 Expect: ops HTML title `Operations · FactoryWager`; JSON `application/json`; SVG `image/svg+xml` (not the landing-page HTML shell).
+
+### Runtime flags for edge verification
+
+`verify:pages-edge` (and `--weave`) are script-level flags; Bun CLI flags stay orthogonal runtime layers. Curated SSOT: [`config/runtime-flags.json`](../../../config/runtime-flags.json) (`bun run portal:flags`).
+
+```bash
+# Local proof / CI (clean output)
+bun --silent run verify:pages-edge
+bun --silent run verify:pages-edge:taxonomy
+bun tools/verify-pages-edge.ts --weave
+
+# Dev loop while editing the verifier itself
+bun --watch --no-clear-screen tools/verify-pages-edge.ts --weave
+
+# Debug the pipeline
+bun --inspect-brk tools/verify-pages-edge.ts --weave
+
+# Explicit env (skips auto-loaded .env ambiguity)
+bun --env-file=.env run verify:pages-edge
+
+# Low-memory runner
+bun --smol run verify:pages-edge
+```
+
+Repo policy notes:
+
+- **`-i` ≡ `--install=fallback`, never `--no-install`** — `frozenLockfile = true` already fails on lockfile drift; the immutable deploy proof needs `CLOUDFLARE_API_TOKEN` from env.
+- **`--console-depth=N`** overrides bunfig `[console] depth` (repo pin 6) for native `console.log` object depth; the policy layer in `lib/console-depth.ts` reads it too.
+- The `--weave` mode is read-only against the edge; `--watch` re-fires probes on every save, so prefer `--no-clear-screen` to compare runs.
