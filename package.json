@@ -1819,6 +1819,8 @@
     "partner-profile:bake": "bun lib/partner-profile/bake.ts",
     "partner-profile:bake:check": "bun lib/partner-profile/bake.ts --check",
     "partner:bookmaker:register": "bun tools/register-partner-bookmaker.ts",
+    "partner:onboard": "bun tools/partner-onboard.ts",
+    "partner:book:add": "bun tools/partner-book-add.ts",
     "partner:vault:migrate": "bun tools/migrate-seat-intake-vault.ts",
     "soft:accounting:bake": "bun tools/bake-soft-accounting-export.ts",
     "soft:accounting:check": "bun tools/bake-soft-accounting-export.ts --check",
