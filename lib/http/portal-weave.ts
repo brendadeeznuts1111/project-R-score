@@ -347,6 +347,14 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveArtifact[] = [
   // ── ui (also listed in related) ──
   { label: 'ops-summary', href: '/registry/ops-summary.json', purpose: 'ui' },
   {
+    id: 'partner-profiles', // brand-ok — weave artifact slug, not a domain *Id
+    label: 'partner-profiles',
+    href: '/registry/partner-profiles.json',
+    note: 'unified Partner Profile bake · CODE-keyed · docs/design/unified-partner-profile.md',
+    purpose: 'ui',
+    cli: 'bun run partner-profile:bake',
+  },
+  {
     id: 'bookmakers-registry', // brand-ok — weave artifact slug, not a domain *Id
     label: 'bookmakers',
     href: '/registry/bookmakers.json',
