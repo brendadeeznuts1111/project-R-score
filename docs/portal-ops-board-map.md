@@ -10,8 +10,8 @@ Generated from the machine SSOT — **do not invent commands** here; rebake afte
 | **Code SSOT** | [`lib/http/portal-weave.ts`](../lib/http/portal-weave.ts) |
 | **Board** | [`/portal/ops/`](../public/portal/ops/) → Portal weave → Operator scripts |
 | **Schema** | v2 · kind `portal-weave` |
-| **Baked (weave)** | `2026-08-02T21:08:17.925Z` (UTC) |
-| **Counts** | **43** commands · **4** groups · 27 surfaces · 38 artifacts |
+| **Baked (weave)** | `2026-08-02T22:20:09.813Z` (UTC) |
+| **Counts** | **45** commands · **4** groups · 27 surfaces · 39 artifacts |
 
 ```bash
 # refresh weave then this guide
@@ -25,8 +25,8 @@ bun tools/bake-portal-ops-map.ts
 
 The ops board meta line is a **summary**, not a shell command:
 
-> **43 commands** · **4 groups** (Registry / R2 · Ops · Harness · Secrets / vault) · **schema v2**  
-> Source: [`/registry/portal-weave.json`](/registry/portal-weave.json) · Baked: `2026-08-02T21:08:17.925Z` · Guide: [`docs/portal-ops-board-map.md`](portal-ops-board-map.md)
+> **45 commands** · **4 groups** (Registry / R2 · Ops · Harness · Secrets / vault) · **schema v2**  
+> Source: [`/registry/portal-weave.json`](/registry/portal-weave.json) · Baked: `2026-08-02T22:20:09.813Z` · Guide: [`docs/portal-ops-board-map.md`](portal-ops-board-map.md)
 
 ### Related chips
 
@@ -91,7 +91,7 @@ Each row is one grounded monorepo command.
 | `script-24-limit-raise-alerts` | Limit raise alerts | `bun run ops:limits:alerts` | — | [`/docs/harness/tenants/partner-limits.md`](../docs/harness/tenants/partner-limits.md) |
 | `script-25-portal-dev-server-hot` | Portal dev server (hot) | `bun run dev:portal` | — | [`/docs/portal-foundation.md`](../docs/portal-foundation.md) |
 
-### Group C: Harness (13)
+### Group C: Harness (15)
 
 | Short id | Label | Command | Flags | Docs |
 |----------|-------|---------|-------|------|
@@ -106,6 +106,8 @@ Each row is one grounded monorepo command.
 | `script-34-doc-index-bake` | Doc index bake | `bun run build:doc-index` | — | [`/lib/docs/doc-index.ts`](../lib/docs/doc-index.ts) |
 | `script-35-lane-status-primary-worktrees-bakes` | Lane status (primary/worktrees/bakes) | `bun run lane:status` | — | [`/AGENTS.md`](../AGENTS.md) |
 | `script-36-native-markdown-docs-check` | Native Markdown docs check | `bun run docs:native:check` | — | [`/docs/BUN_NATIVE_CAPABILITIES.md`](../docs/BUN_NATIVE_CAPABILITIES.md) |
+| `verify-bun-runtime-nits` | Bun runtime nits (Phase 1) | `bun run verify:bun-runtime-nits` | — | [`/docs/bun-runtime-nits.md`](../docs/bun-runtime-nits.md) |
+| `verify-bun-runtime-nits-save` | Bun runtime nits save proof | `bun run verify:bun-runtime-nits:save` | — | [`/docs/bun-runtime-nits.md`](../docs/bun-runtime-nits.md) |
 | `portal-chrome-bake-apply` | Portal chrome bake + apply | `bun run portal:chrome:bake && bun tools/portal-apply-chrome.ts` | — | [`/docs/portal-foundation.md`](../docs/portal-foundation.md) |
 | `monorepo-health-bake` | Monorepo health bake | `bun run monorepo:health:bake` | — | [`/docs/harness/tenants/monorepo-health.md`](../docs/harness/tenants/monorepo-health.md) |
 
@@ -113,10 +115,10 @@ Each row is one grounded monorepo command.
 
 | Short id | Label | Command | Flags | Docs |
 |----------|-------|---------|-------|------|
-| `script-37-compliance-bake-proton-vault` | Compliance bake (Proton vault) | `bun run compliance:bake:vault` | — | [`/docs/harness/tenants/proton-integration.md`](../docs/harness/tenants/proton-integration.md) |
-| `script-38-vault-health-gate-snapshots` | Vault health gate (snapshots) | `bun run vault:health` | — | [`/docs/harness/tenants/proton-integration.md`](../docs/harness/tenants/proton-integration.md) |
-| `script-39-vault-health-live-bake` | Vault health live bake | `bun run vault:health:bake` | — | [`/docs/harness/tenants/proton-integration.md`](../docs/harness/tenants/proton-integration.md) |
-| `script-40-vault-map-resolve-list` | Vault map resolve (list) | `bun run vault:resolve` | — | [`/docs/harness/tenants/proton-integration.md`](../docs/harness/tenants/proton-integration.md) |
+| `script-39-compliance-bake-proton-vault` | Compliance bake (Proton vault) | `bun run compliance:bake:vault` | — | [`/docs/harness/tenants/proton-integration.md`](../docs/harness/tenants/proton-integration.md) |
+| `script-40-vault-health-gate-snapshots` | Vault health gate (snapshots) | `bun run vault:health` | — | [`/docs/harness/tenants/proton-integration.md`](../docs/harness/tenants/proton-integration.md) |
+| `script-41-vault-health-live-bake` | Vault health live bake | `bun run vault:health:bake` | — | [`/docs/harness/tenants/proton-integration.md`](../docs/harness/tenants/proton-integration.md) |
+| `script-42-vault-map-resolve-list` | Vault map resolve (list) | `bun run vault:resolve` | — | [`/docs/harness/tenants/proton-integration.md`](../docs/harness/tenants/proton-integration.md) |
 
 ---
 
