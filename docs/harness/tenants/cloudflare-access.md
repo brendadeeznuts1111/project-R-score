@@ -27,17 +27,20 @@ deleting them.
 
 ## Identity contract
 
-1. Configure Cloudflare as an identity provider with “restrict to account
-   members” enabled.
-2. Each managed app uses one `cloudflare_account_member: {}` include rule.
-   Omitting `account_id` selects the current account and keeps identifiers out
-   of source.
-3. Email-domain one-time PIN is not the SSO contract.
+1. IdPs in use: **Google** and **One-time PIN** (not Cloudflare account-member
+   SSO). Operators sign in with an allowlisted personal or `@factory-wager.com`
+   inbox.
+2. Each managed app uses an explicit `email: { email: … }` allowlist (OR
+   includes). Source of truth: [`.cloudflare-access.yml`](../../../.cloudflare-access.yml).
+   Keep live Access policies in sync when adding/removing operators.
+3. Domain-wide `email_domain` OTP is **not** the SSO contract (rejected by
+   `bun run cloudflare:access:verify`).
 4. Interactive sessions are capped at four hours.
 5. Access authorization cookies remain `HttpOnly`. Do not enable a binding
    cookie or change `SameSite` without browser-flow verification.
 6. App Launcher visibility is configured after the application policies
    pass authorized and unauthorized tests.
+7. GitHub `noreply` commit emails cannot authenticate — use real inboxes only.
 
 Current Cloudflare references:
 
@@ -142,12 +145,13 @@ bun tools/portal-cli.ts doctor --group infra --offline --layout plain
 
 ### Plan safety finding
 
-The dedicated token is healthy. A live plan on 2026-07-31 exposed two separate
-concerns: the source name for the existing Ledger application was stale, and
-the production portal changes would replace owner-email policies with the
-broader account-member selector. The source name is now `ledger`; production
-policy broadening remains a separate reviewed rollout and is not a prerequisite
-for preview protection.
+The dedicated Access token can read/update Access apps/policies. Account
+**Members** invite remains out of scope for that token (403) — operator access
+is granted via the email allowlist, not Cloudflare account membership.
+
+Aligned 2026-08-02: source YAML and live portal/ledger policies use the same
+explicit email allowlist (`utahj4754@gmail.com`, `brendawill2233@gmail.com`,
+`nolarose@factory-wager.com`; ledger also keeps `inmikehuntglobal@gmail.com`).
 
 **Pages preview steps:**
 

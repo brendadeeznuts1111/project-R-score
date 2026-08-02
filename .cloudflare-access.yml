@@ -1,22 +1,26 @@
 # .cloudflare-access.yml — scoped policy-as-code for operator surfaces.
 #
-# STATUS (verified live 2026-07-31):
-#   · ledger.factory-wager.com     — APPLIED (existing app name "ledger" · 302 Access)
-#   · score.factory-wager.com/portal — APPLIED (app "FactoryWager Portal" · 302 Access)
-#   · project-r-score.pages.dev/portal — APPLIED (app "FactoryWager Portal (pages.dev)" · 302 Access)
+# STATUS (aligned live 2026-08-02):
+#   · ledger.factory-wager.com     — APPLIED (app "ledger" · email allowlist)
+#   · score.factory-wager.com/portal — APPLIED (app "FactoryWager Portal" · email allowlist)
+#   · project-r-score.pages.dev/portal — APPLIED (app "FactoryWager Portal (pages.dev)")
 #   · Pages branch/hash previews — PAGES-OWNED TARGET (public until the project
 #     Settings > General > Enable access policy control is enabled)
 #   · reasonix.factory-wager.com   — DECOMMISSIONED 2026-07-28 (no DNS, no tunnel; app + template removed)
 # Access token: Proton factorywager / Cloudflare Access API Token
 #   → CLOUDFLARE_ACCESS_API_TOKEN (kimi plan uses CLOUDFLARE_API_TOKEN=that value)
 #
-# Schema matches src/lib/cloudflare-access-policy.ts (kimi-toolchain):
-# apps[].policies[].include/require/exclude entries are Cloudflare Access
-# rule groups. `cloudflare_account_member: {}` delegates authentication to
-# Cloudflare as IdP and restricts authorization to this account's members.
+# Schema matches lib/verification/cloudflare-access-policy.ts:
+# apps[].policies[].include entries are Cloudflare Access rule groups.
+# Human SSO contract: explicit `email:` allowlist (Google / One-time PIN IdPs).
+# Domain-wide `email_domain` OTP is rejected by the static verifier.
 #
 # scoped: true is a hard safety boundary: unlisted live Access apps are ignored.
 scoped: true
+
+# Operator emails permitted on managed portal / ledger surfaces (OR include).
+# Keep in sync with live Access policies when inviting operators.
+# (GitHub noreply commit emails cannot authenticate — use real inboxes.)
 
 apps:
   - name: ledger
@@ -24,25 +28,42 @@ apps:
     type: self_hosted
     session_duration: 4h
     policies:
-      - name: Allow Cloudflare account members
+      - name: Allow owner emails
         decision: allow
         include:
-          - cloudflare_account_member: {}
+          - email:
+              email: utahj4754@gmail.com
+          - email:
+              email: brendawill2233@gmail.com
+          - email:
+              email: nolarose@factory-wager.com
+          - email:
+              email: inmikehuntglobal@gmail.com
   - name: FactoryWager Portal
     domain: score.factory-wager.com/portal
     type: self_hosted
     session_duration: 4h
     policies:
-      - name: Allow Cloudflare account members
+      - name: Allow owner emails
         decision: allow
         include:
-          - cloudflare_account_member: {}
+          - email:
+              email: utahj4754@gmail.com
+          - email:
+              email: brendawill2233@gmail.com
+          - email:
+              email: nolarose@factory-wager.com
   - name: FactoryWager Portal (pages.dev)
     domain: project-r-score.pages.dev/portal
     type: self_hosted
     session_duration: 4h
     policies:
-      - name: Allow Cloudflare account members
+      - name: Allow owner emails
         decision: allow
         include:
-          - cloudflare_account_member: {}
+          - email:
+              email: utahj4754@gmail.com
+          - email:
+              email: brendawill2233@gmail.com
+          - email:
+              email: nolarose@factory-wager.com
