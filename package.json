@@ -1816,6 +1816,8 @@
     "partners:event": "bun scripts/partners-event.ts",
     "partners:event-concepts:bake": "bun tools/bake-partner-ops-event-concepts.ts",
     "partners:event-concepts:check": "bun tools/bake-partner-ops-event-concepts.ts --check",
+    "partner-profile:bake": "bun lib/partner-profile/bake.ts",
+    "partner-profile:bake:check": "bun lib/partner-profile/bake.ts --check",
     "soft:accounting:bake": "bun tools/bake-soft-accounting-export.ts",
     "soft:accounting:check": "bun tools/bake-soft-accounting-export.ts --check",
     "soft:accounting:from-ct": "bun tools/bake-soft-accounting-export.ts --from-ct",

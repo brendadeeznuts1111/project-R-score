@@ -1,0 +1,109 @@
+# Example unified partner profile — copy to <CODE>.toml and fill in.
+# See docs/design/unified-partner-profile.md for the model + invariants.
+# Secrets: NEVER put passwords here — only vaultKey (see [books.*.account]).
+# Code must match the file name: config/partner-profiles/YOU.toml → CODE = YOU.
+
+[meta]
+templateId = "partner-active"
+name = "Example partner"
+version = "1.0.0"
+source = "telegram"          # referral | portal | telegram | promoted
+
+[identity]
+code = "YOU"                 # ^[A-Z]{3,6}$ — the single canonical key
+callSign = "YOU-001"         # CODE-NNN (derived alias)
+status = "onboarded"
+
+[lineage]
+parent = ""
+expert = ""
+cutPct = 40
+
+[lifecycle]
+status = "active"            # signup|materialized|kyc_pending|active|cultivating|graduated|suspended|terminated
+phase = "operator_ready"     # derived — see derivePhase
+
+[telegram]
+chatId = "-1001234567890"    # package-group supergroup where intake arrives
+topics.general = 1
+topics.ops = 2
+topics.alerts = 3
+topics.liquidity = 4
+topics.accounting = 5
+
+[jurisdiction]
+type = "pph"
+allowedStates = ["NV", "NJ"]
+allowedCountries = ["US"]
+minimumAge = 21
+kycTier = "basic"
+geoFenceEnabled = true
+
+[rules.sor]
+eligibleTiers = ["T1", "T2"]
+maxExposurePerSignal = 250
+maxDailyExposure = 1000
+maxSingleBet = 500
+signalGates.steam = true
+signalGates.arb = false
+signalGates.clv = true
+signalGates.manual = false
+signalGates.predictive = false
+requireOpsecGreen = true
+opsecScoreMax = 20
+
+[books.youwager]             # bookKey = @factorywager/bookmakers registry id
+type = "pph"
+status = "ready"
+withdrawPath = "Venmo → house"
+[books.youwager.account]
+username = "youwager-user"
+vaultKey = "partner:YOU:youwager"   # partner_vault key — password lives in the vault, never here
+[books.youwager.funding]
+method = "deposit.method.venmo"
+rail = "Venmo"
+target = "@you.partner"
+[books.youwager.limits]
+maxBet = 500
+freeRollPct = 100
+
+[cultivation]
+initialDepositTarget = 500
+depositScheduleWeeks = 4
+depositAmounts = [100, 150, 150, 100]
+initialLimit = 200
+limitRaiseTarget = 1000
+raiseRequestWeek = 3
+recreationalMix = 60
+roundStakes = true
+casinoPlayPct = 10
+oddsBoostAcceptance = 50
+maxBetFrequencyDaily = 20
+requiredSportsDiversity = 3
+
+[settlement]
+commissionStructure = "tiered"
+commissionTiers = [0.1, 0.15]
+makeupCarry = false
+makeupCap = 500
+payoutFrequency = "weekly"
+currency = "USD"
+holdTargetPct = 8
+
+[balance]
+initialCapitalRequirement = 1000
+marginCallThreshold = 300
+marginCallAction = "pause"
+autoInject = false
+
+[compliance]
+autoSuspendRules = true
+reviewRequiredFor = ["sports", "stakes"]
+auditRetentionDays = 180
+maxOpsecScore = 20
+require2FA = true
+
+[accounting]
+fundStatus = "ready"
+
+[tracking]
