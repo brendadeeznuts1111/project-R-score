@@ -1,0 +1,1129 @@
+{
+  "generated": "2026-07-22T13:45:51.022Z",
+  "source": "https://bun.com/rss.xml",
+  "etag": "W/\"bf5f600b38aaec3cddc18a543ea0e41c\"",
+  "lastModified": "Fri, 17 Jul 2026 04:37:47 GMT",
+  "count": 160,
+  "entries": [
+    {
+      "version": "0.1.1",
+      "title": "Bun v0.1.1",
+      "url": "https://bun.com/blog/bun-v0.1.1",
+      "guid": "https://bun.com/blog/bun-v0.1.1",
+      "pubDate": "2022-07-05T20:35:35.000Z"
+    },
+    {
+      "version": "0.1.2",
+      "title": "Bun v0.1.2",
+      "url": "https://bun.com/blog/bun-v0.1.2",
+      "guid": "https://bun.com/blog/bun-v0.1.2",
+      "pubDate": "2022-07-07T23:32:48.000Z"
+    },
+    {
+      "version": "0.1.3",
+      "title": "Bun v0.1.3",
+      "url": "https://bun.com/blog/bun-v0.1.3",
+      "guid": "https://bun.com/blog/bun-v0.1.3",
+      "pubDate": "2022-07-11T19:38:25.000Z"
+    },
+    {
+      "version": "0.1.4",
+      "title": "Bun v0.1.4",
+      "url": "https://bun.com/blog/bun-v0.1.4",
+      "guid": "https://bun.com/blog/bun-v0.1.4",
+      "pubDate": "2022-07-13T08:49:38.000Z"
+    },
+    {
+      "version": "0.1.5",
+      "title": "Bun v0.1.5",
+      "url": "https://bun.com/blog/bun-v0.1.5",
+      "guid": "https://bun.com/blog/bun-v0.1.5",
+      "pubDate": "2022-07-23T02:11:34.000Z"
+    },
+    {
+      "version": "0.1.6",
+      "title": "Bun v0.1.6",
+      "url": "https://bun.com/blog/bun-v0.1.6",
+      "guid": "https://bun.com/blog/bun-v0.1.6",
+      "pubDate": "2022-08-01T23:29:18.000Z"
+    },
+    {
+      "version": "0.1.7",
+      "title": "Bun v0.1.7",
+      "url": "https://bun.com/blog/bun-v0.1.7",
+      "guid": "https://bun.com/blog/bun-v0.1.7",
+      "pubDate": "2022-08-06T08:15:30.000Z"
+    },
+    {
+      "version": "0.1.8",
+      "title": "Bun v0.1.8",
+      "url": "https://bun.com/blog/bun-v0.1.8",
+      "guid": "https://bun.com/blog/bun-v0.1.8",
+      "pubDate": "2022-08-11T08:18:30.000Z"
+    },
+    {
+      "version": "0.1.9",
+      "title": "Bun v0.1.9",
+      "url": "https://bun.com/blog/bun-v0.1.9",
+      "guid": "https://bun.com/blog/bun-v0.1.9",
+      "pubDate": "2022-08-18T08:49:36.000Z"
+    },
+    {
+      "version": "0.1.10",
+      "title": "Bun v0.1.10",
+      "url": "https://bun.com/blog/bun-v0.1.10",
+      "guid": "https://bun.com/blog/bun-v0.1.10",
+      "pubDate": "2022-08-19T07:49:38.000Z"
+    },
+    {
+      "version": "0.1.11",
+      "title": "Bun v0.1.11",
+      "url": "https://bun.com/blog/bun-v0.1.11",
+      "guid": "https://bun.com/blog/bun-v0.1.11",
+      "pubDate": "2022-09-07T19:56:07.000Z"
+    },
+    {
+      "version": "0.1.12",
+      "title": "Bun v0.1.12",
+      "url": "https://bun.com/blog/bun-v0.1.12",
+      "guid": "https://bun.com/blog/bun-v0.1.12",
+      "pubDate": "2022-09-18T06:37:55.000Z"
+    },
+    {
+      "version": "0.2.0",
+      "title": "Bun v0.2.0",
+      "url": "https://bun.com/blog/bun-v0.2.0",
+      "guid": "https://bun.com/blog/bun-v0.2.0",
+      "pubDate": "2022-10-13T23:48:34.000Z"
+    },
+    {
+      "version": "0.2.1",
+      "title": "Bun v0.2.1",
+      "url": "https://bun.com/blog/bun-v0.2.1",
+      "guid": "https://bun.com/blog/bun-v0.2.1",
+      "pubDate": "2022-10-19T06:10:52.000Z"
+    },
+    {
+      "version": "0.2.2",
+      "title": "Bun v0.2.2",
+      "url": "https://bun.com/blog/bun-v0.2.2",
+      "guid": "https://bun.com/blog/bun-v0.2.2",
+      "pubDate": "2022-10-27T08:14:11.000Z"
+    },
+    {
+      "version": "0.3.0",
+      "title": "Bun v0.3.0",
+      "url": "https://bun.com/blog/bun-v0.3.0",
+      "guid": "https://bun.com/blog/bun-v0.3.0",
+      "pubDate": "2022-12-07T06:00:00.000Z"
+    },
+    {
+      "version": "0.4.0",
+      "title": "Bun v0.4",
+      "url": "https://bun.com/blog/bun-v0.4.0",
+      "guid": "https://bun.com/blog/bun-v0.4.0",
+      "pubDate": "2022-12-23T07:00:00.000Z"
+    },
+    {
+      "version": "0.5.0",
+      "title": "Bun v0.5",
+      "url": "https://bun.com/blog/bun-v0.5.0",
+      "guid": "https://bun.com/blog/bun-v0.5.0",
+      "pubDate": "2023-01-18T18:10:45.000Z"
+    },
+    {
+      "version": "0.5.1",
+      "title": "Bun v0.5.1",
+      "url": "https://bun.com/blog/bun-v0.5.1",
+      "guid": "https://bun.com/blog/bun-v0.5.1",
+      "pubDate": "2023-01-19T18:10:45.000Z"
+    },
+    {
+      "version": "0.5.2",
+      "title": "Bun v0.5.2",
+      "url": "https://bun.com/blog/bun-v0.5.2",
+      "guid": "https://bun.com/blog/bun-v0.5.2",
+      "pubDate": "2023-01-31T03:43:44.000Z"
+    },
+    {
+      "version": "0.5.5",
+      "title": "Bun v0.5.5",
+      "url": "https://bun.com/blog/bun-v0.5.5",
+      "guid": "https://bun.com/blog/bun-v0.5.5",
+      "pubDate": "2023-02-02T22:39:43.000Z"
+    },
+    {
+      "version": "0.5.6",
+      "title": "Bun v0.5.6",
+      "url": "https://bun.com/blog/bun-v0.5.6",
+      "guid": "https://bun.com/blog/bun-v0.5.6",
+      "pubDate": "2023-02-09T01:19:03.000Z"
+    },
+    {
+      "version": "0.5.7",
+      "title": "Bun v0.5.7",
+      "url": "https://bun.com/blog/bun-v0.5.7",
+      "guid": "https://bun.com/blog/bun-v0.5.7",
+      "pubDate": "2023-02-24T00:00:50.000Z"
+    },
+    {
+      "version": "0.5.8",
+      "title": "Bun v0.5.8",
+      "url": "https://bun.com/blog/bun-v0.5.8",
+      "guid": "https://bun.com/blog/bun-v0.5.8",
+      "pubDate": "2023-03-18T00:00:00.000Z"
+    },
+    {
+      "version": "0.5.9",
+      "title": "Bun v0.5.9",
+      "url": "https://bun.com/blog/bun-v0.5.9",
+      "guid": "https://bun.com/blog/bun-v0.5.9",
+      "pubDate": "2023-04-04T00:00:00.000Z"
+    },
+    {
+      "version": "0.6.0",
+      "title": "Bun v0.6.0",
+      "url": "https://bun.com/blog/bun-v0.6.0",
+      "guid": "https://bun.com/blog/bun-v0.6.0",
+      "pubDate": "2023-05-16T12:00:00.000Z"
+    },
+    {
+      "version": "0.6.2",
+      "title": "Bun v0.6.2",
+      "url": "https://bun.com/blog/bun-v0.6.2",
+      "guid": "https://bun.com/blog/bun-v0.6.2",
+      "pubDate": "2023-05-17T12:00:00.000Z"
+    },
+    {
+      "version": "0.6.3",
+      "title": "Bun v0.6.3",
+      "url": "https://bun.com/blog/bun-v0.6.3",
+      "guid": "https://bun.com/blog/bun-v0.6.3",
+      "pubDate": "2023-05-22T18:06:10.000Z"
+    },
+    {
+      "version": "0.6.4",
+      "title": "Bun v0.6.4",
+      "url": "https://bun.com/blog/bun-v0.6.4",
+      "guid": "https://bun.com/blog/bun-v0.6.4",
+      "pubDate": "2023-05-26T00:00:00.000Z"
+    },
+    {
+      "version": "0.6.5",
+      "title": "Bun v0.6.5",
+      "url": "https://bun.com/blog/bun-v0.6.5",
+      "guid": "https://bun.com/blog/bun-v0.6.5",
+      "pubDate": "2023-05-29T00:00:00.000Z"
+    },
+    {
+      "version": "0.6.6",
+      "title": "Bun v0.6.6",
+      "url": "https://bun.com/blog/bun-v0.6.6",
+      "guid": "https://bun.com/blog/bun-v0.6.6",
+      "pubDate": "2023-05-31T17:56:51.000Z"
+    },
+    {
+      "version": "0.6.7",
+      "title": "Bun v0.6.7",
+      "url": "https://bun.com/blog/bun-v0.6.7",
+      "guid": "https://bun.com/blog/bun-v0.6.7",
+      "pubDate": "2023-06-02T00:00:00.000Z"
+    },
+    {
+      "version": "0.6.8",
+      "title": "Bun v0.6.8",
+      "url": "https://bun.com/blog/bun-v0.6.8",
+      "guid": "https://bun.com/blog/bun-v0.6.8",
+      "pubDate": "2023-06-09T12:00:00.000Z"
+    },
+    {
+      "version": "0.6.9",
+      "title": "Bun v0.6.9",
+      "url": "https://bun.com/blog/bun-v0.6.9",
+      "guid": "https://bun.com/blog/bun-v0.6.9",
+      "pubDate": "2023-06-13T15:05:43.000Z"
+    },
+    {
+      "version": "0.6.10",
+      "title": "Bun v0.6.10",
+      "url": "https://bun.com/blog/bun-v0.6.10",
+      "guid": "https://bun.com/blog/bun-v0.6.10",
+      "pubDate": "2023-06-26T20:15:43.000Z"
+    },
+    {
+      "version": "0.6.12",
+      "title": "Bun v0.6.12",
+      "url": "https://bun.com/blog/bun-v0.6.12",
+      "guid": "https://bun.com/blog/bun-v0.6.12",
+      "pubDate": "2023-06-30T20:15:43.000Z"
+    },
+    {
+      "version": "0.6.13",
+      "title": "Bun v0.6.13",
+      "url": "https://bun.com/blog/bun-v0.6.13",
+      "guid": "https://bun.com/blog/bun-v0.6.13",
+      "pubDate": "2023-07-04T10:00:00.000Z"
+    },
+    {
+      "version": "0.6.14",
+      "title": "Bun v0.6.14",
+      "url": "https://bun.com/blog/bun-v0.6.14",
+      "guid": "https://bun.com/blog/bun-v0.6.14",
+      "pubDate": "2023-07-12T00:57:49.000Z"
+    },
+    {
+      "version": "0.7.0",
+      "title": "Bun v0.7.0",
+      "url": "https://bun.com/blog/bun-v0.7.0",
+      "guid": "https://bun.com/blog/bun-v0.7.0",
+      "pubDate": "2023-07-21T00:57:49.000Z"
+    },
+    {
+      "version": "0.7.1",
+      "title": "Bun v0.7.1",
+      "url": "https://bun.com/blog/bun-v0.7.1",
+      "guid": "https://bun.com/blog/bun-v0.7.1",
+      "pubDate": "2023-07-29T00:57:49.000Z"
+    },
+    {
+      "version": "0.7.2",
+      "title": "Bun v0.7.2",
+      "url": "https://bun.com/blog/bun-v0.7.2",
+      "guid": "https://bun.com/blog/bun-v0.7.2",
+      "pubDate": "2023-08-03T12:00:00.000Z"
+    },
+    {
+      "version": "0.7.3",
+      "title": "Bun v0.7.3",
+      "url": "https://bun.com/blog/bun-v0.7.3",
+      "guid": "https://bun.com/blog/bun-v0.7.3",
+      "pubDate": "2023-08-06T12:12:00.000Z"
+    },
+    {
+      "version": "0.8.0",
+      "title": "Bun v0.8.0",
+      "url": "https://bun.com/blog/bun-v0.8.0",
+      "guid": "https://bun.com/blog/bun-v0.8.0",
+      "pubDate": "2023-08-24T00:21:35.000Z"
+    },
+    {
+      "version": "0.8.1",
+      "title": "Bun v0.8.1",
+      "url": "https://bun.com/blog/bun-v0.8.1",
+      "guid": "https://bun.com/blog/bun-v0.8.1",
+      "pubDate": "2023-08-26T00:21:35.000Z"
+    },
+    {
+      "version": "1.0.0",
+      "title": "Bun 1.0",
+      "url": "https://bun.com/blog/bun-v1.0",
+      "guid": "https://bun.com/blog/bun-v1.0",
+      "pubDate": "2023-09-08T01:40:20.000Z"
+    },
+    {
+      "version": "1.0.1",
+      "title": "Bun v1.0.1",
+      "url": "https://bun.com/blog/bun-v1.0.1",
+      "guid": "https://bun.com/blog/bun-v1.0.1",
+      "pubDate": "2023-09-12T15:19:15.000Z"
+    },
+    {
+      "version": "1.0.2",
+      "title": "Bun v1.0.2",
+      "url": "https://bun.com/blog/bun-v1.0.2",
+      "guid": "https://bun.com/blog/bun-v1.0.2",
+      "pubDate": "2023-09-15T16:51:51.000Z"
+    },
+    {
+      "version": "1.0.3",
+      "title": "Bun v1.0.3",
+      "url": "https://bun.com/blog/bun-v1.0.3",
+      "guid": "https://bun.com/blog/bun-v1.0.3",
+      "pubDate": "2023-09-22T12:00:00.000Z"
+    },
+    {
+      "version": "1.0.4",
+      "title": "Bun v1.0.4",
+      "url": "https://bun.com/blog/bun-v1.0.4",
+      "guid": "https://bun.com/blog/bun-v1.0.4",
+      "pubDate": "2023-10-03T12:00:00.000Z"
+    },
+    {
+      "version": "1.0.5",
+      "title": "Bun v1.0.5",
+      "url": "https://bun.com/blog/bun-v1.0.5",
+      "guid": "https://bun.com/blog/bun-v1.0.5",
+      "pubDate": "2023-10-11T10:33:40.000Z"
+    },
+    {
+      "version": "1.0.6",
+      "title": "Bun v1.0.6",
+      "url": "https://bun.com/blog/bun-v1.0.6",
+      "guid": "https://bun.com/blog/bun-v1.0.6",
+      "pubDate": "2023-10-11T23:39:51.000Z"
+    },
+    {
+      "version": "1.0.7",
+      "title": "Bun v1.0.7",
+      "url": "https://bun.com/blog/bun-v1.0.7",
+      "guid": "https://bun.com/blog/bun-v1.0.7",
+      "pubDate": "2023-10-20T23:39:51.000Z"
+    },
+    {
+      "version": "1.0.8",
+      "title": "Bun v1.0.8",
+      "url": "https://bun.com/blog/bun-v1.0.8",
+      "guid": "https://bun.com/blog/bun-v1.0.8",
+      "pubDate": "2023-11-02T18:51:31.000Z"
+    },
+    {
+      "version": "1.0.9",
+      "title": "Bun v1.0.9",
+      "url": "https://bun.com/blog/bun-v1.0.9",
+      "guid": "https://bun.com/blog/bun-v1.0.9",
+      "pubDate": "2023-11-05T10:13:16.000Z"
+    },
+    {
+      "version": "1.0.10",
+      "title": "Bun v1.0.10",
+      "url": "https://bun.com/blog/bun-v1.0.10",
+      "guid": "https://bun.com/blog/bun-v1.0.10",
+      "pubDate": "2023-11-07T07:39:33.000Z"
+    },
+    {
+      "version": "1.0.11",
+      "title": "Bun v1.0.11",
+      "url": "https://bun.com/blog/bun-v1.0.11",
+      "guid": "https://bun.com/blog/bun-v1.0.11",
+      "pubDate": "2023-11-08T07:39:33.000Z"
+    },
+    {
+      "version": "1.0.12",
+      "title": "Bun v1.0.12",
+      "url": "https://bun.com/blog/bun-v1.0.12",
+      "guid": "https://bun.com/blog/bun-v1.0.12",
+      "pubDate": "2023-11-16T08:05:44.000Z"
+    },
+    {
+      "version": "1.0.13",
+      "title": "Bun v1.0.13",
+      "url": "https://bun.com/blog/bun-v1.0.13",
+      "guid": "https://bun.com/blog/bun-v1.0.13",
+      "pubDate": "2023-11-18T08:05:44.000Z"
+    },
+    {
+      "version": "1.0.14",
+      "title": "Bun v1.0.14",
+      "url": "https://bun.com/blog/bun-v1.0.14",
+      "guid": "https://bun.com/blog/bun-v1.0.14",
+      "pubDate": "2023-11-22T22:54:46.000Z"
+    },
+    {
+      "version": "1.0.15",
+      "title": "Bun v1.0.15",
+      "url": "https://bun.com/blog/bun-v1.0.15",
+      "guid": "https://bun.com/blog/bun-v1.0.15",
+      "pubDate": "2023-12-02T14:30:15.000Z"
+    },
+    {
+      "version": "1.0.16",
+      "title": "Bun v1.0.16",
+      "url": "https://bun.com/blog/bun-v1.0.16",
+      "guid": "https://bun.com/blog/bun-v1.0.16",
+      "pubDate": "2023-12-10T13:28:21.000Z"
+    },
+    {
+      "version": "1.0.17",
+      "title": "Bun v1.0.17",
+      "url": "https://bun.com/blog/bun-v1.0.17",
+      "guid": "https://bun.com/blog/bun-v1.0.17",
+      "pubDate": "2023-12-12T11:36:17.000Z"
+    },
+    {
+      "version": "1.0.18",
+      "title": "Bun v1.0.18",
+      "url": "https://bun.com/blog/bun-v1.0.18",
+      "guid": "https://bun.com/blog/bun-v1.0.18",
+      "pubDate": "2023-12-14T07:54:01.000Z"
+    },
+    {
+      "version": "1.0.19",
+      "title": "Bun v1.0.19",
+      "url": "https://bun.com/blog/bun-v1.0.19",
+      "guid": "https://bun.com/blog/bun-v1.0.19",
+      "pubDate": "2023-12-22T08:26:18.000Z"
+    },
+    {
+      "version": "1.0.20",
+      "title": "Bun v1.0.20",
+      "url": "https://bun.com/blog/bun-v1.0.20",
+      "guid": "https://bun.com/blog/bun-v1.0.20",
+      "pubDate": "2023-12-24T14:05:40.000Z"
+    },
+    {
+      "version": "1.0.21",
+      "title": "Bun v1.0.21",
+      "url": "https://bun.com/blog/bun-v1.0.21",
+      "guid": "https://bun.com/blog/bun-v1.0.21",
+      "pubDate": "2024-01-02T02:27:00.000Z"
+    },
+    {
+      "version": "1.0.22",
+      "title": "Bun v1.0.22",
+      "url": "https://bun.com/blog/bun-v1.0.22",
+      "guid": "https://bun.com/blog/bun-v1.0.22",
+      "pubDate": "2024-01-09T22:27:17.000Z"
+    },
+    {
+      "version": "1.0.23",
+      "title": "Bun v1.0.23",
+      "url": "https://bun.com/blog/bun-v1.0.23",
+      "guid": "https://bun.com/blog/bun-v1.0.23",
+      "pubDate": "2024-01-16T08:17:21.000Z"
+    },
+    {
+      "version": "1.0.24",
+      "title": "Bun v1.0.24",
+      "url": "https://bun.com/blog/bun-v1.0.24",
+      "guid": "https://bun.com/blog/bun-v1.0.24",
+      "pubDate": "2024-01-20T05:17:49.000Z"
+    },
+    {
+      "version": "1.0.25",
+      "title": "Bun v1.0.25",
+      "url": "https://bun.com/blog/bun-v1.0.25",
+      "guid": "https://bun.com/blog/bun-v1.0.25",
+      "pubDate": "2024-01-21T14:30:03.000Z"
+    },
+    {
+      "version": "1.0.26",
+      "title": "Bun v1.0.26",
+      "url": "https://bun.com/blog/bun-v1.0.26",
+      "guid": "https://bun.com/blog/bun-v1.0.26",
+      "pubDate": "2024-02-03T16:40:08.000Z"
+    },
+    {
+      "version": "1.0.27",
+      "title": "Bun v1.0.27",
+      "url": "https://bun.com/blog/bun-v1.0.27",
+      "guid": "https://bun.com/blog/bun-v1.0.27",
+      "pubDate": "2024-02-17T05:57:22.000Z"
+    },
+    {
+      "version": "1.0.28",
+      "title": "Bun v1.0.28",
+      "url": "https://bun.com/blog/bun-v1.0.28",
+      "guid": "https://bun.com/blog/bun-v1.0.28",
+      "pubDate": "2024-02-19T23:03:46.000Z"
+    },
+    {
+      "version": "1.0.29",
+      "title": "Bun v1.0.29",
+      "url": "https://bun.com/blog/bun-v1.0.29",
+      "guid": "https://bun.com/blog/bun-v1.0.29",
+      "pubDate": "2024-02-23T04:50:50.000Z"
+    },
+    {
+      "version": "1.0.30",
+      "title": "Bun v1.0.30",
+      "url": "https://bun.com/blog/bun-v1.0.30",
+      "guid": "https://bun.com/blog/bun-v1.0.30",
+      "pubDate": "2024-03-04T09:25:31.000Z"
+    },
+    {
+      "version": "1.0.31",
+      "title": "Bun v1.0.31",
+      "url": "https://bun.com/blog/bun-v1.0.31",
+      "guid": "https://bun.com/blog/bun-v1.0.31",
+      "pubDate": "2024-03-14T22:19:59.000Z"
+    },
+    {
+      "version": "1.0.32",
+      "title": "Bun v1.0.32",
+      "url": "https://bun.com/blog/bun-v1.0.32",
+      "guid": "https://bun.com/blog/bun-v1.0.32",
+      "pubDate": "2024-03-17T15:30:16.000Z"
+    },
+    {
+      "version": "1.0.33",
+      "title": "Bun v1.0.33",
+      "url": "https://bun.com/blog/bun-v1.0.33",
+      "guid": "https://bun.com/blog/bun-v1.0.33",
+      "pubDate": "2024-03-17T15:30:16.000Z"
+    },
+    {
+      "version": "1.0.34",
+      "title": "Bun v1.0.34",
+      "url": "https://bun.com/blog/bun-v1.0.34",
+      "guid": "https://bun.com/blog/bun-v1.0.34",
+      "pubDate": "2024-03-22T12:49:41.000Z"
+    },
+    {
+      "version": "1.0.36",
+      "title": "Bun v1.0.36",
+      "url": "https://bun.com/blog/bun-v1.0.36",
+      "guid": "https://bun.com/blog/bun-v1.0.36",
+      "pubDate": "2024-03-29T07:03:02.000Z"
+    },
+    {
+      "version": "1.1.0",
+      "title": "Bun 1.1",
+      "url": "https://bun.com/blog/bun-v1.1",
+      "guid": "https://bun.com/blog/bun-v1.1",
+      "pubDate": "2024-04-01T16:00:00.000Z"
+    },
+    {
+      "version": "1.1.1",
+      "title": "Bun v1.1.1",
+      "url": "https://bun.com/blog/bun-v1.1.1",
+      "guid": "https://bun.com/blog/bun-v1.1.1",
+      "pubDate": "2024-04-04T15:29:30.000Z"
+    },
+    {
+      "version": "1.1.2",
+      "title": "Bun v1.1.2",
+      "url": "https://bun.com/blog/bun-v1.1.2",
+      "guid": "https://bun.com/blog/bun-v1.1.2",
+      "pubDate": "2024-04-06T00:37:28.000Z"
+    },
+    {
+      "version": "1.1.3",
+      "title": "Bun v1.1.3",
+      "url": "https://bun.com/blog/bun-v1.1.3",
+      "guid": "https://bun.com/blog/bun-v1.1.3",
+      "pubDate": "2024-04-08T15:48:44.000Z"
+    },
+    {
+      "version": "1.1.4",
+      "title": "Bun v1.1.4",
+      "url": "https://bun.com/blog/bun-v1.1.4",
+      "guid": "https://bun.com/blog/bun-v1.1.4",
+      "pubDate": "2024-04-16T18:18:13.000Z"
+    },
+    {
+      "version": "1.1.5",
+      "title": "Bun v1.1.5",
+      "url": "https://bun.com/blog/bun-v1.1.5",
+      "guid": "https://bun.com/blog/bun-v1.1.5",
+      "pubDate": "2024-04-26T23:13:58.000Z"
+    },
+    {
+      "version": "1.1.6",
+      "title": "Bun v1.1.6",
+      "url": "https://bun.com/blog/bun-v1.1.6",
+      "guid": "https://bun.com/blog/bun-v1.1.6",
+      "pubDate": "2024-04-28T08:48:12.000Z"
+    },
+    {
+      "version": "1.1.7",
+      "title": "Bun v1.1.7",
+      "url": "https://bun.com/blog/bun-v1.1.7",
+      "guid": "https://bun.com/blog/bun-v1.1.7",
+      "pubDate": "2024-05-03T14:02:22.000Z"
+    },
+    {
+      "version": "1.1.8",
+      "title": "Bun v1.1.8",
+      "url": "https://bun.com/blog/bun-v1.1.8",
+      "guid": "https://bun.com/blog/bun-v1.1.8",
+      "pubDate": "2024-05-10T11:16:44.000Z"
+    },
+    {
+      "version": "1.1.9",
+      "title": "Bun v1.1.9",
+      "url": "https://bun.com/blog/bun-v1.1.9",
+      "guid": "https://bun.com/blog/bun-v1.1.9",
+      "pubDate": "2024-05-22T00:40:48.000Z"
+    },
+    {
+      "version": "1.1.10",
+      "title": "Bun v1.1.10",
+      "url": "https://bun.com/blog/bun-v1.1.10",
+      "guid": "https://bun.com/blog/bun-v1.1.10",
+      "pubDate": "2024-05-24T22:17:59.000Z"
+    },
+    {
+      "version": "1.1.11",
+      "title": "Bun v1.1.11",
+      "url": "https://bun.com/blog/bun-v1.1.11",
+      "guid": "https://bun.com/blog/bun-v1.1.11",
+      "pubDate": "2024-06-01T08:00:22.000Z"
+    },
+    {
+      "version": "1.1.13",
+      "title": "Bun v1.1.13",
+      "url": "https://bun.com/blog/bun-v1.1.13",
+      "guid": "https://bun.com/blog/bun-v1.1.13",
+      "pubDate": "2024-06-05T08:00:22.000Z"
+    },
+    {
+      "version": "1.1.14",
+      "title": "Bun v1.1.14",
+      "url": "https://bun.com/blog/bun-v1.1.14",
+      "guid": "https://bun.com/blog/bun-v1.1.14",
+      "pubDate": "2024-06-19T08:02:22.000Z"
+    },
+    {
+      "version": "1.1.16",
+      "title": "Bun v1.1.16",
+      "url": "https://bun.com/blog/bun-v1.1.16",
+      "guid": "https://bun.com/blog/bun-v1.1.16",
+      "pubDate": "2024-06-23T02:34:19.000Z"
+    },
+    {
+      "version": "1.1.17",
+      "title": "Bun v1.1.17",
+      "url": "https://bun.com/blog/bun-v1.1.17",
+      "guid": "https://bun.com/blog/bun-v1.1.17",
+      "pubDate": "2024-06-25T03:37:20.000Z"
+    },
+    {
+      "version": "1.1.18",
+      "title": "Bun v1.1.18",
+      "url": "https://bun.com/blog/bun-v1.1.18",
+      "guid": "https://bun.com/blog/bun-v1.1.18",
+      "pubDate": "2024-07-03T23:28:26.000Z"
+    },
+    {
+      "version": "1.1.19",
+      "title": "Bun v1.1.19",
+      "url": "https://bun.com/blog/bun-v1.1.19",
+      "guid": "https://bun.com/blog/bun-v1.1.19",
+      "pubDate": "2024-07-12T21:47:25.000Z"
+    },
+    {
+      "version": "1.1.21",
+      "title": "Bun v1.1.21",
+      "url": "https://bun.com/blog/bun-v1.1.21",
+      "guid": "https://bun.com/blog/bun-v1.1.21",
+      "pubDate": "2024-07-27T06:43:53.000Z"
+    },
+    {
+      "version": "1.1.22",
+      "title": "Bun v1.1.22",
+      "url": "https://bun.com/blog/bun-v1.1.22",
+      "guid": "https://bun.com/blog/bun-v1.1.22",
+      "pubDate": "2024-08-07T22:01:19.000Z"
+    },
+    {
+      "version": "1.1.23",
+      "title": "Bun v1.1.23",
+      "url": "https://bun.com/blog/bun-v1.1.23",
+      "guid": "https://bun.com/blog/bun-v1.1.23",
+      "pubDate": "2024-08-14T00:02:32.000Z"
+    },
+    {
+      "version": "1.1.25",
+      "title": "Bun v1.1.25",
+      "url": "https://bun.com/blog/bun-v1.1.25",
+      "guid": "https://bun.com/blog/bun-v1.1.25",
+      "pubDate": "2024-08-21T05:25:44.000Z"
+    },
+    {
+      "version": "1.1.26",
+      "title": "Bun v1.1.26",
+      "url": "https://bun.com/blog/bun-v1.1.26",
+      "guid": "https://bun.com/blog/bun-v1.1.26",
+      "pubDate": "2024-08-24T07:24:26.000Z"
+    },
+    {
+      "version": "1.1.27",
+      "title": "Bun v1.1.27",
+      "url": "https://bun.com/blog/bun-v1.1.27",
+      "guid": "https://bun.com/blog/bun-v1.1.27",
+      "pubDate": "2024-09-07T10:33:38.000Z"
+    },
+    {
+      "version": "1.1.28",
+      "title": "Bun v1.1.28",
+      "url": "https://bun.com/blog/bun-v1.1.28",
+      "guid": "https://bun.com/blog/bun-v1.1.28",
+      "pubDate": "2024-09-18T14:36:14.000Z"
+    },
+    {
+      "version": "1.1.29",
+      "title": "Bun v1.1.29",
+      "url": "https://bun.com/blog/bun-v1.1.29",
+      "guid": "https://bun.com/blog/bun-v1.1.29",
+      "pubDate": "2024-09-20T08:54:53.000Z"
+    },
+    {
+      "version": "1.1.30",
+      "title": "Bun v1.1.30",
+      "url": "https://bun.com/blog/bun-v1.1.30",
+      "guid": "https://bun.com/blog/bun-v1.1.30",
+      "pubDate": "2024-10-08T10:33:19.000Z"
+    },
+    {
+      "version": "1.1.31",
+      "title": "Bun v1.1.31",
+      "url": "https://bun.com/blog/bun-v1.1.31",
+      "guid": "https://bun.com/blog/bun-v1.1.31",
+      "pubDate": "2024-10-18T03:55:06.000Z"
+    },
+    {
+      "version": "1.1.32",
+      "title": "Bun v1.1.32",
+      "url": "https://bun.com/blog/bun-v1.1.32",
+      "guid": "https://bun.com/blog/bun-v1.1.32",
+      "pubDate": "2024-10-21T20:25:58.000Z"
+    },
+    {
+      "version": "1.1.33",
+      "title": "Bun v1.1.33",
+      "url": "https://bun.com/blog/bun-v1.1.33",
+      "guid": "https://bun.com/blog/bun-v1.1.33",
+      "pubDate": "2024-10-24T00:40:17.000Z"
+    },
+    {
+      "version": "1.1.34",
+      "title": "Bun v1.1.34",
+      "url": "https://bun.com/blog/bun-v1.1.34",
+      "guid": "https://bun.com/blog/bun-v1.1.34",
+      "pubDate": "2024-11-02T05:09:22.000Z"
+    },
+    {
+      "version": "1.1.35",
+      "title": "Bun v1.1.35",
+      "url": "https://bun.com/blog/bun-v1.1.35",
+      "guid": "https://bun.com/blog/bun-v1.1.35",
+      "pubDate": "2024-11-19T10:54:31.000Z"
+    },
+    {
+      "version": "1.1.37",
+      "title": "Bun v1.1.37",
+      "url": "https://bun.com/blog/bun-v1.1.37",
+      "guid": "https://bun.com/blog/bun-v1.1.37",
+      "pubDate": "2024-11-26T00:58:38.000Z"
+    },
+    {
+      "version": "1.1.38",
+      "title": "Bun v1.1.38",
+      "url": "https://bun.com/blog/bun-v1.1.38",
+      "guid": "https://bun.com/blog/bun-v1.1.38",
+      "pubDate": "2024-11-29T08:00:00.000Z"
+    },
+    {
+      "version": "1.1.39",
+      "title": "Bun v1.1.39",
+      "url": "https://bun.com/blog/bun-v1.1.39",
+      "guid": "https://bun.com/blog/bun-v1.1.39",
+      "pubDate": "2024-12-17T11:19:14.000Z"
+    },
+    {
+      "version": "1.1.40",
+      "title": "Bun v1.1.40",
+      "url": "https://bun.com/blog/bun-v1.1.40",
+      "guid": "https://bun.com/blog/bun-v1.1.40",
+      "pubDate": "2024-12-18T05:51:42.000Z"
+    },
+    {
+      "version": "1.1.41",
+      "title": "Bun v1.1.41",
+      "url": "https://bun.com/blog/bun-v1.1.41",
+      "guid": "https://bun.com/blog/bun-v1.1.41",
+      "pubDate": "2024-12-20T13:57:57.000Z"
+    },
+    {
+      "version": "1.1.42",
+      "title": "Bun v1.1.42",
+      "url": "https://bun.com/blog/bun-v1.1.42",
+      "guid": "https://bun.com/blog/bun-v1.1.42",
+      "pubDate": "2024-12-21T13:57:57.000Z"
+    },
+    {
+      "version": "1.1.43",
+      "title": "Bun v1.1.43",
+      "url": "https://bun.com/blog/bun-v1.1.43",
+      "guid": "https://bun.com/blog/bun-v1.1.43",
+      "pubDate": "2025-01-08T16:29:43.000Z"
+    },
+    {
+      "version": "1.1.44",
+      "title": "Bun v1.1.44",
+      "url": "https://bun.com/blog/bun-v1.1.44",
+      "guid": "https://bun.com/blog/bun-v1.1.44",
+      "pubDate": "2025-01-16T14:01:24.000Z"
+    },
+    {
+      "version": "1.1.45",
+      "title": "Bun v1.1.45",
+      "url": "https://bun.com/blog/bun-v1.1.45",
+      "guid": "https://bun.com/blog/bun-v1.1.45",
+      "pubDate": "2025-01-17T15:35:49.000Z"
+    },
+    {
+      "version": "1.2.0",
+      "title": "Bun 1.2",
+      "url": "https://bun.com/blog/bun-v1.2",
+      "guid": "https://bun.com/blog/bun-v1.2",
+      "pubDate": "2025-01-22T16:00:00.000Z"
+    },
+    {
+      "version": "1.2.1",
+      "title": "Bun v1.2.1",
+      "url": "https://bun.com/blog/bun-v1.2.1",
+      "guid": "https://bun.com/blog/bun-v1.2.1",
+      "pubDate": "2025-01-27T15:35:49.000Z"
+    },
+    {
+      "version": "1.2.2",
+      "title": "Bun v1.2.2",
+      "url": "https://bun.com/blog/bun-v1.2.2",
+      "guid": "https://bun.com/blog/bun-v1.2.2",
+      "pubDate": "2025-02-01T05:07:32.000Z"
+    },
+    {
+      "version": "1.2.3",
+      "title": "Bun v1.2.3",
+      "url": "https://bun.com/blog/bun-v1.2.3",
+      "guid": "https://bun.com/blog/bun-v1.2.3",
+      "pubDate": "2025-02-22T02:51:16.000Z"
+    },
+    {
+      "version": "1.2.4",
+      "title": "Bun v1.2.4",
+      "url": "https://bun.com/blog/bun-v1.2.4",
+      "guid": "https://bun.com/blog/bun-v1.2.4",
+      "pubDate": "2025-02-26T08:51:16.000Z"
+    },
+    {
+      "version": "1.2.5",
+      "title": "Bun v1.2.5",
+      "url": "https://bun.com/blog/bun-v1.2.5",
+      "guid": "https://bun.com/blog/bun-v1.2.5",
+      "pubDate": "2025-03-11T08:51:16.000Z"
+    },
+    {
+      "version": "1.2.6",
+      "title": "Bun v1.2.6",
+      "url": "https://bun.com/blog/bun-v1.2.6",
+      "guid": "https://bun.com/blog/bun-v1.2.6",
+      "pubDate": "2025-03-25T07:46:20.000Z"
+    },
+    {
+      "version": "1.2.7",
+      "title": "Bun v1.2.7",
+      "url": "https://bun.com/blog/bun-v1.2.7",
+      "guid": "https://bun.com/blog/bun-v1.2.7",
+      "pubDate": "2025-03-27T08:51:16.000Z"
+    },
+    {
+      "version": "1.2.8",
+      "title": "Bun v1.2.8",
+      "url": "https://bun.com/blog/bun-v1.2.8",
+      "guid": "https://bun.com/blog/bun-v1.2.8",
+      "pubDate": "2025-03-31T08:46:20.000Z"
+    },
+    {
+      "version": "1.2.9",
+      "title": "Bun v1.2.9",
+      "url": "https://bun.com/blog/bun-v1.2.9",
+      "guid": "https://bun.com/blog/bun-v1.2.9",
+      "pubDate": "2025-04-09T03:04:26.000Z"
+    },
+    {
+      "version": "1.2.10",
+      "title": "Bun v1.2.10",
+      "url": "https://bun.com/blog/bun-v1.2.10",
+      "guid": "https://bun.com/blog/bun-v1.2.10",
+      "pubDate": "2025-04-17T05:02:21.000Z"
+    },
+    {
+      "version": "1.2.11",
+      "title": "Bun v1.2.11",
+      "url": "https://bun.com/blog/bun-v1.2.11",
+      "guid": "https://bun.com/blog/bun-v1.2.11",
+      "pubDate": "2025-04-29T02:39:42.000Z"
+    },
+    {
+      "version": "1.2.12",
+      "title": "Bun v1.2.12",
+      "url": "https://bun.com/blog/bun-v1.2.12",
+      "guid": "https://bun.com/blog/bun-v1.2.12",
+      "pubDate": "2025-05-04T05:02:21.000Z"
+    },
+    {
+      "version": "1.2.13",
+      "title": "Bun v1.2.13",
+      "url": "https://bun.com/blog/bun-v1.2.13",
+      "guid": "https://bun.com/blog/bun-v1.2.13",
+      "pubDate": "2025-05-09T05:00:00.000Z"
+    },
+    {
+      "version": "1.2.14",
+      "title": "Bun v1.2.14",
+      "url": "https://bun.com/blog/bun-v1.2.14",
+      "guid": "https://bun.com/blog/bun-v1.2.14",
+      "pubDate": "2025-05-21T12:00:00.000Z"
+    },
+    {
+      "version": "1.2.15",
+      "title": "Bun v1.2.15",
+      "url": "https://bun.com/blog/bun-v1.2.15",
+      "guid": "https://bun.com/blog/bun-v1.2.15",
+      "pubDate": "2025-05-28T17:07:10.000Z"
+    },
+    {
+      "version": "1.2.16",
+      "title": "Bun v1.2.16",
+      "url": "https://bun.com/blog/bun-v1.2.16",
+      "guid": "https://bun.com/blog/bun-v1.2.16",
+      "pubDate": "2025-06-11T22:54:53.000Z"
+    },
+    {
+      "version": "1.2.17",
+      "title": "Bun v1.2.17",
+      "url": "https://bun.com/blog/bun-v1.2.17",
+      "guid": "https://bun.com/blog/bun-v1.2.17",
+      "pubDate": "2025-06-21T22:54:53.000Z"
+    },
+    {
+      "version": "1.2.18",
+      "title": "Bun v1.2.18",
+      "url": "https://bun.com/blog/bun-v1.2.18",
+      "guid": "https://bun.com/blog/bun-v1.2.18",
+      "pubDate": "2025-07-03T10:00:00.000Z"
+    },
+    {
+      "version": "1.2.19",
+      "title": "Bun v1.2.19",
+      "url": "https://bun.com/blog/bun-v1.2.19",
+      "guid": "https://bun.com/blog/bun-v1.2.19",
+      "pubDate": "2025-07-19T10:00:00.000Z"
+    },
+    {
+      "version": "1.2.20",
+      "title": "Bun v1.2.20",
+      "url": "https://bun.com/blog/bun-v1.2.20",
+      "guid": "https://bun.com/blog/bun-v1.2.20",
+      "pubDate": "2025-08-10T10:00:00.000Z"
+    },
+    {
+      "version": "1.2.21",
+      "title": "Bun v1.2.21",
+      "url": "https://bun.com/blog/bun-v1.2.21",
+      "guid": "https://bun.com/blog/bun-v1.2.21",
+      "pubDate": "2025-08-25T22:54:53.000Z"
+    },
+    {
+      "version": "1.2.22",
+      "title": "Bun v1.2.22",
+      "url": "https://bun.com/blog/bun-v1.2.22",
+      "guid": "https://bun.com/blog/bun-v1.2.22",
+      "pubDate": "2025-09-14T22:54:53.000Z"
+    },
+    {
+      "version": "1.2.23",
+      "title": "Bun v1.2.23",
+      "url": "https://bun.com/blog/bun-v1.2.23",
+      "guid": "https://bun.com/blog/bun-v1.2.23",
+      "pubDate": "2025-09-28T10:11:00.000Z"
+    },
+    {
+      "version": "1.3.0",
+      "title": "Bun 1.3",
+      "url": "https://bun.com/blog/bun-v1.3",
+      "guid": "https://bun.com/blog/bun-v1.3",
+      "pubDate": "2025-10-10T20:00:00.000Z"
+    },
+    {
+      "version": "1.3.1",
+      "title": "Bun v1.3.1",
+      "url": "https://bun.com/blog/bun-v1.3.1",
+      "guid": "https://bun.com/blog/bun-v1.3.1",
+      "pubDate": "2025-10-22T10:11:00.000Z"
+    },
+    {
+      "version": "1.3.2",
+      "title": "Bun v1.3.2",
+      "url": "https://bun.com/blog/bun-v1.3.2",
+      "guid": "https://bun.com/blog/bun-v1.3.2",
+      "pubDate": "2025-11-08T10:11:00.000Z"
+    },
+    {
+      "version": "1.3.3",
+      "title": "Bun v1.3.3",
+      "url": "https://bun.com/blog/bun-v1.3.3",
+      "guid": "https://bun.com/blog/bun-v1.3.3",
+      "pubDate": "2025-11-21T10:11:00.000Z"
+    },
+    {
+      "version": "1.3.4",
+      "title": "Bun v1.3.4",
+      "url": "https://bun.com/blog/bun-v1.3.4",
+      "guid": "https://bun.com/blog/bun-v1.3.4",
+      "pubDate": "2025-12-06T10:11:00.000Z"
+    },
+    {
+      "version": "1.3.5",
+      "title": "Bun v1.3.5",
+      "url": "https://bun.com/blog/bun-v1.3.5",
+      "guid": "https://bun.com/blog/bun-v1.3.5",
+      "pubDate": "2025-12-17T10:11:00.000Z"
+    },
+    {
+      "version": "1.3.6",
+      "title": "Bun v1.3.6",
+      "url": "https://bun.com/blog/bun-v1.3.6",
+      "guid": "https://bun.com/blog/bun-v1.3.6",
+      "pubDate": "2026-01-13T01:12:07.000Z"
+    },
+    {
+      "version": "1.3.7",
+      "title": "Bun v1.3.7",
+      "url": "https://bun.com/blog/bun-v1.3.7",
+      "guid": "https://bun.com/blog/bun-v1.3.7",
+      "pubDate": "2026-01-27T06:30:58.000Z"
+    },
+    {
+      "version": "1.3.8",
+      "title": "Bun v1.3.8",
+      "url": "https://bun.com/blog/bun-v1.3.8",
+      "guid": "https://bun.com/blog/bun-v1.3.8",
+      "pubDate": "2026-01-29T10:04:52.000Z"
+    },
+    {
+      "version": "1.3.9",
+      "title": "Bun v1.3.9",
+      "url": "https://bun.com/blog/bun-v1.3.9",
+      "guid": "https://bun.com/blog/bun-v1.3.9",
+      "pubDate": "2026-02-08T09:01:15.000Z"
+    },
+    {
+      "version": "1.3.10",
+      "title": "Bun v1.3.10",
+      "url": "https://bun.com/blog/bun-v1.3.10",
+      "guid": "https://bun.com/blog/bun-v1.3.10",
+      "pubDate": "2026-02-26T06:31:59.000Z"
+    },
+    {
+      "version": "1.3.11",
+      "title": "Bun v1.3.11",
+      "url": "https://bun.com/blog/bun-v1.3.11",
+      "guid": "https://bun.com/blog/bun-v1.3.11",
+      "pubDate": "2026-03-18T04:16:10.000Z"
+    },
+    {
+      "version": "1.3.12",
+      "title": "Bun v1.3.12",
+      "url": "https://bun.com/blog/bun-v1.3.12",
+      "guid": "https://bun.com/blog/bun-v1.3.12",
+      "pubDate": "2026-04-09T00:00:00.000Z"
+    },
+    {
+      "version": "1.3.13",
+      "title": "Bun v1.3.13",
+      "url": "https://bun.com/blog/bun-v1.3.13",
+      "guid": "https://bun.com/blog/bun-v1.3.13",
+      "pubDate": "2026-04-20T07:33:26.000Z"
+    },
+    {
+      "version": "1.3.14",
+      "title": "Bun v1.3.14",
+      "url": "https://bun.com/blog/bun-v1.3.14",
+      "guid": "https://bun.com/blog/bun-v1.3.14",
+      "pubDate": "2026-05-13T03:19:35.000Z"
+    }
+  ]
+}
