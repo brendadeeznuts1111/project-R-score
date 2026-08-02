@@ -39,3 +39,42 @@ id = "generic-api-key"
 description = "Generic API Key"
 regex = '''(?i)(?:api[_-]?key|token|secret|password|credential)\s*[:=]\s*['"][A-Za-z0-9_\-\.]{16,}['"]'''
 tags = ["key", "API"]
+  # Fixture noise floor (2026-08-02 triage of 308 full-tree findings — all
+  # fixtures, zero real secrets). RE2: no lookaheads, exclusions live here.
+  # Accepted risk (documented in PR): real tokens that are ENTIRELY lowercase
+  # letters/digits/dashes (e.g. Slack xox*-style) are excluded by the slug
+  # rule below; domain tokens (AWS/GitHub/CF/Telegram/Kalshi) are mixed-case
+  # and still caught. Update the triage if that changes.
+  [rules.allowlist]
+  description = "Fixture slugs, env-var names, standard test vectors, codemod tables"
+  paths = [
+    '''scripts/bun-migrate\.ts''', # codemod table — "Token" keys are Bun API identifiers, not values
+    '''bet-ticker-worker-v1\.1/src/upstream/upstream\.test\.ts''', # hand-crafted fixture JWTs ('eyJhbG.valid.jwt')
+    '''bet-ticker-worker-v1\.1/scripts/shared/sync-local-token-core\.test\.mjs''', # fixture JWT with literal '.sig'
+  ]
+  regexes = [
+    # Human-readable lowercase slug values are placeholders, not entropy:
+    # 'test-token-abcdef', '--partner-ops-kalshi', 'dev_secret_12345',
+    # 'staging_jwt_secret', 'your_fire22_api_token', 'fire22_api_token'
+    '''["']-{0,2}[a-z][a-z0-9_-]{13,}["']''',
+    # ALL_CAPS_*_TOKEN/KEY/SECRET/FACTORY are env-var NAMES in policy tables:
+    # 'FACTORY_WAGER_TOKEN', 'TELEGRAM_BOT_FACTORY' (real all-caps values like
+    # AWS key IDs have no such suffix and stay caught)
+    '''["'][A-Z0-9_]*_(TOKEN|SECRET|KEY|FACTORY)["']''',
+    # Long repeated-char runs are doc padding: 'ghp_xxxx…', 'ghp_aaaa…'
+    # (RE2: no backreferences, so enumerate the padding chars)
+    '''(x{10,}|a{10,}|0{10,})''',
+    # Header-name shapes, not values: 'X-Bun-Proxy-Token'
+    '''["'][A-Z][A-Za-z0-9]*(-[A-Za-z0-9]+){2,}["']''',
+    # word.word dotted identifiers: 'fantasy402.password'
+    '''["'][A-Za-z0-9_]+\.[a-z]{2,}["']''',
+    # Doc elision — a value containing '...' is truncated, not usable
+    '''\.\.\.''',
+  ]
+  stopWords = [
+    "test", # cfat_test_* placeholders, test-review-token, …
+    "fixture", "example", "sample", "mock", "fake", "dummy",
+    "redacted", "placeholder", "changeme",
+    "GEZDGNBVGY3TQOJQ", # RFC 4226 TOTP test vector (identity-mfa.test.ts)
+    "SflKxwRJSMeKKF2QT4", # jwt.io 'John Doe' example signature
+  ]
