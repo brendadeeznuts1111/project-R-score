@@ -2,6 +2,7 @@
 // Offline: schema validation, phase derivation, TOML parsing, bake shape.
 
 import { describe, expect, test } from 'bun:test';
+import { asPartnerTemplateId } from '../lib/types/branded';
 import {
   derivePhase,
   PARTNER_LIFECYCLE_STATUSES,
@@ -15,7 +16,7 @@ const EXAMPLE_PATH = 'config/partner-profiles/.example.toml';
 
 function baseProfile(overrides: Record<string, unknown> = {}): Record<string, unknown> {
   return {
-    meta: { templateId: 'partner-active', name: 'Test', version: '1.0.0', source: 'telegram' },
+    meta: { templateId: asPartnerTemplateId('partner-active'), name: 'Test', version: '1.0.0', source: 'telegram' },
     identity: { code: 'YOU', callSign: 'YOU-001', status: 'onboarded' },
     lifecycle: { status: 'active', phase: 'operator_ready' },
     ...overrides,

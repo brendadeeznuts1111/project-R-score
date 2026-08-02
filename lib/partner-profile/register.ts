@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // lib/partner-profile/register.ts — phase 2: register a partner bookmaker
 // account into the unified Partner Profile (CODE-keyed) with vault-only
 // credentials.
@@ -15,8 +17,7 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 
 import type { Database } from 'bun:sqlite';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { joinPath } from '../path-bun';
 import { DEFAULT_OPS_DB_PATH, openOperationsDb, type OpenOperationsDbOpts } from '../operations/db';
 import { setPartnerSecret } from '../security/partner-vault';
 import {
@@ -27,6 +28,7 @@ import {
   type SeatOut,
 } from '../telegram/seat-intake';
 import { BOOK_KEY_RE, CALL_SIGN_RE, PARTNER_CODE_RE, VAULT_KEY_RE, type BookType } from './schema';
+import { asOutId, type OutId, type TreeNodeId } from '../types/branded';
 
 export const PROFILES_DIR = 'config/partner-profiles';
 
@@ -51,10 +53,10 @@ export function vaultKeyFor(code: string, bookKey: string): string {
 }
 
 /** Resolve the active tree-node id for a call-sign (null when not onboarded). */
-export function resolvePartnerNodeId(db: Database, callSign: string): string | null {
+export function resolvePartnerNodeId(db: Database, callSign: string): TreeNodeId | null {
   const row = db
     .query('SELECT id FROM tree_nodes WHERE call_sign = $cs AND active = 1 LIMIT 1')
-    .get({ $cs: callSign }) as { id: string } | undefined;
+    .get({ $cs: callSign }) as { id: TreeNodeId } | undefined;
   return row?.id ?? null;
 }
 
@@ -68,7 +70,7 @@ export interface RegisterBookmakerInput {
   type?: BookType; // default pph
   chatId?: string; // brand-ok — telegram chat id wire
   maxBet?: number;
-  outId?: string; // default `${code}-1`
+  outId?: OutId; // default `${code}-1`
   /** Injected ops DB (tests). Default: open via dbPath / DEFAULT_OPS_DB_PATH. */
   db?: Database;
   dbPath?: string; // ops DB (default DEFAULT_OPS_DB_PATH)
@@ -77,7 +79,7 @@ export interface RegisterBookmakerInput {
 }
 
 export interface RegisterBookmakerResult {
-  nodeId: string;
+  nodeId: TreeNodeId;
   vaultKey: string;
   intakePath: string;
   profilePath: string;
@@ -88,18 +90,18 @@ function escapeToml(value: string): string {
 }
 
 /** Build (or merge into) the profile TOML for books.<bookKey>. */
-export function upsertProfileToml(
+export async function upsertProfileToml(
   profilesDir: string,
   code: string,
   callSign: string,
   bookKey: string,
   input: Pick<RegisterBookmakerInput, 'url' | 'username' | 'type' | 'maxBet' | 'chatId'>,
   vaultKey: string
-): string {
-  const path = join(profilesDir, `${code}.toml`);
+): Promise<string> {
+  const path = joinPath(profilesDir, `${code}.toml`);
   let text = '';
   try {
-    text = readFileSync(path, 'utf8');
+    text = await Bun.file(path).text();
   } catch {
     // new profile — minimal skeleton
   }
@@ -136,8 +138,7 @@ ${input.chatId ? `\n[telegram]\nchatId = ${escapeToml(input.chatId)}\n` : ''}
     text = text.trim() === '' ? skeleton : `${text.trimEnd()}\n\n`;
     text += bookBlock;
   }
-  mkdirSync(profilesDir, { recursive: true });
-  writeFileSync(path, `${text.trimEnd()}\n`);
+  await Bun.write(path, `${text.trimEnd()}\n`);
   return path;
 }
 
@@ -190,7 +191,7 @@ export async function registerPartnerBookmaker(
       outs: [],
       recordedAt: new Date().toISOString(),
     } as SeatIntakeRecord);
-  const outId = input.outId ?? `${input.code}-1`;
+  const outId = input.outId ?? asOutId(`${input.code}-1`);
   const existing = record.outs.find(o => o.outId === outId);
   const out: SeatOut = {
     ...(existing ?? {}),
@@ -204,7 +205,7 @@ export async function registerPartnerBookmaker(
   else Object.assign(existing, out);
   const intakePath = await saveSeatIntake(record, intakeDir);
 
-  const profilePath = upsertProfileToml(
+  const profilePath = await upsertProfileToml(
     input.profilesDir ?? PROFILES_DIR,
     input.code,
     input.callSign,

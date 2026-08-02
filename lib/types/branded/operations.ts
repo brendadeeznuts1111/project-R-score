@@ -37,6 +37,8 @@ export type ExperimentAssignmentId = BrandedString<'ExperimentAssignmentId'>;
 export type PartnerProfileKey = BrandedString<'PartnerProfileKey'>;
 /** Partner onboarding template identifier. */
 export type PartnerTemplateId = BrandedString<'PartnerTemplateId'>;
+/** Seat-intake out token (e.g. SPEN-1 / CODE-1). */
+export type OutId = BrandedString<'OutId'>;
 /** Policy gate decision row id. */
 export type GateDecisionId = BrandedString<'GateDecisionId'>;
 /** Unified ops channel outbox event id. */
@@ -73,6 +75,7 @@ const experimentVariant = defineBrandConstructors('ExperimentVariantId');
 const experimentAssignment = defineBrandConstructors('ExperimentAssignmentId');
 const partnerProfileKey = defineBrandConstructors('PartnerProfileKey');
 const partnerTemplateId = defineBrandConstructors('PartnerTemplateId');
+const outId = defineBrandConstructors('OutId');
 const gateDecisionId = defineBrandConstructors('GateDecisionId');
 const opsChannelEventId = defineBrandConstructors('OpsChannelEventId');
 const limitForecastIssueId = defineBrandConstructors('LimitForecastIssueId');
@@ -140,6 +143,9 @@ export const parseExperimentAssignmentId = experimentAssignment.parse;
 export const asPartnerProfileKey = partnerProfileKey.as;
 export const tryPartnerProfileKey = partnerProfileKey.try;
 export const parsePartnerProfileKey = partnerProfileKey.parse;
+export const asOutId = outId.as;
+export const tryOutId = outId.try;
+export const parseOutId = outId.parse;
 
 export const asPartnerTemplateId = partnerTemplateId.as;
 export const tryPartnerTemplateId = partnerTemplateId.try;
@@ -372,6 +378,13 @@ export const OPERATIONS_BRAND_SPECS = [
     tiers: ['as', 'try', 'parse'],
     mint: ['user-input', 'wire-input'],
     description: 'Partner onboarding template identifier',
+  },
+  {
+    name: 'OutId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal'],
+    description: 'Seat-intake out token (e.g. SPEN-1 / CODE-1)',
   },
   {
     name: 'GateDecisionId',
