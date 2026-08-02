@@ -103,6 +103,24 @@
       ]
     },
     {
+      "path": "/portal/bookmakers/",
+      "concept": "page.bookmakers",
+      "sections": [
+        {
+          "hash": "artifact",
+          "domId": "artifact",
+          "conceptId": "ui.semantic.artifact",
+          "title": "Artifact"
+        },
+        {
+          "hash": "books",
+          "domId": "books",
+          "conceptId": "ui.semantic.resources",
+          "title": "Books"
+        }
+      ]
+    },
+    {
       "path": "/portal/brands/",
       "concept": "page.brandKeymap",
       "sections": []
@@ -391,20 +409,20 @@
     }
   ],
   "summary": {
-    "concepts": 425,
-    "active": 424,
+    "concepts": 426,
+    "active": 425,
     "deprecated": 1,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 288,
+    "portalSemantics": 289,
     "categories": {
       "market": 33,
       "model": 18,
       "pipeline": 41,
       "tournament": 86,
       "trading": 58,
-      "ui": 162,
+      "ui": 163,
       "warehouse": 27
     },
     "kinds": {
@@ -425,13 +443,13 @@
       "region": 7,
       "registry": 39,
       "sport": 10,
-      "ui": 236
+      "ui": 237
     },
     "semanticTypes": {
       "classification": 149,
       "location": 4,
       "presentation": 14,
-      "resource": 89,
+      "resource": 90,
       "state": 31,
       "version": 1
     },
@@ -439,7 +457,7 @@
       "badge": 55,
       "chip": 110,
       "code": 33,
-      "heading": 68,
+      "heading": 69,
       "link": 18,
       "token": 4
     }
@@ -3924,6 +3942,37 @@
         "telegram dossier",
         "per-account accounting",
         "/dossier"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "page.bookmakers",
+      "label": "Bookmaker registry",
+      "description": "Portal page for the canonical bookmaker registry mirrored from the @factorywager/bookmakers artifact on the FactoryWager artifact registry.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "bookmakers",
+        "bookmaker registry",
+        "bookmaker board",
+        "book books"
       ],
       "values": null,
       "valueLabels": null,
