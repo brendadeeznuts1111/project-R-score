@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "bun-brand-map",
   "path": "/registry/bun-brand-map.json",
-  "generatedAt": "2026-08-01T19:54:21.166Z",
+  "generatedAt": "2026-08-02T00:56:06.685Z",
   "sources": {
     "declarations": "lib/docs/bun-brand-usages.ts",
     "catalog": "tools/bun-docs-catalog.json",
@@ -12,13 +12,13 @@
     "proof": "public/registry/release-features.json"
   },
   "sourceDigests": {
-    "declarations": "84eb8731c152781216bc8c667ce7621bb1bfbbcd3ade6460c05b5e623b8d7da1",
+    "declarations": "983e4abdc6c2186b059149e14d91505db8e34f1ce852cb0bbe5931d442432fec",
     "catalog": "660cd11fb3c8950911a5f8a6e91911778384cad382b0fdc3771876bacdf99041",
     "brandManifest": "a0d03772fafe4d1af7a5099abc28d28e693af01e884f079032f6a85d052b824c",
     "brandKeymap": "440d3d2c4ba6c608d5be85135e2b3bdac0744cbcd5b3d775b1b25c1f8c45e0ad",
-    "observations": "a3ed0e6f3cd074ac7ec0a8abf3ed518f8588960557f02844aa9eebd1f889b5be",
+    "observations": "1d373e2461e5ad35c82f5300d84e56ef4932380f45af6feacfbb1586bfcfab00",
     "baseline": "57e70c50175bc9a9ce9fafdb90fdb801e1e423fff49ae2fcf7c422bd268fb330",
-    "proofs": "3639d56bf2486e08f315deefc2bc07920d686f6d67459b13caf07ea962b98a58"
+    "proofs": "de7129ca17c5951aca8d6e78d6aa52b345ff4cd5d3445d96b770e1c10e428840"
   },
   "summary": {
     "apis": 15,
@@ -438,7 +438,7 @@
         },
         {
           "path": "lib/console-depth.ts",
-          "symbol": "fitWidth"
+          "symbol": "fitVisible"
         }
       ],
       "consumers": [
@@ -448,7 +448,7 @@
         },
         {
           "path": "lib/console-depth.ts",
-          "symbol": "fitWidth"
+          "symbol": "fitVisible"
         }
       ],
       "brands": [
@@ -1232,9 +1232,9 @@
       "direction": "none",
       "rationale": "ANSI-aware slicing transforms display text and does not create or consume an identity.",
       "wrapper": "lib/console-depth.ts",
-      "wrapperSymbol": "fitWidth",
+      "wrapperSymbol": "fitVisible",
       "consumer": "lib/console-depth.ts",
-      "consumerSymbol": "fitWidth",
+      "consumerSymbol": "fitVisible",
       "project": "project-R-score",
       "policy": "optional",
       "evidenceState": "declared-unproven",
@@ -4978,7 +4978,7 @@
       "severity": "warning",
       "api": "Bun.sliceAnsi",
       "path": "lib/factory/cli.ts",
-      "line": 326,
+      "line": 327,
       "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
       "baseline": true
     },
