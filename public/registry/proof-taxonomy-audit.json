@@ -1,14 +1,14 @@
 {
   "type": "ProofTaxonomyAuditReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-31T11:04:59.845Z",
+  "timestamp": "2026-08-02T22:40:36.512Z",
   "ok": true,
   "reportPath": "/registry/proof-taxonomy-audit.json",
   "audits": [
     {
       "path": "public/registry/release-features.json",
       "ok": true,
-      "rows": 74,
+      "rows": 76,
       "missingSubsystem": 0,
       "missingIntroducedIn": 0,
       "missingCanonicalKind": 0,
@@ -56,7 +56,7 @@
     {
       "path": "public/registry/bun-runtime-nits-proof.json",
       "ok": true,
-      "rows": 16,
+      "rows": 18,
       "missingSubsystem": 0,
       "missingIntroducedIn": 0,
       "missingCanonicalKind": 0,
@@ -264,5 +264,5 @@
       "notes": []
     }
   ],
-  "proofHash": "99a4776922c18ec56bc09b14baff0d3fcae87f2171b3681cbba55ea175a73213"
+  "proofHash": "4f846242c3272e79119639554e8e24f812c096c296c6927aa30b4268ed0d55fd"
 }
