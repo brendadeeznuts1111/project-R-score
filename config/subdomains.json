@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "kind": "weave-subdomain-probes",
+  "note": "Probe matrix for `bun run verify:weave -- --subdomains`. Host inventory SSOT remains config/surfaces.toml (live only — no vanity/retired).",
+  "subdomains": [
+    {
+      "name": "score",
+      "domain": "score.factory-wager.com",
+      "checks": ["/health", "/registry/portal-weave.json"]
+    },
+    {
+      "name": "registry",
+      "domain": "registry.factory-wager.com",
+      "checks": ["/health", "/api/registry/health"]
+    },
+    {
+      "name": "pages_dev",
+      "domain": "project-r-score.pages.dev",
+      "checks": ["/health", "/registry/portal-weave.json"]
+    },
+    {
+      "name": "wiki",
+      "domain": "wiki.factory-wager.com",
+      "checks": [{ "path": "/", "expect": "ok" }]
+    }
+  ]
+}

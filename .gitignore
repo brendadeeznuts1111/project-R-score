@@ -264,6 +264,7 @@ config/*
 !config/vault-map.json
 !config/vault-map.toml
 !config/surfaces.toml
+!config/subdomains.json
 !config/images.toml
 !config/runtime-flags.json
 !config/scraper-targets.ts

@@ -2,6 +2,8 @@
 import { describe, expect, test } from 'bun:test';
 import {
   buildPortalWeavePayload,
+  INTENTIONAL_ORPHAN_PURPOSES,
+  isIntentionalOrphanPurpose,
   PORTAL_WEAVE_ARTIFACTS,
   PORTAL_WEAVE_SURFACES,
 } from '../lib/http/portal-weave.ts';
@@ -88,5 +90,18 @@ describe('portal weave', () => {
     expect(p.scripts.some(s => s.cmd.includes('compliance:verify'))).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('ops:limits:demo'))).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('ops:snapshot'))).toBe(true);
+  });
+
+  test('every artifact carries a purpose; intentional purposes are non-ui', () => {
+    expect(PORTAL_WEAVE_ARTIFACTS.every(a => a.purpose)).toBe(true);
+    expect(INTENTIONAL_ORPHAN_PURPOSES.has('shared')).toBe(true);
+    expect(INTENTIONAL_ORPHAN_PURPOSES.has('ui')).toBe(false);
+    expect(isIntentionalOrphanPurpose('audit')).toBe(true);
+    expect(isIntentionalOrphanPurpose('ui')).toBe(false);
+    const baked = buildPortalWeavePayload('2026-01-01T00:00:00.000Z');
+    expect(baked.artifacts.every(a => a.purpose)).toBe(true);
+    expect(baked.artifacts.find(a => a.href === '/registry/portal-weave.json')?.purpose).toBe(
+      'shared'
+    );
   });
 });

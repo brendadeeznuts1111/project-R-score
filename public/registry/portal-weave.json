@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-08-02T00:34:36.524Z",
+  "generated": "2026-08-02T20:11:09.587Z",
   "summary": {
     "surfaces": 27,
     "artifacts": 36,
@@ -228,85 +228,29 @@
     {
       "label": "ops-summary",
       "href": "/registry/ops-summary.json",
+      "purpose": "ui",
       "id": "artifact-0-ops-summary"
-    },
-    {
-      "label": "brand-keymap",
-      "href": "/registry/brand-keymap.json",
-      "note": "57-value catalog · tracked project adoption",
-      "id": "artifact-1-brand-keymap"
-    },
-    {
-      "label": "domain-glossary",
-      "href": "/registry/domain-glossary.json",
-      "note": "schema v3 · domain concepts + sections[] hash/domId/conceptId · deep-link projection",
-      "id": "artifact-2-domain-glossary"
-    },
-    {
-      "label": "surfaces-state",
-      "href": "/registry/surfaces-state.json",
-      "note": "schema v2 · apex/subdomain/backendCode · Access domains · surfaces:bake",
-      "id": "artifact-3-surfaces-state"
-    },
-    {
-      "label": "telegram-handshake",
-      "href": "/registry/telegram-handshake.json",
-      "note": "package-group readiness · invite gaps",
-      "id": "artifact-4-telegram-handshake"
-    },
-    {
-      "label": "telegram-handshake-catalog",
-      "href": "/registry/telegram-handshake-catalog.json",
-      "note": "lanes · CLI · constants SSOT",
-      "id": "artifact-5-telegram-handshake-catalog"
     },
     {
       "label": "toc-ops",
       "href": "/registry/toc-ops.json",
       "note": "operate-lite bake",
-      "id": "artifact-6-toc-ops"
-    },
-    {
-      "label": "toc-ops bake proof",
-      "href": "/registry/toc-ops-bake-proof.json",
-      "id": "artifact-7-toc-ops-bake-proof"
-    },
-    {
-      "label": "monitoring",
-      "href": "/registry/monitoring.json",
-      "id": "artifact-8-monitoring"
-    },
-    {
-      "label": "skills-catalog",
-      "href": "/registry/skills-catalog.json",
-      "note": "Kimi Daimon plane",
-      "id": "artifact-9-skills-catalog"
-    },
-    {
-      "label": "harness-skills-catalog",
-      "href": "/registry/harness-skills-catalog.json",
-      "note": "repo .agents/skills · skill-loop-registry",
-      "id": "artifact-10-harness-skills-catalog"
+      "purpose": "ui",
+      "id": "artifact-1-toc-ops"
     },
     {
       "label": "packages-graph-map",
       "href": "/registry/packages-graph-map.json",
       "note": "workspace coupling · multi-surface · env owners · claim packages-graph-map-v13",
-      "id": "artifact-11-packages-graph-map"
-    },
-    {
-      "label": "install-hygiene-report",
-      "href": "/registry/install-hygiene-report.json",
-      "note": "bunfig/cache/npm-install hygiene bake · bake:install-hygiene · monitoring.installHygiene · board /portal/install-hygiene/",
-      "group": "harness",
-      "cli": "bun run bake:install-hygiene",
-      "id": "artifact-12-install-hygiene-report"
+      "purpose": "ui",
+      "id": "artifact-2-packages-graph-map"
     },
     {
       "label": "monorepo-health",
       "href": "/registry/monorepo-health.json",
       "note": "score 0–100 · claim monorepo-health-score · gate check:monorepo-health · TOC harness glance",
-      "id": "artifact-13-monorepo-health"
+      "purpose": "ui",
+      "id": "artifact-3-monorepo-health"
     },
     {
       "label": "doctor-state",
@@ -314,123 +258,214 @@
       "note": "portal-cli doctor bake · tone green/yellow/red · bunfig/catalog/linker groups · bake:doctor",
       "group": "harness",
       "cli": "bun run bake:doctor",
-      "id": "artifact-14-doctor-state"
+      "purpose": "ui",
+      "id": "artifact-4-doctor-state"
     },
     {
       "label": "portal-chrome",
       "href": "/registry/portal-chrome.json",
       "note": "nav · footer · components SSOT · apply via portal-apply-chrome",
-      "id": "artifact-15-portal-chrome"
+      "purpose": "ui",
+      "id": "artifact-5-portal-chrome"
     },
     {
-      "label": "env-inventory",
-      "href": "/registry/env-inventory.json",
-      "note": "owners · needsInject vs template defaults · packages plane · env:inventory:bake",
-      "id": "artifact-16-env-inventory"
+      "label": "brand-keymap",
+      "href": "/registry/brand-keymap.json",
+      "note": "57-value catalog · tracked project adoption",
+      "purpose": "shared",
+      "id": "artifact-6-brand-keymap"
     },
     {
-      "label": "vault-health",
-      "href": "/registry/vault-health.json",
-      "note": "live bake · gate: portal-cli vault health · vault:health:bake",
-      "id": "artifact-17-vault-health"
+      "label": "domain-glossary",
+      "href": "/registry/domain-glossary.json",
+      "note": "schema v3 · domain concepts + sections[] hash/domId/conceptId · deep-link projection",
+      "purpose": "shared",
+      "id": "artifact-7-domain-glossary"
     },
     {
-      "label": "vault-map",
-      "href": "/registry/vault-map.json",
-      "note": "display chrome + pass:// paths · no secret values",
-      "id": "artifact-18-vault-map"
-    },
-    {
-      "label": "capability-map-subset",
-      "href": "/registry/capability-map-subset.json",
-      "note": "tools hub capability table · full matrix AGENTS.md",
-      "id": "artifact-19-capability-map-subset"
-    },
-    {
-      "label": "dod-queue",
-      "href": "/registry/dod-queue.json",
-      "id": "artifact-20-dod-queue"
-    },
-    {
-      "label": "compliance-board",
-      "href": "/registry/compliance-board.json",
-      "note": "enhancements + shadow + geo · ops-summary.compliance",
-      "id": "artifact-21-compliance-board"
-    },
-    {
-      "label": "compliance-enhancements",
-      "href": "/registry/compliance-enhancements.json",
-      "note": "deepEquals · escapeHTML proof rows",
-      "id": "artifact-22-compliance-enhancements"
-    },
-    {
-      "label": "compliance-shadow",
-      "href": "/registry/compliance-shadow.json",
-      "note": "real vs shadow check matrix",
-      "id": "artifact-23-compliance-shadow"
-    },
-    {
-      "label": "limit-raises",
-      "href": "/registry/limit-raises.json",
-      "note": "multi-factor raise context bake · agent API snapshot",
-      "id": "artifact-24-limit-raises"
+      "label": "surfaces-state",
+      "href": "/registry/surfaces-state.json",
+      "note": "schema v2 · apex/subdomain/backendCode · Access domains · surfaces:bake",
+      "purpose": "shared",
+      "id": "artifact-8-surfaces-state"
     },
     {
       "label": "verification-index",
       "href": "/registry/verification-index.json",
       "note": "verify-all rollup · release track",
-      "id": "artifact-25-verification-index"
+      "purpose": "shared",
+      "id": "artifact-9-verification-index"
     },
     {
       "label": "doc-index",
       "href": "/registry/doc-index.json",
       "note": "CANONICAL_REFS · bun docs catalog coverage",
-      "id": "artifact-26-doc-index"
+      "purpose": "shared",
+      "id": "artifact-10-doc-index"
     },
     {
       "label": "static aggregate",
       "href": "/registry/static.json",
-      "id": "artifact-27-static-aggregate"
-    },
-    {
-      "label": "proof taxonomy",
-      "href": "/registry/proof-taxonomy-audit.json",
-      "id": "artifact-28-proof-taxonomy"
+      "purpose": "shared",
+      "id": "artifact-11-static-aggregate"
     },
     {
       "label": "portal weave",
       "href": "/registry/portal-weave.json",
-      "id": "artifact-29-portal-weave"
+      "purpose": "shared",
+      "id": "artifact-12-portal-weave"
     },
     {
       "label": "content-type matrix",
       "href": "/registry/content-type-matrix.json",
       "note": "Pages Functions content-type.ts snapshot",
-      "id": "artifact-30-content-type-matrix"
+      "purpose": "shared",
+      "id": "artifact-13-content-type-matrix"
     },
     {
-      "label": "formdata proof",
-      "href": "/registry/formdata-proof.json",
-      "note": "verify:formdata bake",
-      "id": "artifact-31-formdata-proof"
+      "label": "install-hygiene-report",
+      "href": "/registry/install-hygiene-report.json",
+      "note": "bunfig/cache/npm-install hygiene bake · bake:install-hygiene · monitoring.installHygiene · board /portal/install-hygiene/",
+      "group": "harness",
+      "cli": "bun run bake:install-hygiene",
+      "purpose": "shared",
+      "id": "artifact-14-install-hygiene-report"
     },
     {
-      "label": "package-info",
-      "href": "/registry/package-info.json",
-      "note": "verify:package-info bake",
-      "id": "artifact-32-package-info"
+      "label": "env-inventory",
+      "href": "/registry/env-inventory.json",
+      "note": "owners · needsInject vs template defaults · packages plane · env:inventory:bake",
+      "purpose": "shared",
+      "id": "artifact-15-env-inventory"
+    },
+    {
+      "label": "vault-health",
+      "href": "/registry/vault-health.json",
+      "note": "live bake · gate: portal-cli vault health · vault:health:bake",
+      "purpose": "shared",
+      "id": "artifact-16-vault-health"
+    },
+    {
+      "label": "vault-map",
+      "href": "/registry/vault-map.json",
+      "note": "display chrome + pass:// paths · no secret values",
+      "purpose": "shared",
+      "id": "artifact-17-vault-map"
+    },
+    {
+      "label": "capability-map-subset",
+      "href": "/registry/capability-map-subset.json",
+      "note": "tools hub capability table · full matrix AGENTS.md",
+      "purpose": "shared",
+      "id": "artifact-18-capability-map-subset"
+    },
+    {
+      "label": "telegram-handshake",
+      "href": "/registry/telegram-handshake.json",
+      "note": "package-group readiness · invite gaps",
+      "purpose": "shared",
+      "id": "artifact-19-telegram-handshake"
+    },
+    {
+      "label": "telegram-handshake-catalog",
+      "href": "/registry/telegram-handshake-catalog.json",
+      "note": "lanes · CLI · constants SSOT",
+      "purpose": "shared",
+      "id": "artifact-20-telegram-handshake-catalog"
     },
     {
       "label": "seat-capital-desk",
       "href": "/registry/seat-capital-desk.json",
       "note": "FUND status · outs · checklist",
-      "id": "artifact-33-seat-capital-desk"
+      "purpose": "shared",
+      "id": "artifact-21-seat-capital-desk"
     },
     {
       "label": "partners-ops",
       "href": "/registry/partners-ops.json",
       "note": "v2 taxonomy · phases · book types · rails · events",
-      "id": "artifact-34-partners-ops"
+      "purpose": "shared",
+      "id": "artifact-22-partners-ops"
+    },
+    {
+      "label": "dod-queue",
+      "href": "/registry/dod-queue.json",
+      "purpose": "audit",
+      "id": "artifact-23-dod-queue"
+    },
+    {
+      "label": "compliance-board",
+      "href": "/registry/compliance-board.json",
+      "note": "enhancements + shadow + geo · ops-summary.compliance",
+      "purpose": "audit",
+      "id": "artifact-24-compliance-board"
+    },
+    {
+      "label": "compliance-enhancements",
+      "href": "/registry/compliance-enhancements.json",
+      "note": "deepEquals · escapeHTML proof rows",
+      "purpose": "audit",
+      "id": "artifact-25-compliance-enhancements"
+    },
+    {
+      "label": "compliance-shadow",
+      "href": "/registry/compliance-shadow.json",
+      "note": "real vs shadow check matrix",
+      "purpose": "audit",
+      "id": "artifact-26-compliance-shadow"
+    },
+    {
+      "label": "proof taxonomy",
+      "href": "/registry/proof-taxonomy-audit.json",
+      "purpose": "audit",
+      "id": "artifact-27-proof-taxonomy"
+    },
+    {
+      "label": "skills-catalog",
+      "href": "/registry/skills-catalog.json",
+      "note": "Kimi Daimon plane",
+      "purpose": "script",
+      "id": "artifact-28-skills-catalog"
+    },
+    {
+      "label": "harness-skills-catalog",
+      "href": "/registry/harness-skills-catalog.json",
+      "note": "repo .agents/skills · skill-loop-registry",
+      "purpose": "script",
+      "id": "artifact-29-harness-skills-catalog"
+    },
+    {
+      "label": "limit-raises",
+      "href": "/registry/limit-raises.json",
+      "note": "multi-factor raise context bake · agent API snapshot",
+      "purpose": "script",
+      "id": "artifact-30-limit-raises"
+    },
+    {
+      "label": "package-info",
+      "href": "/registry/package-info.json",
+      "note": "verify:package-info bake",
+      "purpose": "script",
+      "id": "artifact-31-package-info"
+    },
+    {
+      "label": "toc-ops bake proof",
+      "href": "/registry/toc-ops-bake-proof.json",
+      "purpose": "script",
+      "id": "artifact-32-toc-ops-bake-proof"
+    },
+    {
+      "label": "monitoring",
+      "href": "/registry/monitoring.json",
+      "purpose": "script",
+      "id": "artifact-33-monitoring"
+    },
+    {
+      "label": "formdata proof",
+      "href": "/registry/formdata-proof.json",
+      "note": "verify:formdata bake",
+      "purpose": "script",
+      "id": "artifact-34-formdata-proof"
     },
     {
       "label": "tennis agent-auth",
@@ -438,6 +473,7 @@
       "note": "cloud agent token status (no secret) · FACTORY_WAGER_TOKEN configured mark",
       "group": "ops",
       "cli": "bun run tennis:agent-auth:bake",
+      "purpose": "script",
       "id": "artifact-35-tennis-agent-auth"
     }
   ],
