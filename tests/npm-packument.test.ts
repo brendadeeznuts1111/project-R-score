@@ -5,6 +5,10 @@
  */
 import { describe, expect, test } from 'bun:test';
 import {
+  decodeScopedPackagePath,
+  onRequest as middlewareOnRequest,
+} from '../functions/_middleware.ts';
+import {
   npmJsonError,
   onRequest,
   parseNpmPackageSegment,
@@ -94,5 +98,51 @@ describe('npm packument Pages Function', () => {
     const res = npmJsonError(400, 'bad');
     expect(res.status).toBe(400);
     expect(await res.json()).toEqual({ error: 'bad' });
+  });
+});
+
+describe('middleware scoped-package decode', () => {
+  test('decodeScopedPackagePath rewrites npm %2f scope encoding', () => {
+    expect(decodeScopedPackagePath('/@factorywager%2fregistry-client')).toBe(
+      '/@factorywager/registry-client'
+    );
+    expect(decodeScopedPackagePath('/@factorywager%2Fbookmakers')).toBe(
+      '/@factorywager/bookmakers'
+    );
+    expect(decodeScopedPackagePath('/@factorywager%2fregistry-client/')).toBe(
+      '/@factorywager/registry-client'
+    );
+  });
+
+  test('decodeScopedPackagePath leaves everything else alone', () => {
+    expect(decodeScopedPackagePath('/@factorywager/registry-client')).toBeNull();
+    expect(decodeScopedPackagePath('/portal/packages/')).toBeNull();
+    expect(decodeScopedPackagePath('/%2f')).toBeNull();
+    expect(decodeScopedPackagePath('/api/registry/health')).toBeNull();
+  });
+
+  test('middleware rewrites encoded scope before routing, keeps security headers', async () => {
+    const seen: string[] = [];
+    const res = await middlewareOnRequest({
+      request: new Request('https://registry.factory-wager.com/@factorywager%2fregistry-client'),
+      next: async input => {
+        seen.push(String(input instanceof Request ? new URL(input.url).pathname : input));
+        return new Response('{}', { headers: { 'Content-Type': 'application/json' } });
+      },
+    });
+    expect(seen[0]).toBe('/@factorywager/registry-client');
+    expect(res.headers.get('X-Content-Type-Options')).toBe('nosniff');
+  });
+
+  test('middleware passes plain paths through untouched', async () => {
+    const seen: string[] = [];
+    await middlewareOnRequest({
+      request: new Request('https://registry.factory-wager.com/portal/packages/'),
+      next: async input => {
+        seen.push(input === undefined ? '(none)' : String(input));
+        return new Response('ok');
+      },
+    });
+    expect(seen[0]).toBe('(none)');
   });
 });
