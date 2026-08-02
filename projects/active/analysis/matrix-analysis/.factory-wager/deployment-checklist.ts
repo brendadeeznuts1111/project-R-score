@@ -127,7 +127,7 @@ console.info(`# Full Status`);
 console.info(`bun run live-dashboard.ts status`);
 console.info(``);
 console.info(`# R2 Operations (when needed)`);
-console.info(`CLOUDFLARE_API_TOKEN=xLVB37fpG3_j2P7fyfrlT7iKPewmUNFEuz2SnXpZ bunx wrangler r2 bucket list`);
+console.info(`CLOUDFLARE_API_TOKEN=REDACTED bunx wrangler r2 bucket list`);
 
 console.info(`\n🎉 Current Infrastructure Status: 85% Ready`);
 console.info(`Core services operational, waiting for DNS propagation + Worker token.`);

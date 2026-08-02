@@ -3,9 +3,9 @@ import { describe, expect, test } from "bun:test";
 import { buildNitsProof, runNitProbes } from "../tools/verify-bun-runtime-nits.ts";
 
 describe("bun runtime nits probes", () => {
-  test("all 16 probes pass on this runtime", async () => {
+  test("all 18 probes pass on this runtime", async () => {
     const results = await runNitProbes();
-    expect(results).toHaveLength(16);
+    expect(results).toHaveLength(18);
     const failures = results.filter(r => !r.passed);
     expect(failures.map(f => `${f.name}: expected=${f.expected} actual=${f.actual}`)).toEqual([]);
   });
@@ -16,7 +16,7 @@ describe("bun runtime nits probes", () => {
       acc[r.category] = (acc[r.category] ?? 0) + 1;
       return acc;
     }, {});
-    expect(counts).toEqual({ inspect: 7, streams: 2, url: 4, "file-io": 3 });
+    expect(counts).toEqual({ inspect: 9, streams: 2, url: 4, "file-io": 3 });
   });
 
   test("proof carries summary + sha256 hash", async () => {

@@ -232,7 +232,7 @@ bun run verify:install-env                   # BUN_CONFIG_* (6) + scoped registr
 bun run verify:install-env:save              # + public/registry/install-env-proof.json
 bun run verify:registry-client               # RegistryClient resolve · download · publish (3 probes)
 bun run verify:registry-client:save          # + public/registry/registry-client-proof.json
-bun run verify:bun-runtime-nits                # Phase 1 nits: inspect · streams · url · file-io (16 probes)
+bun run verify:bun-runtime-nits                # Phase 1 nits: inspect · streams · url · file-io (18 probes)
 bun run verify:bun-runtime-nits:save           # + public/registry/bun-runtime-nits-proof.json (verify-all step 8)
 bun tools/verify-bun-release.ts              # includes install aspects in release proof
 bun run check:release-tracker                # tests + release verify

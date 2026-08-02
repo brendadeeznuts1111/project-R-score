@@ -60,6 +60,8 @@ HTTPS proxy pooling: Bun ≥1.3.12 reuses the CONNECT tunnel and inner TLS sessi
 
 Workspace runtime knobs for gates / spawn chains (not install-machine SSOT). See [UNIFIED.md](./UNIFIED.md) matrix · [runtime CLI](https://bun.com/docs/runtime#cli-usage).
 
+For `verify:pages-edge --weave`, keep layers separate: Bun flags control runtime execution, and `--weave` controls script behavior. Put Bun flags immediately after `bun` (for example `bun --watch run verify:pages-edge --weave`); `bun run verify:pages-edge --weave --watch` passes `--watch` to the script, not Bun.
+
 | Control | Where | Role |
 |---------|--------|------|
 | `[run] noOrphans = true` | root `bunfig.toml` | Kill descendants when Bun’s parent dies ([bunfig](https://bun.com/docs/runtime/bunfig#run-noorphans-dont-leave-orphan-processes-behind)); husky EXIT trap is belt-and-suspenders |
