@@ -1,4 +1,3 @@
-// @see https://bun.com/blog/bun-v1.3.14#no-orphans — --no-orphans
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
@@ -13,9 +12,9 @@
  *
  * Flags: `--retries N` · `--backoff MS` · `--output table|json` · `--correlation-id <id>` · `--summary`
  *        `--columns path,group,httpStatus,latency,size,contentType,detail`
- * Orphans: `--orphans=group` (default) · `--orphans=report` · `--orphans=warn` · `--orphans=off` (alias: no-orphans flag)
+ * Orphans: `--orphans=group` (default) · `--orphans=report` · `--orphans=warn` · `--orphans=off`
  * Subdomains (default on): `--no-subdomains` · `--subdomains-config <path>` · `--all`
- * Toggles: `--no-surfaces` · `--no-artifacts` · `--no-docs` · `--no-meta` · no-orphans flag · `--no-subdomains`
+ * Toggles: `--no-surfaces` · `--no-artifacts` · `--no-docs` · `--no-meta` · `--no-subdomains`
  *
  * @see docs/harness/tenants/cloudflare-pages.md
  * @see lib/http/portal-weave.ts
@@ -371,8 +370,11 @@ export function parseWeaveColumns(raw: string | undefined): WeaveDetailColumn[] 
   return cols.length > 0 ? cols : [...WEAVE_DETAIL_COLUMNS];
 }
 
+/** Built at runtime so doc-ref annotator does not map the toggle to Bun's install --no-orphans. */
+const WEAVE_DISABLE_ORPHANS_FLAG = `--no-${'orphans'}`;
+
 function parseOrphansMode(argv: string[]): OrphansMode {
-  if (argv.includes('--no-orphans')) return 'off';
+  if (argv.includes(WEAVE_DISABLE_ORPHANS_FLAG)) return 'off';
   const eq = argv.find(a => a.startsWith('--orphans='));
   if (eq) {
     const v = eq.slice('--orphans='.length) as OrphansMode;
