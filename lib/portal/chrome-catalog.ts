@@ -131,8 +131,8 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/packages/',
     tier: 'overflow',
     group: 'registry',
-    note: 'graph map · portal-cli pm graph',
-    cli: 'bun run portal-cli pm graph  # offline packages-graph-map table',
+    note: 'graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.*',
+    cli: 'bun run ssot:flow:soft && bun run verify:pm:save',
   },
   {
     id: 'brands',

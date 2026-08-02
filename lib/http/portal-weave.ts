@@ -10,6 +10,15 @@
 
 import { PORTAL_WEAVE_WIKI } from './wiki-nav.ts';
 import { PORTAL_CHROME_COMPONENTS } from '../portal/chrome-catalog.ts';
+import {
+  PUBLISH_PM_PROOF_CONCEPT_ID,
+  PUBLISH_SSOT_FLOW_SOFT_CONCEPT_ID,
+  publishPlaneColorForConcept,
+} from '../verification/publish-plane-color.ts';
+import {
+  buildPublishPlaneWeaveBlock,
+  type PublishPlaneWeaveBlock,
+} from '../verification/publish-plane-weave.ts';
 
 export type PortalWeaveGroup =
   | 'ops'
@@ -29,6 +38,8 @@ export type PortalWeaveLink = {
   group?: PortalWeaveGroup;
   /** Grounded portal-cli / bun command */
   cli?: string;
+  /** Artifact ids this surface owns (publish soft-pass → packages). */
+  relatedArtifactIds?: string[]; // brand-ok — weave artifact slugs
 };
 
 /**
@@ -49,6 +60,14 @@ export const INTENTIONAL_ORPHAN_PURPOSES: ReadonlySet<PortalWeaveArtifactPurpose
 
 export type PortalWeaveArtifact = PortalWeaveLink & {
   purpose?: PortalWeaveArtifactPurpose;
+  /** Stable registry slug — equals proof `artifactId` when publish-plane. */
+  artifactId?: string; // brand-ok — weave/registry artifact slug
+  /** Human title — equals proof `artifactName` when publish-plane. */
+  artifactName?: string;
+  /** Partner-ops color kernel concept (`publish.*` / `ops.view.*` / …). */
+  conceptId?: string; // brand-ok — glossary/color concept key
+  /** Closed palette key from PARTNER_OPS_COLORS. */
+  colorKey?: string; // brand-ok — PartnerOpsColorKey as wire string
 };
 
 export function isIntentionalOrphanPurpose(
@@ -85,6 +104,10 @@ export type PortalWeaveRelated = {
   monorepoHealth: '/registry/monorepo-health.json';
   doctorState: '/registry/doctor-state.json';
   packagesGraph: '/registry/packages-graph-map.json';
+  /** Publish-plane soft-pass — Tennis HQ @tennis-hq/ssot offline pack. */
+  ssotFlowSoft: '/registry/ssot-flow-soft.json';
+  /** Publish-plane soft-pass — @factorywager/registry-client probes. */
+  pmProof: '/registry/pm-proof.json';
   opsSummary: '/registry/ops-summary.json';
   tocOps: '/registry/toc-ops.json';
 };
@@ -96,6 +119,8 @@ export type PortalWeavePayload = {
   generated: string;
   summary: PortalWeaveSummary;
   related: PortalWeaveRelated;
+  /** Publish soft-pass plane — packages board + color kernel `publish.*`. */
+  publishPlane: PublishPlaneWeaveBlock;
   surfaces: PortalWeaveLink[];
   artifacts: PortalWeaveArtifact[];
   /** Shared chrome modules (topbar, footer, sidebar, …). */
@@ -120,9 +145,10 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     id: 'packages',
     label: 'Packages',
     href: '/portal/packages/',
-    note: 'graph map · coupling · portal-cli pm graph',
+    note: 'graph map · publish soft-pass (ssot-flow-soft · pm-proof) · color kernel publish.* · weave.publishPlane',
     group: 'registry',
-    cli: 'bun run portal-cli pm graph',
+    cli: 'bun run ssot:flow:soft && bun run verify:pm:save',
+    relatedArtifactIds: ['ssot-flow-soft', 'pm-proof'],
   },
   {
     id: 'skills',
@@ -325,6 +351,34 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveArtifact[] = [
     purpose: 'ui',
   },
   {
+    id: 'ssot-flow-soft', // brand-ok — weave artifact slug, not a domain *Id
+    artifactId: 'ssot-flow-soft',
+    artifactName: 'SSOT soft-pass',
+    label: 'SSOT soft-pass',
+    href: '/registry/ssot-flow-soft.json',
+    conceptId: PUBLISH_SSOT_FLOW_SOFT_CONCEPT_ID,
+    colorKey: publishPlaneColorForConcept(PUBLISH_SSOT_FLOW_SOFT_CONCEPT_ID).colorKey,
+    note: 'artifactId=ssot-flow-soft · conceptId=publish.ssot_flow_soft · colorKey=tennis · offline pack',
+    group: 'registry',
+    cli: 'bun run ssot:flow:soft',
+    // ui — owned by /portal/packages/ + related.ssotFlowSoft (not Soft accounting)
+    purpose: 'ui',
+  },
+  {
+    id: 'pm-proof', // brand-ok — weave artifact slug, not a domain *Id
+    artifactId: 'pm-proof',
+    artifactName: 'PM publish-plane proof',
+    label: 'PM publish-plane proof',
+    href: '/registry/pm-proof.json',
+    conceptId: PUBLISH_PM_PROOF_CONCEPT_ID,
+    colorKey: publishPlaneColorForConcept(PUBLISH_PM_PROOF_CONCEPT_ID).colorKey,
+    note: 'artifactId=pm-proof · conceptId=publish.pm_proof · colorKey=kalshi · soft-pass probes',
+    group: 'registry',
+    cli: 'bun run verify:pm:save',
+    // ui — owned by /portal/packages/ + related.pmProof (not Soft accounting)
+    purpose: 'ui',
+  },
+  {
     label: 'monorepo-health',
     href: '/registry/monorepo-health.json',
     note: 'score 0–100 · claim monorepo-health-score · gate check:monorepo-health · TOC harness glance',
@@ -519,6 +573,27 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveArtifact[] = [
  */
 export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
   // ── Registry / R2 ──
+  {
+    id: 'ssot-flow-soft',
+    label: 'SSOT soft-pass (offline pack)',
+    cmd: 'bun run ssot:flow:soft',
+    doc: 'docs/harness/tenants/tennis-hq-registry.md',
+    group: 'registry',
+  },
+  {
+    id: 'verify-pm-save',
+    label: 'PM publish-plane soft-pass save',
+    cmd: 'bun run verify:pm:save',
+    doc: 'docs/harness/tenants/tennis-hq-registry.md',
+    group: 'registry',
+  },
+  {
+    id: 'verify-weave',
+    label: 'Pages edge weave verify',
+    cmd: 'bun run verify:weave -- --summary',
+    doc: 'docs/harness/tenants/cloudflare-pages.md',
+    group: 'registry',
+  },
   {
     label: 'Tennis HQ SSOT → R2',
     cmd: 'bun run --cwd king-zippy-umbra-acre ssot:publish:r2',
@@ -799,6 +874,8 @@ export function buildPortalWeavePayload(generated?: string): PortalWeavePayload 
     kind: c.kind,
   }));
 
+  const publishPlane = buildPublishPlaneWeaveBlock({ artifacts, scripts });
+
   return {
     schemaVersion: 2,
     kind: 'portal-weave',
@@ -816,9 +893,12 @@ export function buildPortalWeavePayload(generated?: string): PortalWeavePayload 
       monorepoHealth: '/registry/monorepo-health.json',
       doctorState: '/registry/doctor-state.json',
       packagesGraph: '/registry/packages-graph-map.json',
+      ssotFlowSoft: '/registry/ssot-flow-soft.json',
+      pmProof: '/registry/pm-proof.json',
       opsSummary: '/registry/ops-summary.json',
       tocOps: '/registry/toc-ops.json',
     },
+    publishPlane,
     surfaces,
     artifacts,
     components,

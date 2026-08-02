@@ -125,6 +125,12 @@ export const PARTNER_OPS_CONCEPT_COLORS = {
   'telegram.action.reply': 'kalshi',
   'telegram.action.forward': 'polymarket',
   'telegram.action.pin': 'pinnacle',
+
+  // Publish-plane soft-pass (packages board — not Soft accounting / Soft Balance).
+  'publish.ssot_flow_soft': 'tennis',
+  'publish.pm_proof': 'kalshi',
+  'publish.mode.soft': 'middleware',
+  'publish.mode.strict': 'trading',
 } as const satisfies Readonly<Record<string, PartnerOpsColorKey>>;
 
 export type PartnerOpsConceptColorId = keyof typeof PARTNER_OPS_CONCEPT_COLORS;

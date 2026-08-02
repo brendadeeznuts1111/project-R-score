@@ -99,6 +99,10 @@
     tr.pkg-row-selected td { outline: 1px solid var(--accent); outline-offset: -1px; }
     tr.pkg-row-clickable { cursor: pointer; }
     tr.pkg-row-clickable:hover td { background: color-mix(in srgb, var(--surface) 80%, var(--accent)); }
+    .pkg-color-swatch {
+      display: inline-block; width: 10px; height: 10px; border-radius: 2px;
+      margin-inline-end: 6px; vertical-align: middle; border: 1px solid var(--border);
+    }
   </style>
 </head>
 <body>
@@ -122,7 +126,7 @@
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
             <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
-            <a href="/portal/packages/" class="nav-link active" aria-current="page" title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table" data-group="registry" data-cli="bun run portal-cli pm graph  # offline packages-graph-map table" role="menuitem">Packages</a>
+            <a href="/portal/packages/" class="nav-link active" aria-current="page" title="graph map · portal-cli pm graph · ssot soft-pass · pm-proof · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" role="menuitem">Packages</a>
             <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
             <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-cli="bun run glossary:portal" role="menuitem">Glossary</a>
             <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
@@ -161,6 +165,16 @@
       <p class="hero-sub">Multi-surface · page→registry · lib hubs · orphan triage (schema v13 · surfaces v3)</p>
       <p class="meta" id="gen-meta">Loading…</p>
       <p class="meta" id="package-info-meta">Related package-info…</p>
+    </section>
+
+    <section class="pkg-dep-panel" id="publish-plane-panel" aria-label="Publish plane soft-pass">
+      <h3>Publish plane · soft-pass</h3>
+      <p class="meta">
+        <code>artifactName</code> (display) · <code>artifactId</code> (key) · offline pack / fail-soft probes — not Soft accounting
+      </p>
+      <div id="publish-plane-body"><p class="pkg-empty">Loading soft-pass proofs…</p></div>
+      <p class="meta" id="ssot-soft-meta" hidden></p>
+      <p class="meta" id="pm-proof-meta" hidden></p>
     </section>
 
     <div id="pkg-error-banner" class="ops-banner error hidden" role="alert"></div>

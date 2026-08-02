@@ -18,6 +18,8 @@ export const PACKAGES_RELATED_REGISTRY = [
   '/registry/package-info.json',
   '/registry/monorepo-health.json',
   '/registry/install-hygiene-report.json',
+  '/registry/ssot-flow-soft.json',
+  '/registry/pm-proof.json',
 ];
 
 /**
@@ -751,6 +753,260 @@ export async function loadPackageInfoRelated(doc = document) {
 }
 
 /**
+ * Normalize a soft-pass proof into a board row (name ≠ id).
+ * @param {Record<string, unknown> | null | undefined} proof
+ * @param {{ fallbackId: string, fallbackName: string, fallbackCli: string }} fallbacks
+ */
+export function normalizePublishPlaneRow(proof, fallbacks) {
+  const p = proof && typeof proof === 'object' ? proof : {};
+  const summary =
+    p.summary && typeof p.summary === 'object'
+      ? /** @type {Record<string, unknown>} */ (p.summary)
+      : {};
+  const pkg = p.package;
+  const pkgLabel =
+    typeof pkg === 'string'
+      ? pkg
+      : pkg && typeof pkg === 'object'
+        ? `${/** @type {Record<string, unknown>} */ (pkg).name ?? '?'}@${/** @type {Record<string, unknown>} */ (pkg).version ?? '?'}`
+        : '—';
+  const status =
+    summary.status === 'pass' || summary.status === 'fail'
+      ? summary.status
+      : p.ok === true
+        ? 'pass'
+        : p.ok === false
+          ? 'fail'
+          : 'missing';
+  const tarball =
+    p.tarball && typeof p.tarball === 'object'
+      ? /** @type {Record<string, unknown>} */ (p.tarball)
+      : null;
+  const color =
+    p.color && typeof p.color === 'object'
+      ? /** @type {Record<string, unknown>} */ (p.color)
+      : {};
+  const modeColor =
+    p.modeColor && typeof p.modeColor === 'object'
+      ? /** @type {Record<string, unknown>} */ (p.modeColor)
+      : {};
+  return {
+    artifactId: String(p.artifactId || fallbacks.fallbackId),
+    artifactName: String(p.artifactName || fallbacks.fallbackName),
+    conceptId: String(p.conceptId || ''),
+    colorKey: String(color.colorKey || ''),
+    colorHex: String(color.hex || ''),
+    colorToken: String(color.token || ''),
+    modeColorKey: String(modeColor.colorKey || ''),
+    modeColorHex: String(modeColor.hex || ''),
+    plane: String(p.plane || 'publish'),
+    purpose: String(p.purpose || 'audit'),
+    mode: String(p.mode || 'soft'),
+    cli: String(p.cli || fallbacks.fallbackCli),
+    status,
+    passed: summary.passed ?? '—',
+    failed: summary.failed ?? '—',
+    skipped: summary.skipped ?? 0,
+    total: summary.total ?? '—',
+    packageLabel: pkgLabel,
+    reportPath: String(p.reportPath || p.links?.json || ''),
+    tarballPath: tarball?.path ? String(tarball.path) : '',
+    sha256: tarball?.sha256 ? String(tarball.sha256).slice(0, 12) : '',
+    missing: !proof,
+  };
+}
+
+/**
+ * HTML table for publish-plane soft-pass rows.
+ * @param {ReturnType<typeof normalizePublishPlaneRow>[]} rows
+ */
+export function renderPublishPlaneTable(rows) {
+  if (!rows.length) {
+    return '<p class="pkg-empty">No soft-pass proofs — <code>bun run ssot:flow:soft</code> · <code>bun run verify:pm:save</code></p>';
+  }
+  const body = rows
+    .map(r => {
+      const statusClass =
+        r.status === 'pass' ? 'grade-healthy' : r.status === 'fail' ? 'grade-critical' : 'pkg-empty';
+      const mark = r.status === 'pass' ? '✅' : r.status === 'fail' ? '❌' : '—';
+      const counts =
+        r.missing
+          ? 'missing bake'
+          : `${r.passed}/${r.total}` +
+            (r.skipped ? ` · ${r.skipped} skipped` : '') +
+            (r.failed && r.failed !== 0 && r.failed !== '—' ? ` · ${r.failed} failed` : '');
+      const detail = r.tarballPath
+        ? `<code>${escapeHtml(r.tarballPath)}</code>${r.sha256 ? ` · sha256 ${escapeHtml(r.sha256)}…` : ''}`
+        : escapeHtml(r.packageLabel);
+      const jsonHref = r.reportPath || `/registry/${r.artifactId}.json`;
+      const swatch = r.colorHex
+        ? `<span class="pkg-color-swatch" style="background:${escapeHtml(r.colorHex)}" title="${escapeHtml(r.colorToken || r.colorKey)}"></span>`
+        : '';
+      const colorCell = r.colorKey
+        ? `${swatch}<code>${escapeHtml(r.colorKey)}</code>` +
+          (r.conceptId ? ` · <code>${escapeHtml(r.conceptId)}</code>` : '')
+        : '—';
+      const modeCell = r.modeColorKey
+        ? `<span class="pkg-color-swatch" style="background:${escapeHtml(r.modeColorHex || 'transparent')}"></span>` +
+          `<code>${escapeHtml(r.mode)}</code>/<code>${escapeHtml(r.modeColorKey)}</code>`
+        : escapeHtml(r.mode);
+      return (
+        `<tr data-artifact-id="${escapeHtml(r.artifactId)}" data-concept-id="${escapeHtml(r.conceptId)}" data-color-key="${escapeHtml(r.colorKey)}">` +
+        `<td>${escapeHtml(r.artifactName)}</td>` +
+        `<td><code>${escapeHtml(r.artifactId)}</code></td>` +
+        `<td>${colorCell}</td>` +
+        `<td>${modeCell}</td>` +
+        `<td class="${statusClass}">${mark} ${escapeHtml(String(r.status))}</td>` +
+        `<td>${escapeHtml(String(counts))}</td>` +
+        `<td>${detail}</td>` +
+        `<td><a href="${escapeHtml(jsonHref)}"><code>${escapeHtml(r.artifactId)}.json</code></a></td>` +
+        `<td><button type="button" class="copy-cli" data-cli="${escapeHtml(r.cli)}">copy CLI</button></td>` +
+        `</tr>`
+      );
+    })
+    .join('');
+  return (
+    `<table class="pkg-table" aria-label="Publish plane soft-pass artifacts">` +
+    `<thead><tr>` +
+    `<th>artifactName</th><th>artifactId</th><th>colorKey</th><th>mode</th><th>status</th><th>summary</th><th>detail</th><th>json</th><th>cli</th>` +
+    `</tr></thead><tbody>${body}</tbody></table>`
+  );
+}
+
+/**
+ * Soft-pass panel: ssot-flow-soft + pm-proof → #publish-plane-body.
+ * @param {Document} [doc]
+ */
+export async function loadPublishPlaneSoftPass(doc = document) {
+  const host = doc.getElementById('publish-plane-body');
+  const ssotEl = doc.getElementById('ssot-soft-meta');
+  const pmEl = doc.getElementById('pm-proof-meta');
+  const fetchJson = async path => {
+    const res = await fetch(path, {
+      cache: 'no-store',
+      credentials: 'same-origin',
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(6000),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  };
+
+  /** @type {ReturnType<typeof normalizePublishPlaneRow>[]} */
+  const rows = [];
+
+  let ssot = null;
+  let pm = null;
+  try {
+    ssot = await fetchJson('/registry/ssot-flow-soft.json');
+  } catch {
+    ssot = null;
+  }
+  try {
+    pm = await fetchJson('/registry/pm-proof.json');
+  } catch {
+    pm = null;
+  }
+
+  rows.push(
+    normalizePublishPlaneRow(ssot, {
+      fallbackId: 'ssot-flow-soft',
+      fallbackName: 'SSOT soft-pass',
+      fallbackCli: 'bun run ssot:flow:soft',
+    })
+  );
+  rows.push(
+    normalizePublishPlaneRow(pm, {
+      fallbackId: 'pm-proof',
+      fallbackName: 'PM publish-plane proof',
+      fallbackCli: 'bun run verify:pm:save',
+    })
+  );
+
+  let weaveNote = '';
+  try {
+    const weave = await fetchJson('/registry/portal-weave.json');
+    const related = weave.related || {};
+    const plane = weave.publishPlane || {};
+    const planeArts = Array.isArray(plane.artifacts) ? plane.artifacts : [];
+    const scriptCmds = Array.isArray(plane.scripts)
+      ? plane.scripts
+      : (Array.isArray(weave.scripts) ? weave.scripts : [])
+          .filter(s => s.id === 'ssot-flow-soft' || s.id === 'verify-pm-save' || s.id === 'verify-weave')
+          .map(s => s.cmd);
+    const packages = (Array.isArray(weave.surfaces) ? weave.surfaces : []).find(
+      s => s.id === 'packages'
+    );
+    const owns = Array.isArray(packages?.relatedArtifactIds)
+      ? packages.relatedArtifactIds.join(', ')
+      : '';
+    const hexByKey = Object.fromEntries(
+      rows
+        .filter(r => r.colorKey && r.colorHex)
+        .map(r => [r.colorKey, r.colorHex])
+    );
+    const planeSource = planeArts.length
+      ? planeArts
+      : rows
+          .filter(r => r.colorKey)
+          .map(r => ({
+            artifactId: r.artifactId,
+            conceptId: r.conceptId,
+            colorKey: r.colorKey,
+            hex: r.colorHex,
+            token: r.colorToken,
+          }));
+    const swatches = planeSource
+      .filter(a => a.colorKey)
+      .map(a => {
+        const hex = String(a.hex || hexByKey[a.colorKey] || '');
+        const title = String(a.token || a.conceptId || a.artifactId || a.colorKey);
+        return (
+          `<span class="pkg-color-swatch"${hex ? ` style="background:${escapeHtml(hex)}"` : ''} title="${escapeHtml(title)}"></span>` +
+          `<code>${escapeHtml(String(a.colorKey))}</code>`
+        );
+      })
+      .join(' · ');
+    const planePending = !planeArts.length;
+    weaveNote =
+      `<p class="meta">Weave <code>publishPlane</code>: <a href="/registry/portal-weave.json"><code>portal-weave.json</code></a>` +
+      (planePending ? ' · <em>pending on edge</em>' : '') +
+      ` · board <code>${escapeHtml(String(plane.board || '/portal/packages/'))}</code>` +
+      ` · kernel <code>${escapeHtml(String(plane.colorKernel || 'partner-ops'))}</code>` +
+      (owns ? ` · packages owns <code>${escapeHtml(owns)}</code>` : '') +
+      (related.ssotFlowSoft
+        ? ` · related.ssotFlowSoft=<code>${escapeHtml(String(related.ssotFlowSoft))}</code>`
+        : '') +
+      (related.pmProof ? ` · related.pmProof=<code>${escapeHtml(String(related.pmProof))}</code>` : '') +
+      (swatches ? ` · ${swatches}` : '') +
+      (scriptCmds.length
+        ? ` · scripts: ${scriptCmds.map(c => `<code>${escapeHtml(String(c))}</code>`).join(' · ')}`
+        : '') +
+      `</p>`;
+  } catch {
+    weaveNote =
+      '<p class="meta">Weave: missing <code>portal-weave.json</code> — rebake via ops:snapshot / compliance:bake</p>';
+  }
+
+  if (host) {
+    host.innerHTML = renderPublishPlaneTable(rows) + weaveNote;
+    bindCopyButtons(host);
+  }
+
+  // Keep hidden meta nodes for older tests / scrapers.
+  if (ssotEl) {
+    ssotEl.textContent = ssot
+      ? `${ssot.artifactName} · id=${ssot.artifactId} · ${ssot.summary?.status ?? (ssot.ok ? 'pass' : 'fail')}`
+      : 'SSOT soft-pass: missing';
+  }
+  if (pmEl) {
+    pmEl.textContent = pm
+      ? `${pm.artifactName} · id=${pm.artifactId} · ${pm.summary?.status ?? '—'}`
+      : 'PM publish-plane proof: missing';
+  }
+}
+
+/**
  * Bipartite SVG: portal pages (left) → registry bakes (right).
  * @param {Array<{ page: string, registryPath: string, family: string, weight: number }>} edges
  * @param {{ maxEdges?: number }} [opts]
@@ -1211,6 +1467,7 @@ function renderPackagesBoard(data, doc = document) {
 
   // Related package-plane bakes (package-info orphan → packages board)
   void loadPackageInfoRelated(doc);
+  void loadPublishPlaneSoftPass(doc);
 
   const body = doc.getElementById('pkg-body');
   if (body) {

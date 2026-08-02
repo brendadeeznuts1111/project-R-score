@@ -85,11 +85,46 @@ describe('portal weave', () => {
     expect(arts).toContain('/registry/limit-raises.json');
     expect(arts).toContain('/registry/verification-index.json');
     expect(arts).toContain('/registry/doc-index.json');
+    expect(arts).toContain('/registry/ssot-flow-soft.json');
+    expect(arts).toContain('/registry/pm-proof.json');
+    expect(p.related.ssotFlowSoft).toBe('/registry/ssot-flow-soft.json');
+    expect(p.related.pmProof).toBe('/registry/pm-proof.json');
     expect(p.scripts.some(s => s.cmd.includes('docs:map:check'))).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('compliance:bake'))).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('compliance:verify'))).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('ops:limits:demo'))).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('ops:snapshot'))).toBe(true);
+    expect(p.scripts.some(s => s.cmd === 'bun run ssot:flow:soft')).toBe(true);
+    expect(p.scripts.some(s => s.cmd === 'bun run verify:pm:save')).toBe(true);
+    expect(p.scripts.some(s => s.cmd.includes('verify:weave'))).toBe(true);
+  });
+
+  test('publish-plane weave artifacts carry name/id + color kernel keys', () => {
+    const ssot = PORTAL_WEAVE_ARTIFACTS.find(a => a.id === 'ssot-flow-soft');
+    const pm = PORTAL_WEAVE_ARTIFACTS.find(a => a.id === 'pm-proof');
+    expect(ssot?.artifactId).toBe('ssot-flow-soft');
+    expect(ssot?.artifactName).toBe('SSOT soft-pass');
+    expect(ssot?.conceptId).toBe('publish.ssot_flow_soft');
+    expect(ssot?.colorKey).toBe('tennis');
+    expect(ssot?.purpose).toBe('ui');
+    expect(pm?.artifactId).toBe('pm-proof');
+    expect(pm?.artifactName).toBe('PM publish-plane proof');
+    expect(pm?.conceptId).toBe('publish.pm_proof');
+    expect(pm?.colorKey).toBe('kalshi');
+    expect(pm?.purpose).toBe('ui');
+    const packages = PORTAL_WEAVE_SURFACES.find(s => s.id === 'packages');
+    expect(packages?.cli).toContain('ssot:flow:soft');
+    expect(packages?.relatedArtifactIds).toEqual(['ssot-flow-soft', 'pm-proof']);
+    const baked = buildPortalWeavePayload('2026-01-01T00:00:00.000Z');
+    expect(baked.publishPlane.artifacts).toHaveLength(2);
+    expect(baked.publishPlane.colorKernel).toBe('partner-ops');
+    expect(baked.publishPlane.board).toBe('/portal/packages/');
+    expect(baked.publishPlane.related.ssotFlowSoft).toBe('/registry/ssot-flow-soft.json');
+    expect(baked.publishPlane.scripts.some(c => c.includes('ssot:flow:soft'))).toBe(true);
+    expect(baked.publishPlane.artifacts.every(a => a.hex?.startsWith('#'))).toBe(true);
+    expect(baked.publishPlane.artifacts.every(a => a.token?.startsWith('--partner-ops-'))).toBe(
+      true
+    );
   });
 
   test('every artifact carries a purpose; intentional purposes are non-ui', () => {

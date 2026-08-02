@@ -1,0 +1,93 @@
+{
+  "schema": "factorywager.pm-proof.v1",
+  "artifactId": "pm-proof",
+  "artifactName": "PM publish-plane proof",
+  "conceptId": "publish.pm_proof",
+  "color": {
+    "conceptId": "publish.pm_proof",
+    "colorKey": "kalshi",
+    "token": "--partner-ops-kalshi",
+    "hex": "#58A6FF",
+    "css": "#58a6ff"
+  },
+  "modeColor": {
+    "conceptId": "publish.mode.soft",
+    "colorKey": "middleware",
+    "token": "--partner-ops-middleware",
+    "hex": "#D29922",
+    "css": "#d29922"
+  },
+  "plane": "publish",
+  "purpose": "audit",
+  "cli": "bun run verify:pm:save",
+  "type": "PmPublishPlaneProof",
+  "version": "1.0.0",
+  "mode": "soft",
+  "timestamp": "2026-08-02T21:08:17.887Z",
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62",
+  "reportPath": "/registry/pm-proof.json",
+  "links": {
+    "json": "/registry/pm-proof.json",
+    "board": "/portal/packages/",
+    "weave": "/registry/portal-weave.json"
+  },
+  "package": "@factorywager/registry-client",
+  "probes": [
+    {
+      "name": "pm pkg parity",
+      "ok": true,
+      "skipped": false,
+      "detail": "@factorywager/registry-client@1.0.0"
+    },
+    {
+      "name": "npm registry metadata",
+      "ok": true,
+      "skipped": true,
+      "detail": "skipped — no npm packument (text/html fallback)"
+    },
+    {
+      "name": "artifact registry api",
+      "ok": true,
+      "skipped": false,
+      "detail": "https://registry.factory-wager.com/api/registry/health ok"
+    },
+    {
+      "name": "manifest parity",
+      "ok": true,
+      "skipped": true,
+      "detail": "skipped — no packument"
+    },
+    {
+      "name": "readme metadata",
+      "ok": true,
+      "skipped": true,
+      "detail": "skipped — no packument"
+    },
+    {
+      "name": "pack dry-run",
+      "ok": true,
+      "skipped": true,
+      "detail": "skipped — dist not built (bun run build in registry-client)"
+    },
+    {
+      "name": "pm ls sanity",
+      "ok": true,
+      "skipped": false,
+      "detail": "dependency tree resolves"
+    },
+    {
+      "name": "scope token presence",
+      "ok": true,
+      "skipped": true,
+      "detail": "FACTORY_WAGER_TOKEN absent (read-only probes only)"
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "skipped": 5,
+    "failed": 0,
+    "total": 8,
+    "status": "pass"
+  }
+}

@@ -15,7 +15,7 @@ the registry bake.
 | FactoryWager | `tools/bake-soft-accounting-export.ts` | Bake/check/import `/registry/soft-accounting-export.json` (`soft:accounting:bake` · `:check` · `:from-ct`; partners-ops bookType enrich on fixture) |
 | FactoryWager | `/portal/account/` · `/portal/partners/` | Soft plays / weeks / book-type chrome (`ops.view.per_*`) · Soft Balance stays in toc-ops `ct` |
 | FactoryWager | `lib/telegram/telegram-glossary.ts` | Wire/topics + message chrome MVP: `telegram.message.*` · `telegram.status.{delivered,failed}` · `telegram.action.{reply,forward,pin}` |
-| FactoryWager | `lib/telegram/partner-ops-color-kernel.ts` | `PARTNER_OPS_COLORS` (9-key closed palette, Bun.color-validated) + `PARTNER_OPS_CONCEPT_COLORS` (61 concept→key) |
+| FactoryWager | `lib/telegram/partner-ops-color-kernel.ts` | `PARTNER_OPS_COLORS` (9-key closed palette, Bun.color-validated) + `PARTNER_OPS_CONCEPT_COLORS` (65 concept→key; includes `publish.*` soft-pass) |
 | FactoryWager | `lib/telegram/partner-ops-events.ts` | 11 event codes (`PARTNER_OPS_EVENT_CODES`) + `PARTNER_OPS_EVENT_GLOSSARY` → `event.*` |
 | FactoryWager | `public/portal/components/partner-ops-event-concepts.js` | Generated portal map (dossier + partners ledger). Bake: `bun run partners:event-concepts:bake` · check: `partners:event-concepts:check` |
 | FactoryWager | `lib/telegram/partner-ops-registry.ts` | Registry bake (`factorywager.partners-ops.v2` → `/registry/partners-ops.json`) · per-account view validate |
@@ -117,7 +117,7 @@ Depicts `accounting.*` renamed to the doc's `*_received|_processed|_extended|_ap
 |-------|---------|
 | 47 new glossary entries | 40 listed (internal inconsistency); 21 already shipped, 5 renames, 13 new |
 | 10 funding methods (§4) | 9 listed |
-| 36 color-mapped ids | **61** in `PARTNER_OPS_CONCEPT_COLORS` (partner-ops cores + handshake/membership + `ops.limits.*` projections + 10 `ops.view.*` + 10 telegram message/status/action MVP) |
+| 36 color-mapped ids | **65** in `PARTNER_OPS_CONCEPT_COLORS` (partner-ops cores + handshake/membership + `ops.limits.*` projections + 10 `ops.view.*` + 10 telegram message/status/action MVP + 4 `publish.*` soft-pass) |
 | `category: "ops"` | not a valid category in either taxonomy |
 
 ---

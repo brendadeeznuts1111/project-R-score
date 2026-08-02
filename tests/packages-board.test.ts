@@ -3,6 +3,7 @@
 import { describe, test, expect } from 'bun:test';
 import {
   PACKAGES_MAP_SCHEMA,
+  PACKAGES_RELATED_REGISTRY,
   actionHint,
   buildDependencyGraphModel,
   edgesForPackage,
@@ -11,8 +12,10 @@ import {
   graphFocusSet,
   isKeyboardActivationKey,
   normalizePackagesMap,
+  normalizePublishPlaneRow,
   renderDependencyGraphSvg,
   renderPageRegistrySvg,
+  renderPublishPlaneTable,
   summarizePackageRoles,
   applyTableFilters,
   matchCapabilityRows,
@@ -21,6 +24,91 @@ import {
 describe('packages-board failure paths', () => {
   test('pins board schema v13', () => {
     expect(PACKAGES_MAP_SCHEMA).toBe(13);
+  });
+
+  test('related registry includes ssot soft-pass + pm-proof', () => {
+    expect(PACKAGES_RELATED_REGISTRY).toContain('/registry/ssot-flow-soft.json');
+    expect(PACKAGES_RELATED_REGISTRY).toContain('/registry/pm-proof.json');
+  });
+
+  test('board HTML hosts publish-plane soft-pass panel', async () => {
+    const html = await Bun.file('public/portal/packages/index.html').text();
+    expect(html).toContain('id="publish-plane-panel"');
+    expect(html).toContain('id="publish-plane-body"');
+    expect(html).toContain('artifactName');
+    expect(html).toContain('artifactId');
+    const js = await Bun.file('public/portal/packages/packages-board.js').text();
+    expect(js).toContain('loadPublishPlaneSoftPass');
+    expect(js).toContain('renderPublishPlaneTable');
+    expect(js).toContain('pending on edge');
+    expect(js).toContain('hexByKey');
+  });
+
+  test('normalizePublishPlaneRow keeps name and id distinct', () => {
+    const row = normalizePublishPlaneRow(
+      {
+        artifactId: 'ssot-flow-soft',
+        artifactName: 'SSOT soft-pass',
+        plane: 'publish',
+        purpose: 'audit',
+        mode: 'soft',
+        cli: 'bun run ssot:flow:soft',
+        ok: true,
+        summary: { passed: 4, failed: 0, total: 4, status: 'pass' },
+        package: { name: '@tennis-hq/ssot', version: '1.4.0' },
+        reportPath: '/registry/ssot-flow-soft.json',
+      },
+      {
+        fallbackId: 'ssot-flow-soft',
+        fallbackName: 'SSOT soft-pass',
+        fallbackCli: 'bun run ssot:flow:soft',
+      }
+    );
+    expect(row.artifactId).toBe('ssot-flow-soft');
+    expect(row.artifactName).toBe('SSOT soft-pass');
+    expect(row.artifactId).not.toBe(row.artifactName);
+    expect(row.status).toBe('pass');
+    expect(renderPublishPlaneTable([row])).toContain('artifactName');
+    expect(renderPublishPlaneTable([row])).toContain('data-artifact-id="ssot-flow-soft"');
+  });
+
+  test('publish-plane row surfaces color kernel keys', () => {
+    const row = normalizePublishPlaneRow(
+      {
+        artifactId: 'pm-proof',
+        artifactName: 'PM publish-plane proof',
+        conceptId: 'publish.pm_proof',
+        color: {
+          conceptId: 'publish.pm_proof',
+          colorKey: 'kalshi',
+          token: '--partner-ops-kalshi',
+          hex: '#58A6FF',
+          css: 'oklch(0.7 0.14 250)',
+        },
+        modeColor: {
+          conceptId: 'publish.mode.soft',
+          colorKey: 'middleware',
+          token: '--partner-ops-middleware',
+          hex: '#D29922',
+          css: 'oklch(0.7 0.14 90)',
+        },
+        mode: 'soft',
+        summary: { passed: 8, skipped: 5, failed: 0, total: 8, status: 'pass' },
+        reportPath: '/registry/pm-proof.json',
+      },
+      {
+        fallbackId: 'pm-proof',
+        fallbackName: 'PM publish-plane proof',
+        fallbackCli: 'bun run verify:pm:save',
+      }
+    );
+    expect(row.colorKey).toBe('kalshi');
+    expect(row.conceptId).toBe('publish.pm_proof');
+    expect(row.modeColorKey).toBe('middleware');
+    const html = renderPublishPlaneTable([row]);
+    expect(html).toContain('data-color-key="kalshi"');
+    expect(html).toContain('publish.pm_proof');
+    expect(html).toContain('pkg-color-swatch');
   });
 
   test('gradeFromScore matches monorepo-health bands', () => {

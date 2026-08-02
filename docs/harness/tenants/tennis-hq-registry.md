@@ -95,6 +95,36 @@ set -a && source ~/.reasonix/tennis-hq-registry-token.env && set +a
 | Vault map bake  | `bun run env:inventory:bake` → `/registry/vault-map.json`                |
 | Tennis board    | `/portal/tennis/` loads agent-auth KPI                                   |
 | Tenant packages | `/registry/tennis/registry.json` (`bun run ops:seed:toc` / seed tenants) |
+| SSOT soft-pass (`artifactId` `ssot-flow-soft`, concept `publish.ssot_flow_soft` → colorKey `tennis`) | `bun run ssot:flow:soft` → `/registry/ssot-flow-soft.json` · `/portal/packages/` |
+| PM publish-plane proof (`artifactId` `pm-proof`, concept `publish.pm_proof` → colorKey `kalshi`) | `bun run verify:pm:save` → `/registry/pm-proof.json` · same board strip |
+
+### SSOT soft-pass (offline pack)
+
+Offline only: Tennis HQ `ssot:build` → `ssot:check` → `ssot:pack` (no
+`bun publish`). Resolves the gitignored checkout via `TENNIS_HQ_ROOT` or
+`king-zippy-umbra-acre` next to the monorepo (worktrees use the git common-dir
+sibling). Version bumps stay operator-controlled (`bun pm version` inside Tennis
+HQ, not root `factorywager-enterprise`).
+
+```bash
+bun run ssot:flow:soft
+bun run verify:pm:save   # @factorywager/registry-client publish-plane soft-pass
+```
+
+Hard-match (packument shasum ↔ local tarball) is a later gate when the version
+is on the registry; soft-pass stays green when network/auth probes skip.
+
+### Weave
+
+Both proofs are first-class portal-weave artifacts (`purpose: ui`, owned by
+`/portal/packages/` via `relatedArtifactIds` + `related.ssotFlowSoft` /
+`related.pmProof`) with `artifactId` / `artifactName` / `conceptId` /
+`colorKey` / hex+token from the partner-ops kernel. Weave payload also exposes
+`publishPlane` (board · colorKernel · artifacts · scripts · related). Soft-pass
+parity is checked by `bun run verify:weave` (`publish-plane soft-pass` row):
+full hard parity when `publishPlane` is on the edge; soft-skip while Pages lags
+(`publishPlane pending on edge`). Packages board renders the soft-pass table +
+`publishPlane` footer (hex swatches from weave or proof rows).
 
 ## Related
 
