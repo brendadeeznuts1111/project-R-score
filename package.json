@@ -2347,7 +2347,7 @@
     "CLAUDE.md"
   ],
   "publishConfig": {
-    "registry": "https://registry.factory-wager.com/",
+    "registry": "https://registry.factory-wager.com/api/npm",
     "access": "public"
   },
   "overrides": {
