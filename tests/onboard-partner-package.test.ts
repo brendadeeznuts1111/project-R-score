@@ -8,6 +8,7 @@ import {
   applyPartnerOnboardPackage,
   buildOnboardChecklist,
   emitPackageGroupCreateRequest,
+  ensureOnboardTreeNode,
   listUnboundAgentSeats,
   partnerCodeFromCallSign,
   planPartnerOnboardPackage,
@@ -61,6 +62,56 @@ describe('partner onboard package', () => {
     expect(resolveOnboardTreeNodeId(db, agentId)).toEqual(asTreeNodeId(agentId));
     expect(() => resolveOnboardTreeNodeId(db, 'ZZZ-999')).toThrow(/Unknown call sign/);
     expect(() => resolveOnboardTreeNodeId(db, 'BIL')).toThrow(/seat call-sign \(BIL-001\)/);
+    db.close();
+  });
+
+  test('ensureOnboardTreeNode creates the node (id node-<code>) when missing', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const tid = ensureOnboardTreeNode(db, 'YOU-001', { name: 'YOU' });
+
+    expect(tid).toEqual(asTreeNodeId('node-you'));
+    const row = db
+      .query(
+        'SELECT id, type, name, call_sign, active, status FROM tree_nodes WHERE call_sign = $cs'
+      )
+      .get({ $cs: 'YOU-001' }) as {
+      id: string; // brand-ok — tree_nodes.id wire
+      type: string;
+      name: string;
+      call_sign: string;
+      active: number;
+      status: string;
+    };
+    expect(row).toMatchObject({
+      id: 'node-you',
+      type: 'partner',
+      name: 'YOU',
+      call_sign: 'YOU-001',
+      active: 1,
+      status: 'active',
+    });
+    // register flow can now resolve it
+    expect(resolveOnboardTreeNodeId(db, 'YOU-001')).toEqual(asTreeNodeId('node-you'));
+    db.close();
+  });
+
+  test('ensureOnboardTreeNode is idempotent — returns the existing node', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const first = ensureOnboardTreeNode(db, 'NOV-001', { name: 'NOV' });
+    const again = ensureOnboardTreeNode(db, 'NOV-001', { name: 'NOV' });
+
+    expect(again).toEqual(first);
+    const n = db.query('SELECT COUNT(*) AS n FROM tree_nodes WHERE call_sign = $cs').get({
+      $cs: 'NOV-001',
+    }) as { n: number };
+    expect(n.n).toBe(1);
+    db.close();
+  });
+
+  test('ensureOnboardTreeNode rejects a non-call-sign ref', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    expect(() => ensureOnboardTreeNode(db, 'not-a-call-sign')).toThrow();
+    expect(() => ensureOnboardTreeNode(db, 'BIL')).toThrow(); // bare CODE, not CODE-NNN
     db.close();
   });
 
