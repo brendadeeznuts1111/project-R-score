@@ -10,8 +10,8 @@ Generated from the machine SSOT — **do not invent commands** here; rebake afte
 | **Code SSOT** | [`lib/http/portal-weave.ts`](../lib/http/portal-weave.ts) |
 | **Board** | [`/portal/ops/`](../public/portal/ops/) → Portal weave → Operator scripts |
 | **Schema** | v2 · kind `portal-weave` |
-| **Baked (weave)** | `2026-08-01T21:28:48.791Z` (UTC) |
-| **Counts** | **37** commands · **4** groups · 27 surfaces · 36 artifacts |
+| **Baked (weave)** | `2026-08-02T00:34:36.524Z` (UTC) |
+| **Counts** | **40** commands · **4** groups · 27 surfaces · 36 artifacts |
 
 ```bash
 # refresh weave then this guide
@@ -25,8 +25,8 @@ bun tools/bake-portal-ops-map.ts
 
 The ops board meta line is a **summary**, not a shell command:
 
-> **37 commands** · **4 groups** (Registry / R2 · Ops · Harness · Secrets / vault) · **schema v2**  
-> Source: [`/registry/portal-weave.json`](/registry/portal-weave.json) · Baked: `2026-08-01T21:28:48.791Z` · Guide: [`docs/portal-ops-board-map.md`](portal-ops-board-map.md)
+> **40 commands** · **4 groups** (Registry / R2 · Ops · Harness · Secrets / vault) · **schema v2**  
+> Source: [`/registry/portal-weave.json`](/registry/portal-weave.json) · Baked: `2026-08-02T00:34:36.524Z` · Guide: [`docs/portal-ops-board-map.md`](portal-ops-board-map.md)
 
 ### Related chips
 
@@ -64,7 +64,7 @@ Each row is one grounded monorepo command.
 | `script-4-pages-edge-verify` | Pages edge verify | `bun run verify:pages-edge --taxonomy` | --taxonomy | — |
 | `script-5-domain-glossary-bake` | Domain glossary bake | `bun run glossary:portal` | — | [`/docs/portal-foundation.md`](../docs/portal-foundation.md) |
 
-### Group B: Ops (16)
+### Group B: Ops (17)
 
 | Short id | Label | Command | Flags | Docs |
 |----------|-------|---------|-------|------|
@@ -84,20 +84,23 @@ Each row is one grounded monorepo command.
 | `script-19-limit-raise-analyze` | Limit raise analyze | `bun run ops:limits:analyze` | — | [`/docs/harness/tenants/partner-limits.md`](../docs/harness/tenants/partner-limits.md) |
 | `script-20-limit-pattern-seed-bake` | Limit pattern seed + bake | `bun run ops:limits:seed-patterns` | — | [`/docs/harness/tenants/partner-limits.md`](../docs/harness/tenants/partner-limits.md) |
 | `script-21-limit-raise-alerts` | Limit raise alerts | `bun run ops:limits:alerts` | — | [`/docs/harness/tenants/partner-limits.md`](../docs/harness/tenants/partner-limits.md) |
+| `script-22-portal-dev-server-hot` | Portal dev server (hot) | `bun run dev:portal` | — | [`/docs/portal-foundation.md`](../docs/portal-foundation.md) |
 
-### Group C: Harness (11)
+### Group C: Harness (13)
 
 | Short id | Label | Command | Flags | Docs |
 |----------|-------|---------|-------|------|
-| `script-22-portal-doctor-all-groups` | Portal doctor (all groups) | `bun run portal:doctor --verbose` | --verbose | [`/docs/harness/tenants/portal-doctor.md`](../docs/harness/tenants/portal-doctor.md) |
-| `script-23-portal-doctor-bunfig-only` | Portal doctor (bunfig only) | `bun run portal:doctor --group bunfig --verbose` | --group --verbose | [`/docs/UNIFIED.md`](../docs/UNIFIED.md) |
-| `script-24-bake-doctor-state` | Bake doctor-state | `bun run bake:doctor` | — | [`/docs/harness/tenants/portal-doctor.md`](../docs/harness/tenants/portal-doctor.md) |
-| `script-25-reference-discovery` | Reference discovery | `bun run reference:discover:check` | — | [`/docs/harness/tenants/reference-discovery.md`](../docs/harness/tenants/reference-discovery.md) |
-| `script-26-public-plane-discovery` | Public plane discovery | `bun run public:discover:check` | — | [`/docs/harness/tenants/public-plane.md`](../docs/harness/tenants/public-plane.md) |
-| `script-27-public-audit-bundle` | Public audit bundle | `bun run public:audit:verify` | — | [`/docs/harness/tenants/public-plane.md`](../docs/harness/tenants/public-plane.md) |
-| `script-28-discovery-compose` | Discovery compose | `bun run discover:compose:check` | — | [`/docs/harness/tenants/reference-discovery.md`](../docs/harness/tenants/reference-discovery.md) |
-| `script-29-doc-map-check` | Doc map check | `bun run docs:map:check` | — | [`/docs/README.md`](../docs/README.md) |
-| `script-30-doc-index-bake` | Doc index bake | `bun run build:doc-index` | — | [`/lib/docs/doc-index.ts`](../lib/docs/doc-index.ts) |
+| `script-23-portal-doctor-all-groups` | Portal doctor (all groups) | `bun run portal:doctor --verbose` | --verbose | [`/docs/harness/tenants/portal-doctor.md`](../docs/harness/tenants/portal-doctor.md) |
+| `script-24-portal-doctor-bunfig-only` | Portal doctor (bunfig only) | `bun run portal:doctor --group bunfig --verbose` | --group --verbose | [`/docs/UNIFIED.md`](../docs/UNIFIED.md) |
+| `script-25-bake-doctor-state` | Bake doctor-state | `bun run bake:doctor` | — | [`/docs/harness/tenants/portal-doctor.md`](../docs/harness/tenants/portal-doctor.md) |
+| `script-26-reference-discovery` | Reference discovery | `bun run reference:discover:check` | — | [`/docs/harness/tenants/reference-discovery.md`](../docs/harness/tenants/reference-discovery.md) |
+| `script-27-public-plane-discovery` | Public plane discovery | `bun run public:discover:check` | — | [`/docs/harness/tenants/public-plane.md`](../docs/harness/tenants/public-plane.md) |
+| `script-28-public-audit-bundle` | Public audit bundle | `bun run public:audit:verify` | — | [`/docs/harness/tenants/public-plane.md`](../docs/harness/tenants/public-plane.md) |
+| `script-29-discovery-compose` | Discovery compose | `bun run discover:compose:check` | — | [`/docs/harness/tenants/reference-discovery.md`](../docs/harness/tenants/reference-discovery.md) |
+| `script-30-doc-map-check` | Doc map check | `bun run docs:map:check` | — | [`/docs/README.md`](../docs/README.md) |
+| `script-31-doc-index-bake` | Doc index bake | `bun run build:doc-index` | — | [`/lib/docs/doc-index.ts`](../lib/docs/doc-index.ts) |
+| `script-32-lane-status-primary-worktrees-bakes` | Lane status (primary/worktrees/bakes) | `bun run lane:status` | — | [`/AGENTS.md`](../AGENTS.md) |
+| `script-33-native-markdown-docs-check` | Native Markdown docs check | `bun run docs:native:check` | — | [`/docs/BUN_NATIVE_CAPABILITIES.md`](../docs/BUN_NATIVE_CAPABILITIES.md) |
 | `portal-chrome-bake-apply` | Portal chrome bake + apply | `bun run portal:chrome:bake && bun tools/portal-apply-chrome.ts` | — | [`/docs/portal-foundation.md`](../docs/portal-foundation.md) |
 | `monorepo-health-bake` | Monorepo health bake | `bun run monorepo:health:bake` | — | [`/docs/harness/tenants/monorepo-health.md`](../docs/harness/tenants/monorepo-health.md) |
 
@@ -105,10 +108,10 @@ Each row is one grounded monorepo command.
 
 | Short id | Label | Command | Flags | Docs |
 |----------|-------|---------|-------|------|
-| `script-31-compliance-bake-proton-vault` | Compliance bake (Proton vault) | `bun run compliance:bake:vault` | — | [`/docs/harness/tenants/proton-integration.md`](../docs/harness/tenants/proton-integration.md) |
-| `script-32-vault-health-gate-snapshots` | Vault health gate (snapshots) | `bun run vault:health` | — | [`/docs/harness/tenants/proton-integration.md`](../docs/harness/tenants/proton-integration.md) |
-| `script-33-vault-health-live-bake` | Vault health live bake | `bun run vault:health:bake` | — | [`/docs/harness/tenants/proton-integration.md`](../docs/harness/tenants/proton-integration.md) |
-| `script-34-vault-map-resolve-list` | Vault map resolve (list) | `bun run vault:resolve` | — | [`/docs/harness/tenants/proton-integration.md`](../docs/harness/tenants/proton-integration.md) |
+| `script-34-compliance-bake-proton-vault` | Compliance bake (Proton vault) | `bun run compliance:bake:vault` | — | [`/docs/harness/tenants/proton-integration.md`](../docs/harness/tenants/proton-integration.md) |
+| `script-35-vault-health-gate-snapshots` | Vault health gate (snapshots) | `bun run vault:health` | — | [`/docs/harness/tenants/proton-integration.md`](../docs/harness/tenants/proton-integration.md) |
+| `script-36-vault-health-live-bake` | Vault health live bake | `bun run vault:health:bake` | — | [`/docs/harness/tenants/proton-integration.md`](../docs/harness/tenants/proton-integration.md) |
+| `script-37-vault-map-resolve-list` | Vault map resolve (list) | `bun run vault:resolve` | — | [`/docs/harness/tenants/proton-integration.md`](../docs/harness/tenants/proton-integration.md) |
 
 ---
 

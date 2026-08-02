@@ -572,6 +572,12 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
     doc: 'docs/harness/tenants/partner-limits.md',
     group: 'ops',
   },
+  {
+    label: 'Portal dev server (hot)',
+    cmd: 'bun run dev:portal',
+    doc: 'docs/portal-foundation.md',
+    group: 'ops',
+  },
   // ── Harness ──
   {
     label: 'Portal doctor (all groups)',
@@ -625,6 +631,18 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
     label: 'Doc index bake',
     cmd: 'bun run build:doc-index',
     doc: 'lib/docs/doc-index.ts',
+    group: 'harness',
+  },
+  {
+    label: 'Lane status (primary/worktrees/bakes)',
+    cmd: 'bun run lane:status',
+    doc: 'AGENTS.md',
+    group: 'harness',
+  },
+  {
+    label: 'Native Markdown docs check',
+    cmd: 'bun run docs:native:check',
+    doc: 'docs/BUN_NATIVE_CAPABILITIES.md',
     group: 'harness',
   },
   // ── Secrets ──

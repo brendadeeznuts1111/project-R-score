@@ -2,13 +2,13 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-08-01T21:28:48.791Z",
+  "generated": "2026-08-02T00:34:36.524Z",
   "summary": {
     "surfaces": 27,
     "artifacts": 36,
     "components": 14,
     "wiki": 6,
-    "scripts": 37
+    "scripts": 40
   },
   "related": {
     "chrome": "/registry/portal-chrome.json",
@@ -724,95 +724,116 @@
       "id": "script-21-limit-raise-alerts"
     },
     {
+      "label": "Portal dev server (hot)",
+      "cmd": "bun run dev:portal",
+      "doc": "docs/portal-foundation.md",
+      "group": "ops",
+      "id": "script-22-portal-dev-server-hot"
+    },
+    {
       "label": "Portal doctor (all groups)",
       "cmd": "bun run portal:doctor --verbose",
       "doc": "docs/harness/tenants/portal-doctor.md",
       "group": "harness",
-      "id": "script-22-portal-doctor-all-groups"
+      "id": "script-23-portal-doctor-all-groups"
     },
     {
       "label": "Portal doctor (bunfig only)",
       "cmd": "bun run portal:doctor --group bunfig --verbose",
       "doc": "docs/UNIFIED.md",
       "group": "harness",
-      "id": "script-23-portal-doctor-bunfig-only"
+      "id": "script-24-portal-doctor-bunfig-only"
     },
     {
       "label": "Bake doctor-state",
       "cmd": "bun run bake:doctor",
       "doc": "docs/harness/tenants/portal-doctor.md",
       "group": "harness",
-      "id": "script-24-bake-doctor-state"
+      "id": "script-25-bake-doctor-state"
     },
     {
       "label": "Reference discovery",
       "cmd": "bun run reference:discover:check",
       "doc": "docs/harness/tenants/reference-discovery.md",
       "group": "harness",
-      "id": "script-25-reference-discovery"
+      "id": "script-26-reference-discovery"
     },
     {
       "label": "Public plane discovery",
       "cmd": "bun run public:discover:check",
       "doc": "docs/harness/tenants/public-plane.md",
       "group": "harness",
-      "id": "script-26-public-plane-discovery"
+      "id": "script-27-public-plane-discovery"
     },
     {
       "label": "Public audit bundle",
       "cmd": "bun run public:audit:verify",
       "doc": "docs/harness/tenants/public-plane.md",
       "group": "harness",
-      "id": "script-27-public-audit-bundle"
+      "id": "script-28-public-audit-bundle"
     },
     {
       "label": "Discovery compose",
       "cmd": "bun run discover:compose:check",
       "doc": "docs/harness/tenants/reference-discovery.md",
       "group": "harness",
-      "id": "script-28-discovery-compose"
+      "id": "script-29-discovery-compose"
     },
     {
       "label": "Doc map check",
       "cmd": "bun run docs:map:check",
       "doc": "docs/README.md",
       "group": "harness",
-      "id": "script-29-doc-map-check"
+      "id": "script-30-doc-map-check"
     },
     {
       "label": "Doc index bake",
       "cmd": "bun run build:doc-index",
       "doc": "lib/docs/doc-index.ts",
       "group": "harness",
-      "id": "script-30-doc-index-bake"
+      "id": "script-31-doc-index-bake"
+    },
+    {
+      "label": "Lane status (primary/worktrees/bakes)",
+      "cmd": "bun run lane:status",
+      "doc": "AGENTS.md",
+      "group": "harness",
+      "id": "script-32-lane-status-primary-worktrees-bakes"
+    },
+    {
+      "label": "Native Markdown docs check",
+      "cmd": "bun run docs:native:check",
+      "doc": "docs/BUN_NATIVE_CAPABILITIES.md",
+      "group": "harness",
+      "id": "script-33-native-markdown-docs-check"
     },
     {
       "label": "Compliance bake (Proton vault)",
       "cmd": "bun run compliance:bake:vault",
       "doc": "docs/harness/tenants/proton-integration.md",
       "group": "secrets",
-      "id": "script-31-compliance-bake-proton-vault"
+      "id": "script-34-compliance-bake-proton-vault"
     },
     {
       "label": "Vault health gate (snapshots)",
       "cmd": "bun run vault:health",
       "doc": "docs/harness/tenants/proton-integration.md",
       "group": "secrets",
-      "id": "script-32-vault-health-gate-snapshots"
+      "id": "script-35-vault-health-gate-snapshots"
     },
     {
       "label": "Vault health live bake",
       "cmd": "bun run vault:health:bake",
       "doc": "docs/harness/tenants/proton-integration.md",
       "group": "secrets",
-      "id": "script-33-vault-health-live-bake"
+      "id": "script-36-vault-health-live-bake"
     },
     {
       "label": "Vault map resolve (list)",
       "cmd": "bun run vault:resolve",
       "doc": "docs/harness/tenants/proton-integration.md",
       "group": "secrets",
-      "id": "script-34-vault-map-resolve-list"
+      "id": "script-37-vault-map-resolve-list"
     },
     {
       "id": "portal-chrome-bake-apply",
