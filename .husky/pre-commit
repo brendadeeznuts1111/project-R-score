@@ -91,12 +91,13 @@ else
 fi
 
 echo ""
-echo "== pre-commit: test:changed (bail) =="
-# Import-graph filter + parallel workers; short-circuits on docs-only diffs.
+echo "== pre-commit: test:changed (staged-scoped, bail) =="
+# Staged-scoped: selection runs in a HEAD ∪ staged scratch repo so another
+# lane's dirty-tree test failures cannot block this commit.
 # Hard fail — catch broken tests before push. Opt out: SKIP_TEST_CHANGED=1
 if [ "$DRY_RUN" -eq 1 ]; then
   if git diff --cached --name-only --diff-filter=ACMR | grep -qE '\.(ts|tsx|js|jsx|mts|cts)$'; then
-    bun run test:changed -- --dry-run --bail=1
+    bun scripts/bun-test-changed-staged.ts --dry-run --bail=1
   else
     echo "  ⏭️  [dry-run] no staged TS/JS — test:changed would skip"
   fi
@@ -105,8 +106,8 @@ elif [ "${SKIP_TEST_CHANGED:-}" = "1" ]; then
 else
   # Staged TS/JS only — skip pure docs/registry bakes
   if git diff --cached --name-only --diff-filter=ACMR | grep -qE '\.(ts|tsx|js|jsx|mts|cts)$'; then
-    bun run test:changed -- --bail=1 || {
-      echo "❌ test:changed failed (bail=1). Fix or SKIP_TEST_CHANGED=1 for docs-only escape."
+    bun scripts/bun-test-changed-staged.ts --bail=1 || {
+      echo "❌ test:changed failed (bail=1). Fix or SKIP_TEST_CHANGED=1 with reason in commit message."
       exit 1
     }
   else
