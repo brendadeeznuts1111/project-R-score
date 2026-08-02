@@ -56,6 +56,8 @@ export type SeatOut = {
   user?: string;
   /** Book password — local intake only. */
   password?: string;
+  /** partner_vault key for this account's credentials (phase 2: password → vault). */
+  vaultKey?: string;
   /** CASHOUT rail SPEN assigns for this book (Venmo, CashApp, …). */
   paymentRail?: string;
   /** Handle / email house sends to on that rail (@user, $cashtag, email). */
