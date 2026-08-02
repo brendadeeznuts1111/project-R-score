@@ -14,6 +14,11 @@
  *   bun scripts/lint-console-format.ts --staged       # ADDED lines only (pre-commit runs this)
  *   bun scripts/lint-console-format.ts --write-baseline   # owners: re-pin after burn-down
  *
+ * Ratchet mode scans the git index tree (HEAD ∪ staged, via
+ * scripts/lib/index-tree.ts) — NOT the worktree — so another lane's
+ * uncommitted dirty files can never fail your commit. Re-pins likewise
+ * record the committed state, not local dirt.
+ *
  * Scope: lib/ + scripts/ + tools/ *.ts (tests and projects/ excluded — nested
  * products are separate artifacts). Suppress an intentional machine-output
  * line (e.g. a new --json branch) with `// console-ok` on that line.
@@ -33,6 +38,7 @@ import {
   type ConsoleFormatSummary,
   type ConsoleFormatViolation,
 } from '../lib/console-format-scan.ts';
+import { withIndexTree } from './lib/index-tree.ts';
 
 const ROOT = process.cwd();
 const BASELINE_PATH = `${ROOT}/scripts/console-format-baseline.json`;
@@ -93,7 +99,13 @@ if (STAGED) {
   process.exit(0);
 }
 
-const { total, byPattern, files } = summarizeConsoleFormat(await scanConsoleFormat(ROOT));
+const { total, byPattern, files, violations } = await withIndexTree(
+  ['lib', 'scripts', 'tools'],
+  async dir => {
+    const found = await scanConsoleFormat(dir);
+    return { ...summarizeConsoleFormat(found), violations: found };
+  }
+);
 
 if (WRITE_BASELINE) {
   const current: ConsoleFormatSummary = { total, byPattern, files };
@@ -119,7 +131,6 @@ if (failed) {
   console.error(
     `❌ console-format hits grew: ${total} > baseline ${baseline.total} — convert to logTable/logDepth or re-pin`
   );
-  const violations = await scanConsoleFormat(ROOT);
   for (const v of violations) {
     if ((baseline.files[v.file] ?? 0) < files[v.file]!) {
       console.error(`   ${v.file}:${v.line}  [${v.id}] ${v.text}`);

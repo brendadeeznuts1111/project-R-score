@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/reference/bun/Transpiler — Bun.Transpiler
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/transpiler — Bun.Transpiler
@@ -11,6 +13,9 @@
  *   bun scripts/check-import-graph.ts --write-baseline   # owners: re-pin after intentional restructuring
  *
  * Scope: lib/ + scripts/ TypeScript (same perimeter as check-bun-env).
+ * Scans the git index tree (HEAD ∪ staged, via scripts/lib/index-tree.ts) —
+ * NOT the worktree — so another lane's uncommitted dirty files can never
+ * fail your commit. Re-pins likewise record the committed state.
  *
  *   cycles      — file-level relative-import cycles may only go DOWN vs baseline,
  *                 split strong (all-static) vs weak (≥1 lazy dynamic-import edge).
@@ -22,6 +27,7 @@
  * type-only ignored) — same SSOT as monorepo-health.
  */
 import { loaderForPath, scanSourceImports } from '../lib/harness/monorepo-health.ts';
+import { materializeIndexTree, removeIndexTreeSync } from './lib/index-tree.ts';
 
 export {};
 
@@ -29,6 +35,12 @@ const ROOT = process.cwd();
 const BASELINE_PATH = `${ROOT}/scripts/import-graph-baseline.json`;
 const WRITE_BASELINE = Bun.argv.includes('--write-baseline');
 const JSON_OUT = Bun.argv.includes('--json');
+
+// Index tree (HEAD ∪ staged) — worktree dirt from other lanes cannot leak in.
+// Sync cleanup on exit covers the early process.exit paths below.
+const tree = await materializeIndexTree(['lib', 'scripts']);
+const SCAN_ROOT = tree.dir;
+process.on('exit', () => removeIndexTreeSync(tree.dir));
 
 interface Baseline {
   deepRelativeImports: number;
@@ -83,9 +95,9 @@ const deepImportFiles: Record<string, number> = {};
 let deepRelativeImports = 0;
 
 for (const dir of ['lib', 'scripts'] as const) {
-  for (const rel of new Bun.Glob(`${dir}/**/*.ts`).scanSync({ cwd: ROOT, onlyFiles: true })) {
+  for (const rel of new Bun.Glob(`${dir}/**/*.ts`).scanSync({ cwd: SCAN_ROOT, onlyFiles: true })) {
     if (rel.includes('node_modules') || rel.endsWith('.test.ts') || rel.endsWith('.d.ts')) continue;
-    const abs = `${ROOT}/${rel}`;
+    const abs = `${SCAN_ROOT}/${rel}`;
     const code = await Bun.file(abs).text();
     const key = fileKey(rel);
     const relImports: string[] = [];

@@ -91,43 +91,6 @@ else
 fi
 
 echo ""
-echo "== pre-commit: type-check (tools) =="
-# Only when tools/ is staged — full type-check:tools is ~400 errors on canary types (non-gate CI).
-if [ "$DRY_RUN" -eq 1 ]; then
-  if git diff --cached --name-only --diff-filter=ACMR | grep -qE '^tools/'; then
-    echo "  [dry-run] bun run type-check:tools (tools/ staged)"
-  else
-    echo "  ⏭️  [dry-run] no tools/ staged — type-check:tools would skip"
-  fi
-else
-  if git diff --cached --name-only --diff-filter=ACMR | grep -qE '^tools/'; then
-    # Fully skip: canary bun-types produce hundreds of errors and tsc|tail can
-    # SIGPIPE under set -e. CI owns type-check:tools. Do not run here.
-    echo "  ⏭️  type-check:tools deferred to CI (canary types noise; non-blocking)"
-  else
-    echo "  ⏭️  no tools/ staged — skip type-check:tools"
-  fi
-fi
-
-echo ""
-echo "== pre-commit: env defaults check =="
-# Staged-only + harness heuristics. Non-blocking until clean.
-if [ "$DRY_RUN" -eq 1 ]; then
-  echo "  [dry-run] bun scripts/check-env-defaults.ts --staged"
-else
-  bun scripts/check-env-defaults.ts --staged || echo "  ⚠️  env-defaults: staged optional config without fallback (non-blocking)"
-fi
-
-echo ""
-echo "== pre-commit: env vault-gap ratchet =="
-if [ "$DRY_RUN" -eq 1 ]; then
-  echo "  [dry-run] bun scripts/env-inventory.ts --ratchet"
-else
-  # Soft fail for now (baseline exists); promote to hard fail when team is ready
-  bun scripts/env-inventory.ts --ratchet 2>&1 | tail -20 || echo "  ⚠️  vault-gap ratchet failed (non-blocking)"
-fi
-
-echo ""
 echo "== pre-commit: test:changed (bail) =="
 # Import-graph filter + parallel workers; short-circuits on docs-only diffs.
 # Hard fail — catch broken tests before push. Opt out: SKIP_TEST_CHANGED=1

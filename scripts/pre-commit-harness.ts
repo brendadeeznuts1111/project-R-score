@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 // @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
@@ -193,8 +194,10 @@ async function filesWithUnstagedDiff(files: string[]): Promise<string[]> {
 }
 
 /**
- * ESLint --fix / Prettier --write / doc-refs annotate must not leave a
- * green commit with a dirty tree (amend thrash). Fail with re-stage repair.
+ * ESLint --fix / Prettier --write / doc-refs annotate rewrite staged files
+ * after they were added. Fold those rewrites back into the index automatically
+ * (the deeplink-automation hook pattern) instead of failing the commit and
+ * making the operator re-stage + re-run every gate.
  */
 async function assertStagedMatchesWorktree(
   files: string[],
@@ -203,23 +206,23 @@ async function assertStagedMatchesWorktree(
 ): Promise<void> {
   const t0 = performance.now();
   const dirty = await filesWithUnstagedDiff(files);
+  if (dirty.length > 0) {
+    const code = await runGate('auto-restage', ['git', 'add', '--', ...dirty], timings);
+    if (code !== 0) {
+      console.error(`❌ Auto-restage failed — run manually: git add ${dirty.join(' ')}`);
+      await writeTimings(timings, full);
+      process.exit(1);
+    }
+    console.info(
+      `↻ Auto-restaged ${dirty.length} file(s) rewritten by format/annotate gates:\n` +
+        dirty.map(f => `   ${f}`).join('\n')
+    );
+  }
   timings.push({
     name: 'staged-worktree',
     ms: Math.round(performance.now() - t0),
-    ok: dirty.length === 0,
+    ok: true,
   });
-  if (dirty.length === 0) return;
-  console.error('');
-  console.error('❌ Format/annotate rewrote staged files — commit would leave a dirty tree');
-  console.error(
-    '   invariant: index must match worktree for staged harness files after write tools'
-  );
-  console.error('   owner: scripts/pre-commit-harness.ts · docs/harness/FEEDBACK.md');
-  console.error('   repair:');
-  console.error(`     git add ${dirty.join(' ')}`);
-  console.error('     # then re-run: git commit');
-  await writeTimings(timings, full);
-  process.exit(1);
 }
 
 async function runGate(name: string, cmd: string[], timings: GateTiming[]): Promise<number> {
@@ -377,7 +380,6 @@ async function main(): Promise<void> {
       process.exit(1);
     }
   }
-
 
   // Theme-dark color kernels — CSS stale + aliases/floors (claim color-kernel-theme-aliases).
   // Escape: SKIP_COLOR_KERNEL=1
@@ -587,6 +589,21 @@ async function main(): Promise<void> {
       n.startsWith('lib/')
     );
   });
+  /**
+   * Dependency manifests only. bun-pm-cache is a machine-environment health
+   * check (~5s — cache dir path/exists/size), not a code-change gate; running
+   * it on every scripts/tools/lib commit halves hook throughput for nothing.
+   */
+  const depManifestStaged = staged.some(f => {
+    const n = f.replace(/^\.\//, '');
+    return (
+      n === 'package.json' ||
+      n === '.npmrc' ||
+      n === 'bunfig.toml' ||
+      n === 'bun.lock' ||
+      n === 'bun.lockb'
+    );
+  });
 
   // Parallel: staged adoption + committed-tree adoption + catalog collision proof.
   console.info(
@@ -652,6 +669,8 @@ async function main(): Promise<void> {
   }
   if (npmInstallStaged) {
     parallelJobs.push(spawnGate('npm-install', ['bun', 'run', 'check:npm-install']));
+  }
+  if (depManifestStaged) {
     parallelJobs.push(spawnGate('bun-pm-cache', ['bun', 'run', 'check:bun-pm-cache']));
   }
 
