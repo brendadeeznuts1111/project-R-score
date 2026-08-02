@@ -112,6 +112,7 @@ export const CANONICAL_HARNESS = {
 /** Tools / skills (repo-relative). */
 export const CANONICAL_TOOLS = {
   bunDocRefs: 'tools/bun-doc-refs.ts',
+  bunNativeCapabilitiesSync: 'tools/bun-native-capabilities-sync.ts',
   bunDocsIndex: 'tools/bun-docs-index.json',
   bunDocsCatalog: 'tools/bun-docs-catalog.ts',
   bunDocsCatalogJson: 'tools/bun-docs-catalog.json',

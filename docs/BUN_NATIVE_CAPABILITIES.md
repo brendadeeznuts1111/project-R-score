@@ -174,6 +174,21 @@ Static portal boards on Pages do not have a Bun global. Bake-time utilities land
 | Bake spawn | `bunSpawnArgs` / `resolveBunExecutable()` + `{ ...Bun.env }` at every nested `Bun.spawn` (portal-cli · bake-all · vault-cli · bun-doc-refs · CI scripts) | [`lib/bun-executable.ts`](../lib/bun-executable.ts) · [`tools/bake-all.ts`](../tools/bake-all.ts) · [`portal-cli-bun-flags`](../tools/lib/portal-cli-bun-flags.ts) · [`vault-cli`](../tools/vault-cli.ts) · [`bun-doc-refs`](../tools/bun-doc-refs.ts) · [`scripts/bun-test-changed.ts`](../scripts/bun-test-changed.ts) |
 | File I/O | `Bun.file` / `Bun.write` for registry bakes (chrome, glossary, schema audit) | bake tools under `tools/` |
 
+## Native Markdown automation
+
+This bounded block is generated from the shared ast-grep Bun pattern catalog. Source matches are structural call expressions; comments, strings, and generated bundles are excluded.
+
+<!-- bun-native-markdown-sync:start -->
+| Primitive | State | Structural owners | Pattern authority |
+|-----------|-------|-------------------|-------------------|
+| [`Bun.markdown.html`](https://bun.com/docs/runtime/markdown) | Adopted | [`lib/factory/markdown.ts`](../lib/factory/markdown.ts)<br>[`lib/http/portal-markdown.ts`](../lib/http/portal-markdown.ts)<br>[`lib/http/portal-skill-detail.ts`](../lib/http/portal-skill-detail.ts)<br>[`tools/bun-api-oneliners.ts`](../tools/bun-api-oneliners.ts)<br>[`tools/bun-api-showcase/oneliners.ts`](../tools/bun-api-showcase/oneliners.ts) | [`bun-markdown-html`](../.agents/skills/ast-grep/bun-patterns.json) |
+| [`Bun.markdown.ansi`](https://bun.com/docs/runtime/markdown) | Adopted | [`lib/factory/markdown.ts`](../lib/factory/markdown.ts)<br>[`scripts/docs-ci-deploy.ts`](../scripts/docs-ci-deploy.ts)<br>[`scripts/docs-code-quality.ts`](../scripts/docs-code-quality.ts)<br>[`scripts/docs-fresh-rerun.ts`](../scripts/docs-fresh-rerun.ts)<br>[`scripts/docs-spine-tenants.ts`](../scripts/docs-spine-tenants.ts)<br>[`scripts/dx-mcp.ts`](../scripts/dx-mcp.ts)<br>[`scripts/harness-status.ts`](../scripts/harness-status.ts)<br>[`tools/brand-status.ts`](../tools/brand-status.ts)<br>[`tools/bun-api-oneliners.ts`](../tools/bun-api-oneliners.ts)<br>[`tools/bun-api-showcase.ts`](../tools/bun-api-showcase.ts)<br>[`tools/bun-api-showcase/oneliners.ts`](../tools/bun-api-showcase/oneliners.ts)<br>[`tools/bun-native-capabilities-sync.ts`](../tools/bun-native-capabilities-sync.ts)<br>[`tools/glossary-verify.ts`](../tools/glossary-verify.ts) | [`bun-markdown-ansi`](../.agents/skills/ast-grep/bun-patterns.json) |
+| [`Bun.markdown.render`](https://bun.com/docs/runtime/markdown) | Adopted | [`lib/docs/bun-native-capabilities-sync.ts`](../lib/docs/bun-native-capabilities-sync.ts)<br>[`lib/factory/cli.ts`](../lib/factory/cli.ts)<br>[`scripts/brand-bench-runner.ts`](../scripts/brand-bench-runner.ts) | [`bun-markdown-render`](../.agents/skills/ast-grep/bun-patterns.json) |
+| [`Bun.markdown.react`](https://bun.com/docs/runtime/markdown) | Adopted | [`scripts/brand-bench-runner.ts`](../scripts/brand-bench-runner.ts) | [`bun-markdown-react`](../.agents/skills/ast-grep/bun-patterns.json) |
+<!-- bun-native-markdown-sync:end -->
+
+Operator paths: `bun run docs:native:preview` renders the candidate block in-process with the FactoryWager ANSI theme; `bun ./docs/BUN_NATIVE_CAPABILITIES.md` renders the saved file directly.
+
 ## Release maps
 
 Upstream: [v1.3.12](https://bun.com/blog/bun-v1.3.12) · [v1.3.13](https://bun.com/blog/bun-v1.3.13) (`--isolate` · `--parallel` · `--shard` · `--changed` — curated TOC [bun-test-flags-1.3.13.md](./guides/bun-test-flags-1.3.13.md)). Day-loop wrappers: [harness/day-loop.md](./harness/day-loop.md). Pin **1.4.0** is a superset — do not re-document every bugfix bullet.

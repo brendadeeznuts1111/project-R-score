@@ -471,7 +471,7 @@
       "id": "bun-markdown-react",
       "name": "Bun.markdown.react",
       "pattern": "Bun.markdown.react($$$)",
-      "lang": "tsx",
+      "lang": "ts",
       "group": "display",
       "outline": true,
       "tier": "extended",
