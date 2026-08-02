@@ -71,6 +71,39 @@ describe('readJsonRpcStream', () => {
     expect(msgs[0]?.id).toBe(11);
   });
 
+  test('Content-Length header split after the first CRLF', async () => {
+    const obj = { jsonrpc: '2.0', id: 21, method: 'ping', params: {} };
+    const json = JSON.stringify(obj);
+    const msgs = await collect([
+      new TextEncoder().encode(`Content-Length: ${Buffer.byteLength(json)}\r\n`),
+      new TextEncoder().encode(`\r\n${json}`),
+    ]);
+    expect(msgs).toHaveLength(1);
+    expect(msgs[0]?.id).toBe(21);
+  });
+
+  test('lenient \\n\\n header split across chunks', async () => {
+    const obj = { jsonrpc: '2.0', id: 22, method: 'ping', params: {} };
+    const json = JSON.stringify(obj);
+    const msgs = await collect([
+      new TextEncoder().encode(`Content-Length: ${Buffer.byteLength(json)}\n`),
+      new TextEncoder().encode(`\n${json}`),
+    ]);
+    expect(msgs).toHaveLength(1);
+    expect(msgs[0]?.id).toBe(22);
+  });
+
+  test('multibyte UTF-8 sequence split across chunks (CL body)', async () => {
+    const obj = { jsonrpc: '2.0', id: 23, method: 'x', params: { q: 'café 🎯' } };
+    const full = frame(obj);
+    // Split inside the 4-byte 🎯 (F0 9F 8E AF) lead byte.
+    const f0 = full.indexOf(0xf0);
+    expect(f0).toBeGreaterThan(0);
+    const msgs = await collect([full.subarray(0, f0 + 1), full.subarray(f0 + 1)]);
+    expect(msgs).toHaveLength(1);
+    expect((msgs[0]?.params as { q: string }).q).toBe('café 🎯');
+  });
+
   test('trims whitespace around JSON body', async () => {
     const json = '  {"jsonrpc":"2.0","id":12,"method":"ping","params":{}}  ';
     const framed = new TextEncoder().encode(

@@ -43,6 +43,26 @@ const PATHSPEC = ['.', ':(exclude)projects/'];
 const LINK_DIRS = ['node_modules', 'projects'];
 const forwarded = Bun.argv.slice(2).filter(a => a !== '--');
 
+/**
+ * Hermetic git env: partial commits (`git commit -- <paths>`) run hooks with
+ * `GIT_INDEX_FILE` pointing at a temp next-index, and every git subprocess
+ * here would inherit it — the scratch repo's `git add -A` would then write
+ * its entries (incl. the node_modules/projects symlinks) into the parent
+ * commit's temp index, whose blobs live in the soon-deleted scratch ODB and
+ * break the parent tree build ("invalid object 120000 … for 'node_modules'").
+ * Strip all GIT_* index/dir vars so each command uses the repo at its cwd.
+ */
+export function gitEnv(): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(Bun.env).filter(
+      ([k]) =>
+        !/^GIT_(INDEX_FILE|DIR|WORK_TREE|COMMON_DIR|OBJECT_DIRECTORY|ALTERNATE_OBJECT_DIRECTORIES)/.test(
+          k
+        )
+    )
+  );
+}
+
 function tempRoot(): string {
   return Bun.env.TMPDIR || Bun.env.TMP || '/tmp';
 }
@@ -54,6 +74,7 @@ function git(args: string[], opts: { cwd?: string; stdin?: Buffer } = {}) {
     stdin: opts.stdin,
     stdout: 'pipe',
     stderr: 'pipe',
+    env: gitEnv(),
   });
   return { code: proc.exitCode, out: proc.stdout, err: proc.stderr.toString() };
 }
@@ -114,6 +135,7 @@ async function buildScratchRepo(tmp: string): Promise<void> {
     stdin: ls.out,
     stdout: 'pipe',
     stderr: 'pipe',
+    env: gitEnv(),
   });
   if (co.exitCode !== 0) {
     throw new Error(`git checkout-index: ${co.stderr.toString().trim()}`);
@@ -180,6 +202,7 @@ async function main(): Promise<number> {
       stdout: 'inherit',
       stderr: 'inherit',
       stdin: 'inherit',
+      env: gitEnv(),
     });
     return (await legacy.exited) ?? 1;
   }
@@ -187,7 +210,7 @@ async function main(): Promise<number> {
   try {
     const proc = Bun.spawn(
       ['bun', 'test', '--changed', '--pass-with-no-tests', '--parallel', ...forwarded],
-      { cwd: tmp, stdout: 'inherit', stderr: 'inherit', stdin: 'inherit' }
+      { cwd: tmp, stdout: 'inherit', stderr: 'inherit', stdin: 'inherit', env: gitEnv() }
     );
     return (await proc.exited) ?? 1;
   } finally {

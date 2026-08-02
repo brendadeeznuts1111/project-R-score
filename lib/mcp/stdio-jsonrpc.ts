@@ -131,10 +131,13 @@ export async function* readJsonRpcStream(
         }
       }
 
-      // NDJSON fallback (bare JSON lines, e.g. kimi-code).
+      // NDJSON fallback (bare JSON lines, e.g. kimi-code). A line that looks like a
+      // pending Content-Length header (header split across chunks before its
+      // terminator arrives) must NOT be consumed — wait for the rest of the frame.
       const nl = indexOfBytes(buffer, LF);
       if (nl === -1) break;
       const line = decoder.decode(buffer.subarray(0, nl)).trim();
+      if (/^Content-Length\s*:/i.test(line)) break;
       buffer = buffer.subarray(nl + 1);
       if (!line || !line.startsWith('{')) continue;
       clientFraming = 'ndjson';
