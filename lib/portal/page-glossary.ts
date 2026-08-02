@@ -79,6 +79,10 @@ function bareMount(
 const PAGE_SECTIONS: Readonly<
   Partial<Record<PortalSemanticConceptKey, readonly PortalGlossarySection[]>>
 > = {
+  ['page.bookmakers']: [
+    bareMount('artifact', 'ui.semantic.artifact', 'Artifact'),
+    bareMount('books', 'ui.semantic.resources', 'Books'),
+  ],
   [LIMIT_SURFACE_CONCEPTS.page]: [
     bareMount('account-control', LIMIT_SURFACE_CONCEPTS.accountControl, 'Account limit control'),
     bareMount(
@@ -114,11 +118,7 @@ const PAGE_SECTIONS: Readonly<
       LIMIT_SURFACE_CONCEPTS.dataConnectionAudit,
       'Data connection audit'
     ),
-    bareMount(
-      'recent-changes',
-      LIMIT_SURFACE_CONCEPTS.recentLimitChanges,
-      'Recent limit changes'
-    ),
+    bareMount('recent-changes', LIMIT_SURFACE_CONCEPTS.recentLimitChanges, 'Recent limit changes'),
     bareMount('node-breakdown', LIMIT_SURFACE_CONCEPTS.perNodeBreakdown, 'Per-node breakdown'),
   ],
   [PARTNER_HISTORY_SURFACE_CONCEPTS.page]: [
@@ -128,16 +128,8 @@ const PAGE_SECTIONS: Readonly<
       'Sportsbook opening baseline'
     ),
     // Same board also mounts recent/node panels (hrefs + ids); govern them.
-    bareMount(
-      'recent-changes',
-      LIMIT_SURFACE_CONCEPTS.recentLimitChanges,
-      'Recent limit changes'
-    ),
-    bareMount(
-      'node-breakdown',
-      LIMIT_SURFACE_CONCEPTS.perNodeBreakdown,
-      'Per-account breakdown'
-    ),
+    bareMount('recent-changes', LIMIT_SURFACE_CONCEPTS.recentLimitChanges, 'Recent limit changes'),
+    bareMount('node-breakdown', LIMIT_SURFACE_CONCEPTS.perNodeBreakdown, 'Per-account breakdown'),
   ],
   [ACCOUNT_DOSSIER_SURFACE_CONCEPTS.page]: [
     adSectionMount('identity', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.identity, 'Identity'),
@@ -148,11 +140,7 @@ const PAGE_SECTIONS: Readonly<
     adSectionMount('telemetry', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.telemetry, 'Limit telemetry'),
     adSectionMount('changes', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.changes, 'Limit changes'),
     adSectionMount('outs', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.outs, 'Partner outs & books'),
-    adSectionMount(
-      'telegram',
-      ACCOUNT_DOSSIER_SURFACE_CONCEPTS.telegram,
-      'Telegram package group'
-    ),
+    adSectionMount('telegram', ACCOUNT_DOSSIER_SURFACE_CONCEPTS.telegram, 'Telegram package group'),
     adSectionMount(
       'accounting',
       ACCOUNT_DOSSIER_SURFACE_CONCEPTS.accounting,
@@ -174,11 +162,7 @@ const PAGE_SECTIONS: Readonly<
     ),
     sectionMount('onboard', PARTNERS_SURFACE_CONCEPTS.onboard, 'Onboarding flow'),
     sectionMount('deposits', PARTNERS_SURFACE_CONCEPTS.deposits, 'Betting deposits'),
-    sectionMount(
-      'partner-message',
-      PARTNERS_SURFACE_CONCEPTS.partnerMessage,
-      'Partner messages'
-    ),
+    sectionMount('partner-message', PARTNERS_SURFACE_CONCEPTS.partnerMessage, 'Partner messages'),
     sectionMount('outs', PARTNERS_SURFACE_CONCEPTS.outs, 'Outs'),
     sectionMount('books', PARTNERS_SURFACE_CONCEPTS.bookDetail, 'Books'),
     sectionMount('tag-filter-bar', PARTNERS_SURFACE_CONCEPTS.tags, 'Partner tags'),

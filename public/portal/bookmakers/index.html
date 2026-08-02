@@ -103,14 +103,14 @@
           docs/package-registry.md).
         </p>
 
-        <div class="card">
+        <div class="card" id="artifact">
           <h2>Artifact</h2>
           <div class="meta-row" id="bookmakers-meta">
             <span>resolving…</span>
           </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="books">
           <h2>Books (<span id="bookmakers-count">—</span>)</h2>
           <table>
             <thead>
@@ -133,12 +133,42 @@
     </div>
 
     <script type="module">
+      import { bootGlossaryUx } from '../components/glossary-ux.js';
+
       const REGISTRY_URL = '/registry/bookmakers.json';
+      const GLOSSARY_URL = '/registry/domain-glossary.json';
       const POLL_INTERVAL_MS = 60_000;
 
       const metaEl = document.getElementById('bookmakers-meta');
       const bodyEl = document.getElementById('bookmakers-body');
       const countEl = document.getElementById('bookmakers-count');
+
+      /** sport.<id> concept ids present in the portal glossary (tooltip wiring). */
+      let glossarySportIds = null;
+      let glossaryInflight = null;
+      async function sportConceptIds() {
+        if (glossarySportIds) return glossarySportIds;
+        if (glossaryInflight) return glossaryInflight;
+        glossaryInflight = (async () => {
+          const ids = new Set();
+          try {
+            const res = await fetch(GLOSSARY_URL, { headers: { Accept: 'application/json' } });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const payload = await res.json();
+            const entries = Array.isArray(payload)
+              ? payload
+              : (payload.entries ?? payload.concepts ?? []);
+            for (const e of entries) {
+              if (e && typeof e.id === 'string') ids.add(e.id);
+            }
+          } catch {
+            // glossary unavailable — chips render plain, no tooltips
+          }
+          glossarySportIds = ids;
+          return ids;
+        })();
+        return glossaryInflight;
+      }
 
       function escapeHtml(value) {
         return String(value).replace(/[&<>"']/g, (c) => ({
@@ -169,11 +199,19 @@
         bodyEl.innerHTML = books
           .map((b) => {
             const sports = (b.supportedSports ?? [])
-              .map((s) => `<span class="chip">${escapeHtml(s)}</span>`)
+              .map((s) => {
+                const concept = `sport.${s}`;
+                const wired = glossarySportIds && glossarySportIds.has(concept);
+                return wired
+                  ? `<a class="chip" data-glossary-concept="${escapeHtml(concept)}" href="/portal/glossary/#glossary:${escapeHtml(concept)}">${escapeHtml(s)}</a>`
+                  : `<span class="chip">${escapeHtml(s)}</span>`;
+              })
               .join('');
             const regions = (b.regions ?? []).map(escapeHtml).join(', ');
-            const color = b.color ? `<span class="dot" style="background:${escapeHtml(b.color)}"></span>` : '';
-            const status = (b.id && b.domain && b.fetcherType) ? 'ok' : 'incomplete';
+            const color = b.color
+              ? `<span class="dot" style="background:${escapeHtml(b.color)}"></span>`
+              : '';
+            const status = b.id && b.domain && b.fetcherType ? 'ok' : 'incomplete';
             return `<tr>
               <td>${color}${escapeHtml(b.id ?? '?')}</td>
               <td>${escapeHtml(b.label ?? '?')}</td>
@@ -191,7 +229,10 @@
         try {
           const res = await fetch(REGISTRY_URL, { headers: { Accept: 'application/json' } });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          render(await res.json());
+          const payload = await res.json();
+          await sportConceptIds(); // ensure chips are glossary-aware before render
+          render(payload);
+          bootGlossaryUx(); // bind tooltips / breadcrumbs on freshly rendered chips
         } catch (err) {
           metaEl.innerHTML = `<span class="state-err">load failed: ${escapeHtml(err.message)}</span>`;
         }

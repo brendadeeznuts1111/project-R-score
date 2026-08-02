@@ -28,6 +28,14 @@ export const PORTAL_PAGE_CONCEPT_DEFINITIONS = [
     ],
   },
   {
+    path: '/portal/bookmakers/',
+    id: 'page.bookmakers',
+    label: 'Bookmaker registry',
+    description:
+      'Portal page for the canonical bookmaker registry mirrored from the @factorywager/bookmakers artifact on the FactoryWager artifact registry.',
+    synonyms: ['bookmakers', 'bookmaker registry', 'bookmaker board', 'book books'],
+  },
+  {
     path: '/portal/brands/',
     id: 'page.brandKeymap',
     label: 'Brand keymap',
