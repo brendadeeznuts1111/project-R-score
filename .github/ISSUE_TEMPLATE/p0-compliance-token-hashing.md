@@ -47,13 +47,13 @@ grep -r "logger.*token" .
 ## 🧪 Test Cases
 ```typescript
 // Test: Token is hashed
-const token = "secret-token-123";
+const token = "redacted-token";
 const logOutput = captureLog(() => {
   logEscalation(token);
 });
 
 expect(logOutput).toContain('token_hash:');
-expect(logOutput).not.toContain('secret-token-123');
+expect(logOutput).not.toContain('redacted-token');
 ```
 
 ## 📊 Compliance Requirements
