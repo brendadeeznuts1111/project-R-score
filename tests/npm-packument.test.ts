@@ -5,9 +5,11 @@
  */
 import { describe, expect, test } from 'bun:test';
 import {
-  decodeScopedPackagePath,
-  onRequest as middlewareOnRequest,
-} from '../functions/_middleware.ts';
+  npmPrefixJsonError,
+  onRequest as npmPrefixOnRequest,
+  parseNpmPrefixPackage,
+  type NpmPrefixPagesContext,
+} from '../functions/api/npm/[[path]].ts';
 import {
   npmJsonError,
   onRequest,
@@ -109,48 +111,68 @@ describe('npm packument Pages Function', () => {
   });
 });
 
-describe('middleware scoped-package decode', () => {
-  test('decodeScopedPackagePath rewrites npm %2f scope encoding', () => {
-    expect(decodeScopedPackagePath('/@factorywager%2fregistry-client')).toBe(
-      '/@factorywager/registry-client'
-    );
-    expect(decodeScopedPackagePath('/@factorywager%2Fbookmakers')).toBe(
-      '/@factorywager/bookmakers'
-    );
-    expect(decodeScopedPackagePath('/@factorywager%2fregistry-client/')).toBe(
-      '/@factorywager/registry-client'
-    );
-  });
-
-  test('decodeScopedPackagePath leaves everything else alone', () => {
-    expect(decodeScopedPackagePath('/@factorywager/registry-client')).toBeNull();
-    expect(decodeScopedPackagePath('/portal/packages/')).toBeNull();
-    expect(decodeScopedPackagePath('/%2f')).toBeNull();
-    expect(decodeScopedPackagePath('/api/registry/health')).toBeNull();
-  });
-
-  test('middleware rewrites encoded scope before routing, keeps security headers', async () => {
-    const seen: string[] = [];
-    const res = await middlewareOnRequest({
-      request: new Request('https://registry.factory-wager.com/@factorywager%2fregistry-client'),
-      next: async input => {
-        seen.push(String(input instanceof Request ? new URL(input.url).pathname : input));
-        return new Response('{}', { headers: { 'Content-Type': 'application/json' } });
+describe('npm prefix catch-all (/api/npm/*)', () => {
+  function ctx(path: string | string[] | undefined, body = '{}', ok = true): NpmPrefixPagesContext {
+    return {
+      request: new Request('https://registry.factory-wager.com/api/npm/@factorywager%2fregistry-client'),
+      env: {
+        ASSETS: {
+          fetch: async () =>
+            new Response(body, {
+              status: ok ? 200 : 404,
+              headers: { 'Content-Type': 'application/json' },
+            }),
+        },
       },
-    });
-    expect(seen[0]).toBe('/@factorywager/registry-client');
-    expect(res.headers.get('X-Content-Type-Options')).toBe('nosniff');
+      params: { path },
+    };
+  }
+
+  test('parseNpmPrefixPackage decodes the npm %2f form (single segment)', () => {
+    expect(parseNpmPrefixPackage('@factorywager%2fregistry-client')).toBe('registry-client');
+    expect(parseNpmPrefixPackage('@factorywager%2Fbookmakers')).toBe('bookmakers');
   });
 
-  test('middleware passes plain paths through untouched', async () => {
-    const seen: string[] = [];
-    await middlewareOnRequest({
-      request: new Request('https://registry.factory-wager.com/portal/packages/'),
-      next: async input => {
-        seen.push(input === undefined ? '(none)' : String(input));
-        return new Response('ok');
-      },
-    });
-    expect(seen[0]).toBe('(none)');
+  test('parseNpmPrefixPackage accepts the plain two-segment form', () => {
+    expect(parseNpmPrefixPackage(['@factorywager', 'registry-client'])).toBe('registry-client');
+  });
+
+  test('parseNpmPrefixPackage rejects wrong scope, traversal, subpaths', () => {
+    expect(parseNpmPrefixPackage('@other%2fregistry-client')).toBeNull();
+    expect(parseNpmPrefixPackage(['@factorywager', 'a', 'b'])).toBeNull();
+    expect(parseNpmPrefixPackage('..%2f..%2fetc')).toBeNull();
+    expect(parseNpmPrefixPackage(undefined)).toBeNull();
+    expect(parseNpmPrefixPackage('')).toBeNull();
+  });
+
+  test('serves baked packument with JSON content type', async () => {
+    const res = await npmPrefixOnRequest(ctx('@factorywager%2fregistry-client', '{"name":"x"}'));
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Content-Type')).toContain('json');
+    expect(await res.json()).toEqual({ name: 'x' });
+  });
+
+  test('JSON 404 when no packument is baked', async () => {
+    const res = await npmPrefixOnRequest(ctx('@factorywager%2fnope', '{}', false));
+    expect(res.status).toBe(404);
+    expect(res.headers.get('Content-Type')).toContain('json');
+  });
+
+  test('JSON 400 for wrong scope', async () => {
+    const res = await npmPrefixOnRequest(ctx('@other%2fnope'));
+    expect(res.status).toBe(400);
+  });
+
+  test('rejects non-GET methods with JSON 405', async () => {
+    const c = ctx('@factorywager%2fregistry-client');
+    c.request = new Request(c.request.url, { method: 'PUT' });
+    const res = await npmPrefixOnRequest(c);
+    expect(res.status).toBe(405);
+  });
+
+  test('npmPrefixJsonError shape', async () => {
+    const res = npmPrefixJsonError(400, 'bad');
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: 'bad' });
   });
 });

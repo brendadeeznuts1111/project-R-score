@@ -41,7 +41,7 @@ export const PM_PROOF_BOARD_PATH = '/portal/packages/' as const;
 export const PM_PROOF_WEAVE_PATH = '/registry/portal-weave.json' as const;
 
 const REPO_ROOT = new URL('../../', import.meta.url).pathname;
-const DEFAULT_REGISTRY = 'https://registry.factory-wager.com/';
+const DEFAULT_REGISTRY = 'https://registry.factory-wager.com/api/npm';
 
 export interface PmSpawnResult {
   exitCode: number;
