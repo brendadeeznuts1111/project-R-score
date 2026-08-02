@@ -73,37 +73,69 @@ export function parseToolPayload(result: unknown): unknown {
   }
 }
 
+const CRLFCRLF = new Uint8Array([0x0d, 0x0a, 0x0d, 0x0a]);
+const LFLF = new Uint8Array([0x0a, 0x0a]);
+const LF = new Uint8Array([0x0a]);
+
+function indexOfBytes(haystack: Uint8Array, needle: Uint8Array, from = 0): number {
+  outer: for (let i = from; i <= haystack.length - needle.length; i++) {
+    for (let j = 0; j < needle.length; j++) {
+      if (haystack[i + j] !== needle[j]) continue outer;
+    }
+    return i;
+  }
+  return -1;
+}
+
 export async function* readJsonRpcStream(
   stream: ReadableStream<Uint8Array>
 ): AsyncGenerator<JsonRpcMessage> {
-  let buffer = '';
+  // Content-Length counts UTF-8 *bytes*; JS string offsets count UTF-16 code units, so we
+  // accumulate raw bytes and slice bodies by byte offsets before decoding (unicode-safe).
+  let buffer = new Uint8Array(0);
   const decoder = new TextDecoder();
 
   for await (const chunk of stream) {
-    buffer += decoder.decode(chunk, { stream: true });
+    const next = new Uint8Array(buffer.length + chunk.length);
+    next.set(buffer, 0);
+    next.set(chunk, buffer.length);
+    buffer = next;
 
     while (true) {
-      const headerEnd = buffer.indexOf('\r\n\r\n');
+      // Header terminator: standard \r\n\r\n, lenient \n\n (e.g. MCP servers that use bare LFs).
+      const crlfEnd = indexOfBytes(buffer, CRLFCRLF);
+      const lfEnd = indexOfBytes(buffer, LFLF);
+      let headerEnd = -1;
+      let separatorLength = 0;
+      if (crlfEnd !== -1 && (lfEnd === -1 || crlfEnd <= lfEnd)) {
+        headerEnd = crlfEnd;
+        separatorLength = 4;
+      } else if (lfEnd !== -1) {
+        headerEnd = lfEnd;
+        separatorLength = 2;
+      }
+
       if (headerEnd !== -1) {
-        const header = buffer.slice(0, headerEnd);
+        const header = decoder.decode(buffer.subarray(0, headerEnd));
         const match = header.match(/Content-Length:\s*(\d+)/i);
         if (match) {
           const contentLength = Number(match[1]);
-          const bodyStart = headerEnd + 4;
+          const bodyStart = headerEnd + separatorLength;
           const bodyEnd = bodyStart + contentLength;
-          if (buffer.length < bodyEnd) break;
-          const body = buffer.slice(bodyStart, bodyEnd);
-          buffer = buffer.slice(bodyEnd);
+          if (buffer.length < bodyEnd) break; // body incomplete — wait for more chunks
+          const body = decoder.decode(buffer.subarray(bodyStart, bodyEnd));
+          buffer = buffer.subarray(bodyEnd);
           clientFraming = 'content-length';
           yield JSON.parse(body) as JsonRpcMessage;
           continue;
         }
       }
 
-      const nl = buffer.indexOf('\n');
+      // NDJSON fallback (bare JSON lines, e.g. kimi-code).
+      const nl = indexOfBytes(buffer, LF);
       if (nl === -1) break;
-      const line = buffer.slice(0, nl).trim();
-      buffer = buffer.slice(nl + 1);
+      const line = decoder.decode(buffer.subarray(0, nl)).trim();
+      buffer = buffer.subarray(nl + 1);
       if (!line || !line.startsWith('{')) continue;
       clientFraming = 'ndjson';
       yield JSON.parse(line) as JsonRpcMessage;
