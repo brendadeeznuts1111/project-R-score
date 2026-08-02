@@ -41,7 +41,7 @@ async function deployR2() {
 
   // Test 2: Try with original API token for Worker deployment
   console.info("\n🏗️ Step 2: Testing Worker Deployment");
-  const originalToken = "V1i357VeyPrHbrUEX0hQWNPQwbWMHqi9Tj06ApLC";
+  const originalToken = "REDACTED";
   
   try {
     const workerTest = await Bun.$`bunx curl -s -X GET "https://api.cloudflare.com/client/v4/accounts/7a470541a704caaf91e71efccc78fd36/workers/services" -H "Authorization: Bearer ${originalToken}" -H "Content-Type: application/json" | bunx jq -r '.success'`.text();

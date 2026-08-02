@@ -8,7 +8,7 @@ class DeploymentStatusReport {
   private registryDomain = 'registry.factory-wager.co';
   private accountId = '7a470541a704caaf91e71efccc78fd36';
   private zoneId = 'a3b7ba4bb62cb1b177b04b8675250674';
-  private apiToken = 'V1i357VeyPrHbrUEX0hQWNPQwbWMHqi9Tj06ApLC';
+  private apiToken = 'REDACTED';
 
   async generateReport(): Promise<void> {
     console.info("📊 FactoryWager Deployment Status Report");
@@ -126,11 +126,11 @@ class DeploymentStatusReport {
     console.info("   - R2:Bucket:Read");
 
     console.info("\n2. 🏗️ Deploy Worker:");
-    console.info("   CLOUDFLARE_API_TOKEN=V1i357VeyPrHbrUEX0hQWNPQwbWMHqi9Tj06ApLC bunx wrangler deploy");
+    console.info("   CLOUDFLARE_API_TOKEN=REDACTED bunx wrangler deploy");
 
     console.info("\n3. 📦 Create R2 Buckets:");
-    console.info("   CLOUDFLARE_API_TOKEN=V1i357VeyPrHbrUEX0hQWNPQwbWMHqi9Tj06ApLC bunx wrangler r2 bucket create factory-wager-registry");
-    console.info("   CLOUDFLARE_API_TOKEN=V1i357VeyPrHbrUEX0hQWNPQwbWMHqi9Tj06ApLC bunx wrangler r2 bucket create factory-wager-artifacts");
+    console.info("   CLOUDFLARE_API_TOKEN=REDACTED bunx wrangler r2 bucket create factory-wager-registry");
+    console.info("   CLOUDFLARE_API_TOKEN=REDACTED bunx wrangler r2 bucket create factory-wager-artifacts");
 
     console.info("\n4. 🌐 Update DNS to Worker:");
     console.info("   After deployment, get worker URL and update CNAME");
@@ -152,7 +152,7 @@ class DeploymentStatusReport {
       '# Use this after updating API token permissions\n\n' +
       'echo "🔧 Updating FactoryWager with new permissions..."\n\n' +
       '# Set the updated token\n' +
-      'export CLOUDFLARE_API_TOKEN="V1i357VeyPrHbrUEX0hQWNPQwbWMHqi9Tj06ApLC"\n\n' +
+      'export CLOUDFLARE_API_TOKEN="REDACTED"\n\n' +
       '# Test permissions\n' +
       'echo "🔍 Testing API permissions..."\n' +
       'curl -s -X GET "https://api.cloudflare.com/client/v4/accounts/7a470541a704caaf91e71efccc78fd36/workers/services" \\\n' +
@@ -167,7 +167,7 @@ class DeploymentStatusReport {
       'bunx wrangler r2 bucket create factory-wager-artifacts\n\n' +
       '# Set secrets\n' +
       'echo "🔐 Setting secrets..."\n' +
-      'echo "V1i357VeyPrHbrUEX0hQWNPQwbWMHqi9Tj06ApLC" | bunx wrangler secret put CLOUDFLARE_API_TOKEN\n\n' +
+      'echo "REDACTED" | bunx wrangler secret put CLOUDFLARE_API_TOKEN\n\n' +
       'echo "✅ Setup complete!"\n' +
       'echo "🔍 Test with: curl -I https://registry.factory-wager.co/health"\n';
 

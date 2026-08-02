@@ -9,7 +9,7 @@ console.info("=============================");
 
 async function deploy() {
   // Configuration
-  const API_TOKEN = "V1i357VeyPrHbrUEX0hQWNPQwbWMHqi9Tj06ApLC";
+  const API_TOKEN = "REDACTED";
   const ACCOUNT_ID = "7a470541a704caaf91e71efccc78fd36";
   const ZONE_ID = "a3b7ba4bb62cb1b177b04b8675250674";
   // Step 1: Verify DNS

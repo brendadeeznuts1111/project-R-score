@@ -23,9 +23,9 @@ This document describes the integration of Bun's native secrets API with the RSS
 ### Environment Variables (.env.r2)
 ```bash
 # Cloudflare R2 Credentials
-R2_ACCESS_KEY_ID=d346e25c0908772c368525586b28d49a
-R2_SECRET_ACCESS_KEY=cbe2eb81aea0071be77e936d258a96daced7abfda9a0b03a27c3ff28840353f9
-R2_API_TOKEN=xcJ3kWE13OU7Vfv1Pxk8Am4oQnJQUNUh51SLrMiC
+R2_ACCESS_KEY_ID=REDACTED
+R2_SECRET_ACCESS_KEY=REDACTED
+R2_API_TOKEN=REDACTED
 
 # R2 Configuration
 R2_ACCOUNT_ID=7a470541a704caaf91e71efccc78fd36
