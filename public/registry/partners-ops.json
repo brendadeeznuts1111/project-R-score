@@ -1,7 +1,7 @@
 {
   "schema": "factorywager.partners-ops.v2",
   "version": "2",
-  "generatedAt": "2026-08-01T01:00:20.270Z",
+  "generatedAt": "2026-08-02T00:53:01.014Z",
   "path": "/registry/partners-ops.json",
   "sources": {
     "seatCapitalDesk": "/registry/seat-capital-desk.json",

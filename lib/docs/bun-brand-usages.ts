@@ -140,12 +140,8 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     scope: 'production',
     policy: 'optional',
     ownerLane: 'operations',
-    implementations: [
-      { path: 'lib/operations/phone-sportsbook-journal.ts', symbol: 'mintId' },
-    ],
-    consumers: [
-      { path: 'lib/operations/phone-sportsbook-journal.ts', symbol: 'addPhone' },
-    ],
+    implementations: [{ path: 'lib/operations/phone-sportsbook-journal.ts', symbol: 'mintId' }],
+    consumers: [{ path: 'lib/operations/phone-sportsbook-journal.ts', symbol: 'addPhone' }],
     relationships: none(
       'Journal row ids are opaque SQLite primary keys (brand-ok strings), not a domain *Id yet.'
     ),
@@ -202,11 +198,11 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     ownerLane: 'runtime-tooling',
     implementations: [
       { path: 'lib/console-depth.ts', symbol: 'truncateWidth' },
-      { path: 'lib/console-depth.ts', symbol: 'fitWidth' },
+      { path: 'lib/console-depth.ts', symbol: 'fitVisible' },
     ],
     consumers: [
       { path: 'lib/factory/cli.ts', symbol: 'truncateDesc' },
-      { path: 'lib/console-depth.ts', symbol: 'fitWidth' },
+      { path: 'lib/console-depth.ts', symbol: 'fitVisible' },
     ],
     relationships: none(
       'ANSI-aware slicing transforms display text and does not create or consume an identity.'
