@@ -97,11 +97,22 @@ on the wire; fixture may still carry odds from toc-ops demo plays.
 - **toc-ops-fixture** — partners-ops primary-out enrich when Soft plays omit
   `bookType` (demo only).
 
+## Inventory (status)
+
+| Slice | Soft | Factory | Status |
+|-------|------|---------|--------|
+| Wire schema v1 | `ct soft-accounting-export` | `factorywager.soft-accounting-export.v1` | **Shipped** (Soft #201 · Factory #100+) |
+| Empty soft-ct governance | — | `assertSoftCtNonEmpty` / `--force` | **Shipped** (#116) |
+| Fixture bookType enrich | — | partners-ops primary-out → demo bake | **Shipped** (#124) |
+| `ops.view.per_book_type` chrome | Soft `byBookType[]` / tagged plays | dossier + partners tables | **Shipped** (#124) |
+| Live soft-ct finalize | Soft-authored odds/`bookType` on plays | `finalizeSoftAccountingExport` (no partners-ops enrich) | **Shipped** (Factory #127) |
+| Soft DATA_MODEL 2.31 | `odds` + `book_type` columns · classifier · Soft week/book rollups · `ct … --odds/--book-type` | Consumes via finalize | **Pending Soft PR** (local `feat/soft-play-odds-booktype`) |
+| Promote live registry | Soft DB with plays | `bun run soft:accounting:from-ct` | **Blocked** on Soft 2.31 land + non-empty Soft DB |
+
 ## Exit criteria (remaining)
 
-1. Promote registry bake with `bun run soft:accounting:from-ct` when Soft DB
+1. Land Soft DATA_MODEL **2.31** (odds/`book_type` + export classifier + CLI flags).
+2. Promote registry bake with `bun run soft:accounting:from-ct` when Soft DB
    has plays (`source: "soft-ct"`) — empty soft-ct is rejected without `--force`.
-2. Soft DATA_MODEL ≥ 2.31 lands Soft-authored odds/`book_type` columns + export
-   classifier; Factory consumes via `finalizeSoftAccountingExport` (no new glossary).
 3. Local proof: `bun run partners:governance` + lane tests; merge authority
    remains `bun run bun:ci` (GitHub Actions is not a gate).
