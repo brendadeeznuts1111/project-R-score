@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
@@ -160,6 +161,142 @@ async function expectImmutableDeployProof() {
   return `deploy ${deployId} @ ${commit} · P1 markers ok · sections ${titled}/${sections}`;
 }
 
+// ── Weave consistency (--weave) ─────────────────────────────────────────────
+
+interface WeavePayload {
+  summary?: Record<string, number>;
+  surfaces?: Array<{ id?: string; href?: string }>; // brand-ok — opaque wire DTO id
+  artifacts?: Array<{ id?: string; href?: string }>; // brand-ok — opaque wire DTO id
+  components?: Array<{ id?: string; path?: string }>; // brand-ok — opaque wire DTO id
+  wiki?: Array<{ id?: string; href?: string }>; // brand-ok — opaque wire DTO id
+  scripts?: Array<{ id?: string; label?: string; doc?: string }>; // brand-ok — opaque wire DTO id
+}
+
+const REPO_ROOT = new URL('..', import.meta.url).pathname;
+
+/** 200 public or 302 Access — never 404 / SPA fallback. */
+async function probeEdgeHref(href: string): Promise<string> {
+  const res = await fetch(`${BASE}${href}`, { redirect: 'manual' });
+  const access =
+    res.status === 302 && (res.headers.get('location') ?? '').includes('cloudflareaccess');
+  if (!res.ok && !access) throw new Error(`${href} → ${res.status}`);
+  return `${href} ${access ? '302 Access' : res.status}`;
+}
+
+async function weaveChecks(): Promise<Check[]> {
+  const res = await fetch(`${BASE}/registry/portal-weave.json`);
+  if (!res.ok) throw new Error(`portal-weave.json → ${res.status}`);
+  const weave = (await res.json()) as WeavePayload;
+  const out: Check[] = [];
+
+  const probeGroup = async (
+    hrefs: Array<string | undefined>,
+    jsonParse = false
+  ): Promise<string> => {
+    const fails: string[] = [];
+    for (const href of hrefs) {
+      if (!href) continue;
+      try {
+        await probeEdgeHref(href);
+        if (jsonParse) {
+          const r = await fetch(`${BASE}${href}`);
+          await r.json();
+        }
+      } catch (e) {
+        fails.push(e instanceof Error ? e.message : String(e));
+      }
+    }
+    if (fails.length) throw new Error(fails.slice(0, 4).join(' · '));
+    const total = hrefs.filter(Boolean).length;
+    return `${total}/${total} reachable`;
+  };
+
+  out.push(
+    await check('weave surfaces', 'core', () => probeGroup((weave.surfaces ?? []).map(s => s.href)))
+  );
+  out.push(
+    await check('weave artifacts', 'core', () =>
+      probeGroup(
+        (weave.artifacts ?? []).map(a => a.href),
+        true
+      )
+    )
+  );
+  out.push(
+    await check('weave components', 'core', () =>
+      probeGroup((weave.components ?? []).map(c => c.path))
+    )
+  );
+  out.push(
+    await check('weave script docs', 'core', async () => {
+      const missing: string[] = [];
+      for (const s of weave.scripts ?? []) {
+        if (!s.doc) continue;
+        if (!(await Bun.file(`${REPO_ROOT}${s.doc}`).exists())) {
+          missing.push(`${s.label ?? s.id}→${s.doc}`);
+        }
+      }
+      if (missing.length) throw new Error(missing.slice(0, 4).join(' · '));
+      const total = (weave.scripts ?? []).filter(s => s.doc).length;
+      return `${total}/${total} doc paths exist`;
+    })
+  );
+  out.push(
+    await check('weave meta counts', 'core', async () => {
+      const s = weave.summary ?? {};
+      const actual: Record<string, number> = {
+        surfaces: weave.surfaces?.length ?? 0,
+        artifacts: weave.artifacts?.length ?? 0,
+        components: weave.components?.length ?? 0,
+        wiki: weave.wiki?.length ?? 0,
+        scripts: weave.scripts?.length ?? 0,
+      };
+      const mismatched = Object.entries(actual).filter(
+        ([k, v]) => s[k] !== undefined && s[k] !== v
+      );
+      if (mismatched.length) {
+        throw new Error(mismatched.map(([k, v]) => `${k}: summary ${s[k]}≠${v}`).join(' · '));
+      }
+      return Object.entries(actual)
+        .map(([k, v]) => `${k}=${v}`)
+        .join(' · ');
+    })
+  );
+  // Orphans: artifacts nothing in the weave links to (warning only, never fails).
+  const linked = new Set([
+    ...(weave.surfaces ?? []).map(s => s.href),
+    ...(weave.wiki ?? []).map(w => w.href),
+    ...(weave.components ?? []).map(c => c.path),
+    ...Object.values((weave as { related?: Record<string, string> }).related ?? {}),
+  ]);
+  const orphans = (weave.artifacts ?? []).filter(a => a.href && !linked.has(a.href));
+  out.push({
+    name: 'weave orphans',
+    ok: true,
+    detail: orphans.length
+      ? `${orphans.length} unlinked (warn): ${orphans
+          .slice(0, 4)
+          .map(o => o.href)
+          .join(', ')}`
+      : 'all artifacts linked',
+    tier: 'core',
+  });
+  return out;
+}
+
+async function weaveMain() {
+  console.log(`Pages weave verify → ${BASE}/registry/portal-weave.json`);
+  const checks = await weaveChecks();
+  for (const c of checks)
+    console.log(c.ok ? `✓ ${c.name}: ${c.detail}` : `✗ ${c.name}: ${c.detail}`);
+  const failed = checks.filter(c => !c.ok);
+  if (failed.length) {
+    console.error(`\n❌ ${failed.length} weave check(s) failed`);
+    process.exit(1);
+  }
+  console.log('\n✅ Weave verify passed');
+}
+
 async function main() {
   console.log(`Pages edge verify → ${BASE}${TAXONOMY ? ' (--taxonomy)' : ''}`);
   const checks = await Promise.all([
@@ -308,7 +445,8 @@ async function main() {
 }
 
 if (import.meta.main) {
-  main().catch(e => {
+  const entry = Bun.argv.includes('--weave') ? weaveMain : main;
+  entry().catch(e => {
     console.error(e instanceof Error ? e.message : e);
     process.exit(1);
   });
