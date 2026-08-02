@@ -71,6 +71,12 @@
   --status-stale-bg: var(--tone-warn-bg);
   --status-old-bg: var(--tone-old-bg);
   --status-critical-bg: var(--tone-bad-bg);
+  --opportunity-stage-new: var(--tone-info);
+  --opportunity-stage-qualifying: var(--tone-warn);
+  --opportunity-stage-proposal: var(--accent);
+  --opportunity-stage-contracting: var(--tone-old);
+  --opportunity-stage-won: var(--tone-ok);
+  --opportunity-stage-lost: var(--tone-bad);
   --badge-default: var(--surface);
   --badge-hover: var(--surface-hover);
   --badge-active: var(--accent-glow);

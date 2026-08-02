@@ -275,6 +275,12 @@
       "concept": "page.partners",
       "sections": [
         {
+          "hash": "opportunities",
+          "domId": "section:opportunities",
+          "conceptId": "section.partnersOpportunities",
+          "title": "Opportunity pipeline"
+        },
+        {
           "hash": "telegram",
           "domId": "section:telegram",
           "conceptId": "section.partnersTelegram",
@@ -391,21 +397,21 @@
     }
   ],
   "summary": {
-    "concepts": 425,
-    "active": 424,
+    "concepts": 436,
+    "active": 435,
     "deprecated": 1,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 288,
+    "portalSemantics": 299,
     "categories": {
       "market": 33,
       "model": 18,
-      "pipeline": 41,
+      "pipeline": 47,
       "tournament": 86,
       "trading": 58,
-      "ui": 162,
-      "warehouse": 27
+      "ui": 163,
+      "warehouse": 31
     },
     "kinds": {
       "baseline": 2,
@@ -414,7 +420,7 @@
       "country": 25,
       "cross_market": 2,
       "event": 2,
-      "evidence": 10,
+      "evidence": 14,
       "jurisdiction": 2,
       "kpi": 4,
       "league": 20,
@@ -425,21 +431,21 @@
       "region": 7,
       "registry": 39,
       "sport": 10,
-      "ui": 236
+      "ui": 243
     },
     "semanticTypes": {
       "classification": 149,
       "location": 4,
       "presentation": 14,
-      "resource": 89,
-      "state": 31,
+      "resource": 94,
+      "state": 37,
       "version": 1
     },
     "uiRoles": {
-      "badge": 55,
+      "badge": 61,
       "chip": 110,
-      "code": 33,
-      "heading": 68,
+      "code": 37,
+      "heading": 69,
       "link": 18,
       "token": 4
     }
@@ -6869,6 +6875,36 @@
       "color": "#58a6ff"
     },
     {
+      "id": "section.partnersOpportunities",
+      "label": "Opportunity pipeline",
+      "description": "Partners board section for event-sourced partner and account opportunities, current stage, next action, and linked agreements.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "opportunities",
+        "partner pipeline",
+        "account pipeline"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.partners",
+        "section.partnersAccountsLimits",
+        "section.partnersAccounting"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "color": "#58a6ff"
+    },
+    {
       "id": "section.partnersOuts",
       "label": "Partner outs",
       "description": "Partners board section for per-out book, funding, status, balance, and limits.",
@@ -6958,7 +6994,7 @@
     {
       "id": "ui.route.partnerHash",
       "label": "Partner hash route",
-      "description": "URLPattern hash route for partner deep links: #partners, #partner/:code, #partner/:code/out/:outId, #partner/:code/accounting, #partner/:code/telegram/:topic, #book/:bookId.",
+      "description": "URLPattern hash route for partner deep links: #partners, #partner/:code, #partner/:code/opportunities, #partner/:code/opportunity/:opportunityId, #partner/:code/out/:outId, #partner/:code/accounting, #partner/:code/telegram/:topic, #book/:bookId.",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
@@ -6972,6 +7008,7 @@
       "seeAlso": [
         "page.partners",
         "section.partnersOuts",
+        "section.partnersOpportunities",
         "section.partnersAccounting",
         "section.partnersTelegram"
       ],
@@ -13461,9 +13498,357 @@
       "color": "#3fb950"
     },
     {
+      "id": "opportunity.stage.new",
+      "label": "New opportunity",
+      "description": "New partner or account opportunity awaiting qualification.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "new opportunity",
+        "lead"
+      ],
+      "values": [
+        "new"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.ops.event",
+        "page.partners"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#58a6ff"
+    },
+    {
+      "id": "opportunity.stage.qualifying",
+      "label": "Qualifying",
+      "description": "Opportunity under fit, account, and operating-readiness review.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "qualification",
+        "qualified lead"
+      ],
+      "values": [
+        "qualifying"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.ops.event",
+        "page.partners"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#d29922"
+    },
+    {
+      "id": "opportunity.stage.proposal",
+      "label": "Proposal",
+      "description": "Opportunity with commercial or operating terms proposed.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "proposal sent",
+        "terms proposed"
+      ],
+      "values": [
+        "proposal"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.ops.event",
+        "page.partners"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#a371f7"
+    },
+    {
+      "id": "opportunity.stage.contracting",
+      "label": "Contracting",
+      "description": "Opportunity progressing through agreement execution.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "contract",
+        "agreement pending"
+      ],
+      "values": [
+        "contracting"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.ops.event",
+        "page.partners"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f0883e"
+    },
+    {
+      "id": "opportunity.stage.won",
+      "label": "Won",
+      "description": "Opportunity converted into active partner, account, or agreement work.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "closed won",
+        "converted"
+      ],
+      "values": [
+        "won"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.ops.event",
+        "page.partners"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#3fb950"
+    },
+    {
+      "id": "opportunity.stage.lost",
+      "label": "Lost",
+      "description": "Opportunity closed without conversion.",
+      "category": "pipeline",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "closed lost",
+        "declined"
+      ],
+      "values": [
+        "lost"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.ops.event",
+        "page.partners"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#f85149"
+    },
+    {
+      "id": "event.opportunity.created",
+      "label": "Opportunity created",
+      "description": "Append-only creation event for an opportunity.",
+      "category": "warehouse",
+      "kind": "evidence",
+      "mapsTo": null,
+      "synonyms": [
+        "opportunity created"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.ops.event",
+        "page.partners"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "resource",
+      "uiRole": "code",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#58a6ff"
+    },
+    {
+      "id": "event.opportunity.stage_changed",
+      "label": "Opportunity stage changed",
+      "description": "Append-only transition between opportunity stages.",
+      "category": "warehouse",
+      "kind": "evidence",
+      "mapsTo": null,
+      "synonyms": [
+        "opportunity stage changed"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.ops.event",
+        "page.partners"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "resource",
+      "uiRole": "code",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#d29922"
+    },
+    {
+      "id": "event.opportunity.account_linked",
+      "label": "Opportunity account linked",
+      "description": "Append-only link from an opportunity to an account.",
+      "category": "warehouse",
+      "kind": "evidence",
+      "mapsTo": null,
+      "synonyms": [
+        "opportunity account linked"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.ops.event",
+        "page.partners"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "resource",
+      "uiRole": "code",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#1f6feb"
+    },
+    {
+      "id": "event.opportunity.agreement_created",
+      "label": "Opportunity agreement created",
+      "description": "Append-only link from an opportunity to signed commercial terms.",
+      "category": "warehouse",
+      "kind": "evidence",
+      "mapsTo": null,
+      "synonyms": [
+        "opportunity agreement created"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "partner.ops.event",
+        "page.partners"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "resource",
+      "uiRole": "code",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": "#3fb950"
+    },
+    {
       "id": "partner.ops.event",
       "label": "Partner-ops event code",
-      "description": "Factory mirror event codes for partner/out/deposit/credit/free-roll/telegram actions. Soft ledger stays in ct. Prefer event.* glossary leaves for UI.",
+      "description": "Factory mirror event codes for partner, opportunity, out, deposit, credit, free-roll, and Telegram actions. Soft ledger stays in ct. Prefer event.* glossary leaves for UI.",
       "category": "warehouse",
       "kind": "registry",
       "mapsTo": null,
@@ -13482,7 +13867,11 @@
         "FREE_ROLL_APPLIED",
         "SETTLEMENT_PROCESSED",
         "TELEGRAM_INVITE_SENT",
-        "TELEGRAM_MESSAGE_PINNED"
+        "TELEGRAM_MESSAGE_PINNED",
+        "OPPORTUNITY_CREATED",
+        "OPPORTUNITY_STAGE_CHANGED",
+        "OPPORTUNITY_ACCOUNT_LINKED",
+        "OPPORTUNITY_AGREEMENT_CREATED"
       ],
       "valueLabels": null,
       "seeAlso": [
@@ -13491,6 +13880,7 @@
         "accounting.credit",
         "accounting.free_roll",
         "telegram.wire",
+        "event.opportunity.created",
         "page.partners"
       ],
       "status": "active",

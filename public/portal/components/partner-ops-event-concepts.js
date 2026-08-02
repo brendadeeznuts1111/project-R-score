@@ -2,7 +2,7 @@
  * GENERATED — bun run partners:event-concepts:bake
  * Do not edit by hand. Source: lib/telegram/partner-ops-events.ts (PARTNER_OPS_EVENT_GLOSSARY).
  *
- * Partners-ops ledger code → Kalshi `event.*` leaf (static portal SSOT).
+ * Partners-ops event code → governed `event.*` leaf (static portal SSOT).
  *
  * @see lib/telegram/partner-ops-events.ts
  * @see public/portal/account/glossary-map.js
@@ -20,6 +20,10 @@ export const PARTNER_OPS_EVENT_CODE_CONCEPTS = Object.freeze({
   SETTLEMENT_PROCESSED: 'event.settlement.processed',
   TELEGRAM_INVITE_SENT: 'event.telegram.invite_sent',
   TELEGRAM_MESSAGE_PINNED: 'event.telegram.message_pinned',
+  OPPORTUNITY_CREATED: 'event.opportunity.created',
+  OPPORTUNITY_STAGE_CHANGED: 'event.opportunity.stage_changed',
+  OPPORTUNITY_ACCOUNT_LINKED: 'event.opportunity.account_linked',
+  OPPORTUNITY_AGREEMENT_CREATED: 'event.opportunity.agreement_created',
 });
 
 /** Map a partners-ops event code onto its Kalshi event.* leaf when known. */
