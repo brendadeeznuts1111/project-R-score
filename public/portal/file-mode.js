@@ -4,21 +4,58 @@
  * The real portal remains HTTP-only: root-relative assets, APIs, Access, and
  * registry fetches need an origin. This classic relative script still loads
  * under file:// and replaces the broken-looking shell with actionable routes.
+ *
+ * @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern component routing
+ * @see https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster — test/exec fast path
  */
 (function installFileModeHandoff() {
   if (location.protocol !== 'file:') return;
 
+  const LOCAL_PORTAL_ORIGIN = 'http://localhost:3000';
+  const DEPLOYED_PORTAL_ORIGIN = 'https://score.factory-wager.com';
+  const portalDestinationPatterns =
+    typeof URLPattern === 'function'
+      ? {
+          local: new URLPattern({
+            protocol: 'http',
+            hostname: 'localhost',
+            port: '3000',
+            pathname: '/portal/:surface(.*)',
+          }),
+          deployed: new URLPattern({
+            protocol: 'https',
+            hostname: 'score.factory-wager.com',
+            pathname: '/portal/:surface(.*)',
+          }),
+        }
+      : null;
+
   document.documentElement.dataset.portalRuntime = 'file';
 
   function portalRoute() {
-    const path = decodeURIComponent(location.pathname);
+    const path = location.pathname;
     const publicMarker = '/public/';
     const markerAt = path.lastIndexOf(publicMarker);
     if (markerAt < 0) return '/portal/';
 
     let route = `/${path.slice(markerAt + publicMarker.length)}`;
     route = route.replace(/\/index\.html$/, '/');
-    return route.startsWith('/portal/') ? route : '/portal/';
+    return route;
+  }
+
+  function portalUrl(origin, destination) {
+    let target = new URL(portalRoute(), origin);
+    const pattern = portalDestinationPatterns?.[destination];
+    const matches = pattern
+      ? pattern.test(target)
+      : target.origin === origin && target.pathname.startsWith('/portal/');
+
+    if (!matches) target = new URL('/portal/', origin);
+
+    // Hashes are client-side semantic routes. Queries are intentionally not
+    // forwarded because they cross the HTTP boundary and require allowlisting.
+    target.hash = location.hash;
+    return target;
   }
 
   function element(tag, className, text) {
@@ -28,18 +65,20 @@
     return node;
   }
 
-  function action(label, href, primary) {
+  function action(label, href, primary, origin) {
     const link = element('a', primary ? 'file-mode-action primary' : 'file-mode-action', label);
     link.href = href;
+    link.referrerPolicy = 'no-referrer';
+    link.rel = 'noreferrer';
+    link.dataset.portalOrigin = origin;
     return link;
   }
 
   function mount() {
     if (!document.body || document.querySelector('.file-mode-guard')) return;
 
-    const route = portalRoute();
-    const localUrl = new URL(route, 'http://localhost:3000');
-    const deployedUrl = new URL(route, 'https://project-r-score.pages.dev');
+    const localUrl = portalUrl(LOCAL_PORTAL_ORIGIN, 'local');
+    const deployedUrl = portalUrl(DEPLOYED_PORTAL_ORIGIN, 'deployed');
     const guard = element('main', 'file-mode-guard');
     guard.setAttribute('aria-labelledby', 'file-mode-title');
 
@@ -60,8 +99,8 @@
     const actions = element('nav', 'file-mode-actions');
     actions.setAttribute('aria-label', 'Portal origins');
     actions.append(
-      action('Open local portal', localUrl.href, true),
-      action('Open deployed portal', deployedUrl.href, false)
+      action('Open local portal', localUrl.href, true, 'local'),
+      action('Open deployed portal', deployedUrl.href, false, 'deployed')
     );
     panel.append(actions);
 
@@ -79,6 +118,12 @@
         'p',
         '',
         'Browser file mode has no HTTP origin. Paths such as /portal/style.css and /api/health cannot resolve to this repository’s public root.'
+      ),
+      element('strong', '', 'Deployed security'),
+      element(
+        'p',
+        '',
+        'Cloudflare Access handles authorized sign-in and the edge session before the deployed portal loads. Authentication responses stay private and no-store; portal assets retain their explicit cache policy.'
       )
     );
     panel.append(boundary);
