@@ -34,6 +34,7 @@ describe('Cloudflare security headers', () => {
 
   test('middleware preserves route headers and applies browser protections', async () => {
     const response = await onRequest({
+      request: new Request('https://factory-wager.com/portal/'),
       next: async () =>
         Response.json(
           { ok: true },
