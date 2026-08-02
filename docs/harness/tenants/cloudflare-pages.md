@@ -2,7 +2,7 @@
 
 **Tenant** `cloudflare-pages` (Git-integrated Pages · not `deploy:production`)  
 **Project** `project-r-score` → https://project-r-score.pages.dev  
-**Custom domain** `score.factory-wager.com` (Pages project domain attached; **needs zone DNS CNAME**)  
+**Custom domain** `score.factory-wager.com` (live · proxied; CNAME `score` → `project-r-score.pages.dev`)  
 **Proof** `cloudflare-pages-env-ssot`  
 **Owner** [`config/r2-env.ts`](../../../config/r2-env.ts) · [`.env.example`](../../../.env.example)
 
@@ -138,6 +138,7 @@ Use Cloudflare MCP `execute` in Cursor to inspect failed builds (`deployments/{i
 | `cloudflare:deploy:wait` | Trigger + poll until success/failure (log tail on fail) |
 | `cloudflare:deploy:verify` | Wait + `verify:pages-edge` (core checks; `--taxonomy` for full 13-contract gate) |
 | `cloudflare:deploy:verify:taxonomy` | Wait + full edge taxonomy gate |
+| `verify:weave` | Post-deploy weave smoke (`portal-weave.json` surfaces/artifacts/components); SSOT [`lib/verification/pages-edge-weave.ts`](../../../lib/verification/pages-edge-weave.ts) |
 | `cloudflare:publish` | `ops:snapshot` → registry git gate → optional `--commit --push` → deploy + taxonomy |
 | `cloudflare:publish:push` | Same with commit + push |
 
@@ -239,7 +240,7 @@ Ops experiments/prediction on the portal:
 
 ### Custom domain: `score.factory-wager.com`
 
-Pages project domain is registered. **Activate DNS** (token needs Zone.DNS Edit):
+Custom domain is **live** (HTTP 200 on apex; portal paths may 302 Access). **Verify or repair DNS** if drift appears (token needs Zone.DNS Edit):
 
 ```bash
 bash scripts/cloudflare-pages-domain-dns.sh
@@ -247,14 +248,13 @@ bash scripts/cloudflare-pages-domain-dns.sh
 #   CNAME  score  →  project-r-score.pages.dev  (proxied)
 ```
 
-Until DNS exists, use:
-
 | Surface | URL |
 |---------|-----|
-| Pages production | https://project-r-score.pages.dev/ |
-| Ops dashboard (C4/C5) | https://project-r-score.pages.dev/portal/ops/ |
-| Ops summary API | https://project-r-score.pages.dev/api/operations/summary |
-| Ops summary static | https://project-r-score.pages.dev/registry/ops-summary.json |
+| Production (custom) | https://score.factory-wager.com/ |
+| Pages hostname | https://project-r-score.pages.dev/ |
+| Ops dashboard (C4/C5) | https://score.factory-wager.com/portal/ops/ (or pages.dev) |
+| Ops summary API | https://score.factory-wager.com/api/operations/summary |
+| Ops summary static | https://score.factory-wager.com/registry/ops-summary.json |
 
 `wiki.factory-wager.com` remains **GitHub Pages** (separate content). Do not repoint it without a deliberate content migration.
 
@@ -290,30 +290,53 @@ curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" https://project-r-scor
 curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" https://project-r-score.pages.dev/registry/prediction/coverage-chart.svg
 curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" https://project-r-score.pages.dev/portal/data.js
 bun run verify:pages-edge
+bun run verify:weave -- --summary
 ```
 
-Expect: ops HTML title `Operations · FactoryWager`; JSON `application/json`; SVG `image/svg+xml` (not the landing-page HTML shell).
+Expect: ops HTML title `Operations · FactoryWager`; JSON `application/json`; SVG `image/svg+xml` (not the landing-page HTML shell). Weave summary: group pass/fail for surfaces · artifacts · components against live `portal-weave.json`.
+
+### Weave verify
+
+SSOT: [`lib/verification/pages-edge-weave.ts`](../../../lib/verification/pages-edge-weave.ts) · script `bun run verify:weave`. Script-level flags; Bun CLI flags stay orthogonal ([`config/runtime-flags.json`](../../../config/runtime-flags.json) · `bun run portal:flags`).
+
+```bash
+bun run verify:weave
+bun run verify:weave -- --retries 3 --backoff 1000 --output table
+bun run verify:weave -- --output json
+bun run verify:weave -- --summary
+bun run verify:weave -- --correlation-id run-1 --no-orphans --summary
+bun run verify:weave -- --orphans=group --summary    # categorized inventory (default)
+bun run verify:weave -- --orphans=report --summary   # flat unlinked path list
+bun run verify:weave -- --summary                    # summary only (CI): groups + latency/size/errors
+bun run verify:weave -- --no-subdomains --summary    # skip cross-host probes
+bun run verify:weave -- --columns path,group,latency,detail
+bun run verify:weave -- --no-surfaces --no-artifacts --no-docs --no-meta --no-orphans --summary
+
+# Orphans: --orphans=group (default) · --orphans=report · --orphans=warn · --orphans=off / --no-orphans
+# Intentional orphans: artifact.purpose shared|script|audit (SSOT lib/http/portal-weave.ts) — skipped
+# Subdomains (default on): --no-subdomains · --subdomains-config <path> (default config/subdomains.json)
+# Host inventory SSOT: config/surfaces.toml · probe matrix: config/subdomains.json
+# Parallel: surfaces · artifacts · components · subdomains via Promise.all (per-path latency kept)
+# Columns: --columns path,group,httpStatus,latency,size,contentType,detail
+# See also: set WEAVE_DASHBOARD_URL for an extra Dashboard link
+# Toggles (default on): --no-surfaces · --no-artifacts · --no-docs · --no-meta · --no-orphans · --no-subdomains
+# Also: --retries N · --backoff MS · --output table|json · --summary · --correlation-id <id>
+# Table mode: header (id · shortcode · timestamp · elapsed) + rich group summary + per-path details.
+```
+
+Dev loop / debug (Bun runtime flags before `run`; `--watch` re-fires probes — prefer `--no-clear-screen`):
+
+```bash
+bun --watch --no-clear-screen run verify:weave
+bun --inspect-brk run verify:weave
+```
 
 ### Runtime flags for edge verification
 
-`verify:pages-edge` (and `--weave`) are script-level flags; Bun CLI flags stay orthogonal runtime layers. Curated SSOT: [`config/runtime-flags.json`](../../../config/runtime-flags.json) (`bun run portal:flags`).
-
 ```bash
-# Local proof / CI (clean output)
 bun --silent run verify:pages-edge
 bun --silent run verify:pages-edge:taxonomy
-bun tools/verify-pages-edge.ts --weave
-
-# Dev loop while editing the verifier itself
-bun --watch --no-clear-screen tools/verify-pages-edge.ts --weave
-
-# Debug the pipeline
-bun --inspect-brk tools/verify-pages-edge.ts --weave
-
-# Explicit env (skips auto-loaded .env ambiguity)
 bun --env-file=.env run verify:pages-edge
-
-# Low-memory runner
 bun --smol run verify:pages-edge
 ```
 
@@ -321,4 +344,3 @@ Repo policy notes:
 
 - **`-i` ≡ `--install=fallback`, never `--no-install`** — `frozenLockfile = true` already fails on lockfile drift; the immutable deploy proof needs `CLOUDFLARE_API_TOKEN` from env.
 - **`--console-depth=N`** overrides bunfig `[console] depth` (repo pin 6) for native `console.log` object depth; the policy layer in `lib/console-depth.ts` reads it too.
-- The `--weave` mode is read-only against the edge; `--watch` re-fires probes on every save, so prefer `--no-clear-screen` to compare runs.

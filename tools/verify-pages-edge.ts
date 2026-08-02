@@ -10,14 +10,24 @@
  *   bun tools/verify-pages-edge.ts --taxonomy   # also gate proof subsystem fields
  *   bun tools/verify-pages-edge.ts --pm         # package-manager publish-plane probes
  *   bun tools/verify-pages-edge.ts --pm --strict-pm  # promote pm skips to failures
+ *   bun run verify:weave
+ *   bun tools/verify-pages-edge.ts --weave [--retries N] [--backoff MS] [--output table|json] [--summary]
+ *     [--correlation-id <id>] [--orphans=group|report|warn|off] [--columns path,group,httpStatus,…]
+ *     [--subdomains-config <path>] [--no-subdomains] [--all]
+ *     [--no-surfaces] [--no-artifacts] [--no-docs] [--no-meta] [--orphans=off]
  *   PAGES_VERIFY_BASE=https://project-r-score.pages.dev bun tools/verify-pages-edge.ts
  *
  * @see docs/harness/tenants/cloudflare-pages.md
  */
 import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
-import { inspectTable } from '../lib/console-depth.ts';
 import { inspectCloudflareSecurityHeaders } from '../lib/http/cloudflare-security-headers.ts';
 import { isCloudflareAccessEnforced } from '../lib/verification/cloudflare-access-live.ts';
+import {
+  parseWeaveOptions,
+  renderWeaveMatrix,
+  runWeaveVerify,
+  type WeaveProbeRow,
+} from '../lib/verification/pages-edge-weave.ts';
 import { runPmProbes } from '../lib/verification/pm-registry-probes.ts';
 import { PROOF_TAXONOMY_CONTRACT_COUNT } from '../lib/verification/proof-taxonomy.ts';
 
@@ -165,221 +175,11 @@ async function expectImmutableDeployProof() {
   return `deploy ${deployId} @ ${commit} · P1 markers ok · sections ${titled}/${sections}`;
 }
 
-// ── Weave consistency (--weave) ─────────────────────────────────────────────
-
-interface WeavePayload {
-  summary?: Record<string, number>;
-  surfaces?: Array<{ id?: string; href?: string }>; // brand-ok — opaque wire DTO id
-  artifacts?: Array<{ id?: string; href?: string }>; // brand-ok — opaque wire DTO id
-  components?: Array<{ id?: string; path?: string }>; // brand-ok — opaque wire DTO id
-  wiki?: Array<{ id?: string; href?: string }>; // brand-ok — opaque wire DTO id
-  scripts?: Array<{ id?: string; label?: string; doc?: string }>; // brand-ok — opaque wire DTO id
-}
-
-const REPO_ROOT = new URL('..', import.meta.url).pathname;
-
-interface WeaveProbeRow {
-  group: string;
-  path: string;
-  status: 'pass' | 'fail';
-  latencyMs: number;
-  detail: string;
-}
-
-/** 200 public or 302 Access — never 404 / SPA fallback. */
-async function probeEdgeHref(href: string): Promise<string> {
-  const res = await fetch(`${BASE}${href}`, { redirect: 'manual' });
-  const access =
-    res.status === 302 && (res.headers.get('location') ?? '').includes('cloudflareaccess');
-  if (!res.ok && !access) throw new Error(`${href} → ${res.status}`);
-  return `${href} ${access ? '302 Access' : res.status}`;
-}
-
-/** Grouped coverage matrix over per-path probe rows (console-depth wrapper, not raw inspect.table). */
-function renderWeaveMatrix(rows: WeaveProbeRow[]): string {
-  const groups = new Map<string, WeaveProbeRow[]>();
-  for (const r of rows) {
-    const list = groups.get(r.group) ?? [];
-    list.push(r);
-    groups.set(r.group, list);
-  }
-  const tableRows: Array<Record<string, string | number>> = [];
-  for (const [group, items] of groups) {
-    const fail = items.filter(i => i.status === 'fail').length;
-    const avg = Math.round(items.reduce((s, i) => s + i.latencyMs, 0) / items.length);
-    tableRows.push({
-      path: `── ${group} ──`,
-      group: `(${items.length})`,
-      status: fail === 0 ? `✅ ${items.length - fail}✓` : `❌ ${fail}✗`,
-      latency: `${avg}ms avg`,
-      detail: '',
-    });
-    for (const item of items) {
-      tableRows.push({
-        path: item.path,
-        group: '',
-        status: item.status === 'pass' ? '✅' : '❌',
-        latency: `${item.latencyMs}ms`,
-        detail: item.detail,
-      });
-    }
-  }
-  const total = rows.length;
-  const passed = rows.filter(r => r.status === 'pass').length;
-  const rate = total > 0 ? Math.round((passed / total) * 100) : 0;
-  tableRows.push({
-    path: 'TOTAL',
-    group: `(${total})`,
-    status: rate === 100 ? `✅ ${rate}%` : `❌ ${rate}%`,
-    latency: '',
-    detail: `${passed}✓ ${total - passed}✗`,
-  });
-  return inspectTable(tableRows, ['path', 'group', 'status', 'latency', 'detail'], {
-    colors: true,
-  });
-}
-
-async function weaveChecks(): Promise<{ checks: Check[]; rows: WeaveProbeRow[] }> {
-  const res = await fetch(`${BASE}/registry/portal-weave.json`);
-  if (!res.ok) throw new Error(`portal-weave.json → ${res.status}`);
-  const weave = (await res.json()) as WeavePayload;
-  const out: Check[] = [];
-  const rows: WeaveProbeRow[] = [];
-
-  const probeGroup = async (
-    group: string,
-    hrefs: Array<string | undefined>,
-    jsonParse = false
-  ): Promise<string> => {
-    const fails: string[] = [];
-    for (const href of hrefs) {
-      if (!href) continue;
-      const t0 = performance.now();
-      try {
-        const detail = await probeEdgeHref(href);
-        if (jsonParse) {
-          const r = await fetch(`${BASE}${href}`);
-          await r.json();
-        }
-        rows.push({
-          group,
-          path: href,
-          status: 'pass',
-          latencyMs: Math.round(performance.now() - t0),
-          detail: detail.split(' ').pop() ?? '',
-        });
-      } catch (e) {
-        const msg = e instanceof Error ? e.message : String(e);
-        fails.push(msg);
-        rows.push({
-          group,
-          path: href,
-          status: 'fail',
-          latencyMs: Math.round(performance.now() - t0),
-          detail: msg.slice(0, 40),
-        });
-      }
-    }
-    if (fails.length) throw new Error(fails.slice(0, 4).join(' · '));
-    const total = hrefs.filter(Boolean).length;
-    return `${total}/${total} reachable`;
-  };
-
-  out.push(
-    await check('weave surfaces', 'core', () =>
-      probeGroup(
-        'surfaces',
-        (weave.surfaces ?? []).map(s => s.href)
-      )
-    )
-  );
-  out.push(
-    await check('weave artifacts', 'core', () =>
-      probeGroup(
-        'artifacts',
-        (weave.artifacts ?? []).map(a => a.href),
-        true
-      )
-    )
-  );
-  out.push(
-    await check('weave components', 'core', () =>
-      probeGroup(
-        'components',
-        (weave.components ?? []).map(c => c.path)
-      )
-    )
-  );
-  out.push(
-    await check('weave script docs', 'core', async () => {
-      const missing: string[] = [];
-      for (const s of weave.scripts ?? []) {
-        if (!s.doc) continue;
-        if (!(await Bun.file(`${REPO_ROOT}${s.doc}`).exists())) {
-          missing.push(`${s.label ?? s.id}→${s.doc}`);
-        }
-      }
-      if (missing.length) throw new Error(missing.slice(0, 4).join(' · '));
-      const total = (weave.scripts ?? []).filter(s => s.doc).length;
-      return `${total}/${total} doc paths exist`;
-    })
-  );
-  out.push(
-    await check('weave meta counts', 'core', async () => {
-      const s = weave.summary ?? {};
-      const actual: Record<string, number> = {
-        surfaces: weave.surfaces?.length ?? 0,
-        artifacts: weave.artifacts?.length ?? 0,
-        components: weave.components?.length ?? 0,
-        wiki: weave.wiki?.length ?? 0,
-        scripts: weave.scripts?.length ?? 0,
-      };
-      const mismatched = Object.entries(actual).filter(
-        ([k, v]) => s[k] !== undefined && s[k] !== v
-      );
-      if (mismatched.length) {
-        throw new Error(mismatched.map(([k, v]) => `${k}: summary ${s[k]}≠${v}`).join(' · '));
-      }
-      return Object.entries(actual)
-        .map(([k, v]) => `${k}=${v}`)
-        .join(' · ');
-    })
-  );
-  // Orphans: artifacts nothing in the weave links to (warning only, never fails).
-  const linked = new Set([
-    ...(weave.surfaces ?? []).map(s => s.href),
-    ...(weave.wiki ?? []).map(w => w.href),
-    ...(weave.components ?? []).map(c => c.path),
-    ...Object.values((weave as { related?: Record<string, string> }).related ?? {}),
-  ]);
-  const orphans = (weave.artifacts ?? []).filter(a => a.href && !linked.has(a.href));
-  out.push({
-    name: 'weave orphans',
-    ok: true,
-    detail: orphans.length
-      ? `${orphans.length} unlinked (warn): ${orphans
-          .slice(0, 4)
-          .map(o => o.href)
-          .join(', ')}`
-      : 'all artifacts linked',
-    tier: 'core',
-  });
-  return { checks: out, rows };
-}
+// ── Weave consistency (--weave) → lib/verification/pages-edge-weave.ts ──
 
 async function weaveMain() {
-  console.log(`Pages weave verify → ${BASE}/registry/portal-weave.json`);
-  const { checks, rows } = await weaveChecks();
-  for (const c of checks)
-    console.log(c.ok ? `✓ ${c.name}: ${c.detail}` : `✗ ${c.name}: ${c.detail}`);
-  console.log(`\n📊 Weave coverage (${rows.length} probes)`);
-  console.log(renderWeaveMatrix(rows));
-  const failed = checks.filter(c => !c.ok);
-  if (failed.length) {
-    console.error(`\n❌ ${failed.length} weave check(s) failed`);
-    process.exit(1);
-  }
-  console.log('\n✅ Weave verify passed');
+  const result = await runWeaveVerify(BASE, parseWeaveOptions());
+  if (!result.ok) process.exit(1);
 }
 
 async function pmMain() {

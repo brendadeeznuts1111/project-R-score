@@ -31,6 +31,32 @@ export type PortalWeaveLink = {
   cli?: string;
 };
 
+/**
+ * Why a registry artifact exists relative to portal surfaces.
+ * - `ui` — owned by a surface / related link (expected to be reachable from weave)
+ * - `shared` — cross-board state; unlinked by design
+ * - `script` — bake/verify/CLI catalogs; not a standalone page
+ * - `audit` — compliance / proof rows consumed by scripts
+ */
+export type PortalWeaveArtifactPurpose = 'shared' | 'script' | 'audit' | 'ui';
+
+/** Non-`ui` purposes are intentional orphans for `verify:weave`. */
+export const INTENTIONAL_ORPHAN_PURPOSES: ReadonlySet<PortalWeaveArtifactPurpose> = new Set([
+  'shared',
+  'script',
+  'audit',
+]);
+
+export type PortalWeaveArtifact = PortalWeaveLink & {
+  purpose?: PortalWeaveArtifactPurpose;
+};
+
+export function isIntentionalOrphanPurpose(
+  purpose: PortalWeaveArtifactPurpose | string | undefined
+): boolean {
+  return purpose === 'shared' || purpose === 'script' || purpose === 'audit';
+}
+
 export type PortalWeaveScript = {
   id?: string; // brand-ok — script slot key
   label: string;
@@ -71,7 +97,7 @@ export type PortalWeavePayload = {
   summary: PortalWeaveSummary;
   related: PortalWeaveRelated;
   surfaces: PortalWeaveLink[];
-  artifacts: PortalWeaveLink[];
+  artifacts: PortalWeaveArtifact[];
   /** Shared chrome modules (topbar, footer, sidebar, …). */
   components: PortalWeaveComponent[];
   /** GitHub Pages wiki (external to score.factory-wager.com). */
@@ -283,58 +309,26 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
 ];
 
 /** Static registry artifacts the portal surfaces depend on. */
-export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
-  { label: 'ops-summary', href: '/registry/ops-summary.json' },
+export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveArtifact[] = [
+  // ── ui (also listed in related) ──
+  { label: 'ops-summary', href: '/registry/ops-summary.json', purpose: 'ui' },
   {
-    label: 'brand-keymap',
-    href: '/registry/brand-keymap.json',
-    note: '57-value catalog · tracked project adoption',
-  },
-  {
-    label: 'domain-glossary',
-    href: '/registry/domain-glossary.json',
-    note: 'schema v3 · domain concepts + sections[] hash/domId/conceptId · deep-link projection',
-  },
-  {
-    label: 'surfaces-state',
-    href: '/registry/surfaces-state.json',
-    note: 'schema v2 · apex/subdomain/backendCode · Access domains · surfaces:bake',
-  },
-  {
-    label: 'telegram-handshake',
-    href: '/registry/telegram-handshake.json',
-    note: 'package-group readiness · invite gaps',
-  },
-  {
-    label: 'telegram-handshake-catalog',
-    href: '/registry/telegram-handshake-catalog.json',
-    note: 'lanes · CLI · constants SSOT',
-  },
-  { label: 'toc-ops', href: '/registry/toc-ops.json', note: 'operate-lite bake' },
-  { label: 'toc-ops bake proof', href: '/registry/toc-ops-bake-proof.json' },
-  { label: 'monitoring', href: '/registry/monitoring.json' },
-  { label: 'skills-catalog', href: '/registry/skills-catalog.json', note: 'Kimi Daimon plane' },
-  {
-    label: 'harness-skills-catalog',
-    href: '/registry/harness-skills-catalog.json',
-    note: 'repo .agents/skills · skill-loop-registry',
+    label: 'toc-ops',
+    href: '/registry/toc-ops.json',
+    note: 'operate-lite bake',
+    purpose: 'ui',
   },
   {
     label: 'packages-graph-map',
     href: '/registry/packages-graph-map.json',
     note: 'workspace coupling · multi-surface · env owners · claim packages-graph-map-v13',
-  },
-  {
-    label: 'install-hygiene-report',
-    href: '/registry/install-hygiene-report.json',
-    note: 'bunfig/cache/npm-install hygiene bake · bake:install-hygiene · monitoring.installHygiene · board /portal/install-hygiene/',
-    group: 'harness',
-    cli: 'bun run bake:install-hygiene',
+    purpose: 'ui',
   },
   {
     label: 'monorepo-health',
     href: '/registry/monorepo-health.json',
     note: 'score 0–100 · claim monorepo-health-score · gate check:monorepo-health · TOC harness glance',
+    purpose: 'ui',
   },
   {
     label: 'doctor-state',
@@ -342,90 +336,172 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     note: 'portal-cli doctor bake · tone green/yellow/red · bunfig/catalog/linker groups · bake:doctor',
     group: 'harness',
     cli: 'bun run bake:doctor',
+    purpose: 'ui',
   },
   {
     label: 'portal-chrome',
     href: '/registry/portal-chrome.json',
     note: 'nav · footer · components SSOT · apply via portal-apply-chrome',
+    purpose: 'ui',
+  },
+  // ── shared / cross-cutting state ──
+  {
+    label: 'brand-keymap',
+    href: '/registry/brand-keymap.json',
+    note: '57-value catalog · tracked project adoption',
+    purpose: 'shared',
   },
   {
-    label: 'env-inventory',
-    href: '/registry/env-inventory.json',
-    note: 'owners · needsInject vs template defaults · packages plane · env:inventory:bake',
+    label: 'domain-glossary',
+    href: '/registry/domain-glossary.json',
+    note: 'schema v3 · domain concepts + sections[] hash/domId/conceptId · deep-link projection',
+    purpose: 'shared',
   },
   {
-    label: 'vault-health',
-    href: '/registry/vault-health.json',
-    note: 'live bake · gate: portal-cli vault health · vault:health:bake',
-  },
-  {
-    label: 'vault-map',
-    href: '/registry/vault-map.json',
-    note: 'display chrome + pass:// paths · no secret values',
-  },
-  {
-    label: 'capability-map-subset',
-    href: '/registry/capability-map-subset.json',
-    note: 'tools hub capability table · full matrix AGENTS.md',
-  },
-  { label: 'dod-queue', href: '/registry/dod-queue.json' },
-  {
-    label: 'compliance-board',
-    href: '/registry/compliance-board.json',
-    note: 'enhancements + shadow + geo · ops-summary.compliance',
-  },
-  {
-    label: 'compliance-enhancements',
-    href: '/registry/compliance-enhancements.json',
-    note: 'deepEquals · escapeHTML proof rows',
-  },
-  {
-    label: 'compliance-shadow',
-    href: '/registry/compliance-shadow.json',
-    note: 'real vs shadow check matrix',
-  },
-  {
-    label: 'limit-raises',
-    href: '/registry/limit-raises.json',
-    note: 'multi-factor raise context bake · agent API snapshot',
+    label: 'surfaces-state',
+    href: '/registry/surfaces-state.json',
+    note: 'schema v2 · apex/subdomain/backendCode · Access domains · surfaces:bake',
+    purpose: 'shared',
   },
   {
     label: 'verification-index',
     href: '/registry/verification-index.json',
     note: 'verify-all rollup · release track',
+    purpose: 'shared',
   },
   {
     label: 'doc-index',
     href: '/registry/doc-index.json',
     note: 'CANONICAL_REFS · bun docs catalog coverage',
+    purpose: 'shared',
   },
-  { label: 'static aggregate', href: '/registry/static.json' },
-  { label: 'proof taxonomy', href: '/registry/proof-taxonomy-audit.json' },
-  { label: 'portal weave', href: '/registry/portal-weave.json' },
+  { label: 'static aggregate', href: '/registry/static.json', purpose: 'shared' },
+  { label: 'portal weave', href: '/registry/portal-weave.json', purpose: 'shared' },
   {
     label: 'content-type matrix',
     href: '/registry/content-type-matrix.json',
     note: 'Pages Functions content-type.ts snapshot',
+    purpose: 'shared',
+  },
+  // ── infrastructure & vault (board-backed state, not standalone surfaces) ──
+  {
+    label: 'install-hygiene-report',
+    href: '/registry/install-hygiene-report.json',
+    note: 'bunfig/cache/npm-install hygiene bake · bake:install-hygiene · monitoring.installHygiene · board /portal/install-hygiene/',
+    group: 'harness',
+    cli: 'bun run bake:install-hygiene',
+    purpose: 'shared',
   },
   {
-    label: 'formdata proof',
-    href: '/registry/formdata-proof.json',
-    note: 'verify:formdata bake',
+    label: 'env-inventory',
+    href: '/registry/env-inventory.json',
+    note: 'owners · needsInject vs template defaults · packages plane · env:inventory:bake',
+    purpose: 'shared',
   },
   {
-    label: 'package-info',
-    href: '/registry/package-info.json',
-    note: 'verify:package-info bake',
+    label: 'vault-health',
+    href: '/registry/vault-health.json',
+    note: 'live bake · gate: portal-cli vault health · vault:health:bake',
+    purpose: 'shared',
+  },
+  {
+    label: 'vault-map',
+    href: '/registry/vault-map.json',
+    note: 'display chrome + pass:// paths · no secret values',
+    purpose: 'shared',
+  },
+  {
+    label: 'capability-map-subset',
+    href: '/registry/capability-map-subset.json',
+    note: 'tools hub capability table · full matrix AGENTS.md',
+    purpose: 'shared',
+  },
+  // ── telegram & partners (ops panel backing data) ──
+  {
+    label: 'telegram-handshake',
+    href: '/registry/telegram-handshake.json',
+    note: 'package-group readiness · invite gaps',
+    purpose: 'shared',
+  },
+  {
+    label: 'telegram-handshake-catalog',
+    href: '/registry/telegram-handshake-catalog.json',
+    note: 'lanes · CLI · constants SSOT',
+    purpose: 'shared',
   },
   {
     label: 'seat-capital-desk',
     href: '/registry/seat-capital-desk.json',
     note: 'FUND status · outs · checklist',
+    purpose: 'shared',
   },
   {
     label: 'partners-ops',
     href: '/registry/partners-ops.json',
     note: 'v2 taxonomy · phases · book types · rails · events',
+    purpose: 'shared',
+  },
+  // ── compliance & audit ──
+  { label: 'dod-queue', href: '/registry/dod-queue.json', purpose: 'audit' },
+  {
+    label: 'compliance-board',
+    href: '/registry/compliance-board.json',
+    note: 'enhancements + shadow + geo · ops-summary.compliance',
+    purpose: 'audit',
+  },
+  {
+    label: 'compliance-enhancements',
+    href: '/registry/compliance-enhancements.json',
+    note: 'deepEquals · escapeHTML proof rows',
+    purpose: 'audit',
+  },
+  {
+    label: 'compliance-shadow',
+    href: '/registry/compliance-shadow.json',
+    note: 'real vs shadow check matrix',
+    purpose: 'audit',
+  },
+  {
+    label: 'proof taxonomy',
+    href: '/registry/proof-taxonomy-audit.json',
+    purpose: 'audit',
+  },
+  // ── skills / registry ops / script-only ──
+  {
+    label: 'skills-catalog',
+    href: '/registry/skills-catalog.json',
+    note: 'Kimi Daimon plane',
+    purpose: 'script',
+  },
+  {
+    label: 'harness-skills-catalog',
+    href: '/registry/harness-skills-catalog.json',
+    note: 'repo .agents/skills · skill-loop-registry',
+    purpose: 'script',
+  },
+  {
+    label: 'limit-raises',
+    href: '/registry/limit-raises.json',
+    note: 'multi-factor raise context bake · agent API snapshot',
+    purpose: 'script',
+  },
+  {
+    label: 'package-info',
+    href: '/registry/package-info.json',
+    note: 'verify:package-info bake',
+    purpose: 'script',
+  },
+  {
+    label: 'toc-ops bake proof',
+    href: '/registry/toc-ops-bake-proof.json',
+    purpose: 'script',
+  },
+  { label: 'monitoring', href: '/registry/monitoring.json', purpose: 'script' },
+  {
+    label: 'formdata proof',
+    href: '/registry/formdata-proof.json',
+    note: 'verify:formdata bake',
+    purpose: 'script',
   },
   {
     label: 'tennis agent-auth',
@@ -433,6 +509,7 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     note: 'cloud agent token status (no secret) · FACTORY_WAGER_TOKEN configured mark',
     group: 'ops',
     cli: 'bun run tennis:agent-auth:bake',
+    purpose: 'script',
   },
 ];
 
@@ -672,7 +749,7 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
   },
 ];
 
-function withLinkIds(links: PortalWeaveLink[], prefix: string): PortalWeaveLink[] {
+function withLinkIds<T extends PortalWeaveLink>(links: T[], prefix: string): T[] {
   return links.map((l, i) => ({
     ...l,
     id: l.id ?? `${prefix}-${i}-${slugFromLabel(l.label)}`,
