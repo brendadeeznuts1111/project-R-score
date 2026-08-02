@@ -23,7 +23,7 @@ hyper_mode = false
 telemetry = false
 
 [duoplus]
-api_key = "dp_TG99I2UDZRQEWTXZ3IQDL7JZ7Z61YFTH"
+api_key = "REDACTED"
 endpoint = "https://api.duoplus.com/v3/resolve"
 timeout = 5
 retries = 3
