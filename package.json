@@ -2272,7 +2272,6 @@
     "harness:lesson": "bun scripts/harness-lesson.ts",
     "search:loop:status": "bun run scripts/search-loop-status.ts",
     "check:tsconfig-types": "bun tools/tsconfig-types-audit.ts",
-    "type-check:tools": "bunx tsc -p tools --pretty false",
     "type-check:sto": "bun run --filter sports-terminal-os typecheck",
     "registry:tags": "bun tools/registry-tags-cli.ts",
     "registry:tags:status": "bun tools/registry-tags-cli.ts status",

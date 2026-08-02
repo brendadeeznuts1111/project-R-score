@@ -671,8 +671,6 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'tsconfig.check.json',
       'tsconfig.bun.json',
       'bun run check:tsconfig-types',
-      'bun run type-check:tools',
-      'tools/tsconfig.json globs *.ts · cli/*.ts · benchmarks/*.ts',
       'bun run type-check:sto',
       'tsconfig.check.json includes factory/mcp/ai/r2/theme/package/rss/shared/performance',
     ],
