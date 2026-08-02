@@ -18,11 +18,15 @@ export const PARTNER_OPS_EVENT_CODES = [
   'SETTLEMENT_PROCESSED',
   'TELEGRAM_INVITE_SENT',
   'TELEGRAM_MESSAGE_PINNED',
+  'OPPORTUNITY_CREATED',
+  'OPPORTUNITY_STAGE_CHANGED',
+  'OPPORTUNITY_ACCOUNT_LINKED',
+  'OPPORTUNITY_AGREEMENT_CREATED',
 ] as const;
 
 export type PartnerOpsEventCode = (typeof PARTNER_OPS_EVENT_CODES)[number];
 
-/** Option A — event codes map to Kalshi glossary event.* leaves (UI/Telegram). */
+/** Event codes map to governed event.* glossary leaves (shared core or Factory overlay). */
 export const PARTNER_OPS_EVENT_GLOSSARY: Record<PartnerOpsEventCode, string> = {
   PARTNER_REGISTERED: 'event.partner.registered',
   PARTNER_PHASE_CHANGE: 'event.partner.phase_change',
@@ -35,7 +39,13 @@ export const PARTNER_OPS_EVENT_GLOSSARY: Record<PartnerOpsEventCode, string> = {
   SETTLEMENT_PROCESSED: 'event.settlement.processed',
   TELEGRAM_INVITE_SENT: 'event.telegram.invite_sent',
   TELEGRAM_MESSAGE_PINNED: 'event.telegram.message_pinned',
+  OPPORTUNITY_CREATED: 'event.opportunity.created',
+  OPPORTUNITY_STAGE_CHANGED: 'event.opportunity.stage_changed',
+  OPPORTUNITY_ACCOUNT_LINKED: 'event.opportunity.account_linked',
+  OPPORTUNITY_AGREEMENT_CREATED: 'event.opportunity.agreement_created',
 };
+
+import type { OpportunityStage } from './partner-opportunities.ts';
 
 export type PartnerOpsEvent = {
   at: string;
@@ -46,6 +56,15 @@ export type PartnerOpsEvent = {
   amount?: number;
   rail?: string;
   note?: string;
+  opportunityId?: string; // brand-ok — opportunity wire id
+  title?: string;
+  stage?: OpportunityStage;
+  previousStage?: OpportunityStage;
+  accountIds?: readonly string[]; // brand-ok — linked account ids
+  agreementIds?: readonly string[]; // brand-ok — TocDealTerms dealId references
+  owner?: string;
+  value?: number;
+  nextAction?: string;
   conceptId: string; // brand-ok — glossary concept key
 };
 

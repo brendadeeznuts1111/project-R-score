@@ -12,11 +12,14 @@
 const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
 const OUT_ID_RE = /^out-[A-Z0-9-]+$/;
 const BOOK_ID_RE = /^book-[a-z0-9-]+$/;
+const OPPORTUNITY_ID_RE = /^opp-[A-Z0-9-]+$/i;
 const TELEGRAM_TOPICS = new Set(['general', 'ops', 'alerts', 'liquidity', 'accounting']);
 
 const PARTNER_PATTERNS = {
   partners: new URLPattern({ hash: 'partners' }),
   out: new URLPattern({ hash: 'partner/:code/out/:outId' }),
+  opportunity: new URLPattern({ hash: 'partner/:code/opportunity/:opportunityId' }),
+  opportunities: new URLPattern({ hash: 'partner/:code/opportunities' }),
   accounting: new URLPattern({ hash: 'partner/:code/accounting' }),
   telegram: new URLPattern({ hash: 'partner/:code/telegram/:topic' }),
   partner: new URLPattern({ hash: 'partner/:code' }),
@@ -50,6 +53,25 @@ export function parsePartnerHash(hash) {
     if (code && OUT_ID_RE.test(outId) && outId.startsWith(`out-${code}-`)) {
       return { type: 'out', code, outId };
     }
+  }
+
+  const opportunity = PARTNER_PATTERNS.opportunity.exec({ hash: clean });
+  if (opportunity) {
+    const code = partnerCode(opportunity.hash.groups.code);
+    const opportunityId = decode(opportunity.hash.groups.opportunityId);
+    if (
+      code &&
+      OPPORTUNITY_ID_RE.test(opportunityId) &&
+      opportunityId.toUpperCase().startsWith(`OPP-${code}-`)
+    ) {
+      return { type: 'opportunity', code, opportunityId };
+    }
+  }
+
+  const opportunities = PARTNER_PATTERNS.opportunities.exec({ hash: clean });
+  if (opportunities) {
+    const code = partnerCode(opportunities.hash.groups.code);
+    if (code) return { type: 'opportunities', code };
   }
 
   const accounting = PARTNER_PATTERNS.accounting.exec({ hash: clean });
@@ -97,6 +119,24 @@ export function partnerOutHash(code, outId) {
     return '#partners';
   }
   return `#partner/${normalized}/out/${encodeURIComponent(normalizedOut)}`;
+}
+
+export function partnerOpportunitiesHash(code) {
+  const normalized = partnerCode(code);
+  return normalized ? `#partner/${normalized}/opportunities` : '#partners';
+}
+
+export function partnerOpportunityHash(code, opportunityId) {
+  const normalized = partnerCode(code);
+  const id = decode(opportunityId);
+  if (
+    !normalized ||
+    !OPPORTUNITY_ID_RE.test(id) ||
+    !id.toUpperCase().startsWith(`OPP-${normalized}-`)
+  ) {
+    return '#partners';
+  }
+  return `#partner/${normalized}/opportunity/${encodeURIComponent(id)}`;
 }
 
 export function partnerAccountingHash(code) {
@@ -151,7 +191,10 @@ export function decodeTelegramStartPayload(raw) {
     const colon = decoded.indexOf(':');
     if (colon < 0) return null;
     const code = decoded.slice(0, colon).trim().toUpperCase();
-    const topic = decoded.slice(colon + 1).trim().toLowerCase();
+    const topic = decoded
+      .slice(colon + 1)
+      .trim()
+      .toLowerCase();
     if (!PARTNER_CODE_RE.test(code) || !TELEGRAM_TOPICS.has(topic)) return null;
     return { code, topic };
   } catch {

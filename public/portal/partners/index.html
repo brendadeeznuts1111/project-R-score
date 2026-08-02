@@ -243,6 +243,19 @@
       .partner-profile-links a {
         font-size: 12px;
       }
+      .opportunity-stage {
+        display: inline-block;
+        padding: 2px 7px;
+        border: 1px solid var(--opportunity-stage-color, var(--border));
+        border-radius: var(--radius-full);
+        color: var(--opportunity-stage-color, var(--text));
+        background: color-mix(
+          in srgb,
+          var(--opportunity-stage-color, var(--surface)) 12%,
+          transparent
+        );
+        font-weight: 600;
+      }
       .onboard-steps {
         margin: 0;
         padding-left: 1.2em;
@@ -588,6 +601,44 @@
             onboard next steps. Cross-board deep links stay on the partner filter.
           </p>
           <div class="partners-panel" id="partner-profile-body"></div>
+        </section>
+
+        <section
+          class="partners-section"
+          id="section:opportunities"
+          aria-labelledby="opportunities-heading"
+          data-glossary-concept="section.partnersOpportunities"
+        >
+          <h2 id="opportunities-heading">
+            <a
+              href="/portal/glossary/#glossary:section.partnersOpportunities"
+              data-glossary-concept="section.partnersOpportunities"
+              >Opportunity pipeline</a
+            >
+          </h2>
+          <p class="blurb">
+            Event-sourced partner and account opportunities. Commercial agreements remain separate
+            and are linked by agreement ID after conversion.
+          </p>
+          <div class="partners-panel hidden" id="opportunity-detail" aria-live="polite"></div>
+          <div class="partners-panel" id="opportunities-board" style="margin-top: 12px">
+            <table class="partners-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>Opportunity</th>
+                  <th>Stage</th>
+                  <th>Owner</th>
+                  <th>Value</th>
+                  <th>Accounts</th>
+                  <th>Agreements</th>
+                  <th>Next action</th>
+                  <th>Updated</th>
+                </tr>
+              </thead>
+              <tbody id="opportunities-tbody"></tbody>
+            </table>
+          </div>
         </section>
 
         <section
@@ -1122,6 +1173,8 @@
         parsePartnerHash,
         partnerAccountingHash,
         partnerHash,
+        partnerOpportunitiesHash,
+        partnerOpportunityHash,
         partnerOutHash,
         partnerTelegramHash,
         telegramDeepLink,
@@ -1335,8 +1388,10 @@
         const accounts = ops?.summary?.accounts ?? ops?.summary?.outs ?? 0;
         const trackedLimits = ops?.summary?.trackedLimits ?? 0;
         const communicationReady = ops?.summary?.communicationReady ?? 0;
+        const openOpportunities = ops?.summary?.openOpportunities ?? 0;
         const cells = [
           ['Partners', partners, ''],
+          ['Open opportunities', openOpportunities, openOpportunities > 0 ? 'warn' : ''],
           ['Operator ready', ready, ready === partners && partners > 0 ? 'ok' : ''],
           ['Accounts', accounts, ''],
           [
@@ -1368,6 +1423,74 @@
 
       function partnerLink(code, label = code) {
         return `<a href="${partnerHash(code)}"><code>${esc(label)}</code></a>`;
+      }
+
+      function opportunityStage(stage) {
+        const normalized = String(stage || 'new').toLowerCase();
+        const conceptId = `opportunity.stage.${normalized}`;
+        return `<a class="opportunity-stage" href="${glossaryHref(conceptId)}" data-glossary-concept="${esc(conceptId)}" style="--opportunity-stage-color:var(--opportunity-stage-${esc(normalized)})">${esc(normalized)}</a>`;
+      }
+
+      function allOpportunities(ops) {
+        return (ops?.partners || []).flatMap(partner =>
+          (partner.opportunities || []).map(opportunity => ({
+            partnerCode: partner.code,
+            ...opportunity,
+          }))
+        );
+      }
+
+      function renderOpportunities(ops) {
+        const rows = allOpportunities(ops);
+        const body = $('opportunities-tbody');
+        if (!body) return;
+        body.innerHTML = rows.length
+          ? rows
+              .map(opportunity => {
+                const href = partnerOpportunityHash(opportunity.partnerCode, opportunity.id);
+                return `<tr id="opportunity-card-${esc(opportunity.id)}" data-partner-code="${esc(opportunity.partnerCode)}">
+                <td>${partnerLink(opportunity.partnerCode)}</td>
+                <td><a href="${href}">${esc(opportunity.title || opportunity.id)}</a><br><code>${esc(opportunity.id)}</code></td>
+                <td>${opportunityStage(opportunity.stage)}</td>
+                <td>${esc(opportunity.owner || '—')}</td>
+                <td>${opportunity.value == null ? '—' : esc(String(opportunity.value))}</td>
+                <td>${esc(String((opportunity.accountIds || []).length))}</td>
+                <td>${esc(String((opportunity.agreementIds || []).length))}</td>
+                <td>${esc(opportunity.nextAction || '—')}</td>
+                <td><time>${esc(opportunity.updatedAt || '—')}</time></td>
+              </tr>`;
+              })
+              .join('')
+          : '<tr><td colspan="9">No opportunities yet — append OPPORTUNITY_CREATED, then run partners:build</td></tr>';
+      }
+
+      function renderOpportunityDetail(route) {
+        const panel = $('opportunity-detail');
+        if (!panel) return;
+        if (route.type !== 'opportunity') {
+          panel.classList.add('hidden');
+          panel.innerHTML = '';
+          return;
+        }
+        const opportunity = (opsByPartner.get(route.code)?.opportunities || []).find(
+          item => item.id === route.opportunityId
+        );
+        if (!opportunity) {
+          panel.classList.add('hidden');
+          panel.innerHTML = '';
+          return;
+        }
+        const history = (opportunity.history || [])
+          .map(
+            event =>
+              `<li><time>${esc(event.at)}</time> · <a href="${glossaryHref(event.conceptId)}" data-glossary-concept="${esc(event.conceptId)}"><code>${esc(event.code)}</code></a>${event.stage ? ` · ${opportunityStage(event.stage)}` : ''}${event.note ? ` · ${esc(event.note)}` : ''}</li>`
+          )
+          .join('');
+        panel.innerHTML = `<h3>${esc(opportunity.title)}</h3>
+          <p><code>${esc(opportunity.id)}</code> · ${opportunityStage(opportunity.stage)} · opened <time>${esc(opportunity.openedAt)}</time></p>
+          <p>Accounts: ${esc((opportunity.accountIds || []).join(', ') || '—')} · Agreements: ${esc((opportunity.agreementIds || []).join(', ') || '—')}</p>
+          <ol class="onboard-steps">${history || '<li>No projected history</li>'}</ol>`;
+        panel.classList.remove('hidden');
       }
 
       function renderPartnerRoutes(ops) {
@@ -1469,6 +1592,7 @@
           `<a class="topic-chip" href="/portal/limits/?partner=${encodeURIComponent(code)}">Limits</a>`,
           `<a class="topic-chip" href="/portal/partner-history/?partner=${encodeURIComponent(code)}">Limit history</a>`,
           `<a class="topic-chip" href="${partnerAccountingHash(code)}">Accounting deals</a>`,
+          `<a class="topic-chip" href="${partnerOpportunitiesHash(code)}">Opportunities</a>`,
           `<a class="topic-chip" href="${partnerTelegramHash(code, 'ops')}">Telegram ops</a>`,
           `<a class="topic-chip" href="/portal/toc/">TOC offers</a>`,
           `<a class="topic-chip" href="#section:onboard">Onboard</a>`,
@@ -1868,9 +1992,13 @@
         }
 
         renderPartnerProfile(selectedCode);
+        renderOpportunityDetail(route);
 
         let target = null;
         if (route.type === 'out') target = document.getElementById(`out-card-${route.outId}`);
+        if (route.type === 'opportunities') target = $('opportunities-board');
+        if (route.type === 'opportunity')
+          target = document.getElementById(`opportunity-card-${route.opportunityId}`);
         if (route.type === 'accounting') target = $('accounting-ledger');
         if (route.type === 'telegram') target = $('telegram-thread');
         if (route.type === 'partner') {
@@ -1978,6 +2106,7 @@
           renderStats(handshake, seat, ops);
           renderPartners(handshake);
           renderAccountsLimits(ops, limitPatterns);
+          renderOpportunities(ops);
           renderAccounting(handshake, seat, ops);
           renderDeposits(seat);
           renderBooks(ops);

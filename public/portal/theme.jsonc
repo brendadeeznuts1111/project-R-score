@@ -115,6 +115,15 @@
       "old": "var(--tone-old)",
       "critical": "var(--tone-bad)",
     },
+    // Opportunity stages reuse governed tones; business state remains in the glossary/events.
+    "opportunityStage": {
+      "new": "var(--tone-info)",
+      "qualifying": "var(--tone-warn)",
+      "proposal": "var(--accent)",
+      "contracting": "var(--tone-old)",
+      "won": "var(--tone-ok)",
+      "lost": "var(--tone-bad)",
+    },
     "badge": {
       "default": "var(--surface)",
       "hover": "var(--surface-hover)",

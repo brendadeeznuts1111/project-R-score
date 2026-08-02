@@ -31,13 +31,24 @@ import { asDomId, type DomId } from '../types/branded/portal.ts';
 const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
 const OUT_ID_RE = /^out-[A-Z0-9-]+$/;
 const BOOK_ID_RE = /^book-[a-z0-9-]+$/;
+const OPPORTUNITY_ID_RE = /^opp-[A-Z0-9-]+$/i;
 
-export type PartnerRouteType = 'partners' | 'partner' | 'out' | 'accounting' | 'telegram' | 'book';
+export type PartnerRouteType =
+  | 'partners'
+  | 'partner'
+  | 'out'
+  | 'opportunities'
+  | 'opportunity'
+  | 'accounting'
+  | 'telegram'
+  | 'book';
 
 export type PartnerRoute =
   | { type: 'partners' }
   | { type: 'partner'; code: string } // brand-ok — partner CODE from partners-ops registry
   | { type: 'out'; code: string; outId: string } // brand-ok — out token from partners-ops registry
+  | { type: 'opportunities'; code: string } // brand-ok — partner CODE
+  | { type: 'opportunity'; code: string; opportunityId: string } // brand-ok — opportunity wire id
   | { type: 'accounting'; code: string } // brand-ok — partner CODE
   | { type: 'telegram'; code: string; topic: TelegramTopicSlug } // brand-ok — CODE; topic narrowed via isTelegramTopicSlug
   | { type: 'book'; bookId: string }; // brand-ok — book id from partners-ops registry
@@ -45,6 +56,8 @@ export type PartnerRoute =
 /** Constructor-time validation: invalid patterns throw on import (Bun URLPattern). */
 const PARTNER_PATTERNS = {
   out: new URLPattern(PARTNER_HASH_PATTERN_INITS.out),
+  opportunity: new URLPattern(PARTNER_HASH_PATTERN_INITS.opportunity),
+  opportunities: new URLPattern(PARTNER_HASH_PATTERN_INITS.opportunities),
   accounting: new URLPattern(PARTNER_HASH_PATTERN_INITS.accounting),
   telegram: new URLPattern(PARTNER_HASH_PATTERN_INITS.telegram),
   partner: new URLPattern(PARTNER_HASH_PATTERN_INITS.partner),
@@ -79,6 +92,25 @@ export function parsePartnerHash(hash: string): PartnerRoute | null {
     if (code && OUT_ID_RE.test(outId) && outId.startsWith(`out-${code}-`)) {
       return { type: 'out', code, outId };
     }
+  }
+
+  const opportunity = PARTNER_PATTERNS.opportunity.exec({ hash: clean });
+  if (opportunity) {
+    const code = normalizePartnerCode(opportunity.hash.groups.code);
+    const opportunityId = decode(opportunity.hash.groups.opportunityId);
+    if (
+      code &&
+      OPPORTUNITY_ID_RE.test(opportunityId) &&
+      opportunityId.toUpperCase().startsWith(`OPP-${code}-`)
+    ) {
+      return { type: 'opportunity', code, opportunityId };
+    }
+  }
+
+  const opportunities = PARTNER_PATTERNS.opportunities.exec({ hash: clean });
+  if (opportunities) {
+    const code = normalizePartnerCode(opportunities.hash.groups.code);
+    if (code) return { type: 'opportunities', code };
   }
 
   const accounting = PARTNER_PATTERNS.accounting.exec({ hash: clean });
@@ -121,6 +153,10 @@ export function anchorDomId(route: PartnerRoute): DomId {
       return asDomId(`partner-detail-${route.code}`);
     case 'out':
       return asDomId(`out-card-${route.outId}`);
+    case 'opportunities':
+      return asDomId('opportunities-board');
+    case 'opportunity':
+      return asDomId(`opportunity-card-${route.opportunityId}`);
     case 'accounting':
       return asDomId('accounting-ledger');
     case 'telegram':
@@ -139,6 +175,9 @@ export function anchorConceptId(route: PartnerRoute): PortalSemanticConceptKey {
       return 'page.partners';
     case 'out':
       return 'section.partnersOuts';
+    case 'opportunities':
+    case 'opportunity':
+      return 'section.partnersOpportunities';
     case 'accounting':
       return 'section.partnersAccounting';
     case 'telegram':
@@ -161,6 +200,16 @@ export function partnerHash(route: PartnerRoute): string {
       return parsePartnerHash(`#partner/${route.code}/out/${route.outId}`)
         ? `#partner/${normalizePartnerCode(route.code)}/out/${route.outId}`
         : '#partners';
+    case 'opportunities':
+      return normalizePartnerCode(route.code)
+        ? `#partner/${normalizePartnerCode(route.code)}/opportunities`
+        : '#partners';
+    case 'opportunity': {
+      const code = normalizePartnerCode(route.code);
+      return code && parsePartnerHash(`#partner/${code}/opportunity/${route.opportunityId}`)
+        ? `#partner/${code}/opportunity/${route.opportunityId}`
+        : '#partners';
+    }
     case 'accounting':
       return normalizePartnerCode(route.code)
         ? `#partner/${normalizePartnerCode(route.code)}/accounting`

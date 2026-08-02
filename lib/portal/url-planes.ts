@@ -42,6 +42,8 @@ export const PORTAL_GLOSSARY_CONCEPT_HASH_INIT = {
  */
 export const PARTNER_HASH_PATTERN_INITS = {
   out: { hash: 'partner/:code/out/:outId' },
+  opportunity: { hash: 'partner/:code/opportunity/:opportunityId' },
+  opportunities: { hash: 'partner/:code/opportunities' },
   accounting: { hash: 'partner/:code/accounting' },
   telegram: { hash: 'partner/:code/telegram/:topic' },
   partner: { hash: 'partner/:code' },

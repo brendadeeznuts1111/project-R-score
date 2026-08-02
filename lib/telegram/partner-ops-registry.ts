@@ -18,6 +18,7 @@ import {
   type PartnerOpsEventCode,
   isPartnerOpsEventCode,
 } from './partner-ops-events.ts';
+import { foldPartnerOpportunities, type PartnersOpsOpportunity } from './partner-opportunities.ts';
 import { PARTNER_OPS_GLOSSARY_CONCEPT_IDS } from './partner-ops-glossary.ts';
 import { TELEGRAM_GLOSSARY_CONCEPT_IDS } from './handshake-catalog.ts';
 import {
@@ -127,6 +128,7 @@ export type PartnersOpsPartner = {
     topicIds: Record<string, number | null>;
   };
   outs: PartnersOpsOut[];
+  opportunities: PartnersOpsOpportunity[];
   accounting: {
     fundStatus: string;
     incompleteOuts: number;
@@ -193,6 +195,8 @@ export type PartnersOpsRegistry = {
     trackedLimits: number;
     communicationReady: number;
     ledgerEvents: number;
+    opportunities: number;
+    openOpportunities: number;
     incompleteOuts: number;
     validationErrors: number;
     validationWarnings: number;
@@ -640,7 +644,9 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
       rootDir: PACKAGE_GROUP_FORUMS_META_DIR,
     });
     const topicMap = forumMeta?.topicsThreadMap || hs?.topicsThreadMap || {};
-    const partnerEvents = (eventsByPartner.get(code) ?? []).slice(-50);
+    const allPartnerEvents = eventsByPartner.get(code) ?? [];
+    const partnerEvents = allPartnerEvents.slice(-50);
+    const opportunities = foldPartnerOpportunities(allPartnerEvents, code);
     const deposits = partnerEvents
       .filter(e => e.code === 'DEPOSIT_RECEIVED' || e.code === 'DEPOSIT_ALLOCATED')
       .map(e => ({
@@ -736,6 +742,7 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
         topicIds,
       },
       outs,
+      opportunities,
       accounting,
       tracking: {
         accounts: {
@@ -819,6 +826,14 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
       communicationReady: partners.filter(partner => partner.tracking.communication.ready).length,
       ledgerEvents: partners.reduce(
         (sum, partner) => sum + partner.tracking.accounting.ledgerEvents,
+        0
+      ),
+      opportunities: partners.reduce((sum, partner) => sum + partner.opportunities.length, 0),
+      openOpportunities: partners.reduce(
+        (sum, partner) =>
+          sum +
+          partner.opportunities.filter(item => item.stage !== 'won' && item.stage !== 'lost')
+            .length,
         0
       ),
       incompleteOuts,

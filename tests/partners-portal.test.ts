@@ -8,6 +8,8 @@ import {
   partnerAccountingHash,
   partnerBookHash,
   partnerHash,
+  partnerOpportunitiesHash,
+  partnerOpportunityHash,
   partnerOutHash,
   partnerTelegramHash,
 } from '../public/portal/partners/partner-routes.js';
@@ -26,6 +28,10 @@ describe('partners portal board', () => {
   test('board loads handshake, seat desk, and accounting/deposit sections', async () => {
     const html = await Bun.file(BOARD).text();
     expect(html).toContain('id="section:telegram"');
+    expect(html).toContain('id="section:opportunities"');
+    expect(html).toContain('id="opportunities-tbody"');
+    expect(html).toContain('renderOpportunities');
+    expect(html).toContain('renderOpportunityDetail');
     expect(html).toContain('id="section:accounting"');
     expect(html).toContain('id="section:accounts-limits"');
     expect(html).toContain('id="section:onboard"');
@@ -85,6 +91,7 @@ describe('partners portal board', () => {
     const html = await Bun.file(BOARD).text();
     expect(html).toContain('data-glossary-concept="page.partners"');
     expect(html).toContain('data-glossary-concept="section.partnersTelegram"');
+    expect(html).toContain('data-glossary-concept="section.partnersOpportunities"');
     expect(html).toContain('data-glossary-concept="section.partnersAccounting"');
     expect(html).toContain('data-glossary-concept="section.partnersAccountsLimits"');
     expect(html).toContain('data-glossary-concept="section.partnersOnboard"');
@@ -140,7 +147,7 @@ describe('partners portal board', () => {
     expect(ops.colors?.['ops.view.per_account']?.hex).toMatch(/^#/);
   });
 
-  test('URLPattern routes keep partner, out, accounting, and Telegram anchors aligned', () => {
+  test('URLPattern routes keep partner, opportunity, out, accounting, and Telegram anchors aligned', () => {
     expect(parsePartnerHash('#partners')).toEqual({ type: 'partners' });
     expect(parsePartnerHash('#partner/ash')).toEqual({ type: 'partner', code: 'ASH' });
     expect(parsePartnerHash('#partner/ASH/out/out-ASH-2')).toEqual({
@@ -160,6 +167,10 @@ describe('partners portal board', () => {
     expect(parsePartnerHash('#partner/ASH/telegram/not-a-topic')).toBeNull();
     expect(partnerHash('ash')).toBe('#partner/ASH');
     expect(partnerOutHash('ASH', 'out-ASH-2')).toBe('#partner/ASH/out/out-ASH-2');
+    expect(partnerOpportunitiesHash('ASH')).toBe('#partner/ASH/opportunities');
+    expect(partnerOpportunityHash('ASH', 'opp-ASH-001')).toBe(
+      '#partner/ASH/opportunity/opp-ASH-001'
+    );
     expect(partnerAccountingHash('ASH')).toBe('#partner/ASH/accounting');
     expect(partnerTelegramHash('ASH', 'accounting')).toBe('#partner/ASH/telegram/accounting');
     expect(parsePartnerHash('#book/book-dk-nj')).toEqual({ type: 'book', bookId: 'book-dk-nj' });

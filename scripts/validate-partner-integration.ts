@@ -45,6 +45,8 @@ const ROUTE_SAMPLES: readonly PartnerRoute[] = [
   { type: 'partners' },
   { type: 'partner', code: 'ASH' },
   { type: 'out', code: 'ASH', outId: 'out-ASH-1' },
+  { type: 'opportunities', code: 'ASH' },
+  { type: 'opportunity', code: 'ASH', opportunityId: 'opp-ASH-001' },
   { type: 'accounting', code: 'ASH' },
   { type: 'telegram', code: 'ASH', topic: 'ops' },
   { type: 'book', bookId: 'book-dk-nj' },
@@ -86,6 +88,7 @@ const portalHtml = await Bun.file('public/portal/partners/index.html').text();
 for (const anchor of [
   'partner-panel',
   'accounting-ledger',
+  'opportunities-board',
   'telegram-thread',
   'tag-filter-bar',
   'out-table',
@@ -100,13 +103,14 @@ for (const concept of [
   'data-glossary-concept="section.partnersTags"',
   'data-glossary-concept="section.partnersOuts"',
   'data-glossary-concept="section.partnersBookDetail"',
+  'data-glossary-concept="section.partnersOpportunities"',
   'data-glossary-concept="ui.route.partnerHash"',
 ]) {
   if (!portalHtml.includes(concept)) {
     errs.push(`portal glossary wiring ${concept}: missing from partners board`);
   }
 }
-for (const marker of ['partner-detail-${', 'out-card-${', 'book-card-${']) {
+for (const marker of ['partner-detail-${', 'opportunity-card-${', 'out-card-${', 'book-card-${']) {
   if (!portalHtml.includes(marker)) errs.push(`portal dynamic anchor marker ${marker}: missing`);
 }
 

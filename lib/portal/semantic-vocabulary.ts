@@ -88,6 +88,7 @@ export const PORTAL_SEMANTIC_CONCEPT_KEYS = [
   'section.partnersOuts',
   'section.partnersBookDetail',
   'section.partnersTags',
+  'section.partnersOpportunities',
   'ui.route.partnerHash',
   'ui.filter.profile',
   'ui.filter.jurisdiction',
@@ -970,6 +971,16 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     seeAlso: ['ui.filter.profile', 'ops.limits.profile', 'section.accountLimitControl'],
   },
   {
+    id: 'section.partnersOpportunities',
+    label: 'Opportunity pipeline',
+    description:
+      'Partners board section for event-sourced partner and account opportunities, current stage, next action, and linked agreements.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['opportunities', 'partner pipeline', 'account pipeline'],
+    seeAlso: ['page.partners', 'section.partnersAccountsLimits', 'section.partnersAccounting'],
+  },
+  {
     id: 'section.partnersOuts',
     label: 'Partner outs',
     description: 'Partners board section for per-out book, funding, status, balance, and limits.',
@@ -1002,13 +1013,14 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     id: 'ui.route.partnerHash',
     label: 'Partner hash route',
     description:
-      'URLPattern hash route for partner deep links: #partners, #partner/:code, #partner/:code/out/:outId, #partner/:code/accounting, #partner/:code/telegram/:topic, #book/:bookId.',
+      'URLPattern hash route for partner deep links: #partners, #partner/:code, #partner/:code/opportunities, #partner/:code/opportunity/:opportunityId, #partner/:code/out/:outId, #partner/:code/accounting, #partner/:code/telegram/:topic, #book/:bookId.',
     semanticType: 'resource',
     uiRole: 'link',
     synonyms: ['hash router', 'partner deep link', 'URLPattern route'],
     seeAlso: [
       'page.partners',
       'section.partnersOuts',
+      'section.partnersOpportunities',
       'section.partnersAccounting',
       'section.partnersTelegram',
     ],
@@ -1367,6 +1379,7 @@ export const PARTNERS_SURFACE_CONCEPTS = {
   outs: 'section.partnersOuts',
   bookDetail: 'section.partnersBookDetail',
   tags: 'section.partnersTags',
+  opportunities: 'section.partnersOpportunities',
 } as const satisfies Record<string, PortalSemanticConceptKey>;
 
 export function validatePortalSemanticVocabulary(): void {

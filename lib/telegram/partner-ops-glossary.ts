@@ -35,6 +35,16 @@ export type PartnerOpsOverlayConceptId =
   | 'telegram.topic.alerts'
   | 'telegram.topic.liquidity'
   | 'telegram.topic.accounting'
+  | 'opportunity.stage.new'
+  | 'opportunity.stage.qualifying'
+  | 'opportunity.stage.proposal'
+  | 'opportunity.stage.contracting'
+  | 'opportunity.stage.won'
+  | 'opportunity.stage.lost'
+  | 'event.opportunity.created'
+  | 'event.opportunity.stage_changed'
+  | 'event.opportunity.account_linked'
+  | 'event.opportunity.agreement_created'
   | 'partner.ops.event';
 
 export type PartnerOpsGlossaryConcept = {
@@ -68,6 +78,16 @@ const LABELS: Record<Exclude<PartnerOpsOverlayConceptId, 'partner.ops.event'>, s
   'telegram.topic.alerts': 'Alerts topic',
   'telegram.topic.liquidity': 'Liquidity/Outs topic',
   'telegram.topic.accounting': 'Accounting topic',
+  'opportunity.stage.new': 'New opportunity',
+  'opportunity.stage.qualifying': 'Qualifying',
+  'opportunity.stage.proposal': 'Proposal',
+  'opportunity.stage.contracting': 'Contracting',
+  'opportunity.stage.won': 'Won',
+  'opportunity.stage.lost': 'Lost',
+  'event.opportunity.created': 'Opportunity created',
+  'event.opportunity.stage_changed': 'Opportunity stage changed',
+  'event.opportunity.account_linked': 'Opportunity account linked',
+  'event.opportunity.agreement_created': 'Opportunity agreement created',
 };
 
 const DESCRIPTIONS: Partial<
@@ -83,6 +103,17 @@ const DESCRIPTIONS: Partial<
     'Peer-to-peer / exchange sportsbook (matched bets, commission on winnings).',
   'telegram.topic.liquidity': 'Package forum Liquidity/Outs topic — pinned seat capital desk home.',
   'telegram.topic.accounting': 'Package forum Accounting topic — deposit/withdraw proof thread.',
+  'opportunity.stage.new': 'New partner or account opportunity awaiting qualification.',
+  'opportunity.stage.qualifying': 'Opportunity under fit, account, and operating-readiness review.',
+  'opportunity.stage.proposal': 'Opportunity with commercial or operating terms proposed.',
+  'opportunity.stage.contracting': 'Opportunity progressing through agreement execution.',
+  'opportunity.stage.won': 'Opportunity converted into active partner, account, or agreement work.',
+  'opportunity.stage.lost': 'Opportunity closed without conversion.',
+  'event.opportunity.created': 'Append-only creation event for an opportunity.',
+  'event.opportunity.stage_changed': 'Append-only transition between opportunity stages.',
+  'event.opportunity.account_linked': 'Append-only link from an opportunity to an account.',
+  'event.opportunity.agreement_created':
+    'Append-only link from an opportunity to signed commercial terms.',
 };
 
 function concept(
@@ -248,11 +279,49 @@ export function partnerOpsGlossaryConcepts(): PartnerOpsGlossaryConcept[] {
       ],
     }),
 
+    ...(
+      [
+        ['opportunity.stage.new', ['new opportunity', 'lead']],
+        ['opportunity.stage.qualifying', ['qualification', 'qualified lead']],
+        ['opportunity.stage.proposal', ['proposal sent', 'terms proposed']],
+        ['opportunity.stage.contracting', ['contract', 'agreement pending']],
+        ['opportunity.stage.won', ['closed won', 'converted']],
+        ['opportunity.stage.lost', ['closed lost', 'declined']],
+      ] as const
+    ).map(([id, synonyms]) =>
+      concept(id, {
+        category: 'pipeline',
+        kind: 'ui',
+        semanticType: 'state',
+        uiRole: 'badge',
+        synonyms,
+        values: [id.replace('opportunity.stage.', '')],
+        seeAlso: ['partner.ops.event', 'page.partners'],
+      })
+    ),
+    ...(
+      [
+        'event.opportunity.created',
+        'event.opportunity.stage_changed',
+        'event.opportunity.account_linked',
+        'event.opportunity.agreement_created',
+      ] as const
+    ).map(id =>
+      concept(id, {
+        category: 'warehouse',
+        kind: 'evidence',
+        semanticType: 'resource',
+        uiRole: 'code',
+        synonyms: [LABELS[id].toLowerCase()],
+        seeAlso: ['partner.ops.event', 'page.partners'],
+      })
+    ),
+
     {
       id: 'partner.ops.event',
       label: 'Partner-ops event code',
       description:
-        'Factory mirror event codes for partner/out/deposit/credit/free-roll/telegram actions. Soft ledger stays in ct. Prefer event.* glossary leaves for UI.',
+        'Factory mirror event codes for partner, opportunity, out, deposit, credit, free-roll, and Telegram actions. Soft ledger stays in ct. Prefer event.* glossary leaves for UI.',
       category: 'warehouse',
       kind: 'registry',
       synonyms: ['event code', 'PARTNER_OPS_EVENT'],
@@ -263,6 +332,7 @@ export function partnerOpsGlossaryConcepts(): PartnerOpsGlossaryConcept[] {
         'accounting.credit',
         'accounting.free_roll',
         'telegram.wire',
+        'event.opportunity.created',
         'page.partners',
       ],
       status: 'active',

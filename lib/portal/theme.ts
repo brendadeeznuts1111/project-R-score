@@ -58,6 +58,14 @@ export type PortalThemeSemantic = {
     old: string;
     critical: string;
   };
+  opportunityStage: {
+    new: string;
+    qualifying: string;
+    proposal: string;
+    contracting: string;
+    won: string;
+    lost: string;
+  };
   badge: {
     default: string;
     hover: string;
@@ -325,6 +333,7 @@ export function renderThemeTokensCss(theme: PortalTheme = portalTheme): string {
     '  --status-stale-bg: var(--tone-warn-bg);',
     '  --status-old-bg: var(--tone-old-bg);',
     '  --status-critical-bg: var(--tone-bad-bg);',
+    mapEntries(semantic.opportunityStage, k => `--opportunity-stage-${k}`),
     // Badge / link / group
     `  --badge-default: ${semantic.badge.default};`,
     `  --badge-hover: ${semantic.badge.hover};`,

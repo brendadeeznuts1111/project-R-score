@@ -70,6 +70,7 @@ describe('partner-ops color + glossary', () => {
     expect(ids).toContain('partner.ops.event');
     expect(ids).toContain('deposit.method.cashapp');
     expect(PARTNER_OPS_EVENT_CODES).toContain('DEPOSIT_RECEIVED');
+    expect(PARTNER_OPS_EVENT_CODES).toContain('OPPORTUNITY_CREATED');
     expect(buildPartnerOpsEvent('DEPOSIT_RECEIVED', { partnerCode: 'ASH', amount: 1 }).conceptId).toBe(
       'event.deposit.received'
     );
@@ -97,6 +98,9 @@ describe('partners-ops registry bake', () => {
     expect(ash?.tracking.communication.topicsRequired).toBe(5);
     expect(registry.sources.limitPatterns).toBe('/registry/limit-raises.json');
     expect(registry.summary.accounts).toBe(registry.summary.outs);
+    expect(registry.summary.opportunities).toBe(
+      registry.partners.reduce((sum, partner) => sum + partner.opportunities.length, 0)
+    );
   });
 
   test('validate catches duplicate partner codes', () => {
@@ -108,6 +112,7 @@ describe('partners-ops registry bake', () => {
       phaseColor: partnerOpsConceptColorWire('partner.phase.operator_ready'),
       telegram: { chatId: null, topicIds: {} },
       outs: [],
+      opportunities: [],
       accounting: {
         fundStatus: 'ready',
         incompleteOuts: 0,

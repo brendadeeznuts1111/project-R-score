@@ -82,6 +82,17 @@ export const PARTNER_OPS_CONCEPT_COLORS = {
   'out.status.partial': 'middleware',
   'out.status.funded': 'tennis',
 
+  'opportunity.stage.new': 'kalshi',
+  'opportunity.stage.qualifying': 'middleware',
+  'opportunity.stage.proposal': 'pinnacle',
+  'opportunity.stage.contracting': 'research',
+  'opportunity.stage.won': 'tennis',
+  'opportunity.stage.lost': 'trading',
+  'event.opportunity.created': 'kalshi',
+  'event.opportunity.stage_changed': 'middleware',
+  'event.opportunity.account_linked': 'polymarket',
+  'event.opportunity.agreement_created': 'tennis',
+
   'accounting.deposit': 'tennis',
   'accounting.withdrawal': 'trading',
   'accounting.credit': 'kalshi',

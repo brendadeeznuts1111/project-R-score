@@ -22,6 +22,11 @@ const PARTNER_HASH_FIXTURES: readonly { initKey: keyof typeof PARTNER_HASH_PATTE
     { initKey: 'partners', route: { type: 'partners' } },
     { initKey: 'partner', route: { type: 'partner', code: 'ASH' } },
     { initKey: 'out', route: { type: 'out', code: 'ASH', outId: 'out-ASH-1' } },
+    { initKey: 'opportunities', route: { type: 'opportunities', code: 'ASH' } },
+    {
+      initKey: 'opportunity',
+      route: { type: 'opportunity', code: 'ASH', opportunityId: 'opp-ASH-001' },
+    },
     { initKey: 'accounting', route: { type: 'accounting', code: 'ASH' } },
     { initKey: 'telegram', route: { type: 'telegram', code: 'ASH', topic: 'ops' } },
     { initKey: 'book', route: { type: 'book', bookId: 'book-dk-nj' } },
@@ -44,6 +49,8 @@ describe('portal url planes', () => {
     expect(classifyPortalHash('section:accounting')).toBe('hash-section');
     expect(classifyPortalHash('#partner/ASH')).toBe('hash-partner');
     expect(classifyPortalHash('#partner/ASH/out/out-ASH-1')).toBe('hash-partner');
+    expect(classifyPortalHash('#partner/ASH/opportunities')).toBe('hash-partner');
+    expect(classifyPortalHash('#partner/ASH/opportunity/opp-ASH-001')).toBe('hash-partner');
     expect(classifyPortalHash('#book/book-dk-nj')).toBe('hash-partner');
     expect(classifyPortalHash('#partners')).toBe('hash-partner');
     expect(classifyPortalHash('#glossary:section.partnersOnboard')).toBe('hash-glossary');

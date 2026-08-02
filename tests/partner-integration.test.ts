@@ -25,6 +25,10 @@ describe('partner integration contracts', () => {
     expect(parsePartnerHash('#partner/ASH/out/out-BIL-1')).toBeNull();
     expect(parsePartnerHash('#partner/ASH/telegram/admin')).toBeNull();
     expect(partnerHash({ type: 'partner', code: '../bad' })).toBe('#partners');
+    expect(
+      parsePartnerHash('#partner/ASH/opportunity/opp-ASH-001')
+    ).toEqual({ type: 'opportunity', code: 'ASH', opportunityId: 'opp-ASH-001' });
+    expect(parsePartnerHash('#partner/ASH/opportunity/opp-BIL-001')).toBeNull();
   });
 
   test('Telegram links use bounded base64url hints and canonical in-app routes', async () => {
@@ -68,6 +72,8 @@ describe('partner integration contracts', () => {
       '#partners',
       '#partner/ASH',
       '#partner/ASH/out/out-ASH-1',
+      '#partner/ASH/opportunities',
+      '#partner/ASH/opportunity/opp-ASH-001',
       '#partner/ASH/accounting',
       '#partner/ASH/telegram/ops',
       '#book/book-dk-nj',

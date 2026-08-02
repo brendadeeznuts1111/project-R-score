@@ -23,6 +23,7 @@ import {
   PARTNERS_OPS_REGISTRY_PATH,
 } from '../lib/telegram/partner-ops-registry.ts';
 import { bakePartnerOpsEventConcepts } from './bake-partner-ops-event-concepts.ts';
+import { isOpportunityStage } from '../lib/telegram/partner-opportunities.ts';
 
 const argv = Bun.argv.slice(2);
 const cmd = argv.find(a => !a.startsWith('-')) ?? 'validate';
@@ -97,6 +98,21 @@ async function runLedgerAppend(): Promise<number> {
     return 2;
   }
   const amountRaw = flag('--amount');
+  const stageRaw = flag('--stage');
+  const previousStageRaw = flag('--previous-stage');
+  if (stageRaw && !isOpportunityStage(stageRaw)) {
+    console.error(`Invalid --stage ${stageRaw}`);
+    return 2;
+  }
+  if (previousStageRaw && !isOpportunityStage(previousStageRaw)) {
+    console.error(`Invalid --previous-stage ${previousStageRaw}`);
+    return 2;
+  }
+  const csv = (value: string | undefined): string[] | undefined =>
+    value
+      ?.split(',')
+      .map(item => item.trim())
+      .filter(Boolean);
   const event = buildPartnerOpsEvent(codeRaw as PartnerOpsEventCode, {
     partnerCode: flag('--partner')?.toUpperCase(),
     callSign: flag('--call')?.toUpperCase(),
@@ -104,6 +120,16 @@ async function runLedgerAppend(): Promise<number> {
     amount: amountRaw != null ? Number(amountRaw) : undefined,
     rail: flag('--rail'),
     note: flag('--note'),
+    opportunityId: flag('--opportunity'),
+    title: flag('--title'),
+    stage: stageRaw && isOpportunityStage(stageRaw) ? stageRaw : undefined,
+    previousStage:
+      previousStageRaw && isOpportunityStage(previousStageRaw) ? previousStageRaw : undefined,
+    accountIds: csv(flag('--accounts')),
+    agreementIds: csv(flag('--agreements')),
+    owner: flag('--owner'),
+    value: flag('--value') != null ? Number(flag('--value')) : undefined,
+    nextAction: flag('--next-action'),
   });
   const path = await appendPartnerOpsEvent(event);
   if (wantJson) jsonOut({ path, event });
@@ -116,7 +142,7 @@ if (argv.includes('--help') || argv.includes('-h')) {
 
 validate  Check seat-desk + handshake projection for collisions / glossary IDs
 build     Bake portal event-concepts JS + write ${PARTNERS_OPS_REGISTRY_PATH}
-ledger:append  Append factory-mirror event JSONL (not soft ledger)
+ledger:append  Append factory-mirror event JSONL (opportunity: --opportunity ID --title T --stage S --accounts A,B --agreements D,E)
 `);
   process.exit(0);
 }

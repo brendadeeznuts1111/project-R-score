@@ -20,6 +20,8 @@ describe('portal theme (jsonc loader)', () => {
     expect(portalTheme.tones.old).toBe('var(--orange)');
     expect(portalTheme.semantic.status.fresh).toBe('var(--tone-ok)');
     expect(portalTheme.semantic.status.critical).toBe('var(--tone-bad)');
+    expect(portalTheme.semantic.opportunityStage.won).toBe('var(--tone-ok)');
+    expect(portalTheme.semantic.opportunityStage.contracting).toBe('var(--tone-old)');
     expect(portalTheme.semantic.group.ops).toBe('var(--green)');
     expect(portalTheme.layers.card).toBe('var(--surface)');
     expect(portalTheme.typography.fontSizes.sm).toBe('0.75rem');
@@ -48,6 +50,8 @@ describe('portal theme (jsonc loader)', () => {
     expect(css).toContain('--tone-old-bg: color-mix(');
     expect(css).toContain('--status-fresh: var(--tone-ok)');
     expect(css).toContain('--status-critical: var(--tone-bad)');
+    expect(css).toContain('--opportunity-stage-new: var(--tone-info)');
+    expect(css).toContain('--opportunity-stage-won: var(--tone-ok)');
     expect(css).toContain('--group-harness: var(--yellow)');
     expect(css).toContain('--bg-card: var(--surface)');
     expect(css).toContain('--text-sm: 0.75rem');
