@@ -87,7 +87,7 @@ class OperationsDashboard extends HTMLElement {
           </div>
         </div>
         <div id="ops-grid" class="ops-grid hidden">
-          <section class="ops-panel">
+          <section class="ops-panel" id="ops-liquidity">
             <h2>Liquidity</h2>
             <div class="ops-metric" id="total-liquidity">$0</div>
           </section>
@@ -99,14 +99,14 @@ class OperationsDashboard extends HTMLElement {
             <h2>Agent Tree</h2>
             <div id="tree-viz"></div>
           </section>
-          <section class="ops-panel">
+          <section class="ops-panel" id="ops-partners">
             <h2>Partner profiles</h2>
             <div class="ops-metric" id="partners-bound">0</div>
             <div class="ops-sub" id="partners-detail"></div>
             <ul id="partners-recent"></ul>
           </section>
-          <section class="ops-panel">
-            <h2>📊 Limit changes</h2>
+          <section class="ops-panel" id="ops-limits">
+            <h2>Limit changes</h2>
             <div class="ops-metric" id="limits-count">0</div>
             <div class="ops-sub" id="limits-detail"></div>
             <div class="ops-sub" id="limits-patterns-detail" hidden></div>
@@ -324,7 +324,7 @@ class OperationsDashboard extends HTMLElement {
               <tbody></tbody>
             </table>
           </section>
-          <section class="ops-panel wide" data-subsystem="runtime">
+          <section class="ops-panel wide" id="ops-runtime-nits" data-subsystem="runtime">
             <h2>Bun runtime nits (Phase 1) <span class="version-badge subsystem-runtime">runtime</span></h2>
             <div class="ops-metric" id="runtime-nits-pass">—</div>
             <div class="ops-sub" id="runtime-nits-detail"></div>
@@ -365,7 +365,7 @@ class OperationsDashboard extends HTMLElement {
               <tbody></tbody>
             </table>
           </section>
-          <section class="ops-panel wide" data-subsystem="mixed">
+          <section class="ops-panel wide" id="ops-taxonomy" data-subsystem="mixed">
             <h2>Proof taxonomy audit <span class="version-badge">mixed</span></h2>
             <div class="ops-metric" id="taxonomy-pass">—</div>
             <div class="ops-sub" id="taxonomy-detail"></div>
@@ -424,7 +424,7 @@ class OperationsDashboard extends HTMLElement {
             <a class="ops-link" id="pred-report-link" href="/registry/prediction/report/">Open report</a>
             <img id="pred-chart" class="ops-chart hidden" alt="Coverage prediction chart" width="100%" />
           </section>
-          <section class="ops-panel wide">
+          <section class="ops-panel wide" id="ops-plays">
             <h2>Today's Plays</h2>
             <div class="ops-source" id="ops-source"></div>
             <table id="plays-table"><thead><tr><th>Time</th><th>Expert</th><th>Event</th><th>Pick</th><th>Odds</th><th>Sent</th><th>Placed</th></tr></thead><tbody></tbody></table>
@@ -467,7 +467,41 @@ class OperationsDashboard extends HTMLElement {
 
     await this.load();
     this.render();
+    this.mountOpsJump();
     this.startPolling();
+  }
+
+  /** Sticky section jump strip in #ops-jump (shell host outside this element). */
+  mountOpsJump() {
+    const host = document.getElementById('ops-jump');
+    if (!host) return;
+    const grid = this.querySelector('#ops-grid');
+    if (!grid || grid.classList.contains('hidden')) {
+      host.hidden = true;
+      host.innerHTML = '';
+      return;
+    }
+    const links = [
+      ['Liquidity', 'ops-liquidity'],
+      ['Partners', 'ops-partners'],
+      ['Limits', 'ops-limits'],
+      ['Handshake', 'telegram-handshake'],
+      ['Compliance', 'compliance-panel'],
+      ['Health', 'monorepo-health-panel'],
+      ['Nits', 'ops-runtime-nits'],
+      ['Taxonomy', 'ops-taxonomy'],
+      ['Weave', 'portal-weave-panel'],
+      ['Plays', 'ops-plays'],
+    ].filter(([, id]) => this.querySelector(`#${id}`));
+    if (links.length === 0) {
+      host.hidden = true;
+      host.innerHTML = '';
+      return;
+    }
+    host.innerHTML =
+      `<span class="ops-jump-label">Jump</span>` +
+      links.map(([label, id]) => `<a href="#${esc(id)}">${esc(label)}</a>`).join('');
+    host.hidden = false;
   }
 
   async loadDocIndex() {
@@ -667,6 +701,7 @@ class OperationsDashboard extends HTMLElement {
         this.retries = 0;
         loading.classList.add('hidden');
         grid.classList.remove('hidden');
+        this.mountOpsJump();
         return;
       }
     } catch {
@@ -681,6 +716,7 @@ class OperationsDashboard extends HTMLElement {
         this.retries = 0;
         loading.classList.add('hidden');
         grid.classList.remove('hidden');
+        this.mountOpsJump();
         return;
       }
     } catch {
@@ -2068,7 +2104,7 @@ class OperationsDashboard extends HTMLElement {
     if (nitsPass) {
       const s = nits.summary;
       if (s?.total) {
-        nitsPass.textContent = s.status === 'pass' ? '✅' : `${s.passed}/${s.total} probes`;
+        nitsPass.textContent = `${s.passed}/${s.total} probes`;
         nitsPass.classList.toggle('ok', s.status === 'pass');
         nitsPass.classList.toggle('bad', s.status !== 'pass');
       } else {
@@ -2449,10 +2485,32 @@ class OperationsDashboard extends HTMLElement {
     }
     const weaveArts = this.querySelector('#portal-weave-artifacts');
     if (weaveArts) {
-      const arts = (weave?.artifacts || []).slice(0, 18);
-      weaveArts.innerHTML = arts.length
-        ? arts.map(a => chip(a)).join('')
-        : '<span class="ops-muted">Rebake portal-weave for artifacts</span>';
+      const arts = weave?.artifacts || [];
+      if (!arts.length) {
+        weaveArts.innerHTML = '<span class="ops-muted">Rebake portal-weave for artifacts</span>';
+      } else {
+        const PURPOSE_ORDER = ['ui', 'shared', 'audit', 'script', 'other'];
+        const purposeLabel = p =>
+          ({ ui: 'UI', shared: 'Shared', audit: 'Audit', script: 'Script', other: 'Other' })[p] || p;
+        const buckets = new Map();
+        for (const a of arts) {
+          const p = a.purpose && PURPOSE_ORDER.includes(a.purpose) ? a.purpose : 'other';
+          if (!buckets.has(p)) buckets.set(p, []);
+          buckets.get(p).push(a);
+        }
+        const ordered = PURPOSE_ORDER.filter(p => buckets.has(p));
+        weaveArts.innerHTML = ordered
+          .map(p => {
+            const rows = buckets.get(p);
+            return (
+              `<div class="ops-weave-purpose" data-purpose="${esc(p)}">` +
+              `<h4 class="ops-weave-purpose-h">${esc(purposeLabel(p))} (${rows.length})</h4>` +
+              `<div class="ops-weave-links">${rows.map(a => chip(a)).join('')}</div>` +
+              `</div>`
+            );
+          })
+          .join('');
+      }
     }
     const weaveComps = this.querySelector('#portal-weave-components');
     if (weaveComps) {
