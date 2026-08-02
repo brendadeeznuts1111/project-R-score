@@ -1,16 +1,16 @@
 {
   "type": "BunRuntimeNitsVerificationReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-28T20:27:22.747Z",
+  "timestamp": "2026-08-02T22:16:35.906Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62",
   "semanticTags": {
     "channel": "stable",
     "targetVersion": "1.4.0",
     "latestAtTestTime": "1.4.0",
-    "testSuiteCommit": "118fef0cf3309583ea2e8059cc67dd8c9b3d7b8f",
-    "provenanceId": "local-2026-07-28T20-27-22-676Z",
-    "testedAt": "2026-07-28T20:27:22.676Z",
+    "testSuiteCommit": "a98cd6222b6cd46a06828b92833b789e154a610a",
+    "provenanceId": "local-2026-08-02T22-16-35-698Z",
+    "testedAt": "2026-08-02T22:16:35.698Z",
     "bunRevision": "a227ad991b62",
     "runtimeVersion": "1.4.0",
     "platform": "darwin",
@@ -168,6 +168,46 @@
       "actual": "customInspect:false ignored; custom still shown",
       "passed": true,
       "canonicalSource": "reference"
+    },
+    {
+      "probe": "inspect.defaultOptions",
+      "category": "inspect",
+      "canonicalKey": "Bun.inspect",
+      "canonical": "https://bun.com/docs/runtime/utils#bun-inspect",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/utils#bun-inspect",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "inspect.defaultOptions",
+      "expected": "Bun.inspect.defaultOptions is undefined (Node util.inspect API absent)",
+      "actual": "undefined",
+      "passed": true,
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "inspect.tableOptionIgnored",
+      "category": "inspect",
+      "canonicalKey": "Bun.inspect.table",
+      "canonical": "https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "inspect.tableOptionIgnored",
+      "expected": "{ table: true } ignored; Bun.inspect.table produces distinct tabular output",
+      "actual": "table option ignored; inspect.table distinct",
+      "passed": true,
+      "canonicalSource": "docs"
     },
     {
       "probe": "streams.gzip-roundtrip",
@@ -358,15 +398,15 @@
     }
   ],
   "summary": {
-    "passed": 16,
-    "total": 16,
+    "passed": 18,
+    "total": 18,
     "status": "pass",
     "bySubsystem": {
       "runtime": {
-        "passed": 16,
-        "total": 16
+        "passed": 18,
+        "total": 18
       }
     }
   },
-  "proofHash": "edb681031a374efeb1338e7e70a669632ecdb15966f9f940e080eb46d0e50c4f"
+  "proofHash": "607fa63c7acf9da7abaa51775dd0629dbf6ce21a3df63847d39efe1d2126c8a7"
 }

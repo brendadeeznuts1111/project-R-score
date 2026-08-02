@@ -216,6 +216,49 @@ export function probeInspectCustomInspect(): BunRuntimeNitsProbeRow {
   );
 }
 
+/** Node util.inspect.defaultOptions is not exposed on Bun.inspect. */
+export function probeInspectDefaultOptions(): BunRuntimeNitsProbeRow {
+  const value = (Bun.inspect as { defaultOptions?: unknown }).defaultOptions;
+  const ok = value === undefined;
+  return resultRow(
+    'inspect.defaultOptions',
+    'inspect',
+    'Bun.inspect.defaultOptions is undefined (Node util.inspect API absent)',
+    ok ? 'undefined' : typeof value,
+    ok,
+    { canonicalKey: 'Bun.inspect' }
+  );
+}
+
+/**
+ * `{ table: true }` on Bun.inspect is silently ignored.
+ * Columnar output requires Bun.inspect.table.
+ */
+export function probeInspectTableOptionIgnored(): BunRuntimeNitsProbeRow {
+  const rows = [
+    { a: 1, b: 2 },
+    { a: 3, b: 4 },
+  ];
+  const withTableOpt = Bun.inspect(rows, { table: true, colors: false } as never);
+  // Probe asserts Bun.inspect.table API truth — not operator TTY output.
+  const tableOut = Bun.inspect.table(rows, { colors: false }); // console-ok
+  const looksTabular =
+    withTableOpt.includes('┌') || withTableOpt.includes('│') || /^\s*a\s+b\s*$/m.test(withTableOpt);
+  const tableWorks = tableOut.length > 0 && tableOut !== withTableOpt;
+  const optionIgnored = withTableOpt !== tableOut && !looksTabular;
+  const ok = optionIgnored && tableWorks;
+  return resultRow(
+    'inspect.tableOptionIgnored',
+    'inspect',
+    '{ table: true } ignored; Bun.inspect.table produces distinct tabular output',
+    ok
+      ? 'table option ignored; inspect.table distinct'
+      : `opt=${withTableOpt.slice(0, 40)} table=${tableOut.slice(0, 40)}`,
+    ok,
+    { canonicalKey: 'Bun.inspect.table' }
+  );
+}
+
 export function runInspectProbes(): BunRuntimeNitsProbeRow[] {
   return [
     probeInspectSorted(),
@@ -225,6 +268,8 @@ export function runInspectProbes(): BunRuntimeNitsProbeRow[] {
     probeInspectNumericSeparator(),
     probeInspectMaxStringLength(),
     probeInspectCustomInspect(),
+    probeInspectDefaultOptions(),
+    probeInspectTableOptionIgnored(),
   ];
 }
 

@@ -11,7 +11,7 @@ Proof JSON: `/registry/bun-runtime-nits-proof.json`
 
 | Category | Probes | What it proves |
 |----------|--------|----------------|
-| `inspect` | 7 | `sorted`, `compact`, `showProxy`, `getters`, `numericSeparator`, `maxStringLength`, `customInspect` — **runtime truth**, not Node parity |
+| `inspect` | 9 | `sorted`, `compact`, `showProxy`, `getters`, `numericSeparator`, `maxStringLength`, `customInspect`, `defaultOptions`, `tableOptionIgnored` — **runtime truth**, not Node parity |
 | `streams` | 2 | gzip `CompressionStream`/`DecompressionStream` roundtrip; `TextEncoderStream`/`TextDecoderStream` |
 | `url` | 4 | `host`, `origin`, `searchParams`, `host` setter |
 | `file-io` | 3 | lazy `Bun.file` size, `Bun.write` auto-dir, bytes vs `fs.readFile` |
@@ -31,6 +31,8 @@ Project SSOT: [`lib/console-depth.ts`](../lib/console-depth.ts) exposes only opt
 verified on Bun 1.4 (`depth`, `colors`, `compact`, `sorted`). Probes record behavior
 for Node-compat options:
 
+- `defaultOptions` — **absent** (`Bun.inspect.defaultOptions` is `undefined`; not Node `util.inspect`)
+- `{ table: true }` — **ignored**; use `Bun.inspect.table` / `inspectTable` for columnar output
 - `maxStringLength` — typically **ignored** (full string still shown)
 - `numericSeparator` — may be **ignored**
 - `getters: true` — shows `[Getter]` on this runtime
