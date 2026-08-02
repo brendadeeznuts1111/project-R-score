@@ -11,14 +11,14 @@ parallel lifecycle enums, duplicated `maxBet`, jurisdiction/cultivation/
 settlement existing only in the Sports Terminal product, bookmaker accounts as
 free-text URLs, and credentials split between intake JSON and the vault.
 
-| Fragment | File | Unique fields |
-|---|---|---|
-| Onboarding/bridge | `lib/operations/partner-onboarding.ts` · `config/partner-templates/*.toml` | cut, lineage (parent/expert), template binding, `[sor]` rules |
-| Partners-ops | `lib/telegram/partner-ops-registry.ts` | CODE, call-sign, phase, telegram chat+topics, rail taxonomy, ledger |
-| Seat intake | `lib/telegram/seat-intake.ts` | password (secret), balance, withdrawPath, desk thread |
-| Account dossier | `/portal/account/` | pure join view (no own fields) |
-| Sports Terminal | `.agents/skills/partner-profile-os/` · `projects/active/sports-terminal-os/profiles/*.toml` | jurisdiction, sources, cultivation, settlement, balance, compliance, graduated lifecycle |
-| Vault / limit-raises | `lib/security/partner-vault.ts` · `/registry/limit-raises.json` | node-scoped AES-GCM secrets; raise history + multi-factor scores |
+| Fragment             | File                                                                                        | Unique fields                                                                            |
+| -------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Onboarding/bridge    | `lib/operations/partner-onboarding.ts` · `config/partner-templates/*.toml`                  | cut, lineage (parent/expert), template binding, `[sor]` rules                            |
+| Partners-ops         | `lib/telegram/partner-ops-registry.ts`                                                      | CODE, call-sign, phase, telegram chat+topics, rail taxonomy, ledger                      |
+| Seat intake          | `lib/telegram/seat-intake.ts`                                                               | password (secret), balance, withdrawPath, desk thread                                    |
+| Account dossier      | `/portal/account/`                                                                          | pure join view (no own fields)                                                           |
+| Sports Terminal      | `.agents/skills/partner-profile-os/` · `projects/active/sports-terminal-os/profiles/*.toml` | jurisdiction, sources, cultivation, settlement, balance, compliance, graduated lifecycle |
+| Vault / limit-raises | `lib/security/partner-vault.ts` · `/registry/limit-raises.json`                             | node-scoped AES-GCM secrets; raise history + multi-factor scores                         |
 
 ## Unified model (v0)
 
@@ -74,23 +74,38 @@ derived aliases. Canonical glossary concept ids reused (`book.type.*`,
 
 - `lib/partner-profile/` — schema + validation + bake
 - `config/partner-profiles/<CODE>.toml` — one profile per partner
-- bake → `/registry/partner-profiles.json` (`bun run partner-profile:bake[:check]`)
+- bake → `/registry/partner-profiles.json`
+  (`bun run partner-profile:bake[:check]`)
 - Consumers: account dossier, `/portal/partners/`, seat desk, and the Sports
   Terminal engine (same model, both products).
 
 ## Migration plan (per fragment, own PR)
 
-| Phase | Fragment → | Work |
-|---|---|---|
-| 1 | **schema + bake** (this PR) | `lib/partner-profile/` · `.example.toml` · weave artifact · tests · design doc |
-| 2 | seat intake → vault | write `partner_vault` on intake; drop plaintext `password` from `SeatOut`; keep `bookLogin` username |
-| 3 | partners-ops → profile | derive `PartnersOpsPartner` from the unified profile (phase from lifecycle); rail/funding taxonomy moves into `books[].funding` |
-| 4 | tree_nodes identity | CODE becomes the join key; callSign/TreeNodeId aliases; dossier keys off CODE |
-| 5 | Sports Terminal profiles | re-express `profiles/*.toml` as unified profiles (jurisdiction/cultivation/settlement already in model); ST engine reads the same bake |
-| 6 | boards | `/portal/partners/` + dossier read `/registry/partner-profiles.json` (no more six-way joins) |
+| Phase | Fragment →                                      | Work                                                                                                                                                                                                                       |
+| ----- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1     | **schema + bake** ✅ merged (#206)              | `lib/partner-profile/` · `.example.toml` · weave artifact · tests · design doc                                                                                                                                             |
+| 2     | **register + seat-intake → vault** ✅ (this PR) | `lib/partner-profile/register.ts` (tree lookup → vault write → intake upsert → profile upsert) · `partner:bookmaker:register` CLI · `partner:vault:migrate` (plaintext passwords → vault, idempotent) · `SeatOut.vaultKey` |
+| 3     | partners-ops → profile                          | derive `PartnersOpsPartner` from the unified profile (phase from lifecycle); rail/funding taxonomy moves into `books[].funding`                                                                                            |
+| 4     | tree_nodes identity                             | CODE becomes the join key; callSign/TreeNodeId aliases; dossier keys off CODE                                                                                                                                              |
+| 5     | Sports Terminal profiles                        | re-express `profiles/*.toml` as unified profiles (jurisdiction/cultivation/settlement already in model); ST engine reads the same bake                                                                                     |
+| 6     | boards                                          | `/portal/partners/` + dossier read `/registry/partner-profiles.json` (no more six-way joins)                                                                                                                               |
+
+## Registration command (phase 2)
+
+```bash
+bun run partner:bookmaker:register <CODE> <bookKey> \
+  --url <url> --username <user> --password <pass> \
+  [--type pph] [--chat <chatId>] [--maxBet <n>]
+```
+
+Writes the password to `partner_vault` (node-scoped AES-GCM, key
+`partner:<CODE>:<bookKey>`), upserts the seat-intake out (`bookLogin` +
+`vaultKey`, **no plaintext password**), and upserts
+`config/partner-profiles/<CODE>.toml`. Existing plaintext intake passwords
+migrate via `bun run partner:vault:migrate` (idempotent).
 
 ## youwager (first real profile)
 
 `YOU` → `books.youwager { type: pph, account{username, vaultKey}, limits{…} }` +
-telegram binding. Blocks: partner code/call-sign, chat id, credentials
-(vault write). Registration lands only after the schema PR merges.
+telegram binding. Blocks: partner code/call-sign, chat id, credentials (vault
+write). Registration lands only after the schema PR merges.
