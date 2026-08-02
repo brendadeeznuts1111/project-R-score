@@ -11,6 +11,7 @@ import {
   parsePmPkgValue,
   pmLsSanity,
   pmPkgParity,
+  readmeMetadata,
   scopeTokenPresence,
   scopedPackumentUrl,
 } from '../lib/verification/pm-registry-probes.ts';
@@ -239,6 +240,46 @@ describe('pm-registry-probes network fail-soft', () => {
     const absent = scopeTokenPresence({});
     expect(absent.ok).toBe(true);
     expect(absent.skipped).toBe(true);
+  });
+});
+
+describe('pm-registry-probes readme metadata (Bun 1.3.14+)', () => {
+  const local = { name: '@factorywager/registry-client', version: '1.0.0' };
+
+  test('skips without packument or published version', async () => {
+    const noPack = await readmeMetadata(undefined, async () => local);
+    expect(noPack.skipped).toBe(true);
+    const noVersion = await readmeMetadata({ versions: {} }, async () => local);
+    expect(noVersion.skipped).toBe(true);
+  });
+
+  test('passes when readme and readmeFilename are populated', async () => {
+    const packument = {
+      versions: {
+        '1.0.0': { version: '1.0.0', readme: '# Registry Client\n…', readmeFilename: 'README.md' },
+      },
+    };
+    const row = await readmeMetadata(packument, async () => local);
+    expect(row.ok).toBe(true);
+    expect(row.skipped).toBe(false);
+    expect(row.detail).toContain('README.md');
+  });
+
+  test('fails when metadata is empty (pre-1.3.14 publish)', async () => {
+    const packument = { versions: { '1.0.0': { version: '1.0.0', readme: '', readmeFilename: '' } } };
+    const row = await readmeMetadata(packument, async () => local);
+    expect(row.ok).toBe(false);
+    expect(row.detail).toContain('Bun ≥1.3.14');
+  });
+
+  test('falls back to dist-tags.latest when local version is unpublished', async () => {
+    const packument = {
+      'dist-tags': { latest: '0.9.0' },
+      versions: { '0.9.0': { version: '0.9.0', readme: '# old', readmeFilename: 'README.md' } },
+    };
+    const row = await readmeMetadata(packument, async () => local);
+    expect(row.ok).toBe(true);
+    expect(row.detail).toContain('v0.9.0');
   });
 });
 
