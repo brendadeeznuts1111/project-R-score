@@ -4,8 +4,18 @@ import { joinPath } from './fs-bun';
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 
-/** Default dirs skipped when scanning for literal `./~` Bun cache drift. */
-export const DEFAULT_TILDE_PRUNE = ['node_modules', '.git', 'herdr-worktrees'] as const;
+/**
+ * Default dirs skipped when scanning for literal `./~` Bun cache drift.
+ * Matched by NAME at any depth (not root-anchored paths) so nested workspace
+ * `node_modules`/`.git` and foreign worktree checkouts are pruned too —
+ * each worktree checkout evicts its own tree via its own hook run.
+ */
+export const DEFAULT_TILDE_PRUNE = [
+  'node_modules',
+  '.git',
+  'herdr-worktrees',
+  '.codex-worktrees',
+] as const;
 
 export function resolveHome(
   env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
@@ -54,10 +64,11 @@ export function findTildeCacheDirs(
   root: string,
   pruneDirNames: readonly string[] = DEFAULT_TILDE_PRUNE
 ): string[] {
-  const prune = pruneDirNames.map(name => joinPath(root, name));
+  // Name-based prune (any depth): root-anchored `-path` only skipped the
+  // top-level dir, so every nested workspace node_modules/.git was walked.
   const findArgs = [
     root,
-    ...prune.flatMap(p => ['-path', p, '-prune', '-o']),
+    ...pruneDirNames.flatMap(name => ['-name', name, '-prune', '-o']),
     '-name',
     '~',
     '-type',
