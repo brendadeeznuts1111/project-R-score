@@ -626,6 +626,7 @@ loadDomainGlossary()
       searchInput: document.getElementById('glossary-search'),
       tooltipRoot: document.querySelector('.glossary-board'),
       trackPage: false,
+      applySectionTitles: true,
       onAutocompleteSelect(concept) {
         document.getElementById('glossary-search').value = concept.label;
         renderConcepts();

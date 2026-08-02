@@ -163,6 +163,11 @@ describe('shared glossary UX contract', () => {
     expect(limits).toContain('applySectionTitles: true');
   });
 
+  test('glossary board opts into applySectionTitles (unified section headers)', async () => {
+    const board = await Bun.file('public/portal/glossary/glossary-board.js').text();
+    expect(board).toContain('applySectionTitles: true');
+  });
+
   test('applySectionTitles writes section.title into section-anchor and keeps siblings', async () => {
     const { applySectionTitles } = await import('../public/portal/components/glossary-ux.js');
 
