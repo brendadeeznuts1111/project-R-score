@@ -40,6 +40,14 @@ const CORE_STEPS: Array<{ name: string; cmd: string[] }> = [
     cmd: ['bun', 'scripts/check-import-graph.ts'],
   },
   {
+    name: 'oxlint-ratchet',
+    cmd: ['bun', 'scripts/check-oxlint-ratchet.ts'],
+  },
+  {
+    name: 'console-format-ratchet',
+    cmd: ['bun', 'scripts/lint-console-format.ts'],
+  },
+  {
     name: 'brand-manifest',
     cmd: ['bun', 'tools/brand-manifest.ts', '--check'],
   },
