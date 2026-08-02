@@ -63,6 +63,20 @@ export function gitEnv(): Record<string, string> {
   );
 }
 
+/**
+ * Test-run env: gitEnv() minus NODE_ENV. Bun loads the repo .env (which sets
+ * NODE_ENV=production) into the hook process, and the scratch test runner
+ * inherited it — tests that fail-closed in production (e.g. the
+ * PARTNER_VAULT_MASTER_KEY policy in lib/security/partner-vault.ts) then
+ * broke in the scratch run while passing locally with the dev fallback.
+ * Tests always run in dev semantics; deployment env is never inherited.
+ */
+export function testRunEnv(): Record<string, string> {
+  const env = gitEnv();
+  delete env.NODE_ENV;
+  return env;
+}
+
 function tempRoot(): string {
   return Bun.env.TMPDIR || Bun.env.TMP || '/tmp';
 }
@@ -202,7 +216,7 @@ async function main(): Promise<number> {
       stdout: 'inherit',
       stderr: 'inherit',
       stdin: 'inherit',
-      env: gitEnv(),
+      env: testRunEnv(),
     });
     return (await legacy.exited) ?? 1;
   }
@@ -210,7 +224,7 @@ async function main(): Promise<number> {
   try {
     const proc = Bun.spawn(
       ['bun', 'test', '--changed', '--pass-with-no-tests', '--parallel', ...forwarded],
-      { cwd: tmp, stdout: 'inherit', stderr: 'inherit', stdin: 'inherit', env: gitEnv() }
+      { cwd: tmp, stdout: 'inherit', stderr: 'inherit', stdin: 'inherit', env: testRunEnv() }
     );
     return (await proc.exited) ?? 1;
   } finally {

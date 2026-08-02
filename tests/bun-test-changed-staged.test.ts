@@ -1,6 +1,6 @@
 // @see https://bun.com/docs/test/index#run-tests
 import { describe, expect, test } from 'bun:test';
-import { gitEnv, stagedDeletions } from '../scripts/bun-test-changed-staged.ts';
+import { gitEnv, stagedDeletions, testRunEnv } from '../scripts/bun-test-changed-staged.ts';
 
 function sh(cmd: string[], opts: { cwd?: string; env?: Record<string, string> } = {}) {
   const p = Bun.spawnSync({ cmd, cwd: opts.cwd, env: opts.env, stdout: 'pipe', stderr: 'pipe' });
@@ -28,6 +28,12 @@ describe('test-changed-staged helpers', () => {
       expect(env[k]).toBeUndefined();
     }
     expect(env.PATH).toBe(Bun.env.PATH); // everything else is preserved
+  });
+
+  test('testRunEnv also strips NODE_ENV — tests run in dev semantics', () => {
+    const env = testRunEnv();
+    expect(env.NODE_ENV).toBeUndefined();
+    expect(env.GIT_INDEX_FILE).toBeUndefined();
   });
 
   test('scratch git add -A never leaks the node_modules symlink into an inherited index', async () => {
