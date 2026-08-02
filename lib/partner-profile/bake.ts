@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
@@ -19,7 +20,7 @@
  * @see docs/design/unified-partner-profile.md
  */
 
-import { dirname, join } from 'node:path';
+import { joinPath } from '../path-bun';
 import { parsePartnerProfileToml } from './parse';
 
 export const PROFILES_DIR = 'config/partner-profiles';
@@ -45,7 +46,7 @@ export async function loadAllProfiles(
     if (file.startsWith('.example')) continue;
     const code = file.replace(/\.toml$/, '');
     try {
-      const text = await fetcher(join(dir, file));
+      const text = await fetcher(joinPath(dir, file));
       const profile = parsePartnerProfileToml(text, code);
       profiles[code] = profile;
     } catch (err) {

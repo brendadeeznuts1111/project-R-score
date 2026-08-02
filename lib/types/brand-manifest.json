@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "generatedAt": "2026-08-01T19:46:02.065Z",
+  "generatedAt": "2026-08-02T23:32:56.408Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
-  "brandCount": 61,
+  "brandCount": 62,
   "domainCount": 9,
   "domains": [
     "audit",
@@ -16,7 +16,7 @@
     "surfaces"
   ],
   "kinds": {
-    "id": 55,
+    "id": 56,
     "key": 1,
     "code": 5
   },
@@ -44,7 +44,7 @@
     {
       "name": "operations",
       "module": "lib/types/branded/operations.ts",
-      "brandCount": 23
+      "brandCount": 24
     },
     {
       "name": "portal",
@@ -1183,6 +1183,33 @@
       "guard": "BRAND_GUARDS.isPartnerTemplateId",
       "shortName": "partnerTemplateId",
       "envName": "PARTNER_TEMPLATE_ID"
+    },
+    {
+      "name": "OutId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Seat-intake out token (e.g. SPEN-1 / CODE-1)",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asOutId",
+        "try": "tryOutId",
+        "parse": "parseOutId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isOutId",
+      "shortName": "outId",
+      "envName": "OUT_ID"
     },
     {
       "name": "GateDecisionId",

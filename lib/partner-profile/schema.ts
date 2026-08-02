@@ -11,6 +11,8 @@
 //   3. Credentials are vault-only — the profile carries account.vaultKey, never
 //      a plaintext password.
 
+import type { PartnerTemplateId } from '../types/branded';
+
 export const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
 export const CALL_SIGN_RE = /^[A-Z]{3,6}-\d{3}$/;
 export const BOOK_KEY_RE = /^[a-z][a-z0-9-]*$/;
@@ -55,7 +57,7 @@ export type ProfileSource = (typeof PROFILE_SOURCES)[number];
 
 export type PartnerProfile = {
   meta: {
-    templateId: string;
+    templateId: PartnerTemplateId;
     name: string;
     version: string;
     source: ProfileSource;
@@ -203,7 +205,10 @@ export function derivePhase(
   return 'incomplete';
 }
 
-/** Validate a candidate profile. Returns issues ([] = valid). */
+/** Validate a candidate profile. Returns issues ([] = valid).
+ * Wire validator: raw profile input (TOML / intake) parsed at the edge; see
+ * WIRE_BOUNDARY — issues-only return, no re-decode inward. */
+// eslint-disable-next-line harness/no-unknown-function-param
 export function validatePartnerProfile(value: unknown): ProfileValidation {
   const issues: string[] = [];
   if (!isRecord(value)) return { valid: false, issues: ['profile is not an object'] };
