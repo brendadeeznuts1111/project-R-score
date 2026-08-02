@@ -43,6 +43,11 @@ const STEPS: BakeStep[] = [
   },
   { id: 'bunfig', bunArgs: ['run', 'bunfig:bake'], note: 'bunfig-state.json' },
   {
+    id: 'npm-packument',
+    bunArgs: ['run', 'bake:npm-packument'],
+    note: 'registry/npm/@factorywager/registry-client.json',
+  },
+  {
     id: 'console-format',
     bunArgs: ['run', 'console-format:bake'],
     note: 'console-format-state.json',
