@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastUpdated": "2026-07-24T00:00:22.295046+00:00",
+  "lastUpdated": "2026-08-02T19:59:26.757Z",
   "packages": {
     "event-store": {
       "versions": [
@@ -616,6 +616,102 @@
             "r2Key": "@factorywager/sdk-test-pkg/1.0.0.tgz",
             "size": 16,
             "checksum": "9276297f7ebf1ba9917e342258c3b82a3273f81b3f0f3aea7bd83e746625d8b2",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "@factorywager/tennis-hq-ssot": {
+      "versions": [
+        "1.4.0"
+      ],
+      "dist-tags": {
+        "latest": "1.4.0"
+      },
+      "releases": {
+        "1.4.0": {
+          "id": "@factorywager/tennis-hq-ssot@1.4.0",
+          "name": "@factorywager/tennis-hq-ssot",
+          "version": "1.4.0",
+          "type": "library",
+          "description": "Tennis HQ governance SSOT (npm: @tennis-hq/ssot) — color registry + glossary color wire",
+          "author": {
+            "name": "FactoryWager Team",
+            "email": "team@factory-wager.com",
+            "url": "https://factory-wager.com"
+          },
+          "tags": [],
+          "readme": "# `@tennis-hq/ssot`\n\n**Publish-only** package for Tennis HQ governance artifacts (MIT).\n\nThe root app (`tennis-hq`) stays **`private: true`** and is never published.\n\n| Export | Contents |\n|--------|----------|\n| `@tennis-hq/ssot` | `SSOT_VERSION`, `COLOR_KEYS`, loaders |\n| `@tennis-hq/ssot/color-system.json` | Kernel color registry |\n| `@tennis-hq/ssot/glossary-colors.json` | Glossary color wire |\n\n## From monorepo root\n\n```bash\nbun run colors:build\nbun run ssot:build\nbun run ssot:check\nbun run ssot:pack          # artifacts/publish/*.tgz — no auth\nbun run ssot:publish       # needs NPM_TOKEN or npm login\n```\n\n## Version\n\n```bash\nbun pm version patch --no-git-tag-version   # root\nbun run ssot:build                          # sync + artifacts\n```\n\n## Config\n\n- `publishConfig.access`: **public** (free scoped package)\n- `private`: false\n- `files`: dist, registry, README, LICENSE\n",
+          "publishedAt": "2026-07-31T14:57:36.452Z",
+          "publisher": "tennis-hq",
+          "storage": {
+            "r2Key": "@factorywager/tennis-hq-ssot/1.4.0.tgz",
+            "size": 5228,
+            "checksum": "fb0d0ba575de786182a45827a184d3f195f9cfe21cf8c74b76b7e569a370d19c",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "@tennis-hq/ssot": {
+      "versions": [
+        "1.4.0"
+      ],
+      "dist-tags": {
+        "latest": "1.4.0"
+      },
+      "releases": {
+        "1.4.0": {
+          "id": "@tennis-hq/ssot@1.4.0",
+          "name": "@tennis-hq/ssot",
+          "version": "1.4.0",
+          "type": "library",
+          "description": "Tennis HQ governance SSOT (npm: @tennis-hq/ssot) — color registry + glossary color wire",
+          "author": {
+            "name": "FactoryWager Team",
+            "email": "team@factory-wager.com",
+            "url": "https://factory-wager.com"
+          },
+          "tags": [],
+          "readme": "# `@tennis-hq/ssot`\n\n**Publish-only** package for Tennis HQ governance artifacts (MIT).\n\nThe root app (`tennis-hq`) stays **`private: true`** and is never published.\n\n| Export | Contents |\n|--------|----------|\n| `@tennis-hq/ssot` | `SSOT_VERSION`, `COLOR_KEYS`, loaders |\n| `@tennis-hq/ssot/color-system.json` | Kernel color registry |\n| `@tennis-hq/ssot/glossary-colors.json` | Glossary color wire |\n\n## From monorepo root\n\n```bash\nbun run colors:build\nbun run ssot:build\nbun run ssot:check\nbun run ssot:pack          # artifacts/publish/*.tgz — no auth\nbun run ssot:publish       # needs NPM_TOKEN or npm login\n```\n\n## Version\n\n```bash\nbun pm version patch --no-git-tag-version   # root\nbun run ssot:build                          # sync + artifacts\n```\n\n## Config\n\n- `publishConfig.access`: **public** (free scoped package)\n- `private`: false\n- `files`: dist, registry, README, LICENSE\n",
+          "publishedAt": "2026-07-31T15:01:23.230Z",
+          "publisher": "tennis-hq",
+          "storage": {
+            "r2Key": "@tennis-hq/ssot/1.4.0.tgz",
+            "size": 5228,
+            "checksum": "fb0d0ba575de786182a45827a184d3f195f9cfe21cf8c74b76b7e569a370d19c",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "@factorywager/bookmakers": {
+      "versions": [
+        "0.1.0"
+      ],
+      "dist-tags": {
+        "latest": "0.1.0"
+      },
+      "releases": {
+        "0.1.0": {
+          "id": "@factorywager/bookmakers@0.1.0",
+          "name": "@factorywager/bookmakers",
+          "version": "0.1.0",
+          "type": "library",
+          "description": "Canonical bookmaker registry (deep-link pipeline)",
+          "author": {
+            "name": "FactoryWager Team",
+            "email": "team@factory-wager.com",
+            "url": "https://factory-wager.com"
+          },
+          "tags": [],
+          "readme": "# @factorywager/bookmakers\n\nCanonical bookmaker registry for the sportsbook deep-link pipeline — published to\nthe FactoryWager **artifact registry** (`registry.factory-wager.com`, R2-backed),\nnot npm.\n\n## Schema\n\nEach entry key is the canonical bookmaker id; the value is a `BookmakerEntry`:\n\n| Field | Type | Required | Meaning |\n|-------|------|----------|---------|\n| `id` | `string` | yes | Canonical id (`pinnacle`, `fanduel`, …) |\n| `label` | `string` | yes | Display name |\n| `domain` | `string` | yes | Bookmaker site domain |\n| `fetcherType` | `\"rest\" \\| \"webview\"` | yes | Fetch strategy |\n| `restBaseUrl` / `restProtocol` | `string` | for `rest` | REST base URL + HTTP protocol pin |\n| `webViewConfig` | `object` | for `webview` | `waitForSelector`, `timeout`, `emptyMarker` |\n| `supportedSports` | `string[]` | yes | Canonical sport ids |\n| `supportedLeagues` | `string[]` | no | Canonical league allow-list |\n| `regions` | `string[]` | yes | Regions the book operates in |\n| `color` | `string` | yes | Brand chip color (CSS hex) |\n| `apiKeyEnv` / `envVars` | `string` | no | Environment plumbing for keys |\n\n## Usage (on-demand, no install)\n\n```bash\n# From the deeplink-automation repo — resolves @factorywager/bookmakers from the\n# artifact registry, downloads, validates, and renders:\nbun run weave --package @factorywager/bookmakers --depth 5 --table\nbun run weave --package @factorywager/bookmakers@0.1.0 --json\n```\n\n`FACTORY_REGISTRY_URL` overrides the registry base URL (default\n`https://registry.factory-wager.com`).\n\n## Publish (runbook)\n\nThe artifact registry is R2-backed; publishing requires R2 credentials\n(`R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY`) — run from the factory monorepo\n(`~/Projects`) after sourcing its `.env`:\n\n```bash\n# 1. build an npm-style tarball (package/ prefix, ustar)\ntar -czf /tmp/bookmakers.tgz -C packages/bookmakers .\n\n# 2. publish to R2 (name must be @factorywager/* — the registry rejects other scopes)\nbun lib/factory/cli.ts publish /tmp/bookmakers.tgz \\\n  --name @factorywager/bookmakers --version 0.1.0 \\\n  --type library --description \"Canonical bookmaker registry (deep-link pipeline)\"\n\n# 3. refresh the static read-plane index and deploy it (commit + push Pages)\nbun lib/factory/cli.ts snapshot public/registry/registry.json\n```\n\nThe tarball object is immediately readable at\n`/api/registry/%40factorywager/bookmakers/<version>.tgz`; the index (dist-tag\nresolution + checksums) needs the snapshot commit to reach Pages.\n\n## Regenerate\n\n`bookmakers.ts` is a snapshot of the repo's `lib/bookmakers.ts`:\n\n```bash\ncp lib/bookmakers.ts packages/bookmakers/bookmakers.ts\n```\n\n`bookmakers-package.unit.test.ts` fails when the two drift.\n",
+          "publishedAt": "2026-08-02T19:59:26.343Z",
+          "publisher": "deeplink-automation",
+          "storage": {
+            "r2Key": "@factorywager/bookmakers/0.1.0.tgz",
+            "size": 4900,
+            "checksum": "33a40ab65298a7e05860de2b5b69dfa562cfb9d7c12c90902808a37dc24da035",
             "contentType": "application/gzip"
           }
         }
