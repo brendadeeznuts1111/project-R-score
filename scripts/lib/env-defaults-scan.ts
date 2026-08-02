@@ -2,7 +2,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/environment-variables#configuring-bun
 /**
- * Pure Bun.env hygiene scanner — shared by check-env-defaults CLI + tests.
+ * Pure Bun.env hygiene scanner — shared by env-inventory + tests.
  * Classifies optional config reads that lack fallbacks (not secrets / ambient).
  */
 import { BUN_RUNTIME_ENV_NAMES } from '../../lib/bun-runtime-env.ts';

@@ -605,12 +605,11 @@ async function main(): Promise<void> {
     );
   });
 
-  // Parallel: staged adoption + committed-tree adoption + catalog collision proof.
-  console.info(
-    full
-      ? '🏷️  Branded IDs + ratchets (staged ‖ smart ‖ types ‖ path-bun ‖ bun-env)...'
-      : '🏷️  Branded IDs + ratchets (staged ‖ smart ‖ path-bun ‖ bun-env; types deferred)...'
-  );
+  // Parallel: staged adoption + path/env policy + console-format staged mode.
+  // Repo-wide trend gates (brands-smart/catalog, import-graph, oxlint,
+  // console-format ratchet) live in pre-push / ci:core — one enforcement
+  // point per concern; commit time is for "did MY diff break anything".
+  console.info('🏷️  Branded IDs (staged) + policy gates...');
 
   async function spawnGate(name: string, cmd: string[]): Promise<GateTiming & { code: number }> {
     const t0 = performance.now();
@@ -625,14 +624,6 @@ async function main(): Promise<void> {
 
   const parallelJobs: Array<Promise<GateTiming & { code: number }>> = [
     spawnGate('brands-staged', ['bun', 'tools/branded-id-check.ts', '--staged', '--strict']),
-    spawnGate('brands-smart', [
-      'bun',
-      'tools/branded-id-check.ts',
-      '--smart',
-      '--strict',
-      '--quiet',
-    ]),
-    spawnGate('brands-catalog', ['bun', 'test', 'tests/branded-catalog.test.ts']),
   ];
 
   const brandedTypesStaged = staged.some(f => {
@@ -652,19 +643,14 @@ async function main(): Promise<void> {
   }
   if (libStaged || scriptsStaged) {
     parallelJobs.push(spawnGate('bun-env', ['bun', 'scripts/check-bun-env.ts']));
-    parallelJobs.push(spawnGate('import-graph', ['bun', 'scripts/check-import-graph.ts']));
   }
   // Tier-A package gate always runs (sole successor to check-banned-wrappers).
   parallelJobs.push(spawnGate('bun-deps-tier-a', ['bun', 'scripts/check-bun-deps-tier-a.ts']));
   // Mixed-lane guard (warn-only): bakes staged together with source files.
   parallelJobs.push(spawnGate('mixed-lane', ['bun', 'scripts/check-mixed-lane.ts']));
   if (libStaged || scriptsStaged || toolsStaged) {
-    parallelJobs.push(spawnGate('oxlint-ratchet', ['bun', 'scripts/check-oxlint-ratchet.ts']));
     parallelJobs.push(
       spawnGate('console-format-staged', ['bun', 'scripts/lint-console-format.ts', '--staged'])
-    );
-    parallelJobs.push(
-      spawnGate('console-format-ratchet', ['bun', 'scripts/lint-console-format.ts'])
     );
   }
   if (npmInstallStaged) {
@@ -717,17 +703,11 @@ async function main(): Promise<void> {
   for (const r of parallelResults) timings.push({ name: r.name, ms: r.ms, ok: r.ok });
 
   const brandStaged = parallelResults.find(r => r.name === 'brands-staged')?.code ?? 1;
-  const brandSmart = parallelResults.find(r => r.name === 'brands-smart')?.code ?? 1;
-  const brandCatalog = parallelResults.find(r => r.name === 'brands-catalog')?.code ?? 1;
   const brandTypes = parallelResults.find(r => r.name === 'brands-types')?.code ?? 0;
   const pathBun = parallelResults.find(r => r.name === 'path-bun')?.code ?? 0;
   const bunEnv = parallelResults.find(r => r.name === 'bun-env')?.code ?? 0;
-  const importGraph = parallelResults.find(r => r.name === 'import-graph')?.code ?? 0;
-  const oxlintRatchet = parallelResults.find(r => r.name === 'oxlint-ratchet')?.code ?? 0;
   const consoleFormatStaged =
     parallelResults.find(r => r.name === 'console-format-staged')?.code ?? 0;
-  const consoleFormatRatchet =
-    parallelResults.find(r => r.name === 'console-format-ratchet')?.code ?? 0;
   const npmInstall = parallelResults.find(r => r.name === 'npm-install')?.code ?? 0;
   const bunDepsTierA = parallelResults.find(r => r.name === 'bun-deps-tier-a')?.code ?? 0;
   const monorepoHealthTests =
@@ -739,16 +719,6 @@ async function main(): Promise<void> {
     console.error(
       '❌ New unbranded domain ID (bare string) — use lib/types/branded.ts as*/try*/parse*'
     );
-    await writeTimings(timings, full);
-    process.exit(1);
-  }
-  if (brandSmart !== 0) {
-    console.error('❌ Actionable unbranded IDs — bun run check:brands');
-    await writeTimings(timings, full);
-    process.exit(1);
-  }
-  if (brandCatalog !== 0) {
-    console.error('❌ Domain entity catalog collision or constructor contract failure');
     await writeTimings(timings, full);
     process.exit(1);
   }
@@ -767,25 +737,10 @@ async function main(): Promise<void> {
     await writeTimings(timings, full);
     process.exit(1);
   }
-  if (importGraph !== 0) {
-    console.error('❌ import cycle or deep-relative-import growth — bun run check:import-graph');
-    await writeTimings(timings, full);
-    process.exit(1);
-  }
-  if (oxlintRatchet !== 0) {
-    console.error('❌ oxlint warnings grew — bun run check:oxlint-ratchet');
-    await writeTimings(timings, full);
-    process.exit(1);
-  }
   if (consoleFormatStaged !== 0) {
     console.error(
       '❌ raw console.table / pretty-JSON in staged lines — use logTable/logDepth (bun run check:console-format)'
     );
-    await writeTimings(timings, full);
-    process.exit(1);
-  }
-  if (consoleFormatRatchet !== 0) {
-    console.error('❌ console-format hits grew — bun run check:console-format');
     await writeTimings(timings, full);
     process.exit(1);
   }
