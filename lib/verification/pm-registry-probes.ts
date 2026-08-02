@@ -257,6 +257,36 @@ async function readLocalPackageManifest(): Promise<Record<string, unknown>> {
   >;
 }
 
+/**
+ * 3b — README metadata reached the registry (Bun ≥1.3.14 `bun publish`
+ * sends readme/readmeFilename; empty fields mean a pre-fix publish).
+ */
+export async function readmeMetadata(
+  packument: NpmPackument | undefined,
+  readLocal: () => Promise<Record<string, unknown>> = readLocalPackageManifest
+): Promise<PmProbeRow> {
+  if (!packument?.versions) {
+    return row('readme metadata', true, 'skipped — no packument', true);
+  }
+  const local = await readLocal();
+  const localVersion = typeof local.version === 'string' ? local.version : '';
+  const version = packument.versions[localVersion] ? localVersion : packument['dist-tags']?.latest;
+  const entry = version ? packument.versions[version] : undefined;
+  if (!version || !entry) {
+    return row('readme metadata', true, 'skipped — no published version to inspect', true);
+  }
+  const readme = typeof entry.readme === 'string' ? entry.readme : '';
+  const filename = typeof entry.readmeFilename === 'string' ? entry.readmeFilename : '';
+  if (readme.length > 0 && /^readme(\.|$)/i.test(filename)) {
+    return row('readme metadata', true, `v${version} readme=${readme.length} chars (${filename})`);
+  }
+  return row(
+    'readme metadata',
+    false,
+    `v${version} readme metadata empty — publish with Bun ≥1.3.14 to populate`
+  );
+}
+
 /** 4 — `bun pm pack --dry-run` file set + dependency protocols. */
 export async function packDryRun(
   spawn: PmSpawn = defaultSpawn,
@@ -327,6 +357,7 @@ export async function runPmProbes(opts?: {
   rows.push(metaRow);
   rows.push(await artifactRegistryApi(opts?.fetchImpl, opts?.registry));
   rows.push(await manifestParity(packument));
+  rows.push(await readmeMetadata(packument));
   rows.push(await packDryRun(opts?.spawn));
   rows.push(pmLsSanity(opts?.spawn));
   rows.push(scopeTokenPresence());
