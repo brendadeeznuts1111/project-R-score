@@ -1,5 +1,890 @@
 {
   "version": 1,
-  "proposals": [],
-  "history": []
+  "proposals": [
+    {
+      "id": "api.example.com",
+      "label": "Com",
+      "description": "Discovered by concept:discover in lib/core/core-errors.ts",
+      "category": "api",
+      "group": "api.example",
+      "domain": "api",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "api.github.com",
+      "label": "Com",
+      "description": "Discovered by concept:discover in lib/github-repository-ref.ts, lib/verification/channels.ts",
+      "category": "api",
+      "group": "api.github",
+      "domain": "api",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.alert",
+      "label": "Alert",
+      "description": "Discovered by concept:discover in lib/operations/partner-profile-seed.ts",
+      "category": "ops",
+      "group": "ops.alert",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.broadcast",
+      "label": "Broadcast",
+      "description": "Discovered by concept:discover in lib/channels/outbox.ts, lib/telegram/broadcast.ts",
+      "category": "ops",
+      "group": "ops.broadcast",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.limits.baseline_tier",
+      "label": "Baseline tier",
+      "description": "Discovered by concept:discover in lib/operations/baseline-source-tiers.ts, lib/operations/sportsbook-opening-baseline.ts",
+      "category": "ops",
+      "group": "ops.limits",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.limits.opening_baseline",
+      "label": "Opening baseline",
+      "description": "Discovered by concept:discover in lib/operations/baseline-source-tiers.ts, lib/operations/sportsbook-opening-baseline.ts",
+      "category": "ops",
+      "group": "ops.limits",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.account_credit",
+      "label": "Account credit",
+      "description": "Discovered by concept:discover in lib/telegram/ops-accounting-view.ts, lib/telegram/ops-view-glossary.ts, lib/telegram/partner-ops-color-kernel.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.account_deposits",
+      "label": "Account deposits",
+      "description": "Discovered by concept:discover in lib/telegram/ops-accounting-view.ts, lib/telegram/ops-view-glossary.ts, lib/telegram/partner-ops-color-kernel.ts, lib/telegram/telegram-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.account_fees",
+      "label": "Account fees",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.account_freeplay",
+      "label": "Account freeplay",
+      "description": "Discovered by concept:discover in lib/telegram/ops-accounting-view.ts, lib/telegram/ops-view-glossary.ts, lib/telegram/partner-ops-color-kernel.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.account_high_water",
+      "label": "Account high water",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.account_net",
+      "label": "Account net",
+      "description": "Discovered by concept:discover in lib/telegram/ops-accounting-view.ts, lib/telegram/ops-view-glossary.ts, lib/telegram/partner-ops-color-kernel.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.account_settlements",
+      "label": "Account settlements",
+      "description": "Discovered by concept:discover in lib/telegram/ops-accounting-view.ts, lib/telegram/ops-view-glossary.ts, lib/telegram/partner-ops-color-kernel.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.account_summary",
+      "label": "Account summary",
+      "description": "Discovered by concept:discover in lib/telegram/ops-accounting-view.ts, lib/telegram/ops-view-glossary.ts, lib/telegram/partner-ops-color-kernel.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.crypto_accounting",
+      "label": "Crypto accounting",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.crypto_deposits",
+      "label": "Crypto deposits",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.crypto_fees",
+      "label": "Crypto fees",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.crypto_settlements",
+      "label": "Crypto settlements",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.legal_accounting",
+      "label": "Legal accounting",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.legal_deposits",
+      "label": "Legal deposits",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.legal_fees",
+      "label": "Legal fees",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.legal_settlements",
+      "label": "Legal settlements",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.per_account",
+      "label": "Per account",
+      "description": "Discovered by concept:discover in lib/telegram/ops-accounting-view.ts, lib/telegram/ops-view-glossary.ts, lib/telegram/partner-ops-color-kernel.ts, lib/telegram/telegram-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.per_book_type",
+      "label": "Per book type",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts, lib/telegram/partner-ops-color-kernel.ts, lib/telegram/soft-accounting-export.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.per_play",
+      "label": "Per play",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts, lib/telegram/partner-ops-color-kernel.ts, lib/telegram/soft-accounting-export.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.per_week",
+      "label": "Per week",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts, lib/telegram/partner-ops-color-kernel.ts, lib/telegram/soft-accounting-export.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.play_gross",
+      "label": "Play gross",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.play_id",
+      "label": "Play id",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.play_juice",
+      "label": "Play juice",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.play_net",
+      "label": "Play net",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.play_odds",
+      "label": "Play odds",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.play_result",
+      "label": "Play result",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.play_settlement_time",
+      "label": "Play settlement time",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.play_stake",
+      "label": "Play stake",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.pph_accounting",
+      "label": "Pph accounting",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.rolling_30d",
+      "label": "Rolling 30d",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.rolling_7d",
+      "label": "Rolling 7d",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.sweepstakes_accounting",
+      "label": "Sweepstakes accounting",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.week_of",
+      "label": "Week of",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.week_over_week",
+      "label": "Week over week",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.weekly_deposits",
+      "label": "Weekly deposits",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.weekly_fees",
+      "label": "Weekly fees",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.weekly_net",
+      "label": "Weekly net",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.weekly_settlements",
+      "label": "Weekly settlements",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.view.weekly_withdrawals",
+      "label": "Weekly withdrawals",
+      "description": "Discovered by concept:discover in lib/telegram/ops-view-glossary.ts",
+      "category": "ops",
+      "group": "ops.view",
+      "domain": "ops",
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "concept-discover",
+      "proposedAt": "2026-08-03T04:12:12.241Z"
+    },
+    {
+      "id": "ops.tournament.setka_cup_ua_w",
+      "label": "Setka Cup Ukraine (W)",
+      "description": "Setka Cup Ukraine women table tennis tournament",
+      "category": "tournament",
+      "group": "ops.tournament",
+      "domain": "ops",
+      "unit": null,
+      "color": null,
+      "semanticType": null,
+      "uiRole": null,
+      "correlationId": "concept-discover",
+      "status": "pending",
+      "proposedBy": "agent",
+      "proposedAt": "2026-08-03T04:12:12.262Z",
+      "reviewer": null,
+      "reviewedBy": null,
+      "reviewedAt": null,
+      "reviewReason": null
+    }
+  ],
+  "history": [
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "api.example.com",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "api.github.com",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 2 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.alert",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.broadcast",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 2 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.limits.baseline_tier",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 2 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.limits.opening_baseline",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 2 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.account_credit",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 3 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.account_deposits",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 4 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.account_fees",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.account_freeplay",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 3 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.account_high_water",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.account_net",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 3 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.account_settlements",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 3 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.account_summary",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 3 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.crypto_accounting",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.crypto_deposits",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.crypto_fees",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.crypto_settlements",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.legal_accounting",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.legal_deposits",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.legal_fees",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.legal_settlements",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.per_account",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 4 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.per_book_type",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 3 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.per_play",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 3 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.per_week",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 3 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.play_gross",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.play_id",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.play_juice",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.play_net",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.play_odds",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.play_result",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.play_settlement_time",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.play_stake",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.pph_accounting",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.rolling_30d",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.rolling_7d",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.sweepstakes_accounting",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.week_of",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.week_over_week",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.weekly_deposits",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.weekly_fees",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.weekly_net",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.weekly_settlements",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.241Z",
+      "action": "propose",
+      "id": "ops.view.weekly_withdrawals",
+      "actor": "concept-discover",
+      "reason": "auto-proposed from 1 file(s)"
+    },
+    {
+      "at": "2026-08-03T04:12:12.262Z",
+      "action": "propose",
+      "id": "ops.tournament.setka_cup_ua_w",
+      "actor": "cli",
+      "reason": null,
+      "replaceBy": null
+    }
+  ]
 }
