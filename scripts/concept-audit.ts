@@ -14,9 +14,9 @@
  * Env (CLI flags override when set):
  *   CONCEPT_WATCH_PATHS / WATCH_PATHS
  *   CONCEPT_AUDIT_STRICT · QUIET · OUTPUT · FILTER (status)
- *   CONCEPT_AUDIT_GROUP · CATEGORY · BOARD · SORT · DESC
+ *   CONCEPT_AUDIT_GROUP · DOMAIN · CATEGORY · BOARD · SORT · DESC
  *   CONCEPT_AUDIT_SHOW_UNUSED · SHOW_USED · SHOW_DEPRECATED · SHOW_ORPHANS
- *   CONCEPT_AUDIT_MIN_USAGE · MAX_USAGE · PROVENANCE
+ *   CONCEPT_AUDIT_DOMAIN_SUMMARY · MIN_USAGE · MAX_USAGE · PROVENANCE
  *   CONCEPT_AUDIT_OUTPUT_HEADERS · WATCH_POLL · WATCH_DELAY_MS · VERBOSE
  *
  * Strict fails when metadata or surface-coverage gates fail, when used
@@ -63,6 +63,8 @@ const DEFAULT_WATCH_PATHS = [
 export const DEFAULT_OUTPUT_HEADERS = [
   'id',
   'label',
+  'domain',
+  'namespace',
   'group',
   'category',
   'status',
@@ -74,6 +76,8 @@ export type ConceptAuditOutput = 'table' | 'json' | 'markdown';
 export type ConceptAuditSortField =
   | 'id'
   | 'label'
+  | 'domain'
+  | 'namespace'
   | 'group'
   | 'category'
   | 'status'
@@ -95,10 +99,13 @@ export type ConceptAuditOptions = {
   usedOnly: boolean;
   showDeprecated: boolean;
   showOrphans: boolean;
+  domainSummary: boolean;
   /** Status allowlist (empty = all). Comma-split from FILTER / --status. */
   statuses: string[];
   boards: string[];
   groups: string[];
+  domains: string[];
+  namespaces: string[];
   categories: string[];
   sort: ConceptAuditSortField;
   sortDesc: boolean;
@@ -113,12 +120,23 @@ export type ConceptAuditOptions = {
 export type ConceptAuditDetailRow = {
   id: string; // brand-ok — portal concept key
   label: string;
+  domain: string; // brand-ok — business ConceptDomain
+  namespace: string; // brand-ok — vocabulary namespace
   group: string;
   category: string;
   status: string;
   provenance: string; // brand-ok — correlationId or empty
   usage: number;
   kind: 'used' | 'unused' | 'surface-only';
+};
+
+export type ConceptAuditDomainSummary = {
+  domain: string; // brand-ok — business ConceptDomain
+  count: number;
+  used: number;
+  unused: number;
+  provenance: number;
+  provenancePct: number;
 };
 
 export type ConceptAuditReport = {
@@ -139,6 +157,7 @@ export type ConceptAuditReport = {
     bakeDrift: number;
     detailRows: number;
   };
+  domainSummary: ConceptAuditDomainSummary[];
   boards: Array<{
     board: string;
     files: number;
@@ -237,6 +256,8 @@ function parseSort(raw: string | undefined): ConceptAuditSortField {
   const allowed: ConceptAuditSortField[] = [
     'id',
     'label',
+    'domain',
+    'namespace',
     'group',
     'category',
     'status',
@@ -275,9 +296,12 @@ export function parseConceptAuditOptions(argv: readonly string[] = Bun.argv): Co
     usedOnly: resolveBool(argv, '--show-used', 'CONCEPT_AUDIT_SHOW_USED', false),
     showDeprecated: resolveBool(argv, '--show-deprecated', 'CONCEPT_AUDIT_SHOW_DEPRECATED', false),
     showOrphans: resolveBool(argv, '--show-orphans', 'CONCEPT_AUDIT_SHOW_ORPHANS', false),
+    domainSummary: resolveBool(argv, '--domain-summary', 'CONCEPT_AUDIT_DOMAIN_SUMMARY', false),
     statuses: statusCsv,
     boards: resolveCsv(argv, '--board', 'CONCEPT_AUDIT_BOARD'),
     groups: resolveCsv(argv, '--group', 'CONCEPT_AUDIT_GROUP'),
+    domains: resolveCsv(argv, '--domain', 'CONCEPT_AUDIT_DOMAIN'),
+    namespaces: resolveCsv(argv, '--namespace', 'CONCEPT_AUDIT_NAMESPACE'),
     categories: resolveCsv(argv, '--category', 'CONCEPT_AUDIT_CATEGORY'),
     sort: parseSort(resolveStr(argv, '--sort', 'CONCEPT_AUDIT_SORT')),
     sortDesc: resolveBool(argv, '--desc', 'CONCEPT_AUDIT_DESC', false),
@@ -356,6 +380,8 @@ export function filterDetailRows(
     ConceptAuditOptions,
     | 'statuses'
     | 'groups'
+    | 'domains'
+    | 'namespaces'
     | 'categories'
     | 'unusedOnly'
     | 'usedOnly'
@@ -369,6 +395,8 @@ export function filterDetailRows(
     if (opts.statuses.length > 0 && !opts.statuses.includes(row.status)) return false;
     if (!opts.showDeprecated && row.status === 'deprecated') return false;
     if (opts.groups.length > 0 && !matchesAnyPrefix(row.id, opts.groups)) return false;
+    if (opts.domains.length > 0 && !opts.domains.includes(row.domain)) return false;
+    if (opts.namespaces.length > 0 && !opts.namespaces.includes(row.namespace)) return false;
     if (opts.categories.length > 0 && !opts.categories.includes(row.category)) return false;
     if (opts.unusedOnly && row.kind === 'used') return false;
     if (opts.usedOnly && row.kind !== 'used') return false;
@@ -461,6 +489,8 @@ export async function runConceptAudit(opts: ConceptAuditOptions): Promise<Concep
     allDetails.push({
       id: concept.id,
       label: concept.label,
+      domain: concept.domain,
+      namespace: concept.namespace,
       group: conceptGroupOf(concept.id),
       category: conceptCategoryOf(concept.id),
       status,
@@ -471,6 +501,29 @@ export async function runConceptAudit(opts: ConceptAuditOptions): Promise<Concep
   }
 
   const details = sortDetailRows(filterDetailRows(allDetails, opts), opts.sort, opts.sortDesc);
+
+  const domainMap = new Map<
+    string,
+    { count: number; used: number; unused: number; provenance: number }
+  >();
+  for (const row of allDetails) {
+    const cur = domainMap.get(row.domain) ?? { count: 0, used: 0, unused: 0, provenance: 0 };
+    cur.count += 1;
+    if (row.kind === 'used') cur.used += 1;
+    else cur.unused += 1;
+    if (row.provenance) cur.provenance += 1;
+    domainMap.set(row.domain, cur);
+  }
+  const domainSummary = [...domainMap.entries()]
+    .map(([domain, v]) => ({
+      domain,
+      count: v.count,
+      used: v.used,
+      unused: v.unused,
+      provenance: v.provenance,
+      provenancePct: v.count === 0 ? 0 : Math.round((v.provenance / v.count) * 100),
+    }))
+    .sort((a, b) => b.count - a.count || a.domain.localeCompare(b.domain));
 
   let boards = surface.boards.map(b => ({
     board: b.board,
@@ -530,6 +583,7 @@ export async function runConceptAudit(opts: ConceptAuditOptions): Promise<Concep
       bakeDrift: bakeDrift.length,
       detailRows: details.length,
     },
+    domainSummary,
     boards,
     details,
     metadataIssues: metadata.issues,
@@ -563,21 +617,25 @@ Modes:
 
 Filters (flags or CONCEPT_AUDIT_* env — AND across types, OR within CSV lists):
   --status / FILTER     active,deprecated
+  --domain / DOMAIN     accounting,partners,portal,compliance,…
+  --namespace / NAMESPACE  api,ops,page,section,ui
   --group / GROUP       ops.metric,ops.filter
-  --category / CATEGORY ui,ops  (first id segment)
+  --category / CATEGORY ui,ops  (first id segment; usually equals namespace)
   --board / BOARD       partner-history,partners
-  --sort / SORT         id|label|group|category|status|usage|provenance
+  --sort / SORT         id|label|domain|namespace|group|category|status|usage|provenance
   --desc / DESC         reverse sort
   --min-usage / MAX     usage bounds
   --provenance          present|missing
   --show-used           only used rows
   --show-deprecated     include deprecated (default exclude from detail)
   --show-orphans        print surface orphan list
+  --domain-summary      print domain rollup tile (count / used / unused)
   --output-headers      comma columns (default: ${DEFAULT_OUTPUT_HEADERS.join(',')})
   --watch-paths / CONCEPT_WATCH_PATHS
 
 Examples:
   CONCEPT_AUDIT_SHOW_UNUSED=1 CONCEPT_AUDIT_GROUP=ops.metric CONCEPT_AUDIT_SORT=usage CONCEPT_AUDIT_DESC=1 bun run concept:audit
+  bun run concept:audit -- --domain-summary --domain compliance
   CONCEPT_AUDIT_PROVENANCE=missing bun run concept:audit
   CONCEPT_AUDIT_WATCH_POLL=1 CONCEPT_AUDIT_WATCH_DELAY_MS=500 bun run concept:audit -- --watch
 `);
@@ -607,6 +665,17 @@ function printMarkdown(report: ConceptAuditReport, opts: ConceptAuditOptions): v
   console.log(
     `| ${report.summary.totalPortal} | ${report.summary.withProvenance} | ${report.summary.usedUi} | ${report.summary.unusedUi} | ${report.summary.surfaceOnly} | ${report.summary.surfaceOrphans} | ${report.summary.bakeDrift} | ${report.summary.detailRows} |`
   );
+  if (opts.domainSummary && report.domainSummary.length > 0) {
+    console.log('');
+    console.log(`## Domains`);
+    console.log(`| domain | count | used | unused | provenance | provenance % |`);
+    console.log(`|--------|------:|-----:|-------:|-----------:|-------------:|`);
+    for (const d of report.domainSummary) {
+      console.log(
+        `| ${d.domain} | ${d.count} | ${d.used} | ${d.unused} | ${d.provenance} | ${d.provenancePct}% |`
+      );
+    }
+  }
   if (!opts.quiet && report.boards.length > 0) {
     console.log('');
     console.log(`## Boards`);
@@ -692,6 +761,18 @@ function printReport(report: ConceptAuditReport, opts: ConceptAuditOptions): voi
     ],
     ['total', 'provenance', 'usedUi', 'unused', 'surfaceOnly', 'orphans', 'drift', 'details']
   );
+
+  if (opts.domainSummary && report.domainSummary.length > 0) {
+    console.log(colorize('domain summary', '#8b949e'));
+    logTable(report.domainSummary, [
+      'domain',
+      'count',
+      'used',
+      'unused',
+      'provenance',
+      'provenancePct',
+    ]);
+  }
 
   if (!opts.quiet) {
     if (report.boards.length > 0) {

@@ -17,6 +17,10 @@ describe('concept:inventory', () => {
       'tools/concept-inventory.ts',
       '--group',
       'ops.limits',
+      '--domain',
+      'compliance',
+      '--group-by',
+      'domain',
       '--category',
       'ui',
       '--correlation-id',
@@ -27,6 +31,8 @@ describe('concept:inventory', () => {
       'json',
     ]);
     expect(opts.group).toBe('ops.limits');
+    expect(opts.domain).toBe('compliance');
+    expect(opts.groupBy).toBe('domain');
     expect(opts.category).toBe('ui');
     expect(opts.correlationId).toBe('PR#228');
     expect(opts.output).toBe('json');
@@ -39,6 +45,7 @@ describe('concept:inventory', () => {
         id: 'ops.limits.account',
         label: 'Limit account',
         category: 'ui',
+        domain: 'compliance',
         kind: 'ui',
         correlationId: 'PR#100',
       },
@@ -46,6 +53,7 @@ describe('concept:inventory', () => {
         id: 'ops.metric.raises',
         label: 'Raises',
         category: 'ui',
+        domain: 'operations',
         kind: 'metric',
         correlationId: 'PR#228',
       },
@@ -60,6 +68,12 @@ describe('concept:inventory', () => {
       'ops.limits.account',
     ]);
     expect(filterConcepts(sample, { category: 'market' }).map(c => c.id)).toEqual(['mid']);
+    expect(filterConcepts(sample, { domain: 'compliance' }).map(c => c.id)).toEqual([
+      'ops.limits.account',
+    ]);
+    expect(filterConcepts(sample, { domain: 'operations' }).map(c => c.id)).toEqual([
+      'ops.metric.raises',
+    ]);
     expect(filterConcepts(sample, { group: 'ops' }).map(c => c.id)).toEqual([
       'ops.limits.account',
       'ops.metric.raises',
@@ -69,15 +83,26 @@ describe('concept:inventory', () => {
     ]);
   });
 
-  test('groupCounts rolls up two-segment prefixes', () => {
+  test('groupCounts rolls up two-segment prefixes and domains', () => {
     const counts = groupCounts([
-      { id: 'ops.limits.account', label: 'a', category: 'ui' },
-      { id: 'ops.limits.node', label: 'b', category: 'ui' },
+      { id: 'ops.limits.account', label: 'a', category: 'ui', domain: 'compliance' },
+      { id: 'ops.limits.node', label: 'b', category: 'ui', domain: 'compliance' },
       { id: 'mid', label: 'c', category: 'market' },
     ]);
     expect(counts[0]).toEqual({ group: 'ops.limits', count: 2 });
     expect(counts.some(r => r.group === 'mid' && r.count === 1)).toBe(true);
     expect(conceptGroupOf('ops.metric.raises')).toBe('ops.metric');
+    const byDomain = groupCounts(
+      [
+        { id: 'ops.limits.account', label: 'a', category: 'ui', domain: 'compliance' },
+        { id: 'ui.semantic.tone', label: 'b', category: 'ui', domain: 'portal' },
+        { id: 'ops.metric.raises', label: 'c', category: 'ui', domain: 'operations' },
+      ],
+      'domain'
+    );
+    expect(byDomain.find(r => r.group === 'compliance')?.count).toBe(1);
+    expect(byDomain.find(r => r.group === 'portal')?.count).toBe(1);
+    expect(byDomain.find(r => r.group === 'operations')?.count).toBe(1);
   });
 
   test('runs against baked domain glossary with provenance + usage fields', async () => {

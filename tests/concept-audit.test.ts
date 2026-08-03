@@ -18,6 +18,9 @@ const ENV_KEYS = [
   'CONCEPT_AUDIT_OUTPUT',
   'CONCEPT_AUDIT_FILTER',
   'CONCEPT_AUDIT_GROUP',
+  'CONCEPT_AUDIT_DOMAIN',
+  'CONCEPT_AUDIT_NAMESPACE',
+  'CONCEPT_AUDIT_DOMAIN_SUMMARY',
   'CONCEPT_AUDIT_CATEGORY',
   'CONCEPT_AUDIT_BOARD',
   'CONCEPT_AUDIT_SORT',
@@ -128,6 +131,8 @@ describe('concept:audit', () => {
       {
         id: 'ops.metric.a',
         label: 'A',
+        domain: 'operations',
+        namespace: 'ops',
         group: 'ops.metric',
         category: 'ops',
         status: 'active',
@@ -138,6 +143,8 @@ describe('concept:audit', () => {
       {
         id: 'ops.filter.b',
         label: 'B',
+        domain: 'operations',
+        namespace: 'ops',
         group: 'ops.filter',
         category: 'ops',
         status: 'active',
@@ -148,6 +155,8 @@ describe('concept:audit', () => {
       {
         id: 'ui.semantic.tone',
         label: 'Tone',
+        domain: 'portal',
+        namespace: 'ui',
         group: 'ui.semantic',
         category: 'ui',
         status: 'active',
@@ -158,6 +167,8 @@ describe('concept:audit', () => {
       {
         id: 'ops.metric.old',
         label: 'Old',
+        domain: 'operations',
+        namespace: 'ops',
         group: 'ops.metric',
         category: 'ops',
         status: 'deprecated',
@@ -170,6 +181,8 @@ describe('concept:audit', () => {
     const filtered = filterDetailRows(rows, {
       statuses: ['active'],
       groups: ['ops.metric', 'ops.filter'],
+      domains: ['operations'],
+      namespaces: [],
       categories: [],
       unusedOnly: true,
       usedOnly: false,
@@ -206,6 +219,7 @@ describe('concept:audit', () => {
         '--output',
         'json',
         '--quiet',
+        '--domain-summary',
       ])
     );
     expect(report.ok).toBe(true);
@@ -215,8 +229,33 @@ describe('concept:audit', () => {
     expect(report.summary.bakeDrift).toBe(0);
     expect(report.boards.length).toBeGreaterThan(0);
     expect(report.details.length).toBeGreaterThan(0);
+    expect(report.domainSummary.some(d => d.domain === 'operations' && d.count > 0)).toBe(true);
+    expect(report.domainSummary.every(d => typeof d.provenancePct === 'number')).toBe(true);
+    expect(report.details.every(r => typeof r.domain === 'string' && r.domain.length > 0)).toBe(
+      true
+    );
     // Partner-history chrome is surface-only by design (glossary collapse).
     expect(report.surfaceOnly.some(id => id.startsWith('ops.metric.'))).toBe(true);
+  });
+
+  test('parses --domain and filters detail rows', async () => {
+    clearConceptEnv();
+    const opts = parseConceptAuditOptions([
+      'bun',
+      'scripts/concept-audit.ts',
+      '--domain',
+      'compliance',
+      '--domain-summary',
+      '--output',
+      'json',
+      '--quiet',
+    ]);
+    expect(opts.domains).toEqual(['compliance']);
+    expect(opts.domainSummary).toBe(true);
+    const report = await runConceptAudit(opts);
+    expect(report.details.every(r => r.domain === 'compliance')).toBe(true);
+    expect(report.details.every(r => r.namespace === 'ops')).toBe(true);
+    expect(report.domainSummary.length).toBeGreaterThan(0);
   });
 
   test('unused filter lists only zero-UI concepts', async () => {

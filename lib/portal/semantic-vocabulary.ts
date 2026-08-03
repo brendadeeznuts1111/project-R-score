@@ -10,7 +10,18 @@
  * parallel key list.
  */
 
+import type { ConceptDomain } from './concept-domains.ts';
 import { PORTAL_PAGE_CONCEPT_DEFINITIONS } from './page-concepts.ts';
+
+export type { ConceptDomain } from './concept-domains.ts';
+export {
+  CONCEPT_DOMAINS,
+  DOMAIN_BY_PREFIX,
+  DOMAIN_METADATA,
+  domainLabel,
+  inferDomain,
+  isConceptDomain,
+} from './concept-domains.ts';
 
 export const PORTAL_SEMANTIC_TYPES = [
   'classification',
@@ -28,6 +39,38 @@ export const PORTAL_UI_ROLES = ['badge', 'chip', 'code', 'heading', 'link', 'tok
 export type PortalUiRole = (typeof PORTAL_UI_ROLES)[number];
 
 /**
+ * Vocabulary namespace — first dotted segment of the concept id
+ * (api · ops · page · section · ui). Distinct from business {@link ConceptDomain}.
+ */
+export const PORTAL_SEMANTIC_NAMESPACES = ['api', 'ops', 'page', 'section', 'ui'] as const;
+
+export type PortalSemanticNamespace = (typeof PORTAL_SEMANTIC_NAMESPACES)[number];
+
+/** @deprecated Use {@link PortalSemanticNamespace} */
+export type PortalSemanticDomain = PortalSemanticNamespace;
+/** @deprecated Use {@link PORTAL_SEMANTIC_NAMESPACES} */
+export const PORTAL_SEMANTIC_DOMAINS = PORTAL_SEMANTIC_NAMESPACES;
+
+const PORTAL_SEMANTIC_NAMESPACE_SET = new Set<string>(PORTAL_SEMANTIC_NAMESPACES);
+
+/** Infer namespace from concept id (`ops.metric.raises` → `ops`). */
+export function inferPortalSemanticNamespace(id: string): PortalSemanticNamespace | undefined {
+  // brand-ok — opaque glossary concept key
+  const head = id.split('.')[0] ?? '';
+  return PORTAL_SEMANTIC_NAMESPACE_SET.has(head) ? (head as PortalSemanticNamespace) : undefined;
+}
+
+/** @deprecated Use {@link inferPortalSemanticNamespace} */
+export const inferPortalSemanticDomain = inferPortalSemanticNamespace;
+
+export function isPortalSemanticNamespace(value: string): value is PortalSemanticNamespace {
+  return PORTAL_SEMANTIC_NAMESPACE_SET.has(value);
+}
+
+/** @deprecated Use {@link isPortalSemanticNamespace} */
+export const isPortalSemanticDomain = isPortalSemanticNamespace;
+
+/**
  * Shape of a portal semantic concept. Optional provenance fields support
  * concept tracking (`bun run concept:inventory`, `validate:concept-metadata`).
  */
@@ -37,6 +80,10 @@ export type PortalSemanticConceptDef = {
   readonly description: string;
   readonly semanticType: PortalSemanticType;
   readonly uiRole: PortalUiRole;
+  /** Vocabulary namespace (first id segment): api · ops · page · section · ui. */
+  readonly namespace: PortalSemanticNamespace;
+  /** Business domain lane — see lib/portal/concept-domains.ts. */
+  readonly domain: ConceptDomain;
   readonly synonyms: readonly string[];
   readonly seeAlso: readonly string[];
   readonly values?: readonly string[];
@@ -46,7 +93,25 @@ export type PortalSemanticConceptDef = {
   readonly correlationId?: string; // brand-ok — provenance work-item ref, not CorrelationId UUID
   /** ISO date (YYYY-MM-DD) when the concept was added or last materially changed. */
   readonly addedAt?: string;
+  /** Concept lifecycle status (default: active). */
+  readonly status?: 'active' | 'deprecated' | 'archived';
+  /** Concept that supersedes this one when deprecated. */
+  readonly replacedBy?: string;
+  /** ISO date when deprecated/archived. */
+  readonly deprecatedAt?: string;
 };
+
+/** Portal concept lifecycle statuses — default when absent is `active`. */
+export const PORTAL_CONCEPT_STATUSES = ['active', 'deprecated', 'archived'] as const;
+
+export type PortalConceptStatus = (typeof PORTAL_CONCEPT_STATUSES)[number];
+
+/** Lifecycle status of a concept; missing `status` means `active`. */
+export function conceptStatusOf(concept: {
+  readonly status?: PortalConceptStatus;
+}): PortalConceptStatus {
+  return concept.status ?? 'active';
+}
 
 /**
  * Portal UI semantic inventory — single source of truth.
@@ -59,6 +124,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     description: page.description,
     semanticType: 'resource' as const,
     uiRole: 'heading' as const,
+    namespace: 'page' as const,
+    domain: 'portal' as const,
     synonyms: page.synonyms,
     seeAlso: ['ui.semantic.surface', 'ui.semantic.resources', 'ui.semantic.artifact'] as const,
     correlationId: 'legacy' as const,
@@ -66,6 +133,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   })),
   {
     id: 'ui.semantic.surface',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Surface',
     description: 'Named portal, endpoint, board, or artifact being described or checked.',
     semanticType: 'resource',
@@ -77,6 +146,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.semantic.hostname',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Hostname',
     description:
       'Network host resolved from a surface URL, without its protocol, port, path, or query.',
@@ -89,6 +160,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.semantic.port',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Port',
     description:
       'Network port resolved from a surface URL, using the protocol default when no port is explicit.',
@@ -101,6 +174,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.semantic.status',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Status',
     description:
       'Observed operational outcome reported by a source; status is evidence and does not encode presentation color.',
@@ -114,6 +189,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.semantic.tone',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Tone',
     description:
       'Presentation token derived from status and evidence; tone controls color consistently without replacing status.',
@@ -127,6 +204,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.semantic.kind',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Kind',
     description:
       'Operational classification of a surface or check; distinct from the glossary concept kind used for provenance.',
@@ -140,6 +219,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.semantic.plane',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Plane',
     description:
       'Control-plane ownership boundary responsible for producing or operating a surface.',
@@ -153,6 +234,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.semantic.source',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Source',
     description: 'Canonical path or location from which the displayed evidence was read.',
     semanticType: 'location',
@@ -164,6 +247,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.semantic.version',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Version',
     description:
       'Declared schema, runtime, proof, or artifact revision attached to the displayed evidence.',
@@ -176,6 +261,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.semantic.resources',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Resources',
     description:
       'Governed links that connect a surface to its artifact, package owner, and human documentation.',
@@ -188,6 +275,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.semantic.artifact',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Artifact',
     description: 'Produced evidence consumed, maintained, delivered, or verified by the portal.',
     semanticType: 'resource',
@@ -199,6 +288,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.semantic.package',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Package',
     description: 'Owning or producing package mapped to a portal surface or artifact.',
     semanticType: 'resource',
@@ -210,6 +301,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.semantic.type',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Semantic type',
     description:
       'Stable data role of a concept; distinct from operational kind and from its visual UI role.',
@@ -223,6 +316,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.account',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Limit account',
     description:
       'Partner-tree account whose observed sportsbook limits, jurisdiction binding, and monitoring evidence are evaluated together. Same subject as ops.limits.node (UI says account; wire says node_id).',
@@ -240,6 +335,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.node',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Tree node',
     description:
       'One row in tree_nodes identified by TreeNodeId / node_id. Synonym for limit account; not an AI agent and not the Agent API.',
@@ -252,6 +349,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.tree',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Partner tree',
     description:
       'Full hierarchy of partner accounts (partner → agent → sub_agent) used for limit, license, and downline context.',
@@ -269,6 +368,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.downline',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Downline',
     description:
       'Descendant accounts under a partner in the partner tree (agents and sub-agents), excluding the partner root itself.',
@@ -286,6 +387,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.role_type',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Role type',
     description:
       'Position of a tree node in the partner hierarchy. Wire field node_type: partner, agent, or sub_agent.',
@@ -300,6 +403,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.partner',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Partner',
     description:
       'Top-of-tree role in the partner hierarchy (node_type partner). Owns downline agents and sub-agents.',
@@ -313,6 +418,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.agent',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Downline agent',
     description:
       'Betting downline role in the partner tree (node_type agent). Not an HTTP Agent API client and not a Cursor/AI automation agent.',
@@ -326,6 +433,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.sub_agent',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Sub-agent',
     description:
       'Further-downline role under an agent in the partner tree (node_type sub_agent). Still a limit account, not an automation agent.',
@@ -339,6 +448,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.profile',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Account limit profile',
     description:
       'Read model joining a limit account to its operating profile, geography, licenses, policies, observations, and trace evidence.',
@@ -355,6 +466,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.jurisdiction_policy',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Jurisdiction policy',
     description:
       'Effective state-scoped or account-scoped wagering rule projected from the regulatory limit authority.',
@@ -367,6 +480,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.policy_code',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Policy code',
     description:
       'Stable internal code identifying a jurisdiction, sport, market, and optional account override without claiming an external legal citation.',
@@ -379,6 +494,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.monitoring_status',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Limit monitoring status',
     description:
       'Evidence-derived account state: monitored, attention, blocked, or incomplete; presentation tone is derived separately.',
@@ -392,6 +509,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.evidence_trace',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Limit evidence trace',
     description:
       'Time-ordered record of profile, license, policy, observed-limit, change, and blocked-wager evidence for one account.',
@@ -404,6 +523,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.effective_limit',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Effective limit',
     description:
       'Limit value currently applicable at an account, sportsbook, sport, market, bet-type, and jurisdiction intersection.',
@@ -418,6 +539,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.pattern_surface',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Partner limit patterns',
     description:
       'Evidence surface grouping recent limit movement by partner tree, sportsbook, jurisdiction, and ZIP prefix.',
@@ -430,6 +553,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.change_direction',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Limit change direction',
     description:
       'Observed direction of a sportsbook limit change relative to the immediately previous limit.',
@@ -443,6 +568,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.market_phase',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Market phase',
     description:
       'Trading phase on a limit observation: pregame or live (in-play). Bet structure is governed separately by ops.limits.multi_structure.',
@@ -461,6 +588,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.sport',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Sport',
     description:
       'Hierarchy root for the observed limit row. Values are the competition-catalog / scrape-wire SPORT_KEYS (SSOT with glossary sport.*).',
@@ -483,6 +612,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.league',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'League or tour',
     description:
       'League, tour, or sanctioning body for a limit observation. Values ⊆ competition-catalog LEAGUE_KEYS (audited by schema:audit).',
@@ -515,6 +646,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.competition',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Competition tier',
     description:
       'Specific level within a league or tour. Values ⊆ COMPETITION_KEYS (audited by schema:audit).',
@@ -542,6 +675,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.event_country',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Event host country',
     description:
       'ISO alpha-2 country where the event is played. This dimension owns the displayed country flag; global tours do not.',
@@ -554,6 +689,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.market_type',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Market type',
     description:
       'Bet market family on the limit row. Values are scrape-wire SCRAPE_MARKET_KEYS (regulation + extended); domain definitions under market.* / scrape.market.',
@@ -567,6 +704,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.multi_structure',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Multi / parlay structure',
     description:
       'How selections combine: straight single, or multi (parlay) with legs. Domain definitions live under multi.* in the glossary.',
@@ -580,6 +719,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.limit_delta',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Limit delta',
     description:
       'Signed difference between the new sportsbook limit and its immediately previous value in USD.',
@@ -598,6 +739,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.influence_score',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Multi-factor influence',
     description:
       'Normalized contribution score joining activity, profitability, risk, compliance, and sportsbook context for a limit change.',
@@ -612,6 +755,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.data_coverage',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Pattern evidence coverage',
     description:
       'Percentage of expected hierarchy, geography, license, score, and proof connections present in the limit-pattern read model.',
@@ -626,6 +771,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.limits.prediction',
+    namespace: 'ops',
+    domain: 'compliance',
     label: 'Limit raise prediction',
     description:
       'Forecast of the probability and expected magnitude of a future limit raise using frequency, trend, influence, and time-window features.',
@@ -638,6 +785,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'api.agent',
+    namespace: 'api',
+    domain: 'infrastructure',
     label: 'Agent API',
     description:
       'HTTP surface for bots and tools under /api/agents/v1/… (for example limits raises/record). Distinct from ops.limits.agent (partner-tree downline role).',
@@ -655,6 +804,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.accountLimitControl',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Account limit control',
     description:
       'Section for searching, filtering, selecting, and tracing evidence-backed partner-tree account limit profiles.',
@@ -667,6 +818,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.complianceKpis',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Compliance policy KPIs',
     description:
       'Section presenting governed compliance decision metrics derived from policies and blocked-wager evidence.',
@@ -679,6 +832,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.jurisdictionCatalog',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Jurisdiction policy catalog',
     description:
       'Section listing effective state and account policy codes, limits, enforcement actions, and source evidence.',
@@ -691,6 +846,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.patternSummary',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Pattern summary',
     description:
       'Section summarizing selected limit changes, direction, net movement, influence, connected nodes, and evidence coverage.',
@@ -703,6 +860,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.limitRaisePrediction',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Limit raise prediction',
     description:
       'Section describing the active raise-probability model, its weighted factors, and available backtest accuracy.',
@@ -719,6 +878,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.sportsbookPatterns',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Sportsbook patterns',
     description:
       'Section comparing change volume, direction, net movement, and influence across sportsbook sources.',
@@ -731,6 +892,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.stateZipPatterns',
+    namespace: 'section',
+    domain: 'portal',
     label: 'State and ZIP patterns',
     description: 'Section comparing limit movement by jurisdiction and three-digit ZIP prefix.',
     semanticType: 'resource',
@@ -742,6 +905,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.downlineContext',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Partner to downline context',
     description:
       'Section preserving the partner-tree lineage, depth, jurisdiction, license, risk, and proof context for every observed node.',
@@ -759,6 +924,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.dataConnectionAudit',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Data connection audit',
     description:
       'Section reporting hierarchy, geography, license, score, and proof connections in the pattern read model.',
@@ -775,6 +942,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.recentLimitChanges',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Recent limit changes',
     description:
       'Section listing observed limit changes with account, geography, sportsbook, market, direction, influence, and time.',
@@ -787,6 +956,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.perNodeBreakdown',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Per-node breakdown',
     description:
       'Section aggregating movement, influence, sportsbooks, violations, and proof completeness for each selected account node.',
@@ -804,6 +975,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.openingBaseline',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Sportsbook opening baseline',
     description:
       'Section showing internal top-10 US sportsbook new-account max wagers by sport, market, parlay/straight, and live/pregame.',
@@ -821,6 +994,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.partnersTelegram',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Telegram package groups',
     description:
       'Partners board section for package-forum handshake readiness, membership tell, invite, and topic plan.',
@@ -840,6 +1015,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.partnersAccounting',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Accounting deals',
     description:
       'Partners board section for deposit/withdraw proof in the Accounting topic and all-accounting house rollup. Dossier #section:accounting keeps this surface id for bookmarks; per-account reporting chrome is ops.view.per_account (cross-plane seeAlso via domain-glossary bake).',
@@ -859,6 +1036,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.partnersAccountsLimits',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Accounts and limits',
     description:
       'Partners board section joining account readiness, effective max-bet coverage, accounting activity, and Telegram communication readiness by partner.',
@@ -878,6 +1057,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.partnersOnboard',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Onboard',
     description:
       'Partners board section for partner onboarding checklist and CLI next steps (#section:onboard). Phase vocabulary lives on partner.phase.onboarding (cross-plane seeAlso via domain-glossary bake).',
@@ -895,6 +1076,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.partnersDeposits',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Betting deposits',
     description:
       'Partners board section for seat capital desk deposit rails (book, method, send-to, max bet, freeplay %).',
@@ -913,6 +1096,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.partnersPartnerMessage',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Partner messages',
     description:
       'Partners board section for seat-desk partner-message views (confirm / todo / topic templates) baked from intake.',
@@ -931,6 +1116,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.filter.profile',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Profile filter',
     description: 'Filter limiting the account-control view to matching profile evidence.',
     semanticType: 'classification',
@@ -942,6 +1129,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.filter.jurisdiction',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Jurisdiction filter',
     description: 'Filter limiting results to accounts or patterns governed by one jurisdiction.',
     semanticType: 'classification',
@@ -953,6 +1142,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.filter.partnerId',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Account or partner filter',
     description:
       'Search filter matching account identifiers, partner identifiers, downline names, and profile text.',
@@ -965,6 +1156,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.filter.sportsbook',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Sportsbook filter',
     description: 'Filter limiting pattern evidence to one sportsbook source.',
     semanticType: 'classification',
@@ -976,6 +1169,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.filter.state',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'State filter',
     description: 'Filter limiting pattern evidence to one state jurisdiction.',
     semanticType: 'classification',
@@ -987,6 +1182,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.filter.zipPrefix',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'ZIP-prefix filter',
     description: 'Filter limiting pattern evidence to one connected three-digit ZIP prefix.',
     semanticType: 'classification',
@@ -998,6 +1195,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.action.reset',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Reset filters',
     description: 'Action clearing the filters owned by the current portal section.',
     semanticType: 'presentation',
@@ -1009,6 +1208,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.action.searchProfiles',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Search profiles',
     description:
       'Action searching account limit profiles by identity, policy, and sportsbook text.',
@@ -1021,6 +1222,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.partnersOuts',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Partner outs',
     description: 'Partners board section for per-out book, funding, status, balance, and limits.',
     semanticType: 'resource',
@@ -1032,6 +1235,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.partnersBookDetail',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Book detail',
     description:
       'Partners board section for a single book: type, location, max bet, free-roll percent.',
@@ -1044,6 +1249,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'section.partnersTags',
+    namespace: 'section',
+    domain: 'portal',
     label: 'Partner tag filter bar',
     description:
       'Partners board section for phase, book-type, status, funding, and location filter tags.',
@@ -1056,6 +1263,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.route.partnerHash',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Partner hash route',
     description:
       'URLPattern hash route for partner deep links: #partners, #partner/:code, #partner/:code/out/:outId, #partner/:code/accounting, #partner/:code/telegram/:topic, #book/:bookId.',
@@ -1073,6 +1282,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.panel.partner_limit_history',
+    namespace: 'ops',
+    domain: 'operations',
     label: 'Partner limit history',
     description:
       'Partner Limit History UI chrome: page panel for account-level limit movement traces.',
@@ -1085,6 +1296,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.panel.limit_overview',
+    namespace: 'ops',
+    domain: 'operations',
     label: 'Limit overview',
     description:
       'Partner Limit History UI chrome: summary panel of current limit state per account.',
@@ -1097,6 +1310,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.summary.partner_limit_trace',
+    namespace: 'ops',
+    domain: 'operations',
     label: 'Partner limit trace',
     description:
       'Partner Limit History UI chrome: trace of account-level limit movement with evidence links.',
@@ -1109,6 +1324,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.filter.account.all',
+    namespace: 'ops',
+    domain: 'operations',
     label: 'All accounts',
     description:
       'Partner Limit History filter value: no account narrowing (all downline accounts).',
@@ -1121,6 +1338,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.filter.sportsbook.all',
+    namespace: 'ops',
+    domain: 'operations',
     label: 'All sportsbooks',
     description: 'Partner Limit History filter value: no sportsbook narrowing.',
     semanticType: 'classification',
@@ -1132,6 +1351,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.filter.window',
+    namespace: 'ops',
+    domain: 'operations',
     label: 'Window filter',
     description: 'Partner Limit History filter: time window for limit movement evidence.',
     semanticType: 'classification',
@@ -1143,6 +1364,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.filter.window.48h',
+    namespace: 'ops',
+    domain: 'operations',
     label: '48 hours',
     description: 'Partner Limit History window value: last 48 hours of movement.',
     semanticType: 'classification',
@@ -1154,6 +1377,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.filter.window.7d',
+    namespace: 'ops',
+    domain: 'operations',
     label: '7 days',
     description: 'Partner Limit History window value: last 7 days of movement.',
     semanticType: 'classification',
@@ -1165,6 +1390,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.filter.window.30d',
+    namespace: 'ops',
+    domain: 'operations',
     label: '30 days',
     description: 'Partner Limit History window value: last 30 days of movement.',
     semanticType: 'classification',
@@ -1176,6 +1403,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.metric.visible_changes',
+    namespace: 'ops',
+    domain: 'operations',
     label: 'Visible changes',
     description: 'Partner Limit History metric: count of filtered limit-change rows.',
     semanticType: 'state',
@@ -1187,6 +1416,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.metric.raises',
+    namespace: 'ops',
+    domain: 'operations',
     label: 'Raises',
     description: 'Partner Limit History metric: count of positive limit deltas (raised direction).',
     semanticType: 'state',
@@ -1198,6 +1429,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.metric.decreases',
+    namespace: 'ops',
+    domain: 'operations',
     label: 'Decreases',
     description:
       'Partner Limit History metric: count of negative limit deltas (reduced direction).',
@@ -1210,6 +1443,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.metric.sportsbooks',
+    namespace: 'ops',
+    domain: 'operations',
     label: 'Sportsbooks',
     description: 'Partner Limit History metric: unique sportsbook count among visible changes.',
     semanticType: 'state',
@@ -1221,6 +1456,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.metric.high_water',
+    namespace: 'ops',
+    domain: 'operations',
     label: 'High-water',
     description: 'Partner Limit History metric: prior peak limit for an account within the window.',
     semanticType: 'state',
@@ -1232,6 +1469,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.metric.deltas',
+    namespace: 'ops',
+    domain: 'operations',
     label: 'Deltas',
     description: 'Partner Limit History metric: change amounts across visible rows.',
     semanticType: 'state',
@@ -1244,6 +1483,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.metric.active_filters',
+    namespace: 'ops',
+    domain: 'operations',
     label: 'Active filters',
     description: 'Partner Limit History metric: count of applied filters in the filter bar.',
     semanticType: 'state',
@@ -1255,6 +1496,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.metric.proof_coverage',
+    namespace: 'ops',
+    domain: 'operations',
     label: 'Proof coverage',
     description:
       'Partner Limit History metric: percent of visible changes with signed evidence context.',
@@ -1268,6 +1511,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.table.recent_changes',
+    namespace: 'ops',
+    domain: 'operations',
     label: 'Recent changes',
     description: 'Partner Limit History table tab: recent limit-change rows.',
     semanticType: 'presentation',
@@ -1279,6 +1524,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.table.per_account',
+    namespace: 'ops',
+    domain: 'operations',
     label: 'Per account',
     description: 'Partner Limit History table tab: limit movement grouped by account.',
     semanticType: 'presentation',
@@ -1290,6 +1537,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ops.table.limit_changes',
+    namespace: 'ops',
+    domain: 'operations',
     label: 'Limit changes',
     description: 'Partner Limit History table tab: raw limit-change evidence rows.',
     semanticType: 'presentation',
@@ -1301,6 +1550,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.action.refresh',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Refresh',
     description: 'Action re-running the current portal section fetch.',
     semanticType: 'presentation',
@@ -1312,6 +1563,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.action.export',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Export',
     description: 'Action exporting the current portal section data.',
     semanticType: 'presentation',
@@ -1323,6 +1576,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.export.csv',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'CSV export',
     description: 'Export format: comma-separated values of the current section.',
     semanticType: 'presentation',
@@ -1334,6 +1589,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.export.json',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'JSON export',
     description: 'Export format: JSON payload of the current section.',
     semanticType: 'presentation',
@@ -1345,6 +1602,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'ui.action.filter',
+    namespace: 'ui',
+    domain: 'portal',
     label: 'Apply filters',
     description: 'Action applying the current account, sportsbook, state, and ZIP filter state.',
     semanticType: 'presentation',

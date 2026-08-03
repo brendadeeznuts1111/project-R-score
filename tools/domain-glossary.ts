@@ -69,6 +69,10 @@ type CanonicalConcept = {
   correlationId?: string | null; // brand-ok — provenance work-item ref
   /** ISO date (YYYY-MM-DD) when the concept was added or last materially changed. */
   addedAt?: string | null;
+  /** Business domain lane (accounting · partners · portal · …). */
+  domain?: string | null; // brand-ok — business ConceptDomain
+  /** Vocabulary namespace (api · ops · page · section · ui). */
+  namespace?: string | null; // brand-ok — vocabulary namespace (api|ops|page|…)
   parentId?: string | null; // brand-ok — glossary concept relation
   scope?: string | null;
   countryCodes?: readonly string[] | null;
@@ -164,8 +168,8 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
         values: concept.values ? [...concept.values] : null,
         valueLabels: null,
         seeAlso,
-        status: 'active' as const,
-        deprecatedBy: null,
+        status: 'status' in concept ? (concept.status ?? 'active') : 'active',
+        deprecatedBy: 'replacedBy' in concept ? (concept.replacedBy ?? null) : null,
         unit: concept.unit ?? null,
         format: concept.format ?? null,
         registryColumn: null,
@@ -175,6 +179,8 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
         uiRole: concept.uiRole,
         correlationId: 'correlationId' in concept ? (concept.correlationId ?? null) : null,
         addedAt: 'addedAt' in concept ? (concept.addedAt ?? null) : null,
+        domain: 'domain' in concept ? (concept.domain ?? null) : null,
+        namespace: 'namespace' in concept ? (concept.namespace ?? null) : null,
       };
     }
   );
