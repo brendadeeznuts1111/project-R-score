@@ -136,6 +136,27 @@ export const SCHEDULED_JOB_EXEMPTIONS: readonly ScheduledJobExemption[] = [
     reason: 'OS cron register for vault-health board bake — not a spine maintenance tenant',
   },
   {
+    id: 'pkg-partner-settlement-cron-register',
+    source: 'package-script',
+    match: 'partner:settlement:cron:register',
+    reason:
+      'OS cron register for the weekly partner settlement runner — not a spine maintenance tenant; see docs/design/settlement-feed.md',
+  },
+  {
+    id: 'pkg-partner-settlement-cron-remove',
+    source: 'package-script',
+    match: 'partner:settlement:cron:remove',
+    reason:
+      'OS cron remove for the weekly partner settlement runner — not a spine maintenance tenant',
+  },
+  {
+    id: 'pkg-partner-settlement-cron-preview',
+    source: 'package-script',
+    match: 'partner:settlement:cron:preview',
+    reason:
+      'OS cron preview for the weekly partner settlement runner — not a spine maintenance tenant',
+  },
+  {
     id: 'gha-har-performance',
     source: 'gha-cron',
     match: 'har-performance.yml',
