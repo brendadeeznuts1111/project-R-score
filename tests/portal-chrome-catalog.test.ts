@@ -72,7 +72,9 @@ describe('portal-chrome-catalog', () => {
     expect(html).toContain('/registry/monorepo-health.json');
     expect(html).toContain('/registry/portal-weave.json');
     expect(html).toContain('portal-chrome.json');
-    expect(html).toContain('/portal/tools/');
+    expect(html).not.toContain('/portal/tools/');
+    expect(html).not.toContain('/portal/failures/');
+    expect(html).not.toContain('/portal/install-hygiene/');
     expect(html).toContain('data-footer-bun');
   });
 

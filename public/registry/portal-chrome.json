@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-08-03T23:40:32.198Z",
+  "generated": "2026-08-03T23:44:37.601Z",
   "path": "/registry/portal-chrome.json",
   "runtime": {
     "bunVersion": "1.4.0",
@@ -10,7 +10,7 @@
   "summary": {
     "priorityNav": 6,
     "overflowNav": 20,
-    "footerLinks": 20,
+    "footerLinks": 17,
     "components": 14,
     "scripts": 5
   },
@@ -289,10 +289,6 @@
       "href": "/registry/portal-weave.json"
     },
     {
-      "label": "CLI Tools",
-      "href": "/portal/tools/"
-    },
-    {
       "label": "Compliance",
       "href": "/portal/compliance/"
     },
@@ -311,14 +307,6 @@
     {
       "label": "Vault",
       "href": "/portal/vault/"
-    },
-    {
-      "label": "Failures",
-      "href": "/portal/failures/"
-    },
-    {
-      "label": "Install hygiene",
-      "href": "/portal/install-hygiene/"
     },
     {
       "label": "Monorepo health",
