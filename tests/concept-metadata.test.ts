@@ -46,4 +46,13 @@ describe('validate:concept-metadata', () => {
     expect('correlationId' in raises! && raises!.correlationId).toBe('PR#228');
     expect('addedAt' in raises! && raises!.addedAt).toBe('2026-08-02');
   });
+
+  test('write-baseline refuses to grandfather ids that already have provenance', async () => {
+    const { writeBaselineFromConcepts } = await import(
+      '../scripts/validate-concept-metadata.ts'
+    );
+    await expect(
+      writeBaselineFromConcepts(PORTAL_SEMANTIC_CONCEPTS, '/tmp/concept-baseline-test.json')
+    ).rejects.toThrow(/No concepts lack correlationId/);
+  });
 });

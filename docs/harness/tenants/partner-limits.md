@@ -295,10 +295,12 @@ Every portal concept carries optional provenance (`correlationId`, `addedAt`) on
 
 | Command | Role |
 | ------- | ---- |
+| `bun run concept:audit` | Unified inventory + metadata + surface (one-shot) |
+| `bun run concept:audit -- --strict` | Governance fail on provenance / orphans / bake drift (wired into `partners:governance`) |
+| `bun run concept:audit -- --watch` | Live re-audit on vocabulary / portal HTML·JS changes |
 | `bun run concept:inventory` | Group/filter bake by `--group` / `--category` / `--correlation-id` · usage counts |
 | `bun run validate:concept-metadata` | Require `correlationId` on non-grandfathered portal concepts |
 | `bun run validate:surface-coverage` | Board HTML/JS ↔ surface maps ↔ domain-glossary |
-| `bun run validate:surface-coverage -- --include-metadata` | Also list used portal concepts missing provenance |
 
 Partner Limit History chrome (`ops.metric.*` · `ops.panel.*` · `ops.filter.*` ·
 `ops.table.*`) is inventoried on `PARTNER_HISTORY_SURFACE_CONCEPTS` with

@@ -6,6 +6,7 @@
  */
 import {
   ACCOUNT_DOSSIER_SURFACE_CONCEPTS,
+  HEALTH_FIELD_CONCEPTS,
   LIMIT_FIELD_CONCEPTS,
   LIMIT_SURFACE_CONCEPTS,
   PARTNER_HISTORY_SURFACE_CONCEPTS,
@@ -48,6 +49,7 @@ function surfaceMaps(): Array<Record<string, string>> {
     LIMIT_SURFACE_CONCEPTS as Record<string, string>,
     ACCOUNT_DOSSIER_SURFACE_CONCEPTS as Record<string, string>,
     LIMIT_FIELD_CONCEPTS as Record<string, string>,
+    HEALTH_FIELD_CONCEPTS as Record<string, string>,
   ];
 }
 

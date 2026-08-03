@@ -9,19 +9,30 @@
  *   bun run concept:inventory -- --group ops.metric
  *   bun run concept:inventory -- --category ui --output json
  *   bun run concept:inventory -- --correlation-id PR#228
+ *   bun run concept:inventory -- --unused --sort usage --desc
+ *   bun run concept:inventory -- --board limits --output markdown
  *
  * Flags:
  *   --group <prefix>          Filter by dotted id prefix (ops.limits, ui.semantic, …)
  *   --category <id>           Filter by glossary category (market · ui · trading · …)
  *   --correlation-id <id>     Filter by concept provenance (e.g. PR#228)
+ *   --status active|deprecated  Filter by concept status
+ *   --unused                  Only concepts with usage === 0
+ *   --used                    Only concepts with usage > 0
+ *   --usage-gt <N>            Only concepts with usage > N
+ *   --board <name>            Only concepts used on that surface board
+ *                             (partner-history · partners · limits · account)
+ *   --sort id|usage|group     Sort rows (default: bake order)
+ *   --desc                    Reverse the sort order
  *   --run-id <id>             Scan trace id (default: Bun.randomUUIDv7())
- *   --output json|table       Machine JSON or TTY table (default: table)
+ *   --output json|table|markdown  Machine JSON, TTY table (default), or GFM markdown
  *   --help
  */
 import { randomUUIDv7 } from 'bun';
 import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
 import { countPortalConceptUsages } from '../lib/portal/concept-usage.ts';
 import { asCorrelationId, type CorrelationId } from '../lib/types/branded.ts';
+import { isBoardId, scanBoardConceptIds, BOARD_IDS } from '../scripts/validate-surface-coverage.ts';
 
 const REGISTRY_PATH = `${import.meta.dir}/../public/registry/domain-glossary.json`;
 
@@ -53,8 +64,19 @@ export type ConceptInventoryOptions = {
   category?: string;
   /** Concept provenance filter (PR#228) — not the scan run id. */
   correlationId?: string; // brand-ok — work-item provenance ref, not CorrelationId UUID
+  status?: 'active' | 'deprecated';
+  /** Only concepts with usage === 0. */
+  unused: boolean;
+  /** Only concepts with usage > 0. */
+  used: boolean;
+  /** Only concepts with usage > N. */
+  usageGt?: number;
+  sort?: 'id' | 'usage' | 'group';
+  desc: boolean;
+  /** Only concepts used on this surface board. */
+  board?: string;
   runId: CorrelationId;
-  output: 'table' | 'json';
+  output: 'table' | 'json' | 'markdown';
   help: boolean;
 };
 
@@ -90,12 +112,23 @@ export function parseConceptInventoryOptions(
 ): ConceptInventoryOptions {
   const outputRaw = argValue(argv, '--output');
   const runRaw = argValue(argv, '--run-id') ?? randomUUIDv7();
+  const statusRaw = argValue(argv, '--status')?.trim();
+  const sortRaw = argValue(argv, '--sort')?.trim();
+  const usageGtRaw = argValue(argv, '--usage-gt')?.trim();
+  const usageGt = usageGtRaw === undefined ? undefined : Number.parseInt(usageGtRaw, 10);
   return {
     group: argValue(argv, '--group')?.trim() || undefined,
     category: argValue(argv, '--category')?.trim() || undefined,
     correlationId: argValue(argv, '--correlation-id')?.trim() || undefined,
+    status: statusRaw === 'active' || statusRaw === 'deprecated' ? statusRaw : undefined,
+    unused: argv.includes('--unused'),
+    used: argv.includes('--used'),
+    usageGt: usageGt !== undefined && Number.isFinite(usageGt) ? usageGt : undefined,
+    sort: sortRaw === 'id' || sortRaw === 'usage' || sortRaw === 'group' ? sortRaw : undefined,
+    desc: argv.includes('--desc'),
+    board: argValue(argv, '--board')?.trim() || undefined,
     runId: asCorrelationId(runRaw),
-    output: outputRaw === 'json' ? 'json' : 'table',
+    output: outputRaw === 'json' ? 'json' : outputRaw === 'markdown' ? 'markdown' : 'table',
     help: argv.includes('--help') || argv.includes('-h'),
   };
 }

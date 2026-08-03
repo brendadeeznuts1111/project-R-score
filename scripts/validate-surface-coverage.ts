@@ -8,11 +8,14 @@
  * domain-glossary bake.
  *
  * Catches: new UI chrome wired to a concept missing from the surface
- * allowlist (or unknown to the glossary entirely).
+ * allowlist (or unknown to the glossary entirely). The reverse check warns
+ * on dead allowlist entries (allowlisted but never used on the board).
  *
  *   bun run validate:surface-coverage
  *   bun run validate:surface-coverage -- --json
  *   bun run validate:surface-coverage -- --include-metadata
+ *   bun run validate:surface-coverage -- --report
+ *   bun run validate:surface-coverage -- --strict
  *
  * Note: partner-history collapses labels onto shared ops.limits.* /
  * ui.filter.* owners (see glossary-map.js). Parallel ops.metric.* ids are
@@ -34,13 +37,43 @@ import {
 import { ACCOUNT_DOSSIER_GLOSSARY } from '../public/portal/account/glossary-map.js';
 import { PARTNER_HISTORY_GLOSSARY } from '../public/portal/partner-history/glossary-map.js';
 
-type BoardId = 'partner-history' | 'partners' | 'limits' | 'account';
+export type BoardId = 'partner-history' | 'partners' | 'limits' | 'account';
 
-type Orphan = {
+export type Orphan = {
   board: BoardId;
   file: string;
   concept: string;
   via: string;
+};
+
+export type DeadAllowlistEntry = {
+  board: BoardId;
+  concept: string; // brand-ok — glossary concept key from the board surface map
+};
+
+export type BoardUsageRow = {
+  concept: string; // brand-ok — glossary concept key (report row)
+  count: number;
+  files: string[];
+};
+
+export type BoardScan = {
+  board: BoardId;
+  files: number;
+  usages: number;
+  allowlist: number;
+  deadAllowlist: string[]; // brand-ok — glossary concept keys
+  usageRows: BoardUsageRow[];
+};
+
+export type SurfaceCoverageResult = {
+  scanned: Array<{ board: BoardId; files: number; usages: number }>;
+  boards: BoardScan[];
+  orphans: Orphan[];
+  inventoryMisses: string[];
+  deadAllowlist: DeadAllowlistEntry[];
+  usedConceptIds: Set<string>;
+  missingCorrelationIds: string[]; // brand-ok — glossary concept keys
 };
 
 const ROOT = `${import.meta.dir}/..`;
@@ -115,6 +148,12 @@ const BOARDS: readonly BoardConfig[] = [
     ],
   },
 ];
+
+export const BOARD_IDS: readonly BoardId[] = BOARDS.map(board => board.id);
+
+export function isBoardId(value: string): value is BoardId {
+  return (BOARD_IDS as readonly string[]).includes(value);
+}
 
 const KNOWN_MAP_ALIASES = new Set(
   BOARDS.flatMap(board => (board.maps ?? []).flatMap(map => [...map.aliases]))
@@ -203,13 +242,15 @@ async function loadDomainIds(): Promise<Set<string>> {
   return new Set((registry.concepts ?? []).map(c => String(c.id)).filter(id => id.length > 0));
 }
 
-async function main(): Promise<void> {
-  const wantJson = Bun.argv.includes('--json');
-  const includeMetadata = Bun.argv.includes('--include-metadata');
+export async function scanSurfaceCoverage(
+  opts: { includeMetadata?: boolean } = {}
+): Promise<SurfaceCoverageResult> {
   const domainIds = await loadDomainIds();
   const orphanKeys = new Set<string>();
   const orphans: Orphan[] = [];
   const scanned: Array<{ board: BoardId; files: number; usages: number }> = [];
+  const boards: BoardScan[] = [];
+  const deadAllowlist: DeadAllowlistEntry[] = [];
   const usedConceptIds = new Set<string>();
 
   const pushOrphan = (orphan: Orphan) => {
@@ -222,6 +263,8 @@ async function main(): Promise<void> {
   for (const board of BOARDS) {
     const files = (await Promise.all(board.dirs.map(dir => collectFiles(dir)))).flat();
     let usages = 0;
+    const boardUsed = new Set<string>();
+    const perConcept = new Map<string, { count: number; files: Set<string> }>();
 
     for (const file of files) {
       const text = await Bun.file(file).text();
@@ -232,6 +275,11 @@ async function main(): Promise<void> {
       for (const hit of hits) {
         if (hit.via !== 'unresolved-template') {
           usedConceptIds.add(hit.concept);
+          boardUsed.add(hit.concept);
+          const row = perConcept.get(hit.concept) ?? { count: 0, files: new Set<string>() };
+          row.count += 1;
+          row.files.add(rel);
+          perConcept.set(hit.concept, row);
         }
         if (hit.via === 'unresolved-template') {
           pushOrphan({
@@ -265,7 +313,24 @@ async function main(): Promise<void> {
       }
     }
 
+    const allowlistIds = [...new Set(Object.values(board.surface))];
+    const dead = allowlistIds.filter(id => !boardUsed.has(id)).sort();
+    for (const concept of dead) {
+      deadAllowlist.push({ board: board.id, concept });
+    }
+    const usageRows = [...perConcept.entries()]
+      .map(([concept, row]) => ({ concept, count: row.count, files: [...row.files].sort() }))
+      .sort((a, b) => b.count - a.count || a.concept.localeCompare(b.concept));
+
     scanned.push({ board: board.id, files: files.length, usages });
+    boards.push({
+      board: board.id,
+      files: files.length,
+      usages,
+      allowlist: allowlistIds.length,
+      deadAllowlist: dead,
+      usageRows,
+    });
   }
 
   // Inventory: every surface value must be a known portal semantic key.
@@ -279,7 +344,7 @@ async function main(): Promise<void> {
   }
 
   const missingCorrelationIds: string[] = [];
-  if (includeMetadata) {
+  if (opts.includeMetadata) {
     const portalById = new Map(PORTAL_SEMANTIC_CONCEPTS.map(c => [c.id, c]));
     for (const id of [...usedConceptIds].sort()) {
       const concept = portalById.get(id as PortalSemanticConceptKey);
@@ -292,15 +357,68 @@ async function main(): Promise<void> {
     }
   }
 
+  return {
+    scanned,
+    boards,
+    orphans,
+    inventoryMisses,
+    deadAllowlist,
+    usedConceptIds,
+    missingCorrelationIds,
+  };
+}
+
+/** Concept ids used on a single board (shared with concept:inventory --board). */
+export async function scanBoardConceptIds(board: BoardId): Promise<Set<string>> {
+  const result = await scanSurfaceCoverage();
+  const scan = result.boards.find(b => b.board === board);
+  return new Set((scan?.usageRows ?? []).map(row => row.concept));
+}
+
+async function main(): Promise<void> {
+  const wantJson = Bun.argv.includes('--json');
+  const includeMetadata = Bun.argv.includes('--include-metadata');
+  const wantReport = Bun.argv.includes('--report');
+  const strict = Bun.argv.includes('--strict');
+
+  const result = await scanSurfaceCoverage({ includeMetadata });
+  const { scanned, boards, orphans, inventoryMisses, deadAllowlist, missingCorrelationIds } =
+    result;
+  const hardFail = orphans.length > 0 || inventoryMisses.length > 0;
+  const strictFail = strict && deadAllowlist.length > 0;
+  const failed = hardFail || strictFail;
+
   if (wantJson) {
     jsonOut({
-      ok: orphans.length === 0 && inventoryMisses.length === 0,
+      ok: !failed,
       scanned,
       orphans,
       inventoryMisses,
+      deadAllowlist,
       ...(includeMetadata ? { missingCorrelationIds } : {}),
+      ...(wantReport
+        ? {
+            report: boards.map(board => ({
+              board: board.board,
+              usage: board.usageRows,
+            })),
+          }
+        : {}),
     });
   } else {
+    if (wantReport) {
+      for (const board of boards) {
+        console.log(colorize(`${board.board} · usage report`, '#58a6ff'));
+        logTable(
+          board.usageRows.map(row => ({
+            concept: row.concept,
+            count: row.count,
+            files: row.files.join(', '),
+          })),
+          ['concept', 'count', 'files']
+        );
+      }
+    }
     logTable(
       scanned.map(row => ({
         board: row.board,
@@ -309,12 +427,22 @@ async function main(): Promise<void> {
       })),
       ['board', 'files', 'usages']
     );
-    if (orphans.length === 0 && inventoryMisses.length === 0) {
+    for (const entry of deadAllowlist) {
+      console.warn(
+        colorize(
+          `⚠️ allowlist concept "${entry.concept}" never used in board "${entry.board}"`,
+          '#d29922'
+        )
+      );
+    }
+    if (!failed) {
       console.log(colorize('✅ Surface coverage: PASS', '#3fb950'));
     } else {
       console.error(
         colorize(
-          `❌ Surface coverage: FAIL (${orphans.length} orphans, ${inventoryMisses.length} inventory)`,
+          `❌ Surface coverage: FAIL (${orphans.length} orphans, ${inventoryMisses.length} inventory` +
+            (strictFail ? `, ${deadAllowlist.length} dead allowlist (--strict)` : '') +
+            ')',
           '#f85149'
         )
       );
@@ -342,7 +470,7 @@ async function main(): Promise<void> {
     }
   }
 
-  if (orphans.length > 0 || inventoryMisses.length > 0) process.exit(1);
+  if (failed) process.exit(1);
 }
 
 if (import.meta.main) {
