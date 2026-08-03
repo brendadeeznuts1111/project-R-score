@@ -60,7 +60,7 @@ describe('partner_ledger table client', () => {
     expect(hasLedgerRows(db, 'OTHER')).toBe(false);
   });
 
-  test('outId + trackingId are stored and listed', () => {
+  test('bookKey + trackingId + account fields are stored and listed', () => {
     const row = insertLedgerEntry(db, {
       partnerCode: 'SPEN',
       type: 'settlement',
@@ -68,21 +68,42 @@ describe('partner_ledger table client', () => {
       currency: 'USD',
       bookKey: 'parlay21-com',
       trackingId: 'weekly-2026-08-03',
+      accountScope: 'rail:venmo:spen@venmo.com',
+      counterparty: 'rail:venmo:john@venmo.com',
+      source: 'John (agent)',
+      externalId: 'VENMO-123',
+      proof: 'https://registry.factory-wager.com/api/registry/proofs/SPEN/1-shot.png',
+      batchId: 'batch-1',
     });
     expect(row.bookKey).toBe('parlay21-com');
     expect(row.trackingId).toBe('weekly-2026-08-03');
+    expect(row.accountScope).toBe('rail:venmo:spen@venmo.com');
+    expect(row.counterparty).toBe('rail:venmo:john@venmo.com');
+    expect(row.source).toBe('John (agent)');
+    expect(row.externalId).toBe('VENMO-123');
+    expect(row.proof).toContain('/proofs/SPEN/');
+    expect(row.batchId).toBe('batch-1');
     const listed = listLedgerEntries(db, 'SPEN');
-    expect(listed[0]!.bookKey).toBe('parlay21-com');
-    expect(listed[0]!.trackingId).toBe('weekly-2026-08-03');
-    // partner-level rows omit both keys entirely
+    expect(listed[0]).toMatchObject({
+      bookKey: 'parlay21-com',
+      trackingId: 'weekly-2026-08-03',
+      accountScope: 'rail:venmo:spen@venmo.com',
+      counterparty: 'rail:venmo:john@venmo.com',
+      source: 'John (agent)',
+      externalId: 'VENMO-123',
+      proof: expect.stringContaining('/proofs/SPEN/'),
+      batchId: 'batch-1',
+    });
+    // partner-level rows omit the optional keys entirely
     const plain = insertLedgerEntry(db, {
       partnerCode: 'SPEN',
       type: 'settlement',
       amount: 500,
       currency: 'USD',
     });
-    expect(plain.bookKey).toBeUndefined();
-    expect(plain.trackingId).toBeUndefined();
+    expect(plain.accountScope).toBeUndefined();
+    expect(plain.externalId).toBeUndefined();
+    expect(plain.batchId).toBeUndefined();
   });
 });
 

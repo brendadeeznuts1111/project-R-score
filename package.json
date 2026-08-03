@@ -1823,6 +1823,7 @@
     "partner:settlement:cron:register": "bun tools/partner-settlement-cron.ts register",
     "partner:settlement:cron:remove": "bun tools/partner-settlement-cron.ts remove",
     "partner:settlement:cron:preview": "bun tools/partner-settlement-cron.ts preview",
+    "validate:ledger": "bun scripts/validate-partner-ledger-schema.ts",
     "partner-profile:bake": "bun lib/partner-profile/bake.ts",
     "partner-profile:bake:check": "bun lib/partner-profile/bake.ts --check",
     "partner:bookmaker:register": "bun tools/register-partner-bookmaker.ts",
