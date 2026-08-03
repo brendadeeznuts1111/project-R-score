@@ -30,6 +30,7 @@ export const PORTAL_SEMANTIC_CONCEPT_KEYS = [
   'ui.semantic.port',
   'ui.semantic.status',
   'ui.semantic.tone',
+  'color.kernel',
   'ui.semantic.kind',
   'ui.semantic.plane',
   'ui.semantic.source',
@@ -136,6 +137,7 @@ export type PortalSemanticConcept = {
   values?: readonly string[];
   unit?: string;
   format?: string;
+  /** Related concept keys — closed under the semantic vocabulary (seeAlso targets must be PortalSemanticConceptKey). */
   seeAlso: readonly PortalSemanticConceptKey[];
 };
 
@@ -199,6 +201,16 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['color tone', 'severity color'],
     values: ['ok', 'warn', 'bad', 'info', 'skip'],
     seeAlso: ['ui.semantic.status', 'ui.semantic.type'],
+  },
+  {
+    id: 'color.kernel',
+    label: 'Color kernel',
+    description:
+      'Theme-dark color alias kernel (claim color-kernel-theme-aliases): dark palette aliases are complete and conflict-free across glossary, partner-ops, and Telegram consumers; SSOT public/portal/theme.jsonc via Bun native color + jsonc loaders.',
+    semanticType: 'presentation',
+    uiRole: 'token',
+    synonyms: ['theme-dark aliases', 'color kernel theme aliases'],
+    seeAlso: ['ui.semantic.tone', 'ui.semantic.status'],
   },
   {
     id: 'ui.semantic.kind',
