@@ -1819,6 +1819,7 @@
     "partners:profiles:seed": "bun tools/migrate-seat-partners-to-profiles.ts",
     "partner:settlement:post": "bun tools/partner-settlement.ts",
     "partner:settlement:import": "bun tools/partner-settlement.ts import",
+    "partner:deposit:import": "bun tools/partner-deposit-import.ts",
     "partner:settlement:run": "bun tools/partner-settlement.ts run",
     "partner:settlement:cron:register": "bun tools/partner-settlement-cron.ts register",
     "partner:settlement:cron:remove": "bun tools/partner-settlement-cron.ts remove",
