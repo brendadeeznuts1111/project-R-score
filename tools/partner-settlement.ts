@@ -31,6 +31,12 @@ import {
 import { mirrorLedgerEntryToProfile } from '../lib/partner-profile/accounting-stub';
 import { PROFILES_DIR } from '../lib/partner-profile/bake';
 import { PARTNER_CODE_RE } from '../lib/partner-profile/schema';
+import {
+  runSettlementForPartner,
+  runSettlementsForAll,
+  SETTLEMENT_CRON_SCHEDULE,
+  startOfWeek,
+} from '../lib/partner-profile/settlement-runner';
 
 export const SETTLEMENT_FUND_STATUSES = ['ready', 'deferred', 'paused', 'blocked'] as const;
 export type SettlementFundStatus = (typeof SETTLEMENT_FUND_STATUSES)[number];
@@ -154,12 +160,74 @@ function usage(): never {
   bun run partner:settlement:import --file <settlements.csv|jsonl> \\
     [--code <CODE>] [--dry-run]        # per-row code overrides --code
 
+  bun run partner:settlement:run [--partner <CODE>] [--period START..END] \\
+    [--dry-run] [--cron]               # weekly settlement runner
+
 CSV header: amount,currency,description,reference[,code]
 JSONL row:  {"code"?, "amount", "currency"?, "description"?, "reference"?}`);
   process.exit(1);
 }
 
-// ── Import mode ────────────────────────────────────────────────────────────
+// ── Run mode (weekly settlement runner) ────────────────────────────────────
+
+function parsePeriod(raw: string | undefined): { start: Date; end?: Date } {
+  if (raw === undefined) return { start: startOfWeek() };
+  const [startRaw, endRaw] = raw.split('..');
+  if (!startRaw) throw new Error(`--period must be START..END (YYYY-MM-DD..YYYY-MM-DD)`);
+  const start = new Date(`${startRaw.trim()}T00:00:00Z`);
+  if (Number.isNaN(start.getTime())) throw new Error(`invalid --period start "${startRaw}"`);
+  const end = endRaw ? new Date(`${endRaw.trim()}T23:59:59.999Z`) : undefined;
+  if (end !== undefined && Number.isNaN(end.getTime())) {
+    throw new Error(`invalid --period end "${endRaw}"`);
+  }
+  return { start, end };
+}
+
+async function runMode(argv: string[]): Promise<void> {
+  const partner = flag(argv, 'partner');
+  const { start, end } = parsePeriod(flag(argv, 'period'));
+  const dryRun = argv.includes('--dry-run');
+
+  if (argv.includes('--cron')) {
+    const { scheduleInProcess } = await import('../lib/harness/cron');
+    await using job = scheduleInProcess(SETTLEMENT_CRON_SCHEDULE, () => {
+      runSettlementsForAll({ periodStart: startOfWeek() }).catch(e =>
+        console.error(`settlement cron failed: ${e instanceof Error ? e.message : e}`)
+      );
+    });
+    console.log(`⏱ settlement cron registered (${SETTLEMENT_CRON_SCHEDULE} UTC) — Ctrl+C to stop`);
+    await new Promise(() => {});
+    return;
+  }
+
+  if (partner) {
+    const result = await runSettlementForPartner({
+      code: partner,
+      periodStart: start,
+      periodEnd: end,
+      dryRun,
+    });
+    const verb = dryRun ? 'would post' : 'posted';
+    console.log(
+      `${dryRun ? '[dry-run] ' : ''}✓ ${verb} period settlement ${result.code}: gross ${result.gross} · commission ${result.commission} · net ${result.net}${result.fundStatus ? ` · fundStatus → ${result.fundStatus}` : ''}${result.skipped ? ' · skipped (no desk entries or period already settled)' : ''}`
+    );
+    return;
+  }
+
+  const result = await runSettlementsForAll({ periodStart: start, periodEnd: end, dryRun });
+  for (const r of result.results) {
+    console.log(
+      `  ${dryRun ? '[dry-run] ' : ''}${r.code}: gross ${r.gross} · commission ${r.commission} · net ${r.net}${r.fundStatus ? ` · fundStatus → ${r.fundStatus}` : ''}${r.skipped ? ' · skipped' : ''}`
+    );
+  }
+  for (const code of result.skippedPartners)
+    console.log(`  ${code}: skipped (no settlement.commissionPct)`);
+  for (const f of result.failed) console.error(`  ✗ ${f.code}: ${f.error}`);
+  console.log(
+    `${dryRun ? '[dry-run] ' : ''}✓ settlement run: ${result.results.length} settled · ${result.skippedPartners.length} no-commission · ${result.failed.length} failed`
+  );
+  if (result.failed.length > 0) process.exitCode = 1;
+}
 
 export interface SettlementImportRow {
   code?: string; // optional per-row override; falls back to --code
@@ -270,6 +338,11 @@ export async function importSettlements(
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
   const dryRun = argv.includes('--dry-run');
+
+  if (argv[0] === 'run') {
+    await runMode(argv);
+    return;
+  }
 
   if (argv[0] === 'import') {
     const filePath = flag(argv, 'file');
