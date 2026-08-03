@@ -297,7 +297,8 @@ Every portal concept carries optional provenance (`correlationId`, `addedAt`) on
 | ------- | ---- |
 | `bun run concept:audit` | Unified inventory + metadata + surface (one-shot) |
 | `bun run concept:audit -- --strict` | Governance fail on provenance / orphans / bake drift (wired into `partners:governance`) |
-| `bun run concept:audit -- --watch` | Live re-audit on vocabulary / portal HTML·JS changes |
+| `bun run concept:audit -- --watch` | Live re-audit on vocabulary / portal HTML·JS changes (`Bun.file` mtime poll; `CONCEPT_AUDIT_WATCH_DELAY_MS`) |
+| `CONCEPT_AUDIT_*` env | Filters/sort/display — see `.env.example` (CLI flags override). Examples: `CONCEPT_AUDIT_SHOW_UNUSED=1`, `CONCEPT_AUDIT_PROVENANCE=missing`, `CONCEPT_AUDIT_GROUP=ops.metric`, `CONCEPT_AUDIT_OUTPUT=markdown` |
 | `bun run concept:inventory` | Group/filter bake by `--group` / `--category` / `--correlation-id` · usage counts |
 | `bun run validate:concept-metadata` | Require `correlationId` on non-grandfathered portal concepts |
 | `bun run validate:surface-coverage` | Board HTML/JS ↔ surface maps ↔ domain-glossary |
