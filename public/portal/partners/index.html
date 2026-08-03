@@ -1206,7 +1206,10 @@
       function fmtMoney(value) {
         if (value == null || Number.isNaN(Number(value))) return '—';
         const n = Number(value);
-        return n < 0 ? `-$${Math.abs(n).toLocaleString('en-US')}` : `$${n.toLocaleString('en-US')}`;
+        // red-figure: negative amounts/balances render in tone-bad
+        return n < 0
+          ? `<span class="tone-bad">-$${Math.abs(n).toLocaleString('en-US')}</span>`
+          : `$${n.toLocaleString('en-US')}`;
       }
 
       /** Balance cell: SQLite partner_ledger projection when present. */
@@ -1515,10 +1518,27 @@
                 <th>Amount</th>
                 <th>Currency</th>
                 <th>Reference</th>
+                <th>Tracking</th>
                 <th>Balance</th>
               </tr>
             </thead>
             <tbody id="partner-ledger-tbody"></tbody>
+          </table>
+        </div>
+        <div class="partners-panel">
+          <h2>Per-out balances <span class="tone-muted">(books)</span></h2>
+          <div class="blurb">Ledger sums per book account — which book is profitable vs. losing.</div>
+          <table class="partners-table">
+            <thead>
+              <tr>
+                <th>Out</th>
+                <th>Balance</th>
+                <th>Last</th>
+                <th>Amount</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+            <tbody id="partner-outs-tbody"></tbody>
           </table>
         </div>`;
         panel.classList.remove('hidden');
@@ -1535,11 +1555,31 @@
                 <td>${fmtMoney(r.amount)}</td>
                 <td>${esc(r.currency)}</td>
                 <td>${esc(r.reference || '—')}</td>
+                <td>${esc(r.trackingId || '—')}</td>
                 <td>${fmtMoney(r.balanceAfter)}</td>
               </tr>`
                 )
                 .join('')
-            : '<tr><td colspan="6">No partner_ledger transactions — post via <code>partner:settlement:post</code> / <code>import</code>, then <code>partners:build</code></td></tr>';
+            : '<tr><td colspan="7">No partner_ledger transactions — post via <code>partner:settlement:post</code> / <code>import</code>, then <code>partners:build</code></td></tr>';
+        }
+        const outsBody = $('partner-outs-tbody');
+        if (outsBody) {
+          const outs = ops?.accounting?.outs || {};
+          const outIds = Object.keys(outs);
+          outsBody.innerHTML = outIds.length
+            ? outIds
+                .sort()
+                .map(
+                  o => `<tr>
+                <td><code>${esc(o)}</code></td>
+                <td>${fmtMoney(outs[o].balance)}</td>
+                <td><time>${esc(outs[o].lastTransactionAt || '—')}</time></td>
+                <td>${outs[o].lastAmount != null ? fmtMoney(outs[o].lastAmount) : '—'}</td>
+                <td>${esc(outs[o].lastType || '—')}</td>
+              </tr>`
+                )
+                .join('')
+            : '<tr><td colspan="5">No per-out ledger rows — post with <code>--out &lt;bookKey&gt;</code></td></tr>';
         }
         const hint = $('onboard-cli-hint');
         if (hint) {

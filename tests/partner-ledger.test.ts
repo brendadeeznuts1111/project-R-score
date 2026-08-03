@@ -59,6 +59,31 @@ describe('partner_ledger table client', () => {
     expect(hasLedgerRows(db, 'JOHNNY')).toBe(true);
     expect(hasLedgerRows(db, 'OTHER')).toBe(false);
   });
+
+  test('outId + trackingId are stored and listed', () => {
+    const row = insertLedgerEntry(db, {
+      partnerCode: 'SPEN',
+      type: 'settlement',
+      amount: -1200,
+      currency: 'USD',
+      bookKey: 'parlay21-com',
+      trackingId: 'weekly-2026-08-03',
+    });
+    expect(row.bookKey).toBe('parlay21-com');
+    expect(row.trackingId).toBe('weekly-2026-08-03');
+    const listed = listLedgerEntries(db, 'SPEN');
+    expect(listed[0]!.bookKey).toBe('parlay21-com');
+    expect(listed[0]!.trackingId).toBe('weekly-2026-08-03');
+    // partner-level rows omit both keys entirely
+    const plain = insertLedgerEntry(db, {
+      partnerCode: 'SPEN',
+      type: 'settlement',
+      amount: 500,
+      currency: 'USD',
+    });
+    expect(plain.bookKey).toBeUndefined();
+    expect(plain.trackingId).toBeUndefined();
+  });
 });
 
 describe('initLedgerForPartner (accounting stub)', () => {

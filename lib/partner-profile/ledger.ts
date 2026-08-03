@@ -32,10 +32,13 @@ CREATE TABLE IF NOT EXISTS partner_ledger (
   currency TEXT NOT NULL,
   description TEXT,
   reference TEXT,
+  book_key TEXT,
+  tracking_id TEXT,
   balance_after REAL NOT NULL,
   created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_partner_ledger_code ON partner_ledger(partner_code, created_at);
+CREATE INDEX IF NOT EXISTS idx_partner_ledger_out ON partner_ledger(partner_code, book_key);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_partner_ledger_initial_capital
   ON partner_ledger(partner_code) WHERE type = 'initial_capital';
 CREATE UNIQUE INDEX IF NOT EXISTS idx_partner_ledger_reference
@@ -50,6 +53,8 @@ export interface PartnerLedgerRow {
   currency: string;
   description: string | null;
   reference?: string | null; // external feed key — idempotent re-imports
+  bookKey?: string | null; // brand-ok — per-out attribution references profile books.<bookKey> (not the seat OutId brand)
+  trackingId?: string | null; // brand-ok — opaque run key (e.g. weekly-2026-08-03)
   balanceAfter: number;
   createdAt: string;
 }
@@ -61,6 +66,8 @@ export interface NewLedgerEntry {
   currency: string;
   description?: string;
   reference?: string;
+  bookKey?: string; // brand-ok — per-out attribution references profile books.<bookKey>
+  trackingId?: string; // brand-ok — opaque run key (e.g. weekly-2026-08-03)
 }
 
 export function ensurePartnerLedgerSchema(db: Database): void {
@@ -84,13 +91,15 @@ export function insertLedgerEntry(db: Database, entry: NewLedgerEntry): PartnerL
     currency: entry.currency,
     description: entry.description ?? null,
     ...(entry.reference !== undefined ? { reference: entry.reference } : {}),
+    ...(entry.bookKey !== undefined ? { bookKey: entry.bookKey } : {}),
+    ...(entry.trackingId !== undefined ? { trackingId: entry.trackingId } : {}),
     balanceAfter,
     createdAt: new Date().toISOString(),
   };
   db.query(
     `INSERT INTO partner_ledger
-       (id, partner_code, type, amount, currency, description, reference, balance_after, created_at)
-     VALUES ($id, $code, $type, $amount, $cur, $desc, $ref, $bal, $ts)`
+       (id, partner_code, type, amount, currency, description, reference, book_key, tracking_id, balance_after, created_at)
+     VALUES ($id, $code, $type, $amount, $cur, $desc, $ref, $book, $track, $bal, $ts)`
   ).run({
     $id: row.id,
     $code: row.partnerCode,
@@ -99,6 +108,8 @@ export function insertLedgerEntry(db: Database, entry: NewLedgerEntry): PartnerL
     $cur: row.currency,
     $desc: row.description,
     $ref: row.reference ?? null,
+    $book: row.bookKey ?? null,
+    $track: row.trackingId ?? null,
     $bal: row.balanceAfter,
     $ts: row.createdAt,
   });
@@ -139,7 +150,7 @@ export function hasLedgerRows(db: Database, partnerCode: string): boolean {
 export function listLedgerEntries(db: Database, partnerCode: string): PartnerLedgerRow[] {
   const rows = db
     .query(
-      `SELECT id, partner_code, type, amount, currency, description, reference, balance_after, created_at
+      `SELECT id, partner_code, type, amount, currency, description, reference, book_key, tracking_id, balance_after, created_at
        FROM partner_ledger WHERE partner_code = $code ORDER BY created_at ASC, id ASC`
     )
     .all({ $code: partnerCode }) as {
@@ -150,6 +161,8 @@ export function listLedgerEntries(db: Database, partnerCode: string): PartnerLed
     currency: string;
     description: string | null;
     reference: string | null;
+    book_key: string | null;
+    tracking_id: string | null; // brand-ok — opaque run key (e.g. weekly-2026-08-03)
     balance_after: number;
     created_at: string;
   }[];
@@ -161,6 +174,8 @@ export function listLedgerEntries(db: Database, partnerCode: string): PartnerLed
     currency: r.currency,
     description: r.description,
     ...(r.reference !== null ? { reference: r.reference } : {}),
+    ...(r.book_key !== null ? { bookKey: r.book_key } : {}),
+    ...(r.tracking_id !== null ? { trackingId: r.tracking_id } : {}),
     balanceAfter: r.balance_after,
     createdAt: r.created_at,
   }));

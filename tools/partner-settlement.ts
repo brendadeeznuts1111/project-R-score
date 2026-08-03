@@ -49,6 +49,8 @@ export interface PostSettlementInput {
   fundStatus?: string; // optional accounting.fundStatus refresh
   description?: string; // default 'desk-entry settlement'
   reference?: string; // external feed key — idempotent re-imports skip
+  bookKey?: string; // brand-ok — per-out attribution references profile books.<bookKey> (user flag --out)
+  trackingId?: string; // brand-ok — opaque run key (e.g. weekly-2026-08-03)
   dryRun?: boolean;
   /** Injected ops DB (tests). Default: open via dbPath / DEFAULT_OPS_DB_PATH. */
   db?: Database;
@@ -120,6 +122,8 @@ export async function postSettlement(input: PostSettlementInput): Promise<PostSe
         currency,
         description: input.description ?? 'desk-entry settlement',
         ...(input.reference !== undefined ? { reference: input.reference } : {}),
+        ...(input.bookKey !== undefined ? { bookKey: input.bookKey } : {}),
+        ...(input.trackingId !== undefined ? { trackingId: input.trackingId } : {}),
       });
     } catch (e) {
       // A concurrent import won the reference race — treat as already imported.
@@ -163,8 +167,8 @@ function usage(): never {
   bun run partner:settlement:run [--partner <CODE>] [--period START..END] \\
     [--dry-run] [--cron]               # weekly settlement runner
 
-CSV header: amount,currency,description,reference[,code]
-JSONL row:  {"code"?, "amount", "currency"?, "description"?, "reference"?}`);
+CSV header: amount,currency,description,reference[,code][,out][,trackingId]
+JSONL row:  {"code"?, "amount", "currency"?, "description"?, "reference"?, "out"?, "trackingId"?}`);
   process.exit(1);
 }
 
@@ -235,6 +239,8 @@ export interface SettlementImportRow {
   currency?: string;
   description?: string;
   reference?: string;
+  out?: string; // per-out attribution (books.<bookKey>)
+  trackingId?: string; // brand-ok — opaque run key (e.g. weekly-2026-08-03)
 }
 
 export interface ImportSettlementsInput {
@@ -290,6 +296,8 @@ export function parseSettlementFile(
     currency: cell(line, 'currency'),
     description: cell(line, 'description'),
     reference: cell(line, 'reference'),
+    ...(idx.out !== undefined ? { out: cell(line, 'out') } : {}),
+    ...(idx.trackingId !== undefined ? { trackingId: cell(line, 'trackingId') } : {}),
   }));
 }
 
@@ -318,6 +326,8 @@ export async function importSettlements(
           currency: row.currency,
           description: row.description,
           reference: row.reference,
+          bookKey: row.out,
+          trackingId: row.trackingId,
           dryRun: input.dryRun,
           db,
           profilesDir: input.profilesDir,
@@ -376,6 +386,8 @@ async function main(): Promise<void> {
   const fundStatus = flag(argv, 'fund-status');
   const description = flag(argv, 'description');
   const reference = flag(argv, 'reference');
+  const bookKey = flag(argv, 'out');
+  const trackingId = flag(argv, 'tracking-id');
   if (!code || amountRaw === undefined) usage();
   const amount = Number(amountRaw);
 
@@ -386,6 +398,8 @@ async function main(): Promise<void> {
     fundStatus,
     description,
     reference,
+    bookKey,
+    trackingId,
     dryRun,
   });
   const sign = amount < 0 ? '' : '+';
