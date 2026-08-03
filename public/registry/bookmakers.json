@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-02T22:49:48.656Z",
+  "generatedAt": "2026-08-03T00:51:01.752Z",
   "artifact": {
     "name": "@factorywager/bookmakers",
     "version": "0.2.0",
@@ -16,8 +16,14 @@
       "restBaseUrl": "https://api.pinnacle.com/v1",
       "restProtocol": "http2",
       "apiKeyEnv": "PINNACLE_API_KEY",
-      "envVars": ["PINNACLE_API_KEY"],
-      "supportedSports": ["tennis", "tabletennis", "soccer"],
+      "envVars": [
+        "PINNACLE_API_KEY"
+      ],
+      "supportedSports": [
+        "tennis",
+        "tabletennis",
+        "soccer"
+      ],
       "regions": [
         {
           "country": "US"
@@ -136,7 +142,9 @@
         }
       ],
       "color": "#b91c1c",
-      "envVars": ["BETMGM_DEFAULT_STATE"]
+      "envVars": [
+        "BETMGM_DEFAULT_STATE"
+      ]
     }
   },
   "audit": {
@@ -147,6 +155,7 @@
     "count": 5,
     "webview": 4,
     "rest": 1,
+    "seat": 0,
     "sports": [
       "american-football",
       "baseball",

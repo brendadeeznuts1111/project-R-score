@@ -17,7 +17,7 @@ describe('bookmakers registry mirror', () => {
       artifact: { name: string; version: string; checksum: string };
       bookmakers: Record<string, unknown>;
       audit: { ok: boolean; issues: string[] };
-      summary: { count: number; webview: number; rest: number; sports: string[] };
+      summary: { count: number; webview: number; rest: number; seat: number; sports: string[] };
     };
     expect(payload.schemaVersion).toBe(1);
     expect(payload.artifact.name).toBe('@factorywager/bookmakers');
@@ -25,7 +25,9 @@ describe('bookmakers registry mirror', () => {
     expect(payload.artifact.checksum).toMatch(/^[0-9a-f]{64}$/);
     expect(payload.audit.ok).toBe(true);
     expect(payload.summary.count).toBeGreaterThanOrEqual(5);
-    expect(payload.summary.webview + payload.summary.rest).toBe(payload.summary.count);
+    expect(payload.summary.webview + payload.summary.rest + (payload.summary.seat ?? 0)).toBe(
+      payload.summary.count
+    );
     expect(payload.bookmakers.fanduel).toBeDefined();
     expect(payload.bookmakers.pinnacle?.fetcherType).toBe('rest');
   });
