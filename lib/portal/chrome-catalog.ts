@@ -190,7 +190,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
   // ── Registry (concepts) ──
   // Harness overflow slots (tools, failures, bunfig, console-format, doctor,
   // install-hygiene) intentionally omitted from default nav — boards remain
-  // reachable via direct URL / weave / footer where listed.
+  // reachable via direct URL / weave. Health stays on priority (group: harness).
   {
     id: 'concepts',
     label: 'Concepts',
@@ -297,6 +297,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
   },
 ];
 
+/** Business/ops footer links — harness boards omitted (direct URL / weave only). */
 export const PORTAL_FOOTER_LINKS: PortalChromeCatalog['footerLinks'] = [
   { label: 'Dashboard', href: 'https://factory-wager.com', external: true },
   { label: 'Ops', href: '/portal/ops/' },
@@ -308,14 +309,11 @@ export const PORTAL_FOOTER_LINKS: PortalChromeCatalog['footerLinks'] = [
   { label: 'Surfaces', href: '/portal/surfaces/' },
   { label: 'Health', href: '/portal/health/' },
   { label: 'Portal proof', href: '/registry/portal-weave.json' },
-  { label: 'CLI Tools', href: '/portal/tools/' },
   { label: 'Compliance', href: '/portal/compliance/' },
   { label: 'Limits', href: '/portal/limits/' },
   { label: 'DOD', href: '/portal/dod/' },
   { label: 'Env', href: '/portal/env/' },
   { label: 'Vault', href: '/portal/vault/' },
-  { label: 'Failures', href: '/portal/failures/' },
-  { label: 'Install hygiene', href: '/portal/install-hygiene/' },
   { label: 'Monorepo health', href: '/registry/monorepo-health.json' },
   {
     label: 'GitHub',
