@@ -83,31 +83,46 @@ export async function initLedgerForPartner(
     }
 
     const profilePath = joinPath(input.profilesDir ?? PROFILES_DIR, `${input.code}.toml`);
-    try {
-      const profile = (await Bun.file(profilePath).exists())
-        ? (Bun.TOML.parse(await Bun.file(profilePath).text()) as Record<string, unknown>)
-        : null;
-      if (profile) {
-        const accounting = (profile.accounting as Record<string, unknown> | undefined) ?? {};
-        accounting.fundStatus = 'ready';
-        if (row) {
-          const ledger = Array.isArray(accounting.ledger) ? (accounting.ledger as unknown[]) : [];
-          accounting.ledger = [...ledger, row];
-        }
-        profile.accounting = accounting;
-        await Bun.write(profilePath, `${Bun.TOML.stringify(profile).trimEnd()}\n`);
-      }
-    } catch (e) {
-      // Ledger row stands; surface the mirror failure instead of hiding it.
-      console.warn(
-        `accounting-stub: profile mirror skipped for ${input.code}: ${
-          e instanceof Error ? e.message : e
-        }`
-      );
+    if (row) {
+      await mirrorLedgerEntryToProfile(profilePath, row, { fundStatus: 'ready' });
     }
 
     return { inserted, row, profilePath: profilePath };
   } finally {
     if (!input.db) db.close();
+  }
+}
+
+/**
+ * Mirror a ledger row into the profile TOML's accounting section
+ * (read-merge-write). Sets accounting.fundStatus when provided, appends the
+ * row to accounting.ledger, and rewrites the TOML. Returns false (with a
+ * warn) when the profile is missing or the write fails — the ledger row in
+ * the DB stands regardless.
+ */
+export async function mirrorLedgerEntryToProfile(
+  profilePath: string,
+  row: PartnerLedgerRow,
+  opts: { fundStatus?: string } = {}
+): Promise<boolean> {
+  try {
+    const profile = (await Bun.file(profilePath).exists())
+      ? (Bun.TOML.parse(await Bun.file(profilePath).text()) as Record<string, unknown>)
+      : null;
+    if (!profile) return false;
+    const accounting = (profile.accounting as Record<string, unknown> | undefined) ?? {};
+    if (opts.fundStatus) accounting.fundStatus = opts.fundStatus;
+    const ledger = Array.isArray(accounting.ledger) ? (accounting.ledger as unknown[]) : [];
+    accounting.ledger = [...ledger, row];
+    profile.accounting = accounting;
+    await Bun.write(profilePath, `${Bun.TOML.stringify(profile).trimEnd()}\n`);
+    return true;
+  } catch (e) {
+    console.warn(
+      `accounting-stub: profile mirror skipped for ${profilePath}: ${
+        e instanceof Error ? e.message : e
+      }`
+    );
+    return false;
   }
 }
