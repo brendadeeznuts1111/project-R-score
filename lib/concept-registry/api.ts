@@ -13,15 +13,18 @@ import {
   graphToMermaid,
 } from './graph.ts';
 import {
-  approveConcept,
+  approveProposal,
+  deprecateWithReason,
+  proposeForReview,
+  rejectProposal,
+} from './lifecycle.ts';
+import {
   archiveConcept,
   defaultAuthor,
-  deprecateConcept,
   getConcept,
   listConcepts,
   listUsage,
   listVersions,
-  proposeConcept,
 } from './repository.ts';
 import type { ConceptStatus, ProposeConceptInput } from './types.ts';
 import { isConceptStatus, parseNonEmpty } from './types.ts';
@@ -73,6 +76,7 @@ function parseProposeBody(raw: unknown): ProposeConceptInput {
     kind: typeof o.kind === 'string' ? o.kind : undefined,
     category: typeof o.category === 'string' ? o.category : undefined,
     group: typeof o.group === 'string' ? o.group : undefined,
+    domain: typeof o.domain === 'string' ? o.domain : undefined,
     summary: typeof o.summary === 'string' ? o.summary : undefined,
     color: typeof o.color === 'string' ? o.color : undefined,
     unit: typeof o.unit === 'string' ? o.unit : undefined,
@@ -81,6 +85,8 @@ function parseProposeBody(raw: unknown): ProposeConceptInput {
     seeAlso,
     author: typeof o.author === 'string' ? o.author : undefined,
     correlationId: typeof o.correlationId === 'string' ? o.correlationId : undefined,
+    asDraft: o.asDraft === true || o.draft === true,
+    reviewer: typeof o.reviewer === 'string' ? o.reviewer : undefined,
   };
 }
 
@@ -123,12 +129,14 @@ export async function handleConceptRegistryRequest(
     // POST /api/concepts/propose
     if (path === '/api/concepts/propose' && method === 'POST') {
       const body = parseProposeBody(await readJsonBody(req));
-      const concept = proposeConcept(db, body, body.author ?? defaultAuthor());
+      const concept = proposeForReview(db, body, body.author ?? defaultAuthor());
       return json({ ok: true, concept }, 201);
     }
 
     // /api/concepts/:id/...
-    const m = path.match(/^\/api\/concepts\/([^/]+)(?:\/(versions|usage|approve|deprecate))?$/);
+    const m = path.match(
+      /^\/api\/concepts\/([^/]+)(?:\/(versions|usage|approve|deprecate|reject))?$/
+    );
     if (m) {
       const id = decodeURIComponent(m[1]!); // brand-ok — glossary concept key from path
       const sub = m[2];
@@ -148,7 +156,18 @@ export async function handleConceptRegistryRequest(
         const o = raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : {};
         const reviewer = typeof o.reviewer === 'string' ? o.reviewer : defaultAuthor();
         const comments = typeof o.comments === 'string' ? o.comments : undefined;
-        const concept = approveConcept(db, id, reviewer, comments);
+        const concept = approveProposal(db, id, reviewer, comments);
+        return json({ ok: true, concept });
+      }
+
+      if (sub === 'reject' && method === 'PATCH') {
+        const raw = await readJsonBody(req);
+        const o = raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : {};
+        const reason =
+          typeof o.reason === 'string' && o.reason.trim() ? o.reason.trim() : 'rejected';
+        const reviewer = typeof o.reviewer === 'string' ? o.reviewer : defaultAuthor();
+        const soft = o.soft === true;
+        const concept = rejectProposal(db, id, reason, reviewer, soft);
         return json({ ok: true, concept });
       }
 
@@ -162,7 +181,8 @@ export async function handleConceptRegistryRequest(
               ? o.deprecatedBy
               : undefined;
         const author = typeof o.author === 'string' ? o.author : defaultAuthor();
-        const concept = deprecateConcept(db, id, replaceBy, author);
+        const reason = typeof o.reason === 'string' ? o.reason : undefined;
+        const concept = deprecateWithReason(db, id, { replaceBy, reason, author });
         return json({ ok: true, concept });
       }
 

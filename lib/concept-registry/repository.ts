@@ -15,11 +15,19 @@ import {
   type ProposeConceptInput,
   type RegistryConcept,
   type ReviewStatus,
+  canTransition,
   conceptCategoryOf,
   conceptGroupOf,
   isConceptStatus,
   parseNonEmpty,
 } from './types.ts';
+
+function assertTransition(from: ConceptStatus, to: ConceptStatus): void {
+  if (from === to) return; // no-op same-status updates allowed
+  if (!canTransition(from, to)) {
+    throw new Error(`illegal lifecycle transition: ${from} → ${to}`);
+  }
+}
 
 type ConceptRow = {
   id: string; // brand-ok — glossary concept key (SQLite row)
@@ -311,8 +319,14 @@ export function proposeConcept(
   author = defaultAuthor()
 ): RegistryConcept {
   const existing = getConcept(db, input.id);
-  if (existing && existing.status !== 'archived' && existing.status !== 'rejected') {
-    throw new Error(`concept already exists: ${input.id} (status=${existing.status})`);
+  if (existing) {
+    // Only allow re-create from terminal-ish states via lifecycle helpers.
+    if (existing.status !== 'archived' && existing.status !== 'rejected') {
+      throw new Error(`concept already exists: ${input.id} (status=${existing.status})`);
+    }
+    if (existing.status === 'rejected') {
+      assertTransition('rejected', 'proposed');
+    }
   }
   const concept = upsertConcept(db, { ...input, status: 'proposed' }, author);
   const ts = nowIso();
@@ -331,11 +345,15 @@ export function approveConcept(
 ): RegistryConcept {
   const existing = getConcept(db, id);
   if (!existing) throw new Error(`concept not found: ${id}`);
-  if (existing.status !== 'proposed' && existing.status !== 'rejected') {
-    // allow re-approve of active as no-op version bump with comment
-    if (existing.status !== 'active') {
-      throw new Error(`cannot approve concept in status=${existing.status}`);
-    }
+  // Same-status re-approve of active is a documented no-op version bump.
+  if (existing.status !== 'active') {
+    assertTransition(existing.status, 'active');
+  }
+  // rejected/draft must resubmit to proposed first (LIFECYCLE_TRANSITIONS).
+  if (existing.status === 'rejected' || existing.status === 'draft') {
+    throw new Error(
+      `cannot approve concept in status=${existing.status}; submit (→ proposed) first`
+    );
   }
   const ts = nowIso();
   const next: RegistryConcept = {
@@ -369,9 +387,10 @@ export function deprecateConcept(
 ): RegistryConcept {
   const existing = getConcept(db, id);
   if (!existing) throw new Error(`concept not found: ${id}`);
-  if (existing.status === 'archived') {
-    throw new Error(`cannot deprecate archived concept: ${id}`);
+  if (existing.status === 'deprecated') {
+    throw new Error(`illegal lifecycle transition: deprecated → deprecated`);
   }
+  assertTransition(existing.status, 'deprecated');
   const ts = nowIso();
   const next: RegistryConcept = {
     ...existing,
@@ -386,7 +405,7 @@ export function deprecateConcept(
   return next;
 }
 
-/** Soft delete → archived. */
+/** Soft delete → archived. Active requires force=true (still a legal transition). */
 export function archiveConcept(
   db: Database,
   id: string, // brand-ok — glossary concept key
@@ -395,6 +414,8 @@ export function archiveConcept(
 ): RegistryConcept {
   const existing = getConcept(db, id);
   if (!existing) throw new Error(`concept not found: ${id}`);
+  if (existing.status === 'archived') return existing;
+  assertTransition(existing.status, 'archived');
   if (existing.status === 'active' && !force) {
     throw new Error(`refusing to archive active concept ${id} without force`);
   }

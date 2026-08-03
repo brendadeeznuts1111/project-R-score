@@ -50,6 +50,8 @@ function upsertProposal(
     reviewer?: string | null;
     rejectionReason?: string | null;
     reviewedAt?: string | null;
+    /** When true, SET rejection_reason = NULL (approve / resubmit). */
+    clearRejection?: boolean;
   } = {}
 ): void {
   const ts = nowIso();
@@ -59,23 +61,48 @@ function upsertProposal(
     )
     .get({ $id: conceptId }) as { id: string } | null; // brand-ok — proposal id
 
+  const clear = opts.clearRejection === true || status === 'active' || status === 'proposed';
+  const reason = clear
+    ? null
+    : opts.rejectionReason !== undefined
+      ? opts.rejectionReason
+      : undefined;
+
   if (existing) {
-    db.query(
-      `UPDATE concept_proposals SET
-         status = $status,
-         reviewer = COALESCE($rev, reviewer),
-         reviewed_at = COALESCE($revAt, reviewed_at),
-         rejection_reason = COALESCE($reason, rejection_reason),
-         updated_at = $ts
-       WHERE id = $id`
-    ).run({
-      $id: existing.id,
-      $status: status,
-      $rev: opts.reviewer ?? null,
-      $revAt: opts.reviewedAt ?? null,
-      $reason: opts.rejectionReason ?? null,
-      $ts: ts,
-    });
+    if (clear) {
+      db.query(
+        `UPDATE concept_proposals SET
+           status = $status,
+           reviewer = COALESCE($rev, reviewer),
+           reviewed_at = COALESCE($revAt, reviewed_at),
+           rejection_reason = NULL,
+           updated_at = $ts
+         WHERE id = $id`
+      ).run({
+        $id: existing.id,
+        $status: status,
+        $rev: opts.reviewer ?? null,
+        $revAt: opts.reviewedAt ?? null,
+        $ts: ts,
+      });
+    } else {
+      db.query(
+        `UPDATE concept_proposals SET
+           status = $status,
+           reviewer = COALESCE($rev, reviewer),
+           reviewed_at = COALESCE($revAt, reviewed_at),
+           rejection_reason = COALESCE($reason, rejection_reason),
+           updated_at = $ts
+         WHERE id = $id`
+      ).run({
+        $id: existing.id,
+        $status: status,
+        $rev: opts.reviewer ?? null,
+        $revAt: opts.reviewedAt ?? null,
+        $reason: reason ?? null,
+        $ts: ts,
+      });
+    }
     return;
   }
 
@@ -89,7 +116,7 @@ function upsertProposal(
     $status: status,
     $rev: opts.reviewer ?? null,
     $revAt: opts.reviewedAt ?? null,
-    $reason: opts.rejectionReason ?? null,
+    $reason: clear ? null : (opts.rejectionReason ?? null),
     $ts: ts,
   });
 }
@@ -113,6 +140,7 @@ export function saveDraft(
  * Propose for review.
  * - asDraft: true → draft only
  * - default → proposed (ready for reviewer)
+ * - existing draft/rejected: merge field updates from input, then → proposed
  */
 export function proposeForReview(
   db: Database,
@@ -124,19 +152,34 @@ export function proposeForReview(
   }
   const existing = getConcept(db, input.id);
   if (existing?.status === 'draft' || existing?.status === 'rejected') {
+    // Merge CLI/API field updates before status flip (do not discard label/domain/…).
+    upsertConcept(
+      db,
+      {
+        ...input,
+        id: existing.id,
+        label: input.label || existing.label,
+        status: existing.status,
+      },
+      author
+    );
     return submitProposal(db, input.id, author, input.reviewer);
   }
   const concept = proposeConcept(db, input, author);
-  upsertProposal(db, concept.id, 'proposed', { reviewer: input.reviewer ?? null });
+  upsertProposal(db, concept.id, 'proposed', {
+    reviewer: input.reviewer ?? null,
+    clearRejection: true,
+  });
   return concept;
 }
 
-/** draft|rejected → proposed */
+/** draft|rejected → proposed (optionally merge field updates via input). */
 export function submitProposal(
   db: Database,
   id: string, // brand-ok — glossary concept key
   author = defaultAuthor(),
-  reviewer?: string
+  reviewer?: string,
+  fieldUpdates?: Partial<ProposeConceptInput>
 ): RegistryConcept {
   const existing = getConcept(db, id);
   if (!existing) throw new Error(`concept not found: ${id}`);
@@ -145,19 +188,20 @@ export function submitProposal(
     db,
     {
       id: existing.id,
-      label: existing.label,
-      kind: existing.kind,
-      category: existing.category,
-      group: existing.groupName,
-      domain: existing.domain ?? undefined,
-      summary: existing.summary ?? undefined,
-      color: existing.color ?? undefined,
-      unit: existing.unit ?? undefined,
-      format: existing.format ?? undefined,
-      mapsTo: existing.mapsTo ?? undefined,
-      seeAlso: existing.seeAlso,
+      label: fieldUpdates?.label?.trim() || existing.label,
+      kind: fieldUpdates?.kind ?? existing.kind,
+      category: fieldUpdates?.category ?? existing.category,
+      group: fieldUpdates?.group ?? existing.groupName,
+      domain: fieldUpdates?.domain ?? existing.domain ?? undefined,
+      summary: fieldUpdates?.summary ?? existing.summary ?? undefined,
+      color: fieldUpdates?.color ?? existing.color ?? undefined,
+      unit: fieldUpdates?.unit ?? existing.unit ?? undefined,
+      format: fieldUpdates?.format ?? existing.format ?? undefined,
+      mapsTo: fieldUpdates?.mapsTo ?? existing.mapsTo ?? undefined,
+      seeAlso: fieldUpdates?.seeAlso ?? existing.seeAlso,
       status: 'proposed',
       source: existing.source,
+      correlationId: fieldUpdates?.correlationId,
     },
     author
   );
@@ -166,7 +210,10 @@ export function submitProposal(
     `INSERT INTO concept_review (concept_id, status, reviewer, reviewed_at, comments, created_at)
      VALUES ($id, 'proposed', $rev, NULL, NULL, $ts)`
   ).run({ $id: id, $rev: reviewer ?? null, $ts: ts });
-  upsertProposal(db, id, 'proposed', { reviewer: reviewer ?? null });
+  upsertProposal(db, id, 'proposed', {
+    reviewer: reviewer ?? null,
+    clearRejection: true,
+  });
   return next;
 }
 
@@ -224,13 +271,19 @@ export function approveProposal(
 ): RegistryConcept {
   const existing = getConcept(db, id);
   if (!existing) throw new Error(`concept not found: ${id}`);
+  // Only draft may auto-advance to proposed; rejected must explicitly resubmit.
   if (existing.status === 'draft') {
     submitProposal(db, id, reviewer);
+  } else if (existing.status === 'rejected') {
+    throw new Error(`cannot approve rejected concept ${id}; submit (→ proposed) first`);
+  } else if (existing.status !== 'proposed' && existing.status !== 'active') {
+    assertTransition(existing.status, 'active');
   }
   const next = approveConcept(db, id, reviewer, comments);
   upsertProposal(db, id, 'active', {
     reviewer,
     reviewedAt: nowIso(),
+    clearRejection: true,
   });
   return next;
 }
@@ -398,10 +451,14 @@ export function computeConceptHealth(db: Database): ConceptHealthSnapshot {
     ['proposal_age_max_days', proposalAgeDaysMax],
     ['proposals_older_7d', proposalsOlderThan7d],
   ];
+  // Snapshot semantics: one row per (concept_id, metric_name) — replace in place.
   for (const [name, value] of metrics) {
     db.query(
-      `INSERT OR REPLACE INTO concept_health (concept_id, metric_name, metric_value, measured_at)
-       VALUES ('', $name, $val, $ts)`
+      `INSERT INTO concept_health (concept_id, metric_name, metric_value, measured_at)
+       VALUES ('', $name, $val, $ts)
+       ON CONFLICT(concept_id, metric_name) DO UPDATE SET
+         metric_value = excluded.metric_value,
+         measured_at = excluded.measured_at`
     ).run({ $name: name, $val: value, $ts: measuredAt });
   }
 

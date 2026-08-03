@@ -90,12 +90,13 @@ CREATE INDEX IF NOT EXISTS idx_concept_proposals_status ON concept_proposals(sta
 CREATE INDEX IF NOT EXISTS idx_concept_proposals_concept ON concept_proposals(concept_id);
 CREATE INDEX IF NOT EXISTS idx_concept_proposals_reviewer ON concept_proposals(reviewer);
 
+-- Snapshot metrics: one row per (concept_id, metric_name); measured_at is last update.
 CREATE TABLE IF NOT EXISTS concept_health (
   concept_id TEXT NOT NULL DEFAULT '', -- brand-ok — empty = global metric; else concept key
   metric_name TEXT NOT NULL,
   metric_value REAL NOT NULL,
   measured_at TEXT NOT NULL,
-  PRIMARY KEY (concept_id, metric_name, measured_at)
+  PRIMARY KEY (concept_id, metric_name)
 );
 
 CREATE INDEX IF NOT EXISTS idx_concept_health_measured ON concept_health(measured_at);
@@ -124,6 +125,7 @@ function migrateConceptColumns(db: Database): void {
 /**
  * Rebuild concepts table when legacy CHECK lacks `draft`.
  * Detect by attempting a savepoint insert of a draft row.
+ * Crash-safe: temp table cleaned first; column values preserved when present.
  */
 function migrateStatusCheckForDraft(db: Database): void {
   const has = db
@@ -141,7 +143,11 @@ function migrateStatusCheckForDraft(db: Database): void {
     db.run('RELEASE draft_check');
     return; // draft allowed
   } catch {
-    db.run('ROLLBACK TO draft_check');
+    try {
+      db.run('ROLLBACK TO draft_check');
+    } catch {
+      /* savepoint already rolled back */
+    }
     try {
       db.run('RELEASE draft_check');
     } catch {
@@ -149,55 +155,154 @@ function migrateStatusCheckForDraft(db: Database): void {
     }
   }
 
-  // Rebuild without FK violations: drop dependents temporarily is heavy;
-  // copy concepts → new table, keep child tables (they only store concept_id text).
-  db.exec(`
-    PRAGMA foreign_keys = OFF;
-    CREATE TABLE concepts_lifecycle_v2 (
-      id TEXT PRIMARY KEY,
-      label TEXT NOT NULL,
-      kind TEXT NOT NULL DEFAULT 'composite',
-      category TEXT NOT NULL DEFAULT 'ui',
-      group_name TEXT NOT NULL DEFAULT '',
-      domain TEXT,
-      status TEXT NOT NULL DEFAULT 'active'
-        CHECK(status IN ('draft', 'proposed', 'active', 'deprecated', 'archived', 'rejected')),
-      color TEXT,
-      unit TEXT,
-      format TEXT,
-      summary TEXT,
-      maps_to TEXT,
-      see_also_json TEXT NOT NULL DEFAULT '[]',
-      source TEXT,
-      created_at TEXT NOT NULL,
-      updated_at TEXT NOT NULL,
-      deprecated_at TEXT,
-      deprecated_by TEXT,
-      deprecation_reason TEXT
-    );
-    INSERT INTO concepts_lifecycle_v2 (
-      id, label, kind, category, group_name, domain, status, color, unit, format, summary,
-      maps_to, see_also_json, source, created_at, updated_at, deprecated_at, deprecated_by, deprecation_reason
+  const cols = tableColumns(db, 'concepts');
+  const domainExpr = cols.has('domain') ? 'domain' : 'NULL';
+  const depReasonExpr = cols.has('deprecation_reason') ? 'deprecation_reason' : 'NULL';
+
+  db.run('PRAGMA foreign_keys = OFF');
+  try {
+    db.run('BEGIN IMMEDIATE');
+    db.run(`DROP TABLE IF EXISTS concepts_lifecycle_v2`);
+    db.run(`
+      CREATE TABLE concepts_lifecycle_v2 (
+        id TEXT PRIMARY KEY,
+        label TEXT NOT NULL,
+        kind TEXT NOT NULL DEFAULT 'composite',
+        category TEXT NOT NULL DEFAULT 'ui',
+        group_name TEXT NOT NULL DEFAULT '',
+        domain TEXT,
+        status TEXT NOT NULL DEFAULT 'active'
+          CHECK(status IN ('draft', 'proposed', 'active', 'deprecated', 'archived', 'rejected')),
+        color TEXT,
+        unit TEXT,
+        format TEXT,
+        summary TEXT,
+        maps_to TEXT,
+        see_also_json TEXT NOT NULL DEFAULT '[]',
+        source TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        deprecated_at TEXT,
+        deprecated_by TEXT,
+        deprecation_reason TEXT
+      )
+    `);
+    db.run(`
+      INSERT INTO concepts_lifecycle_v2 (
+        id, label, kind, category, group_name, domain, status, color, unit, format, summary,
+        maps_to, see_also_json, source, created_at, updated_at, deprecated_at, deprecated_by,
+        deprecation_reason
+      )
+      SELECT
+        id, label, kind, category, group_name,
+        ${domainExpr}, status, color, unit, format, summary,
+        maps_to, see_also_json, source, created_at, updated_at, deprecated_at, deprecated_by,
+        ${depReasonExpr}
+      FROM concepts
+    `);
+    db.run(`DROP TABLE concepts`);
+    db.run(`ALTER TABLE concepts_lifecycle_v2 RENAME TO concepts`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_concepts_status ON concepts(status)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_concepts_category ON concepts(category)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_concepts_group ON concepts(group_name)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_concepts_domain ON concepts(domain)`);
+    db.run('COMMIT');
+  } catch (e) {
+    try {
+      db.run('ROLLBACK');
+    } catch {
+      /* ignore */
+    }
+    try {
+      db.run(`DROP TABLE IF EXISTS concepts_lifecycle_v2`);
+    } catch {
+      /* ignore */
+    }
+    throw e;
+  } finally {
+    db.run('PRAGMA foreign_keys = ON');
+  }
+}
+
+/** Rebuild concept_health if legacy PK included measured_at (unbounded growth). */
+function migrateConceptHealthSnapshotPk(db: Database): void {
+  const has = db
+    .query(`SELECT name FROM sqlite_master WHERE type='table' AND name='concept_health'`)
+    .all() as Array<{ name: string }>;
+  if (has.length === 0) return;
+
+  // Detect legacy multi-row PK: more than one measured_at per (concept_id, metric_name).
+  const multi = db
+    .query(
+      `SELECT COUNT(*) AS n FROM (
+         SELECT concept_id, metric_name, COUNT(*) AS c
+         FROM concept_health
+         GROUP BY concept_id, metric_name
+         HAVING c > 1
+       )`
     )
-    SELECT
-      id, label, kind, category, group_name,
-      NULL, status, color, unit, format, summary,
-      maps_to, see_also_json, source, created_at, updated_at, deprecated_at, deprecated_by, NULL
-    FROM concepts;
-    DROP TABLE concepts;
-    ALTER TABLE concepts_lifecycle_v2 RENAME TO concepts;
-    CREATE INDEX IF NOT EXISTS idx_concepts_status ON concepts(status);
-    CREATE INDEX IF NOT EXISTS idx_concepts_category ON concepts(category);
-    CREATE INDEX IF NOT EXISTS idx_concepts_group ON concepts(group_name);
-    CREATE INDEX IF NOT EXISTS idx_concepts_domain ON concepts(domain);
-    PRAGMA foreign_keys = ON;
-  `);
+    .get() as { n: number } | null;
+
+  // Also detect schema via index list — if unique index is only on 2 cols we're good.
+  // When multi is 0, still migrate if table was created with 3-col PK by checking sqlite_master SQL.
+  const sqlRow = db
+    .query(`SELECT sql FROM sqlite_master WHERE type='table' AND name='concept_health'`)
+    .get() as { sql: string | null } | null;
+  const sql = sqlRow?.sql ?? '';
+  const legacyPk =
+    /PRIMARY KEY\s*\(\s*concept_id\s*,\s*metric_name\s*,\s*measured_at\s*\)/i.test(sql) ||
+    (multi?.n ?? 0) > 0;
+  if (!legacyPk) return;
+
+  db.run('PRAGMA foreign_keys = OFF');
+  try {
+    db.run('BEGIN IMMEDIATE');
+    db.run(`DROP TABLE IF EXISTS concept_health_v2`);
+    db.run(`
+      CREATE TABLE concept_health_v2 (
+        concept_id TEXT NOT NULL DEFAULT '',
+        metric_name TEXT NOT NULL,
+        metric_value REAL NOT NULL,
+        measured_at TEXT NOT NULL,
+        PRIMARY KEY (concept_id, metric_name)
+      )
+    `);
+    // Keep latest measured_at per metric.
+    db.run(`
+      INSERT INTO concept_health_v2 (concept_id, metric_name, metric_value, measured_at)
+      SELECT concept_id, metric_name, metric_value, measured_at
+      FROM concept_health AS h
+      WHERE measured_at = (
+        SELECT MAX(h2.measured_at) FROM concept_health AS h2
+        WHERE h2.concept_id = h.concept_id AND h2.metric_name = h.metric_name
+      )
+    `);
+    db.run(`DROP TABLE concept_health`);
+    db.run(`ALTER TABLE concept_health_v2 RENAME TO concept_health`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_concept_health_measured ON concept_health(measured_at)`);
+    db.run('COMMIT');
+  } catch (e) {
+    try {
+      db.run('ROLLBACK');
+    } catch {
+      /* ignore */
+    }
+    try {
+      db.run(`DROP TABLE IF EXISTS concept_health_v2`);
+    } catch {
+      /* ignore */
+    }
+    throw e;
+  } finally {
+    db.run('PRAGMA foreign_keys = ON');
+  }
 }
 
 export function ensureConceptRegistrySchema(db: Database): void {
   db.exec(CONCEPT_REGISTRY_DDL);
   migrateConceptColumns(db);
   migrateStatusCheckForDraft(db);
+  migrateConceptHealthSnapshotPk(db);
   // Re-run DDL for indexes/tables that depend on concepts existing.
   db.exec(CONCEPT_REGISTRY_DDL);
 }
