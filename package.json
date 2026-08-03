@@ -1894,6 +1894,7 @@
     "baseline:scrape-alert": "bun tools/baseline-sync.ts scrape-alert",
     "baseline:test-tier4": "bun test tests/draftkings-scrape-agent.test.ts tests/fanduel-scrape-agent.test.ts tests/betmgm-caesars-scrape-agent.test.ts tests/espnbet-scrape-agent.test.ts tests/bet365-scrape-agent.test.ts tests/us-top10-scrape-agents.test.ts tests/caesars-aw-scrape.test.ts tests/scrape-wire-taxonomy.test.ts tests/scrape-wire-schema-audit.test.ts tests/scrape-alert.test.ts tests/baseline-scraped.test.ts tests/book-scrape-registry.test.ts tests/baseline-scrape-cron.test.ts tests/scraped-limits-merge.test.ts",
     "baseline:apply-overrides": "bun tools/baseline-sync.ts apply-overrides",
+    "concept:inventory": "bun tools/concept-inventory.ts",
     "glossary:portal": "bun tools/domain-glossary.ts",
     "glossary:portal:check": "bun tools/domain-glossary.ts --check",
     "glossary:verify": "bun tools/glossary-verify.ts",
