@@ -1852,6 +1852,8 @@
     "concept:health": "bun scripts/concept-health.ts",
     "concept:health:weekly": "bun scripts/concept-health-weekly.ts",
     "concept:serve": "bun scripts/concept-serve.ts",
+    "concept:registry:sync": "bun scripts/concept-registry-db.ts",
+    "concept:registry:check": "bun scripts/concept-registry-db.ts --check",
     "partners:governance": "bun run partners:validate && bun run partners:integration:validate && bun run concept:audit -- --strict && bun run glossary:portal:check && bun run partners:event-concepts:check && bun run soft:accounting:check && bun run validate:colors",
     "partners:ledger:append": "bun tools/partners-ops.ts ledger:append",
     "partners:refresh": "bun tools/partners-ops.ts build",
