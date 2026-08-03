@@ -31,12 +31,15 @@ CREATE TABLE IF NOT EXISTS partner_ledger (
   amount REAL NOT NULL,
   currency TEXT NOT NULL,
   description TEXT,
+  reference TEXT,
   balance_after REAL NOT NULL,
   created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_partner_ledger_code ON partner_ledger(partner_code, created_at);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_partner_ledger_initial_capital
   ON partner_ledger(partner_code) WHERE type = 'initial_capital';
+CREATE UNIQUE INDEX IF NOT EXISTS idx_partner_ledger_reference
+  ON partner_ledger(partner_code, reference) WHERE reference IS NOT NULL;
 `;
 
 export interface PartnerLedgerRow {
@@ -46,6 +49,7 @@ export interface PartnerLedgerRow {
   amount: number;
   currency: string;
   description: string | null;
+  reference?: string | null; // external feed key — idempotent re-imports
   balanceAfter: number;
   createdAt: string;
 }
@@ -56,6 +60,7 @@ export interface NewLedgerEntry {
   amount: number;
   currency: string;
   description?: string;
+  reference?: string;
 }
 
 export function ensurePartnerLedgerSchema(db: Database): void {
@@ -78,13 +83,14 @@ export function insertLedgerEntry(db: Database, entry: NewLedgerEntry): PartnerL
     amount: entry.amount,
     currency: entry.currency,
     description: entry.description ?? null,
+    ...(entry.reference !== undefined ? { reference: entry.reference } : {}),
     balanceAfter,
     createdAt: new Date().toISOString(),
   };
   db.query(
     `INSERT INTO partner_ledger
-       (id, partner_code, type, amount, currency, description, balance_after, created_at)
-     VALUES ($id, $code, $type, $amount, $cur, $desc, $bal, $ts)`
+       (id, partner_code, type, amount, currency, description, reference, balance_after, created_at)
+     VALUES ($id, $code, $type, $amount, $cur, $desc, $ref, $bal, $ts)`
   ).run({
     $id: row.id,
     $code: row.partnerCode,
@@ -92,10 +98,22 @@ export function insertLedgerEntry(db: Database, entry: NewLedgerEntry): PartnerL
     $amount: row.amount,
     $cur: row.currency,
     $desc: row.description,
+    $ref: row.reference ?? null,
     $bal: row.balanceAfter,
     $ts: row.createdAt,
   });
   return row;
+}
+
+/** Does a row with this external reference already exist? (import idempotency.) */
+export function ledgerEntryExists(db: Database, partnerCode: string, reference: string): boolean {
+  const row = db
+    .query(
+      `SELECT 1 AS hit FROM partner_ledger
+       WHERE partner_code = $code AND reference = $ref LIMIT 1`
+    )
+    .get({ $code: partnerCode, $ref: reference }) as { hit: number } | null;
+  return row !== null;
 }
 
 /** Current running balance for a partner (0 when no ledger rows exist). */
@@ -121,7 +139,7 @@ export function hasLedgerRows(db: Database, partnerCode: string): boolean {
 export function listLedgerEntries(db: Database, partnerCode: string): PartnerLedgerRow[] {
   const rows = db
     .query(
-      `SELECT id, partner_code, type, amount, currency, description, balance_after, created_at
+      `SELECT id, partner_code, type, amount, currency, description, reference, balance_after, created_at
        FROM partner_ledger WHERE partner_code = $code ORDER BY created_at ASC, id ASC`
     )
     .all({ $code: partnerCode }) as {
@@ -131,6 +149,7 @@ export function listLedgerEntries(db: Database, partnerCode: string): PartnerLed
     amount: number;
     currency: string;
     description: string | null;
+    reference: string | null;
     balance_after: number;
     created_at: string;
   }[];
@@ -141,6 +160,7 @@ export function listLedgerEntries(db: Database, partnerCode: string): PartnerLed
     amount: r.amount,
     currency: r.currency,
     description: r.description,
+    ...(r.reference !== null ? { reference: r.reference } : {}),
     balanceAfter: r.balance_after,
     createdAt: r.created_at,
   }));

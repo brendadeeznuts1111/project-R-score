@@ -25,6 +25,7 @@ import {
   ensurePartnerLedgerSchema,
   insertLedgerEntry,
   ledgerBalance,
+  ledgerEntryExists,
   type PartnerLedgerRow,
 } from '../lib/partner-profile/ledger';
 import { mirrorLedgerEntryToProfile } from '../lib/partner-profile/accounting-stub';
@@ -41,6 +42,7 @@ export interface PostSettlementInput {
   currency?: string; // default USD
   fundStatus?: string; // optional accounting.fundStatus refresh
   description?: string; // default 'desk-entry settlement'
+  reference?: string; // external feed key — idempotent re-imports skip
   dryRun?: boolean;
   /** Injected ops DB (tests). Default: open via dbPath / DEFAULT_OPS_DB_PATH. */
   db?: Database;
@@ -50,10 +52,11 @@ export interface PostSettlementInput {
 
 export interface PostSettlementResult {
   code: string;
-  row: PartnerLedgerRow | null; // null on dry-run
+  row: PartnerLedgerRow | null; // null on dry-run / skipped
   balance: number;
   profilePath: string | null;
   mirrored: boolean;
+  skipped: boolean; // reference already present → no write
 }
 
 /** Post a desk-entry settlement (validated; dry-run writes nothing). */
@@ -84,23 +87,54 @@ export async function postSettlement(input: PostSettlementInput): Promise<PostSe
     const profilePath = joinPath(input.profilesDir ?? PROFILES_DIR, `${code}.toml`);
 
     if (input.dryRun) {
-      const balance = ledgerBalance(db, code) + input.amount;
-      return { code, row: null, balance, profilePath, mirrored: false };
+      const skipped = input.reference !== undefined && ledgerEntryExists(db, code, input.reference);
+      const balance = skipped ? ledgerBalance(db, code) : ledgerBalance(db, code) + input.amount;
+      return { code, row: null, balance, profilePath, mirrored: false, skipped };
     }
 
-    const row = insertLedgerEntry(db, {
-      partnerCode: code,
-      type: 'settlement',
-      amount: input.amount,
-      currency,
-      description: input.description ?? 'desk-entry settlement',
-    });
+    // Idempotency: a reference already on the ledger is skipped (unique index
+    // backs this against concurrent imports).
+    if (input.reference !== undefined && ledgerEntryExists(db, code, input.reference)) {
+      return {
+        code,
+        row: null,
+        balance: ledgerBalance(db, code),
+        profilePath,
+        mirrored: false,
+        skipped: true,
+      };
+    }
+
+    let row: PartnerLedgerRow;
+    try {
+      row = insertLedgerEntry(db, {
+        partnerCode: code,
+        type: 'settlement',
+        amount: input.amount,
+        currency,
+        description: input.description ?? 'desk-entry settlement',
+        ...(input.reference !== undefined ? { reference: input.reference } : {}),
+      });
+    } catch (e) {
+      // A concurrent import won the reference race — treat as already imported.
+      if (e instanceof Error && /UNIQUE constraint failed/.test(e.message)) {
+        return {
+          code,
+          row: null,
+          balance: ledgerBalance(db, code),
+          profilePath,
+          mirrored: false,
+          skipped: true,
+        };
+      }
+      throw e;
+    }
     const mirrored = await mirrorLedgerEntryToProfile(
       profilePath,
       row,
       input.fundStatus ? { fundStatus: input.fundStatus } : {}
     );
-    return { code, row, balance: row.balanceAfter, profilePath, mirrored };
+    return { code, row, balance: row.balanceAfter, profilePath, mirrored, skipped: false };
   } finally {
     if (!input.db) db.close();
   }
@@ -115,30 +149,180 @@ function usage(): never {
   console.log(`Usage:
   bun run partner:settlement:post --code <CODE> --amount <n> \\
     [--currency <ISO3>] [--fund-status <ready|deferred|paused|blocked>] \\
-    [--description <text>] [--dry-run]`);
+    [--description <text>] [--reference <key>] [--dry-run]
+
+  bun run partner:settlement:import --file <settlements.csv|jsonl> \\
+    [--code <CODE>] [--dry-run]        # per-row code overrides --code
+
+CSV header: amount,currency,description,reference[,code]
+JSONL row:  {"code"?, "amount", "currency"?, "description"?, "reference"?}`);
   process.exit(1);
+}
+
+// ── Import mode ────────────────────────────────────────────────────────────
+
+export interface SettlementImportRow {
+  code?: string; // optional per-row override; falls back to --code
+  amount: number;
+  currency?: string;
+  description?: string;
+  reference?: string;
+}
+
+export interface ImportSettlementsInput {
+  rows: SettlementImportRow[];
+  defaultCode?: string;
+  dryRun?: boolean;
+  /** Injected ops DB (tests). Default: open via dbPath / DEFAULT_OPS_DB_PATH. */
+  db?: Database;
+  dbPath?: string;
+  profilesDir?: string;
+}
+
+export interface ImportSettlementsResult {
+  imported: number;
+  skipped: number;
+  failed: { row: number; error: string }[]; // 1-based row numbers
+  balances: Record<string, number>;
+}
+
+/** Parse a settlement file (CSV with header or JSONL). CSV values must not contain commas. */
+export function parseSettlementFile(
+  text: string,
+  format: 'csv' | 'jsonl' | 'auto' = 'auto'
+): SettlementImportRow[] {
+  const trimmed = text.trimStart();
+  const kind: 'csv' | 'jsonl' =
+    format === 'auto'
+      ? trimmed.startsWith('{') || trimmed.startsWith('[')
+        ? 'jsonl'
+        : 'csv'
+      : format;
+  if (kind === 'jsonl') {
+    return text
+      .split('\n')
+      .map(l => l.trim())
+      .filter(Boolean)
+      .map(l => JSON.parse(l) as SettlementImportRow);
+  }
+  const lines = text
+    .split('\n')
+    .map(l => l.trim())
+    .filter(Boolean);
+  if (lines.length === 0) return [];
+  const header = lines[0]!.split(',').map(h => h.trim());
+  const idx = Object.fromEntries(header.map((h, i) => [h, i]));
+  const cell = (line: string, name: string): string | undefined => {
+    const i = idx[name];
+    return i === undefined ? undefined : (line.split(',')[i] ?? '').trim() || undefined;
+  };
+  return lines.slice(1).map(line => ({
+    ...(idx.code !== undefined ? { code: cell(line, 'code') } : {}),
+    amount: Number(cell(line, 'amount')),
+    currency: cell(line, 'currency'),
+    description: cell(line, 'description'),
+    reference: cell(line, 'reference'),
+  }));
+}
+
+/**
+ * Batch-import settlement rows. One bad row does not abort the file — it is
+ * counted in `failed`. Rows whose `reference` already exists are skipped
+ * (idempotent re-imports).
+ */
+export async function importSettlements(
+  input: ImportSettlementsInput
+): Promise<ImportSettlementsResult> {
+  const db = input.db ?? openOperationsDb({ path: input.dbPath } as OpenOperationsDbOpts);
+  try {
+    ensurePartnerLedgerSchema(db);
+    const result: ImportSettlementsResult = { imported: 0, skipped: 0, failed: [], balances: {} };
+    for (const [i, row] of input.rows.entries()) {
+      const code = (row.code ?? input.defaultCode ?? '').trim().toUpperCase();
+      if (!code) {
+        result.failed.push({ row: i + 1, error: 'missing partner code (row code or --code)' });
+        continue;
+      }
+      try {
+        const res = await postSettlement({
+          code,
+          amount: row.amount,
+          currency: row.currency,
+          description: row.description,
+          reference: row.reference,
+          dryRun: input.dryRun,
+          db,
+          profilesDir: input.profilesDir,
+        });
+        if (res.skipped) result.skipped++;
+        else result.imported++;
+        result.balances[code] = res.balance;
+      } catch (e) {
+        result.failed.push({ row: i + 1, error: e instanceof Error ? e.message : String(e) });
+      }
+    }
+    return result;
+  } finally {
+    if (!input.db) db.close();
+  }
 }
 
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
+  const dryRun = argv.includes('--dry-run');
+
+  if (argv[0] === 'import') {
+    const filePath = flag(argv, 'file');
+    const defaultCode = flag(argv, 'code');
+    let text: string;
+    if (argv.includes('--stdin')) {
+      text = await Bun.stdin.text();
+    } else if (filePath) {
+      text = await Bun.file(filePath).text();
+    } else {
+      usage();
+    }
+    const format = filePath?.endsWith('.csv')
+      ? 'csv'
+      : filePath?.endsWith('.jsonl')
+        ? 'jsonl'
+        : 'auto';
+    const rows = parseSettlementFile(text, format);
+    const result = await importSettlements({ rows, defaultCode, dryRun });
+    for (const f of result.failed) console.error(`  ✗ row ${f.row}: ${f.error}`);
+    console.log(
+      `${dryRun ? '[dry-run] ' : ''}✓ import: ${result.imported} imported · ${result.skipped} skipped · ${result.failed.length} failed`
+    );
+    if (result.failed.length > 0) process.exitCode = 1;
+    return;
+  }
+
   const code = flag(argv, 'code');
   const amountRaw = flag(argv, 'amount');
   const currency = flag(argv, 'currency');
   const fundStatus = flag(argv, 'fund-status');
   const description = flag(argv, 'description');
-  const dryRun = argv.includes('--dry-run');
+  const reference = flag(argv, 'reference');
   if (!code || amountRaw === undefined) usage();
   const amount = Number(amountRaw);
 
-  const result = await postSettlement({ code, amount, currency, fundStatus, description, dryRun });
+  const result = await postSettlement({
+    code,
+    amount,
+    currency,
+    fundStatus,
+    description,
+    reference,
+    dryRun,
+  });
   const sign = amount < 0 ? '' : '+';
   if (dryRun) {
     console.log(
-      `[dry-run] would post settlement ${sign}${amount} ${result.row?.currency ?? (currency ?? 'USD').toUpperCase()} → ${result.code} · balance ${result.balance}`
+      `[dry-run] would post settlement ${sign}${amount} ${result.row?.currency ?? (currency ?? 'USD').toUpperCase()} → ${result.code} · balance ${result.balance}${result.skipped ? ' · skipped (reference exists)' : ''}`
     );
   } else {
     console.log(
-      `✓ posted settlement ${sign}${amount} ${result.row?.currency ?? ''} → ${result.code} · balance ${result.balance}${fundStatus ? ` · fundStatus ${fundStatus}` : ''}${result.mirrored ? '' : ' · profile mirror skipped'}`
+      `${result.skipped ? '⏭ skipped' : '✓ posted'} settlement ${sign}${amount} ${result.row?.currency ?? ''} → ${result.code} · balance ${result.balance}${fundStatus ? ` · fundStatus ${fundStatus}` : ''}${result.mirrored ? '' : ' · profile mirror skipped'}`
     );
     if (result.balance < 0) {
       console.warn(`⚠ balance ${result.balance} is negative — margin review advised`);

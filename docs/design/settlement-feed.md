@@ -68,8 +68,8 @@ A `Bun.cron` job (daily/weekly per `settlement.payoutFrequency` when set, defaul
 
 ## Open decisions
 
-1. **`reference` column** for settlement idempotency (recommended: add it) vs. description-based dedupe.
-2. **Import format** (JSONL first; CSV later) and whether the import lands directly in `partner_ledger` or a staged table with a finalize step.
+1. ~~**`reference` column** for settlement idempotency~~ — **resolved**: `partner_ledger.reference TEXT` + unique partial index shipped with `partner:settlement:import`. Rows whose reference already exists are skipped on re-import.
+2. **Import format** (JSONL + CSV shipped; CSV values must not contain commas) and whether the import lands directly in `partner_ledger` or a staged table with a finalize step. (Current: direct to `partner_ledger` with `reference` idempotency.)
 3. **Commission math source of truth**: apply `settlement.commissionPct` at import time vs. store gross and compute on the board. (Recommend: store the net settlement amount, compute gross→net at import, mirror both in the description.)
 4. **Cron cadence + window**: align to `settlement.payoutFrequency` (default weekly, week boundaries UTC).
 
