@@ -14207,7 +14207,8 @@
     },
     {
       "id": "accounting.transfer",
-      "description": "undefined — partner-ops Factory overlay concept.",
+      "label": "Transfer",
+      "description": "Funds moved between partner account scopes (global ↔ book:/rail:) — recorded as a scope-transfer ledger entry.",
       "category": "ops",
       "kind": "composite",
       "mapsTo": null,
@@ -14244,7 +14245,8 @@
     },
     {
       "id": "account.scope.global",
-      "description": "undefined — partner-ops Factory overlay concept.",
+      "label": "Global scope",
+      "description": "Partner-level (global) balance scope — ledger entries without a book:/rail: scope default here.",
       "category": "ops",
       "kind": "composite",
       "mapsTo": null,

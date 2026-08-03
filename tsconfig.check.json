@@ -39,7 +39,10 @@
     "scripts/lint-bun-native-changed.ts",
     "scripts/lib/git-changed.ts",
     "scripts/check-pr-claim.ts",
-    "scripts/bun-test-changed.ts"
+    "scripts/bun-test-changed.ts",
+    "lib/telegram/partner-ops-glossary.ts",
+    "lib/telegram/partner-ops-color-kernel.ts",
+    "lib/telegram/partner-ops-events.ts"
   ],
   "exclude": [
     "node_modules",
