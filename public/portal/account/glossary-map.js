@@ -29,6 +29,7 @@ export const ACCOUNT_DOSSIER_GLOSSARY = Object.freeze({
   policyCode: 'ops.limits.policy_code',
   traces: 'ops.limits.evidence_trace',
   monitoring: 'ops.limits.monitoring_status',
+  lifecycle: 'ops.limits.lifecycle_state',
   profile: 'ops.limits.profile',
   telemetry: 'ops.limits.pattern_surface',
   changes: 'section.recentLimitChanges',

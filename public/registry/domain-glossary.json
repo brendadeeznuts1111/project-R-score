@@ -409,13 +409,13 @@
     }
   ],
   "summary": {
-    "concepts": 432,
-    "active": 427,
+    "concepts": 433,
+    "active": 428,
     "deprecated": 5,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 295,
+    "portalSemantics": 296,
     "categories": {
       "market": 33,
       "model": 18,
@@ -423,7 +423,7 @@
       "pipeline": 41,
       "tournament": 86,
       "trading": 58,
-      "ui": 167,
+      "ui": 168,
       "warehouse": 27
     },
     "kinds": {
@@ -444,18 +444,18 @@
       "region": 7,
       "registry": 39,
       "sport": 10,
-      "ui": 241
+      "ui": 242
     },
     "semanticTypes": {
       "classification": 155,
       "location": 4,
       "presentation": 14,
       "resource": 90,
-      "state": 31,
+      "state": 32,
       "version": 1
     },
     "uiRoles": {
-      "badge": 55,
+      "badge": 56,
       "chip": 116,
       "code": 33,
       "heading": 69,
@@ -5412,7 +5412,8 @@
         "ops.limits.node",
         "ops.limits.role_type",
         "ops.limits.profile",
-        "ops.limits.evidence_trace"
+        "ops.limits.evidence_trace",
+        "ops.limits.lifecycle_state"
       ],
       "status": "active",
       "deprecatedBy": null,
@@ -5860,6 +5861,47 @@
       "color": "#1f6feb"
     },
     {
+      "id": "ops.limits.lifecycle_state",
+      "label": "Limit lifecycle state",
+      "description": "Temporal enforceability of a limit (pending, active, expired, superseded). Distinct from monitoring_status (evidence health) and partner onboarding lifecycleStatus.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "limit lifecycle",
+        "enforceability state",
+        "limit temporal state"
+      ],
+      "values": [
+        "pending",
+        "active",
+        "expired",
+        "superseded"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.account",
+        "ops.limits.effective_limit",
+        "ops.limits.limit_delta",
+        "ops.limits.prediction",
+        "ops.limits.monitoring_status"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "correlationId": "PR#244",
+      "addedAt": "2026-08-03",
+      "domain": "compliance",
+      "namespace": "ops",
+      "color": "#58a6ff"
+    },
+    {
       "id": "ops.limits.effective_limit",
       "label": "Effective limit",
       "description": "Limit value currently applicable at an account, sportsbook, sport, market, bet-type, and jurisdiction intersection.",
@@ -5876,7 +5918,8 @@
       "seeAlso": [
         "ops.limits.jurisdiction_policy",
         "ops.limits.profile",
-        "ui.semantic.source"
+        "ui.semantic.source",
+        "ops.limits.lifecycle_state"
       ],
       "status": "active",
       "deprecatedBy": null,
@@ -6276,7 +6319,8 @@
       "seeAlso": [
         "ops.limits.change_direction",
         "ops.limits.effective_limit",
-        "ops.limits.pattern_surface"
+        "ops.limits.pattern_surface",
+        "ops.limits.lifecycle_state"
       ],
       "status": "active",
       "deprecatedBy": null,
@@ -6376,7 +6420,8 @@
       "seeAlso": [
         "ops.limits.influence_score",
         "ops.limits.limit_delta",
-        "ops.limits.pattern_surface"
+        "ops.limits.pattern_surface",
+        "ops.limits.lifecycle_state"
       ],
       "status": "active",
       "deprecatedBy": null,
