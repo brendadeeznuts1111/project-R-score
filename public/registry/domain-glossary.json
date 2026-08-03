@@ -141,16 +141,6 @@
       "sections": []
     },
     {
-      "path": "/portal/concepts/",
-      "concept": "page.concepts",
-      "sections": []
-    },
-    {
-      "path": "/portal/concepts/graph/",
-      "concept": "page.conceptsGraph",
-      "sections": []
-    },
-    {
       "path": "/portal/console-format/",
       "concept": "page.consoleFormat",
       "sections": []
@@ -419,13 +409,13 @@
     }
   ],
   "summary": {
-    "concepts": 430,
-    "active": 429,
+    "concepts": 428,
+    "active": 427,
     "deprecated": 1,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 293,
+    "portalSemantics": 291,
     "categories": {
       "market": 33,
       "model": 18,
@@ -433,7 +423,7 @@
       "pipeline": 41,
       "tournament": 86,
       "trading": 58,
-      "ui": 165,
+      "ui": 163,
       "warehouse": 27
     },
     "kinds": {
@@ -454,13 +444,13 @@
       "region": 7,
       "registry": 39,
       "sport": 10,
-      "ui": 239
+      "ui": 237
     },
     "semanticTypes": {
       "classification": 151,
       "location": 4,
       "presentation": 14,
-      "resource": 92,
+      "resource": 90,
       "state": 31,
       "version": 1
     },
@@ -468,7 +458,7 @@
       "badge": 55,
       "chip": 112,
       "code": 33,
-      "heading": 71,
+      "heading": 69,
       "link": 18,
       "token": 4
     }
@@ -4124,74 +4114,6 @@
       "synonyms": [
         "compliance board",
         "regulatory controls"
-      ],
-      "values": null,
-      "valueLabels": null,
-      "seeAlso": [
-        "ui.semantic.surface",
-        "ui.semantic.resources",
-        "ui.semantic.artifact"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/portal/semantic-vocabulary.ts",
-      "featurePurpose": "Cross-portal semantic field contract.",
-      "semanticType": "resource",
-      "uiRole": "heading",
-      "correlationId": "legacy",
-      "addedAt": "2026-01-01",
-      "domain": "portal",
-      "namespace": "page",
-      "color": "#58a6ff"
-    },
-    {
-      "id": "page.concepts",
-      "label": "Concept inventory",
-      "description": "Portal page for semantic vocabulary health — domains, usage, provenance, and board coverage.",
-      "category": "ui",
-      "kind": "ui",
-      "mapsTo": null,
-      "synonyms": [
-        "concepts board",
-        "semantic inventory",
-        "domain summary"
-      ],
-      "values": null,
-      "valueLabels": null,
-      "seeAlso": [
-        "ui.semantic.surface",
-        "ui.semantic.resources",
-        "ui.semantic.artifact"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/portal/semantic-vocabulary.ts",
-      "featurePurpose": "Cross-portal semantic field contract.",
-      "semanticType": "resource",
-      "uiRole": "heading",
-      "correlationId": "legacy",
-      "addedAt": "2026-01-01",
-      "domain": "portal",
-      "namespace": "page",
-      "color": "#58a6ff"
-    },
-    {
-      "id": "page.conceptsGraph",
-      "label": "Concept graph",
-      "description": "Portal page for the interactive concept relationship graph — seeAlso, surface, and domain hubs.",
-      "category": "ui",
-      "kind": "ui",
-      "mapsTo": null,
-      "synonyms": [
-        "concept graph",
-        "semantic graph",
-        "seeAlso graph"
       ],
       "values": null,
       "valueLabels": null,
@@ -14154,7 +14076,8 @@
     },
     {
       "id": "accounting.transfer",
-      "description": "undefined — partner-ops Factory overlay concept.",
+      "label": "Transfer",
+      "description": "Funds moved between partner account scopes (global ↔ book:/rail:) — recorded as a scope-transfer ledger entry.",
       "category": "ops",
       "kind": "composite",
       "mapsTo": null,
@@ -14191,7 +14114,8 @@
     },
     {
       "id": "account.scope.global",
-      "description": "undefined — partner-ops Factory overlay concept.",
+      "label": "Global scope",
+      "description": "Partner-level (global) balance scope — ledger entries without a book:/rail: scope default here.",
       "category": "ops",
       "kind": "composite",
       "mapsTo": null,

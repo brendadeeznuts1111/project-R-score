@@ -35,13 +35,15 @@ export type PartnerOpsOverlayConceptId =
   | 'telegram.topic.alerts'
   | 'telegram.topic.liquidity'
   | 'telegram.topic.accounting'
+  | 'account.scope.global'
+  | 'accounting.transfer'
   | 'partner.ops.event';
 
 export type PartnerOpsGlossaryConcept = {
   id: string; // brand-ok — glossary concept key
   label: string;
   description: string;
-  category: 'pipeline' | 'trading' | 'warehouse' | 'ui';
+  category: 'pipeline' | 'trading' | 'warehouse' | 'ui' | 'ops';
   kind: 'evidence' | 'registry' | 'composite' | 'ui';
   synonyms: readonly string[];
   values: readonly string[] | null;
@@ -68,6 +70,8 @@ const LABELS: Record<Exclude<PartnerOpsOverlayConceptId, 'partner.ops.event'>, s
   'telegram.topic.alerts': 'Alerts topic',
   'telegram.topic.liquidity': 'Liquidity/Outs topic',
   'telegram.topic.accounting': 'Accounting topic',
+  'account.scope.global': 'Global scope',
+  'accounting.transfer': 'Transfer',
 };
 
 const DESCRIPTIONS: Partial<
@@ -83,6 +87,10 @@ const DESCRIPTIONS: Partial<
     'Peer-to-peer / exchange sportsbook (matched bets, commission on winnings).',
   'telegram.topic.liquidity': 'Package forum Liquidity/Outs topic — pinned seat capital desk home.',
   'telegram.topic.accounting': 'Package forum Accounting topic — deposit/withdraw proof thread.',
+  'account.scope.global':
+    'Partner-level (global) balance scope — ledger entries without a book:/rail: scope default here.',
+  'accounting.transfer':
+    'Funds moved between partner account scopes (global ↔ book:/rail:) — recorded as a scope-transfer ledger entry.',
 };
 
 function concept(
