@@ -150,7 +150,7 @@ Content-Type matrix rows for env page CT section.
    <script type="module" src="/portal/data.js"></script>
    <script type="module" src="/portal/topbar.js"></script>
    ```
-3. Use shared topbar chrome from SSOT (do not hand-edit nav or substitute a text glyph for the mark): [`lib/portal/chrome-catalog.ts`](../lib/portal/chrome-catalog.ts) · bake `bun run portal:chrome:bake` → `/registry/portal-chrome.json` · apply `bun run portal:chrome:apply`. Priority: Home · Ops · Registry · Health · DOD · Compliance. Overflow includes Packages · Vault · Env · CLI Tools · Failures · … (see catalog).
+3. Use shared topbar chrome from SSOT (do not hand-edit nav or substitute a text glyph for the mark): [`lib/portal/chrome-catalog.ts`](../lib/portal/chrome-catalog.ts) · bake `bun run portal:chrome:bake` → `/registry/portal-chrome.json` · apply `bun run portal:chrome:apply`. Priority: Home · Ops · Registry · Health · DOD · Compliance. Overflow is ops/registry/secrets-facing (Packages · Vault · Env · Concepts · …); harness boards (doctor · failures · tools · bunfig · console-format · install-hygiene) stay on direct URL / weave / footer, not default overflow.
 4. Bun-native monorepo/portal probes: `bun run portal:probe` · `portal-cli probe lockfile`. Launcher: `portal-cli dashboard --view=<board>`.
 5. Keep the generated brand head block (`theme-color`, factory icons, `/site.webmanifest`) and add topbar status: MD link (if applicable) + health link with `#health-dot` / `#health-label` (badges via `nav-badges.js` / topbar).
 6. Subscribe to `portal:data` for data; do not inline-fetch `/api/health` for the dot.

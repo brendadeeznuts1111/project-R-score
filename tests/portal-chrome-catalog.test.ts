@@ -25,14 +25,20 @@ describe('portal-chrome-catalog', () => {
     expect(all.filter(n => n.href === '/portal/env/')).toHaveLength(1);
   });
 
-  test('overflow includes vault tools failures packages with groups', () => {
+  test('overflow includes vault packages ops boards; omits harness slots', () => {
     const byId = Object.fromEntries(PORTAL_OVERFLOW_NAV.map(n => [n.id, n]));
     expect(byId.vault?.href).toBe('/portal/vault/');
     expect(byId.vault?.group).toBe('secrets');
     expect(byId.env?.group).toBe('secrets');
-    expect(byId.tools?.href).toBe('/portal/tools/');
-    expect(byId.failures?.href).toBe('/portal/failures/');
-    expect(byId.packages?.cli).toContain('pm graph');
+    // Harness boards stay on direct URL / weave / footer — not default overflow nav.
+    expect(byId.tools).toBeUndefined();
+    expect(byId.failures).toBeUndefined();
+    expect(byId.bunfig).toBeUndefined();
+    expect(byId.doctor).toBeUndefined();
+    expect(byId['install-hygiene']).toBeUndefined();
+    expect(byId['console-format']).toBeUndefined();
+    expect(PORTAL_OVERFLOW_NAV.every(n => n.group !== 'harness')).toBe(true);
+    expect(byId.packages?.cli).toContain('ssot:flow:soft');
     expect(byId['prediction-report']?.href).toBe('/registry/prediction/report/');
     expect(byId.partners?.href).toBe('/portal/partners/');
     expect(byId.partners?.cli).toContain('telegram:handshake:catalog');
@@ -54,7 +60,9 @@ describe('portal-chrome-catalog', () => {
     expect(html).toContain('aria-current="page"');
     expect(html).toContain('/portal/ops/');
     expect(html).toContain('/portal/packages/');
-    expect(html).toContain('/portal/tools/');
+    expect(html).not.toContain('/portal/tools/');
+    expect(html).not.toContain('/portal/doctor/');
+    expect(html).not.toContain('/portal/failures/');
     expect(html).toContain('data-group="secrets"');
     expect(html).toContain('nav-overflow');
   });
