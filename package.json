@@ -33,7 +33,8 @@
     "@pinecone-database/pinecone": "7.2.0",
     "@simplewebauthn/server": "13.3.2",
     "plaid": "42.2.0",
-    "yaml": "2.9.0"
+    "yaml": "2.9.0",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@socketsecurity/bun-security-scanner": "^1.1.2",
@@ -1896,6 +1897,9 @@
     "baseline:apply-overrides": "bun tools/baseline-sync.ts apply-overrides",
     "glossary:portal": "bun tools/domain-glossary.ts",
     "glossary:portal:check": "bun tools/domain-glossary.ts --check",
+    "concept:registry:serve": "bun scripts/concept-registry-serve.ts",
+    "concept:registry:migrate": "bun scripts/concept-registry-migrate.ts",
+    "concept:registry:graph": "bun scripts/concept-registry-graph.ts",
     "glossary:verify": "bun tools/glossary-verify.ts",
     "glossary:verify:json": "bun tools/glossary-verify.ts --json",
     "glossary:verify:strict": "bun tools/glossary-verify.ts --strict",
