@@ -500,33 +500,129 @@ export function recordConceptUsage(
 }
 
 const CONCEPT_ATTR_RE = /data-glossary-concept="([^"]+)"/g;
+/** Literal glossary key shape — excludes `${...}` template expressions resolved at runtime via G / PARTNER_HISTORY_GLOSSARY. */
+const CONCEPT_KEY_RE = /^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/;
+
+export type ConceptSyncOrphan = {
+  key: string; // brand-ok — glossary concept key used in HTML but missing from the registry
+  totalCount: number;
+  files: Array<{ board: string; filePath: string; count: number }>;
+};
+
+export type ConceptSyncReport = {
+  scannedFiles: number;
+  usageRows: number;
+  orphanUsage: ConceptSyncOrphan[];
+};
 
 /**
- * One-shot usage scan: greps HTML files under `public/portal` for
- * `data-glossary-concept="<key>"` attributes and upserts concept_usage rows.
- * Board = first path segment under the portal dir. Phase-1 seeding only —
- * the on-build auto-sync watcher is a later phase.
+ * Auto-sync with code (Phase 2): greps HTML files under `public/portal` for
+ * `data-glossary-concept="<key>"` attributes, upserts concept_usage rows, and
+ * reports keys that are used in code but missing from the glossary (orphan
+ * usage). Template expressions (`${G.…}`) are excluded — they resolve to
+ * concept keys at runtime and are not literal glossary keys.
+ */
+export async function syncConceptUsage(
+  db: Database,
+  portalDir = 'public/portal'
+): Promise<ConceptSyncReport> {
+  const glob = new Bun.Glob('**/*.html');
+  const keyFiles = new Map<string, ConceptSyncOrphan>();
+  let scannedFiles = 0;
+  for (const rel of glob.scanSync({ cwd: portalDir, onlyFiles: true })) {
+    scannedFiles++;
+    const text = await Bun.file(`${portalDir}/${rel}`).text();
+    const counts = new Map<string, number>();
+    for (const match of text.matchAll(CONCEPT_ATTR_RE)) {
+      const key = match[1]!.trim();
+      if (CONCEPT_KEY_RE.test(key)) counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+    const board = rel.split('/')[0] ?? 'root';
+    const filePath = `${portalDir}/${rel}`;
+    for (const [key, count] of counts) {
+      recordConceptUsage(db, key, board, filePath, count);
+      const entry = keyFiles.get(key) ?? { key, totalCount: 0, files: [] };
+      entry.totalCount += count;
+      entry.files.push({ board, filePath, count });
+      keyFiles.set(key, entry);
+    }
+  }
+
+  const orphanUsage: ConceptSyncOrphan[] = [];
+  for (const entry of keyFiles.values()) {
+    if (!conceptIdExists(db, entry.key)) orphanUsage.push(entry);
+  }
+  orphanUsage.sort((a, b) => b.totalCount - a.totalCount);
+
+  return {
+    scannedFiles,
+    usageRows: [...keyFiles.values()].reduce((sum, e) => sum + e.files.length, 0),
+    orphanUsage,
+  };
+}
+
+/**
+ * One-shot usage scan (Phase-1 migration seeding) — delegates to the Phase-2
+ * sync and returns the number of concept×file usage rows recorded.
  */
 export async function scanPortalConceptUsage(
   db: Database,
   portalDir = 'public/portal'
 ): Promise<number> {
-  const glob = new Bun.Glob('**/*.html');
-  let recorded = 0;
-  for (const rel of glob.scanSync({ cwd: portalDir, onlyFiles: true })) {
-    const text = await Bun.file(`${portalDir}/${rel}`).text();
-    const counts = new Map<string, number>();
-    for (const match of text.matchAll(CONCEPT_ATTR_RE)) {
-      const key = match[1]!.trim();
-      if (key) counts.set(key, (counts.get(key) ?? 0) + 1);
-    }
-    const board = rel.split('/')[0] ?? 'root';
-    for (const [key, count] of counts) {
-      recordConceptUsage(db, key, board, `${portalDir}/${rel}`, count);
-      recorded++;
-    }
-  }
-  return recorded;
+  const report = await syncConceptUsage(db, portalDir);
+  return report.usageRows;
+}
+
+export type PersistedOrphanUsageRow = {
+  conceptId: string; // brand-ok — glossary concept key used in code, missing from concepts
+  files: number;
+  totalCount: number;
+};
+
+/** Persisted orphan usage: concept_usage rows whose key no longer exists in concepts. */
+export function findOrphanUsage(db: Database): PersistedOrphanUsageRow[] {
+  const rows = db
+    .query(
+      `SELECT u.concept_id, COUNT(*) AS files, SUM(u.count) AS total_count
+       FROM concept_usage u
+       LEFT JOIN concepts c ON c.id = u.concept_id
+       WHERE c.id IS NULL
+       GROUP BY u.concept_id
+       ORDER BY total_count DESC`
+    )
+    .all() as Array<{ concept_id: string; files: number; total_count: number }>; // brand-ok — glossary concept key
+  return rows.map(r => ({ conceptId: r.concept_id, files: r.files, totalCount: r.total_count }));
+}
+
+export type UnusedConceptCandidate = {
+  id: string; // brand-ok — glossary concept key
+  status: ConceptRegistryRow['status'];
+  lastSeenAt: string | null;
+};
+
+/**
+ * Deprecation candidates: active/deprecated concepts with no usage rows at all
+ * (never referenced in portal HTML) or whose last usage predates the cutoff.
+ * `minDays` defaults to 90 per the auto-sync alert spec.
+ */
+export function unusedConceptCandidates(db: Database, minDays = 90): UnusedConceptCandidate[] {
+  const cutoff = new Date(Date.now() - minDays * 86_400_000).toISOString();
+  const rows = db
+    .query(
+      `SELECT c.id, c.status, MAX(u.last_seen_at) AS last_seen
+       FROM concepts c
+       LEFT JOIN concept_usage u ON u.concept_id = c.id
+       WHERE c.status IN ('active', 'deprecated')
+       GROUP BY c.id
+       HAVING last_seen IS NULL OR last_seen < ?
+       ORDER BY c.id`
+    )
+    .all(cutoff) as Array<{ id: string; status: string; last_seen: string | null }>; // brand-ok — glossary concept key
+  return rows.map(r => ({
+    id: r.id,
+    status: r.status as ConceptRegistryRow['status'],
+    lastSeenAt: r.last_seen,
+  }));
 }
 
 export function buildConceptGraph(db: Database): ConceptGraph {
