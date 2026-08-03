@@ -57,6 +57,9 @@ type PageKey =
   | 'partner-history'
   | 'doctor'
   | 'install-hygiene'
+  | 'concepts'
+  | 'concepts-graph'
+  | 'console-format'
   | 'tennis'
   | 'template';
 
@@ -79,6 +82,24 @@ const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: st
     active: 'glossary',
     pageLabel: 'Glossary',
     brandBadge: 'domain',
+  },
+  {
+    file: 'concepts/index.html',
+    active: 'concepts',
+    pageLabel: 'Concepts',
+    brandBadge: 'ops',
+  },
+  {
+    file: 'concepts/graph/index.html',
+    active: 'concepts-graph',
+    pageLabel: 'Concept graph',
+    brandBadge: 'ops',
+  },
+  {
+    file: 'console-format/index.html',
+    active: 'console-format',
+    pageLabel: 'Console Format',
+    brandBadge: 'ops',
   },
   { file: 'toc/index.html', active: 'toc', pageLabel: 'TOC', brandBadge: 'ops' },
   {
