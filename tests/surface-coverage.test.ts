@@ -11,7 +11,7 @@ describe('validate:surface-coverage', () => {
     const ids = new Set(Object.values(PARTNER_HISTORY_SURFACE_CONCEPTS));
     for (const id of [
       'ops.metric.visible_changes',
-      'ops.filter.window',
+      'ui.filter.window',
       'ops.panel.partner_limit_history',
       'ops.table.recent_changes',
       'ui.action.export',

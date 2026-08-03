@@ -141,16 +141,6 @@
       "sections": []
     },
     {
-      "path": "/portal/concepts/",
-      "concept": "page.concepts",
-      "sections": []
-    },
-    {
-      "path": "/portal/concepts/graph/",
-      "concept": "page.conceptsGraph",
-      "sections": []
-    },
-    {
       "path": "/portal/console-format/",
       "concept": "page.consoleFormat",
       "sections": []
@@ -419,13 +409,13 @@
     }
   ],
   "summary": {
-    "concepts": 430,
-    "active": 429,
-    "deprecated": 1,
+    "concepts": 432,
+    "active": 427,
+    "deprecated": 5,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 293,
+    "portalSemantics": 295,
     "categories": {
       "market": 33,
       "model": 18,
@@ -433,7 +423,7 @@
       "pipeline": 41,
       "tournament": 86,
       "trading": 58,
-      "ui": 165,
+      "ui": 167,
       "warehouse": 27
     },
     "kinds": {
@@ -454,21 +444,21 @@
       "region": 7,
       "registry": 39,
       "sport": 10,
-      "ui": 239
+      "ui": 241
     },
     "semanticTypes": {
-      "classification": 151,
+      "classification": 155,
       "location": 4,
       "presentation": 14,
-      "resource": 92,
+      "resource": 90,
       "state": 31,
       "version": 1
     },
     "uiRoles": {
       "badge": 55,
-      "chip": 112,
+      "chip": 116,
       "code": 33,
-      "heading": 71,
+      "heading": 69,
       "link": 18,
       "token": 4
     }
@@ -4148,74 +4138,6 @@
       "color": "#58a6ff"
     },
     {
-      "id": "page.concepts",
-      "label": "Concept inventory",
-      "description": "Portal page for semantic vocabulary health — domains, usage, provenance, and board coverage.",
-      "category": "ui",
-      "kind": "ui",
-      "mapsTo": null,
-      "synonyms": [
-        "concepts board",
-        "semantic inventory",
-        "domain summary"
-      ],
-      "values": null,
-      "valueLabels": null,
-      "seeAlso": [
-        "ui.semantic.surface",
-        "ui.semantic.resources",
-        "ui.semantic.artifact"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/portal/semantic-vocabulary.ts",
-      "featurePurpose": "Cross-portal semantic field contract.",
-      "semanticType": "resource",
-      "uiRole": "heading",
-      "correlationId": "legacy",
-      "addedAt": "2026-01-01",
-      "domain": "portal",
-      "namespace": "page",
-      "color": "#58a6ff"
-    },
-    {
-      "id": "page.conceptsGraph",
-      "label": "Concept graph",
-      "description": "Portal page for the interactive concept relationship graph — seeAlso, surface, and domain hubs.",
-      "category": "ui",
-      "kind": "ui",
-      "mapsTo": null,
-      "synonyms": [
-        "concept graph",
-        "semantic graph",
-        "seeAlso graph"
-      ],
-      "values": null,
-      "valueLabels": null,
-      "seeAlso": [
-        "ui.semantic.surface",
-        "ui.semantic.resources",
-        "ui.semantic.artifact"
-      ],
-      "status": "active",
-      "deprecatedBy": null,
-      "unit": null,
-      "format": null,
-      "registryColumn": null,
-      "source": "lib/portal/semantic-vocabulary.ts",
-      "featurePurpose": "Cross-portal semantic field contract.",
-      "semanticType": "resource",
-      "uiRole": "heading",
-      "correlationId": "legacy",
-      "addedAt": "2026-01-01",
-      "domain": "portal",
-      "namespace": "page",
-      "color": "#58a6ff"
-    },
-    {
       "id": "page.consoleFormat",
       "label": "Console format",
       "description": "Portal page for governed console output, depth, and formatting policy.",
@@ -7325,6 +7247,134 @@
       "color": "#58a6ff"
     },
     {
+      "id": "ui.filter.window",
+      "label": "Window filter",
+      "description": "Time-window UI selector for limit-movement and history evidence (SSOT; supersedes ops.filter.window).",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "time window",
+        "lookback",
+        "window filter"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.action.filter",
+        "ui.filter.window.48h",
+        "ui.filter.window.7d",
+        "ui.filter.window.30d"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "correlationId": "PR#228",
+      "addedAt": "2026-08-03",
+      "domain": "portal",
+      "namespace": "ui",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ui.filter.window.48h",
+      "label": "48 hours",
+      "description": "Window filter value: last 48 hours of movement evidence.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "48h",
+        "last 48 hours"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.filter.window"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "correlationId": "PR#228",
+      "addedAt": "2026-08-03",
+      "domain": "portal",
+      "namespace": "ui",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ui.filter.window.7d",
+      "label": "7 days",
+      "description": "Window filter value: last 7 days of movement evidence.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "7d",
+        "last week"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.filter.window"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "correlationId": "PR#228",
+      "addedAt": "2026-08-03",
+      "domain": "portal",
+      "namespace": "ui",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ui.filter.window.30d",
+      "label": "30 days",
+      "description": "Window filter value: last 30 days of movement evidence.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "30d",
+        "last month"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.filter.window"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "correlationId": "PR#228",
+      "addedAt": "2026-08-03",
+      "domain": "portal",
+      "namespace": "ui",
+      "color": "#58a6ff"
+    },
+    {
       "id": "ui.action.reset",
       "label": "Reset filters",
       "description": "Action clearing the filters owned by the current portal section.",
@@ -7637,7 +7687,7 @@
       "valueLabels": null,
       "seeAlso": [
         "ui.filter.partnerId",
-        "ops.filter.window"
+        "ui.filter.window"
       ],
       "status": "active",
       "deprecatedBy": null,
@@ -7669,7 +7719,7 @@
       "valueLabels": null,
       "seeAlso": [
         "ui.filter.sportsbook",
-        "ops.filter.window"
+        "ui.filter.window"
       ],
       "status": "active",
       "deprecatedBy": null,
@@ -7689,7 +7739,7 @@
     {
       "id": "ops.filter.window",
       "label": "Window filter",
-      "description": "Partner Limit History filter: time window for limit movement evidence.",
+      "description": "Deprecated: use ui.filter.window. Partner Limit History filter: time window for limit movement evidence.",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
@@ -7700,11 +7750,11 @@
       "values": null,
       "valueLabels": null,
       "seeAlso": [
-        "ui.action.filter",
-        "ops.filter.window.48h"
+        "ui.filter.window",
+        "ui.action.filter"
       ],
-      "status": "active",
-      "deprecatedBy": null,
+      "status": "deprecated",
+      "deprecatedBy": "ui.filter.window",
       "unit": null,
       "format": null,
       "registryColumn": null,
@@ -7721,7 +7771,7 @@
     {
       "id": "ops.filter.window.48h",
       "label": "48 hours",
-      "description": "Partner Limit History window value: last 48 hours of movement.",
+      "description": "Deprecated: use ui.filter.window.48h. Partner Limit History window value: last 48 hours of movement.",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
@@ -7732,10 +7782,11 @@
       "values": null,
       "valueLabels": null,
       "seeAlso": [
+        "ui.filter.window.48h",
         "ops.filter.window"
       ],
-      "status": "active",
-      "deprecatedBy": null,
+      "status": "deprecated",
+      "deprecatedBy": "ui.filter.window.48h",
       "unit": null,
       "format": null,
       "registryColumn": null,
@@ -7752,7 +7803,7 @@
     {
       "id": "ops.filter.window.7d",
       "label": "7 days",
-      "description": "Partner Limit History window value: last 7 days of movement.",
+      "description": "Deprecated: use ui.filter.window.7d. Partner Limit History window value: last 7 days of movement.",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
@@ -7763,10 +7814,11 @@
       "values": null,
       "valueLabels": null,
       "seeAlso": [
+        "ui.filter.window.7d",
         "ops.filter.window"
       ],
-      "status": "active",
-      "deprecatedBy": null,
+      "status": "deprecated",
+      "deprecatedBy": "ui.filter.window.7d",
       "unit": null,
       "format": null,
       "registryColumn": null,
@@ -7783,7 +7835,7 @@
     {
       "id": "ops.filter.window.30d",
       "label": "30 days",
-      "description": "Partner Limit History window value: last 30 days of movement.",
+      "description": "Deprecated: use ui.filter.window.30d. Partner Limit History window value: last 30 days of movement.",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
@@ -7794,10 +7846,11 @@
       "values": null,
       "valueLabels": null,
       "seeAlso": [
+        "ui.filter.window.30d",
         "ops.filter.window"
       ],
-      "status": "active",
-      "deprecatedBy": null,
+      "status": "deprecated",
+      "deprecatedBy": "ui.filter.window.30d",
       "unit": null,
       "format": null,
       "registryColumn": null,
