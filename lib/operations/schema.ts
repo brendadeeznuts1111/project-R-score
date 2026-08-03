@@ -111,15 +111,18 @@ export function migrateSchema(db: Database): void {
     const ledgerCols = new Set(
       (db.query('PRAGMA table_info(partner_ledger)').all() as { name: string }[]).map(c => c.name)
     );
-    if (!ledgerCols.has('reference')) {
-      db.run('ALTER TABLE partner_ledger ADD COLUMN reference TEXT');
-    }
-    if (!ledgerCols.has('book_key')) {
-      db.run('ALTER TABLE partner_ledger ADD COLUMN book_key TEXT');
-    }
-    if (!ledgerCols.has('tracking_id')) {
-      db.run('ALTER TABLE partner_ledger ADD COLUMN tracking_id TEXT');
-    }
+    const ADD = (col: string) => {
+      if (!ledgerCols.has(col)) db.run(`ALTER TABLE partner_ledger ADD COLUMN ${col} TEXT`);
+    };
+    ADD('reference');
+    ADD('book_key');
+    ADD('tracking_id');
+    ADD('account_scope');
+    ADD('counterparty');
+    ADD('source');
+    ADD('external_id');
+    ADD('proof');
+    ADD('batch_id');
   }
   ensurePartnerLedgerSchema(db);
 

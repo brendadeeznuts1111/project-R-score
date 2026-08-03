@@ -409,16 +409,17 @@
     }
   ],
   "summary": {
-    "concepts": 426,
-    "active": 425,
+    "concepts": 428,
+    "active": 427,
     "deprecated": 1,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 289,
+    "portalSemantics": 291,
     "categories": {
       "market": 33,
       "model": 18,
+      "ops": 2,
       "pipeline": 41,
       "tournament": 86,
       "trading": 58,
@@ -428,7 +429,7 @@
     "kinds": {
       "baseline": 2,
       "competition": 14,
-      "composite": 31,
+      "composite": 33,
       "country": 25,
       "cross_market": 2,
       "event": 2,
@@ -446,7 +447,7 @@
       "ui": 237
     },
     "semanticTypes": {
-      "classification": 149,
+      "classification": 151,
       "location": 4,
       "presentation": 14,
       "resource": 90,
@@ -455,7 +456,7 @@
     },
     "uiRoles": {
       "badge": 55,
-      "chip": 110,
+      "chip": 112,
       "code": 33,
       "heading": 69,
       "link": 18,
@@ -13558,6 +13559,78 @@
       "flagEmoji": null,
       "flagAriaLabel": null,
       "color": "#1f6feb"
+    },
+    {
+      "id": "accounting.transfer",
+      "description": "undefined — partner-ops Factory overlay concept.",
+      "category": "ops",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "transfer",
+        "scope transfer",
+        "funds move"
+      ],
+      "values": [
+        "transfer"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.deposit",
+        "accounting.withdrawal",
+        "account.scope.global"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": null
+    },
+    {
+      "id": "account.scope.global",
+      "description": "undefined — partner-ops Factory overlay concept.",
+      "category": "ops",
+      "kind": "composite",
+      "mapsTo": null,
+      "synonyms": [
+        "global balance",
+        "partner-level balance"
+      ],
+      "values": [
+        "global"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "accounting.deposit",
+        "accounting.settlement"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/partner-ops-glossary.ts",
+      "featurePurpose": "Governed partner-ops phase, book type, funding rail, out status, and accounting concept.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "color": null
     },
     {
       "id": "ops.view.per_account",

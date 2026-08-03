@@ -81,11 +81,20 @@ describe('migrateSchema adds the reference column', () => {
     expect(cols).toContain('reference');
     expect(cols).toContain('book_key');
     expect(cols).toContain('tracking_id');
+    expect(cols).toContain('account_scope');
+    expect(cols).toContain('counterparty');
+    expect(cols).toContain('source');
+    expect(cols).toContain('external_id');
+    expect(cols).toContain('proof');
+    expect(cols).toContain('batch_id');
     const indexes = (db.query(`PRAGMA index_list(partner_ledger)`).all() as {
       name: string;
     }[]).map(i => i.name);
     expect(indexes).toContain('idx_partner_ledger_reference');
     expect(indexes).toContain('idx_partner_ledger_out');
+    expect(indexes).toContain('idx_partner_ledger_scope');
+    expect(indexes).toContain('idx_partner_ledger_batch');
+    expect(indexes).toContain('idx_partner_ledger_external');
     db.close();
   });
 });

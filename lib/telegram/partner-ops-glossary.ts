@@ -270,6 +270,22 @@ export function partnerOpsGlossaryConcepts(): PartnerOpsGlossaryConcept[] {
       semanticType: 'classification',
       uiRole: 'code',
     },
+
+    concept('accounting.transfer', {
+      kind: 'composite',
+      category: 'ops',
+      synonyms: ['transfer', 'scope transfer', 'funds move'],
+      values: ['transfer'],
+      seeAlso: ['accounting.deposit', 'accounting.withdrawal', 'account.scope.global'],
+    }),
+
+    concept('account.scope.global', {
+      kind: 'composite',
+      category: 'ops',
+      synonyms: ['global balance', 'partner-level balance'],
+      values: ['global'],
+      seeAlso: ['accounting.deposit', 'accounting.settlement'],
+    }),
   ];
 }
 
