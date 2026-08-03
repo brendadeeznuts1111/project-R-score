@@ -627,6 +627,7 @@
                   <th>Invite</th>
                   <th>Bot</th>
                   <th>Next</th>
+                  <th>Balance</th>
                 </tr>
               </thead>
               <tbody id="partners-tbody"></tbody>
@@ -1201,6 +1202,22 @@
         return el.innerHTML;
       }
 
+      /** Format a ledger balance ("—" when the ops DB projection is absent). */
+      function fmtMoney(value) {
+        if (value == null || Number.isNaN(Number(value))) return '—';
+        const n = Number(value);
+        return n < 0 ? `-$${Math.abs(n).toLocaleString('en-US')}` : `$${n.toLocaleString('en-US')}`;
+      }
+
+      /** Balance cell: SQLite partner_ledger projection when present. */
+      function balanceCell(ops) {
+        const bal = ops?.accounting?.balance;
+        if (bal == null) return '<span class="tone-muted">—</span>';
+        const cap = ops.accounting.initialCapital;
+        const title = cap != null ? `initial capital ${fmtMoney(cap)}` : 'partner_ledger balance';
+        return `<span title="${esc(title)}">${fmtMoney(bal)}</span>`;
+      }
+
       function glossaryHref(id) {
         return `/portal/glossary/#glossary:${encodeURIComponent(id)}`;
       }
@@ -1437,10 +1454,11 @@
                 <td>${invite}</td>
                 <td>${bot}</td>
                 <td>${esc((row.nextSteps && row.nextSteps[0]) || '—')}</td>
+                <td>${balanceCell(ops)}</td>
               </tr>`;
               })
               .join('')
-          : '<tr><td colspan="10">No partners in telegram-handshake bake</td></tr>';
+          : '<tr><td colspan="11">No partners in telegram-handshake bake</td></tr>';
       }
 
       function renderPartnerProfile(code) {
@@ -1479,6 +1497,8 @@
           <div><div class="k">Telegram</div><div class="v">${esc(hs?.membershipCell || '—')} · DM ${esc(hs?.dmSeatStatus || (desk?.hasTelegramDesk ? 'pinned' : '—'))}</div></div>
           <div><div class="k">Accounts</div><div class="v">${esc(String(accounts.ready ?? 0))}/${esc(String(accounts.total ?? 0))} ready · ${esc(String(limits.coveragePct ?? 0))}% limits</div></div>
           <div><div class="k">Fund / outs</div><div class="v ${fundTone(desk?.fundStatus)}">${esc(desk?.fundStatus || 'no intake')} · ${esc(String(desk?.incompleteOuts ?? ops?.outs?.length ?? '—'))} outs</div></div>
+          <div><div class="k">Balance</div><div class="v">${fmtMoney(ops?.accounting?.balance)}</div></div>
+          <div><div class="k">Initial cap</div><div class="v">${fmtMoney(ops?.accounting?.initialCapital)}</div></div>
           <div><div class="k">Bot topics</div><div class="v">${bot}</div></div>
           <div><div class="k">Next</div><div class="v">${esc(next)}</div></div>
           <div><div class="k">Onboard CLI</div><div class="v"><code>bun run onboard:partner -- ${esc(callSign)} --dry-run</code></div></div>
