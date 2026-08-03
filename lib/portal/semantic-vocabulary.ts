@@ -28,6 +28,27 @@ export const PORTAL_UI_ROLES = ['badge', 'chip', 'code', 'heading', 'link', 'tok
 export type PortalUiRole = (typeof PORTAL_UI_ROLES)[number];
 
 /**
+ * Shape of a portal semantic concept. Optional provenance fields support
+ * concept tracking (`bun run concept:inventory`, `validate:concept-metadata`).
+ */
+export type PortalSemanticConceptDef = {
+  readonly id: string; // brand-ok — glossary concept key (PortalSemanticConceptKey after bake)
+  readonly label: string;
+  readonly description: string;
+  readonly semanticType: PortalSemanticType;
+  readonly uiRole: PortalUiRole;
+  readonly synonyms: readonly string[];
+  readonly seeAlso: readonly string[];
+  readonly values?: readonly string[];
+  readonly unit?: string;
+  readonly format?: string;
+  /** Work item that introduced/changed this concept (e.g. PR#228, ticket-123). */
+  readonly correlationId?: string; // brand-ok — provenance work-item ref, not CorrelationId UUID
+  /** ISO date (YYYY-MM-DD) when the concept was added or last materially changed. */
+  readonly addedAt?: string;
+};
+
+/**
  * Portal UI semantic inventory — single source of truth.
  * Keys and {@link PortalSemanticConceptKey} are derived from this array.
  */
@@ -40,6 +61,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading' as const,
     synonyms: page.synonyms,
     seeAlso: ['ui.semantic.surface', 'ui.semantic.resources', 'ui.semantic.artifact'] as const,
+    correlationId: 'legacy' as const,
+    addedAt: '2026-01-01' as const,
   })),
   {
     id: 'ui.semantic.surface',
@@ -49,6 +72,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['target', 'endpoint', 'board'],
     seeAlso: ['ui.semantic.source', 'ui.semantic.resources'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.semantic.hostname',
@@ -59,6 +84,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'code',
     synonyms: ['host', 'domain'],
     seeAlso: ['ui.semantic.port', 'ui.semantic.source'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.semantic.port',
@@ -69,6 +96,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'code',
     synonyms: ['service port'],
     seeAlso: ['ui.semantic.hostname', 'ui.semantic.source'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.semantic.status',
@@ -80,6 +109,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['result', 'health state', 'outcome'],
     values: ['ok', 'active', 'monitored', 'attention', 'blocked', 'fail', 'unavailable', 'pending'],
     seeAlso: ['ui.semantic.tone', 'ui.semantic.source'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.semantic.tone',
@@ -91,6 +122,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['color tone', 'severity color'],
     values: ['ok', 'warn', 'bad', 'info', 'skip'],
     seeAlso: ['ui.semantic.status', 'ui.semantic.type'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.semantic.kind',
@@ -102,6 +135,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['check kind', 'probe class', 'operational kind'],
     values: ['edge-health', 'registry-bake', 'proof', 'board', 'inventory', 'ops-rollup', 'doctor'],
     seeAlso: ['ui.semantic.type', 'ui.semantic.plane'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.semantic.plane',
@@ -113,6 +148,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['control plane', 'owner plane'],
     values: ['edge', 'public', 'document', 'operate', 'harness', 'infra'],
     seeAlso: ['ui.semantic.kind', 'ui.semantic.source'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.semantic.source',
@@ -122,6 +159,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'link',
     synonyms: ['source path', 'origin path'],
     seeAlso: ['ui.semantic.hostname', 'ui.semantic.port', 'ui.semantic.artifact'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.semantic.version',
@@ -132,6 +171,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'badge',
     synonyms: ['schema version', 'revision', 'runtime version'],
     seeAlso: ['ui.semantic.artifact', 'ui.semantic.package'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.semantic.resources',
@@ -142,6 +183,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'link',
     synonyms: ['mappings', 'references', 'ownership links'],
     seeAlso: ['ui.semantic.artifact', 'ui.semantic.package', 'ui.semantic.source'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.semantic.artifact',
@@ -151,6 +194,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'link',
     synonyms: ['bake', 'proof', 'output'],
     seeAlso: ['ui.semantic.package', 'ui.semantic.version', 'ui.semantic.resources'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.semantic.package',
@@ -160,6 +205,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'link',
     synonyms: ['package owner', 'producer'],
     seeAlso: ['ui.semantic.artifact', 'ui.semantic.version', 'ui.semantic.resources'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.semantic.type',
@@ -171,6 +218,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['data role', 'semantic role', 'type'],
     values: [...PORTAL_SEMANTIC_TYPES],
     seeAlso: ['ui.semantic.kind', 'ui.semantic.tone'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.account',
@@ -186,6 +235,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'ops.limits.profile',
       'ops.limits.evidence_trace',
     ],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.node',
@@ -196,6 +247,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'code',
     synonyms: ['node_id', 'TreeNodeId', 'tree_nodes row', 'account'],
     seeAlso: ['ops.limits.account', 'ops.limits.tree', 'ops.limits.role_type', 'ops.limits.agent'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.tree',
@@ -211,6 +264,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'ops.limits.role_type',
       'section.downlineContext',
     ],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.downline',
@@ -226,6 +281,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'ops.limits.sub_agent',
       'section.downlineContext',
     ],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.role_type',
@@ -238,6 +295,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['node_type', 'tree role', 'account role', 'ops.limits.roleType', 'roleType'],
     values: ['partner', 'agent', 'sub_agent'],
     seeAlso: ['ops.limits.partner', 'ops.limits.agent', 'ops.limits.sub_agent', 'ops.limits.node'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.partner',
@@ -249,6 +308,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['master', 'partner root', 'node_type partner'],
     values: ['partner'],
     seeAlso: ['ops.limits.role_type', 'ops.limits.downline', 'ops.limits.agent', 'ops.limits.tree'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.agent',
@@ -260,6 +321,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['agent', 'node_type agent', 'downline agent'],
     values: ['agent'],
     seeAlso: ['ops.limits.sub_agent', 'ops.limits.partner', 'ops.limits.role_type', 'api.agent'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.sub_agent',
@@ -271,6 +334,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['sub_agent', 'sub-agent', 'node_type sub_agent'],
     values: ['sub_agent'],
     seeAlso: ['ops.limits.agent', 'ops.limits.downline', 'ops.limits.role_type', 'ops.limits.node'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.profile',
@@ -285,6 +350,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'ops.limits.jurisdiction_policy',
       'ops.limits.monitoring_status',
     ],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.jurisdiction_policy',
@@ -295,6 +362,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'chip',
     synonyms: ['state limit rule', 'regulatory policy', 'policy binding'],
     seeAlso: ['ops.limits.policy_code', 'ops.limits.effective_limit', 'ops.limits.account'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.policy_code',
@@ -305,6 +374,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'code',
     synonyms: ['regulation code', 'limit rule code'],
     seeAlso: ['ops.limits.jurisdiction_policy', 'ui.semantic.source', 'ui.semantic.version'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.monitoring_status',
@@ -316,6 +387,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['profile health', 'account limit status'],
     values: ['monitored', 'attention', 'blocked', 'incomplete'],
     seeAlso: ['ops.limits.profile', 'ops.limits.evidence_trace', 'ui.semantic.tone'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.evidence_trace',
@@ -326,6 +399,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'link',
     synonyms: ['limit trace', 'monitoring history', 'audit evidence'],
     seeAlso: ['ops.limits.account', 'ops.limits.monitoring_status', 'ui.semantic.artifact'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.effective_limit',
@@ -338,6 +413,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     unit: 'usd',
     format: 'currency:usd',
     seeAlso: ['ops.limits.jurisdiction_policy', 'ops.limits.profile', 'ui.semantic.source'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.pattern_surface',
@@ -348,6 +425,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['limit pattern board', 'partner limit board'],
     seeAlso: ['ops.limits.limit_delta', 'ops.limits.influence_score', 'ops.limits.prediction'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.change_direction',
@@ -359,6 +438,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['raise direction', 'limit movement'],
     values: ['raised', 'reduced'],
     seeAlso: ['ops.limits.limit_delta', 'ops.limits.effective_limit', 'ui.semantic.tone'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.market_phase',
@@ -375,6 +456,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'ops.limits.market_type',
       'ops.limits.multi_structure',
     ],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.sport',
@@ -395,6 +478,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'mma',
     ],
     seeAlso: ['ops.limits.league', 'ops.limits.market_type', 'ops.limits.effective_limit'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.league',
@@ -425,6 +510,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'ufc',
     ],
     seeAlso: ['ops.limits.sport', 'ops.limits.competition', 'ops.limits.event_country'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.competition',
@@ -450,6 +537,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'wta_125',
     ],
     seeAlso: ['ops.limits.sport', 'ops.limits.league', 'ops.limits.event_country'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.event_country',
@@ -460,6 +549,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'badge',
     synonyms: ['host country', 'event country', 'country_code'],
     seeAlso: ['ops.limits.sport', 'ops.limits.league', 'ops.limits.competition'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.market_type',
@@ -471,6 +562,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['market_id', 'market key', 'bet market', 'scrape.market'],
     values: ['match_winner', 'over_under', 'spread', 'player_prop', 'team_prop', 'futures'],
     seeAlso: ['ops.limits.sport', 'ops.limits.market_phase', 'ops.limits.multi_structure'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.multi_structure',
@@ -482,6 +575,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['parlay', 'accumulator', 'multi', 'leg'],
     values: ['straight', 'parlay', 'leg'],
     seeAlso: ['ops.limits.market_type', 'ops.limits.effective_limit', 'ops.limits.market_phase'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.limit_delta',
@@ -498,6 +593,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'ops.limits.effective_limit',
       'ops.limits.pattern_surface',
     ],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.influence_score',
@@ -510,6 +607,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     unit: 'percent',
     format: 'percent:0',
     seeAlso: ['ops.limits.prediction', 'ops.limits.data_coverage', 'ops.limits.evidence_trace'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.data_coverage',
@@ -522,6 +621,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     unit: 'percent',
     format: 'percent:0',
     seeAlso: ['ops.limits.evidence_trace', 'ops.limits.influence_score', 'ui.semantic.source'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.limits.prediction',
@@ -532,6 +633,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['raise forecast', 'limit forecast'],
     seeAlso: ['ops.limits.influence_score', 'ops.limits.limit_delta', 'ops.limits.pattern_surface'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'api.agent',
@@ -547,6 +650,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'ui.semantic.surface',
       'ui.semantic.artifact',
     ],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.accountLimitControl',
@@ -557,6 +662,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['partner limit control', 'account controls'],
     seeAlso: ['page.limitPatterns', 'ops.limits.profile', 'ops.limits.monitoring_status'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.complianceKpis',
@@ -567,6 +674,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['compliance metrics', 'policy KPIs'],
     seeAlso: ['page.limitPatterns', 'ops.limits.jurisdiction_policy', 'ops.limits.evidence_trace'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.jurisdictionCatalog',
@@ -577,6 +686,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['jurisdiction catalog', 'state policy catalog'],
     seeAlso: ['page.limitPatterns', 'section.limitRaisePrediction', 'section.dataConnectionAudit'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.patternSummary',
@@ -587,6 +698,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['limit summary', 'pattern metrics'],
     seeAlso: ['page.limitPatterns', 'ops.limits.pattern_surface', 'ops.limits.data_coverage'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.limitRaisePrediction',
@@ -601,6 +714,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'section.jurisdictionCatalog',
       'section.dataConnectionAudit',
     ],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.sportsbookPatterns',
@@ -611,6 +726,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['book patterns', 'sportsbook movement'],
     seeAlso: ['page.limitPatterns', 'ops.limits.pattern_surface', 'ops.limits.influence_score'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.stateZipPatterns',
@@ -620,6 +737,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['state and ZIP patterns', 'geographic limit patterns'],
     seeAlso: ['page.limitPatterns', 'ops.limits.jurisdiction_policy', 'section.downlineContext'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.downlineContext',
@@ -635,6 +754,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'ops.limits.role_type',
       'section.stateZipPatterns',
     ],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.dataConnectionAudit',
@@ -649,6 +770,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'section.jurisdictionCatalog',
       'section.limitRaisePrediction',
     ],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.recentLimitChanges',
@@ -659,6 +782,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['recent changes', 'limit change table'],
     seeAlso: ['ops.limits.limit_delta', 'ops.limits.change_direction', 'section.perNodeBreakdown'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.perNodeBreakdown',
@@ -674,6 +799,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'ops.limits.influence_score',
       'section.recentLimitChanges',
     ],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.openingBaseline',
@@ -689,6 +816,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'ops.limits.multi_structure',
       'ops.limits.sport',
     ],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.partnersTelegram',
@@ -706,6 +835,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'section.partnersDeposits',
       'section.partnersPartnerMessage',
     ],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.partnersAccounting',
@@ -723,6 +854,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'section.partnersDeposits',
       'section.partnersPartnerMessage',
     ],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.partnersAccountsLimits',
@@ -740,6 +873,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'section.partnersOnboard',
       'section.partnersDeposits',
     ],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.partnersOnboard',
@@ -755,6 +890,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'section.partnersTelegram',
       'section.partnersAccounting',
     ],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.partnersDeposits',
@@ -771,6 +908,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'section.partnersTelegram',
       'section.partnersPartnerMessage',
     ],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.partnersPartnerMessage',
@@ -787,6 +926,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'section.partnersDeposits',
       'section.partnersTelegram',
     ],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.filter.profile',
@@ -796,6 +937,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'chip',
     synonyms: ['filter by profile', 'profile selector'],
     seeAlso: ['ops.limits.profile', 'ui.action.searchProfiles', 'section.accountLimitControl'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.filter.jurisdiction',
@@ -805,6 +948,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'chip',
     synonyms: ['filter by jurisdiction', 'state filter'],
     seeAlso: ['ops.limits.jurisdiction_policy', 'ui.filter.state', 'section.jurisdictionCatalog'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.filter.partnerId',
@@ -815,6 +960,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'chip',
     synonyms: ['filter by partner ID', 'account search'],
     seeAlso: ['ops.limits.account', 'ui.filter.profile', 'ui.action.filter'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.filter.sportsbook',
@@ -824,6 +971,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'chip',
     synonyms: ['all sportsbooks', 'book filter'],
     seeAlso: ['section.sportsbookPatterns', 'ui.action.filter', 'ui.filter.partnerId'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.filter.state',
@@ -833,6 +982,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'chip',
     synonyms: ['all states', 'jurisdiction state filter'],
     seeAlso: ['ui.filter.jurisdiction', 'ui.filter.zipPrefix', 'ui.action.filter'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.filter.zipPrefix',
@@ -842,6 +993,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'chip',
     synonyms: ['all ZIP prefixes', 'ZIP cluster filter'],
     seeAlso: ['ui.filter.state', 'section.stateZipPatterns', 'ui.action.filter'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.action.reset',
@@ -851,6 +1004,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'link',
     synonyms: ['reset', 'clear filters'],
     seeAlso: ['ui.action.filter', 'ui.filter.profile', 'ui.filter.jurisdiction'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.action.searchProfiles',
@@ -861,6 +1016,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'link',
     synonyms: ['profile search', 'find account profile'],
     seeAlso: ['ui.filter.profile', 'ops.limits.profile', 'section.accountLimitControl'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.partnersOuts',
@@ -870,6 +1027,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['out table', 'outs board', 'seat outs'],
     seeAlso: ['page.partners', 'section.partnersDeposits', 'section.partnersBookDetail'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.partnersBookDetail',
@@ -880,6 +1039,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['book card', 'book profile'],
     seeAlso: ['page.partners', 'section.partnersOuts'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'section.partnersTags',
@@ -890,6 +1051,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['tag bar', 'filter taxonomy', 'tag-filter-bar'],
     seeAlso: ['page.partners', 'ui.filter.partnerId'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.route.partnerHash',
@@ -905,6 +1068,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'section.partnersAccounting',
       'section.partnersTelegram',
     ],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ops.panel.partner_limit_history',
@@ -915,6 +1080,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['limit history panel', 'partner limit history page'],
     seeAlso: ['page.partnerHistory', 'section.openingBaseline', 'ops.limits.pattern_surface'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ops.panel.limit_overview',
@@ -925,6 +1092,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['overview panel', 'limit summary'],
     seeAlso: ['ops.panel.partner_limit_history', 'ops.limits.effective_limit'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ops.summary.partner_limit_trace',
@@ -935,6 +1104,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['limit trace', 'movement trace'],
     seeAlso: ['ops.limits.evidence_trace', 'ops.limits.limit_delta', 'ops.metric.deltas'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ops.filter.account.all',
@@ -945,6 +1116,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'chip',
     synonyms: ['all accounts', 'every account'],
     seeAlso: ['ui.filter.partnerId', 'ops.filter.window'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ops.filter.sportsbook.all',
@@ -954,6 +1127,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'chip',
     synonyms: ['all books', 'every sportsbook'],
     seeAlso: ['ui.filter.sportsbook', 'ops.filter.window'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ops.filter.window',
@@ -963,6 +1138,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'chip',
     synonyms: ['time window', 'lookback'],
     seeAlso: ['ui.action.filter', 'ops.filter.window.48h'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ops.filter.window.48h',
@@ -972,6 +1149,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'chip',
     synonyms: ['48h', 'last 48 hours'],
     seeAlso: ['ops.filter.window'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ops.filter.window.7d',
@@ -981,6 +1160,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'chip',
     synonyms: ['7d', 'last week'],
     seeAlso: ['ops.filter.window'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ops.filter.window.30d',
@@ -990,6 +1171,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'chip',
     synonyms: ['30d', 'last month'],
     seeAlso: ['ops.filter.window'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ops.metric.visible_changes',
@@ -999,6 +1182,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'code',
     synonyms: ['change count', 'filtered rows'],
     seeAlso: ['ops.limits.limit_delta', 'ops.metric.active_filters'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ops.metric.raises',
@@ -1008,6 +1193,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'code',
     synonyms: ['limit raises', 'increases'],
     seeAlso: ['ops.limits.change_direction', 'ops.limits.limit_delta'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ops.metric.decreases',
@@ -1018,6 +1205,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'code',
     synonyms: ['limit decreases', 'reductions'],
     seeAlso: ['ops.limits.change_direction', 'ops.limits.limit_delta'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ops.metric.sportsbooks',
@@ -1027,6 +1216,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'code',
     synonyms: ['book count', 'unique books'],
     seeAlso: ['ui.filter.sportsbook', 'ops.metric.visible_changes'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ops.metric.high_water',
@@ -1036,6 +1227,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'code',
     synonyms: ['prior peak', 'max limit'],
     seeAlso: ['ops.limits.effective_limit', 'ops.limits.limit_delta'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ops.metric.deltas',
@@ -1046,6 +1239,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['delta amounts', 'change amounts', 'limit deltas'],
     unit: 'usd',
     seeAlso: ['ops.limits.limit_delta', 'ops.metric.visible_changes'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ops.metric.active_filters',
@@ -1055,6 +1250,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'code',
     synonyms: ['applied filters', 'filter count'],
     seeAlso: ['ui.action.filter', 'ui.action.reset'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ops.metric.proof_coverage',
@@ -1066,6 +1263,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     unit: 'percent',
     synonyms: ['evidence coverage', 'signed coverage'],
     seeAlso: ['ops.limits.evidence_trace', 'ops.limits.data_coverage'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ops.table.recent_changes',
@@ -1075,6 +1274,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['changes tab', 'recent tab'],
     seeAlso: ['section.recentLimitChanges', 'ops.metric.visible_changes'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ops.table.per_account',
@@ -1084,6 +1285,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['account tab', 'per-account view'],
     seeAlso: ['ops.limits.account', 'ops.limits.downline'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ops.table.limit_changes',
@@ -1093,6 +1296,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'heading',
     synonyms: ['changes table', 'limit movement table'],
     seeAlso: ['ops.limits.limit_delta', 'section.dataConnectionAudit'],
+    correlationId: 'PR#228',
+    addedAt: '2026-08-02',
   },
   {
     id: 'ui.action.refresh',
@@ -1102,6 +1307,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'link',
     synonyms: ['reload', 're-run'],
     seeAlso: ['ui.action.filter', 'ui.semantic.source'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.action.export',
@@ -1111,6 +1318,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'link',
     synonyms: ['download', 'export data'],
     seeAlso: ['ui.export.csv', 'ui.export.json'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.export.csv',
@@ -1120,6 +1329,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'code',
     synonyms: ['csv', 'spreadsheet export'],
     seeAlso: ['ui.action.export'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.export.json',
@@ -1129,6 +1340,8 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'code',
     synonyms: ['json', 'api export'],
     seeAlso: ['ui.action.export'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
   {
     id: 'ui.action.filter',
@@ -1138,8 +1351,10 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'link',
     synonyms: ['filter', 'apply filter'],
     seeAlso: ['ui.filter.partnerId', 'ui.filter.sportsbook', 'ui.filter.state'],
+    correlationId: 'legacy',
+    addedAt: '2026-01-01',
   },
-] as const;
+] as const satisfies readonly PortalSemanticConceptDef[];
 
 export type PortalSemanticConceptKey = (typeof PORTAL_SEMANTIC_CONCEPTS)[number]['id'];
 

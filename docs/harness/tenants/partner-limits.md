@@ -287,6 +287,24 @@ Terminology (glossary SSOT in [`lib/portal/semantic-vocabulary.ts`](../../../lib
 | `node_type: agent` | Downline agent | `ops.limits.agent` (not HTTP, not Cursor) |
 | `/api/agents/v1/…` | Agent API | `api.agent` |
 
+### Concept tracking (provenance + inventory)
+
+Every portal concept carries optional provenance (`correlationId`, `addedAt`) on
+`PortalSemanticConceptDef`. New concepts must set `correlationId` (e.g.
+`PR#228`); the gate rejects bare additions.
+
+| Command | Role |
+| ------- | ---- |
+| `bun run concept:inventory` | Group/filter bake by `--group` / `--category` / `--correlation-id` · usage counts |
+| `bun run validate:concept-metadata` | Require `correlationId` on non-grandfathered portal concepts |
+| `bun run validate:surface-coverage` | Board HTML/JS ↔ surface maps ↔ domain-glossary |
+| `bun run validate:surface-coverage -- --include-metadata` | Also list used portal concepts missing provenance |
+
+Partner Limit History chrome (`ops.metric.*` · `ops.panel.*` · `ops.filter.*` ·
+`ops.table.*`) is inventoried on `PARTNER_HISTORY_SURFACE_CONCEPTS` with
+`correlationId: PR#228`. HTML attributes still collapse onto shared
+`ops.limits.*` / `ui.filter.*` owners via `glossary-map.js`.
+
 `accountProfiles` is a read model over existing tables, not a new write
 authority. Monitoring status is derived from evidence:
 

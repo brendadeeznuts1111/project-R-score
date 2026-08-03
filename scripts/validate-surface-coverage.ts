@@ -12,6 +12,7 @@
  *
  *   bun run validate:surface-coverage
  *   bun run validate:surface-coverage -- --json
+ *   bun run validate:surface-coverage -- --include-metadata
  *
  * Note: partner-history collapses labels onto shared ops.limits.* /
  * ui.filter.* owners (see glossary-map.js). Parallel ops.metric.* ids are
@@ -26,6 +27,7 @@ import {
   LIMIT_SURFACE_CONCEPTS,
   PARTNER_HISTORY_SURFACE_CONCEPTS,
   PARTNERS_SURFACE_CONCEPTS,
+  PORTAL_SEMANTIC_CONCEPTS,
   PORTAL_SEMANTIC_CONCEPT_KEYS,
   type PortalSemanticConceptKey,
 } from '../lib/portal/semantic-vocabulary.ts';
@@ -203,10 +205,12 @@ async function loadDomainIds(): Promise<Set<string>> {
 
 async function main(): Promise<void> {
   const wantJson = Bun.argv.includes('--json');
+  const includeMetadata = Bun.argv.includes('--include-metadata');
   const domainIds = await loadDomainIds();
   const orphanKeys = new Set<string>();
   const orphans: Orphan[] = [];
   const scanned: Array<{ board: BoardId; files: number; usages: number }> = [];
+  const usedConceptIds = new Set<string>();
 
   const pushOrphan = (orphan: Orphan) => {
     const key = `${orphan.board}|${orphan.file}|${orphan.concept}|${orphan.via}`;
@@ -226,6 +230,9 @@ async function main(): Promise<void> {
       const rel = file.startsWith(ROOT) ? file.slice(ROOT.length + 1) : file;
 
       for (const hit of hits) {
+        if (hit.via !== 'unresolved-template') {
+          usedConceptIds.add(hit.concept);
+        }
         if (hit.via === 'unresolved-template') {
           pushOrphan({
             board: board.id,
@@ -271,12 +278,27 @@ async function main(): Promise<void> {
     }
   }
 
+  const missingCorrelationIds: string[] = [];
+  if (includeMetadata) {
+    const portalById = new Map(PORTAL_SEMANTIC_CONCEPTS.map(c => [c.id, c]));
+    for (const id of [...usedConceptIds].sort()) {
+      const concept = portalById.get(id as PortalSemanticConceptKey);
+      if (!concept) continue;
+      const corr =
+        'correlationId' in concept && typeof concept.correlationId === 'string'
+          ? concept.correlationId.trim()
+          : '';
+      if (!corr) missingCorrelationIds.push(id);
+    }
+  }
+
   if (wantJson) {
     jsonOut({
       ok: orphans.length === 0 && inventoryMisses.length === 0,
       scanned,
       orphans,
       inventoryMisses,
+      ...(includeMetadata ? { missingCorrelationIds } : {}),
     });
   } else {
     logTable(
@@ -301,6 +323,21 @@ async function main(): Promise<void> {
       }
       for (const miss of inventoryMisses) {
         console.error(`  ✗ SURFACE_INVENTORY: ${miss}`);
+      }
+    }
+    if (includeMetadata) {
+      if (missingCorrelationIds.length === 0) {
+        console.log(colorize('metadata · used portal concepts all have correlationId', '#8b949e'));
+      } else {
+        console.log(
+          colorize(
+            `metadata · ${missingCorrelationIds.length} used portal concepts missing correlationId (informational)`,
+            '#d29922'
+          )
+        );
+        for (const id of missingCorrelationIds.slice(0, 25)) {
+          console.log(`  · ${id}`);
+        }
       }
     }
   }

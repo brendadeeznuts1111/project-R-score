@@ -3,27 +3,29 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 /**
- * Concept inventory — list/filter the baked domain glossary.
+ * Concept inventory — list/filter the baked domain glossary with provenance + usage.
  *
  *   bun run concept:inventory
- *   bun run concept:inventory -- --group ops.limits
+ *   bun run concept:inventory -- --group ops.metric
  *   bun run concept:inventory -- --category ui --output json
- *   bun run concept:inventory -- --group ui.semantic --category ui --correlation-id <id>
+ *   bun run concept:inventory -- --correlation-id PR#228
  *
  * Flags:
- *   --group <prefix>     Filter by dotted id prefix (ops.limits, ui.semantic, …)
- *   --category <id>      Filter by glossary category (market · ui · trading · …)
- *   --correlation-id <id> Trace id (default: Bun.randomUUIDv7())
- *   --output json|table  Machine JSON or TTY table (default: table)
+ *   --group <prefix>          Filter by dotted id prefix (ops.limits, ui.semantic, …)
+ *   --category <id>           Filter by glossary category (market · ui · trading · …)
+ *   --correlation-id <id>     Filter by concept provenance (e.g. PR#228)
+ *   --run-id <id>             Scan trace id (default: Bun.randomUUIDv7())
+ *   --output json|table       Machine JSON or TTY table (default: table)
  *   --help
  */
 import { randomUUIDv7 } from 'bun';
 import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
+import { countPortalConceptUsages } from '../lib/portal/concept-usage.ts';
 import { asCorrelationId, type CorrelationId } from '../lib/types/branded.ts';
 
 const REGISTRY_PATH = `${import.meta.dir}/../public/registry/domain-glossary.json`;
 
-type GlossaryConcept = {
+export type GlossaryConcept = {
   id: string; // brand-ok — opaque glossary concept id from domain-glossary bake
   label: string;
   description?: string;
@@ -33,6 +35,8 @@ type GlossaryConcept = {
   synonyms?: readonly string[] | null;
   seeAlso?: readonly string[] | null;
   source?: string | null;
+  correlationId?: string | null; // brand-ok — provenance work-item ref
+  addedAt?: string | null;
 };
 
 type GlossaryBake = {
@@ -47,9 +51,23 @@ type GlossaryBake = {
 export type ConceptInventoryOptions = {
   group?: string;
   category?: string;
-  correlationId: CorrelationId;
+  /** Concept provenance filter (PR#228) — not the scan run id. */
+  correlationId?: string; // brand-ok — work-item provenance ref, not CorrelationId UUID
+  runId: CorrelationId;
   output: 'table' | 'json';
   help: boolean;
+};
+
+export type ConceptInventoryRow = {
+  id: string; // brand-ok — opaque glossary concept id (report row)
+  label: string;
+  group: string;
+  category: string;
+  kind: string;
+  status: string;
+  correlationId: string; // brand-ok — work-item provenance ref, not CorrelationId UUID
+  addedAt: string;
+  usage: number;
 };
 
 function argValue(argv: readonly string[], flag: string): string | undefined {
@@ -60,15 +78,23 @@ function argValue(argv: readonly string[], flag: string): string | undefined {
   return undefined;
 }
 
+/** Two-segment prefix for grouping (ops.metric → ops.metric; mid → mid). */
+export function conceptGroupOf(id: string): string {
+  // brand-ok — glossary concept key prefixing
+  const parts = id.split('.');
+  return parts.length >= 2 ? `${parts[0]}.${parts[1]}` : (parts[0] ?? 'other');
+}
+
 export function parseConceptInventoryOptions(
   argv: readonly string[] = Bun.argv
 ): ConceptInventoryOptions {
   const outputRaw = argValue(argv, '--output');
-  const correlationRaw = argValue(argv, '--correlation-id') ?? randomUUIDv7();
+  const runRaw = argValue(argv, '--run-id') ?? randomUUIDv7();
   return {
     group: argValue(argv, '--group')?.trim() || undefined,
     category: argValue(argv, '--category')?.trim() || undefined,
-    correlationId: asCorrelationId(correlationRaw),
+    correlationId: argValue(argv, '--correlation-id')?.trim() || undefined,
+    runId: asCorrelationId(runRaw),
     output: outputRaw === 'json' ? 'json' : 'table',
     help: argv.includes('--help') || argv.includes('-h'),
   };
@@ -76,13 +102,16 @@ export function parseConceptInventoryOptions(
 
 export function filterConcepts(
   concepts: readonly GlossaryConcept[],
-  opts: Pick<ConceptInventoryOptions, 'group' | 'category'>
+  opts: Pick<ConceptInventoryOptions, 'group' | 'category' | 'correlationId'>
 ): GlossaryConcept[] {
   return concepts.filter(c => {
     if (opts.category && c.category !== opts.category) return false;
+    if (opts.correlationId) {
+      const prov = (c.correlationId ?? '').trim();
+      if (prov !== opts.correlationId) return false;
+    }
     if (opts.group) {
       const g = opts.group;
-      // Exact id, or dotted prefix with a following segment boundary.
       if (c.id !== g && !c.id.startsWith(`${g}.`)) return false;
     }
     return true;
@@ -95,8 +124,7 @@ export function groupCounts(concepts: readonly GlossaryConcept[]): Array<{
 }> {
   const map = new Map<string, number>();
   for (const c of concepts) {
-    const parts = c.id.split('.');
-    const key = parts.length >= 2 ? `${parts[0]}.${parts[1]}` : (parts[0] ?? 'other');
+    const key = conceptGroupOf(c.id);
     map.set(key, (map.get(key) ?? 0) + 1);
   }
   return [...map.entries()]
@@ -111,15 +139,18 @@ Usage:
   bun run concept:inventory [--group <prefix>] [--category <id>] [--correlation-id <id>] [--output json|table]
 
 Filters:
-  --group      Dotted id prefix (e.g. ops.limits, ui.semantic, page)
-  --category   Glossary category id (ui · market · trading · tournament · …)
+  --group             Dotted id prefix (e.g. ops.limits, ui.semantic, page)
+  --category          Glossary category id (ui · market · trading · tournament · …)
+  --correlation-id    Concept provenance (e.g. PR#228) — filters rows with that field
 
 Output:
-  --output table  TTY table (default)
-  --output json   Machine JSON (includes correlationId)
+  --output table      TTY table (default)
+  --output json       Machine JSON (includes runId + usage)
+  --run-id            Optional scan trace id (default: randomUUIDv7)
 
 Examples:
-  bun run concept:inventory -- --group ops.limits
+  bun run concept:inventory -- --group ops.metric
+  bun run concept:inventory -- --correlation-id PR#228
   bun run concept:inventory -- --category ui --output json
 `);
 }
@@ -130,34 +161,36 @@ export async function loadGlossaryBake(path = REGISTRY_PATH): Promise<GlossaryBa
 
 export async function runConceptInventory(
   opts: ConceptInventoryOptions,
-  path = REGISTRY_PATH
+  path = REGISTRY_PATH,
+  usageCounts?: Map<string, number>
 ): Promise<{
-  correlationId: CorrelationId;
+  runId: CorrelationId;
+  correlationIdFilter?: string;
   total: number;
   matched: number;
   group?: string;
   category?: string;
-  concepts: Array<{
-    id: string; // brand-ok — opaque glossary concept id (report row)
-    label: string;
-    category: string;
-    kind: string;
-    status: string;
-  }>;
+  concepts: ConceptInventoryRow[];
   groups: Array<{ group: string; count: number }>;
 }> {
   const bake = await loadGlossaryBake(path);
   const all = bake.concepts ?? [];
   const matched = filterConcepts(all, opts);
-  const rows = matched.map(c => ({
+  const usages = usageCounts ?? (await countPortalConceptUsages());
+  const rows: ConceptInventoryRow[] = matched.map(c => ({
     id: c.id,
     label: c.label,
+    group: conceptGroupOf(c.id),
     category: c.category,
     kind: c.kind ?? '',
     status: c.status ?? '',
+    correlationId: (c.correlationId ?? '').trim(),
+    addedAt: (c.addedAt ?? '').trim(),
+    usage: usages.get(c.id) ?? 0,
   }));
   return {
-    correlationId: opts.correlationId,
+    runId: opts.runId,
+    correlationIdFilter: opts.correlationId,
     total: all.length,
     matched: matched.length,
     group: opts.group,
@@ -183,14 +216,17 @@ async function main(): Promise<void> {
 
   console.log(
     colorize(
-      `concept:inventory · ${report.matched}/${report.total} · correlationId=${report.correlationId}`,
+      `concept:inventory · ${report.matched}/${report.total} · runId=${report.runId}`,
       '#58a6ff'
     )
   );
-  if (opts.group || opts.category) {
-    console.log(
-      colorize(`filters · group=${opts.group ?? '—'} · category=${opts.category ?? '—'}`, '#8b949e')
-    );
+  const filterBits = [
+    opts.group ? `group=${opts.group}` : null,
+    opts.category ? `category=${opts.category}` : null,
+    opts.correlationId ? `correlationId=${opts.correlationId}` : null,
+  ].filter(Boolean);
+  if (filterBits.length > 0) {
+    console.log(colorize(`filters · ${filterBits.join(' · ')}`, '#8b949e'));
   }
 
   if (report.concepts.length === 0) {
@@ -199,14 +235,22 @@ async function main(): Promise<void> {
     return;
   }
 
-  // Compact summary by prefix when unfiltered or large.
-  if (!opts.group && report.concepts.length > 40) {
+  // Compact summary by prefix when unfiltered or large (unless provenance filter).
+  if (!opts.group && !opts.correlationId && report.concepts.length > 40) {
     logTable(report.groups.slice(0, 25), ['group', 'count']);
     console.log(colorize(`… ${report.groups.length} groups · pass --group to list ids`, '#8b949e'));
     return;
   }
 
-  logTable(report.concepts, ['id', 'label', 'category', 'kind', 'status']);
+  logTable(report.concepts, [
+    'id',
+    'label',
+    'group',
+    'category',
+    'correlationId',
+    'status',
+    'usage',
+  ]);
 }
 
 if (import.meta.main) {

@@ -36,10 +36,7 @@ import {
   PARTNER_OPS_CONCEPT_COLORS,
   partnerOpsConceptColorWire,
 } from '../lib/telegram/partner-ops-color-kernel.ts';
-import {
-  CATEGORY_COLOR_KEYS,
-  PORTAL_KERNEL_PALETTE,
-} from '../lib/portal/portal-kernel-palette.ts';
+import { CATEGORY_COLOR_KEYS, PORTAL_KERNEL_PALETTE } from '../lib/portal/portal-kernel-palette.ts';
 
 export const DOMAIN_GLOSSARY_SOURCE_PATH = 'Kalshi-bot/research/registry/glossary-dump.json';
 export const DOMAIN_GLOSSARY_PATH = 'public/registry/domain-glossary.json';
@@ -68,6 +65,10 @@ type CanonicalConcept = {
   featurePurpose: string | null;
   semanticType?: string | null;
   uiRole?: string | null;
+  /** Work-item provenance (e.g. PR#228) — optional, portal vocabulary only today. */
+  correlationId?: string | null; // brand-ok — provenance work-item ref
+  /** ISO date (YYYY-MM-DD) when the concept was added or last materially changed. */
+  addedAt?: string | null;
   parentId?: string | null; // brand-ok — glossary concept relation
   scope?: string | null;
   countryCodes?: readonly string[] | null;
@@ -172,6 +173,8 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
         featurePurpose: 'Cross-portal semantic field contract.',
         semanticType: concept.semanticType,
         uiRole: concept.uiRole,
+        correlationId: 'correlationId' in concept ? (concept.correlationId ?? null) : null,
+        addedAt: 'addedAt' in concept ? (concept.addedAt ?? null) : null,
       };
     }
   );
