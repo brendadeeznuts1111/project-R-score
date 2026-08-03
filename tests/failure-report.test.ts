@@ -5,6 +5,7 @@ import {
   failuresFromJunitXml,
   namePattern,
 } from '../lib/failure-report.ts';
+import { renderHtml } from '../tools/failures-bake.ts';
 
 const JUNIT = `<?xml version="1.0" encoding="UTF-8"?>
 <testsuites name="bun test" tests="3" assertions="10" failures="1" skipped="1" time="2.5">
@@ -68,5 +69,34 @@ describe('test-failures parser', () => {
   test('report shape is a stable contract (snapshot)', () => {
     const report = buildFailuresReport([{ source: 'junit.xml', xml: JUNIT }], '2026-07-28T00:00:00Z');
     expect(report).toMatchSnapshot();
+  });
+});
+
+describe('test-failures bake template', () => {
+  test('renders stale-guard banner, age script, and failure rows', () => {
+    const report = buildFailuresReport(
+      [{ source: 'junit.xml', xml: JUNIT }],
+      '2026-07-28T00:00:00Z'
+    );
+    const html = renderHtml(report);
+    expect(html).toContain('id="tf-stale-banner"');
+    expect(html).toContain('STALE_MS');
+    expect(html).toContain('report.generatedAt');
+    expect(html).toContain('bun test tests/foo.test.ts --test-name-pattern');
+  });
+
+  test('healthy empty report renders ok row and escaping', () => {
+    const r = buildFailuresReport(
+      [
+        {
+          source: 'junit.xml',
+          xml: '<testsuites tests="1" failures="0" skipped="0" time="0.1"><testsuite name="x"><testcase name="ok &amp; fine" file="a.test.ts" time="0" /></testsuite></testsuites>',
+        },
+      ],
+      '2026-07-28T00:00:00Z'
+    );
+    const html = renderHtml(r);
+    expect(html).toContain('No failing tests in the latest JUnit run ✓');
+    expect(html).not.toContain('ok & fine');
   });
 });

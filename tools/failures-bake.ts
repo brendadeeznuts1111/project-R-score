@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
@@ -22,7 +23,7 @@ const OUT_JSON = joinPath(ROOT, 'public', 'registry', 'failures.json');
 const OUT_HTML = joinPath(ROOT, 'public', 'portal', 'failures', 'index.html');
 const NO_FAIL = Bun.argv.includes('--no-fail');
 
-function renderHtml(report: TestFailuresReport): string {
+export function renderHtml(report: TestFailuresReport): string {
   const t = report.totals;
   const stat = (k: string, v: string | number, cls = '') =>
     `<div class="tf-stat ${cls}"><div class="k">${k}</div><div class="v">${v}</div></div>`;
@@ -65,6 +66,8 @@ function renderHtml(report: TestFailuresReport): string {
     .tf-stat.ok .v { color: var(--green, #3fb950); }
     .tf-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 16px; }
     .tf-panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin: 0 0 12px; }
+    .tf-stale { background: rgba(248,81,73,.08); border: 1px solid var(--red, #f85149); color: var(--red, #f85149); border-radius: var(--radius); padding: 10px 14px; margin: 0 0 16px; font-size: 12px; line-height: 1.5; }
+    .tf-stale.ok { background: rgba(63,185,80,.07); border-color: var(--green, #3fb950); color: var(--green, #3fb950); }
     .tf-table { width: 100%; border-collapse: collapse; font-size: 12px; }
     .tf-table th { text-align: left; padding: 6px 8px; color: var(--text-dim); font-weight: 500; border-bottom: 1px solid var(--border); }
     .tf-table td { padding: 6px 8px; border-bottom: 1px solid rgba(48,54,61,.4); vertical-align: top; }
@@ -88,6 +91,7 @@ function renderHtml(report: TestFailuresReport): string {
     </div>
   </header>
   <main class="tf-wrap">
+    <div id="tf-stale-banner" class="tf-stale" hidden></div>
     <p class="dim">Latest JUnit results (${escapeHtml(report.sources.join(', '))}) · generated ${escapeHtml(report.generatedAt)} · <code>bun run failures:bake</code></p>
     <div class="tf-stats">
       ${stat('Tests', t.tests)}
@@ -109,6 +113,29 @@ function renderHtml(report: TestFailuresReport): string {
   <script type="module" src="/portal/components/sidebar.js"></script>
   <script type="module" src="/portal/components/notification.js"></script>
   <script type="module" src="/portal/components/footer.js"></script>
+  <script>
+    (() => {
+      // Stale-board guard: the bake is only as fresh as the JUnit run it was
+      // generated from. A committed green board can silently age (e.g. served
+      // by Pages for days after the suite changed), so flag bakedAt age > 24h
+      // at page load — extra-prominent when the stale board claims healthy.
+      try {
+        const embed = document.getElementById('test-failures-embed');
+        const report = JSON.parse(embed.textContent);
+        const ageMs = Date.now() - new Date(report.generatedAt).getTime();
+        const STALE_MS = 24 * 60 * 60 * 1000;
+        if (!(ageMs > STALE_MS)) return;
+        const days = Math.floor(ageMs / 86400000);
+        const hours = Math.floor((ageMs % 86400000) / 3600000);
+        const banner = document.getElementById('tf-stale-banner');
+        banner.hidden = false;
+        if (report.healthy) banner.classList.add('ok');
+        banner.textContent = report.healthy
+          ? '\u26a0 Stale green board \u2014 baked ' + days + 'd ' + hours + 'h ago (' + report.generatedAt + '). Green is meaningless here; re-run the suite, then bun run failures:bake.'
+          : '\u26a0 Board is stale \u2014 baked ' + days + 'd ' + hours + 'h ago (' + report.generatedAt + '). Failure list may be outdated; re-run the suite, then bun run failures:bake.';
+      } catch {}
+    })();
+  </script>
 </body>
 </html>
 `;
