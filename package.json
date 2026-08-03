@@ -1817,6 +1817,7 @@
     "partners:event-concepts:bake": "bun tools/bake-partner-ops-event-concepts.ts",
     "partners:event-concepts:check": "bun tools/bake-partner-ops-event-concepts.ts --check",
     "partners:profiles:seed": "bun tools/migrate-seat-partners-to-profiles.ts",
+    "partner:settlement:post": "bun tools/partner-settlement.ts",
     "partner-profile:bake": "bun lib/partner-profile/bake.ts",
     "partner-profile:bake:check": "bun lib/partner-profile/bake.ts --check",
     "partner:bookmaker:register": "bun tools/register-partner-bookmaker.ts",
