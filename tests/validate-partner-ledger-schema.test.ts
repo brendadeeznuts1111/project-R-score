@@ -89,7 +89,7 @@ describe('validateLedgerData', () => {
       proof: 'https://evil.example.com/shot.png',
     });
     expect(validateLedgerData(db)).toEqual([
-      'proof URL "https://evil.example.com/shot.png" is not from https://registry.factory-wager.com/api/registry/proofs/',
+      `proof URL "https://evil.example.com/shot.png" is not from ${'https://registry.factory-wager.com/api/registry/proofs/'}`,
     ]);
   });
 

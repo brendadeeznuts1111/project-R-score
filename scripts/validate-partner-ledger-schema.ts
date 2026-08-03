@@ -29,6 +29,15 @@ const RAIL_METHOD_RE = /^rail:([a-z]+):/;
 /** Onboarding seed — no accounting.* concept exists for it (it is a deposit). */
 const TYPE_EXEMPTIONS = new Set(['initial_capital']);
 
+/**
+ * Allowed proof URL prefixes (comma-separated). Defaults to the real registry
+ * proofs base; override via ALLOWED_PROOF_DOMAINS for staging mirrors.
+ */
+const ALLOWED_PROOF_DOMAINS = (Bun.env.ALLOWED_PROOF_DOMAINS ?? `${PROOF_BASE_URL}/`)
+  .split(',')
+  .map(d => d.trim())
+  .filter(Boolean);
+
 /** Pure validation over an injected DB — returns a list of issues ([] = valid). */
 export function validateLedgerData(db: Database): string[] {
   const issues: string[] = [];
@@ -80,8 +89,8 @@ export function validateLedgerData(db: Database): string[] {
     }[]
   ).map(r => r.proof);
   for (const proof of proofs) {
-    if (!proof.startsWith(`${PROOF_BASE_URL}/`)) {
-      issues.push(`proof URL "${proof}" is not from ${PROOF_BASE_URL}/`);
+    if (!ALLOWED_PROOF_DOMAINS.some(prefix => proof.startsWith(prefix))) {
+      issues.push(`proof URL "${proof}" is not from ${ALLOWED_PROOF_DOMAINS.join(', ')}`);
     }
   }
 
@@ -110,7 +119,9 @@ export function validateLedgerData(db: Database): string[] {
 }
 
 async function main(): Promise<void> {
-  const db = openOperationsDb(); // migrates partner_ledger to the current schema
+  const db = openOperationsDb(
+    Bun.env.OPERATIONS_DB_PATH ? { path: Bun.env.OPERATIONS_DB_PATH } : undefined
+  ); // migrates partner_ledger to the current schema
   try {
     const issues = validateLedgerData(db);
     if (issues.length === 0) {
