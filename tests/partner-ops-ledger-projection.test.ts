@@ -86,6 +86,58 @@ describe('loadSqliteLedgerSnapshots', () => {
 });
 
 describe('buildPartnersOpsRegistry ledger projection', () => {
+  test('per-out rows project accounting.outs (sum + last transaction)', async () => {
+    await using workspace = await createTestWorkspace('ledger-proj-');
+    await writeSeatFixture(workspace.root);
+    const dir = resolve(workspace.root, 'data');
+    mkdirSync(dir, { recursive: true });
+    const db = new Database(resolve(dir, 'operations.db'));
+    ensurePartnerLedgerSchema(db);
+    insertLedgerEntry(db, {
+      partnerCode: 'JOHNNY',
+      type: 'settlement',
+      amount: 1000,
+      currency: 'USD',
+      bookKey: 'parlay21-com',
+    });
+    insertLedgerEntry(db, {
+      partnerCode: 'JOHNNY',
+      type: 'settlement',
+      amount: -400,
+      currency: 'USD',
+      bookKey: 'parlay21-com',
+      trackingId: 'weekly-2026-08-03',
+    });
+    insertLedgerEntry(db, {
+      partnerCode: 'JOHNNY',
+      type: 'settlement',
+      amount: 750,
+      currency: 'USD',
+      bookKey: 'action92-com',
+    });
+    db.close();
+
+    const registry = await buildPartnersOpsRegistry(workspace.root);
+    const partner = registry.partners.find(p => p.code === 'JOHNNY');
+    expect(partner?.accounting.outs).toEqual({
+      'parlay21-com': {
+        balance: 600, // 1000 - 400
+        lastAmount: -400,
+        lastType: 'settlement',
+        lastTransactionAt: expect.any(String),
+      },
+      'action92-com': {
+        balance: 750,
+        lastAmount: 750,
+        lastType: 'settlement',
+        lastTransactionAt: expect.any(String),
+      },
+    });
+    // trackingId flows through the transaction history rows
+    const tracked = partner?.accounting.ledgerRows?.find(r => r.amount === -400);
+    expect(tracked?.trackingId).toBe('weekly-2026-08-03');
+  });
+
   test('absent DB → no balance fields, no summary accountingBalance', async () => {
     await using workspace = await createTestWorkspace('ledger-proj-');
     await writeSeatFixture(workspace.root);

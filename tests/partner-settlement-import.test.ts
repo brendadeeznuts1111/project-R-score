@@ -40,6 +40,22 @@ describe('parseSettlementFile', () => {
     ]);
   });
 
+  test('CSV maps optional out + trackingId columns', () => {
+    const rows = parseSettlementFile(
+      'amount,currency,description,reference,out,trackingId\n-500,USD,UFC loss,ufc-1,parlay21-com,weekly-2026-08-03\n'
+    );
+    expect(rows).toEqual([
+      {
+        amount: -500,
+        currency: 'USD',
+        description: 'UFC loss',
+        reference: 'ufc-1',
+        out: 'parlay21-com',
+        trackingId: 'weekly-2026-08-03',
+      },
+    ]);
+  });
+
   test('JSONL parses with optional per-row code', () => {
     const rows = parseSettlementFile(
       '{"code":"SPEN","amount":500,"currency":"USD","reference":"a"}\n{"amount":-100,"reference":"b"}\n',
@@ -63,10 +79,13 @@ describe('migrateSchema adds the reference column', () => {
       c => c.name
     );
     expect(cols).toContain('reference');
+    expect(cols).toContain('book_key');
+    expect(cols).toContain('tracking_id');
     const indexes = (db.query(`PRAGMA index_list(partner_ledger)`).all() as {
       name: string;
     }[]).map(i => i.name);
     expect(indexes).toContain('idx_partner_ledger_reference');
+    expect(indexes).toContain('idx_partner_ledger_out');
     db.close();
   });
 });

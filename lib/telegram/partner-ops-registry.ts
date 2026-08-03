@@ -145,6 +145,11 @@ export type PartnersOpsPartner = {
     sqlLedgerCount?: number;
     /** Most recent partner_ledger rows (transaction history, newest last). */
     ledgerRows?: PartnerLedgerRow[];
+    /** Per-out balances (books.<bookKey> → sum of amounts) when rows carry an out. */
+    outs?: Record<
+      string,
+      { balance: number; lastTransactionAt?: string; lastAmount?: number; lastType?: string }
+    >;
   };
   tracking: {
     accounts: {
@@ -184,6 +189,16 @@ export interface PartnerLedgerSnapshot {
   lastEventAt?: string;
   /** Most recent ledger rows (newest last) — transaction history for the board. */
   recentRows: PartnerLedgerRow[];
+  /** Per-out balances (sum of amounts per outId) — empty when no rows carry an out. */
+  outs: Record<string, PartnerLedgerOutSnapshot>;
+}
+
+/** Per-out ledger summary (balance = SUM(amount) for that out, plus its last row). */
+export interface PartnerLedgerOutSnapshot {
+  balance: number;
+  lastTransactionAt?: string;
+  lastAmount?: number;
+  lastType?: string;
 }
 
 export type PartnersOpsRegistry = {
@@ -642,12 +657,24 @@ export async function loadSqliteLedgerSnapshots(
       const entries = listLedgerEntries(db, code);
       if (entries.length === 0) continue;
       const initial = entries.find(e => e.type === 'initial_capital');
+      const outs: Record<string, PartnerLedgerOutSnapshot> = {};
+      for (const entry of entries) {
+        if (!entry.bookKey) continue;
+        const prev = outs[entry.bookKey] ?? { balance: 0 };
+        outs[entry.bookKey] = {
+          balance: prev.balance + entry.amount,
+          lastTransactionAt: entry.createdAt,
+          lastAmount: entry.amount,
+          lastType: entry.type,
+        };
+      }
       out.set(code, {
         balance: ledgerBalance(db, code),
         initialCapital: initial?.amount ?? 0,
         rows: entries.length,
         lastEventAt: entries[entries.length - 1]!.createdAt,
         recentRows: entries.slice(-25),
+        outs,
       });
     }
     return out;
@@ -790,6 +817,7 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
             initialCapital: snap.initialCapital,
             sqlLedgerCount: snap.rows,
             ledgerRows: snap.recentRows,
+            ...(Object.keys(snap.outs).length > 0 ? { outs: snap.outs } : {}),
           }
         : {}),
     };

@@ -190,6 +190,7 @@ export async function runSettlementForPartner(
         amount: adjustment,
         currency: String(settlement.currency ?? 'USD'),
         reference,
+        trackingId: `weekly-${input.periodStart.toISOString().slice(0, 10)}`,
         description: `Weekly settlement (gross ${gross}, commission ${commission}, net ${net})`,
       });
     } catch (e) {

@@ -69,6 +69,7 @@ describe('runSettlementForPartner', () => {
     expect(result.net).toBe(3500);
     expect(result.row?.amount).toBe(-1500); // commission adjustment
     expect(result.row?.reference).toBe(`period-${MONDAY.toISOString().slice(0, 10)}`);
+    expect(result.row?.trackingId).toBe(`weekly-${MONDAY.toISOString().slice(0, 10)}`);
     expect(result.skipped).toBe(false);
     expect(ledgerBalance(db, 'SPEN')).toBe(before - 1500);
     expect(result.row?.description).toContain('gross 5000');

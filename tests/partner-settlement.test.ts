@@ -67,6 +67,24 @@ describe('postSettlement', () => {
     expect(ledger[1]).toMatchObject({ type: 'settlement', amount: 1500 });
   });
 
+  test('outId + trackingId flow through postSettlement', async () => {
+    await seedProfile('SPEN');
+    const res = await postSettlement({
+      code: 'SPEN',
+      amount: -1200,
+      bookKey: 'parlay21-com',
+      trackingId: 'weekly-2026-08-03',
+      db,
+      profilesDir,
+    });
+    expect(res.row?.bookKey).toBe('parlay21-com');
+    expect(res.row?.trackingId).toBe('weekly-2026-08-03');
+    expect(listLedgerEntries(db, 'SPEN')[0]).toMatchObject({
+      bookKey: 'parlay21-com',
+      trackingId: 'weekly-2026-08-03',
+    });
+  });
+
   test('negative amount (payout/loss) decreases the balance', async () => {
     await seedProfile('JOHNNY');
     await postSettlement({ code: 'JOHNNY', amount: 10000, db, profilesDir });
