@@ -1,13 +1,13 @@
 {
   "kind": "concept-graph",
   "schemaVersion": 5,
-  "generatedAt": "2026-08-03T23:47:09.796Z",
+  "generatedAt": "2026-08-03T23:50:13.931Z",
   "summary": {
     "nodes": 139,
-    "edges": 571,
-    "seeAlsoEdges": 321,
+    "edges": 567,
+    "seeAlsoEdges": 317,
     "seeAlsoByLayer": {
-      "sameGroup": 90,
+      "sameGroup": 86,
       "crossGroup": 42,
       "crossDomain": 75,
       "pageBridge": 114
@@ -29,7 +29,7 @@
     {
       "domain": "portal",
       "nodes": 83,
-      "edges": 218,
+      "edges": 214,
       "usage": 204
     },
     {
@@ -80,7 +80,7 @@
   "clusters": [
     {
       "id": "cluster:ui.filter.jurisdiction",
-      "size": 35,
+      "size": 34,
       "domain": "portal",
       "hubs": [
         "ui.semantic.source",
@@ -523,6 +523,14 @@
       "hubs": [
         "section.patternSummary"
       ]
+    },
+    {
+      "id": "cluster:ui.semantic.type",
+      "size": 1,
+      "domain": "portal",
+      "hubs": [
+        "ui.semantic.type"
+      ]
     }
   ],
   "corridors": [
@@ -598,7 +606,7 @@
     "clusters": [
       {
         "id": "cluster:ui.filter.jurisdiction",
-        "size": 35,
+        "size": 34,
         "domain": "portal",
         "hubs": [
           "ui.semantic.source",
@@ -813,122 +821,122 @@
         "id": "ui.semantic.artifact",
         "label": "Artifact",
         "bridgeScore": 33,
-        "betweenness": 0.11205283877506124
+        "betweenness": 0.11332299768379901
       },
       {
         "id": "ui.semantic.surface",
         "label": "Surface",
         "bridgeScore": 32,
-        "betweenness": 0.07031528145499272
+        "betweenness": 0.06988703737966051
       },
       {
         "id": "ui.semantic.resources",
         "label": "Resources",
         "bridgeScore": 31,
-        "betweenness": 0.059434465939618264
+        "betweenness": 0.05646592026841581
       },
       {
         "id": "page.partners",
         "label": "Partners",
         "bridgeScore": 13,
-        "betweenness": 0.05972004076735645
+        "betweenness": 0.05928954161394706
       },
       {
         "id": "page.limitPatterns",
         "label": "Partner limit patterns",
         "bridgeScore": 9,
-        "betweenness": 0.049126215151311825
+        "betweenness": 0.04890849979137303
       },
       {
         "id": "ops.limits.limit_delta",
         "label": "Limit delta",
         "bridgeScore": 9,
-        "betweenness": 0.04627120970841403
+        "betweenness": 0.043705526493965766
       },
       {
         "id": "page.accountDossier",
         "label": "Account dossier",
         "bridgeScore": 6,
-        "betweenness": 0.008447227347814295
+        "betweenness": 0.00836542452980309
       },
       {
         "id": "page.partnerHistory",
         "label": "Partner limit history",
         "bridgeScore": 5,
-        "betweenness": 0.0179745803012551
+        "betweenness": 0.017962247533636407
       },
       {
         "id": "ops.limits.change_direction",
         "label": "Limit change direction",
         "bridgeScore": 5,
-        "betweenness": 0.014347466874058586
+        "betweenness": 0.014579879701628974
       },
       {
         "id": "section.openingBaseline",
         "label": "Sportsbook opening baseline",
         "bridgeScore": 5,
-        "betweenness": 0.012398894133236707
+        "betweenness": 0.012359282844887902
       }
     ],
     "topCentral": [
       {
         "id": "ui.semantic.source",
         "label": "Source",
-        "betweenness": 0.11732551570434413,
+        "betweenness": 0.1166479908897342,
         "seeAlsoDegree": 11
       },
       {
         "id": "ui.semantic.artifact",
         "label": "Artifact",
-        "betweenness": 0.11205283877506124,
+        "betweenness": 0.11332299768379901,
         "seeAlsoDegree": 37
       },
       {
         "id": "ops.limits.effective_limit",
         "label": "Effective limit",
-        "betweenness": 0.08710904255424899,
+        "betweenness": 0.08269775407350492,
         "seeAlsoDegree": 12
       },
       {
         "id": "ui.semantic.surface",
         "label": "Surface",
-        "betweenness": 0.07031528145499272,
+        "betweenness": 0.06988703737966051,
         "seeAlsoDegree": 34
       },
       {
         "id": "ui.action.filter",
         "label": "Apply filters",
-        "betweenness": 0.06437015318125953,
+        "betweenness": 0.06393607059117819,
         "seeAlsoDegree": 9
       },
       {
         "id": "page.partners",
         "label": "Partners",
-        "betweenness": 0.05972004076735645,
+        "betweenness": 0.05928954161394706,
         "seeAlsoDegree": 13
       },
       {
         "id": "ui.semantic.resources",
         "label": "Resources",
-        "betweenness": 0.059434465939618264,
-        "seeAlsoDegree": 35
+        "betweenness": 0.05646592026841581,
+        "seeAlsoDegree": 34
       },
       {
         "id": "page.limitPatterns",
         "label": "Partner limit patterns",
-        "betweenness": 0.049126215151311825,
+        "betweenness": 0.04890849979137303,
         "seeAlsoDegree": 9
       },
       {
         "id": "ops.limits.limit_delta",
         "label": "Limit delta",
-        "betweenness": 0.04627120970841403,
+        "betweenness": 0.043705526493965766,
         "seeAlsoDegree": 14
       },
       {
         "id": "ops.limits.account",
         "label": "Limit account",
-        "betweenness": 0.040639206378317465,
+        "betweenness": 0.04019235198830292,
         "seeAlsoDegree": 8
       }
     ]
@@ -978,7 +986,7 @@
       ],
       "kind": "used",
       "degree": 39,
-      "seeAlsoCount": 3,
+      "seeAlsoCount": 2,
       "seeAlsoByLayer": {
         "sameGroup": 4,
         "crossGroup": 0,
@@ -988,36 +996,7 @@
       "bridgeScore": 33,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 37,
-      "betweenness": 0.11205283877506124
-    },
-    {
-      "id": "ui.semantic.resources",
-      "label": "Resources",
-      "nodeKind": "concept",
-      "domain": "portal",
-      "domainLabel": "Portal",
-      "namespace": "ui",
-      "group": "ui.semantic",
-      "provenance": "legacy",
-      "usage": 2,
-      "usageUi": 1,
-      "usageSurface": 1,
-      "boards": [
-        "health-fields"
-      ],
-      "kind": "used",
-      "degree": 37,
-      "seeAlsoCount": 3,
-      "seeAlsoByLayer": {
-        "sameGroup": 4,
-        "crossGroup": 0,
-        "crossDomain": 0,
-        "pageBridge": 31
-      },
-      "bridgeScore": 31,
-      "clusterId": "cluster:ui.filter.jurisdiction",
-      "seeAlsoDegree": 35,
-      "betweenness": 0.059434465939618264
+      "betweenness": 0.11332299768379901
     },
     {
       "id": "api.agent",
@@ -1046,7 +1025,36 @@
       "bridgeScore": 4,
       "clusterId": "cluster:api.agent",
       "seeAlsoDegree": 4,
-      "betweenness": 0.02812162704881936
+      "betweenness": 0.027496889116750398
+    },
+    {
+      "id": "ui.semantic.resources",
+      "label": "Resources",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.semantic",
+      "provenance": "legacy",
+      "usage": 2,
+      "usageUi": 1,
+      "usageSurface": 1,
+      "boards": [
+        "health-fields"
+      ],
+      "kind": "used",
+      "degree": 36,
+      "seeAlsoCount": 2,
+      "seeAlsoByLayer": {
+        "sameGroup": 3,
+        "crossGroup": 0,
+        "crossDomain": 0,
+        "pageBridge": 31
+      },
+      "bridgeScore": 31,
+      "clusterId": "cluster:ui.filter.jurisdiction",
+      "seeAlsoDegree": 34,
+      "betweenness": 0.05646592026841581
     },
     {
       "id": "ui.semantic.surface",
@@ -1075,7 +1083,7 @@
       "bridgeScore": 32,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 34,
-      "betweenness": 0.07031528145499272
+      "betweenness": 0.06988703737966051
     },
     {
       "id": "ops.filter.account.all",
@@ -1104,7 +1112,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.filter.account.all",
       "seeAlsoDegree": 2,
-      "betweenness": 0.0032565422083994633
+      "betweenness": 0.0032493485641280503
     },
     {
       "id": "page.limitPatterns",
@@ -1133,7 +1141,7 @@
       "bridgeScore": 9,
       "clusterId": "cluster:page.limitPatterns",
       "seeAlsoDegree": 9,
-      "betweenness": 0.049126215151311825
+      "betweenness": 0.04890849979137303
     },
     {
       "id": "hub:domain:compliance",
@@ -1189,7 +1197,7 @@
       "bridgeScore": 13,
       "clusterId": "cluster:page.partners",
       "seeAlsoDegree": 13,
-      "betweenness": 0.05972004076735645
+      "betweenness": 0.05928954161394706
     },
     {
       "id": "ops.limits.account",
@@ -1219,7 +1227,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 8,
-      "betweenness": 0.040639206378317465
+      "betweenness": 0.04019235198830292
     },
     {
       "id": "hub:domain:operations",
@@ -1275,7 +1283,7 @@
       "bridgeScore": 9,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 14,
-      "betweenness": 0.04627120970841403
+      "betweenness": 0.043705526493965766
     },
     {
       "id": "ops.limits.effective_limit",
@@ -1304,7 +1312,7 @@
       "bridgeScore": 4,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 12,
-      "betweenness": 0.08710904255424899
+      "betweenness": 0.08269775407350492
     },
     {
       "id": "ui.semantic.source",
@@ -1334,7 +1342,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 11,
-      "betweenness": 0.11732551570434413
+      "betweenness": 0.1166479908897342
     },
     {
       "id": "ui.action.filter",
@@ -1364,7 +1372,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 9,
-      "betweenness": 0.06437015318125953
+      "betweenness": 0.06393607059117819
     },
     {
       "id": "ops.limits.evidence_trace",
@@ -1394,7 +1402,7 @@
       "bridgeScore": 4,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 8,
-      "betweenness": 0.04041871351574849
+      "betweenness": 0.03853216877428444
     },
     {
       "id": "section.partnersTelegram",
@@ -1512,7 +1520,7 @@
       "bridgeScore": 5,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 8,
-      "betweenness": 0.014347466874058586
+      "betweenness": 0.014579879701628974
     },
     {
       "id": "ops.limits.pattern_surface",
@@ -1542,7 +1550,7 @@
       "bridgeScore": 4,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 7,
-      "betweenness": 0.0188281712339189
+      "betweenness": 0.01815222044706317
     },
     {
       "id": "ops.limits.jurisdiction_policy",
@@ -1572,7 +1580,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 7,
-      "betweenness": 0.018698735566918014
+      "betweenness": 0.01829643738585003
     },
     {
       "id": "ops.limits.role_type",
@@ -1601,7 +1609,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 8,
-      "betweenness": 0.011274970676699362
+      "betweenness": 0.011143912754708885
     },
     {
       "id": "ops.limits.profile",
@@ -1631,7 +1639,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 7,
-      "betweenness": 0.012748942852249196
+      "betweenness": 0.012239182897701886
     },
     {
       "id": "ops.limits.sport",
@@ -1660,7 +1668,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 7,
-      "betweenness": 0.031254835940078746
+      "betweenness": 0.031014362688720067
     },
     {
       "id": "ops.limits.lifecycle_state",
@@ -1691,7 +1699,7 @@
       "bridgeScore": 0,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 5,
-      "betweenness": 0.009787256691166845
+      "betweenness": 0.009519347679850802
     },
     {
       "id": "section.partnersAccountsLimits",
@@ -1749,7 +1757,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 7,
-      "betweenness": 0.02277320797954924
+      "betweenness": 0.022607174932806954
     },
     {
       "id": "section.recentLimitChanges",
@@ -1780,7 +1788,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:section.recentLimitChanges",
       "seeAlsoDegree": 4,
-      "betweenness": 0.007304494893799895
+      "betweenness": 0.00728451662332558
     },
     {
       "id": "ops.limits.influence_score",
@@ -1809,7 +1817,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 6,
-      "betweenness": 0.008830135073580306
+      "betweenness": 0.008697330225250112
     },
     {
       "id": "ops.limits.data_coverage",
@@ -1838,7 +1846,7 @@
       "bridgeScore": 4,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 6,
-      "betweenness": 0.010590995602672371
+      "betweenness": 0.01044507652509579
     },
     {
       "id": "ops.limits.monitoring_status",
@@ -1868,7 +1876,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 5,
-      "betweenness": 0.007179828075701154
+      "betweenness": 0.0045040877821289705
     },
     {
       "id": "page.accountDossier",
@@ -1897,7 +1905,7 @@
       "bridgeScore": 6,
       "clusterId": "cluster:page.accountDossier",
       "seeAlsoDegree": 6,
-      "betweenness": 0.008447227347814295
+      "betweenness": 0.00836542452980309
     },
     {
       "id": "section.partnersDeposits",
@@ -1955,7 +1963,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 6,
-      "betweenness": 0.03336960407160418
+      "betweenness": 0.03311300920618757
     },
     {
       "id": "ops.limits.agent",
@@ -1984,7 +1992,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 6,
-      "betweenness": 0.01568191533640929
+      "betweenness": 0.015603714713937539
     },
     {
       "id": "ops.limits.downline",
@@ -2013,7 +2021,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 6,
-      "betweenness": 0.001283587068010814
+      "betweenness": 0.0012823327476565048
     },
     {
       "id": "ops.limits.node",
@@ -2042,7 +2050,37 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 6,
-      "betweenness": 0.005991728812265714
+      "betweenness": 0.00592479709063755
+    },
+    {
+      "id": "ui.semantic.status",
+      "label": "Status",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.semantic",
+      "provenance": "legacy",
+      "usage": 15,
+      "usageUi": 13,
+      "usageSurface": 2,
+      "boards": [
+        "health-fields",
+        "partner-history"
+      ],
+      "kind": "used",
+      "degree": 7,
+      "seeAlsoCount": 1,
+      "seeAlsoByLayer": {
+        "sameGroup": 2,
+        "crossGroup": 0,
+        "crossDomain": 2,
+        "pageBridge": 0
+      },
+      "bridgeScore": 2,
+      "clusterId": "cluster:ui.filter.jurisdiction",
+      "seeAlsoDegree": 4,
+      "betweenness": 0.013059322431723195
     },
     {
       "id": "ui.filter.sportsbook",
@@ -2071,7 +2109,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 5,
-      "betweenness": 0.016359638407695484
+      "betweenness": 0.016276367426982546
     },
     {
       "id": "ops.limits.market_phase",
@@ -2100,7 +2138,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 5,
-      "betweenness": 0.004476374760140403
+      "betweenness": 0.004357941683846254
     },
     {
       "id": "section.perNodeBreakdown",
@@ -2130,7 +2168,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:section.recentLimitChanges",
       "seeAlsoDegree": 4,
-      "betweenness": 0.005485414458619693
+      "betweenness": 0.005346656636095017
     },
     {
       "id": "ops.limits.prediction",
@@ -2159,7 +2197,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 5,
-      "betweenness": 0.003989694765140844
+      "betweenness": 0.0039492818992875114
     },
     {
       "id": "section.partnersOuts",
@@ -2219,7 +2257,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 4,
-      "betweenness": 0.003625334658608142
+      "betweenness": 0.003611101519585416
     },
     {
       "id": "page.partnerHistory",
@@ -2248,7 +2286,7 @@
       "bridgeScore": 5,
       "clusterId": "cluster:page.partnerHistory",
       "seeAlsoDegree": 5,
-      "betweenness": 0.0179745803012551
+      "betweenness": 0.017962247533636407
     },
     {
       "id": "section.downlineContext",
@@ -2278,7 +2316,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 4,
-      "betweenness": 0.00348258859240645
+      "betweenness": 0.003470936030535057
     },
     {
       "id": "section.openingBaseline",
@@ -2307,7 +2345,7 @@
       "bridgeScore": 5,
       "clusterId": "cluster:section.openingBaseline",
       "seeAlsoDegree": 5,
-      "betweenness": 0.012398894133236707
+      "betweenness": 0.012359282844887902
     },
     {
       "id": "section.partnersPartnerMessage",
@@ -2365,7 +2403,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 5,
-      "betweenness": 0.008735545541666945
+      "betweenness": 0.00825063786340274
     },
     {
       "id": "ops.limits.tree",
@@ -2423,7 +2461,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.summary.partner_limit_trace",
       "seeAlsoDegree": 5,
-      "betweenness": 0.013789617461469141
+      "betweenness": 0.013427523534137894
     },
     {
       "id": "ui.filter.profile",
@@ -2452,7 +2490,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 5,
-      "betweenness": 0.006108808382455738
+      "betweenness": 0.005958431165812109
     },
     {
       "id": "ops.limits.policy_code",
@@ -2482,7 +2520,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 3,
-      "betweenness": 0.003268157540301652
+      "betweenness": 0.0031502748135151908
     },
     {
       "id": "ops.limits.league",
@@ -2540,7 +2578,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 4,
-      "betweenness": 0.013861321931972927
+      "betweenness": 0.013799375935227245
     },
     {
       "id": "section.partnersOnboard",
@@ -2627,7 +2665,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 4,
-      "betweenness": 0.002694629453713559
+      "betweenness": 0.0026785979036229807
     },
     {
       "id": "ops.limits.partner",
@@ -2656,7 +2694,7 @@
       "bridgeScore": 0,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 4,
-      "betweenness": 0.00047430551302170656
+      "betweenness": 0.00047305119266739744
     },
     {
       "id": "ops.limits.sub_agent",
@@ -2714,7 +2752,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 4,
-      "betweenness": 0.003418662971462881
+      "betweenness": 0.003392901161108993
     },
     {
       "id": "section.stateZipPatterns",
@@ -2743,7 +2781,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 4,
-      "betweenness": 0.014826947492078345
+      "betweenness": 0.01471928375799782
     },
     {
       "id": "section.jurisdictionCatalog",
@@ -2772,7 +2810,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 4,
-      "betweenness": 0.011392470264931278
+      "betweenness": 0.011409659649195065
     },
     {
       "id": "ui.filter.jurisdiction",
@@ -2801,7 +2839,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 4,
-      "betweenness": 0.008082399090703437
+      "betweenness": 0.00800624922777319
     },
     {
       "id": "ops.panel.partner_limit_history",
@@ -2857,37 +2895,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.filter.window.48h",
       "seeAlsoDegree": 5,
-      "betweenness": 0.021181685557176522
-    },
-    {
-      "id": "ui.semantic.status",
-      "label": "Status",
-      "nodeKind": "concept",
-      "domain": "portal",
-      "domainLabel": "Portal",
-      "namespace": "ui",
-      "group": "ui.semantic",
-      "provenance": "legacy",
-      "usage": 15,
-      "usageUi": 13,
-      "usageSurface": 2,
-      "boards": [
-        "health-fields",
-        "partner-history"
-      ],
-      "kind": "used",
-      "degree": 5,
-      "seeAlsoCount": 2,
-      "seeAlsoByLayer": {
-        "sameGroup": 2,
-        "crossGroup": 0,
-        "crossDomain": 0,
-        "pageBridge": 0
-      },
-      "bridgeScore": 0,
-      "clusterId": "cluster:ui.filter.jurisdiction",
-      "seeAlsoDegree": 2,
-      "betweenness": 0.004452183342038575
+      "betweenness": 0.02101335428122545
     },
     {
       "id": "ops.limits.market_type",
@@ -3032,7 +3040,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:section.patternSummary",
       "seeAlsoDegree": 3,
-      "betweenness": 0.0010247283981993896
+      "betweenness": 0.0010126824695896632
     },
     {
       "id": "ui.action.searchProfiles",
@@ -3090,7 +3098,7 @@
       "bridgeScore": 0,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 3,
-      "betweenness": 0.00362099278045861
+      "betweenness": 0.0036236647054737055
     },
     {
       "id": "section.complianceKpis",
@@ -3119,7 +3127,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:section.complianceKpis",
       "seeAlsoDegree": 3,
-      "betweenness": 0.0014459301880049217
+      "betweenness": 0.001460403115170027
     },
     {
       "id": "ui.filter.state",
@@ -3151,35 +3159,6 @@
       "betweenness": 0.0014447098556626106
     },
     {
-      "id": "ui.semantic.version",
-      "label": "Version",
-      "nodeKind": "concept",
-      "domain": "portal",
-      "domainLabel": "Portal",
-      "namespace": "ui",
-      "group": "ui.semantic",
-      "provenance": "legacy",
-      "usage": 2,
-      "usageUi": 1,
-      "usageSurface": 1,
-      "boards": [
-        "health-fields"
-      ],
-      "kind": "used",
-      "degree": 5,
-      "seeAlsoCount": 2,
-      "seeAlsoByLayer": {
-        "sameGroup": 2,
-        "crossGroup": 0,
-        "crossDomain": 1,
-        "pageBridge": 0
-      },
-      "bridgeScore": 1,
-      "clusterId": "cluster:ui.filter.jurisdiction",
-      "seeAlsoDegree": 3,
-      "betweenness": 0.0009859597802793956
-    },
-    {
       "id": "ops.metric.active_filters",
       "label": "Active filters",
       "nodeKind": "concept",
@@ -3206,7 +3185,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.summary.partner_limit_trace",
       "seeAlsoDegree": 3,
-      "betweenness": 0.007653419771684306
+      "betweenness": 0.007565767207642419
     },
     {
       "id": "ops.metric.deltas",
@@ -3235,7 +3214,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.summary.partner_limit_trace",
       "seeAlsoDegree": 3,
-      "betweenness": 0.0009542559599052199
+      "betweenness": 0.0009389156410022885
     },
     {
       "id": "ops.metric.high_water",
@@ -3293,34 +3272,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.summary.partner_limit_trace",
       "seeAlsoDegree": 3,
-      "betweenness": 0.006836037157103442
-    },
-    {
-      "id": "ui.semantic.tone",
-      "label": "Tone",
-      "nodeKind": "concept",
-      "domain": "portal",
-      "domainLabel": "Portal",
-      "namespace": "ui",
-      "group": "ui.semantic",
-      "provenance": "legacy",
-      "usage": 0,
-      "usageUi": 0,
-      "usageSurface": 0,
-      "boards": [],
-      "kind": "unused",
-      "degree": 5,
-      "seeAlsoCount": 2,
-      "seeAlsoByLayer": {
-        "sameGroup": 2,
-        "crossGroup": 0,
-        "crossDomain": 2,
-        "pageBridge": 0
-      },
-      "bridgeScore": 2,
-      "clusterId": "cluster:ui.filter.jurisdiction",
-      "seeAlsoDegree": 4,
-      "betweenness": 0.007963661491253798
+      "betweenness": 0.006551752736903936
     },
     {
       "id": "section.partnersBookDetail",
@@ -3378,7 +3330,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 2,
-      "betweenness": 0.014429278601925909
+      "betweenness": 0.014403601274687533
     },
     {
       "id": "page.toc",
@@ -3405,7 +3357,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.toc",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "ui.filter.window.30d",
@@ -3495,35 +3447,6 @@
       "betweenness": 0.00012157258818688511
     },
     {
-      "id": "ui.semantic.kind",
-      "label": "Kind",
-      "nodeKind": "concept",
-      "domain": "portal",
-      "domainLabel": "Portal",
-      "namespace": "ui",
-      "group": "ui.semantic",
-      "provenance": "legacy",
-      "usage": 2,
-      "usageUi": 1,
-      "usageSurface": 1,
-      "boards": [
-        "health-fields"
-      ],
-      "kind": "used",
-      "degree": 4,
-      "seeAlsoCount": 2,
-      "seeAlsoByLayer": {
-        "sameGroup": 2,
-        "crossGroup": 0,
-        "crossDomain": 0,
-        "pageBridge": 0
-      },
-      "bridgeScore": 0,
-      "clusterId": "cluster:ui.filter.jurisdiction",
-      "seeAlsoDegree": 2,
-      "betweenness": 0.0016645153933337086
-    },
-    {
       "id": "ui.semantic.plane",
       "label": "Plane",
       "nodeKind": "concept",
@@ -3550,7 +3473,7 @@
       "bridgeScore": 0,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 2,
-      "betweenness": 0.007780824083708161
+      "betweenness": 0.007238244865896084
     },
     {
       "id": "ui.semantic.port",
@@ -3580,6 +3503,35 @@
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 2,
       "betweenness": 0
+    },
+    {
+      "id": "ui.semantic.version",
+      "label": "Version",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.semantic",
+      "provenance": "legacy",
+      "usage": 2,
+      "usageUi": 1,
+      "usageSurface": 1,
+      "boards": [
+        "health-fields"
+      ],
+      "kind": "used",
+      "degree": 4,
+      "seeAlsoCount": 1,
+      "seeAlsoByLayer": {
+        "sameGroup": 1,
+        "crossGroup": 0,
+        "crossDomain": 1,
+        "pageBridge": 0
+      },
+      "bridgeScore": 1,
+      "clusterId": "cluster:ui.filter.jurisdiction",
+      "seeAlsoDegree": 2,
+      "betweenness": 0.0008670591171076064
     },
     {
       "id": "api.bookmaker_feed",
@@ -3811,7 +3763,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.summary.partner_limit_trace",
       "seeAlsoDegree": 2,
-      "betweenness": 0.0013423174442286916
+      "betweenness": 0.0013187013935556033
     },
     {
       "id": "ops.panel.limit_overview",
@@ -3840,7 +3792,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.panel.limit_overview",
       "seeAlsoDegree": 2,
-      "betweenness": 0.0008081843398483387
+      "betweenness": 0.00078881288348889
     },
     {
       "id": "ops.table.limit_changes",
@@ -3869,7 +3821,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.table.limit_changes",
       "seeAlsoDegree": 2,
-      "betweenness": 0.0014284967516928018
+      "betweenness": 0.0013927597546158875
     },
     {
       "id": "ops.table.per_account",
@@ -3898,7 +3850,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.table.per_account",
       "seeAlsoDegree": 2,
-      "betweenness": 0.002313753466822708
+      "betweenness": 0.0022688651265690887
     },
     {
       "id": "ops.table.recent_changes",
@@ -3985,7 +3937,7 @@
       "bridgeScore": 0,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 2,
-      "betweenness": 0.036059900965345226
+      "betweenness": 0.03570517255680693
     },
     {
       "id": "hub:domain:infrastructure",
@@ -4039,7 +3991,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.bookmakers",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.brandKeymap",
@@ -4066,7 +4018,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.brandKeymap",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.bunfig",
@@ -4093,7 +4045,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.bunfig",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.catalog",
@@ -4120,7 +4072,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.catalog",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.compliance",
@@ -4147,7 +4099,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.compliance",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.consoleFormat",
@@ -4174,7 +4126,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.consoleFormat",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.dashboard",
@@ -4201,7 +4153,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.dashboard",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.doctor",
@@ -4228,7 +4180,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.doctor",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.dodReview",
@@ -4255,7 +4207,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.dodReview",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.environment",
@@ -4282,7 +4234,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.environment",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.factoryRegistry",
@@ -4309,7 +4261,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.factoryRegistry",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.failures",
@@ -4336,7 +4288,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.failures",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.glossary",
@@ -4363,7 +4315,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.glossary",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.health",
@@ -4390,7 +4342,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.health",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.identity",
@@ -4417,7 +4369,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.identity",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.installHygiene",
@@ -4444,7 +4396,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.installHygiene",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.limitForecastLab",
@@ -4471,7 +4423,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.limitForecastLab",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.operations",
@@ -4498,7 +4450,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.operations",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.packages",
@@ -4525,7 +4477,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.packages",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.registry",
@@ -4552,7 +4504,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.registry",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.science",
@@ -4579,7 +4531,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.science",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.skills",
@@ -4606,7 +4558,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.skills",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.surfaces",
@@ -4633,7 +4585,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.surfaces",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.tennis",
@@ -4660,7 +4612,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.tennis",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.tools",
@@ -4687,7 +4639,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.tools",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
       "id": "page.vault",
@@ -4714,34 +4666,36 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.vault",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007463934472556655
+      "betweenness": 0.000009158773183112886
     },
     {
-      "id": "ui.semantic.package",
-      "label": "Package",
+      "id": "ui.semantic.kind",
+      "label": "Kind",
       "nodeKind": "concept",
       "domain": "portal",
       "domainLabel": "Portal",
       "namespace": "ui",
       "group": "ui.semantic",
       "provenance": "legacy",
-      "usage": 0,
-      "usageUi": 0,
-      "usageSurface": 0,
-      "boards": [],
-      "kind": "unused",
-      "degree": 4,
-      "seeAlsoCount": 3,
+      "usage": 2,
+      "usageUi": 1,
+      "usageSurface": 1,
+      "boards": [
+        "health-fields"
+      ],
+      "kind": "used",
+      "degree": 3,
+      "seeAlsoCount": 1,
       "seeAlsoByLayer": {
-        "sameGroup": 3,
+        "sameGroup": 1,
         "crossGroup": 0,
         "crossDomain": 0,
         "pageBridge": 0
       },
       "bridgeScore": 0,
       "clusterId": "cluster:ui.filter.jurisdiction",
-      "seeAlsoDegree": 3,
-      "betweenness": 0.00002961383558398484
+      "seeAlsoDegree": 1,
+      "betweenness": 0
     },
     {
       "id": "ui.export.csv",
@@ -4883,6 +4837,60 @@
       "betweenness": 0.00006546216286986121
     },
     {
+      "id": "ui.semantic.package",
+      "label": "Package",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.semantic",
+      "provenance": "PR#248",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 2,
+      "seeAlsoCount": 1,
+      "seeAlsoByLayer": {
+        "sameGroup": 1,
+        "crossGroup": 0,
+        "crossDomain": 0,
+        "pageBridge": 0
+      },
+      "bridgeScore": 0,
+      "clusterId": "cluster:ui.filter.jurisdiction",
+      "seeAlsoDegree": 1,
+      "betweenness": 0
+    },
+    {
+      "id": "ui.semantic.tone",
+      "label": "Tone",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.semantic",
+      "provenance": "PR#248",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 2,
+      "seeAlsoCount": 1,
+      "seeAlsoByLayer": {
+        "sameGroup": 1,
+        "crossGroup": 0,
+        "crossDomain": 0,
+        "pageBridge": 0
+      },
+      "bridgeScore": 0,
+      "clusterId": "cluster:ui.filter.jurisdiction",
+      "seeAlsoDegree": 1,
+      "betweenness": 0
+    },
+    {
       "id": "ui.semantic.type",
       "label": "Semantic type",
       "nodeKind": "concept",
@@ -4890,24 +4898,24 @@
       "domainLabel": "Portal",
       "namespace": "ui",
       "group": "ui.semantic",
-      "provenance": "legacy",
+      "provenance": "PR#248",
       "usage": 0,
       "usageUi": 0,
       "usageSurface": 0,
       "boards": [],
       "kind": "unused",
-      "degree": 3,
-      "seeAlsoCount": 2,
+      "degree": 1,
+      "seeAlsoCount": 0,
       "seeAlsoByLayer": {
-        "sameGroup": 2,
+        "sameGroup": 0,
         "crossGroup": 0,
         "crossDomain": 0,
         "pageBridge": 0
       },
       "bridgeScore": 0,
-      "clusterId": "cluster:ui.filter.jurisdiction",
-      "seeAlsoDegree": 2,
-      "betweenness": 0.0010658257502046077
+      "clusterId": "cluster:ui.semantic.type",
+      "seeAlsoDegree": 0,
+      "betweenness": 0
     }
   ],
   "edges": [
@@ -5635,7 +5643,7 @@
     },
     {
       "source": "ops.limits.change_direction",
-      "target": "ui.semantic.tone",
+      "target": "ui.semantic.status",
       "kind": "seeAlso",
       "weight": 1.5,
       "layer": "crossDomain"
@@ -5957,7 +5965,7 @@
     },
     {
       "source": "ops.limits.monitoring_status",
-      "target": "ui.semantic.tone",
+      "target": "ui.semantic.status",
       "kind": "seeAlso",
       "weight": 1.5,
       "layer": "crossDomain"
@@ -8413,13 +8421,6 @@
       "weight": 0.75
     },
     {
-      "source": "ui.semantic.artifact",
-      "target": "ui.semantic.package",
-      "kind": "seeAlso",
-      "weight": 3,
-      "layer": "sameGroup"
-    },
-    {
       "source": "ui.semantic.hostname",
       "target": "hub:domain:portal",
       "kind": "domainHub",
@@ -8501,19 +8502,19 @@
       "layer": "sameGroup"
     },
     {
-      "source": "ui.semantic.kind",
-      "target": "ui.semantic.type",
-      "kind": "seeAlso",
-      "weight": 3,
-      "layer": "sameGroup"
-    },
-    {
       "source": "ui.semantic.package",
       "target": "hub:domain:portal",
       "kind": "domainHub",
       "weight": 0.75
     },
     {
+      "source": "ui.semantic.package",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
       "source": "ui.semantic.plane",
       "target": "hub:domain:portal",
       "kind": "domainHub",
@@ -8554,13 +8555,6 @@
     },
     {
       "source": "ui.semantic.resources",
-      "target": "ui.semantic.package",
-      "kind": "seeAlso",
-      "weight": 3,
-      "layer": "sameGroup"
-    },
-    {
-      "source": "ui.semantic.resources",
       "target": "ui.semantic.source",
       "kind": "seeAlso",
       "weight": 3,
@@ -8588,13 +8582,6 @@
     {
       "source": "ui.semantic.status",
       "target": "ui.semantic.source",
-      "kind": "seeAlso",
-      "weight": 3,
-      "layer": "sameGroup"
-    },
-    {
-      "source": "ui.semantic.status",
-      "target": "ui.semantic.tone",
       "kind": "seeAlso",
       "weight": 3,
       "layer": "sameGroup"
@@ -8627,7 +8614,7 @@
     },
     {
       "source": "ui.semantic.tone",
-      "target": "ui.semantic.type",
+      "target": "ui.semantic.status",
       "kind": "seeAlso",
       "weight": 3,
       "layer": "sameGroup"
@@ -8647,13 +8634,6 @@
     {
       "source": "ui.semantic.version",
       "target": "ui.semantic.artifact",
-      "kind": "seeAlso",
-      "weight": 3,
-      "layer": "sameGroup"
-    },
-    {
-      "source": "ui.semantic.version",
-      "target": "ui.semantic.package",
       "kind": "seeAlso",
       "weight": 3,
       "layer": "sameGroup"

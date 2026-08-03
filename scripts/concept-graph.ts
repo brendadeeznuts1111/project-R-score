@@ -158,7 +158,7 @@ Examples:
   bun run concept:graph -- --focus ops.limits.account --depth 2 --serve --port 3043
   bun run concept:graph -- --bake
   bun run concept:graph -- --see-also-layer sameGroup,crossDomain --format table
-  bun run concept:graph -- --path-from ui.semantic.status --path-to ui.semantic.tone
+  bun run concept:graph -- --path-from ui.semantic.status --path-to ui.semantic.source
 `);
 }
 

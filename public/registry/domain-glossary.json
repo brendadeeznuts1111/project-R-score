@@ -410,8 +410,8 @@
   ],
   "summary": {
     "concepts": 436,
-    "active": 431,
-    "deprecated": 5,
+    "active": 428,
+    "deprecated": 8,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
@@ -5050,7 +5050,6 @@
       ],
       "valueLabels": null,
       "seeAlso": [
-        "ui.semantic.tone",
         "ui.semantic.source"
       ],
       "status": "active",
@@ -5071,7 +5070,7 @@
     {
       "id": "ui.semantic.tone",
       "label": "Tone",
-      "description": "Presentation token derived from status and evidence; tone controls color consistently without replacing status.",
+      "description": "Deprecated: use ui.semantic.status. Former presentation token derived from status and evidence; tone controlled color without replacing status.",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
@@ -5088,11 +5087,10 @@
       ],
       "valueLabels": null,
       "seeAlso": [
-        "ui.semantic.status",
-        "ui.semantic.type"
+        "ui.semantic.status"
       ],
-      "status": "active",
-      "deprecatedBy": null,
+      "status": "deprecated",
+      "deprecatedBy": "ui.semantic.status",
       "unit": null,
       "format": null,
       "registryColumn": null,
@@ -5100,7 +5098,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "presentation",
       "uiRole": "token",
-      "correlationId": "legacy",
+      "correlationId": "PR#248",
       "addedAt": "2026-01-01",
       "domain": "portal",
       "namespace": "ui",
@@ -5129,7 +5127,6 @@
       ],
       "valueLabels": null,
       "seeAlso": [
-        "ui.semantic.type",
         "ui.semantic.plane"
       ],
       "status": "active",
@@ -5234,8 +5231,7 @@
       "values": null,
       "valueLabels": null,
       "seeAlso": [
-        "ui.semantic.artifact",
-        "ui.semantic.package"
+        "ui.semantic.artifact"
       ],
       "status": "active",
       "deprecatedBy": null,
@@ -5268,7 +5264,6 @@
       "valueLabels": null,
       "seeAlso": [
         "ui.semantic.artifact",
-        "ui.semantic.package",
         "ui.semantic.source"
       ],
       "status": "active",
@@ -5301,7 +5296,6 @@
       "values": null,
       "valueLabels": null,
       "seeAlso": [
-        "ui.semantic.package",
         "ui.semantic.version",
         "ui.semantic.resources"
       ],
@@ -5323,7 +5317,7 @@
     {
       "id": "ui.semantic.package",
       "label": "Package",
-      "description": "Owning or producing package mapped to a portal surface or artifact.",
+      "description": "Deprecated: use ui.semantic.artifact. Former owning or producing package mapped to a portal surface or artifact.",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
@@ -5334,12 +5328,10 @@
       "values": null,
       "valueLabels": null,
       "seeAlso": [
-        "ui.semantic.artifact",
-        "ui.semantic.version",
-        "ui.semantic.resources"
+        "ui.semantic.artifact"
       ],
-      "status": "active",
-      "deprecatedBy": null,
+      "status": "deprecated",
+      "deprecatedBy": "ui.semantic.artifact",
       "unit": null,
       "format": null,
       "registryColumn": null,
@@ -5347,7 +5339,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "resource",
       "uiRole": "link",
-      "correlationId": "legacy",
+      "correlationId": "PR#248",
       "addedAt": "2026-01-01",
       "domain": "portal",
       "namespace": "ui",
@@ -5356,7 +5348,7 @@
     {
       "id": "ui.semantic.type",
       "label": "Semantic type",
-      "description": "Stable data role of a concept; distinct from operational kind and from its visual UI role.",
+      "description": "Deprecated; use the semanticType field or PORTAL_SEMANTIC_TYPES enum directly. Former stable data role of a concept; distinct from operational kind and from its visual UI role.",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
@@ -5374,11 +5366,8 @@
         "version"
       ],
       "valueLabels": null,
-      "seeAlso": [
-        "ui.semantic.kind",
-        "ui.semantic.tone"
-      ],
-      "status": "active",
+      "seeAlso": [],
+      "status": "deprecated",
       "deprecatedBy": null,
       "unit": null,
       "format": null,
@@ -5387,7 +5376,7 @@
       "featurePurpose": "Cross-portal semantic field contract.",
       "semanticType": "classification",
       "uiRole": "chip",
-      "correlationId": "legacy",
+      "correlationId": "PR#248",
       "addedAt": "2026-01-01",
       "domain": "portal",
       "namespace": "ui",
@@ -5791,7 +5780,7 @@
     {
       "id": "ops.limits.monitoring_status",
       "label": "Limit monitoring status",
-      "description": "Evidence-derived account state: monitored, attention, blocked, or incomplete; presentation tone is derived separately.",
+      "description": "Evidence-derived account state: monitored, attention, blocked, or incomplete; presentation is derived from status separately.",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
@@ -5809,7 +5798,7 @@
       "seeAlso": [
         "ops.limits.profile",
         "ops.limits.evidence_trace",
-        "ui.semantic.tone"
+        "ui.semantic.status"
       ],
       "status": "active",
       "deprecatedBy": null,
@@ -5989,7 +5978,7 @@
       "seeAlso": [
         "ops.limits.limit_delta",
         "ops.limits.effective_limit",
-        "ui.semantic.tone",
+        "ui.semantic.status",
         "api.limit_events"
       ],
       "status": "active",
