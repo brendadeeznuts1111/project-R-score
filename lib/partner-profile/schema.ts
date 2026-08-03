@@ -121,6 +121,7 @@ export type PartnerProfile = {
   };
   settlement?: {
     commissionStructure?: string;
+    commissionPct?: number;
     commissionTiers?: number[];
     makeupCarry?: boolean;
     makeupCap?: number;

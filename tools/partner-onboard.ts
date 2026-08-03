@@ -6,7 +6,9 @@
  *   bun run partner:onboard --code JOHNNY --url https://rc.youwager.lv \
  *     --username <user> [--password <pass>] --telegram-user-id <id> \
  *     [--chat <chatId>] [--book-key youwager] [--type pph] [--maxBet 500] \
- *     [--name Johnny] [--dry-run] [--skip-forum] [--no-bake]
+ *     [--deal 30] [--initial-balance 10000] [--funding-method wire] \
+ *     [--currency USD] [--hold-target 0.05] [--name Johnny] \
+ *     [--dry-run] [--skip-forum] [--no-bake]
  *
  * Chains identity → forum → book (vault-only creds) → bake → audit,
  * idempotently. --dry-run validates and prints the plan without writing.
@@ -21,6 +23,8 @@ function usage(): never {
   bun run partner:onboard --code <CODE> --url <url> --username <user> \\
     [--password <pass>] --telegram-user-id <id> [--chat <chatId>] \\
     [--book-key <key>] [--type <type>] [--maxBet <n>] [--name <name>] \\
+    [--deal <pct>] [--initial-balance <n>] [--funding-method <wire|crypto|voucher|internal>] \\
+    [--currency <ISO3>] [--hold-target <0..1>] \\
     [--dry-run] [--skip-forum] [--no-bake]`);
   process.exit(1);
 }
@@ -28,6 +32,67 @@ function usage(): never {
 function flag(argv: string[], name: string): string | undefined {
   const i = argv.indexOf(`--${name}`);
   return i !== -1 ? argv[i + 1] : undefined;
+}
+
+const FUNDING_METHODS = ['wire', 'crypto', 'voucher', 'internal'] as const;
+export type FundingMethod = (typeof FUNDING_METHODS)[number];
+const CURRENCY_RE = /^[A-Z]{3}$/i;
+
+/** Parse + validate an optional numeric flag; throws on malformed input. */
+function numFlag(argv: string[], name: string): number | undefined {
+  const raw = flag(argv, name);
+  if (raw === undefined) return undefined;
+  const value = Number(raw);
+  if (!Number.isFinite(value)) throw new Error(`--${name} must be a number (got "${raw}")`);
+  return value;
+}
+
+export interface AccountingFlags {
+  commissionPct?: number; // --deal (0–100)
+  initialBalance?: number; // --initial-balance (≥ 0)
+  holdTargetPct?: number; // --hold-target (0–1)
+  fundingMethod?: FundingMethod; // --funding-method
+  currency?: string; // --currency (3-letter ISO, uppercased)
+}
+
+/**
+ * Parse + validate the optional accounting flags. Omitted flags return
+ * `undefined` (fields left unset — no prompts, no implicit defaults);
+ * malformed values throw.
+ */
+export function parseAccountingFlags(argv: string[]): AccountingFlags {
+  const deal = numFlag(argv, 'deal');
+  const initialBalance = numFlag(argv, 'initial-balance');
+  const holdTarget = numFlag(argv, 'hold-target');
+  const fundingMethod = flag(argv, 'funding-method');
+  const currency = flag(argv, 'currency');
+  if (deal !== undefined && (deal < 0 || deal > 100)) {
+    throw new Error(`--deal must be 0–100 (got ${deal})`);
+  }
+  if (initialBalance !== undefined && initialBalance < 0) {
+    throw new Error(`--initial-balance must be ≥ 0 (got ${initialBalance})`);
+  }
+  if (holdTarget !== undefined && (holdTarget < 0 || holdTarget > 1)) {
+    throw new Error(`--hold-target must be 0–1 (got ${holdTarget})`);
+  }
+  if (
+    fundingMethod !== undefined &&
+    !(FUNDING_METHODS as readonly string[]).includes(fundingMethod)
+  ) {
+    throw new Error(
+      `--funding-method must be one of ${FUNDING_METHODS.join('|')} (got "${fundingMethod}")`
+    );
+  }
+  if (currency !== undefined && !CURRENCY_RE.test(currency)) {
+    throw new Error(`--currency must be a 3-letter ISO code (got "${currency}")`);
+  }
+  return {
+    commissionPct: deal,
+    initialBalance,
+    holdTargetPct: holdTarget,
+    fundingMethod: fundingMethod as FundingMethod | undefined,
+    currency: currency?.toUpperCase(),
+  };
 }
 
 async function main(): Promise<void> {
@@ -48,6 +113,8 @@ async function main(): Promise<void> {
 
   if (!code || !url || !username) usage();
 
+  const accounting = parseAccountingFlags(argv);
+
   await onboardPartner({
     code,
     url,
@@ -59,6 +126,7 @@ async function main(): Promise<void> {
     type,
     maxBet,
     name,
+    ...accounting,
     dryRun,
     skipForum,
     noBake,

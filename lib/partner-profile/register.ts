@@ -28,6 +28,7 @@ import {
   type SeatOut,
 } from '../telegram/seat-intake';
 import { BOOK_KEY_RE, CALL_SIGN_RE, PARTNER_CODE_RE, VAULT_KEY_RE, type BookType } from './schema';
+import { initLedgerForPartner } from './accounting-stub';
 import { asOutId, type OutId, type TreeNodeId } from '../types/branded';
 
 export const PROFILES_DIR = 'config/partner-profiles';
@@ -70,6 +71,12 @@ export interface RegisterBookmakerInput {
   type?: BookType; // default pph
   chatId?: string; // brand-ok — telegram chat id wire
   maxBet?: number;
+  /** Accounting terms captured during onboarding (optional; omitted → left unset). */
+  commissionPct?: number; // settlement.commissionPct (deal / revenue-share %)
+  currency?: string; // settlement.currency (ISO 4217 code)
+  holdTargetPct?: number; // settlement.holdTargetPct (0–1)
+  initialBalance?: number; // balance.initialCapitalRequirement
+  fundingMethod?: string; // books.<bookKey>.funding.method (wire|crypto|voucher|internal)
   outId?: OutId; // default `${code}-1`
   /** Injected ops DB (tests). Default: open via dbPath / DEFAULT_OPS_DB_PATH. */
   db?: Database;
@@ -97,7 +104,19 @@ export async function upsertProfileToml(
   code: string,
   callSign: string,
   bookKey: string,
-  input: Pick<RegisterBookmakerInput, 'url' | 'username' | 'type' | 'maxBet' | 'chatId'>,
+  input: Pick<
+    RegisterBookmakerInput,
+    | 'url'
+    | 'username'
+    | 'type'
+    | 'maxBet'
+    | 'chatId'
+    | 'commissionPct'
+    | 'currency'
+    | 'holdTargetPct'
+    | 'initialBalance'
+    | 'fundingMethod'
+  >,
   vaultKey: string
 ): Promise<string> {
   const path = joinPath(profilesDir, `${code}.toml`);
@@ -123,8 +142,26 @@ export async function upsertProfileToml(
     type: input.type ?? 'pph',
     account: { username: input.username, vaultKey },
     ...(input.maxBet ? { limits: { maxBet: input.maxBet } } : {}),
+    ...(input.fundingMethod ? { funding: { method: input.fundingMethod } } : {}),
   };
   profile.books = books;
+  // Accounting terms — written only when explicitly provided, so omitted
+  // flags leave the profile unset (no implicit defaults).
+  if (
+    input.commissionPct !== undefined ||
+    input.currency !== undefined ||
+    input.holdTargetPct !== undefined
+  ) {
+    profile.settlement ??= {};
+    const settlement = profile.settlement as Record<string, unknown>;
+    if (input.commissionPct !== undefined) settlement.commissionPct = input.commissionPct;
+    if (input.currency !== undefined) settlement.currency = input.currency;
+    if (input.holdTargetPct !== undefined) settlement.holdTargetPct = input.holdTargetPct;
+  }
+  if (input.initialBalance !== undefined) {
+    profile.balance ??= {};
+    (profile.balance as Record<string, unknown>).initialCapitalRequirement = input.initialBalance;
+  }
   await Bun.write(path, `${Bun.TOML.stringify(profile).trimEnd()}\n`);
   return path;
 }
@@ -200,6 +237,17 @@ export async function registerPartnerBookmaker(
     input,
     vaultKey
   );
+
+  // Accounting stub — initializes the partner ledger (idempotent initial_capital
+  // row + fundStatus='ready' mirror in the profile). Local function for now;
+  // swappable for an external accounting service without changing this call.
+  await initLedgerForPartner({
+    code: input.code,
+    initialBalance: input.initialBalance,
+    currency: input.currency,
+    db,
+    profilesDir: input.profilesDir ?? PROFILES_DIR,
+  });
 
   return { nodeId, vaultKey, intakePath, profilePath };
 }

@@ -14,6 +14,7 @@ import { ensureProvisioningSchema } from '../provisioning/schema.ts';
 import { ensurePlatformCoverageSchema } from './platform-coverage.ts';
 import { ensureStateRegulationSchema } from './state-regulation.ts';
 import { ensureAccountLimitsSchema } from '../account-limits-repo.ts';
+import { ensurePartnerLedgerSchema } from '../partner-profile/ledger.ts';
 
 const TREE_NODE_COLUMNS = [
   ['email', 'TEXT'],
@@ -100,6 +101,7 @@ export function migrateSchema(db: Database): void {
   ensureMonitoringSchema(db);
   ensureStateRegulationSchema(db);
   ensureAccountLimitsSchema(db);
+  ensurePartnerLedgerSchema(db);
 
   const pdCols = new Set(
     (db.query('PRAGMA table_info(play_distribution)').all() as { name: string }[]).map(c => c.name)
