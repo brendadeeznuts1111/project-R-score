@@ -6,11 +6,87 @@ import {
   PARTNER_HISTORY_COLLAPSE_BACKLOG,
   PARTNER_HISTORY_GLOSSARY,
 } from '../public/portal/partner-history/glossary-map.js';
+import {
+  HEALTH_FIELD_CONCEPTS,
+  LIMIT_FIELD_CONCEPTS,
+  LIMIT_SURFACE_CONCEPTS,
+  PARTNER_HISTORY_SURFACE_CONCEPTS,
+  PARTNERS_SURFACE_CONCEPTS,
+  PORTAL_SEMANTIC_CONCEPT_KEYS,
+  PORTAL_SEMANTIC_CONCEPTS,
+  glossaryConceptForNodeType,
+} from '../lib/portal/semantic-vocabulary.ts';
 
 const HISTORY_HTML = 'public/portal/partner-history/index.html';
 const LIMIT_CARD = 'public/portal/components/limit-changes-card.js';
 
+/** Chrome ids historically gated by partners:integration:validate layer 7. */
+const PARTNER_LIMIT_UI_CHROME = [
+  'ops.panel.partner_limit_history',
+  'ops.panel.limit_overview',
+  'ops.summary.partner_limit_trace',
+  'ops.filter.account.all',
+  'ops.filter.sportsbook.all',
+  'ops.filter.window',
+  'ops.filter.window.48h',
+  'ops.filter.window.7d',
+  'ops.filter.window.30d',
+  'ops.metric.visible_changes',
+  'ops.metric.raises',
+  'ops.metric.decreases',
+  'ops.metric.sportsbooks',
+  'ops.metric.high_water',
+  'ops.metric.deltas',
+  'ops.metric.active_filters',
+  'ops.metric.proof_coverage',
+  'ops.table.recent_changes',
+  'ops.table.per_account',
+  'ops.table.limit_changes',
+  'ui.action.refresh',
+  'ui.action.export',
+  'ui.export.csv',
+  'ui.export.json',
+] as const;
+
 describe('partner-history portal', () => {
+  test('derives semantic keys from concepts and maps wire node_type at the boundary', () => {
+    expect(PORTAL_SEMANTIC_CONCEPT_KEYS).toEqual(
+      PORTAL_SEMANTIC_CONCEPTS.map(concept => concept.id)
+    );
+    expect(glossaryConceptForNodeType('partner')).toBe('ops.limits.partner');
+    expect(glossaryConceptForNodeType('agent')).toBe('ops.limits.agent');
+    expect(glossaryConceptForNodeType('sub_agent')).toBe('ops.limits.sub_agent');
+    expect(glossaryConceptForNodeType(null)).toBeNull();
+    expect(glossaryConceptForNodeType(undefined)).toBeNull();
+    expect(glossaryConceptForNodeType('')).toBeNull();
+    expect(glossaryConceptForNodeType('operator')).toBeNull();
+  });
+
+  test('partner-history surface covers chrome and UI-referenced portal concepts', () => {
+    const keySet = new Set<string>(PORTAL_SEMANTIC_CONCEPT_KEYS);
+    const surfaceIds = new Set<string>(Object.values(PARTNER_HISTORY_SURFACE_CONCEPTS));
+    const sharedIds = new Set<string>([
+      ...Object.values(LIMIT_FIELD_CONCEPTS),
+      ...Object.values(LIMIT_SURFACE_CONCEPTS),
+      ...Object.values(HEALTH_FIELD_CONCEPTS),
+      ...Object.values(PARTNERS_SURFACE_CONCEPTS),
+    ]);
+
+    for (const id of surfaceIds) {
+      expect(keySet.has(id), `surface ${id}`).toBe(true);
+    }
+    for (const id of PARTNER_LIMIT_UI_CHROME) {
+      expect(surfaceIds.has(id), `chrome ${id}`).toBe(true);
+    }
+    for (const [alias, concept] of Object.entries(PARTNER_HISTORY_GLOSSARY)) {
+      if (!keySet.has(concept)) continue; // domain-glossary owned (scrape.*, accounting.*, alert.*)
+      expect(
+        surfaceIds.has(concept) || sharedIds.has(concept),
+        `${alias} -> ${concept}`
+      ).toBe(true);
+    }
+  });
+
   test('exposes accessible, restorable history filters and tabs', async () => {
     const html = await Bun.file(HISTORY_HTML).text();
 
@@ -238,7 +314,7 @@ describe('partner-history portal', () => {
     );
     expect(PARTNER_HISTORY_COLLAPSE_BACKLOG.diffDelta).toBe('ops.limits.limit_delta');
     expect(PARTNER_HISTORY_COLLAPSE_BACKLOG.timeNow).toBe('section.recentLimitChanges');
-    expect(PARTNER_HISTORY_COLLAPSE_BACKLOG.roleOperator).toBe('ops.limits.roleType');
+    expect(PARTNER_HISTORY_COLLAPSE_BACKLOG.roleOperator).toBe('ops.limits.role_type');
 
     for (const [key, concept] of Object.entries(PARTNER_HISTORY_COLLAPSE_BACKLOG)) {
       expect(knownIds.has(concept), `${key} -> ${concept}`).toBe(true);

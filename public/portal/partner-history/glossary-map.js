@@ -168,7 +168,7 @@ export const PARTNER_HISTORY_COLLAPSE_BACKLOG = Object.freeze({
   printPageNumber: 'ui.semantic.artifact',
   printGeneratedAt: 'ui.semantic.status',
   printConfidential: 'ui.semantic.artifact',
-  printOperatorId: 'ops.limits.roleType',
+  printOperatorId: 'ops.limits.role_type',
 
   // Alerts (reuse existing alert.* / telegram topic)
   alertSlackLimit: 'alert.severity',
@@ -203,11 +203,11 @@ export const PARTNER_HISTORY_COLLAPSE_BACKLOG = Object.freeze({
   timeIsoTooltip: 'section.recentLimitChanges',
 
   // Permission gates
-  roleAdmin: 'ops.limits.roleType',
-  roleOperator: 'ops.limits.roleType',
-  roleAnalyst: 'ops.limits.roleType',
-  roleViewer: 'ops.limits.roleType',
-  roleSystem: 'ops.limits.roleType',
+  roleAdmin: 'ops.limits.role_type',
+  roleOperator: 'ops.limits.role_type',
+  roleAnalyst: 'ops.limits.role_type',
+  roleViewer: 'ops.limits.role_type',
+  roleSystem: 'ops.limits.role_type',
 });
 
 export function partnerHistoryGlossaryHref(concept) {

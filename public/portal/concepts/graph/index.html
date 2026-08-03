@@ -1,0 +1,287 @@
+<!doctype html>
+<!-- @see docs/portal-foundation.md — concept graph board; bake via bun run concept:graph:bake -->
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Concept graph · FactoryWager</title>
+    <meta name="theme-color" content="#0d1117" />
+    <meta name="application-name" content="FactoryWager" />
+    <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+    <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/portal/style.css" />
+    <style>
+      :root {
+        --bg: #0d1117;
+        --surface: #161b22;
+        --border: #30363d;
+        --text: #e6edf3;
+        --dim: #8b949e;
+        --accent: #58a6ff;
+      }
+      body {
+        margin: 0;
+        color: var(--text);
+        background:
+          radial-gradient(900px 480px at 8% -8%, #1b2838 0%, transparent 55%),
+          radial-gradient(700px 400px at 100% 0%, #1a222c 0%, transparent 50%),
+          var(--bg);
+      }
+      .cg-header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: baseline;
+        justify-content: space-between;
+        padding: 12px 18px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(22, 27, 34, 0.92);
+        backdrop-filter: blur(8px);
+        position: sticky;
+        top: 0;
+        z-index: 2;
+      }
+      .cg-header h1 {
+        font-size: 15px;
+        margin: 0;
+      }
+      .meta {
+        color: var(--dim);
+        font-size: 12px;
+        font-variant-numeric: tabular-nums;
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      label {
+        font-size: 12px;
+        color: var(--dim);
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      select,
+      input[type='search'],
+      input[type='text'] {
+        background: var(--bg);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 4px 8px;
+        font: inherit;
+        font-size: 12px;
+      }
+      button.chip {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 2px 8px;
+        font: inherit;
+        font-size: 11px;
+        cursor: pointer;
+      }
+      button.chip.active {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .cg-main {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        min-height: calc(100vh - 120px);
+      }
+      @media (max-width: 960px) {
+        .cg-main {
+          grid-template-columns: 1fr;
+        }
+      }
+      #canvas-wrap {
+        position: relative;
+        min-height: 70vh;
+        border-right: 1px solid var(--border);
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+        cursor: grab;
+      }
+      canvas:active {
+        cursor: grabbing;
+      }
+      aside {
+        padding: 14px 16px;
+        background: var(--surface);
+        overflow: auto;
+      }
+      aside h2 {
+        margin: 0 0 8px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--dim);
+      }
+      .stat {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        padding: 5px 0;
+        border-bottom: 1px solid rgba(48, 54, 61, 0.45);
+      }
+      .stat .k {
+        color: var(--dim);
+      }
+      #detail {
+        margin-top: 12px;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+      #detail .id {
+        font-family: ui-monospace, Menlo, monospace;
+        color: var(--accent);
+        word-break: break-all;
+      }
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 10px 0 4px;
+      }
+      .swatch {
+        font-size: 10px;
+        padding: 2px 7px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+      }
+      a {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+    <div class="cg-header">
+      <div>
+        <h1>Concept graph <span class="meta">v3</span></h1>
+        <div class="meta" id="summary">loading…</div>
+      </div>
+      <div class="controls">
+        <label
+          >Domain
+          <select id="domain">
+            <option value="">all</option>
+          </select>
+        </label>
+        <label
+          >Kind
+          <select id="kind">
+            <option value="">all</option>
+            <option value="used">used</option>
+            <option value="unused">unused</option>
+            <option value="surface-only">surface-only</option>
+            <option value="hub">hub</option>
+          </select>
+        </label>
+        <label
+          >Board
+          <select id="board">
+            <option value="">all</option>
+          </select>
+        </label>
+        <label
+          >seeAlso
+          <button type="button" class="chip active" data-layer="sameGroup">sameGroup</button>
+          <button type="button" class="chip active" data-layer="crossGroup">crossGroup</button>
+          <button type="button" class="chip active" data-layer="crossDomain">crossDomain</button>
+          <button type="button" class="chip active" data-layer="pageBridge">pageBridge</button>
+        </label>
+        <label
+          >Edges
+          <button type="button" class="chip active" data-ek="surface">surface</button>
+          <button type="button" class="chip active" data-ek="domainHub">hubs</button>
+        </label>
+        <label
+          >Hop
+          <button type="button" class="chip active" data-hop="0">Off</button>
+          <button type="button" class="chip" data-hop="1">1</button>
+          <button type="button" class="chip" data-hop="2">2</button>
+          <button type="button" class="chip" data-hop="3">3</button>
+        </label>
+        <label
+          >Search
+          <input id="q" type="search" placeholder="id or label" />
+        </label>
+        <label
+          >Path
+          <input id="pathTo" type="text" placeholder="target id" style="width: 140px" />
+        </label>
+        <label><input id="labels" type="checkbox" checked /> Labels</label>
+        <label><input id="usageSize" type="checkbox" checked /> Usage size</label>
+        <label><input id="freeze" type="checkbox" /> Freeze</label>
+        <button type="button" class="chip" id="exportPng">PNG</button>
+        <button type="button" class="chip" id="exportJson">JSON</button>
+        <a class="meta" href="/portal/concepts/">inventory</a>
+        <a class="meta" href="/registry/concepts-graph.json">bake</a>
+      </div>
+    </div>
+    <div class="cg-main">
+      <div id="canvas-wrap"><canvas id="c"></canvas></div>
+      <aside>
+        <h2>Summary</h2>
+        <div id="stats"></div>
+        <div class="legend" id="legend"></div>
+        <h2 style="margin-top: 14px">Boards</h2>
+        <div id="boards" class="meta"></div>
+        <h2 style="margin-top: 14px">Selection</h2>
+        <div id="detail" class="meta">
+          Click a node · hop 0–3 · layer chips · / search · f freeze · e PNG
+        </div>
+        <p class="meta" style="margin-top: 16px">
+          Live server: <code>bun run concept:graph -- --serve --BUNPORT</code>
+        </p>
+      </aside>
+    </div>
+    <script type="module" src="/portal/concepts/graph-board.js"></script>
+    <script type="module" src="/portal/data.js"></script>
+    <script type="module" src="/portal/topbar.js"></script>
+    <script type="module" src="/portal/components/sidebar.js"></script>
+    <footer class="footer" data-portal-chrome="footer">
+    <p>
+      <strong>FactoryWager</strong> ·
+      <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
+      <a href="/portal/ops/">Ops</a> ·
+      <a href="/portal/toc/">TOC</a> ·
+      <a href="/portal/partners/">Partners</a> ·
+      <a href="/portal/packages/">Packages</a> ·
+      <a href="/portal/brands/">Brands</a> ·
+      <a href="/portal/glossary/">Glossary</a> ·
+      <a href="/portal/surfaces/">Surfaces</a> ·
+      <a href="/portal/health/">Health</a> ·
+      <a href="/registry/portal-weave.json">Portal proof</a> ·
+      <a href="/portal/tools/">CLI Tools</a> ·
+      <a href="/portal/compliance/">Compliance</a> ·
+      <a href="/portal/limits/">Limits</a> ·
+      <a href="/portal/dod/">DOD</a> ·
+      <a href="/portal/env/">Env</a> ·
+      <a href="/portal/vault/">Vault</a> ·
+      <a href="/portal/failures/">Failures</a> ·
+      <a href="/portal/install-hygiene/">Install hygiene</a> ·
+      <a href="/registry/monorepo-health.json">Monorepo health</a> ·
+      <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </p>
+    <p class="footer-meta">
+      project-R-score · chrome <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a>
+      · <span data-footer-bun></span>
+      · <span data-footer-ts>…</span>
+    </p>
+  </footer>
+  <script type="module" src="/portal/components/footer.js"></script>
+</body>
+</html>

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
@@ -18,7 +19,14 @@ const TIMING_PATH = `${repoRoot}/reports/ci-core-timing.json`;
 
 type GateTiming = { name: string; ms: number; ok: boolean };
 
-const CORE_STEPS: Array<{ name: string; cmd: string[] }> = [
+type CoreStep = {
+  name: string;
+  cmd: string[];
+  /** Write captured stdout to this repo-relative artifact on success. */
+  writeOut?: string;
+};
+
+const CORE_STEPS: CoreStep[] = [
   {
     name: 'install-verify',
     cmd: ['bun', 'scripts/verify-install-cache.ts', '--strict', '--quiet'],
@@ -71,6 +79,11 @@ const CORE_STEPS: Array<{ name: string; cmd: string[] }> = [
     name: 'monorepo-health',
     cmd: ['bun', 'scripts/check-monorepo-health.ts', '--no-history', '--no-write'],
   },
+  {
+    name: 'concept-audit',
+    cmd: ['bun', 'run', 'concept:audit', '--', '--strict', '--output', 'json'],
+    writeOut: 'concept-audit.json',
+  },
 ];
 
 async function run(
@@ -101,7 +114,8 @@ const verbose = harnessArgs.includes('--verbose');
 const timings: GateTiming[] = [];
 
 for (const step of CORE_STEPS) {
-  const { code, ms, out } = await run(step.cmd, verbose);
+  // writeOut steps always capture stdout (needed for the artifact), even in verbose mode.
+  const { code, ms, out } = await run(step.cmd, verbose && !step.writeOut);
   timings.push({ name: step.name, ms, ok: code === 0 });
   if (!verbose) console.info(`${code === 0 ? '✓' : '✗'} ${step.name} (${ms}ms)`);
   if (code !== 0) {
@@ -114,6 +128,9 @@ for (const step of CORE_STEPS) {
       gates: timings,
     });
     process.exit(code);
+  }
+  if (step.writeOut) {
+    await Bun.write(`${repoRoot}/${step.writeOut}`, out);
   }
 }
 

@@ -25,7 +25,10 @@
 import { PARTNER_OPS_GLOSSARY_CONCEPT_IDS } from '../lib/telegram/partner-ops-glossary.ts';
 import { OPS_VIEW_MVP_CONCEPT_IDS } from '../lib/telegram/ops-view-glossary.ts';
 import { buildPerAccountAccountingView } from '../lib/telegram/ops-accounting-view.ts';
-import { PORTAL_SEMANTIC_CONCEPT_KEYS } from '../lib/portal/semantic-vocabulary.ts';
+import {
+  PARTNER_HISTORY_SURFACE_CONCEPTS,
+  PORTAL_SEMANTIC_CONCEPT_KEYS,
+} from '../lib/portal/semantic-vocabulary.ts';
 import {
   anchorConceptId,
   parsePartnerHash,
@@ -217,9 +220,12 @@ try {
 }
 
 // ── Layer 7: partner-limit-history UI chrome coverage ────────────────────────
-// Every human-readable string in that UI is glossary-governed: these chrome
-// ids must resolve in PORTAL_SEMANTIC_CONCEPT_KEYS. Data values ($-950,
-// "3 of 13") are computed and use these labels — they are not concepts.
+// Chrome ids are owned by PARTNER_HISTORY_SURFACE_CONCEPTS (derived keys).
+// Data values ($-950, "3 of 13") are computed and use these labels — they are
+// not concepts.
+const PARTNER_HISTORY_SURFACE_IDS = new Set<string>(
+  Object.values(PARTNER_HISTORY_SURFACE_CONCEPTS)
+);
 const PARTNER_LIMIT_UI_CHROME_CONCEPTS = [
   'ops.panel.partner_limit_history',
   'ops.panel.limit_overview',
@@ -250,6 +256,9 @@ const PARTNER_LIMIT_UI_CHROME_CONCEPTS = [
 for (const id of PARTNER_LIMIT_UI_CHROME_CONCEPTS) {
   if (!KEYS.includes(id)) {
     errs.push(`partner-limit-history chrome ${id} missing from PORTAL_SEMANTIC_CONCEPT_KEYS`);
+  }
+  if (!PARTNER_HISTORY_SURFACE_IDS.has(id)) {
+    errs.push(`partner-limit-history chrome ${id} missing from PARTNER_HISTORY_SURFACE_CONCEPTS`);
   }
 }
 

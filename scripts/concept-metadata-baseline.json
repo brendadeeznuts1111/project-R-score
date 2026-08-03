@@ -1,0 +1,5 @@
+{
+  "version": 1,
+  "description": "Portal concept ids grandfathered without correlationId. Empty after full provenance backfill — new ids must set correlationId.",
+  "grandfatheredIds": []
+}

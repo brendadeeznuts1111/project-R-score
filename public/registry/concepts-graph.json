@@ -1,0 +1,6138 @@
+{
+  "kind": "concept-graph",
+  "schemaVersion": 3,
+  "generatedAt": "2026-08-03T03:54:40.257Z",
+  "summary": {
+    "nodes": 133,
+    "edges": 546,
+    "seeAlsoEdges": 308,
+    "seeAlsoByLayer": {
+      "sameGroup": 84,
+      "crossGroup": 41,
+      "crossDomain": 63,
+      "pageBridge": 120
+    },
+    "surfaceEdges": 109,
+    "groupEdges": 0,
+    "domainHubEdges": 129,
+    "domains": 4,
+    "namespaces": 5,
+    "used": 72,
+    "unused": 31,
+    "surfaceOnly": 26,
+    "totalUsage": 386
+  },
+  "domainSummary": [
+    {
+      "domain": "portal",
+      "nodes": 81,
+      "edges": 220,
+      "usage": 199
+    },
+    {
+      "domain": "compliance",
+      "nodes": 27,
+      "edges": 57,
+      "usage": 186
+    },
+    {
+      "domain": "operations",
+      "nodes": 20,
+      "edges": 30,
+      "usage": 0
+    },
+    {
+      "domain": "infrastructure",
+      "nodes": 1,
+      "edges": 0,
+      "usage": 1
+    }
+  ],
+  "boardSummary": [
+    {
+      "board": "partner-history",
+      "concepts": 33
+    },
+    {
+      "board": "limits-fields",
+      "concepts": 28
+    },
+    {
+      "board": "limits",
+      "concepts": 21
+    },
+    {
+      "board": "account",
+      "concepts": 13
+    },
+    {
+      "board": "partners",
+      "concepts": 11
+    },
+    {
+      "board": "health-fields",
+      "concepts": 9
+    }
+  ],
+  "nodes": [
+    {
+      "id": "hub:domain:portal",
+      "label": "Portal",
+      "nodeKind": "domainHub",
+      "domain": "hub",
+      "domainLabel": "Portal",
+      "namespace": "hub",
+      "group": "domain.portal",
+      "provenance": "",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "hub",
+      "degree": 81,
+      "seeAlsoCount": 0
+    },
+    {
+      "id": "ui.semantic.artifact",
+      "label": "Artifact",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.semantic",
+      "provenance": "legacy",
+      "usage": 21,
+      "usageUi": 20,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "used",
+      "degree": 41,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ui.semantic.resources",
+      "label": "Resources",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.semantic",
+      "provenance": "legacy",
+      "usage": 2,
+      "usageUi": 1,
+      "usageSurface": 1,
+      "boards": [
+        "health-fields"
+      ],
+      "kind": "used",
+      "degree": 39,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ui.semantic.surface",
+      "label": "Surface",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.semantic",
+      "provenance": "legacy",
+      "usage": 2,
+      "usageUi": 1,
+      "usageSurface": 1,
+      "boards": [
+        "health-fields"
+      ],
+      "kind": "used",
+      "degree": 38,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ops.filter.account.all",
+      "label": "All accounts",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.filter",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 35,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "api.agent",
+      "label": "Agent API",
+      "nodeKind": "concept",
+      "domain": "infrastructure",
+      "domainLabel": "Infrastructure",
+      "namespace": "api",
+      "group": "api.agent",
+      "provenance": "legacy",
+      "usage": 2,
+      "usageUi": 1,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 32,
+      "seeAlsoCount": 4
+    },
+    {
+      "id": "page.limitPatterns",
+      "label": "Partner limit patterns",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.limitPatterns",
+      "provenance": "legacy",
+      "usage": 5,
+      "usageUi": 4,
+      "usageSurface": 1,
+      "boards": [
+        "limits"
+      ],
+      "kind": "used",
+      "degree": 30,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "hub:domain:compliance",
+      "label": "Compliance",
+      "nodeKind": "domainHub",
+      "domain": "hub",
+      "domainLabel": "Compliance",
+      "namespace": "hub",
+      "group": "domain.compliance",
+      "provenance": "",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "hub",
+      "degree": 27,
+      "seeAlsoCount": 0
+    },
+    {
+      "id": "page.partners",
+      "label": "Partners",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.partners",
+      "provenance": "legacy",
+      "usage": 13,
+      "usageUi": 12,
+      "usageSurface": 1,
+      "boards": [
+        "partners"
+      ],
+      "kind": "used",
+      "degree": 24,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.limits.account",
+      "label": "Limit account",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 24,
+      "usageUi": 22,
+      "usageSurface": 2,
+      "boards": [
+        "account",
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 21,
+      "seeAlsoCount": 4
+    },
+    {
+      "id": "hub:domain:operations",
+      "label": "Operations",
+      "nodeKind": "domainHub",
+      "domain": "hub",
+      "domainLabel": "Operations",
+      "namespace": "hub",
+      "group": "domain.operations",
+      "provenance": "",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "hub",
+      "degree": 20,
+      "seeAlsoCount": 0
+    },
+    {
+      "id": "ops.limits.limit_delta",
+      "label": "Limit delta",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 14,
+      "usageUi": 13,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 14,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ui.semantic.source",
+      "label": "Source",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.semantic",
+      "provenance": "legacy",
+      "usage": 5,
+      "usageUi": 3,
+      "usageSurface": 2,
+      "boards": [
+        "health-fields",
+        "partner-history"
+      ],
+      "kind": "used",
+      "degree": 14,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.limits.effective_limit",
+      "label": "Effective limit",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 14,
+      "usageUi": 13,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 12,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.limits.evidence_trace",
+      "label": "Limit evidence trace",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 21,
+      "usageUi": 18,
+      "usageSurface": 3,
+      "boards": [
+        "account",
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 11,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ui.action.filter",
+      "label": "Apply filters",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.action",
+      "provenance": "legacy",
+      "usage": 19,
+      "usageUi": 17,
+      "usageSurface": 2,
+      "boards": [
+        "limits",
+        "partner-history"
+      ],
+      "kind": "used",
+      "degree": 11,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "section.partnersTelegram",
+      "label": "Telegram package groups",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.partnersTelegram",
+      "provenance": "legacy",
+      "usage": 7,
+      "usageUi": 5,
+      "usageSurface": 2,
+      "boards": [
+        "account",
+        "partners"
+      ],
+      "kind": "used",
+      "degree": 11,
+      "seeAlsoCount": 6
+    },
+    {
+      "id": "section.partnersAccounting",
+      "label": "Accounting deals",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.partnersAccounting",
+      "provenance": "legacy",
+      "usage": 6,
+      "usageUi": 4,
+      "usageSurface": 2,
+      "boards": [
+        "account",
+        "partners"
+      ],
+      "kind": "used",
+      "degree": 11,
+      "seeAlsoCount": 6
+    },
+    {
+      "id": "ui.semantic.hostname",
+      "label": "Hostname",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.semantic",
+      "provenance": "legacy",
+      "usage": 2,
+      "usageUi": 1,
+      "usageSurface": 1,
+      "boards": [
+        "health-fields"
+      ],
+      "kind": "used",
+      "degree": 11,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ops.limits.pattern_surface",
+      "label": "Partner limit patterns",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 11,
+      "usageUi": 9,
+      "usageSurface": 2,
+      "boards": [
+        "account",
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 10,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.limits.jurisdiction_policy",
+      "label": "Jurisdiction policy",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 10,
+      "usageUi": 8,
+      "usageSurface": 2,
+      "boards": [
+        "account",
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 10,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.limits.role_type",
+      "label": "Role type",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 8,
+      "usageUi": 7,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 10,
+      "seeAlsoCount": 4
+    },
+    {
+      "id": "ops.limits.profile",
+      "label": "Account limit profile",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 5,
+      "usageUi": 3,
+      "usageSurface": 2,
+      "boards": [
+        "account",
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 10,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.limits.change_direction",
+      "label": "Limit change direction",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 19,
+      "usageUi": 18,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 9,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "section.partnersAccountsLimits",
+      "label": "Accounts and limits",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.partnersAccountsLimits",
+      "provenance": "legacy",
+      "usage": 4,
+      "usageUi": 3,
+      "usageSurface": 1,
+      "boards": [
+        "partners"
+      ],
+      "kind": "used",
+      "degree": 9,
+      "seeAlsoCount": 6
+    },
+    {
+      "id": "section.recentLimitChanges",
+      "label": "Recent limit changes",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.recentLimitChanges",
+      "provenance": "legacy",
+      "usage": 24,
+      "usageUi": 20,
+      "usageSurface": 4,
+      "boards": [
+        "account",
+        "limits",
+        "partner-history"
+      ],
+      "kind": "used",
+      "degree": 8,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.limits.influence_score",
+      "label": "Multi-factor influence",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 18,
+      "usageUi": 17,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 8,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.limits.sport",
+      "label": "Sport",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 8,
+      "usageUi": 7,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 8,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.limits.data_coverage",
+      "label": "Pattern evidence coverage",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 6,
+      "usageUi": 5,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 8,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.accountDossier",
+      "label": "Account dossier",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.accountDossier",
+      "provenance": "legacy",
+      "usage": 6,
+      "usageUi": 5,
+      "usageSurface": 1,
+      "boards": [
+        "account"
+      ],
+      "kind": "used",
+      "degree": 8,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "section.partnersDeposits",
+      "label": "Betting deposits",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.partnersDeposits",
+      "provenance": "legacy",
+      "usage": 4,
+      "usageUi": 3,
+      "usageSurface": 1,
+      "boards": [
+        "partners"
+      ],
+      "kind": "used",
+      "degree": 8,
+      "seeAlsoCount": 5
+    },
+    {
+      "id": "ui.filter.partnerId",
+      "label": "Account or partner filter",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.filter",
+      "provenance": "legacy",
+      "usage": 4,
+      "usageUi": 3,
+      "usageSurface": 1,
+      "boards": [
+        "limits"
+      ],
+      "kind": "used",
+      "degree": 8,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.limits.agent",
+      "label": "Downline agent",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 3,
+      "usageUi": 2,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 8,
+      "seeAlsoCount": 4
+    },
+    {
+      "id": "ops.limits.downline",
+      "label": "Downline",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 3,
+      "usageUi": 2,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 8,
+      "seeAlsoCount": 4
+    },
+    {
+      "id": "ops.limits.node",
+      "label": "Tree node",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 3,
+      "usageUi": 2,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 8,
+      "seeAlsoCount": 4
+    },
+    {
+      "id": "ops.filter.window",
+      "label": "Window filter",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.filter",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 8,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ui.filter.sportsbook",
+      "label": "Sportsbook filter",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.filter",
+      "provenance": "legacy",
+      "usage": 11,
+      "usageUi": 10,
+      "usageSurface": 1,
+      "boards": [
+        "limits"
+      ],
+      "kind": "used",
+      "degree": 7,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.limits.market_phase",
+      "label": "Market phase",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 8,
+      "usageUi": 7,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 7,
+      "seeAlsoCount": 4
+    },
+    {
+      "id": "section.perNodeBreakdown",
+      "label": "Per-node breakdown",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.perNodeBreakdown",
+      "provenance": "legacy",
+      "usage": 8,
+      "usageUi": 6,
+      "usageSurface": 2,
+      "boards": [
+        "limits",
+        "partner-history"
+      ],
+      "kind": "used",
+      "degree": 7,
+      "seeAlsoCount": 4
+    },
+    {
+      "id": "section.partnersOuts",
+      "label": "Partner outs",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.partnersOuts",
+      "provenance": "legacy",
+      "usage": 7,
+      "usageUi": 5,
+      "usageSurface": 2,
+      "boards": [
+        "account",
+        "partners"
+      ],
+      "kind": "used",
+      "degree": 7,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ui.action.reset",
+      "label": "Reset filters",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.action",
+      "provenance": "legacy",
+      "usage": 7,
+      "usageUi": 5,
+      "usageSurface": 2,
+      "boards": [
+        "limits",
+        "partner-history"
+      ],
+      "kind": "used",
+      "degree": 7,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.limits.monitoring_status",
+      "label": "Limit monitoring status",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 6,
+      "usageUi": 4,
+      "usageSurface": 2,
+      "boards": [
+        "account",
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 7,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.partnerHistory",
+      "label": "Partner limit history",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.partnerHistory",
+      "provenance": "legacy",
+      "usage": 6,
+      "usageUi": 5,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "used",
+      "degree": 7,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "section.downlineContext",
+      "label": "Partner to downline context",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.downlineContext",
+      "provenance": "legacy",
+      "usage": 6,
+      "usageUi": 4,
+      "usageSurface": 2,
+      "boards": [
+        "account",
+        "limits"
+      ],
+      "kind": "used",
+      "degree": 7,
+      "seeAlsoCount": 4
+    },
+    {
+      "id": "section.openingBaseline",
+      "label": "Sportsbook opening baseline",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.openingBaseline",
+      "provenance": "legacy",
+      "usage": 5,
+      "usageUi": 4,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "used",
+      "degree": 7,
+      "seeAlsoCount": 4
+    },
+    {
+      "id": "section.partnersPartnerMessage",
+      "label": "Partner messages",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.partnersPartnerMessage",
+      "provenance": "legacy",
+      "usage": 4,
+      "usageUi": 3,
+      "usageSurface": 1,
+      "boards": [
+        "partners"
+      ],
+      "kind": "used",
+      "degree": 7,
+      "seeAlsoCount": 5
+    },
+    {
+      "id": "section.accountLimitControl",
+      "label": "Account limit control",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.accountLimitControl",
+      "provenance": "legacy",
+      "usage": 3,
+      "usageUi": 2,
+      "usageSurface": 1,
+      "boards": [
+        "limits"
+      ],
+      "kind": "used",
+      "degree": 7,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.limits.tree",
+      "label": "Partner tree",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "surface-only",
+      "degree": 7,
+      "seeAlsoCount": 4
+    },
+    {
+      "id": "ops.metric.visible_changes",
+      "label": "Visible changes",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.metric",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 7,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ui.filter.profile",
+      "label": "Profile filter",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.filter",
+      "provenance": "legacy",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "limits"
+      ],
+      "kind": "surface-only",
+      "degree": 7,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.limits.prediction",
+      "label": "Limit raise prediction",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 7,
+      "usageUi": 6,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 6,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.limits.policy_code",
+      "label": "Policy code",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 6,
+      "usageUi": 4,
+      "usageSurface": 2,
+      "boards": [
+        "account",
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 6,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "section.sportsbookPatterns",
+      "label": "Sportsbook patterns",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.sportsbookPatterns",
+      "provenance": "legacy",
+      "usage": 5,
+      "usageUi": 4,
+      "usageSurface": 1,
+      "boards": [
+        "limits"
+      ],
+      "kind": "used",
+      "degree": 6,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "section.partnersOnboard",
+      "label": "Onboard",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.partnersOnboard",
+      "provenance": "legacy",
+      "usage": 4,
+      "usageUi": 3,
+      "usageSurface": 1,
+      "boards": [
+        "partners"
+      ],
+      "kind": "used",
+      "degree": 6,
+      "seeAlsoCount": 4
+    },
+    {
+      "id": "ui.route.partnerHash",
+      "label": "Partner hash route",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.route",
+      "provenance": "legacy",
+      "usage": 4,
+      "usageUi": 3,
+      "usageSurface": 1,
+      "boards": [
+        "partners"
+      ],
+      "kind": "used",
+      "degree": 6,
+      "seeAlsoCount": 4
+    },
+    {
+      "id": "ops.limits.multi_structure",
+      "label": "Multi / parlay structure",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 3,
+      "usageUi": 2,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 6,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.limits.partner",
+      "label": "Partner",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 3,
+      "usageUi": 2,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 6,
+      "seeAlsoCount": 4
+    },
+    {
+      "id": "ops.limits.sub_agent",
+      "label": "Sub-agent",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 3,
+      "usageUi": 2,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 6,
+      "seeAlsoCount": 4
+    },
+    {
+      "id": "section.dataConnectionAudit",
+      "label": "Data connection audit",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.dataConnectionAudit",
+      "provenance": "legacy",
+      "usage": 3,
+      "usageUi": 2,
+      "usageSurface": 1,
+      "boards": [
+        "limits"
+      ],
+      "kind": "used",
+      "degree": 6,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "section.stateZipPatterns",
+      "label": "State and ZIP patterns",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.stateZipPatterns",
+      "provenance": "legacy",
+      "usage": 3,
+      "usageUi": 2,
+      "usageSurface": 1,
+      "boards": [
+        "limits"
+      ],
+      "kind": "used",
+      "degree": 6,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "section.jurisdictionCatalog",
+      "label": "Jurisdiction policy catalog",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.jurisdictionCatalog",
+      "provenance": "legacy",
+      "usage": 2,
+      "usageUi": 1,
+      "usageSurface": 1,
+      "boards": [
+        "limits"
+      ],
+      "kind": "used",
+      "degree": 6,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ui.filter.jurisdiction",
+      "label": "Jurisdiction filter",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.filter",
+      "provenance": "legacy",
+      "usage": 2,
+      "usageUi": 1,
+      "usageSurface": 1,
+      "boards": [
+        "limits"
+      ],
+      "kind": "used",
+      "degree": 6,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.panel.partner_limit_history",
+      "label": "Partner limit history",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.panel",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 6,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ui.semantic.status",
+      "label": "Status",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.semantic",
+      "provenance": "legacy",
+      "usage": 15,
+      "usageUi": 13,
+      "usageSurface": 2,
+      "boards": [
+        "health-fields",
+        "partner-history"
+      ],
+      "kind": "used",
+      "degree": 5,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ops.limits.market_type",
+      "label": "Market type",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 6,
+      "usageUi": 5,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 5,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.limits.league",
+      "label": "League or tour",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 5,
+      "usageUi": 4,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 5,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "section.limitRaisePrediction",
+      "label": "Limit raise prediction",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.limitRaisePrediction",
+      "provenance": "legacy",
+      "usage": 5,
+      "usageUi": 4,
+      "usageSurface": 1,
+      "boards": [
+        "limits"
+      ],
+      "kind": "used",
+      "degree": 5,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.limits.competition",
+      "label": "Competition tier",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 3,
+      "usageUi": 2,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 5,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.limits.event_country",
+      "label": "Event host country",
+      "nodeKind": "concept",
+      "domain": "compliance",
+      "domainLabel": "Compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "provenance": "legacy",
+      "usage": 3,
+      "usageUi": 2,
+      "usageSurface": 1,
+      "boards": [
+        "limits-fields"
+      ],
+      "kind": "used",
+      "degree": 5,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "section.patternSummary",
+      "label": "Pattern summary",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.patternSummary",
+      "provenance": "legacy",
+      "usage": 3,
+      "usageUi": 2,
+      "usageSurface": 1,
+      "boards": [
+        "limits"
+      ],
+      "kind": "used",
+      "degree": 5,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ui.action.searchProfiles",
+      "label": "Search profiles",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.action",
+      "provenance": "legacy",
+      "usage": 3,
+      "usageUi": 2,
+      "usageSurface": 1,
+      "boards": [
+        "limits"
+      ],
+      "kind": "used",
+      "degree": 5,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ui.filter.zipPrefix",
+      "label": "ZIP-prefix filter",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.filter",
+      "provenance": "legacy",
+      "usage": 3,
+      "usageUi": 2,
+      "usageSurface": 1,
+      "boards": [
+        "limits"
+      ],
+      "kind": "used",
+      "degree": 5,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "section.complianceKpis",
+      "label": "Compliance policy KPIs",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.complianceKpis",
+      "provenance": "legacy",
+      "usage": 2,
+      "usageUi": 1,
+      "usageSurface": 1,
+      "boards": [
+        "limits"
+      ],
+      "kind": "used",
+      "degree": 5,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ui.filter.state",
+      "label": "State filter",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.filter",
+      "provenance": "legacy",
+      "usage": 2,
+      "usageUi": 1,
+      "usageSurface": 1,
+      "boards": [
+        "limits"
+      ],
+      "kind": "used",
+      "degree": 5,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ui.semantic.version",
+      "label": "Version",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.semantic",
+      "provenance": "legacy",
+      "usage": 2,
+      "usageUi": 1,
+      "usageSurface": 1,
+      "boards": [
+        "health-fields"
+      ],
+      "kind": "used",
+      "degree": 5,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ops.metric.active_filters",
+      "label": "Active filters",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.metric",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 5,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ops.metric.deltas",
+      "label": "Deltas",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.metric",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 5,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ops.summary.partner_limit_trace",
+      "label": "Partner limit trace",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.summary",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 5,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ui.semantic.tone",
+      "label": "Tone",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.semantic",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 5,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "section.partnersBookDetail",
+      "label": "Book detail",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.partnersBookDetail",
+      "provenance": "legacy",
+      "usage": 4,
+      "usageUi": 3,
+      "usageSurface": 1,
+      "boards": [
+        "partners"
+      ],
+      "kind": "used",
+      "degree": 4,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "section.partnersTags",
+      "label": "Partner tag filter bar",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "section",
+      "group": "section.partnersTags",
+      "provenance": "legacy",
+      "usage": 4,
+      "usageUi": 3,
+      "usageSurface": 1,
+      "boards": [
+        "partners"
+      ],
+      "kind": "used",
+      "degree": 4,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "page.toc",
+      "label": "TOC operations",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.toc",
+      "provenance": "legacy",
+      "usage": 2,
+      "usageUi": 2,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "used",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ui.semantic.kind",
+      "label": "Kind",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.semantic",
+      "provenance": "legacy",
+      "usage": 2,
+      "usageUi": 1,
+      "usageSurface": 1,
+      "boards": [
+        "health-fields"
+      ],
+      "kind": "used",
+      "degree": 4,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ui.semantic.plane",
+      "label": "Plane",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.semantic",
+      "provenance": "legacy",
+      "usage": 2,
+      "usageUi": 1,
+      "usageSurface": 1,
+      "boards": [
+        "health-fields"
+      ],
+      "kind": "used",
+      "degree": 4,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ui.semantic.port",
+      "label": "Port",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.semantic",
+      "provenance": "legacy",
+      "usage": 2,
+      "usageUi": 1,
+      "usageSurface": 1,
+      "boards": [
+        "health-fields"
+      ],
+      "kind": "used",
+      "degree": 4,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ops.filter.sportsbook.all",
+      "label": "All sportsbooks",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.filter",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 4,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ops.metric.decreases",
+      "label": "Decreases",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.metric",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 4,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ops.metric.high_water",
+      "label": "High-water",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.metric",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 4,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ops.metric.proof_coverage",
+      "label": "Proof coverage",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.metric",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 4,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ops.metric.raises",
+      "label": "Raises",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.metric",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 4,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ops.metric.sportsbooks",
+      "label": "Sportsbooks",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.metric",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 4,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ops.panel.limit_overview",
+      "label": "Limit overview",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.panel",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 4,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ops.table.limit_changes",
+      "label": "Limit changes",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.table",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 4,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ops.table.per_account",
+      "label": "Per account",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.table",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 4,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ops.table.recent_changes",
+      "label": "Recent changes",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.table",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 4,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ui.action.export",
+      "label": "Export",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.action",
+      "provenance": "legacy",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 4,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "ui.action.refresh",
+      "label": "Refresh",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.action",
+      "provenance": "legacy",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 4,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "page.bookmakers",
+      "label": "Bookmaker registry",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.bookmakers",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.brandKeymap",
+      "label": "Brand keymap",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.brandKeymap",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.bunfig",
+      "label": "Bunfig",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.bunfig",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.catalog",
+      "label": "Account catalog",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.catalog",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.compliance",
+      "label": "Compliance",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.compliance",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.concepts",
+      "label": "Concept inventory",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.concepts",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.conceptsGraph",
+      "label": "Concept graph",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.conceptsGraph",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.consoleFormat",
+      "label": "Console format",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.consoleFormat",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.dashboard",
+      "label": "Executive dashboard",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.dashboard",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.doctor",
+      "label": "Portal doctor",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.doctor",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.dodReview",
+      "label": "Definition-of-done review",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.dodReview",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.environment",
+      "label": "Environment inventory",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.environment",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.factoryRegistry",
+      "label": "Factory registry surface",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.factoryRegistry",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.failures",
+      "label": "Test failures",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.failures",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.glossary",
+      "label": "Domain glossary",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.glossary",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.health",
+      "label": "Health",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.health",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.identity",
+      "label": "Identity",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.identity",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.installHygiene",
+      "label": "Install hygiene",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.installHygiene",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.limitForecastLab",
+      "label": "Limits forecast lab",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.limitForecastLab",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.operations",
+      "label": "Operations",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.operations",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.packages",
+      "label": "Packages map",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.packages",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.registry",
+      "label": "Factory registry",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.registry",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.science",
+      "label": "Science lab",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.science",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.skills",
+      "label": "Skills",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.skills",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.surfaces",
+      "label": "Surface inventory",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.surfaces",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.tennis",
+      "label": "Tennis desk",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.tennis",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.tools",
+      "label": "CLI tools",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.tools",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "page.vault",
+      "label": "Vault",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.vault",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ui.semantic.package",
+      "label": "Package",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.semantic",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 4,
+      "seeAlsoCount": 3
+    },
+    {
+      "id": "ops.filter.window.30d",
+      "label": "30 days",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.filter",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 3,
+      "seeAlsoCount": 1
+    },
+    {
+      "id": "ops.filter.window.48h",
+      "label": "48 hours",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.filter",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 3,
+      "seeAlsoCount": 1
+    },
+    {
+      "id": "ops.filter.window.7d",
+      "label": "7 days",
+      "nodeKind": "concept",
+      "domain": "operations",
+      "domainLabel": "Operations",
+      "namespace": "ops",
+      "group": "ops.filter",
+      "provenance": "PR#228",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 3,
+      "seeAlsoCount": 1
+    },
+    {
+      "id": "ui.export.csv",
+      "label": "CSV export",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.export",
+      "provenance": "legacy",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 3,
+      "seeAlsoCount": 1
+    },
+    {
+      "id": "ui.export.json",
+      "label": "JSON export",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.export",
+      "provenance": "legacy",
+      "usage": 1,
+      "usageUi": 0,
+      "usageSurface": 1,
+      "boards": [
+        "partner-history"
+      ],
+      "kind": "surface-only",
+      "degree": 3,
+      "seeAlsoCount": 1
+    },
+    {
+      "id": "ui.semantic.type",
+      "label": "Semantic type",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "ui",
+      "group": "ui.semantic",
+      "provenance": "legacy",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "unused",
+      "degree": 3,
+      "seeAlsoCount": 2
+    },
+    {
+      "id": "hub:domain:infrastructure",
+      "label": "Infrastructure",
+      "nodeKind": "domainHub",
+      "domain": "hub",
+      "domainLabel": "Infrastructure",
+      "namespace": "hub",
+      "group": "domain.infrastructure",
+      "provenance": "",
+      "usage": 0,
+      "usageUi": 0,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "hub",
+      "degree": 1,
+      "seeAlsoCount": 0
+    }
+  ],
+  "edges": [
+    {
+      "source": "api.agent",
+      "target": "hub:domain:infrastructure",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.account",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.agent",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.change_direction",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.competition",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.data_coverage",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.downline",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.effective_limit",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.event_country",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.evidence_trace",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.influence_score",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.jurisdiction_policy",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.league",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.limit_delta",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.market_phase",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.market_type",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.monitoring_status",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.multi_structure",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.node",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.partner",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.pattern_surface",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.pattern_surface",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.policy_code",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.prediction",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.profile",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.role_type",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.sport",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.sub_agent",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ops.limits.tree",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "api.agent",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "api.agent",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.filter.sportsbook.all",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.filter.window",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.filter.window",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.filter.window.30d",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.filter.window.48h",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.filter.window.7d",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.metric.active_filters",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.metric.decreases",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.metric.deltas",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.metric.high_water",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.metric.proof_coverage",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.metric.raises",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.metric.sportsbooks",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.metric.visible_changes",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.panel.limit_overview",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.panel.partner_limit_history",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.summary.partner_limit_trace",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.table.limit_changes",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.table.per_account",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ops.table.recent_changes",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "page.partnerHistory",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "section.openingBaseline",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "section.perNodeBreakdown",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "section.recentLimitChanges",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ui.action.export",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ui.action.filter",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ui.action.refresh",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ui.action.reset",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ui.export.csv",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ui.export.json",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ui.filter.partnerId",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ui.semantic.artifact",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ui.semantic.source",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.account.all",
+      "target": "ui.semantic.status",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.filter.sportsbook.all",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.filter.sportsbook.all",
+      "target": "ops.filter.window",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.filter.sportsbook.all",
+      "target": "ui.filter.sportsbook",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.filter.window",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.filter.window",
+      "target": "ops.filter.window.48h",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.filter.window",
+      "target": "ui.action.filter",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.filter.window.30d",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.filter.window.30d",
+      "target": "ops.filter.window",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.filter.window.48h",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.filter.window.7d",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.filter.window.7d",
+      "target": "ops.filter.window",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.account",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.account",
+      "target": "ops.limits.evidence_trace",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.account",
+      "target": "ops.limits.evidence_trace",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.limits.account",
+      "target": "ops.limits.jurisdiction_policy",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.limits.account",
+      "target": "ops.limits.monitoring_status",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.limits.account",
+      "target": "ops.limits.node",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.account",
+      "target": "ops.limits.pattern_surface",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.limits.account",
+      "target": "ops.limits.policy_code",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.limits.account",
+      "target": "ops.limits.profile",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.account",
+      "target": "ops.limits.profile",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.limits.account",
+      "target": "ops.limits.role_type",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.account",
+      "target": "page.accountDossier",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.limits.account",
+      "target": "section.downlineContext",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.limits.account",
+      "target": "section.partnersAccounting",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.limits.account",
+      "target": "section.partnersOuts",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.limits.account",
+      "target": "section.partnersTelegram",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.limits.account",
+      "target": "section.recentLimitChanges",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ops.limits.agent",
+      "target": "api.agent",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.limits.agent",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.agent",
+      "target": "ops.limits.sub_agent",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.change_direction",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.change_direction",
+      "target": "ops.limits.effective_limit",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.change_direction",
+      "target": "ops.limits.limit_delta",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.change_direction",
+      "target": "ui.semantic.tone",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.limits.competition",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.competition",
+      "target": "ops.limits.event_country",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.competition",
+      "target": "ops.limits.sport",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.data_coverage",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.data_coverage",
+      "target": "ops.limits.evidence_trace",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.data_coverage",
+      "target": "ui.semantic.source",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.limits.downline",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.downline",
+      "target": "ops.limits.agent",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.downline",
+      "target": "ops.limits.sub_agent",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.downline",
+      "target": "section.downlineContext",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.limits.effective_limit",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.effective_limit",
+      "target": "ops.limits.profile",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.effective_limit",
+      "target": "ui.semantic.source",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.limits.event_country",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.event_country",
+      "target": "ops.limits.sport",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.evidence_trace",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.evidence_trace",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.limits.influence_score",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.influence_score",
+      "target": "ops.limits.data_coverage",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.influence_score",
+      "target": "ops.limits.evidence_trace",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.influence_score",
+      "target": "ops.limits.prediction",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.jurisdiction_policy",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.jurisdiction_policy",
+      "target": "ops.limits.account",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.jurisdiction_policy",
+      "target": "ops.limits.effective_limit",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.jurisdiction_policy",
+      "target": "ops.limits.policy_code",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.league",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.league",
+      "target": "ops.limits.competition",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.league",
+      "target": "ops.limits.event_country",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.limit_delta",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.limit_delta",
+      "target": "ops.limits.effective_limit",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.market_phase",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.market_phase",
+      "target": "ops.limits.change_direction",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.market_phase",
+      "target": "ops.limits.effective_limit",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.market_phase",
+      "target": "ops.limits.market_type",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.market_phase",
+      "target": "ops.limits.multi_structure",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.market_type",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.market_type",
+      "target": "ops.limits.multi_structure",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.monitoring_status",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.monitoring_status",
+      "target": "ops.limits.evidence_trace",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.monitoring_status",
+      "target": "ui.semantic.tone",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.limits.multi_structure",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.multi_structure",
+      "target": "ops.limits.effective_limit",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.node",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.node",
+      "target": "ops.limits.agent",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.node",
+      "target": "ops.limits.role_type",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.node",
+      "target": "ops.limits.tree",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.partner",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.partner",
+      "target": "ops.limits.agent",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.partner",
+      "target": "ops.limits.downline",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.partner",
+      "target": "ops.limits.tree",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.pattern_surface",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.pattern_surface",
+      "target": "ops.limits.influence_score",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.pattern_surface",
+      "target": "ops.limits.limit_delta",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.pattern_surface",
+      "target": "ops.limits.prediction",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.policy_code",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.policy_code",
+      "target": "ui.semantic.source",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.limits.policy_code",
+      "target": "ui.semantic.version",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.limits.prediction",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.prediction",
+      "target": "ops.limits.limit_delta",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.profile",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.profile",
+      "target": "ops.limits.jurisdiction_policy",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.profile",
+      "target": "ops.limits.monitoring_status",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.role_type",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.role_type",
+      "target": "ops.limits.agent",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.role_type",
+      "target": "ops.limits.partner",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.role_type",
+      "target": "ops.limits.sub_agent",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.sport",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.sport",
+      "target": "ops.limits.effective_limit",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.sport",
+      "target": "ops.limits.league",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.sport",
+      "target": "ops.limits.market_type",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.sub_agent",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.sub_agent",
+      "target": "ops.limits.node",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.tree",
+      "target": "hub:domain:compliance",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.limits.tree",
+      "target": "ops.limits.downline",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.tree",
+      "target": "ops.limits.role_type",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.limits.tree",
+      "target": "section.downlineContext",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.metric.active_filters",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.metric.active_filters",
+      "target": "ui.action.filter",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.metric.active_filters",
+      "target": "ui.action.reset",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.metric.decreases",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.metric.decreases",
+      "target": "ops.limits.change_direction",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.metric.decreases",
+      "target": "ops.limits.limit_delta",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.metric.deltas",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.metric.deltas",
+      "target": "ops.limits.limit_delta",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.metric.deltas",
+      "target": "ops.metric.visible_changes",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.metric.high_water",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.metric.high_water",
+      "target": "ops.limits.effective_limit",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.metric.high_water",
+      "target": "ops.limits.limit_delta",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.metric.proof_coverage",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.metric.proof_coverage",
+      "target": "ops.limits.data_coverage",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.metric.proof_coverage",
+      "target": "ops.limits.evidence_trace",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.metric.raises",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.metric.raises",
+      "target": "ops.limits.change_direction",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.metric.raises",
+      "target": "ops.limits.limit_delta",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.metric.sportsbooks",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.metric.sportsbooks",
+      "target": "ops.metric.visible_changes",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.metric.sportsbooks",
+      "target": "ui.filter.sportsbook",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.metric.visible_changes",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.metric.visible_changes",
+      "target": "ops.limits.limit_delta",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.metric.visible_changes",
+      "target": "ops.metric.active_filters",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.panel.limit_overview",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.panel.limit_overview",
+      "target": "ops.limits.effective_limit",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.panel.limit_overview",
+      "target": "ops.panel.partner_limit_history",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ops.panel.partner_limit_history",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.panel.partner_limit_history",
+      "target": "ops.limits.pattern_surface",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.panel.partner_limit_history",
+      "target": "page.partnerHistory",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "ops.panel.partner_limit_history",
+      "target": "section.openingBaseline",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.summary.partner_limit_trace",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.summary.partner_limit_trace",
+      "target": "ops.limits.evidence_trace",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.summary.partner_limit_trace",
+      "target": "ops.limits.limit_delta",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.summary.partner_limit_trace",
+      "target": "ops.metric.deltas",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ops.table.limit_changes",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.table.limit_changes",
+      "target": "ops.limits.limit_delta",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.table.limit_changes",
+      "target": "section.dataConnectionAudit",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.table.per_account",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.table.per_account",
+      "target": "ops.limits.account",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.table.per_account",
+      "target": "ops.limits.downline",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ops.table.recent_changes",
+      "target": "hub:domain:operations",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ops.table.recent_changes",
+      "target": "ops.metric.visible_changes",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ops.table.recent_changes",
+      "target": "section.recentLimitChanges",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "page.accountDossier",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.accountDossier",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.accountDossier",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.accountDossier",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.bookmakers",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.bookmakers",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.bookmakers",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.bookmakers",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.brandKeymap",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.brandKeymap",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.brandKeymap",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.brandKeymap",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.bunfig",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.bunfig",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.bunfig",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.bunfig",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.catalog",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.catalog",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.catalog",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.catalog",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.compliance",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.compliance",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.compliance",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.compliance",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.concepts",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.concepts",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.concepts",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.concepts",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.conceptsGraph",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.conceptsGraph",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.conceptsGraph",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.conceptsGraph",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.consoleFormat",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.consoleFormat",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.consoleFormat",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.consoleFormat",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.dashboard",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.dashboard",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.dashboard",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.dashboard",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.doctor",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.doctor",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.doctor",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.doctor",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.dodReview",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.dodReview",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.dodReview",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.dodReview",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.environment",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.environment",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.environment",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.environment",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.factoryRegistry",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.factoryRegistry",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.factoryRegistry",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.factoryRegistry",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.failures",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.failures",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.failures",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.failures",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.glossary",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.glossary",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.glossary",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.glossary",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.health",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.health",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.health",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.health",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.identity",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.identity",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.identity",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.identity",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.installHygiene",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.installHygiene",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.installHygiene",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.installHygiene",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.limitForecastLab",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.limitForecastLab",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.limitForecastLab",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.limitForecastLab",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "section.accountLimitControl",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "section.complianceKpis",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "section.dataConnectionAudit",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "section.downlineContext",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "section.jurisdictionCatalog",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "section.limitRaisePrediction",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "section.patternSummary",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "section.perNodeBreakdown",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "section.recentLimitChanges",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "section.sportsbookPatterns",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "section.stateZipPatterns",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "ui.action.filter",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "ui.action.reset",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "ui.action.searchProfiles",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "ui.filter.jurisdiction",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "ui.filter.partnerId",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "ui.filter.profile",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "ui.filter.sportsbook",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "ui.filter.state",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "ui.filter.zipPrefix",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.limitPatterns",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.operations",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.operations",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.operations",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.operations",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.packages",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.packages",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.packages",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.packages",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.partnerHistory",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.partnerHistory",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.partnerHistory",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.partnerHistory",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.partners",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.partners",
+      "target": "section.partnersAccounting",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.partners",
+      "target": "section.partnersAccountsLimits",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.partners",
+      "target": "section.partnersBookDetail",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.partners",
+      "target": "section.partnersDeposits",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.partners",
+      "target": "section.partnersOnboard",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.partners",
+      "target": "section.partnersOuts",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.partners",
+      "target": "section.partnersPartnerMessage",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.partners",
+      "target": "section.partnersTags",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.partners",
+      "target": "section.partnersTelegram",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.partners",
+      "target": "ui.route.partnerHash",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "page.partners",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.partners",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.partners",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.registry",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.registry",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.registry",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.registry",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.science",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.science",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.science",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.science",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.skills",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.skills",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.skills",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.skills",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.surfaces",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.surfaces",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.surfaces",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.surfaces",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.tennis",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.tennis",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.tennis",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.tennis",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.toc",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.toc",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.toc",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.toc",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.tools",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.tools",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.tools",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.tools",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.vault",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.vault",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.vault",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.vault",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.accountLimitControl",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.accountLimitControl",
+      "target": "ops.limits.monitoring_status",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.accountLimitControl",
+      "target": "ops.limits.profile",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.accountLimitControl",
+      "target": "page.limitPatterns",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.complianceKpis",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.complianceKpis",
+      "target": "ops.limits.evidence_trace",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.complianceKpis",
+      "target": "ops.limits.jurisdiction_policy",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.complianceKpis",
+      "target": "page.limitPatterns",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.dataConnectionAudit",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.dataConnectionAudit",
+      "target": "ops.limits.data_coverage",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.downlineContext",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.downlineContext",
+      "target": "ops.limits.role_type",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.jurisdictionCatalog",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.jurisdictionCatalog",
+      "target": "page.limitPatterns",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.jurisdictionCatalog",
+      "target": "section.dataConnectionAudit",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.jurisdictionCatalog",
+      "target": "section.limitRaisePrediction",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.limitRaisePrediction",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.limitRaisePrediction",
+      "target": "ops.limits.prediction",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.limitRaisePrediction",
+      "target": "section.dataConnectionAudit",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.openingBaseline",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.openingBaseline",
+      "target": "ops.limits.market_phase",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.openingBaseline",
+      "target": "ops.limits.multi_structure",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.openingBaseline",
+      "target": "ops.limits.sport",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.openingBaseline",
+      "target": "page.partnerHistory",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.partnersAccounting",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.partnersAccounting",
+      "target": "page.accountDossier",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.partnersAccounting",
+      "target": "page.partners",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.partnersAccounting",
+      "target": "section.partnersAccountsLimits",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.partnersAccounting",
+      "target": "section.partnersDeposits",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.partnersAccounting",
+      "target": "section.partnersPartnerMessage",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.partnersAccountsLimits",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.partnersAccountsLimits",
+      "target": "page.accountDossier",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.partnersAccountsLimits",
+      "target": "page.partners",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.partnersAccountsLimits",
+      "target": "section.partnersDeposits",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.partnersAccountsLimits",
+      "target": "section.partnersOnboard",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.partnersBookDetail",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.partnersBookDetail",
+      "target": "page.partners",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.partnersDeposits",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.partnersDeposits",
+      "target": "page.partners",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.partnersDeposits",
+      "target": "section.partnersPartnerMessage",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.partnersOnboard",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.partnersOnboard",
+      "target": "page.partners",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.partnersOnboard",
+      "target": "section.partnersAccounting",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.partnersOnboard",
+      "target": "section.partnersTelegram",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.partnersOuts",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.partnersOuts",
+      "target": "page.partners",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.partnersOuts",
+      "target": "section.partnersBookDetail",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.partnersOuts",
+      "target": "section.partnersDeposits",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.partnersPartnerMessage",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.partnersPartnerMessage",
+      "target": "page.partners",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.partnersPartnerMessage",
+      "target": "section.partnersAccountsLimits",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.partnersTags",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.partnersTags",
+      "target": "page.partners",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.partnersTags",
+      "target": "ui.filter.partnerId",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.partnersTelegram",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.partnersTelegram",
+      "target": "page.accountDossier",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.partnersTelegram",
+      "target": "page.partners",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.partnersTelegram",
+      "target": "section.partnersAccounting",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.partnersTelegram",
+      "target": "section.partnersAccountsLimits",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.partnersTelegram",
+      "target": "section.partnersDeposits",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.partnersTelegram",
+      "target": "section.partnersPartnerMessage",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.patternSummary",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.patternSummary",
+      "target": "ops.limits.data_coverage",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.patternSummary",
+      "target": "ops.limits.pattern_surface",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.patternSummary",
+      "target": "page.limitPatterns",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.perNodeBreakdown",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.perNodeBreakdown",
+      "target": "ops.limits.influence_score",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.perNodeBreakdown",
+      "target": "ops.limits.node",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.perNodeBreakdown",
+      "target": "ops.limits.role_type",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.recentLimitChanges",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.recentLimitChanges",
+      "target": "ops.limits.change_direction",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.recentLimitChanges",
+      "target": "ops.limits.limit_delta",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.recentLimitChanges",
+      "target": "section.perNodeBreakdown",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "section.sportsbookPatterns",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.sportsbookPatterns",
+      "target": "ops.limits.influence_score",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.sportsbookPatterns",
+      "target": "ops.limits.pattern_surface",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.sportsbookPatterns",
+      "target": "page.limitPatterns",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.stateZipPatterns",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "section.stateZipPatterns",
+      "target": "ops.limits.jurisdiction_policy",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "section.stateZipPatterns",
+      "target": "page.limitPatterns",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "section.stateZipPatterns",
+      "target": "section.downlineContext",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ui.action.export",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.action.export",
+      "target": "ui.export.csv",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ui.action.export",
+      "target": "ui.export.json",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ui.action.filter",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.action.refresh",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.action.refresh",
+      "target": "ui.action.filter",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.action.refresh",
+      "target": "ui.semantic.source",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ui.action.reset",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.action.reset",
+      "target": "ui.action.filter",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.action.reset",
+      "target": "ui.filter.jurisdiction",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ui.action.reset",
+      "target": "ui.filter.profile",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ui.action.searchProfiles",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.action.searchProfiles",
+      "target": "ops.limits.profile",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ui.action.searchProfiles",
+      "target": "section.accountLimitControl",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ui.export.csv",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.export.json",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.filter.jurisdiction",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.filter.jurisdiction",
+      "target": "ops.limits.jurisdiction_policy",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ui.filter.jurisdiction",
+      "target": "section.jurisdictionCatalog",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ui.filter.jurisdiction",
+      "target": "ui.filter.state",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.filter.partnerId",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.filter.partnerId",
+      "target": "ops.limits.account",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ui.filter.partnerId",
+      "target": "ui.action.filter",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ui.filter.partnerId",
+      "target": "ui.filter.profile",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.filter.profile",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.filter.profile",
+      "target": "ops.limits.profile",
+      "kind": "seeAlso",
+      "weight": 1.5,
+      "layer": "crossDomain"
+    },
+    {
+      "source": "ui.filter.profile",
+      "target": "section.accountLimitControl",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ui.filter.profile",
+      "target": "ui.action.searchProfiles",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ui.filter.sportsbook",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.filter.sportsbook",
+      "target": "section.sportsbookPatterns",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ui.filter.sportsbook",
+      "target": "ui.action.filter",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ui.filter.sportsbook",
+      "target": "ui.filter.partnerId",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.filter.state",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.filter.state",
+      "target": "ui.action.filter",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ui.filter.state",
+      "target": "ui.filter.zipPrefix",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.filter.zipPrefix",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.filter.zipPrefix",
+      "target": "section.stateZipPatterns",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ui.filter.zipPrefix",
+      "target": "ui.action.filter",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ui.route.partnerHash",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.route.partnerHash",
+      "target": "page.partners",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "ui.route.partnerHash",
+      "target": "section.partnersAccounting",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ui.route.partnerHash",
+      "target": "section.partnersOuts",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ui.route.partnerHash",
+      "target": "section.partnersTelegram",
+      "kind": "seeAlso",
+      "weight": 2,
+      "layer": "crossGroup"
+    },
+    {
+      "source": "ui.semantic.artifact",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.semantic.artifact",
+      "target": "ui.semantic.package",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.semantic.hostname",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.semantic.hostname",
+      "target": "ui.semantic.kind",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ui.semantic.hostname",
+      "target": "ui.semantic.plane",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ui.semantic.hostname",
+      "target": "ui.semantic.port",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.semantic.hostname",
+      "target": "ui.semantic.port",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ui.semantic.hostname",
+      "target": "ui.semantic.resources",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ui.semantic.hostname",
+      "target": "ui.semantic.source",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.semantic.hostname",
+      "target": "ui.semantic.source",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ui.semantic.hostname",
+      "target": "ui.semantic.status",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ui.semantic.hostname",
+      "target": "ui.semantic.surface",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ui.semantic.hostname",
+      "target": "ui.semantic.version",
+      "kind": "surface",
+      "weight": 1
+    },
+    {
+      "source": "ui.semantic.kind",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.semantic.kind",
+      "target": "ui.semantic.plane",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.semantic.kind",
+      "target": "ui.semantic.type",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.semantic.package",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.semantic.plane",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.semantic.plane",
+      "target": "ui.semantic.source",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.semantic.port",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.semantic.port",
+      "target": "ui.semantic.source",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.semantic.resources",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.semantic.resources",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.semantic.resources",
+      "target": "ui.semantic.package",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.semantic.resources",
+      "target": "ui.semantic.source",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.semantic.source",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.semantic.source",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.semantic.status",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.semantic.status",
+      "target": "ui.semantic.source",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.semantic.status",
+      "target": "ui.semantic.tone",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.semantic.surface",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.semantic.surface",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.semantic.surface",
+      "target": "ui.semantic.source",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.semantic.tone",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.semantic.tone",
+      "target": "ui.semantic.type",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.semantic.type",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.semantic.version",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "ui.semantic.version",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    },
+    {
+      "source": "ui.semantic.version",
+      "target": "ui.semantic.package",
+      "kind": "seeAlso",
+      "weight": 3,
+      "layer": "sameGroup"
+    }
+  ]
+}

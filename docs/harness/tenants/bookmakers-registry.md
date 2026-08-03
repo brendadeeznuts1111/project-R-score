@@ -13,7 +13,7 @@ first-class portal surface on the live domain.
 | Route manifest | `/portal/bookmakers/` ([`lib/http/portal-route-manifest.ts`](../../../lib/http/portal-route-manifest.ts)) |
 | Chrome nav | `bookmakers` (overflow, ops) ([`lib/portal/chrome-catalog.ts`](../../../lib/portal/chrome-catalog.ts)) |
 | Suite | [`tests/bookmakers-registry-bake.test.ts`](../../../tests/bookmakers-registry-bake.test.ts) |
-| Consumer runbook | [`docs/package-registry.md`](../../../docs/package-registry.md) (deeplink-automation repo) |
+| Consumer runbook | This tenant doc · `bun run bookmakers:bake` · Factory weave publish via `bun lib/factory/cli.ts publish` |
 
 ## Purpose
 
@@ -45,8 +45,8 @@ domain serves a stable, versioned JSON without a server function.
 1. Edit the canonical registry in **deeplink-automation**
    (`lib/bookmakers.ts`) → `cp lib/bookmakers.ts packages/bookmakers/bookmakers.ts`
    → `bun run build:bookmakers` → bump version → commit + push.
-2. Publish to the artifact registry + refresh the snapshot (see
-   `docs/package-registry.md` runbook): `bun lib/factory/cli.ts publish …` →
+2. Publish to the artifact registry + refresh the snapshot:
+   `bun lib/factory/cli.ts publish …` →
    `bun lib/factory/cli.ts snapshot public/registry/registry.json` → bake
    commit + PR (direct pushes to main are declined).
 3. Re-run `bun run bookmakers:bake` and commit the refreshed mirror

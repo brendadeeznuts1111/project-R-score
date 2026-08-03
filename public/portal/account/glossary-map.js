@@ -19,7 +19,7 @@ export const ACCOUNT_DOSSIER_GLOSSARY = Object.freeze({
   windowFilter: 'section.recentLimitChanges',
 
   identity: 'ops.limits.account',
-  roleType: 'ops.limits.roleType',
+  roleType: 'ops.limits.role_type',
   partner: 'ops.limits.partner',
   agent: 'ops.limits.agent',
   subAgent: 'ops.limits.sub_agent',
