@@ -101,6 +101,20 @@ export function migrateSchema(db: Database): void {
   ensureMonitoringSchema(db);
   ensureStateRegulationSchema(db);
   ensureAccountLimitsSchema(db);
+  // partner_ledger.reference — idempotent-import key added post-deploy. The
+  // column must exist before ensurePartnerLedgerSchema creates the reference
+  // unique index; fresh DBs skip the ALTER (their DDL already has it).
+  const ledgerTable = db
+    .query(`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'partner_ledger'`)
+    .all();
+  if (ledgerTable.length > 0) {
+    const ledgerCols = new Set(
+      (db.query('PRAGMA table_info(partner_ledger)').all() as { name: string }[]).map(c => c.name)
+    );
+    if (!ledgerCols.has('reference')) {
+      db.run('ALTER TABLE partner_ledger ADD COLUMN reference TEXT');
+    }
+  }
   ensurePartnerLedgerSchema(db);
 
   const pdCols = new Set(
