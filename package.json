@@ -1819,6 +1819,7 @@
     "partners:profiles:seed": "bun tools/migrate-seat-partners-to-profiles.ts",
     "partner:settlement:post": "bun tools/partner-settlement.ts",
     "partner:settlement:import": "bun tools/partner-settlement.ts import",
+    "partner:settlement:run": "bun tools/partner-settlement.ts run",
     "partner-profile:bake": "bun lib/partner-profile/bake.ts",
     "partner-profile:bake:check": "bun lib/partner-profile/bake.ts --check",
     "partner:bookmaker:register": "bun tools/register-partner-bookmaker.ts",

@@ -165,3 +165,12 @@ export function listLedgerEntries(db: Database, partnerCode: string): PartnerLed
     createdAt: r.created_at,
   }));
 }
+
+/** Ledger rows for a partner created at/after `since` (ISO-inclusive), oldest first. */
+export function listLedgerEntriesSince(
+  db: Database,
+  partnerCode: string,
+  since: Date
+): PartnerLedgerRow[] {
+  return listLedgerEntries(db, partnerCode).filter(row => row.createdAt >= since.toISOString());
+}

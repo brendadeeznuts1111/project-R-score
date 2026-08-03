@@ -11,6 +11,8 @@ Status: **design** · owner: partner accounting lane · updated 2026-08-03
 | Partners-ops projection | `loadSqliteLedgerSnapshots` → `accounting.balance/initialCapital/sqlLedgerCount` | ✅ merged (#212) |
 | Board display | `/portal/partners/` Balance column + Initial cap tiles | ✅ merged + deployed (#216) |
 | **Desk-entry settlement** | `partner:settlement:post` (`tools/partner-settlement.ts`) — manual win/loss posting | ✅ merged (#217) |
+| **Bulk import** | `partner:settlement:import` — CSV/JSONL with `reference` idempotency | ✅ merged (#219) |
+| **Weekly runner** | `partner:settlement:run` — commission adjustment + fundStatus refresh, `Bun.cron` `0 0 * * 0` | ✅ merged (this PR) |
 
 The manual CLI is live today: a desk posts `--code --amount` (negative = payout/loss) and a `settlement` row lands in `partner_ledger` with a running `balance_after`, mirrored into the profile TOML, with a negative-balance warning. That is the **data path** — this design automates the same path.
 
@@ -70,8 +72,8 @@ A `Bun.cron` job (daily/weekly per `settlement.payoutFrequency` when set, defaul
 
 1. ~~**`reference` column** for settlement idempotency~~ — **resolved**: `partner_ledger.reference TEXT` + unique partial index shipped with `partner:settlement:import`. Rows whose reference already exists are skipped on re-import.
 2. **Import format** (JSONL + CSV shipped; CSV values must not contain commas) and whether the import lands directly in `partner_ledger` or a staged table with a finalize step. (Current: direct to `partner_ledger` with `reference` idempotency.)
-3. **Commission math source of truth**: apply `settlement.commissionPct` at import time vs. store gross and compute on the board. (Recommend: store the net settlement amount, compute gross→net at import, mirror both in the description.)
-4. **Cron cadence + window**: align to `settlement.payoutFrequency` (default weekly, week boundaries UTC).
+3. ~~**Commission math source of truth**~~ — **resolved**: commission applies to **net P&L** (signed) — `commission = gross × commissionPct/100` over the period's desk-entry settlements, posted as a single `-commission` adjustment row (`period-<start>` reference) so the period doesn't double-count; the description carries the `(gross X, commission Y, net Z)` breakdown.
+4. ~~**Cron cadence + window**~~ — **resolved**: `Bun.cron` `0 0 * * 0` (Sunday midnight UTC, `SETTLEMENT_CRON_SCHEDULE`), default period = current ISO week (Monday 00:00 UTC → now) so the `period-<weekStart>` reference is stable across re-runs.
 
 ## Out of scope (for now)
 
