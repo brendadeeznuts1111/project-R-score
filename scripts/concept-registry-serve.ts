@@ -3,6 +3,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/api/http — Bun.serve
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 /**
  * Concept Registry Service — Phase 1 HTTP API.
  *
@@ -10,7 +11,11 @@
  *   CONCEPT_REGISTRY_PORT=8788 bun run concept:registry:serve -- --seed
  *
  * Endpoints: /api/concepts* · /health
+ *
+ * Every request is echoed to the server console as
+ * `METHOD path → status · X.Xms` (colored, console-depth policy layer).
  */
+import { colorize } from '../lib/console-depth.ts';
 import {
   createConceptRegistryFetch,
   openConceptRegistryDb,
@@ -30,7 +35,23 @@ if (seedOnStart) {
   );
 }
 
-const fetch = createConceptRegistryFetch(db);
+/** Echo every request to the server console: METHOD path → status · ms. */
+function withRequestEcho(fetch: (req: Request) => Promise<Response>): typeof fetch {
+  return (req: Request) => {
+    const t0 = Bun.nanoseconds();
+    const url = new URL(req.url);
+    return fetch(req).then(res => {
+      const ms = (Bun.nanoseconds() - t0) / 1e6;
+      const statusColor = res.status >= 500 ? '#f85149' : res.status >= 400 ? '#d29922' : '#3fb950';
+      console.log(
+        `${colorize(req.method.padEnd(6), '#58a6ff')} ${url.pathname}${url.search} → ${colorize(String(res.status), statusColor)} · ${colorize(`${ms.toFixed(1)}ms`, '#8b949e')}`
+      );
+      return res;
+    });
+  };
+}
+
+const fetch = withRequestEcho(createConceptRegistryFetch(db));
 
 const server = Bun.serve({
   port,
