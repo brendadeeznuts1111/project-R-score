@@ -17,6 +17,7 @@ import {
   applyPartnerOnboardPackage,
   buildOnboardChecklist,
   emitPackageGroupCreateRequest,
+  ensureOnboardTreeNode,
   formatOnboardPlanLines,
   formatOnboardStatusLine,
   planPartnerOnboardPackage,
@@ -34,6 +35,8 @@ if (!ref || ref.startsWith('--')) {
     [
       'Usage: bun tools/onboard-partner-package.ts <call-sign|tree-node-id>',
       '  [--dry-run] [--force] [--create-package-group]',
+      '  [--create-tree-node]  # insert the tree_node (id node-<code>) when missing',
+      '  [--name=…]            # node name used with --create-tree-node (default: CODE)',
       '  [--expert-id=…] [--parent-id=…]',
       '  [--state=MA|NJ] [--age=N] [--location=City] [--zip=#####] [--license=…]',
       '  [--identity-verified]  # force identity_verified=true',
@@ -46,6 +49,7 @@ const dryRun = process.argv.includes('--dry-run');
 const force = process.argv.includes('--force');
 const createPackageGroup = process.argv.includes('--create-package-group');
 const identityVerified = process.argv.includes('--identity-verified');
+const createTreeNode = process.argv.includes('--create-tree-node');
 
 const compliance = parseComplianceOnboardFields({
   state: flag('state'),
@@ -58,7 +62,18 @@ const compliance = parseComplianceOnboardFields({
 
 const db = openOperationsDb();
 try {
-  const treeNodeId = resolveOnboardTreeNodeId(db, ref);
+  let treeNodeId: ReturnType<typeof resolveOnboardTreeNodeId>;
+  try {
+    treeNodeId = resolveOnboardTreeNodeId(db, ref);
+  } catch (err) {
+    if (!createTreeNode) throw err;
+    if (dryRun) {
+      console.log(`⏭️  [dry-run] would create tree node for ${ref} (rerun without --dry-run)`);
+      process.exit(0);
+    }
+    treeNodeId = ensureOnboardTreeNode(db, ref, { name: flag('name') });
+    console.log(`🌳 created tree node ${treeNodeId} for ${ref}`);
+  }
   const opts = {
     source: 'portal' as const,
     dryRun,

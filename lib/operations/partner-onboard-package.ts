@@ -136,6 +136,51 @@ export function resolveOnboardTreeNodeId(db: Database, ref: string): TreeNodeId 
   return asTreeNodeId(byId.id);
 }
 
+export interface CreateOnboardTreeNodeOpts {
+  name?: string;
+  type?: 'partner' | 'agent';
+  parentId?: string; // brand-ok — tree_nodes.parent_id wire
+  expertId?: string; // brand-ok — experts.id wire
+}
+
+/**
+ * Insert the tree_node for a call-sign when none exists (id `node-<code>`).
+ *
+ * The onboard flow previously required the node to pre-exist — nothing in the
+ * repo created one, so `partner:bookmaker:register` always failed with
+ * "partner X is not onboarded". Callers opt in explicitly (onboard tool's
+ * `--create-tree-node`); creation is never silent. Idempotent: returns the
+ * existing node when present.
+ */
+export function ensureOnboardTreeNode(
+  db: Database,
+  callSign: string,
+  opts: CreateOnboardTreeNodeOpts = {}
+): TreeNodeId {
+  assertCallSignArg(callSign);
+  try {
+    return resolveOnboardTreeNodeId(db, callSign);
+  } catch {
+    // node missing — create it below
+  }
+  const code = partnerCodeFromCallSign(callSign);
+  const id = `node-${code.toLowerCase()}`;
+  const now = new Date().toISOString();
+  db.query(
+    `INSERT INTO tree_nodes (id, type, parent_id, expert_id, name, call_sign, active, status, created_at)
+     VALUES ($id, $type, $parent, $expert, $name, $call, 1, 'active', $created)`
+  ).run({
+    $id: id,
+    $type: opts.type ?? 'partner',
+    $parent: opts.parentId ?? null,
+    $expert: opts.expertId ?? null,
+    $name: opts.name ?? code,
+    $call: callSign,
+    $created: now,
+  });
+  return asTreeNodeId(id);
+}
+
 /** Agent seats missing partner_profile_bindings. */
 export function listUnboundAgentSeats(db: Database): UnboundAgentSeat[] {
   const rows = db
