@@ -5,7 +5,13 @@
  * @see lib/partner-profile/ledger.ts — same bun:sqlite repository pattern
  */
 
+/**
+ * Lifecycle:
+ *   draft → proposed → active → deprecated → archived
+ *                 ↘ rejected ↗ (resubmit)
+ */
 export const CONCEPT_STATUSES = [
+  'draft',
   'proposed',
   'active',
   'deprecated',
@@ -17,6 +23,20 @@ export type ConceptStatus = (typeof CONCEPT_STATUSES)[number];
 export const REVIEW_STATUSES = ['proposed', 'approved', 'rejected'] as const;
 export type ReviewStatus = (typeof REVIEW_STATUSES)[number];
 
+/** Legal transitions (from → to[]). Application-enforced; SQLite CHECK is permissive. */
+export const LIFECYCLE_TRANSITIONS: Readonly<Record<ConceptStatus, readonly ConceptStatus[]>> = {
+  draft: ['proposed', 'archived'],
+  proposed: ['active', 'rejected', 'draft', 'archived'],
+  active: ['deprecated', 'archived'],
+  deprecated: ['archived', 'active'],
+  rejected: ['proposed', 'draft', 'archived'],
+  archived: [],
+};
+
+export function canTransition(from: ConceptStatus, to: ConceptStatus): boolean {
+  return (LIFECYCLE_TRANSITIONS[from] as readonly string[]).includes(to);
+}
+
 export const EDGE_TYPES = ['seeAlso', 'mapsTo', 'displayedAs', 'replaces', 'deprecatedBy'] as const;
 export type ConceptEdgeType = (typeof EDGE_TYPES)[number];
 
@@ -26,6 +46,8 @@ export type RegistryConcept = {
   kind: string;
   category: string;
   groupName: string;
+  /** Business domain lane (optional until domain-mapping merges). */
+  domain: string | null;
   status: ConceptStatus;
   color: string | null;
   unit: string | null;
@@ -38,6 +60,7 @@ export type RegistryConcept = {
   updatedAt: string;
   deprecatedAt: string | null;
   deprecatedBy: string | null; // brand-ok — replacement concept key
+  deprecationReason: string | null;
 };
 
 export type ConceptVersion = {
@@ -79,6 +102,7 @@ export type ProposeConceptInput = {
   kind?: string;
   category?: string;
   group?: string;
+  domain?: string;
   summary?: string;
   color?: string;
   unit?: string;
@@ -87,6 +111,41 @@ export type ProposeConceptInput = {
   seeAlso?: string[];
   author?: string;
   correlationId?: string; // brand-ok — work-item provenance ref
+  /** When true, create as draft (WIP). Default false → proposed (ready for review). */
+  asDraft?: boolean;
+  reviewer?: string;
+};
+
+export type ConceptHistoryEvent = {
+  at: string;
+  kind: 'version' | 'review' | 'proposal';
+  summary: string;
+  author: string | null;
+  detail?: Record<string, string | number | null>;
+};
+
+export type ConceptHealthSnapshot = {
+  measuredAt: string;
+  total: number;
+  byStatus: Record<ConceptStatus, number>;
+  proposalAgeDaysMax: number;
+  proposalsOlderThan7d: number;
+  usageRatio: number;
+  deprecationBacklog: number;
+  provenanceCoverage: number;
+  alerts: string[];
+};
+
+export type ConceptProposalRow = {
+  id: string; // brand-ok — proposal row id
+  conceptId: string; // brand-ok — glossary concept key
+  status: ConceptStatus;
+  reviewer: string | null;
+  reviewedAt: string | null;
+  rejectionReason: string | null;
+  createdAt: string;
+  updatedAt: string;
+  ageDays: number;
 };
 
 export type ConceptListFilters = {

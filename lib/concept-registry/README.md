@@ -33,7 +33,22 @@ bun run concept:graph -- --output mermaid --summary
 
 ## Lifecycle
 
-`proposed` → `active` → `deprecated` → `archived` (soft delete)
+```
+draft → proposed → active → deprecated → archived
+              ↘ rejected ↗ (resubmit)
+```
+
+| Command | Transition |
+|---------|------------|
+| `concept:propose -- --draft` | create **draft** |
+| `concept:propose` | create **proposed** |
+| `concept:submit` | draft → proposed |
+| `concept:review -- --approve` | proposed → **active** |
+| `concept:review -- --reject` | proposed → **rejected** (or draft with `--soft`) |
+| `concept:deprecate` | active → **deprecated** |
+| `concept:archive` | → **archived** |
+| `concept:history` | version + review timeline |
+| `concept:health` | registry health metrics + alerts |
 
 ## API
 

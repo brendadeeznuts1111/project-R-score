@@ -27,6 +27,7 @@ type ConceptRow = {
   kind: string;
   category: string;
   group_name: string;
+  domain: string | null;
   status: string;
   color: string | null;
   unit: string | null;
@@ -39,6 +40,7 @@ type ConceptRow = {
   updated_at: string;
   deprecated_at: string | null;
   deprecated_by: string | null;
+  deprecation_reason: string | null;
 };
 
 function parseSeeAlso(json: string): string[] {
@@ -59,6 +61,7 @@ function rowToConcept(r: ConceptRow): RegistryConcept {
     kind: r.kind,
     category: r.category,
     groupName: r.group_name,
+    domain: r.domain ?? null,
     status,
     color: r.color,
     unit: r.unit,
@@ -71,6 +74,7 @@ function rowToConcept(r: ConceptRow): RegistryConcept {
     updatedAt: r.updated_at,
     deprecatedAt: r.deprecated_at,
     deprecatedBy: r.deprecated_by,
+    deprecationReason: r.deprecation_reason ?? null,
   };
 }
 
@@ -117,11 +121,12 @@ function writeVersion(db: Database, concept: RegistryConcept, author: string, ts
 function insertConceptRow(db: Database, c: RegistryConcept): void {
   db.query(
     `INSERT INTO concepts (
-       id, label, kind, category, group_name, status, color, unit, format, summary,
-       maps_to, see_also_json, source, created_at, updated_at, deprecated_at, deprecated_by
+       id, label, kind, category, group_name, domain, status, color, unit, format, summary,
+       maps_to, see_also_json, source, created_at, updated_at, deprecated_at, deprecated_by,
+       deprecation_reason
      ) VALUES (
-       $id, $label, $kind, $cat, $grp, $status, $color, $unit, $fmt, $sum,
-       $maps, $see, $src, $created, $updated, $depAt, $depBy
+       $id, $label, $kind, $cat, $grp, $domain, $status, $color, $unit, $fmt, $sum,
+       $maps, $see, $src, $created, $updated, $depAt, $depBy, $depReason
      )`
   ).run({
     $id: c.id,
@@ -129,6 +134,7 @@ function insertConceptRow(db: Database, c: RegistryConcept): void {
     $kind: c.kind,
     $cat: c.category,
     $grp: c.groupName,
+    $domain: c.domain,
     $status: c.status,
     $color: c.color,
     $unit: c.unit,
@@ -141,16 +147,17 @@ function insertConceptRow(db: Database, c: RegistryConcept): void {
     $updated: c.updatedAt,
     $depAt: c.deprecatedAt,
     $depBy: c.deprecatedBy,
+    $depReason: c.deprecationReason,
   });
 }
 
 function updateConceptRow(db: Database, c: RegistryConcept): void {
   db.query(
     `UPDATE concepts SET
-       label = $label, kind = $kind, category = $cat, group_name = $grp, status = $status,
-       color = $color, unit = $unit, format = $fmt, summary = $sum, maps_to = $maps,
-       see_also_json = $see, source = $src, updated_at = $updated,
-       deprecated_at = $depAt, deprecated_by = $depBy
+       label = $label, kind = $kind, category = $cat, group_name = $grp, domain = $domain,
+       status = $status, color = $color, unit = $unit, format = $fmt, summary = $sum,
+       maps_to = $maps, see_also_json = $see, source = $src, updated_at = $updated,
+       deprecated_at = $depAt, deprecated_by = $depBy, deprecation_reason = $depReason
      WHERE id = $id`
   ).run({
     $id: c.id,
@@ -158,6 +165,7 @@ function updateConceptRow(db: Database, c: RegistryConcept): void {
     $kind: c.kind,
     $cat: c.category,
     $grp: c.groupName,
+    $domain: c.domain,
     $status: c.status,
     $color: c.color,
     $unit: c.unit,
@@ -169,6 +177,7 @@ function updateConceptRow(db: Database, c: RegistryConcept): void {
     $updated: c.updatedAt,
     $depAt: c.deprecatedAt,
     $depBy: c.deprecatedBy,
+    $depReason: c.deprecationReason,
   });
 }
 
@@ -264,6 +273,7 @@ export function upsertConcept(
     kind: input.kind?.trim() || existing?.kind || 'composite',
     category: input.category?.trim() || existing?.category || conceptCategoryOf(id),
     groupName: input.group?.trim() || existing?.groupName || conceptGroupOf(id),
+    domain: input.domain?.trim() || existing?.domain || null,
     status: input.status ?? existing?.status ?? 'proposed',
     color: input.color ?? existing?.color ?? null,
     unit: input.unit ?? existing?.unit ?? null,
@@ -276,6 +286,7 @@ export function upsertConcept(
     updatedAt: ts,
     deprecatedAt: existing?.deprecatedAt ?? null,
     deprecatedBy: existing?.deprecatedBy ?? null,
+    deprecationReason: existing?.deprecationReason ?? null,
   };
 
   if (existing) updateConceptRow(db, concept);
@@ -333,6 +344,7 @@ export function approveConcept(
     updatedAt: ts,
     deprecatedAt: null,
     deprecatedBy: null,
+    deprecationReason: null,
   };
   updateConceptRow(db, next);
   writeVersion(db, next, reviewer, ts);
@@ -352,7 +364,8 @@ export function deprecateConcept(
   db: Database,
   id: string, // brand-ok — glossary concept key
   replaceBy?: string, // brand-ok — replacement glossary concept key
-  author = defaultAuthor()
+  author = defaultAuthor(),
+  reason?: string
 ): RegistryConcept {
   const existing = getConcept(db, id);
   if (!existing) throw new Error(`concept not found: ${id}`);
@@ -366,6 +379,7 @@ export function deprecateConcept(
     updatedAt: ts,
     deprecatedAt: ts,
     deprecatedBy: replaceBy?.trim() || existing.deprecatedBy,
+    deprecationReason: reason?.trim() || existing.deprecationReason,
   };
   updateConceptRow(db, next);
   writeVersion(db, next, author, ts);

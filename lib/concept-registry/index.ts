@@ -27,6 +27,17 @@ export {
   upsertUsage,
 } from './repository.ts';
 export {
+  approveProposal,
+  computeConceptHealth,
+  conceptHistory,
+  deprecateWithReason,
+  listProposals,
+  proposeForReview,
+  rejectProposal,
+  saveDraft,
+  submitProposal,
+} from './lifecycle.ts';
+export {
   buildConceptGraph,
   graphCentrality,
   graphOrphans,
@@ -47,7 +58,10 @@ export {
 } from './api.ts';
 export type {
   ConceptGraph,
+  ConceptHealthSnapshot,
+  ConceptHistoryEvent,
   ConceptListFilters,
+  ConceptProposalRow,
   ConceptStatus,
   ConceptVersion,
   GraphEdge,
@@ -55,4 +69,11 @@ export type {
   ProposeConceptInput,
   RegistryConcept,
 } from './types.ts';
-export { CONCEPT_STATUSES, conceptCategoryOf, conceptGroupOf, isConceptStatus } from './types.ts';
+export {
+  CONCEPT_STATUSES,
+  LIFECYCLE_TRANSITIONS,
+  canTransition,
+  conceptCategoryOf,
+  conceptGroupOf,
+  isConceptStatus,
+} from './types.ts';

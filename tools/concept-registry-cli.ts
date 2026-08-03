@@ -4,30 +4,38 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
- * Concept Registry CLI — propose / approve / deprecate / archive / graph / seed.
+ * Concept Registry CLI — lifecycle + graph + seed.
  *
- *   bun run concept:propose -- --id accounting.batch_import --label "Batch Import" --category ops --group accounting
- *   bun run concept:approve -- accounting.batch_import
- *   bun run concept:deprecate -- accounting.old_thing --replace-by accounting.new_thing
- *   bun run concept:archive -- unused_concept --force
- *   bun run concept:graph -- --output mermaid
+ *   bun run concept:propose -- --id accounting.batch_import --label "Batch Import" --domain accounting
+ *   bun run concept:propose -- --id … --draft
+ *   bun run concept:review -- --list
+ *   bun run concept:review -- --id accounting.batch_import --approve
+ *   bun run concept:review -- --id … --reject --reason "…"
+ *   bun run concept:deprecate -- accounting.old --replace-by accounting.new --reason "…"
+ *   bun run concept:history -- --id accounting.transfer
+ *   bun run concept:health
  *   bun run concept:registry:seed
  */
 import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
 import {
-  approveConcept,
   archiveConcept,
+  approveProposal,
   buildConceptGraph,
-  deprecateConcept,
+  computeConceptHealth,
+  conceptHistory,
+  deprecateWithReason,
   getConcept,
   graphCentrality,
   graphOrphans,
   graphStaleEdges,
   graphToMermaid,
   listConcepts,
+  listProposals,
   openConceptRegistryDb,
-  proposeConcept,
+  proposeForReview,
+  rejectProposal,
   seedConceptRegistry,
+  submitProposal,
 } from '../lib/concept-registry/index.ts';
 
 function argValue(argv: readonly string[], flag: string): string | undefined {
@@ -55,17 +63,21 @@ function positional(argv: readonly string[], after = 0): string[] {
 }
 
 function printHelp(): void {
-  console.log(`concept-registry CLI
+  console.log(`concept-registry CLI — lifecycle management
 
 Commands:
-  seed                         Seed from semantic-vocabulary + domain-glossary (+ usage scan)
-  propose --id --label [...]   Propose a draft concept
-  approve <id>                 Approve proposed → active
-  deprecate <id> [--replace-by <id>]
-  archive <id> [--force]       Soft-delete → archived
-  get <id>                     Show one concept
-  list [--status active]       List concepts
-  graph [--output mermaid|json] [--centrality] [--orphans] [--stale]
+  seed                         Seed from semantic-vocabulary + domain-glossary
+  propose --id --label […]     Propose (default: proposed; --draft for WIP)
+  review --list                Pending drafts/proposals
+  review --id <id> --approve
+  review --id <id> --reject --reason "…"
+  submit <id>                  draft → proposed
+  approve <id>                 proposed → active (alias of review --approve)
+  deprecate <id> [--replace-by] [--reason]
+  archive <id> [--force]
+  history --id <id>            Version + review timeline
+  health                       Registry health metrics + alerts
+  get <id> | list | graph
 
 Env:
   CONCEPT_REGISTRY_DB_PATH     default data/concept-registry.db
@@ -105,19 +117,79 @@ async function main(): Promise<void> {
         console.error('propose requires --id and --label');
         process.exit(1);
       }
-      const concept = proposeConcept(db, {
+      const concept = proposeForReview(db, {
         id,
         label,
         category: argValue(argv, '--category'),
         group: argValue(argv, '--group'),
+        domain: argValue(argv, '--domain'),
         kind: argValue(argv, '--kind'),
         summary: argValue(argv, '--summary'),
         unit: argValue(argv, '--unit'),
         format: argValue(argv, '--format'),
+        color: argValue(argv, '--color'),
         mapsTo: argValue(argv, '--maps-to'),
         correlationId: argValue(argv, '--correlation-id'),
+        asDraft: argv.includes('--draft'),
+        reviewer: argValue(argv, '--reviewer'),
       });
       jsonOut({ ok: true, concept });
+      return;
+    }
+
+    if (cmd === 'review') {
+      if (argv.includes('--list') || (!argValue(argv, '--id') && !positional(argv, 3)[0])) {
+        const status = argValue(argv, '--status');
+        const rows = listProposals(
+          db,
+          status
+            ? (status.split(',').map(s => s.trim()) as never)
+            : (['draft', 'proposed'] as never)
+        );
+        if (argValue(argv, '--output') === 'json' || argv.includes('--json')) {
+          jsonOut({ ok: true, count: rows.length, proposals: rows });
+        } else {
+          logTable(
+            rows.map(r => ({
+              conceptId: r.conceptId,
+              status: r.status,
+              ageDays: r.ageDays.toFixed(1),
+              reviewer: r.reviewer ?? '—',
+            })),
+            ['conceptId', 'status', 'ageDays', 'reviewer']
+          );
+          console.log(colorize(`count=${rows.length}`, '#8b949e'));
+        }
+        return;
+      }
+      const id = argValue(argv, '--id') ?? positional(argv, 3)[0];
+      if (!id) {
+        console.error('review requires --id or --list');
+        process.exit(1);
+      }
+      if (argv.includes('--approve')) {
+        jsonOut({ ok: true, concept: approveProposal(db, id) });
+        return;
+      }
+      if (argv.includes('--reject')) {
+        const reason = argValue(argv, '--reason') ?? 'rejected';
+        jsonOut({
+          ok: true,
+          concept: rejectProposal(db, id, reason, undefined, argv.includes('--soft')),
+        });
+        return;
+      }
+      console.error('review requires --list, --approve, or --reject');
+      process.exit(1);
+    }
+
+    if (cmd === 'submit') {
+      const id = positional(argv, 3)[0] ?? argValue(argv, '--id');
+      if (!id) {
+        console.error('submit requires <id>');
+        process.exit(1);
+      }
+      jsonOut({ ok: true, concept: submitProposal(db, id) });
       return;
     }
 
@@ -127,7 +199,7 @@ async function main(): Promise<void> {
         console.error('approve requires <id>');
         process.exit(1);
       }
-      jsonOut({ ok: true, concept: approveConcept(db, id) });
+      jsonOut({ ok: true, concept: approveProposal(db, id) });
       return;
     }
 
@@ -139,8 +211,67 @@ async function main(): Promise<void> {
       }
       jsonOut({
         ok: true,
-        concept: deprecateConcept(db, id, argValue(argv, '--replace-by')),
+        concept: deprecateWithReason(db, id, {
+          replaceBy: argValue(argv, '--replace-by'),
+          reason: argValue(argv, '--reason'),
+        }),
       });
+      return;
+    }
+
+    if (cmd === 'history') {
+      const id = argValue(argv, '--id') ?? positional(argv, 3)[0];
+      if (!id) {
+        console.error('history requires --id');
+        process.exit(1);
+      }
+      const events = conceptHistory(db, id);
+      if (argValue(argv, '--output') === 'json' || argv.includes('--json')) {
+        jsonOut({ ok: true, conceptId: id, events });
+      } else {
+        logTable(
+          events.map(e => ({
+            at: e.at,
+            kind: e.kind,
+            summary: e.summary,
+            author: e.author ?? '—',
+          })),
+          ['at', 'kind', 'summary', 'author']
+        );
+      }
+      return;
+    }
+
+    if (cmd === 'health') {
+      const health = computeConceptHealth(db);
+      if (argValue(argv, '--output') === 'json' || argv.includes('--json')) {
+        jsonOut({ ok: true, health });
+      } else {
+        console.log(colorize('Concept registry health', '#58a6ff'));
+        logTable(
+          [
+            {
+              total: health.total,
+              usageRatio: `${(health.usageRatio * 100).toFixed(0)}%`,
+              provenance: `${(health.provenanceCoverage * 100).toFixed(0)}%`,
+              depBacklog: health.deprecationBacklog,
+              oldProposals: health.proposalsOlderThan7d,
+              maxAgeDays: health.proposalAgeDaysMax.toFixed(1),
+            },
+          ],
+          ['total', 'usageRatio', 'provenance', 'depBacklog', 'oldProposals', 'maxAgeDays']
+        );
+        logTable(
+          [health.byStatus as unknown as Record<string, number>],
+          Object.keys(health.byStatus)
+        );
+        if (health.alerts.length > 0) {
+          console.error(colorize('alerts:', '#f85149'));
+          for (const a of health.alerts) console.error(`  ⚠ ${a}`);
+        } else {
+          console.log(colorize('no alerts', '#3fb950'));
+        }
+      }
       return;
     }
 
