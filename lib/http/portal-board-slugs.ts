@@ -17,6 +17,7 @@ export const PORTAL_BOARD_SLUGS = [
   'bunfig',
   'compliance',
   'console-format',
+  'concepts',
   'doctor',
   'factory',
   'failures',

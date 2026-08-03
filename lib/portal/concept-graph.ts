@@ -35,6 +35,8 @@ export const SEE_ALSO_LAYER_WEIGHTS: Record<SeeAlsoLayer, number> = {
   pageBridge: 1,
 };
 
+export type SeeAlsoByLayer = Record<SeeAlsoLayer, number>;
+
 export type ConceptGraphNode = {
   id: string; // brand-ok — portal concept key or hub:domain:*
   label: string;
@@ -51,6 +53,16 @@ export type ConceptGraphNode = {
   kind: 'used' | 'unused' | 'surface-only' | 'hub';
   degree: number;
   seeAlsoCount: number;
+  /** Incident seeAlso edges by derived layer. */
+  seeAlsoByLayer: SeeAlsoByLayer;
+  /** crossDomain + pageBridge incident seeAlso count (bridge richness). */
+  bridgeScore: number;
+  /** Connected-component cluster over seeAlso (excl. pageBridge). */
+  clusterId: string; // brand-ok — cluster:* opaque key
+  /** Incident seeAlso degree (undirected). */
+  seeAlsoDegree: number;
+  /** Normalized betweenness centrality on seeAlso graph (0–1). */
+  betweenness: number;
 };
 
 export type ConceptGraphEdge = {
@@ -62,11 +74,70 @@ export type ConceptGraphEdge = {
   layer?: SeeAlsoLayer;
 };
 
-export type SeeAlsoByLayer = Record<SeeAlsoLayer, number>;
+export type WeightedPathResult = {
+  path: string[];
+  cost: number;
+  /** Product of edge weights along the path (higher = stronger). */
+  strength: number;
+  layers: SeeAlsoLayer[];
+};
+
+export type ConceptRecommendation = {
+  id: string; // brand-ok — concept id
+  label: string;
+  hop: number;
+  score: number;
+  path: string[];
+  pathCost: number;
+  layers: SeeAlsoLayer[];
+};
+
+export type ConceptEgoAnalysis = {
+  id: string; // brand-ok — focus concept id
+  depth: number;
+  hopCounts: Record<string, number>;
+  layerMix: SeeAlsoByLayer;
+  /** seeAlso edges crossing into each hop ring from the previous ring. */
+  layerMixByHop: Array<{ hop: number; layers: SeeAlsoByLayer }>;
+  bridgeScore: number;
+  recommendations: ConceptRecommendation[];
+};
+
+export type ConceptCluster = {
+  id: string; // brand-ok — cluster:* opaque key
+  size: number;
+  domain: string;
+  hubs: string[];
+};
+
+export type ConceptCorridor = {
+  fromDomain: string;
+  toDomain: string;
+  edges: number;
+  /** Top bridge concept ids on this corridor. */
+  bridges: string[];
+};
+
+export type ConceptGraphReport = {
+  clusters: ConceptCluster[];
+  corridors: ConceptCorridor[];
+  topBridges: Array<{
+    id: string; // brand-ok — glossary concept key
+    label: string;
+    bridgeScore: number;
+    betweenness: number;
+  }>;
+  topCentral: Array<{
+    id: string; // brand-ok — glossary concept key
+    label: string;
+    betweenness: number;
+    seeAlsoDegree: number;
+  }>;
+};
 
 export type ConceptGraph = {
   kind: 'concept-graph';
-  schemaVersion: 3;
+  schemaVersion: 5;
   generatedAt: string;
   focus?: string;
   depth?: number;
@@ -84,6 +155,10 @@ export type ConceptGraph = {
     unused: number;
     surfaceOnly: number;
     totalUsage: number;
+    /** Concepts with bridgeScore > 0. */
+    bridges: number;
+    clusters: number;
+    corridors: number;
   };
   domainSummary: Array<{
     domain: string;
@@ -95,6 +170,9 @@ export type ConceptGraph = {
     board: string;
     concepts: number;
   }>;
+  clusters: ConceptCluster[];
+  corridors: ConceptCorridor[];
+  report: ConceptGraphReport;
   nodes: ConceptGraphNode[];
   edges: ConceptGraphEdge[];
 };
@@ -306,18 +384,15 @@ export function filterGraphBySeeAlsoLayers(
   };
 }
 
-/** Undirected shortest path (edge list) between two concept ids. */
+/** Undirected shortest path (hop count) between two concept ids. */
 export function shortestPath(
   edges: readonly ConceptGraphEdge[],
   from: string,
-  to: string
+  to: string,
+  filter?: EgoEdgeFilter
 ): string[] | null {
   if (from === to) return [from];
-  const adj = new Map<string, string[]>();
-  for (const e of edges) {
-    (adj.get(e.source) ?? adj.set(e.source, []).get(e.source)!).push(e.target);
-    (adj.get(e.target) ?? adj.set(e.target, []).get(e.target)!).push(e.source);
-  }
+  const adj = undirectedAdj(edges, filter);
   const prev = new Map<string, string | null>([[from, null]]);
   const q = [from];
   for (let i = 0; i < q.length; i++) {
@@ -338,6 +413,392 @@ export function shortestPath(
     }
   }
   return null;
+}
+
+/** Edge traversal cost — lower prefers stronger seeAlso layers. */
+export function edgeTraversalCost(e: ConceptGraphEdge): number {
+  if (e.kind === 'seeAlso') {
+    const w = e.layer ? SEE_ALSO_LAYER_WEIGHTS[e.layer] : 1;
+    return 1 / Math.max(w, 0.25);
+  }
+  if (e.kind === 'surface') return 2;
+  if (e.kind === 'group') return 2.5;
+  return 3; // domainHub
+}
+
+type WeightedAdjEdge = { to: string; cost: number; weight: number; layer?: SeeAlsoLayer };
+
+function weightedAdj(
+  edges: readonly ConceptGraphEdge[],
+  filter?: EgoEdgeFilter
+): Map<string, WeightedAdjEdge[]> {
+  const adj = new Map<string, WeightedAdjEdge[]>();
+  const push = (from: string, to: string, e: ConceptGraphEdge) => {
+    const list = adj.get(from) ?? [];
+    list.push({
+      to,
+      cost: edgeTraversalCost(e),
+      weight: e.weight || 1,
+      layer: e.kind === 'seeAlso' ? e.layer : undefined,
+    });
+    adj.set(from, list);
+  };
+  for (const e of edges) {
+    if (!edgePassesFilter(e, filter)) continue;
+    push(e.source, e.target, e);
+    push(e.target, e.source, e);
+  }
+  return adj;
+}
+
+/**
+ * Dijkstra shortest path preferring stronger seeAlso layers (lower cost).
+ */
+export function shortestPathWeighted(
+  edges: readonly ConceptGraphEdge[],
+  from: string,
+  to: string,
+  filter?: EgoEdgeFilter
+): WeightedPathResult | null {
+  if (from === to) return { path: [from], cost: 0, strength: 1, layers: [] };
+  const adj = weightedAdj(edges, filter);
+  const dist = new Map<string, number>([[from, 0]]);
+  const strength = new Map<string, number>([[from, 1]]);
+  const prev = new Map<string, { id: string; layer?: SeeAlsoLayer } | null>([[from, null]]); // brand-ok — glossary concept key
+  const pending = new Set<string>([from]);
+
+  while (pending.size > 0) {
+    let cur: string | null = null;
+    let best = Infinity;
+    for (const id of pending) {
+      const d = dist.get(id) ?? Infinity;
+      if (d < best) {
+        best = d;
+        cur = id;
+      }
+    }
+    if (cur == null) break;
+    pending.delete(cur);
+    if (cur === to) break;
+    for (const edge of adj.get(cur) ?? []) {
+      const nextCost = best + edge.cost;
+      const prevCost = dist.get(edge.to);
+      if (prevCost !== undefined && nextCost >= prevCost) continue;
+      dist.set(edge.to, nextCost);
+      strength.set(edge.to, (strength.get(cur) ?? 1) * edge.weight);
+      prev.set(edge.to, { id: cur, layer: edge.layer });
+      pending.add(edge.to);
+    }
+  }
+
+  if (!dist.has(to)) return null;
+  const path = [to];
+  const layers: SeeAlsoLayer[] = [];
+  let walk: string | null = to;
+  while (walk && walk !== from) {
+    const step = prev.get(walk);
+    if (!step) break;
+    if (step.layer) layers.push(step.layer);
+    path.push(step.id);
+    walk = step.id;
+  }
+  path.reverse();
+  layers.reverse();
+  return {
+    path,
+    cost: dist.get(to) ?? Infinity,
+    strength: strength.get(to) ?? 0,
+    layers,
+  };
+}
+
+/**
+ * Ego analysis — hop rings, layer mix, and second-order recommendations.
+ */
+export function analyzeConceptEgo(
+  graph: ConceptGraph,
+  focus: string,
+  depth = 2,
+  filter?: EgoEdgeFilter,
+  recommendLimit = 8
+): ConceptEgoAnalysis | null {
+  const focusNode = graph.nodes.find(n => n.id === focus);
+  if (!focusNode) return null;
+
+  const seeAlsoFilter: EgoEdgeFilter = filter ?? { kinds: ['seeAlso'] };
+  const distances = egoNeighborhoodDistances(graph.edges, focus, depth, seeAlsoFilter);
+  const hopCounts: Record<string, number> = {};
+  for (let h = 0; h <= depth; h++) hopCounts[String(h)] = 0;
+  for (const hop of distances.values()) {
+    hopCounts[String(hop)] = (hopCounts[String(hop)] ?? 0) + 1;
+  }
+
+  const layerMix = emptySeeAlsoByLayer();
+  for (const e of graph.edges) {
+    if (e.kind !== 'seeAlso' || !e.layer) continue;
+    if (!edgePassesFilter(e, seeAlsoFilter)) continue;
+    if (!distances.has(e.source) || !distances.has(e.target)) continue;
+    layerMix[e.layer] += 1;
+  }
+
+  const layerMixByHop: Array<{ hop: number; layers: SeeAlsoByLayer }> = [];
+  for (let h = 1; h <= depth; h++) {
+    const ring = emptySeeAlsoByLayer();
+    for (const e of graph.edges) {
+      if (e.kind !== 'seeAlso' || !e.layer) continue;
+      if (!edgePassesFilter(e, seeAlsoFilter)) continue;
+      const ds = distances.get(e.source);
+      const dt = distances.get(e.target);
+      if (ds == null || dt == null) continue;
+      if ((ds === h && dt === h - 1) || (dt === h && ds === h - 1)) {
+        ring[e.layer] += 1;
+      }
+    }
+    layerMixByHop.push({ hop: h, layers: ring });
+  }
+
+  // Score hop-2 concepts along the BFS path (keeps hop length = 2; no weighted detours).
+  const edgeLookup = new Map<string, ConceptGraphEdge>();
+  for (const e of graph.edges) {
+    if (!edgePassesFilter(e, seeAlsoFilter)) continue;
+    const a = e.source < e.target ? e.source : e.target;
+    const b = e.source < e.target ? e.target : e.source;
+    edgeLookup.set(`${a}->${b}`, e);
+  }
+  const findEdge = (x: string, y: string) => {
+    const a = x < y ? x : y;
+    const b = x < y ? y : x;
+    return edgeLookup.get(`${a}->${b}`);
+  };
+
+  const recommendations: ConceptRecommendation[] = [];
+  for (const [id, hop] of distances) {
+    if (hop !== 2) continue;
+    const node = graph.nodes.find(n => n.id === id);
+    if (!node || node.nodeKind !== 'concept') continue;
+    const path = shortestPath(graph.edges, focus, id, seeAlsoFilter);
+    if (!path || path.length !== 3) continue; // exactly 2 hops
+    let strength = 1;
+    let cost = 0;
+    const layers: SeeAlsoLayer[] = [];
+    for (let i = 0; i < path.length - 1; i++) {
+      const e = findEdge(path[i]!, path[i + 1]!);
+      if (!e) continue;
+      strength *= e.weight || 1;
+      cost += edgeTraversalCost(e);
+      if (e.layer) layers.push(e.layer);
+    }
+    recommendations.push({
+      id,
+      label: node.label,
+      hop,
+      score: strength,
+      path,
+      pathCost: cost,
+      layers,
+    });
+  }
+  recommendations.sort(
+    (a, b) => b.score - a.score || a.pathCost - b.pathCost || a.id.localeCompare(b.id)
+  );
+
+  return {
+    id: focus,
+    depth,
+    hopCounts,
+    layerMix,
+    layerMixByHop,
+    bridgeScore: focusNode.bridgeScore,
+    recommendations: recommendations.slice(0, recommendLimit),
+  };
+}
+
+/** Union-Find clusters over sameGroup+crossGroup seeAlso (tight communities). */
+export function computeSeeAlsoClusters(
+  conceptIds: readonly string[],
+  edges: readonly ConceptGraphEdge[]
+): Map<string, string> {
+  const parent = new Map<string, string>();
+  const rank = new Map<string, number>();
+  for (const id of conceptIds) {
+    parent.set(id, id);
+    rank.set(id, 0);
+  }
+  const find = (x: string): string => {
+    let cur = x;
+    while (parent.get(cur) !== cur) {
+      const p = parent.get(cur)!;
+      parent.set(cur, parent.get(p)!);
+      cur = p;
+    }
+    return cur;
+  };
+  const unite = (a: string, b: string) => {
+    let ra = find(a);
+    let rb = find(b);
+    if (ra === rb) return;
+    const raRank = rank.get(ra) ?? 0;
+    const rbRank = rank.get(rb) ?? 0;
+    if (raRank < rbRank) [ra, rb] = [rb, ra];
+    parent.set(rb, ra);
+    if (raRank === rbRank) rank.set(ra, raRank + 1);
+  };
+
+  for (const e of edges) {
+    if (e.kind !== 'seeAlso') continue;
+    if (e.layer !== 'sameGroup' && e.layer !== 'crossGroup') continue;
+    if (!parent.has(e.source) || !parent.has(e.target)) continue;
+    unite(e.source, e.target);
+  }
+
+  const out = new Map<string, string>();
+  for (const id of conceptIds) {
+    const root = find(id);
+    out.set(id, `cluster:${root}`);
+  }
+  return out;
+}
+
+/**
+ * Brandes betweenness on undirected seeAlso graph; values normalized to [0, 1].
+ */
+export function computeSeeAlsoBetweenness(
+  conceptIds: readonly string[],
+  edges: readonly ConceptGraphEdge[]
+): Map<string, number> {
+  const ids = [...conceptIds];
+  const adj = new Map<string, string[]>();
+  for (const id of ids) adj.set(id, []);
+  for (const e of edges) {
+    if (e.kind !== 'seeAlso') continue;
+    if (!adj.has(e.source) || !adj.has(e.target)) continue;
+    adj.get(e.source)!.push(e.target);
+    adj.get(e.target)!.push(e.source);
+  }
+
+  const raw = new Map<string, number>();
+  for (const id of ids) raw.set(id, 0);
+
+  for (const s of ids) {
+    const stack: string[] = [];
+    const pred = new Map<string, string[]>();
+    const sigma = new Map<string, number>();
+    const dist = new Map<string, number>();
+    for (const id of ids) {
+      pred.set(id, []);
+      sigma.set(id, 0);
+      dist.set(id, -1);
+    }
+    sigma.set(s, 1);
+    dist.set(s, 0);
+    const queue = [s];
+    for (let qi = 0; qi < queue.length; qi++) {
+      const v = queue[qi]!;
+      stack.push(v);
+      for (const w of adj.get(v) ?? []) {
+        if ((dist.get(w) ?? -1) < 0) {
+          dist.set(w, (dist.get(v) ?? 0) + 1);
+          queue.push(w);
+        }
+        if (dist.get(w) === (dist.get(v) ?? 0) + 1) {
+          sigma.set(w, (sigma.get(w) ?? 0) + (sigma.get(v) ?? 0));
+          pred.get(w)!.push(v);
+        }
+      }
+    }
+    const delta = new Map<string, number>();
+    for (const id of ids) delta.set(id, 0);
+    while (stack.length > 0) {
+      const w = stack.pop()!;
+      for (const v of pred.get(w) ?? []) {
+        const sw = sigma.get(w) ?? 1;
+        const share = ((sigma.get(v) ?? 0) / sw) * (1 + (delta.get(w) ?? 0));
+        delta.set(v, (delta.get(v) ?? 0) + share);
+      }
+      if (w !== s) raw.set(w, (raw.get(w) ?? 0) + (delta.get(w) ?? 0));
+    }
+  }
+
+  // Undirected: each pair counted twice
+  for (const id of ids) raw.set(id, (raw.get(id) ?? 0) / 2);
+
+  const n = ids.length;
+  const denom = n > 2 ? (n - 1) * (n - 2) : 1;
+  const out = new Map<string, number>();
+  for (const id of ids) {
+    out.set(id, (raw.get(id) ?? 0) / denom);
+  }
+  return out;
+}
+
+/** Cross-domain seeAlso corridors with top bridge concepts. */
+export function computeDomainCorridors(
+  nodes: readonly ConceptGraphNode[],
+  edges: readonly ConceptGraphEdge[],
+  limit = 12
+): ConceptCorridor[] {
+  const byId = new Map(nodes.filter(n => n.nodeKind === 'concept').map(n => [n.id, n]));
+  type Acc = { edges: number; bridgeHits: Map<string, number> };
+  const map = new Map<string, Acc>();
+
+  for (const e of edges) {
+    if (e.kind !== 'seeAlso' || e.layer !== 'crossDomain') continue;
+    const a = byId.get(e.source);
+    const b = byId.get(e.target);
+    if (!a || !b || a.domain === b.domain) continue;
+    const d1 = a.domain < b.domain ? a.domain : b.domain;
+    const d2 = a.domain < b.domain ? b.domain : a.domain;
+    const key = `${d1}|${d2}`;
+    const acc = map.get(key) ?? { edges: 0, bridgeHits: new Map() };
+    acc.edges += 1;
+    acc.bridgeHits.set(a.id, (acc.bridgeHits.get(a.id) ?? 0) + 1);
+    acc.bridgeHits.set(b.id, (acc.bridgeHits.get(b.id) ?? 0) + 1);
+    map.set(key, acc);
+  }
+
+  const corridors: ConceptCorridor[] = [...map.entries()].map(([key, acc]) => {
+    const [fromDomain, toDomain] = key.split('|') as [string, string];
+    const bridges = [...acc.bridgeHits.entries()]
+      .sort((x, y) => y[1] - x[1] || x[0].localeCompare(y[0]))
+      .slice(0, 5)
+      .map(([id]) => id);
+    return { fromDomain, toDomain, edges: acc.edges, bridges };
+  });
+  corridors.sort((a, b) => b.edges - a.edges || a.fromDomain.localeCompare(b.fromDomain));
+  return corridors.slice(0, limit);
+}
+
+export function buildConceptGraphReport(
+  nodes: readonly ConceptGraphNode[],
+  clusters: readonly ConceptCluster[],
+  corridors: readonly ConceptCorridor[]
+): ConceptGraphReport {
+  const concepts = nodes.filter(n => n.nodeKind === 'concept');
+  const topBridges = [...concepts]
+    .filter(n => n.bridgeScore > 0)
+    .sort((a, b) => b.bridgeScore - a.bridgeScore || b.betweenness - a.betweenness)
+    .slice(0, 10)
+    .map(n => ({
+      id: n.id,
+      label: n.label,
+      bridgeScore: n.bridgeScore,
+      betweenness: n.betweenness,
+    }));
+  const topCentral = [...concepts]
+    .sort((a, b) => b.betweenness - a.betweenness || b.seeAlsoDegree - a.seeAlsoDegree)
+    .slice(0, 10)
+    .map(n => ({
+      id: n.id,
+      label: n.label,
+      betweenness: n.betweenness,
+      seeAlsoDegree: n.seeAlsoDegree,
+    }));
+  return {
+    clusters: [...clusters].sort((a, b) => b.size - a.size).slice(0, 16),
+    corridors: [...corridors],
+    topBridges,
+    topCentral,
+  };
 }
 
 export function buildConceptGraph(opts: ConceptGraphBuildOptions = {}): ConceptGraph {
@@ -469,11 +930,26 @@ export function buildConceptGraph(opts: ConceptGraphBuildOptions = {}): ConceptG
     }
   }
 
+  const nodeLayer = new Map<string, SeeAlsoByLayer>();
+  const nodeBridge = new Map<string, number>();
+  for (const e of edges) {
+    if (e.kind !== 'seeAlso' || !e.layer) continue;
+    for (const end of [e.source, e.target]) {
+      const layers = nodeLayer.get(end) ?? emptySeeAlsoByLayer();
+      layers[e.layer] += 1;
+      nodeLayer.set(end, layers);
+      if (e.layer === 'crossDomain' || e.layer === 'pageBridge') {
+        nodeBridge.set(end, (nodeBridge.get(end) ?? 0) + 1);
+      }
+    }
+  }
+
   let nodes: ConceptGraphNode[] = concepts.map(c => {
     const row = usages.get(c.id);
     const usageUi = uiHits(row);
     const usageSurface = row?.surface ?? 0;
     const boards = boardsForConcept(c.id, boardMembership);
+    const seeAlsoByLayer = nodeLayer.get(c.id) ?? emptySeeAlsoByLayer();
     return {
       id: c.id,
       label: c.label,
@@ -490,6 +966,11 @@ export function buildConceptGraph(opts: ConceptGraphBuildOptions = {}): ConceptG
       kind: nodeUsageKind(usageUi, usageSurface),
       degree: degree.get(c.id) ?? 0,
       seeAlsoCount: (c.seeAlso ?? []).length,
+      seeAlsoByLayer,
+      bridgeScore: nodeBridge.get(c.id) ?? 0,
+      clusterId: '',
+      seeAlsoDegree: 0,
+      betweenness: 0,
     };
   });
 
@@ -513,6 +994,11 @@ export function buildConceptGraph(opts: ConceptGraphBuildOptions = {}): ConceptG
         kind: 'hub',
         degree: degree.get(hub) ?? 0,
         seeAlsoCount: 0,
+        seeAlsoByLayer: emptySeeAlsoByLayer(),
+        bridgeScore: 0,
+        clusterId: '',
+        seeAlsoDegree: 0,
+        betweenness: 0,
       });
     }
   }
@@ -531,6 +1017,25 @@ export function buildConceptGraph(opts: ConceptGraphBuildOptions = {}): ConceptG
       degree.set(e.target, (degree.get(e.target) ?? 0) + 1);
     }
     for (const n of nodes) n.degree = degree.get(n.id) ?? 0;
+  }
+
+  // Deep analytics: clusters · betweenness · seeAlso degree
+  {
+    const conceptIds = nodes.filter(n => n.nodeKind === 'concept').map(n => n.id);
+    const clustersMap = computeSeeAlsoClusters(conceptIds, edges);
+    const betweennessMap = computeSeeAlsoBetweenness(conceptIds, edges);
+    const seeAlsoDeg = new Map<string, number>();
+    for (const e of edges) {
+      if (e.kind !== 'seeAlso') continue;
+      seeAlsoDeg.set(e.source, (seeAlsoDeg.get(e.source) ?? 0) + 1);
+      seeAlsoDeg.set(e.target, (seeAlsoDeg.get(e.target) ?? 0) + 1);
+    }
+    for (const n of nodes) {
+      if (n.nodeKind !== 'concept') continue;
+      n.clusterId = clustersMap.get(n.id) ?? `cluster:${n.id}`;
+      n.betweenness = betweennessMap.get(n.id) ?? 0;
+      n.seeAlsoDegree = seeAlsoDeg.get(n.id) ?? 0;
+    }
   }
 
   nodes.sort((a, b) => b.degree - a.degree || b.usage - a.usage || a.id.localeCompare(b.id));
@@ -554,6 +1059,31 @@ export function buildConceptGraph(opts: ConceptGraphBuildOptions = {}): ConceptG
   const surfaceEdgeCount = edges.filter(e => e.kind === 'surface').length;
   const groupEdgeCount = edges.filter(e => e.kind === 'group').length;
   const domainHubEdgeCount = edges.filter(e => e.kind === 'domainHub').length;
+
+  const clusterBuckets = new Map<string, ConceptGraphNode[]>();
+  for (const n of conceptNodes) {
+    const list = clusterBuckets.get(n.clusterId) ?? [];
+    list.push(n);
+    clusterBuckets.set(n.clusterId, list);
+  }
+  const clusters: ConceptCluster[] = [...clusterBuckets.entries()].map(([id, members]) => {
+    const domainCounts = new Map<string, number>();
+    for (const m of members) {
+      domainCounts.set(m.domain, (domainCounts.get(m.domain) ?? 0) + 1);
+    }
+    const domain =
+      [...domainCounts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] ??
+      'tbd';
+    const hubs = [...members]
+      .sort((a, b) => b.betweenness - a.betweenness || b.seeAlsoDegree - a.seeAlsoDegree)
+      .slice(0, 3)
+      .map(m => m.id);
+    return { id, size: members.length, domain, hubs };
+  });
+  clusters.sort((a, b) => b.size - a.size || a.id.localeCompare(b.id));
+
+  const corridors = computeDomainCorridors(nodes, edges);
+  const report = buildConceptGraphReport(nodes, clusters, corridors);
 
   const domainSummaryMap = new Map<string, { nodes: number; edges: number; usage: number }>();
   for (const n of conceptNodes) {
@@ -581,7 +1111,7 @@ export function buildConceptGraph(opts: ConceptGraphBuildOptions = {}): ConceptG
 
   return {
     kind: 'concept-graph',
-    schemaVersion: 3,
+    schemaVersion: 5,
     generatedAt: new Date().toISOString(),
     focus: opts.focus,
     depth: opts.focus ? (opts.depth ?? 2) : undefined,
@@ -599,6 +1129,9 @@ export function buildConceptGraph(opts: ConceptGraphBuildOptions = {}): ConceptG
       unused: conceptNodes.filter(n => n.kind === 'unused').length,
       surfaceOnly: conceptNodes.filter(n => n.kind === 'surface-only').length,
       totalUsage: conceptNodes.reduce((s, n) => s + n.usageUi, 0),
+      bridges: conceptNodes.filter(n => n.bridgeScore > 0).length,
+      clusters: clusters.filter(c => c.size > 1).length,
+      corridors: corridors.length,
     },
     domainSummary: [...domainSummaryMap.entries()]
       .map(([domain, v]) => ({ domain, ...v }))
@@ -606,6 +1139,9 @@ export function buildConceptGraph(opts: ConceptGraphBuildOptions = {}): ConceptG
     boardSummary: [...boardSummaryMap.entries()]
       .map(([board, concepts]) => ({ board, concepts }))
       .sort((a, b) => b.concepts - a.concepts || a.board.localeCompare(b.board)),
+    clusters,
+    corridors,
+    report,
     nodes,
     edges,
   };
