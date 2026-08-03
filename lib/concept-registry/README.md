@@ -49,6 +49,7 @@ draft → proposed → active → deprecated → archived
 | `concept:archive` | → **archived** |
 | `concept:history` | version + review timeline |
 | `concept:health` | registry health metrics + alerts |
+| `concept:registry:doctor` | systems check: schema · CLI · API · domains · proposal backlog |
 
 ## API
 

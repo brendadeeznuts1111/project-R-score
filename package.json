@@ -1838,6 +1838,7 @@
     "validate:surface-coverage": "bun scripts/validate-surface-coverage.ts",
     "concept:registry:seed": "bun tools/concept-registry-cli.ts seed",
     "concept:registry:serve": "bun scripts/concept-registry-serve.ts",
+    "concept:registry:doctor": "bun tools/concept-registry-doctor.ts",
     "concept:propose": "bun tools/concept-registry-cli.ts propose",
     "concept:approve": "bun tools/concept-registry-cli.ts approve",
     "concept:review": "bun tools/concept-registry-cli.ts review",

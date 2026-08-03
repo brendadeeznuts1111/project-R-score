@@ -38,6 +38,19 @@ export {
   submitProposal,
 } from './lifecycle.ts';
 export {
+  CLI_SURFACE_PATHS,
+  REQUIRED_REGISTRY_TABLES,
+  checkApiHealth,
+  checkCliSurface,
+  checkRequiredTables,
+  collectConceptStats,
+  collectProposalBacklog,
+  formatDoctorReport,
+  runConceptRegistryDoctor,
+  type ConceptRegistryDoctorReport,
+  type DoctorCheck,
+} from './doctor.ts';
+export {
   buildConceptGraph,
   graphCentrality,
   graphOrphans,

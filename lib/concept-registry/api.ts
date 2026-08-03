@@ -214,7 +214,13 @@ export function createConceptRegistryFetch(db: Database): ConceptRegistryFetch {
     const res = await handleConceptRegistryRequest(req, db);
     if (res) return res;
     if (new URL(req.url).pathname === '/health') {
-      return json({ ok: true, service: 'concept-registry' });
+      const n = (db.query(`SELECT COUNT(*) AS n FROM concepts`).get() as { n: number } | null)?.n;
+      return json({
+        ok: true,
+        service: 'concept-registry',
+        version: '1',
+        concepts: n ?? 0,
+      });
     }
     return err('not found', 404);
   };
