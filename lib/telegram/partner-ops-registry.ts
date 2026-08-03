@@ -33,7 +33,7 @@ import {
 } from './package-group-forum.ts';
 import { joinPath } from '../path-bun';
 import { openOperationsDb } from '../operations/db';
-import { ledgerBalance, listLedgerEntries } from '../partner-profile/ledger';
+import { ledgerBalance, listLedgerEntries, type PartnerLedgerRow } from '../partner-profile/ledger';
 
 export const PARTNERS_OPS_SCHEMA = 'factorywager.partners-ops.v2' as const;
 export const PARTNERS_OPS_REGISTRY_REL = 'public/registry/partners-ops.json';
@@ -143,6 +143,8 @@ export type PartnersOpsPartner = {
     balance?: number;
     initialCapital?: number;
     sqlLedgerCount?: number;
+    /** Most recent partner_ledger rows (transaction history, newest last). */
+    ledgerRows?: PartnerLedgerRow[];
   };
   tracking: {
     accounts: {
@@ -180,6 +182,8 @@ export interface PartnerLedgerSnapshot {
   initialCapital: number;
   rows: number;
   lastEventAt?: string;
+  /** Most recent ledger rows (newest last) — transaction history for the board. */
+  recentRows: PartnerLedgerRow[];
 }
 
 export type PartnersOpsRegistry = {
@@ -643,6 +647,7 @@ export async function loadSqliteLedgerSnapshots(
         initialCapital: initial?.amount ?? 0,
         rows: entries.length,
         lastEventAt: entries[entries.length - 1]!.createdAt,
+        recentRows: entries.slice(-25),
       });
     }
     return out;
@@ -780,7 +785,12 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
       },
       ledger: partnerEvents,
       ...(snap
-        ? { balance: snap.balance, initialCapital: snap.initialCapital, sqlLedgerCount: snap.rows }
+        ? {
+            balance: snap.balance,
+            initialCapital: snap.initialCapital,
+            sqlLedgerCount: snap.rows,
+            ledgerRows: snap.recentRows,
+          }
         : {}),
     };
     const readyAccounts = outs.filter(o => o.status === 'ready' || o.status === 'funded').length;
