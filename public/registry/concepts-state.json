@@ -1,7 +1,7 @@
 {
   "kind": "concepts-state",
   "schemaVersion": 1,
-  "bakedAt": "2026-08-03T23:47:09.746Z",
+  "bakedAt": "2026-08-03T23:50:13.894Z",
   "gate": "pass",
   "summary": {
     "totalPortal": 135,
@@ -1585,8 +1585,8 @@
       "namespace": "ui",
       "group": "ui.semantic",
       "category": "ui",
-      "status": "active",
-      "provenance": "legacy",
+      "status": "deprecated",
+      "provenance": "PR#248",
       "usage": 0,
       "kind": "unused"
     },
@@ -1669,8 +1669,8 @@
       "namespace": "ui",
       "group": "ui.semantic",
       "category": "ui",
-      "status": "active",
-      "provenance": "legacy",
+      "status": "deprecated",
+      "provenance": "PR#248",
       "usage": 0,
       "kind": "unused"
     },
@@ -1681,8 +1681,8 @@
       "namespace": "ui",
       "group": "ui.semantic",
       "category": "ui",
-      "status": "active",
-      "provenance": "legacy",
+      "status": "deprecated",
+      "provenance": "PR#248",
       "usage": 0,
       "kind": "unused"
     },

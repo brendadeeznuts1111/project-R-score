@@ -45,7 +45,7 @@ describe('concept:graph', () => {
       classifySeeAlsoLayer('page.concepts', 'ui.semantic.surface', 'portal', 'portal')
     ).toBe('pageBridge');
     expect(
-      classifySeeAlsoLayer('ops.limits.account', 'ui.semantic.tone', 'compliance', 'portal')
+      classifySeeAlsoLayer('ops.limits.account', 'ui.semantic.status', 'compliance', 'portal')
     ).toBe('crossDomain');
     expect(
       classifySeeAlsoLayer('ops.limits.account', 'ops.limits.agent', 'compliance', 'compliance')
