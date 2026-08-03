@@ -283,7 +283,7 @@ Terminology (glossary SSOT in [`lib/portal/semantic-vocabulary.ts`](../../../lib
 | `node_id` / `TreeNodeId` | Account | `ops.limits.node` · `ops.limits.account` |
 | `tree_nodes` hierarchy | Partner tree | `ops.limits.tree` |
 | Descendants under a partner | Downline | `ops.limits.downline` |
-| `node_type` | Role type | `ops.limits.roleType` (`partner` · `agent` · `sub_agent`) |
+| `node_type` | Role type | `ops.limits.role_type` (`partner` · `agent` · `sub_agent`) |
 | `node_type: agent` | Downline agent | `ops.limits.agent` (not HTTP, not Cursor) |
 | `/api/agents/v1/…` | Agent API | `api.agent` |
 
@@ -317,7 +317,7 @@ Glossary deep links:
 - `#glossary:ops.limits.node`
 - `#glossary:ops.limits.tree`
 - `#glossary:ops.limits.downline`
-- `#glossary:ops.limits.roleType`
+- `#glossary:ops.limits.role_type`
 - `#glossary:ops.limits.agent`
 - `#glossary:ops.limits.sub_agent`
 - `#glossary:api.agent`

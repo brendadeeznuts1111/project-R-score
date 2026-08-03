@@ -5,6 +5,9 @@
  * Domain concepts remain owned by Kalshi-bot/src/institutions/glossary.ts.
  * This module owns cross-portal UI field semantics so labels, roles, and
  * operational values do not drift between boards.
+ *
+ * `PORTAL_SEMANTIC_CONCEPTS` is the SSOT; keys are derived — never edit a
+ * parallel key list.
  */
 
 import { PORTAL_PAGE_CONCEPT_DEFINITIONS } from './page-concepts.ts';
@@ -24,121 +27,10 @@ export const PORTAL_UI_ROLES = ['badge', 'chip', 'code', 'heading', 'link', 'tok
 
 export type PortalUiRole = (typeof PORTAL_UI_ROLES)[number];
 
-export const PORTAL_SEMANTIC_CONCEPT_KEYS = [
-  'ui.semantic.surface',
-  'ui.semantic.hostname',
-  'ui.semantic.port',
-  'ui.semantic.status',
-  'ui.semantic.tone',
-  'ui.semantic.kind',
-  'ui.semantic.plane',
-  'ui.semantic.source',
-  'ui.semantic.version',
-  'ui.semantic.resources',
-  'ui.semantic.artifact',
-  'ui.semantic.package',
-  'ui.semantic.type',
-  'ops.limits.account',
-  'ops.limits.node',
-  'ops.limits.tree',
-  'ops.limits.downline',
-  'ops.limits.roleType',
-  'ops.limits.partner',
-  'ops.limits.agent',
-  'ops.limits.sub_agent',
-  'ops.limits.profile',
-  'ops.limits.jurisdiction_policy',
-  'ops.limits.policy_code',
-  'ops.limits.monitoring_status',
-  'ops.limits.evidence_trace',
-  'ops.limits.effective_limit',
-  'ops.limits.pattern_surface',
-  'ops.limits.change_direction',
-  'ops.limits.market_phase',
-  'ops.limits.sport',
-  'ops.limits.league',
-  'ops.limits.competition',
-  'ops.limits.event_country',
-  'ops.limits.market_type',
-  'ops.limits.multi_structure',
-  'ops.limits.limit_delta',
-  'ops.limits.influence_score',
-  'ops.limits.data_coverage',
-  'ops.limits.prediction',
-  'api.agent',
-  ...PORTAL_PAGE_CONCEPT_DEFINITIONS.map(page => page.id),
-  'section.accountLimitControl',
-  'section.complianceKpis',
-  'section.jurisdictionCatalog',
-  'section.patternSummary',
-  'section.limitRaisePrediction',
-  'section.sportsbookPatterns',
-  'section.stateZipPatterns',
-  'section.downlineContext',
-  'section.dataConnectionAudit',
-  'section.recentLimitChanges',
-  'section.perNodeBreakdown',
-  'section.openingBaseline',
-  'section.partnersTelegram',
-  'section.partnersAccounting',
-  'section.partnersAccountsLimits',
-  'section.partnersOnboard',
-  'section.partnersDeposits',
-  'section.partnersPartnerMessage',
-  'section.partnersOuts',
-  'section.partnersBookDetail',
-  'section.partnersTags',
-  'ui.route.partnerHash',
-  'ui.filter.profile',
-  'ui.filter.jurisdiction',
-  'ui.filter.partnerId',
-  'ui.filter.sportsbook',
-  'ui.filter.state',
-  'ui.filter.zipPrefix',
-  'ui.action.reset',
-  'ui.action.searchProfiles',
-  'ui.action.filter',
-  'ops.panel.partner_limit_history',
-  'ops.panel.limit_overview',
-  'ops.summary.partner_limit_trace',
-  'ops.filter.account.all',
-  'ops.filter.sportsbook.all',
-  'ops.filter.window',
-  'ops.filter.window.48h',
-  'ops.filter.window.7d',
-  'ops.filter.window.30d',
-  'ops.metric.visible_changes',
-  'ops.metric.raises',
-  'ops.metric.decreases',
-  'ops.metric.sportsbooks',
-  'ops.metric.high_water',
-  'ops.metric.deltas',
-  'ops.metric.active_filters',
-  'ops.metric.proof_coverage',
-  'ops.table.recent_changes',
-  'ops.table.per_account',
-  'ops.table.limit_changes',
-  'ui.action.refresh',
-  'ui.action.export',
-  'ui.export.csv',
-  'ui.export.json',
-] as const;
-
-export type PortalSemanticConceptKey = (typeof PORTAL_SEMANTIC_CONCEPT_KEYS)[number];
-
-export type PortalSemanticConcept = {
-  id: PortalSemanticConceptKey;
-  label: string;
-  description: string;
-  semanticType: PortalSemanticType;
-  uiRole: PortalUiRole;
-  synonyms: readonly string[];
-  values?: readonly string[];
-  unit?: string;
-  format?: string;
-  seeAlso: readonly PortalSemanticConceptKey[];
-};
-
+/**
+ * Portal UI semantic inventory — single source of truth.
+ * Keys and {@link PortalSemanticConceptKey} are derived from this array.
+ */
 export const PORTAL_SEMANTIC_CONCEPTS = [
   ...PORTAL_PAGE_CONCEPT_DEFINITIONS.map(page => ({
     id: page.id,
@@ -290,7 +182,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['partner account', 'tree node', 'limit subject', 'node'],
     seeAlso: [
       'ops.limits.node',
-      'ops.limits.roleType',
+      'ops.limits.role_type',
       'ops.limits.profile',
       'ops.limits.evidence_trace',
     ],
@@ -303,7 +195,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     semanticType: 'resource',
     uiRole: 'code',
     synonyms: ['node_id', 'TreeNodeId', 'tree_nodes row', 'account'],
-    seeAlso: ['ops.limits.account', 'ops.limits.tree', 'ops.limits.roleType', 'ops.limits.agent'],
+    seeAlso: ['ops.limits.account', 'ops.limits.tree', 'ops.limits.role_type', 'ops.limits.agent'],
   },
   {
     id: 'ops.limits.tree',
@@ -316,7 +208,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     seeAlso: [
       'ops.limits.node',
       'ops.limits.downline',
-      'ops.limits.roleType',
+      'ops.limits.role_type',
       'section.downlineContext',
     ],
   },
@@ -336,13 +228,14 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     ],
   },
   {
-    id: 'ops.limits.roleType',
+    id: 'ops.limits.role_type',
     label: 'Role type',
     description:
       'Position of a tree node in the partner hierarchy. Wire field node_type: partner, agent, or sub_agent.',
     semanticType: 'classification',
     uiRole: 'chip',
-    synonyms: ['node_type', 'tree role', 'account role'],
+    // ops.limits.roleType: deprecated camelCase id (deep-link alias via synonym)
+    synonyms: ['node_type', 'tree role', 'account role', 'ops.limits.roleType', 'roleType'],
     values: ['partner', 'agent', 'sub_agent'],
     seeAlso: ['ops.limits.partner', 'ops.limits.agent', 'ops.limits.sub_agent', 'ops.limits.node'],
   },
@@ -355,7 +248,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'chip',
     synonyms: ['master', 'partner root', 'node_type partner'],
     values: ['partner'],
-    seeAlso: ['ops.limits.roleType', 'ops.limits.downline', 'ops.limits.agent', 'ops.limits.tree'],
+    seeAlso: ['ops.limits.role_type', 'ops.limits.downline', 'ops.limits.agent', 'ops.limits.tree'],
   },
   {
     id: 'ops.limits.agent',
@@ -366,7 +259,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'chip',
     synonyms: ['agent', 'node_type agent', 'downline agent'],
     values: ['agent'],
-    seeAlso: ['ops.limits.sub_agent', 'ops.limits.partner', 'ops.limits.roleType', 'api.agent'],
+    seeAlso: ['ops.limits.sub_agent', 'ops.limits.partner', 'ops.limits.role_type', 'api.agent'],
   },
   {
     id: 'ops.limits.sub_agent',
@@ -377,7 +270,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'chip',
     synonyms: ['sub_agent', 'sub-agent', 'node_type sub_agent'],
     values: ['sub_agent'],
-    seeAlso: ['ops.limits.agent', 'ops.limits.downline', 'ops.limits.roleType', 'ops.limits.node'],
+    seeAlso: ['ops.limits.agent', 'ops.limits.downline', 'ops.limits.role_type', 'ops.limits.node'],
   },
   {
     id: 'ops.limits.profile',
@@ -739,7 +632,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     seeAlso: [
       'ops.limits.downline',
       'ops.limits.tree',
-      'ops.limits.roleType',
+      'ops.limits.role_type',
       'section.stateZipPatterns',
     ],
   },
@@ -777,7 +670,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['node breakdown', 'account movement breakdown'],
     seeAlso: [
       'ops.limits.node',
-      'ops.limits.roleType',
+      'ops.limits.role_type',
       'ops.limits.influence_score',
       'section.recentLimitChanges',
     ],
@@ -1150,6 +1043,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     description: 'Partner Limit History metric: change amounts across visible rows.',
     semanticType: 'state',
     uiRole: 'code',
+    synonyms: ['delta amounts', 'change amounts', 'limit deltas'],
     unit: 'usd',
     seeAlso: ['ops.limits.limit_delta', 'ops.metric.visible_changes'],
   },
@@ -1245,7 +1139,15 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     synonyms: ['filter', 'apply filter'],
     seeAlso: ['ui.filter.partnerId', 'ui.filter.sportsbook', 'ui.filter.state'],
   },
-] as const satisfies readonly PortalSemanticConcept[];
+] as const;
+
+export type PortalSemanticConceptKey = (typeof PORTAL_SEMANTIC_CONCEPTS)[number]['id'];
+
+export type PortalSemanticConcept = (typeof PORTAL_SEMANTIC_CONCEPTS)[number];
+
+/** Derived from {@link PORTAL_SEMANTIC_CONCEPTS} — do not maintain a parallel list. */
+export const PORTAL_SEMANTIC_CONCEPT_KEYS: readonly PortalSemanticConceptKey[] =
+  PORTAL_SEMANTIC_CONCEPTS.map(concept => concept.id);
 
 export const HEALTH_FIELD_CONCEPTS = {
   surface: 'ui.semantic.surface',
@@ -1264,7 +1166,7 @@ export const LIMIT_FIELD_CONCEPTS = {
   node: 'ops.limits.node',
   tree: 'ops.limits.tree',
   downline: 'ops.limits.downline',
-  roleType: 'ops.limits.roleType',
+  roleType: 'ops.limits.role_type',
   partner: 'ops.limits.partner',
   agent: 'ops.limits.agent',
   subAgent: 'ops.limits.sub_agent',
@@ -1290,10 +1192,22 @@ export const LIMIT_FIELD_CONCEPTS = {
   agentApi: 'api.agent',
 } as const satisfies Record<string, PortalSemanticConceptKey>;
 
-/** Map wire node_type values to glossary role concepts. */
+const TREE_NODE_TYPES = ['partner', 'agent', 'sub_agent'] as const;
+type TreeNodeType = (typeof TREE_NODE_TYPES)[number];
+
+function isTreeNodeType(value: string): value is TreeNodeType {
+  return (TREE_NODE_TYPES as readonly string[]).includes(value);
+}
+
+/**
+ * Map wire `node_type` values to glossary role concepts.
+ * Returns `null` for missing/unknown wire — callers must handle at the boundary.
+ */
 export function glossaryConceptForNodeType(
-  nodeType: string | null | undefined
-): PortalSemanticConceptKey {
+  nodeType: string | null | undefined // brand-ok — wire node_type before parse
+): PortalSemanticConceptKey | null {
+  if (nodeType == null || nodeType === '') return null;
+  if (!isTreeNodeType(nodeType)) return null;
   switch (nodeType) {
     case 'partner':
       return 'ops.limits.partner';
@@ -1301,8 +1215,6 @@ export function glossaryConceptForNodeType(
       return 'ops.limits.agent';
     case 'sub_agent':
       return 'ops.limits.sub_agent';
-    default:
-      return 'ops.limits.roleType';
   }
 }
 
@@ -1330,9 +1242,47 @@ export const LIMIT_SURFACE_CONCEPTS = {
   filterAction: 'ui.action.filter',
 } as const satisfies Record<string, PortalSemanticConceptKey>;
 
+/**
+ * Partner Limit History board binding surface.
+ * Includes section mounts plus UI chrome ids enforced by
+ * `partners:integration:validate` (ops.panel/metric/filter/table.*).
+ */
 export const PARTNER_HISTORY_SURFACE_CONCEPTS = {
   page: 'page.partnerHistory',
   openingBaseline: 'section.openingBaseline',
+  recentLimitChanges: 'section.recentLimitChanges',
+  perNodeBreakdown: 'section.perNodeBreakdown',
+  panelPartnerLimitHistory: 'ops.panel.partner_limit_history',
+  panelLimitOverview: 'ops.panel.limit_overview',
+  summaryPartnerLimitTrace: 'ops.summary.partner_limit_trace',
+  filterAccountAll: 'ops.filter.account.all',
+  filterSportsbookAll: 'ops.filter.sportsbook.all',
+  filterWindow: 'ops.filter.window',
+  filterWindow48h: 'ops.filter.window.48h',
+  filterWindow7d: 'ops.filter.window.7d',
+  filterWindow30d: 'ops.filter.window.30d',
+  metricVisibleChanges: 'ops.metric.visible_changes',
+  metricRaises: 'ops.metric.raises',
+  metricDecreases: 'ops.metric.decreases',
+  metricSportsbooks: 'ops.metric.sportsbooks',
+  metricHighWater: 'ops.metric.high_water',
+  metricDeltas: 'ops.metric.deltas',
+  metricActiveFilters: 'ops.metric.active_filters',
+  metricProofCoverage: 'ops.metric.proof_coverage',
+  tableRecentChanges: 'ops.table.recent_changes',
+  tablePerAccount: 'ops.table.per_account',
+  tableLimitChanges: 'ops.table.limit_changes',
+  actionRefresh: 'ui.action.refresh',
+  actionExport: 'ui.action.export',
+  exportCsv: 'ui.export.csv',
+  exportJson: 'ui.export.json',
+  actionReset: 'ui.action.reset',
+  actionFilter: 'ui.action.filter',
+  /** Export / betlog presentation collapses onto artifact evidence. */
+  artifact: 'ui.semantic.artifact',
+  /** Freshness chrome collapses onto status / source. */
+  status: 'ui.semantic.status',
+  source: 'ui.semantic.source',
 } as const satisfies Record<string, PortalSemanticConceptKey>;
 
 /** Account dossier board — sections collapse onto existing ops.limits.* / partners surfaces. */
@@ -1367,6 +1317,7 @@ export const PARTNERS_SURFACE_CONCEPTS = {
   outs: 'section.partnersOuts',
   bookDetail: 'section.partnersBookDetail',
   tags: 'section.partnersTags',
+  partnerHashRoute: 'ui.route.partnerHash',
 } as const satisfies Record<string, PortalSemanticConceptKey>;
 
 export function validatePortalSemanticVocabulary(): void {

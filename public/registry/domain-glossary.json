@@ -5234,7 +5234,7 @@
       "valueLabels": null,
       "seeAlso": [
         "ops.limits.node",
-        "ops.limits.roleType",
+        "ops.limits.role_type",
         "ops.limits.profile",
         "ops.limits.evidence_trace"
       ],
@@ -5267,7 +5267,7 @@
       "seeAlso": [
         "ops.limits.account",
         "ops.limits.tree",
-        "ops.limits.roleType",
+        "ops.limits.role_type",
         "ops.limits.agent"
       ],
       "status": "active",
@@ -5298,7 +5298,7 @@
       "seeAlso": [
         "ops.limits.node",
         "ops.limits.downline",
-        "ops.limits.roleType",
+        "ops.limits.role_type",
         "section.downlineContext"
       ],
       "status": "active",
@@ -5344,7 +5344,7 @@
       "color": "#58a6ff"
     },
     {
-      "id": "ops.limits.roleType",
+      "id": "ops.limits.role_type",
       "label": "Role type",
       "description": "Position of a tree node in the partner hierarchy. Wire field node_type: partner, agent, or sub_agent.",
       "category": "ui",
@@ -5353,7 +5353,9 @@
       "synonyms": [
         "node_type",
         "tree role",
-        "account role"
+        "account role",
+        "ops.limits.roleType",
+        "roleType"
       ],
       "values": [
         "partner",
@@ -5395,7 +5397,7 @@
       ],
       "valueLabels": null,
       "seeAlso": [
-        "ops.limits.roleType",
+        "ops.limits.role_type",
         "ops.limits.downline",
         "ops.limits.agent",
         "ops.limits.tree"
@@ -5430,7 +5432,7 @@
       "seeAlso": [
         "ops.limits.sub_agent",
         "ops.limits.partner",
-        "ops.limits.roleType",
+        "ops.limits.role_type",
         "api.agent"
       ],
       "status": "active",
@@ -5463,7 +5465,7 @@
       "seeAlso": [
         "ops.limits.agent",
         "ops.limits.downline",
-        "ops.limits.roleType",
+        "ops.limits.role_type",
         "ops.limits.node"
       ],
       "status": "active",
@@ -6357,7 +6359,7 @@
       "seeAlso": [
         "ops.limits.downline",
         "ops.limits.tree",
-        "ops.limits.roleType",
+        "ops.limits.role_type",
         "section.stateZipPatterns"
       ],
       "status": "active",
@@ -6444,7 +6446,7 @@
       "valueLabels": null,
       "seeAlso": [
         "ops.limits.node",
-        "ops.limits.roleType",
+        "ops.limits.role_type",
         "ops.limits.influence_score",
         "section.recentLimitChanges"
       ],
@@ -7434,7 +7436,11 @@
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
-      "synonyms": [],
+      "synonyms": [
+        "delta amounts",
+        "change amounts",
+        "limit deltas"
+      ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
