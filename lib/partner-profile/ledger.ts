@@ -47,6 +47,7 @@ CREATE INDEX IF NOT EXISTS idx_partner_ledger_code ON partner_ledger(partner_cod
 CREATE INDEX IF NOT EXISTS idx_partner_ledger_out ON partner_ledger(partner_code, book_key);
 CREATE INDEX IF NOT EXISTS idx_partner_ledger_scope ON partner_ledger(partner_code, account_scope);
 CREATE INDEX IF NOT EXISTS idx_partner_ledger_batch ON partner_ledger(partner_code, batch_id);
+CREATE INDEX IF NOT EXISTS idx_partner_ledger_tracking ON partner_ledger(partner_code, tracking_id);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_partner_ledger_external
   ON partner_ledger(partner_code, account_scope, external_id) WHERE external_id IS NOT NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_partner_ledger_initial_capital

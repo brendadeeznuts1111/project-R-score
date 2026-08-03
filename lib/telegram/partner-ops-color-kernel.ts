@@ -87,6 +87,8 @@ export const PARTNER_OPS_CONCEPT_COLORS = {
   'accounting.credit': 'kalshi',
   'accounting.free_roll': 'research',
   'accounting.settlement': 'polymarket',
+  'accounting.transfer': 'kalshi', // scope moves — infoBlue analog → kalshi (#58A6FF)
+  'account.scope.global': 'env', // neutralGray analog → env (#8B949E)
 
   'telegram.topic.general': 'env',
   'telegram.topic.ops': 'kalshi',

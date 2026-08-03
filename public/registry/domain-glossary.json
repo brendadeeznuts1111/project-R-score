@@ -14842,7 +14842,7 @@
       "flagAriaLabel": null,
       "domain": null,
       "namespace": null,
-      "color": null
+      "color": "#58a6ff"
     },
     {
       "id": "account.scope.global",
@@ -14861,7 +14861,8 @@
       "valueLabels": null,
       "seeAlso": [
         "accounting.deposit",
-        "accounting.settlement"
+        "accounting.settlement",
+        "accounting.transfer"
       ],
       "status": "active",
       "deprecatedBy": null,
@@ -14880,7 +14881,7 @@
       "flagAriaLabel": null,
       "domain": null,
       "namespace": null,
-      "color": null
+      "color": "#8b949e"
     },
     {
       "id": "ops.view.per_account",
