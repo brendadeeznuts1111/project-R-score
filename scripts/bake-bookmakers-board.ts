@@ -20,6 +20,7 @@
  */
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 
+// eslint-disable-next-line no-restricted-imports -- temp-dir tar extraction; Bun has no rmSync/mkdirSync for arbitrary paths
 import { mkdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -122,7 +123,13 @@ export interface BookmakersBakeResult {
   artifact: { name: string; version: string; checksum: string; source: string };
   bookmakers: Record<string, unknown>;
   audit: { ok: boolean; issues: string[] };
-  summary: { count: number; webview: number; rest: number; sports: string[] };
+  summary: {
+    count: number;
+    webview: number;
+    rest: number;
+    seat: number;
+    sports: string[];
+  };
 }
 
 /** Build the bake payload (pure, testable). */
@@ -140,7 +147,7 @@ export function buildBookmakersBake(
   }>;
   const sports = new Set<string>();
   for (const b of entries) {
-    if (b.fetcherType !== 'rest' && b.fetcherType !== 'webview') {
+    if (b.fetcherType !== 'rest' && b.fetcherType !== 'webview' && b.fetcherType !== 'seat') {
       issues.push(`entry missing valid fetcherType (got ${b.fetcherType})`);
     }
     if (!Array.isArray(b.supportedSports)) issues.push('entry missing supportedSports');
@@ -157,6 +164,7 @@ export function buildBookmakersBake(
       count: entries.length,
       webview: entries.filter(b => b.fetcherType === 'webview').length,
       rest: entries.filter(b => b.fetcherType === 'rest').length,
+      seat: entries.filter(b => b.fetcherType === 'seat').length,
       sports: [...sports].sort(),
     },
   };
