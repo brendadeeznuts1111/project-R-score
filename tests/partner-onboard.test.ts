@@ -14,6 +14,9 @@ import {
 } from '../lib/partner-profile/onboard';
 import { loadSeatIntake } from '../lib/telegram/seat-intake';
 import { parsePartnerProfileToml } from '../lib/partner-profile/parse';
+import { parseAccountingFlags } from '../tools/partner-onboard';
+import { openOperationsDb } from '../lib/operations/db';
+import { listLedgerEntries } from '../lib/partner-profile/ledger';
 
 describe('normalize / derive / detect', () => {
   test('normalizePartnerCode uppercases + validates', () => {
@@ -36,6 +39,52 @@ describe('normalize / derive / detect', () => {
     expect(detectBookType('https://rc.youwager.lv')).toBe('pph');
     expect(detectBookType('https://sportsbook.fanduel.com')).toBe('offshore');
     expect(detectBookType('https://rc.youwager.lv', 'legal')).toBe('legal');
+  });
+});
+
+describe('parseAccountingFlags (CLI validation)', () => {
+  test('valid flags parse to schema-shaped fields', () => {
+    const flags = parseAccountingFlags([
+      '--deal',
+      '30',
+      '--initial-balance',
+      '10000',
+      '--funding-method',
+      'wire',
+      '--currency',
+      'usd',
+      '--hold-target',
+      '0.05',
+    ]);
+    expect(flags).toEqual({
+      commissionPct: 30,
+      initialBalance: 10000,
+      holdTargetPct: 0.05,
+      fundingMethod: 'wire',
+      currency: 'USD', // uppercased
+    });
+  });
+
+  test('omitted flags leave every field unset', () => {
+    expect(parseAccountingFlags([])).toEqual({});
+  });
+
+  test('invalid values are rejected', () => {
+    expect(() => parseAccountingFlags(['--deal', '150'])).toThrow(/--deal must be 0–100/);
+    expect(() => parseAccountingFlags(['--deal', '-5'])).toThrow(/--deal must be 0–100/);
+    expect(() => parseAccountingFlags(['--initial-balance', '-1'])).toThrow(
+      /--initial-balance must be ≥ 0/
+    );
+    expect(() => parseAccountingFlags(['--hold-target', '1.5'])).toThrow(
+      /--hold-target must be 0–1/
+    );
+    expect(() => parseAccountingFlags(['--funding-method', 'paypal'])).toThrow(
+      /--funding-method must be one of wire\|crypto\|voucher\|internal/
+    );
+    expect(() => parseAccountingFlags(['--currency', 'US'])).toThrow(
+      /--currency must be a 3-letter ISO code/
+    );
+    expect(() => parseAccountingFlags(['--deal', 'abc'])).toThrow(/--deal must be a number/);
   });
 });
 
@@ -71,7 +120,12 @@ describe('onboardPartner', () => {
   }
 
   test('dry-run writes nothing', async () => {
-    const { plan, nodeId, intakePath, profilePath } = await run({ dryRun: true });
+    const { plan, nodeId, intakePath, profilePath } = await run({
+      dryRun: true,
+      initialBalance: 10000,
+      currency: 'USD',
+      commissionPct: 30,
+    });
     expect(plan.identity).toBe('create');
     expect(plan.type).toBe('pph');
     expect(plan.bookKey).toBe('youwager');
@@ -79,6 +133,9 @@ describe('onboardPartner', () => {
     expect(intakePath).toBeNull();
     expect(profilePath).toBeNull();
     expect(await Bun.file(auditPath).exists()).toBe(false);
+    expect(plan.actions.join('\n')).toContain(
+      'would init ledger JOHNNY — initial_capital 10000 USD · deal 30%'
+    );
   });
 
   test('real run: node + vault + intake + profile + audit; idempotent on rerun', async () => {
@@ -112,6 +169,42 @@ describe('onboardPartner', () => {
     const again = await run({});
     expect(again.plan.identity).toBe('reuse');
     expect(again.nodeId).toBe(nodeId);
+  });
+
+  test('real run captures accounting terms + initializes the ledger', async () => {
+    await run({
+      initialBalance: 10000,
+      currency: 'USD', // uppercasing is the CLI's job (see parseAccountingFlags test)
+      commissionPct: 30,
+      holdTargetPct: 0.05,
+      fundingMethod: 'wire',
+    });
+
+    // profile: settlement / balance / per-book funding written
+    const text = await Bun.file(join(profilesDir, 'JOHNNY.toml')).text();
+    const profile = parsePartnerProfileToml(text, 'JOHNNY');
+    expect(profile.settlement).toMatchObject({
+      commissionPct: 30,
+      currency: 'USD',
+      holdTargetPct: 0.05,
+    });
+    expect(profile.balance?.initialCapitalRequirement).toBe(10000);
+    expect(profile.books?.youwager?.funding?.method).toBe('wire');
+    // stub mirror: fundStatus + ledger entry
+    expect(profile.accounting?.fundStatus).toBe('ready');
+    expect((profile.accounting?.ledger as unknown[]).length).toBe(1);
+
+    // ops DB: initial_capital row with running balance
+    const db = openOperationsDb({ path: dbPath } as never);
+    const rows = listLedgerEntries(db, 'JOHNNY');
+    expect(rows.length).toBe(1);
+    expect(rows[0]).toMatchObject({
+      type: 'initial_capital',
+      amount: 10000,
+      currency: 'USD',
+      balanceAfter: 10000,
+    });
+    db.close();
   });
 
   test('missing required input fails fast', async () => {

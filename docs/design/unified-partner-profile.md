@@ -48,8 +48,8 @@ derived aliases. Canonical glossary concept ids reused (`book.type.*`,
                   initialLimit · limitRaiseTarget · raiseRequestWeek ·
                   recreationalMix · roundStakes · casinoPlayPct ·
                   oddsBoostAcceptance · maxBetFrequencyDaily · requiredSportsDiversity
-[settlement]      commissionStructure · commissionTiers · makeup* · payout* ·
-                  currency · holdTargetPct
+[settlement]      commissionStructure · commissionPct · commissionTiers · makeup* ·
+                  payout* · currency · holdTargetPct
 [balance]         initialCapitalRequirement · marginCallThreshold ·
                   marginCallAction · autoInject*
 [compliance]      autoSuspendRules · reviewRequiredFor · auditRetentionDays ·
@@ -104,6 +104,51 @@ Writes the password to `partner_vault` (node-scoped AES-GCM, key
 `vaultKey`, **no plaintext password**), and upserts
 `config/partner-profiles/<CODE>.toml`. Existing plaintext intake passwords
 migrate via `bun run partner:vault:migrate` (idempotent).
+
+## Accounting capture + partner ledger
+
+`partner:onboard` captures the deal terms during onboarding and initializes a
+per-partner ledger. The five flags are **optional** — omitted flags are left
+unset (no prompts, no implicit defaults); malformed values are rejected:
+
+```bash
+bun run partner:onboard --code JOHNNY --url https://rc.youwager.lv \
+  --username <user> --telegram-user-id <id> \
+  --deal 30 \                       # settlement.commissionPct (0–100)
+  --initial-balance 10000 \         # balance.initialCapitalRequirement (≥ 0)
+  --funding-method wire \           # books.<bookKey>.funding.method (wire|crypto|voucher|internal)
+  --currency USD \                  # settlement.currency (3-letter ISO)
+  --hold-target 0.05                # settlement.holdTargetPct (0–1)
+```
+
+Where each field lands (schema-correct homes, not the CLI names):
+
+| Flag            | Profile field                                    |
+| --------------- | ------------------------------------------------ |
+| `--deal`        | `settlement.commissionPct`                       |
+| `--currency`    | `settlement.currency` (uppercased)               |
+| `--hold-target` | `settlement.holdTargetPct`                       |
+| `--initial-balance` | `balance.initialCapitalRequirement`          |
+| `--funding-method`  | `books.<bookKey>.funding.method`             |
+
+On successful registration, the accounting stub (`lib/partner-profile/
+accounting-stub.ts`) initializes the partner ledger (`partner_ledger` table in
+the ops DB — DDL wired into `migrateSchema`, so every `openOperationsDb`
+creates it): it inserts an `initial_capital` row (amount `--initial-balance`,
+default `0`; currency `--currency`, default `USD`) **idempotently** (only when
+the partner has no rows yet, so `partner:book:add` reruns do not duplicate it),
+sets `accounting.fundStatus = 'ready'`, and appends the entry to the profile's
+`accounting.ledger`. The stub is a local function for now — swappable for an
+external accounting service without changing the call site.
+
+`--dry-run` prints the accounting actions (`would init ledger <CODE> —
+initial_capital <amount> <currency> · deal <n>% · hold <pct>`) without writing.
+
+**Out of scope (follow-up):** the settlement engine — a cron/event-driven
+service that reads `settlement.*` terms, pulls bet/win data, computes
+settlement, posts `settlement` entries to `partner_ledger`, and refreshes
+`accounting.fundStatus` / `balance.initialCapitalRequirement`. Payment-rail
+integration and live balance reconciliation are also follow-ups.
 
 ## youwager (first real profile)
 

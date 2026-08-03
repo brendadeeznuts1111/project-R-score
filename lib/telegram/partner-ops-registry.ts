@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 /**
  * Partners-ops registry v2 — collision-free projection over seat-capital-desk + handshake.
  *
@@ -10,6 +11,7 @@
  * @see docs/harness/tenants/seat-capital-desk.md
  * @see lib/telegram/partner-ops-glossary.ts
  */
+import type { Database } from 'bun:sqlite';
 import { partnerOpsColorMap, partnerOpsConceptColorWire } from './partner-ops-color-kernel.ts';
 import {
   PARTNER_OPS_EVENT_CODES,
@@ -29,6 +31,9 @@ import {
   PACKAGE_GROUP_FORUMS_META_DIR,
   loadPackageGroupForumMetadata,
 } from './package-group-forum.ts';
+import { joinPath } from '../path-bun';
+import { openOperationsDb } from '../operations/db';
+import { ledgerBalance, listLedgerEntries } from '../partner-profile/ledger';
 
 export const PARTNERS_OPS_SCHEMA = 'factorywager.partners-ops.v2' as const;
 export const PARTNERS_OPS_REGISTRY_REL = 'public/registry/partners-ops.json';
@@ -134,6 +139,10 @@ export type PartnersOpsPartner = {
     credits: { amount: number; date: string }[];
     freeRoll: { total: number; used: number };
     ledger: PartnerOpsEvent[];
+    /** SQLite partner_ledger projection (present only when the ops DB has rows). */
+    balance?: number;
+    initialCapital?: number;
+    sqlLedgerCount?: number;
   };
   tracking: {
     accounts: {
@@ -159,9 +168,19 @@ export type PartnersOpsPartner = {
       ledgerEvents: number;
       freeRollPercent: number;
       freeRollApplied: number;
+      /** Current running balance from the SQLite partner_ledger (when present). */
+      balance?: number;
     };
   };
 };
+
+/** SQLite `partner_ledger` projection for one partner (from the ops DB). */
+export interface PartnerLedgerSnapshot {
+  balance: number;
+  initialCapital: number;
+  rows: number;
+  lastEventAt?: string;
+}
 
 export type PartnersOpsRegistry = {
   schema: typeof PARTNERS_OPS_SCHEMA;
@@ -196,6 +215,8 @@ export type PartnersOpsRegistry = {
     incompleteOuts: number;
     validationErrors: number;
     validationWarnings: number;
+    /** Sum of SQLite partner_ledger balances (present when the ops DB has rows). */
+    accountingBalance?: number;
   };
   validation: {
     ok: boolean;
@@ -586,6 +607,50 @@ export function validatePartnersOpsRegistry(
   return issues;
 }
 
+/**
+ * Read SQLite `partner_ledger` snapshots from the ops DB (keyed by partner
+ * CODE, uppercased). Gracefully returns an empty map when the DB file or the
+ * table is absent — the public build runs without local ops data.
+ */
+export async function loadSqliteLedgerSnapshots(
+  root = process.cwd()
+): Promise<Map<string, PartnerLedgerSnapshot>> {
+  const dbPath = joinPath(root, 'data', 'operations.db');
+  if (!(await Bun.file(dbPath).exists())) return new Map();
+  let db: Database;
+  try {
+    db = openOperationsDb({ path: dbPath });
+  } catch {
+    return new Map();
+  }
+  try {
+    const tables = db
+      .query(`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'partner_ledger'`)
+      .all();
+    if (tables.length === 0) return new Map();
+    const codes = (
+      db.query('SELECT DISTINCT partner_code FROM partner_ledger').all() as {
+        partner_code: string;
+      }[]
+    ).map(r => r.partner_code.toUpperCase());
+    const out = new Map<string, PartnerLedgerSnapshot>();
+    for (const code of codes) {
+      const entries = listLedgerEntries(db, code);
+      if (entries.length === 0) continue;
+      const initial = entries.find(e => e.type === 'initial_capital');
+      out.set(code, {
+        balance: ledgerBalance(db, code),
+        initialCapital: initial?.amount ?? 0,
+        rows: entries.length,
+        lastEventAt: entries[entries.length - 1]!.createdAt,
+      });
+    }
+    return out;
+  } finally {
+    db.close();
+  }
+}
+
 export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<PartnersOpsRegistry> {
   const seatPath = root.endsWith('/')
     ? `${root}public/registry/seat-capital-desk.json`
@@ -627,12 +692,15 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
     eventsByPartner.set(code, list);
   }
 
+  const ledgerSnapshots = await loadSqliteLedgerSnapshots(root);
+
   const partners: PartnersOpsPartner[] = [];
   for (const row of (seat.rows || []) as SeatDeskRow[]) {
     const code = String(row.partnerCode || '').toUpperCase();
     const callSign = String(row.callSign || '').toUpperCase();
     if (!code || !callSign) continue;
     const hs = hsByCode.get(code);
+    const snap = ledgerSnapshots.get(code);
     const phase = mapHandshakePhase(hs?.phase, row.fundStatus);
     const phaseConceptId = `partner.phase.${phase}` as const;
     // Handshake bake omits chatId / topicsThreadMap — load forum metadata SSOT.
@@ -711,6 +779,9 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
         used: freeRollApplied.length,
       },
       ledger: partnerEvents,
+      ...(snap
+        ? { balance: snap.balance, initialCapital: snap.initialCapital, sqlLedgerCount: snap.rows }
+        : {}),
     };
     const readyAccounts = outs.filter(o => o.status === 'ready' || o.status === 'funded').length;
     const deferredAccounts = outs.filter(
@@ -761,6 +832,7 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
           ledgerEvents: partnerEvents.length,
           freeRollPercent: accounting.freeRoll.total,
           freeRollApplied: accounting.freeRoll.used,
+          ...(snap ? { balance: snap.balance } : {}),
         },
       },
     });
@@ -824,6 +896,14 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
       incompleteOuts,
       validationErrors: issues.filter(i => i.level === 'error').length,
       validationWarnings: issues.filter(i => i.level === 'warn').length,
+      ...(ledgerSnapshots.size > 0
+        ? {
+            accountingBalance: partners.reduce(
+              (sum, partner) => sum + (partner.accounting.balance ?? 0),
+              0
+            ),
+          }
+        : {}),
     },
     validation: {
       ok: issues.every(i => i.level !== 'error'),

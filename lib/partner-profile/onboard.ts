@@ -19,8 +19,8 @@
 // @see docs/design/unified-partner-profile.md
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 
+// eslint-disable-next-line no-restricted-imports -- audit JSONL append; Bun has no append API
 import { appendFileSync } from 'node:fs';
-import { join } from 'node:path';
 import type { Database } from 'bun:sqlite';
 import { AccountService } from '../operations/account-service';
 import { openOperationsDb, type OpenOperationsDbOpts } from '../operations/db';
@@ -94,6 +94,12 @@ export interface PartnerOnboardInput {
   bookKey?: string;
   type?: string;
   maxBet?: number;
+  /** Accounting terms captured during onboarding (optional; omitted → left unset). */
+  commissionPct?: number; // settlement.commissionPct (deal / revenue-share %)
+  currency?: string; // settlement.currency (ISO 4217 code)
+  holdTargetPct?: number; // settlement.holdTargetPct (0–1)
+  initialBalance?: number; // balance.initialCapitalRequirement
+  fundingMethod?: string; // books.<bookKey>.funding.method (wire|crypto|voucher|internal)
   name?: string;
   dryRun?: boolean;
   skipForum?: boolean;
@@ -113,7 +119,7 @@ export interface PartnerOnboardPlan {
   type: BookType;
   identity: 'create' | 'reuse';
   forum: 'request' | 'given' | 'skip';
-  chatId: string | null;
+  chatId: string | null; // brand-ok — telegram chat id wire
   vaultKey: string;
   actions: string[];
 }
@@ -133,7 +139,7 @@ function fmtPlan(plan: PartnerOnboardPlan): string {
  */
 export async function onboardPartner(input: PartnerOnboardInput): Promise<{
   plan: PartnerOnboardPlan;
-  nodeId: string | null;
+  nodeId: string | null; // brand-ok — tree-node id (derived alias of CODE)
   intakePath: string | null;
   profilePath: string | null;
 }> {
@@ -151,7 +157,7 @@ export async function onboardPartner(input: PartnerOnboardInput): Promise<{
   const vaultKey = `partner:${code}:${bookKey}`;
 
   const db = openOperationsDb({ path: input.dbPath } as OpenOperationsDbOpts);
-  let nodeId: string | null = null;
+  let nodeId: string | null = null; // brand-ok — tree-node id (derived alias of CODE)
   let identity: 'create' | 'reuse' = 'reuse';
   let forum: PartnerOnboardPlan['forum'] = input.chatId
     ? 'given'
@@ -164,7 +170,7 @@ export async function onboardPartner(input: PartnerOnboardInput): Promise<{
     // ── identity (idempotent) ─────────────────────────────────────────────
     const existing = db
       .query('SELECT id FROM tree_nodes WHERE call_sign = $cs AND active = 1 LIMIT 1')
-      .get({ $cs: callSign }) as { id: string } | undefined;
+      .get({ $cs: callSign }) as { id: string } | undefined; // brand-ok — opaque tree-node PK
     if (existing) {
       nodeId = existing.id;
       actions.push(`reuse tree node ${nodeId} (${callSign})`);
@@ -195,7 +201,7 @@ export async function onboardPartner(input: PartnerOnboardInput): Promise<{
     }
 
     // ── forum ─────────────────────────────────────────────────────────────
-    let chatId: string | null = input.chatId ?? null;
+    let chatId: string | null = input.chatId ?? null; // brand-ok — telegram chat id wire
     if (forum === 'request' && nodeId) {
       if (input.dryRun) {
         actions.push(`would emit package-group create request for ${code}`);
@@ -208,6 +214,11 @@ export async function onboardPartner(input: PartnerOnboardInput): Promise<{
     // ── book ──────────────────────────────────────────────────────────────
     if (input.dryRun) {
       actions.push(`would register book ${bookKey} (${type}) at ${input.url}`);
+      const amt = input.initialBalance ?? 0;
+      const cur = input.currency ?? 'USD';
+      const deal = input.commissionPct !== undefined ? ` · deal ${input.commissionPct}%` : '';
+      const hold = input.holdTargetPct !== undefined ? ` · hold ${input.holdTargetPct}` : '';
+      actions.push(`would init ledger ${code} — initial_capital ${amt} ${cur}${deal}${hold}`);
     } else if (nodeId) {
       const reg = await registerPartnerBookmaker({
         code,
@@ -219,6 +230,11 @@ export async function onboardPartner(input: PartnerOnboardInput): Promise<{
         type,
         chatId: chatId ?? undefined,
         maxBet: input.maxBet,
+        commissionPct: input.commissionPct,
+        currency: input.currency,
+        holdTargetPct: input.holdTargetPct,
+        initialBalance: input.initialBalance,
+        fundingMethod: input.fundingMethod,
         db,
         intakeDir: input.intakeDir,
         profilesDir: input.profilesDir,
