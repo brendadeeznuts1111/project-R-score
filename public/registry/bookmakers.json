@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-03T00:51:01.752Z",
+  "generatedAt": "2026-08-03T00:54:56.709Z",
   "artifact": {
     "name": "@factorywager/bookmakers",
-    "version": "0.2.0",
-    "checksum": "60fb4099d768cdcd145028b11afba2da907288ac738d854e17561c8876046913",
+    "version": "0.3.0",
+    "checksum": "63ca6745e3fe603a5cba315c43021dd8b79d0b967db8e797de8089059c388f56",
     "source": "artifact-registry"
   },
   "bookmakers": {
@@ -145,6 +145,87 @@
       "envVars": [
         "BETMGM_DEFAULT_STATE"
       ]
+    },
+    "hard-rock-florida": {
+      "id": "hard-rock-florida",
+      "label": "Hard Rock Florida",
+      "domain": "hardrockfl.sportsbook.hardrock.bet",
+      "fetcherType": "seat",
+      "note": "Seat-managed PPH desk (partner ASH/NOV) — credentials in partner_vault, not pipeline-fetched. Domain best-effort.",
+      "supportedSports": [
+        "basketball"
+      ],
+      "regions": [
+        {
+          "country": "US",
+          "stateCode": "FL"
+        }
+      ],
+      "color": "#db2777"
+    },
+    "parlay21-com": {
+      "id": "parlay21-com",
+      "label": "Parlay21",
+      "domain": "parlay21.com",
+      "fetcherType": "seat",
+      "note": "Seat-managed PPH desk (partner SPEN) — credentials in partner_vault, not pipeline-fetched.",
+      "supportedSports": [
+        "basketball"
+      ],
+      "regions": [
+        {
+          "country": "US"
+        }
+      ],
+      "color": "#7c3aed"
+    },
+    "lonestarwagering-com": {
+      "id": "lonestarwagering-com",
+      "label": "LoneStar Wagering",
+      "domain": "lonestarwagering.com",
+      "fetcherType": "seat",
+      "note": "Seat-managed PPH desk (partner SPEN) — credentials in partner_vault, not pipeline-fetched.",
+      "supportedSports": [
+        "basketball"
+      ],
+      "regions": [
+        {
+          "country": "US"
+        }
+      ],
+      "color": "#0891b2"
+    },
+    "action92-com": {
+      "id": "action92-com",
+      "label": "Action92",
+      "domain": "action92.com",
+      "fetcherType": "seat",
+      "note": "Seat-managed PPH desk (partner SPEN) — credentials in partner_vault, not pipeline-fetched.",
+      "supportedSports": [
+        "basketball"
+      ],
+      "regions": [
+        {
+          "country": "US"
+        }
+      ],
+      "color": "#65a30d"
+    },
+    "betvegas23-com": {
+      "id": "betvegas23-com",
+      "label": "BetVegas23",
+      "domain": "betvegas23.com",
+      "fetcherType": "seat",
+      "note": "Seat-managed PPH desk (partner SPEN) — credentials in partner_vault, not pipeline-fetched.",
+      "supportedSports": [
+        "basketball"
+      ],
+      "regions": [
+        {
+          "country": "US"
+        }
+      ],
+      "color": "#ea580c"
     }
   },
   "audit": {
@@ -152,10 +233,10 @@
     "issues": []
   },
   "summary": {
-    "count": 5,
+    "count": 10,
     "webview": 4,
     "rest": 1,
-    "seat": 0,
+    "seat": 5,
     "sports": [
       "american-football",
       "baseball",
