@@ -96,7 +96,7 @@ describe('buildPartnersOpsRegistry ledger projection', () => {
     expect(registry.summary.accountingBalance).toBeUndefined();
   });
 
-  test('seeded DB → balance/initialCapital/sqlLedgerCount + summary aggregate', async () => {
+  test('seeded DB → balance/initialCapital/sqlLedgerCount + ledgerRows + summary aggregate', async () => {
     await using workspace = await createTestWorkspace('ledger-proj-');
     await writeSeatFixture(workspace.root);
     await seedOpsDb(workspace.root);
@@ -107,6 +107,16 @@ describe('buildPartnersOpsRegistry ledger projection', () => {
     expect(partner?.accounting.sqlLedgerCount).toBe(2);
     expect(partner?.tracking.accounting.balance).toBe(10500);
     expect(registry.summary.accountingBalance).toBe(10500);
+    // transaction history: newest last, full row shape
+    expect(partner?.accounting.ledgerRows?.map(r => r.type)).toEqual(['initial_capital', 'deposit']);
+    expect(partner?.accounting.ledgerRows?.[1]).toMatchObject({
+      type: 'deposit',
+      amount: 500,
+      currency: 'USD',
+      balanceAfter: 10500,
+    });
+    expect(partner?.accounting.ledgerRows?.[1]?.reference).toBeUndefined();
+    expect(partner?.accounting.ledgerRows?.[1]?.createdAt).toBeTruthy();
   });
 });
 

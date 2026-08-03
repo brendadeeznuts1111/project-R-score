@@ -1503,8 +1503,44 @@
           <div><div class="k">Next</div><div class="v">${esc(next)}</div></div>
           <div><div class="k">Onboard CLI</div><div class="v"><code>bun run onboard:partner -- ${esc(callSign)} --dry-run</code></div></div>
         </div>
-        <div class="partner-profile-links">${cross}</div>`;
+        <div class="partner-profile-links">${cross}</div>
+        <div class="partners-panel">
+          <h2>Ledger <span class="tone-muted">(partner_ledger)</span></h2>
+          <div class="blurb">Most recent transactions — desk entries, imports, and the weekly commission adjustment (newest first).</div>
+          <table class="partners-table">
+            <thead>
+              <tr>
+                <th>When</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Currency</th>
+                <th>Reference</th>
+                <th>Balance</th>
+              </tr>
+            </thead>
+            <tbody id="partner-ledger-tbody"></tbody>
+          </table>
+        </div>`;
         panel.classList.remove('hidden');
+        const ledgerBody = $('partner-ledger-tbody');
+        if (ledgerBody) {
+          const rows = ops?.accounting?.ledgerRows || [];
+          ledgerBody.innerHTML = rows.length
+            ? [...rows]
+                .reverse()
+                .map(
+                  r => `<tr>
+                <td><time>${esc(r.createdAt)}</time></td>
+                <td><code>${esc(r.type)}</code></td>
+                <td>${fmtMoney(r.amount)}</td>
+                <td>${esc(r.currency)}</td>
+                <td>${esc(r.reference || '—')}</td>
+                <td>${fmtMoney(r.balanceAfter)}</td>
+              </tr>`
+                )
+                .join('')
+            : '<tr><td colspan="6">No partner_ledger transactions — post via <code>partner:settlement:post</code> / <code>import</code>, then <code>partners:build</code></td></tr>';
+        }
         const hint = $('onboard-cli-hint');
         if (hint) {
           hint.textContent = `bun run onboard:partner -- ${callSign} --dry-run · docs/harness/tenants/partner-onboarding-package.md`;
