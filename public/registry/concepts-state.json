@@ -1,21 +1,21 @@
 {
   "kind": "concepts-state",
   "schemaVersion": 1,
-  "bakedAt": "2026-08-03T23:32:55.500Z",
+  "bakedAt": "2026-08-03T23:37:30.772Z",
   "gate": "pass",
   "summary": {
-    "totalPortal": 131,
-    "withProvenance": 131,
+    "totalPortal": 132,
+    "withProvenance": 132,
     "provenanceCoverage": 1,
-    "usedUi": 76,
+    "usedUi": 77,
     "unusedUi": 7,
     "surfaceOnly": 22,
     "metadataIssues": 0,
     "surfaceOrphans": 0,
     "inventoryMisses": 0,
     "deprecatedUsed": 0,
-    "bakeDrift": 8,
-    "detailRows": 131
+    "bakeDrift": 1,
+    "detailRows": 132
   },
   "domainSummary": [
     {
@@ -28,10 +28,10 @@
     },
     {
       "domain": "compliance",
-      "count": 27,
-      "used": 26,
+      "count": 28,
+      "used": 27,
       "unused": 1,
-      "provenance": 27,
+      "provenance": 28,
       "provenancePct": 100
     },
     {
@@ -56,7 +56,7 @@
       "board": "partner-history",
       "files": 5,
       "usages": 244,
-      "allowlist": 33
+      "allowlist": 34
     },
     {
       "board": "partners",
@@ -74,7 +74,7 @@
       "board": "account",
       "files": 3,
       "usages": 148,
-      "allowlist": 13
+      "allowlist": 14
     }
   ],
   "concepts": [
@@ -304,6 +304,18 @@
       "status": "active",
       "provenance": "legacy",
       "usage": 4,
+      "kind": "used"
+    },
+    {
+      "id": "ops.limits.lifecycle_state",
+      "label": "Limit lifecycle state",
+      "domain": "compliance",
+      "namespace": "ops",
+      "group": "ops.limits",
+      "category": "ops",
+      "status": "active",
+      "provenance": "PR#244",
+      "usage": 2,
       "kind": "used"
     },
     {
@@ -1686,7 +1698,7 @@
   ],
   "metadataIssues": [],
   "failures": [
-    "bake-drift:8"
+    "bake-drift:1"
   ],
   "links": {
     "vocabulary": "lib/portal/semantic-vocabulary.ts",

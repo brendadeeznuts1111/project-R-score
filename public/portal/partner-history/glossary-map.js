@@ -38,6 +38,7 @@ export const PARTNER_HISTORY_GLOSSARY = Object.freeze({
   highWater: 'ops.limits.limit_delta',
   deltas: 'ops.limits.limit_delta',
   activeFilters: 'ui.action.filter',
+  lifecycle: 'ops.limits.lifecycle_state',
 
   recentChanges: 'section.recentLimitChanges',
   perAccount: 'section.perNodeBreakdown',
