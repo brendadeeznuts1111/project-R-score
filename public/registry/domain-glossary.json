@@ -409,13 +409,13 @@
     }
   ],
   "summary": {
-    "concepts": 433,
-    "active": 428,
+    "concepts": 436,
+    "active": 431,
     "deprecated": 5,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 296,
+    "portalSemantics": 299,
     "categories": {
       "market": 33,
       "model": 18,
@@ -423,7 +423,7 @@
       "pipeline": 41,
       "tournament": 86,
       "trading": 58,
-      "ui": 168,
+      "ui": 171,
       "warehouse": 27
     },
     "kinds": {
@@ -444,13 +444,13 @@
       "region": 7,
       "registry": 39,
       "sport": 10,
-      "ui": 242
+      "ui": 245
     },
     "semanticTypes": {
       "classification": 155,
       "location": 4,
       "presentation": 14,
-      "resource": 90,
+      "resource": 93,
       "state": 32,
       "version": 1
     },
@@ -459,7 +459,7 @@
       "chip": 116,
       "code": 33,
       "heading": 69,
-      "link": 18,
+      "link": 21,
       "token": 4
     }
   },
@@ -5919,7 +5919,8 @@
         "ops.limits.jurisdiction_policy",
         "ops.limits.profile",
         "ui.semantic.source",
-        "ops.limits.lifecycle_state"
+        "ops.limits.lifecycle_state",
+        "api.limit_cache"
       ],
       "status": "active",
       "deprecatedBy": null,
@@ -5988,7 +5989,8 @@
       "seeAlso": [
         "ops.limits.limit_delta",
         "ops.limits.effective_limit",
-        "ui.semantic.tone"
+        "ui.semantic.tone",
+        "api.limit_events"
       ],
       "status": "active",
       "deprecatedBy": null,
@@ -6069,7 +6071,8 @@
       "seeAlso": [
         "ops.limits.league",
         "ops.limits.market_type",
-        "ops.limits.effective_limit"
+        "ops.limits.effective_limit",
+        "api.bookmaker_feed"
       ],
       "status": "active",
       "deprecatedBy": null,
@@ -6123,7 +6126,8 @@
       "seeAlso": [
         "ops.limits.sport",
         "ops.limits.competition",
-        "ops.limits.event_country"
+        "ops.limits.event_country",
+        "api.bookmaker_feed"
       ],
       "status": "active",
       "deprecatedBy": null,
@@ -6320,7 +6324,8 @@
         "ops.limits.change_direction",
         "ops.limits.effective_limit",
         "ops.limits.pattern_surface",
-        "ops.limits.lifecycle_state"
+        "ops.limits.lifecycle_state",
+        "api.limit_events"
       ],
       "status": "active",
       "deprecatedBy": null,
@@ -6469,6 +6474,105 @@
       "uiRole": "link",
       "correlationId": "legacy",
       "addedAt": "2026-01-01",
+      "domain": "infrastructure",
+      "namespace": "api",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "api.bookmaker_feed",
+      "label": "Bookmaker feed API",
+      "description": "Infrastructure surface for sport/league/event catalog data consumed by ops.limits.sport and ops.limits.league. Distinct from bookmaker registry pages; names the upstream feed dependency in the concept graph.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "bookmaker feed",
+        "sport feed API",
+        "league feed"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.sport",
+        "ops.limits.league"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "link",
+      "correlationId": "PR#247",
+      "addedAt": "2026-08-03",
+      "domain": "infrastructure",
+      "namespace": "api",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "api.limit_events",
+      "label": "Limit event stream",
+      "description": "Infrastructure surface for limit-change events (deltas and direction) that populate ops.limits.change_direction and ops.limits.limit_delta.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "limit events",
+        "raise event stream",
+        "limit change stream"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.change_direction",
+        "ops.limits.limit_delta"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "link",
+      "correlationId": "PR#247",
+      "addedAt": "2026-08-03",
+      "domain": "infrastructure",
+      "namespace": "api",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "api.limit_cache",
+      "label": "Limit cache",
+      "description": "Infrastructure surface for cached high-water marks and effective limits backing ops.metric.high_water and ops.limits.effective_limit.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "limit cache",
+        "high-water cache",
+        "effective limit cache"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.effective_limit",
+        "ops.metric.high_water"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "link",
+      "correlationId": "PR#247",
+      "addedAt": "2026-08-03",
       "domain": "infrastructure",
       "namespace": "api",
       "color": "#58a6ff"
@@ -8052,7 +8156,8 @@
       "valueLabels": null,
       "seeAlso": [
         "ops.limits.effective_limit",
-        "ops.limits.limit_delta"
+        "ops.limits.limit_delta",
+        "api.limit_cache"
       ],
       "status": "active",
       "deprecatedBy": null,

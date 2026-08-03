@@ -1,21 +1,21 @@
 {
   "kind": "concepts-state",
   "schemaVersion": 1,
-  "bakedAt": "2026-08-03T23:37:30.772Z",
+  "bakedAt": "2026-08-03T23:47:09.746Z",
   "gate": "pass",
   "summary": {
-    "totalPortal": 132,
-    "withProvenance": 132,
+    "totalPortal": 135,
+    "withProvenance": 135,
     "provenanceCoverage": 1,
     "usedUi": 77,
     "unusedUi": 7,
-    "surfaceOnly": 22,
+    "surfaceOnly": 25,
     "metadataIssues": 0,
     "surfaceOrphans": 0,
     "inventoryMisses": 0,
     "deprecatedUsed": 0,
-    "bakeDrift": 1,
-    "detailRows": 132
+    "bakeDrift": 3,
+    "detailRows": 135
   },
   "domainSummary": [
     {
@@ -44,10 +44,10 @@
     },
     {
       "domain": "infrastructure",
-      "count": 1,
+      "count": 4,
       "used": 1,
-      "unused": 0,
-      "provenance": 1,
+      "unused": 3,
+      "provenance": 4,
       "provenancePct": 100
     }
   ],
@@ -89,6 +89,42 @@
       "provenance": "legacy",
       "usage": 1,
       "kind": "used"
+    },
+    {
+      "id": "api.bookmaker_feed",
+      "label": "Bookmaker feed API",
+      "domain": "infrastructure",
+      "namespace": "api",
+      "group": "api.bookmaker_feed",
+      "category": "api",
+      "status": "active",
+      "provenance": "PR#247",
+      "usage": 0,
+      "kind": "surface-only"
+    },
+    {
+      "id": "api.limit_cache",
+      "label": "Limit cache",
+      "domain": "infrastructure",
+      "namespace": "api",
+      "group": "api.limit_cache",
+      "category": "api",
+      "status": "active",
+      "provenance": "PR#247",
+      "usage": 0,
+      "kind": "surface-only"
+    },
+    {
+      "id": "api.limit_events",
+      "label": "Limit event stream",
+      "domain": "infrastructure",
+      "namespace": "api",
+      "group": "api.limit_events",
+      "category": "api",
+      "status": "active",
+      "provenance": "PR#247",
+      "usage": 0,
+      "kind": "surface-only"
     },
     {
       "id": "ops.filter.account.all",
@@ -1673,6 +1709,9 @@
     "ui.semantic.type"
   ],
   "surfaceOnly": [
+    "api.bookmaker_feed",
+    "api.limit_cache",
+    "api.limit_events",
     "ops.filter.account.all",
     "ops.filter.sportsbook.all",
     "ops.limits.tree",
@@ -1698,7 +1737,7 @@
   ],
   "metadataIssues": [],
   "failures": [
-    "bake-drift:1"
+    "bake-drift:3"
   ],
   "links": {
     "vocabulary": "lib/portal/semantic-vocabulary.ts",
