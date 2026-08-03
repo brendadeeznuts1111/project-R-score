@@ -1,15 +1,79 @@
 {
   "kind": "test-failures",
-  "generatedAt": "2026-07-28T17:35:47.540Z",
+  "generatedAt": "2026-08-03T03:34:40.423Z",
   "sources": [
     "tmp/junit.xml"
   ],
   "totals": {
-    "tests": 14,
-    "failures": 0,
-    "skipped": 0,
-    "timeSeconds": 0.183
+    "tests": 836,
+    "failures": 7,
+    "skipped": 6,
+    "timeSeconds": 51.791
   },
-  "failures": [],
-  "healthy": true
+  "failures": [
+    {
+      "file": "tests/bun-release-tracker.test.ts",
+      "suite": "tools/verify-bun-release.ts",
+      "name": "proof JSON includes canonical blog URLs per test",
+      "timeSeconds": 1.034775,
+      "message": "",
+      "replayFile": "bun test tests/bun-release-tracker.test.ts",
+      "replayTest": "bun test tests/bun-release-tracker.test.ts --test-name-pattern \"proof JSON includes canonical blog URLs per test\""
+    },
+    {
+      "file": "tests/bun-release-tracker.test.ts",
+      "suite": "tools/verify-bun-release.ts",
+      "name": "runs full suite including release-note probes",
+      "timeSeconds": 0.653748,
+      "message": "",
+      "replayFile": "bun test tests/bun-release-tracker.test.ts",
+      "replayTest": "bun test tests/bun-release-tracker.test.ts --test-name-pattern \"runs full suite including release-note probes\""
+    },
+    {
+      "file": "tests/harness-coverage-probe.test.ts",
+      "suite": "harness coverage probe",
+      "name": "catalogs load and cheap asserts pass",
+      "timeSeconds": 0.01143,
+      "message": "",
+      "replayFile": "bun test tests/harness-coverage-probe.test.ts",
+      "replayTest": "bun test tests/harness-coverage-probe.test.ts --test-name-pattern \"catalogs load and cheap asserts pass\""
+    },
+    {
+      "file": "tests/harness-tenant-runbooks.test.ts",
+      "suite": "spine maintenance runbooks",
+      "name": "discovered schedules are owned tenants or exempted",
+      "timeSeconds": 0.009849,
+      "message": "",
+      "replayFile": "bun test tests/harness-tenant-runbooks.test.ts",
+      "replayTest": "bun test tests/harness-tenant-runbooks.test.ts --test-name-pattern \"discovered schedules are owned tenants or exempt\""
+    },
+    {
+      "file": "tests/harness-tenant-runbooks.test.ts",
+      "suite": "spine maintenance runbooks",
+      "name": "every runbook proofId resolves in CRITICAL_PROOF_PATHS",
+      "timeSeconds": 0.000173,
+      "message": "",
+      "replayFile": "bun test tests/harness-tenant-runbooks.test.ts",
+      "replayTest": "bun test tests/harness-tenant-runbooks.test.ts --test-name-pattern \"every runbook proofId resolves in CRITICAL_PROOF\""
+    },
+    {
+      "file": "tests/portal-cli-doctor.test.ts",
+      "suite": "portal-cli doctor pure",
+      "name": "pretty format keeps full messages (no mid-line …) and wraps in frame",
+      "timeSeconds": 0.008577,
+      "message": "",
+      "replayFile": "bun test tests/portal-cli-doctor.test.ts",
+      "replayTest": "bun test tests/portal-cli-doctor.test.ts --test-name-pattern \"pretty format keeps full messages \\(no mid-line …\""
+    },
+    {
+      "file": "tests/portal-cli-doctor.test.ts",
+      "suite": "portal-cli doctor pure",
+      "name": "runPortalDoctor is OK on monorepo root (default)",
+      "timeSeconds": 0.0156,
+      "message": "",
+      "replayFile": "bun test tests/portal-cli-doctor.test.ts",
+      "replayTest": "bun test tests/portal-cli-doctor.test.ts --test-name-pattern \"runPortalDoctor is OK on monorepo root \\(default\\)\""
+    }
+  ],
+  "healthy": false
 }

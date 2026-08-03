@@ -6,16 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="portal-poll-ms" content="60000" />
   <title>Failures · FactoryWager</title>
-  <meta name="theme-color" content="#0d1117" />
-  <meta name="application-name" content="FactoryWager" />
-  <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
-  <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
-  <link rel="manifest" href="/site.webmanifest" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/portal/style.css" />
-  <script type="application/json" id="test-failures-embed">{"kind":"test-failures","generatedAt":"2026-07-28T17:35:47.540Z","sources":["tmp/junit.xml"],"totals":{"tests":14,"failures":0,"skipped":0,"timeSeconds":0.183},"failures":[],"healthy":true}</script>
+  <script type="application/json" id="test-failures-embed">{"kind":"test-failures","generatedAt":"2026-08-03T03:34:40.423Z","sources":["tmp/junit.xml"],"totals":{"tests":836,"failures":7,"skipped":6,"timeSeconds":51.791},"failures":[{"file":"tests/bun-release-tracker.test.ts","suite":"tools/verify-bun-release.ts","name":"proof JSON includes canonical blog URLs per test","timeSeconds":1.034775,"message":"","replayFile":"bun test tests/bun-release-tracker.test.ts","replayTest":"bun test tests/bun-release-tracker.test.ts --test-name-pattern \"proof JSON includes canonical blog URLs per test\""},{"file":"tests/bun-release-tracker.test.ts","suite":"tools/verify-bun-release.ts","name":"runs full suite including release-note probes","timeSeconds":0.653748,"message":"","replayFile":"bun test tests/bun-release-tracker.test.ts","replayTest":"bun test tests/bun-release-tracker.test.ts --test-name-pattern \"runs full suite including release-note probes\""},{"file":"tests/harness-coverage-probe.test.ts","suite":"harness coverage probe","name":"catalogs load and cheap asserts pass","timeSeconds":0.01143,"message":"","replayFile":"bun test tests/harness-coverage-probe.test.ts","replayTest":"bun test tests/harness-coverage-probe.test.ts --test-name-pattern \"catalogs load and cheap asserts pass\""},{"file":"tests/harness-tenant-runbooks.test.ts","suite":"spine maintenance runbooks","name":"discovered schedules are owned tenants or exempted","timeSeconds":0.009849,"message":"","replayFile":"bun test tests/harness-tenant-runbooks.test.ts","replayTest":"bun test tests/harness-tenant-runbooks.test.ts --test-name-pattern \"discovered schedules are owned tenants or exempt\""},{"file":"tests/harness-tenant-runbooks.test.ts","suite":"spine maintenance runbooks","name":"every runbook proofId resolves in CRITICAL_PROOF_PATHS","timeSeconds":0.000173,"message":"","replayFile":"bun test tests/harness-tenant-runbooks.test.ts","replayTest":"bun test tests/harness-tenant-runbooks.test.ts --test-name-pattern \"every runbook proofId resolves in CRITICAL_PROOF\""},{"file":"tests/portal-cli-doctor.test.ts","suite":"portal-cli doctor pure","name":"pretty format keeps full messages (no mid-line …) and wraps in frame","timeSeconds":0.008577,"message":"","replayFile":"bun test tests/portal-cli-doctor.test.ts","replayTest":"bun test tests/portal-cli-doctor.test.ts --test-name-pattern \"pretty format keeps full messages \\(no mid-line …\""},{"file":"tests/portal-cli-doctor.test.ts","suite":"portal-cli doctor pure","name":"runPortalDoctor is OK on monorepo root (default)","timeSeconds":0.0156,"message":"","replayFile":"bun test tests/portal-cli-doctor.test.ts","replayTest":"bun test tests/portal-cli-doctor.test.ts --test-name-pattern \"runPortalDoctor is OK on monorepo root \\(default\\)\""}],"healthy":false}</script>
   <style>
     .tf-wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px 48px; }
     .tf-stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin: 16px 0 20px; }
@@ -26,6 +21,8 @@
     .tf-stat.ok .v { color: var(--green, #3fb950); }
     .tf-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 16px; }
     .tf-panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin: 0 0 12px; }
+    .tf-stale { background: rgba(248,81,73,.08); border: 1px solid var(--red, #f85149); color: var(--red, #f85149); border-radius: var(--radius); padding: 10px 14px; margin: 0 0 16px; font-size: 12px; line-height: 1.5; }
+    .tf-stale.ok { background: rgba(63,185,80,.07); border-color: var(--green, #3fb950); color: var(--green, #3fb950); }
     .tf-table { width: 100%; border-collapse: collapse; font-size: 12px; }
     .tf-table th { text-align: left; padding: 6px 8px; color: var(--text-dim); font-weight: 500; border-bottom: 1px solid var(--border); }
     .tf-table td { padding: 6px 8px; border-bottom: 1px solid rgba(48,54,61,.4); vertical-align: top; }
@@ -40,60 +37,90 @@
   <header class="topbar">
     <div class="topbar-inner">
       <h1 class="logo">
-        <span class="logo-icon" aria-hidden="true"></span>
+        <span class="logo-icon">■</span>
         <span class="brand-wordmark">FactoryWager</span>
         <span class="brand-badge">ops</span>
         <span class="logo-page">Failures</span>
       </h1>
-      <nav class="topbar-nav" aria-label="Primary">
-        <a href="/" class="nav-link" data-group="other">Home</a>
-        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · bun run ops:snapshot" data-group="ops" data-cli="bun run ops:snapshot">Ops</a>
-        <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
-        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake">Health</a>
-        <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane">DOD</a>
-        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake">Compliance</a>
-        <div class="nav-overflow">
-          <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
-          <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
-            <a href="/portal/packages/" class="nav-link" title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table" data-group="registry" data-cli="bun run portal-cli pm graph  # offline packages-graph-map table" role="menuitem">Packages</a>
-            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
-            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-cli="bun run glossary:portal" role="menuitem">Glossary</a>
-            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
-            <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
-            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
-            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
-            <a href="/portal/tools/" class="nav-link" title="portal-cli surface map · badges · capability subset · bun run portal-cli dashboard --view=tools" data-group="harness" data-cli="bun run portal-cli dashboard --view=tools" role="menuitem">CLI Tools</a>
-            <a href="/portal/failures/" class="nav-link active" aria-current="page" title="test failures bake · junit · nav badge = count · bun run failures:bake  # → /registry/failures.json" data-group="harness" data-cli="bun run failures:bake  # → /registry/failures.json" role="menuitem">Failures</a>
-            <a href="/portal/bunfig/" class="nav-link" title="bunfig install config provenance · portal-cli bunfig status · bun run bunfig:bake  # → /registry/bunfig-state.json" data-group="harness" data-cli="bun run bunfig:bake  # → /registry/bunfig-state.json" role="menuitem">Bunfig</a>
-            <a href="/portal/console-format/" class="nav-link" title="structured output gate · logTable/logDepth/jsonOut ratchet · bun run console-format:bake  # → /registry/console-format-state.json" data-group="harness" data-cli="bun run console-format:bake  # → /registry/console-format-state.json" role="menuitem">Console Format</a>
-            <a href="/portal/doctor/" class="nav-link" title="unified health gate · bunfig · catalog · linker · bun run portal:doctor --verbose" data-group="harness" data-cli="bun run portal:doctor --verbose" role="menuitem">Doctor</a>
-            <a href="/portal/install-hygiene/" class="nav-link" title="cache prune · npm-install policy · install:verify bake · bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" data-group="harness" data-cli="bun run bake:install-hygiene  # → /registry/install-hygiene-report.json" role="menuitem">Install hygiene</a>
-            <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
-            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
-            <a href="/portal/limits/" class="nav-link" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
-            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
-            <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
-            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
-            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub" data-group="other" role="menuitem">Wiki</a>
-          </div>
-        </div>
-      </nav>
+      <nav class="topbar-nav" aria-label="Primary"></nav>
     </div>
   </header>
   <main class="tf-wrap">
-    <p class="dim">Latest JUnit results (tmp/junit.xml) · generated 2026-07-28T17:35:47.540Z · <code>bun run failures:bake</code></p>
+    <div id="tf-stale-banner" class="tf-stale" hidden></div>
+    <p class="dim">Latest JUnit results (tmp/junit.xml) · generated 2026-08-03T03:34:40.423Z · <code>bun run failures:bake</code></p>
     <div class="tf-stats">
-      <div class="tf-stat "><div class="k">Tests</div><div class="v">14</div></div>
-      <div class="tf-stat ok"><div class="k">Failures</div><div class="v">0</div></div>
-      <div class="tf-stat "><div class="k">Skipped</div><div class="v">0</div></div>
-      <div class="tf-stat "><div class="k">Time (s)</div><div class="v">0.183</div></div>
+      <div class="tf-stat "><div class="k">Tests</div><div class="v">836</div></div>
+      <div class="tf-stat bad"><div class="k">Failures</div><div class="v">7</div></div>
+      <div class="tf-stat "><div class="k">Skipped</div><div class="v">6</div></div>
+      <div class="tf-stat "><div class="k">Time (s)</div><div class="v">51.791</div></div>
     </div>
     <div class="tf-panel">
       <h2>Failing tests &amp; dev replay</h2>
       <table class="tf-table">
         <thead><tr><th>File</th><th>Test</th><th>Error</th><th>Replay</th></tr></thead>
-        <tbody><tr><td colspan="4" class="ok">No failing tests in the latest JUnit run ✓</td></tr></tbody>
+        <tbody><tr class="fail">
+        <td><code>tests/bun-release-tracker.test.ts</code></td>
+        <td>proof JSON includes canonical blog URLs per test</td>
+        <td class="dim"></td>
+        <td class="replay">
+          <code>bun test tests/bun-release-tracker.test.ts</code><br/>
+          <code>bun test tests/bun-release-tracker.test.ts --test-name-pattern &quot;proof JSON includes canonical blog URLs per test&quot;</code>
+        </td>
+      </tr>
+<tr class="fail">
+        <td><code>tests/bun-release-tracker.test.ts</code></td>
+        <td>runs full suite including release-note probes</td>
+        <td class="dim"></td>
+        <td class="replay">
+          <code>bun test tests/bun-release-tracker.test.ts</code><br/>
+          <code>bun test tests/bun-release-tracker.test.ts --test-name-pattern &quot;runs full suite including release-note probes&quot;</code>
+        </td>
+      </tr>
+<tr class="fail">
+        <td><code>tests/harness-coverage-probe.test.ts</code></td>
+        <td>catalogs load and cheap asserts pass</td>
+        <td class="dim"></td>
+        <td class="replay">
+          <code>bun test tests/harness-coverage-probe.test.ts</code><br/>
+          <code>bun test tests/harness-coverage-probe.test.ts --test-name-pattern &quot;catalogs load and cheap asserts pass&quot;</code>
+        </td>
+      </tr>
+<tr class="fail">
+        <td><code>tests/harness-tenant-runbooks.test.ts</code></td>
+        <td>discovered schedules are owned tenants or exempted</td>
+        <td class="dim"></td>
+        <td class="replay">
+          <code>bun test tests/harness-tenant-runbooks.test.ts</code><br/>
+          <code>bun test tests/harness-tenant-runbooks.test.ts --test-name-pattern &quot;discovered schedules are owned tenants or exempt&quot;</code>
+        </td>
+      </tr>
+<tr class="fail">
+        <td><code>tests/harness-tenant-runbooks.test.ts</code></td>
+        <td>every runbook proofId resolves in CRITICAL_PROOF_PATHS</td>
+        <td class="dim"></td>
+        <td class="replay">
+          <code>bun test tests/harness-tenant-runbooks.test.ts</code><br/>
+          <code>bun test tests/harness-tenant-runbooks.test.ts --test-name-pattern &quot;every runbook proofId resolves in CRITICAL_PROOF&quot;</code>
+        </td>
+      </tr>
+<tr class="fail">
+        <td><code>tests/portal-cli-doctor.test.ts</code></td>
+        <td>pretty format keeps full messages (no mid-line …) and wraps in frame</td>
+        <td class="dim"></td>
+        <td class="replay">
+          <code>bun test tests/portal-cli-doctor.test.ts</code><br/>
+          <code>bun test tests/portal-cli-doctor.test.ts --test-name-pattern &quot;pretty format keeps full messages \(no mid-line …&quot;</code>
+        </td>
+      </tr>
+<tr class="fail">
+        <td><code>tests/portal-cli-doctor.test.ts</code></td>
+        <td>runPortalDoctor is OK on monorepo root (default)</td>
+        <td class="dim"></td>
+        <td class="replay">
+          <code>bun test tests/portal-cli-doctor.test.ts</code><br/>
+          <code>bun test tests/portal-cli-doctor.test.ts --test-name-pattern &quot;runPortalDoctor is OK on monorepo root \(default\)&quot;</code>
+        </td>
+      </tr></tbody>
       </table>
     </div>
     <p class="dim">Reproduce: <code>bun test &lt;file&gt;</code> · pinpoint: <code>--test-name-pattern "&lt;name&gt;"</code> · refresh board: run the suite with <code>--reporter=junit --reporter-outfile=tmp/junit.xml</code> then <code>bun run failures:bake</code>.</p>
@@ -103,33 +130,28 @@
   <script type="module" src="/portal/components/sidebar.js"></script>
   <script type="module" src="/portal/components/notification.js"></script>
   <script type="module" src="/portal/components/footer.js"></script>
-  <footer class="footer" data-portal-chrome="footer">
-    <p>
-      <strong>FactoryWager</strong> ·
-      <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
-      <a href="/portal/ops/">Ops</a> ·
-      <a href="/portal/toc/">TOC</a> ·
-      <a href="/portal/packages/">Packages</a> ·
-      <a href="/portal/brands/">Brands</a> ·
-      <a href="/portal/glossary/">Glossary</a> ·
-      <a href="/portal/surfaces/">Surfaces</a> ·
-      <a href="/portal/health/">Health</a> ·
-      <a href="/registry/portal-weave.json">Portal proof</a> ·
-      <a href="/portal/tools/">CLI Tools</a> ·
-      <a href="/portal/compliance/">Compliance</a> ·
-      <a href="/portal/limits/">Limits</a> ·
-      <a href="/portal/dod/">DOD</a> ·
-      <a href="/portal/env/">Env</a> ·
-      <a href="/portal/vault/">Vault</a> ·
-      <a href="/portal/failures/">Failures</a> ·
-      <a href="/portal/install-hygiene/">Install hygiene</a> ·
-      <a href="/registry/monorepo-health.json">Monorepo health</a> ·
-      <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
-    </p>
-    <p class="footer-meta">
-      project-R-score · chrome <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a>
-      · <span data-footer-ts>…</span>
-    </p>
-  </footer>
+  <script>
+    (() => {
+      // Stale-board guard: the bake is only as fresh as the JUnit run it was
+      // generated from. A committed green board can silently age (e.g. served
+      // by Pages for days after the suite changed), so flag bakedAt age > 24h
+      // at page load — extra-prominent when the stale board claims healthy.
+      try {
+        const embed = document.getElementById('test-failures-embed');
+        const report = JSON.parse(embed.textContent);
+        const ageMs = Date.now() - new Date(report.generatedAt).getTime();
+        const STALE_MS = 24 * 60 * 60 * 1000;
+        if (!(ageMs > STALE_MS)) return;
+        const days = Math.floor(ageMs / 86400000);
+        const hours = Math.floor((ageMs % 86400000) / 3600000);
+        const banner = document.getElementById('tf-stale-banner');
+        banner.hidden = false;
+        if (report.healthy) banner.classList.add('ok');
+        banner.textContent = report.healthy
+          ? '⚠ Stale green board — baked ' + days + 'd ' + hours + 'h ago (' + report.generatedAt + '). Green is meaningless here; re-run the suite, then bun run failures:bake.'
+          : '⚠ Board is stale — baked ' + days + 'd ' + hours + 'h ago (' + report.generatedAt + '). Failure list may be outdated; re-run the suite, then bun run failures:bake.';
+      } catch {}
+    })();
+  </script>
 </body>
 </html>
