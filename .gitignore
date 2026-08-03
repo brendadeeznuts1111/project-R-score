@@ -157,6 +157,7 @@ profiles/
 *.profile.json
 *-profile-*.json
 *.cpuprofile
+/concept-audit.json
 CPU.*.md
 Heap.*.md
 

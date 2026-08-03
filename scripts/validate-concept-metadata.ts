@@ -14,15 +14,25 @@
  *   bun run validate:concept-metadata
  *   bun run validate:concept-metadata -- --write-baseline
  *   bun run validate:concept-metadata -- --json
- *   bun run validate:concept-metadata -- --strict   # grandfathered must also carry addedAt
- *   bun run validate:concept-metadata -- --fix      # repair domain + addedAt mechanically
+ *   bun run validate:concept-metadata -- --strict   # no grandfathering; warnings fail
+ *   bun run validate:concept-metadata -- --fix      # repair domain + addedAt; placeholder provenance
+ *
+ * Warnings (non-failing unless --strict):
+ *   invalid-correlation-id-format — correlationId outside the dominant styles
+ *     (legacy · TODO · PR#123 · pr:123 · issue:456 · cycle:72)
+ *   deprecated-but-used           — status: deprecated with portal usage > 0
+ *   group-prefix-mismatch         — declared group differs from the id prefix
  *
  * Env: CONCEPT_METADATA_STRICT=1 ≡ --strict · CONCEPT_METADATA_FIX=1 ≡ --fix.
- * --fix never invents correlationId values — missing provenance is reported
- * as remaining (unfixable) after the repair pass.
+ * --fix never invents correlationId values in the vocabulary — concepts still
+ * missing provenance get a `provenancePlaceholders` entry (`'TODO'`) in the
+ * baseline file (idempotent; existing entries are never overwritten) and are
+ * reported as remaining (unfixable) after the repair pass.
  */
 import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
 import { isConceptDomain, type ConceptDomain } from '../lib/portal/concept-domains.ts';
+import { conceptGroupOf } from '../lib/portal/concept-graph.ts';
+import { countPortalConceptUsages } from '../lib/portal/concept-usage.ts';
 import {
   inferPortalSemanticNamespace,
   isPortalSemanticNamespace,
@@ -38,6 +48,8 @@ type Baseline = {
   version: number;
   description?: string;
   grandfatheredIds: string[]; // brand-ok — glossary concept keys
+  /** Placeholder provenance written by --fix for ids still missing correlationId. */
+  provenancePlaceholders?: Record<string, string>; // brand-ok — glossary concept keys → 'TODO'
 };
 
 export type ConceptMetadataIssue = {
@@ -153,15 +165,19 @@ export async function writeBaselineFromConcepts(
 export async function runConceptMetadataValidation(opts?: {
   concepts?: readonly PortalSemanticConcept[];
   baselinePath?: string;
+  baseline?: Baseline;
+  usageCounts?: Map<string, number>;
 }): Promise<{
   ok: boolean;
   issues: ConceptMetadataIssue[];
+  warnings: ConceptMetadataWarning[];
   withProvenance: number;
   total: number;
 }> {
   const concepts = opts?.concepts ?? PORTAL_SEMANTIC_CONCEPTS;
-  const baseline = await loadBaseline(opts?.baselinePath);
+  const baseline = opts?.baseline ?? (await loadBaseline(opts?.baselinePath));
   const issues = validateConceptMetadata(concepts, baseline);
+  const warnings = collectConceptWarnings(concepts, opts?.usageCounts);
   const withProvenance = concepts.filter(c => {
     const corr = conceptCorrelationId(c);
     return corr !== undefined && corr.length > 0;
@@ -169,9 +185,66 @@ export async function runConceptMetadataValidation(opts?: {
   return {
     ok: issues.length === 0,
     issues,
+    warnings,
     withProvenance,
     total: concepts.length,
   };
+}
+
+export type ConceptMetadataWarning = {
+  id: string; // brand-ok — glossary concept key
+  reason: 'invalid-correlation-id-format' | 'deprecated-but-used' | 'group-prefix-mismatch';
+  detail?: string;
+};
+
+/** Dominant provenance styles in the vocabulary SSOT (legacy · TODO · PR#123 · pr:123 · issue:456 · cycle:72). */
+export const CORRELATION_ID_FORMAT = /^(legacy|TODO|PR#\d+|pr:\d+|issue:\d+|cycle:\d+)$/;
+
+/** Status accessor tolerant of concepts defined before the field existed. */
+export function conceptStatus(concept: PortalSemanticConcept): string | undefined {
+  return 'status' in concept && typeof concept.status === 'string'
+    ? concept.status.trim()
+    : undefined;
+}
+
+/** Group accessor — concepts usually derive group from the id prefix; a declared group must match it. */
+function conceptDeclaredGroup(concept: PortalSemanticConcept): string | undefined {
+  return 'group' in concept && typeof concept.group === 'string' ? concept.group.trim() : undefined;
+}
+
+/**
+ * Warning-tier checks (non-failing unless --strict): provenance format,
+ * deprecated-but-used, and declared-group prefix consistency.
+ */
+export function collectConceptWarnings(
+  concepts: readonly PortalSemanticConcept[],
+  usageCounts?: Map<string, number>
+): ConceptMetadataWarning[] {
+  const warnings: ConceptMetadataWarning[] = [];
+  for (const concept of concepts) {
+    const corr = conceptCorrelationId(concept);
+    if (corr !== undefined && corr.length > 0 && !CORRELATION_ID_FORMAT.test(corr)) {
+      warnings.push({ id: concept.id, reason: 'invalid-correlation-id-format', detail: corr });
+    }
+    if (usageCounts && conceptStatus(concept) === 'deprecated') {
+      const usage = usageCounts.get(concept.id) ?? 0;
+      if (usage > 0) {
+        warnings.push({ id: concept.id, reason: 'deprecated-but-used', detail: `usage=${usage}` });
+      }
+    }
+    const group = conceptDeclaredGroup(concept);
+    if (group !== undefined && group.length > 0) {
+      const expected = conceptGroupOf(concept.id);
+      if (group !== expected) {
+        warnings.push({
+          id: concept.id,
+          reason: 'group-prefix-mismatch',
+          detail: `group=${group} expected=${expected}`,
+        });
+      }
+    }
+  }
+  return warnings;
 }
 
 /** addedAt accessor tolerant of concepts defined before the field existed. */
@@ -305,27 +378,69 @@ export async function insertAddedAtDates(
   return written;
 }
 
+/**
+ * Placeholder provenance plan for --fix: ids still missing correlationId get a
+ * `'TODO'` entry in the baseline's `provenancePlaceholders` map. Pure and
+ * idempotent — ids already placeholdered are never overwritten.
+ */
+export function planProvenancePlaceholders(
+  concepts: readonly PortalSemanticConcept[],
+  baseline: Baseline
+): Record<string, string> {
+  const existing = new Set(Object.keys(baseline.provenancePlaceholders ?? {}));
+  const planned: Record<string, string> = {};
+  for (const concept of concepts) {
+    const corr = conceptCorrelationId(concept);
+    if (corr !== undefined && corr.length > 0) continue;
+    if (existing.has(concept.id)) continue;
+    planned[concept.id] = 'TODO';
+  }
+  return planned;
+}
+
+/** Write planned placeholder entries into the baseline file (idempotent). */
+export async function writeProvenancePlaceholders(
+  concepts: readonly PortalSemanticConcept[],
+  opts?: { baselinePath?: string; dryRun?: boolean }
+): Promise<number> {
+  const baselinePath = opts?.baselinePath ?? BASELINE_PATH;
+  const baseline = await loadBaseline(baselinePath);
+  const planned = planProvenancePlaceholders(concepts, baseline);
+  const count = Object.keys(planned).length;
+  if (count === 0 || opts?.dryRun) return count;
+  const next: Baseline = {
+    ...baseline,
+    provenancePlaceholders: { ...(baseline.provenancePlaceholders ?? {}), ...planned },
+  };
+  await Bun.write(baselinePath, `${JSON.stringify(next, null, 2)}\n`);
+  return count;
+}
+
 export type ConceptMetadataFixSummary = {
   fixedDomains: number;
   fixedAddedAt: number;
   plannedDomainFixes: number;
   plannedAddedAtFixes: number;
+  /** Placeholder 'TODO' provenance entries written to the baseline file. */
+  placeholdersWritten: number;
   remaining: ConceptMetadataIssue[];
 };
 
 /**
- * --fix: repair domain (via the backfill write path) and addedAt, then report
- * what remains failing. Never invents correlationId values.
+ * --fix: repair domain (via the backfill write path) and addedAt, stamp
+ * placeholder provenance in the baseline, then report what remains failing.
+ * Never invents correlationId values in the vocabulary itself.
  */
 export async function runConceptMetadataFix(opts?: {
   concepts?: readonly PortalSemanticConcept[];
   baseline?: Baseline;
+  baselinePath?: string;
   vocabPath?: string;
   today?: string;
   dryRun?: boolean;
 }): Promise<ConceptMetadataFixSummary> {
   const concepts = opts?.concepts ?? PORTAL_SEMANTIC_CONCEPTS;
-  const baseline = opts?.baseline ?? (await loadBaseline());
+  const baseline = opts?.baseline ?? (await loadBaseline(opts?.baselinePath));
   const plan = planConceptMetadataFixes(concepts, { today: opts?.today, baseline });
 
   let fixedDomains = 0;
@@ -346,11 +461,17 @@ export async function runConceptMetadataFix(opts?: {
     });
   }
 
+  const placeholdersWritten = await writeProvenancePlaceholders(concepts, {
+    baselinePath: opts?.baselinePath,
+    dryRun: opts?.dryRun,
+  });
+
   return {
     fixedDomains,
     fixedAddedAt,
     plannedDomainFixes: plan.domainFixes.length,
     plannedAddedAtFixes: plan.addedAtFixes.length,
+    placeholdersWritten,
     remaining: plan.unfixable,
   };
 }
@@ -382,10 +503,11 @@ async function main(): Promise<void> {
           {
             fixedDomains: summary.fixedDomains,
             fixedAddedAt: summary.fixedAddedAt,
+            placeholdersWritten: summary.placeholdersWritten,
             remaining: summary.remaining.length,
           },
         ],
-        ['fixedDomains', 'fixedAddedAt', 'remaining']
+        ['fixedDomains', 'fixedAddedAt', 'placeholdersWritten', 'remaining']
       );
       if (summary.remaining.length > 0) {
         console.error(colorize('concept metadata issues remaining after fix:', '#f85149'));
@@ -410,11 +532,17 @@ async function main(): Promise<void> {
     return;
   }
 
-  const report = await runConceptMetadataValidation();
+  const baseline = await loadBaseline();
+  // --strict: no grandfathering — every concept must carry provenance.
+  const report = await runConceptMetadataValidation({
+    baseline: strict ? { ...baseline, grandfatheredIds: [] } : baseline,
+    usageCounts: await countPortalConceptUsages(),
+  });
   const strictIssues = strict
-    ? validateGrandfatheredAddedAt(PORTAL_SEMANTIC_CONCEPTS, await loadBaseline())
+    ? validateGrandfatheredAddedAt(PORTAL_SEMANTIC_CONCEPTS, baseline)
     : [];
-  const ok = report.ok && strictIssues.length === 0;
+  // --strict: warning-tier findings (format / deprecated / group) also fail.
+  const ok = report.ok && strictIssues.length === 0 && (!strict || report.warnings.length === 0);
   if (asJson) {
     jsonOut(strict ? { ...report, ok, strictIssues } : report);
   } else {
@@ -423,14 +551,15 @@ async function main(): Promise<void> {
         {
           total: report.total,
           withProvenance: report.withProvenance,
-          grandfathered: (await loadBaseline()).grandfatheredIds.length,
+          grandfathered: baseline.grandfatheredIds.length,
           issues: report.issues.length,
+          warnings: report.warnings.length,
           ...(strict ? { strictIssues: strictIssues.length } : {}),
         },
       ],
       strict
-        ? ['total', 'withProvenance', 'grandfathered', 'issues', 'strictIssues']
-        : ['total', 'withProvenance', 'grandfathered', 'issues']
+        ? ['total', 'withProvenance', 'grandfathered', 'issues', 'warnings', 'strictIssues']
+        : ['total', 'withProvenance', 'grandfathered', 'issues', 'warnings']
     );
     if (report.issues.length > 0) {
       console.error(colorize('concept metadata issues:', '#f85149'));
@@ -439,6 +568,19 @@ async function main(): Promise<void> {
       }
       if (report.issues.length > 40) {
         console.error(`  … ${report.issues.length - 40} more`);
+      }
+    }
+    if (report.warnings.length > 0) {
+      console.warn(
+        colorize(`concept metadata warnings${strict ? ' (fatal under --strict)' : ''}:`, '#d29922')
+      );
+      for (const warning of report.warnings.slice(0, 40)) {
+        console.warn(
+          `  ⚠️ ${warning.id} (${warning.reason}${warning.detail ? ` · ${warning.detail}` : ''})`
+        );
+      }
+      if (report.warnings.length > 40) {
+        console.warn(`  … ${report.warnings.length - 40} more`);
       }
     }
     if (strictIssues.length > 0) {
