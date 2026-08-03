@@ -1,29 +1,29 @@
 {
   "kind": "concepts-state",
   "schemaVersion": 1,
-  "bakedAt": "2026-08-03T03:42:15.192Z",
+  "bakedAt": "2026-08-03T23:32:55.500Z",
   "gate": "pass",
   "summary": {
-    "totalPortal": 129,
-    "withProvenance": 129,
+    "totalPortal": 131,
+    "withProvenance": 131,
     "provenanceCoverage": 1,
-    "usedUi": 72,
-    "unusedUi": 3,
-    "surfaceOnly": 26,
+    "usedUi": 76,
+    "unusedUi": 7,
+    "surfaceOnly": 22,
     "metadataIssues": 0,
     "surfaceOrphans": 0,
     "inventoryMisses": 0,
     "deprecatedUsed": 0,
-    "bakeDrift": 0,
-    "detailRows": 129
+    "bakeDrift": 8,
+    "detailRows": 131
   },
   "domainSummary": [
     {
       "domain": "portal",
-      "count": 81,
-      "used": 73,
+      "count": 83,
+      "used": 75,
       "unused": 8,
-      "provenance": 81,
+      "provenance": 83,
       "provenancePct": 100
     },
     {
@@ -121,10 +121,10 @@
       "namespace": "ops",
       "group": "ops.filter",
       "category": "ops",
-      "status": "active",
+      "status": "deprecated",
       "provenance": "PR#228",
       "usage": 0,
-      "kind": "surface-only"
+      "kind": "unused"
     },
     {
       "id": "ops.filter.window.30d",
@@ -133,10 +133,10 @@
       "namespace": "ops",
       "group": "ops.filter",
       "category": "ops",
-      "status": "active",
+      "status": "deprecated",
       "provenance": "PR#228",
       "usage": 0,
-      "kind": "surface-only"
+      "kind": "unused"
     },
     {
       "id": "ops.filter.window.48h",
@@ -145,10 +145,10 @@
       "namespace": "ops",
       "group": "ops.filter",
       "category": "ops",
-      "status": "active",
+      "status": "deprecated",
       "provenance": "PR#228",
       "usage": 0,
-      "kind": "surface-only"
+      "kind": "unused"
     },
     {
       "id": "ops.filter.window.7d",
@@ -157,10 +157,10 @@
       "namespace": "ops",
       "group": "ops.filter",
       "category": "ops",
-      "status": "active",
+      "status": "deprecated",
       "provenance": "PR#228",
       "usage": 0,
-      "kind": "surface-only"
+      "kind": "unused"
     },
     {
       "id": "ops.limits.account",
@@ -720,30 +720,6 @@
       "domain": "portal",
       "namespace": "page",
       "group": "page.compliance",
-      "category": "page",
-      "status": "active",
-      "provenance": "legacy",
-      "usage": 0,
-      "kind": "used"
-    },
-    {
-      "id": "page.concepts",
-      "label": "Concept inventory",
-      "domain": "portal",
-      "namespace": "page",
-      "group": "page.concepts",
-      "category": "page",
-      "status": "active",
-      "provenance": "legacy",
-      "usage": 0,
-      "kind": "used"
-    },
-    {
-      "id": "page.conceptsGraph",
-      "label": "Concept graph",
-      "domain": "portal",
-      "namespace": "page",
-      "group": "page.conceptsGraph",
       "category": "page",
       "status": "active",
       "provenance": "legacy",
@@ -1447,6 +1423,54 @@
       "kind": "used"
     },
     {
+      "id": "ui.filter.window",
+      "label": "Window filter",
+      "domain": "portal",
+      "namespace": "ui",
+      "group": "ui.filter",
+      "category": "ui",
+      "status": "active",
+      "provenance": "PR#228",
+      "usage": 2,
+      "kind": "used"
+    },
+    {
+      "id": "ui.filter.window.30d",
+      "label": "30 days",
+      "domain": "portal",
+      "namespace": "ui",
+      "group": "ui.filter",
+      "category": "ui",
+      "status": "active",
+      "provenance": "PR#228",
+      "usage": 1,
+      "kind": "used"
+    },
+    {
+      "id": "ui.filter.window.48h",
+      "label": "48 hours",
+      "domain": "portal",
+      "namespace": "ui",
+      "group": "ui.filter",
+      "category": "ui",
+      "status": "active",
+      "provenance": "PR#228",
+      "usage": 1,
+      "kind": "used"
+    },
+    {
+      "id": "ui.filter.window.7d",
+      "label": "7 days",
+      "domain": "portal",
+      "namespace": "ui",
+      "group": "ui.filter",
+      "category": "ui",
+      "status": "active",
+      "provenance": "PR#228",
+      "usage": 1,
+      "kind": "used"
+    },
+    {
       "id": "ui.filter.zipPrefix",
       "label": "ZIP-prefix filter",
       "domain": "portal",
@@ -1628,6 +1652,10 @@
     }
   ],
   "unused": [
+    "ops.filter.window",
+    "ops.filter.window.30d",
+    "ops.filter.window.48h",
+    "ops.filter.window.7d",
     "ui.semantic.package",
     "ui.semantic.tone",
     "ui.semantic.type"
@@ -1635,10 +1663,6 @@
   "surfaceOnly": [
     "ops.filter.account.all",
     "ops.filter.sportsbook.all",
-    "ops.filter.window",
-    "ops.filter.window.30d",
-    "ops.filter.window.48h",
-    "ops.filter.window.7d",
     "ops.limits.tree",
     "ops.metric.active_filters",
     "ops.metric.decreases",
@@ -1661,7 +1685,9 @@
     "ui.filter.profile"
   ],
   "metadataIssues": [],
-  "failures": [],
+  "failures": [
+    "bake-drift:8"
+  ],
   "links": {
     "vocabulary": "lib/portal/semantic-vocabulary.ts",
     "audit": "scripts/concept-audit.ts",
