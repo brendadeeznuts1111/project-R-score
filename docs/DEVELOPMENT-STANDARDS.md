@@ -34,11 +34,15 @@ Use the [`lib/console-depth.ts`](../lib/console-depth.ts) helpers for object/tab
 ```bash
 bun run install:verify
 bun run type-check
-bun run test:changed
+bun run test:changed          # Bun-native --changed (+ parallel)
+bun run test:dev              # watch monorepo tests/
 bun run lint:harness
 bun run harness:status
 bun tools/bun-doc-refs.ts suggest "Bun.secrets"
 ```
+
+Full testing / hooks map: [`docs/DEVELOPMENT-WORKFLOW.md`](./DEVELOPMENT-WORKFLOW.md)
+(concept gates: `bun run concept:audit --strict` · `validate:surface-coverage`).
 
 ## Before merge
 
