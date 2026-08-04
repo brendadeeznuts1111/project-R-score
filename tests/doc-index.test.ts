@@ -5,7 +5,7 @@ import {
   buildDocIndex,
   DEFAULTS_VERIFY_DOC_KEYS,
 } from '../lib/docs/doc-index.ts';
-import { CANONICAL_REFS } from '../tools/bun-doc-refs.ts';
+import { CANONICAL_REFS, listCodeApiKeys } from '../tools/bun-doc-refs.ts';
 
 describe('lib/docs/doc-index', () => {
   test('buildDocIndex produces entries for all code API keys', async () => {
@@ -42,6 +42,11 @@ describe('lib/docs/doc-index', () => {
 });
 
 describe('tools/build-doc-index.ts', () => {
+  test('ambiguous external CLI flags remain catalogued but are not auto-annotated', () => {
+    expect(CANONICAL_REFS['--format']).toBeTruthy();
+    expect(listCodeApiKeys()).not.toContain('--format');
+  });
+
   test('CLI reports the generated index without mutating the registry', async () => {
     const proc = Bun.spawn({
       cmd: ['bun', 'tools/build-doc-index.ts'],
