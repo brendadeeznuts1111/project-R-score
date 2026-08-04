@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Tournament snap ownership — map composite snap keys to glossary tournament leaves.
  *
@@ -18,6 +19,9 @@
 import { joinPath } from '../path-bun.ts';
 
 const REPO_ROOT = joinPath(import.meta.dir, '..', '..');
+
+/** Safe snap / id token for shell hints (alphanumeric, underscore, dot, hyphen). */
+const SAFE_SNAP_RE = /^[a-zA-Z0-9._-]+$/;
 
 export type SnapGender = 'MALE' | 'FEMALE' | 'MIXED' | null;
 
@@ -85,6 +89,33 @@ const GENDER_SUFFIX: Record<string, SnapGender> = {
 /** Longest-first so setka_cup matches before setka. */
 const TOURNAMENT_PREFIXES = [...KNOWN_TOURNAMENT_KEYS].sort((a, b) => b.length - a.length);
 
+function isIso2Region(s: string): boolean {
+  return /^[a-z]{2}$/.test(s);
+}
+
+/**
+ * Parse region + gender facets after a known tournament key.
+ * Valid: empty | gender | iso2 | iso2_gender. Anything else → null (malformed).
+ */
+function parseKnownFacets(rest: string): { region: string | null; gender: SnapGender } | null {
+  if (!rest) return { region: null, gender: null };
+  const segs = rest.split('_').filter(Boolean);
+  if (segs.length === 1) {
+    const s = segs[0]!;
+    if (GENDER_SUFFIX[s]) return { region: null, gender: GENDER_SUFFIX[s]! };
+    if (isIso2Region(s)) return { region: s, gender: null };
+    return null;
+  }
+  if (segs.length === 2) {
+    const regionCand = segs[0]!;
+    const last = segs[1]!;
+    const gender = GENDER_SUFFIX[last] ?? null;
+    if (!gender || !isIso2Region(regionCand)) return null;
+    return { region: regionCand, gender };
+  }
+  return null;
+}
+
 /**
  * Parse a warehouse snap key into tournament + optional region + gender.
  *
@@ -93,12 +124,16 @@ const TOURNAMENT_PREFIXES = [...KNOWN_TOURNAMENT_KEYS].sort((a, b) => b.length -
  *   setka_cup_ua_w
  *   setka_cup_w
  *   tournament.setka_cup  (already a glossary id — treated as bare tournament)
+ *
+ * Malformed known-prefix facets (e.g. setka_cup_ua_z, setka_cup_usa_w) → null.
+ * Region/gender-only keys (e.g. ua_w) → null (no tournament series).
  */
 export function parseTournamentSnap(raw: string): TournamentSnapParts | null {
-  let snap = raw
-    .trim()
-    .toLowerCase()
-    .replace(/^tournament\./, '');
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+  // Warehouse snaps are alphanumeric keys only — reject shell-meta noise early.
+  if (!SAFE_SNAP_RE.test(trimmed)) return null;
+  let snap = trimmed.toLowerCase().replace(/^tournament\./, '');
   if (!snap) return null;
 
   // Already a bare tournament key
@@ -115,55 +150,50 @@ export function parseTournamentSnap(raw: string): TournamentSnapParts | null {
 
   let tournamentKey: string | null = null;
   let rest = '';
+  let knownPrefix = false;
   for (const key of TOURNAMENT_PREFIXES) {
     if (snap === key) {
       tournamentKey = key;
       rest = '';
+      knownPrefix = true;
       break;
     }
     if (snap.startsWith(`${key}_`)) {
       tournamentKey = key;
       rest = snap.slice(key.length + 1);
+      knownPrefix = true;
       break;
-    }
-  }
-  if (!tournamentKey) {
-    // Fallback: last _w/_m as gender, middle as region, rest as tournament
-    const parts = snap.split('_').filter(Boolean);
-    if (parts.length === 0) return null;
-    const last = parts[parts.length - 1]!;
-    const gender = GENDER_SUFFIX[last] ?? null;
-    if (gender && parts.length >= 2) {
-      const regionCand = parts[parts.length - 2]!;
-      const region = /^[a-z]{2}$/.test(regionCand) ? regionCand : null;
-      const tourParts = region ? parts.slice(0, -2) : parts.slice(0, -1);
-      tournamentKey = tourParts.join('_');
-      rest = [region, last].filter(Boolean).join('_');
-    } else {
-      tournamentKey = snap;
-      rest = '';
     }
   }
 
   let region: string | null = null;
   let gender: SnapGender = null;
-  if (rest) {
-    const segs = rest.split('_').filter(Boolean);
-    if (segs.length === 1) {
-      const s = segs[0]!;
-      if (GENDER_SUFFIX[s]) gender = GENDER_SUFFIX[s]!;
-      else if (/^[a-z]{2}$/.test(s)) region = s;
-      else region = s;
-    } else if (segs.length >= 2) {
-      const last = segs[segs.length - 1]!;
-      gender = GENDER_SUFFIX[last] ?? null;
-      const regionCand = segs[segs.length - 2]!;
-      region = /^[a-z]{2}$/.test(regionCand) ? regionCand : segs.slice(0, -1).join('_');
-      if (!gender) {
-        region = segs.join('_');
-      }
+
+  if (knownPrefix && tournamentKey) {
+    const facets = parseKnownFacets(rest);
+    if (!facets) return null;
+    region = facets.region;
+    gender = facets.gender;
+  } else {
+    // Fallback: last _w/_m as gender, optional iso2 region, rest as tournament
+    const parts = snap.split('_').filter(Boolean);
+    if (parts.length === 0) return null;
+    const last = parts[parts.length - 1]!;
+    const g = GENDER_SUFFIX[last] ?? null;
+    if (g && parts.length >= 2) {
+      const regionCand = parts[parts.length - 2]!;
+      const hasRegion = isIso2Region(regionCand);
+      const tourParts = hasRegion ? parts.slice(0, -2) : parts.slice(0, -1);
+      tournamentKey = tourParts.join('_');
+      if (!tournamentKey) return null;
+      region = hasRegion ? regionCand : null;
+      gender = g;
+    } else {
+      tournamentKey = snap;
     }
   }
+
+  if (!tournamentKey) return null;
 
   return {
     snap: raw.trim(),
@@ -175,9 +205,14 @@ export function parseTournamentSnap(raw: string): TournamentSnapParts | null {
   };
 }
 
-async function loadJsonIds(
-  path: string
-): Promise<{ ids: Set<string>; labels: Map<string, string> }> {
+type LoadJsonResult = {
+  ids: Set<string>;
+  labels: Map<string, string>;
+  /** Set when the file exists but JSON/schema parse failed. */
+  error?: string;
+};
+
+async function loadJsonIds(path: string): Promise<LoadJsonResult> {
   const ids = new Set<string>();
   const labels = new Map<string, string>();
   const file = Bun.file(path);
@@ -203,8 +238,9 @@ async function loadJsonIds(
         if (typeof v?.label === 'string') labels.set(id, v.label);
       }
     }
-  } catch {
-    /* ignore parse errors */
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return { ids, labels, error: `failed to parse ${path}: ${msg}` };
   }
   return { ids, labels };
 }
@@ -214,45 +250,71 @@ export type OwnershipLookupPaths = {
   tennisHqColors?: string;
 };
 
+export type OwnershipLookupResult = {
+  hit: GlossaryHit | null;
+  issues: string[];
+};
+
+function tennisHqColorsCandidates(explicit?: string): string[] {
+  const out: string[] = [];
+  if (explicit) out.push(explicit);
+  const envDir = Bun.env.TENNIS_HQ_SSOT_DIR?.trim();
+  if (envDir) {
+    out.push(joinPath(envDir, 'registry/glossary-colors.json'));
+    out.push(joinPath(envDir, 'glossary-colors.json'));
+  }
+  out.push(
+    joinPath(
+      REPO_ROOT,
+      'king-zippy-umbra-acre/packages/tennis-hq-ssot/registry/glossary-colors.json'
+    )
+  );
+  return out.filter((p, i, a) => p.length > 0 && a.indexOf(p) === i);
+}
+
 export async function findTournamentOwnership(
   glossaryId: string, // brand-ok — glossary concept key
   paths: OwnershipLookupPaths = {}
-): Promise<GlossaryHit | null> {
+): Promise<OwnershipLookupResult> {
+  const issues: string[] = [];
   const domainPath =
     paths.domainGlossary ?? joinPath(REPO_ROOT, 'public/registry/domain-glossary.json');
 
-  const domain = await loadJsonIds(domainPath);
-  if (domain.ids.has(glossaryId)) {
-    return {
-      source: 'domain-glossary',
-      path: domainPath,
-      label: domain.labels.get(glossaryId),
-    };
+  const domainFile = Bun.file(domainPath);
+  if (await domainFile.exists()) {
+    const domain = await loadJsonIds(domainPath);
+    if (domain.error) {
+      issues.push(domain.error);
+      // Do not fall through to known-map while domain-glossary is present but unreadable.
+      return { hit: null, issues };
+    }
+    if (domain.ids.has(glossaryId)) {
+      return {
+        hit: {
+          source: 'domain-glossary',
+          path: domainPath,
+          label: domain.labels.get(glossaryId),
+        },
+        issues,
+      };
+    }
   }
 
-  // Tennis HQ packages may live only on the primary checkout (not always in worktrees).
-  const tennisCandidates = [
-    paths.tennisHqColors,
-    joinPath(
-      REPO_ROOT,
-      'king-zippy-umbra-acre/packages/tennis-hq-ssot/registry/glossary-colors.json'
-    ),
-    joinPath(
-      REPO_ROOT,
-      '..',
-      'Projects',
-      'king-zippy-umbra-acre/packages/tennis-hq-ssot/registry/glossary-colors.json'
-    ),
-  ].filter((x): x is string => typeof x === 'string' && x.length > 0);
-
-  for (const tennisPath of tennisCandidates) {
+  for (const tennisPath of tennisHqColorsCandidates(paths.tennisHqColors)) {
     if (!(await Bun.file(tennisPath).exists())) continue;
     const tennis = await loadJsonIds(tennisPath);
+    if (tennis.error) {
+      issues.push(tennis.error);
+      continue;
+    }
     if (tennis.ids.has(glossaryId)) {
       return {
-        source: 'tennis-hq-colors',
-        path: tennisPath,
-        label: tennis.labels.get(glossaryId),
+        hit: {
+          source: 'tennis-hq-colors',
+          path: tennisPath,
+          label: tennis.labels.get(glossaryId),
+        },
+        issues,
       };
     }
   }
@@ -261,13 +323,20 @@ export async function findTournamentOwnership(
   const key = glossaryId.replace(/^tournament\./, '');
   if ((KNOWN_TOURNAMENT_KEYS as readonly string[]).includes(key)) {
     return {
-      source: 'known-map',
-      path: 'lib/glossary/tournament-snap.ts#KNOWN_TOURNAMENT_KEYS',
-      label: TOURNAMENT_LABELS[key],
+      hit: {
+        source: 'known-map',
+        path: 'lib/glossary/tournament-snap.ts#KNOWN_TOURNAMENT_KEYS',
+        label: TOURNAMENT_LABELS[key],
+      },
+      issues,
     };
   }
 
-  return null;
+  return { hit: null, issues };
+}
+
+function safeProposeToken(value: string, fallback: string): string {
+  return SAFE_SNAP_RE.test(value) ? value : fallback;
 }
 
 export async function verifyTournamentSnapOwnership(
@@ -277,17 +346,28 @@ export async function verifyTournamentSnapOwnership(
   const issues: string[] = [];
   const parts = parseTournamentSnap(snap);
   if (!parts) {
+    const safe = safeProposeToken(
+      snap
+        .trim()
+        .toLowerCase()
+        .replace(/^tournament\./, ''),
+      'unknown'
+    );
     return {
       snap,
       ok: false,
       parts: null,
       ownedBy: null,
       issues: [`unparseable snap key: ${snap}`],
-      proposeHint: `bun run concept:propose -- --id tournament.${snap} --label "${snap}" --domain trading --category tournament`,
+      proposeHint: `bun run concept:propose -- --id tournament.${safe} --label "${safe}" --domain trading --category tournament`,
     };
   }
 
-  const ownedBy = await findTournamentOwnership(parts.glossaryId, paths);
+  const { hit: ownedBy, issues: lookupIssues } = await findTournamentOwnership(
+    parts.glossaryId,
+    paths
+  );
+  issues.push(...lookupIssues);
   if (!ownedBy) {
     issues.push(`glossary leaf missing: ${parts.glossaryId}`);
   }
@@ -298,6 +378,8 @@ export async function verifyTournamentSnapOwnership(
   }
 
   const ok = issues.length === 0 && ownedBy !== null;
+  const safeId = safeProposeToken(parts.glossaryId, 'tournament.unknown');
+  const safeLabel = parts.tournamentLabel.replace(/["`$\\]/g, '');
   return {
     snap,
     ok,
@@ -306,7 +388,7 @@ export async function verifyTournamentSnapOwnership(
     issues,
     proposeHint: ok
       ? undefined
-      : `bun run concept:propose -- --id ${parts.glossaryId} --label "${parts.tournamentLabel}" --domain trading --category tournament --summary "Table tennis tournament series (snap facets: region/gender on warehouse rows)"`,
+      : `bun run concept:propose -- --id ${safeId} --label "${safeLabel}" --domain trading --category tournament --summary "Table tennis tournament series (snap facets: region/gender on warehouse rows)"`,
   };
 }
 

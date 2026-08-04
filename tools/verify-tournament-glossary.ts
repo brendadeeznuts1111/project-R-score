@@ -6,6 +6,7 @@
  *
  *   bun run verify:tournament-glossary -- setka_cup_ua_w
  *   bun run verify:tournament-glossary -- setka_cup_ua_w tournament.setka_cup --json
+ *   bun run verify:tournament-glossary -- --json setka_cup_ua_w
  *   bun run verify:tournament-glossary -- --list-known
  *
  * Ownership rule: snap facets (region/gender) hang off tournament.* leaves.
@@ -21,15 +22,24 @@ import {
   verifyTournamentSnapOwnership,
 } from '../lib/glossary/tournament-snap.ts';
 
-function positionalSnaps(argv: readonly string[]): string[] {
+/** Boolean flags that never consume the following token as a value. */
+const BOOLEAN_FLAGS = new Set(['--json', '--list-known', '--']);
+
+/**
+ * Collect positional snap keys. Boolean options never eat the next arg.
+ * Value options (`--foo=bar` or future `--path DIR`) still skip the value.
+ */
+export function positionalSnaps(argv: readonly string[]): string[] {
   const out: string[] = [];
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i]!;
+    if (a === '--') continue;
     if (a.startsWith('--')) {
+      if (a.includes('=')) continue;
+      if (BOOLEAN_FLAGS.has(a)) continue;
+      // Value-taking option: skip following non-flag token
       const next = argv[i + 1];
-      if (!a.includes('=') && next && !next.startsWith('--') && a !== '--list-known') {
-        i++;
-      }
+      if (next && !next.startsWith('--')) i++;
       continue;
     }
     out.push(a);
@@ -68,6 +78,7 @@ async function main(): Promise<void> {
   bun run verify:tournament-glossary -- <snap> [snap…]
   bun run verify:tournament-glossary -- --list-known
   bun run verify:tournament-glossary -- setka_cup_ua_w --json
+  bun run verify:tournament-glossary -- --json setka_cup_ua_w
 
 Example:
   bun run verify:tournament-glossary -- setka_cup_ua_w`);
