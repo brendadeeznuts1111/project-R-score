@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/reference/bun/argv — Bun.argv
@@ -7,7 +8,7 @@
  * public/registry/concepts-state.json (board at /portal/concepts/).
  *
  *   bun run concepts:bake            # write state JSON
- *   bun run concepts:bake -- --check # fail when audit report is not ok
+ *   bun run concepts:bake -- --check # fail when the committed state is stale
  *
  * State is derived from `runConceptAudit` (vocabulary + usage + surface coverage).
  * Values only — no secrets.
@@ -99,15 +100,51 @@ export async function bakeConceptsState(): Promise<ConceptsState> {
   };
 }
 
+function comparableState(state: ConceptsState): Omit<ConceptsState, 'bakedAt'> {
+  const { bakedAt: _bakedAt, ...comparable } = state;
+  return comparable;
+}
+
+export function conceptsStateMatches(current: ConceptsState, candidate: ConceptsState): boolean {
+  return Bun.deepEquals(comparableState(current), comparableState(candidate), true);
+}
+
+export async function persistConceptsState(
+  state: ConceptsState,
+  options: { check?: boolean; outPath?: string } = {}
+): Promise<'current' | 'written'> {
+  const outPath = options.outPath ?? OUT_PATH;
+  if (options.check) {
+    let current: ConceptsState;
+    try {
+      current = (await Bun.file(outPath).json()) as ConceptsState;
+    } catch {
+      throw new Error(`concepts state is missing or unreadable: ${outPath}`);
+    }
+    if (!conceptsStateMatches(current, state)) {
+      throw new Error('concepts-state.json is stale; run bun run concepts:bake');
+    }
+    return 'current';
+  }
+
+  await Bun.write(outPath, `${JSON.stringify(state, null, 2)}\n`);
+  return 'written';
+}
+
 async function main(): Promise<void> {
   const state = await bakeConceptsState();
-  await Bun.write(OUT_PATH, `${JSON.stringify(state, null, 2)}\n`);
-  console.info(
-    `concepts-state.json baked: ${state.summary.totalPortal} concepts · domains=${state.domainSummary.length} · gate ${state.gate}`
-  );
   if (CHECK && state.gate !== 'pass') {
     console.error(`❌ concepts bake gate failed: ${state.failures.join(' · ') || 'report not ok'}`);
-    process.exit(1);
+    Bun.exit(1);
+  }
+  try {
+    const result = await persistConceptsState(state, { check: CHECK });
+    console.info(
+      `concepts-state.json ${result}: ${state.summary.totalPortal} concepts · domains=${state.domainSummary.length} · gate ${state.gate}`
+    );
+  } catch (error) {
+    console.error(`❌ ${error instanceof Error ? error.message : String(error)}`);
+    Bun.exit(1);
   }
 }
 

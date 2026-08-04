@@ -1,29 +1,29 @@
 {
   "kind": "concepts-state",
   "schemaVersion": 1,
-  "bakedAt": "2026-08-03T23:50:13.894Z",
+  "bakedAt": "2026-08-04T06:41:31.775Z",
   "gate": "pass",
   "summary": {
-    "totalPortal": 135,
-    "withProvenance": 135,
+    "totalPortal": 139,
+    "withProvenance": 139,
     "provenanceCoverage": 1,
     "usedUi": 77,
-    "unusedUi": 7,
-    "surfaceOnly": 25,
+    "unusedUi": 9,
+    "surfaceOnly": 26,
     "metadataIssues": 0,
     "surfaceOrphans": 0,
     "inventoryMisses": 0,
     "deprecatedUsed": 0,
-    "bakeDrift": 3,
-    "detailRows": 135
+    "bakeDrift": 0,
+    "detailRows": 139
   },
   "domainSummary": [
     {
       "domain": "portal",
-      "count": 83,
-      "used": 75,
+      "count": 84,
+      "used": 76,
       "unused": 8,
-      "provenance": 83,
+      "provenance": 84,
       "provenancePct": 100
     },
     {
@@ -44,10 +44,10 @@
     },
     {
       "domain": "infrastructure",
-      "count": 4,
+      "count": 7,
       "used": 1,
-      "unused": 3,
-      "provenance": 4,
+      "unused": 6,
+      "provenance": 7,
       "provenancePct": 100
     }
   ],
@@ -103,6 +103,18 @@
       "kind": "surface-only"
     },
     {
+      "id": "api.identity",
+      "label": "Identity API",
+      "domain": "infrastructure",
+      "namespace": "api",
+      "group": "api.identity",
+      "category": "api",
+      "status": "active",
+      "provenance": "PR#256",
+      "usage": 0,
+      "kind": "surface-only"
+    },
+    {
       "id": "api.limit_cache",
       "label": "Limit cache",
       "domain": "infrastructure",
@@ -127,16 +139,40 @@
       "kind": "surface-only"
     },
     {
+      "id": "api.partner",
+      "label": "Partner registry API",
+      "domain": "infrastructure",
+      "namespace": "api",
+      "group": "api.partner",
+      "category": "api",
+      "status": "active",
+      "provenance": "PR#256",
+      "usage": 0,
+      "kind": "surface-only"
+    },
+    {
+      "id": "api.prediction",
+      "label": "Prediction API",
+      "domain": "infrastructure",
+      "namespace": "api",
+      "group": "api.prediction",
+      "category": "api",
+      "status": "active",
+      "provenance": "PR#256",
+      "usage": 0,
+      "kind": "surface-only"
+    },
+    {
       "id": "ops.filter.account.all",
       "label": "All accounts",
       "domain": "operations",
       "namespace": "ops",
       "group": "ops.filter",
       "category": "ops",
-      "status": "active",
+      "status": "deprecated",
       "provenance": "PR#228",
       "usage": 0,
-      "kind": "surface-only"
+      "kind": "unused"
     },
     {
       "id": "ops.filter.sportsbook.all",
@@ -145,10 +181,10 @@
       "namespace": "ops",
       "group": "ops.filter",
       "category": "ops",
-      "status": "active",
+      "status": "deprecated",
       "provenance": "PR#228",
       "usage": 0,
-      "kind": "surface-only"
+      "kind": "unused"
     },
     {
       "id": "ops.filter.window",
@@ -768,6 +804,18 @@
       "domain": "portal",
       "namespace": "page",
       "group": "page.compliance",
+      "category": "page",
+      "status": "active",
+      "provenance": "legacy",
+      "usage": 0,
+      "kind": "used"
+    },
+    {
+      "id": "page.concepts",
+      "label": "Concepts",
+      "domain": "portal",
+      "namespace": "page",
+      "group": "page.concepts",
       "category": "page",
       "status": "active",
       "provenance": "legacy",
@@ -1700,6 +1748,8 @@
     }
   ],
   "unused": [
+    "ops.filter.account.all",
+    "ops.filter.sportsbook.all",
     "ops.filter.window",
     "ops.filter.window.30d",
     "ops.filter.window.48h",
@@ -1710,10 +1760,11 @@
   ],
   "surfaceOnly": [
     "api.bookmaker_feed",
+    "api.identity",
     "api.limit_cache",
     "api.limit_events",
-    "ops.filter.account.all",
-    "ops.filter.sportsbook.all",
+    "api.partner",
+    "api.prediction",
     "ops.limits.tree",
     "ops.metric.active_filters",
     "ops.metric.decreases",
@@ -1736,9 +1787,7 @@
     "ui.filter.profile"
   ],
   "metadataIssues": [],
-  "failures": [
-    "bake-drift:3"
-  ],
+  "failures": [],
   "links": {
     "vocabulary": "lib/portal/semantic-vocabulary.ts",
     "audit": "scripts/concept-audit.ts",

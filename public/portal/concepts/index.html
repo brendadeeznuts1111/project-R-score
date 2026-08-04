@@ -66,6 +66,22 @@
         color: var(--text-dim);
         margin: 0 0 12px;
       }
+      .cx-model {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+      }
+      .cx-model-step {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 12px;
+      }
+      .cx-model-step strong {
+        display: block;
+        margin-bottom: 4px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+      }
       .cx-domains {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -172,6 +188,9 @@
         .cx-stats {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
+        .cx-model {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
       }
     </style>
   </head>
@@ -229,6 +248,36 @@
         ·
         <a href="/portal/concepts/graph/">concept graph</a>
       </p>
+      <section class="cx-panel" aria-labelledby="cx-model-title">
+        <h2 id="cx-model-title">Domain → concept → shape → surface</h2>
+        <div class="cx-model">
+          <div class="cx-model-step" data-model-step="domain">
+            <strong>1 · Domain</strong>
+            <span class="dim">Business lane that owns the meaning.</span>
+          </div>
+          <div class="cx-model-step" data-model-step="concept">
+            <strong>2 · Concept</strong>
+            <span class="dim">Stable semantic identity with lifecycle and provenance.</span>
+          </div>
+          <div class="cx-model-step" data-model-step="shape">
+            <strong>3 · Shape</strong>
+            <span class="dim">Parsed contract trusted after the wire boundary.</span>
+          </div>
+          <div class="cx-model-step" data-model-step="surface">
+            <strong>4 · Surface</strong>
+            <span class="dim">Board, API, artifact, or workflow that consumes it.</span>
+          </div>
+        </div>
+        <p class="dim" style="margin: 12px 0 0">
+          Keep business domain, namespace, concept identity, and runtime shape distinct ·
+          <a
+            href="https://wiki.factory-wager.com/docs/DOMAIN_CONCEPT_SHAPE.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            >operator model</a
+          >
+        </p>
+      </section>
       <div class="cx-stats" id="cx-stats"></div>
       <div class="cx-panel" id="cx-graph-panel">
         <h2>Concept graph</h2>

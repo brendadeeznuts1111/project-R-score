@@ -2,6 +2,15 @@
 
 Shared gates and MCP tools for all `.agents/skills/*` skills. Prefer MCP over shell when the `ast-grep` server is enabled in `.cursor/mcp.json`.
 
+## Domain, concept, shape, and surface
+
+Before a skill introduces domain vocabulary, a wire contract, a registry
+artifact, or portal chrome, follow
+[`docs/DOMAIN_CONCEPT_SHAPE.md`](../../../docs/DOMAIN_CONCEPT_SHAPE.md): choose
+business ownership, reuse or define the semantic concept, parse the trusted
+shape once at the boundary, then bind and prove the consuming surface. Keep
+namespace, business domain, concept identity, and runtime shape distinct.
+
 ## Pre-commit (husky)
 
 Hook chain at `.husky/pre-commit`:

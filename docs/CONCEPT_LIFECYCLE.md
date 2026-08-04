@@ -9,6 +9,7 @@ Related:
 | Role | Path |
 | --- | --- |
 | Wire boundary thesis | [`docs/WIRE_BOUNDARY.md`](WIRE_BOUNDARY.md) |
+| Domain → concept → shape → surface | [`docs/DOMAIN_CONCEPT_SHAPE.md`](DOMAIN_CONCEPT_SHAPE.md) |
 | Portal UI foundation | [`docs/portal-foundation.md`](portal-foundation.md) |
 | Partner limits + E3 contract | [`docs/harness/tenants/partner-limits.md`](harness/tenants/partner-limits.md#e3-wire-contract-pending) |
 | Agent / limit-row integration | [`docs/harness/tenants/agents.md`](harness/tenants/agents.md) |
