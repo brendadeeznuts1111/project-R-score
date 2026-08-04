@@ -61,7 +61,9 @@ Hooks live in [`.husky/pre-commit`](../.husky/pre-commit). They already:
    `lib/portal/semantic-vocabulary.ts`, `lib/portal/concept-*`,
    `lib/portal/page-concepts.ts`, `scripts/validate-surface-coverage.ts`,
    `scripts/concept-audit.ts`, `tools/generate-surface-coverage-map.ts`,
-   `docs/SURFACE_COVERAGE.md`, `public/registry/domain-glossary.json`
+   `docs/SURFACE_COVERAGE.md`, `docs/DOMAIN_CONCEPT_SHAPE.md`,
+   `public/portal/concepts/index.html`, `public/registry/domain-glossary.json`,
+   `public/registry/concepts-state.json`
 
 ### Escape hatches
 
