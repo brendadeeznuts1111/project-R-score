@@ -12,6 +12,7 @@
 //      a plaintext password.
 
 import type { PartnerTemplateId } from '../types/branded';
+import type { TelegramNotificationPreferences } from '../telegram/partner-notifications';
 
 export const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
 export const CALL_SIGN_RE = /^[A-Z]{3,6}-\d{3}$/;
@@ -80,6 +81,8 @@ export type PartnerProfile = {
   telegram?: {
     chatId?: string; // brand-ok — telegram chat id wire
     topics?: Partial<Record<TelegramTopic, number | null>>;
+    /** Notification opt-in flags (all default on). See lib/telegram/partner-notifications.ts. */
+    preferences?: TelegramNotificationPreferences;
   };
   jurisdiction?: {
     type?: 'legal' | 'offshore' | 'pph' | 'crypto';
@@ -302,6 +305,17 @@ export function validatePartnerProfile(value: unknown): ProfileValidation {
       }
       if (value.telegram.topics !== undefined && !isRecord(value.telegram.topics)) {
         issues.push('telegram.topics must be an object');
+      }
+      if (value.telegram.preferences !== undefined) {
+        if (!isRecord(value.telegram.preferences)) {
+          issues.push('telegram.preferences must be an object');
+        } else {
+          for (const [key, val] of Object.entries(value.telegram.preferences)) {
+            if (typeof val !== 'boolean') {
+              issues.push(`telegram.preferences.${key} must be a boolean`);
+            }
+          }
+        }
       }
     }
   }
