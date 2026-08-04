@@ -32,6 +32,7 @@ import { sportsbookOpeningBaselineGlossaryConcepts } from '../lib/operations/spo
 import { telegramGlossaryConcepts } from '../lib/telegram/telegram-glossary.ts';
 import { partnerOpsGlossaryConcepts } from '../lib/telegram/partner-ops-glossary.ts';
 import { opsViewGlossaryConcepts } from '../lib/telegram/ops-view-glossary.ts';
+import { tournamentSeriesGlossaryConcepts } from '../lib/glossary/tournament-series-glossary.ts';
 import {
   PARTNER_OPS_CONCEPT_COLORS,
   partnerOpsConceptColorWire,
@@ -192,6 +193,7 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
     ...telegramGlossaryConcepts(),
     ...partnerOpsGlossaryConcepts(),
     ...opsViewGlossaryConcepts(),
+    ...tournamentSeriesGlossaryConcepts(),
   ].map(concept => ({
     id: concept.id,
     label: concept.label,
@@ -225,7 +227,9 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
                   ? 'Governed partner-ops phase, book type, funding rail, out status, and accounting concept.'
                   : concept.source === 'lib/telegram/ops-view-glossary.ts'
                     ? 'Governed ops reporting-view chrome (per-account / per-play / per-week / per-book-type).'
-                    : 'Governed compliance policy and KPI concept.',
+                    : concept.source === 'lib/glossary/tournament-series-glossary.ts'
+                      ? 'Governed table-tennis tournament series, league, and snap-facet concepts.'
+                      : 'Governed compliance policy and KPI concept.',
     semanticType: concept.semanticType,
     uiRole: concept.uiRole,
     parentId: 'parentId' in concept ? (concept.parentId ?? null) : null,
@@ -234,6 +238,8 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
     region: 'region' in concept ? (concept.region ?? null) : null,
     flagEmoji: 'flagEmoji' in concept ? (concept.flagEmoji ?? null) : null,
     flagAriaLabel: 'flagAriaLabel' in concept ? (concept.flagAriaLabel ?? null) : null,
+    domain: 'domain' in concept ? (concept.domain ?? null) : null,
+    namespace: 'namespace' in concept ? (concept.namespace ?? null) : null,
   }));
   const combinedConcepts = [...source.concepts, ...portalConcepts, ...governedConcepts];
   const combinedIds = combinedConcepts.map(concept => concept.id);
@@ -310,6 +316,7 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
       partnerOpsAuthority: 'lib/telegram/partner-ops-glossary.ts',
       partnerOpsColorKernel: 'lib/telegram/partner-ops-color-kernel.ts',
       opsViewAuthority: 'lib/telegram/ops-view-glossary.ts',
+      tournamentSeriesAuthority: 'lib/glossary/tournament-series-glossary.ts',
       canonicalDump: DOMAIN_GLOSSARY_SOURCE_PATH,
       portalProjection: 'tools/domain-glossary.ts',
       colorKernel: 'public/portal/theme.jsonc',

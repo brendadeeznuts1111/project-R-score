@@ -26,3 +26,19 @@ bun run verify:tournament-glossary -- setka_cup_ua_w --json
 ### Code
 
 - `tournament-snap.ts` — `parseTournamentSnap`, `verifyTournamentSnapOwnership`
+- `tournament-series-glossary.ts` — Factory domain-glossary authority for
+  `sport.table_tennis` · `league.wtt` · `league.ittf` · `tournament.*` · gender
+  facets
+
+### Domain glossary bake
+
+```bash
+bun run glossary:portal          # projects series into public/registry/domain-glossary.json
+bun run glossary:portal:check    # fail if bake stale
+bun run verify:tournament-glossary -- setka_cup_ua_w
+bun run verify:pages-edge:tournament -- --offline   # local bake + snap ownership
+bun run verify:pages-edge:tournament                # live Pages domain-glossary
+```
+
+After bake, ownership for known series prefers **domain-glossary** over
+tennis-hq / known-map when the projection is present.

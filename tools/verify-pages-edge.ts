@@ -8,6 +8,7 @@
  *
  *   bun tools/verify-pages-edge.ts
  *   bun tools/verify-pages-edge.ts --taxonomy   # also gate proof subsystem fields
+ *   bun tools/verify-pages-edge.ts --tournament # table-tennis series ownership on domain-glossary
  *   bun tools/verify-pages-edge.ts --pm         # package-manager publish-plane probes
  *   bun tools/verify-pages-edge.ts --pm --save  # write public/registry/pm-proof.json
  *   bun tools/verify-pages-edge.ts --pm --strict-pm  # promote pm skips to failures
@@ -35,6 +36,15 @@ import {
   runPmProbes,
 } from '../lib/verification/pm-registry-probes.ts';
 import { PROOF_TAXONOMY_CONTRACT_COUNT } from '../lib/verification/proof-taxonomy.ts';
+import {
+  TOURNAMENT_OWNERSHIP_PROBE_SNAPS,
+  TOURNAMENT_SERIES_GLOSSARY_IDS,
+} from '../lib/glossary/tournament-series-glossary.ts';
+import {
+  parseTournamentSnap,
+  verifyTournamentSnapOwnership,
+} from '../lib/glossary/tournament-snap.ts';
+import { joinPath } from '../lib/path-bun.ts';
 
 const BASE = Bun.env.PAGES_VERIFY_BASE?.trim() || `https://${CLOUDFLARE_DEFAULTS.pages.subdomain}`;
 const TAXONOMY = Bun.argv.includes('--taxonomy');
@@ -221,6 +231,129 @@ async function pmMain() {
   console.log(`\n✅ PM verify passed${skipped > 0 ? ` (${skipped} skipped — fail-soft)` : ''}`);
 }
 
+// ── Tournament series ownership (--tournament) ──────────────────────────
+
+/**
+ * Prove table-tennis series leaves are on domain-glossary and warehouse snaps
+ * resolve ownership to tournament.* (not region/gender editions).
+ *
+ * Modes:
+ *   --tournament           live Pages + local snap parse
+ *   --tournament --offline local bake only (no network)
+ */
+async function tournamentMain() {
+  const offline = Bun.argv.includes('--offline');
+  console.log(`Tournament series ownership verify${offline ? ' (--offline)' : ` → ${BASE}`}`);
+
+  const issues: string[] = [];
+
+  // 1) Local snap parse + ownership (always)
+  for (const snap of TOURNAMENT_OWNERSHIP_PROBE_SNAPS) {
+    const parts = parseTournamentSnap(snap);
+    if (!parts) {
+      issues.push(`unparseable probe snap: ${snap}`);
+      continue;
+    }
+    const report = await verifyTournamentSnapOwnership(snap);
+    if (!report.ok) {
+      issues.push(
+        `ownership fail ${snap} → ${parts.glossaryId}: ${report.issues.join('; ') || 'unknown'}`
+      );
+    } else {
+      console.log(
+        `✓ snap ${snap} → ${parts.glossaryId} region=${parts.region ?? '—'} gender=${parts.gender ?? '—'} · ${report.ownedBy?.source}`
+      );
+    }
+  }
+
+  // 2) Glossary leaf presence
+  let glossaryIds: Set<string>;
+  if (offline) {
+    const path = joinPath(import.meta.dir, '..', 'public/registry/domain-glossary.json');
+    const file = Bun.file(path);
+    if (!(await file.exists())) {
+      issues.push(`missing local ${path} — run bun run glossary:portal`);
+      glossaryIds = new Set();
+    } else {
+      const j = (await file.json()) as { concepts?: Array<{ id?: string }> };
+      glossaryIds = new Set(
+        (j.concepts ?? []).map(c => c.id).filter((id): id is string => typeof id === 'string')
+      );
+      console.log(`✓ local domain-glossary · ${glossaryIds.size} concepts`);
+    }
+  } else {
+    const res = await fetch(`${BASE}/registry/domain-glossary.json`, {
+      headers: { Accept: 'application/json' },
+    });
+    if (!res.ok) {
+      issues.push(`domain-glossary.json → ${res.status} (try --offline against local bake)`);
+      glossaryIds = new Set();
+    } else {
+      const ct = res.headers.get('content-type') ?? '';
+      if (ct.includes('text/html')) {
+        issues.push('domain-glossary.json → HTML shell (Access or SPA fallback)');
+        glossaryIds = new Set();
+      } else {
+        const j = (await res.json()) as { concepts?: Array<{ id?: string }> };
+        glossaryIds = new Set(
+          (j.concepts ?? []).map(c => c.id).filter((id): id is string => typeof id === 'string')
+        );
+        console.log(`✓ live domain-glossary · ${glossaryIds.size} concepts`);
+      }
+    }
+  }
+
+  const required = [
+    'sport.table_tennis',
+    'league.wtt',
+    'league.ittf',
+    'tournament',
+    ...TOURNAMENT_SERIES_GLOSSARY_IDS,
+  ];
+  const missing = required.filter(id => !glossaryIds.has(id));
+  if (missing.length) {
+    issues.push(`glossary missing series ids: ${missing.join(', ')}`);
+  } else if (glossaryIds.size > 0) {
+    console.log(`✓ series leaves present (${required.length} ids)`);
+  }
+
+  // 3) Live ownership prefers domain-glossary when remote bake is current
+  if (!offline && glossaryIds.has('tournament.setka_cup')) {
+    const tmp = joinPath(import.meta.dir, '..', 'tmp-tournament-edge-glossary.json');
+    // Reconstruct minimal domain-glossary shape from required ids for local pin
+    await Bun.write(
+      tmp,
+      JSON.stringify({
+        concepts: required
+          .filter(id => glossaryIds.has(id))
+          .map(id => ({ id, label: id.replace(/^tournament\./, '').replace(/_/g, ' ') })),
+      })
+    );
+    try {
+      const report = await verifyTournamentSnapOwnership('setka_cup_ua_w', {
+        domainGlossary: tmp,
+        tennisHqColors: '',
+      });
+      if (!report.ok || report.ownedBy?.source !== 'domain-glossary') {
+        issues.push(
+          `pinned domain-glossary ownership expected domain-glossary, got ${report.ownedBy?.source ?? 'null'}`
+        );
+      } else {
+        console.log('✓ setka_cup_ua_w owned by domain-glossary (pinned remote projection)');
+      }
+    } finally {
+      Bun.spawnSync(['rm', '-f', tmp]);
+    }
+  }
+
+  if (issues.length) {
+    for (const issue of issues) console.error(`✗ ${issue}`);
+    console.error(`\n❌ ${issues.length} tournament ownership check(s) failed`);
+    process.exit(1);
+  }
+  console.log('\n✅ Tournament series ownership verify passed');
+}
+
 async function main() {
   console.log(`Pages edge verify → ${BASE}${TAXONOMY ? ' (--taxonomy)' : ''}`);
   const checks = await Promise.all([
@@ -373,7 +506,9 @@ if (import.meta.main) {
     ? weaveMain
     : Bun.argv.includes('--pm')
       ? pmMain
-      : main;
+      : Bun.argv.includes('--tournament')
+        ? tournamentMain
+        : main;
   entry().catch(e => {
     console.error(e instanceof Error ? e.message : e);
     process.exit(1);
