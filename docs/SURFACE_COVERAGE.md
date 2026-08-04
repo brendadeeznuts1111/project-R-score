@@ -3,7 +3,7 @@
 Human-readable view of **board surface inventories** and **HTML/JS usage**
 from the same SSOT as `bun run validate:surface-coverage`.
 
-| Generated | `2026-08-04T01:30:39.971Z` |
+| Generated | `2026-08-04T01:40:16.773Z` |
 | --- | --- |
 | Boards | partner-history · partners · limits · account |
 | Validator | [`scripts/validate-surface-coverage.ts`](../scripts/validate-surface-coverage.ts) |
