@@ -295,6 +295,14 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     note: 'telegram-handshake · seat-capital-desk · accounting topic · deposit rails',
   },
   {
+    path: '/portal/bookmakers/',
+    name: 'Bookmakers registry portal',
+    category: 'portal',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: '@factorywager/bookmakers artifact · /registry/bookmakers.json · bookmakers:bake',
+  },
+  {
     path: '/portal/account/',
     name: 'Account dossier portal',
     category: 'portal',
@@ -461,6 +469,14 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     kind: 'file-static',
     okStatuses: [200],
     note: '/registry/domain-glossary.json schema v3 · sections[] hash/domId/conceptId · URLPattern.hash deep links',
+  },
+  {
+    path: '/portal/concepts/',
+    name: 'Concepts inventory',
+    category: 'portal',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: 'concepts:bake · /registry/concepts-state.json · graph board at /portal/concepts/graph/',
   },
   {
     path: '/registry/domain-glossary.json',

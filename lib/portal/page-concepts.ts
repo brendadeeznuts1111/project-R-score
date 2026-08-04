@@ -72,6 +72,14 @@ export const PORTAL_PAGE_CONCEPT_DEFINITIONS = [
     synonyms: ['console output', 'format gate'],
   },
   {
+    path: '/portal/concepts/',
+    id: 'page.concepts',
+    label: 'Concepts',
+    description:
+      'Portal page for the semantic vocabulary inventory: domain summary, usage, provenance, and concept graph entry points.',
+    synonyms: ['concepts board', 'semantic vocabulary', 'concept inventory'],
+  },
+  {
     path: '/portal/dashboard/',
     id: 'page.dashboard',
     label: 'Executive dashboard',
