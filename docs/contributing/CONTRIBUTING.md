@@ -28,8 +28,9 @@ Full testing / hooks map: [DEVELOPMENT-WORKFLOW.md](../DEVELOPMENT-WORKFLOW.md).
 
 `quality:concept` runs `concept:audit --strict`, `validate:surface-coverage`, and
 `surface-coverage:map:check`. Pre-commit runs it **only** when concept SSOT
-paths are staged (see DEVELOPMENT-WORKFLOW). Escape: `SKIP_QUALITY_CONCEPT=1`
-with reason + evidence in the commit message.
+paths are staged. Escape hatches (`SKIP_QUALITY_CONCEPT`, `SKIP_TEST_CHANGED`,
+`SKIP_GITLEAKS`) require reason + local proof in the commit message — see
+[Escape hatches](../DEVELOPMENT-WORKFLOW.md#escape-hatches).
 
 ## Before a PR
 

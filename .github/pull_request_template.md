@@ -70,6 +70,16 @@ CI always runs `bun run validate:colors:strict` via `test:colors` (claim `color-
 # expect: Claim: Color kernel theme-dark aliases are complete and conflict-free (theme v…).
 ```
 
+## Escape hatches used (if any)
+
+Only when a commit on this PR set `SKIP_*=1`. Full policy:
+[DEVELOPMENT-WORKFLOW.md](../docs/DEVELOPMENT-WORKFLOW.md#escape-hatches).
+Leave unchecked / blank when no skip was used.
+
+- [ ] `SKIP_TEST_CHANGED=1` — reason + local proof:
+- [ ] `SKIP_QUALITY_CONCEPT=1` — reason + local proof:
+- [ ] `SKIP_GITLEAKS=1` — reason + local proof:
+
 ## Checklist
 
 - [ ] Did **not** sweep a parallel lane (foreign dirty trees left out)
@@ -79,6 +89,7 @@ CI always runs `bun run validate:colors:strict` via `test:colors` (claim `color-
 - [ ] Concept lifecycle / agents tenant docs updated when vocabulary or wire contract moved ([CONCEPT_LIFECYCLE.md](../docs/CONCEPT_LIFECYCLE.md) · [agents.md](../docs/harness/tenants/agents.md))
 - [ ] If spine touched: `bun run type-check` (`tsconfig.check.json`)
 - [ ] Day-loop known: `bun run harness:status` (optional discover)
+- [ ] Any `SKIP_*` pre-commit escape is justified above (or N/A)
 
 ## Test plan
 
