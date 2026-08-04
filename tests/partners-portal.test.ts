@@ -170,6 +170,31 @@ describe('partners portal board', () => {
     expect(partnerBookHash('book-dk-nj')).toBe('#book/book-dk-nj');
   });
 
+  test('partner profile panel wires ledger balance, history, and per-out DOM contracts', async () => {
+    const html = await Bun.file(BOARD).text();
+    expect(html).toContain('renderPartnerProfile');
+    expect(html).toContain('partner-ledger-tbody');
+    expect(html).toContain('partner-outs-tbody');
+    expect(html).toContain('ops?.accounting?.balance');
+    expect(html).toContain('ops?.accounting?.initialCapital');
+    expect(html).toContain('ops?.accounting?.ledgerRows');
+    expect(html).toContain('ops?.accounting?.outs');
+    expect(html).toContain('trackingId');
+    expect(html).toContain('tone-bad');
+    expect(html).toContain('.reverse()');
+    expect(html).toContain('partner:settlement:post');
+    expect(html).toContain('partners:build');
+  });
+
+  test('partners Soft week rollup table wires ops.view.per_week rows from softWeekRows', async () => {
+    const html = await Bun.file(BOARD).text();
+    expect(html).toContain('soft-weeks-tbody');
+    expect(html).toContain('softWeekRows');
+    expect(html).toContain('data-glossary-concept="ops.view.per_week"');
+    expect(html).toContain('w.weekStart');
+    expect(html).toContain('w.net');
+  });
+
   test('partners Soft book-type table wires live soft-ct byBookType into ops.view.per_book_type', async () => {
     const {
       finalizeSoftAccountingExport,
