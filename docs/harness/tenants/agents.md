@@ -71,8 +71,9 @@ Defined in `semantic-vocabulary.ts` with `seeAlso` into downstream limit fields:
 | `api.prediction`     | ML / forecast service for `ops.limits.prediction`           |
 
 Treat these as **inventory nodes**, not as license to fabricate wire payloads.
-Surface keys: `LIMIT_FIELD_CONCEPTS.identityApi` · `partnerApi` ·
-`predictionApi`.
+Surface keys live on `API_INFRA_CONCEPTS` (not `LIMIT_FIELD_CONCEPTS`):
+`identityApi` · `partnerApi` · `predictionApi` · `agentApi` ·
+`bookmakerFeedApi` · `limitEventsApi` · `limitCacheApi`.
 
 ### Adding a new agent-facing field
 

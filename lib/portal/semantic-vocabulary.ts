@@ -1883,6 +1883,10 @@ export const HEALTH_FIELD_CONCEPTS = {
   resources: 'ui.semantic.resources',
 } as const satisfies Record<string, PortalSemanticConceptKey>;
 
+/**
+ * Desk / limit-row field concepts (ops.limits.* and related metrics fields).
+ * HTTP infrastructure APIs live in {@link API_INFRA_CONCEPTS}, not here.
+ */
 export const LIMIT_FIELD_CONCEPTS = {
   account: 'ops.limits.account',
   node: 'ops.limits.node',
@@ -1912,6 +1916,13 @@ export const LIMIT_FIELD_CONCEPTS = {
   influenceScore: 'ops.limits.influence_score',
   dataCoverage: 'ops.limits.data_coverage',
   prediction: 'ops.limits.prediction',
+} as const satisfies Record<string, PortalSemanticConceptKey>;
+
+/**
+ * Infrastructure HTTP / feed surfaces (`api.*`).
+ * Inventory + surface-map alias keys — not desk field chrome.
+ */
+export const API_INFRA_CONCEPTS = {
   agentApi: 'api.agent',
   bookmakerFeedApi: 'api.bookmaker_feed',
   limitEventsApi: 'api.limit_events',

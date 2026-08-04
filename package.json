@@ -1838,6 +1838,8 @@
     "soft:accounting:check": "bun tools/bake-soft-accounting-export.ts --check",
     "soft:accounting:from-ct": "bun tools/bake-soft-accounting-export.ts --from-ct",
     "validate:surface-coverage": "bun scripts/validate-surface-coverage.ts",
+    "surface-coverage:map": "bun tools/generate-surface-coverage-map.ts",
+    "surface-coverage:map:check": "bun tools/generate-surface-coverage-map.ts --check",
     "validate:concept-metadata": "bun scripts/validate-concept-metadata.ts",
     "concept:domain:backfill": "bun scripts/concept-domain-backfill.ts",
     "concept:audit": "bun scripts/concept-audit.ts",

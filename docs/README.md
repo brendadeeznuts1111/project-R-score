@@ -16,6 +16,7 @@ here.
 | Workspace map                  | [STRUCTURE.md](../STRUCTURE.md)                                                                                                                                                        |
 | Coding standards               | [DEVELOPMENT-STANDARDS.md](./DEVELOPMENT-STANDARDS.md) · full [custom-instructions.md](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md) (repo) |
 | Dev / test workflow            | [DEVELOPMENT-WORKFLOW.md](./DEVELOPMENT-WORKFLOW.md)                                                                                                                                   |
+| Surface coverage map           | [SURFACE_COVERAGE.md](./SURFACE_COVERAGE.md) · `bun run surface-coverage:map`                                                                                                          |
 | Harness JIT                    | [harness index](./harness/) · `bun run harness:status`                                                                                                                                 |
 | Live surfaces (wiki vs portal) | [Live surfaces](/#live-surfaces) · [platform-routing.md](./platform-routing.md)                                                                                                        |
 
