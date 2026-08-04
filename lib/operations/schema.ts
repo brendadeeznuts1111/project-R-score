@@ -142,7 +142,7 @@ export function migrateSchema(db: Database): void {
       template_id TEXT NOT NULL,
       profile_key TEXT NOT NULL UNIQUE,
       lifecycle_status TEXT NOT NULL DEFAULT 'materialized'
-        CHECK(lifecycle_status IN ('signup', 'materialized', 'kyc_pending', 'active', 'suspended', 'terminated')),
+        CHECK(lifecycle_status IN ('signup', 'materialized', 'kyc_pending', 'active', 'cultivating', 'graduated', 'suspended', 'terminated')),
       metadata_json TEXT,
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL
@@ -182,6 +182,8 @@ export function migrateSchema(db: Database): void {
     CREATE INDEX IF NOT EXISTS idx_ops_outbox_topic ON ops_channel_outbox(topic, created_at);
   `);
 
+  migratePartnerProfileBindingsLifecycle(db);
+
   // Add available_at before toc rebuild (legacy tables may lack the column).
   migrateOpsChannelOutboxAvailableAt(db);
   migrateOpsChannelOutboxTopicToc(db);
@@ -203,6 +205,67 @@ export function migrateSchema(db: Database): void {
     CREATE INDEX IF NOT EXISTS idx_phone_sportsbooks_phone
       ON phone_sportsbooks(phone_id, status);
   `);
+}
+
+/** Expand the legacy six-state partner lifecycle CHECK to the canonical eight states. */
+export function migratePartnerProfileBindingsLifecycle(db: Database): void {
+  const row = db
+    .query(
+      `SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'partner_profile_bindings'`
+    )
+    .get() as { sql: string } | null;
+  if (!row?.sql) return;
+
+  const legacyStatuses = [
+    'signup',
+    'materialized',
+    'kyc_pending',
+    'active',
+    'suspended',
+    'terminated',
+  ];
+  const isLegacyConstraint =
+    legacyStatuses.every(status => row.sql.includes(`'${status}'`)) &&
+    (!row.sql.includes("'cultivating'") || !row.sql.includes("'graduated'"));
+  if (!isLegacyConstraint) return;
+
+  const foreignKeys = db.query('PRAGMA foreign_keys').get() as { foreign_keys: number };
+  db.run('PRAGMA foreign_keys = OFF');
+  try {
+    db.transaction(() => {
+      db.run(`
+        CREATE TABLE partner_profile_bindings__lifecycle (
+          tree_node_id TEXT PRIMARY KEY REFERENCES tree_nodes(id),
+          template_id TEXT NOT NULL,
+          profile_key TEXT NOT NULL UNIQUE,
+          lifecycle_status TEXT NOT NULL DEFAULT 'materialized'
+            CHECK(lifecycle_status IN ('signup', 'materialized', 'kyc_pending', 'active', 'cultivating', 'graduated', 'suspended', 'terminated')),
+          metadata_json TEXT,
+          created_at TEXT NOT NULL,
+          updated_at TEXT NOT NULL
+        );
+        INSERT INTO partner_profile_bindings__lifecycle
+          (tree_node_id, template_id, profile_key, lifecycle_status, metadata_json, created_at, updated_at)
+        SELECT tree_node_id, template_id, profile_key, lifecycle_status, metadata_json, created_at, updated_at
+        FROM partner_profile_bindings;
+        DROP TABLE partner_profile_bindings;
+        ALTER TABLE partner_profile_bindings__lifecycle RENAME TO partner_profile_bindings;
+        CREATE INDEX idx_ppb_template ON partner_profile_bindings(template_id);
+        CREATE INDEX idx_ppb_lifecycle ON partner_profile_bindings(lifecycle_status);
+      `);
+
+      const violations = db
+        .query('PRAGMA foreign_key_check(partner_profile_bindings)')
+        .all() as Array<{ table: string; rowid: number; parent: string; fkid: number }>;
+      if (violations.length > 0) {
+        throw new Error('partner_profile_bindings lifecycle migration failed foreign-key check');
+      }
+    }).immediate();
+  } finally {
+    db.run(`PRAGMA foreign_keys = ${foreignKeys.foreign_keys === 1 ? 'ON' : 'OFF'}`);
+  }
+
+  // Rollback: remap cultivating/graduated rows first, then transactionally rebuild with the old CHECK.
 }
 
 /** Nullable defer-until for rate-limit backoff (Telegram 429). */
