@@ -2231,7 +2231,6 @@
     "check:bun-pm-cache": "bun scripts/check-bun-pm-cache.ts",
     "check:npm-install": "bun scripts/check-npm-install.ts",
     "check:import-graph": "bun scripts/check-import-graph.ts",
-    "check:oxlint-ratchet": "bun scripts/check-oxlint-ratchet.ts",
     "check:package-scripts": "bun scripts/check-package-scripts.ts",
     "check:monorepo-health": "bun scripts/check-monorepo-health.ts",
     "check:invisible-chars": "bun scripts/check-invisible-chars.ts",

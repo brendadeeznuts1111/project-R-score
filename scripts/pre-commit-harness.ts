@@ -606,7 +606,7 @@ async function main(): Promise<void> {
   });
 
   // Parallel: staged adoption + path/env policy + console-format staged mode.
-  // Repo-wide trend gates (brands-smart/catalog, import-graph, oxlint,
+  // Repo-wide trend gates (brands-smart/catalog, import-graph,
   // console-format ratchet) live in pre-push / ci:core — one enforcement
   // point per concern; commit time is for "did MY diff break anything".
   console.info('🏷️  Branded IDs (staged) + policy gates...');

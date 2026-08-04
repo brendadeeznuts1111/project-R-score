@@ -15,10 +15,12 @@ describe('test-changed-staged helpers', () => {
     expect(stagedDeletions('single.ts')).toEqual(['single.ts']);
   });
 
-  test('hook invokes the staged-scoped runner, not the worktree wrapper', async () => {
+  test('Bun hook invokes the staged-scoped runner, not the worktree wrapper', async () => {
     const hook = await Bun.file('.husky/pre-commit').text();
-    expect(hook).toContain('bun scripts/bun-test-changed-staged.ts --bail=1');
-    expect(hook).not.toContain('bun run test:changed -- --bail=1');
+    const runner = await Bun.file('scripts/pre-commit.ts').text();
+    expect(hook).toContain('exec bun scripts/pre-commit.ts "$@"');
+    expect(runner).toContain("['bun', 'scripts/bun-test-changed-staged.ts', '--bail=1']");
+    expect(runner).not.toContain('bun run test:changed -- --bail=1');
   });
 
   test('gitEnv strips GIT_INDEX_FILE — scratch git commands stay hermetic', () => {

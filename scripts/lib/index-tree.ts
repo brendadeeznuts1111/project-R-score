@@ -6,7 +6,7 @@
  * Materialize the git index tree (HEAD ∪ staged) for a set of subdirectories
  * into a temp directory, via `git ls-files` → `git checkout-index`.
  *
- * Ratchet gates (console-format, oxlint, import-graph) scan this tree instead
+ * Ratchet gates (console-format and import-graph) scan this tree instead
  * of the worktree so another lane's uncommitted dirty files can never fail
  * your commit — the count reflects exactly what the tree looks like after the
  * commit (staged changes included, unstaged foreign dirt excluded).
