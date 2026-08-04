@@ -1800,6 +1800,7 @@
     "partner:profiles:diff": "bun tools/partner-profiles-diff.ts diff",
     "partner:profiles:audit": "bun tools/partner-profiles-diff.ts audit",
     "partner:health": "bun tools/partner-health.ts",
+    "partner:health-check": "bun tools/partner-health-check.ts",
     "telegram:handshake:verify": "bun tools/verify-package-group-handshake.ts",
     "telegram:handshake:desk": "bun tools/telegram-handshake-desk.ts",
     "telegram:handshake:readiness": "bun tools/telegram-handshake-readiness.ts",
