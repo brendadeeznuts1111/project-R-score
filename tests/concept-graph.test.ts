@@ -17,9 +17,9 @@ import {
 import { parseConceptGraphOptions } from '../scripts/concept-graph.ts';
 
 describe('concept:graph', () => {
-  test('builds schema v3 with typed seeAlso layers', async () => {
+  test('builds schema v5 with typed seeAlso layers', async () => {
     const graph = await buildConceptGraphAsync();
-    expect(graph.schemaVersion).toBe(3);
+    expect(graph.schemaVersion).toBe(5);
     expect(graph.summary.nodes).toBeGreaterThan(0);
     expect(graph.summary.seeAlsoEdges).toBeGreaterThan(0);
     expect(graph.summary.domainHubEdges).toBeGreaterThan(0);
@@ -144,7 +144,7 @@ describe('concept:graph', () => {
     expect(text.includes('data-layer="sameGroup"')).toBe(true);
     expect(text.includes('data-layer="pageBridge"')).toBe(true);
     expect(text.includes('data-hop="3"')).toBe(true);
-    expect(text.includes('v3')).toBe(true);
+    expect(text.includes('v5')).toBe(true);
     const board = await js.text();
     expect(board.includes('seeAlsoLayers')).toBe(true);
     expect(board.includes('neighborhoodDistances')).toBe(true);

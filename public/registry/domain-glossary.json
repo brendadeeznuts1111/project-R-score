@@ -146,6 +146,11 @@
       "sections": []
     },
     {
+      "path": "/portal/concepts/",
+      "concept": "page.concepts",
+      "sections": []
+    },
+    {
       "path": "/portal/dashboard/",
       "concept": "page.dashboard",
       "sections": []
@@ -409,13 +414,13 @@
     }
   ],
   "summary": {
-    "concepts": 436,
-    "active": 428,
-    "deprecated": 8,
+    "concepts": 437,
+    "active": 427,
+    "deprecated": 10,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 299,
+    "portalSemantics": 300,
     "categories": {
       "market": 33,
       "model": 18,
@@ -423,7 +428,7 @@
       "pipeline": 41,
       "tournament": 86,
       "trading": 58,
-      "ui": 171,
+      "ui": 172,
       "warehouse": 27
     },
     "kinds": {
@@ -444,13 +449,13 @@
       "region": 7,
       "registry": 39,
       "sport": 10,
-      "ui": 245
+      "ui": 246
     },
     "semanticTypes": {
       "classification": 155,
       "location": 4,
       "presentation": 14,
-      "resource": 93,
+      "resource": 94,
       "state": 32,
       "version": 1
     },
@@ -458,7 +463,7 @@
       "badge": 56,
       "chip": 116,
       "code": 33,
-      "heading": 69,
+      "heading": 70,
       "link": 21,
       "token": 4
     }
@@ -4171,6 +4176,40 @@
       "color": "#58a6ff"
     },
     {
+      "id": "page.concepts",
+      "label": "Concepts",
+      "description": "Portal page for the semantic vocabulary inventory: domain summary, usage, provenance, and concept graph entry points.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "concepts board",
+        "semantic vocabulary",
+        "concept inventory"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "correlationId": "legacy",
+      "addedAt": "2026-01-01",
+      "domain": "portal",
+      "namespace": "page",
+      "color": "#58a6ff"
+    },
+    {
       "id": "page.dashboard",
       "label": "Executive dashboard",
       "description": "Portal page summarizing operational, package, proof, and health signals.",
@@ -7813,7 +7852,7 @@
     {
       "id": "ops.filter.account.all",
       "label": "All accounts",
-      "description": "Partner Limit History filter value: no account narrowing (all downline accounts).",
+      "description": "Deprecated: use ui.filter.partnerId. Former Partner Limit History filter value: no account narrowing (all downline accounts).",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
@@ -7827,8 +7866,8 @@
         "ui.filter.partnerId",
         "ui.filter.window"
       ],
-      "status": "active",
-      "deprecatedBy": null,
+      "status": "deprecated",
+      "deprecatedBy": "ui.filter.partnerId",
       "unit": null,
       "format": null,
       "registryColumn": null,
@@ -7845,7 +7884,7 @@
     {
       "id": "ops.filter.sportsbook.all",
       "label": "All sportsbooks",
-      "description": "Partner Limit History filter value: no sportsbook narrowing.",
+      "description": "Deprecated: use ui.filter.sportsbook. Former Partner Limit History filter value: no sportsbook narrowing.",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
@@ -7859,8 +7898,8 @@
         "ui.filter.sportsbook",
         "ui.filter.window"
       ],
-      "status": "active",
-      "deprecatedBy": null,
+      "status": "deprecated",
+      "deprecatedBy": "ui.filter.sportsbook",
       "unit": null,
       "format": null,
       "registryColumn": null,
