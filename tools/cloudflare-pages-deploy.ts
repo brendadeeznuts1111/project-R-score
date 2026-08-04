@@ -42,11 +42,45 @@ const VERIFY_TAXONOMY = Bun.argv.includes('--taxonomy') || Bun.env.PAGES_VERIFY_
 const POLL_MS = 15_000;
 const MAX_POLLS = 12;
 
-type CfResponse<T> = {
+export type CfResponse<T> = {
   success: boolean;
   result?: T;
   errors?: Array<{ message: string }>;
 };
+
+function responseExcerpt(text: string): string {
+  const compact = text.replace(/\s+/g, ' ').trim();
+  if (!compact) return '(empty body)';
+  return compact.length <= 160 ? compact : `${compact.slice(0, 157)}…`;
+}
+
+/** Decode the Cloudflare envelope without assuming every HTTP response is JSON object-shaped. */
+export function parseCloudflareApiResponse<T>(
+  text: string,
+  status: number,
+  requestLabel: string
+): CfResponse<T> {
+  let value: unknown;
+  try {
+    value = JSON.parse(text);
+  } catch {
+    throw new Error(
+      `Cloudflare API ${requestLabel} returned non-JSON (HTTP ${status}): ${responseExcerpt(text)}`
+    );
+  }
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    throw new Error(
+      `Cloudflare API ${requestLabel} returned an invalid envelope (HTTP ${status}): ${responseExcerpt(text)}`
+    );
+  }
+  const envelope = value as Partial<CfResponse<T>>;
+  if (typeof envelope.success !== 'boolean') {
+    throw new Error(
+      `Cloudflare API ${requestLabel} omitted success (HTTP ${status}): ${responseExcerpt(text)}`
+    );
+  }
+  return envelope as CfResponse<T>;
+}
 
 type DeployStage = { name: string; status: string };
 type Deployment = {
@@ -62,6 +96,8 @@ async function cf<T>(path: string, init?: RequestInit): Promise<CfResponse<T>> {
   if (!token) {
     throw new Error('CLOUDFLARE_API_TOKEN not set (~/.reasonix/.env)');
   }
+  const method = init?.method ?? 'GET';
+  const requestLabel = `${method} ${path}`;
   const res = await fetch(`https://api.cloudflare.com/client/v4${path}`, {
     ...init,
     headers: {
@@ -70,7 +106,12 @@ async function cf<T>(path: string, init?: RequestInit): Promise<CfResponse<T>> {
       ...(init?.headers ?? {}),
     },
   });
-  return (await res.json()) as CfResponse<T>;
+  const body = parseCloudflareApiResponse<T>(await res.text(), res.status, requestLabel);
+  if (!res.ok) {
+    const detail = body.errors?.map(error => error.message).join('; ') || 'request failed';
+    throw new Error(`Cloudflare API ${requestLabel} HTTP ${res.status}: ${detail}`);
+  }
+  return body;
 }
 
 async function triggerDeploy(): Promise<string> {
