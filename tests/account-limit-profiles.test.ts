@@ -1,6 +1,8 @@
 // @see https://bun.com/docs/test — bun:test
+// @see https://bun.com/docs/test/dates-times — setSystemTime (Date.now · new Date · Intl)
+// @see https://bun.com/docs/guides/test/mock-clock — setSystemTime guide
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
-import { describe, expect, test } from 'bun:test';
+import { afterEach, beforeEach, describe, expect, setSystemTime, test } from 'bun:test';
 
 import { ensureAccountLimitsSchema } from '../lib/account-limits-repo.ts';
 import { buildAccountLimitProfiles } from '../lib/operations/account-limit-profiles.ts';
@@ -15,11 +17,30 @@ import {
 } from '../lib/operations/state-regulation.ts';
 import { asStateCode, asTreeNodeId } from '../lib/types/branded.ts';
 
+/**
+ * Deterministic clock for lookback windows.
+ * `setSystemTime` mocks JS time (`Date.now`, `new Date()`, Intl) — not SQLite unixepoch().
+ * @see https://bun.com/docs/test/dates-times
+ */
+const FAKE_NOW = new Date('2026-07-31T12:00:00.000Z');
+
 describe('account limit profile projection', () => {
+  beforeEach(() => {
+    setSystemTime(FAKE_NOW);
+  });
+
+  afterEach(() => {
+    // Reset mocked time (no args) — https://bun.com/docs/test/dates-times#reset-the-system-time
+    setSystemTime();
+  });
+
   test('joins profile, jurisdiction, license, policy, observation, and trace evidence', () => {
     const db = openOperationsDb({ path: ':memory:' });
-    const now = new Date('2026-07-31T12:00:00.000Z');
-    const nowSec = Math.floor(now.getTime() / 1000);
+    // Under setSystemTime, Date.now / new Date() return FAKE_NOW (not wall clock).
+    const now = new Date();
+    const nowSec = Math.floor(Date.now() / 1000);
+    expect(now.toISOString()).toBe(FAKE_NOW.toISOString());
+    expect(Date.now()).toBe(FAKE_NOW.getTime());
     const nodeId = asTreeNodeId('limits-account-ma');
 
     ensureAccountLimitsSchema(db);
@@ -167,10 +188,15 @@ describe('account limit profile projection', () => {
     ensureAccountLimitsSchema(db);
     ensureStateRegulationSchema(db);
     seedStateRegulations(db);
+    // effective_from must be set explicitly: SQLite DEFAULT (unixepoch()) uses the
+    // real wall clock, not Bun setSystemTime — a future real-time default would
+    // fail effective_from <= now under the fake clock.
+    const effectiveFrom = Math.floor(Date.now() / 1000);
     db.run(
       `INSERT INTO regulatory_limits
-         (state_code, sport_id, market_id, max_wager, min_wager, allowed_bet_types, special_rules)
-       VALUES ('CO', 'basketball', 'spread', 7500, 0, '["straight"]', '{"min_age":21}')`
+         (state_code, sport_id, market_id, max_wager, min_wager, allowed_bet_types, special_rules, effective_from)
+       VALUES ('CO', 'basketball', 'spread', 7500, 0, '["straight"]', '{"min_age":21}', $from)`,
+      { $from: effectiveFrom }
     );
 
     const result = buildAccountLimitProfiles(db, queryLimitPatternSnapshot(db), new Date());
