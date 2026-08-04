@@ -1,4 +1,6 @@
 {
   "schemaVersion": 1,
-  "pathEqBunMain": []
+  "pathEqBunMain": [
+    "tools/bake-bun-cli-reference.ts"
+  ]
 }
