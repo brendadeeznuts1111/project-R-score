@@ -953,6 +953,7 @@
       let colorsCache = {};
       let handshakeCache = null;
       let seatCache = null;
+      let partnerProfilesCache = { profiles: {}, summary: { count: 0 } };
 
       function weekStartIsoFromPlacedAt(placedAt) {
         const ms = Date.parse(String(placedAt || ''));
@@ -1286,7 +1287,8 @@
         const desk = (seatCache?.rows || []).find(
           r => String(r.partnerCode || '').toUpperCase() === code
         );
-        const callSign = hs?.callSign || desk?.callSign || `${code}-001`;
+        const unified = partnerProfilesCache?.profiles?.[code] || null;
+        const callSign = unified?.identity?.callSign || hs?.callSign || desk?.callSign || `${code}-001`;
         const tracking = ops?.tracking || {};
         const accounts = tracking.accounts || {};
         const limits = tracking.limits || {};
@@ -1303,6 +1305,8 @@
         body.innerHTML = `<div class="partner-profile-grid">
           <div><div class="k">Code</div><div class="v"><code>${esc(code)}</code> · <code>${esc(callSign)}</code></div></div>
           <div><div class="k">Phase</div><div class="v">${phaseChip(code)}</div></div>
+          <div><div class="k">Profile lifecycle</div><div class="v">${esc(unified?.lifecycle?.status || 'not baked')} · ${esc(unified?.lifecycle?.phase || '—')}</div></div>
+          <div><div class="k">Profile template</div><div class="v">${esc(unified?.meta?.templateId || '—')} · ${esc(unified?.meta?.version || '—')}</div></div>
           <div><div class="k">Telegram</div><div class="v">${esc(hs?.membershipCell || '—')} · DM ${esc(hs?.dmSeatStatus || (desk?.hasTelegramDesk ? 'pinned' : '—'))}</div></div>
           <div><div class="k">Accounts</div><div class="v">${esc(String(accounts.ready ?? 0))}/${esc(String(accounts.total ?? 0))} ready · ${esc(String(limits.coveragePct ?? 0))}% limits</div></div>
           <div><div class="k">Fund / outs</div><div class="v ${fundTone(desk?.fundStatus)}">${esc(desk?.fundStatus || 'no intake')} · ${esc(String(desk?.incompleteOuts ?? ops?.outs?.length ?? '—'))} outs</div></div>
@@ -1796,13 +1800,23 @@
 
       async function load() {
         try {
-          const [handshake, seat, catalog, taxonomy, ops, limitPatterns, softAccounting] =
+          const [
+            handshake,
+            seat,
+            catalog,
+            taxonomy,
+            ops,
+            partnerProfiles,
+            limitPatterns,
+            softAccounting,
+          ] =
             await Promise.all([
               loadJson('/registry/telegram-handshake.json'),
               loadJson('/registry/seat-capital-desk.json'),
               loadJson('/registry/telegram-handshake-catalog.json'),
               loadJson('/registry/scrape-wire-taxonomy.json'),
               loadJson('/registry/partners-ops.json'),
+              loadJson('/registry/partner-profiles.json'),
               loadJson('/registry/limit-raises.json'),
               loadJson('/registry/soft-accounting-export.json').catch(() => null),
             ]);
@@ -1811,6 +1825,7 @@
           bookIndex = indexBooks(taxonomy);
           handshakeCache = handshake;
           seatCache = seat;
+          partnerProfilesCache = partnerProfiles;
           opsByPartner = new Map(
             (ops.partners || []).map(p => [String(p.code || '').toUpperCase(), p])
           );
@@ -1867,10 +1882,12 @@
             `Handshake <time>${esc(handshake.generatedAt || '—')}</time> · ` +
             `Seat desk <time>${esc(seat.generatedAt || '—')}</time> · ` +
             `Ops <time>${esc(ops.generatedAt || '—')}</time> · ` +
+            `Profiles <time>${esc(partnerProfiles.generatedAt || '—')}</time> (${esc(partnerProfiles.summary?.count ?? 0)}) · ` +
             `Soft <time>${esc(softAccounting?.generatedAt || '—')}</time> (${esc(softAccountingSource)}) · ` +
             `<a href="/registry/telegram-handshake.json"><code>telegram-handshake.json</code></a> · ` +
             `<a href="/registry/seat-capital-desk.json"><code>seat-capital-desk.json</code></a> · ` +
             `<a href="/registry/partners-ops.json"><code>partners-ops.json</code></a> · ` +
+            `<a href="/registry/partner-profiles.json"><code>partner-profiles.json</code></a> · ` +
             `<a href="/registry/soft-accounting-export.json" data-glossary-concept="ops.view.per_play"><code>soft-accounting-export.json</code></a> · ` +
             `<a href="/registry/limit-raises.json"><code>limit-raises.json</code></a> · ` +
             `<a href="/portal/glossary/#glossary:telegram.wire"><code>telegram glossary</code></a>`;
