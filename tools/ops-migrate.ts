@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/sqlite
 /**
  * One-shot migration: merge legacy data/accounts-*.db tree into data/operations.db SSOT.
@@ -43,7 +46,9 @@ async function main(): Promise<void> {
 
   for (const row of nodes) {
     const exists = target
-      .query('SELECT id FROM tree_nodes WHERE id = $id OR telegram_id = $tg OR oidc_subject = $oidc')
+      .query(
+        'SELECT id FROM tree_nodes WHERE id = $id OR telegram_id = $tg OR oidc_subject = $oidc'
+      )
       .get({
         $id: row.id,
         $tg: row.telegram_id ?? null,

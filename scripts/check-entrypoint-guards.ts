@@ -1,4 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // @see https://bun.com/docs/guides/util/entrypoint — import.meta.main
 // @see https://bun.com/docs/guides/util/main — Bun.main
 /**
@@ -29,7 +34,10 @@ const write = Bun.argv.includes('--write-baseline');
 const found = await scan();
 
 if (write) {
-  await Bun.write(BASELINE, `${JSON.stringify({ schemaVersion: 1, pathEqBunMain: found }, null, 2)}\n`);
+  await Bun.write(
+    BASELINE,
+    `${JSON.stringify({ schemaVersion: 1, pathEqBunMain: found }, null, 2)}\n`
+  );
   console.log(`wrote baseline (${found.length} path===Bun.main sites)`);
   process.exit(0);
 }
@@ -43,7 +51,9 @@ const baseline = (await baselineFile.json()) as { pathEqBunMain: string[] };
 const allowed = new Set(baseline.pathEqBunMain ?? []);
 const novel = found.filter(f => !allowed.has(f));
 if (novel.length) {
-  console.error('New import.meta.path === Bun.main in tools/ (use isModuleEntrypoint(import.meta)):');
+  console.error(
+    'New import.meta.path === Bun.main in tools/ (use isModuleEntrypoint(import.meta)):'
+  );
   for (const f of novel) console.error(`  ${f}`);
   process.exit(1);
 }

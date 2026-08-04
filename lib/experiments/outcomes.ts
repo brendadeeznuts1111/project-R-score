@@ -4,16 +4,8 @@
  * designs, record metrics from play settlement, coverage gate with partner floor.
  */
 import type { Database } from 'bun:sqlite';
-import {
-  asTreeNodeId,
-  unbrand,
-  type ExperimentId,
-  type TreeNodeId,
-} from '../types/branded.ts';
-import {
-  canOfferOnPlatform,
-  minCoveragePct,
-} from '../operations/platform-coverage.ts';
+import { asTreeNodeId, unbrand, type ExperimentId, type TreeNodeId } from '../types/branded.ts';
+import { canOfferOnPlatform, minCoveragePct } from '../operations/platform-coverage.ts';
 import { FactorialEngine, type AssignmentResult } from './engine.ts';
 import { ensureExperimentsSchema } from './schema.ts';
 
@@ -66,8 +58,7 @@ export function ensureAssignedToActiveExperiments(
 ): AssignmentResult[] {
   ensureExperimentsSchema(db);
   const engine = new FactorialEngine(db);
-  const subject =
-    typeof subjectNodeId === 'string' ? asTreeNodeId(subjectNodeId) : subjectNodeId;
+  const subject = typeof subjectNodeId === 'string' ? asTreeNodeId(subjectNodeId) : subjectNodeId;
   const active = engine.listExperiments().filter(e => e.status === 'active');
   return active.map(exp => engine.assignBalanced(exp.id, subject));
 }

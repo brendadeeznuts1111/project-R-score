@@ -752,8 +752,7 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'fetch verbose': 'runtime/networking/fetch#debugging',
   'verbose: true': 'runtime/networking/fetch#debugging',
   // Env plane → debugger; per-request verbose stays on fetch#debugging
-  BUN_CONFIG_VERBOSE_FETCH:
-    'runtime/debugger#print-fetch-nodehttp-requests-as-curl-commands',
+  BUN_CONFIG_VERBOSE_FETCH: 'runtime/debugger#print-fetch-nodehttp-requests-as-curl-commands',
   'dns-prefetching': 'runtime/networking/fetch#dns-prefetching',
   'dns-caching': 'runtime/networking/fetch#dns-caching',
   'implementation-details': 'runtime/networking/fetch#implementation-details',

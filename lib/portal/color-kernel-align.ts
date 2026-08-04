@@ -1,3 +1,4 @@
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
 // @see https://bun.com/docs/runtime/color#output-formats
 // @see https://bun.com/docs/bundler/loaders#jsonc — theme.jsonc via portalTheme
@@ -370,9 +371,12 @@ export const generateColorKernelClaimReport = colorKernelClaimReport;
 
 /** Stdout paste block for `bun run validate:colors` / `portal:colors:check`. */
 export function formatColorKernelClaimReport(report: ColorKernelClaimReport): string {
-  return [`Claim: ${report.claim}`, '', 'Evidence:', ...report.evidence.map(line => `  ${line}`)].join(
-    '\n'
-  );
+  return [
+    `Claim: ${report.claim}`,
+    '',
+    'Evidence:',
+    ...report.evidence.map(line => `  ${line}`),
+  ].join('\n');
 }
 
 /**

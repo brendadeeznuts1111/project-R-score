@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
+// @see https://bun.com/reference/bun/SQL — Bun.SQL
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/sql
 /**
  * Postgres migration bridge — DDL export + connectivity probe for Bun.SQL.
@@ -12,22 +15,24 @@ export function exportPostgresDdl(): string {
   const db = new Database(':memory:');
   initSchema(db);
   const tables = db
-    .query("SELECT sql FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name")
+    .query(
+      "SELECT sql FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name"
+    )
     .all() as { sql: string }[];
   db.close();
 
-  return tables
-    .map(t =>
-      t.sql
-        .replace(/INTEGER DEFAULT 1/g, 'INTEGER DEFAULT 1')
-        .replace(/AUTOINCREMENT/g, 'GENERATED ALWAYS AS IDENTITY')
-    )
-    .join(';\n\n') + ';\n';
+  return (
+    tables
+      .map(t =>
+        t.sql
+          .replace(/INTEGER DEFAULT 1/g, 'INTEGER DEFAULT 1')
+          .replace(/AUTOINCREMENT/g, 'GENERATED ALWAYS AS IDENTITY')
+      )
+      .join(';\n\n') + ';\n'
+  );
 }
 
-export type PostgresProbeResult =
-  | { ok: true; version: string }
-  | { ok: false; reason: string };
+export type PostgresProbeResult = { ok: true; version: string } | { ok: false; reason: string };
 
 /** Probe Bun.SQL postgres connectivity (requires OPS_DATABASE_URL or DATABASE_URL). */
 export async function probePostgresOps(url?: string): Promise<PostgresProbeResult> {

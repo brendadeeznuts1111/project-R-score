@@ -153,9 +153,7 @@ function paramHasUnknownType(param: TSESTree.Parameter): boolean {
   return false;
 }
 
-function enclosingFunctionName(
-  node: TSESTree.Node | undefined
-): string | null {
+function enclosingFunctionName(node: TSESTree.Node | undefined): string | null {
   let cur: TSESTree.Node | undefined = node;
   while (cur) {
     if (cur.type === 'FunctionDeclaration' && cur.id?.name) return cur.id.name;
@@ -275,9 +273,7 @@ export const noUnknownFunctionParamOutsideBoundary: Rule.RuleModule = {
       if (
         'returnType' in node &&
         node.returnType &&
-        hasTypePredicateReturn(
-          node as TSESTree.FunctionDeclaration | TSESTree.FunctionExpression
-        )
+        hasTypePredicateReturn(node as TSESTree.FunctionDeclaration | TSESTree.FunctionExpression)
       ) {
         // Type guards are boundary-shaped: (v: unknown) => v is T
         return;
@@ -319,14 +315,14 @@ export const noUnknownFunctionParamOutsideBoundary: Rule.RuleModule = {
       },
       TSMethodSignature(node) {
         const key = (node as { key?: { type?: string; name?: string } }).key;
-        const name = key?.type === 'Identifier' ? key.name ?? null : null;
+        const name = key?.type === 'Identifier' ? (key.name ?? null) : null;
         checkFunction(node as unknown as TSESTree.TSMethodSignature, name);
       },
       MethodDefinition(node) {
         const fn = (node as { value?: TSESTree.FunctionExpression }).value;
         if (!fn) return;
         const key = (node as { key?: { type?: string; name?: string } }).key;
-        const name = key?.type === 'Identifier' ? key.name ?? null : null;
+        const name = key?.type === 'Identifier' ? (key.name ?? null) : null;
         checkFunction(fn, name);
       },
       Property(node) {
@@ -336,13 +332,10 @@ export const noUnknownFunctionParamOutsideBoundary: Rule.RuleModule = {
           value?: TSESTree.Node;
           method?: boolean;
         };
-        const name = n.key?.type === 'Identifier' ? n.key.name ?? null : null;
+        const name = n.key?.type === 'Identifier' ? (n.key.name ?? null) : null;
         const val = n.value;
         if (!val) return;
-        if (
-          val.type === 'FunctionExpression' ||
-          val.type === 'ArrowFunctionExpression'
-        ) {
+        if (val.type === 'FunctionExpression' || val.type === 'ArrowFunctionExpression') {
           checkFunction(
             val as TSESTree.FunctionExpression | TSESTree.ArrowFunctionExpression,
             name

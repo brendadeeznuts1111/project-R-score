@@ -73,7 +73,9 @@ export function reconcileAllPositions(db: Database): {
   let reconciled = 0;
   for (const { id } of agents) {
     const before = db
-      .query(`SELECT deposited, available, in_play FROM positions WHERE node_id = $id AND book = '_all'`)
+      .query(
+        `SELECT deposited, available, in_play FROM positions WHERE node_id = $id AND book = '_all'`
+      )
       .get({ $id: id }) as { deposited: number; available: number; in_play: number } | null;
 
     const bookTotal = reconcilePositionFromAccounts(db, id);

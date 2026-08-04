@@ -39,8 +39,7 @@ export async function withRetry<T>(
         console.error(`[${label}] all ${maxRetries} attempts failed:`, e);
         return null;
       }
-      const delay =
-        baseDelay * Math.pow(2, attempt - 1) + Math.random() * jitterMs;
+      const delay = baseDelay * Math.pow(2, attempt - 1) + Math.random() * jitterMs;
       opts.onRetry?.({ attempt, maxRetries, error: e, delayMs: delay });
       console.warn(
         `[${label}] attempt ${attempt}/${maxRetries} failed: ${

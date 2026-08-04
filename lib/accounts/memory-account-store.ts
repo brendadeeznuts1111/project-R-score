@@ -9,11 +9,7 @@ import {
   type PortalTenantId,
   type TelegramUserId,
 } from '../types/branded/portal.ts';
-import type {
-  AccountRole,
-  CreateAccountInput,
-  PortalAccount,
-} from './account-types.ts';
+import type { AccountRole, CreateAccountInput, PortalAccount } from './account-types.ts';
 
 export class MemoryAccountStore {
   private accounts = new Map<string, PortalAccount>();

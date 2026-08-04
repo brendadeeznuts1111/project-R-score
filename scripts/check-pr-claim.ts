@@ -235,9 +235,7 @@ function warnMissingFreshRerun(ids: string[]): void {
 
 function warnColorKernelEvidence(result: Result): void {
   if (result.failingColorKernelEvidence) {
-    console.warn(
-      '⚠️  soft: Color Kernel Evidence paste shows a failing validate:colors Claim'
-    );
+    console.warn('⚠️  soft: Color Kernel Evidence paste shows a failing validate:colors Claim');
     console.warn(
       '   repair: bun run validate:colors:strict → paste success Claim under ### Color Kernel Evidence'
     );

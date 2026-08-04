@@ -1,3 +1,5 @@
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
 /**
  * Operations automation — cron jobs for growth checks, metrics, C5 coverage prediction,
@@ -36,10 +38,7 @@ Bun.cron('ops-registry-snapshot', '*/10 * * * *', async () => {
   try {
     await runRegistrySnapshotCycle();
   } catch (e) {
-    console.error(
-      'Registry snapshot cron failed:',
-      e instanceof Error ? e.message : e
-    );
+    console.error('Registry snapshot cron failed:', e instanceof Error ? e.message : e);
   }
 });
 

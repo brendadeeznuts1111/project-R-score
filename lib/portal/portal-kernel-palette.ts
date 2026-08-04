@@ -20,8 +20,7 @@ export const CATEGORY_COLOR_KEYS = {
   other: 'muted',
 } as const satisfies Record<string, string>;
 
-export type PortalKernelPaletteKey =
-  (typeof CATEGORY_COLOR_KEYS)[keyof typeof CATEGORY_COLOR_KEYS];
+export type PortalKernelPaletteKey = (typeof CATEGORY_COLOR_KEYS)[keyof typeof CATEGORY_COLOR_KEYS];
 
 /**
  * Closed portal + partner-ops palette used for glossary category tokens.
