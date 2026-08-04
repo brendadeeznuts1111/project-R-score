@@ -111,8 +111,10 @@ bun run ssot:flow:soft
 bun run verify:pm:save   # @factorywager/registry-client publish-plane soft-pass
 ```
 
-Hard-match (packument shasum ↔ local tarball) is a later gate when the version
-is on the registry; soft-pass stays green when network/auth probes skip.
+The canonical R2 release is verified by `RegistryClient.install()` against the
+stored size and SHA-256. Pages packument/tarball hard-match follows deployment
+of the refreshed snapshot and `@tennis-hq/*` read allowlist; soft-pass stays
+green when network/auth probes skip.
 
 ### Versioned domain contracts
 
@@ -135,10 +137,12 @@ provider-side `OPERATOR_API_TOKEN` alias) and fail closed when it is absent.
 `FACTORY_WAGER_TOKEN` remains registry/package authentication and is not a
 runtime API credential.
 
-FactoryWager's current registry catalog contains `@tennis-hq/ssot@1.4.0`, which
-does not contain these exports. Do not mark the v1 contracts available or add a
-runtime package dependency until one canonical `1.5.0` tarball is published and
-its registry size/checksum match the stored artifact.
+FactoryWager's registry catalog now contains the canonical
+`@tennis-hq/ssot@1.5.0` tarball with all five v1 contract exports. The stored
+artifact is `11,204` bytes with SHA-256
+`a6c0e9502cdb1c30d37e7579ed3d90e475cc28e6e0f46e0837394524f8cc8f55`;
+the root and Tennis tenant registry metadata must retain that exact size and
+checksum.
 
 ### Weave
 

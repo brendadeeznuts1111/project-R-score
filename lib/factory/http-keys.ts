@@ -19,7 +19,12 @@ export const REGISTRY_ALLOWED_EXACT = new Set([
   'tenants/science/registry.json',
   'tenants/tennis/registry.json',
 ]);
-export const REGISTRY_ALLOWED_PREFIXES = ['@factorywager/', 'projects/', 'readme/'] as const;
+export const REGISTRY_ALLOWED_PREFIXES = [
+  '@factorywager/',
+  '@tennis-hq/',
+  'projects/',
+  'readme/',
+] as const;
 
 /**
  * Decode + validate an object key from `/api/registry/<key>`.
