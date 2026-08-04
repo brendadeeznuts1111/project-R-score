@@ -414,13 +414,13 @@
     }
   ],
   "summary": {
-    "concepts": 437,
-    "active": 427,
+    "concepts": 440,
+    "active": 430,
     "deprecated": 10,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 300,
+    "portalSemantics": 303,
     "categories": {
       "market": 33,
       "model": 18,
@@ -428,7 +428,7 @@
       "pipeline": 41,
       "tournament": 86,
       "trading": 58,
-      "ui": 172,
+      "ui": 175,
       "warehouse": 27
     },
     "kinds": {
@@ -449,13 +449,13 @@
       "region": 7,
       "registry": 39,
       "sport": 10,
-      "ui": 246
+      "ui": 249
     },
     "semanticTypes": {
       "classification": 155,
       "location": 4,
       "presentation": 14,
-      "resource": 94,
+      "resource": 97,
       "state": 32,
       "version": 1
     },
@@ -464,7 +464,7 @@
       "chip": 116,
       "code": 33,
       "heading": 70,
-      "link": 21,
+      "link": 24,
       "token": 4
     }
   },
@@ -6454,7 +6454,8 @@
         "ops.limits.influence_score",
         "ops.limits.limit_delta",
         "ops.limits.pattern_surface",
-        "ops.limits.lifecycle_state"
+        "ops.limits.lifecycle_state",
+        "api.prediction"
       ],
       "status": "active",
       "deprecatedBy": null,
@@ -6488,6 +6489,8 @@
       "seeAlso": [
         "ops.limits.agent",
         "ops.limits.pattern_surface",
+        "api.identity",
+        "api.partner",
         "ui.semantic.surface",
         "ui.semantic.artifact"
       ],
@@ -6601,6 +6604,116 @@
       "uiRole": "link",
       "correlationId": "PR#247",
       "addedAt": "2026-08-03",
+      "domain": "infrastructure",
+      "namespace": "api",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "api.identity",
+      "label": "Identity API",
+      "description": "Infrastructure surface for authentication, session, lockout, and anomaly identity under /api/identity and related identity routes. Backs page.identity and partner-tree account resolution used by ui.filter.partnerId.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "identity service",
+        "auth API",
+        "session API",
+        "/api/identity"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.identity",
+        "ops.limits.partner",
+        "ui.filter.partnerId",
+        "api.agent",
+        "api.partner"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "link",
+      "correlationId": "PR#256",
+      "addedAt": "2026-08-04",
+      "domain": "infrastructure",
+      "namespace": "api",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "api.partner",
+      "label": "Partner registry API",
+      "description": "Infrastructure surface for partner registry, package-group, and seat-desk data consumed by page.partners and partners surface sections (onboard, outs, deposits, book detail).",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "partner API",
+        "partner registry HTTP",
+        "package-group API"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.partners",
+        "ops.limits.partner",
+        "section.partnersOnboard",
+        "ui.filter.partnerId",
+        "api.identity",
+        "api.agent"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "link",
+      "correlationId": "PR#256",
+      "addedAt": "2026-08-04",
+      "domain": "infrastructure",
+      "namespace": "api",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "api.prediction",
+      "label": "Prediction API",
+      "description": "Infrastructure surface for ML / forecast services that compute limit-raise probability and magnitude features backing ops.limits.prediction and the prediction report bake.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "prediction service",
+        "ML forecast API",
+        "raise prediction API"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ops.limits.prediction",
+        "section.limitRaisePrediction",
+        "ops.limits.influence_score",
+        "api.limit_events",
+        "api.limit_cache"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "link",
+      "correlationId": "PR#256",
+      "addedAt": "2026-08-04",
       "domain": "infrastructure",
       "namespace": "api",
       "color": "#58a6ff"

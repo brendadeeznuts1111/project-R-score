@@ -10,6 +10,7 @@ import { countPortalConceptUsagesDetailed, type ConceptUsageBreakdown } from './
 import {
   ACCOUNT_DOSSIER_SURFACE_CONCEPTS,
   HEALTH_FIELD_CONCEPTS,
+  API_INFRA_CONCEPTS,
   LIMIT_FIELD_CONCEPTS,
   LIMIT_SURFACE_CONCEPTS,
   PARTNER_HISTORY_SURFACE_CONCEPTS,
@@ -234,6 +235,7 @@ const SURFACE_BOARD_MAPS: Array<{ board: string; map: Record<string, string> }> 
   { board: 'limits', map: LIMIT_SURFACE_CONCEPTS as Record<string, string> },
   { board: 'account', map: ACCOUNT_DOSSIER_SURFACE_CONCEPTS as Record<string, string> },
   { board: 'limits-fields', map: LIMIT_FIELD_CONCEPTS as Record<string, string> },
+  { board: 'api-infra', map: API_INFRA_CONCEPTS as Record<string, string> },
   { board: 'health-fields', map: HEALTH_FIELD_CONCEPTS as Record<string, string> },
 ];
 

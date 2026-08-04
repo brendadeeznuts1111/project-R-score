@@ -35,6 +35,7 @@ import {
 } from '../lib/portal/concept-usage.ts';
 import {
   ACCOUNT_DOSSIER_SURFACE_CONCEPTS,
+  API_INFRA_CONCEPTS,
   LIMIT_FIELD_CONCEPTS,
   LIMIT_SURFACE_CONCEPTS,
   PARTNER_HISTORY_SURFACE_CONCEPTS,
@@ -344,6 +345,7 @@ function allSurfaceIds(): Set<string> {
     ...Object.values(LIMIT_SURFACE_CONCEPTS),
     ...Object.values(ACCOUNT_DOSSIER_SURFACE_CONCEPTS),
     ...Object.values(LIMIT_FIELD_CONCEPTS),
+    ...Object.values(API_INFRA_CONCEPTS),
   ]);
 }
 

@@ -85,11 +85,17 @@ Always (local or CI day-loop):
 
 ```bash
 bun run test:concept
-bun run concept:audit --strict
-bun run validate:surface-coverage
+bun run quality:concept   # audit --strict + surface-coverage + SURFACE_COVERAGE.md --check
 ```
 
-See also portal semantic contract in [`portal-foundation.md`](portal-foundation.md).
+| Command | Role |
+| --- | --- |
+| `bun run surface-coverage:map` | Regenerate [`docs/SURFACE_COVERAGE.md`](SURFACE_COVERAGE.md) |
+| `bun run surface-coverage:check` | Fail if the map doc is stale (ignores Generated timestamp) |
+| `bun run quality:concept` | Full concept-lane quality gate |
+
+See also portal semantic contract in [`portal-foundation.md`](portal-foundation.md)
+and the lifecycle map in [`CONCEPT_LIFECYCLE.md`](CONCEPT_LIFECYCLE.md).
 
 ---
 

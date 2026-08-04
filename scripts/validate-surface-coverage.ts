@@ -25,6 +25,7 @@
 import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
 import {
   ACCOUNT_DOSSIER_SURFACE_CONCEPTS,
+  API_INFRA_CONCEPTS,
   HEALTH_FIELD_CONCEPTS,
   LIMIT_FIELD_CONCEPTS,
   LIMIT_SURFACE_CONCEPTS,
@@ -82,6 +83,7 @@ const REGISTRY_PATH = `${ROOT}/public/registry/domain-glossary.json`;
 /** Cross-board field/section maps boards may legally reference. */
 const SHARED_PORTAL_IDS = new Set<string>([
   ...Object.values(LIMIT_FIELD_CONCEPTS),
+  ...Object.values(API_INFRA_CONCEPTS),
   ...Object.values(LIMIT_SURFACE_CONCEPTS),
   ...Object.values(HEALTH_FIELD_CONCEPTS),
   ...Object.values(PARTNERS_SURFACE_CONCEPTS),
@@ -150,6 +152,11 @@ const BOARDS: readonly BoardConfig[] = [
 ];
 
 export const BOARD_IDS: readonly BoardId[] = BOARDS.map(board => board.id);
+
+/** Board configs (surface maps + scan dirs) for docs / inventory tools. */
+export function getSurfaceBoardConfigs(): readonly BoardConfig[] {
+  return BOARDS;
+}
 
 export function isBoardId(value: string): value is BoardId {
   return (BOARD_IDS as readonly string[]).includes(value);

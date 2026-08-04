@@ -8,6 +8,7 @@ import {
 } from '../public/portal/partner-history/glossary-map.js';
 import {
   HEALTH_FIELD_CONCEPTS,
+  API_INFRA_CONCEPTS,
   LIMIT_FIELD_CONCEPTS,
   LIMIT_SURFACE_CONCEPTS,
   PARTNER_HISTORY_SURFACE_CONCEPTS,
@@ -67,6 +68,7 @@ describe('partner-history portal', () => {
     const surfaceIds = new Set<string>(Object.values(PARTNER_HISTORY_SURFACE_CONCEPTS));
     const sharedIds = new Set<string>([
       ...Object.values(LIMIT_FIELD_CONCEPTS),
+      ...Object.values(API_INFRA_CONCEPTS),
       ...Object.values(LIMIT_SURFACE_CONCEPTS),
       ...Object.values(HEALTH_FIELD_CONCEPTS),
       ...Object.values(PARTNERS_SURFACE_CONCEPTS),
