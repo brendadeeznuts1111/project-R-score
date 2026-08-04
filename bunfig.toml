@@ -126,5 +126,7 @@ output = "public"
 
 # Bun Security Scanner — https://bun.com/docs/pm/security-scanner-api
 # Scanners export: { version: "1", scan({ packages }) => Advisory[] }
-[install.security]
-scanner = "@socketsecurity/bun-security-scanner"
+# OFF by default (quota policy above) — uncomment only for intentional
+# install-time scanning; portal-cli scanner scan --oneshot manages this line.
+# [install.security]
+# scanner = "@socketsecurity/bun-security-scanner"
