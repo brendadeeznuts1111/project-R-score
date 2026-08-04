@@ -1,0 +1,144 @@
+import { afterEach, describe, expect, it } from 'bun:test';
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
+import { tmpdir } from 'node:os';
+import {
+  AGENT_SKILLS_PATHS,
+  agentSkillsDisplayPath,
+  resolveAgentSkillsPath,
+  resolveAgentSkillsRoot,
+} from '../lib/agent-skills-paths.ts';
+import { validateAgentSkills } from '../scripts/validate-agent-skills.ts';
+
+const roots: string[] = [];
+
+afterEach(async () => {
+  await Promise.all(roots.splice(0).map(root => rm(root, { recursive: true, force: true })));
+});
+
+async function fixtureRoot(): Promise<string> {
+  const root = await mkdtemp(join(tmpdir(), 'agent-skills-'));
+  roots.push(root);
+  await mkdir(resolveAgentSkillsRoot(root), { recursive: true });
+  return root;
+}
+
+async function writeSkill(
+  root: string,
+  name: string,
+  options: { frontmatterExtra?: string; body?: string; metadata?: boolean } = {}
+): Promise<void> {
+  const folder = resolveAgentSkillsPath(root, name);
+  const metadataPath = resolveAgentSkillsPath(root, name, AGENT_SKILLS_PATHS.metadataFile);
+  await mkdir(dirname(metadataPath), { recursive: true });
+  await writeFile(
+    join(folder, AGENT_SKILLS_PATHS.skillFile),
+    [
+      '---',
+      `name: ${name}`,
+      'description: A complete skill description that says what it does and when to use it.',
+      options.frontmatterExtra,
+      '---',
+      '',
+      options.body ?? `# ${name}`,
+    ]
+      .filter(value => value !== undefined && value !== '')
+      .join('\n')
+  );
+  if (options.metadata === false) return;
+  await writeFile(
+    metadataPath,
+    [
+      'interface:',
+      `  display_name: "${name}"`,
+      '  short_description: "Validate a repository-local skill"',
+      `  default_prompt: "Use $${name} to validate this skill."`,
+    ].join('\n')
+  );
+}
+
+async function writeRegistry(root: string, names: string[], skillsValue?: unknown): Promise<void> {
+  const registryPath = resolveAgentSkillsPath(root, AGENT_SKILLS_PATHS.loopRegistry);
+  const registryFolder = dirname(registryPath);
+  await mkdir(registryFolder, { recursive: true });
+  if (!(await Bun.file(join(registryFolder, AGENT_SKILLS_PATHS.skillFile)).exists())) {
+    await writeSkill(root, 'ast-grep');
+  }
+  const skills =
+    skillsValue ??
+    Object.fromEntries(
+      names.map(name => [
+        name,
+        {
+          path: agentSkillsDisplayPath(name),
+          phases: { doctor: { enabled: true }, rate: { enabled: true } },
+        },
+      ])
+    );
+  await writeFile(
+    registryPath,
+    JSON.stringify({ version: 2, skills })
+  );
+}
+
+describe('validateAgentSkills', () => {
+  it('accepts aligned skill, metadata, and registry entries', async () => {
+    const root = await fixtureRoot();
+    await writeSkill(root, 'demo-skill');
+    await writeRegistry(root, ['demo-skill']);
+
+    const result = await validateAgentSkills(root);
+    expect(result.ok).toBe(true);
+    expect(result.skillCount).toBe(2);
+    expect(result.registryCount).toBe(1);
+    expect(result.issues).toEqual([]);
+  });
+
+  it('rejects unsupported frontmatter and active directories without SKILL.md', async () => {
+    const root = await fixtureRoot();
+    await writeSkill(root, 'demo-skill', { frontmatterExtra: 'triggers: [demo]' });
+    await mkdir(resolveAgentSkillsPath(root, 'broken-entry'), { recursive: true });
+    await writeRegistry(root, ['demo-skill']);
+
+    const result = await validateAgentSkills(root);
+    expect(result.ok).toBe(false);
+    expect(result.issues.map(item => item.code)).toContain('frontmatter-key');
+    expect(result.issues.map(item => item.code)).toContain('skill-entry-broken');
+  });
+
+  it('rejects malformed registry entries and missing registered metadata', async () => {
+    const root = await fixtureRoot();
+    await writeSkill(root, 'demo-skill', { metadata: false });
+    await writeRegistry(root, [], {
+      'demo-skill': {
+        path: agentSkillsDisplayPath('not-demo-skill'),
+        phases: { doctor: { enabled: false } },
+      },
+    });
+
+    const result = await validateAgentSkills(root);
+    expect(result.ok).toBe(false);
+    expect(result.issues.map(item => item.code)).toContain('metadata-missing');
+    expect(result.issues.map(item => item.code)).toContain('registry-path');
+    expect(result.issues.filter(item => item.code === 'registry-phase')).toHaveLength(2);
+  });
+
+  it('rejects broken relative links but permits an unavailable optional linked skill', async () => {
+    const root = await fixtureRoot();
+    await writeSkill(root, 'demo-skill', { body: '# Demo\n\n[missing](references/missing.md)' });
+    await mkdir(resolveAgentSkillsPath(root, 'bet-ticker-worker'));
+    await writeRegistry(root, ['demo-skill']);
+
+    const result = await validateAgentSkills(root);
+    expect(result.ok).toBe(false);
+    expect(result.issues.map(item => item.code)).toContain('skill-link-broken');
+    expect(result.issues).toContainEqual(
+      expect.objectContaining({ level: 'warning', code: 'skill-link-unavailable' })
+    );
+  });
+
+  it('keeps the repository skill plane valid', async () => {
+    const result = await validateAgentSkills(join(import.meta.dir, '..'));
+    expect(result.issues.filter(item => item.level === 'error')).toEqual([]);
+  });
+});

@@ -3,8 +3,8 @@ name: quantum-domain-ops
 description: |
   Protocols for operating QuantumDomain instances including state collapse,
   entanglement management, coherence monitoring, and tunneling analysis.
-  Safety rules and optimization procedures for quantum domains.
-triggers: ["quantum", "domain", "collapse", "entangle", "coherence", "superposition"]
+  Use for quantum-domain collapse, entanglement, coherence, superposition,
+  tunneling safety, and optimization procedures.
 ---
 
 # Quantum Domain Operations

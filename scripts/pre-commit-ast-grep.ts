@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * Pre-commit ast-grep + semver gates.
@@ -8,11 +10,13 @@
  *   --full     Manual default — always run rules + semver (+ packages)
  *   --changed  Run when ast-grep paths differ from HEAD (unstaged or staged)
  */
+import { agentSkillsDisplayPath, resolveAgentSkillsPath } from '../lib/agent-skills-paths.ts';
+
 const repoRoot = import.meta.dir + '/..';
-const skillRoot = `${repoRoot}/.agents/skills/ast-grep`;
+const skillRoot = resolveAgentSkillsPath(repoRoot, 'ast-grep');
 const helper = `${skillRoot}/scripts/ast_grep_helper.py`;
 
-const AST_GREP_PREFIX = '.agents/skills/ast-grep/';
+const AST_GREP_PREFIX = `${agentSkillsDisplayPath('ast-grep')}/`;
 const LOCKFILE_PATHS = new Set([
   'package.json',
   'bun.lock',
@@ -201,7 +205,7 @@ async function main(): Promise<void> {
   // Root package.json / lockfile triggers still run rules + semver + packages.
   const includeDoctor =
     mode === 'full' || triggerFiles.some(f => f.replace(/^\.\//, '').startsWith(AST_GREP_PREFIX));
-  if (!includeDoctor && mode !== 'full') {
+  if (!includeDoctor) {
     console.info('⏭️  Skipping ast-grep doctor (no skill-tree paths in trigger set)');
   }
 

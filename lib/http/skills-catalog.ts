@@ -22,6 +22,12 @@
  * `{ skills: [], count: 0, error, warning }` with HTTP 200.
  */
 
+import {
+  AGENT_SKILLS_PATHS,
+  agentSkillsDisplayPath,
+  resolveAgentSkillsRoot,
+} from '../agent-skills-paths';
+
 const DEFAULT_SKILLS_DIR =
   '/Users/nolarose/Library/Application Support/kimi-desktop/daimon-share/daimon/skills';
 const DEFAULT_PACKAGES_DIR = 'public/skills';
@@ -222,7 +228,7 @@ async function scanSkillsDirectory(
 export async function buildHarnessSkillsCatalog(
   rootDir: string = process.cwd()
 ): Promise<HarnessSkillsCatalog> {
-  const dir = `${rootDir.replace(/\/$/, '')}/.agents/skills`;
+  const dir = resolveAgentSkillsRoot(rootDir);
   const result = await scanSkillsDirectory(
     dir,
     null,
@@ -230,7 +236,7 @@ export async function buildHarnessSkillsCatalog(
   );
   return {
     plane: 'harness-agents',
-    skillLoopRegistry: '.agents/skills/ast-grep/skill-loop-registry.json',
+    skillLoopRegistry: agentSkillsDisplayPath(AGENT_SKILLS_PATHS.loopRegistry),
     scannedAt: new Date().toISOString(),
     skills: result.skills,
     count: result.skills.length,

@@ -5,7 +5,6 @@ description: |
   process/spawn, HTTP/2, NO_PROXY, profiling, and mock auto-cleanup.
 
   Use when: testing Bun v1.3.9+ features, running demos, or benchmarking.
-triggers: ["bun", "v1.3.9", "playground", "demo", "governance", "signal"]
 ---
 
 # Bun v1.3.9 Playground

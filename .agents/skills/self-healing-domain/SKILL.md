@@ -2,9 +2,8 @@
 name: self-healing-domain
 description: |
   Automated diagnostic and healing workflows for SelfHealingDomain instances.
-  Multi-step flows for health checks, diagnosis, treatment, and recovery.
-type: flow
-triggers: ["heal", "diagnostic", "repair", "recovery", "health"]
+  Use for multi-step health checks, diagnosis, repair, treatment, recovery,
+  rebuild, or other self-healing domain operations.
 ---
 
 # Self-Healing Domain Operations
