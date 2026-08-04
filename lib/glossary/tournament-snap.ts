@@ -256,8 +256,11 @@ export type OwnershipLookupResult = {
 };
 
 function tennisHqColorsCandidates(explicit?: string): string[] {
+  // Explicit path pins lookup for tests / callers — no env or in-repo defaults.
+  if (explicit !== undefined) {
+    return explicit.length > 0 ? [explicit] : [];
+  }
   const out: string[] = [];
-  if (explicit) out.push(explicit);
   const envDir = Bun.env.TENNIS_HQ_SSOT_DIR?.trim();
   if (envDir) {
     out.push(joinPath(envDir, 'registry/glossary-colors.json'));
