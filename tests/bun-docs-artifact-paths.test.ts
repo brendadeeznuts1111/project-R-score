@@ -46,13 +46,15 @@ describe('docs-artifact-paths', () => {
   });
 
   test('legacy split indexes are not present after migration', async () => {
-    const legacy = [
-      'tools/release-index.json',
+    // Fully migrated off tools/ root (now cache-only or deleted).
+    // tools/release-index.json remains a transitional write target for
+    // bun-docs-releases / MCP until feeds-only consumers land — not asserted absent.
+    const legacyRemoved = [
       'tools/reference-index.json',
       'tools/bun-docs-release-overlay.json',
       'tools/bun-docs-token-supplement.json',
     ];
-    for (const rel of legacy) {
+    for (const rel of legacyRemoved) {
       expect(await Bun.file(resolveDocsArtifactPath(rel)).exists()).toBe(false);
     }
     expect(await Bun.file(resolveDocsArtifactPath(DOCS_FEEDS)).exists()).toBe(true);

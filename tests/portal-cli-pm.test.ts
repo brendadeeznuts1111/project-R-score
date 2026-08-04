@@ -70,7 +70,8 @@ describe('portal-cli pm passthrough', () => {
     expect(code).toBe(0);
     expect(out.includes('packages-graph-map') || out.includes('registry-client')).toBe(true);
     expect(out.includes('Rebake') || out.includes('role') || out.includes('score')).toBe(true);
-    expect(out).toContain('selection  scope=all  view=all  package=');
+    // v13 header: selection  scope=all  view=all  selected=N/N  surfaces=global
+    expect(out).toContain('selection  scope=all  view=all');
     expect(out).toContain('selected=');
     expect(out).toContain('surfaces=global');
   });

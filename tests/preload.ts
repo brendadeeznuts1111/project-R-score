@@ -6,6 +6,12 @@
  * Kept minimal following Bun's pattern: just env sync + shared global setup.
  * Utility functions live in tests/harness.ts for explicit imports.
  */
+// Operator shells sometimes export NODE_ENV=production; vault/partner tests
+// then hit fail-closed requireSecret. Coerce to test for the suite only.
+if (Bun.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'production') {
+  Bun.env.NODE_ENV = 'test';
+  process.env.NODE_ENV = 'test';
+}
 // Sync Bun.env → process.env so both stay consistent (matches Bun's preload)
 for (const key of Object.keys(Bun.env)) {
   if (key === 'TZ') continue;

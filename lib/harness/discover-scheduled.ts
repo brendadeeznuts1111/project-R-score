@@ -111,6 +111,13 @@ export const SCHEDULED_JOB_EXEMPTIONS: readonly ScheduledJobExemption[] = [
     reason: 'One-shot entry for spine tenant ops-snapshot',
   },
   {
+    id: 'pkg-sweep-domain-cron',
+    source: 'package-script',
+    match: 'sweep:domain:cron',
+    reason:
+      'Domain health sweep daemon (tools/domain-sweep-cron.ts) — operator schedule, not a spine tenant',
+  },
+  {
     id: 'pkg-portal-snapshot-cron-register',
     source: 'package-script',
     match: 'portal:snapshot:cron:register',

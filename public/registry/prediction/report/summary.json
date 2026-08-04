@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "generated": "2026-07-28T15:23:48.481Z",
+  "generated": "2026-08-04T00:36:31.750Z",
   "model": "naive-coverage-v1",
   "range": {
     "from": "2026-06-25",
@@ -150,7 +150,7 @@
     "trendText": "Trend: → stable · Δ 0.00"
   },
   "previous": {
-    "generatedAt": "2026-07-28T15:23:48.430Z",
+    "generatedAt": "2026-07-28T15:23:48.481Z",
     "mae": 2.8666666666666667,
     "rmse": 4.464676173400859,
     "bias": 2.8666666666666667,

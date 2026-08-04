@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-01T19:54:14.117Z",
+  "generatedAt": "2026-08-04T00:42:37.422Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -12,12 +12,12 @@
     "colorKernel": "public/portal/theme.jsonc"
   },
   "summary": {
-    "brands": 61,
+    "brands": 62,
     "domains": 9,
-    "ids": 55,
+    "ids": 56,
     "keys": 1,
     "codes": 5,
-    "covered": 40,
+    "covered": 41,
     "referencedUnconstructed": 6,
     "unused": 15,
     "cataloguedProjects": 35,
@@ -87,7 +87,7 @@
     {
       "name": "operations",
       "module": "lib/types/branded/operations.ts",
-      "brandCount": 23,
+      "brandCount": 24,
       "colorKey": "accent",
       "color": "#58a6ff",
       "tone": "info"
@@ -358,26 +358,30 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 13,
+        "references": 20,
         "constructors": {
-          "as": 2,
+          "as": 4,
           "try": 0,
           "parse": 0
         },
         "guards": 0,
         "files": [
           "lib/ai/ai-operations-manager.ts",
-          "lib/core/structured-logger.ts"
+          "lib/core/structured-logger.ts",
+          "lib/verification/pages-edge-weave.ts",
+          "tools/concept-inventory.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 13,
-            "constructionCalls": 2,
+            "references": 20,
+            "constructionCalls": 4,
             "guardCalls": 0,
             "files": [
               "lib/ai/ai-operations-manager.ts",
-              "lib/core/structured-logger.ts"
+              "lib/core/structured-logger.ts",
+              "lib/verification/pages-edge-weave.ts",
+              "tools/concept-inventory.ts"
             ]
           },
           "projects": {
@@ -2343,9 +2347,9 @@
       ],
       "coverage": {
         "status": "covered",
-        "references": 266,
+        "references": 271,
         "constructors": {
-          "as": 103,
+          "as": 104,
           "try": 2,
           "parse": 7
         },
@@ -2367,8 +2371,8 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 266,
-            "constructionCalls": 112,
+            "references": 271,
+            "constructionCalls": 113,
             "guardCalls": 0,
             "files": [
               "lib/accounts/accounts.ts",
@@ -2694,7 +2698,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 24,
+        "references": 26,
         "constructors": {
           "as": 11,
           "try": 0,
@@ -2709,12 +2713,13 @@
           "lib/operations/partner-onboarding.ts",
           "lib/operations/partner-profile-bridge.ts",
           "lib/operations/partner-profile-seed.ts",
+          "lib/partner-profile/schema.ts",
           "tools/ops-loop-live-proof.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 24,
+            "references": 26,
             "constructionCalls": 11,
             "guardCalls": 0,
             "files": [
@@ -2725,7 +2730,70 @@
               "lib/operations/partner-onboarding.ts",
               "lib/operations/partner-profile-bridge.ts",
               "lib/operations/partner-profile-seed.ts",
+              "lib/partner-profile/schema.ts",
               "tools/ops-loop-live-proof.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "OutId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Seat-intake out token (e.g. SPEN-1 / CODE-1)",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asOutId",
+        "try": "tryOutId",
+        "parse": "parseOutId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isOutId",
+      "shortName": "outId",
+      "envName": "OUT_ID",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 2,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/partner-profile/register.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 2,
+            "constructionCalls": 1,
+            "guardCalls": 0,
+            "files": [
+              "lib/partner-profile/register.ts"
             ]
           },
           "projects": {
@@ -3564,9 +3632,9 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 38,
+        "references": 40,
         "constructors": {
-          "as": 2,
+          "as": 3,
           "try": 4,
           "parse": 0
         },
@@ -3579,6 +3647,7 @@
           "lib/http/portal-weave.ts",
           "lib/surfaces/inventory.ts",
           "lib/verification/cloudflare-access-live.ts",
+          "lib/verification/pages-edge-weave-subdomains.ts",
           "scripts/bake-surfaces.ts",
           "scripts/lib/domain-branding.ts",
           "tools/brand-status.ts"
@@ -3586,8 +3655,8 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 38,
-            "constructionCalls": 6,
+            "references": 40,
+            "constructionCalls": 7,
             "guardCalls": 0,
             "files": [
               "lib/http/bun-serve-lifecycle.ts",
@@ -3597,6 +3666,7 @@
               "lib/http/portal-weave.ts",
               "lib/surfaces/inventory.ts",
               "lib/verification/cloudflare-access-live.ts",
+              "lib/verification/pages-edge-weave-subdomains.ts",
               "scripts/bake-surfaces.ts",
               "scripts/lib/domain-branding.ts",
               "tools/brand-status.ts"
@@ -3785,9 +3855,9 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 12,
+        "references": 14,
         "constructors": {
-          "as": 3,
+          "as": 4,
           "try": 0,
           "parse": 0
         },
@@ -3796,19 +3866,21 @@
           "lib/http/host-planes.ts",
           "lib/surfaces/doctor-check.ts",
           "lib/surfaces/inventory.ts",
+          "lib/verification/pages-edge-weave-subdomains.ts",
           "scripts/bake-surfaces.ts",
           "tools/lib/portal-cli-doctor-infra.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 12,
-            "constructionCalls": 3,
+            "references": 14,
+            "constructionCalls": 4,
             "guardCalls": 0,
             "files": [
               "lib/http/host-planes.ts",
               "lib/surfaces/doctor-check.ts",
               "lib/surfaces/inventory.ts",
+              "lib/verification/pages-edge-weave-subdomains.ts",
               "scripts/bake-surfaces.ts",
               "tools/lib/portal-cli-doctor-infra.ts"
             ]
