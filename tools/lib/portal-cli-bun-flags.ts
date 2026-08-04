@@ -306,6 +306,33 @@ export async function spawnBunWithFlags(
   return (await proc.exited) ?? 1;
 }
 
+/**
+ * Capturing variant of spawnBunWithFlags — output is echoed through after the
+ * process exits. Used by `portal-cli scanner scan` so quota exhaustion (429)
+ * is detectable for the oneshot quota path.
+ */
+export async function spawnBunWithFlagsCapture(
+  bunFlags: string[],
+  args: string[],
+  opts?: { cwd?: string }
+): Promise<{ code: number; output: string }> {
+  const proc = Bun.spawn(bunSpawnArgv(bunFlags, args), {
+    cwd: opts?.cwd ?? process.cwd(),
+    stdout: 'pipe',
+    stderr: 'pipe',
+    stdin: 'inherit',
+    env: { ...Bun.env },
+  });
+  const [stdout, stderr, exited] = await Promise.all([
+    new Response(proc.stdout).text(),
+    new Response(proc.stderr).text(),
+    proc.exited,
+  ]);
+  if (stdout) process.stdout.write(stdout);
+  if (stderr) process.stderr.write(stderr);
+  return { code: exited ?? 1, output: stdout + stderr };
+}
+
 /** Display form for help/table: `--install=fallback` when helpExample is set. */
 export function formatFlagDisplay(row: RuntimeFlagEntry): string {
   if (row.helpExample != null && row.helpExample !== '') {

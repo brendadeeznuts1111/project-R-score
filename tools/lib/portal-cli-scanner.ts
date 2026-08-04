@@ -1030,6 +1030,16 @@ export type ScannerDispatchOpts = {
    * portal-cli wraps this with spawnBunWithFlags so execution flags apply once.
    */
   spawnBun?: (args: string[], opts?: { cwd?: string }) => Promise<number>;
+  /**
+   * Capturing variant of spawnBun used for `pm scan` so oneshot can detect
+   * Socket quota exhaustion (HTTP 429) in the output and downgrade it to the
+   * non-fatal quota path. Output is echoed through after the process exits.
+   * Tests that only inject spawnBun are unaffected.
+   */
+  spawnBunCapture?: (
+    args: string[],
+    opts?: { cwd?: string }
+  ) => Promise<{ code: number; output: string }>;
   /** Injected git clone for tests. */
   spawnGit?: (args: string[], opts?: { cwd?: string }) => Promise<number>;
 };
@@ -1082,6 +1092,30 @@ async function defaultSpawnGit(args: string[], opts?: { cwd?: string }): Promise
   return (await proc.exited) ?? 1;
 }
 
+async function defaultSpawnBunCapture(
+  args: string[],
+  opts?: { cwd?: string }
+): Promise<{ code: number; output: string }> {
+  const proc = Bun.spawn(bunSpawnArgs(args), {
+    cwd: opts?.cwd ?? process.cwd(),
+    stdout: 'pipe',
+    stderr: 'pipe',
+    stdin: 'inherit',
+    env: { ...Bun.env },
+  });
+  const [stdout, stderr, exited] = await Promise.all([
+    new Response(proc.stdout).text(),
+    new Response(proc.stderr).text(),
+    proc.exited,
+  ]);
+  if (stdout) process.stdout.write(stdout);
+  if (stderr) process.stderr.write(stderr);
+  return { code: exited ?? 1, output: stdout + stderr };
+}
+
+/** Socket free-tier quota exhaustion signature (HTTP 429 from the scan API). */
+const SCAN_QUOTA_EXHAUSTED = /429|rate limit|too many requests|quota/i;
+
 /**
  * Dispatch scanner subcommand. Returns process exit code (0 = ok).
  * Does not call process.exit — caller may.
@@ -1094,6 +1128,10 @@ export async function dispatchScanner(
   const bunfigPath = flagValue(rest, '--bunfig') || opts.bunfigPath || DEFAULT_BUNFIG_REL;
   const cwd = opts.cwd ?? process.cwd();
   const spawnBun = opts.spawnBun ?? defaultSpawnBun;
+  // Only default the capturing spawn when spawnBun is not injected — an
+  // injected spawnBun mock must stay the scan's spawn path.
+  const spawnBunCapture =
+    opts.spawnBunCapture ?? (opts.spawnBun ? undefined : defaultSpawnBunCapture);
   const spawnGit = opts.spawnGit ?? defaultSpawnGit;
 
   const cmd = !sub || sub === 'status' ? 'status' : sub;
@@ -1255,9 +1293,17 @@ export async function dispatchScanner(
     }
 
     let code = 1;
+    let scanOutput = '';
     try {
-      // Real command: bun pm scan
-      code = await spawnBun(['pm', 'scan'], { cwd });
+      // Real command: bun pm scan (captured when possible so oneshot can
+      // detect Socket quota exhaustion in the output)
+      if (spawnBunCapture) {
+        const r = await spawnBunCapture(['pm', 'scan'], { cwd });
+        code = r.code;
+        scanOutput = r.output;
+      } else {
+        code = await spawnBun(['pm', 'scan'], { cwd });
+      }
     } finally {
       if (oneshot && restoredBunfig != null) {
         await Bun.write(
@@ -1266,6 +1312,16 @@ export async function dispatchScanner(
         );
         console.log(`oneshot: restored ${bunfigPath} (install-time scanner off again)`);
       }
+    }
+
+    // Quota path: oneshot exists to avoid install-time quota cost, so a
+    // 429/rate-limit failure is non-fatal — warn and exit 0. Other scan
+    // failures keep the real exit code.
+    if (code !== 0 && oneshot && SCAN_QUOTA_EXHAUSTED.test(scanOutput)) {
+      console.warn(
+        'oneshot: Socket quota exhausted (429) — non-fatal (quota path); re-run later or authenticate'
+      );
+      code = 0;
     }
 
     await writeScannerLastRun(

@@ -66,6 +66,7 @@ import {
   loadRuntimeFlagsCatalog,
   parseBunExecutionFlags,
   spawnBunWithFlags,
+  spawnBunWithFlagsCapture,
   type RuntimeFlagsJsonReport,
 } from './lib/portal-cli-bun-flags.ts';
 import { bunSpawnArgs, isModuleEntrypoint } from '../lib/bun-executable.ts';
@@ -1176,6 +1177,7 @@ Rebake: bun run bunfig:bake  ·  Policy: docs/UNIFIED.md
     // @see https://bun.com/docs/pm/security-scanner-api
     const code = await dispatchScanner(argv[1], argv.slice(2), {
       spawnBun: async (args, o) => spawnBunWithFlags(bunExecFlags, args, o),
+      spawnBunCapture: async (args, o) => spawnBunWithFlagsCapture(bunExecFlags, args, o),
     });
     process.exit(code);
   }
