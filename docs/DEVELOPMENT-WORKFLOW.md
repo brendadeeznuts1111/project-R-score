@@ -57,12 +57,18 @@ Hooks live in [`.husky/pre-commit`](../.husky/pre-commit). They already:
 5. **`scripts/bun-test-changed-staged.ts`** — runs `bun test --changed` in a
    **HEAD ∪ staged** scratch repo so **another lane’s dirty failing tests cannot
    block your commit**
+6. **`quality:concept` (path-gated)** — only when concept SSOT is staged:
+   `lib/portal/semantic-vocabulary.ts`, `lib/portal/concept-*`,
+   `lib/portal/page-concepts.ts`, `scripts/validate-surface-coverage.ts`,
+   `scripts/concept-audit.ts`, `tools/generate-surface-coverage-map.ts`,
+   `docs/SURFACE_COVERAGE.md`, `public/registry/domain-glossary.json`
 
 ### Escape hatches (document in the commit message)
 
 | Env | When |
 | --- | --- |
 | `SKIP_TEST_CHANGED=1` | Staged-temp / foreign-gate evidence only — write reason + local proof |
+| `SKIP_QUALITY_CONCEPT=1` | Concept SSOT staged but gate is foreign-lane / documented exception |
 | `SKIP_GITLEAKS=1` | Rare; credential scan exception with reason |
 
 ### Why we did **not** switch to `bun-git-hooks`
