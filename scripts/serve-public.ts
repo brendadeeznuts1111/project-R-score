@@ -1665,6 +1665,53 @@ async function doctorRunApi(req: Request, server?: RouteServer): Promise<Respons
  * Runs `bun run audit:packages -- --bake` and returns score metadata from the new map.
  * Never enable on non-loopback binds (Pages / staging IPs).
  */
+/**
+ * GET /api/partner/health — loopback-only live partner health snapshot
+ * (same shape as the committed bake, minus the outChecks desk scan cost
+ * being fresh). Use `bun run partner:health:bake` for the committed board.
+ */
+async function partnerHealthApi(req: Request, server?: RouteServer): Promise<Response> {
+  if (req.method !== 'GET') {
+    return json({ error: 'Method not allowed — use GET' }, 405);
+  }
+  const ip = clientSocket(req, server);
+  const addr = ip?.address ?? '';
+  const loopback =
+    addr === '127.0.0.1' ||
+    addr === '::1' ||
+    addr === '::ffff:127.0.0.1' ||
+    (!ip &&
+      (new URL(req.url).hostname === '127.0.0.1' ||
+        new URL(req.url).hostname === 'localhost' ||
+        new URL(req.url).hostname === '::1'));
+  if (!loopback) {
+    return json(
+      {
+        error: 'partner health is loopback-only',
+        hint: 'Use: bun run partner:health:bake',
+        client: addr || null,
+      },
+      403
+    );
+  }
+  try {
+    const { buildPartnerHealthBake } = await import(
+      '../lib/partner-profile/partner-health-bake.ts'
+    );
+    const bake = await buildPartnerHealthBake();
+    return json({ ok: bake.health.ok, ...bake });
+  } catch (e) {
+    return json(
+      {
+        ok: false,
+        error: e instanceof Error ? e.message : String(e),
+        hint: 'bun run partner:health:bake',
+      },
+      500
+    );
+  }
+}
+
 async function packagesGraphRebake(req: Request, server?: RouteServer): Promise<Response> {
   if (req.method !== 'POST' && req.method !== 'GET') {
     return json({ error: 'Method not allowed — use POST' }, 405);
@@ -2059,6 +2106,12 @@ function buildPublicRoutes() {
     '/api/doctor/run/': {
       GET: (req: Request, server: RouteServer) => doctorRunApi(req, server),
       POST: (req: Request, server: RouteServer) => doctorRunApi(req, server),
+    },
+    '/api/partner/health': {
+      GET: (req: Request, server: RouteServer) => partnerHealthApi(req, server),
+    },
+    '/api/partner/health/': {
+      GET: (req: Request, server: RouteServer) => partnerHealthApi(req, server),
     },
     '/api/packages/graph/rebake': {
       GET: (req: Request, server: RouteServer) => packagesGraphRebake(req, server),
