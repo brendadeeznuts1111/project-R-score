@@ -2181,6 +2181,7 @@
     "portal:css:score:components": "bun tools/portal-css-score.ts --components",
     "portal:css:score:power": "bun tools/portal-css-score.ts --power",
     "verify:pages-edge": "bun tools/verify-pages-edge.ts",
+    "verify:tournament-glossary": "bun tools/verify-tournament-glossary.ts",
     "verify:pages-edge:taxonomy": "bun tools/verify-pages-edge.ts --taxonomy",
     "verify:weave": "bun tools/verify-pages-edge.ts --weave",
     "verify:pm": "bun tools/verify-pages-edge.ts --pm",
