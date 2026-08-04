@@ -7,6 +7,10 @@
  * the same database as interactive runs. Explicit opts.path always wins.
  */
 import { Database } from 'bun:sqlite';
+// Sync mkdir required: SQLite opens a file handle before any async file helper
+// could create the parent dir; Bun.file is async-only.
+// eslint-disable-next-line no-restricted-imports -- parent-dir creation for fresh-worktree data/
+import { mkdirSync } from 'node:fs';
 import { joinPath } from '../path-bun.ts';
 import { initSchema } from './schema.ts';
 
@@ -22,6 +26,9 @@ export type OpenOperationsDbOpts = {
 
 export function openOperationsDb(opts?: OpenOperationsDbOpts): Database {
   const path = opts?.path ?? DEFAULT_OPS_DB_PATH;
+  if (path !== ':memory:') {
+    mkdirSync(joinPath(path, '..'), { recursive: true });
+  }
   const db = new Database(path, path === ':memory:' ? undefined : { create: true });
   db.run('PRAGMA journal_mode = WAL');
   db.run('PRAGMA busy_timeout = 5000');

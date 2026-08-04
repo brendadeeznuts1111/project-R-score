@@ -1797,6 +1797,8 @@
     "partner:finance-report:cron:register": "bun tools/partner-finance-report.ts register",
     "partner:finance-report:cron:remove": "bun tools/partner-finance-report.ts remove",
     "partner:finance-report:cron:preview": "bun tools/partner-finance-report.ts preview",
+    "partner:profiles:diff": "bun tools/partner-profiles-diff.ts diff",
+    "partner:profiles:audit": "bun tools/partner-profiles-diff.ts audit",
     "telegram:handshake:verify": "bun tools/verify-package-group-handshake.ts",
     "telegram:handshake:desk": "bun tools/telegram-handshake-desk.ts",
     "telegram:handshake:readiness": "bun tools/telegram-handshake-readiness.ts",
