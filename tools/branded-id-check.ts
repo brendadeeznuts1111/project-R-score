@@ -20,7 +20,7 @@
  *   bun tools/branded-id-check.ts --smart --json
  *   bun tools/branded-id-check.ts --smart --quiet  # one-line success / full on fail
  *   bun tools/branded-id-check.ts --strict     # exit 1 on actionable hits
- *                                              #   (with --smart: ignores opaque-pk)
+ *                                              #   (--smart also rejects stale baseline rows)
  *   bun tools/branded-id-check.ts --staged     # ADDED lines only (agents)
  *   bun tools/branded-id-check.ts --write-baseline  # refresh grandfather list
  *
@@ -210,6 +210,20 @@ type BaselineFile = {
 
 function baselineKey(file: string, field: string, text: string): string {
   return `${file}\t${field}\t${text.trim()}`;
+}
+
+/** Baseline rows must disappear as soon as their legacy declaration disappears. */
+export function findStaleBaselineKeys(
+  baselineKeys: ReadonlySet<string>,
+  liveActionableKeys: ReadonlySet<string>
+): string[] {
+  return [...baselineKeys].filter(key => !liveActionableKeys.has(key)).sort();
+}
+
+function actionableBaselineKeys(hits: readonly Hit[]): Set<string> {
+  return new Set(
+    hits.filter(hit => !hit.suppressed).map(hit => baselineKey(hit.file, hit.field, hit.text))
+  );
 }
 
 async function loadBaselineKeys(): Promise<Set<string>> {
@@ -602,12 +616,17 @@ async function writeBaselineFile(files: string[]): Promise<void> {
   );
 }
 
-async function printSmartReport(hits: Hit[], asJson: boolean, quiet = false): Promise<void> {
+async function printSmartReport(
+  hits: Hit[],
+  asJson: boolean,
+  quiet = false,
+  staleBaselineKeys: readonly string[] = []
+): Promise<void> {
   const maps = await fieldMaps();
   const actionable = hits.filter(h => !h.suppressed);
   const suppressed = hits.filter(h => h.suppressed);
 
-  if (quiet && !asJson && actionable.length === 0) {
+  if (quiet && !asJson && actionable.length === 0 && staleBaselineKeys.length === 0) {
     console.info(
       `✅ brands-smart (${hits.length} hits, 0 actionable, ${suppressed.length} suppressed)`
     );
@@ -621,6 +640,7 @@ async function printSmartReport(hits: Hit[], asJson: boolean, quiet = false): Pr
           total: hits.length,
           actionable: actionable.length,
           autoSuppressed: suppressed.length,
+          staleBaselineKeys,
           manifestLoaded: maps.loadedFromManifest,
           byRole: Object.fromEntries(
             (
@@ -653,6 +673,12 @@ async function printSmartReport(hits: Hit[], asJson: boolean, quiet = false): Pr
       `${legacy > 0 ? `, ${legacy} legacy-baseline` : ''})\n` +
       `  AGENTS: new domain *Id fields MUST use brands (as*/try*/parse*) — staged gate has no baseline.\n`
   );
+
+  if (staleBaselineKeys.length > 0) {
+    console.info(`\n  stale baseline keys (${staleBaselineKeys.length}):`);
+    for (const key of staleBaselineKeys) console.info(`    ${key}`);
+    console.info('  repair: bun run brand:baseline');
+  }
 
   const roles: Role[] = ['auth-credential', 'named-domain', 'new-brand', 'opaque-pk', 'ambiguous'];
   for (const role of roles) {
@@ -719,7 +745,7 @@ async function printSmartReport(hits: Hit[], asJson: boolean, quiet = false): Pr
       `  catalog: bun tools/brand-catalog.ts [domain|brand]\n` +
       `  baseline: tools/branded-id-baseline.json (legacy only; staged ignores)\n` +
       `  gate: bun run check:brands  ·  agents: MUST brand domain *Id (no bare string)\n` +
-      `  strict (actionable only): bun tools/branded-id-check.ts --smart --strict\n`
+      `  strict (actionable + baseline freshness): bun tools/branded-id-check.ts --smart --strict\n`
   );
 }
 
@@ -761,10 +787,15 @@ async function main(): Promise<void> {
 
   if (smart) {
     const baseline = await loadBaselineKeys();
-    const hits = applyBaseline(await scanAll(files), baseline);
-    await printSmartReport(hits, asJson, quiet);
+    const rawHits = await scanAll(files);
+    const isRepoWideScan = !args.some(arg => !arg.startsWith('--'));
+    const staleBaselineKeys = isRepoWideScan
+      ? findStaleBaselineKeys(baseline, actionableBaselineKeys(rawHits))
+      : [];
+    const hits = applyBaseline(rawHits, baseline);
+    await printSmartReport(hits, asJson, quiet, staleBaselineKeys);
     const actionable = hits.filter(h => !h.suppressed).length;
-    if (strict && actionable > 0) process.exit(1);
+    if (strict && (actionable > 0 || staleBaselineKeys.length > 0)) process.exit(1);
     return;
   }
 
