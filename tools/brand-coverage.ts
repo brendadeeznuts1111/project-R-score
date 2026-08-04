@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/reference/bun/argv — Bun.argv
@@ -327,6 +328,29 @@ export function inferProjectRoot(path: string): string | undefined {
   return parts.slice(0, 3).join('/');
 }
 
+/**
+ * Enumerate projects/ paths for coverage/adoption. Normally a scoped
+ * `git ls-files`; the staged-scratch test runner
+ * (scripts/bun-test-changed-staged.ts) symlinks projects/ instead of
+ * materializing it, so `git ls-files -- projects` is empty there — it exports
+ * the real index's projects paths via KIMI_STAGED_PROJECTS_LS_FILES
+ * (NUL-separated) and file content is read through the symlink (worktree
+ * content, matching how bakes are generated locally).
+ */
+export async function listProjectsPaths(root: string): Promise<string[]> {
+  const exported = Bun.env.KIMI_STAGED_PROJECTS_LS_FILES;
+  if (exported && (await Bun.file(exported).exists())) {
+    return (await Bun.file(exported).text()).split('\0').filter(Boolean);
+  }
+  const proc = Bun.spawn(['git', 'ls-files', '-z', '--', 'projects'], {
+    cwd: root,
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
+  const [stdout, exitCode] = await Promise.all([new Response(proc.stdout).text(), proc.exited]);
+  return exitCode === 0 ? stdout.split('\0').filter(Boolean) : [];
+}
+
 export async function loadProjectRoots(root: string): Promise<string[]> {
   const registryPath = `${root}/public/registry/projects-registry.json`;
   const registry = (await Bun.file(registryPath).exists())
@@ -334,19 +358,9 @@ export async function loadProjectRoots(root: string): Promise<string[]> {
         projects?: Array<{ path?: unknown }>;
       })
     : { projects: [] };
-  const proc = Bun.spawn(['git', 'ls-files', '-z', '--', 'projects'], {
-    cwd: root,
-    stdout: 'pipe',
-    stderr: 'pipe',
-  });
-  const [stdout, exitCode] = await Promise.all([new Response(proc.stdout).text(), proc.exited]);
-  const trackedRoots =
-    exitCode === 0
-      ? stdout
-          .split('\0')
-          .map(inferProjectRoot)
-          .filter((path): path is string => typeof path === 'string')
-      : [];
+  const trackedRoots = (await listProjectsPaths(root))
+    .map(inferProjectRoot)
+    .filter((path): path is string => typeof path === 'string');
   return [
     ...new Set([
       ...(registry.projects ?? [])
@@ -381,7 +395,14 @@ export async function loadBrandConsumerFiles(root: string): Promise<BrandCoverag
   }
 
   const files: BrandCoverageFile[] = [];
-  for (const path of stdout.split('\0').filter(Boolean)) {
+  const paths = stdout.split('\0').filter(Boolean);
+  // Scratch/snapshot repos (staged-test runner): projects/ is a symlink, so
+  // the main ls-files has no projects entries — pull them from the runner's
+  // export (or a scoped ls-files) instead of scanning the 1.8G dir blindly.
+  if (!paths.some(path => path.startsWith('projects/'))) {
+    paths.push(...(await listProjectsPaths(root)));
+  }
+  for (const path of paths) {
     if (!CONSUMER_ROOTS.some(consumerRoot => path.startsWith(`${consumerRoot}/`))) continue;
     if (!SOURCE_FILE.test(path) || EXCLUDED.some(pattern => pattern.test(path))) continue;
     const text = await Bun.file(`${root}/${path}`).text();

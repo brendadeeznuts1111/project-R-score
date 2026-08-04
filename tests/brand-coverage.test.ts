@@ -7,6 +7,8 @@ import {
   analyzeBrandCoverage,
   analyzeProjectBrandAdoption,
   inferProjectRoot,
+  listProjectsPaths,
+  loadProjectRoots,
   stripSourceComments,
   type BrandCoverageFile,
 } from '../tools/brand-coverage.ts';
@@ -155,5 +157,34 @@ describe('brand coverage reporter', () => {
     );
     expect(inferProjectRoot('lib/types/branded.ts')).toBeUndefined();
     expect(inferProjectRoot('projects/active/analysis/README.md')).toBeUndefined();
+  });
+
+  test('honors KIMI_STAGED_PROJECTS_LS_FILES when git cannot see projects/', async () => {
+    // Staged-scratch runner (scripts/bun-test-changed-staged.ts) symlinks
+    // projects/, so `git ls-files -- projects` is empty there; it exports the
+    // real index's paths NUL-separated and points this env var at the file.
+    const tmp = `${Bun.env.TMPDIR ?? '/tmp'}brand-coverage-${Bun.randomUUIDv7()}`;
+    const previous = Bun.env.KIMI_STAGED_PROJECTS_LS_FILES;
+    try {
+      await Bun.write(
+        `${tmp}/projects-ls-files`,
+        'projects/active/tools/demo/src/index.ts\0projects/experimental/2048/src/game.ts\0'
+      );
+      Bun.env.KIMI_STAGED_PROJECTS_LS_FILES = `${tmp}/projects-ls-files`;
+
+      expect(await listProjectsPaths(tmp)).toEqual([
+        'projects/active/tools/demo/src/index.ts',
+        'projects/experimental/2048/src/game.ts',
+      ]);
+      // No projects-registry.json in tmp → roots come from the export alone.
+      expect(await loadProjectRoots(tmp)).toEqual([
+        'projects/active/tools/demo',
+        'projects/experimental/2048',
+      ]);
+    } finally {
+      if (previous === undefined) delete Bun.env.KIMI_STAGED_PROJECTS_LS_FILES;
+      else Bun.env.KIMI_STAGED_PROJECTS_LS_FILES = previous;
+      await Bun.$`rm -rf ${tmp}`.quiet().nothrow();
+    }
   });
 });

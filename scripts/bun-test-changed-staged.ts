@@ -184,6 +184,15 @@ async function buildScratchRepo(tmp: string): Promise<void> {
     if (src.exitCode !== 0) throw new Error(`copy untracked ${f} failed`);
   }
 
+  // 6b. projects/ is symlinked (LINK_DIRS), so `git ls-files -- projects`
+  //    inside scratch returns nothing. Export the real index's projects paths
+  //    for tools that enumerate them (brand-coverage adoption scan, consumed
+  //    via KIMI_STAGED_PROJECTS_LS_FILES); content is read through the
+  //    symlink — the accepted LINK_DIRS worktree-content leak.
+  const proj = git(['ls-files', '-z', '--', 'projects']);
+  if (proj.code !== 0) throw new Error(`git ls-files projects: ${proj.err.trim()}`);
+  await Bun.write(`${tmp}/.staged-projects-ls-files`, proj.out);
+
   // 7. Point origin/main at the baseline commit. bun --changed resolves
   //    origin/main as its diff base — if it pointed at the REAL main (no
   //    shared history with the fresh scratch repo) every file would count
@@ -224,7 +233,17 @@ async function main(): Promise<number> {
   try {
     const proc = Bun.spawn(
       ['bun', 'test', '--changed', '--pass-with-no-tests', '--parallel', ...forwarded],
-      { cwd: tmp, stdout: 'inherit', stderr: 'inherit', stdin: 'inherit', env: testRunEnv() }
+      {
+        cwd: tmp,
+        stdout: 'inherit',
+        stderr: 'inherit',
+        stdin: 'inherit',
+        env: {
+          ...testRunEnv(),
+          // brand-coverage projects/ enumeration (see buildScratchRepo 6b).
+          KIMI_STAGED_PROJECTS_LS_FILES: `${tmp}/.staged-projects-ls-files`,
+        },
+      }
     );
     return (await proc.exited) ?? 1;
   } finally {
