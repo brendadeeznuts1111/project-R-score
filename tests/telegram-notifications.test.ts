@@ -110,6 +110,7 @@ describe('notification preferences', () => {
       dailyCapacity: true,
       newEvents: true,
       betConfirm: true,
+      dailyFinance: true,
     });
     expect(shouldNotify('dailyCapacity')).toBe(true);
     expect(shouldNotify('dailyCapacity', { dailyCapacity: false })).toBe(false);

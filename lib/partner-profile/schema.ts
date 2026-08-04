@@ -311,6 +311,12 @@ export function validatePartnerProfile(value: unknown): ProfileValidation {
           issues.push('telegram.preferences must be an object');
         } else {
           for (const [key, val] of Object.entries(value.telegram.preferences)) {
+            if (key === 'newEventsSports') {
+              if (!Array.isArray(val) || val.some(v => typeof v !== 'string')) {
+                issues.push('telegram.preferences.newEventsSports must be an array of strings');
+              }
+              continue;
+            }
             if (typeof val !== 'boolean') {
               issues.push(`telegram.preferences.${key} must be a boolean`);
             }

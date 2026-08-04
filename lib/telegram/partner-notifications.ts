@@ -11,11 +11,19 @@
 
 import { sendTelegramBotMessage, type TelegramApiResult } from './telegram-api.ts';
 
-export const TELEGRAM_NOTIFICATION_TYPES = ['dailyCapacity', 'newEvents', 'betConfirm'] as const;
+export const TELEGRAM_NOTIFICATION_TYPES = [
+  'dailyCapacity',
+  'newEvents',
+  'betConfirm',
+  'dailyFinance',
+] as const;
 export type TelegramNotificationType = (typeof TELEGRAM_NOTIFICATION_TYPES)[number];
 
 /** Partner opt-in flags, stored as `partner.telegram.preferences` (all default on). */
-export type TelegramNotificationPreferences = Partial<Record<TelegramNotificationType, boolean>>;
+export type TelegramNotificationPreferences = Partial<Record<TelegramNotificationType, boolean>> & {
+  /** Per-sport opt-in for new-event alerts (empty = all sports). */
+  newEventsSports?: string[];
+};
 
 /** Defaults applied over partial prefs — unknown keys ignored, known keys default true. */
 export function resolveNotificationPreferences(
@@ -25,6 +33,7 @@ export function resolveNotificationPreferences(
     dailyCapacity: true,
     newEvents: true,
     betConfirm: true,
+    dailyFinance: true,
   };
   if (!prefs) return base;
   for (const key of TELEGRAM_NOTIFICATION_TYPES) {
@@ -39,6 +48,13 @@ export function shouldNotify(
   prefs?: TelegramNotificationPreferences
 ): boolean {
   return resolveNotificationPreferences(prefs)[type] === true;
+}
+
+/** True when the partner wants new-event alerts for this sport (empty sports = all). */
+export function shouldNotifyEvent(sport: string, prefs?: TelegramNotificationPreferences): boolean {
+  if (!shouldNotify('newEvents', prefs)) return false;
+  const sports = (prefs?.newEventsSports ?? []).map(s => s.toLowerCase());
+  return sports.length === 0 || sports.includes(sport.toLowerCase());
 }
 
 export type PartnerNotificationTarget = {

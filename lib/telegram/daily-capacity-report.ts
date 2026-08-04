@@ -130,6 +130,7 @@ export async function publishDailyCapacityReports(
   let sent = 0;
 
   const db = opts.logDelivery ? (opts.db ?? openDailyReportDb()) : null;
+  if (db) ensureDailyReportLog(db);
 
   for (const view of snapshot.rows) {
     if (opts.filter && !opts.filter(view)) {
