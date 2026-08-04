@@ -27,6 +27,8 @@ Machine-readable proofs and operator bakes live on **Cloudflare Pages** (not thi
 | PM publish-plane proof (`artifactId` `pm-proof`) | [pm-proof.json](https://score.factory-wager.com/registry/pm-proof.json) | `bun run verify:pm:save` · soft-pass skips stay green |
 | Monitoring | [monitoring.json](https://score.factory-wager.com/registry/monitoring.json) | `ops:snapshot` |
 | Limit raises | [limit-raises.json](https://score.factory-wager.com/registry/limit-raises.json) | `ops:snapshot` · multi-factor · [`partner-limits.md`](docs/harness/tenants/partner-limits.md) |
+| Kimi skills catalog | [skills-catalog.json](https://score.factory-wager.com/registry/skills-catalog.json) | external `PORTAL_SKILLS_DIR` plane · not repository harness skills |
+| Harness skills catalog | [harness-skills-catalog.json](https://score.factory-wager.com/registry/harness-skills-catalog.json) | all repository `.agents/skills/*/SKILL.md` definitions · registry subset verified by `bun run skills:validate` |
 | Doc index | [doc-index.json](https://score.factory-wager.com/registry/doc-index.json) | `bun run build:doc-index` |
 | Verification | [verification-index.json](https://score.factory-wager.com/registry/verification-index.json) | `bun run verify-all` |
 
@@ -53,5 +55,12 @@ Operator proof bakes (not product boards). Linked from portal [Health](https://s
 | Partner history | [/portal/partner-history/](https://score.factory-wager.com/portal/partner-history/) |
 | TOC Ops | [/portal/toc/](https://score.factory-wager.com/portal/toc/) |
 | Monitoring | [/monitoring/](https://score.factory-wager.com/monitoring/) |
+| Skills | [/portal/skills/](https://score.factory-wager.com/portal/skills/) |
 
 Routing: [`docs/platform-routing.md`](docs/platform-routing.md)
+
+The harness catalog and the skill-loop registry are related but not identical
+domains. The catalog contains every repository skill definition; only skills
+with executable loop phases belong in
+`.agents/skills/ast-grep/skill-loop-registry.json`. `bun run skills:validate`
+checks both domains and their metadata alignment before the catalog is merged.

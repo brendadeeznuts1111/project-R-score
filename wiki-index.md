@@ -62,7 +62,7 @@ Live boards under `public/portal/<name>/` (plus Home). Product/ops first, then c
 | Health | [/portal/health/](https://score.factory-wager.com/portal/health/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
 | Env | [/portal/env/](https://score.factory-wager.com/portal/env/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
 | DOD | [/portal/dod/](https://score.factory-wager.com/portal/dod/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
-| Skills | [/portal/skills/](https://score.factory-wager.com/portal/skills/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
+| Skills | [/portal/skills/](https://score.factory-wager.com/portal/skills/) | [`public-plane.md` skill domains](docs/harness/tenants/public-plane.md#skill-catalog-domains) · `bun run skills:validate` |
 | Packages | [/portal/packages/](https://score.factory-wager.com/portal/packages/) | [`monorepo-health.md`](docs/harness/tenants/monorepo-health.md) |
 | Doctor | [/portal/doctor/](https://score.factory-wager.com/portal/doctor/) | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
 | Bunfig | [/portal/bunfig/](https://score.factory-wager.com/portal/bunfig/) | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
@@ -165,6 +165,7 @@ bun run test:seat-desk
 bun test tests/identity-*.test.ts
 bun run verify:portal:static
 bun run public:audit:verify
+bun run skills:validate
 PAGES_VERIFY_BASE=https://project-r-score.pages.dev bun run verify:pages-edge
 ```
 
