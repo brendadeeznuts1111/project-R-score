@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "generatedAt": "2026-08-05T03:02:10.583Z",
+  "generatedAt": "2026-08-04T20:34:06.607Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
   "brandCount": 67,
   "domainCount": 9,
@@ -1906,10 +1906,10 @@
         "wire-input",
         "system-internal"
       ],
-      "description": "Backend family shortcode (cloudflare-pages|cloudflare-worker|cloudflared|github-pages|helpscout|none|unknown)",
+      "description": "Backend family shortcode (cloudflare-pages|cloudflared|github-pages|helpscout|none|unknown)",
       "validation": {
         "shape": "pattern",
-        "pattern": "^(?:cloudflare-pages|cloudflare-worker|cloudflared|github-pages|helpscout|none|unknown)$",
+        "pattern": "^(?:cloudflare-pages|cloudflared|github-pages|helpscout|none|unknown)$",
         "flags": "",
         "ingressNormalization": "trim"
       },
