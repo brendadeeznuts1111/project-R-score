@@ -89,14 +89,14 @@ set -a && source ~/.reasonix/tennis-hq-registry-token.env && set +a
 
 ## Portal / bake
 
-| Surface         | Command / path                                                           |
-| --------------- | ------------------------------------------------------------------------ |
-| Agent auth bake | `bun run tennis:agent-auth:bake` / `tennis:agent-auth:check`             |
-| Vault map bake  | `bun run env:inventory:bake` → `/registry/vault-map.json`                |
-| Tennis board    | `/portal/tennis/` loads agent-auth KPI                                   |
-| Tenant packages | `/registry/tennis/registry.json` (`bun run ops:seed:toc` / seed tenants) |
+| Surface                                                                                              | Command / path                                                                   |
+| ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Agent auth bake                                                                                      | `bun run tennis:agent-auth:bake` / `tennis:agent-auth:check`                     |
+| Vault map bake                                                                                       | `bun run env:inventory:bake` → `/registry/vault-map.json`                        |
+| Tennis board                                                                                         | `/portal/tennis/` loads agent-auth KPI                                           |
+| Tenant packages                                                                                      | `/registry/tennis/registry.json` (`bun run ops:seed:toc` / seed tenants)         |
 | SSOT soft-pass (`artifactId` `ssot-flow-soft`, concept `publish.ssot_flow_soft` → colorKey `tennis`) | `bun run ssot:flow:soft` → `/registry/ssot-flow-soft.json` · `/portal/packages/` |
-| PM publish-plane proof (`artifactId` `pm-proof`, concept `publish.pm_proof` → colorKey `kalshi`) | `bun run verify:pm:save` → `/registry/pm-proof.json` · same board strip |
+| PM publish-plane proof (`artifactId` `pm-proof`, concept `publish.pm_proof` → colorKey `kalshi`)     | `bun run verify:pm:save` → `/registry/pm-proof.json` · same board strip          |
 
 ### SSOT soft-pass (offline pack)
 
@@ -114,12 +114,38 @@ bun run verify:pm:save   # @factorywager/registry-client publish-plane soft-pass
 Hard-match (packument shasum ↔ local tarball) is a later gate when the version
 is on the registry; soft-pass stays green when network/auth probes skip.
 
+### Versioned domain contracts
+
+Tennis HQ `@tennis-hq/ssot@1.5.0` adds a transport-only `tennis-hq/v1` manifest
+and JSON Schemas. FactoryWager consumes the immutable packed package; it must
+not import files from the sibling Tennis HQ source tree. The soft-pass extracts
+`package/registry/contracts/v1/manifest.json` from the tarball and requires
+package-version parity plus exactly these five authenticated read domains:
+
+| Domain     | Runtime path                     | Contract package export               |
+| ---------- | -------------------------------- | ------------------------------------- |
+| marketdata | `GET /api/v1/marketdata/desk`    | `contracts/v1/marketdata.schema.json` |
+| research   | `GET /api/v1/research/status`    | `contracts/v1/research.schema.json`   |
+| trading    | `GET /api/v1/trading/executions` | `contracts/v1/trading.schema.json`    |
+| partners   | `GET /api/v1/partners/capacity`  | `contracts/v1/partners.schema.json`   |
+| accounting | `GET /api/v1/accounting/finance` | `contracts/v1/accounting.schema.json` |
+
+Runtime reads require a Tennis HQ provider token (`PARTNER_API_TOKEN`, with
+provider-side `OPERATOR_API_TOKEN` alias) and fail closed when it is absent.
+`FACTORY_WAGER_TOKEN` remains registry/package authentication and is not a
+runtime API credential.
+
+FactoryWager's current registry catalog contains `@tennis-hq/ssot@1.4.0`, which
+does not contain these exports. Do not mark the v1 contracts available or add a
+runtime package dependency until one canonical `1.5.0` tarball is published and
+its registry size/checksum match the stored artifact.
+
 ### Weave
 
 Both proofs are first-class portal-weave artifacts (`purpose: ui`, owned by
 `/portal/packages/` via `relatedArtifactIds` + `related.ssotFlowSoft` /
-`related.pmProof`) with `artifactId` / `artifactName` / `conceptId` /
-`colorKey` / hex+token from the partner-ops kernel. Weave payload also exposes
+`related.pmProof`) with `artifactId` / `artifactName` / `conceptId` / `colorKey`
+/ hex+token from the partner-ops kernel. Weave payload also exposes
 `publishPlane` (board · colorKernel · artifacts · scripts · related). Soft-pass
 parity is checked by `bun run verify:weave` (`publish-plane soft-pass` row):
 full hard parity when `publishPlane` is on the edge; soft-skip while Pages lags

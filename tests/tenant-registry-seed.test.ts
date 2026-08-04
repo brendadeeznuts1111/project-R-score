@@ -39,6 +39,7 @@ describe('tenant registry seed', () => {
         artifact: '/registry/tennis/agent-auth.json',
         envKey: 'FACTORY_WAGER_TOKEN',
       });
+      expect(tennis.packages['@tennis-hq/ssot']).toBeTruthy();
 
       const skip = await seedTenantRegistries({ rootDir: SCRATCH, force: false, minPackages: 4 });
       expect(skip.seeded).toBe(false);
