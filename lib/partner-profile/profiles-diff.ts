@@ -38,20 +38,24 @@ export async function loadProfileTomlEntries(
   hashFn: (text: string) => string = profileFileHash
 ): Promise<ProfileTomlEntry[]> {
   const out: ProfileTomlEntry[] = [];
-  const glob = new Bun.Glob('*.toml');
-  for await (const rel of glob.scan(profilesDir)) {
-    const expected = rel.replace(/\.toml$/i, '').toUpperCase();
-    try {
-      const text = await Bun.file(`${profilesDir}/${rel}`).text();
-      const profile = parsePartnerProfileToml(text, expected);
-      out.push({
-        code: profile.identity.code,
-        filePath: `${profilesDir}/${rel}`,
-        hash: hashFn(text),
-      });
-    } catch {
-      /* skip malformed / non-profile TOML */
+  try {
+    const glob = new Bun.Glob('*.toml');
+    for await (const rel of glob.scan(profilesDir)) {
+      const expected = rel.replace(/\.toml$/i, '').toUpperCase();
+      try {
+        const text = await Bun.file(`${profilesDir}/${rel}`).text();
+        const profile = parsePartnerProfileToml(text, expected);
+        out.push({
+          code: profile.identity.code,
+          filePath: `${profilesDir}/${rel}`,
+          hash: hashFn(text),
+        });
+      } catch {
+        /* skip malformed / non-profile TOML */
+      }
     }
+  } catch {
+    /* profiles dir missing — empty */
   }
   return out.sort((a, b) => a.code.localeCompare(b.code));
 }
