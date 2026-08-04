@@ -1,7 +1,7 @@
 {
   "schemaVersion": 13,
   "kind": "packages-graph-map",
-  "generatedAt": "2026-07-29T00:20:09.390Z",
+  "generatedAt": "2026-08-04T23:24:20.807Z",
   "bunVersion": "1.4.0",
   "score": 100,
   "grade": "healthy",
@@ -453,7 +453,7 @@
         "package": "p2p",
         "kind": "library",
         "srcFiles": 4,
-        "bytes": 24728,
+        "bytes": 24729,
         "hasTests": false,
         "indexIsEmptyExport": false,
         "recommendation": "keep-review",
@@ -540,7 +540,7 @@
       "scanned": 6,
       "inGraph": 6,
       "orphans": 0,
-      "bytes": 85593,
+      "bytes": 85700,
       "score": 100,
       "grade": "healthy",
       "role": "root-tooling"
@@ -550,7 +550,7 @@
       "scanned": 2,
       "inGraph": 2,
       "orphans": 0,
-      "bytes": 5322,
+      "bytes": 5400,
       "score": 100,
       "grade": "healthy",
       "role": "consumed"
@@ -560,7 +560,7 @@
       "scanned": 4,
       "inGraph": 4,
       "orphans": 0,
-      "bytes": 24728,
+      "bytes": 24729,
       "score": 85,
       "grade": "needs-improvement",
       "role": "dormant"
@@ -580,7 +580,7 @@
       "scanned": 4,
       "inGraph": 4,
       "orphans": 0,
-      "bytes": 35726,
+      "bytes": 35980,
       "score": 100,
       "grade": "healthy",
       "role": "consumed"
@@ -588,7 +588,7 @@
   ],
   "totals": {
     "inputCount": 29,
-    "inputBytes": 300854,
+    "inputBytes": 305209,
     "orphanCount": 0,
     "leafCount": 9,
     "orphanPercent": 0,
@@ -603,28 +603,35 @@
   "surfaces": {
     "schemaVersion": 3,
     "kind": "monorepo-surfaces",
-    "generatedAt": "2026-07-29T00:20:09.336Z",
+    "generatedAt": "2026-08-04T23:24:20.764Z",
     "summary": {
-      "workspaceMembers": 8,
+      "workspaceMembers": 9,
       "packagesPlane": 6,
-      "otherWorkspaces": 2,
-      "portalPages": 24,
-      "portalModules": 37,
-      "chromeComponents": 13,
+      "otherWorkspaces": 3,
+      "portalPages": 32,
+      "portalModules": 55,
+      "chromeComponents": 14,
       "brandAssets": 20,
-      "registryTopLevelJson": 62,
-      "registryStoragePackages": 9,
-      "libTopLevelDirs": 42,
+      "registryTopLevelJson": 81,
+      "registryStoragePackages": 0,
+      "libTopLevelDirs": 47,
       "stoNestedPackages": 3,
-      "portalRegistryRefs": 64,
+      "portalRegistryRefs": 89,
       "registryOrphanFromPortal": 0,
       "registryFamilyCount": 13,
-      "themeDarkTokens": 12,
-      "pageRegistryEdges": 198,
+      "themeDarkTokens": 14,
+      "pageRegistryEdges": 341,
       "libImportHubs": 1,
       "orphanWireCandidates": 0
     },
     "workspaces": [
+      {
+        "path": ".agents/skills/ast-grep",
+        "name": "@projects/ast-grep-skill",
+        "version": "0.1.0",
+        "plane": "other",
+        "inPackagesGraph": false
+      },
       {
         "path": "lib/shared",
         "name": "@factorywager/shared",
@@ -705,6 +712,29 @@
           ]
         },
         {
+          "href": "/portal/account/",
+          "slug": "account",
+          "hasIndex": true,
+          "hasMd": false,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/components/limit-changes-card.js",
+            "/portal/components/glossary-ux.js",
+            "/portal/components/footer.js"
+          ]
+        },
+        {
+          "href": "/portal/bookmakers/",
+          "slug": "bookmakers",
+          "hasIndex": true,
+          "hasMd": false,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js"
+          ]
+        },
+        {
           "href": "/portal/brands/",
           "slug": "brands",
           "hasIndex": true,
@@ -759,6 +789,32 @@
           ]
         },
         {
+          "href": "/portal/concepts/",
+          "slug": "concepts",
+          "hasIndex": true,
+          "hasMd": false,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js",
+            "/portal/components/footer.js"
+          ]
+        },
+        {
+          "href": "/portal/console-format/",
+          "slug": "console-format",
+          "hasIndex": true,
+          "hasMd": false,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js",
+            "/portal/components/footer.js"
+          ]
+        },
+        {
           "href": "/portal/dashboard/",
           "slug": "dashboard",
           "hasIndex": true,
@@ -780,7 +836,8 @@
           "scripts": [
             "/portal/data.js",
             "/portal/doctor/doctor-board.js",
-            "/portal/topbar.js"
+            "/portal/topbar.js",
+            "/portal/components/footer.js"
           ]
         },
         {
@@ -838,11 +895,26 @@
           ]
         },
         {
+          "href": "/portal/glossary/",
+          "slug": "glossary",
+          "hasIndex": true,
+          "hasMd": true,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/glossary/glossary-board.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js",
+            "/portal/components/footer.js"
+          ]
+        },
+        {
           "href": "/portal/health/",
           "slug": "health",
           "hasIndex": true,
           "hasMd": true,
           "scripts": [
+            "/../file-mode.js",
             "/portal/data.js",
             "/portal/topbar.js",
             "/portal/health-page.js",
@@ -866,6 +938,30 @@
           ]
         },
         {
+          "href": "/portal/install-hygiene/",
+          "slug": "install-hygiene",
+          "hasIndex": true,
+          "hasMd": true,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/install-hygiene/install-hygiene-board.js",
+            "/portal/topbar.js",
+            "/portal/components/footer.js"
+          ]
+        },
+        {
+          "href": "/portal/limits-lab/",
+          "slug": "limits-lab",
+          "hasIndex": true,
+          "hasMd": false,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/limits-lab/limits-lab.js",
+            "/portal/components/footer.js"
+          ]
+        },
+        {
           "href": "/portal/limits/",
           "slug": "limits",
           "hasIndex": true,
@@ -873,6 +969,7 @@
           "scripts": [
             "/portal/data.js",
             "/portal/topbar.js",
+            "/portal/limits/limit-profiles.js?v=5",
             "/portal/components/footer.js"
           ]
         },
@@ -912,7 +1009,22 @@
             "/portal/data.js",
             "/portal/topbar.js",
             "/portal/components/notification.js",
-            "/portal/components/limit-changes-card.js"
+            "/portal/components/limit-changes-card.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/footer.js"
+          ]
+        },
+        {
+          "href": "/portal/partners/",
+          "slug": "partners",
+          "hasIndex": true,
+          "hasMd": true,
+          "scripts": [
+            "/portal/data.js",
+            "/portal/topbar.js",
+            "/portal/components/sidebar.js",
+            "/portal/components/notification.js",
+            "/portal/components/footer.js"
           ]
         },
         {
@@ -961,11 +1073,15 @@
           "hasIndex": true,
           "hasMd": true,
           "scripts": [
-            "/icons/tennis/mark.svg",
+            "/avatars/demo-player.webp",
             "/portal/data.js",
             "/portal/topbar.js",
             "/portal/components/sidebar.js",
-            "/portal/components/notification.js"
+            "/portal/components/footer.js",
+            "/avatars/${s}.webp",
+            "/avatar/${s}",
+            "/${src}",
+            "/avatar/${id}"
           ]
         },
         {
@@ -1017,6 +1133,16 @@
           "id": "_page-template"
         },
         {
+          "path": "//portal/account/account-dossier.js",
+          "kind": "page-script",
+          "id": "account-dossier"
+        },
+        {
+          "path": "//portal/account/glossary-map.js",
+          "kind": "page-script",
+          "id": "glossary-map"
+        },
+        {
           "path": "//portal/app.js",
           "kind": "module",
           "id": "app"
@@ -1025,6 +1151,11 @@
           "path": "//portal/brands/brands-board.js",
           "kind": "page-script",
           "id": "brands-board"
+        },
+        {
+          "path": "//portal/bun-brand-alignment.js",
+          "kind": "module",
+          "id": "bun-brand-alignment"
         },
         {
           "path": "//portal/card.js",
@@ -1057,6 +1188,11 @@
           "id": "footer"
         },
         {
+          "path": "//portal/components/glossary-ux.js",
+          "kind": "component",
+          "id": "glossary-ux"
+        },
+        {
           "path": "//portal/components/limit-changes-card.js",
           "kind": "component",
           "id": "limit-changes-card"
@@ -1072,9 +1208,29 @@
           "id": "package-card"
         },
         {
+          "path": "//portal/components/partner-ops-event-concepts.js",
+          "kind": "component",
+          "id": "partner-ops-event-concepts"
+        },
+        {
           "path": "//portal/components/sidebar.js",
           "kind": "component",
           "id": "sidebar"
+        },
+        {
+          "path": "//portal/components/tennis-desk.js",
+          "kind": "component",
+          "id": "tennis-desk"
+        },
+        {
+          "path": "//portal/components/venue-badge.js",
+          "kind": "component",
+          "id": "venue-badge"
+        },
+        {
+          "path": "//portal/concepts/graph-board.js",
+          "kind": "page-script",
+          "id": "graph-board"
         },
         {
           "path": "//portal/copy-cli.js",
@@ -1112,6 +1268,16 @@
           "id": "fetch-json"
         },
         {
+          "path": "//portal/file-mode.js",
+          "kind": "module",
+          "id": "file-mode"
+        },
+        {
+          "path": "//portal/glossary/glossary-board.js",
+          "kind": "page-script",
+          "id": "glossary-board"
+        },
+        {
           "path": "//portal/health-page.js",
           "kind": "module",
           "id": "health-page"
@@ -1120,6 +1286,21 @@
           "path": "//portal/health.js",
           "kind": "module",
           "id": "health"
+        },
+        {
+          "path": "//portal/install-hygiene/install-hygiene-board.js",
+          "kind": "page-script",
+          "id": "install-hygiene-board"
+        },
+        {
+          "path": "//portal/limits-lab/limits-lab.js",
+          "kind": "page-script",
+          "id": "limits-lab"
+        },
+        {
+          "path": "//portal/limits/limit-profiles.js",
+          "kind": "page-script",
+          "id": "limit-profiles"
         },
         {
           "path": "//portal/nav-badges.js",
@@ -1142,6 +1323,26 @@
           "id": "packages-board"
         },
         {
+          "path": "//portal/partner-history/glossary-map.js",
+          "kind": "page-script",
+          "id": "glossary-map"
+        },
+        {
+          "path": "//portal/partner-history/sport-league-map.js",
+          "kind": "page-script",
+          "id": "sport-league-map"
+        },
+        {
+          "path": "//portal/partner-history/sportsbook-catalog.js",
+          "kind": "page-script",
+          "id": "sportsbook-catalog"
+        },
+        {
+          "path": "//portal/partners/partner-routes.js",
+          "kind": "page-script",
+          "id": "partner-routes"
+        },
+        {
           "path": "//portal/proof-index.js",
           "kind": "module",
           "id": "proof-index"
@@ -1150,6 +1351,11 @@
           "path": "//portal/registry-cache.js",
           "kind": "module",
           "id": "registry-cache"
+        },
+        {
+          "path": "//portal/scripts/glossary-router.js",
+          "kind": "page-script",
+          "id": "glossary-router"
         },
         {
           "path": "//portal/search.js",
@@ -1244,7 +1450,14 @@
           "id": "footer",
           "path": "/portal/components/footer.js",
           "kind": "module",
-          "role": "shared footer from portal-chrome registry",
+          "role": "shared footer from portal-chrome registry · bake-time Bun.version",
+          "onDisk": true
+        },
+        {
+          "id": "glossary-ux",
+          "path": "/portal/components/glossary-ux.js",
+          "kind": "module",
+          "role": "data-glossary-concept tooltips · #glossary: deep links · domain-glossary.json",
           "onDisk": true
         },
         {
@@ -1294,8 +1507,8 @@
         "jsonc": true,
         "tokensCss": true,
         "styleCss": true,
-        "darkTokenCount": 12,
-        "lightTokenCount": 12,
+        "darkTokenCount": 14,
+        "lightTokenCount": 14,
         "fontKeys": [
           "brand",
           "mono",
@@ -1304,19 +1517,26 @@
         "layoutKeys": [
           "fontHero",
           "fontMetric",
+          "gap",
+          "headerHeight",
           "max",
+          "maxWidth",
           "padBlock",
           "padInline",
-          "radius"
+          "radii",
+          "radius",
+          "shadows",
+          "sidebarWidth",
+          "spacing"
         ],
-        "version": "1.0.0",
+        "version": "1.3.0",
         "colorSchemeDefault": "dark"
       },
       "modulesByKind": {
         "template": 1,
-        "module": 20,
-        "page-script": 8,
-        "component": 5,
+        "page-script": 20,
+        "module": 22,
+        "component": 9,
         "style": 1,
         "theme": 2
       }
@@ -1433,10 +1653,31 @@
     "registry": {
       "topLevel": [
         {
+          "file": "bookmakers.json",
+          "kind": null,
+          "schemaVersion": 1,
+          "bytes": 7347,
+          "family": "other"
+        },
+        {
           "file": "brand-keymap.json",
           "kind": "brand-keymap",
           "schemaVersion": 1,
-          "bytes": 102804,
+          "bytes": 122042,
+          "family": "other"
+        },
+        {
+          "file": "bun-brand-map.json",
+          "kind": "bun-brand-map",
+          "schemaVersion": 1,
+          "bytes": 197137,
+          "family": "other"
+        },
+        {
+          "file": "bun-cli-reference.json",
+          "kind": "bun-cli-reference",
+          "schemaVersion": 1,
+          "bytes": 25330,
           "family": "other"
         },
         {
@@ -1450,7 +1691,7 @@
           "file": "bun-runtime-nits-proof.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 15065,
+          "bytes": 16813,
           "family": "proof"
         },
         {
@@ -1468,17 +1709,24 @@
           "family": "other"
         },
         {
+          "file": "caesars-scrape-endpoints.json",
+          "kind": "caesars-scrape-endpoints",
+          "schemaVersion": 1,
+          "bytes": 9677,
+          "family": "other"
+        },
+        {
           "file": "capability-map-full.json",
           "kind": "capability-map-full",
           "schemaVersion": 2,
-          "bytes": 50007,
+          "bytes": 63516,
           "family": "other"
         },
         {
           "file": "capability-map-subset.json",
           "kind": "capability-map-subset",
           "schemaVersion": 4,
-          "bytes": 47562,
+          "bytes": 61016,
           "family": "other"
         },
         {
@@ -1492,14 +1740,14 @@
           "file": "channel-meta-bake.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 149,
+          "bytes": 821,
           "family": "catalog"
         },
         {
           "file": "cloudflare-pages-preflight.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 1069,
+          "bytes": 1033,
           "family": "ops"
         },
         {
@@ -1529,6 +1777,27 @@
           "schemaVersion": null,
           "bytes": 2156,
           "family": "compliance"
+        },
+        {
+          "file": "concepts-graph.json",
+          "kind": "concept-graph",
+          "schemaVersion": 5,
+          "bytes": 205264,
+          "family": "other"
+        },
+        {
+          "file": "concepts-state.json",
+          "kind": "concepts-state",
+          "schemaVersion": 1,
+          "bytes": 43126,
+          "family": "other"
+        },
+        {
+          "file": "console-format-state.json",
+          "kind": "console-format-state",
+          "schemaVersion": 1,
+          "bytes": 1452,
+          "family": "other"
         },
         {
           "file": "content-type-matrix.json",
@@ -1562,7 +1831,7 @@
           "file": "doctor-state.json",
           "kind": "portal-doctor-state",
           "schemaVersion": 1,
-          "bytes": 5542,
+          "bytes": 6402,
           "family": "other"
         },
         {
@@ -1580,10 +1849,17 @@
           "family": "compliance"
         },
         {
+          "file": "domain-glossary.json",
+          "kind": "domain-glossary",
+          "schemaVersion": 3,
+          "bytes": 440616,
+          "family": "other"
+        },
+        {
           "file": "env-inventory.json",
           "kind": "env-inventory",
           "schemaVersion": 4,
-          "bytes": 57156,
+          "bytes": 58421,
           "family": "env"
         },
         {
@@ -1611,7 +1887,7 @@
           "file": "harness-skills-catalog.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 11175,
+          "bytes": 18469,
           "family": "catalog"
         },
         {
@@ -1632,7 +1908,7 @@
           "file": "install-hygiene-report.json",
           "kind": "install-hygiene",
           "schemaVersion": 1,
-          "bytes": 2260,
+          "bytes": 2458,
           "family": "other"
         },
         {
@@ -1643,24 +1919,31 @@
           "family": "catalog"
         },
         {
+          "file": "limit-forecast-lab.json",
+          "kind": "limit-forecast-lab",
+          "schemaVersion": 1,
+          "bytes": 4721,
+          "family": "other"
+        },
+        {
           "file": "limit-raises.json",
           "kind": null,
-          "schemaVersion": 1,
-          "bytes": 59659,
+          "schemaVersion": 3,
+          "bytes": 134123,
           "family": "compliance"
         },
         {
           "file": "monitoring.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 12173,
+          "bytes": 13005,
           "family": "health"
         },
         {
           "file": "monorepo-health.json",
           "kind": "monorepo-health",
           "schemaVersion": 1,
-          "bytes": 1131,
+          "bytes": 1129,
           "family": "health"
         },
         {
@@ -1681,7 +1964,7 @@
           "file": "ops-summary.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 67399,
+          "bytes": 63844,
           "family": "ops"
         },
         {
@@ -1695,21 +1978,42 @@
           "file": "packages-graph-map.json",
           "kind": "packages-graph-map",
           "schemaVersion": 13,
-          "bytes": 115396,
+          "bytes": 115594,
           "family": "packages"
+        },
+        {
+          "file": "partner-profiles.json",
+          "kind": null,
+          "schemaVersion": 1,
+          "bytes": 165,
+          "family": "other"
+        },
+        {
+          "file": "partners-ops.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 37917,
+          "family": "ops"
+        },
+        {
+          "file": "pm-proof.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 2272,
+          "family": "proof"
         },
         {
           "file": "portal-chrome.json",
           "kind": "portal-chrome",
           "schemaVersion": 1,
-          "bytes": 9513,
+          "bytes": 10979,
           "family": "portal"
         },
         {
           "file": "portal-weave.json",
           "kind": "portal-weave",
           "schemaVersion": 2,
-          "bytes": 20304,
+          "bytes": 31247,
           "family": "portal"
         },
         {
@@ -1744,21 +2048,42 @@
           "file": "registry.json",
           "kind": null,
           "schemaVersion": 1,
-          "bytes": 19740,
+          "bytes": 54889,
           "family": "other"
         },
         {
           "file": "release-features.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 69099,
+          "bytes": 111002,
           "family": "verification"
+        },
+        {
+          "file": "scrape-wire-schema-audit.json",
+          "kind": "scrape-wire-schema-audit",
+          "schemaVersion": 1,
+          "bytes": 1546,
+          "family": "other"
+        },
+        {
+          "file": "scrape-wire-taxonomy.json",
+          "kind": "scrape-wire-taxonomy",
+          "schemaVersion": 5,
+          "bytes": 40708,
+          "family": "other"
+        },
+        {
+          "file": "scraped-limits-observed.json",
+          "kind": "scraped-limits-observed",
+          "schemaVersion": 1,
+          "bytes": 140339,
+          "family": "other"
         },
         {
           "file": "seat-capital-desk.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 7467,
+          "bytes": 14635,
           "family": "ops"
         },
         {
@@ -1769,24 +2094,52 @@
           "family": "catalog"
         },
         {
+          "file": "soft-accounting-export.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 5861,
+          "family": "other"
+        },
+        {
+          "file": "sports-taxonomy.json",
+          "kind": "sports-competition-taxonomy",
+          "schemaVersion": 1,
+          "bytes": 64546,
+          "family": "other"
+        },
+        {
+          "file": "sportsbook-opening-baseline.json",
+          "kind": "sportsbook-opening-baseline",
+          "schemaVersion": 3,
+          "bytes": 902462,
+          "family": "other"
+        },
+        {
+          "file": "ssot-flow-soft.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 2749,
+          "family": "other"
+        },
+        {
           "file": "static.json",
           "kind": null,
           "schemaVersion": 1,
-          "bytes": 115421,
+          "bytes": 120263,
           "family": "catalog"
         },
         {
           "file": "surfaces-state.json",
           "kind": "surfaces-state",
           "schemaVersion": 2,
-          "bytes": 8761,
+          "bytes": 10707,
           "family": "other"
         },
         {
           "file": "telegram-handshake-catalog.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 17963,
+          "bytes": 20495,
           "family": "telegram"
         },
         {
@@ -1800,28 +2153,28 @@
           "file": "toc-ops-bake-proof.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 1141,
+          "bytes": 1142,
           "family": "ops"
         },
         {
           "file": "toc-ops.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 383955,
+          "bytes": 378009,
           "family": "ops"
         },
         {
           "file": "vault-health.json",
           "kind": "vault-health",
           "schemaVersion": null,
-          "bytes": 2835,
+          "bytes": 2547,
           "family": "vault"
         },
         {
           "file": "vault-map.json",
           "kind": "vault-map-bundle",
           "schemaVersion": 1,
-          "bytes": 7350,
+          "bytes": 7935,
           "family": "vault"
         },
         {
@@ -1856,7 +2209,7 @@
           "file": "verification-stable-1.4.0.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 108118,
+          "bytes": 111002,
           "family": "verification"
         },
         {
@@ -1867,17 +2220,7 @@
           "family": "health"
         }
       ],
-      "storagePackageNames": [
-        "@factory/health-check",
-        "@factorywager/bun-test",
-        "@factorywager/final-test",
-        "@factorywager/registry-client",
-        "__formdata-test",
-        "formdata-test",
-        "sdk-test-pkg",
-        "test-npm-pkg",
-        "test-plugin"
-      ],
+      "storagePackageNames": [],
       "scopedLatest": [
         "@factorywager/bun-utils-test/latest.json",
         "@factorywager/registry-client/latest.json",
@@ -1886,12 +2229,12 @@
       ],
       "byFamily": [
         {
-          "family": "proof",
-          "count": 12
+          "family": "other",
+          "count": 26
         },
         {
-          "family": "other",
-          "count": 9
+          "family": "proof",
+          "count": 13
         },
         {
           "family": "catalog",
@@ -1902,11 +2245,11 @@
           "count": 8
         },
         {
-          "family": "compliance",
-          "count": 6
+          "family": "ops",
+          "count": 7
         },
         {
-          "family": "ops",
+          "family": "compliance",
           "count": 6
         },
         {
@@ -1954,10 +2297,34 @@
           "exists": true
         },
         {
+          "path": "/registry/bookmakers.json",
+          "from": [
+            "public/portal/bookmakers/index.html"
+          ],
+          "exists": true
+        },
+        {
           "path": "/registry/brand-keymap.json",
           "from": [
             "public/portal/brands/brands-board.js",
             "public/portal/brands/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/bun-brand-map.json",
+          "from": [
+            "public/portal/brands/brands-board.js",
+            "public/portal/brands/index.html",
+            "public/portal/operations-dashboard.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/bun-cli-reference.json",
+          "from": [
+            "public/portal/tools/index.html",
+            "public/portal/tools/tools-hub.js"
           ],
           "exists": true
         },
@@ -1990,6 +2357,14 @@
           "path": "/registry/bunfig-state.json",
           "from": [
             "public/portal/bunfig/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/caesars-scrape-endpoints.json",
+          "from": [
+            "public/portal/catalog/index.html",
+            "public/portal/limits/index.html"
           ],
           "exists": true
         },
@@ -2048,6 +2423,7 @@
             "public/portal/compliance/compliance-dashboard.js",
             "public/portal/compliance/index.html",
             "public/portal/dashboard-app.js",
+            "public/portal/health-page.js",
             "public/portal/operations-dashboard.js",
             "public/portal/toc/toc-dashboard.js"
           ],
@@ -2064,6 +2440,79 @@
           "path": "/registry/compliance-shadow.json",
           "from": [
             "public/portal/compliance/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/concepts-graph.json",
+          "from": [
+            "public/portal/_page-template.html",
+            "public/portal/account/index.html",
+            "public/portal/bunfig/index.html",
+            "public/portal/catalog/index.html",
+            "public/portal/compliance/index.html",
+            "public/portal/concepts/graph-board.js",
+            "public/portal/concepts/graph/index.html",
+            "public/portal/concepts/index.html",
+            "public/portal/console-format/index.html",
+            "public/portal/dashboard/index.html",
+            "public/portal/doctor/index.html",
+            "public/portal/dod/index.html",
+            "public/portal/env/index.html",
+            "public/portal/failures/index.html",
+            "public/portal/glossary/index.html",
+            "public/portal/health/index.html",
+            "public/portal/index.html",
+            "public/portal/install-hygiene/index.html",
+            "public/portal/limits/index.html",
+            "public/portal/ops/index.html",
+            "public/portal/packages/index.html",
+            "public/portal/partner-history/index.html",
+            "public/portal/partners/index.html",
+            "public/portal/skills/index.html",
+            "public/portal/tennis/index.html",
+            "public/portal/toc/index.html",
+            "public/portal/tools/index.html",
+            "public/portal/vault/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/concepts-state.json",
+          "from": [
+            "public/portal/_page-template.html",
+            "public/portal/account/index.html",
+            "public/portal/bunfig/index.html",
+            "public/portal/catalog/index.html",
+            "public/portal/compliance/index.html",
+            "public/portal/concepts/index.html",
+            "public/portal/console-format/index.html",
+            "public/portal/dashboard/index.html",
+            "public/portal/doctor/index.html",
+            "public/portal/dod/index.html",
+            "public/portal/env/index.html",
+            "public/portal/failures/index.html",
+            "public/portal/glossary/index.html",
+            "public/portal/health/index.html",
+            "public/portal/index.html",
+            "public/portal/install-hygiene/index.html",
+            "public/portal/limits/index.html",
+            "public/portal/ops/index.html",
+            "public/portal/packages/index.html",
+            "public/portal/partner-history/index.html",
+            "public/portal/partners/index.html",
+            "public/portal/skills/index.html",
+            "public/portal/tennis/index.html",
+            "public/portal/toc/index.html",
+            "public/portal/tools/index.html",
+            "public/portal/vault/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/console-format-state.json",
+          "from": [
+            "public/portal/console-format/index.html"
           ],
           "exists": true
         },
@@ -2102,6 +2551,7 @@
             "public/portal/command-centre-core.js",
             "public/portal/doctor/doctor-board.js",
             "public/portal/doctor/index.html",
+            "public/portal/health-page.js",
             "public/portal/nav-badges.js",
             "public/portal/tools/tools-hub.js"
           ],
@@ -2122,32 +2572,28 @@
           "exists": true
         },
         {
+          "path": "/registry/domain-glossary.json",
+          "from": [
+            "public/portal/bookmakers/index.html",
+            "public/portal/components/glossary-ux.js",
+            "public/portal/glossary/index.html"
+          ],
+          "exists": true
+        },
+        {
           "path": "/registry/env-inventory.json",
           "from": [
-            "public/portal/env/index.html"
+            "public/portal/env/index.html",
+            "public/portal/tools/tools-hub.js"
           ],
           "exists": true
         },
         {
           "path": "/registry/failures.json",
           "from": [
-            "public/portal/_page-template.html",
-            "public/portal/catalog/index.html",
             "public/portal/command-centre-core.js",
             "public/portal/command-centre.js",
-            "public/portal/compliance/index.html",
-            "public/portal/dashboard/index.html",
-            "public/portal/dod/index.html",
-            "public/portal/env/index.html",
-            "public/portal/failures/index.html",
-            "public/portal/health/index.html",
-            "public/portal/index.html",
-            "public/portal/nav-badges.js",
-            "public/portal/ops/index.html",
-            "public/portal/packages/index.html",
-            "public/portal/skills/index.html",
-            "public/portal/toc/index.html",
-            "public/portal/tools/index.html"
+            "public/portal/nav-badges.js"
           ],
           "exists": true
         },
@@ -2191,7 +2637,9 @@
         {
           "path": "/registry/install-hygiene-report.json",
           "from": [
-            "public/portal/packages/index.html",
+            "public/portal/install-hygiene/index.html",
+            "public/portal/install-hygiene/install-hygiene-board.js",
+            "public/portal/nav-badges.js",
             "public/portal/packages/packages-board.js"
           ],
           "exists": true
@@ -2206,13 +2654,25 @@
           "exists": true
         },
         {
+          "path": "/registry/limit-forecast-lab.json",
+          "from": [
+            "public/portal/limits-lab/index.html",
+            "public/portal/limits-lab/limits-lab.js"
+          ],
+          "exists": true
+        },
+        {
           "path": "/registry/limit-raises.json",
           "from": [
+            "public/portal/account/account-dossier.js",
+            "public/portal/account/index.html",
             "public/portal/components/limit-changes-card.js",
             "public/portal/dashboard-app.js",
             "public/portal/health-page.js",
             "public/portal/limits/index.html",
+            "public/portal/limits/limit-profiles.js",
             "public/portal/operations-dashboard.js",
+            "public/portal/partners/index.html",
             "public/portal/toc/toc-dashboard.js"
           ],
           "exists": true
@@ -2230,28 +2690,40 @@
           "path": "/registry/monorepo-health.json",
           "from": [
             "public/portal/_page-template.html",
+            "public/portal/account/index.html",
             "public/portal/bunfig/index.html",
             "public/portal/catalog/index.html",
             "public/portal/command-centre-core.js",
             "public/portal/command-centre.js",
             "public/portal/compliance/index.html",
             "public/portal/components/footer.js",
+            "public/portal/concepts/graph/index.html",
+            "public/portal/concepts/index.html",
+            "public/portal/console-format/index.html",
             "public/portal/dashboard/index.html",
+            "public/portal/doctor/index.html",
             "public/portal/dod/index.html",
             "public/portal/env/index.html",
             "public/portal/failures/index.html",
+            "public/portal/glossary/index.html",
+            "public/portal/health-page.js",
             "public/portal/health/index.html",
             "public/portal/index.html",
+            "public/portal/install-hygiene/index.html",
             "public/portal/limits/index.html",
             "public/portal/nav-badges.js",
             "public/portal/operations-dashboard.js",
             "public/portal/ops/index.html",
             "public/portal/packages/index.html",
             "public/portal/packages/packages-board.js",
+            "public/portal/partner-history/index.html",
+            "public/portal/partners/index.html",
             "public/portal/skills/index.html",
+            "public/portal/tennis/index.html",
             "public/portal/toc/index.html",
             "public/portal/toc/toc-dashboard.js",
-            "public/portal/tools/index.html"
+            "public/portal/tools/index.html",
+            "public/portal/vault/index.html"
           ],
           "exists": true
         },
@@ -2265,6 +2737,7 @@
         {
           "path": "/registry/networking-proof.json",
           "from": [
+            "public/portal/health-page.js",
             "public/portal/operations-dashboard.js"
           ],
           "exists": true
@@ -2307,26 +2780,61 @@
           "exists": true
         },
         {
+          "path": "/registry/partner-profiles.json",
+          "from": [
+            "public/portal/partners/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/partners-ops.json",
+          "from": [
+            "public/portal/account/account-dossier.js",
+            "public/portal/account/index.html",
+            "public/portal/partner-history/index.html",
+            "public/portal/partners/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/pm-proof.json",
+          "from": [
+            "public/portal/packages/packages-board.js"
+          ],
+          "exists": true
+        },
+        {
           "path": "/registry/portal-chrome.json",
           "from": [
             "public/portal/_page-template.html",
+            "public/portal/account/index.html",
             "public/portal/bunfig/index.html",
             "public/portal/catalog/index.html",
             "public/portal/compliance/index.html",
             "public/portal/components/footer.js",
+            "public/portal/concepts/graph/index.html",
+            "public/portal/concepts/index.html",
+            "public/portal/console-format/index.html",
             "public/portal/dashboard/index.html",
+            "public/portal/doctor/index.html",
             "public/portal/dod/index.html",
             "public/portal/env/index.html",
             "public/portal/failures/index.html",
+            "public/portal/glossary/index.html",
             "public/portal/health/index.html",
             "public/portal/index.html",
+            "public/portal/install-hygiene/index.html",
             "public/portal/limits/index.html",
             "public/portal/operations-dashboard.js",
             "public/portal/ops/index.html",
             "public/portal/packages/index.html",
+            "public/portal/partner-history/index.html",
+            "public/portal/partners/index.html",
             "public/portal/skills/index.html",
+            "public/portal/tennis/index.html",
             "public/portal/toc/index.html",
-            "public/portal/tools/index.html"
+            "public/portal/tools/index.html",
+            "public/portal/vault/index.html"
           ],
           "exists": true
         },
@@ -2334,23 +2842,37 @@
           "path": "/registry/portal-weave.json",
           "from": [
             "public/portal/_page-template.html",
+            "public/portal/account/index.html",
             "public/portal/bunfig/index.html",
             "public/portal/catalog/index.html",
             "public/portal/compliance/index.html",
             "public/portal/components/footer.js",
+            "public/portal/concepts/graph/index.html",
+            "public/portal/concepts/index.html",
+            "public/portal/console-format/index.html",
             "public/portal/dashboard/index.html",
+            "public/portal/doctor/index.html",
             "public/portal/dod/index.html",
             "public/portal/env/index.html",
             "public/portal/failures/index.html",
+            "public/portal/glossary/index.html",
+            "public/portal/health-page.js",
             "public/portal/health/index.html",
             "public/portal/index.html",
+            "public/portal/install-hygiene/index.html",
             "public/portal/limits/index.html",
             "public/portal/operations-dashboard.js",
             "public/portal/ops/index.html",
             "public/portal/packages/index.html",
+            "public/portal/packages/packages-board.js",
+            "public/portal/partner-history/index.html",
+            "public/portal/partners/index.html",
             "public/portal/skills/index.html",
+            "public/portal/tennis/index.html",
             "public/portal/toc/index.html",
-            "public/portal/tools/index.html"
+            "public/portal/tools/index.html",
+            "public/portal/tools/tools-hub.js",
+            "public/portal/vault/index.html"
           ],
           "exists": true
         },
@@ -2366,6 +2888,7 @@
           "from": [
             "public/portal/dashboard-app.js",
             "public/portal/dashboard/index.html",
+            "public/portal/health-page.js",
             "public/portal/operations-dashboard.js"
           ],
           "exists": true
@@ -2390,6 +2913,7 @@
             "public/portal/app.js",
             "public/portal/components/package-card.js",
             "public/portal/components/sidebar.js",
+            "public/portal/health-page.js",
             "public/portal/index.html",
             "public/portal/registry-cache.js"
           ],
@@ -2400,8 +2924,32 @@
           "from": [
             "public/portal/dashboard-app.js",
             "public/portal/dashboard/index.html",
+            "public/portal/health-page.js",
             "public/portal/operations-dashboard.js",
             "public/portal/verification-card.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/scrape-wire-schema-audit.json",
+          "from": [
+            "public/portal/catalog/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/scrape-wire-taxonomy.json",
+          "from": [
+            "public/portal/catalog/index.html",
+            "public/portal/partners/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/scraped-limits-observed.json",
+          "from": [
+            "public/portal/catalog/index.html",
+            "public/portal/limits/index.html"
           ],
           "exists": true
         },
@@ -2409,7 +2957,8 @@
           "path": "/registry/seat-capital-desk.json",
           "from": [
             "public/portal/dashboard-app.js",
-            "public/portal/operations-dashboard.js"
+            "public/portal/operations-dashboard.js",
+            "public/portal/partners/index.html"
           ],
           "exists": true
         },
@@ -2421,8 +2970,41 @@
           "exists": true
         },
         {
+          "path": "/registry/soft-accounting-export.json",
+          "from": [
+            "public/portal/account/account-dossier.js",
+            "public/portal/account/index.html",
+            "public/portal/partners/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/sports-taxonomy.json",
+          "from": [
+            "public/portal/catalog/index.html",
+            "public/portal/limits-lab/limits-lab.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/sportsbook-opening-baseline.json",
+          "from": [
+            "public/portal/limits/index.html",
+            "public/portal/partner-history/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/ssot-flow-soft.json",
+          "from": [
+            "public/portal/packages/packages-board.js"
+          ],
+          "exists": true
+        },
+        {
           "path": "/registry/static.json",
           "from": [
+            "public/portal/health-page.js",
             "public/portal/health/index.html",
             "public/portal/operations-dashboard.js"
           ],
@@ -2431,23 +3013,100 @@
         {
           "path": "/registry/surfaces-state.json",
           "from": [
+            "public/portal/_page-template.html",
+            "public/portal/account/index.html",
+            "public/portal/bunfig/index.html",
+            "public/portal/catalog/index.html",
+            "public/portal/compliance/index.html",
+            "public/portal/concepts/index.html",
+            "public/portal/console-format/index.html",
+            "public/portal/dashboard/index.html",
+            "public/portal/doctor/index.html",
+            "public/portal/dod/index.html",
+            "public/portal/env/index.html",
+            "public/portal/failures/index.html",
+            "public/portal/glossary/index.html",
+            "public/portal/health-page.js",
+            "public/portal/health/index.html",
+            "public/portal/index.html",
+            "public/portal/install-hygiene/index.html",
+            "public/portal/limits/index.html",
+            "public/portal/ops/index.html",
+            "public/portal/packages/index.html",
+            "public/portal/partner-history/index.html",
+            "public/portal/partners/index.html",
+            "public/portal/skills/index.html",
             "public/portal/surfaces/index.html",
-            "public/portal/surfaces/surfaces-board.js"
+            "public/portal/surfaces/surfaces-board.js",
+            "public/portal/tennis/index.html",
+            "public/portal/toc/index.html",
+            "public/portal/tools/index.html",
+            "public/portal/vault/index.html"
           ],
           "exists": true
         },
         {
           "path": "/registry/telegram-handshake-catalog.json",
           "from": [
-            "public/portal/operations-dashboard.js"
+            "public/portal/operations-dashboard.js",
+            "public/portal/partners/index.html"
           ],
           "exists": true
         },
         {
           "path": "/registry/telegram-handshake.json",
           "from": [
+            "public/portal/account/account-dossier.js",
+            "public/portal/account/index.html",
             "public/portal/dashboard-app.js",
-            "public/portal/operations-dashboard.js"
+            "public/portal/operations-dashboard.js",
+            "public/portal/partners/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/tennis/agent-auth.json",
+          "from": [
+            "public/portal/tennis/index.html",
+            "public/portal/tools/tools-hub.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/tennis/avatar-index.json",
+          "from": [
+            "public/portal/tennis/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/tennis/board-metrics.json",
+          "from": [
+            "public/portal/components/tennis-desk.js",
+            "public/portal/tennis/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/tennis/live-matches.json",
+          "from": [
+            "public/portal/tennis/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/tennis/mid-distribution.json",
+          "from": [
+            "public/portal/components/tennis-desk.js",
+            "public/portal/tennis/index.html"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/tennis/registry.json",
+          "from": [
+            "public/portal/components/tennis-desk.js",
+            "public/portal/tennis/index.html"
           ],
           "exists": true
         },
@@ -2463,6 +3122,7 @@
           "from": [
             "public/portal/dashboard-app.js",
             "public/portal/dashboard/index.html",
+            "public/portal/health-page.js",
             "public/portal/health/index.html",
             "public/portal/operations-dashboard.js",
             "public/portal/toc/index.html",
@@ -2585,7 +3245,7 @@
         {
           "name": "docs",
           "hasPackageJson": false,
-          "tsFiles": 35
+          "tsFiles": 38
         },
         {
           "name": "doctor",
@@ -2608,6 +3268,11 @@
           "tsFiles": 15
         },
         {
+          "name": "glossary",
+          "hasPackageJson": false,
+          "tsFiles": 2
+        },
+        {
           "name": "harness",
           "hasPackageJson": false,
           "tsFiles": 20
@@ -2615,12 +3280,17 @@
         {
           "name": "http",
           "hasPackageJson": false,
-          "tsFiles": 36
+          "tsFiles": 41
         },
         {
           "name": "identity",
           "hasPackageJson": false,
           "tsFiles": 17
+        },
+        {
+          "name": "images",
+          "hasPackageJson": false,
+          "tsFiles": 1
         },
         {
           "name": "install",
@@ -2640,7 +3310,7 @@
         {
           "name": "monitoring",
           "hasPackageJson": false,
-          "tsFiles": 12
+          "tsFiles": 13
         },
         {
           "name": "net",
@@ -2650,7 +3320,7 @@
         {
           "name": "operations",
           "hasPackageJson": false,
-          "tsFiles": 49
+          "tsFiles": 91
         },
         {
           "name": "package",
@@ -2663,19 +3333,24 @@
           "tsFiles": 2
         },
         {
+          "name": "partner-profile",
+          "hasPackageJson": false,
+          "tsFiles": 11
+        },
+        {
           "name": "performance",
           "hasPackageJson": false,
-          "tsFiles": 1
+          "tsFiles": 2
         },
         {
           "name": "portal",
           "hasPackageJson": false,
-          "tsFiles": 9
+          "tsFiles": 27
         },
         {
           "name": "prediction",
           "hasPackageJson": false,
-          "tsFiles": 7
+          "tsFiles": 10
         },
         {
           "name": "provisioning",
@@ -2720,7 +3395,12 @@
         {
           "name": "telegram",
           "hasPackageJson": false,
-          "tsFiles": 91
+          "tsFiles": 100
+        },
+        {
+          "name": "tennis",
+          "hasPackageJson": false,
+          "tsFiles": 4
         },
         {
           "name": "theme",
@@ -2730,7 +3410,7 @@
         {
           "name": "toc-ops",
           "hasPackageJson": false,
-          "tsFiles": 13
+          "tsFiles": 14
         },
         {
           "name": "types",
@@ -2743,9 +3423,14 @@
           "tsFiles": 5
         },
         {
+          "name": "venues",
+          "hasPackageJson": false,
+          "tsFiles": 1
+        },
+        {
           "name": "verification",
           "hasPackageJson": false,
-          "tsFiles": 26
+          "tsFiles": 34
         }
       ],
       "workspaceShared": true
@@ -2775,16 +3460,9 @@
         {
           "page": "shared",
           "pageHref": "/portal/",
-          "registryPath": "/registry/failures.json",
-          "family": "ops",
-          "weight": 4
-        },
-        {
-          "page": "shared",
-          "pageHref": "/portal/",
           "registryPath": "/registry/monorepo-health.json",
           "family": "health",
-          "weight": 4
+          "weight": 5
         },
         {
           "page": "shared",
@@ -2794,10 +3472,31 @@
           "weight": 4
         },
         {
+          "page": "account",
+          "pageHref": "/portal/account/",
+          "registryPath": "/registry/limit-raises.json",
+          "family": "compliance",
+          "weight": 3
+        },
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 3
+        },
+        {
           "page": "health",
           "pageHref": "/portal/health/",
           "registryPath": "/registry/ops-summary.json",
           "family": "ops",
+          "weight": 3
+        },
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
           "weight": 3
         },
         {
@@ -2829,6 +3528,20 @@
           "weight": 3
         },
         {
+          "page": "packages",
+          "pageHref": "/portal/packages/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 3
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/failures.json",
+          "family": "ops",
+          "weight": 3
+        },
+        {
           "page": "shared",
           "pageHref": "/portal/",
           "registryPath": "/registry/vault-health.json",
@@ -2843,9 +3556,65 @@
           "weight": 3
         },
         {
+          "page": "tools",
+          "pageHref": "/portal/tools/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 3
+        },
+        {
+          "page": "account",
+          "pageHref": "/portal/account/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "account",
+          "pageHref": "/portal/account/",
+          "registryPath": "/registry/partners-ops.json",
+          "family": "ops",
+          "weight": 2
+        },
+        {
+          "page": "account",
+          "pageHref": "/portal/account/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "account",
+          "pageHref": "/portal/account/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "account",
+          "pageHref": "/portal/account/",
+          "registryPath": "/registry/soft-accounting-export.json",
+          "family": "other",
+          "weight": 2
+        },
+        {
+          "page": "account",
+          "pageHref": "/portal/account/",
+          "registryPath": "/registry/telegram-handshake.json",
+          "family": "telegram",
+          "weight": 2
+        },
+        {
           "page": "brands",
           "pageHref": "/portal/brands/",
           "registryPath": "/registry/brand-keymap.json",
+          "family": "other",
+          "weight": 2
+        },
+        {
+          "page": "brands",
+          "pageHref": "/portal/brands/",
+          "registryPath": "/registry/bun-brand-map.json",
           "family": "other",
           "weight": 2
         },
@@ -2915,6 +3684,55 @@
         {
           "page": "compliance",
           "pageHref": "/portal/compliance/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "concepts",
+          "pageHref": "/portal/concepts/",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 2
+        },
+        {
+          "page": "concepts",
+          "pageHref": "/portal/concepts/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "concepts",
+          "pageHref": "/portal/concepts/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "concepts",
+          "pageHref": "/portal/concepts/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "console-format",
+          "pageHref": "/portal/console-format/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "console-format",
+          "pageHref": "/portal/console-format/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "console-format",
+          "pageHref": "/portal/console-format/",
           "registryPath": "/registry/portal-weave.json",
           "family": "portal",
           "weight": 2
@@ -2997,6 +3815,27 @@
           "weight": 2
         },
         {
+          "page": "doctor",
+          "pageHref": "/portal/doctor/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "doctor",
+          "pageHref": "/portal/doctor/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "doctor",
+          "pageHref": "/portal/doctor/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
           "page": "dod",
           "pageHref": "/portal/dod/",
           "registryPath": "/registry/monorepo-health.json",
@@ -3055,6 +3894,27 @@
         {
           "page": "failures",
           "pageHref": "/portal/failures/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "glossary",
+          "pageHref": "/portal/glossary/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "glossary",
+          "pageHref": "/portal/glossary/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "glossary",
+          "pageHref": "/portal/glossary/",
           "registryPath": "/registry/portal-weave.json",
           "family": "portal",
           "weight": 2
@@ -3069,13 +3929,6 @@
         {
           "page": "health",
           "pageHref": "/portal/health/",
-          "registryPath": "/registry/monorepo-health.json",
-          "family": "health",
-          "weight": 2
-        },
-        {
-          "page": "health",
-          "pageHref": "/portal/health/",
           "registryPath": "/registry/portal-chrome.json",
           "family": "portal",
           "weight": 2
@@ -3083,8 +3936,29 @@
         {
           "page": "health",
           "pageHref": "/portal/health/",
-          "registryPath": "/registry/portal-weave.json",
-          "family": "portal",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 2
+        },
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/static.json",
+          "family": "catalog",
+          "weight": 2
+        },
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
+          "weight": 2
+        },
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/toc-ops.json",
+          "family": "ops",
           "weight": 2
         },
         {
@@ -3116,6 +3990,41 @@
           "weight": 2
         },
         {
+          "page": "install-hygiene",
+          "pageHref": "/portal/install-hygiene/",
+          "registryPath": "/registry/install-hygiene-report.json",
+          "family": "other",
+          "weight": 2
+        },
+        {
+          "page": "install-hygiene",
+          "pageHref": "/portal/install-hygiene/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "install-hygiene",
+          "pageHref": "/portal/install-hygiene/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "install-hygiene",
+          "pageHref": "/portal/install-hygiene/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "limits",
+          "pageHref": "/portal/limits/",
+          "registryPath": "/registry/limit-raises.json",
+          "family": "compliance",
+          "weight": 2
+        },
+        {
           "page": "limits",
           "pageHref": "/portal/limits/",
           "registryPath": "/registry/monorepo-health.json",
@@ -3137,9 +4046,9 @@
           "weight": 2
         },
         {
-          "page": "packages",
-          "pageHref": "/portal/packages/",
-          "registryPath": "/registry/install-hygiene-report.json",
+          "page": "limits-lab",
+          "pageHref": "/portal/limits-lab/",
+          "registryPath": "/registry/limit-forecast-lab.json",
           "family": "other",
           "weight": 2
         },
@@ -3158,10 +4067,10 @@
           "weight": 2
         },
         {
-          "page": "packages",
-          "pageHref": "/portal/packages/",
-          "registryPath": "/registry/portal-weave.json",
-          "family": "portal",
+          "page": "partner-history",
+          "pageHref": "/portal/partner-history/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
           "weight": 2
         },
         {
@@ -3172,9 +4081,51 @@
           "weight": 2
         },
         {
+          "page": "partner-history",
+          "pageHref": "/portal/partner-history/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "partner-history",
+          "pageHref": "/portal/partner-history/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "partners",
+          "pageHref": "/portal/partners/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "partners",
+          "pageHref": "/portal/partners/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "partners",
+          "pageHref": "/portal/partners/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
           "page": "shared",
           "pageHref": "/portal/",
           "registryPath": "/registry/capability-map-subset.json",
+          "family": "other",
+          "weight": 2
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/concepts-graph.json",
           "family": "other",
           "weight": 2
         },
@@ -3190,6 +4141,20 @@
           "pageHref": "/portal/",
           "registryPath": "/registry/ops-summary.json",
           "family": "ops",
+          "weight": 2
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
           "weight": 2
         },
         {
@@ -3221,6 +4186,27 @@
           "weight": 2
         },
         {
+          "page": "tennis",
+          "pageHref": "/portal/tennis/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "tennis",
+          "pageHref": "/portal/tennis/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "tennis",
+          "pageHref": "/portal/tennis/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
           "page": "toc",
           "pageHref": "/portal/toc/",
           "registryPath": "/registry/portal-chrome.json",
@@ -3244,6 +4230,13 @@
         {
           "page": "tools",
           "pageHref": "/portal/tools/",
+          "registryPath": "/registry/bun-cli-reference.json",
+          "family": "other",
+          "weight": 2
+        },
+        {
+          "page": "tools",
+          "pageHref": "/portal/tools/",
           "registryPath": "/registry/monorepo-health.json",
           "family": "health",
           "weight": 2
@@ -3256,11 +4249,74 @@
           "weight": 2
         },
         {
-          "page": "tools",
-          "pageHref": "/portal/tools/",
+          "page": "vault",
+          "pageHref": "/portal/vault/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "vault",
+          "pageHref": "/portal/vault/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "vault",
+          "pageHref": "/portal/vault/",
           "registryPath": "/registry/portal-weave.json",
           "family": "portal",
           "weight": 2
+        },
+        {
+          "page": "account",
+          "pageHref": "/portal/account/",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "account",
+          "pageHref": "/portal/account/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "account",
+          "pageHref": "/portal/account/",
+          "registryPath": "/registry/domain-glossary.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "account",
+          "pageHref": "/portal/account/",
+          "registryPath": "/registry/ops-summary.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "account",
+          "pageHref": "/portal/account/",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "bookmakers",
+          "pageHref": "/portal/bookmakers/",
+          "registryPath": "/registry/bookmakers.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "bookmakers",
+          "pageHref": "/portal/bookmakers/",
+          "registryPath": "/registry/domain-glossary.json",
+          "family": "other",
+          "weight": 1
         },
         {
           "page": "brands",
@@ -3300,7 +4356,35 @@
         {
           "page": "bunfig",
           "pageHref": "/portal/bunfig/",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "bunfig",
+          "pageHref": "/portal/bunfig/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "bunfig",
+          "pageHref": "/portal/bunfig/",
           "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "bunfig",
+          "pageHref": "/portal/bunfig/",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "catalog",
+          "pageHref": "/portal/catalog/",
+          "registryPath": "/registry/caesars-scrape-endpoints.json",
           "family": "other",
           "weight": 1
         },
@@ -3314,15 +4398,22 @@
         {
           "page": "catalog",
           "pageHref": "/portal/catalog/",
-          "registryPath": "/registry/content-type-matrix.json",
-          "family": "catalog",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
           "weight": 1
         },
         {
           "page": "catalog",
           "pageHref": "/portal/catalog/",
-          "registryPath": "/registry/failures.json",
-          "family": "ops",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "catalog",
+          "pageHref": "/portal/catalog/",
+          "registryPath": "/registry/content-type-matrix.json",
+          "family": "catalog",
           "weight": 1
         },
         {
@@ -3336,6 +4427,41 @@
           "page": "catalog",
           "pageHref": "/portal/catalog/",
           "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "catalog",
+          "pageHref": "/portal/catalog/",
+          "registryPath": "/registry/scrape-wire-schema-audit.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "catalog",
+          "pageHref": "/portal/catalog/",
+          "registryPath": "/registry/scrape-wire-taxonomy.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "catalog",
+          "pageHref": "/portal/catalog/",
+          "registryPath": "/registry/scraped-limits-observed.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "catalog",
+          "pageHref": "/portal/catalog/",
+          "registryPath": "/registry/sports-taxonomy.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "catalog",
+          "pageHref": "/portal/catalog/",
+          "registryPath": "/registry/surfaces-state.json",
           "family": "other",
           "weight": 1
         },
@@ -3356,15 +4482,22 @@
         {
           "page": "compliance",
           "pageHref": "/portal/compliance/",
-          "registryPath": "/registry/dod-registry.json",
-          "family": "compliance",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
           "weight": 1
         },
         {
           "page": "compliance",
           "pageHref": "/portal/compliance/",
-          "registryPath": "/registry/failures.json",
-          "family": "ops",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "compliance",
+          "pageHref": "/portal/compliance/",
+          "registryPath": "/registry/dod-registry.json",
+          "family": "compliance",
           "weight": 1
         },
         {
@@ -3375,9 +4508,72 @@
           "weight": 1
         },
         {
+          "page": "compliance",
+          "pageHref": "/portal/compliance/",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
           "page": "components",
           "pageHref": "/portal/components/",
           "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "concepts",
+          "pageHref": "/portal/concepts/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "concepts",
+          "pageHref": "/portal/concepts/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "concepts",
+          "pageHref": "/portal/concepts/",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "console-format",
+          "pageHref": "/portal/console-format/",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "console-format",
+          "pageHref": "/portal/console-format/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "console-format",
+          "pageHref": "/portal/console-format/",
+          "registryPath": "/registry/console-format-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "console-format",
+          "pageHref": "/portal/console-format/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "console-format",
+          "pageHref": "/portal/console-format/",
+          "registryPath": "/registry/surfaces-state.json",
           "family": "other",
           "weight": 1
         },
@@ -3405,15 +4601,22 @@
         {
           "page": "dashboard",
           "pageHref": "/portal/dashboard/",
-          "registryPath": "/registry/defaults-proof.json",
-          "family": "proof",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
           "weight": 1
         },
         {
           "page": "dashboard",
           "pageHref": "/portal/dashboard/",
-          "registryPath": "/registry/failures.json",
-          "family": "ops",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/defaults-proof.json",
+          "family": "proof",
           "weight": 1
         },
         {
@@ -3454,8 +4657,50 @@
         {
           "page": "dashboard",
           "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
           "registryPath": "/registry/telegram-handshake.json",
           "family": "telegram",
+          "weight": 1
+        },
+        {
+          "page": "doctor",
+          "pageHref": "/portal/doctor/",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "doctor",
+          "pageHref": "/portal/doctor/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "doctor",
+          "pageHref": "/portal/doctor/",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "dod",
+          "pageHref": "/portal/dod/",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "dod",
+          "pageHref": "/portal/dod/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
           "weight": 1
         },
         {
@@ -3468,14 +4713,28 @@
         {
           "page": "dod",
           "pageHref": "/portal/dod/",
-          "registryPath": "/registry/failures.json",
-          "family": "ops",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
           "weight": 1
         },
         {
           "page": "dod",
           "pageHref": "/portal/dod/",
-          "registryPath": "/registry/registry.json",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "env",
+          "pageHref": "/portal/env/",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "env",
+          "pageHref": "/portal/env/",
+          "registryPath": "/registry/concepts-state.json",
           "family": "other",
           "weight": 1
         },
@@ -3489,14 +4748,14 @@
         {
           "page": "env",
           "pageHref": "/portal/env/",
-          "registryPath": "/registry/failures.json",
-          "family": "ops",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
           "weight": 1
         },
         {
           "page": "env",
           "pageHref": "/portal/env/",
-          "registryPath": "/registry/registry.json",
+          "registryPath": "/registry/surfaces-state.json",
           "family": "other",
           "weight": 1
         },
@@ -3517,14 +4776,63 @@
         {
           "page": "failures",
           "pageHref": "/portal/failures/",
-          "registryPath": "/registry/failures.json",
-          "family": "ops",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "failures",
+          "pageHref": "/portal/failures/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
           "weight": 1
         },
         {
           "page": "failures",
           "pageHref": "/portal/failures/",
           "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "failures",
+          "pageHref": "/portal/failures/",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "glossary",
+          "pageHref": "/portal/glossary/",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "glossary",
+          "pageHref": "/portal/glossary/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "glossary",
+          "pageHref": "/portal/glossary/",
+          "registryPath": "/registry/domain-glossary.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "glossary",
+          "pageHref": "/portal/glossary/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "glossary",
+          "pageHref": "/portal/glossary/",
+          "registryPath": "/registry/surfaces-state.json",
           "family": "other",
           "weight": 1
         },
@@ -3538,6 +4846,27 @@
         {
           "page": "health",
           "pageHref": "/portal/health/",
+          "registryPath": "/registry/compliance-board.json",
+          "family": "compliance",
+          "weight": 1
+        },
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
           "registryPath": "/registry/defaults-proof.json",
           "family": "proof",
           "weight": 1
@@ -3545,8 +4874,8 @@
         {
           "page": "health",
           "pageHref": "/portal/health/",
-          "registryPath": "/registry/failures.json",
-          "family": "ops",
+          "registryPath": "/registry/doctor-state.json",
+          "family": "other",
           "weight": 1
         },
         {
@@ -3559,22 +4888,22 @@
         {
           "page": "health",
           "pageHref": "/portal/health/",
-          "registryPath": "/registry/registry.json",
-          "family": "other",
+          "registryPath": "/registry/networking-proof.json",
+          "family": "proof",
           "weight": 1
         },
         {
           "page": "health",
           "pageHref": "/portal/health/",
-          "registryPath": "/registry/static.json",
-          "family": "catalog",
+          "registryPath": "/registry/proof-taxonomy-audit.json",
+          "family": "verification",
           "weight": 1
         },
         {
           "page": "health",
           "pageHref": "/portal/health/",
-          "registryPath": "/registry/toc-ops.json",
-          "family": "ops",
+          "registryPath": "/registry/release-features.json",
+          "family": "verification",
           "weight": 1
         },
         {
@@ -3587,8 +4916,22 @@
         {
           "page": "home",
           "pageHref": "/portal/",
-          "registryPath": "/registry/failures.json",
-          "family": "ops",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "home",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "home",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
           "weight": 1
         },
         {
@@ -3627,10 +4970,45 @@
           "weight": 1
         },
         {
+          "page": "install-hygiene",
+          "pageHref": "/portal/install-hygiene/",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "install-hygiene",
+          "pageHref": "/portal/install-hygiene/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "install-hygiene",
+          "pageHref": "/portal/install-hygiene/",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
           "page": "limits",
           "pageHref": "/portal/limits/",
-          "registryPath": "/registry/limit-raises.json",
-          "family": "compliance",
+          "registryPath": "/registry/caesars-scrape-endpoints.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "limits",
+          "pageHref": "/portal/limits/",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "limits",
+          "pageHref": "/portal/limits/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
           "weight": 1
         },
         {
@@ -3638,6 +5016,62 @@
           "pageHref": "/portal/limits/",
           "registryPath": "/registry/ops-summary.json",
           "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "limits",
+          "pageHref": "/portal/limits/",
+          "registryPath": "/registry/scraped-limits-observed.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "limits",
+          "pageHref": "/portal/limits/",
+          "registryPath": "/registry/sportsbook-opening-baseline.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "limits",
+          "pageHref": "/portal/limits/",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "limits-lab",
+          "pageHref": "/portal/limits-lab/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 1
+        },
+        {
+          "page": "limits-lab",
+          "pageHref": "/portal/limits-lab/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 1
+        },
+        {
+          "page": "limits-lab",
+          "pageHref": "/portal/limits-lab/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 1
+        },
+        {
+          "page": "limits-lab",
+          "pageHref": "/portal/limits-lab/",
+          "registryPath": "/registry/sports-taxonomy.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/bun-brand-map.json",
+          "family": "other",
           "weight": 1
         },
         {
@@ -3685,6 +5119,20 @@
         {
           "page": "ops",
           "pageHref": "/portal/ops/",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
           "registryPath": "/registry/doc-index.json",
           "family": "catalog",
           "weight": 1
@@ -3694,13 +5142,6 @@
           "pageHref": "/portal/ops/",
           "registryPath": "/registry/docs-coverage-proof.json",
           "family": "proof",
-          "weight": 1
-        },
-        {
-          "page": "ops",
-          "pageHref": "/portal/ops/",
-          "registryPath": "/registry/failures.json",
-          "family": "ops",
           "weight": 1
         },
         {
@@ -3804,6 +5245,13 @@
         {
           "page": "ops",
           "pageHref": "/portal/ops/",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
           "registryPath": "/registry/telegram-handshake-catalog.json",
           "family": "telegram",
           "weight": 1
@@ -3846,8 +5294,22 @@
         {
           "page": "packages",
           "pageHref": "/portal/packages/",
-          "registryPath": "/registry/failures.json",
-          "family": "ops",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "packages",
+          "pageHref": "/portal/packages/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "packages",
+          "pageHref": "/portal/packages/",
+          "registryPath": "/registry/install-hygiene-report.json",
+          "family": "other",
           "weight": 1
         },
         {
@@ -3860,7 +5322,42 @@
         {
           "page": "packages",
           "pageHref": "/portal/packages/",
+          "registryPath": "/registry/pm-proof.json",
+          "family": "proof",
+          "weight": 1
+        },
+        {
+          "page": "packages",
+          "pageHref": "/portal/packages/",
           "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "packages",
+          "pageHref": "/portal/packages/",
+          "registryPath": "/registry/ssot-flow-soft.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "packages",
+          "pageHref": "/portal/packages/",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "partner-history",
+          "pageHref": "/portal/partner-history/",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "partner-history",
+          "pageHref": "/portal/partner-history/",
+          "registryPath": "/registry/concepts-state.json",
           "family": "other",
           "weight": 1
         },
@@ -3869,6 +5366,118 @@
           "pageHref": "/portal/partner-history/",
           "registryPath": "/registry/limit-raises.json",
           "family": "compliance",
+          "weight": 1
+        },
+        {
+          "page": "partner-history",
+          "pageHref": "/portal/partner-history/",
+          "registryPath": "/registry/partners-ops.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "partner-history",
+          "pageHref": "/portal/partner-history/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "partner-history",
+          "pageHref": "/portal/partner-history/",
+          "registryPath": "/registry/sportsbook-opening-baseline.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "partner-history",
+          "pageHref": "/portal/partner-history/",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "partners",
+          "pageHref": "/portal/partners/",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "partners",
+          "pageHref": "/portal/partners/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "partners",
+          "pageHref": "/portal/partners/",
+          "registryPath": "/registry/limit-raises.json",
+          "family": "compliance",
+          "weight": 1
+        },
+        {
+          "page": "partners",
+          "pageHref": "/portal/partners/",
+          "registryPath": "/registry/partner-profiles.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "partners",
+          "pageHref": "/portal/partners/",
+          "registryPath": "/registry/partners-ops.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "partners",
+          "pageHref": "/portal/partners/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "partners",
+          "pageHref": "/portal/partners/",
+          "registryPath": "/registry/scrape-wire-taxonomy.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "partners",
+          "pageHref": "/portal/partners/",
+          "registryPath": "/registry/seat-capital-desk.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "partners",
+          "pageHref": "/portal/partners/",
+          "registryPath": "/registry/soft-accounting-export.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "partners",
+          "pageHref": "/portal/partners/",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "partners",
+          "pageHref": "/portal/partners/",
+          "registryPath": "/registry/telegram-handshake-catalog.json",
+          "family": "telegram",
+          "weight": 1
+        },
+        {
+          "page": "partners",
+          "pageHref": "/portal/partners/",
+          "registryPath": "/registry/telegram-handshake.json",
+          "family": "telegram",
           "weight": 1
         },
         {
@@ -3888,8 +5497,22 @@
         {
           "page": "shared",
           "pageHref": "/portal/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
           "registryPath": "/registry/formdata-proof.json",
           "family": "proof",
+          "weight": 1
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/install-hygiene-report.json",
+          "family": "other",
           "weight": 1
         },
         {
@@ -3909,20 +5532,6 @@
         {
           "page": "shared",
           "pageHref": "/portal/",
-          "registryPath": "/registry/portal-chrome.json",
-          "family": "portal",
-          "weight": 1
-        },
-        {
-          "page": "shared",
-          "pageHref": "/portal/",
-          "registryPath": "/registry/portal-weave.json",
-          "family": "portal",
-          "weight": 1
-        },
-        {
-          "page": "shared",
-          "pageHref": "/portal/",
           "registryPath": "/registry/registry.json",
           "family": "other",
           "weight": 1
@@ -3932,6 +5541,13 @@
           "pageHref": "/portal/",
           "registryPath": "/registry/release-features.json",
           "family": "verification",
+          "weight": 1
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
           "weight": 1
         },
         {
@@ -3972,8 +5588,15 @@
         {
           "page": "skills",
           "pageHref": "/portal/skills/",
-          "registryPath": "/registry/failures.json",
-          "family": "ops",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "skills",
+          "pageHref": "/portal/skills/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
           "weight": 1
         },
         {
@@ -3995,6 +5618,13 @@
           "pageHref": "/portal/skills/",
           "registryPath": "/registry/skills-catalog.json",
           "family": "catalog",
+          "weight": 1
+        },
+        {
+          "page": "skills",
+          "pageHref": "/portal/skills/",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
           "weight": 1
         },
         {
@@ -4028,7 +5658,28 @@
         {
           "page": "tennis",
           "pageHref": "/portal/tennis/",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "tennis",
+          "pageHref": "/portal/tennis/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "tennis",
+          "pageHref": "/portal/tennis/",
           "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "tennis",
+          "pageHref": "/portal/tennis/",
+          "registryPath": "/registry/surfaces-state.json",
           "family": "other",
           "weight": 1
         },
@@ -4042,8 +5693,15 @@
         {
           "page": "toc",
           "pageHref": "/portal/toc/",
-          "registryPath": "/registry/failures.json",
-          "family": "ops",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "toc",
+          "pageHref": "/portal/toc/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
           "weight": 1
         },
         {
@@ -4075,6 +5733,13 @@
           "weight": 1
         },
         {
+          "page": "toc",
+          "pageHref": "/portal/toc/",
+          "registryPath": "/registry/surfaces-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
           "page": "tools",
           "pageHref": "/portal/tools/",
           "registryPath": "/registry/capability-map-full.json",
@@ -4098,6 +5763,20 @@
         {
           "page": "tools",
           "pageHref": "/portal/tools/",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "tools",
+          "pageHref": "/portal/tools/",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "tools",
+          "pageHref": "/portal/tools/",
           "registryPath": "/registry/doctor-state.json",
           "family": "other",
           "weight": 1
@@ -4105,14 +5784,21 @@
         {
           "page": "tools",
           "pageHref": "/portal/tools/",
-          "registryPath": "/registry/failures.json",
-          "family": "ops",
+          "registryPath": "/registry/env-inventory.json",
+          "family": "env",
           "weight": 1
         },
         {
           "page": "tools",
           "pageHref": "/portal/tools/",
           "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "tools",
+          "pageHref": "/portal/tools/",
+          "registryPath": "/registry/surfaces-state.json",
           "family": "other",
           "weight": 1
         },
@@ -4126,28 +5812,28 @@
         {
           "page": "vault",
           "pageHref": "/portal/vault/",
-          "registryPath": "/registry/monorepo-health.json",
-          "family": "health",
+          "registryPath": "/registry/concepts-graph.json",
+          "family": "other",
           "weight": 1
         },
         {
           "page": "vault",
           "pageHref": "/portal/vault/",
-          "registryPath": "/registry/portal-chrome.json",
-          "family": "portal",
-          "weight": 1
-        },
-        {
-          "page": "vault",
-          "pageHref": "/portal/vault/",
-          "registryPath": "/registry/portal-weave.json",
-          "family": "portal",
+          "registryPath": "/registry/concepts-state.json",
+          "family": "other",
           "weight": 1
         },
         {
           "page": "vault",
           "pageHref": "/portal/vault/",
           "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "vault",
+          "pageHref": "/portal/vault/",
+          "registryPath": "/registry/surfaces-state.json",
           "family": "other",
           "weight": 1
         },
@@ -4182,13 +5868,13 @@
       {
         "id": "workspaces",
         "label": "bun workspaces (package.json)",
-        "count": 8,
+        "count": 9,
         "note": "packages/* + sports-terminal-os + lib/* — see bun pm ls"
       },
       {
         "id": "lib-plane",
         "label": "lib/ top-level dirs",
-        "count": 42,
+        "count": 47,
         "note": "interior modules; workspace package only lib/shared · shared=yes"
       },
       {
@@ -4200,46 +5886,46 @@
       {
         "id": "portal-pages",
         "label": "portal HTML pages",
-        "count": 24,
+        "count": 32,
         "portal": "/portal/",
         "note": "public/portal/*/index.html shells + script src inventory"
       },
       {
         "id": "portal-chrome",
         "label": "portal chrome components",
-        "count": 13,
+        "count": 14,
         "bake": "/registry/portal-chrome.json",
-        "note": "nav + shared modules SSOT · onDisk=13/13"
+        "note": "nav + shared modules SSOT · onDisk=14/14"
       },
       {
         "id": "portal-modules",
         "label": "portal JS/CSS modules",
-        "count": 37,
+        "count": 55,
         "note": "components/ + root modules + page scripts + theme"
       },
       {
         "id": "brand",
         "label": "brand + tenant icons",
         "count": 20,
-        "note": "tenants: factory, science, telegram, tennis · theme darkTokens=12 fonts=brand,mono,sans"
+        "note": "tenants: factory, science, telegram, tennis · theme darkTokens=14 fonts=brand,mono,sans"
       },
       {
         "id": "registry-bake",
         "label": "registry top-level JSON",
-        "count": 62,
+        "count": 81,
         "bake": "/registry/",
-        "note": "families: proof=12 · other=9 · catalog=8 · verification=8 · compliance=6 · ops=6 · not npm package deps"
+        "note": "families: other=26 · proof=13 · catalog=8 · verification=8 · ops=7 · compliance=6 · not npm package deps"
       },
       {
         "id": "registry-portal-refs",
         "label": "portal → registry refs",
-        "count": 64,
+        "count": 89,
         "note": "unique /registry/*.json from portal JS/HTML · orphanTop=0"
       },
       {
         "id": "page-registry-edges",
         "label": "page → registry edges",
-        "count": 198,
+        "count": 341,
         "portal": "/portal/packages/",
         "note": "attributed via page scripts + shell HTML (v3 cross-plane)"
       },
@@ -4258,7 +5944,7 @@
       {
         "id": "registry-storage",
         "label": "registry storage packages",
-        "count": 9,
+        "count": 0,
         "note": "public/registry/storage published artifact.tgz names"
       }
     ]
