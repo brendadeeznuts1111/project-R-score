@@ -164,7 +164,7 @@ export class RegistryClient {
 
     const r2Key =
       type === 'library'
-        ? `${name.startsWith('@factorywager/') ? name : `@factorywager/${name}`}/${version}.tgz`
+        ? `${name.startsWith('@') ? name : `@factorywager/${name}`}/${version}.tgz`
         : `projects/${name}/${version}.tgz`;
 
     await this.store.putBytes(r2Key, blob, {

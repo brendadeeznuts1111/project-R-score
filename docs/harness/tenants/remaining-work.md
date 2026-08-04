@@ -74,11 +74,13 @@
 - Options: (a) document as accepted (add ADR note), (b) split channels to a dedicated bucket + rebind webhook function.
 - Recommend (a) — the allowlist is the enforced boundary; split only if write-scope separation is ever needed.
 
-### B5. ADR-0002 artifact plane — ✅ DONE 2026-07-28 (branch 2: catalog-only formalized in ADR addendum; reactivate via branch 1 when a real publish is wanted)
-- **Owner:** product decision; agent executes either.
-- Current reality (audited): zero `storage/` objects in R2; installs resolve from committed static mirror `public/registry/@factorywager/*`.
-- Branch 1 (activate): `bun run factory publish` one real package → verify `storage/<name>/<version>/artifact.tgz` in bucket + packument fetch → update `REGISTRY_PRODUCTION_READINESS.md` (remove "catalog-only" note).
-- Branch 2 (formalize): amend ADR-0002 status to "catalog-only by design; storage plane deferred" and point install docs at the static mirror permanently.
+### B5. ADR-0002 artifact plane — ✅ ACTIVATED 2026-08-04
+
+- **Owner:** product decision; completed via the direct-to-R2 lane.
+- Published `@tennis-hq/ssot@1.5.0` with `bun run factory publish` to
+  `@tennis-hq/ssot/1.5.0.tgz`.
+- Verified R2 download size and SHA-256 through `RegistryClient.install()`, then
+  refreshed the committed registry snapshot and Tennis tenant slice.
 
 ### B6. registry-write.internal — ✅ DONE 2026-07-28 (dropped: surface retired, ADR addendum)
 - **Owner:** product decision (pairs with B5).
@@ -108,4 +110,4 @@
 
 ## Done already (for reference — do not redo)
 
-bunfig machine SSOT + excludes + `frozenLockfile` drift · workspace bunfig dedupe · env-inventory TOML plane (v4) · `bake:all` + `portal-cli badge|bunfig|dashboard --list` · `/portal/bunfig/` board · surfaces.toml SSOT + `surfaces:bake` + cross-checks + `/portal/surfaces/` board + doctor check · Access applied (ledger, score/portal, pages.dev/portal) · terminal.+support. CNAMEs retired · 12 edge handlers GET-guarded (405 in prod) · R2 bucket audit (12 objects, catalog-only, no leaks) · ledger tunnel launchd · DNS zone fully mapped · `misson-control` zone removed · registry docs placeholder/bucket-reality notes.
+bunfig machine SSOT + excludes + `frozenLockfile` drift · workspace bunfig dedupe · env-inventory TOML plane (v4) · `bake:all` + `portal-cli badge|bunfig|dashboard --list` · `/portal/bunfig/` board · surfaces.toml SSOT + `surfaces:bake` + cross-checks + `/portal/surfaces/` board + doctor check · Access applied (ledger, score/portal, pages.dev/portal) · terminal.+support. CNAMEs retired · 12 edge handlers GET-guarded (405 in prod) · R2 artifact plane activated with verified Tennis HQ SSOT 1.5.0 · ledger tunnel launchd · DNS zone fully mapped · `misson-control` zone removed · registry docs placeholder/bucket-reality notes.

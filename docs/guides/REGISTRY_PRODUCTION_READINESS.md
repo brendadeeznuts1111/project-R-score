@@ -94,18 +94,14 @@ and enforces `REGISTRY_MAX_PUBLISH_BYTES` (50 MiB by default). Run one publish
 gateway instance; the R2 index update model has a single-writer authority while
 Cloudflare scales the read plane independently.
 
-> **Bucket reality (audited 2026-07-28 via SigV4 ListObjectsV2):** the
-> `factory-wager-registry` bucket holds 11 objects (`channels/_probe` removed 2026-07-28) — the catalog index
-> (`registry.json`, 17 packages, metadata + inline README), an `ops-summary.json`
-> stub, and the `channels/*` telegram event streams. **No `storage/` artifact
-> objects exist** — no publish has landed artifact bytes in R2 to date. What
-> `bun install` actually resolves (packuments like
-> `@factorywager/registry-client/latest.json` + tarballs) is served from the
-> **committed static mirror** (`public/registry/@factorywager/*`), not R2. The
-> `storage/` write plane in this doc is the designed path, not the current one;
-> the bucket is catalog-only today. The same bucket is multi-tenant (registry +
-> telegram channels) — the public read plane stays safe because the edge
-> allowlist (`lib/factory/http-keys.ts`) never exposes `channels/*`.
+> **Bucket reality:** the R2 artifact plane was activated on 2026-08-04 with
+> `@tennis-hq/ssot/1.5.0.tgz`. The 11,204-byte object and its SHA-256
+> `a6c0e9502cdb1c30d37e7579ed3d90e475cc28e6e0f46e0837394524f8cc8f55`
+> were verified by a direct `RegistryClient.install()` download after publish.
+> The R2 index is canonical; `factory snapshot` refreshes the committed static
+> fallback. The bucket remains multi-tenant (registry + Telegram channels), and
+> the public read plane stays bounded by `lib/factory/http-keys.ts`, which never
+> exposes `channels/*`.
 
 ## Dynamic integrations
 
