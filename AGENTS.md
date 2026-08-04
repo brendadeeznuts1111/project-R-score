@@ -189,6 +189,13 @@ interior, path/name allowlists, suppressions.
   another lane's in-flight tests/artifacts, the documented escape is
   `SKIP_TEST_CHANGED=1` **with the reason and evidence written into the commit
   message** (which suites failed, why they're not yours, what passes).
+  Test-workflow shape (Bun-recommended, already adopted — do not replace with
+  `bun-git-hooks`): dev `bun run test:watch` (import-graph `--changed --watch`),
+  pre-commit staged gates + `scripts/bun-test-changed-staged.ts` (multi-lane
+  isolation — scratch repos symlink `projects/` and export the real index's
+  projects paths via `KIMI_STAGED_PROJECTS_LS_FILES` for brand-coverage),
+  push/CI full `bun test` (root scans `tests/` only; `pathIgnorePatterns` in
+  `bunfig.toml`).
 - **Worktrees:** run `bun install` in a fresh `git worktree` before your first
   commit there — the postinstall wires husky (`core.hooksPath`), and without it
   pre-commit gates silently do not run. Fresh worktrees also need gitignored

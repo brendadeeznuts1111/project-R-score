@@ -53,10 +53,14 @@ frozenLockfile = true
 #   --shard=M/N     CI matrix split (e.g. SHARD=2/4 bun run test:ci:shard)
 #   --changed[=REF] import-graph filter (wrapper: bun run test:changed)
 #
-# Day-loop:
-#   bun run test:changed | test:changed:watch | test:watch
+# Day-loop (Bun-native selection — no custom git-ls invent):
+#   bun run test:dev          # --watch (import-graph / file watchers)
+#   bun run test:changed      # wrapper → bun test --changed (+ parallel)
+#   bun run test:concept      # concept-lane subset
 #   bun run test:parallel | test:isolate | SHARD=1/4 bun run test:ci:shard
-#   bun run test:ci  → junit at tmp/junit.xml
+#   bun run test:ci           # junit under tests/ only
+# Pre-commit uses scripts/bun-test-changed-staged.ts (HEAD ∪ staged scratch)
+# so foreign worktree dirt cannot block your commit — not SKIP_TEST_CHANGED by default.
 #
 # Install linker=isolated lives in ~/.bunfig.toml (machine SSOT) — do not duplicate here.
 # Streaming tarball extract is on by default; disable only if needed:
@@ -77,6 +81,9 @@ concurrentTestGlob = [
   ".agents/skills/ast-grep/tests/integration/**/*.test.ts",
   ".agents/skills/ast-grep/**/concurrent-*.test.ts",
 ]
+# Nested product trees / foreign checkouts — not part of monorepo day-loop `bun test`.
+# Default scripts already pass `tests/` as the root; these keep bare `bun test` clean too.
+# @see https://bun.com/docs/test/configuration#pathignorepatterns
 pathIgnorePatterns = [
   "node_modules/**",
   "dist/**",
@@ -88,6 +95,11 @@ pathIgnorePatterns = [
   "migrations/**",
   "generated/**",
   "vendor/**",
+  "toc-ops-repo/**",
+  "Kalshi-bot/**",
+  ".codex-worktrees/**",
+  "artifacts/**",
+  "artifacts-browser/**",
 ]
 
 # HTTP server defaults (overridden by PORT env or --port CLI flag)
@@ -111,3 +123,8 @@ output = "public"
 # Package stays a devDependency; clear with: portal-cli scanner clear --write
 # #[install.security]
 # #scanner = "@socketsecurity/bun-security-scanner"
+
+# Bun Security Scanner — https://bun.com/docs/pm/security-scanner-api
+# Scanners export: { version: "1", scan({ packages }) => Advisory[] }
+[install.security]
+scanner = "@socketsecurity/bun-security-scanner"
