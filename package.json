@@ -10,7 +10,8 @@
     "packages": [
       "packages/*",
       "projects/active/sports-terminal-os",
-      "lib/*"
+      "lib/*",
+      ".agents/skills/ast-grep"
     ]
   },
   "trustedDependencies": [],

@@ -76,6 +76,7 @@ bun run packages:docs-index --bump-verified=2026-07-20:registry-md,pm-filter
 | `@factorywager/docs-tools` | Doc validators (coupled to `lib/docs`) | active | Root `workspace:*` |
 | `@factorywager/shared` | Entry-guard / URL helpers under `lib/shared` | active | Workspace via `lib/*` glob |
 | `sports-terminal-os` | App workspace member | active | Path: `projects/active/sports-terminal-os` |
+| `@projects/ast-grep-skill` | Private pre-commit/semver tooling | active | Workspace so root install + lockfile hydrate hook dependencies |
 
 ### Root tooling (not a workspace package)
 

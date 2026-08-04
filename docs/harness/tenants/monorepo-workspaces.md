@@ -17,6 +17,7 @@ factorywager-enterprise (root)
 ├── packages/*      @factorywager/* workspace packages
 ├── lib/shared      @factorywager/shared (lib/* glob)
 ├── sports-terminal-os   workspace app member
+├── .agents/skills/ast-grep   private hook tooling workspace
 └── projects/**     nested monorepos / archive (not root workspaces)
 ```
 
@@ -154,7 +155,8 @@ From root `package.json` (do not invent globs in prose):
   "packages": [
     "packages/*",
     "projects/active/sports-terminal-os",
-    "lib/*"
+    "lib/*",
+    ".agents/skills/ast-grep"
   ]
 }
 ```
@@ -162,10 +164,12 @@ From root `package.json` (do not invent globs in prose):
 | Member class | Examples |
 |--------------|----------|
 | Root `workspace:*` deps (spine imports) | `docs-tools`, `guards`, `registry-client`, `rip` |
-| Workspace-only (filter/discovery) | `business`, `p2p`, `@factorywager/shared`, `sports-terminal-os` |
+| Workspace-only (filter/discovery/install) | `business`, `p2p`, `@factorywager/shared`, `sports-terminal-os`, private `@projects/ast-grep-skill` hook tooling |
 | Archived (out of install graph) | `projects/archive/factorywager-packages/{ab-testing,versioning}` |
 
 Gate: `scripts/validate-workspaces.ts` — **homebase only** (does not require experimental/archive package.json files to be root members).
+
+The ast-grep tooling package is deliberately a workspace member because the root pre-commit hook runs its semver tests. This keeps dependency hydration in the ordinary root `bun install` and shared `bun.lock`, rather than performing an implicit install during `git commit`.
 
 ## Catalog SSOT
 

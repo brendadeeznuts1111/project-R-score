@@ -9,7 +9,7 @@ Readonly map of this monorepo as the Projects **homebase** root. Detail history:
 | Install | Healthy | `install:verify` · machine bunfig SSOT [UNIFIED.md](../UNIFIED.md) |
 | Pin | **bun@1.4.0** | `packageManager` matches runtime |
 | Shared spine | `lib/` + `config/` + `packages/*` | brands, wire, console-depth |
-| Workspaces | `packages/*` · factorywager registry packages · `sports-terminal-os` · `lib/*` | no dead kimiremote glob |
+| Workspaces | `packages/*` · factorywager registry packages · `sports-terminal-os` · `lib/*` · ast-grep hook tooling | shared lockfile hydrates all root-executed package dependencies |
 | Day loop | Honest | `type-check` · `build:affected` / `test:affected` · `test:changed` |
 | Bun DX | Live | `config/bun-dx-catalog.ts` · `bun run dx:catalog` |
 

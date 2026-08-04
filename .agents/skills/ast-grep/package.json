@@ -94,11 +94,11 @@
     "bun:score": "bun scripts/bun-cli.ts bun score --zone sports-terminal",
     "bun:report": "bun scripts/bun-cli.ts bun report --zone sports-terminal",
     "bun:ci": "./scripts/bun-ci.sh",
-    "install-cli": "npm install",
+    "install-cli": "./scripts/install.sh",
     "smoke": "./scripts/smoke.sh"
   },
   "dependencies": {
     "@ast-grep/cli": "0.44.0",
-    "effect": "^3.21.3"
+    "effect": "3.22.1"
   }
 }

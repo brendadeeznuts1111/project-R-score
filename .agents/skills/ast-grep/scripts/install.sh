@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-# Install pinned @ast-grep/cli@0.44.0 into this skill's node_modules.
+# Hydrate the pinned ast-grep workspace dependencies from the shared root lockfile.
 set -euo pipefail
 
 SKILL_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$SKILL_ROOT"
+REPO_ROOT="$(cd "$SKILL_ROOT/../../.." && pwd)"
+cd "$REPO_ROOT"
 
-echo "Installing @ast-grep/cli@0.44.0 in $SKILL_ROOT ..."
-npm install
-chmod +x scripts/sg.sh scripts/doctor.sh
-./scripts/doctor.sh
+echo "Hydrating @projects/ast-grep-skill from $REPO_ROOT/bun.lock ..."
+bun install --frozen-lockfile --ignore-scripts
+chmod +x "$SKILL_ROOT/scripts/sg.sh" "$SKILL_ROOT/scripts/doctor.sh"
+"$SKILL_ROOT/scripts/doctor.sh"
