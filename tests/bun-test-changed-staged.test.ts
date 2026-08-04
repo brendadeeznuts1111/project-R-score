@@ -1,6 +1,12 @@
 // @see https://bun.com/docs/test/index#run-tests
 import { describe, expect, test } from 'bun:test';
-import { gitEnv, stagedDeletions, testRunEnv } from '../scripts/bun-test-changed-staged.ts';
+import {
+  gitEnv,
+  SCRATCH_LINK_DIRS,
+  SCRATCH_PATHSPEC,
+  stagedDeletions,
+  testRunEnv,
+} from '../scripts/bun-test-changed-staged.ts';
 
 function sh(cmd: string[], opts: { cwd?: string; env?: Record<string, string> } = {}) {
   const p = Bun.spawnSync({ cmd, cwd: opts.cwd, env: opts.env, stdout: 'pipe', stderr: 'pipe' });
@@ -36,6 +42,13 @@ describe('test-changed-staged helpers', () => {
     const env = testRunEnv();
     expect(env.NODE_ENV).toBeUndefined();
     expect(env.GIT_INDEX_FILE).toBeUndefined();
+  });
+
+  test('scratch repo links heavyweight external trees needed by selected tests', () => {
+    expect(SCRATCH_LINK_DIRS).toContain('projects');
+    expect(SCRATCH_LINK_DIRS).toContain('Kalshi-bot');
+    expect(SCRATCH_PATHSPEC).toContain(':(exclude)projects/');
+    expect(SCRATCH_PATHSPEC).toContain(':(exclude)Kalshi-bot');
   });
 
   test('scratch git add -A never leaks the node_modules symlink into an inherited index', async () => {

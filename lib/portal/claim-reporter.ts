@@ -1,5 +1,5 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
-// @see https://bun.com/docs/runtime/file-io#bun-write — Bun.write
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/guides/util/entrypoint — import.meta.main
 /**

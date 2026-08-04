@@ -1,7 +1,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
-// @see https://bun.com/docs/runtime/color#output-formats
+// @see https://bun.com/docs/runtime/color#flexible-input
 /**
  * Component color-kernel alignment — check-only gate.
  *

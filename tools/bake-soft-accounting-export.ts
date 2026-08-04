@@ -7,7 +7,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
-// @see https://bun.com/docs/api/spawn#input — Bun.spawn
+// @see https://bun.com/docs/runtime/child-process#input-stream — Bun.spawn input
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/guides/util/entrypoint — import.meta.main
 // @see https://bun.com/docs/guides/util/which-path-to-executable-bin — Bun.which

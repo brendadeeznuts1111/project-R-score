@@ -4,8 +4,9 @@ Runtime-neutral HTTP SDK for the FactoryWager artifact registry read plane and
 authenticated publish endpoint. Package:
 [`packages/registry-client`](../packages/registry-client).
 
-**Related:** [REGISTRY_PRODUCTION_READINESS.md](./guides/REGISTRY_PRODUCTION_READINESS.md)
-· proof JSON at `/registry/registry-client-proof.json`
+**Related:**
+[REGISTRY_PRODUCTION_READINESS.md](./guides/REGISTRY_PRODUCTION_READINESS.md) ·
+proof JSON at `/registry/registry-client-proof.json`
 
 ## URL format
 
@@ -18,8 +19,8 @@ The SDK and npm-compatible metadata both use the same tarball path:
 Scoped packages encode each path segment (`@factorywager/registry-client` →
 `%40factorywager/registry-client/1.0.0/artifact.tgz`).
 
-The read plane index lives at `{baseUrl}/api/registry/registry.json`. Do not
-use `/api/registry/{r2Key}` for downloads — that key is storage metadata only.
+The read plane index lives at `{baseUrl}/api/registry/registry.json`. Do not use
+`/api/registry/{r2Key}` for downloads — that key is storage metadata only.
 
 ## resolve
 
@@ -53,7 +54,7 @@ FormData to the **authenticated** publish origin (`publishUrl`, default
 `baseUrl`). Requires `apiKey`; the read plane rejects writes.
 
 > **Placeholder host:** `registry-write.internal.factory-wager.com` below is the
-> *intended* private publish plane — it is not provisioned (no DNS, no server).
+> _intended_ private publish plane — it is not provisioned (no DNS, no server).
 > Today the only authenticated write origins are the local gateway
 > (`http://localhost:3000`, `POST /api/registry/:scope/:name/versions`) and
 > direct-to-R2 SigV4 via `bun run factory publish`. See ADR-0002.
@@ -62,7 +63,7 @@ FormData to the **authenticated** publish origin (`publishUrl`, default
 const client = new RegistryClient({
   baseUrl: 'https://registry.factory-wager.com',
   publishUrl: 'https://registry-write.internal.factory-wager.com',
-  apiKey: process.env.FACTORY_WAGER_TOKEN,
+  apiKey: Bun.env.FACTORY_WAGER_TOKEN,
 });
 
 await client.publish('@scope/pkg', '1.0.0', tarballBlob, {
@@ -81,11 +82,11 @@ bun test tests/registry-client-probes.test.ts
 
 Probes:
 
-| Probe | Proves |
-|-------|--------|
-| `registry-client.resolve` | `assetUrl` matches npm packument `dist.tarball` |
-| `registry-client.download` | SHA-256 + size match index metadata |
-| `registry-client.publish` | Missing `apiKey` fails before network |
+| Probe                      | Proves                                          |
+| -------------------------- | ----------------------------------------------- |
+| `registry-client.resolve`  | `assetUrl` matches npm packument `dist.tarball` |
+| `registry-client.download` | SHA-256 + size match index metadata             |
+| `registry-client.publish`  | Missing `apiKey` fails before network           |
 
 Local resolve/download probes pass when `bun scripts/serve-public.ts` is running
 and `public/registry/storage/@factorywager/registry-client/1.0.0/artifact.tgz`
@@ -96,11 +97,11 @@ exists (served from the R2-backed index).
 Three planes share "registry" vocabulary — do not cross them. Canonical names
 (scanner: `naming-cluster` findings in `bun tools/reference-discovery.ts`):
 
-| Plane | Canonical | Scope |
-|-------|-----------|-------|
-| npm registry | `factoryWagerRegistryUrlFromEnv()` · `REGISTRY_URL` · `registry.factory-wager.com` | artifact resolve/publish (this doc) |
+| Plane        | Canonical                                                                             | Scope                                                          |
+| ------------ | ------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| npm registry | `factoryWagerRegistryUrlFromEnv()` · `REGISTRY_URL` · `registry.factory-wager.com`    | artifact resolve/publish (this doc)                            |
 | Pages public | `factoryWagerPagesCustomUrl()` · `ROUTING_PROBE_BASE_URL` · `score.factory-wager.com` | Pages portal + routing probes — never `bun publish --registry` |
-| R2 bucket | `factoryRegistryBucketFromEnv()` · `R2_REGISTRY_BUCKET` · `factory-wager-registry` | object store bucket — see `config/r2-env.ts` |
+| R2 bucket    | `factoryRegistryBucketFromEnv()` · `R2_REGISTRY_BUCKET` · `factory-wager-registry`    | object store bucket — see `config/r2-env.ts`                   |
 
 ## Env naming: similar pairs
 
@@ -109,9 +110,9 @@ intentional, not drift. Allowlisted in `isAllowedSimilarEnvPair`
 (`lib/reference-discovery.ts`); owner table in
 [`docs/harness/tenants/reference-discovery.md`](harness/tenants/reference-discovery.md).
 
-| Pair | First | Second | Why both exist |
-|------|-------|--------|----------------|
-| `CLOUDFLARE_API_TOKEN` ↔ `CLOUDFLARE_DNS_API_TOKEN` | Pages + zone-read token, **no** Zone.DNS scope | separate token with Zone.DNS:Read/Edit | least-privilege split, verified 2026-07-27 — see `docs/harness/tenants/proton-integration.md` |
-| `COMPLIANCE_MOCK_PORT` ↔ `COMPLIANCE_MOCK_URL` | mock server listen port (default 8787) | client base URL for report/shadow tools | server side vs client side of the same compliance mock |
-| `TELEGRAM_CATALOG_RESEARCH_CRON_SCHEDULE` ↔ `TELEGRAM_CATALOG_RESEARCH_CRON_TITLE` | cron expression (default `0 7 * * *`) | job/log title (`telegram-catalog-research`) | schedule vs log identity in `lib/telegram/catalog-research/constants.ts` |
-| `TELEGRAM_CATALOG_RESEARCH_LLM_KEY` ↔ `..._LLM_MODEL` ↔ `..._LLM_URL` | API key (canonical alias → `OPENAI_API_KEY`) | model name (default `gpt-4o-mini`) / OpenAI-compatible base URL | three independent LLM knobs in `lib/telegram/catalog-research/llm-pass.ts` |
+| Pair                                                                                | First                                          | Second                                                          | Why both exist                                                                                |
+| ----------------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `CLOUDFLARE_API_TOKEN` ↔ `CLOUDFLARE_DNS_API_TOKEN`                                | Pages + zone-read token, **no** Zone.DNS scope | separate token with Zone.DNS:Read/Edit                          | least-privilege split, verified 2026-07-27 — see `docs/harness/tenants/proton-integration.md` |
+| `COMPLIANCE_MOCK_PORT` ↔ `COMPLIANCE_MOCK_URL`                                     | mock server listen port (default 8787)         | client base URL for report/shadow tools                         | server side vs client side of the same compliance mock                                        |
+| `TELEGRAM_CATALOG_RESEARCH_CRON_SCHEDULE` ↔ `TELEGRAM_CATALOG_RESEARCH_CRON_TITLE` | cron expression (default `0 7 * * *`)          | job/log title (`telegram-catalog-research`)                     | schedule vs log identity in `lib/telegram/catalog-research/constants.ts`                      |
+| `TELEGRAM_CATALOG_RESEARCH_LLM_KEY` ↔ `..._LLM_MODEL` ↔ `..._LLM_URL`             | API key (canonical alias → `OPENAI_API_KEY`)   | model name (default `gpt-4o-mini`) / OpenAI-compatible base URL | three independent LLM knobs in `lib/telegram/catalog-research/llm-pass.ts`                    |

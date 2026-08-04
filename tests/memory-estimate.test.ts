@@ -1,5 +1,5 @@
 /**
- * @see https://bun.com/docs/runtime/utils#estimateshallowmemoryusageof-in-bun-jsc
+ * @see https://bun.com/docs/runtime/utils#estimateshallowmemoryusageof-in-bunjsc
  * @see https://bun.com/docs/test/index#run-tests
  */
 

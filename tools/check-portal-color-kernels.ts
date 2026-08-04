@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/guides/util/entrypoint — import.meta.main
 // @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
-// @see https://bun.com/docs/runtime/file-io#bun-write — Bun.write (via claim-reporter)
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write (via claim-reporter)
 /**
  * Check theme.jsonc aliases vs glossary / partner-ops / telegram kernels,
  * plus the component plane (var(--token, <fallback>) pairs in

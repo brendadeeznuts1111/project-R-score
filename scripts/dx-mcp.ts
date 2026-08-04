@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/blog/bun-v1.3.14#no-orphans — --no-orphans
+// @see https://bun.com/docs/runtime/workers#creating-a-worker — Worker
+// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern
 // @see https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster — URLPattern
 // @see https://bun.com/blog/bun-v1.3.12#faster-bun-glob-scan — Bun.Glob.scan
 // @see https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect — Bun.connect
@@ -1369,7 +1372,7 @@ async function dispatch(
         },
         'no-orphans': {
           description: '--no-orphans flag recognized',
-          code: `bun --no-orphans -e "console.log('no-orphans:', process.env.BUN_FEATURE_FLAG_NO_ORPHANS || 'active')"`,
+          code: `bun --no-orphans -e "console.log('no-orphans:', Bun.env.BUN_FEATURE_FLAG_NO_ORPHANS || 'active')"`,
         },
         'hardware-concurrency': {
           description: 'Cgroup-aware navigator.hardwareConcurrency',

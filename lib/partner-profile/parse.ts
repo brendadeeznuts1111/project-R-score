@@ -1,5 +1,6 @@
+// @see https://bun.com/reference/bun/TOML/parse — Bun.TOML.parse
 // lib/partner-profile/parse.ts — TOML → validated PartnerProfile.
-// @see https://bun.com/docs/runtime/loaders#toml — Bun TOML loader
+// @see https://bun.com/docs/runtime/toml — Bun TOML loader
 
 import { validatePartnerProfile, type PartnerProfile } from './schema';
 

@@ -1,6 +1,6 @@
 // @see https://bun.com/docs/test/index#run-tests — bun:test
 // @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
-// @see https://bun.com/docs/runtime/color#output-formats
+// @see https://bun.com/docs/runtime/color#flexible-input
 import { describe, expect, test } from 'bun:test';
 import {
   SCRAPE_BOOK_KEYS,

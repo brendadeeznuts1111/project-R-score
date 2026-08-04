@@ -332,6 +332,24 @@ function isAllowedSimilarEnvPair(a: string, b: string): boolean {
   ]);
   if (telegramLlmCluster.has(a) && telegramLlmCluster.has(b)) return true;
 
+  // Concept audit controls are deliberately symmetric or orthogonal. Their
+  // shared command namespace makes the spellings similar, but each key owns a
+  // distinct CLI option in scripts/concept-audit.ts.
+  const conceptAuditPairs = new Set([
+    'CONCEPT_AUDIT_MAX_USAGE|CONCEPT_AUDIT_MIN_USAGE',
+    'CONCEPT_AUDIT_SHOW_UNUSED|CONCEPT_AUDIT_SHOW_USED',
+    'CONCEPT_AUDIT_SORT|CONCEPT_AUDIT_STRICT',
+  ]);
+  if (conceptAuditPairs.has([a, b].sort().join('|'))) return true;
+
+  // Concept graph output and bind controls are independent. BUNPORT selects
+  // Bun's native default port; PORT supplies an explicit numeric override.
+  const conceptGraphPairs = new Set([
+    'CONCEPT_GRAPH_BUNPORT|CONCEPT_GRAPH_PORT',
+    'CONCEPT_GRAPH_FORMAT|CONCEPT_GRAPH_PORT',
+  ]);
+  if (conceptGraphPairs.has([a, b].sort().join('|'))) return true;
+
   return false;
 }
 

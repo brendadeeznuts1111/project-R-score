@@ -5,7 +5,7 @@
  * TOC Ops brand mark. Validated via Bun.color on load.
  *
  * @see https://bun.com/docs/runtime/color#flexible-input
- * @see https://bun.com/docs/runtime/color#output-formats
+ * @see https://bun.com/docs/runtime/color#flexible-input
  * @see lib/telegram/catalog-research/suggested-icons.ts — Bot API icon_color 0–6
  */
 

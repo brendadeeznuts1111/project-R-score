@@ -589,7 +589,7 @@ Bun.dns.getCacheStats();`,
     apis: ['Bun.SQL', 'Bun.sql'],
     docs: 'https://bun.com/docs/runtime/sql',
     live: true,
-    snippet: `const sql = new Bun.SQL(process.env.DATABASE_URL!);
+    snippet: `const sql = new Bun.SQL(Bun.env.DATABASE_URL!);
 await sql\`SELECT 1\`;`,
   },
   {
@@ -598,7 +598,7 @@ await sql\`SELECT 1\`;`,
     apis: ['Bun.RedisClient', 'RedisClient'],
     docs: 'https://bun.com/docs/runtime/redis#getting-started',
     live: true,
-    snippet: `const client = new Bun.RedisClient(process.env.REDIS_URL!);`,
+    snippet: `const client = new Bun.RedisClient(Bun.env.REDIS_URL!);`,
   },
   {
     id: 'webview',

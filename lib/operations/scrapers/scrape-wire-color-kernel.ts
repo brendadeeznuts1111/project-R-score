@@ -8,7 +8,7 @@
  * Does not import scrape-wire-taxonomy (bake imports this module).
  *
  * @see https://bun.com/docs/runtime/color#flexible-input
- * @see https://bun.com/docs/runtime/color#output-formats
+ * @see https://bun.com/docs/runtime/color#flexible-input
  * @see docs/harness/tenants/partner-limits.md
  */
 import {

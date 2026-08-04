@@ -1,6 +1,6 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
-// @see https://bun.com/docs/runtime/color#output-formats
+// @see https://bun.com/docs/runtime/color#flexible-input
 // @see https://bun.com/docs/bundler/loaders#jsonc — theme.jsonc via portalTheme
 // @see https://bun.com/docs/guides/util/entrypoint — import.meta.main
 /**
