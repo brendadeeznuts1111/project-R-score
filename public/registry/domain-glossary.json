@@ -20,6 +20,7 @@
     "partnerOpsAuthority": "lib/telegram/partner-ops-glossary.ts",
     "partnerOpsColorKernel": "lib/telegram/partner-ops-color-kernel.ts",
     "opsViewAuthority": "lib/telegram/ops-view-glossary.ts",
+    "tournamentSeriesAuthority": "lib/glossary/tournament-series-glossary.ts",
     "canonicalDump": "Kalshi-bot/research/registry/glossary-dump.json",
     "portalProjection": "tools/domain-glossary.ts",
     "colorKernel": "public/portal/theme.jsonc"
@@ -414,56 +415,59 @@
     }
   ],
   "summary": {
-    "concepts": 440,
-    "active": 430,
+    "concepts": 453,
+    "active": 443,
     "deprecated": 10,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 303,
+    "portalSemantics": 316,
     "categories": {
       "market": 33,
       "model": 18,
       "ops": 2,
       "pipeline": 41,
-      "tournament": 86,
+      "tournament": 99,
       "trading": 58,
       "ui": 175,
       "warehouse": 27
     },
     "kinds": {
       "baseline": 2,
+      "classification": 1,
       "competition": 14,
       "composite": 33,
       "country": 25,
       "cross_market": 2,
       "event": 2,
       "evidence": 10,
+      "gender": 3,
       "jurisdiction": 2,
       "kpi": 4,
-      "league": 20,
+      "league": 22,
       "market": 12,
       "metric": 3,
       "multi": 2,
       "policy": 4,
       "region": 7,
       "registry": 39,
-      "sport": 10,
+      "sport": 11,
+      "tournament": 6,
       "ui": 249
     },
     "semanticTypes": {
-      "classification": 155,
+      "classification": 162,
       "location": 4,
       "presentation": 14,
-      "resource": 97,
+      "resource": 103,
       "state": 32,
       "version": 1
     },
     "uiRoles": {
-      "badge": 56,
-      "chip": 116,
+      "badge": 59,
+      "chip": 125,
       "code": 33,
-      "heading": 70,
+      "heading": 71,
       "link": 24,
       "token": 4
     }
@@ -8699,6 +8703,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -8733,6 +8739,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -8772,6 +8780,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -8811,6 +8821,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -8850,6 +8862,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -8889,6 +8903,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -8922,6 +8938,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -8954,6 +8972,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -8986,6 +9006,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -9018,6 +9040,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -9067,6 +9091,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9141,6 +9167,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9179,6 +9207,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9215,6 +9245,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9253,6 +9285,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9289,6 +9323,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9328,6 +9364,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9364,6 +9402,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9404,6 +9444,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9440,6 +9482,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9475,6 +9519,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9510,6 +9556,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9550,6 +9598,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global sports regions",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9611,6 +9661,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Event host country",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9661,6 +9713,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9702,6 +9756,8 @@
       "region": "north_america",
       "flagEmoji": "🌐",
       "flagAriaLabel": "North America region",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9741,6 +9797,8 @@
       "region": "south_america",
       "flagEmoji": "🌐",
       "flagAriaLabel": "South America region",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9800,6 +9858,8 @@
       "region": "europe",
       "flagEmoji": "🌐",
       "flagAriaLabel": "Europe region",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9845,6 +9905,8 @@
       "region": "asia_pacific",
       "flagEmoji": "🌐",
       "flagAriaLabel": "Asia-Pacific region",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9884,6 +9946,8 @@
       "region": "africa_middle_east",
       "flagEmoji": "🌐",
       "flagAriaLabel": "Africa & Middle East region",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9920,6 +9984,8 @@
       "region": "north_america",
       "flagEmoji": "🇺🇸",
       "flagAriaLabel": "United States flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9956,6 +10022,8 @@
       "region": "north_america",
       "flagEmoji": "🇨🇦",
       "flagAriaLabel": "Canada flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -9992,6 +10060,8 @@
       "region": "europe",
       "flagEmoji": "🇬🇧",
       "flagAriaLabel": "United Kingdom flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10028,6 +10098,8 @@
       "region": "asia_pacific",
       "flagEmoji": "🇦🇺",
       "flagAriaLabel": "Australia flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10064,6 +10136,8 @@
       "region": "europe",
       "flagEmoji": "🇫🇷",
       "flagAriaLabel": "France flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10100,6 +10174,8 @@
       "region": "europe",
       "flagEmoji": "🇩🇪",
       "flagAriaLabel": "Germany flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10136,6 +10212,8 @@
       "region": "europe",
       "flagEmoji": "🇮🇹",
       "flagAriaLabel": "Italy flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10172,6 +10250,8 @@
       "region": "europe",
       "flagEmoji": "🇪🇸",
       "flagAriaLabel": "Spain flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10208,6 +10288,8 @@
       "region": "europe",
       "flagEmoji": "🇳🇱",
       "flagAriaLabel": "Netherlands flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10244,6 +10326,8 @@
       "region": "europe",
       "flagEmoji": "🇧🇪",
       "flagAriaLabel": "Belgium flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10280,6 +10364,8 @@
       "region": "europe",
       "flagEmoji": "🇨🇭",
       "flagAriaLabel": "Switzerland flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10316,6 +10402,8 @@
       "region": "europe",
       "flagEmoji": "🇨🇿",
       "flagAriaLabel": "Czechia flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10352,6 +10440,8 @@
       "region": "europe",
       "flagEmoji": "🇵🇱",
       "flagAriaLabel": "Poland flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10388,6 +10478,8 @@
       "region": "europe",
       "flagEmoji": "🇷🇸",
       "flagAriaLabel": "Serbia flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10424,6 +10516,8 @@
       "region": "europe",
       "flagEmoji": "🇬🇷",
       "flagAriaLabel": "Greece flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10460,6 +10554,8 @@
       "region": "south_america",
       "flagEmoji": "🇧🇷",
       "flagAriaLabel": "Brazil flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10496,6 +10592,8 @@
       "region": "south_america",
       "flagEmoji": "🇦🇷",
       "flagAriaLabel": "Argentina flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10532,6 +10630,8 @@
       "region": "north_america",
       "flagEmoji": "🇲🇽",
       "flagAriaLabel": "Mexico flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10568,6 +10668,8 @@
       "region": "asia_pacific",
       "flagEmoji": "🇯🇵",
       "flagAriaLabel": "Japan flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10604,6 +10706,8 @@
       "region": "asia_pacific",
       "flagEmoji": "🇨🇳",
       "flagAriaLabel": "China flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10640,6 +10744,8 @@
       "region": "asia_pacific",
       "flagEmoji": "🇰🇷",
       "flagAriaLabel": "South Korea flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10676,6 +10782,8 @@
       "region": "asia_pacific",
       "flagEmoji": "🇮🇳",
       "flagAriaLabel": "India flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10712,6 +10820,8 @@
       "region": "africa_middle_east",
       "flagEmoji": "🇿🇦",
       "flagAriaLabel": "South Africa flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10748,6 +10858,8 @@
       "region": "africa_middle_east",
       "flagEmoji": "🇦🇪",
       "flagAriaLabel": "United Arab Emirates flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10784,6 +10896,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10820,6 +10934,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10856,6 +10972,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10892,6 +11010,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10928,6 +11048,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -10964,6 +11086,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11000,6 +11124,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11036,6 +11162,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11072,6 +11200,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11108,6 +11238,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11144,6 +11276,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11180,6 +11314,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11216,6 +11352,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global tour; event country supplies the flag",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11254,6 +11392,8 @@
       "region": null,
       "flagEmoji": "🇺🇸 🇨🇦",
       "flagAriaLabel": "United States and Canada",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11291,6 +11431,8 @@
       "region": null,
       "flagEmoji": "🇺🇸",
       "flagAriaLabel": "United States",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11328,6 +11470,8 @@
       "region": null,
       "flagEmoji": "🇺🇸",
       "flagAriaLabel": "United States",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11366,6 +11510,8 @@
       "region": null,
       "flagEmoji": "🇺🇸",
       "flagAriaLabel": "United States",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11405,6 +11551,8 @@
       "region": null,
       "flagEmoji": "🇺🇸",
       "flagAriaLabel": "United States",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11443,6 +11591,8 @@
       "region": null,
       "flagEmoji": "🇺🇸 🇨🇦",
       "flagAriaLabel": "United States and Canada",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11481,6 +11631,8 @@
       "region": null,
       "flagEmoji": "🇺🇸 🇨🇦",
       "flagAriaLabel": "United States and Canada",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11519,6 +11671,8 @@
       "region": null,
       "flagEmoji": "🇺🇸 🇨🇦",
       "flagAriaLabel": "United States and Canada",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11557,6 +11711,8 @@
       "region": null,
       "flagEmoji": "🇬🇧",
       "flagAriaLabel": "United Kingdom",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11593,6 +11749,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global competition",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11629,6 +11787,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global competition",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11665,6 +11825,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global competition",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11701,6 +11863,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global competition",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11736,6 +11900,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global competition",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11771,6 +11937,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global competition",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11806,6 +11974,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global competition",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11841,6 +12011,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global competition",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11876,6 +12048,8 @@
       "region": null,
       "flagEmoji": "🌐",
       "flagAriaLabel": "Global competition",
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -11915,6 +12089,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -11952,6 +12128,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -11990,6 +12168,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -12026,6 +12206,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -12061,6 +12243,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -12097,6 +12281,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -12133,6 +12319,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -12168,6 +12356,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -12204,6 +12394,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -12240,6 +12432,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#a371f7"
     },
     {
@@ -12277,6 +12471,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#a371f7"
     },
     {
@@ -12313,6 +12509,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#a371f7"
     },
     {
@@ -12350,6 +12548,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -12386,6 +12586,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -12422,6 +12624,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#1f6feb"
     },
     {
@@ -12458,6 +12662,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#1f6feb"
     },
     {
@@ -12495,6 +12701,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -12531,6 +12739,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -12572,6 +12782,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#1f6feb"
     },
     {
@@ -12620,6 +12832,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -12672,6 +12886,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -12729,6 +12945,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -12777,6 +12995,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -12819,6 +13039,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -12857,6 +13079,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -12947,6 +13171,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -12985,6 +13211,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -13026,6 +13254,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -13065,6 +13295,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#f85149"
     },
     {
@@ -13103,6 +13335,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#f85149"
     },
     {
@@ -13151,6 +13385,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#f85149"
     },
     {
@@ -13192,6 +13428,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#1f6feb"
     },
     {
@@ -13234,6 +13472,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -13273,6 +13513,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -13314,6 +13556,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#f85149"
     },
     {
@@ -13353,6 +13597,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -13391,6 +13637,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -13428,6 +13676,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -13469,6 +13719,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -13510,6 +13762,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#a371f7"
     },
     {
@@ -13549,6 +13803,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#1f6feb"
     },
     {
@@ -13584,6 +13840,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -13619,6 +13877,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -13655,6 +13915,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#f85149"
     },
     {
@@ -13691,6 +13953,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -13727,6 +13991,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -13762,6 +14028,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -13797,6 +14065,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#f85149"
     },
     {
@@ -13832,6 +14102,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -13867,6 +14139,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#1f6feb"
     },
     {
@@ -13902,6 +14176,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#a371f7"
     },
     {
@@ -13942,6 +14218,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#f0883e"
     },
     {
@@ -13982,6 +14260,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#1f6feb"
     },
     {
@@ -14019,6 +14299,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#f85149"
     },
     {
@@ -14054,6 +14336,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -14089,6 +14373,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#1f6feb"
     },
     {
@@ -14124,6 +14410,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#8b949e"
     },
     {
@@ -14157,6 +14445,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#8b949e"
     },
     {
@@ -14192,6 +14482,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#f85149"
     },
     {
@@ -14227,6 +14519,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -14262,6 +14556,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -14298,6 +14594,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#8b949e"
     },
     {
@@ -14334,6 +14632,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -14370,6 +14670,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#f85149"
     },
     {
@@ -14408,6 +14710,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#1f6feb"
     },
     {
@@ -14444,6 +14748,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -14494,6 +14800,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#1f6feb"
     },
     {
@@ -14532,6 +14840,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": null
     },
     {
@@ -14568,6 +14878,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": null
     },
     {
@@ -14604,6 +14916,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -14638,6 +14952,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#1f6feb"
     },
     {
@@ -14672,6 +14988,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#d29922"
     },
     {
@@ -14709,6 +15027,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#a371f7"
     },
     {
@@ -14745,6 +15065,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -14781,6 +15103,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#3fb950"
     },
     {
@@ -14816,6 +15140,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#1f6feb"
     },
     {
@@ -14852,6 +15178,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#58a6ff"
     },
     {
@@ -14888,6 +15216,8 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#f0883e"
     },
     {
@@ -14925,7 +15255,564 @@
       "region": null,
       "flagEmoji": null,
       "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
       "color": "#f85149"
+    },
+    {
+      "id": "sport.table_tennis",
+      "label": "Table tennis",
+      "description": "Racket sport hierarchy root for WTT/ITTF tours and Setka Cup series. Distinct from sport.tennis (ATP/WTA).",
+      "category": "tournament",
+      "kind": "sport",
+      "mapsTo": null,
+      "synonyms": [
+        "ping pong",
+        "table-tennis",
+        "tt",
+        "table_tennis"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "sport",
+        "sport.tennis",
+        "competition",
+        "event",
+        "tournament",
+        "league.wtt",
+        "league.ittf",
+        "tournament.setka_cup",
+        "tournament.ittf_world",
+        "tournament.wtt_champions",
+        "tournament.wtt_contender",
+        "tournament.wtt_star_contender",
+        "tournament.wtt_feeder"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/glossary/tournament-series-glossary.ts",
+      "featurePurpose": "Governed table-tennis tournament series, league, and snap-facet concepts.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport",
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "domain": "trading",
+      "namespace": "ops",
+      "color": "#3fb950"
+    },
+    {
+      "id": "league.wtt",
+      "label": "League · WTT",
+      "description": "World Table Tennis tour league under sport.table_tennis. Children are tournament.wtt_* and Setka Cup series leaves.",
+      "category": "tournament",
+      "kind": "league",
+      "mapsTo": null,
+      "synonyms": [
+        "WTT",
+        "world table tennis",
+        "wtt"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "sport.table_tennis",
+        "tournament",
+        "competition",
+        "tournament.setka_cup",
+        "tournament.wtt_champions",
+        "tournament.wtt_contender",
+        "tournament.wtt_star_contender",
+        "tournament.wtt_feeder"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/glossary/tournament-series-glossary.ts",
+      "featurePurpose": "Governed table-tennis tournament series, league, and snap-facet concepts.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.table_tennis",
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "domain": "trading",
+      "namespace": "ops",
+      "color": "#3fb950"
+    },
+    {
+      "id": "league.ittf",
+      "label": "League · ITTF",
+      "description": "International Table Tennis Federation league under sport.table_tennis. Child series includes tournament.ittf_world.",
+      "category": "tournament",
+      "kind": "league",
+      "mapsTo": null,
+      "synonyms": [
+        "ITTF",
+        "international table tennis"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "sport.table_tennis",
+        "tournament",
+        "competition",
+        "tournament.ittf_world"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/glossary/tournament-series-glossary.ts",
+      "featurePurpose": "Governed table-tennis tournament series, league, and snap-facet concepts.",
+      "semanticType": "classification",
+      "uiRole": "chip",
+      "parentId": "sport.table_tennis",
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "domain": "trading",
+      "namespace": "ops",
+      "color": "#3fb950"
+    },
+    {
+      "id": "tournament",
+      "label": "Tournament series",
+      "description": "Series-level tournament leaf category. Warehouse snaps encode tournament + region + gender; glossary owns tournament.* only.",
+      "category": "tournament",
+      "kind": "classification",
+      "mapsTo": null,
+      "synonyms": [
+        "tour series",
+        "tournament key",
+        "tournament.*"
+      ],
+      "values": [
+        "setka_cup",
+        "ittf_world",
+        "wtt_champions",
+        "wtt_contender",
+        "wtt_star_contender",
+        "wtt_feeder"
+      ],
+      "valueLabels": null,
+      "seeAlso": [
+        "sport.table_tennis",
+        "league.wtt",
+        "league.ittf",
+        "competition",
+        "event",
+        "gender",
+        "tournament.setka_cup",
+        "tournament.ittf_world",
+        "tournament.wtt_champions",
+        "tournament.wtt_contender",
+        "tournament.wtt_star_contender",
+        "tournament.wtt_feeder"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/glossary/tournament-series-glossary.ts",
+      "featurePurpose": "Governed table-tennis tournament series, league, and snap-facet concepts.",
+      "semanticType": "classification",
+      "uiRole": "heading",
+      "parentId": "sport.table_tennis",
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "domain": "trading",
+      "namespace": "ops",
+      "color": "#3fb950"
+    },
+    {
+      "id": "gender.male",
+      "label": "Male",
+      "description": "Male draw facet on warehouse tournament snaps (suffix _m / _men). Not a glossary ownership leaf.",
+      "category": "tournament",
+      "kind": "gender",
+      "mapsTo": null,
+      "synonyms": [
+        "men",
+        "m",
+        "MALE"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "gender",
+        "gender.female",
+        "gender.mixed",
+        "tournament"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/glossary/tournament-series-glossary.ts",
+      "featurePurpose": "Governed table-tennis tournament series, league, and snap-facet concepts.",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "gender",
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "domain": "trading",
+      "namespace": "ops",
+      "color": "#3fb950"
+    },
+    {
+      "id": "gender.female",
+      "label": "Female",
+      "description": "Female draw facet on warehouse tournament snaps (suffix _w / _women). Not a glossary ownership leaf.",
+      "category": "tournament",
+      "kind": "gender",
+      "mapsTo": null,
+      "synonyms": [
+        "women",
+        "w",
+        "FEMALE"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "gender",
+        "gender.male",
+        "gender.mixed",
+        "tournament"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/glossary/tournament-series-glossary.ts",
+      "featurePurpose": "Governed table-tennis tournament series, league, and snap-facet concepts.",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "gender",
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "domain": "trading",
+      "namespace": "ops",
+      "color": "#3fb950"
+    },
+    {
+      "id": "gender.mixed",
+      "label": "Mixed",
+      "description": "Mixed draw facet on warehouse tournament snaps (suffix _x / _mixed). Not a glossary ownership leaf.",
+      "category": "tournament",
+      "kind": "gender",
+      "mapsTo": null,
+      "synonyms": [
+        "mixed doubles",
+        "x",
+        "MIXED"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "gender",
+        "gender.male",
+        "gender.female",
+        "tournament"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/glossary/tournament-series-glossary.ts",
+      "featurePurpose": "Governed table-tennis tournament series, league, and snap-facet concepts.",
+      "semanticType": "classification",
+      "uiRole": "badge",
+      "parentId": "gender",
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "domain": "trading",
+      "namespace": "ops",
+      "color": "#3fb950"
+    },
+    {
+      "id": "tournament.setka_cup",
+      "label": "Setka Cup",
+      "description": "Setka Cup table-tennis series. Warehouse snaps append region + gender (e.g. setka_cup_ua_w); ownership is this leaf, not each edition.",
+      "category": "tournament",
+      "kind": "tournament",
+      "mapsTo": null,
+      "synonyms": [
+        "setka",
+        "setka_cup",
+        "setka_cup_ua_w"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "tournament",
+        "sport.table_tennis",
+        "league.wtt",
+        "gender",
+        "gender.male",
+        "gender.female",
+        "gender.mixed",
+        "event"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/glossary/tournament-series-glossary.ts",
+      "featurePurpose": "Governed table-tennis tournament series, league, and snap-facet concepts.",
+      "semanticType": "resource",
+      "uiRole": "chip",
+      "parentId": "tournament",
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "domain": "trading",
+      "namespace": "ops",
+      "color": "#3fb950"
+    },
+    {
+      "id": "tournament.ittf_world",
+      "label": "ITTF World",
+      "description": "ITTF World table-tennis championships series. Faceted warehouse keys resolve ownership to this leaf.",
+      "category": "tournament",
+      "kind": "tournament",
+      "mapsTo": null,
+      "synonyms": [
+        "ittf",
+        "ittf world",
+        "ittf_world"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "tournament",
+        "sport.table_tennis",
+        "league.ittf",
+        "gender",
+        "gender.male",
+        "gender.female",
+        "gender.mixed",
+        "event"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/glossary/tournament-series-glossary.ts",
+      "featurePurpose": "Governed table-tennis tournament series, league, and snap-facet concepts.",
+      "semanticType": "resource",
+      "uiRole": "chip",
+      "parentId": "tournament",
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "domain": "trading",
+      "namespace": "ops",
+      "color": "#3fb950"
+    },
+    {
+      "id": "tournament.wtt_champions",
+      "label": "WTT Champions",
+      "description": "WTT Champions tier series — premium WTT tournament leaf for snap ownership.",
+      "category": "tournament",
+      "kind": "tournament",
+      "mapsTo": null,
+      "synonyms": [
+        "wtt champions",
+        "wtt_champions"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "tournament",
+        "sport.table_tennis",
+        "league.wtt",
+        "gender",
+        "gender.male",
+        "gender.female",
+        "gender.mixed",
+        "event"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/glossary/tournament-series-glossary.ts",
+      "featurePurpose": "Governed table-tennis tournament series, league, and snap-facet concepts.",
+      "semanticType": "resource",
+      "uiRole": "chip",
+      "parentId": "tournament",
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "domain": "trading",
+      "namespace": "ops",
+      "color": "#3fb950"
+    },
+    {
+      "id": "tournament.wtt_contender",
+      "label": "WTT Contender",
+      "description": "WTT Contender tier series — mid-tier WTT tournament leaf for snap ownership.",
+      "category": "tournament",
+      "kind": "tournament",
+      "mapsTo": null,
+      "synonyms": [
+        "wtt contender",
+        "wtt_contender"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "tournament",
+        "sport.table_tennis",
+        "league.wtt",
+        "gender",
+        "gender.male",
+        "gender.female",
+        "gender.mixed",
+        "event"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/glossary/tournament-series-glossary.ts",
+      "featurePurpose": "Governed table-tennis tournament series, league, and snap-facet concepts.",
+      "semanticType": "resource",
+      "uiRole": "chip",
+      "parentId": "tournament",
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "domain": "trading",
+      "namespace": "ops",
+      "color": "#3fb950"
+    },
+    {
+      "id": "tournament.wtt_star_contender",
+      "label": "WTT Star Contender",
+      "description": "WTT Star Contender tier series — elevated contender leaf for snap ownership.",
+      "category": "tournament",
+      "kind": "tournament",
+      "mapsTo": null,
+      "synonyms": [
+        "wtt star contender",
+        "wtt_star_contender"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "tournament",
+        "sport.table_tennis",
+        "league.wtt",
+        "gender",
+        "gender.male",
+        "gender.female",
+        "gender.mixed",
+        "event"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/glossary/tournament-series-glossary.ts",
+      "featurePurpose": "Governed table-tennis tournament series, league, and snap-facet concepts.",
+      "semanticType": "resource",
+      "uiRole": "chip",
+      "parentId": "tournament",
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "domain": "trading",
+      "namespace": "ops",
+      "color": "#3fb950"
+    },
+    {
+      "id": "tournament.wtt_feeder",
+      "label": "WTT Feeder",
+      "description": "WTT Feeder tier series — entry feeder leaf for snap ownership.",
+      "category": "tournament",
+      "kind": "tournament",
+      "mapsTo": null,
+      "synonyms": [
+        "wtt feeder",
+        "wtt_feeder"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "tournament",
+        "sport.table_tennis",
+        "league.wtt",
+        "gender",
+        "gender.male",
+        "gender.female",
+        "gender.mixed",
+        "event"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/glossary/tournament-series-glossary.ts",
+      "featurePurpose": "Governed table-tennis tournament series, league, and snap-facet concepts.",
+      "semanticType": "resource",
+      "uiRole": "chip",
+      "parentId": "tournament",
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "domain": "trading",
+      "namespace": "ops",
+      "color": "#3fb950"
     }
   ]
 }

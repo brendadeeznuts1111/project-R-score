@@ -2183,6 +2183,7 @@
     "verify:pages-edge": "bun tools/verify-pages-edge.ts",
     "verify:tournament-glossary": "bun tools/verify-tournament-glossary.ts",
     "verify:pages-edge:taxonomy": "bun tools/verify-pages-edge.ts --taxonomy",
+    "verify:pages-edge:tournament": "bun tools/verify-pages-edge.ts --tournament",
     "verify:weave": "bun tools/verify-pages-edge.ts --weave",
     "verify:pm": "bun tools/verify-pages-edge.ts --pm",
     "verify:pm:save": "bun tools/verify-pages-edge.ts --pm --save",
