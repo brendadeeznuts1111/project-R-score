@@ -45,7 +45,9 @@ describe('domain → concept → shape → surface authority', () => {
     );
     expect(steps.every(index => index >= 0)).toBe(true);
     expect(steps).toEqual([...steps].sort((a, b) => a - b));
-    expect(board).toContain('wiki.factory-wager.com/docs/DOMAIN_CONCEPT_SHAPE.html');
+    expect(board).toContain(
+      'github.com/brendadeeznuts1111/project-R-score/blob/main/docs/DOMAIN_CONCEPT_SHAPE.md'
+    );
   });
 
   test('concept bake check is timestamp-insensitive and non-mutating', async () => {
