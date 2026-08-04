@@ -42,6 +42,9 @@ describe('partners portal board', () => {
     expect(html).toContain('/registry/telegram-handshake-catalog.json');
     expect(html).toContain('/registry/scrape-wire-taxonomy.json');
     expect(html).toContain('/registry/partners-ops.json');
+    expect(html).toContain('/registry/partner-profiles.json');
+    expect(html).toContain('partnerProfilesCache?.profiles?.[code]');
+    expect(html).toContain('Profile lifecycle');
     expect(html).toContain('/registry/limit-raises.json');
     expect(html).toContain('depositMethod');
     expect(html).toContain('telegram:package-group:accounting');
