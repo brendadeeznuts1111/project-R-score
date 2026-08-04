@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/bundler/executables#code-signing-on-macos — --verify
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
@@ -147,12 +148,26 @@ async function runEdgeVerify(taxonomy = false): Promise<void> {
   if ((await proc.exited) !== 0) process.exit(1);
 }
 
+async function runTennisSsotReleaseVerify(): Promise<void> {
+  console.log('\n🔍 Tennis SSOT live release parity');
+  const proc = Bun.spawn({
+    cmd: ['bun', 'tools/verify-tennis-ssot-release.ts', '--live'],
+    cwd: `${import.meta.dir}/..`,
+    env: { ...Bun.env },
+    stdout: 'inherit',
+    stderr: 'inherit',
+  });
+  if ((await proc.exited) !== 0) process.exit(1);
+}
+
 async function main() {
   await loadReasonixEnv();
   const deployId = await triggerDeploy();
   if (WAIT) await waitForDeploy(deployId);
-  if (VERIFY) await runEdgeVerify(VERIFY_TAXONOMY);
-  else if (!WAIT) {
+  if (VERIFY) {
+    await runEdgeVerify(VERIFY_TAXONOMY);
+    await runTennisSsotReleaseVerify();
+  } else if (!WAIT) {
     console.log('   tip: bun run cloudflare:deploy:wait — poll until live');
     console.log('   tip: bun run cloudflare:deploy:verify — wait + edge smoke');
     console.log(

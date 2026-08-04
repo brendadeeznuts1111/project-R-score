@@ -333,5 +333,11 @@ describe('verify-pages-edge --pm wiring', () => {
     expect(pkg.scripts?.['verify:pm']).toBe('bun tools/verify-pages-edge.ts --pm');
     expect(pkg.scripts?.['verify:pm:save']).toBe('bun tools/verify-pages-edge.ts --pm --save');
     expect(pkg.scripts?.['ssot:flow:soft']).toBe('bun tools/bake-ssot-flow-soft.ts');
+    expect(pkg.scripts?.['tennis:ssot:release:check']).toBe(
+      'bun tools/verify-tennis-ssot-release.ts'
+    );
+    expect(pkg.scripts?.['tennis:ssot:release:check:live']).toBe(
+      'bun tools/verify-tennis-ssot-release.ts --live'
+    );
   });
 });

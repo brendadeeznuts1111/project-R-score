@@ -168,6 +168,25 @@ artifact is `11,204` bytes with SHA-256
 the root and Tennis tenant registry metadata must retain that exact size and
 checksum.
 
+### Package and version authority
+
+Tennis HQ is a separate producer repository, not a FactoryWager Bun workspace.
+That separation is deliberate: FactoryWager consumes the immutable package
+artifact and never resolves the producer through `workspace:*`.
+
+| Layer | Authority | Version behavior |
+| ----- | --------- | ---------------- |
+| FactoryWager workspaces | root `package.json#workspaces` | Local packages use `workspace:*`; no publish version is inferred |
+| Third-party dependencies | root `package.json#catalog` | `catalog:` centralizes dependency versions such as TypeScript and Bun types |
+| Tennis package | producer `packages/tennis-hq-ssot/package.json` | Producer owns the explicit semver bump and immutable tarball |
+| FactoryWager registry | root `registry.json` release + dist-tag | Stores every release, the `latest` tag, byte size, and SHA-256 |
+| Tennis consumer slice | `/registry/tennis/registry.json` | Derived from the root registry; must not carry an independent version decision |
+
+Run `bun run tennis:ssot:release:check` for the offline parity gate used by
+`bun:ci`. Run `bun run tennis:ssot:release:check:live` after publishing or
+deploying; it downloads the canonical registry tarball and verifies its exact
+size and SHA-256 without reading the sibling producer source tree.
+
 ### Weave
 
 Both proofs are first-class portal-weave artifacts (`purpose: ui`, owned by

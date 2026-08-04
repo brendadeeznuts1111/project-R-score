@@ -98,7 +98,7 @@ describe('ssot-flow-soft resolve', () => {
       await Bun.write(joinPath(tennisRoot, 'package.json'), '{}\n');
       await Bun.write(
         joinPath(tennisRoot, 'packages/tennis-hq-ssot/package.json'),
-        '{"name":"@tennis-hq/ssot","version":"1.5.0"}\n'
+        '{"name":"@tennis-hq/ssot","version":"9.9.9"}\n'
       );
       expect(await resolveTennisHqRoot(scratch)).toBe(tennisRoot);
     } finally {

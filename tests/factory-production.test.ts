@@ -31,8 +31,8 @@ describe('parseRegistryObjectKey (lib)', () => {
     expect(parseRegistryObjectKey('@factorywager/routing-test/latest.json')).toBe(
       '@factorywager/routing-test/latest.json'
     );
-    expect(parseRegistryObjectKey('@tennis-hq/ssot/1.5.0.tgz')).toBe(
-      '@tennis-hq/ssot/1.5.0.tgz'
+    expect(parseRegistryObjectKey('@tennis-hq/ssot/9.9.9.tgz')).toBe(
+      '@tennis-hq/ssot/9.9.9.tgz'
     );
   });
 

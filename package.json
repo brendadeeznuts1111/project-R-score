@@ -2188,6 +2188,8 @@
     "verify:pm": "bun tools/verify-pages-edge.ts --pm",
     "verify:pm:save": "bun tools/verify-pages-edge.ts --pm --save",
     "ssot:flow:soft": "bun tools/bake-ssot-flow-soft.ts",
+    "tennis:ssot:release:check": "bun tools/verify-tennis-ssot-release.ts",
+    "tennis:ssot:release:check:live": "bun tools/verify-tennis-ssot-release.ts --live",
     "verify:flag-order": "bun tools/verify-script-flags.ts",
     "verify:install-env:save": "bun tools/verify-install-env.ts --save",
     "verify:registry-client": "bun tools/verify-registry-client.ts",
