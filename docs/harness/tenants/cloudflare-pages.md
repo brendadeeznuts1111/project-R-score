@@ -136,7 +136,7 @@ Use Cloudflare MCP `execute` in Cursor to inspect failed builds (`deployments/{i
 | `cloudflare:preflight` | Static: well-known parity, token proof (no live), edge-safety test |
 | `cloudflare:deploy` | Trigger deploy only |
 | `cloudflare:deploy:wait` | Trigger + poll until success/failure (log tail on fail) |
-| `cloudflare:deploy:verify` | Wait + `verify:pages-edge` (core checks; `--taxonomy` for full 13-contract gate) |
+| `cloudflare:deploy:verify` | Wait + `verify:pages-edge` + live Tennis SSOT tarball parity (core checks; `--taxonomy` for full 13-contract gate) |
 | `cloudflare:deploy:verify:taxonomy` | Wait + full edge taxonomy gate |
 | `verify:weave` | Post-deploy weave smoke (`portal-weave.json` surfaces/artifacts/components); SSOT [`lib/verification/pages-edge-weave.ts`](../../../lib/verification/pages-edge-weave.ts) |
 | `cloudflare:publish` | `ops:snapshot` → registry git gate → optional `--commit --push` → deploy + taxonomy |

@@ -55,7 +55,7 @@ describe('packages-board failure paths', () => {
         cli: 'bun run ssot:flow:soft',
         ok: true,
         summary: { passed: 4, failed: 0, total: 4, status: 'pass' },
-        package: { name: '@tennis-hq/ssot', version: '1.4.0' },
+        package: { name: '@tennis-hq/ssot', version: '9.9.9' },
         reportPath: '/registry/ssot-flow-soft.json',
       },
       {

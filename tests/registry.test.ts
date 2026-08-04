@@ -206,11 +206,11 @@ describe('RegistryClient — publish name validation', () => {
 
   test('accepts the Tennis HQ producer scope and preserves its R2 key', async () => {
     const client = mockClient();
-    const release = await client.publish('@tennis-hq/ssot', '1.5.0', new Blob(['data']), {
+    const release = await client.publish('@tennis-hq/ssot', '9.9.9', new Blob(['data']), {
       type: 'library',
     });
     expect(release.name).toBe('@tennis-hq/ssot');
-    expect(release.storage.r2Key).toBe('@tennis-hq/ssot/1.5.0.tgz');
+    expect(release.storage.r2Key).toBe('@tennis-hq/ssot/9.9.9.tgz');
   });
 
   test('rejects arbitrary package scopes', async () => {

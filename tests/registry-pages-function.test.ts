@@ -74,8 +74,8 @@ describe('parseRegistryObjectKey', () => {
     expect(parseRegistryObjectKey('@factorywager/my-lib/1.0.0.tgz')).toBe(
       '@factorywager/my-lib/1.0.0.tgz'
     );
-    expect(parseRegistryObjectKey('@tennis-hq/ssot/1.5.0.tgz')).toBe(
-      '@tennis-hq/ssot/1.5.0.tgz'
+    expect(parseRegistryObjectKey('@tennis-hq/ssot/9.9.9.tgz')).toBe(
+      '@tennis-hq/ssot/9.9.9.tgz'
     );
     expect(parseRegistryObjectKey('projects/app/2.0.0.tgz')).toBe('projects/app/2.0.0.tgz');
     expect(parseRegistryObjectKey('readme/my-lib.md')).toBe('readme/my-lib.md');
