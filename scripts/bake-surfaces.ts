@@ -216,7 +216,7 @@ async function main(): Promise<void> {
     schemaVersion: 2,
     kind: 'surfaces-state',
     generatedAt: new Date().toISOString(),
-    source: 'config/surfaces.toml (dig+curl verified 2026-07-28)',
+    source: 'config/surfaces.toml (dig+curl verified 2026-08-04)',
     surfaces,
     publishLanes: lanes,
     mail: inventory.mail,

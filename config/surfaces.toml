@@ -9,7 +9,7 @@
 #   placeholder — documented name only; nothing provisions it
 #   external    — third-party service (not our infra)
 #   retired     — decommissioned (DNS record removed); kept for audit trail
-# Verified via dig + curl 2026-07-28. Re-verify: bake --probe (planned) or manual dig/curl.
+# Verified via dig + curl 2026-08-04. Re-verify: bake --probe (planned) or manual dig/curl.
 
 [surfaces.apex]
 host = "factory-wager.com"
@@ -63,6 +63,15 @@ status = "live"
 protocol = "https-get-only allowlist gateway (npm packuments + proof JSON)"
 access = "allowlist"
 note = "Token in bunfig scope is sent but not verified; authz = key allowlist. Writes → 405. Bucket audit 2026-07-28: 12 objects, catalog index (registry.json, 17 pkgs metadata+readme) + ops stub + telegram channels/ — NO storage/ artifacts; installable packuments+tarballs are served from the committed static mirror (public/registry/@factorywager/*), not R2."
+
+[surfaces.tennis]
+host = "tennis.factory-wager.com"
+dnsTarget = ""
+backend = "cloudflare-worker:tennis-hq"
+status = "live"
+protocol = "https-static+functions"
+access = "public"
+note = "Operator-owned Tennis HQ Worker Custom Domain. Cloudflare manages DNS/TLS directly; merged producer SHA cb091989 and Worker version 9aaae6ba-7293-4cda-b2ab-41cd068a76ca passed strict release verification 2026-08-04. Public shell and identity; /api/v1/* contracts use separate fail-closed bearer auth."
 
 [surfaces.wiki]
 host = "wiki.factory-wager.com"

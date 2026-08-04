@@ -174,6 +174,9 @@ describe('branded domain-value catalog', () => {
     expect(branded.surfaceBackendCodeFromBackend('cloudflare-pages:project-r-score')).toBe(
       'cloudflare-pages'
     );
+    expect(branded.surfaceBackendCodeFromBackend('cloudflare-worker:tennis-hq')).toBe(
+      'cloudflare-worker'
+    );
     expect(branded.surfaceBackendCodeFromBackend('none — no tunnel')).toBe('none');
     expect(branded.pagesDevHostForProject(branded.PROJECT_R_SCORE_PAGES)).toBe(
       'project-r-score.pages.dev'

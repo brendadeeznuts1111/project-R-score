@@ -15,6 +15,9 @@
 **Portal** [`/portal/tennis/`](../../../public/portal/tennis/) ·
 [`/portal/env/`](../../../public/portal/env/)
 
+**Producer runtime** [`https://tennis.factory-wager.com`](https://tennis.factory-wager.com)
+· Cloudflare Worker `tennis-hq`
+
 ## Purpose
 
 Give a **cloud agent** (remote sandbox) a Bearer token so it can:
@@ -25,6 +28,27 @@ Give a **cloud agent** (remote sandbox) a Bearer token so it can:
    (local `serve-public` or direct R2 publish — not Pages).
 
 The public read plane on Pages does **not** require the token for GETs.
+
+## Operator-owned producer runtime
+
+The canonical Tennis HQ runtime is deployed directly by FactoryWager operators;
+it is not delegated to an external Git integration. Cloudflare owns DNS and TLS
+for the Worker Custom Domain, while this repository owns its inventory and
+consumer evidence.
+
+| Proof | Value |
+| ----- | ----- |
+| Runtime | `https://tennis.factory-wager.com` |
+| Worker | `tennis-hq` |
+| Producer merge | `cb09198929929ed7b9970eed7f27bb3a82c964d2` |
+| Worker version | `9aaae6ba-7293-4cda-b2ab-41cd068a76ca` |
+| Verified | 2026-08-04 · identity, shell, glossary, fail-closed v1 auth |
+| Inventory | `config/surfaces.toml` → `/registry/surfaces-state.json` |
+
+Producer service auth is a distinct boundary from FactoryWager registry auth.
+`FACTORY_WAGER_TOKEN` is not sent to Tennis HQ. The producer accepts its own
+`PARTNER_API_TOKEN`; until that secret is provisioned, v1 reads return the
+redacted `contract_auth_unconfigured` response with HTTP 503.
 
 ## Status: configured
 
