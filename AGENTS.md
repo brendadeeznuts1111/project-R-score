@@ -284,11 +284,8 @@ interior, path/name allowlists, suppressions.
     worktree files cannot fail your commit; failure output names the cheapest
     edge to break per cycle; `--json` for agents; owner re-pin:
     `bun scripts/check-import-graph.ts --write-baseline`)
-  - oxlint warnings → `bun run check:oxlint-ratchet` (`ci:core` merge proof;
-    total may only go down — 193 pinned 2026-07-28; scans the **git index tree**
-    (HEAD ∪ staged), immune to foreign-lane worktree dirt; owner re-pin:
-    `bun scripts/check-oxlint-ratchet.ts --write-baseline`; biggest cluster:
-    `scripts/search-benchmark-dashboard.ts` useless-escapes)
+  - Root quality → pinned Prettier + ESLint. Root Oxlint is retired; nested
+    standalone products may retain an explicitly pinned toolchain they own.
   - Console output formatting →
     [`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts)
     policy (`logTable` / `logDepth` / `inspectTable` / `jsonOut` / `colorize`);
