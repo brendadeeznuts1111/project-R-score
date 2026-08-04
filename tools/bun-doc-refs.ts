@@ -1526,8 +1526,9 @@ function isCodeApiKey(k: string): boolean {
   if (CONCEPT_ONLY_KEYS.has(k)) return false;
   // Ambiguous CLI flag: bundler watch vs `bun test --changed --watch` (blog #bun-test-changed)
   if (k === '--watch') return false;
-  // Bundler CLI flags that collide with unrelated --env / --version / --console surfaces
-  if (k === '--env' || k === '--version' || k === '--console') return false;
+  // Bundler CLI flags that collide with unrelated tool surfaces. Keep them in the
+  // URL/catalog map, but do not auto-annotate every external CLI invocation.
+  if (k === '--env' || k === '--version' || k === '--console' || k === '--format') return false;
   if (k.startsWith('Bun.') || k.startsWith('bun:') || k.startsWith('--')) return true;
   // PascalCase Bun package exports / types
   if (/^[A-Z][A-Za-z0-9]+$/.test(k)) return true;

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-openineditor — Bun.openInEditor
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/file-io — Bun.file
@@ -9,7 +10,7 @@
  *
  * Collectors (start with easy / high-signal):
  *   1. ESLint wire-boundary rules (unknown params, decodeUnknown*)
- *   2. branded-id-check --smart (actionable + optional legacy baseline)
+ *   2. branded-id-check --smart (actionable + authoritative optional legacy queue)
  *
  * Usage:
  *   bun tools/harness-violations.ts                  # list, group by rule
@@ -186,6 +187,7 @@ type BrandSmartJson = {
     role: string;
     structural: string;
     brandHint: string | null;
+    candidateBrand: string | null;
     reason: string;
     text: string;
     suppressed?: boolean;
@@ -197,6 +199,19 @@ type BrandSmartJson = {
     role: string;
     structural: string;
     brandHint: string | null;
+    candidateBrand: string | null;
+    reason: string;
+    text: string;
+    suppressed?: boolean;
+  }>;
+  legacyHits?: Array<{
+    file: string;
+    line: number;
+    field: string;
+    role: string;
+    structural: string;
+    brandHint: string | null;
+    candidateBrand: string | null;
     reason: string;
     text: string;
     suppressed?: boolean;
@@ -204,7 +219,9 @@ type BrandSmartJson = {
 };
 
 async function collectBrands(includeLegacy: boolean): Promise<Violation[]> {
-  const proc = Bun.spawn(bunSpawnArgs(['tools/branded-id-check.ts', '--smart', '--json']), {
+  const brandArgs = ['tools/branded-id-check.ts', '--smart', '--json'];
+  if (includeLegacy) brandArgs.push('--legacy');
+  const proc = Bun.spawn(bunSpawnArgs(brandArgs), {
     cwd: REPO,
     stdout: 'pipe',
     stderr: 'pipe',
@@ -229,47 +246,26 @@ async function collectBrands(includeLegacy: boolean): Promise<Violation[]> {
       message: `${h.field}: string  [${h.role}/${h.structural}] ${h.reason}`,
       hint: h.brandHint
         ? `use ${h.brandHint} via as*/try*/parse* from lib/types/branded`
-        : 'use brand from lib/types/branded or // brand-ok',
+        : h.candidateBrand
+          ? `${h.candidateBrand} is only a naming candidate; review domain ownership and the catalog`
+          : 'use brand from lib/types/branded or // brand-ok',
       tier: 'easy',
     });
   }
 
   if (includeLegacy) {
-    // Re-run without baseline by reading smart and also scanning? Baseline is applied inside tool.
-    // For legacy, call write-baseline keys vs full scan: use --smart without baseline not available.
-    // Instead parse suppressedSample only if reason is legacy — insufficient.
-    // Spawn a second internal approach: run smart json is only actionable.
-    // Load baseline and scan is heavy; document --legacy-brands as future.
-    // Quick path: rg mid-line sessionId: string without brand-ok as info tier
-    const legacy = await collectEasyBareIdStrings();
-    hits.push(...legacy);
-  }
-  return hits;
-}
-
-/** Lightweight "easy" bare domain ID:string hits (no full smart classify). */
-async function collectEasyBareIdStrings(): Promise<Violation[]> {
-  const idRe =
-    /(?<![\w$.])(sessionId|userId|accountId|requestId|correlationId|zoneId|webhookId|jobId)\??:\s*string\b/;
-  const hits: Violation[] = [];
-  const glob = new Bun.Glob('**/*.ts');
-  for await (const f of glob.scan({ cwd: resolvePath(REPO, 'lib'), absolute: true })) {
-    if (f.includes('/types/branded/')) continue;
-    const text = await Bun.file(f).text();
-    const lines = text.split('\n');
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i]!;
-      if (/brand-ok/.test(line)) continue;
-      if (/^\s*(\/\/|\*)/.test(line)) continue;
-      const m = line.match(idRe);
-      if (!m) continue;
+    for (const h of data.legacyHits ?? []) {
       hits.push({
-        rule: 'branded-id/easy-name',
+        rule: 'branded-id/legacy',
         severity: 'info',
-        file: rel(f),
-        line: i + 1,
-        message: `${m[1]}: string (common domain name — prefer brand)`,
-        hint: `bun tools/brand-catalog.ts ${m[1]![0]!.toUpperCase()}${m[1]!.slice(1)}`,
+        file: h.file,
+        line: h.line,
+        message: `${h.field}: string  [${h.role}/${h.structural}] grandfathered`,
+        hint: h.brandHint
+          ? `migrate to ${h.brandHint} via an owned boundary constructor`
+          : h.candidateBrand
+            ? `${h.candidateBrand} is only a naming candidate; establish domain ownership before adding it`
+            : 'brand the owned identity or document an opaque // brand-ok decision',
         tier: 'legacy',
       });
     }

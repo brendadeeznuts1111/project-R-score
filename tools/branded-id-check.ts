@@ -18,6 +18,7 @@
  *   bun tools/branded-id-check.ts [paths...]   # report by directory (exit 0)
  *   bun tools/branded-id-check.ts --smart      # role + structure clusters
  *   bun tools/branded-id-check.ts --smart --json
+ *   bun tools/branded-id-check.ts --legacy     # full grandfathered migration queue
  *   bun tools/branded-id-check.ts --smart --quiet  # one-line success / full on fail
  *   bun tools/branded-id-check.ts --strict     # exit 1 on actionable hits
  *                                              #   (--smart also rejects stale baseline rows)
@@ -149,7 +150,10 @@ type Hit = {
   structural: StructuralKind;
   /** True when detector auto-suppresses (not an actionable domain ingress). */
   suppressed: boolean;
+  /** Existing catalog brand for this field; safe to recommend directly. */
   brandHint: string | null;
+  /** Proposed name only; requires domain ownership review before adding a brand. */
+  candidateBrand: string | null;
   reason: string;
 };
 
@@ -220,10 +224,38 @@ export function findStaleBaselineKeys(
   return [...baselineKeys].filter(key => !liveActionableKeys.has(key)).sort();
 }
 
-function actionableBaselineKeys(hits: readonly Hit[]): Set<string> {
-  return new Set(
-    hits.filter(hit => !hit.suppressed).map(hit => baselineKey(hit.file, hit.field, hit.text))
-  );
+export type BaselineMatchSummary = {
+  scope: 'repository' | 'paths';
+  keyCount: number;
+  matchedKeyCount: number;
+  matchCount: number;
+  staleKeys: string[];
+  duplicateMatches: Array<{ key: string; count: number }>;
+};
+
+/** Summarize exact live matches, including one baseline key masking repeated declarations. */
+export function summarizeBaselineKeyMatches(
+  baselineKeys: ReadonlySet<string>,
+  matchedKeys: readonly string[],
+  scope: 'repository' | 'paths' = 'repository'
+): BaselineMatchSummary {
+  const counts = new Map<string, number>();
+  for (const key of matchedKeys) {
+    if (!baselineKeys.has(key)) continue;
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  const liveKeys = new Set(counts.keys());
+  return {
+    scope,
+    keyCount: baselineKeys.size,
+    matchedKeyCount: liveKeys.size,
+    matchCount: [...counts.values()].reduce((total, count) => total + count, 0),
+    staleKeys: scope === 'repository' ? findStaleBaselineKeys(baselineKeys, liveKeys) : [],
+    duplicateMatches: [...counts.entries()]
+      .filter(([, count]) => count > 1)
+      .map(([key, count]) => ({ key, count }))
+      .sort((a, b) => a.key.localeCompare(b.key)),
+  };
 }
 
 async function loadBaselineKeys(): Promise<Set<string>> {
@@ -266,8 +298,11 @@ function fieldRole(field: string, maps: FieldMaps): Role {
 
 function brandHintFor(field: string, role: Role, maps: FieldMaps): string | null {
   if (role === 'opaque-pk') return null;
-  const fromManifest = maps.brandByField.get(field);
-  if (fromManifest) return fromManifest;
+  return maps.brandByField.get(field) ?? null;
+}
+
+/** A naming candidate is not a catalog brand and must never be presented as one. */
+export function candidateBrandNameForField(field: string): string {
   // Normalize snake / camel to Pascal brand name
   const camel = field.includes('_')
     ? field
@@ -400,6 +435,7 @@ function classifyHit(
 ): Hit {
   const role = fieldRole(field, maps);
   const brandHint = brandHintFor(field, role, maps);
+  const candidateBrand = role === 'new-brand' ? candidateBrandNameForField(field) : null;
   const highTrust = HIGH_TRUST_PATH.test(relPath(file));
   let suppressed = false;
   let reason = '';
@@ -419,6 +455,7 @@ function classifyHit(
       structural,
       suppressed: true,
       brandHint,
+      candidateBrand,
       reason: 'dual string|Brand input port (normalize with try*/as*)',
     };
   }
@@ -458,8 +495,17 @@ function classifyHit(
     structural,
     suppressed,
     brandHint,
+    candidateBrand,
     reason,
   };
+}
+
+function migrationHint(hit: Hit): string {
+  if (hit.brandHint) return `use ${hit.brandHint} via as*/try*/parse*`;
+  if (hit.candidateBrand) {
+    return `no catalog brand; review ownership before adding ${hit.candidateBrand}`;
+  }
+  return 'brand the owned identity or add a reasoned // brand-ok suppression';
 }
 
 /**
@@ -523,7 +569,7 @@ async function stagedViolations(): Promise<Violation[]> {
         violations.push({
           file,
           line: newLine,
-          text: `${line.trim()}  ← ${field}${hit.brandHint ? ` → use ${hit.brandHint}` : ''}`,
+          text: `${line.trim()}  ← ${field} → ${migrationHint(hit)}`,
         });
       }
       continue;
@@ -620,13 +666,22 @@ async function printSmartReport(
   hits: Hit[],
   asJson: boolean,
   quiet = false,
-  staleBaselineKeys: readonly string[] = []
+  baseline: BaselineMatchSummary,
+  includeLegacy = false
 ): Promise<void> {
   const maps = await fieldMaps();
   const actionable = hits.filter(h => !h.suppressed);
   const suppressed = hits.filter(h => h.suppressed);
 
-  if (quiet && !asJson && actionable.length === 0 && staleBaselineKeys.length === 0) {
+  const legacyHits = hits.filter(hit => hit.reason.startsWith('legacy baseline'));
+
+  if (
+    quiet &&
+    !asJson &&
+    !includeLegacy &&
+    actionable.length === 0 &&
+    baseline.staleKeys.length === 0
+  ) {
     console.info(
       `✅ brands-smart (${hits.length} hits, 0 actionable, ${suppressed.length} suppressed)`
     );
@@ -640,7 +695,8 @@ async function printSmartReport(
           total: hits.length,
           actionable: actionable.length,
           autoSuppressed: suppressed.length,
-          staleBaselineKeys,
+          baseline,
+          staleBaselineKeys: baseline.staleKeys,
           manifestLoaded: maps.loadedFromManifest,
           byRole: Object.fromEntries(
             (
@@ -655,6 +711,7 @@ async function printSmartReport(
             ])
           ),
           hits: actionable,
+          legacyHits: includeLegacy ? legacyHits : undefined,
           suppressedSample: suppressed.slice(0, 20),
         },
         null,
@@ -674,10 +731,27 @@ async function printSmartReport(
       `  AGENTS: new domain *Id fields MUST use brands (as*/try*/parse*) — staged gate has no baseline.\n`
   );
 
-  if (staleBaselineKeys.length > 0) {
-    console.info(`\n  stale baseline keys (${staleBaselineKeys.length}):`);
-    for (const key of staleBaselineKeys) console.info(`    ${key}`);
+  if (baseline.staleKeys.length > 0) {
+    console.info(`\n  stale baseline keys (${baseline.staleKeys.length}):`);
+    for (const key of baseline.staleKeys) console.info(`    ${key}`);
     console.info('  repair: bun run brand:baseline');
+  }
+
+  if (includeLegacy) {
+    console.info(
+      `\n  legacy migration queue (${baseline.matchedKeyCount} keys · ${legacyHits.length} declarations):`
+    );
+    for (const hit of legacyHits) {
+      console.info(
+        `    ${hit.file}:${hit.line}  ${hit.field}  [${hit.structural}] → ${migrationHint(hit)}`
+      );
+    }
+    if (baseline.duplicateMatches.length > 0) {
+      console.info(`\n  repeated declarations covered by one baseline key:`);
+      for (const duplicate of baseline.duplicateMatches) {
+        console.info(`    ×${duplicate.count} ${duplicate.key}`);
+      }
+    }
   }
 
   const roles: Role[] = ['auth-credential', 'named-domain', 'new-brand', 'opaque-pk', 'ambiguous'];
@@ -716,8 +790,9 @@ async function printSmartReport(
   if (newBrandFields.size > 0) {
     console.info(`\n  new-brand field breakdown:`);
     for (const [f, n] of [...newBrandFields.entries()].sort((a, b) => b[1] - a[1])) {
-      const hint = brandHintFor(f, 'new-brand', maps);
-      console.info(`    ${String(n).padStart(3)}  ${f}${hint ? ` → ${hint}` : ''}`);
+      console.info(
+        `    ${String(n).padStart(3)}  ${f} → candidate ${candidateBrandNameForField(f)} (not in catalog)`
+      );
     }
   }
 
@@ -749,12 +824,63 @@ async function printSmartReport(
   );
 }
 
+function printHelp(): void {
+  console.info(`branded-id-check — enforce branded domain values after boundaries
+
+Usage:
+  bun tools/branded-id-check.ts [paths...] [options]
+
+Modes:
+  --staged           Check only added TypeScript lines; never uses the baseline
+  --smart            Classify actionable and suppressed declarations
+  --legacy           Include the complete grandfathered migration queue
+  --write-baseline   Rewrite the legacy baseline from current actionable declarations
+
+Output and policy:
+  --json             Emit the smart report as JSON (implies --smart)
+  --quiet            Emit one line when clean (implies --smart)
+  --strict           Exit 1 for actionable hits or stale repository baseline keys
+  -h, --help         Show this help without scanning
+
+Examples:
+  bun tools/branded-id-check.ts --staged --strict
+  bun tools/branded-id-check.ts --smart --strict
+  bun tools/branded-id-check.ts --legacy
+  bun tools/branded-id-check.ts --legacy --json
+  bun tools/branded-id-check.ts lib/identity --smart --strict
+
+Catalog: bun tools/brand-catalog.ts <domain|BrandName>
+Coverage: bun tools/brand-coverage.ts --attention`);
+}
+
 async function main(): Promise<void> {
   const args = Bun.argv.slice(2);
+  if (args.includes('--help') || args.includes('-h')) {
+    printHelp();
+    return;
+  }
+
+  const knownFlags = new Set([
+    '--staged',
+    '--smart',
+    '--legacy',
+    '--json',
+    '--quiet',
+    '--strict',
+    '--write-baseline',
+  ]);
+  const unknownFlags = args.filter(arg => arg.startsWith('-') && !knownFlags.has(arg));
+  if (unknownFlags.length > 0) {
+    console.error(`Unknown option(s): ${unknownFlags.join(', ')}\n`);
+    printHelp();
+    process.exit(2);
+  }
+
   const strict = args.includes('--strict');
-  const smart = args.includes('--smart');
   const asJson = args.includes('--json');
   const quiet = args.includes('--quiet');
+  const includeLegacy = args.includes('--legacy');
+  const smart = args.includes('--smart') || asJson || quiet || includeLegacy || strict;
   const writeBaseline = args.includes('--write-baseline');
 
   // Staged mode: hunk-aware — only ADDED lines are judged, so legacy
@@ -789,13 +915,18 @@ async function main(): Promise<void> {
     const baseline = await loadBaselineKeys();
     const rawHits = await scanAll(files);
     const isRepoWideScan = !args.some(arg => !arg.startsWith('--'));
-    const staleBaselineKeys = isRepoWideScan
-      ? findStaleBaselineKeys(baseline, actionableBaselineKeys(rawHits))
-      : [];
+    const rawActionableKeys = rawHits
+      .filter(hit => !hit.suppressed)
+      .map(hit => baselineKey(hit.file, hit.field, hit.text));
+    const baselineSummary = summarizeBaselineKeyMatches(
+      baseline,
+      rawActionableKeys,
+      isRepoWideScan ? 'repository' : 'paths'
+    );
     const hits = applyBaseline(rawHits, baseline);
-    await printSmartReport(hits, asJson, quiet, staleBaselineKeys);
+    await printSmartReport(hits, asJson, quiet, baselineSummary, includeLegacy);
     const actionable = hits.filter(h => !h.suppressed).length;
-    if (strict && (actionable > 0 || staleBaselineKeys.length > 0)) process.exit(1);
+    if (strict && (actionable > 0 || baselineSummary.staleKeys.length > 0)) process.exit(1);
     return;
   }
 
