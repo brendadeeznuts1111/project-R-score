@@ -90,8 +90,7 @@ These may exist on disk under `~/Projects` but are **gitignored** or separate re
 | `bet-turnin-sheet/`, `bradley-terry/` | Own nested git projects |
 | `oddsblaze/`, `king-zippy-umbra-acre/` | Gitignored nested products (local only) |
 | `projects/active/kimiremote/`, `…/enterprise/{cascade-mover-v3,bet-ticker-worker-v1.1}/`, `…/f402-openapi/` | Own remotes, nested under active for path convenience |
-| `herdr-worktrees/` | Empty worktree parking |
-| Root `test-binary-*`, `**/sports-terminal-{before,after}` | Bun `--compile` dumps — delete if reappear |
+| Root `herdr-worktrees/`, `profiles/`, `bun-write-test/`, `test-*-*`, `test-binary-*`, `**/sports-terminal-{before,after}` | Local parking / Bun scratch / `--compile` dumps — delete if reappear |
 
 `projects/experimental/` holds relocated demos (see [`projects/experimental/README.md`](projects/experimental/README.md)). `projects/archive/` holds the first freeze ([`factorywager-packages/`](projects/archive/factorywager-packages/) — `ab-testing`, `versioning`).
 
