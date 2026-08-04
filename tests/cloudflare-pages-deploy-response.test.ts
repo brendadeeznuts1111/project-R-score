@@ -21,6 +21,13 @@ describe('Cloudflare Pages deploy response boundary', () => {
     );
   });
 
+  test('treats an empty HTTP 304 as an unchanged deployment signal', () => {
+    expect(parseCloudflareApiResponse('', 304, 'POST /deployments')).toEqual({
+      success: true,
+      notModified: true,
+    });
+  });
+
   test('reports non-JSON without leaking an unbounded response body', () => {
     const body = `<html>${'x'.repeat(300)}</html>`;
     expect(() => parseCloudflareApiResponse(body, 502, 'POST /deployments')).toThrow(
