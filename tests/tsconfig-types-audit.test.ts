@@ -16,18 +16,10 @@ describe('check:tsconfig-types audit', () => {
     expect(r.exitCode).toBe(0);
 
     const inv = (await Bun.file(resolvePath(ROOT, '.tmp/tsconfig-types-audit.json')).json()) as {
-      summary: {
-        omit: number;
-        bunTypes: number;
-        bunOk: number;
-        total: number;
-        monorepoRisk?: number;
-      };
+      summary: { omit: number; bunTypes: number; bunOk: number; total: number };
     };
     expect(inv.summary.total).toBeGreaterThan(50);
-    // Tool exits 0 when monorepo_risk=0 even if leaf/archive projects still use
-    // TS6-risk "omit" patterns. Gate monorepo risk + bun-types rename debt.
-    expect(inv.summary.monorepoRisk ?? 0).toBe(0);
+    expect(inv.summary.omit).toBe(0);
     expect(inv.summary.bunTypes).toBe(0);
     expect(inv.summary.bunOk).toBeGreaterThan(50);
   });
