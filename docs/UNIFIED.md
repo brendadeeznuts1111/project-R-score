@@ -116,7 +116,7 @@ TOML samples under package-manager docs are almost always **`bunfig.toml`** (`ex
 
 **Types pin:** catalog `@types/bun` / `bun-types` may lag `packageManager` / runtime (e.g. runtime 1.4.0, types 1.3.14). Bump both type packages together; prove with typecheck gates. Pages `BUN_VERSION` is a separate deploy pin.
 
-**Intentional catalog exception:** `sports-terminal-os` pins `typescript` at **5.9.3** (not `catalog:` → 6.0.3) until its `tsc` surface is cleaned for TS 6 (`baseUrl` deprecation, rootDir/path imports into monorepo `lib/`). Other shared pins (zod, react, bun-types) still use `catalog:`. Debt / exit criteria: [monorepo-workspaces — Open debt: STO TypeScript 6](./harness/tenants/monorepo-workspaces.md#open-debt-sto-typescript-6).
+**STO TypeScript 6 (resolved):** `sports-terminal-os` uses `"typescript": "catalog:"` like other workspace members — see [monorepo-workspaces — STO TypeScript 6 (resolved)](./harness/tenants/monorepo-workspaces.md#sto-typescript-6-resolved).
 
 ## Config SSOT rules
 

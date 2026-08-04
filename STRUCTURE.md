@@ -27,7 +27,7 @@ Projects/
 ├── .claude/                 # Claude commands / agents
 ├── .github/                 # Workflows, templates
 ├── _includes/               # Jekyll includes for wiki.factory-wager.com
-├── AGENTS.md                # Agent entrypoint → docs/AGENTS.md + docs/UNIFIED.md
+├── AGENTS.md                # Agent entry + grounded capability map SSOT
 ├── .custom-instructions.md  # Coding standards SSOT → docs/DEVELOPMENT-STANDARDS.md
 ├── README.md                # Human hub
 ├── STRUCTURE.md             # This file
@@ -42,7 +42,7 @@ Projects/
 ├── dashboard/               # Dashboard servers & UIs
 ├── docs/                    # Documentation (UNIFIED.md, AGENTS.md, guides)
 │   ├── README.md            # Docs index (SSOT navigation)
-│   ├── AGENTS.md            # Full agent guide (root AGENTS.md is thin entry)
+│   ├── AGENTS.md            # Pointer → root AGENTS.md (operating rules + capability map SSOT)
 │   ├── UNIFIED.md · WIRE_BOUNDARY.md · DEVELOPMENT-STANDARDS.md
 │   ├── BUN_DOCS_OPERATE.md  # Token/catalog operate (RSS → scrape → catalog)
 │   ├── organization/        # Root cleanup history
@@ -88,6 +88,7 @@ These may exist on disk under `~/Projects` but are **gitignored** or separate re
 | `plannotator-upstream/` | Full upstream clone; use `plannator/` for thin skills |
 | `toc-ops/`, `toc-ops-repo/`, `toc-ops-repo-wt-*` | Separate TOC-ops product / worktrees |
 | `bet-turnin-sheet/`, `bradley-terry/` | Own nested git projects |
+| `oddsblaze/`, `king-zippy-umbra-acre/` | Gitignored nested products (local only) |
 | `projects/active/kimiremote/`, `…/enterprise/{cascade-mover-v3,bet-ticker-worker-v1.1}/`, `…/f402-openapi/` | Own remotes, nested under active for path convenience |
 | `herdr-worktrees/` | Empty worktree parking |
 | Root `test-binary-*`, `**/sports-terminal-{before,after}` | Bun `--compile` dumps — delete if reappear |
