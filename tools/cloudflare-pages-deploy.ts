@@ -87,6 +87,20 @@ export function parseCloudflareApiResponse<T>(
   return envelope as CfResponse<T>;
 }
 
+/** Apply HTTP status policy after envelope parsing; 304 is a verified no-op, not a failure. */
+export function ensureCloudflareHttpSuccess<T>(
+  body: CfResponse<T>,
+  status: number,
+  requestLabel: string
+): CfResponse<T> {
+  if (body.notModified) return body;
+  if (status < 200 || status >= 300) {
+    const detail = body.errors?.map(error => error.message).join('; ') || 'request failed';
+    throw new Error(`Cloudflare API ${requestLabel} HTTP ${status}: ${detail}`);
+  }
+  return body;
+}
+
 type DeployStage = { name: string; status: string };
 type Deployment = {
   id: string; // brand-ok — Cloudflare Pages deployment UUID
@@ -112,11 +126,7 @@ async function cf<T>(path: string, init?: RequestInit): Promise<CfResponse<T>> {
     },
   });
   const body = parseCloudflareApiResponse<T>(await res.text(), res.status, requestLabel);
-  if (!res.ok) {
-    const detail = body.errors?.map(error => error.message).join('; ') || 'request failed';
-    throw new Error(`Cloudflare API ${requestLabel} HTTP ${res.status}: ${detail}`);
-  }
-  return body;
+  return ensureCloudflareHttpSuccess(body, res.status, requestLabel);
 }
 
 async function triggerDeploy(): Promise<string | null> {
