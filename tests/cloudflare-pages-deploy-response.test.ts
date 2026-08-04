@@ -1,6 +1,9 @@
 // @see https://bun.com/docs/test — bun:test
 import { describe, expect, test } from 'bun:test';
-import { parseCloudflareApiResponse } from '../tools/cloudflare-pages-deploy.ts';
+import {
+  ensureCloudflareHttpSuccess,
+  parseCloudflareApiResponse,
+} from '../tools/cloudflare-pages-deploy.ts';
 
 describe('Cloudflare Pages deploy response boundary', () => {
   test('accepts a valid Cloudflare envelope', () => {
@@ -22,10 +25,22 @@ describe('Cloudflare Pages deploy response boundary', () => {
   });
 
   test('treats an empty HTTP 304 as an unchanged deployment signal', () => {
-    expect(parseCloudflareApiResponse('', 304, 'POST /deployments')).toEqual({
+    const response = parseCloudflareApiResponse('', 304, 'POST /deployments');
+    expect(response).toEqual({
       success: true,
       notModified: true,
     });
+    expect(ensureCloudflareHttpSuccess(response, 304, 'POST /deployments')).toBe(response);
+  });
+
+  test('preserves Cloudflare errors for other non-success HTTP statuses', () => {
+    expect(() =>
+      ensureCloudflareHttpSuccess(
+        { success: false, errors: [{ message: 'token rejected' }] },
+        403,
+        'POST /deployments'
+      )
+    ).toThrow('Cloudflare API POST /deployments HTTP 403: token rejected');
   });
 
   test('reports non-JSON without leaking an unbounded response body', () => {
