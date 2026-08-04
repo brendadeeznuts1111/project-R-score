@@ -160,7 +160,7 @@ Valid: plain objects, arrays, strings, numbers, booleans, null, `ArrayBuffer`, `
 5. **Check config** — compatibility_date, nodejs_compat, observability, secrets, binding-code consistency
 6. **Check patterns** — streaming, floating promises, global state, serialization boundaries
 7. **Check security** — crypto usage, secret handling, timing-safe comparisons, error handling
-8. **Validate with tools** — `npx tsc --noEmit`, lint for `no-floating-promises`
+8. **Validate with tools** — `bun run tsc --noEmit`, then use the project's pinned lint command with `no-floating-promises` enabled
 9. **Assess risk** — HIGH (auth, crypto, bindings), MEDIUM (business logic, config), LOW (style, comments)
 
 ### Output format

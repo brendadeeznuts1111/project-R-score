@@ -108,7 +108,7 @@ mkdir -p /tmp/workers-types-latest && \
 4. **Check config** — compatibility_date, nodejs_compat, observability, secrets, binding-code consistency
 5. **Check patterns** — streaming, floating promises, global state, serialization boundaries
 6. **Check security** — crypto usage, secret handling, timing-safe comparisons, error handling
-7. **Validate with tools** — `npx tsc --noEmit`, lint for `no-floating-promises`
+7. **Validate with tools** — `bun run tsc --noEmit`, then use the project's pinned lint command with `no-floating-promises` enabled
 8. **Reference rules** — see `references/rules.md` for each rule's correct pattern
 
 ## Scope

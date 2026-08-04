@@ -337,11 +337,9 @@ A Promise that is not `await`ed, `return`ed, or passed to `ctx.waitUntil()` is a
 **Check**: every `fetch()`, `env.*.put()`, `env.*.send()`, and any other async call is handled. Enable `no-floating-promises` lint rule.
 
 ```bash
-# ESLint
-npx eslint --rule '{"@typescript-eslint/no-floating-promises": "error"}' src/
-
-# oxlint
-npx oxlint --deny typescript/no-floating-promises src/
+# Configure @typescript-eslint/no-floating-promises in the project ESLint rules,
+# then invoke the project-owned, pinned lint entrypoint.
+bun run lint
 ```
 
 ```ts

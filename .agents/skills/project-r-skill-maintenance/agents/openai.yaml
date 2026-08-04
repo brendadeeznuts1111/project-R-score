@@ -1,4 +1,4 @@
 interface:
   display_name: "Skill Maintenance"
-  short_description: "Create and update Codex skills with aligned metadata"
-  default_prompt: "Use $project-r-skill-maintenance to update an existing skill first, align its metadata, run bun run skills:validate, and report changed files."
+  short_description: "Align skill metadata, registry entries, and guidance"
+  default_prompt: "Use $project-r-skill-maintenance to update the repository-authoritative skill first, align metadata and registry entries, retire stale guidance, run bun run skills:validate, and report changed files."

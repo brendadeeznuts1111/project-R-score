@@ -29,8 +29,10 @@ Keep edits minimal, deterministic, and aligned between `SKILL.md` and `agents/op
 - Ensure no broken paths under `scripts/`, `references/`, or `assets/`.
 5. Audit staleness before preserving advice.
 - Compare duplicate skill names under `/Users/nolarose/.codex/skills` and `/Users/nolarose/Projects/.agents/skills`; choose and state the authority instead of letting copies drift.
+- Treat `/Users/nolarose/Projects/.agents/skills` as the repository authority for Project R skills; synchronize an installed `/Users/nolarose/.codex/skills` copy only after the repository version validates.
 - For Bun behavior, check `dx version`, the active command's `--help`, and current official Bun docs. Runtime evidence wins over cached examples.
 - Remove or clearly deprecate incorrect translations rather than keeping them as runnable examples. Current examples: Bun has no `bun test --runInBand`; `t.workerId` / `NODE_TEST_WORKER_ID` belong to `node:test`, not `bun:test`.
+- Retire runnable root Oxlint examples; Project R uses its pinned ESLint and Prettier entrypoints. Preserve Oxlint only in a nested standalone product that owns an explicit pin.
 - Preserve historical/version-specific skills only when their version scope is explicit in the name and body.
 6. Run update checklist.
 - Frontmatter valid and trigger description reflects actual use cases.
