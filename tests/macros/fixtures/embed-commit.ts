@@ -4,12 +4,11 @@
  * Fixture entry for proving git macros inline under `bun build`.
  * Not imported by runtime tests except via spawn of `bun build`.
  */
-import { getGitBranch, getGitCommitHash } from '../../../lib/macros/git-commit.ts' with {
-  type: 'macro',
-};
-import { getGitHubRepositoryParts } from '../../../lib/macros/github-repository.ts' with {
-  type: 'macro',
-};
+import {
+  getGitBranch,
+  getGitCommitHash,
+} from '../../../lib/macros/git-commit.ts' with { type: 'macro' };
+import { getGitHubRepositoryParts } from '../../../lib/macros/github-repository.ts' with { type: 'macro' };
 
 export const COMMIT = getGitCommitHash();
 export const BRANCH = getGitBranch();

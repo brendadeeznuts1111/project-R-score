@@ -9,13 +9,19 @@ export function lintMessage(entryId: string, prefix?: string): string {
 
 export function importPathMessage(moduleName: string): string {
   const entry = getBunDxEntry(
-    moduleName.includes('child_process') ? 'spawn.exec' :
-    moduleName.includes('fs') ? 'file.read' :
-    moduleName === 'crypto' || moduleName === 'node:crypto' ? 'crypto.hash' :
-    moduleName === 'axios' ? 'http.fetch' :
-    moduleName.includes('zlib') ? 'zlib.compress' :
-    moduleName.includes('http') ? 'http.serve' :
-    'file.read'
+    moduleName.includes('child_process')
+      ? 'spawn.exec'
+      : moduleName.includes('fs')
+        ? 'file.read'
+        : moduleName === 'crypto' || moduleName === 'node:crypto'
+          ? 'crypto.hash'
+          : moduleName === 'axios'
+            ? 'http.fetch'
+            : moduleName.includes('zlib')
+              ? 'zlib.compress'
+              : moduleName.includes('http')
+                ? 'http.serve'
+                : 'file.read'
   );
   if (!entry) {
     return `Prefer Bun-native APIs instead of "${moduleName}". Docs: https://bun.sh/docs`;

@@ -18,11 +18,7 @@ import type {
   PortalAccount,
   TelegramIndexEntry,
 } from './account-types.ts';
-import {
-  accountObjectKey,
-  oidcIndexKey,
-  telegramIndexKey,
-} from './account-types.ts';
+import { accountObjectKey, oidcIndexKey, telegramIndexKey } from './account-types.ts';
 
 export type { CreateAccountInput };
 
@@ -59,16 +55,19 @@ export class AccountR2Store {
   async getByOidc(oidcSubject: string): Promise<PortalAccount | null> {
     const idx = await r2GetJson<OidcSubjectIndexEntry>(this.bucket, oidcIndexKey(oidcSubject));
     if (!idx) return null;
-    return this.get(asPortalTenantId(idx.tenantId as string), asPortalAccountId(idx.accountId as string));
+    return this.get(
+      asPortalTenantId(idx.tenantId as string),
+      asPortalAccountId(idx.accountId as string)
+    );
   }
 
   async getByTelegram(telegramId: TelegramUserId): Promise<PortalAccount | null> {
-    const idx = await r2GetJson<TelegramIndexEntry>(
-      this.bucket,
-      telegramIndexKey(telegramId)
-    );
+    const idx = await r2GetJson<TelegramIndexEntry>(this.bucket, telegramIndexKey(telegramId));
     if (!idx) return null;
-    return this.get(asPortalTenantId(idx.tenantId as string), asPortalAccountId(idx.accountId as string));
+    return this.get(
+      asPortalTenantId(idx.tenantId as string),
+      asPortalAccountId(idx.accountId as string)
+    );
   }
 
   async linkTelegram(

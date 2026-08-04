@@ -2,11 +2,7 @@
  * Portal account domain types.
  */
 
-import type {
-  PortalAccountId,
-  PortalTenantId,
-  TelegramUserId,
-} from '../types/branded/portal.ts';
+import type { PortalAccountId, PortalTenantId, TelegramUserId } from '../types/branded/portal.ts';
 
 export type AccountRole = 'admin' | 'operator' | 'viewer';
 

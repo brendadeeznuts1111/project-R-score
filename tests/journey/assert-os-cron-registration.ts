@@ -13,11 +13,7 @@ import { joinPath } from '../../lib/path-bun.ts';
 /** Assert Bun.cron OS registration exists for `title` on the current platform. */
 export async function assertOsCronRegistration(title: string): Promise<void> {
   if (process.platform === 'darwin') {
-    const plist = joinPath(
-      Bun.env.HOME || '',
-      'Library/LaunchAgents',
-      `bun.cron.${title}.plist`
-    );
+    const plist = joinPath(Bun.env.HOME || '', 'Library/LaunchAgents', `bun.cron.${title}.plist`);
     expect(await Bun.file(plist).exists()).toBe(true);
     const list = Bun.spawnSync(['launchctl', 'list'], {
       stdout: 'pipe',

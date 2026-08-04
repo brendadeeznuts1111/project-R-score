@@ -30,8 +30,7 @@ export const BUN_DNS_PREFETCHING_DOCS =
   'https://bun.com/docs/runtime/networking/fetch#dns-prefetching';
 
 /** DNS module locus for `dns.prefetch(hostname, port?)`. */
-export const BUN_DNS_PREFETCH_DOCS =
-  'https://bun.com/docs/runtime/networking/dns#dns-prefetch';
+export const BUN_DNS_PREFETCH_DOCS = 'https://bun.com/docs/runtime/networking/dns#dns-prefetch';
 
 export const BUN_DNS_CACHE_STATS_DOCS =
   'https://bun.com/docs/runtime/networking/dns#dns-getcachestats';

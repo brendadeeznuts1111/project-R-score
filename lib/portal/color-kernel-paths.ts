@@ -8,8 +8,7 @@ export const COLOR_KERNEL_SUCCESS_CLAIM =
   'Claim: Color kernel theme-dark aliases are complete and conflict-free';
 
 /** Fail paste prefix — authors must not leave a failing run in the PR body. */
-export const COLOR_KERNEL_FAIL_CLAIM =
-  'Claim: Color kernel theme-dark aliases are inconsistent';
+export const COLOR_KERNEL_FAIL_CLAIM = 'Claim: Color kernel theme-dark aliases are inconsistent';
 
 const COLOR_KERNEL_EXACT = new Set([
   'public/portal/theme.jsonc',
@@ -37,18 +36,14 @@ export function touchesColorKernel(files: readonly string[]): boolean {
 
 /** True when body includes a passing `validate:colors` Claim line. */
 export function colorKernelEvidenceIndicatesPass(body: string): boolean {
-  return new RegExp(
-    COLOR_KERNEL_SUCCESS_CLAIM.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
-    'i'
-  ).test(body);
+  return new RegExp(COLOR_KERNEL_SUCCESS_CLAIM.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(
+    body
+  );
 }
 
 /** True when body includes a failing `validate:colors` Claim line. */
 export function colorKernelEvidenceIndicatesFail(body: string): boolean {
-  return new RegExp(
-    COLOR_KERNEL_FAIL_CLAIM.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
-    'i'
-  ).test(body);
+  return new RegExp(COLOR_KERNEL_FAIL_CLAIM.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(body);
 }
 
 /**

@@ -134,8 +134,7 @@ function interactionEffect(
       ? m11 - m01 - (m10 - m00)
       : 0;
 
-  const n =
-    cell(a0, b0).length + cell(a1, b0).length + cell(a0, b1).length + cell(a1, b1).length;
+  const n = cell(a0, b0).length + cell(a1, b0).length + cell(a0, b1).length + cell(a1, b1).length;
 
   return {
     name,
@@ -172,9 +171,7 @@ export function analyzeFactorial(
   const interactions: EffectEstimate[] = [];
   for (let i = 0; i < factors.length; i++) {
     for (let j = i + 1; j < factors.length; j++) {
-      interactions.push(
-        interactionEffect(rows, factors[i]!, factors[j]!, interactionThreshold)
-      );
+      interactions.push(interactionEffect(rows, factors[i]!, factors[j]!, interactionThreshold));
     }
   }
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — fetch
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
@@ -97,10 +98,10 @@ export function printVerdictTable(
       r.Status === 'ACCESS_FAIL' ||
       (!options.quick && r.Status === 'ACCESS_SKIP')
   ).length;
-  const headline = options.failed
-    ? `FAIL — ${blocking} blocking`
-    : 'LIVE — All checks passed';
-  console.log(colorize(headline, options.failed ? PORTAL_KERNEL_PALETTE.red : PORTAL_KERNEL_PALETTE.green));
+  const headline = options.failed ? `FAIL — ${blocking} blocking` : 'LIVE — All checks passed';
+  console.log(
+    colorize(headline, options.failed ? PORTAL_KERNEL_PALETTE.red : PORTAL_KERNEL_PALETTE.green)
+  );
   console.log(
     `${padEndWidth('Check', 28)} ${padEndWidth('Plane', 8)} ${padEndWidth('Status', 8)} Detail`
   );
