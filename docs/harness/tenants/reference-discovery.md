@@ -46,6 +46,7 @@ New env keys: prefer SSOT helpers in `config/r2-env.ts` over raw `Bun.env` reads
 | Harness plane | `bun run reference:discover:check` |
 | Public plane | `bun run public:discover:check` |
 | Both planes | `bun run discover:compose:check` |
+| Agent skills | `bun run skills:validate` (definitions · metadata · links · loop registry) |
 | Markdown SSOT | `bun tools/doc-map-check.ts` |
 | Bun `@see` / taxonomy | `bun tools/bun-doc-refs.ts integrity` |
 | Audit catalog | `bun run audit:verify` |
@@ -59,6 +60,7 @@ New env keys: prefer SSOT helpers in `config/r2-env.ts` over raw `Bun.env` reads
 ```bash
 bun run discover:compose:check
 bun run reference:discover:check
+bun run skills:validate
 bun run audit:verify
 bun tools/doc-map-check.ts
 bun tools/bun-doc-refs.ts integrity
@@ -71,7 +73,9 @@ bun tools/bun-doc-refs.ts integrity
 | `audit:verify` | 2026-07-26 | pass · 4 findings · 5 concepts |
 | `docs:map:check` | 2026-07-26 | pass |
 | `bun-doc-refs integrity` | 2026-07-26 | pass · 2277 links |
-| `harness-skills-catalog` | 2026-07-26 | 22 skills · `skill-loop-registry.json` |
+| `reference-discovery --json --skip-unused` | 2026-08-04 | 0 errors · 5 warning-tier findings |
+| `skills:validate` | 2026-08-04 | pass · 34 definitions · 23 loop-registry entries · optional `bet-ticker-worker` warning |
+| `harness-skills-catalog` | 2026-08-04 | 34 repository skill definitions |
 
 ## Retirement
 

@@ -40,6 +40,21 @@ Pages static artifact plane — portal UI, registry bake, monitoring shells. Dis
 | Limit raises bake + board | **Closed** | `/portal/limits/` · `limit-raises.json` · health `artifacts.limitRaises` · tenant `partner-limits.md` |
 | `skills-catalog.json` scope | **Closed** | Kimi Daimon (`PORTAL_SKILLS_DIR`) · harness plane baked separately as `harness-skills-catalog.json` |
 
+## Skill catalog domains
+
+| Domain | Source | Consumer / proof |
+|--------|--------|------------------|
+| Kimi catalog | external `PORTAL_SKILLS_DIR` | `/registry/skills-catalog.json` |
+| Harness definitions | every repository `.agents/skills/*/SKILL.md` | `/registry/harness-skills-catalog.json` · `/portal/skills/` |
+| Loop-capable skills | `.agents/skills/ast-grep/skill-loop-registry.json` | ast-grep skill-loop presets and phases |
+| Alignment gate | `scripts/validate-agent-skills.ts` | `bun run skills:validate` · path-gated pre-commit · `ci:core` |
+
+The harness catalog is intentionally broader than the loop registry. Catalog
+membership means a valid repository skill definition exists; registry
+membership means that skill also declares executable loop phases. The validator
+checks frontmatter, metadata, relative links, and registry alignment without
+requiring every catalog skill to be loop-capable.
+
 ## Compose
 
 | Layer | Gate |
@@ -102,7 +117,8 @@ bun run ops:snapshot --no-routing # portal-weave rebake
 | `test:toc-ops` | 2026-07-26 | 71 pass · 18 files |
 | `cloudflare:preflight` | 2026-07-26 | pass · 13 contracts · 20 consistency |
 | `ci:harness:fast` | 2026-07-26 | pass |
-| `harness-skills-catalog` | 2026-07-26 | 22 skills baked · portal-weave artifact |
+| `skills:validate` | 2026-08-04 | pass · 34 definitions · 23 loop-registry entries · optional `bet-ticker-worker` warning |
+| `harness-skills-catalog` | 2026-08-04 | 34 definitions baked · portal-weave artifact |
 | Registry rebake | 2026-07-26 | `portal-weave.json` · `harness-skills-catalog.json` + weave artifacts |
 
 ### Deferred lanes (not this triage)
