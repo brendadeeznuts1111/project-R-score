@@ -28,19 +28,20 @@ import { removeIndexTreeSync } from './lib/index-tree.ts';
 
 const ROOT = process.cwd();
 /**
- * Sync scope: every tracked path EXCEPT projects/ (8.2k files / 1.8G of
- * nested products — symlinked instead). Tests reference tsconfigs, bun.lock,
- * packages/, docs/, public/, guides… — a whitelist whack-a-mole, so the
- * scratch repo mirrors the full tracked tree minus the one heavy dir.
+ * Sync scope: every tracked path except heavyweight external trees. Tests
+ * reference tsconfigs, bun.lock, packages/, docs/, public/, guides… — a
+ * whitelist whack-a-mole, so the scratch repo mirrors the full tracked tree
+ * and links the excluded trees from the real checkout.
  */
-const PATHSPEC = ['.', ':(exclude)projects/'];
+export const SCRATCH_PATHSPEC = ['.', ':(exclude)projects/', ':(exclude)Kalshi-bot'] as const;
 /**
  * Symlinked instead of copied — too big to materialize per commit. Trade-off:
  * a staged change inside a linked dir is seen as its WORKTREE content (a
  * narrow foreign-dirt leak, accepted for projects/ which main-repo commits
- * rarely stage; node_modules content never counts as "changed" anyway).
+ * rarely stage and Kalshi-bot's canonical glossary fixture. node_modules
+ * content never counts as "changed" anyway.
  */
-const LINK_DIRS = ['node_modules', 'projects'];
+export const SCRATCH_LINK_DIRS = ['node_modules', 'projects', 'Kalshi-bot'] as const;
 const forwarded = Bun.argv.slice(2).filter(a => a !== '--');
 
 /**
@@ -100,7 +101,7 @@ export function stagedDeletions(diffOutput: string): string[] {
 
 async function buildScratchRepo(tmp: string): Promise<void> {
   // 1. Baseline: HEAD content of the full tracked tree minus projects/.
-  const archive = git(['archive', '--format=tar', 'HEAD', '--', ...PATHSPEC]);
+  const archive = git(['archive', '--format=tar', 'HEAD', '--', ...SCRATCH_PATHSPEC]);
   if (archive.code !== 0) throw new Error(`git archive: ${archive.err.trim()}`);
   const tar = Bun.spawnSync({
     cmd: ['tar', '-x', '--exclude', 'projects', '-C', tmp],
@@ -111,7 +112,7 @@ async function buildScratchRepo(tmp: string): Promise<void> {
   if (tar.exitCode !== 0) throw new Error(`tar extract: ${tar.stderr.toString().trim()}`);
 
   // 2. Big dirs link so test imports resolve (tracked → not "changed").
-  for (const d of LINK_DIRS) {
+  for (const d of SCRATCH_LINK_DIRS) {
     const ln = Bun.spawnSync({
       cmd: ['ln', '-s', `${ROOT}/${d}`, `${tmp}/${d}`],
       stdout: 'pipe',
@@ -141,7 +142,7 @@ async function buildScratchRepo(tmp: string): Promise<void> {
   }
 
   // 4. Overlay the staged (index) content — this is the only delta.
-  const ls = git(['ls-files', '-z', '--', ...PATHSPEC]);
+  const ls = git(['ls-files', '-z', '--', ...SCRATCH_PATHSPEC]);
   if (ls.code !== 0) throw new Error(`git ls-files: ${ls.err.trim()}`);
   const co = Bun.spawnSync({
     cmd: ['git', 'checkout-index', '-f', '-z', '--stdin', `--prefix=${tmp}/`],
@@ -156,7 +157,14 @@ async function buildScratchRepo(tmp: string): Promise<void> {
   }
 
   // 5. Staged deletions must disappear from the scratch tree.
-  const del = git(['diff', '--cached', '--name-only', '--diff-filter=D', '--', ...PATHSPEC]);
+  const del = git([
+    'diff',
+    '--cached',
+    '--name-only',
+    '--diff-filter=D',
+    '--',
+    ...SCRATCH_PATHSPEC,
+  ]);
   for (const f of stagedDeletions(del.out.toString())) {
     Bun.spawnSync({ cmd: ['rm', '-f', `${tmp}/${f}`], stdout: 'pipe', stderr: 'pipe' });
   }
@@ -174,7 +182,7 @@ async function buildScratchRepo(tmp: string): Promise<void> {
     }
     // Paths under a symlinked dir are already visible through the link —
     // copying them would write into the REAL dir (cp source → itself).
-    if (LINK_DIRS.some(d => f === d || f.startsWith(`${d}/`))) continue;
+    if (SCRATCH_LINK_DIRS.some(d => f === d || f.startsWith(`${d}/`))) continue;
     const src = Bun.spawnSync({
       cmd: ['bash', '-c', `mkdir -p "${tmp}/$(dirname "$1")" && cp "$1" "${tmp}/$1"`, '_', f],
       cwd: ROOT,

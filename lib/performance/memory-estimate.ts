@@ -5,7 +5,7 @@
  * Capacity bytes retain the cache's serialized-size approximation when it is
  * safe to compute and never report less than the Bun-native shallow estimate.
  *
- * @see https://bun.com/docs/runtime/utils#estimateshallowmemoryusageof-in-bun-jsc
+ * @see https://bun.com/docs/runtime/utils#estimateshallowmemoryusageof-in-bunjsc
  * @see https://bun.com/docs/guides/runtime/heap-snapshot
  */
 

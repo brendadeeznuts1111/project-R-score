@@ -37,15 +37,11 @@
       "packages-docs-tools",
       "packages-shared"
     ],
-    "toolchain": [
-      "kimi-toolchain-src",
-      "kimi-toolchain-scripts"
-    ],
+    "toolchain": ["kimi-toolchain-src", "kimi-toolchain-scripts"],
     "agents": [
       "agents-ast-grep",
       "agents-sports-terminal-skill",
       "agents-partner-profile",
-      "agents-bet-ticker-worker",
       "agents-cascade-mover",
       "agents-domain-orchestrator",
       "agents-domain-diagnostic",
@@ -320,7 +316,6 @@
       "path": ".agents/skills/sports-terminal-os",
       "view": "digest",
       "tags": ["skill", "sports-terminal"],
-      "anchors": ["Bun.serve", "PartnerGateway", "router"],
       "description": "SKILL.md runbook for Sports Terminal OS workspace"
     },
     {
@@ -330,18 +325,7 @@
       "path": ".agents/skills/partner-profile-os",
       "view": "digest",
       "tags": ["skill", "partner"],
-      "anchors": ["PartnerGateway", "evaluate", "TOML"],
       "description": "Partner Profile OS skill — gateway, lifecycle, SOR"
-    },
-    {
-      "id": "agents-bet-ticker-worker",
-      "zone": "agents",
-      "name": "bet-ticker-worker skill",
-      "path": ".agents/skills/bet-ticker-worker",
-      "view": "digest",
-      "tags": ["skill", "cloudflare", "worker"],
-      "anchors": ["DurableObject", "WebSocket", "PartnerGateway"],
-      "description": "CF Worker + DO live wager broadcast skill"
     },
     {
       "id": "agents-cascade-mover",
@@ -350,7 +334,6 @@
       "path": ".agents/skills/cascade-mover-v3",
       "view": "digest",
       "tags": ["skill", "cascade", "mcp"],
-      "anchors": ["cascade-mover", "confidence"],
       "description": "Sports intelligence and multi-market cascading (MCP-first)"
     },
     {
@@ -360,7 +343,6 @@
       "path": ".agents/skills/domain-orchestrator",
       "view": "digest",
       "tags": ["skill", "orchestrator", "flow"],
-      "anchors": ["SkillOrchestrator", "executeFlowSkill"],
       "description": "Flow skill orchestration and domain API mapping"
     },
     {
@@ -397,7 +379,6 @@
       "path": ".agents/skills/bun-v139-playground",
       "view": "digest",
       "tags": ["skill", "bun", "playground"],
-      "anchors": ["Bun.serve", "governance"],
       "description": "Bun v1.3.9 interactive playground demos"
     },
     {

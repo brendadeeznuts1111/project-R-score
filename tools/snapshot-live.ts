@@ -8,7 +8,7 @@
 // @see https://bun.com/blog/bun-v1.3.14#terminal-methods — Bun.Image terminal methods
 // @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 // @see https://bun.com/docs/runtime/color — Bun.color (via colorize)
-// @see https://bun.com/docs/runtime/utils#bun-inspect-table — Bun.inspect.table (via logTable)
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table (via logTable)
 // @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals (via deepEquals)
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**

@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/test — bun:test
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 import { describe, expect, test } from 'bun:test';
+import { mkdir } from 'node:fs/promises';
 import {
   assertSoftCtNonEmpty,
   clearBunExecutableCache,
@@ -12,6 +13,7 @@ import {
   SOFT_ACCOUNTING_EXPORT_SCHEMA,
   type SoftAccountingExport,
 } from '../lib/telegram/soft-accounting-export.ts';
+import { createTestWorkspace, withTestEnvironment } from './harness.ts';
 
 function emptySoftCtExport(): SoftAccountingExport {
   return {
@@ -91,15 +93,26 @@ describe('soft:accounting:from-ct spawn resolution', () => {
   });
 
   test('resolveTocOpsRepo finds Soft checkout from factory root or worktree', async () => {
-    const repo = await resolveTocOpsRepo();
-    expect(await Bun.file(`${repo}/package.json`).exists()).toBe(true);
-    // Soft package name is toc-ops (or similar) — require ct script presence
-    const pkg = (await Bun.file(`${repo}/package.json`).json()) as {
-      scripts?: Record<string, string>;
-    };
-    expect(typeof pkg.scripts?.ct === 'string' || typeof pkg.scripts?.['soft-accounting-export'] === 'string').toBe(
-      true
+    await using workspace = await createTestWorkspace('soft-checkout-resolution-');
+    const softRepo = workspace.resolve('toc-ops-repo');
+    await mkdir(softRepo, { recursive: true });
+    await Bun.write(
+      `${softRepo}/package.json`,
+      `${JSON.stringify({ name: 'toc-ops', scripts: { ct: 'bun run src/cli.ts' } }, null, 2)}\n`
     );
+
+    await withTestEnvironment({ TOC_OPS_REPO: undefined }, async () => {
+      const repo = await resolveTocOpsRepo(workspace.root);
+      expect(repo).toBe(softRepo);
+      expect(await Bun.file(`${repo}/package.json`).exists()).toBe(true);
+      const pkg = (await Bun.file(`${repo}/package.json`).json()) as {
+        scripts?: Record<string, string>;
+      };
+      expect(
+        typeof pkg.scripts?.ct === 'string' ||
+          typeof pkg.scripts?.['soft-accounting-export'] === 'string'
+      ).toBe(true);
+    });
   });
 
   test('missing cwd was the ENOENT red herring — resolve rejects empty path', async () => {

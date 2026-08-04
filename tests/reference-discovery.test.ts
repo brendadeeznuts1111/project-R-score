@@ -24,6 +24,11 @@ describe('reference-discovery', () => {
     expect(report.perimeter.length).toBeGreaterThan(0);
     expect(report.summary.total).toBe(report.findings.length);
     expect(typeof report.summary.errors).toBe('number');
+    expect(
+      report.findings.filter(
+        finding => finding.kind === 'similar-env' && finding.severity === 'warn'
+      )
+    ).toEqual([]);
   });
 
   test('reportPasses fails when errors present', () => {
