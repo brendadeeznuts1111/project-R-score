@@ -124,6 +124,26 @@ else
 fi
 
 echo ""
+echo "== pre-commit: quality:concept (path-gated) =="
+# Only when concept SSOT / surface-coverage tooling is staged — not every commit.
+# Escape: SKIP_QUALITY_CONCEPT=1 + reason and evidence in the commit message.
+CONCEPT_SSOT_RE='^(lib/portal/semantic-vocabulary\.ts|lib/portal/concept-|lib/portal/page-concepts\.ts|scripts/validate-surface-coverage\.ts|scripts/concept-audit\.ts|tools/generate-surface-coverage-map\.ts|docs/SURFACE_COVERAGE\.md|public/registry/domain-glossary\.json)'
+if [ "${SKIP_QUALITY_CONCEPT:-}" = "1" ]; then
+  echo "  ⏭️  SKIP_QUALITY_CONCEPT=1"
+elif git diff --cached --name-only --diff-filter=ACMR | grep -qE "$CONCEPT_SSOT_RE"; then
+  if [ "$DRY_RUN" -eq 1 ]; then
+    echo "  [dry-run] bun run quality:concept"
+  else
+    bun run quality:concept || {
+      echo "❌ quality:concept failed. Fix or SKIP_QUALITY_CONCEPT=1 with reason in commit message."
+      exit 1
+    }
+  fi
+else
+  echo "  ⏭️  no concept SSOT staged — skip quality:concept"
+fi
+
+echo ""
 if [ "$DRY_RUN" -eq 1 ]; then
   echo "✅ Pre-commit dry-run complete (no changes made)"
 else

@@ -57,13 +57,46 @@ Hooks live in [`.husky/pre-commit`](../.husky/pre-commit). They already:
 5. **`scripts/bun-test-changed-staged.ts`** — runs `bun test --changed` in a
    **HEAD ∪ staged** scratch repo so **another lane’s dirty failing tests cannot
    block your commit**
+6. **`quality:concept` (path-gated)** — only when concept SSOT is staged:
+   `lib/portal/semantic-vocabulary.ts`, `lib/portal/concept-*`,
+   `lib/portal/page-concepts.ts`, `scripts/validate-surface-coverage.ts`,
+   `scripts/concept-audit.ts`, `tools/generate-surface-coverage-map.ts`,
+   `docs/SURFACE_COVERAGE.md`, `public/registry/domain-glossary.json`
 
-### Escape hatches (document in the commit message)
+### Escape hatches
 
-| Env | When |
-| --- | --- |
-| `SKIP_TEST_CHANGED=1` | Staged-temp / foreign-gate evidence only — write reason + local proof |
-| `SKIP_GITLEAKS=1` | Rare; credential scan exception with reason |
+These environment variables bypass a specific pre-commit gate **in exceptional
+cases only**. Every skip must be accompanied by a clear reason and local proof
+in the **commit message**. Without that, post-merge review should flag the
+commit.
+
+| Env | When to use | Requirements |
+| --- | --- | --- |
+| `SKIP_TEST_CHANGED=1` | Staged-temp / foreign-gate noise only — when `bun test --changed` false-fails (runner symlink / HEAD∪staged scratch limits, or another lane’s dirty suite). | Local proof the change is safe (e.g. `bun test tests/<affected>.test.ts` green) plus why the gate is not yours. |
+| `SKIP_QUALITY_CONCEPT=1` | Concept SSOT is staged but the gate fails for a **documented** exception (foreign-lane surface drift, temporary env mismatch, known allowlist work in flight). | Reference issue/PR or owner lane; prefer fixing or narrowing the gate over skipping. |
+| `SKIP_GITLEAKS=1` | Rare — false positive credential scan (e.g. test fixture with a clearly fake secret). | Explain why the match is not a real secret. |
+
+**Usage example:**
+
+```bash
+SKIP_QUALITY_CONCEPT=1 git commit -m "$(cat <<'EOF'
+fix: retarget glossary alias (SKIP_QUALITY_CONCEPT=1)
+
+Upstream board HTML pending in PR#123; quality:concept fails on allowlist-only
+surface until that lands. Local: bun run concept:audit --strict exits 0.
+EOF
+)"
+```
+
+**Caution:** skips are temporary. Prefer fixing the underlying issue or adjusting
+the gate so false positives do not recur. Do not use escape hatches as a routine
+day-loop shortcut.
+
+**Commit message must include:**
+
+1. Which gate was skipped (`SKIP_*` name)
+2. Why the skip was necessary
+3. Evidence the change is safe (command + exit 0, or path to proof)
 
 ### Why we did **not** switch to `bun-git-hooks`
 
