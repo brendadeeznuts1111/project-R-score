@@ -25,6 +25,15 @@ function ageLabel(iso) {
   return `${Math.round(mins / 60)}h ago`;
 }
 
+/** Bake staleness tone: <60m ok, <6h stale (yellow), else very stale (red). */
+function bakeTone(iso) {
+  if (!iso) return 'red';
+  const mins = (Date.now() - Date.parse(iso)) / 60_000;
+  if (mins < 60) return 'green';
+  if (mins < 360) return 'yellow';
+  return 'red';
+}
+
 function kvTable(rows) {
   return `<table class="kv">${rows
     .map(([k, v]) => `<tr><td>${esc(k)}</td><td>${v}</td></tr>`)
@@ -51,7 +60,9 @@ export function renderPartnerHealth(bake) {
   const o = bake.outChecks;
   badge.textContent = h.ok ? 'HEALTHY' : 'DEGRADED';
   badge.className = h.ok ? 'doc-badge green' : 'doc-badge red';
+  const tone = bakeTone(bake.generatedAt);
   age.textContent = `bake age · ${ageLabel(bake.generatedAt)}`;
+  age.className = `doc-badge ${tone}`;
 
   const healthRows = [
     ['Ops DB', h.opsDb.ok ? chip('ok', 'green') : chip(h.opsDb.error ?? 'unavailable', 'red')],
@@ -71,15 +82,18 @@ export function renderPartnerHealth(bake) {
   healthRows.push(['Profile ↔ binding', alignment]);
 
   const degraded = o.degraded ?? [];
+  const checked = o.checked ?? 0;
   const outHtml =
-    degraded.length === 0
-      ? `<p>${chip(`all ${o.checked ?? 0} out(s) ok`, 'green')}</p>`
-      : degraded
-          .map(
-            d =>
-              `<p>${chip(d.outNum, d.status === 'offline' ? 'red' : 'yellow')} · ${esc(d.partnerCode)} · ${esc(d.book)} — <b>${esc(d.status)}</b>: ${esc(d.reason)}</p>`
-          )
-          .join('');
+    checked === 0
+      ? `<p>${chip('no outs on file', 'yellow')}</p>`
+      : degraded.length === 0
+        ? `<p>${chip(`all ${checked} out(s) ok`, 'green')}</p>`
+        : degraded
+            .map(
+              d =>
+                `<p>${chip(d.outNum, d.status === 'offline' ? 'red' : 'yellow')} · ${esc(d.partnerCode)} · ${esc(d.book)} — <b>${esc(d.status)}</b>: ${esc(d.reason)}</p>`
+            )
+            .join('');
 
   root.innerHTML = `
     <div class="card"><h2>Domain health</h2>${kvTable(healthRows)}</div>
