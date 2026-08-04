@@ -50,6 +50,7 @@ Suppress only with reason: `// brand-ok` or targeted eslint-disable on a true ed
 2. Emit brands/structs from that edge  
 3. Interior uses brands only  
 4. No `decodeUnknownSync` outside the edge  
+5. Partner limits rows: when the backend lands `lifecycleState` / `derivesFrom`, parse via `parseLimitRowWire` per [partner-limits E3 wire contract](./harness/tenants/partner-limits.md#e3-wire-contract-pending)  
 
 **Spine parse examples:** `parseImageEvidenceMeta` / `isImageEvidenceMeta` in [`lib/image-metadata.ts`](../lib/image-metadata.ts) — wire JSON → `ImageEvidenceMeta` (TEST-003 evidence) via `parse*` / `is*` name rules; no extra path allowlist.
 

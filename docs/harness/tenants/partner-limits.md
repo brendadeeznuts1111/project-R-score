@@ -473,3 +473,33 @@ chargebacks / volatility **lower** score). SSOT: `MULTI_FACTOR_WEIGHTS` /
   desk vocabulary (terms, not raise detection)
 - [Bun.inspect.table](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options)
   · [inspect.custom](https://bun.com/docs/runtime/utils#bun-inspect-custom)
+
+## E3 wire contract (pending)
+
+Expected JSON fields on limit rows once the backend returns temporal
+enforceability and derivation metadata. Parse once at the boundary
+([`docs/WIRE_BOUNDARY.md`](../../WIRE_BOUNDARY.md)); do not invent client-side
+values before the wire lands.
+
+| Field | Type | Values / notes |
+| --- | --- | --- |
+| `lifecycleState` | `string` | `pending` / `active` / `expired` / `superseded` — distinct from `monitoring_status` (`monitored` / `attention` / `blocked` / `incomplete`) |
+| `derivesFrom` | `string[]` | Vocabulary concept ids; optional until backend ships |
+
+**Fixture example:**
+
+```json
+{
+  "lifecycleState": "active",
+  "derivesFrom": ["ops.limits.effective_limit", "api.limit_cache"]
+}
+```
+
+**Parser stub:** [`lib/operations/limits/limit-row-wire.ts`](../../../lib/operations/limits/limit-row-wire.ts)
+(`parseLimitRowWire`). Absent fields → `undefined` (wire not landed). Invalid
+enum / type → throw at the edge.
+
+**Go signal:** endpoints that emit limit-change / raise rows return these
+fields per the table above; then bind UI columns and bake `derivesFrom` graph
+edges. Until then, no lifecycle UI and no invented derivation edges.
+

@@ -86,6 +86,8 @@ export type PortalSemanticConceptDef = {
   readonly domain: ConceptDomain;
   readonly synonyms: readonly string[];
   readonly seeAlso: readonly string[];
+  /** Upstream concept ids this metric/state is derived from (inventory; wire may echo). */
+  readonly derivesFrom?: readonly string[];
   readonly values?: readonly string[];
   readonly unit?: string;
   readonly format?: string;
@@ -1975,15 +1977,28 @@ export const PARTNERS_SURFACE_CONCEPTS = {
   partnerHashRoute: 'ui.route.partnerHash',
 } as const satisfies Record<string, PortalSemanticConceptKey>;
 
-export function validatePortalSemanticVocabulary(): void {
-  const keys = new Set<PortalSemanticConceptKey>();
-  for (const concept of PORTAL_SEMANTIC_CONCEPTS) {
+/** Relation fields checked for referential integrity (seeAlso + optional derivesFrom). */
+export type PortalSemanticRelationConcept = {
+  readonly id: string; // brand-ok — glossary concept key
+  readonly seeAlso: readonly string[];
+  readonly derivesFrom?: readonly string[];
+};
+
+/**
+ * Validate seeAlso / derivesFrom point at known concept ids and never self.
+ * Injectable for unit tests; production uses {@link validatePortalSemanticVocabulary}.
+ */
+export function validatePortalSemanticConceptRelations(
+  concepts: readonly PortalSemanticRelationConcept[]
+): void {
+  const keys = new Set<string>();
+  for (const concept of concepts) {
     if (keys.has(concept.id)) {
       throw new Error(`Duplicate portal semantic concept: ${concept.id}`);
     }
     keys.add(concept.id);
   }
-  for (const concept of PORTAL_SEMANTIC_CONCEPTS) {
+  for (const concept of concepts) {
     for (const related of concept.seeAlso) {
       if (!keys.has(related)) {
         throw new Error(`Unknown portal semantic relation: ${concept.id} → ${related}`);
@@ -1992,5 +2007,17 @@ export function validatePortalSemanticVocabulary(): void {
         throw new Error(`Portal semantic concept cannot relate to itself: ${concept.id}`);
       }
     }
+    for (const upstream of concept.derivesFrom ?? []) {
+      if (!keys.has(upstream)) {
+        throw new Error(`Unknown portal semantic derivesFrom: ${concept.id} → ${upstream}`);
+      }
+      if (upstream === concept.id) {
+        throw new Error(`Portal semantic concept cannot derive from itself: ${concept.id}`);
+      }
+    }
   }
+}
+
+export function validatePortalSemanticVocabulary(): void {
+  validatePortalSemanticConceptRelations(PORTAL_SEMANTIC_CONCEPTS);
 }
