@@ -499,6 +499,10 @@ values before the wire lands.
 (`parseLimitRowWire`). Absent fields → `undefined` (wire not landed). Invalid
 enum / type → throw at the edge.
 
+**Lifecycle + agent contract:**
+[`docs/CONCEPT_LIFECYCLE.md`](../../CONCEPT_LIFECYCLE.md) ·
+[`agents.md`](agents.md) (endpoint boundary, vocabulary mapping, field checklist).
+
 **Go signal:** endpoints that emit limit-change / raise rows return these
 fields per the table above; then bind UI columns and bake `derivesFrom` graph
 edges. Until then, no lifecycle UI and no invented derivation edges.

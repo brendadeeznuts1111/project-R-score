@@ -53,6 +53,10 @@ cross-portal field names and their typed UI meaning. The glossary projection
 combines that authority with the Kalshi-bot domain glossary without changing
 the latter's market/model definitions.
 
+**Lifecycle map (definition → wire → graph → boards → audit):**
+[`docs/CONCEPT_LIFECYCLE.md`](CONCEPT_LIFECYCLE.md). Agent/limit-row integration:
+[`docs/harness/tenants/agents.md`](harness/tenants/agents.md).
+
 | Dimension | Meaning | Examples |
 |-----------|---------|----------|
 | Concept kind | Provenance and consumer class | `ui` · `registry` · `composite` |

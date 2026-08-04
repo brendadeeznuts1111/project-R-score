@@ -35,6 +35,8 @@ export const CANONICAL_REPO_DOCS = {
   importBoundaries: 'docs/IMPORT_BOUNDARIES.md',
   /** Wire / parse-once boundary (unknown → domain) */
   wireBoundary: 'docs/WIRE_BOUNDARY.md',
+  /** Concept vocabulary → wire → graph → audit lifecycle */
+  conceptLifecycle: 'docs/CONCEPT_LIFECYCLE.md',
   /** Portal shared data + topbar foundation */
   portalFoundation: 'docs/portal-foundation.md',
   /** Local vs Pages routing map (domains · functions · auth) */
@@ -161,6 +163,7 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   unified: 'Bun install policy (machine + workspace)',
   importBoundaries: 'Import / package boundaries',
   wireBoundary: 'Wire boundary (parse once / unknown → domain)',
+  conceptLifecycle: 'Concept lifecycle (vocabulary · wire · graph · audit)',
   portalFoundation: 'Portal static UI foundation',
   platformRouting: 'Local vs Pages routing map',
   bunNativeCapabilities: 'Bun native capabilities note (browser, md, scheduler, datagram)',
