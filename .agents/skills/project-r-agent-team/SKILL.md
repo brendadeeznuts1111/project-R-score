@@ -1,3 +1,8 @@
+---
+name: project-r-agent-team
+description: Operate Project R agent-team access through the correct Proton Pass vault, environment loader, MCP surface, and SSH host. Use for agent credential setup, vault routing, remote access, or team-specific environment diagnostics.
+---
+
 # Agent Team Onboarding
 
 This project has a team of AI agents that can access different vaults and tools.

@@ -3,9 +3,7 @@ name: domain-orchestrator
 description: |
   Bridges Kimi Agent Skills with Dynamic Domain APIs. Parses SKILL.md files,
   executes flow diagrams, and maps skill instructions to domain methods.
-  Core orchestration layer for domain-aware automation.
-type: flow
-triggers: ["domain", "orchestrate", "flow", "skill", "execute"]
+  Use for domain orchestration, flow-skill execution, and domain-method mapping.
 ---
 
 # Domain Skill Orchestrator

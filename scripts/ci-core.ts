@@ -40,6 +40,10 @@ const CORE_STEPS: CoreStep[] = [
     cmd: ['bun', 'run', 'hygiene'],
   },
   {
+    name: 'agent-skills',
+    cmd: ['bun', 'run', 'skills:validate'],
+  },
+  {
     name: 'native-docs',
     cmd: ['bun', 'run', 'docs:native:check'],
   },

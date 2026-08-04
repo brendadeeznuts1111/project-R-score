@@ -1,48 +1,14 @@
 ---
 name: domain-diagnostic-flow
-type: flow
-description: Comprehensive domain health check with automated remediation
-version: 1.0.0
-
-resilience:
-  # Global default policy for all steps
-  default_policy:
-    retries: 2
-    retry_strategy: exponential_backoff
-    timeout_ms: 5000
-    on_failure: escalate
-    idempotent: false
-  
-  # Per-step overrides
-  step_policies:
-    "Check Vital Signs":
-      retries: 1
-      timeout_ms: 2000
-      on_failure: skip
-      
-    "Run Deep Diagnostics":
-      retries: 3
-      retry_strategy: fixed
-      timeout_ms: 30000
-      on_failure: fallback
-      fallback_node: "Escalate to Council"
-      
-    "Execute Treatment":
-      retries: 2
-      timeout_ms: 10000
-      on_failure: compensate
-      compensation_step: "Rollback Treatment"
-      idempotent: true
-      
-    "Rebuild Domain":
-      retries: 0
-      timeout_ms: 60000
-      on_failure: halt
+description: Run a comprehensive domain health-check flow with automated remediation, step-specific retries, compensation, fallback, and escalation. Use for domain diagnostics, treatment, rebuild, or resilience-policy changes.
 ---
 
 # Domain Diagnostic Flow
 
 Automated diagnostic and remediation workflow for Dynamic Domains.
+
+Default resilience policy: retry twice with exponential backoff and a 5-second timeout, then
+escalate. Treat steps as non-idempotent unless the table below says otherwise.
 
 ## Flow Diagram
 
@@ -76,12 +42,12 @@ flowchart TD
 
 ## Error Handling
 
-| Step | Retries | Timeout | On Failure |
-|------|---------|---------|------------|
-| Check Vital Signs | 1 | 2s | Skip |
-| Run Deep Diagnostics | 3 | 30s | Fallback to Council |
-| Execute Treatment | 2 | 10s | Compensate |
-| Rebuild Domain | 0 | 60s | Halt |
+| Step | Retries | Strategy | Timeout | On failure | Idempotent |
+|------|---------|----------|---------|------------|------------|
+| Check Vital Signs | 1 | Exponential backoff | 2s | Skip | No |
+| Run Deep Diagnostics | 3 | Fixed | 30s | Fallback to Council | No |
+| Execute Treatment | 2 | Exponential backoff | 10s | Roll back treatment | Yes |
+| Rebuild Domain | 0 | None | 60s | Halt | No |
 
 ## Agent tooling
 

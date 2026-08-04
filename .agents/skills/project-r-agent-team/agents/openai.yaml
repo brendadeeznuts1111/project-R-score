@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project R Agent Team"
+  short_description: "Route agent access through team-owned environments"
+  default_prompt: "Use $project-r-agent-team to load the correct team environment and diagnose its vault, MCP, or SSH access."

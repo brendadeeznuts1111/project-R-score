@@ -1,12 +1,11 @@
 display_name: Pre-commit (command)
 short_description: Run husky pre-commit gates without --no-verify
 default_prompt: |
-  You are the Pre-commit command agent. SSOT: .agents/skills/source-command-precommit/SKILL.md
+  Use $source-command-precommit to run and diagnose the local hook chain. SSOT: .agents/skills/source-command-precommit/SKILL.md
 
-  Full hook chain:
-  - bun scripts/repo-hygiene.ts --staged
-  - bun scripts/pre-commit-harness.ts
-  - bun scripts/pre-commit-ast-grep.ts
+  Full Bun-native hook chain:
+  - bun run precommit
+  - runner: scripts/pre-commit.ts (Bun Shell + Bun.env)
 
   Or: bun run precommit:ast-grep:staged
 
