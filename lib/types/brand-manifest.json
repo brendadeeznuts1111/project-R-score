@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "generatedAt": "2026-08-04T22:41:48.393Z",
+  "generatedAt": "2026-08-05T03:02:10.583Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
-  "brandCount": 62,
+  "brandCount": 67,
   "domainCount": 9,
   "domains": [
     "audit",
@@ -16,7 +16,7 @@
     "surfaces"
   ],
   "kinds": {
-    "id": 56,
+    "id": 61,
     "key": 1,
     "code": 5
   },
@@ -24,7 +24,7 @@
     {
       "name": "audit",
       "module": "lib/types/branded/audit.ts",
-      "brandCount": 6
+      "brandCount": 8
     },
     {
       "name": "deployment",
@@ -44,7 +44,7 @@
     {
       "name": "operations",
       "module": "lib/types/branded/operations.ts",
-      "brandCount": 24
+      "brandCount": 27
     },
     {
       "name": "portal",
@@ -713,6 +713,62 @@
       "envName": "EVIDENCE_ID"
     },
     {
+      "name": "DodId",
+      "domain": "audit",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "DOD (proof-of-deposit) submission identity",
+      "kind": "id",
+      "module": "lib/types/branded/audit.ts",
+      "constructors": {
+        "as": "asDodId",
+        "try": "tryDodId",
+        "parse": "parseDodId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isDodId",
+      "shortName": "dodId",
+      "envName": "DOD_ID"
+    },
+    {
+      "name": "RuleId",
+      "domain": "audit",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Anomaly-detection rule identity",
+      "kind": "id",
+      "module": "lib/types/branded/audit.ts",
+      "constructors": {
+        "as": "asRuleId",
+        "try": "tryRuleId",
+        "parse": "parseRuleId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isRuleId",
+      "shortName": "ruleId",
+      "envName": "RULE_ID"
+    },
+    {
       "name": "OperationId",
       "domain": "operations",
       "tiers": [
@@ -1045,6 +1101,89 @@
       "guard": "BRAND_GUARDS.isTreeNodeId",
       "shortName": "treeNodeId",
       "envName": "TREE_NODE_ID"
+    },
+    {
+      "name": "RailId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Funding rail identity for treasury transfers",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asRailId",
+        "try": "tryRailId",
+        "parse": "parseRailId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isRailId",
+      "shortName": "railId",
+      "envName": "RAIL_ID"
+    },
+    {
+      "name": "FundingId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Funding transfer row identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asFundingId",
+        "try": "tryFundingId",
+        "parse": "parseFundingId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isFundingId",
+      "shortName": "fundingId",
+      "envName": "FUNDING_ID"
+    },
+    {
+      "name": "CommandId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "AI / automation optimization command handle",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asCommandId",
+        "try": "tryCommandId",
+        "parse": "parseCommandId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isCommandId",
+      "shortName": "commandId",
+      "envName": "COMMAND_ID"
     },
     {
       "name": "ExperimentId",

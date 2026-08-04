@@ -12,10 +12,15 @@ import { YAML } from 'bun';
 import { Mutex } from '../core/safe-concurrency';
 import { logger } from '../core/structured-logger';
 import { globalCaches } from '../performance/cache-manager';
-import { type CorrelationId, asCorrelationId } from '../types/branded.ts';
+import {
+  type CommandId,
+  type CorrelationId,
+  asCommandId,
+  asCorrelationId,
+} from '../types/branded.ts';
 
 export interface AICommand {
-  id: string; // brand-ok — opaque generated DTO id (single-use domain id)
+  id: CommandId;
   type: 'optimize' | 'analyze' | 'predict' | 'automate';
   input: string;
   parameters?: Record<string, any>;
@@ -39,7 +44,7 @@ export interface AIInsight {
 }
 
 export interface OptimizationResult {
-  commandId: string; // brand-ok — single-use domain id (CommandId is not a declared brand)
+  commandId: CommandId;
   success: boolean;
   improvements: Array<{
     metric: string;
@@ -823,7 +828,7 @@ export class AIOperationsManager extends EventEmitter {
   private processing = false;
   private insights: AIInsight[] = [];
   private learningData: any[] = [];
-  private completedCommands: Map<string, OptimizationResult> = new Map();
+  private completedCommands: Map<CommandId, OptimizationResult> = new Map();
   private config: Record<string, any> = {}; // Loaded from YAML
   private cleanupTimer?: ReturnType<typeof setInterval>;
   private processingTimer?: ReturnType<typeof setInterval>; // Timer for command processing
@@ -921,7 +926,7 @@ export class AIOperationsManager extends EventEmitter {
   async submitCommand(
     command: Omit<AICommand, 'id' | 'timestamp'>,
     clientIp?: string
-  ): Promise<string> {
+  ): Promise<CommandId> {
     return await this.mutex.withLock(() => {
       // Rate limiting
       if (clientIp && !this.checkRateLimit(clientIp)) {
@@ -954,7 +959,7 @@ export class AIOperationsManager extends EventEmitter {
 
       this.emit('command:submitted', { command: aiCommand, correlationId });
 
-      return aiCommand.id;
+      return Promise.resolve(aiCommand.id);
     });
   }
 
@@ -1301,7 +1306,7 @@ export class AIOperationsManager extends EventEmitter {
   /**
    * Execute automated optimization with circuit breaker and enhanced monitoring
    */
-  async executeOptimization(commandId: string): Promise<OptimizationResult> {
+  async executeOptimization(commandId: CommandId): Promise<OptimizationResult> {
     return await this.mutex.withLock(async () => {
       const start = Bun.nanoseconds();
       const correlationId = this.generateCorrelationId();
@@ -1501,8 +1506,8 @@ export class AIOperationsManager extends EventEmitter {
   /**
    * Generate unique ID
    */
-  private generateId(): string {
-    return `ai-${Bun.randomUUIDv7()}`;
+  private generateId(): CommandId {
+    return asCommandId(`ai-${Bun.randomUUIDv7()}`);
   }
 
   /**
@@ -1976,7 +1981,7 @@ export class AIOperationsManager extends EventEmitter {
   /**
    * Get command result
    */
-  getCommandResult(commandId: string): OptimizationResult | undefined {
+  getCommandResult(commandId: CommandId): OptimizationResult | undefined {
     return this.completedCommands.get(commandId);
   }
 

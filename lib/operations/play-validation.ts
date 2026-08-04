@@ -61,7 +61,7 @@ export function validatePlay(db: Database, play: PlayInput): PlayValidation {
       $eid: play.expertId,
       $ev: play.event,
       $sel: play.selection,
-    }) as { id: string } | null;
+    }) as { id: string } | null; // brand-ok — opaque plays.id row
 
   if (duplicate) {
     return { valid: false, reason: 'Duplicate play within 24h' };

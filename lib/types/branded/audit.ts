@@ -20,6 +20,10 @@ export type AuditConceptId = BrandedString<'AuditConceptId'>;
 export type AuditEntryId = BrandedString<'AuditEntryId'>;
 /** Screenshot / image evidence row (typically UUID v7). */
 export type EvidenceId = BrandedString<'EvidenceId'>;
+/** DOD (proof-of-deposit) submission identity. */
+export type DodId = BrandedString<'DodId'>;
+/** Anomaly-detection rule identity. */
+export type RuleId = BrandedString<'RuleId'>;
 
 const version = defineBrandConstructors('VersionId');
 const audit = defineBrandConstructors('AuditId');
@@ -27,6 +31,8 @@ const finding = defineBrandConstructors('AuditFindingId');
 const concept = defineBrandConstructors('AuditConceptId');
 const entry = defineBrandConstructors('AuditEntryId');
 const evidence = defineBrandConstructors('EvidenceId');
+const dod = defineBrandConstructors('DodId');
+const rule = defineBrandConstructors('RuleId');
 
 export const asVersionId = version.as;
 export const tryVersionId = version.try;
@@ -51,6 +57,14 @@ export const parseAuditEntryId = entry.parse;
 export const asEvidenceId = evidence.as;
 export const tryEvidenceId = evidence.try;
 export const parseEvidenceId = evidence.parse;
+
+export const asDodId = dod.as;
+export const tryDodId = dod.try;
+export const parseDodId = dod.parse;
+
+export const asRuleId = rule.as;
+export const tryRuleId = rule.try;
+export const parseRuleId = rule.parse;
 
 export const AUDIT_BRAND_SPECS = [
   {
@@ -94,5 +108,19 @@ export const AUDIT_BRAND_SPECS = [
     tiers: ['as', 'try', 'parse'],
     mint: ['system-internal', 'wire-input'],
     description: 'Screenshot / image evidence row (UUID v7 via Bun.randomUUIDv7)',
+  },
+  {
+    name: 'DodId',
+    domain: 'audit',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'DOD (proof-of-deposit) submission identity',
+  },
+  {
+    name: 'RuleId',
+    domain: 'audit',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Anomaly-detection rule identity',
   },
 ] as const satisfies readonly BrandSpec[];

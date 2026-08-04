@@ -30,6 +30,7 @@ import {
   detectPlatformFromText,
   platformSlug,
 } from '../operations/platform-coverage.ts';
+import { parseDodId, parseTreeNodeId, type DodId, type TreeNodeId } from '../types/branded.ts';
 
 /** Magic-byte sniffing: PNG, JPEG, WebP (RIFF), GIF. */
 export function validateImage(bytes: Uint8Array): boolean {
@@ -151,8 +152,8 @@ export function extractAmount(text: string | undefined): number | undefined {
 }
 
 export interface DODSubmission {
-  id: string; // brand-ok — UUIDv7
-  agentId: string; // brand-ok
+  id: string; // brand-ok — wire UUID parsed by process()
+  agentId: string; // brand-ok — wire tree-node ID parsed by process()
   type: 'balance' | 'slip' | 'receipt' | 'id' | 'location' | 'device';
   rawImage: Uint8Array;
   submittedAt: string;
@@ -162,7 +163,7 @@ export interface DODSubmission {
 }
 
 export interface DODVerification {
-  dodId: string;
+  dodId: DodId;
   status: 'pending' | 'verified' | 'rejected' | 'flagged';
   visualHash: string;
   metadataHash: string;
@@ -186,7 +187,7 @@ export class DODVerifier {
   private registryPath: string;
   private store: DODEvidenceStore;
   private idEncryptionKey?: string;
-  private onVerifiedBalance?: (agentId: string, amount?: number) => Promise<void>;
+  private onVerifiedBalance?: (agentId: TreeNodeId, amount?: number) => Promise<void>;
 
   constructor(
     dbPath = DEFAULT_OPS_DB_PATH,
@@ -195,7 +196,7 @@ export class DODVerifier {
       registryPath?: string;
       store?: DODEvidenceStore;
       idEncryptionKey?: string;
-      onVerifiedBalance?: (agentId: string, amount?: number) => Promise<void>;
+      onVerifiedBalance?: (agentId: TreeNodeId, amount?: number) => Promise<void>;
     } = {}
   ) {
     this.proofSecret = requireSecret('DOD_PROOF_SECRET', 'dod-dev-secret');
@@ -242,6 +243,8 @@ export class DODVerifier {
 
   async process(submission: DODSubmission): Promise<DODVerification> {
     const t0 = Bun.nanoseconds();
+    const dodId = parseDodId(submission.id);
+    const agentId = parseTreeNodeId(submission.agentId);
 
     // 0a. Validate image magic bytes before decoding.
     if (!validateImage(submission.rawImage)) {
@@ -249,7 +252,7 @@ export class DODVerifier {
     }
 
     // 0b. Per-agent rate limit (default 10/hour, DOD_RATE_LIMIT_PER_HOUR override).
-    this.checkRateLimit(submission.agentId);
+    this.checkRateLimit(agentId);
 
     // 1. Load image
     const img = new Bun.Image(submission.rawImage);
@@ -271,7 +274,7 @@ export class DODVerifier {
 
     // 5. Randomized storage path (no agentId in URL; deterministic per id+secret)
     const prefix = Bun.hash
-      .crc32(submission.id + this.proofSecret)
+      .crc32(dodId + this.proofSecret)
       .toString(36)
       .slice(0, 8);
 
@@ -282,14 +285,14 @@ export class DODVerifier {
       storeBytes = await encryptAesGcm(stored, this.idEncryptionKey);
       encrypted = true;
     }
-    const s3Path = `dod/${prefix}/${submission.id}.webp${encrypted ? '.enc' : ''}`;
+    const s3Path = `dod/${prefix}/${dodId}.webp${encrypted ? '.enc' : ''}`;
     await this.store.put(s3Path, storeBytes);
 
     // 6. Metadata hash
     const metaHash = this.hashMetadata(metadata, submission);
 
     // 7. Sign
-    const signature = this.sign(submission.id, visualHash, metaHash);
+    const signature = this.sign(dodId, visualHash, metaHash);
 
     // 8. Tamper detection
     let tamperScore = this.detectTampering(metadata, submission);
@@ -326,7 +329,7 @@ export class DODVerifier {
         : 'pending';
 
     const verification: DODVerification = {
-      dodId: submission.id,
+      dodId,
       status,
       visualHash,
       metadataHash: metaHash,
@@ -349,8 +352,8 @@ export class DODVerifier {
       VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $text, $lat, $lng, $dev, $s3, $sub, $proc, $enc)
     `,
       {
-        $id: submission.id,
-        $aid: submission.agentId,
+        $id: dodId,
+        $aid: agentId,
         $type: submission.type,
         $status: verification.status,
         $vh: visualHash,
@@ -371,7 +374,7 @@ export class DODVerifier {
     // 9b. Sidecar record — the store is the source of truth; SQLite is a
     // rebuildable index (see rebuildIndex()).
     await this.store.put(
-      `dod-records/${submission.id}.json`,
+      `dod-records/${dodId}.json`,
       new TextEncoder().encode(
         JSON.stringify({
           submission: { ...submission, rawImage: undefined },
@@ -387,7 +390,7 @@ export class DODVerifier {
       submission.type === 'balance' &&
       this.onVerifiedBalance
     ) {
-      await this.onVerifiedBalance(submission.agentId, extractAmount(extractedText));
+      await this.onVerifiedBalance(agentId, extractAmount(extractedText));
     }
 
     // 11. Notify ops if flagged
@@ -402,8 +405,7 @@ export class DODVerifier {
   }
 
   // ── Rate Limit ─────────────────────────────────────────────────
-  private checkRateLimit(agentId: string): void {
-    // brand-ok — external agent key, not domain AgentId
+  private checkRateLimit(agentId: TreeNodeId): void {
     const parsed = Number(Bun.env.DOD_RATE_LIMIT_PER_HOUR ?? 10);
     const maxPerHour = Number.isFinite(parsed) && parsed > 0 ? parsed : 10;
     const row = this.db
@@ -547,7 +549,7 @@ export class DODVerifier {
   }
 
   // ── Signature ────────────────────────────────────────────────────
-  private sign(dodId: string, visualHash: string, metaHash: string): string {
+  private sign(dodId: DodId, visualHash: string, metaHash: string): string {
     const h = new Bun.CryptoHasher('sha256', this.proofSecret);
     h.update(`${dodId}:${visualHash}:${metaHash}`);
     return h.digest('hex');
@@ -620,14 +622,14 @@ export class DODVerifier {
   }
 
   // ── Review Actions ───────────────────────────────────────────────
-  approve(dodId: string, reviewedBy = 'operations') {
+  approve(dodId: DodId, reviewedBy = 'operations') {
     this.db.run(
       "UPDATE dod_submissions SET status='verified', reviewed_at=datetime('now'), reviewed_by=$by WHERE id=$id",
       { $id: dodId, $by: reviewedBy }
     );
   }
 
-  reject(dodId: string, reason: string, reviewedBy = 'operations') {
+  reject(dodId: DodId, reason: string, reviewedBy = 'operations') {
     this.db.run(
       "UPDATE dod_submissions SET status='rejected', reviewed_at=datetime('now'), reviewed_by=$by, rejection_reason=$r WHERE id=$id",
       { $id: dodId, $by: reviewedBy, $r: reason }
@@ -643,15 +645,18 @@ export class DODVerifier {
   }
 
   /** Find submissions with similar perceptual hashes (Hamming distance). */
-  findSimilar(hash: string, maxDistance = 5): { id: string; agent_id: string; distance: number }[] {
+  findSimilar(
+    hash: string,
+    maxDistance = 5
+  ): { id: DodId; agent_id: TreeNodeId; distance: number }[] {
     const all = this.db
       .query('SELECT id, agent_id, visual_hash FROM dod_submissions WHERE visual_hash IS NOT NULL')
       .all() as { id: string; agent_id: string; visual_hash: string }[]; // brand-ok x2 — opaque DB row, not domain types
 
     return all
       .map(row => ({
-        id: row.id,
-        agent_id: row.agent_id,
+        id: parseDodId(row.id),
+        agent_id: parseTreeNodeId(row.agent_id),
         distance: hammingDistance(hash, row.visual_hash),
       }))
       .filter(r => r.distance > 0 && r.distance <= maxDistance)
@@ -721,8 +726,7 @@ export class DODVerifier {
   }
 
   /** Agent-side receipt: status + hashes for a submitted DOD. */
-  receipt(dodId: string) {
-    // brand-ok — opaque external DOD id
+  receipt(dodId: DodId) {
     return (
       this.db
         .query(
@@ -733,8 +737,7 @@ export class DODVerifier {
   }
 
   /** Agent-side verification: recompute HMAC and compare (constant length). */
-  verifySignature(dodId: string, visualHash: string, metaHash: string, signature: string): boolean {
-    // brand-ok — opaque external DOD id
+  verifySignature(dodId: DodId, visualHash: string, metaHash: string, signature: string): boolean {
     return this.sign(dodId, visualHash, metaHash) === signature;
   }
 

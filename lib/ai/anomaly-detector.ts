@@ -5,6 +5,7 @@ import { EventEmitter } from 'events';
 
 import { logger } from '../core/structured-logger';
 import { auditLogger } from '../security/secret-audit-logger';
+import { asRuleId, type RuleId } from '../types/branded.ts';
 
 export interface Anomaly {
   id: string; // brand-ok — opaque entity primary key
@@ -52,7 +53,7 @@ export interface BaselineProfile {
 }
 
 export interface DetectionRule {
-  id: string; // brand-ok — opaque entity primary key
+  id: RuleId;
   name: string;
   type: Anomaly['type'];
   conditions: {
@@ -74,7 +75,7 @@ export class AnomalyDetector extends EventEmitter {
   private baselines: Map<string, BaselineProfile> = new Map();
   private recentData: MetricData[] = [];
   private anomalies: Anomaly[] = [];
-  private rules: Map<string, DetectionRule> = new Map();
+  private rules: Map<RuleId, DetectionRule> = new Map();
   private learningEnabled = true;
   private detectionInterval = 30000; // 30 seconds
   private maxDataPoints = 10000;
@@ -174,7 +175,7 @@ export class AnomalyDetector extends EventEmitter {
   /**
    * Remove detection rule
    */
-  removeRule(ruleId: string): boolean {
+  removeRule(ruleId: RuleId): boolean {
     const removed = this.rules.delete(ruleId);
     if (removed) {
       logger.info('Anomaly detection rule removed', { ruleId }, ['anomaly', 'rule']);
@@ -263,7 +264,7 @@ export class AnomalyDetector extends EventEmitter {
   private initializeDefaultRules(): void {
     // Security rules
     this.addRule({
-      id: 'sec-001',
+      id: asRuleId('sec-001'),
       name: 'Multiple Failed Login Attempts',
       type: 'security',
       conditions: [{ metric: 'failed_login_count', operator: '>', threshold: 5 }],
@@ -276,7 +277,7 @@ export class AnomalyDetector extends EventEmitter {
     });
 
     this.addRule({
-      id: 'sec-002',
+      id: asRuleId('sec-002'),
       name: 'Unusual Access Pattern',
       type: 'security',
       conditions: [{ metric: 'access_pattern_deviation', operator: '>', threshold: 2.0 }],
@@ -286,7 +287,7 @@ export class AnomalyDetector extends EventEmitter {
 
     // Performance rules
     this.addRule({
-      id: 'perf-001',
+      id: asRuleId('perf-001'),
       name: 'High Response Time',
       type: 'performance',
       conditions: [{ metric: 'response_time_ms', operator: '>', threshold: 1000 }],
@@ -295,7 +296,7 @@ export class AnomalyDetector extends EventEmitter {
     });
 
     this.addRule({
-      id: 'perf-002',
+      id: asRuleId('perf-002'),
       name: 'High Error Rate',
       type: 'performance',
       conditions: [{ metric: 'error_rate_percent', operator: '>', threshold: 5 }],
@@ -305,7 +306,7 @@ export class AnomalyDetector extends EventEmitter {
 
     // Operational rules
     this.addRule({
-      id: 'ops-001',
+      id: asRuleId('ops-001'),
       name: 'High Memory Usage',
       type: 'operational',
       conditions: [{ metric: 'memory_usage_percent', operator: '>', threshold: 85 }],
@@ -314,7 +315,7 @@ export class AnomalyDetector extends EventEmitter {
     });
 
     this.addRule({
-      id: 'ops-002',
+      id: asRuleId('ops-002'),
       name: 'High CPU Usage',
       type: 'operational',
       conditions: [{ metric: 'cpu_usage_percent', operator: '>', threshold: 90 }],
