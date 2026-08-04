@@ -87,6 +87,7 @@
             <code>bun run tennis:board:bake</code> →
             <code>/registry/tennis/board-metrics.json</code>.
             Venue colors are identity; edge uses semantic green/red.
+            Owned runtime: <a href="https://tennis.factory-wager.com" target="_blank" rel="noopener noreferrer"><code>tennis.factory-wager.com</code></a>.
             Local on-demand: <code>GET /avatar/demo-player</code> (serve-public · Bun.Image).
           </p>
         </div>
@@ -98,6 +99,8 @@
       <a href="/registry/tennis/mid-distribution.json" target="_blank" rel="noopener">mid-distribution</a>
       <a href="/registry/tennis/registry.json" target="_blank" rel="noopener">registry</a>
       <a href="/registry/tennis/agent-auth.json" target="_blank" rel="noopener" title="Cloud agent FACTORY_WAGER_TOKEN status">agent-auth</a>
+      <a href="https://tennis.factory-wager.com" target="_blank" rel="noopener noreferrer" title="Operator-owned Tennis HQ Cloudflare Worker">production runtime</a>
+      <a href="https://tennis.factory-wager.com/api/version" target="_blank" rel="noopener noreferrer" title="Merged producer build identity">runtime version</a>
       <a href="/portal/env/" title="Vault map · FACTORY_WAGER_TOKEN">Env / vault</a>
       <a href="/portal/health/">Health</a>
       <button type="button" id="btn-refresh">Refresh</button>
@@ -112,6 +115,17 @@
     </div>
 
     <div class="portal-card-grid" id="kpi-host" aria-live="polite"></div>
+
+    <section class="portal-section" aria-labelledby="runtime-heading">
+      <h2 id="runtime-heading">Owned production runtime</h2>
+      <p class="section-sub">
+        <a href="https://tennis.factory-wager.com" target="_blank" rel="noopener noreferrer"><code>tennis.factory-wager.com</code></a>
+        is served by the FactoryWager-operated Cloudflare Worker <code>tennis-hq</code>.
+        Release verification checks the exact merged SHA, shell, glossary, and the fail-closed
+        <code>/api/v1</code> contract boundary. Registry auth and producer service auth remain
+        separate token planes.
+      </p>
+    </section>
 
     <section class="portal-section" aria-labelledby="venues-heading">
       <h2 id="venues-heading">Venues</h2>

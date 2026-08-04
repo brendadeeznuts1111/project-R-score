@@ -2,9 +2,10 @@ import type { VaultMapFile } from '../security/vault-map.ts';
 
 export const TENNIS_AGENT_AUTH_KIND = 'tennis-hq-agent-auth' as const;
 export const TENNIS_AGENT_AUTH_PATH = '/registry/tennis/agent-auth.json' as const;
-export const TENNIS_AGENT_AUTH_SCHEMA_VERSION = 2 as const;
+export const TENNIS_AGENT_AUTH_SCHEMA_VERSION = 3 as const;
 export const TENNIS_AGENT_AUTH_ENV_KEY = 'FACTORY_WAGER_TOKEN' as const;
 export const TENNIS_AGENT_AUTH_REGISTRY_URL = 'https://registry.factory-wager.com/' as const;
+export const TENNIS_HQ_RUNTIME_URL = 'https://tennis.factory-wager.com' as const;
 
 export type TennisAgentAuthArtifact = {
   schemaVersion: typeof TENNIS_AGENT_AUTH_SCHEMA_VERSION;
@@ -34,6 +35,21 @@ export type TennisAgentAuthArtifact = {
   planes: {
     read: string;
     write: string;
+  };
+  producerRuntime: {
+    url: typeof TENNIS_HQ_RUNTIME_URL;
+    worker: 'tennis-hq';
+    platform: 'cloudflare-workers';
+    ownership: 'factorywager-operator';
+    versionPath: '/api/version';
+    contractBasePath: '/api/v1';
+    contractAuth: {
+      mode: 'bearer-fail-closed';
+      producerEnvKey: 'PARTNER_API_TOKEN';
+      registryTokenAccepted: false;
+      unauthenticatedStatuses: readonly [401, 503];
+    };
+    releaseVerification: 'bun run deploy:verify:prod';
   };
   docs: readonly string[];
   portal: {
@@ -85,6 +101,21 @@ export function buildTennisAgentAuthArtifact(
     planes: {
       read: 'Public Pages/R2 mirror — GET/HEAD without token',
       write: `Bearer ${TENNIS_AGENT_AUTH_ENV_KEY} — local serve-public or private publish path (Pages rejects writes)`,
+    },
+    producerRuntime: {
+      url: TENNIS_HQ_RUNTIME_URL,
+      worker: 'tennis-hq',
+      platform: 'cloudflare-workers',
+      ownership: 'factorywager-operator',
+      versionPath: '/api/version',
+      contractBasePath: '/api/v1',
+      contractAuth: {
+        mode: 'bearer-fail-closed',
+        producerEnvKey: 'PARTNER_API_TOKEN',
+        registryTokenAccepted: false,
+        unauthenticatedStatuses: [401, 503],
+      },
+      releaseVerification: 'bun run deploy:verify:prod',
     },
     docs: [
       'docs/harness/tenants/tennis-hq-registry.md',

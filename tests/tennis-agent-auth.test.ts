@@ -8,6 +8,7 @@ import {
   TENNIS_AGENT_AUTH_KIND,
   TENNIS_AGENT_AUTH_PATH,
   TENNIS_AGENT_AUTH_SCHEMA_VERSION,
+  TENNIS_HQ_RUNTIME_URL,
 } from '../lib/tennis/agent-auth.ts';
 
 function vaultMap(): VaultMapFile {
@@ -38,6 +39,10 @@ describe('Tennis HQ agent auth artifact', () => {
       'pass://factorywager/FactoryWager Registry Token/password'
     );
     expect(JSON.stringify(artifact)).not.toContain('tokenPresent');
+    expect(artifact.producerRuntime.url).toBe(TENNIS_HQ_RUNTIME_URL);
+    expect(artifact.producerRuntime.platform).toBe('cloudflare-workers');
+    expect(artifact.producerRuntime.contractAuth.registryTokenAccepted).toBe(false);
+    expect(artifact.producerRuntime.contractAuth.unauthenticatedStatuses).toEqual([401, 503]);
   });
 
   test('fails closed when the vault mapping is absent', () => {
@@ -45,5 +50,11 @@ describe('Tennis HQ agent auth artifact', () => {
     expect(artifact.status).toBe('missing');
     expect(artifact.configured).toBe(false);
     expect(artifact.vaultRef).toBeNull();
+  });
+
+  test('publishes the owned producer runtime from the Tennis portal', async () => {
+    const portal = await Bun.file('public/portal/tennis/index.html').text();
+    expect(portal).toContain(`href="${TENNIS_HQ_RUNTIME_URL}"`);
+    expect(portal).toContain(`${TENNIS_HQ_RUNTIME_URL}/api/version`);
   });
 });

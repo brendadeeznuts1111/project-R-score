@@ -50,6 +50,14 @@ describe('bake-surfaces', () => {
     expect(byId.get(asSurfaceId('health_host'))?.status).toBe('vanity');
     expect(byId.get(asSurfaceId('reasonix'))?.status).toBe('retired');
     expect(byId.get(asSurfaceId('registry_write'))?.status).toBe('retired');
+    expect(byId.get(asSurfaceId('tennis'))).toEqual(
+      expect.objectContaining({
+        host: asHostId('tennis.factory-wager.com'),
+        status: 'live',
+        backendCode: 'cloudflare-worker',
+        access: 'public',
+      })
+    );
     expect(byId.get(asSurfaceId('score'))?.apex).toBe('factory-wager.com');
     expect(byId.get(asSurfaceId('score'))?.subdomain).toBe('score');
     expect(byId.get(asSurfaceId('score'))?.backendCode).toBe('cloudflare-pages');
