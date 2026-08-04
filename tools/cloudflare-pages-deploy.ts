@@ -46,6 +46,8 @@ export type CfResponse<T> = {
   success: boolean;
   result?: T;
   errors?: Array<{ message: string }>;
+  /** Synthetic operator signal: Cloudflare accepted the request but public content is unchanged. */
+  notModified?: boolean;
 };
 
 function responseExcerpt(text: string): string {
@@ -60,6 +62,9 @@ export function parseCloudflareApiResponse<T>(
   status: number,
   requestLabel: string
 ): CfResponse<T> {
+  if (status === 304 && !text.trim()) {
+    return { success: true, notModified: true };
+  }
   let value: unknown;
   try {
     value = JSON.parse(text);
@@ -114,12 +119,16 @@ async function cf<T>(path: string, init?: RequestInit): Promise<CfResponse<T>> {
   return body;
 }
 
-async function triggerDeploy(): Promise<string> {
+async function triggerDeploy(): Promise<string | null> {
   console.log(`🚀 Triggering Pages deploy → ${PROJECT} (${BRANCH})`);
   const body = await cf<Deployment>(
     `/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}/deployments`,
     { method: 'POST', body: JSON.stringify({ branch: BRANCH }) }
   );
+  if (body.notModified) {
+    console.log('ℹ️  Pages content unchanged (HTTP 304) — verifying current production');
+    return null;
+  }
   if (!body.success || !body.result?.id) {
     throw new Error(body.errors?.map(e => e.message).join('; ') || 'deploy trigger failed');
   }
@@ -204,7 +213,7 @@ async function runTennisSsotReleaseVerify(): Promise<void> {
 async function main() {
   await loadReasonixEnv();
   const deployId = await triggerDeploy();
-  if (WAIT) await waitForDeploy(deployId);
+  if (WAIT && deployId) await waitForDeploy(deployId);
   if (VERIFY) {
     await runEdgeVerify(VERIFY_TAXONOMY);
     await runTennisSsotReleaseVerify();
