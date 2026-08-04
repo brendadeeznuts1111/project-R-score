@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "kind": "surfaces-state",
-  "generatedAt": "2026-07-29T01:21:38.013Z",
-  "source": "config/surfaces.toml (dig+curl verified 2026-07-28)",
+  "generatedAt": "2026-08-04T22:41:48.418Z",
+  "source": "config/surfaces.toml (dig+curl verified 2026-08-04)",
   "surfaces": [
     {
       "id": "apex",
@@ -85,6 +85,19 @@
       "access": "allowlist",
       "note": "Token in bunfig scope is sent but not verified; authz = key allowlist. Writes → 405. Bucket audit 2026-07-28: 12 objects, catalog index (registry.json, 17 pkgs metadata+readme) + ops stub + telegram channels/ — NO storage/ artifacts; installable packuments+tarballs are served from the committed static mirror (public/registry/@factorywager/*), not R2.",
       "dnsTarget": "project-r-score.pages.dev"
+    },
+    {
+      "id": "tennis",
+      "host": "tennis.factory-wager.com",
+      "apex": "factory-wager.com",
+      "subdomain": "tennis",
+      "backend": "cloudflare-worker:tennis-hq",
+      "backendCode": "cloudflare-worker",
+      "status": "live",
+      "protocol": "https-static+functions",
+      "access": "public",
+      "note": "Operator-owned Tennis HQ Worker Custom Domain. Cloudflare manages DNS/TLS directly; merged producer SHA cb091989 and Worker version 9aaae6ba-7293-4cda-b2ab-41cd068a76ca passed strict release verification 2026-08-04. Public shell and identity; /api/v1/* contracts use separate fail-closed bearer auth.",
+      "dnsTarget": ""
     },
     {
       "id": "wiki",
@@ -247,21 +260,22 @@
     "issues": []
   },
   "summary": {
-    "total": 13,
+    "total": 14,
     "lanes": 3,
     "byStatus": {
-      "live": 7,
+      "live": 8,
       "vanity": 2,
       "retired": 4
     },
     "byAccess": {
-      "public": 7,
+      "public": 8,
       "allowlist": 1,
       "applied": 1,
       "none": 4
     },
     "byBackendCode": {
       "cloudflare-pages": 7,
+      "cloudflare-worker": 1,
       "github-pages": 1,
       "cloudflared": 1,
       "none": 4
