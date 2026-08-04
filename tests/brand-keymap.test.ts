@@ -42,7 +42,7 @@ describe('brand keymap', () => {
       path: '/registry/brand-keymap.json',
       generatedAt: '2026-07-28T00:00:00.000Z',
       summary: {
-        brands: 61,
+        brands: 62,
         domains: 9,
         trackedProjects: 1,
         canonicalProjects: 1,
@@ -50,6 +50,8 @@ describe('brand keymap', () => {
       },
       sources: {
         colorKernel: 'public/portal/theme.jsonc',
+        catalog: 'lib/types/branded/index.ts#BRAND_CATALOG',
+        manifest: 'lib/types/brand-manifest.json',
       },
     });
     expect(payload.brands.find(brand => brand.name === 'StateCode')).toMatchObject({
