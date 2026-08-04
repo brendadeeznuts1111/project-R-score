@@ -22,7 +22,7 @@
   "cli": "bun run ssot:flow:soft",
   "mode": "soft",
   "ok": true,
-  "timestamp": "2026-08-02T21:08:17.375Z",
+  "timestamp": "2026-08-04T21:38:14.745Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62",
   "reportPath": "/registry/ssot-flow-soft.json",
@@ -34,12 +34,24 @@
   "tennisHqRoot": "king-zippy-umbra-acre",
   "package": {
     "name": "@tennis-hq/ssot",
-    "version": "1.4.0"
+    "version": "1.5.0"
   },
   "tarball": {
-    "path": "artifacts/publish/tennis-hq-ssot-1.4.0.tgz",
-    "fileCount": 7,
-    "sha256": "8f7cb1d9a29d4e92a13d3efb383e377c62e89acc5418837305b77b276dd3bff7"
+    "path": "artifacts/publish/tennis-hq-ssot-1.5.0.tgz",
+    "fileCount": 14,
+    "sha256": "a6c0e9502cdb1c30d37e7579ed3d90e475cc28e6e0f46e0837394524f8cc8f55"
+  },
+  "contracts": {
+    "manifestPath": "package/registry/contracts/v1/manifest.json",
+    "contractSet": "tennis-hq/v1",
+    "schemaVersion": 1,
+    "domains": [
+      "marketdata",
+      "research",
+      "trading",
+      "partners",
+      "accounting"
+    ]
   },
   "steps": [
     {
@@ -58,19 +70,24 @@
       "name": "ssot:pack",
       "ok": true,
       "exitCode": 0,
-      "detail": "   king-zippy-umbra-acre/artifacts/publish/tennis-hq-ssot-1.4.0.tgz ·    files: 7 · ════════════════════════════════════════════════════"
+      "detail": "   king-zippy-umbra-acre/artifacts/publish/tennis-hq-ssot-1.5.0.tgz ·    files: 14 · ════════════════════════════════════════════════════"
     },
     {
       "name": "tarball",
       "ok": true,
-      "detail": "artifacts/publish/tennis-hq-ssot-1.4.0.tgz · 7 files · sha256=8f7cb1d9a29d…"
+      "detail": "artifacts/publish/tennis-hq-ssot-1.5.0.tgz · 14 files · sha256=a6c0e9502cdb…"
+    },
+    {
+      "name": "contracts:v1",
+      "ok": true,
+      "detail": "tennis-hq/v1 · 5 domains · package 1.5.0"
     }
   ],
   "summary": {
-    "passed": 4,
+    "passed": 5,
     "failed": 0,
-    "total": 4,
+    "total": 5,
     "status": "pass"
   },
-  "gitSha": "b83c128"
+  "gitSha": "1cea1dd"
 }
