@@ -13,14 +13,23 @@ Syntax-aware layer between `rg` and a full LSP. **No index to maintain.**
 
 ## Setup
 
-**Global (preferred):**
+**FactoryWager workspace (preferred):**
+
+```bash
+bun install --frozen-lockfile
+```
+
+The private `@projects/ast-grep-skill` workspace is part of the root lockfile, so
+the normal root install hydrates the CLI and Effect dependencies used by pre-commit.
+
+**Portable global fallback:**
 
 ```bash
 npm install -g @ast-grep/cli@0.44.0
 ast-grep outline --help   # must work
 ```
 
-**Skill fallback:**
+**Workspace repair:**
 
 ```bash
 cd .agents/skills/ast-grep && ./scripts/install.sh

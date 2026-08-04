@@ -116,9 +116,10 @@ From root `package.json` `workspaces.packages` (SSOT — do not invent extra glo
 - `packages/*` — `@factorywager/*` library packages
 - `projects/active/sports-terminal-os` — Sports Terminal OS (workspace member, not a nested install root)
 - `lib/*` — currently only `lib/shared` (`name: shared`); product code under other `lib/**` paths is imported relatively, not as workspace packages
+- `.agents/skills/ast-grep` — private hook tooling; root install + shared lockfile own dependencies required by pre-commit
 
 **Root `workspace:*` deps (imported from spine):** `docs-tools`, `guards`, `registry-client`, `rip`.  
-**Workspace-only (not root deps):** `business`, `p2p`, `@factorywager/shared` (`lib/shared`), `sports-terminal-os`.  
+**Workspace-only (not root deps):** `business`, `p2p`, `@factorywager/shared` (`lib/shared`), `sports-terminal-os`, `@projects/ast-grep-skill`.
 **Archived (out of root install graph):** `projects/archive/factorywager-packages/{ab-testing,versioning}` — revive only with a real consumer.
 
 **Not root workspaces:** nested monorepos under `projects/**` (e.g. `projects/active/factorywager/registry`) keep their **own** `workspaces` / `catalog` and own `bun install`. Shared third-party pins for root members use root `catalog` + `catalog:` — see [`docs/UNIFIED.md`](docs/UNIFIED.md#catalogs-and-workspace-protocols).

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
@@ -6,7 +7,7 @@
  * Workspace Validator — homebase hybrid model
  *
  * Root workspaces intentionally cover only:
- *   packages/* · projects/active/sports-terminal-os · lib/*
+ *   packages/* · projects/active/sports-terminal-os · lib/* · .agents/skills/ast-grep
  *
  * Nested monorepos under projects/** (registry, experimental, archive, etc.)
  * are separate install roots and must NOT be required as root workspace members.
@@ -90,6 +91,7 @@ const HOMEBASE_SCAN_GLOBS = [
   'packages/*/package.json',
   'lib/*/package.json',
   'projects/active/sports-terminal-os/package.json',
+  '.agents/skills/ast-grep/package.json',
 ];
 
 /** Allowed non-workspace package.json at specific roots (if any). */
@@ -219,7 +221,7 @@ for (const pattern of normalizedGlobs) {
 // ---------- Output ----------
 console.info(`${colors.bold}\n📦 Workspace Coverage Report (homebase)\n${colors.reset}`);
 console.info(
-  `  Root workspaces globs: ${colors.cyan}${normalizedGlobs.join(', ')}${colors.reset}\n`
+  `  Root workspace patterns: ${colors.cyan}${normalizedGlobs.join(', ')}${colors.reset}\n`
 );
 console.info(
   `  ${colors.dim}Nested monorepos under projects/** are out of scope (separate install roots).${colors.reset}\n`

@@ -21,6 +21,7 @@ describe('monorepo-surfaces', () => {
     expect(paths.some(p => p.startsWith('packages/'))).toBe(true);
     expect(paths).toContain('projects/active/sports-terminal-os');
     expect(paths).toContain('lib/shared');
+    expect(paths).toContain('.agents/skills/ast-grep');
     const graphDirs = await discoverPackagesGraphDirs(ROOT);
     expect(graphDirs).toContain('registry-client');
     // packages plane is a subset of full workspaces
