@@ -5,6 +5,10 @@ import {
   SSOT_FLOW_SOFT_ARTIFACT_NAME,
   SSOT_FLOW_SOFT_REPORT_PATH,
   SSOT_FLOW_SOFT_SCHEMA,
+  SSOT_CONTRACT_DOMAINS,
+  SSOT_CONTRACT_MANIFEST_ENTRY,
+  SSOT_CONTRACT_SET,
+  canonicalTennisHqCheckoutLabel,
   resolveTennisHqRoot,
 } from '../lib/verification/ssot-flow-soft.ts';
 import {
@@ -28,6 +32,31 @@ describe('ssot-flow-soft resolve', () => {
     expect(PM_PROOF_ARTIFACT_ID).toBe('pm-proof');
     expect(PM_PROOF_ARTIFACT_NAME).toBe('PM publish-plane proof');
     expect(PM_PROOF_ARTIFACT_ID).not.toBe(PM_PROOF_ARTIFACT_NAME);
+  });
+
+  test('v1 contract package pins exactly five domains', () => {
+    expect(SSOT_CONTRACT_MANIFEST_ENTRY).toBe(
+      'package/registry/contracts/v1/manifest.json'
+    );
+    expect(SSOT_CONTRACT_SET).toBe('tennis-hq/v1');
+    expect(SSOT_CONTRACT_DOMAINS).toEqual([
+      'marketdata',
+      'research',
+      'trading',
+      'partners',
+      'accounting',
+    ]);
+  });
+
+  test('worktree paths bake the canonical checkout label', () => {
+    expect(
+      canonicalTennisHqCheckoutLabel(
+        '/Users/operator/Projects/king-zippy-umbra-acre-plum-integration'
+      )
+    ).toBe('king-zippy-umbra-acre');
+    expect(canonicalTennisHqCheckoutLabel('/tmp/another-tennis-provider')).toBe(
+      'another-tennis-provider'
+    );
   });
 
   test('baked soft-pass proof carries enhance keys', async () => {
@@ -59,13 +88,22 @@ describe('ssot-flow-soft resolve', () => {
     expect(proof.summary && typeof proof.summary === 'object').toBe(true);
   });
 
-  test('resolveTennisHqRoot finds primary sibling from worktree', async () => {
-    const factoryRoot = joinPath(import.meta.dir, '..');
-    const root = await resolveTennisHqRoot(factoryRoot);
-    expect(root).toContain('king-zippy-umbra-acre');
-    expect(await Bun.file(joinPath(root, 'packages/tennis-hq-ssot/package.json')).exists()).toBe(
-      true
+  test('resolveTennisHqRoot finds a sibling checkout without machine paths', async () => {
+    const scratch = joinPath(
+      import.meta.dir,
+      `../.tmp/ssot-root-${Bun.randomUUIDv7()}`
     );
+    const tennisRoot = joinPath(scratch, 'king-zippy-umbra-acre');
+    try {
+      await Bun.write(joinPath(tennisRoot, 'package.json'), '{}\n');
+      await Bun.write(
+        joinPath(tennisRoot, 'packages/tennis-hq-ssot/package.json'),
+        '{"name":"@tennis-hq/ssot","version":"1.5.0"}\n'
+      );
+      expect(await resolveTennisHqRoot(scratch)).toBe(tennisRoot);
+    } finally {
+      await Bun.$`rm -rf ${scratch}`.quiet();
+    }
   });
 });
 
