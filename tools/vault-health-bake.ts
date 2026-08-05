@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @see https://developers.cloudflare.com/api/resources/user/subresources/tokens/methods/verify/ — token lifecycle response
 /**
  * Vault health bake — cross-references config/vault-map.toml env refs against
  * LIVE Proton Pass item states, writes:
@@ -50,10 +52,32 @@ const CLOUDFLARE_TOKEN_KEYS = [
   'CLOUDFLARE_DNS_API_TOKEN',
   'CLOUDFLARE_ACCESS_API_TOKEN',
 ] as const;
+type CloudflareTokenEnvKey = (typeof CLOUDFLARE_TOKEN_KEYS)[number];
+
+export type CloudflareTokenVerifyPayload = {
+  success?: boolean;
+  result?: { status?: string };
+};
+
+/** Interpret both HTTP transport and Cloudflare's token lifecycle response. */
+export function classifyCloudflareTokenVerify(
+  statusCode: number,
+  payload: CloudflareTokenVerifyPayload | null
+): TokenProbe['status'] {
+  if (statusCode === 408 || statusCode === 425 || statusCode === 429 || statusCode >= 500) {
+    return 'unreachable';
+  }
+  if (statusCode >= 400) return 'invalid';
+  if (payload?.result?.status === 'disabled' || payload?.result?.status === 'expired') {
+    return 'invalid';
+  }
+  if (payload?.success === true && payload.result?.status === 'active') return 'ok';
+  return 'unreachable';
+}
 
 /** Probe a Cloudflare token value against the tokens/verify endpoint. */
-async function probeCloudflareToken(envKey: string): Promise<TokenProbe> {
-  const token = process.env[envKey];
+async function probeCloudflareToken(envKey: CloudflareTokenEnvKey): Promise<TokenProbe> {
+  const token = Bun.env[envKey];
   const checkedAt = new Date().toISOString();
   if (!token) {
     return { envKey, kind: 'cloudflare', status: 'unreachable', statusCode: null, checkedAt };
@@ -62,10 +86,11 @@ async function probeCloudflareToken(envKey: string): Promise<TokenProbe> {
     const res = await fetch('https://api.cloudflare.com/client/v4/user/tokens/verify', {
       headers: { Authorization: `Bearer ${token}` },
     });
+    const payload = (await res.json().catch(() => null)) as CloudflareTokenVerifyPayload | null;
     return {
       envKey,
       kind: 'cloudflare',
-      status: res.status === 200 ? 'ok' : 'invalid',
+      status: classifyCloudflareTokenVerify(res.status, payload),
       statusCode: res.status,
       checkedAt,
     };
@@ -78,7 +103,7 @@ async function probeCloudflareToken(envKey: string): Promise<TokenProbe> {
 async function probeCloudflareTokens(): Promise<TokenProbe[]> {
   const probes: TokenProbe[] = [];
   for (const key of CLOUDFLARE_TOKEN_KEYS) {
-    if (process.env[key]) probes.push(await probeCloudflareToken(key));
+    if (Bun.env[key]) probes.push(await probeCloudflareToken(key));
   }
   return probes;
 }
@@ -99,19 +124,32 @@ export function renderHtml(
 ): string {
   const s = report.summary;
   const issues = report.referenced.filter(r => r.status !== 'ok');
-  const tokenRows = report.tokenProbes.map(p => [p.envKey, p.status.toUpperCase(), p.statusCode ?? '—']);
+  const tokenRows = report.tokenProbes.map(p => [
+    p.envKey,
+    p.status.toUpperCase(),
+    p.statusCode ?? '—',
+  ]);
   const tokenBlock =
     report.tokenProbes.length === 0
       ? ''
       : renderPortalPanel(
           'Token probes (live verify against issuer)',
           renderPortalTable(['Env key', 'Status', 'HTTP'], tokenRows, { zebra: true }),
-          report.tokenProbes.some(p => p.status !== 'ok')
-            ? { title: 'expired/invalid tokens will fail deploys at runtime' }
-            : undefined
+          s.tokensInvalid > 0
+            ? { title: 'expired/disabled tokens fail the health gate' }
+            : s.tokensUnreachable > 0
+              ? { title: 'issuer unreachable; token validity was not scored' }
+              : undefined
         );
   const gateCls = s.healthy && listFailures.length === 0 ? 'pass' : 'fail';
-  const gateLabel = listFailures.length > 0 ? 'list failed' : s.healthy ? 'healthy' : 'purge risk';
+  const gateLabel =
+    listFailures.length > 0
+      ? 'list failed'
+      : s.tokensInvalid > 0
+        ? 'token invalid'
+        : s.healthy
+          ? 'healthy'
+          : 'purge risk';
 
   const issuesTable = renderPortalTable(
     [
@@ -230,6 +268,11 @@ export function renderHtml(
           value: s.tokensInvalid,
           tone: s.tokensInvalid ? 'bad' : 'ok',
         },
+        {
+          label: 'Token probes unavailable',
+          value: s.tokensUnreachable,
+          tone: s.tokensUnreachable ? 'warn' : 'ok',
+        },
       ])}
     </div>
     ${tokenBlock}
@@ -312,7 +355,7 @@ async function main(): Promise<void> {
   console.log(
     `vault-health: ${s.vaultCount} vaults · ${s.activeItems} active · ${s.trashedItems} trashed · ` +
       `refs ok=${s.referencedOk} trashed=${s.referencedTrashed} missing=${s.referencedMissing}` +
-      ` · tokens ok=${s.tokensOk} invalid=${s.tokensInvalid}` +
+      ` · tokens ok=${s.tokensOk} invalid=${s.tokensInvalid} unreachable=${s.tokensUnreachable}` +
       (listFailures.length ? ` · listFailed=${listFailures.join(',')}` : '')
   );
   for (const r of report.referenced.filter(r => r.status !== 'ok')) {
@@ -331,6 +374,8 @@ async function main(): Promise<void> {
       console.error(
         `UNHEALTHY: pass-cli item list failed for vault(s): ${listFailures.join(', ')} (fail-closed).`
       );
+    } else if (s.tokensInvalid > 0) {
+      console.error(`UNHEALTHY: ${s.tokensInvalid} Cloudflare token probe(s) invalid or expired.`);
     } else {
       console.error('UNHEALTHY: env-referenced items are missing or trashed (purge risk).');
     }
