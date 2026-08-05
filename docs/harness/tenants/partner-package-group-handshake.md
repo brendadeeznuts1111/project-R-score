@@ -184,9 +184,11 @@ bun tools/onboard-partner-package.ts ASH-001 --create-package-group
 bun tools/onboard-partner-package.ts ASH-001 --dry-run --create-package-group
 ```
 
-Resolves `partner_code` from seat call-sign prefix or parent partner node. Appends JSONL even on dry-run (when not `--dry-run` only for writes? Plan says emit on flag - dry-run should still print recipe but maybe skip JSONL append on dry-run - I'll skip JSONL on dry-run to avoid polluting pending file).
-
-Actually plan says: `bun tools/onboard-partner-package.ts ASH-001 --create-package-group` - dry-run with --dry-run might skip JSONL. I'll skip JSONL append when `--dry-run` is set.
+Resolves `partner_code` from the seat call-sign prefix or parent partner node.
+Without `--dry-run`, the command appends the create request to the pending JSONL
+event log. With `--dry-run`, it prints the operator recipe without writing the
+event log. This boundary is covered by
+[`tests/onboard-partner-package.test.ts`](../../../tests/onboard-partner-package.test.ts).
 
 ### `link-package-group`
 
