@@ -27,7 +27,7 @@ export type SubdomainProbeRow = {
   detail: string;
 };
 
-export type SubdomainExpect = 'json' | 'ok' | 'access' | 'fail-closed';
+export type SubdomainExpect = 'json' | 'ok' | 'access' | 'bearer-auth';
 
 export type SubdomainCheckSpec = {
   path: string;
@@ -72,7 +72,7 @@ function normalizeCheck(raw: unknown): SubdomainCheckSpec {
     throw new Error('subdomain check.path must be a string starting with /');
   }
   const expect =
-    o.expect === 'json' || o.expect === 'ok' || o.expect === 'access' || o.expect === 'fail-closed'
+    o.expect === 'json' || o.expect === 'ok' || o.expect === 'access' || o.expect === 'bearer-auth'
       ? o.expect
       : defaultExpectForPath(o.path);
   return { path: o.path, expect };
@@ -185,9 +185,9 @@ export async function probeSubdomainCheck(
           detail: '302 Access',
         };
       }
-      if (expect === 'fail-closed') {
-        if (res.status !== 401 && res.status !== 503) {
-          throw new Error(`expected fail-closed 401/503, got ${res.status}`);
+      if (expect === 'bearer-auth') {
+        if (res.status !== 401) {
+          throw new Error(`expected configured bearer rejection 401, got ${res.status}`);
         }
         const body = await res.arrayBuffer();
         const sizeBytes = sizeOf(res, body);
@@ -197,15 +197,12 @@ export async function probeSubdomainCheck(
             throw new Error('JSON not an object');
           }
           const auth = parsed as { ok?: unknown; code?: unknown };
-          if (
-            auth.ok !== false ||
-            (auth.code !== 'unauthorized' && auth.code !== 'contract_auth_unconfigured')
-          ) {
-            throw new Error('JSON is not a recognized auth rejection');
+          if (auth.ok !== false || auth.code !== 'unauthorized') {
+            throw new Error('JSON is not the configured bearer rejection');
           }
         } catch (e) {
           const msg = e instanceof Error ? e.message : String(e);
-          throw new Error(`invalid fail-closed JSON (${msg})`);
+          throw new Error(`invalid bearer-auth JSON (${msg})`);
         }
         return {
           ok: true,
@@ -213,7 +210,7 @@ export async function probeSubdomainCheck(
           latencyMs,
           sizeBytes,
           contentType: contentType || 'application/json',
-          detail: `${res.status} fail-closed`,
+          detail: `${res.status} bearer-auth`,
         };
       }
       if (access) throw new Error(`302 Access (expected ${expect})`);

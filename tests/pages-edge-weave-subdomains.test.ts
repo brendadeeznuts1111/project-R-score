@@ -51,11 +51,15 @@ describe('pages-edge-weave-subdomains', () => {
     expect(tennis?.checks).toEqual([
       { path: '/api/version', expect: 'json' },
       { path: '/api/glossary', expect: 'json' },
-      { path: '/api/v1/marketdata/desk', expect: 'fail-closed' },
+      { path: '/api/v1/marketdata/desk', expect: 'bearer-auth' },
+      { path: '/api/v1/research/status', expect: 'bearer-auth' },
+      { path: '/api/v1/trading/executions', expect: 'bearer-auth' },
+      { path: '/api/v1/partners/capacity', expect: 'bearer-auth' },
+      { path: '/api/v1/accounting/finance', expect: 'bearer-auth' },
     ]);
   });
 
-  test('parses fail-closed endpoint expectations', () => {
+  test('parses configured bearer-auth endpoint expectations', () => {
     const cfg = parseSubdomainsConfig({
       schemaVersion: 1,
       kind: 'weave-subdomain-probes',
@@ -63,21 +67,28 @@ describe('pages-edge-weave-subdomains', () => {
         {
           name: 'tennis',
           domain: 'tennis.factory-wager.com',
-          checks: [{ path: '/api/v1/marketdata/desk', expect: 'fail-closed' }],
+          checks: [{ path: '/api/v1/marketdata/desk', expect: 'bearer-auth' }],
         },
       ],
     });
     expect(cfg.subdomains[0]?.checks[0]).toEqual({
       path: '/api/v1/marketdata/desk',
-      expect: 'fail-closed',
+      expect: 'bearer-auth',
     });
   });
 
-  test('fail-closed probe accepts auth rejection and rejects a public response', async () => {
+  test('bearer-auth probe accepts only the configured auth rejection', async () => {
     const server = Bun.serve({
       port: 0,
       fetch(request) {
-        if (new URL(request.url).pathname === '/closed') {
+        const path = new URL(request.url).pathname;
+        if (path === '/closed') {
+          return Response.json(
+            { ok: false, code: 'unauthorized', error: 'Partner service token required.' },
+            { status: 401 }
+          );
+        }
+        if (path === '/unconfigured') {
           return Response.json(
             { ok: false, code: 'contract_auth_unconfigured', error: 'not configured' },
             { status: 503 }
@@ -87,20 +98,31 @@ describe('pages-edge-weave-subdomains', () => {
       },
     });
     try {
-      const closed = await probeSubdomainCheck(`${server.url}closed`, 'fail-closed', {
+      const closed = await probeSubdomainCheck(`${server.url}closed`, 'bearer-auth', {
         retries: 1,
         backoffMs: 0,
       });
       expect(closed).toEqual(
-        expect.objectContaining({ ok: true, httpStatus: 503, detail: '503 fail-closed' })
+        expect.objectContaining({ ok: true, httpStatus: 401, detail: '401 bearer-auth' })
       );
 
-      const open = await probeSubdomainCheck(`${server.url}open`, 'fail-closed', {
+      const unconfigured = await probeSubdomainCheck(
+        `${server.url}unconfigured`,
+        'bearer-auth',
+        {
+          retries: 1,
+          backoffMs: 0,
+        }
+      );
+      expect(unconfigured.ok).toBe(false);
+      expect(unconfigured.detail).toContain('expected configured bearer rejection 401, got 503');
+
+      const open = await probeSubdomainCheck(`${server.url}open`, 'bearer-auth', {
         retries: 1,
         backoffMs: 0,
       });
       expect(open.ok).toBe(false);
-      expect(open.detail).toContain('expected fail-closed 401/503, got 200');
+      expect(open.detail).toContain('expected configured bearer rejection 401, got 200');
     } finally {
       server.stop(true);
     }
