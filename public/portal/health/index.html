@@ -852,14 +852,25 @@
       </div>
     </header>
 
-    <main class="health-page">
-      <div class="health-hero">
-        <h1>Health</h1>
-        <p class="sub">
+    <main class="health-page portal-page">
+      <section class="health-hero portal-hero portal-hero--card" aria-labelledby="health-hero-title">
+        <p class="portal-eyebrow">Edge · harness · operations</p>
+        <h1 id="health-hero-title">Health</h1>
+        <p class="sub hero-sub">
           Operator summary for edge health and current operations. Detailed probes, routing,
           environment, infrastructure, and raw payloads stay in the evidence archive below.
         </p>
-      </div>
+        <div class="portal-hero-meta">
+          <span id="health-gate" class="portal-gate" aria-live="polite">Checking health…</span>
+          <span id="health-baked" class="portal-baked">Probing /api/health and /health</span>
+          <div class="portal-source-links" aria-label="Health artifacts">
+            <a href="/api/health">API JSON</a>
+            <a href="/registry/ops-summary.json">ops-summary</a>
+            <a href="/registry/static.json">static aggregate</a>
+            <a href="/portal/dashboard/">dashboard</a>
+          </div>
+        </div>
+      </section>
 
       <div id="banner" class="health-banner" data-tone="warn" role="status" aria-live="polite">
         <span class="dot"></span>

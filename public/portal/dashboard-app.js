@@ -750,6 +750,10 @@ function renderErrors(failed) {
 export async function load() {
   renderSkeleton();
   $('ts').textContent = 'Loading…';
+  const gate = document.getElementById('dash-gate');
+  const baked = document.getElementById('dash-baked');
+  if (gate) gate.textContent = 'Loading dashboard…';
+  if (baked) baked.textContent = 'Fetching proof slices…';
   $('errors')?.classList.add('hidden');
 
   const urls = {
@@ -815,6 +819,16 @@ export async function load() {
   void mountProofIndex(document.getElementById('proof-index-host'));
 
   $('ts').textContent = `Updated ${new Date().toLocaleTimeString()}`;
+  if (gate) gate.textContent = failed.length ? 'Dashboard loaded with gaps' : 'Dashboard live';
+  if (baked) {
+    baked.textContent = [
+      failed.length ? `${failed.length} source(s) failed` : 'All primary slices loaded',
+      ops?.generatedAt ? `ops ${ops.generatedAt}` : null,
+      release?.generatedAt ? `release ${release.generatedAt}` : null,
+    ]
+      .filter(Boolean)
+      .join(' · ');
+  }
   document.dispatchEvent(new CustomEvent('portal:dashboard-ready', { detail: ctx }));
 }
 
