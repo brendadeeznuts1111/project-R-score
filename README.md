@@ -168,6 +168,12 @@ Triage tiers `experimental/` / `archive/` are documented under `projects/`; only
 | `bun run public:audit:verify` | Public plane discovery + portal static gate |
 | `bun run proton:deploy:pages` | Cloudflare Pages deploy (after Proton inject) |
 
+**Delivery loop** (`main` is PR-only, squash-merged): `gh pr create --fill` →
+`gh pr merge --squash --delete-branch` → `git sync-main` (squash-merge sync;
+`git pull --ff-only` fails after a squash). Configure once:
+`git config --global alias.sync-main '!git fetch origin main && git reset --soft origin/main'`
+and `git config --global merge.conflictstyle zdiff3`.
+
 See `bun run help --verbose` (regenerate long [`docs/CLI.md`](docs/CLI.md) with `bun run cli:docs` only when needed).
 
 ## Code Quality & Fix Tools

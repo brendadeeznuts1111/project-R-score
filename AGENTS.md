@@ -227,6 +227,23 @@ interior, path/name allowlists, suppressions.
   repository-wide because hosted-runner billing locks jobs before step 1; never
   make a hosted check a merge dependency. Do not leave verified work
   uncommitted.
+- **Squash-merge delivery loop:** `main` is branch-protected — no direct
+  pushes, and history is squash-only. Per batch: `git push -u origin HEAD:refs/heads/<lane>` →
+  open a PR (`gh pr create --fill`) → run the local authority `bun run bun:ci`
+  → squash-merge (`gh pr merge --squash --delete-branch`) → sync local:
+  `git sync-main` (alias `!git fetch origin main && git reset --soft origin/main`
+  — `git pull --ff-only` fails after a squash by design, and the trees are
+  content-identical so `--soft` loses nothing). Recommended conflict ergonomics:
+  `git config --global merge.conflictstyle zdiff3` (base + ours + theirs makes
+  timestamp-only conflicts in generated artifacts obvious).
+- **Root-dir hygiene:** untracked root-level dirs that are not part of the
+  monorepo (foreign lanes' worktrees, vendored clones, prototypes) must be
+  routed — add to `.gitignore` (matching the existing `/king-zippy-umbra-acre/`
+  pattern) or move under an allowlisted owner dir — before `bun:ci` runs.
+  `repo-hygiene` full-scan flags any non-ignored unexpected root dir
+  (`unexpected-root-dir`); don't leave a foreign dir to fail the gate for the
+  next lane. Do **not** delete or move another lane's dir to make the gate pass
+  — route it instead.
 - **Portal formatting:** before committing portal work that touches
   `lib/**/*.ts`, run `bun x prettier --write <file...>` over every touched
   library TypeScript file or run `bun run format:harness`, then re-stage the
