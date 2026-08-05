@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="portal-poll-ms" content="60000" />
   <title>Account Catalog · FactoryWager</title>
   <meta name="theme-color" content="#0d1117" />
   <meta name="application-name" content="FactoryWager" />
@@ -16,48 +17,51 @@
   <link rel="stylesheet" href="/portal/style.css" />
   <style>
     .hidden { display: none; }
-    .catalog-dashboard { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
-    .stat-card .stat-num { font-size: 28px; font-weight: 600; }
-    .stat-card .stat-label { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
-    .filter-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
     .filter-chips { display: flex; gap: 6px; flex-wrap: wrap; }
-    .filter-chip { font-size: 12px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); color: var(--text-dim); cursor: pointer; }
-    .filter-chip.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); }
-    #sort-select { padding: 4px 8px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); color: var(--text); font-size: 12px; }
-    #search { padding: 6px 12px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); color: var(--text); font-size: 13px; width: 240px; }
+    .filter-chip {
+      font-size: 12px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px;
+      background: var(--surface); color: var(--text-dim); cursor: pointer; font-family: inherit;
+    }
+    .filter-chip.active {
+      background: var(--accent-glow); border-color: var(--accent); color: var(--accent);
+    }
     .account-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
-    .account-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; transition: border-color .15s; }
+    .account-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px; transition: border-color .15s;
+    }
     .account-card:hover { border-color: var(--accent); }
     .account-card.active { border-left: 4px solid var(--green); }
     .account-card.inactive { border-left: 4px solid var(--yellow); }
     .account-card.limited { border-left: 4px solid var(--red); }
     .account-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
     .account-platform { font-size: 16px; font-weight: 600; color: var(--accent); }
-    .account-identifier { font-size: 12px; font-family: monospace; color: var(--text-dim); }
-    .account-meta { display: flex; gap: 12px; margin-bottom: 8px; }
-    .account-category { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; padding: 2px 8px; border-radius: 4px; background: var(--accent-glow); color: var(--accent); }
-    .account-balance { font-size: 18px; font-weight: 600; }
-    .account-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-dim); }
+    .account-identifier { font-size: 12px; font-family: var(--font-mono, monospace); color: var(--text-dim); }
+    .account-meta { display: flex; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
+    .account-category {
+      font-size: 11px; text-transform: uppercase; letter-spacing: .5px; padding: 2px 8px;
+      border-radius: 4px; background: var(--accent-glow); color: var(--accent);
+    }
+    .account-balance { font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .account-footer {
+      display: flex; justify-content: space-between; align-items: center; padding-top: 12px;
+      border-top: 1px solid var(--border); font-size: 12px; color: var(--text-dim); gap: 8px; flex-wrap: wrap;
+    }
     .status-badge { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
     .status-active { background: rgba(46,204,113,.15); color: var(--green); }
     .status-inactive { background: rgba(243,156,18,.15); color: var(--yellow); }
     .status-limited { background: rgba(231,76,60,.15); color: var(--red); }
-    .partner-name { color: var(--text-dim); }
-    .wire-panel { margin: 28px 0 8px; padding: 18px 20px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
-    .wire-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
-    .wire-panel h2 { margin: 0; font-size: 15px; font-weight: 600; }
     .wire-heading-link { color: inherit; text-decoration: none; }
     .wire-heading-link:hover, .wire-heading-link:focus-visible { color: var(--accent); text-decoration: underline; }
-    .wire-audit { flex: 0 0 auto; font-size: 11px; padding: 3px 8px; border-radius: 999px; font-weight: 700; }
-    .wire-panel .wire-sub { margin: 0 0 14px; font-size: 12px; color: var(--text-dim); }
     .wire-stats { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
-    .wire-stat { font-size: 12px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 4px; color: var(--text-dim); }
+    .wire-stat {
+      font-size: 12px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 4px; color: var(--text-dim);
+    }
     .wire-stat strong { color: var(--text); font-family: var(--font-mono, monospace); }
-    .wire-section-label { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin: 12px 0 8px; }
+    .wire-section-label {
+      font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin: 12px 0 8px;
+    }
     .wire-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-    /* Fallback first — color-mix dropped entirely in browsers without support. */
     .wire-chip {
       font-size: 12px; padding: 4px 9px; border-radius: 4px; text-decoration: none;
       border: 1px solid var(--border); background: var(--surface); color: var(--text);
@@ -68,16 +72,20 @@
     }
     .wire-chip:hover, .wire-chip:focus-visible {
       border-color: var(--chip-color, var(--accent));
-      background: var(--surface);
       background: color-mix(in srgb, var(--chip-color, var(--accent)) 22%, var(--surface));
     }
-    /* Key text stays theme-readable; palette color is border/tint only. */
     .wire-chip code { font-size: 11px; color: var(--text-dim); }
     .wire-states { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 6px; }
-    .wire-state { font-size: 12px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 4px; display: flex; justify-content: space-between; gap: 8px; }
+    .wire-state {
+      font-size: 12px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 4px;
+      display: flex; justify-content: space-between; gap: 8px;
+    }
     .wire-state code { color: var(--accent); font-size: 11px; }
     .wire-state span { color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    @media (max-width: 768px) { .stats-row { grid-template-columns: repeat(2, 1fr); } .account-grid { grid-template-columns: 1fr; } }
+    .cat-empty { grid-column: 1 / -1; text-align: center; padding: 60px 0; color: var(--text-dim); }
+    .ops-loading { text-align: center; padding: 48px 0; color: var(--text-dim); }
+    .portal-error .portal-error-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    @media (max-width: 768px) { .account-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -137,51 +145,87 @@
     </div>
   </header>
 
-  <main class="catalog-dashboard">
-    <div id="error-banner" class="ops-banner error hidden"></div>
-    <div id="loading" class="ops-loading"><div class="spinner"></div><p>Loading catalog…</p></div>
-    <div id="dashboard" class="hidden">
-      <p class="meta" id="catalog-related" style="font-size:12px;color:var(--text-dim);margin:0 0 12px">
-        Related registry:
-        <a href="/registry/catalog-snapshot.json"><code>catalog-snapshot.json</code></a> ·
-        <a href="/registry/scrape-wire-taxonomy.json" title="Tier 4 scrape wire · sports + US states SSOT · bun run bake:scrape-wire-taxonomy"><code>scrape-wire-taxonomy.json</code></a>
-        <a href="#section:scrape-wire" class="wire-heading-link" title="Jump to scrape-wire panel">§</a>
-        <span id="scrape-wire-meta"></span> ·
-        <a href="/registry/scrape-wire-schema-audit.json" title="Governance gate · bun run schema:audit"><code>schema-audit</code></a> ·
-        <a href="/registry/scraped-limits-observed.json" title="Tier 4 merged scrape observations · bun run baseline:sync-scraped"><code>scraped-limits-observed.json</code></a> ·
-        <a href="/registry/caesars-scrape-endpoints.json" title="Caesars American Wagering endpoint catalog · bun run baseline:caesars:probe"><code>caesars-scrape-endpoints.json</code></a> ·
-        <a href="/registry/sports-taxonomy.json" title="Sports competition taxonomy bake"><code>sports-taxonomy.json</code></a> ·
-        <a href="/registry/content-type-matrix.json" title="Content-Type wire matrix bake"><code>content-type-matrix.json</code></a>
-        <span id="ct-matrix-meta"></span> ·
-        <a href="/registry/harness-skills-catalog.json" title="Harness agent skills catalog bake"><code>harness-skills-catalog.json</code></a>
-        <span id="harness-skills-meta"></span> ·
-        <a href="/portal/skills/">Skills board</a> ·
-        <a href="/portal/glossary/#glossary:scrape.wire">Scrape wire glossary</a>
+  <main class="portal-page">
+    <section class="portal-hero portal-hero--card" aria-labelledby="cat-hero-title">
+      <p class="portal-eyebrow">Account catalog · scrape-wire registry</p>
+      <h2 id="cat-hero-title">Partner accounts and Tier-4 wire taxonomy</h2>
+      <p class="hero-sub">
+        Live account inventory from API or static snapshot, plus scrape-wire sportsbooks, sports,
+        markets, and US state catalogs that Tier-4 agents normalize before limit observations.
+        Bake: <code data-copy>bun run bake:scrape-wire-taxonomy</code>.
       </p>
-      <div class="stats-row">
-        <div class="stat-card"><div class="stat-num" id="stat-total">0</div><div class="stat-label">accounts</div></div>
-        <div class="stat-card"><div class="stat-num" id="stat-active">0</div><div class="stat-label">active</div></div>
-        <div class="stat-card"><div class="stat-num" id="stat-categories">0</div><div class="stat-label">categories</div></div>
-        <div class="stat-card"><div class="stat-num" id="stat-balance">$0</div><div class="stat-label">total balance</div></div>
-      </div>
-      <div class="filter-row">
-        <input type="text" id="search" placeholder="Search platform, partner, account…" />
-        <div id="filter-chips" class="filter-chips"></div>
-        <select id="sort-select">
-          <option value="name">Name</option>
-          <option value="balance">Balance</option>
-          <option value="date">Opened</option>
-        </select>
-      </div>
-      <div id="account-grid" class="account-grid"></div>
-      <section class="wire-panel" id="section:scrape-wire" aria-labelledby="scrape-wire-heading" data-glossary-concept="scrape.wire">
-        <div class="wire-heading-row">
-          <h2 id="scrape-wire-heading"><a class="wire-heading-link" href="#section:scrape-wire" data-glossary-concept="scrape.wire">Scrape wire registry</a></h2>
-          <span class="wire-audit status-inactive" id="wire-audit" role="status">audit loading</span>
+      <div class="portal-hero-meta">
+        <span id="cat-gate" class="portal-gate" aria-live="polite">…</span>
+        <span id="cat-baked" class="portal-baked">loading…</span>
+        <div class="portal-source-links" aria-label="Related registry artifacts">
+          <a href="/registry/catalog-snapshot.json">catalog-snapshot.json</a>
+          <a href="/registry/scrape-wire-taxonomy.json" title="Tier 4 scrape wire · bun run bake:scrape-wire-taxonomy">scrape-wire-taxonomy.json</a>
+          <a href="/registry/scrape-wire-schema-audit.json" title="Governance gate · bun run schema:audit">schema-audit.json</a>
+          <a href="/registry/scraped-limits-observed.json">scraped-limits-observed.json</a>
+          <a href="/portal/glossary/#glossary:scrape.wire">scrape wire glossary</a>
         </div>
-        <p class="wire-sub">
-          Full sport + US state catalogs that Tier 4 agents normalize onto before limit observations.
-          Bake: <code>bun run bake:scrape-wire-taxonomy</code>
+      </div>
+    </section>
+
+    <div id="cat-error" hidden></div>
+
+    <div id="cat-stats" class="portal-stat-grid" aria-label="Catalog summary"></div>
+
+    <div id="loading" class="ops-loading"><p>Loading catalog…</p></div>
+
+    <div id="dashboard" class="hidden">
+      <section class="portal-panel" aria-labelledby="cat-accounts-title">
+        <div class="portal-panel-head">
+          <div>
+            <h2 id="cat-accounts-title">Accounts</h2>
+            <p class="portal-panel-desc">
+              Filter by category chip, status stat, or search · shareable via URL hash ·
+              related:
+              <a href="/registry/caesars-scrape-endpoints.json">caesars-scrape-endpoints.json</a> ·
+              <a href="/registry/sports-taxonomy.json">sports-taxonomy.json</a> ·
+              <a href="/registry/content-type-matrix.json">content-type-matrix.json</a><span id="ct-matrix-meta"></span> ·
+              <a href="/registry/harness-skills-catalog.json">harness-skills-catalog.json</a><span id="harness-skills-meta"></span>
+            </p>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span class="portal-count" id="cat-count">…</span>
+            <button type="button" class="portal-clear" id="cat-clear" disabled>Clear filters</button>
+          </div>
+        </div>
+        <div class="portal-toolbar">
+          <label>
+            Search
+            <input type="search" id="cat-q" placeholder="Platform, partner, account…" aria-label="Search accounts" />
+          </label>
+          <label>
+            Sort
+            <select id="sort-select" aria-label="Sort accounts">
+              <option value="name">Name</option>
+              <option value="balance">Balance</option>
+              <option value="date">Opened</option>
+            </select>
+          </label>
+        </div>
+        <div id="filter-chips" class="filter-chips" role="group" aria-label="Category filters"></div>
+        <div id="account-grid" class="account-grid" style="margin-top:16px"></div>
+      </section>
+
+      <section class="portal-panel" id="section:scrape-wire" aria-labelledby="scrape-wire-heading" data-glossary-concept="scrape.wire">
+        <div class="portal-panel-head">
+          <div>
+            <h2 id="scrape-wire-heading">
+              <a class="wire-heading-link" href="#section:scrape-wire" data-glossary-concept="scrape.wire">Scrape wire registry</a>
+            </h2>
+            <p class="portal-panel-desc">
+              Full sport + US state catalogs · audit gate:
+              <code data-copy>bun run schema:audit:check</code>
+            </p>
+          </div>
+          <span class="portal-gate warn" id="wire-audit" role="status">audit loading</span>
+        </div>
+        <p class="portal-panel-desc">
+          <span id="scrape-wire-meta"></span>
+          · <a href="/portal/skills/">Skills board</a>
         </p>
         <div class="wire-stats" id="wire-stats">Loading scrape-wire-taxonomy…</div>
         <div class="wire-section-label">Sportsbooks</div>
@@ -200,285 +244,8 @@
     </div>
   </main>
 
-  <script type="module">
-    const $ = id => document.getElementById(id);
-    let accounts = [];
-
-    async function load() {
-      try {
-        const res = await fetch('/api/catalog');
-        if (res.ok) { accounts = (await res.json()).accounts; render(); return; }
-      } catch {}
-      try {
-        const res = await fetch('/registry/catalog-snapshot.json');
-        if (res.ok) { accounts = (await res.json()).accounts; render(); return; }
-      } catch {}
-      $('error-banner').innerHTML = '<p>⚠️ Could not load catalog. Deploy a static snapshot or connect the database.</p>';
-      $('error-banner').classList.remove('hidden');
-      $('loading').classList.add('hidden');
-    }
-
-    function render() {
-      $('loading').classList.add('hidden');
-      $('dashboard').classList.remove('hidden');
-      renderStats();
-      renderFilters();
-      renderGrid();
-    }
-
-    function renderStats() {
-      const active = accounts.filter(a => a.status === 'active').length;
-      const cats = new Set(accounts.map(a => a.category));
-      const bal = accounts.reduce((s, a) => s + (a.balance || 0), 0);
-      $('stat-total').textContent = accounts.length;
-      $('stat-active').textContent = active;
-      $('stat-categories').textContent = cats.size;
-      $('stat-balance').textContent = '$' + bal.toLocaleString();
-    }
-
-    function renderFilters() {
-      const cats = [...new Set(accounts.map(a => a.category))].sort();
-      const active = new Set([...document.querySelectorAll('#filter-chips .active')].map(el => el.dataset.cat));
-      $('filter-chips').innerHTML = cats.map(c => `
-        <button class="filter-chip ${active.has(c) || active.size === 0 ? 'active' : ''}" data-cat="${c}">${c}</button>
-      `).join('');
-      $('filter-chips').querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', () => {
-          if (active.size === 0) cats.forEach(c => active.add(c));
-          active.has(btn.dataset.cat) ? active.delete(btn.dataset.cat) : active.add(btn.dataset.cat);
-          render();
-        });
-      });
-    }
-
-    function renderGrid() {
-      const q = ($('search').value || '').toLowerCase();
-      const activeFilters = new Set([...document.querySelectorAll('#filter-chips .active')].map(el => el.dataset.cat));
-      if (activeFilters.size === 0) [...new Set(accounts.map(a => a.category))].forEach(c => activeFilters.add(c));
-
-      let filtered = accounts.filter(a =>
-        activeFilters.has(a.category) &&
-        (!q || a.platform?.toLowerCase().includes(q) || a.account_identifier?.toLowerCase().includes(q) || a.partner_name?.toLowerCase().includes(q))
-      );
-
-      const sort = $('sort-select').value;
-      if (sort === 'balance') filtered.sort((a, b) => (b.balance || 0) - (a.balance || 0));
-      else if (sort === 'date') filtered.sort((a, b) => new Date(b.opened_at || 0) - new Date(a.opened_at || 0));
-      else filtered.sort((a, b) => (a.platform || '').localeCompare(b.platform || ''));
-
-      $('account-grid').innerHTML = filtered.length
-        ? filtered.map(a => `
-          <div class="account-card ${a.status}">
-            <div class="account-header">
-              <span class="account-platform">${a.platform || '—'}</span>
-              <span class="account-identifier">${a.account_identifier || '—'}</span>
-            </div>
-            <div class="account-meta">
-              <span class="account-category">${a.category}${a.sub_category ? ' · ' + a.sub_category : ''}</span>
-              <span class="status-badge status-${a.status}">${a.status}</span>
-            </div>
-            <div class="account-balance">$${(a.balance || 0).toLocaleString()}</div>
-            <div class="account-footer">
-              <span class="partner-name">${a.partner_name || '—'} (${a.partner_type || '—'})</span>
-              <span>${a.opened_at ? new Date(a.opened_at).toLocaleDateString() : '—'}</span>
-            </div>
-          </div>
-        `).join('')
-        : '<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--text-dim)">No accounts match.</div>';
-    }
-
-    $('search').addEventListener('input', renderGrid);
-    $('sort-select').addEventListener('change', renderGrid);
-    load();
-
-    function esc(value) {
-      const el = document.createElement('div');
-      el.textContent = value == null ? '' : String(value);
-      return el.innerHTML;
-    }
-
-    function isChipHex(hex) {
-      return typeof hex === 'string' && /^#[0-9A-Fa-f]{6}$/.test(hex);
-    }
-
-    function wireChip(label, key, conceptId, detail = '', hex = '', colorKey = '') {
-      const body = `${esc(label)} <code>${esc(key)}</code>${detail ? ` · ${esc(detail)}` : ''}`;
-      const safeHex = isChipHex(hex) ? hex : '';
-      const style = safeHex ? ` style="--chip-color:${safeHex}"` : '';
-      const colorAttr = colorKey
-        ? ` data-color-key="${esc(colorKey)}"`
-        : key
-          ? ` data-color-key="${esc(key)}"`
-          : '';
-      const tagAttrs = `${style}${colorAttr}`;
-      if (!conceptId) return `<span class="wire-chip"${tagAttrs}>${body}</span>`;
-      const href = `/portal/glossary/#glossary:${encodeURIComponent(conceptId)}`;
-      return `<a class="wire-chip" href="${href}" data-glossary-concept="${esc(conceptId)}"${tagAttrs}>${body}</a>`;
-    }
-
-    function renderScrapeWire(payload) {
-      const s = payload.summary || {};
-      if ($('scrape-wire-meta')) {
-        $('scrape-wire-meta').textContent =
-          ` (${s.books ?? '?'} books · ${s.sports ?? '?'} sports · ${s.markets ?? '?'} markets · ${s.phases ?? '?'} phases · ${s.states ?? '?'} states)`;
-      }
-      $('wire-stats').innerHTML = [
-        ['books', s.books],
-        ['sports', s.sports],
-        ['leagues', s.leagues],
-        ['markets', s.markets],
-        ['phases', s.phases],
-        ['states', s.states],
-        ['book aliases', s.bookAliases],
-        ['league aliases', s.leagueAliases],
-      ]
-        .map(
-          ([label, n]) =>
-            `<span class="wire-stat"><strong>${esc(n ?? '—')}</strong> ${esc(label)}</span>`
-        )
-        .join('');
-
-      const books = Array.isArray(payload.bookRegistry) ? payload.bookRegistry : [];
-      $('wire-books').innerHTML = books.length
-        ? books
-            .map(row =>
-              wireChip(
-                `#${row.rank} ${row.label}`,
-                row.key,
-                row.conceptId,
-                '',
-                row.hex || '',
-                row.colorKey || row.key
-              )
-            )
-            .join('')
-        : '<span class="wire-stat">No bookRegistry in bake</span>';
-
-      const sports = Array.isArray(payload.sportRegistry) ? payload.sportRegistry : [];
-      $('wire-sports').innerHTML = sports.length
-        ? sports
-            .map(row =>
-              wireChip(
-                row.label,
-                row.key,
-                row.conceptId,
-                '',
-                row.hex || '',
-                row.colorKey || row.key
-              )
-            )
-            .join('')
-        : '<span class="wire-stat">No sportRegistry in bake</span>';
-
-      const leagues = Array.isArray(payload.leagueRegistry) ? payload.leagueRegistry : [];
-      $('wire-leagues').innerHTML = leagues.length
-        ? leagues
-            .map(row =>
-              wireChip(
-                row.label,
-                row.key,
-                row.conceptId,
-                row.sport,
-                row.hex || '',
-                row.colorKey || row.key
-              )
-            )
-            .join('')
-        : '<span class="wire-stat">No leagueRegistry in bake</span>';
-
-      const markets = Array.isArray(payload.marketRegistry) ? payload.marketRegistry : [];
-      $('wire-markets').innerHTML = markets.length
-        ? markets
-            .map(row => wireChip(row.label, row.key, row.conceptId, row.tier))
-            .join('')
-        : (Array.isArray(payload.markets) ? payload.markets : [])
-            .map(key => `<span class="wire-chip"><code>${esc(key)}</code></span>`)
-            .join('');
-
-      const phases = Array.isArray(payload.phaseRegistry) ? payload.phaseRegistry : [];
-      $('wire-phases').innerHTML = phases.length
-        ? phases
-            .map(row => wireChip(row.label, row.key, row.conceptId))
-            .join('')
-        : ['pregame', 'live']
-            .map(key => `<span class="wire-chip"><code>${esc(key)}</code></span>`)
-            .join('');
-
-      const states = Array.isArray(payload.stateRegistry) ? payload.stateRegistry : [];
-      $('wire-states').innerHTML = states.length
-        ? states
-            .map(
-              row =>
-                `<div class="wire-state"><code>${esc(row.key || row.code)}</code><span>${esc(row.label)}</span></div>`
-            )
-            .join('')
-        : '<span class="wire-stat">No stateRegistry in bake</span>';
-    }
-
-    // Related catalog-plane bakes (closes surfaces v3 wire-portal orphans)
-    (async () => {
-      try {
-        const res = await fetch('/registry/scrape-wire-taxonomy.json', {
-          cache: 'no-store',
-          headers: { Accept: 'application/json' },
-        });
-        if (res.ok) renderScrapeWire(await res.json());
-        else $('wire-stats').textContent = `scrape-wire-taxonomy HTTP ${res.status}`;
-      } catch (err) {
-        $('wire-stats').textContent =
-          err instanceof Error ? err.message : 'Failed to load scrape-wire-taxonomy';
-      }
-      try {
-        const res = await fetch('/registry/scrape-wire-schema-audit.json', {
-          cache: 'no-store',
-          headers: { Accept: 'application/json' },
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const report = await res.json();
-        const badge = $('wire-audit');
-        const errors = report?.summary?.errors ?? '?';
-        const warnings = report?.summary?.warnings ?? '?';
-        badge.className = `wire-audit ${report?.ok ? 'status-active' : 'status-limited'}`;
-        badge.textContent = report?.ok
-          ? `audit ok · ${warnings} warning${warnings === 1 ? '' : 's'}`
-          : `audit failed · ${errors} error${errors === 1 ? '' : 's'}`;
-        badge.title = `bun run schema:audit:check · ${report?.generatedAt ?? 'unknown time'}`;
-      } catch (err) {
-        const badge = $('wire-audit');
-        badge.className = 'wire-audit status-inactive';
-        badge.textContent = 'audit unavailable';
-        badge.title = err instanceof Error ? err.message : 'Failed to load schema audit';
-      }
-      try {
-        const res = await fetch('/registry/content-type-matrix.json', {
-          cache: 'no-store',
-          headers: { Accept: 'application/json' },
-        });
-        if (res.ok) {
-          const j = await res.json();
-          const s = j.summary;
-          if (s && $('ct-matrix-meta')) {
-            $('ct-matrix-meta').textContent =
-              ` (${s.pass ?? '?'}/${s.total ?? '?'} pass)`;
-          }
-        }
-      } catch { /* optional */ }
-      try {
-        const res = await fetch('/registry/harness-skills-catalog.json', {
-          cache: 'no-store',
-          headers: { Accept: 'application/json' },
-        });
-        if (res.ok) {
-          const j = await res.json();
-          const n = Array.isArray(j.skills) ? j.skills.length : 0;
-          if ($('harness-skills-meta')) {
-            $('harness-skills-meta').textContent = n ? ` (${n} skills)` : '';
-          }
-        }
-      } catch { /* optional */ }
-    })();
-  </script>
   <script type="module" src="/portal/data.js"></script>
+  <script type="module" src="/portal/catalog/catalog-board.js"></script>
   <script type="module" src="/portal/topbar.js"></script>
   <script type="module" src="/portal/components/sidebar.js"></script>
   <script type="module" src="/portal/components/notification.js"></script>
