@@ -258,6 +258,105 @@ body {
   }
 }
 
+/* Domain filter inside overflow (partner desk first) */
+.domain-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 6px 8px 8px;
+  border-block-end: 1px solid var(--border);
+  margin-block-end: 4px;
+}
+
+.domain-filter-chip {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  font: 600 10px/1.2 var(--font-sans, system-ui, sans-serif);
+  letter-spacing: 0.02em;
+  padding: 4px 8px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    color 0.12s,
+    border-color 0.12s,
+    background 0.12s;
+}
+
+.domain-filter-chip:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.domain-filter-chip.is-active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-glow, color-mix(in srgb, var(--accent) 14%, transparent));
+}
+
+/* Domain rail on partner/ops boards */
+.domain-lane-rail {
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface, #161b22) 88%, transparent);
+}
+
+.domain-lane-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 12px;
+  margin-bottom: 10px;
+}
+
+.domain-lane-label {
+  font: 650 12px/1.2 var(--font-sans, system-ui, sans-serif);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.domain-lane-desc {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+.domain-lane-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.domain-lane-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 550;
+  color: var(--text);
+  text-decoration: none;
+  transition:
+    border-color 0.12s,
+    background 0.12s;
+}
+
+.domain-lane-chip:hover {
+  border-color: var(--accent);
+  background: var(--accent-glow, color-mix(in srgb, var(--accent) 12%, transparent));
+}
+
+.domain-lane-chip.is-current {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-glow, color-mix(in srgb, var(--accent) 14%, transparent));
+}
+
 /* Live counts from baked registry JSON (nav-badges.js) */
 .nav-badge {
   display: inline-flex;

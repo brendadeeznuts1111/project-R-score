@@ -20,6 +20,19 @@ export const PORTAL_CHROME_REGISTRY_PATH = '/registry/portal-chrome.json' as con
 /** Logical nav groups (overflow ordering + data-group for UI filters). */
 export type PortalChromeNavGroup = 'ops' | 'harness' | 'registry' | 'secrets' | 'plane' | 'other';
 
+/**
+ * Product domain lanes — partner desk first, then trading / control / knowledge.
+ * Orthogonal to chrome `group` (nav chrome sections).
+ * @see docs/harness/tenants/partner-domain-map.md
+ */
+export type PortalChromeDomainLane =
+  | 'partner'
+  | 'trading'
+  | 'control'
+  | 'identity'
+  | 'knowledge'
+  | 'platform';
+
 export type PortalChromeNavItem = {
   id: string; // brand-ok — chrome nav slot key (home|ops|…), not a domain *Id
   label: string;
@@ -30,6 +43,8 @@ export type PortalChromeNavItem = {
   note?: string;
   /** Logical group for overflow order / data-group */
   group?: PortalChromeNavGroup;
+  /** Product domain lane (partner desk, trading, …) */
+  domain?: PortalChromeDomainLane;
   /** Grounded portal-cli / bun command (title tooltip when set) */
   cli?: string;
   /** Optional registry bake that backs live nav badges (see badgeSources). */
@@ -38,11 +53,11 @@ export type PortalChromeNavItem = {
   registryArtifact?: string;
 };
 
-/** Overflow menu group order (section headers in ⋯ dropdown). */
+/** Overflow menu group order — ops (domain desk) first. */
 export const PORTAL_OVERFLOW_GROUP_ORDER: PortalChromeNavGroup[] = [
-  'registry',
-  'secrets',
   'ops',
+  'secrets',
+  'registry',
   'plane',
   'harness',
   'other',
@@ -51,11 +66,61 @@ export const PORTAL_OVERFLOW_GROUP_ORDER: PortalChromeNavGroup[] = [
 export const PORTAL_OVERFLOW_GROUP_LABELS: Record<PortalChromeNavGroup, string> = {
   registry: 'Registry',
   secrets: 'Secrets',
-  ops: 'Ops',
+  ops: 'Ops · domain',
   plane: 'Plane',
   harness: 'Harness',
   other: 'More',
 };
+
+/** Domain lane metadata (operator map + domain-lanes.js chips). */
+export type PortalChromeDomainLaneMeta = {
+  id: PortalChromeDomainLane; // brand-ok — lane key, not domain *Id
+  label: string;
+  description: string;
+  /** Harness / design doc path (wiki-relative when under docs/) */
+  doc: string;
+  boardIds: string[]; // brand-ok — chrome nav ids
+};
+
+export const PORTAL_DOMAIN_LANE_META: Omit<PortalChromeDomainLaneMeta, 'boardIds'>[] = [
+  {
+    id: 'partner',
+    label: 'Partner desk',
+    description:
+      'Package groups · account dossier · limit raises · bookmakers · Factory Telegram · seat capital',
+    doc: 'docs/harness/tenants/partner-domain-map.md',
+  },
+  {
+    id: 'trading',
+    label: 'Trading',
+    description: 'Tennis HQ runtime · prediction reports · live desk metrics',
+    doc: 'docs/harness/tenants/tennis-hq-registry.md',
+  },
+  {
+    id: 'control',
+    label: 'Control loop',
+    description: 'Ops snapshot · TOC · dashboard · monitoring · compliance (MA/NJ)',
+    doc: 'docs/harness/tenants/ops-loop-throughput.md',
+  },
+  {
+    id: 'identity',
+    label: 'Identity & secrets',
+    description: 'Auth board · vault · env inject · lockout / geo / JIT',
+    doc: 'lib/identity/README.md',
+  },
+  {
+    id: 'knowledge',
+    label: 'Knowledge',
+    description: 'Glossary · concepts · brands · catalog · surfaces · skills',
+    doc: 'docs/portal-foundation.md',
+  },
+  {
+    id: 'platform',
+    label: 'Platform',
+    description: 'Packages graph · health · DOD · wiki hub',
+    doc: 'docs/harness/AUTHORITY.md',
+  },
+];
 
 /** How a public board appears relative to chrome nav. */
 export type PortalChromeBoardTier = 'priority' | 'overflow' | 'unlisted';
@@ -65,6 +130,7 @@ export type PortalChromeBoardEntry = {
   href: string;
   tier: PortalChromeBoardTier;
   group?: PortalChromeNavGroup;
+  domain?: PortalChromeDomainLane;
   label?: string;
 };
 
@@ -109,6 +175,7 @@ export type PortalChromeCatalog = {
     badgeSources: number;
     unlistedSurfaces: number;
     boardCoverage: number;
+    domainLanes: number;
     groups: Record<PortalChromeNavGroup, number>;
   };
   related: {
@@ -120,6 +187,8 @@ export type PortalChromeCatalog = {
     doctor: '/registry/doctor-state.json';
     bookmakers: '/registry/bookmakers.json';
     vaultHealth: '/registry/vault-health.json';
+    partnersOps: '/registry/partners-ops.json';
+    limitRaises: '/registry/limit-raises.json';
     chrome: typeof PORTAL_CHROME_REGISTRY_PATH;
   };
   priorityNav: PortalChromeNavItem[];
@@ -136,6 +205,8 @@ export type PortalChromeCatalog = {
    * Use with assertPortalChromeBoardCoverage against public portal board dirs.
    */
   boardCoverage: PortalChromeBoardEntry[];
+  /** Domain lanes with board membership (partner desk first). */
+  domainLanes: PortalChromeDomainLaneMeta[];
 };
 
 /** Priority topbar (left → right) — keep lean; deep links live in overflow. */
@@ -146,6 +217,7 @@ export const PORTAL_PRIORITY_NAV: PortalChromeNavItem[] = [
     href: '/',
     tier: 'priority',
     group: 'other',
+    domain: 'platform',
     note: 'public lander · portal entry',
   },
   {
@@ -154,8 +226,10 @@ export const PORTAL_PRIORITY_NAV: PortalChromeNavItem[] = [
     href: '/portal/ops/',
     tier: 'priority',
     group: 'ops',
-    note: 'ops-summary rollup · C4/C5 loop',
+    domain: 'control',
+    note: 'ops-summary rollup · C4/C5 loop · partner handshake panel',
     cli: 'bun run ops:snapshot',
+    registryArtifact: '/registry/ops-summary.json',
   },
   {
     id: 'registry',
@@ -163,6 +237,7 @@ export const PORTAL_PRIORITY_NAV: PortalChromeNavItem[] = [
     href: '/portal/',
     tier: 'priority',
     group: 'registry',
+    domain: 'platform',
     note: 'portal hub · board index · weave surfaces',
   },
   {
@@ -171,6 +246,7 @@ export const PORTAL_PRIORITY_NAV: PortalChromeNavItem[] = [
     href: '/portal/health/',
     tier: 'priority',
     group: 'harness',
+    domain: 'platform',
     note: 'system health · monorepo score',
     cli: 'bun run monorepo:health:bake',
     badgeSource: '/registry/monorepo-health.json',
@@ -182,6 +258,7 @@ export const PORTAL_PRIORITY_NAV: PortalChromeNavItem[] = [
     href: '/portal/dod/',
     tier: 'priority',
     group: 'plane',
+    domain: 'platform',
     note: 'visual proof review · public-plane gate',
     cli: 'bun run public:audit:verify',
   },
@@ -191,6 +268,7 @@ export const PORTAL_PRIORITY_NAV: PortalChromeNavItem[] = [
     href: '/portal/compliance/',
     tier: 'priority',
     group: 'ops',
+    domain: 'control',
     note: 'MA/NJ board · shadow matrix',
     cli: 'bun run compliance:bake',
     registryArtifact: '/registry/compliance-board.json',
@@ -209,6 +287,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/catalog/',
     tier: 'overflow',
     group: 'registry',
+    domain: 'knowledge',
     note: 'account catalog · scrape-wire sports/states registry',
     cli: 'bun run bake:scrape-wire-taxonomy',
   },
@@ -218,6 +297,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/packages/',
     tier: 'overflow',
     group: 'registry',
+    domain: 'platform',
     note: 'graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.*',
     cli: 'bun run ssot:flow:soft && bun run verify:pm:save',
     badgeSource: '/registry/packages-graph-map.json',
@@ -229,6 +309,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/brands/',
     tier: 'overflow',
     group: 'registry',
+    domain: 'knowledge',
     note: 'domain-value glossary · constructor tiers · project adoption',
     cli: 'bun run brand:keymap',
   },
@@ -238,6 +319,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/glossary/',
     tier: 'overflow',
     group: 'registry',
+    domain: 'knowledge',
     note: 'market · model · trading · warehouse · pipeline concepts',
     cli: 'bun run glossary:portal',
     registryArtifact: '/registry/domain-glossary.json',
@@ -248,6 +330,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/surfaces/',
     tier: 'overflow',
     group: 'registry',
+    domain: 'knowledge',
     note: 'edge host inventory · Access domains · backend shortcodes · schema v2',
     cli: 'bun run surfaces:bake  # → /registry/surfaces-state.json',
     registryArtifact: '/registry/surfaces-state.json',
@@ -258,6 +341,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/skills/',
     tier: 'overflow',
     group: 'registry',
+    domain: 'knowledge',
     note: 'harness + Kimi skill catalogs · loop registry alignment',
     cli: 'bun run skills:validate',
     registryArtifact: '/registry/harness-skills-catalog.json',
@@ -269,6 +353,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/vault/',
     tier: 'overflow',
     group: 'secrets',
+    domain: 'identity',
     note: 'Proton Pass health bake · gate: portal-cli vault health',
     cli: 'bun run portal-cli vault health  # offline SSOT · --update to refresh snaps',
     badgeSource: '/registry/vault-health.json',
@@ -280,6 +365,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/env/',
     tier: 'overflow',
     group: 'secrets',
+    domain: 'identity',
     note: 'vault-map inject · secret autofill mapping',
     cli: 'bun run portal-cli secret map  # no secret values printed',
   },
@@ -294,6 +380,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/concepts/',
     tier: 'overflow',
     group: 'registry',
+    domain: 'knowledge',
     note: 'semantic vocabulary · domain summary · usage + provenance',
     cli: 'bun run concepts:bake  # → /registry/concepts-state.json',
   },
@@ -303,26 +390,43 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/concepts/graph/',
     tier: 'overflow',
     group: 'registry',
+    domain: 'knowledge',
     note: 'seeAlso · surface · domain hubs · interactive board',
     cli: 'bun run concept:graph:bake  # → /registry/concepts-graph.json',
   },
-  // ── Ops boards ──
+  // ── Ops boards (partner desk first → trading → control loop) ──
   {
-    id: 'dashboard',
-    label: 'Dashboard',
-    href: '/portal/dashboard/',
+    id: 'partners',
+    label: 'Partners',
+    href: '/portal/partners/',
     tier: 'overflow',
     group: 'ops',
-    note: 'KPIs · TOC · compliance plane · proof-index pins',
+    domain: 'partner',
+    note: 'package groups · telegram forums · accounting · deposits · seat capital',
+    cli: 'bun run telegram:handshake:catalog',
+    registryArtifact: '/registry/partners-ops.json',
   },
   {
-    id: 'toc',
-    label: 'TOC',
-    href: '/portal/toc/',
+    id: 'account',
+    label: 'Account',
+    href: '/portal/account/',
     tier: 'overflow',
     group: 'ops',
-    note: 'Drum/Buffer/Rope fixture board',
-    cli: 'bun run ops:seed:toc',
+    domain: 'partner',
+    note: 'single-account dossier · tree · telemetry · betlog · ops.view.per_account',
+    cli: 'bun run ops:dossier:seed',
+    registryArtifact: '/registry/partners-ops.json',
+  },
+  {
+    id: 'partner-history',
+    label: 'Partner history',
+    href: '/portal/partner-history/',
+    tier: 'overflow',
+    group: 'ops',
+    domain: 'partner',
+    note: 'per-partner limit history board',
+    cli: 'bun run ops:limits:demo',
+    registryArtifact: '/registry/limit-raises.json',
   },
   {
     id: 'limits',
@@ -330,6 +434,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/limits/',
     tier: 'overflow',
     group: 'ops',
+    domain: 'partner',
     note: 'multi-factor partner limit raises · CLV',
     cli: 'bun run ops:limits:demo',
     registryArtifact: '/registry/limit-raises.json',
@@ -340,36 +445,10 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/limits-lab/',
     tier: 'overflow',
     group: 'ops',
+    domain: 'partner',
     note: 'forecast / predict lab · multi-factor backtest',
     cli: 'bun run ops:limits:predict',
     registryArtifact: '/registry/limit-forecast-lab.json',
-  },
-  {
-    id: 'partners',
-    label: 'Partners',
-    href: '/portal/partners/',
-    tier: 'overflow',
-    group: 'ops',
-    note: 'package groups · telegram forums · accounting · deposits',
-    cli: 'bun run telegram:handshake:catalog',
-  },
-  {
-    id: 'account',
-    label: 'Account',
-    href: '/portal/account/',
-    tier: 'overflow',
-    group: 'ops',
-    note: 'single-account dossier · tree · telemetry · betlog',
-    cli: 'bun run ops:dossier:seed',
-  },
-  {
-    id: 'partner-history',
-    label: 'Partner history',
-    href: '/portal/partner-history/',
-    tier: 'overflow',
-    group: 'ops',
-    note: 'per-partner limit history board',
-    cli: 'bun run ops:limits:demo',
   },
   {
     id: 'bookmakers',
@@ -377,6 +456,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/bookmakers/',
     tier: 'overflow',
     group: 'ops',
+    domain: 'partner',
     note: '@factorywager/bookmakers artifact · canonical bookmaker registry',
     cli: 'bun run bookmakers:bake',
     registryArtifact: '/registry/bookmakers.json',
@@ -387,7 +467,8 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/factory/',
     tier: 'overflow',
     group: 'ops',
-    note: 'Factory Telegram ops · package-group wire',
+    domain: 'partner',
+    note: 'Factory Telegram ops · package-group wire · handshake',
     cli: 'bun run telegram:verify',
     registryArtifact: '/registry/telegram-handshake.json',
   },
@@ -397,29 +478,10 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/tennis/',
     tier: 'overflow',
     group: 'ops',
+    domain: 'trading',
     note: 'Tennis HQ desk · agent-auth · live matches',
     cli: 'bun run tennis:board:bake',
     registryArtifact: '/registry/tennis/agent-auth.json',
-  },
-  {
-    id: 'identity',
-    label: 'Identity',
-    href: '/portal/identity/',
-    tier: 'overflow',
-    group: 'ops',
-    note: 'auth board · lockout · anomaly · geo · JIT',
-    cli: 'bun test tests/identity-*.test.ts',
-    registryArtifact: '/registry/identity-board.json',
-  },
-  {
-    id: 'monitoring',
-    label: 'Monitoring',
-    href: '/monitoring/',
-    tier: 'overflow',
-    group: 'ops',
-    note: 'routing · env · compliance tile · proof status',
-    cli: 'bun run ops:snapshot --no-seed',
-    registryArtifact: '/registry/monitoring.json',
   },
   {
     id: 'prediction-report',
@@ -427,8 +489,51 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/registry/prediction/report/',
     tier: 'overflow',
     group: 'ops',
+    domain: 'trading',
     note: 'latest prediction report · snapshot scope',
     cli: 'bun run portal-cli snapshot last --scope prediction',
+  },
+  {
+    id: 'dashboard',
+    label: 'Dashboard',
+    href: '/portal/dashboard/',
+    tier: 'overflow',
+    group: 'ops',
+    domain: 'control',
+    note: 'KPIs · TOC · compliance plane · proof-index pins',
+  },
+  {
+    id: 'toc',
+    label: 'TOC',
+    href: '/portal/toc/',
+    tier: 'overflow',
+    group: 'ops',
+    domain: 'control',
+    note: 'Drum/Buffer/Rope fixture board',
+    cli: 'bun run ops:seed:toc',
+    registryArtifact: '/registry/toc-ops.json',
+  },
+  {
+    id: 'monitoring',
+    label: 'Monitoring',
+    href: '/monitoring/',
+    tier: 'overflow',
+    group: 'ops',
+    domain: 'control',
+    note: 'routing · env · compliance tile · proof status',
+    cli: 'bun run ops:snapshot --no-seed',
+    registryArtifact: '/registry/monitoring.json',
+  },
+  {
+    id: 'identity',
+    label: 'Identity',
+    href: '/portal/identity/',
+    tier: 'overflow',
+    group: 'ops',
+    domain: 'identity',
+    note: 'auth board · lockout · anomaly · geo · JIT',
+    cli: 'bun test tests/identity-*.test.ts',
+    registryArtifact: '/registry/identity-board.json',
   },
   // ── External ──
   {
@@ -437,6 +542,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: PORTAL_WIKI_DROPDOWN_HREF,
     tier: 'overflow',
     group: 'other',
+    domain: 'platform',
     external: true,
     note: 'GitHub Pages hub · wiki-index',
   },
@@ -573,9 +679,15 @@ export const PORTAL_CHROME_COMPONENTS: PortalChromeComponent[] = [
     kind: 'module',
   },
   {
+    id: 'domain-lanes',
+    path: '/portal/components/domain-lanes.js',
+    role: 'domain lane chips · partner desk filter from portal-chrome domainLanes',
+    kind: 'module',
+  },
+  {
     id: 'topbar',
     path: '/portal/topbar.js',
-    role: 'health dot · nav current · sidebar bootstrap · nav badges',
+    role: 'health dot · nav current · sidebar bootstrap · nav badges · domain lanes',
     kind: 'module',
   },
   {
@@ -695,6 +807,7 @@ export function listChromeBoardCoverage(): PortalChromeBoardEntry[] {
       href: item.href,
       tier: 'priority',
       group: item.group,
+      domain: item.domain,
       label: item.label,
     });
   }
@@ -704,6 +817,7 @@ export function listChromeBoardCoverage(): PortalChromeBoardEntry[] {
       href: item.href,
       tier: 'overflow',
       group: item.group,
+      domain: item.domain,
       label: item.label,
     });
   }
@@ -715,6 +829,16 @@ export function listChromeBoardCoverage(): PortalChromeBoardEntry[] {
     });
   }
   return out;
+}
+
+/** Build domain lane roster from nav membership. */
+export function buildDomainLanes(
+  coverage: PortalChromeBoardEntry[] = listChromeBoardCoverage()
+): PortalChromeDomainLaneMeta[] {
+  return PORTAL_DOMAIN_LANE_META.map(meta => ({
+    ...meta,
+    boardIds: coverage.filter(b => b.domain === meta.id).map(b => b.id),
+  }));
 }
 
 /**
@@ -802,6 +926,7 @@ export function buildPortalChromeCatalog(
   ];
   const allNav = [...PORTAL_PRIORITY_NAV, ...PORTAL_OVERFLOW_NAV];
   const boardCoverage = listChromeBoardCoverage();
+  const domainLanes = buildDomainLanes(boardCoverage);
   const provenance = bunRuntimeProvenance();
   return {
     schemaVersion: 1,
@@ -821,6 +946,7 @@ export function buildPortalChromeCatalog(
       badgeSources: PORTAL_CHROME_BADGE_SOURCES.length,
       unlistedSurfaces: PORTAL_CHROME_UNLISTED.length,
       boardCoverage: boardCoverage.length,
+      domainLanes: domainLanes.length,
       groups: countNavGroups(allNav),
     },
     related: {
@@ -832,6 +958,8 @@ export function buildPortalChromeCatalog(
       doctor: '/registry/doctor-state.json',
       bookmakers: '/registry/bookmakers.json',
       vaultHealth: '/registry/vault-health.json',
+      partnersOps: '/registry/partners-ops.json',
+      limitRaises: '/registry/limit-raises.json',
       chrome: PORTAL_CHROME_REGISTRY_PATH,
     },
     priorityNav: PORTAL_PRIORITY_NAV,
@@ -842,6 +970,7 @@ export function buildPortalChromeCatalog(
     badgeSources: PORTAL_CHROME_BADGE_SOURCES,
     unlistedSurfaces: PORTAL_CHROME_UNLISTED,
     boardCoverage,
+    domainLanes,
   };
 }
 
@@ -853,11 +982,12 @@ function navAttrs(item: PortalChromeNavItem, activeId?: string): string {
   const tip = [item.note, item.cli].filter(Boolean).join(' · ');
   const title = tip ? ` title="${tip.replace(/"/g, '&quot;')}"` : '';
   const group = item.group ? ` data-group="${item.group}"` : '';
+  const domain = item.domain ? ` data-domain="${item.domain}"` : '';
   const cli = item.cli ? ` data-cli="${item.cli.replace(/"/g, '&quot;')}"` : '';
   const art = item.registryArtifact
     ? ` data-registry="${item.registryArtifact.replace(/"/g, '&quot;')}"`
     : '';
-  return `class="nav-link${active}"${aria}${ext}${title}${group}${cli}${art}`;
+  return `class="nav-link${active}"${aria}${ext}${title}${group}${domain}${cli}${art}`;
 }
 
 /** Group overflow items for sectioned ⋯ menu (preserves within-group order). */
