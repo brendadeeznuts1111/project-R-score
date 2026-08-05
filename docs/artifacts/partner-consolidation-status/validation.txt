@@ -1,0 +1,12 @@
+Generated: 2026-08-05T21:55:34Z
+Command: bun scripts/validate-partner-dashboard-plan.ts
+
+partner dashboard plan valid
+semantic bindings: 33
+explicit semantic gaps: 15
+connectors: 8
+regions: 8
+section mounts: 9
+hash routes: 6
+presentation states: 31
+canonical profiles: 0
