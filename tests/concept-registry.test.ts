@@ -12,9 +12,13 @@ import {
   buildConceptGraph,
   ConceptRegistryError,
   deprecateConcept,
+  getConcept,
+  getConceptVersions,
   listConcepts,
+  patchConcept,
   proposeConcept,
   rejectConcept,
+  upsertConcept,
 } from '../lib/concept-registry/repo.ts';
 import { openConceptRegistryDb } from '../lib/concept-registry/schema.ts';
 
@@ -61,8 +65,16 @@ describe('concept registry migration', () => {
     const fresh = openConceptRegistryDb(':memory:');
     const first = await migrateConceptRegistry(fresh);
     expect(first.inserted).toBeGreaterThan(0);
+    const versionsAfterFirst = fresh
+      .query('SELECT COUNT(*) AS total FROM concept_versions')
+      .get() as { total: number };
     const second = await migrateConceptRegistry(fresh);
     expect(second.inserted).toBe(0);
+    expect(second.updated).toBe(0);
+    const versionsAfterSecond = fresh
+      .query('SELECT COUNT(*) AS total FROM concept_versions')
+      .get() as { total: number };
+    expect(versionsAfterSecond.total).toBe(versionsAfterFirst.total);
   });
 
   test('vocabulary concepts exist with kind derived from semanticType', () => {
@@ -71,6 +83,80 @@ describe('concept registry migration', () => {
     );
     expect(concept).toBeDefined();
     expect(concept?.kind).toBe('resource');
+  });
+
+  test('upsert detects and versions every persisted metadata change', () => {
+    const fresh = openConceptRegistryDb(':memory:');
+    const base = {
+      id: 'ops.test.metadata',
+      label: 'Metadata',
+      status: 'active' as const,
+      color: '#111111',
+      unit: 'count',
+      format: 'integer',
+      synonyms: ['old'],
+      values: ['one'],
+      source: 'fixture-a',
+    };
+    expect(upsertConcept(fresh, base)).toBe(true);
+    expect(upsertConcept(fresh, base)).toBe(false);
+
+    expect(
+      upsertConcept(fresh, {
+        ...base,
+        status: 'deprecated',
+        color: '#222222',
+        unit: 'usd',
+        format: 'currency',
+        synonyms: ['new'],
+        values: ['two'],
+        source: 'fixture-b',
+      })
+    ).toBe(true);
+
+    expect(getConcept(fresh, base.id)).toMatchObject({
+      status: 'deprecated',
+      color: '#222222',
+      unit: 'usd',
+      format: 'currency',
+      synonyms: ['new'],
+      values: ['two'],
+      source: 'fixture-b',
+    });
+    expect(getConceptVersions(fresh, base.id)).toHaveLength(2);
+  });
+
+  test('partial patches preserve omitted metadata, allow null clears, and version only diffs', () => {
+    const fresh = openConceptRegistryDb(':memory:');
+    upsertConcept(fresh, {
+      id: 'ops.test.patch',
+      label: 'Before',
+      description: 'Keep me',
+      kind: 'metric',
+      unit: 'count',
+      format: 'integer',
+      deprecatedBy: 'ops.test.next',
+    });
+
+    expect(patchConcept(fresh, 'ops.test.patch', { label: 'After' })).toBe(true);
+    expect(getConcept(fresh, 'ops.test.patch')).toMatchObject({
+      label: 'After',
+      description: 'Keep me',
+      kind: 'metric',
+      unit: 'count',
+      format: 'integer',
+      deprecatedBy: 'ops.test.next',
+    });
+
+    expect(
+      patchConcept(fresh, 'ops.test.patch', { unit: null, deprecatedBy: null })
+    ).toBe(true);
+    expect(getConcept(fresh, 'ops.test.patch')).toMatchObject({
+      unit: null,
+      deprecatedBy: null,
+    });
+    expect(patchConcept(fresh, 'ops.test.patch', { unit: null, deprecatedBy: null })).toBe(false);
+    expect(getConceptVersions(fresh, 'ops.test.patch')).toHaveLength(3);
   });
 });
 

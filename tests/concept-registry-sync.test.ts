@@ -25,16 +25,11 @@ beforeEach(async () => {
 });
 
 describe('concept registry auto-sync', () => {
-  test('syncs real portal HTML: usage rows recorded', async () => {
+  test('syncs real portal HTML with no literal orphan keys', async () => {
     const report = await syncConceptUsage(db);
     expect(report.scannedFiles).toBeGreaterThan(0);
     expect(report.usageRows).toBeGreaterThan(0);
-    // Orphans may exist when portal boards use keys not yet in the bake —
-    // assert shape only (key + totalCount); governance closes them separately.
-    for (const orphan of report.orphanUsage) {
-      expect(orphan.key.length).toBeGreaterThan(0);
-      expect(orphan.totalCount).toBeGreaterThan(0);
-    }
+    expect(report.orphanUsage).toEqual([]);
   });
 
   test('excludes template expressions and flags literal keys missing from the glossary', async () => {
@@ -52,9 +47,17 @@ describe('concept registry auto-sync', () => {
     expect(report.orphanUsage.some(o => o.key === 'ops.ghost.key')).toBe(true);
     const ghost = report.orphanUsage.find(o => o.key === 'ops.ghost.key');
     expect(ghost?.totalCount).toBe(1);
+
+    await Bun.write(
+      `${fixture}/board.html`,
+      '<span data-glossary-concept="ui.semantic.surface"></span>'
+    );
+    await syncConceptUsage(db, fixture);
+    expect(findOrphanUsage(db).some(o => o.conceptId === 'ops.ghost.key')).toBe(false);
   });
 
   test('findOrphanUsage reports persisted usage rows whose key left the glossary', () => {
+    expect(findOrphanUsage(db)).toEqual([]);
     recordConceptUsage(db, 'ops.gone.key', 'fixture', 'x.html', 3);
     const orphans = findOrphanUsage(db);
     const gone = orphans.find(o => o.conceptId === 'ops.gone.key');

@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "skipLibCheck": true,
+    "types": ["bun"]
+  },
+  "include": [
+    "../lib/concept-registry/**/*.ts",
+    "../scripts/concept-registry-graph.ts",
+    "../scripts/concept-registry-migrate.ts",
+    "../scripts/concept-registry-serve.ts",
+    "../scripts/concept-registry-sync.ts"
+  ]
+}

@@ -172,6 +172,7 @@ export const BakeConceptSchema = z.object({
   status: z.enum(['active', 'deprecated']).optional(),
   color: z.string().nullable().optional(),
   unit: z.string().nullable().optional(),
+  format: z.string().nullable().optional(),
   mapsTo: z.string().nullable().optional(),
   seeAlso: z.array(conceptKey).nullable().optional(),
   synonyms: z.array(z.string()).nullable().optional(),
