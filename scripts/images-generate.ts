@@ -17,7 +17,7 @@
  * Zero npm deps. Tennis HQ / portal asset pipeline.
  * @see docs/IMAGES.md
  */
-import { join, basename, extname, dirname } from 'node:path';
+import { joinPath, basenamePath, extnamePath, dirnamePath } from '../lib/path-bun.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 
 type Template = 'avatar' | 'hero' | 'match' | 'convert' | 'placeholder';
@@ -65,7 +65,7 @@ const DEFAULTS: CliOpts = {
 /** Optional defaults from config/images.toml when present. */
 async function loadTomlDefaults(): Promise<Partial<CliOpts>> {
   try {
-    const path = join(import.meta.dir, '../config/images.toml');
+    const path = joinPath(import.meta.dir, '../config/images.toml');
     if (!(await Bun.file(path).exists())) return {};
     const raw = (await import(path, { with: { type: 'toml' } })) as {
       default?: {
@@ -185,7 +185,7 @@ async function listImages(source: string): Promise<string[]> {
   const files: string[] = [];
   try {
     for await (const rel of glob.scan({ cwd: source, onlyFiles: true, absolute: false })) {
-      files.push(join(source, rel));
+      files.push(joinPath(source, rel));
     }
   } catch {
     // single missing file
@@ -197,7 +197,7 @@ async function listImages(source: string): Promise<string[]> {
 
 /** Bun.write creates intermediate directories — no node:fs mkdir. */
 async function ensureDir(path: string): Promise<void> {
-  const keep = join(path, '.gitkeep');
+  const keep = joinPath(path, '.gitkeep');
   if (!(await Bun.file(keep).exists()) && !(await Bun.file(path).exists())) {
     await Bun.write(keep, '');
   }
@@ -205,8 +205,8 @@ async function ensureDir(path: string): Promise<void> {
 
 function outPathFor(sourceFile: string, out: string, format: OutFormat, isDirOut: boolean): string {
   if (!isDirOut) return out;
-  const base = basename(sourceFile, extname(sourceFile));
-  return join(out, `${base}.${format === 'jpeg' ? 'jpg' : format}`);
+  const base = basenamePath(sourceFile, extnamePath(sourceFile));
+  return joinPath(out, `${base}.${format === 'jpeg' ? 'jpg' : format}`);
 }
 
 async function isDirectory(path: string): Promise<boolean> {
@@ -226,9 +226,9 @@ async function isDirectory(path: string): Promise<boolean> {
       }
     }
     // create as dir later
-    return !IMAGE_EXTS.has(extname(path).toLowerCase());
+    return !IMAGE_EXTS.has(extnamePath(path).toLowerCase());
   } catch {
-    return !IMAGE_EXTS.has(extname(path).toLowerCase());
+    return !IMAGE_EXTS.has(extnamePath(path).toLowerCase());
   }
 }
 
@@ -337,7 +337,7 @@ async function runTemplate(opts: CliOpts) {
       src,
       opts.out,
       opts.format,
-      outIsDir || sources.length > 1 || !IMAGE_EXTS.has(extname(opts.out).toLowerCase())
+      outIsDir || sources.length > 1 || !IMAGE_EXTS.has(extnamePath(opts.out).toLowerCase())
     );
     const r = await processOne(src, dest, {
       w: dims.w,

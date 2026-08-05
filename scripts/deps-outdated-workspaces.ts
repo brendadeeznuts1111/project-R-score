@@ -18,11 +18,11 @@
  * @see https://bun.com/docs/pm/filter
  * @see https://bun.com/docs/runtime/color
  */
-import { join } from 'node:path';
+import { joinPath } from '../lib/path-bun.ts';
 
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
 
-const root = join(import.meta.dir, '..');
+const root = joinPath(import.meta.dir, '..');
 const json = Bun.argv.includes('--json');
 const preferLatest = Bun.argv.includes('--latest');
 
@@ -102,17 +102,17 @@ async function listWorkspaceDirs(): Promise<Array<{ label: string; cwd: string }
   // packages/* via Bun.Glob (no node:fs)
   for await (const rel of new Bun.Glob('packages/*/package.json').scan({ cwd: root })) {
     const name = rel.split('/')[1]!;
-    out.push({ label: `packages/${name}`, cwd: join(root, 'packages', name) });
+    out.push({ label: `packages/${name}`, cwd: joinPath(root, 'packages', name) });
   }
 
-  const sto = join(root, 'projects/active/sports-terminal-os');
-  if (await pathExists(join(sto, 'package.json'))) {
+  const sto = joinPath(root, 'projects/active/sports-terminal-os');
+  if (await pathExists(joinPath(sto, 'package.json'))) {
     out.push({ label: 'projects/active/sports-terminal-os', cwd: sto });
   }
 
   // Nested product (submodule) — optional
-  const kalshi = join(root, 'Kalshi-bot');
-  if (await pathExists(join(kalshi, 'package.json'))) {
+  const kalshi = joinPath(root, 'Kalshi-bot');
+  if (await pathExists(joinPath(kalshi, 'package.json'))) {
     out.push({ label: 'Kalshi-bot', cwd: kalshi });
   }
 

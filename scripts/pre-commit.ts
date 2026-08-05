@@ -8,9 +8,9 @@
 /** Bun-native Husky pre-commit orchestration. */
 
 import { $ } from 'bun';
-import { resolve } from 'node:path';
+import { resolvePath } from '../lib/path-bun.ts';
 
-const REPO_ROOT = resolve(import.meta.dir, '..');
+const REPO_ROOT = resolvePath(import.meta.dir, '..');
 const SKILL_VALIDATION_PATH_RE =
   /^(\.agents\/skills\/|lib\/agent-skills-paths\.ts$|scripts\/validate-agent-skills\.ts$|tests\/agent-skills-validation\.test\.ts$)/;
 const TEST_SOURCE_PATH_RE = /\.(ts|tsx|js|jsx|mts|cts)$/;

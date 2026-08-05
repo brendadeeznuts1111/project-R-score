@@ -60,6 +60,7 @@
 import type { BunRequest } from 'bun';
 import { Database } from 'bun:sqlite';
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
+import { sleep } from '../lib/time.ts';
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
 import {
@@ -632,7 +633,7 @@ async function channelsEvents(req: Request): Promise<Response> {
       async pull(controller) {
         const events = await readLocalChannelEvents(topic, cursor);
         if (events.length === 0) {
-          await new Promise(r => setTimeout(r, 2000));
+          await sleep(2000);
           return;
         }
         for (const ev of events) {

@@ -2,8 +2,8 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 /**
- * Ratchet: TypeScript under lib/ and tools/ must not import node:path or path.
- * Use lib/path-bun (joinPath / resolvePath) instead.
+ * Ratchet: TypeScript under lib/, tools/, and scripts/ must not import
+ * node:path or path. Use lib/path-bun (joinPath / resolvePath / …) instead.
  *
  *   bun run check:path-bun
  */
@@ -12,7 +12,7 @@ export {};
 const ROOT = process.cwd();
 const bad: string[] = [];
 const importRe = /^\s*import\s+.+from\s+['"](?:node:)?path['"]/;
-const globs = ['lib/**/*.ts', 'tools/**/*.ts'] as const;
+const globs = ['lib/**/*.ts', 'tools/**/*.ts', 'scripts/**/*.ts'] as const;
 
 for (const pattern of globs) {
   for (const rel of new Bun.Glob(pattern).scanSync({ cwd: ROOT, onlyFiles: true })) {
@@ -28,8 +28,8 @@ for (const pattern of globs) {
 }
 
 if (bad.length) {
-  console.error('path/node:path imports in lib/|tools/ (use lib/path-bun):');
+  console.error('path/node:path imports in lib/|tools/|scripts/ (use lib/path-bun):');
   for (const f of bad) console.error(' ', f);
   process.exit(1);
 }
-console.info('lib/ + tools/ have no path/node:path imports (path-bun ratchet)');
+console.info('lib/ + tools/ + scripts/ have no path/node:path imports (path-bun ratchet)');
