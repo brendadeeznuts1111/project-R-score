@@ -2,11 +2,11 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-08-02T23:19:11.478Z",
+  "generated": "2026-08-05T08:47:04.097Z",
   "summary": {
     "surfaces": 28,
     "artifacts": 41,
-    "components": 14,
+    "components": 20,
     "wiki": 6,
     "scripts": 45
   },
@@ -83,7 +83,10 @@
       "note": "graph map · publish soft-pass (ssot-flow-soft · pm-proof) · color kernel publish.* · weave.publishPlane",
       "group": "registry",
       "cli": "bun run ssot:flow:soft && bun run verify:pm:save",
-      "relatedArtifactIds": ["ssot-flow-soft", "pm-proof"]
+      "relatedArtifactIds": [
+        "ssot-flow-soft",
+        "pm-proof"
+      ]
     },
     {
       "id": "skills",
@@ -584,6 +587,18 @@
       "kind": "module"
     },
     {
+      "id": "fetch-json",
+      "path": "/portal/fetch-json.js",
+      "role": "shared JSON fetch helper · cache: no-store defaults",
+      "kind": "module"
+    },
+    {
+      "id": "registry-cache",
+      "path": "/portal/registry-cache.js",
+      "role": "in-memory registry bake cache for multi-card boards",
+      "kind": "module"
+    },
+    {
       "id": "nav-badges",
       "path": "/portal/nav-badges.js",
       "role": "live counts from baked registry JSON on nav links",
@@ -599,6 +614,12 @@
       "id": "navigation",
       "path": "/portal/navigation.js",
       "role": "markCurrentNavigation path SSOT",
+      "kind": "module"
+    },
+    {
+      "id": "card",
+      "path": "/portal/card.js",
+      "role": "shared card chrome · scope badges · tag filters",
       "kind": "module"
     },
     {
@@ -638,6 +659,18 @@
       "kind": "style"
     },
     {
+      "id": "theme-tokens",
+      "path": "/portal/theme-tokens.css",
+      "role": "CSS custom properties · color kernel theme aliases",
+      "kind": "style"
+    },
+    {
+      "id": "theme-jsonc",
+      "path": "/portal/theme.jsonc",
+      "role": "theme SSOT · validate:colors / test:colors",
+      "kind": "shell"
+    },
+    {
       "id": "brand-assets",
       "path": "/site.webmanifest",
       "role": "FactoryWager mark · install metadata · theme colors",
@@ -659,6 +692,12 @@
       "id": "toc-dashboard",
       "path": "/portal/toc/toc-dashboard.js",
       "role": "TOC Drum/Buffer/Rope · harness glance",
+      "kind": "module"
+    },
+    {
+      "id": "verification-card",
+      "path": "/portal/verification-card.js",
+      "role": "proof-index verification pins · health/dashboard",
       "kind": "module"
     }
   ],
