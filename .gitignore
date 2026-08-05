@@ -6,6 +6,7 @@
 # Vendored upstream clones (local only)
 /plannotator-upstream/
 /king-zippy-umbra-acre/
+/king-zippy-umbra-acre-plum-integration/
 
 # Unintegrated prototypes are not release artifacts. Promote deliberately into
 # projects/experimental/ with package, type, ownership, and brand contracts.

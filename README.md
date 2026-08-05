@@ -129,7 +129,7 @@ Install policy detail: [`docs/UNIFIED.md`](docs/UNIFIED.md).
 ## Architecture
 
 ```
-packages/                        @factorywager/* — 8 internal packages (root workspace)
+packages/                        @factorywager/* — 6 live (+ 2 archived) (root workspace)
 lib/                             Shared harness (brands, security, scan, console-depth)
 projects/active/factorywager/    Registry platform (+ workspace packages)
 projects/active/sports-terminal-os/  Sports Terminal OS (root workspace member)

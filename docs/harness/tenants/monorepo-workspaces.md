@@ -183,18 +183,11 @@ Root `catalog` pins shared third-party versions (exact; matches `install.exact`)
 
 **Consumers must use** `"pkg": "catalog:"` (or `catalog:<name>`). Do not re-float cataloged names with `^` / `latest`.
 
-**Intentional exception:** `sports-terminal-os` pins `typescript` at **5.9.3** until TS 6 typecheck cleanup; zod/react/`bun-types` still use `catalog:`. See [Open debt: STO TypeScript 6](#open-debt-sto-typescript-6).
-
 Policy table + anti-patterns: [UNIFIED § Catalogs and workspace protocols](../../UNIFIED.md#catalogs-and-workspace-protocols).
 
-### Open debt: STO TypeScript 6
+### STO TypeScript 6 (resolved)
 
-| | |
-|--|--|
-| **Current** | `sports-terminal-os` pins `typescript` **5.9.3** intentionally; root catalog is **6.0.3**. |
-| **Why** | On catalog TS 6, STO `tsc` surfaces path imports into monorepo `lib/`, `baseUrl`/`rootDir` layout, Response body types, and related strictness — not ready to force the pin. |
-| **Exit** | STO `bun run typecheck` green on catalog `typescript` → switch STO `package.json` to `"typescript": "catalog:"` → drop the UNIFIED catalog exception. |
-| **Owner** | platform / STO maintainers |
+Resolved **2026-07-28**: `sports-terminal-os` uses `"typescript": "catalog:"` (root catalog **6.0.3**). No catalog exception remains for STO.
 
 ## TypeScript 6+ types discovery
 

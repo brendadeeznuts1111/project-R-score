@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-05T03:04:08.036Z",
+  "generatedAt": "2026-08-04T20:37:29.099Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -4499,10 +4499,10 @@
         "wire-input",
         "system-internal"
       ],
-      "description": "Backend family shortcode (cloudflare-pages|cloudflare-worker|cloudflared|github-pages|helpscout|none|unknown)",
+      "description": "Backend family shortcode (cloudflare-pages|cloudflared|github-pages|helpscout|none|unknown)",
       "validation": {
         "shape": "pattern",
-        "pattern": "^(?:cloudflare-pages|cloudflare-worker|cloudflared|github-pages|helpscout|none|unknown)$",
+        "pattern": "^(?:cloudflare-pages|cloudflared|github-pages|helpscout|none|unknown)$",
         "flags": "",
         "ingressNormalization": "trim"
       },
