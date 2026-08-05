@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
  * Report seat-capital desk book labels vs public bookmakers registry.
@@ -12,6 +13,7 @@ import {
   buildDeskCoverageReport,
 } from '../lib/bookmakers/desk-coverage.ts';
 import { loadBookmakerRegistry } from '../lib/bookmakers/resolve.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 const DESK_PATH = 'public/registry/seat-capital-desk.json';
 const REGISTRY_PATH = 'public/registry/bookmakers.json';
@@ -53,7 +55,7 @@ async function main(): Promise<void> {
   }
 
   if (asJson) {
-    console.log(JSON.stringify(report, null, 2));
+    jsonOut(report);
   } else {
     console.log(
       `desk coverage: ${report.matched} matched · ${report.placeholder} placeholder · ${report.unmatched} unmatched · ${report.registryUnused.length} registry unused`
