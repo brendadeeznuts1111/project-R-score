@@ -178,7 +178,7 @@ Root `catalog` pins shared third-party versions (exact; matches `install.exact`)
 | Key | Role |
 |-----|------|
 | `typescript` | Toolchain (root + packages via `catalog:`) |
-| `@types/bun` / `bun-types` | Types pin (may lag runtime 1.4.0) |
+| `@types/bun` / `bun-types` | Independent wrapper-stable and declaration-canary pins; policy in `config/bun-channels.toml` |
 | `zod`, `react`, `react-dom`, `@types/react*` | Shared app stack |
 
 **Consumers must use** `"pkg": "catalog:"` (or `catalog:<name>`). Do not re-float cataloged names with `^` / `latest`.

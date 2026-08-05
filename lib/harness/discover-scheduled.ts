@@ -143,6 +143,25 @@ export const SCHEDULED_JOB_EXEMPTIONS: readonly ScheduledJobExemption[] = [
     reason: 'OS cron register for vault-health board bake — not a spine maintenance tenant',
   },
   {
+    id: 'pkg-bun-channel-cron-preview',
+    source: 'package-script',
+    match: 'bun:channel:cron:preview',
+    reason: 'Read-only preview for the operator-owned Bun channel doctor OS schedule',
+  },
+  {
+    id: 'pkg-bun-channel-cron-register',
+    source: 'package-script',
+    match: 'bun:channel:cron:register',
+    reason:
+      'Explicit OS cron registration for the Bun channel doctor; not a spine maintenance tenant',
+  },
+  {
+    id: 'pkg-bun-channel-cron-remove',
+    source: 'package-script',
+    match: 'bun:channel:cron:remove',
+    reason: 'Explicit OS cron removal for the operator-owned Bun channel doctor',
+  },
+  {
     id: 'pkg-partner-settlement-cron-register',
     source: 'package-script',
     match: 'partner:settlement:cron:register',

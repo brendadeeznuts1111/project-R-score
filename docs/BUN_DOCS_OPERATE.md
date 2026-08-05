@@ -40,7 +40,14 @@ Migrate legacy split indexes once: `bun run docs:feeds:migrate` (or `bun tools/b
 
 Dry-run step plan: `bun tools/bun-docs-refresh.ts --dry-run --fast`
 
-**Coverage model:** RSS = *what shipped* · reference index = *what exists on bun.com/reference* · `canonical-helpers` = *traceability* · `verify-docs-coverage` = *strict gate on FactoryWager-tracked tokens* (not every generated symbol).
+**Coverage model:** RSS indexes Bun blog/release content (*what shipped*) and is
+the docs-ingestion feed. GitHub release Atom and `oven-sh/bun` main-tip metadata
+are separate channel-governance observations, not documentation bakes or
+automatic promotion authority; see
+[`bun-channel-governance.md`](./design/bun-channel-governance.md). The reference
+index records *what exists on bun.com/reference*, `canonical-helpers` provides
+traceability, and `verify-docs-coverage` gates FactoryWager-tracked tokens (not
+every generated symbol).
 
 **Terminal / PTY north-star (three planes):** guide [`child-process#terminal-pty-support`](https://bun.com/docs/runtime/child-process#terminal-pty-support) · reference [`/reference/bun/Terminal`](https://bun.com/reference/bun/Terminal) · types [`packages/bun-types`](https://github.com/oven-sh/bun/tree/main/packages/bun-types). Host TTY (`process.stdout.isTTY`) is not `Bun.Terminal`. Factory helpers: [`lib/terminal.ts`](../lib/terminal.ts). After curated path edits prefer `bun run docs:catalog:build` (notes etag cache) — not `docs:refresh:fast` (llms index re-fetches every page).
 
