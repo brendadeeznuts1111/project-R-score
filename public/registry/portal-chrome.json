@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-08-05T08:47:04.082Z",
+  "generated": "2026-08-05T09:04:25.293Z",
   "path": "/registry/portal-chrome.json",
   "runtime": {
     "bunVersion": "1.4.0",
@@ -15,6 +15,7 @@
     "scripts": 6,
     "badgeSources": 6,
     "unlistedSurfaces": 7,
+    "boardCoverage": 37,
     "groups": {
       "ops": 15,
       "harness": 1,
@@ -69,7 +70,8 @@
       "group": "harness",
       "note": "system health · monorepo score",
       "cli": "bun run monorepo:health:bake",
-      "badgeSource": "/registry/monorepo-health.json"
+      "badgeSource": "/registry/monorepo-health.json",
+      "registryArtifact": "/registry/monorepo-health.json"
     },
     {
       "id": "dod",
@@ -87,7 +89,8 @@
       "tier": "priority",
       "group": "ops",
       "note": "MA/NJ board · shadow matrix",
-      "cli": "bun run compliance:bake"
+      "cli": "bun run compliance:bake",
+      "registryArtifact": "/registry/compliance-board.json"
     }
   ],
   "overflowNav": [
@@ -108,7 +111,8 @@
       "group": "registry",
       "note": "graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.*",
       "cli": "bun run ssot:flow:soft && bun run verify:pm:save",
-      "badgeSource": "/registry/packages-graph-map.json"
+      "badgeSource": "/registry/packages-graph-map.json",
+      "registryArtifact": "/registry/packages-graph-map.json"
     },
     {
       "id": "brands",
@@ -126,7 +130,8 @@
       "tier": "overflow",
       "group": "registry",
       "note": "market · model · trading · warehouse · pipeline concepts",
-      "cli": "bun run glossary:portal"
+      "cli": "bun run glossary:portal",
+      "registryArtifact": "/registry/domain-glossary.json"
     },
     {
       "id": "surfaces",
@@ -135,7 +140,8 @@
       "tier": "overflow",
       "group": "registry",
       "note": "edge host inventory · Access domains · backend shortcodes · schema v2",
-      "cli": "bun run surfaces:bake  # → /registry/surfaces-state.json"
+      "cli": "bun run surfaces:bake  # → /registry/surfaces-state.json",
+      "registryArtifact": "/registry/surfaces-state.json"
     },
     {
       "id": "skills",
@@ -144,7 +150,8 @@
       "tier": "overflow",
       "group": "registry",
       "note": "harness + Kimi skill catalogs · loop registry alignment",
-      "cli": "bun run skills:validate"
+      "cli": "bun run skills:validate",
+      "registryArtifact": "/registry/harness-skills-catalog.json"
     },
     {
       "id": "vault",
@@ -154,7 +161,8 @@
       "group": "secrets",
       "note": "Proton Pass health bake · gate: portal-cli vault health",
       "cli": "bun run portal-cli vault health  # offline SSOT · --update to refresh snaps",
-      "badgeSource": "/registry/vault-health.json"
+      "badgeSource": "/registry/vault-health.json",
+      "registryArtifact": "/registry/vault-health.json"
     },
     {
       "id": "env",
@@ -207,7 +215,8 @@
       "tier": "overflow",
       "group": "ops",
       "note": "multi-factor partner limit raises · CLV",
-      "cli": "bun run ops:limits:demo"
+      "cli": "bun run ops:limits:demo",
+      "registryArtifact": "/registry/limit-raises.json"
     },
     {
       "id": "limits-lab",
@@ -216,7 +225,8 @@
       "tier": "overflow",
       "group": "ops",
       "note": "forecast / predict lab · multi-factor backtest",
-      "cli": "bun run ops:limits:predict"
+      "cli": "bun run ops:limits:predict",
+      "registryArtifact": "/registry/limit-forecast-lab.json"
     },
     {
       "id": "partners",
@@ -252,7 +262,8 @@
       "tier": "overflow",
       "group": "ops",
       "note": "@factorywager/bookmakers artifact · canonical bookmaker registry",
-      "cli": "bun run bookmakers:bake"
+      "cli": "bun run bookmakers:bake",
+      "registryArtifact": "/registry/bookmakers.json"
     },
     {
       "id": "factory",
@@ -261,7 +272,8 @@
       "tier": "overflow",
       "group": "ops",
       "note": "Factory Telegram ops · package-group wire",
-      "cli": "bun run telegram:verify"
+      "cli": "bun run telegram:verify",
+      "registryArtifact": "/registry/telegram-handshake.json"
     },
     {
       "id": "tennis",
@@ -270,7 +282,8 @@
       "tier": "overflow",
       "group": "ops",
       "note": "Tennis HQ desk · agent-auth · live matches",
-      "cli": "bun run tennis:board:bake"
+      "cli": "bun run tennis:board:bake",
+      "registryArtifact": "/registry/tennis/agent-auth.json"
     },
     {
       "id": "identity",
@@ -279,7 +292,8 @@
       "tier": "overflow",
       "group": "ops",
       "note": "auth board · lockout · anomaly · geo · JIT",
-      "cli": "bun test tests/identity-*.test.ts"
+      "cli": "bun test tests/identity-*.test.ts",
+      "registryArtifact": "/registry/identity-board.json"
     },
     {
       "id": "monitoring",
@@ -288,7 +302,8 @@
       "tier": "overflow",
       "group": "ops",
       "note": "routing · env · compliance tile · proof status",
-      "cli": "bun run ops:snapshot --no-seed"
+      "cli": "bun run ops:snapshot --no-seed",
+      "registryArtifact": "/registry/monitoring.json"
     },
     {
       "id": "prediction-report",
@@ -610,6 +625,253 @@
       "id": "science",
       "href": "/portal/science/",
       "reason": "experimental science board · niche"
+    }
+  ],
+  "boardCoverage": [
+    {
+      "id": "home",
+      "href": "/",
+      "tier": "priority",
+      "group": "other",
+      "label": "Home"
+    },
+    {
+      "id": "ops",
+      "href": "/portal/ops/",
+      "tier": "priority",
+      "group": "ops",
+      "label": "Ops"
+    },
+    {
+      "id": "registry",
+      "href": "/portal/",
+      "tier": "priority",
+      "group": "registry",
+      "label": "Registry"
+    },
+    {
+      "id": "health",
+      "href": "/portal/health/",
+      "tier": "priority",
+      "group": "harness",
+      "label": "Health"
+    },
+    {
+      "id": "dod",
+      "href": "/portal/dod/",
+      "tier": "priority",
+      "group": "plane",
+      "label": "DOD"
+    },
+    {
+      "id": "compliance",
+      "href": "/portal/compliance/",
+      "tier": "priority",
+      "group": "ops",
+      "label": "Compliance"
+    },
+    {
+      "id": "catalog",
+      "href": "/portal/catalog/",
+      "tier": "overflow",
+      "group": "registry",
+      "label": "Catalog"
+    },
+    {
+      "id": "packages",
+      "href": "/portal/packages/",
+      "tier": "overflow",
+      "group": "registry",
+      "label": "Packages"
+    },
+    {
+      "id": "brands",
+      "href": "/portal/brands/",
+      "tier": "overflow",
+      "group": "registry",
+      "label": "Brands"
+    },
+    {
+      "id": "glossary",
+      "href": "/portal/glossary/",
+      "tier": "overflow",
+      "group": "registry",
+      "label": "Glossary"
+    },
+    {
+      "id": "surfaces",
+      "href": "/portal/surfaces/",
+      "tier": "overflow",
+      "group": "registry",
+      "label": "Surfaces"
+    },
+    {
+      "id": "skills",
+      "href": "/portal/skills/",
+      "tier": "overflow",
+      "group": "registry",
+      "label": "Skills"
+    },
+    {
+      "id": "vault",
+      "href": "/portal/vault/",
+      "tier": "overflow",
+      "group": "secrets",
+      "label": "Vault"
+    },
+    {
+      "id": "env",
+      "href": "/portal/env/",
+      "tier": "overflow",
+      "group": "secrets",
+      "label": "Env"
+    },
+    {
+      "id": "concepts",
+      "href": "/portal/concepts/",
+      "tier": "overflow",
+      "group": "registry",
+      "label": "Concepts"
+    },
+    {
+      "id": "concepts-graph",
+      "href": "/portal/concepts/graph/",
+      "tier": "overflow",
+      "group": "registry",
+      "label": "Concept graph"
+    },
+    {
+      "id": "dashboard",
+      "href": "/portal/dashboard/",
+      "tier": "overflow",
+      "group": "ops",
+      "label": "Dashboard"
+    },
+    {
+      "id": "toc",
+      "href": "/portal/toc/",
+      "tier": "overflow",
+      "group": "ops",
+      "label": "TOC"
+    },
+    {
+      "id": "limits",
+      "href": "/portal/limits/",
+      "tier": "overflow",
+      "group": "ops",
+      "label": "Limits"
+    },
+    {
+      "id": "limits-lab",
+      "href": "/portal/limits-lab/",
+      "tier": "overflow",
+      "group": "ops",
+      "label": "Limits lab"
+    },
+    {
+      "id": "partners",
+      "href": "/portal/partners/",
+      "tier": "overflow",
+      "group": "ops",
+      "label": "Partners"
+    },
+    {
+      "id": "account",
+      "href": "/portal/account/",
+      "tier": "overflow",
+      "group": "ops",
+      "label": "Account"
+    },
+    {
+      "id": "partner-history",
+      "href": "/portal/partner-history/",
+      "tier": "overflow",
+      "group": "ops",
+      "label": "Partner history"
+    },
+    {
+      "id": "bookmakers",
+      "href": "/portal/bookmakers/",
+      "tier": "overflow",
+      "group": "ops",
+      "label": "Bookmakers"
+    },
+    {
+      "id": "factory",
+      "href": "/portal/factory/",
+      "tier": "overflow",
+      "group": "ops",
+      "label": "Factory"
+    },
+    {
+      "id": "tennis",
+      "href": "/portal/tennis/",
+      "tier": "overflow",
+      "group": "ops",
+      "label": "Tennis"
+    },
+    {
+      "id": "identity",
+      "href": "/portal/identity/",
+      "tier": "overflow",
+      "group": "ops",
+      "label": "Identity"
+    },
+    {
+      "id": "monitoring",
+      "href": "/monitoring/",
+      "tier": "overflow",
+      "group": "ops",
+      "label": "Monitoring"
+    },
+    {
+      "id": "prediction-report",
+      "href": "/registry/prediction/report/",
+      "tier": "overflow",
+      "group": "ops",
+      "label": "Prediction"
+    },
+    {
+      "id": "wiki",
+      "href": "https://wiki.factory-wager.com/wiki-index.html",
+      "tier": "overflow",
+      "group": "other",
+      "label": "Wiki"
+    },
+    {
+      "id": "doctor",
+      "href": "/portal/doctor/",
+      "tier": "unlisted"
+    },
+    {
+      "id": "tools",
+      "href": "/portal/tools/",
+      "tier": "unlisted"
+    },
+    {
+      "id": "failures",
+      "href": "/portal/failures/",
+      "tier": "unlisted"
+    },
+    {
+      "id": "bunfig",
+      "href": "/portal/bunfig/",
+      "tier": "unlisted"
+    },
+    {
+      "id": "console-format",
+      "href": "/portal/console-format/",
+      "tier": "unlisted"
+    },
+    {
+      "id": "install-hygiene",
+      "href": "/portal/install-hygiene/",
+      "tier": "unlisted"
+    },
+    {
+      "id": "science",
+      "href": "/portal/science/",
+      "tier": "unlisted"
     }
   ]
 }

@@ -212,7 +212,9 @@ body {
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 4px;
-    min-width: 200px;
+    min-width: 220px;
+    max-height: min(70vh, 32rem);
+    overflow-y: auto;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     z-index: 20;
 
@@ -224,6 +226,29 @@ body {
       padding-block: 8px;
       padding-inline: 12px;
     }
+  }
+
+  .nav-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .nav-group + .nav-group {
+    margin-block-start: 4px;
+    padding-block-start: 4px;
+    border-block-start: 1px solid var(--border);
+  }
+
+  .nav-group-label {
+    padding-block: 6px 2px;
+    padding-inline: 12px;
+    font-size: 10px;
+    font-weight: 650;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    user-select: none;
   }
 
   &:is(.open, :hover, :focus-within) .nav-dropdown {

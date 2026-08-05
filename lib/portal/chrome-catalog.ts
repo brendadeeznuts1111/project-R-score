@@ -9,6 +9,8 @@
  * @see public/portal/components/
  * @see public/portal/nav-badges.js
  */
+import { existsSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { bunRuntimeProvenance } from '../bun-executable.ts';
 import { PORTAL_WIKI_DROPDOWN_HREF } from '../http/wiki-nav.ts';
 
@@ -32,6 +34,38 @@ export type PortalChromeNavItem = {
   cli?: string;
   /** Optional registry bake that backs live nav badges (see badgeSources). */
   badgeSource?: string;
+  /** Primary registry JSON this board consumes (operator map). */
+  registryArtifact?: string;
+};
+
+/** Overflow menu group order (section headers in ⋯ dropdown). */
+export const PORTAL_OVERFLOW_GROUP_ORDER: PortalChromeNavGroup[] = [
+  'registry',
+  'secrets',
+  'ops',
+  'plane',
+  'harness',
+  'other',
+];
+
+export const PORTAL_OVERFLOW_GROUP_LABELS: Record<PortalChromeNavGroup, string> = {
+  registry: 'Registry',
+  secrets: 'Secrets',
+  ops: 'Ops',
+  plane: 'Plane',
+  harness: 'Harness',
+  other: 'More',
+};
+
+/** How a public board appears relative to chrome nav. */
+export type PortalChromeBoardTier = 'priority' | 'overflow' | 'unlisted';
+
+export type PortalChromeBoardEntry = {
+  id: string; // brand-ok — board slug / nav id
+  href: string;
+  tier: PortalChromeBoardTier;
+  group?: PortalChromeNavGroup;
+  label?: string;
 };
 
 export type PortalChromeComponent = {
@@ -74,6 +108,7 @@ export type PortalChromeCatalog = {
     scripts: number;
     badgeSources: number;
     unlistedSurfaces: number;
+    boardCoverage: number;
     groups: Record<PortalChromeNavGroup, number>;
   };
   related: {
@@ -96,6 +131,11 @@ export type PortalChromeCatalog = {
   badgeSources: PortalChromeBadgeSource[];
   /** Product/control boards intentionally omitted from default chrome nav. */
   unlistedSurfaces: PortalChromeUnlistedSurface[];
+  /**
+   * Full chrome board index (priority + overflow + unlisted).
+   * Use with assertPortalChromeBoardCoverage against public portal board dirs.
+   */
+  boardCoverage: PortalChromeBoardEntry[];
 };
 
 /** Priority topbar (left → right) — keep lean; deep links live in overflow. */
@@ -134,6 +174,7 @@ export const PORTAL_PRIORITY_NAV: PortalChromeNavItem[] = [
     note: 'system health · monorepo score',
     cli: 'bun run monorepo:health:bake',
     badgeSource: '/registry/monorepo-health.json',
+    registryArtifact: '/registry/monorepo-health.json',
   },
   {
     id: 'dod',
@@ -152,6 +193,7 @@ export const PORTAL_PRIORITY_NAV: PortalChromeNavItem[] = [
     group: 'ops',
     note: 'MA/NJ board · shadow matrix',
     cli: 'bun run compliance:bake',
+    registryArtifact: '/registry/compliance-board.json',
   },
 ];
 
@@ -179,6 +221,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     note: 'graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.*',
     cli: 'bun run ssot:flow:soft && bun run verify:pm:save',
     badgeSource: '/registry/packages-graph-map.json',
+    registryArtifact: '/registry/packages-graph-map.json',
   },
   {
     id: 'brands',
@@ -197,6 +240,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     group: 'registry',
     note: 'market · model · trading · warehouse · pipeline concepts',
     cli: 'bun run glossary:portal',
+    registryArtifact: '/registry/domain-glossary.json',
   },
   {
     id: 'surfaces',
@@ -206,6 +250,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     group: 'registry',
     note: 'edge host inventory · Access domains · backend shortcodes · schema v2',
     cli: 'bun run surfaces:bake  # → /registry/surfaces-state.json',
+    registryArtifact: '/registry/surfaces-state.json',
   },
   {
     id: 'skills',
@@ -215,6 +260,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     group: 'registry',
     note: 'harness + Kimi skill catalogs · loop registry alignment',
     cli: 'bun run skills:validate',
+    registryArtifact: '/registry/harness-skills-catalog.json',
   },
   // ── Secrets & env ──
   {
@@ -226,6 +272,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     note: 'Proton Pass health bake · gate: portal-cli vault health',
     cli: 'bun run portal-cli vault health  # offline SSOT · --update to refresh snaps',
     badgeSource: '/registry/vault-health.json',
+    registryArtifact: '/registry/vault-health.json',
   },
   {
     id: 'env',
@@ -285,6 +332,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     group: 'ops',
     note: 'multi-factor partner limit raises · CLV',
     cli: 'bun run ops:limits:demo',
+    registryArtifact: '/registry/limit-raises.json',
   },
   {
     id: 'limits-lab',
@@ -294,6 +342,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     group: 'ops',
     note: 'forecast / predict lab · multi-factor backtest',
     cli: 'bun run ops:limits:predict',
+    registryArtifact: '/registry/limit-forecast-lab.json',
   },
   {
     id: 'partners',
@@ -330,6 +379,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     group: 'ops',
     note: '@factorywager/bookmakers artifact · canonical bookmaker registry',
     cli: 'bun run bookmakers:bake',
+    registryArtifact: '/registry/bookmakers.json',
   },
   {
     id: 'factory',
@@ -339,6 +389,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     group: 'ops',
     note: 'Factory Telegram ops · package-group wire',
     cli: 'bun run telegram:verify',
+    registryArtifact: '/registry/telegram-handshake.json',
   },
   {
     id: 'tennis',
@@ -348,6 +399,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     group: 'ops',
     note: 'Tennis HQ desk · agent-auth · live matches',
     cli: 'bun run tennis:board:bake',
+    registryArtifact: '/registry/tennis/agent-auth.json',
   },
   {
     id: 'identity',
@@ -357,6 +409,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     group: 'ops',
     note: 'auth board · lockout · anomaly · geo · JIT',
     cli: 'bun test tests/identity-*.test.ts',
+    registryArtifact: '/registry/identity-board.json',
   },
   {
     id: 'monitoring',
@@ -366,6 +419,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     group: 'ops',
     note: 'routing · env · compliance tile · proof status',
     cli: 'bun run ops:snapshot --no-seed',
+    registryArtifact: '/registry/monitoring.json',
   },
   {
     id: 'prediction-report',
@@ -632,6 +686,105 @@ function countNavGroups(items: PortalChromeNavItem[]): Record<PortalChromeNavGro
   return groups;
 }
 
+/** Priority + overflow + unlisted → operator board index (no disk scan). */
+export function listChromeBoardCoverage(): PortalChromeBoardEntry[] {
+  const out: PortalChromeBoardEntry[] = [];
+  for (const item of PORTAL_PRIORITY_NAV) {
+    out.push({
+      id: item.id,
+      href: item.href,
+      tier: 'priority',
+      group: item.group,
+      label: item.label,
+    });
+  }
+  for (const item of PORTAL_OVERFLOW_NAV) {
+    out.push({
+      id: item.id,
+      href: item.href,
+      tier: 'overflow',
+      group: item.group,
+      label: item.label,
+    });
+  }
+  for (const item of PORTAL_CHROME_UNLISTED) {
+    out.push({
+      id: item.id,
+      href: item.href,
+      tier: 'unlisted',
+    });
+  }
+  return out;
+}
+
+/**
+ * Slugs under public/portal board dirs with index.html
+ * (excludes components, dist, icons, scripts).
+ * Home is `/` and registry hub is `/portal/` — not slug dirs.
+ */
+export function scanPortalBoardSlugs(portalDir: string): string[] {
+  const skip = new Set(['components', 'dist', 'icons', 'scripts']);
+  const names = readdirSync(portalDir, { withFileTypes: true });
+  const slugs: string[] = [];
+  for (const ent of names) {
+    if (!ent.isDirectory() || skip.has(ent.name) || ent.name.startsWith('_')) continue;
+    if (existsSync(join(portalDir, ent.name, 'index.html'))) slugs.push(ent.name);
+  }
+  return slugs.sort();
+}
+
+export type PortalChromeCoverageReport = {
+  diskBoards: string[];
+  orphans: string[];
+  /** Chrome entries that claim a /portal/<slug>/ path but no index.html on disk */
+  missingOnDisk: string[];
+  covered: string[];
+};
+
+/**
+ * Every disk board must be priority, overflow, or unlisted.
+ * Chrome /portal/<slug> paths must exist (except concepts-graph which is nested).
+ */
+export function assertPortalChromeBoardCoverage(portalDir: string): PortalChromeCoverageReport {
+  const diskBoards = scanPortalBoardSlugs(portalDir);
+  const coverage = listChromeBoardCoverage();
+  const coveredSlugs = new Set<string>();
+  const missingOnDisk: string[] = [];
+
+  for (const entry of coverage) {
+    const m = entry.href.match(/^\/portal\/([a-z0-9-]+)\/?$/i);
+    if (!m) continue; // home, monitoring, external, nested graph
+    const slug = m[1]!;
+    coveredSlugs.add(slug);
+    if (slug === 'concepts' && entry.id === 'concepts-graph') continue;
+    // nested concepts/graph handled separately
+    if (!diskBoards.includes(slug) && entry.id !== 'concepts-graph') {
+      // concepts-graph is nested under concepts/
+      if (entry.href.includes('/concepts/graph')) continue;
+      missingOnDisk.push(entry.id);
+    }
+  }
+  // concepts-graph lives at public/portal/concepts/graph/
+  if (coverage.some(c => c.id === 'concepts-graph')) {
+    coveredSlugs.add('concepts');
+  }
+
+  const orphans = diskBoards.filter(s => !coveredSlugs.has(s));
+  if (orphans.length > 0 || missingOnDisk.length > 0) {
+    const parts: string[] = [];
+    if (orphans.length) parts.push(`orphans (on disk, not in chrome): ${orphans.join(', ')}`);
+    if (missingOnDisk.length)
+      parts.push(`missing on disk (chrome href): ${missingOnDisk.join(', ')}`);
+    throw new Error(`portal chrome board coverage failed — ${parts.join('; ')}`);
+  }
+  return {
+    diskBoards,
+    orphans,
+    missingOnDisk,
+    covered: [...coveredSlugs].sort(),
+  };
+}
+
 export function buildPortalChromeCatalog(
   generated = new Date().toISOString()
 ): PortalChromeCatalog {
@@ -648,6 +801,7 @@ export function buildPortalChromeCatalog(
     { label: 'portal doctor', cmd: 'bun run portal:doctor' },
   ];
   const allNav = [...PORTAL_PRIORITY_NAV, ...PORTAL_OVERFLOW_NAV];
+  const boardCoverage = listChromeBoardCoverage();
   const provenance = bunRuntimeProvenance();
   return {
     schemaVersion: 1,
@@ -666,6 +820,7 @@ export function buildPortalChromeCatalog(
       scripts: scripts.length,
       badgeSources: PORTAL_CHROME_BADGE_SOURCES.length,
       unlistedSurfaces: PORTAL_CHROME_UNLISTED.length,
+      boardCoverage: boardCoverage.length,
       groups: countNavGroups(allNav),
     },
     related: {
@@ -686,6 +841,7 @@ export function buildPortalChromeCatalog(
     scripts,
     badgeSources: PORTAL_CHROME_BADGE_SOURCES,
     unlistedSurfaces: PORTAL_CHROME_UNLISTED,
+    boardCoverage,
   };
 }
 
@@ -698,7 +854,46 @@ function navAttrs(item: PortalChromeNavItem, activeId?: string): string {
   const title = tip ? ` title="${tip.replace(/"/g, '&quot;')}"` : '';
   const group = item.group ? ` data-group="${item.group}"` : '';
   const cli = item.cli ? ` data-cli="${item.cli.replace(/"/g, '&quot;')}"` : '';
-  return `class="nav-link${active}"${aria}${ext}${title}${group}${cli}`;
+  const art = item.registryArtifact
+    ? ` data-registry="${item.registryArtifact.replace(/"/g, '&quot;')}"`
+    : '';
+  return `class="nav-link${active}"${aria}${ext}${title}${group}${cli}${art}`;
+}
+
+/** Group overflow items for sectioned ⋯ menu (preserves within-group order). */
+export function groupOverflowNav(
+  items: PortalChromeNavItem[] = PORTAL_OVERFLOW_NAV
+): Array<{ group: PortalChromeNavGroup; label: string; items: PortalChromeNavItem[] }> {
+  const buckets = new Map<PortalChromeNavGroup, PortalChromeNavItem[]>();
+  for (const item of items) {
+    const g = item.group ?? 'other';
+    const list = buckets.get(g) ?? [];
+    list.push(item);
+    buckets.set(g, list);
+  }
+  return PORTAL_OVERFLOW_GROUP_ORDER.filter(g => (buckets.get(g)?.length ?? 0) > 0).map(g => ({
+    group: g,
+    label: PORTAL_OVERFLOW_GROUP_LABELS[g],
+    items: buckets.get(g)!,
+  }));
+}
+
+function renderOverflowMenuHtml(activeId?: string): string {
+  // brand-ok — nav slot key
+  return groupOverflowNav()
+    .map(({ group, label, items }) => {
+      const links = items
+        .map(
+          item =>
+            `<a href="${item.href}" ${navAttrs(item, activeId)} role="menuitem">${item.label}</a>`
+        )
+        .join('\n            ');
+      return `<div class="nav-group" role="group" aria-label="${label}" data-group="${group}">
+            <div class="nav-group-label" aria-hidden="true">${label}</div>
+            ${links}
+          </div>`;
+    })
+    .join('\n          ');
 }
 
 export function renderPriorityNavHtml(activeId?: string): string {
@@ -711,10 +906,7 @@ export function renderPriorityNavHtml(activeId?: string): string {
         <div class="nav-overflow">
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
-            ${PORTAL_OVERFLOW_NAV.map(
-              item =>
-                `<a href="${item.href}" ${navAttrs(item, activeId)} role="menuitem">${item.label}</a>`
-            ).join('\n            ')}
+          ${renderOverflowMenuHtml(activeId)}
           </div>
         </div>
       </nav>`;

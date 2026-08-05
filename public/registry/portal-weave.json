@@ -2,9 +2,9 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-08-05T08:47:04.097Z",
+  "generated": "2026-08-05T09:04:25.294Z",
   "summary": {
-    "surfaces": 28,
+    "surfaces": 32,
     "artifacts": 41,
     "components": 20,
     "wiki": 6,
@@ -266,6 +266,37 @@
       "note": "@factorywager/bookmakers artifact · canonical bookmaker registry · weave runbook",
       "group": "ops",
       "cli": "bun run bookmakers:bake"
+    },
+    {
+      "id": "factory",
+      "label": "Factory",
+      "href": "/portal/factory/",
+      "note": "Factory Telegram ops · package-group wire",
+      "group": "ops",
+      "cli": "bun run telegram:verify"
+    },
+    {
+      "id": "identity",
+      "label": "Identity",
+      "href": "/portal/identity/",
+      "note": "auth board · lockout · anomaly · geo · JIT",
+      "group": "ops"
+    },
+    {
+      "id": "limits-lab",
+      "label": "Limits lab",
+      "href": "/portal/limits-lab/",
+      "note": "forecast / predict lab · multi-factor backtest",
+      "group": "ops",
+      "cli": "bun run ops:limits:predict"
+    },
+    {
+      "id": "concepts",
+      "label": "Concepts",
+      "href": "/portal/concepts/",
+      "note": "semantic vocabulary · domain summary · usage + provenance",
+      "group": "registry",
+      "cli": "bun run concepts:bake"
     },
     {
       "id": "dod",
