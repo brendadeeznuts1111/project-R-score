@@ -189,6 +189,8 @@ describe('partners portal board', () => {
     expect(html).toContain('ops?.accounting?.initialCapital');
     expect(html).toContain('ops?.accounting?.ledgerRows');
     expect(html).toContain('ops?.accounting?.outs');
+    expect(html).toContain("const conceptId = `accounting.${type}`");
+    expect(html).toContain('conceptChip(conceptId, type, ops?.colors?.[conceptId])');
     expect(html).toContain('trackingId');
     expect(html).toContain('tone-bad');
     expect(html).toContain('.reverse()');
