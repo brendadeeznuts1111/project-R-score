@@ -18,6 +18,7 @@ first-class portal surface on the live domain.
 | Route manifest | `/portal/bookmakers/` ([`lib/http/portal-route-manifest.ts`](../../../lib/http/portal-route-manifest.ts)) |
 | Chrome nav | `bookmakers` (overflow, ops) ([`lib/portal/chrome-catalog.ts`](../../../lib/portal/chrome-catalog.ts)) |
 | Suite | [`tests/bookmakers-registry-bake.test.ts`](../../../tests/bookmakers-registry-bake.test.ts) · [`tests/bookmakers-migrate-v04.test.ts`](../../../tests/bookmakers-migrate-v04.test.ts) · [`tests/bookmakers-board.test.ts`](../../../tests/bookmakers-board.test.ts) |
+| Open issues | [`bookmakers-open-issues.md`](./bookmakers-open-issues.md) — Orange777 · Pages/R2 lag · null limits · publish `--readme` |
 
 ## v0.4 public vs ops
 
@@ -80,22 +81,29 @@ bun run bookmakers:desk-coverage -- --apply-max   # fill missing limits.maxBetUs
 
 ```bash
 bun run bookmakers:prepare-publish
-bun run factory:publish artifacts/deeplink-automation/packages/bookmakers/factorywager-bookmakers-0.4.0.tgz \
-  --name @factorywager/bookmakers --version 0.4.0 --type library
+bun run factory:publish artifacts/deeplink-automation/packages/bookmakers/factorywager-bookmakers-0.4.1.tgz \
+  --name @factorywager/bookmakers --version 0.4.1 --type library \
+  --readme artifacts/deeplink-automation/packages/bookmakers/README.md
 bun lib/factory/cli.ts snapshot public/registry/registry.json
 bun run bookmakers:bake   # or bookmakers:bake -- --local offline
 ```
 
+Always pass **`--readme <path>`** to the package README (BM-5). Auto-detect can
+attach a wrong/stale file when publishing a `.tgz`.
+
 **Published:** `@factorywager/bookmakers@0.4.1` is on R2 (`factory list` shows
 latest 0.4.1). Public HTTP index at `registry.factory-wager.com` may lag until
 `public/registry/registry.json` is deployed to Pages — bake prefers the **local**
-snapshot:
+snapshot (BM-2):
 
 ```bash
 bun lib/factory/cli.ts snapshot public/registry/registry.json   # after publish
 bun run bookmakers:bake -- --version 0.4.1
 bun run bookmakers:desk-coverage
 ```
+
+Remaining gaps (limits nulls, Orange777, live index lag): 
+[`bookmakers-open-issues.md`](./bookmakers-open-issues.md).
 
 ## Verification
 

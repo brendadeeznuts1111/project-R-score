@@ -24,15 +24,17 @@ Pages; record/analyze mutations need local Bun + SQLite.
 
 | Concern | Where |
 |---------|--------|
-| Book / sportsbook SSOT | [Bookmakers](./bookmakers/) · [bookmakers.md](./bookmakers.md) · `bookmakers.json` |
-| Partner outs · max bet · rails | [Partners](./partners/) · seat-capital-desk |
+| Book / sportsbook SSOT | [Bookmakers](./bookmakers/) · [bookmakers.md](./bookmakers.md) · `bookmakers.json` (v0.4.1 · `id === slug` · `fetcher` · `urls.web`) |
+| Partner outs · max bet · rails | [Partners](./partners/) · seat-capital-desk · [partners.md](./partners.md) |
 | Per-account dossier | [Account](./account/) · partner-history |
 | Slip / balance **image proof** | [DOD](./dod/) · [dod.md](./dod.md) (confirm amount in Telegram Accounting) |
-| Telegram package forums | [telegram.md](./telegram.md) · Factory handshake |
+| Telegram package forums | [telegram.md](./telegram.md) · [factory.md](./factory.md) handshake |
 | Soft plays / weeks | Soft export · Partners Soft tables |
+| Ops pulse | [ops.md](./ops.md) · `ops-summary.limitChanges` |
 
 Limit raises often key by **node / book** — keep book ids aligned with the
-bookmakers registry when correlating coverage.
+bookmakers registry (`id === slug`) when correlating coverage. Desk free-text
+BOOK labels: `bun run bookmakers:desk-coverage`.
 
 ## CLI
 
@@ -44,6 +46,7 @@ bun run ops:limits:predict
 bun run ops:limits:analyze
 bun run ops:limits:capture          # missing raise context rows
 bun run ops:snapshot --no-seed      # limit-raises + embeds
+bun run bookmakers:desk-coverage    # book id / max-bet alignment
 ```
 
 ## Audit · failure paths
@@ -53,7 +56,7 @@ bun run ops:snapshot --no-seed      # limit-raises + embeds
 | Pages agent raises **503** / empty `byNode` | Rebake `limit-raises.json` · demo seed · check lookback window |
 | Board metrics zero after deploy | Stale bake · `ops:snapshot` · Pages cache |
 | Predict / analyze 503 on Pages | Expected — run local `serve:public` or lab board |
-| Book id mismatch vs outs | [bookmakers.md](./bookmakers.md) · seat desk BOOK column |
+| Book id mismatch vs outs | [bookmakers.md](./bookmakers.md) · seat desk BOOK column · desk coverage |
 | Coverage % incomplete | Bind more accounts · `ops:limits:capture` · partners-ops |
 | Routing probe miss | [routing.md](./routing.md) · `bun run check:routes` · catalog row present |
 
@@ -65,3 +68,7 @@ bun test tests/limit-raise-agent-api.test.ts
 bun test tests/pages-local-only-limits.test.ts
 bun test tests/portal-domain-gap-map.test.ts
 ```
+
+Mesh: [partners.md](./partners.md) · [bookmakers.md](./bookmakers.md) ·
+[telegram.md](./telegram.md) · [dod.md](./dod.md) · [routing.md](./routing.md) ·
+[ops.md](./ops.md) · [index.md](./index.md).

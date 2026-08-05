@@ -20,6 +20,20 @@ export const DESK_BOOK_PLACEHOLDERS = new Set([
   'tbd',
 ]);
 
+/**
+ * Known desk free-text typos / compact spellings → registry id.
+ * Keys are lowercased. Only map strings that already resolve to a published
+ * catalog id — never invent Orange777 (or any book without domain SSOT).
+ */
+export const DESK_BOOK_ALIASES: Record<string, string> = {
+  'hardrock florida': 'hard-rock-florida',
+  'hard rock bet florida': 'hard-rock-florida',
+  'hardrockbet florida': 'hard-rock-florida',
+  parlay21: 'parlay21-com',
+  'lonestar wagering': 'lonestarwagering-com',
+  'lone star wagering': 'lonestarwagering-com',
+};
+
 export type DeskBookClass = 'matched' | 'placeholder' | 'unmatched';
 
 export interface DeskBookHit {
@@ -82,6 +96,10 @@ export function matchDeskBookToRegistry(
   const q = deskBook.trim().toLowerCase();
   if (!q) return undefined;
   if (DESK_BOOK_PLACEHOLDERS.has(q)) return undefined;
+
+  // known typos / compact labels (never Orange777 — no domain SSOT)
+  const aliasId = DESK_BOOK_ALIASES[q];
+  if (aliasId && registry[aliasId]) return registry[aliasId]!.id;
 
   // exact id / slug
   if (registry[q]) return registry[q]!.id;
@@ -146,8 +164,7 @@ export function buildDeskCoverageReport(
   )) {
     const { class: cls, registryId } = classifyDeskBook(deskBook, registry);
     if (registryId) usedIds.add(registryId);
-    const maxBetUsd =
-      maxBets.length > 0 ? Math.max(...maxBets) : undefined;
+    const maxBetUsd = maxBets.length > 0 ? Math.max(...maxBets) : undefined;
     hits.push({
       deskBook,
       class: cls,
@@ -176,7 +193,10 @@ export function buildDeskCoverageReport(
 
 /** Apply desk-observed maxBetUsd onto public catalog limits when missing. */
 export function applyDeskMaxBetsToCatalog(
-  bookmakers: Record<string, { limits?: { maxBetUsd?: number | null; [k: string]: unknown }; [k: string]: unknown }>,
+  bookmakers: Record<
+    string,
+    { limits?: { maxBetUsd?: number | null; [k: string]: unknown }; [k: string]: unknown }
+  >,
   report: DeskCoverageReport
 ): number {
   let applied = 0;

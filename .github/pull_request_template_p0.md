@@ -1,9 +1,19 @@
 # [P0] Pull Request Template
 
-## 🚨 Priority: P0 (Production Blocker)
+For non-P0 work use the default template:
+[`.github/pull_request_template.md`](./pull_request_template.md)
+(includes **Claim → evidence** — required by `bun scripts/check-pr-claim.ts`).
 
-## 📋 Issue Reference
+## Priority: P0 (Production Blocker)
+
+## Issue reference
 Fixes #<!-- issue number -->
+
+## Claim → evidence (required)
+
+| Claim (one sentence) | Kind (`unit` / `boundary` / `journey` / `deployed`) | Evidence |
+|----------------------|-----------------------------------------------------|----------|
+| | | |
 
 ## 🔒 Security Impact
 <!-- For security fixes -->

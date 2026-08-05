@@ -5,6 +5,7 @@ import {
   buildDeskCoverageReport,
   classifyDeskBook,
   collectDeskBooks,
+  DESK_BOOK_ALIASES,
   matchDeskBookToRegistry,
 } from '../lib/bookmakers/desk-coverage.ts';
 import { loadBookmakerRegistry } from '../lib/bookmakers/resolve.ts';
@@ -18,6 +19,15 @@ describe('bookmakers desk coverage', () => {
     expect(matchDeskBookToRegistry('Hard Rock Florida', reg)).toBe('hard-rock-florida');
     expect(matchDeskBookToRegistry('action92.com', reg)).toBe('action92-com');
     expect(classifyDeskBook('Orange777', reg).class).toBe('unmatched');
+  });
+
+  test('DESK_BOOK_ALIASES maps known typos only (not Orange777)', async () => {
+    const reg = await loadBookmakerRegistry();
+    expect(DESK_BOOK_ALIASES['orange777']).toBeUndefined();
+    expect(DESK_BOOK_ALIASES['orange-777']).toBeUndefined();
+    expect(matchDeskBookToRegistry('hardrock florida', reg)).toBe('hard-rock-florida');
+    expect(matchDeskBookToRegistry('parlay21', reg)).toBe('parlay21-com');
+    expect(matchDeskBookToRegistry('Orange777', reg)).toBeUndefined();
   });
 
   test('report against committed seat desk + registry', async () => {
