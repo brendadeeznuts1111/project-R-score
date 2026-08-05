@@ -7,7 +7,9 @@ import {
   actionHint,
   buildDependencyGraphModel,
   edgesForPackage,
+  filterPackageRows,
   formatLoadError,
+  formatRelativeAge,
   gradeFromScore,
   graphFocusSet,
   isKeyboardActivationKey,
@@ -15,7 +17,9 @@ import {
   normalizePublishPlaneRow,
   renderDependencyGraphSvg,
   renderPageRegistrySvg,
+  renderPublishPlaneCards,
   renderPublishPlaneTable,
+  sortPackageRows,
   summarizePackageRoles,
   applyTableFilters,
   matchCapabilityRows,
@@ -35,13 +39,33 @@ describe('packages-board failure paths', () => {
     const html = await Bun.file('public/portal/packages/index.html').text();
     expect(html).toContain('id="publish-plane-panel"');
     expect(html).toContain('id="publish-plane-body"');
+    expect(html).toContain('id="publish-plane-kpis"');
+    expect(html).toContain('id="pkg-search"');
+    expect(html).toContain('id="pkg-role-mix"');
+    expect(html).toContain('id="board-grade-pill"');
     expect(html).toContain('artifactName');
     expect(html).toContain('artifactId');
     const js = await Bun.file('public/portal/packages/packages-board.js').text();
     expect(js).toContain('loadPublishPlaneSoftPass');
     expect(js).toContain('renderPublishPlaneTable');
+    expect(js).toContain('renderPublishPlaneCards');
     expect(js).toContain('pending on edge');
     expect(js).toContain('hexByKey');
+  });
+
+  test('formatRelativeAge and package filter/sort helpers', () => {
+    const now = Date.parse('2026-08-05T12:00:00.000Z');
+    expect(formatRelativeAge('2026-08-05T11:30:00.000Z', now)).toBe('30m ago');
+    expect(formatRelativeAge('2026-08-05T10:00:00.000Z', now)).toBe('2h ago');
+    const pkgs = [
+      { name: 'zebra', role: 'dormant', score: 80, bytes: 100 },
+      { name: 'alpha', role: 'consumed', score: 100, bytes: 50 },
+      { name: 'beta', role: 'consumed', score: 90, bytes: 200 },
+    ];
+    expect(filterPackageRows(pkgs, 'cons').map(p => p.name)).toEqual(['alpha', 'beta']);
+    expect(sortPackageRows(pkgs, 'name').map(p => p.name)).toEqual(['alpha', 'beta', 'zebra']);
+    expect(sortPackageRows(pkgs, 'score-desc')[0].name).toBe('alpha');
+    expect(sortPackageRows(pkgs, 'size-desc')[0].name).toBe('beta');
   });
 
   test('normalizePublishPlaneRow keeps name and id distinct', () => {
@@ -70,6 +94,10 @@ describe('packages-board failure paths', () => {
     expect(row.status).toBe('pass');
     expect(renderPublishPlaneTable([row])).toContain('artifactName');
     expect(renderPublishPlaneTable([row])).toContain('data-artifact-id="ssot-flow-soft"');
+    const cards = renderPublishPlaneCards([row]);
+    expect(cards).toContain('publish-kpi-card');
+    expect(cards).toContain('data-artifact-id="ssot-flow-soft"');
+    expect(cards).toContain('@tennis-hq/ssot');
   });
 
   test('publish-plane row surfaces color kernel keys', () => {

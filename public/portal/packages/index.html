@@ -103,6 +103,106 @@
       display: inline-block; width: 10px; height: 10px; border-radius: 2px;
       margin-inline-end: 6px; vertical-align: middle; border: 1px solid var(--border);
     }
+    /* —— enhancement: hero, soft-pass cards, role mix, table tools —— */
+    .pkg-hero-top {
+      display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: flex-start;
+      justify-content: space-between; margin-bottom: 8px;
+    }
+    .pkg-hero-top h2 { margin: 0; }
+    .pkg-grade-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border);
+      background: var(--surface); font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
+    }
+    .pkg-grade-pill .pill-score { font-family: ui-monospace, monospace; font-size: 15px; }
+    .pkg-grade-pill.grade-healthy { border-color: color-mix(in srgb, var(--green, #3dd68c) 45%, var(--border)); }
+    .pkg-grade-pill.grade-needs-improvement { border-color: color-mix(in srgb, var(--yellow, #e6b84d) 45%, var(--border)); }
+    .pkg-grade-pill.grade-critical { border-color: color-mix(in srgb, var(--red, #f07178) 45%, var(--border)); }
+    .pkg-quick-links {
+      display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 4px;
+    }
+    .pkg-quick-links a {
+      font-size: 12px; padding: 5px 10px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text); text-decoration: none;
+    }
+    .pkg-quick-links a:hover { border-color: var(--accent); color: var(--accent); }
+    .pkg-quick-links a.external::after { content: " ↗"; opacity: 0.55; font-size: 10px; }
+    .stat-card .stat-sub {
+      margin-top: 6px; font-size: 11px; color: var(--text-dim); line-height: 1.35;
+    }
+    .pkg-role-mix {
+      margin: 0 0 20px; padding: 12px 14px; border: 1px solid var(--border);
+      border-radius: var(--radius); background: var(--surface);
+    }
+    .pkg-role-mix-head {
+      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px;
+      font-size: 12px; color: var(--text-dim); margin-bottom: 8px;
+    }
+    .pkg-role-mix-track {
+      display: flex; height: 10px; border-radius: 999px; overflow: hidden;
+      background: color-mix(in srgb, var(--border) 60%, transparent);
+    }
+    .pkg-role-mix-track span { display: block; height: 100%; min-width: 0; }
+    .pkg-role-mix-track .mix-consumed { background: var(--green, #3dd68c); }
+    .pkg-role-mix-track .mix-dormant { background: var(--yellow, #e6b84d); }
+    .pkg-role-mix-track .mix-root-tooling { background: var(--text-dim); }
+    .pkg-role-mix-track .mix-scripted { background: var(--accent, #58a6ff); }
+    .pkg-role-mix-track .mix-other { background: color-mix(in srgb, var(--text-dim) 50%, var(--border)); }
+    .pkg-role-mix-legend {
+      display: flex; flex-wrap: wrap; gap: 10px 14px; margin-top: 8px;
+      font-size: 11px; color: var(--text-dim);
+    }
+    .pkg-role-mix-legend i {
+      display: inline-block; width: 8px; height: 8px; border-radius: 2px;
+      margin-inline-end: 5px; vertical-align: middle;
+    }
+    .publish-kpis {
+      display: grid; grid-template-columns: 1fr; gap: 10px; margin: 12px 0 14px;
+    }
+    @media (min-width: 720px) {
+      .publish-kpis { grid-template-columns: 1fr 1fr; }
+    }
+    .publish-kpi-card {
+      border: 1px solid var(--border); border-radius: var(--radius);
+      background: color-mix(in srgb, var(--bg, #0d1117) 70%, var(--surface));
+      padding: 12px 14px; display: grid; gap: 6px;
+    }
+    .publish-kpi-card[data-status="pass"] {
+      border-color: color-mix(in srgb, var(--green, #3dd68c) 40%, var(--border));
+    }
+    .publish-kpi-card[data-status="fail"] {
+      border-color: color-mix(in srgb, var(--red, #f07178) 40%, var(--border));
+    }
+    .publish-kpi-card .kpi-title {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px;
+      font-size: 13px; font-weight: 600;
+    }
+    .publish-kpi-card .kpi-meta { font-size: 11px; color: var(--text-dim); line-height: 1.4; }
+    .publish-kpi-card .kpi-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+    .pkg-table-tools {
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+      margin: 18px 0 10px; justify-content: space-between;
+    }
+    .pkg-table-tools .tools-left,
+    .pkg-table-tools .tools-right { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .pkg-table-tools input[type="search"],
+    .pkg-table-tools select {
+      font: inherit; font-size: 12px; padding: 6px 10px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--surface); color: var(--text);
+      min-height: 34px;
+    }
+    .pkg-table-tools input[type="search"] { min-width: min(100%, 220px); }
+    .pkg-table-tools input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; }
+    #pkg-table-count { font-size: 12px; color: var(--text-dim); }
+    .pkg-section-head {
+      display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+      gap: 8px; margin-top: 8px;
+    }
+    .pkg-section-head h3 { margin: 0; }
+    @media (prefers-reduced-motion: reduce) {
+      tr.pkg-row-flash td { transition: none; }
+    }
   </style>
 </head>
 <body>
@@ -160,17 +260,38 @@
 
   <main class="main pkg-board">
     <section class="hero">
-      <h2>Packages graph map</h2>
-      <p class="hero-sub">Multi-surface · page→registry · lib hubs · orphan triage (schema v13 · surfaces v3)</p>
+      <div class="pkg-hero-top">
+        <div>
+          <h2>Packages graph map</h2>
+          <p class="hero-sub">Multi-surface · page→registry · lib hubs · orphan triage (schema v13 · surfaces v3)</p>
+        </div>
+        <div id="board-grade-pill" class="pkg-grade-pill" aria-live="polite">
+          <span class="pill-score" id="pill-score">—</span>
+          <span id="pill-grade">loading</span>
+        </div>
+      </div>
       <p class="meta" id="gen-meta">Loading…</p>
       <p class="meta" id="package-info-meta">Related package-info…</p>
+      <nav class="pkg-quick-links" aria-label="Related surfaces">
+        <a href="/portal/tennis/" title="Tennis tenant board">Tennis board</a>
+        <a class="external" href="https://tennis.factory-wager.com" target="_blank" rel="noopener noreferrer" title="Market Desk Worker">Tennis HQ runtime</a>
+        <a href="/portal/" title="Registry index">Registry</a>
+        <a href="/portal/env/" title="Vault map / env inject">Env / vault</a>
+        <a href="/registry/packages-graph-map.json" target="_blank" rel="noopener">graph JSON</a>
+        <a href="/registry/ssot-flow-soft.json" target="_blank" rel="noopener">ssot soft-pass</a>
+        <a href="/registry/pm-proof.json" target="_blank" rel="noopener">pm-proof</a>
+      </nav>
     </section>
 
     <section class="pkg-dep-panel" id="publish-plane-panel" aria-label="Publish plane soft-pass">
-      <h3>Publish plane · soft-pass</h3>
+      <div class="pkg-section-head">
+        <h3>Publish plane · soft-pass</h3>
+        <p class="meta" id="publish-plane-age">—</p>
+      </div>
       <p class="meta">
         <code>artifactName</code> (display) · <code>artifactId</code> (key) · offline pack / fail-soft probes — not Soft accounting
       </p>
+      <div id="publish-plane-kpis" class="publish-kpis" aria-live="polite"></div>
       <div id="publish-plane-body"><p class="pkg-empty">Loading soft-pass proofs…</p></div>
       <p class="meta" id="ssot-soft-meta" hidden></p>
       <p class="meta" id="pm-proof-meta" hidden></p>
@@ -179,12 +300,20 @@
     <div id="pkg-error-banner" class="ops-banner error hidden" role="alert"></div>
 
     <div class="stats-row" id="pkg-summary-cards" aria-label="Packages summary">
-      <div class="stat-card"><div class="stat-num" id="s-score">—</div><div class="stat-label">board score</div></div>
-      <div class="stat-card"><div class="stat-num" id="s-avg">—</div><div class="stat-label">avg package score</div></div>
-      <div class="stat-card"><div class="stat-num" id="s-actions">—</div><div class="stat-label">open actions</div></div>
-      <div class="stat-card"><div class="stat-num" id="s-consumed">—</div><div class="stat-label">consumed</div></div>
-      <div class="stat-card"><div class="stat-num" id="s-dormant">—</div><div class="stat-label">dormant</div></div>
-      <div class="stat-card"><div class="stat-num" id="s-pkg-count">—</div><div class="stat-label">packages</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-score">—</div><div class="stat-label">board score</div><div class="stat-sub" id="s-score-sub">schema · bake age</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-avg">—</div><div class="stat-label">avg package score</div><div class="stat-sub" id="s-avg-sub">across packages/*</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-actions">—</div><div class="stat-label">open actions</div><div class="stat-sub" id="s-actions-sub">archive / coupling</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-consumed">—</div><div class="stat-label">consumed</div><div class="stat-sub">imported outside packages/</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-dormant">—</div><div class="stat-label">dormant</div><div class="stat-sub">no outside consumers</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-pkg-count">—</div><div class="stat-label">packages</div><div class="stat-sub" id="s-pkg-sub">workspace graph plane</div></div>
+    </div>
+    <div class="pkg-role-mix" id="pkg-role-mix" aria-label="Role mix" hidden>
+      <div class="pkg-role-mix-head">
+        <span>Role mix</span>
+        <span id="pkg-role-mix-label">—</span>
+      </div>
+      <div class="pkg-role-mix-track" id="pkg-role-mix-track"></div>
+      <div class="pkg-role-mix-legend" id="pkg-role-mix-legend"></div>
     </div>
     <p class="meta" id="pkg-summary-meta">Loading summary…</p>
     <p class="meta" id="pkg-orphan-alert" hidden></p>
@@ -246,6 +375,23 @@
       <ul id="orphan-triage-list"><li>Loading…</li></ul>
     </section>
 
+    <div class="pkg-table-tools" aria-label="Package table tools">
+      <div class="tools-left">
+        <label class="meta" for="pkg-search">Search</label>
+        <input type="search" id="pkg-search" name="pkg-search" placeholder="name or role…" autocomplete="off" aria-label="Filter packages by name or role" />
+        <label class="meta" for="pkg-sort">Sort</label>
+        <select id="pkg-sort" aria-label="Sort packages">
+          <option value="name">name</option>
+          <option value="score-desc" selected>score ↓</option>
+          <option value="score-asc">score ↑</option>
+          <option value="role">role</option>
+          <option value="size-desc">size ↓</option>
+        </select>
+      </div>
+      <div class="tools-right">
+        <span id="pkg-table-count" aria-live="polite">—</span>
+      </div>
+    </div>
     <table class="pkg-table" aria-label="Package coupling">
       <thead>
         <tr><th>Package</th><th>Role</th><th>Score</th><th>Orphans</th><th>KiB</th></tr>
