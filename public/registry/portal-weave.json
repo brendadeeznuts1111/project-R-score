@@ -2,11 +2,11 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-08-05T09:04:25.294Z",
+  "generated": "2026-08-05T09:11:01.860Z",
   "summary": {
     "surfaces": 32,
     "artifacts": 41,
-    "components": 20,
+    "components": 21,
     "wiki": 6,
     "scripts": 45
   },
@@ -636,9 +636,15 @@
       "kind": "module"
     },
     {
+      "id": "domain-lanes",
+      "path": "/portal/components/domain-lanes.js",
+      "role": "domain lane chips · partner desk filter from portal-chrome domainLanes",
+      "kind": "module"
+    },
+    {
       "id": "topbar",
       "path": "/portal/topbar.js",
-      "role": "health dot · nav current · sidebar bootstrap · nav badges",
+      "role": "health dot · nav current · sidebar bootstrap · nav badges · domain lanes",
       "kind": "module"
     },
     {

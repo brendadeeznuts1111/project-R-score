@@ -12,6 +12,7 @@ import {
 import { markCurrentNavigation } from './navigation.js';
 import { bootstrapNavBadges } from './nav-badges.js';
 import { bootGlossaryUx } from './components/glossary-ux.js';
+import { bootstrapDomainLanes } from './components/domain-lanes.js';
 import './components/notification.js';
 
 let pendingHealthRaf = 0;
@@ -187,6 +188,7 @@ function onReady() {
   bootstrapSidebar();
   bootstrapNavOverflow();
   bootstrapNavBadges();
+  bootstrapDomainLanes();
   void bootstrapGlossarySurface();
 }
 

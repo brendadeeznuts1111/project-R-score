@@ -78,16 +78,34 @@ describe('portal-chrome-catalog', () => {
     expect(html).toContain('nav-overflow');
     expect(html).toContain('nav-group-label');
     expect(html).toContain('aria-label="Registry"');
-    expect(html).toContain('aria-label="Ops"');
+    expect(html).toContain('aria-label="Ops · domain"');
     expect(html).toContain('data-registry=');
   });
 
-  test('overflow menu groups registry before ops', () => {
+  test('overflow menu groups ops (domain) before registry', () => {
     const groups = groupOverflowNav();
     const labels = groups.map(g => g.group);
-    expect(labels.indexOf('registry')).toBeLessThan(labels.indexOf('ops'));
+    expect(labels.indexOf('ops')).toBeLessThan(labels.indexOf('registry'));
     expect(groups.some(g => g.group === 'secrets')).toBe(true);
-    expect(groups.find(g => g.group === 'ops')?.items.some(i => i.id === 'tennis')).toBe(true);
+    const opsItems = groups.find(g => g.group === 'ops')?.items.map(i => i.id) ?? [];
+    expect(opsItems.indexOf('partners')).toBeLessThan(opsItems.indexOf('tennis'));
+    expect(opsItems.indexOf('partners')).toBeLessThan(opsItems.indexOf('dashboard'));
+    expect(opsItems).toContain('tennis');
+  });
+
+  test('domain lanes list partner desk boards first', () => {
+    const c = buildPortalChromeCatalog('t');
+    expect(c.domainLanes[0]?.id).toBe('partner');
+    expect(c.domainLanes[0]?.boardIds).toContain('partners');
+    expect(c.domainLanes[0]?.boardIds).toContain('limits');
+    expect(c.summary.domainLanes).toBe(c.domainLanes.length);
+    expect(c.related.partnersOps).toBe('/registry/partners-ops.json');
+    expect(c.related.limitRaises).toBe('/registry/limit-raises.json');
+    const partners = PORTAL_OVERFLOW_NAV.find(n => n.id === 'partners');
+    expect(partners?.domain).toBe('partner');
+    expect(partners?.registryArtifact).toBe('/registry/partners-ops.json');
+    expect(renderPriorityNavHtml()).toContain('data-domain="partner"');
+    expect(renderPriorityNavHtml()).toContain('aria-label="Ops · domain"');
   });
 
   test('board coverage includes every public portal board', () => {
