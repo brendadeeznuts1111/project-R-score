@@ -6,7 +6,7 @@
 |-------|-------|
 | id | `kalshi-repo-richardfeynmanenthusiast-kalshi-polymarket-arbitrage-bot` |
 | kind | `AuditFinding` |
-| status | `open` |
+| status | `confirmed` |
 | publishedAt | 2026-07-22 |
 | since | _unknown_ |
 | discoveredIn | 2026-07-22T06-19-51-053Z |
@@ -15,7 +15,7 @@
 
 ## Description
 
-Quality score 69.5/100. Strategy: market_making, arb, news_event. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox.  Watchlist tier — below high-value export threshold; verify before lift.
+Quality score 69.5/100. Strategy: market_making, arb, news_event. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox. Watchlist tier — below high-value export threshold; verify before lift. Triaged 2026-08-05 audit-gap batch: confirmed as watchlist arb/market_making diversity row; re-score before any module lift.
 
 ## Evidence
 

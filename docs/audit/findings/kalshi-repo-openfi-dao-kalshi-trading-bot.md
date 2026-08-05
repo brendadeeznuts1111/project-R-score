@@ -6,7 +6,7 @@
 |-------|-------|
 | id | `kalshi-repo-openfi-dao-kalshi-trading-bot` |
 | kind | `AuditFinding` |
-| status | `open` |
+| status | `confirmed` |
 | publishedAt | 2026-07-22 |
 | since | _unknown_ |
 | discoveredIn | 2026-07-22T05-50-48-875Z |
@@ -15,7 +15,7 @@
 
 ## Description
 
-Quality score 67.5/100. Strategy: news_event, llm_ensemble. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox.  Watchlist tier — below high-value export threshold; verify before lift.
+Quality score 67.5/100. Strategy: news_event, llm_ensemble. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox. Watchlist tier — below high-value export threshold; verify before lift. Triaged 2026-08-05 audit-gap batch: confirmed as watchlist (not high-value export); keep under kalshi-shortlist-diversity until re-score.
 
 ## Evidence
 
