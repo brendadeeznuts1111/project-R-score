@@ -72,9 +72,49 @@ describe('mergeBookmakersWithOps', () => {
 
     const pin = merged.health.find(h => h.id === 'pinnacle');
     expect(pin?.liquidityTier).toBe('high');
-    expect(pin?.status).toBe('active'); // no outs → catalog active
+    expect(pin?.status).toBe('deferred'); // catalog presence is not health evidence
 
     const id = resolvePartnerForHost(merged.hostIndex, 'hardrock.bet');
     expect(id).toBe('hard-rock-florida');
+  });
+
+  test('keeps liquidity separate from readiness status', () => {
+    const lowLiquidityBook = {
+      id: 'low-book',
+      slug: 'low-book',
+      label: 'Low Book',
+      urls: { web: 'https://low.example', api: null },
+      fetcher: 'seat',
+      sports: ['basketball'],
+      limits: { liquidityTier: 'low', maxBetUsd: 100, minBetUsd: null },
+    } as BookmakerRegistryEntry;
+
+    const merged = mergeBookmakersWithOps(
+      { 'low-book': lowLiquidityBook },
+      {
+        partners: [
+          {
+            code: 'LOW',
+            outs: [{ status: 'ready', book: { slug: 'low-book' } }],
+          },
+        ],
+      },
+      { now: '2026-08-05T12:00:00.000Z' },
+    );
+
+    expect(merged.health[0]?.liquidityTier).toBe('low');
+    expect(merged.health[0]?.balance).toBeNull();
+    expect(merged.health[0]?.status).toBe('active');
+  });
+
+  test('marks every catalog row deferred when the ops overlay is unavailable', () => {
+    const merged = mergeBookmakersWithOps(
+      sampleBooks,
+      null,
+      { now: '2026-08-05T12:00:00.000Z' },
+    );
+
+    expect(merged.health.every(row => row.status === 'deferred')).toBe(true);
+    expect(merged.source.partnersOps).toBeNull();
   });
 });
