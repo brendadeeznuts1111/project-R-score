@@ -13,6 +13,7 @@ Local dev vs Cloudflare Pages — how URLs reach code and static files.
 | **Wiki** (docs hub) | `wiki.factory-wager.com` | GitHub Pages from repo root (`README.md`, `wiki-index.md`, `docs/`, `AGENTS.md`) — **not** Cloudflare Pages |
 | Portal + registry proofs | `project-r-score.pages.dev`, `score.factory-wager.com` | `public/` + `functions/` |
 | npm/R2 registry | `registry.factory-wager.com` | Pages Functions + R2 binding `REGISTRY_BUCKET` (`wrangler.toml`, `functions/api/registry/[[path]].ts`) — no separate registry Worker |
+| Tennis HQ runtime | `tennis.factory-wager.com` | Operator-owned Cloudflare Worker `tennis-hq` from the separate Tennis producer repository. Public shell, `/api/version`, and `/api/glossary`; `/api/v1/*` is bearer-authenticated and fails closed. |
 | Reasonix UI | `reasonix.factory-wager.com` | **Not installed** — tunnel config `scripts/cloudflared-reasonix.yml` exists in-repo but no `~/.cloudflared/config.yml` / credentials on this machine; hostname does not resolve. Inventory: `docs/harness/tenants/tunnel-inventory.md` |
 | Local dev | `http://127.0.0.1:<port>` | `serve-public.ts` + `functions-bun-only/` |
 
@@ -44,6 +45,12 @@ Edge-safe only (no `bun:sqlite`). Key handlers:
 Partner limits live path (local): `scripts/serve-public.ts` → [`limit-raise-agent-api.ts`](../lib/operations/limit-raise-agent-api.ts) against `operations.db`. Tenant: [`harness/tenants/partner-limits.md`](harness/tenants/partner-limits.md).
 
 Full inventory: [`docs/harness/tenants/cloudflare-pages.md`](harness/tenants/cloudflare-pages.md).
+
+Tennis HQ routes are not implemented by this repository's Pages Functions.
+Project R owns the hostname inventory, cross-host probes, registry contracts,
+and consumer evidence; the producer repository owns the Worker runtime and its
+strict deployment verification. See
+[`tennis-hq-registry.md`](harness/tenants/tennis-hq-registry.md).
 
 ### 3. Local-only (`functions-bun-only/` + `serve-public.ts` fetch)
 

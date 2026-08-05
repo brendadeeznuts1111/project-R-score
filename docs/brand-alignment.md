@@ -6,12 +6,13 @@
 
 ## Domain Structure
 
-Verified live (dig + curl 2026-07-28 — status in parentheses; `terminal` CNAME removal re-checked 2026-07-29):
+Verified live (dig + curl 2026-08-04 — status in parentheses; `terminal` CNAME removal re-checked 2026-07-29):
 ```
 factory-wager.com          → Pages (project-r-score, apex)
   www.factory-wager.com    → Pages (same as apex)
   score.factory-wager.com  → Pages (portal + proofs; /portal behind Access since 2026-07-28 — 302 → login)
   registry.factory-wager.com → Pages (/api/registry/* → R2, read-only allowlist)
+  tennis.factory-wager.com → Cloudflare Worker tennis-hq (public shell/identity; bearer-authenticated /api/v1/*)
   wiki.factory-wager.com   → GitHub Pages (docs hub, proxied via Cloudflare)
   ledger.factory-wager.com → cloudflared tunnel → this Mac :3000 · Cloudflare Access APPLIED (302 → login)
 ```

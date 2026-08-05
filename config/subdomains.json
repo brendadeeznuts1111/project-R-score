@@ -14,6 +14,15 @@
       "checks": ["/health", "/api/registry/health"]
     },
     {
+      "name": "tennis",
+      "domain": "tennis.factory-wager.com",
+      "checks": [
+        { "path": "/api/version", "expect": "json" },
+        { "path": "/api/glossary", "expect": "json" },
+        { "path": "/api/v1/marketdata/desk", "expect": "fail-closed" }
+      ]
+    },
+    {
       "name": "pages_dev",
       "domain": "project-r-score.pages.dev",
       "checks": ["/health", "/registry/portal-weave.json"]

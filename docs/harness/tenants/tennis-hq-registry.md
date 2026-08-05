@@ -44,6 +44,7 @@ consumer evidence.
 | Worker version | `9aaae6ba-7293-4cda-b2ab-41cd068a76ca` |
 | Verified | 2026-08-04 · identity, shell, glossary, fail-closed v1 auth |
 | Inventory | `config/surfaces.toml` → `/registry/surfaces-state.json` |
+| Cross-host probe | `bun run verify:weave -- --subdomains` → version, glossary, fail-closed v1 read |
 
 Producer service auth is a distinct boundary from FactoryWager registry auth.
 `FACTORY_WAGER_TOKEN` is not sent to Tennis HQ. The producer accepts its own
