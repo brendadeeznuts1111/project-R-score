@@ -233,7 +233,15 @@ interior, path/name allowlists, suppressions.
   → squash-merge (`gh pr merge --squash --delete-branch`) → sync local:
   `git sync-main` (alias `!git fetch origin main && git reset --soft origin/main`
   — `git pull --ff-only` fails after a squash by design, and the trees are
-  content-identical so `--soft` loses nothing). Recommended conflict ergonomics:
+  content-identical so `--soft` loses nothing). **`git sync-main` gotcha:**
+  `--soft` moves `HEAD` only — index and working tree keep the pre-merge
+  content, so the just-merged files show as staged afterwards. They are
+  byte-identical to the new `HEAD`; clear the staged state with the targeted,
+  hook-safe pattern per file — `git show origin/main:<path> > <path> && git
+  add <path>` — **not** `git reset --hard` (blocked by the repo's
+  `block_destructive_git.sh` in the primary checkout) and **not**
+  `git restore --staged .` (would unstage another lane's staged files in the
+  shared primary). Recommended conflict ergonomics:
   `git config --global merge.conflictstyle zdiff3` (base + ours + theirs makes
   timestamp-only conflicts in generated artifacts obvious).
 - **Root-dir hygiene:** untracked root-level dirs that are not part of the
