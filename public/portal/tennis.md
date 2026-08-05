@@ -62,19 +62,23 @@ curl -fsS -H "Authorization: Bearer $PARTNER_API_TOKEN" \
 
 ## 3. Versioned v1 contracts (bearer)
 
-From `@tennis-hq/ssot` transport manifest (Factory consumes the packed artifact):
+From `@tennis-hq/ssot` transport manifest (Factory consumes the packed artifact).
+**Live tip `41c9ab6` implements only research** — other v1 paths return the SPA
+shell (**404**). Unauth research → **401** when `PARTNER_API_TOKEN` is set.
+Producer git tip `0f7b6d9` is 3 commits ahead of production (not live until
+Wrangler redeploy).
 
-| Domain | Path | Join to Factory |
-|--------|------|-----------------|
-| marketdata | `GET /api/v1/marketdata/desk` | Desk rows · venue mids · live board bake |
-| research | `GET /api/v1/research/status` | Phase2 / research strip |
-| trading | `GET /api/v1/trading/executions` | Edge may report `edge_storage_unavailable` (no SQLite on Worker) |
-| **partners** | `GET /api/v1/partners/capacity` | Outs capacity · CODE · call-sign → Partners outs inventory |
-| **accounting** | `GET /api/v1/accounting/finance` | Finance phase · ledger · capacity → Accounting / Soft / DOD |
+| Domain | Path | Live tip | Join to Factory |
+|--------|------|----------|-----------------|
+| research | `GET /api/v1/research/status` | **wired** (401 unauth) | Phase2 / research strip |
+| marketdata | `GET /api/v1/marketdata/desk` | SPA 404 | Desk rows · venue mids · live board bake |
+| trading | `GET /api/v1/trading/executions` | SPA 404 | Edge may report `edge_storage_unavailable` |
+| **partners** | `GET /api/v1/partners/capacity` | SPA 404 | Outs capacity · CODE → Partners outs inventory |
+| **accounting** | `GET /api/v1/accounting/finance` | SPA 404 | Finance phase · ledger → Accounting / Soft / DOD |
 
-Live producer (2026-08-05) returns capacity for **ASH · BIL · NOV · SPEN** and
-finance reports with `partner.phase.operator_ready` / onboarding. Factory bakes
-mirror the same codes via `partners-ops.json` + `telegram-handshake.json`.
+Partner CODE inventory (**ASH · BIL · NOV · SPEN**) and finance phase labels
+still live in Factory bakes (`partners-ops.json` + `telegram-handshake.json`)
+even while the Worker v1 partners/accounting routes are not yet wired.
 
 Deep links on Partners board:
 
