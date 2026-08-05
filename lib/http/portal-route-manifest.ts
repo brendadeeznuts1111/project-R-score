@@ -90,6 +90,8 @@ export const PORTAL_MARKDOWN_SLUGS = [
   'compliance',
   'limits',
   'partners',
+  'factory',
+  'telegram',
   'health',
   'env',
   'skills',

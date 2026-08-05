@@ -21,7 +21,7 @@ Product domains on chrome (partner desk first). Full machine map:
 
 | Lane | Boards (entry) | Focus |
 |------|----------------|-------|
-| **Partner** | [Partners](./partners/) · [Account](./account/) · [Limits](./limits/) · [Bookmakers](./bookmakers/) · [Factory](./factory/) | Package groups, outs, limit raises, seat capital, handshake |
+| **Partner** | [Partners](./partners/) · [Account](./account/) · [Limits](./limits/) · [Bookmakers](./bookmakers/) · [Factory](./factory/) · [Telegram](./telegram.md) | Package groups, outs, Telegram chats (plays · balances · bets · accounting), handshake |
 | **Trading** | [Tennis](./tennis/) · prediction report | Tennis HQ desk · agent-auth · live metrics |
 | **Control** | [Ops](./ops/) · [TOC](./toc/) · [Dashboard](./dashboard/) · [Compliance](./compliance/) · [Monitoring](./monitoring.md) | ops-summary pulse, loop, MA/NJ |
 | **Identity** | [Identity](./identity/) · [Vault](./vault/) · [Env](./env/) | Auth · Proton · inject map |
@@ -41,9 +41,9 @@ Product domains on chrome (partner desk first). Full machine map:
 | Doctor | [`/portal/doctor/`](./doctor/) | [`doctor-state.json`](../registry/doctor-state.json) |
 | Tennis | [`/portal/tennis/`](./tennis/) | [`tennis/agent-auth.json`](../registry/tennis/agent-auth.json) |
 
-Markdown companions (when present): `ops.md` · `partners.md` · `packages.md` ·
-`limits.md` · `compliance.md` · `brands.md` · `glossary.md` · `health.md` ·
-`tennis.md` · `tools.md` · `toc.md` · `factory.md`.
+Markdown companions (when present): `ops.md` · `partners.md` · `telegram.md` ·
+`factory.md` · `packages.md` · `limits.md` · `compliance.md` · `brands.md` ·
+`glossary.md` · `health.md` · `tennis.md` · `tools.md` · `toc.md`.
 
 ## Registry artifacts (operator)
 
@@ -54,7 +54,8 @@ Markdown companions (when present): `ops.md` · `partners.md` · `packages.md` �
 | [`ops-summary.json`](../registry/ops-summary.json) | Day-loop rollup (handshake · seat · loop · TOC · compliance) |
 | [`partners-ops.json`](../registry/partners-ops.json) | Partner desk v2 (phases · outs · tracking) |
 | [`telegram-handshake.json`](../registry/telegram-handshake.json) | Package-group readiness · invite gaps |
-| [`seat-capital-desk.json`](../registry/seat-capital-desk.json) | Seat FUND · outs · partner messages |
+| [`seat-capital-desk.json`](../registry/seat-capital-desk.json) | Seat FUND · outs · max bet · partner messages |
+| [`soft-accounting-export.json`](../registry/soft-accounting-export.json) | Soft plays · weeks · book types (read-only mirror) |
 | [`domain-glossary.json`](../registry/domain-glossary.json) | Concept glossary (Kalshi cores + Factory overlay) |
 | [`registry.json`](../registry/registry.json) | Package index (R2 snapshot for Pages) |
 
