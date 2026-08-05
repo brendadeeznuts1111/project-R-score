@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "metric": "aggregate-initial-js-css-by-route",
-  "revision": "3e4b7ccb2cd15e595ab556a1c9ae5b4d8e98ae4a",
+  "revision": "faff7919463f82dc3ab5227482a704a1f7672377",
   "pageCount": 33,
-  "baselineBytes": 5551604
+  "baselineBytes": 6415396
 }

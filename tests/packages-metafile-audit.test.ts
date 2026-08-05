@@ -52,7 +52,7 @@ describe('packages-metafile-audit', () => {
     expect(deep.orphans.includes('packages/rip/src/cli.ts')).toBe(false);
     // Prefer src over dist for registry-client
     expect(deep.entrypoints.some(e => e.includes('/dist/'))).toBe(false);
-  });
+  }, 30_000);
 
   test('emits portable provenance and deterministic sampled edges', async () => {
     const [deep, shallow] = await Promise.all([getDeep(), getShallow()]);

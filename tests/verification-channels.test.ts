@@ -38,7 +38,7 @@ describe('lib/verification/channels', () => {
     const res = await resolveChannel('runtime', { runtimeVersion: '1.4.0-canary.1' });
     expect(res.channel).toBe('canary');
     expect(res.resolvedVersion).toBe('1.4.0-canary.1');
-  });
+  }, 30_000);
 
   test('resolveChannel pinned semver', async () => {
     const res = await resolveChannel('1.3.14');

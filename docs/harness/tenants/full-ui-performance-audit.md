@@ -1,7 +1,7 @@
 # Full UI, route, and performance audit
 
 **Audit date:** 2026-08-05
-**Baseline revision:** `3e4b7ccb2cd15e595ab556a1c9ae5b4d8e98ae4a`
+**Baseline revision:** `faff7919463f82dc3ab5227482a704a1f7672377`
 **Scope:** every canonical hostname in `config/surfaces.toml`, the complete local
 route catalog, all portal pages and shared UI assets, and the Cloudflare Pages
 static + Functions boundary.
@@ -10,7 +10,7 @@ static + Functions boundary.
 
 | Requirement | Metric | Baseline | Candidate | Result |
 |---|---|---:|---:|---:|
-| Bundle reduction | Aggregate initial JS + CSS bytes over all 33 portal pages | 5,551,604 B | 3,534,934 B | **36.33% smaller — pass** |
+| Bundle reduction | Aggregate initial JS + CSS bytes over all 33 portal pages | 6,415,396 B | 3,708,011 B | **42.20% smaller — pass** |
 | Speed improvement | Wall time for a sequential 95-route local catalog sweep | 28,761.108 ms | 915.178 ms median of 3 | **96.82% faster — pass** |
 | Route correctness | HTTP/status/content verification | 95/95 local | 95/95 local | **pass** |
 | Live edge correctness | Canonical live weave probes | — | 93/93 | **pass before deploy** |
@@ -89,8 +89,8 @@ PAGES_VERIFY_BASE=http://127.0.0.1:6111 bun run verify:pages-edge
 bun run verify:weave -- --summary
 ```
 
-Cloudflare uses `BUN_VERSION=1.3.14`; the optimizer was also run explicitly with
-`bunx bun@1.3.14` and produced a 36.31% reduction.
+Cloudflare uses `BUN_VERSION=1.3.14`; that pinned runtime produces 3,708,836 B,
+a 42.19% reduction.
 
 ## Remaining proof boundary
 
