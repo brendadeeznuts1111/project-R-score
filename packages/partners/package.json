@@ -1,0 +1,17 @@
+{
+  "name": "@factorywager/partners",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Partner dashboard contracts and semantic-map authority",
+  "exports": {
+    ".": "./src/index.ts",
+    "./dashboard-plan": "./src/dashboard-plan.ts",
+    "./package.json": "./package.json"
+  },
+  "module": "./src/index.ts",
+  "scripts": {
+    "build": "bun run tsc --project ./tsconfig.json",
+    "test": "bun test ../../tests/partners-package.test.ts"
+  }
+}
