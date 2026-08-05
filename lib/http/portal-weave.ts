@@ -161,9 +161,9 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     id: 'brands',
     label: 'Brands',
     href: '/portal/brands/',
-    note: 'domain-value glossary · constructors · project adoption',
+    note: 'Bun×brand relationships · domain-value glossary · constructors · project adoption',
     group: 'registry',
-    cli: 'bun tools/brand-keymap.ts',
+    cli: 'bun tools/brand-keymap.ts && bun run bun:brand-map',
   },
   {
     id: 'glossary',
@@ -455,9 +455,16 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveArtifact[] = [
   },
   // ── shared / cross-cutting state ──
   {
+    label: 'bun-brand-map',
+    href: '/registry/bun-brand-map.json',
+    note: 'Bun capability × brand cross-map · evidence + undeclared ratchet',
+    purpose: 'shared',
+    cli: 'bun run bun:brand-map',
+  },
+  {
     label: 'brand-keymap',
     href: '/registry/brand-keymap.json',
-    note: '57-value catalog · tracked project adoption',
+    note: '67-value catalog · tracked project adoption',
     purpose: 'shared',
   },
   {

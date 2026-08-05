@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/guides/util/version — version / revision
 /**
@@ -9,8 +10,6 @@
  * @see public/portal/components/
  * @see public/portal/nav-badges.js
  */
-import { existsSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
 import { bunRuntimeProvenance } from '../bun-executable.ts';
 import { PORTAL_WIKI_DROPDOWN_HREF } from '../http/wiki-nav.ts';
 
@@ -848,11 +847,11 @@ export function buildDomainLanes(
  */
 export function scanPortalBoardSlugs(portalDir: string): string[] {
   const skip = new Set(['components', 'dist', 'icons', 'scripts']);
-  const names = readdirSync(portalDir, { withFileTypes: true });
   const slugs: string[] = [];
-  for (const ent of names) {
-    if (!ent.isDirectory() || skip.has(ent.name) || ent.name.startsWith('_')) continue;
-    if (existsSync(join(portalDir, ent.name, 'index.html'))) slugs.push(ent.name);
+  for (const rel of new Bun.Glob('*/index.html').scanSync({ cwd: portalDir, onlyFiles: true })) {
+    const name = rel.split('/')[0] ?? '';
+    if (!name || skip.has(name) || name.startsWith('_')) continue;
+    slugs.push(name);
   }
   return slugs.sort();
 }

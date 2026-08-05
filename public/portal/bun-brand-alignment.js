@@ -33,7 +33,24 @@ export function formatBunBrandAlignment(slice) {
           : 'aligned';
   const parts = [`${warnings} warning${warnings === 1 ? '' : 's'}`];
   if (stale) parts.push('proof or source stale');
-  if (errors > 0) parts.push('open the Brands attention view');
+
+  const matched = count(slice.matched);
+  const mapped = count(slice.mappedBrands ?? slice.mapped);
+  const newUndeclared = count(slice.newUndeclared);
+  const hasRich =
+    Number.isInteger(slice.matched) ||
+    Number.isInteger(slice.mappedBrands) ||
+    Number.isInteger(slice.mapped) ||
+    Number.isInteger(slice.newUndeclared);
+  if (hasRich) {
+    parts.push(`${matched} matched`);
+    parts.push(`${mapped} mapped`);
+    parts.push(`${newUndeclared} new undeclared`);
+  }
+
+  if (errors > 0 || warnings > 0 || hardFailure) {
+    parts.push('open /portal/brands/#evidence=observed-undeclared');
+  }
 
   return {
     metric,

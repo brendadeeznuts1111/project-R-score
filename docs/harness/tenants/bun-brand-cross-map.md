@@ -94,8 +94,9 @@ bun run verify:portal:static
 
 The bake order is capability map → brand keymap → Bun/brand cross-map → ops
 snapshot. The ops summary exposes a compact health slice. Legacy warnings remain
-visible in the Brands **Projects** and **attention** views without degrading
-health; hard errors and stale production proof do degrade health.
+visible in the Brands **Projects** view and the Relationships **evidence**
+filter (`observed-undeclared`) without degrading health; hard errors and stale
+production proof do degrade health.
 
 ## Portal behavior
 

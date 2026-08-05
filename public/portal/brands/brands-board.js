@@ -57,11 +57,50 @@ function glossaryLinks(conceptIds) {
   return wrap;
 }
 
-function stat(value, label, attention = false) {
-  const card = document.createElement('div');
-  card.className = `brand-stat${attention ? ' attention' : ''}`;
+/**
+ * @param {string|number} value
+ * @param {string} label
+ * @param {boolean|{ attention?: boolean, attentionStrong?: boolean, onActivate?: () => void }} [attentionOrOptions]
+ */
+function stat(value, label, attentionOrOptions = false) {
+  const options =
+    typeof attentionOrOptions === 'object' && attentionOrOptions
+      ? attentionOrOptions
+      : { attention: Boolean(attentionOrOptions) };
+  const attention = Boolean(options.attention || options.attentionStrong);
+  const onActivate = typeof options.onActivate === 'function' ? options.onActivate : null;
+  const card = document.createElement(onActivate ? 'button' : 'div');
+  card.className = [
+    'brand-stat',
+    attention ? 'attention' : '',
+    options.attentionStrong ? 'attention-strong' : '',
+    onActivate ? 'clickable' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+  if (onActivate) {
+    card.type = 'button';
+    card.addEventListener('click', onActivate);
+  }
   card.append(text('strong', value), text('span', label));
   return card;
+}
+
+/** Brands that appear on bun-brand-map relationships with a non-null brand. */
+export function bunGraphBrandNames(relationships = []) {
+  return new Set(
+    relationships.map(row => row.brand).filter(brand => typeof brand === 'string' && brand)
+  );
+}
+
+function focusEvidence(evidence) {
+  const select = document.getElementById('relationship-evidence');
+  if (select) select.value = evidence;
+  selectedRelationship = null;
+  requestedSelectionId = null;
+  setView('relationships');
+  writeHash({ evidence, selected: '' });
+  renderRelationships();
 }
 
 function unique(values) {
@@ -169,16 +208,41 @@ function populateFilters() {
   for (const project of projects) option(document.getElementById('relationship-project'), project);
 }
 
+function topUndeclaredApis(limit = 3) {
+  const counts = new Map();
+  for (const finding of bunBrandMap?.findings ?? []) {
+    if (finding.kind !== 'observed-undeclared' || !finding.api) continue;
+    counts.set(finding.api, (counts.get(finding.api) ?? 0) + 1);
+  }
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, limit)
+    .map(([api, count]) => `${api} (${count})`);
+}
+
 function renderSummary() {
   const graph = bunBrandMap?.summary ?? {};
+  const mapped = graph.mappedBrands ?? 0;
+  const totalBrands = graph.totalCanonicalBrands ?? graph.brands ?? 0;
+  const matched = graph.matched ?? 0;
+  const observed = graph.observed ?? 0;
+  const baselineUndeclared = graph.baselineUndeclared ?? graph.legacyUndeclared ?? graph.undeclared ?? 0;
+  const newUndeclared = graph.newUndeclared ?? 0;
+  const undeclaredTotal = Number(baselineUndeclared) + Number(newUndeclared);
   const target = document.getElementById('brand-summary');
   target.replaceChildren(
     stat(graph.apis ?? bunBrandMap?.capabilities?.length ?? 0, 'Bun APIs'),
     stat(graph.relationships ?? bunBrandMap?.relationships?.length ?? 0, 'relationships'),
-    stat(graph.wrappers ?? 0, 'wrappers'),
-    stat(graph.projects ?? bunBrandMap?.projects?.length ?? 0, 'tracked projects'),
-    stat(graph.verified ?? 0, 'verified'),
-    stat(graph.attention ?? 0, 'attention', Number(graph.attention ?? 0) > 0)
+    stat(`${mapped}/${totalBrands || '—'}`, 'brands mapped'),
+    stat(`${matched}/${observed || '—'}`, 'matched / observed'),
+    stat(graph.verified ?? 0, 'verified', {
+      onActivate: () => focusEvidence('verified'),
+    }),
+    stat(`${baselineUndeclared}/${newUndeclared}`, 'legacy / new undeclared', {
+      attention: undeclaredTotal > 0,
+      attentionStrong: Number(newUndeclared) > 0,
+      onActivate: () => focusEvidence('observed-undeclared'),
+    })
   );
 }
 
@@ -516,7 +580,12 @@ function brandMatches(brand) {
   const domain = document.getElementById('brand-domain').value;
   const status = document.getElementById('brand-status').value;
   if (domain && brand.domain !== domain) return false;
-  if (status && brand.coverage?.status !== status) return false;
+  if (status === 'unmapped') {
+    const mapped = bunGraphBrandNames(bunBrandMap?.relationships ?? []);
+    if (mapped.has(brand.name)) return false;
+  } else if (status && brand.coverage?.status !== status) {
+    return false;
+  }
   if (!query) return true;
   return [
     brand.name,
@@ -778,8 +847,13 @@ async function bootstrap() {
     .filter(Boolean)
     .sort()
     .at(-1);
+  const summary = bunBrandMap?.summary ?? {};
+  const topApis = topUndeclaredApis(3);
+  const undeclaredNote = topApis.length
+    ? ` · top undeclared: ${topApis.join(', ')}`
+    : '';
   document.getElementById('brand-generated').textContent = generated
-    ? `Latest registry generation ${generated} · ${bunBrandMap?.summary?.matched ?? 0} observed uses matched`
+    ? `Latest registry generation ${generated} · ${summary.matched ?? 0}/${summary.observed ?? 0} matched · ${summary.mappedBrands ?? 0}/${summary.totalCanonicalBrands ?? 0} brands mapped${undeclaredNote}`
     : 'Registry artifacts unavailable; use the raw JSON links to inspect recovery state.';
 }
 
