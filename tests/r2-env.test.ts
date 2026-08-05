@@ -29,16 +29,16 @@ describe('config/r2-env Cloudflare SSOT', () => {
     expect(CLOUDFLARE_DEFAULTS.accountId).toBe('7a470541a704caaf91e71efccc78fd36');
     expect(p.project).toBe('project-r-score');
     expect(p.subdomain).toBe('project-r-score.pages.dev');
-    expect(p.destinationDir).toBe('public');
-    expect(p.buildCommand).toBe('exit 0');
+    expect(p.destinationDir).toBe('tmp/pages-optimized');
+    expect(p.buildCommand).toBe('bun tools/optimize-portal-assets.ts --no-report');
     expect(p.productionBranch).toBe('main');
     expect(p.bunVersion).toBe('1.3.14');
     expect(p.skipDependencyInstall).toBe(true);
 
     expect(CLOUDFLARE_PAGES.url).toBe(`https://${p.subdomain}`);
     expect(cloudflarePagesDesiredBuild()).toEqual({
-      build_command: 'exit 0',
-      destination_dir: 'public',
+      build_command: 'bun tools/optimize-portal-assets.ts --no-report',
+      destination_dir: 'tmp/pages-optimized',
       root_dir: '',
       production_branch: 'main',
     });
@@ -98,7 +98,7 @@ describe('config/r2-env Cloudflare SSOT', () => {
     expect(CLOUDFLARE_ENV_KEYS.identity.join(' ')).not.toContain('CLOUDFLARE_PAGES_');
   });
 
-  test('.env.example + public/index.html are the Pages publish surface', async () => {
+  test('.env.example + public/index.html are the Pages source surface', async () => {
     const text = await Bun.file('.env.example').text();
     expect(text).toContain('BUN_VERSION=1.3.14');
     expect(text).toContain('SKIP_DEPENDENCY_INSTALL=true');

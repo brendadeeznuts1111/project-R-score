@@ -869,10 +869,11 @@ async function complianceBoardApi(req: Request): Promise<Response> {
 /** GET /api/monitoring — registry + ops metrics + API proof (JSON). */
 async function liveMonitoringApi(req: Request): Promise<Response> {
   try {
-    const data = (await getMonitoringData({ source: 'live', uptimeOriginMs: startedAt })) as Record<
-      string,
-      unknown
-    >;
+    const data = (await getMonitoringData({
+      source: 'live',
+      uptimeOriginMs: startedAt,
+      includeInstallCache: false,
+    })) as Record<string, unknown>;
     // Append Bun API proof status
     const proofFile = Bun.file('tools/bun-api-coverage-proof.json');
     if (await proofFile.exists()) {
@@ -1036,7 +1037,11 @@ function limitPredictionsApi(): Response {
 /** GET /monitoring — server-rendered Bun.inspect.table dashboard. */
 async function monitoringPage(): Promise<Response> {
   try {
-    const data = await getMonitoringData({ source: 'live', uptimeOriginMs: startedAt });
+    const data = await getMonitoringData({
+      source: 'live',
+      uptimeOriginMs: startedAt,
+      includeInstallCache: false,
+    });
     return withLiveReload(
       new Response(renderMonitoringHtml(data), {
         headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },

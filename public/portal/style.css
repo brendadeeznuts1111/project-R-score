@@ -84,7 +84,7 @@ body {
   block-size: 20px;
   flex: 0 0 20px;
   border-radius: 5px;
-  background: url("/icons/factory/mark-32.webp") center / contain no-repeat;
+  background: url("../icons/factory/mark-32.webp") center / contain no-repeat;
   color: transparent;
   font-size: 0;
 }
