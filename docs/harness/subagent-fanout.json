@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "kind": "subagent-fanout",
+  "createdAt": "2026-08-05",
+  "policy": {
+    "noD1": true,
+    "edgeDurable": "r2",
+    "tennisAuth": ["PARTNER_API_TOKEN"],
+    "factoryAuth": ["FACTORY_WAGER_TOKEN"]
+  },
+  "liveAnchors": {
+    "tennisVersion": "https://tennis.factory-wager.com/api/version",
+    "expectTipAtLeast": "8f21bf2",
+    "ledgerProbe": "https://tennis.factory-wager.com/api/partners/ledger?partner=ASH&limit=1",
+    "expectLedgerMetaCache": "url"
+  },
+  "waves": [
+    {
+      "id": 0,
+      "parallel": true,
+      "lanes": ["T1", "T2", "P1", "O1", "O4"]
+    },
+    {
+      "id": 1,
+      "parallel": false,
+      "lanes": ["T3", "H1"]
+    },
+    {
+      "id": 2,
+      "parallel": false,
+      "requiresParentApprove": "APPROVE O2+O3 research HTTP",
+      "lanes": ["O2", "O3"]
+    }
+  ],
+  "lanes": [
+    {
+      "id": "T1",
+      "title": "Monorepo tennis tip pin 8f21bf2 + R2-first docs",
+      "repo": "project-R-score",
+      "status": "READY",
+      "branch": "docs/tennis-tip-8f21bf2-r2",
+      "ownerGlobs": [
+        "docs/harness/tenants/tennis-hq-ui-audit.md",
+        "docs/harness/tenants/tennis-hq-registry.md",
+        "public/portal/tennis.md",
+        "config/surfaces.toml",
+        "public/registry/surfaces-state.json"
+      ],
+      "verify": [
+        "curl -fsS https://tennis.factory-wager.com/api/version",
+        "bun run surfaces:bake"
+      ],
+      "spawnPrompt": "Lane T1 only. Monorepo worktree from origin/main, branch docs/tennis-tip-8f21bf2-r2. Re-probe tennis.factory-wager.com /api/version and partners/ledger?partner=ASH + partners/executions. Update tennis-hq-ui-audit.md, tennis-hq-registry.md, public/portal/tennis.md, config/surfaces.toml note to tip SHA 8f21bf2 and live Worker deploymentId; state R2-first cache (meta.cache=url). Run bun run surfaces:bake. Commit pathspec only those files + surfaces-state.json. Open PR, squash-merge. Do not touch producer. No D1 wording."
+    },
+    {
+      "id": "T2",
+      "title": "Strip D1 residual prose → R2-only policy",
+      "repo": "project-R-score",
+      "status": "READY",
+      "dependsOn": [],
+      "mergeWith": "T1",
+      "ownerGlobs": [
+        "docs/harness/tenants/tennis-hq-ui-audit.md",
+        "docs/harness/tenants/tennis-hq-registry.md"
+      ],
+      "spawnPrompt": "Lane T2 (or fold into T1). In monorepo tennis-hq-ui-audit / registry remediations: replace all D1 dual-driver residual language with R2-only policy (publish cron, embed fallback, POST 503). Do not invent D1 schemas. Commit + PR if not already in T1."
+    },
+    {
+      "id": "T3",
+      "title": "Partner ledger/executions R2 cron watch",
+      "repo": "plum-spruce-dawn-dune1",
+      "status": "READY",
+      "branch": "feat/partner-snapshot-cron",
+      "ownerGlobs": [
+        "scripts/partner-snapshot-watch.ts",
+        "package.json",
+        "docs/SUBAGENT-TASKS.md"
+      ],
+      "verify": [
+        "bun run partner-ledger:publish",
+        "bun run partner-executions:publish"
+      ],
+      "spawnPrompt": "Lane T3 only. Repo plum-spruce-dawn-dune1, branch feat/partner-snapshot-cron. Add scripts/partner-snapshot-watch.ts modeled on edge-archive-watch (Bun.cron */5, no overlap): run partner-ledger:publish and partner-executions:publish. Wire package.json partner-snapshot:watch / :once. Document in docs/SUBAGENT-TASKS.md Agent E. No D1, no route redesign, no PARTNER_API_TOKEN changes. PR + squash-merge. Do not deploy unless parent asks."
+    },
+    {
+      "id": "P1",
+      "title": "Poly join hydrate residual",
+      "repo": "plum-spruce-dawn-dune1",
+      "status": "READY",
+      "branch": "fix/poly-join-hydrate",
+      "ownerGlobs": [
+        "src/lib/tennis-hq/**/poly*",
+        "src/lib/tennis-hq/__tests__/poly-*"
+      ],
+      "verify": [
+        "bun test src/lib/tennis-hq/__tests__/poly-hydrate-order.test.ts src/lib/tennis-hq/__tests__/poly-lookup-memo.test.ts"
+      ],
+      "spawnPrompt": "Lane P1 only. plum-spruce-dawn-dune1. Follow docs/SUBAGENT-TASKS.md Agent C. Hydrate poly cache before first board enrich; tests only under poly-*. Do not touch partner ledger, wrangler.jsonc, or R2 publish scripts. PR + squash-merge."
+    },
+    {
+      "id": "O1",
+      "title": "operator-research doctor CLI",
+      "repo": "project-R-score",
+      "status": "READY",
+      "branch": "feat/operator-research-doctor",
+      "ownerGlobs": [
+        "lib/operator-research/doctor.ts",
+        "tools/operator-agent.ts",
+        "package.json",
+        "tests/operator-research-doctor.test.ts"
+      ],
+      "verify": [
+        "bun tools/operator-agent.ts doctor",
+        "bun tools/operator-agent.ts doctor --json",
+        "bun test tests/operator-research-doctor.test.ts"
+      ],
+      "spawnPrompt": "Lane O1 only. Monorepo worktree. Implement lib/operator-research/doctor.ts and wire tools/operator-agent.ts doctor + package.json agent:doctor. Check: engines.bun, Bun.which curl/git, config/operators/*.toml count, data/operator-research dirs, export paths. --json machine output. Tests in tests/operator-research-doctor.test.ts. No HTTP serve, no password auth, no Tennis Worker files. PR + squash-merge."
+    },
+    {
+      "id": "O4",
+      "title": "Fetch classify Bun.sleep backoff",
+      "repo": "project-R-score",
+      "status": "READY",
+      "branch": "fix/operator-research-fetch-backoff",
+      "ownerGlobs": [
+        "lib/operator-research/fetch-classify.ts",
+        "tests/operator-research-fetch*.test.ts"
+      ],
+      "spawnPrompt": "Lane O4 only. Add Bun.sleep exponential backoff to lib/operator-research/fetch-classify.ts for 429 and transient failures. Cap retries. Add // @see Bun.sleep canonical ref. Tests for backoff schedule (mock fetch). No doctor, no HTTP, no producer. PR + squash-merge."
+    },
+    {
+      "id": "O2",
+      "title": "Optional Bun.password research API keys",
+      "repo": "project-R-score",
+      "status": "SERIAL",
+      "requiresParentApprove": "APPROVE O2+O3 research HTTP",
+      "spawnPrompt": "Lane O2 only after APPROVE O2+O3 research HTTP. Implement Bun.password hash/verify for research agent keys only under data/operator-research/auth.json (gitignored). Never apply to Tennis Worker. Document vault map if needed. PR + tests."
+    },
+    {
+      "id": "O3",
+      "title": "Optional operator-research Bun.serve",
+      "repo": "project-R-score",
+      "status": "SERIAL",
+      "requiresParentApprove": "APPROVE O2+O3 research HTTP",
+      "dependsOn": ["O1"],
+      "spawnPrompt": "Lane O3 only after parent APPROVE. Scaffold tools/operator-research-serve.ts with Bun.serve: health, doctor JSON, optional enrich trigger behind auth hook stub. HTML must Bun.escapeHTML. Gzip when Accept-Encoding includes gzip. Document that this is NOT tennis.factory-wager.com. No D1. PR as draft if incomplete."
+    },
+    {
+      "id": "H1",
+      "title": "Orchestrator live proof handoff",
+      "repo": "both",
+      "status": "SERIAL",
+      "dependsOn": ["T1", "T3"],
+      "spawnPrompt": "Lane H1 orchestrator only. Re-probe Tennis version + ledger/executions meta.cache. Confirm monorepo tip docs merged. If T3 merged, note cron runbook. Write short handoff summary with curl evidence. No code unless proof fails."
+    }
+  ]
+}
