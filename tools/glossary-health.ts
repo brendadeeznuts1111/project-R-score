@@ -17,6 +17,8 @@
  *   bun run glossary:health --local   # read public/registry/domain-glossary.json
  */
 
+import { jsonOut } from '../lib/console-depth.ts';
+
 type Check = { name: string; ok: boolean; detail?: string };
 
 type GlossarySection = { hash?: string; domId?: string }; // brand-ok — opaque glossary registry section key
@@ -116,7 +118,7 @@ async function main() {
   const allOk = checks.every(c => c.ok);
 
   if (Bun.argv.includes('--json')) {
-    console.log(JSON.stringify({ allOk, checks }, null, 2));
+    jsonOut({ allOk, checks });
   } else {
     let md = '| Check | Status | Detail |\n| :--- | :--- | :--- |\n';
     for (const c of checks) {
