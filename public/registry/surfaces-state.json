@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "kind": "surfaces-state",
-  "generatedAt": "2026-08-05T17:38:55.987Z",
+  "generatedAt": "2026-08-05T17:44:05.486Z",
   "source": "config/surfaces.toml (dig+curl verified 2026-08-04)",
   "surfaces": [
     {
@@ -96,7 +96,7 @@
       "status": "live",
       "protocol": "https-static+functions",
       "access": "public",
-      "note": "Operator-owned Tennis HQ Worker Custom Domain. Source repo plum-spruce-dawn-dune1 (canonical); Cloudflare manages DNS/TLS. Production tip SHA 41c9ab6 / Worker 7b9ac02a (tennis-hq@1.4.0) verified 2026-08-05 via /api/version + unauth v1 401. Public shell and identity; /api/v1/* contracts use separate fail-closed bearer auth. Git tip may lead production tip until redeploy.",
+      "note": "Operator-owned Tennis HQ Worker Custom Domain. Source repo plum-spruce-dawn-dune1 (canonical); Cloudflare manages DNS/TLS. Production tip SHA 41c9ab6 / Worker 7b9ac02a (tennis-hq@1.4.0) verified 2026-08-05 via /api/version + unauth v1 401. Public shell and identity; only GET /api/v1/research/status is implemented (other v1 paths SPA 404); bearer fail-closed when PARTNER_API_TOKEN set. Git tip 0f7b6d9 leads production until redeploy.",
       "dnsTarget": ""
     },
     {
