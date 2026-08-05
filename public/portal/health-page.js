@@ -1428,6 +1428,13 @@ function renderRoutingTable(d) {
     .join('');
 }
 
+function syncHeroGate(title, meta) {
+  const gate = $('health-gate');
+  const baked = $('health-baked');
+  if (gate) gate.textContent = title;
+  if (baked) baked.textContent = meta;
+}
+
 function render(payload) {
   const raw = $('raw');
   if (!payload?.data) {
@@ -1435,6 +1442,7 @@ function render(payload) {
     $('banner').dataset.tone = 'bad';
     $('banner-title').textContent = 'Health unavailable';
     $('banner-meta').textContent = 'Could not reach /api/health, /health, or static snapshots';
+    syncHeroGate('Health unavailable', $('banner-meta').textContent);
     $('cards').innerHTML = '';
     renderPlane(null);
     raw.textContent = 'No data';
@@ -1447,7 +1455,7 @@ function render(payload) {
   $('banner').className = 'health-banner';
   $('banner').dataset.tone = ok ? 'ok' : 'bad';
   $('banner-title').textContent = ok ? 'System healthy' : `Status: ${d.status}`;
-  $('banner-meta').textContent = [
+  const meta = [
     `source ${payload.source}`,
     d.runtime || d.edge ? 'edge/pages' : 'origin',
     d.schemaVersion != null ? `schema v${d.schemaVersion}` : null,
@@ -1457,6 +1465,8 @@ function render(payload) {
   ]
     .filter(Boolean)
     .join(' · ');
+  $('banner-meta').textContent = meta;
+  syncHeroGate($('banner-title').textContent, meta);
 
   renderCards(d);
   renderPlane(d);
@@ -1468,6 +1478,7 @@ function render(payload) {
 export async function load() {
   $('banner-title').textContent = 'Checking health…';
   $('banner-meta').textContent = 'Probing /api/health and /health';
+  syncHeroGate('Checking health…', 'Probing /api/health and /health');
   $('cards').innerHTML = skeletonCards(8);
   const plane = $('ops-plane');
   if (plane) {

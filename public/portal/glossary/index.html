@@ -691,26 +691,33 @@
 
     <main class="main glossary-board">
       <nav id="glossary-crumbs" class="glossary-crumbs" aria-label="Breadcrumb"></nav>
-      <section class="hero">
-        <p class="glossary-eyebrow">Semantic registry · schema v3</p>
-        <h2>Domain glossary</h2>
+      <section class="hero portal-hero portal-hero--card" aria-labelledby="glossary-hero-title">
+        <p class="glossary-eyebrow portal-eyebrow">Semantic registry · schema v3</p>
+        <h2 id="glossary-hero-title">Domain glossary</h2>
         <p class="hero-sub">
           Search domain concepts and typed portal field semantics across market, model, tournament,
           warehouse, trading, UI, and pipeline surfaces.
         </p>
+        <div class="portal-hero-meta">
+          <p class="glossary-meta portal-gate" id="glossary-generated" aria-live="polite">
+            Loading <code>domain-glossary.json</code>…
+          </p>
+          <div class="portal-source-links" aria-label="Glossary artifacts">
+            <a href="/registry/domain-glossary.json">domain-glossary.json</a>
+            <a href="/portal/concepts/">concepts</a>
+            <a href="/portal/brands/">brands</a>
+          </div>
+        </div>
         <div
           class="glossary-category-chips"
           id="glossary-category-chips"
           role="group"
           aria-label="Browse glossary categories"
         ></div>
-        <p class="glossary-meta" id="glossary-generated">
-          Loading <code>domain-glossary.json</code>…
-        </p>
       </section>
 
       <div
-        class="glossary-summary"
+        class="glossary-summary portal-stat-grid"
         id="glossary-summary"
         aria-label="Domain glossary summary"
       ></div>
