@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/test — bun:test
 import { describe, expect, test } from 'bun:test';
 import {
+  canonicalProfileCoverage,
   coverageBarStyle,
   filterPartnerOuts,
   flattenPartnerOuts,
@@ -117,6 +118,17 @@ describe('partners-board domain helpers', () => {
 
   test('readiness distinguishes legacy visibility from canonical profile coverage', () => {
     expect(
+      canonicalProfileCoverage(
+        { partners: [{ code: 'ASH' }, { code: 'BIL' }] },
+        null,
+        { profiles: { ASH: {}, NOV: {}, SPEN: {} }, summary: { count: 3 } }
+      )
+    ).toEqual({
+      partnerCodes: ['ASH', 'BIL'],
+      coveredCodes: ['ASH'],
+      missingCodes: ['BIL'],
+    });
+    expect(
       partnerReadinessGate({
         partnerCount: 4,
         canonicalProfileCount: 0,
@@ -138,6 +150,13 @@ describe('partners-board domain helpers', () => {
         inviteGaps: 0,
       }).tone
     ).toBe('pass');
+    expect(
+      partnerReadinessGate({
+        partnerCount: 4,
+        canonicalProfileCount: 0,
+        incompleteOuts: 1,
+      }).label
+    ).toBe('legacy gaps · profiles 0/4');
     expect(partnerReadinessGate({ partnerCount: 0 }).tone).toBe('fail');
   });
 });

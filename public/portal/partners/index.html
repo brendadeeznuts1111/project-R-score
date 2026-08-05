@@ -1120,6 +1120,7 @@
         indexOpsByPartner,
         listPartnerPhases,
         normalizePartnerCode,
+        canonicalProfileCoverage,
         partnerReadinessGate,
         summarizePartnerDesk,
       } from '/portal/partners/partners-board.js';
@@ -1496,9 +1497,8 @@
       function renderStats(handshake, seat, ops, partnerProfiles) {
         const desk = summarizePartnerDesk(ops, handshake);
         const desks = seat?.desks ?? (seat?.rows?.length || 0);
-        const canonicalProfiles = Number(
-          partnerProfiles?.summary?.count ?? Object.keys(partnerProfiles?.profiles || {}).length
-        );
+        const profileCoverage = canonicalProfileCoverage(ops, handshake, partnerProfiles);
+        const canonicalProfiles = profileCoverage.coveredCodes.length;
         const cells = [
           ['Partners', desk.partners, '', 'section:telegram', 'Package groups in handshake'],
           [
@@ -1536,7 +1536,9 @@
             canonicalProfiles,
             canonicalProfiles >= desk.partners && desk.partners > 0 ? 'ok' : 'warn',
             'partner-profile',
-            'Required profile authority coverage',
+            profileCoverage.missingCodes.length
+              ? `Exact CODE coverage; missing ${profileCoverage.missingCodes.join(', ')}`
+              : 'Exact CODE coverage is complete',
           ],
           [
             'Incomplete outs',

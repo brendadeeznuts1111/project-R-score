@@ -146,7 +146,9 @@ describe('partners portal board', () => {
   test('labels zero-profile data as legacy compatibility instead of canonical readiness', async () => {
     const html = await Bun.file(BOARD).text();
     expect(html).toContain('partnerReadinessGate');
+    expect(html).toContain('canonicalProfileCoverage');
     expect(html).toContain('Canonical profiles');
+    expect(html).toContain('Exact CODE coverage; missing');
     expect(html).toContain('Legacy compatibility view; canonical profile coverage is incomplete');
     expect(html).toContain('renderStats(handshake, seat, ops, partnerProfiles)');
   });

@@ -115,6 +115,41 @@ export function summarizePartnerDesk(ops, handshake) {
 }
 
 /**
+ * Measure canonical profile coverage by exact partner CODE, never by aggregate
+ * profile count. Unrelated or stale profiles must not satisfy readiness.
+ * @param {object | null | undefined} ops
+ * @param {object | null | undefined} handshake
+ * @param {object | null | undefined} partnerProfiles
+ */
+export function canonicalProfileCoverage(ops, handshake, partnerProfiles) {
+  const rows =
+    Array.isArray(ops?.partners) && ops.partners.length
+      ? ops.partners
+      : Array.isArray(handshake?.rows)
+        ? handshake.rows
+        : [];
+  const partnerCodes = [
+    ...new Set(
+      rows
+        .map(row =>
+          normalizePartnerCode(
+            row?.code || row?.partnerCode || String(row?.callSign || '').split('-', 1)[0]
+          )
+        )
+        .filter(code => /^[A-Z]{3,6}$/.test(code))
+    ),
+  ].sort();
+  const profileCodes = new Set(
+    Object.keys(partnerProfiles?.profiles || {})
+      .map(normalizePartnerCode)
+      .filter(code => /^[A-Z]{3,6}$/.test(code))
+  );
+  const coveredCodes = partnerCodes.filter(code => profileCodes.has(code));
+  const missingCodes = partnerCodes.filter(code => !profileCodes.has(code));
+  return { partnerCodes, coveredCodes, missingCodes };
+}
+
+/**
  * Separate legacy board availability from canonical profile readiness.
  * A populated partners-ops bake must never claim the canonical MVP is ready
  * while required profiles are missing.
@@ -135,7 +170,7 @@ export function partnerReadinessGate(input = {}) {
   if (!profilesReady) {
     return {
       tone: 'warn',
-      label: `legacy ready · profiles ${canonicalProfileCount}/${partnerCount}`,
+      label: `legacy ${gaps > 0 ? 'gaps' : 'ready'} · profiles ${canonicalProfileCount}/${partnerCount}`,
       ok,
       profilesReady,
       gaps,
