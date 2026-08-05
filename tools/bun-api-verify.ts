@@ -320,5 +320,7 @@ if (import.meta.main) {
   const failed =
     manifest.summary.demosPassed < manifest.summary.demos ||
     manifest.summary.apisVerified < manifest.summary.apis;
-  if (failed) process.exit(1);
+  // The CLI owns its lifecycle after every awaited proof has completed. Exit
+  // explicitly so a runtime-level handle leak cannot make CI wait forever.
+  process.exit(failed ? 1 : 0);
 }

@@ -74,6 +74,14 @@ main-tip revision, but does not infer a feature from a commit endpoint. Any new
 timezone syntax must not be used until the selected runtime and declarations
 both expose it.
 
+The installed 1.4.0 canary separately observes the local-time and `{ tz }`
+candidate from [oven-sh/bun#35122](https://github.com/oven-sh/bun/pull/35122).
+That behavior is version-stamped in
+`tests/bun-1.4.0-cron-contract.test.ts`; it does not change the 1.3.14
+production contract. The same file keeps the canary's stopped-job CLI-lifetime
+issue as an explicit TODO, so aggregate API verification uses `Bun.cron.parse`
+and cannot retain a scheduler handle.
+
 ## Bun channel doctor — OS-persistent primary
 
 The channel doctor observes runtime releases, canary metadata, Bun RSS, GitHub
