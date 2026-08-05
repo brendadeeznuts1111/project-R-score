@@ -1,11 +1,11 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-05T15:21:41.096Z",
+  "generatedAt": "2026-08-05T15:32:03.221Z",
   "artifact": {
     "name": "@factorywager/bookmakers",
-    "version": "0.4.0",
-    "checksum": "63ca6745e3fe603a5cba315c43021dd8b79d0b967db8e797de8089059c388f56",
-    "source": "migrated-v0.3-to-v0.4"
+    "version": "0.4.1",
+    "checksum": "a7996c7cdb90fdda5c33e532df30ec07fba077aeb95ae5b699fb61eb9736ce3a",
+    "source": "artifact-registry"
   },
   "bookmakers": {
     "pinnacle": {
@@ -132,7 +132,7 @@
         "waitForSelector": "main a[href*='-v-'], main a[href*='-@-']",
         "timeout": 30000
       },
-      "note": "Event rows are lazy-rendered below the fold \u2014 nothing renders without scroll pumping, and all classes are hashed atomic CSS (unusable as selectors). Extraction (see fanDuelScrapeScript) uses deploy-independent hooks: a JSON-LD schema.org SportsEvent[] blob (names, startDate, canonical url) correlated with match-link rows (a[href*='-v-'], slug ends in the numeric event id) whose li leaf texts carry names and the two moneyline prices in order. Event pages (/{sport}/{league}/{slug}-{id}) take a separate branch (fanDuelEventScrapeScript): JSON-LD single SportsEvent + outcome buttons with aria-labels ending in ' Odds' (\"Rafael Jodar to win, -130 Odds\", \"Spread, X, -9.5, -122 Odds\"); ended matchups render no outcome buttons, so they still fail with SelectorTimeoutError."
+      "note": "Event rows are lazy-rendered below the fold — nothing renders without scroll pumping, and all classes are hashed atomic CSS (unusable as selectors). Extraction (see fanDuelScrapeScript) uses deploy-independent hooks: a JSON-LD schema.org SportsEvent[] blob (names, startDate, canonical url) correlated with match-link rows (a[href*='-v-'], slug ends in the numeric event id) whose li leaf texts carry names and the two moneyline prices in order. Event pages (/{sport}/{league}/{slug}-{id}) take a separate branch (fanDuelEventScrapeScript): JSON-LD single SportsEvent + outcome buttons with aria-labels ending in ' Odds' (\"Rafael Jodar to win, -130 Odds\", \"Spread, X, -9.5, -122 Odds\"); ended matchups render no outcome buttons, so they still fail with SelectorTimeoutError."
     },
     "draftkings": {
       "id": "draftkings",
@@ -219,7 +219,7 @@
         "waitForSelector": ".option-indicator",
         "timeout": 30000
       },
-      "note": "Geo-redirects unpredictably (observed www.la.betmgm.com; also an nj geolocator interstitial that hangs scrapes) \u2014 discovery pins www.ny.betmgm.com directly (BETMGM_DEFAULT_STATE, verified live 2026-08-01). Plain HTTP clients get a Cloudflare 403, but WKWebView renders fine. .participant text includes a trailing country code in .participant-country."
+      "note": "Geo-redirects unpredictably (observed www.la.betmgm.com; also an nj geolocator interstitial that hangs scrapes) — discovery pins www.ny.betmgm.com directly (BETMGM_DEFAULT_STATE, verified live 2026-08-01). Plain HTTP clients get a Cloudflare 403, but WKWebView renders fine. .participant text includes a trailing country code in .participant-country."
     },
     "hard-rock-florida": {
       "id": "hard-rock-florida",
@@ -252,7 +252,7 @@
       "skin": "HardRockBet Florida",
       "brandGroup": "Hard Rock International",
       "color": "#db2777",
-      "note": "Seat-managed PPH desk (partner ASH/NOV) \u2014 credentials in partner_vault, not pipeline-fetched. Domain best-effort."
+      "note": "Seat-managed PPH desk (partner ASH/NOV) — credentials in partner_vault, not pipeline-fetched. Domain best-effort."
     },
     "parlay21-com": {
       "id": "parlay21-com",
@@ -284,7 +284,7 @@
       "skin": "Parlay21",
       "brandGroup": "Parlay21",
       "color": "#7c3aed",
-      "note": "Seat-managed PPH desk (partner SPEN) \u2014 credentials in partner_vault, not pipeline-fetched."
+      "note": "Seat-managed PPH desk (partner SPEN) — credentials in partner_vault, not pipeline-fetched."
     },
     "lonestarwagering-com": {
       "id": "lonestarwagering-com",
@@ -316,7 +316,7 @@
       "skin": "LoneStar Wagering",
       "brandGroup": "LoneStar",
       "color": "#0891b2",
-      "note": "Seat-managed PPH desk (partner SPEN) \u2014 credentials in partner_vault, not pipeline-fetched."
+      "note": "Seat-managed PPH desk (partner SPEN) — credentials in partner_vault, not pipeline-fetched."
     },
     "action92-com": {
       "id": "action92-com",
@@ -348,7 +348,7 @@
       "skin": "Action92",
       "brandGroup": "Action92",
       "color": "#65a30d",
-      "note": "Seat-managed PPH desk (partner SPEN) \u2014 credentials in partner_vault, not pipeline-fetched."
+      "note": "Seat-managed PPH desk (partner SPEN) — credentials in partner_vault, not pipeline-fetched."
     },
     "betvegas23-com": {
       "id": "betvegas23-com",
@@ -380,7 +380,7 @@
       "skin": "BetVegas23",
       "brandGroup": "BetVegas23",
       "color": "#ea580c",
-      "note": "Seat-managed PPH desk (partner SPEN) \u2014 credentials in partner_vault, not pipeline-fetched."
+      "note": "Seat-managed PPH desk (partner SPEN) — credentials in partner_vault, not pipeline-fetched."
     }
   },
   "audit": {

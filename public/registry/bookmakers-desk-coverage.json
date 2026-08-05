@@ -1,0 +1,67 @@
+{
+  "generatedAt": "2026-08-05T15:32:03.216Z",
+  "deskBooks": 8,
+  "matched": 5,
+  "placeholder": 2,
+  "unmatched": 1,
+  "hits": [
+    {
+      "deskBook": "action92.com",
+      "class": "matched",
+      "registryId": "action92-com",
+      "maxBetUsd": 500,
+      "samples": 2
+    },
+    {
+      "deskBook": "betvegas23.com",
+      "class": "matched",
+      "registryId": "betvegas23-com",
+      "maxBetUsd": 500,
+      "samples": 2
+    },
+    {
+      "deskBook": "Hard Rock Florida",
+      "class": "matched",
+      "registryId": "hard-rock-florida",
+      "maxBetUsd": 500,
+      "samples": 6
+    },
+    {
+      "deskBook": "lonestarwagering.com",
+      "class": "matched",
+      "registryId": "lonestarwagering-com",
+      "maxBetUsd": 500,
+      "samples": 2
+    },
+    {
+      "deskBook": "Orange777",
+      "class": "unmatched",
+      "samples": 2
+    },
+    {
+      "deskBook": "parlay21.com",
+      "class": "matched",
+      "registryId": "parlay21-com",
+      "maxBetUsd": 500,
+      "samples": 2
+    },
+    {
+      "deskBook": "Partner book TBD",
+      "class": "placeholder",
+      "maxBetUsd": 500,
+      "samples": 2
+    },
+    {
+      "deskBook": "SouthFL PPH Desk",
+      "class": "placeholder",
+      "samples": 2
+    }
+  ],
+  "registryUnused": [
+    "betmgm",
+    "caesars",
+    "draftkings",
+    "fanduel",
+    "pinnacle"
+  ]
+}
