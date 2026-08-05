@@ -59,4 +59,12 @@ describe('readPublishPackageJson', () => {
     await writeFile(join(root, 'package.json'), '[]');
     expect(await readPublishPackageJson(root)).toBeNull();
   });
+
+  test('returns null when a tgz cannot be extracted', async () => {
+    const root = await makeTempRoot();
+    const invalidTarball = join(root, 'invalid.tgz');
+    await writeFile(invalidTarball, 'not a tarball');
+
+    expect(await readPublishPackageJson(invalidTarball)).toBeNull();
+  });
 });
