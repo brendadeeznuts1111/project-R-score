@@ -307,7 +307,8 @@ bun run proton:ssh:doctor               # session + daemon heal + debug + load +
 bun run proton:ssh:heal                 # restart daemon on "No active session" drift
 bun run proton:ssh:load                 # default vault factorywager (agent PAT)
 PASS_SSH_VAULT=Personal bun run proton:ssh:load   # full-account / agent-work PAT only
-PASS_LOG_LEVEL=debug pass-cli ssh-agent start --vault-name factorywager
+PASS_LOG_LEVEL=debug bun run proton:ssh:doctor    # elevate official Pass CLI logs
+bun run proton:ssh -- --debug doctor              # same via ssh-vault --debug
 ```
 
 - Socket: `~/.ssh/proton-pass-agent.sock`

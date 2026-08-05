@@ -123,13 +123,25 @@ pass_ssh_daemon_needs_heal() {
   tail -n 40 "$log" 2>/dev/null | grep -q 'No active session'
 }
 
+# Official Pass CLI log level (info|debug|…). Override: PASS_LOG_LEVEL=debug or ssh-vault --debug.
+# @see https://protonpass.github.io/pass-cli/get-started/configuration/
+pass_cli_log_level() {
+  printf '%s' "${PASS_LOG_LEVEL:-info}"
+}
+
+# Run pass-cli with the active PASS_LOG_LEVEL (default info).
+pass_cli() {
+  PASS_LOG_LEVEL="$(pass_cli_log_level)" command pass-cli "$@"
+}
+
 # Restart Pass SSH agent daemon so it picks up the current pass-cli session.
 # @see https://protonpass.github.io/pass-cli/help/troubleshoot/
 pass_ssh_daemon_heal() {
   echo "  🔧 Healing ssh-agent daemon (No active session / session drift)…"
-  pass-cli ssh-agent daemon stop 2>/dev/null || true
+  echo "     PASS_LOG_LEVEL=$(pass_cli_log_level)"
+  pass_cli ssh-agent daemon stop 2>/dev/null || true
   sleep 0.5
-  pass-cli ssh-agent daemon start
+  pass_cli ssh-agent daemon start
   pass_ssh_export_sock || true
   echo "  ✓ daemon restarted; SSH_AUTH_SOCK=${SSH_AUTH_SOCK:-unset}"
 }

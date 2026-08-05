@@ -8,6 +8,7 @@
 # Usage:
 #   bash scripts/ssh-vault.sh doctor            # session + heal + debug + ssh-add -L
 #   bash scripts/ssh-vault.sh heal              # restart daemon on session drift
+#   bash scripts/ssh-vault.sh --debug doctor    # elevate PASS_LOG_LEVEL=debug
 #   bash scripts/ssh-vault.sh debug
 #   bash scripts/ssh-vault.sh load [--vault NAME]
 #   bash scripts/ssh-vault.sh daemon | status | clear
@@ -15,12 +16,21 @@
 # Default vault is factorywager (visible to factorywager-bot PAT).
 # Personal vault needs interactive login or agent-work PAT:
 #   PASS_SSH_VAULT=Personal bash scripts/ssh-vault.sh load
+# Verbose Pass CLI logs:
+#   PASS_LOG_LEVEL=debug bun run proton:ssh:doctor
+#   bun run proton:ssh -- --debug doctor
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=lib/pass-session.sh
 . "$SCRIPT_DIR/lib/pass-session.sh"
+
+# Optional leading --debug elevates official Pass CLI logs for this process.
+while [ "${1:-}" = "--debug" ]; do
+  export PASS_LOG_LEVEL=debug
+  shift
+done
 
 # Resolved after session when possible (PAT → vault); PASS_SSH_VAULT wins.
 VAULT="$(pass_ssh_vault_for_session)"
@@ -37,6 +47,7 @@ show_help() {
   echo "  clear             ssh-add -D"
   echo "  help              This message"
   echo ""
+  echo "Flags: --debug (sets PASS_LOG_LEVEL=debug for this run)"
   echo "Default vault: PAT-aware (factorywager-bot → factorywager). Override PASS_SSH_VAULT=Personal for full-account."
   echo "Troubleshoot: https://protonpass.github.io/pass-cli/help/troubleshoot/"
 }
@@ -49,8 +60,8 @@ ensure_agent_session() {
 
 debug_keys() {
   ensure_agent_session
-  echo "  📋 SSH key debug — pass-cli vault: $VAULT"
-  PASS_LOG_LEVEL="${PASS_LOG_LEVEL:-info}" pass-cli ssh-agent debug --vault-name "$VAULT"
+  echo "  📋 SSH key debug — pass-cli vault: $VAULT · PASS_LOG_LEVEL=$(pass_cli_log_level)"
+  pass_cli ssh-agent debug --vault-name "$VAULT"
 }
 
 load_keys() {
@@ -64,7 +75,7 @@ load_keys() {
     pass_ssh_daemon_heal
   fi
   echo "  🔑 Loading SSH keys from vault '$vault'..."
-  pass-cli ssh-agent load --vault-name "$vault"
+  pass_cli ssh-agent load --vault-name "$vault"
   pass_ssh_export_sock || true
   echo "    ✅ Keys loaded · SSH_AUTH_SOCK=${SSH_AUTH_SOCK:-unset}"
 }
@@ -72,12 +83,12 @@ load_keys() {
 start_daemon() {
   ensure_agent_session
   echo "  🔑 Starting pass-cli SSH agent daemon..."
-  pass-cli ssh-agent daemon start
+  pass_cli ssh-agent daemon start
   pass_ssh_export_sock || true
 }
 
 daemon_status() {
-  pass-cli ssh-agent daemon status
+  pass_cli ssh-agent daemon status
 }
 
 heal_daemon() {
@@ -87,7 +98,7 @@ heal_daemon() {
     return 1
   fi
   pass_ssh_daemon_heal
-  pass-cli ssh-agent daemon status 2>&1 | head -20
+  pass_cli ssh-agent daemon status 2>&1 | head -20
 }
 
 clear_keys() {
@@ -103,13 +114,14 @@ doctor() {
   echo "== proton ssh doctor =="
   echo "Docs: https://protonpass.github.io/pass-cli/help/troubleshoot/"
   echo "Preferred vault: $VAULT"
+  echo "PASS_LOG_LEVEL=$(pass_cli_log_level) (override: --debug or PASS_LOG_LEVEL=debug)"
   echo ""
 
   if ! command -v pass-cli >/dev/null 2>&1; then
     echo "❌ pass-cli not on PATH"
     return 1
   fi
-  echo "✓ pass-cli: $(pass-cli --version 2>/dev/null | head -1 || echo present)"
+  echo "✓ pass-cli: $(pass_cli --version 2>/dev/null | head -1 || echo present)"
 
   ensure_agent_session
 
@@ -128,17 +140,17 @@ doctor() {
     echo "⚠️  daemon log shows 'No active session' — healing"
     pass_ssh_daemon_heal || rc=1
   fi
-  pass-cli ssh-agent daemon status 2>&1 || echo "(daemon not running — ok if using load/start)"
+  pass_cli ssh-agent daemon status 2>&1 || echo "(daemon not running — ok if using load/start)"
   pass_ssh_export_sock && echo "→ SSH_AUTH_SOCK=$SSH_AUTH_SOCK" || true
 
   echo ""
   echo "-- ssh-agent debug --"
-  if PASS_LOG_LEVEL="${PASS_LOG_LEVEL:-info}" pass-cli ssh-agent debug --vault-name "$debug_vault" 2>&1; then
+  if pass_cli ssh-agent debug --vault-name "$debug_vault" 2>&1; then
     echo "✓ debug ok for vault '$debug_vault'"
   elif [ "$debug_vault" != "factorywager" ]; then
     echo "⚠️  vault '$debug_vault' not visible — falling back to factorywager"
     debug_vault="factorywager"
-    if PASS_LOG_LEVEL="${PASS_LOG_LEVEL:-info}" pass-cli ssh-agent debug --vault-name "$debug_vault" 2>&1; then
+    if pass_cli ssh-agent debug --vault-name "$debug_vault" 2>&1; then
       echo "✓ debug ok for vault '$debug_vault'"
     else
       echo "⚠️  debug failed for vault '$debug_vault'"
@@ -152,7 +164,7 @@ doctor() {
   echo ""
   echo "-- load + ssh-add -L --"
   if pass_session_ready; then
-    pass-cli ssh-agent load --vault-name "$debug_vault" 2>&1 | tail -3 || true
+    pass_cli ssh-agent load --vault-name "$debug_vault" 2>&1 | tail -3 || true
   fi
   pass_ssh_export_sock || true
   if [ -z "${SSH_AUTH_SOCK:-}" ]; then

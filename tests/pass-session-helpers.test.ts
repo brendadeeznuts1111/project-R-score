@@ -125,4 +125,20 @@ describe('pass-session helpers', () => {
     expect((await new Response(r.stdout).text()).trim()).toBe('factorywager');
     expect(await r.exited).toBe(0);
   });
+
+  test('pass_cli_log_level defaults info; honors PASS_LOG_LEVEL', async () => {
+    const def = await Bun.spawn(
+      ['bash', '-c', `set -e; unset PASS_LOG_LEVEL; . '${HELPERS}'; pass_cli_log_level`],
+      { stdout: 'pipe' }
+    );
+    expect((await new Response(def.stdout).text()).trim()).toBe('info');
+    expect(await def.exited).toBe(0);
+
+    const dbg = await Bun.spawn(
+      ['bash', '-c', `set -e; . '${HELPERS}'; PASS_LOG_LEVEL=debug pass_cli_log_level`],
+      { stdout: 'pipe' }
+    );
+    expect((await new Response(dbg.stdout).text()).trim()).toBe('debug');
+    expect(await dbg.exited).toBe(0);
+  });
 });
