@@ -178,6 +178,31 @@
       gap: 8px; margin-top: 8px;
     }
     .pkg-section-head h3 { margin: 0; }
+    .pkg-glance-strip {
+      display: flex; flex-wrap: wrap; gap: 8px 10px;
+      margin: 0 0 16px; padding: 10px 12px;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      background: var(--surface);
+    }
+    .pkg-glance-cell {
+      display: inline-flex; flex-direction: column; gap: 2px;
+      min-width: 4.5rem; padding: 4px 8px; border-radius: 6px;
+      border: 1px solid transparent;
+    }
+    .pkg-glance-num {
+      font-family: ui-monospace, monospace; font-size: 14px; font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .pkg-glance-label { font-size: 10px; color: var(--text-dim); letter-spacing: 0.02em; }
+    .pkg-glance-hub .pkg-glance-num { font-size: 12px; max-width: 12rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .pkg-table-tools input[type="search"]:focus-visible,
+    .pkg-table-tools select:focus-visible,
+    .pkg-chip:focus-visible,
+    .pkg-quick-links a:focus-visible {
+      border-color: var(--accent);
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
     @media (prefers-reduced-motion: reduce) {
       tr.pkg-row-flash td { transition: none; }
     }
@@ -265,10 +290,9 @@
         </div>
         <span class="portal-baked" id="gen-meta">Loading…</span>
         <nav class="pkg-quick-links portal-source-links" aria-label="Related surfaces">
-          <a href="/portal/tennis/" title="Tennis tenant board">Tennis</a>
-          <a class="external" href="https://tennis.factory-wager.com" target="_blank" rel="noopener noreferrer" title="Market Desk Worker">Tennis HQ</a>
           <a href="/portal/" title="Registry index">Registry</a>
           <a href="/portal/env/" title="Vault map / env inject">Env</a>
+          <a href="/registry/monorepo-health.json" target="_blank" rel="noopener">monorepo health</a>
           <a href="/registry/packages-graph-map.json" target="_blank" rel="noopener">graph JSON</a>
           <a href="/registry/ssot-flow-soft.json" target="_blank" rel="noopener">ssot soft-pass</a>
           <a href="/registry/pm-proof.json" target="_blank" rel="noopener">pm-proof</a>
@@ -301,6 +325,7 @@
       <div class="portal-stat warn"><div class="k">dormant</div><div class="v" id="s-dormant">—</div><div class="hint">no outside consumers</div></div>
       <div class="portal-stat muted"><div class="k">packages</div><div class="v" id="s-pkg-count">—</div><div class="hint" id="s-pkg-sub">workspace graph plane</div></div>
     </div>
+    <div id="pkg-glance" aria-label="Graph health glance" hidden></div>
     <div class="pkg-role-mix" id="pkg-role-mix" aria-label="Role mix" hidden>
       <div class="pkg-role-mix-head">
         <span>Role mix</span>
@@ -413,7 +438,7 @@
   <script type="module" src="/portal/data.js"></script>
   <script type="module" src="/portal/topbar.js"></script>
   <script type="module" src="/portal/components/sidebar.js"></script>
-  <script type="module" src="/portal/packages/packages-board.js"></script>
+  <script type="module" src="/portal/packages/packages-board.js?v=14"></script>
   <footer class="footer" data-portal-chrome="footer">
     <p>
       <strong>FactoryWager</strong> ·

@@ -3,11 +3,14 @@ import { describe, test, expect } from 'bun:test';
 import {
   applyWireRootDeps,
   buildPackageGraphMap,
+  buildPackagesGraphGlance,
   classifyPackageCoupling,
   enrichCouplingMap,
   enrichIntraPackageMap,
+  filterOpenCouplingActions,
   formatIntraPackageMermaid,
   formatPackageMapMermaid,
+  PACKAGES_GRAPH_BOARD,
   resolveMetaImportPath,
   scorePackageCoupling,
 } from '../lib/harness/packages-graph-map.ts';
@@ -173,5 +176,71 @@ describe('packages-graph-map', () => {
     const score = scorePackageCoupling(map).find(s => s.package === 'sdk')!;
     expect(score.score).toBe(92); // 100 − 8 residual relative
     expect(score.reasons.some(r => r.includes('residual relative'))).toBe(true);
+  });
+
+  test('glance + openActions filter for bake top-level', () => {
+    expect(PACKAGES_GRAPH_BOARD).toBe('/portal/packages/');
+    const map = enrichCouplingMap({
+      packages: ['dorm', 'used'],
+      packageEdges: [],
+      externalEdges: [],
+      internalEdgeCount: 0,
+      dependents: { dorm: [], used: [] },
+      dependencies: { dorm: [], used: [] },
+      layers: [['dorm', 'used']],
+      packageCycles: [],
+      outsideConsumers: [
+        {
+          package: 'used',
+          count: 1,
+          consumers: ['lib/x.ts'],
+          workspaceImports: 1,
+          relativeImports: 0,
+        },
+      ],
+      declared: [
+        {
+          package: 'dorm',
+          npmName: '@factorywager/dorm',
+          declaredWorkspace: [],
+          actualCrossPkg: [],
+          missingInPackageJson: [],
+          unusedDeclared: [],
+          inRootWorkspaceDeps: false,
+        },
+        {
+          package: 'used',
+          npmName: '@factorywager/used',
+          declaredWorkspace: [],
+          actualCrossPkg: [],
+          missingInPackageJson: [],
+          unusedDeclared: [],
+          inRootWorkspaceDeps: true,
+        },
+      ],
+      scriptRefs: [],
+    });
+    const open = filterOpenCouplingActions(map.actions);
+    expect(open.every(a => a.action !== 'ok')).toBe(true);
+    expect(open.some(a => a.package === 'dorm' && a.action === 'archive-candidate')).toBe(true);
+    const glance = buildPackagesGraphGlance({
+      score: 100,
+      grade: 'healthy',
+      map,
+      totals: {
+        orphanCount: 0,
+        cycleCount: 0,
+        hubCount: 1,
+        externalEdges: 2,
+        crossPackageEdges: 0,
+        openActions: open.length,
+        avgPackageScore: 95,
+      },
+      surfacesSummary: { portalPages: 32, registryOrphanFromPortal: 0 },
+    });
+    expect(glance.openActions).toBe(open.length);
+    expect(glance.surfacesPages).toBe(32);
+    expect(glance.externalEdges).toBe(2);
+    expect(glance.packageCount).toBe(2);
   });
 });
