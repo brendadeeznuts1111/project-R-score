@@ -9,6 +9,7 @@ import {
   type SurfaceId,
 } from '../lib/types/branded.ts';
 import { resolvePath } from '../scripts/lib/fs-bun';
+import { surfaceStateArtifactDrift } from '../scripts/bake-surfaces.ts';
 
 const ROOT = resolvePath(import.meta.dir, '..');
 
@@ -72,6 +73,30 @@ describe('bake-surfaces', () => {
     ).toEqual(['local-gateway', 'local-npm', 'prod-write']);
     // No secrets in the bake
     expect(JSON.stringify(state)).not.toMatch(/cfat_[A-Za-z0-9]+/);
+  });
+
+  test('--check verifies the artifact without rewriting it', async () => {
+    const path = resolvePath(ROOT, 'public/registry/surfaces-state.json');
+    const before = await Bun.file(path).text();
+    const proc = Bun.spawnSync(['bun', 'scripts/bake-surfaces.ts', '--check'], {
+      cwd: ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+
+    expect(proc.exitCode).toBe(0);
+    expect(proc.stdout.toString()).toContain('(unchanged)');
+    expect(await Bun.file(path).text()).toBe(before);
+  });
+
+  test('artifact drift comparison ignores only the generated timestamp', () => {
+    const expected = '{\n  "generatedAt": "2026-08-05T22:30:00.000Z",\n  "total": 14\n}\n';
+    const persisted = '{\n  "generatedAt": "2026-08-05T22:00:00.000Z",\n  "total": 14\n}\n';
+    const stale = '{\n  "generatedAt": "2026-08-05T22:00:00.000Z",\n  "total": 13\n}\n';
+
+    expect(surfaceStateArtifactDrift(expected, persisted)).toBe(false);
+    expect(surfaceStateArtifactDrift(expected, stale)).toBe(true);
+    expect(surfaceStateArtifactDrift(expected, '{"total":14}\n')).toBe(true);
   });
 });
 

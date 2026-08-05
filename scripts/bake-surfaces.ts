@@ -17,7 +17,7 @@
  * SurfaceStatusCode, SurfaceAccessCode, SurfaceBackendCode.
  *
  *   bun run surfaces:bake
- *   bun run surfaces:bake -- --check
+ *   bun run surfaces:bake -- --check          # read-only artifact drift check
  *   bun run surfaces:bake -- --probe          # live DNS+HTTP re-verification (opt-in)
  *   bun run surfaces:bake -- --probe --check  # fail on live drift vs TOML status
  *   bun run surfaces:bake -- --zone-check     # CF API: TOML dnsTarget/mail vs live zone
@@ -48,6 +48,16 @@ const CHECK = Bun.argv.includes('--check');
 const PROBE = Bun.argv.includes('--probe');
 const ZONE_CHECK = Bun.argv.includes('--zone-check');
 const TOML = `${ROOT}/config/surfaces.toml`;
+const STATE_PATH = `${ROOT}/public/registry/surfaces-state.json`;
+
+const GENERATED_AT_LINE = /^(\s*"generatedAt":\s*)"[^"]+"(,?)$/m;
+
+/** Compare a freshly rendered artifact while treating its bake timestamp as metadata. */
+export function surfaceStateArtifactDrift(expectedText: string, persistedText: string): boolean {
+  const persistedTimestamp = persistedText.match(GENERATED_AT_LINE)?.[0];
+  if (!persistedTimestamp) return true;
+  return expectedText.replace(GENERATED_AT_LINE, persistedTimestamp) !== persistedText;
+}
 
 // ── Zone check (opt-in, CF API) ───────────────────────────────────────
 // Compares TOML dnsTarget / mail records against the live zone. Token from
@@ -290,11 +300,24 @@ async function main(): Promise<void> {
     }
   }
 
-  await Bun.write(
-    `${ROOT}/public/registry/surfaces-state.json`,
-    JSON.stringify(state, null, 2) + '\n'
-  );
-  console.log('→ public/registry/surfaces-state.json');
+  const renderedState = JSON.stringify(state, null, 2) + '\n';
+  const artifactIssues: string[] = [];
+  if (CHECK) {
+    if (!PROBE && !ZONE_CHECK) {
+      const stateFile = Bun.file(STATE_PATH);
+      if (!(await stateFile.exists())) {
+        artifactIssues.push('public/registry/surfaces-state.json is missing');
+      } else if (surfaceStateArtifactDrift(renderedState, await stateFile.text())) {
+        artifactIssues.push(
+          'public/registry/surfaces-state.json is stale; run bun run surfaces:bake'
+        );
+      }
+    }
+    console.log('✓ checked public/registry/surfaces-state.json (unchanged)');
+  } else {
+    await Bun.write(STATE_PATH, renderedState);
+    console.log('→ public/registry/surfaces-state.json');
+  }
   console.log(
     `surfaces-state  total=${summary.total}  apexes=${summary.apexes.length}  backend=${JSON.stringify(summary.byBackendCode)}  accessDomains=${summary.accessDomains.length}  crossCheck=${issues.length === 0 ? 'ok' : 'DRIFT'}`
   );
@@ -309,8 +332,15 @@ async function main(): Promise<void> {
     console.log('zone-check: ok — TOML dnsTarget/mail matches live zone');
   }
   for (const i of zoneIssues) console.log(`  ✗ ${i}`);
+  for (const i of artifactIssues) console.log(`  ✗ ${i}`);
 
-  if (CHECK && (issues.length > 0 || probeDrift.length > 0 || zoneIssues.length > 0)) {
+  if (
+    CHECK &&
+    (issues.length > 0 ||
+      probeDrift.length > 0 ||
+      zoneIssues.length > 0 ||
+      artifactIssues.length > 0)
+  ) {
     process.exit(1);
   }
 }
