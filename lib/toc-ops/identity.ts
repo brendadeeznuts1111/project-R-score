@@ -5,6 +5,8 @@
  * @see lib/operations/toc-identity-bridge.ts
  */
 
+import type { PartnerLifecycleStatus } from '../partner-profile/schema.ts';
+
 export type TocIdentityPlane = 'demo-readonly' | 'linked';
 
 export type TocRailBinding = {
@@ -28,7 +30,7 @@ export type TocPartnerBinding = {
   partnerCode: string; // brand-ok
   treeNodeId: string | null; // brand-ok
   opsName: string | null;
-  lifecycleStatus: string | null;
+  lifecycleStatus: PartnerLifecycleStatus | null;
   profileKey: string | null;
   linked: boolean;
   rails: TocRailBinding[];

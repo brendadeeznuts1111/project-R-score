@@ -18,10 +18,17 @@
 tree_nodes.id  ──1:1──►  partner_profile_bindings.tree_node_id
                               ├── template_id  → config/partner-templates/<id>.toml
                               ├── profile_key  → PartnerProfileKey (pp-…)
-                              └── lifecycle_status ∈ signup | materialized | kyc_pending | active | suspended | terminated
+                              └── lifecycle_status → canonical eight-state PartnerLifecycleStatus
 ```
 
 Default template: **`default-prospect`** (`DEFAULT_TEMPLATE_ID`).
+
+The canonical contract is owned by
+[`lib/partner-profile/schema.ts`](../../../lib/partner-profile/schema.ts): `signup`
+· `materialized` · `kyc_pending` · `active` · `cultivating` · `graduated` ·
+`suspended` · `terminated`. SQLite lifecycle values are parsed into that
+contract at the bridge boundary before materialization, gating, summaries, or
+downstream projections.
 
 ## API surface
 
@@ -41,6 +48,24 @@ Default template: **`default-prospect`** (`DEFAULT_TEMPLATE_ID`).
 | `prospect` | `materialized` |
 | `partner` | `active` |
 | other active | `materialized` |
+
+## Lifecycle gate mapping
+
+`evaluateForNode` applies this lifecycle decision before the template SoR gate:
+
+| Lifecycle | Gate action |
+|-----------|-------------|
+| `active` | allow |
+| `graduated` | allow |
+| `materialized` | allow |
+| `kyc_pending` | allow |
+| `cultivating` | defer |
+| `signup` | defer |
+| `suspended` | block |
+| `terminated` | block |
+
+An `allow` lifecycle continues through the template’s stake, book, signal,
+OpSec, and tier policy checks; those checks may still adjust or block the play.
 
 ## Commands
 
