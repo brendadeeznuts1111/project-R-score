@@ -8,7 +8,7 @@
 import type { Database } from 'bun:sqlite';
 
 import {
-  parsePartnerLifecycleStatus,
+  isPartnerLifecycleStatus,
   type PartnerLifecycleStatus,
 } from '../partner-profile/schema.ts';
 import {
@@ -293,10 +293,12 @@ export function buildAccountLimitProfiles(
         )
         .all() as BindingRowWire[])
     : [];
-  const bindings: BindingRow[] = bindingRows.map(row => ({
-    ...row,
-    lifecycle_status: parsePartnerLifecycleStatus(row.lifecycle_status),
-  }));
+  // Soft-parse: drop corrupt lifecycle rows so one bad binding cannot take
+  // down the full account-limits projection (CHECK normally prevents this).
+  const bindings: BindingRow[] = bindingRows.flatMap(row => {
+    if (!isPartnerLifecycleStatus(row.lifecycle_status)) return [];
+    return [{ ...row, lifecycle_status: row.lifecycle_status }];
+  });
   const geos = tableExists(db, 'partner_geo_profiles')
     ? (db
         .query(`SELECT node_id, state_code, location, zip_code FROM partner_geo_profiles`)

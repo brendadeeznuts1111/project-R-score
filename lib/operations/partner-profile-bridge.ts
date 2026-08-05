@@ -14,6 +14,7 @@
 import type { Database } from 'bun:sqlite';
 import { randomUUIDv7 } from 'bun';
 import {
+  isPartnerLifecycleStatus,
   parsePartnerLifecycleStatus,
   type PartnerLifecycleStatus,
 } from '../partner-profile/schema.ts';
@@ -576,6 +577,8 @@ export type PartnersSummarySlice = {
   bound: number;
   unboundAgents: number;
   byLifecycle: Partial<Record<PartnerLifecycleStatus, number>>;
+  /** Rows with lifecycle_status that failed parse — aggregate soft-quarantine count. */
+  invalidLifecycle: number;
   recent: Array<{
     treeNodeId: TreeNodeId;
     profileKey: string;
@@ -606,8 +609,13 @@ export function queryPartnersSlice(db: Database): PartnersSummarySlice {
     .all() as { lifecycle_status: string; n: number }[];
 
   const byLifecycle: Partial<Record<PartnerLifecycleStatus, number>> = {};
+  let invalidLifecycle = 0;
   for (const row of lifecycleRows) {
-    byLifecycle[parsePartnerLifecycleStatus(row.lifecycle_status)] = row.n;
+    if (!isPartnerLifecycleStatus(row.lifecycle_status)) {
+      invalidLifecycle += row.n;
+      continue;
+    }
+    byLifecycle[row.lifecycle_status] = (byLifecycle[row.lifecycle_status] ?? 0) + row.n;
   }
 
   const recent = db
@@ -625,17 +633,27 @@ export function queryPartnersSlice(db: Database): PartnersSummarySlice {
     name: string;
   }>;
 
+  // Soft-parse recent rows: skip corrupt lifecycle so one bad binding cannot
+  // take down ops-summary (single-entity materialize/evaluate still throw).
+  const recentParsed = recent.flatMap(r => {
+    if (!isPartnerLifecycleStatus(r.lifecycle_status)) return [];
+    return [
+      {
+        treeNodeId: asTreeNodeId(r.tree_node_id),
+        profileKey: r.profile_key,
+        partnerTemplate: asPartnerTemplateId(r.template_id),
+        lifecycleStatus: r.lifecycle_status,
+        name: r.name,
+      },
+    ];
+  });
+
   return {
     bound: bound.n,
     unboundAgents: unboundAgents.n,
     byLifecycle,
-    recent: recent.map(r => ({
-      treeNodeId: asTreeNodeId(r.tree_node_id),
-      profileKey: r.profile_key,
-      partnerTemplate: asPartnerTemplateId(r.template_id),
-      lifecycleStatus: parsePartnerLifecycleStatus(r.lifecycle_status),
-      name: r.name,
-    })),
+    invalidLifecycle,
+    recent: recentParsed,
   };
 }
 

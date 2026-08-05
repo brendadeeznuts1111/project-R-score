@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
@@ -15,14 +16,19 @@
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { escapeHtml } from '../lib/escape-html.ts';
-import { buildFailuresReport, type TestFailuresReport } from '../lib/failure-report.ts';
+import {
+  buildFailuresReport,
+  FAILURES_STALE_MS,
+  type TestFailuresReport,
+} from '../lib/failure-report.ts';
 
 const ROOT = joinPath(import.meta.dir, '..');
 const OUT_JSON = joinPath(ROOT, 'public', 'registry', 'failures.json');
 const OUT_HTML = joinPath(ROOT, 'public', 'portal', 'failures', 'index.html');
 const NO_FAIL = Bun.argv.includes('--no-fail');
 
-function renderHtml(report: TestFailuresReport): string {
+/** Export for unit coverage of the stale-board template. */
+export function renderHtml(report: TestFailuresReport): string {
   const t = report.totals;
   const stat = (k: string, v: string | number, cls = '') =>
     `<div class="tf-stat ${cls}"><div class="k">${k}</div><div class="v">${v}</div></div>`;
@@ -41,6 +47,8 @@ function renderHtml(report: TestFailuresReport): string {
         )
         .join('\n')
     : '<tr><td colspan="4" class="ok">No failing tests in the latest JUnit run ✓</td></tr>';
+
+  const sourceAt = report.sourceAt || report.generatedAt;
 
   return `<!DOCTYPE html>
 <!-- @see docs/portal-foundation.md — baked by tools/failures-bake.ts; do not edit -->
@@ -65,6 +73,8 @@ function renderHtml(report: TestFailuresReport): string {
     .tf-stat.ok .v { color: var(--green, #3fb950); }
     .tf-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 16px; }
     .tf-panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin: 0 0 12px; }
+    .tf-stale { background: rgba(248,81,73,.08); border: 1px solid var(--red, #f85149); color: var(--red, #f85149); border-radius: var(--radius); padding: 10px 14px; margin: 0 0 16px; font-size: 12px; line-height: 1.5; }
+    .tf-stale strong { font-weight: 650; }
     .tf-table { width: 100%; border-collapse: collapse; font-size: 12px; }
     .tf-table th { text-align: left; padding: 6px 8px; color: var(--text-dim); font-weight: 500; border-bottom: 1px solid var(--border); }
     .tf-table td { padding: 6px 8px; border-bottom: 1px solid rgba(48,54,61,.4); vertical-align: top; }
@@ -88,7 +98,8 @@ function renderHtml(report: TestFailuresReport): string {
     </div>
   </header>
   <main class="tf-wrap">
-    <p class="dim">Latest JUnit results (${escapeHtml(report.sources.join(', '))}) · generated ${escapeHtml(report.generatedAt)} · <code>bun run failures:bake</code></p>
+    <div id="tf-stale-banner" class="tf-stale" hidden></div>
+    <p class="dim">Latest JUnit results (${escapeHtml(report.sources.join(', '))}) · suite ${escapeHtml(sourceAt)} · baked ${escapeHtml(report.generatedAt)} · <code>bun run failures:bake</code></p>
     <div class="tf-stats">
       ${stat('Tests', t.tests)}
       ${stat('Failures', t.failures, t.failures ? 'bad' : 'ok')}
@@ -109,6 +120,33 @@ function renderHtml(report: TestFailuresReport): string {
   <script type="module" src="/portal/components/sidebar.js"></script>
   <script type="module" src="/portal/components/notification.js"></script>
   <script type="module" src="/portal/components/footer.js"></script>
+  <script>
+    // Stale-board guard: committed Pages HTML can outlive the suite it shows.
+    // Prefer sourceAt (JUnit mtime) over generatedAt (bake wall-clock) so re-baking
+    // an old junit file cannot fake freshness.
+    (function () {
+      try {
+        const embed = document.getElementById('test-failures-embed');
+        if (!embed || !embed.textContent) return;
+        const report = JSON.parse(embed.textContent);
+        const anchor = report.sourceAt || report.generatedAt;
+        const ageMs = Date.now() - new Date(anchor).getTime();
+        const STALE_MS = ${FAILURES_STALE_MS};
+        if (!(ageMs > STALE_MS)) return;
+        const days = Math.floor(ageMs / 86400000);
+        const hours = Math.floor((ageMs % 86400000) / 3600000);
+        const banner = document.getElementById('tf-stale-banner');
+        if (!banner) return;
+        banner.hidden = false;
+        const age = days + 'd ' + hours + 'h ago';
+        banner.innerHTML = report.healthy
+          ? '<strong>⚠ Stale green board</strong> — suite source ' + age +
+            ' (' + anchor + '). Green is meaningless; re-run the suite, then <code>bun run failures:bake</code>.'
+          : '<strong>⚠ Board is stale</strong> — suite source ' + age +
+            ' (' + anchor + '). Failure list may be outdated; re-run the suite, then <code>bun run failures:bake</code>.';
+      } catch (_) { /* ignore embed parse errors */ }
+    })();
+  </script>
 </body>
 </html>
 `;
@@ -157,7 +195,9 @@ async function main(): Promise<void> {
       console.error(`warn: missing ${f} — skipped`);
       continue;
     }
-    docs.push({ source: f, xml: await Bun.file(path).text() });
+    const file = Bun.file(path);
+    const st = await file.stat();
+    docs.push({ source: f, xml: await file.text(), mtimeMs: st.mtimeMs });
   }
 
   const report = buildFailuresReport(docs);
@@ -165,7 +205,7 @@ async function main(): Promise<void> {
   await Bun.write(OUT_HTML, renderHtml(report));
 
   console.log(
-    `test-failures: ${report.totals.tests} tests · ${report.totals.failures} failures · sources=${docs.length}`
+    `test-failures: ${report.totals.tests} tests · ${report.totals.failures} failures · sources=${docs.length} · sourceAt=${report.sourceAt}`
   );
   for (const f of report.failures) {
     console.log(`  ✗ ${f.file} › ${f.name}`);

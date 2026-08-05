@@ -43,6 +43,10 @@ describe('Tennis HQ agent auth artifact', () => {
     expect(artifact.producerRuntime.platform).toBe('cloudflare-workers');
     expect(artifact.producerRuntime.contractAuth.registryTokenAccepted).toBe(false);
     expect(artifact.producerRuntime.contractAuth.unauthenticatedStatuses).toEqual([401, 503]);
+    // Must match a real package.json script (not a dead alias).
+    expect(artifact.producerRuntime.releaseVerification).toBe(
+      'bun run cloudflare:deploy:verify'
+    );
   });
 
   test('fails closed when the vault mapping is absent', () => {

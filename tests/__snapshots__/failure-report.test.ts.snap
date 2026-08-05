@@ -19,6 +19,7 @@ Received: 3 & more"
   "generatedAt": "2026-07-28T00:00:00Z",
   "healthy": false,
   "kind": "test-failures",
+  "sourceAt": "2026-07-28T00:00:00Z",
   "sources": [
     "junit.xml",
   ],
