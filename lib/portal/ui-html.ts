@@ -50,6 +50,8 @@ export type PortalTableOpts = PortalTableRowOpts & {
   zebra?: boolean;
   tone?: 'accent' | 'warn' | 'bad';
   className?: string;
+  /** Extra attributes on the `<table>` element (e.g. aria-label, id). */
+  tableAttrs?: Record<string, string>;
 };
 
 export function escHtml(value: string | number | boolean | null | undefined): string {
@@ -172,6 +174,7 @@ export function renderPortalTable(
     opts.density === 'compact' ? ' data-density="compact"' : '',
     opts.zebra ? ' data-zebra' : '',
     opts.tone ? ` data-tone="${escHtml(opts.tone)}"` : '',
+    attrsHtml(opts.tableAttrs),
   ].join('');
 
   const thead =

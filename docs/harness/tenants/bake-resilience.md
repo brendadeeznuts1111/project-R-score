@@ -41,11 +41,14 @@ GitHub Actions is **disabled** repository-wide. The bake pipeline is:
 | Projects browser | `bun run registry:projects` |
 
 **Schedule (operator machine):** cron / Bun.cron / launchd calling `bake:all`
-or a subset after `ops:snapshot`. Prefer:
+or a subset after `ops:snapshot`. Prefer (and `bake:all` step order):
 
-1. `ops:snapshot` (ops-summary · limit-raises)
-2. `tennis:partner-contracts` bake (live token optional)
-3. `bake-registry-manifest` (last)
+1. `ops:snapshot` (partners-ops · ops-summary · limit-raises)
+2. `bun run tennis:partner-contracts:bake` (live when `PARTNER_API_TOKEN` set; else offline)
+3. `bake-registry-manifest` (last — inventory for “Data as of” badges)
+
+Tennis board splits freshness into **contracts · metrics · books** (`desk.latestBookAt`
+independent of bake-manifest).
 
 **Atomic write + keep-last-good:** partner-contracts bake writes via temp+rename
 and refuses to clobber a useful bake with an empty/failed run.

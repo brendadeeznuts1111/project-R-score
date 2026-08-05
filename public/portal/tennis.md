@@ -19,6 +19,18 @@ Factory partner desk (Telegram · Accounting · Soft · DOD).
 | Producer contribute | [plum-spruce-dawn-dune1 · CONTRIBUTING](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md) (Market Desk day loop · gate · partners) |
 | Bake inventory | [`/registry/bake-manifest.json`](../registry/bake-manifest.json) (`runtime.runtimeVersion` · per-artifact `bakedAt`) |
 
+
+
+## Glossary planes (do not confuse)
+
+| Plane | Host | RPS / Warehouse |
+|-------|------|-----------------|
+| Live Market Desk | `tennis.factory-wager.com` | RPS = cycle scanner (`kpi.rps_warnings`); Warehouse = `#warehouse` facets |
+| Factory portal board | `/portal/tennis/` | Baked metrics + partner-contracts — **not** live RPS counts |
+| Domain glossary bake | `/portal/glossary/` | May lag producer desk definitions for overlapping `kpi.*` ids |
+
+Deep links: prefer `#glossary:kpi.rps_warnings` **or** `#warehouse` — not both with text fragments.
+
 ## 1. Two surfaces (do not collapse)
 
 | Host | Owner | Role |
