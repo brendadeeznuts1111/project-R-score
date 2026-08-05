@@ -205,6 +205,8 @@ export async function seedDodDemo(opts: SeedDodDemoOpts = {}): Promise<SeedDodDe
     const byStatus: Record<string, number> = {};
     let inserted = 0;
     const now = Date.now();
+    // Unique (chat_id, message_id) — salt so --force batches never collide.
+    const msgSalt = Math.floor(now / 1000) % 1_000_000_000;
 
     for (let i = 0; i < DEMO_ROWS.length; i++) {
       const row = DEMO_ROWS[i]!;
@@ -216,6 +218,7 @@ export async function seedDodDemo(opts: SeedDodDemoOpts = {}): Promise<SeedDodDe
           ? new Date(now - i * 3_600_000 + 600_000).toISOString()
           : null;
       const amt = extractAccountingAmount(row.ocr ?? undefined) ?? null;
+      const tgMsg = row.tgMsg != null ? row.tgMsg + msgSalt + i : null;
 
       insert.run({
         $id: id,
@@ -237,7 +240,7 @@ export async function seedDodDemo(opts: SeedDodDemoOpts = {}): Promise<SeedDodDe
         $by: reviewed ? 'demo-seed' : null,
         $reason: row.reason ?? null,
         $tgChat: row.tgChat ?? null,
-        $tgMsg: row.tgMsg ?? null,
+        $tgMsg: tgMsg,
         $tgThread: row.tgThread ?? null,
         $tgTopic: row.tgTopic ?? null,
         $imgMeta: row.imageMeta ? JSON.stringify(row.imageMeta) : null,
