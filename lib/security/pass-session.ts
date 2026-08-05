@@ -59,7 +59,7 @@ export type PassAgentProject = keyof typeof PASS_PAT_VAULT_MATRIX;
 
 export type PassInfoJson = {
   release_track?: string;
-  id?: string;
+  id?: string; // brand-ok — opaque Pass CLI session/device id from info JSON wire
   personal_access_token_name?: string | null;
   session_has_lock?: boolean;
 };
