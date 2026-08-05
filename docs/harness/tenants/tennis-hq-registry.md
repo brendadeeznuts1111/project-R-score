@@ -53,11 +53,11 @@ consumer evidence.
 | ---------------- | ---------------------------------------------------------------------------------------------------- |
 | Runtime          | `https://tennis.factory-wager.com`                                                                   |
 | Worker           | `tennis-hq`                                                                                          |
-| Production tip   | `41c9ab68b4d3d47d0bea92d8877137588a7cfdf1` (`41c9ab6`) · `tennis-hq@1.4.0` · `/api/version` 2026-08-05T17:16:41Z · msg `security(export): gate warehouse-csv/json… (#7)` |
+| Production tip   | [`41c9ab6`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/commit/41c9ab68b4d3d47d0bea92d8877137588a7cfdf1) · `tennis-hq@1.4.0` · `/api/version` `at` 2026-08-05T17:16:41Z · `security(export): gate warehouse-csv/json with partner API access (#7)` |
 | Worker version   | `7b9ac02a-18c4-46f5-a724-f07b7fa5925d`                                                               |
-| Git tip (`main`) | May be **ahead** of production tip — do not treat `origin/main` HEAD as live until redeploy + verify |
-| Verified         | 2026-08-05 · `/api/version` ok · unauth `GET /api/v1/research/status` → **401**                      |
-| Inventory        | `config/surfaces.toml` → `/registry/surfaces-state.json`                                             |
+| Git tip (`main`) | [`0f7b6d9`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/commit/0f7b6d9fba84bfeb404edc1edfba964b8ef96cd1) — **3 commits ahead** of production tip (`#9` timeout shell · `#8` CONTRIBUTING mesh · `#10` scan-flag filter). Not live until Wrangler redeploy + `/api/version` match |
+| Verified         | 2026-08-05 · `/api/version` ok · unauth `GET /api/v1/research/status` → **401** · glossary 300 entries |
+| Inventory        | `config/surfaces.toml` → `/registry/surfaces-state.json` (re-bake after tip change)                  |
 | Cross-host probe | `bun run verify:weave -- --subdomains` → version, glossary, all five configured v1 bearer rejections |
 
 Producer service auth is a distinct boundary from FactoryWager registry auth.
