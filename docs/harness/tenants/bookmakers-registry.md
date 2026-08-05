@@ -6,6 +6,7 @@ first-class portal surface on the live domain.
 | Role | Path |
 |------|------|
 | Board | [`/portal/bookmakers/`](../../../public/portal/bookmakers/index.html) |
+| Markdown companion | [`/portal/bookmakers.md`](../../../public/portal/bookmakers.md) · routing audit [`routing.md`](../../../public/portal/routing.md) |
 | Registry artifact (baked mirror) | [`/registry/bookmakers.json`](../../../public/registry/bookmakers.json) |
 | Source artifact | `@factorywager/bookmakers` on the artifact registry (`registry.factory-wager.com`) |
 | Bake | `bun run bookmakers:bake` · check `bookmakers:bake:check` · script [`scripts/bake-bookmakers-board.ts`](../../../scripts/bake-bookmakers-board.ts) |

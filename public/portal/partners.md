@@ -14,8 +14,10 @@ DOD image proofs (Bun.Image · R2) + amount confirm: [dod.md](./dod.md) · [`/po
 | Partners-ops (v2) | [`/registry/partners-ops.json`](../registry/partners-ops.json) |
 | Soft accounting export | [`/registry/soft-accounting-export.json`](../registry/soft-accounting-export.json) |
 | Handshake catalog | [`/registry/telegram-handshake-catalog.json`](../registry/telegram-handshake-catalog.json) |
-| DOD queue | [`/registry/dod-queue.json`](../registry/dod-queue.json) · [`/portal/dod/`](./dod/) |
-| Limit raises | [`/registry/limit-raises.json`](../registry/limit-raises.json) |
+| DOD queue | [`/registry/dod-queue.json`](../registry/dod-queue.json) · [`/portal/dod/`](./dod/) · [dod.md](./dod.md) |
+| Limit raises | [`/registry/limit-raises.json`](../registry/limit-raises.json) · [limits.md](./limits.md) |
+| Bookmakers | [`/registry/bookmakers.json`](../registry/bookmakers.json) · [bookmakers.md](./bookmakers.md) |
+| Routing audit | [routing.md](./routing.md) |
 
 ## Sections (HTML board)
 

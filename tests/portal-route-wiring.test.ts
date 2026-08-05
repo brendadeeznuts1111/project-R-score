@@ -5,7 +5,7 @@ import {
   PORTAL_MARKDOWN_SLUGS,
   PORTAL_TRAILING_SLASH_SOURCES,
 } from '../lib/http/portal-route-manifest.ts';
-import { PORTAL_DASHBOARD_ROUTES } from '../lib/http/public-routes.ts';
+import { PORTAL_DASHBOARD_ROUTES, publicRouteCatalog } from '../lib/http/public-routes.ts';
 
 describe('portal route wiring', () => {
   test('_redirects covers all trailing-slash sources', async () => {
@@ -54,6 +54,26 @@ describe('portal route wiring', () => {
     expect(PORTAL_HTML_ROUTES).toContain('/portal/limits/');
     expect(PORTAL_TRAILING_SLASH_SOURCES).toContain('/portal/limits');
     expect(PORTAL_MARKDOWN_SLUGS).toContain('limits');
+  });
+
+  test('bookmakers portal is first-class in route SSOT', () => {
+    expect(PORTAL_HTML_ROUTES).toContain('/portal/bookmakers/');
+    expect(PORTAL_TRAILING_SLASH_SOURCES).toContain('/portal/bookmakers');
+    expect(PORTAL_MARKDOWN_SLUGS).toContain('bookmakers');
+  });
+
+  test('dod + routing markdown companions are registered', () => {
+    expect(PORTAL_MARKDOWN_SLUGS).toContain('dod');
+    expect(PORTAL_MARKDOWN_SLUGS).toContain('routing');
+    expect(PORTAL_MARKDOWN_SLUGS).toContain('telegram');
+  });
+
+  test('public-routes catalog includes bookmakers bake', () => {
+    const paths = new Set(publicRouteCatalog().map(r => r.path));
+    expect(paths.has('/registry/bookmakers.json')).toBe(true);
+    expect(paths.has('/portal/bookmakers/')).toBe(true);
+    expect(paths.has('/registry/dod-queue.json')).toBe(true);
+    expect(paths.has('/registry/limit-raises.json')).toBe(true);
   });
 
   test('brand keymap portal is first-class in route SSOT', () => {

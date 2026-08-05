@@ -21,7 +21,7 @@ Product domains on chrome (partner desk first). Full machine map:
 
 | Lane | Boards (entry) | Focus |
 |------|----------------|-------|
-| **Partner** | [Partners](./partners/) · [Account](./account/) · [Limits](./limits/) · [Bookmakers](./bookmakers/) · [Factory](./factory/) · [Telegram](./telegram.md) · [DOD](./dod.md) | Package groups, outs, Telegram chats (plays · balances · bets · accounting), handshake, image proof confirm |
+| **Partner** | [Partners](./partners/) · [Account](./account/) · [Limits](./limits.md) · [Bookmakers](./bookmakers.md) · [Factory](./factory/) · [Telegram](./telegram.md) · [DOD](./dod.md) · [Routing](./routing.md) | Package groups, outs, limits, books, Telegram, image proof, route audit |
 | **Trading** | [Tennis](./tennis/) · prediction report | Tennis HQ desk · agent-auth · live metrics |
 | **Control** | [Ops](./ops/) · [TOC](./toc/) · [Dashboard](./dashboard/) · [Compliance](./compliance/) · [Monitoring](./monitoring.md) | ops-summary pulse, loop, MA/NJ |
 | **Identity** | [Identity](./identity/) · [Vault](./vault/) · [Env](./env/) | Auth · Proton · inject map |
@@ -35,6 +35,8 @@ Product domains on chrome (partner desk first). Full machine map:
 | Ops (control pulse) | [`/portal/ops/`](./ops/) | [`ops-summary.json`](../registry/ops-summary.json) |
 | Partners | [`/portal/partners/`](./partners/) | [`partners-ops.json`](../registry/partners-ops.json) |
 | Limits | [`/portal/limits/`](./limits/) | [`limit-raises.json`](../registry/limit-raises.json) |
+| Bookmakers | [`/portal/bookmakers/`](./bookmakers/) | [`bookmakers.json`](../registry/bookmakers.json) |
+| DOD | [`/portal/dod/`](./dod/) | [`dod-queue.json`](../registry/dod-queue.json) |
 | Packages | [`/portal/packages/`](./packages/) | [`packages-graph-map.json`](../registry/packages-graph-map.json) |
 | Health | [`/portal/health/`](./health/) | [`monorepo-health.json`](../registry/monorepo-health.json) |
 | Compliance | [`/portal/compliance/`](./compliance/) | [`compliance-board.json`](../registry/compliance-board.json) |
@@ -42,8 +44,9 @@ Product domains on chrome (partner desk first). Full machine map:
 | Tennis | [`/portal/tennis/`](./tennis/) | [`tennis/agent-auth.json`](../registry/tennis/agent-auth.json) |
 
 Markdown companions (when present): `ops.md` · `partners.md` · `telegram.md` ·
-`factory.md` · `dod.md` · `packages.md` · `limits.md` · `compliance.md` ·
-`brands.md` · `glossary.md` · `health.md` · `tennis.md` · `tools.md` · `toc.md`.
+`factory.md` · `dod.md` · `limits.md` · `bookmakers.md` · `routing.md` ·
+`packages.md` · `compliance.md` · `brands.md` · `glossary.md` · `health.md` ·
+`tennis.md` · `tools.md` · `toc.md`.
 
 ## Registry artifacts (operator)
 
@@ -57,6 +60,8 @@ Markdown companions (when present): `ops.md` · `partners.md` · `telegram.md` �
 | [`seat-capital-desk.json`](../registry/seat-capital-desk.json) | Seat FUND · outs · max bet · partner messages |
 | [`soft-accounting-export.json`](../registry/soft-accounting-export.json) | Soft plays · weeks · book types (read-only mirror) |
 | [`dod-queue.json`](../registry/dod-queue.json) | DOD evidence queue (Bun.Image · R2/local `s3_path`) |
+| [`limit-raises.json`](../registry/limit-raises.json) | Multi-factor partner limit raises |
+| [`bookmakers.json`](../registry/bookmakers.json) | Book registry mirror (`@factorywager/bookmakers`) |
 | [`domain-glossary.json`](../registry/domain-glossary.json) | Concept glossary (Kalshi cores + Factory overlay) |
 | [`registry.json`](../registry/registry.json) | Package index (R2 snapshot for Pages) |
 
@@ -72,8 +77,11 @@ bun run telegram:handshake:catalog
 bun run portal:chrome:bake         # nav + domainLanes
 bun run audit:packages:full        # packages graph
 bun run monorepo:health:bake
+bun run bookmakers:bake:check
 bun run portal:doctor
+bun run public:discover:check
 bun run verify:portal:static
+bun run check:routes               # see routing.md if /monitoring ERR
 ```
 
 Deploy Pages after Proton inject: `bun run proton:inject:factorywager:reasonix` →
