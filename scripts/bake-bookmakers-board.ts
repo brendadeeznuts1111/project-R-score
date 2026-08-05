@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob (tar output scan)
 // @see https://bun.com/docs/runtime/utils#bun-gunzipsync — Bun.gunzipSync
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
@@ -23,7 +25,7 @@
 // eslint-disable-next-line no-restricted-imports -- temp-dir tar extraction; Bun has no rmSync/mkdirSync for arbitrary paths
 import { mkdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirnamePath, joinPath } from '../lib/path-bun.ts';
 
 export const BOOKMAKERS_REGISTRY_PATH = 'public/registry/bookmakers.json';
 export const BOOKMAKERS_BOARD_PATH = 'public/portal/bookmakers/index.html';
@@ -93,7 +95,7 @@ export async function downloadArtifact(
 
 /** Extract a tgz into dir (npm-style package/ prefix stripped by tar -C). */
 export async function extractTarball(tgz: Uint8Array, dir: string): Promise<void> {
-  const tgzPath = join(dir, 'artifact.tgz');
+  const tgzPath = joinPath(dir, 'artifact.tgz');
   await Bun.write(tgzPath, tgz);
   const proc = Bun.spawnSync(['tar', '-xzf', tgzPath, '-C', dir, '--strip-components=1']);
   if (!proc.success) {
@@ -104,7 +106,7 @@ export async function extractTarball(tgz: Uint8Array, dir: string): Promise<void
 
 /** Import the extracted package entry and return its BOOKMAKERS registry. */
 export async function loadBookmakersModule(dir: string): Promise<Record<string, unknown>> {
-  const pkgJson = join(dir, 'package.json');
+  const pkgJson = joinPath(dir, 'package.json');
   let entry = 'index.js';
   try {
     const raw = JSON.parse(await Bun.file(pkgJson).text()) as { main?: string };
@@ -112,7 +114,7 @@ export async function loadBookmakersModule(dir: string): Promise<Record<string, 
   } catch {
     // no package.json — fall back to index.js
   }
-  const abs = join(dir, entry);
+  const abs = joinPath(dir, entry);
   if (!(await Bun.file(abs).exists())) throw new Error(`no package entry at ${abs}`);
   return (await import(Bun.pathToFileURL(abs).href)) as Record<string, unknown>;
 }
@@ -176,7 +178,7 @@ async function main(): Promise<void> {
 
   const release = await resolveArtifactRelease();
   const tgz = await downloadArtifact(release);
-  const dir = join(tmpdir(), `fw-bookmakers-bake-${Date.now()}`);
+  const dir = joinPath(tmpdir(), `fw-bookmakers-bake-${Date.now()}`);
   mkdirSync(dir, { recursive: true });
   let module: Record<string, unknown>;
   try {
@@ -222,7 +224,7 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  mkdirSync(dirname(BOOKMAKERS_REGISTRY_PATH), { recursive: true });
+  mkdirSync(dirnamePath(BOOKMAKERS_REGISTRY_PATH), { recursive: true });
   await Bun.write(BOOKMAKERS_REGISTRY_PATH, body);
   console.log(
     `✓ Baked ${BOOKMAKERS_REGISTRY_PATH} (${payload.artifact.version}, ${payload.summary.count} bookmakers)`

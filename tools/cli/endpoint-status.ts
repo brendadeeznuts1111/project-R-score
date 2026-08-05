@@ -19,6 +19,7 @@ import {
 import { colorize, type ColorStatus } from '../../lib/utils/color-system.ts';
 import { styled, FW_COLORS } from '../../lib/theme/colors.ts';
 import { jsonOut } from '../../lib/console-depth.ts';
+import { sleep } from '../../lib/time.ts';
 
 /** Pad string to target visual width (left-aligned) */
 function swPad(str: string, width: number, char = ' '): string {
@@ -265,7 +266,7 @@ async function watchEndpoints(
     const results = await checkAllEndpoints(endpoints);
     displayEndpointResults(results, context);
 
-    await new Promise(resolve => setTimeout(resolve, interval));
+    await sleep(interval);
   }
 }
 

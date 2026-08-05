@@ -16,7 +16,7 @@
 import { Database } from 'bun:sqlite';
 // eslint-disable-next-line no-restricted-imports -- Bun has no mkdirSync for arbitrary paths
 import { mkdirSync } from 'node:fs';
-import { dirname } from 'node:path';
+import { dirnamePath } from '../lib/path-bun.ts';
 import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
 import { countPortalConceptUsages } from '../lib/portal/concept-usage.ts';
 import { PORTAL_SEMANTIC_CONCEPTS } from '../lib/portal/semantic-vocabulary.ts';
@@ -108,7 +108,7 @@ async function main(): Promise<void> {
   const check = Bun.argv.includes('--check');
   const wantJson = Bun.argv.includes('--json');
 
-  mkdirSync(dirname(REGISTRY_DB_PATH), { recursive: true });
+  mkdirSync(dirnamePath(REGISTRY_DB_PATH), { recursive: true });
   const db = new Database(REGISTRY_DB_PATH);
   try {
     if (check) {
