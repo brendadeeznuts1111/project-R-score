@@ -1513,7 +1513,7 @@ async function loadVpsStatus() {
     const ok = s => s === 'active' || s?.startsWith('Up');
     const cls = s => (ok(s) ? 'st-ok' : 'st-bad');
     panel.innerHTML = `
-      <table class="env-table">
+      <table class="portal-table">
         <thead><tr><th>Host</th><th>Uptime</th><th>Disk</th><th>Memory</th></tr></thead>
         <tbody>
           <tr>
@@ -1524,7 +1524,7 @@ async function loadVpsStatus() {
           </tr>
         </tbody>
       </table>
-      <table class="env-table" style="margin-top:8px">
+      <table class="portal-table" style="margin-top:8px">
         <thead><tr><th>Service</th><th>Status</th></tr></thead>
         <tbody>
           ${Object.entries(d.services || {})

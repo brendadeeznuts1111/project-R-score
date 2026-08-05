@@ -108,28 +108,12 @@
         padding: 14px 16px;
         overflow-x: auto;
       }
+      /* Base chrome from .portal-table — board keeps width floor only */
       .partners-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 12px;
         min-width: 720px;
       }
       .partners-table th {
-        text-align: left;
-        padding: 7px 8px;
-        color: var(--text-dim);
         font-weight: 600;
-        border-bottom: 1px solid var(--border);
-        white-space: nowrap;
-      }
-      .partners-table td {
-        padding: 7px 8px;
-        border-bottom: 1px solid rgba(48, 54, 61, 0.35);
-        vertical-align: top;
-      }
-      .partners-table code {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 11px;
       }
       .tone-ok {
         color: var(--green, #3fb950);
@@ -547,7 +531,7 @@
           </p>
           <ul class="topic-chips" id="topic-chips"></ul>
           <div class="partners-panel" id="telegram-thread" style="margin-top: 12px">
-            <table class="partners-table">
+            <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Partner</th>
@@ -608,7 +592,7 @@
             <span id="outs-filter-count" class="tone-muted" aria-live="polite"></span>
           </div>
           <div class="partners-panel">
-            <table class="partners-table">
+            <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Partner</th>
@@ -663,7 +647,7 @@
             <span id="account-limit-summary"></span>
           </p>
           <div class="partners-panel">
-            <table class="partners-table">
+            <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Partner</th>
@@ -793,7 +777,7 @@
             surface. Soft Balance stays in toc-ops <code>ct</code>.
           </p>
           <div class="partners-panel" id="accounting-ledger">
-            <table class="partners-table">
+            <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Partner</th>
@@ -813,7 +797,7 @@
               <code>partners:event</code> / <code>partners:ledger:append</code> →
               <code>bun run partners:build</code>. Shipped <code>event.*</code> ids only.
             </p>
-            <table class="partners-table">
+            <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Partner</th>
@@ -842,7 +826,7 @@
                 ><code>ops.view.per_play</code></a
               >. Promote live with <code>bun run soft:accounting:from-ct</code>.
             </p>
-            <table class="partners-table">
+            <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Partner</th>
@@ -871,7 +855,7 @@
                 ><code>ops.view.per_week</code></a
               >.
             </p>
-            <table class="partners-table">
+            <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Partner</th>
@@ -904,7 +888,7 @@
                 ><code>book.type.*</code></a
               >.
             </p>
-            <table class="partners-table">
+            <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Partner</th>
@@ -969,7 +953,7 @@
               — deposit rails and status chips (hash
               <code>#partner/CODE/out/out-CODE-N</code>).
             </p>
-            <table class="partners-table">
+            <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Partner</th>
@@ -1047,7 +1031,7 @@
             ></ul>
           </div>
           <div class="partners-panel">
-            <table class="partners-table">
+            <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Call</th>
@@ -1682,7 +1666,7 @@
         <div class="partners-panel">
           <h2>Ledger <span class="tone-muted">(partner_ledger)</span></h2>
           <div class="blurb">Most recent transactions — desk entries, imports, and the weekly commission adjustment (newest first).</div>
-          <table class="partners-table">
+          <table class="portal-table partners-table">
             <thead>
               <tr>
                 <th>When</th>
@@ -1700,7 +1684,7 @@
         <div class="partners-panel">
           <h2>Per-out balances <span class="tone-muted">(books)</span></h2>
           <div class="blurb">Ledger sums per book account — which book is profitable vs. losing.</div>
-          <table class="partners-table">
+          <table class="portal-table partners-table">
             <thead>
               <tr>
                 <th>Out</th>

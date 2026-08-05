@@ -8,16 +8,16 @@
 
 import { bindCopyButtons } from '../copy-cli.js';
 import { bootGlossaryUx } from '../components/glossary-ux.js';
+import { escHtml } from '../components/portal-ui.js';
 
 export const REGISTRY_URL = '/registry/bookmakers.json';
 export const DESK_COVERAGE_URL = '/registry/bookmakers-desk-coverage.json';
 export const GLOSSARY_URL = '/registry/domain-glossary.json';
 const POLL_MS = 60_000;
 
+/** @deprecated prefer escHtml from portal-ui — kept as board export for tests */
 export function esc(value) {
-  return String(value ?? '').replace(/[&<>"']/g, c =>
-    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]
-  );
+  return escHtml(value);
 }
 
 /** Domain from v0.3 `domain` or v0.4 `urls.web`. */
@@ -133,7 +133,7 @@ export function filterBooks(books, { fetcher = 'all', tier = 'all', q = '' } = {
 
 export function lifecycleChipsHtml(modes) {
   return (modes || [])
-    .map(m => `<span class="chip chip-muted lifecycle-chip">${esc(m)}</span>`)
+    .map(m => `<span class="portal-chip portal-chip--muted">${esc(m)}</span>`)
     .join('');
 }
 
@@ -175,8 +175,8 @@ export function sportsChipsHtml(sports, glossaryIds) {
       const concept = `sport.${s}`;
       const wired = glossaryIds && glossaryIds.has(concept);
       return wired
-        ? `<a class="chip" data-glossary-concept="${esc(concept)}" href="/portal/glossary/#glossary:${esc(concept)}">${esc(s)}</a>`
-        : `<span class="chip">${esc(s)}</span>`;
+        ? `<a class="portal-chip" data-glossary-concept="${esc(concept)}" href="/portal/glossary/#glossary:${esc(concept)}">${esc(s)}</a>`
+        : `<span class="portal-chip">${esc(s)}</span>`;
     })
     .join('');
 }
@@ -184,7 +184,7 @@ export function sportsChipsHtml(sports, glossaryIds) {
 export function regionsHtml(regions) {
   const parts = (regions || []).map(formatRegion).filter(Boolean);
   if (!parts.length) return '<span class="dim">—</span>';
-  return parts.map(r => `<span class="chip chip-muted">${esc(r)}</span>`).join('');
+  return parts.map(r => `<span class="portal-chip portal-chip--muted">${esc(r)}</span>`).join('');
 }
 
 export function rowHtml(book, glossaryIds) {
@@ -200,7 +200,7 @@ export function rowHtml(book, glossaryIds) {
     ? `<a class="domain-link" href="https://${esc(book.domain.replace(/^https?:\/\//, ''))}" target="_blank" rel="noopener noreferrer"><code>${esc(book.domain)}</code></a>`
     : '<span class="dim">—</span>';
   const fetcher = book.fetcherType
-    ? `<span class="fetcher-pill fetcher-${esc(book.fetcherType)}">${esc(book.fetcherType)}</span>`
+    ? `<span class="portal-pill portal-pill--${esc(book.fetcherType)}">${esc(book.fetcherType)}</span>`
     : '<span class="dim">—</span>';
   const tier = book.liquidityTier
     ? `<div class="dim" style="margin-top:4px;font-size:11px">${esc(book.liquidityTier)}</div>`
@@ -289,7 +289,7 @@ export function deskCoverageHtml(report) {
     .map(h => {
       const max = h.maxBetUsd != null ? ` · max$${esc(h.maxBetUsd)}` : '';
       const id = h.registryId ? ` → <code>${esc(h.registryId)}</code>` : '';
-      return `<span class="chip ${h.class === 'unmatched' ? 'state-err' : 'chip-muted'}">[${esc(h.class)}] ${esc(h.deskBook)}${id}${max}</span>`;
+      return `<span class="portal-chip ${h.class === 'unmatched' ? 'state-err' : 'portal-chip--muted'}">[${esc(h.class)}] ${esc(h.deskBook)}${id}${max}</span>`;
     })
     .join(' ');
   return {

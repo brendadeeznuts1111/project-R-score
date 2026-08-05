@@ -103,7 +103,7 @@ describe('bookmakers board helpers', () => {
     const html = rowHtml(ok, new Set(['sport.tennis']));
     expect(html).toContain('data-glossary-concept="sport.tennis"');
     expect(html).toContain('US');
-    expect(html).toContain('fetcher-rest');
+    expect(html).toContain('portal-pill--rest');
     expect(html).toContain('state-ok');
   });
 

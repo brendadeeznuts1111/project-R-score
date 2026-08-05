@@ -111,7 +111,7 @@ class OperationsDashboard extends HTMLElement {
               <input type="checkbox" id="telegram-handshake-gaps-only" />
               gaps only (2·house!)
             </label>
-            <table id="telegram-handshake-table" class="ops-table hidden" aria-label="Package group handshake partners">
+            <table id="telegram-handshake-table" class="portal-table hidden" aria-label="Package group handshake partners">
               <thead>
                 <tr>
                   <th>CODE</th>
@@ -133,7 +133,7 @@ class OperationsDashboard extends HTMLElement {
             <h2>Seat Capital <span class="version-badge subsystem-other">telegram</span></h2>
             <div class="ops-metric" id="seat-capital-desk-metric">—</div>
             <div class="ops-sub" id="seat-capital-desk-detail"></div>
-            <table id="seat-capital-desk-table" class="ops-table hidden" aria-label="Seat capital desks">
+            <table id="seat-capital-desk-table" class="portal-table hidden" aria-label="Seat capital desks">
               <thead>
                 <tr>
                   <th>Call</th>
@@ -147,7 +147,7 @@ class OperationsDashboard extends HTMLElement {
             </table>
             <div id="seat-capital-desk-expand" class="ops-sub"></div>
             <h3 class="ops-sub" style="margin-top:12px">Partner messages</h3>
-            <table id="seat-partner-message-table" class="ops-table hidden" aria-label="Seat desk partner messages">
+            <table id="seat-partner-message-table" class="portal-table hidden" aria-label="Seat desk partner messages">
               <thead>
                 <tr>
                   <th>Call</th>
@@ -177,7 +177,7 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-sub" id="limits-detail"></div>
             <div class="ops-sub" id="limits-patterns-detail" hidden></div>
             <div class="ops-sub" id="limits-predict-detail" hidden></div>
-            <table id="limits-table" class="ops-table" data-density="compact">
+            <table id="limits-table" class="portal-table" data-density="compact">
               <thead><tr><th>Partner</th><th>Book</th><th>Sport</th><th>Market</th><th>Type</th><th>Old</th><th>New</th><th>Influence</th><th>When</th></tr></thead>
               <tbody id="limits-tbody"></tbody>
             </table>
@@ -292,7 +292,7 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-metric" id="install-platform-pass">—</div>
             <div class="ops-sub" id="install-platform-detail"></div>
             <a class="ops-link" id="install-platform-link" href="/registry/install-platform.json">Full install platform proof JSON</a>
-            <table id="install-platform-table" class="ops-table hidden">
+            <table id="install-platform-table" class="portal-table hidden">
               <thead><tr><th>Aspect</th><th>Status</th><th>Docs</th></tr></thead>
               <tbody></tbody>
             </table>
@@ -303,7 +303,7 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-sub" id="install-env-detail"></div>
             <a class="ops-link" id="install-env-link" href="/registry/install-env-proof.json">Full install env proof JSON</a>
             <a class="ops-link" href="https://bun.com/docs/pm/cli/install#configuring-with-environment-variables" target="_blank" rel="noopener">Bun install env vars</a>
-            <table id="install-env-table" class="ops-table hidden">
+            <table id="install-env-table" class="portal-table hidden">
               <thead><tr><th>Env var</th><th>Status</th><th>Docs</th></tr></thead>
               <tbody></tbody>
             </table>
@@ -315,7 +315,7 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-mono" id="docs-coverage-hash"></div>
             <a class="ops-link" id="docs-coverage-link" href="/registry/docs-coverage-proof.json">Full docs coverage proof JSON</a>
             <a class="ops-link" href="https://bun.com/reference" target="_blank" rel="noopener" title="Meta · stable — Complete generated API reference">Bun API Reference</a>
-            <table id="docs-coverage-table" class="ops-table hidden">
+            <table id="docs-coverage-table" class="portal-table hidden">
               <thead><tr><th>Lane</th><th>Status</th><th>Detail</th></tr></thead>
               <tbody></tbody>
             </table>
@@ -329,7 +329,7 @@ class OperationsDashboard extends HTMLElement {
             <a class="ops-link" href="/.well-known/mcp.json">/.well-known/mcp.json</a>
             <a class="ops-link" href="/registry/cloudflare-pages-preflight.json">Preflight report JSON</a>
             <div class="ops-sub" id="cloudflare-preflight-detail"></div>
-            <table id="cloudflare-token-table" class="ops-table hidden">
+            <table id="cloudflare-token-table" class="portal-table hidden">
               <thead><tr><th>Server</th><th>Status</th><th>URL</th></tr></thead>
               <tbody></tbody>
             </table>
@@ -341,7 +341,7 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-mono" id="registry-client-hash"></div>
             <a class="ops-link" id="registry-client-link" href="/registry/registry-client-proof.json">Full registry client proof JSON</a>
             <a class="ops-link" href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/registry-client.md" target="_blank" rel="noopener">Registry client docs</a>
-            <table id="registry-client-table" class="ops-table hidden">
+            <table id="registry-client-table" class="portal-table hidden">
               <thead><tr><th>Probe</th><th>Status</th><th>Docs</th></tr></thead>
               <tbody></tbody>
             </table>
@@ -353,7 +353,7 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-mono" id="runtime-nits-hash"></div>
             <a class="ops-link" id="runtime-nits-link" href="/registry/bun-runtime-nits-proof.json">Full runtime nits proof JSON</a>
             <a class="ops-link" href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/bun-runtime-nits.md" target="_blank" rel="noopener">Runtime nits docs</a>
-            <table id="runtime-nits-table" class="ops-table hidden">
+            <table id="runtime-nits-table" class="portal-table hidden">
               <thead><tr><th>Probe</th><th>Category</th><th>Status</th><th>Docs</th></tr></thead>
               <tbody></tbody>
             </table>
@@ -382,7 +382,7 @@ class OperationsDashboard extends HTMLElement {
             <a class="ops-link" id="bundler-loaders-link" href="/registry/bundler-loaders-proof.json">Full bundler loaders proof JSON</a>
             <a class="ops-link" href="https://bun.com/docs/bundler/loaders#css" target="_blank" rel="noopener">CSS loader</a>
             <a class="ops-link" href="https://bun.com/docs/bundler#content-types" target="_blank" rel="noopener">Asset Processing</a>
-            <table id="bundler-loaders-table" class="ops-table hidden">
+            <table id="bundler-loaders-table" class="portal-table hidden">
               <thead><tr><th>Probe</th><th>Status</th><th>Docs</th></tr></thead>
               <tbody></tbody>
             </table>
@@ -394,7 +394,7 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-mono" id="taxonomy-hash"></div>
             <a class="ops-link" id="taxonomy-link" href="/registry/proof-taxonomy-audit.json">Full taxonomy audit JSON</a>
             <a class="ops-link" href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/verification/proof-taxonomy.ts" target="_blank" rel="noopener">Contract SSOT</a>
-            <table id="taxonomy-table" class="ops-table hidden">
+            <table id="taxonomy-table" class="portal-table hidden">
               <thead><tr><th>Artifact</th><th>Subsystem</th><th>Rows</th><th>Status</th></tr></thead>
               <tbody></tbody>
             </table>
@@ -412,7 +412,7 @@ class OperationsDashboard extends HTMLElement {
             <channel-filter></channel-filter>
             <div id="release-features-cards" class="verification-cards hidden"></div>
             <script type="application/ld+json" id="release-jsonld"></script>
-            <table id="release-features-table" class="ops-table hidden">
+            <table id="release-features-table" class="portal-table hidden">
               <thead><tr><th>Test</th><th>Status</th><th>Docs</th></tr></thead>
               <tbody></tbody>
             </table>
@@ -449,7 +449,7 @@ class OperationsDashboard extends HTMLElement {
           <section class="ops-panel wide" id="ops-plays">
             <h2>Plays</h2>
             <div class="ops-source" id="ops-source"></div>
-            <table id="plays-table" class="ops-table" data-zebra><thead><tr><th>Time</th><th>Expert</th><th>Event</th><th>Pick</th><th>Odds</th><th>Sent</th><th>Placed</th></tr></thead><tbody></tbody></table>
+            <table id="plays-table" class="portal-table" data-zebra><thead><tr><th>Time</th><th>Expert</th><th>Event</th><th>Pick</th><th>Odds</th><th>Sent</th><th>Placed</th></tr></thead><tbody></tbody></table>
           </section>
           <section class="ops-panel" id="ops-rails">
             <h2>Rails</h2>

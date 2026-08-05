@@ -670,7 +670,7 @@ export class LimitChangesCard extends HTMLElement {
     const totalAvailable = changes.length;
     const caption = `Partner limit changes, ${filtered.length} of ${totalAvailable} visible`;
     wrap.innerHTML = `
-      <table class="lcc-table" aria-label="${escapeText(caption)}" data-glossary-concept="${G.ariaTableCaption}">
+      <table class="portal-table lcc-table" aria-label="${escapeText(caption)}" data-glossary-concept="${G.ariaTableCaption}">
         <caption data-glossary-concept="${G.ariaTableCaption}">${escapeText(caption)}. Sorted newest first. Structure / phase is wire bet_type: straight/parlay or pregame/live.</caption>
         <thead><tr>${headers.map(([label, concept, title]) => columnHeader(label, concept, title)).join('')}</tr></thead>
         <tbody>${filtered
