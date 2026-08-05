@@ -81,6 +81,7 @@ describe('verifyBunApis (offline)', () => {
     expect(manifest.apis['Bun.TOML.stringify']).toMatchObject({
       inTypes: false,
       knownTypeGap: true,
+      knownRuntimeGap: !Bun.semver.satisfies(Bun.version, '>=1.4.0'),
       ok: true,
     });
     expect(Object.values(manifest.apis).every(proof => proof.inDocs)).toBe(true);

@@ -45,7 +45,8 @@ export function resolveBunExecutable(opts: { PATH?: string } = {}): string {
   const hit = bunExecutableCache.get(cacheKey);
   if (hit) return hit;
 
-  const found = PATH !== undefined && PATH !== '' ? Bun.which('bun', { PATH }) : Bun.which('bun');
+  const found =
+    PATH === undefined ? Bun.which('bun') : PATH === '' ? null : Bun.which('bun', { PATH });
   const resolved = (found ?? process.execPath).trim();
   if (!resolved) {
     throw new Error(

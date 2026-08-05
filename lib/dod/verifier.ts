@@ -26,6 +26,7 @@ import { reconcileDodAmounts } from './reconcile.ts';
 import { appendDodMetaNdjson } from './meta-log.ts';
 import { requireSecret } from '../security/require-secret.ts';
 import { requireMintableSecret } from '../security/mintable-secret.ts';
+import { telegramBotApiUrl } from '../telegram/telegram-api-url.ts';
 import { DEFAULT_OPS_DB_PATH } from '../operations/db.ts';
 import {
   agentHasPlatformAccount,
@@ -698,7 +699,7 @@ export class DODVerifier {
     const token = tg.effectiveToken;
     const chatId = tg.opsChatId;
     if (!token || !chatId) return;
-    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    await fetch(telegramBotApiUrl(token, 'sendMessage'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

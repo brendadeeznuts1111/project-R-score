@@ -16,11 +16,13 @@
 import { Database } from 'bun:sqlite';
 import {
   asPortalTenantId,
+  asTelegramUserId,
   asTreeNodeId,
   type PortalTenantId,
   type TelegramUserId,
   type TreeNodeId,
 } from '../types/branded.ts';
+import { telegramBotApiUrl } from '../telegram/telegram-api-url.ts';
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -60,6 +62,41 @@ export const PROMOTION_THRESHOLDS = {
   volume: 10_000,
   pnl: 1_000,
 } as const;
+
+function parseRequiredString(row: Record<string, unknown>, column: string): string {
+  const value = row[column];
+  if (typeof value !== 'string' || value.length === 0) {
+    throw new Error(`tree row column ${column} must be a non-empty string`);
+  }
+  return value;
+}
+
+function parseOptionalString(row: Record<string, unknown>, column: string): string | undefined {
+  const value = row[column];
+  if (value === null || value === undefined) return undefined;
+  if (typeof value !== 'string') throw new Error(`tree row column ${column} must be a string`);
+  return value;
+}
+
+function parseRequiredNumber(row: Record<string, unknown>, column: string): number {
+  const value = row[column];
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    throw new Error(`tree row column ${column} must be a finite number`);
+  }
+  return value;
+}
+
+function parseTreeNodeType(value: unknown): TreeNode['type'] {
+  if (value === 'partner' || value === 'agent' || value === 'sub_agent') return value;
+  throw new Error(`tree_nodes.type is invalid: ${String(value)}`);
+}
+
+function parseTreeNodeStatus(value: unknown): TreeNode['status'] {
+  if (value === 'prospect' || value === 'active' || value === 'partner' || value === 'suspended') {
+    return value;
+  }
+  throw new Error(`tree_nodes.status is invalid: ${String(value)}`);
+}
 
 // ── AccountSystem ────────────────────────────────────────────────────────
 
@@ -180,42 +217,56 @@ export class AccountSystem {
       string,
       unknown
     > | null;
-    return row ? this.deserialize(row) : null;
+    return row ? this.parseTreeNodeRow(row) : null;
   }
 
   getByTelegram(telegramId: TelegramUserId): TreeNode | null {
     const row = this.db
       .query('SELECT * FROM tree_nodes WHERE telegram_id = $t')
       .get({ $t: telegramId }) as Record<string, unknown> | null;
-    return row ? this.deserialize(row) : null;
+    return row ? this.parseTreeNodeRow(row) : null;
   }
 
   getByOidcSubject(oidcSubject: string): TreeNode | null {
     const row = this.db
       .query('SELECT * FROM tree_nodes WHERE oidc_subject = $sub')
       .get({ $sub: oidcSubject }) as Record<string, unknown> | null;
-    return row ? this.deserialize(row) : null;
+    return row ? this.parseTreeNodeRow(row) : null;
   }
 
-  private deserialize(row: Record<string, unknown>): TreeNode {
+  private parseTreeNodeRow(row: Record<string, unknown>): TreeNode {
+    const parentId = parseOptionalString(row, 'parent_id');
     return {
-      id: asTreeNodeId(row.id as string),
-      type: row.type as TreeNode['type'],
-      parentId: row.parent_id ? asTreeNodeId(row.parent_id as string) : null,
-      expertId: (row.expert_id as string) ?? null,
-      name: row.name as string,
-      email: row.email as string | undefined,
-      telegramId: row.telegram_id as TelegramUserId,
-      oidcSubject: row.oidc_subject as string | undefined,
-      railPreference: (row.rail_preference as string) || 'paypal',
-      cutPercentage: row.cut_percentage as number,
-      totalLiquidity: row.total_liquidity as number,
-      totalAccounts: row.total_accounts as number,
-      status: row.status as TreeNode['status'],
-      promotedAt: (row.promoted_at as string) ?? null,
-      createdAt: row.created_at as string,
-      lastPlayAt: (row.last_play_at as string) ?? null,
-      phoneId: (row.phone_id as string) ?? null,
+      id: asTreeNodeId(parseRequiredString(row, 'id')),
+      type: parseTreeNodeType(row.type),
+      parentId: parentId ? asTreeNodeId(parentId) : null,
+      expertId: parseOptionalString(row, 'expert_id') ?? null,
+      name: parseRequiredString(row, 'name'),
+      email: parseOptionalString(row, 'email'),
+      telegramId: asTelegramUserId(parseRequiredString(row, 'telegram_id')),
+      oidcSubject: parseOptionalString(row, 'oidc_subject'),
+      railPreference: parseOptionalString(row, 'rail_preference') ?? 'paypal',
+      cutPercentage: parseRequiredNumber(row, 'cut_percentage'),
+      totalLiquidity: parseRequiredNumber(row, 'total_liquidity'),
+      totalAccounts: parseRequiredNumber(row, 'total_accounts'),
+      status: parseTreeNodeStatus(row.status),
+      promotedAt: parseOptionalString(row, 'promoted_at') ?? null,
+      createdAt: parseRequiredString(row, 'created_at'),
+      lastPlayAt: parseOptionalString(row, 'last_play_at') ?? null,
+      phoneId: parseOptionalString(row, 'phone_id') ?? null,
+    };
+  }
+
+  private parseGrowthMetricsRow(row: Record<string, unknown>): GrowthMetrics {
+    return {
+      nodeId: asTreeNodeId(parseRequiredString(row, 'node_id')),
+      period: parseRequiredString(row, 'period'),
+      playsReceived: parseRequiredNumber(row, 'plays_received'),
+      playsPlaced: parseRequiredNumber(row, 'plays_placed'),
+      volume: parseRequiredNumber(row, 'volume'),
+      pnl: parseRequiredNumber(row, 'pnl'),
+      newSubAgents: parseRequiredNumber(row, 'new_sub_agents'),
+      newAccounts: parseRequiredNumber(row, 'new_accounts'),
     };
   }
 
@@ -227,13 +278,14 @@ export class AccountSystem {
     if (node.type !== 'agent')
       return { eligible: false, reason: 'Only agents can become partners' };
 
-    const metrics = this.db
+    const metricsRow = this.db
       .query(
         "SELECT * FROM growth_metrics WHERE node_id = $id AND period = strftime('%Y-%m', 'now')"
       )
-      .get({ $id: nodeId }) as GrowthMetrics | null;
+      .get({ $id: nodeId }) as Record<string, unknown> | null;
 
-    if (!metrics) return { eligible: false, reason: 'No activity this month' };
+    if (!metricsRow) return { eligible: false, reason: 'No activity this month' };
+    const metrics = this.parseGrowthMetricsRow(metricsRow);
 
     const checks = {
       plays: metrics.playsPlaced >= PROMOTION_THRESHOLDS.playsPlaced,
@@ -314,9 +366,13 @@ export class AccountSystem {
   getNodesForExpert(
     expertId: string // brand-ok — opaque expert reference
   ): TreeNode[] {
-    return this.db
-      .query("SELECT * FROM tree_nodes WHERE expert_id = $e AND status IN ('active', 'partner')")
-      .all({ $e: expertId }) as unknown as TreeNode[];
+    const rows = this.db
+      .query<
+        Record<string, unknown>,
+        { $e: string }
+      >("SELECT * FROM tree_nodes WHERE expert_id = $e AND status IN ('active', 'partner')")
+      .all({ $e: expertId });
+    return rows.map(row => this.parseTreeNodeRow(row));
   }
 
   // ── Metrics ─────────────────────────────────────────────────────────
@@ -344,13 +400,17 @@ export class AccountSystem {
     );
   }
 
+  close(): void {
+    this.db.close();
+  }
+
   // ── Helpers ─────────────────────────────────────────────────────────
 
   private async notify(telegramId: TelegramUserId, lines: string[]): Promise<void> {
     const { loadTelegramEnv } = await import('../telegram/telegram-config.ts');
     const token = loadTelegramEnv().effectiveToken;
     if (!token) return;
-    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    await fetch(telegramBotApiUrl(token, 'sendMessage'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

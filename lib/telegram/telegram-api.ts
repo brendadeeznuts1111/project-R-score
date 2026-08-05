@@ -8,6 +8,7 @@
  * Includes per-token min-interval rate limiting and a single 429 retry.
  */
 import { loadTelegramEnv } from './telegram-config.ts';
+import { telegramBotApiUrl, telegramFileApiUrl } from './telegram-api-url.ts';
 
 export type TelegramApiResult = {
   ok: boolean;
@@ -49,7 +50,7 @@ export async function telegramApiCall(
   body: Record<string, unknown>
 ): Promise<TelegramApiResult> {
   await respectRateLimit(token);
-  const res = await fetch(`https://api.telegram.org/bot${token}/` + method, {
+  const res = await fetch(telegramBotApiUrl(token, method), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -542,7 +543,7 @@ export async function downloadTelegramFile(
       ? (meta.result as { file_path?: string }).file_path
       : undefined;
   if (!path) throw new Error(meta.description || 'getFile failed — no file_path');
-  const res = await fetch(`https://api.telegram.org/file/bot${token}/${path}`);
+  const res = await fetch(telegramFileApiUrl(token, path));
   if (!res.ok) throw new Error(`Telegram file download HTTP ${res.status}`);
   return new Uint8Array(await res.arrayBuffer());
 }

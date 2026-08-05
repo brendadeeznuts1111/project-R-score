@@ -342,10 +342,7 @@ export class LimitRaiseReport {
     context?: InspectTableProof;
     proofs?: InspectTableProof;
   } {
-    const raiseRows = projectTableRows(
-      this.raiseRows() as unknown as TableRow[],
-      LIMIT_RAISE_TABLE_PROPERTIES
-    );
+    const raiseRows = projectTableRows(this.raiseRows(), LIMIT_RAISE_TABLE_PROPERTIES);
     const proof: ReturnType<LimitRaiseReport['tableProof']> = {
       raises: proveInspectTable(raiseRows, LIMIT_RAISE_TABLE_PROPERTIES),
     };
@@ -379,7 +376,7 @@ export class LimitRaiseReport {
     u8sample: string;
   } {
     const colors = opts.colors ?? shouldColor();
-    const raiseRows = this.raiseRows() as unknown as TableRow[];
+    const raiseRows = this.raiseRows();
     const factors = this.factorRows();
     const clv = this.clvRows();
     const ctx = this.contextRows();
@@ -445,10 +442,10 @@ export class LimitRaiseReport {
       /** column visual widths for primary table */
       columnWidths: Object.fromEntries(
         LIMIT_RAISE_TABLE_PROPERTIES.map(p => {
-          const rows = this.raiseRows() as unknown as TableRow[];
+          const rows = this.raiseRows();
           let max = stringWidth(p);
           for (const row of rows) {
-            max = Math.max(max, stringWidth(String((row as Record<string, unknown>)[p] ?? '')));
+            max = Math.max(max, stringWidth(String(Reflect.get(row, p) ?? '')));
           }
           return [p, max];
         })

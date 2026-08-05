@@ -203,7 +203,7 @@ export const FRAGMENT_VALIDATION = {
 
   // Validate fragment parameter
   isValidParam: (name: string, value: string) => {
-    if (!FRAGMENT_VALIDATION.VALID_NAMES.includes(name as any)) {
+    if (!FRAGMENT_VALIDATION.VALID_NAMES.some(validName => validName === name)) {
       return false;
     }
 
@@ -294,7 +294,12 @@ export const FRAGMENT_PARSERS = {
     const decodedText = decodeURIComponent(rawText);
 
     // Parse components: [prefix-,]textStart[,textEnd][,-suffix]
-    const components: any = {};
+    const components: {
+      prefix?: string;
+      textStart?: string;
+      textEnd?: string;
+      suffix?: string;
+    } = {};
     const parts = decodedText.split(',');
 
     if (parts[0].endsWith('-')) {

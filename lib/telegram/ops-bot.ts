@@ -28,6 +28,7 @@ export type { TreeNode } from './ops-bot-types.ts';
 export type { BotConfig } from './ops-bot-types.ts';
 import type { BotConfig } from './ops-bot-types.ts';
 import { loadTelegramEnv } from './telegram-config.ts';
+import { telegramBotApiUrl } from './telegram-api-url.ts';
 
 export class OpsTelegramBot {
   private db: Database;
@@ -49,9 +50,10 @@ export class OpsTelegramBot {
     this.polling = true;
     while (this.polling) {
       try {
-        const res = await fetch(
-          `https://api.telegram.org/bot${this.token}/getUpdates?offset=${offset}&timeout=30`
-        );
+        const url = new URL(telegramBotApiUrl(this.token, 'getUpdates'));
+        url.searchParams.set('offset', String(offset));
+        url.searchParams.set('timeout', '30');
+        const res = await fetch(url);
         if (!res.ok) {
           await Bun.sleep(5000);
           continue;

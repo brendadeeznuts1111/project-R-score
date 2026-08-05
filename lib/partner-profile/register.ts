@@ -1,3 +1,4 @@
+// @see https://bun.com/reference/bun/TOML/parse — Bun.TOML.parse
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // lib/partner-profile/register.ts — phase 2: register a partner bookmaker
@@ -18,6 +19,7 @@
 
 import type { Database } from 'bun:sqlite';
 import { joinPath } from '../path-bun';
+import { tomlStringify } from '../toml-stringify';
 import { DEFAULT_OPS_DB_PATH, openOperationsDb, type OpenOperationsDbOpts } from '../operations/db';
 import { setPartnerSecret } from '../security/partner-vault';
 import {
@@ -162,7 +164,7 @@ export async function upsertProfileToml(
     profile.balance ??= {};
     (profile.balance as Record<string, unknown>).initialCapitalRequirement = input.initialBalance;
   }
-  await Bun.write(path, `${Bun.TOML.stringify(profile).trimEnd()}\n`);
+  await Bun.write(path, `${tomlStringify(profile).trimEnd()}\n`);
   return path;
 }
 

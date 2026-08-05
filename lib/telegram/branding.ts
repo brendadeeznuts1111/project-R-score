@@ -12,6 +12,7 @@
 import { Database } from 'bun:sqlite';
 import { letterMarkPng } from '../../tools/generate-portal-icons.ts';
 import { upsertKnownChat } from './known-chats.ts';
+import { telegramBotApiUrl } from './telegram-api-url.ts';
 import {
   allSurfaceTitles,
   formatTocOpsGroupTitle,
@@ -116,7 +117,7 @@ async function telegramMultipart(
   for (const f of files) {
     form.append(f.name, new Blob([f.bytes], { type: f.type }), f.filename);
   }
-  const res = await fetch(`https://api.telegram.org/bot${token}/` + method, {
+  const res = await fetch(telegramBotApiUrl(token, method), {
     method: 'POST',
     body: form,
   });
