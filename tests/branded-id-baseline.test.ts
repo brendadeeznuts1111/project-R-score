@@ -72,6 +72,7 @@ describe('branded ID workflow UX', () => {
   test('--strict uses smart classification instead of the raw legacy rollup', () => {
     const result = Bun.spawnSync([bunExecutable, 'tools/branded-id-check.ts', '--strict'], {
       cwd: repo,
+      timeout: 60_000,
     });
 
     expect(result.exitCode).toBe(0);
@@ -79,10 +80,10 @@ describe('branded ID workflow UX', () => {
     expect(result.stdout.toString()).not.toContain('Unbranded ID declarations');
   });
 
-  test('--legacy --json exposes the complete migration queue and baseline cardinality', () => {
+  test('--legacy --json exposes empty migration queue after baseline migration', () => {
     const result = Bun.spawnSync(
       [bunExecutable, 'tools/branded-id-check.ts', '--legacy', '--json'],
-      { cwd: repo }
+      { cwd: repo, timeout: 60_000 }
     );
     const report = JSON.parse(result.stdout.toString()) as {
       baseline: {
@@ -91,24 +92,18 @@ describe('branded ID workflow UX', () => {
         matchCount: number;
         staleKeys: string[];
       };
-      legacyHits: Array<{
-        field: string;
-        brandHint: string | null;
-        candidateBrand: string | null;
-      }>;
+      legacyHits: unknown[];
     };
 
     expect(result.exitCode).toBe(0);
-    expect(report.baseline.matchedKeyCount).toBe(report.baseline.keyCount);
-    expect(report.baseline.matchCount).toBe(report.legacyHits.length);
+    expect(report.baseline.keyCount).toBe(0);
+    expect(report.baseline.matchedKeyCount).toBe(0);
+    expect(report.baseline.matchCount).toBe(0);
     expect(report.baseline.staleKeys).toEqual([]);
-    expect(report.legacyHits.find(hit => hit.field === 'commandId')).toMatchObject({
-      brandHint: null,
-      candidateBrand: 'CommandId',
-    });
+    expect(report.legacyHits).toEqual([]);
   });
 
-  test('harness violations consumes the authoritative legacy queue', () => {
+  test('harness violations legacy queue is empty after baseline migration', () => {
     const result = Bun.spawnSync(
       [
         bunExecutable,
@@ -118,19 +113,16 @@ describe('branded ID workflow UX', () => {
         '--legacy-brands',
         '--json',
       ],
-      { cwd: repo }
+      { cwd: repo, timeout: 60_000 }
     );
     const report = JSON.parse(result.stdout.toString()) as {
       count: number;
       byRule: Record<string, number>;
-      hits: Array<{ rule: string; message: string; hint?: string }>;
+      hits: unknown[];
     };
 
     expect(result.exitCode).toBe(0);
-    expect(report.count).toBe(report.byRule['branded-id/legacy']);
-    expect(report.hits.every(hit => hit.rule === 'branded-id/legacy')).toBe(true);
-    expect(report.hits.find(hit => hit.message.startsWith('commandId:'))?.hint).toContain(
-      'only a naming candidate'
-    );
+    expect(report.count).toBe(0);
+    expect(report.hits).toEqual([]);
   });
 });

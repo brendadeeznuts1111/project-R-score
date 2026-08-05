@@ -26,6 +26,9 @@ describe('pre-commit path gates', () => {
     expect(isConceptSsotPath('lib/portal/concept-graph.ts')).toBe(true);
     expect(isConceptSsotPath('scripts/concept-audit.ts')).toBe(true);
     expect(isConceptSsotPath('public/registry/domain-glossary.json')).toBe(true);
+    expect(isConceptSsotPath('docs/DOMAIN_CONCEPT_SHAPE.md')).toBe(true);
+    expect(isConceptSsotPath('public/portal/concepts/index.html')).toBe(true);
+    expect(isConceptSsotPath('public/registry/concepts-state.json')).toBe(true);
     expect(isConceptSsotPath('lib/http/skills-catalog.ts')).toBe(false);
   });
 });

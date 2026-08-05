@@ -27,6 +27,12 @@ export type DecisionId = BrandedString<'DecisionId'>;
 export type LoopId = BrandedString<'LoopId'>;
 /** Ops tree node (partner / agent / sub_agent) primary key. */
 export type TreeNodeId = BrandedString<'TreeNodeId'>;
+/** Funding rail identity (operations treasury path). */
+export type RailId = BrandedString<'RailId'>;
+/** Funding transfer row identity. */
+export type FundingId = BrandedString<'FundingId'>;
+/** AI / automation optimization command handle. */
+export type CommandId = BrandedString<'CommandId'>;
 /** Factorial / A/B experiment primary key. */
 export type ExperimentId = BrandedString<'ExperimentId'>;
 /** One design cell (variant) within an experiment. */
@@ -70,6 +76,9 @@ const run = defineBrandConstructors('RunId');
 const decision = defineBrandConstructors('DecisionId');
 const loop = defineBrandConstructors('LoopId');
 const treeNode = defineBrandConstructors('TreeNodeId');
+const rail = defineBrandConstructors('RailId');
+const funding = defineBrandConstructors('FundingId');
+const command = defineBrandConstructors('CommandId');
 const experiment = defineBrandConstructors('ExperimentId');
 const experimentVariant = defineBrandConstructors('ExperimentVariantId');
 const experimentAssignment = defineBrandConstructors('ExperimentAssignmentId');
@@ -127,6 +136,18 @@ export const parseLoopId = loop.parse;
 export const asTreeNodeId = treeNode.as;
 export const tryTreeNodeId = treeNode.try;
 export const parseTreeNodeId = treeNode.parse;
+
+export const asRailId = rail.as;
+export const tryRailId = rail.try;
+export const parseRailId = rail.parse;
+
+export const asFundingId = funding.as;
+export const tryFundingId = funding.try;
+export const parseFundingId = funding.parse;
+
+export const asCommandId = command.as;
+export const tryCommandId = command.try;
+export const parseCommandId = command.parse;
 
 export const asExperimentId = experiment.as;
 export const tryExperimentId = experiment.try;
@@ -343,6 +364,27 @@ export const OPERATIONS_BRAND_SPECS = [
     tiers: ['as', 'try', 'parse'],
     mint: ['system-internal', 'wire-input'],
     description: 'Ops tree node (partner / agent / sub_agent) identity',
+  },
+  {
+    name: 'RailId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Funding rail identity for treasury transfers',
+  },
+  {
+    name: 'FundingId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal'],
+    description: 'Funding transfer row identity',
+  },
+  {
+    name: 'CommandId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'AI / automation optimization command handle',
   },
   {
     name: 'ExperimentId',

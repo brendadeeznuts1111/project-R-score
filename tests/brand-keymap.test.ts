@@ -42,7 +42,7 @@ describe('brand keymap', () => {
       path: '/registry/brand-keymap.json',
       generatedAt: '2026-07-28T00:00:00.000Z',
       summary: {
-        brands: 62,
+        brands: 67,
         domains: 9,
         trackedProjects: 1,
         canonicalProjects: 1,

@@ -4,19 +4,26 @@
  */
 import type { Database } from 'bun:sqlite';
 import { randomUUIDv7 } from 'bun';
+import {
+  asFundingId,
+  parseTreeNodeId,
+  type FundingId,
+  type RailId,
+  type TreeNodeId,
+} from '../types/branded.ts';
 
 export type FundResult =
-  | { ok: true; fundingId: string; netAmount: number }
+  | { ok: true; fundingId: FundingId; netAmount: number }
   | { ok: false; reason: string };
 
 export type FundInput = {
-  railId: string;
-  toAgentId: string;
+  railId: RailId;
+  toAgentId: TreeNodeId;
   amount: number;
   fee?: number;
 };
 
-function railUsage(db: Database, railId: string, window: 'day' | 'month'): number {
+function railUsage(db: Database, railId: RailId, window: 'day' | 'month'): number {
   const filter =
     window === 'day'
       ? "sent_at >= datetime('now', 'start of day')"
@@ -60,7 +67,7 @@ export function fundViaRail(db: Database, input: FundInput): FundResult {
     };
   }
 
-  const fundingId = randomUUIDv7();
+  const fundingId = asFundingId(randomUUIDv7());
   const sentAt = new Date().toISOString();
 
   db.transaction(() => {
@@ -95,8 +102,7 @@ export function fundViaRail(db: Database, input: FundInput): FundResult {
 }
 
 /** Risk-based daily limit from lifetime P&L and tenure. */
-export function calculateRailLimit(db: Database, nodeId: string): number {
-  // brand-ok — TreeNodeId wire
+export function calculateRailLimit(db: Database, nodeId: TreeNodeId): number {
   const lifetime = db
     .query(
       `SELECT COALESCE(SUM(p.pnl), 0) as total
@@ -122,11 +128,11 @@ export function calculateRailLimit(db: Database, nodeId: string): number {
 export function applyDynamicRailLimits(db: Database): number {
   const rails = db
     .query('SELECT id, agent_id FROM rails WHERE agent_id IS NOT NULL AND status = $s')
-    .all({ $s: 'active' }) as { id: string; agent_id: string }[];
+    .all({ $s: 'active' }) as { id: string; agent_id: string }[]; // brand-ok x2 — opaque DB row
 
   let updated = 0;
   for (const { id, agent_id: agentId } of rails) {
-    const limit = calculateRailLimit(db, agentId);
+    const limit = calculateRailLimit(db, parseTreeNodeId(agentId));
     db.run('UPDATE rails SET daily_limit = $lim WHERE id = $id', { $lim: limit, $id: id });
     updated++;
   }

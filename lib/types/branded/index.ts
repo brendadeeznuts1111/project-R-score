@@ -78,6 +78,8 @@ import type {
   AuditConceptId,
   AuditEntryId,
   EvidenceId,
+  DodId,
+  RuleId,
 } from './audit.ts';
 import type {
   OperationId,
@@ -92,6 +94,9 @@ import type {
   DecisionId,
   LoopId,
   TreeNodeId,
+  RailId,
+  FundingId,
+  CommandId,
   ExperimentId,
   ExperimentVariantId,
   ExperimentAssignmentId,
@@ -180,6 +185,8 @@ export type AnyId =
   | AuditConceptId
   | AuditEntryId
   | EvidenceId
+  | DodId
+  | RuleId
   | OperationId
   | ResourceId
   | ProjectId
@@ -192,6 +199,9 @@ export type AnyId =
   | DecisionId
   | LoopId
   | TreeNodeId
+  | RailId
+  | FundingId
+  | CommandId
   | ExperimentId
   | ExperimentVariantId
   | ExperimentAssignmentId

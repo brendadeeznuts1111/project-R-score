@@ -4,11 +4,12 @@
  */
 import type { Database } from 'bun:sqlite';
 import { reconcilePositionFromAccounts } from './liquidity.ts';
+import { parseTreeNodeId, type RailId, type TreeNodeId } from '../types/branded.ts';
 
 export type ReconcileMismatch = {
   kind: 'rail_deposit' | 'position_balance' | 'platform_liquidity' | 'book_balance';
-  nodeId?: string;
-  railId?: string;
+  nodeId?: TreeNodeId;
+  railId?: RailId;
   detail: string;
   diff: number;
 };
@@ -29,9 +30,10 @@ export function reconcileRailsVsDeposits(db: Database): ReconcileMismatch[] {
 
   const agents = db
     .query(`SELECT id FROM tree_nodes WHERE type IN ('agent', 'sub_agent') AND active = 1`)
-    .all() as { id: string }[];
+    .all() as { id: string }[]; // brand-ok — opaque tree_nodes.id row
 
-  for (const { id: nodeId } of agents) {
+  for (const { id } of agents) {
+    const nodeId = parseTreeNodeId(id);
     const deposits = db
       .query(
         `SELECT COALESCE(SUM(balance), 0) as total FROM sb_accounts
@@ -68,10 +70,11 @@ export function reconcileAllPositions(db: Database): {
   const mismatches: ReconcileMismatch[] = [];
   const agents = db
     .query(`SELECT id FROM tree_nodes WHERE type IN ('agent', 'partner') AND active = 1`)
-    .all() as { id: string }[];
+    .all() as { id: string }[]; // brand-ok — opaque tree_nodes.id row
 
   let reconciled = 0;
-  for (const { id } of agents) {
+  for (const { id: rawId } of agents) {
+    const id = parseTreeNodeId(rawId);
     const before = db
       .query(
         `SELECT deposited, available, in_play FROM positions WHERE node_id = $id AND book = '_all'`
