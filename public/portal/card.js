@@ -98,13 +98,12 @@ export function renderDetail(name, info) {
                   .map(([t]) => `<span class="pkg-tag tag-dist">${esc(t)}</span>`)
                   .join('');
                 const vRelease = info.releases?.[vStr];
-                const vDate = vRelease?.publishedAt
-                  ? new Date(vRelease.publishedAt).toLocaleDateString()
-                  : '';
-                return `<div class="version-row">
+                const vDate = vRelease?.publishedAt ? relativeDate(vRelease.publishedAt) : '';
+                const isLatest = latestVer && vStr === String(latestVer);
+                return `<div class="version-row${isLatest ? ' version-row--latest' : ''}">
                 <span class="version-num">v${esc(vStr)}</span>
                 <span class="version-tags">${tags || ''}</span>
-                <span class="version-date">${vDate}</span>
+                <span class="version-date" title="${vRelease?.publishedAt ? new Date(vRelease.publishedAt).toLocaleDateString() : ''}">${vDate}</span>
               </div>`;
               })
               .join('')}
@@ -232,6 +231,23 @@ export function showDetail(name, info) {
       btn.textContent = '📋 Copy create';
     }, 2000);
   });
+}
+
+/**
+ * Compact relative timestamp: "2h ago" / "3d ago" / "2mo ago".
+ * Falls back to a date string for invalid or very old dates.
+ */
+function relativeDate(iso) {
+  const then = new Date(iso).getTime();
+  if (!iso || Number.isNaN(then)) return '';
+  const ms = Date.now() - then;
+  if (ms < 0) return new Date(iso).toLocaleDateString();
+  const HOUR = 3600000;
+  const DAY = 86400000;
+  if (ms < DAY) return `${Math.max(1, Math.round(ms / HOUR))}h ago`;
+  if (ms < 30 * DAY) return `${Math.round(ms / DAY)}d ago`;
+  if (ms < 365 * DAY) return `${Math.round(ms / (30 * DAY))}mo ago`;
+  return new Date(iso).toLocaleDateString();
 }
 
 /**

@@ -253,7 +253,13 @@
         <h2 class="portal-hero__title">Artifact Registry</h2>
         <p class="hero-sub">R2-backed package index · <span id="pkg-count">—</span> packages</p>
         <div class="search-box">
-          <input type="text" id="search" placeholder="Search by name, description, or tag…" />
+          <input
+            type="search"
+            id="search"
+            autocomplete="off"
+            aria-label="Search packages"
+            placeholder="Search by name, description, or tag…"
+          />
           <button
             type="button"
             id="search-clear"
@@ -313,6 +319,7 @@
               <option value="name">Name</option>
               <option value="version">Version</option>
               <option value="date">Publish date</option>
+              <option value="health">Health</option>
             </select>
           </div>
         </div>
