@@ -25,7 +25,8 @@ Top panel KPIs from `ops-summary` (domain-first):
 
 Deep links: [Partners](./partners/) · [Outs](./partners/#section:outs) ·
 [Limits](./limits/) · [Account](./account/) · [TOC](./toc/) ·
-[Compliance](./compliance/).
+[Compliance](./compliance/) · [Telegram map](./telegram.md) (plays · balances ·
+bets · accounting chats).
 
 ## Jump sections
 
