@@ -27,7 +27,7 @@ import { semver } from 'bun';
 import { buildVaultMapBundle, colorize, type VaultMapEntry } from '../lib/security/vault-map.ts';
 import { runPassCli } from './portal-secret.ts';
 
-const BUN_MIN = '1.4.0';
+const BUN_MIN = '1.3.14';
 if (!semver.satisfies(Bun.version, `>=${BUN_MIN}`)) {
   console.error(`  ❌ Bun ${Bun.version} < ${BUN_MIN} — upgrade required`);
   process.exit(1);

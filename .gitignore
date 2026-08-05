@@ -29,6 +29,8 @@ yarn.lock
 .pnpm-store/
 .yarn/
 .yarn/cache/
+# Runtime pin SSOT (mise/asdf/volta + engines.bun) — never ignore
+!.bun-version
 
 # Absolute path caches (from embedded projects)
 **/$HOME/
