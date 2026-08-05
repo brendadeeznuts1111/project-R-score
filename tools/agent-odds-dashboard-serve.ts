@@ -6,18 +6,21 @@
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 /**
- * Serve Bun Agent Live Odds Intelligence dashboard (v1.03) + mock APIs.
+ * Serve Bun Agent Live Odds Intelligence dashboard (v1.06 Uncovered Edges) + mock APIs.
  *
  *   bun run agent:odds-dashboard
  *   open http://127.0.0.1:3000/
  *
  * Static:
- *   public/portal/agent-odds/dashboard-v1.03.html (latest index)
- *   public/portal/agent-odds/dashboard-v1.02.html · dashboard.html (prior)
+ *   public/portal/agent-odds/dashboard-v1.06.html (default /)
+ *   public/portal/agent-odds/dashboard-v1.03.html · v1.02 · dashboard.html
  *
  * APIs:
- *   GET  /api/odds/options · /api/odds · /api/odds/stats · /api/odds/stream
- *   GET  /api/partners/health  (merged bookmakers + partners-ops)
+ *   GET  /api/odds/* · /api/partners/health
+ *   GET  /api/events · /api/events/:id · /api/events/:id/history
+ *   GET  /api/edges  (arb · value · steam · Kelly · latency-adjusted)
+ *   GET|POST /api/alerts/rules · DELETE /api/alerts/rules/:id
+ *   GET  /api/alerts/history · /api/alerts/performance
  *   POST /api/upload · /api/auth/login · /api/backup
  *   GET  /api/pool · /api/prefetch · /api/platform
  */
@@ -28,6 +31,18 @@ import {
   type MergedPartnerHealth,
   type MergedRegistry,
 } from '../lib/bookmakers/merged-registry.ts';
+import {
+  defaultAlertRules,
+  detectEdges,
+  edgesSummary,
+  filterEdges,
+  generateEventHistory,
+  generateEvents,
+  rulePerformanceSnapshot,
+  type AgentEvent,
+  type AlertRule,
+  type EdgeOpportunity,
+} from '../lib/operator-research/edge-engine.ts';
 
 const ROOT = join(import.meta.dir, '..');
 const DASH_DIR = join(ROOT, 'public/portal/agent-odds');
@@ -124,6 +139,54 @@ const rateState = {
   rateLimit: 100,
   lastBackup: null as string | null,
 };
+
+/** In-memory edge / events / rules plane (local mock agent). */
+let EVENTS_CACHE: AgentEvent[] | null = null;
+let EDGES_CACHE: EdgeOpportunity[] | null = null;
+let ALERT_RULES: AlertRule[] = defaultAlertRules();
+const ALERT_HISTORY: Array<{
+  rule_id: string;
+  message: string;
+  timestamp: number;
+}> = [
+  {
+    rule_id: 'price-move',
+    message: 'NBA: Lakers vs Celtics moved 6.2% (latency 210ms)',
+    timestamp: Date.now() - 120_000,
+  },
+  {
+    rule_id: 'arbitrage',
+    message: 'Arbitrage 2.4% on NFL: Chiefs vs 49ers (cross-book)',
+    timestamp: Date.now() - 300_000,
+  },
+  {
+    rule_id: 'steam',
+    message: 'Steam move 9.1% on NHL: Rangers vs Bruins',
+    timestamp: Date.now() - 450_000,
+  },
+  {
+    rule_id: 'value-bet',
+    message: 'Value bet 4.2% EV on Premier League: Arsenal vs Chelsea',
+    timestamp: Date.now() - 600_000,
+  },
+];
+
+async function getEvents(refresh = false): Promise<AgentEvent[]> {
+  if (!EVENTS_CACHE || refresh) {
+    const merged = await getMerged();
+    EVENTS_CACHE = generateEvents(merged.health, 24);
+    EDGES_CACHE = null;
+  }
+  return EVENTS_CACHE;
+}
+
+async function getEdges(refresh = false): Promise<EdgeOpportunity[]> {
+  const events = await getEvents(refresh);
+  if (!EDGES_CACHE || refresh) {
+    EDGES_CACHE = detectEdges(events, { minEdgePct: 0.3 });
+  }
+  return EDGES_CACHE;
+}
 
 function pick<T extends readonly string[]>(arr: T): T[number] {
   return arr[Math.floor(Math.random() * arr.length)]!;
@@ -395,6 +458,136 @@ const server = Bun.serve({
       });
     }
 
+    // ── Events / Edges / Alerts (v1.06) ──────────────────────────
+    if (path === '/api/events' || path === '/api/events/') {
+      const refresh = url.searchParams.get('refresh') === '1';
+      let events = await getEvents(refresh);
+      const sport = url.searchParams.get('sport');
+      const league = url.searchParams.get('league');
+      const status = url.searchParams.get('status');
+      const geo = url.searchParams.get('geo');
+      const state = url.searchParams.get('state');
+      if (sport) events = events.filter(e => e.sport === sport);
+      if (league) events = events.filter(e => e.league === league);
+      if (status) events = events.filter(e => e.status === status);
+      if (geo) events = events.filter(e => e.geo === geo);
+      if (state) events = events.filter(e => e.state === state);
+      return json({
+        data: events,
+        total: events.length,
+        generatedAt: new Date().toISOString(),
+      });
+    }
+
+    const eventHistoryMatch = path.match(/^\/api\/events\/([^/]+)\/history\/?$/);
+    if (eventHistoryMatch) {
+      const eventId = decodeURIComponent(eventHistoryMatch[1]!);
+      const events = await getEvents();
+      const ev = events.find(e => e.id === eventId);
+      const market = url.searchParams.get('market') || 'moneyline';
+      const books = ev ? Object.keys(ev.bookmakers) : [];
+      return json({
+        event_id: eventId,
+        market,
+        data: generateEventHistory(eventId, market, books),
+      });
+    }
+
+    const eventMatch = path.match(/^\/api\/events\/([^/]+)\/?$/);
+    if (eventMatch && req.method === 'GET') {
+      const eventId = decodeURIComponent(eventMatch[1]!);
+      const events = await getEvents();
+      const ev = events.find(e => e.id === eventId);
+      if (!ev) return json({ ok: false, error: 'event not found' }, 404);
+      return json({ data: ev });
+    }
+
+    if (path === '/api/edges' || path === '/api/edges/') {
+      const refresh = url.searchParams.get('refresh') === '1';
+      const all = await getEdges(refresh);
+      const filtered = filterEdges(all, {
+        sport: url.searchParams.get('sport'),
+        league: url.searchParams.get('league'),
+        type: url.searchParams.get('type'),
+        minEdge: url.searchParams.get('min')
+          ? Number(url.searchParams.get('min'))
+          : null,
+      });
+      const limit = Math.min(
+        Math.max(Number(url.searchParams.get('limit') || 100), 1),
+        500,
+      );
+      const data = filtered.slice(0, limit);
+      return json({
+        data,
+        total: filtered.length,
+        summary: edgesSummary(filtered),
+        generatedAt: new Date().toISOString(),
+      });
+    }
+
+    if (path === '/api/alerts/rules' || path === '/api/alerts/rules/') {
+      if (req.method === 'GET') {
+        return json({ data: ALERT_RULES, total: ALERT_RULES.length });
+      }
+      if (req.method === 'POST') {
+        try {
+          const body = (await req.json()) as AlertRule;
+          if (!body?.id || !body?.name) {
+            return json({ ok: false, error: 'id and name required' }, 400);
+          }
+          const idx = ALERT_RULES.findIndex(r => r.id === body.id);
+          const next: AlertRule = {
+            id: String(body.id),
+            name: String(body.name),
+            description: body.description,
+            active: body.active !== false,
+            condition: body.condition || '',
+            channels: Array.isArray(body.channels) ? body.channels.map(String) : ['ws'],
+            email_recipients: body.email_recipients,
+            period: body.period || 'all',
+            pattern: body.pattern || '',
+            market_type: body.market_type || 'all',
+            geo: body.geo || 'all',
+            state: body.state || '',
+            edge: body.edge,
+            limit: body.limit,
+            latency_threshold: body.latency_threshold,
+            bookmaker_comparison: body.bookmaker_comparison,
+          };
+          if (idx >= 0) ALERT_RULES[idx] = next;
+          else ALERT_RULES.push(next);
+          ALERT_HISTORY.unshift({
+            rule_id: next.id,
+            message: `Rule ${idx >= 0 ? 'updated' : 'created'}: ${next.name}`,
+            timestamp: Date.now(),
+          });
+          return json({ ok: true, data: next });
+        } catch {
+          return json({ ok: false, error: 'invalid json' }, 400);
+        }
+      }
+    }
+
+    const ruleMatch = path.match(/^\/api\/alerts\/rules\/([^/]+)\/?$/);
+    if (ruleMatch && req.method === 'DELETE') {
+      const id = decodeURIComponent(ruleMatch[1]!);
+      const before = ALERT_RULES.length;
+      ALERT_RULES = ALERT_RULES.filter(r => r.id !== id);
+      if (ALERT_RULES.length === before) {
+        return json({ ok: false, error: 'rule not found' }, 404);
+      }
+      return json({ ok: true, deleted: id });
+    }
+
+    if (path === '/api/alerts/history' || path === '/api/alerts/history/') {
+      return json({ data: ALERT_HISTORY.slice(0, 50), total: ALERT_HISTORY.length });
+    }
+
+    if (path === '/api/alerts/performance' || path === '/api/alerts/performance/') {
+      return json({ data: rulePerformanceSnapshot(ALERT_RULES) });
+    }
+
     if (path === '/api/upload' && req.method === 'POST') {
       return handleUpload(req);
     }
@@ -474,7 +667,7 @@ const server = Bun.serve({
         partnersOnline: summary.online,
         partnersTotal: summary.total,
         byLiquidity: summary.byLiquidity,
-        dashboard: 'agent-odds v1.03+liquidity',
+        dashboard: 'agent-odds v1.06 edges',
         rateCurrent: rateState.rateCurrent,
         rateLimit: rateState.rateLimit,
         lastBackup: rateState.lastBackup,
@@ -490,21 +683,27 @@ const server = Bun.serve({
           'charts',
           'partner-health',
           'liquidity-filter',
+          'edges',
+          'events',
+          'alert-rules',
+          'kelly',
+          'steam',
+          'value-bets',
         ],
       });
     }
 
-    // Static: default to v1.03
-    let filePath = path === '/' || path === '' ? '/dashboard-v1.03.html' : path;
-    if (filePath === '/index.html') filePath = '/dashboard-v1.03.html';
+    // Static: default to v1.06 Uncovered Edges
+    let filePath = path === '/' || path === '' ? '/dashboard-v1.06.html' : path;
+    if (filePath === '/index.html') filePath = '/dashboard-v1.06.html';
     if (filePath === '/dashboard.html') {
       const v1 = join(DASH_DIR, 'dashboard.html');
       if (!(await Bun.file(v1).exists())) {
-        filePath = '/dashboard-v1.03.html';
+        filePath = '/dashboard-v1.06.html';
       }
     }
     const safe = filePath.replace(/\.\./g, '').replace(/^\/+/, '');
-    const abs = join(DASH_DIR, safe || 'dashboard-v1.03.html');
+    const abs = join(DASH_DIR, safe || 'dashboard-v1.06.html');
     if (!abs.startsWith(DASH_DIR)) {
       return new Response('Forbidden', { status: 403 });
     }
@@ -522,5 +721,5 @@ const server = Bun.serve({
 });
 
 console.log(
-  `agent-odds dashboard v1.03+liquidity → http://${server.hostname}:${server.port}/  (health · liquidity · arb · auth mock)`,
+  `agent-odds dashboard v1.06 edges → http://${server.hostname}:${server.port}/  (edges · events · alerts · health)`,
 );

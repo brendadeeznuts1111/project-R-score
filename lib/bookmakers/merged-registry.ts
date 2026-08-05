@@ -110,16 +110,14 @@ type OpsPartner = {
 function deriveStatus(args: {
   outsReady: number;
   outsTotal: number;
-  liquidityTier: LiquidityTier;
 }): PartnerHealthStatus {
   if (args.outsTotal === 0) {
-    // catalog-only book, no partner outs — treat as active catalog entry
-    return args.liquidityTier === 'illiquid' ? 'degraded' : 'active';
+    // Catalog presence is not health evidence. Keep the row visible without
+    // claiming the partner is online until an ops out is registered.
+    return 'deferred';
   }
   if (args.outsReady === 0) return 'offline';
   if (args.outsReady < args.outsTotal) return 'degraded';
-  if (args.liquidityTier === 'illiquid') return 'degraded';
-  if (args.liquidityTier === 'low') return 'low_balance';
   return 'active';
 }
 
@@ -174,7 +172,6 @@ export function mergeBookmakersWithOps(
     const status = deriveStatus({
       outsReady: outs.ready,
       outsTotal: outs.total,
-      liquidityTier,
     });
 
     const urls = {
