@@ -24,6 +24,7 @@ import {
   readFileSync,
   writeFileSync,
 } from 'node:fs';
+import { randomHex } from '../bytes-base64.ts';
 import { joinPath } from '../path-bun.ts';
 
 const MINT_DIR_ENV = 'FACTORYWAGER_MINTED_SECRETS_DIR';
@@ -59,9 +60,7 @@ export function mintedSecretPath(envKey: string): string {
 }
 
 function mintHex(byteLen: number): string {
-  const bytes = new Uint8Array(byteLen);
-  crypto.getRandomValues(bytes);
-  return Buffer.from(bytes).toString('hex');
+  return randomHex(byteLen);
 }
 
 export type ResolveMintableOpts = {

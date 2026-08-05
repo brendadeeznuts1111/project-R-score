@@ -6,6 +6,8 @@
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // lib/security/index.ts — Security module index (Bun primitives at call sites)
 
+import { bytesToHex, hexToBytes, randomHex } from '../bytes-base64.ts';
+
 export { Cookie, CookieMap } from 'bun';
 
 export { zeroTrustManager } from './zero-trust-manager';
@@ -37,19 +39,15 @@ export class SecurityUtils {
   static generateSecret(length: number = 32): string {
     const bytes = new Uint8Array(Math.max(1, Math.ceil(length / 2)));
     crypto.getRandomValues(bytes);
-    return Buffer.from(bytes).toString('hex').slice(0, length);
+    return bytesToHex(bytes).slice(0, length);
   }
 
   static generateApiKey(prefix: string = 'sk'): string {
-    const bytes = new Uint8Array(24);
-    crypto.getRandomValues(bytes);
-    return `${prefix}_${Buffer.from(bytes).toString('hex')}`;
+    return `${prefix}_${randomHex(24)}`;
   }
 
   static generateJWTSecret(): string {
-    const bytes = new Uint8Array(64);
-    crypto.getRandomValues(bytes);
-    return Buffer.from(bytes).toString('hex');
+    return randomHex(64);
   }
 
   static generatePassword(length: number = 16): string {
@@ -129,8 +127,8 @@ export class SecurityUtils {
   }
 
   static compareSecret(secret1: string, secret2: string): boolean {
-    const a = Buffer.from(this.hashSecret(secret1), 'hex');
-    const b = Buffer.from(this.hashSecret(secret2), 'hex');
+    const a = hexToBytes(this.hashSecret(secret1));
+    const b = hexToBytes(this.hashSecret(secret2));
     if (a.byteLength !== b.byteLength) return false;
     return crypto.timingSafeEqual(a, b);
   }

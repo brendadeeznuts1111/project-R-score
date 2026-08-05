@@ -61,6 +61,7 @@ import type {
   PublicKeyCredentialRequestOptionsJSON,
   RegistrationResponseJSON,
 } from '@simplewebauthn/server';
+import { base64UrlToBytes, bytesToBase64Url } from '../bytes-base64.ts';
 import type { TreeNodeId } from '../types/branded.ts';
 import {
   IdentityError,
@@ -127,11 +128,11 @@ function unixNow(): number {
 }
 
 function base64urlEncode(bytes: Uint8Array): string {
-  return Buffer.from(bytes).toString('base64url');
+  return bytesToBase64Url(bytes);
 }
 
 function base64urlDecode(value: string): Uint8Array {
-  return new Uint8Array(Buffer.from(value, 'base64url'));
+  return base64UrlToBytes(value);
 }
 
 function toTransports(transports: string[] | null): AuthenticatorTransportFuture[] | undefined {

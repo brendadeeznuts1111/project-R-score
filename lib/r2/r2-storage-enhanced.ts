@@ -1,5 +1,12 @@
 // @see https://bun.com/docs/runtime/utils#bun-gzipsync — Bun.gzipSync
-// lib/r2/r2-storage-enhanced.ts — Enhanced R2 storage with package integration
+// @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client (canonical factory path)
+/**
+ * Enhanced R2 storage with package integration.
+ *
+ * Prefer {@link createS3RegistryStore} in `lib/factory/object-store.ts` for
+ * new registry/R2 work (Bun S3Client, Uint8Array bodies). This class remains a
+ * legacy package-docs path; bodies use `Uint8Array` (not Node Buffer).
+ */
 
 import { RSS_URLS } from '../../config/urls';
 import { withCircuitBreaker } from '../core/circuit-breaker';
@@ -83,16 +90,18 @@ export class R2Storage {
     const timestamp = Date.now();
     const key = `packages/${packageName}/${timestamp}/docs.json`;
 
-    const compressedData = Bun.gzipSync(Buffer.from(JSON.stringify(docs)));
-    const checksum = crc32(new Uint8Array(compressedData));
-    await this.put(bucketName, key, Buffer.from(compressedData), checksum.hex);
+    const compressedData = Bun.gzipSync(new TextEncoder().encode(JSON.stringify(docs)));
+    const body =
+      compressedData instanceof Uint8Array ? compressedData : new Uint8Array(compressedData);
+    const checksum = crc32(body);
+    await this.put(bucketName, key, body, checksum.hex);
 
     // Also generate and upload HTML docs
     const html = await this.generateHtmlDocs(packageName, docs);
     await this.put(
       bucketName,
       `packages/${packageName}/${timestamp}/index.html`,
-      Buffer.from(html)
+      new TextEncoder().encode(html)
     );
 
     return `https://${bucketName}.${this.config.accountId}.r2.dev/packages/${packageName}/`;
@@ -144,7 +153,7 @@ export class R2Storage {
 
     const uploads = [...localCache.entries()].map(([key, value]) =>
       ConcurrencyManagers.networkRequests.withPermit(async () => {
-        const data = Buffer.from(JSON.stringify(value));
+        const data = new TextEncoder().encode(JSON.stringify(value));
         await this.put(this.config.defaultBucket, `cache/${packageName}/${key}`, data);
       })
     );
@@ -168,7 +177,7 @@ export class R2Storage {
     console.info(`CRC32 for ${key}: ${checksum.hex}`);
 
     const decompressed = Bun.gunzipSync(new Uint8Array(data));
-    return JSON.parse(Buffer.from(decompressed).toString());
+    return JSON.parse(new TextDecoder().decode(decompressed));
   }
 
   async listPackages(): Promise<Array<{ name: string; versions: string[]; lastUpdated: string }>> {
@@ -210,7 +219,12 @@ export class R2Storage {
     );
   }
 
-  private async put(bucket: string, key: string, data: Buffer, crc32Hex?: string): Promise<void> {
+  private async put(
+    bucket: string,
+    key: string,
+    data: Uint8Array | ArrayBuffer | string,
+    crc32Hex?: string
+  ): Promise<void> {
     try {
       await withCircuitBreaker(
         'r2-storage',
@@ -222,10 +236,16 @@ export class R2Storage {
             headers['x-amz-meta-crc32'] = crc32Hex;
           }
 
+          const body =
+            typeof data === 'string'
+              ? new TextEncoder().encode(data)
+              : data instanceof Uint8Array
+                ? data
+                : new Uint8Array(data);
           const response = await fetch(`${this.endpoint}/${bucket}/${key}`, {
             method: 'PUT',
             headers,
-            body: new Uint8Array(data),
+            body,
           });
 
           if (!response.ok) {
@@ -240,7 +260,7 @@ export class R2Storage {
     }
   }
 
-  private async getPrivate(bucket: string, key: string): Promise<Buffer | null> {
+  private async getPrivate(bucket: string, key: string): Promise<Uint8Array | null> {
     try {
       return await withCircuitBreaker(
         'r2-storage',
@@ -250,7 +270,7 @@ export class R2Storage {
           });
 
           if (!response.ok) return null;
-          return Buffer.from(await response.arrayBuffer());
+          return new Uint8Array(await response.arrayBuffer());
         },
         R2_CB_CONFIG
       );
@@ -263,18 +283,18 @@ export class R2Storage {
   // Public methods for external usage
   public async get(key: string): Promise<string | null> {
     const data = await this.getPrivate(this.config.defaultBucket, key);
-    return data ? data.toString() : null;
+    return data ? new TextDecoder().decode(data) : null;
   }
 
   public async upload(key: string, data: string): Promise<void> {
-    await this.put(this.config.defaultBucket, key, Buffer.from(data));
+    await this.put(this.config.defaultBucket, key, new TextEncoder().encode(data));
   }
 
   private async putJson(
     key: string,
     data: object | string | number | boolean | null
   ): Promise<void> {
-    await this.put(this.config.defaultBucket, key, Buffer.from(JSON.stringify(data)));
+    await this.put(this.config.defaultBucket, key, new TextEncoder().encode(JSON.stringify(data)));
   }
 
   private async getJson(key: string): Promise<any> {
