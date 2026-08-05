@@ -985,7 +985,7 @@ class OperationsDashboard extends HTMLElement {
         .map(
           c =>
             `<a class="ops-desk-stat ${esc(c.tone)}" href="${esc(c.href)}">` +
-            `<span class="k">${esc(c.k)}</span>` +
+            `<span class="kicker">${esc(c.k)}</span>` +
             `<span class="v">${esc(c.v)}</span>` +
             `</a>`
         )
@@ -1660,7 +1660,7 @@ class OperationsDashboard extends HTMLElement {
         loopGrid.innerHTML = cells
           .map(
             ([k, v, tone]) =>
-              `<div class="ops-loop-cell ${esc(tone)}"><span class="k">${esc(k)}</span><span class="v">${esc(v)}</span></div>`
+              `<div class="ops-loop-cell ${esc(tone)}"><span class="kicker">${esc(k)}</span><span class="v">${esc(v)}</span></div>`
           )
           .join('');
       }
