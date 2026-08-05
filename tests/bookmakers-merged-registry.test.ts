@@ -92,10 +92,11 @@ describe('mergeBookmakersWithOps', () => {
     const merged = mergeBookmakersWithOps(
       { 'low-book': lowLiquidityBook },
       {
+        generatedAt: '2026-08-05T12:00:00.000Z',
         partners: [
           {
             code: 'LOW',
-            outs: [{ status: 'ready', book: { slug: 'low-book' } }],
+            outs: [{ status: 'funded', book: { slug: 'low-book' } }],
           },
         ],
       },
@@ -105,6 +106,7 @@ describe('mergeBookmakersWithOps', () => {
     expect(merged.health[0]?.liquidityTier).toBe('low');
     expect(merged.health[0]?.balance).toBeNull();
     expect(merged.health[0]?.status).toBe('active');
+    expect(merged.health[0]?.lastProbe).toBe('2026-08-05T12:00:00.000Z');
   });
 
   test('marks every catalog row deferred when the ops overlay is unavailable', () => {
@@ -115,6 +117,7 @@ describe('mergeBookmakersWithOps', () => {
     );
 
     expect(merged.health.every(row => row.status === 'deferred')).toBe(true);
+    expect(merged.health.every(row => row.lastProbe === null)).toBe(true);
     expect(merged.source.partnersOps).toBeNull();
   });
 });

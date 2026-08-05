@@ -1,4 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
+// @see https://bun.com/docs/runtime/networking/dns#dns-prefetch — Bun.dns
+// @see https://bun.com/docs/runtime/networking/dns#dns-prefetch — Bun.dns.prefetch
+// @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
 // @see https://bun.com/docs/api/http — Bun.serve
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
@@ -24,7 +28,6 @@
  *   POST /api/upload · /api/auth/login · /api/backup
  *   GET  /api/pool · /api/prefetch · /api/platform
  */
-import { join } from 'node:path';
 import {
   loadMergedRegistry,
   resolvePartnerForHost,
@@ -43,11 +46,19 @@ import {
   type AlertRule,
   type EdgeOpportunity,
 } from '../lib/operator-research/edge-engine.ts';
+import { joinPath } from '../lib/path-bun.ts';
+import {
+  asRuleId,
+  tryEventId,
+  tryRuleId,
+  type RuleId,
+  type SportsbookId,
+} from '../lib/types/branded.ts';
 
-const ROOT = join(import.meta.dir, '..');
-const DASH_DIR = join(ROOT, 'public/portal/agent-odds');
-const PORT = Number(process.env.PORT || process.env.AGENT_ODDS_PORT || 3000);
-const HOST = process.env.HOST || '127.0.0.1';
+const ROOT = joinPath(import.meta.dir, '..');
+const DASH_DIR = joinPath(ROOT, 'public/portal/agent-odds');
+const PORT = Number(Bun.env.PORT || Bun.env.AGENT_ODDS_PORT || 3000);
+const HOST = Bun.env.HOST || '127.0.0.1';
 
 /** Fallback hosts when registry has no urls.web */
 const FALLBACK_HOSTS = [
@@ -97,13 +108,7 @@ const LEAGUES = [
   'Bundesliga',
 ] as const;
 
-const MARKETS = [
-  'moneyline',
-  'spread',
-  'total',
-  'team_total',
-  'over_under',
-] as const;
+const MARKETS = ['moneyline', 'spread', 'total', 'team_total', 'over_under'] as const;
 
 const SESSIONS = ['pregame', 'live'] as const;
 
@@ -116,7 +121,7 @@ type OddsRow = {
   price: string;
   timestamp: number;
   marketData: { selections: Array<{ price: string }> };
-  bookmakerId?: string;
+  bookmakerId?: SportsbookId;
   liquidityTier?: string;
   partnerStatus?: string;
   label?: string;
@@ -131,8 +136,8 @@ const poolState = {
 };
 
 /** Demo-only credentials for local mock agent (not production). */
-const DEMO_USER = process.env.AGENT_DEMO_USER || 'analyst';
-const DEMO_PASS = process.env.AGENT_DEMO_PASS || 'password123';
+const DEMO_USER = Bun.env.AGENT_DEMO_USER || 'analyst';
+const DEMO_PASS = Bun.env.AGENT_DEMO_PASS || 'password123';
 
 const rateState = {
   rateCurrent: 12,
@@ -145,33 +150,34 @@ let EVENTS_CACHE: AgentEvent[] | null = null;
 let EDGES_CACHE: EdgeOpportunity[] | null = null;
 let ALERT_RULES: AlertRule[] = defaultAlertRules();
 const ALERT_HISTORY: Array<{
-  rule_id: string;
+  rule_id: RuleId;
   message: string;
   timestamp: number;
 }> = [
   {
-    rule_id: 'price-move',
+    rule_id: asRuleId('price-move'),
     message: 'NBA: Lakers vs Celtics moved 6.2% (latency 210ms)',
     timestamp: Date.now() - 120_000,
   },
   {
-    rule_id: 'arbitrage',
+    rule_id: asRuleId('arbitrage'),
     message: 'Arbitrage 2.4% on NFL: Chiefs vs 49ers (cross-book)',
     timestamp: Date.now() - 300_000,
   },
   {
-    rule_id: 'steam',
+    rule_id: asRuleId('steam'),
     message: 'Steam move 9.1% on NHL: Rangers vs Bruins',
     timestamp: Date.now() - 450_000,
   },
   {
-    rule_id: 'value-bet',
+    rule_id: asRuleId('value-bet'),
     message: 'Value bet 4.2% EV on Premier League: Arsenal vs Chelsea',
     timestamp: Date.now() - 600_000,
   },
 ];
 
 async function getEvents(refresh = false): Promise<AgentEvent[]> {
+  if (refresh) MERGED = null;
   if (!EVENTS_CACHE || refresh) {
     const merged = await getMerged();
     EVENTS_CACHE = generateEvents(merged.health, 24);
@@ -194,9 +200,7 @@ function pick<T extends readonly string[]>(arr: T): T[number] {
 
 function enrichRow(row: OddsRow, merged: MergedRegistry): OddsRow {
   const id = resolvePartnerForHost(merged.hostIndex, row.host);
-  const partner = id
-    ? merged.health.find(h => h.id === id)
-    : undefined;
+  const partner = id ? merged.health.find(h => h.id === id) : undefined;
   return {
     ...row,
     bookmakerId: id,
@@ -228,6 +232,7 @@ function generateOdds(count: number, hosts: string[]): OddsRow[] {
 let CATALOG: OddsRow[] | null = null;
 
 async function getCatalog(refresh = false): Promise<OddsRow[]> {
+  if (refresh) MERGED = null;
   const merged = await getMerged();
   if (!CATALOG || refresh) {
     const hosts = catalogHosts(merged);
@@ -236,10 +241,7 @@ async function getCatalog(refresh = false): Promise<OddsRow[]> {
   return CATALOG;
 }
 
-function filterOdds(
-  rows: OddsRow[],
-  url: URL,
-): { data: OddsRow[]; total: number } {
+function filterOdds(rows: OddsRow[], url: URL): { data: OddsRow[]; total: number } {
   let filtered = rows;
   const host = url.searchParams.get('host');
   const sport = url.searchParams.get('sport');
@@ -264,9 +266,7 @@ function filterOdds(
 }
 
 function healthSummary(health: MergedPartnerHealth[]) {
-  const online = health.filter(
-    p => p.status === 'active' || p.status === 'low_balance',
-  ).length;
+  const online = health.filter(p => p.status === 'active' || p.status === 'low_balance').length;
   return {
     online,
     total: health.length,
@@ -276,14 +276,14 @@ function healthSummary(health: MergedPartnerHealth[]) {
         acc[p.status] = (acc[p.status] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>,
+      {} as Record<string, number>
     ),
     byLiquidity: health.reduce(
       (acc, p) => {
         acc[p.liquidityTier] = (acc[p.liquidityTier] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>,
+      {} as Record<string, number>
     ),
   };
 }
@@ -307,7 +307,7 @@ function statsFrom(rows: OddsRow[], hostCount: number) {
   };
 }
 
-function json(data: unknown, status = 200): Response {
+function json(data: object, status = 200): Response {
   const body = JSON.stringify(data);
   return new Response(body, {
     status,
@@ -346,9 +346,7 @@ function oddsStreamResponse(hosts: string[]): Response {
           session: pick(SESSIONS),
           at: new Date().toISOString(),
         };
-        controller.enqueue(
-          enc.encode(`id: ${id}\ndata: ${JSON.stringify(payload)}\n\n`),
-        );
+        controller.enqueue(enc.encode(`id: ${id}\ndata: ${JSON.stringify(payload)}\n\n`));
         poolState.streams = Math.min(poolState.streams + 1, 99);
       };
       send();
@@ -408,14 +406,7 @@ const server = Bun.serve({
         marketTypes: [...MARKETS],
         sessions: [...SESSIONS],
         liquidityTiers: ['high', 'medium', 'low', 'illiquid', 'unknown'],
-        partnerStatuses: [
-          'active',
-          'low_balance',
-          'critical',
-          'degraded',
-          'offline',
-          'deferred',
-        ],
+        partnerStatuses: ['active', 'low_balance', 'critical', 'degraded', 'offline', 'deferred'],
         partners: merged.health.map(p => ({
           id: p.id,
           label: p.label,
@@ -445,11 +436,18 @@ const server = Bun.serve({
 
     if (path === '/api/partners/health' || path === '/api/partners/health/') {
       const refresh = url.searchParams.get('refresh') === '1';
-      if (refresh) MERGED = null;
+      if (refresh) {
+        MERGED = null;
+        CATALOG = null;
+        EVENTS_CACHE = null;
+        EDGES_CACHE = null;
+      }
       const merged = await getMerged();
       const summary = healthSummary(merged.health);
+      const lastProbe = merged.health.find(partner => partner.lastProbe)?.lastProbe ?? null;
       return json({
         generatedAt: merged.generatedAt,
+        lastProbe,
         source: merged.source,
         summary,
         health: merged.health,
@@ -481,11 +479,13 @@ const server = Bun.serve({
 
     const eventHistoryMatch = path.match(/^\/api\/events\/([^/]+)\/history\/?$/);
     if (eventHistoryMatch) {
-      const eventId = decodeURIComponent(eventHistoryMatch[1]!);
+      const eventId = tryEventId(decodeURIComponent(eventHistoryMatch[1]!));
+      if (!eventId) return json({ ok: false, error: 'invalid event id' }, 400);
       const events = await getEvents();
       const ev = events.find(e => e.id === eventId);
+      if (!ev) return json({ ok: false, error: 'event not found' }, 404);
       const market = url.searchParams.get('market') || 'moneyline';
-      const books = ev ? Object.keys(ev.bookmakers) : [];
+      const books = Object.keys(ev.bookmakers);
       return json({
         event_id: eventId,
         market,
@@ -495,7 +495,8 @@ const server = Bun.serve({
 
     const eventMatch = path.match(/^\/api\/events\/([^/]+)\/?$/);
     if (eventMatch && req.method === 'GET') {
-      const eventId = decodeURIComponent(eventMatch[1]!);
+      const eventId = tryEventId(decodeURIComponent(eventMatch[1]!));
+      if (!eventId) return json({ ok: false, error: 'invalid event id' }, 400);
       const events = await getEvents();
       const ev = events.find(e => e.id === eventId);
       if (!ev) return json({ ok: false, error: 'event not found' }, 404);
@@ -509,14 +510,9 @@ const server = Bun.serve({
         sport: url.searchParams.get('sport'),
         league: url.searchParams.get('league'),
         type: url.searchParams.get('type'),
-        minEdge: url.searchParams.get('min')
-          ? Number(url.searchParams.get('min'))
-          : null,
+        minEdge: url.searchParams.get('min') ? Number(url.searchParams.get('min')) : null,
       });
-      const limit = Math.min(
-        Math.max(Number(url.searchParams.get('limit') || 100), 1),
-        500,
-      );
+      const limit = Math.min(Math.max(Number(url.searchParams.get('limit') || 100), 1), 500);
       const data = filtered.slice(0, limit);
       return json({
         data,
@@ -532,13 +528,15 @@ const server = Bun.serve({
       }
       if (req.method === 'POST') {
         try {
-          const body = (await req.json()) as AlertRule;
+          const body = (await req.json()) as Partial<AlertRule>;
           if (!body?.id || !body?.name) {
             return json({ ok: false, error: 'id and name required' }, 400);
           }
-          const idx = ALERT_RULES.findIndex(r => r.id === body.id);
+          const id = tryRuleId(String(body.id));
+          if (!id) return json({ ok: false, error: 'invalid rule id' }, 400);
+          const idx = ALERT_RULES.findIndex(r => r.id === id);
           const next: AlertRule = {
-            id: String(body.id),
+            id,
             name: String(body.name),
             description: body.description,
             active: body.active !== false,
@@ -571,7 +569,8 @@ const server = Bun.serve({
 
     const ruleMatch = path.match(/^\/api\/alerts\/rules\/([^/]+)\/?$/);
     if (ruleMatch && req.method === 'DELETE') {
-      const id = decodeURIComponent(ruleMatch[1]!);
+      const id = tryRuleId(decodeURIComponent(ruleMatch[1]!));
+      if (!id) return json({ ok: false, error: 'invalid rule id' }, 400);
       const before = ALERT_RULES.length;
       ALERT_RULES = ALERT_RULES.filter(r => r.id !== id);
       if (ALERT_RULES.length === before) {
@@ -653,7 +652,7 @@ const server = Bun.serve({
     if (path === '/api/platform') {
       rateState.rateCurrent = Math.min(
         rateState.rateCurrent + Math.floor(Math.random() * 3),
-        rateState.rateLimit,
+        rateState.rateLimit
       );
       const merged = await getMerged();
       const summary = healthSummary(merged.health);
@@ -671,7 +670,7 @@ const server = Bun.serve({
         rateCurrent: rateState.rateCurrent,
         rateLimit: rateState.rateLimit,
         lastBackup: rateState.lastBackup,
-        lastProbe: merged.generatedAt,
+        lastProbe: merged.health.find(partner => partner.lastProbe)?.lastProbe ?? null,
         features: [
           'sse',
           'formdata',
@@ -697,13 +696,13 @@ const server = Bun.serve({
     let filePath = path === '/' || path === '' ? '/dashboard-v1.06.html' : path;
     if (filePath === '/index.html') filePath = '/dashboard-v1.06.html';
     if (filePath === '/dashboard.html') {
-      const v1 = join(DASH_DIR, 'dashboard.html');
+      const v1 = joinPath(DASH_DIR, 'dashboard.html');
       if (!(await Bun.file(v1).exists())) {
         filePath = '/dashboard-v1.06.html';
       }
     }
     const safe = filePath.replace(/\.\./g, '').replace(/^\/+/, '');
-    const abs = join(DASH_DIR, safe || 'dashboard-v1.06.html');
+    const abs = joinPath(DASH_DIR, safe || 'dashboard-v1.06.html');
     if (!abs.startsWith(DASH_DIR)) {
       return new Response('Forbidden', { status: 403 });
     }
@@ -721,5 +720,5 @@ const server = Bun.serve({
 });
 
 console.log(
-  `agent-odds dashboard v1.06 edges → http://${server.hostname}:${server.port}/  (edges · events · alerts · health)`,
+  `agent-odds dashboard v1.06 edges → http://${server.hostname}:${server.port}/  (edges · events · alerts · health)`
 );

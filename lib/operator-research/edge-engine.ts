@@ -10,12 +10,22 @@
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 
 import type { LiquidityTier, MergedPartnerHealth } from '../bookmakers/merged-registry.ts';
+import {
+  asEdgeId,
+  asEventId,
+  asRuleId,
+  asSportsbookId,
+  type EdgeId,
+  type EventId,
+  type RuleId,
+  type SportsbookId,
+} from '../types/branded.ts';
 
 export type EdgeType = 'arbitrage' | 'value' | 'steam';
 export type EventStatus = 'scheduled' | 'live' | 'finished';
 
 export type BookQuote = {
-  bookmakerId: string; // brand-ok — registry id
+  bookmakerId: SportsbookId;
   label: string;
   host: string;
   liquidityTier: LiquidityTier;
@@ -27,7 +37,7 @@ export type BookQuote = {
 };
 
 export type AgentEvent = {
-  id: string; // brand-ok — synthetic event id
+  id: EventId;
   sport: string;
   league: string;
   home_team: string;
@@ -48,15 +58,15 @@ export type AgentEvent = {
       latency: number;
       liquidityTier?: string;
       partnerStatus?: string;
-      bookmakerId?: string;
+      bookmakerId: SportsbookId;
     }
   >;
   limits: { min: number; max: number };
 };
 
 export type EdgeOpportunity = {
-  id: string; // brand-ok — edge id
-  event_id: string;
+  id: EdgeId;
+  event_id: EventId;
   sport: string;
   league: string;
   home: string;
@@ -69,7 +79,7 @@ export type EdgeOpportunity = {
   kelly_fraction: number;
   stake_suggestion: number;
   bookmakers: string[];
-  bookmaker_ids: string[];
+  bookmaker_ids: SportsbookId[];
   odds: { book1: string; book2: string };
   latency_ms: { book1: number; book2: number };
   latency_adjusted: boolean;
@@ -78,7 +88,7 @@ export type EdgeOpportunity = {
 };
 
 export type AlertRule = {
-  id: string; // brand-ok — rule id
+  id: RuleId;
   name: string;
   description?: string;
   active: boolean;
@@ -97,7 +107,7 @@ export type AlertRule = {
 };
 
 export type RulePerformance = {
-  rule_id: string;
+  rule_id: RuleId;
   name: string;
   triggered: number;
   hit_rate: number;
@@ -150,7 +160,7 @@ export function twoWayArbProfit(oddsA: number, oddsB: number): number {
   if (!(oddsA > 1) || !(oddsB > 1)) return 0;
   const sum = 1 / oddsA + 1 / oddsB;
   if (sum >= 1) return 0;
-  return 1 - sum;
+  return 1 / sum - 1;
 }
 
 /** EV as percent of stake: (p * odds - 1) * 100 */
@@ -176,7 +186,7 @@ export function kellyFraction(trueProb: number, decimalOdds: number): number {
 export function latencyAdjustedConfidence(
   base: number,
   latencyMs: number,
-  thresholdMs = 250,
+  thresholdMs = 250
 ): number {
   const lag = Math.max(0, latencyMs - thresholdMs);
   const penalty = Math.min(0.45, lag / 1000);
@@ -207,10 +217,7 @@ function decimal(n: number, d = 2): string {
 /**
  * Build simulated multi-book events from partner health catalog.
  */
-export function generateEvents(
-  partners: MergedPartnerHealth[],
-  count = 24,
-): AgentEvent[] {
+export function generateEvents(partners: MergedPartnerHealth[], count = 24): AgentEvent[] {
   const eligible = partners.filter(partnerEligibleForEdge);
   const pool = eligible.length >= 2 ? eligible : partners.slice(0, 6);
   const books =
@@ -218,7 +225,7 @@ export function generateEvents(
       ? pool
       : ([
           {
-            id: 'pinnacle',
+            id: asSportsbookId('pinnacle'),
             label: 'Pinnacle',
             hosts: ['pinnacle.com'],
             liquidityTier: 'high',
@@ -273,7 +280,7 @@ export function generateEvents(
     // consensus markets for the event row
     const first = Object.values(bookmakers)[0];
     events.push({
-      id: String(i),
+      id: asEventId(String(i)),
       sport,
       league,
       home_team: home,
@@ -318,7 +325,7 @@ export function detectEdges(
     bankroll?: number;
     minEdgePct?: number;
     includeFinished?: boolean;
-  },
+  }
 ): EdgeOpportunity[] {
   const bankroll = opts?.bankroll ?? BANKROLL_USD;
   const minEdge = opts?.minEdgePct ?? 0.4;
@@ -331,13 +338,26 @@ export function detectEdges(
       ([, b]) =>
         b.liquidityTier !== 'illiquid' &&
         b.partnerStatus !== 'offline' &&
-        b.partnerStatus !== 'critical',
+        b.partnerStatus !== 'critical' &&
+        b.partnerStatus !== 'deferred'
     );
     if (entries.length < 2) continue;
 
     // --- Arbitrage: best home vs best away across books ---
-    let bestHome = { key: '', odds: 0, lat: 0, id: '', tier: 'unknown' };
-    let bestAway = { key: '', odds: 0, lat: 0, id: '', tier: 'unknown' };
+    let bestHome = {
+      key: '',
+      odds: 0,
+      lat: 0,
+      id: null as SportsbookId | null,
+      tier: 'unknown',
+    };
+    let bestAway = {
+      key: '',
+      odds: 0,
+      lat: 0,
+      id: null as SportsbookId | null,
+      tier: 'unknown',
+    };
     for (const [key, b] of entries) {
       const h = Number(b.odds.moneyline.home);
       const a = Number(b.odds.moneyline.away);
@@ -346,7 +366,7 @@ export function detectEdges(
           key,
           odds: h,
           lat: b.latency,
-          id: b.bookmakerId || key,
+          id: b.bookmakerId,
           tier: b.liquidityTier || 'unknown',
         };
       }
@@ -355,12 +375,18 @@ export function detectEdges(
           key,
           odds: a,
           lat: b.latency,
-          id: b.bookmakerId || key,
+          id: b.bookmakerId,
           tier: b.liquidityTier || 'unknown',
         };
       }
     }
-    if (bestHome.key && bestAway.key && bestHome.key !== bestAway.key) {
+    if (
+      bestHome.key &&
+      bestAway.key &&
+      bestHome.id &&
+      bestAway.id &&
+      bestHome.key !== bestAway.key
+    ) {
       const profit = twoWayArbProfit(bestHome.odds, bestAway.odds);
       if (profit > 0) {
         const edgePct = profit * 100;
@@ -369,7 +395,7 @@ export function detectEdges(
           const conf = latencyAdjustedConfidence(0.92, maxLat);
           const stake = Math.round(bankroll * Math.min(0.05, profit * 2));
           edges.push({
-            id: `${ev.id}-arb`,
+            id: asEdgeId(`${ev.id}-arb`),
             event_id: ev.id,
             sport: ev.sport,
             league: ev.league,
@@ -399,8 +425,7 @@ export function detectEdges(
 
     // --- Value: true prob from sharpest book (prefer high liquidity) ---
     const ranked = [...entries].sort((a, b) => {
-      const rank = (t?: string) =>
-        t === 'high' ? 0 : t === 'medium' ? 1 : t === 'low' ? 2 : 3;
+      const rank = (t?: string) => (t === 'high' ? 0 : t === 'medium' ? 1 : t === 'low' ? 2 : 3);
       return rank(a[1].liquidityTier) - rank(b[1].liquidityTier);
     });
     const sharp = ranked[0]!;
@@ -419,12 +444,9 @@ export function detectEdges(
         const evPct = expectedValuePct(trueP, odds);
         if (evPct < minEdge) continue;
         const kelly = kellyFraction(trueP, odds);
-        const conf = latencyAdjustedConfidence(
-          0.55 + Math.min(0.35, evPct / 20),
-          b.latency,
-        );
+        const conf = latencyAdjustedConfidence(0.55 + Math.min(0.35, evPct / 20), b.latency);
         edges.push({
-          id: `${ev.id}-val-${key}-${side}`,
+          id: asEdgeId(`${ev.id}-val-${key}-${side}`),
           event_id: ev.id,
           sport: ev.sport,
           league: ev.league,
@@ -436,22 +458,16 @@ export function detectEdges(
           expected_value: +evPct.toFixed(2),
           confidence: +conf.toFixed(3),
           kelly_fraction: +kelly.toFixed(4),
-          stake_suggestion: Math.max(
-            5,
-            Math.round(bankroll * kelly * 0.5),
-          ),
+          stake_suggestion: Math.max(5, Math.round(bankroll * kelly * 0.5)),
           bookmakers: [key, sharp[0]],
-          bookmaker_ids: [b.bookmakerId || key, sharp[1].bookmakerId || sharp[0]],
+          bookmaker_ids: [b.bookmakerId, sharp[1].bookmakerId],
           odds: {
             book1: decimal(odds),
             book2: sharp[1].odds.moneyline[side],
           },
           latency_ms: { book1: b.latency, book2: sharp[1].latency },
           latency_adjusted: b.latency > 250,
-          liquidity_tiers: [
-            b.liquidityTier || 'unknown',
-            sharp[1].liquidityTier || 'unknown',
-          ],
+          liquidity_tiers: [b.liquidityTier || 'unknown', sharp[1].liquidityTier || 'unknown'],
           timestamp: now - Math.floor(Math.random() * 240_000),
         });
       }
@@ -466,7 +482,7 @@ export function detectEdges(
       if (movePct >= 5) {
         const conf = latencyAdjustedConfidence(0.7, b.latency, 150);
         edges.push({
-          id: `${ev.id}-steam-${key}`,
+          id: asEdgeId(`${ev.id}-steam-${key}`),
           event_id: ev.id,
           sport: ev.sport,
           league: ev.league,
@@ -480,7 +496,7 @@ export function detectEdges(
           kelly_fraction: +Math.min(0.08, movePct / 200).toFixed(4),
           stake_suggestion: Math.round(bankroll * Math.min(0.08, movePct / 200)),
           bookmakers: [key],
-          bookmaker_ids: [b.bookmakerId || key],
+          bookmaker_ids: [b.bookmakerId],
           odds: { book1: decimal(cur), book2: decimal(prior) },
           latency_ms: { book1: b.latency, book2: b.latency },
           latency_adjusted: b.latency > 150,
@@ -502,7 +518,7 @@ export function filterEdges(
     league?: string | null;
     type?: string | null;
     minEdge?: number | null;
-  },
+  }
 ): EdgeOpportunity[] {
   let out = edges;
   if (q.sport) out = out.filter(e => e.sport === q.sport);
@@ -517,7 +533,7 @@ export function filterEdges(
 export function defaultAlertRules(): AlertRule[] {
   return [
     {
-      id: 'price-move',
+      id: asRuleId('price-move'),
       name: 'Price movement > 5%',
       description: 'Trigger when odds change more than 5%',
       active: true,
@@ -535,7 +551,7 @@ export function defaultAlertRules(): AlertRule[] {
       bookmaker_comparison: 'sharp_vs_soft',
     },
     {
-      id: 'arbitrage',
+      id: asRuleId('arbitrage'),
       name: 'Arbitrage > 2%',
       active: true,
       condition: 'arb_percent > 2',
@@ -551,7 +567,7 @@ export function defaultAlertRules(): AlertRule[] {
       bookmaker_comparison: '',
     },
     {
-      id: 'steam',
+      id: asRuleId('steam'),
       name: 'Steam move > 8%',
       active: true,
       condition: 'steam_move > 8',
@@ -567,7 +583,7 @@ export function defaultAlertRules(): AlertRule[] {
       bookmaker_comparison: '',
     },
     {
-      id: 'value-bet',
+      id: asRuleId('value-bet'),
       name: 'Value bet > 3% EV',
       active: true,
       condition: 'expected_value > 3',
@@ -597,9 +613,9 @@ export function rulePerformanceSnapshot(rules: AlertRule[]): RulePerformance[] {
 }
 
 export function generateEventHistory(
-  eventId: string,
+  eventId: EventId,
   marketType: string,
-  bookKeys: string[],
+  bookKeys: string[]
 ): HistoryPoint[] {
   const points = 20;
   const data: HistoryPoint[] = [];

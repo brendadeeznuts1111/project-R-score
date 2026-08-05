@@ -350,7 +350,7 @@ function populateSelect(id, values, allLabel) {
 }
 
 // ── Edges ────────────────────────────────────────────────────
-async function loadEdges() {
+async function loadEdges(refresh = false) {
   const params = new URLSearchParams();
   const sport = document.getElementById('filterEdgeSport').value;
   const league = document.getElementById('filterEdgeLeague').value;
@@ -360,7 +360,7 @@ async function loadEdges() {
   if (league) params.set('league', league);
   if (type) params.set('type', type);
   if (min) params.set('min', min);
-  params.set('refresh', '1');
+  params.set('refresh', refresh ? '1' : '0');
   try {
     const res = await fetch(API + '/api/edges?' + params);
     const body = await res.json();
@@ -458,7 +458,7 @@ async function loadRulePerformance() {
 }
 
 // ── Events ───────────────────────────────────────────────────
-async function loadEvents() {
+async function loadEvents(refresh = false) {
   const params = new URLSearchParams();
   const sport = document.getElementById('filterSportEvents').value;
   const league = document.getElementById('filterLeagueEvents').value;
@@ -468,7 +468,7 @@ async function loadEvents() {
   if (league) params.set('league', league);
   if (status) params.set('status', status);
   if (geo) params.set('geo', geo);
-  params.set('refresh', '0');
+  params.set('refresh', refresh ? '1' : '0');
   try {
     const res = await fetch(API + '/api/events?' + params);
     const body = await res.json();
@@ -637,7 +637,7 @@ function drawHistoryChart(data) {
 }
 
 // ── Odds ─────────────────────────────────────────────────────
-async function loadOdds() {
+async function loadOdds(refresh = false) {
   const params = new URLSearchParams();
   const host = document.getElementById('filterHost').value;
   const sport = document.getElementById('filterSport').value;
@@ -647,6 +647,7 @@ async function loadOdds() {
   if (sport) params.set('sport', sport);
   if (liq) params.set('liquidity', liq);
   if (st) params.set('status', st);
+  params.set('refresh', refresh ? '1' : '0');
   params.set('limit', '80');
   try {
     const res = await fetch(API + '/api/odds?' + params);
@@ -800,9 +801,9 @@ async function deleteRule(id) {
 }
 
 // ── Health ───────────────────────────────────────────────────
-async function loadHealth() {
+async function loadHealth(refresh = false) {
   try {
-    const res = await fetch(API + '/api/partners/health');
+    const res = await fetch(API + '/api/partners/health' + (refresh ? '?refresh=1' : ''));
     const data = await res.json();
     partnerHealth = data.health || [];
     const summary = data.summary || {};
@@ -819,7 +820,9 @@ async function loadHealth() {
     document.getElementById('liquidityMix').textContent = summary.byLiquidity
       ? Object.entries(summary.byLiquidity).map(([k, v]) => `${k}:${v}`).join(' · ')
       : '—';
-    if (data.generatedAt) document.getElementById('lastProbe').textContent = new Date(data.generatedAt).toLocaleString();
+    document.getElementById('lastProbe').textContent = data.lastProbe
+      ? new Date(data.lastProbe).toLocaleString()
+      : '—';
     document.getElementById('bookCount').textContent = total;
     document.getElementById('partnerStrip').innerHTML = partnerHealth.slice(0, 12).map(p => `
       <div class="partner-chip">
@@ -858,13 +861,11 @@ async function loadOptions() {
 }
 
 document.getElementById('applyEdgeFilter').addEventListener('click', loadEdges);
-document.getElementById('refreshEdges').addEventListener('click', loadEdges);
+document.getElementById('refreshEdges').addEventListener('click', () => loadEdges(true));
 document.getElementById('applyEventsFilter').addEventListener('click', loadEvents);
-document.getElementById('refreshEvents').addEventListener('click', () => {
-  fetch(API + '/api/events?refresh=1').then(() => loadEvents());
-});
+document.getElementById('refreshEvents').addEventListener('click', () => loadEvents(true));
 document.getElementById('applyOddsFilter').addEventListener('click', loadOdds);
-document.getElementById('refreshOdds').addEventListener('click', loadOdds);
+document.getElementById('refreshOdds').addEventListener('click', () => loadOdds(true));
 document.getElementById('loadEventBtn').addEventListener('click', () => {
   const id = document.getElementById('eventIdInput').value.trim();
   if (id) loadEventDetail(id);
@@ -948,13 +949,15 @@ loadOptions();
 loadHealth();
 loadEdges();
 setInterval(() => {
-  if (currentTab === 'edges') loadEdges();
-  else if (currentTab === 'events') loadEvents();
-  else if (currentTab === 'odds') loadOdds();
-  else if (currentTab === 'health') loadHealth();
+  if (currentTab === 'edges') loadEdges(true);
+  else if (currentTab === 'events') loadEvents(true);
+  else if (currentTab === 'odds') loadOdds(true);
+  else if (currentTab === 'health') loadHealth(true);
 }, 30000);
 
 console.log('🧠 Bun Agent Dashboard v1.06 – Uncovered Edges loaded.');
 </script>
+<script type="module" src="/portal/data.js"></script>
+<script type="module" src="/portal/topbar.js"></script>
 </body>
 </html>

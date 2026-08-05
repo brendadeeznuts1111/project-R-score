@@ -12,12 +12,14 @@ import {
   type AgentEvent,
 } from '../lib/operator-research/edge-engine.ts';
 import type { MergedPartnerHealth } from '../lib/bookmakers/merged-registry.ts';
+import { asEventId, asSportsbookId } from '../lib/types/branded.ts';
 
 describe('edge math', () => {
   test('impliedProb and twoWayArbProfit', () => {
     expect(impliedProb(2)).toBeCloseTo(0.5, 5);
     // classic arb: 2.10 / 2.10
     expect(twoWayArbProfit(2.1, 2.1)).toBeGreaterThan(0);
+    expect(twoWayArbProfit(3, 3)).toBeCloseTo(0.5, 5);
     expect(twoWayArbProfit(1.9, 1.9)).toBe(0);
   });
 
@@ -41,7 +43,7 @@ describe('edge math', () => {
 describe('detectEdges', () => {
   test('finds arbitrage when books disagree enough', () => {
     const ev: AgentEvent = {
-      id: '1',
+      id: asEventId('1'),
       sport: 'basketball',
       league: 'NBA',
       home_team: 'A',
@@ -61,14 +63,14 @@ describe('detectEdges', () => {
           latency: 80,
           liquidityTier: 'medium',
           partnerStatus: 'active',
-          bookmakerId: 'soft',
+          bookmakerId: asSportsbookId('soft'),
         },
         sharp: {
           odds: { moneyline: { home: '1.70', away: '2.20' } },
           latency: 60,
           liquidityTier: 'high',
           partnerStatus: 'active',
-          bookmakerId: 'sharp',
+          bookmakerId: asSportsbookId('sharp'),
         },
       },
       limits: { min: 10, max: 500 },
@@ -78,6 +80,44 @@ describe('detectEdges', () => {
     expect(arb).toBeDefined();
     expect(arb!.edge_percent).toBeGreaterThan(0);
     expect(arb!.bookmakers).toHaveLength(2);
+  });
+
+  test('does not publish edges from deferred partner quotes', () => {
+    const ev: AgentEvent = {
+      id: asEventId('deferred-event'),
+      sport: 'basketball',
+      league: 'NBA',
+      home_team: 'A',
+      away_team: 'B',
+      start_time: Date.now(),
+      status: 'live',
+      geo: 'US',
+      state: 'NV',
+      markets: {
+        moneyline: { home: '3.00', away: '3.00' },
+        spread: { home: '-1.5', away: '1.5' },
+        total: { over: '1.90', under: '1.90' },
+      },
+      bookmakers: {
+        active: {
+          odds: { moneyline: { home: '3.00', away: '1.50' } },
+          latency: 50,
+          liquidityTier: 'high',
+          partnerStatus: 'active',
+          bookmakerId: asSportsbookId('active'),
+        },
+        deferred: {
+          odds: { moneyline: { home: '1.50', away: '3.00' } },
+          latency: 50,
+          liquidityTier: 'high',
+          partnerStatus: 'deferred',
+          bookmakerId: asSportsbookId('deferred'),
+        },
+      },
+      limits: { min: 10, max: 500 },
+    };
+
+    expect(detectEdges([ev], { minEdgePct: 0 })).toHaveLength(0);
   });
 
   test('filterEdges by type and min', () => {
