@@ -108,7 +108,7 @@ and the partner-contracts table (`partnerCode`, hrefs, outs counts,
 
 ## Related
 
-- [`tennis-hq-registry.md`](tennis-hq-registry.md) — dual auth planes
+- [`tennis-hq-registry.md`](tennis-hq-registry.md) — dual auth planes · [producer CONTRIBUTING](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md) (Market Desk day loop; stale Pages badges need Factory bake, not Wrangler)
 - [`partner-limits.md`](partner-limits.md) — limits APIs
 - `lib/http/data-source.ts` — `X-Data-Source` helper
 - `lib/registry/bake-manifest.ts` — bake inventory + `runtime` provenance (`Bun.version`, optional `BUN_VERSION` override)
