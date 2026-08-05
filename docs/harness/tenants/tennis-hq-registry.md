@@ -185,18 +185,20 @@ not import files from the sibling Tennis HQ source tree. The soft-pass extracts
 `package/registry/contracts/v1/manifest.json` from the tarball and requires
 package-version parity plus exactly these five authenticated read domains:
 
-| Domain     | Runtime path                     | Contract package export               |
-| ---------- | -------------------------------- | ------------------------------------- |
-| marketdata | `GET /api/v1/marketdata/desk`    | `contracts/v1/marketdata.schema.json` |
-| research   | `GET /api/v1/research/status`    | `contracts/v1/research.schema.json`   |
-| trading    | `GET /api/v1/trading/executions` | `contracts/v1/trading.schema.json`    |
-| partners   | `GET /api/v1/partners/capacity`  | `contracts/v1/partners.schema.json`   |
-| accounting | `GET /api/v1/accounting/finance` | `contracts/v1/accounting.schema.json` |
+| Domain     | Runtime path                     | Contract package export               | Live tip `41c9ab6` |
+| ---------- | -------------------------------- | ------------------------------------- | ------------------ |
+| research   | `GET /api/v1/research/status`    | `contracts/v1/research.schema.json`   | **wired** (unauth **401**) |
+| marketdata | `GET /api/v1/marketdata/desk`    | `contracts/v1/marketdata.schema.json` | SPA **404**        |
+| trading    | `GET /api/v1/trading/executions` | `contracts/v1/trading.schema.json`    | SPA **404**        |
+| partners   | `GET /api/v1/partners/capacity`  | `contracts/v1/partners.schema.json`   | SPA **404**        |
+| accounting | `GET /api/v1/accounting/finance` | `contracts/v1/accounting.schema.json` | SPA **404**        |
 
-Runtime reads require a Tennis HQ provider token (`PARTNER_API_TOKEN`, with
-provider-side `OPERATOR_API_TOKEN` alias) and fail closed when it is absent.
-`FACTORY_WAGER_TOKEN` remains registry/package authentication and is not a
-runtime API credential.
+Package manifest lists all five; **only research is implemented on the live
+Worker**. Remaining routes are producer work (or shrink the manifest). Runtime
+reads require `PARTNER_API_TOKEN` (provider-side `OPERATOR_API_TOKEN` alias) and
+fail closed when it is absent (`401` unauthorized when set; `503`
+`contract_auth_unconfigured` only when missing). `FACTORY_WAGER_TOKEN` remains
+registry/package authentication and is not a runtime API credential.
 
 FactoryWager's registry catalog now contains the canonical
 `@tennis-hq/ssot@1.5.0` tarball with all five v1 contract exports. The stored
