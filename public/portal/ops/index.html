@@ -83,8 +83,38 @@
       </div>
     </div>
   </header>
+  <main class="portal-page ops-page">
+    <div data-domain-lanes="control" hidden></div>
+    <header class="portal-hero portal-hero--card ops-hero" aria-labelledby="ops-hero-title">
+      <p class="portal-eyebrow">Control loop · partner desk · C4/C5</p>
+      <h2 class="portal-hero__title" id="ops-hero-title">
+        <a
+          class="semantic-label"
+          href="/portal/glossary/#glossary:page.ops"
+          data-glossary-concept="page.ops"
+          >Operations</a
+        >
+      </h2>
+      <p class="hero-sub">
+        Live pulse from
+        <a href="/registry/ops-summary.json"><code>ops-summary.json</code></a>
+        — handshake gaps, seat incomplete outs, limit raises, and outbox health. Partner boards deep-link from the desk strip.
+      </p>
+      <div class="portal-hero-meta">
+        <span id="ops-gate" class="portal-gate" aria-live="polite">…</span>
+        <span id="ops-baked" class="portal-baked">loading…</span>
+        <div class="portal-source-links" aria-label="Related boards">
+          <a href="/portal/partners/">Partners</a>
+          <a href="/portal/limits/">Limits</a>
+          <a href="/portal/toc/">TOC</a>
+          <a href="/portal/compliance/">Compliance</a>
+          <a href="/registry/ops-summary.json">ops-summary</a>
+        </div>
+      </div>
+    </header>
   <nav id="ops-jump" class="ops-jump" aria-label="Ops sections" hidden></nav>
   <operations-dashboard></operations-dashboard>
+  </main>
   <notification-center aria-live="polite"></notification-center>
   <script type="module" src="/portal/data.js"></script>
   <script type="module" src="/portal/topbar.js"></script>

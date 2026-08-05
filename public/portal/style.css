@@ -1920,6 +1920,114 @@ body {
   padding: 0 24px 32px;
 }
 
+.ops-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 24px 0;
+}
+
+.ops-hero {
+  margin-bottom: 12px;
+}
+
+.ops-desk-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  margin: 0 0 10px;
+}
+
+.ops-desk-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  background: color-mix(in srgb, var(--bg, #0d1117) 35%, transparent);
+  transition:
+    border-color 0.12s,
+    background 0.12s;
+}
+
+.ops-desk-stat:hover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.ops-desk-stat .k {
+  font: 650 10px/1.2 var(--font-sans, system-ui, sans-serif);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.ops-desk-stat .v {
+  font: 650 1.25rem/1.1 var(--font-mono, ui-monospace, monospace);
+  font-variant-numeric: tabular-nums;
+}
+
+.ops-desk-stat.ok .v {
+  color: var(--green, #3fb950);
+}
+.ops-desk-stat.warn .v {
+  color: var(--yellow, #d29922);
+}
+.ops-desk-stat.bad .v {
+  color: var(--red, #f85149);
+}
+
+.ops-desk-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-top: 8px;
+}
+
+.ops-loop-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin: 10px 0 8px;
+}
+
+.ops-loop-cell {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  background: color-mix(in srgb, var(--bg) 30%, transparent);
+}
+
+.ops-loop-cell .k {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  margin-bottom: 2px;
+}
+
+.ops-loop-cell .v {
+  font: 600 13px/1.2 var(--font-mono, ui-monospace, monospace);
+  font-variant-numeric: tabular-nums;
+}
+
+.ops-loop-cell.ok .v {
+  color: var(--green, #3fb950);
+}
+.ops-loop-cell.warn .v {
+  color: var(--yellow, #d29922);
+}
+.ops-loop-cell.bad .v {
+  color: var(--red, #f85149);
+}
+
+.ops-panel--desk {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+}
+
 .ops-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
