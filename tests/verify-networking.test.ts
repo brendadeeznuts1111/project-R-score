@@ -1,12 +1,20 @@
 // @see https://bun.com/docs/runtime/networking/fetch#dns-prefetching
 // @see https://bun.com/docs/runtime/networking/dns#dns-prefetch
 import { describe, expect, test } from 'bun:test';
+import { joinPath } from '../lib/path-bun.ts';
 import {
   buildNetworkingProofArtifact,
   parseNetworkingProofArtifact,
 } from '../lib/http/networking-proof.ts';
 import { netCheckRow } from '../lib/http/networking-report.ts';
-import { verifyTarget, type NetTarget } from '../tools/verify-networking.ts';
+import { serveBindSnapshot } from '../lib/http/bun-server.ts';
+import {
+  resolveRouteProbeBase,
+  verifyTarget,
+  type NetTarget,
+} from '../tools/verify-networking.ts';
+import { createTestWorkspace } from './harness.ts';
+import { writeServePublicBindManifest } from '../lib/http/serve-public-bind.ts';
 
 describe('tools/verify-networking', () => {
   test('buildNetworkingProofArtifact produces parseable proof JSON', () => {
@@ -65,5 +73,35 @@ describe('tools/verify-networking', () => {
       expect(rows.some(r => r.optimization === 'Cold Fetch' && r.status === 'PASS')).toBe(true);
       expect(rows.some(r => r.optimization === 'Warm Fetch' && r.status === 'PASS')).toBe(true);
     }
+  });
+
+  test('route-only base is explicit or owned by the current worktree', async () => {
+    expect(await resolveRouteProbeBase('http://127.0.0.1:4311')).toBe(
+      'http://127.0.0.1:4311'
+    );
+
+    await using workspace = await createTestWorkspace('factorywager-route-base-');
+    const bindPath = workspace.resolve('bind.json');
+    const server = Bun.serve({
+      port: 0,
+      hostname: '127.0.0.1',
+      fetch: () => new Response('ok'),
+    });
+    const snapshot = serveBindSnapshot(server);
+    await writeServePublicBindManifest(
+      {
+        ...snapshot,
+        schemaVersion: 1,
+        ephemeralFallback: false,
+        requestedDefaultPort: snapshot.port,
+        boundAt: '2026-08-05T00:00:00.000Z',
+      },
+      bindPath
+    );
+    expect(await resolveRouteProbeBase(undefined, bindPath)).toBe(snapshot.loopbackOrigin);
+    await server.stop(true);
+    await expect(
+      resolveRouteProbeBase(undefined, joinPath(workspace.path, 'missing-bind.json'))
+    ).rejects.toThrow('routes-only requires');
   });
 });
