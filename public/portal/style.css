@@ -878,12 +878,29 @@ body {
   border-radius: var(--radius);
 }
 
+/* Canonical table + legacy / board dual-class aliases (prefer .portal-table in new markup) */
 .portal-table,
 .data-table,
 .env-table,
 .ops-table,
 .live-table,
-.doc-table {
+.doc-table,
+.partners-table,
+.tools-table,
+.cli-table,
+.ad-table,
+.vh-table,
+.tf-table,
+.pkg-table,
+.lab-table,
+.cx-table,
+.brand-table,
+.lcc-table,
+.cmp-table,
+.baseline-table,
+.history-book-table,
+.help-table,
+.toc-rp-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
@@ -895,7 +912,22 @@ body {
 .env-table th,
 .ops-table th,
 .live-table th,
-.doc-table th {
+.doc-table th,
+.partners-table th,
+.tools-table th,
+.cli-table th,
+.ad-table th,
+.vh-table th,
+.tf-table th,
+.pkg-table th,
+.lab-table th,
+.cx-table th,
+.brand-table th,
+.lcc-table th,
+.cmp-table th,
+.baseline-table th,
+.history-book-table th,
+.help-table th {
   text-align: left;
   padding: 8px 10px;
   color: var(--text-dim);
@@ -910,7 +942,22 @@ body {
 .env-table td,
 .ops-table td,
 .live-table td,
-.doc-table td {
+.doc-table td,
+.partners-table td,
+.tools-table td,
+.cli-table td,
+.ad-table td,
+.vh-table td,
+.tf-table td,
+.pkg-table td,
+.lab-table td,
+.cx-table td,
+.brand-table td,
+.lcc-table td,
+.cmp-table td,
+.baseline-table td,
+.history-book-table td,
+.help-table td {
   padding: 7px 10px;
   border-bottom: 1px solid rgba(48, 54, 61, 0.35);
   vertical-align: top;
@@ -920,7 +967,10 @@ body {
 .data-table .mono,
 .env-table .mono,
 .ops-table .mono,
-.live-table .mono {
+.live-table .mono,
+.partners-table .mono,
+.tools-table code,
+.partners-table code {
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 11px;
 }

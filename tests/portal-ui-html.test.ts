@@ -121,4 +121,31 @@ describe('browser portal-ui twin', () => {
     expect(bake).toContain('renderPortalTable');
     expect(bake).toContain('renderPortalStatGrid');
   });
+
+  test('vault and failures bakes import shared ui-html builders', async () => {
+    for (const p of ['tools/vault-health-bake.ts', 'tools/failures-bake.ts']) {
+      const bake = await Bun.file(p).text();
+      expect(bake, p).toContain("from '../lib/portal/ui-html.ts'");
+      expect(bake, p).toContain('renderPortalTable');
+      expect(bake, p).toContain('renderPortalStatGrid');
+    }
+  });
+
+  test('second-wave boards dual-class portal-table with board aliases', async () => {
+    const paths = [
+      'public/portal/partners/index.html',
+      'public/portal/tools/index.html',
+      'public/portal/account/index.html',
+      'public/portal/packages/index.html',
+      'public/portal/compliance/index.html',
+      'public/portal/concepts/index.html',
+      'public/portal/brands/index.html',
+      'public/portal/limits-lab/index.html',
+      'public/portal/components/limit-changes-card.js',
+    ];
+    for (const p of paths) {
+      const src = await Bun.file(p).text();
+      expect(src, p).toContain('portal-table');
+    }
+  });
 });

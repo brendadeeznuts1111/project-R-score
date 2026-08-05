@@ -936,7 +936,7 @@ export function renderPublishPlaneTable(rows) {
     })
     .join('');
   return (
-    `<table class="pkg-table" aria-label="Publish plane soft-pass artifacts">` +
+    `<table class="portal-table pkg-table" aria-label="Publish plane soft-pass artifacts">` +
     `<thead><tr>` +
     `<th>artifactName</th><th>artifactId</th><th>colorKey</th><th>mode</th><th>status</th><th>summary</th><th>detail</th><th>json</th><th>cli</th>` +
     `</tr></thead><tbody>${body}</tbody></table>`

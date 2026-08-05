@@ -862,7 +862,7 @@
             </label>
           </div>
           <div class="baseline-table-wrap">
-            <table class="baseline-table">
+            <table class="portal-table baseline-table">
               <thead>
                 <tr>
                   <th>#</th>
@@ -1589,7 +1589,7 @@
             right.changes - left.changes || leftName.localeCompare(rightName)
         );
         sportsbookBreakdownEl.innerHTML = rows.length
-          ? `<table class="history-book-table" aria-label="Sportsbook limit activity">
+          ? `<table class="portal-table history-book-table" aria-label="Sportsbook limit activity">
         <caption class="sr-only">Sportsbook activity for the current history filters</caption>
         <thead><tr><th scope="col" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.sportsbooks}">Sportsbook</th><th scope="col" class="num" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.visibleChanges}">Changes</th><th scope="col" class="num" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.raises}">Raises</th><th scope="col" class="num" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.decreases}">Decreases</th><th scope="col" class="num" data-glossary-concept="${PARTNER_HISTORY_GLOSSARY.deltas}">High-water delta</th></tr></thead>
         <tbody>${rows
