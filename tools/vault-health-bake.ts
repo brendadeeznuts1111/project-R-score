@@ -30,6 +30,7 @@ import { buildVaultMapBundle } from '../lib/security/vault-map.ts';
 import {
   computeVaultHealth,
   liveItemsFromListJson,
+  type TokenProbe,
   type VaultLiveItem,
   type VaultRefInput,
 } from '../lib/security/vault-health.ts';
@@ -42,6 +43,45 @@ const OUT_HTML = joinPath(ROOT, 'public', 'portal', 'vault', 'index.html');
 const NO_FAIL = Bun.argv.includes('--no-fail');
 
 export type VaultListResult = { ok: true; items: VaultLiveItem[] } | { ok: false; code: number };
+
+/** Cloudflare token-bearing env keys probed via /user/tokens/verify (401 = expired). */
+const CLOUDFLARE_TOKEN_KEYS = [
+  'CLOUDFLARE_API_TOKEN',
+  'CLOUDFLARE_DNS_API_TOKEN',
+  'CLOUDFLARE_ACCESS_API_TOKEN',
+] as const;
+
+/** Probe a Cloudflare token value against the tokens/verify endpoint. */
+async function probeCloudflareToken(envKey: string): Promise<TokenProbe> {
+  const token = process.env[envKey];
+  const checkedAt = new Date().toISOString();
+  if (!token) {
+    return { envKey, kind: 'cloudflare', status: 'unreachable', statusCode: null, checkedAt };
+  }
+  try {
+    const res = await fetch('https://api.cloudflare.com/client/v4/user/tokens/verify', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return {
+      envKey,
+      kind: 'cloudflare',
+      status: res.status === 200 ? 'ok' : 'invalid',
+      statusCode: res.status,
+      checkedAt,
+    };
+  } catch {
+    return { envKey, kind: 'cloudflare', status: 'unreachable', statusCode: null, checkedAt };
+  }
+}
+
+/** Probe all configured Cloudflare tokens (catches expired 401 before deploys fail). */
+async function probeCloudflareTokens(): Promise<TokenProbe[]> {
+  const probes: TokenProbe[] = [];
+  for (const key of CLOUDFLARE_TOKEN_KEYS) {
+    if (process.env[key]) probes.push(await probeCloudflareToken(key));
+  }
+  return probes;
+}
 
 /** Live `item list` for one vault — fail closed on non-zero exit (do not invent empty). */
 export async function fetchVaultItems(vault: string): Promise<VaultListResult> {
@@ -59,6 +99,17 @@ export function renderHtml(
 ): string {
   const s = report.summary;
   const issues = report.referenced.filter(r => r.status !== 'ok');
+  const tokenRows = report.tokenProbes.map(p => [p.envKey, p.status.toUpperCase(), p.statusCode ?? '—']);
+  const tokenBlock =
+    report.tokenProbes.length === 0
+      ? ''
+      : renderPortalPanel(
+          'Token probes (live verify against issuer)',
+          renderPortalTable(['Env key', 'Status', 'HTTP'], tokenRows, { zebra: true }),
+          report.tokenProbes.some(p => p.status !== 'ok')
+            ? { title: 'expired/invalid tokens will fail deploys at runtime' }
+            : undefined
+        );
   const gateCls = s.healthy && listFailures.length === 0 ? 'pass' : 'fail';
   const gateLabel = listFailures.length > 0 ? 'list failed' : s.healthy ? 'healthy' : 'purge risk';
 
@@ -174,8 +225,14 @@ export function renderHtml(
           value: s.referencedMissing,
           tone: s.referencedMissing ? 'bad' : 'ok',
         },
+        {
+          label: 'Tokens invalid',
+          value: s.tokensInvalid,
+          tone: s.tokensInvalid ? 'bad' : 'ok',
+        },
       ])}
     </div>
+    ${tokenBlock}
     ${listFailBlock}
     ${renderPortalPanel('Referenced-item issues (purge risk)', issuesTable, {
       desc: 'Env keys whose Pass items are missing or trashed.',
@@ -242,7 +299,8 @@ async function main(): Promise<void> {
   const failedVaults = new Set(listFailures);
   // Score refs only for vaults we successfully listed; list failures fail the bake below.
   const scoredRefs = refs.filter(r => r.vault && !failedVaults.has(r.vault));
-  const report = computeVaultHealth(scoredRefs, liveByVault);
+  const tokenProbes = await probeCloudflareTokens();
+  const report = computeVaultHealth(scoredRefs, liveByVault, undefined, { tokenProbes });
   if (listFailures.length > 0) {
     report.summary.healthy = false;
   }
@@ -254,10 +312,16 @@ async function main(): Promise<void> {
   console.log(
     `vault-health: ${s.vaultCount} vaults · ${s.activeItems} active · ${s.trashedItems} trashed · ` +
       `refs ok=${s.referencedOk} trashed=${s.referencedTrashed} missing=${s.referencedMissing}` +
+      ` · tokens ok=${s.tokensOk} invalid=${s.tokensInvalid}` +
       (listFailures.length ? ` · listFailed=${listFailures.join(',')}` : '')
   );
   for (const r of report.referenced.filter(r => r.status !== 'ok')) {
     console.error(`  ⚠️  ${r.envKey} → ${r.vault}/${r.item} — ${r.status.toUpperCase()}`);
+  }
+  for (const p of report.tokenProbes.filter(p => p.status !== 'ok')) {
+    console.error(
+      `  ⚠️  ${p.envKey} — token ${p.status.toUpperCase()}${p.statusCode ? ` (HTTP ${p.statusCode})` : ''}`
+    );
   }
   console.log(`baked: ${OUT_JSON}`);
   console.log(`baked: ${OUT_HTML}`);
