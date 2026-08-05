@@ -629,7 +629,7 @@
   // ──────────────────────────────────────────────────────────────
   // STREAMING (Server‑Sent Events simulation)
   // ──────────────────────────────────────────────────────────────
-  
+
   function appendStreamEvent(data) {
     streamCount++;
     document.getElementById('streamCount').textContent = streamCount + ' events';
@@ -1003,5 +1003,7 @@ function startStream() {
   init();
   console.log('🧠 Bun Agent Dashboard v1.02 loaded.');
 </script>
+<script type="module" src="/portal/data.js"></script>
+<script type="module" src="/portal/topbar.js"></script>
 </body>
 </html>

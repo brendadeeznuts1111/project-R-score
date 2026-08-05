@@ -1,4 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
+// @see https://bun.com/docs/runtime/networking/dns#dns-prefetch — Bun.dns
+// @see https://bun.com/docs/runtime/networking/dns#dns-prefetch — Bun.dns.prefetch
+// @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
 // @see https://bun.com/docs/api/http — Bun.serve
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
@@ -20,12 +24,12 @@
  *   POST /api/upload · /api/auth/login · /api/backup
  *   GET  /api/pool · /api/prefetch · /api/platform
  */
-import { join } from 'node:path';
+import { joinPath } from '../lib/path-bun.ts';
 
-const ROOT = join(import.meta.dir, '..');
-const DASH_DIR = join(ROOT, 'public/portal/agent-odds');
-const PORT = Number(process.env.PORT || process.env.AGENT_ODDS_PORT || 3000);
-const HOST = process.env.HOST || '127.0.0.1';
+const ROOT = joinPath(import.meta.dir, '..');
+const DASH_DIR = joinPath(ROOT, 'public/portal/agent-odds');
+const PORT = Number(Bun.env.PORT || Bun.env.AGENT_ODDS_PORT || 3000);
+const HOST = Bun.env.HOST || '127.0.0.1';
 
 const HOSTS = [
   'hardrock.bet',
@@ -66,13 +70,7 @@ const LEAGUES = [
   'Bundesliga',
 ] as const;
 
-const MARKETS = [
-  'moneyline',
-  'spread',
-  'total',
-  'team_total',
-  'over_under',
-] as const;
+const MARKETS = ['moneyline', 'spread', 'total', 'team_total', 'over_under'] as const;
 
 const SESSIONS = ['pregame', 'live'] as const;
 
@@ -96,8 +94,8 @@ const poolState = {
 };
 
 /** Demo-only credentials for local mock agent (not production). */
-const DEMO_USER = process.env.AGENT_DEMO_USER || 'analyst';
-const DEMO_PASS = process.env.AGENT_DEMO_PASS || 'password123';
+const DEMO_USER = Bun.env.AGENT_DEMO_USER || 'analyst';
+const DEMO_PASS = Bun.env.AGENT_DEMO_PASS || 'password123';
 
 const rateState = {
   rateCurrent: 12,
@@ -163,7 +161,7 @@ function statsFrom(rows: OddsRow[]) {
   };
 }
 
-function json(data: unknown, status = 200): Response {
+function json(data: object, status = 200): Response {
   const body = JSON.stringify(data);
   return new Response(body, {
     status,
@@ -201,9 +199,7 @@ function oddsStreamResponse(): Response {
           session: pick(SESSIONS),
           at: new Date().toISOString(),
         };
-        controller.enqueue(
-          enc.encode(`id: ${id}\ndata: ${JSON.stringify(payload)}\n\n`),
-        );
+        controller.enqueue(enc.encode(`id: ${id}\ndata: ${JSON.stringify(payload)}\n\n`));
         poolState.streams = Math.min(poolState.streams + 1, 99);
       };
       send();
@@ -341,7 +337,7 @@ const server = Bun.serve({
     if (path === '/api/platform') {
       rateState.rateCurrent = Math.min(
         rateState.rateCurrent + Math.floor(Math.random() * 3),
-        rateState.rateLimit,
+        rateState.rateLimit
       );
       return json({
         bun: Bun.version,
@@ -354,16 +350,7 @@ const server = Bun.serve({
         rateCurrent: rateState.rateCurrent,
         rateLimit: rateState.rateLimit,
         lastBackup: rateState.lastBackup,
-        features: [
-          'sse',
-          'formdata',
-          'pool',
-          'prefetch',
-          'auth',
-          'backup',
-          'arb-ui',
-          'charts',
-        ],
+        features: ['sse', 'formdata', 'pool', 'prefetch', 'auth', 'backup', 'arb-ui', 'charts'],
       });
     }
 
@@ -371,13 +358,13 @@ const server = Bun.serve({
     let filePath = path === '/' || path === '' ? '/dashboard-v1.03.html' : path;
     if (filePath === '/index.html') filePath = '/dashboard-v1.03.html';
     if (filePath === '/dashboard.html') {
-      const v1 = join(DASH_DIR, 'dashboard.html');
+      const v1 = joinPath(DASH_DIR, 'dashboard.html');
       if (!(await Bun.file(v1).exists())) {
         filePath = '/dashboard-v1.03.html';
       }
     }
     const safe = filePath.replace(/\.\./g, '').replace(/^\/+/, '');
-    const abs = join(DASH_DIR, safe || 'dashboard-v1.03.html');
+    const abs = joinPath(DASH_DIR, safe || 'dashboard-v1.03.html');
     if (!abs.startsWith(DASH_DIR)) {
       return new Response('Forbidden', { status: 403 });
     }
@@ -395,5 +382,5 @@ const server = Bun.serve({
 });
 
 console.log(
-  `agent-odds dashboard v1.03 → http://${server.hostname}:${server.port}/  (arb · alerts · charts · auth mock)`,
+  `agent-odds dashboard v1.03 → http://${server.hostname}:${server.port}/  (arb · alerts · charts · auth mock)`
 );
