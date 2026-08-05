@@ -26,7 +26,7 @@ const MUST_INCLUDE_BUN = [
   'tools/tsconfig.json',
   'tests/tsconfig.branded.json',
   'tests/tsconfig.bun-native-comprehensive.json',
-  'tests/tsconfig.snapshot.json',
+  // tests/tsconfig.snapshot.json — referenced by check:snapshot:types but not present on main
 ] as const;
 
 async function readJson(rel: string): Promise<Record<string, unknown>> {

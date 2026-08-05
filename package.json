@@ -1934,6 +1934,7 @@
     "baseline:apply-overrides": "bun tools/baseline-sync.ts apply-overrides",
     "concept:inventory": "bun tools/concept-inventory.ts",
     "glossary:portal": "bun tools/domain-glossary.ts",
+    "glossary:health": "bun tools/glossary-health.ts",
     "glossary:portal:check": "bun tools/domain-glossary.ts --check",
     "glossary:verify": "bun tools/glossary-verify.ts",
     "glossary:verify:json": "bun tools/glossary-verify.ts --json",
