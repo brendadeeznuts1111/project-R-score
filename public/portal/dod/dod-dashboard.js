@@ -45,24 +45,142 @@ export function resolvePartnerCode(entry) {
   return null;
 }
 
-/** Confirm bet/deposit amounts in partner Telegram Accounting (or Partners desk). */
-export function confirmLinksHtml(entry) {
+/** First dollar amount from OCR / accounting_amount column. */
+export function resolveAccountingAmount(entry) {
+  const direct = Number(entry?.accounting_amount ?? entry?.accountingAmount);
+  if (Number.isFinite(direct)) return direct;
+  const ocr = String(entry?.extracted_text || '');
+  const m = ocr.match(/\$\s?([\d,]+(?:\.\d{1,2})?)/);
+  if (!m) return null;
+  const n = Number(m[1].replace(/,/g, ''));
+  return Number.isFinite(n) ? n : null;
+}
+
+export function formatAccountingAmount(amount) {
+  if (amount == null || !Number.isFinite(Number(amount))) return null;
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 2,
+  }).format(Number(amount));
+}
+
+/** t.me message link from bake fields (or precomputed telegram_deep_link). */
+export function resolveTelegramMessageLink(entry) {
+  const existing = String(entry?.telegram_deep_link || entry?.telegramDeepLink || '').trim();
+  if (existing.startsWith('https://t.me/')) return existing;
+
+  const messageId = Number(entry?.telegram_message_id ?? entry?.telegramMessageId);
+  if (!Number.isFinite(messageId) || messageId <= 0) return null;
+
+  const username = String(entry?.telegram_username || entry?.telegramUsername || '')
+    .replace(/^@/, '')
+    .trim();
+  const threadId = Number(entry?.telegram_thread_id ?? entry?.telegramThreadId);
+  const threadSeg =
+    Number.isFinite(threadId) && threadId > 0 ? `${Math.trunc(threadId)}/` : '';
+
+  if (username && /^[A-Za-z][A-Za-z0-9_]{3,31}$/.test(username)) {
+    return `https://t.me/${username}/${threadSeg}${Math.trunc(messageId)}`;
+  }
+
+  const chatRaw = entry?.telegram_chat_id ?? entry?.telegramChatId;
+  if (chatRaw == null || chatRaw === '') return null;
+  const chatStr = String(chatRaw).trim();
+  let channelPart = '';
+  if (chatStr.startsWith('-100') && chatStr.length > 4) channelPart = chatStr.slice(4);
+  else {
+    const n = Number(chatStr);
+    if (!Number.isFinite(n)) return null;
+    channelPart = String(Math.abs(Math.trunc(n)));
+  }
+  if (!/^\d{5,}$/.test(channelPart)) return null;
+  return `https://t.me/c/${channelPart}/${threadSeg}${Math.trunc(messageId)}`;
+}
+
+function handshakeInviteFor(code, partners) {
+  const rows = Array.isArray(partners) ? partners : [];
+  const hit = rows.find(r => String(r.partnerCode || r.code || '').toUpperCase() === code);
+  const invite = String(hit?.inviteLink || hit?.invite_link || '').trim();
+  return invite.startsWith('https://t.me/') ? invite : null;
+}
+
+/** Confirm bet/deposit amounts — message deep-link, forum Accounting, invite. */
+export function confirmLinksHtml(entry, handshakePartners) {
   if (!CONFIRM_TYPES.has(String(entry?.type || ''))) return '';
   const code = resolvePartnerCode(entry);
+  const msgLink = resolveTelegramMessageLink(entry);
+  const topic = String(entry?.telegram_topic || entry?.telegramTopic || 'accounting');
+  const links = [];
+
+  if (msgLink) {
+    links.push(
+      `<a class="dod-confirm-link" href="${esc(msgLink)}" target="_blank" rel="noopener noreferrer" data-glossary-concept="telegram.forum.topic.accounting">Open Telegram message</a>`
+    );
+  }
+
   if (code) {
     const tg = `/portal/partners/${partnerTelegramHash(code, 'accounting')}`;
     const acct = `/portal/partners/#partner/${code}/accounting`;
-    return `<div class="dod-confirm" data-partner-code="${esc(code)}">
-      <span class="dod-confirm-label">Confirm amount</span>
-      <a class="dod-confirm-link" href="${esc(tg)}" data-glossary-concept="telegram.forum.topic.accounting">Telegram · Accounting (${esc(code)})</a>
-      <a class="dod-confirm-link" href="${esc(acct)}" data-glossary-concept="section.partnersAccounting">Partners desk</a>
-    </div>`;
+    const invite = handshakeInviteFor(code, handshakePartners);
+    links.push(
+      `<a class="dod-confirm-link" href="${esc(tg)}" data-glossary-concept="telegram.forum.topic.accounting">Forum · ${esc(topic)} (${esc(code)})</a>`
+    );
+    links.push(
+      `<a class="dod-confirm-link" href="${esc(acct)}" data-glossary-concept="section.partnersAccounting">Partners desk</a>`
+    );
+    if (invite) {
+      links.push(
+        `<a class="dod-confirm-link" href="${esc(invite)}" target="_blank" rel="noopener noreferrer">Invite · ${esc(code)}</a>`
+      );
+    }
+  } else {
+    links.push(
+      `<a class="dod-confirm-link" href="/portal/partners/#section:telegram" data-glossary-concept="telegram.forum.topic.accounting">Partner Accounting chat</a>`
+    );
+    links.push(`<a class="dod-confirm-link" href="/portal/factory/">Factory handshake</a>`);
   }
-  return `<div class="dod-confirm">
+
+  return `<div class="dod-confirm"${code ? ` data-partner-code="${esc(code)}"` : ''}>
     <span class="dod-confirm-label">Confirm amount</span>
-    <a class="dod-confirm-link" href="/portal/partners/#section:telegram" data-glossary-concept="telegram.forum.topic.accounting">Partner Accounting chat</a>
-    <a class="dod-confirm-link" href="/portal/factory/">Factory handshake</a>
+    ${links.join('\n    ')}
   </div>`;
+}
+
+/** Stripped Bun.Image.metadata() for agent learning (width/format/EXIF/gps). */
+export function imageMetaHtml(entry) {
+  const meta = entry?.image_meta || entry?.imageMeta;
+  if (!meta || typeof meta !== 'object') return '';
+  const dims =
+    meta.width != null && meta.height != null ? `${meta.width}×${meta.height}` : null;
+  const rows = [
+    dims ? ['dims', dims] : null,
+    meta.format ? ['format', meta.format] : null,
+    meta.size != null ? ['bytes', String(meta.size)] : null,
+    meta.exif?.deviceModel ? ['device', meta.exif.deviceModel] : null,
+    meta.exif?.software ? ['software', meta.exif.software] : null,
+    meta.exif?.dateTimeOriginal ? ['taken', meta.exif.dateTimeOriginal] : null,
+    meta.gps
+      ? ['gps', `${Number(meta.gps.lat).toFixed(4)}, ${Number(meta.gps.lng).toFixed(4)}`]
+      : null,
+    meta.missingExif != null ? ['exif', meta.missingExif ? 'missing (screenshot-like)' : 'present'] : null,
+  ].filter(Boolean);
+
+  if (!rows.length) return '';
+
+  const dl = rows
+    .map(
+      ([k, v]) =>
+        `<div><dt>${esc(k)}</dt><dd><code>${esc(v)}</code></dd></div>`
+    )
+    .join('');
+
+  const json = esc(JSON.stringify(meta));
+  return `<details class="dod-image-meta">
+    <summary>Bun.Image metadata <span class="dim">(agent learning strip)</span></summary>
+    <dl class="dod-meta dod-meta-compact">${dl}</dl>
+    <pre class="dod-image-meta-json" data-bun-doc="runtime/image#metadata">${json}</pre>
+  </details>`;
 }
 
 export function partnerConfirmStripHtml(partners) {
@@ -87,11 +205,8 @@ export function partnerConfirmStripHtml(partners) {
       <p>
         Deposit / withdraw / bet-slip screenshots live in each package forum’s
         <a href="/portal/glossary/#glossary:telegram.forum.topic.accounting" data-glossary-concept="telegram.forum.topic.accounting">Accounting</a>
-        topic — open a CODE to confirm amounts against the DOD card (Bun.Image
-        processed · R2/local <code>s3_path</code>).
-        Overview: <a href="/portal/dod.md">dod.md</a> ·
-        <a href="/portal/telegram.md">telegram.md</a> ·
-        <a href="/portal/factory/">Factory</a> ·
+        topic — open a CODE to confirm amounts against the DOD card.
+        Overview: <a href="/portal/factory/">Factory</a> ·
         <a href="/portal/partners/">Partners</a>.
       </p>
     </div>
@@ -368,9 +483,11 @@ open http://localhost:3000/portal/dod/</code></pre>
           const tamper = Number(e.tamper_score ?? 0);
           const tamperCls = tamper > 50 ? 'tamper-high' : 'tamper-low';
           const partner = resolvePartnerCode(e);
+          const amountLabel = formatAccountingAmount(resolveAccountingAmount(e));
+          const msgLink = resolveTelegramMessageLink(e);
           return `<article class="dod-card ${esc(e.status)}" data-id="${esc(e.id)}"${
             partner ? ` data-partner-code="${esc(partner)}"` : ''
-          }>
+          }${amountLabel ? ` data-accounting-amount="${esc(String(resolveAccountingAmount(e)))}"` : ''}>
             <div class="dod-preview">
               ${
                 e.s3_path
@@ -384,7 +501,19 @@ open http://localhost:3000/portal/dod/</code></pre>
                 <span class="dod-status-pill ${esc(e.status)}">${esc(e.status)}</span>
                 <span class="dod-type">${esc(e.type || 'unknown')}</span>
                 ${partner ? `<span class="dod-partner-pill">${esc(partner)}</span>` : ''}
+                ${
+                  amountLabel
+                    ? `<span class="dod-amount-pill" title="Agent accounting figure from OCR / bake">${esc(amountLabel)}</span>`
+                    : ''
+                }
               </div>
+              ${
+                amountLabel
+                  ? `<p class="dod-accounting-figure"><span class="k">Accounting</span> <span class="v">${esc(amountLabel)}</span>${
+                      partner ? ` <span class="dim">· ${esc(partner)}</span>` : ''
+                    }</p>`
+                  : ''
+              }
               <dl class="dod-meta">
                 <div><dt>ID</dt><dd><code title="${esc(e.id)}">${esc(shortId(e.id))}</code></dd></div>
                 <div><dt>Agent</dt><dd><code title="${esc(e.agent_id)}">${esc(shortId(e.agent_id))}</code></dd></div>
@@ -396,9 +525,19 @@ open http://localhost:3000/portal/dod/</code></pre>
                 }
                 ${e.device_model ? `<div><dt>Device</dt><dd>${esc(e.device_model)}</dd></div>` : ''}
                 ${e.signature ? `<div><dt>Sig</dt><dd><code title="${esc(e.signature)}">${esc(String(e.signature).slice(0, 16))}…</code></dd></div>` : ''}
+                ${
+                  msgLink
+                    ? `<div><dt>Telegram</dt><dd><a class="dod-tg-inline" href="${esc(msgLink)}" target="_blank" rel="noopener noreferrer">message</a>${
+                        e.telegram_topic || e.telegramTopic
+                          ? ` · <code>${esc(e.telegram_topic || e.telegramTopic)}</code>`
+                          : ''
+                      }</dd></div>`
+                    : ''
+                }
               </dl>
               ${e.extracted_text ? `<p class="dod-ocr">${esc(String(e.extracted_text).slice(0, 180))}${String(e.extracted_text).length > 180 ? '…' : ''}</p>` : ''}
-              ${confirmLinksHtml(e)}
+              ${confirmLinksHtml(e, handshakePartners)}
+              ${imageMetaHtml(e)}
               ${e.rejection_reason ? `<div class="reject-reason">${esc(e.rejection_reason)}</div>` : ''}
             </div>
             ${

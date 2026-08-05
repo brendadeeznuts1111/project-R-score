@@ -32,3 +32,14 @@ export {
   type DODSubmission,
   type DODVerification,
 } from './verifier.ts';
+
+export {
+  enrichDodEntries,
+  enrichDodEntry,
+  extractAccountingAmount,
+  parseBunImageMetaStrip,
+  parseDodQueueEntries,
+  telegramMessageDeepLink,
+  type DodImageMetaStrip,
+  type TelegramMessageLinkInput,
+} from './enrich-entry.ts';

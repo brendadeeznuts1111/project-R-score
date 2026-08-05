@@ -157,7 +157,15 @@ export interface DODSubmission {
   type: 'balance' | 'slip' | 'receipt' | 'id' | 'location' | 'device';
   rawImage: Uint8Array;
   submittedAt: string;
-  telegramMessageId?: number;
+  /** Bot API chat id where the evidence photo landed (supergroup/channel/DM). */
+  telegramChatId?: string | number; // brand-ok — Telegram Bot API chat id (opaque wire)
+  telegramMessageId?: number; // brand-ok — Telegram message id (opaque wire)
+  /** Forum topic id (Accounting / Liquidity) when sent in a package forum. */
+  telegramThreadId?: number; // brand-ok — Telegram forum topic / thread id
+  /** Public @username when the chat is public (optional). */
+  telegramUsername?: string;
+  /** Forum topic label, e.g. accounting. */
+  telegramTopic?: string;
   /** Optional book slug or display name from caption (`/dod balance draftkings`). */
   platformHint?: string;
 }
@@ -234,11 +242,20 @@ export class DODVerifier {
         rejection_reason TEXT
       )
     `);
-    // Migration: encrypted-at-rest flag (Batch 2).
+    // Migrations (additive only).
     const cols = this.db.query('PRAGMA table_info(dod_submissions)').all() as { name: string }[];
-    if (!cols.some(c => c.name === 'encrypted')) {
-      this.db.run('ALTER TABLE dod_submissions ADD COLUMN encrypted INTEGER DEFAULT 0');
-    }
+    const have = new Set(cols.map(c => c.name));
+    const add = (name: string, ddl: string) => {
+      if (!have.has(name)) this.db.run(`ALTER TABLE dod_submissions ADD COLUMN ${ddl}`);
+    };
+    add('encrypted', 'encrypted INTEGER DEFAULT 0');
+    add('telegram_chat_id', 'telegram_chat_id TEXT');
+    add('telegram_message_id', 'telegram_message_id INTEGER');
+    add('telegram_thread_id', 'telegram_thread_id INTEGER');
+    add('telegram_username', 'telegram_username TEXT');
+    add('telegram_topic', 'telegram_topic TEXT');
+    add('image_meta_json', 'image_meta_json TEXT');
+    add('accounting_amount', 'accounting_amount REAL');
   }
 
   async process(submission: DODSubmission): Promise<DODVerification> {
@@ -344,12 +361,23 @@ export class DODVerifier {
       flagReason: platformCheck.flagReason,
     };
 
+    const { parseBunImageMetaStrip } = await import('./enrich-entry.ts');
+    const imageMeta = parseBunImageMetaStrip({
+      ...metadata,
+      size: submission.rawImage.byteLength,
+      deviceModel: verification.deviceModel,
+    });
+    const accountingAmount = extractAmount(extractedText) ?? null;
+
     // 9. Persist
     this.db.run(
       `
       INSERT INTO dod_submissions (id, agent_id, type, status, visual_hash, metadata_hash, signature, tamper_score,
-        extracted_text, geo_lat, geo_lng, device_model, s3_path, submitted_at, processed_at, encrypted)
-      VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $text, $lat, $lng, $dev, $s3, $sub, $proc, $enc)
+        extracted_text, geo_lat, geo_lng, device_model, s3_path, submitted_at, processed_at, encrypted,
+        telegram_chat_id, telegram_message_id, telegram_thread_id, telegram_username, telegram_topic,
+        image_meta_json, accounting_amount)
+      VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $text, $lat, $lng, $dev, $s3, $sub, $proc, $enc,
+        $tgChat, $tgMsg, $tgThread, $tgUser, $tgTopic, $imgMeta, $amt)
     `,
       {
         $id: dodId,
@@ -368,6 +396,13 @@ export class DODVerifier {
         $sub: submission.submittedAt,
         $proc: verification.processedAt,
         $enc: encrypted ? 1 : 0,
+        $tgChat: submission.telegramChatId != null ? String(submission.telegramChatId) : null,
+        $tgMsg: submission.telegramMessageId ?? null,
+        $tgThread: submission.telegramThreadId ?? null,
+        $tgUser: submission.telegramUsername ?? null,
+        $tgTopic: submission.telegramTopic ?? null,
+        $imgMeta: imageMeta ? JSON.stringify(imageMeta) : null,
+        $amt: accountingAmount,
       }
     );
 
@@ -697,8 +732,11 @@ export class DODVerifier {
         const { submission: s, verification: v } = record;
         this.db.run(
           `INSERT OR REPLACE INTO dod_submissions (id, agent_id, type, status, visual_hash, metadata_hash, signature, tamper_score,
-            extracted_text, geo_lat, geo_lng, device_model, s3_path, submitted_at, processed_at, encrypted)
-          VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $text, $lat, $lng, $dev, $s3, $sub, $proc, $enc)`,
+            extracted_text, geo_lat, geo_lng, device_model, s3_path, submitted_at, processed_at, encrypted,
+            telegram_chat_id, telegram_message_id, telegram_thread_id, telegram_username, telegram_topic,
+            accounting_amount)
+          VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $text, $lat, $lng, $dev, $s3, $sub, $proc, $enc,
+            $tgChat, $tgMsg, $tgThread, $tgUser, $tgTopic, $amt)`,
           {
             $id: s.id,
             $aid: s.agentId,
@@ -716,6 +754,12 @@ export class DODVerifier {
             $sub: s.submittedAt,
             $proc: v.processedAt,
             $enc: record.encrypted ? 1 : 0,
+            $tgChat: s.telegramChatId != null ? String(s.telegramChatId) : null,
+            $tgMsg: s.telegramMessageId ?? null,
+            $tgThread: s.telegramThreadId ?? null,
+            $tgUser: s.telegramUsername ?? null,
+            $tgTopic: s.telegramTopic ?? null,
+            $amt: extractAmount(v.extractedText) ?? null,
           }
         );
         restored++;
