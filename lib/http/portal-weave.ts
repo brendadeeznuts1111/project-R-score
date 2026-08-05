@@ -332,6 +332,37 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     group: 'ops',
     cli: 'bun run bookmakers:bake',
   },
+  {
+    id: 'factory',
+    label: 'Factory',
+    href: '/portal/factory/',
+    note: 'Factory Telegram ops · package-group wire',
+    group: 'ops',
+    cli: 'bun run telegram:verify',
+  },
+  {
+    id: 'identity',
+    label: 'Identity',
+    href: '/portal/identity/',
+    note: 'auth board · lockout · anomaly · geo · JIT',
+    group: 'ops',
+  },
+  {
+    id: 'limits-lab',
+    label: 'Limits lab',
+    href: '/portal/limits-lab/',
+    note: 'forecast / predict lab · multi-factor backtest',
+    group: 'ops',
+    cli: 'bun run ops:limits:predict',
+  },
+  {
+    id: 'concepts',
+    label: 'Concepts',
+    href: '/portal/concepts/',
+    note: 'semantic vocabulary · domain summary · usage + provenance',
+    group: 'registry',
+    cli: 'bun run concepts:bake',
+  },
   // ── Plane ──
   {
     id: 'dod',

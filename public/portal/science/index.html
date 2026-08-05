@@ -33,36 +33,48 @@
         <a href="/" class="nav-link" title="public lander · portal entry" data-group="other">Home</a>
         <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · C4/C5 loop · bun run ops:snapshot" data-group="ops" data-cli="bun run ops:snapshot">Ops</a>
         <a href="/portal/" class="nav-link" title="portal hub · board index · weave surfaces" data-group="registry">Registry</a>
-        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake">Health</a>
+        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake" data-registry="/registry/monorepo-health.json">Health</a>
         <a href="/portal/dod/" class="nav-link" title="visual proof review · public-plane gate · bun run public:audit:verify" data-group="plane" data-cli="bun run public:audit:verify">DOD</a>
-        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · shadow matrix · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake">Compliance</a>
+        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · shadow matrix · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake" data-registry="/registry/compliance-board.json">Compliance</a>
         <div class="nav-overflow">
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
+          <div class="nav-group" role="group" aria-label="Registry" data-group="registry">
+            <div class="nav-group-label" aria-hidden="true">Registry</div>
             <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
-            <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" role="menuitem">Packages</a>
+            <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" data-registry="/registry/packages-graph-map.json" role="menuitem">Packages</a>
             <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
-            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-cli="bun run glossary:portal" role="menuitem">Glossary</a>
-            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
-            <a href="/portal/skills/" class="nav-link" title="harness + Kimi skill catalogs · loop registry alignment · bun run skills:validate" data-group="registry" data-cli="bun run skills:validate" role="menuitem">Skills</a>
-            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
-            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
+            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-cli="bun run glossary:portal" data-registry="/registry/domain-glossary.json" role="menuitem">Glossary</a>
+            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" data-registry="/registry/surfaces-state.json" role="menuitem">Surfaces</a>
+            <a href="/portal/skills/" class="nav-link" title="harness + Kimi skill catalogs · loop registry alignment · bun run skills:validate" data-group="registry" data-cli="bun run skills:validate" data-registry="/registry/harness-skills-catalog.json" role="menuitem">Skills</a>
             <a href="/portal/concepts/" class="nav-link" title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json" data-group="registry" data-cli="bun run concepts:bake  # → /registry/concepts-state.json" role="menuitem">Concepts</a>
             <a href="/portal/concepts/graph/" class="nav-link" title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json" data-group="registry" data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json" role="menuitem">Concept graph</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="Secrets" data-group="secrets">
+            <div class="nav-group-label" aria-hidden="true">Secrets</div>
+            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-registry="/registry/vault-health.json" role="menuitem">Vault</a>
+            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="Ops" data-group="ops">
+            <div class="nav-group-label" aria-hidden="true">Ops</div>
             <a href="/portal/dashboard/" class="nav-link" title="KPIs · TOC · compliance plane · proof-index pins" data-group="ops" role="menuitem">Dashboard</a>
             <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope fixture board · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
-            <a href="/portal/limits/" class="nav-link" title="multi-factor partner limit raises · CLV · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
-            <a href="/portal/limits-lab/" class="nav-link" title="forecast / predict lab · multi-factor backtest · bun run ops:limits:predict" data-group="ops" data-cli="bun run ops:limits:predict" role="menuitem">Limits lab</a>
+            <a href="/portal/limits/" class="nav-link" title="multi-factor partner limit raises · CLV · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Limits</a>
+            <a href="/portal/limits-lab/" class="nav-link" title="forecast / predict lab · multi-factor backtest · bun run ops:limits:predict" data-group="ops" data-cli="bun run ops:limits:predict" data-registry="/registry/limit-forecast-lab.json" role="menuitem">Limits lab</a>
             <a href="/portal/partners/" class="nav-link" title="package groups · telegram forums · accounting · deposits · bun run telegram:handshake:catalog" data-group="ops" data-cli="bun run telegram:handshake:catalog" role="menuitem">Partners</a>
             <a href="/portal/account/" class="nav-link" title="single-account dossier · tree · telemetry · betlog · bun run ops:dossier:seed" data-group="ops" data-cli="bun run ops:dossier:seed" role="menuitem">Account</a>
             <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
-            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers artifact · canonical bookmaker registry · bun run bookmakers:bake" data-group="ops" data-cli="bun run bookmakers:bake" role="menuitem">Bookmakers</a>
-            <a href="/portal/factory/" class="nav-link" title="Factory Telegram ops · package-group wire · bun run telegram:verify" data-group="ops" data-cli="bun run telegram:verify" role="menuitem">Factory</a>
-            <a href="/portal/tennis/" class="nav-link" title="Tennis HQ desk · agent-auth · live matches · bun run tennis:board:bake" data-group="ops" data-cli="bun run tennis:board:bake" role="menuitem">Tennis</a>
-            <a href="/portal/identity/" class="nav-link" title="auth board · lockout · anomaly · geo · JIT · bun test tests/identity-*.test.ts" data-group="ops" data-cli="bun test tests/identity-*.test.ts" role="menuitem">Identity</a>
-            <a href="/monitoring/" class="nav-link" title="routing · env · compliance tile · proof status · bun run ops:snapshot --no-seed" data-group="ops" data-cli="bun run ops:snapshot --no-seed" role="menuitem">Monitoring</a>
+            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers artifact · canonical bookmaker registry · bun run bookmakers:bake" data-group="ops" data-cli="bun run bookmakers:bake" data-registry="/registry/bookmakers.json" role="menuitem">Bookmakers</a>
+            <a href="/portal/factory/" class="nav-link" title="Factory Telegram ops · package-group wire · bun run telegram:verify" data-group="ops" data-cli="bun run telegram:verify" data-registry="/registry/telegram-handshake.json" role="menuitem">Factory</a>
+            <a href="/portal/tennis/" class="nav-link" title="Tennis HQ desk · agent-auth · live matches · bun run tennis:board:bake" data-group="ops" data-cli="bun run tennis:board:bake" data-registry="/registry/tennis/agent-auth.json" role="menuitem">Tennis</a>
+            <a href="/portal/identity/" class="nav-link" title="auth board · lockout · anomaly · geo · JIT · bun test tests/identity-*.test.ts" data-group="ops" data-cli="bun test tests/identity-*.test.ts" data-registry="/registry/identity-board.json" role="menuitem">Identity</a>
+            <a href="/monitoring/" class="nav-link" title="routing · env · compliance tile · proof status · bun run ops:snapshot --no-seed" data-group="ops" data-cli="bun run ops:snapshot --no-seed" data-registry="/registry/monitoring.json" role="menuitem">Monitoring</a>
             <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="More" data-group="other">
+            <div class="nav-group-label" aria-hidden="true">More</div>
             <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub · wiki-index" data-group="other" role="menuitem">Wiki</a>
+          </div>
           </div>
         </div>
       </nav>

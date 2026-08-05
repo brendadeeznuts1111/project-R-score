@@ -8,12 +8,14 @@
  */
 import { joinPath } from '../lib/path-bun.ts';
 import {
+  assertPortalChromeBoardCoverage,
   buildPortalChromeCatalog,
   PORTAL_CHROME_REGISTRY_REL,
 } from '../lib/portal/chrome-catalog.ts';
 import { buildPortalWeavePayload } from '../lib/http/portal-weave.ts';
 
 const root = joinPath(import.meta.dir, '..');
+const coverage = assertPortalChromeBoardCoverage(joinPath(root, 'public/portal'));
 const catalog = buildPortalChromeCatalog();
 const out = joinPath(root, PORTAL_CHROME_REGISTRY_REL);
 await Bun.write(out, JSON.stringify(catalog, null, 2) + '\n');
@@ -26,5 +28,5 @@ await Bun.write(
 );
 
 console.info(
-  `[portal-chrome] bake → /registry/portal-chrome.json · priority ${catalog.priorityNav.length} · overflow ${catalog.overflowNav.length} · components ${catalog.components.length}`
+  `[portal-chrome] bake → /registry/portal-chrome.json · priority ${catalog.priorityNav.length} · overflow ${catalog.overflowNav.length} · components ${catalog.components.length} · boards ${coverage.diskBoards.length} · coverage ${catalog.summary.boardCoverage}`
 );

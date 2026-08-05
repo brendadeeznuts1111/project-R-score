@@ -1,8 +1,13 @@
 // @see https://bun.com/docs/test — bun:test
 import { describe, expect, test } from 'bun:test';
+import { join } from 'node:path';
 import {
+  assertPortalChromeBoardCoverage,
   assertUniqueChromeNavIds,
   buildPortalChromeCatalog,
+  groupOverflowNav,
+  listChromeBoardCoverage,
+  PORTAL_CHROME_BADGE_SOURCES,
   PORTAL_CHROME_COMPONENTS,
   PORTAL_OVERFLOW_NAV,
   PORTAL_PRIORITY_NAV,
@@ -71,6 +76,30 @@ describe('portal-chrome-catalog', () => {
     expect(html).not.toContain('/portal/failures/');
     expect(html).toContain('data-group="secrets"');
     expect(html).toContain('nav-overflow');
+    expect(html).toContain('nav-group-label');
+    expect(html).toContain('aria-label="Registry"');
+    expect(html).toContain('aria-label="Ops"');
+    expect(html).toContain('data-registry=');
+  });
+
+  test('overflow menu groups registry before ops', () => {
+    const groups = groupOverflowNav();
+    const labels = groups.map(g => g.group);
+    expect(labels.indexOf('registry')).toBeLessThan(labels.indexOf('ops'));
+    expect(groups.some(g => g.group === 'secrets')).toBe(true);
+    expect(groups.find(g => g.group === 'ops')?.items.some(i => i.id === 'tennis')).toBe(true);
+  });
+
+  test('board coverage includes every public portal board', () => {
+    const portalDir = join(import.meta.dir, '../public/portal');
+    const report = assertPortalChromeBoardCoverage(portalDir);
+    expect(report.orphans).toEqual([]);
+    expect(report.diskBoards).toContain('tennis');
+    expect(report.diskBoards).toContain('doctor');
+    const ids = listChromeBoardCoverage().map(b => b.id);
+    expect(ids).toContain('tennis');
+    expect(ids).toContain('doctor');
+    expect(PORTAL_CHROME_BADGE_SOURCES.length).toBeGreaterThanOrEqual(6);
   });
 
   test('renderFooterHtml links monorepo health registry + bun slot', () => {
@@ -93,6 +122,8 @@ describe('portal-chrome-catalog', () => {
     expect(c.summary.priorityNav).toBe(c.priorityNav.length);
     expect(c.summary.badgeSources).toBe(c.badgeSources.length);
     expect(c.summary.unlistedSurfaces).toBe(c.unlistedSurfaces.length);
+    expect(c.summary.boardCoverage).toBe(c.boardCoverage.length);
+    expect(c.boardCoverage.some(b => b.tier === 'unlisted' && b.id === 'doctor')).toBe(true);
     expect(c.summary.groups.ops).toBeGreaterThan(0);
     expect(c.summary.groups.registry).toBeGreaterThan(0);
     expect(c.related.weave).toBe('/registry/portal-weave.json');
