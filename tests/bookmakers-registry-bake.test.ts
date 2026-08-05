@@ -86,6 +86,15 @@ describe('bookmakers registry mirror', () => {
     expect(await Bun.file('public/registry/bookmakers-ops.json').exists()).toBe(false);
   });
 
+  test('seat books carry desk-observed maxBetUsd enrichment', async () => {
+    const payload = JSON.parse(await Bun.file('public/registry/bookmakers.json').text()) as {
+      bookmakers: Record<string, { limits?: { maxBetUsd?: number | null } }>;
+    };
+    expect(payload.bookmakers['hard-rock-florida']?.limits?.maxBetUsd).toBe(500);
+    expect(payload.bookmakers['parlay21-com']?.limits?.maxBetUsd).toBe(500);
+    expect(payload.bookmakers.pinnacle?.limits?.maxBetUsd ?? null).toBeNull();
+  });
+
   test('buildBookmakersBake flags an invalid registry', () => {
     const bad = buildBookmakersBake(
       { x: { fetcherType: 'scrape' } as unknown },

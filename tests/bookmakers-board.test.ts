@@ -66,6 +66,11 @@ describe('bookmakers board helpers', () => {
     expect(filterBooks(books, { fetcher: 'rest' }).map(b => b.id)).toEqual(['pinnacle']);
     expect(filterBooks(books, { q: 'fan' }).map(b => b.id)).toEqual(['fanduel']);
     expect(filterBooks(books, { q: 'tennis' }).map(b => b.id)).toEqual(['pinnacle']);
+    const withTier = books.map((b, i) => ({
+      ...b,
+      liquidityTier: i === 0 ? 'high' : i === 1 ? 'medium' : 'low',
+    }));
+    expect(filterBooks(withTier, { tier: 'high' }).map(b => b.id)).toEqual(['fanduel']);
     expect(countByFetcher(books)).toEqual({
       all: 3,
       rest: 1,

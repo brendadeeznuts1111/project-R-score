@@ -62,6 +62,14 @@ export function normalizeBooks(payload) {
         color: b.color ? String(b.color) : '',
         lifecycle: Array.isArray(b.lifecycle) ? b.lifecycle.map(String) : [],
         liquidityTier: b.limits?.liquidityTier ? String(b.limits.liquidityTier) : '',
+        maxBetUsd:
+          typeof b.limits?.maxBetUsd === 'number' && Number.isFinite(b.limits.maxBetUsd)
+            ? b.limits.maxBetUsd
+            : null,
+        minBetUsd:
+          typeof b.limits?.minBetUsd === 'number' && Number.isFinite(b.limits.minBetUsd)
+            ? b.limits.minBetUsd
+            : null,
         note: b.note ? String(b.note) : '',
       };
     })
@@ -93,13 +101,15 @@ export function slugEqualsId(book) {
   return book.id === book.slug;
 }
 
-export function filterBooks(books, { fetcher = 'all', q = '' } = {}) {
+export function filterBooks(books, { fetcher = 'all', tier = 'all', q = '' } = {}) {
   const query = String(q || '')
     .trim()
     .toLowerCase();
   const fetcherKey = String(fetcher || 'all').toLowerCase();
+  const tierKey = String(tier || 'all').toLowerCase();
   return books.filter(b => {
     if (fetcherKey !== 'all' && String(b.fetcherType).toLowerCase() !== fetcherKey) return false;
+    if (tierKey !== 'all' && String(b.liquidityTier || '').toLowerCase() !== tierKey) return false;
     if (!query) return true;
     const hay = [
       b.id,
@@ -110,6 +120,7 @@ export function filterBooks(books, { fetcher = 'all', q = '' } = {}) {
       b.domain,
       b.fetcherType,
       b.liquidityTier,
+      b.maxBetUsd != null ? String(b.maxBetUsd) : '',
       ...(b.supportedSports || []),
       ...(b.lifecycle || []),
     ]
@@ -117,6 +128,17 @@ export function filterBooks(books, { fetcher = 'all', q = '' } = {}) {
       .toLowerCase();
     return hay.includes(query);
   });
+}
+
+export function lifecycleChipsHtml(modes) {
+  return (modes || [])
+    .map(m => `<span class="chip chip-muted lifecycle-chip">${esc(m)}</span>`)
+    .join('');
+}
+
+export function formatMaxBet(n) {
+  if (n == null || !Number.isFinite(Number(n))) return null;
+  return `$${Number(n).toLocaleString('en-US')}`;
 }
 
 export function countByFetcher(books) {
@@ -182,11 +204,18 @@ export function rowHtml(book, glossaryIds) {
   const tier = book.liquidityTier
     ? `<div class="dim" style="margin-top:4px;font-size:11px">${esc(book.liquidityTier)}</div>`
     : '';
-  return `<tr data-id="${esc(book.id)}" data-slug="${esc(book.slug || book.id)}" data-fetcher="${esc(book.fetcherType)}">
+  const maxBet = formatMaxBet(book.maxBetUsd);
+  const maxCell = maxBet
+    ? `<span class="max-bet">${esc(maxBet)}</span>`
+    : '<span class="dim">—</span>';
+  const life = lifecycleChipsHtml(book.lifecycle);
+  return `<tr data-id="${esc(book.id)}" data-slug="${esc(book.slug || book.id)}" data-fetcher="${esc(book.fetcherType)}" data-tier="${esc(book.liquidityTier || '')}">
     <td class="col-id">${color}<code>${esc(book.id || '?')}</code></td>
     <td><div class="book-label">${esc(book.label || '?')}</div>${brandBits}</td>
     <td>${domainCell}</td>
     <td>${fetcher}${tier}</td>
+    <td class="col-max">${maxCell}</td>
+    <td class="col-life">${life || '<span class="dim">—</span>'}</td>
     <td class="col-sports">${sportsChipsHtml(book.supportedSports, glossaryIds)}</td>
     <td class="col-regions">${regionsHtml(book.regions)}</td>
     <td class="${status === 'ok' ? 'state-ok' : 'state-err'}">${status}</td>
@@ -257,6 +286,7 @@ export function initBookmakersBoard(root = document) {
   const gateEl = root.getElementById('bookmakers-gate');
   const bakedEl = root.getElementById('bookmakers-baked');
   const filterEl = root.getElementById('bookmakers-filter');
+  const tierEl = root.getElementById('bookmakers-tier');
   const searchEl = root.getElementById('bookmakers-search');
   const shownEl = root.getElementById('bookmakers-shown');
   if (!metaEl || !bodyEl) return;
@@ -272,8 +302,9 @@ export function initBookmakersBoard(root = document) {
 
   const paint = () => {
     const fetcher = filterEl?.value || 'all';
+    const tier = tierEl?.value || 'all';
     const q = searchEl?.value || '';
-    const filtered = filterBooks(books, { fetcher, q });
+    const filtered = filterBooks(books, { fetcher, tier, q });
     const counts = countByFetcher(books);
 
     if (countEl) countEl.textContent = String(books.length);
@@ -337,7 +368,7 @@ export function initBookmakersBoard(root = document) {
 
     if (filtered.length === 0) {
       bodyEl.innerHTML =
-        '<tr><td colspan="7" class="dim">No books match this filter</td></tr>';
+        '<tr><td colspan="9" class="dim">No books match this filter</td></tr>';
     } else {
       bodyEl.innerHTML = filtered.map(b => rowHtml(b, glossaryIds)).join('');
     }
@@ -366,6 +397,7 @@ export function initBookmakersBoard(root = document) {
   }
 
   filterEl?.addEventListener('change', paint);
+  tierEl?.addEventListener('change', paint);
   searchEl?.addEventListener('input', paint);
   root.getElementById('bookmakers-refresh')?.addEventListener('click', e => {
     e.preventDefault();

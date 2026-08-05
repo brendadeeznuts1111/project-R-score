@@ -300,7 +300,7 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     category: 'portal',
     kind: 'file-static',
     okStatuses: [200],
-    note: '@factorywager/bookmakers artifact · /registry/bookmakers.json · bookmakers:bake',
+    note: '@factorywager/bookmakers v0.4 public catalog · /registry/bookmakers.json · bookmakers:bake',
   },
   {
     path: '/registry/bookmakers.json',
@@ -308,7 +308,7 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     category: 'registry',
     kind: 'file-static',
     okStatuses: [200],
-    note: 'bookmakers:bake mirror of @factorywager/bookmakers · deep-link SSOT',
+    note: 'v0.4 Pages-safe public catalog (schemaVersion 2 · no apiKeyEnv/balance)',
   },
   {
     path: '/portal/account/',

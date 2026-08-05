@@ -104,13 +104,17 @@ export function migrateBookV03(
     regions: normalizeRegions(raw.regions),
     limits: {
       minBetUsd:
-        typeof (raw.limits as { minBetUsd?: number } | undefined)?.minBetUsd === 'number'
-          ? (raw.limits as { minBetUsd: number }).minBetUsd
-          : null,
+        typeof enrich.minBetUsd === 'number'
+          ? enrich.minBetUsd
+          : typeof (raw.limits as { minBetUsd?: number } | undefined)?.minBetUsd === 'number'
+            ? (raw.limits as { minBetUsd: number }).minBetUsd
+            : null,
       maxBetUsd:
-        typeof (raw.limits as { maxBetUsd?: number } | undefined)?.maxBetUsd === 'number'
-          ? (raw.limits as { maxBetUsd: number }).maxBetUsd
-          : null,
+        typeof enrich.maxBetUsd === 'number'
+          ? enrich.maxBetUsd
+          : typeof (raw.limits as { maxBetUsd?: number } | undefined)?.maxBetUsd === 'number'
+            ? (raw.limits as { maxBetUsd: number }).maxBetUsd
+            : null,
       liquidityTier: enrich.liquidityTier ?? 'unknown',
     },
   };
