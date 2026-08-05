@@ -63,22 +63,23 @@ curl -fsS -H "Authorization: Bearer $PARTNER_API_TOKEN" \
 ## 3. Versioned v1 contracts (bearer)
 
 From `@tennis-hq/ssot` transport manifest (Factory consumes the packed artifact).
-**Live tip `0f7b6d9` implements only research** — other v1 paths return the SPA
-shell (**404**). Unauth research → **401** when `PARTNER_API_TOKEN` is set.
-Desk tip matches producer `origin/main` (Worker `b3f2c700`, verified
-2026-08-05 via `/api/version`).
+**Live tip `0f7b6d9` wires all five v1 domains** — unauth probes return JSON
+**401** when `PARTNER_API_TOKEN` is set (not SPA 404). Desk tip matches
+producer `origin/main` (Worker `8072c3da`, verified 2026-08-05 via
+`/api/version`). Payload emptiness (desk rows / warehouse / edge storage) is
+orthogonal to route presence.
 
 | Domain | Path | Live tip | Join to Factory |
 |--------|------|----------|-----------------|
 | research | `GET /api/v1/research/status` | **wired** (401 unauth) | Phase2 / research strip |
-| marketdata | `GET /api/v1/marketdata/desk` | SPA 404 | Desk rows · venue mids · live board bake |
-| trading | `GET /api/v1/trading/executions` | SPA 404 | Edge may report `edge_storage_unavailable` |
-| **partners** | `GET /api/v1/partners/capacity` | SPA 404 | Outs capacity · CODE → Partners outs inventory |
-| **accounting** | `GET /api/v1/accounting/finance` | SPA 404 | Finance phase · ledger → Accounting / Soft / DOD |
+| marketdata | `GET /api/v1/marketdata/desk` | **wired** (401 unauth) | Desk rows · venue mids · live board bake |
+| trading | `GET /api/v1/trading/executions` | **wired** (401 unauth) | Edge may report `edge_storage_unavailable` |
+| **partners** | `GET /api/v1/partners/capacity` | **wired** (401 unauth) | Outs capacity · CODE → Partners outs inventory |
+| **accounting** | `GET /api/v1/accounting/finance` | **wired** (401 unauth) | Finance phase · ledger → Accounting / Soft / DOD |
 
 Partner CODE inventory (**ASH · BIL · NOV · SPEN**) and finance phase labels
-still live in Factory bakes (`partners-ops.json` + `telegram-handshake.json`)
-even while the Worker v1 partners/accounting routes are not yet wired.
+also live in Factory bakes (`partners-ops.json` + `telegram-handshake.json`)
+for portal join even when authenticated v1 payloads are empty or soft-fail.
 
 Deep links on Partners board:
 

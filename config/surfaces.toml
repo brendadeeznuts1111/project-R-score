@@ -71,7 +71,7 @@ backend = "cloudflare-worker:tennis-hq"
 status = "live"
 protocol = "https-static+functions"
 access = "public"
-note = "Operator-owned Tennis HQ Worker Custom Domain. Source repo plum-spruce-dawn-dune1 (canonical); Cloudflare manages DNS/TLS. Production tip SHA 0f7b6d9 / Worker b3f2c700 (tennis-hq@1.4.0) verified 2026-08-05 via /api/version + unauth v1 401 + warehouse-json 401. Public shell and identity; only GET /api/v1/research/status is implemented (other v1 paths SPA 404); bearer fail-closed when PARTNER_API_TOKEN set. Matches origin/main after Wrangler redeploy."
+note = "Operator-owned Tennis HQ Worker Custom Domain. Source repo plum-spruce-dawn-dune1 (canonical); Cloudflare manages DNS/TLS. Production tip SHA 0f7b6d9 / Worker 8072c3da (tennis-hq@1.4.0) verified 2026-08-05 via /api/version + unauth all five GET /api/v1/* 401 + warehouse-json 401. Public shell and identity; favicon.svg + site.webmanifest 200; all five v1 domains wired and bearer fail-closed when PARTNER_API_TOKEN set. Matches origin/main after Wrangler redeploy."
 
 [surfaces.wiki]
 host = "wiki.factory-wager.com"
