@@ -17,10 +17,10 @@ Two live UIs share the Tennis HQ brand and must not be collapsed into one:
 | Market Desk | `https://tennis.factory-wager.com` | [`plum-spruce-dawn-dune1`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1) ([CONTRIBUTING](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md)) · Worker `tennis-hq` · local sibling `~/Projects/plum-spruce-dawn-dune1` | Interactive desk SPA |
 | Portal board | `https://factory-wager.com/portal/tennis/` | [`public/portal/tennis/`](../../../public/portal/tennis/) | Baked registry evidence board |
 
-Live identity (desk tip ≠ git tip): `tennis-hq@1.4.0` · SHA `41c9ab6`
-(`41c9ab68b4d3d47d0bea92d8877137588a7cfdf1`) · Worker deployment
-`7b9ac02a-18c4-46f5-a724-f07b7fa5925d` · probed via `/api/version` 2026-08-05T17:16Z.
-Producer `origin/main` is `0f7b6d9` (**3 commits ahead** — not live until redeploy).
+Live identity (desk tip = git tip): `tennis-hq@1.4.0` · SHA `0f7b6d9`
+(`0f7b6d9fba84bfeb404edc1edfba964b8ef96cd1`) · Worker deployment
+`b3f2c700-5f9e-4ea1-9ab0-3c28049be22e` · probed via `/api/version` 2026-08-05T17:49Z.
+Matches producer `origin/main` after Wrangler redeploy + `deploy:verify:prod`.
 
 ```mermaid
 flowchart LR
@@ -163,7 +163,7 @@ never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
 | --- | ------ | ----- |
 | `/` | 200 | Title `Tennis HQ · Market Desk`; SSR “Loading desk…” shell |
 | `/api/health` | 200 | `ok`, package `tennis-hq@1.4.0` (prefer `/api/version` for tip SHA) |
-| `/api/version` | 200 | tip SHA `41c9ab6` · Worker `7b9ac02a…` · 2026-08-05T17:16Z |
+| `/api/version` | 200 | tip SHA `0f7b6d9` · Worker `b3f2c700…` · 2026-08-05T17:49Z |
 | `/api/glossary` | 200 | 300 entries · live `generatedAt` refreshes on probe |
 | `/build-id.json` | 200 | packageVersion 1.4.0 |
 | `/api/export/hq-json` | 200 | schema `hq-desk/v1` · **`row_count`: 0** |
