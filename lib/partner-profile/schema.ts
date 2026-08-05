@@ -31,6 +31,17 @@ export const PARTNER_LIFECYCLE_STATUSES = [
 ] as const;
 export type PartnerLifecycleStatus = (typeof PARTNER_LIFECYCLE_STATUSES)[number];
 
+export function isPartnerLifecycleStatus(value: unknown): value is PartnerLifecycleStatus {
+  return typeof value === 'string' && PARTNER_LIFECYCLE_STATUSES.some(status => status === value);
+}
+
+export function parsePartnerLifecycleStatus(value: unknown): PartnerLifecycleStatus {
+  if (!isPartnerLifecycleStatus(value)) {
+    throw new Error(`Invalid PartnerLifecycleStatus: ${String(value)}`);
+  }
+  return value;
+}
+
 export const PARTNER_PHASES = ['operator_ready', 'onboarding', 'incomplete', 'paused'] as const;
 export type PartnerPhase = (typeof PARTNER_PHASES)[number];
 
@@ -250,7 +261,7 @@ export function validatePartnerProfile(value: unknown): ProfileValidation {
   if (!isRecord(value.lifecycle)) {
     issues.push('lifecycle required');
   } else {
-    if (!PARTNER_LIFECYCLE_STATUSES.includes(value.lifecycle.status as PartnerLifecycleStatus)) {
+    if (!isPartnerLifecycleStatus(value.lifecycle.status)) {
       issues.push(`lifecycle.status must be one of ${PARTNER_LIFECYCLE_STATUSES.join('|')}`);
     }
     if (!PARTNER_PHASES.includes(value.lifecycle.phase as PartnerPhase)) {

@@ -5,6 +5,8 @@ import { describe, expect, test } from 'bun:test';
 import { asPartnerTemplateId } from '../lib/types/branded';
 import {
   derivePhase,
+  isPartnerLifecycleStatus,
+  parsePartnerLifecycleStatus,
   PARTNER_LIFECYCLE_STATUSES,
   validatePartnerProfile,
   type PartnerProfile,
@@ -64,6 +66,31 @@ describe('validatePartnerProfile', () => {
     const result = validatePartnerProfile(baseProfile({ books: { youwager: { type: 'scrape' } } }));
     expect(result.valid).toBe(false);
     if (!result.valid) expect(result.issues.some((i) => i.includes('books.youwager.type'))).toBe(true);
+  });
+});
+
+describe('PartnerLifecycleStatus runtime guards', () => {
+  test('accepts all eight valid states', () => {
+    for (const value of PARTNER_LIFECYCLE_STATUSES) {
+      expect(isPartnerLifecycleStatus(value)).toBe(true);
+      expect(parsePartnerLifecycleStatus(value)).toBe(value);
+    }
+  });
+
+  test('rejects invalid strings', () => {
+    for (const value of ['frozen', 'unknown', '', 'ACTIVE', 'graduated ']) {
+      expect(isPartnerLifecycleStatus(value)).toBe(false);
+      expect(() => parsePartnerLifecycleStatus(value)).toThrow(
+        `Invalid PartnerLifecycleStatus: ${value}`,
+      );
+    }
+  });
+
+  test('rejects non-string values', () => {
+    for (const value of [null, undefined, 42, {}, []]) {
+      expect(isPartnerLifecycleStatus(value)).toBe(false);
+      expect(() => parsePartnerLifecycleStatus(value)).toThrow('Invalid PartnerLifecycleStatus');
+    }
   });
 });
 
