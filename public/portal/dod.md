@@ -26,20 +26,22 @@ review.
 
 ```text
 Telegram photo / agent upload
+  → Accounting ingest (package forum + house all-accounting) when applicable
   → magic-byte validate
   → Bun.Image (metadata · aHash · resize · WebP)
   → watermark (Bun.WebView when available)
   → OCR (slip / receipt / balance-as-needed)
+  → stake reconcile (expected_amount vs accounting_amount · play_distribution)
   → store key: dod/{prefix}/{id}.webp[.enc]
   → R2 (DOD_R2_BUCKET) or public/evidence/
-  → SQLite dod_submissions + dod-queue bake
+  → SQLite dod_submissions + dod-queue bake + dod-meta.ndjson (Bun.Image strip)
   → /portal/dod/ review
   → Confirm amount in partner Telegram Accounting + Soft/Partners desk
 ```
 
 Outbox route: `dod` → house surface **`hq`** (not partner CODE forum). Partner
 **Accounting** is where humans post deposit / withdraw / bet-slip screenshots
-for amount confirmation — see [telegram.md](./telegram.md).
+for amount confirmation — see [telegram.md](./telegram.md). Tennis runtime contracts: [tennis.factory-wager.com](https://tennis.factory-wager.com/) `partners/capacity` · `accounting/finance` · board [tennis.md](./tennis.md).
 
 ## Partner Telegram confirm
 
@@ -112,6 +114,17 @@ Canonical: [Bun.Image](https://bun.com/docs/runtime/image).
 
 Never put agent passwords in DOD captions or Accounting chat text.
 
+## Accounting ingest · reconcile · meta log
+
+| Piece | Role |
+|-------|------|
+| `lib/dod/telegram-accounting-ingest.ts` | Package Accounting + house Deposits/Withdrawals/Reconcile photo → `DODVerifier.process`; caption CODE; telegram message dedupe |
+| `lib/dod/reconcile.ts` | Compare OCR `accounting_amount` vs `expected_amount` / `play_distribution.stake_actual` |
+| `lib/dod/meta-log.ts` | Append stripped Bun.Image metadata to `data/dod-meta.ndjson` for agent learning |
+| Board | Mismatch shows yellow `.dod-reconcile-banner` on the DOD card |
+
+House **all-accounting** topics require partner CODE in caption (`ASH · slip`). Package forum Accounting inherits CODE from registry when omitted.
+
 ## Accounting · Soft · Telegram
 
 | Need | Where |
@@ -171,6 +184,8 @@ bun run soft:accounting:bake
 | [`docs/IMAGES.md`](../../docs/IMAGES.md) | Non-DOD Bun.Image templates |
 | [`telegram-factory.md`](../../docs/harness/tenants/telegram-factory.md) | Outbox `dod` → `hq` |
 
-Tests: `tests/dod-portal.test.ts` · `tests/dod-verifier.test.ts` ·
+Tests: `tests/dod-portal.test.ts` · `tests/dod-telegram-accounting-ingest.test.ts` ·
+`tests/dod-reconcile.test.ts` · `tests/dod-enrich-entry.test.ts` ·
+`tests/dod-verifier.test.ts` ·
 `tests/dod-evidence.test.ts` · `tests/dod-lifecycle.test.ts` ·
 `tests/portal-domain-gap-map.test.ts`.

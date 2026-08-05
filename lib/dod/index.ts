@@ -26,6 +26,7 @@ export {
   encryptAesGcm,
   extractAmount,
   localEvidenceStore,
+  lookupExpectedStake,
   r2EvidenceStoreFromEnv,
   validateImage,
   type DODEvidenceStore,
@@ -43,3 +44,26 @@ export {
   type DodImageMetaStrip,
   type TelegramMessageLinkInput,
 } from './enrich-entry.ts';
+
+export { appendDodMetaNdjson, DEFAULT_DOD_META_NDJSON, type DodMetaLogLine } from './meta-log.ts';
+
+export {
+  expectedAmountFromRow,
+  formatDodMoney,
+  reconcileDodAmounts,
+  type DodReconcileResult,
+  type DodReconcileStatus,
+} from './reconcile.ts';
+
+export {
+  extractPartnerCodeHint,
+  extractTelegramImageFileId,
+  findDodByTelegramMessage,
+  ingestAccountingDodPhoto,
+  parseDodCaption,
+  resolveAccountingForumTarget,
+  resolveIngestAgentId,
+  type AccountingDodIngestDeps,
+  type AccountingDodIngestResult,
+  type AccountingForumTarget,
+} from './telegram-accounting-ingest.ts';

@@ -20,6 +20,11 @@ readiness)
 [`https://tennis.factory-wager.com`](https://tennis.factory-wager.com) ·
 Cloudflare Worker `tennis-hq`
 
+**Partner contracts join** live/offline bake →
+[`/registry/tennis/partner-contracts.json`](../../../public/registry/tennis/partner-contracts.json)
+· tool `bun tools/bake-tennis-partner-contracts.ts` · resilience notes
+[`bake-resilience.md`](bake-resilience.md)
+
 ## Purpose
 
 Give a **cloud agent** (remote sandbox) a Bearer token so it can:

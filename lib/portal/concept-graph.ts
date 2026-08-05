@@ -16,6 +16,7 @@ import {
   PARTNER_HISTORY_SURFACE_CONCEPTS,
   PARTNERS_SURFACE_CONCEPTS,
   PORTAL_SEMANTIC_CONCEPTS,
+  TENNIS_SURFACE_CONCEPTS,
   type PortalSemanticConcept,
   type PortalSemanticNamespace,
 } from './semantic-vocabulary.ts';
@@ -237,6 +238,7 @@ const SURFACE_BOARD_MAPS: Array<{ board: string; map: Record<string, string> }> 
   { board: 'limits-fields', map: LIMIT_FIELD_CONCEPTS as Record<string, string> },
   { board: 'api-infra', map: API_INFRA_CONCEPTS as Record<string, string> },
   { board: 'health-fields', map: HEALTH_FIELD_CONCEPTS as Record<string, string> },
+  { board: 'tennis', map: TENNIS_SURFACE_CONCEPTS as Record<string, string> },
 ];
 
 export function conceptGroupOf(id: string): string {

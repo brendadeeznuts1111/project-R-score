@@ -1039,6 +1039,13 @@
           cluster while keeping policy, license, prediction, and proof evidence directly
           inspectable. The signal window covers 48 hours and refreshes every 30 seconds.
           <span id="last-updated" class="last-updated" hidden></span>
+          <span
+            id="limits-freshness"
+            class="portal-freshness"
+            hidden
+            aria-live="polite"
+            title="Bake-manifest freshness"
+          ></span>
         </p>
       </header>
 
@@ -1674,6 +1681,7 @@
           void loadBaselineProvenance();
           let summary = null;
           let loadError = null;
+          let limitRaisesGeneratedAt = null;
           try {
             const res = await fetch('/api/operations/summary');
             if (res.ok) {
@@ -1712,6 +1720,7 @@
             const res = await fetch('/registry/limit-raises.json');
             if (res.ok) {
               const snapshot = await res.json();
+              limitRaisesGeneratedAt = snapshot.generatedAt || snapshot.generated || null;
               const snapshotChanges = Object.values(snapshot.byNode ?? {}).flatMap(bucket =>
                 (bucket.raises ?? []).map(raise => ({
                   ...raise,
@@ -1739,6 +1748,22 @@
               lastUpdated.hidden = false;
               lastUpdated.textContent = `Updated ${new Date().toLocaleTimeString()}`;
             }
+            // Bake-manifest "Data as of" — worst of limits desk bakes (fail-silent).
+            import('/portal/data-freshness.js')
+              .then(({ mountFreshnessBadge }) =>
+                mountFreshnessBadge(
+                  document.getElementById('limits-freshness'),
+                  ['/registry/limit-raises.json', '/registry/ops-summary.json'],
+                  {
+                    fallbacks: {
+                      '/registry/limit-raises.json': limitRaisesGeneratedAt,
+                      '/registry/ops-summary.json':
+                        summary.generated || summary.generatedAt || null,
+                    },
+                  }
+                )
+              )
+              .catch(() => {});
             return;
           }
           const empty = document.getElementById('empty-state');

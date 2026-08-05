@@ -22,6 +22,8 @@
 
 import { Database } from 'bun:sqlite';
 import { averageHash, hammingDistance } from './evidence.ts';
+import { reconcileDodAmounts } from './reconcile.ts';
+import { appendDodMetaNdjson } from './meta-log.ts';
 import { requireSecret } from '../security/require-secret.ts';
 import { requireMintableSecret } from '../security/mintable-secret.ts';
 import { DEFAULT_OPS_DB_PATH } from '../operations/db.ts';
@@ -168,6 +170,30 @@ export interface DODSubmission {
   telegramTopic?: string;
   /** Optional book slug or display name from caption (`/dod balance draftkings`). */
   platformHint?: string;
+  /** Expected stake from play dispatch (optional override). */
+  expectedAmount?: number;
+  /** Partner CODE when ingested from Accounting forum. */
+  partnerCode?: string;
+}
+
+/** Latest stake_actual for an agent from play_distribution fan-out. */
+export function lookupExpectedStake(
+  db: Database,
+  agentId: string // brand-ok — play_distribution node_id / partner CODE
+): number | null {
+  try {
+    const row = db
+      .query(
+        `SELECT stake_actual FROM play_distribution
+         WHERE node_id = $aid AND stake_actual IS NOT NULL
+         ORDER BY received_at DESC
+         LIMIT 1`
+      )
+      .get({ $aid: agentId }) as { stake_actual: number } | null;
+    return row?.stake_actual ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export interface DODVerification {
@@ -256,6 +282,13 @@ export class DODVerifier {
     add('telegram_topic', 'telegram_topic TEXT');
     add('image_meta_json', 'image_meta_json TEXT');
     add('accounting_amount', 'accounting_amount REAL');
+    add('expected_amount', 'expected_amount REAL');
+    add('reconciled', 'reconciled INTEGER DEFAULT 0');
+    this.db.run(`
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_dod_telegram_msg
+      ON dod_submissions (telegram_chat_id, telegram_message_id)
+      WHERE telegram_chat_id IS NOT NULL AND telegram_message_id IS NOT NULL
+    `);
   }
 
   async process(submission: DODSubmission): Promise<DODVerification> {
@@ -369,15 +402,27 @@ export class DODVerifier {
     });
     const accountingAmount = extractAmount(extractedText) ?? null;
 
+    const expectedStake =
+      submission.expectedAmount ?? lookupExpectedStake(this.db, agentId) ?? null;
+    const reconcile = reconcileDodAmounts(expectedStake, accountingAmount);
+    if (reconcile.status === 'mismatch') {
+      tamperScore = Math.min(100, tamperScore + 15);
+      verification.tamperScore = tamperScore;
+      if (status === 'verified' || status === 'pending') {
+        status = 'flagged';
+        verification.status = status;
+      }
+    }
+
     // 9. Persist
     this.db.run(
       `
       INSERT INTO dod_submissions (id, agent_id, type, status, visual_hash, metadata_hash, signature, tamper_score,
         extracted_text, geo_lat, geo_lng, device_model, s3_path, submitted_at, processed_at, encrypted,
         telegram_chat_id, telegram_message_id, telegram_thread_id, telegram_username, telegram_topic,
-        image_meta_json, accounting_amount)
+        image_meta_json, accounting_amount, expected_amount, reconciled)
       VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $text, $lat, $lng, $dev, $s3, $sub, $proc, $enc,
-        $tgChat, $tgMsg, $tgThread, $tgUser, $tgTopic, $imgMeta, $amt)
+        $tgChat, $tgMsg, $tgThread, $tgUser, $tgTopic, $imgMeta, $amt, $expAmt, $reconciled)
     `,
       {
         $id: dodId,
@@ -403,8 +448,23 @@ export class DODVerifier {
         $tgTopic: submission.telegramTopic ?? null,
         $imgMeta: imageMeta ? JSON.stringify(imageMeta) : null,
         $amt: accountingAmount,
+        $expAmt: reconcile.expected,
+        $reconciled: reconcile.reconciled ? 1 : 0,
       }
     );
+
+    if (imageMeta) {
+      await appendDodMetaNdjson({
+        at: verification.processedAt,
+        dodId,
+        agentId,
+        type: submission.type,
+        partnerCode: submission.partnerCode ?? null,
+        telegramTopic: submission.telegramTopic ?? null,
+        s3Path,
+        meta: imageMeta,
+      });
+    }
 
     // 9b. Sidecar record — the store is the source of truth; SQLite is a
     // rebuildable index (see rebuildIndex()).
@@ -734,9 +794,9 @@ export class DODVerifier {
           `INSERT OR REPLACE INTO dod_submissions (id, agent_id, type, status, visual_hash, metadata_hash, signature, tamper_score,
             extracted_text, geo_lat, geo_lng, device_model, s3_path, submitted_at, processed_at, encrypted,
             telegram_chat_id, telegram_message_id, telegram_thread_id, telegram_username, telegram_topic,
-            accounting_amount)
+            accounting_amount, expected_amount, reconciled)
           VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $text, $lat, $lng, $dev, $s3, $sub, $proc, $enc,
-            $tgChat, $tgMsg, $tgThread, $tgUser, $tgTopic, $amt)`,
+            $tgChat, $tgMsg, $tgThread, $tgUser, $tgTopic, $amt, $expAmt, $reconciled)`,
           {
             $id: s.id,
             $aid: s.agentId,
@@ -760,6 +820,8 @@ export class DODVerifier {
             $tgUser: s.telegramUsername ?? null,
             $tgTopic: s.telegramTopic ?? null,
             $amt: extractAmount(v.extractedText) ?? null,
+            $expAmt: s.expectedAmount ?? null,
+            $reconciled: 0,
           }
         );
         restored++;

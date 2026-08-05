@@ -8,12 +8,13 @@
  * @see lib/telegram/flows/README.md
  */
 import { Database } from 'bun:sqlite';
+import { ingestAccountingDodPhoto } from '../dod/telegram-accounting-ingest.ts';
 import { DODVerifier } from '../dod/verifier.ts';
 import { asTreeNodeId } from '../types/branded/operations.ts';
 import { asTelegramUserId } from '../types/branded/portal.ts';
 import { onboardPartnerProfile } from '../operations/partner-onboarding.ts';
 import { enqueuePartnerWelcomeEvent } from '../channels/outbox.ts';
-import { answerCallbackQuery } from './telegram-api.ts';
+import { answerCallbackQuery, sendTelegramBotMessage } from './telegram-api.ts';
 import { handleSeatDeskCallback, isSeatDeskCallback } from './seat-desk-callback.ts';
 import { handleSeatDeskReply } from './seat-desk-reply.ts';
 import { observeKnownChatsFromUpdate } from './known-chats.ts';
@@ -33,10 +34,12 @@ export class OpsTelegramBot {
   private dbPath: string;
   private token: string;
   private polling = false;
+  private accountingIngest?: BotConfig['accountingIngest'];
 
   constructor(config: BotConfig) {
     this.token = config.token || loadTelegramEnv().effectiveToken || '';
     this.dbPath = config.dbPath;
+    this.accountingIngest = config.accountingIngest;
     this.db = new Database(config.dbPath);
     this.db.run('PRAGMA journal_mode=WAL');
   }
@@ -76,7 +79,7 @@ export class OpsTelegramBot {
     });
 
     if (update.my_chat_member || update.chat_member) {
-      if (!update.message && !update.callback_query) return;
+      if (!update.message && !update.edited_message && !update.callback_query) return;
     }
 
     const cq = update.callback_query as Record<string, unknown> | undefined;
@@ -85,7 +88,29 @@ export class OpsTelegramBot {
       return;
     }
 
-    const msg = update.message as Record<string, unknown> | undefined;
+    const msg = (update.message ?? update.edited_message) as Record<string, unknown> | undefined;
+    if (msg) {
+      const photoIngest = await ingestAccountingDodPhoto(msg, {
+        token: this.token,
+        db: this.db,
+        dbPath: this.dbPath,
+        ...this.accountingIngest,
+      });
+      if (photoIngest.handled) {
+        const chatId = Number((msg.chat as Record<string, unknown>)?.id);
+        if (Number.isFinite(chatId)) {
+          await sendTelegramBotMessage(this.token, {
+            chatId,
+            text: photoIngest.replyText,
+            parseMode: 'HTML',
+            messageThreadId:
+              typeof msg.message_thread_id === 'number' ? msg.message_thread_id : undefined,
+          });
+        }
+        return;
+      }
+    }
+
     if (!msg?.text) return;
 
     const text = (msg.text as string).trim();

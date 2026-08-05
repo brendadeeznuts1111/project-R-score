@@ -20,10 +20,11 @@ import { commandToFlowId, findFlowNodeByTelegram } from './flows/registry.ts';
 import { gateFactoryCommand } from './ops-acl.ts';
 import { dispatchOpsFlowOutput } from './ops-commands.ts';
 import { tryObserveKnownChats } from './known-chats.ts';
-import { answerCallbackQuery } from './telegram-api.ts';
+import { answerCallbackQuery, sendTelegramBotMessage } from './telegram-api.ts';
 import { handleSeatDeskCallback, isSeatDeskCallback } from './seat-desk-callback.ts';
 import { handleSeatDeskReply } from './seat-desk-reply.ts';
 import { decodeTelegramStartPayload, telegramAppHash } from '../portal/partner-telegram.ts';
+import { ingestAccountingDodPhoto } from '../dod/telegram-accounting-ingest.ts';
 import type { TelegramCallbackQuery, TelegramMessage, TelegramUpdate } from './telegram-update.ts';
 
 export type { TelegramCallbackQuery, TelegramMessage, TelegramUpdate } from './telegram-update.ts';
@@ -91,12 +92,27 @@ export class TelegramBot {
     tryObserveKnownChats(dbPath, update, String(deps.tenant.id));
 
     if (update.my_chat_member || update.chat_member) {
-      if (!update.message && !update.callback_query && !update.channel_post) return;
+      if (
+        !update.message &&
+        !update.edited_message &&
+        !update.callback_query &&
+        !update.channel_post
+      ) {
+        return;
+      }
     }
 
     if (update.callback_query) {
       await this.handleCallbackQuery(update.callback_query, deps);
       return;
+    }
+
+    // Package Accounting + house all-accounting proof photos (factory webhook path).
+    // Long-poll OpsTelegramBot has the same ingest; keep both entrypoints wired.
+    const mediaMsg = update.message ?? update.edited_message;
+    if (mediaMsg && (deps.tenant.id as string) === 'factory') {
+      const handled = await this.tryAccountingPhotoIngest(mediaMsg, deps, dbPath);
+      if (handled) return;
     }
 
     const msg = update.message ?? update.channel_post;
@@ -267,6 +283,48 @@ export class TelegramBot {
       opsArgs: argParts,
     });
     await sendTelegramMessage(deps.env, deps.tenant, msg.chat.id, response);
+  }
+
+  /**
+   * Accounting-topic image → DODVerifier (package forum + house rollup).
+   * Returns true when the update was handled (caller must not reprocess as text).
+   */
+  private async tryAccountingPhotoIngest(
+    msg: TelegramMessage,
+    deps: Omit<CommandContext, 'msg' | 'account'>,
+    dbPath: string
+  ): Promise<boolean> {
+    const token = resolveTelegramToken(deps.env, deps.tenant);
+    if (!token) return false;
+
+    const db = tryOpenOpsDb(deps.env);
+    if (!db) return false;
+
+    try {
+      const photoIngest = await ingestAccountingDodPhoto(
+        msg as unknown as Record<string, unknown>,
+        {
+          token,
+          db,
+          dbPath,
+        }
+      );
+      if (!photoIngest.handled) return false;
+
+      const chatId = Number(msg.chat?.id);
+      if (Number.isFinite(chatId)) {
+        await sendTelegramBotMessage(token, {
+          chatId,
+          text: photoIngest.replyText,
+          parseMode: 'HTML',
+          messageThreadId:
+            typeof msg.message_thread_id === 'number' ? msg.message_thread_id : undefined,
+        });
+      }
+      return true;
+    } finally {
+      db.close();
+    }
   }
 
   private async handleCallbackQuery(

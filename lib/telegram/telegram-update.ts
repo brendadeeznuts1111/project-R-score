@@ -23,18 +23,44 @@ export type TelegramUserWire = {
   last_name?: string;
 };
 
+/** Photo size entry from Bot API message.photo[] (largest last). */
+export type TelegramPhotoSizeWire = {
+  file_id?: string; // brand-ok — Telegram file_id wire
+  width?: number;
+  height?: number;
+  file_unique_id?: string; // brand-ok — Telegram Bot API file_unique_id wire
+};
+
+export type TelegramDocumentWire = {
+  file_id?: string; // brand-ok — Telegram file_id wire
+  mime_type?: string;
+  file_name?: string;
+};
+
 export type TelegramMessage = {
   chat: TelegramChatWire;
   from: TelegramUserWire;
   text?: string;
+  /** Caption on photo / document media. */
+  caption?: string;
   message_id?: number;
+  /** Forum topic thread (package Accounting · house Deposits/…). */
+  message_thread_id?: number;
+  date?: number;
+  photo?: TelegramPhotoSizeWire[];
+  document?: TelegramDocumentWire;
+  reply_to_message?: TelegramMessage;
 };
 
 export type TelegramCallbackQuery = {
   id: string; // brand-ok — Telegram callback_query id
   from: TelegramUserWire;
   data?: string;
-  message?: { chat: TelegramChatWire; message_id?: number };
+  message?: {
+    chat: TelegramChatWire;
+    message_id?: number;
+    message_thread_id?: number;
+  };
 };
 
 /** ChatMember subset — status drives known-chat active flag. */

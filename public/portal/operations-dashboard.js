@@ -7,6 +7,7 @@
  */
 import { renderVerificationResults, renderVerificationTableRow } from './verification-card.js';
 import { formatBunBrandAlignment } from './bun-brand-alignment.js';
+import { mountFreshnessBadge } from './data-freshness.js';
 import './channel-filter.js';
 
 /** Format summary.bySubsystem for ops panel subtitle. */
@@ -1014,6 +1015,21 @@ class OperationsDashboard extends HTMLElement {
       if (baked && d.generated) {
         baked.textContent = String(d.generated).replace('T', ' ').replace(/\.\d+Z$/, ' UTC');
       }
+      // Bake-manifest "Data as of" — fail-silent if missing; worst of desk bakes.
+      void mountFreshnessBadge(
+        document.getElementById('ops-freshness'),
+        [
+          '/registry/ops-summary.json',
+          '/registry/partners-ops.json',
+          '/registry/telegram-handshake.json',
+          '/registry/limit-raises.json',
+        ],
+        {
+          fallbacks: {
+            '/registry/ops-summary.json': d.generated || d.generatedAt || null,
+          },
+        }
+      );
     }
 
     const partnersBound = this.querySelector('#partners-bound');

@@ -45,6 +45,8 @@ type DemoRow = {
   reason?: string;
   lat?: number;
   lng?: number;
+  /** Override expected stake (demo mismatch on slip). */
+  expectedAmount?: number;
   /** Bot API chat id for package forum (demo). */
   tgChat?: string;
   tgMsg?: number;
@@ -77,6 +79,7 @@ const DEMO_ROWS: DemoRow[] = [
     status: 'flagged',
     tamper: 62,
     ocr: 'BIL-001 · NBA LAL -4.5 $250 · DraftKings',
+    expectedAmount: 100,
     tgChat: '-1002147483002',
     tgMsg: 991,
     tgThread: 42,
@@ -192,13 +195,13 @@ export async function seedDodDemo(opts: SeedDodDemoOpts = {}): Promise<SeedDodDe
         tamper_score, extracted_text, geo_lat, geo_lng, device_model, s3_path,
         submitted_at, processed_at, reviewed_at, reviewed_by, rejection_reason,
         telegram_chat_id, telegram_message_id, telegram_thread_id, telegram_topic,
-        image_meta_json, accounting_amount
+        image_meta_json, accounting_amount, expected_amount, reconciled
       ) VALUES (
         $id, $aid, $type, $st, $vh, $mh, $sig,
         $ts, $ocr, $lat, $lng, $dev, $s3,
         $sub, $proc, $rev, $by, $reason,
         $tgChat, $tgMsg, $tgThread, $tgTopic,
-        $imgMeta, $amt
+        $imgMeta, $amt, $expAmt, $reconciled
       )
     `);
 
@@ -206,7 +209,7 @@ export async function seedDodDemo(opts: SeedDodDemoOpts = {}): Promise<SeedDodDe
     let inserted = 0;
     const now = Date.now();
     // Unique (chat_id, message_id) — salt so --force batches never collide.
-    const msgSalt = Math.floor(now / 1000) % 1_000_000_000;
+    const msgSalt = Number(Bun.hash.crc32(`${now}:${inserted}`).toString()) % 1_000_000_000;
 
     for (let i = 0; i < DEMO_ROWS.length; i++) {
       const row = DEMO_ROWS[i]!;
@@ -218,6 +221,8 @@ export async function seedDodDemo(opts: SeedDodDemoOpts = {}): Promise<SeedDodDe
           ? new Date(now - i * 3_600_000 + 600_000).toISOString()
           : null;
       const amt = extractAccountingAmount(row.ocr ?? undefined) ?? null;
+      const expAmt = row.expectedAmount ?? amt;
+      const reconciled = expAmt != null && amt != null && Math.abs(expAmt - amt) <= 0.01 ? 1 : 0;
       const tgMsg = row.tgMsg != null ? row.tgMsg + msgSalt + i : null;
 
       insert.run({
@@ -245,6 +250,8 @@ export async function seedDodDemo(opts: SeedDodDemoOpts = {}): Promise<SeedDodDe
         $tgTopic: row.tgTopic ?? null,
         $imgMeta: row.imageMeta ? JSON.stringify(row.imageMeta) : null,
         $amt: amt,
+        $expAmt: expAmt,
+        $reconciled: reconciled,
       });
 
       byStatus[row.status] = (byStatus[row.status] ?? 0) + 1;

@@ -65,6 +65,21 @@ export function formatAccountingAmount(amount) {
   }).format(Number(amount));
 }
 
+/** Reconcile warning strip when stake mismatch or banner present. */
+export function reconcileBannerHtml(entry) {
+  const banner = entry?.reconcile_banner;
+  const status = String(entry?.reconcile_status ?? '');
+  if (!banner && status !== 'mismatch') return '';
+  const text =
+    banner ||
+    (status === 'mismatch'
+      ? 'Stake mismatch — confirm expected vs OCR amount in Accounting'
+      : '');
+  if (!text) return '';
+  const cls = status === 'mismatch' ? 'mismatch' : 'unknown';
+  return `<div class="dod-reconcile-banner ${cls}" role="alert">${esc(text)}</div>`;
+}
+
 /** t.me message link from bake fields (or precomputed telegram_deep_link). */
 export function resolveTelegramMessageLink(entry) {
   const existing = String(entry?.telegram_deep_link || entry?.telegramDeepLink || '').trim();
@@ -514,6 +529,7 @@ open http://localhost:3000/portal/dod/</code></pre>
                     }</p>`
                   : ''
               }
+              ${reconcileBannerHtml(e)}
               <dl class="dod-meta">
                 <div><dt>ID</dt><dd><code title="${esc(e.id)}">${esc(shortId(e.id))}</code></dd></div>
                 <div><dt>Agent</dt><dd><code title="${esc(e.agent_id)}">${esc(shortId(e.agent_id))}</code></dd></div>

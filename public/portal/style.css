@@ -1163,6 +1163,47 @@ body {
   font: 500 11px/1.4 var(--font-mono, ui-monospace, monospace);
 }
 
+/* Bake-manifest "Data as of" — fail-silent if empty */
+.portal-freshness {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font: 600 11px/22px var(--font-mono, ui-monospace, monospace);
+  color: var(--text-dim);
+  background: var(--surface);
+  white-space: nowrap;
+}
+
+.portal-freshness[hidden] {
+  display: none !important;
+}
+
+.portal-freshness--ok {
+  color: var(--ok, #3fb950);
+  border-color: color-mix(in srgb, var(--ok, #3fb950) 45%, var(--border));
+  background: color-mix(in srgb, var(--ok, #3fb950) 12%, var(--surface));
+}
+
+.portal-freshness--warn {
+  color: var(--warn, #d29922);
+  border-color: color-mix(in srgb, var(--warn, #d29922) 45%, var(--border));
+  background: color-mix(in srgb, var(--warn, #d29922) 12%, var(--surface));
+}
+
+.portal-freshness--bad {
+  color: var(--bad, #f85149);
+  border-color: color-mix(in srgb, var(--bad, #f85149) 45%, var(--border));
+  background: color-mix(in srgb, var(--bad, #f85149) 12%, var(--surface));
+}
+
+.portal-freshness--unknown {
+  color: var(--text-dim);
+}
+
 .portal-source-links {
   display: flex;
   flex-wrap: wrap;

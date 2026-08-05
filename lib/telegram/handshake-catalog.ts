@@ -348,6 +348,7 @@ export const TELEGRAM_GLOSSARY_CONCEPT_IDS = [
   'telegram.forum.topic',
   'telegram.topic_map',
   'telegram.forum.topic.accounting',
+  'telegram.dod.visual_proof',
   'telegram.forum.topic.liquidity_outs',
   'telegram.surface',
   'telegram.surface.all_accounting',

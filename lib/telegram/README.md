@@ -6,8 +6,8 @@ Tree-aware Telegram integration for the sports betting operations platform and m
 
 | Module | Role |
 |--------|------|
-| `ops-bot.ts` | Long-polling `OpsTelegramBot` (direct SQLite) |
-| `bot.ts` | Bun command router (`TelegramBot`, factory/science/tennis) |
+| `ops-bot.ts` | Long-polling `OpsTelegramBot` (direct SQLite) · Accounting photo → `lib/dod/telegram-accounting-ingest.ts` |
+| `bot.ts` | Bun command router (`TelegramBot`, factory/science/tennis) · factory path also runs Accounting photo ingest |
 | `webhook-pages.ts` | Pages edge enqueue → R2 `telegram-updates` (no bun:sqlite) |
 | `telegram-update.ts` | Edge-safe TelegramUpdate wire types |
 | `ops-bridge.ts` | Bun webhook → SQLite or R2 `telegram-commands` queue |
