@@ -104,7 +104,8 @@ describe('bookmakers board helpers', () => {
     expect(html).toContain('data-glossary-concept="sport.tennis"');
     expect(html).toContain('US');
     expect(html).toContain('portal-pill--rest');
-    expect(html).toContain('state-ok');
+    expect(html).toContain('portal-dot');
+    expect(html).toContain('status-text ok');
   });
 
   test('normalizeBooks reads v0.4 urls/fetcher/sports and id===slug', () => {

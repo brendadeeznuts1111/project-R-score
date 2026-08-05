@@ -58,7 +58,7 @@ export function renderPortalStatGrid(items) {
         .map(([k, v]) => ` ${escHtml(k)}="${escHtml(v)}"`)
         .join('');
       const body =
-        `<span class="k">${escHtml(item.label)}</span>` +
+        `<span class="kicker">${escHtml(item.label)}</span>` +
         `<span class="v">${escHtml(item.value)}</span>` +
         (item.hint != null && item.hint !== ''
           ? `<span class="hint">${escHtml(item.hint)}</span>`

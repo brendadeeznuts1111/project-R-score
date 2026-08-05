@@ -54,6 +54,7 @@ describe('lib/portal/ui-html', () => {
     ]);
     expect(html).toContain('portal-stat ok');
     expect(html).toContain('portal-stat bad active');
+    expect(html).toContain('class="kicker"');
     expect(html).toContain('data-filter="flagged"');
     expect(html).toContain('<button type="button"');
   });
