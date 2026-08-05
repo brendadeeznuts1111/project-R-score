@@ -163,3 +163,53 @@ describe('vault-health', () => {
     expect(inventory).toMatchSnapshot();
   });
 });
+
+  test('token probes fold into health — expired token fails the gate', () => {
+    const report = computeVaultHealth([], new Map(), '2026-08-05T00:00:00Z', {
+      tokenProbes: [
+        { envKey: 'CLOUDFLARE_API_TOKEN', kind: 'cloudflare', status: 'ok', statusCode: 200, checkedAt: '2026-08-05T00:00:00Z' },
+        { envKey: 'CLOUDFLARE_DNS_API_TOKEN', kind: 'cloudflare', status: 'invalid', statusCode: 401, checkedAt: '2026-08-05T00:00:00Z' },
+      ],
+    });
+    expect(report.summary.tokensOk).toBe(1);
+    expect(report.summary.tokensInvalid).toBe(1);
+    expect(report.summary.healthy).toBe(false);
+    expect(report.tokenProbes).toHaveLength(2);
+    expect(report.tokenProbes.map(p => p.envKey).sort()).toEqual([
+      'CLOUDFLARE_API_TOKEN',
+      'CLOUDFLARE_DNS_API_TOKEN',
+    ]);
+  });
+
+  test('no token probes keeps health unchanged (backward compat)', () => {
+    const report = computeVaultHealth([], new Map(), '2026-08-05T00:00:00Z');
+    expect(report.tokenProbes).toEqual([]);
+    expect(report.summary.tokensOk).toBe(0);
+    expect(report.summary.tokensInvalid).toBe(0);
+    expect(report.summary.healthy).toBe(true);
+  });
+
+  test('token probes fold into health — expired token fails the gate', () => {
+    const report = computeVaultHealth([], new Map(), '2026-08-05T00:00:00Z', {
+      tokenProbes: [
+        { envKey: 'CLOUDFLARE_API_TOKEN', kind: 'cloudflare', status: 'ok', statusCode: 200, checkedAt: '2026-08-05T00:00:00Z' },
+        { envKey: 'CLOUDFLARE_DNS_API_TOKEN', kind: 'cloudflare', status: 'invalid', statusCode: 401, checkedAt: '2026-08-05T00:00:00Z' },
+      ],
+    });
+    expect(report.summary.tokensOk).toBe(1);
+    expect(report.summary.tokensInvalid).toBe(1);
+    expect(report.summary.healthy).toBe(false);
+    expect(report.tokenProbes).toHaveLength(2);
+    expect(report.tokenProbes.map(p => p.envKey).sort()).toEqual([
+      'CLOUDFLARE_API_TOKEN',
+      'CLOUDFLARE_DNS_API_TOKEN',
+    ]);
+  });
+
+  test('no token probes keeps health unchanged (backward compat)', () => {
+    const report = computeVaultHealth([], new Map(), '2026-08-05T00:00:00Z');
+    expect(report.tokenProbes).toEqual([]);
+    expect(report.summary.tokensOk).toBe(0);
+    expect(report.summary.tokensInvalid).toBe(0);
+    expect(report.summary.healthy).toBe(true);
+  });
