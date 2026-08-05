@@ -16,6 +16,7 @@ import {
   normalizePackagesMap,
   normalizePublishPlaneRow,
   renderDependencyGraphSvg,
+  renderGlanceStrip,
   renderPageRegistrySvg,
   renderPublishPlaneCards,
   renderPublishPlaneTable,
@@ -42,13 +43,17 @@ describe('packages-board failure paths', () => {
     expect(html).toContain('id="publish-plane-kpis"');
     expect(html).toContain('id="pkg-search"');
     expect(html).toContain('id="pkg-role-mix"');
+    expect(html).toContain('id="pkg-glance"');
     expect(html).toContain('id="board-grade-pill"');
+    expect(html).toContain('packages-board.js?v=14');
     expect(html).toContain('artifactName');
     expect(html).toContain('artifactId');
+    expect(html).not.toContain('Tennis board');
     const js = await Bun.file('public/portal/packages/packages-board.js').text();
     expect(js).toContain('loadPublishPlaneSoftPass');
     expect(js).toContain('renderPublishPlaneTable');
     expect(js).toContain('renderPublishPlaneCards');
+    expect(js).toContain('renderGlanceStrip');
     expect(js).toContain('pending on edge');
     expect(js).toContain('hexByKey');
   });
@@ -238,6 +243,41 @@ describe('packages-board failure paths', () => {
         generatedAt: 't',
         bunVersion: '1.4.0',
         score: 100,
+        grade: 'healthy',
+        board: '/portal/packages/',
+        openActions: [
+          {
+            package: 'p2p',
+            action: 'archive-candidate',
+            reason: 'no outside imports',
+          },
+        ],
+        glance: {
+          score: 100,
+          grade: 'healthy',
+          packageCount: 1,
+          consumed: 1,
+          dormant: 0,
+          openActions: 1,
+          avgPackageScore: 100,
+          orphanCount: 0,
+          cycleCount: 0,
+          hubCount: 2,
+          externalEdges: 3,
+          crossPackageEdges: 0,
+          topHub: 'lib/docs',
+          surfacesPages: 18,
+          surfacesRegOrphan: 0,
+        },
+        totals: {
+          orphanCount: 0,
+          cycleCount: 0,
+          hubCount: 2,
+          externalEdges: 3,
+          crossPackageEdges: 0,
+          openActions: 1,
+          avgPackageScore: 100,
+        },
         packages: [{ name: 'rip', score: 100, role: 'consumed', orphans: 0, bytes: 1024 }],
         surfaces: {
           summary: {
@@ -271,8 +311,15 @@ describe('packages-board failure paths', () => {
           brand: { tenants: ['factory'], assets: [] },
         },
         map: {
-          summary: { openActions: 0, avgPackageScore: 100, archivePlaceholders: 0 },
-          actions: [],
+          summary: { openActions: 1, avgPackageScore: 100, archivePlaceholders: 0 },
+          actions: [
+            { package: 'rip', action: 'ok', reason: 'aligned' },
+            {
+              package: 'p2p',
+              action: 'archive-candidate',
+              reason: 'no outside imports',
+            },
+          ],
           archiveProbes: [],
           quarantine: [{ package: 'package', reason: 'placeholder', blockedBy: ['tsconfig.json'] }],
           env: {
@@ -291,7 +338,14 @@ describe('packages-board failure paths', () => {
     expect(data.schemaStatus).toBe('current');
     expect(data.schemaDegraded).toBe(false);
     expect(data.packages).toHaveLength(1);
-    expect(data.summary.openActions).toBe(0);
+    expect(data.summary.openActions).toBe(1);
+    expect(data.board).toBe('/portal/packages/');
+    expect(data.openActions).toHaveLength(1);
+    expect(data.openActions[0].package).toBe('p2p');
+    expect(data.glance?.topHub).toBe('lib/docs');
+    expect(data.glance?.externalEdges).toBe(3);
+    expect(renderGlanceStrip(data.glance)).toContain('pkg-glance-strip');
+    expect(renderGlanceStrip(data.glance)).toContain('lib/docs');
     expect(data.quarantine).toHaveLength(1);
     expect(data.env?.owners?.[0]?.envKey).toBe('REDIS_URL');
     expect(data.surfaces?.summary?.registryTopLevelJson).toBe(54);

@@ -25,13 +25,16 @@ import { joinPath } from '../lib/path-bun.ts';
 import { jsonOut, logTable } from '../lib/console-depth.ts';
 import {
   buildPackageGraphMap,
+  buildPackagesGraphGlance,
   compareDeclaredWorkspaceDeps,
   applyWireRootDeps,
   enrichDeepPackageMap,
   enrichIntraPackageMap,
+  filterOpenCouplingActions,
   formatIntraPackageMermaid,
   formatPackageMapDot,
   formatPackageMapMermaid,
+  PACKAGES_GRAPH_BOARD,
   resolveMetaImportPath,
   scanOutsidePackageConsumers,
   scanRootScriptRefs,
@@ -1200,6 +1203,14 @@ Map v12: + template-default cover · archive placeholder removed · env inventor
 
   if (argvFlag('--bake')) {
     const bakePath = joinPath(ROOT, 'public/registry/packages-graph-map.json');
+    const openActions = filterOpenCouplingActions(report.map.actions);
+    const glance = buildPackagesGraphGlance({
+      score: report.score,
+      grade: report.grade,
+      map: report.map,
+      totals: report.totals,
+      surfacesSummary: report.surfaces?.summary ?? null,
+    });
     const bake = {
       schemaVersion: 13,
       kind: 'packages-graph-map',
@@ -1207,6 +1218,9 @@ Map v12: + template-default cover · archive placeholder removed · env inventor
       bunVersion: report.bunVersion,
       score: report.score,
       grade: report.grade,
+      board: PACKAGES_GRAPH_BOARD,
+      openActions,
+      glance,
       map: report.map,
       packages: report.packages,
       totals: report.totals,

@@ -127,6 +127,42 @@ export function normalizePackagesMap(raw, source) {
     raw.surfaces && typeof raw.surfaces === 'object'
       ? /** @type {Record<string, unknown>} */ (raw.surfaces)
       : null;
+  const mapActions = Array.isArray(map.actions) ? map.actions : [];
+  const openActions = Array.isArray(raw.openActions)
+    ? raw.openActions.filter(a => a && typeof a === 'object' && a.action !== 'ok')
+    : mapActions.filter(a => a && a.action !== 'ok');
+  const totals =
+    raw.totals && typeof raw.totals === 'object'
+      ? /** @type {Record<string, unknown>} */ (raw.totals)
+      : {};
+  const summary =
+    map.summary && typeof map.summary === 'object'
+      ? /** @type {Record<string, unknown>} */ (map.summary)
+      : {};
+  /** @type {Record<string, unknown>|null} */
+  let glance =
+    raw.glance && typeof raw.glance === 'object'
+      ? /** @type {Record<string, unknown>} */ (raw.glance)
+      : null;
+  if (!glance) {
+    glance = {
+      score: raw.score ?? map.score,
+      grade: raw.grade ?? map.grade,
+      packageCount: summary.packageCount ?? rows.length,
+      consumed: summary.consumed ?? 0,
+      dormant: summary.dormant ?? 0,
+      openActions: totals.openActions ?? summary.openActions ?? openActions.length,
+      avgPackageScore: totals.avgPackageScore ?? summary.avgPackageScore ?? null,
+      orphanCount: totals.orphanCount ?? 0,
+      cycleCount: totals.cycleCount ?? 0,
+      hubCount: totals.hubCount ?? 0,
+      externalEdges: totals.externalEdges ?? 0,
+      crossPackageEdges: totals.crossPackageEdges ?? 0,
+      topHub: summary.topHub ?? null,
+      surfacesPages: surfaces?.summary?.portalPages ?? null,
+      surfacesRegOrphan: surfaces?.summary?.registryOrphanFromPortal ?? null,
+    };
+  }
   return {
     source,
     schemaVersion,
@@ -138,16 +174,58 @@ export function normalizePackagesMap(raw, source) {
     bunVersion: raw.bunVersion ?? map.bunVersion ?? '',
     score: raw.score ?? map.score,
     grade: raw.grade ?? map.grade,
+    board: typeof raw.board === 'string' ? raw.board : '/portal/packages/',
+    glance,
+    totals,
+    openActions,
     map,
     packages: rows,
-    summary: map.summary && typeof map.summary === 'object' ? map.summary : {},
-    actions: Array.isArray(map.actions) ? map.actions : [],
+    summary,
+    actions: mapActions,
     archiveProbes: Array.isArray(map.archiveProbes) ? map.archiveProbes : [],
     quarantine: Array.isArray(map.quarantine) ? map.quarantine : [],
     vault: map.vault && typeof map.vault === 'object' ? map.vault : null,
     env: map.env && typeof map.env === 'object' ? map.env : null,
     surfaces,
   };
+}
+
+/**
+ * Graph-health strip HTML from glance (cycles · hubs · edges · orphans).
+ * @param {Record<string, unknown>|null|undefined} glance
+ */
+export function renderGlanceStrip(glance) {
+  if (!glance || typeof glance !== 'object') return '';
+  const n = key => {
+    const v = glance[key];
+    return typeof v === 'number' && Number.isFinite(v) ? v : 0;
+  };
+  const tone = (v, warnAt = 1) =>
+    v >= warnAt ? (v >= 5 ? 'grade-critical' : 'grade-needs-improvement') : 'grade-healthy';
+  const cell = (label, key, warnAt) => {
+    const v = n(key);
+    return (
+      `<span class="pkg-glance-cell ${tone(v, warnAt)}">` +
+      `<span class="pkg-glance-num">${v}</span>` +
+      `<span class="pkg-glance-label">${label}</span>` +
+      `</span>`
+    );
+  };
+  const hub = glance.topHub ? String(glance.topHub) : '—';
+  return (
+    `<div class="pkg-glance-strip" role="group" aria-label="Graph health glance">` +
+    cell('cycles', 'cycleCount', 1) +
+    cell('hubs', 'hubCount', 999) +
+    cell('external', 'externalEdges', 999) +
+    cell('cross-pkg', 'crossPackageEdges', 1) +
+    cell('orphans', 'orphanCount', 1) +
+    cell('open', 'openActions', 1) +
+    `<span class="pkg-glance-cell pkg-glance-hub" title="top external hub">` +
+    `<span class="pkg-glance-num">${escapeHtml(hub)}</span>` +
+    `<span class="pkg-glance-label">top hub</span>` +
+    `</span>` +
+    `</div>`
+  );
 }
 
 /**
@@ -1521,6 +1599,11 @@ function renderPackagesBoard(data, doc = document) {
     `${breakdown.roles.consumed} consumed · ${breakdown.roles.dormant} dormant`
   );
   renderRoleMixBar(breakdown, doc);
+  const glanceHost = doc.getElementById('pkg-glance');
+  if (glanceHost) {
+    glanceHost.innerHTML = renderGlanceStrip(data.glance);
+    glanceHost.hidden = !glanceHost.innerHTML;
+  }
   // Optional legacy cards if present in older HTML
   setText(
     doc.getElementById('s-archive'),
@@ -1816,7 +1899,10 @@ function renderPackagesBoard(data, doc = document) {
 
   const actionList = doc.getElementById('action-list');
   if (actionList) {
-    const actions = data.actions.filter(a => a.action !== 'ok');
+    const actions = Array.isArray(data.openActions)
+      ? data.openActions
+      : data.actions.filter(a => a.action !== 'ok');
+    const okOmitted = Math.max(0, (data.actions || []).length - actions.length);
     actionList.innerHTML = actions.length
       ? actions
           .map(a => {
@@ -1826,7 +1912,10 @@ function renderPackagesBoard(data, doc = document) {
               : '';
             return `<li><code>${escapeHtml(a.package)}</code> · <strong>${escapeHtml(a.action)}</strong> — ${escapeHtml(a.reason)}${hintHtml}</li>`;
           })
-          .join('')
+          .join('') +
+        (okOmitted
+          ? `<li class="meta">${okOmitted} ok action${okOmitted === 1 ? '' : 's'} omitted</li>`
+          : '')
       : '<li>None — coupling aligned</li>';
   }
 
