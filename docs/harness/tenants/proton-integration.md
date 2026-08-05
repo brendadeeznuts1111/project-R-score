@@ -156,6 +156,7 @@ bun run proton:check               # inject proof for all templates
 bun run env:inventory              # includes packages plane section
 bun run env:inventory:bake         # → /registry/env-inventory.json (+ partnersAccountsPlane v5)
 # Env board also surfaces /registry/vault-health.json — prefer /portal/vault/ over the raw JSON dump
+# Local serve: browser nav to /registry/vault-health.json 302 → /portal/vault/ (curl/?raw=1 keep JSON)
 bun run audit:packages:full        # --vault --env
 bun run audit:packages:env         # --env --vault-gap + dual bake
 bun run audit:packages:vault       # --vault --vault-gap
