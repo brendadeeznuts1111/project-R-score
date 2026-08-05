@@ -1481,14 +1481,14 @@ function renderPackagesBoard(data, doc = document) {
   const scoreEl = doc.getElementById('s-score');
   setText(scoreEl, data.score != null ? String(data.score) : '—');
   if (scoreEl) {
-    scoreEl.className = `stat-num grade-${boardGrade}`;
+    scoreEl.className = `v grade-${boardGrade}`;
     scoreEl.title = data.grade ? String(data.grade) : boardGrade;
   }
   const pill = doc.getElementById('board-grade-pill');
   const pillScore = doc.getElementById('pill-score');
   const pillGrade = doc.getElementById('pill-grade');
   if (pill) {
-    pill.className = `pkg-grade-pill grade-${boardGrade}`;
+    pill.className = `portal-gate pkg-grade-pill grade-${boardGrade}`;
   }
   setText(pillScore, data.score != null ? String(data.score) : '—');
   setText(pillGrade, data.grade ? String(data.grade) : boardGrade);
@@ -1916,7 +1916,7 @@ function renderPackagesBoardError(err, doc = document) {
   setText(doc.getElementById('s-inject'), '—');
   setText(doc.getElementById('hub'), '—');
   const scoreEl = doc.getElementById('s-score');
-  if (scoreEl) scoreEl.className = 'stat-num';
+  if (scoreEl) scoreEl.className = 'v';
 
   const body = doc.getElementById('pkg-body');
   if (body) {

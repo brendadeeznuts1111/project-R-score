@@ -23,16 +23,10 @@
     .ih-shell--yellow { border-top: 3px solid var(--yellow, #d29922); }
     .ih-shell--red { border-top: 3px solid var(--red, #f85149); }
     .ih-shell--neutral { border-top: 3px solid var(--border); }
-    .doc-hero { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin: 16px 0 8px; }
-    .doc-hero h1 { font-size: 1.35rem; font-weight: 650; margin: 0; }
-    .doc-badge {
-      font-size: 12px; font-weight: 650; letter-spacing: .04em; text-transform: uppercase;
-      padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border);
-    }
-    .doc-badge.green { color: var(--green, #3fb950); border-color: #238636; background: color-mix(in srgb, var(--green, #3fb950) 14%, transparent); }
-    .doc-badge.yellow { color: var(--yellow, #d29922); border-color: #9e6a03; background: color-mix(in srgb, var(--yellow, #d29922) 14%, transparent); }
-    .doc-badge.red { color: var(--red, #f85149); border-color: #da3633; background: color-mix(in srgb, var(--red, #f85149) 14%, transparent); }
-    .doc-badge.neutral { color: var(--text-dim); border-color: var(--border); background: transparent; }
+    #ih-stats.portal-stat-grid { margin: 16px 0; }
+    #ih-stats .portal-stat { cursor: default; }
+    #ih-stats .portal-stat:hover { transform: none; box-shadow: none; }
+    .ih-hero.portal-hero--card { margin-top: 8px; }
     .ih-legend {
       display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center;
       margin: 4px 0 12px; font-size: 12px; color: var(--text-dim);
@@ -47,20 +41,6 @@
     .ih-chip--yellow { color: var(--yellow, #d29922); border-color: #9e6a03; background: color-mix(in srgb, var(--yellow, #d29922) 16%, transparent); }
     .ih-chip--red { color: var(--red, #f85149); border-color: #da3633; background: color-mix(in srgb, var(--red, #f85149) 16%, transparent); }
     .ih-chip--neutral { color: var(--text-dim); border-color: var(--border); background: transparent; }
-    .doc-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 16px 0; }
-    .doc-stat {
-      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px;
-      border-left-width: 3px;
-    }
-    .doc-stat--green { border-left-color: var(--green, #3fb950); }
-    .doc-stat--yellow { border-left-color: var(--yellow, #d29922); }
-    .doc-stat--red { border-left-color: var(--red, #f85149); }
-    .doc-stat--neutral { border-left-color: var(--border); }
-    .doc-stat--green .v { color: var(--green, #3fb950); }
-    .doc-stat--yellow .v { color: var(--yellow, #d29922); }
-    .doc-stat--red .v { color: var(--red, #f85149); }
-    .doc-stat .k { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
-    .doc-stat .v { font-size: 18px; font-weight: 650; font-variant-numeric: tabular-nums; word-break: break-word; }
     .doc-panel {
       background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
       padding: 16px 18px; margin-bottom: 16px; border-top-width: 2px;
@@ -168,9 +148,6 @@
     /* Mobile / Pixel-class viewports */
     @media (max-width: 720px) {
       .doc-wrap { padding: 0 max(12px, env(safe-area-inset-right)) 32px max(12px, env(safe-area-inset-left)); }
-      .doc-hero h1 { font-size: 1.15rem; }
-      .doc-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-      .doc-stat .v { font-size: 16px; }
       .doc-actions button, .doc-actions a.btn {
         min-height: 40px; padding: 8px 12px; font-size: 13px; flex: 1 1 calc(50% - 8px);
       }
@@ -182,7 +159,6 @@
       .ih-action .copy-cli { min-height: 36px; padding: 6px 10px; }
     }
     @media (max-width: 400px) {
-      .doc-stats { grid-template-columns: 1fr; }
       .doc-actions button, .doc-actions a.btn { flex: 1 1 100%; }
     }
   </style>
@@ -244,13 +220,25 @@
       </div>
     </div>
   </header>
-  <main class="doc-wrap ih-shell ih-shell--yellow" id="ih-shell">
-    <div class="doc-hero">
-      <h1>Install hygiene</h1>
-      <span id="ih-tone" class="doc-badge yellow" data-tone="neutral">attention</span>
-      <span id="ih-source">offline SSR</span>
-      <p class="dim" id="ih-meta">generated 2026-07-31T08:16:23.929Z · bun 1.4.0 · offline SSR bake</p>
-    </div>
+  <main class="portal-page doc-wrap ih-shell ih-shell--yellow" id="ih-shell">
+    <section class="portal-hero portal-hero--card ih-hero" aria-labelledby="ih-hero-title">
+      <p class="portal-eyebrow">Bun install · cache · verify</p>
+      <h2 id="ih-hero-title">Install hygiene</h2>
+      <p class="hero-sub">
+        Cache size vs prune threshold, npm-install drift, and <code>install:verify</code> checks —
+        color-coded for operator triage.
+      </p>
+      <div class="portal-hero-meta">
+        <span id="ih-tone" class="portal-gate warn" data-tone="yellow" aria-live="polite"><span class="dot" aria-hidden="true"></span>attention</span>
+        <span id="ih-source" class="portal-baked">offline SSR</span>
+        <span class="portal-baked" id="ih-meta">generated 2026-07-31T08:16:23.929Z · bun 1.4.0 · offline SSR bake</span>
+        <div class="portal-source-links" aria-label="Related artifacts">
+          <a href="/registry/install-hygiene-report.json">JSON</a>
+          <a href="/portal/bunfig/">bunfig</a>
+          <a href="/portal/doctor/">doctor</a>
+        </div>
+      </div>
+    </section>
     <div class="ih-legend" aria-label="Color legend">
       <span><span class="ih-chip ih-chip--green">green</span> ok / pass / clean</span>
       <span><span class="ih-chip ih-chip--yellow">yellow</span> attention (prune · schema · mismatch)</span>
@@ -281,7 +269,7 @@ reasons: cache over prune threshold</pre>
       <a class="btn" href="/portal/packages/">Packages</a>
     </div>
 
-    <div class="doc-stats" id="ih-stats"><div class="doc-stat doc-stat--yellow" data-tone="yellow"><div class="k">overall</div><div class="v">attention</div></div><div class="doc-stat doc-stat--yellow" data-tone="yellow"><div class="k">cache size</div><div class="v">3.62 GB</div></div><div class="doc-stat doc-stat--yellow" data-tone="yellow"><div class="k">would prune</div><div class="v">yes</div></div><div class="doc-stat doc-stat--green" data-tone="green"><div class="k">npm install</div><div class="v">clean</div></div><div class="doc-stat doc-stat--green" data-tone="green"><div class="k">install:verify</div><div class="v">pass</div></div><div class="doc-stat doc-stat--neutral" data-tone="neutral"><div class="k">bun</div><div class="v">1.4.0</div></div></div>
+    <div class="portal-stat-grid" id="ih-stats" aria-label="Install hygiene summary"><div class="portal-stat warn" data-tone="yellow"><div class="k">overall</div><div class="v">attention</div></div><div class="portal-stat warn" data-tone="yellow"><div class="k">cache size</div><div class="v">3.62 GB</div></div><div class="portal-stat warn" data-tone="yellow"><div class="k">would prune</div><div class="v">yes</div></div><div class="portal-stat ok" data-tone="green"><div class="k">npm install</div><div class="v">clean</div></div><div class="portal-stat ok" data-tone="green"><div class="k">install:verify</div><div class="v">pass</div></div><div class="portal-stat muted" data-tone="neutral"><div class="k">bun</div><div class="v">1.4.0</div></div></div>
 
     <div class="doc-panel doc-panel--neutral" id="ih-panel-actions" data-tone="neutral">
       <h2>Recommended actions</h2>

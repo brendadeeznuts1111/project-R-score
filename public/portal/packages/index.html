@@ -16,15 +16,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/portal/style.css" />
   <style>
-    .pkg-board { max-width: 1100px; margin: 0 auto; padding: 0 24px 48px; }
-    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0 28px; }
-    @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(6, 1fr); } }
-    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
-    .stat-card .stat-num { font-size: 26px; font-weight: 600; }
-    .stat-card .stat-label { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+    .pkg-board.portal-page { max-width: 1100px; }
     .grade-healthy { color: var(--green, #3dd68c); }
     .grade-needs-improvement { color: var(--yellow, #e6b84d); }
     .grade-critical { color: var(--red, #f07178); }
+    #pkg-summary-cards.portal-stat-grid { margin: 0 0 20px; }
+    #pkg-summary-cards .portal-stat { cursor: default; }
+    #pkg-summary-cards .portal-stat:hover { transform: none; box-shadow: none; }
     .action-hint { color: var(--text-dim); font-size: 12px; }
     table.pkg-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     table.pkg-table th, table.pkg-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
@@ -42,7 +40,6 @@
     .ops-banner.hidden { display: none; }
     .error-hint { margin: 8px 0 0; font-size: 13px; }
     .retry-btn { cursor: pointer; }
-    @media (max-width: 720px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
     /* Dependency graph (SVG, no D3/Mermaid) */
     .pkg-dep-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin: 20px 0 24px; }
     .pkg-dep-panel h3 { margin: 0 0 6px; font-size: 14px; }
@@ -103,34 +100,15 @@
       display: inline-block; width: 10px; height: 10px; border-radius: 2px;
       margin-inline-end: 6px; vertical-align: middle; border: 1px solid var(--border);
     }
-    /* —— enhancement: hero, soft-pass cards, role mix, table tools —— */
-    .pkg-hero-top {
-      display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: flex-start;
-      justify-content: space-between; margin-bottom: 8px;
-    }
-    .pkg-hero-top h2 { margin: 0; }
-    .pkg-grade-pill {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border);
-      background: var(--surface); font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
-    }
-    .pkg-grade-pill .pill-score { font-family: ui-monospace, monospace; font-size: 15px; }
-    .pkg-grade-pill.grade-healthy { border-color: color-mix(in srgb, var(--green, #3dd68c) 45%, var(--border)); }
-    .pkg-grade-pill.grade-needs-improvement { border-color: color-mix(in srgb, var(--yellow, #e6b84d) 45%, var(--border)); }
-    .pkg-grade-pill.grade-critical { border-color: color-mix(in srgb, var(--red, #f07178) 45%, var(--border)); }
-    .pkg-quick-links {
-      display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 4px;
-    }
-    .pkg-quick-links a {
-      font-size: 12px; padding: 5px 10px; border-radius: 8px;
-      border: 1px solid var(--border); background: var(--surface);
-      color: var(--text); text-decoration: none;
-    }
-    .pkg-quick-links a:hover { border-color: var(--accent); color: var(--accent); }
+    /* —— enhancement: soft-pass cards, role mix, table tools —— */
+    .pkg-hero.portal-hero--card .portal-hero-meta { width: 100%; }
+    .pkg-grade-pill.portal-gate { margin-left: auto; text-transform: none; letter-spacing: 0.02em; }
+    .pkg-grade-pill .pill-score { font-size: 13px; }
+    .pkg-grade-pill.grade-healthy { color: var(--green, #3fb950); border-color: color-mix(in srgb, var(--green, #3dd68c) 45%, var(--border)); }
+    .pkg-grade-pill.grade-needs-improvement { color: var(--yellow, #d29922); border-color: color-mix(in srgb, var(--yellow, #e6b84d) 45%, var(--border)); }
+    .pkg-grade-pill.grade-critical { color: var(--red, #f85149); border-color: color-mix(in srgb, var(--red, #f07178) 45%, var(--border)); }
+    .pkg-quick-links.portal-source-links { margin-left: 0; width: 100%; }
     .pkg-quick-links a.external::after { content: " ↗"; opacity: 0.55; font-size: 10px; }
-    .stat-card .stat-sub {
-      margin-top: 6px; font-size: 11px; color: var(--text-dim); line-height: 1.35;
-    }
     .pkg-role-mix {
       margin: 0 0 20px; padding: 12px 14px; border: 1px solid var(--border);
       border-radius: var(--radius); background: var(--surface);
@@ -262,29 +240,29 @@
     </div>
   </header>
 
-  <main class="main pkg-board">
-    <section class="hero">
-      <div class="pkg-hero-top">
-        <div>
-          <h2>Packages graph map</h2>
-          <p class="hero-sub">Multi-surface · page→registry · lib hubs · orphan triage (schema v13 · surfaces v3)</p>
-        </div>
-        <div id="board-grade-pill" class="pkg-grade-pill" aria-live="polite">
+  <main class="main pkg-board portal-page">
+    <section class="portal-hero portal-hero--card pkg-hero" aria-labelledby="pkg-hero-title">
+      <p class="portal-eyebrow">Workspace graph · publish soft-pass</p>
+      <h2 id="pkg-hero-title">Packages graph map</h2>
+      <p class="hero-sub">Multi-surface · page→registry · lib hubs · orphan triage (schema v13 · surfaces v3)</p>
+      <div class="portal-hero-meta">
+        <div id="board-grade-pill" class="portal-gate pkg-grade-pill" aria-live="polite">
+          <span class="dot" aria-hidden="true"></span>
           <span class="pill-score" id="pill-score">—</span>
           <span id="pill-grade">loading</span>
         </div>
+        <span class="portal-baked" id="gen-meta">Loading…</span>
+        <nav class="pkg-quick-links portal-source-links" aria-label="Related surfaces">
+          <a href="/portal/tennis/" title="Tennis tenant board">Tennis</a>
+          <a class="external" href="https://tennis.factory-wager.com" target="_blank" rel="noopener noreferrer" title="Market Desk Worker">Tennis HQ</a>
+          <a href="/portal/" title="Registry index">Registry</a>
+          <a href="/portal/env/" title="Vault map / env inject">Env</a>
+          <a href="/registry/packages-graph-map.json" target="_blank" rel="noopener">graph JSON</a>
+          <a href="/registry/ssot-flow-soft.json" target="_blank" rel="noopener">ssot soft-pass</a>
+          <a href="/registry/pm-proof.json" target="_blank" rel="noopener">pm-proof</a>
+        </nav>
       </div>
-      <p class="meta" id="gen-meta">Loading…</p>
-      <p class="meta" id="package-info-meta">Related package-info…</p>
-      <nav class="pkg-quick-links" aria-label="Related surfaces">
-        <a href="/portal/tennis/" title="Tennis tenant board">Tennis board</a>
-        <a class="external" href="https://tennis.factory-wager.com" target="_blank" rel="noopener noreferrer" title="Market Desk Worker">Tennis HQ runtime</a>
-        <a href="/portal/" title="Registry index">Registry</a>
-        <a href="/portal/env/" title="Vault map / env inject">Env / vault</a>
-        <a href="/registry/packages-graph-map.json" target="_blank" rel="noopener">graph JSON</a>
-        <a href="/registry/ssot-flow-soft.json" target="_blank" rel="noopener">ssot soft-pass</a>
-        <a href="/registry/pm-proof.json" target="_blank" rel="noopener">pm-proof</a>
-      </nav>
+      <p class="meta" id="package-info-meta" style="margin-top:12px">Related package-info…</p>
     </section>
 
     <section class="pkg-dep-panel" id="publish-plane-panel" aria-label="Publish plane soft-pass">
@@ -303,13 +281,13 @@
 
     <div id="pkg-error-banner" class="ops-banner error hidden" role="alert"></div>
 
-    <div class="stats-row" id="pkg-summary-cards" aria-label="Packages summary">
-      <div class="stat-card"><div class="stat-num" id="s-score">—</div><div class="stat-label">board score</div><div class="stat-sub" id="s-score-sub">schema · bake age</div></div>
-      <div class="stat-card"><div class="stat-num" id="s-avg">—</div><div class="stat-label">avg package score</div><div class="stat-sub" id="s-avg-sub">across packages/*</div></div>
-      <div class="stat-card"><div class="stat-num" id="s-actions">—</div><div class="stat-label">open actions</div><div class="stat-sub" id="s-actions-sub">archive / coupling</div></div>
-      <div class="stat-card"><div class="stat-num" id="s-consumed">—</div><div class="stat-label">consumed</div><div class="stat-sub">imported outside packages/</div></div>
-      <div class="stat-card"><div class="stat-num" id="s-dormant">—</div><div class="stat-label">dormant</div><div class="stat-sub">no outside consumers</div></div>
-      <div class="stat-card"><div class="stat-num" id="s-pkg-count">—</div><div class="stat-label">packages</div><div class="stat-sub" id="s-pkg-sub">workspace graph plane</div></div>
+    <div class="portal-stat-grid" id="pkg-summary-cards" aria-label="Packages summary">
+      <div class="portal-stat muted"><div class="k">board score</div><div class="v" id="s-score">—</div><div class="hint" id="s-score-sub">schema · bake age</div></div>
+      <div class="portal-stat muted"><div class="k">avg package score</div><div class="v" id="s-avg">—</div><div class="hint" id="s-avg-sub">across packages/*</div></div>
+      <div class="portal-stat muted"><div class="k">open actions</div><div class="v" id="s-actions">—</div><div class="hint" id="s-actions-sub">archive / coupling</div></div>
+      <div class="portal-stat ok"><div class="k">consumed</div><div class="v" id="s-consumed">—</div><div class="hint">imported outside packages/</div></div>
+      <div class="portal-stat warn"><div class="k">dormant</div><div class="v" id="s-dormant">—</div><div class="hint">no outside consumers</div></div>
+      <div class="portal-stat muted"><div class="k">packages</div><div class="v" id="s-pkg-count">—</div><div class="hint" id="s-pkg-sub">workspace graph plane</div></div>
     </div>
     <div class="pkg-role-mix" id="pkg-role-mix" aria-label="Role mix" hidden>
       <div class="pkg-role-mix-head">

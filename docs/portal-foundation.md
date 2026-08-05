@@ -202,7 +202,7 @@ Shared layout / status classes in [`public/portal/style.css`](../public/portal/s
 | `.portal-actions` + `.btn` / `.btn-primary` | Secondary outline actions. |
 | `.portal-banner` | Status strip + `.dot` (ok/warn/bad). |
 
-Operator boards that already use the raised bar: Concepts · Surfaces · Skills · Env · Glossary · Brands. Prefer these primitives when upgrading Catalog · Bunfig · Console-format · Packages · Doctor.
+Operator boards that already use the raised bar: Concepts · Surfaces · Skills · Env · Glossary · Brands · Catalog · Bunfig · Console-format · Doctor · Partners · Packages · Failures · Vault · Install-hygiene. Prefer these primitives for remaining boards.
 
 **Tone contract (only):** `ok → var(--green)` · `warn → var(--yellow)` · `bad → var(--red)` · `neutral → var(--text-dim)`. Do not use Tailwind greens (`#16a34a`) or light badge fills on portal boards.
 
