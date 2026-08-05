@@ -10,7 +10,7 @@
  */
 import {
   applyDeskMaxBetsToCatalog,
-  buildDeskCoverageReport,
+  parseDeskCoverageReport,
 } from '../lib/bookmakers/desk-coverage.ts';
 import { loadBookmakerRegistry } from '../lib/bookmakers/resolve.ts';
 import { jsonOut } from '../lib/console-depth.ts';
@@ -32,7 +32,7 @@ async function main(): Promise<void> {
   }
   const desk = JSON.parse(await Bun.file(DESK_PATH).text());
   const registry = await loadBookmakerRegistry(REGISTRY_PATH);
-  const report = buildDeskCoverageReport(desk, registry);
+  const report = parseDeskCoverageReport(desk, registry);
 
   if (writeBake) {
     await Bun.write(COVERAGE_BAKE, `${JSON.stringify(report, null, 2)}\n`);
