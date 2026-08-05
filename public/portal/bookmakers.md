@@ -61,11 +61,16 @@ public catalog only** (`schemaVersion: 2`). Ops credentials live under
 
 ```bash
 bun run bookmakers:migrate          # v0.3 mirror → v0.4 public + ops
+bun run bookmakers:desk-coverage    # seat desk labels ↔ registry (Orange777 unmatched)
+bun run bookmakers:desk-coverage -- --apply-max
+bun run bookmakers:prepare-publish  # sync package PUBLIC_BOOKMAKERS + tarball
 bun run bookmakers:bake             # from published package (prefers PUBLIC_BOOKMAKERS)
+bun run bookmakers:bake -- --local  # offline from artifacts/.../packages/bookmakers
 bun run bookmakers:bake:check
 bun test tests/bookmakers-registry-bake.test.ts
 bun test tests/bookmakers-migrate-v04.test.ts
 bun test tests/bookmakers-board.test.ts
+bun test tests/bookmakers-desk-coverage.test.ts
 ```
 
 ## Failure paths
@@ -76,6 +81,8 @@ bun test tests/bookmakers-board.test.ts
 | `apiKeyEnv` in public JSON | Re-run migrate · never bake ops into `public/` |
 | Board empty domains | Ensure `urls.web` present (board falls back to `domain`) |
 | brandGroup missing audit | Enrichment map in `lib/bookmakers/v04-types.ts` |
-| Stale package bake | Publish `@factorywager/bookmakers@0.4.x` with `PUBLIC_BOOKMAKERS` |
+| Stale package bake | `bookmakers:prepare-publish` → `factory:publish` 0.4.0 · until then migrate |
+| Desk `Orange777` unmatched | No domain SSOT — keep unmatched; do not invent registry id |
+| Desk `Partner book TBD` | Placeholder (not a book) |
 
 Related: [limits.md](./limits.md) · [partners.md](./partners.md) · [dod.md](./dod.md) · [routing.md](./routing.md).

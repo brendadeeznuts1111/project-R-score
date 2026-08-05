@@ -11,6 +11,9 @@ first-class portal surface on the live domain.
 | Artifact split (v0.4.0) | [`artifact-registry/bookmakers/v0.4.0/`](../../../artifact-registry/bookmakers/v0.4.0/) — `public/books.json` + `ops/books.json` (**ops never on Pages**) |
 | Bake | `bun run bookmakers:bake` · check `bookmakers:bake:check` · script [`scripts/bake-bookmakers-board.ts`](../../../scripts/bake-bookmakers-board.ts) |
 | Migrate | `bun run bookmakers:migrate` · [`scripts/migrate-bookmakers-v0.3-to-v0.4.ts`](../../../scripts/migrate-bookmakers-v0.3-to-v0.4.ts) |
+| Desk coverage | `bun run bookmakers:desk-coverage` · [`scripts/bookmakers-desk-coverage.ts`](../../../scripts/bookmakers-desk-coverage.ts) |
+| Prepare publish | `bun run bookmakers:prepare-publish` · local package under `artifacts/deeplink-automation/packages/bookmakers/` |
+| Bake local | `bun run bookmakers:bake -- --local` (uses local 0.4 package, no registry fetch) |
 | Weave | surface `bookmakers` · artifact `bookmakers-registry` ([`lib/http/portal-weave.ts`](../../../lib/http/portal-weave.ts)) |
 | Route manifest | `/portal/bookmakers/` ([`lib/http/portal-route-manifest.ts`](../../../lib/http/portal-route-manifest.ts)) |
 | Chrome nav | `bookmakers` (overflow, ops) ([`lib/portal/chrome-catalog.ts`](../../../lib/portal/chrome-catalog.ts)) |
@@ -58,13 +61,43 @@ Local v0.3 → v0.4 without a published package: `bun run bookmakers:migrate`.
 2. Or migrate: `bun run bookmakers:migrate` from a v0.3 bake.
 3. Commit `public/registry/bookmakers.json` + `artifact-registry/bookmakers/v0.4.0/`.
 
+## Desk coverage
+
+Seat capital desk free-text `book` fields are classified against the registry:
+
+| Class | Examples |
+|-------|----------|
+| matched | `Hard Rock Florida` → `hard-rock-florida` · `parlay21.com` → `parlay21-com` |
+| placeholder | `Partner book TBD` · `SouthFL PPH Desk` |
+| unmatched | `Orange777` (no domain SSOT yet — do not invent a registry id) |
+
+```bash
+bun run bookmakers:desk-coverage
+bun run bookmakers:desk-coverage -- --apply-max   # fill missing limits.maxBetUsd from desk
+```
+
+## Publish 0.4.0 package (when R2 available)
+
+```bash
+bun run bookmakers:prepare-publish
+bun run factory:publish artifacts/deeplink-automation/packages/bookmakers/factorywager-bookmakers-0.4.0.tgz \
+  --name @factorywager/bookmakers --version 0.4.0 --type library
+bun lib/factory/cli.ts snapshot public/registry/registry.json
+bun run bookmakers:bake   # or bookmakers:bake -- --local offline
+```
+
+Until `dist-tags.latest` is **0.4.0** on the artifact registry, Pages mirror is
+maintained via migrate + desk-coverage (not live package bake).
+
 ## Verification
 
 ```bash
 bun run bookmakers:migrate -- --dry-run   # optional
+bun run bookmakers:desk-coverage
 bun test tests/bookmakers-registry-bake.test.ts
 bun test tests/bookmakers-migrate-v04.test.ts
 bun test tests/bookmakers-board.test.ts
+bun test tests/bookmakers-desk-coverage.test.ts
 ```
 
 Live: `/registry/bookmakers.json` + `/portal/bookmakers/` on the Pages host
