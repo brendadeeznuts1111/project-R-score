@@ -23,10 +23,10 @@ remains intentionally curated here;
 
 | Plane           | Coverage                                | Authority                                                                 | Drift check                     |
 | --------------- | --------------------------------------- | ------------------------------------------------------------------------- | ------------------------------- |
-| Portal pages    | 31 boards + Home                        | [`lib/portal/page-concepts.ts`](lib/portal/page-concepts.ts)              | compare [Portal boards](#portal-boards) to `public/portal/*/index.html` |
+| Portal pages    | 31 boards + Home                        | [`lib/portal/page-concepts.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/portal/page-concepts.ts)              | compare [Portal boards](#portal-boards) to `public/portal/*/index.html` |
 | Harness tenants | all `docs/harness/tenants/*.md`         | [`docs/harness/tenants/`](docs/harness/tenants/)                          | list dir vs [Tenants](#harness-tenants) |
 | Registry links  | Curated links present                   | [`public/registry/`](public/registry/)                                    | paths must exist under `public/registry/` |
-| Wiki links      | Published entrypoints                   | `_config.yml` · [`tools/wiki-link-check.ts`](tools/wiki-link-check.ts)    | `bun run wiki:links:check`      |
+| Wiki links      | Published entrypoints                   | `_config.yml` · [`tools/wiki-link-check.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/wiki-link-check.ts)    | `bun run wiki:links:check`      |
 | Public plane    | Portal · registry · monitoring · lander | [`public-plane.md`](docs/harness/tenants/public-plane.md)                 | `bun run public:discover:check` |
 
 ## Platform entry
@@ -54,7 +54,7 @@ authority, and the shortest proof command.
 | Inspect compliance controls                | [Compliance](https://score.factory-wager.com/portal/compliance/)                                                                       | [`compliance-portal.md`](docs/harness/tenants/compliance-portal.md)                                                                                                                                  | `bun run compliance:verify`                   |
 | Diagnose portal or install health          | [Doctor](https://score.factory-wager.com/portal/doctor/) · [Install hygiene](https://score.factory-wager.com/portal/install-hygiene/)  | [`portal-doctor.md`](docs/harness/tenants/portal-doctor.md) · [`docs/UNIFIED.md`](docs/UNIFIED.md)                                                                                                   | `bun run portal:doctor:ci`                    |
 | Audit deploy, Access, and routing          | [Health](https://score.factory-wager.com/portal/health/) · [Surfaces](https://score.factory-wager.com/portal/surfaces/)                | [`cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) · [`cloudflare-access.md`](docs/harness/tenants/cloudflare-access.md)                                                              | `bun run cloudflare:preflight`                |
-| Find a domain term or branded value        | [Glossary](https://score.factory-wager.com/portal/glossary/) · [Brands](https://score.factory-wager.com/portal/brands/)                | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md) · [`lib/types/branded/README.md`](lib/types/branded/README.md) | `bun run glossary:verify`                     |
+| Find a domain term or branded value        | [Glossary](https://score.factory-wager.com/portal/glossary/) · [Brands](https://score.factory-wager.com/portal/brands/)                | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md) · [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md) | `bun run glossary:verify`                     |
 | Govern semantic concepts and relationships | [Concepts](https://score.factory-wager.com/portal/concepts/) · [Concept graph](https://score.factory-wager.com/portal/concepts/graph/) | [`docs/CONCEPT_LIFECYCLE.md`](docs/CONCEPT_LIFECYCLE.md) · [`docs/SURFACE_COVERAGE.md`](docs/SURFACE_COVERAGE.md)                                                                                    | `bun run quality:concept`                     |
 | Investigate harness or documentation drift | [`docs/harness/`](docs/harness/) · [Failures](https://score.factory-wager.com/portal/failures/)                                        | [`docs-integrity.md`](docs/harness/tenants/docs-integrity.md) · [`reference-discovery.md`](docs/harness/tenants/reference-discovery.md)                                                              | `bun run discover:compose:check`              |
 
@@ -80,7 +80,7 @@ Bidirectional SSOT between GitHub Pages (this wiki) and Cloudflare Pages
 | Mechanism                                                                                                  | Role                                                                        |
 | ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | [`portal-weave.json`](https://score.factory-wager.com/registry/portal-weave.json) | Machine cross-links: `surfaces[]`, `artifacts[]`, **`wiki[]`**, `scripts[]` |
-| [`lib/http/wiki-nav.ts`](lib/http/wiki-nav.ts)                                    | Portal chrome wiki URL · weave `wiki[]` bake source                         |
+| [`lib/http/wiki-nav.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/http/wiki-nav.ts)                                    | Portal chrome wiki URL · weave `wiki[]` bake source                         |
 | [`registry-index.md`](registry-index.md)                                                                   | Registry-focused wiki companion                                             |
 | Portal ops dashboard                                                                                       | Renders weave surfaces + wiki links from JSON                               |
 
@@ -251,8 +251,8 @@ Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc:
 
 | Topic           | Doc                                                                                                                                                      |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Identity / auth | [`lib/identity/README.md`](lib/identity/README.md) · `bun test tests/identity-*.test.ts` |
-| Branded IDs     | [`lib/types/branded/README.md`](lib/types/branded/README.md)                             |
+| Identity / auth | [`lib/identity/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/identity/README.md) · `bun test tests/identity-*.test.ts` |
+| Branded IDs     | [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md)                             |
 | Wire boundary   | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md)                                                                                                         |
 | Bun native      | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) · [Utilities guides map](docs/BUN_NATIVE_CAPABILITIES.md#utilities-guides-map)      |
 

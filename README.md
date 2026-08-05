@@ -24,18 +24,18 @@ from `public/` and `functions/`, with machine-readable proofs baked under
 | Wiki full index | [`wiki-index.md`](wiki-index.md) — portal · registry · tenants · proof loop |
 | Registry index | [`registry-index.md`](registry-index.md) — bake map + portal consumers |
 | Workspace map | [`STRUCTURE.md`](STRUCTURE.md) |
-| Coding standards | [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) · [`.custom-instructions.md`](.custom-instructions.md) |
+| Coding standards | [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) · [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md) |
 | Bun install policy | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
 | Bun native capabilities | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) · [utilities map](docs/BUN_NATIVE_CAPABILITIES.md#utilities-guides-map) |
-| Bun runtime conventions | [`lib/bun-runtime.md`](lib/bun-runtime.md) — process, TTY, paths, Markdown, cron, networking |
+| Bun runtime conventions | [`lib/bun-runtime.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/bun-runtime.md) — process, TTY, paths, Markdown, cron, networking |
 | Import boundaries | [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md) |
 | Wire boundary (parse once) | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) |
 | Portal foundation | [`docs/portal-foundation.md`](docs/portal-foundation.md) |
 | Portal operator command map | [`docs/portal-ops-board-map.md`](docs/portal-ops-board-map.md) — generated from Portal weave v2 |
 | Harness JIT | [`docs/harness/`](docs/harness/) · `bun run harness:status` |
 | Local merge + Pages delivery | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) · [`cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) · `bun run bun:ci` |
-| Projects triage | [`projects/README.md`](projects/README.md) |
-| Path SSOT (code) | [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) (`CANONICAL_REPO_DOCS`) |
+| Projects triage | [`projects/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/projects/README.md) |
+| Path SSOT (code) | [`lib/docs/repo-docs.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/repo-docs.ts) (`CANONICAL_REPO_DOCS`) |
 | Harness thesis | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) (domain types; prefer **artifact** over **codebase**) |
 
 **Remotes:** `origin` →
@@ -54,10 +54,10 @@ from `public/` and `functions/`, with machine-readable proofs baked under
 | Registry / evidence  | `public/registry/`                        | committed JSON bakes consumed by portal boards and verification    |
 
 The portal’s route, chrome, theme, glossary, and command surfaces are governed
-in source: [`portal-route-manifest.ts`](lib/http/portal-route-manifest.ts),
-[`chrome-catalog.ts`](lib/portal/chrome-catalog.ts),
-[`theme.ts`](lib/portal/theme.ts), and
-[`portal-weave.ts`](lib/http/portal-weave.ts). Additions must update those
+in source: [`portal-route-manifest.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/http/portal-route-manifest.ts),
+[`chrome-catalog.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/portal/chrome-catalog.ts),
+[`theme.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/portal/theme.ts), and
+[`portal-weave.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/http/portal-weave.ts). Additions must update those
 owners and pass the static portal gates.
 
 ## Live surfaces
@@ -119,7 +119,7 @@ launcher: `bun run dev:portal`. Bake: `bun run ops:snapshot` (full) ·
 | Proof taxonomy             | [`/registry/proof-taxonomy-audit.json`](https://score.factory-wager.com/registry/proof-taxonomy-audit.json)                                                                                                                                                       | Cross-proof contracts                                             |
 
 Full map: [`registry-index.md`](registry-index.md). Weave source:
-[`lib/http/portal-weave.ts`](lib/http/portal-weave.ts) · baked at
+[`lib/http/portal-weave.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/http/portal-weave.ts) · baked at
 [portal-weave.json](https://score.factory-wager.com/registry/portal-weave.json).
 
 ## Operator day loop
@@ -155,7 +155,7 @@ When a decision is unresolved, read **one** owner in
 
 | Lane                         | Entry                                                                                                                                                                |
 | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Identity / auth (Phase 0–2b) | [`lib/identity/README.md`](lib/identity/README.md) · lockout · anomaly · geo · password · JIT |
+| Identity / auth (Phase 0–2b) | [`lib/identity/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/identity/README.md) · lockout · anomaly · geo · password · JIT |
 | Compliance portal (MA/NJ)    | [`compliance-portal.md`](docs/harness/tenants/compliance-portal.md) · `bun run compliance:verify` |
 | Partner limit raises         | [`partner-limits.md`](docs/harness/tenants/partner-limits.md) · `ops:limits:demo` / `predict` |
 | Factory Telegram             | [`telegram-factory.md`](docs/harness/tenants/telegram-factory.md) · `bun run telegram:verify` |
@@ -168,7 +168,7 @@ When a decision is unresolved, read **one** owner in
 | Proton / vault deploy        | [`proton-integration.md`](docs/harness/tenants/proton-integration.md) · `proton:inject:factorywager:reasonix` |
 | Cloudflare Pages             | [`cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) · `bun run cloudflare:env` |
 | Monorepo health              | [`monorepo-health.md`](docs/harness/tenants/monorepo-health.md) · `bun run check:monorepo-health` |
-| Branded IDs                  | [`lib/types/branded/README.md`](lib/types/branded/README.md) · `bun run check:brands:all` |
+| Branded IDs                  | [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md) · `bun run check:brands:all` |
 
 Agent entry (full table): [`AGENTS.md`](AGENTS.md)
 
@@ -203,7 +203,7 @@ projects/active/*                Independent apps by category — see projects/R
 
 Triage tiers `active/`, `experimental/`, and `archive/` are documented under
 `projects/`. Full map: [`STRUCTURE.md`](STRUCTURE.md). Agent scope (what not to
-load): [`projects/README.md`](projects/README.md).
+load): [`projects/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/projects/README.md).
 
 ## Key Commands
 
@@ -275,14 +275,14 @@ Antipattern remediation (after major refactors). Conventions:
 | `bun run fix:scan-non-null-assertions` | `!` assertions → safe access |
 
 Implementations: [`scripts/fix-*.ts`](scripts/) (e.g.
-[`scripts/fix-console-log.ts`](scripts/fix-console-log.ts)).
+[`scripts/fix-console-log.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/scripts/fix-console-log.ts)).
 
 ## Shared Configuration
 
 <!-- markdownlint-disable MD013 -->
-- [`config/ports.ts`](config/ports.ts) — Port defaults (DOCS_SERVER=3000, P2P_PROXY=3002, DASHBOARD=3456, …); env-overridable
-- [`config/r2-env.ts`](config/r2-env.ts) — Cloudflare/R2/Pages SSOT (`CLOUDFLARE_DEFAULTS`, `requireR2Config`)
-- [`.env.example`](.env.example) — identity + secret placeholders + Pages build pins
+- [`config/ports.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/ports.ts) — Port defaults (DOCS_SERVER=3000, P2P_PROXY=3002, DASHBOARD=3456, …); env-overridable
+- [`config/r2-env.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/r2-env.ts) — Cloudflare/R2/Pages SSOT (`CLOUDFLARE_DEFAULTS`, `requireR2Config`)
+- [`.env.example`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.env.example) — identity + secret placeholders + Pages build pins
 - Status: `bun run cloudflare:env` · secrets via Proton inject (never paste into shell history)
 - CORS: `CORS_ALLOWED_ORIGINS` (comma-separated; empty = allow all)
 - Bind: `SERVER_HOST` (default `localhost`)
@@ -290,13 +290,13 @@ Implementations: [`scripts/fix-*.ts`](scripts/) (e.g.
 
 ## Project Policies
 
-- **Standards:** [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) · [`.custom-instructions.md`](.custom-instructions.md)
+- **Standards:** [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) · [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md)
 - **Wire boundary:** [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) — parse once; no interior `unknown` / `decodeUnknown*`
 - **Import boundaries:** [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md)
 - **Layout:** [`STRUCTURE.md`](STRUCTURE.md) · homebase: [`docs/organization/HOMEBASE_DISCOVERY.md`](docs/organization/HOMEBASE_DISCOVERY.md)
-- **Portal:** routes → [`portal-route-manifest.ts`](lib/http/portal-route-manifest.ts) · chrome → [`chrome-catalog.ts`](lib/portal/chrome-catalog.ts) · theme/colors → [`theme.ts`](lib/portal/theme.ts) + `bun run test:colors`
+- **Portal:** routes → [`portal-route-manifest.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/http/portal-route-manifest.ts) · chrome → [`chrome-catalog.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/portal/chrome-catalog.ts) · theme/colors → [`theme.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/portal/theme.ts) + `bun run test:colors`
 - **Workspace hygiene:** `bun run validate:workspaces`
-- **Harness:** brands → [`lib/types/branded/README.md`](lib/types/branded/README.md) · console depth → [`lib/console-depth.ts`](lib/console-depth.ts)
+- **Harness:** brands → [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md) · console depth → [`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts)
 - **Merge authority:** local `bun run bun:ci` — never a hosted check as merge dependency
 - **ESLint conventions:** no `console.log`; no `any`; named exports only; no non-null `!`; no empty `catch`; no hardcoded secrets
 - **Monorepo tooling:** `--filter` patterns · `build:affected` / `test:affected`
