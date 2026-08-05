@@ -3,6 +3,8 @@
  * Pure state management, no DOM.
  */
 
+import { computeHealth } from './health.js';
+
 const DEFAULT_STATE = Object.freeze({
   query: '',
   types: [],
@@ -13,7 +15,13 @@ const DEFAULT_STATE = Object.freeze({
 });
 
 function parseList(params, key) {
-  return params.get(key)?.split(',').map(value => value.trim()).filter(Boolean) || [];
+  return (
+    params
+      .get(key)
+      ?.split(',')
+      .map(value => value.trim())
+      .filter(Boolean) || []
+  );
 }
 
 /**
@@ -88,9 +96,11 @@ export function applyFilters(packages, state) {
     const release = info.releases?.[String(info['dist-tags']?.latest)];
     if (state.query) {
       const q = state.query.toLowerCase();
-      if (!name.toLowerCase().includes(q) &&
-          !release?.description?.toLowerCase().includes(q) &&
-          !release?.tags?.some(t => t.toLowerCase().includes(q))) {
+      if (
+        !name.toLowerCase().includes(q) &&
+        !release?.description?.toLowerCase().includes(q) &&
+        !release?.tags?.some(t => t.toLowerCase().includes(q))
+      ) {
         return false;
       }
     }
@@ -110,9 +120,17 @@ export function applyFilters(packages, state) {
     const ra = a[1].releases?.[String(a[1]['dist-tags']?.latest)];
     const rb = b[1].releases?.[String(b[1]['dist-tags']?.latest)];
     switch (state.sort) {
-      case 'version': return String(b[1]['dist-tags']?.latest || '').localeCompare(String(a[1]['dist-tags']?.latest || ''));
+      case 'version':
+        return String(b[1]['dist-tags']?.latest || '').localeCompare(
+          String(a[1]['dist-tags']?.latest || '')
+        );
       case 'date':
         return new Date(rb?.publishedAt || 0).getTime() - new Date(ra?.publishedAt || 0).getTime();
+      case 'health': {
+        const ha = computeHealth(ra, a[1].versions?.length || 0).score;
+        const hb = computeHealth(rb, b[1].versions?.length || 0).score;
+        return hb - ha || a[0].localeCompare(b[0]);
+      }
       default: // name
         return a[0].localeCompare(b[0]);
     }
@@ -134,7 +152,7 @@ export function collectTypes(packages) {
 /** Collect all unique npm scopes from package names for filter chips. */
 export function collectScopes(packages) {
   return [...new Set(packages.map(([name]) => derivePackageScope(name)))].sort((a, b) =>
-    a.localeCompare(b),
+    a.localeCompare(b)
   );
 }
 
