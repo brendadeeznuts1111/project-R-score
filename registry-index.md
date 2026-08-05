@@ -47,15 +47,21 @@ Operator proof bakes (not product boards). Linked from portal [Health](https://s
 
 ## Portal boards (consume registry)
 
-| Board | URL |
-|-------|-----|
-| Ops | [/portal/ops/](https://score.factory-wager.com/portal/ops/) |
-| Compliance | [/portal/compliance/](https://score.factory-wager.com/portal/compliance/) |
-| Partner limits | [/portal/limits/](https://score.factory-wager.com/portal/limits/) |
-| Partner history | [/portal/partner-history/](https://score.factory-wager.com/portal/partner-history/) |
-| TOC Ops | [/portal/toc/](https://score.factory-wager.com/portal/toc/) |
-| Monitoring | [/monitoring/](https://score.factory-wager.com/monitoring/) |
-| Skills | [/portal/skills/](https://score.factory-wager.com/portal/skills/) |
+Primary consumers of baked registry JSON. Full board index: [`wiki-index.md`](wiki-index.md#portal-boards).
+
+| Board | URL | Typical artifacts |
+|-------|-----|-------------------|
+| Ops | [/portal/ops/](https://score.factory-wager.com/portal/ops/) | `ops-summary.json` · weave |
+| Compliance | [/portal/compliance/](https://score.factory-wager.com/portal/compliance/) | `compliance-board.json` |
+| Partner limits | [/portal/limits/](https://score.factory-wager.com/portal/limits/) | `limit-raises.json` |
+| Partner history | [/portal/partner-history/](https://score.factory-wager.com/portal/partner-history/) | limit / partner slices |
+| TOC Ops | [/portal/toc/](https://score.factory-wager.com/portal/toc/) | `toc-ops.json` |
+| Bookmakers | [/portal/bookmakers/](https://score.factory-wager.com/portal/bookmakers/) | `bookmakers.json` |
+| Tennis | [/portal/tennis/](https://score.factory-wager.com/portal/tennis/) | `tennis/*` · agent-auth |
+| Doctor | [/portal/doctor/](https://score.factory-wager.com/portal/doctor/) | `doctor-state.json` |
+| Vault | [/portal/vault/](https://score.factory-wager.com/portal/vault/) | `vault-health.json` |
+| Skills | [/portal/skills/](https://score.factory-wager.com/portal/skills/) | `skills-catalog.json` · harness catalog |
+| Monitoring | [/monitoring/](https://score.factory-wager.com/monitoring/) | `monitoring.json` |
 
 Routing: [`docs/platform-routing.md`](docs/platform-routing.md)
 
