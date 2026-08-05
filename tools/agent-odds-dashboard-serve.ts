@@ -4,20 +4,20 @@
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/hashing — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 /**
- * Serve Bun Agent Live Odds Intelligence dashboard (v1.02) + mock APIs.
+ * Serve Bun Agent Live Odds Intelligence dashboard (v1.03) + mock APIs.
  *
  *   bun run agent:odds-dashboard
  *   open http://127.0.0.1:3000/
  *
  * Static:
- *   public/portal/agent-odds/dashboard-v1.02.html (latest index)
- *   public/portal/agent-odds/dashboard.html (v1.01 if present)
+ *   public/portal/agent-odds/dashboard-v1.03.html (latest index)
+ *   public/portal/agent-odds/dashboard-v1.02.html · dashboard.html (prior)
  *
  * APIs:
- *   GET  /api/odds/options · /api/odds · /api/odds/stats
- *   GET  /api/odds/stream  (SSE)
- *   POST /api/upload       (FormData + Blob)
+ *   GET  /api/odds/options · /api/odds · /api/odds/stats · /api/odds/stream
+ *   POST /api/upload · /api/auth/login · /api/backup
  *   GET  /api/pool · /api/prefetch · /api/platform
  */
 import { join } from 'node:path';
@@ -93,6 +93,16 @@ const poolState = {
   streams: 12,
   prefetchHits: 0,
   http2: true,
+};
+
+/** Demo-only credentials for local mock agent (not production). */
+const DEMO_USER = process.env.AGENT_DEMO_USER || 'analyst';
+const DEMO_PASS = process.env.AGENT_DEMO_PASS || 'password123';
+
+const rateState = {
+  rateCurrent: 12,
+  rateLimit: 100,
+  lastBackup: null as string | null,
 };
 
 function pick<T extends readonly string[]>(arr: T): T[number] {
@@ -270,6 +280,40 @@ const server = Bun.serve({
       return handleUpload(req);
     }
 
+    if (path === '/api/auth/login' && req.method === 'POST') {
+      try {
+        const body = (await req.json()) as {
+          username?: string;
+          password?: string;
+        };
+        const username = body.username?.trim() ?? '';
+        const password = body.password ?? '';
+        if (username === DEMO_USER && password === DEMO_PASS) {
+          rateState.rateCurrent = Math.min(rateState.rateCurrent + 1, rateState.rateLimit);
+          return json({
+            ok: true,
+            user: username,
+            token: 'demo-' + Bun.randomUUIDv7().slice(0, 8),
+            note: 'local mock login — not for production',
+          });
+        }
+        return json({ ok: false, error: 'invalid credentials' }, 401);
+      } catch {
+        return json({ ok: false, error: 'invalid json body' }, 400);
+      }
+    }
+
+    if (path === '/api/backup' && req.method === 'POST') {
+      rateState.lastBackup = new Date().toISOString();
+      rateState.rateCurrent = Math.min(rateState.rateCurrent + 1, rateState.rateLimit);
+      return json({
+        ok: true,
+        message: 'Mock SQLite backup complete',
+        at: rateState.lastBackup,
+        path: 'data/operator-research/backups/mock.db',
+      });
+    }
+
     if (path === '/api/pool') {
       // mild jitter so UI feels live
       poolState.active = 5 + Math.floor(Math.random() * 15);
@@ -295,6 +339,10 @@ const server = Bun.serve({
     }
 
     if (path === '/api/platform') {
+      rateState.rateCurrent = Math.min(
+        rateState.rateCurrent + Math.floor(Math.random() * 3),
+        rateState.rateLimit,
+      );
       return json({
         bun: Bun.version,
         auth: 'mock',
@@ -302,23 +350,34 @@ const server = Bun.serve({
         image: typeof (Bun as { Image?: unknown }).Image !== 'undefined',
         cron: true,
         operators: HOSTS.length,
-        dashboard: 'agent-odds v1.02',
-        features: ['sse', 'formdata', 'pool', 'prefetch'],
+        dashboard: 'agent-odds v1.03',
+        rateCurrent: rateState.rateCurrent,
+        rateLimit: rateState.rateLimit,
+        lastBackup: rateState.lastBackup,
+        features: [
+          'sse',
+          'formdata',
+          'pool',
+          'prefetch',
+          'auth',
+          'backup',
+          'arb-ui',
+          'charts',
+        ],
       });
     }
 
-    // Static: default to v1.02
-    let filePath = path === '/' || path === '' ? '/dashboard-v1.02.html' : path;
-    if (filePath === '/index.html') filePath = '/dashboard-v1.02.html';
+    // Static: default to v1.03
+    let filePath = path === '/' || path === '' ? '/dashboard-v1.03.html' : path;
+    if (filePath === '/index.html') filePath = '/dashboard-v1.03.html';
     if (filePath === '/dashboard.html') {
-      // keep v1.01 available if present
       const v1 = join(DASH_DIR, 'dashboard.html');
       if (!(await Bun.file(v1).exists())) {
-        filePath = '/dashboard-v1.02.html';
+        filePath = '/dashboard-v1.03.html';
       }
     }
     const safe = filePath.replace(/\.\./g, '').replace(/^\/+/, '');
-    const abs = join(DASH_DIR, safe || 'dashboard-v1.02.html');
+    const abs = join(DASH_DIR, safe || 'dashboard-v1.03.html');
     if (!abs.startsWith(DASH_DIR)) {
       return new Response('Forbidden', { status: 403 });
     }
@@ -336,5 +395,5 @@ const server = Bun.serve({
 });
 
 console.log(
-  `agent-odds dashboard v1.02 → http://${server.hostname}:${server.port}/  (SSE · FormData · pool)`,
+  `agent-odds dashboard v1.03 → http://${server.hostname}:${server.port}/  (arb · alerts · charts · auth mock)`,
 );
