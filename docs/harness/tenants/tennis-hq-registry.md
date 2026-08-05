@@ -53,9 +53,10 @@ consumer evidence.
 | ---------------- | ---------------------------------------------------------------------------------------------------- |
 | Runtime          | `https://tennis.factory-wager.com`                                                                   |
 | Worker           | `tennis-hq`                                                                                          |
-| Producer merge   | `cb09198929929ed7b9970eed7f27bb3a82c964d2`                                                           |
-| Worker version   | `9aaae6ba-7293-4cda-b2ab-41cd068a76ca`                                                               |
-| Verified         | 2026-08-05 · identity, shell, glossary; all five unauthenticated v1 reads reject with HTTP 401       |
+| Production tip   | `41c9ab68b4d3d47d0bea92d8877137588a7cfdf1` (`41c9ab6`) · `tennis-hq@1.4.0` · `/api/version` 2026-08-05T17:16:41Z · msg `security(export): gate warehouse-csv/json… (#7)` |
+| Worker version   | `7b9ac02a-18c4-46f5-a724-f07b7fa5925d`                                                               |
+| Git tip (`main`) | May be **ahead** of production tip — do not treat `origin/main` HEAD as live until redeploy + verify |
+| Verified         | 2026-08-05 · `/api/version` ok · unauth `GET /api/v1/research/status` → **401**                      |
 | Inventory        | `config/surfaces.toml` → `/registry/surfaces-state.json`                                             |
 | Cross-host probe | `bun run verify:weave -- --subdomains` → version, glossary, all five configured v1 bearer rejections |
 

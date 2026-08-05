@@ -17,9 +17,10 @@ Two live UIs share the Tennis HQ brand and must not be collapsed into one:
 | Market Desk | `https://tennis.factory-wager.com` | [`plum-spruce-dawn-dune1`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1) ([CONTRIBUTING](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md)) · Worker `tennis-hq` · local sibling `~/Projects/plum-spruce-dawn-dune1` | Interactive desk SPA |
 | Portal board | `https://factory-wager.com/portal/tennis/` | [`public/portal/tennis/`](../../../public/portal/tennis/) | Baked registry evidence board |
 
-Live identity (desk): `tennis-hq@1.4.0` · SHA `1092c5e`
-(`1092c5ea6da9af87bbdb1102b3cd4cc1270790f1`) · matches local producer HEAD /
-`build-id.json`.
+Live identity (desk tip, not git tip): `tennis-hq@1.4.0` · SHA `41c9ab6`
+(`41c9ab68b4d3d47d0bea92d8877137588a7cfdf1`) · Worker deployment
+`7b9ac02a-18c4-46f5-a724-f07b7fa5925d` · probed via `/api/version` 2026-08-05T17:16Z.
+`origin/main` may be ahead until the next verified Wrangler deploy.
 
 ```mermaid
 flowchart LR
@@ -159,14 +160,14 @@ file).
 | URL | Status | Notes |
 | --- | ------ | ----- |
 | `/` | 200 | Title `Tennis HQ · Market Desk`; SSR “Loading desk…” shell |
-| `/api/health` | 200 | `ok`, SHA `1092c5e`, package `tennis-hq@1.4.0` |
-| `/api/version` | 200 | same identity |
+| `/api/health` | 200 | `ok`, package `tennis-hq@1.4.0` (prefer `/api/version` for tip SHA) |
+| `/api/version` | 200 | tip SHA `41c9ab6` · Worker `7b9ac02a…` · 2026-08-05T17:16Z |
 | `/api/glossary` | 200 | 300 entries · `generatedAt` 2026-08-05 |
 | `/build-id.json` | 200 | packageVersion 1.4.0 |
 | `/api/export/hq-json` | 200 | schema `hq-desk/v1` · **`row_count`: 0** |
 | `/api/partners/health` | 200 | snapshot engine; `probed: false` |
 | `/api/partners/health?probe=1` | **500** | `{"ok":false,"error":"operation not permitted"}` |
-| `/api/v1/research/status` | **503** | `contract_auth_unconfigured` (fail-closed) |
+| `/api/v1/research/status` | **401** | `unauthorized` when `PARTNER_API_TOKEN` set (fail-closed; 503 only if secret missing) |
 | `/api/v1/marketdata/desk` | **404** | SPA HTML (not JSON) |
 | `/api/v1/trading/executions` | **404** | SPA HTML |
 | `/api/v1/partners/capacity` | **404** | SPA HTML |
@@ -190,7 +191,7 @@ file).
 | `/registry/tennis/avatar-index.json` | 200 | same bake stamp |
 | `/registry/tennis/agent-auth.json` | 200 | `status: configured` · `generatedAt` 2026-08-05T02:48:46Z |
 | `/registry/tennis/registry.json` | 200 | `lastUpdated` 2026-08-04 |
-| `/registry/surfaces-state.json` | 200 | tennis row **stale vs live**: note still cites SHA `cb091989` / Worker `9aaae6ba…` (bake 2026-08-04); live Worker is `1092c5e` / `873ca076…` |
+| `/registry/surfaces-state.json` | 200 | tennis row note tracks tip SHA · re-bake after tip change (`bun run surfaces:bake`) |
 
 ---
 
