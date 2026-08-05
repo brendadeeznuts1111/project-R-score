@@ -178,7 +178,20 @@ function printHuman(report: DiagnoseReport): void {
       console.info(`  compliance    ${complianceLine}`);
     }
   }
-  console.info(`  liquidity     $${s.liquidity?.total ?? 0}`);
+  {
+    const L = s.liquidity || {};
+    const pos = L.positions;
+    const pool = L.pool;
+    const posBit =
+      pos && (pos.count ?? 0) > 0
+        ? ` · pos avail $${pos.available ?? 0} / dep $${pos.deposited ?? 0} / in-play $${pos.inPlay ?? 0} (n=${pos.count})`
+        : '';
+    const poolBit =
+      pool && (pool.totalLiquidity ?? 0) > 0
+        ? ` · pool $${pool.totalLiquidity} − exp $${pool.totalExposure ?? 0} = $${pool.available ?? 0}`
+        : '';
+    console.info(`  liquidity     $${L.total ?? 0} accounts${posBit}${poolBit}`);
+  }
   console.info(`  tree_nodes    ${report.treeNodes ?? 'unreachable'}`);
   console.info(`  snapshot mtime ${report.snapshotModified ?? 'missing'}`);
   console.info(`  severity      ${report.classification.severity}`);
