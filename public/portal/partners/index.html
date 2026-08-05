@@ -1113,10 +1113,54 @@
         summarizePartnerDesk,
       } from '/portal/partners/partners-board.js';
       import { mountFreshnessBadge } from '/portal/data-freshness.js';
+      import {
+        escHtml,
+        renderPortalStatGrid,
+        renderPortalTableRows,
+      } from '/portal/components/portal-ui.js';
 
       const TELEGRAM_BOT = 'FactoryWagerBot';
 
       const $ = id => document.getElementById(id);
+
+      /** Column defs for shared tbody builders (static thead stays in HTML). */
+      const PARTNER_COLS = [
+        { key: 'code', label: 'Partner' },
+        { key: 'phase', label: 'Phase' },
+        { key: 'tax', label: 'Taxonomy' },
+        { key: 'membership', label: 'Membership' },
+        { key: 'callSign', label: 'Call sign' },
+        { key: 'dm', label: 'DM seat' },
+        { key: 'handshake', label: 'Handshake' },
+        { key: 'invite', label: 'Invite' },
+        { key: 'bot', label: 'Bot' },
+        { key: 'next', label: 'Next' },
+        { key: 'balance', label: 'Balance' },
+      ];
+      const OUTS_COLS = [
+        { key: 'partner', label: 'Partner' },
+        { key: 'phase', label: 'Phase' },
+        { key: 'out', label: 'Out' },
+        { key: 'book', label: 'Book' },
+        { key: 'type', label: 'Type' },
+        { key: 'user', label: 'User' },
+        { key: 'rail', label: 'Rail' },
+        { key: 'max', label: 'Max' },
+        { key: 'status', label: 'Status' },
+        { key: 'note', label: 'Note' },
+      ];
+      const DEPOSIT_COLS = [
+        { key: 'partner', label: 'Partner' },
+        { key: 'callSign', label: 'Call sign' },
+        { key: 'out', label: 'Out' },
+        { key: 'book', label: 'Book' },
+        { key: 'user', label: 'User' },
+        { key: 'rail', label: 'Rail' },
+        { key: 'sendTo', label: 'Send to' },
+        { key: 'max', label: 'Max' },
+        { key: 'freeplay', label: 'Freeplay' },
+        { key: 'status', label: 'Status' },
+      ];
       /** @type {Map<string, { hex?: string, conceptId?: string, label?: string }>} */
       let bookIndex = new Map();
       /** @type {Map<string, object>} */
@@ -1188,10 +1232,9 @@
         );
       }
 
+      /** Escape for HTML text/attrs — shared portal-ui builder. */
       function esc(value) {
-        const el = document.createElement('div');
-        el.textContent = value == null ? '' : String(value);
-        return el.innerHTML;
+        return escHtml(value);
       }
 
       /** Format a ledger balance ("—" when the ops DB projection is absent). */
@@ -1414,16 +1457,16 @@
           gate.className = `portal-gate ${ok ? 'pass' : gaps > 0 ? 'warn' : 'pass'}`;
           gate.innerHTML = `<span class="dot" aria-hidden="true"></span>${ok ? 'ready' : gaps > 0 ? 'gaps' : 'ok'}`;
         }
-        $('partners-stats').innerHTML = cells
-          .map(
-            ([k, v, tone, target, hint]) =>
-              `<button type="button" class="portal-stat ${tone}" data-scroll-target="${esc(target)}">` +
-              `<span class="k">${esc(k)}</span>` +
-              `<span class="v">${esc(v)}</span>` +
-              `<span class="hint">${esc(hint)}</span>` +
-              `</button>`
-          )
-          .join('');
+        $('partners-stats').innerHTML = renderPortalStatGrid(
+          cells.map(([k, v, tone, target, hint]) => ({
+            label: k,
+            value: v,
+            tone: tone || 'muted',
+            hint,
+            button: true,
+            attrs: { 'data-scroll-target': target },
+          }))
+        );
         for (const btn of $('partners-stats').querySelectorAll('[data-scroll-target]')) {
           btn.addEventListener('click', () => {
             const id = btn.getAttribute('data-scroll-target');
@@ -1487,26 +1530,46 @@
         if (count) {
           count.textContent = `${filtered.length} of ${flattenedOuts.length} outs`;
         }
-        tbody.innerHTML = filtered.length
-          ? filtered
-              .map(row => {
-                const out = row.out || {};
-                const outId = out.id || '';
-                return `<tr data-partner-code="${esc(row.partnerCode)}" data-out-status="${esc(row.status)}">
-                <td>${partnerLink(row.partnerCode)}<br><code>${esc(row.callSign)}</code></td>
-                <td>${phaseChip(row.partnerCode)}</td>
-                <td><a href="${partnerOutHash(row.partnerCode, outId)}"><code>${esc(outId)}</code></a></td>
-                <td>${bookChip(row.bookName, out)}</td>
-                <td>${conceptChip(out.book?.typeConceptId || 'book.type.legal', row.bookType, out.book?.color)}</td>
-                <td><code>${esc(row.username)}</code></td>
-                <td>${railChip(row.method, out)}</td>
-                <td>${esc(String(row.maxBet))}</td>
-                <td>${statusChip(row.status, out)}${row.incomplete ? ' · <span class="tone-warn">incomplete</span>' : ''}</td>
-                <td>${esc(out.note || '—')}</td>
-              </tr>`;
-              })
-              .join('')
-          : '<tr><td colspan="10">No outs match filters — check partners-ops bake</td></tr>';
+        tbody.innerHTML = renderPortalTableRows(
+          OUTS_COLS,
+          filtered.map(row => {
+            const out = row.out || {};
+            const outId = out.id || '';
+            return [
+              {
+                html: `${partnerLink(row.partnerCode)}<br><code>${esc(row.callSign)}</code>`,
+              },
+              { html: phaseChip(row.partnerCode) },
+              {
+                html: `<a href="${partnerOutHash(row.partnerCode, outId)}"><code>${esc(outId)}</code></a>`,
+              },
+              { html: bookChip(row.bookName, out) },
+              {
+                html: conceptChip(
+                  out.book?.typeConceptId || 'book.type.legal',
+                  row.bookType,
+                  out.book?.color
+                ),
+              },
+              { html: `<code>${esc(row.username)}</code>` },
+              { html: railChip(row.method, out) },
+              String(row.maxBet),
+              {
+                html:
+                  statusChip(row.status, out) +
+                  (row.incomplete ? ' · <span class="tone-warn">incomplete</span>' : ''),
+              },
+              out.note || '—',
+            ];
+          }),
+          {
+            emptyMessage: 'No outs match filters — check partners-ops bake',
+            rowAttrs: i => ({
+              'data-partner-code': String(filtered[i]?.partnerCode || ''),
+              'data-out-status': String(filtered[i]?.status || ''),
+            }),
+          }
+        );
       }
 
       function routeChip(href, label, color, conceptId = '') {
@@ -1570,35 +1633,56 @@
               return String(ops?.phase || '') === phaseFilter;
             })
           : rows;
-        $('partners-tbody').innerHTML = filtered.length
-          ? filtered
-              .map(row => {
-                const invite = row.inviteLink
-                  ? `<a href="${esc(row.inviteLink)}" target="_blank" rel="noopener">invite</a>`
-                  : '<span class="tone-warn">none</span>';
-                const verify = `${row.verifyPassed ?? '—'}/${row.verifyTotal ?? '—'}`;
-                const ops = opsByPartner.get(normalizePartnerCode(row.partnerCode));
-                const limits = ops?.tracking?.limits || {};
-                const tax = ops
-                  ? `${ops.outs?.length || 0} outs · ${limits.coveragePct ?? 0}% limits`
-                  : '—';
-                const bot = botTopicLinks(row.partnerCode, ops?.phase);
-                return `<tr id="partner-detail-${esc(row.partnerCode)}" data-partner-code="${esc(row.partnerCode)}" data-phase="${esc(ops?.phase || '')}">
-                <td>${partnerLink(row.partnerCode)}</td>
-                <td>${phaseChip(row.partnerCode)}</td>
-                <td>${esc(tax)}${limits.coveragePct != null ? `<div style="margin-top:4px">${coverageBarHtml(limits.coveragePct)}</div>` : ''}</td>
-                <td><code>${esc(row.membershipCell || '—')}</code></td>
-                <td><code>${esc(row.callSign || '—')}</code></td>
-                <td>${esc(row.dmSeatStatus || '—')}</td>
-                <td class="${toneClass(row.handshakeOk)}">${row.handshakeOk ? 'ok' : 'fail'} · ${esc(verify)}</td>
-                <td>${invite}</td>
-                <td>${bot}</td>
-                <td>${esc((row.nextSteps && row.nextSteps[0]) || '—')}</td>
-                <td>${balanceCell(ops)}</td>
-              </tr>`;
-              })
-              .join('')
-          : `<tr><td colspan="11">${phaseFilter ? `No partners in phase ${esc(phaseFilter)}` : 'No partners in telegram-handshake bake'}</td></tr>`;
+        $('partners-tbody').innerHTML = renderPortalTableRows(
+          PARTNER_COLS,
+          filtered.map(row => {
+            const invite = row.inviteLink
+              ? `<a href="${esc(row.inviteLink)}" target="_blank" rel="noopener">invite</a>`
+              : '<span class="tone-warn">none</span>';
+            const verify = `${row.verifyPassed ?? '—'}/${row.verifyTotal ?? '—'}`;
+            const ops = opsByPartner.get(normalizePartnerCode(row.partnerCode));
+            const limits = ops?.tracking?.limits || {};
+            const tax = ops
+              ? `${ops.outs?.length || 0} outs · ${limits.coveragePct ?? 0}% limits`
+              : '—';
+            const bot = botTopicLinks(row.partnerCode, ops?.phase);
+            const taxHtml =
+              esc(tax) +
+              (limits.coveragePct != null
+                ? `<div style="margin-top:4px">${coverageBarHtml(limits.coveragePct)}</div>`
+                : '');
+            return [
+              { html: partnerLink(row.partnerCode) },
+              { html: phaseChip(row.partnerCode) },
+              { html: taxHtml },
+              { html: `<code>${esc(row.membershipCell || '—')}</code>` },
+              { html: `<code>${esc(row.callSign || '—')}</code>` },
+              row.dmSeatStatus || '—',
+              {
+                html: `${row.handshakeOk ? 'ok' : 'fail'} · ${esc(verify)}`,
+                className: toneClass(row.handshakeOk),
+              },
+              { html: invite },
+              { html: bot },
+              (row.nextSteps && row.nextSteps[0]) || '—',
+              { html: balanceCell(ops) },
+            ];
+          }),
+          {
+            emptyMessage: phaseFilter
+              ? `No partners in phase ${phaseFilter}`
+              : 'No partners in telegram-handshake bake',
+            rowAttrs: i => {
+              const row = filtered[i];
+              const ops = opsByPartner.get(normalizePartnerCode(row?.partnerCode));
+              return {
+                id: `partner-detail-${row?.partnerCode || ''}`,
+                'data-partner-code': String(row?.partnerCode || ''),
+                'data-phase': String(ops?.phase || ''),
+              };
+            },
+          }
+        );
       }
 
       function renderPartnerProfile(code) {
@@ -1934,27 +2018,43 @@
             });
           }
         }
-        $('deposits-tbody').innerHTML = outs.length
-          ? outs
-              .map(o => {
-                const opsOut = opsOutFor(o.partnerCode, o.outNum);
-                const routeOutId =
-                  opsOut?.id || `out-${String(o.partnerCode || '').toUpperCase()}-${o.outNum}`;
-                return `<tr id="out-card-${esc(routeOutId)}" data-partner-code="${esc(o.partnerCode)}">
-                <td>${partnerLink(o.partnerCode)}</td>
-                <td><code>${esc(o.callSign)}</code></td>
-                <td><a href="${partnerOutHash(o.partnerCode, routeOutId)}">${esc(o.outNum)}</a></td>
-                <td>${bookChip(o.book, opsOut)}</td>
-                <td><code>${esc(o.username)}</code></td>
-                <td>${railChip(o.depositMethod, opsOut)}</td>
-                <td><code>${esc(o.sendTo)}</code></td>
-                <td>${esc(o.maxBet)}</td>
-                <td><a href="${glossaryHref('accounting.free_roll')}" data-glossary-concept="accounting.free_roll">${esc(o.freeplayPct)}</a></td>
-                <td>${statusChip(o.status, opsOut)}</td>
-              </tr>`;
-              })
-              .join('')
-          : '<tr><td colspan="10">No deposit outs in seat-capital-desk bake</td></tr>';
+        $('deposits-tbody').innerHTML = renderPortalTableRows(
+          DEPOSIT_COLS,
+          outs.map(o => {
+            const opsOut = opsOutFor(o.partnerCode, o.outNum);
+            const routeOutId =
+              opsOut?.id || `out-${String(o.partnerCode || '').toUpperCase()}-${o.outNum}`;
+            return [
+              { html: partnerLink(o.partnerCode) },
+              { html: `<code>${esc(o.callSign)}</code>` },
+              {
+                html: `<a href="${partnerOutHash(o.partnerCode, routeOutId)}">${esc(o.outNum)}</a>`,
+              },
+              { html: bookChip(o.book, opsOut) },
+              { html: `<code>${esc(o.username)}</code>` },
+              { html: railChip(o.depositMethod, opsOut) },
+              { html: `<code>${esc(o.sendTo)}</code>` },
+              o.maxBet,
+              {
+                html: `<a href="${glossaryHref('accounting.free_roll')}" data-glossary-concept="accounting.free_roll">${esc(o.freeplayPct)}</a>`,
+              },
+              { html: statusChip(o.status, opsOut) },
+            ];
+          }),
+          {
+            emptyMessage: 'No deposit outs in seat-capital-desk bake',
+            rowAttrs: i => {
+              const o = outs[i];
+              const opsOut = opsOutFor(o?.partnerCode, o?.outNum);
+              const routeOutId =
+                opsOut?.id || `out-${String(o?.partnerCode || '').toUpperCase()}-${o?.outNum}`;
+              return {
+                id: `out-card-${routeOutId}`,
+                'data-partner-code': String(o?.partnerCode || ''),
+              };
+            },
+          }
+        );
       }
 
       function renderAccountsLimits(ops, limitPatterns) {

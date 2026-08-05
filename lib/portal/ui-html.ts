@@ -38,11 +38,33 @@ export type PortalTableCell =
       className?: string;
     };
 
+export type PortalTableRowOpts = {
+  emptyMessage?: string;
+  rowClass?: (rowIndex: number) => string | undefined;
+  /** Extra attributes on each `<tr>` (id, data-*, aria-*). Values are escaped. */
+  rowAttrs?: (rowIndex: number) => Record<string, string> | undefined;
+};
+
+export type PortalTableOpts = PortalTableRowOpts & {
+  density?: 'compact' | 'default';
+  zebra?: boolean;
+  tone?: 'accent' | 'warn' | 'bad';
+  className?: string;
+};
+
 export function escHtml(value: string | number | boolean | null | undefined): string {
   return String(value ?? '').replace(
     /[&<>"']/g,
     c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!
   );
+}
+
+function attrsHtml(attrs: Record<string, string> | undefined): string {
+  if (!attrs) return '';
+  return Object.entries(attrs)
+    .filter(([, v]) => v != null && v !== '')
+    .map(([k, v]) => ` ${escHtml(k)}="${escHtml(v)}"`)
+    .join('');
 }
 
 /** Status / tone chip — uses shared `.tone-chip` contract. */
@@ -72,9 +94,7 @@ export function renderPortalStatGrid(items: readonly PortalStatItem[]): string {
       const tone = item.tone && item.tone !== 'neutral' ? item.tone : 'muted';
       const active = item.active ? ' active' : '';
       const cls = `portal-stat ${tone}${active}`;
-      const attrs = Object.entries(item.attrs ?? {})
-        .map(([k, v]) => ` ${escHtml(k)}="${escHtml(v)}"`)
-        .join('');
+      const attrs = attrsHtml(item.attrs);
       const body =
         `<span class="k">${escHtml(item.label)}</span>` +
         `<span class="v">${escHtml(item.value)}</span>` +
@@ -98,28 +118,60 @@ function cellHtml(cell: PortalTableCell): { html: string; className: string } {
   return { html: escHtml(cell), className: '' };
 }
 
+function resolveCells(
+  columns: readonly PortalTableColumn[],
+  row: readonly PortalTableCell[] | Record<string, PortalTableCell>
+): PortalTableCell[] {
+  return Array.isArray(row)
+    ? [...row]
+    : columns.map(c => (row as Record<string, PortalTableCell>)[c.key]);
+}
+
 /**
- * Canonical dark data table.
- * @param columns header defs
- * @param rows array of cells aligned to columns (or Record keyed by column.key)
+ * `<tr>` fragments for boards that keep a static thead and fill tbody.
+ * Prefer this over hand-rolled row HTML on dynamic boards.
+ */
+export function renderPortalTableRows(
+  columns: readonly PortalTableColumn[],
+  rows: readonly (readonly PortalTableCell[] | Record<string, PortalTableCell>)[],
+  opts: PortalTableRowOpts = {}
+): string {
+  if (!rows.length) {
+    const msg = opts.emptyMessage ?? 'No rows';
+    return `<tr><td colspan="${columns.length}" class="dim">${escHtml(msg)}</td></tr>`;
+  }
+  return rows
+    .map((row, ri) => {
+      const cells = resolveCells(columns, row);
+      const rowCls = opts.rowClass?.(ri);
+      const clsAttr = rowCls ? ` class="${escHtml(rowCls)}"` : '';
+      const extra = attrsHtml(opts.rowAttrs?.(ri));
+      const tds = columns
+        .map((c, ci) => {
+          const { html, className } = cellHtml(cells[ci]);
+          const tdCls = className ? ` class="${escHtml(className)}"` : '';
+          return `<td${tdCls}>${html}</td>`;
+        })
+        .join('');
+      return `<tr${clsAttr}${extra}>${tds}</tr>`;
+    })
+    .join('');
+}
+
+/**
+ * Canonical dark data table (wrap + thead + tbody).
+ * For static thead + dynamic body, use `renderPortalTableRows` instead.
  */
 export function renderPortalTable(
   columns: readonly PortalTableColumn[],
   rows: readonly (readonly PortalTableCell[] | Record<string, PortalTableCell>)[],
-  opts: {
-    density?: 'compact' | 'default';
-    zebra?: boolean;
-    tone?: 'accent' | 'warn' | 'bad';
-    className?: string;
-    emptyMessage?: string;
-    rowClass?: (rowIndex: number) => string | undefined;
-  } = {}
+  opts: PortalTableOpts = {}
 ): string {
   const classes = ['portal-table', opts.className ?? ''].filter(Boolean).join(' ');
   const dataAttrs = [
     opts.density === 'compact' ? ' data-density="compact"' : '',
     opts.zebra ? ' data-zebra' : '',
-    opts.tone ? ` data-tone="${escHtml(opts.tone)}` + '"' : '',
+    opts.tone ? ` data-tone="${escHtml(opts.tone)}"` : '',
   ].join('');
 
   const thead =
@@ -132,33 +184,7 @@ export function renderPortalTable(
       .join('') +
     '</tr></thead>';
 
-  let tbody: string;
-  if (!rows.length) {
-    const msg = opts.emptyMessage ?? 'No rows';
-    tbody = `<tbody><tr><td colspan="${columns.length}" class="dim">${escHtml(msg)}</td></tr></tbody>`;
-  } else {
-    tbody =
-      '<tbody>' +
-      rows
-        .map((row, ri) => {
-          const cells: PortalTableCell[] = Array.isArray(row)
-            ? [...row]
-            : columns.map(c => (row as Record<string, PortalTableCell>)[c.key]);
-          const rowCls = opts.rowClass?.(ri);
-          const trAttr = rowCls ? ` class="${escHtml(rowCls)}"` : '';
-          const tds = columns
-            .map((c, ci) => {
-              const { html, className } = cellHtml(cells[ci]);
-              const tdCls = className ? ` class="${escHtml(className)}"` : '';
-              return `<td${tdCls}>${html}</td>`;
-            })
-            .join('');
-          return `<tr${trAttr}>${tds}</tr>`;
-        })
-        .join('') +
-      '</tbody>';
-  }
-
+  const tbody = `<tbody>${renderPortalTableRows(columns, rows, opts)}</tbody>`;
   return `<div class="table-wrap"><table class="${classes}"${dataAttrs}>${thead}${tbody}</table></div>`;
 }
 

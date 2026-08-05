@@ -6,11 +6,20 @@
  * @see public/portal/style.css — Board primitives · .portal-table
  */
 
-/** @param {unknown} value */
+/** @param {string|number|boolean|null|undefined} value */
 export function escHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, c =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]
   );
+}
+
+/** @param {Record<string,string>|undefined} attrs */
+function attrsHtml(attrs) {
+  if (!attrs) return '';
+  return Object.entries(attrs)
+    .filter(([, v]) => v != null && v !== '')
+    .map(([k, v]) => ` ${escHtml(k)}="${escHtml(v)}"`)
+    .join('');
 }
 
 /**
@@ -54,9 +63,7 @@ export function renderPortalStatGrid(items) {
       const tone = item.tone && item.tone !== 'neutral' ? item.tone : 'muted';
       const active = item.active ? ' active' : '';
       const cls = `portal-stat ${tone}${active}`;
-      const attrs = Object.entries(item.attrs || {})
-        .map(([k, v]) => ` ${escHtml(k)}="${escHtml(v)}"`)
-        .join('');
+      const attrs = attrsHtml(item.attrs);
       const body =
         `<span class="k">${escHtml(item.label)}</span>` +
         `<span class="v">${escHtml(item.value)}</span>` +
@@ -72,10 +79,61 @@ export function renderPortalStatGrid(items) {
     .join('');
 }
 
+/** @param {unknown} cell */
+function cellHtml(cell) {
+  if (cell == null) return { html: '<span class="dim">—</span>', className: '' };
+  if (typeof cell === 'object' && cell !== null && 'html' in cell) {
+    return {
+      html: /** @type {{html:string, className?:string}} */ (cell).html,
+      className: /** @type {{html:string, className?:string}} */ (cell).className || '',
+    };
+  }
+  return { html: escHtml(/** @type {string|number|boolean} */ (cell)), className: '' };
+}
+
+/**
+ * @param {Array<{ key: string, label: string, className?: string }>} columns
+ * @param {Array|Record} row
+ */
+function resolveCells(columns, row) {
+  return Array.isArray(row)
+    ? row
+    : columns.map(c => /** @type {Record<string,unknown>} */ (row)[c.key]);
+}
+
+/**
+ * `<tr>` fragments for boards that keep a static thead and fill tbody.
+ * @param {Array<{ key: string, label: string, className?: string }>} columns
+ * @param {Array<Array<unknown>|Record<string, unknown>>} rows
+ * @param {{ emptyMessage?: string, rowClass?: (i:number)=>string|undefined, rowAttrs?: (i:number)=>Record<string,string>|undefined }} [opts]
+ */
+export function renderPortalTableRows(columns, rows, opts = {}) {
+  if (!rows || !rows.length) {
+    const msg = opts.emptyMessage || 'No rows';
+    return `<tr><td colspan="${columns.length}" class="dim">${escHtml(msg)}</td></tr>`;
+  }
+  return rows
+    .map((row, ri) => {
+      const cells = resolveCells(columns, row);
+      const rowCls = opts.rowClass?.(ri);
+      const clsAttr = rowCls ? ` class="${escHtml(rowCls)}"` : '';
+      const extra = attrsHtml(opts.rowAttrs?.(ri));
+      const tds = columns
+        .map((c, ci) => {
+          const { html, className } = cellHtml(cells[ci]);
+          const tdCls = className ? ` class="${escHtml(className)}"` : '';
+          return `<td${tdCls}>${html}</td>`;
+        })
+        .join('');
+      return `<tr${clsAttr}${extra}>${tds}</tr>`;
+    })
+    .join('');
+}
+
 /**
  * @param {Array<{ key: string, label: string, className?: string }>} columns
  * @param {Array<Array<unknown>|Record<string, unknown>>} rows
- * @param {{ density?: string, zebra?: boolean, tone?: string, className?: string, emptyMessage?: string, rowClass?: (i:number)=>string|undefined }} [opts]
+ * @param {{ density?: string, zebra?: boolean, tone?: string, className?: string, emptyMessage?: string, rowClass?: (i:number)=>string|undefined, rowAttrs?: (i:number)=>Record<string,string>|undefined }} [opts]
  */
 export function renderPortalTable(columns, rows, opts = {}) {
   const classes = ['portal-table', opts.className || ''].filter(Boolean).join(' ');
@@ -95,45 +153,7 @@ export function renderPortalTable(columns, rows, opts = {}) {
       .join('') +
     '</tr></thead>';
 
-  /** @param {unknown} cell */
-  function cellHtml(cell) {
-    if (cell == null) return { html: '<span class="dim">—</span>', className: '' };
-    if (typeof cell === 'object' && cell !== null && 'html' in cell) {
-      return {
-        html: /** @type {{html:string, className?:string}} */ (cell).html,
-        className: /** @type {{html:string, className?:string}} */ (cell).className || '',
-      };
-    }
-    return { html: escHtml(cell), className: '' };
-  }
-
-  let tbody;
-  if (!rows || !rows.length) {
-    const msg = opts.emptyMessage || 'No rows';
-    tbody = `<tbody><tr><td colspan="${columns.length}" class="dim">${escHtml(msg)}</td></tr></tbody>`;
-  } else {
-    tbody =
-      '<tbody>' +
-      rows
-        .map((row, ri) => {
-          const cells = Array.isArray(row)
-            ? row
-            : columns.map(c => /** @type {Record<string,unknown>} */ (row)[c.key]);
-          const rowCls = opts.rowClass?.(ri);
-          const trAttr = rowCls ? ` class="${escHtml(rowCls)}"` : '';
-          const tds = columns
-            .map((c, ci) => {
-              const { html, className } = cellHtml(cells[ci]);
-              const tdCls = className ? ` class="${escHtml(className)}"` : '';
-              return `<td${tdCls}>${html}</td>`;
-            })
-            .join('');
-          return `<tr${trAttr}>${tds}</tr>`;
-        })
-        .join('') +
-      '</tbody>';
-  }
-
+  const tbody = `<tbody>${renderPortalTableRows(columns, rows, opts)}</tbody>`;
   return `<div class="table-wrap"><table class="${classes}"${dataAttrs}>${thead}${tbody}</table></div>`;
 }
 

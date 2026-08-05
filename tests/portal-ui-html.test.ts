@@ -6,6 +6,7 @@ import {
   renderPortalPanel,
   renderPortalStatGrid,
   renderPortalTable,
+  renderPortalTableRows,
   renderToneChip,
 } from '../lib/portal/ui-html.ts';
 
@@ -66,6 +67,31 @@ describe('lib/portal/ui-html', () => {
     expect(panel).toContain('portal-panel');
     expect(panel).toContain('export-safe');
   });
+
+  test('renderPortalTableRows supports rowAttrs and empty state', () => {
+    const cols = [
+      { key: 'a', label: 'A' },
+      { key: 'b', label: 'B' },
+    ];
+    const empty = renderPortalTableRows(cols, [], { emptyMessage: 'Empty' });
+    expect(empty).toContain('colspan="2"');
+    expect(empty).toContain('Empty');
+    expect(empty).not.toContain('<tbody');
+
+    const rows = renderPortalTableRows(
+      cols,
+      [[{ html: '<b>x</b>' }, 'y']],
+      {
+        rowClass: () => 'row-ok',
+        rowAttrs: () => ({ id: 'r1', 'data-partner-code': 'ASH' }),
+      }
+    );
+    expect(rows).toContain('class="row-ok"');
+    expect(rows).toContain('id="r1"');
+    expect(rows).toContain('data-partner-code="ASH"');
+    expect(rows).toContain('<b>x</b>');
+    expect(rows).toContain('>y</td>');
+  });
 });
 
 describe('browser portal-ui twin', () => {
@@ -77,10 +103,28 @@ describe('browser portal-ui twin', () => {
       'renderPortalChip',
       'renderPortalStatGrid',
       'renderPortalTable',
+      'renderPortalTableRows',
       'renderPortalPanel',
     ]) {
       expect(src).toContain(`export function ${name}`);
     }
+  });
+
+  test('partners board imports portal-ui row and stat builders', async () => {
+    const html = await Bun.file('public/portal/partners/index.html').text();
+    expect(html).toContain('/portal/components/portal-ui.js');
+    expect(html).toContain('renderPortalStatGrid');
+    expect(html).toContain('renderPortalTableRows');
+    expect(html).toContain('PARTNER_COLS');
+    expect(html).toContain('OUTS_COLS');
+    expect(html).toContain('DEPOSIT_COLS');
+  });
+
+  test('account board imports portal-ui table builders', async () => {
+    const html = await Bun.file('public/portal/account/index.html').text();
+    expect(html).toContain("from '../components/portal-ui.js'");
+    expect(html).toContain('renderPortalTable');
+    expect(html).toContain('escHtml');
   });
 
   test('bookmakers board uses portal-table and shared chips', async () => {
