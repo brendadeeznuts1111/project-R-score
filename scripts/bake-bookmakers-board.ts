@@ -203,21 +203,57 @@ export function buildBookmakersBake(
   };
 }
 
+const LOCAL_PACKAGE_DIR = 'artifacts/deeplink-automation/packages/bookmakers';
+
 async function main(): Promise<void> {
   const check = Bun.argv.includes('--check');
   const asJson = Bun.argv.includes('--json');
+  const useLocal = Bun.argv.includes('--local');
 
-  const release = await resolveArtifactRelease();
-  const tgz = await downloadArtifact(release);
-  const dir = joinPath(tmpdir(), `fw-bookmakers-bake-${Date.now()}`);
-  mkdirSync(dir, { recursive: true });
   let module: Record<string, unknown>;
-  try {
-    await extractTarball(tgz, dir);
-    module = await loadBookmakersModule(dir);
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
+  let version: string;
+  let checksum: string;
+
+  if (useLocal) {
+    // Offline: load PUBLIC_BOOKMAKERS from the deeplink package (or its public-catalog.json).
+    const catalogPath = joinPath(LOCAL_PACKAGE_DIR, 'public-catalog.json');
+    const distEntry = joinPath(LOCAL_PACKAGE_DIR, 'dist/index.js');
+    if (await Bun.file(distEntry).exists()) {
+      module = (await import(Bun.pathToFileURL(distEntry).href)) as Record<string, unknown>;
+    } else if (await Bun.file(catalogPath).exists()) {
+      const cat = JSON.parse(await Bun.file(catalogPath).text()) as {
+        bookmakers?: Record<string, unknown>;
+        artifact?: { version?: string };
+      };
+      module = {
+        PUBLIC_BOOKMAKERS: cat.bookmakers,
+        BOOKMAKERS: cat.bookmakers,
+      };
+    } else {
+      throw new Error(
+        `--local requires ${LOCAL_PACKAGE_DIR}/dist or public-catalog.json (run bookmakers:prepare-publish)`
+      );
+    }
+    const pkg = JSON.parse(
+      await Bun.file(joinPath(LOCAL_PACKAGE_DIR, 'package.json')).text()
+    ) as { version?: string };
+    version = pkg.version ?? '0.4.0';
+    checksum = '0'.repeat(64); // local bake — checksum filled on registry publish
+  } else {
+    const release = await resolveArtifactRelease();
+    const tgz = await downloadArtifact(release);
+    const dir = joinPath(tmpdir(), `fw-bookmakers-bake-${Date.now()}`);
+    mkdirSync(dir, { recursive: true });
+    try {
+      await extractTarball(tgz, dir);
+      module = await loadBookmakersModule(dir);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+    version = release.version;
+    checksum = release.checksum;
   }
+
   // Prefer v0.4 Pages-safe catalog when the package exports it.
   const candidate =
     module.PUBLIC_BOOKMAKERS ??
@@ -228,9 +264,12 @@ async function main(): Promise<void> {
     module;
   const payload = buildBookmakersBake(
     candidate as Record<string, unknown>,
-    release.version,
-    release.checksum
+    version,
+    checksum
   );
+  if (useLocal) {
+    payload.artifact.source = 'local-package';
+  }
   if (
     module.PUBLIC_BOOKMAKERS ||
     (module.default as Record<string, unknown> | undefined)?.PUBLIC_BOOKMAKERS

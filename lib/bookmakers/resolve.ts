@@ -45,6 +45,10 @@ export function resolveBookmakerEntry(
   );
   if (byId) return byId;
 
+  // Desk-style domain labels: parlay21.com → parlay21-com
+  const asSlug = q.replace(/\./g, '-');
+  if (registry[asSlug]) return registry[asSlug];
+
   const exact = values.find(b => {
     const host = bookmakerHost(b).toLowerCase();
     return (
