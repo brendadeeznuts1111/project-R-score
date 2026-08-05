@@ -14,6 +14,7 @@ describe('ops portal board', () => {
     expect(html).toContain('operations-dashboard');
     expect(html).toContain('/registry/ops-summary.json');
     expect(html).toContain('/portal/partners/');
+    expect(html.match(/\/portal\/components\/notification\.js/g)).toHaveLength(1);
   });
 
   test('dashboard prioritizes partner desk pulse and loop outbox', async () => {
@@ -34,5 +35,22 @@ describe('ops portal board', () => {
     expect(handshake).toBeGreaterThan(desk);
     expect(partners).toBeGreaterThan(handshake);
     expect(health).toBeGreaterThan(partners);
+  });
+
+  test('renders the summary before loading optional proof artifacts', async () => {
+    const js = await Bun.file(DASH).text();
+    expect(js).toContain('await Promise.allSettled([');
+
+    const liveSummary = js.indexOf("fetch('/api/operations/summary')");
+    const snapshotSummary = js.indexOf("fetch('/registry/ops-summary.json')");
+    const liveRender = js.indexOf('this.render();', liveSummary);
+    const liveProofs = js.indexOf('this.loadVerificationArtifacts()', liveSummary);
+    const snapshotRender = js.indexOf('this.render();', snapshotSummary);
+    const snapshotProofs = js.indexOf('this.loadVerificationArtifacts()', snapshotSummary);
+
+    expect(liveRender).toBeGreaterThan(liveSummary);
+    expect(liveProofs).toBeGreaterThan(liveRender);
+    expect(snapshotRender).toBeGreaterThan(snapshotSummary);
+    expect(snapshotProofs).toBeGreaterThan(snapshotRender);
   });
 });

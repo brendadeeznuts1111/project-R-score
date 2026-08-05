@@ -3,7 +3,6 @@
  * @see /registry/tennis/board-metrics.json
  * @see /portal/venues.css · style.css bar-chart / venue-badge
  */
-import { getHealthData } from '/portal/data.js';
 import {
   mountVenueLegend,
   renderVenueBadge,
@@ -45,37 +44,69 @@ function barChartHtml(data, { title, subtitle = '' } = {}) {
   </div>`;
 }
 
-function kpiHtml(label, value, sub = '') {
-  return `<article class="portal-card portal-card--metric" data-kpi="${esc(label)}">
-    <h3 style="font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-dim);margin:0 0 6px">${esc(label)}</h3>
-    <div class="val">${esc(String(value))}</div>
-    ${sub ? `<div class="sub">${esc(sub)}</div>` : ''}
-  </article>`;
+function statHtml(label, value, sub = '', cls = 'muted') {
+  return `<div class="portal-stat ${cls}"><div class="k">${esc(label)}</div><div class="v">${esc(String(value))}</div>${sub ? `<div class="hint">${esc(sub)}</div>` : ''}</div>`;
+}
+
+function setGate(tone, label, meta) {
+  const gate = $('tennis-gate');
+  const baked = $('tennis-baked');
+  if (gate) {
+    gate.className = `portal-gate ${tone === 'ok' ? 'pass' : tone === 'bad' ? 'fail' : 'warn'}`;
+    gate.innerHTML = `<span class="dot" aria-hidden="true"></span>${esc(label)}`;
+  }
+  if (baked) baked.textContent = meta;
 }
 
 function setBanner(tone, title, meta) {
+  setGate(tone, title, meta);
   const banner = $('live-banner');
   if (!banner) return;
-  banner.className = `portal-banner ${tone}`;
-  $('banner-title').textContent = title;
-  $('banner-meta').textContent = meta;
+  banner.hidden = true;
 }
 
-function renderKpis(metrics, regPkgCount) {
+function renderKpis(metrics, regPkgCount, agentAuth) {
   const host = $('kpi-host');
   if (!host) return;
   const source = metrics?.source ?? '—';
-  const tone =
-    source === 'event-store' ? 'ok' : source === 'sample' ? 'warn' : 'warn';
+  const tone = source === 'event-store' ? 'ok' : source === 'sample' ? 'warn' : 'warn';
+  const authStatus =
+    agentAuth?.status === 'configured'
+      ? 'configured'
+      : agentAuth
+        ? agentAuth.status || 'unset'
+        : '—';
+  const authSub = agentAuth?.envKey ? `${agentAuth.envKey} · cloud agent` : 'FACTORY_WAGER_TOKEN';
+  const desk = metrics?.desk;
+  const coverage = desk && typeof desk.coveragePct === 'number' ? `${desk.coveragePct}%` : '—';
+  const coverageSub = desk
+    ? `${desk.withBothMids ?? 0}/${desk.scannedEvents ?? 0} full books` +
+      (desk.listedMissingMids ? ` · ${desk.listedMissingMids} listed incomplete` : '')
+    : 'from live-matches bake';
   host.innerHTML = [
-    kpiHtml('Source', source, metrics?.note?.slice(0, 48) ?? ''),
-    kpiHtml('Markets', metrics?.markets ?? '—', 'event-store rows'),
-    kpiHtml('Book mids', metrics?.midsUsable ?? '—', `${metrics?.bookTicksLatest ?? 0} latest ticks`),
-    kpiHtml('Packages', regPkgCount, 'tennis registry'),
+    statHtml('Source', source, metrics?.note?.slice(0, 48) ?? '', tone === 'ok' ? 'ok' : 'warn'),
+    statHtml('Markets', metrics?.markets ?? '—', 'event-store rows', 'muted'),
+    statHtml(
+      'Book mids',
+      metrics?.midsUsable ?? '—',
+      `${metrics?.bookTicksLatest ?? 0} latest ticks`,
+      'muted'
+    ),
+    statHtml(
+      'Desk coverage',
+      coverage,
+      coverageSub,
+      desk && Number(desk.coveragePct) >= 70
+        ? 'ok'
+        : desk && Number(desk.coveragePct) >= 30
+          ? 'warn'
+          : desk
+            ? 'bad'
+            : 'muted'
+    ),
+    statHtml('Packages', regPkgCount, 'tennis registry', 'muted'),
+    statHtml('Registry token', authStatus, authSub, authStatus === 'configured' ? 'ok' : 'warn'),
   ].join('');
-  // tint first card by source
-  const first = host.querySelector('[data-kpi="Source"] .val');
-  if (first) first.className = `val st-${tone === 'ok' ? 'ok' : 'warn'}`;
 }
 
 function renderCharts(metrics) {
@@ -131,52 +162,162 @@ function renderVenuesFromMetrics(metrics) {
     .join('');
 }
 
-const SAMPLE_ROWS = [
-  { a: 'Sinner', b: 'Alcaraz', venue: 'kalshi', edge: '+4.2', score: '72' },
-  { a: 'Gauff', b: 'Swiatek', venue: 'polymarket', edge: '+1.8', score: '61' },
-  { a: 'Medvedev', b: 'Zverev', venue: 'pinnacle', edge: '-0.4', score: '48' },
-  { a: 'Sabalenka', b: 'Rybakina', venue: 'betfair', edge: '+2.1', score: '55' },
-];
+/** @type {{ players: any[], nameToSlug: Record<string,string> }} */
+let avatarIndex = { players: [], nameToSlug: {} };
+/** @type {any[]} */
+let liveMatchRows = [];
+
+function resolveSlug(name) {
+  const raw = String(name || '').trim();
+  if (!raw) return 'demo-player';
+  if (avatarIndex.nameToSlug[raw]) return avatarIndex.nameToSlug[raw];
+  const n =
+    raw
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'player';
+  return avatarIndex.nameToSlug[n] || n;
+}
+
+function avatarImg(slug, size = 28) {
+  const s = esc(slug || 'demo-player');
+  return `<img src="/avatars/${s}.webp" width="${size}" height="${size}" alt="${s}" loading="lazy"
+    style="border-radius:50%;object-fit:cover;background:var(--border);vertical-align:middle"
+    onerror="this.onerror=null;this.src='/avatar/${s}'" />`;
+}
 
 function renderSampleTable(filterVenue = '') {
   const tbody = document.querySelector('#sample-rows tbody');
   if (!tbody) return;
-  const rows = filterVenue
-    ? SAMPLE_ROWS.filter(r => r.venue === filterVenue)
-    : SAMPLE_ROWS;
+  const rows = filterVenue ? liveMatchRows.filter(r => r.venue === filterVenue) : liveMatchRows;
+  if (!rows.length) {
+    tbody.innerHTML =
+      '<tr><td colspan="9">No matches — run <code>bun run tennis:board:bake</code></td></tr>';
+    return;
+  }
   tbody.innerHTML = rows
-    .map(
-      r => `<tr>
-        <td>${esc(r.a)}</td>
-        <td>${esc(r.b)}</td>
-        <td>${renderVenueBadge(r.venue, { showLabel: false })}</td>
-        <td class="mono ${r.edge.startsWith('-') ? 'st-bad' : 'st-ok'}">${esc(r.edge)}¢</td>
-        <td class="mono">${esc(r.score)}</td>
-      </tr>`
-    )
+    .map(r => {
+      const slugA = r.sideA?.slug || resolveSlug(r.sideA?.label);
+      const slugB = r.sideB?.slug || resolveSlug(r.sideB?.label);
+      const edge = r.edgeCents;
+      const edgeCls = edge == null ? '' : edge >= 0 ? 'st-ok' : 'st-bad';
+      const edgeStr = edge == null ? '—' : (edge >= 0 ? '+' : '') + edge + '¢';
+      const midA = r.sideA?.midCents != null ? r.sideA.midCents + '¢' : '—';
+      const midB = r.sideB?.midCents != null ? r.sideB.midCents + '¢' : '—';
+      const midStatus =
+        r.midStatus ||
+        (r.sideA?.midCents != null && r.sideB?.midCents != null
+          ? 'ok'
+          : r.sideA?.midCents != null || r.sideB?.midCents != null
+            ? 'partial'
+            : 'missing');
+      const midDot =
+        midStatus === 'ok'
+          ? '<span class="tone-chip tone-ok" title="Both side mids" style="font-size:10px">ok</span>'
+          : midStatus === 'partial'
+            ? '<span class="tone-chip tone-warn" title="One side mid only" style="font-size:10px">partial</span>'
+            : '<span class="tone-chip tone-bad" title="No book mids" style="font-size:10px">missing</span>';
+      return `<tr>
+      <td>${avatarImg(slugA)}</td>
+      <td>${esc(r.sideA?.label || '—')}</td>
+      <td>${avatarImg(slugB)}</td>
+      <td>${esc(r.sideB?.label || '—')}</td>
+      <td>${typeof renderVenueBadge === 'function' ? renderVenueBadge(r.venue || 'kalshi', { showLabel: false }) : esc(r.venue || '—')}</td>
+      <td class="mono">${esc(midA)}</td>
+      <td class="mono">${esc(midB)}</td>
+      <td class="mono ${edgeCls}">${esc(edgeStr)}</td>
+      <td class="mono">${esc(r.seriesLabel || r.series || '—')} ${midDot}</td>
+    </tr>`;
+    })
     .join('');
 }
 
-async function loadMetrics() {
+function renderAvatarStrip() {
+  const host = document.getElementById('avatar-strip');
+  const img = document.getElementById('hero-avatar');
+  const players = (avatarIndex.players || []).filter(
+    p => p.hasSource || p.hasWebp || p.slug === 'demo-player'
+  );
+  const ids = players.length ? players.slice(0, 12).map(p => p.slug) : ['demo-player'];
+  if (img) {
+    const id = ids[0] || 'demo-player';
+    img.src = `/avatars/${id}.webp`;
+    img.alt = id;
+    const label = img.closest('a')?.querySelector('.tennis-avatar-name');
+    if (label) label.textContent = id;
+  }
+  if (host) {
+    host.innerHTML = ids
+      .map(id => {
+        const p = (avatarIndex.players || []).find(x => x.slug === id);
+        const name = p?.displayName || id;
+        return `<a href="/avatars/${esc(id)}.webp" class="portal-card" style="display:flex;align-items:center;gap:10px;padding:10px 12px;text-decoration:none;color:inherit">
+        ${avatarImg(id, 48)}
+        <div>
+          <div style="font-weight:600;font-size:13px">${esc(name)}</div>
+          <div class="sub" style="margin:0"><code>${esc(id)}</code> · ${p?.hasWebp ? 'webp' : 'pending'}</div>
+        </div>
+      </a>`;
+      })
+      .join('');
+  }
+}
+
+async function fetchTennisJson(path, cache) {
   try {
-    const res = await fetch('/registry/tennis/board-metrics.json', {
+    const res = await fetch(path, {
       credentials: 'same-origin',
       headers: { Accept: 'application/json' },
-      cache: 'no-cache',
+      ...(cache ? { cache } : {}),
     });
-    if (!res.ok) throw new Error(`metrics HTTP ${res.status}`);
-    return await res.json();
+    return res.ok ? await res.json() : null;
   } catch {
-    // legacy mid-only
-    try {
-      const res = await fetch('/registry/tennis/mid-distribution.json', {
-        credentials: 'same-origin',
-        headers: { Accept: 'application/json' },
-        cache: 'no-cache',
-      });
-      if (!res.ok) return null;
-      const mid = await res.json();
-      return {
+    return null;
+  }
+}
+
+async function loadAvatarIndex() {
+  const doc = await fetchTennisJson('/registry/tennis/avatar-index.json', 'no-cache');
+  if (!doc) return;
+  avatarIndex = {
+    players: doc.players || [],
+    nameToSlug: doc.nameToSlug || {},
+  };
+  if (!Object.keys(avatarIndex.nameToSlug).length && avatarIndex.players.length) {
+    const m = {};
+    for (const p of avatarIndex.players) {
+      m[p.slug] = p.slug;
+    }
+    avatarIndex.nameToSlug = m;
+  }
+}
+
+async function loadLiveMatches() {
+  const doc = await fetchTennisJson('/registry/tennis/live-matches.json', 'no-cache');
+  if (!doc) {
+    liveMatchRows = [];
+    return;
+  }
+  liveMatchRows = doc.matches || [];
+  const meta = document.getElementById('matches-meta');
+  if (meta) {
+    const q = doc.quality;
+    const qBit = q
+      ? ` · mid-ok ${q.listedWithBothMids ?? 0}/${liveMatchRows.length}` +
+        (typeof q.coveragePct === 'number' ? ` · store ${q.coveragePct}%` : '')
+      : '';
+    meta.textContent = `${doc.source || '—'} · ${liveMatchRows.length} matches${qBit} · filter by venue · slugs from avatar-index`;
+  }
+}
+
+async function loadMetrics() {
+  const metrics = await fetchTennisJson('/registry/tennis/board-metrics.json', 'no-cache');
+  if (metrics) return metrics;
+  const mid = await fetchTennisJson('/registry/tennis/mid-distribution.json', 'no-cache');
+  return mid
+    ? {
         schemaVersion: 1,
         kind: 'tennis-board-metrics',
         generatedAt: mid.generatedAt,
@@ -188,24 +329,8 @@ async function loadMetrics() {
         seriesVolume: [],
         venues: [],
         note: mid.note,
-      };
-    } catch {
-      return null;
-    }
-  }
-}
-
-async function loadRegistry() {
-  try {
-    const res = await fetch('/registry/tennis/registry.json', {
-      credentials: 'same-origin',
-      headers: { Accept: 'application/json' },
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.json();
-  } catch {
-    return null;
-  }
+      }
+    : null;
 }
 
 function renderRegistry(reg) {
@@ -245,15 +370,33 @@ function renderHealth(detail) {
 }
 
 export async function load() {
-  setBanner('warn', 'Loading tennis board…', 'metrics · registry · venues');
-  const [metrics, reg] = await Promise.all([loadMetrics(), loadRegistry()]);
+  setBanner('warn', 'Loading tennis board…', 'metrics · registry · avatars · matches');
+  const [metrics, reg, agentAuth] = await Promise.all([
+    loadMetrics(),
+    fetchTennisJson('/registry/tennis/registry.json'),
+    fetchTennisJson('/registry/tennis/agent-auth.json', 'no-store'),
+    loadAvatarIndex(),
+    loadLiveMatches(),
+  ]);
   const pkgCount = renderRegistry(reg);
+  renderAvatarStrip();
+  renderSampleTable(document.getElementById('venue-filter')?.value || '');
 
   if (metrics) {
-    renderKpis(metrics, pkgCount);
+    renderKpis(metrics, pkgCount, agentAuth);
     renderCharts(metrics);
     renderVenuesFromMetrics(metrics);
     const tone = metrics.source === 'event-store' ? 'ok' : 'warn';
+    const authBit =
+      agentAuth?.status === 'configured'
+        ? ' · registry token configured'
+        : agentAuth
+          ? ' · registry token missing'
+          : '';
+    const deskBit =
+      metrics.desk && typeof metrics.desk.coveragePct === 'number'
+        ? `desk ${metrics.desk.coveragePct}%`
+        : null;
     setBanner(
       tone,
       metrics.source === 'event-store' ? 'Tennis board live' : 'Tennis board (sample metrics)',
@@ -261,17 +404,26 @@ export async function load() {
         metrics.generatedAt ? String(metrics.generatedAt).slice(0, 19) : null,
         `mids ${metrics.midsUsable}`,
         `markets ${metrics.markets}`,
+        deskBit,
         metrics.eventStorePath ? metrics.eventStorePath : null,
       ]
         .filter(Boolean)
-        .join(' · ')
+        .join(' · ') + authBit
     );
   } else {
-    setBanner('bad', 'Metrics unavailable', 'Run bun run tennis:board:bake');
+    renderKpis(null, pkgCount, agentAuth);
+    setBanner(
+      'bad',
+      'Metrics unavailable',
+      'Run bun run tennis:board:bake' +
+        (agentAuth?.status === 'configured' ? ' · registry token configured' : '')
+    );
   }
 }
 
 function boot() {
+  renderAvatarStrip();
+
   mountVenueLegend($('venue-legend-host'));
   renderSampleTable();
 
@@ -284,8 +436,6 @@ function boot() {
   });
 
   document.addEventListener('portal:data', e => renderHealth(e.detail));
-  const cached = getHealthData();
-  if (cached) renderHealth({ status: 'stale', data: cached });
 
   void load();
   setInterval(() => void load(), 30_000);

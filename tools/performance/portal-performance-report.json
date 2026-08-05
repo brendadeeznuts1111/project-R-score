@@ -4,10 +4,10 @@
   "pageCount": 33,
   "baselineRevision": "faff7919463f82dc3ab5227482a704a1f7672377",
   "baselineBytes": 6415396,
-  "sourceBytes": 4972651,
-  "optimizedBytes": 3715671,
+  "sourceBytes": 4969228,
+  "optimizedBytes": 3716504,
   "targetReductionPct": 35,
-  "reductionPct": 42.08,
+  "reductionPct": 42.07,
   "targetBytes": 4170007,
   "pass": true,
   "source": [
@@ -19,18 +19,18 @@
       "totalBytes": 400056
     },
     {
-      "page": "/portal/ops/",
-      "javascriptBytes": 158036,
-      "stylesheetBytes": 76144,
-      "inlineBytes": 141,
-      "totalBytes": 234321
-    },
-    {
       "page": "/portal/health/",
       "javascriptBytes": 132547,
       "stylesheetBytes": 79415,
       "inlineBytes": 20996,
       "totalBytes": 232958
+    },
+    {
+      "page": "/portal/ops/",
+      "javascriptBytes": 152988,
+      "stylesheetBytes": 76144,
+      "inlineBytes": 141,
+      "totalBytes": 229273
     },
     {
       "page": "/portal/partner-history/",
@@ -166,6 +166,13 @@
       "totalBytes": 117656
     },
     {
+      "page": "/portal/tennis/",
+      "javascriptBytes": 36753,
+      "stylesheetBytes": 79710,
+      "inlineBytes": 706,
+      "totalBytes": 117169
+    },
+    {
       "page": "/portal/compliance/",
       "javascriptBytes": 32478,
       "stylesheetBytes": 76144,
@@ -178,13 +185,6 @@
       "stylesheetBytes": 76144,
       "inlineBytes": 391,
       "totalBytes": 116050
-    },
-    {
-      "page": "/portal/tennis/",
-      "javascriptBytes": 18630,
-      "stylesheetBytes": 79710,
-      "inlineBytes": 17204,
-      "totalBytes": 115544
     },
     {
       "page": "/portal/console-format/",
@@ -253,10 +253,10 @@
     },
     {
       "page": "/portal/ops/",
-      "javascriptBytes": 110632,
+      "javascriptBytes": 110600,
       "stylesheetBytes": 65367,
       "inlineBytes": 126,
-      "totalBytes": 176125
+      "totalBytes": 176093
     },
     {
       "page": "/portal/health/",
@@ -385,6 +385,13 @@
       "totalBytes": 89504
     },
     {
+      "page": "/portal/tennis/",
+      "javascriptBytes": 19537,
+      "stylesheetBytes": 67623,
+      "inlineBytes": 594,
+      "totalBytes": 87754
+    },
+    {
       "page": "/portal/bunfig/",
       "javascriptBytes": 21563,
       "stylesheetBytes": 65367,
@@ -397,13 +404,6 @@
       "stylesheetBytes": 65367,
       "inlineBytes": 599,
       "totalBytes": 87059
-    },
-    {
-      "page": "/portal/tennis/",
-      "javascriptBytes": 5405,
-      "stylesheetBytes": 67623,
-      "inlineBytes": 13861,
-      "totalBytes": 86889
     },
     {
       "page": "/portal/doctor/",
