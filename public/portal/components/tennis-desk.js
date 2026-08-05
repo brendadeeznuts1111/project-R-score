@@ -5,7 +5,12 @@
  * @see /portal/venues.css · style.css bar-chart / venue-badge
  */
 import { getHealthData } from '/portal/data.js';
-import { mountFreshnessBadge } from '/portal/data-freshness.js';
+import {
+  mountFreshnessBadge,
+  toneForAge,
+  formatAge,
+  ageMsFromIso,
+} from '/portal/data-freshness.js';
 import {
   mountVenueLegend,
   renderVenueBadge,
@@ -627,22 +632,44 @@ export async function load() {
   renderRuntimeProbe(runtimeProbe, agentAuth);
   renderPartnerContracts(partnerContracts);
 
-  // Bake-manifest "Data as of" — worst of tennis board bakes (fail-silent).
+  // Split freshness — contracts vs metrics vs books (avoid one red blob from oldest key).
   void mountFreshnessBadge(
-    document.getElementById('tennis-freshness'),
-    [
-      '/registry/tennis/partner-contracts.json',
-      '/registry/tennis/board-metrics.json',
-      '/registry/tennis/agent-auth.json',
-    ],
+    document.getElementById('tennis-freshness-contracts'),
+    '/registry/tennis/partner-contracts.json',
     {
       fallbacks: {
         '/registry/tennis/partner-contracts.json': partnerContracts?.generatedAt || null,
-        '/registry/tennis/board-metrics.json': metrics?.generatedAt || null,
-        '/registry/tennis/agent-auth.json': agentAuth?.generatedAt || null,
       },
     }
-  );
+  ).then(info => {
+    const el = document.getElementById('tennis-freshness-contracts');
+    if (el && info?.label) el.textContent = `contracts ${info.label.replace(/^Updated\s+/i, '')}`;
+  });
+  void mountFreshnessBadge(
+    document.getElementById('tennis-freshness-metrics'),
+    '/registry/tennis/board-metrics.json',
+    {
+      fallbacks: {
+        '/registry/tennis/board-metrics.json': metrics?.generatedAt || null,
+      },
+    }
+  ).then(info => {
+    const el = document.getElementById('tennis-freshness-metrics');
+    if (el && info?.label) el.textContent = `metrics ${info.label.replace(/^Updated\s+/i, '')}`;
+  });
+  {
+    const el = document.getElementById('tennis-freshness-books');
+    const bookAt = metrics?.desk?.latestBookAt || null;
+    if (el && bookAt) {
+      const ageMs = ageMsFromIso(bookAt);
+      const tone = toneForAge(ageMs);
+      el.hidden = false;
+      el.classList.add('portal-freshness', `portal-freshness--${tone}`);
+      el.dataset.tone = tone;
+      el.textContent = `books ${formatAge(ageMs)}`;
+      el.title = `desk.latestBookAt ${String(bookAt).replace('T', ' ')}`;
+    }
+  }
 
   if (metrics) {
     renderKpis(metrics, pkgCount, agentAuth);

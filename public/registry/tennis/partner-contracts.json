@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "kind": "tennis-partner-contracts",
   "path": "/registry/tennis/partner-contracts.json",
-  "generatedAt": "2026-08-05T15:57:39.065Z",
-  "source": "offline-join",
+  "generatedAt": "2026-08-05T17:37:45.981Z",
+  "source": "live",
   "runtimeUrl": "https://tennis.factory-wager.com",
   "contractPaths": {
     "partnersCapacity": "https://tennis.factory-wager.com/api/v1/partners/capacity",
@@ -11,22 +11,22 @@
   },
   "summary": {
     "partnerCount": 4,
-    "activeOuts": 7,
-    "totalOuts": 10,
-    "operatorReady": 4,
+    "activeOuts": 5,
+    "totalOuts": 5,
+    "operatorReady": 3,
     "handshakeOk": 4
   },
   "partners": [
     {
       "partnerCode": "ASH",
       "callSign": "ASH-001",
-      "phase": "operator_ready",
+      "phase": "partner.phase.operator_ready",
       "activeOuts": 1,
-      "totalOuts": 2,
-      "totalPerBetMaxCents": null,
+      "totalOuts": 1,
+      "totalPerBetMaxCents": 50000,
       "ledgerRowCount": 0,
-      "balanceDeltaCents": null,
-      "colorHex": null,
+      "balanceDeltaCents": 0,
+      "colorHex": "#c530ac",
       "handshakeOk": true,
       "factoryPhase": "operator_ready",
       "fundStatus": "ready",
@@ -39,34 +39,24 @@
           "outId": "out-ASH-1",
           "partnerCode": "ASH",
           "callSign": "ASH-001",
-          "status": "ready",
-          "bookId": null,
-          "verticalKey": null,
-          "secretsConfigured": null,
-          "perBetMaxCents": null
-        },
-        {
-          "outId": "out-ASH-2",
-          "partnerCode": "ASH",
-          "callSign": "ASH-001",
-          "status": "deferred",
-          "bookId": null,
-          "verticalKey": null,
-          "secretsConfigured": null,
-          "perBetMaxCents": null
+          "status": "active",
+          "bookId": "book-hard-rock-florida",
+          "verticalKey": "hardrock",
+          "secretsConfigured": false,
+          "perBetMaxCents": 50000
         }
       ]
     },
     {
       "partnerCode": "BIL",
       "callSign": "BIL-001",
-      "phase": "operator_ready",
+      "phase": "partner.phase.operator_ready",
       "activeOuts": 1,
       "totalOuts": 1,
-      "totalPerBetMaxCents": null,
+      "totalPerBetMaxCents": 50000,
       "ledgerRowCount": 0,
-      "balanceDeltaCents": null,
-      "colorHex": null,
+      "balanceDeltaCents": 0,
+      "colorHex": "#2e1fd1",
       "handshakeOk": true,
       "factoryPhase": "operator_ready",
       "fundStatus": "ready",
@@ -79,24 +69,24 @@
           "outId": "out-BIL-1",
           "partnerCode": "BIL",
           "callSign": "BIL-001",
-          "status": "ready",
-          "bookId": null,
-          "verticalKey": null,
-          "secretsConfigured": null,
-          "perBetMaxCents": null
+          "status": "active",
+          "bookId": "book-partner-book-tbd",
+          "verticalKey": "fantasy402",
+          "secretsConfigured": false,
+          "perBetMaxCents": 50000
         }
       ]
     },
     {
       "partnerCode": "NOV",
       "callSign": "NOV-001",
-      "phase": "operator_ready",
+      "phase": "partner.phase.operator_ready",
       "activeOuts": 1,
-      "totalOuts": 2,
-      "totalPerBetMaxCents": null,
+      "totalOuts": 1,
+      "totalPerBetMaxCents": 50000,
       "ledgerRowCount": 0,
-      "balanceDeltaCents": null,
-      "colorHex": null,
+      "balanceDeltaCents": 0,
+      "colorHex": "#4a7e20",
       "handshakeOk": true,
       "factoryPhase": "operator_ready",
       "fundStatus": "ready",
@@ -109,34 +99,24 @@
           "outId": "out-NOV-1",
           "partnerCode": "NOV",
           "callSign": "NOV-001",
-          "status": "ready",
-          "bookId": null,
-          "verticalKey": null,
-          "secretsConfigured": null,
-          "perBetMaxCents": null
-        },
-        {
-          "outId": "out-NOV-2",
-          "partnerCode": "NOV",
-          "callSign": "NOV-001",
-          "status": "deferred",
-          "bookId": null,
-          "verticalKey": null,
-          "secretsConfigured": null,
-          "perBetMaxCents": null
+          "status": "active",
+          "bookId": "book-hard-rock-florida",
+          "verticalKey": "hardrock",
+          "secretsConfigured": false,
+          "perBetMaxCents": 50000
         }
       ]
     },
     {
       "partnerCode": "SPEN",
       "callSign": "SPEN-001",
-      "phase": "operator_ready",
-      "activeOuts": 4,
-      "totalOuts": 5,
-      "totalPerBetMaxCents": null,
+      "phase": "partner.phase.onboarding",
+      "activeOuts": 2,
+      "totalOuts": 2,
+      "totalPerBetMaxCents": 100000,
       "ledgerRowCount": 0,
-      "balanceDeltaCents": null,
-      "colorHex": null,
+      "balanceDeltaCents": 0,
+      "colorHex": "#6a7c13",
       "handshakeOk": true,
       "factoryPhase": "operator_ready",
       "fundStatus": "ready",
@@ -149,56 +129,27 @@
           "outId": "out-SPEN-1",
           "partnerCode": "SPEN",
           "callSign": "SPEN-001",
-          "status": "ready",
-          "bookId": null,
-          "verticalKey": null,
-          "secretsConfigured": null,
-          "perBetMaxCents": null
+          "status": "active",
+          "bookId": "book-parlay21-com",
+          "verticalKey": "oddsblaze",
+          "secretsConfigured": false,
+          "perBetMaxCents": 50000
         },
         {
           "outId": "out-SPEN-2",
           "partnerCode": "SPEN",
           "callSign": "SPEN-001",
-          "status": "ready",
-          "bookId": null,
-          "verticalKey": null,
-          "secretsConfigured": null,
-          "perBetMaxCents": null
-        },
-        {
-          "outId": "out-SPEN-3",
-          "partnerCode": "SPEN",
-          "callSign": "SPEN-001",
-          "status": "ready",
-          "bookId": null,
-          "verticalKey": null,
-          "secretsConfigured": null,
-          "perBetMaxCents": null
-        },
-        {
-          "outId": "out-SPEN-4",
-          "partnerCode": "SPEN",
-          "callSign": "SPEN-001",
-          "status": "ready",
-          "bookId": null,
-          "verticalKey": null,
-          "secretsConfigured": null,
-          "perBetMaxCents": null
-        },
-        {
-          "outId": "out-SPEN-5",
-          "partnerCode": "SPEN",
-          "callSign": "SPEN-001",
-          "status": "deferred",
-          "bookId": null,
-          "verticalKey": null,
-          "secretsConfigured": null,
-          "perBetMaxCents": null
+          "status": "active",
+          "bookId": "book-lonestarwagering-com",
+          "verticalKey": "oddsblaze",
+          "secretsConfigured": false,
+          "perBetMaxCents": 50000
         }
       ]
     }
   ],
   "notes": [
-    "Offline join from partners-ops.json + telegram-handshake.json (no PARTNER_API_TOKEN)"
+    "Live Tennis HQ v1 partners/capacity + accounting/finance",
+    "Enriched with Factory handshake + fundStatus from partners-ops join"
   ]
 }

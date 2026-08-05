@@ -1,13 +1,13 @@
 {
   "kind": "registry-bake-manifest",
   "schemaVersion": 2,
-  "generatedAt": "2026-08-05T17:03:46.825Z",
-  "root": "/Users/nolarose/Projects/.codex-worktrees/portal-shared-ui/public/registry",
+  "generatedAt": "2026-08-05T17:37:46.044Z",
+  "root": "/Users/nolarose/Projects/.codex-worktrees/wave-c-tennis-int/public/registry",
   "runtime": {
     "runtime": "bun",
-    "runtimeVersion": "1.4.0",
-    "bakedAt": "2026-08-05T17:03:46.825Z",
-    "runtimeRevision": "a227ad991b62"
+    "runtimeVersion": "1.3.6",
+    "bakedAt": "2026-08-05T17:37:46.044Z",
+    "runtimeRevision": "d8bebc386121"
   },
   "entries": [
     {
@@ -82,15 +82,15 @@
     },
     {
       "path": "/registry/tennis/partner-contracts.json",
-      "bakedAt": "2026-08-05T15:57:39.065Z",
-      "source": "offline-join",
-      "bytes": 5950,
+      "bakedAt": "2026-08-05T17:37:45.981Z",
+      "source": "live",
+      "bytes": 4811,
       "etag": null
     }
   ],
   "summary": {
     "files": 11,
     "withTimestamp": 11,
-    "totalBytes": 957126
+    "totalBytes": 955987
   }
 }
