@@ -15,6 +15,7 @@ import {
   PM_PROOF_REPORT_PATH,
   PM_PROOF_SCHEMA,
   readmeMetadata,
+  registryHostOrigin,
   scopeTokenPresence,
   scopedPackumentUrl,
 } from '../lib/verification/pm-registry-probes.ts';
@@ -236,6 +237,26 @@ describe('pm-registry-probes network fail-soft', () => {
     );
     expect(thrown.ok).toBe(true);
     expect(thrown.skipped).toBe(true);
+  });
+
+  test('artifactRegistryApi uses host origin, not npm packument base', async () => {
+    expect(registryHostOrigin('https://registry.factory-wager.com/api/npm')).toBe(
+      'https://registry.factory-wager.com'
+    );
+    let hit = '';
+    const row = await artifactRegistryApi(
+      (async (input: RequestInfo | URL) => {
+        hit = String(input);
+        return Response.json(
+          { status: 'ok' },
+          { headers: { 'content-type': 'application/json' } }
+        );
+      }) as unknown as typeof fetch,
+      'https://registry.factory-wager.com/api/npm'
+    );
+    expect(hit).toBe('https://registry.factory-wager.com/api/registry/health');
+    expect(hit).not.toContain('/api/npm/api/');
+    expect(row.ok).toBe(true);
   });
 
   test('scopeTokenPresence never hard-fails', () => {
