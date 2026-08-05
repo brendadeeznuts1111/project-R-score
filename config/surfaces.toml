@@ -71,7 +71,7 @@ backend = "cloudflare-worker:tennis-hq"
 status = "live"
 protocol = "https-static+functions"
 access = "public"
-note = "Operator-owned Tennis HQ Worker Custom Domain. Source repo plum-spruce-dawn-dune1 (canonical); Cloudflare manages DNS/TLS. Producer SHA 1092c5ea / Worker 873ca076 passed strict release verification 2026-08-05 (version, health, glossary, fail-closed v1). Public shell and identity; /api/v1/* contracts use separate fail-closed bearer auth."
+note = "Operator-owned Tennis HQ Worker Custom Domain. Source repo plum-spruce-dawn-dune1 (canonical); Cloudflare manages DNS/TLS. Production tip SHA 41c9ab6 / Worker 7b9ac02a (tennis-hq@1.4.0) verified 2026-08-05 via /api/version + unauth v1 401. Public shell and identity; /api/v1/* contracts use separate fail-closed bearer auth. Git tip may lead production tip until redeploy."
 
 [surfaces.wiki]
 host = "wiki.factory-wager.com"
