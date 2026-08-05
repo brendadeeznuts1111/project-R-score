@@ -95,6 +95,7 @@ describe('migrateSchema adds the reference column', () => {
     expect(indexes).toContain('idx_partner_ledger_scope');
     expect(indexes).toContain('idx_partner_ledger_batch');
     expect(indexes).toContain('idx_partner_ledger_external');
+    expect(indexes).toContain('idx_partner_ledger_tracking');
     db.close();
   });
 });

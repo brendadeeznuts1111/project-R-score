@@ -105,6 +105,34 @@ describe('partner_ledger table client', () => {
     expect(plain.externalId).toBeUndefined();
     expect(plain.batchId).toBeUndefined();
   });
+
+  test('idx_partner_ledger_external enforces uniqueness on partner_code+account_scope+external_id', () => {
+    insertLedgerEntry(db, {
+      partnerCode: 'SPEN',
+      type: 'deposit',
+      amount: 100,
+      currency: 'USD',
+      accountScope: 'rail:venmo:spen@venmo.com',
+      externalId: 'PAYPAL-DUP-1',
+    });
+    expect(() =>
+      insertLedgerEntry(db, {
+        partnerCode: 'SPEN',
+        type: 'deposit',
+        amount: 50,
+        currency: 'USD',
+        accountScope: 'rail:venmo:spen@venmo.com',
+        externalId: 'PAYPAL-DUP-1',
+      })
+    ).toThrow();
+  });
+
+  test('ensurePartnerLedgerSchema creates idx_partner_ledger_tracking', () => {
+    const indexes = (
+      db.query(`PRAGMA index_list(partner_ledger)`).all() as { name: string }[]
+    ).map(i => i.name);
+    expect(indexes).toContain('idx_partner_ledger_tracking');
+  });
 });
 
 describe('initLedgerForPartner (accounting stub)', () => {

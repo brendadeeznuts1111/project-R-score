@@ -1720,17 +1720,19 @@
           ledgerBody.innerHTML = rows.length
             ? [...rows]
                 .reverse()
-                .map(
-                  r => `<tr>
+                .map(r => {
+                  const type = String(r.type || 'unknown');
+                  const conceptId = `accounting.${type}`;
+                  return `<tr>
                 <td><time>${esc(r.createdAt)}</time></td>
-                <td><code>${esc(r.type)}</code></td>
+                <td>${conceptChip(conceptId, type, ops?.colors?.[conceptId])}</td>
                 <td>${fmtMoney(r.amount)}</td>
                 <td>${esc(r.currency)}</td>
                 <td>${esc(r.reference || '—')}</td>
                 <td>${esc(r.trackingId || '—')}</td>
                 <td>${fmtMoney(r.balanceAfter)}</td>
-              </tr>`
-                )
+              </tr>`;
+                })
                 .join('')
             : '<tr><td colspan="7">No partner_ledger transactions — post via <code>partner:settlement:post</code> / <code>import</code>, then <code>partners:build</code></td></tr>';
         }
