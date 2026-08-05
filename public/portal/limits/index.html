@@ -1252,6 +1252,19 @@
               <option value="">All ZIP prefixes</option>
             </select>
           </label>
+          <label class="pattern-filter" for="filter-time">
+            <a
+              href="/portal/glossary/#glossary:ui.filter.window"
+              data-glossary-concept="ui.filter.window"
+              >Time</a
+            >
+            <select id="filter-time" aria-label="Filter by time window">
+              <option value="">All time</option>
+              <option value="24h">Last 24 hours</option>
+              <option value="7d">Last 7 days</option>
+              <option value="30d">Last 30 days</option>
+            </select>
+          </label>
           <button
             onclick="applyFilter()"
             data-glossary-concept="ui.action.filter"
@@ -1484,6 +1497,13 @@
                   <th>
                     <a
                       class="semantic-label"
+                      href="/portal/glossary/#glossary:ops.limits.limit_delta"
+                      >Delta %</a
+                    >
+                  </th>
+                  <th>
+                    <a
+                      class="semantic-label"
                       href="/portal/glossary/#glossary:ops.limits.influence_score"
                       >Influence</a
                     >
@@ -1524,11 +1544,13 @@
         let filterBook = '';
         let filterState = '';
         let filterZip = '';
+        let filterTime = '';
         const PATTERN_QUERY_PARAMS = {
           account: 'pattern',
           sportsbook: 'book',
           state: 'state',
           zip: 'zip',
+          time: 'time',
         };
         const GLOSSARY_CONCEPT_PATTERN = /^[a-z0-9][a-z0-9._-]*$/i;
         const MARKET_GLOSSARY_CONCEPTS = Object.freeze({
@@ -1768,12 +1790,14 @@
           filterBook = document.getElementById('filter-book').value;
           filterState = document.getElementById('filter-state').value;
           filterZip = document.getElementById('filter-zip').value;
+          filterTime = document.getElementById('filter-time').value;
           const url = new URL(window.location.href);
           const values = {
             [PATTERN_QUERY_PARAMS.account]: filterPartner,
             [PATTERN_QUERY_PARAMS.sportsbook]: filterBook,
             [PATTERN_QUERY_PARAMS.state]: filterState,
             [PATTERN_QUERY_PARAMS.zip]: filterZip,
+            [PATTERN_QUERY_PARAMS.time]: filterTime,
           };
           for (const [parameter, value] of Object.entries(values)) {
             if (value) url.searchParams.set(parameter, value);
@@ -1794,8 +1818,12 @@
           filterBook = url.searchParams.get(PATTERN_QUERY_PARAMS.sportsbook) ?? '';
           filterState = url.searchParams.get(PATTERN_QUERY_PARAMS.state) ?? '';
           filterZip = url.searchParams.get(PATTERN_QUERY_PARAMS.zip) ?? '';
+          filterTime = url.searchParams.get(PATTERN_QUERY_PARAMS.time) ?? '';
           document.getElementById('filter-partner').value = filterPartner;
           document.getElementById('filter-book').value = filterBook;
+          document.getElementById('filter-state').value = filterState;
+          document.getElementById('filter-zip').value = filterZip;
+          document.getElementById('filter-time').value = filterTime;
         }
 
         function esc(s) {
@@ -1808,6 +1836,15 @@
         function toneMetric(id, tone) {
           const el = document.getElementById(id);
           if (el) el.className = `metric${tone ? ' ' + tone : ''}`;
+        }
+
+        /** Absolute cutoff (ms) for a time-window filter value. */
+        function timeCutoffMs(value) {
+          const now = Date.now();
+          if (value === '24h') return now - 24 * 3600000;
+          if (value === '7d') return now - 7 * 86400000;
+          if (value === '30d') return now - 30 * 86400000;
+          return 0;
         }
 
         /** Compact relative timestamp from unix seconds: "3h ago" / "5d ago". */
@@ -1883,6 +1920,10 @@
             if (filterBook && r.sportsbook !== filterBook) return false;
             if (filterState && pattern?.state_code !== filterState) return false;
             if (filterZip && pattern?.zip_prefix !== filterZip) return false;
+            if (filterTime) {
+              const t = Number(r.increased_at) * 1000;
+              if (!Number.isFinite(t) || t <= 0 || t < timeCutoffMs(filterTime)) return false;
+            }
             return true;
           });
 
@@ -1979,7 +2020,8 @@
         <td><span class="badge ${typeCls}" data-glossary-concept="ops.limits.market_phase">${esc(r.bet_type ?? '—')}</span></td>
         <td>$${prev.toLocaleString()}</td>
         <td><strong>$${next.toLocaleString()}</strong></td>
-        <td><span class="badge ${directionCls}" data-glossary-concept="ops.limits.change_direction">${directionLabel}</span><br><strong>${raise >= 0 ? '+' : '−'}$${Math.abs(raise).toLocaleString()} (${pct}%)</strong></td>
+        <td><span class="badge ${directionCls}" data-glossary-concept="ops.limits.change_direction">${directionLabel}</span> <strong>${raise >= 0 ? '+' : '−'}$${Math.abs(raise).toLocaleString()}</strong></td>
+        <td>${pct === '∞' ? '∞' : `${pct}%`}</td>
         <td>${scoreBadge}</td>
         <td>${when}</td>
       </tr>`;
@@ -2189,6 +2231,7 @@
         document.getElementById('filter-book').addEventListener('change', applyFilter);
         document.getElementById('filter-state').addEventListener('change', applyFilter);
         document.getElementById('filter-zip').addEventListener('change', applyFilter);
+        document.getElementById('filter-time').addEventListener('change', applyFilter);
         window.addEventListener('popstate', () => {
           syncPatternFiltersFromUrl();
           render();
