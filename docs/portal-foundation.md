@@ -252,7 +252,7 @@ bun test tests/venue-brand.test.ts
 | Mid distribution | `/registry/tennis/mid-distribution.json` |
 | Agent registry auth | `/registry/tennis/agent-auth.json` (`FACTORY_WAGER_TOKEN` status · no secret) · [`tennis-hq-registry`](harness/tenants/tennis-hq-registry.md) |
 | Bake | `bun run tennis:board:bake` (event-store) · `--sample` fallback |
-| Board UI | [`/portal/tennis/`](../public/portal/tennis/) · `tennis-board.js` |
+| Board UI | [`/portal/tennis/`](../public/portal/tennis/) · [`tennis-desk.js`](../public/portal/components/tennis-desk.js) |
 | Pure helpers | [`lib/tennis/board-metrics.ts`](../lib/tennis/board-metrics.ts) |
 
 Event-store default: `Kalshi-bot/research/cache/event-store.db` (book_ticks mids + markets series volume).
