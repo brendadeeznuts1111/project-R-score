@@ -17,8 +17,11 @@
 // attributes (the same mechanism concept-usage counting uses) so
 // GET /api/concepts/:id/usage returns real data immediately.
 
-import { PORTAL_SEMANTIC_CONCEPTS } from '../portal/semantic-vocabulary.ts';
-import { getConcept, patchConcept, scanPortalConceptUsage, upsertConcept } from './repo.ts';
+import {
+  PORTAL_SEMANTIC_CONCEPTS,
+  type PortalSemanticConceptDef,
+} from '../portal/semantic-vocabulary.ts';
+import { getConcept, scanPortalConceptUsage, upsertConcept } from './repo.ts';
 import { BakeFileSchema } from './types.ts';
 
 import type { Database } from 'bun:sqlite';
@@ -55,29 +58,38 @@ export async function migrateConceptRegistry(
     provenanceRows: 0,
     total: 0,
   };
+  const semanticById = new Map<string, PortalSemanticConceptDef>(
+    PORTAL_SEMANTIC_CONCEPTS.map(concept => [concept.id, concept])
+  ); // brand-ok — glossary concept key indexes the semantic fallback
+  const bakedIds = new Set<string>(); // brand-ok — glossary concept keys parsed from the bake
 
-  // 1. Bake pass (boundary parse via zod).
+  // 1. Bake pass (boundary parse via zod). The bake owns governance metadata
+  // (category, color, status, URL); the portal vocabulary owns its live
+  // presentation semantics. Merge both before upsert so reruns converge.
   const bakeText = await Bun.file(bakePath).text();
   const bake = BakeFileSchema.safeParse(JSON.parse(bakeText) as unknown);
   if (!bake.success) {
     throw new Error(`invalid glossary bake at ${bakePath}: ${bake.error.issues[0]?.message}`);
   }
   for (const concept of bake.data.concepts) {
+    bakedIds.add(concept.id);
+    const semanticConcept = semanticById.get(concept.id);
     const preExisting = getConcept(db, concept.id);
     const changed = upsertConcept(db, {
       id: concept.id,
-      label: concept.label ?? concept.id,
-      description: concept.description ?? null,
-      kind: concept.kind ?? null,
+      label: semanticConcept?.label ?? concept.label ?? concept.id,
+      description: semanticConcept?.description ?? concept.description ?? null,
+      kind: semanticConcept?.semanticType ?? concept.kind ?? null,
       category: concept.category ?? null,
       groupPrefix: groupPrefixOf(concept.id),
       status: concept.status === 'deprecated' ? 'deprecated' : 'active',
       color: concept.color ?? null,
-      unit: concept.unit ?? null,
+      unit: semanticConcept?.unit ?? concept.unit ?? null,
+      format: semanticConcept?.format ?? concept.format ?? null,
       mapsTo: concept.mapsTo ?? null,
-      seeAlso: concept.seeAlso ?? [],
-      synonyms: concept.synonyms ?? [],
-      values: concept.values ?? [],
+      seeAlso: semanticConcept?.seeAlso ?? concept.seeAlso ?? [],
+      synonyms: semanticConcept?.synonyms ?? concept.synonyms ?? [],
+      values: semanticConcept?.values ?? concept.values ?? [],
       url: concept.url ?? null,
       deprecatedBy: concept.deprecatedBy ?? null,
       source: bakePath,
@@ -89,37 +101,34 @@ export async function migrateConceptRegistry(
     }
   }
 
-  // 2. Vocabulary pass — gap-fill; insert portal concepts missing from the bake.
+  // 2. Vocabulary pass — baked rows were already enriched above; insert only
+  // portal concepts that are entirely absent from the bake.
   for (const concept of PORTAL_SEMANTIC_CONCEPTS) {
-    const existing = getConcept(db, concept.id);
-    if (existing) {
+    const semanticConcept: PortalSemanticConceptDef = concept;
+    if (bakedIds.has(semanticConcept.id)) {
       summary.vocabularyPresent++;
-      patchConcept(db, concept.id, {
-        label: concept.label,
-        description: concept.description,
-        kind: concept.semanticType,
-        unit: concept.unit ?? null,
-        format: concept.format ?? null,
-        seeAlso: concept.seeAlso,
-        synonyms: concept.synonyms,
-        values: concept.values ?? [],
-      });
     } else {
-      const inserted = upsertConcept(db, {
-        id: concept.id,
-        label: concept.label,
-        description: concept.description,
-        kind: concept.semanticType,
-        category: concept.id.split('.')[0] ?? null,
-        groupPrefix: groupPrefixOf(concept.id),
-        seeAlso: concept.seeAlso,
-        synonyms: concept.synonyms,
-        values: concept.values ?? [],
-        unit: concept.unit ?? null,
-        format: concept.format ?? null,
+      const preExisting = getConcept(db, semanticConcept.id);
+      const changed = upsertConcept(db, {
+        id: semanticConcept.id,
+        label: semanticConcept.label,
+        description: semanticConcept.description,
+        kind: semanticConcept.semanticType,
+        category: semanticConcept.id.split('.')[0] ?? null,
+        groupPrefix: groupPrefixOf(semanticConcept.id),
+        seeAlso: semanticConcept.seeAlso,
+        synonyms: semanticConcept.synonyms,
+        values: semanticConcept.values ?? [],
+        unit: semanticConcept.unit ?? null,
+        format: semanticConcept.format ?? null,
+        status: semanticConcept.status ?? 'active',
+        deprecatedBy: semanticConcept.replacedBy ?? null,
         source: 'lib/portal/semantic-vocabulary.ts',
       });
-      if (inserted) summary.inserted++;
+      if (changed) {
+        if (preExisting) summary.updated++;
+        else summary.inserted++;
+      }
     }
   }
 

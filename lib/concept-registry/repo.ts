@@ -20,8 +20,6 @@ import type {
   ConceptVersionRow,
 } from './types.ts';
 
-const jsonCols = ['see_also', 'synonyms', 'values'] as const;
-
 /** Typed repository error so the API layer can map to HTTP status codes. */
 export class ConceptRegistryError extends Error {
   constructor(
@@ -62,7 +60,7 @@ function rowToConcept(row: Record<string, unknown>): ConceptRegistryRow {
     mapsTo: row.maps_to === null ? null : String(row.maps_to),
     seeAlso: decodeJson(String(row.see_also)),
     synonyms: decodeJson(String(row.synonyms)),
-    values: decodeJson(String(row.values)),
+    values: decodeJson(String(row.value_labels)),
     url: row.url === null ? null : String(row.url),
     deprecatedBy: row.deprecated_by === null ? null : String(row.deprecated_by),
     source: row.source === null ? null : String(row.source),
@@ -131,20 +129,28 @@ export function upsertConcept(
   const values = encodeJson([...(input.values ?? [])]);
 
   if (existing) {
+    const status = input.status ?? 'active';
     const changed =
       existing.label !== input.label ||
       existing.description !== (input.description ?? null) ||
       existing.kind !== (input.kind ?? null) ||
       existing.category !== (input.category ?? null) ||
       existing.group_prefix !== (input.groupPrefix ?? null) ||
+      existing.status !== status ||
+      existing.color !== (input.color ?? null) ||
+      existing.unit !== (input.unit ?? null) ||
+      existing.format !== (input.format ?? null) ||
       existing.maps_to !== (input.mapsTo ?? null) ||
       existing.see_also !== seeAlso ||
+      existing.synonyms !== synonyms ||
+      existing.value_labels !== values ||
       existing.url !== (input.url ?? null) ||
-      existing.deprecated_by !== (input.deprecatedBy ?? null);
+      existing.deprecated_by !== (input.deprecatedBy ?? null) ||
+      existing.source !== (input.source ?? null);
     if (!changed) return false;
     db.query(
       `UPDATE concepts SET label = ?, description = ?, kind = ?, category = ?, group_prefix = ?,
-         color = ?, unit = ?, format = ?, maps_to = ?, see_also = ?, synonyms = ?, value_labels = ?,
+         status = ?, color = ?, unit = ?, format = ?, maps_to = ?, see_also = ?, synonyms = ?, value_labels = ?,
          url = ?, deprecated_by = ?, source = ?, updated_at = ?
        WHERE id = ?`
     ).run(
@@ -153,6 +159,7 @@ export function upsertConcept(
       input.kind ?? null,
       input.category ?? null,
       input.groupPrefix ?? null,
+      status,
       input.color ?? null,
       input.unit ?? null,
       input.format ?? null,
@@ -222,20 +229,28 @@ export function patchConcept(
     deprecatedBy?: string | null;
   }
 ): boolean {
+  const existing = db.query('SELECT * FROM concepts WHERE id = ?').get(id) as
+    | Record<string, unknown>
+    | null
+    | undefined;
+  if (!existing) {
+    throw new ConceptRegistryError('not-found', `concept not found: ${id}`);
+  }
+
   const sets: string[] = [];
   const params: Array<string | number | null> = [];
   const add = (col: string, value: string | number | null | undefined) => {
-    if (value === undefined) return;
+    if (value === undefined || existing[col] === value) return;
     sets.push(`${col} = ?`);
     params.push(value);
   };
   add('label', patch.label);
-  add('description', patch.description ?? null);
-  add('kind', patch.kind ?? null);
-  add('unit', patch.unit ?? null);
-  add('format', patch.format ?? null);
-  add('status', patch.status ?? undefined);
-  add('deprecated_by', patch.deprecatedBy ?? null);
+  add('description', patch.description);
+  add('kind', patch.kind);
+  add('unit', patch.unit);
+  add('format', patch.format);
+  add('status', patch.status);
+  add('deprecated_by', patch.deprecatedBy);
   if (patch.seeAlso !== undefined) add('see_also', encodeJson(patch.seeAlso));
   if (patch.synonyms !== undefined) add('synonyms', encodeJson(patch.synonyms));
   if (patch.values !== undefined) add('value_labels', encodeJson(patch.values));
@@ -515,6 +530,13 @@ export type ConceptSyncReport = {
   orphanUsage: ConceptSyncOrphan[];
 };
 
+type ScannedConceptUsage = {
+  conceptId: string; // brand-ok — glossary concept key parsed from a portal data attribute
+  board: string;
+  filePath: string;
+  count: number;
+};
+
 /**
  * Auto-sync with code (Phase 2): greps HTML files under `public/portal` for
  * `data-glossary-concept="<key>"` attributes, upserts concept_usage rows, and
@@ -528,6 +550,7 @@ export async function syncConceptUsage(
 ): Promise<ConceptSyncReport> {
   const glob = new Bun.Glob('**/*.html');
   const keyFiles = new Map<string, ConceptSyncOrphan>();
+  const usageRows: ScannedConceptUsage[] = [];
   let scannedFiles = 0;
   for (const rel of glob.scanSync({ cwd: portalDir, onlyFiles: true })) {
     scannedFiles++;
@@ -540,13 +563,24 @@ export async function syncConceptUsage(
     const board = rel.split('/')[0] ?? 'root';
     const filePath = `${portalDir}/${rel}`;
     for (const [key, count] of counts) {
-      recordConceptUsage(db, key, board, filePath, count);
+      usageRows.push({ conceptId: key, board, filePath, count });
       const entry = keyFiles.get(key) ?? { key, totalCount: 0, files: [] };
       entry.totalCount += count;
       entry.files.push({ board, filePath, count });
       keyFiles.set(key, entry);
     }
   }
+
+  const filePrefix = `${portalDir}/`;
+  db.transaction(() => {
+    db.query('DELETE FROM concept_usage WHERE substr(file_path, 1, ?) = ?').run(
+      filePrefix.length,
+      filePrefix
+    );
+    for (const row of usageRows) {
+      recordConceptUsage(db, row.conceptId, row.board, row.filePath, row.count);
+    }
+  })();
 
   const orphanUsage: ConceptSyncOrphan[] = [];
   for (const entry of keyFiles.values()) {

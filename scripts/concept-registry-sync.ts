@@ -3,10 +3,10 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // scripts/concept-registry-sync.ts — Auto-sync with code (Phase 2).
 //
-//   bun run concept:registry:sync                       # table report
-//   bun run concept:registry:sync -- --fail-on-orphans  # exit 1 when code uses keys missing from the glossary
-//   bun run concept:registry:sync -- --output json
-//   bun run concept:registry:sync -- --min-unused-days 30
+//   bun run concept:registry:usage-sync                       # table report
+//   bun run concept:registry:usage-sync -- --fail-on-orphans  # exit 1 when code uses keys missing from the glossary
+//   bun run concept:registry:usage-sync -- --output json
+//   bun run concept:registry:usage-sync -- --min-unused-days 30
 //
 // Scans public/portal HTML for `data-glossary-concept` attributes, upserts
 // concept_usage rows, and reports:
@@ -15,6 +15,7 @@
 //     (default cutoff 90 days, per the auto-sync alert spec)
 
 import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
+import { migrateConceptRegistry } from '../lib/concept-registry/migrate.ts';
 import {
   findOrphanUsage,
   syncConceptUsage,
@@ -37,6 +38,7 @@ const minUnusedDays = Number(argValue(Bun.argv, '--min-unused-days') ?? '90');
 const failOnOrphans = Bun.argv.includes('--fail-on-orphans');
 const outputJson = Bun.argv.includes('--output') && argValue(Bun.argv, '--output') === 'json';
 
+await migrateConceptRegistry(db, { scanUsage: false });
 const report = await syncConceptUsage(db);
 const persistedOrphans = findOrphanUsage(db);
 const unused = unusedConceptCandidates(db, minUnusedDays);
@@ -84,15 +86,15 @@ if (outputJson) {
   }
 }
 
-if (failOnOrphans && report.orphanUsage.length > 0) {
+if (failOnOrphans && (report.orphanUsage.length > 0 || persistedOrphans.length > 0)) {
   console.error(
     colorize(
-      `concept:registry:sync · FAIL — ${report.orphanUsage.length} orphan usage key(s)`,
+      `concept:registry:usage-sync · FAIL — ${report.orphanUsage.length} current + ${persistedOrphans.length} persisted orphan usage key(s)`,
       '#f85149'
     )
   );
   process.exit(1);
 }
 if (!outputJson) {
-  console.log(colorize(`concept:registry:sync · OK · db=${dbPath}`, '#3fb950'));
+  console.log(colorize(`concept:registry:usage-sync · OK · db=${dbPath}`, '#3fb950'));
 }

@@ -59,7 +59,7 @@ bun run concept:registry:sync         # lightweight vocabulary → DB (existing 
 bun run concept:registry:check        # verify lightweight DB
 bun run concept:registry:serve        # migrate + serve versioned API on 127.0.0.1:8790
 bun run concept:registry:migrate      # seed/refresh versioned data/concept-registry.db
-bun run concept:registry:usage-sync   # scan portal HTML → concept_usage + orphan report
+bun run concept:registry:usage-sync   # refresh service rows, then scan portal HTML → usage + orphan report
 bun run concept:registry:graph        # graph summary (central concepts)
 bun run concept:registry:graph -- --output json
 ```
