@@ -12,7 +12,6 @@ first-class portal surface on the live domain.
 | Bake | `bun run bookmakers:bake` · check `bookmakers:bake:check` · script [`scripts/bake-bookmakers-board.ts`](../../../scripts/bake-bookmakers-board.ts) |
 | Migrate | `bun run bookmakers:migrate` · [`scripts/migrate-bookmakers-v0.3-to-v0.4.ts`](../../../scripts/migrate-bookmakers-v0.3-to-v0.4.ts) |
 | Desk coverage | `bun run bookmakers:desk-coverage` · [`scripts/bookmakers-desk-coverage.ts`](../../../scripts/bookmakers-desk-coverage.ts) |
-| Publish | `bun run bookmakers:publish` (factory CLI → snapshot → bake `--version`) |
 | Prepare publish | `bun run bookmakers:prepare-publish` · local package under `artifacts/deeplink-automation/packages/bookmakers/` |
 | Bake local | `bun run bookmakers:bake -- --local` (uses local 0.4 package, no registry fetch) |
 | Weave | surface `bookmakers` · artifact `bookmakers-registry` ([`lib/http/portal-weave.ts`](../../../lib/http/portal-weave.ts)) |
