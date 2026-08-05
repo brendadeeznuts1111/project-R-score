@@ -145,6 +145,7 @@ import { formatServePublicBindLines } from '../lib/http/serve-public-bind.ts';
 import { resolveServePublicBindPrefs } from '../lib/http/serve-public-config.ts';
 import { attachServePublicErrorHandler } from '../lib/http/serve-public-error.ts';
 import { isPublicReadPath } from '../lib/http/public-read-path.ts';
+import { registryBoardRedirectFor } from '../lib/http/registry-board-negotiate.ts';
 import { getDb, getMonitoringData } from '../lib/db/connection.ts';
 
 /** Env/CLI/TOML bind prefs — omit port/hostname on Bun.serve when Bun env chain wins. */
@@ -1744,6 +1745,20 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
 
   // Primary APIs + portal boards + health/llms + __hmr live on `routes` (buildPublicRoutes).
   // fetch = unmatched only: markdown stubs, encoded registry, static, npm PUT/GET.
+
+  // Browser address-bar hits on registry JSON → portal board (curl/API keep JSON).
+  // Escape: ?raw=1 or ?format=json or Accept: application/json
+  const board = registryBoardRedirectFor(req, path);
+  if (board) {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: board,
+        Vary: 'Accept, Sec-Fetch-Dest',
+        'Cache-Control': 'no-store',
+      },
+    });
+  }
 
   const md = await portalMarkdown(req);
   if (md) return md;

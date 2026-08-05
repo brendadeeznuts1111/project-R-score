@@ -139,6 +139,7 @@ export function renderHtml(
         <div class="portal-source-links" aria-label="Related artifacts">
           <a href="/registry/vault-health.json">vault-health.json</a>
           <a href="/portal/env/">env</a>
+          <a href="/portal/env/#partner-env-panel">partners env</a>
           <a href="/portal/doctor/">doctor</a>
         </div>
       </div>

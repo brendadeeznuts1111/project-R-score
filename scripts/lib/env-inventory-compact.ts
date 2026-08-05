@@ -9,6 +9,7 @@
  *
  * schemaVersion 3: reverse owners · root/product runtime · template-default cover
  * schemaVersion 4: toml plane — config TOML files, flattened keys, TS importers
+ * schemaVersion 5: partnersAccountsPlane — partners-ops × handshake × vault-map join
  */
 import { Glob } from 'bun';
 import {
@@ -29,6 +30,7 @@ import {
   type PackageVaultDisposition,
   type PackageVaultMap,
 } from '../../lib/harness/packages-vault-map.ts';
+import { loadPartnersAccountsPlane, type PartnersAccountsPlane } from './partners-env-join.ts';
 
 export const ENV_INVENTORY_SCAN_ROOTS = ['lib', 'config', 'scripts', 'tools', 'packages'] as const;
 
@@ -95,7 +97,7 @@ export type EnvRuntimeSlice = {
 };
 
 export type EnvInventoryCompact = {
-  schemaVersion: 4;
+  schemaVersion: 5;
   kind: 'env-inventory';
   generatedAt: string;
   scannedRoots: string[];
@@ -146,6 +148,11 @@ export type EnvInventoryCompact = {
     /** Files Bun.TOML.parse rejected. */
     parseErrors: string[];
   };
+  /**
+   * Partners → accounts join (partners-ops × handshake × vault-map).
+   * Keys/presence only — deep-links to /portal/partners/ and /portal/account/.
+   */
+  partnersAccountsPlane: PartnersAccountsPlane;
   summary: {
     ownerCount: number;
     packageTouchedKeys: number;
@@ -155,6 +162,9 @@ export type EnvInventoryCompact = {
     rootRuntimeNeedsInject: number;
     rootCoveredByDefault: number;
     defaultsIssueCount: number;
+    partnerCount?: number;
+    partnerAccountsReady?: number;
+    partnerSharedEnvMissing?: number;
   };
 };
 
@@ -491,8 +501,16 @@ export async function buildEnvInventoryCompact(
   const pkgIssues = defaultsIssues.filter(i => i.file.startsWith('packages/'));
   const harnessIssues = defaultsIssues.filter(i => !i.file.startsWith('packages/'));
 
+  const vaultEntriesLite = (packagesPlane.displayMap ?? []).map(e => ({
+    envKey: e.envKey,
+    passRef: e.passRef ?? null,
+    inTemplate: e.inTemplate,
+    runtimePresent: e.runtimePresent,
+  }));
+  const partnersAccountsPlane = await loadPartnersAccountsPlane(root, vaultEntriesLite);
+
   return {
-    schemaVersion: 4,
+    schemaVersion: 5,
     kind: 'env-inventory',
     generatedAt: new Date().toISOString(),
     scannedRoots: [...ENV_INVENTORY_SCAN_ROOTS],
@@ -549,6 +567,7 @@ export async function buildEnvInventoryCompact(
       orphanFiles: tomlOrphans,
       parseErrors: tomlParseErrors,
     },
+    partnersAccountsPlane,
     summary: {
       ownerCount: owners.length,
       packageTouchedKeys: owners.filter(o => o.packages.length > 0).length,
@@ -557,6 +576,9 @@ export async function buildEnvInventoryCompact(
       rootRuntimeNeedsInject: rootRuntime.missingNeedsInject.length,
       rootCoveredByDefault: rootRuntime.coveredByTemplateDefault.length,
       defaultsIssueCount: defaultsIssues.length,
+      partnerCount: partnersAccountsPlane.summary.partnerCount,
+      partnerAccountsReady: partnersAccountsPlane.summary.accountsReady,
+      partnerSharedEnvMissing: partnersAccountsPlane.summary.sharedEnvMissing,
     },
   };
 }

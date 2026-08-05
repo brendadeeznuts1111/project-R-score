@@ -16,7 +16,7 @@ export function normalizePartnerCode(value) {
 
 /**
  * Index partners-ops partners by code.
- * @param {{ partners?: Array<{ code?: string }> } | null | undefined} ops
+ * @param {object | null | undefined} ops
  * @returns {Map<string, object>}
  */
 export function indexOpsByPartner(ops) {
@@ -30,7 +30,7 @@ export function indexOpsByPartner(ops) {
 
 /**
  * Flatten outs across partners for inventory tables.
- * @param {{ partners?: Array<object> } | null | undefined} ops
+ * @param {object | null | undefined} ops
  * @returns {Array<object>}
  */
 export function flattenPartnerOuts(ops) {
@@ -60,7 +60,7 @@ export function flattenPartnerOuts(ops) {
 
 /**
  * @param {Array<object>} outs
- * @param {{ partnerCode?: string | null, status?: string | null, incompleteOnly?: boolean }} [filter]
+ * @param {object} [filter]
  */
 export function filterPartnerOuts(outs, filter = {}) {
   const code = filter.partnerCode ? normalizePartnerCode(filter.partnerCode) : null;
@@ -75,8 +75,8 @@ export function filterPartnerOuts(outs, filter = {}) {
 
 /**
  * Aggregate domain stats from partners-ops + handshake-shaped sources.
- * @param {{ summary?: object } | null | undefined} ops
- * @param {{ operatorReady?: number, inviteGaps?: number, partners?: number, rows?: unknown[] } | null | undefined} handshake
+ * @param {object | null | undefined} ops
+ * @param {object | null | undefined} handshake
  */
 export function summarizePartnerDesk(ops, handshake) {
   const summary = ops?.summary || {};
@@ -114,7 +114,7 @@ export function summarizePartnerDesk(ops, handshake) {
 
 /**
  * Unique phase labels from partners-ops (for filter chips).
- * @param {{ partners?: Array<{ phase?: string, phaseConceptId?: string, phaseColor?: object }> } | null | undefined} ops
+ * @param {object | null | undefined} ops
  */
 export function listPartnerPhases(ops) {
   const seen = new Map();

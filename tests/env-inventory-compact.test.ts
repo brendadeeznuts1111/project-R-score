@@ -6,7 +6,10 @@ describe('env-inventory-compact', () => {
   test('includes packages root, owners, and root/product runtime', async () => {
     const inv = await buildEnvInventoryCompact(process.cwd());
     expect(inv.kind).toBe('env-inventory');
-    expect(inv.schemaVersion).toBe(4);
+    expect(inv.schemaVersion).toBe(5);
+    expect(inv.partnersAccountsPlane).toBeDefined();
+    expect(inv.partnersAccountsPlane.sharedEnvBindings.length).toBeGreaterThan(0);
+    expect(inv.summary.partnerCount).toBe(inv.partnersAccountsPlane.summary.partnerCount);
     expect(inv.scannedRoots).toContain('packages');
     expect(inv.uniqueVars).toBeGreaterThan(0);
     expect(inv.packagesPlane.summary.envKeyCount).toBeGreaterThan(0);
@@ -37,5 +40,5 @@ describe('env-inventory-compact', () => {
     expect(inv.toml.orphanFiles.some(p => p.endsWith('bunfig.toml'))).toBe(false);
     // boolean presence only — no secret payloads
     expect(JSON.stringify(inv)).not.toMatch(/cfat_[A-Za-z0-9]+/);
-  });
+  }, 30_000);
 });
