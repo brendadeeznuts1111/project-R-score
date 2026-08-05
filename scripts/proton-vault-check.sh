@@ -69,8 +69,13 @@ for entry in "${PROJECTS[@]}"; do
     continue
   fi
   if [ ! -f "$template" ]; then
-    echo "❌ $proj: template missing ($template)"
-    FAIL=1
+    # Nested enterprise templates may be absent in sparse worktrees — skip unless filtered.
+    if [ -n "$FILTER" ]; then
+      echo "❌ $proj: template missing ($template)"
+      FAIL=1
+    else
+      echo "⚠️  $proj: template missing — skip (sparse checkout?)"
+    fi
     continue
   fi
 
@@ -109,7 +114,8 @@ for entry in "${PROJECTS[@]}"; do
   tmp_out="$(mktemp "${TMPDIR:-/tmp}/proton-vault-XXXXXX.env")"
   chmod 600 "$tmp_out"
   if PROTON_PASS_AGENT_REASON="Vault check inject for $proj" \
-    pass-cli inject --in-file "$template" --out-file "$tmp_out" --force >/dev/null 2>"${tmp_out}.err"; then
+    pass-cli inject --in-file "$template" --out-file "$tmp_out" --force --file-mode 0600 \
+    >/dev/null 2>"${tmp_out}.err"; then
     # Validate: every KEY that had a pass ref is non-empty and not a raw template
     ok=1
     while IFS= read -r line; do

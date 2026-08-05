@@ -1,15 +1,21 @@
 {
   "kind": "vault-health",
-  "generatedAt": "2026-07-28T17:14:41.828Z",
+  "generatedAt": "2026-08-05T07:14:17.992Z",
   "vaults": [
     {
       "name": "factorywager",
-      "active": 28,
+      "active": 31,
       "trashed": 0,
       "trashedTitles": []
     }
   ],
   "referenced": [
+    {
+      "envKey": "CLOUDFLARE_ACCESS_API_TOKEN",
+      "vault": "factorywager",
+      "item": "Cloudflare Access API Token",
+      "status": "ok"
+    },
     {
       "envKey": "CLOUDFLARE_API_TOKEN",
       "vault": "factorywager",
@@ -83,6 +89,12 @@
       "status": "ok"
     },
     {
+      "envKey": "SOCKET_API_KEY",
+      "vault": "factorywager",
+      "item": "Socket API Key",
+      "status": "ok"
+    },
+    {
       "envKey": "SSH_DEPLOY_KEY",
       "vault": "factorywager",
       "item": "SSH Deploy Key",
@@ -103,9 +115,9 @@
   ],
   "summary": {
     "vaultCount": 1,
-    "activeItems": 28,
+    "activeItems": 31,
     "trashedItems": 0,
-    "referencedOk": 15,
+    "referencedOk": 17,
     "referencedTrashed": 0,
     "referencedMissing": 0,
     "healthy": true

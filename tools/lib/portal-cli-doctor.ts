@@ -38,6 +38,11 @@ import {
   INSTALL_LINKER_DOCS,
   probeLockfileConfigVersion,
 } from '../../lib/docs/bun-install-linker-docs.ts';
+import {
+  checkPatVaultMatrix,
+  probePassSession,
+  type PassSessionProbe,
+} from '../../lib/security/pass-session.ts';
 import { joinPath } from '../../scripts/lib/fs-bun.ts';
 import {
   readMachineBunfig,
@@ -163,6 +168,11 @@ export type PortalDoctorOpts = {
    * Distinct from doctor --env ci|dev|all (envScope filter).
    */
   machineEnv?: Record<string, string | undefined>;
+  /**
+   * Inject Pass session probe for tests / offline. When omitted under --full,
+   * runs live `probePassSession({ listVaults: true })` (dev scope).
+   */
+  passSessionProbe?: () => Promise<PassSessionProbe>;
 };
 
 export const GROUP_LABEL: Record<PortalDoctorGroup, string> = {
@@ -291,6 +301,21 @@ export function formatAgeFromIso(iso: string, nowMs: number = Date.now()): strin
   if (hr < 48) return `${hr}h ago`;
   const d = Math.floor(hr / 24);
   return `${d}d ago`;
+}
+
+/** Live vault-health bake older than this is treated as stale by doctor (warn). */
+export const VAULT_HEALTH_STALE_MS = 48 * 60 * 60 * 1000;
+
+/** True when ISO generatedAt is older than maxAgeMs (invalid/missing → not stale). */
+export function isBakeStale(
+  iso: string | undefined,
+  maxAgeMs: number = VAULT_HEALTH_STALE_MS,
+  nowMs: number = Date.now()
+): boolean {
+  if (!iso) return false;
+  const t = Date.parse(iso);
+  if (!Number.isFinite(t)) return false;
+  return nowMs - t > maxAgeMs;
 }
 
 function withMeta(
@@ -434,23 +459,83 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
   const vaultHealth = joinPath(cwd, 'public/registry/vault-health.json');
   const vaultOk = await fileExists(vaultHealth);
   const vaultAt = vaultOk ? await readBakeGeneratedAt(vaultHealth) : undefined;
+  const vaultStale = vaultOk && isBakeStale(vaultAt);
+  const vaultCheckOk = vaultOk && !vaultStale;
   checks.push(
     withMeta(
       {
         id: 'vault-health-bake',
         level: 'warn',
         group: 'bakes',
-        ok: vaultOk,
-        message: vaultOk
-          ? `public/registry/vault-health.json present${vaultAt ? ` · ${formatAgeFromIso(vaultAt)}` : ''}`
-          : 'vault-health bake missing — bun run vault:health:bake (needs pass session)',
+        ok: vaultCheckOk,
+        message: !vaultOk
+          ? 'vault-health bake missing — bun run vault:health:bake (needs pass session)'
+          : vaultStale
+            ? `public/registry/vault-health.json stale${vaultAt ? ` · ${formatAgeFromIso(vaultAt)}` : ''} (>48h) — re-bake`
+            : `public/registry/vault-health.json present${vaultAt ? ` · ${formatAgeFromIso(vaultAt)}` : ''}`,
         freshness: vaultAt ? formatAgeFromIso(vaultAt) : undefined,
       },
       {
-        fixCommand: vaultOk ? undefined : 'bun run vault:health:bake',
-        impact: 'Portal /portal/vault/ board and nav badges need the bake artifact',
+        fixCommand: vaultCheckOk ? undefined : 'bun run vault:health:bake',
+        impact: 'Portal /portal/vault/ board and nav badges need a fresh bake artifact',
         autoFixable: true,
-        timeToFix: vaultOk ? undefined : '1–3 min',
+        timeToFix: vaultCheckOk ? undefined : '1–3 min',
+        envScope: 'dev',
+      }
+    )
+  );
+
+  // Pass CLI binary + session-dir hygiene (offline; no vault login required).
+  // @see https://protonpass.github.io/pass-cli/get-started/configuration/
+  const passCliPath = Bun.which('pass-cli');
+  checks.push(
+    withMeta(
+      {
+        id: 'pass-cli-on-path',
+        level: 'warn',
+        group: 'bakes',
+        ok: Boolean(passCliPath),
+        message: passCliPath
+          ? `pass-cli on PATH · ${passCliPath}`
+          : 'pass-cli missing from PATH — install from protonpass.github.io/pass-cli',
+        source: 'https://protonpass.github.io/pass-cli/',
+      },
+      {
+        fixCommand: passCliPath ? undefined : 'https://protonpass.github.io/pass-cli/',
+        impact: 'Vault inject/run/bake require the official Pass CLI binary',
+        autoFixable: false,
+        timeToFix: passCliPath ? undefined : '5–15 min',
+        envScope: 'dev',
+      }
+    )
+  );
+  const home = Bun.env.HOME ?? '';
+  const stableSessionRoot = home ? joinPath(home, '.factorywager/pass-sessions') : '';
+  const legacyTmpSession = await fileExists('/tmp/pass-agent-factorywager');
+  const stablePresent = stableSessionRoot ? await fileExists(stableSessionRoot) : false;
+  // Always ok (info): migration hint must not fail offline doctor / CI.
+  checks.push(
+    withMeta(
+      {
+        id: 'pass-session-dir-stable',
+        level: 'info',
+        group: 'bakes',
+        ok: true,
+        message:
+          legacyTmpSession && !stablePresent
+            ? 'legacy /tmp/pass-agent-* session present — migrate: source scripts/agent-env.sh factorywager (uses ~/.factorywager/pass-sessions)'
+            : stablePresent
+              ? 'stable Pass session root · ~/.factorywager/pass-sessions'
+              : 'Pass session root not created yet (ok until first agent-env)',
+        source: 'https://protonpass.github.io/pass-cli/get-started/configuration/',
+      },
+      {
+        fixCommand:
+          legacyTmpSession && !stablePresent
+            ? 'source scripts/agent-env.sh factorywager && rm -rf /tmp/pass-agent-factorywager'
+            : undefined,
+        impact: '/tmp sessions vanish on reboot and break inject until re-login',
+        autoFixable: false,
         envScope: 'dev',
       }
     )
@@ -528,6 +613,64 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
 
   // 4) Optional full: spawn existing gates (no network assumed)
   if (full) {
+    // Live Pass session + PAT vault matrix (dev-only; skipped under --env ci).
+    // @see https://protonpass.github.io/pass-cli/commands/info/
+    const passProbe =
+      opts.passSessionProbe != null
+        ? await opts.passSessionProbe()
+        : await probePassSession({ listVaults: true });
+    const matrix = checkPatVaultMatrix(passProbe.patName, passProbe.vaults);
+    const passReadyOk = passProbe.ready && matrix.ok;
+    checks.push(
+      withMeta(
+        {
+          id: 'pass-session-ready',
+          level: 'warn',
+          group: 'gates',
+          ok: passReadyOk,
+          message: !passProbe.passCliPath
+            ? 'pass-cli missing — cannot probe session'
+            : !passProbe.ready
+              ? `Pass session not ready${passProbe.infoError ? ` (${passProbe.infoError})` : ''} — source scripts/agent-env.sh factorywager`
+              : !matrix.ok
+                ? `PAT ${passProbe.patName} missing vault(s): ${matrix.missing.join(', ')} (visible: ${passProbe.vaults.join(',') || 'none'})`
+                : `Pass session ready · PAT=${passProbe.patName} vaults=${passProbe.vaults.join(',') || 'none'}`,
+          source: 'https://protonpass.github.io/pass-cli/commands/info/',
+        },
+        {
+          fixCommand: passReadyOk
+            ? undefined
+            : 'source scripts/agent-env.sh factorywager && bun run proton:session:ready',
+          impact: 'Inject/run/bake and SSH agent load require a ready PAT session',
+          autoFixable: false,
+          timeToFix: passReadyOk ? undefined : '1–5 min',
+          envScope: 'dev',
+          heavy: true,
+        }
+      )
+    );
+    if (passProbe.ready && passProbe.sessionHasLock === true) {
+      checks.push(
+        withMeta(
+          {
+            id: 'pass-session-unlocked',
+            level: 'warn',
+            group: 'gates',
+            ok: false,
+            message: 'Pass session has lock — unlock before inject/run (pass-cli unlock)',
+            source: 'https://protonpass.github.io/pass-cli/help/troubleshoot/',
+          },
+          {
+            fixCommand: 'pass-cli unlock',
+            impact: 'Locked sessions fail inject/run until unlocked',
+            autoFixable: false,
+            envScope: 'dev',
+            heavy: true,
+          }
+        )
+      );
+    }
+
     const installVerify = await spawn(bunSpawnArgs(['run', 'install:verify']), { cwd });
     checks.push(
       withMeta(
