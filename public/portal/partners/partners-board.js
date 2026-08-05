@@ -81,7 +81,9 @@ export function filterPartnerOuts(outs, filter = {}) {
 export function summarizePartnerDesk(ops, handshake) {
   const summary = ops?.summary || {};
   const partners =
-    summary.partners ?? handshake?.partners ?? (Array.isArray(handshake?.rows) ? handshake.rows.length : 0);
+    summary.partners ??
+    handshake?.partners ??
+    (Array.isArray(handshake?.rows) ? handshake.rows.length : 0);
   const outs = flattenPartnerOuts(ops);
   const readyOuts = outs.filter(o => String(o.status).toLowerCase() === 'ready').length;
   const deferredOuts = outs.filter(o => String(o.status).toLowerCase() === 'deferred').length;
@@ -110,6 +112,37 @@ export function summarizePartnerDesk(ops, handshake) {
       return Math.round((tracked / accounts) * 100);
     })(),
   };
+}
+
+/**
+ * Separate legacy board availability from canonical profile readiness.
+ * A populated partners-ops bake must never claim the canonical MVP is ready
+ * while required profiles are missing.
+ * @param {{ partnerCount?: number, canonicalProfileCount?: number, incompleteOuts?: number, inviteGaps?: number }} input
+ */
+export function partnerReadinessGate(input = {}) {
+  const partnerCount = Math.max(0, Number(input.partnerCount) || 0);
+  const canonicalProfileCount = Math.max(0, Number(input.canonicalProfileCount) || 0);
+  const gaps =
+    Math.max(0, Number(input.incompleteOuts) || 0) + Math.max(0, Number(input.inviteGaps) || 0);
+  const hasPartners = partnerCount > 0;
+  const profilesReady = hasPartners && canonicalProfileCount >= partnerCount;
+  const ok = hasPartners && profilesReady && gaps === 0;
+
+  if (!hasPartners) {
+    return { tone: 'fail', label: 'unavailable', ok, profilesReady, gaps };
+  }
+  if (!profilesReady) {
+    return {
+      tone: 'warn',
+      label: `legacy ready · profiles ${canonicalProfileCount}/${partnerCount}`,
+      ok,
+      profilesReady,
+      gaps,
+    };
+  }
+  if (gaps > 0) return { tone: 'warn', label: 'gaps', ok, profilesReady, gaps };
+  return { tone: 'pass', label: 'ready', ok, profilesReady, gaps };
 }
 
 /**

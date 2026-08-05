@@ -122,6 +122,35 @@ describe('partners portal board', () => {
     expect(html).toContain('bookRegistry');
   });
 
+  test('ships valid head, accessible loading/filter states, and non-nested book links', async () => {
+    const html = await Bun.file(BOARD).text();
+    const head = html.slice(0, html.indexOf('</head>'));
+    const renderBooks = html.slice(
+      html.indexOf('function renderBooks'),
+      html.indexOf('function applyPartnerRoute')
+    );
+
+    expect(head).not.toContain('\\n');
+    expect(html).toMatch(
+      /<div\s+id="error-banner"\s+class="ops-banner error hidden"\s+role="alert"\s+aria-live="assertive"/
+    );
+    expect(html).toMatch(
+      /<div\s+id="loading"\s+class="ops-loading"\s+role="status"\s+aria-live="polite"/
+    );
+    expect(html).toContain('aria-pressed="${!phaseFilter}"');
+    expect(html).toContain('aria-pressed="${phaseFilter === p.phase}"');
+    expect(renderBooks).toContain('class="book-card book-chip"');
+    expect(renderBooks).not.toContain('conceptChip(');
+  });
+
+  test('labels zero-profile data as legacy compatibility instead of canonical readiness', async () => {
+    const html = await Bun.file(BOARD).text();
+    expect(html).toContain('partnerReadinessGate');
+    expect(html).toContain('Canonical profiles');
+    expect(html).toContain('Legacy compatibility view; canonical profile coverage is incomplete');
+    expect(html).toContain('renderStats(handshake, seat, ops, partnerProfiles)');
+  });
+
   test('baked registry artifacts exist for the board consumers', async () => {
     expect(await Bun.file('public/registry/telegram-handshake.json').exists()).toBe(true);
     expect(await Bun.file('public/registry/seat-capital-desk.json').exists()).toBe(true);
@@ -173,6 +202,8 @@ describe('partners portal board', () => {
     expect(parsePartnerHash('#partner/ASH/telegram/not-a-topic')).toBeNull();
     expect(partnerHash('ash')).toBe('#partner/ASH');
     expect(partnerOutHash('ASH', 'out-ASH-2')).toBe('#partner/ASH/out/out-ASH-2');
+    expect(partnerOutHash('ASH', 'out-ASH-0')).toBe('#partners');
+    expect(partnerOutHash('ASH', 'out-ASH-01')).toBe('#partners');
     expect(partnerAccountingHash('ASH')).toBe('#partner/ASH/accounting');
     expect(partnerTelegramHash('ASH', 'accounting')).toBe('#partner/ASH/telegram/accounting');
     expect(parsePartnerHash('#book/book-dk-nj')).toEqual({ type: 'book', bookId: 'book-dk-nj' });

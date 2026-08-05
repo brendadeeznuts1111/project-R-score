@@ -27,6 +27,9 @@ describe('partner dashboard semantic plan', () => {
       regions: 8,
       sectionMounts: 9,
       hashRoutes: 6,
+      portalInputs: 8,
+      portalRequiredInputs: 7,
+      portalOptionalInputs: 1,
       presentationStates: 31,
       canonicalProfiles: 0,
     });
@@ -132,7 +135,14 @@ describe('partner dashboard semantic plan', () => {
   it('separately rejects section-mount and partner-hash-route drift', async () => {
     const plan = copyPlan();
     plan.surfaces.portal.section_mount_compatibility.pop();
+    plan.surfaces.portal.section_mount_compatibility.push(
+      structuredClone(plan.surfaces.portal.section_mount_compatibility[0])
+    );
     plan.surfaces.portal.partner_hash_route_compatibility[0].pattern = 'wrong/:route';
+    plan.surfaces.portal.partner_hash_route_compatibility[1].anchor_kind = 'static';
+    plan.surfaces.portal.regions.find(
+      (region: Record<string, unknown>) => region.region_id === 'accounting'
+    ).route_dom_id = 'wrong-dom-id';
 
     const result = await validatePartnerDashboardPlan(plan);
     expect(
@@ -141,6 +151,49 @@ describe('partner dashboard semantic plan', () => {
     expect(
       result.errors.some(error => error.includes('partner hash route compatibility mapping'))
     ).toBe(true);
+    expect(
+      result.errors.some(error => error.includes('static partner hash route anchor does not exist'))
+    ).toBe(true);
+    expect(result.errors).toContain('section mount compatibility anchors must be unique');
+    expect(
+      result.errors.some(error => error.includes('registered region accounting must map'))
+    ).toBe(true);
+  });
+
+  it('keeps the current HTML registry inputs explicit until the one-artifact cutover', async () => {
+    const plan = copyPlan();
+    plan.surfaces.portal.consumer_contract.required_input_refs.pop();
+    plan.surfaces.portal.consumer_contract.target_shape_ref = 'shapes.wrong';
+
+    const result = await validatePartnerDashboardPlan(plan);
+    expect(result.errors.some(error => error.includes('portal registry input map'))).toBe(true);
+    expect(result.errors).toContain('portal consumer target_shape_ref must be shapes.dashboard_artifact');
+  });
+
+  it('requires optional current HTML inputs to degrade explicitly', async () => {
+    const html = await Bun.file('public/portal/partners/index.html').text();
+    const result = await validatePartnerDashboardPlan(copyPlan(), {
+      boardHtml: html.replace(".catch(() => null)", ''),
+    });
+
+    expect(result.errors.some(error => error.includes('portal registry input map'))).toBe(true);
+  });
+
+  it('rejects ambiguous target naming and premature canonical-consumer claims', async () => {
+    const plan = copyPlan();
+    plan.surfaces.portal.consumer = 'PartnerDashboardArtifact';
+    plan.surfaces.portal.target_consumer = 'WrongArtifact';
+    plan.surfaces.portal.consumer_contract.implementation_status = 'implemented';
+    plan.surfaces.portal.consumer_contract.active_input_mode = 'canonical-single-artifact';
+
+    const result = await validatePartnerDashboardPlan(plan);
+    expect(result.errors).toContain(
+      'surfaces.portal.target_consumer must match the dashboard artifact type'
+    );
+    expect(result.errors).toContain('surfaces.portal.consumer is ambiguous; use target_consumer');
+    expect(result.errors).toContain(
+      'implemented portal consumer must load only the canonical dashboard artifact'
+    );
   });
 
   it('turns the active legacy-ops cutoff into a hard removal gate', async () => {

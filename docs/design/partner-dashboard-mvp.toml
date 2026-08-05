@@ -38,7 +38,25 @@ board_id = "partners"
 host_surface_id = "score"
 route = "/portal/partners/"
 page_concept_id = "page.partners"
-consumer = "PartnerDashboardArtifact"
+target_consumer = "PartnerDashboardArtifact"
+
+[surfaces.portal.consumer_contract]
+entrypoint_path = "public/portal/partners/index.html"
+implementation_status = "current-compatibility"
+active_input_mode = "legacy-multi-artifact"
+required_input_refs = [
+  "/registry/telegram-handshake.json",
+  "/registry/seat-capital-desk.json",
+  "/registry/telegram-handshake-catalog.json",
+  "/registry/scrape-wire-taxonomy.json",
+  "/registry/partners-ops.json",
+  "/registry/partner-profiles.json",
+  "/registry/limit-raises.json",
+]
+optional_input_refs = ["/registry/soft-accounting-export.json"]
+target_shape_ref = "shapes.dashboard_artifact"
+target_input_mode = "canonical-single-artifact"
+retirement_condition = "portal-loads-only-target-artifact"
 
 [semantic_model]
 semantic_order = ["business-domain", "concept", "parsed-shape", "consuming-surface"]
