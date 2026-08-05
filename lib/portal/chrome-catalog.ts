@@ -7,6 +7,7 @@
  *
  * @see docs/portal-foundation.md
  * @see public/portal/components/
+ * @see public/portal/nav-badges.js
  */
 import { bunRuntimeProvenance } from '../bun-executable.ts';
 import { PORTAL_WIKI_DROPDOWN_HREF } from '../http/wiki-nav.ts';
@@ -29,6 +30,8 @@ export type PortalChromeNavItem = {
   group?: PortalChromeNavGroup;
   /** Grounded portal-cli / bun command (title tooltip when set) */
   cli?: string;
+  /** Optional registry bake that backs live nav badges (see badgeSources). */
+  badgeSource?: string;
 };
 
 export type PortalChromeComponent = {
@@ -36,6 +39,21 @@ export type PortalChromeComponent = {
   path: string;
   role: string;
   kind: 'module' | 'shell' | 'style' | 'template';
+};
+
+/** Nav-badge wiring — mirrors public/portal/nav-badges.js BADGE_SPECS (machine SSOT for operators). */
+export type PortalChromeBadgeSource = {
+  href: string;
+  source: string;
+  /** Human field path / pick semantics */
+  pick: string;
+};
+
+/** Boards that exist on the public plane but stay out of default nav (direct URL / weave only). */
+export type PortalChromeUnlistedSurface = {
+  id: string; // brand-ok — board slug, not domain *Id
+  href: string;
+  reason: string;
 };
 
 export type PortalChromeCatalog = {
@@ -54,6 +72,9 @@ export type PortalChromeCatalog = {
     footerLinks: number;
     components: number;
     scripts: number;
+    badgeSources: number;
+    unlistedSurfaces: number;
+    groups: Record<PortalChromeNavGroup, number>;
   };
   related: {
     weave: '/registry/portal-weave.json';
@@ -61,27 +82,49 @@ export type PortalChromeCatalog = {
     packagesGraph: '/registry/packages-graph-map.json';
     opsSummary: '/registry/ops-summary.json';
     glossary: '/registry/domain-glossary.json';
+    doctor: '/registry/doctor-state.json';
+    bookmakers: '/registry/bookmakers.json';
+    vaultHealth: '/registry/vault-health.json';
+    chrome: typeof PORTAL_CHROME_REGISTRY_PATH;
   };
   priorityNav: PortalChromeNavItem[];
   overflowNav: PortalChromeNavItem[];
   footerLinks: Array<{ label: string; href: string; external?: boolean }>;
   components: PortalChromeComponent[];
   scripts: Array<{ label: string; cmd: string; doc?: string }>;
+  /** Live nav badge sources (client hydrates counts/tones from these bakes). */
+  badgeSources: PortalChromeBadgeSource[];
+  /** Product/control boards intentionally omitted from default chrome nav. */
+  unlistedSurfaces: PortalChromeUnlistedSurface[];
 };
 
 /** Priority topbar (left → right) — keep lean; deep links live in overflow. */
 export const PORTAL_PRIORITY_NAV: PortalChromeNavItem[] = [
-  { id: 'home', label: 'Home', href: '/', tier: 'priority', group: 'other' },
+  {
+    id: 'home',
+    label: 'Home',
+    href: '/',
+    tier: 'priority',
+    group: 'other',
+    note: 'public lander · portal entry',
+  },
   {
     id: 'ops',
     label: 'Ops',
     href: '/portal/ops/',
     tier: 'priority',
     group: 'ops',
-    note: 'ops-summary rollup',
+    note: 'ops-summary rollup · C4/C5 loop',
     cli: 'bun run ops:snapshot',
   },
-  { id: 'registry', label: 'Registry', href: '/portal/', tier: 'priority', group: 'registry' },
+  {
+    id: 'registry',
+    label: 'Registry',
+    href: '/portal/',
+    tier: 'priority',
+    group: 'registry',
+    note: 'portal hub · board index · weave surfaces',
+  },
   {
     id: 'health',
     label: 'Health',
@@ -90,6 +133,7 @@ export const PORTAL_PRIORITY_NAV: PortalChromeNavItem[] = [
     group: 'harness',
     note: 'system health · monorepo score',
     cli: 'bun run monorepo:health:bake',
+    badgeSource: '/registry/monorepo-health.json',
   },
   {
     id: 'dod',
@@ -97,7 +141,8 @@ export const PORTAL_PRIORITY_NAV: PortalChromeNavItem[] = [
     href: '/portal/dod/',
     tier: 'priority',
     group: 'plane',
-    note: 'visual proof review',
+    note: 'visual proof review · public-plane gate',
+    cli: 'bun run public:audit:verify',
   },
   {
     id: 'compliance',
@@ -105,7 +150,7 @@ export const PORTAL_PRIORITY_NAV: PortalChromeNavItem[] = [
     href: '/portal/compliance/',
     tier: 'priority',
     group: 'ops',
-    note: 'MA/NJ board',
+    note: 'MA/NJ board · shadow matrix',
     cli: 'bun run compliance:bake',
   },
 ];
@@ -133,6 +178,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     group: 'registry',
     note: 'graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.*',
     cli: 'bun run ssot:flow:soft && bun run verify:pm:save',
+    badgeSource: '/registry/packages-graph-map.json',
   },
   {
     id: 'brands',
@@ -167,6 +213,8 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/skills/',
     tier: 'overflow',
     group: 'registry',
+    note: 'harness + Kimi skill catalogs · loop registry alignment',
+    cli: 'bun run skills:validate',
   },
   // ── Secrets & env ──
   {
@@ -177,6 +225,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     group: 'secrets',
     note: 'Proton Pass health bake · gate: portal-cli vault health',
     cli: 'bun run portal-cli vault health  # offline SSOT · --update to refresh snaps',
+    badgeSource: '/registry/vault-health.json',
   },
   {
     id: 'env',
@@ -190,7 +239,8 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
   // ── Registry (concepts) ──
   // Harness overflow slots (tools, failures, bunfig, console-format, doctor,
   // install-hygiene) intentionally omitted from default nav — boards remain
-  // reachable via direct URL / weave. Health stays on priority (group: harness).
+  // reachable via direct URL / weave. See unlistedSurfaces. Health stays on
+  // priority (group: harness).
   {
     id: 'concepts',
     label: 'Concepts',
@@ -216,6 +266,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/dashboard/',
     tier: 'overflow',
     group: 'ops',
+    note: 'KPIs · TOC · compliance plane · proof-index pins',
   },
   {
     id: 'toc',
@@ -223,7 +274,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/toc/',
     tier: 'overflow',
     group: 'ops',
-    note: 'Drum/Buffer/Rope',
+    note: 'Drum/Buffer/Rope fixture board',
     cli: 'bun run ops:seed:toc',
   },
   {
@@ -232,7 +283,17 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/limits/',
     tier: 'overflow',
     group: 'ops',
+    note: 'multi-factor partner limit raises · CLV',
     cli: 'bun run ops:limits:demo',
+  },
+  {
+    id: 'limits-lab',
+    label: 'Limits lab',
+    href: '/portal/limits-lab/',
+    tier: 'overflow',
+    group: 'ops',
+    note: 'forecast / predict lab · multi-factor backtest',
+    cli: 'bun run ops:limits:predict',
   },
   {
     id: 'partners',
@@ -250,6 +311,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     tier: 'overflow',
     group: 'ops',
     note: 'single-account dossier · tree · telemetry · betlog',
+    cli: 'bun run ops:dossier:seed',
   },
   {
     id: 'partner-history',
@@ -270,11 +332,40 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     cli: 'bun run bookmakers:bake',
   },
   {
+    id: 'factory',
+    label: 'Factory',
+    href: '/portal/factory/',
+    tier: 'overflow',
+    group: 'ops',
+    note: 'Factory Telegram ops · package-group wire',
+    cli: 'bun run telegram:verify',
+  },
+  {
+    id: 'tennis',
+    label: 'Tennis',
+    href: '/portal/tennis/',
+    tier: 'overflow',
+    group: 'ops',
+    note: 'Tennis HQ desk · agent-auth · live matches',
+    cli: 'bun run tennis:board:bake',
+  },
+  {
+    id: 'identity',
+    label: 'Identity',
+    href: '/portal/identity/',
+    tier: 'overflow',
+    group: 'ops',
+    note: 'auth board · lockout · anomaly · geo · JIT',
+    cli: 'bun test tests/identity-*.test.ts',
+  },
+  {
     id: 'monitoring',
     label: 'Monitoring',
     href: '/monitoring/',
     tier: 'overflow',
     group: 'ops',
+    note: 'routing · env · compliance tile · proof status',
+    cli: 'bun run ops:snapshot --no-seed',
   },
   {
     id: 'prediction-report',
@@ -293,7 +384,83 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     tier: 'overflow',
     group: 'other',
     external: true,
-    note: 'GitHub Pages hub',
+    note: 'GitHub Pages hub · wiki-index',
+  },
+];
+
+/**
+ * Harness / niche boards kept off default overflow so the ⋯ menu stays product-first.
+ * Still first-class surfaces — link via weave, tools hub, or direct URL.
+ */
+export const PORTAL_CHROME_UNLISTED: PortalChromeUnlistedSurface[] = [
+  {
+    id: 'doctor',
+    href: '/portal/doctor/',
+    reason: 'harness control-plane · portal:doctor · badge source on doctor-state',
+  },
+  {
+    id: 'tools',
+    href: '/portal/tools/',
+    reason: 'operator tools hub · weave scripts · not a product board',
+  },
+  {
+    id: 'failures',
+    href: '/portal/failures/',
+    reason: 'JUnit failure board · badge source; keep overflow lean',
+  },
+  {
+    id: 'bunfig',
+    href: '/portal/bunfig/',
+    reason: 'install policy board · UNIFIED machine/project merge',
+  },
+  {
+    id: 'console-format',
+    href: '/portal/console-format/',
+    reason: 'console-format ratchet board · developer control-plane',
+  },
+  {
+    id: 'install-hygiene',
+    href: '/portal/install-hygiene/',
+    reason: 'cache/links hygiene · badge source; not day-loop product nav',
+  },
+  {
+    id: 'science',
+    href: '/portal/science/',
+    reason: 'experimental science board · niche',
+  },
+];
+
+/** Mirrors public/portal/nav-badges.js — keep in sync when adding badge hrefs. */
+export const PORTAL_CHROME_BADGE_SOURCES: PortalChromeBadgeSource[] = [
+  {
+    href: '/portal/failures/',
+    source: '/registry/failures.json',
+    pick: 'totals.failures | failures.length',
+  },
+  {
+    href: '/portal/vault/',
+    source: '/registry/vault-health.json',
+    pick: 'summary.activeItems | vaults[].active sum',
+  },
+  {
+    href: '/portal/packages/',
+    source: '/registry/packages-graph-map.json',
+    pick: 'packages.length | map.summary.packageCount',
+  },
+  {
+    href: '/portal/health/',
+    source: '/registry/monorepo-health.json',
+    pick: 'score | summary.score',
+  },
+  {
+    href: '/portal/doctor/',
+    source: '/registry/doctor-state.json',
+    pick: 'tone | ok → green/red',
+  },
+  {
+    href: '/portal/install-hygiene/',
+    source: '/registry/install-hygiene-report.json',
+    pick: 'ok | prune | fail label',
   },
 ];
 
@@ -303,6 +470,8 @@ export const PORTAL_FOOTER_LINKS: PortalChromeCatalog['footerLinks'] = [
   { label: 'Ops', href: '/portal/ops/' },
   { label: 'TOC', href: '/portal/toc/' },
   { label: 'Partners', href: '/portal/partners/' },
+  { label: 'Tennis', href: '/portal/tennis/' },
+  { label: 'Bookmakers', href: '/portal/bookmakers/' },
   { label: 'Packages', href: '/portal/packages/' },
   { label: 'Brands', href: '/portal/brands/' },
   { label: 'Glossary', href: '/portal/glossary/' },
@@ -314,6 +483,7 @@ export const PORTAL_FOOTER_LINKS: PortalChromeCatalog['footerLinks'] = [
   { label: 'DOD', href: '/portal/dod/' },
   { label: 'Env', href: '/portal/env/' },
   { label: 'Vault', href: '/portal/vault/' },
+  { label: 'Wiki', href: PORTAL_WIKI_DROPDOWN_HREF, external: true },
   { label: 'Monorepo health', href: '/registry/monorepo-health.json' },
   {
     label: 'GitHub',
@@ -328,6 +498,18 @@ export const PORTAL_CHROME_COMPONENTS: PortalChromeComponent[] = [
     id: 'data',
     path: '/portal/data.js',
     role: 'SWR health service · portal:data',
+    kind: 'module',
+  },
+  {
+    id: 'fetch-json',
+    path: '/portal/fetch-json.js',
+    role: 'shared JSON fetch helper · cache: no-store defaults',
+    kind: 'module',
+  },
+  {
+    id: 'registry-cache',
+    path: '/portal/registry-cache.js',
+    role: 'in-memory registry bake cache for multi-card boards',
     kind: 'module',
   },
   {
@@ -346,6 +528,12 @@ export const PORTAL_CHROME_COMPONENTS: PortalChromeComponent[] = [
     id: 'navigation',
     path: '/portal/navigation.js',
     role: 'markCurrentNavigation path SSOT',
+    kind: 'module',
+  },
+  {
+    id: 'card',
+    path: '/portal/card.js',
+    role: 'shared card chrome · scope badges · tag filters',
     kind: 'module',
   },
   {
@@ -385,6 +573,18 @@ export const PORTAL_CHROME_COMPONENTS: PortalChromeComponent[] = [
     kind: 'style',
   },
   {
+    id: 'theme-tokens',
+    path: '/portal/theme-tokens.css',
+    role: 'CSS custom properties · color kernel theme aliases',
+    kind: 'style',
+  },
+  {
+    id: 'theme-jsonc',
+    path: '/portal/theme.jsonc',
+    role: 'theme SSOT · validate:colors / test:colors',
+    kind: 'shell',
+  },
+  {
     id: 'brand-assets',
     path: '/site.webmanifest',
     role: 'FactoryWager mark · install metadata · theme colors',
@@ -408,7 +608,29 @@ export const PORTAL_CHROME_COMPONENTS: PortalChromeComponent[] = [
     role: 'TOC Drum/Buffer/Rope · harness glance',
     kind: 'module',
   },
+  {
+    id: 'verification-card',
+    path: '/portal/verification-card.js',
+    role: 'proof-index verification pins · health/dashboard',
+    kind: 'module',
+  },
 ];
+
+function countNavGroups(items: PortalChromeNavItem[]): Record<PortalChromeNavGroup, number> {
+  const groups: Record<PortalChromeNavGroup, number> = {
+    ops: 0,
+    harness: 0,
+    registry: 0,
+    secrets: 0,
+    plane: 0,
+    other: 0,
+  };
+  for (const item of items) {
+    const g = item.group ?? 'other';
+    groups[g] += 1;
+  }
+  return groups;
+}
 
 export function buildPortalChromeCatalog(
   generated = new Date().toISOString()
@@ -423,7 +645,9 @@ export function buildPortalChromeCatalog(
     { label: 'verify portal static', cmd: 'bun run verify:portal:static' },
     { label: 'monorepo health bake', cmd: 'bun run monorepo:health:bake' },
     { label: 'ops snapshot', cmd: 'bun run ops:snapshot --no-routing' },
+    { label: 'portal doctor', cmd: 'bun run portal:doctor' },
   ];
+  const allNav = [...PORTAL_PRIORITY_NAV, ...PORTAL_OVERFLOW_NAV];
   const provenance = bunRuntimeProvenance();
   return {
     schemaVersion: 1,
@@ -440,6 +664,9 @@ export function buildPortalChromeCatalog(
       footerLinks: PORTAL_FOOTER_LINKS.length,
       components: PORTAL_CHROME_COMPONENTS.length,
       scripts: scripts.length,
+      badgeSources: PORTAL_CHROME_BADGE_SOURCES.length,
+      unlistedSurfaces: PORTAL_CHROME_UNLISTED.length,
+      groups: countNavGroups(allNav),
     },
     related: {
       weave: '/registry/portal-weave.json',
@@ -447,12 +674,18 @@ export function buildPortalChromeCatalog(
       packagesGraph: '/registry/packages-graph-map.json',
       opsSummary: '/registry/ops-summary.json',
       glossary: '/registry/domain-glossary.json',
+      doctor: '/registry/doctor-state.json',
+      bookmakers: '/registry/bookmakers.json',
+      vaultHealth: '/registry/vault-health.json',
+      chrome: PORTAL_CHROME_REGISTRY_PATH,
     },
     priorityNav: PORTAL_PRIORITY_NAV,
     overflowNav: PORTAL_OVERFLOW_NAV,
     footerLinks: PORTAL_FOOTER_LINKS,
     components: PORTAL_CHROME_COMPONENTS,
     scripts,
+    badgeSources: PORTAL_CHROME_BADGE_SOURCES,
+    unlistedSurfaces: PORTAL_CHROME_UNLISTED,
   };
 }
 

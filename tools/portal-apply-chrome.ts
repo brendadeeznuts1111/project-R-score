@@ -61,6 +61,13 @@ type PageKey =
   | 'concepts-graph'
   | 'console-format'
   | 'tennis'
+  | 'bookmakers'
+  | 'factory'
+  | 'identity'
+  | 'limits-lab'
+  | 'brands'
+  | 'surfaces'
+  | 'science'
   | 'template';
 
 const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: string }[] = [
@@ -135,6 +142,33 @@ const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: st
     brandBadge: 'ops',
   },
   { file: 'tennis/index.html', active: 'tennis', pageLabel: 'Tennis', brandBadge: 'tenant' },
+  {
+    file: 'bookmakers/index.html',
+    active: 'bookmakers',
+    pageLabel: 'Bookmakers',
+    brandBadge: 'ops',
+  },
+  { file: 'factory/index.html', active: 'factory', pageLabel: 'Factory', brandBadge: 'ops' },
+  {
+    file: 'identity/index.html',
+    active: 'identity',
+    pageLabel: 'Identity',
+    brandBadge: 'ops',
+  },
+  {
+    file: 'limits-lab/index.html',
+    active: 'limits-lab',
+    pageLabel: 'Limits lab',
+    brandBadge: 'ops',
+  },
+  { file: 'brands/index.html', active: 'brands', pageLabel: 'Brands', brandBadge: 'domain' },
+  {
+    file: 'surfaces/index.html',
+    active: 'surfaces',
+    pageLabel: 'Surfaces',
+    brandBadge: 'ops',
+  },
+  { file: 'science/index.html', active: 'science', pageLabel: 'Science', brandBadge: 'ops' },
   { file: '_page-template.html', active: 'template', pageLabel: 'New Page', brandBadge: 'ops' },
 ];
 

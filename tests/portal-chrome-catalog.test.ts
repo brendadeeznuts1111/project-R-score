@@ -43,6 +43,12 @@ describe('portal-chrome-catalog', () => {
     expect(byId.partners?.href).toBe('/portal/partners/');
     expect(byId.partners?.cli).toContain('telegram:handshake:catalog');
     expect(byId['partner-history']?.href).toBe('/portal/partner-history/');
+    // Product boards that were missing from chrome
+    expect(byId.tennis?.href).toBe('/portal/tennis/');
+    expect(byId.factory?.href).toBe('/portal/factory/');
+    expect(byId.identity?.href).toBe('/portal/identity/');
+    expect(byId['limits-lab']?.href).toBe('/portal/limits-lab/');
+    expect(byId.skills?.cli).toContain('skills:validate');
   });
 
   test('components register topbar footer sidebar glossary-ux', () => {
@@ -85,10 +91,26 @@ describe('portal-chrome-catalog', () => {
     expect(c.components.length).toBeGreaterThan(5);
     expect(c.summary.components).toBe(c.components.length);
     expect(c.summary.priorityNav).toBe(c.priorityNav.length);
+    expect(c.summary.badgeSources).toBe(c.badgeSources.length);
+    expect(c.summary.unlistedSurfaces).toBe(c.unlistedSurfaces.length);
+    expect(c.summary.groups.ops).toBeGreaterThan(0);
+    expect(c.summary.groups.registry).toBeGreaterThan(0);
     expect(c.related.weave).toBe('/registry/portal-weave.json');
     expect(c.related.monorepoHealth).toBe('/registry/monorepo-health.json');
     expect(c.related.glossary).toBe('/registry/domain-glossary.json');
+    expect(c.related.doctor).toBe('/registry/doctor-state.json');
+    expect(c.related.bookmakers).toBe('/registry/bookmakers.json');
+    expect(c.related.chrome).toBe('/registry/portal-chrome.json');
+    expect(c.badgeSources.some(b => b.href === '/portal/health/')).toBe(true);
+    expect(c.unlistedSurfaces.some(u => u.id === 'doctor')).toBe(true);
     expect(c.runtime.bunVersion).toBe(Bun.version);
     expect(c.runtime.bunRevision).toBe(Bun.revision.slice(0, 8));
+  });
+
+  test('footer includes tennis bookmakers wiki product links', () => {
+    const html = renderFooterHtml();
+    expect(html).toContain('/portal/tennis/');
+    expect(html).toContain('/portal/bookmakers/');
+    expect(html).toContain('Wiki');
   });
 });

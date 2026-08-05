@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-08-03T23:44:37.601Z",
+  "generated": "2026-08-05T08:47:04.082Z",
   "path": "/registry/portal-chrome.json",
   "runtime": {
     "bunVersion": "1.4.0",
@@ -9,17 +9,31 @@
   },
   "summary": {
     "priorityNav": 6,
-    "overflowNav": 20,
-    "footerLinks": 17,
-    "components": 14,
-    "scripts": 5
+    "overflowNav": 24,
+    "footerLinks": 20,
+    "components": 20,
+    "scripts": 6,
+    "badgeSources": 6,
+    "unlistedSurfaces": 7,
+    "groups": {
+      "ops": 15,
+      "harness": 1,
+      "registry": 9,
+      "secrets": 2,
+      "plane": 1,
+      "other": 2
+    }
   },
   "related": {
     "weave": "/registry/portal-weave.json",
     "monorepoHealth": "/registry/monorepo-health.json",
     "packagesGraph": "/registry/packages-graph-map.json",
     "opsSummary": "/registry/ops-summary.json",
-    "glossary": "/registry/domain-glossary.json"
+    "glossary": "/registry/domain-glossary.json",
+    "doctor": "/registry/doctor-state.json",
+    "bookmakers": "/registry/bookmakers.json",
+    "vaultHealth": "/registry/vault-health.json",
+    "chrome": "/registry/portal-chrome.json"
   },
   "priorityNav": [
     {
@@ -27,7 +41,8 @@
       "label": "Home",
       "href": "/",
       "tier": "priority",
-      "group": "other"
+      "group": "other",
+      "note": "public lander · portal entry"
     },
     {
       "id": "ops",
@@ -35,7 +50,7 @@
       "href": "/portal/ops/",
       "tier": "priority",
       "group": "ops",
-      "note": "ops-summary rollup",
+      "note": "ops-summary rollup · C4/C5 loop",
       "cli": "bun run ops:snapshot"
     },
     {
@@ -43,7 +58,8 @@
       "label": "Registry",
       "href": "/portal/",
       "tier": "priority",
-      "group": "registry"
+      "group": "registry",
+      "note": "portal hub · board index · weave surfaces"
     },
     {
       "id": "health",
@@ -52,7 +68,8 @@
       "tier": "priority",
       "group": "harness",
       "note": "system health · monorepo score",
-      "cli": "bun run monorepo:health:bake"
+      "cli": "bun run monorepo:health:bake",
+      "badgeSource": "/registry/monorepo-health.json"
     },
     {
       "id": "dod",
@@ -60,7 +77,8 @@
       "href": "/portal/dod/",
       "tier": "priority",
       "group": "plane",
-      "note": "visual proof review"
+      "note": "visual proof review · public-plane gate",
+      "cli": "bun run public:audit:verify"
     },
     {
       "id": "compliance",
@@ -68,7 +86,7 @@
       "href": "/portal/compliance/",
       "tier": "priority",
       "group": "ops",
-      "note": "MA/NJ board",
+      "note": "MA/NJ board · shadow matrix",
       "cli": "bun run compliance:bake"
     }
   ],
@@ -89,7 +107,8 @@
       "tier": "overflow",
       "group": "registry",
       "note": "graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.*",
-      "cli": "bun run ssot:flow:soft && bun run verify:pm:save"
+      "cli": "bun run ssot:flow:soft && bun run verify:pm:save",
+      "badgeSource": "/registry/packages-graph-map.json"
     },
     {
       "id": "brands",
@@ -123,7 +142,9 @@
       "label": "Skills",
       "href": "/portal/skills/",
       "tier": "overflow",
-      "group": "registry"
+      "group": "registry",
+      "note": "harness + Kimi skill catalogs · loop registry alignment",
+      "cli": "bun run skills:validate"
     },
     {
       "id": "vault",
@@ -132,7 +153,8 @@
       "tier": "overflow",
       "group": "secrets",
       "note": "Proton Pass health bake · gate: portal-cli vault health",
-      "cli": "bun run portal-cli vault health  # offline SSOT · --update to refresh snaps"
+      "cli": "bun run portal-cli vault health  # offline SSOT · --update to refresh snaps",
+      "badgeSource": "/registry/vault-health.json"
     },
     {
       "id": "env",
@@ -166,7 +188,8 @@
       "label": "Dashboard",
       "href": "/portal/dashboard/",
       "tier": "overflow",
-      "group": "ops"
+      "group": "ops",
+      "note": "KPIs · TOC · compliance plane · proof-index pins"
     },
     {
       "id": "toc",
@@ -174,7 +197,7 @@
       "href": "/portal/toc/",
       "tier": "overflow",
       "group": "ops",
-      "note": "Drum/Buffer/Rope",
+      "note": "Drum/Buffer/Rope fixture board",
       "cli": "bun run ops:seed:toc"
     },
     {
@@ -183,7 +206,17 @@
       "href": "/portal/limits/",
       "tier": "overflow",
       "group": "ops",
+      "note": "multi-factor partner limit raises · CLV",
       "cli": "bun run ops:limits:demo"
+    },
+    {
+      "id": "limits-lab",
+      "label": "Limits lab",
+      "href": "/portal/limits-lab/",
+      "tier": "overflow",
+      "group": "ops",
+      "note": "forecast / predict lab · multi-factor backtest",
+      "cli": "bun run ops:limits:predict"
     },
     {
       "id": "partners",
@@ -200,7 +233,8 @@
       "href": "/portal/account/",
       "tier": "overflow",
       "group": "ops",
-      "note": "single-account dossier · tree · telemetry · betlog"
+      "note": "single-account dossier · tree · telemetry · betlog",
+      "cli": "bun run ops:dossier:seed"
     },
     {
       "id": "partner-history",
@@ -221,11 +255,40 @@
       "cli": "bun run bookmakers:bake"
     },
     {
+      "id": "factory",
+      "label": "Factory",
+      "href": "/portal/factory/",
+      "tier": "overflow",
+      "group": "ops",
+      "note": "Factory Telegram ops · package-group wire",
+      "cli": "bun run telegram:verify"
+    },
+    {
+      "id": "tennis",
+      "label": "Tennis",
+      "href": "/portal/tennis/",
+      "tier": "overflow",
+      "group": "ops",
+      "note": "Tennis HQ desk · agent-auth · live matches",
+      "cli": "bun run tennis:board:bake"
+    },
+    {
+      "id": "identity",
+      "label": "Identity",
+      "href": "/portal/identity/",
+      "tier": "overflow",
+      "group": "ops",
+      "note": "auth board · lockout · anomaly · geo · JIT",
+      "cli": "bun test tests/identity-*.test.ts"
+    },
+    {
       "id": "monitoring",
       "label": "Monitoring",
       "href": "/monitoring/",
       "tier": "overflow",
-      "group": "ops"
+      "group": "ops",
+      "note": "routing · env · compliance tile · proof status",
+      "cli": "bun run ops:snapshot --no-seed"
     },
     {
       "id": "prediction-report",
@@ -243,7 +306,7 @@
       "tier": "overflow",
       "group": "other",
       "external": true,
-      "note": "GitHub Pages hub"
+      "note": "GitHub Pages hub · wiki-index"
     }
   ],
   "footerLinks": [
@@ -263,6 +326,14 @@
     {
       "label": "Partners",
       "href": "/portal/partners/"
+    },
+    {
+      "label": "Tennis",
+      "href": "/portal/tennis/"
+    },
+    {
+      "label": "Bookmakers",
+      "href": "/portal/bookmakers/"
     },
     {
       "label": "Packages",
@@ -309,6 +380,11 @@
       "href": "/portal/vault/"
     },
     {
+      "label": "Wiki",
+      "href": "https://wiki.factory-wager.com/wiki-index.html",
+      "external": true
+    },
+    {
       "label": "Monorepo health",
       "href": "/registry/monorepo-health.json"
     },
@@ -323,6 +399,18 @@
       "id": "data",
       "path": "/portal/data.js",
       "role": "SWR health service · portal:data",
+      "kind": "module"
+    },
+    {
+      "id": "fetch-json",
+      "path": "/portal/fetch-json.js",
+      "role": "shared JSON fetch helper · cache: no-store defaults",
+      "kind": "module"
+    },
+    {
+      "id": "registry-cache",
+      "path": "/portal/registry-cache.js",
+      "role": "in-memory registry bake cache for multi-card boards",
       "kind": "module"
     },
     {
@@ -341,6 +429,12 @@
       "id": "navigation",
       "path": "/portal/navigation.js",
       "role": "markCurrentNavigation path SSOT",
+      "kind": "module"
+    },
+    {
+      "id": "card",
+      "path": "/portal/card.js",
+      "role": "shared card chrome · scope badges · tag filters",
       "kind": "module"
     },
     {
@@ -380,6 +474,18 @@
       "kind": "style"
     },
     {
+      "id": "theme-tokens",
+      "path": "/portal/theme-tokens.css",
+      "role": "CSS custom properties · color kernel theme aliases",
+      "kind": "style"
+    },
+    {
+      "id": "theme-jsonc",
+      "path": "/portal/theme.jsonc",
+      "role": "theme SSOT · validate:colors / test:colors",
+      "kind": "shell"
+    },
+    {
       "id": "brand-assets",
       "path": "/site.webmanifest",
       "role": "FactoryWager mark · install metadata · theme colors",
@@ -401,6 +507,12 @@
       "id": "toc-dashboard",
       "path": "/portal/toc/toc-dashboard.js",
       "role": "TOC Drum/Buffer/Rope · harness glance",
+      "kind": "module"
+    },
+    {
+      "id": "verification-card",
+      "path": "/portal/verification-card.js",
+      "role": "proof-index verification pins · health/dashboard",
       "kind": "module"
     }
   ],
@@ -425,6 +537,79 @@
     {
       "label": "ops snapshot",
       "cmd": "bun run ops:snapshot --no-routing"
+    },
+    {
+      "label": "portal doctor",
+      "cmd": "bun run portal:doctor"
+    }
+  ],
+  "badgeSources": [
+    {
+      "href": "/portal/failures/",
+      "source": "/registry/failures.json",
+      "pick": "totals.failures | failures.length"
+    },
+    {
+      "href": "/portal/vault/",
+      "source": "/registry/vault-health.json",
+      "pick": "summary.activeItems | vaults[].active sum"
+    },
+    {
+      "href": "/portal/packages/",
+      "source": "/registry/packages-graph-map.json",
+      "pick": "packages.length | map.summary.packageCount"
+    },
+    {
+      "href": "/portal/health/",
+      "source": "/registry/monorepo-health.json",
+      "pick": "score | summary.score"
+    },
+    {
+      "href": "/portal/doctor/",
+      "source": "/registry/doctor-state.json",
+      "pick": "tone | ok → green/red"
+    },
+    {
+      "href": "/portal/install-hygiene/",
+      "source": "/registry/install-hygiene-report.json",
+      "pick": "ok | prune | fail label"
+    }
+  ],
+  "unlistedSurfaces": [
+    {
+      "id": "doctor",
+      "href": "/portal/doctor/",
+      "reason": "harness control-plane · portal:doctor · badge source on doctor-state"
+    },
+    {
+      "id": "tools",
+      "href": "/portal/tools/",
+      "reason": "operator tools hub · weave scripts · not a product board"
+    },
+    {
+      "id": "failures",
+      "href": "/portal/failures/",
+      "reason": "JUnit failure board · badge source; keep overflow lean"
+    },
+    {
+      "id": "bunfig",
+      "href": "/portal/bunfig/",
+      "reason": "install policy board · UNIFIED machine/project merge"
+    },
+    {
+      "id": "console-format",
+      "href": "/portal/console-format/",
+      "reason": "console-format ratchet board · developer control-plane"
+    },
+    {
+      "id": "install-hygiene",
+      "href": "/portal/install-hygiene/",
+      "reason": "cache/links hygiene · badge source; not day-loop product nav"
+    },
+    {
+      "id": "science",
+      "href": "/portal/science/",
+      "reason": "experimental science board · niche"
     }
   ]
 }
