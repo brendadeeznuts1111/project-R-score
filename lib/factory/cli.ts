@@ -251,10 +251,24 @@ async function cmdPublish(args: string[]): Promise<void> {
   const filePath = positionals[0];
   if (!filePath) errorExit('Missing <path> argument. Usage: factory publish <path> [options]');
 
-  // Try to read package.json from the path (if it's a directory) or adjacent
-  const pkgJson = await tryReadJson(
-    filePath.endsWith('.tgz') ? 'package.json' : `${filePath}/package.json`
-  );
+  // Read package.json from a directory, or extract it from inside a .tgz
+  // (never fall back to the monorepo root package.json — that mis-tags publishes).
+  let pkgJson: Record<string, unknown> | null = null;
+  if (filePath.endsWith('.tgz')) {
+    const proc = Bun.spawnSync(['tar', '-xOf', filePath, 'package/package.json'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    if (proc.success) {
+      try {
+        pkgJson = JSON.parse(proc.stdout.toString()) as Record<string, unknown>;
+      } catch {
+        pkgJson = null;
+      }
+    }
+  } else {
+    pkgJson = await tryReadJson(`${filePath}/package.json`);
+  }
 
   const name = (values.name as string | undefined) ?? (pkgJson?.name as string | undefined);
   const version =

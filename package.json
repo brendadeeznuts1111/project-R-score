@@ -2394,7 +2394,9 @@
     "surfaces:bake": "bun scripts/bake-surfaces.ts",
     "surfaces:check": "bun scripts/bake-surfaces.ts --check",
     "check:console-format": "bun scripts/lint-console-format.ts",
-    "console-format:bake": "bun scripts/bake-console-format.ts"
+    "console-format:bake": "bun scripts/bake-console-format.ts",
+    "bookmakers:bake:local": "bun scripts/bake-bookmakers-board.ts --local",
+    "bookmakers:publish": "bun lib/factory/cli.ts publish artifacts/deeplink-automation/packages/bookmakers/factorywager-bookmakers-0.4.1.tgz --tag latest --type library && bun lib/factory/cli.ts snapshot public/registry/registry.json && bun scripts/bake-bookmakers-board.ts --version 0.4.1"
   },
   "private": "false",
   "files": [
