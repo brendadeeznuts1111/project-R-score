@@ -17,9 +17,10 @@ Two live UIs share the Tennis HQ brand and must not be collapsed into one:
 | Market Desk | `https://tennis.factory-wager.com` | [`plum-spruce-dawn-dune1`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1) ([CONTRIBUTING](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md)) · Worker `tennis-hq` · local sibling `~/Projects/plum-spruce-dawn-dune1` | Interactive desk SPA |
 | Portal board | `https://factory-wager.com/portal/tennis/` | [`public/portal/tennis/`](../../../public/portal/tennis/) | Baked registry evidence board |
 
-Live identity (desk): `tennis-hq@1.4.0` · SHA `1092c5e`
-(`1092c5ea6da9af87bbdb1102b3cd4cc1270790f1`) · matches local producer HEAD /
-`build-id.json`.
+Live identity (desk tip, not git tip): `tennis-hq@1.4.0` · SHA `41c9ab6`
+(`41c9ab68b4d3d47d0bea92d8877137588a7cfdf1`) · Worker deployment
+`7b9ac02a-18c4-46f5-a724-f07b7fa5925d` · probed via `/api/version` 2026-08-05T17:16Z.
+`origin/main` may be ahead until the next verified Wrangler deploy.
 
 ```mermaid
 flowchart LR
