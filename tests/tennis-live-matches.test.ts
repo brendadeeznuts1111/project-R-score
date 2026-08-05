@@ -16,6 +16,11 @@ describe('tennis live-matches', () => {
     expect(doc.source).toBe('sample');
     expect(doc.matches.length).toBeGreaterThan(0);
     expect(doc.limit).toBe(12);
+    expect(doc.quality).toBeDefined();
+    expect(doc.quality!.listedWithBothMids).toBeGreaterThan(0);
+    for (const row of doc.matches) {
+      expect(['ok', 'partial', 'missing']).toContain(row.midStatus);
+    }
   });
 
   test('slugs are safe', () => {
@@ -67,10 +72,19 @@ describe('tennis live-matches', () => {
     expect(doc.kind).toBe('tennis-live-matches');
     expect(doc.source).toBe('event-store');
     expect(doc.matches.length).toBeLessThanOrEqual(4);
+    expect(doc.quality).toBeDefined();
+    expect(doc.quality!.scannedEvents).toBeGreaterThanOrEqual(doc.matches.length);
     for (const row of doc.matches) {
       expect(isSafeAvatarId(row.sideA.slug)).toBe(true);
       expect(isSafeAvatarId(row.sideB.slug)).toBe(true);
       expect(row.venue.length).toBeGreaterThan(0);
+      expect(['ok', 'partial', 'missing']).toContain(row.midStatus);
+    }
+    // Prefer mid-complete rows when the store has any full books.
+    if (doc.quality!.withBothMids > 0 && doc.matches.length > 0) {
+      expect(doc.matches[0]!.midStatus).toBe('ok');
+      expect(doc.matches[0]!.sideA.midCents).not.toBeNull();
+      expect(doc.matches[0]!.sideB.midCents).not.toBeNull();
     }
   });
 });

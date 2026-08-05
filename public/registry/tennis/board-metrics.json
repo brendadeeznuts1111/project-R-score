@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "kind": "tennis-board-metrics",
-  "generatedAt": "2026-07-30T23:09:19.722Z",
+  "generatedAt": "2026-08-05T07:57:06.849Z",
   "source": "event-store",
   "eventStorePath": "Kalshi-bot/research/cache/event-store.db",
   "bookTicksLatest": 174,
   "midsUsable": 52,
-  "markets": 6378,
+  "markets": 8190,
   "buckets": [
     {
       "range": "1–20¢",
@@ -38,37 +38,48 @@
     {
       "series": "KXITFMATCH",
       "label": "ITF M",
-      "markets": 2462,
-      "volume24h": 44493481.07,
-      "display": "44.5M"
+      "markets": 3204,
+      "volume24h": 81640136.83,
+      "display": "81.6M"
     },
     {
       "series": "KXITFWMATCH",
       "label": "ITF W",
-      "markets": 2484,
-      "volume24h": 34687128.08,
-      "display": "34.7M"
-    },
-    {
-      "series": "KXITFWDOUBLES",
-      "label": "ITF W DBL",
-      "markets": 710,
-      "volume24h": 2241065.7,
-      "display": "2.2M"
+      "markets": 3174,
+      "volume24h": 63387784.01,
+      "display": "63.4M"
     },
     {
       "series": "KXITFDOUBLES",
       "label": "ITF M DBL",
-      "markets": 722,
-      "volume24h": 1236451.65,
-      "display": "1.2M"
+      "markets": 922,
+      "volume24h": 3127932.06,
+      "display": "3.1M"
+    },
+    {
+      "series": "KXITFWDOUBLES",
+      "label": "ITF W DBL",
+      "markets": 890,
+      "volume24h": 2267088.74,
+      "display": "2.3M"
     }
   ],
   "venues": [
     {
       "venue": "kalshi",
-      "count": 6378
+      "count": 8190
     }
   ],
-  "note": "Live from event-store · 174 latest books · 52 mids"
+  "note": "Live from event-store · 174 latest books · 52 mids",
+  "desk": {
+    "scannedEvents": 4095,
+    "withBothMids": 23,
+    "withOneMid": 0,
+    "withNoMids": 4072,
+    "listedWithBothMids": 12,
+    "listedMissingMids": 0,
+    "coveragePct": 1,
+    "latestBookTs": 1785249318394,
+    "latestBookAt": "2026-07-28T14:35:18.394Z"
+  }
 }

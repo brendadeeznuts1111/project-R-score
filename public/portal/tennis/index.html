@@ -139,7 +139,7 @@
     <section class="portal-section" aria-labelledby="sample-heading">
       <h2 id="sample-heading">Live matches</h2>
       <p class="section-sub" id="matches-sub">
-        Event-store pairs with avatar slugs — filter by venue.
+        <span id="matches-meta">Event-store pairs with avatar slugs — filter by venue.</span>
         <label for="venue-filter" class="dim">Venue</label>
         <select id="venue-filter" style="margin-left:8px;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit">
           <option value="">All</option>
@@ -303,16 +303,33 @@ function renderKpis(metrics, regPkgCount, agentAuth) {
   const authSub = agentAuth?.envKey
     ? `${agentAuth.envKey} · cloud agent`
     : 'FACTORY_WAGER_TOKEN';
+  const desk = metrics?.desk;
+  const coverage =
+    desk && typeof desk.coveragePct === 'number'
+      ? `${desk.coveragePct}%`
+      : '—';
+  const coverageSub = desk
+    ? `${desk.withBothMids ?? 0}/${desk.scannedEvents ?? 0} full books` +
+      (desk.listedMissingMids
+        ? ` · ${desk.listedMissingMids} listed incomplete`
+        : '')
+    : 'from live-matches bake';
   host.innerHTML = [
     kpiHtml('Source', source, metrics?.note?.slice(0, 48) ?? ''),
     kpiHtml('Markets', metrics?.markets ?? '—', 'event-store rows'),
     kpiHtml('Book mids', metrics?.midsUsable ?? '—', `${metrics?.bookTicksLatest ?? 0} latest ticks`),
+    kpiHtml('Desk coverage', coverage, coverageSub),
     kpiHtml('Packages', regPkgCount, 'tennis registry'),
     kpiHtml('Registry token', authStatus, authSub),
   ].join('');
   // tint first card by source
   const first = host.querySelector('[data-kpi="Source"] .val');
   if (first) first.className = `val st-${tone === 'ok' ? 'ok' : 'warn'}`;
+  const covVal = host.querySelector('[data-kpi="Desk coverage"] .val');
+  if (covVal && desk) {
+    const pct = Number(desk.coveragePct) || 0;
+    covVal.className = `val st-${pct >= 70 ? 'ok' : pct >= 30 ? 'warn' : 'bad'}`;
+  }
   const authVal = host.querySelector('[data-kpi="Registry token"] .val');
   if (authVal) {
     authVal.className = `val st-${authStatus === 'configured' ? 'ok' : 'warn'}`;
@@ -412,6 +429,17 @@ function renderSampleTable(filterVenue = '') {
     const edgeStr = edge == null ? '—' : (edge >= 0 ? '+' : '') + edge + '¢';
     const midA = r.sideA?.midCents != null ? r.sideA.midCents + '¢' : '—';
     const midB = r.sideB?.midCents != null ? r.sideB.midCents + '¢' : '—';
+    const midStatus = r.midStatus || (r.sideA?.midCents != null && r.sideB?.midCents != null
+      ? 'ok'
+      : r.sideA?.midCents != null || r.sideB?.midCents != null
+        ? 'partial'
+        : 'missing');
+    const midDot =
+      midStatus === 'ok'
+        ? '<span class="tone-chip tone-ok" title="Both side mids" style="font-size:10px">ok</span>'
+        : midStatus === 'partial'
+          ? '<span class="tone-chip tone-warn" title="One side mid only" style="font-size:10px">partial</span>'
+          : '<span class="tone-chip tone-bad" title="No book mids" style="font-size:10px">missing</span>';
     return `<tr>
       <td>${avatarImg(slugA)}</td>
       <td>${esc(r.sideA?.label || '—')}</td>
@@ -421,7 +449,7 @@ function renderSampleTable(filterVenue = '') {
       <td class="mono">${esc(midA)}</td>
       <td class="mono">${esc(midB)}</td>
       <td class="mono ${edgeCls}">${esc(edgeStr)}</td>
-      <td class="mono">${esc(r.seriesLabel || r.series || '—')}</td>
+      <td class="mono">${esc(r.seriesLabel || r.series || '—')} ${midDot}</td>
     </tr>`;
   }).join('');
 }
@@ -482,9 +510,14 @@ async function loadLiveMatches() {
     if (!res.ok) return;
     const doc = await res.json();
     liveMatchRows = doc.matches || [];
-    const sub = document.getElementById('matches-sub');
-    if (sub) {
-      sub.innerHTML = `${doc.source || '—'} · ${liveMatchRows.length} matches · filter by venue · slugs from avatar-index`;
+    const meta = document.getElementById('matches-meta');
+    if (meta) {
+      const q = doc.quality;
+      const qBit = q
+        ? ` · mid-ok ${q.listedWithBothMids ?? 0}/${liveMatchRows.length}` +
+          (typeof q.coveragePct === 'number' ? ` · store ${q.coveragePct}%` : '')
+        : '';
+      meta.textContent = `${doc.source || '—'} · ${liveMatchRows.length} matches${qBit} · filter by venue · slugs from avatar-index`;
     }
   } catch {
     liveMatchRows = [];
@@ -616,6 +649,10 @@ export async function load() {
         : agentAuth
           ? ' · registry token missing'
           : '';
+    const deskBit =
+      metrics.desk && typeof metrics.desk.coveragePct === 'number'
+        ? `desk ${metrics.desk.coveragePct}%`
+        : null;
     setBanner(
       tone,
       metrics.source === 'event-store' ? 'Tennis board live' : 'Tennis board (sample metrics)',
@@ -623,6 +660,7 @@ export async function load() {
         metrics.generatedAt ? String(metrics.generatedAt).slice(0, 19) : null,
         `mids ${metrics.midsUsable}`,
         `markets ${metrics.markets}`,
+        deskBit,
         metrics.eventStorePath ? metrics.eventStorePath : null,
       ]
         .filter(Boolean)

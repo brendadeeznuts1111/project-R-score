@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "kind": "surfaces-state",
-  "generatedAt": "2026-08-04T22:41:48.418Z",
+  "generatedAt": "2026-08-05T07:57:37.773Z",
   "source": "config/surfaces.toml (dig+curl verified 2026-08-04)",
   "surfaces": [
     {
@@ -96,7 +96,7 @@
       "status": "live",
       "protocol": "https-static+functions",
       "access": "public",
-      "note": "Operator-owned Tennis HQ Worker Custom Domain. Cloudflare manages DNS/TLS directly; merged producer SHA cb091989 and Worker version 9aaae6ba-7293-4cda-b2ab-41cd068a76ca passed strict release verification 2026-08-04. Public shell and identity; /api/v1/* contracts use separate fail-closed bearer auth.",
+      "note": "Operator-owned Tennis HQ Worker Custom Domain. Source repo plum-spruce-dawn-dune1 (canonical); Cloudflare manages DNS/TLS. Producer SHA 1092c5ea / Worker 873ca076 passed strict release verification 2026-08-05 (version, health, glossary, fail-closed v1). Public shell and identity; /api/v1/* contracts use separate fail-closed bearer auth.",
       "dnsTarget": ""
     },
     {
