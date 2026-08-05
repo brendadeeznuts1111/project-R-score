@@ -87,6 +87,8 @@ describe('migrateSchema adds the reference column', () => {
     expect(cols).toContain('external_id');
     expect(cols).toContain('proof');
     expect(cols).toContain('batch_id');
+    expect(cols).toContain('amount_minor');
+    expect(cols).toContain('balance_after_minor');
     const indexes = (db.query(`PRAGMA index_list(partner_ledger)`).all() as {
       name: string;
     }[]).map(i => i.name);

@@ -12,6 +12,7 @@
 
 import { $ } from 'bun';
 import { resolvePath } from '../lib/path-bun.ts';
+import { isMoneySqlScannable } from './lint-money-sql.ts';
 
 const REPO_ROOT = resolvePath(import.meta.dir, '..');
 const BUN_VERSION_FILE = resolvePath(REPO_ROOT, '.bun-version');
@@ -21,6 +22,8 @@ const SKILL_VALIDATION_PATH_RE =
 const TEST_SOURCE_PATH_RE = /\.(ts|tsx|js|jsx|mts|cts)$/;
 const CONCEPT_SSOT_PATH_RE =
   /^(lib\/portal\/semantic-vocabulary\.ts|lib\/portal\/concept-|lib\/portal\/page-concepts\.ts|scripts\/validate-surface-coverage\.ts|scripts\/concept-audit\.ts|tools\/generate-surface-coverage-map\.ts|docs\/SURFACE_COVERAGE\.md|docs\/DOMAIN_CONCEPT_SHAPE\.md|public\/portal\/concepts\/index\.html|public\/registry\/domain-glossary\.json|public\/registry\/concepts-state\.json)/;
+const PARTNER_DASHBOARD_PLAN_PATH_RE =
+  /^(docs\/design\/partner-dashboard-(mvp\.(toml|md)|semantic-map\.md)|lib\/partner-profile\/schema\.ts|lib\/portal\/(concept-domains|partner-routes|semantic-vocabulary|theme|url-planes)\.ts|lib\/telegram\/partner-ops-color-kernel\.ts|packages\/partners\/|public\/portal\/theme\.jsonc|public\/portal\/theme-tokens\.css|public\/portal\/partners\/|public\/registry\/(domain-glossary|partner-profiles)\.json|scripts\/validate-partner-dashboard-plan\.ts|tests\/(partners-package|validate-partner-dashboard-plan)\.test\.ts)/;
 
 type Environment = Record<string, string | undefined>;
 
@@ -123,6 +126,10 @@ export function isConceptSsotPath(path: string): boolean {
   return CONCEPT_SSOT_PATH_RE.test(path);
 }
 
+export function isPartnerDashboardPlanPath(path: string): boolean {
+  return PARTNER_DASHBOARD_PLAN_PATH_RE.test(path);
+}
+
 function section(label: string, first = false): void {
   console.info(`${first ? '' : '\n'}== pre-commit: ${label} ==`);
 }
@@ -217,6 +224,28 @@ export async function runPrecommit(args: string[] = Bun.argv.slice(2)): Promise<
       );
       if (code !== 0) return code;
     }
+  }
+
+  section('financial SQL storage (path-gated)');
+  if (stagedFiles.some(isMoneySqlScannable)) {
+    const code = await requireCommand(
+      ['bun', 'scripts/lint-money-sql.ts', '--staged'],
+      '❌ financial SQL storage guard failed'
+    );
+    if (code !== 0) return code;
+  } else {
+    console.info('  ⏭️  no staged SQL/migration/schema/ledger DDL — skip money-sql');
+  }
+
+  section('partner dashboard semantic plan (path-gated)');
+  if (stagedFiles.some(isPartnerDashboardPlanPath)) {
+    const code = await requireCommand(
+      ['bun', 'run', 'partner:dashboard-plan:validate'],
+      '❌ partner dashboard semantic plan validation failed'
+    );
+    if (code !== 0) return code;
+  } else {
+    console.info('  ⏭️  no partner dashboard semantic plan paths staged — skip');
   }
 
   section('agent skills (path-gated)');
