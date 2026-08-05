@@ -372,6 +372,17 @@
       groupFilter = h.group;
       statusFilter = h.status;
       syncControls();
+      scrollToPanelFromHash(hash);
+    }
+
+    /** Bare panel ids (#partner-env-panel) — not filter params (#q=&severity=). */
+    function scrollToPanelFromHash(hash = location.hash) {
+      const raw = String(hash).replace(/^#/, '');
+      if (!raw || raw.includes('=')) return;
+      const id = raw.split('&')[0];
+      if (!/^[a-z][a-z0-9-]*$/i.test(id)) return;
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function syncControls() {

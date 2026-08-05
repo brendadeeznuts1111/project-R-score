@@ -157,6 +157,14 @@ exports[`vault-health vault-map referenced inventory is stable (snapshot) 1`] = 
     "vault": "factorywager",
   },
   {
+    "envKey": "PARTNER_API_TOKEN",
+    "field": "password",
+    "inTemplate": false,
+    "item": "Tennis HQ Partner API Token",
+    "passRef": "pass://factorywager/Tennis HQ Partner API Token/password",
+    "vault": "factorywager",
+  },
+  {
     "envKey": "PLAY_SIGNING_SECRET",
     "field": "password",
     "inTemplate": true,
