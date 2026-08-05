@@ -206,10 +206,10 @@ never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
    (`plum-spruce-dawn-dune1/src/routes/api/v1/research/status.ts`). The other four
    return SPA **404**. Ownership: **producer**.
 2. ~~**Surfaces inventory overclaims**~~ — **Closed 2026-08-05 tip refresh.**
-   `[surfaces.tennis].note` + `surfaces-state.json` now pin production tip
-   `41c9ab6` / Worker `7b9ac02a`, record unauth **401**, and state that only
-   research is implemented (other v1 → SPA 404). Residual: git tip `0f7b6d9`
-   still leads until next Wrangler deploy. Ownership was **monorepo**.
+   `[surfaces.tennis].note` + `surfaces-state.json` pin production tip
+   `0f7b6d9` / Worker `b3f2c700`, record unauth **401**, and state that only
+   research is implemented (other v1 → SPA 404). Desk tip matches
+   `origin/main` after Wrangler redeploy. Ownership was **monorepo**.
 
 ### P1 — Empty / soft-fail desk (UI looks broken)
 
@@ -238,9 +238,9 @@ never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
    **docs / UX** (link hygiene).
 10. **Missing desk chrome assets** — favicon / webmanifest 404 on Worker.
     Ownership: **producer**.
-11. **Git tip leads production** — producer `origin/main` `0f7b6d9` is 3 commits
-    ahead of live tip `41c9ab6` (`#9`/`#8`/`#10`). Operators must not treat git
-    HEAD as deployed. Ownership: **operator** (Wrangler redeploy + tip docs).
+11. ~~**Git tip leads production**~~ — **Closed 2026-08-05.** Live tip is
+    `0f7b6d9` / Worker `b3f2c700` (`#10` on `origin/main`); verified via
+    `/api/version` + `deploy:verify:prod`. Ownership was **operator**.
 
 ### P3 — Hygiene
 
@@ -257,12 +257,13 @@ Documentation-only audit — **do not** apply these without an explicit fix lane
 
 | Lane | Action |
 | ---- | ------ |
-| Producer | Implement remaining v1 routes **or** shrink manifest/docs to `research` only; attach warehouse/DB or hide empty panels; add favicon/manifest; deploy `0f7b6d9` (or later) when ready |
+| Producer | Implement remaining v1 routes **or** shrink manifest/docs to `research` only; attach warehouse/DB or hide empty panels; add favicon/manifest |
 | Monorepo | `bun run tennis:board:bake` (stale 2026-07-30 metrics); after each producer deploy: refresh tip in `tennis-hq-registry.md` + `[surfaces.tennis].note` + `bun run surfaces:bake` |
 | Edge | Kalshi probe ACL / outbound permission for `?probe=1` |
 
-**Done this tip lane:** production tip pin `41c9ab6` · surfaces note accuracy ·
-`tennis-desk.js` inventory · `PARTNER_API_TOKEN` configured (unauth **401**).
+**Done this tip lane:** production tip pin `0f7b6d9` / Worker `b3f2c700` ·
+surfaces note accuracy · `tennis-desk.js` inventory · `PARTNER_API_TOKEN`
+configured (unauth **401**) · Wrangler redeploy matched `origin/main`.
 
 Out of scope here: Pages deploy, vault token mint, Kalshi network ACL changes.
 

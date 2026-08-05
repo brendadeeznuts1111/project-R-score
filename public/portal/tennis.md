@@ -63,10 +63,10 @@ curl -fsS -H "Authorization: Bearer $PARTNER_API_TOKEN" \
 ## 3. Versioned v1 contracts (bearer)
 
 From `@tennis-hq/ssot` transport manifest (Factory consumes the packed artifact).
-**Live tip `41c9ab6` implements only research** — other v1 paths return the SPA
+**Live tip `0f7b6d9` implements only research** — other v1 paths return the SPA
 shell (**404**). Unauth research → **401** when `PARTNER_API_TOKEN` is set.
-Producer git tip `0f7b6d9` is 3 commits ahead of production (not live until
-Wrangler redeploy).
+Desk tip matches producer `origin/main` (Worker `b3f2c700`, verified
+2026-08-05 via `/api/version`).
 
 | Domain | Path | Live tip | Join to Factory |
 |--------|------|----------|-----------------|
