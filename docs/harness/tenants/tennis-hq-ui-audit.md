@@ -1,6 +1,6 @@
 # Tenant audit: Tennis HQ dashboard UI surfaces
 
-**Probed** 2026-08-05T22:10Z (UTC) via `/api/version` + unauth v1 suite · tip docs refreshed same day  
+**Probed** 2026-08-05T22:17Z (UTC) via `/api/version` + desk export + warehouse + partner probe · tip docs refreshed same day  
 **Claim** dual-surface inventory + path traces + ranked findings  
 **Owners** producer `plum-spruce-dawn-dune1` (Market Desk) · this monorepo
 (`/portal/tennis/` board) · Cloudflare edge (Worker networking)
@@ -169,17 +169,18 @@ never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
 | `/api/version` | 200 | tip SHA `0f7b6d9` · Worker `8072c3da…` · 2026-08-05T22:03Z |
 | `/api/glossary` | 200 | 300 entries · live `generatedAt` refreshes on probe |
 | `/build-id.json` | 200 | packageVersion 1.4.0 |
-| `/api/export/hq-json` | 200 | schema `hq-desk/v1` · **`row_count`: 0** |
-| `/api/partners/health` | 200 | snapshot engine; `probed: false` |
-| `/api/partners/health?probe=1` | **500** | `{"ok":false,"error":"operation not permitted"}` |
+| `/api/export/hq-json` | 200 | schema `hq-desk/v1` · **`row_count`: 71** · `source: hybrid` |
+| `/api/partners/health` | 200 | engine snapshot · `everProbed: true` · summary online/degraded |
+| `/api/partners/health?probe=1` | **200** | live probe ok · `engine: fetch+AbortSignal.timeout` · 6 liveProbes |
+| `/api/partners/executions` | 200 | **`count`: 0** (edge ledger still empty) |
 | `/api/v1/research/status` | **401** | JSON `unauthorized` (fail-closed; 503 only if secret missing) |
 | `/api/v1/marketdata/desk` | **401** | JSON `unauthorized` (wired — not SPA 404) |
 | `/api/v1/trading/executions` | **401** | JSON `unauthorized` (wired — not SPA 404) |
 | `/api/v1/partners/capacity` | **401** | JSON `unauthorized` (wired — not SPA 404) |
 | `/api/v1/accounting/finance` | **401** | JSON `unauthorized` (wired — not SPA 404) |
-| `/warehouse/hardrock-board-overlay.json` | 200 | `stub: true`, `count: 0` |
-| `/warehouse/odds-move-signals.json` | 200 | `stub: true`, `count: 0` |
-| `/api/export/warehouse-json` | **401** | bearer fail-closed when partner secret set |
+| `/warehouse/hardrock-board-overlay.json` | 200 | **`count`: 200** · `generatedAt` 2026-08-05T22:03Z (not stub) |
+| `/warehouse/odds-move-signals.json` | 200 | **`count`: 245** signals · same bake window |
+| `/api/export/warehouse-json` | **401** | partner bearer required (`PARTNER_API_TOKEN`) |
 | `/favicon.svg` | **200** | SVG icon referenced from root head |
 | `/site.webmanifest` | **200** | PWA manifest (icons → `/favicon.svg`) |
 | `/favicon.ico` | **404** | SPA HTML — optional legacy alias only |
@@ -208,9 +209,9 @@ never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
 
 1. ~~**v1 surface incomplete**~~ — **Closed 2026-08-05 re-probe.** All five
    `GET /api/v1/{research,marketdata,trading,partners,accounting}/*` routes
-   return JSON **401** unauth (not SPA 404). Residual risk is **payload quality**
-   after bearer (empty desk / warehouse / edge storage), not route absence.
-   Ownership residual: **producer** data plane.
+   return JSON **401** unauth (not SPA 404). Residual risk is **authenticated
+   payload quality** + edge ledger emptiness, not route absence. Ownership
+   residual: **producer** data plane.
 2. ~~**Surfaces inventory overclaims**~~ — **Closed 2026-08-05 tip refresh** and
    re-aligned after full v1 suite. `[surfaces.tennis].note` +
    `surfaces-state.json` pin production tip `0f7b6d9` / Worker `8072c3da` and
@@ -218,17 +219,22 @@ never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
 
 ### P1 — Empty / soft-fail desk (UI looks broken)
 
-3. **Desk export empty** — `/api/export/hq-json` `row_count: 0` while shell
-   paints. Ownership: **producer** / data plane (no live rows on Worker).
-4. **Warehouse stubs + export 404** — Hard Rock / odds-move JSON are empty
-   stubs; warehouse export returns “No warehouse DB…”. Ownership: **producer**
-   ops (WAREHOUSE_DIR / pollers).
-5. **Edge storage soft-fail** — Cloudflare Worker SQLite path soft-fails GETs
-   empty / POSTs 503 (`edge-storage`). Ledger/executions look empty on edge.
-   Ownership: **producer** + **Cloudflare** Durable Object / D1 choice.
-6. **Partner live probe 500** — `?probe=1` → `operation not permitted` (Kalshi
-   outbound blocked at edge). Snapshot health still 200. Ownership: **Cloudflare
-   edge** networking + **producer** probe path.
+3. ~~**Desk export empty**~~ — **Closed 2026-08-05 re-probe.**
+   `/api/export/hq-json` returns **`row_count`: 71** · `source: hybrid`
+   (Kalshi/Poly live + mock pinny/oddsblaze). Ownership was **producer** data
+   plane.
+4. ~~**Warehouse stubs + export 404**~~ — **Closed 2026-08-05 re-probe.**
+   Hard Rock overlay **`count`: 200** and odds-move **`count`: 245** (not
+   stubs). `/api/export/warehouse-json` is **401** without
+   `PARTNER_API_TOKEN` (expected fail-closed; not SPA 404). Ownership was
+   **producer** ops.
+5. **Edge storage soft-fail** — `/api/partners/executions` still **`count`: 0**
+   on edge; ledger/executions look empty. Ownership: **producer** +
+   **Cloudflare** Durable Object / D1 choice.
+6. ~~**Partner live probe 500**~~ — **Closed 2026-08-05 re-probe.**
+   `?probe=1` returns **200** with `engine: fetch+AbortSignal.timeout`,
+   `liveProbes: 6`, summary online/degraded. Ownership was **Cloudflare edge**
+   + **producer** probe path.
 
 ### P2 — Portal consumer drift
 
@@ -266,17 +272,18 @@ Documentation-only audit — **do not** apply these without an explicit fix lane
 
 | Lane | Action |
 | ---- | ------ |
-| Producer | Attach warehouse/DB or hide empty panels; harden edge storage; optional `/favicon.ico` alias |
-| Monorepo | After each producer deploy: refresh tip in `tennis-hq-registry.md` + `[surfaces.tennis].note` + `bun run surfaces:bake`; re-run `tennis:board:bake` when event-store drifts |
-| Edge | Kalshi probe ACL / outbound permission for `?probe=1` |
+| Producer | Harden edge ledger/executions (`count: 0`); optional `/favicon.ico` alias; keep desk/warehouse publish loop (`hq-export:publish` · warehouse overlays) |
+| Monorepo | After each producer deploy: refresh tip in `tennis-hq-registry.md` + `[surfaces.tennis].note` + `bun run surfaces:bake`; re-run `tennis:board:bake` when event-store drifts; re-open pass-cli for authenticated v1 payload smoke |
+| Edge | Residual: edge SQLite / DO for executions only (partner live probe ACL closed) |
 
 **Done this tip lane:** production tip pin `0f7b6d9` / Worker `8072c3da` ·
 surfaces note accuracy · `tennis-desk.js` inventory · `PARTNER_API_TOKEN`
 configured (all five v1 unauth **401**) · Wrangler redeploy matched
 `origin/main` · board bake refreshed 2026-08-05T22:07Z · findings
-#1/#7/#10/#11 closed.
+#1/#3/#4/#6/#7/#10/#11 closed · residual **#5** edge executions empty.
 
-Out of scope here: Pages deploy, vault token mint, Kalshi network ACL changes.
+Out of scope here: Pages deploy, vault token mint (pass-cli session down), edge
+DO/D1 redesign.
 
 ---
 
