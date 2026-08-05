@@ -64,6 +64,12 @@
       .metric.raised {
         color: var(--accent, #58a6ff);
       }
+      .metric.warn {
+        color: var(--yellow, #d29922);
+      }
+      .metric.down {
+        color: var(--red, #f85149);
+      }
       .limits-page table {
         width: 100%;
         border-collapse: collapse;
@@ -175,6 +181,12 @@
         cursor: pointer;
         font-weight: 600;
         font-family: inherit;
+      }
+      .filter-bar :is(input, select, button):focus-visible,
+      .profile-filter :is(input, select):focus-visible {
+        border-color: var(--accent);
+        outline: 2px solid var(--accent);
+        outline-offset: 1px;
       }
       .empty {
         color: var(--text-dim);
@@ -529,6 +541,14 @@
       }
       .limits-hero .sub {
         max-width: 72ch;
+      }
+      .last-updated {
+        color: var(--text-dim);
+        display: inline-block;
+        font-size: 11px;
+        font-variant-numeric: tabular-nums;
+        margin-left: 8px;
+        white-space: nowrap;
       }
       .section-heading {
         align-items: center;
@@ -886,44 +906,218 @@
     <header class="topbar">
       <div class="topbar-inner">
         <h1 class="logo">
-        <span class="logo-icon" aria-hidden="true"></span>
-        <span class="brand-wordmark">FactoryWager</span>
-        <span class="brand-badge">ops</span>
-        <span class="logo-page">Limits</span>
-      </h1>
+          <span class="logo-icon" aria-hidden="true"></span>
+          <span class="brand-wordmark">FactoryWager</span>
+          <span class="brand-badge">ops</span>
+          <span class="logo-page">Limits</span>
+        </h1>
         <nav class="topbar-nav" aria-label="Primary">
-        <a href="/" class="nav-link" data-group="other">Home</a>
-        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · bun run ops:snapshot" data-group="ops" data-cli="bun run ops:snapshot">Ops</a>
-        <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
-        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake">Health</a>
-        <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane">DOD</a>
-        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake">Compliance</a>
-        <div class="nav-overflow">
-          <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
-          <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
-            <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" role="menuitem">Packages</a>
-            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
-            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-cli="bun run glossary:portal" role="menuitem">Glossary</a>
-            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
-            <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
-            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
-            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
-            <a href="/portal/concepts/" class="nav-link" title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json" data-group="registry" data-cli="bun run concepts:bake  # → /registry/concepts-state.json" role="menuitem">Concepts</a>
-            <a href="/portal/concepts/graph/" class="nav-link" title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json" data-group="registry" data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json" role="menuitem">Concept graph</a>
-            <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
-            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
-            <a href="/portal/limits/" class="nav-link active" aria-current="page" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
-            <a href="/portal/partners/" class="nav-link" title="package groups · telegram forums · accounting · deposits · bun run telegram:handshake:catalog" data-group="ops" data-cli="bun run telegram:handshake:catalog" role="menuitem">Partners</a>
-            <a href="/portal/account/" class="nav-link" title="single-account dossier · tree · telemetry · betlog" data-group="ops" role="menuitem">Account</a>
-            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
-            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers artifact · canonical bookmaker registry · bun run bookmakers:bake" data-group="ops" data-cli="bun run bookmakers:bake" role="menuitem">Bookmakers</a>
-            <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
-            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
-            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub" data-group="other" role="menuitem">Wiki</a>
+          <a href="/" class="nav-link" data-group="other">Home</a>
+          <a
+            href="/portal/ops/"
+            class="nav-link"
+            title="ops-summary rollup · bun run ops:snapshot"
+            data-group="ops"
+            data-cli="bun run ops:snapshot"
+            >Ops</a
+          >
+          <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
+          <a
+            href="/portal/health/"
+            class="nav-link"
+            title="system health · monorepo score · bun run monorepo:health:bake"
+            data-group="harness"
+            data-cli="bun run monorepo:health:bake"
+            >Health</a
+          >
+          <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane"
+            >DOD</a
+          >
+          <a
+            href="/portal/compliance/"
+            class="nav-link"
+            title="MA/NJ board · bun run compliance:bake"
+            data-group="ops"
+            data-cli="bun run compliance:bake"
+            >Compliance</a
+          >
+          <div class="nav-overflow">
+            <button
+              type="button"
+              class="nav-more"
+              aria-label="More navigation"
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              ⋯
+            </button>
+            <div class="nav-dropdown" role="menu">
+              <a
+                href="/portal/catalog/"
+                class="nav-link"
+                title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy"
+                data-group="registry"
+                data-cli="bun run bake:scrape-wire-taxonomy"
+                role="menuitem"
+                >Catalog</a
+              >
+              <a
+                href="/portal/packages/"
+                class="nav-link"
+                title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save"
+                data-group="registry"
+                data-cli="bun run ssot:flow:soft && bun run verify:pm:save"
+                role="menuitem"
+                >Packages</a
+              >
+              <a
+                href="/portal/brands/"
+                class="nav-link"
+                title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap"
+                data-group="registry"
+                data-cli="bun run brand:keymap"
+                role="menuitem"
+                >Brands</a
+              >
+              <a
+                href="/portal/glossary/"
+                class="nav-link"
+                title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal"
+                data-group="registry"
+                data-cli="bun run glossary:portal"
+                role="menuitem"
+                >Glossary</a
+              >
+              <a
+                href="/portal/surfaces/"
+                class="nav-link"
+                title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json"
+                data-group="registry"
+                data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json"
+                role="menuitem"
+                >Surfaces</a
+              >
+              <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem"
+                >Skills</a
+              >
+              <a
+                href="/portal/vault/"
+                class="nav-link"
+                title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps"
+                data-group="secrets"
+                data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps"
+                role="menuitem"
+                >Vault</a
+              >
+              <a
+                href="/portal/env/"
+                class="nav-link"
+                title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed"
+                data-group="secrets"
+                data-cli="bun run portal-cli secret map  # no secret values printed"
+                role="menuitem"
+                >Env</a
+              >
+              <a
+                href="/portal/concepts/"
+                class="nav-link"
+                title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json"
+                data-group="registry"
+                data-cli="bun run concepts:bake  # → /registry/concepts-state.json"
+                role="menuitem"
+                >Concepts</a
+              >
+              <a
+                href="/portal/concepts/graph/"
+                class="nav-link"
+                title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json"
+                data-group="registry"
+                data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json"
+                role="menuitem"
+                >Concept graph</a
+              >
+              <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem"
+                >Dashboard</a
+              >
+              <a
+                href="/portal/toc/"
+                class="nav-link"
+                title="Drum/Buffer/Rope · bun run ops:seed:toc"
+                data-group="ops"
+                data-cli="bun run ops:seed:toc"
+                role="menuitem"
+                >TOC</a
+              >
+              <a
+                href="/portal/limits/"
+                class="nav-link active"
+                aria-current="page"
+                title="bun run ops:limits:demo"
+                data-group="ops"
+                data-cli="bun run ops:limits:demo"
+                role="menuitem"
+                >Limits</a
+              >
+              <a
+                href="/portal/partners/"
+                class="nav-link"
+                title="package groups · telegram forums · accounting · deposits · bun run telegram:handshake:catalog"
+                data-group="ops"
+                data-cli="bun run telegram:handshake:catalog"
+                role="menuitem"
+                >Partners</a
+              >
+              <a
+                href="/portal/account/"
+                class="nav-link"
+                title="single-account dossier · tree · telemetry · betlog"
+                data-group="ops"
+                role="menuitem"
+                >Account</a
+              >
+              <a
+                href="/portal/partner-history/"
+                class="nav-link"
+                title="per-partner limit history board · bun run ops:limits:demo"
+                data-group="ops"
+                data-cli="bun run ops:limits:demo"
+                role="menuitem"
+                >Partner history</a
+              >
+              <a
+                href="/portal/bookmakers/"
+                class="nav-link"
+                title="@factorywager/bookmakers artifact · canonical bookmaker registry · bun run bookmakers:bake"
+                data-group="ops"
+                data-cli="bun run bookmakers:bake"
+                role="menuitem"
+                >Bookmakers</a
+              >
+              <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem"
+                >Monitoring</a
+              >
+              <a
+                href="/registry/prediction/report/"
+                class="nav-link"
+                title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction"
+                data-group="ops"
+                data-cli="bun run portal-cli snapshot last --scope prediction"
+                role="menuitem"
+                >Prediction</a
+              >
+              <a
+                href="https://wiki.factory-wager.com/wiki-index.html"
+                class="nav-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="GitHub Pages hub"
+                data-group="other"
+                role="menuitem"
+                >Wiki</a
+              >
+            </div>
           </div>
-        </div>
-      </nav>
+        </nav>
         <div class="topbar-status">
           <a href="/portal/health/" class="topbar-health-link" title="System health">
             <span id="health-dot" class="health-dot unknown"></span>
@@ -1001,6 +1195,7 @@
           Trace observed limit movement from partner to downline, sportsbook, jurisdiction, and ZIP
           cluster while keeping policy, license, prediction, and proof evidence directly
           inspectable. The signal window covers 48 hours and refreshes every 30 seconds.
+          <span id="last-updated" class="last-updated" hidden></span>
         </p>
       </header>
 
@@ -1588,7 +1783,8 @@
             const caesars = caesarsRes.ok ? await caesarsRes.json() : null;
             const t3 = baseline?.sources?.tiers?.['3'] ?? baseline?.sources?.tiers?.[3];
             const t3Status = t3?.status ?? (t3?.wired === false ? 'stub' : 'unknown');
-            const t3Notes = t3?.notes ?? 'Tier 3 partner API provenance missing — run baseline:sync-all';
+            const t3Notes =
+              t3?.notes ?? 'Tier 3 partner API provenance missing — run baseline:sync-all';
             const wafCount = caesars?.summary?.byRole?.waf ?? 0;
             const cookieHint =
               'Live Caesars bets/configuration is CloudFront/WAF-gated; set CAESARS_SCRAPE_COOKIE + CAESARS_WAF_TOKEN for live, else fixture default.';
@@ -1673,6 +1869,11 @@
             data = summary;
             render();
             loadPredictStrip(summary);
+            const lastUpdated = document.getElementById('last-updated');
+            if (lastUpdated) {
+              lastUpdated.hidden = false;
+              lastUpdated.textContent = `Updated ${new Date().toLocaleTimeString()}`;
+            }
             return;
           }
           const empty = document.getElementById('empty-state');
@@ -1760,6 +1961,26 @@
           return d.innerHTML;
         }
 
+        /** Apply a tone class to a summary metric span ('' = neutral). */
+        function toneMetric(id, tone) {
+          const el = document.getElementById(id);
+          if (el) el.className = `metric${tone ? ' ' + tone : ''}`;
+        }
+
+        /** Compact relative timestamp from unix seconds: "3h ago" / "5d ago". */
+        function relativeTime(unixSeconds) {
+          const then = Number(unixSeconds) * 1000;
+          if (!Number.isFinite(then) || then <= 0) return '—';
+          const ms = Date.now() - then;
+          if (ms < 0) return new Date(then).toLocaleString();
+          const HOUR = 3600000;
+          const DAY = 86400000;
+          if (ms < DAY) return `${Math.max(1, Math.round(ms / HOUR))}h ago`;
+          if (ms < 30 * DAY) return `${Math.round(ms / DAY)}d ago`;
+          if (ms < 365 * DAY) return `${Math.round(ms / (30 * DAY))}mo ago`;
+          return new Date(then).toLocaleDateString();
+        }
+
         function render() {
           if (!data || !Array.isArray(data.limitChanges)) {
             document.getElementById('empty-state').style.display = 'block';
@@ -1831,6 +2052,19 @@
                     100
                 )}%`
               : '—';
+          toneMetric('net-limit-delta', netDelta >= 0 ? 'ok' : 'down');
+          toneMetric(
+            'raised-share',
+            filtered.length === 0 ? '' : upward / filtered.length >= 0.5 ? 'ok' : 'warn'
+          );
+          toneMetric(
+            'evidence-coverage',
+            Number(patterns.audit?.coveragePct ?? 0) >= 90
+              ? 'ok'
+              : Number(patterns.audit?.coveragePct ?? 0) >= 60
+                ? 'warn'
+                : 'down'
+          );
           document.getElementById('unique-partners').textContent = partners.size;
           document.getElementById('unique-books').textContent = books.size;
           document.getElementById('downline-nodes').textContent = patterns.downlineNodes ?? 0;
@@ -1875,7 +2109,7 @@
                   : `<span class="badge pending" data-glossary-concept="ui.semantic.status" title="${esc(scoreTitle)}">pending</span>`;
                 const when =
                   Number.isFinite(Number(r.increased_at)) && Number(r.increased_at) > 0
-                    ? new Date(Number(r.increased_at) * 1000).toLocaleString()
+                    ? `<time datetime="${new Date(Number(r.increased_at) * 1000).toISOString()}" title="${new Date(Number(r.increased_at) * 1000).toLocaleString()}">${relativeTime(Number(r.increased_at))}</time>`
                     : '—';
                 return `<tr>
         <td><strong data-glossary-concept="ops.limits.account">${esc(pattern?.node_name ?? r.node_id ?? '—')}</strong><br><small><a class="semantic-label" href="${glossaryHref(roleGlossaryConcept(pattern?.node_type))}">${esc(pattern?.node_type ?? 'node')}</a> · depth ${pattern?.downline_depth ?? 0}</small></td>
@@ -2105,35 +2339,34 @@
         load();
         setInterval(load, POLL_INTERVAL);
       </script>
-      <script type="module" src="/portal/limits/limit-profiles.js?v=5"></script>
+      <script type="module" src="/portal/limits/limit-profiles.js?v=6"></script>
     </main>
     <footer class="footer" data-portal-chrome="footer">
-    <p>
-      <strong>FactoryWager</strong> ·
-      <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
-      <a href="/portal/ops/">Ops</a> ·
-      <a href="/portal/toc/">TOC</a> ·
-      <a href="/portal/partners/">Partners</a> ·
-      <a href="/portal/packages/">Packages</a> ·
-      <a href="/portal/brands/">Brands</a> ·
-      <a href="/portal/glossary/">Glossary</a> ·
-      <a href="/portal/surfaces/">Surfaces</a> ·
-      <a href="/portal/health/">Health</a> ·
-      <a href="/registry/portal-weave.json">Portal proof</a> ·
-      <a href="/portal/compliance/">Compliance</a> ·
-      <a href="/portal/limits/">Limits</a> ·
-      <a href="/portal/dod/">DOD</a> ·
-      <a href="/portal/env/">Env</a> ·
-      <a href="/portal/vault/">Vault</a> ·
-      <a href="/registry/monorepo-health.json">Monorepo health</a> ·
-      <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
-    </p>
-    <p class="footer-meta">
-      project-R-score · chrome <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a>
-      · <span data-footer-bun></span>
-      · <span data-footer-ts>…</span>
-    </p>
-  </footer>
+      <p>
+        <strong>FactoryWager</strong> ·
+        <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a>
+        · <a href="/portal/ops/">Ops</a> · <a href="/portal/toc/">TOC</a> ·
+        <a href="/portal/partners/">Partners</a> · <a href="/portal/packages/">Packages</a> ·
+        <a href="/portal/brands/">Brands</a> · <a href="/portal/glossary/">Glossary</a> ·
+        <a href="/portal/surfaces/">Surfaces</a> · <a href="/portal/health/">Health</a> ·
+        <a href="/registry/portal-weave.json">Portal proof</a> ·
+        <a href="/portal/compliance/">Compliance</a> · <a href="/portal/limits/">Limits</a> ·
+        <a href="/portal/dod/">DOD</a> · <a href="/portal/env/">Env</a> ·
+        <a href="/portal/vault/">Vault</a> ·
+        <a href="/registry/monorepo-health.json">Monorepo health</a> ·
+        <a
+          href="https://github.com/brendadeeznuts1111/project-R-score"
+          target="_blank"
+          rel="noopener noreferrer"
+          >GitHub</a
+        >
+      </p>
+      <p class="footer-meta">
+        project-R-score · chrome
+        <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a> ·
+        <span data-footer-bun></span> · <span data-footer-ts>…</span>
+      </p>
+    </footer>
     <script type="module" src="/portal/components/footer.js"></script>
   </body>
 </html>

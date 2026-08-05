@@ -134,6 +134,21 @@ function formatDate(value) {
   return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleString();
 }
 
+/** Relative variant: "3h ago" / "5d ago"; falls back to absolute for old/invalid. */
+function formatDateRelative(value) {
+  if (!value) return 'not observed';
+  const date = new Date(value);
+  const t = date.getTime();
+  if (Number.isNaN(t)) return String(value);
+  const ms = Date.now() - t;
+  const HOUR = 3600000;
+  const DAY = 86400000;
+  if (ms < 0 || ms >= 365 * DAY) return formatDate(value);
+  if (ms < DAY) return `${Math.max(1, Math.round(ms / HOUR))}h ago`;
+  if (ms < 30 * DAY) return `${Math.round(ms / DAY)}d ago`;
+  return `${Math.round(ms / (30 * DAY))}mo ago`;
+}
+
 function formatMoney(value) {
   return value == null
     ? '—'
@@ -271,7 +286,7 @@ function profileCard(profile) {
       <span class="account-profile__metric"><strong>${profile.observations.violations30d}</strong>blocked</span>
     </div>
     <div class="account-profile__footer">
-      <small>Observed ${esc(formatDate(profile.observations.lastObservedAt))}</small>
+      <small>Observed <time datetime="${esc(profile.observations.lastObservedAt)}" title="${esc(formatDate(profile.observations.lastObservedAt))}">${esc(formatDateRelative(profile.observations.lastObservedAt))}</time></small>
       <a href="${accountHash(profile.treeNodeId)}" data-account-link="${esc(profile.treeNodeId)}">Inspect ${profile.traces.length} events →</a>
     </div>
   </article>`;
@@ -316,7 +331,7 @@ function renderTrace() {
             trace => `<li class="trace-event" data-kind="${esc(trace.kind)}">
               <div class="trace-event__top">
                 <strong>${esc(labelFromKey(trace.kind))}</strong>
-                <time datetime="${esc(trace.at)}">${esc(formatDate(trace.at))}</time>
+                <time datetime="${esc(trace.at)}" title="${esc(formatDate(trace.at))}">${esc(formatDateRelative(trace.at))}</time>
               </div>
               <span class="trace-event__detail">${esc(trace.detail)}</span>
               <small>Source · <code>${esc(trace.source)}</code></small>
