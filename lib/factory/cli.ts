@@ -42,6 +42,7 @@ import { buildRegistryHealthReport } from './health';
 import { runIntegrityCycle } from './monitoring';
 import { registry } from './registry';
 import { type ArtifactType } from './artifact';
+import { readPublishPackageJson } from './publish-metadata';
 
 const VERSION = '0.1.0';
 
@@ -251,10 +252,8 @@ async function cmdPublish(args: string[]): Promise<void> {
   const filePath = positionals[0];
   if (!filePath) errorExit('Missing <path> argument. Usage: factory publish <path> [options]');
 
-  // Try to read package.json from the path (if it's a directory) or adjacent
-  const pkgJson = await tryReadJson(
-    filePath.endsWith('.tgz') ? 'package.json' : `${filePath}/package.json`
-  );
+  // Never fall back to the monorepo root package.json for tarball publishes.
+  const pkgJson = await readPublishPackageJson(filePath);
 
   const name = (values.name as string | undefined) ?? (pkgJson?.name as string | undefined);
   const version =
