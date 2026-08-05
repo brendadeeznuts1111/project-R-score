@@ -25,7 +25,7 @@ export type DeskBookClass = 'matched' | 'placeholder' | 'unmatched';
 export interface DeskBookHit {
   deskBook: string;
   class: DeskBookClass;
-  registryId?: string;
+  registryId?: string; // brand-ok — bookmakers registry slug until RegistryId lands
   /** Parsed max bet dollars when desk shows a number (not "—"). */
   maxBetUsd?: number;
   samples: number;
@@ -51,8 +51,10 @@ function parseMaxBet(raw: unknown): number | undefined {
 }
 
 /** Collect distinct desk `book` labels with sample counts + max bets. */
+// eslint-disable-next-line harness/no-unknown-function-param -- desk JSON wire ingress
 export function collectDeskBooks(desk: unknown): Map<string, { count: number; maxBets: number[] }> {
   const map = new Map<string, { count: number; maxBets: number[] }>();
+  // eslint-disable-next-line harness/no-unknown-function-param -- recursive desk JSON walk
   const walk = (o: unknown): void => {
     if (Array.isArray(o)) {
       for (const x of o) walk(x);
@@ -125,6 +127,7 @@ export function classifyDeskBook(
   deskBook: string,
   registry: Record<string, BookmakerRegistryEntry>
 ): { class: DeskBookClass; registryId?: string } {
+  // brand-ok — bookmakers registry slug until RegistryId lands
   const q = deskBook.trim().toLowerCase();
   if (!q || DESK_BOOK_PLACEHOLDERS.has(q)) return { class: 'placeholder' };
   const id = matchDeskBookToRegistry(deskBook, registry);
@@ -133,6 +136,7 @@ export function classifyDeskBook(
 }
 
 export function buildDeskCoverageReport(
+  // eslint-disable-next-line harness/no-unknown-function-param -- desk JSON wire ingress
   desk: unknown,
   registry: Record<string, BookmakerRegistryEntry>,
   generatedAt = new Date().toISOString()
@@ -146,8 +150,7 @@ export function buildDeskCoverageReport(
   )) {
     const { class: cls, registryId } = classifyDeskBook(deskBook, registry);
     if (registryId) usedIds.add(registryId);
-    const maxBetUsd =
-      maxBets.length > 0 ? Math.max(...maxBets) : undefined;
+    const maxBetUsd = maxBets.length > 0 ? Math.max(...maxBets) : undefined;
     hits.push({
       deskBook,
       class: cls,
@@ -176,7 +179,10 @@ export function buildDeskCoverageReport(
 
 /** Apply desk-observed maxBetUsd onto public catalog limits when missing. */
 export function applyDeskMaxBetsToCatalog(
-  bookmakers: Record<string, { limits?: { maxBetUsd?: number | null; [k: string]: unknown }; [k: string]: unknown }>,
+  bookmakers: Record<
+    string,
+    { limits?: { maxBetUsd?: number | null; [k: string]: unknown }; [k: string]: unknown }
+  >,
   report: DeskCoverageReport
 ): number {
   let applied = 0;
