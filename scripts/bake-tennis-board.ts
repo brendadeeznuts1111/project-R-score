@@ -220,6 +220,28 @@ async function main(): Promise<void> {
     ? sampleLiveMatches(new Date(), matchLimit)
     : loadLiveMatchesDoc(dbPath, { limit: matchLimit });
 
+  // Attach desk quality onto metrics for portal health strip.
+  if (liveMatches.quality) {
+    metrics = {
+      ...metrics,
+      desk: {
+        scannedEvents: liveMatches.quality.scannedEvents,
+        withBothMids: liveMatches.quality.withBothMids,
+        withOneMid: liveMatches.quality.withOneMid,
+        withNoMids: liveMatches.quality.withNoMids,
+        listedWithBothMids: liveMatches.quality.listedWithBothMids,
+        listedMissingMids: liveMatches.quality.listedMissingMids,
+        coveragePct: liveMatches.quality.coveragePct,
+        ...(liveMatches.quality.latestBookTs != null
+          ? { latestBookTs: liveMatches.quality.latestBookTs }
+          : {}),
+        ...(liveMatches.quality.latestBookAt
+          ? { latestBookAt: liveMatches.quality.latestBookAt }
+          : {}),
+      },
+    };
+  }
+
   const profileNames = forceSample
     ? liveMatches.matches.flatMap(m => [m.sideA.label, m.sideB.label])
     : [
@@ -250,8 +272,13 @@ async function main(): Promise<void> {
   console.log(
     `tennis board bake → metrics=${metrics.source} mids=${metrics.midsUsable} series=${metrics.seriesVolume.length} markets=${metrics.markets}`
   );
+  const q = liveMatches.quality;
   console.log(
-    `  matches=${liveMatches.source} n=${liveMatches.matches.length} · avatars=${avatarIndex.players.length} · images=${imagesOk ? 'ok' : 'skip'}`
+    `  matches=${liveMatches.source} n=${liveMatches.matches.length}` +
+      (q
+        ? ` mid-ok=${q.listedWithBothMids}/${liveMatches.matches.length} store-full=${q.withBothMids}`
+        : '') +
+      ` · avatars=${avatarIndex.players.length} · images=${imagesOk ? 'ok' : 'skip'}`
   );
   console.log(`  ${OUT_DIR}/board-metrics.json`);
   console.log(`  ${OUT_DIR}/mid-distribution.json`);

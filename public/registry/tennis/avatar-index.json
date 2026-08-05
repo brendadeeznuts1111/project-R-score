@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "tennis-avatar-index",
-  "generatedAt": "2026-07-30T23:09:19.757Z",
+  "generatedAt": "2026-08-05T07:57:07.047Z",
   "sourceDir": "warehouse/avatars",
   "cacheDir": "public/avatars",
   "players": [
@@ -34,8 +34,8 @@
       "source": "manual"
     },
     {
-      "slug": "akli-crawley",
-      "displayName": "Akli / Crawley",
+      "slug": "alec-beckley",
+      "displayName": "Alec Beckley",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -48,36 +48,15 @@
       "source": "manual"
     },
     {
+      "slug": "alex-huszar",
+      "displayName": "Alex Huszar",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
       "slug": "alexander-chang",
       "displayName": "Alexander Chang",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "alexandre-reco",
-      "displayName": "Alexandre Reco",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "alisa-danilova",
-      "displayName": "Alisa Danilova",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "allen-el-jardi",
-      "displayName": "Allen / El Jardi",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "alonso-angel",
-      "displayName": "Alonso / Angel",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -90,8 +69,8 @@
       "source": "manual"
     },
     {
-      "slug": "anastasia-mozgaleva",
-      "displayName": "Anastasia Mozgaleva",
+      "slug": "amanda-carolina-nava-elkin",
+      "displayName": "Amanda Carolina Nava Elkin",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -99,6 +78,13 @@
     {
       "slug": "andrea-obradovic",
       "displayName": "Andrea Obradovic",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "andrei-kunitsyn",
+      "displayName": "Andrei Kunitsyn",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -125,6 +111,13 @@
       "source": "manual"
     },
     {
+      "slug": "ariadna-garcia-patron-canals",
+      "displayName": "Ariadna Garcia-Patron Canals",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
       "slug": "ariana-geerlings",
       "displayName": "Ariana Geerlings",
       "hasSource": false,
@@ -134,6 +127,13 @@
     {
       "slug": "arianna-zucchini",
       "displayName": "Arianna Zucchini",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "arjun-mehrotra",
+      "displayName": "Arjun Mehrotra",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -181,6 +181,13 @@
       "source": "manual"
     },
     {
+      "slug": "ayana-akli",
+      "displayName": "Ayana Akli",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
       "slug": "azuma-visaya",
       "displayName": "Azuma Visaya",
       "hasSource": false,
@@ -188,15 +195,15 @@
       "source": "manual"
     },
     {
-      "slug": "barrera-aguirre-maria-gonzalez-daniele",
-      "displayName": "Barrera Aguirre / Maria Gonzalez Daniele",
+      "slug": "bastian-malla",
+      "displayName": "Bastian Malla",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
     },
     {
-      "slug": "bastian-malla",
-      "displayName": "Bastian Malla",
+      "slug": "beatrise-zeltina",
+      "displayName": "Beatrise Zeltina",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -223,13 +230,6 @@
       "source": "manual"
     },
     {
-      "slug": "bowers-okonkwo",
-      "displayName": "Bowers / OKONKWO",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
       "slug": "boyoung-jeong",
       "displayName": "BoYoung Jeong",
       "hasSource": false,
@@ -237,29 +237,8 @@
       "source": "manual"
     },
     {
-      "slug": "branko-djuric",
-      "displayName": "Branko Djuric",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
       "slug": "brenda-fruhvirtova",
       "displayName": "Brenda Fruhvirtova",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "broadus-collins",
-      "displayName": "Broadus / Collins",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "brown-voelzke",
-      "displayName": "Brown / Voelzke",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -279,6 +258,20 @@
       "source": "manual"
     },
     {
+      "slug": "camilla-zanolini",
+      "displayName": "Camilla Zanolini",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "carlos-lopez-montagud",
+      "displayName": "Carlos Lopez Montagud",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
       "slug": "carmen-gallardo-guevara",
       "displayName": "Carmen Gallardo Guevara",
       "hasSource": false,
@@ -288,13 +281,6 @@
     {
       "slug": "carolina-gomez",
       "displayName": "Carolina Gomez",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "casari-watanabe",
-      "displayName": "Casari / Watanabe",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -321,29 +307,8 @@
       "source": "manual"
     },
     {
-      "slug": "charo-esquiva-banuls",
-      "displayName": "Charo Esquiva Banuls",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
       "slug": "chia-yi-tsao",
       "displayName": "Chia Yi Tsao",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "chopra-dickerson",
-      "displayName": "Chopra / Dickerson",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "clarke-jagatdeo-verma",
-      "displayName": "Clarke / Jagatdeo Verma",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -363,13 +328,6 @@
       "source": "manual"
     },
     {
-      "slug": "cook-vithoontien",
-      "displayName": "Cook / Vithoontien",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
       "slug": "corban-crowther",
       "displayName": "Corban Crowther",
       "hasSource": false,
@@ -377,22 +335,8 @@
       "source": "manual"
     },
     {
-      "slug": "covato-mbithi",
-      "displayName": "Covato / Mbithi",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
       "slug": "cristina-elena-tiglea",
       "displayName": "Cristina Elena Tiglea",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "damien-salvestre",
-      "displayName": "Damien Salvestre",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -419,8 +363,8 @@
       "source": "manual"
     },
     {
-      "slug": "dayeon-back",
-      "displayName": "Dayeon Back",
+      "slug": "david-fix",
+      "displayName": "David Fix",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -436,13 +380,6 @@
     {
       "slug": "denis-constantin-spiridon",
       "displayName": "Denis Constantin Spiridon",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "derek-pham",
-      "displayName": "Derek Pham",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -469,20 +406,6 @@
       "source": "manual"
     },
     {
-      "slug": "echazu-alexander-rodriguez",
-      "displayName": "Echazu / Alexander Rodriguez",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "elijah-cham",
-      "displayName": "Elijah Cham",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
       "slug": "emma-lene",
       "displayName": "Emma Lene",
       "hasSource": false,
@@ -499,13 +422,6 @@
     {
       "slug": "eric-vanshelboim",
       "displayName": "Eric Vanshelboim",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "ethan-david-zapp",
-      "displayName": "Ethan David Zapp",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -539,13 +455,6 @@
       "source": "manual"
     },
     {
-      "slug": "fang-an-lin",
-      "displayName": "Fang An Lin",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
       "slug": "fernanda-torres-gomez",
       "displayName": "Fernanda Torres Gomez",
       "hasSource": false,
@@ -567,15 +476,15 @@
       "source": "manual"
     },
     {
-      "slug": "francesca-mattioli",
-      "displayName": "Francesca Mattioli",
+      "slug": "francesca-curmi",
+      "displayName": "Francesca Curmi",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
     },
     {
-      "slug": "francesca-pace",
-      "displayName": "Francesca Pace",
+      "slug": "francesca-mattioli",
+      "displayName": "Francesca Mattioli",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -595,15 +504,8 @@
       "source": "manual"
     },
     {
-      "slug": "frodin-hewitt",
-      "displayName": "Frodin / Hewitt",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "gabriel-sardo",
-      "displayName": "Gabriel Sardo",
+      "slug": "gabriela-ce",
+      "displayName": "Gabriela Ce",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -618,34 +520,6 @@
     {
       "slug": "gabriela-paun",
       "displayName": "Gabriela Paun",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "gabriele-bosio",
-      "displayName": "Gabriele Bosio",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "gina-marie-dittmann",
-      "displayName": "Gina Marie Dittmann",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "gonzalez-fitzmaurice-strode",
-      "displayName": "Gonzalez Fitzmaurice / Strode",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "goto-lee",
-      "displayName": "Goto / Lee",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -693,27 +567,6 @@
       "source": "manual"
     },
     {
-      "slug": "helena-stevic",
-      "displayName": "Helena Stevic",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "hikaru-shiraishi",
-      "displayName": "Hikaru Shiraishi",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "hugo-car",
-      "displayName": "Hugo Car",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
       "slug": "i-wen-wan",
       "displayName": "I Wen Wan",
       "hasSource": false,
@@ -735,6 +588,13 @@
       "source": "manual"
     },
     {
+      "slug": "imanol-lopez-morillo",
+      "displayName": "Imanol Lopez Morillo",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
       "slug": "imogen-haddad",
       "displayName": "Imogen Haddad",
       "hasSource": false,
@@ -751,6 +611,13 @@
     {
       "slug": "isaac-becroft",
       "displayName": "Isaac Becroft",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "isabella-maria-serban",
+      "displayName": "Isabella Maria Serban",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -784,13 +651,6 @@
       "source": "manual"
     },
     {
-      "slug": "jantje-tilbuerger",
-      "displayName": "Jantje Tilbuerger",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
       "slug": "jelani-sarr",
       "displayName": "Jelani Sarr",
       "hasSource": false,
@@ -805,8 +665,8 @@
       "source": "manual"
     },
     {
-      "slug": "jeong-sema",
-      "displayName": "Jeong / Sema",
+      "slug": "jeremy-beale",
+      "displayName": "Jeremy Beale",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -821,6 +681,20 @@
     {
       "slug": "jesse-de-jager",
       "displayName": "Jesse De Jager",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "jo-yee-chan",
+      "displayName": "Jo-Yee Chan",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "joaquin-guilleme",
+      "displayName": "Joaquin Guilleme",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -847,6 +721,13 @@
       "source": "manual"
     },
     {
+      "slug": "juliana-nicole-singeorzan",
+      "displayName": "Juliana Nicole Singeorzan",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
       "slug": "julio-cesar-porras",
       "displayName": "Julio Cesar Porras",
       "hasSource": false,
@@ -856,6 +737,13 @@
     {
       "slug": "kabeer-kapasi",
       "displayName": "Kabeer Kapasi",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "kajsa-rinaldo-persson",
+      "displayName": "Kajsa Rinaldo Persson",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -875,8 +763,22 @@
       "source": "manual"
     },
     {
+      "slug": "kaua-lorenzo-santos-gava",
+      "displayName": "Kaua Lorenzo Santos Gava",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
       "slug": "keisuke-saitoh",
       "displayName": "Keisuke Saitoh",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "kira-bataikina",
+      "displayName": "Kira Bataikina",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -910,6 +812,13 @@
       "source": "manual"
     },
     {
+      "slug": "laura-svatikova",
+      "displayName": "Laura Svatikova",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
       "slug": "leonardo-borrelli",
       "displayName": "Leonardo Borrelli",
       "hasSource": false,
@@ -917,8 +826,8 @@
       "source": "manual"
     },
     {
-      "slug": "leonie-rabl",
-      "displayName": "Leonie Rabl",
+      "slug": "liel-marlies-rothensteiner",
+      "displayName": "Liel Marlies Rothensteiner",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -926,13 +835,6 @@
     {
       "slug": "lily-fairclough",
       "displayName": "Lily Fairclough",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "lincer-slama",
-      "displayName": "Lincer / Slama",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -959,8 +861,8 @@
       "source": "manual"
     },
     {
-      "slug": "luca-parenti",
-      "displayName": "Luca Parenti",
+      "slug": "lorenzo-comino",
+      "displayName": "Lorenzo Comino",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -973,13 +875,6 @@
       "source": "manual"
     },
     {
-      "slug": "lucia-cortez-llorca",
-      "displayName": "Lucia Cortez Llorca",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
       "slug": "lucia-rodriguez",
       "displayName": "Lucia Rodriguez",
       "hasSource": false,
@@ -987,15 +882,8 @@
       "source": "manual"
     },
     {
-      "slug": "lucie-urbanova",
-      "displayName": "Lucie Urbanova",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "ludvig-hede",
-      "displayName": "Ludvig Hede",
+      "slug": "lucie-nguyen-tan",
+      "displayName": "Lucie Nguyen Tan",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1003,6 +891,13 @@
     {
       "slug": "maiko-uchijima",
       "displayName": "Maiko Uchijima",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "maileen-nuudi",
+      "displayName": "Maileen Nuudi",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1017,6 +912,13 @@
     {
       "slug": "maria-andrienko",
       "displayName": "Maria Andrienko",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "maria-garcia-cid",
+      "displayName": "Maria Garcia Cid",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1043,6 +945,13 @@
       "source": "manual"
     },
     {
+      "slug": "mariia-drobysheva",
+      "displayName": "Mariia Drobysheva",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
       "slug": "mariia-masiianskaia",
       "displayName": "Mariia Masiianskaia",
       "hasSource": false,
@@ -1052,13 +961,6 @@
     {
       "slug": "mario-arce-fernandez",
       "displayName": "Mario Arce Fernandez",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "martina-trevisan",
-      "displayName": "Martina Trevisan",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1078,8 +980,15 @@
       "source": "manual"
     },
     {
-      "slug": "matta-peck",
-      "displayName": "Matta / Peck",
+      "slug": "mateus-alves",
+      "displayName": "Mateus Alves",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "mathilde-ngijol-carre",
+      "displayName": "Mathilde Ngijol Carre",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1092,8 +1001,8 @@
       "source": "manual"
     },
     {
-      "slug": "maxence-rivet",
-      "displayName": "Maxence Rivet",
+      "slug": "maximilian-todorov",
+      "displayName": "Maximilian Todorov",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1127,13 +1036,6 @@
       "source": "manual"
     },
     {
-      "slug": "mikhail-khodorchenko",
-      "displayName": "Mikhail Khodorchenko",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
       "slug": "moerani-bouzige",
       "displayName": "Moerani Bouzige",
       "hasSource": false,
@@ -1143,13 +1045,6 @@
     {
       "slug": "mutsumi-uemura",
       "displayName": "Mutsumi Uemura",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "nagi-hanatani",
-      "displayName": "Nagi Hanatani",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1211,6 +1106,13 @@
       "source": "manual"
     },
     {
+      "slug": "noemi-maines",
+      "displayName": "Noemi Maines",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
       "slug": "nuria-brancaccio",
       "displayName": "Nuria Brancaccio",
       "hasSource": false,
@@ -1218,8 +1120,22 @@
       "source": "manual"
     },
     {
+      "slug": "odeta-panasa",
+      "displayName": "Odeta Panasa",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
       "slug": "olivia-allegre",
       "displayName": "Olivia Allegre",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "olivia-symons",
+      "displayName": "Olivia Symons",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1234,6 +1150,13 @@
     {
       "slug": "oriana-gniewkowska",
       "displayName": "Oriana Gniewkowska",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "patricia-georgiana-goina",
+      "displayName": "Patricia Georgiana Goina",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1255,13 +1178,6 @@
     {
       "slug": "pavel-lagutin",
       "displayName": "Pavel Lagutin",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
-      "slug": "pereira-florencia-urrutia",
-      "displayName": "Pereira / Florencia Urrutia",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1302,15 +1218,15 @@
       "source": "manual"
     },
     {
-      "slug": "raphael-perot",
-      "displayName": "Raphael Perot",
+      "slug": "raffaele-ciurnelli",
+      "displayName": "Raffaele Ciurnelli",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
     },
     {
-      "slug": "reed-schaefbauer",
-      "displayName": "Reed / Schaefbauer",
+      "slug": "raphael-perot",
+      "displayName": "Raphael Perot",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1332,6 +1248,13 @@
     {
       "slug": "rianna-alame",
       "displayName": "Rianna Alame",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "roisin-gilheany",
+      "displayName": "Roisin Gilheany",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1372,13 +1295,6 @@
       "source": "manual"
     },
     {
-      "slug": "saavedra-carrera-torres-gomez",
-      "displayName": "Saavedra Carrera / Torres Gomez",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
       "slug": "sam-ryan-ziegann",
       "displayName": "Sam Ryan Ziegann",
       "hasSource": false,
@@ -1393,15 +1309,15 @@
       "source": "manual"
     },
     {
-      "slug": "sara-cakarevic",
-      "displayName": "Sara Cakarevic",
+      "slug": "sarah-mildren",
+      "displayName": "Sarah Mildren",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
     },
     {
-      "slug": "sarah-mildren",
-      "displayName": "Sarah Mildren",
+      "slug": "shinji-hazawa",
+      "displayName": "Shinji Hazawa",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1421,15 +1337,15 @@
       "source": "manual"
     },
     {
-      "slug": "sophia-biolay",
-      "displayName": "Sophia Biolay",
+      "slug": "stefan-adrian-andreescu",
+      "displayName": "Stefan Adrian Andreescu",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
     },
     {
-      "slug": "sophie-llewellyn",
-      "displayName": "Sophie LLEWELLYN",
+      "slug": "stefaniya-pushkar",
+      "displayName": "Stefaniya Pushkar",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1456,13 +1372,6 @@
       "source": "manual"
     },
     {
-      "slug": "tatiana-pieri",
-      "displayName": "Tatiana Pieri",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    {
       "slug": "teodora-kostovic",
       "displayName": "Teodora Kostovic",
       "hasSource": false,
@@ -1479,6 +1388,27 @@
     {
       "slug": "thanaphat-boosarawongse",
       "displayName": "Thanaphat Boosarawongse",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "tim-handel",
+      "displayName": "TIM Handel",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "tomohiro-masabayashi",
+      "displayName": "Tomohiro Masabayashi",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "tristan-berard",
+      "displayName": "Tristan BERARD",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1505,8 +1435,29 @@
       "source": "manual"
     },
     {
+      "slug": "victoria-lazarova",
+      "displayName": "Victoria Lazarova",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "vincent-dullinger",
+      "displayName": "Vincent Dullinger",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
       "slug": "vivian-wolff",
       "displayName": "Vivian Wolff",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "vladyslav-orlov",
+      "displayName": "Vladyslav Orlov",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1540,6 +1491,13 @@
       "source": "manual"
     },
     {
+      "slug": "yannik-kelm",
+      "displayName": "Yannik Kelm",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
       "slug": "yara-bartashevich",
       "displayName": "Yara Bartashevich",
       "hasSource": false,
@@ -1568,6 +1526,13 @@
       "source": "manual"
     },
     {
+      "slug": "yusuke-takahashi",
+      "displayName": "Yusuke Takahashi",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
       "slug": "yuttana-charoenphon",
       "displayName": "Yuttana Charoenphon",
       "hasSource": false,
@@ -1577,6 +1542,13 @@
     {
       "slug": "yuya-hirose",
       "displayName": "Yuya Hirose",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    {
+      "slug": "zane-stevens",
+      "displayName": "Zane Stevens",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1611,9 +1583,9 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "akli-crawley": {
-      "slug": "akli-crawley",
-      "displayName": "Akli / Crawley",
+    "alec-beckley": {
+      "slug": "alec-beckley",
+      "displayName": "Alec Beckley",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1625,37 +1597,16 @@
       "hasWebp": false,
       "source": "manual"
     },
+    "alex-huszar": {
+      "slug": "alex-huszar",
+      "displayName": "Alex Huszar",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
     "alexander-chang": {
       "slug": "alexander-chang",
       "displayName": "Alexander Chang",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "alexandre-reco": {
-      "slug": "alexandre-reco",
-      "displayName": "Alexandre Reco",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "alisa-danilova": {
-      "slug": "alisa-danilova",
-      "displayName": "Alisa Danilova",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "allen-el-jardi": {
-      "slug": "allen-el-jardi",
-      "displayName": "Allen / El Jardi",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "alonso-angel": {
-      "slug": "alonso-angel",
-      "displayName": "Alonso / Angel",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1667,9 +1618,9 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "anastasia-mozgaleva": {
-      "slug": "anastasia-mozgaleva",
-      "displayName": "Anastasia Mozgaleva",
+    "amanda-carolina-nava-elkin": {
+      "slug": "amanda-carolina-nava-elkin",
+      "displayName": "Amanda Carolina Nava Elkin",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1677,6 +1628,13 @@
     "andrea-obradovic": {
       "slug": "andrea-obradovic",
       "displayName": "Andrea Obradovic",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    "andrei-kunitsyn": {
+      "slug": "andrei-kunitsyn",
+      "displayName": "Andrei Kunitsyn",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1702,6 +1660,13 @@
       "hasWebp": false,
       "source": "manual"
     },
+    "ariadna-garcia-patron-canals": {
+      "slug": "ariadna-garcia-patron-canals",
+      "displayName": "Ariadna Garcia-Patron Canals",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
     "ariana-geerlings": {
       "slug": "ariana-geerlings",
       "displayName": "Ariana Geerlings",
@@ -1712,6 +1677,13 @@
     "arianna-zucchini": {
       "slug": "arianna-zucchini",
       "displayName": "Arianna Zucchini",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    "arjun-mehrotra": {
+      "slug": "arjun-mehrotra",
+      "displayName": "Arjun Mehrotra",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1758,6 +1730,13 @@
       "hasWebp": false,
       "source": "manual"
     },
+    "ayana-akli": {
+      "slug": "ayana-akli",
+      "displayName": "Ayana Akli",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
     "azuma-visaya": {
       "slug": "azuma-visaya",
       "displayName": "Azuma Visaya",
@@ -1765,16 +1744,16 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "barrera-aguirre-maria-gonzalez-daniele": {
-      "slug": "barrera-aguirre-maria-gonzalez-daniele",
-      "displayName": "Barrera Aguirre / Maria Gonzalez Daniele",
+    "bastian-malla": {
+      "slug": "bastian-malla",
+      "displayName": "Bastian Malla",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
     },
-    "bastian-malla": {
-      "slug": "bastian-malla",
-      "displayName": "Bastian Malla",
+    "beatrise-zeltina": {
+      "slug": "beatrise-zeltina",
+      "displayName": "Beatrise Zeltina",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1800,13 +1779,6 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "bowers-okonkwo": {
-      "slug": "bowers-okonkwo",
-      "displayName": "Bowers / OKONKWO",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
     "boyoung-jeong": {
       "slug": "boyoung-jeong",
       "displayName": "BoYoung Jeong",
@@ -1814,30 +1786,9 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "branko-djuric": {
-      "slug": "branko-djuric",
-      "displayName": "Branko Djuric",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
     "brenda-fruhvirtova": {
       "slug": "brenda-fruhvirtova",
       "displayName": "Brenda Fruhvirtova",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "broadus-collins": {
-      "slug": "broadus-collins",
-      "displayName": "Broadus / Collins",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "brown-voelzke": {
-      "slug": "brown-voelzke",
-      "displayName": "Brown / Voelzke",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1856,6 +1807,20 @@
       "hasWebp": false,
       "source": "manual"
     },
+    "camilla-zanolini": {
+      "slug": "camilla-zanolini",
+      "displayName": "Camilla Zanolini",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    "carlos-lopez-montagud": {
+      "slug": "carlos-lopez-montagud",
+      "displayName": "Carlos Lopez Montagud",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
     "carmen-gallardo-guevara": {
       "slug": "carmen-gallardo-guevara",
       "displayName": "Carmen Gallardo Guevara",
@@ -1866,13 +1831,6 @@
     "carolina-gomez": {
       "slug": "carolina-gomez",
       "displayName": "Carolina Gomez",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "casari-watanabe": {
-      "slug": "casari-watanabe",
-      "displayName": "Casari / Watanabe",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1898,30 +1856,9 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "charo-esquiva-banuls": {
-      "slug": "charo-esquiva-banuls",
-      "displayName": "Charo Esquiva Banuls",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
     "chia-yi-tsao": {
       "slug": "chia-yi-tsao",
       "displayName": "Chia Yi Tsao",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "chopra-dickerson": {
-      "slug": "chopra-dickerson",
-      "displayName": "Chopra / Dickerson",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "clarke-jagatdeo-verma": {
-      "slug": "clarke-jagatdeo-verma",
-      "displayName": "Clarke / Jagatdeo Verma",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1940,13 +1877,6 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "cook-vithoontien": {
-      "slug": "cook-vithoontien",
-      "displayName": "Cook / Vithoontien",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
     "corban-crowther": {
       "slug": "corban-crowther",
       "displayName": "Corban Crowther",
@@ -1954,23 +1884,9 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "covato-mbithi": {
-      "slug": "covato-mbithi",
-      "displayName": "Covato / Mbithi",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
     "cristina-elena-tiglea": {
       "slug": "cristina-elena-tiglea",
       "displayName": "Cristina Elena Tiglea",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "damien-salvestre": {
-      "slug": "damien-salvestre",
-      "displayName": "Damien Salvestre",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -1996,9 +1912,9 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "dayeon-back": {
-      "slug": "dayeon-back",
-      "displayName": "Dayeon Back",
+    "david-fix": {
+      "slug": "david-fix",
+      "displayName": "David Fix",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2014,13 +1930,6 @@
     "denis-constantin-spiridon": {
       "slug": "denis-constantin-spiridon",
       "displayName": "Denis Constantin Spiridon",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "derek-pham": {
-      "slug": "derek-pham",
-      "displayName": "Derek Pham",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2046,20 +1955,6 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "echazu-alexander-rodriguez": {
-      "slug": "echazu-alexander-rodriguez",
-      "displayName": "Echazu / Alexander Rodriguez",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "elijah-cham": {
-      "slug": "elijah-cham",
-      "displayName": "Elijah Cham",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
     "emma-lene": {
       "slug": "emma-lene",
       "displayName": "Emma Lene",
@@ -2077,13 +1972,6 @@
     "eric-vanshelboim": {
       "slug": "eric-vanshelboim",
       "displayName": "Eric Vanshelboim",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "ethan-david-zapp": {
-      "slug": "ethan-david-zapp",
-      "displayName": "Ethan David Zapp",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2116,13 +2004,6 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "fang-an-lin": {
-      "slug": "fang-an-lin",
-      "displayName": "Fang An Lin",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
     "fernanda-torres-gomez": {
       "slug": "fernanda-torres-gomez",
       "displayName": "Fernanda Torres Gomez",
@@ -2144,16 +2025,16 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "francesca-mattioli": {
-      "slug": "francesca-mattioli",
-      "displayName": "Francesca Mattioli",
+    "francesca-curmi": {
+      "slug": "francesca-curmi",
+      "displayName": "Francesca Curmi",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
     },
-    "francesca-pace": {
-      "slug": "francesca-pace",
-      "displayName": "Francesca Pace",
+    "francesca-mattioli": {
+      "slug": "francesca-mattioli",
+      "displayName": "Francesca Mattioli",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2172,16 +2053,9 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "frodin-hewitt": {
-      "slug": "frodin-hewitt",
-      "displayName": "Frodin / Hewitt",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "gabriel-sardo": {
-      "slug": "gabriel-sardo",
-      "displayName": "Gabriel Sardo",
+    "gabriela-ce": {
+      "slug": "gabriela-ce",
+      "displayName": "Gabriela Ce",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2196,34 +2070,6 @@
     "gabriela-paun": {
       "slug": "gabriela-paun",
       "displayName": "Gabriela Paun",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "gabriele-bosio": {
-      "slug": "gabriele-bosio",
-      "displayName": "Gabriele Bosio",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "gina-marie-dittmann": {
-      "slug": "gina-marie-dittmann",
-      "displayName": "Gina Marie Dittmann",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "gonzalez-fitzmaurice-strode": {
-      "slug": "gonzalez-fitzmaurice-strode",
-      "displayName": "Gonzalez Fitzmaurice / Strode",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "goto-lee": {
-      "slug": "goto-lee",
-      "displayName": "Goto / Lee",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2270,27 +2116,6 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "helena-stevic": {
-      "slug": "helena-stevic",
-      "displayName": "Helena Stevic",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "hikaru-shiraishi": {
-      "slug": "hikaru-shiraishi",
-      "displayName": "Hikaru Shiraishi",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "hugo-car": {
-      "slug": "hugo-car",
-      "displayName": "Hugo Car",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
     "i-wen-wan": {
       "slug": "i-wen-wan",
       "displayName": "I Wen Wan",
@@ -2312,6 +2137,13 @@
       "hasWebp": false,
       "source": "manual"
     },
+    "imanol-lopez-morillo": {
+      "slug": "imanol-lopez-morillo",
+      "displayName": "Imanol Lopez Morillo",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
     "imogen-haddad": {
       "slug": "imogen-haddad",
       "displayName": "Imogen Haddad",
@@ -2329,6 +2161,13 @@
     "isaac-becroft": {
       "slug": "isaac-becroft",
       "displayName": "Isaac Becroft",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    "isabella-maria-serban": {
+      "slug": "isabella-maria-serban",
+      "displayName": "Isabella Maria Serban",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2361,13 +2200,6 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "jantje-tilbuerger": {
-      "slug": "jantje-tilbuerger",
-      "displayName": "Jantje Tilbuerger",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
     "jelani-sarr": {
       "slug": "jelani-sarr",
       "displayName": "Jelani Sarr",
@@ -2382,9 +2214,9 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "jeong-sema": {
-      "slug": "jeong-sema",
-      "displayName": "Jeong / Sema",
+    "jeremy-beale": {
+      "slug": "jeremy-beale",
+      "displayName": "Jeremy Beale",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2399,6 +2231,20 @@
     "jesse-de-jager": {
       "slug": "jesse-de-jager",
       "displayName": "Jesse De Jager",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    "jo-yee-chan": {
+      "slug": "jo-yee-chan",
+      "displayName": "Jo-Yee Chan",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    "joaquin-guilleme": {
+      "slug": "joaquin-guilleme",
+      "displayName": "Joaquin Guilleme",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2424,6 +2270,13 @@
       "hasWebp": false,
       "source": "manual"
     },
+    "juliana-nicole-singeorzan": {
+      "slug": "juliana-nicole-singeorzan",
+      "displayName": "Juliana Nicole Singeorzan",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
     "julio-cesar-porras": {
       "slug": "julio-cesar-porras",
       "displayName": "Julio Cesar Porras",
@@ -2434,6 +2287,13 @@
     "kabeer-kapasi": {
       "slug": "kabeer-kapasi",
       "displayName": "Kabeer Kapasi",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    "kajsa-rinaldo-persson": {
+      "slug": "kajsa-rinaldo-persson",
+      "displayName": "Kajsa Rinaldo Persson",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2452,9 +2312,23 @@
       "hasWebp": false,
       "source": "manual"
     },
+    "kaua-lorenzo-santos-gava": {
+      "slug": "kaua-lorenzo-santos-gava",
+      "displayName": "Kaua Lorenzo Santos Gava",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
     "keisuke-saitoh": {
       "slug": "keisuke-saitoh",
       "displayName": "Keisuke Saitoh",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    "kira-bataikina": {
+      "slug": "kira-bataikina",
+      "displayName": "Kira Bataikina",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2487,6 +2361,13 @@
       "hasWebp": false,
       "source": "manual"
     },
+    "laura-svatikova": {
+      "slug": "laura-svatikova",
+      "displayName": "Laura Svatikova",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
     "leonardo-borrelli": {
       "slug": "leonardo-borrelli",
       "displayName": "Leonardo Borrelli",
@@ -2494,9 +2375,9 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "leonie-rabl": {
-      "slug": "leonie-rabl",
-      "displayName": "Leonie Rabl",
+    "liel-marlies-rothensteiner": {
+      "slug": "liel-marlies-rothensteiner",
+      "displayName": "Liel Marlies Rothensteiner",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2504,13 +2385,6 @@
     "lily-fairclough": {
       "slug": "lily-fairclough",
       "displayName": "Lily Fairclough",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "lincer-slama": {
-      "slug": "lincer-slama",
-      "displayName": "Lincer / Slama",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2536,9 +2410,9 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "luca-parenti": {
-      "slug": "luca-parenti",
-      "displayName": "Luca Parenti",
+    "lorenzo-comino": {
+      "slug": "lorenzo-comino",
+      "displayName": "Lorenzo Comino",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2550,13 +2424,6 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "lucia-cortez-llorca": {
-      "slug": "lucia-cortez-llorca",
-      "displayName": "Lucia Cortez Llorca",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
     "lucia-rodriguez": {
       "slug": "lucia-rodriguez",
       "displayName": "Lucia Rodriguez",
@@ -2564,16 +2431,9 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "lucie-urbanova": {
-      "slug": "lucie-urbanova",
-      "displayName": "Lucie Urbanova",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "ludvig-hede": {
-      "slug": "ludvig-hede",
-      "displayName": "Ludvig Hede",
+    "lucie-nguyen-tan": {
+      "slug": "lucie-nguyen-tan",
+      "displayName": "Lucie Nguyen Tan",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2581,6 +2441,13 @@
     "maiko-uchijima": {
       "slug": "maiko-uchijima",
       "displayName": "Maiko Uchijima",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    "maileen-nuudi": {
+      "slug": "maileen-nuudi",
+      "displayName": "Maileen Nuudi",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2595,6 +2462,13 @@
     "maria-andrienko": {
       "slug": "maria-andrienko",
       "displayName": "Maria Andrienko",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    "maria-garcia-cid": {
+      "slug": "maria-garcia-cid",
+      "displayName": "Maria Garcia Cid",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2620,6 +2494,13 @@
       "hasWebp": false,
       "source": "manual"
     },
+    "mariia-drobysheva": {
+      "slug": "mariia-drobysheva",
+      "displayName": "Mariia Drobysheva",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
     "mariia-masiianskaia": {
       "slug": "mariia-masiianskaia",
       "displayName": "Mariia Masiianskaia",
@@ -2630,13 +2511,6 @@
     "mario-arce-fernandez": {
       "slug": "mario-arce-fernandez",
       "displayName": "Mario Arce Fernandez",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "martina-trevisan": {
-      "slug": "martina-trevisan",
-      "displayName": "Martina Trevisan",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2655,9 +2529,16 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "matta-peck": {
-      "slug": "matta-peck",
-      "displayName": "Matta / Peck",
+    "mateus-alves": {
+      "slug": "mateus-alves",
+      "displayName": "Mateus Alves",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    "mathilde-ngijol-carre": {
+      "slug": "mathilde-ngijol-carre",
+      "displayName": "Mathilde Ngijol Carre",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2669,9 +2550,9 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "maxence-rivet": {
-      "slug": "maxence-rivet",
-      "displayName": "Maxence Rivet",
+    "maximilian-todorov": {
+      "slug": "maximilian-todorov",
+      "displayName": "Maximilian Todorov",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2704,13 +2585,6 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "mikhail-khodorchenko": {
-      "slug": "mikhail-khodorchenko",
-      "displayName": "Mikhail Khodorchenko",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
     "moerani-bouzige": {
       "slug": "moerani-bouzige",
       "displayName": "Moerani Bouzige",
@@ -2721,13 +2595,6 @@
     "mutsumi-uemura": {
       "slug": "mutsumi-uemura",
       "displayName": "Mutsumi Uemura",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "nagi-hanatani": {
-      "slug": "nagi-hanatani",
-      "displayName": "Nagi Hanatani",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2788,6 +2655,13 @@
       "hasWebp": false,
       "source": "manual"
     },
+    "noemi-maines": {
+      "slug": "noemi-maines",
+      "displayName": "Noemi Maines",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
     "nuria-brancaccio": {
       "slug": "nuria-brancaccio",
       "displayName": "Nuria Brancaccio",
@@ -2795,9 +2669,23 @@
       "hasWebp": false,
       "source": "manual"
     },
+    "odeta-panasa": {
+      "slug": "odeta-panasa",
+      "displayName": "Odeta Panasa",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
     "olivia-allegre": {
       "slug": "olivia-allegre",
       "displayName": "Olivia Allegre",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    "olivia-symons": {
+      "slug": "olivia-symons",
+      "displayName": "Olivia Symons",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2812,6 +2700,13 @@
     "oriana-gniewkowska": {
       "slug": "oriana-gniewkowska",
       "displayName": "Oriana Gniewkowska",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    "patricia-georgiana-goina": {
+      "slug": "patricia-georgiana-goina",
+      "displayName": "Patricia Georgiana Goina",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2833,13 +2728,6 @@
     "pavel-lagutin": {
       "slug": "pavel-lagutin",
       "displayName": "Pavel Lagutin",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
-    "pereira-florencia-urrutia": {
-      "slug": "pereira-florencia-urrutia",
-      "displayName": "Pereira / Florencia Urrutia",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2879,16 +2767,16 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "raphael-perot": {
-      "slug": "raphael-perot",
-      "displayName": "Raphael Perot",
+    "raffaele-ciurnelli": {
+      "slug": "raffaele-ciurnelli",
+      "displayName": "Raffaele Ciurnelli",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
     },
-    "reed-schaefbauer": {
-      "slug": "reed-schaefbauer",
-      "displayName": "Reed / Schaefbauer",
+    "raphael-perot": {
+      "slug": "raphael-perot",
+      "displayName": "Raphael Perot",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2910,6 +2798,13 @@
     "rianna-alame": {
       "slug": "rianna-alame",
       "displayName": "Rianna Alame",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    "roisin-gilheany": {
+      "slug": "roisin-gilheany",
+      "displayName": "Roisin Gilheany",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2949,13 +2844,6 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "saavedra-carrera-torres-gomez": {
-      "slug": "saavedra-carrera-torres-gomez",
-      "displayName": "Saavedra Carrera / Torres Gomez",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
     "sam-ryan-ziegann": {
       "slug": "sam-ryan-ziegann",
       "displayName": "Sam Ryan Ziegann",
@@ -2970,16 +2858,16 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "sara-cakarevic": {
-      "slug": "sara-cakarevic",
-      "displayName": "Sara Cakarevic",
+    "sarah-mildren": {
+      "slug": "sarah-mildren",
+      "displayName": "Sarah Mildren",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
     },
-    "sarah-mildren": {
-      "slug": "sarah-mildren",
-      "displayName": "Sarah Mildren",
+    "shinji-hazawa": {
+      "slug": "shinji-hazawa",
+      "displayName": "Shinji Hazawa",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -2998,16 +2886,16 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "sophia-biolay": {
-      "slug": "sophia-biolay",
-      "displayName": "Sophia Biolay",
+    "stefan-adrian-andreescu": {
+      "slug": "stefan-adrian-andreescu",
+      "displayName": "Stefan Adrian Andreescu",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
     },
-    "sophie-llewellyn": {
-      "slug": "sophie-llewellyn",
-      "displayName": "Sophie LLEWELLYN",
+    "stefaniya-pushkar": {
+      "slug": "stefaniya-pushkar",
+      "displayName": "Stefaniya Pushkar",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -3033,13 +2921,6 @@
       "hasWebp": false,
       "source": "manual"
     },
-    "tatiana-pieri": {
-      "slug": "tatiana-pieri",
-      "displayName": "Tatiana Pieri",
-      "hasSource": false,
-      "hasWebp": false,
-      "source": "manual"
-    },
     "teodora-kostovic": {
       "slug": "teodora-kostovic",
       "displayName": "Teodora Kostovic",
@@ -3057,6 +2938,27 @@
     "thanaphat-boosarawongse": {
       "slug": "thanaphat-boosarawongse",
       "displayName": "Thanaphat Boosarawongse",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    "tim-handel": {
+      "slug": "tim-handel",
+      "displayName": "TIM Handel",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    "tomohiro-masabayashi": {
+      "slug": "tomohiro-masabayashi",
+      "displayName": "Tomohiro Masabayashi",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    "tristan-berard": {
+      "slug": "tristan-berard",
+      "displayName": "Tristan BERARD",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -3082,9 +2984,30 @@
       "hasWebp": false,
       "source": "manual"
     },
+    "victoria-lazarova": {
+      "slug": "victoria-lazarova",
+      "displayName": "Victoria Lazarova",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    "vincent-dullinger": {
+      "slug": "vincent-dullinger",
+      "displayName": "Vincent Dullinger",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
     "vivian-wolff": {
       "slug": "vivian-wolff",
       "displayName": "Vivian Wolff",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
+    "vladyslav-orlov": {
+      "slug": "vladyslav-orlov",
+      "displayName": "Vladyslav Orlov",
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
@@ -3117,6 +3040,13 @@
       "hasWebp": false,
       "source": "manual"
     },
+    "yannik-kelm": {
+      "slug": "yannik-kelm",
+      "displayName": "Yannik Kelm",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
     "yara-bartashevich": {
       "slug": "yara-bartashevich",
       "displayName": "Yara Bartashevich",
@@ -3145,6 +3075,13 @@
       "hasWebp": false,
       "source": "manual"
     },
+    "yusuke-takahashi": {
+      "slug": "yusuke-takahashi",
+      "displayName": "Yusuke Takahashi",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
+    },
     "yuttana-charoenphon": {
       "slug": "yuttana-charoenphon",
       "displayName": "Yuttana Charoenphon",
@@ -3158,6 +3095,13 @@
       "hasSource": false,
       "hasWebp": false,
       "source": "manual"
+    },
+    "zane-stevens": {
+      "slug": "zane-stevens",
+      "displayName": "Zane Stevens",
+      "hasSource": false,
+      "hasWebp": false,
+      "source": "manual"
     }
   },
   "nameToSlug": {
@@ -3165,166 +3109,151 @@
     "adam-lynch": "adam-lynch",
     "adrian-andreev": "adrian-andreev",
     "agustina-chlpac": "agustina-chlpac",
-    "akli-crawley": "akli-crawley",
+    "alec-beckley": "alec-beckley",
     "alessandro-bellifemine": "alessandro-bellifemine",
+    "alex-huszar": "alex-huszar",
     "alexander-chang": "alexander-chang",
-    "alexandre-reco": "alexandre-reco",
-    "alisa-danilova": "alisa-danilova",
-    "allen-el-jardi": "allen-el-jardi",
-    "alonso-angel": "alonso-angel",
     "alvin-nicholas-tudorica": "alvin-nicholas-tudorica",
-    "anastasia-mozgaleva": "anastasia-mozgaleva",
+    "amanda-carolina-nava-elkin": "amanda-carolina-nava-elkin",
     "andrea-obradovic": "andrea-obradovic",
+    "andrei-kunitsyn": "andrei-kunitsyn",
     "angela-fita-boluda": "angela-fita-boluda",
     "anna-shkutova": "anna-shkutova",
     "anna-siskova": "anna-siskova",
+    "ariadna-garcia-patron-canals": "ariadna-garcia-patron-canals",
     "ariana-geerlings": "ariana-geerlings",
     "arianna-zucchini": "arianna-zucchini",
+    "arjun-mehrotra": "arjun-mehrotra",
     "asher-brownrigg": "asher-brownrigg",
     "ashleigh-harvey": "ashleigh-harvey",
     "ashton-mcleod": "ashton-mcleod",
     "astrid-wanja-brune-olsen": "astrid-wanja-brune-olsen",
     "aurora-corvi": "aurora-corvi",
     "aya-el-aouni": "aya-el-aouni",
+    "ayana-akli": "ayana-akli",
     "azuma-visaya": "azuma-visaya",
-    "barrera-aguirre-maria-gonzalez-daniele": "barrera-aguirre-maria-gonzalez-daniele",
     "bastian-malla": "bastian-malla",
+    "beatrise-zeltina": "beatrise-zeltina",
     "belle-thompson": "belle-thompson",
     "berfu-cengiz": "berfu-cengiz",
     "bor-artnak": "bor-artnak",
-    "bowers-okonkwo": "bowers-okonkwo",
     "boyoung-jeong": "boyoung-jeong",
-    "branko-djuric": "branko-djuric",
     "brenda-fruhvirtova": "brenda-fruhvirtova",
-    "broadus-collins": "broadus-collins",
-    "brown-voelzke": "brown-voelzke",
     "caitlin-baker": "caitlin-baker",
     "camila-rodero": "camila-rodero",
+    "camilla-zanolini": "camilla-zanolini",
+    "carlos-lopez-montagud": "carlos-lopez-montagud",
     "carmen-gallardo-guevara": "carmen-gallardo-guevara",
     "carolina-gomez": "carolina-gomez",
-    "casari-watanabe": "casari-watanabe",
     "catarina-melleiro": "catarina-melleiro",
     "charlie-camus": "charlie-camus",
     "charlotte-pikkaart": "charlotte-pikkaart",
-    "charo-esquiva-banuls": "charo-esquiva-banuls",
     "chia-yi-tsao": "chia-yi-tsao",
-    "chopra-dickerson": "chopra-dickerson",
-    "clarke-jagatdeo-verma": "clarke-jagatdeo-verma",
     "clement-lemire": "clement-lemire",
     "cody-atkinson": "cody-atkinson",
-    "cook-vithoontien": "cook-vithoontien",
     "corban-crowther": "corban-crowther",
-    "covato-mbithi": "covato-mbithi",
     "cristina-elena-tiglea": "cristina-elena-tiglea",
-    "damien-salvestre": "damien-salvestre",
     "daniel-jovanovski": "daniel-jovanovski",
     "darina-matvejeva": "darina-matvejeva",
     "david-bakonyi": "david-bakonyi",
-    "dayeon-back": "dayeon-back",
+    "david-fix": "david-fix",
     "demo-player": "demo-player",
     "denis-constantin-spiridon": "denis-constantin-spiridon",
-    "derek-pham": "derek-pham",
     "destanee-aiava": "destanee-aiava",
     "dragos-nicolae-cazacu": "dragos-nicolae-cazacu",
     "duje-markovina": "duje-markovina",
-    "echazu-alexander-rodriguez": "echazu-alexander-rodriguez",
-    "elijah-cham": "elijah-cham",
     "emma-lene": "emma-lene",
     "emma-ottavia-ghirardato": "emma-ottavia-ghirardato",
     "eric-vanshelboim": "eric-vanshelboim",
-    "ethan-david-zapp": "ethan-david-zapp",
     "ethan-domingo": "ethan-domingo",
     "eugenia-zozaya-menendez": "eugenia-zozaya-menendez",
     "eunchae-kim": "eunchae-kim",
     "evan-bynoe": "evan-bynoe",
-    "fang-an-lin": "fang-an-lin",
     "fernanda-torres-gomez": "fernanda-torres-gomez",
     "filip-jeff-planinsek": "filip-jeff-planinsek",
     "fiona-ganz": "fiona-ganz",
+    "francesca-curmi": "francesca-curmi",
     "francesca-mattioli": "francesca-mattioli",
-    "francesca-pace": "francesca-pace",
     "francesca-parcelli": "francesca-parcelli",
     "franziska-sziedat": "franziska-sziedat",
-    "frodin-hewitt": "frodin-hewitt",
-    "gabriel-sardo": "gabriel-sardo",
+    "gabriela-ce": "gabriela-ce",
     "gabriela-kawano-cho": "gabriela-kawano-cho",
     "gabriela-paun": "gabriela-paun",
-    "gabriele-bosio": "gabriele-bosio",
-    "gina-marie-dittmann": "gina-marie-dittmann",
-    "gonzalez-fitzmaurice-strode": "gonzalez-fitzmaurice-strode",
-    "goto-lee": "goto-lee",
     "gunawan-trismuwantara": "gunawan-trismuwantara",
     "gustavo-albieri": "gustavo-albieri",
     "gyeong-seo-lee": "gyeong-seo-lee",
     "hanna-chang": "hanna-chang",
     "harrison-satara": "harrison-satara",
     "hayden-jones": "hayden-jones",
-    "helena-stevic": "helena-stevic",
-    "hikaru-shiraishi": "hikaru-shiraishi",
-    "hugo-car": "hugo-car",
     "i-wen-wan": "i-wen-wan",
     "ida-wobker": "ida-wobker",
     "ilinca-dalina-amariei": "ilinca-dalina-amariei",
+    "imanol-lopez-morillo": "imanol-lopez-morillo",
     "imogen-haddad": "imogen-haddad",
     "irina-balus": "irina-balus",
     "isaac-becroft": "isaac-becroft",
+    "isabella-maria-serban": "isabella-maria-serban",
     "ivan-gretskiy": "ivan-gretskiy",
     "jack-bruce-smith": "jack-bruce-smith",
     "jake-delaney": "jake-delaney",
     "jana-otzipka": "jana-otzipka",
-    "jantje-tilbuerger": "jantje-tilbuerger",
     "jelani-sarr": "jelani-sarr",
     "jennifer-rosa-dourado": "jennifer-rosa-dourado",
-    "jeong-sema": "jeong-sema",
+    "jeremy-beale": "jeremy-beale",
     "jeremy-zhang": "jeremy-zhang",
     "jesse-de-jager": "jesse-de-jager",
+    "jo-yee-chan": "jo-yee-chan",
+    "joaquin-guilleme": "joaquin-guilleme",
     "jonas-gundacker": "jonas-gundacker",
     "jordi-garcia-mestre": "jordi-garcia-mestre",
     "julia-grabher": "julia-grabher",
+    "juliana-nicole-singeorzan": "juliana-nicole-singeorzan",
     "julio-cesar-porras": "julio-cesar-porras",
     "kabeer-kapasi": "kabeer-kapasi",
+    "kajsa-rinaldo-persson": "kajsa-rinaldo-persson",
     "kallista-liu": "kallista-liu",
     "katerina-tsygourova": "katerina-tsygourova",
+    "kaua-lorenzo-santos-gava": "kaua-lorenzo-santos-gava",
     "keisuke-saitoh": "keisuke-saitoh",
+    "kira-bataikina": "kira-bataikina",
     "krisha-mahendran": "krisha-mahendran",
     "kristina-novak": "kristina-novak",
     "lachlan-mcfadzean": "lachlan-mcfadzean",
     "laura-hietaranta": "laura-hietaranta",
+    "laura-svatikova": "laura-svatikova",
     "leonardo-borrelli": "leonardo-borrelli",
-    "leonie-rabl": "leonie-rabl",
+    "liel-marlies-rothensteiner": "liel-marlies-rothensteiner",
     "lily-fairclough": "lily-fairclough",
-    "lincer-slama": "lincer-slama",
     "livas-eduardo-de-carvalho-damazio": "livas-eduardo-de-carvalho-damazio",
     "loes-ebeling-koning": "loes-ebeling-koning",
     "lorenzo-beraldo": "lorenzo-beraldo",
-    "luca-parenti": "luca-parenti",
+    "lorenzo-comino": "lorenzo-comino",
     "lucas-marionneau": "lucas-marionneau",
-    "lucia-cortez-llorca": "lucia-cortez-llorca",
     "lucia-rodriguez": "lucia-rodriguez",
-    "lucie-urbanova": "lucie-urbanova",
-    "ludvig-hede": "ludvig-hede",
+    "lucie-nguyen-tan": "lucie-nguyen-tan",
     "maiko-uchijima": "maiko-uchijima",
+    "maileen-nuudi": "maileen-nuudi",
     "margaux-maquet": "margaux-maquet",
     "maria-andrienko": "maria-andrienko",
+    "maria-garcia-cid": "maria-garcia-cid",
     "maria-kononova": "maria-kononova",
     "marian-gomez-pezuela-cano": "marian-gomez-pezuela-cano",
     "marianna-argyrokastriti": "marianna-argyrokastriti",
+    "mariia-drobysheva": "mariia-drobysheva",
     "mariia-masiianskaia": "mariia-masiianskaia",
     "mario-arce-fernandez": "mario-arce-fernandez",
-    "martina-trevisan": "martina-trevisan",
     "matei-florin-breazu": "matei-florin-breazu",
     "mateo-luis-alvarez-sarmiento": "mateo-luis-alvarez-sarmiento",
-    "matta-peck": "matta-peck",
+    "mateus-alves": "mateus-alves",
+    "mathilde-ngijol-carre": "mathilde-ngijol-carre",
     "matthew-dellavedova": "matthew-dellavedova",
-    "maxence-rivet": "maxence-rivet",
+    "maximilian-todorov": "maximilian-todorov",
     "mckenna-schaefbauer": "mckenna-schaefbauer",
     "merel-hoedt": "merel-hoedt",
     "mia-ristic": "mia-ristic",
     "michele-mecarelli": "michele-mecarelli",
-    "mikhail-khodorchenko": "mikhail-khodorchenko",
     "moerani-bouzige": "moerani-bouzige",
     "mutsumi-uemura": "mutsumi-uemura",
-    "nagi-hanatani": "nagi-hanatani",
     "natsuho-arakawa": "natsuho-arakawa",
     "natsuki-yoshimoto": "natsuki-yoshimoto",
     "nicholas-godsick": "nicholas-godsick",
@@ -3333,58 +3262,69 @@
     "nikita-volonski": "nikita-volonski",
     "nina-radovanovic": "nina-radovanovic",
     "nithesa-selvaraj": "nithesa-selvaraj",
+    "noemi-maines": "noemi-maines",
     "nuria-brancaccio": "nuria-brancaccio",
+    "odeta-panasa": "odeta-panasa",
     "olivia-allegre": "olivia-allegre",
+    "olivia-symons": "olivia-symons",
     "omar-jasika": "omar-jasika",
     "oriana-gniewkowska": "oriana-gniewkowska",
+    "patricia-georgiana-goina": "patricia-georgiana-goina",
     "patrick-zahraj": "patrick-zahraj",
     "paulo-andre-saraiva-dos-santos": "paulo-andre-saraiva-dos-santos",
     "pavel-lagutin": "pavel-lagutin",
-    "pereira-florencia-urrutia": "pereira-florencia-urrutia",
     "polina-kaibekova": "polina-kaibekova",
     "radu-david-turcanu": "radu-david-turcanu",
     "radu-mihai-papoe": "radu-mihai-papoe",
     "rafael-giotis": "rafael-giotis",
     "rafalentino-ali-da-costa": "rafalentino-ali-da-costa",
+    "raffaele-ciurnelli": "raffaele-ciurnelli",
     "raphael-perot": "raphael-perot",
-    "reed-schaefbauer": "reed-schaefbauer",
     "ren-nakamura": "ren-nakamura",
     "renee-alame": "renee-alame",
     "rianna-alame": "rianna-alame",
+    "roisin-gilheany": "roisin-gilheany",
     "romina-ccuno": "romina-ccuno",
     "rose-marie-nijkamp": "rose-marie-nijkamp",
     "ryan-augusto-dos-santos": "ryan-augusto-dos-santos",
     "ryotaro-taguchi": "ryotaro-taguchi",
     "ryuki-matsuda": "ryuki-matsuda",
-    "saavedra-carrera-torres-gomez": "saavedra-carrera-torres-gomez",
     "sam-ryan-ziegann": "sam-ryan-ziegann",
     "sanhui-shin": "sanhui-shin",
-    "sara-cakarevic": "sara-cakarevic",
     "sarah-mildren": "sarah-mildren",
+    "shinji-hazawa": "shinji-hazawa",
     "sofia-rocchetti": "sofia-rocchetti",
     "sonja-zhenikhova": "sonja-zhenikhova",
-    "sophia-biolay": "sophia-biolay",
-    "sophie-llewellyn": "sophie-llewellyn",
+    "stefan-adrian-andreescu": "stefan-adrian-andreescu",
+    "stefaniya-pushkar": "stefaniya-pushkar",
     "taiki-takizawa": "taiki-takizawa",
     "taisei-ichikawa": "taisei-ichikawa",
     "tanapatt-nirundorn": "tanapatt-nirundorn",
-    "tatiana-pieri": "tatiana-pieri",
     "teodora-kostovic": "teodora-kostovic",
     "teodora-miron": "teodora-miron",
     "thanaphat-boosarawongse": "thanaphat-boosarawongse",
+    "tim-handel": "tim-handel",
+    "tomohiro-masabayashi": "tomohiro-masabayashi",
+    "tristan-berard": "tristan-berard",
     "tudor-batin": "tudor-batin",
     "valentina-ivanov": "valentina-ivanov",
     "veronika-kulhava": "veronika-kulhava",
+    "victoria-lazarova": "victoria-lazarova",
+    "vincent-dullinger": "vincent-dullinger",
     "vivian-wolff": "vivian-wolff",
+    "vladyslav-orlov": "vladyslav-orlov",
     "warda-ait-el-bachir": "warda-ait-el-bachir",
     "xavier-ferrer-mateo": "xavier-ferrer-mateo",
     "ya-yi-yang": "ya-yi-yang",
     "yannick-theodor-alexandrescou": "yannick-theodor-alexandrescou",
+    "yannik-kelm": "yannik-kelm",
     "yara-bartashevich": "yara-bartashevich",
     "ylenia-zocco": "ylenia-zocco",
     "ymerali-ibraimi": "ymerali-ibraimi",
     "yuki-naito": "yuki-naito",
+    "yusuke-takahashi": "yusuke-takahashi",
     "yuttana-charoenphon": "yuttana-charoenphon",
-    "yuya-hirose": "yuya-hirose"
+    "yuya-hirose": "yuya-hirose",
+    "zane-stevens": "zane-stevens"
   }
 }

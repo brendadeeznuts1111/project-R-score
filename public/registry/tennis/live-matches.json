@@ -1,262 +1,285 @@
 {
   "schemaVersion": 1,
   "kind": "tennis-live-matches",
-  "generatedAt": "2026-07-30T23:09:19.742Z",
+  "generatedAt": "2026-08-05T07:57:06.913Z",
   "source": "event-store",
   "limit": 12,
   "matches": [
     {
-      "eventId": "d1e144c4b2f01c09576b3de559c8047a",
-      "eventTicker": "KXITFWDOUBLES-26JUL30GOTLEEREESCH",
-      "series": "KXITFWDOUBLES",
-      "seriesLabel": "ITF W DBL",
-      "venue": "kalshi",
-      "status": "scheduled",
-      "sideA": {
-        "label": "Goto / Lee",
-        "slug": "goto-lee",
-        "midCents": null,
-        "ticker": "KXITFWDOUBLES-26JUL30GOTLEEREESCH-GOTLEE"
-      },
-      "sideB": {
-        "label": "Reed / Schaefbauer",
-        "slug": "reed-schaefbauer",
-        "midCents": null,
-        "ticker": "KXITFWDOUBLES-26JUL30GOTLEEREESCH-REESCH"
-      },
-      "edgeCents": null
-    },
-    {
-      "eventId": "dbd8710d192f33dc0487a38bf9a86a13",
-      "eventTicker": "KXITFWDOUBLES-26JUL30BROCOLJEOSEM",
-      "series": "KXITFWDOUBLES",
-      "seriesLabel": "ITF W DBL",
-      "venue": "kalshi",
-      "status": "scheduled",
-      "sideA": {
-        "label": "Broadus / Collins",
-        "slug": "broadus-collins",
-        "midCents": null,
-        "ticker": "KXITFWDOUBLES-26JUL30BROCOLJEOSEM-BROCOL"
-      },
-      "sideB": {
-        "label": "Jeong / Sema",
-        "slug": "jeong-sema",
-        "midCents": null,
-        "ticker": "KXITFWDOUBLES-26JUL30BROCOLJEOSEM-JEOSEM"
-      },
-      "edgeCents": null
-    },
-    {
-      "eventId": "ed4023562ddc741149b5a9140e24a77c",
-      "eventTicker": "KXITFWDOUBLES-26JUL30LINSLAAKLCRA",
-      "series": "KXITFWDOUBLES",
-      "seriesLabel": "ITF W DBL",
-      "venue": "kalshi",
-      "status": "scheduled",
-      "sideA": {
-        "label": "Akli / Crawley",
-        "slug": "akli-crawley",
-        "midCents": null,
-        "ticker": "KXITFWDOUBLES-26JUL30LINSLAAKLCRA-AKLCRA"
-      },
-      "sideB": {
-        "label": "Lincer / Slama",
-        "slug": "lincer-slama",
-        "midCents": null,
-        "ticker": "KXITFWDOUBLES-26JUL30LINSLAAKLCRA-LINSLA"
-      },
-      "edgeCents": null
-    },
-    {
-      "eventId": "79dc664aaf6a038f5cdaffc5e5a21467",
-      "eventTicker": "KXITFWDOUBLES-26JUL30FROHEWALLELJ",
-      "series": "KXITFWDOUBLES",
-      "seriesLabel": "ITF W DBL",
-      "venue": "kalshi",
-      "status": "scheduled",
-      "sideA": {
-        "label": "Allen / El Jardi",
-        "slug": "allen-el-jardi",
-        "midCents": null,
-        "ticker": "KXITFWDOUBLES-26JUL30FROHEWALLELJ-ALLELJ"
-      },
-      "sideB": {
-        "label": "Frodin / Hewitt",
-        "slug": "frodin-hewitt",
-        "midCents": null,
-        "ticker": "KXITFWDOUBLES-26JUL30FROHEWALLELJ-FROHEW"
-      },
-      "edgeCents": null
-    },
-    {
-      "eventId": "fa714eba6913390b5d13008a90605a9c",
-      "eventTicker": "KXITFDOUBLES-26JUL30COOVITBOWOKO",
-      "series": "KXITFDOUBLES",
-      "seriesLabel": "ITF M DBL",
-      "venue": "kalshi",
-      "status": "scheduled",
-      "sideA": {
-        "label": "Bowers / OKONKWO",
-        "slug": "bowers-okonkwo",
-        "midCents": null,
-        "ticker": "KXITFDOUBLES-26JUL30COOVITBOWOKO-BOWOKO"
-      },
-      "sideB": {
-        "label": "Cook / Vithoontien",
-        "slug": "cook-vithoontien",
-        "midCents": null,
-        "ticker": "KXITFDOUBLES-26JUL30COOVITBOWOKO-COOVIT"
-      },
-      "edgeCents": null
-    },
-    {
-      "eventId": "fcd384a50595e2a49299bc98acaa61b3",
-      "eventTicker": "KXITFWMATCH-26JUL30CHATIL",
+      "eventId": "e45faf366c2cd9088b0bb12225c76620",
+      "eventTicker": "KXITFWMATCH-26JUL28PANLAZ",
       "series": "KXITFWMATCH",
       "seriesLabel": "ITF W",
       "venue": "kalshi",
-      "status": "scheduled",
+      "status": "completed",
       "sideA": {
-        "label": "Hanna Chang",
-        "slug": "hanna-chang",
-        "midCents": null,
-        "ticker": "KXITFWMATCH-26JUL30CHATIL-CHA"
+        "label": "Odeta Panasa",
+        "slug": "odeta-panasa",
+        "midCents": 97,
+        "ticker": "KXITFWMATCH-26JUL28PANLAZ-PAN"
       },
       "sideB": {
-        "label": "Jantje Tilbuerger",
-        "slug": "jantje-tilbuerger",
-        "midCents": null,
-        "ticker": "KXITFWMATCH-26JUL30CHATIL-TIL"
+        "label": "Victoria Lazarova",
+        "slug": "victoria-lazarova",
+        "midCents": 4,
+        "ticker": "KXITFWMATCH-26JUL28PANLAZ-LAZ"
       },
-      "edgeCents": null
+      "edgeCents": 93,
+      "midStatus": "ok"
     },
     {
-      "eventId": "17a2b9298b087a176dc9236ef6693e71",
-      "eventTicker": "KXITFWDOUBLES-26JUL30PERFLOBARMAR",
-      "series": "KXITFWDOUBLES",
-      "seriesLabel": "ITF W DBL",
+      "eventId": "f08b59fd2f33ece3b35fef34bf3fb7c6",
+      "eventTicker": "KXITFMATCH-26JUL22SANALV",
+      "series": "KXITFMATCH",
+      "seriesLabel": "ITF M",
       "venue": "kalshi",
-      "status": "scheduled",
+      "status": "completed",
       "sideA": {
-        "label": "Barrera Aguirre / Maria Gonzalez Daniele",
-        "slug": "barrera-aguirre-maria-gonzalez-daniele",
-        "midCents": null,
-        "ticker": "KXITFWDOUBLES-26JUL30PERFLOBARMAR-BARMAR"
+        "label": "Kaua Lorenzo Santos Gava",
+        "slug": "kaua-lorenzo-santos-gava",
+        "midCents": 10,
+        "ticker": "KXITFMATCH-26JUL22SANALV-SAN"
       },
       "sideB": {
-        "label": "Pereira / Florencia Urrutia",
-        "slug": "pereira-florencia-urrutia",
-        "midCents": null,
-        "ticker": "KXITFWDOUBLES-26JUL30PERFLOBARMAR-PERFLO"
+        "label": "Mateus Alves",
+        "slug": "mateus-alves",
+        "midCents": 92,
+        "ticker": "KXITFMATCH-26JUL22SANALV-ALV"
       },
-      "edgeCents": null
+      "edgeCents": -82,
+      "midStatus": "ok"
     },
     {
-      "eventId": "7d9038999433c02e6859e382d08032fc",
-      "eventTicker": "KXITFDOUBLES-26JUL30CHODICGONSTR",
-      "series": "KXITFDOUBLES",
-      "seriesLabel": "ITF M DBL",
+      "eventId": "5731ad9e3a2f4f5da67a540bba61fde1",
+      "eventTicker": "KXITFWMATCH-26JUL22ZANROD",
+      "series": "KXITFWMATCH",
+      "seriesLabel": "ITF W",
       "venue": "kalshi",
-      "status": "scheduled",
+      "status": "completed",
       "sideA": {
-        "label": "Chopra / Dickerson",
-        "slug": "chopra-dickerson",
-        "midCents": null,
-        "ticker": "KXITFDOUBLES-26JUL30CHODICGONSTR-CHODIC"
+        "label": "Camilla Zanolini",
+        "slug": "camilla-zanolini",
+        "midCents": 71,
+        "ticker": "KXITFWMATCH-26JUL22ZANROD-ZAN"
       },
       "sideB": {
-        "label": "Gonzalez Fitzmaurice / Strode",
-        "slug": "gonzalez-fitzmaurice-strode",
-        "midCents": null,
-        "ticker": "KXITFDOUBLES-26JUL30CHODICGONSTR-GONSTR"
+        "label": "Lucia Rodriguez",
+        "slug": "lucia-rodriguez",
+        "midCents": 28,
+        "ticker": "KXITFWMATCH-26JUL22ZANROD-ROD"
       },
-      "edgeCents": null
+      "edgeCents": 43,
+      "midStatus": "ok"
     },
     {
-      "eventId": "84e3cb77b376b2f9eb0d01a7337dadbe",
-      "eventTicker": "KXITFWDOUBLES-26JUL30CASWATCLAJAG",
-      "series": "KXITFWDOUBLES",
-      "seriesLabel": "ITF W DBL",
+      "eventId": "57ff675ec90d6dba80c32d51cca2c214",
+      "eventTicker": "KXITFWMATCH-26JUL22ZELRIN",
+      "series": "KXITFWMATCH",
+      "seriesLabel": "ITF W",
       "venue": "kalshi",
-      "status": "scheduled",
+      "status": "completed",
       "sideA": {
-        "label": "Casari / Watanabe",
-        "slug": "casari-watanabe",
-        "midCents": null,
-        "ticker": "KXITFWDOUBLES-26JUL30CASWATCLAJAG-CASWAT"
+        "label": "Beatrise Zeltina",
+        "slug": "beatrise-zeltina",
+        "midCents": 57,
+        "ticker": "KXITFWMATCH-26JUL22ZELRIN-ZEL"
       },
       "sideB": {
-        "label": "Clarke / Jagatdeo Verma",
-        "slug": "clarke-jagatdeo-verma",
-        "midCents": null,
-        "ticker": "KXITFWDOUBLES-26JUL30CASWATCLAJAG-CLAJAG"
+        "label": "Kajsa Rinaldo Persson",
+        "slug": "kajsa-rinaldo-persson",
+        "midCents": 43,
+        "ticker": "KXITFWMATCH-26JUL22ZELRIN-RIN"
       },
-      "edgeCents": null
+      "edgeCents": 14,
+      "midStatus": "ok"
     },
     {
-      "eventId": "88fa8660c5c8980c3f8b1ac007dea790",
-      "eventTicker": "KXITFDOUBLES-26JUL30ECHALECOVMBI",
-      "series": "KXITFDOUBLES",
-      "seriesLabel": "ITF M DBL",
+      "eventId": "10417b0abd91125d8f1960c90d71f733",
+      "eventTicker": "KXITFMATCH-26JUL22HANLOP",
+      "series": "KXITFMATCH",
+      "seriesLabel": "ITF M",
       "venue": "kalshi",
-      "status": "scheduled",
+      "status": "completed",
       "sideA": {
-        "label": "Covato / Mbithi",
-        "slug": "covato-mbithi",
-        "midCents": null,
-        "ticker": "KXITFDOUBLES-26JUL30ECHALECOVMBI-COVMBI"
+        "label": "Imanol Lopez Morillo",
+        "slug": "imanol-lopez-morillo",
+        "midCents": 67,
+        "ticker": "KXITFMATCH-26JUL22HANLOP-LOP"
       },
       "sideB": {
-        "label": "Echazu / Alexander Rodriguez",
-        "slug": "echazu-alexander-rodriguez",
-        "midCents": null,
-        "ticker": "KXITFDOUBLES-26JUL30ECHALECOVMBI-ECHALE"
+        "label": "TIM Handel",
+        "slug": "tim-handel",
+        "midCents": 33,
+        "ticker": "KXITFMATCH-26JUL22HANLOP-HAN"
       },
-      "edgeCents": null
+      "edgeCents": 34,
+      "midStatus": "ok"
     },
     {
-      "eventId": "e175db115412301820d23a296954a828",
-      "eventTicker": "KXITFDOUBLES-26JUL30BROVOEMATPEC",
-      "series": "KXITFDOUBLES",
-      "seriesLabel": "ITF M DBL",
+      "eventId": "17aa51901e3dec21491a43913f831b28",
+      "eventTicker": "KXITFMATCH-26JUL22DULBEC",
+      "series": "KXITFMATCH",
+      "seriesLabel": "ITF M",
       "venue": "kalshi",
-      "status": "scheduled",
+      "status": "completed",
       "sideA": {
-        "label": "Brown / Voelzke",
-        "slug": "brown-voelzke",
-        "midCents": null,
-        "ticker": "KXITFDOUBLES-26JUL30BROVOEMATPEC-BROVOE"
+        "label": "Alec Beckley",
+        "slug": "alec-beckley",
+        "midCents": 54,
+        "ticker": "KXITFMATCH-26JUL22DULBEC-BEC"
       },
       "sideB": {
-        "label": "Matta / Peck",
-        "slug": "matta-peck",
-        "midCents": null,
-        "ticker": "KXITFDOUBLES-26JUL30BROVOEMATPEC-MATPEC"
+        "label": "Vincent Dullinger",
+        "slug": "vincent-dullinger",
+        "midCents": 47,
+        "ticker": "KXITFMATCH-26JUL22DULBEC-DUL"
       },
-      "edgeCents": null
+      "edgeCents": 7,
+      "midStatus": "ok"
     },
     {
-      "eventId": "f98a683451a817849817e4d1788b8864",
-      "eventTicker": "KXITFWDOUBLES-26JUL30ALOANGSAATOR",
-      "series": "KXITFWDOUBLES",
-      "seriesLabel": "ITF W DBL",
+      "eventId": "e7a76cd33d5075be38bc4276406f5935",
+      "eventTicker": "KXITFWMATCH-26JUL22NGUEBE",
+      "series": "KXITFWMATCH",
+      "seriesLabel": "ITF W",
       "venue": "kalshi",
-      "status": "scheduled",
+      "status": "completed",
       "sideA": {
-        "label": "Alonso / Angel",
-        "slug": "alonso-angel",
-        "midCents": null,
-        "ticker": "KXITFWDOUBLES-26JUL30ALOANGSAATOR-ALOANG"
+        "label": "Loes Ebeling Koning",
+        "slug": "loes-ebeling-koning",
+        "midCents": 39,
+        "ticker": "KXITFWMATCH-26JUL22NGUEBE-EBE"
       },
       "sideB": {
-        "label": "Saavedra Carrera / Torres Gomez",
-        "slug": "saavedra-carrera-torres-gomez",
-        "midCents": null,
-        "ticker": "KXITFWDOUBLES-26JUL30ALOANGSAATOR-SAATOR"
+        "label": "Lucie Nguyen Tan",
+        "slug": "lucie-nguyen-tan",
+        "midCents": 62,
+        "ticker": "KXITFWMATCH-26JUL22NGUEBE-NGU"
       },
-      "edgeCents": null
+      "edgeCents": -23,
+      "midStatus": "ok"
+    },
+    {
+      "eventId": "8258813027bc52031a977df5e661db8e",
+      "eventTicker": "KXITFWMATCH-26JUL22CURTSY",
+      "series": "KXITFWMATCH",
+      "seriesLabel": "ITF W",
+      "venue": "kalshi",
+      "status": "completed",
+      "sideA": {
+        "label": "Francesca Curmi",
+        "slug": "francesca-curmi",
+        "midCents": 75,
+        "ticker": "KXITFWMATCH-26JUL22CURTSY-CUR"
+      },
+      "sideB": {
+        "label": "Katerina Tsygourova",
+        "slug": "katerina-tsygourova",
+        "midCents": 26,
+        "ticker": "KXITFWMATCH-26JUL22CURTSY-TSY"
+      },
+      "edgeCents": 49,
+      "midStatus": "ok"
+    },
+    {
+      "eventId": "b6045e18aad2e9ea163a99230ffa0280",
+      "eventTicker": "KXITFWMATCH-26JUL22SINPUS",
+      "series": "KXITFWMATCH",
+      "seriesLabel": "ITF W",
+      "venue": "kalshi",
+      "status": "completed",
+      "sideA": {
+        "label": "Juliana Nicole Singeorzan",
+        "slug": "juliana-nicole-singeorzan",
+        "midCents": 80,
+        "ticker": "KXITFWMATCH-26JUL22SINPUS-SIN"
+      },
+      "sideB": {
+        "label": "Stefaniya Pushkar",
+        "slug": "stefaniya-pushkar",
+        "midCents": 23,
+        "ticker": "KXITFWMATCH-26JUL22SINPUS-PUS"
+      },
+      "edgeCents": 57,
+      "midStatus": "ok"
+    },
+    {
+      "eventId": "ed01cba1d73bcd56b6c7b79fb71933ce",
+      "eventTicker": "KXITFWMATCH-26JUL22GARMAI",
+      "series": "KXITFWMATCH",
+      "seriesLabel": "ITF W",
+      "venue": "kalshi",
+      "status": "completed",
+      "sideA": {
+        "label": "Ariadna Garcia-Patron Canals",
+        "slug": "ariadna-garcia-patron-canals",
+        "midCents": 47,
+        "ticker": "KXITFWMATCH-26JUL22GARMAI-GAR"
+      },
+      "sideB": {
+        "label": "Noemi Maines",
+        "slug": "noemi-maines",
+        "midCents": 52,
+        "ticker": "KXITFWMATCH-26JUL22GARMAI-MAI"
+      },
+      "edgeCents": -5,
+      "midStatus": "ok"
+    },
+    {
+      "eventId": "2d6b64b3fbcbba0aa95852fc3d6b7ff6",
+      "eventTicker": "KXITFMATCH-26JUL22ORLMAS",
+      "series": "KXITFMATCH",
+      "seriesLabel": "ITF M",
+      "venue": "kalshi",
+      "status": "completed",
+      "sideA": {
+        "label": "Tomohiro Masabayashi",
+        "slug": "tomohiro-masabayashi",
+        "midCents": 3,
+        "ticker": "KXITFMATCH-26JUL22ORLMAS-MAS"
+      },
+      "sideB": {
+        "label": "Vladyslav Orlov",
+        "slug": "vladyslav-orlov",
+        "midCents": 98,
+        "ticker": "KXITFMATCH-26JUL22ORLMAS-ORL"
+      },
+      "edgeCents": -95,
+      "midStatus": "ok"
+    },
+    {
+      "eventId": "44c914fb07483830500de87c5881facc",
+      "eventTicker": "KXITFMATCH-26JUL22CIUBER",
+      "series": "KXITFMATCH",
+      "seriesLabel": "ITF M",
+      "venue": "kalshi",
+      "status": "completed",
+      "sideA": {
+        "label": "Lorenzo Beraldo",
+        "slug": "lorenzo-beraldo",
+        "midCents": 28,
+        "ticker": "KXITFMATCH-26JUL22CIUBER-BER"
+      },
+      "sideB": {
+        "label": "Raffaele Ciurnelli",
+        "slug": "raffaele-ciurnelli",
+        "midCents": 74,
+        "ticker": "KXITFMATCH-26JUL22CIUBER-CIU"
+      },
+      "edgeCents": -46,
+      "midStatus": "ok"
     }
   ],
-  "note": "Live from event-store · 12 matches · 52 latest mids"
+  "quality": {
+    "scannedEvents": 4095,
+    "withBothMids": 23,
+    "withOneMid": 0,
+    "withNoMids": 4072,
+    "listedWithBothMids": 12,
+    "listedMissingMids": 0,
+    "coveragePct": 1,
+    "latestBookTs": 1785249318394,
+    "latestBookAt": "2026-07-28T14:35:18.394Z"
+  },
+  "note": "Live from event-store · 12 listed · 12/12 with mids · 52 ticker mids · 23 events full-book / 4095 scanned"
 }

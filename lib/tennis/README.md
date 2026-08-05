@@ -38,8 +38,12 @@ Cloud agent / private registry:
 | ------------------ | ---------------------------------------------- |
 | `board-metrics.ts` | Mid buckets, series volume                     |
 | `avatar-index.ts`  | Slug normalize, warehouse scan, name→slug maps |
-| `live-matches.ts`  | Paired event rows + edge + venue               |
+| `live-matches.ts`  | Paired event rows + edge + venue · mid quality |
 | Bake               | `bun run tennis:board:bake`                    |
+
+Live list ranks **usable mids first**, then live/scheduled, then recency.
+`quality` on `live-matches.json` and `desk` on `board-metrics.json` report
+coverage (listed vs store-wide full-book events, latest book ts).
 
 ## Operator
 
