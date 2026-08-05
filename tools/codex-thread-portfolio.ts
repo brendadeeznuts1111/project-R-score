@@ -26,6 +26,7 @@ import { Database } from 'bun:sqlite';
 import { homedir } from 'node:os';
 import { jsonOut, logTable } from '../lib/console-depth.ts';
 import { dirnamePath, joinPath } from '../lib/path-bun.ts';
+import { parseSessionId, type SessionId } from '../lib/types/branded.ts';
 
 const DEFAULT_PORTFOLIO_PATH = new URL('./codex-thread-portfolio.json', import.meta.url).pathname;
 
@@ -38,33 +39,100 @@ export type ThreadState =
   | 'merged'
   | 'verified'
   | 'ready'
+  | 'open'
   | 'blocked'
   | 'pushed'
   | 'local'
   | 'audit'
   | 'snapshot'
   | 'analysis'
+  | 'planned'
   | 'closed-unmerged'
   | 'incomplete'
   | 'empty';
 
+export type ThreadLane =
+  | 'agent'
+  | 'bun'
+  | 'ci'
+  | 'cli'
+  | 'compliance'
+  | 'domain'
+  | 'dx'
+  | 'identity'
+  | 'operations'
+  | 'partner'
+  | 'portal'
+  | 'project'
+  | 'research'
+  | 'security'
+  | 'tennis'
+  | 'testing'
+  | 'tooling';
+
+export type ThreadQuality =
+  | 'production'
+  | 'verified'
+  | 'review-required'
+  | 'analysis-only'
+  | 'blocked'
+  | 'empty';
+
+export type ThreadTitleTransport = 'app-server' | 'state-only';
+
+export type ThreadReferenceKind =
+  | 'branch'
+  | 'command'
+  | 'commit'
+  | 'deployment'
+  | 'document'
+  | 'issue'
+  | 'pull-request'
+  | 'thread'
+  | 'worktree';
+
+export type ThreadReference = `RTH-${string}`;
+
+export type PortfolioReference = {
+  kind: ThreadReferenceKind;
+  label: string;
+  target: string;
+};
+
 export type PortfolioThread = {
+  ref: ThreadReference;
   rank: number;
-  threadId: string; // brand-ok — opaque Codex provider thread identifier
+  sessionId: SessionId;
   title: string;
+  lane: ThreadLane;
   score: number;
+  quality: ThreadQuality;
   state: ThreadState;
+  titleTransport: ThreadTitleTransport;
   pin: boolean;
   summary: string;
   evidence: string[];
+  references: PortfolioReference[];
+  relatedRefs: ThreadReference[];
   closure: string;
 };
 
 export type ThreadPortfolio = {
-  schemaVersion: 1;
+  schemaVersion: 2;
+  catalog: string;
   scope: {
     cwd: string;
     reviewedAt: string;
+    rootThreadCount: number;
+    identity: {
+      humanRefPrefix: string;
+      humanRefRule: string;
+      providerIdentity: string;
+      rankRule: string;
+      titleOrder: string[];
+    };
+    inclusion: string;
+    exclusion: string;
     scoreWeights: {
       deliveredValue: number;
       verification: number;
@@ -88,6 +156,23 @@ type LocalThreadRow = {
   opaqueKey: string;
   title: string;
   isPinned: number;
+};
+
+type InventoryThreadRow = {
+  opaqueKey: string;
+  createdAt: number;
+  source: string;
+  threadSource: string | null;
+};
+
+export type ThreadInventoryStatus = {
+  catalogCount: number;
+  rootThreadCount: number;
+  missingCatalogSessionIds: string[];
+  uncatalogedRootSessionIds: string[];
+  chronologicalRefsMatch: boolean;
+  subagentCount: number;
+  orphanSubagentSessionIds: string[];
 };
 
 type RpcResponse = {
@@ -131,21 +216,72 @@ function parseStringArray(value: unknown, path: string): string[] {
   return value.map((entry, index) => parseString(entry, `${path}[${index}]`));
 }
 
+function parseThreadReference(value: unknown, path: string): ThreadReference {
+  const ref = parseString(value, path);
+  if (!/^RTH-\d{3}$/.test(ref)) {
+    throw new Error(`${path} must match RTH-###`);
+  }
+  return ref as ThreadReference;
+}
+
 const THREAD_STATES = new Set<ThreadState>([
   'index',
   'shipped',
   'merged',
   'verified',
   'ready',
+  'open',
   'blocked',
   'pushed',
   'local',
   'audit',
   'snapshot',
   'analysis',
+  'planned',
   'closed-unmerged',
   'incomplete',
   'empty',
+]);
+
+const THREAD_LANES = new Set<ThreadLane>([
+  'agent',
+  'bun',
+  'ci',
+  'cli',
+  'compliance',
+  'domain',
+  'dx',
+  'identity',
+  'operations',
+  'partner',
+  'portal',
+  'project',
+  'research',
+  'security',
+  'tennis',
+  'testing',
+  'tooling',
+]);
+
+const THREAD_QUALITIES = new Set<ThreadQuality>([
+  'production',
+  'verified',
+  'review-required',
+  'analysis-only',
+  'blocked',
+  'empty',
+]);
+
+const THREAD_REFERENCE_KINDS = new Set<ThreadReferenceKind>([
+  'branch',
+  'command',
+  'commit',
+  'deployment',
+  'document',
+  'issue',
+  'pull-request',
+  'thread',
+  'worktree',
 ]);
 
 function parseThreadState(value: unknown, path: string): ThreadState {
@@ -156,38 +292,116 @@ function parseThreadState(value: unknown, path: string): ThreadState {
   return state as ThreadState;
 }
 
+function parseThreadLane(value: unknown, path: string): ThreadLane {
+  const lane = parseString(value, path);
+  if (!THREAD_LANES.has(lane as ThreadLane)) {
+    throw new Error(`${path} has unsupported lane: ${lane}`);
+  }
+  return lane as ThreadLane;
+}
+
+function parseThreadQuality(value: unknown, path: string): ThreadQuality {
+  const quality = parseString(value, path);
+  if (!THREAD_QUALITIES.has(quality as ThreadQuality)) {
+    throw new Error(`${path} has unsupported quality: ${quality}`);
+  }
+  return quality as ThreadQuality;
+}
+
+function parseThreadTitleTransport(value: unknown, path: string): ThreadTitleTransport {
+  if (value === undefined) return 'app-server';
+  const transport = parseString(value, path);
+  if (transport !== 'app-server' && transport !== 'state-only') {
+    throw new Error(`${path} must be app-server or state-only`);
+  }
+  return transport;
+}
+
+function parsePortfolioReferences(value: unknown, path: string): PortfolioReference[] {
+  if (!Array.isArray(value)) {
+    throw new Error(`${path} must be an array`);
+  }
+  return value.map((entry, index) => {
+    if (!isRecord(entry)) {
+      throw new Error(`${path}[${index}] must be an object`);
+    }
+    const kind = parseString(entry.kind, `${path}[${index}].kind`);
+    if (!THREAD_REFERENCE_KINDS.has(kind as ThreadReferenceKind)) {
+      throw new Error(`${path}[${index}].kind has unsupported reference kind: ${kind}`);
+    }
+    return {
+      kind: kind as ThreadReferenceKind,
+      label: parseString(entry.label, `${path}[${index}].label`),
+      target: parseString(entry.target, `${path}[${index}].target`),
+    };
+  });
+}
+
 function parsePortfolioThreadWire(value: unknown, index: number): PortfolioThread {
   if (!isRecord(value)) {
     throw new Error(`threads[${index}] must be an object`);
   }
   return {
+    ref: parseThreadReference(value.ref, `threads[${index}].ref`),
     rank: parseNumber(value.rank, `threads[${index}].rank`),
-    threadId: parseString(value.threadId, `threads[${index}].threadId`), // brand-ok — parsed opaque Codex provider thread identifier
+    sessionId: parseSessionId(value.sessionId),
     title: parseString(value.title, `threads[${index}].title`),
+    lane: parseThreadLane(value.lane, `threads[${index}].lane`),
     score: parseNumber(value.score, `threads[${index}].score`),
+    quality: parseThreadQuality(value.quality, `threads[${index}].quality`),
     state: parseThreadState(value.state, `threads[${index}].state`),
+    titleTransport: parseThreadTitleTransport(
+      value.titleTransport,
+      `threads[${index}].titleTransport`
+    ),
     pin: parseBoolean(value.pin, `threads[${index}].pin`),
     summary: parseString(value.summary, `threads[${index}].summary`),
     evidence: parseStringArray(value.evidence, `threads[${index}].evidence`),
+    references: parsePortfolioReferences(value.references, `threads[${index}].references`),
+    relatedRefs: parseStringArray(value.relatedRefs, `threads[${index}].relatedRefs`).map(
+      (ref, relatedIndex) =>
+        parseThreadReference(ref, `threads[${index}].relatedRefs[${relatedIndex}]`)
+    ),
     closure: parseString(value.closure, `threads[${index}].closure`),
   };
 }
 
 export function parseThreadPortfolioWire(value: unknown): ThreadPortfolio {
-  if (!isRecord(value) || value.schemaVersion !== 1) {
-    throw new Error('thread portfolio must use schemaVersion 1');
+  if (!isRecord(value) || value.schemaVersion !== 2) {
+    throw new Error('thread portfolio must use schemaVersion 2');
   }
-  if (!isRecord(value.scope) || !isRecord(value.scope.scoreWeights)) {
-    throw new Error('thread portfolio scope and scoreWeights are required');
+  if (
+    !isRecord(value.scope) ||
+    !isRecord(value.scope.identity) ||
+    !isRecord(value.scope.scoreWeights)
+  ) {
+    throw new Error('thread portfolio scope, identity, and scoreWeights are required');
   }
   if (!Array.isArray(value.threads)) {
     throw new Error('thread portfolio threads must be an array');
   }
   const portfolio: ThreadPortfolio = {
-    schemaVersion: 1,
+    schemaVersion: 2,
+    catalog: parseString(value.catalog, 'catalog'),
     scope: {
       cwd: parseString(value.scope.cwd, 'scope.cwd'),
       reviewedAt: parseString(value.scope.reviewedAt, 'scope.reviewedAt'),
+      rootThreadCount: parseNumber(value.scope.rootThreadCount, 'scope.rootThreadCount'),
+      identity: {
+        humanRefPrefix: parseString(
+          value.scope.identity.humanRefPrefix,
+          'scope.identity.humanRefPrefix'
+        ),
+        humanRefRule: parseString(value.scope.identity.humanRefRule, 'scope.identity.humanRefRule'),
+        providerIdentity: parseString(
+          value.scope.identity.providerIdentity,
+          'scope.identity.providerIdentity'
+        ),
+        rankRule: parseString(value.scope.identity.rankRule, 'scope.identity.rankRule'),
+        titleOrder: parseStringArray(value.scope.identity.titleOrder, 'scope.identity.titleOrder'),
+      },
+      inclusion: parseString(value.scope.inclusion, 'scope.inclusion'),
+      exclusion: parseString(value.scope.exclusion, 'scope.exclusion'),
       scoreWeights: {
         deliveredValue: parseNumber(
           value.scope.scoreWeights.deliveredValue,
@@ -226,14 +440,28 @@ export function validateThreadPortfolio(portfolio: ThreadPortfolio): void {
     throw new Error('thread portfolio must not be empty');
   }
 
-  const opaqueKeys = new Set<string>();
+  if (portfolio.scope.rootThreadCount !== portfolio.threads.length) {
+    throw new Error(
+      `scope.rootThreadCount must equal catalog length; received ${portfolio.scope.rootThreadCount} and ${portfolio.threads.length}`
+    );
+  }
+  if (portfolio.scope.identity.humanRefPrefix !== 'RTH') {
+    throw new Error('scope.identity.humanRefPrefix must be RTH');
+  }
+
+  const sessionIds = new Set<SessionId>();
+  const refs = new Set<ThreadReference>();
   const ranks = new Set<number>();
   let indexCount = 0;
   for (const thread of portfolio.threads) {
-    if (opaqueKeys.has(thread.threadId)) {
-      throw new Error(`duplicate Codex thread identifier: ${thread.threadId}`);
+    if (sessionIds.has(thread.sessionId)) {
+      throw new Error(`duplicate Codex SessionId: ${thread.sessionId}`);
     }
-    opaqueKeys.add(thread.threadId);
+    sessionIds.add(thread.sessionId);
+    if (refs.has(thread.ref)) {
+      throw new Error(`duplicate Project R thread reference: ${thread.ref}`);
+    }
+    refs.add(thread.ref);
     if (!Number.isInteger(thread.rank) || thread.rank < 0) {
       throw new Error(`thread rank must be a non-negative integer: ${thread.rank}`);
     }
@@ -247,6 +475,15 @@ export function validateThreadPortfolio(portfolio: ThreadPortfolio): void {
     if (thread.title.length > MAX_TITLE_LENGTH) {
       throw new Error(`thread title exceeds ${MAX_TITLE_LENGTH} characters: ${thread.title}`);
     }
+    if (thread.titleTransport === 'state-only' && thread.state !== 'empty') {
+      throw new Error(
+        `${thread.ref} may use state-only title transport only for a legacy empty row`
+      );
+    }
+    const titlePrefix = `${thread.ref} · ${thread.state.toUpperCase().replace('CLOSED-UNMERGED', 'CLOSED')} · ${thread.lane.toUpperCase()} · `;
+    if (!thread.title.startsWith(titlePrefix)) {
+      throw new Error(`thread title must follow ref · state · lane order: ${thread.title}`);
+    }
     if (thread.rank === 0) {
       indexCount++;
       if (thread.state !== 'index' || !thread.pin) {
@@ -258,6 +495,25 @@ export function validateThreadPortfolio(portfolio: ThreadPortfolio): void {
     throw new Error(
       `thread portfolio must contain exactly one rank 0 index, received ${indexCount}`
     );
+  }
+
+  const referenceNumbers = [...refs].map(ref => Number(ref.slice(4))).sort((a, b) => a - b);
+  const expectedReferenceNumbers = Array.from(
+    { length: portfolio.scope.rootThreadCount },
+    (_, index) => index + 1
+  );
+  if (referenceNumbers.some((value, index) => value !== expectedReferenceNumbers[index])) {
+    throw new Error('RTH references must be contiguous from RTH-001 through the root count');
+  }
+  for (const thread of portfolio.threads) {
+    for (const relatedRef of thread.relatedRefs) {
+      if (!refs.has(relatedRef)) {
+        throw new Error(`${thread.ref} references unknown related thread ${relatedRef}`);
+      }
+      if (relatedRef === thread.ref) {
+        throw new Error(`${thread.ref} must not relate to itself`);
+      }
+    }
   }
 
   const workThreads = rankedWorkThreads(portfolio);
@@ -289,12 +545,12 @@ export function formatThreadPortfolioMarkdown(portfolio: ThreadPortfolio): strin
     '',
     `Reviewed: ${portfolio.scope.reviewedAt} · Scope: \`${portfolio.scope.cwd}\``,
     '',
-    '| Rank | Score | State | Pin | Purpose-based title | Bring-home action |',
-    '|---:|---:|---|:---:|---|---|',
+    '| Rank | Ref | Score | Quality | State | Lane | Pin | Purpose-based title | Bring-home action |',
+    '|---:|---|---:|---|---|---|:---:|---|---|',
   ];
   for (const thread of portfolio.threads.slice().sort((a, b) => a.rank - b.rank)) {
     lines.push(
-      `| ${thread.rank === 0 ? 'INDEX' : thread.rank} | ${thread.score} | ${thread.state} | ${thread.pin ? 'yes' : 'no'} | ${escape(thread.title)} | ${escape(thread.closure)} |`
+      `| ${thread.rank === 0 ? 'INDEX' : thread.rank} | ${thread.ref} | ${thread.score} | ${thread.quality} | ${thread.state} | ${thread.lane} | ${thread.pin ? 'yes' : 'no'} | ${escape(thread.title)} | ${escape(thread.closure)} |`
     );
   }
   lines.push(
@@ -334,9 +590,9 @@ export function readLocalThreadStatuses(
     const byOpaqueKey = new Map(rows.map(row => [row.opaqueKey, row]));
     return new Map(
       portfolio.threads.map(thread => {
-        const row = byOpaqueKey.get(thread.threadId);
+        const row = byOpaqueKey.get(thread.sessionId);
         return [
-          thread.threadId,
+          thread.sessionId,
           row
             ? {
                 present: true,
@@ -349,6 +605,69 @@ export function readLocalThreadStatuses(
         ];
       })
     );
+  } finally {
+    database.close();
+  }
+}
+
+function parseSubagentParentSessionId(source: string): string | undefined {
+  try {
+    const wire = JSON.parse(source) as unknown;
+    if (!isRecord(wire) || !isRecord(wire.subagent) || !isRecord(wire.subagent.thread_spawn)) {
+      return undefined;
+    }
+    const parent = wire.subagent.thread_spawn.parent_thread_id;
+    return typeof parent === 'string' ? parent : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export function inspectThreadInventory(
+  portfolio: ThreadPortfolio,
+  stateDatabasePath = resolveStateDatabase(resolveCodexHome())
+): ThreadInventoryStatus {
+  const database = new Database(stateDatabasePath, { readonly: true });
+  try {
+    const rows = database
+      .query<
+        InventoryThreadRow,
+        [string]
+      >('SELECT id AS opaqueKey, created_at AS createdAt, source, thread_source AS threadSource FROM threads WHERE cwd = ?')
+      .all(portfolio.scope.cwd);
+    const rootRows = rows
+      .filter(row => row.source === 'vscode' || row.threadSource === 'user')
+      .sort((a, b) => a.createdAt - b.createdAt || a.opaqueKey.localeCompare(b.opaqueKey));
+    const catalogBySessionId = new Map(
+      portfolio.threads.map(thread => [thread.sessionId as string, thread])
+    );
+    const rootIds = new Set(rootRows.map(row => row.opaqueKey));
+    const missingCatalogSessionIds = portfolio.threads
+      .map(thread => thread.sessionId as string)
+      .filter(sessionId => !rootIds.has(sessionId));
+    const uncatalogedRootSessionIds = rootRows
+      .map(row => row.opaqueKey)
+      .filter(sessionId => !catalogBySessionId.has(sessionId));
+    const chronologicalRefsMatch = rootRows.every((row, index) => {
+      const expectedRef = `RTH-${String(index + 1).padStart(3, '0')}`;
+      return catalogBySessionId.get(row.opaqueKey)?.ref === expectedRef;
+    });
+    const subagentRows = rows.filter(row => row.threadSource === 'subagent');
+    const orphanSubagentSessionIds = subagentRows
+      .filter(row => {
+        const parentSessionId = parseSubagentParentSessionId(row.source);
+        return !parentSessionId || !catalogBySessionId.has(parentSessionId);
+      })
+      .map(row => row.opaqueKey);
+    return {
+      catalogCount: portfolio.threads.length,
+      rootThreadCount: rootRows.length,
+      missingCatalogSessionIds,
+      uncatalogedRootSessionIds,
+      chronologicalRefsMatch,
+      subagentCount: subagentRows.length,
+      orphanSubagentSessionIds,
+    };
   } finally {
     database.close();
   }
@@ -418,14 +737,17 @@ async function applyThreadTitles(portfolio: ThreadPortfolio): Promise<void> {
     child.stdin.write(`${JSON.stringify(initialize)}\n`);
     await waitForResponse(1);
     child.stdin.write(`${JSON.stringify({ method: 'initialized' })}\n`);
-    for (let index = 0; index < portfolio.threads.length; index++) {
-      const thread = portfolio.threads[index]!;
+    const appServerThreads = portfolio.threads.filter(
+      thread => thread.titleTransport === 'app-server'
+    );
+    for (let index = 0; index < appServerThreads.length; index++) {
+      const thread = appServerThreads[index]!;
       const requestId = index + 2;
       child.stdin.write(
         `${JSON.stringify({
           id: requestId,
           method: 'thread/name/set',
-          params: { threadId: thread.threadId, name: thread.title },
+          params: { threadId: thread.sessionId, name: thread.title },
         })}\n`
       );
       await waitForResponse(requestId);
@@ -484,9 +806,10 @@ async function backUpStateDatabase(stateDatabasePath: string, codexHome: string)
   return backupPath;
 }
 
-async function applyThreadPins(
+async function applyThreadLocalState(
   portfolio: ThreadPortfolio,
-  stateDatabasePath = resolveStateDatabase(resolveCodexHome())
+  stateDatabasePath = resolveStateDatabase(resolveCodexHome()),
+  includePins = true
 ): Promise<string> {
   const codexHome = dirnamePath(stateDatabasePath);
   const backupPath = await backUpStateDatabase(stateDatabasePath, codexHome);
@@ -500,13 +823,24 @@ async function applyThreadPins(
       }
     }
 
-    const update = database.query('UPDATE threads SET is_pinned = ? WHERE id = ? AND cwd = ?');
+    const updatePin = database.query('UPDATE threads SET is_pinned = ? WHERE id = ? AND cwd = ?');
+    const updateTitle = database.query('UPDATE threads SET title = ? WHERE id = ? AND cwd = ?');
     database.exec('BEGIN IMMEDIATE');
     try {
       for (const thread of portfolio.threads) {
-        const result = update.run(thread.pin ? 1 : 0, thread.threadId, portfolio.scope.cwd);
-        if (result.changes !== 1) {
-          throw new Error(`pin update matched ${result.changes} rows for ${thread.threadId}`);
+        if (thread.titleTransport === 'state-only') {
+          const result = updateTitle.run(thread.title, thread.sessionId, portfolio.scope.cwd);
+          if (result.changes !== 1) {
+            throw new Error(
+              `state-only title update matched ${result.changes} rows for ${thread.sessionId}`
+            );
+          }
+        }
+        if (includePins) {
+          const result = updatePin.run(thread.pin ? 1 : 0, thread.sessionId, portfolio.scope.cwd);
+          if (result.changes !== 1) {
+            throw new Error(`pin update matched ${result.changes} rows for ${thread.sessionId}`);
+          }
         }
       }
       database.exec('COMMIT');
@@ -523,6 +857,7 @@ async function applyThreadPins(
 function printAudit(
   portfolio: ThreadPortfolio,
   statuses: Map<string, LocalThreadStatus>,
+  inventory: ThreadInventoryStatus,
   asJson: boolean
 ): void {
   const rows = portfolio.threads
@@ -530,16 +865,19 @@ function printAudit(
     .sort((a, b) => a.rank - b.rank)
     .map(thread => ({
       rank: thread.rank === 0 ? 'INDEX' : String(thread.rank).padStart(2, '0'),
+      ref: thread.ref,
       score: thread.score,
+      quality: thread.quality,
       state: thread.state,
+      lane: thread.lane,
       pin: thread.pin,
-      present: statuses.get(thread.threadId)?.present ?? false,
-      titleMatches: statuses.get(thread.threadId)?.titleMatches ?? false,
-      pinMatches: statuses.get(thread.threadId)?.pinMatches ?? false,
+      present: statuses.get(thread.sessionId)?.present ?? false,
+      titleMatches: statuses.get(thread.sessionId)?.titleMatches ?? false,
+      pinMatches: statuses.get(thread.sessionId)?.pinMatches ?? false,
       title: thread.title,
     }));
   if (asJson) {
-    jsonOut({ scope: portfolio.scope, rows });
+    jsonOut({ scope: portfolio.scope, inventory, rows });
     return;
   }
   logTable(rows);
@@ -583,22 +921,50 @@ async function main(): Promise<void> {
   const stateDatabasePath = resolveStateDatabase(codexHome);
   if (args.has('--apply')) {
     await applyThreadTitles(portfolio);
-    console.info(`Applied ${portfolio.threads.length} purpose-based thread titles.`);
-    if (args.has('--pins')) {
-      const backupPath = await applyThreadPins(portfolio, stateDatabasePath);
-      console.info(`Applied ${portfolio.threads.filter(thread => thread.pin).length} pins.`);
+    const appServerCount = portfolio.threads.filter(
+      thread => thread.titleTransport === 'app-server'
+    ).length;
+    const stateOnlyCount = portfolio.threads.length - appServerCount;
+    console.info(`Applied ${appServerCount} app-server thread titles.`);
+    if (args.has('--pins') || stateOnlyCount > 0) {
+      const backupPath = await applyThreadLocalState(
+        portfolio,
+        stateDatabasePath,
+        args.has('--pins')
+      );
+      if (stateOnlyCount > 0) {
+        console.info(`Applied ${stateOnlyCount} backup-backed state-only thread title.`);
+      }
+      if (args.has('--pins')) {
+        console.info(`Applied ${portfolio.threads.filter(thread => thread.pin).length} pins.`);
+      }
       console.info(`Codex state backup: ${backupPath}`);
     }
   }
 
   const statuses = readLocalThreadStatuses(portfolio, stateDatabasePath);
-  printAudit(portfolio, statuses, args.has('--json'));
+  const inventory = inspectThreadInventory(portfolio, stateDatabasePath);
+  if (!args.has('--json')) {
+    console.info(
+      `Inventory: ${inventory.rootThreadCount}/${inventory.catalogCount} root threads · ${inventory.subagentCount} mapped subagents · chronological refs ${inventory.chronologicalRefsMatch ? 'match' : 'DRIFT'}`
+    );
+  }
+  printAudit(portfolio, statuses, inventory, args.has('--json'));
   if (args.has('--verify')) {
     const failures = [...statuses.values()].filter(
       status => !status.present || !status.titleMatches || !status.pinMatches
     );
     if (failures.length > 0) {
       throw new Error(`${failures.length} thread portfolio entries do not match local Codex state`);
+    }
+    if (
+      inventory.rootThreadCount !== inventory.catalogCount ||
+      inventory.missingCatalogSessionIds.length > 0 ||
+      inventory.uncatalogedRootSessionIds.length > 0 ||
+      !inventory.chronologicalRefsMatch ||
+      inventory.orphanSubagentSessionIds.length > 0
+    ) {
+      throw new Error(`Project R root/subagent inventory does not match the RTH catalog`);
     }
   }
 }

@@ -1,100 +1,147 @@
 # Codex thread portfolio
 
-> **JIT:** Purpose-based titles, value ranking, pin policy, and bring-home queue
-> for Codex threads rooted at `/Users/nolarose/Projects`.
+> **JIT:** Stable thread identity, purpose-based titles, value ranking,
+> references, pin policy, and bring-home reconciliation for Codex threads rooted
+> at `/Users/nolarose/Projects`.
 
 ## Authority and scope
 
-The portfolio catalog is
+The machine-readable authority is
 [`tools/codex-thread-portfolio.json`](../../../tools/codex-thread-portfolio.json).
-It covers the 25 user-visible Project R threads returned by the Codex thread
-inventory on 2026-08-05. Local state also contains subagent and handoff
-sessions; those are implementation history rather than user-owned portfolio
-entries and are intentionally excluded.
+Schema v2 covers all 40 Project R root user threads present on 2026-08-05:
 
-Scores are evidence-based and total 100:
+- 38 visible Codex Desktop threads;
+- one visible user CLI thread;
+- one legacy user CLI record with an empty preview.
 
-- **Delivered value — 30:** Did the thread produce material artifact value?
-- **Verification — 25:** Did focused tests, type checks, security, and `bun:ci`
-  pass?
-- **Integration — 20:** Was the work committed, pushed, merged, or deployed?
-- **Reusability — 15:** Is the outcome a durable contract, tool, runbook, or
-  proof?
-- **Closure — 10:** Is the handoff explicit and free of unresolved risk?
+The same local state contains 61 subagent sessions. They remain implementation
+history under their root threads and do not consume root reference numbers. The
+verification command proves that every subagent parent resolves to a cataloged
+root thread.
 
-Rank 0 is the pinned portfolio index. Ranks 1–5 are the pinned work threads.
-Every other thread remains searchable by its numeric rank, lifecycle state, and
-purpose-based title.
+## Identity and title schema
+
+Thread identity, ranking, and subject lane are separate fields:
+
+| Field              | Example             | Stability         | Meaning                                             |
+| ------------------ | ------------------- | ----------------- | --------------------------------------------------- |
+| Human reference    | `RTH-003`           | Immutable         | Chronological Project R root-thread reference       |
+| Provider identity  | `019fa629-…`        | Immutable         | Codex UUIDv7-shaped `SessionId`; machine joins only |
+| Rank               | `6`                 | Mutable           | Current value order; never identity                 |
+| State              | `MERGED`            | Mutable           | Delivery lifecycle at the last evidence review      |
+| Lane               | `BUN`               | Stable by purpose | Subject/owner routing label, not an ID namespace    |
+| Purpose            | `API Surface Proof` | Editable          | Concise context-derived outcome                     |
+| Delivery reference | `PR #52`            | Optional          | Most useful PR, issue, commit, or deployment handle |
+
+Canonical title order:
+
+```text
+RTH-### · STATE · LANE · Purpose — delivery reference
+```
+
+Examples:
+
+```text
+RTH-003 · MERGED · BUN · API Surface Proof — PR #52
+RTH-021 · SHIPPED · PORTAL · Partner Routing — PR #153
+RTH-036 · BLOCKED · TENNIS · v1 Auth Cutover — PRs #10/#290
+```
+
+Do not use `UID-7` or `Bun UID-7`:
+
+- `UID-7` conflates a human sequence with the UUIDv7-shaped provider identity.
+- `BUN` is a lane, not an identity authority.
+- A mutable rank cannot be used as a durable reference.
+
+New root threads receive the next chronological `RTH-###` value. Existing values
+never change when score, state, lane, or title changes.
+
+## Mapping schema
+
+Each root entry records:
+
+- stable `ref` and branded provider `sessionId`;
+- mutable `rank`, `score`, `quality`, `state`, and `pin`;
+- routing `lane` and purpose-based `title`;
+- evidence, structured external/repository references, and `relatedRefs`;
+- one explicit bring-home or closure action.
+
+Structured reference kinds are `pull-request`, `issue`, `commit`, `branch`,
+`worktree`, `document`, `command`, `deployment`, and `thread`. Relationships use
+stable `RTH` values rather than rank numbers or raw provider UUIDs.
+
+Scores total 100:
+
+- **Delivered value — 30:** material artifact value.
+- **Verification — 25:** focused tests, typing, security, and local merge proof.
+- **Integration — 20:** commit, push, merge, or deployment posture.
+- **Reusability — 15:** durable contract, tool, runbook, or proof.
+- **Closure — 10:** explicit handoff with unresolved risk named.
+
+Quality is separate from score: `production`, `verified`, `review-required`,
+`analysis-only`, `blocked`, or `empty`. This prevents a valuable blocked
+contract thread from being mislabeled as poor code.
 
 ## Operate
 
 ```bash
-# Audit local title and pin parity
+# Read-only audit of title, pin, root inventory, and subagent-parent parity
 bun run threads:portfolio
 
 # Print the complete scorecard
 bun run threads:portfolio -- --markdown
 
-# Apply titles through Codex app-server, then apply the six catalog pins
+# Apply catalog titles and the index/top-five pin policy
 bun run threads:portfolio:apply
 
-# Require exact local parity
+# Require exact title, pin, root-count, chronological-ref, and parent parity
 bun run threads:portfolio:verify
 ```
 
 Title changes use Codex's supported `thread/name/set` app-server method. Codex
-0.146 does not expose pin mutation through that local protocol, so the guarded
-pin lane:
+0.146 does not expose pin mutation through that protocol. The legacy `RTH-001`
+CLI record also has no rollout file, so its catalog entry explicitly declares
+`titleTransport: state-only`. The guarded local-state lane:
 
 1. verifies the expected `threads.id`, `threads.cwd`, and `threads.is_pinned`
    columns;
 2. creates a consistent SQLite backup under `~/.codex/backups/`;
-3. updates only the 25 exact catalog rows for `/Users/nolarose/Projects` in one
-   transaction;
-4. verifies title and pin parity after the write.
+3. updates only exact cataloged root rows in one transaction;
+4. verifies title, pin, inventory, chronological reference, and subagent-parent
+   parity after the write.
 
-The default command is read-only. State changes require the explicit `--apply`
-and `--pins` flags used by `threads:portfolio:apply`.
+The default command is read-only. State changes require explicit `--apply` and
+`--pins` flags, as used by `threads:portfolio:apply`.
 
-## Bring-home queue
+## Reference map and bring-home queue
 
-The catalog records the evidence and next action for every thread. The important
-remaining work is:
+The catalog is the complete ranked map. Current highest-value open work:
 
-- **7 — Tennis matcher, cache, and registry hardening:** Publish the clean
-  three-commit lane through a focused PR.
-- **8 — Cross-venue tennis reconciliation:** Push and review the clean
+- **RTH-040 — domain authority/backlog map:** Review and merge PR #337, then use
+  its integration order for mapped domain lanes.
+- **RTH-030 — Tennis matcher/cache/registry:** Publish the clean three-commit
+  lane through a focused PR.
+- **RTH-029 — cross-venue reconciliation:** Push and review the clean
   three-commit lane.
-- **9 — Tennis HQ v1 contract and Plum integration:** Complete the canonical
-  package publication and checksum/registry handoff.
-- **10 — Tennis v1 auth cutover:** Supply the authorized `PARTNER_API_TOKEN` and
-  Tennis Worker secret write; PRs #10 and #290 remain draft.
-- **11 — Branded-ID adoption wave 2:** Publish the clean integration branch.
-- **12 — Portal URLPattern link integrity:** Confirm the pushed commit is merged
-  or recover it through a PR.
-- **14 — UI accessibility and Vite boundary hardening:** Split local changes
-  into an isolated lane before committing.
-- **18 — Hosted CI cleanup:** PR #55 is closed unmerged; compare main before
-  recovering unique changes.
-- **19–23 — Incomplete or blocked threads:** Re-open only with a scoped input,
-  clean lane, and explicit final proof.
-- **24 — Unscoped agent thread:** Archive candidate; it has no usable
-  deliverable.
+- **RTH-032 — Tennis v1/Plum:** Complete package publication and the
+  checksum/registry handoff.
+- **RTH-036 — Tennis auth:** Supply authorized `PARTNER_API_TOKEN` custody and
+  Tennis Worker secret access; PRs #10 and #290 remain blocked.
+- **RTH-027 — branded IDs:** Publish the clean integration branch.
+- **RTH-025 / RTH-023:** Confirm pushed revisions are reachable from `main` or
+  recover them through focused PRs.
+- **RTH-037 / RTH-016 / RTH-012–RTH-015:** Compare historical local lanes with
+  current `main` before recovering unique changes.
+- **RTH-020:** PR #55 is closed unmerged; recover only unique changes.
+- **RTH-018 / RTH-001:** Empty root records and archive candidates.
 
-## Repository reconciliation snapshot
+## Repository reconciliation
 
-At review time, the primary checkout was on `feat/factory-handshake-board`, not
-`main`, with 44 dirty paths, one staged submodule pointer, and six registry bake
-changes. The workspace had more than 80 registered worktrees, including several
-dirty and stale lanes. The portfolio automation was therefore built in a
-disjoint worktree and does not modify or sweep the primary checkout.
+Thread titles are navigation metadata, not merge evidence. A thread is brought
+home only when its closure matches git, PR, local-gate, and deployment state.
+The catalog therefore stores repository/external references beside the thread
+relationship map.
 
-Current external status was verified directly:
-
-- Project R PRs #52, #153, #280, #281, #334, and #335 are merged.
-- Project R PR #290 and Tennis producer PR #10 are open drafts.
-- Project R PR #55 is closed without merge.
-
-Thread titles are navigational metadata, not merge evidence. A thread is
-considered brought home only when its catalog closure matches git, PR, local
-gate, and deployment state.
+This automation was built in a disjoint worktree because the primary checkout
+contained unrelated active work. It must never sweep, archive, commit, merge, or
+delete another lane merely because a thread is low-ranked or stale.

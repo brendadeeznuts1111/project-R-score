@@ -1,9 +1,19 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "catalog": "project-r-thread-portfolio",
   "scope": {
     "cwd": "/Users/nolarose/Projects",
     "reviewedAt": "2026-08-05",
+    "rootThreadCount": 40,
+    "identity": {
+      "humanRefPrefix": "RTH",
+      "humanRefRule": "Chronological, immutable, zero-padded Project R root-thread reference",
+      "providerIdentity": "SessionId backed by the Codex UUIDv7-shaped identifier",
+      "rankRule": "Mutable portfolio value order; never an identity",
+      "titleOrder": ["ref", "state", "lane", "purpose", "delivery-reference"]
+    },
+    "inclusion": "Root user-owned threads where source is vscode or thread_source is user",
+    "exclusion": "Subagent, handoff, and implementation-history sessions map to a root thread and do not receive RTH references",
     "scoreWeights": {
       "deliveredValue": 30,
       "verification": 25,
@@ -14,40 +24,81 @@
   },
   "threads": [
     {
+      "ref": "RTH-039",
       "rank": 0,
-      "threadId": "019fd1a6-b090-7d62-92af-9d20d69715b3",
-      "title": "INDEX · Project R Thread Portfolio & Work Reconciliation",
+      "sessionId": "019fd1a6-b090-7d62-92af-9d20d69715b3",
+      "title": "RTH-039 · INDEX · PROJECT · Thread Portfolio & Work Reconciliation",
+      "lane": "project",
       "score": 100,
+      "quality": "production",
       "state": "index",
       "pin": true,
-      "summary": "Durable index for the scored Project R thread portfolio and bring-home queue.",
+      "summary": "Canonical map for Project R root threads, stable references, value ranking, relationships, and bring-home actions.",
       "evidence": [
-        "25 visible Project R threads inventoried",
-        "local Codex session records reviewed"
+        "40 root Project R threads inventoried",
+        "61 subagent sessions excluded and mapped by parent metadata",
+        "local Codex session outcomes reviewed"
       ],
-      "closure": "Keep pinned as the portfolio entrypoint."
+      "references": [
+        {
+          "kind": "pull-request",
+          "label": "Project R PR #336",
+          "target": "https://github.com/brendadeeznuts1111/project-R-score/pull/336"
+        },
+        {
+          "kind": "document",
+          "label": "Thread portfolio runbook",
+          "target": "docs/harness/tenants/codex-thread-portfolio.md"
+        }
+      ],
+      "relatedRefs": ["RTH-040"],
+      "closure": "Keep pinned as the canonical Project R thread entrypoint."
     },
     {
+      "ref": "RTH-038",
       "rank": 1,
-      "threadId": "019fd112-8f05-7943-adb0-f82bac162f43",
-      "title": "01 · SHIPPED · Portal Performance — 42% Smaller, 96.8% Faster",
+      "sessionId": "019fd112-8f05-7943-adb0-f82bac162f43",
+      "title": "RTH-038 · SHIPPED · PORTAL · Performance — PRs #334/#335",
+      "lane": "portal",
       "score": 98,
+      "quality": "production",
       "state": "shipped",
       "pin": true,
-      "summary": "Completed the full UI performance audit, exceeded both targets, merged two PRs, and deployed production proof.",
+      "summary": "Completed the UI performance audit, exceeded both targets, merged two PRs, and deployed production proof.",
       "evidence": [
-        "PRs #334 and #335 merged",
-        "bun:ci passed",
+        "42.08% bundle reduction",
+        "96.82% route-catalog speedup",
         "105/105 live routes passed",
-        "production deployment verified"
+        "bun:ci passed"
       ],
+      "references": [
+        {
+          "kind": "pull-request",
+          "label": "PR #334",
+          "target": "https://github.com/brendadeeznuts1111/project-R-score/pull/334"
+        },
+        {
+          "kind": "pull-request",
+          "label": "PR #335",
+          "target": "https://github.com/brendadeeznuts1111/project-R-score/pull/335"
+        },
+        {
+          "kind": "deployment",
+          "label": "Portal production",
+          "target": "https://score.factory-wager.com/portal/"
+        }
+      ],
+      "relatedRefs": ["RTH-021"],
       "closure": "Closed; preserve as the highest-value performance reference."
     },
     {
+      "ref": "RTH-021",
       "rank": 2,
-      "threadId": "019fb89b-b759-7d43-b2b6-86274684a548",
-      "title": "02 · SHIPPED · Partner Portal Routing — PR #153",
+      "sessionId": "019fb89b-b759-7d43-b2b6-86274684a548",
+      "title": "RTH-021 · SHIPPED · PORTAL · Partner Routing — PR #153",
+      "lane": "portal",
       "score": 97,
+      "quality": "production",
       "state": "shipped",
       "pin": true,
       "summary": "Delivered governed URLPattern routing, glossary integration, branded UI identifiers, and production Access verification.",
@@ -57,13 +108,29 @@
         "Cloudflare Pages deployed",
         "production Access verified"
       ],
+      "references": [
+        {
+          "kind": "pull-request",
+          "label": "PR #153",
+          "target": "https://github.com/brendadeeznuts1111/project-R-score/pull/153"
+        },
+        {
+          "kind": "commit",
+          "label": "Merged revision",
+          "target": "0449a99572962adc4085018efe5cd56fff764a69"
+        }
+      ],
+      "relatedRefs": ["RTH-038", "RTH-023"],
       "closure": "Closed; preserve as the portal routing and glossary reference."
     },
     {
+      "ref": "RTH-033",
       "rank": 3,
-      "threadId": "019fcebc-3d20-7f92-b31c-b72daa20f0af",
-      "title": "03 · MERGED · Partner Lifecycle Storage — PR #280",
+      "sessionId": "019fcebc-3d20-7f92-b31c-b72daa20f0af",
+      "title": "RTH-033 · MERGED · PARTNER · Lifecycle Storage — PR #280",
+      "lane": "partner",
       "score": 96,
+      "quality": "production",
       "state": "merged",
       "pin": true,
       "summary": "Implemented the eight-state SQLite lifecycle migration with transactional preservation, rollback, and idempotence proof.",
@@ -73,28 +140,56 @@
         "767 pre-commit tests",
         "bun:ci passed"
       ],
-      "closure": "Closed; storage foundation is on main."
+      "references": [
+        {
+          "kind": "pull-request",
+          "label": "PR #280",
+          "target": "https://github.com/brendadeeznuts1111/project-R-score/pull/280"
+        },
+        { "kind": "commit", "label": "Merged revision", "target": "d70c1149e" }
+      ],
+      "relatedRefs": ["RTH-034", "RTH-035"],
+      "closure": "Closed; lifecycle storage foundation is on main."
     },
     {
+      "ref": "RTH-035",
       "rank": 4,
-      "threadId": "019fcf4b-622e-7882-a5ee-bd3ea79e1d87",
-      "title": "04 · MERGED · Partner Lifecycle Contract — PR #281",
+      "sessionId": "019fcf4b-622e-7882-a5ee-bd3ea79e1d87",
+      "title": "RTH-035 · MERGED · PARTNER · Lifecycle Contract — PR #281",
+      "lane": "partner",
       "score": 95,
+      "quality": "production",
       "state": "merged",
       "pin": true,
-      "summary": "Opened the lifecycle contract PR that is now merged into main.",
+      "summary": "Published the lifecycle contract and consumer propagation through merged PR #281.",
       "evidence": [
         "PR #281 merged",
         "35 focused tests",
         "concept and surface checks passed"
       ],
-      "closure": "Closed; retain for the PR-level lifecycle handoff."
+      "references": [
+        {
+          "kind": "pull-request",
+          "label": "PR #281",
+          "target": "https://github.com/brendadeeznuts1111/project-R-score/pull/281"
+        },
+        {
+          "kind": "branch",
+          "label": "Delivery branch",
+          "target": "fix/partner-lifecycle-contract"
+        }
+      ],
+      "relatedRefs": ["RTH-033", "RTH-034"],
+      "closure": "Closed; retain as the PR-level lifecycle handoff."
     },
     {
+      "ref": "RTH-034",
       "rank": 5,
-      "threadId": "019fcf3b-4144-7b13-9f84-4f33305641d0",
-      "title": "05 · VERIFIED · Lifecycle Guards & Consumer Propagation",
+      "sessionId": "019fcf3b-4144-7b13-9f84-4f33305641d0",
+      "title": "RTH-034 · VERIFIED · PARTNER · Lifecycle Guards & Propagation",
+      "lane": "partner",
       "score": 94,
+      "quality": "verified",
       "state": "verified",
       "pin": true,
       "summary": "Implemented canonical lifecycle parsing, boundary propagation, exhaustive gate tests, and tenant documentation.",
@@ -104,13 +199,29 @@
         "bun:ci passed",
         "two rollback-safe commits"
       ],
-      "closure": "Closed through merged PR #281; retain as implementation detail."
+      "references": [
+        {
+          "kind": "commit",
+          "label": "Canonical lifecycle contract",
+          "target": "e1de1e491"
+        },
+        {
+          "kind": "commit",
+          "label": "Consumer propagation",
+          "target": "c2436c6e7"
+        }
+      ],
+      "relatedRefs": ["RTH-033", "RTH-035"],
+      "closure": "Closed through merged PR #281; retain as implementation proof."
     },
     {
+      "ref": "RTH-003",
       "rank": 6,
-      "threadId": "019fa629-a03d-7781-9297-6cd7b1696611",
-      "title": "06 · MERGED · Bun API Surface Proof — PR #52",
+      "sessionId": "019fa629-a03d-7781-9297-6cd7b1696611",
+      "title": "RTH-003 · MERGED · BUN · API Surface Proof — PR #52",
+      "lane": "bun",
       "score": 94,
+      "quality": "production",
       "state": "merged",
       "pin": false,
       "summary": "Added namespace-aware Bun API validation, canonical source proof, and mutation-safe R2 behavior.",
@@ -120,13 +231,96 @@
         "399 changed-path tests",
         "Cloudflare and Socket checks passed"
       ],
+      "references": [
+        {
+          "kind": "pull-request",
+          "label": "PR #52",
+          "target": "https://github.com/brendadeeznuts1111/project-R-score/pull/52"
+        },
+        {
+          "kind": "document",
+          "label": "Bun native capabilities",
+          "target": "docs/BUN_NATIVE_CAPABILITIES.md"
+        }
+      ],
+      "relatedRefs": [
+        "RTH-004",
+        "RTH-005",
+        "RTH-006",
+        "RTH-007",
+        "RTH-008",
+        "RTH-009",
+        "RTH-010",
+        "RTH-011",
+        "RTH-012",
+        "RTH-013",
+        "RTH-014",
+        "RTH-015",
+        "RTH-016"
+      ],
       "closure": "Closed; keep as the Bun source-authority reference."
     },
     {
+      "ref": "RTH-040",
       "rank": 7,
-      "threadId": "019fcbf4-c80b-7da0-8e0d-eba6684af0ef",
-      "title": "07 · READY · Tennis Matcher, Cache & Registry Hardening",
+      "sessionId": "019fd1c4-c422-7e33-bbfc-c3b8797518c0",
+      "title": "RTH-040 · OPEN · DOMAIN · Authority & Backlog Map — PR #337",
+      "lane": "domain",
+      "score": 94,
+      "quality": "verified",
+      "state": "open",
+      "pin": false,
+      "summary": "Published a mergeable domain-unification map that separates ownership across Tennis, partners, limits, Telegram, TOC, portals, documentation, and generated bakes.",
+      "evidence": [
+        "PR #337 open and mergeable",
+        "bun:ci passed",
+        "65 Telegram tests",
+        "9 Tennis tests",
+        "8 limits tests"
+      ],
+      "references": [
+        {
+          "kind": "pull-request",
+          "label": "PR #337",
+          "target": "https://github.com/brendadeeznuts1111/project-R-score/pull/337"
+        },
+        {
+          "kind": "document",
+          "label": "Domain unification map",
+          "target": "docs/organization/DOMAIN_UNIFICATION_MAP.md"
+        },
+        {
+          "kind": "commit",
+          "label": "Authority and backlog map",
+          "target": "d2b2944bb"
+        },
+        {
+          "kind": "commit",
+          "label": "Surface coverage refresh",
+          "target": "65ca3b223"
+        }
+      ],
+      "relatedRefs": [
+        "RTH-003",
+        "RTH-008",
+        "RTH-009",
+        "RTH-021",
+        "RTH-024",
+        "RTH-027",
+        "RTH-032",
+        "RTH-036",
+        "RTH-039"
+      ],
+      "closure": "Review and merge PR #337, then use its integration order to close the mapped domain lanes."
+    },
+    {
+      "ref": "RTH-030",
+      "rank": 8,
+      "sessionId": "019fcbf4-c80b-7da0-8e0d-eba6684af0ef",
+      "title": "RTH-030 · READY · TENNIS · Matcher, Cache & Registry Hardening",
+      "lane": "tennis",
       "score": 93,
+      "quality": "verified",
       "state": "ready",
       "pin": false,
       "summary": "Added registry-driven semantics, durable quote provenance, and inventory fingerprinting in three clean commits.",
@@ -136,13 +330,30 @@
         "three specialist reviews",
         "no remaining P0/P1 findings"
       ],
+      "references": [
+        {
+          "kind": "commit",
+          "label": "Registry semantics",
+          "target": "4ea9151"
+        },
+        { "kind": "commit", "label": "Quote provenance", "target": "6aec2af" },
+        {
+          "kind": "commit",
+          "label": "Inventory fingerprints",
+          "target": "880e264"
+        }
+      ],
+      "relatedRefs": ["RTH-028", "RTH-029", "RTH-032"],
       "closure": "Bring home by publishing the clean lane through a focused PR."
     },
     {
-      "rank": 8,
-      "threadId": "019fcbdf-d9fd-7183-95f2-890225b55d9b",
-      "title": "08 · READY · Cross-Venue Tennis Reconciliation",
+      "ref": "RTH-029",
+      "rank": 9,
+      "sessionId": "019fcbdf-d9fd-7183-95f2-890225b55d9b",
+      "title": "RTH-029 · READY · TENNIS · Cross-Venue Reconciliation",
+      "lane": "tennis",
       "score": 92,
+      "quality": "verified",
       "state": "ready",
       "pin": false,
       "summary": "Replaced mock reconciliation with live matching, persistence, freshness, and Tennis HQ health diagnostics.",
@@ -152,13 +363,29 @@
         "bun:ci passed",
         "live matcher results recorded"
       ],
-      "closure": "Bring home by pushing and reviewing the three-commit lane."
+      "references": [
+        {
+          "kind": "branch",
+          "label": "Cross-venue lane",
+          "target": "kalshi-tennis-cross-venue-coverage"
+        },
+        {
+          "kind": "command",
+          "label": "Local merge proof",
+          "target": "bun run bun:ci"
+        }
+      ],
+      "relatedRefs": ["RTH-028", "RTH-030"],
+      "closure": "Bring home by pushing and reviewing the clean three-commit lane."
     },
     {
-      "rank": 9,
-      "threadId": "019fce75-48f5-72c3-bec5-f2f7de13a085",
-      "title": "09 · READY · Tennis HQ v1 Contract & Plum Integration",
+      "ref": "RTH-032",
+      "rank": 10,
+      "sessionId": "019fce75-48f5-72c3-bec5-f2f7de13a085",
+      "title": "RTH-032 · READY · TENNIS · v1 Contract & Plum Integration",
+      "lane": "tennis",
       "score": 90,
+      "quality": "verified",
       "state": "ready",
       "pin": false,
       "summary": "Built authenticated five-domain producer contracts and immutable FactoryWager consumer verification.",
@@ -168,29 +395,61 @@
         "production build passed",
         "package and boundary checks passed"
       ],
-      "closure": "Finish the canonical package publication and checksum/registry handoff."
+      "references": [
+        {
+          "kind": "branch",
+          "label": "Producer branch",
+          "target": "feat/plum-integration"
+        },
+        {
+          "kind": "branch",
+          "label": "Consumer branch",
+          "target": "docs/tennis-hq-contract-consumer"
+        }
+      ],
+      "relatedRefs": ["RTH-030", "RTH-036"],
+      "closure": "Finish canonical package publication and checksum/registry handoff."
     },
     {
-      "rank": 10,
-      "threadId": "019fcf8c-3eb5-7fb3-973a-c282a3155d21",
-      "title": "10 · BLOCKED · Tennis v1 Auth Cutover — PRs #10/#290",
+      "ref": "RTH-036",
+      "rank": 11,
+      "sessionId": "019fcf8c-3eb5-7fb3-973a-c282a3155d21",
+      "title": "RTH-036 · BLOCKED · TENNIS · v1 Auth Cutover — PRs #10/#290",
+      "lane": "tennis",
       "score": 89,
+      "quality": "blocked",
       "state": "blocked",
       "pin": false,
-      "summary": "Prepared the fail-closed producer/consumer cutover but production remains intentionally unconfigured.",
+      "summary": "Prepared the fail-closed producer/consumer cutover; production remains intentionally unconfigured.",
       "evidence": [
         "Project R PR #290 open draft",
         "Tennis PR #10 open draft",
         "bun:ci passed",
-        "five live endpoints fail closed"
+        "five endpoints fail closed"
       ],
-      "closure": "Requires the authorized PARTNER_API_TOKEN and Tennis Worker secret write."
+      "references": [
+        {
+          "kind": "pull-request",
+          "label": "Project R PR #290",
+          "target": "https://github.com/brendadeeznuts1111/project-R-score/pull/290"
+        },
+        {
+          "kind": "pull-request",
+          "label": "Tennis PR #10",
+          "target": "https://github.com/brendadeeznuts1111/king-zippy-umbra-acre/pull/10"
+        }
+      ],
+      "relatedRefs": ["RTH-032", "RTH-037"],
+      "closure": "Requires authorized PARTNER_API_TOKEN creation and Tennis Worker secret write."
     },
     {
-      "rank": 11,
-      "threadId": "019fcb38-308e-7650-8e0b-14597dd86b34",
-      "title": "11 · READY · Branded-ID Adoption Wave 2",
+      "ref": "RTH-027",
+      "rank": 12,
+      "sessionId": "019fcb38-308e-7650-8e0b-14597dd86b34",
+      "title": "RTH-027 · READY · IDENTITY · Branded-ID Adoption Wave 2",
+      "lane": "identity",
       "score": 88,
+      "quality": "verified",
       "state": "ready",
       "pin": false,
       "summary": "Expanded branded-ID coverage and made guidance/catalog drift mechanically testable.",
@@ -200,13 +459,57 @@
         "bun:ci passed",
         "nine clean commits"
       ],
+      "references": [
+        {
+          "kind": "branch",
+          "label": "Integration branch",
+          "target": "codex/brand-wave1-integration"
+        },
+        {
+          "kind": "document",
+          "label": "Brand contract",
+          "target": "lib/types/branded/README.md"
+        }
+      ],
+      "relatedRefs": ["RTH-004"],
       "closure": "Bring home by publishing the clean integration branch."
     },
     {
-      "rank": 12,
-      "threadId": "019fc026-5d94-7d73-a50f-1a51857e67e9",
-      "title": "12 · PUSHED · Portal URLPattern Link Integrity",
+      "ref": "RTH-025",
+      "rank": 13,
+      "sessionId": "019fc64c-c202-7230-9eb2-8bbe8e2dc912",
+      "title": "RTH-025 · PUSHED · BUN · Release & RSS Governance — efa8df477",
+      "lane": "bun",
+      "score": 87,
+      "quality": "verified",
+      "state": "pushed",
+      "pin": false,
+      "summary": "Added Bun RSS measurement, version evidence, and release-check integration; the former wiki-recovery title was incorrect.",
+      "evidence": [
+        "test:rss added",
+        "ops:bun-version added",
+        "ops:release-check integrated",
+        "commit efa8df477 pushed"
+      ],
+      "references": [
+        { "kind": "commit", "label": "Pushed revision", "target": "efa8df477" },
+        {
+          "kind": "document",
+          "label": "CI core runbook",
+          "target": "docs/harness/tenants/ci-core.md"
+        }
+      ],
+      "relatedRefs": ["RTH-002", "RTH-003"],
+      "closure": "Confirm the pushed revision is reachable from main; otherwise open a focused PR."
+    },
+    {
+      "ref": "RTH-023",
+      "rank": 14,
+      "sessionId": "019fc026-5d94-7d73-a50f-1a51857e67e9",
+      "title": "RTH-023 · PUSHED · PORTAL · URLPattern Link Integrity",
+      "lane": "portal",
       "score": 86,
+      "quality": "verified",
       "state": "pushed",
       "pin": false,
       "summary": "Added static/live URLPattern link validation and corrected stale portal tenant links.",
@@ -216,24 +519,48 @@
         "122 deployed targets checked",
         "commit 5467014d1 pushed"
       ],
-      "closure": "Confirm whether the pushed branch was merged; open or recover a PR if absent."
+      "references": [
+        { "kind": "commit", "label": "Pushed revision", "target": "5467014d1" },
+        {
+          "kind": "document",
+          "label": "Portal foundation",
+          "target": "docs/portal-foundation.md"
+        }
+      ],
+      "relatedRefs": ["RTH-021", "RTH-038"],
+      "closure": "Confirm the pushed revision was merged; open or recover a PR if absent."
     },
     {
-      "rank": 13,
-      "threadId": "019f8fbe-efa7-7163-87e8-0bca13ca5e4c",
-      "title": "13 · PUSHED · Bun Install Platform Selection Proof",
+      "ref": "RTH-002",
+      "rank": 15,
+      "sessionId": "019f8fbe-efa7-7163-87e8-0bca13ca5e4c",
+      "title": "RTH-002 · PUSHED · BUN · Install Platform Selection — 6f13397b0",
+      "lane": "bun",
       "score": 85,
+      "quality": "verified",
       "state": "pushed",
       "pin": false,
       "summary": "Added lock normalization, OS/CPU filtering, stability, dry-run, and invalid-flag proof.",
       "evidence": ["22 tests passed", "commit 6f13397b0", "pushed to main"],
+      "references": [
+        { "kind": "commit", "label": "Pushed revision", "target": "6f13397b0" },
+        {
+          "kind": "document",
+          "label": "Bun install policy",
+          "target": "docs/UNIFIED.md"
+        }
+      ],
+      "relatedRefs": ["RTH-003", "RTH-025"],
       "closure": "Closed if commit 6f13397b0 remains reachable from main."
     },
     {
-      "rank": 14,
-      "threadId": "019fd011-fed5-7e63-8f4d-d1cb46bb894f",
-      "title": "14 · LOCAL · UI Accessibility & Vite Boundary Hardening",
-      "score": 82,
+      "ref": "RTH-037",
+      "rank": 16,
+      "sessionId": "019fd011-fed5-7e63-8f4d-d1cb46bb894f",
+      "title": "RTH-037 · LOCAL · PORTAL · UI Accessibility & Vite Boundaries",
+      "lane": "portal",
+      "score": 83,
+      "quality": "review-required",
       "state": "local",
       "pin": false,
       "summary": "Fixed accessibility order, focus behavior, ARIA linkage, React keys, and Bun/Vite client boundaries.",
@@ -243,28 +570,409 @@
         "changed-file typecheck passed",
         "git diff check clean"
       ],
-      "closure": "Split the local changes into a focused lane and resolve the unrelated full-suite/runtime debt separately."
+      "references": [
+        {
+          "kind": "worktree",
+          "label": "Local implementation lane",
+          "target": ".codex-worktrees/tennis-runtime-secret-contract"
+        },
+        {
+          "kind": "command",
+          "label": "Production build",
+          "target": "bun run build"
+        }
+      ],
+      "relatedRefs": ["RTH-036", "RTH-038"],
+      "closure": "Split local changes into a focused lane and resolve unrelated full-suite/runtime debt separately."
     },
     {
-      "rank": 15,
-      "threadId": "019fce6d-d837-7a41-a618-6984f1690415",
-      "title": "15 · AUDIT · Workspace Recovery & Untracked Lanes",
+      "ref": "RTH-016",
+      "rank": 17,
+      "sessionId": "019fa9e8-afd3-72e3-acd9-717d013be333",
+      "title": "RTH-016 · LOCAL · PORTAL · Package-Scope Filters & URL State",
+      "lane": "portal",
+      "score": 82,
+      "quality": "review-required",
+      "state": "local",
+      "pin": false,
+      "summary": "Implemented accessible npm-scope filtering, URL state, history synchronization, freshness status, and safe rendering.",
+      "evidence": [
+        "6 focused tests",
+        "26 assertions",
+        "portal static verification passed",
+        "public discovery reported zero findings"
+      ],
+      "references": [
+        {
+          "kind": "document",
+          "label": "Portal search implementation",
+          "target": "public/portal/search.js"
+        },
+        {
+          "kind": "command",
+          "label": "Portal static proof",
+          "target": "bun run verify:portal:static"
+        }
+      ],
+      "relatedRefs": ["RTH-003", "RTH-021"],
+      "closure": "Recover the uncommitted five-file lane only after checking whether main already contains equivalent work."
+    },
+    {
+      "ref": "RTH-012",
+      "rank": 18,
+      "sessionId": "019fa982-cfd8-7983-84d8-34c06d95cbb7",
+      "title": "RTH-012 · LOCAL · TESTING · Disposable Harness Utilities",
+      "lane": "testing",
+      "score": 82,
+      "quality": "review-required",
+      "state": "local",
+      "pin": false,
+      "summary": "Created disposable test workspaces, scoped environment mutation, and loopback JSON server utilities.",
+      "evidence": [
+        "3 tests passed",
+        "19 assertions",
+        "strict focused typecheck passed",
+        "Prettier and diff checks passed"
+      ],
+      "references": [
+        {
+          "kind": "document",
+          "label": "Harness utilities",
+          "target": "tests/harness.ts"
+        },
+        {
+          "kind": "document",
+          "label": "Harness utility tests",
+          "target": "tests/harness-utilities.test.ts"
+        }
+      ],
+      "relatedRefs": ["RTH-003", "RTH-013", "RTH-014"],
+      "closure": "Audit main for equivalent utilities, then recover as a focused testing PR if still unique."
+    },
+    {
+      "ref": "RTH-015",
+      "rank": 19,
+      "sessionId": "019fa9e8-9742-79e3-827d-c2dc7ea27230",
+      "title": "RTH-015 · LOCAL · TOOLING · Package Audit Determinism",
+      "lane": "tooling",
+      "score": 81,
+      "quality": "review-required",
+      "state": "local",
+      "pin": false,
+      "summary": "Made the package metafile audit repository-relative, deterministically ordered, and stable for extensionless samples.",
+      "evidence": [
+        "10 tests passed",
+        "62 assertions",
+        "format and lint checks passed",
+        "generated JSON left untouched"
+      ],
+      "references": [
+        {
+          "kind": "document",
+          "label": "Package metafile audit",
+          "target": "tools/packages-metafile-audit.ts"
+        },
+        {
+          "kind": "document",
+          "label": "Audit tests",
+          "target": "tests/packages-metafile-audit.test.ts"
+        }
+      ],
+      "relatedRefs": ["RTH-003"],
+      "closure": "Compare against main and recover only the deterministic delta."
+    },
+    {
+      "ref": "RTH-004",
+      "rank": 20,
+      "sessionId": "019fa62a-eea8-7141-a755-c1367299c591",
+      "title": "RTH-004 · LOCAL · IDENTITY · Authentication Hotfix",
+      "lane": "identity",
+      "score": 81,
+      "quality": "review-required",
+      "state": "local",
+      "pin": false,
+      "summary": "Implemented a five-file identity hotfix with full focused identity proof but did not stage or commit it.",
+      "evidence": [
+        "98 identity tests passed",
+        "type and lint checks passed",
+        "brand and diff checks passed"
+      ],
+      "references": [
+        {
+          "kind": "command",
+          "label": "Identity test proof",
+          "target": "bun test tests/identity*"
+        },
+        {
+          "kind": "thread",
+          "label": "Umbrella delivery thread",
+          "target": "RTH-003"
+        }
+      ],
+      "relatedRefs": ["RTH-003", "RTH-027"],
+      "closure": "Inspect the old lane for unique changes before recovery; do not assume the uncommitted files still exist."
+    },
+    {
+      "ref": "RTH-009",
+      "rank": 21,
+      "sessionId": "019fa930-0cee-73a0-9c36-c70cdceb6d2d",
+      "title": "RTH-009 · VERIFIED · PARTNER · Limit Persistence — de2375164",
+      "lane": "partner",
+      "score": 80,
+      "quality": "verified",
+      "state": "verified",
+      "pin": false,
+      "summary": "Verified the already-committed partner-limit fixes and recorded residual concurrency and query-bound risks.",
+      "evidence": [
+        "17 focused tests",
+        "116 expectations",
+        "branded-ID strict scan clean",
+        "worktree clean"
+      ],
+      "references": [
+        {
+          "kind": "commit",
+          "label": "Existing implementation",
+          "target": "de2375164"
+        },
+        {
+          "kind": "document",
+          "label": "Partner limits runbook",
+          "target": "docs/harness/tenants/partner-limits.md"
+        }
+      ],
+      "relatedRefs": ["RTH-003", "RTH-008"],
+      "closure": "Confirm de2375164 is on main and track residual uniqueness/concurrency risk separately."
+    },
+    {
+      "ref": "RTH-013",
+      "rank": 22,
+      "sessionId": "019fa982-f309-7ec3-869b-7a3649c23439",
+      "title": "RTH-013 · LOCAL · TESTING · Duration-Balanced Shards",
+      "lane": "testing",
+      "score": 80,
+      "quality": "review-required",
+      "state": "local",
+      "pin": false,
+      "summary": "Added complete timing rows, deterministic LPT shard planning, schema metadata, and shard-plan output.",
+      "evidence": [
+        "6 tests passed",
+        "21 assertions",
+        "strict TypeScript passed",
+        "format and diff checks passed"
+      ],
+      "references": [
+        {
+          "kind": "document",
+          "label": "Suite inventory",
+          "target": "scripts/suite-inventory.ts"
+        },
+        {
+          "kind": "document",
+          "label": "Shard planner",
+          "target": "scripts/lib/duration-balanced-shards.ts"
+        }
+      ],
+      "relatedRefs": ["RTH-003", "RTH-012", "RTH-014"],
+      "closure": "Compare with current CI sharding before recovering the local lane."
+    },
+    {
+      "ref": "RTH-014",
+      "rank": 23,
+      "sessionId": "019fa983-104e-7410-9e21-d99590aea810",
+      "title": "RTH-014 · LOCAL · CI · Portal Isolation & Test Documentation",
+      "lane": "ci",
+      "score": 79,
+      "quality": "review-required",
+      "state": "local",
+      "pin": false,
+      "summary": "Added a required portal/registry isolation job and rebuilt repository-wide test documentation.",
+      "evidence": [
+        "21 tests passed",
+        "137 assertions",
+        "YAML and Prettier checks passed",
+        "diff checks passed"
+      ],
+      "references": [
+        {
+          "kind": "thread",
+          "label": "Umbrella delivery thread",
+          "target": "RTH-003"
+        },
+        {
+          "kind": "command",
+          "label": "Repository test proof",
+          "target": "bun test"
+        }
+      ],
+      "relatedRefs": ["RTH-003", "RTH-012", "RTH-013", "RTH-020"],
+      "closure": "Audit current local-only CI policy before recovering any hosted-workflow portion."
+    },
+    {
+      "ref": "RTH-006",
+      "rank": 24,
+      "sessionId": "019fa62b-06c8-7810-9ac0-16809f40845e",
+      "title": "RTH-006 · AUDIT · SECURITY · Cloudflare Access Scope P0",
+      "lane": "security",
       "score": 78,
+      "quality": "analysis-only",
       "state": "audit",
       "pin": false,
-      "summary": "Mapped mixed staged concerns, untracked worktrees, bake drift, and large nested repositories without destructive cleanup.",
+      "summary": "Found a destructive Access-policy scope risk and correctly stopped live application before unrelated apps could be deleted.",
+      "evidence": [
+        "P0 deletion risk identified",
+        "Pages and preview bypass paths mapped",
+        "no live mutation performed"
+      ],
+      "references": [
+        {
+          "kind": "document",
+          "label": "Access policy",
+          "target": ".cloudflare-access.yml"
+        },
+        {
+          "kind": "document",
+          "label": "Cloudflare Access runbook",
+          "target": "docs/harness/tenants/cloudflare-access.md"
+        }
+      ],
+      "relatedRefs": ["RTH-003", "RTH-021"],
+      "closure": "Retain as the safety rationale for scoped Access plans; verify current policy before acting."
+    },
+    {
+      "ref": "RTH-031",
+      "rank": 25,
+      "sessionId": "019fce6d-d837-7a41-a618-6984f1690415",
+      "title": "RTH-031 · AUDIT · PROJECT · Workspace Recovery & Untracked Lanes",
+      "lane": "project",
+      "score": 78,
+      "quality": "analysis-only",
+      "state": "audit",
+      "pin": false,
+      "summary": "Mapped mixed staged concerns, untracked worktrees, bake drift, and nested repositories without destructive cleanup.",
       "evidence": [
         "primary checkout inventory",
         "dirty worktree inventory",
         "large untracked repository preserved"
       ],
-      "closure": "Use as recovery evidence; current lane status supersedes its counts."
+      "references": [
+        {
+          "kind": "command",
+          "label": "Current lane status",
+          "target": "bun run lane:status"
+        },
+        {
+          "kind": "document",
+          "label": "Workspace map",
+          "target": "STRUCTURE.md"
+        }
+      ],
+      "relatedRefs": ["RTH-032", "RTH-039"],
+      "closure": "Use as historical recovery evidence; current lane status supersedes its counts."
     },
     {
-      "rank": 16,
-      "threadId": "019fcbd3-e78c-7dc3-8830-4ab1cecde985",
-      "title": "16 · SNAPSHOT · Kalshi vs Polymarket Live Tennis",
+      "ref": "RTH-005",
+      "rank": 26,
+      "sessionId": "019fa62a-f9df-7072-91ea-16e96da08bdc",
+      "title": "RTH-005 · AUDIT · COMPLIANCE · Portal & HMAC Proof",
+      "lane": "compliance",
+      "score": 77,
+      "quality": "verified",
+      "state": "audit",
+      "pin": false,
+      "summary": "Verified compliance portal, shadow HMAC, vault redaction, and public audit posture; identified two small follow-ups.",
+      "evidence": [
+        "40 focused tests passed",
+        "public audit passed",
+        "board and shadow HMACs verified",
+        "vault export stayed redacted"
+      ],
+      "references": [
+        {
+          "kind": "document",
+          "label": "Compliance portal runbook",
+          "target": "docs/harness/tenants/compliance-portal.md"
+        },
+        {
+          "kind": "command",
+          "label": "Compliance proof",
+          "target": "bun run compliance:verify"
+        }
+      ],
+      "relatedRefs": ["RTH-003"],
+      "closure": "Add local-mint signing regression coverage and refresh the stale JSDoc if still absent."
+    },
+    {
+      "ref": "RTH-008",
+      "rank": 27,
+      "sessionId": "019fa903-02cd-7862-a43d-d73539dd62e8",
+      "title": "RTH-008 · AUDIT · SECURITY · Limit Telegram Routing",
+      "lane": "security",
+      "score": 76,
+      "quality": "analysis-only",
+      "state": "audit",
+      "pin": false,
+      "summary": "Mapped the missing package-forum routing seam and found raw Telegram invite disclosure in the public registry.",
+      "evidence": [
+        "outbox flow mapped",
+        "package forum topic resolution mapped",
+        "public invite disclosure identified",
+        "no files edited"
+      ],
+      "references": [
+        {
+          "kind": "document",
+          "label": "Telegram factory runbook",
+          "target": "docs/harness/tenants/telegram-factory.md"
+        },
+        {
+          "kind": "document",
+          "label": "Partner limit runbook",
+          "target": "docs/harness/tenants/partner-limits.md"
+        }
+      ],
+      "relatedRefs": ["RTH-003", "RTH-009"],
+      "closure": "Verify invite redaction and package-target routing are closed on main."
+    },
+    {
+      "ref": "RTH-011",
+      "rank": 28,
+      "sessionId": "019fa930-64dd-70a2-8c4c-3d7786be3e50",
+      "title": "RTH-011 · PLANNED · SECURITY · Monitoring Redaction Boundary",
+      "lane": "security",
+      "score": 74,
+      "quality": "analysis-only",
+      "state": "planned",
+      "pin": false,
+      "summary": "Specified a public-monitoring projection that whitelists fields, blocks stale invite rebakes, and adds disclosure detection.",
+      "evidence": [
+        "smallest complete fix scoped",
+        "public-tree disclosure tests specified",
+        "no files edited"
+      ],
+      "references": [
+        {
+          "kind": "document",
+          "label": "Public plane runbook",
+          "target": "docs/harness/tenants/public-plane.md"
+        },
+        {
+          "kind": "thread",
+          "label": "Umbrella delivery thread",
+          "target": "RTH-003"
+        }
+      ],
+      "relatedRefs": ["RTH-003", "RTH-008"],
+      "closure": "Re-open only after checking whether the monitoring projection and disclosure gate now exist."
+    },
+    {
+      "ref": "RTH-028",
+      "rank": 29,
+      "sessionId": "019fcbd3-e78c-7dc3-8830-4ab1cecde985",
+      "title": "RTH-028 · SNAPSHOT · TENNIS · Kalshi vs Polymarket Live Events",
+      "lane": "tennis",
       "score": 72,
+      "quality": "analysis-only",
       "state": "snapshot",
       "pin": false,
       "summary": "Produced a timestamped cross-venue live tennis inventory with league and volume separation.",
@@ -274,113 +982,290 @@
         "league breakdown",
         "source-linked methodology"
       ],
+      "references": [
+        {
+          "kind": "thread",
+          "label": "Reconciliation implementation",
+          "target": "RTH-029"
+        },
+        { "kind": "thread", "label": "Matcher hardening", "target": "RTH-030" }
+      ],
+      "relatedRefs": ["RTH-029", "RTH-030"],
       "closure": "Reference only; rerun for current market state."
     },
     {
-      "rank": 17,
-      "threadId": "019faa2b-192a-7ca3-9422-526b30537871",
-      "title": "17 · ANALYSIS · Market Inefficiency Archive",
+      "ref": "RTH-007",
+      "rank": 30,
+      "sessionId": "019fa902-f274-7d63-a1c9-e9fb82394aac",
+      "title": "RTH-007 · PLANNED · PORTAL · Partner Limits Contrast Repair",
+      "lane": "portal",
+      "score": 71,
+      "quality": "analysis-only",
+      "state": "planned",
+      "pin": false,
+      "summary": "Diagnosed the partner-limits contrast failure and produced an implementable portal-shell repair specification.",
+      "evidence": [
+        "1.08:1 card contrast measured",
+        "3.66:1 link contrast measured",
+        "duplicate theme import identified",
+        "no files edited"
+      ],
+      "references": [
+        {
+          "kind": "document",
+          "label": "Partner limits portal",
+          "target": "public/portal/limits/index.html"
+        },
+        {
+          "kind": "document",
+          "label": "Portal foundation",
+          "target": "docs/portal-foundation.md"
+        }
+      ],
+      "relatedRefs": ["RTH-003", "RTH-009"],
+      "closure": "Check current portal tokens before applying the historical repair specification."
+    },
+    {
+      "ref": "RTH-010",
+      "rank": 31,
+      "sessionId": "019fa930-3719-7753-b4c1-f7d1900877f5",
+      "title": "RTH-010 · AUDIT · OPERATIONS · Database & Monitoring Cache",
+      "lane": "operations",
+      "score": 68,
+      "quality": "analysis-only",
+      "state": "audit",
+      "pin": false,
+      "summary": "Identified missing boundary redaction tests plus singleton and path-aware monitoring cache requirements.",
+      "evidence": [
+        "stage-two and stage-three gaps mapped",
+        "worktree stayed clean",
+        "no files edited"
+      ],
+      "references": [
+        {
+          "kind": "thread",
+          "label": "Monitoring redaction plan",
+          "target": "RTH-011"
+        },
+        {
+          "kind": "thread",
+          "label": "Umbrella delivery thread",
+          "target": "RTH-003"
+        }
+      ],
+      "relatedRefs": ["RTH-003", "RTH-011"],
+      "closure": "Verify singleton and path-aware cache ownership before reopening."
+    },
+    {
+      "ref": "RTH-017",
+      "rank": 32,
+      "sessionId": "019faa2b-192a-7ca3-9422-526b30537871",
+      "title": "RTH-017 · ANALYSIS · RESEARCH · Market Inefficiency Archive",
+      "lane": "research",
       "score": 65,
+      "quality": "analysis-only",
       "state": "analysis",
       "pin": false,
-      "summary": "Analyzed four hours of market snapshots and identified a missing surface attribution prerequisite.",
+      "summary": "Analyzed four hours of market snapshots and identified missing surface attribution as a prerequisite.",
       "evidence": [
         "595 snapshots",
         "118 tickers",
         "155 gaps at or above five cents"
       ],
+      "references": [
+        {
+          "kind": "command",
+          "label": "Research statistics",
+          "target": "bun run research:market-inefficiency -- --stats"
+        },
+        {
+          "kind": "thread",
+          "label": "Live tennis snapshot",
+          "target": "RTH-028"
+        }
+      ],
+      "relatedRefs": ["RTH-028"],
       "closure": "Add surface attribution before using the archive for surface-edge conclusions."
     },
     {
-      "rank": 18,
-      "threadId": "019fb57d-9f08-7622-a5ff-12ee1da34489",
-      "title": "18 · CLOSED · Hosted CI Cleanup — PR #55 Unmerged",
+      "ref": "RTH-020",
+      "rank": 33,
+      "sessionId": "019fb57d-9f08-7622-a5ff-12ee1da34489",
+      "title": "RTH-020 · CLOSED · CI · Hosted Workflow Cleanup — PR #55",
+      "lane": "ci",
       "score": 60,
+      "quality": "review-required",
       "state": "closed-unmerged",
       "pin": false,
-      "summary": "Removed hosted workflows and retained self-hosted cache lifecycle proof, but the PR later closed without merge.",
+      "summary": "Removed hosted workflows and retained self-hosted cache lifecycle proof, but PR #55 later closed without merge.",
       "evidence": [
         "81 governance tests",
         "PR #55 closed unmerged",
         "branch reported pushed"
       ],
+      "references": [
+        {
+          "kind": "pull-request",
+          "label": "PR #55",
+          "target": "https://github.com/brendadeeznuts1111/project-R-score/pull/55"
+        },
+        { "kind": "commit", "label": "Cleanup revision", "target": "bdb486bbd" }
+      ],
+      "relatedRefs": ["RTH-014"],
       "closure": "Audit main for equivalent changes before recovering any unique commits."
     },
     {
-      "rank": 19,
-      "threadId": "019fc5ec-b6e9-7471-bcf6-4e5cb2375b2b",
-      "title": "19 · INCOMPLETE · Serve-Public Port Parsing",
-      "score": 55,
-      "state": "incomplete",
+      "ref": "RTH-024",
+      "rank": 34,
+      "sessionId": "019fc5ec-b6e9-7471-bcf6-4e5cb2375b2b",
+      "title": "RTH-024 · PLANNED · DOMAIN · Ownership Issue Graph — #237–#241",
+      "lane": "domain",
+      "score": 58,
+      "quality": "analysis-only",
+      "state": "planned",
       "pin": false,
-      "summary": "Found Bun CLI port-shape and fallback defects but stopped before recording a completed patch.",
+      "summary": "Opened the domain-management dependency graph; the former serve-public port title did not match this thread's outcome.",
       "evidence": [
-        "Bun 1.4 port behavior reproduced",
-        "regression scope identified"
+        "coordinator issue #237",
+        "domain taxonomy issue #238",
+        "tooling issue #239",
+        "public and portal issues #240/#241"
       ],
-      "closure": "Re-open as a focused port-parser fix with tests and a clean final summary."
+      "references": [
+        {
+          "kind": "issue",
+          "label": "Coordinator #237",
+          "target": "https://github.com/brendadeeznuts1111/project-R-score/issues/237"
+        },
+        {
+          "kind": "issue",
+          "label": "Domain taxonomy #238",
+          "target": "https://github.com/brendadeeznuts1111/project-R-score/issues/238"
+        },
+        {
+          "kind": "issue",
+          "label": "Portal ownership #241",
+          "target": "https://github.com/brendadeeznuts1111/project-R-score/issues/241"
+        }
+      ],
+      "relatedRefs": ["RTH-021", "RTH-039"],
+      "closure": "Use the issue graph as planning history; verify which issues remain open before resuming."
     },
     {
-      "rank": 20,
-      "threadId": "019fc653-d1e7-7310-982d-94bbdbbfc6b9",
-      "title": "20 · INCOMPLETE · Local Skill Gate Cleanup",
+      "ref": "RTH-026",
+      "rank": 35,
+      "sessionId": "019fc653-d1e7-7310-982d-94bbdbbfc6b9",
+      "title": "RTH-026 · INCOMPLETE · DX · Local Skill Gate Cleanup",
+      "lane": "dx",
       "score": 54,
+      "quality": "review-required",
       "state": "incomplete",
       "pin": false,
-      "summary": "Identified a dead skill alias and catalog parser warning but ended during mutation.",
+      "summary": "Identified a dead skill alias and catalog parser warning but ended without a durable final outcome.",
       "evidence": [
-        "new gate passed",
+        "new gate reportedly passed",
         "dead alias identified",
-        "false warning isolated"
+        "false warning isolated",
+        "no final answer recorded"
       ],
+      "references": [
+        {
+          "kind": "document",
+          "label": "Harness skill catalog",
+          "target": ".agents/skills/"
+        },
+        {
+          "kind": "command",
+          "label": "Skill validation",
+          "target": "bun run skills:validate"
+        }
+      ],
+      "relatedRefs": ["RTH-027"],
       "closure": "Verify the alias archive and parser fix in git before retaining or discarding the lane."
     },
     {
-      "rank": 21,
-      "threadId": "019fc64c-c202-7230-9eb2-8bbe8e2dc912",
-      "title": "21 · INCOMPLETE · DX Installer & Wiki Index Recovery",
-      "score": 50,
-      "state": "incomplete",
-      "pin": false,
-      "summary": "Validated a dry-run and discovered a release-snapshot installer gap, then stopped during recovery.",
-      "evidence": [
-        "installer dry-run passed",
-        "unpublished CLI source dependency isolated"
-      ],
-      "closure": "Inspect the DX symlink and machine modules before resuming the recovery path."
-    },
-    {
-      "rank": 22,
-      "threadId": "019fb90f-b9b4-7d63-9616-f36cfd94c7cd",
-      "title": "22 · BLOCKED · Domain Commit by Legacy Sandbox",
+      "ref": "RTH-022",
+      "rank": 36,
+      "sessionId": "019fb90f-b9b4-7d63-9616-f36cfd94c7cd",
+      "title": "RTH-022 · BLOCKED · DOMAIN · Legacy Sandbox Commit",
+      "lane": "domain",
       "score": 40,
+      "quality": "blocked",
       "state": "blocked",
       "pin": false,
-      "summary": "A commit attempt stopped on a legacy sandbox index-lock restriction with no final delivery summary.",
-      "evidence": ["staged index reported unchanged"],
+      "summary": "A domain commit attempt stopped on a legacy sandbox index-lock restriction with no final delivery summary.",
+      "evidence": [
+        "staged index reported unchanged",
+        "no final answer recorded"
+      ],
+      "references": [
+        {
+          "kind": "document",
+          "label": "Domain model",
+          "target": "docs/DOMAIN_CONCEPT_SHAPE.md"
+        }
+      ],
+      "relatedRefs": ["RTH-024"],
       "closure": "Inspect the corresponding worktree before deciding whether any changes remain valuable."
     },
     {
-      "rank": 23,
-      "threadId": "019fb27d-90a3-7ce2-afbb-c5a09d557685",
-      "title": "23 · BLOCKED · TOML Demo Coverage Missing Input",
+      "ref": "RTH-019",
+      "rank": 37,
+      "sessionId": "019fb27d-90a3-7ce2-afbb-c5a09d557685",
+      "title": "RTH-019 · BLOCKED · BUN · TOML Demo Missing Input",
+      "lane": "bun",
       "score": 25,
+      "quality": "blocked",
       "state": "blocked",
       "pin": false,
-      "summary": "The requested TOML enhancement could not proceed because the referenced demo was absent.",
+      "summary": "The TOML enhancement could not proceed because the referenced demo was absent.",
       "evidence": ["workspace search completed", "missing input reported"],
+      "references": [
+        {
+          "kind": "document",
+          "label": "Unrelated TOML exporter found",
+          "target": "scripts/export-toml.ts"
+        }
+      ],
+      "relatedRefs": ["RTH-003"],
       "closure": "Archive unless the missing demo is supplied."
     },
     {
-      "rank": 24,
-      "threadId": "019faaf6-a784-7ef1-bd84-55b3f326881c",
-      "title": "24 · EMPTY · Unscoped Agent Thread",
+      "ref": "RTH-018",
+      "rank": 38,
+      "sessionId": "019faaf6-a784-7ef1-bd84-55b3f326881c",
+      "title": "RTH-018 · EMPTY · AGENT · Unscoped Agent Thread",
+      "lane": "agent",
       "score": 5,
+      "quality": "empty",
       "state": "empty",
       "pin": false,
-      "summary": "The thread contains no usable request or delivery outcome.",
+      "summary": "The visible thread contains no usable request or delivery outcome.",
       "evidence": ["no assistant outcome"],
+      "references": [],
+      "relatedRefs": [],
       "closure": "Safe archive candidate."
+    },
+    {
+      "ref": "RTH-001",
+      "rank": 39,
+      "sessionId": "019e6c4c-4d0a-7b11-b1ac-1f177a673fb4",
+      "title": "RTH-001 · EMPTY · CLI · Legacy Shell Thread",
+      "lane": "cli",
+      "score": 0,
+      "quality": "empty",
+      "state": "empty",
+      "titleTransport": "state-only",
+      "pin": false,
+      "summary": "Legacy CLI shell record with no visible preview or delivery outcome.",
+      "evidence": [
+        "thread_source is user",
+        "preview is empty",
+        "no assistant outcome"
+      ],
+      "references": [],
+      "relatedRefs": [],
+      "closure": "Archive candidate after confirming it is not needed for CLI history."
     }
   ]
 }

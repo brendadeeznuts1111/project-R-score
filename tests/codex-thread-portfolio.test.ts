@@ -14,12 +14,14 @@ async function loadPortfolio(): Promise<ThreadPortfolio> {
 }
 
 describe('Codex thread portfolio', () => {
-  test('keeps one index plus 24 contiguous ranked work threads', async () => {
+  test('keeps one index plus 39 contiguous ranked root threads', async () => {
     const portfolio = await loadPortfolio();
-    expect(portfolio.threads).toHaveLength(25);
+    expect(portfolio.schemaVersion).toBe(2);
+    expect(portfolio.scope.rootThreadCount).toBe(40);
+    expect(portfolio.threads).toHaveLength(40);
     expect(portfolio.threads.filter(thread => thread.rank === 0)).toHaveLength(1);
     expect(rankedWorkThreads(portfolio).map(thread => thread.rank)).toEqual(
-      Array.from({ length: 24 }, (_, index) => index + 1)
+      Array.from({ length: 39 }, (_, index) => index + 1)
     );
   });
 
@@ -33,32 +35,77 @@ describe('Codex thread portfolio', () => {
     ).toEqual([0, 1, 2, 3, 4, 5]);
   });
 
-  test('keeps purpose-based titles concise and unique', async () => {
+  test('keeps stable references and purpose-based titles concise and unique', async () => {
     const portfolio = await loadPortfolio();
     const titles = portfolio.threads.map(thread => thread.title);
+    const refs = portfolio.threads.map(thread => thread.ref).sort();
     expect(new Set(titles).size).toBe(titles.length);
-    expect(titles.every(title => title.length <= 100)).toBe(true);
-    expect(rankedWorkThreads(portfolio).every(thread => thread.title.startsWith(String(thread.rank).padStart(2, '0')))).toBe(
-      true
+    expect(refs).toEqual(
+      Array.from({ length: 40 }, (_, index) => `RTH-${String(index + 1).padStart(3, '0')}`)
     );
+    expect(titles.every(title => title.length <= 100)).toBe(true);
+    expect(
+      portfolio.threads.every(thread =>
+        thread.title.startsWith(
+          `${thread.ref} · ${thread.state.toUpperCase().replace('CLOSED-UNMERGED', 'CLOSED')} · ${thread.lane.toUpperCase()} · `
+        )
+      )
+    ).toBe(true);
+  });
+
+  test('maps relationships and durable references to known RTH entries', async () => {
+    const portfolio = await loadPortfolio();
+    const refs = new Set(portfolio.threads.map(thread => thread.ref));
+    expect(
+      portfolio.threads.every(thread => thread.relatedRefs.every(ref => refs.has(ref)))
+    ).toBe(true);
+    expect(
+      portfolio.threads
+        .filter(thread => thread.quality !== 'empty')
+        .every(thread => thread.references.length > 0)
+    ).toBe(true);
+    expect(
+      portfolio.threads
+        .flatMap(thread => thread.references)
+        .filter(reference => reference.kind === 'thread')
+        .every(reference => refs.has(reference.target as `RTH-${string}`))
+    ).toBe(true);
+  });
+
+  test('makes the legacy CLI title transport explicit', async () => {
+    const portfolio = await loadPortfolio();
+    expect(portfolio.threads.filter(thread => thread.titleTransport === 'state-only')).toEqual([
+      expect.objectContaining({ ref: 'RTH-001', state: 'empty', lane: 'cli' }),
+    ]);
   });
 
   test('emits a complete Markdown bring-home table', async () => {
     const portfolio = await loadPortfolio();
     const markdown = formatThreadPortfolioMarkdown(portfolio);
     expect(markdown).toContain('# Project R Codex thread portfolio');
-    expect(markdown).toContain('| INDEX | 100 | index | yes |');
-    expect(markdown).toContain('01 · SHIPPED · Portal Performance');
-    expect(markdown).toContain('24 · EMPTY · Unscoped Agent Thread');
-    expect(markdown.match(/^\| (?:INDEX|\d+) \|/gm)).toHaveLength(25);
+    expect(markdown).toContain('| INDEX | RTH-039 | 100 | production | index | project | yes |');
+    expect(markdown).toContain('RTH-038 · SHIPPED · PORTAL · Performance');
+    expect(markdown).toContain('RTH-001 · EMPTY · CLI · Legacy Shell Thread');
+    expect(markdown).toContain('RTH-040 · OPEN · DOMAIN · Authority & Backlog Map');
+    expect(markdown.match(/^\| (?:INDEX|\d+) \|/gm)).toHaveLength(40);
   });
 
-  test('rejects duplicate opaque provider identifiers', async () => {
+  test('rejects duplicate provider SessionIds', async () => {
     const portfolio = await loadPortfolio();
     const duplicate = structuredClone(portfolio) as unknown as Record<string, unknown>;
     const threads = duplicate.threads as Array<Record<string, unknown>>;
-    threads[1]!.threadId = threads[0]!.threadId;
-    expect(() => parseThreadPortfolioWire(duplicate)).toThrow('duplicate Codex thread identifier');
+    threads[1]!.sessionId = threads[0]!.sessionId;
+    expect(() => parseThreadPortfolioWire(duplicate)).toThrow('duplicate Codex SessionId');
+  });
+
+  test('rejects duplicate stable RTH references', async () => {
+    const portfolio = await loadPortfolio();
+    const duplicate = structuredClone(portfolio) as unknown as Record<string, unknown>;
+    const threads = duplicate.threads as Array<Record<string, unknown>>;
+    threads[1]!.ref = threads[0]!.ref;
+    expect(() => parseThreadPortfolioWire(duplicate)).toThrow(
+      'duplicate Project R thread reference'
+    );
   });
 
   test('rejects pin drift below the top five', async () => {
