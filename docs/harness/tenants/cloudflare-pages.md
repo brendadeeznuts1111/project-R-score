@@ -342,5 +342,5 @@ bun --smol run verify:pages-edge
 
 Repo policy notes:
 
-- **`-i` ≡ `--install=fallback`, never `--no-install`** — `frozenLockfile = true` already fails on lockfile drift; the immutable deploy proof needs `CLOUDFLARE_API_TOKEN` from env.
+- **`-i` ≡ `--install=fallback`, never `--no-install`** — `frozenLockfile = true` already fails on lockfile drift; the production deploy proof needs `CLOUDFLARE_API_TOKEN` from env to select the latest successful deployment, then verifies content through its public apex alias because Pages Access protects branch/hash previews.
 - **`--console-depth=N`** overrides bunfig `[console] depth` (repo pin 6) for native `console.log` object depth; the policy layer in `lib/console-depth.ts` reads it too.
