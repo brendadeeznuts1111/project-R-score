@@ -57,6 +57,7 @@ export type VaultHealthReport = {
     referencedMissing: number;
     tokensOk: number;
     tokensInvalid: number;
+    tokensUnreachable: number;
     healthy: boolean;
   };
 };
@@ -136,6 +137,7 @@ export function computeVaultHealth(
   tokenProbes.sort((a, b) => a.envKey.localeCompare(b.envKey));
   const tokensOk = tokenProbes.filter(p => p.status === 'ok').length;
   const tokensInvalid = tokenProbes.filter(p => p.status === 'invalid').length;
+  const tokensUnreachable = tokenProbes.filter(p => p.status === 'unreachable').length;
 
   const referencedTrashed = referenced.filter(r => r.status === 'trashed').length;
   const referencedMissing = referenced.filter(r => r.status === 'missing').length;
@@ -154,6 +156,7 @@ export function computeVaultHealth(
       referencedMissing,
       tokensOk,
       tokensInvalid,
+      tokensUnreachable,
       healthy: referencedTrashed === 0 && referencedMissing === 0 && tokensInvalid === 0,
     },
   };
