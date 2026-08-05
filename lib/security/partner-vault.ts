@@ -86,8 +86,10 @@ export async function decryptPartnerSecret(
 ): Promise<string> {
   const raw = base64ToBytes(encryptedValue);
   if (raw.byteLength < 13) throw new Error('partner-vault: ciphertext too short');
-  const iv = raw.subarray(0, 12);
-  const ct = raw.subarray(12);
+  // slice() (not subarray()) so iv/ct are fresh Uint8Array<ArrayBuffer> views,
+  // assignable to BufferSource for crypto.subtle.decrypt (TS lib generics).
+  const iv = raw.slice(0, 12);
+  const ct = raw.slice(12);
   const key = await derivePartnerAesKey(masterKey, nodeId);
   const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
   return new TextDecoder().decode(pt);
