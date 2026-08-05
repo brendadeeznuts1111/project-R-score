@@ -499,7 +499,7 @@ export class DODVerifier {
       const wv = new Bun.WebView({
         width: meta.width || 400,
         height: (meta.height || 300) + 24,
-        html: `<style>body{margin:0;background:#000}img{width:100%;object-fit:contain}.wm{position:absolute;bottom:4px;right:8px;background:rgba(0,0,0,0.7);color:#fff;font:11px monospace;padding:2px 6px;border-radius:3px}</style><img src="data:image/webp;base64,${Buffer.from(await img.webp({ quality: 90 }).bytes()).toString('base64')}"/><div class="wm">${text}</div>`,
+        html: `<style>body{margin:0;background:#000}img{width:100%;object-fit:contain}.wm{position:absolute;bottom:4px;right:8px;background:rgba(0,0,0,0.7);color:#fff;font:11px monospace;padding:2px 6px;border-radius:3px}</style><img src="data:image/webp;base64,${(await img.webp({ quality: 90 }).bytes()).toBase64()}"/><div class="wm">${text}</div>`,
         headless: true,
       });
       await Bun.sleep(200);
@@ -514,7 +514,7 @@ export class DODVerifier {
   // ── OCR via WebView + Tesseract ──────────────────────────────
   private async extractText(img: Bun.Image): Promise<string> {
     try {
-      const encoded = Buffer.from(await img.webp({ quality: 80 }).bytes()).toString('base64');
+      const encoded = (await img.webp({ quality: 80 }).bytes()).toBase64();
       const wv = new Bun.WebView({
         width: 800,
         height: 600,

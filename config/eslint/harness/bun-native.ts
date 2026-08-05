@@ -79,6 +79,20 @@ const bunNativeSyntaxSelectors = [
     selector: "CallExpression[callee.name='require'][arguments.0.value='fs']",
     message: syntaxMessage('file.read', 'Use Bun.file() instead of require("fs").'),
   },
+  {
+    selector: "CallExpression[callee.name='btoa']",
+    message: syntaxMessage(
+      'bytes.base64',
+      'Use lib/bytes-base64 (Uint8Array.toBase64) instead of btoa().'
+    ),
+  },
+  {
+    selector: "CallExpression[callee.name='atob']",
+    message: syntaxMessage(
+      'bytes.base64',
+      'Use lib/bytes-base64 (Uint8Array.fromBase64) instead of atob().'
+    ),
+  },
 ] as const;
 
 function restrictedSyntax(): Linter.RuleEntry {

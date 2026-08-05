@@ -11,6 +11,7 @@
  * Repository layer: SQL filters on `node_id` / `key_prefix` belong here.
  */
 import type { Database } from 'bun:sqlite';
+import { randomHex } from '../bytes-base64.ts';
 import { asTreeNodeId, type TreeNodeId } from '../types/branded.ts';
 
 /** Fixed public prefix for agent API keys (`pk_agent_` — length 9). */
@@ -61,7 +62,7 @@ export async function createAgent(
   if (!name.trim()) throw new Error('ai-agents: name required');
 
   const id = crypto.randomUUID();
-  const material = Buffer.from(crypto.getRandomValues(new Uint8Array(24))).toString('hex');
+  const material = randomHex(24);
   const apiKey = `${AGENT_API_KEY_PREFIX}${material}`;
   const keyPrefix = agentKeyPrefix(apiKey);
   if (!keyPrefix) throw new Error('ai-agents: failed to derive key prefix');
