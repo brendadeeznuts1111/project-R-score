@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/fetch — fetch with AbortSignal.timeout
 /**
@@ -28,6 +29,8 @@
 
 import type { TreeNodeId } from '../types/branded.ts';
 import type { IdentitySystem } from './identity.ts';
+
+const IP_GEO_API_BASE_URL = Bun.env.IP_GEO_API_BASE_URL ?? 'https://ipapi.co';
 
 export type GeoResolver = (ip: string) => Promise<string | null>;
 
@@ -61,7 +64,7 @@ function networkPrefix(ip: string): string {
 export function defaultGeoResolver(): GeoResolver {
   return async (ip: string): Promise<string | null> => {
     try {
-      const res = await fetch(`https://ipapi.co/${ip}/country/`, {
+      const res = await fetch(`${IP_GEO_API_BASE_URL}/${encodeURIComponent(ip)}/country/`, {
         signal: AbortSignal.timeout(2000),
       });
       if (!res.ok) return null;

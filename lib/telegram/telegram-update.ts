@@ -37,7 +37,7 @@ export type TelegramDocumentWire = {
   file_name?: string;
 };
 
-export type TelegramMessage = {
+export type TelegramMessage = Record<string, unknown> & {
   chat: TelegramChatWire;
   from: TelegramUserWire;
   text?: string;

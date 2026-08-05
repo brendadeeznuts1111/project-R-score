@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
@@ -6,6 +7,8 @@
 
 import { withCircuitBreaker } from '../core/circuit-breaker';
 import { ConcurrencyManagers } from '../core/safe-concurrency';
+
+const NPM_REGISTRY_BASE_URL = Bun.env.NPM_REGISTRY_BASE_URL ?? 'https://registry.npmjs.org';
 
 export interface PackageInfo {
   name: string;
@@ -33,6 +36,38 @@ export interface PackageDependencyGraph {
   docsUrls: string[];
 }
 
+interface PackageManifest {
+  name: string;
+  version: string;
+  description: string;
+  dependencies: Record<string, string>;
+  devDependencies: Record<string, string>;
+  rss?: string;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function readStringRecord(value: unknown): Record<string, string> {
+  if (!isRecord(value)) return {};
+  return Object.fromEntries(
+    Object.entries(value).filter((entry): entry is [string, string] => typeof entry[1] === 'string')
+  );
+}
+
+function parsePackageManifest(value: unknown): PackageManifest {
+  if (!isRecord(value)) throw new Error('package.json must contain an object');
+  return {
+    name: typeof value.name === 'string' && value.name ? value.name : 'unknown',
+    version: typeof value.version === 'string' && value.version ? value.version : '1.0.0',
+    description: typeof value.description === 'string' ? value.description : '',
+    dependencies: readStringRecord(value.dependencies),
+    devDependencies: readStringRecord(value.devDependencies),
+    rss: typeof value.rss === 'string' ? value.rss : undefined,
+  };
+}
+
 export class PackageManager {
   private projectRoot: string;
   private cacheDir: string;
@@ -54,7 +89,7 @@ export class PackageManager {
       throw new Error('No package.json found');
     }
 
-    const pkg = (await Bun.file(packageJsonPath).json()) as any;
+    const pkg = parsePackageManifest(await Bun.file(packageJsonPath).json());
 
     // Scan for Bun-specific APIs used
     const bunApis = await this.scanForBunAPIs();
@@ -66,11 +101,11 @@ export class PackageManager {
     const rssFeed = await this.findRSSFeeds(pkg);
 
     return {
-      name: pkg.name || 'unknown',
-      version: pkg.version || '1.0.0',
-      description: pkg.description || '',
-      dependencies: pkg.dependencies || {},
-      devDependencies: pkg.devDependencies || {},
+      name: pkg.name,
+      version: pkg.version,
+      description: pkg.description,
+      dependencies: pkg.dependencies,
+      devDependencies: pkg.devDependencies,
       bunDocs: bunApis,
       r2Config,
       rssFeed,
@@ -147,7 +182,7 @@ export class PackageManager {
     };
   }
 
-  private async findRSSFeeds(pkg: any): Promise<string | undefined> {
+  private async findRSSFeeds(pkg: PackageManifest): Promise<string | undefined> {
     // Check for RSS feed in package.json
     if (pkg.rss) return pkg.rss;
 
@@ -195,16 +230,17 @@ export class PackageManager {
     // Try to fetch from npm registry
     try {
       const response = await withCircuitBreaker('npm-registry', () =>
-        fetch(`https://registry.npmjs.org/${name}/${version}`)
+        fetch(`${NPM_REGISTRY_BASE_URL}/${encodeURIComponent(name)}/${encodeURIComponent(version)}`)
       );
       if (response.ok) {
-        const pkg = (await response.json()) as any;
+        const pkg = (await response.json()) as unknown;
+        const dist = isRecord(pkg) && isRecord(pkg.dist) ? pkg.dist : undefined;
 
         return {
           name,
           version,
           dependencies: [],
-          size: pkg.dist?.size || 0,
+          size: typeof dist?.size === 'number' ? dist.size : 0,
           docsUrls: [`https://www.npmjs.com/package/${name}`],
         };
       }

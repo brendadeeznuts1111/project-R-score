@@ -18,6 +18,7 @@
 
 import type { TreeNodeId } from '../types/branded.ts';
 import { loadTelegramEnv } from '../telegram/telegram-config.ts';
+import { telegramBotApiUrl } from '../telegram/telegram-api-url.ts';
 
 /** Injectable sender — returns whether the message was accepted. */
 export type TelegramAlertSend = (text: string) => Promise<boolean>;
@@ -58,7 +59,7 @@ function createDefaultSend(chatId?: string): TelegramAlertSend {
   }
   return async (text: string): Promise<boolean> => {
     try {
-      const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      const res = await fetch(telegramBotApiUrl(token, 'sendMessage'), {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ chat_id: target, text }),

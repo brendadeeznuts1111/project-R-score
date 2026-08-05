@@ -79,11 +79,27 @@ export type RouteProbeResult = {
   summary: { total: number; passed: number; failed: number; criticalFailed: number };
 };
 
+function isTableCell(value: unknown): value is TableRow[string] {
+  return (
+    value === null ||
+    value === undefined ||
+    typeof value === 'string' ||
+    typeof value === 'number' ||
+    typeof value === 'boolean'
+  );
+}
+
 /** Project object rows to explicit inspect.table columns only. */
-export function projectTableRows(rows: TableRow[], properties: readonly string[]): TableRow[] {
+export function projectTableRows(
+  rows: readonly object[],
+  properties: readonly string[]
+): TableRow[] {
   return rows.map(row => {
     const out: TableRow = {};
-    for (const p of properties) out[p] = row[p];
+    for (const property of properties) {
+      const value: unknown = Reflect.get(row, property);
+      out[property] = isTableCell(value) ? value : String(value ?? '');
+    }
     return out;
   });
 }
@@ -107,7 +123,7 @@ export function tableColumnWidths(
 
 /** Self-verify inspect.table: stringWidth widths + deepEquals idempotency. */
 export function proveInspectTable(
-  rows: TableRow[],
+  rows: readonly object[],
   properties: readonly string[]
 ): InspectTableProof {
   const projected = projectTableRows(rows, properties);
@@ -129,7 +145,7 @@ export function proveInspectTable(
  * and deepEquals-proves colorless render is idempotent before returning.
  */
 export function inspectTable(
-  rows: TableRow[],
+  rows: readonly object[],
   properties?: readonly string[],
   opts: { colors?: boolean } = {}
 ): string {

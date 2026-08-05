@@ -21,11 +21,14 @@ import { gateFactoryCommand } from './ops-acl.ts';
 import { dispatchOpsFlowOutput } from './ops-commands.ts';
 import { tryObserveKnownChats } from './known-chats.ts';
 import { answerCallbackQuery, sendTelegramBotMessage } from './telegram-api.ts';
+import { telegramBotApiUrl } from './telegram-api-url.ts';
 import { handleSeatDeskCallback, isSeatDeskCallback } from './seat-desk-callback.ts';
 import { handleSeatDeskReply } from './seat-desk-reply.ts';
 import { decodeTelegramStartPayload, telegramAppHash } from '../portal/partner-telegram.ts';
 import { ingestAccountingDodPhoto } from '../dod/telegram-accounting-ingest.ts';
 import type { TelegramCallbackQuery, TelegramMessage, TelegramUpdate } from './telegram-update.ts';
+
+const DEFAULT_KALSHI_MARKETS_URL = 'https://api.elections.kalshi.com/trade-api/v2/markets?limit=5';
 
 export type { TelegramCallbackQuery, TelegramMessage, TelegramUpdate } from './telegram-update.ts';
 
@@ -301,14 +304,11 @@ export class TelegramBot {
     if (!db) return false;
 
     try {
-      const photoIngest = await ingestAccountingDodPhoto(
-        msg as unknown as Record<string, unknown>,
-        {
-          token,
-          db,
-          dbPath,
-        }
-      );
+      const photoIngest = await ingestAccountingDodPhoto(msg, {
+        token,
+        db,
+        dbPath,
+      });
       if (!photoIngest.handled) return false;
 
       const chatId = Number(msg.chat?.id);
@@ -402,7 +402,7 @@ export async function sendTelegramMessage(
 ): Promise<void> {
   const token = resolveTelegramToken(env, tenant);
   if (!token) return;
-  await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+  await fetch(telegramBotApiUrl(token, 'sendMessage'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'Markdown' }),
@@ -558,7 +558,7 @@ export function registerTennisCommands(bot: TelegramBot): void {
       }
       if (!ctx.env.KALSHI_KEY) return 'Kalshi API not configured.';
       try {
-        const res = await fetch('https://api.elections.kalshi.com/trade-api/v2/markets?limit=5', {
+        const res = await fetch(ctx.env.KALSHI_MARKETS_URL ?? DEFAULT_KALSHI_MARKETS_URL, {
           headers: { Authorization: `Bearer ${ctx.env.KALSHI_KEY}` },
         });
         if (!res.ok) return `Kalshi error: ${res.status}`;

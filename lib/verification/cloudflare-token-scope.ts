@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher
 /**
@@ -9,6 +10,9 @@ import { CryptoHasher, revision, version } from 'bun';
 import { asAccountId, asZoneId, type AccountId, type ZoneId } from '../types/branded.ts';
 import { joinPath } from '../path-bun.ts';
 import { buildSemanticTags } from './channels.ts';
+
+const CLOUDFLARE_API_BASE_URL =
+  Bun.env.CLOUDFLARE_API_BASE_URL ?? 'https://api.cloudflare.com/client/v4';
 
 async function r2Env() {
   return import('../../config/r2-env.ts');
@@ -329,7 +333,7 @@ export async function runCloudflareTokenScopeProbe(opts?: {
   }
 
   const pagesRes = await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${account}/pages/projects/${project}`,
+    `${CLOUDFLARE_API_BASE_URL}/accounts/${account}/pages/projects/${project}`,
     { headers: authHeaders }
   );
   const pagesOk = pagesRes.ok;
@@ -337,7 +341,7 @@ export async function runCloudflareTokenScopeProbe(opts?: {
     errors.push(`Pages probe failed ${pagesRes.status} for ${project}`);
   }
 
-  const zoneRes = await fetch(`https://api.cloudflare.com/client/v4/zones/${zoneId}`, {
+  const zoneRes = await fetch(`${CLOUDFLARE_API_BASE_URL}/zones/${zoneId}`, {
     headers: authHeaders,
   });
   const zoneOk = zoneRes.ok;

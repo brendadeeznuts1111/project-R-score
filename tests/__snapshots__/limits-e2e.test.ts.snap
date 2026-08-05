@@ -25,6 +25,6 @@ exports[`limit detection pipeline (E2E) Stage 12: chart SVG generation 1`] = `
 <text x="20" y="323" font-family="system-ui" font-size="14" font-weight="bold" fill="#333">Prediction Accuracy (n=50)</text>
 <text x="20" y="345" font-family="system-ui" font-size="12" fill="#666">MAE: 0.1230 | RMSE: 0.4560 | Bias: -0.0120</text>
 <line x1="20" y1="370" x2="580" y2="370" stroke="#ddd" stroke-width="1"/>
-<text x="20" y="388" font-family="system-ui" font-size="10" fill="#666">Generated: 2026-07-28T00:00:00 | Bun 1.4.0</text>
+<text x="20" y="388" font-family="system-ui" font-size="10" fill="#666">Generated: 2026-07-28T00:00:00 | Bun test-runtime</text>
 </svg>"
 `;

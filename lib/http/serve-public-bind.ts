@@ -33,6 +33,7 @@ import { formatBindIdentityStartup } from './bind-identity-card.ts';
 import type { BunServer } from './bun-server.ts';
 import { serveBindSnapshot, type ServeBindSnapshot } from './bun-server.ts';
 import { resolveBunServeDefaultPort } from './bun-serve-shape.ts';
+import { tomlStringify } from '../toml-stringify.ts';
 
 export const SERVE_PUBLIC_BIND_DIR = '.serve-public';
 export const SERVE_PUBLIC_BIND_FILE = `${SERVE_PUBLIC_BIND_DIR}/bind.json`;
@@ -178,7 +179,7 @@ export async function writeServePublicBindManifest(
   const tomlPath = path.endsWith('.json')
     ? path.replace(/\.json$/, '.toml')
     : SERVE_PUBLIC_BIND_TOML_FILE;
-  await Bun.write(tomlPath, `${Bun.TOML.stringify(serializable)}\n`);
+  await Bun.write(tomlPath, `${tomlStringify(serializable).trimEnd()}\n`);
 }
 
 /** Read last bind manifest; prefers `.toml` then `.json`. */

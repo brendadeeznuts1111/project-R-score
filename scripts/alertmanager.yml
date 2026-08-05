@@ -2,20 +2,20 @@ global:
   resolve_timeout: 5m
 
 route:
-  receiver: 'telegram-ops'
+  receiver: "telegram-ops"
   group_wait: 30s
   group_interval: 5m
   repeat_interval: 4h
   routes:
     - match:
         severity: critical
-      receiver: 'telegram-ops'
+      receiver: "telegram-ops"
       repeat_interval: 1h
 
 receivers:
-  - name: 'telegram-ops'
+  - name: "telegram-ops"
     webhook_configs:
-      - url: 'https://api.telegram.org/bot8972341795:AAGTTI7cdgDVfqlM81Eddw_jmhP996uiA70/sendMessage'
+      - url: "http://127.0.0.1:9094/alerts"
         send_resolved: true
         http_config:
           headers:

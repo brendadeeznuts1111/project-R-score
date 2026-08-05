@@ -9,6 +9,7 @@ import { Database } from 'bun:sqlite';
 import type { Database as DatabaseType } from 'bun:sqlite';
 import { openOperationsDb } from './db.ts';
 import { AccountLimitsRepository } from '../account-limits-repo.ts';
+import { telegramBotApiUrl } from '../telegram/telegram-api-url.ts';
 
 export interface TreeNode {
   id: string; // brand-ok — UUID v7
@@ -424,7 +425,7 @@ export async function sendTelegramMessage(
   const botToken =
     token ?? Bun.env.TELEGRAM_BOT_FACTORY?.trim() ?? Bun.env.TELEGRAM_BOT_TOKEN?.trim();
   if (!botToken || chatId.startsWith('pending-')) return false;
-  const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+  const res = await fetch(telegramBotApiUrl(botToken, 'sendMessage'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

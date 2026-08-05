@@ -317,5 +317,5 @@ export function validatePartnerProfile(value: unknown): ProfileValidation {
     }
   }
   if (issues.length > 0) return { valid: false, issues };
-  return { valid: true, profile: value as unknown as PartnerProfile };
+  return { valid: true, profile: value as PartnerProfile };
 }

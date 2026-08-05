@@ -23,7 +23,7 @@ export interface AICommand {
   id: CommandId;
   type: 'optimize' | 'analyze' | 'predict' | 'automate';
   input: string;
-  parameters?: Record<string, any>;
+  parameters?: Record<string, unknown>;
   timestamp: number;
   priority: 'low' | 'medium' | 'high' | 'critical';
 }
@@ -36,7 +36,7 @@ export interface AIInsight {
   confidence: number; // 0-1
   impact: 'low' | 'medium' | 'high' | 'critical';
   recommendations: string[];
-  data?: Record<string, any>;
+  data?: unknown;
   timestamp: number;
   correlationId?: CorrelationId;
   tags?: string[];
@@ -66,6 +66,38 @@ export interface OptimizationResult {
     precision: number;
     recall: number;
   };
+}
+
+export type OptimizationImprovement = OptimizationResult['improvements'][number];
+
+export interface SystemPrediction {
+  resource: { cpu: number; memory: number; storage: number };
+  performance: { responseTime: number; throughput: number; errorRate: number };
+  confidence: number;
+  model?: string;
+  correlationId?: CorrelationId;
+}
+
+export interface HistoricalMetric {
+  timestamp: number;
+  cpu: number;
+  memory: number;
+  storage: number;
+  responseTime: number;
+  throughput: number;
+  errorRate: number;
+}
+
+export interface MLModel {
+  name?: string;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function parsePredictionTimeframe(value: unknown): 'hour' | 'day' | 'week' {
+  return value === 'hour' || value === 'week' ? value : 'day';
 }
 
 export interface RealTimeMetrics {
@@ -152,8 +184,8 @@ export class AdvancedLRUCache<T> extends EventEmitter {
   private enableMemoryTracking: boolean;
   private evictionPolicy: 'lru' | 'lfu' | 'ttl';
 
-  private head: LRUCacheNode<T>;
-  private tail: LRUCacheNode<T>;
+  private head: LRUCacheNode<T> | null = null;
+  private tail: LRUCacheNode<T> | null = null;
   private cache = new Map<string, LRUCacheNode<T>>();
   private frequencyMap = new Map<string, number>(); // For LFU
   private statsMutex = new Mutex(); // Thread-safe statistics
@@ -196,12 +228,6 @@ export class AdvancedLRUCache<T> extends EventEmitter {
     this.enableStats = config.enableStats;
     this.enableMemoryTracking = config.enableMemoryTracking;
     this.evictionPolicy = config.evictionPolicy;
-
-    // Initialize dummy head and tail nodes
-    this.head = { key: '', value: null as any, expires: 0, prev: null, next: null };
-    this.tail = { key: '', value: null as any, expires: 0, prev: null, next: null };
-    this.head.next = this.tail;
-    this.tail.prev = this.head;
 
     this.startCleanup();
   }
@@ -426,8 +452,8 @@ export class AdvancedLRUCache<T> extends EventEmitter {
   clear(): void {
     this.cache.clear();
     this.frequencyMap.clear();
-    this.head.next = this.tail;
-    this.tail.prev = this.head;
+    this.head = null;
+    this.tail = null;
 
     // Reset statistics
     if (this.enableStats) {
@@ -631,21 +657,29 @@ export class AdvancedLRUCache<T> extends EventEmitter {
   }
 
   private addToHead(node: LRUCacheNode<T>): void {
-    node.prev = this.head;
-    node.next = this.head.next;
-    if (this.head.next) {
-      this.head.next.prev = node;
+    node.prev = null;
+    node.next = this.head;
+    if (this.head) {
+      this.head.prev = node;
+    } else {
+      this.tail = node;
     }
-    this.head.next = node;
+    this.head = node;
   }
 
   private removeNode(node: LRUCacheNode<T>): void {
     if (node.prev) {
       node.prev.next = node.next;
+    } else {
+      this.head = node.next;
     }
     if (node.next) {
       node.next.prev = node.prev;
+    } else {
+      this.tail = node.prev;
     }
+    node.prev = null;
+    node.next = null;
   }
 
   private moveToHead(node: LRUCacheNode<T>): void {
@@ -654,8 +688,8 @@ export class AdvancedLRUCache<T> extends EventEmitter {
   }
 
   private evictLRU(): void {
-    const lru = this.tail.prev;
-    if (lru && lru !== this.head) {
+    const lru = this.tail;
+    if (lru) {
       this.removeNode(lru);
       this.cache.delete(lru.key);
       this.frequencyMap.delete(lru.key);
@@ -827,9 +861,8 @@ export class AIOperationsManager extends EventEmitter {
   private commandQueue: AICommand[] = [];
   private processing = false;
   private insights: AIInsight[] = [];
-  private learningData: any[] = [];
   private completedCommands: Map<CommandId, OptimizationResult> = new Map();
-  private config: Record<string, any> = {}; // Loaded from YAML
+  private config: Record<string, unknown> = {}; // Loaded from YAML
   private cleanupTimer?: ReturnType<typeof setInterval>;
   private processingTimer?: ReturnType<typeof setInterval>; // Timer for command processing
   private metricsTimer?: ReturnType<typeof setInterval>; // Timer for metrics collection
@@ -849,11 +882,11 @@ export class AIOperationsManager extends EventEmitter {
     () => Promise<{ name: string; status: 'pass' | 'warn' | 'fail'; message?: string }>
   > = [];
   private adaptiveThresholds: Record<string, { min: number; max: number; adaptive: boolean }> = {};
-  private mlModels: Map<string, any> = new Map();
+  private mlModels: Map<string, MLModel> = new Map();
 
   // Advanced caching
   private insightsCache: AdvancedLRUCache<AIInsight[]>;
-  private predictionsCache: AdvancedLRUCache<any>;
+  private predictionsCache: AdvancedLRUCache<SystemPrediction>;
   private metricsCache: AdvancedLRUCache<RealTimeMetrics[]>;
 
   // Rate limiting
@@ -870,7 +903,10 @@ export class AIOperationsManager extends EventEmitter {
 
     // Initialize advanced caches
     this.insightsCache = new AdvancedLRUCache<AIInsight[]>({ maxSize: 500, defaultTTL: 300000 }); // 500 items, 5 min TTL
-    this.predictionsCache = new AdvancedLRUCache<any>({ maxSize: 200, defaultTTL: 600000 }); // 200 items, 10 min TTL
+    this.predictionsCache = new AdvancedLRUCache<SystemPrediction>({
+      maxSize: 200,
+      defaultTTL: 600000,
+    }); // 200 items, 10 min TTL
     this.metricsCache = new AdvancedLRUCache<RealTimeMetrics[]>({
       maxSize: 100,
       defaultTTL: 120000,
@@ -903,7 +939,8 @@ export class AIOperationsManager extends EventEmitter {
       const configFile = Bun.file('ai-config.yaml');
       if (await configFile.exists()) {
         const content = await configFile.text();
-        this.config = YAML.parse(content) as Record<string, any>;
+        const parsed = YAML.parse(content) as unknown;
+        this.config = isRecord(parsed) ? parsed : {};
         logger.info('AI config loaded from YAML', {
           keys: Object.keys(this.config),
         });
@@ -1040,7 +1077,7 @@ export class AIOperationsManager extends EventEmitter {
   /**
    * Generate secure cache keys to prevent collisions
    */
-  private generateSecureCacheKey(prefix: string, data: any): string {
+  private generateSecureCacheKey(prefix: string, data: Record<string, unknown>): string {
     // Create a deterministic hash from the data
     const dataString = JSON.stringify(data, Object.keys(data).sort());
     let hash = 0;
@@ -1059,7 +1096,7 @@ export class AIOperationsManager extends EventEmitter {
     type?: AIInsight['type'];
     impact?: AIInsight['impact'];
     minConfidence?: number;
-    compareData?: Record<string, any>;
+    compareData?: unknown;
   }): AIInsight[] {
     const insights = this.getInsights(filter);
 
@@ -1230,13 +1267,7 @@ export class AIOperationsManager extends EventEmitter {
   /**
    * Predict system behavior with ML models and circuit breaker (cached)
    */
-  async predict(timeframe: 'hour' | 'day' | 'week'): Promise<{
-    resource: { cpu: number; memory: number; storage: number };
-    performance: { responseTime: number; throughput: number; errorRate: number };
-    confidence: number;
-    model?: string;
-    correlationId?: CorrelationId;
-  }> {
+  async predict(timeframe: 'hour' | 'day' | 'week'): Promise<SystemPrediction> {
     const correlationId = this.generateCorrelationId();
     const cacheKey = this.generateSecureCacheKey('predict', { timeframe, correlationId });
 
@@ -1364,13 +1395,14 @@ export class AIOperationsManager extends EventEmitter {
             result.insights = await this.performAnalysis(command);
             break;
           case 'predict':
-            const prediction = await this.predict(command.parameters?.timeframe || 'day');
+            const timeframe = parsePredictionTimeframe(command.parameters?.timeframe);
+            const prediction = await this.predict(timeframe);
             result.insights = [
               {
                 id: this.generateId(),
                 type: 'performance',
                 title: 'System Prediction',
-                description: `Predicted system behavior for ${command.parameters?.timeframe || 'day'}`,
+                description: `Predicted system behavior for ${timeframe}`,
                 confidence: prediction.confidence,
                 impact: 'medium',
                 recommendations: this.generateRecommendations(prediction),
@@ -1735,7 +1767,7 @@ export class AIOperationsManager extends EventEmitter {
   /**
    * Get historical metrics for prediction
    */
-  private async getHistoricalMetrics(timeframe: string): Promise<any[]> {
+  private async getHistoricalMetrics(timeframe: string): Promise<HistoricalMetric[]> {
     // Use real metrics history if available, otherwise mock
     if (this.metricsHistory.length > 0) {
       const dataPoints = timeframe === 'hour' ? 60 : timeframe === 'day' ? 144 : 1008;
@@ -1807,7 +1839,7 @@ export class AIOperationsManager extends EventEmitter {
    * Predict with ML model
    */
   private async predictWithML(
-    mlModel: any,
+    mlModel: MLModel,
     timeframe: 'hour' | 'day' | 'week'
   ): Promise<{
     resource: { cpu: number; memory: number; storage: number };
@@ -1896,7 +1928,7 @@ export class AIOperationsManager extends EventEmitter {
   /**
    * Perform optimization based on command
    */
-  private async performOptimization(command: AICommand): Promise<any[]> {
+  private async performOptimization(command: AICommand): Promise<OptimizationImprovement[]> {
     // Enhanced optimization improvements with trends
     const improvements = [
       {
@@ -1945,7 +1977,7 @@ export class AIOperationsManager extends EventEmitter {
   /**
    * Perform automation based on command
    */
-  private async performAutomation(command: AICommand): Promise<any[]> {
+  private async performAutomation(command: AICommand): Promise<OptimizationImprovement[]> {
     // Enhanced automation improvements with trends
     const improvements = [
       {
@@ -1988,7 +2020,7 @@ export class AIOperationsManager extends EventEmitter {
   /**
    * Generate recommendations from prediction
    */
-  private generateRecommendations(prediction: any): string[] {
+  private generateRecommendations(prediction: SystemPrediction): string[] {
     const recommendations: string[] = [];
 
     if (prediction.resource.cpu > 80) {
@@ -2013,7 +2045,7 @@ export class AIOperationsManager extends EventEmitter {
   /**
    * Calculate optimization metrics
    */
-  private calculateOptimizationMetrics(improvements: any[]): {
+  private calculateOptimizationMetrics(improvements: OptimizationImprovement[]): {
     accuracy: number;
     precision: number;
     recall: number;
@@ -2175,7 +2207,7 @@ export class AIOperationsManager extends EventEmitter {
   /**
    * Register ML model
    */
-  registerMLModel(name: string, model: any): void {
+  registerMLModel(name: string, model: MLModel): void {
     this.mlModels.set(name, model);
     logger.info('ML model registered', { name }, ['ai', 'ml']);
   }
@@ -2216,11 +2248,6 @@ export class AIOperationsManager extends EventEmitter {
     const originalLength = this.insights.length;
     this.insights = this.insights.filter(insight => now - insight.timestamp < this.INSIGHT_TTL);
     cleanedInsights = originalLength - this.insights.length;
-
-    // Clean up old learning data
-    if (this.learningData.length > 1000) {
-      this.learningData = this.learningData.slice(-500);
-    }
 
     if (cleanedCommands > 0 || cleanedInsights > 0) {
       logger.info(
@@ -2299,7 +2326,6 @@ export class AIOperationsManager extends EventEmitter {
     // Clear data structures
     this.commandQueue = [];
     this.insights = [];
-    this.learningData = [];
     this.completedCommands.clear();
     this.metricsHistory = [];
     this.circuitBreakers.clear();
@@ -2362,7 +2388,7 @@ export class AIOperationsManager extends EventEmitter {
    * Export configuration and state
    */
   exportState(): {
-    config: Record<string, any>;
+    config: Record<string, unknown>;
     adaptiveThresholds: Record<string, { min: number; max: number; adaptive: boolean }>;
     systemStats: ReturnType<typeof this.getSystemStats>;
     healthStatus: Promise<HealthStatus>;

@@ -36,6 +36,7 @@
  */
 import { formatCliTable, toolTableVersion } from './cli-table.ts';
 import { inspectTable } from '../lib/console-depth.ts';
+import { tomlStringify } from '../lib/toml-stringify.ts';
 
 export type ApiOneliner = {
   id: string; // brand-ok — demo oneliner id
@@ -104,8 +105,6 @@ console.log(st.size, pkg.name);`,
     snippet: `const toml = Bun.TOML.stringify({ a: 1 });
 const parsed = Bun.TOML.parse(toml);`,
     run: () => {
-      const tomlStringify = (Bun.TOML as typeof Bun.TOML & { stringify: (v: unknown) => string })
-        .stringify;
       const toml = tomlStringify({ a: 1, b: 'x' });
       const parsed = Bun.TOML.parse(toml) as { a: number };
       return `a=${parsed.a}`;

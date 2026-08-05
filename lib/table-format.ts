@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/terminal — Bun.terminal / Bun.stdout
@@ -30,12 +31,12 @@ function getTerminal(): { isTTY: boolean; width: number } {
   let isTTY = false;
   let width = 80;
   try {
-    const t = new (Bun as any).Terminal(Bun.stdout);
+    const t = new Bun.Terminal(Bun.stdout);
     isTTY = t.isTTY === true;
     width = typeof t.columns === 'number' && t.columns > 0 ? t.columns : 80;
   } catch {
     try {
-      isTTY = (Bun.stdout as any)?.isTTY === true;
+      isTTY = Bun.stdout.isTTY === true;
     } catch {}
   }
   _ttyCache = { isTTY, width };
@@ -78,6 +79,8 @@ export const styles = {
 };
 
 // ── Types ─────────────────────────────────────────────────────────────────
+export type TableCell = string | number | boolean | bigint | symbol | object | null | undefined;
+
 export type ColumnDef = {
   key: string;
   label: string;
@@ -85,7 +88,7 @@ export type ColumnDef = {
   width?: number; // max column width (0 = auto)
   color?: (s: string) => string;
 
-  format?: (val: any) => string;
+  format?: (val: TableCell) => string;
 };
 
 export type TableOpts = {
@@ -175,7 +178,7 @@ const BOX = {
 };
 
 // ── Helpers ───────────────────────────────────────────────────────────────
-function sw(s: any): number {
+function sw(s: TableCell): number {
   return stringWidth(String(s ?? ''));
 }
 
@@ -209,7 +212,7 @@ function boxLine(parts: string[], b: typeof BOX.unicode): string {
 export function formatTable(
   title: string,
   columns: ColumnDef[],
-  rows: Record<string, any>[],
+  rows: Record<string, TableCell>[],
   opts: TableOpts = {}
 ): string {
   // Version gate: fall back to compact mode on old Bun
@@ -309,14 +312,14 @@ export function formatTable(
 
 /** Quick native table via Bun.inspect.table — no custom formatting, just raw data dump. */
 export function formatTableNative(
-  rows: Record<string, any>[],
+  rows: Record<string, TableCell>[],
   options?: { properties?: string[]; colors?: boolean }
 ): string {
   if (rows.length === 0) return '(no data)';
   const props = options?.properties;
   const data = props
     ? rows.map(r => {
-        const subset: Record<string, any> = {};
+        const subset: Record<string, TableCell> = {};
         for (const p of props) subset[p] = r[p];
         return subset;
       })
@@ -327,33 +330,33 @@ export function formatTableNative(
 // ── Convenience: number formatting ────────────────────────────────────────
 
 export const fmt = {
-  dollar: (v: any) => {
+  dollar: (v: TableCell) => {
     if (v == null || v === '') return '—';
     const n = Number(v);
     return Number.isFinite(n) ? `$${n.toLocaleString()}` : '—';
   },
-  delta: (v: any) => {
+  delta: (v: TableCell) => {
     if (v == null || v === '') return '—';
     const n = Number(v);
     if (!Number.isFinite(n)) return '—';
     return `${n >= 0 ? '+' : ''}$${n.toLocaleString()}`;
   },
-  pct: (v: any) => {
+  pct: (v: TableCell) => {
     if (v == null || v === '') return '—';
     const n = Number(v);
     return Number.isFinite(n) ? `${(n * 100).toFixed(1)}%` : '—';
   },
-  pctRaw: (v: any) => {
+  pctRaw: (v: TableCell) => {
     if (v == null || v === '') return '—';
     const n = Number(v);
     return Number.isFinite(n) ? `${n >= 0 ? '+' : ''}${n.toFixed(1)}%` : '—';
   },
-  date: (v: any) => {
+  date: (v: TableCell) => {
     if (v == null || v === '') return '—';
     const n = Number(v);
     return Number.isFinite(n) ? new Date(n * 1000).toLocaleDateString() : '—';
   },
-  score: (v: any) => {
+  score: (v: TableCell) => {
     if (v == null || v === '') return '···';
     const n = Number(v);
     return Number.isFinite(n) ? `${(n * 100).toFixed(0)}%` : '···';
@@ -398,7 +401,7 @@ export const LIMIT_CHANGE_COLUMNS: ColumnDef[] = [
     label: '±$',
     align: 'right',
     width: 10,
-    format: (v: any, _row?: Record<string, any>) => {
+    format: (v: TableCell) => {
       const n = Number(v);
       return Number.isFinite(n) ? color[n >= 0 ? 'green' : 'red'](fmt.delta(v as number)) : '—';
     },

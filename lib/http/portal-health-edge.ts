@@ -23,6 +23,9 @@ import {
 import { buildEdgeEnvTable } from './portal-env-edge.ts';
 import { portalOptionsResponse } from './portal-cors.ts';
 
+const BUN_API_COVERAGE_FALLBACK_URL =
+  'https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/bun-api-coverage-proof.json';
+
 export type HealthEnv = {
   ASSETS?: { fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response> };
 };
@@ -273,9 +276,7 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
     };
   } else {
     try {
-      const res = await fetch(
-        'https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/bun-api-coverage-proof.json'
-      );
+      const res = await fetch(BUN_API_COVERAGE_FALLBACK_URL);
       if (res.ok) {
         const p = (await res.json()) as Record<string, unknown>;
         bunApiProof = {
@@ -385,7 +386,7 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
     channels: (ops?.channels as Record<string, unknown> | undefined) ?? null,
     loop: (ops?.loop as Record<string, unknown> | undefined) ?? null,
     monorepoHealth: monorepoBake
-      ? (projectMonorepoHealthBake(monorepoBake) as unknown as Record<string, unknown>)
+      ? projectMonorepoHealthBake(monorepoBake)
       : ((ops?.monorepoHealth as Record<string, unknown> | undefined) ?? null),
     env: {
       summary: {

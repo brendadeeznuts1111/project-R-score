@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/reference/bun/TOML/parse — Bun.TOML.parse
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/toml#bun-toml-stringify — Bun.TOML.stringify
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
@@ -25,6 +28,7 @@
 
 import { joinPath } from '../lib/path-bun';
 import { BOOK_KEY_RE } from '../lib/partner-profile/schema';
+import { tomlStringify } from '../lib/toml-stringify';
 
 export const SEAT_CAPITAL_DESK_PATH = 'public/registry/seat-capital-desk.json';
 export const PROFILES_DIR = 'config/partner-profiles';
@@ -145,7 +149,7 @@ export async function migrateSeatPartnersToProfiles(
         `[dry-run] would write ${code}.toml (${Object.keys(profile.books ?? {}).length} books)`
       );
     } else {
-      await Bun.write(path, `${Bun.TOML.stringify(merged).trimEnd()}\n`);
+      await Bun.write(path, `${tomlStringify(merged).trimEnd()}\n`);
       written.push(`${code}.toml`);
     }
   }
