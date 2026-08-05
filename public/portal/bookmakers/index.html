@@ -1,9 +1,13 @@
 <!doctype html>
-<!-- @see docs/portal-foundation.md — board primitives · tone tokens · no emoji headings -->
+<!-- @see docs/portal-foundation.md · bookmakers registry · bun run bookmakers:bake -->
 <html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="FactoryWager bookmaker registry — @factorywager/bookmakers bake, fetcher mix, sports coverage."
+    />
     <title>Bookmakers · FactoryWager</title>
     <meta name="theme-color" content="#0d1117" />
     <meta name="application-name" content="FactoryWager" />
@@ -17,32 +21,31 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/portal/style.css" />
-    <script type="module" src="/portal/data.js"></script>
-    <script type="module" src="/portal/topbar.js"></script>
     <style>
-      /* Board-local only — shared shell/table/tone live in style.css */
+      .bookmakers-page { max-width: min(1100px, 100%); }
       .bookmakers-page .card {
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: var(--radius);
-        padding: 16px 18px;
-        margin: 16px 0;
+        padding: 14px 16px;
+        margin: 0 0 16px;
       }
       .bookmakers-page .card h2 {
         margin: 0 0 10px;
-        font-size: 15px;
-        font-weight: 600;
-        border-bottom: 1px solid var(--border);
-        padding-bottom: 8px;
+        font-size: 13px;
+        font-weight: 650;
+        letter-spacing: -.01em;
       }
       .bookmakers-page .meta-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px 22px;
+        gap: 8px 16px;
         font-size: 12.5px;
-        color: var(--muted, #8b949e);
+        color: var(--text-dim);
         font-family: var(--font-mono, ui-monospace, monospace);
+        line-height: 1.5;
       }
+      .bookmakers-page .meta-row b { color: var(--text); font-weight: 650; }
       .bookmakers-page .dot {
         display: inline-block;
         width: 10px;
@@ -59,14 +62,14 @@
       .bookmakers-page th,
       .bookmakers-page td {
         text-align: left;
-        padding: 7px 10px;
+        padding: 8px 10px;
         border-bottom: 1px solid var(--border);
         vertical-align: top;
       }
       .bookmakers-page th {
-        font-weight: 600;
-        color: var(--muted, #8b949e);
-        font-size: 11.5px;
+        font-weight: 650;
+        color: var(--text-dim);
+        font-size: 11px;
         text-transform: uppercase;
         letter-spacing: 0.04em;
       }
@@ -78,206 +81,238 @@
         background: var(--surface);
         margin: 0 4px 4px 0;
         display: inline-block;
+        text-decoration: none;
+        color: var(--text);
       }
-      .bookmakers-page .state-ok {
-        color: #2da44e;
-      }
-      .bookmakers-page .state-err {
-        color: #f85149;
-      }
-      .bookmakers-page #bookmakers-body td:first-child {
+      .bookmakers-page a.chip { color: var(--accent); }
+      .bookmakers-page .chip-muted { color: var(--text-dim); }
+      .bookmakers-page .state-ok { color: var(--green, #3fb950); font-weight: 600; }
+      .bookmakers-page .state-err { color: var(--red, #f85149); font-weight: 600; }
+      .bookmakers-page .dim { color: var(--text-dim); }
+      .bookmakers-page .col-id code {
         font-family: var(--font-mono, ui-monospace, monospace);
+        font-size: 12px;
+      }
+      .bookmakers-page .domain-link { color: inherit; text-decoration: none; }
+      .bookmakers-page .domain-link:hover code { color: var(--accent); }
+      .bookmakers-page .fetcher-pill {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 650;
+        letter-spacing: .03em;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        text-transform: lowercase;
+      }
+      .bookmakers-page .fetcher-rest {
+        border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+        color: var(--accent);
+        background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+      }
+      .bookmakers-page .fetcher-webview {
+        border-color: color-mix(in srgb, var(--green, #3fb950) 40%, var(--border));
+        color: var(--green, #3fb950);
+        background: color-mix(in srgb, var(--green, #3fb950) 10%, var(--surface));
+      }
+      .bookmakers-page .fetcher-seat {
+        border-color: color-mix(in srgb, var(--yellow, #d29922) 45%, var(--border));
+        color: var(--yellow, #d29922);
+        background: color-mix(in srgb, var(--yellow, #d29922) 12%, var(--surface));
+      }
+      .bookmakers-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin: 0 0 14px;
+      }
+      .bookmakers-toolbar label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: var(--text-dim);
+      }
+      .bookmakers-toolbar select,
+      .bookmakers-toolbar input[type='search'] {
+        font: inherit;
+        font-size: 13px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: var(--bg);
+        color: var(--text);
+        min-width: 0;
+      }
+      .bookmakers-toolbar input[type='search'] { min-width: 12rem; flex: 1 1 12rem; }
+      .bookmakers-toolbar .portal-count { margin-left: auto; }
+      #bookmakers-sports { line-height: 1.8; }
+      @media (max-width: 800px) {
+        .bookmakers-page .col-regions { display: none; }
+        .bookmakers-page th:nth-child(6),
+        .bookmakers-page td:nth-child(6) { display: none; }
       }
     </style>
   </head>
   <body>
-    <div id="app">
-      <div class="bookmakers-page page" id="bookmakers-page">
-        <h1>Bookmaker registry</h1>
-        <p class="subtitle">
-          Canonical bookmaker registry — baked from the
-          <code>@factorywager/bookmakers</code> artifact on the FactoryWager
-          artifact registry. On-demand consumption:
-          <code>bun run weave --package @factorywager/bookmakers</code>
-          · bake
-          <a href="/registry/bookmakers.json" class="chip">/registry/bookmakers.json</a>
-          · map
-          <a href="/portal/bookmakers.md" class="chip">bookmakers.md</a>
-          · related
-          <a href="/portal/limits/" class="chip">limits</a>
-          <a href="/portal/partners/" class="chip">partners</a>
-          <a href="/portal/dod/" class="chip">dod</a>
-          <a href="/portal/routing.md" class="chip">routing</a>.
-        </p>
-
-        <div class="card" id="artifact">
-          <h2>Artifact</h2>
-          <div class="meta-row" id="bookmakers-meta">
-            <span>resolving…</span>
-          </div>
-        </div>
-
-        <div class="card" id="books">
-          <h2>Books (<span id="bookmakers-count">—</span>)</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>id</th>
-                <th>label</th>
-                <th>domain</th>
-                <th>fetcher</th>
-                <th>sports</th>
-                <th>regions</th>
-                <th>status</th>
-              </tr>
-            </thead>
-            <tbody id="bookmakers-body">
-              <tr><td colspan="7">loading…</td></tr>
-            </tbody>
-          </table>
+    <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <h1 class="logo">
+          <span class="logo-icon" aria-hidden="true"></span>
+          <span class="brand-wordmark">FactoryWager</span>
+          <span class="brand-badge">ops</span>
+          <span class="logo-page">Bookmakers</span>
+        </h1>
+        <nav class="topbar-nav" aria-label="Primary">
+          <a href="/" class="nav-link" data-domain="platform">Home</a>
+          <a href="/portal/ops/" class="nav-link" data-domain="control">Ops</a>
+          <a href="/portal/" class="nav-link" data-domain="platform">Registry</a>
+          <a href="/portal/partners/" class="nav-link" data-domain="partner">Partners</a>
+          <a href="/portal/limits/" class="nav-link" data-domain="partner">Limits</a>
+          <a
+            href="/portal/bookmakers/"
+            class="nav-link active"
+            aria-current="page"
+            data-domain="partner"
+            data-cli="bun run bookmakers:bake"
+            data-registry="/registry/bookmakers.json"
+            >Bookmakers</a
+          >
+          <a href="/portal/dod/" class="nav-link" data-domain="platform">DOD</a>
+          <a href="/portal/health/" class="nav-link" data-domain="platform">Health</a>
+        </nav>
+        <div class="topbar-status">
+          <a href="/portal/bookmakers.md" class="nav-link nav-md" title="Markdown view">MD</a>
+          <a href="/registry/bookmakers.json" class="nav-link nav-md" title="Raw JSON">JSON</a>
+          <a href="/portal/health/" class="topbar-health-link" title="System health">
+            <span id="health-dot" class="health-dot unknown"></span>
+            <span id="health-label" class="health-label">…</span>
+          </a>
         </div>
       </div>
-    </div>
+    </header>
 
-    <script type="module">
-      import { bootGlossaryUx } from '../components/glossary-ux.js';
+    <main class="portal-page bookmakers-page">
+      <section class="portal-hero portal-hero--card" aria-labelledby="bookmakers-hero-title">
+        <p class="portal-eyebrow">Partner domain · deep-link SSOT</p>
+        <h2 id="bookmakers-hero-title" class="portal-hero__title">Bookmaker registry</h2>
+        <p class="hero-sub">
+          Canonical books from <code>@factorywager/bookmakers</code> — mirrored to
+          <code>/registry/bookmakers.json</code> for the portal read plane. Align seat
+          outs and limit nodes with these ids.
+        </p>
+        <div class="portal-hero-meta">
+          <span id="bookmakers-gate" class="portal-gate warn" aria-live="polite">
+            <span class="dot" aria-hidden="true"></span>loading
+          </span>
+          <span id="bookmakers-baked" class="portal-baked">loading bake…</span>
+          <div class="portal-source-links" aria-label="Related artifacts">
+            <a href="/registry/bookmakers.json">bookmakers.json</a>
+            <a href="/portal/bookmakers.md">bookmakers.md</a>
+            <a href="/portal/limits/">limits</a>
+            <a href="/portal/partners/">partners</a>
+            <a href="/portal/dod/">dod</a>
+            <a href="/portal/routing.md">routing</a>
+          </div>
+        </div>
+      </section>
 
-      const REGISTRY_URL = '/registry/bookmakers.json';
-      const GLOSSARY_URL = '/registry/domain-glossary.json';
-      const POLL_INTERVAL_MS = 60_000;
+      <div class="portal-actions">
+        <button type="button" id="bookmakers-refresh">Refresh</button>
+        <button type="button" class="copy-cli portal-clear" data-cli="bun run bookmakers:bake">
+          Copy bake CLI
+        </button>
+        <button type="button" class="copy-cli portal-clear" data-cli="bun run bookmakers:bake:check">
+          Copy check CLI
+        </button>
+        <a href="/registry/bookmakers.json" target="_blank" rel="noopener">Open JSON</a>
+        <span class="portal-count" id="bookmakers-shown">…</span>
+      </div>
 
-      const metaEl = document.getElementById('bookmakers-meta');
-      const bodyEl = document.getElementById('bookmakers-body');
-      const countEl = document.getElementById('bookmakers-count');
+      <div id="bookmakers-stats" class="portal-stat-grid" aria-label="Bookmakers summary"></div>
 
-      /** sport.<id> concept ids present in the portal glossary (tooltip wiring). */
-      let glossarySportIds = null;
-      let glossaryInflight = null;
-      async function sportConceptIds() {
-        if (glossarySportIds) return glossarySportIds;
-        if (glossaryInflight) return glossaryInflight;
-        glossaryInflight = (async () => {
-          const ids = new Set();
-          try {
-            const res = await fetch(GLOSSARY_URL, { headers: { Accept: 'application/json' } });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const payload = await res.json();
-            const entries = Array.isArray(payload)
-              ? payload
-              : (payload.entries ?? payload.concepts ?? []);
-            for (const e of entries) {
-              if (e && typeof e.id === 'string') ids.add(e.id);
-            }
-          } catch {
-            // glossary unavailable — chips render plain, no tooltips
-          }
-          glossarySportIds = ids;
-          return ids;
-        })();
-        return glossaryInflight;
-      }
+      <div class="card" id="artifact">
+        <h2>Artifact</h2>
+        <div class="meta-row" id="bookmakers-meta"><span>resolving…</span></div>
+      </div>
 
-      function escapeHtml(value) {
-        return String(value).replace(/[&<>"']/g, (c) => ({
-          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-        }[c]));
-      }
+      <div class="card">
+        <h2>Sports coverage</h2>
+        <div id="bookmakers-sports"><span class="dim">loading…</span></div>
+      </div>
 
-      function render(payload) {
-        const artifact = payload.artifact ?? {};
-        const audit = payload.audit ?? { ok: true, issues: [] };
-        metaEl.innerHTML = [
-          `name <b>${escapeHtml(artifact.name ?? '?')}</b>`,
-          `version <b>${escapeHtml(artifact.version ?? '?')}</b>`,
-          `checksum <code>${escapeHtml((artifact.checksum ?? '').slice(0, 12))}…</code>`,
-          `generated <code>${escapeHtml(payload.generatedAt ?? '?')}</code>`,
-          `source <code>${escapeHtml(artifact.source ?? '?')}</code>`,
-          audit.ok
-            ? `<span class="state-ok">audit ok</span>`
-            : `<span class="state-err">audit: ${escapeHtml(audit.issues.join('; '))}</span>`,
-        ].join(' · ');
+      <div class="bookmakers-toolbar" aria-label="Filter books">
+        <label>
+          Fetcher
+          <select id="bookmakers-filter">
+            <option value="all">all</option>
+            <option value="rest">rest</option>
+            <option value="webview">webview</option>
+            <option value="seat">seat</option>
+          </select>
+        </label>
+        <label style="flex: 1 1 14rem">
+          Search
+          <input
+            id="bookmakers-search"
+            type="search"
+            placeholder="id · label · domain · sport"
+            autocomplete="off"
+          />
+        </label>
+      </div>
 
-        const books = Object.values(payload.bookmakers ?? {});
-        countEl.textContent = String(books.length);
-        if (books.length === 0) {
-          bodyEl.innerHTML = '<tr><td colspan="7">no bookmakers in registry</td></tr>';
-          return;
-        }
-        bodyEl.innerHTML = books
-          .map((b) => {
-            const sports = (b.supportedSports ?? [])
-              .map((s) => {
-                const concept = `sport.${s}`;
-                const wired = glossarySportIds && glossarySportIds.has(concept);
-                return wired
-                  ? `<a class="chip" data-glossary-concept="${escapeHtml(concept)}" href="/portal/glossary/#glossary:${escapeHtml(concept)}">${escapeHtml(s)}</a>`
-                  : `<span class="chip">${escapeHtml(s)}</span>`;
-              })
-              .join('');
-            const regions = (b.regions ?? []).map(escapeHtml).join(', ');
-            const color = b.color
-              ? `<span class="dot" style="background:${escapeHtml(b.color)}"></span>`
-              : '';
-            const status = b.id && b.domain && b.fetcherType ? 'ok' : 'incomplete';
-            return `<tr>
-              <td>${color}${escapeHtml(b.id ?? '?')}</td>
-              <td>${escapeHtml(b.label ?? '?')}</td>
-              <td><code>${escapeHtml(b.domain ?? '?')}</code></td>
-              <td>${escapeHtml(b.fetcherType ?? '?')}</td>
-              <td>${sports}</td>
-              <td>${regions}</td>
-              <td class="${status === 'ok' ? 'state-ok' : 'state-err'}">${status}</td>
-            </tr>`;
-          })
-          .join('');
-      }
+      <div class="card" id="books">
+        <h2>Books (<span id="bookmakers-count">—</span>)</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>id</th>
+              <th>label</th>
+              <th>domain</th>
+              <th>fetcher</th>
+              <th>sports</th>
+              <th>regions</th>
+              <th>status</th>
+            </tr>
+          </thead>
+          <tbody id="bookmakers-body">
+            <tr>
+              <td colspan="7">loading…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
 
-      async function refresh() {
-        try {
-          const res = await fetch(REGISTRY_URL, { headers: { Accept: 'application/json' } });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const payload = await res.json();
-          await sportConceptIds(); // ensure chips are glossary-aware before render
-          render(payload);
-          bootGlossaryUx(); // bind tooltips / breadcrumbs on freshly rendered chips
-        } catch (err) {
-          metaEl.innerHTML = `<span class="state-err">load failed: ${escapeHtml(err.message)}</span>`;
-        }
-      }
+    <notification-center aria-live="polite"></notification-center>
 
-      refresh();
-      setInterval(refresh, POLL_INTERVAL_MS);
-    </script>
     <footer class="footer" data-portal-chrome="footer">
-    <p>
-      <strong>FactoryWager</strong> ·
-      <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
-      <a href="/portal/ops/">Ops</a> ·
-      <a href="/portal/toc/">TOC</a> ·
-      <a href="/portal/partners/">Partners</a> ·
-      <a href="/portal/tennis/">Tennis</a> ·
-      <a href="/portal/bookmakers/">Bookmakers</a> ·
-      <a href="/portal/packages/">Packages</a> ·
-      <a href="/portal/brands/">Brands</a> ·
-      <a href="/portal/glossary/">Glossary</a> ·
-      <a href="/portal/surfaces/">Surfaces</a> ·
-      <a href="/portal/health/">Health</a> ·
-      <a href="/registry/portal-weave.json">Portal proof</a> ·
-      <a href="/portal/compliance/">Compliance</a> ·
-      <a href="/portal/limits/">Limits</a> ·
-      <a href="/portal/dod/">DOD</a> ·
-      <a href="/portal/env/">Env</a> ·
-      <a href="/portal/vault/">Vault</a> ·
-      <a href="https://wiki.factory-wager.com/wiki-index.html" target="_blank" rel="noopener noreferrer">Wiki</a> ·
-      <a href="/registry/monorepo-health.json">Monorepo health</a> ·
-      <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
-    </p>
-    <p class="footer-meta">
-      project-R-score · chrome <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a>
-      · <span data-footer-bun></span>
-      · <span data-footer-ts>…</span>
-    </p>
-  </footer>
-  <script type="module" src="/portal/components/footer.js"></script>
-</body>
+      <p>
+        <strong>FactoryWager</strong> ·
+        <a href="/portal/ops/">Ops</a> ·
+        <a href="/portal/partners/">Partners</a> ·
+        <a href="/portal/limits/">Limits</a> ·
+        <a href="/portal/bookmakers/">Bookmakers</a> ·
+        <a href="/portal/dod/">DOD</a> ·
+        <a href="/portal/health/">Health</a> ·
+        <a href="/registry/bookmakers.json">bookmakers.json</a>
+      </p>
+      <p class="footer-meta">
+        project-R-score ·
+        <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a>
+        · <span data-footer-bun></span>
+        · <span data-footer-ts>…</span>
+      </p>
+    </footer>
+
+    <script type="module" src="/portal/data.js"></script>
+    <script type="module" src="/portal/topbar.js"></script>
+    <script type="module" src="/portal/bookmakers/bookmakers-board.js"></script>
+    <script type="module" src="/portal/components/sidebar.js"></script>
+    <script type="module" src="/portal/components/notification.js"></script>
+    <script type="module" src="/portal/components/footer.js"></script>
+  </body>
 </html>
