@@ -47,9 +47,13 @@ describe('pass-session (TS)', () => {
     expect(PASS_PAT_VAULT_MATRIX.factorywager.notes).toMatch(/Personal/i);
   });
 
-  test('defaultSshVaultForPat prefers factorywager for agent bots', () => {
+  test('defaultSshVaultForPat maps each agent PAT to its vault', () => {
     expect(defaultSshVaultForPat('factorywager-bot')).toBe('factorywager');
     expect(defaultSshVaultForPat(null)).toBe('factorywager');
+    expect(defaultSshVaultForPat('bet-ticker-bot')).toBe('bet-ticker');
+    expect(defaultSshVaultForPat('cascade-bot')).toBe('cascade-mover');
+    expect(defaultSshVaultForPat('kalshi-bot')).toBe('kalshi-bot');
+    expect(defaultSshVaultForPat('partners-bot')).toBe('partners');
     expect(defaultSshVaultForPat('agent-work')).toBe('Personal');
   });
 });

@@ -55,7 +55,7 @@ for arg in "$@"; do
       echo "  default   pass-cli run --env-file (official masking)"
       echo "  --inject  inject → source .env → exec (durable cache path)"
       echo "  --reasonix refresh ~/.reasonix/.env then run"
-      echo "  --ssh     load SSH keys from Personal vault before command"
+      echo "  --ssh     load SSH keys (default vault factorywager; override PASS_SSH_VAULT)"
       echo ""
       echo "Docs: https://protonpass.github.io/pass-cli/commands/contents/run/"
       exit 0

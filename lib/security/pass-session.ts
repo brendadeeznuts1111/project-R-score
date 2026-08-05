@@ -168,15 +168,21 @@ export async function probePassSession(opts?: { listVaults?: boolean }): Promise
   return { passCliPath, ready, patName, sessionHasLock, vaults };
 }
 
-/** Default SSH vault for agent PAT sessions (Personal is not visible to factorywager-bot). */
+/**
+ * Default SSH vault for a PAT session.
+ * Each agent PAT is vault-scoped — do not collapse bet-ticker/cascade onto factorywager.
+ * Monorepo operator scripts still default shell `pass_ssh_vault_default` → factorywager
+ * (SSH keys duplicated there for factorywager-bot).
+ */
 export function defaultSshVaultForPat(patName: string | null | undefined): string {
   if (!patName || patName === 'N/A') return 'factorywager';
-  if (
-    patName.includes('factorywager') ||
-    patName.includes('bet-ticker') ||
-    patName.includes('cascade')
-  ) {
-    return 'factorywager';
-  }
+  const n = patName.toLowerCase();
+  if (n.includes('factorywager')) return 'factorywager';
+  if (n.includes('bet-ticker') || n.includes('betticker')) return 'bet-ticker';
+  if (n.includes('cascade')) return 'cascade-mover';
+  if (n.includes('kalshi')) return 'kalshi-bot';
+  if (n.includes('partner')) return 'partners';
+  if (n.includes('cloudflare')) return 'factorywager';
+  // Interactive / Personal PAT names (e.g. agent-work)
   return 'Personal';
 }

@@ -120,16 +120,21 @@ echo "   Key provider: $PROTON_PASS_KEY_PROVIDER (PASS_USE_KEYRING=1 for OS keyr
 if pass_session_ready; then
   _pat_name="$(pass_session_pat_name)"
   echo "   Personal Access Token: ${_pat_name:-unknown}"
-  unset _pat_name
-else
-  if ! pass-cli --version >/dev/null 2>&1; then
-    echo "⚠️  pass-cli not executable here (often Killed:9 / exit 137)"
-    echo "   Use Terminal.app for pass-cli, or: bun run vault:gap:mint-local"
-  else
-    echo "⚠️  Session not ready (pass-cli info --output json missing personal_access_token_name)"
-    echo "   Recovery: pass-cli logout --force; rm -rf \"\$PROTON_PASS_SESSION_DIR\"; re-source this script"
-    echo "   Docs: https://protonpass.github.io/pass-cli/help/troubleshoot/"
-    echo "   Note: pass-cli test alone is connectivity — not session proof"
-  fi
+  unset _pat_name _pass_project
+  return 0
 fi
+
+# Soft-degrade only when the binary cannot run (SIGKILL / sandbox). Otherwise fail hard.
+if ! pass-cli --version >/dev/null 2>&1; then
+  echo "⚠️  pass-cli not executable here (often Killed:9 / exit 137)"
+  echo "   Use Terminal.app for pass-cli, or: bun run vault:gap:mint-local"
+  unset _pass_project
+  return 0
+fi
+
+echo "❌ Session not ready (pass-cli info --output json missing personal_access_token_name)"
+echo "   Recovery: pass-cli logout --force; rm -rf \"\$PROTON_PASS_SESSION_DIR\"; re-source this script"
+echo "   Docs: https://protonpass.github.io/pass-cli/help/troubleshoot/"
+echo "   Note: pass-cli test alone is connectivity — not session proof"
 unset _pass_project
+return 1

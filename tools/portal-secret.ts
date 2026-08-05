@@ -28,6 +28,7 @@
  *   bun tools/portal-cli.ts secret get 'pass://factorywager/Cloudflare API Token/password'
  *   bun run portal:secret autofill --vault factorywager -- bun run cloudflare:env:validate
  */
+import { unlinkSync } from 'node:fs';
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 import { safeJsonParse } from '../lib/core/index.ts';
@@ -742,6 +743,17 @@ async function cmdRun(rest: string[]): Promise<void> {
   const envIdx = before.findIndex(a => a === '--env-file' || a === '-e');
   let cleanup: string | null = null;
   const runBefore = [...before];
+  // Bun's process.exit skips `finally` — always unlink before exit.
+  const removeCleanup = (): void => {
+    if (!cleanup) return;
+    try {
+      unlinkSync(cleanup);
+    } catch {
+      /* ignore */
+    }
+    cleanup = null;
+  };
+
   if (envIdx >= 0 && before[envIdx + 1]) {
     const src = before[envIdx + 1]!;
     const file = Bun.file(src);
@@ -750,7 +762,6 @@ async function cmdRun(rest: string[]): Promise<void> {
       if (text.includes('{{') && text.includes('pass://')) {
         const tmp = `${Bun.env.TMPDIR ?? '/tmp'}/fw-portal-run-${process.pid}.env`;
         await Bun.write(tmp, templateToRunEnv(text));
-        // Best-effort 0600
         try {
           await Bun.spawn(['chmod', '600', tmp]).exited;
         } catch {
@@ -764,29 +775,15 @@ async function cmdRun(rest: string[]): Promise<void> {
 
   const ready = await probePassSession();
   if (!ready.ready) {
-    if (cleanup)
-      await Bun.file(cleanup)
-        .exists()
-        .then(e => e && Bun.write(cleanup!, ''))
-        .catch(() => {});
+    removeCleanup();
     cliError(
       'Pass session not ready — source scripts/agent-env.sh factorywager (info --output json)'
     );
   }
 
-  try {
-    const code = await runPassCli(['run', ...runBefore, '--', ...after], 'run');
-    process.exit(code);
-  } finally {
-    if (cleanup) {
-      try {
-        const { unlinkSync } = await import('node:fs');
-        unlinkSync(cleanup);
-      } catch {
-        /* ignore */
-      }
-    }
-  }
+  const code = await runPassCli(['run', ...runBefore, '--', ...after], 'run');
+  removeCleanup();
+  process.exit(code);
 }
 
 async function cmdInject(rest: string[]): Promise<void> {
