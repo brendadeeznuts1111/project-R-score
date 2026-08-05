@@ -19,7 +19,11 @@
       "checks": [
         { "path": "/api/version", "expect": "json" },
         { "path": "/api/glossary", "expect": "json" },
-        { "path": "/api/v1/marketdata/desk", "expect": "fail-closed" }
+        { "path": "/api/v1/marketdata/desk", "expect": "bearer-auth" },
+        { "path": "/api/v1/research/status", "expect": "bearer-auth" },
+        { "path": "/api/v1/trading/executions", "expect": "bearer-auth" },
+        { "path": "/api/v1/partners/capacity", "expect": "bearer-auth" },
+        { "path": "/api/v1/accounting/finance", "expect": "bearer-auth" }
       ]
     },
     {
