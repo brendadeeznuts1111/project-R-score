@@ -13,6 +13,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 
 import { joinPath } from '../path-bun.ts';
+import { parseSportsbookId, trySportsbookId, type SportsbookId } from '../types/branded.ts';
 import { bookmakerHost, type BookmakerRegistryEntry } from './resolve.ts';
 
 export type LiquidityTier = 'high' | 'medium' | 'low' | 'illiquid' | 'unknown';
@@ -26,7 +27,7 @@ export type PartnerHealthStatus =
   | 'deferred';
 
 export type MergedPartnerHealth = {
-  id: string; // brand-ok — sportsbook id/slug
+  id: SportsbookId;
   label: string;
   status: PartnerHealthStatus;
   balance: number | null;
@@ -56,7 +57,7 @@ export type MergedRegistry = {
   };
   health: MergedPartnerHealth[];
   /** host (no www) → bookmaker id */
-  hostIndex: Record<string, string>;
+  hostIndex: Record<string, SportsbookId>;
 };
 
 /**
@@ -99,13 +100,20 @@ type OpsOut = {
   status?: string;
   incomplete?: boolean;
   maxBet?: string | number;
-  book?: { id?: string; slug?: string; name?: string };
+  /** Raw baked-registry fields; parsed once by parseOpsSportsbookId. */
+  book?: { id?: unknown; slug?: unknown; name?: string };
 };
 
 type OpsPartner = {
   code?: string;
   outs?: OpsOut[];
 };
+
+function parseOpsSportsbookId(book: OpsOut['book']): SportsbookId | undefined {
+  const rawSlug = typeof book?.slug === 'string' ? book.slug : undefined;
+  const rawId = typeof book?.id === 'string' ? book.id.replace(/^book-/, '') : undefined;
+  return trySportsbookId(rawSlug || rawId);
+}
 
 function deriveStatus(args: { outsReady: number; outsTotal: number }): PartnerHealthStatus {
   if (args.outsTotal === 0) {
@@ -127,26 +135,25 @@ export function mergeBookmakersWithOps(
   opts?: { now?: string }
 ): MergedRegistry {
   const generatedAt = opts?.now ?? new Date().toISOString();
-  const outsByBookSlug = new Map<string, { ready: number; total: number }>();
+  const outsByBookSlug = new Map<SportsbookId, { ready: number; total: number }>();
 
   for (const partner of partnersOps?.partners ?? []) {
     for (const out of partner.outs ?? []) {
-      const slug = out.book?.slug || out.book?.id?.replace(/^book-/, '') || '';
+      const slug = parseOpsSportsbookId(out.book);
       if (!slug) continue;
-      const key = slug.toLowerCase();
-      const cur = outsByBookSlug.get(key) ?? { ready: 0, total: 0 };
+      const cur = outsByBookSlug.get(slug) ?? { ready: 0, total: 0 };
       cur.total += 1;
       const st = String(out.status ?? '').toLowerCase();
       if (st === 'ready' || st === 'active' || st === 'warmed') cur.ready += 1;
-      outsByBookSlug.set(key, cur);
+      outsByBookSlug.set(slug, cur);
     }
   }
 
   const health: MergedPartnerHealth[] = [];
-  const hostIndex: Record<string, string> = {};
+  const hostIndex: Record<string, SportsbookId> = {};
 
   for (const [key, entry] of Object.entries(bookmakers)) {
-    const id = String(entry.id || key);
+    const id = parseSportsbookId(entry.id || key);
     const limits = (entry as { limits?: Record<string, unknown> }).limits ?? {};
     const liquidityTier = parseLiquidity(limits.liquidityTier);
     const maxBetUsd =
@@ -162,9 +169,8 @@ export function mergeBookmakersWithOps(
           ? null
           : Number(limits.minBetUsd);
 
-    const slug = String(entry.slug || id).toLowerCase();
-    const outs = outsByBookSlug.get(slug) ??
-      outsByBookSlug.get(id.toLowerCase()) ?? { ready: 0, total: 0 };
+    const slug = parseSportsbookId(entry.slug || id);
+    const outs = outsByBookSlug.get(slug) ?? outsByBookSlug.get(id) ?? { ready: 0, total: 0 };
 
     const status = deriveStatus({
       outsReady: outs.ready,
@@ -254,9 +260,9 @@ export async function loadMergedRegistry(
 
 /** Join an odds host string to merged partner id via hostIndex. */
 export function resolvePartnerForHost(
-  hostIndex: Record<string, string>,
+  hostIndex: Record<string, SportsbookId>,
   host: string
-): string | undefined {
+): SportsbookId | undefined {
   const raw =
     host
       .trim()
