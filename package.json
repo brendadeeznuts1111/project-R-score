@@ -1939,7 +1939,7 @@
     "glossary:portal:check": "bun tools/domain-glossary.ts --check",
     "concept:registry:serve": "bun scripts/concept-registry-serve.ts",
     "concept:registry:migrate": "bun scripts/concept-registry-migrate.ts",
-    "concept:registry:sync": "bun scripts/concept-registry-sync.ts",
+    "concept:registry:usage-sync": "bun scripts/concept-registry-sync.ts",
     "concept:registry:graph": "bun scripts/concept-registry-graph.ts",
     "glossary:verify": "bun tools/glossary-verify.ts",
     "glossary:verify:json": "bun tools/glossary-verify.ts --json",
