@@ -55,7 +55,7 @@ import {
   loadSeatCapitalDeskSummarySlice,
   type SeatCapitalDeskSummarySlice,
 } from '../telegram/seat-desk-snapshot.ts';
-import { asTreeNodeId } from '../types/branded.ts';
+import { asTreeNodeId, parseTreeNodeId, type TreeNodeId } from '../types/branded.ts';
 import { buildLimitPatternSnapshot, type LimitPatternSnapshot } from './limit-patterns.ts';
 
 export type OpsSummaryExpert = {
@@ -257,7 +257,7 @@ export type OpsSummaryBunBrandMap = BunBrandMapOpsSlice;
 
 /** Per-node position row for the ops liquidity panel. */
 export type OpsSummaryLiquidityPosition = {
-  nodeId: string; // brand-ok — tree_nodes.id on wire DTO
+  nodeId: TreeNodeId;
   name: string;
   type: string;
   book: string;
@@ -1031,7 +1031,7 @@ export function buildLiquiditySummary(
          LIMIT $limit`
       )
       .all({ $limit: topLimit }) as Array<{
-      nodeId: string;
+      nodeId: unknown;
       book: string;
       deposited: number;
       available: number;
@@ -1041,16 +1041,19 @@ export function buildLiquiditySummary(
       type: string;
     }>;
 
-    topPositions = rows.map(r => ({
-      nodeId: r.nodeId,
-      name: r.name || r.nodeId,
-      type: r.type || 'unknown',
-      book: r.book || '_all',
-      deposited: Number(r.deposited) || 0,
-      available: Number(r.available) || 0,
-      inPlay: Number(r.inPlay) || 0,
-      lastReconciled: r.lastReconciled ?? null,
-    }));
+    topPositions = rows.map(r => {
+      const nodeId = parseTreeNodeId(r.nodeId);
+      return {
+        nodeId,
+        name: r.name || nodeId,
+        type: r.type || 'unknown',
+        book: r.book || '_all',
+        deposited: Number(r.deposited) || 0,
+        available: Number(r.available) || 0,
+        inPlay: Number(r.inPlay) || 0,
+        lastReconciled: r.lastReconciled ?? null,
+      };
+    });
   } catch {
     /* positions / tree_nodes missing */
   }
