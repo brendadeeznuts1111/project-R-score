@@ -142,7 +142,17 @@ async function main(): Promise<void> {
 
   for (const file of files) {
     try {
-      const content = await Bun.file(file).text();
+      const handle = Bun.file(file);
+      if (!(await handle.exists())) {
+        console.error(`\n❌ ${file}`);
+        console.error(
+          `  🔴 missing STRICT inventory path — remove from STRICT_INVENTORY or restore the file`
+        );
+        totalViolations++;
+        totalErrors++;
+        continue;
+      }
+      const content = await handle.text();
       const result = checkBunFirstCompliance(content, file);
 
       if (!result.valid) {
@@ -160,7 +170,9 @@ async function main(): Promise<void> {
         console.info(`✅ ${file} - No violations`);
       }
     } catch (error) {
-      console.error(`❌ Error reading ${file}:`, error);
+      console.error(`❌ Error reading ${file}:`, error instanceof Error ? error.message : error);
+      totalViolations++;
+      totalErrors++;
     }
   }
 
