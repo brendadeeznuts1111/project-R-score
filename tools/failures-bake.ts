@@ -30,8 +30,10 @@ const NO_FAIL = Bun.argv.includes('--no-fail');
 /** Export for unit coverage of the stale-board template. */
 export function renderHtml(report: TestFailuresReport): string {
   const t = report.totals;
-  const stat = (k: string, v: string | number, cls = '') =>
-    `<div class="tf-stat ${cls}"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  const gateCls = t.failures ? 'fail' : 'pass';
+  const gateLabel = t.failures ? `${t.failures} failing` : 'healthy';
+  const stat = (k: string, v: string | number, cls = 'muted') =>
+    `<div class="portal-stat ${cls}"><div class="k">${k}</div><div class="v">${v}</div></div>`;
   const rows = report.failures.length
     ? report.failures
         .map(
@@ -64,15 +66,6 @@ export function renderHtml(report: TestFailuresReport): string {
   <link rel="stylesheet" href="/portal/style.css" />
   <script type="application/json" id="test-failures-embed">${JSON.stringify(report)}</script>
   <style>
-    .tf-wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px 48px; }
-    .tf-stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin: 16px 0 20px; }
-    .tf-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
-    .tf-stat .k { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
-    .tf-stat .v { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; }
-    .tf-stat.bad .v { color: var(--red, #f85149); }
-    .tf-stat.ok .v { color: var(--green, #3fb950); }
-    .tf-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 16px; }
-    .tf-panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin: 0 0 12px; }
     .tf-stale { background: rgba(248,81,73,.08); border: 1px solid var(--red, #f85149); color: var(--red, #f85149); border-radius: var(--radius); padding: 10px 14px; margin: 0 0 16px; font-size: 12px; line-height: 1.5; }
     .tf-stale strong { font-weight: 650; }
     .tf-table { width: 100%; border-collapse: collapse; font-size: 12px; }
@@ -82,6 +75,8 @@ export function renderHtml(report: TestFailuresReport): string {
     .tf-table td.ok { color: var(--green, #3fb950); }
     .tf-table td.replay code { font-size: 11px; color: var(--text-dim); }
     .dim { color: var(--text-dim); font-size: 11px; }
+    .portal-stat { cursor: default; }
+    .portal-stat:hover { transform: none; box-shadow: none; }
   </style>
 </head>
 <body>
@@ -97,22 +92,44 @@ export function renderHtml(report: TestFailuresReport): string {
       <nav class="topbar-nav" aria-label="Primary"></nav>
     </div>
   </header>
-  <main class="tf-wrap">
+  <main class="portal-page">
     <div id="tf-stale-banner" class="tf-stale" hidden></div>
-    <p class="dim">Latest JUnit results (${escapeHtml(report.sources.join(', '))}) · suite ${escapeHtml(sourceAt)} · baked ${escapeHtml(report.generatedAt)} · <code>bun run failures:bake</code></p>
-    <div class="tf-stats">
+    <section class="portal-hero portal-hero--card" aria-labelledby="tf-hero-title">
+      <p class="portal-eyebrow">JUnit · replay commands</p>
+      <h2 id="tf-hero-title">Test failures board</h2>
+      <p class="hero-sub">
+        Latest suite totals with per-failure <code>bun test</code> replay lines.
+        Refresh via <code>bun run failures:bake</code> after a JUnit run.
+      </p>
+      <div class="portal-hero-meta">
+        <span class="portal-gate ${gateCls}" aria-live="polite"><span class="dot" aria-hidden="true"></span>${gateLabel}</span>
+        <span class="portal-baked">suite ${escapeHtml(sourceAt)} · baked ${escapeHtml(report.generatedAt)}</span>
+        <div class="portal-source-links" aria-label="Related artifacts">
+          <a href="/registry/failures.json">failures.json</a>
+          <a href="/portal/doctor/">doctor</a>
+          <a href="/portal/health/">health</a>
+        </div>
+      </div>
+    </section>
+    <p class="dim">Sources: ${escapeHtml(report.sources.join(', '))}</p>
+    <div class="portal-stat-grid" aria-label="Failures summary">
       ${stat('Tests', t.tests)}
       ${stat('Failures', t.failures, t.failures ? 'bad' : 'ok')}
       ${stat('Skipped', t.skipped)}
       ${stat('Time (s)', t.timeSeconds)}
     </div>
-    <div class="tf-panel">
-      <h2>Failing tests &amp; dev replay</h2>
+    <section class="portal-panel" aria-labelledby="tf-fail-title">
+      <div class="portal-panel-head">
+        <div>
+          <h2 id="tf-fail-title">Failing tests &amp; dev replay</h2>
+          <p class="portal-panel-desc">Copy the replay line into a local shell to reproduce.</p>
+        </div>
+      </div>
       <table class="tf-table">
         <thead><tr><th>File</th><th>Test</th><th>Error</th><th>Replay</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
-    </div>
+    </section>
     <p class="dim">Reproduce: <code>bun test &lt;file&gt;</code> · pinpoint: <code>--test-name-pattern "&lt;name&gt;"</code> · refresh board: run the suite with <code>--reporter=junit --reporter-outfile=tmp/junit.xml</code> then <code>bun run failures:bake</code>.</p>
   </main>
   <script type="module" src="/portal/data.js"></script>

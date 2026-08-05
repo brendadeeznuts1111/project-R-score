@@ -373,12 +373,14 @@ export function renderInstallHygieneReport(report) {
 
   const { tone, label, reasons } = toneFromReport(report);
   const badgeTone = toneClass(tone);
-  toneEl.textContent = label;
-  toneEl.className = `doc-badge ${badgeTone}`;
+  const portalTone =
+    badgeTone === 'green' ? 'ok' : badgeTone === 'yellow' ? 'warn' : badgeTone === 'red' ? 'bad' : 'muted';
+  toneEl.innerHTML = `<span class="dot" aria-hidden="true"></span>${esc(label)}`;
+  toneEl.className = `portal-gate ${portalTone}`;
   toneEl.dataset.tone = badgeTone;
   if (shell) {
     shell.dataset.tone = badgeTone;
-    shell.className = `doc-wrap ih-shell ih-shell--${badgeTone}`;
+    shell.className = `portal-page doc-wrap ih-shell ih-shell--${badgeTone}`;
   }
 
   if (sourceEl && report && typeof report === 'object' && '_source' in report) {
@@ -463,10 +465,17 @@ export function renderInstallHygieneReport(report) {
 
   if (stats) {
     stats.innerHTML = buildStatRows(report)
-      .map(
-        row =>
-          `<div class="doc-stat doc-stat--${row.tone}" data-tone="${row.tone}"><div class="k">${esc(row.k)}</div><div class="v">${esc(row.v)}</div></div>`
-      )
+      .map(row => {
+        const cls =
+          row.tone === 'green'
+            ? 'ok'
+            : row.tone === 'yellow'
+              ? 'warn'
+              : row.tone === 'red'
+                ? 'bad'
+                : 'muted';
+        return `<div class="portal-stat ${cls}" data-tone="${row.tone}"><div class="k">${esc(row.k)}</div><div class="v">${esc(row.v)}</div></div>`;
+      })
       .join('');
   }
 
