@@ -4,6 +4,7 @@ import {
   NAMING_CLUSTERS,
   reportPasses,
   runReferenceDiscovery,
+  similarEnvRepair,
 } from '../lib/reference-discovery.ts';
 
 describe('reference-discovery', () => {
@@ -16,6 +17,17 @@ describe('reference-discovery', () => {
     const ids = NAMING_CLUSTERS.map(c => c.id);
     expect(ids).toContain('registry-plane');
     expect(ids).toContain('pages-plane');
+  });
+
+  test('similarEnvRepair is context-aware (not R2-only boilerplate)', () => {
+    expect(similarEnvRepair('R2_BUCKET', 'S3_BUCKET')).toContain('r2-env.ts');
+    expect(similarEnvRepair('CONCEPT_GRAPH_FOCUS', 'CONCEPT_GRAPH_FORMAT')).toContain(
+      'concept CLI'
+    );
+    expect(similarEnvRepair('TELEGRAM_BOT_FACTORY', 'TELEGRAM_OPS_CHAT_ID')).toContain(
+      'Telegram'
+    );
+    expect(similarEnvRepair('FOO_BAR', 'FOO_BAZ')).toContain('isAllowedSimilarEnvPair');
   });
 
   test(

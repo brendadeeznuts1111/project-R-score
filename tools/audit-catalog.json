@@ -1,20 +1,20 @@
 {
-  "generated": "2026-07-22T12:02:14.208Z",
+  "generated": "2026-08-05T18:05:14.070Z",
   "bunVersion": "1.4.0",
   "count": 4,
   "conceptCount": 5,
   "byStatus": {
-    "confirmed": 1,
+    "confirmed": 4,
     "mitigated": 0,
-    "open": 3
+    "open": 0
   },
   "findings": [
     {
       "id": "kalshi-repo-octagonai-kalshi-trading-bot-cli",
       "kind": "AuditFinding",
       "title": "Kalshi bot candidate: OctagonAI/kalshi-trading-bot-cli",
-      "description": "Quality score 84.75/100. Strategy: market_making, sports, news_event, momentum, llm_ensemble. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox. Missing test coverage on extracted paths.",
-      "status": "open",
+      "description": "Quality score 84.75/100. Strategy: market_making, sports, news_event, momentum, llm_ensemble. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox. Missing test coverage on extracted paths. Triaged 2026-08-05 audit-gap batch: confirmed as high-value shortlist candidate under kalshi-shortlist-diversity (lift signing/execution modules separately; do not wholesale-vend).",
+      "status": "confirmed",
       "publishedAt": "2026-07-22",
       "evidence": {
         "path": "tools/audit-evidence/kalshi/octagonai__kalshi-trading-bot-cli.ndjson",
@@ -41,8 +41,8 @@
       "id": "kalshi-repo-openfi-dao-kalshi-trading-bot",
       "kind": "AuditFinding",
       "title": "Kalshi bot candidate: openfi-dao/kalshi-trading-bot",
-      "description": "Quality score 67.5/100. Strategy: news_event, llm_ensemble. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox.  Watchlist tier — below high-value export threshold; verify before lift.",
-      "status": "open",
+      "description": "Quality score 67.5/100. Strategy: news_event, llm_ensemble. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox. Watchlist tier — below high-value export threshold; verify before lift. Triaged 2026-08-05 audit-gap batch: confirmed as watchlist (not high-value export); keep under kalshi-shortlist-diversity until re-score.",
+      "status": "confirmed",
       "publishedAt": "2026-07-22",
       "evidence": {
         "path": "tools/audit-evidence/kalshi/openfi-dao__kalshi-trading-bot.ndjson",
@@ -69,8 +69,8 @@
       "id": "kalshi-repo-richardfeynmanenthusiast-kalshi-polymarket-arbitrage-bot",
       "kind": "AuditFinding",
       "title": "Kalshi bot candidate: RichardFeynmanEnthusiast/kalshi-polymarket-arbitrage-bot",
-      "description": "Quality score 69.5/100. Strategy: market_making, arb, news_event. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox.  Watchlist tier — below high-value export threshold; verify before lift.",
-      "status": "open",
+      "description": "Quality score 69.5/100. Strategy: market_making, arb, news_event. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox. Watchlist tier — below high-value export threshold; verify before lift. Triaged 2026-08-05 audit-gap batch: confirmed as watchlist arb/market_making diversity row; re-score before any module lift.",
+      "status": "confirmed",
       "publishedAt": "2026-07-22",
       "evidence": {
         "path": "tools/audit-evidence/kalshi/richardfeynmanenthusiast__kalshi-polymarket-arbitrage-bot.ndjson",
