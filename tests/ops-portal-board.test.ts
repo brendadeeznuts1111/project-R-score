@@ -17,14 +17,14 @@ describe('ops portal board', () => {
     expect(html.match(/\/portal\/components\/notification\.js/g)).toHaveLength(1);
   });
 
-  test('dashboard prioritizes partner desk pulse and loop outbox', async () => {
+  test('dashboard prioritizes partner desk and loop outbox', async () => {
     const js = await Bun.file(DASH).text();
     expect(js).toContain('id="ops-partner-desk"');
-    expect(js).toContain('Partner desk pulse');
+    expect(js).toContain('Partner Desk');
     expect(js).toContain('ops-desk-metrics');
     expect(js).toContain('Outbox pending');
     expect(js).toContain('id="loop-grid"');
-    expect(js).toContain("['Desk', 'ops-partner-desk']");
+    expect(js).toContain("['Partner Desk', 'ops-partner-desk']");
     expect(js).toContain("['Handshake', 'telegram-handshake']");
     // Partner domain panels appear before monorepo health harness block
     const desk = js.indexOf('id="ops-partner-desk"');
@@ -52,5 +52,16 @@ describe('ops portal board', () => {
     expect(liveProofs).toBeGreaterThan(liveRender);
     expect(snapshotRender).toBeGreaterThan(snapshotSummary);
     expect(snapshotProofs).toBeGreaterThan(snapshotRender);
+  });
+
+  test('board renders a persistent section rail with scroll-spy + hash sync', async () => {
+    const js = await Bun.file(DASH).text();
+    expect(js).toContain('id="ops-sidebar"');
+    expect(js).toContain('ops-sidebar-label');
+    expect(js).toContain('data-section=');
+    expect(js).toContain("['Brand Alignment', 'bun-brand-alignment-panel']");
+    expect(js).toContain("['Rails', 'ops-rails']");
+    expect(js).toContain('history.replaceState');
+    expect(js).toContain('getBoundingClientRect');
   });
 });
