@@ -34,6 +34,7 @@ Projects/
 ├── wiki-index.md            # Wiki full navigation (portal · registry · tenants)
 ├── registry-index.md        # Registry bake index (portal consumers)
 ├── archive/                 # Frozen local experiments (gitignored entire tree)
+├── artifact-registry/       # Versioned public/ops artifact split (ops never deploys to Pages)
 ├── artifacts/               # Releases + local reports (reports/ largely ignored)
 │   ├── browser/             # Local browser exports (gitignored)
 │   └── snapshots/           # Portal data-plane snapshots (gitignored)
