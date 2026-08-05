@@ -14,9 +14,10 @@ Canonical docs: **[protonpass.github.io/pass-cli](https://protonpass.github.io/p
 | `pass://vault/item/field` URIs | [Secret references](https://protonpass.github.io/pass-cli/commands/contents/secret-references/) |
 | Resolve env + exec | [`run`](https://protonpass.github.io/pass-cli/commands/contents/run/) — bare `pass://` |
 | Template → file | [`inject`](https://protonpass.github.io/pass-cli/commands/contents/inject/) — `{{ pass://… }}` |
-| Session status | [`info`](https://protonpass.github.io/pass-cli/commands/info/) · [`test`](https://protonpass.github.io/pass-cli/commands/test/) |
+| Session status | [`info`](https://protonpass.github.io/pass-cli/commands/info/) (`--output json`) · [`test`](https://protonpass.github.io/pass-cli/commands/test/) (connectivity only) |
 | Vaults / items | [`vault`](https://protonpass.github.io/pass-cli/commands/vault/) · [`item`](https://protonpass.github.io/pass-cli/commands/item/) |
-| Troubleshoot | [Troubleshoot](https://protonpass.github.io/pass-cli/help/troubleshoot/) · [Configuration](https://protonpass.github.io/pass-cli/get-started/configuration/) (`PROTON_PASS_KEY_PROVIDER`, session dir) |
+| SSH agent | [`ssh-agent`](https://protonpass.github.io/pass-cli/) `start` · `load` · `debug` · `daemon` — `bun run proton:ssh:doctor` |
+| Troubleshoot | [Troubleshoot](https://protonpass.github.io/pass-cli/help/troubleshoot/) · [Configuration](https://protonpass.github.io/pass-cli/get-started/configuration/) (`PROTON_PASS_KEY_PROVIDER`, `PROTON_PASS_SESSION_DIR`, `PASS_LOG_LEVEL`) |
 
 This monorepo prefers **`inject`** → project `.env` (see below). Sibling Kalshi-bot prefers **`run`** + `.env.protonpass` — see [`Kalshi-bot/docs/PROTONPASS.md`](../../../Kalshi-bot/docs/PROTONPASS.md).
 
@@ -24,13 +25,24 @@ This monorepo prefers **`inject`** → project `.env` (see below). Sibling Kalsh
 
 | Vault | Purpose | Items | Agent PAT (`.env.pass-tokens`) |
 |-------|---------|-------|--------------------------------|
-| **Personal** | Personal SSH key | `id_ed25519 (dev)` | `agent-work` |
-| **factorywager** | Monorepo deploy + CF + Telegram (factory bot) | R2, Registry, **Cloudflare API Token**, Telegram bot/webhook, emails | `PROTON_PASS_FACTORYWAGER_TOKEN` → `factorywager-bot` |
+| **Personal** | Personal SSH key | `id_ed25519 (dev)` | `agent-work` (not factorywager-bot) |
+| **factorywager** | Monorepo deploy + CF + Telegram + agent SSH keys | R2, Registry, **Cloudflare API Token**, Telegram, SSH copies | `PROTON_PASS_FACTORYWAGER_TOKEN` → `factorywager-bot` |
 | **bet-ticker** | bet-ticker-worker secrets | VPS key, R2, Token, login | `PROTON_PASS_BET_TICKER_TOKEN` |
 | **cascade-mover** | Cascade mover secrets | SSH key, Server config | `PROTON_PASS_CASCADE_TOKEN` |
 | **cloudflare** | Optional CF-scoped agent session | (agent-only) | `PROTON_PASS_CLOUDFLARE_TOKEN` |
 
-> **Note:** `factorywager-bot` only sees the **factorywager** vault. Root `env.template` therefore uses `pass://factorywager/...` for Telegram as well as CF/R2 (not a separate `tenants` vault name the agent cannot open).
+> **Note:** `factorywager-bot` only sees the **factorywager** vault (`pass-cli vault list`). Root `env.template` therefore uses `pass://factorywager/...`. Machine matrix: [`lib/security/pass-session.ts`](../../../lib/security/pass-session.ts) `PASS_PAT_VAULT_MATRIX`.
+
+### Operator loop (doc-grounded)
+
+```bash
+bun run proton:session:migrate     # wipe /tmp sessions → ~/.factorywager/pass-sessions + daemon heal
+bun run proton:session:ready       # portal secret ready — info JSON + vault list
+bun run proton:check               # inject proof
+bun run proton:run -- factorywager -- bun run cloudflare:env:validate   # official run (masked)
+bun run proton:ssh:doctor          # daemon heal + debug + ssh-add -L
+bun run vault:health:bake          # live title/state board
+```
 
 ### Cloudflare API token (canonical ref)
 
@@ -65,8 +77,8 @@ pass://factorywager/Socket API Key/password
 |-------|---------|-------------------------|------|
 | **Gate (CI)** | `bun test tests/vault-health.test.ts` · `portal-cli vault health` | No | Report-shape + **env→vault inventory** snapshot SSOT in git (`tests/__snapshots__/vault-health.test.ts.snap`). Harness Gates step. |
 | **Intentional drift** | `portal-cli vault health --update` | No | Refresh inventory/shape snaps after you move/rename a mapped item; commit the `.snap`. |
-| **Live bake** | `bun run vault:health:bake` | Yes (agent session) | Cross-check live Proton Pass titles/states vs map; exit 1 on trashed/missing refs (purge risk). |
-| **Dashboard** | `/portal/vault/` · `public/registry/vault-health.json` | — | Visual summary of the last bake — not the gate. |
+| **Live bake** | `bun run vault:health:bake` | Yes (agent session) | Cross-check live Proton Pass titles/states vs map; exit 1 on trashed/missing refs **or** `item list` failure (fail-closed — never treat list failure as empty vault). |
+| **Dashboard** | `/portal/vault/` · `public/registry/vault-health.json` | — | Visual summary of the last bake — not the gate. Doctor warns when the bake is **>48h** stale. |
 | **CLI hub** | `/portal/tools/` · `portal-cli dashboard` | No | Command → board matrix, bake freshness, capability subset, copy-CLI. Nav badges from registry JSON (no pass-cli in browser). |
 
 ```bash
@@ -81,7 +93,46 @@ source scripts/agent-env.sh factorywager && bun run vault:health:bake
 
 Engine: [`lib/security/vault-health.ts`](../../../lib/security/vault-health.ts) · bake: [`tools/vault-health-bake.ts`](../../../tools/vault-health-bake.ts) · resolve: [`tools/vault-resolver.ts`](../../../tools/vault-resolver.ts). Portal nav: `/portal/vault/` (weave surface `vault`) · tools hub: [`public/portal/tools/`](../../../public/portal/tools/) · badges: [`public/portal/nav-badges.js`](../../../public/portal/nav-badges.js).
 
-If pass-cli reports a corrupted local DB: `pass-cli logout --force` then re-login / re-run `source scripts/agent-env.sh factorywager`.
+### Session storage + readiness (official CLI)
+
+Grounded in [Configuration](https://protonpass.github.io/pass-cli/get-started/configuration/), [`info`](https://protonpass.github.io/pass-cli/commands/info/), [`test`](https://protonpass.github.io/pass-cli/commands/test/), [Troubleshoot](https://protonpass.github.io/pass-cli/help/troubleshoot/).
+
+| Concern | Official default | FactoryWager agent path |
+|---------|------------------|-------------------------|
+| Session dir | `~/Library/Application Support/proton-pass-cli/.session/` (macOS) | `~/.factorywager/pass-sessions/<project>/` via `PROTON_PASS_SESSION_DIR` (stable; not `/tmp`) |
+| Key provider | OS **keyring** | **`fs`** for multi-PAT isolation (`local.key` beside session). Opt into keyring: `PASS_USE_KEYRING=1` |
+| Session proof | `pass-cli info` / `info --output json` (`personal_access_token_name`) | Required by `agent-env.sh` — **`test` is connectivity only** |
+| PAT login | `PROTON_PASS_PERSONAL_ACCESS_TOKEN=pst_…::TOKENKEY pass-cli login` | `.env.pass-tokens` → `agent-env.sh` |
+
+Helpers: [`scripts/lib/pass-session.sh`](../../../scripts/lib/pass-session.sh) (`pass_session_ready`, `pass_template_to_run_env`).
+
+### Session recovery (corrupt / missing / zsh)
+
+`pass-cli` stores an encrypted session under `$PROTON_PASS_SESSION_DIR/.session/` (binary `session.json` is normal — not UTF-8 JSON). Failures look like `non-existent session`, `Error serializing auth`, or `Error opening temp session file`.
+
+```bash
+source scripts/agent-env.sh factorywager   # zsh-safe; sets SESSION_DIR + KEY_PROVIDER
+pass-cli logout --force || true
+rm -rf "$PROTON_PASS_SESSION_DIR"
+unset PROTON_PASS_SESSION_DIR              # let agent-env recompute stable path
+source scripts/agent-env.sh factorywager
+pass-cli info --output json                # must include personal_access_token_name
+pass-cli test                              # connectivity only — secondary
+```
+
+Legacy `/tmp/pass-agent-*` sessions are obsolete — wipe them if present.
+
+**zsh note:** `scripts/agent-env.sh` must resolve its own path under zsh (`BASH_SOURCE` is empty when sourced). If you see `No Proton Pass agent PAT` despite a valid `.env.pass-tokens`, you are on a broken path resolver — update/re-source the script (or `bash -c 'source scripts/agent-env.sh factorywager'`).
+
+### Run vs inject (official)
+
+| Path | Command | When |
+|------|---------|------|
+| **One-shot (preferred)** | `bun run proton:run -- factorywager -- <cmd>` → `pass-cli run --env-file` ([run](https://protonpass.github.io/pass-cli/commands/contents/run/)) | Masked child env; no parent-shell secrets |
+| **Durable cache** | `bun run proton:inject:factorywager[:reasonix]` → `pass-cli inject` ([inject](https://protonpass.github.io/pass-cli/commands/contents/inject/)) | `.env` / `~/.reasonix/.env` for MCP / tools that read files |
+| **Force inject+source** | `proton-run … --inject -- <cmd>` | Escape hatch only |
+
+`env.template` uses `{{ pass://… }}` for inject. `proton-run` materializes bare `pass://` for `run` via `pass_template_to_run_env`.
 
 ## Env inventory (code ↔ vault)
 
@@ -221,7 +272,7 @@ Template refs use `{{ pass://<vault>/<item>/<field> }}` — see root [`env.templ
 ## Agent Access
 
 ```bash
-source scripts/agent-env.sh <project>
+source scripts/agent-env.sh <project>   # works in bash and zsh
 # Projects: factorywager, cloudflare, bet-ticker, cascade-mover, partners
 # Always set: PROTON_PASS_AGENT_REASON="why" on pass-cli calls
 ```
@@ -234,7 +285,8 @@ Mint / grant (main account) — official [typical workflow](https://protonpass.g
 pass-cli login
 pass-cli pat create --name <bot> --expiration 1y
 pass-cli pat access grant --pat-name <bot> --vault-name <vault> --role viewer
-# Save pst_… into .env.pass-tokens as PROTON_PASS_<PROJECT>_TOKEN
+# Save into .env.pass-tokens as PROTON_PASS_<PROJECT>_TOKEN='pst_…::TOKENKEY'
+# (official PAT form — see configuration docs)
 ```
 
 ## PAT Rotation
@@ -248,11 +300,21 @@ pass-cli pat renew --pat-name <name> --expiration 1y
 
 ## SSH Agent
 
-Daemon manages SSH keys from Personal vault.
+Daemon manages SSH keys. Human SSOT key `id_ed25519 (dev)` also lives in **Personal**; **factorywager-bot** cannot open Personal, so agent scripts default to **factorywager** (where SSH keys are duplicated). Official verbs: `start` · `load` · `debug` · `daemon` — **not** `list` ([troubleshoot](https://protonpass.github.io/pass-cli/help/troubleshoot/)).
+
+```bash
+bun run proton:ssh:doctor               # session + daemon heal + debug + load + ssh-add -L
+bun run proton:ssh:heal                 # restart daemon on "No active session" drift
+bun run proton:ssh:load                 # default vault factorywager (agent PAT)
+PASS_SSH_VAULT=Personal bun run proton:ssh:load   # full-account / agent-work PAT only
+PASS_LOG_LEVEL=debug pass-cli ssh-agent start --vault-name factorywager
+```
 
 - Socket: `~/.ssh/proton-pass-agent.sock`
 - PID: `~/.ssh/proton-pass-agent.pid`
 - Auto-start: `~/Library/LaunchAgents/com.proton.pass-cli.ssh-agent.plist`
+
+**Remote boundary:** `reasonix remote *` / `bun run remote:setup` import SSH hosts only. They do **not** inject vault secrets onto the remote. Inject locally (`proton:inject:factorywager:reasonix`), then use local CLIs that talk to remote APIs/SSH.
 
 ## Orgs
 

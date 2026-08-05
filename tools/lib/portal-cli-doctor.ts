@@ -293,6 +293,21 @@ export function formatAgeFromIso(iso: string, nowMs: number = Date.now()): strin
   return `${d}d ago`;
 }
 
+/** Live vault-health bake older than this is treated as stale by doctor (warn). */
+export const VAULT_HEALTH_STALE_MS = 48 * 60 * 60 * 1000;
+
+/** True when ISO generatedAt is older than maxAgeMs (invalid/missing → not stale). */
+export function isBakeStale(
+  iso: string | undefined,
+  maxAgeMs: number = VAULT_HEALTH_STALE_MS,
+  nowMs: number = Date.now()
+): boolean {
+  if (!iso) return false;
+  const t = Date.parse(iso);
+  if (!Number.isFinite(t)) return false;
+  return nowMs - t > maxAgeMs;
+}
+
 function withMeta(
   base: PortalDoctorCheck,
   meta: Partial<Omit<PortalDoctorCheck, 'id' | 'level' | 'ok' | 'message' | 'group'>>
@@ -434,23 +449,83 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
   const vaultHealth = joinPath(cwd, 'public/registry/vault-health.json');
   const vaultOk = await fileExists(vaultHealth);
   const vaultAt = vaultOk ? await readBakeGeneratedAt(vaultHealth) : undefined;
+  const vaultStale = vaultOk && isBakeStale(vaultAt);
+  const vaultCheckOk = vaultOk && !vaultStale;
   checks.push(
     withMeta(
       {
         id: 'vault-health-bake',
         level: 'warn',
         group: 'bakes',
-        ok: vaultOk,
-        message: vaultOk
-          ? `public/registry/vault-health.json present${vaultAt ? ` · ${formatAgeFromIso(vaultAt)}` : ''}`
-          : 'vault-health bake missing — bun run vault:health:bake (needs pass session)',
+        ok: vaultCheckOk,
+        message: !vaultOk
+          ? 'vault-health bake missing — bun run vault:health:bake (needs pass session)'
+          : vaultStale
+            ? `public/registry/vault-health.json stale${vaultAt ? ` · ${formatAgeFromIso(vaultAt)}` : ''} (>48h) — re-bake`
+            : `public/registry/vault-health.json present${vaultAt ? ` · ${formatAgeFromIso(vaultAt)}` : ''}`,
         freshness: vaultAt ? formatAgeFromIso(vaultAt) : undefined,
       },
       {
-        fixCommand: vaultOk ? undefined : 'bun run vault:health:bake',
-        impact: 'Portal /portal/vault/ board and nav badges need the bake artifact',
+        fixCommand: vaultCheckOk ? undefined : 'bun run vault:health:bake',
+        impact: 'Portal /portal/vault/ board and nav badges need a fresh bake artifact',
         autoFixable: true,
-        timeToFix: vaultOk ? undefined : '1–3 min',
+        timeToFix: vaultCheckOk ? undefined : '1–3 min',
+        envScope: 'dev',
+      }
+    )
+  );
+
+  // Pass CLI binary + session-dir hygiene (offline; no vault login required).
+  // @see https://protonpass.github.io/pass-cli/get-started/configuration/
+  const passCliPath = Bun.which('pass-cli');
+  checks.push(
+    withMeta(
+      {
+        id: 'pass-cli-on-path',
+        level: 'warn',
+        group: 'bakes',
+        ok: Boolean(passCliPath),
+        message: passCliPath
+          ? `pass-cli on PATH · ${passCliPath}`
+          : 'pass-cli missing from PATH — install from protonpass.github.io/pass-cli',
+        source: 'https://protonpass.github.io/pass-cli/',
+      },
+      {
+        fixCommand: passCliPath ? undefined : 'https://protonpass.github.io/pass-cli/',
+        impact: 'Vault inject/run/bake require the official Pass CLI binary',
+        autoFixable: false,
+        timeToFix: passCliPath ? undefined : '5–15 min',
+        envScope: 'dev',
+      }
+    )
+  );
+  const home = Bun.env.HOME ?? '';
+  const stableSessionRoot = home ? joinPath(home, '.factorywager/pass-sessions') : '';
+  const legacyTmpSession = await fileExists('/tmp/pass-agent-factorywager');
+  const stablePresent = stableSessionRoot ? await fileExists(stableSessionRoot) : false;
+  // Always ok (info): migration hint must not fail offline doctor / CI.
+  checks.push(
+    withMeta(
+      {
+        id: 'pass-session-dir-stable',
+        level: 'info',
+        group: 'bakes',
+        ok: true,
+        message:
+          legacyTmpSession && !stablePresent
+            ? 'legacy /tmp/pass-agent-* session present — migrate: source scripts/agent-env.sh factorywager (uses ~/.factorywager/pass-sessions)'
+            : stablePresent
+              ? 'stable Pass session root · ~/.factorywager/pass-sessions'
+              : 'Pass session root not created yet (ok until first agent-env)',
+        source: 'https://protonpass.github.io/pass-cli/get-started/configuration/',
+      },
+      {
+        fixCommand:
+          legacyTmpSession && !stablePresent
+            ? 'source scripts/agent-env.sh factorywager && rm -rf /tmp/pass-agent-factorywager'
+            : undefined,
+        impact: '/tmp sessions vanish on reboot and break inject until re-login',
+        autoFixable: false,
         envScope: 'dev',
       }
     )

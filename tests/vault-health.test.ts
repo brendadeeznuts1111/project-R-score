@@ -95,6 +95,23 @@ describe('vault-health', () => {
     expect(report.summary.trashedItems).toBe(1);
   });
 
+  test('list-failure fail-closed: omit vault from map and skip its refs (no invented missing)', () => {
+    // Bake CLI drops failed vaults from liveByVault and scores only listed vaults.
+    // Empty map entry would invent referencedMissing for every key in that vault.
+    const listedOnly = new Map([['cloudflare', live.get('cloudflare')!]]);
+    const allRefs = [
+      { envKey: 'GOOD', vault: 'factorywager', item: 'Good Token' },
+      { envKey: 'DNS', vault: 'cloudflare', item: 'DNS Token' },
+    ];
+    const failed = new Set(['factorywager']);
+    const scored = allRefs.filter(r => r.vault && !failed.has(r.vault));
+    const report = computeVaultHealth(scored, listedOnly, '2026-08-05T00:00:00Z');
+    expect(report.referenced.map(r => r.envKey)).toEqual(['DNS']);
+    expect(report.summary.referencedMissing).toBe(0);
+    expect(report.summary.healthy).toBe(true);
+    // Bake still forces unhealthy when listFailures.length > 0 (CLI layer).
+  });
+
   test('vault rollup tracks trashed titles sorted', () => {
     const report = computeVaultHealth([], live);
     const fw = report.vaults.find(v => v.name === 'factorywager')!;

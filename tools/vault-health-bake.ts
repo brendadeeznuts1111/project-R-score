@@ -8,7 +8,9 @@
  *   public/portal/vault/index.html      (baked board / visual summary)
  *
  * Exits 1 when any env-referenced item is missing or trashed (purge time-bomb
- * detector) unless --no-fail. Requires an agent session:
+ * detector), or when `pass-cli item list` fails for a referenced vault
+ * (fail-closed — never treat list failure as an empty vault) unless --no-fail.
+ * Requires an agent session:
  *   source scripts/agent-env.sh factorywager && bun run vault:health:bake
  *
  * CI gate (no live vault): portal-cli vault health → tests/vault-health.test.ts
@@ -31,16 +33,18 @@ const OUT_JSON = joinPath(ROOT, 'public', 'registry', 'vault-health.json');
 const OUT_HTML = joinPath(ROOT, 'public', 'portal', 'vault', 'index.html');
 const NO_FAIL = Bun.argv.includes('--no-fail');
 
-async function fetchVaultItems(vault: string): Promise<VaultLiveItem[]> {
+export type VaultListResult = { ok: true; items: VaultLiveItem[] } | { ok: false; code: number };
+
+/** Live `item list` for one vault — fail closed on non-zero exit (do not invent empty). */
+export async function fetchVaultItems(vault: string): Promise<VaultListResult> {
   const { code, stdout } = await capturePassCli(['item', 'list', vault, '--output', 'json']);
   if (code !== 0) {
-    console.error(`warn: item list failed for vault "${vault}" (exit ${code}) — treating as empty`);
-    return [];
+    return { ok: false, code };
   }
-  return liveItemsFromListJson(stdout);
+  return { ok: true, items: liveItemsFromListJson(stdout) };
 }
 
-function renderHtml(report: ReturnType<typeof computeVaultHealth>): string {
+function renderHtml(report: ReturnType<typeof computeVaultHealth>, listFailures: string[]): string {
   const s = report.summary;
   const issues = report.referenced.filter(r => r.status !== 'ok');
   const stat = (k: string, v: number, cls = '') =>
@@ -64,6 +68,10 @@ function renderHtml(report: ReturnType<typeof computeVaultHealth>): string {
         )
         .join('\n')
     : '<tr><td colspan="4" class="ok">All env-referenced items resolve Active ✓</td></tr>';
+  const listFailBlock = listFailures.length
+    ? `<div class="vh-panel"><h2>Vault list failures (fail-closed)</h2>
+       <p class="bad">Could not list: ${escapeHtml(listFailures.join(', '))}. Refs for these vaults are not trusted.</p></div>`
+    : '';
 
   return `<!DOCTYPE html>
 <!-- @see docs/portal-foundation.md — baked by tools/vault-health-bake.ts; do not edit -->
@@ -95,6 +103,7 @@ function renderHtml(report: ReturnType<typeof computeVaultHealth>): string {
     .vh-table tr.warn td { color: var(--yellow, #d29922); }
     .vh-table td.ok { color: var(--green, #3fb950); }
     .dim { color: var(--text-dim); font-size: 11px; }
+    .bad { color: var(--red, #f85149); }
   </style>
 </head>
 <body>
@@ -120,6 +129,7 @@ function renderHtml(report: ReturnType<typeof computeVaultHealth>): string {
       ${stat('Refs trashed', s.referencedTrashed, s.referencedTrashed ? 'bad' : 'ok')}
       ${stat('Refs missing', s.referencedMissing, s.referencedMissing ? 'bad' : 'ok')}
     </div>
+    ${listFailBlock}
     <div class="vh-panel">
       <h2>Referenced-item issues (purge risk)</h2>
       <table class="vh-table">
@@ -154,18 +164,34 @@ async function main(): Promise<void> {
 
   const vaultNames = [...new Set(refs.map(r => r.vault!))].sort();
   const liveByVault = new Map<string, VaultLiveItem[]>();
+  const listFailures: string[] = [];
   for (const vault of vaultNames) {
-    liveByVault.set(vault, await fetchVaultItems(vault));
+    const result = await fetchVaultItems(vault);
+    if (!result.ok) {
+      listFailures.push(vault);
+      console.error(`error: item list failed for vault "${vault}" (exit ${result.code})`);
+      // Fail-closed: do NOT insert an empty list — that would invent referencedMissing.
+      continue;
+    }
+    liveByVault.set(vault, result.items);
   }
 
-  const report = computeVaultHealth(refs, liveByVault);
+  const failedVaults = new Set(listFailures);
+  // Score refs only for vaults we successfully listed; list failures fail the bake below.
+  const scoredRefs = refs.filter(r => r.vault && !failedVaults.has(r.vault));
+  const report = computeVaultHealth(scoredRefs, liveByVault);
+  if (listFailures.length > 0) {
+    report.summary.healthy = false;
+  }
+
   await Bun.write(OUT_JSON, `${JSON.stringify(report, null, 2)}\n`);
-  await Bun.write(OUT_HTML, renderHtml(report));
+  await Bun.write(OUT_HTML, renderHtml(report, listFailures));
 
   const s = report.summary;
   console.log(
     `vault-health: ${s.vaultCount} vaults · ${s.activeItems} active · ${s.trashedItems} trashed · ` +
-      `refs ok=${s.referencedOk} trashed=${s.referencedTrashed} missing=${s.referencedMissing}`
+      `refs ok=${s.referencedOk} trashed=${s.referencedTrashed} missing=${s.referencedMissing}` +
+      (listFailures.length ? ` · listFailed=${listFailures.join(',')}` : '')
   );
   for (const r of report.referenced.filter(r => r.status !== 'ok')) {
     console.error(`  ⚠️  ${r.envKey} → ${r.vault}/${r.item} — ${r.status.toUpperCase()}`);
@@ -173,8 +199,14 @@ async function main(): Promise<void> {
   console.log(`baked: ${OUT_JSON}`);
   console.log(`baked: ${OUT_HTML}`);
 
-  if (!s.healthy && !NO_FAIL) {
-    console.error('UNHEALTHY: env-referenced items are missing or trashed (purge risk).');
+  if ((!s.healthy || listFailures.length > 0) && !NO_FAIL) {
+    if (listFailures.length > 0) {
+      console.error(
+        `UNHEALTHY: pass-cli item list failed for vault(s): ${listFailures.join(', ')} (fail-closed).`
+      );
+    } else {
+      console.error('UNHEALTHY: env-referenced items are missing or trashed (purge risk).');
+    }
     process.exit(1);
   }
 }

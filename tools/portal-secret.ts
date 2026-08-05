@@ -38,6 +38,7 @@ import {
   formatVaultStatusLine,
   type VaultMapBundle,
 } from '../lib/security/vault-map.ts';
+import { probePassSession, templateToRunEnv } from '../lib/security/pass-session.ts';
 
 const PASS_CLI = 'pass-cli';
 
@@ -50,7 +51,8 @@ Subcommands:
   login [args…]         pass-cli login (stdio inherit)
   logout [args…]        pass-cli logout
   info [--json]         pass-cli info
-  test                  pass-cli test (session connectivity)
+  ready [--json]        Session readiness via info --output json (+ vault list)
+  test                  pass-cli test (connectivity only — not session proof)
   vaults [--json]       pass-cli vault list
   items <vault> [--json]
                         pass-cli item list <vault>
@@ -58,9 +60,9 @@ Subcommands:
                         target: pass://vault/title/field  OR  vault/title[/field]
   view <target>         alias of get
   run [--env-file f] [--no-masking] -- <cmd…>
-                        pass-cli run (template dotenv → child env)
-                        upstream masks secret values in child output (2.1.4+)
-  inject -i <in> [-o out] [-f]
+                        pass-cli run (masked child env). {{ pass:// }} templates
+                        are materialized to bare pass:// before run.
+  inject -i <in> [-o out] [-f] [--file-mode 0600]
                         pass-cli inject (env.template → file/stdout)
   autofill --vault <v> [--json] [--parallel] [-- <cmd…>]
                         List vault items; inject each password as ENV from title
@@ -703,18 +705,97 @@ async function cmdAutofill(rest: string[]): Promise<void> {
   process.exit((await proc.exited) ?? 1);
 }
 
+async function cmdReady(rest: string[]): Promise<void> {
+  const asJson = rest.includes('--json');
+  const probe = await probePassSession({ listVaults: true });
+  if (asJson) {
+    jsonOut(probe);
+    process.exit(probe.ready ? 0 : 1);
+  }
+  if (!probe.passCliPath) {
+    console.error('❌ pass-cli not on PATH — https://protonpass.github.io/pass-cli/');
+    process.exit(1);
+  }
+  if (!probe.ready) {
+    console.error(`❌ session not ready${probe.infoError ? ` (${probe.infoError})` : ''}`);
+    console.error('   source scripts/agent-env.sh factorywager');
+    console.error('   Proof: pass-cli info --output json  (not `test` alone)');
+    process.exit(1);
+  }
+  console.log(`✅ session ready · PAT=${probe.patName}`);
+  if (probe.sessionHasLock != null) {
+    console.log(`   lock=${probe.sessionHasLock}`);
+  }
+  if (probe.vaults.length) {
+    console.log(`   vaults=${probe.vaults.join(',')}`);
+  }
+  process.exit(0);
+}
+
 async function cmdRun(rest: string[]): Promise<void> {
   const { before, after } = takeAfterDashDash(rest);
   if (after.length === 0) {
     cliError('Usage: portal secret run [--env-file <path>] [--no-masking] -- <command>…');
   }
-  const args = ['run', ...before, '--', ...after];
-  process.exit(await runPassCli(args, 'run'));
+
+  // Materialize inject-style templates so official run sees bare pass:// URIs.
+  const envIdx = before.findIndex(a => a === '--env-file' || a === '-e');
+  let cleanup: string | null = null;
+  const runBefore = [...before];
+  if (envIdx >= 0 && before[envIdx + 1]) {
+    const src = before[envIdx + 1]!;
+    const file = Bun.file(src);
+    if (await file.exists()) {
+      const text = await file.text();
+      if (text.includes('{{') && text.includes('pass://')) {
+        const tmp = `${Bun.env.TMPDIR ?? '/tmp'}/fw-portal-run-${process.pid}.env`;
+        await Bun.write(tmp, templateToRunEnv(text));
+        // Best-effort 0600
+        try {
+          await Bun.spawn(['chmod', '600', tmp]).exited;
+        } catch {
+          /* ignore */
+        }
+        runBefore[envIdx + 1] = tmp;
+        cleanup = tmp;
+      }
+    }
+  }
+
+  const ready = await probePassSession();
+  if (!ready.ready) {
+    if (cleanup)
+      await Bun.file(cleanup)
+        .exists()
+        .then(e => e && Bun.write(cleanup!, ''))
+        .catch(() => {});
+    cliError(
+      'Pass session not ready — source scripts/agent-env.sh factorywager (info --output json)'
+    );
+  }
+
+  try {
+    const code = await runPassCli(['run', ...runBefore, '--', ...after], 'run');
+    process.exit(code);
+  } finally {
+    if (cleanup) {
+      try {
+        const { unlinkSync } = await import('node:fs');
+        unlinkSync(cleanup);
+      } catch {
+        /* ignore */
+      }
+    }
+  }
 }
 
 async function cmdInject(rest: string[]): Promise<void> {
-  // Forward real inject flags only: -i/--in-file, -o/--out-file, -f/--force, --file-mode
-  process.exit(await runPassCli(['inject', ...rest], 'inject'));
+  // Forward real inject flags; default --file-mode 0600 when writing a file.
+  const hasOut = rest.some(a => a === '-o' || a === '--out-file');
+  const hasMode = rest.includes('--file-mode');
+  const args = ['inject', ...rest];
+  if (hasOut && !hasMode) args.push('--file-mode', '0600');
+  process.exit(await runPassCli(args, 'inject'));
 }
 
 /**
@@ -739,6 +820,10 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
 
     case 'info':
       process.exit(await runPassCli(jsonOrPassthrough(['info'], rest), 'info'));
+      return;
+
+    case 'ready':
+      await cmdReady(rest);
       return;
 
     case 'vaults':

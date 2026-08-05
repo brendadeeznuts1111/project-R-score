@@ -11,11 +11,13 @@ import {
   formatDoctorSummaryFooter,
   formatPortalDoctor,
   formatPortalDoctorVerbose,
+  isBakeStale,
   parseDoctorEnv,
   parseDoctorGroup,
   parseDoctorGroupsFromArgv,
   runPortalDoctor,
   summarizeDoctorChecks,
+  VAULT_HEALTH_STALE_MS,
   type PortalDoctorReport,
 } from '../tools/lib/portal-cli-doctor.ts';
 import { runCatalogChecks } from '../tools/lib/portal-cli-doctor-catalog.ts';
@@ -32,6 +34,15 @@ const ROOT = resolvePath(import.meta.dir, '..');
 const CLI = resolvePath(ROOT, 'tools/portal-cli.ts');
 
 describe('portal-cli doctor pure', () => {
+  test('isBakeStale flags vault-health older than 48h', () => {
+    const now = Date.parse('2026-08-05T12:00:00.000Z');
+    expect(isBakeStale(undefined, VAULT_HEALTH_STALE_MS, now)).toBe(false);
+    expect(isBakeStale('not-a-date', VAULT_HEALTH_STALE_MS, now)).toBe(false);
+    expect(isBakeStale('2026-08-05T11:00:00.000Z', VAULT_HEALTH_STALE_MS, now)).toBe(false);
+    expect(isBakeStale('2026-08-03T11:59:00.000Z', VAULT_HEALTH_STALE_MS, now)).toBe(true);
+    expect(isBakeStale('2026-07-28T17:14:41.828Z', VAULT_HEALTH_STALE_MS, now)).toBe(true);
+  });
+
   test('linker check passes for monorepo configVersion=1', async () => {
     const c = await checkLinkerConfigVersion(ROOT);
     expect(c.id).toBe('linker-config-version');
