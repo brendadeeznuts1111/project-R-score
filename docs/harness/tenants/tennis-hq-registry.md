@@ -10,7 +10,8 @@
 
 **Status artifact**
 [`/registry/tennis/agent-auth.json`](../../../public/registry/tennis/agent-auth.json)
-(`status: configured`)
+(`registry auth status: configured`; this does not assert producer runtime
+readiness)
 
 **Portal** [`/portal/tennis/`](../../../public/portal/tennis/) ·
 [`/portal/env/`](../../../public/portal/env/)
@@ -54,7 +55,7 @@ return HTTP **401** `unauthorized` when the secret is configured, or **503**
 `contract_auth_unconfigured` only when the secret is missing from the Worker;
 an unconfigured HTTP 503 is not release-ready.
 
-## Status: configured
+## Registry agent auth status: configured
 
 | Check            | Value                                                                       |
 | ---------------- | --------------------------------------------------------------------------- |
