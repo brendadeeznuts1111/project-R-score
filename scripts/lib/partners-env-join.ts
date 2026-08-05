@@ -149,15 +149,16 @@ type PartnersOpsPartner = {
   outs?: PartnersOpsOut[];
 };
 
-function asString(v: unknown): string | null {
+/** Wire parsers for partners-ops / handshake JSON (edge of registry bake). */
+function parseOptionalString(v: unknown): string | null {
   return typeof v === 'string' && v.trim() ? v.trim() : null;
 }
 
-function asNum(v: unknown): number {
+function parseFiniteNumber(v: unknown): number {
   return typeof v === 'number' && Number.isFinite(v) ? v : 0;
 }
 
-function asBool(v: unknown): boolean {
+function parseStrictBool(v: unknown): boolean {
   return v === true;
 }
 
@@ -203,7 +204,7 @@ export function buildPartnersAccountsPlane(opts: {
   ];
   const hsByCode = new Map<string, HandshakeRow>();
   for (const row of hsRows) {
-    const code = asString(row.partnerCode)?.toUpperCase();
+    const code = parseOptionalString(row.partnerCode)?.toUpperCase();
     if (code) hsByCode.set(code, row);
   }
 
@@ -212,22 +213,22 @@ export function buildPartnersAccountsPlane(opts: {
     : [];
   const partners: PartnerAccountsRow[] = [];
   for (const raw of opsPartners) {
-    const partnerCode = asString(raw.code)?.toUpperCase();
+    const partnerCode = parseOptionalString(raw.code)?.toUpperCase();
     if (!partnerCode) continue;
     const hsRow = hsByCode.get(partnerCode);
     const accounts = raw.tracking?.accounts ?? {};
     const outsRaw = Array.isArray(raw.outs) ? raw.outs : [];
     const outs: PartnerAccountOutRow[] = [];
     for (const o of outsRaw) {
-      const idRaw = asString(o.id);
+      const idRaw = parseOptionalString(o.id);
       // OutId wire shape: out-<CODE>-<n> (tryOutId alone is too permissive for opaque strings).
       if (!idRaw || !/^out-[A-Za-z0-9]+-\d+$/.test(idRaw)) continue;
       const outId = tryOutId(idRaw);
       if (!outId) continue;
-      const bookSlug = asString(o.book?.slug) ?? 'unknown';
-      const bookName = asString(o.book?.name) ?? bookSlug;
-      const status = asString(o.status) ?? 'unknown';
-      const usernameLabel = asString(o.credentials?.username);
+      const bookSlug = parseOptionalString(o.book?.slug) ?? 'unknown';
+      const bookName = parseOptionalString(o.book?.name) ?? bookSlug;
+      const status = parseOptionalString(o.status) ?? 'unknown';
+      const usernameLabel = parseOptionalString(o.credentials?.username);
       outs.push({
         outId,
         bookSlug,
@@ -239,20 +240,21 @@ export function buildPartnersAccountsPlane(opts: {
     }
     const outsReady = outs.filter(o => o.status === 'ready').length;
     const telegramChatLinked =
-      asBool(raw.tracking?.communication?.chatLinked) ||
-      Boolean(asString(raw.telegram?.chatId)) ||
-      asBool(raw.tracking?.communication?.ready);
+      parseStrictBool(raw.tracking?.communication?.chatLinked) ||
+      Boolean(parseOptionalString(raw.telegram?.chatId)) ||
+      parseStrictBool(raw.tracking?.communication?.ready);
 
     partners.push({
       partnerCode,
-      callSign: asString(raw.callSign) ?? asString(hsRow?.callSign) ?? partnerCode,
-      phase: asString(raw.phase) ?? asString(hsRow?.phase) ?? 'unknown',
-      handshakeOk: asBool(hsRow?.handshakeOk),
+      callSign:
+        parseOptionalString(raw.callSign) ?? parseOptionalString(hsRow?.callSign) ?? partnerCode,
+      phase: parseOptionalString(raw.phase) ?? parseOptionalString(hsRow?.phase) ?? 'unknown',
+      handshakeOk: parseStrictBool(hsRow?.handshakeOk),
       telegramChatLinked,
-      accountsTotal: asNum(accounts.total) || outs.length,
-      accountsReady: asNum(accounts.ready) || outsReady,
-      accountsDeferred: asNum(accounts.deferred),
-      accountsBlocked: asNum(accounts.blocked),
+      accountsTotal: parseFiniteNumber(accounts.total) || outs.length,
+      accountsReady: parseFiniteNumber(accounts.ready) || outsReady,
+      accountsDeferred: parseFiniteNumber(accounts.deferred),
+      accountsBlocked: parseFiniteNumber(accounts.blocked),
       outsReady,
       outsTotal: outs.length,
       outs,
