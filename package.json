@@ -2180,6 +2180,7 @@
     "portal:css:build": "bun tools/build-portal-css.ts",
     "portal:css:build:minify": "bun tools/build-portal-css.ts --minify",
     "portal:css:check": "bun tools/build-portal-css.ts --check",
+    "portal:optimize": "bun tools/optimize-portal-assets.ts",
     "portal:css:score": "bun tools/portal-css-score.ts",
     "portal:css:score:components": "bun tools/portal-css-score.ts --components",
     "portal:css:score:power": "bun tools/portal-css-score.ts --power",

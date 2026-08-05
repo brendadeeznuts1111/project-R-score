@@ -28,17 +28,28 @@ export async function getMonitoringData(
     source?: 'live' | 'snapshot';
     uptimeOriginMs?: number;
     forceRefresh?: boolean;
+    /** Skip the machine-wide Bun cache scan on latency-sensitive HTTP requests. */
+    includeInstallCache?: boolean;
   } = {}
 ): Promise<MonitoringPayload> {
   const now = Date.now();
-  const { forceRefresh = false, source = 'snapshot', uptimeOriginMs = 0 } = options;
+  const {
+    forceRefresh = false,
+    source = 'snapshot',
+    uptimeOriginMs = 0,
+    includeInstallCache,
+  } = options;
 
   if (!forceRefresh && monitoringCache && now - monitoringCache.ts < MONITORING_CACHE_TTL) {
     return monitoringCache.data;
   }
 
   const db = getDb();
-  const data = (await collectMonitoring(db, { source, uptimeOriginMs })) as Record<string, unknown>;
+  const data = (await collectMonitoring(db, {
+    source,
+    uptimeOriginMs,
+    includeInstallCache,
+  })) as Record<string, unknown>;
 
   // Append proof files
   const proofFiles = [

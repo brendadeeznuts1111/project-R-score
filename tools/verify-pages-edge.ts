@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
@@ -92,9 +93,15 @@ export async function expectPortalPage(path: string, fetchImpl: typeof fetch = f
   }
   const html = await res.text();
   if (!res.ok) throw new Error(String(res.status));
-  if (!html.includes('/portal/data.js')) throw new Error('missing data.js script tag');
   if (!html.includes('/portal/topbar.js')) throw new Error('missing topbar.js script tag');
-  return 'includes shared portal scripts';
+  if (html.includes('/portal/data.js')) return 'includes shared portal scripts';
+
+  const topbar = await fetchImpl(`${BASE}/portal/topbar.js`, { redirect: 'manual' });
+  const topbarSource = await topbar.text();
+  if (!topbar.ok || !topbarSource.includes('./data.js')) {
+    throw new Error('missing data.js script tag or deferred topbar import');
+  }
+  return 'topbar owns deferred shared scripts';
 }
 
 async function expectJson(path: string, assert: (j: Record<string, unknown>) => void) {

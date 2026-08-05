@@ -22,7 +22,7 @@ Common root causes:
 2. Pages → Settings → Environment variables (prod + preview):
    - `BUN_VERSION=1.3.14`
    - `SKIP_DEPENDENCY_INSTALL=true`
-3. Build settings: command `exit 0`, output directory `public`, production branch `main`
+3. Build settings: command `bun tools/optimize-portal-assets.ts --no-report`, output directory `tmp/pages-optimized`, production branch `main`
 4. Retry the failed deployment (dashboard or API). Do **not** pin local `packageManager` to 1.3.14 to “fix” Pages.
 5. Local pin check (no API): `bun run cloudflare:env:assert`
 6. Apex HTTP check (no API token): `bun run cloudflare:env:assert-apex`
@@ -161,7 +161,7 @@ commits without GitHub-hosted runners. Do not use `[CI Skip]` or `[Skip CI]`
 when a Pages preview or production deployment is required because Cloudflare
 reserves those prefixes as deployment skips.
 
-Publish surface is `public/` (includes `index.html` + registry/robots/sitemaps + portal) plus root `functions/` (Pages Functions). Apex 404 means `index.html` is missing from that dir. Pack/release/changelog R2 URLs resolve via `r2BucketUrlFromEnv()` in `config/r2-env.ts`. Registry apps import root `lib/` / `config/` at **7** `../` levels from `apps/*/src` and `packages/*/src`.
+Publish source is `public/` (includes `index.html` + registry/robots/sitemaps + portal); `portal:optimize` copies and minifies it into the Pages output `tmp/pages-optimized`. Root `functions/` remains the Pages Functions source. Apex 404 means `index.html` is missing from the output dir. Pack/release/changelog R2 URLs resolve via `r2BucketUrlFromEnv()` in `config/r2-env.ts`. Registry apps import root `lib/` / `config/` at **7** `../` levels from `apps/*/src` and `packages/*/src`.
 
 ### Ops portal + prediction (static)
 
@@ -282,7 +282,7 @@ Remove when `project-r-score` is disconnected from Git or replaced by an in-repo
 
 ### Live proof (ops portal)
 
-After deploy (SPA rewrite **off**, output dir `public`):
+After deploy (SPA rewrite **off**, output dir `tmp/pages-optimized`):
 
 ```bash
 curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" https://project-r-score.pages.dev/portal/ops/
