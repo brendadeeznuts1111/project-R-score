@@ -4,476 +4,476 @@
   "pageCount": 33,
   "baselineRevision": "faff7919463f82dc3ab5227482a704a1f7672377",
   "baselineBytes": 6415396,
-  "sourceBytes": 4963121,
-  "optimizedBytes": 3708011,
+  "sourceBytes": 4972651,
+  "optimizedBytes": 3715671,
   "targetReductionPct": 35,
-  "reductionPct": 42.2,
+  "reductionPct": 42.08,
   "targetBytes": 4170007,
   "pass": true,
   "source": [
     {
       "page": "/portal/toc/",
       "javascriptBytes": 99313,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 224599,
-      "totalBytes": 399821
+      "totalBytes": 400056
     },
     {
       "page": "/portal/ops/",
       "javascriptBytes": 158036,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 141,
-      "totalBytes": 234086
+      "totalBytes": 234321
     },
     {
       "page": "/portal/health/",
       "javascriptBytes": 132547,
-      "stylesheetBytes": 79180,
+      "stylesheetBytes": 79415,
       "inlineBytes": 20996,
-      "totalBytes": 232723
+      "totalBytes": 232958
     },
     {
       "page": "/portal/partner-history/",
       "javascriptBytes": 74672,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 57145,
-      "totalBytes": 207726
+      "totalBytes": 207961
     },
     {
       "page": "/portal/account/",
       "javascriptBytes": 98993,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 32349,
-      "totalBytes": 207251
+      "totalBytes": 207486
     },
     {
       "page": "/portal/limits/",
       "javascriptBytes": 69085,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 60388,
-      "totalBytes": 205382
+      "totalBytes": 205617
     },
     {
       "page": "/portal/packages/",
       "javascriptBytes": 96980,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 11089,
-      "totalBytes": 183978
+      "totalBytes": 184213
     },
     {
       "page": "/portal/glossary/",
       "javascriptBytes": 78437,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 16951,
-      "totalBytes": 171297
+      "totalBytes": 171532
     },
     {
       "page": "/portal/tools/",
       "javascriptBytes": 78879,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 12160,
-      "totalBytes": 166948
+      "totalBytes": 167183
     },
     {
       "page": "/portal/partners/",
       "javascriptBytes": 23709,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 64338,
-      "totalBytes": 163956
+      "totalBytes": 164191
     },
     {
       "page": "/portal/dashboard/",
       "javascriptBytes": 71816,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 8535,
-      "totalBytes": 156260
+      "totalBytes": 156495
     },
     {
       "page": "/portal/bookmakers/",
-      "javascriptBytes": 69208,
-      "stylesheetBytes": 75909,
-      "inlineBytes": 4479,
-      "totalBytes": 149596
+      "javascriptBytes": 70781,
+      "stylesheetBytes": 76144,
+      "inlineBytes": 4681,
+      "totalBytes": 151606
     },
     {
       "page": "/portal/dod/",
       "javascriptBytes": 54218,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 13543,
-      "totalBytes": 143670
+      "totalBytes": 143905
     },
     {
       "page": "/portal/brands/",
       "javascriptBytes": 53268,
-      "stylesheetBytes": 85292,
+      "stylesheetBytes": 85527,
       "inlineBytes": 0,
-      "totalBytes": 138560
+      "totalBytes": 138795
     },
     {
       "page": "/portal/install-hygiene/",
       "javascriptBytes": 49642,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 10754,
-      "totalBytes": 136305
+      "totalBytes": 136540
     },
     {
       "page": "/portal/",
       "javascriptBytes": 56757,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 0,
-      "totalBytes": 132666
+      "totalBytes": 132901
     },
     {
       "page": "/portal/concepts/",
       "javascriptBytes": 42759,
-      "stylesheetBytes": 89274,
+      "stylesheetBytes": 89509,
       "inlineBytes": 0,
-      "totalBytes": 132033
+      "totalBytes": 132268
     },
     {
       "page": "/portal/catalog/",
       "javascriptBytes": 50336,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 4446,
-      "totalBytes": 130691
+      "totalBytes": 130926
     },
     {
       "page": "/portal/env/",
       "javascriptBytes": 23709,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 29198,
-      "totalBytes": 128816
+      "totalBytes": 129051
     },
     {
       "page": "/portal/concepts/graph/",
       "javascriptBytes": 41144,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 3545,
-      "totalBytes": 120598
+      "totalBytes": 120833
     },
     {
       "page": "/portal/bunfig/",
       "javascriptBytes": 40828,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 788,
-      "totalBytes": 117525
+      "totalBytes": 117760
     },
     {
       "page": "/portal/surfaces/",
       "javascriptBytes": 40471,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 1041,
-      "totalBytes": 117421
+      "totalBytes": 117656
     },
     {
       "page": "/portal/compliance/",
       "javascriptBytes": 32478,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 7842,
-      "totalBytes": 116229
+      "totalBytes": 116464
     },
     {
       "page": "/portal/doctor/",
       "javascriptBytes": 39515,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 391,
-      "totalBytes": 115815
+      "totalBytes": 116050
     },
     {
       "page": "/portal/tennis/",
       "javascriptBytes": 18630,
-      "stylesheetBytes": 79475,
+      "stylesheetBytes": 79710,
       "inlineBytes": 17204,
-      "totalBytes": 115309
+      "totalBytes": 115544
     },
     {
       "page": "/portal/console-format/",
       "javascriptBytes": 37374,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 149,
-      "totalBytes": 113432
+      "totalBytes": 113667
     },
     {
       "page": "/portal/skills/",
       "javascriptBytes": 23709,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 11054,
-      "totalBytes": 110672
+      "totalBytes": 110907
     },
     {
       "page": "/portal/limits-lab/",
       "javascriptBytes": 24747,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 6324,
-      "totalBytes": 106980
+      "totalBytes": 107215
     },
     {
       "page": "/portal/identity/",
       "javascriptBytes": 23709,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 2903,
-      "totalBytes": 102521
+      "totalBytes": 102756
     },
     {
       "page": "/portal/vault/",
       "javascriptBytes": 23709,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 2689,
-      "totalBytes": 102307
+      "totalBytes": 102542
     },
     {
       "page": "/portal/failures/",
       "javascriptBytes": 23709,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 2517,
-      "totalBytes": 102135
+      "totalBytes": 102370
     },
     {
       "page": "/portal/factory/",
       "javascriptBytes": 23709,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 588,
-      "totalBytes": 100206
+      "totalBytes": 100441
     },
     {
       "page": "/portal/science/",
       "javascriptBytes": 23709,
-      "stylesheetBytes": 75909,
+      "stylesheetBytes": 76144,
       "inlineBytes": 588,
-      "totalBytes": 100206
+      "totalBytes": 100441
     }
   ],
   "optimized": [
     {
       "page": "/portal/toc/",
       "javascriptBytes": 62848,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 223280,
-      "totalBytes": 351300
+      "totalBytes": 351495
     },
     {
       "page": "/portal/ops/",
       "javascriptBytes": 110632,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 126,
-      "totalBytes": 175930
+      "totalBytes": 176125
     },
     {
       "page": "/portal/health/",
       "javascriptBytes": 90219,
-      "stylesheetBytes": 67914,
+      "stylesheetBytes": 68109,
       "inlineBytes": 14055,
-      "totalBytes": 172188
+      "totalBytes": 172383
     },
     {
       "page": "/portal/account/",
       "javascriptBytes": 68297,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 25657,
-      "totalBytes": 159126
+      "totalBytes": 159321
     },
     {
       "page": "/portal/limits/",
       "javascriptBytes": 47007,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 42709,
-      "totalBytes": 154888
+      "totalBytes": 155083
     },
     {
       "page": "/portal/partner-history/",
       "javascriptBytes": 45224,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 42280,
-      "totalBytes": 152676
+      "totalBytes": 152871
     },
     {
       "page": "/portal/packages/",
       "javascriptBytes": 62597,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 9357,
-      "totalBytes": 137126
+      "totalBytes": 137321
     },
     {
       "page": "/portal/glossary/",
       "javascriptBytes": 46824,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 11463,
-      "totalBytes": 123459
+      "totalBytes": 123654
     },
     {
       "page": "/portal/tools/",
       "javascriptBytes": 44438,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 9686,
-      "totalBytes": 119296
+      "totalBytes": 119491
     },
     {
       "page": "/portal/partners/",
       "javascriptBytes": 5405,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 46645,
-      "totalBytes": 117222
+      "totalBytes": 117417
     },
     {
       "page": "/portal/dashboard/",
       "javascriptBytes": 43778,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 6098,
-      "totalBytes": 115048
+      "totalBytes": 115243
     },
     {
       "page": "/portal/bookmakers/",
-      "javascriptBytes": 38563,
-      "stylesheetBytes": 65172,
-      "inlineBytes": 3231,
-      "totalBytes": 106966
+      "javascriptBytes": 39620,
+      "stylesheetBytes": 65367,
+      "inlineBytes": 3399,
+      "totalBytes": 108386
     },
     {
       "page": "/portal/dod/",
       "javascriptBytes": 29014,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 11899,
-      "totalBytes": 106085
+      "totalBytes": 106280
     },
     {
       "page": "/portal/brands/",
       "javascriptBytes": 29569,
-      "stylesheetBytes": 73607,
+      "stylesheetBytes": 73802,
       "inlineBytes": 0,
-      "totalBytes": 103176
+      "totalBytes": 103371
     },
     {
       "page": "/portal/install-hygiene/",
       "javascriptBytes": 27625,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 9173,
-      "totalBytes": 101970
+      "totalBytes": 102165
     },
     {
       "page": "/portal/",
       "javascriptBytes": 34435,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 0,
-      "totalBytes": 99607
+      "totalBytes": 99802
     },
     {
       "page": "/portal/concepts/",
       "javascriptBytes": 20502,
-      "stylesheetBytes": 76166,
+      "stylesheetBytes": 76361,
       "inlineBytes": 0,
-      "totalBytes": 96668
+      "totalBytes": 96863
     },
     {
       "page": "/portal/catalog/",
       "javascriptBytes": 24960,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 3754,
-      "totalBytes": 93886
+      "totalBytes": 94081
     },
     {
       "page": "/portal/env/",
       "javascriptBytes": 5405,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 23144,
-      "totalBytes": 93721
+      "totalBytes": 93916
     },
     {
       "page": "/portal/concepts/graph/",
       "javascriptBytes": 21944,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 2193,
-      "totalBytes": 89309
+      "totalBytes": 89504
     },
     {
       "page": "/portal/bunfig/",
       "javascriptBytes": 21563,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 445,
-      "totalBytes": 87180
+      "totalBytes": 87375
     },
     {
       "page": "/portal/surfaces/",
       "javascriptBytes": 21093,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 599,
-      "totalBytes": 86864
+      "totalBytes": 87059
     },
     {
       "page": "/portal/tennis/",
       "javascriptBytes": 5405,
-      "stylesheetBytes": 67428,
+      "stylesheetBytes": 67623,
       "inlineBytes": 13861,
-      "totalBytes": 86694
+      "totalBytes": 86889
     },
     {
       "page": "/portal/doctor/",
       "javascriptBytes": 20265,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 319,
-      "totalBytes": 85756
+      "totalBytes": 85951
     },
     {
       "page": "/portal/compliance/",
       "javascriptBytes": 12356,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 7564,
-      "totalBytes": 85092
+      "totalBytes": 85287
     },
     {
       "page": "/portal/console-format/",
       "javascriptBytes": 18566,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 89,
-      "totalBytes": 83827
+      "totalBytes": 84022
     },
     {
       "page": "/portal/limits-lab/",
       "javascriptBytes": 13585,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 4257,
-      "totalBytes": 83014
+      "totalBytes": 83209
     },
     {
       "page": "/portal/skills/",
       "javascriptBytes": 5405,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 8461,
-      "totalBytes": 79038
+      "totalBytes": 79233
     },
     {
       "page": "/portal/identity/",
       "javascriptBytes": 5405,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 2654,
-      "totalBytes": 73231
+      "totalBytes": 73426
     },
     {
       "page": "/portal/vault/",
       "javascriptBytes": 5405,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 2582,
-      "totalBytes": 73159
+      "totalBytes": 73354
     },
     {
       "page": "/portal/failures/",
       "javascriptBytes": 5405,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 1866,
-      "totalBytes": 72443
+      "totalBytes": 72638
     },
     {
       "page": "/portal/factory/",
       "javascriptBytes": 5405,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 456,
-      "totalBytes": 71033
+      "totalBytes": 71228
     },
     {
       "page": "/portal/science/",
       "javascriptBytes": 5405,
-      "stylesheetBytes": 65172,
+      "stylesheetBytes": 65367,
       "inlineBytes": 456,
-      "totalBytes": 71033
+      "totalBytes": 71228
     }
   ]
 }
