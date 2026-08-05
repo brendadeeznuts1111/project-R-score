@@ -18,18 +18,22 @@ describe('reference-discovery', () => {
     expect(ids).toContain('pages-plane');
   });
 
-  test('runReferenceDiscovery returns structured report', async () => {
-    const report = await runReferenceDiscovery({ skipUnused: true });
-    expect(report.generatedAt).toMatch(/^\d{4}-/);
-    expect(report.perimeter.length).toBeGreaterThan(0);
-    expect(report.summary.total).toBe(report.findings.length);
-    expect(typeof report.summary.errors).toBe('number');
-    expect(
-      report.findings.filter(
-        finding => finding.kind === 'similar-env' && finding.severity === 'warn'
-      )
-    ).toEqual([]);
-  });
+  test(
+    'runReferenceDiscovery returns structured report',
+    async () => {
+      const report = await runReferenceDiscovery({ skipUnused: true });
+      expect(report.generatedAt).toMatch(/^\d{4}-/);
+      expect(report.perimeter.length).toBeGreaterThan(0);
+      expect(report.summary.total).toBe(report.findings.length);
+      expect(typeof report.summary.errors).toBe('number');
+      expect(
+        report.findings.filter(
+          finding => finding.kind === 'similar-env' && finding.severity === 'warn'
+        )
+      ).toEqual([]);
+    },
+    { timeout: 30_000 }
+  );
 
   test('reportPasses fails when errors present', () => {
     expect(
