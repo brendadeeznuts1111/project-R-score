@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/image#input — Bun.Image
 // @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern
 /**
  * Portal semantic vocabulary.
@@ -129,7 +130,13 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     namespace: 'page' as const,
     domain: 'portal' as const,
     synonyms: page.synonyms,
-    seeAlso: ['ui.semantic.surface', 'ui.semantic.resources', 'ui.semantic.artifact'] as const,
+    seeAlso: ('seeAlso' in page && Array.isArray(page.seeAlso)
+      ? page.seeAlso
+      : [
+          'ui.semantic.surface',
+          'ui.semantic.resources',
+          'ui.semantic.artifact',
+        ]) as readonly string[],
     correlationId: 'legacy' as const,
     addedAt: '2026-01-01' as const,
   })),
@@ -1193,10 +1200,13 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     seeAlso: [
       'page.partners',
       'page.accountDossier',
+      'page.dodReview',
       'section.partnersTelegram',
       'section.partnersAccountsLimits',
       'section.partnersDeposits',
       'section.partnersPartnerMessage',
+      'ops.dod.ingest',
+      'ops.dod.reconcile',
     ],
     correlationId: 'legacy',
     addedAt: '2026-01-01',
@@ -1756,6 +1766,68 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     seeAlso: ['ops.limits.evidence_trace', 'ops.limits.data_coverage'],
     correlationId: 'PR#228',
     addedAt: '2026-08-02',
+  },
+  {
+    id: 'ops.dod.ingest',
+    namespace: 'ops',
+    domain: 'operations',
+    label: 'DOD Accounting ingest',
+    description:
+      'Ops-bot path that downloads package-forum Accounting or house Deposits/Withdrawals/Reconcile photos and enqueues DODVerifier.process (caption CODE, telegram message dedupe, deep-link ack).',
+    semanticType: 'resource',
+    uiRole: 'code',
+    synonyms: [
+      'accounting photo ingest',
+      'visual proof ingest',
+      'telegram DOD ingest',
+      'ingestAccountingDodPhoto',
+    ],
+    seeAlso: [
+      'page.dodReview',
+      'section.partnersAccounting',
+      'ops.dod.reconcile',
+      'ops.dod.meta_log',
+    ],
+    correlationId: 'lane/dod-visual-proof',
+    addedAt: '2026-08-05',
+  },
+  {
+    id: 'ops.dod.reconcile',
+    namespace: 'ops',
+    domain: 'operations',
+    label: 'DOD amount reconciliation',
+    description:
+      'Compare OCR/bake accounting_amount against execution expected stake (play_distribution.stake_actual or expected_amount). Mismatch yields portal banner and can flag the queue row.',
+    semanticType: 'state',
+    uiRole: 'badge',
+    synonyms: [
+      'visual proof reconcile',
+      'accounting amount mismatch',
+      'stake vs OCR',
+      'reconcileDodAmounts',
+    ],
+    seeAlso: [
+      'page.dodReview',
+      'section.partnersAccounting',
+      'ops.dod.ingest',
+      'ops.metric.proof_coverage',
+    ],
+    correlationId: 'lane/dod-visual-proof',
+    addedAt: '2026-08-05',
+  },
+  {
+    id: 'ops.dod.meta_log',
+    namespace: 'ops',
+    domain: 'operations',
+    label: 'DOD image meta log',
+    description:
+      'Append-only NDJSON learning log (data/dod_meta.ndjson) of stripped Bun.Image metadata (width/format/EXIF/GPS) for forged-screenshot detection.',
+    semanticType: 'resource',
+    uiRole: 'code',
+    synonyms: ['dod_meta.ndjson', 'image meta learning log', 'appendDodMetaNdjson'],
+    seeAlso: ['page.dodReview', 'ops.dod.ingest', 'ui.semantic.artifact'],
+    correlationId: 'lane/dod-visual-proof',
+    addedAt: '2026-08-05',
   },
   {
     id: 'ops.table.recent_changes',

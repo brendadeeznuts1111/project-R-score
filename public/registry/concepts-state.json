@@ -1,13 +1,13 @@
 {
   "kind": "concepts-state",
   "schemaVersion": 1,
-  "bakedAt": "2026-08-04T06:41:31.775Z",
+  "bakedAt": "2026-08-05T15:46:09.188Z",
   "gate": "pass",
   "summary": {
-    "totalPortal": 139,
-    "withProvenance": 139,
+    "totalPortal": 142,
+    "withProvenance": 142,
     "provenanceCoverage": 1,
-    "usedUi": 77,
+    "usedUi": 81,
     "unusedUi": 9,
     "surfaceOnly": 26,
     "metadataIssues": 0,
@@ -15,7 +15,7 @@
     "inventoryMisses": 0,
     "deprecatedUsed": 0,
     "bakeDrift": 0,
-    "detailRows": 139
+    "detailRows": 142
   },
   "domainSummary": [
     {
@@ -36,10 +36,10 @@
     },
     {
       "domain": "operations",
-      "count": 20,
-      "used": 0,
+      "count": 23,
+      "used": 3,
       "unused": 20,
-      "provenance": 20,
+      "provenance": 23,
       "provenancePct": 100
     },
     {
@@ -60,14 +60,14 @@
     },
     {
       "board": "partners",
-      "files": 2,
-      "usages": 83,
+      "files": 3,
+      "usages": 86,
       "allowlist": 11
     },
     {
       "board": "limits",
       "files": 2,
-      "usages": 98,
+      "usages": 101,
       "allowlist": 21
     },
     {
@@ -161,6 +161,42 @@
       "provenance": "PR#256",
       "usage": 0,
       "kind": "surface-only"
+    },
+    {
+      "id": "ops.dod.ingest",
+      "label": "DOD Accounting ingest",
+      "domain": "operations",
+      "namespace": "ops",
+      "group": "ops.dod",
+      "category": "ops",
+      "status": "active",
+      "provenance": "lane/dod-visual-proof",
+      "usage": 1,
+      "kind": "used"
+    },
+    {
+      "id": "ops.dod.meta_log",
+      "label": "DOD image meta log",
+      "domain": "operations",
+      "namespace": "ops",
+      "group": "ops.dod",
+      "category": "ops",
+      "status": "active",
+      "provenance": "lane/dod-visual-proof",
+      "usage": 1,
+      "kind": "used"
+    },
+    {
+      "id": "ops.dod.reconcile",
+      "label": "DOD amount reconciliation",
+      "domain": "operations",
+      "namespace": "ops",
+      "group": "ops.dod",
+      "category": "ops",
+      "status": "active",
+      "provenance": "lane/dod-visual-proof",
+      "usage": 1,
+      "kind": "used"
     },
     {
       "id": "ops.filter.account.all",
@@ -399,7 +435,7 @@
       "category": "ops",
       "status": "active",
       "provenance": "legacy",
-      "usage": 13,
+      "usage": 14,
       "kind": "used"
     },
     {
@@ -507,7 +543,7 @@
       "category": "ops",
       "status": "active",
       "provenance": "legacy",
-      "usage": 6,
+      "usage": 5,
       "kind": "used"
     },
     {
@@ -860,14 +896,14 @@
     },
     {
       "id": "page.dodReview",
-      "label": "Definition-of-done review",
+      "label": "DOD visual-proof review",
       "domain": "portal",
       "namespace": "page",
       "group": "page.dodReview",
       "category": "page",
       "status": "active",
       "provenance": "legacy",
-      "usage": 0,
+      "usage": 1,
       "kind": "used"
     },
     {
@@ -1215,7 +1251,7 @@
       "category": "section",
       "status": "active",
       "provenance": "legacy",
-      "usage": 4,
+      "usage": 6,
       "kind": "used"
     },
     {
@@ -1527,7 +1563,7 @@
       "category": "ui",
       "status": "active",
       "provenance": "PR#228",
-      "usage": 2,
+      "usage": 4,
       "kind": "used"
     },
     {

@@ -530,3 +530,19 @@ export async function editRichTelegramMessage(
     errorCode: r.error_code,
   };
 }
+
+/** Download a Bot API file by `file_id` (getFile → `/file/bot…/{path}`). */
+export async function downloadTelegramFile(
+  token: string,
+  fileId: string // brand-ok — Telegram file_id wire
+): Promise<Uint8Array> {
+  const meta = await telegramApiCall(token, 'getFile', { file_id: fileId });
+  const path =
+    meta.ok && meta.result && typeof meta.result === 'object'
+      ? (meta.result as { file_path?: string }).file_path
+      : undefined;
+  if (!path) throw new Error(meta.description || 'getFile failed — no file_path');
+  const res = await fetch(`https://api.telegram.org/file/bot${token}/${path}`);
+  if (!res.ok) throw new Error(`Telegram file download HTTP ${res.status}`);
+  return new Uint8Array(await res.arrayBuffer());
+}

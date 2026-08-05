@@ -6,6 +6,7 @@
  */
 import type { KnownChatRow } from './known-chats.ts';
 import {
+  ALL_ACCOUNTING_SURFACE_SLUG,
   TOC_OPS_SURFACES,
   assertTocOpsGroupTitle,
   formatTocOpsGroupTitle,
@@ -112,6 +113,26 @@ export function auditTelegramSurfaces(opts: {
       message:
         'Bot privacy mode on — group messages need @mention until BotFather /setprivacy Disable',
       fix: '@BotFather → /setprivacy → Disable',
+    });
+    findings.push({
+      id: 'A-PRIVACY-ACCOUNTING',
+      severity: 'major',
+      area: 'privacy',
+      message:
+        'Accounting photo → DOD ingest cannot see unmentioned images while privacy mode is on',
+      fix: '@BotFather → /setprivacy → Disable (required for package Accounting + house proof topics)',
+    });
+  }
+
+  // House all-accounting: surfaces map or dedicated env (photo rollup + caption CODE)
+  if (!tg.accountingChatId && !envMap[ALL_ACCOUNTING_SURFACE_SLUG]) {
+    findings.push({
+      id: 'A-ACCOUNTING-CHAT',
+      severity: 'minor',
+      area: 'binding',
+      message:
+        'House all-accounting unbound — package Accounting still works; cross-partner rollup offline',
+      fix: 'Set TELEGRAM_ACCOUNTING_CHAT_ID and TELEGRAM_SURFACES all-accounting=<chat_id>',
     });
   }
 

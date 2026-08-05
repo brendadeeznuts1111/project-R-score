@@ -5,6 +5,8 @@
  * accounting figure, Telegram message deep-link, stripped Bun.Image metadata.
  */
 
+import { expectedAmountFromRow, reconcileDodAmounts } from './reconcile.ts';
+
 /** First plausible dollar amount in OCR text, e.g. "$12,345.67" → 12345.67. */
 export function extractAccountingAmount(text: string | undefined): number | undefined {
   if (!text) return undefined;
@@ -122,10 +124,9 @@ export function telegramMessageDeepLink(input: TelegramMessageLinkInput): string
 
   const chatRaw = input.chatId;
   if (chatRaw == null || chatRaw === '') return null;
-  let chatNum = parseFiniteNumber(chatRaw);
+  const chatNum = parseFiniteNumber(chatRaw);
   if (chatNum == null) return null;
 
-  // Bot API: channels/supergroups are -100XXXXXXXXXX → t.me/c/XXXXXXXXXX
   let channelPart: string;
   const abs = Math.abs(chatNum);
   const asStr = String(Math.trunc(chatNum));
@@ -148,6 +149,15 @@ export function enrichDodEntry(row: Record<string, unknown>): Record<string, unk
 
   const accountingFromCol = parseFiniteNumber(row.accounting_amount ?? row.accountingAmount);
   const accounting_amount = accountingFromCol ?? extractAccountingAmount(extracted) ?? null;
+
+  const expected_amount = expectedAmountFromRow(row);
+  const reconcile = reconcileDodAmounts(expected_amount, accounting_amount);
+  const reconciled =
+    row.reconciled === 1 || row.reconciled === true
+      ? true
+      : row.reconciled === 0 || row.reconciled === false
+        ? Boolean(row.reconciled)
+        : reconcile.reconciled;
 
   let image_meta: DodImageMetaStrip | null = null;
   if (isRecord(row.image_meta)) {
@@ -202,6 +212,11 @@ export function enrichDodEntry(row: Record<string, unknown>): Record<string, unk
   return {
     ...row,
     accounting_amount,
+    expected_amount: reconcile.expected ?? expected_amount,
+    reconcile_status: reconcile.status,
+    reconcile_delta: reconcile.delta,
+    reconcile_banner: reconcile.banner,
+    reconciled,
     image_meta,
     telegram_chat_id,
     telegram_message_id,

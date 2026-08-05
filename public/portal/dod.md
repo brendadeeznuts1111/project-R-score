@@ -1,6 +1,5 @@
 # DOD review · Telegram Accounting · R2 · Bun.Image
 
-<<<<<<< HEAD
 **Document-of-deposit** evidence queue — balance slips, bet amounts, receipts,
 IDs, location proofs. Agents submit images (often from Telegram); Bun.Image
 processes them; R2 (or local disk) holds bytes; operators review on this board
@@ -27,20 +26,22 @@ review.
 
 ```text
 Telegram photo / agent upload
+  → Accounting ingest (package forum + house all-accounting) when applicable
   → magic-byte validate
   → Bun.Image (metadata · aHash · resize · WebP)
   → watermark (Bun.WebView when available)
   → OCR (slip / receipt / balance-as-needed)
+  → stake reconcile (expected_amount vs accounting_amount · play_distribution)
   → store key: dod/{prefix}/{id}.webp[.enc]
   → R2 (DOD_R2_BUCKET) or public/evidence/
-  → SQLite dod_submissions + dod-queue bake
+  → SQLite dod_submissions + dod-queue bake + dod-meta.ndjson (Bun.Image strip)
   → /portal/dod/ review
   → Confirm amount in partner Telegram Accounting + Soft/Partners desk
 ```
 
 Outbox route: `dod` → house surface **`hq`** (not partner CODE forum). Partner
 **Accounting** is where humans post deposit / withdraw / bet-slip screenshots
-for amount confirmation — see [telegram.md](./telegram.md).
+for amount confirmation — see [telegram.md](./telegram.md). Tennis runtime contracts: [tennis.factory-wager.com](https://tennis.factory-wager.com/) `partners/capacity` · `accounting/finance` · board [tennis.md](./tennis.md).
 
 ## Types → confirm path
 
@@ -92,6 +93,17 @@ Canonical: [Bun.Image](https://bun.com/docs/runtime/image).
   [`proton-integration.md`](../../docs/harness/tenants/proton-integration.md)
 
 Never put agent passwords in DOD captions or Accounting chat text.
+
+## Accounting ingest · reconcile · meta log
+
+| Piece | Role |
+|-------|------|
+| `lib/dod/telegram-accounting-ingest.ts` | Package Accounting + house Deposits/Withdrawals/Reconcile photo → `DODVerifier.process`; caption CODE; telegram message dedupe |
+| `lib/dod/reconcile.ts` | Compare OCR `accounting_amount` vs `expected_amount` / `play_distribution.stake_actual` |
+| `lib/dod/meta-log.ts` | Append stripped Bun.Image metadata to `data/dod-meta.ndjson` for agent learning |
+| Board | Mismatch shows yellow `.dod-reconcile-banner` on the DOD card |
+
+House **all-accounting** topics require partner CODE in caption (`ASH · slip`). Package forum Accounting inherits CODE from registry when omitted.
 
 ## Accounting · Soft · Telegram
 
@@ -150,29 +162,8 @@ bun run soft:accounting:bake
 | [`docs/IMAGES.md`](../../docs/IMAGES.md) | Non-DOD Bun.Image templates |
 | [`telegram-factory.md`](../../docs/harness/tenants/telegram-factory.md) | Outbox `dod` → `hq` |
 
-Tests: `tests/dod-portal.test.ts` · `tests/dod-verifier.test.ts` ·
+Tests: `tests/dod-portal.test.ts` · `tests/dod-telegram-accounting-ingest.test.ts` ·
+`tests/dod-reconcile.test.ts` · `tests/dod-enrich-entry.test.ts` ·
+`tests/dod-verifier.test.ts` ·
 `tests/dod-evidence.test.ts` · `tests/dod-lifecycle.test.ts` ·
 `tests/portal-domain-gap-map.test.ts`.
-||||||| parent of 0627ec6af (feat(portal): link DOD cards to Telegram Accounting + Bun.Image meta)
-Visual-proof submission queue.
-=======
-Visual-proof submission queue for balance slips, bet amounts, IDs, and receipts.
-
-## Partner Telegram confirm
-
-Bet-amount and deposit screenshots are confirmed in each partner package forum’s
-**Accounting** topic. The board:
-
-- Loads handshake partners from `/registry/telegram-handshake.json`
-- Shows a CODE chip strip → `/portal/partners/#partner/{CODE}/telegram/accounting`
-- Per slip / balance / receipt card:
-  - **Accounting figure** from OCR / `accounting_amount`
-  - **Open Telegram message** deep-link (`t.me/c/{chat}/{thread}/{msg}` when baked)
-  - Forum Accounting + Partners desk + handshake invite link
-  - **Bun.Image metadata strip** (width/format/EXIF/gps) for agent learning
-
-Related: [`/portal/factory/`](factory/) handshake · [`/portal/partners/`](partners/) desk ·
-[`docs/harness/tenants/partner-package-group-handshake.md`](../../docs/harness/tenants/partner-package-group-handshake.md)
-
-Wire helpers: `lib/dod/enrich-entry.ts` (`telegramMessageDeepLink`, `parseBunImageMetaStrip`, `enrichDodEntry`).
->>>>>>> 0627ec6af (feat(portal): link DOD cards to Telegram Accounting + Bun.Image meta)
