@@ -92,6 +92,8 @@ export const PORTAL_MARKDOWN_SLUGS = [
   'partners',
   'factory',
   'telegram',
+  'bookmakers',
+  'routing',
   'health',
   'env',
   'skills',

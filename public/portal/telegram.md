@@ -142,11 +142,14 @@ proof uses `DOD_PROOF_SECRET`. Full map: [dod.md](./dod.md) ·
 | [Factory](./factory/) | Bot wire · handshake readiness · webhook |
 | [Ops](./ops/) | Partner desk pulse · handshake gaps · seat incomplete · outbox pending |
 | [**DOD**](./dod/) | Evidence queue · Bun.Image/R2 · confirm amounts → Accounting |
-| [Account](./account/) | Per-account dossier · Soft accounting chrome |
 | [Limits](./limits/) | Limit raises · CLV (linked from partner CODE) |
+| [Bookmakers](./bookmakers/) | Book registry (outs / raise book ids) |
+| [Account](./account/) | Per-account dossier · Soft accounting chrome |
+| [Routing audit](./routing.md) | Pages vs local API · discover / check:routes |
 
 Markdown: [partners.md](./partners.md) · [factory.md](./factory.md) ·
-[ops.md](./ops.md) · [dod.md](./dod.md) · [index.md](./index.md).
+[ops.md](./ops.md) · [dod.md](./dod.md) · [limits.md](./limits.md) ·
+[bookmakers.md](./bookmakers.md) · [routing.md](./routing.md) · [index.md](./index.md).
 
 ## 6. CLI day loop
 

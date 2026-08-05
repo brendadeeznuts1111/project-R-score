@@ -126,6 +126,16 @@ bun run telegram:handshake:catalog
 bun run soft:accounting:bake
 ```
 
+## Related partner domain
+
+| Concern | Board / map |
+|---------|-------------|
+| Confirm bet / deposit amounts | [telegram.md](./telegram.md) Accounting · Partners |
+| Limit raises / coverage | [limits.md](./limits.md) · [`/portal/limits/`](./limits/) |
+| Book registry (id / domain) | [bookmakers.md](./bookmakers.md) · `bookmakers.json` |
+| URL / API audit (Pages vs local) | [routing.md](./routing.md) |
+| Soft plays · weeks | Partners Soft · soft-accounting-export |
+
 ## Related
 
 | Doc / board | Why |
@@ -134,9 +144,11 @@ bun run soft:accounting:bake
 | [partners.md](./partners.md) | Desk sections · Soft · deposits |
 | [factory.md](./factory.md) | Bot wire · handshake |
 | [ops.md](./ops.md) | Desk pulse · snapshot |
+| [limits.md](./limits.md) · [bookmakers.md](./bookmakers.md) · [routing.md](./routing.md) | Partner domain audit mesh |
 | [`lib/dod/README.md`](../../lib/dod/README.md) | Pipeline code map |
 | [`docs/IMAGES.md`](../../docs/IMAGES.md) | Non-DOD Bun.Image templates |
 | [`telegram-factory.md`](../../docs/harness/tenants/telegram-factory.md) | Outbox `dod` → `hq` |
 
 Tests: `tests/dod-portal.test.ts` · `tests/dod-verifier.test.ts` ·
-`tests/dod-evidence.test.ts` · `tests/dod-lifecycle.test.ts`.
+`tests/dod-evidence.test.ts` · `tests/dod-lifecycle.test.ts` ·
+`tests/portal-domain-gap-map.test.ts`.

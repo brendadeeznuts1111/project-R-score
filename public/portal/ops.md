@@ -24,10 +24,9 @@ Top panel KPIs from `ops-summary` (domain-first):
 | Outbox pending | `loop.outboxPending` (tone when high) |
 
 Deep links: [Partners](./partners/) · [Outs](./partners/#section:outs) ·
-[Limits](./limits/) · [Account](./account/) · [TOC](./toc/) ·
-[Compliance](./compliance/) · [Telegram map](./telegram.md) (plays · balances ·
-bets · accounting chats) · [DOD](./dod/) / [dod.md](./dod.md) (image proofs ·
-R2 · Bun.Image · Accounting confirm).
+[Limits](./limits.md) · [Bookmakers](./bookmakers.md) · [Account](./account/) ·
+[TOC](./toc/) · [Compliance](./compliance/) · [Telegram map](./telegram.md) ·
+[DOD](./dod.md) · [Routing audit](./routing.md).
 
 ## Jump sections
 

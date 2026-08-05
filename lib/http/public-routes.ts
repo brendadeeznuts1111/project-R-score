@@ -303,6 +303,14 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     note: '@factorywager/bookmakers artifact · /registry/bookmakers.json · bookmakers:bake',
   },
   {
+    path: '/registry/bookmakers.json',
+    name: 'Bookmakers registry bake',
+    category: 'registry',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: 'bookmakers:bake mirror of @factorywager/bookmakers · deep-link SSOT',
+  },
+  {
     path: '/portal/account/',
     name: 'Account dossier portal',
     category: 'portal',
