@@ -20,6 +20,12 @@ readiness)
 [`https://tennis.factory-wager.com`](https://tennis.factory-wager.com) ·
 Cloudflare Worker `tennis-hq`
 
+**Producer repository**
+[`plum-spruce-dawn-dune1`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1)
+(private) · contribute via
+[CONTRIBUTING.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md)
+· local sibling `~/Projects/plum-spruce-dawn-dune1` when present
+
 **Partner contracts join** live/offline bake →
 [`/registry/tennis/partner-contracts.json`](../../../public/registry/tennis/partner-contracts.json)
 · tool `bun tools/bake-tennis-partner-contracts.ts` · resilience notes
@@ -69,7 +75,7 @@ an unconfigured HTTP 503 is not release-ready.
 | Vault map note   | `config/vault-map.toml` `[env.FACTORY_WAGER_TOKEN].note`                    |
 | Portal mark      | `bun run tennis:agent-auth:bake` → `public/registry/tennis/agent-auth.json` |
 | Operator handoff | `~/.reasonix/tennis-hq-registry-token.env` (mode 600, not committed)        |
-| Tennis HQ app    | `plum-spruce-dawn-dune1` (canonical) · Worker `tennis-hq`                   |
+| Tennis HQ app    | [`plum-spruce-dawn-dune1`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1) (canonical) · Worker `tennis-hq` · [CONTRIBUTING](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md) |
 
 ### Producer service auth (`PARTNER_API_TOKEN`) — configured 2026-08-05
 
@@ -228,9 +234,38 @@ full hard parity when `publishPlane` is on the edge; soft-skip while Pages lags
 (`publishPlane pending on edge`). Packages board renders the soft-pass table +
 `publishPlane` footer (hex swatches from weave or proof rows).
 
+## Producer references (plum-spruce-dawn-dune1)
+
+Use these when changing the Market Desk, v1 contracts, or day-loop gates — not
+the Pages evidence board.
+
+| Concern | Producer path (GitHub) |
+| ------- | ---------------------- |
+| Contribute / PR checklist / release gate | [CONTRIBUTING.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md) |
+| Docs hub | [docs/README.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/docs/README.md) |
+| Factory registry token for cloud agents | [docs/REGISTRY.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/docs/REGISTRY.md) |
+| Partners / ledger / seat capital | [docs/PARTNERS.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/docs/PARTNERS.md) |
+| Tip · tags · Worker vs Pages | [docs/RELEASE.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/docs/RELEASE.md) · [CLOUDFLARE-DELIVERY.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/docs/CLOUDFLARE-DELIVERY.md) |
+| Product / agent entry | [AGENTS.project.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/AGENTS.project.md) |
+| Gate failures | [docs/RELEASE-GATE-FAILURES.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/docs/RELEASE-GATE-FAILURES.md) |
+
+**Plane split (do not collapse):**
+
+| Plane | Host | Refresh |
+| ----- | ---- | ------- |
+| Market Desk | `tennis.factory-wager.com` | Producer deploy / Wrangler |
+| Portal evidence | `factory-wager.com/portal/tennis/` | Factory bake (`tennis:board:bake` · `bake-registry-manifest` · partner-contracts) |
+
+Inventory age + **Bun runtime provenance** for bakes:
+[`/registry/bake-manifest.json`](../../../public/registry/bake-manifest.json)
+(`runtime.runtimeVersion` · `runtime.bakedAt`) ·
+[`bake-resilience.md`](bake-resilience.md).
+
 ## Related
 
 - [`docs/registry-client.md`](../../registry-client.md)
 - [`docs/guides/REGISTRY_PRODUCTION_READINESS.md`](../../guides/REGISTRY_PRODUCTION_READINESS.md)
 - [`docs/harness/tenants/proton-integration.md`](proton-integration.md) — vault
   inject
+- [`tennis-hq-ui-audit.md`](tennis-hq-ui-audit.md) — dual-surface UI inventory
+- [`public/portal/tennis.md`](../../../public/portal/tennis.md) — portal consumer map

@@ -16,12 +16,14 @@ Factory partner desk (Telegram · Accounting · Soft · DOD).
 | DOD proofs | [`/portal/dod/`](./dod/) |
 | Tenant runbook | [`docs/harness/tenants/tennis-hq-registry.md`](../../docs/harness/tenants/tennis-hq-registry.md) |
 | UI inventory audit | [`docs/harness/tenants/tennis-hq-ui-audit.md`](../../docs/harness/tenants/tennis-hq-ui-audit.md) |
+| Producer contribute | [plum-spruce-dawn-dune1 · CONTRIBUTING](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md) (Market Desk day loop · gate · partners) |
+| Bake inventory | [`/registry/bake-manifest.json`](../registry/bake-manifest.json) (`runtime.runtimeVersion` · per-artifact `bakedAt`) |
 
 ## 1. Two surfaces (do not collapse)
 
 | Host | Owner | Role |
 |------|-------|------|
-| `tennis.factory-wager.com` | Worker `tennis-hq` · producer `plum-spruce-dawn-dune1` | Live desk SPA · `/api/v1/*` contracts · market feed |
+| `tennis.factory-wager.com` | Worker `tennis-hq` · producer [`plum-spruce-dawn-dune1`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1) · [CONTRIBUTING](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md) | Live desk SPA · `/api/v1/*` contracts · market feed |
 | `factory-wager.com/portal/tennis/` | this monorepo · Pages | Baked metrics · agent-auth · registry · venue board |
 
 There is **no** redirect between them. Board loads registry JSON only (no
