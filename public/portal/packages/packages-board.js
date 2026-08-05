@@ -4,6 +4,8 @@
  * @see docs/harness/tenants/monorepo-health.md (claim packages-graph-map-v13)
  */
 
+import { escHtml, renderPortalTable, renderPortalTableRows } from '../components/portal-ui.js';
+
 /** Supported bake schema for this board (pin — warn on mismatch, still try to render). */
 export const PACKAGES_MAP_SCHEMA = 13;
 /** Older bakes still render; surfaces block appears only on v13+. */
@@ -894,17 +896,28 @@ export function renderPublishPlaneTable(rows) {
   if (!rows.length) {
     return '<p class="pkg-empty">No soft-pass proofs — <code>bun run ssot:flow:soft</code> · <code>bun run verify:pm:save</code></p>';
   }
-  const body = rows
-    .map(r => {
+  const cols = [
+    { key: 'name', label: 'artifactName' },
+    { key: 'id', label: 'artifactId' },
+    { key: 'color', label: 'colorKey' },
+    { key: 'mode', label: 'mode' },
+    { key: 'status', label: 'status' },
+    { key: 'summary', label: 'summary' },
+    { key: 'detail', label: 'detail' },
+    { key: 'json', label: 'json' },
+    { key: 'cli', label: 'cli' },
+  ];
+  return renderPortalTable(
+    cols,
+    rows.map(r => {
       const statusClass =
         r.status === 'pass' ? 'grade-healthy' : r.status === 'fail' ? 'grade-critical' : 'pkg-empty';
       const mark = r.status === 'pass' ? '✅' : r.status === 'fail' ? '❌' : '—';
-      const counts =
-        r.missing
-          ? 'missing bake'
-          : `${r.passed}/${r.total}` +
-            (r.skipped ? ` · ${r.skipped} skipped` : '') +
-            (r.failed && r.failed !== 0 && r.failed !== '—' ? ` · ${r.failed} failed` : '');
+      const counts = r.missing
+        ? 'missing bake'
+        : `${r.passed}/${r.total}` +
+          (r.skipped ? ` · ${r.skipped} skipped` : '') +
+          (r.failed && r.failed !== 0 && r.failed !== '—' ? ` · ${r.failed} failed` : '');
       const detail = r.tarballPath
         ? `<code>${escapeHtml(r.tarballPath)}</code>${r.sha256 ? ` · sha256 ${escapeHtml(r.sha256)}…` : ''}`
         : escapeHtml(r.packageLabel);
@@ -920,26 +933,34 @@ export function renderPublishPlaneTable(rows) {
         ? `<span class="pkg-color-swatch" style="background:${escapeHtml(r.modeColorHex || 'transparent')}"></span>` +
           `<code>${escapeHtml(r.mode)}</code>/<code>${escapeHtml(r.modeColorKey)}</code>`
         : escapeHtml(r.mode);
-      return (
-        `<tr data-artifact-id="${escapeHtml(r.artifactId)}" data-concept-id="${escapeHtml(r.conceptId)}" data-color-key="${escapeHtml(r.colorKey)}">` +
-        `<td>${escapeHtml(r.artifactName)}</td>` +
-        `<td><code>${escapeHtml(r.artifactId)}</code></td>` +
-        `<td>${colorCell}</td>` +
-        `<td>${modeCell}</td>` +
-        `<td class="${statusClass}">${mark} ${escapeHtml(String(r.status))}</td>` +
-        `<td>${escapeHtml(String(counts))}</td>` +
-        `<td>${detail}</td>` +
-        `<td><a href="${escapeHtml(jsonHref)}"><code>${escapeHtml(r.artifactId)}.json</code></a></td>` +
-        `<td><button type="button" class="copy-cli" data-cli="${escapeHtml(r.cli)}">copy CLI</button></td>` +
-        `</tr>`
-      );
-    })
-    .join('');
-  return (
-    `<table class="portal-table pkg-table" aria-label="Publish plane soft-pass artifacts">` +
-    `<thead><tr>` +
-    `<th>artifactName</th><th>artifactId</th><th>colorKey</th><th>mode</th><th>status</th><th>summary</th><th>detail</th><th>json</th><th>cli</th>` +
-    `</tr></thead><tbody>${body}</tbody></table>`
+      return [
+        r.artifactName,
+        { html: `<code>${escapeHtml(r.artifactId)}</code>` },
+        { html: colorCell },
+        { html: modeCell },
+        {
+          html: `${mark} ${escapeHtml(String(r.status))}`,
+          className: statusClass,
+        },
+        String(counts),
+        { html: detail },
+        {
+          html: `<a href="${escapeHtml(jsonHref)}"><code>${escapeHtml(r.artifactId)}.json</code></a>`,
+        },
+        {
+          html: `<button type="button" class="copy-cli" data-cli="${escapeHtml(r.cli)}">copy CLI</button>`,
+        },
+      ];
+    }),
+    {
+      className: 'pkg-table',
+      tableAttrs: { 'aria-label': 'Publish plane soft-pass artifacts' },
+      rowAttrs: i => ({
+        'data-artifact-id': String(rows[i]?.artifactId || ''),
+        'data-concept-id': String(rows[i]?.conceptId || ''),
+        'data-color-key': String(rows[i]?.colorKey || ''),
+      }),
+    }
   );
 }
 
@@ -1707,32 +1728,81 @@ function renderPackagesBoard(data, doc = document) {
       countEl.textContent = `${rows.length} of ${data.packages.length} packages`;
     }
     if (!data.packages.length) {
-      const tr = doc.createElement('tr');
-      tr.innerHTML = `<td colspan="5" class="pkg-empty">No package rows in bake</td>`;
-      body.appendChild(tr);
+      body.innerHTML = renderPortalTableRows(
+        [
+          { key: 'n', label: 'Name' },
+          { key: 'r', label: 'Role' },
+          { key: 's', label: 'Score' },
+          { key: 'o', label: 'Orphans' },
+          { key: 'b', label: 'KB' },
+        ],
+        [],
+        { emptyMessage: 'No package rows in bake' }
+      );
       return;
     }
     if (!rows.length) {
-      const tr = doc.createElement('tr');
-      tr.innerHTML = `<td colspan="5" class="pkg-empty">No packages match “${escapeHtml(q)}”</td>`;
-      body.appendChild(tr);
+      body.innerHTML = renderPortalTableRows(
+        [
+          { key: 'n', label: 'Name' },
+          { key: 'r', label: 'Role' },
+          { key: 's', label: 'Score' },
+          { key: 'o', label: 'Orphans' },
+          { key: 'b', label: 'KB' },
+        ],
+        [],
+        { emptyMessage: `No packages match “${q}”` }
+      );
       return;
     }
-    for (const p of rows) {
-      const tr = doc.createElement('tr');
-      const role = p.role ?? '—';
-      const name = p.name ?? p.package ?? '—';
-      const bytes = typeof p.bytes === 'number' ? (p.bytes / 1024).toFixed(1) : '—';
-      const g = gradeFromScore(p.score);
-      tr.dataset.pkg = String(name);
-      tr.dataset.role = String(role);
-      tr.dataset.grade = g;
-      tr.setAttribute('data-grade', g);
-      tr.tabIndex = 0;
-      tr.setAttribute('aria-label', `Focus package ${String(name)} in dependency graph`);
-      tr.setAttribute('aria-selected', 'false');
-      tr.classList.add('pkg-row-clickable');
-      tr.innerHTML = `<td>${escapeHtml(String(name))}</td><td class="role role-${classToken(role)}">${escapeHtml(String(role))}</td><td class="grade-${g}">${p.score ?? '—'}</td><td>${p.orphans ?? 0}</td><td>${bytes}</td>`;
+    const PKG_COLS = [
+      { key: 'n', label: 'Name' },
+      { key: 'r', label: 'Role' },
+      { key: 's', label: 'Score' },
+      { key: 'o', label: 'Orphans' },
+      { key: 'b', label: 'KB' },
+    ];
+    body.innerHTML = renderPortalTableRows(
+      PKG_COLS,
+      rows.map(p => {
+        const role = p.role ?? '—';
+        const name = p.name ?? p.package ?? '—';
+        const bytes = typeof p.bytes === 'number' ? (p.bytes / 1024).toFixed(1) : '—';
+        const g = gradeFromScore(p.score);
+        return [
+          String(name),
+          {
+            html: escapeHtml(String(role)),
+            className: `role role-${classToken(role)}`,
+          },
+          {
+            html: String(p.score ?? '—'),
+            className: `grade-${g}`,
+          },
+          p.orphans ?? 0,
+          bytes,
+        ];
+      }),
+      {
+        rowClass: () => 'pkg-row-clickable',
+        rowAttrs: i => {
+          const p = rows[i];
+          const role = p?.role ?? '—';
+          const name = p?.name ?? p?.package ?? '—';
+          const g = gradeFromScore(p?.score);
+          return {
+            'data-pkg': String(name),
+            'data-role': String(role),
+            'data-grade': g,
+            tabindex: '0',
+            'aria-label': `Focus package ${String(name)} in dependency graph`,
+            'aria-selected': 'false',
+          };
+        },
+      }
+    );
+    for (const tr of body.querySelectorAll('tr.pkg-row-clickable')) {
+      const name = tr.getAttribute('data-pkg') || '';
       const activateRow = () => {
         const graphHost = doc.getElementById('pkg-dep-graph');
         if (!graphHost) return;
@@ -1751,7 +1821,6 @@ function renderPackagesBoard(data, doc = document) {
         event.preventDefault();
         activateRow();
       });
-      body.appendChild(tr);
     }
   };
 
@@ -1947,23 +2016,16 @@ function renderPackagesBoardError(err, doc = document) {
   }
 }
 
-/**
- * @param {string} s
- */
+/** Prefer shared portal-ui escHtml (kept as escapeHtml for local call sites). */
 function escapeHtml(s) {
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+  return escHtml(s);
 }
 
 /**
  * @param {string} s
  */
 function escapeAttribute(s) {
-  return escapeHtml(s);
+  return escHtml(s);
 }
 
 /**

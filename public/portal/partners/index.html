@@ -1161,6 +1161,83 @@
         { key: 'freeplay', label: 'Freeplay' },
         { key: 'status', label: 'Status' },
       ];
+      const ACCOUNTING_DEALS_COLS = [
+        { key: 'partner', label: 'Partner' },
+        { key: 'callSign', label: 'Call sign' },
+        { key: 'fund', label: 'Fund' },
+        { key: 'tg', label: 'Telegram' },
+        { key: 'incomplete', label: 'Incomplete outs' },
+        { key: 'checklist', label: 'Checklist' },
+        { key: 'cli', label: 'CLI' },
+      ];
+      const ACCOUNTING_EVENTS_COLS = [
+        { key: 'partner', label: 'Partner' },
+        { key: 'at', label: 'When' },
+        { key: 'code', label: 'Code' },
+        { key: 'concept', label: 'Concept' },
+        { key: 'amount', label: 'Amount' },
+        { key: 'rail', label: 'Rail / out' },
+        { key: 'note', label: 'Note' },
+      ];
+      const SOFT_PLAYS_COLS = [
+        { key: 'partner', label: 'Partner' },
+        { key: 'at', label: 'Placed' },
+        { key: 'play', label: 'Play' },
+        { key: 'market', label: 'Market' },
+        { key: 'result', label: 'Result' },
+        { key: 'stake', label: 'Stake' },
+        { key: 'pnl', label: 'PnL' },
+      ];
+      const SOFT_WEEKS_COLS = [
+        { key: 'partner', label: 'Partner' },
+        { key: 'week', label: 'Week' },
+        { key: 'deposits', label: 'Deposits' },
+        { key: 'settlements', label: 'Settlements' },
+        { key: 'net', label: 'Net' },
+      ];
+      const SOFT_BOOKS_COLS = [
+        { key: 'partner', label: 'Partner' },
+        { key: 'book', label: 'Book type' },
+        { key: 'deposits', label: 'Deposits' },
+        { key: 'settlements', label: 'Settlements' },
+        { key: 'net', label: 'Net' },
+      ];
+      const LEDGER_COLS = [
+        { key: 'at', label: 'When' },
+        { key: 'type', label: 'Type' },
+        { key: 'amount', label: 'Amount' },
+        { key: 'currency', label: 'CCY' },
+        { key: 'ref', label: 'Reference' },
+        { key: 'track', label: 'Tracking' },
+        { key: 'balance', label: 'Balance after' },
+      ];
+      const PROFILE_OUTS_COLS = [
+        { key: 'out', label: 'Out' },
+        { key: 'balance', label: 'Balance' },
+        { key: 'last', label: 'Last' },
+        { key: 'amount', label: 'Amount' },
+        { key: 'type', label: 'Type' },
+      ];
+      const ACCOUNTS_LIMITS_COLS = [
+        { key: 'partner', label: 'Partner' },
+        { key: 'phase', label: 'Phase' },
+        { key: 'accounts', label: 'Accounts' },
+        { key: 'limits', label: 'Limits' },
+        { key: 'effective', label: 'Effective' },
+        { key: 'freeplay', label: 'Freeplay' },
+        { key: 'ledger', label: 'Ledger' },
+        { key: 'comms', label: 'Comms' },
+        { key: 'actions', label: 'Actions' },
+      ];
+      const PARTNER_MSG_COLS = [
+        { key: 'callSign', label: 'Call sign' },
+        { key: 'fund', label: 'Fund' },
+        { key: 'active', label: 'Active outs' },
+        { key: 'deferred', label: 'Deferred' },
+        { key: 'common', label: 'Common missing' },
+        { key: 'specific', label: 'Out-specific' },
+        { key: 'cli', label: 'CLI' },
+      ];
       /** @type {Map<string, { hex?: string, conceptId?: string, label?: string }>} */
       let bookIndex = new Map();
       /** @type {Map<string, object>} */
@@ -1784,44 +1861,48 @@
         panel.classList.remove('hidden');
         const ledgerBody = $('partner-ledger-tbody');
         if (ledgerBody) {
-          const rows = ops?.accounting?.ledgerRows || [];
-          ledgerBody.innerHTML = rows.length
-            ? [...rows]
-                .reverse()
-                .map(r => {
-                  const type = String(r.type || 'unknown');
-                  const conceptId = `accounting.${type}`;
-                  return `<tr>
-                <td><time>${esc(r.createdAt)}</time></td>
-                <td>${conceptChip(conceptId, type, ops?.colors?.[conceptId])}</td>
-                <td>${fmtMoney(r.amount)}</td>
-                <td>${esc(r.currency)}</td>
-                <td>${esc(r.reference || '—')}</td>
-                <td>${esc(r.trackingId || '—')}</td>
-                <td>${fmtMoney(r.balanceAfter)}</td>
-              </tr>`;
-                })
-                .join('')
-            : '<tr><td colspan="7">No partner_ledger transactions — post via <code>partner:settlement:post</code> / <code>import</code>, then <code>partners:build</code></td></tr>';
+          const rows = [...(ops?.accounting?.ledgerRows || [])].reverse();
+          ledgerBody.innerHTML = renderPortalTableRows(
+            LEDGER_COLS,
+            rows.map(r => {
+              const type = String(r.type || 'unknown');
+              const conceptId = `accounting.${type}`;
+              return [
+                { html: `<time>${esc(r.createdAt)}</time>` },
+                { html: conceptChip(conceptId, type, ops?.colors?.[conceptId]) },
+                { html: fmtMoney(r.amount) },
+                r.currency,
+                r.reference || '—',
+                r.trackingId || '—',
+                { html: fmtMoney(r.balanceAfter) },
+              ];
+            }),
+            {
+              emptyMessage:
+                'No partner_ledger transactions — post via partner:settlement:post / import, then partners:build',
+            }
+          );
         }
         const outsBody = $('partner-outs-tbody');
         if (outsBody) {
           const outs = ops?.accounting?.outs || {};
-          const outIds = Object.keys(outs);
-          outsBody.innerHTML = outIds.length
-            ? outIds
-                .sort()
-                .map(
-                  o => `<tr>
-                <td><code>${esc(o)}</code></td>
-                <td>${fmtMoney(outs[o].balance)}</td>
-                <td><time>${esc(outs[o].lastTransactionAt || '—')}</time></td>
-                <td>${outs[o].lastAmount != null ? fmtMoney(outs[o].lastAmount) : '—'}</td>
-                <td>${esc(outs[o].lastType || '—')}</td>
-              </tr>`
-                )
-                .join('')
-            : '<tr><td colspan="5">No per-out ledger rows — post with <code>--out &lt;bookKey&gt;</code></td></tr>';
+          const outIds = Object.keys(outs).sort();
+          outsBody.innerHTML = renderPortalTableRows(
+            PROFILE_OUTS_COLS,
+            outIds.map(o => [
+              { html: `<code>${esc(o)}</code>` },
+              { html: fmtMoney(outs[o].balance) },
+              { html: `<time>${esc(outs[o].lastTransactionAt || '—')}</time>` },
+              {
+                html:
+                  outs[o].lastAmount != null ? fmtMoney(outs[o].lastAmount) : '—',
+              },
+              outs[o].lastType || '—',
+            ]),
+            {
+              emptyMessage: 'No per-out ledger rows — post with --out <bookKey>',
+            }
+          );
         }
         const hint = $('onboard-cli-hint');
         if (hint) {
@@ -1848,30 +1929,46 @@
         const desks = deskByPartner(seat);
         const partners = Array.isArray(handshake?.rows) ? handshake.rows : [];
         const codes = partners.length ? partners.map(p => p.partnerCode) : [...desks.keys()];
-        $('accounting-tbody').innerHTML = codes.length
-          ? codes
-              .map(code => {
-                const desk = desks.get(String(code).toUpperCase());
-                const done = (desk?.checklist || []).filter(c => c.done).length;
-                const total = (desk?.checklist || []).length;
-                const checklist = total ? `${done}/${total}` : '—';
-                const softN = softPlayCount(code);
-                return `<tr data-partner-code="${esc(code)}">
-                <td>${partnerLink(code)}</td>
-                <td><code>${esc(desk?.callSign || '—')}</code></td>
-                <td class="${fundTone(desk?.fundStatus)}">${esc(desk?.fundStatus || 'no intake')}</td>
-                <td class="${desk?.hasTelegramDesk ? 'tone-ok' : 'tone-warn'}">${desk?.hasTelegramDesk ? 'pinned' : 'missing'}</td>
-                <td class="${(desk?.incompleteOuts || 0) > 0 ? 'tone-warn' : ''}">${esc(desk?.incompleteOuts ?? '—')}</td>
-                <td>${esc(checklist)}${
-                  softN
+        $('accounting-tbody').innerHTML = renderPortalTableRows(
+          ACCOUNTING_DEALS_COLS,
+          codes.map(code => {
+            const desk = desks.get(String(code).toUpperCase());
+            const done = (desk?.checklist || []).filter(c => c.done).length;
+            const total = (desk?.checklist || []).length;
+            const checklist = total ? `${done}/${total}` : '—';
+            const softN = softPlayCount(code);
+            return [
+              { html: partnerLink(code) },
+              { html: `<code>${esc(desk?.callSign || '—')}</code>` },
+              {
+                html: esc(desk?.fundStatus || 'no intake'),
+                className: fundTone(desk?.fundStatus),
+              },
+              {
+                html: desk?.hasTelegramDesk ? 'pinned' : 'missing',
+                className: desk?.hasTelegramDesk ? 'tone-ok' : 'tone-warn',
+              },
+              {
+                html: esc(desk?.incompleteOuts ?? '—'),
+                className: (desk?.incompleteOuts || 0) > 0 ? 'tone-warn' : '',
+              },
+              {
+                html:
+                  esc(checklist) +
+                  (softN
                     ? ` · ${conceptChip('ops.view.per_play', `${softN} soft plays`, colorsCache['ops.view.per_play'] || '')}`
-                    : ''
-                }</td>
-                <td><code>telegram:package-group:accounting -- ${esc(code)}</code></td>
-              </tr>`;
-              })
-              .join('')
-          : '<tr><td colspan="7">No accounting rows</td></tr>';
+                    : ''),
+              },
+              {
+                html: `<code>telegram:package-group:accounting -- ${esc(code)}</code>`,
+              },
+            ];
+          }),
+          {
+            emptyMessage: 'No accounting rows',
+            rowAttrs: i => ({ 'data-partner-code': String(codes[i] || '') }),
+          }
+        );
 
         const events = [];
         for (const partner of ops?.partners || []) {
@@ -1882,23 +1979,30 @@
         events.sort((a, b) => String(b.at || '').localeCompare(String(a.at || '')));
         const eventsBody = $('accounting-events-tbody');
         if (eventsBody) {
-          eventsBody.innerHTML = events.length
-            ? events
-                .slice(0, 40)
-                .map(e => {
-                  const conceptId = e.conceptId || conceptIdForPartnerOpsEventCode(e.code);
-                  return `<tr data-partner-code="${esc(e.partnerCode)}">
-                <td>${partnerLink(e.partnerCode)}</td>
-                <td><time>${esc(e.at || '—')}</time></td>
-                <td><code>${esc(e.code || '—')}</code></td>
-                <td><a href="${glossaryHref(conceptId)}" data-glossary-concept="${esc(conceptId)}">${esc(conceptId)}</a></td>
-                <td>${e.amount != null ? esc(String(e.amount)) : '—'}</td>
-                <td>${esc([e.rail, e.outId].filter(Boolean).join(' · ') || '—')}</td>
-                <td>${esc(e.note || '—')}</td>
-              </tr>`;
-                })
-                .join('')
-            : '<tr><td colspan="7">No ledger events — bun run partners:event … then partners:build</td></tr>';
+          const slice = events.slice(0, 40);
+          eventsBody.innerHTML = renderPortalTableRows(
+            ACCOUNTING_EVENTS_COLS,
+            slice.map(e => {
+              const conceptId = e.conceptId || conceptIdForPartnerOpsEventCode(e.code);
+              return [
+                { html: partnerLink(e.partnerCode) },
+                { html: `<time>${esc(e.at || '—')}</time>` },
+                { html: `<code>${esc(e.code || '—')}</code>` },
+                {
+                  html: `<a href="${glossaryHref(conceptId)}" data-glossary-concept="${esc(conceptId)}">${esc(conceptId)}</a>`,
+                },
+                e.amount != null ? String(e.amount) : '—',
+                [e.rail, e.outId].filter(Boolean).join(' · ') || '—',
+                e.note || '—',
+              ];
+            }),
+            {
+              emptyMessage: 'No ledger events — bun run partners:event … then partners:build',
+              rowAttrs: i => ({
+                'data-partner-code': String(slice[i]?.partnerCode || ''),
+              }),
+            }
+          );
         }
 
         const softBody = $('soft-plays-tbody');
@@ -1910,58 +2014,72 @@
           softPlays.sort((a, b) =>
             String(b.placedAt || '').localeCompare(String(a.placedAt || ''))
           );
-          softBody.innerHTML = softPlays.length
-            ? softPlays
-                .slice(0, 40)
-                .map(
-                  p => `<tr data-partner-code="${esc(p.partnerCode)}" data-glossary-concept="ops.view.per_play">
-                <td>${partnerLink(p.partnerCode)}</td>
-                <td><time>${esc(p.placedAt || '—')}</time></td>
-                <td><code>${esc(p.playId || '—')}</code></td>
-                <td>${esc(p.market || '—')}</td>
-                <td>${esc(p.result || '—')}</td>
-                <td>${esc(p.stake)}</td>
-                <td>${esc(p.pnl ?? '—')}</td>
-              </tr>`
-                )
-                .join('')
-            : `<tr><td colspan="7">No Soft plays — <code>bun run soft:accounting:bake</code> or <code>soft:accounting:from-ct</code> · source ${esc(softAccountingSource)}</td></tr>`;
+          const slice = softPlays.slice(0, 40);
+          softBody.innerHTML = renderPortalTableRows(
+            SOFT_PLAYS_COLS,
+            slice.map(p => [
+              { html: partnerLink(p.partnerCode) },
+              { html: `<time>${esc(p.placedAt || '—')}</time>` },
+              { html: `<code>${esc(p.playId || '—')}</code>` },
+              p.market || '—',
+              p.result || '—',
+              p.stake,
+              p.pnl ?? '—',
+            ]),
+            {
+              emptyMessage: `No Soft plays — bun run soft:accounting:bake or soft:accounting:from-ct · source ${softAccountingSource}`,
+              rowAttrs: i => ({
+                'data-partner-code': String(slice[i]?.partnerCode || ''),
+                'data-glossary-concept': 'ops.view.per_play',
+              }),
+            }
+          );
         }
 
         const weeksBody = $('soft-weeks-tbody');
         if (weeksBody) {
-          weeksBody.innerHTML = softWeekRows.length
-            ? softWeekRows
-                .slice(0, 40)
-                .map(
-                  w => `<tr data-partner-code="${esc(w.partnerCode)}" data-glossary-concept="ops.view.per_week">
-                <td>${partnerLink(w.partnerCode)}</td>
-                <td><code>${esc(w.weekStart || '—')}</code></td>
-                <td>${esc(w.deposits)}</td>
-                <td>${esc(w.settlements)}</td>
-                <td><strong>${esc(w.net)}</strong></td>
-              </tr>`
-                )
-                .join('')
-            : `<tr><td colspan="5">No Soft week rollups — bake Soft plays first · source ${esc(softAccountingSource)}</td></tr>`;
+          const slice = softWeekRows.slice(0, 40);
+          weeksBody.innerHTML = renderPortalTableRows(
+            SOFT_WEEKS_COLS,
+            slice.map(w => [
+              { html: partnerLink(w.partnerCode) },
+              { html: `<code>${esc(w.weekStart || '—')}</code>` },
+              w.deposits,
+              w.settlements,
+              { html: `<strong>${esc(w.net)}</strong>` },
+            ]),
+            {
+              emptyMessage: `No Soft week rollups — bake Soft plays first · source ${softAccountingSource}`,
+              rowAttrs: i => ({
+                'data-partner-code': String(slice[i]?.partnerCode || ''),
+                'data-glossary-concept': 'ops.view.per_week',
+              }),
+            }
+          );
         }
 
         const booksBody = $('soft-book-types-tbody');
         if (booksBody) {
-          booksBody.innerHTML = softBookTypeRows.length
-            ? softBookTypeRows
-                .slice(0, 40)
-                .map(
-                  b => `<tr data-partner-code="${esc(b.partnerCode)}" data-glossary-concept="ops.view.per_book_type">
-                <td>${partnerLink(b.partnerCode)}</td>
-                <td><a href="${glossaryHref(b.bookType)}" data-glossary-concept="${esc(b.bookType)}"><code>${esc(b.bookType)}</code></a></td>
-                <td>${esc(b.deposits)}</td>
-                <td>${esc(b.settlements)}</td>
-                <td><strong>${esc(b.net)}</strong></td>
-              </tr>`
-                )
-                .join('')
-            : `<tr><td colspan="5">No Soft book-type rollups — tag plays with bookType or enrich via partners-ops · source ${esc(softAccountingSource)}</td></tr>`;
+          const slice = softBookTypeRows.slice(0, 40);
+          booksBody.innerHTML = renderPortalTableRows(
+            SOFT_BOOKS_COLS,
+            slice.map(b => [
+              { html: partnerLink(b.partnerCode) },
+              {
+                html: `<a href="${glossaryHref(b.bookType)}" data-glossary-concept="${esc(b.bookType)}"><code>${esc(b.bookType)}</code></a>`,
+              },
+              b.deposits,
+              b.settlements,
+              { html: `<strong>${esc(b.net)}</strong>` },
+            ]),
+            {
+              emptyMessage: `No Soft book-type rollups — tag plays with bookType or enrich via partners-ops · source ${softAccountingSource}`,
+              rowAttrs: i => ({
+                'data-partner-code': String(slice[i]?.partnerCode || ''),
+                'data-glossary-concept': 'ops.view.per_book_type',
+              }),
+            }
+          );
         }
       }
 
@@ -2065,67 +2183,95 @@
           : '';
 
         const rows = ops?.partners || [];
-        $('accounts-limits-tbody').innerHTML = rows.length
-          ? rows
-              .map(partner => {
-                const tracking = partner.tracking || {};
-                const accounts = tracking.accounts || {};
-                const limits = tracking.limits || {};
-                const communication = tracking.communication || {};
-                const accounting = tracking.accounting || {};
-                const limitTone =
-                  limits.missing === 0 ? colors['out.status.ready'] : colors['out.status.deferred'];
-                const communicationTone = communication.ready
-                  ? colors['out.status.ready']
-                  : colors['telegram.handshake'];
-                const effectiveLimits = (partner.outs || []).map(out =>
-                  routeChip(
-                    partnerOutHash(partner.code, out.id),
-                    `${out.book?.name || out.id}: ${out.maxBet || '—'}`,
-                    colors['ops.limits.effective_limit'],
-                    'ops.limits.effective_limit'
-                  ).replace('topic-chip', 'book-chip')
-                );
-                const actions = [
-                  routeChip(
-                    partnerHash(partner.code),
-                    'Profile',
-                    colors['ops.limits.account'],
-                    'ops.limits.account'
-                  ),
-                  routeChip(
-                    partnerAccountingHash(partner.code),
-                    'Accounting',
-                    colors['ops.view.per_account'] || colors['telegram.topic.accounting'],
-                    'ops.view.per_account'
-                  ),
-                  routeChip(
-                    partnerTelegramHash(partner.code, 'ops'),
-                    'Telegram',
-                    colors['telegram.topic.ops'],
-                    'telegram.handshake'
-                  ),
-                  `<a class="book-chip" href="/portal/limits/?partner=${encodeURIComponent(partner.code)}" data-glossary-concept="ops.limits.effective_limit">Limits</a>`,
-                  `<a class="book-chip" href="/portal/partner-history/?partner=${encodeURIComponent(partner.code)}" data-glossary-concept="ops.limits.opening_baseline">History</a>`,
-                ].join(' ');
-                return `<tr data-partner-code="${esc(partner.code)}">
-                <td>${partnerLink(partner.code)}<br><code>${esc(partner.callSign)}</code></td>
-                <td>${phaseChip(partner.code)}</td>
-                <td>${conceptChip('ops.limits.account', `${accounts.ready || 0}/${accounts.total || 0} ready`, colors['ops.limits.account'])}</td>
-                <td>${coverageBarHtml(limits.coveragePct)}<div class="tone-muted" style="font-size:11px;margin-top:4px">${esc(String(limits.missing || 0))} missing</div></td>
-                <td><span class="tracking-summary">${effectiveLimits.join('') || '—'}</span></td>
-                <td>${conceptChip('ops.view.account_freeplay', `${accounting.freeRollPercent || 0}% · ${accounting.freeRollApplied || 0} applied`, colors['ops.view.account_freeplay'] || colors['accounting.free_roll'])}</td>
-                <td><a href="${partnerAccountingHash(partner.code)}" data-glossary-concept="ops.view.account_summary">${esc(accounting.ledgerEvents || 0)} events</a>${
+        $('accounts-limits-tbody').innerHTML = renderPortalTableRows(
+          ACCOUNTS_LIMITS_COLS,
+          rows.map(partner => {
+            const tracking = partner.tracking || {};
+            const accounts = tracking.accounts || {};
+            const limits = tracking.limits || {};
+            const communication = tracking.communication || {};
+            const accounting = tracking.accounting || {};
+            const communicationTone = communication.ready
+              ? colors['out.status.ready']
+              : colors['telegram.handshake'];
+            const effectiveLimits = (partner.outs || []).map(out =>
+              routeChip(
+                partnerOutHash(partner.code, out.id),
+                `${out.book?.name || out.id}: ${out.maxBet || '—'}`,
+                colors['ops.limits.effective_limit'],
+                'ops.limits.effective_limit'
+              ).replace('topic-chip', 'book-chip')
+            );
+            const actions = [
+              routeChip(
+                partnerHash(partner.code),
+                'Profile',
+                colors['ops.limits.account'],
+                'ops.limits.account'
+              ),
+              routeChip(
+                partnerAccountingHash(partner.code),
+                'Accounting',
+                colors['ops.view.per_account'] || colors['telegram.topic.accounting'],
+                'ops.view.per_account'
+              ),
+              routeChip(
+                partnerTelegramHash(partner.code, 'ops'),
+                'Telegram',
+                colors['telegram.topic.ops'],
+                'telegram.handshake'
+              ),
+              `<a class="book-chip" href="/portal/limits/?partner=${encodeURIComponent(partner.code)}" data-glossary-concept="ops.limits.effective_limit">Limits</a>`,
+              `<a class="book-chip" href="/portal/partner-history/?partner=${encodeURIComponent(partner.code)}" data-glossary-concept="ops.limits.opening_baseline">History</a>`,
+            ].join(' ');
+            return [
+              {
+                html: `${partnerLink(partner.code)}<br><code>${esc(partner.callSign)}</code>`,
+              },
+              { html: phaseChip(partner.code) },
+              {
+                html: conceptChip(
+                  'ops.limits.account',
+                  `${accounts.ready || 0}/${accounts.total || 0} ready`,
+                  colors['ops.limits.account']
+                ),
+              },
+              {
+                html: `${coverageBarHtml(limits.coveragePct)}<div class="tone-muted" style="font-size:11px;margin-top:4px">${esc(String(limits.missing || 0))} missing</div>`,
+              },
+              {
+                html: `<span class="tracking-summary">${effectiveLimits.join('') || '—'}</span>`,
+              },
+              {
+                html: conceptChip(
+                  'ops.view.account_freeplay',
+                  `${accounting.freeRollPercent || 0}% · ${accounting.freeRollApplied || 0} applied`,
+                  colors['ops.view.account_freeplay'] || colors['accounting.free_roll']
+                ),
+              },
+              {
+                html: `<a href="${partnerAccountingHash(partner.code)}" data-glossary-concept="ops.view.account_summary">${esc(accounting.ledgerEvents || 0)} events</a>${
                   softPlayCount(partner.code)
                     ? ` · ${conceptChip('ops.view.per_play', `${softPlayCount(partner.code)} soft`, colors['ops.view.per_play'] || colors['telegram.topic.accounting'])}`
                     : ''
-                }</td>
-                <td>${routeChip(partnerTelegramHash(partner.code, 'accounting'), `${communication.topicsConfigured || 0}/${communication.topicsRequired || 5} topics · ${communication.chatLinked ? 'linked' : 'unlinked'}`, communicationTone, 'telegram.handshake')}</td>
-                <td>${actions}</td>
-              </tr>`;
-              })
-              .join('')
-          : '<tr><td colspan="9">No account tracking in partners-ops bake</td></tr>';
+                }`,
+              },
+              {
+                html: routeChip(
+                  partnerTelegramHash(partner.code, 'accounting'),
+                  `${communication.topicsConfigured || 0}/${communication.topicsRequired || 5} topics · ${communication.chatLinked ? 'linked' : 'unlinked'}`,
+                  communicationTone,
+                  'telegram.handshake'
+                ),
+              },
+              { html: actions },
+            ];
+          }),
+          {
+            emptyMessage: 'No account tracking in partners-ops bake',
+            rowAttrs: i => ({ 'data-partner-code': String(rows[i]?.code || '') }),
+          }
+        );
       }
 
       function renderPartnerMessages(seat) {
@@ -2147,30 +2293,38 @@
             : '<li class="tone-warn">No templates in seat bake — run bun run ops:snapshot</li>';
         }
         const views = seat?.partnerViews || [];
-        $('partner-message-tbody').innerHTML = views.length
-          ? views
-              .map(v => {
-                const fund = v.fund?.status || '—';
-                const common = (v.commonMissing || []).join(', ') || '—';
-                const specific =
-                  (v.outSpecificMissing || [])
-                    .map(o => `${o.num} ${o.book}: ${(o.labels || []).join('/')}`)
-                    .join('; ') || '—';
-                const partnerCode = String(v.callSign || '')
-                  .split('-')[0]
-                  .toUpperCase();
-                return `<tr data-partner-code="${esc(partnerCode)}">
-                <td><code>${esc(v.callSign)}</code></td>
-                <td class="${fundTone(fund)}">${esc(fund)}</td>
-                <td>${esc(String((v.activeOuts || []).length))}</td>
-                <td>${esc(String((v.deferredOuts || []).length))}</td>
-                <td>${esc(common)}</td>
-                <td>${esc(specific)}</td>
-                <td><code>seat:desk:partner-message ${esc(v.callSign)} --json</code></td>
-              </tr>`;
-              })
-              .join('')
-          : '<tr><td colspan="7">No partnerViews in seat-capital-desk bake — run bun run ops:snapshot</td></tr>';
+        $('partner-message-tbody').innerHTML = renderPortalTableRows(
+          PARTNER_MSG_COLS,
+          views.map(v => {
+            const fund = v.fund?.status || '—';
+            const common = (v.commonMissing || []).join(', ') || '—';
+            const specific =
+              (v.outSpecificMissing || [])
+                .map(o => `${o.num} ${o.book}: ${(o.labels || []).join('/')}`)
+                .join('; ') || '—';
+            return [
+              { html: `<code>${esc(v.callSign)}</code>` },
+              { html: esc(fund), className: fundTone(fund) },
+              String((v.activeOuts || []).length),
+              String((v.deferredOuts || []).length),
+              common,
+              specific,
+              {
+                html: `<code>seat:desk:partner-message ${esc(v.callSign)} --json</code>`,
+              },
+            ];
+          }),
+          {
+            emptyMessage:
+              'No partnerViews in seat-capital-desk bake — run bun run ops:snapshot',
+            rowAttrs: i => {
+              const partnerCode = String(views[i]?.callSign || '')
+                .split('-')[0]
+                .toUpperCase();
+              return { 'data-partner-code': partnerCode };
+            },
+          }
+        );
       }
 
       function renderBooks(ops) {
