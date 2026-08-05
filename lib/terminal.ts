@@ -19,6 +19,7 @@
  * @see https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support
  */
 
+import { concatBytes } from './bytes-base64.ts';
 import { bunDocs, bunReference } from './docs/bun-site-url.ts';
 import { BUN_TYPES_SOURCE_URL } from './docs/bun-source-links.ts';
 
@@ -112,7 +113,7 @@ export function createCapturingTerminal(options: CreateTerminalOptions = {}): Ca
   return {
     terminal,
     chunks,
-    text: () => decoder.decode(Buffer.concat(chunks)),
+    text: () => decoder.decode(concatBytes(chunks)),
   };
 }
 

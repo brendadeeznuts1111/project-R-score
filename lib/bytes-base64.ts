@@ -65,3 +65,21 @@ export function randomHex(byteLen: number): string {
   if (bytes.byteLength > 0) crypto.getRandomValues(bytes);
   return bytesToHex(bytes);
 }
+
+/** Concatenate chunks into one contiguous Uint8Array (no Node Buffer.concat). */
+export function concatBytes(chunks: readonly Uint8Array[]): Uint8Array {
+  let total = 0;
+  for (const c of chunks) total += c.byteLength;
+  const out = new Uint8Array(total);
+  let offset = 0;
+  for (const c of chunks) {
+    out.set(c, offset);
+    offset += c.byteLength;
+  }
+  return out;
+}
+
+/** UTF-8 byte length of a string (Bun-native; no Buffer.byteLength). */
+export function utf8ByteLength(text: string): number {
+  return utf8.encode(text).byteLength;
+}

@@ -4,6 +4,7 @@
 import { EventEmitter } from 'events';
 
 import { CryptoHasher } from 'bun';
+import { base64ToUtf8, hexToBytes } from '../bytes-base64.ts';
 import { logger } from '../core/structured-logger';
 import { auditLogger } from './secret-audit-logger';
 import {
@@ -580,20 +581,23 @@ export class ZeroTrustManager extends EventEmitter {
           // Use timing-safe comparison to prevent timing attacks
           const inputHash = new CryptoHasher('sha256').update(credentials.password).digest('hex');
           return crypto.timingSafeEqual(
-            Buffer.from(inputHash, 'hex'),
-            Buffer.from(identity.credentials.hash, 'hex')
+            hexToBytes(inputHash),
+            hexToBytes(identity.credentials.hash)
           );
 
         case 'token':
           if (!credentials.token) return false;
           // Verify token format and signature
           const tokenParts = credentials.token.split('.');
-          if (tokenParts.length !== 3) return false;
+          if (tokenParts.length !== 3 || !tokenParts[1]) return false;
 
           // In production, verify JWT signature with proper key
           // For now, verify basic structure
-          const payload = JSON.parse(Buffer.from(tokenParts[1], 'base64').toString());
-          return payload.exp > Date.now() / 1000 && payload.sub === identity.id;
+          const payload = JSON.parse(base64ToUtf8(tokenParts[1])) as {
+            exp?: number;
+            sub?: string;
+          };
+          return (payload.exp ?? 0) > Date.now() / 1000 && payload.sub === identity.id;
 
         case 'certificate':
           if (!credentials.certificate) return false;
@@ -611,8 +615,8 @@ export class ZeroTrustManager extends EventEmitter {
             .update(credentials.biometricData)
             .digest('hex');
           return crypto.timingSafeEqual(
-            Buffer.from(biometricHash, 'hex'),
-            Buffer.from(identity.credentials.hash, 'hex')
+            hexToBytes(biometricHash),
+            hexToBytes(identity.credentials.hash)
           );
 
         default:
