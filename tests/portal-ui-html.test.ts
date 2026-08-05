@@ -128,6 +128,23 @@ describe('browser portal-ui twin', () => {
     expect(html).toContain('escHtml');
   });
 
+  test('partners soft accounting and limits tables use renderPortalTableRows', async () => {
+    const html = await Bun.file('public/portal/partners/index.html').text();
+    expect(html).toContain('SOFT_PLAYS_COLS');
+    expect(html).toContain('SOFT_WEEKS_COLS');
+    expect(html).toContain('SOFT_BOOKS_COLS');
+    expect(html).toContain('ACCOUNTS_LIMITS_COLS');
+    expect(html).toContain('ACCOUNTING_DEALS_COLS');
+    expect(html).toContain('PARTNER_MSG_COLS');
+  });
+
+  test('packages board imports portal-ui for publish and package tables', async () => {
+    const js = await Bun.file('public/portal/packages/packages-board.js').text();
+    expect(js).toContain("from '../components/portal-ui.js'");
+    expect(js).toContain('renderPortalTable');
+    expect(js).toContain('renderPortalTableRows');
+  });
+
   test('bookmakers board uses portal-table and shared chips', async () => {
     const html = await Bun.file('public/portal/bookmakers/index.html').text();
     const js = await Bun.file('public/portal/bookmakers/bookmakers-board.js').text();

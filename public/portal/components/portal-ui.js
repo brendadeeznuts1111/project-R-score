@@ -141,6 +141,7 @@ export function renderPortalTable(columns, rows, opts = {}) {
     opts.density === 'compact' ? ' data-density="compact"' : '',
     opts.zebra ? ' data-zebra' : '',
     opts.tone ? ` data-tone="${escHtml(opts.tone)}"` : '',
+    attrsHtml(opts.tableAttrs),
   ].join('');
 
   const thead =

@@ -229,10 +229,12 @@ describe('packages-board failure paths', () => {
 
   test('table rows expose keyboard and selected-state semantics', async () => {
     const source = await Bun.file('public/portal/packages/packages-board.js').text();
-    expect(source).toContain('tr.tabIndex = 0');
-    expect(source).toContain("tr.setAttribute('aria-selected', 'false')");
+    // Rows built via renderPortalTableRows (tabindex + aria via rowAttrs)
+    expect(source).toContain("tabindex: '0'");
+    expect(source).toContain("'aria-selected': 'false'");
     expect(source).toContain("tr.addEventListener('keydown'");
     expect(source).toContain('isKeyboardActivationKey(event.key)');
+    expect(source).toContain('renderPortalTableRows');
   });
 
   test('normalizePackagesMap accepts bake shape', () => {
