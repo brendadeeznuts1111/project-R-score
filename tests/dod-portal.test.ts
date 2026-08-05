@@ -19,8 +19,6 @@ describe('dod portal · partner Accounting confirm', () => {
     expect(html).toContain('.dod-partner-chip');
     expect(html).toContain('/registry/telegram-handshake.json');
     expect(html).toContain('Confirm amounts in partner Telegram Accounting');
-    expect(html).toContain('/portal/telegram.md');
-    expect(html).toContain('/portal/dod.md');
 
     expect(script).toContain("const HANDSHAKE_URL = '/registry/telegram-handshake.json'");
     expect(script).toContain('partnerTelegramHash');
@@ -31,8 +29,10 @@ describe('dod portal · partner Accounting confirm', () => {
     expect(script).toContain('Confirm bet amounts in partner chats');
     expect(script).toContain("partnerTelegramHash(code, 'accounting')");
     expect(script).toContain('confirmHost.innerHTML');
-    expect(script).toContain('R2/local');
-    expect(script).toContain('/portal/dod.md');
+    expect(script).toContain('resolveTelegramMessageLink');
+    expect(script).toContain('imageMetaHtml');
+    expect(script).toContain('dod-accounting-figure');
+    expect(script).toContain('Open Telegram message');
   });
 
   test('demo OCR embeds partner CODEs for Accounting deep-links', async () => {
@@ -46,29 +46,44 @@ describe('dod portal · partner Accounting confirm', () => {
     expect(seed).toContain('BIL-001');
     expect(seed).toContain('NOV · Deposit');
     expect(seed).toContain('SPEN · Balance');
+    expect(seed).toContain('telegram_chat_id');
+    expect(seed).toContain('image_meta_json');
 
-    const texts = (queue.entries as Array<{ extracted_text?: string | null }>)
-      .map(e => e.extracted_text)
-      .filter(Boolean)
-      .join('\n');
-    expect(texts).toContain('ASH ·');
-    expect(texts).toContain('BIL-001');
-    expect(texts).toContain('NOV ·');
-    expect(texts).toContain('SPEN ·');
+    const flagged = (queue.entries as Array<Record<string, unknown>>).find(
+      e => e.type === 'balance' && e.status === 'flagged'
+    );
+    expect(String(flagged?.extracted_text)).toContain('ASH ·');
+    expect(flagged?.accounting_amount).toBe(12450);
+    expect(String(flagged?.telegram_deep_link)).toContain('t.me/c/');
+    expect(flagged?.image_meta).toBeTruthy();
 
     expect(html).toContain('ASH · Balance');
     expect(html).toContain('BIL-001');
+    expect(html).toContain('telegram_deep_link');
+    expect(html).toContain('accounting_amount');
   });
 
-  test('resolvePartnerCode reads OCR call-signs', async () => {
-    const { resolvePartnerCode } = await import('../public/portal/dod/dod-dashboard.js');
-    expect(resolvePartnerCode({ type: 'slip', extracted_text: 'BIL-001 · NBA $250' })).toBe(
+  test('resolvePartnerCode and telegram/amount helpers', async () => {
+    const mod = await import('../public/portal/dod/dod-dashboard.js');
+    expect(mod.resolvePartnerCode({ type: 'slip', extracted_text: 'BIL-001 · NBA $250' })).toBe(
       'BIL'
     );
-    expect(resolvePartnerCode({ type: 'balance', extracted_text: 'ASH · Balance $100' })).toBe(
+    expect(mod.resolvePartnerCode({ type: 'balance', extracted_text: 'ASH · Balance $100' })).toBe(
       'ASH'
     );
-    expect(resolvePartnerCode({ partner_code: 'nov' })).toBe('NOV');
-    expect(resolvePartnerCode({ type: 'id', extracted_text: 'ID document' })).toBeNull();
+    expect(mod.resolvePartnerCode({ partner_code: 'nov' })).toBe('NOV');
+    expect(mod.resolvePartnerCode({ type: 'id', extracted_text: 'ID document' })).toBeNull();
+
+    expect(
+      mod.resolveTelegramMessageLink({
+        telegram_chat_id: '-1002147483001',
+        telegram_message_id: 1842,
+        telegram_thread_id: 42,
+      })
+    ).toBe('https://t.me/c/2147483001/42/1842');
+    expect(mod.resolveAccountingAmount({ extracted_text: 'ASH · Balance $12,450.00' })).toBe(
+      12450
+    );
+    expect(mod.formatAccountingAmount(12450)).toBe('$12,450.00');
   });
 });

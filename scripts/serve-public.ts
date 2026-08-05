@@ -600,7 +600,8 @@ async function dodApi(req: Request): Promise<Response> {
 
   if (req.method === 'GET') {
     const status = url.searchParams.get('status') || 'all';
-    return json(dodVerifier.list(status));
+    const { enrichDodEntries } = await import('../lib/dod/enrich-entry.ts');
+    return json(enrichDodEntries(dodVerifier.list(status) as Record<string, unknown>[]));
   }
 
   if (req.method === 'POST') {
