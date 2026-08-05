@@ -2,16 +2,23 @@
 // @see https://bun.com/docs/api/http — Bun.serve
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @see https://bun.com/docs/runtime/hashing — Bun.CryptoHasher
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 /**
- * Serve Bun Agent Live Odds Intelligence dashboard (v1.01) + mock odds APIs.
+ * Serve Bun Agent Live Odds Intelligence dashboard (v1.02) + mock APIs.
  *
  *   bun run agent:odds-dashboard
  *   open http://127.0.0.1:3000/
  *
- * Static: public/portal/agent-odds/dashboard.html
- * APIs:   GET /api/odds/options · /api/odds · /api/odds/stats · /api/platform
+ * Static:
+ *   public/portal/agent-odds/dashboard-v1.02.html (latest index)
+ *   public/portal/agent-odds/dashboard.html (v1.01 if present)
  *
- * When real operator-research HTTP lands, replace mock handlers — keep paths.
+ * APIs:
+ *   GET  /api/odds/options · /api/odds · /api/odds/stats
+ *   GET  /api/odds/stream  (SSE)
+ *   POST /api/upload       (FormData + Blob)
+ *   GET  /api/pool · /api/prefetch · /api/platform
  */
 import { join } from 'node:path';
 
@@ -80,6 +87,14 @@ type OddsRow = {
   marketData: { selections: Array<{ price: string }> };
 };
 
+const poolState = {
+  active: 8,
+  idle: 4,
+  streams: 12,
+  prefetchHits: 0,
+  http2: true,
+};
+
 function pick<T extends readonly string[]>(arr: T): T[number] {
   return arr[Math.floor(Math.random() * arr.length)]!;
 }
@@ -102,7 +117,6 @@ function generateOdds(count: number): OddsRow[] {
   return out;
 }
 
-/** In-memory catalog (stable within process; regenerate via ?refresh=1). */
 let CATALOG: OddsRow[] = generateOdds(120);
 
 function filterOdds(url: URL): { data: OddsRow[]; total: number } {
@@ -159,6 +173,69 @@ function contentType(path: string): string {
   return 'application/octet-stream';
 }
 
+function oddsStreamResponse(): Response {
+  let id = 0;
+  let timer: ReturnType<typeof setInterval> | undefined;
+  const stream = new ReadableStream({
+    start(controller) {
+      const enc = new TextEncoder();
+      const send = () => {
+        id += 1;
+        const price = (1 + Math.random() * 3).toFixed(2);
+        const payload = {
+          id,
+          host: pick(HOSTS),
+          sport: pick(SPORTS),
+          market: pick(MARKETS),
+          price,
+          session: pick(SESSIONS),
+          at: new Date().toISOString(),
+        };
+        controller.enqueue(
+          enc.encode(`id: ${id}\ndata: ${JSON.stringify(payload)}\n\n`),
+        );
+        poolState.streams = Math.min(poolState.streams + 1, 99);
+      };
+      send();
+      timer = setInterval(send, 1500);
+    },
+    cancel() {
+      if (timer) clearInterval(timer);
+    },
+  });
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/event-stream; charset=utf-8',
+      'Cache-Control': 'no-cache, no-transform',
+      Connection: 'keep-alive',
+    },
+  });
+}
+
+async function handleUpload(req: Request): Promise<Response> {
+  const t0 = Bun.nanoseconds();
+  const form = await req.formData();
+  const file = form.get('file');
+  if (!file || typeof file === 'string') {
+    return json({ ok: false, error: 'file field required (Blob/File)' }, 400);
+  }
+  const blob = file as Blob & { name?: string };
+  const buf = new Uint8Array(await blob.arrayBuffer());
+  const sha256 = new Bun.CryptoHasher('sha256').update(buf).digest('hex');
+  const ms = Math.round((Bun.nanoseconds() - t0) / 1e6);
+  poolState.active = Math.min(poolState.active + 1, 40);
+  return json({
+    ok: true,
+    message: `FormData received · ${blob.name ?? 'blob'} · ${buf.byteLength} bytes`,
+    name: blob.name ?? null,
+    size: buf.byteLength,
+    type: blob.type || 'application/octet-stream',
+    kind: form.get('kind')?.toString() ?? null,
+    sha256,
+    ms,
+  });
+}
+
 const server = Bun.serve({
   hostname: HOST,
   port: PORT,
@@ -185,6 +262,38 @@ const server = Bun.serve({
       return json(statsFrom(CATALOG));
     }
 
+    if (path === '/api/odds/stream') {
+      return oddsStreamResponse();
+    }
+
+    if (path === '/api/upload' && req.method === 'POST') {
+      return handleUpload(req);
+    }
+
+    if (path === '/api/pool') {
+      // mild jitter so UI feels live
+      poolState.active = 5 + Math.floor(Math.random() * 15);
+      poolState.idle = Math.floor(Math.random() * 8);
+      return json({ ...poolState });
+    }
+
+    if (path === '/api/prefetch') {
+      const host = url.searchParams.get('host') || 'hardrock.bet';
+      const t0 = Bun.nanoseconds();
+      try {
+        // DNS/TCP pre-warm signal (best-effort; no real book scrape)
+        if (typeof Bun.dns?.prefetch === 'function') {
+          Bun.dns.prefetch(host);
+        }
+      } catch {
+        /* ignore */
+      }
+      await Bun.sleep(50 + Math.floor(Math.random() * 120));
+      const ms = Math.round((Bun.nanoseconds() - t0) / 1e6);
+      poolState.prefetchHits += 1;
+      return json({ ok: true, host, ms, prefetchHits: poolState.prefetchHits });
+    }
+
     if (path === '/api/platform') {
       return json({
         bun: Bun.version,
@@ -193,16 +302,23 @@ const server = Bun.serve({
         image: typeof (Bun as { Image?: unknown }).Image !== 'undefined',
         cron: true,
         operators: HOSTS.length,
-        dashboard: 'agent-odds v1.01',
+        dashboard: 'agent-odds v1.02',
+        features: ['sse', 'formdata', 'pool', 'prefetch'],
       });
     }
 
-    // Static dashboard
-    let filePath = path === '/' || path === '' ? '/dashboard.html' : path;
-    if (filePath === '/index.html') filePath = '/dashboard.html';
-    // only serve under agent-odds dir (no path escape)
+    // Static: default to v1.02
+    let filePath = path === '/' || path === '' ? '/dashboard-v1.02.html' : path;
+    if (filePath === '/index.html') filePath = '/dashboard-v1.02.html';
+    if (filePath === '/dashboard.html') {
+      // keep v1.01 available if present
+      const v1 = join(DASH_DIR, 'dashboard.html');
+      if (!(await Bun.file(v1).exists())) {
+        filePath = '/dashboard-v1.02.html';
+      }
+    }
     const safe = filePath.replace(/\.\./g, '').replace(/^\/+/, '');
-    const abs = join(DASH_DIR, safe || 'dashboard.html');
+    const abs = join(DASH_DIR, safe || 'dashboard-v1.02.html');
     if (!abs.startsWith(DASH_DIR)) {
       return new Response('Forbidden', { status: 403 });
     }
@@ -220,5 +336,5 @@ const server = Bun.serve({
 });
 
 console.log(
-  `agent-odds dashboard → http://${server.hostname}:${server.port}/  (dashboard.html + mock /api/odds/*)`,
+  `agent-odds dashboard v1.02 → http://${server.hostname}:${server.port}/  (SSE · FormData · pool)`,
 );

@@ -1,6 +1,11 @@
-# Bun Agent – Live Odds Intelligence v1.01
+# Bun Agent – Live Odds Intelligence
 
-Self-contained dashboard with sport / league / market / session drill-down.
+Local agent shell dashboards (not Tennis HQ Worker).
+
+| Version | File | Notes |
+|---------|------|--------|
+| **v1.02** (default `/`) | `dashboard-v1.02.html` | Streaming SSE · FormData+Blob upload · connection pool / prefetch UI |
+| v1.01 | `dashboard.html` | Drill-down filters only |
 
 ## Run
 
@@ -9,15 +14,17 @@ bun run agent:odds-dashboard
 # → http://127.0.0.1:3000/
 ```
 
-Serves `dashboard.html` and mock:
+## APIs (mock agent)
 
-| Path | Role |
-|------|------|
-| `GET /api/odds/options` | Filter dropdowns |
-| `GET /api/odds?host=&sport=&league=&market_type=&session=&limit=` | Filtered rows |
-| `GET /api/odds/stats` | Aggregate stats |
-| `GET /api/platform` | Bun/capability stub |
+| Method | Path | Role |
+|--------|------|------|
+| GET | `/api/odds/options` | Filter dropdowns |
+| GET | `/api/odds?…` | Filtered odds rows |
+| GET | `/api/odds/stats` | Aggregates |
+| GET | `/api/odds/stream` | **SSE** live odds events |
+| POST | `/api/upload` | **FormData** file (Blob) → sha256 |
+| GET | `/api/pool` | Connection pool mock stats |
+| GET | `/api/prefetch?host=` | DNS prefetch + timing |
+| GET | `/api/platform` | Bun version / capabilities |
 
-When a real operator-research HTTP agent exists, keep these paths and replace the mock handlers.
-
-**Not** the Tennis HQ Worker (`tennis.factory-wager.com`) — local agent shell only.
+Replace mock handlers when a real operator-research HTTP agent owns these paths.
