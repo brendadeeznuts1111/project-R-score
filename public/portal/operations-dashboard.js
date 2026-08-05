@@ -87,44 +87,20 @@ class OperationsDashboard extends HTMLElement {
           </div>
         </div>
         <div id="ops-grid" class="ops-grid hidden">
-          <section class="ops-panel" id="ops-liquidity">
-            <h2>Liquidity</h2>
-            <div class="ops-metric" id="total-liquidity">$0</div>
+          <section class="ops-panel wide ops-panel--desk" id="ops-partner-desk" data-domain="partner">
+            <h2>Partner desk pulse <span class="ops-badge" title="Handshake · seat · limits · partners-ops">domain</span></h2>
+            <div class="ops-desk-metrics" id="ops-desk-metrics" aria-label="Partner desk KPIs"></div>
+            <div class="ops-sub" id="ops-desk-detail"></div>
+            <div class="ops-desk-links" id="ops-desk-links">
+              <a class="ops-link" href="/portal/partners/">Partners board</a>
+              <a class="ops-link" href="/portal/partners/#section:outs">Outs inventory</a>
+              <a class="ops-link" href="/portal/limits/">Limits</a>
+              <a class="ops-link" href="/portal/account/">Account dossier</a>
+              <a class="ops-link" href="/registry/partners-ops.json">partners-ops.json</a>
+              <a class="ops-link" href="/registry/ops-summary.json">ops-summary.json</a>
+            </div>
           </section>
-          <section class="ops-panel">
-            <h2>Experts</h2>
-            <ul id="expert-list"></ul>
-          </section>
-          <section class="ops-panel">
-            <h2>Agent Tree</h2>
-            <div id="tree-viz"></div>
-          </section>
-          <section class="ops-panel" id="ops-partners">
-            <h2>Partner profiles</h2>
-            <div class="ops-metric" id="partners-bound">0</div>
-            <div class="ops-sub" id="partners-detail"></div>
-            <ul id="partners-recent"></ul>
-          </section>
-          <section class="ops-panel" id="ops-limits">
-            <h2>Limit changes</h2>
-            <div class="ops-metric" id="limits-count">0</div>
-            <div class="ops-sub" id="limits-detail"></div>
-            <div class="ops-sub" id="limits-patterns-detail" hidden></div>
-            <div class="ops-sub" id="limits-predict-detail" hidden></div>
-            <table id="limits-table" style="width:100%;font-size:0.85em;margin-top:4px">
-              <thead><tr><th>Partner</th><th>Book</th><th>Sport</th><th>Market</th><th>Type</th><th>Old</th><th>New</th><th>Influence</th><th>When</th></tr></thead>
-              <tbody id="limits-tbody"></tbody>
-            </table>
-            <a class="ops-link" href="/portal/limits/">Limits board</a>
-            <a class="ops-link" href="/portal/partner-history/">Partner history</a>
-            <a class="ops-link" href="/registry/limit-raises.json">limit-raises.json</a>
-          </section>
-          <section class="ops-panel">
-            <h2>Ops channels</h2>
-            <div class="ops-metric" id="channels-pending">0</div>
-            <div class="ops-sub" id="channels-detail"></div>
-          </section>
-          <section class="ops-panel wide" id="telegram-handshake" data-subsystem="telegram">
+          <section class="ops-panel wide" id="telegram-handshake" data-subsystem="telegram" data-domain="partner">
             <h2>Package handshake <span class="version-badge subsystem-other">telegram</span></h2>
             <div class="ops-metric" id="telegram-handshake-gaps">—</div>
             <div class="ops-sub" id="telegram-handshake-detail"></div>
@@ -150,7 +126,7 @@ class OperationsDashboard extends HTMLElement {
             <a class="ops-link" id="telegram-handshake-json" href="/registry/telegram-handshake.json">Handshake JSON</a>
             <a class="ops-link" id="telegram-handshake-catalog" href="/registry/telegram-handshake-catalog.json">Catalog JSON</a>
           </section>
-          <section class="ops-panel wide" id="seat-capital-desk" data-subsystem="telegram">
+          <section class="ops-panel wide" id="seat-capital-desk" data-subsystem="telegram" data-domain="partner">
             <h2>Seat capital desk <span class="version-badge subsystem-other">telegram</span></h2>
             <div class="ops-metric" id="seat-capital-desk-metric">—</div>
             <div class="ops-sub" id="seat-capital-desk-detail"></div>
@@ -184,12 +160,37 @@ class OperationsDashboard extends HTMLElement {
             <a class="ops-link" id="seat-capital-desk-json" href="/registry/seat-capital-desk.json">Seat desk JSON</a>
             <a class="ops-link" href="/portal/partners/#section:partner-message">Partners · partner messages</a>
           </section>
-          <section class="ops-panel">
+          <section class="ops-panel" id="ops-partners" data-domain="partner">
+            <h2>Partner profiles</h2>
+            <div class="ops-metric" id="partners-bound">0</div>
+            <div class="ops-sub" id="partners-detail"></div>
+            <ul id="partners-recent"></ul>
+            <a class="ops-link" href="/portal/partners/">Partners board</a>
+            <a class="ops-link" href="/registry/partners-ops.json">partners-ops.json</a>
+          </section>
+          <section class="ops-panel" id="ops-limits" data-domain="partner">
+            <h2>Limit changes</h2>
+            <div class="ops-metric" id="limits-count">0</div>
+            <div class="ops-sub" id="limits-detail"></div>
+            <div class="ops-sub" id="limits-patterns-detail" hidden></div>
+            <div class="ops-sub" id="limits-predict-detail" hidden></div>
+            <table id="limits-table" style="width:100%;font-size:0.85em;margin-top:4px">
+              <thead><tr><th>Partner</th><th>Book</th><th>Sport</th><th>Market</th><th>Type</th><th>Old</th><th>New</th><th>Influence</th><th>When</th></tr></thead>
+              <tbody id="limits-tbody"></tbody>
+            </table>
+            <a class="ops-link" href="/portal/limits/">Limits board</a>
+            <a class="ops-link" href="/portal/partner-history/">Partner history</a>
+            <a class="ops-link" href="/registry/limit-raises.json">limit-raises.json</a>
+          </section>
+          <section class="ops-panel" id="ops-loop" data-domain="control">
             <h2>Ops loop</h2>
             <div class="ops-metric" id="loop-completion">0%</div>
             <div class="ops-sub" id="loop-detail"></div>
+            <div class="ops-loop-grid" id="loop-grid" aria-label="Loop counters"></div>
+            <a class="ops-link" href="/portal/partners/">Partner desk</a>
+            <a class="ops-link" href="/registry/ops-summary.json">ops-summary · loop</a>
           </section>
-          <section class="ops-panel">
+          <section class="ops-panel" id="ops-toc" data-domain="control">
             <h2>TOC Ops <span class="ops-badge" title="Operate-lite gates baked; Soft mutations not on Pages">DEMO</span></h2>
             <div class="ops-metric" id="toc-warmed">—</div>
             <div class="ops-sub" id="toc-detail"></div>
@@ -197,7 +198,7 @@ class OperationsDashboard extends HTMLElement {
             <a class="ops-link" href="/portal/toc/">Open TOC board (read-only)</a>
             <a class="ops-link" href="/portal/compliance/">MA/NJ compliance</a>
           </section>
-          <section class="ops-panel" id="compliance-panel" data-subsystem="compliance">
+          <section class="ops-panel" id="compliance-panel" data-subsystem="compliance" data-domain="control">
             <h2>Compliance <span class="ops-badge" title="Baked MA/NJ board · shadow matrix · discrete geo">MA/NJ</span></h2>
             <div class="ops-metric" id="compliance-metric">—</div>
             <div class="ops-sub" id="compliance-detail"></div>
@@ -205,6 +206,23 @@ class OperationsDashboard extends HTMLElement {
             <a class="ops-link" href="/portal/compliance/">Open compliance board</a>
             <a class="ops-link" href="/registry/compliance-board.json">Board JSON</a>
             <a class="ops-link" href="/api/compliance">API snapshot</a>
+          </section>
+          <section class="ops-panel" id="ops-liquidity" data-domain="control">
+            <h2>Liquidity</h2>
+            <div class="ops-metric" id="total-liquidity">$0</div>
+          </section>
+          <section class="ops-panel">
+            <h2>Experts</h2>
+            <ul id="expert-list"></ul>
+          </section>
+          <section class="ops-panel">
+            <h2>Agent Tree</h2>
+            <div id="tree-viz"></div>
+          </section>
+          <section class="ops-panel">
+            <h2>Ops channels</h2>
+            <div class="ops-metric" id="channels-pending">0</div>
+            <div class="ops-sub" id="channels-detail"></div>
           </section>
           <section class="ops-panel" id="monorepo-health-panel" data-subsystem="harness">
             <h2>Monorepo health <span class="ops-badge" title="claim monorepo-health-score · gate check:monorepo-health">harness</span></h2>
@@ -483,11 +501,15 @@ class OperationsDashboard extends HTMLElement {
       return;
     }
     const links = [
-      ['Liquidity', 'ops-liquidity'],
+      ['Desk', 'ops-partner-desk'],
+      ['Handshake', 'telegram-handshake'],
+      ['Seat', 'seat-capital-desk'],
       ['Partners', 'ops-partners'],
       ['Limits', 'ops-limits'],
-      ['Handshake', 'telegram-handshake'],
+      ['Loop', 'ops-loop'],
+      ['TOC', 'ops-toc'],
       ['Compliance', 'compliance-panel'],
+      ['Liquidity', 'ops-liquidity'],
       ['Health', 'monorepo-health-panel'],
       ['Nits', 'ops-runtime-nits'],
       ['Taxonomy', 'ops-taxonomy'],
@@ -813,6 +835,90 @@ class OperationsDashboard extends HTMLElement {
         </div>
         <div>Downstream: $${(t.downstreamLiquidity ?? 0).toLocaleString()}</div>
       `;
+    }
+
+    // ── Partner desk pulse (domain-first) ──
+    const deskMetrics = this.querySelector('#ops-desk-metrics');
+    const deskDetail = this.querySelector('#ops-desk-detail');
+    if (deskMetrics) {
+      const hs = d.telegramHandshake || {};
+      const scd = d.seatCapitalDesk || {};
+      const lims = Array.isArray(d.limitChanges) ? d.limitChanges : [];
+      const partners = d.partners || {};
+      const loop = d.loop || {};
+      const cells = [
+        {
+          k: 'Handshake gaps',
+          v: hs.available ? String(hs.inviteGaps ?? 0) : '—',
+          tone: hs.available && (hs.inviteGaps ?? 0) > 0 ? 'warn' : 'ok',
+          href: '#telegram-handshake',
+        },
+        {
+          k: 'Operator ready',
+          v: hs.available ? `${hs.operatorReady ?? 0}/${hs.partners ?? 0}` : '—',
+          tone:
+            hs.available && hs.partners > 0 && hs.operatorReady === hs.partners ? 'ok' : 'warn',
+          href: '#telegram-handshake',
+        },
+        {
+          k: 'Seat incomplete',
+          v: scd.available ? String(scd.incompleteOuts ?? 0) : '—',
+          tone: scd.available && (scd.incompleteOuts ?? 0) > 0 ? 'warn' : 'ok',
+          href: '#seat-capital-desk',
+        },
+        {
+          k: 'Limit raises',
+          v: String(lims.length),
+          tone: lims.length > 0 ? 'ok' : '',
+          href: '#ops-limits',
+        },
+        {
+          k: 'Partners bound',
+          v: String(partners.bound ?? 0),
+          tone: (partners.bound ?? 0) > 0 ? 'ok' : 'warn',
+          href: '#ops-partners',
+        },
+        {
+          k: 'Outbox pending',
+          v: loop.outboxPending != null ? String(loop.outboxPending) : '—',
+          tone: (loop.outboxPending ?? 0) > 50 ? 'bad' : (loop.outboxPending ?? 0) > 0 ? 'warn' : 'ok',
+          href: '#ops-loop',
+        },
+      ];
+      deskMetrics.innerHTML = cells
+        .map(
+          c =>
+            `<a class="ops-desk-stat ${esc(c.tone)}" href="${esc(c.href)}">` +
+            `<span class="k">${esc(c.k)}</span>` +
+            `<span class="v">${esc(c.v)}</span>` +
+            `</a>`
+        )
+        .join('');
+      if (deskDetail) {
+        const gen = d.generated ? String(d.generated).replace('T', ' ').replace(/\.\d+Z$/, 'Z') : '—';
+        deskDetail.textContent =
+          `ops-summary ${gen}` +
+          (hs.available ? ` · handshake ${hs.partners ?? 0} codes` : ' · handshake unavailable') +
+          (scd.available ? ` · seat ${scd.desks ?? 0} desks` : ' · seat unavailable') +
+          (loop.outboxPending != null
+            ? ` · outbox pending ${loop.outboxPending}` +
+              (loop.oldestPendingAgeSec != null
+                ? ` (oldest ${Math.round(Number(loop.oldestPendingAgeSec) / 3600)}h)`
+                : '')
+            : '');
+      }
+      const gate = document.getElementById('ops-gate');
+      if (gate) {
+        const gaps =
+          (hs.inviteGaps ?? 0) + (scd.incompleteOuts ?? 0) + ((loop.outboxPending ?? 0) > 100 ? 1 : 0);
+        const ok = (hs.available || scd.available) && gaps === 0;
+        gate.className = `portal-gate ${ok ? 'pass' : gaps > 0 ? 'warn' : 'pass'}`;
+        gate.innerHTML = `<span class="dot" aria-hidden="true"></span>${ok ? 'desk ready' : 'desk gaps'}`;
+      }
+      const baked = document.getElementById('ops-baked');
+      if (baked && d.generated) {
+        baked.textContent = String(d.generated).replace('T', ' ').replace(/\.\d+Z$/, ' UTC');
+      }
     }
 
     const partnersBound = this.querySelector('#partners-bound');
@@ -1385,6 +1491,7 @@ class OperationsDashboard extends HTMLElement {
 
     const loopCompletion = this.querySelector('#loop-completion');
     const loopDetail = this.querySelector('#loop-detail');
+    const loopGrid = this.querySelector('#loop-grid');
     if (loopCompletion && d.loop) {
       const rate = Number(d.loop.loopCompletionRate ?? 0);
       loopCompletion.textContent = `${(rate * 100).toFixed(0)}%`;
@@ -1401,11 +1508,17 @@ class OperationsDashboard extends HTMLElement {
         if (d.loop.processReturnProxy != null) {
           capParts.push(`RP ${Number(d.loop.processReturnProxy).toFixed(2)}`);
         }
-        loopDetail.textContent =
+        const pending = d.loop.outboxPending ?? 0;
+        const pendingAgeH =
+          d.loop.oldestPendingAgeSec != null
+            ? Math.round(Number(d.loop.oldestPendingAgeSec) / 3600)
+            : null;
+        loopDetail.innerHTML =
           `disp ${d.loop.dispatched ?? 0} · full ${d.loop.settledViaFullLoop ?? 0}` +
           ` · manual ${d.loop.manualStepsPerCycle ?? 0}` +
-          ` · outbox fail ${d.loop.outboxFailed ?? 0}` +
-          (d.loop.oldestPendingAgeSec != null ? ` · oldest ${d.loop.oldestPendingAgeSec}s` : '') +
+          ` · outbox fail <strong class="${(d.loop.outboxFailed ?? 0) > 0 ? 'tone-bad' : ''}">${d.loop.outboxFailed ?? 0}</strong>` +
+          ` · pending <strong class="${pending > 50 ? 'tone-bad' : pending > 0 ? 'tone-warn' : ''}">${pending}</strong>` +
+          (pendingAgeH != null ? ` · oldest <strong>${pendingAgeH}h</strong>` : '') +
           ` · gate +${d.loop.gatedAllow ?? 0}/~${d.loop.gatedAdjust ?? 0}/-${d.loop.gatedDeny ?? 0}` +
           (d.loop.gatedDefer != null && d.loop.gatedDefer > 0
             ? ` · defer ${d.loop.gatedDefer}`
@@ -1414,11 +1527,31 @@ class OperationsDashboard extends HTMLElement {
             ? ` · play ${Math.round(Number(d.loop.loopCompletionRateByPlay) * 100)}%`
             : '') +
           (d.loop.projectorBackend
-            ? ` · projector ${d.loop.projectorBackend}` +
-              (d.loop.projectorBucket ? `:${d.loop.projectorBucket}` : '') +
+            ? ` · projector ${esc(d.loop.projectorBackend)}` +
+              (d.loop.projectorBucket ? `:${esc(d.loop.projectorBucket)}` : '') +
               (d.loop.projectorDurable ? '' : ' (attr)')
             : '') +
-          (capParts.length ? ` · ${capParts.join(' · ')}` : '');
+          (capParts.length ? ` · ${capParts.map(esc).join(' · ')}` : '');
+      }
+      if (loopGrid) {
+        const cells = [
+          ['Dispatched', d.loop.dispatched ?? 0, ''],
+          ['Settled full', d.loop.settledViaFullLoop ?? 0, 'ok'],
+          ['Outbox sent', d.loop.outboxSent ?? 0, ''],
+          [
+            'Outbox pending',
+            d.loop.outboxPending ?? 0,
+            (d.loop.outboxPending ?? 0) > 50 ? 'bad' : (d.loop.outboxPending ?? 0) > 0 ? 'warn' : 'ok',
+          ],
+          ['Outbox failed', d.loop.outboxFailed ?? 0, (d.loop.outboxFailed ?? 0) > 0 ? 'bad' : 'ok'],
+          ['Reserved', d.loop.reserved ?? 0, ''],
+        ];
+        loopGrid.innerHTML = cells
+          .map(
+            ([k, v, tone]) =>
+              `<div class="ops-loop-cell ${esc(tone)}"><span class="k">${esc(k)}</span><span class="v">${esc(v)}</span></div>`
+          )
+          .join('');
       }
     }
 
