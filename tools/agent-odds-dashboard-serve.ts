@@ -21,9 +21,16 @@
  *
  * APIs:
  *   GET  /api/odds/options · /api/odds · /api/odds/stats · /api/odds/stream
+ *   GET  /api/partners/health  (merged bookmakers + partners-ops)
  *   POST /api/upload · /api/auth/login · /api/backup
  *   GET  /api/pool · /api/prefetch · /api/platform
  */
+import {
+  loadMergedRegistry,
+  resolvePartnerForHost,
+  type MergedPartnerHealth,
+  type MergedRegistry,
+} from '../lib/bookmakers/merged-registry.ts';
 import { joinPath } from '../lib/path-bun.ts';
 
 const ROOT = joinPath(import.meta.dir, '..');
@@ -31,23 +38,32 @@ const DASH_DIR = joinPath(ROOT, 'public/portal/agent-odds');
 const PORT = Number(Bun.env.PORT || Bun.env.AGENT_ODDS_PORT || 3000);
 const HOST = Bun.env.HOST || '127.0.0.1';
 
-const HOSTS = [
+/** Fallback hosts when registry has no urls.web */
+const FALLBACK_HOSTS = [
   'hardrock.bet',
   'bet365.com',
   'stake.com',
   'cloudbet.com',
   'fonbet.com',
-  'tipsport.cz',
-  'synottip.cz',
-  'draftkings.com',
-  'fanduel.com',
-  'betmgm.com',
-  'caesars.com',
-  'betrivers.com',
-  'pointsbet.com',
-  'bovada.lv',
-  'betway.com',
+  'pinnacle.com',
 ] as const;
+
+let MERGED: MergedRegistry | null = null;
+async function getMerged(): Promise<MergedRegistry> {
+  if (!MERGED) MERGED = await loadMergedRegistry(ROOT);
+  return MERGED;
+}
+
+function catalogHosts(merged: MergedRegistry): string[] {
+  const hosts = new Set<string>();
+  for (const h of Object.keys(merged.hostIndex)) {
+    if (h.includes('.')) hosts.add(h);
+  }
+  if (hosts.size === 0) {
+    for (const h of FALLBACK_HOSTS) hosts.add(h);
+  }
+  return [...hosts].sort();
+}
 
 const SPORTS = [
   'basketball',
@@ -83,6 +99,10 @@ type OddsRow = {
   price: string;
   timestamp: number;
   marketData: { selections: Array<{ price: string }> };
+  bookmakerId?: string;
+  liquidityTier?: string;
+  partnerStatus?: string;
+  label?: string;
 };
 
 const poolState = {
@@ -107,12 +127,25 @@ function pick<T extends readonly string[]>(arr: T): T[number] {
   return arr[Math.floor(Math.random() * arr.length)]!;
 }
 
-function generateOdds(count: number): OddsRow[] {
+function enrichRow(row: OddsRow, merged: MergedRegistry): OddsRow {
+  const id = resolvePartnerForHost(merged.hostIndex, row.host);
+  const partner = id ? merged.health.find(h => h.id === id) : undefined;
+  return {
+    ...row,
+    bookmakerId: id,
+    liquidityTier: partner?.liquidityTier ?? 'unknown',
+    partnerStatus: partner?.status ?? 'unknown',
+    label: partner?.label,
+  };
+}
+
+function generateOdds(count: number, hosts: string[]): OddsRow[] {
+  const hostPool = hosts.length ? hosts : [...FALLBACK_HOSTS];
   const out: OddsRow[] = [];
   for (let i = 0; i < count; i++) {
     const price = (1 + Math.random() * 3).toFixed(2);
     out.push({
-      host: pick(HOSTS),
+      host: hostPool[Math.floor(Math.random() * hostPool.length)]!,
       sport: pick(SPORTS),
       league: pick(LEAGUES),
       market_type: pick(MARKETS),
@@ -125,39 +158,80 @@ function generateOdds(count: number): OddsRow[] {
   return out;
 }
 
-let CATALOG: OddsRow[] = generateOdds(120);
+let CATALOG: OddsRow[] | null = null;
 
-function filterOdds(url: URL): { data: OddsRow[]; total: number } {
-  if (url.searchParams.get('refresh') === '1') {
-    CATALOG = generateOdds(120);
+async function getCatalog(refresh = false): Promise<OddsRow[]> {
+  const merged = await getMerged();
+  if (!CATALOG || refresh) {
+    const hosts = catalogHosts(merged);
+    CATALOG = generateOdds(120, hosts).map(r => enrichRow(r, merged));
   }
-  let rows = CATALOG;
+  return CATALOG;
+}
+
+function filterOdds(rows: OddsRow[], url: URL): { data: OddsRow[]; total: number } {
+  let filtered = rows;
   const host = url.searchParams.get('host');
   const sport = url.searchParams.get('sport');
   const league = url.searchParams.get('league');
   const marketType = url.searchParams.get('market_type');
   const session = url.searchParams.get('session');
-  if (host) rows = rows.filter(r => r.host === host);
-  if (sport) rows = rows.filter(r => r.sport === sport);
-  if (league) rows = rows.filter(r => r.league === league);
-  if (marketType) rows = rows.filter(r => r.market_type === marketType);
-  if (session) rows = rows.filter(r => r.session === session);
+  const liquidity = url.searchParams.get('liquidity') || url.searchParams.get('liquidityTier');
+  const status = url.searchParams.get('status') || url.searchParams.get('partner_status');
+  if (host) filtered = filtered.filter(r => r.host === host);
+  if (sport) filtered = filtered.filter(r => r.sport === sport);
+  if (league) filtered = filtered.filter(r => r.league === league);
+  if (marketType) filtered = filtered.filter(r => r.market_type === marketType);
+  if (session) filtered = filtered.filter(r => r.session === session);
+  if (liquidity) {
+    filtered = filtered.filter(r => r.liquidityTier === liquidity);
+  }
+  if (status) {
+    filtered = filtered.filter(r => r.partnerStatus === status);
+  }
   const limit = Math.min(Math.max(Number(url.searchParams.get('limit') || 100), 1), 500);
-  return { data: rows.slice(0, limit), total: rows.length };
+  return { data: filtered.slice(0, limit), total: filtered.length };
 }
 
-function statsFrom(rows: OddsRow[]) {
+function healthSummary(health: MergedPartnerHealth[]) {
+  const online = health.filter(p => p.status === 'active' || p.status === 'low_balance').length;
+  return {
+    online,
+    total: health.length,
+    allOnline: online === health.length && health.length > 0,
+    byStatus: health.reduce(
+      (acc, p) => {
+        acc[p.status] = (acc[p.status] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    ),
+    byLiquidity: health.reduce(
+      (acc, p) => {
+        acc[p.liquidityTier] = (acc[p.liquidityTier] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    ),
+  };
+}
+
+function statsFrom(rows: OddsRow[], hostCount: number) {
   const bySport: Record<string, number> = {};
+  const byLiquidity: Record<string, number> = {};
   let markets = 0;
   for (const r of rows) {
     bySport[r.sport] = (bySport[r.sport] || 0) + 1;
+    const tier = r.liquidityTier || 'unknown';
+    byLiquidity[tier] = (byLiquidity[tier] || 0) + 1;
     markets += r.marketData.selections.length;
   }
   return {
     bySport,
+    byLiquidity,
     totalRows: rows.length,
     totalMarkets: markets,
-    hosts: HOSTS.length,
+    hosts: hostCount,
   };
 }
 
@@ -181,7 +255,8 @@ function contentType(path: string): string {
   return 'application/octet-stream';
 }
 
-function oddsStreamResponse(): Response {
+function oddsStreamResponse(hosts: string[]): Response {
+  const hostPool = (hosts.length ? hosts : [...FALLBACK_HOSTS]) as readonly string[];
   let id = 0;
   let timer: ReturnType<typeof setInterval> | undefined;
   const stream = new ReadableStream({
@@ -192,7 +267,7 @@ function oddsStreamResponse(): Response {
         const price = (1 + Math.random() * 3).toFixed(2);
         const payload = {
           id,
-          host: pick(HOSTS),
+          host: hostPool[Math.floor(Math.random() * hostPool.length)]!,
           sport: pick(SPORTS),
           market: pick(MARKETS),
           price,
@@ -250,26 +325,58 @@ const server = Bun.serve({
     const path = url.pathname;
 
     if (path === '/api/odds/options') {
+      const merged = await getMerged();
+      const hosts = catalogHosts(merged);
       return json({
-        hosts: [...HOSTS],
+        hosts,
         sports: [...SPORTS],
         leagues: [...LEAGUES],
         marketTypes: [...MARKETS],
         sessions: [...SESSIONS],
+        liquidityTiers: ['high', 'medium', 'low', 'illiquid', 'unknown'],
+        partnerStatuses: ['active', 'low_balance', 'critical', 'degraded', 'offline', 'deferred'],
+        partners: merged.health.map(p => ({
+          id: p.id,
+          label: p.label,
+          liquidityTier: p.liquidityTier,
+          status: p.status,
+        })),
       });
     }
 
     if (path === '/api/odds' || path === '/api/odds/') {
-      const { data, total } = filterOdds(url);
+      const refresh = url.searchParams.get('refresh') === '1';
+      const rows = await getCatalog(refresh);
+      const { data, total } = filterOdds(rows, url);
       return json({ data, total, generatedAt: new Date().toISOString() });
     }
 
     if (path === '/api/odds/stats') {
-      return json(statsFrom(CATALOG));
+      const rows = await getCatalog();
+      const merged = await getMerged();
+      return json(statsFrom(rows, catalogHosts(merged).length));
     }
 
     if (path === '/api/odds/stream') {
-      return oddsStreamResponse();
+      const merged = await getMerged();
+      return oddsStreamResponse(catalogHosts(merged));
+    }
+
+    if (path === '/api/partners/health' || path === '/api/partners/health/') {
+      const refresh = url.searchParams.get('refresh') === '1';
+      if (refresh) MERGED = null;
+      const merged = await getMerged();
+      const summary = healthSummary(merged.health);
+      const lastProbe = merged.health.find(partner => partner.lastProbe)?.lastProbe ?? null;
+      return json({
+        generatedAt: merged.generatedAt,
+        lastProbe,
+        source: merged.source,
+        summary,
+        health: merged.health,
+        // compact list for table join / filters
+        liquidity: summary.byLiquidity,
+      });
     }
 
     if (path === '/api/upload' && req.method === 'POST') {
@@ -339,18 +446,35 @@ const server = Bun.serve({
         rateState.rateCurrent + Math.floor(Math.random() * 3),
         rateState.rateLimit
       );
+      const merged = await getMerged();
+      const summary = healthSummary(merged.health);
       return json({
         bun: Bun.version,
         auth: 'mock',
         webview: typeof (Bun as { WebView?: unknown }).WebView !== 'undefined',
         image: typeof (Bun as { Image?: unknown }).Image !== 'undefined',
         cron: true,
-        operators: HOSTS.length,
-        dashboard: 'agent-odds v1.03',
+        operators: merged.health.length,
+        partnersOnline: summary.online,
+        partnersTotal: summary.total,
+        byLiquidity: summary.byLiquidity,
+        dashboard: 'agent-odds v1.03+liquidity',
         rateCurrent: rateState.rateCurrent,
         rateLimit: rateState.rateLimit,
         lastBackup: rateState.lastBackup,
-        features: ['sse', 'formdata', 'pool', 'prefetch', 'auth', 'backup', 'arb-ui', 'charts'],
+        lastProbe: merged.health.find(partner => partner.lastProbe)?.lastProbe ?? null,
+        features: [
+          'sse',
+          'formdata',
+          'pool',
+          'prefetch',
+          'auth',
+          'backup',
+          'arb-ui',
+          'charts',
+          'partner-health',
+          'liquidity-filter',
+        ],
       });
     }
 
@@ -382,5 +506,5 @@ const server = Bun.serve({
 });
 
 console.log(
-  `agent-odds dashboard v1.03 → http://${server.hostname}:${server.port}/  (arb · alerts · charts · auth mock)`
+  `agent-odds dashboard v1.03+liquidity → http://${server.hostname}:${server.port}/  (health · liquidity · arb · auth mock)`
 );

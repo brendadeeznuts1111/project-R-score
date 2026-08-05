@@ -7,6 +7,7 @@ Bookmaker catalog v0.4 contracts and the v0.3 migration boundary.
 | [`v04-types.ts`](./v04-types.ts) | Public and operator catalog shapes, fetcher/lifecycle values, regions, and enrichment defaults |
 | [`migrate-v03-to-v04.ts`](./migrate-v03-to-v04.ts) | Splits a legacy catalog into public-safe and operator-only artifacts and audits the public projection |
 | [`resolve.ts`](./resolve.ts) | Resolve id/slug/label/skin/host against the public mirror (partner register CLI) |
+| [`merged-registry.ts`](./merged-registry.ts) | Public catalog + partners-ops merge · liquidity · derived health · hostIndex for odds join |
 | [`desk-coverage.ts`](./desk-coverage.ts) | Seat desk `book` labels ↔ registry ids · typo aliases · maxBet apply · unmatched (e.g. Orange777) |
 
 ## Data boundary
