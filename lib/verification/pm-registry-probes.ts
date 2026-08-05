@@ -221,13 +221,31 @@ export async function npmRegistryMetadata(
   }
 }
 
+/**
+ * Origin for host-level registry APIs (not the npm packument base).
+ * `DEFAULT_REGISTRY` / `PM_VERIFY_REGISTRY` are npm roots
+ * (`https://registry.factory-wager.com/api/npm`); health lives at
+ * `/api/registry/health` on the same host — never under `/api/npm/…`.
+ */
+export function registryHostOrigin(registryUrl: string): string {
+  try {
+    const u = new URL(registryUrl);
+    return u.origin;
+  } catch {
+    return (
+      registryUrl.replace(/\/api\/npm\/?$/i, '').replace(/\/+$/, '') ||
+      'https://registry.factory-wager.com'
+    );
+  }
+}
+
 /** 2b — artifact registry API live on the registry host (`/api/registry/health`). */
 export async function artifactRegistryApi(
   fetchImpl: typeof fetch = fetch,
   registry?: string
 ): Promise<PmProbeRow> {
   const base = registry ?? (await resolveRegistryUrl());
-  const url = `${base}/api/registry/health`;
+  const url = `${registryHostOrigin(base)}/api/registry/health`;
   try {
     const res = await fetchImpl(url, { signal: AbortSignal.timeout(8_000) });
     if (!res.ok) return row('artifact registry api', false, `${url} → ${res.status}`);
