@@ -190,7 +190,7 @@ export function regionsHtml(regions) {
 export function rowHtml(book, glossaryIds) {
   const status = bookStatus(book);
   const color = book.color
-    ? `<span class="dot" style="background:${esc(book.color)}" title="${esc(book.color)}"></span>`
+    ? `<span class="portal-dot" style="background:${esc(book.color)}" title="${esc(book.color)}"></span>`
     : '';
   const brandBits = [
     book.skin ? `<div class="book-skin">${esc(book.skin)}</div>` : '',
@@ -219,7 +219,7 @@ export function rowHtml(book, glossaryIds) {
     <td class="col-life">${life || '<span class="dim">—</span>'}</td>
     <td class="col-sports">${sportsChipsHtml(book.supportedSports, glossaryIds)}</td>
     <td class="col-regions">${regionsHtml(book.regions)}</td>
-    <td class="${status === 'ok' ? 'state-ok' : 'state-err'}">${status}</td>
+    <td class="status-text ${status === 'ok' ? 'ok' : 'bad'}">${status}</td>
   </tr>`;
 }
 
@@ -280,7 +280,7 @@ export function deskCoverageHtml(report) {
   lines.push(
     `<span><b>${esc(report.matched ?? 0)}</b> matched</span>`,
     `<span><b>${esc(report.placeholder ?? 0)}</b> placeholder</span>`,
-    `<span class="${unmatched.length ? 'state-err' : 'state-ok'}"><b>${esc(report.unmatched ?? 0)}</b> unmatched</span>`,
+    `<span class="status-text ${unmatched.length ? 'bad' : 'ok'}"><b>${esc(report.unmatched ?? 0)}</b> unmatched</span>`,
     report.registryUnused?.length
       ? `<span class="dim">${esc(report.registryUnused.length)} registry unused</span>`
       : null
@@ -289,7 +289,7 @@ export function deskCoverageHtml(report) {
     .map(h => {
       const max = h.maxBetUsd != null ? ` · max$${esc(h.maxBetUsd)}` : '';
       const id = h.registryId ? ` → <code>${esc(h.registryId)}</code>` : '';
-      return `<span class="portal-chip ${h.class === 'unmatched' ? 'state-err' : 'portal-chip--muted'}">[${esc(h.class)}] ${esc(h.deskBook)}${id}${max}</span>`;
+      return `<span class="portal-chip ${h.class === 'unmatched' ? 'status-text bad' : 'portal-chip--muted'}">[${esc(h.class)}] ${esc(h.deskBook)}${id}${max}</span>`;
     })
     .join(' ');
   return {
@@ -401,8 +401,8 @@ export function initBookmakersBoard(root = document) {
       generatedAt ? `generated <code>${esc(generatedAt)}</code>` : null,
       artifact.source ? `source <code>${esc(artifact.source)}</code>` : null,
       audit.ok !== false
-        ? `<span class="state-ok">audit ok</span>`
-        : `<span class="state-err">audit: ${esc((audit.issues || []).join('; ') || 'failed')}</span>`,
+        ? `<span class="status-text ok">audit ok</span>`
+        : `<span class="status-text bad">audit: ${esc((audit.issues || []).join('; ') || 'failed')}</span>`,
     ]
       .filter(Boolean)
       .join(' · ');
@@ -441,10 +441,10 @@ export function initBookmakersBoard(root = document) {
     } catch (err) {
       setGate(gateEl, { ok: false, label: 'load failed' });
       if (metaEl) {
-        metaEl.innerHTML = `<span class="state-err">load failed: ${esc(err.message)}</span>`;
+        metaEl.innerHTML = `<span class="status-text bad">load failed: ${esc(err.message)}</span>`;
       }
       if (bodyEl) {
-        bodyEl.innerHTML = `<tr><td colspan="7" class="state-err">${esc(err.message)}</td></tr>`;
+        bodyEl.innerHTML = `<tr><td colspan="7" class="status-text bad">${esc(err.message)}</td></tr>`;
       }
     }
   }
