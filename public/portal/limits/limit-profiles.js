@@ -149,6 +149,11 @@ function formatDateRelative(value) {
   return `${Math.round(ms / (30 * DAY))}mo ago`;
 }
 
+/** Just the pluralized word: "event" / "events". */
+function pluralWord(count, singular) {
+  return Number(count ?? 0) === 1 ? singular : singular + 's';
+}
+
 function formatMoney(value) {
   return value == null
     ? '—'
@@ -286,8 +291,10 @@ function profileCard(profile) {
       <span class="account-profile__metric"><strong>${profile.observations.violations30d}</strong>blocked</span>
     </div>
     <div class="account-profile__footer">
-      <small>Observed <time datetime="${esc(profile.observations.lastObservedAt)}" title="${esc(formatDate(profile.observations.lastObservedAt))}">${esc(formatDateRelative(profile.observations.lastObservedAt))}</time></small>
-      <a href="${accountHash(profile.treeNodeId)}" data-account-link="${esc(profile.treeNodeId)}">Inspect ${profile.traces.length} events →</a>
+      <small>${profile.observations.lastObservedAt
+        ? `Observed <time datetime="${esc(profile.observations.lastObservedAt)}" title="${esc(formatDate(profile.observations.lastObservedAt))}">${esc(formatDateRelative(profile.observations.lastObservedAt))}</time>`
+        : 'Not observed'}</small>
+      <a href="${accountHash(profile.treeNodeId)}" data-account-link="${esc(profile.treeNodeId)}">Inspect ${profile.traces.length} ${pluralWord(profile.traces.length, 'event')} →</a>
     </div>
   </article>`;
 }

@@ -1811,6 +1811,22 @@
           return new Date(then).toLocaleDateString();
         }
 
+        /** "1 node" / "3 nodes" — regular +s pluralization. */
+        function plural(count, singular) {
+          return `${count} ${pluralWord(count, singular)}`;
+        }
+
+        /** Just the pluralized word: "node" / "nodes". */
+        function pluralWord(count, singular) {
+          return Number(count ?? 0) === 1 ? singular : singular + 's';
+        }
+
+        /** Shorten long ids (UUIDs) for table display: "019f92bf-…b8a95824". */
+        function shortId(value) {
+          const v = String(value ?? '');
+          return v.length <= 20 ? v : `${v.slice(0, 8)}…${v.slice(-8)}`;
+        }
+
         function render() {
           if (!data || !Array.isArray(data.limitChanges)) {
             document.getElementById('empty-state').style.display = 'block';
@@ -1935,7 +1951,7 @@
                   ? `Drivers: ${drivers} · ${proof}`
                   : `Drivers pending · ${proof}`;
                 const scoreBadge = r.context_available
-                  ? `<span class="badge score" data-glossary-concept="ops.limits.influence_score" title="${esc(scoreTitle)}">${Math.round((r.multi_factor_score ?? 0) * 100)}</span>`
+                  ? `<span class="badge score" data-glossary-concept="ops.limits.influence_score" title="${esc(scoreTitle)}">${Math.round((r.multi_factor_score ?? 0) * 100)}%</span>`
                   : `<span class="badge pending" data-glossary-concept="ui.semantic.status" title="${esc(scoreTitle)}">pending</span>`;
                 const when =
                   Number.isFinite(Number(r.increased_at)) && Number(r.increased_at) > 0
@@ -1999,11 +2015,11 @@
                     <span class="badge ${total < 0 ? 'down' : 'up'}" data-glossary-concept="ops.limits.change_direction">${total < 0 ? 'reduced' : 'raised'}</span>
                   </div>
                   <div class="node-breakdown__metrics">
-                    <span><strong>${raises.length}</strong>changes</span>
+                    <span><strong>${raises.length}</strong>${pluralWord(raises.length, 'change')}</span>
                     <span><strong>${total >= 0 ? '+' : '−'}$${Math.abs(total).toLocaleString()}</strong>net delta</span>
                     <span><strong>${avgScore == null ? '—' : `${avgScore}%`}</strong>influence</span>
-                    <span><strong>${pattern?.sportsbooks?.length ?? 0}</strong>books</span>
-                    <span><strong>${pattern?.violation_count_30d ?? 0}</strong>violations</span>
+                    <span><strong>${pattern?.sportsbooks?.length ?? 0}</strong>${pluralWord(pattern?.sportsbooks?.length ?? 0, 'book')}</span>
+                    <span><strong>${pattern?.violation_count_30d ?? 0}</strong>${pluralWord(pattern?.violation_count_30d ?? 0, 'violation')}</span>
                     <span><strong>${pattern?.proof_verified_changes ?? 0}/${pattern?.changes ?? raises.length}</strong>proof</span>
                   </div>
                   <small>${esc((pattern?.sportsbooks ?? []).join(' · ') || 'No sportsbook source')} · top market ${esc(pattern?.top_market ?? 'not observed')}</small>
@@ -2018,10 +2034,10 @@
                 row => `<div class="pattern-row" data-tone="${row.decreases > 0 ? 'warn' : 'ok'}">
                 <div class="pattern-row__label">
                   <strong>${esc(row.key)}</strong>
-                  <small>${row.nodes} nodes · ${row.partners} partner trees</small>
+                  <small>${plural(row.nodes, 'node')} · ${plural(row.partners, 'partner tree')}</small>
                 </div>
                 <div class="pattern-row__metrics">
-                  <small>${row.changes} changes · ${row.raises} raised / ${row.decreases} reduced · ${esc((row.states ?? []).join(' / '))}</small>
+                  <small>${plural(row.changes, 'change')} · ${row.raises} raised / ${row.decreases} reduced · ${esc((row.states ?? []).join(' / '))}</small>
                   <small>net ${row.net_delta >= 0 ? '+' : '−'}$${Math.abs(row.net_delta).toLocaleString()} · avg ${row.avg_delta_pct >= 0 ? '+' : ''}${row.avg_delta_pct}% · top ${esc(row.top_market ?? '—')}</small>
                   <span class="pattern-meter"><span style="width:${Math.min(100, Math.abs(row.avg_delta_pct))}%"></span></span>
                 </div>
@@ -2040,10 +2056,10 @@
                 row => `<div class="pattern-row" data-tone="${row.net_delta < 0 ? 'warn' : 'ok'}">
                 <div class="pattern-row__label">
                   <strong>${esc(row.key)}</strong>
-                  <small>${row.kind} · ${row.nodes} nodes · ${row.partners} partner trees</small>
+                  <small>${row.kind} · ${plural(row.nodes, 'node')} · ${plural(row.partners, 'partner tree')}</small>
                 </div>
                 <div class="pattern-row__metrics">
-                  <small>${row.changes} changes · ${row.raises} raised / ${row.decreases} reduced · net ${row.net_delta >= 0 ? '+' : '−'}$${Math.abs(row.net_delta).toLocaleString()}</small>
+                  <small>${plural(row.changes, 'change')} · ${row.raises} raised / ${row.decreases} reduced · net ${row.net_delta >= 0 ? '+' : '−'}$${Math.abs(row.net_delta).toLocaleString()}</small>
                   <small>top ${esc(row.top_market ?? '—')} · ZIP ${esc((row.zip_prefixes ?? []).join(', ') || row.key)}</small>
                   <span class="pattern-meter"><span style="width:${Math.min(100, Math.abs(row.avg_delta_pct))}%"></span></span>
                 </div>
@@ -2068,13 +2084,13 @@
             (patterns.nodePatterns ?? [])
               .map(
                 row => `<tr>
-                <td><code title="${esc(row.partner_node_id)}">${esc(row.partner_node_id.replace('limit-demo-', ''))}</code></td>
+                <td><code title="${esc(row.partner_node_id)}">${esc(shortId(row.partner_node_id.replace('limit-demo-', '')))}</code></td>
                 <td><strong data-glossary-concept="ops.limits.account">${esc(row.node_name)}</strong><br><small><a class="semantic-label" href="${glossaryHref(roleGlossaryConcept(row.node_type))}">${esc(row.node_type)}</a> · depth ${row.downline_depth}</small></td>
                 <td><strong>${esc(row.state_code ?? '—')}</strong> · <code>${esc(row.zip_code ?? '—')}</code><br><small>${esc(row.location ?? 'not observed')}</small></td>
                 <td><span class="badge ${row.license_status === 'active' ? 'pregame' : 'pending'}" data-glossary-concept="ui.semantic.status">${esc(row.license_status ?? 'none')}</span></td>
-                <td><span class="badge ${row.violation_count_30d > 1 ? 'live' : row.violation_count_30d > 0 ? 'pending' : 'pregame'}">${row.violation_count_30d} violations</span></td>
+                <td><span class="badge ${row.violation_count_30d > 1 ? 'live' : row.violation_count_30d > 0 ? 'pending' : 'pregame'}">${row.violation_count_30d} ${pluralWord(row.violation_count_30d, 'violation')}</span></td>
                 <td>${esc((row.sportsbooks ?? []).join(', '))}</td>
-                <td>${row.changes} changes<br><strong>${row.net_delta >= 0 ? '+' : '−'}$${Math.abs(row.net_delta).toLocaleString()}</strong></td>
+                <td>${plural(row.changes, 'change')}<br><strong>${row.net_delta >= 0 ? '+' : '−'}$${Math.abs(row.net_delta).toLocaleString()}</strong></td>
                 <td>${row.avg_influence_score == null ? '<span class="badge pending" data-glossary-concept="ui.semantic.status">pending</span>' : `<span class="badge score" data-glossary-concept="ops.limits.influence_score">${Math.round(row.avg_influence_score * 100)}%</span>`}</td>
                 <td>${row.proof_verified_changes}/${row.changes}<br><small>${row.scored_changes} scored</small></td>
               </tr>`
@@ -2100,19 +2116,19 @@
           const findings = [
             topBook && {
               title: `${topBook.key} carries the largest net movement`,
-              detail: `${topBook.changes} changes across ${topBook.nodes} nodes produced ${topBook.net_delta >= 0 ? '+' : '−'}$${Math.abs(topBook.net_delta).toLocaleString()} net movement.`,
+              detail: `${plural(topBook.changes, 'change')} across ${plural(topBook.nodes, 'node')} produced ${topBook.net_delta >= 0 ? '+' : '−'}$${Math.abs(topBook.net_delta).toLocaleString()} net movement.`,
               evidence: `sportsbook aggregate · ${topBook.states.join('/')} · ${topBook.top_market ?? 'mixed markets'}`,
               tone: topBook.decreases > 0 ? 'warn' : 'ok',
             },
             topGeo && {
               title: `ZIP ${topGeo.key} has the strongest average move`,
-              detail: `${topGeo.avg_delta_pct >= 0 ? '+' : ''}${topGeo.avg_delta_pct}% average movement across ${topGeo.changes} changes and ${topGeo.nodes} nodes.`,
+              detail: `${topGeo.avg_delta_pct >= 0 ? '+' : ''}${topGeo.avg_delta_pct}% average movement across ${plural(topGeo.changes, 'change')} and ${plural(topGeo.nodes, 'node')}.`,
               evidence: `ZIP aggregate · ${topGeo.states.join('/')} · net ${topGeo.net_delta >= 0 ? '+' : '−'}$${Math.abs(topGeo.net_delta).toLocaleString()}`,
               tone: Math.abs(topGeo.avg_delta_pct) >= 100 ? 'warn' : 'ok',
             },
             riskNode && {
               title: `${riskNode.node_name} is the priority review node`,
-              detail: `${riskNode.violation_count_30d} violations in 30 days with ${riskNode.proof_verified_changes}/${riskNode.changes} changes proof-verified.`,
+              detail: `${plural(riskNode.violation_count_30d, 'violation')} in 30 days with ${riskNode.proof_verified_changes}/${riskNode.changes} changes proof-verified.`,
               evidence: `${riskNode.state_code ?? 'unmapped'} ${riskNode.zip_code ?? ''} · ${riskNode.sportsbooks.join(', ')}`,
               tone: riskNode.violation_count_30d > 1 ? 'warn' : 'ok',
             },
@@ -2169,7 +2185,7 @@
         load();
         setInterval(load, POLL_INTERVAL);
       </script>
-      <script type="module" src="/portal/limits/limit-profiles.js?v=6"></script>
+      <script type="module" src="/portal/limits/limit-profiles.js?v=7"></script>
     </main>
     <footer class="footer" data-portal-chrome="footer">
     <p>
