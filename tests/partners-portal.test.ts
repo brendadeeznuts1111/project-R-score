@@ -28,11 +28,19 @@ describe('partners portal board', () => {
     expect(html).toContain('id="section:telegram"');
     expect(html).toContain('id="section:accounting"');
     expect(html).toContain('id="section:accounts-limits"');
+    expect(html).toContain('id="section:outs"');
+    expect(html).toContain('id="outs-tbody"');
+    expect(html).toContain('id="phase-filter-bar"');
     expect(html).toContain('id="section:onboard"');
     expect(html).toContain('id="partner-profile"');
     expect(html).toContain('id="section:deposits"');
     expect(html).toContain('id="section:partner-message"');
     expect(html).toContain('renderPartnerProfile');
+    expect(html).toContain('renderOutsInventory');
+    expect(html).toContain('renderPhaseFilter');
+    expect(html).toContain('summarizePartnerDesk');
+    expect(html).toContain('coverageBarHtml');
+    expect(html).toContain('/portal/partners/partners-board.js');
     expect(html).toContain('telegramTopicsForPhase');
     expect(html).toContain('onboard:partner');
     expect(html).toContain('/portal/limits/?partner=');
@@ -78,6 +86,8 @@ describe('partners portal board', () => {
     expect(html).toContain('partners:event');
     expect(html).toContain('/portal/components/partner-ops-event-concepts.js');
     expect(html).toContain('conceptIdForPartnerOpsEventCode');
+    expect(html).toContain('data-domain-lanes="partner"');
+    expect(html).toContain('partner-profile-outs');
     expect(html).toContain('data-glossary-concept="section.partnersTags"');
     expect(html).toContain('data-glossary-concept="section.partnersOuts"');
     expect(html).toContain('data-glossary-concept="section.partnersBookDetail"');

@@ -207,6 +207,96 @@
       .tracking-summary .book-chip {
         white-space: nowrap;
       }
+      .phase-filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 0 0 12px;
+        align-items: center;
+      }
+      .phase-filter-bar .phase-filter-label {
+        font-size: 11px;
+        font-weight: 650;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        margin-right: 4px;
+      }
+      .phase-filter-chip {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-dim);
+        font: 550 11px/1.2 var(--font-sans, system-ui, sans-serif);
+        padding: 4px 9px;
+        border-radius: 999px;
+        cursor: pointer;
+      }
+      .phase-filter-chip.is-active,
+      .phase-filter-chip:hover {
+        color: var(--accent);
+        border-color: var(--accent);
+        background: color-mix(in srgb, var(--accent) 12%, transparent);
+      }
+      .coverage-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 110px;
+      }
+      .coverage-bar-track {
+        flex: 1;
+        height: 6px;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--border) 80%, transparent);
+        overflow: hidden;
+      }
+      .coverage-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: var(--accent);
+      }
+      .coverage-bar-fill.tone-ok {
+        background: var(--green, #3fb950);
+      }
+      .coverage-bar-fill.tone-warn {
+        background: var(--yellow, #d29922);
+      }
+      .coverage-bar-fill.tone-bad {
+        background: var(--red, #f85149);
+      }
+      .coverage-bar-pct {
+        font: 550 11px/1 var(--font-mono, ui-monospace, monospace);
+        color: var(--text-dim);
+        min-width: 2.5rem;
+        text-align: end;
+      }
+      .partner-outs-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 0 0 10px;
+        align-items: center;
+      }
+      .partner-outs-toolbar select {
+        font: 500 12px/1.2 var(--font-sans, system-ui, sans-serif);
+        background: var(--surface, #161b22);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 4px 8px;
+      }
+      .partner-profile-outs {
+        margin-top: 14px;
+      }
+      .partner-profile-outs h3 {
+        margin: 0 0 8px;
+        font-size: 12px;
+        font-weight: 650;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+      }
       .cli-row {
         font-family: 'JetBrains Mono', monospace;
         font-size: 11px;
@@ -348,7 +438,11 @@
             <a href="/registry/partners-ops.json">partners-ops.json</a>
             <a href="/registry/telegram-handshake.json">handshake</a>
             <a href="/registry/soft-accounting-export.json">soft export</a>
-            <a href="/portal/glossary/#glossary:telegram.wire">telegram.wire</a>
+            <a
+              href="/portal/glossary/#glossary:telegram.wire"
+              data-glossary-concept="telegram.wire"
+              >telegram.wire</a
+            >
           </div>
         </div>
         <div class="partners-meta-grid" id="partners-meta" aria-label="Bake provenance">Loading registry…</div>
@@ -396,6 +490,12 @@
       </div>
       <div id="dashboard" class="hidden">
         <div class="portal-stat-grid" id="partners-stats" aria-label="Partners summary"></div>
+        <div
+          class="phase-filter-bar"
+          id="phase-filter-bar"
+          role="toolbar"
+          aria-label="Filter partners by phase"
+        ></div>
 
         <section
           class="partners-section partner-profile hidden"
@@ -462,6 +562,63 @@
             bun run telegram:handshake:catalog · telegram:handshake:invite-gap · telegram:ops --
             link-package-group CODE chatId
           </p>
+        </section>
+
+        <section
+          class="partners-section"
+          id="section:outs"
+          aria-labelledby="outs-heading"
+          data-glossary-concept="out.status.ready"
+        >
+          <h2 id="outs-heading">
+            <a href="/portal/glossary/#glossary:out.status.ready" data-glossary-concept="out.status.ready"
+              >Outs inventory</a
+            >
+          </h2>
+          <p class="blurb">
+            Flattened seats from
+            <a href="/registry/partners-ops.json"><code>partners-ops.json</code></a>
+            — book, funding rail, max bet, and
+            <a href="/portal/glossary/#glossary:out.status.ready" data-glossary-concept="out.status.ready"
+              >out status</a
+            >. Filter by readiness; open a partner profile via CODE.
+          </p>
+          <div class="partner-outs-toolbar" role="toolbar" aria-label="Outs filters">
+            <label>
+              Status
+              <select id="outs-status-filter" aria-label="Filter outs by status">
+                <option value="">All</option>
+                <option value="ready">ready</option>
+                <option value="deferred">deferred</option>
+                <option value="paused">paused</option>
+                <option value="blocked">blocked</option>
+              </select>
+            </label>
+            <label class="phase-filter-chip" style="border: none; padding: 0">
+              <input type="checkbox" id="outs-incomplete-only" /> incomplete only
+            </label>
+            <span id="outs-filter-count" class="tone-muted" aria-live="polite"></span>
+          </div>
+          <div class="partners-panel">
+            <table class="partners-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>Phase</th>
+                  <th>Out</th>
+                  <th>Book</th>
+                  <th>Type</th>
+                  <th>User</th>
+                  <th>Rail</th>
+                  <th>Max</th>
+                  <th>Status</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+              <tbody id="outs-tbody"></tbody>
+            </table>
+          </div>
+          <p class="cli-row">bun run partners:validate · bun run partners:build</p>
         </section>
 
         <section
@@ -955,6 +1112,15 @@
         telegramDeepLink,
         telegramTopicsForPhase,
       } from '/portal/partners/partner-routes.js';
+      import {
+        coverageBarStyle,
+        filterPartnerOuts,
+        flattenPartnerOuts,
+        indexOpsByPartner,
+        listPartnerPhases,
+        normalizePartnerCode,
+        summarizePartnerDesk,
+      } from '/portal/partners/partners-board.js';
 
       const TELEGRAM_BOT = 'FactoryWagerBot';
 
@@ -963,6 +1129,12 @@
       let bookIndex = new Map();
       /** @type {Map<string, object>} */
       let opsByPartner = new Map();
+      /** @type {object | null} */
+      let opsCache = null;
+      /** @type {string | null} */
+      let phaseFilter = null;
+      /** @type {object[]} */
+      let flattenedOuts = [];
       /** @type {Map<string, object[]>} */
       let softPlaysByPartner = new Map();
       /** @type {object[]} */
@@ -1194,59 +1366,59 @@
       }
 
       function renderStats(handshake, seat, ops) {
-        const partners =
-          ops?.summary?.partners ?? handshake?.partners ?? (handshake?.rows?.length || 0);
-        const ready = handshake?.operatorReady ?? 0;
+        const desk = summarizePartnerDesk(ops, handshake);
         const desks = seat?.desks ?? (seat?.rows?.length || 0);
-        const incomplete = ops?.summary?.incompleteOuts ?? seat?.incompleteOuts ?? 0;
-        const inviteGaps = handshake?.inviteGaps ?? 0;
-        const accounts = ops?.summary?.accounts ?? ops?.summary?.outs ?? 0;
-        const trackedLimits = ops?.summary?.trackedLimits ?? 0;
-        const communicationReady = ops?.summary?.communicationReady ?? 0;
         const cells = [
-          ['Partners', partners, '', 'section:telegram', 'Package groups in handshake'],
+          ['Partners', desk.partners, '', 'section:telegram', 'Package groups in handshake'],
           [
             'Operator ready',
-            ready,
-            ready === partners && partners > 0 ? 'ok' : 'warn',
+            desk.operatorReady,
+            desk.operatorReady === desk.partners && desk.partners > 0 ? 'ok' : 'warn',
             'section:telegram',
             'Phase operator_ready',
           ],
-          ['Accounts', accounts, '', 'section:accounts-limits', 'Outs / accounts tracked'],
+          ['Accounts', desk.accounts, '', 'section:accounts-limits', 'Outs / accounts tracked'],
           [
-            'Tracked limits',
-            trackedLimits,
-            trackedLimits === accounts && accounts > 0 ? 'ok' : 'warn',
+            'Outs ready',
+            `${desk.readyOuts}/${desk.outs}`,
+            desk.readyOuts === desk.outs && desk.outs > 0 ? 'ok' : 'warn',
+            'section:outs',
+            'partners-ops out.status.ready',
+          ],
+          [
+            'Limit coverage',
+            `${desk.limitCoveragePct}%`,
+            desk.limitCoveragePct >= 80 ? 'ok' : desk.limitCoveragePct >= 40 ? 'warn' : 'bad',
             'section:accounts-limits',
-            'Limit pattern coverage',
+            `${desk.trackedLimits} tracked limits`,
           ],
           [
             'Telegram ready',
-            communicationReady,
-            communicationReady === partners && partners > 0 ? 'ok' : 'warn',
+            desk.communicationReady,
+            desk.communicationReady === desk.partners && desk.partners > 0 ? 'ok' : 'warn',
             'section:telegram',
             'Invite + membership ready',
           ],
           ['Seat desks', desks, '', 'section:deposits', 'Seat capital desks'],
           [
             'Incomplete outs',
-            incomplete,
-            incomplete > 0 ? 'warn' : 'ok',
-            'section:accounts-limits',
+            desk.incompleteOuts,
+            desk.incompleteOuts > 0 ? 'warn' : 'ok',
+            'section:outs',
             'Needs attention',
           ],
           [
             'Invite gaps',
-            inviteGaps,
-            inviteGaps > 0 ? 'warn' : 'ok',
+            desk.inviteGaps,
+            desk.inviteGaps > 0 ? 'warn' : 'ok',
             'section:telegram',
             'Missing Telegram invites',
           ],
         ];
-        const gaps = incomplete + inviteGaps;
+        const gaps = desk.incompleteOuts + desk.inviteGaps;
         const gate = $('partners-gate');
         if (gate) {
-          const ok = partners > 0 && gaps === 0;
+          const ok = desk.partners > 0 && gaps === 0;
           gate.className = `portal-gate ${ok ? 'pass' : gaps > 0 ? 'warn' : 'pass'}`;
           gate.innerHTML = `<span class="dot" aria-hidden="true"></span>${ok ? 'ready' : gaps > 0 ? 'gaps' : 'ok'}`;
         }
@@ -1269,6 +1441,80 @@
             el.scrollIntoView({ behavior: 'smooth', block: 'start' });
           });
         }
+      }
+
+      function coverageBarHtml(pct) {
+        const bar = coverageBarStyle(pct);
+        return `<div class="coverage-bar" title="${bar.pct}% limit coverage">
+          <div class="coverage-bar-track"><div class="coverage-bar-fill tone-${bar.tone}" style="width:${bar.width}"></div></div>
+          <span class="coverage-bar-pct">${bar.pct}%</span>
+        </div>`;
+      }
+
+      function renderPhaseFilter(ops) {
+        const bar = $('phase-filter-bar');
+        if (!bar) return;
+        const phases = listPartnerPhases(ops);
+        if (!phases.length) {
+          bar.innerHTML = '';
+          return;
+        }
+        const chips = [
+          `<span class="phase-filter-label">Phase</span>`,
+          `<button type="button" class="phase-filter-chip${!phaseFilter ? ' is-active' : ''}" data-phase="">All (${ops?.partners?.length || 0})</button>`,
+          ...phases.map(
+            p =>
+              `<button type="button" class="phase-filter-chip${phaseFilter === p.phase ? ' is-active' : ''}" data-phase="${esc(p.phase)}" title="${esc(p.conceptId)}">${esc(p.phase)} (${p.count})</button>`
+          ),
+        ];
+        bar.innerHTML = chips.join('');
+        bar.querySelectorAll('[data-phase]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            phaseFilter = btn.getAttribute('data-phase') || null;
+            if (phaseFilter === '') phaseFilter = null;
+            renderPhaseFilter(opsCache);
+            renderPartners(handshakeCache);
+            applyPartnerRoute(false);
+          });
+        });
+      }
+
+      function renderOutsInventory(selectedCode = null) {
+        const tbody = $('outs-tbody');
+        if (!tbody) return;
+        const statusEl = $('outs-status-filter');
+        const incompleteEl = $('outs-incomplete-only');
+        const status = statusEl?.value || '';
+        const incompleteOnly = Boolean(incompleteEl?.checked);
+        const filtered = filterPartnerOuts(flattenedOuts, {
+          partnerCode: selectedCode,
+          status: status || null,
+          incompleteOnly,
+        });
+        const count = $('outs-filter-count');
+        if (count) {
+          count.textContent = `${filtered.length} of ${flattenedOuts.length} outs`;
+        }
+        tbody.innerHTML = filtered.length
+          ? filtered
+              .map(row => {
+                const out = row.out || {};
+                const outId = out.id || '';
+                return `<tr data-partner-code="${esc(row.partnerCode)}" data-out-status="${esc(row.status)}">
+                <td>${partnerLink(row.partnerCode)}<br><code>${esc(row.callSign)}</code></td>
+                <td>${phaseChip(row.partnerCode)}</td>
+                <td><a href="${partnerOutHash(row.partnerCode, outId)}"><code>${esc(outId)}</code></a></td>
+                <td>${bookChip(row.bookName, out)}</td>
+                <td>${conceptChip(out.book?.typeConceptId || 'book.type.legal', row.bookType, out.book?.color)}</td>
+                <td><code>${esc(row.username)}</code></td>
+                <td>${railChip(row.method, out)}</td>
+                <td>${esc(String(row.maxBet))}</td>
+                <td>${statusChip(row.status, out)}${row.incomplete ? ' · <span class="tone-warn">incomplete</span>' : ''}</td>
+                <td>${esc(out.note || '—')}</td>
+              </tr>`;
+              })
+              .join('')
+          : '<tr><td colspan="10">No outs match filters — check partners-ops bake</td></tr>';
       }
 
       function routeChip(href, label, color, conceptId = '') {
@@ -1326,20 +1572,29 @@
 
       function renderPartners(handshake) {
         const rows = Array.isArray(handshake?.rows) ? handshake.rows : [];
-        $('partners-tbody').innerHTML = rows.length
-          ? rows
+        const filtered = phaseFilter
+          ? rows.filter(row => {
+              const ops = opsByPartner.get(normalizePartnerCode(row.partnerCode));
+              return String(ops?.phase || '') === phaseFilter;
+            })
+          : rows;
+        $('partners-tbody').innerHTML = filtered.length
+          ? filtered
               .map(row => {
                 const invite = row.inviteLink
                   ? `<a href="${esc(row.inviteLink)}" target="_blank" rel="noopener">invite</a>`
                   : '<span class="tone-warn">none</span>';
                 const verify = `${row.verifyPassed ?? '—'}/${row.verifyTotal ?? '—'}`;
-                const ops = opsByPartner.get(String(row.partnerCode || '').toUpperCase());
-                const tax = ops ? `${ops.outs?.length || 0} outs · ${ops.phase}` : '—';
+                const ops = opsByPartner.get(normalizePartnerCode(row.partnerCode));
+                const limits = ops?.tracking?.limits || {};
+                const tax = ops
+                  ? `${ops.outs?.length || 0} outs · ${limits.coveragePct ?? 0}% limits`
+                  : '—';
                 const bot = botTopicLinks(row.partnerCode, ops?.phase);
-                return `<tr id="partner-detail-${esc(row.partnerCode)}" data-partner-code="${esc(row.partnerCode)}">
+                return `<tr id="partner-detail-${esc(row.partnerCode)}" data-partner-code="${esc(row.partnerCode)}" data-phase="${esc(ops?.phase || '')}">
                 <td>${partnerLink(row.partnerCode)}</td>
                 <td>${phaseChip(row.partnerCode)}</td>
-                <td>${esc(tax)}</td>
+                <td>${esc(tax)}${limits.coveragePct != null ? `<div style="margin-top:4px">${coverageBarHtml(limits.coveragePct)}</div>` : ''}</td>
                 <td><code>${esc(row.membershipCell || '—')}</code></td>
                 <td><code>${esc(row.callSign || '—')}</code></td>
                 <td>${esc(row.dmSeatStatus || '—')}</td>
@@ -1351,7 +1606,7 @@
               </tr>`;
               })
               .join('')
-          : '<tr><td colspan="11">No partners in telegram-handshake bake</td></tr>';
+          : `<tr><td colspan="11">${phaseFilter ? `No partners in phase ${esc(phaseFilter)}` : 'No partners in telegram-handshake bake'}</td></tr>`;
       }
 
       function renderPartnerProfile(code) {
@@ -1392,6 +1647,7 @@
           <div><div class="k">Profile template</div><div class="v">${esc(unified?.meta?.templateId || '—')} · ${esc(unified?.meta?.version || '—')}</div></div>
           <div><div class="k">Telegram</div><div class="v">${esc(hs?.membershipCell || '—')} · DM ${esc(hs?.dmSeatStatus || (desk?.hasTelegramDesk ? 'pinned' : '—'))}</div></div>
           <div><div class="k">Accounts</div><div class="v">${esc(String(accounts.ready ?? 0))}/${esc(String(accounts.total ?? 0))} ready · ${esc(String(limits.coveragePct ?? 0))}% limits</div></div>
+          <div><div class="k">Limit coverage</div><div class="v">${coverageBarHtml(limits.coveragePct)}</div></div>
           <div><div class="k">Fund / outs</div><div class="v ${fundTone(desk?.fundStatus)}">${esc(desk?.fundStatus || 'no intake')} · ${esc(String(desk?.incompleteOuts ?? ops?.outs?.length ?? '—'))} outs</div></div>
           <div><div class="k">Balance</div><div class="v">${fmtMoney(ops?.accounting?.balance)}</div></div>
           <div><div class="k">Initial cap</div><div class="v">${fmtMoney(ops?.accounting?.initialCapital)}</div></div>
@@ -1400,6 +1656,21 @@
           <div><div class="k">Onboard CLI</div><div class="v"><code>bun run onboard:partner -- ${esc(callSign)} --dry-run</code></div></div>
         </div>
         <div class="partner-profile-links">${cross}</div>
+        <div class="partner-profile-outs">
+          <h3>Outs · partners-ops</h3>
+          <div class="tracking-summary">${
+            (ops?.outs || [])
+              .map(out =>
+                routeChip(
+                  partnerOutHash(code, out.id),
+                  `${out.book?.name || out.id}: ${out.status || '—'} · ${out.maxBet || '—'}`,
+                  out.statusColor || out.book?.color,
+                  out.statusConceptId || 'out.status.ready'
+                ).replace('topic-chip', 'book-chip')
+              )
+              .join('') || '<span class="tone-warn">No outs on this partner</span>'
+          }</div>
+        </div>
         <div class="partners-panel">
           <h2>Ledger <span class="tone-muted">(partner_ledger)</span></h2>
           <div class="blurb">Most recent transactions — desk entries, imports, and the weekly commission adjustment (newest first).</div>
@@ -1747,7 +2018,7 @@
                 <td>${partnerLink(partner.code)}<br><code>${esc(partner.callSign)}</code></td>
                 <td>${phaseChip(partner.code)}</td>
                 <td>${conceptChip('ops.limits.account', `${accounts.ready || 0}/${accounts.total || 0} ready`, colors['ops.limits.account'])}</td>
-                <td>${conceptChip('ops.limits.monitoring_status', `${limits.coveragePct || 0}% · ${limits.missing || 0} missing`, limitTone)}</td>
+                <td>${coverageBarHtml(limits.coveragePct)}<div class="tone-muted" style="font-size:11px;margin-top:4px">${esc(String(limits.missing || 0))} missing</div></td>
                 <td><span class="tracking-summary">${effectiveLimits.join('') || '—'}</span></td>
                 <td>${conceptChip('ops.view.account_freeplay', `${accounting.freeRollPercent || 0}% · ${accounting.freeRollApplied || 0} applied`, colors['ops.view.account_freeplay'] || colors['accounting.free_roll'])}</td>
                 <td><a href="${partnerAccountingHash(partner.code)}" data-glossary-concept="ops.view.account_summary">${esc(accounting.ledgerEvents || 0)} events</a>${
@@ -1857,9 +2128,16 @@
         }
 
         renderPartnerProfile(selectedCode);
+        renderOutsInventory(selectedCode);
 
         let target = null;
-        if (route.type === 'out') target = document.getElementById(`out-card-${route.outId}`);
+        if (route.type === 'out') {
+          target =
+            document.getElementById(`out-card-${route.outId}`) ||
+            document.querySelector(`[data-partner-code="${route.code}"] a[href*="${route.outId}"]`)
+              ?.closest('tr') ||
+            $('section:outs');
+        }
         if (route.type === 'accounting') target = $('accounting-ledger');
         if (route.type === 'telegram') target = $('telegram-thread');
         if (route.type === 'partner') {
@@ -1909,9 +2187,9 @@
           handshakeCache = handshake;
           seatCache = seat;
           partnerProfilesCache = partnerProfiles;
-          opsByPartner = new Map(
-            (ops.partners || []).map(p => [String(p.code || '').toUpperCase(), p])
-          );
+          opsCache = ops;
+          opsByPartner = indexOpsByPartner(ops);
+          flattenedOuts = flattenPartnerOuts(ops);
           softAccountingSource = softAccounting?.source || 'unavailable';
           softPlaysByPartner = new Map();
           for (const play of softAccounting?.plays || []) {
@@ -1986,12 +2264,24 @@
           renderTaxonomyChips(ops);
           renderPartnerRoutes(ops);
           renderStats(handshake, seat, ops);
+          renderPhaseFilter(ops);
           renderPartners(handshake);
+          renderOutsInventory(null);
           renderAccountsLimits(ops, limitPatterns);
           renderAccounting(handshake, seat, ops);
           renderDeposits(seat);
           renderBooks(ops);
           renderPartnerMessages(seat);
+          $('outs-status-filter')?.addEventListener('change', () => {
+            const route = parsePartnerHash(window.location.hash);
+            renderOutsInventory(route && 'code' in route ? route.code : null);
+            applyPartnerRoute(false);
+          });
+          $('outs-incomplete-only')?.addEventListener('change', () => {
+            const route = parsePartnerHash(window.location.hash);
+            renderOutsInventory(route && 'code' in route ? route.code : null);
+            applyPartnerRoute(false);
+          });
           $('loading').classList.add('hidden');
           $('dashboard').classList.remove('hidden');
           bootGlossaryUx({
