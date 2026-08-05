@@ -48,8 +48,9 @@ consumer evidence.
 
 Producer service auth is a distinct boundary from FactoryWager registry auth.
 `FACTORY_WAGER_TOKEN` is not sent to Tennis HQ. The producer accepts its own
-`PARTNER_API_TOKEN`; until that secret is provisioned, v1 reads return the
-redacted `contract_auth_unconfigured` response with HTTP 503.
+`PARTNER_API_TOKEN` (Proton Pass + Worker secret). Unauthenticated v1 reads
+return HTTP **401** `unauthorized` when the secret is configured, or **503**
+`contract_auth_unconfigured` only when the secret is missing from the Worker.
 
 ## Status: configured
 
@@ -60,7 +61,27 @@ redacted `contract_auth_unconfigured` response with HTTP 503.
 | Vault map note   | `config/vault-map.toml` `[env.FACTORY_WAGER_TOKEN].note`                    |
 | Portal mark      | `bun run tennis:agent-auth:bake` → `public/registry/tennis/agent-auth.json` |
 | Operator handoff | `~/.reasonix/tennis-hq-registry-token.env` (mode 600, not committed)        |
-| Tennis HQ app    | `king-zippy-umbra-acre/.env.local` (gitignored) + `bunfig.toml` scopes      |
+| Tennis HQ app    | `plum-spruce-dawn-dune1` (canonical) · Worker `tennis-hq`                   |
+
+### Producer service auth (`PARTNER_API_TOKEN`) — configured 2026-08-05
+
+| Check | Value |
+| ----- | ----- |
+| Vault item | `factorywager` / **Tennis HQ Partner API Token** |
+| Vault map | `config/vault-map.toml` `[env.PARTNER_API_TOKEN]` |
+| Worker secret | `wrangler secret put PARTNER_API_TOKEN --name tennis-hq` |
+| Handoff | `~/.reasonix/tennis-hq-partner-api-token.env` (mode 600) |
+| Smoke | `curl -H "Authorization: Bearer $PARTNER_API_TOKEN" https://tennis.factory-wager.com/api/v1/research/status` → 200 |
+| Unauth smoke | no bearer → **401** `unauthorized` (not 503) |
+
+```bash
+# Load partner service token (never print)
+set -a && source ~/.reasonix/tennis-hq-partner-api-token.env && set +a
+# Or: bun run portal-cli secret get 'pass://factorywager/Tennis HQ Partner API Token/password'
+
+curl -fsS -H "Authorization: Bearer $PARTNER_API_TOKEN" \
+  https://tennis.factory-wager.com/api/v1/marketdata/desk | head -c 200
+```
 
 Do **not** put the secret in git, portal HTML, or agent chat logs that get
 committed.
