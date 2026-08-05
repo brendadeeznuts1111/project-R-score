@@ -53,10 +53,10 @@ consumer evidence.
 | ---------------- | ---------------------------------------------------------------------------------------------------- |
 | Runtime          | `https://tennis.factory-wager.com`                                                                   |
 | Worker           | `tennis-hq`                                                                                          |
-| Production tip   | [`41c9ab6`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/commit/41c9ab68b4d3d47d0bea92d8877137588a7cfdf1) · `tennis-hq@1.4.0` · `/api/version` `at` 2026-08-05T17:16:41Z · `security(export): gate warehouse-csv/json with partner API access (#7)` |
-| Worker version   | `7b9ac02a-18c4-46f5-a724-f07b7fa5925d`                                                               |
-| Git tip (`main`) | [`0f7b6d9`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/commit/0f7b6d9fba84bfeb404edc1edfba964b8ef96cd1) — **3 commits ahead** of production tip (`#9` timeout shell · `#8` CONTRIBUTING mesh · `#10` scan-flag filter). Not live until Wrangler redeploy + `/api/version` match |
-| Verified         | 2026-08-05 · `/api/version` ok · unauth `GET /api/v1/research/status` → **401** · glossary 300 entries |
+| Production tip   | [`0f7b6d9`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/commit/0f7b6d9fba84bfeb404edc1edfba964b8ef96cd1) · `tennis-hq@1.4.0` · `/api/version` `at` 2026-08-05T17:49:17Z · `fix(desk): scan-flag filter OR parity + hash text-fragment strip (#10)` |
+| Worker version   | `b3f2c700-5f9e-4ea1-9ab0-3c28049be22e`                                                               |
+| Git tip (`main`) | Matches production tip after Wrangler redeploy (`cloudflare:deploy` + `deploy:verify:prod` 2026-08-05) |
+| Verified         | 2026-08-05 · `/api/version` ok · unauth `GET /api/v1/research/status` → **401** · warehouse-json **401** · glossary 300 entries |
 | Inventory        | `config/surfaces.toml` → `/registry/surfaces-state.json` (re-bake after tip change)                  |
 | Cross-host probe | `bun run verify:weave -- --subdomains` → version, glossary, all five configured v1 bearer rejections |
 
@@ -185,7 +185,7 @@ not import files from the sibling Tennis HQ source tree. The soft-pass extracts
 `package/registry/contracts/v1/manifest.json` from the tarball and requires
 package-version parity plus exactly these five authenticated read domains:
 
-| Domain     | Runtime path                     | Contract package export               | Live tip `41c9ab6` |
+| Domain     | Runtime path                     | Contract package export               | Live tip `0f7b6d9` |
 | ---------- | -------------------------------- | ------------------------------------- | ------------------ |
 | research   | `GET /api/v1/research/status`    | `contracts/v1/research.schema.json`   | **wired** (unauth **401**) |
 | marketdata | `GET /api/v1/marketdata/desk`    | `contracts/v1/marketdata.schema.json` | SPA **404**        |

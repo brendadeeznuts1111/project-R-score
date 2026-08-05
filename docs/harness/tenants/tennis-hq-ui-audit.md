@@ -17,10 +17,10 @@ Two live UIs share the Tennis HQ brand and must not be collapsed into one:
 | Market Desk | `https://tennis.factory-wager.com` | [`plum-spruce-dawn-dune1`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1) ([CONTRIBUTING](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md)) · Worker `tennis-hq` · local sibling `~/Projects/plum-spruce-dawn-dune1` | Interactive desk SPA |
 | Portal board | `https://factory-wager.com/portal/tennis/` | [`public/portal/tennis/`](../../../public/portal/tennis/) | Baked registry evidence board |
 
-Live identity (desk tip ≠ git tip): `tennis-hq@1.4.0` · SHA `41c9ab6`
-(`41c9ab68b4d3d47d0bea92d8877137588a7cfdf1`) · Worker deployment
-`7b9ac02a-18c4-46f5-a724-f07b7fa5925d` · probed via `/api/version` 2026-08-05T17:16Z.
-Producer `origin/main` is `0f7b6d9` (**3 commits ahead** — not live until redeploy).
+Live identity (desk tip = git tip): `tennis-hq@1.4.0` · SHA `0f7b6d9`
+(`0f7b6d9fba84bfeb404edc1edfba964b8ef96cd1`) · Worker deployment
+`b3f2c700-5f9e-4ea1-9ab0-3c28049be22e` · probed via `/api/version` 2026-08-05T17:49Z.
+Matches producer `origin/main` after Wrangler redeploy + `deploy:verify:prod`.
 
 ```mermaid
 flowchart LR
@@ -163,7 +163,7 @@ never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
 | --- | ------ | ----- |
 | `/` | 200 | Title `Tennis HQ · Market Desk`; SSR “Loading desk…” shell |
 | `/api/health` | 200 | `ok`, package `tennis-hq@1.4.0` (prefer `/api/version` for tip SHA) |
-| `/api/version` | 200 | tip SHA `41c9ab6` · Worker `7b9ac02a…` · 2026-08-05T17:16Z |
+| `/api/version` | 200 | tip SHA `0f7b6d9` · Worker `b3f2c700…` · 2026-08-05T17:49Z |
 | `/api/glossary` | 200 | 300 entries · live `generatedAt` refreshes on probe |
 | `/build-id.json` | 200 | packageVersion 1.4.0 |
 | `/api/export/hq-json` | 200 | schema `hq-desk/v1` · **`row_count`: 0** |
@@ -206,10 +206,10 @@ never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
    (`plum-spruce-dawn-dune1/src/routes/api/v1/research/status.ts`). The other four
    return SPA **404**. Ownership: **producer**.
 2. ~~**Surfaces inventory overclaims**~~ — **Closed 2026-08-05 tip refresh.**
-   `[surfaces.tennis].note` + `surfaces-state.json` now pin production tip
-   `41c9ab6` / Worker `7b9ac02a`, record unauth **401**, and state that only
-   research is implemented (other v1 → SPA 404). Residual: git tip `0f7b6d9`
-   still leads until next Wrangler deploy. Ownership was **monorepo**.
+   `[surfaces.tennis].note` + `surfaces-state.json` pin production tip
+   `0f7b6d9` / Worker `b3f2c700`, record unauth **401**, and state that only
+   research is implemented (other v1 → SPA 404). Desk tip matches
+   `origin/main` after Wrangler redeploy. Ownership was **monorepo**.
 
 ### P1 — Empty / soft-fail desk (UI looks broken)
 
@@ -238,9 +238,9 @@ never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
    **docs / UX** (link hygiene).
 10. **Missing desk chrome assets** — favicon / webmanifest 404 on Worker.
     Ownership: **producer**.
-11. **Git tip leads production** — producer `origin/main` `0f7b6d9` is 3 commits
-    ahead of live tip `41c9ab6` (`#9`/`#8`/`#10`). Operators must not treat git
-    HEAD as deployed. Ownership: **operator** (Wrangler redeploy + tip docs).
+11. ~~**Git tip leads production**~~ — **Closed 2026-08-05.** Live tip is
+    `0f7b6d9` / Worker `b3f2c700` (`#10` on `origin/main`); verified via
+    `/api/version` + `deploy:verify:prod`. Ownership was **operator**.
 
 ### P3 — Hygiene
 
@@ -257,12 +257,13 @@ Documentation-only audit — **do not** apply these without an explicit fix lane
 
 | Lane | Action |
 | ---- | ------ |
-| Producer | Implement remaining v1 routes **or** shrink manifest/docs to `research` only; attach warehouse/DB or hide empty panels; add favicon/manifest; deploy `0f7b6d9` (or later) when ready |
+| Producer | Implement remaining v1 routes **or** shrink manifest/docs to `research` only; attach warehouse/DB or hide empty panels; add favicon/manifest |
 | Monorepo | `bun run tennis:board:bake` (stale 2026-07-30 metrics); after each producer deploy: refresh tip in `tennis-hq-registry.md` + `[surfaces.tennis].note` + `bun run surfaces:bake` |
 | Edge | Kalshi probe ACL / outbound permission for `?probe=1` |
 
-**Done this tip lane:** production tip pin `41c9ab6` · surfaces note accuracy ·
-`tennis-desk.js` inventory · `PARTNER_API_TOKEN` configured (unauth **401**).
+**Done this tip lane:** production tip pin `0f7b6d9` / Worker `b3f2c700` ·
+surfaces note accuracy · `tennis-desk.js` inventory · `PARTNER_API_TOKEN`
+configured (unauth **401**) · Wrangler redeploy matched `origin/main`.
 
 Out of scope here: Pages deploy, vault token mint, Kalshi network ACL changes.
 
