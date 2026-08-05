@@ -27,7 +27,8 @@ describe('portal surfaces board', () => {
       Bun.file(resolvePath(ROOT, 'public/portal/surfaces/index.html')).text(),
       Bun.file(resolvePath(ROOT, 'public/portal/surfaces/surfaces-board.js')).text(),
     ]);
-    expect(html).toContain('Surface inventory');
+    expect(html).toContain('Hosts, Access domains, and backend shortcodes');
+    expect(html).toContain('Public edge surface inventory');
     expect(html).toContain('/portal/data.js');
     expect(html).toContain('/portal/topbar.js');
     expect(html).toContain('/portal/surfaces/surfaces-board.js');
