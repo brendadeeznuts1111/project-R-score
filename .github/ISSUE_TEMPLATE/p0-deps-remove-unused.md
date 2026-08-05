@@ -6,6 +6,16 @@ labels: tech-debt, p0, dependencies
 assignees: dev-team
 ---
 
+## Routing (optional — human queue)
+
+| Field | Value |
+|-------|-------|
+| **Domain** | `partner` · `control` · `trading` · `identity` · `knowledge` · `platform` · or n/a |
+| **Tracker** | tenant open-issue id · or n/a |
+| **Concept** | vocabulary id only if chrome/wire changes · or n/a |
+
+See [ISSUE-ROUTING.md](../../docs/harness/ISSUE-ROUTING.md).
+
 ## 📦 Description
 Unused dependencies adding 50+ transitive deps to bundle:
 - `express` (not used, we use Bun.serve)

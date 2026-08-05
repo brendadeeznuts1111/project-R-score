@@ -25,3 +25,16 @@ GitHub Issues are a **human queue**, not the concept or domain graph.
 | Portal gap | [`.github/ISSUE_TEMPLATE/portal-gap.md`](../../.github/ISSUE_TEMPLATE/portal-gap.md) |
 | Bookmakers catalog | [`.github/ISSUE_TEMPLATE/bookmakers-catalog.md`](../../.github/ISSUE_TEMPLATE/bookmakers-catalog.md) |
 | Default PR | [`.github/pull_request_template.md`](../../.github/pull_request_template.md) |
+| P0 PR | [`.github/pull_request_template_p0.md`](../../.github/pull_request_template_p0.md) |
+
+P0 issue templates share a short **Routing** block (Domain · Tracker · Concept) for
+filters only — security/arch labels stay as-is.
+
+## Agents
+
+When opening or triaging a ticket:
+
+1. Set **Domain** from chrome lanes (or `platform` for harness-only).
+2. Set **Tracker** when closing a tenant residual (`BM-*`, etc.).
+3. Set **Concept** only if vocabulary/wire chrome moves — then `concept:audit --strict`.
+4. Prove the fix with **Claim → evidence** on the PR, not by closing the issue alone.
