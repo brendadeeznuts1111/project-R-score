@@ -1,11 +1,5 @@
 {
-  "total": 3,
-  "byPattern": {
-    "pretty-json-console": 3
-  },
-  "files": {
-    "scripts/bun-cache-lifecycle.ts": 1,
-    "scripts/check-bun-pm-cache.ts": 1,
-    "tools/ops-snapshot.ts": 1
-  }
+  "total": 0,
+  "byPattern": {},
+  "files": {}
 }

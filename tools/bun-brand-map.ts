@@ -27,6 +27,7 @@
  */
 
 import * as ts from 'typescript';
+import { jsonOut } from '../lib/console-depth.ts';
 import { BUN_BRAND_USAGES } from '../lib/docs/bun-brand-usages.ts';
 import {
   assertBunBrandUsages,
@@ -1204,7 +1205,7 @@ async function main(): Promise<void> {
   const target = `${root}/${BUN_BRAND_MAP_PATH}`;
 
   if (args.has('--json')) {
-    console.log(JSON.stringify(payload, null, 2));
+    jsonOut(payload);
     return;
   }
   if (args.has('--check')) {

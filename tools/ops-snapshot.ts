@@ -36,6 +36,7 @@
  * @see lib/routing-proof.ts
  * @see functions/api/operations/summary.ts
  */
+import { jsonOut } from '../lib/console-depth.ts';
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { resolvePath } from '../lib/path-bun.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
@@ -857,7 +858,7 @@ export async function buildRegistrySnapshot(options?: {
       report,
     };
 
-    console.log(JSON.stringify(summary, null, 2));
+    jsonOut(summary);
     return summary;
   } finally {
     db.close();

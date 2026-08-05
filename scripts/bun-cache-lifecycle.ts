@@ -9,6 +9,7 @@
  *
  * @see docs/UNIFIED.md
  */
+import { jsonOut } from '../lib/console-depth.ts';
 import { runBunCacheLifecycle, type BunCacheLifecyclePlan } from './lib/bun-cache-metrics.ts';
 import { collectBunPmHealth, type BunPmHealthReport } from './lib/bun-pm-health.ts';
 
@@ -54,7 +55,7 @@ async function main(): Promise<void> {
   const payload = { lifecycle: plan, pmHealth: health };
 
   if (args.json) {
-    console.info(JSON.stringify(payload, null, 2));
+    jsonOut(payload);
   } else {
     renderPlan(plan, health);
   }
