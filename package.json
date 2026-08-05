@@ -1,9 +1,9 @@
 {
   "name": "factorywager-enterprise",
   "version": "5.2.0+build.20260723",
-  "packageManager": "bun@1.4.0",
+  "packageManager": "bun@1.3.14",
   "engines": {
-    "bun": ">=1.4.0"
+    "bun": ">=1.3.14"
   },
   "description": "🚀 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
   "workspaces": {
@@ -1906,6 +1906,8 @@
     "bake:scrape-wire-taxonomy:check": "bun tools/bake-scrape-wire-taxonomy.ts --check",
     "tennis:agent-auth:bake": "bun tools/bake-tennis-agent-auth.ts",
     "tennis:agent-auth:check": "bun tools/bake-tennis-agent-auth.ts --check",
+    "tennis:partner-contracts:bake": "bun tools/bake-tennis-partner-contracts.ts",
+    "tennis:partner-contracts:check": "bun tools/bake-tennis-partner-contracts.ts --check",
     "baseline:sync-regulatory": "bun tools/baseline-sync.ts sync-regulatory",
     "baseline:sync-all": "bun tools/baseline-sync.ts sync-all",
     "baseline:status": "bun tools/baseline-sync.ts status",

@@ -72,7 +72,9 @@ describe('Tennis HQ agent auth artifact', () => {
       '<script type="module" src="/portal/components/tennis-desk.js"></script>'
     );
     expect(portal).not.toContain('function renderKpis');
-    expect(controller).toContain("fetchTennisJson('/registry/tennis/live-matches.json'");
-    expect(controller).toContain("fetchTennisJson('/registry/tennis/agent-auth.json'");
+    expect(controller).toContain("fetch('/registry/tennis/live-matches.json'");
+    expect(controller).toContain("fetch('/registry/tennis/agent-auth.json'");
+    expect(controller).toContain('/registry/tennis/partner-contracts.json');
+    expect(controller).toContain('function renderKpis');
   });
 });

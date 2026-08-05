@@ -16,12 +16,26 @@ Factory partner desk (Telegram · Accounting · Soft · DOD).
 | DOD proofs | [`/portal/dod/`](./dod/) |
 | Tenant runbook | [`docs/harness/tenants/tennis-hq-registry.md`](../../docs/harness/tenants/tennis-hq-registry.md) |
 | UI inventory audit | [`docs/harness/tenants/tennis-hq-ui-audit.md`](../../docs/harness/tenants/tennis-hq-ui-audit.md) |
+| Producer contribute | [plum-spruce-dawn-dune1 · CONTRIBUTING](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md) (Market Desk day loop · gate · partners) |
+| Bake inventory | [`/registry/bake-manifest.json`](../registry/bake-manifest.json) (`runtime.runtimeVersion` · per-artifact `bakedAt`) |
+
+
+
+## Glossary planes (do not confuse)
+
+| Plane | Host | RPS / Warehouse |
+|-------|------|-----------------|
+| Live Market Desk | `tennis.factory-wager.com` | RPS = cycle scanner (`kpi.rps_warnings`); Warehouse = `#warehouse` facets |
+| Factory portal board | `/portal/tennis/` | Baked metrics + partner-contracts — **not** live RPS counts |
+| Domain glossary bake | `/portal/glossary/` | May lag producer desk definitions for overlapping `kpi.*` ids |
+
+Deep links: prefer `#glossary:kpi.rps_warnings` **or** `#warehouse` — not both with text fragments.
 
 ## 1. Two surfaces (do not collapse)
 
 | Host | Owner | Role |
 |------|-------|------|
-| `tennis.factory-wager.com` | Worker `tennis-hq` · producer `plum-spruce-dawn-dune1` | Live desk SPA · `/api/v1/*` contracts · market feed |
+| `tennis.factory-wager.com` | Worker `tennis-hq` · producer [`plum-spruce-dawn-dune1`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1) · [CONTRIBUTING](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md) | Live desk SPA · `/api/v1/*` contracts · market feed |
 | `factory-wager.com/portal/tennis/` | this monorepo · Pages | Baked metrics · agent-auth · registry · venue board |
 
 There is **no** redirect between them. Board loads registry JSON only (no
@@ -104,18 +118,30 @@ HTML [`/portal/tennis/`](./tennis/) paints:
 4. Venues · mid distribution · live matches  
 5. Tenant registry packages (`@tennis-hq/ssot`, …)
 
-## 6. CLI day loop
+## 6. Telegram Accounting vs partner-contracts bake
+
+| Plane | Path | What it proves |
+|-------|------|----------------|
+| Telegram → DOD | Accounting topic photo (+ CODE caption) → `@factorywager_bot` / ops long-poll → [`lib/dod/telegram-accounting-ingest.ts`](../../lib/dod/telegram-accounting-ingest.ts) → [`/portal/dod/`](./dod/) | Bet-slip / deposit **photo proof** |
+| Partner-contracts bake | `bun run tennis:partner-contracts:bake` → [`/registry/tennis/partner-contracts.json`](../registry/tennis/partner-contracts.json) → this board’s Partner desk table | Capacity / finance join (live token or offline partners-ops ⊕ handshake) |
+
+Telegram photos do **not** write partner-contracts JSON. Handshake bake only
+enriches offline partner rows (`handshakeOk`, `fundStatus`).
+
+## 7. CLI day loop
 
 ```bash
 # Evidence bakes (Pages)
 bun run tennis:board:bake
+bun run tennis:partner-contracts:bake   # live with PARTNER_API_TOKEN, or --offline
+bun run tennis:partner-contracts:check
 bun run tennis:agent-auth:check
 bun run partners:validate
 bun run telegram:handshake:catalog
 bun run soft:accounting:bake
 bun run ops:snapshot --no-seed
 
-# Runtime release / contracts
+# Runtime release / contracts (producer repo plum-spruce-dawn-dune1)
 bun run cloudflare:deploy:verify   # when deploying tennis-hq
 bun run verify:weave -- --subdomains
 bun run tennis:ssot:release:check
@@ -127,7 +153,7 @@ curl -fsS -H "Authorization: Bearer $PARTNER_API_TOKEN" \
   https://tennis.factory-wager.com/api/v1/accounting/finance | head -c 200
 ```
 
-## 7. Failure paths
+## 8. Failure paths
 
 | Symptom | Fix |
 |---------|-----|
