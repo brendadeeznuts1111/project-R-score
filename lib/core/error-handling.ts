@@ -153,7 +153,7 @@ export class ErrorHandler {
    */
   private generateErrorCode(error: R2IntegrationError, context: string): string {
     const timestamp = Date.now().toString(36);
-    const hash = btoa(`${context}-${error.code}`).slice(0, 8);
+    const hash = new TextEncoder().encode(`${context}-${error.code}`).toBase64().slice(0, 8);
     return `${error.code}-${hash}-${timestamp}`;
   }
 

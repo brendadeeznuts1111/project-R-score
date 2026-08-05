@@ -21,8 +21,6 @@
 // @see docs/design/unified-partner-profile.md
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 
-// eslint-disable-next-line no-restricted-imports -- audit JSONL append; Bun has no append API
-import { appendFileSync } from 'node:fs';
 import type { Database } from 'bun:sqlite';
 import { AccountService } from '../operations/account-service';
 import { openOperationsDb, type OpenOperationsDbOpts } from '../operations/db';
@@ -274,7 +272,9 @@ export async function onboardPartner(input: PartnerOnboardInput): Promise<{
         vaultKey,
       });
       try {
-        appendFileSync(auditPath, `${line}\n`);
+        // Bun has no append API — read + rewrite (JSONL audit log stays small).
+        const prev = (await Bun.file(auditPath).exists()) ? await Bun.file(auditPath).text() : '';
+        await Bun.write(auditPath, `${prev}${line}\n`);
         actions.push(`audit → ${auditPath}`);
       } catch {
         actions.push('audit skipped (log path unwritable)');

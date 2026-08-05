@@ -1,4 +1,4 @@
-// @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortController
+// @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortSignal.timeout
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Tier 4 public sportsbook limit scraper.
@@ -64,12 +64,10 @@ function toScrapedLimit(target: ScrapeTarget, parsed: ScrapeTargetParsedRow): Sc
 }
 
 async function fetchTargetLive(target: ScrapeTarget, timeoutMs: number): Promise<unknown | null> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const response = await fetch(target.url, {
       headers: target.headers ?? {},
-      signal: controller.signal,
+      signal: AbortSignal.timeout(timeoutMs),
     });
     if (!response.ok) {
       console.warn(
@@ -82,8 +80,6 @@ async function fetchTargetLive(target: ScrapeTarget, timeoutMs: number): Promise
     const message = error instanceof Error ? error.message : String(error);
     console.warn(`Scrape error for ${target.sportsbook} (${target.jurisdiction}): ${message}`);
     return null;
-  } finally {
-    clearTimeout(timer);
   }
 }
 
