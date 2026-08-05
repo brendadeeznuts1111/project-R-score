@@ -1788,7 +1788,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'ops.dod.reconcile',
       'ops.dod.meta_log',
     ],
-    correlationId: 'lane/dod-visual-proof',
+    correlationId: 'PR#347',
     addedAt: '2026-08-05',
   },
   {
@@ -1812,7 +1812,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
       'ops.dod.ingest',
       'ops.metric.proof_coverage',
     ],
-    correlationId: 'lane/dod-visual-proof',
+    correlationId: 'PR#347',
     addedAt: '2026-08-05',
   },
   {
@@ -1826,7 +1826,7 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     uiRole: 'code',
     synonyms: ['dod_meta.ndjson', 'image meta learning log', 'appendDodMetaNdjson'],
     seeAlso: ['page.dodReview', 'ops.dod.ingest', 'ui.semantic.artifact'],
-    correlationId: 'lane/dod-visual-proof',
+    correlationId: 'PR#347',
     addedAt: '2026-08-05',
   },
   {
@@ -2132,6 +2132,19 @@ export const PARTNERS_SURFACE_CONCEPTS = {
   bookDetail: 'section.partnersBookDetail',
   tags: 'section.partnersTags',
   partnerHashRoute: 'ui.route.partnerHash',
+} as const satisfies Record<string, PortalSemanticConceptKey>;
+
+/**
+ * Tennis desk board binding surface.
+ * Collapses partner-contracts / agent-auth / runtime evidence onto existing
+ * page + api + ui.semantic concepts (no new glossary ids).
+ */
+export const TENNIS_SURFACE_CONCEPTS = {
+  page: 'page.tennis',
+  partnerApi: 'api.partner',
+  artifact: 'ui.semantic.artifact',
+  status: 'ui.semantic.status',
+  source: 'ui.semantic.source',
 } as const satisfies Record<string, PortalSemanticConceptKey>;
 
 /** Relation fields checked for referential integrity (seeAlso + optional derivesFrom). */
