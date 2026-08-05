@@ -21,7 +21,7 @@ describe('bookmakers registry mirror', () => {
     };
     expect(payload.schemaVersion).toBe(2);
     expect(payload.artifact.name).toBe('@factorywager/bookmakers');
-    expect(payload.artifact.version).toMatch(/^0\.4\./);
+    expect(payload.artifact.version).toMatch(/^0\.4\.\d+$/);
     // v0.4 local mirror may omit registry checksum until package publish.
     if (payload.artifact.checksum) {
       expect(payload.artifact.checksum).toMatch(/^[0-9a-f]{64}$/);

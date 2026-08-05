@@ -86,8 +86,16 @@ bun lib/factory/cli.ts snapshot public/registry/registry.json
 bun run bookmakers:bake   # or bookmakers:bake -- --local offline
 ```
 
-Until `dist-tags.latest` is **0.4.0** on the artifact registry, Pages mirror is
-maintained via migrate + desk-coverage (not live package bake).
+**Published:** `@factorywager/bookmakers@0.4.1` is on R2 (`factory list` shows
+latest 0.4.1). Public HTTP index at `registry.factory-wager.com` may lag until
+`public/registry/registry.json` is deployed to Pages — bake prefers the **local**
+snapshot:
+
+```bash
+bun lib/factory/cli.ts snapshot public/registry/registry.json   # after publish
+bun run bookmakers:bake -- --version 0.4.1
+bun run bookmakers:desk-coverage
+```
 
 ## Verification
 

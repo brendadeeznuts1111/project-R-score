@@ -16,11 +16,13 @@ import { loadBookmakerRegistry } from '../lib/bookmakers/resolve.ts';
 const DESK_PATH = 'public/registry/seat-capital-desk.json';
 const REGISTRY_PATH = 'public/registry/bookmakers.json';
 const ARTIFACT_PUBLIC = 'artifact-registry/bookmakers/v0.4.0/public/books.json';
+const COVERAGE_BAKE = 'public/registry/bookmakers-desk-coverage.json';
 
 async function main(): Promise<void> {
   const asJson = Bun.argv.includes('--json');
   const applyMax = Bun.argv.includes('--apply-max');
   const strict = Bun.argv.includes('--strict');
+  const writeBake = !Bun.argv.includes('--no-write');
 
   if (!(await Bun.file(DESK_PATH).exists())) {
     console.error(`missing ${DESK_PATH} — run seat:desk:refresh / ops:snapshot`);
@@ -29,6 +31,11 @@ async function main(): Promise<void> {
   const desk = JSON.parse(await Bun.file(DESK_PATH).text());
   const registry = await loadBookmakerRegistry(REGISTRY_PATH);
   const report = buildDeskCoverageReport(desk, registry);
+
+  if (writeBake) {
+    await Bun.write(COVERAGE_BAKE, `${JSON.stringify(report, null, 2)}\n`);
+    if (!asJson) console.log(`✓ ${COVERAGE_BAKE}`);
+  }
 
   if (applyMax) {
     const payload = JSON.parse(await Bun.file(REGISTRY_PATH).text()) as {

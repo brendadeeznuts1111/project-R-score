@@ -147,12 +147,16 @@ describe('bookmakers board shell', () => {
     expect(html).toContain('portal-hero');
     expect(html).toContain('/portal/bookmakers.md');
     expect(html).toContain('/registry/bookmakers.json');
+    expect(html).toContain('/registry/bookmakers-desk-coverage.json');
+    expect(html).toContain('desk-coverage-card');
     expect(html).toContain('/portal/limits/');
     expect(html).toContain('/portal/routing.md');
 
     expect(script).toContain('export function normalizeBooks');
     expect(script).toContain('export function formatRegion');
     expect(script).toContain('export function filterBooks');
+    expect(script).toContain('deskCoverageHtml');
+    expect(script).toContain('DESK_COVERAGE_URL');
   });
 
   test('committed bake renders through normalizeBooks', async () => {

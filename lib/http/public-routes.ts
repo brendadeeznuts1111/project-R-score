@@ -311,6 +311,14 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     note: 'v0.4 Pages-safe public catalog (schemaVersion 2 · no apiKeyEnv/balance)',
   },
   {
+    path: '/registry/bookmakers-desk-coverage.json',
+    name: 'Bookmakers seat desk coverage',
+    category: 'registry',
+    kind: 'file-static',
+    okStatuses: [200, 404],
+    note: 'bookmakers:desk-coverage bake · matched/placeholder/unmatched desk books',
+  },
+  {
     path: '/portal/account/',
     name: 'Account dossier portal',
     category: 'portal',

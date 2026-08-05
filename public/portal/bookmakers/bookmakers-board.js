@@ -10,6 +10,7 @@ import { bindCopyButtons } from '../copy-cli.js';
 import { bootGlossaryUx } from '../components/glossary-ux.js';
 
 export const REGISTRY_URL = '/registry/bookmakers.json';
+export const DESK_COVERAGE_URL = '/registry/bookmakers-desk-coverage.json';
 export const GLOSSARY_URL = '/registry/domain-glossary.json';
 const POLL_MS = 60_000;
 
@@ -271,6 +272,42 @@ export async function fetchBake() {
   return res.json();
 }
 
+export function deskCoverageHtml(report) {
+  if (!report || !Array.isArray(report.hits)) return '';
+  const unmatched = report.hits.filter(h => h.class === 'unmatched');
+  const placeholders = report.hits.filter(h => h.class === 'placeholder');
+  const lines = [];
+  lines.push(
+    `<span><b>${esc(report.matched ?? 0)}</b> matched</span>`,
+    `<span><b>${esc(report.placeholder ?? 0)}</b> placeholder</span>`,
+    `<span class="${unmatched.length ? 'state-err' : 'state-ok'}"><b>${esc(report.unmatched ?? 0)}</b> unmatched</span>`,
+    report.registryUnused?.length
+      ? `<span class="dim">${esc(report.registryUnused.length)} registry unused</span>`
+      : null
+  );
+  const hitHtml = [...unmatched, ...placeholders]
+    .map(h => {
+      const max = h.maxBetUsd != null ? ` · max$${esc(h.maxBetUsd)}` : '';
+      const id = h.registryId ? ` → <code>${esc(h.registryId)}</code>` : '';
+      return `<span class="chip ${h.class === 'unmatched' ? 'state-err' : 'chip-muted'}">[${esc(h.class)}] ${esc(h.deskBook)}${id}${max}</span>`;
+    })
+    .join(' ');
+  return {
+    meta: lines.filter(Boolean).join(' · '),
+    hits: hitHtml || '<span class="dim">All desk books matched</span>',
+  };
+}
+
+export async function fetchDeskCoverage() {
+  try {
+    const res = await fetch(DESK_COVERAGE_URL, { headers: { Accept: 'application/json' } });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
 function setGate(el, { ok, label }) {
   if (!el) return;
   el.className = `portal-gate ${ok ? 'ok' : 'bad'}`;
@@ -289,6 +326,9 @@ export function initBookmakersBoard(root = document) {
   const tierEl = root.getElementById('bookmakers-tier');
   const searchEl = root.getElementById('bookmakers-search');
   const shownEl = root.getElementById('bookmakers-shown');
+  const deskCard = root.getElementById('desk-coverage-card');
+  const deskMeta = root.getElementById('bookmakers-desk-meta');
+  const deskHits = root.getElementById('bookmakers-desk-hits');
   if (!metaEl || !bodyEl) return;
 
   bindCopyButtons(root);
@@ -299,6 +339,7 @@ export function initBookmakersBoard(root = document) {
   let artifact = {};
   let audit = { ok: true, issues: [] };
   let generatedAt = null;
+  let deskReport = null;
 
   const paint = () => {
     const fetcher = filterEl?.value || 'all';
@@ -366,6 +407,17 @@ export function initBookmakersBoard(root = document) {
       .filter(Boolean)
       .join(' · ');
 
+    if (deskCard && deskMeta && deskHits) {
+      if (deskReport) {
+        deskCard.hidden = false;
+        const view = deskCoverageHtml(deskReport);
+        deskMeta.innerHTML = view.meta;
+        deskHits.innerHTML = view.hits;
+      } else {
+        deskCard.hidden = true;
+      }
+    }
+
     if (filtered.length === 0) {
       bodyEl.innerHTML =
         '<tr><td colspan="9" class="dim">No books match this filter</td></tr>';
@@ -379,6 +431,7 @@ export function initBookmakersBoard(root = document) {
     try {
       const payload = await fetchBake();
       glossaryIds = await loadGlossarySportIds();
+      deskReport = await fetchDeskCoverage();
       books = normalizeBooks(payload);
       summary = payload.summary || {};
       artifact = payload.artifact || {};

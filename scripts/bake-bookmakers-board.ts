@@ -40,37 +40,62 @@ interface ArtifactRelease {
   checksum: string;
 }
 
-/** Resolve latest + storage metadata for the bookmakers artifact from the index. */
+type RegistryIndex = {
+  packages?: Record<
+    string,
+    {
+      'dist-tags'?: Record<string, string>;
+      releases?: Record<
+        string,
+        { version?: string; storage?: { r2Key?: string; size?: number; checksum?: string } }
+      >;
+    }
+  >;
+};
+
+const LOCAL_REGISTRY_INDEX = 'public/registry/registry.json';
+
+/** Load index: optional preferVersion, then local snapshot, then live HTTP. */
 export async function resolveArtifactRelease(
-  fetcher: typeof fetch = fetch
+  fetcher: typeof fetch = fetch,
+  preferVersion?: string
 ): Promise<ArtifactRelease> {
-  const res = await fetcher(REGISTRY_INDEX_URL, { headers: { Accept: 'application/json' } });
-  if (!res.ok) throw new Error(`registry index failed (${res.status})`);
-  const index = (await res.json()) as {
-    packages?: Record<
-      string,
-      {
-        'dist-tags'?: Record<string, string>;
-        releases?: Record<
-          string,
-          { version?: string; storage?: { r2Key?: string; size?: number; checksum?: string } }
-        >;
-      }
-    >;
-  };
-  const pkg = index.packages?.[BOOKMAKERS_ARTIFACT_NAME];
-  const version = pkg?.['dist-tags']?.latest;
-  const release = version ? pkg?.releases?.[version] : undefined;
-  const storage = release?.storage;
-  if (!release || !storage?.r2Key || typeof storage.size !== 'number' || !storage.checksum) {
-    throw new Error(`${BOOKMAKERS_ARTIFACT_NAME} not found in the registry index`);
+  const indexes: RegistryIndex[] = [];
+  try {
+    if (await Bun.file(LOCAL_REGISTRY_INDEX).exists()) {
+      indexes.push(JSON.parse(await Bun.file(LOCAL_REGISTRY_INDEX).text()) as RegistryIndex);
+    }
+  } catch {
+    /* ignore bad local */
   }
-  return {
-    version: release.version ?? version!,
-    r2Key: storage.r2Key,
-    size: storage.size,
-    checksum: storage.checksum,
-  };
+  try {
+    const res = await fetcher(REGISTRY_INDEX_URL, { headers: { Accept: 'application/json' } });
+    if (res.ok) indexes.push((await res.json()) as RegistryIndex);
+  } catch {
+    /* offline */
+  }
+  if (!indexes.length) throw new Error('no registry index (local or live)');
+
+  for (const index of indexes) {
+    const pkg = index.packages?.[BOOKMAKERS_ARTIFACT_NAME];
+    if (!pkg) continue;
+    const version = preferVersion ?? pkg['dist-tags']?.latest;
+    if (!version) continue;
+    const release = pkg.releases?.[version];
+    const storage = release?.storage;
+    if (!release || !storage?.r2Key || typeof storage.size !== 'number' || !storage.checksum) {
+      continue;
+    }
+    return {
+      version: release.version ?? version,
+      r2Key: storage.r2Key,
+      size: storage.size,
+      checksum: storage.checksum,
+    };
+  }
+  throw new Error(
+    `${BOOKMAKERS_ARTIFACT_NAME}@${preferVersion ?? 'latest'} not found in local/live registry index`
+  );
 }
 
 /** Download a tarball, verifying size + SHA-256 against the index record. */
@@ -209,6 +234,10 @@ async function main(): Promise<void> {
   const check = Bun.argv.includes('--check');
   const asJson = Bun.argv.includes('--json');
   const useLocal = Bun.argv.includes('--local');
+  const versionFlag = (() => {
+    const i = Bun.argv.indexOf('--version');
+    return i >= 0 ? Bun.argv[i + 1] : undefined;
+  })();
 
   let module: Record<string, unknown>;
   let version: string;
@@ -240,7 +269,7 @@ async function main(): Promise<void> {
     version = pkg.version ?? '0.4.0';
     checksum = '0'.repeat(64); // local bake — checksum filled on registry publish
   } else {
-    const release = await resolveArtifactRelease();
+    const release = await resolveArtifactRelease(fetch, versionFlag);
     const tgz = await downloadArtifact(release);
     const dir = joinPath(tmpdir(), `fw-bookmakers-bake-${Date.now()}`);
     mkdirSync(dir, { recursive: true });

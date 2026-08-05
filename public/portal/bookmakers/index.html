@@ -242,6 +242,17 @@
 
       <div id="bookmakers-stats" class="portal-stat-grid" aria-label="Bookmakers summary"></div>
 
+      <div class="card" id="desk-coverage-card" hidden>
+        <h2>Seat desk coverage</h2>
+        <p class="dim" style="margin:0 0 8px;font-size:12px;line-height:1.45">
+          Free-text desk <code>book</code> labels vs this registry.
+          <a href="/registry/bookmakers-desk-coverage.json">JSON</a>
+          · <code>bun run bookmakers:desk-coverage</code>
+        </p>
+        <div class="meta-row" id="bookmakers-desk-meta">—</div>
+        <div id="bookmakers-desk-hits" style="margin-top:10px"></div>
+      </div>
+
       <div class="card" id="artifact">
         <h2>Artifact</h2>
         <div class="meta-row" id="bookmakers-meta"><span>resolving…</span></div>
