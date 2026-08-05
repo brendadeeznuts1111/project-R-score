@@ -1486,10 +1486,13 @@
   "bunBrandMap": {
     "available": true,
     "ok": true,
-    "warnings": 307,
+    "warnings": 257,
     "errors": 0,
     "stale": false,
-    "path": "/registry/bun-brand-map.json"
+    "path": "/registry/bun-brand-map.json",
+    "matched": 112,
+    "mappedBrands": 13,
+    "newUndeclared": 0
   },
   "limitChanges": [
     {

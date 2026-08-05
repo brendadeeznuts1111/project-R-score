@@ -60,6 +60,25 @@
   background: var(--surface);
 }
 
+button.brand-stat,
+.brand-stat.clickable {
+  display: block;
+  width: 100%;
+  margin: 0;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+
+button.brand-stat:hover,
+.brand-stat.clickable:hover,
+button.brand-stat:focus-visible,
+.brand-stat.clickable:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+}
+
 .brand-stat strong {
   display: block;
   font: 600 24px/1 var(--font-mono);
@@ -74,6 +93,10 @@
 
 .brand-stat.attention strong {
   color: var(--yellow, #e6b84d);
+}
+
+.brand-stat.attention-strong strong {
+  color: var(--red, #f85149);
 }
 
 .brand-view-tabs {

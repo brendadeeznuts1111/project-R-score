@@ -148,6 +148,443 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     proofs: [],
   },
   {
+    key: 'bun-randomuuidv7-funding-mint',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'operations',
+    implementations: [{ path: 'lib/operations/rail-limits.ts', symbol: 'fundViaRail' }],
+    consumers: [{ path: 'lib/operations/rail-limits.ts', symbol: 'fundViaRail' }],
+    relationships: [
+      {
+        direction: 'output',
+        brand: 'FundingId',
+        rationale: 'Rail funding rows mint FundingId from UUIDv7 before insert.',
+      },
+    ],
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-ops-channel-event',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'operations',
+    implementations: [{ path: 'lib/channels/outbox.ts', symbol: 'enqueueOpsChannelEvent' }],
+    consumers: [{ path: 'lib/channels/outbox.ts', symbol: 'enqueueOpsChannelEvent' }],
+    relationships: [
+      {
+        direction: 'output',
+        brand: 'OpsChannelEventId',
+        rationale: 'Ops channel outbox events mint OpsChannelEventId from UUIDv7.',
+      },
+    ],
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-command-mint',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'operations',
+    implementations: [
+      { path: 'lib/ai/ai-operations-manager.ts', symbol: 'AIOperationsManager.generateId' },
+    ],
+    consumers: [
+      { path: 'lib/ai/ai-operations-manager.ts', symbol: 'AIOperationsManager.generateId' },
+    ],
+    relationships: [
+      {
+        direction: 'output',
+        brand: 'CommandId',
+        rationale: 'AI command handles mint CommandId from a UUIDv7-backed string.',
+      },
+    ],
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-correlation-mint',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'session',
+    implementations: [
+      {
+        path: 'lib/ai/ai-operations-manager.ts',
+        symbol: 'AIOperationsManager.generateCorrelationId',
+      },
+      { path: 'tools/concept-inventory.ts', symbol: 'parseConceptInventoryOptions' },
+    ],
+    consumers: [
+      {
+        path: 'lib/ai/ai-operations-manager.ts',
+        symbol: 'AIOperationsManager.generateCorrelationId',
+      },
+      { path: 'tools/concept-inventory.ts', symbol: 'parseConceptInventoryOptions' },
+    ],
+    relationships: [
+      {
+        direction: 'output',
+        brand: 'CorrelationId',
+        rationale:
+          'Trace correlation ids and concept-inventory run ids mint CorrelationId from UUIDv7.',
+      },
+    ],
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-toc-tree-node',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'operations',
+    implementations: [
+      { path: 'lib/operations/toc-identity-bridge.ts', symbol: 'ensureAgent' },
+      { path: 'lib/operations/toc-identity-bridge.ts', symbol: 'ensureNovPartner' },
+    ],
+    consumers: [
+      { path: 'lib/operations/toc-identity-bridge.ts', symbol: 'seedTocIdentityBindings' },
+    ],
+    relationships: [
+      {
+        direction: 'output',
+        brand: 'TreeNodeId',
+        rationale: 'TOC identity seeding mints TreeNodeId for new agent and NOV partner nodes.',
+      },
+    ],
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-toc-opaque-rows',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'operations',
+    implementations: [
+      { path: 'lib/operations/toc-identity-bridge.ts', symbol: 'ensureHardrockAccount' },
+      { path: 'lib/operations/toc-identity-bridge.ts', symbol: 'ensureRail' },
+    ],
+    consumers: [
+      { path: 'lib/operations/toc-identity-bridge.ts', symbol: 'seedTocIdentityBindings' },
+    ],
+    relationships: none(
+      'sb_accounts and rails row ids are opaque SQLite primary keys (brand-ok strings), not domain *Id values.'
+    ),
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-partner-ledger-opaque',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'operations',
+    implementations: [
+      { path: 'lib/partner-profile/ledger.ts', symbol: 'insertLedgerEntry' },
+      { path: 'lib/partner-profile/deposit-import.ts', symbol: 'importDeposits' },
+    ],
+    consumers: [
+      { path: 'lib/partner-profile/ledger.ts', symbol: 'insertLedgerEntry' },
+      { path: 'lib/partner-profile/deposit-import.ts', symbol: 'importDeposits' },
+    ],
+    relationships: none(
+      'Partner ledger row ids and deposit batch ids are opaque strings (brand-ok), not domain *Id values.'
+    ),
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-scratch-temp-dirs',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'tooling',
+    policy: 'optional',
+    ownerLane: 'runtime-tooling',
+    implementations: [
+      { path: 'scripts/bun-test-changed-staged.ts', symbol: 'main' },
+      { path: 'scripts/lib/index-tree.ts', symbol: 'materializeIndexTree' },
+    ],
+    consumers: [
+      { path: 'scripts/bun-test-changed-staged.ts', symbol: 'main' },
+      { path: 'scripts/lib/index-tree.ts', symbol: 'materializeIndexTree' },
+    ],
+    relationships: none(
+      'UUIDv7 suffixes only uniquify ephemeral scratch directories for staged test isolation.'
+    ),
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-token-mint',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'identity',
+    implementations: [{ path: 'lib/identity/identity.ts', symbol: 'mintBearerToken' }],
+    consumers: [{ path: 'lib/identity/identity.ts', symbol: 'mintBearerToken' }],
+    relationships: [
+      {
+        direction: 'output',
+        brand: 'TokenId',
+        rationale: 'Bearer token mint concatenates UUIDv7 with a hex secret into TokenId.',
+      },
+    ],
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-identity-mint',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'identity',
+    implementations: [{ path: 'lib/identity/identity.ts', symbol: 'IdentitySystem.logAuthEvent' }],
+    consumers: [{ path: 'lib/identity/identity.ts', symbol: 'IdentitySystem.logAuthEvent' }],
+    relationships: [
+      {
+        direction: 'output',
+        brand: 'IdentityId',
+        rationale: 'Auth audit rows mint IdentityId from UUIDv7 before insert.',
+      },
+    ],
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-gate-decision',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'operations',
+    implementations: [
+      { path: 'lib/operations/partner-profile-bridge.ts', symbol: 'evaluateForNode' },
+      { path: 'lib/operations/play-dispatcher.ts', symbol: 'publishAndDispatch' },
+      { path: 'lib/operations/ops-loop-gate-backfill.ts', symbol: 'insertLegacyGateAllow' },
+    ],
+    consumers: [
+      { path: 'lib/operations/partner-profile-bridge.ts', symbol: 'evaluateForNode' },
+      { path: 'lib/operations/play-dispatcher.ts', symbol: 'publishAndDispatch' },
+      { path: 'lib/operations/ops-loop-gate-backfill.ts', symbol: 'insertLegacyGateAllow' },
+    ],
+    relationships: [
+      {
+        direction: 'output',
+        brand: 'GateDecisionId',
+        rationale: 'Partner policy and play-dispatch paths mint GateDecisionId from UUIDv7.',
+      },
+    ],
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-experiment-mints',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'operations',
+    implementations: [
+      { path: 'lib/experiments/engine.ts', symbol: 'FactorialEngine.createExperiment' },
+      { path: 'lib/experiments/engine.ts', symbol: 'FactorialEngine.assignBalanced' },
+      { path: 'lib/experiments/engine.ts', symbol: 'FactorialEngine.assignToConfig' },
+    ],
+    consumers: [
+      { path: 'lib/experiments/engine.ts', symbol: 'FactorialEngine.createExperiment' },
+      { path: 'lib/experiments/engine.ts', symbol: 'FactorialEngine.assignBalanced' },
+      { path: 'lib/experiments/engine.ts', symbol: 'FactorialEngine.assignToConfig' },
+    ],
+    relationships: [
+      {
+        direction: 'output',
+        brand: 'ExperimentId',
+        rationale: 'Factorial experiment creation mints ExperimentId from UUIDv7.',
+      },
+      {
+        direction: 'output',
+        brand: 'ExperimentVariantId',
+        rationale: 'Factorial experiment creation mints ExperimentVariantId per design variant.',
+      },
+      {
+        direction: 'output',
+        brand: 'ExperimentAssignmentId',
+        rationale: 'Balanced and config assignment paths mint ExperimentAssignmentId from UUIDv7.',
+      },
+    ],
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-tree-node-account',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'operations',
+    implementations: [{ path: 'lib/accounts/accounts.ts', symbol: 'AccountSystem.create' }],
+    consumers: [{ path: 'lib/accounts/accounts.ts', symbol: 'AccountSystem.create' }],
+    relationships: [
+      {
+        direction: 'output',
+        brand: 'TreeNodeId',
+        rationale: 'Account tree node creation mints TreeNodeId from UUIDv7.',
+      },
+    ],
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-ops-seed-demo',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'tooling',
+    policy: 'optional',
+    ownerLane: 'operations',
+    implementations: [{ path: 'lib/operations/ops-seed.ts', symbol: 'seedOperationsDemo' }],
+    consumers: [{ path: 'lib/operations/ops-seed.ts', symbol: 'seedOperationsDemo' }],
+    relationships: none(
+      'Operations demo seed rows use bare UUIDv7 primary keys for fixtures, not domain *Id mints.'
+    ),
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-ops-oneliners-demo',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'tooling',
+    policy: 'optional',
+    ownerLane: 'operations',
+    implementations: [
+      { path: 'tools/bun-ops-oneliners.ts', symbol: 'seedOpsDb' },
+      { path: 'tools/bun-ops-oneliners.ts', symbol: 'run' },
+    ],
+    consumers: [
+      { path: 'tools/bun-ops-oneliners.ts', symbol: 'seedOpsDb' },
+      { path: 'tools/bun-ops-oneliners.ts', symbol: 'run' },
+    ],
+    relationships: none(
+      'Ops oneliner demos mint ephemeral SQLite fixture ids; they are not domain *Id values.'
+    ),
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-anomaly-opaque',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'operations',
+    implementations: [
+      { path: 'lib/ai/anomaly-detector.ts', symbol: 'AnomalyDetector.createAnomaly' },
+      { path: 'lib/ai/anomaly-detector.ts', symbol: 'AnomalyDetector.createRuleBasedAnomaly' },
+      { path: 'lib/ai/anomaly-detector.ts', symbol: 'AnomalyDetector.checkImmediateAnomalies' },
+      { path: 'lib/ai/anomaly-detector.ts', symbol: 'AnomalyDetector.findRelatedEvents' },
+    ],
+    consumers: [
+      { path: 'lib/ai/anomaly-detector.ts', symbol: 'AnomalyDetector.createAnomaly' },
+      { path: 'lib/ai/anomaly-detector.ts', symbol: 'AnomalyDetector.createRuleBasedAnomaly' },
+      { path: 'lib/ai/anomaly-detector.ts', symbol: 'AnomalyDetector.checkImmediateAnomalies' },
+      { path: 'lib/ai/anomaly-detector.ts', symbol: 'AnomalyDetector.findRelatedEvents' },
+    ],
+    relationships: none(
+      'Anomaly and related-event ids are prefixed opaque strings, not branded domain *Id values.'
+    ),
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-ops-loop-fixture',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'tooling',
+    policy: 'optional',
+    ownerLane: 'operations',
+    implementations: [
+      { path: 'lib/operations/ops-loop-fixture.ts', symbol: 'runOpsLoopFixture' },
+      { path: 'lib/operations/ops-loop-fixture.ts', symbol: 'runOpsLoopMultiNodeFixture' },
+    ],
+    consumers: [
+      { path: 'lib/operations/ops-loop-fixture.ts', symbol: 'runOpsLoopFixture' },
+      { path: 'lib/operations/ops-loop-fixture.ts', symbol: 'runOpsLoopMultiNodeFixture' },
+    ],
+    relationships: none(
+      'Ops-loop fixtures mint bare node ids for in-memory demos; branding happens at bind sites.'
+    ),
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-telegram-broadcast-opaque',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'operations',
+    implementations: [
+      { path: 'lib/telegram/broadcast.ts', symbol: 'broadcastToKnownChats' },
+      { path: 'lib/telegram/broadcast.ts', symbol: 'enqueueBroadcastToOutbox' },
+      { path: 'lib/telegram/broadcast-log.ts', symbol: 'recordBroadcastOutboxSend' },
+    ],
+    consumers: [
+      { path: 'lib/telegram/broadcast.ts', symbol: 'broadcastToKnownChats' },
+      { path: 'lib/telegram/broadcast.ts', symbol: 'enqueueBroadcastToOutbox' },
+      { path: 'lib/telegram/broadcast-log.ts', symbol: 'recordBroadcastOutboxSend' },
+    ],
+    relationships: none(
+      'Broadcast batch and log row ids are opaque strings (brand-ok), not domain *Id values.'
+    ),
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-time-encoding-hex',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-hex',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'audit',
+    implementations: [{ path: 'lib/time.ts', symbol: 'randomUUIDv7' }],
+    consumers: [{ path: 'lib/time.ts', symbol: 'randomUUIDv7' }],
+    relationships: none(
+      'The hex encoding overload reshapes UUIDv7 bytes for callers; EvidenceId mint is the uuid-string path.'
+    ),
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-time-encoding-buffer',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-buffer',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'audit',
+    implementations: [{ path: 'lib/time.ts', symbol: 'randomUUIDv7' }],
+    consumers: [{ path: 'lib/time.ts', symbol: 'randomUUIDv7' }],
+    relationships: none(
+      'The buffer encoding overload returns raw UUIDv7 bytes; EvidenceId mint is the uuid-string path.'
+    ),
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-experiment-ab-opaque',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'operations',
+    implementations: [
+      { path: 'lib/experiments/engine.ts', symbol: 'FactorialEngine.recordMetric' },
+      { path: 'lib/experiments/engine.ts', symbol: 'createExperiment' },
+      { path: 'lib/experiments/engine.ts', symbol: 'assignVariant' },
+    ],
+    consumers: [
+      { path: 'lib/experiments/engine.ts', symbol: 'FactorialEngine.recordMetric' },
+      { path: 'lib/experiments/engine.ts', symbol: 'createExperiment' },
+      { path: 'lib/experiments/engine.ts', symbol: 'assignVariant' },
+    ],
+    relationships: none(
+      'Legacy A/B helpers and metric rows mint bare UUID strings without asExperiment* branding.'
+    ),
+    proofs: [],
+  },
+  {
     key: 'bun-cron-in-process-monitoring',
     token: asDocTokenId('Bun.cron'),
     variant: 'in-process',
@@ -221,7 +658,13 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     relationships: none(
       'The PTY object is native process infrastructure; terminal identity remains separately branded.'
     ),
-    proofs: [],
+    proofs: [
+      {
+        source: 'public/registry/release-features.json',
+        key: 'result:Bun.spawn PTY (echo capture)',
+        maxAgeDays: 45,
+      },
+    ],
   },
   {
     key: 'process-execve-capability-probe',
@@ -268,6 +711,7 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
       'test:shard:parallel',
       'test:ci:shard:parallel',
       'test:parallel',
+      'test:dev',
       'test:watch',
       'test:watch:full',
       'test:watch:shard1',

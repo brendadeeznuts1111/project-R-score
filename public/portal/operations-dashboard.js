@@ -222,6 +222,7 @@ class OperationsDashboard extends HTMLElement {
             <h2>Bun × brand alignment <span class="ops-badge" title="capability relationships · branded values · project proof">harness</span></h2>
             <div class="ops-metric" id="bun-brand-alignment-metric">—</div>
             <div class="ops-sub" id="bun-brand-alignment-detail"></div>
+            <a class="ops-link" href="/portal/brands/#evidence=observed-undeclared">Observed undeclared</a>
             <a class="ops-link" href="/portal/brands/#view=projects">Open project alignment</a>
             <a class="ops-link" href="/portal/brands/#view=relationships">Relationship map</a>
             <a class="ops-link" href="/registry/bun-brand-map.json">Map JSON</a>

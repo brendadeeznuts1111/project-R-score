@@ -37,7 +37,7 @@ Exception: [`public/portal/health-page.js`](../public/portal/health-page.js) (sh
 | Brand assets | [`public/site.webmanifest`](../public/site.webmanifest) · [`public/icons/factory/`](../public/icons/factory/) | canonical mark, favicon/install metadata, theme colors |
 | CLI hub | [`/portal/tools/`](../public/portal/tools/) | copy-CLI · bake freshness · capability subset · `#capabilities` |
 | Packages board | [`/portal/packages/`](../public/portal/packages/) | SVG dependency graph · role filter · detail panel · claim `packages-graph-map-v13` |
-| Brand keymap | [`/portal/brands/`](../public/portal/brands/) | 61-value glossary · constructor tiers · glossary concept links · design-kernel domain colors · tracked-project adoption · `/registry/brand-keymap.json` |
+| Brand keymap | [`/portal/brands/`](../public/portal/brands/) | 67-value glossary · constructor tiers · glossary concept links · design-kernel domain colors · tracked-project adoption · `/registry/brand-keymap.json` |
 | Domain glossary | [`/portal/glossary/`](../public/portal/glossary/) | schema v3 · canonical market/model/trading vocabulary + typed portal field semantics · surface `sections[]` as `{ hash, domId, conceptId, title }` · `URLPattern.hash` deep links · portal design-kernel category tokens + partner-ops concept colors · `/registry/domain-glossary.json` |
 | Vault board | [`/portal/vault/`](../public/portal/vault/) | live bake visual; gate = `portal-cli vault health` (offline snaps) |
 | Failures board | [`/portal/failures/`](../public/portal/failures/) | junit bake · nav badge = failure count |

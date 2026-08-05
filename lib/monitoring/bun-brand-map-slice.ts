@@ -29,6 +29,7 @@ export type BunBrandMapSummarySlice = {
   undeclared?: number;
   legacyUndeclared?: number;
   newUndeclared?: number;
+  mappedBrands?: number;
   catalogConflicts?: number;
   experimentalApprovals?: number;
   projects?: number;
@@ -39,10 +40,18 @@ export type BunBrandMapSummarySlice = {
 
 export type BunBrandMapOpsSlice = Pick<
   BunBrandMapSummarySlice,
-  'available' | 'ok' | 'warnings' | 'errors' | 'stale' | 'path'
+  | 'available'
+  | 'ok'
+  | 'warnings'
+  | 'errors'
+  | 'stale'
+  | 'path'
+  | 'matched'
+  | 'mappedBrands'
+  | 'newUndeclared'
 >;
 
-/** Keep the ops summary small; project attribution stays in the map artifact. */
+/** Compact ops health plus Brands-panel ratios; project attribution stays on the map artifact. */
 export function toBunBrandMapOpsSlice(slice: BunBrandMapSummarySlice): BunBrandMapOpsSlice {
   return {
     available: slice.available,
@@ -51,6 +60,9 @@ export function toBunBrandMapOpsSlice(slice: BunBrandMapSummarySlice): BunBrandM
     errors: slice.errors,
     stale: slice.stale,
     path: slice.path,
+    ...(typeof slice.matched === 'number' ? { matched: slice.matched } : {}),
+    ...(typeof slice.mappedBrands === 'number' ? { mappedBrands: slice.mappedBrands } : {}),
+    ...(typeof slice.newUndeclared === 'number' ? { newUndeclared: slice.newUndeclared } : {}),
   };
 }
 
@@ -79,6 +91,7 @@ type WireArtifact = {
     undeclared?: number;
     baselineUndeclared?: number;
     newUndeclared?: number;
+    mappedBrands?: number;
     catalogConflicts?: number;
     experimentalApprovals?: number;
     projects?: number;
@@ -99,6 +112,7 @@ const SUMMARY_COUNT_FIELDS = [
   'undeclared',
   'baselineUndeclared',
   'newUndeclared',
+  'mappedBrands',
   'catalogConflicts',
   'experimentalApprovals',
   'projects',
@@ -259,6 +273,7 @@ export function loadBunBrandMapSummarySliceSync(
       undeclared: summary.undeclared,
       legacyUndeclared,
       newUndeclared,
+      mappedBrands: summary.mappedBrands,
       catalogConflicts: summary.catalogConflicts,
       experimentalApprovals: summary.experimentalApprovals,
       projects: summary.projects,
