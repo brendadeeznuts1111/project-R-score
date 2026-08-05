@@ -5,6 +5,22 @@ title: "[portal] "
 labels: portal, gap
 ---
 
+## Routing (human queue only)
+
+GitHub is **not** concept/domain SSOT. Use these fields so humans can filter;
+concepts stay in vocabulary + `concept:audit`. Domains match portal chrome lanes.
+
+| Field | Value | Rule |
+|-------|-------|------|
+| **Domain** | `partner` · `control` · `trading` · `identity` · `knowledge` · `platform` | Required — chrome `domainLanes` |
+| **Tracker** | e.g. `BM-1` · link to tenant `*-open-issues.md` · or `n/a` | Optional — residual product gap |
+| **Concept** | e.g. `telegram.topic.accounting` · or `n/a` | Only if vocabulary changes; must exist or land with PR + `concept:audit` |
+| **Surface** | e.g. `/portal/dod/` · `/registry/dod-queue.json` | Path operators hit |
+
+Map: [partner-domain-map.md](../../docs/harness/tenants/partner-domain-map.md) ·
+[CONCEPT_LIFECYCLE.md](../../docs/CONCEPT_LIFECYCLE.md) ·
+[bookmakers-open-issues.md](../../docs/harness/tenants/bookmakers-open-issues.md)
+
 ## Gap
 
 <!-- What is missing or wrong on the portal plane? -->
@@ -17,8 +33,6 @@ labels: portal, gap
 | Observed | local serve-public · Pages preview · production |
 
 ## Expected
-
-<!-- What should operators or agents see? -->
 
 -
 
@@ -33,9 +47,10 @@ labels: portal, gap
 - [ ] Bake or fixture produces the registry JSON the board reads
 - [ ] Proof: `bun run verify:portal:static` and/or board-specific check exits 0
 - [ ] PR uses Claim → evidence table ([pull_request_template.md](../pull_request_template.md))
+- [ ] If **Concept** filled: `bun run concept:audit --strict` green on that change
 
 ## Related
 
-<!-- Issues, PRs, tenant docs -->
+<!-- Issues, PRs, tracker ids (BM-*), tenant docs -->
 
 -
