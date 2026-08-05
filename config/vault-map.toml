@@ -56,6 +56,20 @@ type = "token"
 # Status board: /registry/tennis/agent-auth.json · docs/harness/tenants/tennis-hq-registry.md
 note = "Shared registry Bearer · Tennis HQ cloud agent configured · /registry/tennis/agent-auth.json"
 
+# Tennis HQ Worker service contracts (v1 + partner money writes) — distinct from registry token
+[env.PARTNER_API_TOKEN]
+vault = "factorywager"
+item = "Tennis HQ Partner API Token"
+field = "password"
+label = "Tennis HQ Partner API"
+color = "#f59e0b"
+icon = "public/portal/icons/vault/key.svg"
+type = "token"
+# Consumers: Worker secret PARTNER_API_TOKEN · /api/v1/* bearer · partner ledger writes
+# Handoff: ~/.reasonix/tennis-hq-partner-api-token.env (mode 600)
+# Provision: wrangler secret put PARTNER_API_TOKEN --name tennis-hq
+note = "Tennis HQ service Bearer · fail-closed v1 when missing · not FACTORY_WAGER_TOKEN"
+
 [env.REGISTRY_SECRET]
 vault = "factorywager"
 item = "Registry Dev Secret"
