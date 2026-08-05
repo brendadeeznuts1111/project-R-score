@@ -336,7 +336,7 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     id: 'factory',
     label: 'Factory',
     href: '/portal/factory/',
-    note: 'Factory Telegram ops · package-group wire',
+    note: 'Factory Telegram ops · handshake readiness · package-group wire',
     group: 'ops',
     cli: 'bun run telegram:verify',
   },
