@@ -145,8 +145,9 @@ curl -fsS -H "Authorization: Bearer $PARTNER_API_TOKEN" \
 
 | Symptom | Fix |
 |---------|-----|
-| v1 returns **503** `contract_auth_unconfigured` | Worker missing `PARTNER_API_TOKEN` secret |
-| v1 returns **401** without token | Expected fail-closed — good |
+| v1 returns **401** without token | Expected when `PARTNER_API_TOKEN` is configured — good |
+| v1 returns **503** `contract_auth_unconfigured` | Worker missing `PARTNER_API_TOKEN` secret — not release-ready |
+| Desk `/api/version` SHA ≠ docs tip | Redeploy producer **or** refresh tip docs + `bun run surfaces:bake` |
 | Board registry token “missing” | `bun run tennis:agent-auth:bake` · vault map for `FACTORY_WAGER_TOKEN` |
 | Metrics sample / empty | `bun run tennis:board:bake` (needs event-store or `--sample`) |
 | Trading executions unavailable | Edge has no local SQLite — use producer host with storage or accept `edge_storage_unavailable` |

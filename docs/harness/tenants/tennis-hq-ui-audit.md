@@ -1,6 +1,6 @@
 # Tenant audit: Tennis HQ dashboard UI surfaces
 
-**Probed** 2026-08-05T05:39:55Z (UTC)  
+**Probed** 2026-08-05T17:16Z (UTC) via `/api/version` · tip docs refreshed same day  
 **Claim** dual-surface inventory + path traces + ranked findings  
 **Owners** producer `plum-spruce-dawn-dune1` (Market Desk) · this monorepo
 (`/portal/tennis/` board) · Cloudflare edge (Worker networking)
@@ -17,10 +17,10 @@ Two live UIs share the Tennis HQ brand and must not be collapsed into one:
 | Market Desk | `https://tennis.factory-wager.com` | [`plum-spruce-dawn-dune1`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1) ([CONTRIBUTING](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md)) · Worker `tennis-hq` · local sibling `~/Projects/plum-spruce-dawn-dune1` | Interactive desk SPA |
 | Portal board | `https://factory-wager.com/portal/tennis/` | [`public/portal/tennis/`](../../../public/portal/tennis/) | Baked registry evidence board |
 
-Live identity (desk tip, not git tip): `tennis-hq@1.4.0` · SHA `41c9ab6`
+Live identity (desk tip ≠ git tip): `tennis-hq@1.4.0` · SHA `41c9ab6`
 (`41c9ab68b4d3d47d0bea92d8877137588a7cfdf1`) · Worker deployment
 `7b9ac02a-18c4-46f5-a724-f07b7fa5925d` · probed via `/api/version` 2026-08-05T17:16Z.
-`origin/main` may be ahead until the next verified Wrangler deploy.
+Producer `origin/main` is `0f7b6d9` (**3 commits ahead** — not live until redeploy).
 
 ```mermaid
 flowchart LR
@@ -114,8 +114,9 @@ never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
 ## B. Portal board — component inventory
 
 **Page:** [`public/portal/tennis/index.html`](../../../public/portal/tennis/index.html)
-only (board logic is an **inline** `<script type="module">`, not a separate JS
-file).
+(shell + chrome) · board controller
+[`public/portal/components/tennis-desk.js`](../../../public/portal/components/tennis-desk.js)
+(loaded as `<script type="module">`).
 
 **Shared chrome:** `/portal/data.js`, `topbar.js`, `components/sidebar.js`,
 `footer.js`, `components/venue-badge.js`, `/portal/style.css`, `venues.css`.
@@ -124,9 +125,9 @@ file).
 
 ### DOM hosts → renderers → artifacts
 
-| DOM host | Renderer | Registry artifact |
-| -------- | -------- | ----------------- |
-| `#kpi-host` | `renderKpis` | `board-metrics.json` + `agent-auth.json` |
+| DOM host | Renderer (`tennis-desk.js`) | Registry artifact |
+| -------- | --------------------------- | ----------------- |
+| `#kpi-host` | `renderKpis` | `board-metrics.json` + `agent-auth.json` + partner-contracts |
 | `#venue-legend-host` / `#venue-live-host` | `mountVenueLegend` + `renderVenuesFromMetrics` | board-metrics |
 | `#charts-host` | `renderCharts` / `barChartHtml` | board-metrics · mid-distribution fallback |
 | `#sample-rows` + `#venue-filter` | `renderSampleTable` | live-matches + avatar-index |
@@ -142,14 +143,15 @@ file).
 | -------- | ------ | ------- |
 | `board-metrics.json`, `mid-distribution.json`, `live-matches.json`, `avatar-index.json` | [`scripts/bake-tennis-board.ts`](../../../scripts/bake-tennis-board.ts) + [`lib/tennis/{board-metrics,live-matches,avatar-index}.ts`](../../../lib/tennis/) | `bun run tennis:board:bake` |
 | `agent-auth.json` | [`tools/bake-tennis-agent-auth.ts`](../../../tools/bake-tennis-agent-auth.ts) + [`lib/tennis/agent-auth.ts`](../../../lib/tennis/agent-auth.ts) | `bun run tennis:agent-auth:bake` |
+| `partner-contracts.json` | [`tools/bake-tennis-partner-contracts.ts`](../../../tools/bake-tennis-partner-contracts.ts) | `bun tools/bake-tennis-partner-contracts.ts` |
 | `registry.json` | tenant seed | ops/tenant registry seed |
 
-### Orphan / doc drift
+### Closed / residual drift
 
-| Item | Evidence |
-| ---- | -------- |
-| `public/portal/components/tennis-desk.js` | 298-line twin of the board module; **not** imported by `index.html`; still listed in `packages-graph-map.json` |
-| Docs cite `tennis-board.js` | [`docs/portal-foundation.md`](../../portal-foundation.md) Board UI row — file does not exist; logic is inlined in `index.html` |
+| Item | Status |
+| ---- | ------ |
+| `tennis-desk.js` wired from `index.html` | **Closed** (PR #363) — foundation Board UI row cites `tennis-desk.js` |
+| Legacy `tennis-board.js` name | **Closed** — no remaining foundation cite; do not reintroduce |
 
 ---
 
@@ -162,7 +164,7 @@ file).
 | `/` | 200 | Title `Tennis HQ · Market Desk`; SSR “Loading desk…” shell |
 | `/api/health` | 200 | `ok`, package `tennis-hq@1.4.0` (prefer `/api/version` for tip SHA) |
 | `/api/version` | 200 | tip SHA `41c9ab6` · Worker `7b9ac02a…` · 2026-08-05T17:16Z |
-| `/api/glossary` | 200 | 300 entries · `generatedAt` 2026-08-05 |
+| `/api/glossary` | 200 | 300 entries · live `generatedAt` refreshes on probe |
 | `/build-id.json` | 200 | packageVersion 1.4.0 |
 | `/api/export/hq-json` | 200 | schema `hq-desk/v1` · **`row_count`: 0** |
 | `/api/partners/health` | 200 | snapshot engine; `probed: false` |
@@ -203,11 +205,11 @@ file).
    five authenticated reads; **only** `GET /api/v1/research/status` has a route
    (`plum-spruce-dawn-dune1/src/routes/api/v1/research/status.ts`). The other four
    return SPA **404**. Ownership: **producer**.
-2. **Surfaces inventory overclaims** — [`config/surfaces.toml`](../../../config/surfaces.toml)
-   `[surfaces.tennis]` and baked `surfaces-state.json` imply a live fail-closed
-   `/api/v1/*` plane. Accurate wording: research-only route + token
-   unconfigured (503). Live Pages bake also lags the verified SHA.
-   Ownership: **monorepo** (toml + `surfaces:bake`) + **producer** (routes).
+2. ~~**Surfaces inventory overclaims**~~ — **Closed 2026-08-05 tip refresh.**
+   `[surfaces.tennis].note` + `surfaces-state.json` now pin production tip
+   `41c9ab6` / Worker `7b9ac02a`, record unauth **401**, and state that only
+   research is implemented (other v1 → SPA 404). Residual: git tip `0f7b6d9`
+   still leads until next Wrangler deploy. Ownership was **monorepo**.
 
 ### P1 — Empty / soft-fail desk (UI looks broken)
 
@@ -228,20 +230,23 @@ file).
 7. **Stale board bake** — board-metrics / live-matches / avatar-index stamped
    **2026-07-30**; Worker build **2026-08-05**. Ownership: **monorepo** operator
    (`bun run tennis:board:bake`).
-8. **Orphan `tennis-desk.js` + missing `tennis-board.js` doc** — graph map still
-   tracks the orphan; portal-foundation cites a non-existent file.
-   Ownership: **monorepo**.
+8. ~~**Orphan `tennis-desk.js` + missing `tennis-board.js` doc**~~ — **Closed**
+   (PR #363 + foundation Board UI row). Controller is wired; no `tennis-board.js`
+   cite remains.
 9. **Cross-host path confusion** — `/portal/tennis/` and `/registry/tennis/*` on
    the Worker are 404 SPA shells (expected, but operators hit them). Ownership:
    **docs / UX** (link hygiene).
 10. **Missing desk chrome assets** — favicon / webmanifest 404 on Worker.
     Ownership: **producer**.
+11. **Git tip leads production** — producer `origin/main` `0f7b6d9` is 3 commits
+    ahead of live tip `41c9ab6` (`#9`/`#8`/`#10`). Operators must not treat git
+    HEAD as deployed. Ownership: **operator** (Wrangler redeploy + tip docs).
 
 ### P3 — Hygiene
 
-11. **APIs unused by UI** — `/api/glossary`, `/api/health`,
+12. **APIs unused by UI** — `/api/glossary`, `/api/health`,
     `/api/partners/accounts`, `/api/ops/pipeline` exist without panel callers.
-12. **Stub adapters** — BETER live fetch returns `[]`; `StubOrderAdapter`
+13. **Stub adapters** — BETER live fetch returns `[]`; `StubOrderAdapter`
     default fill path in partner router.
 
 ---
@@ -252,9 +257,12 @@ Documentation-only audit — **do not** apply these without an explicit fix lane
 
 | Lane | Action |
 | ---- | ------ |
-| Producer | Implement remaining v1 routes **or** shrink manifest/docs to `research` only; provision `PARTNER_API_TOKEN`; attach warehouse/DB or hide empty panels; add favicon/manifest |
-| Monorepo | `bun run tennis:board:bake`; `bun run surfaces:bake` after surfaces.toml note fix; fix `tennis-board.js` doc ref; delete or wire `tennis-desk.js`; soften `[surfaces.tennis].note` |
+| Producer | Implement remaining v1 routes **or** shrink manifest/docs to `research` only; attach warehouse/DB or hide empty panels; add favicon/manifest; deploy `0f7b6d9` (or later) when ready |
+| Monorepo | `bun run tennis:board:bake` (stale 2026-07-30 metrics); after each producer deploy: refresh tip in `tennis-hq-registry.md` + `[surfaces.tennis].note` + `bun run surfaces:bake` |
 | Edge | Kalshi probe ACL / outbound permission for `?probe=1` |
+
+**Done this tip lane:** production tip pin `41c9ab6` · surfaces note accuracy ·
+`tennis-desk.js` inventory · `PARTNER_API_TOKEN` configured (unauth **401**).
 
 Out of scope here: Pages deploy, vault token mint, Kalshi network ACL changes.
 
