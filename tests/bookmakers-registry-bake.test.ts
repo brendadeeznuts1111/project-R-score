@@ -50,6 +50,9 @@ describe('portal wiring', () => {
     const html = await Bun.file(BOARD_PATH).text();
     expect(html).toContain('/registry/bookmakers.json');
     expect(html).toContain('id="bookmakers-body"');
+    expect(html).toContain('bookmakers-board.js');
+    expect(html).toContain('id="bookmakers-filter"');
+    expect(html).toContain('portal-hero');
   });
 
   test('route manifest exposes /portal/bookmakers/', async () => {

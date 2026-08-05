@@ -12,24 +12,51 @@ from the `@factorywager/bookmakers` artifact onto the portal read plane.
 | Tenant | [`docs/harness/tenants/bookmakers-registry.md`](../../docs/harness/tenants/bookmakers-registry.md) |
 | Route map | [routing.md](./routing.md) |
 
-## What the bake holds
+## Live bake shape (v1)
 
-| Field group | Use |
-|-------------|-----|
-| `id` · `label` · `domain` | Book identity + public site |
-| `fetcher` | Strategy (webview / rest / …) for scrape / deep-link |
-| `sports` · `regions` | Coverage chips (glossary-wired sports when possible) |
-| `artifact` | Version · checksum · source package proof |
-| `audit` | Bake self-check (`ok` · `issues`) |
+```json
+{
+  "schemaVersion": 1,
+  "generatedAt": "…",
+  "artifact": { "name": "@factorywager/bookmakers", "version": "…", "checksum": "…", "source": "artifact-registry" },
+  "bookmakers": { "<id>": { "id", "label", "domain", "fetcherType", "supportedSports", "regions", "color", … } },
+  "summary": { "count", "webview", "rest", "seat", "sports": [] },
+  "audit": { "ok": true, "issues": [] }
+}
+```
 
-Do **not** treat this mirror as mutable live inventory — refresh via bake after
-the package is published.
+`bookmakers` is a **map keyed by id** (not an array). The board normalizes to a
+sorted list for display.
+
+## Fetcher types
+
+| `fetcherType` | Role | Board filter |
+|---------------|------|--------------|
+| `rest` | HTTP API (e.g. Pinnacle) | REST pill |
+| `webview` | Browser / scrape lane (US books) | Webview pill |
+| `seat` | Seat / soft package books | Seat pill |
+
+## Regions
+
+Each region is typically `{ "country": "US", "stateCode": "NY" }` (state optional).
+Board shows `US-NY` chips — not `[object Object]`.
+
+## Board UX
+
+| Control | Behavior |
+|---------|----------|
+| Stats strip | count · webview · rest · seat · unique sports |
+| Fetcher filter | all / rest / webview / seat |
+| Search | id · label · domain · sport |
+| Sports chips | glossary-wired when `sport.<id>` exists |
+| Domain | external link |
+| Audit gate | `audit.ok` on hero |
 
 ## Related partner surfaces
 
 | Concern | Board / bake |
 |---------|--------------|
-| Partner outs · book · max bet | [Partners](./partners/) · seat-capital-desk |
+| Partner outs · book · max bet | [Partners](./partners/) · seat-capital-desk — match `BOOK` to registry `id` |
 | Limit raises by node / book | [Limits](./limits/) · [limits.md](./limits.md) · `limit-raises.json` |
 | Forecast lab | [`/portal/limits-lab/`](./limits-lab/) |
 | Balance / slip image proof | [DOD](./dod/) · [dod.md](./dod.md) |
@@ -42,6 +69,7 @@ the package is published.
 bun run bookmakers:bake
 bun run bookmakers:bake:check
 bun test tests/bookmakers-registry-bake.test.ts
+bun test tests/bookmakers-board.test.ts
 # after package publish:
 # bun lib/factory/cli.ts publish … → snapshot → bookmakers:bake
 ```
@@ -50,9 +78,11 @@ bun test tests/bookmakers-registry-bake.test.ts
 
 | Symptom | Fix |
 |---------|-----|
-| Board empty / “resolving…” stuck | Fetch `/registry/bookmakers.json` · rebake · check Pages deploy |
+| Board empty / load failed | Fetch `/registry/bookmakers.json` · rebake · Pages deploy |
 | `bookmakers:bake:check` fails | Mirror stale vs live artifact · re-run bake and commit |
-| Outs book id unknown on Partners | Align seat desk `BOOK` with registry `id` · refresh partners-ops |
-| Glossary sport chips missing | Bake `domain-glossary.json` · sport concept ids |
+| Regions show blank / wrong | Expect `{country,stateCode}` objects · board uses `formatRegion` |
+| Outs book id unknown on Partners | Align seat desk `BOOK` with registry `id` |
+| Glossary sport chips plain | Bake `domain-glossary.json` · `sport.*` concept ids |
+| Audit fail gate | Inspect `audit.issues` on bake · invalid registry entries |
 
 Weave surface: `bookmakers` · artifact `bookmakers-registry`.
