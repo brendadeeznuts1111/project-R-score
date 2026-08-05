@@ -4,6 +4,7 @@ import {
   defaultExpectForPath,
   loadSubdomainsConfig,
   parseSubdomainsConfig,
+  probeSubdomainCheck,
 } from '../lib/verification/pages-edge-weave-subdomains.ts';
 
 describe('pages-edge-weave-subdomains', () => {
@@ -42,7 +43,67 @@ describe('pages-edge-weave-subdomains', () => {
     const names = cfg.subdomains.map(s => String(s.name));
     expect(names).toContain('score');
     expect(names).toContain('registry');
+    expect(names).toContain('tennis');
     expect(names).toContain('pages_dev');
+
+    const tennis = cfg.subdomains.find(s => String(s.name) === 'tennis');
+    expect(String(tennis?.domain)).toBe('tennis.factory-wager.com');
+    expect(tennis?.checks).toEqual([
+      { path: '/api/version', expect: 'json' },
+      { path: '/api/glossary', expect: 'json' },
+      { path: '/api/v1/marketdata/desk', expect: 'fail-closed' },
+    ]);
+  });
+
+  test('parses fail-closed endpoint expectations', () => {
+    const cfg = parseSubdomainsConfig({
+      schemaVersion: 1,
+      kind: 'weave-subdomain-probes',
+      subdomains: [
+        {
+          name: 'tennis',
+          domain: 'tennis.factory-wager.com',
+          checks: [{ path: '/api/v1/marketdata/desk', expect: 'fail-closed' }],
+        },
+      ],
+    });
+    expect(cfg.subdomains[0]?.checks[0]).toEqual({
+      path: '/api/v1/marketdata/desk',
+      expect: 'fail-closed',
+    });
+  });
+
+  test('fail-closed probe accepts auth rejection and rejects a public response', async () => {
+    const server = Bun.serve({
+      port: 0,
+      fetch(request) {
+        if (new URL(request.url).pathname === '/closed') {
+          return Response.json(
+            { ok: false, code: 'contract_auth_unconfigured', error: 'not configured' },
+            { status: 503 }
+          );
+        }
+        return Response.json({ ok: true });
+      },
+    });
+    try {
+      const closed = await probeSubdomainCheck(`${server.url}closed`, 'fail-closed', {
+        retries: 1,
+        backoffMs: 0,
+      });
+      expect(closed).toEqual(
+        expect.objectContaining({ ok: true, httpStatus: 503, detail: '503 fail-closed' })
+      );
+
+      const open = await probeSubdomainCheck(`${server.url}open`, 'fail-closed', {
+        retries: 1,
+        backoffMs: 0,
+      });
+      expect(open.ok).toBe(false);
+      expect(open.detail).toContain('expected fail-closed 401/503, got 200');
+    } finally {
+      server.stop(true);
+    }
   });
 
   test('rejects unknown host / empty checks', () => {

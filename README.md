@@ -36,6 +36,7 @@
 | **Wiki** (this site) | [wiki.factory-wager.com](https://wiki.factory-wager.com/) | GitHub Pages · `README.md` · [`docs/`](docs/) · [`AGENTS.md`](AGENTS.md) |
 | **Portal hub** | [score.factory-wager.com/portal/](https://score.factory-wager.com/portal/) | Static boards + baked registry embeds (Cloudflare Pages) |
 | **Registry bake** | [score.factory-wager.com/registry/](https://score.factory-wager.com/registry/) | `ops:snapshot` JSON (`ops-summary`, handshake, compliance, …) |
+| **Tennis HQ runtime** | [tennis.factory-wager.com](https://tennis.factory-wager.com/) | Operator-owned Cloudflare Worker · public identity/glossary · authenticated v1 contracts |
 | **Monitoring** | [score.factory-wager.com/monitoring/](https://score.factory-wager.com/monitoring/) | Routing · env · compliance tile · proof status |
 | **Portal weave** | [registry/portal-weave.json](https://score.factory-wager.com/registry/portal-weave.json) | Cross-links + operator scripts (machine SSOT) |
 

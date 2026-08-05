@@ -27,6 +27,7 @@ Navigation hub for [wiki.factory-wager.com](https://wiki.factory-wager.com/). Ho
 | Wiki (GitHub Pages) | [wiki.factory-wager.com](https://wiki.factory-wager.com/) |
 | Portal boards | [score.factory-wager.com/portal/](https://score.factory-wager.com/portal/) |
 | Registry bake | [score.factory-wager.com/registry/](https://score.factory-wager.com/registry/) |
+| Tennis HQ runtime | [tennis.factory-wager.com](https://tennis.factory-wager.com/) |
 | Monitoring | [score.factory-wager.com/monitoring/](https://score.factory-wager.com/monitoring/) |
 | Portal weave JSON | [portal-weave.json](https://score.factory-wager.com/registry/portal-weave.json) |
 | Registry index (wiki) | [`registry-index.md`](registry-index.md) |
@@ -76,7 +77,7 @@ Live boards under `public/portal/<name>/` (plus Home). Product/ops first, then c
 | Factory | [/portal/factory/](https://score.factory-wager.com/portal/factory/) | [`telegram-factory.md`](docs/harness/tenants/telegram-factory.md) |
 | Identity | [/portal/identity/](https://score.factory-wager.com/portal/identity/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
 | Science | [/portal/science/](https://score.factory-wager.com/portal/science/) | — |
-| Tennis | [/portal/tennis/](https://score.factory-wager.com/portal/tennis/) | agent-auth [`/registry/tennis/agent-auth.json`](https://score.factory-wager.com/registry/tennis/agent-auth.json) · [tennis-hq-registry](docs/harness/tenants/tennis-hq-registry.md) |
+| Tennis | [/portal/tennis/](https://score.factory-wager.com/portal/tennis/) | runtime [tennis.factory-wager.com](https://tennis.factory-wager.com/) · agent-auth [`/registry/tennis/agent-auth.json`](https://score.factory-wager.com/registry/tennis/agent-auth.json) · [tennis-hq-registry](docs/harness/tenants/tennis-hq-registry.md) |
 
 ## Registry artifacts (key bakes)
 

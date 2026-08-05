@@ -27,7 +27,7 @@ export type SubdomainProbeRow = {
   detail: string;
 };
 
-export type SubdomainExpect = 'json' | 'ok' | 'access';
+export type SubdomainExpect = 'json' | 'ok' | 'access' | 'fail-closed';
 
 export type SubdomainCheckSpec = {
   path: string;
@@ -72,7 +72,7 @@ function normalizeCheck(raw: unknown): SubdomainCheckSpec {
     throw new Error('subdomain check.path must be a string starting with /');
   }
   const expect =
-    o.expect === 'json' || o.expect === 'ok' || o.expect === 'access'
+    o.expect === 'json' || o.expect === 'ok' || o.expect === 'access' || o.expect === 'fail-closed'
       ? o.expect
       : defaultExpectForPath(o.path);
   return { path: o.path, expect };
@@ -183,6 +183,37 @@ export async function probeSubdomainCheck(
           sizeBytes: 0,
           contentType,
           detail: '302 Access',
+        };
+      }
+      if (expect === 'fail-closed') {
+        if (res.status !== 401 && res.status !== 503) {
+          throw new Error(`expected fail-closed 401/503, got ${res.status}`);
+        }
+        const body = await res.arrayBuffer();
+        const sizeBytes = sizeOf(res, body);
+        try {
+          const parsed: unknown = JSON.parse(new TextDecoder().decode(body));
+          if (parsed === null || typeof parsed !== 'object') {
+            throw new Error('JSON not an object');
+          }
+          const auth = parsed as { ok?: unknown; code?: unknown };
+          if (
+            auth.ok !== false ||
+            (auth.code !== 'unauthorized' && auth.code !== 'contract_auth_unconfigured')
+          ) {
+            throw new Error('JSON is not a recognized auth rejection');
+          }
+        } catch (e) {
+          const msg = e instanceof Error ? e.message : String(e);
+          throw new Error(`invalid fail-closed JSON (${msg})`);
+        }
+        return {
+          ok: true,
+          httpStatus: res.status,
+          latencyMs,
+          sizeBytes,
+          contentType: contentType || 'application/json',
+          detail: `${res.status} fail-closed`,
         };
       }
       if (access) throw new Error(`302 Access (expected ${expect})`);
