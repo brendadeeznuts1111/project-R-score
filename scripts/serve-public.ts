@@ -141,7 +141,11 @@ import {
 } from '../lib/http/bun-server.ts';
 import { PORTAL_BOARD_SLUGS } from '../lib/http/portal-board-slugs.ts';
 import { canonicalSlashRedirect } from '../lib/http/canonical-redirect.ts';
-import { formatServePublicBindLines } from '../lib/http/serve-public-bind.ts';
+import {
+  formatServePublicBindLines,
+  writeServePublicBindManifest,
+  type ServePublicBindManifest,
+} from '../lib/http/serve-public-bind.ts';
 import { resolveServePublicBindPrefs } from '../lib/http/serve-public-config.ts';
 import { attachServePublicErrorHandler } from '../lib/http/serve-public-error.ts';
 import { isPublicReadPath } from '../lib/http/public-read-path.ts';
@@ -2435,17 +2439,16 @@ console.log(
 console.log(
   `[serve] portSource=${bindPrefs.portSource} hostnameSource=${bindPrefs.hostnameSource} requestedPort=${bindPrefs.requestedPort}`
 );
+const bindManifest: ServePublicBindManifest = {
+  ...bind,
+  schemaVersion: 1,
+  ephemeralFallback,
+  requestedDefaultPort: bindPrefs.requestedPort,
+  boundAt: new Date().toISOString(),
+};
+await writeServePublicBindManifest(bindManifest);
 // Docs dual shape (server.port + server.url) then Bind/Serve lines — all from live Server.
-for (const line of formatServePublicBindLines(
-  {
-    ...bind,
-    schemaVersion: 1,
-    ephemeralFallback,
-    requestedDefaultPort: bindPrefs.requestedPort,
-    boundAt: new Date().toISOString(),
-  },
-  { dbPath }
-)) {
+for (const line of formatServePublicBindLines(bindManifest, { dbPath })) {
   console.log(line);
 }
 if (LIVE_RELOAD && liveReloadHub) {

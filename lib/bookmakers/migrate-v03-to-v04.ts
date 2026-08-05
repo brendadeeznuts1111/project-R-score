@@ -15,18 +15,13 @@ import {
   type PublicBookmakersBakeV04,
 } from './v04-types.ts';
 
-const OPS_PRIVATE_KEYS = [
-  'restBaseUrl',
-  'restProtocol',
-  'apiKeyEnv',
-  'envVars',
-] as const;
+const OPS_PRIVATE_KEYS = ['restBaseUrl', 'restProtocol', 'apiKeyEnv', 'envVars'] as const;
 
 export function isPublicSecretKey(key: string): boolean {
   return (OPS_PRIVATE_KEYS as readonly string[]).includes(key);
 }
 
-function asFetcher(raw: unknown): BookFetcher {
+function parseFetcher(raw: unknown): BookFetcher {
   const s = String(raw ?? '');
   if (s === 'rest' || s === 'webview' || s === 'seat') return s;
   return 'seat';
@@ -66,7 +61,7 @@ export function migrateBookV03(
 ): { public: PublicBookmakerV04; ops: OpsBookmakerV04 } {
   const id = String(raw.id || key);
   const slug = String(raw.slug || id);
-  const fetcher = asFetcher(raw.fetcher ?? raw.fetcherType);
+  const fetcher = parseFetcher(raw.fetcher ?? raw.fetcherType);
   const enrich = BOOK_ENRICHMENT[id] ?? BOOK_ENRICHMENT[slug] ?? {};
   const sports = Array.isArray(raw.sports)
     ? raw.sports.map(String)
@@ -148,9 +143,10 @@ export function migrateBookV03(
   return { public: pub, ops };
 }
 
-export function auditPublicCatalog(
-  bookmakers: Record<string, PublicBookmakerV04>
-): { ok: boolean; issues: string[] } {
+export function auditPublicCatalog(bookmakers: Record<string, PublicBookmakerV04>): {
+  ok: boolean;
+  issues: string[];
+} {
   const issues: string[] = [];
   for (const [key, b] of Object.entries(bookmakers)) {
     if (!b.id) issues.push(`${key}: missing id`);

@@ -485,8 +485,6 @@ class OperationsDashboard extends HTMLElement {
     });
 
     await this.load();
-    this.render();
-    this.mountOpsJump();
     this.startPolling();
   }
 
@@ -691,21 +689,23 @@ class OperationsDashboard extends HTMLElement {
   }
 
   async loadVerificationArtifacts() {
-    await this.loadDocIndex();
-    await this.loadReleaseFeatures();
-    await this.loadVerificationIndex();
-    await this.loadInstallPlatform();
-    await this.loadInstallEnv();
-    await this.loadNetworkingProof();
-    await this.loadRegistryClient();
-    await this.loadDocsCoverage();
-    await this.loadCloudflareTokenScope();
-    await this.loadBunRuntimeNits();
-    await this.loadRatchet();
-    await this.loadGuides();
-    await this.loadBundlerLoaders();
-    await this.loadProofTaxonomyAudit();
-    await this.loadPortalWeave();
+    await Promise.allSettled([
+      this.loadDocIndex(),
+      this.loadReleaseFeatures(),
+      this.loadVerificationIndex(),
+      this.loadInstallPlatform(),
+      this.loadInstallEnv(),
+      this.loadNetworkingProof(),
+      this.loadRegistryClient(),
+      this.loadDocsCoverage(),
+      this.loadCloudflareTokenScope(),
+      this.loadBunRuntimeNits(),
+      this.loadRatchet(),
+      this.loadGuides(),
+      this.loadBundlerLoaders(),
+      this.loadProofTaxonomyAudit(),
+      this.loadPortalWeave(),
+    ]);
   }
 
   async load() {
@@ -720,11 +720,12 @@ class OperationsDashboard extends HTMLElement {
       const res = await fetch('/api/operations/summary');
       if (res.ok) {
         this.data = await res.json();
-        await this.loadVerificationArtifacts();
         this.retries = 0;
         loading.classList.add('hidden');
         grid.classList.remove('hidden');
+        this.render();
         this.mountOpsJump();
+        void this.loadVerificationArtifacts().then(() => this.render());
         return;
       }
     } catch {
@@ -735,11 +736,12 @@ class OperationsDashboard extends HTMLElement {
       const res = await fetch('/registry/ops-summary.json');
       if (res.ok) {
         this.data = await res.json();
-        await this.loadVerificationArtifacts();
         this.retries = 0;
         loading.classList.add('hidden');
         grid.classList.remove('hidden');
+        this.render();
         this.mountOpsJump();
+        void this.loadVerificationArtifacts().then(() => this.render());
         return;
       }
     } catch {

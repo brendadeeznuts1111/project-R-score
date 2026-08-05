@@ -151,4 +151,10 @@ describe('lib/http/serve-public-bind', () => {
     const manifest = await readServePublicBindManifest(path);
     expect(base).toBe(manifest?.loopbackOrigin);
   });
+
+  test('serve-public persists its chosen bind for worktree-owned verification', async () => {
+    const source = await Bun.file('scripts/serve-public.ts').text();
+    expect(source).toContain('writeServePublicBindManifest(bindManifest)');
+    expect(source).toContain('formatServePublicBindLines(bindManifest, { dbPath })');
+  });
 });
