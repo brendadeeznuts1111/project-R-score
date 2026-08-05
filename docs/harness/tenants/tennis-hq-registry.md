@@ -53,10 +53,10 @@ consumer evidence.
 | ---------------- | ---------------------------------------------------------------------------------------------------- |
 | Runtime          | `https://tennis.factory-wager.com`                                                                   |
 | Worker           | `tennis-hq`                                                                                          |
-| Production tip   | [`0f7b6d9`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/commit/0f7b6d9fba84bfeb404edc1edfba964b8ef96cd1) · `tennis-hq@1.4.0` · `/api/version` `at` 2026-08-05T17:49:17Z · `fix(desk): scan-flag filter OR parity + hash text-fragment strip (#10)` |
-| Worker version   | `b3f2c700-5f9e-4ea1-9ab0-3c28049be22e`                                                               |
+| Production tip   | [`0f7b6d9`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/commit/0f7b6d9fba84bfeb404edc1edfba964b8ef96cd1) · `tennis-hq@1.4.0` · `/api/version` `at` 2026-08-05T22:03:01Z · `fix(desk): scan-flag filter OR parity + hash text-fragment strip (#10)` |
+| Worker version   | `8072c3da-fa46-408b-88c5-50c35df2d87c`                                                               |
 | Git tip (`main`) | Matches production tip after Wrangler redeploy (`cloudflare:deploy` + `deploy:verify:prod` 2026-08-05) |
-| Verified         | 2026-08-05 · `/api/version` ok · unauth `GET /api/v1/research/status` → **401** · warehouse-json **401** · glossary 300 entries |
+| Verified         | 2026-08-05 · `/api/version` ok · unauth **all five** `GET /api/v1/*` → **401** · warehouse-json **401** · glossary 300 entries · `/favicon.svg` + `/site.webmanifest` **200** |
 | Inventory        | `config/surfaces.toml` → `/registry/surfaces-state.json` (re-bake after tip change)                  |
 | Cross-host probe | `bun run verify:weave -- --subdomains` → version, glossary, all five configured v1 bearer rejections |
 
@@ -188,17 +188,19 @@ package-version parity plus exactly these five authenticated read domains:
 | Domain     | Runtime path                     | Contract package export               | Live tip `0f7b6d9` |
 | ---------- | -------------------------------- | ------------------------------------- | ------------------ |
 | research   | `GET /api/v1/research/status`    | `contracts/v1/research.schema.json`   | **wired** (unauth **401**) |
-| marketdata | `GET /api/v1/marketdata/desk`    | `contracts/v1/marketdata.schema.json` | SPA **404**        |
-| trading    | `GET /api/v1/trading/executions` | `contracts/v1/trading.schema.json`    | SPA **404**        |
-| partners   | `GET /api/v1/partners/capacity`  | `contracts/v1/partners.schema.json`   | SPA **404**        |
-| accounting | `GET /api/v1/accounting/finance` | `contracts/v1/accounting.schema.json` | SPA **404**        |
+| marketdata | `GET /api/v1/marketdata/desk`    | `contracts/v1/marketdata.schema.json` | **wired** (unauth **401**) |
+| trading    | `GET /api/v1/trading/executions` | `contracts/v1/trading.schema.json`    | **wired** (unauth **401**) |
+| partners   | `GET /api/v1/partners/capacity`  | `contracts/v1/partners.schema.json`   | **wired** (unauth **401**) |
+| accounting | `GET /api/v1/accounting/finance` | `contracts/v1/accounting.schema.json` | **wired** (unauth **401**) |
 
-Package manifest lists all five; **only research is implemented on the live
-Worker**. Remaining routes are producer work (or shrink the manifest). Runtime
-reads require `PARTNER_API_TOKEN` (provider-side `OPERATOR_API_TOKEN` alias) and
-fail closed when it is absent (`401` unauthorized when set; `503`
-`contract_auth_unconfigured` only when missing). `FACTORY_WAGER_TOKEN` remains
-registry/package authentication and is not a runtime API credential.
+Package manifest and live Worker both expose all five routes. Unauthenticated
+probes return JSON **401** (not SPA HTML). Runtime reads require
+`PARTNER_API_TOKEN` (provider-side `OPERATOR_API_TOKEN` alias) and fail closed
+when it is absent (`401` unauthorized when set; `503`
+`contract_auth_unconfigured` only when missing). Payload quality (empty desk
+rows, warehouse stubs, edge storage) is separate from route wiring.
+`FACTORY_WAGER_TOKEN` remains registry/package authentication and is not a
+runtime API credential.
 
 FactoryWager's registry catalog now contains the canonical
 `@tennis-hq/ssot@1.5.0` tarball with all five v1 contract exports. The stored

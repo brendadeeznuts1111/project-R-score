@@ -1,6 +1,6 @@
 # Tenant audit: Tennis HQ dashboard UI surfaces
 
-**Probed** 2026-08-05T17:16Z (UTC) via `/api/version` · tip docs refreshed same day  
+**Probed** 2026-08-05T22:10Z (UTC) via `/api/version` + unauth v1 suite · tip docs refreshed same day  
 **Claim** dual-surface inventory + path traces + ranked findings  
 **Owners** producer `plum-spruce-dawn-dune1` (Market Desk) · this monorepo
 (`/portal/tennis/` board) · Cloudflare edge (Worker networking)
@@ -19,7 +19,7 @@ Two live UIs share the Tennis HQ brand and must not be collapsed into one:
 
 Live identity (desk tip = git tip): `tennis-hq@1.4.0` · SHA `0f7b6d9`
 (`0f7b6d9fba84bfeb404edc1edfba964b8ef96cd1`) · Worker deployment
-`b3f2c700-5f9e-4ea1-9ab0-3c28049be22e` · probed via `/api/version` 2026-08-05T17:49Z.
+`8072c3da-fa46-408b-88c5-50c35df2d87c` · probed via `/api/version` 2026-08-05T22:03Z.
 Matches producer `origin/main` after Wrangler redeploy + `deploy:verify:prod`.
 
 ```mermaid
@@ -38,7 +38,7 @@ flowchart LR
   UI --> SF
   UI --> API
   UI --> WH
-  V1 -.->|only research/status wired| SF
+  V1 -.->|all five domains · bearer 401| SF
   Board -->|fetch| Reg
   Board -->|cross-link| desk
   Reg -.->|agent-auth portal.board| Board
@@ -103,8 +103,11 @@ Core load in `dashboard.tsx`: `fetchTennisHqPayload` → parallel
 | `GET /api/export/warehouse-json` / `warehouse-csv` | Warehouse export | `export-bar` |
 | `GET /api/partners/health` (+ `?probe=1`, `/stream`) | Partner health | `use-partner-health` |
 | `GET/POST /api/partners/*` execute · ledger · settle · accounts | Money paths | execution / ledger |
-| `GET /api/v1/research/status` | **Only** implemented v1 read | contracts / weave probes |
-| Manifest-only v1 | marketdata · trading · partners · accounting | **no route files** → SPA 404 |
+| `GET /api/v1/research/status` | v1 research read | contracts / weave probes |
+| `GET /api/v1/marketdata/desk` | v1 desk mids | contracts / weave probes |
+| `GET /api/v1/trading/executions` | v1 executions | contracts / weave probes |
+| `GET /api/v1/partners/capacity` | v1 partners capacity | contracts / weave probes |
+| `GET /api/v1/accounting/finance` | v1 finance | contracts / weave probes |
 
 Auth: `assertPartnerServiceAccess` in `src/lib/server/partner-api-guard.ts` —
 never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
@@ -163,22 +166,24 @@ never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
 | --- | ------ | ----- |
 | `/` | 200 | Title `Tennis HQ · Market Desk`; SSR “Loading desk…” shell |
 | `/api/health` | 200 | `ok`, package `tennis-hq@1.4.0` (prefer `/api/version` for tip SHA) |
-| `/api/version` | 200 | tip SHA `0f7b6d9` · Worker `b3f2c700…` · 2026-08-05T17:49Z |
+| `/api/version` | 200 | tip SHA `0f7b6d9` · Worker `8072c3da…` · 2026-08-05T22:03Z |
 | `/api/glossary` | 200 | 300 entries · live `generatedAt` refreshes on probe |
 | `/build-id.json` | 200 | packageVersion 1.4.0 |
 | `/api/export/hq-json` | 200 | schema `hq-desk/v1` · **`row_count`: 0** |
 | `/api/partners/health` | 200 | snapshot engine; `probed: false` |
 | `/api/partners/health?probe=1` | **500** | `{"ok":false,"error":"operation not permitted"}` |
-| `/api/v1/research/status` | **401** | `unauthorized` when `PARTNER_API_TOKEN` set (fail-closed; 503 only if secret missing) |
-| `/api/v1/marketdata/desk` | **404** | SPA HTML (not JSON) |
-| `/api/v1/trading/executions` | **404** | SPA HTML |
-| `/api/v1/partners/capacity` | **404** | SPA HTML |
-| `/api/v1/accounting/finance` | **404** | SPA HTML |
+| `/api/v1/research/status` | **401** | JSON `unauthorized` (fail-closed; 503 only if secret missing) |
+| `/api/v1/marketdata/desk` | **401** | JSON `unauthorized` (wired — not SPA 404) |
+| `/api/v1/trading/executions` | **401** | JSON `unauthorized` (wired — not SPA 404) |
+| `/api/v1/partners/capacity` | **401** | JSON `unauthorized` (wired — not SPA 404) |
+| `/api/v1/accounting/finance` | **401** | JSON `unauthorized` (wired — not SPA 404) |
 | `/warehouse/hardrock-board-overlay.json` | 200 | `stub: true`, `count: 0` |
 | `/warehouse/odds-move-signals.json` | 200 | `stub: true`, `count: 0` |
-| `/api/export/warehouse-json` | **404** | no warehouse DB / 0 desk rows |
-| `/favicon.ico` | **404** | SPA HTML |
-| `/manifest.json` | **404** | SPA HTML |
+| `/api/export/warehouse-json` | **401** | bearer fail-closed when partner secret set |
+| `/favicon.svg` | **200** | SVG icon referenced from root head |
+| `/site.webmanifest` | **200** | PWA manifest (icons → `/favicon.svg`) |
+| `/favicon.ico` | **404** | SPA HTML — optional legacy alias only |
+| `/manifest.json` | **404** | SPA HTML — use `/site.webmanifest` |
 | `/portal/tennis/` | **404** | not on Worker |
 | `/registry/tennis/agent-auth.json` | **404** | not on Worker |
 
@@ -201,15 +206,15 @@ never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
 
 ### P0 — Contract / docs vs live
 
-1. **v1 surface incomplete** — Tenant docs and `@tennis-hq/ssot` manifest declare
-   five authenticated reads; **only** `GET /api/v1/research/status` has a route
-   (`plum-spruce-dawn-dune1/src/routes/api/v1/research/status.ts`). The other four
-   return SPA **404**. Ownership: **producer**.
-2. ~~**Surfaces inventory overclaims**~~ — **Closed 2026-08-05 tip refresh.**
-   `[surfaces.tennis].note` + `surfaces-state.json` pin production tip
-   `0f7b6d9` / Worker `b3f2c700`, record unauth **401**, and state that only
-   research is implemented (other v1 → SPA 404). Desk tip matches
-   `origin/main` after Wrangler redeploy. Ownership was **monorepo**.
+1. ~~**v1 surface incomplete**~~ — **Closed 2026-08-05 re-probe.** All five
+   `GET /api/v1/{research,marketdata,trading,partners,accounting}/*` routes
+   return JSON **401** unauth (not SPA 404). Residual risk is **payload quality**
+   after bearer (empty desk / warehouse / edge storage), not route absence.
+   Ownership residual: **producer** data plane.
+2. ~~**Surfaces inventory overclaims**~~ — **Closed 2026-08-05 tip refresh** and
+   re-aligned after full v1 suite. `[surfaces.tennis].note` +
+   `surfaces-state.json` pin production tip `0f7b6d9` / Worker `8072c3da` and
+   state all five v1 domains fail-closed unauth. Ownership was **monorepo**.
 
 ### P1 — Empty / soft-fail desk (UI looks broken)
 
@@ -238,10 +243,12 @@ never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
 9. **Cross-host path confusion** — `/portal/tennis/` and `/registry/tennis/*` on
    the Worker are 404 SPA shells (expected, but operators hit them). Ownership:
    **docs / UX** (link hygiene).
-10. **Missing desk chrome assets** — favicon / webmanifest 404 on Worker.
-    Ownership: **producer**.
+10. ~~**Missing desk chrome assets**~~ — **Closed 2026-08-05 re-probe.**
+    `/favicon.svg` and `/site.webmanifest` return **200**; root head links both.
+    Residual: legacy `/favicon.ico` / `/manifest.json` still SPA 404 (optional).
+    Ownership was **producer**.
 11. ~~**Git tip leads production**~~ — **Closed 2026-08-05.** Live tip is
-    `0f7b6d9` / Worker `b3f2c700` (`#10` on `origin/main`); verified via
+    `0f7b6d9` / Worker `8072c3da` (`#10` on `origin/main`); verified via
     `/api/version` + `deploy:verify:prod`. Ownership was **operator**.
 
 ### P3 — Hygiene
@@ -259,14 +266,15 @@ Documentation-only audit — **do not** apply these without an explicit fix lane
 
 | Lane | Action |
 | ---- | ------ |
-| Producer | Implement remaining v1 routes **or** shrink manifest/docs to `research` only; attach warehouse/DB or hide empty panels; add favicon/manifest |
+| Producer | Attach warehouse/DB or hide empty panels; harden edge storage; optional `/favicon.ico` alias |
 | Monorepo | After each producer deploy: refresh tip in `tennis-hq-registry.md` + `[surfaces.tennis].note` + `bun run surfaces:bake`; re-run `tennis:board:bake` when event-store drifts |
 | Edge | Kalshi probe ACL / outbound permission for `?probe=1` |
 
-**Done this tip lane:** production tip pin `0f7b6d9` / Worker `b3f2c700` ·
+**Done this tip lane:** production tip pin `0f7b6d9` / Worker `8072c3da` ·
 surfaces note accuracy · `tennis-desk.js` inventory · `PARTNER_API_TOKEN`
-configured (unauth **401**) · Wrangler redeploy matched `origin/main` ·
-board bake refreshed 2026-08-05T22:07Z (finding #7 closed).
+configured (all five v1 unauth **401**) · Wrangler redeploy matched
+`origin/main` · board bake refreshed 2026-08-05T22:07Z · findings
+#1/#7/#10/#11 closed.
 
 Out of scope here: Pages deploy, vault token mint, Kalshi network ACL changes.
 
