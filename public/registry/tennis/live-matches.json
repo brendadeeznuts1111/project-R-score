@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "tennis-live-matches",
-  "generatedAt": "2026-08-05T07:57:06.913Z",
+  "generatedAt": "2026-08-05T22:07:13.707Z",
   "source": "event-store",
   "limit": 12,
   "matches": [
@@ -271,15 +271,15 @@
     }
   ],
   "quality": {
-    "scannedEvents": 4095,
+    "scannedEvents": 4428,
     "withBothMids": 23,
     "withOneMid": 0,
-    "withNoMids": 4072,
+    "withNoMids": 4405,
     "listedWithBothMids": 12,
     "listedMissingMids": 0,
     "coveragePct": 1,
     "latestBookTs": 1785249318394,
     "latestBookAt": "2026-07-28T14:35:18.394Z"
   },
-  "note": "Live from event-store · 12 listed · 12/12 with mids · 52 ticker mids · 23 events full-book / 4095 scanned"
+  "note": "Live from event-store · 12 listed · 12/12 with mids · 52 ticker mids · 23 events full-book / 4428 scanned"
 }
