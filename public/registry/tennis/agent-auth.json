@@ -2,7 +2,7 @@
   "schemaVersion": 3,
   "kind": "tennis-hq-agent-auth",
   "path": "/registry/tennis/agent-auth.json",
-  "generatedAt": "2026-08-04T22:41:48.438Z",
+  "generatedAt": "2026-08-05T02:48:46.377Z",
   "tenantId": "tennis",
   "consumer": "tennis-hq-cloud-agent",
   "label": "Tennis HQ · FactoryWager registry auth",
@@ -50,7 +50,7 @@
         503
       ]
     },
-    "releaseVerification": "bun run deploy:verify:prod"
+    "releaseVerification": "bun run cloudflare:deploy:verify"
   },
   "docs": [
     "docs/harness/tenants/tennis-hq-registry.md",

@@ -49,7 +49,7 @@ export type TennisAgentAuthArtifact = {
       registryTokenAccepted: false;
       unauthenticatedStatuses: readonly [401, 503];
     };
-    releaseVerification: 'bun run deploy:verify:prod';
+    releaseVerification: 'bun run cloudflare:deploy:verify';
   };
   docs: readonly string[];
   portal: {
@@ -115,7 +115,7 @@ export function buildTennisAgentAuthArtifact(
         registryTokenAccepted: false,
         unauthenticatedStatuses: [401, 503],
       },
-      releaseVerification: 'bun run deploy:verify:prod',
+      releaseVerification: 'bun run cloudflare:deploy:verify',
     },
     docs: [
       'docs/harness/tenants/tennis-hq-registry.md',
