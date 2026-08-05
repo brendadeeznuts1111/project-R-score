@@ -28,7 +28,6 @@
  *   bun tools/portal-cli.ts secret get 'pass://factorywager/Cloudflare API Token/password'
  *   bun run portal:secret autofill --vault factorywager -- bun run cloudflare:env:validate
  */
-import { unlinkSync } from 'node:fs';
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 import { safeJsonParse } from '../lib/core/index.ts';
@@ -744,14 +743,16 @@ async function cmdRun(rest: string[]): Promise<void> {
   let cleanup: string | null = null;
   const runBefore = [...before];
   // Bun's process.exit skips `finally` — always unlink before exit.
-  const removeCleanup = (): void => {
+  // @see https://bun.com/docs/guides/write-file/unlink — Bun.file().unlink()
+  const removeCleanup = async (): Promise<void> => {
     if (!cleanup) return;
+    const path = cleanup;
+    cleanup = null;
     try {
-      unlinkSync(cleanup);
+      await Bun.file(path).unlink();
     } catch {
       /* ignore */
     }
-    cleanup = null;
   };
 
   if (envIdx >= 0 && before[envIdx + 1]) {
@@ -769,14 +770,14 @@ async function cmdRun(rest: string[]): Promise<void> {
 
   const ready = await probePassSession();
   if (!ready.ready) {
-    removeCleanup();
+    await removeCleanup();
     cliError(
       'Pass session not ready — source scripts/agent-env.sh factorywager (info --output json)'
     );
   }
 
   const code = await runPassCli(['run', ...runBefore, '--', ...after], 'run');
-  removeCleanup();
+  await removeCleanup();
   process.exit(code);
 }
 
