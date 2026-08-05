@@ -20,6 +20,12 @@
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { escapeHtml } from '../lib/escape-html.ts';
+import {
+  escHtml,
+  renderPortalPanel,
+  renderPortalStatGrid,
+  renderPortalTable,
+} from '../lib/portal/ui-html.ts';
 import { buildVaultMapBundle } from '../lib/security/vault-map.ts';
 import {
   computeVaultHealth,
@@ -55,35 +61,45 @@ export function renderHtml(
   const issues = report.referenced.filter(r => r.status !== 'ok');
   const gateCls = s.healthy && listFailures.length === 0 ? 'pass' : 'fail';
   const gateLabel = listFailures.length > 0 ? 'list failed' : s.healthy ? 'healthy' : 'purge risk';
-  const stat = (k: string, v: number, cls = 'muted') =>
-    `<div class="portal-stat ${cls}"><div class="k">${k}</div><div class="v">${v}</div></div>`;
-  const vaultRows = report.vaults
-    .map(
-      v => `<tr>
-        <td>${escapeHtml(v.name)}</td><td>${v.active}</td>
-        <td class="${v.trashed ? 'bad' : ''}">${v.trashed}</td>
-        <td class="dim">${escapeHtml(v.trashedTitles.join(', ') || '—')}</td>
-      </tr>`
-    )
-    .join('\n');
-  const issueRows = issues.length
-    ? issues
-        .map(
-          r => `<tr class="${r.status === 'trashed' ? 'bad' : 'warn'}">
-            <td>${escapeHtml(r.envKey)}</td><td>${escapeHtml(r.vault)}</td>
-            <td>${escapeHtml(r.item)}</td><td>${r.status.toUpperCase()}</td>
-          </tr>`
-        )
-        .join('\n')
-    : '<tr><td colspan="4" class="ok">All env-referenced items resolve Active ✓</td></tr>';
+
+  const issuesTable = renderPortalTable(
+    [
+      { key: 'env', label: 'Env key' },
+      { key: 'vault', label: 'Vault' },
+      { key: 'item', label: 'Item' },
+      { key: 'status', label: 'Status' },
+    ],
+    issues.map(r => [r.envKey, r.vault, r.item, r.status.toUpperCase()]),
+    {
+      className: 'vh-table',
+      density: 'compact',
+      emptyMessage: 'All env-referenced items resolve Active ✓',
+      rowClass: i => (issues[i]!.status === 'trashed' ? 'bad' : 'warn'),
+    }
+  );
+
+  const vaultsTable = renderPortalTable(
+    [
+      { key: 'name', label: 'Vault' },
+      { key: 'active', label: 'Active' },
+      { key: 'trashed', label: 'Trashed' },
+      { key: 'titles', label: 'Trashed titles' },
+    ],
+    report.vaults.map(v => [
+      v.name,
+      v.active,
+      { html: String(v.trashed), className: v.trashed ? 'bad' : '' },
+      { html: escHtml(v.trashedTitles.join(', ') || '—'), className: 'dim' },
+    ]),
+    { className: 'vh-table', density: 'compact', emptyMessage: 'No vaults' }
+  );
+
   const listFailBlock = listFailures.length
-    ? `<section class="portal-panel" aria-labelledby="vh-list-fail-title">
-        <div class="portal-panel-head"><div>
-          <h2 id="vh-list-fail-title">Vault list failures (fail-closed)</h2>
-          <p class="portal-panel-desc">Refs for these vaults are not trusted until list succeeds.</p>
-        </div></div>
-        <p class="bad">Could not list: ${escapeHtml(listFailures.join(', '))}.</p>
-      </section>`
+    ? renderPortalPanel(
+        'Vault list failures (fail-closed)',
+        `<p class="bad">Could not list: ${escHtml(listFailures.join(', '))}.</p>`,
+        { desc: 'Refs for these vaults are not trusted until list succeeds.' }
+      )
     : '';
 
   return `<!DOCTYPE html>
@@ -100,12 +116,10 @@ export function renderHtml(
   <link rel="stylesheet" href="/portal/style.css" />
   <script type="application/json" id="vault-health-embed">${JSON.stringify(report)}</script>
   <style>
-    .vh-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    .vh-table th { text-align: left; padding: 6px 8px; color: var(--text-dim); font-weight: 500; border-bottom: 1px solid var(--border); }
-    .vh-table td { padding: 6px 8px; border-bottom: 1px solid rgba(48,54,61,.4); }
-    .vh-table td.bad, .vh-table tr.bad td { color: var(--red, #f85149); }
-    .vh-table tr.warn td { color: var(--yellow, #d29922); }
-    .vh-table td.ok { color: var(--green, #3fb950); }
+    /* Specialty tones only — base table from .portal-table */
+    .portal-table.vh-table td.bad, .portal-table.vh-table tr.bad td { color: var(--red, #f85149); }
+    .portal-table.vh-table tr.warn td { color: var(--yellow, #d29922); }
+    .portal-table.vh-table td.ok { color: var(--green, #3fb950); }
     .dim { color: var(--text-dim); font-size: 11px; }
     .bad { color: var(--red, #f85149); }
     .portal-stat { cursor: default; }
@@ -139,39 +153,36 @@ export function renderHtml(
         <div class="portal-source-links" aria-label="Related artifacts">
           <a href="/registry/vault-health.json">vault-health.json</a>
           <a href="/portal/env/">env</a>
+          <a href="/portal/env/#partner-env-panel">partners env</a>
           <a href="/portal/doctor/">doctor</a>
         </div>
       </div>
     </section>
     <p class="dim">Inventory SSOT <code>tests/__snapshots__/vault-health.test.ts.snap</code> · intentional drift <code>--update</code> · bake <code>bun run vault:health:bake</code></p>
     <div class="portal-stat-grid" aria-label="Vault summary">
-      ${stat('Vaults', s.vaultCount)}
-      ${stat('Active items', s.activeItems)}
-      ${stat('Trashed items', s.trashedItems, s.trashedItems ? 'bad' : 'ok')}
-      ${stat('Refs trashed', s.referencedTrashed, s.referencedTrashed ? 'bad' : 'ok')}
-      ${stat('Refs missing', s.referencedMissing, s.referencedMissing ? 'bad' : 'ok')}
+      ${renderPortalStatGrid([
+        { label: 'Vaults', value: s.vaultCount },
+        { label: 'Active items', value: s.activeItems },
+        { label: 'Trashed items', value: s.trashedItems, tone: s.trashedItems ? 'bad' : 'ok' },
+        {
+          label: 'Refs trashed',
+          value: s.referencedTrashed,
+          tone: s.referencedTrashed ? 'bad' : 'ok',
+        },
+        {
+          label: 'Refs missing',
+          value: s.referencedMissing,
+          tone: s.referencedMissing ? 'bad' : 'ok',
+        },
+      ])}
     </div>
     ${listFailBlock}
-    <section class="portal-panel" aria-labelledby="vh-issues-title">
-      <div class="portal-panel-head"><div>
-        <h2 id="vh-issues-title">Referenced-item issues (purge risk)</h2>
-        <p class="portal-panel-desc">Env keys whose Pass items are missing or trashed.</p>
-      </div></div>
-      <table class="vh-table">
-        <thead><tr><th>Env key</th><th>Vault</th><th>Item</th><th>Status</th></tr></thead>
-        <tbody>${issueRows}</tbody>
-      </table>
-    </section>
-    <section class="portal-panel" aria-labelledby="vh-vaults-title">
-      <div class="portal-panel-head"><div>
-        <h2 id="vh-vaults-title">Vaults</h2>
-        <p class="portal-panel-desc">Active vs trashed item counts per vault.</p>
-      </div></div>
-      <table class="vh-table">
-        <thead><tr><th>Vault</th><th>Active</th><th>Trashed</th><th>Trashed titles</th></tr></thead>
-        <tbody>${vaultRows}</tbody>
-      </table>
-    </section>
+    ${renderPortalPanel('Referenced-item issues (purge risk)', issuesTable, {
+      desc: 'Env keys whose Pass items are missing or trashed.',
+    })}
+    ${renderPortalPanel('Vaults', vaultsTable, {
+      desc: 'Active vs trashed item counts per vault.',
+    })}
     <p class="dim">No secret values are read or stored by this bake — titles and states only.</p>
   </main>
   <script type="module" src="/portal/data.js"></script>

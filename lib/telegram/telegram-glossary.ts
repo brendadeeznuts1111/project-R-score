@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/image#input — Bun.Image
 /**
  * Telegram / package-group domain glossary — handshake, forums, seat desk, deposits.
  *
@@ -138,6 +139,32 @@ export function telegramGlossaryConcepts(): TelegramGlossaryConcept[] {
         'telegram.surface.all_accounting',
         'telegram.seat_desk',
         'section.partnersAccounting',
+        'page.dodReview',
+        'telegram.dod.visual_proof',
+      ],
+      status: 'active',
+      source: SOURCE,
+      semanticType: 'resource',
+      uiRole: 'badge',
+    },
+    {
+      id: 'telegram.dod.visual_proof',
+      label: 'DOD visual-proof ingest',
+      description:
+        'Accounting-topic (and house Deposits/Withdrawals/Reconcile) photo → DODVerifier.process via ops-bot. Caption partner CODE, OCR amount, Telegram deep-link, Bun.Image meta log.',
+      category: 'trading',
+      kind: 'evidence',
+      synonyms: [
+        'visual proof queue',
+        'accounting photo ingest',
+        'document of deposit',
+        'DOD telegram ingest',
+      ],
+      seeAlso: [
+        'telegram.forum.topic.accounting',
+        'telegram.surface.all_accounting',
+        'section.partnersAccounting',
+        'page.dodReview',
       ],
       status: 'active',
       source: SOURCE,

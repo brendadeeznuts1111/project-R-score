@@ -95,19 +95,22 @@
 
   <main class="portal-page">
     <section class="portal-hero portal-hero--card" aria-labelledby="env-hero-title">
-      <p class="portal-eyebrow">Vault map · inject checklist</p>
+      <p class="portal-eyebrow">Vault map · partners · accounts</p>
       <h2 id="env-hero-title">Environment ownership without printing secrets</h2>
       <p class="hero-sub">
-        Vault-map inject checklist, package env hits, and content-type wire behavior — keys, groups, and
-        severity only. Values never appear on this board.
+        Vault-map inject checklist, package env hits, partner shared bindings, and partner→account outs —
+        keys, groups, and severity only. Values never appear on this board.
       </p>
       <div class="portal-hero-meta">
         <span id="env-gate" class="portal-gate" aria-live="polite">…</span>
         <span id="env-meta" class="portal-baked">loading…</span>
         <div class="portal-source-links" aria-label="Related artifacts">
           <a href="/registry/vault-map.json">vault-map.json</a>
+          <a href="/registry/vault-health.json">vault-health.json</a>
           <a href="/registry/env-inventory.json">env-inventory.json</a>
-          <a href="/portal/vault/">vault</a>
+          <a href="/registry/partners-ops.json">partners-ops.json</a>
+          <a href="/portal/vault/">vault board</a>
+          <a href="/portal/partners/">partners</a>
         </div>
       </div>
     </section>
@@ -149,7 +152,7 @@
           </label>
         </div>
         <div class="table-wrap">
-          <table class="data-table" id="env-table">
+          <table class="portal-table" id="env-table">
             <thead><tr><th scope="col">Key</th><th scope="col">Group</th><th scope="col">Severity</th><th scope="col">Status</th><th scope="col">Detail</th></tr></thead>
             <tbody id="env-body">
               <tr><td colspan="5" class="dim">Loading…</td></tr>
@@ -166,7 +169,7 @@
           </div>
         </div>
         <div class="table-wrap">
-          <table class="data-table" id="content-type-table">
+          <table class="portal-table" id="content-type-table">
             <thead><tr><th scope="col">Status</th><th scope="col">Scenario</th><th scope="col">Default</th><th scope="col">Our value</th><th scope="col">Expected</th></tr></thead>
             <tbody id="ct-body">
               <tr><td colspan="5" class="dim">Loading…</td></tr>
@@ -183,9 +186,106 @@
           </div>
         </div>
         <div class="table-wrap">
-          <table class="data-table">
+          <table class="portal-table">
             <thead><tr><th scope="col">Package</th><th scope="col">Env keys</th><th scope="col">Missing template</th></tr></thead>
             <tbody id="pkg-body"><tr><td colspan="3" class="dim">—</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="portal-panel" id="vault-health-panel" aria-labelledby="vault-health-title">
+        <div class="portal-panel-head">
+          <div>
+            <h2 id="vault-health-title">Vault health <a href="/portal/vault/" style="font-size:12px;font-weight:400">board</a></h2>
+            <p class="portal-panel-desc" id="vault-health-summary">Loading vault-health bake…</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="portal-table">
+            <thead>
+              <tr>
+                <th scope="col">Vault</th>
+                <th scope="col">Active</th>
+                <th scope="col">Trashed</th>
+              </tr>
+            </thead>
+            <tbody id="vault-health-vaults"><tr><td colspan="3" class="dim">—</td></tr></tbody>
+          </table>
+        </div>
+        <div class="table-wrap" style="margin-top:16px">
+          <table class="portal-table">
+            <thead>
+              <tr>
+                <th scope="col">Env key</th>
+                <th scope="col">Vault / item</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody id="vault-health-refs"><tr><td colspan="3" class="dim">—</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="portal-panel" id="partner-env-panel" aria-labelledby="partner-env-title">
+        <div class="portal-panel-head">
+          <div>
+            <h2 id="partner-env-title">Partner env bindings <a href="/portal/partners/" style="font-size:12px;font-weight:400">partners</a></h2>
+            <p class="portal-panel-desc" id="partner-env-summary">Loading partnersAccountsPlane…</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="portal-table">
+            <thead>
+              <tr>
+                <th scope="col">Key</th>
+                <th scope="col">Role</th>
+                <th scope="col">Consumers</th>
+                <th scope="col">Vault map</th>
+                <th scope="col">Template</th>
+                <th scope="col">Runtime</th>
+              </tr>
+            </thead>
+            <tbody id="partner-env-body"><tr><td colspan="6" class="dim">—</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="portal-panel" id="partner-accounts-panel" aria-labelledby="partner-accounts-title">
+        <div class="portal-panel-head">
+          <div>
+            <h2 id="partner-accounts-title">Partners → accounts</h2>
+            <p class="portal-panel-desc" id="partner-accounts-summary">—</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="portal-table">
+            <thead>
+              <tr>
+                <th scope="col">Partner</th>
+                <th scope="col">Phase</th>
+                <th scope="col">Handshake</th>
+                <th scope="col">Telegram</th>
+                <th scope="col">Accounts</th>
+                <th scope="col">Outs</th>
+                <th scope="col">Dossier</th>
+              </tr>
+            </thead>
+            <tbody id="partner-accounts-body"><tr><td colspan="7" class="dim">—</td></tr></tbody>
+          </table>
+        </div>
+        <div class="table-wrap" style="margin-top:16px">
+          <table class="portal-table">
+            <thead>
+              <tr>
+                <th scope="col">Partner</th>
+                <th scope="col">Out</th>
+                <th scope="col">Book</th>
+                <th scope="col">Status</th>
+                <th scope="col">Login label</th>
+                <th scope="col">Account</th>
+              </tr>
+            </thead>
+            <tbody id="partner-outs-body"><tr><td colspan="6" class="dim">—</td></tr></tbody>
           </table>
         </div>
       </section>
@@ -198,7 +298,7 @@
           </div>
         </div>
         <div class="table-wrap">
-          <table class="data-table">
+          <table class="portal-table">
             <thead><tr><th scope="col">Key</th><th scope="col">×count</th><th scope="col">Packages</th><th scope="col">Planes</th><th scope="col">Root tpl</th></tr></thead>
             <tbody id="owners-body"><tr><td colspan="5" class="dim">—</td></tr></tbody>
           </table>
@@ -213,7 +313,7 @@
           </div>
         </div>
         <div class="table-wrap">
-          <table class="data-table">
+          <table class="portal-table">
             <thead><tr><th scope="col"></th><th scope="col">Key</th><th scope="col">Label</th><th scope="col">Vault / item</th><th scope="col">Template</th><th scope="col">Runtime</th></tr></thead>
             <tbody id="vault-map-body"><tr><td colspan="6" class="dim">—</td></tr></tbody>
           </table>
@@ -272,6 +372,17 @@
       groupFilter = h.group;
       statusFilter = h.status;
       syncControls();
+      scrollToPanelFromHash(hash);
+    }
+
+    /** Bare panel ids (#partner-env-panel) — not filter params (#q=&severity=). */
+    function scrollToPanelFromHash(hash = location.hash) {
+      const raw = String(hash).replace(/^#/, '');
+      if (!raw || raw.includes('=')) return;
+      const id = raw.split('&')[0];
+      if (!/^[a-z][a-z0-9-]*$/i.test(id)) return;
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function syncControls() {
@@ -601,13 +712,94 @@
               </tr>`;
             }).join('')
           : '<tr><td colspan="5" class="dim">—</td></tr>';
+        renderPartnersAccountsPlane(inv.partnersAccountsPlane, inv.schemaVersion);
       } catch {
         $('pkg-summary').textContent = 'No /registry/env-inventory.json — run bun run env:inventory:bake';
         $('pkg-body').innerHTML =
           '<tr><td colspan="3" class="dim">Bake missing. <a href="/portal/packages/">Packages board</a></td></tr>';
         $('owners-summary').textContent = 'Bake missing';
         $('owners-body').innerHTML = '<tr><td colspan="5" class="dim">—</td></tr>';
+        renderPartnersAccountsPlane(null, null);
       }
+    }
+
+    function renderPartnersAccountsPlane(plane, schemaVersion) {
+      if (!plane || !Array.isArray(plane.sharedEnvBindings)) {
+        $('partner-env-summary').textContent =
+          'No partnersAccountsPlane — re-bake with bun run env:inventory:bake (schema v5+)';
+        $('partner-env-body').innerHTML =
+          '<tr><td colspan="6" class="dim">Bake missing partners join</td></tr>';
+        $('partner-accounts-summary').textContent = '—';
+        $('partner-accounts-body').innerHTML =
+          '<tr><td colspan="7" class="dim">—</td></tr>';
+        $('partner-outs-body').innerHTML =
+          '<tr><td colspan="6" class="dim">—</td></tr>';
+        return;
+      }
+      const s = plane.summary || {};
+      const bindings = plane.sharedEnvBindings || [];
+      $('partner-env-summary').innerHTML =
+        `${bindings.length} shared key(s) · missing runtime=${s.sharedEnvMissing ?? 0} · schema ${schemaVersion ?? '?'} · ` +
+        `<a href="/registry/env-inventory.json">JSON</a> · <a href="/registry/partners-ops.json">partners-ops</a>`;
+      $('partner-env-body').innerHTML = bindings.length
+        ? bindings
+            .map(b => {
+              const rowCls = b.runtimePresent ? 'row-ok' : 'row-warn';
+              return `<tr class="${rowCls}">
+                <td class="mono">${escapeHtml(b.envKey)}</td>
+                <td>${escapeHtml(b.role)}</td>
+                <td class="mono">${escapeHtml((b.consumers || []).join(', '))}</td>
+                <td class="${b.inVaultMap ? 'st-ok' : 'st-warn'}">${b.inVaultMap ? 'yes' : 'no'}</td>
+                <td class="${b.inTemplate ? 'st-ok' : 'st-warn'}">${b.inTemplate ? 'yes' : 'no'}</td>
+                <td class="${b.runtimePresent ? 'st-ok' : 'st-bad'}">${b.runtimePresent ? 'set' : 'missing'}</td>
+              </tr>`;
+            })
+            .join('')
+        : '<tr><td colspan="6" class="dim">—</td></tr>';
+
+      const partners = plane.partners || [];
+      $('partner-accounts-summary').textContent = partners.length
+        ? `${s.partnerCount ?? partners.length} partner(s) · accounts ${s.accountsReady ?? 0}/${s.accountsTotal ?? 0} ready · outs ${s.outsReady ?? 0}/${s.outsTotal ?? 0} · handshake gaps=${s.partnersMissingHandshake ?? 0} · telegram gaps=${s.partnersMissingTelegram ?? 0}`
+        : 'No partners in partners-ops bake';
+      $('partner-accounts-body').innerHTML = partners.length
+        ? partners
+            .map(p => {
+              const hsOk = !!p.handshakeOk;
+              const tgOk = !!p.telegramChatLinked;
+              const acct = `${p.accountsReady ?? 0}/${p.accountsTotal ?? 0}`;
+              const outs = `${p.outsReady ?? 0}/${p.outsTotal ?? 0}`;
+              const rowCls = hsOk && tgOk ? 'row-ok' : 'row-warn';
+              return `<tr class="${rowCls}">
+                <td class="mono"><a href="${escapeHtml(p.partnersHref || '/portal/partners/')}">${escapeHtml(p.partnerCode)}</a> · ${escapeHtml(p.callSign || '')}</td>
+                <td>${escapeHtml(p.phase || '—')}</td>
+                <td class="${hsOk ? 'st-ok' : 'st-bad'}">${hsOk ? 'ok' : 'gap'}</td>
+                <td class="${tgOk ? 'st-ok' : 'st-warn'}">${tgOk ? 'linked' : 'missing'}</td>
+                <td class="mono">${escapeHtml(acct)}</td>
+                <td class="mono">${escapeHtml(outs)}</td>
+                <td><a href="${escapeHtml(p.accountHref || '#')}">dossier</a></td>
+              </tr>`;
+            })
+            .join('')
+        : '<tr><td colspan="7" class="dim">Run <code>bun run partners:build</code> then <code>bun run env:inventory:bake</code></td></tr>';
+
+      const outRows = partners.flatMap(p =>
+        (p.outs || []).map(o => ({ partnerCode: p.partnerCode, ...o }))
+      );
+      $('partner-outs-body').innerHTML = outRows.length
+        ? outRows
+            .map(o => {
+              const ready = o.status === 'ready';
+              return `<tr class="${ready ? 'row-ok' : 'row-warn'}">
+                <td class="mono">${escapeHtml(o.partnerCode)}</td>
+                <td class="mono">${escapeHtml(o.outId)}</td>
+                <td>${escapeHtml(o.bookName || o.bookSlug || '—')}</td>
+                <td class="${ready ? 'st-ok' : 'st-warn'}">${escapeHtml(o.status || '—')}</td>
+                <td class="mono">${escapeHtml(o.usernameLabel || '—')}</td>
+                <td><a href="${escapeHtml(o.href || '#')}">account</a></td>
+              </tr>`;
+            })
+            .join('')
+        : '<tr><td colspan="6" class="dim">No outs in partners-ops</td></tr>';
     }
 
     function showLoadError(msg) {
@@ -639,6 +831,58 @@
       }
     }
 
+    async function loadVaultHealth() {
+      try {
+        const res = await fetch('/registry/vault-health.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error(String(res.status));
+        const vh = await res.json();
+        const sum = vh.summary || {};
+        const healthy = sum.healthy === true;
+        const when = vh.generatedAt ? new Date(vh.generatedAt).toLocaleString() : '—';
+        $('vault-health-summary').innerHTML = healthy
+          ? `healthy · refs ok=${sum.referencedOk ?? '—'} · missing=${sum.referencedMissing ?? 0} · trashed=${sum.referencedTrashed ?? 0} · baked ${escapeHtml(when)} · <a href="/portal/vault/">board</a> · <a href="/registry/vault-health.json">JSON</a>`
+          : `UNHEALTHY · refs ok=${sum.referencedOk ?? '—'} · missing=${sum.referencedMissing ?? 0} · trashed=${sum.referencedTrashed ?? 0} · baked ${escapeHtml(when)} · <a href="/portal/vault/">board</a> · <a href="/registry/vault-health.json">JSON</a>`;
+        const vaults = vh.vaults || [];
+        $('vault-health-vaults').innerHTML = vaults.length
+          ? vaults
+              .map(v => {
+                const bad = (v.trashed || 0) > 0;
+                return `<tr class="${bad ? 'row-warn' : 'row-ok'}">
+                  <td class="mono">${escapeHtml(v.name)}</td>
+                  <td class="st-ok">${escapeHtml(String(v.active ?? 0))}</td>
+                  <td class="${bad ? 'st-warn' : 'st-ok'}">${escapeHtml(String(v.trashed ?? 0))}</td>
+                </tr>`;
+              })
+              .join('')
+          : '<tr><td colspan="3" class="dim">No vaults in bake — bun run vault:health:bake</td></tr>';
+        const refs = vh.referenced || [];
+        const interesting = refs.filter(r => r.status !== 'ok').concat(refs.filter(r => r.status === 'ok').slice(0, 12));
+        const show = interesting.length ? interesting : refs.slice(0, 17);
+        $('vault-health-refs').innerHTML = show.length
+          ? show
+              .map(r => {
+                const ok = r.status === 'ok';
+                const bad = r.status === 'missing' || r.status === 'trashed';
+                const cls = ok ? 'st-ok' : bad ? 'st-bad' : 'st-warn';
+                const rowCls = ok ? 'row-ok' : 'row-warn';
+                return `<tr class="${rowCls}">
+                  <td class="mono">${escapeHtml(r.envKey)}</td>
+                  <td class="mono">${escapeHtml([r.vault, r.item].filter(Boolean).join(' / '))}</td>
+                  <td class="${cls}">${escapeHtml(r.status)}</td>
+                </tr>`;
+              })
+              .join('')
+          : '<tr><td colspan="3" class="dim">—</td></tr>';
+      } catch {
+        $('vault-health-summary').innerHTML =
+          'No /registry/vault-health.json — open <a href="/portal/vault/">vault board</a> or run <code>bun run vault:health:bake</code> (not the raw JSON <pre> dump)';
+        $('vault-health-vaults').innerHTML =
+          '<tr><td colspan="3" class="dim">Bake missing</td></tr>';
+        $('vault-health-refs').innerHTML =
+          '<tr><td colspan="3" class="dim">Bake missing</td></tr>';
+      }
+    }
+
     async function load() {
       try {
         const ctPromise = fetchContentType();
@@ -648,6 +892,7 @@
         if (ct) renderContentType(ct);
         await loadPackagesPlane();
         await loadVaultMap();
+        await loadVaultHealth();
       } catch (e) {
         showLoadError(e.message);
       }

@@ -40,20 +40,12 @@
       margin: 0 0 var(--space-3, 0.75rem);
       line-height: var(--leading-tight, 1.25);
     }
-    .tools-table { width: 100%; border-collapse: collapse; font-size: var(--text-base, 0.8125rem); }
+    /* Base chrome from .portal-table — keep uppercase headers + denser code */
     .tools-table th {
-      text-align: left; padding: var(--space-2, 0.5rem) 10px;
-      color: var(--text-dim); font-weight: var(--font-weight-medium, 500);
-      border-bottom: 1px solid var(--border);
       font-size: var(--text-xs, 0.625rem);
       text-transform: uppercase; letter-spacing: .04em;
     }
-    .tools-table td {
-      padding: var(--space-2, 0.5rem) 10px;
-      border-bottom: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
-      vertical-align: top;
-      line-height: var(--leading-normal, 1.45);
-    }
+    .tools-table td { line-height: var(--leading-normal, 1.45); }
     .tools-table code { font-size: var(--text-xs, 0.625rem); font-family: var(--font-mono); }
     .dim { color: var(--text-dim); font-size: var(--text-sm, 0.75rem); }
     .group-tag {
@@ -259,18 +251,10 @@
     .cli-group-header .chev { opacity: .7; font-family: var(--font-mono); width: 1rem; }
     .cli-group-body { display: none; padding: 0 var(--space-2, 0.5rem) 10px; border-top: 1px solid var(--border); }
     .cli-group-body.open { display: block; }
-    .cli-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm, 0.75rem); }
+    /* Base chrome from .portal-table */
     .cli-table th {
-      text-align: left; padding: var(--space-2, 0.5rem);
-      color: var(--text-dim); font-weight: var(--font-weight-medium, 500);
-      border-bottom: 1px solid var(--border);
       font-size: var(--text-xs, 0.625rem);
       text-transform: uppercase; letter-spacing: .04em;
-    }
-    .cli-table td {
-      padding: 6px 8px;
-      border-bottom: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
-      vertical-align: top;
     }
     .cli-table tr:last-child td { border-bottom: none; }
     .flag-badge {
@@ -395,7 +379,7 @@
       <h2 id="bakes">Baked data status</h2>
       <p class="dim" id="bake-status-meta">Freshness from public registry artifacts (same sources as nav badges) · CLI = copy rebake.</p>
       <div class="bake-filters" id="bake-filters" aria-label="Filter bakes by group"></div>
-      <table class="tools-table bake-status-table">
+      <table class="portal-table tools-table bake-status-table">
         <thead>
           <tr>
             <th>Status</th>
@@ -421,7 +405,7 @@
         <span class="leg-old"><span class="dot" aria-hidden="true"></span>old ≥7d</span>
         <span class="leg-missing"><span class="dot" aria-hidden="true"></span>missing</span>
       </div>
-      <table class="tools-table bake-age-table">
+      <table class="portal-table tools-table bake-age-table">
         <thead>
           <tr>
             <th>Status</th>
@@ -437,7 +421,7 @@
     <div class="tools-panel" id="surface-map-panel">
       <h2 id="surfaces-map">Board → artifact map</h2>
       <p class="dim" id="surface-map-meta">From weave <code>surfaces[]</code> optional fields (<code>artifact</code> · <code>category</code> · <code>description</code>) · schema v2 non-breaking.</p>
-      <table class="tools-table">
+      <table class="portal-table tools-table">
         <thead>
           <tr>
             <th>Board</th>
@@ -473,7 +457,7 @@
 
     <div class="tools-panel">
       <h2>portal-cli → board</h2>
-      <table class="tools-table">
+      <table class="portal-table tools-table">
         <thead>
           <tr><th>Board</th><th>CLI</th><th>What you get</th></tr>
         </thead>
@@ -560,7 +544,7 @@
       </p>
       <p class="dim" id="capability-meta">Loading capability subset…</p>
       <input id="capability-filter" type="search" placeholder="Filter capabilities…" autocomplete="off" />
-      <table class="tools-table">
+      <table class="portal-table tools-table">
         <thead>
           <tr>
             <th>Capability</th>
@@ -578,7 +562,7 @@
 
     <div class="tools-panel">
       <h2>Command groups</h2>
-      <table class="tools-table">
+      <table class="portal-table tools-table">
         <thead><tr><th>Group</th><th>Commands</th></tr></thead>
         <tbody>
           <tr>

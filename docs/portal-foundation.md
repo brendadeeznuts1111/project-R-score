@@ -194,8 +194,10 @@ Shared layout / status classes in [`public/portal/style.css`](../public/portal/s
 | `.portal-toolbar` · `.portal-count` · `.portal-clear` | Filter row + result chip + clear. |
 | `.portal-skeleton` · `.portal-error` | Shimmer loading + actionable failure card. |
 | `.portal-section` / `.section` + `.section-sub` | Bordered `h2` + dim description. **No emoji in headings.** |
-| `.portal-card` / `.portal-card-grid` | Metric / panel cards (accent hairline). |
-| `.data-table` + `.table-wrap` | Dark data tables; aliases include `.env-table`, `.ops-table`, `.live-table`, `.doc-table`. |
+| `.portal-card` / `.portal-card-grid` | **Canonical card primitive** (accent hairline). Variants: `--metric` (numbers), `--panel` (sections), `--stat` (KPI summaries). Composed aliases: `.pkg-card`, `.ops-panel`, `.stat-card`, `.ops-desk-stat`, `.card`, `.verification-result` (`.health-card` is a group container, not a card surface). |
+| `.portal-table` + `.table-wrap` | **Canonical** dark data tables (`data-density` · `data-zebra` · `data-tone`). CSS aliases still style `.data-table` / `.ops-table` / `.env-table` / `.live-table` / `.doc-table` — new markup should use `.portal-table` only. |
+| `.portal-chip` · `.portal-pill` · `.portal-meta-row` | Shared chips / category pills / mono meta rows (prefer over per-board CSS). Atom names used by boards: `.chip` (pills/tags) · `.kicker` (uppercase micro labels) · `.metric-value` (large tabular numbers). |
+| `lib/portal/ui-html.ts` · `components/portal-ui.js` | Pure HTML builders — `renderPortalTable` · **`renderPortalTableRows`** (static thead + dynamic tbody) · `renderPortalStatGrid` · `renderToneChip` · `renderPortalPanel`. Bakes: identity · vault · failures. Boards: partners (stats + partner/outs/deposit rows) · account dossier tables. Dual-class `portal-table` + board alias when specialty CSS remains. |
 | `.row-ok` / `.row-warn` / `.row-bad` | 3px inset row rails (Live check pattern). |
 | `.tone-chip.tone-ok\|warn\|bad\|neutral` | Status pills. |
 | `.status-text` / `.st-ok` / `.st-warn` / `.st-bad` | Inline status color. |
@@ -205,6 +207,18 @@ Shared layout / status classes in [`public/portal/style.css`](../public/portal/s
 Operator boards that already use the raised bar: Concepts · Surfaces · Skills · Env · Glossary · Brands · Catalog · Bunfig · Console-format · Doctor · Partners · Packages · Failures · Vault · Install-hygiene. Prefer these primitives for remaining boards.
 
 **Tone contract (only):** `ok → var(--green)` · `warn → var(--yellow)` · `bad → var(--red)` · `neutral → var(--text-dim)`. Do not use Tailwind greens (`#16a34a`) or light badge fills on portal boards.
+
+### Canonical primitives contract
+
+Canonical names for new `/portal/*` boards. Aliases are **permanent legacy-compat shims — safe to use, never a merge blocker**; new code prefers the canonical names. Do not migrate legacy markup unless already touching the template.
+
+| Primitive | Classes | Modifiers | Notes |
+|-----------|---------|-----------|-------|
+| **Table** | `.portal-table` | `data-density="compact"` · `data-tone="accent|warn|bad"` · `data-zebra` | Aliases: `.data-table`, `.env-table`, `.ops-table`, `.live-table`, `.doc-table` (share base + `row-ok/warn/bad` rails). |
+| **Card** | `.portal-card` | `--metric` (numbers) · `--panel` (sections) · `--stat` (KPI summaries) | Composed aliases: `.pkg-card`, `.ops-panel`, `.stat-card`, `.ops-desk-stat`, `.card`, `.verification-result`. |
+| **Atoms** | `.kicker` (micro labels) · `.chip` (pills/tags) · `.metric-value` (large tabular numbers) | tone via `--tone-*` tokens | Avoid inventing new per-board names (`ops-*`, `vh-*`, `tf-*`…) for these roles. |
+
+**Governance:** new boards targeting `/portal/*` must use the canonical primitives above. Reviewers suggest swapping an alias → canonical on *new* elements; aliases on legacy elements are never a blocker.
 
 ### Venue identity palette (not status)
 
@@ -238,7 +252,7 @@ bun test tests/venue-brand.test.ts
 | Mid distribution | `/registry/tennis/mid-distribution.json` |
 | Agent registry auth | `/registry/tennis/agent-auth.json` (`FACTORY_WAGER_TOKEN` status · no secret) · [`tennis-hq-registry`](harness/tenants/tennis-hq-registry.md) |
 | Bake | `bun run tennis:board:bake` (event-store) · `--sample` fallback |
-| Board UI | [`/portal/tennis/`](../public/portal/tennis/) · `tennis-board.js` |
+| Board UI | [`/portal/tennis/`](../public/portal/tennis/) · [`tennis-desk.js`](../public/portal/components/tennis-desk.js) |
 | Pure helpers | [`lib/tennis/board-metrics.ts`](../lib/tennis/board-metrics.ts) |
 
 Event-store default: `Kalshi-bot/research/cache/event-store.db` (book_ticks mids + markets series volume).

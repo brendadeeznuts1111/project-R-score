@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-08-05T09:19:23.332Z",
+  "generated": "2026-08-05T09:23:47.882Z",
   "summary": {
     "surfaces": 32,
     "artifacts": 42,
@@ -271,7 +271,7 @@
       "id": "factory",
       "label": "Factory",
       "href": "/portal/factory/",
-      "note": "Factory Telegram ops · package-group wire",
+      "note": "Factory Telegram ops · handshake readiness · package-group wire",
       "group": "ops",
       "cli": "bun run telegram:verify"
     },

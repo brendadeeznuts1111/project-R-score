@@ -566,16 +566,12 @@
         accountDossierGlossaryHref,
       } from './glossary-map.js';
       import { bootGlossaryUx, scrollGlossarySectionFromUrl } from '../components/glossary-ux.js';
+      import { escHtml, renderPortalTable } from '../components/portal-ui.js';
 
       let domainGlossary = null;
 
       const $ = id => document.getElementById(id);
-      const esc = value =>
-        String(value ?? '')
-          .replaceAll('&', '&amp;')
-          .replaceAll('<', '&lt;')
-          .replaceAll('>', '&gt;')
-          .replaceAll('"', '&quot;');
+      const esc = value => escHtml(value);
 
       function money(value) {
         if (value == null || Number.isNaN(Number(value))) return '—';
@@ -693,11 +689,16 @@
           $('ad-tree').innerHTML =
             '<p class="ad-empty">No connected tree rows in the baked pattern snapshot.</p>';
         } else {
-          $('ad-tree').innerHTML = `<table class="ad-table"><thead><tr>
-            <th>Account</th><th>Role</th><th>Depth</th><th>State</th><th>ZIP</th><th>Changes</th>
-          </tr></thead><tbody>${dossier.connected
-            .map(row => {
-              const self = String(row.node_id) === dossier.accountId;
+          $('ad-tree').innerHTML = renderPortalTable(
+            [
+              { key: 'account', label: 'Account' },
+              { key: 'role', label: 'Role' },
+              { key: 'depth', label: 'Depth' },
+              { key: 'state', label: 'State' },
+              { key: 'zip', label: 'ZIP' },
+              { key: 'changes', label: 'Changes' },
+            ],
+            dossier.connected.map(row => {
               const href = buildAccountDossierHref({
                 accountId: row.node_id,
                 hours: dossier.lookbackHours,
@@ -710,20 +711,31 @@
                     : row.node_type === 'agent'
                       ? G.agent
                       : G.roleType;
-              return `<tr class="${self ? 'ad-tree-self' : ''}">
-                <td><a href="${href}" data-glossary-concept="${G.accountFilter}">${esc(row.node_name || row.node_id)}</a><div class="ad-meta ad-id">${esc(row.node_id)}</div></td>
-                <td><a class="semantic-label" href="${accountDossierGlossaryHref(roleConcept)}" data-glossary-concept="${roleConcept}">${esc(row.node_type || '—')}</a></td>
-                <td>${esc(row.downline_depth ?? 0)}</td>
-                <td>${esc(row.state_code || '—')}</td>
-                <td>${esc(row.zip_code || '—')}</td>
-                <td>${esc(row.changes ?? 0)}</td>
-              </tr>`;
-            })
-            .join('')}</tbody></table>`;
+              return [
+                {
+                  html: `<a href="${href}" data-glossary-concept="${G.accountFilter}">${esc(row.node_name || row.node_id)}</a><div class="ad-meta ad-id">${esc(row.node_id)}</div>`,
+                },
+                {
+                  html: `<a class="semantic-label" href="${accountDossierGlossaryHref(roleConcept)}" data-glossary-concept="${roleConcept}">${esc(row.node_type || '—')}</a>`,
+                },
+                row.downline_depth ?? 0,
+                row.state_code || '—',
+                row.zip_code || '—',
+                row.changes ?? 0,
+              ];
+            }),
+            {
+              className: 'ad-table',
+              rowClass: i =>
+                String(dossier.connected[i]?.node_id) === dossier.accountId
+                  ? 'ad-tree-self'
+                  : undefined,
+            }
+          );
         }
 
         const loc = dossier.location;
-        $('ad-location').innerHTML = `<table class="ad-table"><tbody>
+        $('ad-location').innerHTML = `<table class="portal-table ad-table"><tbody>
           <tr><th>State</th><td>${esc(loc.state || '—')}</td></tr>
           <tr><th>City / label</th><td>${esc(loc.city || '—')}</td></tr>
           <tr><th>ZIP</th><td>${esc(loc.zip || '—')}${loc.zipPrefix ? ` <span class="ad-meta">(prefix ${esc(loc.zipPrefix)})</span>` : ''}</td></tr>
@@ -735,64 +747,81 @@
           $('ad-traces').innerHTML =
             '<p class="ad-empty">No evidence traces on this account profile.</p>';
         } else {
-          $('ad-traces').innerHTML = `<table class="ad-table"><thead><tr>
-            <th>When</th><th>Kind</th><th>Source</th><th>Detail</th>
-          </tr></thead><tbody>${dossier.traces
-            .slice(0, 40)
-            .map(
-              t => `<tr>
-              <td class="ad-meta">${esc(t.at || '—')}</td>
-              <td>${esc(t.kind || '—')}</td>
-              <td class="ad-meta">${esc(t.source || '—')}</td>
-              <td>${esc(t.detail || '—')}</td>
-            </tr>`
-            )
-            .join('')}</tbody></table>`;
+          $('ad-traces').innerHTML = renderPortalTable(
+            [
+              { key: 'when', label: 'When' },
+              { key: 'kind', label: 'Kind' },
+              { key: 'source', label: 'Source' },
+              { key: 'detail', label: 'Detail' },
+            ],
+            dossier.traces.slice(0, 40).map(t => [
+              { html: esc(t.at || '—'), className: 'ad-meta' },
+              t.kind || '—',
+              { html: esc(t.source || '—'), className: 'ad-meta' },
+              t.detail || '—',
+            ]),
+            { className: 'ad-table' }
+          );
         }
 
         if (!dossier.policies.length) {
           $('ad-policies').innerHTML =
             '<p class="ad-empty">No jurisdiction / account policies matched this node.</p>';
         } else {
-          $('ad-policies').innerHTML = `<table class="ad-table"><thead><tr>
-            <th>Code</th><th>Label</th><th>State</th><th>Max</th><th>Risk</th>
-          </tr></thead><tbody>${dossier.policies
-            .map(
-              p => `<tr>
-              <td class="ad-id">${esc(p.policyCode || p.policyKey)}</td>
-              <td>${esc(p.label || '—')}</td>
-              <td>${esc(p.stateCode || '—')}</td>
-              <td>${money(p.maxWager)}</td>
-              <td>${esc(p.riskTier || '—')}</td>
-            </tr>`
-            )
-            .join('')}</tbody></table>`;
+          $('ad-policies').innerHTML = renderPortalTable(
+            [
+              { key: 'code', label: 'Code' },
+              { key: 'label', label: 'Label' },
+              { key: 'state', label: 'State' },
+              { key: 'max', label: 'Max' },
+              { key: 'risk', label: 'Risk' },
+            ],
+            dossier.policies.map(p => [
+              { html: esc(p.policyCode || p.policyKey), className: 'ad-id' },
+              p.label || '—',
+              p.stateCode || '—',
+              { html: money(p.maxWager) },
+              p.riskTier || '—',
+            ]),
+            { className: 'ad-table' }
+          );
         }
 
         if (!dossier.raises.length) {
           $('ad-raises').innerHTML =
             '<p class="ad-empty">No raise telemetry in this lookback window.</p>';
         } else {
-          $('ad-raises').innerHTML = `<table class="ad-table"><thead><tr>
-            <th>Book</th><th>Sport</th><th>Market</th><th>Prior→New</th><th>Score</th><th>Factors</th><th>Proof</th>
-          </tr></thead><tbody>${dossier.raises
-            .slice(0, 50)
-            .map(r => {
+          $('ad-raises').innerHTML = renderPortalTable(
+            [
+              { key: 'book', label: 'Book' },
+              { key: 'sport', label: 'Sport' },
+              { key: 'market', label: 'Market' },
+              { key: 'delta', label: 'Prior→New' },
+              { key: 'score', label: 'Score' },
+              { key: 'factors', label: 'Factors' },
+              { key: 'proof', label: 'Proof' },
+            ],
+            dossier.raises.slice(0, 50).map(r => {
               const factors = Array.isArray(r.top_contributing_factors)
                 ? r.top_contributing_factors.join(', ')
                 : '—';
               const proof = r.context_proof?.valid === true ? 'valid' : '—';
-              return `<tr>
-                <td>${esc(r.sportsbook || '—')}</td>
-                <td>${esc(r.sport_id || '—')}</td>
-                <td>${esc(r.market_id || '—')}</td>
-                <td>${money(r.previous_max)} → <strong>${money(r.new_limit)}</strong></td>
-                <td>${r.multi_factor_score != null ? Number(r.multi_factor_score).toFixed(2) : '—'}</td>
-                <td class="ad-meta">${esc(factors)}</td>
-                <td>${esc(proof)}</td>
-              </tr>`;
-            })
-            .join('')}</tbody></table>`;
+              return [
+                r.sportsbook || '—',
+                r.sport_id || '—',
+                r.market_id || '—',
+                {
+                  html: `${money(r.previous_max)} → <strong>${money(r.new_limit)}</strong>`,
+                },
+                r.multi_factor_score != null
+                  ? Number(r.multi_factor_score).toFixed(2)
+                  : '—',
+                { html: esc(factors), className: 'ad-meta' },
+                proof,
+              ];
+            }),
+            { className: 'ad-table' }
+          );
         }
 
         const card = $('ad-limit-card');
@@ -806,21 +835,28 @@
             ? `<p class="ad-empty">No outs listed for CODE <code>${esc(dossier.partnerCode)}</code> in partners-ops.</p>`
             : '<p class="ad-empty">No partner CODE resolved — outs unavailable.</p>';
         } else {
-          $('ad-outs').innerHTML = `<table class="ad-table"><thead><tr>
-            <th>Out</th><th>Book</th><th>Type</th><th>Status</th><th>Rail</th><th>Max</th>
-          </tr></thead><tbody>${dossier.outs
-            .map(o => {
+          $('ad-outs').innerHTML = renderPortalTable(
+            [
+              { key: 'out', label: 'Out' },
+              { key: 'book', label: 'Book' },
+              { key: 'type', label: 'Type' },
+              { key: 'status', label: 'Status' },
+              { key: 'rail', label: 'Rail' },
+              { key: 'max', label: 'Max' },
+            ],
+            dossier.outs.map(o => {
               const book = o.book || {};
-              return `<tr>
-                <td class="ad-id">${esc(o.id || '—')}</td>
-                <td>${esc(book.name || book.slug || '—')}</td>
-                <td>${esc(book.type || '—')}</td>
-                <td>${esc(o.status || '—')}</td>
-                <td>${esc(o.funding?.method || '—')}</td>
-                <td>${esc(o.maxBet || '—')}</td>
-              </tr>`;
-            })
-            .join('')}</tbody></table>`;
+              return [
+                { html: esc(o.id || '—'), className: 'ad-id' },
+                book.name || book.slug || '—',
+                book.type || '—',
+                o.status || '—',
+                o.funding?.method || '—',
+                o.maxBet || '—',
+              ];
+            }),
+            { className: 'ad-table' }
+          );
         }
 
         const tg = dossier.telegram || {};
@@ -844,7 +880,7 @@
             .map(step => `<li>${esc(step)}</li>`)
             .join('');
           $('ad-telegram').innerHTML = `
-            <table class="ad-table"><tbody>
+            <table class="portal-table ad-table"><tbody>
               <tr><th data-glossary-concept="${G.handshake}">Phase</th><td>${esc(tg.phase || '—')}${tg.phaseConceptId ? ` <span class="ad-meta">(${esc(tg.phaseConceptId)})</span>` : ''}</td></tr>
               <tr><th data-glossary-concept="${G.wire}">Package chat</th><td class="ad-id">${esc(tg.chatId || 'unlinked')}</td></tr>
               <tr><th data-glossary-concept="${G.handshake}">Comm ready</th><td>${tg.ready ? 'ready' : 'incomplete'} · topics ${esc(tg.topicsConfigured)}/${esc(tg.topicsRequired)}</td></tr>
@@ -852,7 +888,7 @@
               <tr><th data-glossary-concept="${G.wire}">DM seat</th><td>${esc(tg.dmSeatStatus || '—')}${tg.callSign ? ` · ${esc(tg.callSign)}` : ''}</td></tr>
               <tr><th>Invite</th><td>${tg.inviteLink ? `<a href="${esc(tg.inviteLink)}" rel="noopener" target="_blank">open invite</a>` : '—'}</td></tr>
             </tbody></table>
-            <table class="ad-table" style="margin-top:12px"><thead><tr>
+            <table class="portal-table ad-table" style="margin-top:12px"><thead><tr>
               <th>Topic</th><th>thread_id</th><th>Board</th>
             </tr></thead><tbody>${topicRows}</tbody></table>
             <p class="ad-meta" style="margin-top:10px">
@@ -904,7 +940,7 @@
               <a class="semantic-label" href="${accountDossierGlossaryHref(soft.weekConceptId || G.perWeek)}" data-glossary-concept="${soft.weekConceptId || G.perWeek}">Soft weeks</a>
               <span class="ad-meta"> · derived from plays when export.weeks empty</span>
             </h3>
-            <table class="ad-table" data-glossary-concept="${soft.weekConceptId || G.perWeek}"><thead><tr>
+            <table class="portal-table ad-table" data-glossary-concept="${soft.weekConceptId || G.perWeek}"><thead><tr>
               <th>Week (UTC Mon)</th><th>Stake Σ</th><th>|P&amp;L| settled</th><th>Net</th>
             </tr></thead><tbody>${weekRows}</tbody></table>`
               : '';
@@ -925,7 +961,7 @@
               <a class="semantic-label" href="${accountDossierGlossaryHref(soft.bookConceptId || G.perBookType)}" data-glossary-concept="${soft.bookConceptId || G.perBookType}">Soft book types</a>
               <span class="ad-meta"> · tagged plays / partners-ops primary out</span>
             </h3>
-            <table class="ad-table" data-glossary-concept="${soft.bookConceptId || G.perBookType}"><thead><tr>
+            <table class="portal-table ad-table" data-glossary-concept="${soft.bookConceptId || G.perBookType}"><thead><tr>
               <th>Book type</th><th>Stake Σ</th><th>|P&amp;L| settled</th><th>Net</th>
             </tr></thead><tbody>${bookRows}</tbody></table>`
               : '';
@@ -934,7 +970,7 @@
               <a class="semantic-label" href="${accountDossierGlossaryHref(soft.conceptId || G.perPlay)}" data-glossary-concept="${soft.conceptId || G.perPlay}">Soft plays</a>
               <span class="ad-meta"> · ${esc(soft.playCount)} · source ${esc(soft.source)}</span>
             </h3>
-            <table class="ad-table" data-glossary-concept="${soft.conceptId || G.perPlay}"><thead><tr>
+            <table class="portal-table ad-table" data-glossary-concept="${soft.conceptId || G.perPlay}"><thead><tr>
               <th>When</th><th>Play</th><th>Market</th><th>Result</th><th>Stake</th><th>P&amp;L</th>
             </tr></thead><tbody>${playRows}</tbody></table>
             ${weekBlock}
@@ -968,7 +1004,7 @@
             )
             .join('');
           $('ad-accounting').innerHTML = `
-            <table class="ad-table"><tbody>
+            <table class="portal-table ad-table"><tbody>
               <tr data-glossary-concept="${ids.summary || G.accountSummary}"><th><a class="semantic-label" href="${accountDossierGlossaryHref(ids.summary || G.accountSummary)}" data-glossary-concept="${ids.summary || G.accountSummary}">Fund status</a></th><td>${esc(acctView?.fundStatus || acct?.fundStatus || '—')}</td></tr>
               <tr data-glossary-concept="${ids.summary || G.accountSummary}"><th>Incomplete outs</th><td>${esc(acctView?.incompleteOuts ?? acct?.incompleteOuts ?? 0)}</td></tr>
               <tr data-glossary-concept="${ids.deposits || G.accountDeposits}"><th><a class="semantic-label" href="${accountDossierGlossaryHref(ids.deposits || G.accountDeposits)}" data-glossary-concept="${ids.deposits || G.accountDeposits}">Deposits</a></th><td>${esc(summary.deposits ?? '—')}</td></tr>
@@ -979,7 +1015,7 @@
             </tbody></table>
             ${
               deposits
-                ? `<table class="ad-table" style="margin-top:12px" data-glossary-concept="${ids.deposits || G.accountDeposits}"><thead><tr><th>Deposit</th><th>Amount</th><th>Rail</th></tr></thead><tbody>${deposits}</tbody></table>`
+                ? `<table class="portal-table ad-table" style="margin-top:12px" data-glossary-concept="${ids.deposits || G.accountDeposits}"><thead><tr><th>Deposit</th><th>Amount</th><th>Rail</th></tr></thead><tbody>${deposits}</tbody></table>`
                 : '<p class="ad-empty" style="margin-top:12px">No deposit rows in bake.</p>'
             }
             <div class="ad-actions">
@@ -994,7 +1030,7 @@
           $('ad-activity').innerHTML =
             '<p class="ad-empty">No handshake / ledger activity projected for this CODE yet.</p>';
         } else {
-          $('ad-activity').innerHTML = `<table class="ad-table"><thead><tr>
+          $('ad-activity').innerHTML = `<table class="portal-table ad-table"><thead><tr>
             <th>When</th><th>Kind</th><th>Detail</th>
           </tr></thead><tbody>${activity
             .map(row => {

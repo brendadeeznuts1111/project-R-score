@@ -28,6 +28,17 @@ describe('partner:bookmaker:register registry resolution', () => {
     expect(resolveBookmakerEntry(reg, 'FANDUEL')?.id).toBe('fanduel');
   });
 
+  test('resolves v0.4 slug / skin / urls.web host', async () => {
+    const reg = await loadBookmakerRegistry();
+    expect(resolveBookmakerEntry(reg, 'hard-rock-florida')?.id).toBe('hard-rock-florida');
+    expect(resolveBookmakerEntry(reg, 'HardRockBet Florida')?.id).toBe('hard-rock-florida');
+    expect(resolveBookmakerEntry(reg, 'hardrockfl.sportsbook.hardrock.bet')?.id).toBe(
+      'hard-rock-florida'
+    );
+    expect(resolveBookmakerEntry(reg, 'parlay21.com')?.id).toBe('parlay21-com');
+    expect(resolveBookmakerEntry(reg, 'Hard Rock Florida')?.id).toBe('hard-rock-florida');
+  });
+
   test('unknown or blank query → undefined', async () => {
     const reg = await loadBookmakerRegistry();
     expect(resolveBookmakerEntry(reg, 'no-such-book')).toBeUndefined();

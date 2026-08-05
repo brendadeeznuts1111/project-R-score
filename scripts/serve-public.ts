@@ -63,6 +63,7 @@ import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { sleep } from '../lib/time.ts';
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
+import { jsonWithDataSource, withDataSource } from '../lib/http/data-source.ts';
 import {
   handleLimitRaiseAgentRequest,
   handleLimitRecordRequest,
@@ -141,10 +142,15 @@ import {
 } from '../lib/http/bun-server.ts';
 import { PORTAL_BOARD_SLUGS } from '../lib/http/portal-board-slugs.ts';
 import { canonicalSlashRedirect } from '../lib/http/canonical-redirect.ts';
-import { formatServePublicBindLines } from '../lib/http/serve-public-bind.ts';
+import {
+  formatServePublicBindLines,
+  writeServePublicBindManifest,
+  type ServePublicBindManifest,
+} from '../lib/http/serve-public-bind.ts';
 import { resolveServePublicBindPrefs } from '../lib/http/serve-public-config.ts';
 import { attachServePublicErrorHandler } from '../lib/http/serve-public-error.ts';
 import { isPublicReadPath } from '../lib/http/public-read-path.ts';
+import { registryBoardRedirectFor } from '../lib/http/registry-board-negotiate.ts';
 import { getDb, getMonitoringData } from '../lib/db/connection.ts';
 
 /** Env/CLI/TOML bind prefs — omit port/hostname on Bun.serve when Bun env chain wins. */
@@ -220,26 +226,35 @@ async function writeBytes(path: string, data: Uint8Array | string): Promise<void
 
 async function liveOpsSummary(req: Request): Promise<Response> {
   try {
-    return jsonETag(req, buildOpsSummary(getDb(), 'live') as object, {
+    const res = jsonETag(req, buildOpsSummary(getDb(), 'live') as object, {
       versionKey: 'ops-summary-live',
     });
+    return withDataSource(res, 'live');
   } catch (err) {
+    // Fail-open to last good bake — read-only public boards must not 503 when SQLite is down.
     const snap = Bun.file('public/registry/ops-summary.json');
     if (await snap.exists()) {
       const data = (await snap.json()) as Record<string, unknown>;
-      return jsonETag(
+      const res = jsonETag(
         req,
-        { ...data, source: 'snapshot', fallback: 'db-unavailable' },
+        {
+          ...data,
+          source: 'snapshot',
+          fallback: 'db-unavailable',
+          dataSource: 'stale-cache',
+        },
         { versionKey: 'ops-summary-snap' }
       );
+      return withDataSource(res, 'stale-cache');
     }
-    return json(
+    return jsonWithDataSource(
       {
         error: 'Failed to open operations DB',
         detail: err instanceof Error ? err.message : String(err),
         source: 'none',
       },
-      503
+      'none',
+      { status: 503 }
     );
   }
 }
@@ -599,7 +614,8 @@ async function dodApi(req: Request): Promise<Response> {
 
   if (req.method === 'GET') {
     const status = url.searchParams.get('status') || 'all';
-    return json(dodVerifier.list(status));
+    const { enrichDodEntries } = await import('../lib/dod/enrich-entry.ts');
+    return json(enrichDodEntries(dodVerifier.list(status) as Record<string, unknown>[]));
   }
 
   if (req.method === 'POST') {
@@ -868,10 +884,11 @@ async function complianceBoardApi(req: Request): Promise<Response> {
 /** GET /api/monitoring — registry + ops metrics + API proof (JSON). */
 async function liveMonitoringApi(req: Request): Promise<Response> {
   try {
-    const data = (await getMonitoringData({ source: 'live', uptimeOriginMs: startedAt })) as Record<
-      string,
-      unknown
-    >;
+    const data = (await getMonitoringData({
+      source: 'live',
+      uptimeOriginMs: startedAt,
+      includeInstallCache: false,
+    })) as Record<string, unknown>;
     // Append Bun API proof status
     const proofFile = Bun.file('tools/bun-api-coverage-proof.json');
     if (await proofFile.exists()) {
@@ -992,50 +1009,136 @@ async function agentLimitRecordApi(req: Request): Promise<Response> {
 
 /** GET /api/limits/summary — aggregate stats, public (no auth).
  *  ?format=table|text → Bun.inspect.table via LimitRaiseReport
+ *  Fail-open to limit-raises bake when SQLite is unavailable.
  */
-function limitSummaryApi(req?: Request): Response {
-  const db = openOperationsDb({ path: dbPath });
+async function limitSummaryApi(req?: Request): Promise<Response> {
   try {
-    return handleLimitSummaryRequest(db, req);
-  } finally {
-    db.close();
+    const db = openOperationsDb({ path: dbPath });
+    try {
+      return withDataSource(handleLimitSummaryRequest(db, req), 'live');
+    } finally {
+      db.close();
+    }
+  } catch (err) {
+    const snap = Bun.file('public/registry/limit-raises.json');
+    if (await snap.exists()) {
+      const data = (await snap.json()) as Record<string, unknown>;
+      return jsonWithDataSource(
+        {
+          ...data,
+          source: 'snapshot',
+          fallback: 'db-unavailable',
+          dataSource: 'stale-cache',
+          detail: err instanceof Error ? err.message : String(err),
+        },
+        'stale-cache',
+        { cache: 'public, max-age=30, must-revalidate' }
+      );
+    }
+    return jsonWithDataSource(
+      {
+        error: 'Limits summary unavailable',
+        detail: err instanceof Error ? err.message : String(err),
+        source: 'none',
+      },
+      'none',
+      { status: 503 }
+    );
   }
 }
 
 /** GET /api/limits/analyze — granular breakdown by book/sport/market + regulatory. */
-function limitAnalyzeApi(): Response {
-  const db = openOperationsDb({ path: dbPath });
+async function limitAnalyzeApi(): Promise<Response> {
   try {
-    return handleLimitAnalyzeRequest(db);
-  } finally {
-    db.close();
+    const db = openOperationsDb({ path: dbPath });
+    try {
+      return withDataSource(handleLimitAnalyzeRequest(db), 'live');
+    } finally {
+      db.close();
+    }
+  } catch (err) {
+    const snap = Bun.file('public/registry/limit-raises.json');
+    if (await snap.exists()) {
+      const data = (await snap.json()) as Record<string, unknown>;
+      return jsonWithDataSource(
+        {
+          source: 'snapshot',
+          fallback: 'db-unavailable',
+          dataSource: 'stale-cache',
+          note: 'Full granular analyze requires SQLite; serving limit-raises bake',
+          detail: err instanceof Error ? err.message : String(err),
+          bake: data,
+        },
+        'stale-cache',
+        { cache: 'public, max-age=30, must-revalidate' }
+      );
+    }
+    return jsonWithDataSource(
+      {
+        error: 'Limits analyze unavailable',
+        detail: err instanceof Error ? err.message : String(err),
+        source: 'none',
+      },
+      'none',
+      { status: 503 }
+    );
   }
 }
 
 /** POST /api/limits/predictions — run prediction cycle. */
 function limitPredictCycleApi(): Response {
-  const db = openOperationsDb({ path: dbPath });
   try {
-    return handleLimitPredictCycleRequest(db);
-  } finally {
-    db.close();
+    const db = openOperationsDb({ path: dbPath });
+    try {
+      return withDataSource(handleLimitPredictCycleRequest(db), 'live');
+    } finally {
+      db.close();
+    }
+  } catch (err) {
+    // Mutations cannot fail-open to a bake — keep 503 with provenance.
+    return jsonWithDataSource(
+      {
+        error: 'Limit prediction cycle requires local SQLite',
+        detail: err instanceof Error ? err.message : String(err),
+        source: 'none',
+      },
+      'none',
+      { status: 503 }
+    );
   }
 }
 
 /** GET /api/limits/predictions — latest prediction accuracy. */
-function limitPredictionsApi(): Response {
-  const db = openOperationsDb({ path: dbPath });
+async function limitPredictionsApi(): Promise<Response> {
   try {
-    return handleLimitPredictionsRequest(db);
-  } finally {
-    db.close();
+    const db = openOperationsDb({ path: dbPath });
+    try {
+      return withDataSource(handleLimitPredictionsRequest(db), 'live');
+    } finally {
+      db.close();
+    }
+  } catch (err) {
+    return jsonWithDataSource(
+      {
+        error: 'Limit predictions require local SQLite',
+        detail: err instanceof Error ? err.message : String(err),
+        source: 'none',
+        hint: 'Use ops:limits:predict locally or bake limit-raises for desk history',
+      },
+      'none',
+      { status: 503 }
+    );
   }
 }
 
 /** GET /monitoring — server-rendered Bun.inspect.table dashboard. */
 async function monitoringPage(): Promise<Response> {
   try {
-    const data = await getMonitoringData({ source: 'live', uptimeOriginMs: startedAt });
+    const data = await getMonitoringData({
+      source: 'live',
+      uptimeOriginMs: startedAt,
+      includeInstallCache: false,
+    });
     return withLiveReload(
       new Response(renderMonitoringHtml(data), {
         headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
@@ -1745,6 +1848,20 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   // Primary APIs + portal boards + health/llms + __hmr live on `routes` (buildPublicRoutes).
   // fetch = unmatched only: markdown stubs, encoded registry, static, npm PUT/GET.
 
+  // Browser address-bar hits on registry JSON → portal board (curl/API keep JSON).
+  // Escape: ?raw=1 or ?format=json or Accept: application/json
+  const board = registryBoardRedirectFor(req, path);
+  if (board) {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: board,
+        Vary: 'Accept, Sec-Fetch-Dest',
+        'Cache-Control': 'no-store',
+      },
+    });
+  }
+
   const md = await portalMarkdown(req);
   if (md) return md;
 
@@ -2414,17 +2531,16 @@ console.log(
 console.log(
   `[serve] portSource=${bindPrefs.portSource} hostnameSource=${bindPrefs.hostnameSource} requestedPort=${bindPrefs.requestedPort}`
 );
+const bindManifest: ServePublicBindManifest = {
+  ...bind,
+  schemaVersion: 1,
+  ephemeralFallback,
+  requestedDefaultPort: bindPrefs.requestedPort,
+  boundAt: new Date().toISOString(),
+};
+await writeServePublicBindManifest(bindManifest);
 // Docs dual shape (server.port + server.url) then Bind/Serve lines — all from live Server.
-for (const line of formatServePublicBindLines(
-  {
-    ...bind,
-    schemaVersion: 1,
-    ephemeralFallback,
-    requestedDefaultPort: bindPrefs.requestedPort,
-    boundAt: new Date().toISOString(),
-  },
-  { dbPath }
-)) {
+for (const line of formatServePublicBindLines(bindManifest, { dbPath })) {
   console.log(line);
 }
 if (LIVE_RELOAD && liveReloadHub) {

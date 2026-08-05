@@ -569,7 +569,7 @@ function renderBunCliReference(filter = '') {
           <span class="dim">${flags.length} flags</span>
         </div>
         <div class="cli-group-body${open ? ' open' : ''}">
-          <table class="cli-table">
+          <table class="portal-table cli-table">
             <thead><tr><th>Flag</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
             <tbody>${rows}</tbody>
           </table>

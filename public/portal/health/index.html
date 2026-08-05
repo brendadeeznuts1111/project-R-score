@@ -852,14 +852,25 @@
       </div>
     </header>
 
-    <main class="health-page">
-      <div class="health-hero">
-        <h1>Health</h1>
-        <p class="sub">
+    <main class="health-page portal-page">
+      <section class="health-hero portal-hero portal-hero--card" aria-labelledby="health-hero-title">
+        <p class="portal-eyebrow">Edge · harness · operations</p>
+        <h1 id="health-hero-title">Health</h1>
+        <p class="sub hero-sub">
           Operator summary for edge health and current operations. Detailed probes, routing,
           environment, infrastructure, and raw payloads stay in the evidence archive below.
         </p>
-      </div>
+        <div class="portal-hero-meta">
+          <span id="health-gate" class="portal-gate" aria-live="polite">Checking health…</span>
+          <span id="health-baked" class="portal-baked">Probing /api/health and /health</span>
+          <div class="portal-source-links" aria-label="Health artifacts">
+            <a href="/api/health">API JSON</a>
+            <a href="/registry/ops-summary.json">ops-summary</a>
+            <a href="/registry/static.json">static aggregate</a>
+            <a href="/portal/dashboard/">dashboard</a>
+          </div>
+        </div>
+      </section>
 
       <div id="banner" class="health-banner" data-tone="warn" role="status" aria-live="polite">
         <span class="dot"></span>
@@ -915,7 +926,7 @@
           <span class="live-pill"><b>Detail</b> payload / age / score</span>
             </div>
             <div class="table-wrap">
-              <table class="live-table" id="live-table">
+              <table class="portal-table" id="live-table">
             <thead>
               <tr>
                 <th scope="col">
@@ -1033,7 +1044,7 @@
               HTTP-served; these protocols execute only in Bun tools, workers, and local operators.
             </p>
             <div class="table-wrap">
-              <table class="env-table" aria-label="Bun fetch protocol proof">
+              <table class="portal-table" aria-label="Bun fetch protocol proof">
                 <thead>
                   <tr>
                     <th>Protocol</th>
@@ -1050,7 +1061,7 @@
             </div>
             <h3>Transport controls</h3>
             <div class="table-wrap">
-              <table class="env-table" aria-label="Bun fetch transport controls">
+              <table class="portal-table" aria-label="Bun fetch transport controls">
                 <thead>
                   <tr>
                     <th>Control</th>
@@ -1074,7 +1085,7 @@
           </summary>
           <div class="archive-detail-body">
             <div class="table-wrap">
-              <table class="ops-table">
+              <table class="portal-table">
                 <thead>
                   <tr>
                     <th>Path</th>
@@ -1097,7 +1108,7 @@
           </summary>
           <div class="archive-detail-body">
             <div class="table-wrap">
-              <table class="env-table" id="env-table">
+              <table class="portal-table" id="env-table">
                 <thead>
                   <tr>
                     <th>Key</th>

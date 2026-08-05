@@ -415,21 +415,21 @@
     }
   ],
   "summary": {
-    "concepts": 453,
-    "active": 443,
+    "concepts": 457,
+    "active": 447,
     "deprecated": 10,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 316,
+    "portalSemantics": 320,
     "categories": {
       "market": 33,
       "model": 18,
       "ops": 2,
       "pipeline": 41,
       "tournament": 99,
-      "trading": 58,
-      "ui": 175,
+      "trading": 59,
+      "ui": 178,
       "warehouse": 27
     },
     "kinds": {
@@ -440,7 +440,7 @@
       "country": 25,
       "cross_market": 2,
       "event": 2,
-      "evidence": 10,
+      "evidence": 11,
       "gender": 3,
       "jurisdiction": 2,
       "kpi": 4,
@@ -453,20 +453,20 @@
       "registry": 39,
       "sport": 11,
       "tournament": 6,
-      "ui": 249
+      "ui": 252
     },
     "semanticTypes": {
       "classification": 162,
       "location": 4,
       "presentation": 14,
-      "resource": 103,
-      "state": 32,
+      "resource": 106,
+      "state": 33,
       "version": 1
     },
     "uiRoles": {
-      "badge": 59,
+      "badge": 61,
       "chip": 125,
-      "code": 33,
+      "code": 35,
       "heading": 71,
       "link": 24,
       "token": 4
@@ -4281,21 +4281,28 @@
     },
     {
       "id": "page.dodReview",
-      "label": "Definition-of-done review",
-      "description": "Portal page for reviewing completion evidence and proof integrity.",
+      "label": "DOD visual-proof review",
+      "description": "Portal page for the visual-proof submission queue: Accounting-topic photos, OCR amounts, Telegram deep-links, Bun.Image meta, and stake reconciliation against execution expected amounts.",
       "category": "ui",
       "kind": "ui",
       "mapsTo": null,
       "synonyms": [
         "DOD review",
-        "proof review"
+        "proof review",
+        "visual proof",
+        "document of deposit",
+        "accounting proof queue"
       ],
       "values": null,
       "valueLabels": null,
       "seeAlso": [
         "ui.semantic.surface",
         "ui.semantic.resources",
-        "ui.semantic.artifact"
+        "ui.semantic.artifact",
+        "section.partnersAccounting",
+        "ops.dod.ingest",
+        "ops.dod.reconcile",
+        "ops.dod.meta_log"
       ],
       "status": "active",
       "deprecatedBy": null,
@@ -7176,10 +7183,13 @@
       "seeAlso": [
         "page.partners",
         "page.accountDossier",
+        "page.dodReview",
         "section.partnersTelegram",
         "section.partnersAccountsLimits",
         "section.partnersDeposits",
         "section.partnersPartnerMessage",
+        "ops.dod.ingest",
+        "ops.dod.reconcile",
         "ops.view.per_account"
       ],
       "status": "active",
@@ -8412,6 +8422,112 @@
       "uiRole": "code",
       "correlationId": "PR#228",
       "addedAt": "2026-08-02",
+      "domain": "operations",
+      "namespace": "ops",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.dod.ingest",
+      "label": "DOD Accounting ingest",
+      "description": "Ops-bot path that downloads package-forum Accounting or house Deposits/Withdrawals/Reconcile photos and enqueues DODVerifier.process (caption CODE, telegram message dedupe, deep-link ack).",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "accounting photo ingest",
+        "visual proof ingest",
+        "telegram DOD ingest",
+        "ingestAccountingDodPhoto"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.dodReview",
+        "section.partnersAccounting",
+        "ops.dod.reconcile",
+        "ops.dod.meta_log"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "code",
+      "correlationId": "PR#347",
+      "addedAt": "2026-08-05",
+      "domain": "operations",
+      "namespace": "ops",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.dod.reconcile",
+      "label": "DOD amount reconciliation",
+      "description": "Compare OCR/bake accounting_amount against execution expected stake (play_distribution.stake_actual or expected_amount). Mismatch yields portal banner and can flag the queue row.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "visual proof reconcile",
+        "accounting amount mismatch",
+        "stake vs OCR",
+        "reconcileDodAmounts"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.dodReview",
+        "section.partnersAccounting",
+        "ops.dod.ingest",
+        "ops.metric.proof_coverage"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "state",
+      "uiRole": "badge",
+      "correlationId": "PR#347",
+      "addedAt": "2026-08-05",
+      "domain": "operations",
+      "namespace": "ops",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "ops.dod.meta_log",
+      "label": "DOD image meta log",
+      "description": "Append-only NDJSON learning log (data/dod_meta.ndjson) of stripped Bun.Image metadata (width/format/EXIF/GPS) for forged-screenshot detection.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "dod_meta.ndjson",
+        "image meta learning log",
+        "appendDodMetaNdjson"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.dodReview",
+        "ops.dod.ingest",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "code",
+      "correlationId": "PR#347",
+      "addedAt": "2026-08-05",
       "domain": "operations",
       "namespace": "ops",
       "color": "#58a6ff"
@@ -13455,7 +13571,49 @@
         "telegram.deposit_rail",
         "telegram.surface.all_accounting",
         "telegram.seat_desk",
-        "section.partnersAccounting"
+        "section.partnersAccounting",
+        "page.dodReview",
+        "telegram.dod.visual_proof"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/telegram/telegram-glossary.ts",
+      "featurePurpose": "Governed Telegram package-group, forum topic, seat desk, and handshake concept.",
+      "semanticType": "resource",
+      "uiRole": "badge",
+      "parentId": null,
+      "scope": null,
+      "countryCodes": null,
+      "region": null,
+      "flagEmoji": null,
+      "flagAriaLabel": null,
+      "domain": null,
+      "namespace": null,
+      "color": "#d29922"
+    },
+    {
+      "id": "telegram.dod.visual_proof",
+      "label": "DOD visual-proof ingest",
+      "description": "Accounting-topic (and house Deposits/Withdrawals/Reconcile) photo → DODVerifier.process via ops-bot. Caption partner CODE, OCR amount, Telegram deep-link, Bun.Image meta log.",
+      "category": "trading",
+      "kind": "evidence",
+      "mapsTo": null,
+      "synonyms": [
+        "visual proof queue",
+        "accounting photo ingest",
+        "document of deposit",
+        "DOD telegram ingest"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "telegram.forum.topic.accounting",
+        "telegram.surface.all_accounting",
+        "section.partnersAccounting",
+        "page.dodReview"
       ],
       "status": "active",
       "deprecatedBy": null,
@@ -14842,7 +15000,7 @@
       "flagAriaLabel": null,
       "domain": null,
       "namespace": null,
-      "color": null
+      "color": "#58a6ff"
     },
     {
       "id": "account.scope.global",
@@ -14861,7 +15019,8 @@
       "valueLabels": null,
       "seeAlso": [
         "accounting.deposit",
-        "accounting.settlement"
+        "accounting.settlement",
+        "accounting.transfer"
       ],
       "status": "active",
       "deprecatedBy": null,
@@ -14880,7 +15039,7 @@
       "flagAriaLabel": null,
       "domain": null,
       "namespace": null,
-      "color": null
+      "color": "#8b949e"
     },
     {
       "id": "ops.view.per_account",

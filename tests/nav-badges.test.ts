@@ -145,12 +145,14 @@ describe('nav-badges + tools-hub static modules', () => {
     expect(src).toContain('capability-map-subset.json');
   });
 
-  test('topbar imports nav-badges', async () => {
+  test('topbar defers data-backed chrome until browser idle time', async () => {
     const src = await Bun.file(resolvePath(ROOT, 'public/portal/topbar.js')).text();
-    expect(src).toContain("from './nav-badges.js'");
+    expect(src).toContain("import('./nav-badges.js')");
     expect(src).toContain('bootstrapNavBadges');
-    expect(src).toContain("from './components/glossary-ux.js'");
+    expect(src).toContain("import('./components/glossary-ux.js')");
     expect(src).toContain('bootGlossaryUx');
+    expect(src).toContain("import('./data.js')");
+    expect(src).toContain('requestIdleCallback');
     expect(src).toContain("document.documentElement.dataset.brand = 'factorywager'");
     expect(src).toContain("document.title = `${title.split(' · ')[0]} · FactoryWager`");
   });

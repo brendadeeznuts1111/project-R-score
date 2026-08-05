@@ -2,6 +2,7 @@
 /**
  * Export DOD review queue for Pages static snapshot + portal embed.
  */
+import { enrichDodEntries } from './enrich-entry.ts';
 import { DODVerifier } from './verifier.ts';
 
 export type DodQueueSnapshot = {
@@ -16,7 +17,8 @@ export type DodQueueSnapshot = {
 
 export function exportDodQueueSnapshot(): DodQueueSnapshot {
   using verifier = new DODVerifier();
-  const entries = verifier.list('all') as Record<string, unknown>[];
+  const raw = verifier.list('all') as Record<string, unknown>[];
+  const entries = enrichDodEntries(raw);
   const byStatus: Record<string, number> = {};
   for (const row of entries) {
     const st = String(row.status ?? 'unknown');

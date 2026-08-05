@@ -1064,7 +1064,7 @@ function renderReturnEfficiency(re, ranked, buf) {
     }
     ${
       procRank.length
-        ? `<table class="toc-rp-table"><thead><tr><th>Process</th><th>avg R_P</th></tr></thead><tbody>${procRank
+        ? `<table class="portal-table toc-rp-table"><thead><tr><th>Process</th><th>avg R_P</th></tr></thead><tbody>${procRank
             .map(
               ([proc, rp]) =>
                 `<tr><td><code>${esc(proc)}</code></td><td>${fmtRP(rp)}</td></tr>`

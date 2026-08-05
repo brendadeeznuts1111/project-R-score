@@ -61,4 +61,20 @@ describe('Tennis HQ agent auth artifact', () => {
     expect(portal).toContain(`href="${TENNIS_HQ_RUNTIME_URL}"`);
     expect(portal).toContain(`${TENNIS_HQ_RUNTIME_URL}/api/version`);
   });
+
+  test('loads one reusable Tennis desk controller instead of an inline duplicate', async () => {
+    const [portal, controller] = await Promise.all([
+      Bun.file('public/portal/tennis/index.html').text(),
+      Bun.file('public/portal/components/tennis-desk.js').text(),
+    ]);
+
+    expect(portal).toContain(
+      '<script type="module" src="/portal/components/tennis-desk.js"></script>'
+    );
+    expect(portal).not.toContain('function renderKpis');
+    expect(controller).toContain("fetch('/registry/tennis/live-matches.json'");
+    expect(controller).toContain("fetch('/registry/tennis/agent-auth.json'");
+    expect(controller).toContain('/registry/tennis/partner-contracts.json');
+    expect(controller).toContain('function renderKpis');
+  });
 });

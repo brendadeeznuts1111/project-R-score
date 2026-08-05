@@ -34,6 +34,7 @@ Projects/
 ├── wiki-index.md            # Wiki full navigation (portal · registry · tenants)
 ├── registry-index.md        # Registry bake index (portal consumers)
 ├── archive/                 # Frozen local experiments (gitignored entire tree)
+├── artifact-registry/       # Versioned public/ops artifact split (ops never deploys to Pages)
 ├── artifacts/               # Releases + local reports (reports/ largely ignored)
 │   ├── browser/             # Local browser exports (gitignored)
 │   └── snapshots/           # Portal data-plane snapshots (gitignored)
@@ -108,6 +109,7 @@ These may exist on disk under `~/Projects` but are **gitignored** or separate re
 - **Brands:** [`lib/types/branded/README.md`](lib/types/branded/README.md) · `bun run check:brands:all`
 - **Console depth:** [`lib/console-depth.ts`](lib/console-depth.ts)
 - **Agent triage:** [`projects/README.md`](projects/README.md)
+- **Codex threads:** stable `RTH-###` identity, ranking, references, and bring-home parity → [`docs/harness/tenants/codex-thread-portfolio.md`](docs/harness/tenants/codex-thread-portfolio.md) · `bun run threads:portfolio:verify`
 
 ## Root workspaces (authoritative)
 
@@ -133,7 +135,8 @@ From root `package.json` `workspaces.packages` (SSOT — do not invent extra glo
 - **Jul 2026 (docs):** Root standards rewrite; [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) as path SSOT; cleanup summary under [`docs/organization/`](docs/organization/HOMEBASE_DISCOVERY.md).
 - **Jul 2026 (projects triage):** Dropped ghost inventory (`barbershop`/`peer`/empty experimental+archive paths); `bun run registry:projects` regenerates [`public/registry/projects-registry.json`](public/registry/projects-registry.json); `packages:list --write` refreshes [`docs/packages/REGISTRY.md`](docs/packages/REGISTRY.md).
 - **Jul 2026 (scripts trim):** Collapsed ~100 duplicate/unused `package.json` scripts; removed `scratch` passthrough, `deploy-production.sh`, `url-validator-focused.ts`; migrate phase aliases → `bun-migrate` direct.
-- **Jul 2026 (bloat/speed):** CLI category SSOT; scripts **329 → 275 → 258 → 193 → 176 → 173**; demos + utility sandboxes → `projects/experimental/`; Bun-native `fs-bun`/`cli-args`/`Bun.argv`; skip ast-grep doctor on lockfile-only staged sets; day-loop docs. Notes: [`docs/organization/BLOAT_SPEED_PASS.md`](docs/organization/BLOAT_SPEED_PASS.md).
+- **Jul 2026 (bloat/speed):** CLI category SSOT; scripts **329 → 275 → 258 → 193 → 176 → 173** at the trim pass; demos + utility sandboxes → `projects/experimental/`; Bun-native `fs-bun`/`cli-args`/`Bun.argv`; skip ast-grep doctor on lockfile-only staged sets; day-loop docs. Notes: [`docs/organization/BLOAT_SPEED_PASS.md`](docs/organization/BLOAT_SPEED_PASS.md).
+- **Aug 2026 (surface growth):** Portal/registry bakes, doctor groups, and proof scripts expanded the root script surface again — inventory via `bun run help` / `bun run help --verbose` (not the Jul trim count).
 
 Detail: [`docs/organization/HOMEBASE_DISCOVERY.md`](docs/organization/HOMEBASE_DISCOVERY.md) · [`docs/organization/BLOAT_SPEED_PASS.md`](docs/organization/BLOAT_SPEED_PASS.md).
 

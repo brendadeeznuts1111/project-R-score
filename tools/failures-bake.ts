@@ -17,6 +17,12 @@ import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { escapeHtml } from '../lib/escape-html.ts';
 import {
+  escHtml,
+  renderPortalPanel,
+  renderPortalStatGrid,
+  renderPortalTable,
+} from '../lib/portal/ui-html.ts';
+import {
   buildFailuresReport,
   FAILURES_STALE_MS,
   type TestFailuresReport,
@@ -32,23 +38,33 @@ export function renderHtml(report: TestFailuresReport): string {
   const t = report.totals;
   const gateCls = t.failures ? 'fail' : 'pass';
   const gateLabel = t.failures ? `${t.failures} failing` : 'healthy';
-  const stat = (k: string, v: string | number, cls = 'muted') =>
-    `<div class="portal-stat ${cls}"><div class="k">${k}</div><div class="v">${v}</div></div>`;
-  const rows = report.failures.length
-    ? report.failures
-        .map(
-          f => `<tr class="fail">
-        <td><code>${escapeHtml(f.file)}</code></td>
-        <td>${escapeHtml(f.name)}</td>
-        <td class="dim">${escapeHtml(f.message.split('\n')[0] ?? '').slice(0, 120)}</td>
-        <td class="replay">
-          <code>${escapeHtml(f.replayFile)}</code><br/>
-          <code>${escapeHtml(f.replayTest)}</code>
-        </td>
-      </tr>`
-        )
-        .join('\n')
-    : '<tr><td colspan="4" class="ok">No failing tests in the latest JUnit run ✓</td></tr>';
+
+  const failTable = renderPortalTable(
+    [
+      { key: 'file', label: 'File' },
+      { key: 'name', label: 'Test' },
+      { key: 'error', label: 'Error' },
+      { key: 'replay', label: 'Replay' },
+    ],
+    report.failures.map(f => [
+      { html: `<code>${escHtml(f.file)}</code>` },
+      f.name,
+      {
+        html: escHtml((f.message.split('\n')[0] ?? '').slice(0, 120)),
+        className: 'dim',
+      },
+      {
+        html: `<code>${escHtml(f.replayFile)}</code><br/><code>${escHtml(f.replayTest)}</code>`,
+        className: 'replay',
+      },
+    ]),
+    {
+      className: 'tf-table',
+      density: 'compact',
+      emptyMessage: 'No failing tests in the latest JUnit run ✓',
+      rowClass: () => 'fail',
+    }
+  );
 
   const sourceAt = report.sourceAt || report.generatedAt;
 
@@ -68,12 +84,10 @@ export function renderHtml(report: TestFailuresReport): string {
   <style>
     .tf-stale { background: rgba(248,81,73,.08); border: 1px solid var(--red, #f85149); color: var(--red, #f85149); border-radius: var(--radius); padding: 10px 14px; margin: 0 0 16px; font-size: 12px; line-height: 1.5; }
     .tf-stale strong { font-weight: 650; }
-    .tf-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    .tf-table th { text-align: left; padding: 6px 8px; color: var(--text-dim); font-weight: 500; border-bottom: 1px solid var(--border); }
-    .tf-table td { padding: 6px 8px; border-bottom: 1px solid rgba(48,54,61,.4); vertical-align: top; }
-    .tf-table tr.fail td { color: var(--red, #f85149); }
-    .tf-table td.ok { color: var(--green, #3fb950); }
-    .tf-table td.replay code { font-size: 11px; color: var(--text-dim); }
+    /* Specialty tones only — base table from .portal-table */
+    .portal-table.tf-table tr.fail td { color: var(--red, #f85149); }
+    .portal-table.tf-table td.ok { color: var(--green, #3fb950); }
+    .portal-table.tf-table td.replay code { font-size: 11px; color: var(--text-dim); }
     .dim { color: var(--text-dim); font-size: 11px; }
     .portal-stat { cursor: default; }
     .portal-stat:hover { transform: none; box-shadow: none; }
@@ -113,23 +127,16 @@ export function renderHtml(report: TestFailuresReport): string {
     </section>
     <p class="dim">Sources: ${escapeHtml(report.sources.join(', '))}</p>
     <div class="portal-stat-grid" aria-label="Failures summary">
-      ${stat('Tests', t.tests)}
-      ${stat('Failures', t.failures, t.failures ? 'bad' : 'ok')}
-      ${stat('Skipped', t.skipped)}
-      ${stat('Time (s)', t.timeSeconds)}
+      ${renderPortalStatGrid([
+        { label: 'Tests', value: t.tests },
+        { label: 'Failures', value: t.failures, tone: t.failures ? 'bad' : 'ok' },
+        { label: 'Skipped', value: t.skipped },
+        { label: 'Time (s)', value: t.timeSeconds },
+      ])}
     </div>
-    <section class="portal-panel" aria-labelledby="tf-fail-title">
-      <div class="portal-panel-head">
-        <div>
-          <h2 id="tf-fail-title">Failing tests &amp; dev replay</h2>
-          <p class="portal-panel-desc">Copy the replay line into a local shell to reproduce.</p>
-        </div>
-      </div>
-      <table class="tf-table">
-        <thead><tr><th>File</th><th>Test</th><th>Error</th><th>Replay</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </section>
+    ${renderPortalPanel('Failing tests & dev replay', failTable, {
+      desc: 'Copy the replay line into a local shell to reproduce.',
+    })}
     <p class="dim">Reproduce: <code>bun test &lt;file&gt;</code> · pinpoint: <code>--test-name-pattern "&lt;name&gt;"</code> · refresh board: run the suite with <code>--reporter=junit --reporter-outfile=tmp/junit.xml</code> then <code>bun run failures:bake</code>.</p>
   </main>
   <script type="module" src="/portal/data.js"></script>

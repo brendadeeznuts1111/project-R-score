@@ -1,27 +1,29 @@
 <!DOCTYPE html>
-<!-- @see docs/portal-foundation.md — copy this file for new pages -->
+<!-- @see docs/portal-foundation.md · docs/harness/tenants/telegram-factory.md · telegram-handshake bake -->
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="portal-poll-ms" content="30000" />
-  <title>Factory Registry · FactoryWager</title>
+  <meta name="description" content="Factory Telegram handshake readiness — package-group wire, invites, verify lanes." />
+  <title>Factory · FactoryWager</title>
   <meta name="theme-color" content="#0d1117" />
   <meta name="application-name" content="FactoryWager" />
   <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
   <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
   <link rel="manifest" href="/site.webmanifest" />
-  <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg">
-  <link rel="icon" type="image/png" sizes="64x64" href="/icons/factory/mark-64.webp">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/portal/style.css" />
+  <style>
+    .portal-error .portal-error-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    #fx-commands { display: flex; flex-wrap: wrap; gap: 8px; }
+  </style>
 </head>
 <body>
   <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
   <header class="topbar">
-    <img src="/icons/factory/mark.svg" alt="factory" class="brand-icon" style="height:24px;vertical-align:middle;margin-right:8px">
     <div class="topbar-inner">
       <h1 class="logo">
         <span class="logo-icon" aria-hidden="true"></span>
@@ -80,33 +82,164 @@
       </nav>
       <div class="topbar-status">
         <a href="/portal/factory.md" class="nav-link nav-md" title="Markdown view">MD</a>
-        <a href="/portal/health" class="topbar-health-link" title="System health">
+        <a href="/portal/health/" class="topbar-health-link" title="System health">
           <span id="health-dot" class="health-dot unknown"></span>
-          <span id="health-label" class="health-label">Connecting…</span>
+          <span id="health-label" class="health-label">…</span>
         </a>
       </div>
     </div>
   </header>
 
-  <main class="main">
-    <section class="hero">
-      <h2>Factory Registry</h2>
-      <p class="hero-sub">🏭 Factory Registry portal — monitor factorywager_bot status, registry, and operations.
-      <div class="tenant-panel" id="app">
-      <p>Loading Factory Registry data…</p>
-      <div id="tenant-status" class="card">
-        <h3>Bot Status</h3>
-        <p class="loading">Checking factorywager_bot…</p>
+  <main class="portal-page">
+    <section class="portal-hero portal-hero--card" aria-labelledby="fx-hero-title">
+      <p class="portal-eyebrow">Factory Telegram · package-group wire</p>
+      <h2 id="fx-hero-title" class="portal-hero__title">
+        Handshake readiness —
+        <a
+          href="/portal/glossary/#glossary:telegram.handshake"
+          data-glossary-concept="telegram.handshake"
+          >telegram.handshake</a
+        >
+      </h2>
+      <p class="hero-sub">
+        Monitor <code>@factorywager_bot</code> package-group handshake —
+        operator phase, verify lanes, invite gaps, and next steps.
+        Bake: <code data-copy>bun run telegram:handshake:catalog</code> →
+        <code>/registry/telegram-handshake.json</code>.
+        Bot check: <code data-copy>bun run telegram:verify</code>.
+      </p>
+      <div class="portal-hero-meta">
+        <span id="fx-gate" class="portal-gate" aria-live="polite">…</span>
+        <span id="fx-baked" class="portal-baked">loading…</span>
+        <div class="portal-source-links" aria-label="Related artifacts">
+          <a href="/registry/telegram-handshake.json">telegram-handshake.json</a>
+          <a href="/registry/telegram-handshake-catalog.json">catalog</a>
+          <a href="/registry/factory/registry.json">tenant registry</a>
+          <a href="/portal/partners/">partners</a>
+          <a href="/portal/env/">env</a>
+        </div>
       </div>
-      <div id="tenant-registry" class="card">
-        <h3>Registry</h3>
-        <p class="loading">Loading registry data…</p>
-      </div>
-    </div>
     </section>
+
+    <div class="portal-actions">
+      <button type="button" id="fx-refresh">Refresh</button>
+      <button type="button" class="copy-cli portal-clear" data-cli="bun run telegram:verify">Copy verify</button>
+      <button type="button" class="copy-cli portal-clear" data-cli="bun run telegram:handshake:catalog">Copy catalog</button>
+      <a class="portal-clear" href="/registry/telegram-handshake.json" style="display:inline-flex;align-items:center;text-decoration:none">Open JSON</a>
+    </div>
+
+    <div id="fx-error" hidden></div>
+
+    <div id="fx-dashboard" class="hidden">
+      <div id="fx-stats" class="portal-stat-grid" aria-label="Handshake summary"></div>
+
+      <section class="portal-panel" aria-labelledby="fx-cmd-title">
+        <div class="portal-panel-head">
+          <div>
+            <h2 id="fx-cmd-title">Operator commands</h2>
+            <p class="portal-panel-desc">Copy-ready CLI from the handshake bake.</p>
+          </div>
+        </div>
+        <div id="fx-commands" aria-label="Handshake commands"></div>
+      </section>
+
+      <section class="portal-panel" aria-labelledby="fx-table-title">
+        <div class="portal-panel-head">
+          <div>
+            <h2 id="fx-table-title">Partners</h2>
+            <p class="portal-panel-desc">
+              Shareable filters via URL hash · click stats to filter · open a CODE on Partners.
+            </p>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span class="portal-count" id="fx-count">…</span>
+            <button type="button" class="portal-clear" id="fx-clear" disabled>Clear filters</button>
+          </div>
+        </div>
+        <div class="portal-toolbar">
+          <label>
+            Search
+            <input type="search" id="fx-q" placeholder="CODE, call sign, next step…" aria-label="Search partners" />
+          </label>
+          <label>
+            Phase
+            <select id="fx-phase" aria-label="Filter by phase">
+              <option value="">all phases</option>
+              <option value="operator_ready">operator_ready</option>
+              <option value="forum_ready">forum_ready</option>
+              <option value="designated">designated</option>
+              <option value="blocked">blocked / handshake fail</option>
+              <option value="invite_gap">invite gap</option>
+              <option value="other">other</option>
+            </select>
+          </label>
+          <label>
+            Attention
+            <select id="fx-attention" aria-label="Filter by attention">
+              <option value="">any</option>
+              <option value="gaps">any gaps</option>
+              <option value="invite">invite issues</option>
+              <option value="verify">verify fails</option>
+              <option value="lanes">lane fails</option>
+            </select>
+          </label>
+        </div>
+        <div class="table-wrap">
+          <table class="portal-table">
+            <thead>
+              <tr>
+                <th scope="col">Partner</th>
+                <th scope="col">Phase</th>
+                <th scope="col">Membership</th>
+                <th scope="col">Call sign</th>
+                <th scope="col">DM seat</th>
+                <th scope="col">Handshake · verify</th>
+                <th scope="col">Lanes</th>
+                <th scope="col">Invite</th>
+                <th scope="col">Gaps</th>
+                <th scope="col">Next step</th>
+              </tr>
+            </thead>
+            <tbody id="fx-body"><tr><td colspan="10" class="dim">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="portal-panel" aria-labelledby="fx-tenant-title">
+        <div class="portal-panel-head">
+          <div>
+            <h2 id="fx-tenant-title">Tenant registry packages</h2>
+            <p class="portal-panel-desc" id="fx-tenant-meta">Loading…</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="portal-table">
+            <thead>
+              <tr>
+                <th scope="col">Package</th>
+                <th scope="col">Latest</th>
+                <th scope="col">Versions</th>
+              </tr>
+            </thead>
+            <tbody id="fx-tenant-body"><tr><td colspan="3" class="dim">…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
   </main>
 
   <notification-center aria-live="polite"></notification-center>
+
+  <script type="module" src="/portal/data.js"></script>
+  <script type="module" src="/portal/factory/factory-board.js"></script>
+  <script type="module" src="/portal/topbar.js"></script>
+  <script type="module" src="/portal/components/sidebar.js"></script>
+  <script type="module" src="/portal/components/notification.js"></script>
+  <script type="module" src="/portal/components/footer.js"></script>
+  <script type="module">
+    import { bootGlossaryUx } from '/portal/components/glossary-ux.js';
+    bootGlossaryUx({ scrollSections: false });
+  </script>
 
   <footer class="footer" data-portal-chrome="footer">
     <p>
@@ -138,29 +271,5 @@
       · <span data-footer-ts>…</span>
     </p>
   </footer>
-
-  <script type="module" src="/portal/data.js"></script>
-  <script type="module" src="/portal/topbar.js"></script>
-  <script type="module">
-    import { getHealthData } from '/portal/data.js';
-
-    const app = document.getElementById('app');
-
-    function renderFromHealth(detail) {
-      const { status, data } = detail;
-      if (status === 'ok' || status === 'stale') {
-        app.textContent = `Health: ${data?.status ?? 'unknown'}`;
-      } else if (status === 'error') {
-        app.textContent = 'Health unavailable';
-      }
-    }
-
-    document.addEventListener('portal:data', e => renderFromHealth(e.detail));
-    const cached = getHealthData();
-    if (cached) renderFromHealth({ status: 'stale', data: cached });
-  </script>
-  <script type="module" src="/portal/components/sidebar.js"></script>
-  <script type="module" src="/portal/components/notification.js"></script>
-  <script type="module" src="/portal/components/footer.js"></script>
 </body>
 </html>

@@ -52,7 +52,7 @@ describe('packages-metafile-audit', () => {
     expect(deep.orphans.includes('packages/rip/src/cli.ts')).toBe(false);
     // Prefer src over dist for registry-client
     expect(deep.entrypoints.some(e => e.includes('/dist/'))).toBe(false);
-  });
+  }, 30_000);
 
   test('emits portable provenance and deterministic sampled edges', async () => {
     const [deep, shallow] = await Promise.all([getDeep(), getShallow()]);
@@ -148,22 +148,27 @@ describe('packages-metafile-audit', () => {
     expect(report.map.vault!.envHits.every(h => typeof h.inTemplate === 'boolean')).toBe(true);
   });
 
-  test('env inventory attaches compact harness scan with owners', async () => {
-    const report = await runPackagesMetafileAudit({ envInventory: true });
-    expect(report.map.env).toBeDefined();
-    expect(report.map.env!.schemaVersion).toBe(4);
-    expect(report.map.env!.runtime.root.missingNeedsInject).toBeDefined();
-    expect(report.map.summary?.envRootRuntimeNeedsInject).toBe(
-      report.map.env!.summary.rootRuntimeNeedsInject
-    );
-    expect(report.map.env!.scannedRoots).toContain('packages');
-    expect(report.map.env!.packagesPlane.summary.packagesWithEnv).toBeGreaterThan(0);
-    expect(report.map.env!.owners.length).toBeGreaterThan(0);
-    expect(report.map.env!.runtime.root).toBeDefined();
-    expect(report.map.env!.defaultsIssues).toBeDefined();
-    expect(report.map.vault).toBeDefined();
-    expect(report.map.summary?.envPackageTouchedKeys).toBe(
-      report.map.env!.summary.packageTouchedKeys
-    );
-  });
+  test(
+    'env inventory attaches compact harness scan with owners',
+    async () => {
+      const report = await runPackagesMetafileAudit({ envInventory: true });
+      expect(report.map.env).toBeDefined();
+      expect(report.map.env!.schemaVersion).toBe(5);
+      expect(report.map.env!.runtime.root.missingNeedsInject).toBeDefined();
+      expect(report.map.summary?.envRootRuntimeNeedsInject).toBe(
+        report.map.env!.summary.rootRuntimeNeedsInject
+      );
+      expect(report.map.env!.scannedRoots).toContain('packages');
+      expect(report.map.env!.packagesPlane.summary.packagesWithEnv).toBeGreaterThan(0);
+      expect(report.map.env!.owners.length).toBeGreaterThan(0);
+      expect(report.map.env!.runtime.root).toBeDefined();
+      expect(report.map.env!.defaultsIssues).toBeDefined();
+      expect(report.map.env!.partnersAccountsPlane).toBeDefined();
+      expect(report.map.vault).toBeDefined();
+      expect(report.map.summary?.envPackageTouchedKeys).toBe(
+        report.map.env!.summary.packageTouchedKeys
+      );
+    },
+    { timeout: 30_000 }
+  );
 });

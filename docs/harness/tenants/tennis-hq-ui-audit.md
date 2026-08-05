@@ -14,7 +14,7 @@ Two live UIs share the Tennis HQ brand and must not be collapsed into one:
 
 | Surface | Host | Owner tree | Role |
 | ------- | ---- | ---------- | ---- |
-| Market Desk | `https://tennis.factory-wager.com` | [`plum-spruce-dawn-dune1`](../../../plum-spruce-dawn-dune1) · Worker `tennis-hq` | Interactive desk SPA |
+| Market Desk | `https://tennis.factory-wager.com` | [`plum-spruce-dawn-dune1`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1) ([CONTRIBUTING](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md)) · Worker `tennis-hq` · local sibling `~/Projects/plum-spruce-dawn-dune1` | Interactive desk SPA |
 | Portal board | `https://factory-wager.com/portal/tennis/` | [`public/portal/tennis/`](../../../public/portal/tennis/) | Baked registry evidence board |
 
 Live identity (desk): `tennis-hq@1.4.0` · SHA `1092c5e`
@@ -278,7 +278,8 @@ bun run verify:weave -- --subdomains
 
 ## Related
 
-- [`tennis-hq-registry.md`](tennis-hq-registry.md) — registry auth · v1 contract table · weave
+- [`tennis-hq-registry.md`](tennis-hq-registry.md) — registry auth · v1 contract table · weave · **producer CONTRIBUTING mesh**
+- Producer contribute: [CONTRIBUTING.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md) · [docs hub](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/docs/README.md)
 - [`docs/platform-routing.md`](../../platform-routing.md) — host ownership
 - [`docs/portal-foundation.md`](../../portal-foundation.md) — portal tennis board row
 - [`lib/tennis/README.md`](../../../lib/tennis/README.md) — avatar / bake mapping

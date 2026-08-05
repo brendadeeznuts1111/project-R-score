@@ -18,6 +18,7 @@ import {
 describe('repository root policy', () => {
   test('framework and operator roots have explicit integration owners', () => {
     expect(ROOT_INTEGRATIONS._includes.owner).toBe('github-pages');
+    expect(ROOT_INTEGRATIONS['artifact-registry'].owner).toBe('bookmakers-registry');
     expect(ROOT_INTEGRATIONS['functions-bun-only'].owner).toBe('platform-routing');
     expect(ROOT_INTEGRATIONS.warehouse.owner).toBe('image-pipeline');
 

@@ -75,8 +75,8 @@ export function filterPartnerOuts(outs, filter = {}) {
 
 /**
  * Aggregate domain stats from partners-ops + handshake-shaped sources.
- * @param {{ summary?: object } | null | undefined} ops
- * @param {{ operatorReady?: number, inviteGaps?: number, partners?: number, rows?: unknown[] } | null | undefined} handshake
+ * @param {object | null | undefined} ops
+ * @param {object | null | undefined} handshake
  */
 export function summarizePartnerDesk(ops, handshake) {
   const summary = ops?.summary || {};

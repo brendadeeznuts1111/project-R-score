@@ -31,8 +31,8 @@ export const CLOUDFLARE_DEFAULTS = {
      */
     customDomain: 'score.factory-wager.com',
     productionBranch: 'main',
-    destinationDir: 'public',
-    buildCommand: 'exit 0',
+    destinationDir: 'tmp/pages-optimized',
+    buildCommand: 'bun tools/optimize-portal-assets.ts --no-report',
     rootDir: '',
     /** GitHub-releasable Bun for Pages asdf — not local canary packageManager. */
     bunVersion: '1.3.14',
@@ -287,7 +287,7 @@ export function assertCloudflarePagesPins(): void {
     );
   }
   if (!skipDependencyInstall) {
-    throw new Error('SKIP_DEPENDENCY_INSTALL must be true for project-r-score static public/');
+    throw new Error('SKIP_DEPENDENCY_INSTALL must be true for the dependency-free Pages optimizer');
   }
 }
 

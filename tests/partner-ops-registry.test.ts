@@ -60,7 +60,9 @@ describe('partner-ops color + glossary', () => {
     expect(partnerOpsConceptColorWire('publish.pm_proof').colorKey).toBe('kalshi');
     expect(partnerOpsConceptColorWire('publish.mode.soft').colorKey).toBe('middleware');
     expect(partnerOpsConceptColorWire('publish.mode.strict').colorKey).toBe('trading');
-    expect(Object.keys(map).length).toBe(65);
+    expect(partnerOpsConceptColorWire('accounting.transfer').colorKey).toBe('kalshi');
+    expect(partnerOpsConceptColorWire('account.scope.global').colorKey).toBe('env');
+    expect(Object.keys(map).length).toBe(67);
   });
 
   test('Factory overlay glossary stays collision-free; events map to event.*', () => {

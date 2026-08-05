@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-05T10:19:02.411Z",
+  "artifact": {
+    "name": "@factorywager/bookmakers-ops",
+    "version": "0.4.0",
+    "source": "migrated-v0.3-to-v0.4"
+  },
+  "bookmakers": {
+    "pinnacle": {
+      "id": "pinnacle",
+      "slug": "pinnacle",
+      "balance": {
+        "currency": "USD",
+        "amount": null,
+        "asOf": null
+      },
+      "health": {
+        "status": "unknown",
+        "checkedAt": null
+      },
+      "contact": {
+        "supportEmail": null,
+        "telegram": null,
+        "opsDesk": null
+      },
+      "restBaseUrl": "https://api.pinnacle.com/v1",
+      "restProtocol": "http2",
+      "apiKeyEnv": "PINNACLE_API_KEY",
+      "envVars": [
+        "PINNACLE_API_KEY"
+      ]
+    },
+    "caesars": {
+      "id": "caesars",
+      "slug": "caesars",
+      "balance": {
+        "currency": "USD",
+        "amount": null,
+        "asOf": null
+      },
+      "health": {
+        "status": "unknown",
+        "checkedAt": null
+      },
+      "contact": {
+        "supportEmail": null,
+        "telegram": null,
+        "opsDesk": null
+      }
+    },
+    "fanduel": {
+      "id": "fanduel",
+      "slug": "fanduel",
+      "balance": {
+        "currency": "USD",
+        "amount": null,
+        "asOf": null
+      },
+      "health": {
+        "status": "unknown",
+        "checkedAt": null
+      },
+      "contact": {
+        "supportEmail": null,
+        "telegram": null,
+        "opsDesk": null
+      }
+    },
+    "draftkings": {
+      "id": "draftkings",
+      "slug": "draftkings",
+      "balance": {
+        "currency": "USD",
+        "amount": null,
+        "asOf": null
+      },
+      "health": {
+        "status": "unknown",
+        "checkedAt": null
+      },
+      "contact": {
+        "supportEmail": null,
+        "telegram": null,
+        "opsDesk": null
+      }
+    },
+    "betmgm": {
+      "id": "betmgm",
+      "slug": "betmgm",
+      "balance": {
+        "currency": "USD",
+        "amount": null,
+        "asOf": null
+      },
+      "health": {
+        "status": "unknown",
+        "checkedAt": null
+      },
+      "contact": {
+        "supportEmail": null,
+        "telegram": null,
+        "opsDesk": null
+      },
+      "envVars": [
+        "BETMGM_DEFAULT_STATE"
+      ]
+    },
+    "hard-rock-florida": {
+      "id": "hard-rock-florida",
+      "slug": "hard-rock-florida",
+      "balance": {
+        "currency": "USD",
+        "amount": null,
+        "asOf": null
+      },
+      "health": {
+        "status": "unknown",
+        "checkedAt": null
+      },
+      "contact": {
+        "supportEmail": null,
+        "telegram": null,
+        "opsDesk": null
+      }
+    },
+    "parlay21-com": {
+      "id": "parlay21-com",
+      "slug": "parlay21-com",
+      "balance": {
+        "currency": "USD",
+        "amount": null,
+        "asOf": null
+      },
+      "health": {
+        "status": "unknown",
+        "checkedAt": null
+      },
+      "contact": {
+        "supportEmail": null,
+        "telegram": null,
+        "opsDesk": null
+      }
+    },
+    "lonestarwagering-com": {
+      "id": "lonestarwagering-com",
+      "slug": "lonestarwagering-com",
+      "balance": {
+        "currency": "USD",
+        "amount": null,
+        "asOf": null
+      },
+      "health": {
+        "status": "unknown",
+        "checkedAt": null
+      },
+      "contact": {
+        "supportEmail": null,
+        "telegram": null,
+        "opsDesk": null
+      }
+    },
+    "action92-com": {
+      "id": "action92-com",
+      "slug": "action92-com",
+      "balance": {
+        "currency": "USD",
+        "amount": null,
+        "asOf": null
+      },
+      "health": {
+        "status": "unknown",
+        "checkedAt": null
+      },
+      "contact": {
+        "supportEmail": null,
+        "telegram": null,
+        "opsDesk": null
+      }
+    },
+    "betvegas23-com": {
+      "id": "betvegas23-com",
+      "slug": "betvegas23-com",
+      "balance": {
+        "currency": "USD",
+        "amount": null,
+        "asOf": null
+      },
+      "health": {
+        "status": "unknown",
+        "checkedAt": null
+      },
+      "contact": {
+        "supportEmail": null,
+        "telegram": null,
+        "opsDesk": null
+      }
+    }
+  },
+  "note": "Operator-private desk — never deploy under public/ or Pages. restBaseUrl/apiKeyEnv live here; balance/health placeholders until live feed."
+}

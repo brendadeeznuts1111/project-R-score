@@ -13,6 +13,7 @@ surfaces, seat capital desks, Soft plays/balances, and Accounting proof.
 | Seat capital desk | [`/registry/seat-capital-desk.json`](../registry/seat-capital-desk.json) |
 | Partners-ops v2 | [`/registry/partners-ops.json`](../registry/partners-ops.json) |
 | Soft accounting export | [`/registry/soft-accounting-export.json`](../registry/soft-accounting-export.json) |
+| **DOD review** (image proofs) | [`/portal/dod/`](./dod/) · [dod.md](./dod.md) · `/registry/dod-queue.json` |
 
 Two **different** chat grammars — do not mix house topics onto partner forums.
 
@@ -42,7 +43,7 @@ Pinned message per call-sign (e.g. `ASH-001`). Columns:
 | Column | Meaning |
 |--------|---------|
 | # | Out number |
-| BOOK | Sportsbook / venue |
+| BOOK | Sportsbook / venue — match labels to [bookmakers.md](./bookmakers.md) (`id === slug`) |
 | USERNAME | Login (no passwords on the desk) |
 | DEPOSIT METHOD | venmo · wire · crypto · … (`deposit.method.*`) |
 | SEND TO | Rail target |
@@ -57,16 +58,18 @@ CLI:
 bun run seat:desk:refresh CALL-001
 bun run seat:desk:partner-message CALL-001 --json
 bun run seat:desk:accounting-prompt CALL-001 --thread-id N --post
+bun run bookmakers:desk-coverage    # desk BOOK ↔ public registry
 ```
 
 Board: Partners → **Betting deposits** · **Partner messages** ·
 [Outs inventory](./partners/#section:outs).
 
-### Accounting · deals · bet slips
+### Accounting · deals · bet slips · DOD
 
 | Flow | Where |
 |------|--------|
 | Partner posts deposit / withdraw / **bet slip** screenshots | Package forum · **Accounting** topic |
+| Ops reviews agent image proofs (balance / slip / receipt) | [`/portal/dod/`](./dod/) — confirm amount deep-links back to this Accounting topic |
 | Bootstrap Accounting thread | `bun run telegram:package-group:accounting` · `telegram:package-group:enhance CODE --accounting-prompt` |
 | Soft Balance / deals (mutations stay in `ct`) | Soft bake mirror on Partners · Accounting deals |
 | Soft plays / weeks / book types | Partners Soft tables · [`soft-accounting-export.json`](../registry/soft-accounting-export.json) |
@@ -74,6 +77,10 @@ Board: Partners → **Betting deposits** · **Partner messages** ·
 
 Concepts: `telegram.topic.accounting` · `ops.view.per_play` · `ops.view.per_week` ·
 `ops.view.per_account` · `accounting.free_roll` · glossary on Partners board.
+
+**Amount confirmation loop:** DOD card (OCR / partner CODE) → Partners
+`#partner/CODE/telegram/accounting` → human matches stake / deposit dollars →
+approve on DOD when live. Bun.Image meta + Telegram message deep-links: [dod.md](./dod.md).
 
 ### Plays · routing
 
@@ -109,21 +116,44 @@ Bind chat ids: `TELEGRAM_SURFACES` JSON (`pkg-{code}` for package forums;
 | **Deal** / commission week | Accounting topic + Soft | Soft weeks · partners Soft `ops.view.per_week` |
 | **Play** stake / PnL | plays routing · Soft | Soft plays · `ops.view.per_play` |
 | Package readiness | Membership + invite | telegram-handshake · Ops desk pulse |
+| Book id / domain SSOT | Desk BOOK column | [bookmakers.md](./bookmakers.md) · `urls.web` · desk coverage |
 
-## 4. Portal boards
+## 4. DOD · Bun.Image · R2 (image holding)
+
+Agent / bot photo submissions are **not** left as raw Telegram CDN URLs. The
+DOD pipeline holds durable copies:
+
+| Layer | Role |
+|-------|------|
+| **Bun.Image** | Decode · metadata · 8×8 aHash · 1024 inside WebP 85% · evidence pack |
+| **R2** | Production store when `DOD_R2_BUCKET` (+ account + R2 keys) set — key `dod/{prefix}/{id}.webp` |
+| **Local fallback** | `public/evidence/` when R2 env missing (dev / CI) |
+| **Queue** | SQLite `dod_submissions` · bake `dod-queue.json` · board `/portal/dod/` |
+| **Outbox** | Route `dod` → house **`hq`** (see `telegram-factory.md`) |
+
+ID documents encrypt at rest (`.webp.enc`) with `DOD_ID_ENCRYPTION_KEY`. HMAC
+proof uses `DOD_PROOF_SECRET`. Full map: [dod.md](./dod.md) ·
+[`lib/dod/README.md`](../../lib/dod/README.md) · non-DOD image CLI
+[`docs/IMAGES.md`](../../docs/IMAGES.md).
+
+## 5. Portal boards
 
 | Board | Telegram-related sections |
 |-------|---------------------------|
 | [Partners](./partners/) | Package groups · Accounting deals · Betting deposits · Outs inventory · Soft plays/weeks/book types · Partner messages |
 | [Factory](./factory/) | Bot wire · handshake readiness · webhook |
 | [Ops](./ops/) | Partner desk pulse · handshake gaps · seat incomplete · outbox pending |
-| [Account](./account/) | Per-account dossier · Soft accounting chrome |
+| [**DOD**](./dod/) | Evidence queue · Bun.Image/R2 · confirm amounts → Accounting |
 | [Limits](./limits/) | Limit raises · CLV (linked from partner CODE) |
+| [Bookmakers](./bookmakers/) | Book registry v0.4.1 (`fetcher` · `sports` · outs / raise book ids) |
+| [Account](./account/) | Per-account dossier · Soft accounting chrome |
+| [Routing audit](./routing.md) | Pages vs local API · discover / check:routes |
 
 Markdown: [partners.md](./partners.md) · [factory.md](./factory.md) ·
-[ops.md](./ops.md) · [index.md](./index.md).
+[ops.md](./ops.md) · [dod.md](./dod.md) · [limits.md](./limits.md) ·
+[bookmakers.md](./bookmakers.md) · [routing.md](./routing.md) · [index.md](./index.md).
 
-## 5. CLI day loop
+## 6. CLI day loop
 
 ```bash
 # Bot + wire
@@ -143,16 +173,21 @@ bun run telegram:package-group:accounting
 bun run seat:desk:refresh
 bun run seat:desk:partner-message CALL --json
 bun run partners:build && bun run partners:validate
+bun run bookmakers:desk-coverage
 
 # Soft plays / weeks / book types (read-only Factory mirror)
 bun run soft:accounting:bake
 # or from ct: bun run soft:accounting:from-ct
 
+# DOD evidence queue (Bun.Image · R2 when configured)
+bun run ops:snapshot --no-seed
+# local approve/reject: bun run serve:public → /portal/dod/
+
 # Ops rollup
 bun run ops:snapshot --no-seed
 ```
 
-## 6. Docs (harness)
+## 7. Docs (harness)
 
 | Topic | Doc |
 |-------|-----|
@@ -161,8 +196,10 @@ bun run ops:snapshot --no-seed
 | Seat capital desk · max bet · FUND | [`seat-capital-desk.md`](../../docs/harness/tenants/seat-capital-desk.md) |
 | Partner domain / Soft views | [`partner-domain-map.md`](../../docs/harness/tenants/partner-domain-map.md) |
 | Soft handshake design | [`docs/design/soft-handshake.md`](../../docs/design/soft-handshake.md) |
+| Book registry · desk coverage | [bookmakers.md](./bookmakers.md) · [`bookmakers-registry.md`](../../docs/harness/tenants/bookmakers-registry.md) |
+| DOD · R2 · Bun.Image | [dod.md](./dod.md) · [`lib/dod/README.md`](../../lib/dod/README.md) · [`docs/IMAGES.md`](../../docs/IMAGES.md) |
 
-## 7. Failure paths
+## 8. Failure paths
 
 | Symptom | Fix |
 |---------|-----|
@@ -171,6 +208,9 @@ bun run ops:snapshot --no-seed
 | Plays not routing | Handshake lane `route_plays` · thread map for Ops/plays · `telegram:ops:consume` |
 | Desk stale / wrong max bet | `seat:desk:refresh CALL` · patch intake JSON · never post passwords |
 | Soft tables empty on Partners | `soft:accounting:bake` or `:from-ct` · check Soft stays in `ct` for mutations |
+| Desk BOOK unmatched | `bookmakers:desk-coverage` · [bookmakers.md](./bookmakers.md) (e.g. Orange777) |
+| DOD confirm chip missing partner | OCR lacks `CODE` / `CODE-NNN` · set caption platformHint · reseed demo `ops:seed:dod` |
+| DOD images missing on board | R2 env incomplete → local `public/evidence` · check `s3_path` · `DOD_R2_BUCKET` |
 | Webhook 503 | Set `TELEGRAM_WEBHOOK_SECRET` on Pages + local · redeploy |
 
 Bot: `@factorywager_bot` · Soft TOC bot separate (`@TOC_Op_bot` for some seat prompts).

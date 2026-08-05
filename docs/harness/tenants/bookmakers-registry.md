@@ -6,55 +6,115 @@ first-class portal surface on the live domain.
 | Role | Path |
 |------|------|
 | Board | [`/portal/bookmakers/`](../../../public/portal/bookmakers/index.html) |
-| Registry artifact (baked mirror) | [`/registry/bookmakers.json`](../../../public/registry/bookmakers.json) |
-| Source artifact | `@factorywager/bookmakers` on the artifact registry (`registry.factory-wager.com`) |
+| Markdown companion | [`/portal/bookmakers.md`](../../../public/portal/bookmakers.md) · routing audit [`routing.md`](../../../public/portal/routing.md) |
+| Registry artifact (Pages public mirror) | [`/registry/bookmakers.json`](../../../public/registry/bookmakers.json) — **v0.4 public catalog only** (`schemaVersion: 2`) |
+| Artifact split (v0.4.0) | [`artifact-registry/bookmakers/v0.4.0/`](../../../artifact-registry/bookmakers/v0.4.0/) — `public/books.json` + `ops/books.json` (**ops never on Pages**) |
 | Bake | `bun run bookmakers:bake` · check `bookmakers:bake:check` · script [`scripts/bake-bookmakers-board.ts`](../../../scripts/bake-bookmakers-board.ts) |
+| Migrate | `bun run bookmakers:migrate` · [`scripts/migrate-bookmakers-v0.3-to-v0.4.ts`](../../../scripts/migrate-bookmakers-v0.3-to-v0.4.ts) |
+| Desk coverage | `bun run bookmakers:desk-coverage` · [`scripts/bookmakers-desk-coverage.ts`](../../../scripts/bookmakers-desk-coverage.ts) |
+| Prepare publish | `bun run bookmakers:prepare-publish` · local package under `artifacts/deeplink-automation/packages/bookmakers/` |
+| Bake local | `bun run bookmakers:bake -- --local` (uses local 0.4 package, no registry fetch) |
 | Weave | surface `bookmakers` · artifact `bookmakers-registry` ([`lib/http/portal-weave.ts`](../../../lib/http/portal-weave.ts)) |
 | Route manifest | `/portal/bookmakers/` ([`lib/http/portal-route-manifest.ts`](../../../lib/http/portal-route-manifest.ts)) |
 | Chrome nav | `bookmakers` (overflow, ops) ([`lib/portal/chrome-catalog.ts`](../../../lib/portal/chrome-catalog.ts)) |
-| Suite | [`tests/bookmakers-registry-bake.test.ts`](../../../tests/bookmakers-registry-bake.test.ts) |
-| Consumer runbook | This tenant doc · `bun run bookmakers:bake` · Factory weave publish via `bun lib/factory/cli.ts publish` |
+| Suite | [`tests/bookmakers-registry-bake.test.ts`](../../../tests/bookmakers-registry-bake.test.ts) · [`tests/bookmakers-migrate-v04.test.ts`](../../../tests/bookmakers-migrate-v04.test.ts) · [`tests/bookmakers-board.test.ts`](../../../tests/bookmakers-board.test.ts) |
+| Open issues | [`bookmakers-open-issues.md`](./bookmakers-open-issues.md) — Orange777 · Pages/R2 lag · null limits · publish `--readme` |
+
+## v0.4 public vs ops
+
+| Plane | Contents | Deploy |
+|-------|----------|--------|
+| **Public** | `id`/`slug` (equal), `label`, `skin`, `brandGroup`, `urls`, `fetcher`, `lifecycle`, `sports`, `regions`, `limits`, `color`, `webViewConfig`, `note` | Pages `/registry/bookmakers.json` |
+| **Ops** | `restBaseUrl`, `restProtocol`, `apiKeyEnv`, `envVars`, `balance`/`health` placeholders, `contact` | `artifact-registry/.../ops/` only |
+
+### Decisions
+
+| Question | Choice |
+|----------|--------|
+| ID format | **A** — `id === slug` (route primary key; no UUID migration) |
+| Region format | **A** — `{ country, stateCode? }` objects (board-compatible) |
+| Keep public | `color`, `webViewConfig`, `note` |
+| Move to ops | `restBaseUrl`, `restProtocol`, `apiKeyEnv`, `envVars` |
+| Never public | `balance`, `health` |
 
 ## Purpose
 
-The bookmaker registry (id, label, domain, fetcher strategy, supported
-sports/leagues, regions, brand color) is the SSOT for the deep-link pipeline.
-It is published as the `@factorywager/bookmakers` artifact to the R2-backed
-artifact registry and **mirrored** onto the portal read plane so the live
-domain serves a stable, versioned JSON without a server function.
+The bookmaker registry is the SSOT for the deep-link pipeline. It is published
+as `@factorywager/bookmakers` and **mirrored** onto the portal read plane so the
+live domain serves a stable, versioned **public** JSON without a server
+function. Secrets and live desk state stay off Pages.
 
 ## How the mirror is baked
 
 `scripts/bake-bookmakers-board.ts`:
 
-1. Fetch the registry index (`/api/registry/registry.json`), resolve the
-   `latest` dist-tag for `@factorywager/bookmakers`.
-2. Download the tarball from `/api/registry/<r2Key>`, verifying **size +
-   SHA-256** against the index record (corrupt/mismatched → bake fails).
-3. Extract (npm-style `package/` prefix stripped), import the package entry
-   (`package.json main` → `dist/index.js`), read `BOOKMAKERS`.
-4. Write `public/registry/bookmakers.json`:
-   `{ schemaVersion, generatedAt, artifact{name,version,checksum,source},
-      bookmakers, audit{ok,issues}, summary{count,webview,rest,sports} }`.
+1. Fetch the registry index, resolve `latest` for `@factorywager/bookmakers`.
+2. Download the tarball (size + SHA-256 verify).
+3. Import package entry; prefer `PUBLIC_BOOKMAKERS` (v0.4) over `BOOKMAKERS`.
+4. Write `public/registry/bookmakers.json` with audit + summary.
 
-`bun run bookmakers:bake:check` fails when the committed mirror is stale
-(used in CI / pre-merge).
+Local v0.3 → v0.4 without a published package: `bun run bookmakers:migrate`.
 
 ## Updating the registry
 
-1. Edit the canonical registry in **deeplink-automation**
-   (`lib/bookmakers.ts`) → `cp lib/bookmakers.ts packages/bookmakers/bookmakers.ts`
-   → `bun run build:bookmakers` → bump version → commit + push.
-2. Publish to the artifact registry + refresh the snapshot:
-   `bun lib/factory/cli.ts publish …` →
-   `bun lib/factory/cli.ts snapshot public/registry/registry.json` → bake
-   commit + PR (direct pushes to main are declined).
-3. Re-run `bun run bookmakers:bake` and commit the refreshed mirror
-   (`chore(bake)`), plus rebake `portal-weave.json` (ops-snapshot weave step).
+1. Edit canonical registry / package → bump **0.4.x** → publish with
+   `PUBLIC_BOOKMAKERS` export (Pages-safe).
+2. Or migrate: `bun run bookmakers:migrate` from a v0.3 bake.
+3. Commit `public/registry/bookmakers.json` + `artifact-registry/bookmakers/v0.4.0/`.
+
+## Desk coverage
+
+Seat capital desk free-text `book` fields are classified against the registry:
+
+| Class | Examples |
+|-------|----------|
+| matched | `Hard Rock Florida` → `hard-rock-florida` · `parlay21.com` → `parlay21-com` |
+| placeholder | `Partner book TBD` · `SouthFL PPH Desk` |
+| unmatched | `Orange777` (no domain SSOT yet — do not invent a registry id) |
+
+```bash
+bun run bookmakers:desk-coverage
+bun run bookmakers:desk-coverage -- --apply-max   # fill missing limits.maxBetUsd from desk
+```
+
+## Publish 0.4.0 package (when R2 available)
+
+```bash
+bun run bookmakers:prepare-publish
+bun run factory:publish artifacts/deeplink-automation/packages/bookmakers/factorywager-bookmakers-0.4.1.tgz \
+  --name @factorywager/bookmakers --version 0.4.1 --type library \
+  --readme artifacts/deeplink-automation/packages/bookmakers/README.md
+bun lib/factory/cli.ts snapshot public/registry/registry.json
+bun run bookmakers:bake   # or bookmakers:bake -- --local offline
+```
+
+Always pass **`--readme <path>`** to the package README (BM-5). Auto-detect can
+attach a wrong/stale file when publishing a `.tgz`.
+
+**Published:** `@factorywager/bookmakers@0.4.1` is on R2 (`factory list` shows
+latest 0.4.1). Public HTTP index at `registry.factory-wager.com` may lag until
+`public/registry/registry.json` is deployed to Pages — bake prefers the **local**
+snapshot (BM-2):
+
+```bash
+bun lib/factory/cli.ts snapshot public/registry/registry.json   # after publish
+bun run bookmakers:bake -- --version 0.4.1
+bun run bookmakers:desk-coverage
+```
+
+Remaining gaps (limits nulls, Orange777, live index lag): 
+[`bookmakers-open-issues.md`](./bookmakers-open-issues.md).
 
 ## Verification
 
-- `bun run bookmakers:bake:check` — mirror matches the live artifact.
-- `bun test tests/bookmakers-registry-bake.test.ts` — schema, board presence,
-  route/chrome/weave wiring (offline).
-- Live: `/registry/bookmakers.json` + `/portal/bookmakers/` on the Pages host.
+```bash
+bun run bookmakers:migrate -- --dry-run   # optional
+bun run bookmakers:desk-coverage
+bun test tests/bookmakers-registry-bake.test.ts
+bun test tests/bookmakers-migrate-v04.test.ts
+bun test tests/bookmakers-board.test.ts
+bun test tests/bookmakers-desk-coverage.test.ts
+```
+
+Live: `/registry/bookmakers.json` + `/portal/bookmakers/` on the Pages host
+(after deploy). Confirm **no** `apiKeyEnv` / `restBaseUrl` in the public JSON.

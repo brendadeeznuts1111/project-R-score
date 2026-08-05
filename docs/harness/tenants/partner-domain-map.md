@@ -342,7 +342,7 @@ stateDiagram-v2
 |---------|------|----------|
 | Partners board | `/portal/partners/` | `page.partners`, `section.partnersTelegram\|AccountsLimits\|Accounting\|Deposits\|Outs\|BookDetail\|Tags\|PartnerMessage`, `ui.route.partnerHash` |
 | Hash router | `lib/portal/partner-routes.ts` + `public/portal/partners/partner-routes.js` | `#partners` → `{ type: 'partners' }` (TS/JS parity required) |
-| Governance | `bun run partners:governance` | validate ∧ integration ∧ `concept:audit --strict` ∧ glossary:portal:check |
+| Governance | `bun run partners:governance` | validate ∧ integration ∧ `concept:audit --strict` ∧ glossary:portal:check ∧ event-concepts ∧ soft:accounting ∧ validate:colors ∧ validate:surface-coverage ∧ validate:ledger |
 
 Board glossary wiring: `data-glossary-concept` on tags/outs/books + crumbs via
 `bootGlossaryUx({ breadcrumbsMount })`.

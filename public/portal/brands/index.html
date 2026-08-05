@@ -98,25 +98,39 @@
       </div>
     </header>
 
-    <main class="main brand-board">
-      <section class="hero brand-hero">
+    <main class="main brand-board portal-page">
+      <section
+        class="hero brand-hero portal-hero portal-hero--card"
+        aria-labelledby="brand-hero-title"
+      >
         <div>
-          <p class="brand-eyebrow">Domain safety × runtime capability</p>
-          <h2>Bun capability × FactoryWager brand map</h2>
+          <p class="brand-eyebrow portal-eyebrow">Domain safety × runtime capability</p>
+          <h2 id="brand-hero-title">Bun capability × FactoryWager brand map</h2>
           <p class="hero-sub">
             Follow a Bun API through its wrapper, branded value, project, and exact runtime proof.
           </p>
         </div>
-        <div class="brand-source-links" aria-label="Raw registry artifacts">
-          <a href="/registry/bun-brand-map.json">Relationship JSON</a>
-          <a href="/registry/brand-keymap.json">Glossary JSON</a>
+        <div class="portal-hero-meta">
+          <p class="brand-meta brand-generated portal-gate" id="brand-generated" aria-live="polite">
+            Loading the capability graph and brand keymap…
+          </p>
+          <div
+            class="brand-source-links portal-source-links"
+            aria-label="Raw registry artifacts"
+          >
+            <a href="/registry/bun-brand-map.json">Relationship JSON</a>
+            <a href="/registry/brand-keymap.json">Glossary JSON</a>
+            <a href="/portal/glossary/">domain glossary</a>
+            <a href="/portal/concepts/">concepts</a>
+          </div>
         </div>
-        <p class="brand-meta brand-generated" id="brand-generated">
-          Loading the capability graph and brand keymap…
-        </p>
       </section>
 
-      <div class="brand-summary" id="brand-summary" aria-label="Brand relationship summary">
+      <div
+        class="brand-summary portal-stat-grid"
+        id="brand-summary"
+        aria-label="Brand relationship summary"
+      >
         <div class="brand-stat brand-skeleton"></div>
         <div class="brand-stat brand-skeleton"></div>
         <div class="brand-stat brand-skeleton"></div>
@@ -239,7 +253,7 @@
               <span class="brand-meta">Graph-equivalent data</span>
             </div>
             <div class="brand-table-wrap">
-              <table class="brand-table brand-relationship-table">
+              <table class="portal-table brand-table brand-relationship-table">
                 <thead>
                   <tr>
                     <th>API</th>
@@ -310,7 +324,7 @@
           </div>
           <p class="brand-meta brand-results" id="brand-result-count"></p>
           <div class="brand-table-wrap">
-            <table class="brand-table">
+            <table class="portal-table brand-table">
               <thead>
                 <tr>
                   <th>Value</th>
@@ -344,7 +358,7 @@
             remain explicit.
           </p>
           <div class="brand-table-wrap">
-            <table class="brand-table">
+            <table class="portal-table brand-table">
               <thead>
                 <tr>
                   <th>Project</th>

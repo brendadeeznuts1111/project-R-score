@@ -40,37 +40,62 @@ interface ArtifactRelease {
   checksum: string;
 }
 
-/** Resolve latest + storage metadata for the bookmakers artifact from the index. */
+type RegistryIndex = {
+  packages?: Record<
+    string,
+    {
+      'dist-tags'?: Record<string, string>;
+      releases?: Record<
+        string,
+        { version?: string; storage?: { r2Key?: string; size?: number; checksum?: string } }
+      >;
+    }
+  >;
+};
+
+const LOCAL_REGISTRY_INDEX = 'public/registry/registry.json';
+
+/** Load index: optional preferVersion, then local snapshot, then live HTTP. */
 export async function resolveArtifactRelease(
-  fetcher: typeof fetch = fetch
+  fetcher: typeof fetch = fetch,
+  preferVersion?: string
 ): Promise<ArtifactRelease> {
-  const res = await fetcher(REGISTRY_INDEX_URL, { headers: { Accept: 'application/json' } });
-  if (!res.ok) throw new Error(`registry index failed (${res.status})`);
-  const index = (await res.json()) as {
-    packages?: Record<
-      string,
-      {
-        'dist-tags'?: Record<string, string>;
-        releases?: Record<
-          string,
-          { version?: string; storage?: { r2Key?: string; size?: number; checksum?: string } }
-        >;
-      }
-    >;
-  };
-  const pkg = index.packages?.[BOOKMAKERS_ARTIFACT_NAME];
-  const version = pkg?.['dist-tags']?.latest;
-  const release = version ? pkg?.releases?.[version] : undefined;
-  const storage = release?.storage;
-  if (!release || !storage?.r2Key || typeof storage.size !== 'number' || !storage.checksum) {
-    throw new Error(`${BOOKMAKERS_ARTIFACT_NAME} not found in the registry index`);
+  const indexes: RegistryIndex[] = [];
+  try {
+    if (await Bun.file(LOCAL_REGISTRY_INDEX).exists()) {
+      indexes.push(JSON.parse(await Bun.file(LOCAL_REGISTRY_INDEX).text()) as RegistryIndex);
+    }
+  } catch {
+    /* ignore bad local */
   }
-  return {
-    version: release.version ?? version!,
-    r2Key: storage.r2Key,
-    size: storage.size,
-    checksum: storage.checksum,
-  };
+  try {
+    const res = await fetcher(REGISTRY_INDEX_URL, { headers: { Accept: 'application/json' } });
+    if (res.ok) indexes.push((await res.json()) as RegistryIndex);
+  } catch {
+    /* offline */
+  }
+  if (!indexes.length) throw new Error('no registry index (local or live)');
+
+  for (const index of indexes) {
+    const pkg = index.packages?.[BOOKMAKERS_ARTIFACT_NAME];
+    if (!pkg) continue;
+    const version = preferVersion ?? pkg['dist-tags']?.latest;
+    if (!version) continue;
+    const release = pkg.releases?.[version];
+    const storage = release?.storage;
+    if (!release || !storage?.r2Key || typeof storage.size !== 'number' || !storage.checksum) {
+      continue;
+    }
+    return {
+      version: release.version ?? version,
+      r2Key: storage.r2Key,
+      size: storage.size,
+      checksum: storage.checksum,
+    };
+  }
+  throw new Error(
+    `${BOOKMAKERS_ARTIFACT_NAME}@${preferVersion ?? 'latest'} not found in local/live registry index`
+  );
 }
 
 /** Download a tarball, verifying size + SHA-256 against the index record. */
@@ -120,7 +145,7 @@ export async function loadBookmakersModule(dir: string): Promise<Record<string, 
 }
 
 export interface BookmakersBakeResult {
-  schemaVersion: 1;
+  schemaVersion: 1 | 2;
   generatedAt: string;
   artifact: { name: string; version: string; checksum: string; source: string };
   bookmakers: Record<string, unknown>;
@@ -134,7 +159,19 @@ export interface BookmakersBakeResult {
   };
 }
 
-/** Build the bake payload (pure, testable). */
+function entryFetcher(b: { fetcher?: string; fetcherType?: string }): string | undefined {
+  return b.fetcher ?? b.fetcherType;
+}
+
+function entrySports(b: { sports?: string[]; supportedSports?: string[] }): string[] | undefined {
+  return b.sports ?? b.supportedSports;
+}
+
+function entryWeb(b: { urls?: { web?: string }; domain?: string }): string | undefined {
+  return b.urls?.web ?? (b.domain ? `https://${String(b.domain).replace(/^https?:\/\//, '')}` : undefined);
+}
+
+/** Build the bake payload (pure, testable). Accepts v0.3 and v0.4 field names. */
 export function buildBookmakersBake(
   bookmakers: Record<string, unknown>,
   version: string,
@@ -143,60 +180,131 @@ export function buildBookmakersBake(
 ): BookmakersBakeResult {
   const issues: string[] = [];
   const entries = Object.values(bookmakers) as Array<{
+    id?: string;
+    slug?: string;
+    fetcher?: string;
     fetcherType?: string;
+    sports?: string[];
     supportedSports?: string[];
     color?: string;
+    urls?: { web?: string };
+    domain?: string;
+    brandGroup?: string;
   }>;
   const sports = new Set<string>();
+  let looksV4 = 0;
   for (const b of entries) {
-    if (b.fetcherType !== 'rest' && b.fetcherType !== 'webview' && b.fetcherType !== 'seat') {
-      issues.push(`entry missing valid fetcherType (got ${b.fetcherType})`);
+    const fetcher = entryFetcher(b);
+    if (fetcher !== 'rest' && fetcher !== 'webview' && fetcher !== 'seat') {
+      issues.push(`entry missing valid fetcher/fetcherType (got ${fetcher})`);
     }
-    if (!Array.isArray(b.supportedSports)) issues.push('entry missing supportedSports');
-    else for (const s of b.supportedSports) sports.add(s);
+    const sportList = entrySports(b);
+    if (!Array.isArray(sportList)) issues.push('entry missing sports/supportedSports');
+    else for (const s of sportList) sports.add(s);
     if (!b.color) issues.push('entry missing color');
+    if (!entryWeb(b)) issues.push('entry missing urls.web/domain');
+    if (b.fetcher || b.sports || b.urls || b.slug) looksV4 += 1;
+    if (b.id && b.slug && b.id !== b.slug) {
+      issues.push(`entry id !== slug (${b.id} vs ${b.slug})`);
+    }
+    for (const secret of ['restBaseUrl', 'apiKeyEnv', 'envVars'] as const) {
+      if (secret in b) issues.push(`public entry must not include ${secret}`);
+    }
   }
+  const schemaVersion: 1 | 2 = looksV4 >= Math.max(1, Math.floor(entries.length / 2)) ? 2 : 1;
   return {
-    schemaVersion: 1,
+    schemaVersion,
     generatedAt,
     artifact: { name: BOOKMAKERS_ARTIFACT_NAME, version, checksum, source: 'artifact-registry' },
     bookmakers,
     audit: { ok: issues.length === 0, issues },
     summary: {
       count: entries.length,
-      webview: entries.filter(b => b.fetcherType === 'webview').length,
-      rest: entries.filter(b => b.fetcherType === 'rest').length,
-      seat: entries.filter(b => b.fetcherType === 'seat').length,
+      webview: entries.filter(b => entryFetcher(b) === 'webview').length,
+      rest: entries.filter(b => entryFetcher(b) === 'rest').length,
+      seat: entries.filter(b => entryFetcher(b) === 'seat').length,
       sports: [...sports].sort(),
     },
   };
 }
 
+const LOCAL_PACKAGE_DIR = 'artifacts/deeplink-automation/packages/bookmakers';
+
 async function main(): Promise<void> {
   const check = Bun.argv.includes('--check');
   const asJson = Bun.argv.includes('--json');
+  const useLocal = Bun.argv.includes('--local');
+  const versionFlag = (() => {
+    const i = Bun.argv.indexOf('--version');
+    return i >= 0 ? Bun.argv[i + 1] : undefined;
+  })();
 
-  const release = await resolveArtifactRelease();
-  const tgz = await downloadArtifact(release);
-  const dir = joinPath(tmpdir(), `fw-bookmakers-bake-${Date.now()}`);
-  mkdirSync(dir, { recursive: true });
   let module: Record<string, unknown>;
-  try {
-    await extractTarball(tgz, dir);
-    module = await loadBookmakersModule(dir);
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
+  let version: string;
+  let checksum: string;
+
+  if (useLocal) {
+    // Offline: load PUBLIC_BOOKMAKERS from the deeplink package (or its public-catalog.json).
+    const catalogPath = joinPath(LOCAL_PACKAGE_DIR, 'public-catalog.json');
+    const distEntry = joinPath(LOCAL_PACKAGE_DIR, 'dist/index.js');
+    if (await Bun.file(distEntry).exists()) {
+      module = (await import(Bun.pathToFileURL(distEntry).href)) as Record<string, unknown>;
+    } else if (await Bun.file(catalogPath).exists()) {
+      const cat = JSON.parse(await Bun.file(catalogPath).text()) as {
+        bookmakers?: Record<string, unknown>;
+        artifact?: { version?: string };
+      };
+      module = {
+        PUBLIC_BOOKMAKERS: cat.bookmakers,
+        BOOKMAKERS: cat.bookmakers,
+      };
+    } else {
+      throw new Error(
+        `--local requires ${LOCAL_PACKAGE_DIR}/dist or public-catalog.json (run bookmakers:prepare-publish)`
+      );
+    }
+    const pkg = JSON.parse(
+      await Bun.file(joinPath(LOCAL_PACKAGE_DIR, 'package.json')).text()
+    ) as { version?: string };
+    version = pkg.version ?? '0.4.0';
+    checksum = '0'.repeat(64); // local bake — checksum filled on registry publish
+  } else {
+    const release = await resolveArtifactRelease(fetch, versionFlag);
+    const tgz = await downloadArtifact(release);
+    const dir = joinPath(tmpdir(), `fw-bookmakers-bake-${Date.now()}`);
+    mkdirSync(dir, { recursive: true });
+    try {
+      await extractTarball(tgz, dir);
+      module = await loadBookmakersModule(dir);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+    version = release.version;
+    checksum = release.checksum;
   }
+
+  // Prefer v0.4 Pages-safe catalog when the package exports it.
   const candidate =
+    module.PUBLIC_BOOKMAKERS ??
+    (module.default as Record<string, unknown> | undefined)?.PUBLIC_BOOKMAKERS ??
     module.BOOKMAKERS ??
     (module.default as Record<string, unknown> | undefined)?.BOOKMAKERS ??
     module.default ??
     module;
   const payload = buildBookmakersBake(
     candidate as Record<string, unknown>,
-    release.version,
-    release.checksum
+    version,
+    checksum
   );
+  if (useLocal) {
+    payload.artifact.source = 'local-package';
+  }
+  if (
+    module.PUBLIC_BOOKMAKERS ||
+    (module.default as Record<string, unknown> | undefined)?.PUBLIC_BOOKMAKERS
+  ) {
+    payload.schemaVersion = 2;
+  }
 
   const body = `${JSON.stringify(payload, null, 2)}\n`;
   if (check) {

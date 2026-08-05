@@ -115,7 +115,11 @@ export const OUTS_TABLE_COLUMNS: readonly PartnerTableColumn[] = [
   { key: 'max_bet', label: 'Max bet', kind: 'composite', unit: 'usd cents', filter: 'range' },
 ];
 
-/** Accounting ledger (accounting-ledger). */
+/**
+ * Accounting ledger (accounting-ledger).
+ * Provenance keys match partner_ledger columns; glossaryIds are shipped
+ * concepts only (no ops.field.* family).
+ */
 export const ACCOUNTING_LEDGER_COLUMNS: readonly PartnerTableColumn[] = [
   { key: 'date', label: 'Date', kind: 'timestamp', unit: 'ms', filter: 'date' },
   { key: 'partner_code', label: 'Partner', kind: 'string', filter: 'exact' },
@@ -137,6 +141,20 @@ export const ACCOUNTING_LEDGER_COLUMNS: readonly PartnerTableColumn[] = [
     unit: 'usd',
     filter: 'range',
   },
+  {
+    key: 'account_scope',
+    label: 'Scope',
+    kind: 'string',
+    glossaryId: 'account.scope.global',
+    filter: 'exact',
+  },
+  { key: 'counterparty', label: 'Counterparty', kind: 'string', filter: 'fuzzy' },
+  { key: 'source', label: 'Source', kind: 'string', filter: 'fuzzy' },
+  { key: 'external_id', label: 'External ID', kind: 'string', filter: 'exact' },
+  { key: 'proof', label: 'Proof', kind: 'string', filter: 'none' },
+  { key: 'tracking_id', label: 'Tracking', kind: 'string', filter: 'exact' },
+  { key: 'batch_id', label: 'Batch', kind: 'string', filter: 'exact' },
+  { key: 'book_key', label: 'Out / book', kind: 'string', filter: 'exact' },
 ];
 
 export const PARTNER_TABLE_SCHEMAS = {

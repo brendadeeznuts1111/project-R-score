@@ -406,20 +406,33 @@
     </div>
   </header>
 
-  <main class="dash">
-    <div class="dash-hero">
-      <h1>Executive Dashboard</h1>
-      <div class="dash-actions">
-        <button type="button" class="btn" id="refresh-btn">Refresh</button>
-        <a class="btn" href="/portal/toc/">TOC board</a>
-        <a class="btn btn-primary" href="/portal/ops/">Full Ops</a>
-        <span class="ts" id="ts">—</span>
-      </div>
-      <p class="sub">
+  <main class="dash portal-page">
+    <section class="dash-hero portal-hero portal-hero--card" aria-labelledby="dash-hero-title">
+      <p class="portal-eyebrow">Proof command center</p>
+      <h1 id="dash-hero-title">Executive Dashboard</h1>
+      <p class="sub hero-sub">
         At-a-glance proof command center — release taxonomy, install/bundler proofs,
         plus TOC Ops and loop slices from <code>ops-summary</code> (not a Full Ops duplicate).
       </p>
-    </div>
+      <div class="portal-hero-meta">
+        <span id="dash-gate" class="portal-gate" aria-live="polite">Loading dashboard…</span>
+        <span id="dash-baked" class="portal-baked">—</span>
+        <div class="dash-actions">
+          <button type="button" class="btn" id="refresh-btn">Refresh</button>
+          <a class="btn" href="/portal/toc/">TOC board</a>
+          <a class="btn btn-primary" href="/portal/ops/">Full Ops</a>
+          <span class="ts" id="ts">—</span>
+        </div>
+        <div class="portal-source-links" aria-label="Proof artifacts">
+          <a href="/registry/ops-summary.json">ops-summary</a>
+          <a href="/registry/toc-ops.json">toc-ops</a>
+          <a href="/registry/portal-weave.json">portal-weave</a>
+          <a href="/registry/release-features.json">release-features</a>
+          <a href="/portal/toc/">TOC Ops</a>
+          <a href="/portal/ops/">Full Ops</a>
+        </div>
+      </div>
+    </section>
 
     <nav class="nav-links" aria-label="Proof artifacts">
       <a class="ops-link" href="/portal/toc/">TOC Ops</a>

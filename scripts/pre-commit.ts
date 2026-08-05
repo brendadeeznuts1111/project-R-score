@@ -1,16 +1,21 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/reference/bun/semver/satisfies — Bun.semver.satisfies
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/shell — Bun Shell
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean — Bun.semver
 /** Bun-native Husky pre-commit orchestration. */
 
 import { $ } from 'bun';
 import { resolvePath } from '../lib/path-bun.ts';
 
 const REPO_ROOT = resolvePath(import.meta.dir, '..');
+const BUN_VERSION_FILE = resolvePath(REPO_ROOT, '.bun-version');
+const PACKAGE_JSON_FILE = resolvePath(REPO_ROOT, 'package.json');
 const SKILL_VALIDATION_PATH_RE =
   /^(\.agents\/skills\/|lib\/agent-skills-paths\.ts$|scripts\/validate-agent-skills\.ts$|tests\/agent-skills-validation\.test\.ts$)/;
 const TEST_SOURCE_PATH_RE = /\.(ts|tsx|js|jsx|mts|cts)$/;
@@ -30,6 +35,79 @@ export function readPrecommitEnvironment(env: Environment = Bun.env): PrecommitE
     skipGitleaks: env.SKIP_GITLEAKS === '1',
     skipQualityConcept: env.SKIP_QUALITY_CONCEPT === '1',
     skipTestChanged: env.SKIP_TEST_CHANGED === '1',
+  };
+}
+
+export type BunPinCheck = {
+  ok: boolean;
+  runtime: string;
+  enginesBun: string | null;
+  bunVersionFile: string | null;
+  packageManager: string | null;
+  message: string;
+};
+
+/** Enforce package.json engines.bun; .bun-version is advisory SSOT for mise/asdf. */
+export async function checkBunPin(
+  runtime: string = Bun.version,
+  options: { root?: string } = {}
+): Promise<BunPinCheck> {
+  const root = options.root ?? REPO_ROOT;
+  const pkgPath = options.root ? resolvePath(root, 'package.json') : PACKAGE_JSON_FILE;
+  const pinPath = options.root ? resolvePath(root, '.bun-version') : BUN_VERSION_FILE;
+
+  let enginesBun: string | null = null;
+  let packageManager: string | null = null;
+  try {
+    const pkg = (await Bun.file(pkgPath).json()) as {
+      engines?: { bun?: string };
+      packageManager?: string;
+    };
+    enginesBun = pkg.engines?.bun ?? null;
+    packageManager = pkg.packageManager ?? null;
+  } catch {
+    return {
+      ok: false,
+      runtime,
+      enginesBun: null,
+      bunVersionFile: null,
+      packageManager: null,
+      message: `unable to read ${pkgPath}`,
+    };
+  }
+
+  let bunVersionFile: string | null = null;
+  if (await Bun.file(pinPath).exists()) {
+    bunVersionFile = (await Bun.file(pinPath).text()).trim() || null;
+  }
+
+  if (!enginesBun) {
+    return {
+      ok: false,
+      runtime,
+      enginesBun: null,
+      bunVersionFile,
+      packageManager,
+      message: 'package.json missing engines.bun',
+    };
+  }
+
+  const ok = Bun.semver.satisfies(runtime, enginesBun);
+  const parts = [
+    `engines.bun ${enginesBun}`,
+    `runtime ${runtime}`,
+    bunVersionFile ? `.bun-version ${bunVersionFile}` : null,
+    packageManager ? `packageManager ${packageManager}` : null,
+  ].filter(Boolean);
+  return {
+    ok,
+    runtime,
+    enginesBun,
+    bunVersionFile,
+    packageManager,
+    message: ok
+      ? `Bun pin ok · ${parts.join(' · ')}`
+      : `Bun ${runtime} does not satisfy engines.bun ${enginesBun}`,
   };
 }
 
@@ -87,7 +165,15 @@ export async function runPrecommit(args: string[] = Bun.argv.slice(2)): Promise<
   const dryRun = args.includes('--dry-run');
   const environment = readPrecommitEnvironment();
 
-  section('hygiene ‖ harness', true);
+  section('bun pin (.bun-version ‖ engines)', true);
+  const pin = await checkBunPin();
+  if (!pin.ok) {
+    console.error(`❌ ${pin.message}`);
+    return 1;
+  }
+  console.info(`✅ ${pin.message}`);
+
+  section('hygiene ‖ harness');
   const [hygiene, harness] = await Promise.all([
     runCommand(['bun', 'scripts/repo-hygiene.ts', '--staged']),
     runCommand(['bun', 'scripts/pre-commit-harness.ts']),

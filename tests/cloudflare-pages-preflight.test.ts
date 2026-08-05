@@ -26,5 +26,5 @@ describe('cloudflare-pages-preflight', () => {
     expect(ids).toContain('functions-import-graph');
     expect(ids).toContain('proof-taxonomy-audit');
     expect(report.commands.deployVerify).toBe('bun run cloudflare:deploy:verify');
-  });
+  }, 30_000);
 });

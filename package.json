@@ -1,9 +1,9 @@
 {
   "name": "factorywager-enterprise",
   "version": "5.2.0+build.20260723",
-  "packageManager": "bun@1.4.0",
+  "packageManager": "bun@1.3.14",
   "engines": {
-    "bun": ">=1.4.0"
+    "bun": ">=1.3.14"
   },
   "description": "🚀 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
   "workspaces": {
@@ -1573,6 +1573,9 @@
     "showcase:verify": "bun tools/bun-api-showcase/verify.ts --write",
     "integrity:check": "bun lib/monitoring/integrity.ts",
     "ops:health-tick": "bun tools/ops-health-tick.ts",
+    "threads:portfolio": "bun tools/codex-thread-portfolio.ts",
+    "threads:portfolio:apply": "bun tools/codex-thread-portfolio.ts --apply --pins",
+    "threads:portfolio:verify": "bun tools/codex-thread-portfolio.ts --verify",
     "llms:static": "bun tools/llms-static.ts",
     "postinstall": "bun scripts/evict-root-tilde-cache.ts",
     "precommit": "bun scripts/pre-commit.ts",
@@ -1649,6 +1652,9 @@
     "tennis:board:bake": "bun scripts/bake-tennis-board.ts",
     "bookmakers:bake": "bun scripts/bake-bookmakers-board.ts",
     "bookmakers:bake:check": "bun scripts/bake-bookmakers-board.ts --check",
+    "bookmakers:migrate": "bun scripts/migrate-bookmakers-v0.3-to-v0.4.ts",
+    "bookmakers:desk-coverage": "bun scripts/bookmakers-desk-coverage.ts",
+    "bookmakers:prepare-publish": "bun scripts/prepare-bookmakers-publish.ts",
     "images:generate": "bun scripts/images-generate.ts",
     "images:avatars": "bun scripts/images-generate.ts --template=avatar --source=./warehouse/avatars --out=./public/avatars --size=128x128",
     "images:hero:demo": "bun scripts/images-generate.ts --template=hero --source=./warehouse/avatars/demo-player.png --out=./artifacts/phase2-hero.webp --quality=85",
@@ -1865,7 +1871,7 @@
     "concept:registry:sync": "bun scripts/concept-registry-db.ts",
     "concept:registry:check": "bun scripts/concept-registry-db.ts --check",
     "concept:discover": "bun scripts/concept-discover.ts",
-    "partners:governance": "bun run partners:validate && bun run partners:integration:validate && bun run concept:audit -- --strict && bun run glossary:portal:check && bun run partners:event-concepts:check && bun run soft:accounting:check && bun run validate:colors && bun run validate:surface-coverage",
+    "partners:governance": "bun run partners:validate && bun run partners:integration:validate && bun run concept:audit -- --strict && bun run glossary:portal:check && bun run partners:event-concepts:check && bun run soft:accounting:check && bun run validate:colors && bun run validate:surface-coverage && bun run validate:ledger",
     "partners:ledger:append": "bun tools/partners-ops.ts ledger:append",
     "partners:refresh": "bun tools/partners-ops.ts build",
     "onboard:partner": "bun tools/onboard-partner-package.ts",
@@ -1900,6 +1906,8 @@
     "bake:scrape-wire-taxonomy:check": "bun tools/bake-scrape-wire-taxonomy.ts --check",
     "tennis:agent-auth:bake": "bun tools/bake-tennis-agent-auth.ts",
     "tennis:agent-auth:check": "bun tools/bake-tennis-agent-auth.ts --check",
+    "tennis:partner-contracts:bake": "bun tools/bake-tennis-partner-contracts.ts",
+    "tennis:partner-contracts:check": "bun tools/bake-tennis-partner-contracts.ts --check",
     "baseline:sync-regulatory": "bun tools/baseline-sync.ts sync-regulatory",
     "baseline:sync-all": "bun tools/baseline-sync.ts sync-all",
     "baseline:status": "bun tools/baseline-sync.ts status",
@@ -2179,6 +2187,7 @@
     "portal:css:build": "bun tools/build-portal-css.ts",
     "portal:css:build:minify": "bun tools/build-portal-css.ts --minify",
     "portal:css:check": "bun tools/build-portal-css.ts --check",
+    "portal:optimize": "bun tools/optimize-portal-assets.ts",
     "portal:css:score": "bun tools/portal-css-score.ts",
     "portal:css:score:components": "bun tools/portal-css-score.ts --components",
     "portal:css:score:power": "bun tools/portal-css-score.ts --power",

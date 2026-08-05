@@ -22,6 +22,8 @@
 
 import { Database } from 'bun:sqlite';
 import { averageHash, hammingDistance } from './evidence.ts';
+import { reconcileDodAmounts } from './reconcile.ts';
+import { appendDodMetaNdjson } from './meta-log.ts';
 import { requireSecret } from '../security/require-secret.ts';
 import { requireMintableSecret } from '../security/mintable-secret.ts';
 import { DEFAULT_OPS_DB_PATH } from '../operations/db.ts';
@@ -157,9 +159,41 @@ export interface DODSubmission {
   type: 'balance' | 'slip' | 'receipt' | 'id' | 'location' | 'device';
   rawImage: Uint8Array;
   submittedAt: string;
-  telegramMessageId?: number;
+  /** Bot API chat id where the evidence photo landed (supergroup/channel/DM). */
+  telegramChatId?: string | number; // brand-ok — Telegram Bot API chat id (opaque wire)
+  telegramMessageId?: number; // brand-ok — Telegram message id (opaque wire)
+  /** Forum topic id (Accounting / Liquidity) when sent in a package forum. */
+  telegramThreadId?: number; // brand-ok — Telegram forum topic / thread id
+  /** Public @username when the chat is public (optional). */
+  telegramUsername?: string;
+  /** Forum topic label, e.g. accounting. */
+  telegramTopic?: string;
   /** Optional book slug or display name from caption (`/dod balance draftkings`). */
   platformHint?: string;
+  /** Expected stake from play dispatch (optional override). */
+  expectedAmount?: number;
+  /** Partner CODE when ingested from Accounting forum. */
+  partnerCode?: string;
+}
+
+/** Latest stake_actual for an agent from play_distribution fan-out. */
+export function lookupExpectedStake(
+  db: Database,
+  agentId: string // brand-ok — play_distribution node_id / partner CODE
+): number | null {
+  try {
+    const row = db
+      .query(
+        `SELECT stake_actual FROM play_distribution
+         WHERE node_id = $aid AND stake_actual IS NOT NULL
+         ORDER BY received_at DESC
+         LIMIT 1`
+      )
+      .get({ $aid: agentId }) as { stake_actual: number } | null;
+    return row?.stake_actual ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export interface DODVerification {
@@ -234,11 +268,27 @@ export class DODVerifier {
         rejection_reason TEXT
       )
     `);
-    // Migration: encrypted-at-rest flag (Batch 2).
+    // Migrations (additive only).
     const cols = this.db.query('PRAGMA table_info(dod_submissions)').all() as { name: string }[];
-    if (!cols.some(c => c.name === 'encrypted')) {
-      this.db.run('ALTER TABLE dod_submissions ADD COLUMN encrypted INTEGER DEFAULT 0');
-    }
+    const have = new Set(cols.map(c => c.name));
+    const add = (name: string, ddl: string) => {
+      if (!have.has(name)) this.db.run(`ALTER TABLE dod_submissions ADD COLUMN ${ddl}`);
+    };
+    add('encrypted', 'encrypted INTEGER DEFAULT 0');
+    add('telegram_chat_id', 'telegram_chat_id TEXT');
+    add('telegram_message_id', 'telegram_message_id INTEGER');
+    add('telegram_thread_id', 'telegram_thread_id INTEGER');
+    add('telegram_username', 'telegram_username TEXT');
+    add('telegram_topic', 'telegram_topic TEXT');
+    add('image_meta_json', 'image_meta_json TEXT');
+    add('accounting_amount', 'accounting_amount REAL');
+    add('expected_amount', 'expected_amount REAL');
+    add('reconciled', 'reconciled INTEGER DEFAULT 0');
+    this.db.run(`
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_dod_telegram_msg
+      ON dod_submissions (telegram_chat_id, telegram_message_id)
+      WHERE telegram_chat_id IS NOT NULL AND telegram_message_id IS NOT NULL
+    `);
   }
 
   async process(submission: DODSubmission): Promise<DODVerification> {
@@ -344,12 +394,35 @@ export class DODVerifier {
       flagReason: platformCheck.flagReason,
     };
 
+    const { parseBunImageMetaStrip } = await import('./enrich-entry.ts');
+    const imageMeta = parseBunImageMetaStrip({
+      ...metadata,
+      size: submission.rawImage.byteLength,
+      deviceModel: verification.deviceModel,
+    });
+    const accountingAmount = extractAmount(extractedText) ?? null;
+
+    const expectedStake =
+      submission.expectedAmount ?? lookupExpectedStake(this.db, agentId) ?? null;
+    const reconcile = reconcileDodAmounts(expectedStake, accountingAmount);
+    if (reconcile.status === 'mismatch') {
+      tamperScore = Math.min(100, tamperScore + 15);
+      verification.tamperScore = tamperScore;
+      if (status === 'verified' || status === 'pending') {
+        status = 'flagged';
+        verification.status = status;
+      }
+    }
+
     // 9. Persist
     this.db.run(
       `
       INSERT INTO dod_submissions (id, agent_id, type, status, visual_hash, metadata_hash, signature, tamper_score,
-        extracted_text, geo_lat, geo_lng, device_model, s3_path, submitted_at, processed_at, encrypted)
-      VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $text, $lat, $lng, $dev, $s3, $sub, $proc, $enc)
+        extracted_text, geo_lat, geo_lng, device_model, s3_path, submitted_at, processed_at, encrypted,
+        telegram_chat_id, telegram_message_id, telegram_thread_id, telegram_username, telegram_topic,
+        image_meta_json, accounting_amount, expected_amount, reconciled)
+      VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $text, $lat, $lng, $dev, $s3, $sub, $proc, $enc,
+        $tgChat, $tgMsg, $tgThread, $tgUser, $tgTopic, $imgMeta, $amt, $expAmt, $reconciled)
     `,
       {
         $id: dodId,
@@ -368,8 +441,30 @@ export class DODVerifier {
         $sub: submission.submittedAt,
         $proc: verification.processedAt,
         $enc: encrypted ? 1 : 0,
+        $tgChat: submission.telegramChatId != null ? String(submission.telegramChatId) : null,
+        $tgMsg: submission.telegramMessageId ?? null,
+        $tgThread: submission.telegramThreadId ?? null,
+        $tgUser: submission.telegramUsername ?? null,
+        $tgTopic: submission.telegramTopic ?? null,
+        $imgMeta: imageMeta ? JSON.stringify(imageMeta) : null,
+        $amt: accountingAmount,
+        $expAmt: reconcile.expected,
+        $reconciled: reconcile.reconciled ? 1 : 0,
       }
     );
+
+    if (imageMeta) {
+      await appendDodMetaNdjson({
+        at: verification.processedAt,
+        dodId,
+        agentId,
+        type: submission.type,
+        partnerCode: submission.partnerCode ?? null,
+        telegramTopic: submission.telegramTopic ?? null,
+        s3Path,
+        meta: imageMeta,
+      });
+    }
 
     // 9b. Sidecar record — the store is the source of truth; SQLite is a
     // rebuildable index (see rebuildIndex()).
@@ -614,7 +709,8 @@ export class DODVerifier {
           `Type: ${sub.type}`,
           `Tamper: ${ver.tamperScore}/100`,
           `ID: \`${sub.id.slice(0, 8)}\``,
-          `Review: /portal/dod/${sub.id}`,
+          `Review: /portal/dod/`,
+          'Confirm bet/deposit amounts in partner Telegram Accounting (Partners desk).',
         ].join('\n'),
         parse_mode: 'Markdown',
       }),
@@ -696,8 +792,11 @@ export class DODVerifier {
         const { submission: s, verification: v } = record;
         this.db.run(
           `INSERT OR REPLACE INTO dod_submissions (id, agent_id, type, status, visual_hash, metadata_hash, signature, tamper_score,
-            extracted_text, geo_lat, geo_lng, device_model, s3_path, submitted_at, processed_at, encrypted)
-          VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $text, $lat, $lng, $dev, $s3, $sub, $proc, $enc)`,
+            extracted_text, geo_lat, geo_lng, device_model, s3_path, submitted_at, processed_at, encrypted,
+            telegram_chat_id, telegram_message_id, telegram_thread_id, telegram_username, telegram_topic,
+            accounting_amount, expected_amount, reconciled)
+          VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $text, $lat, $lng, $dev, $s3, $sub, $proc, $enc,
+            $tgChat, $tgMsg, $tgThread, $tgUser, $tgTopic, $amt, $expAmt, $reconciled)`,
           {
             $id: s.id,
             $aid: s.agentId,
@@ -715,6 +814,14 @@ export class DODVerifier {
             $sub: s.submittedAt,
             $proc: v.processedAt,
             $enc: record.encrypted ? 1 : 0,
+            $tgChat: s.telegramChatId != null ? String(s.telegramChatId) : null,
+            $tgMsg: s.telegramMessageId ?? null,
+            $tgThread: s.telegramThreadId ?? null,
+            $tgUser: s.telegramUsername ?? null,
+            $tgTopic: s.telegramTopic ?? null,
+            $amt: extractAmount(v.extractedText) ?? null,
+            $expAmt: s.expectedAmount ?? null,
+            $reconciled: 0,
           }
         );
         restored++;

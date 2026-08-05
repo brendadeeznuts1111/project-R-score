@@ -350,7 +350,7 @@ function toggleHelpOverlay() {
       <div class="help-panel">
         <button type="button" class="help-close" aria-label="Close">&times;</button>
         <h2>Keyboard Shortcuts</h2>
-        <table class="help-table">
+        <table class="portal-table help-table">
           <tr><td><kbd>↓</kbd> <kbd>j</kbd></td><td>Next card</td></tr>
           <tr><td><kbd>↑</kbd> <kbd>k</kbd></td><td>Previous card</td></tr>
           <tr><td><kbd>Enter</kbd></td><td>Open detail modal</td></tr>

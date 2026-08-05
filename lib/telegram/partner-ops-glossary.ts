@@ -292,7 +292,7 @@ export function partnerOpsGlossaryConcepts(): PartnerOpsGlossaryConcept[] {
       category: 'ops',
       synonyms: ['global balance', 'partner-level balance'],
       values: ['global'],
-      seeAlso: ['accounting.deposit', 'accounting.settlement'],
+      seeAlso: ['accounting.deposit', 'accounting.settlement', 'accounting.transfer'],
     }),
   ];
 }

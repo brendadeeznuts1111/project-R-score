@@ -46,7 +46,27 @@ describe('surface audit', () => {
     expect(report.bindingMatrix.find(b => b.slug === 'hq')?.status).toBe('missing');
     expect(report.findings.some(f => f.id === 'A-SURFACES-ENV')).toBe(true);
     expect(report.findings.some(f => f.id === 'A-PRIVACY')).toBe(true);
+    expect(report.findings.some(f => f.id === 'A-PRIVACY-ACCOUNTING')).toBe(true);
+    expect(report.findings.some(f => f.id === 'A-ACCOUNTING-CHAT')).toBe(true);
     expect(report.findings.some(f => f.id === 'A-BIND-hq')).toBe(true);
     expect(report.summary.ok).toBe(false);
+  });
+
+  test('skips accounting chat finding when TELEGRAM_ACCOUNTING_CHAT_ID set', () => {
+    const report = auditTelegramSurfaces({
+      knownChats: [],
+      env: {
+        TELEGRAM_BOT_FACTORY: 'x:y',
+        TELEGRAM_OPS_CHAT_ID: '-1001',
+        TELEGRAM_ACCOUNTING_CHAT_ID: '-1002',
+        TELEGRAM_SURFACES: JSON.stringify({
+          hq: '-1001',
+          'all-accounting': '-1002',
+        }),
+      },
+      canReadAllGroupMessages: true,
+    });
+    expect(report.findings.some(f => f.id === 'A-ACCOUNTING-CHAT')).toBe(false);
+    expect(report.findings.some(f => f.id === 'A-PRIVACY-ACCOUNTING')).toBe(false);
   });
 });

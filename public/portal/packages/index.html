@@ -24,9 +24,8 @@
     #pkg-summary-cards .portal-stat { cursor: default; }
     #pkg-summary-cards .portal-stat:hover { transform: none; box-shadow: none; }
     .action-hint { color: var(--text-dim); font-size: 12px; }
-    table.pkg-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    table.pkg-table th, table.pkg-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
-    table.pkg-table th { color: var(--text-dim); font-weight: 500; }
+    /* Base chrome from .portal-table */
+    table.pkg-table { font-size: 13px; }
     .role { font-family: ui-monospace, monospace; font-size: 12px; }
     .role-dormant { color: var(--yellow, #e6b84d); }
     .role-consumed { color: var(--green, #3dd68c); }
@@ -411,7 +410,7 @@
         <span id="pkg-table-count" aria-live="polite">—</span>
       </div>
     </div>
-    <table class="pkg-table" aria-label="Package coupling">
+    <table class="portal-table pkg-table" aria-label="Package coupling">
       <thead>
         <tr><th>Package</th><th>Role</th><th>Score</th><th>Orphans</th><th>KiB</th></tr>
       </thead>
