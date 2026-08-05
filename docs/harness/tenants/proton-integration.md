@@ -154,7 +154,8 @@ bun run proton:check               # inject proof for all templates
 
 ```bash
 bun run env:inventory              # includes packages plane section
-bun run env:inventory:bake         # → /registry/env-inventory.json
+bun run env:inventory:bake         # → /registry/env-inventory.json (+ partnersAccountsPlane v5)
+# Env board also surfaces /registry/vault-health.json — prefer /portal/vault/ over the raw JSON dump
 bun run audit:packages:full        # --vault --env
 bun run audit:packages:env         # --env --vault-gap + dual bake
 bun run audit:packages:vault       # --vault --vault-gap
@@ -162,7 +163,8 @@ bun run audit:packages:vault       # --vault --vault-gap
 
 - Scanners: [`lib/harness/packages-vault-map.ts`](../../../lib/harness/packages-vault-map.ts) · [`scripts/lib/env-inventory-compact.ts`](../../../scripts/lib/env-inventory-compact.ts)
 - Bake: `/registry/packages-graph-map.json` (`map.vault` · `map.env`) · `/registry/env-inventory.json`
-- Boards: `/portal/packages/` · `/portal/env/`
+- Boards: `/portal/packages/` · `/portal/env/` (checklist · vault-health · partner env bindings · partners→accounts outs · vault-map)
+- Partner join: `partnersAccountsPlane` in env-inventory (partners-ops × handshake × vault-map; keys/presence only; dossier links `?partner=CODE`)
 - Never prints secret values — only key names, `pass://` refs, runtime present/missing booleans, and gap flags
 
 Policy: [`scripts/lib/env-secret-policy.ts`](../../../scripts/lib/env-secret-policy.ts) · baseline: [`scripts/env-secret-gap-baseline.json`](../../../scripts/env-secret-gap-baseline.json)
