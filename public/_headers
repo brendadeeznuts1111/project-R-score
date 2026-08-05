@@ -13,7 +13,16 @@
 
 /registry/*.json
   Content-Type: application/json; charset=utf-8
-  Cache-Control: public, max-age=60
+  # Short TTL + revalidate so partner/ops bakes appear quickly on Pages CDN
+  Cache-Control: public, max-age=60, must-revalidate
+
+/registry/bake-manifest.json
+  Content-Type: application/json; charset=utf-8
+  Cache-Control: public, max-age=30, must-revalidate
+
+/registry/tennis/*.json
+  Content-Type: application/json; charset=utf-8
+  Cache-Control: public, max-age=60, must-revalidate
 
 /registry/prediction/*
   Cache-Control: public, max-age=300

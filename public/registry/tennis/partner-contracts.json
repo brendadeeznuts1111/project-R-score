@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 1,
+  "kind": "tennis-partner-contracts",
+  "path": "/registry/tennis/partner-contracts.json",
+  "generatedAt": "2026-08-05T15:57:39.065Z",
+  "source": "offline-join",
+  "runtimeUrl": "https://tennis.factory-wager.com",
+  "contractPaths": {
+    "partnersCapacity": "https://tennis.factory-wager.com/api/v1/partners/capacity",
+    "accountingFinance": "https://tennis.factory-wager.com/api/v1/accounting/finance"
+  },
+  "summary": {
+    "partnerCount": 4,
+    "activeOuts": 7,
+    "totalOuts": 10,
+    "operatorReady": 4,
+    "handshakeOk": 4
+  },
+  "partners": [
+    {
+      "partnerCode": "ASH",
+      "callSign": "ASH-001",
+      "phase": "operator_ready",
+      "activeOuts": 1,
+      "totalOuts": 2,
+      "totalPerBetMaxCents": null,
+      "ledgerRowCount": 0,
+      "balanceDeltaCents": null,
+      "colorHex": null,
+      "handshakeOk": true,
+      "factoryPhase": "operator_ready",
+      "fundStatus": "ready",
+      "incompleteOuts": 0,
+      "partnersHref": "/portal/partners/#partner/ASH",
+      "accountingHref": "/portal/partners/#partner/ASH/accounting",
+      "telegramAccountingHref": "/portal/partners/#partner/ASH/telegram/accounting",
+      "outs": [
+        {
+          "outId": "out-ASH-1",
+          "partnerCode": "ASH",
+          "callSign": "ASH-001",
+          "status": "ready",
+          "bookId": null,
+          "verticalKey": null,
+          "secretsConfigured": null,
+          "perBetMaxCents": null
+        },
+        {
+          "outId": "out-ASH-2",
+          "partnerCode": "ASH",
+          "callSign": "ASH-001",
+          "status": "deferred",
+          "bookId": null,
+          "verticalKey": null,
+          "secretsConfigured": null,
+          "perBetMaxCents": null
+        }
+      ]
+    },
+    {
+      "partnerCode": "BIL",
+      "callSign": "BIL-001",
+      "phase": "operator_ready",
+      "activeOuts": 1,
+      "totalOuts": 1,
+      "totalPerBetMaxCents": null,
+      "ledgerRowCount": 0,
+      "balanceDeltaCents": null,
+      "colorHex": null,
+      "handshakeOk": true,
+      "factoryPhase": "operator_ready",
+      "fundStatus": "ready",
+      "incompleteOuts": 0,
+      "partnersHref": "/portal/partners/#partner/BIL",
+      "accountingHref": "/portal/partners/#partner/BIL/accounting",
+      "telegramAccountingHref": "/portal/partners/#partner/BIL/telegram/accounting",
+      "outs": [
+        {
+          "outId": "out-BIL-1",
+          "partnerCode": "BIL",
+          "callSign": "BIL-001",
+          "status": "ready",
+          "bookId": null,
+          "verticalKey": null,
+          "secretsConfigured": null,
+          "perBetMaxCents": null
+        }
+      ]
+    },
+    {
+      "partnerCode": "NOV",
+      "callSign": "NOV-001",
+      "phase": "operator_ready",
+      "activeOuts": 1,
+      "totalOuts": 2,
+      "totalPerBetMaxCents": null,
+      "ledgerRowCount": 0,
+      "balanceDeltaCents": null,
+      "colorHex": null,
+      "handshakeOk": true,
+      "factoryPhase": "operator_ready",
+      "fundStatus": "ready",
+      "incompleteOuts": 0,
+      "partnersHref": "/portal/partners/#partner/NOV",
+      "accountingHref": "/portal/partners/#partner/NOV/accounting",
+      "telegramAccountingHref": "/portal/partners/#partner/NOV/telegram/accounting",
+      "outs": [
+        {
+          "outId": "out-NOV-1",
+          "partnerCode": "NOV",
+          "callSign": "NOV-001",
+          "status": "ready",
+          "bookId": null,
+          "verticalKey": null,
+          "secretsConfigured": null,
+          "perBetMaxCents": null
+        },
+        {
+          "outId": "out-NOV-2",
+          "partnerCode": "NOV",
+          "callSign": "NOV-001",
+          "status": "deferred",
+          "bookId": null,
+          "verticalKey": null,
+          "secretsConfigured": null,
+          "perBetMaxCents": null
+        }
+      ]
+    },
+    {
+      "partnerCode": "SPEN",
+      "callSign": "SPEN-001",
+      "phase": "operator_ready",
+      "activeOuts": 4,
+      "totalOuts": 5,
+      "totalPerBetMaxCents": null,
+      "ledgerRowCount": 0,
+      "balanceDeltaCents": null,
+      "colorHex": null,
+      "handshakeOk": true,
+      "factoryPhase": "operator_ready",
+      "fundStatus": "ready",
+      "incompleteOuts": 0,
+      "partnersHref": "/portal/partners/#partner/SPEN",
+      "accountingHref": "/portal/partners/#partner/SPEN/accounting",
+      "telegramAccountingHref": "/portal/partners/#partner/SPEN/telegram/accounting",
+      "outs": [
+        {
+          "outId": "out-SPEN-1",
+          "partnerCode": "SPEN",
+          "callSign": "SPEN-001",
+          "status": "ready",
+          "bookId": null,
+          "verticalKey": null,
+          "secretsConfigured": null,
+          "perBetMaxCents": null
+        },
+        {
+          "outId": "out-SPEN-2",
+          "partnerCode": "SPEN",
+          "callSign": "SPEN-001",
+          "status": "ready",
+          "bookId": null,
+          "verticalKey": null,
+          "secretsConfigured": null,
+          "perBetMaxCents": null
+        },
+        {
+          "outId": "out-SPEN-3",
+          "partnerCode": "SPEN",
+          "callSign": "SPEN-001",
+          "status": "ready",
+          "bookId": null,
+          "verticalKey": null,
+          "secretsConfigured": null,
+          "perBetMaxCents": null
+        },
+        {
+          "outId": "out-SPEN-4",
+          "partnerCode": "SPEN",
+          "callSign": "SPEN-001",
+          "status": "ready",
+          "bookId": null,
+          "verticalKey": null,
+          "secretsConfigured": null,
+          "perBetMaxCents": null
+        },
+        {
+          "outId": "out-SPEN-5",
+          "partnerCode": "SPEN",
+          "callSign": "SPEN-001",
+          "status": "deferred",
+          "bookId": null,
+          "verticalKey": null,
+          "secretsConfigured": null,
+          "perBetMaxCents": null
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Offline join from partners-ops.json + telegram-handshake.json (no PARTNER_API_TOKEN)"
+  ]
+}

@@ -434,10 +434,18 @@
         <div class="portal-hero-meta">
           <span id="partners-gate" class="portal-gate" aria-live="polite">…</span>
           <span id="partners-baked" class="portal-baked">loading…</span>
+          <span
+            id="partners-freshness"
+            class="portal-freshness"
+            hidden
+            aria-live="polite"
+            title="Bake-manifest freshness"
+          ></span>
           <div class="portal-source-links" aria-label="Related artifacts">
             <a href="/registry/partners-ops.json">partners-ops.json</a>
             <a href="/registry/telegram-handshake.json">handshake</a>
             <a href="/registry/soft-accounting-export.json">soft export</a>
+            <a href="/registry/bake-manifest.json">bake-manifest</a>
             <a
               href="/portal/glossary/#glossary:telegram.wire"
               data-glossary-concept="telegram.wire"
@@ -1120,6 +1128,7 @@
         normalizePartnerCode,
         summarizePartnerDesk,
       } from '/portal/partners/partners-board.js';
+      import { mountFreshnessBadge } from '/portal/data-freshness.js';
 
       const TELEGRAM_BOT = 'FactoryWagerBot';
 
@@ -2247,6 +2256,23 @@
           if (baked) {
             baked.textContent = `ops ${opsBake.text} · ${ops?.summary?.partners ?? 0} partners · schema ${esc(ops.schema || ops.version || 'v2')}`;
           }
+          void mountFreshnessBadge(
+            $('partners-freshness'),
+            [
+              '/registry/partners-ops.json',
+              '/registry/telegram-handshake.json',
+              '/registry/seat-capital-desk.json',
+              '/registry/soft-accounting-export.json',
+            ],
+            {
+              fallbacks: {
+                '/registry/partners-ops.json': ops?.generatedAt || null,
+                '/registry/telegram-handshake.json': handshake?.generatedAt || null,
+                '/registry/seat-capital-desk.json': seat?.generatedAt || null,
+                '/registry/soft-accounting-export.json': softAccounting?.generatedAt || null,
+              },
+            }
+          );
           $('partners-meta').innerHTML = [
             ['Handshake', hsBake],
             ['Seat desk', seatBake],
