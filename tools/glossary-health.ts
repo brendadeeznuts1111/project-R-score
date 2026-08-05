@@ -5,8 +5,6 @@
 // @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
 // @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
 // @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern
-// @see https://bun.com/docs/api/utils#bun-color — Bun.color
-// @see https://bun.com/docs/api/utils#bun-markdown — Bun.markdown.ansi
 // @see https://developer.mozilla.org/en-US/docs/Web/API/URLPattern — URLPattern named groups
 /**
  * Comprehensive glossary registry health check.
@@ -28,7 +26,7 @@ type GlossaryRegistry = {
   surfaces?: GlossarySurface[];
 };
 
-const LIVE_REGISTRY_URL = 'https://score.factory-wager.com/registry/domain-glossary.json';
+const LIVE_GLOSSARY_URL = 'https://score.factory-wager.com/registry/domain-glossary.json';
 const LOCAL_REGISTRY = new URL('../public/registry/domain-glossary.json', import.meta.url);
 
 function coloredStatus(ok: boolean): string {
@@ -56,7 +54,7 @@ async function loadRegistry(): Promise<GlossaryRegistry> {
   if (Bun.argv.includes('--local')) {
     return (await Bun.file(LOCAL_REGISTRY).json()) as GlossaryRegistry;
   }
-  const res = await fetch(LIVE_REGISTRY_URL, { signal: AbortSignal.timeout(10_000) });
+  const res = await fetch(LIVE_GLOSSARY_URL, { signal: AbortSignal.timeout(10_000) });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return (await res.json()) as GlossaryRegistry;
 }

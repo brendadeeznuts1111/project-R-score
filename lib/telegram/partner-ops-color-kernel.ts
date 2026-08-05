@@ -3,7 +3,6 @@
  * accounting events. Bun.color-validated closed palette.
  *
  * @see https://bun.com/docs/runtime/color#flexible-input
- * @see https://bun.com/docs/runtime/color#output-formats
  * @see lib/telegram/partner-ops-glossary.ts
  */
 
