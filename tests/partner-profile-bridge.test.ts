@@ -158,23 +158,31 @@ describe('partner-profile-bridge', () => {
     }
   );
 
-  test('rejects an invalid lifecycle read from SQLite', () => {
+  test('rejects an invalid lifecycle on single-entity reads; soft-quarantines aggregates', () => {
     const db = openOperationsDb({ path: ':memory:' });
     const nodeId = insertNode(db, { status: 'active' });
+    const goodId = insertNode(db, { name: 'Good', status: 'active' });
     bindPartnerProfile(db, nodeId, { lifecycleStatus: 'active' });
+    bindPartnerProfile(db, goodId, { lifecycleStatus: 'active' });
     db.run('PRAGMA ignore_check_constraints = ON');
     db.run(
       `UPDATE partner_profile_bindings SET lifecycle_status = 'frozen' WHERE tree_node_id = $id`,
       { $id: nodeId }
     );
 
+    // Single-entity paths still fail closed (parse at boundary).
     expect(() => materializePartnerProfile(db, nodeId)).toThrow(
       'Invalid PartnerLifecycleStatus: frozen'
     );
     expect(() => evaluateForNode(db, nodeId, { suggestedStake: 100 })).toThrow(
       'Invalid PartnerLifecycleStatus: frozen'
     );
-    expect(() => queryPartnersSlice(db)).toThrow('Invalid PartnerLifecycleStatus: frozen');
+    // Aggregates soft-quarantine so ops-summary / limits stay up.
+    const slice = queryPartnersSlice(db);
+    expect(slice.bound).toBe(2);
+    expect(slice.invalidLifecycle).toBe(1);
+    expect(slice.byLifecycle.active).toBe(1);
+    expect(slice.recent.every(r => r.lifecycleStatus === 'active')).toBe(true);
     db.close();
   });
 
