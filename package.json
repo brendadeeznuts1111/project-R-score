@@ -1639,6 +1639,7 @@
     "scanner:policy": "bun run portal-cli scanner policy",
     "scanner:estimate": "bun run portal-cli scanner estimate",
     "scanner:doctor": "bun run portal-cli scanner doctor",
+    "agent:odds-dashboard": "bun tools/agent-odds-dashboard-serve.ts",
     "portal:doctor": "bun tools/portal-cli.ts doctor",
     "portal:doctor:verbose": "bun tools/portal-cli.ts doctor --verbose",
     "portal:doctor:full": "bun tools/portal-cli.ts doctor --full",
