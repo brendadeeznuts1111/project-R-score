@@ -185,6 +185,14 @@ Shared layout / status classes in [`public/portal/style.css`](../public/portal/s
 |-------|------|
 | `.portal-page` | Page shell (`max-width: var(--layout-max)`, pad). Aliases: `.health-page`, `.doc-wrap`, `.partner-page`. |
 | `.portal-hero` | In-page title + `.hero-sub` / `.sub` (topbar `.logo-page` stays chrome). |
+| `.portal-hero--card` | Glossary-grade operator hero (radial accent + title + meta row). |
+| `.portal-eyebrow` | Mono uppercase label above hero title. |
+| `.portal-gate` + `.pass`/`.ok`/`.warn`/`.fail`/`.bad` | Bake/audit gate pill with pulse on pass. |
+| `.portal-baked` · `.portal-source-links` | Bake timestamp + artifact deep links. |
+| `.portal-stat-grid` · `.portal-stat` | Clickable metric cards (`ok`/`warn`/`bad`/`muted`/`active`). |
+| `.portal-panel` · `.portal-panel-head` · `.portal-panel-desc` | Section panel + uppercase h2. |
+| `.portal-toolbar` · `.portal-count` · `.portal-clear` | Filter row + result chip + clear. |
+| `.portal-skeleton` · `.portal-error` | Shimmer loading + actionable failure card. |
 | `.portal-section` / `.section` + `.section-sub` | Bordered `h2` + dim description. **No emoji in headings.** |
 | `.portal-card` / `.portal-card-grid` | Metric / panel cards (accent hairline). |
 | `.data-table` + `.table-wrap` | Dark data tables; aliases include `.env-table`, `.ops-table`, `.live-table`, `.doc-table`. |
@@ -193,6 +201,8 @@ Shared layout / status classes in [`public/portal/style.css`](../public/portal/s
 | `.status-text` / `.st-ok` / `.st-warn` / `.st-bad` | Inline status color. |
 | `.portal-actions` + `.btn` / `.btn-primary` | Secondary outline actions. |
 | `.portal-banner` | Status strip + `.dot` (ok/warn/bad). |
+
+Operator boards that already use the raised bar: Concepts · Surfaces · Skills · Env · Glossary · Brands. Prefer these primitives when upgrading Catalog · Bunfig · Console-format · Packages · Doctor.
 
 **Tone contract (only):** `ok → var(--green)` · `warn → var(--yellow)` · `bad → var(--red)` · `neutral → var(--text-dim)`. Do not use Tailwind greens (`#16a34a`) or light badge fills on portal boards.
 
