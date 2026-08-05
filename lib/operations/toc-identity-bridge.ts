@@ -9,9 +9,13 @@
  */
 import { randomUUIDv7 } from 'bun';
 import type { Database } from 'bun:sqlite';
+import {
+  parsePartnerLifecycleStatus,
+  type PartnerLifecycleStatus,
+} from '../partner-profile/schema.ts';
 import type { TocIdentityBridge, TocPartnerBinding } from '../toc-ops/identity.ts';
 import type { TocOpsSnapshot, TocPartner } from '../toc-ops/types.ts';
-import { bindPartnerProfile, type PartnerLifecycleStatus } from './partner-profile-bridge.ts';
+import { bindPartnerProfile } from './partner-profile-bridge.ts';
 import { asTreeNodeId, type TreeNodeId } from '../types/branded/operations.ts';
 
 const DEMO_WARNING =
@@ -198,7 +202,7 @@ function ensureNovPartner(db: Database, now: string): TreeNodeId {
   );
   try {
     bindPartnerProfile(db, asTreeNodeId(id), {
-      lifecycleStatus: 'kyc_pending' as PartnerLifecycleStatus,
+      lifecycleStatus: 'kyc_pending',
     });
   } catch {
     /* binding optional if template missing */
@@ -330,17 +334,16 @@ export function seedTocIdentityBindings(
   };
 }
 
-function lifecycleFor(db: Database, treeNodeId: TreeNodeId): string | null {
+function lifecycleFor(db: Database, treeNodeId: TreeNodeId): PartnerLifecycleStatus | null {
+  let row: { lifecycle_status: string } | null;
   try {
-    const row = db
-      .query(
-        `SELECT lifecycle_status, profile_key FROM partner_profile_bindings WHERE tree_node_id = $id`
-      )
-      .get({ $id: treeNodeId }) as { lifecycle_status: string; profile_key: string } | null;
-    return row?.lifecycle_status ?? null;
+    row = db
+      .query(`SELECT lifecycle_status FROM partner_profile_bindings WHERE tree_node_id = $id`)
+      .get({ $id: treeNodeId }) as { lifecycle_status: string } | null;
   } catch {
     return null;
   }
+  return row ? parsePartnerLifecycleStatus(row.lifecycle_status) : null;
 }
 
 function profileKeyFor(db: Database, treeNodeId: TreeNodeId): string | null {

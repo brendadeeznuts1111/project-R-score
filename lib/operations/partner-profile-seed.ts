@@ -13,13 +13,14 @@
 import { randomUUIDv7 } from 'bun';
 import type { Database } from 'bun:sqlite';
 import { enqueueIdentityChannelEvent, enqueueOpsChannelEvent } from '../channels/outbox.ts';
+import type { PartnerLifecycleStatus } from '../partner-profile/schema.ts';
 import {
   asTreeNodeId,
   type PartnerTemplateId,
   type TreeNodeId,
 } from '../types/branded/operations.ts';
 import { ensurePlatformCoverageSchema } from './platform-coverage.ts';
-import { bindPartnerProfile, type PartnerLifecycleStatus } from './partner-profile-bridge.ts';
+import { bindPartnerProfile } from './partner-profile-bridge.ts';
 import { ensureProvisioningSchema } from '../provisioning/schema.ts';
 import { isOperationsDbEmpty, seedOperationsDemo } from './ops-seed.ts';
 import { seedPredictionDemo } from './prediction-seed.ts';
@@ -34,7 +35,7 @@ export type SeedPartnerProfilesDemoResult = {
   seeded: boolean;
   reason?: string;
   bindings?: number;
-  byLifecycle?: Record<string, number>;
+  byLifecycle?: Partial<Record<PartnerLifecycleStatus, number>>;
   platformAccounts?: number;
   channelEvents?: number;
   provisioningTasks?: number;
@@ -159,7 +160,7 @@ function seedChannelMix(
     treeNodeId: TreeNodeId;
     profileKey: string;
     partnerTemplate: PartnerTemplateId;
-    lifecycleStatus: string;
+    lifecycleStatus: PartnerLifecycleStatus;
   }>,
   force: boolean
 ): number {
@@ -274,12 +275,12 @@ export async function seedPartnerProfilesDemo(
     return { seeded: false, reason: 'no active tree_nodes — run ops:seed first' };
   }
 
-  const byLifecycle: Record<string, number> = {};
+  const byLifecycle: Partial<Record<PartnerLifecycleStatus, number>> = {};
   const bindingRows: Array<{
     treeNodeId: TreeNodeId;
     profileKey: string;
     partnerTemplate: PartnerTemplateId;
-    lifecycleStatus: string;
+    lifecycleStatus: PartnerLifecycleStatus;
   }> = [];
 
   for (let i = 0; i < nodes.length; i++) {

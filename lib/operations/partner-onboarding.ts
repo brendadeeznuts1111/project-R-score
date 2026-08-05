@@ -3,6 +3,7 @@
  * Partner onboarding — assign expert, parent, cut, and template from config + event.
  */
 import type { Database } from 'bun:sqlite';
+import type { PartnerLifecycleStatus } from '../partner-profile/schema.ts';
 import {
   asPartnerTemplateId,
   asTreeNodeId,
@@ -119,7 +120,7 @@ export function onboardPartnerProfile(
   db: Database,
   treeNodeId: TreeNodeId,
   opts?: AssignOnboardingOpts & {
-    lifecycleStatus?: import('./partner-profile-bridge.ts').PartnerLifecycleStatus;
+    lifecycleStatus?: PartnerLifecycleStatus;
   }
 ) {
   const assigned = assignOnboardingDefaults(db, treeNodeId, opts);

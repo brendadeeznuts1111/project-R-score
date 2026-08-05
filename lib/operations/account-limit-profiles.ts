@@ -8,6 +8,10 @@
 import type { Database } from 'bun:sqlite';
 
 import {
+  parsePartnerLifecycleStatus,
+  type PartnerLifecycleStatus,
+} from '../partner-profile/schema.ts';
+import {
   asPartnerProfileKey,
   asStateCode,
   asTreeNodeId,
@@ -90,7 +94,7 @@ export type AccountLimitProfile = {
   /** Partner CODE or call-sign from tree_nodes (e.g. ASH, ASH-001). */
   callSign: string | null;
   parentNodeId: TreeNodeId | null;
-  lifecycleStatus: string | null;
+  lifecycleStatus: PartnerLifecycleStatus | null;
   monitoringStatus: AccountLimitMonitoringStatus;
   tone: AccountLimitTone;
   jurisdiction: {
@@ -144,11 +148,15 @@ type TreeRow = {
   parent_id: string | null; // brand-ok — tree_nodes.parent_id wire
 };
 
-type BindingRow = {
+type BindingRowWire = {
   tree_node_id: string; // brand-ok — partner_profile_bindings.tree_node_id wire
   profile_key: string;
   lifecycle_status: string;
   updated_at: string;
+};
+
+type BindingRow = Omit<BindingRowWire, 'lifecycle_status'> & {
+  lifecycle_status: PartnerLifecycleStatus;
 };
 
 type GeoRow = {
@@ -277,14 +285,18 @@ export function buildAccountLimitProfiles(
   const trees = tableExists(db, 'tree_nodes')
     ? (db.query(`SELECT id, name, type, call_sign, parent_id FROM tree_nodes`).all() as TreeRow[])
     : [];
-  const bindings = tableExists(db, 'partner_profile_bindings')
+  const bindingRows = tableExists(db, 'partner_profile_bindings')
     ? (db
         .query(
           `SELECT tree_node_id, profile_key, lifecycle_status, updated_at
            FROM partner_profile_bindings`
         )
-        .all() as BindingRow[])
+        .all() as BindingRowWire[])
     : [];
+  const bindings: BindingRow[] = bindingRows.map(row => ({
+    ...row,
+    lifecycle_status: parsePartnerLifecycleStatus(row.lifecycle_status),
+  }));
   const geos = tableExists(db, 'partner_geo_profiles')
     ? (db
         .query(`SELECT node_id, state_code, location, zip_code FROM partner_geo_profiles`)
