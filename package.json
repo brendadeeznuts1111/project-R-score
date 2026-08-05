@@ -1906,6 +1906,8 @@
     "bake:scrape-wire-taxonomy:check": "bun tools/bake-scrape-wire-taxonomy.ts --check",
     "tennis:agent-auth:bake": "bun tools/bake-tennis-agent-auth.ts",
     "tennis:agent-auth:check": "bun tools/bake-tennis-agent-auth.ts --check",
+    "tennis:partner-contracts:bake": "bun tools/bake-tennis-partner-contracts.ts",
+    "tennis:partner-contracts:check": "bun tools/bake-tennis-partner-contracts.ts --check",
     "baseline:sync-regulatory": "bun tools/baseline-sync.ts sync-regulatory",
     "baseline:sync-all": "bun tools/baseline-sync.ts sync-all",
     "baseline:status": "bun tools/baseline-sync.ts status",

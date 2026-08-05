@@ -414,11 +414,29 @@ function renderKpis(metrics, regPkgCount, agentAuth) {
         ? ` · ${desk.listedMissingMids} listed incomplete`
         : '')
     : 'from live-matches bake';
+  // Books as of — independent of bake age (can lag days behind board-metrics bake).
+  let booksLabel = '—';
+  let booksSub = 'desk.latestBookAt';
+  let booksTone = 'muted';
+  if (desk?.latestBookAt) {
+    const bookTs = Date.parse(desk.latestBookAt);
+    if (Number.isFinite(bookTs)) {
+      const ageMs = Math.max(0, Date.now() - bookTs);
+      const ageH = Math.floor(ageMs / 3_600_000);
+      const ageD = Math.floor(ageH / 24);
+      booksLabel = ageD >= 2 ? `${ageD}d ago` : ageH >= 1 ? `${ageH}h ago` : 'fresh';
+      booksSub = String(desk.latestBookAt).replace('T', ' ').replace(/\.\d+Z$/, 'Z');
+      booksTone = ageH < 24 ? 'ok' : ageH < 72 ? 'warn' : 'bad';
+    } else {
+      booksLabel = String(desk.latestBookAt).slice(0, 16);
+    }
+  }
   host.innerHTML = [
     statHtml('Source', source, metrics?.note?.slice(0, 48) ?? '', tone === 'ok' ? 'ok' : 'warn'),
     statHtml('Markets', metrics?.markets ?? '—', 'event-store rows', 'muted'),
     statHtml('Book mids', metrics?.midsUsable ?? '—', `${metrics?.bookTicksLatest ?? 0} latest ticks`, 'muted'),
     statHtml('Desk coverage', coverage, coverageSub, desk && Number(desk.coveragePct) >= 70 ? 'ok' : desk && Number(desk.coveragePct) >= 30 ? 'warn' : desk ? 'bad' : 'muted'),
+    statHtml('Books as of', booksLabel, booksSub, booksTone),
     statHtml('Packages', regPkgCount, 'tennis registry', 'muted'),
     statHtml('Registry token', authStatus, authSub, authStatus === 'configured' ? 'ok' : 'warn'),
   ].join('');
