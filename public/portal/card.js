@@ -15,13 +15,19 @@ export function renderCard(name, info) {
   const release = latestVer ? info.releases?.[String(latestVer)] : null;
   const health = computeHealth(release, info.versions?.length || 0);
   const hClass = healthClass(health.score);
-  const isNew = release?.publishedAt && (Date.now() - new Date(release.publishedAt).getTime()) < 7 * 86400000;
+  const isNew =
+    release?.publishedAt && Date.now() - new Date(release.publishedAt).getTime() < 7 * 86400000;
   const depCount = release?.dependencies ? Object.keys(release.dependencies).length : 0;
+  const scope = name.startsWith('@') ? '@' + name.slice(1).split('/')[0] : null;
+  const displayName = scope ? name.slice(scope.length + 1) : name;
 
   return `
     <div class="pkg-card" data-name="${esc(name)}">
       <div class="pkg-card-header">
-        <span class="pkg-name">${esc(name)}${isNew ? ' <span class="pkg-badge-new">NEW</span>' : ''}</span>
+        <span class="pkg-name-wrap">
+          ${scope ? `<span class="pkg-scope filter-chip--scope">${esc(scope)}</span>` : ''}
+          <span class="pkg-name">${esc(displayName)}${isNew ? ' <span class="pkg-badge-new">NEW</span>' : ''}</span>
+        </span>
         <span class="pkg-version">${latestVer ? esc(String(latestVer)) : '—'}</span>
       </div>
       <div class="pkg-health-row">
@@ -32,11 +38,15 @@ export function renderCard(name, info) {
       </div>
       <span class="pkg-type">${esc(release?.type || 'library')}</span>
       ${release?.description ? `<p class="pkg-description">${esc(release.description)}</p>` : ''}
-      ${release?.tags?.length ? `
+      ${
+        release?.tags?.length
+          ? `
         <div class="pkg-tags">
           ${release.tags.map(t => `<span class="pkg-tag">${esc(t)}</span>`).join('')}
         </div>
-      ` : ''}
+      `
+          : ''
+      }
       <div class="pkg-meta">
         <span>${info.versions.length} version(s)</span>
         ${depCount > 0 ? `<span>${depCount} dep(s)</span>` : ''}
@@ -54,7 +64,7 @@ export function renderDetail(name, info) {
   const health = computeHealth(release, info.versions?.length || 0);
 
   return `
-    <div id="detail-overlay" class="detail-overlay" role="dialog" aria-label="${esc(name)} details">
+    <div id="detail-overlay" class="detail-overlay" role="dialog" aria-modal="true" aria-label="${esc(name)} details">
       <div class="detail-panel">
         <button class="detail-close" aria-label="Close">&times;</button>
         <h2 class="detail-name">${esc(name)}</h2>
@@ -80,35 +90,44 @@ export function renderDetail(name, info) {
         <div class="detail-section">
           <h3>Versions</h3>
           <div class="version-list">
-            ${info.versions.map(v => {
-              const vStr = String(v);
-              const tags = Object.entries(info['dist-tags'] || {})
-                .filter(([, tv]) => String(tv) === vStr)
-                .map(([t]) => `<span class="pkg-tag tag-dist">${esc(t)}</span>`)
-                .join('');
-              const vRelease = info.releases?.[vStr];
-              const vDate = vRelease?.publishedAt
-                ? new Date(vRelease.publishedAt).toLocaleDateString()
-                : '';
-              return `<div class="version-row">
+            ${info.versions
+              .map(v => {
+                const vStr = String(v);
+                const tags = Object.entries(info['dist-tags'] || {})
+                  .filter(([, tv]) => String(tv) === vStr)
+                  .map(([t]) => `<span class="pkg-tag tag-dist">${esc(t)}</span>`)
+                  .join('');
+                const vRelease = info.releases?.[vStr];
+                const vDate = vRelease?.publishedAt
+                  ? new Date(vRelease.publishedAt).toLocaleDateString()
+                  : '';
+                return `<div class="version-row">
                 <span class="version-num">v${esc(vStr)}</span>
                 <span class="version-tags">${tags || ''}</span>
                 <span class="version-date">${vDate}</span>
               </div>`;
-            }).join('')}
+              })
+              .join('')}
           </div>
         </div>
 
-        ${release?.dependencies ? `
+        ${
+          release?.dependencies
+            ? `
           <div class="detail-section">
             <h3>Dependencies</h3>
             <div class="dep-list">
-              ${Object.entries(release.dependencies).map(([dep, ver]) =>
-                `<div class="dep-row"><span class="dep-name">${esc(dep)}</span><span class="dep-ver">${esc(ver)}</span></div>`
-              ).join('')}
+              ${Object.entries(release.dependencies)
+                .map(
+                  ([dep, ver]) =>
+                    `<div class="dep-row"><span class="dep-name">${esc(dep)}</span><span class="dep-ver">${esc(ver)}</span></div>`
+                )
+                .join('')}
             </div>
           </div>
-        ` : ''}
+        `
+            : ''
+        }
 
         <div class="detail-section">
           <h3>Tags</h3>
@@ -117,12 +136,16 @@ export function renderDetail(name, info) {
           </div>
         </div>
 
-        ${release?.readme ? `
+        ${
+          release?.readme
+            ? `
           <div class="detail-section">
             <h3>README</h3>
             <div class="detail-readme">${renderSimpleMarkdown(release.readme)}</div>
           </div>
-        ` : ''}
+        `
+            : ''
+        }
 
         <div class="detail-meta">
           <div class="detail-actions">
@@ -147,23 +170,57 @@ export function showDetail(name, info) {
   document.body.insertAdjacentHTML('beforeend', html);
 
   const overlay = document.getElementById('detail-overlay');
-  overlay.querySelector('.detail-close').addEventListener('click', () => overlay.remove());
-  overlay.addEventListener('click', e => {
-    if (e.target === overlay) overlay.remove();
-  });
-  document.addEventListener('keydown', function escClose(e) {
-    if (e.key === 'Escape') {
-      overlay.remove();
-      document.removeEventListener('keydown', escClose);
+  const returnFocus = document.activeElement;
+
+  /** Close the dialog, restore focus to the element that opened it. */
+  function close() {
+    overlay.remove();
+    document.removeEventListener('keydown', escClose);
+    document.removeEventListener('keydown', trapFocus);
+    if (returnFocus && typeof returnFocus.focus === 'function') returnFocus.focus();
+  }
+
+  /** Close on Escape. */
+  function escClose(e) {
+    if (e.key === 'Escape') close();
+  }
+
+  /** Keep Tab cycling inside the dialog while it is open. */
+  function trapFocus(e) {
+    if (e.key !== 'Tab') return;
+    const focusables = overlay.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    if (!focusables.length) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
     }
+  }
+
+  overlay.querySelector('.detail-close').addEventListener('click', close);
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) close();
   });
+  document.addEventListener('keydown', escClose);
+  document.addEventListener('keydown', trapFocus);
+
+  // Move focus into the dialog
+  overlay.querySelector('.detail-close')?.focus();
 
   // Copy install command
   overlay.querySelector('.copy-install-btn')?.addEventListener('click', async () => {
     await copyText(`factory install ${name}`);
     const btn = overlay.querySelector('.copy-install-btn');
     btn.textContent = '✓ Copied!';
-    setTimeout(() => { btn.textContent = '📋 Copy install'; }, 2000);
+    setTimeout(() => {
+      btn.textContent = '📋 Copy install';
+    }, 2000);
   });
 
   // Copy create command
@@ -171,7 +228,9 @@ export function showDetail(name, info) {
     await copyText(`factory create factory-library ${name} --publish`);
     const btn = overlay.querySelector('.copy-create-btn');
     btn.textContent = '✓ Copied!';
-    setTimeout(() => { btn.textContent = '📋 Copy create'; }, 2000);
+    setTimeout(() => {
+      btn.textContent = '📋 Copy create';
+    }, 2000);
   });
 }
 
@@ -184,8 +243,11 @@ function renderSimpleMarkdown(md) {
   let html = esc(md);
 
   // Code fences
-  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) =>
-    `<pre><code class="${lang ? 'language-' + esc(lang) : ''}">${esc(code.trim())}</code></pre>`);
+  html = html.replace(
+    /```(\w*)\n([\s\S]*?)```/g,
+    (_, lang, code) =>
+      `<pre><code class="${lang ? 'language-' + esc(lang) : ''}">${esc(code.trim())}</code></pre>`
+  );
 
   // Inline code
   html = html.replace(/`([^`]+)`/g, (_, code) => `<code>${esc(code)}</code>`);
@@ -199,7 +261,10 @@ function renderSimpleMarkdown(md) {
   html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 
   // Links
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  html = html.replace(
+    /\[([^\]]+)\]\(([^)]+)\)/g,
+    '<a href="$2" target="_blank" rel="noopener">$1</a>'
+  );
 
   // Paragraphs (double newline)
   html = '<p>' + html.split(/\n\n+/).join('</p><p>') + '</p>';
