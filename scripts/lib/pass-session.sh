@@ -75,8 +75,34 @@ pass_template_to_run_env() {
 
 # Agent-reachable SSH vault. factorywager-bot cannot open Personal.
 # Override: PASS_SSH_VAULT. Personal only when using interactive / agent-work PAT.
+# Shell default for monorepo operator SSH (keys duplicated under factorywager).
 pass_ssh_vault_default() {
   printf '%s' "${PASS_SSH_VAULT:-${FACTORYWAGER_VAULT:-factorywager}}"
+}
+
+# PAT-aware SSH vault when a session is active (override PASS_SSH_VAULT wins).
+# Mirrors lib/security/pass-session.ts defaultSshVaultForPat.
+pass_ssh_vault_for_session() {
+  if [ -n "${PASS_SSH_VAULT:-}" ]; then
+    printf '%s' "$PASS_SSH_VAULT"
+    return 0
+  fi
+  if [ -n "${FACTORYWAGER_VAULT:-}" ]; then
+    printf '%s' "$FACTORYWAGER_VAULT"
+    return 0
+  fi
+  local name
+  name="$(pass_session_pat_name 2>/dev/null || true)"
+  case "$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]')" in
+    *factorywager*) printf 'factorywager' ;;
+    *bet-ticker*|*betticker*) printf 'bet-ticker' ;;
+    *cascade*) printf 'cascade-mover' ;;
+    *kalshi*) printf 'kalshi-bot' ;;
+    *partner*) printf 'partners' ;;
+    *cloudflare*) printf 'factorywager' ;;
+    '') printf 'factorywager' ;;
+    *) printf 'Personal' ;;
+  esac
 }
 
 # Export SSH_AUTH_SOCK from Proton Pass daemon sock when unset.

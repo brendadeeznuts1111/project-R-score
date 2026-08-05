@@ -39,7 +39,7 @@ import {
   formatVaultStatusLine,
   type VaultMapBundle,
 } from '../lib/security/vault-map.ts';
-import { probePassSession, templateToRunEnv } from '../lib/security/pass-session.ts';
+import { probePassSession, writeRunEnvTemp } from '../lib/security/pass-session.ts';
 
 const PASS_CLI = 'pass-cli';
 
@@ -760,13 +760,7 @@ async function cmdRun(rest: string[]): Promise<void> {
     if (await file.exists()) {
       const text = await file.text();
       if (text.includes('{{') && text.includes('pass://')) {
-        const tmp = `${Bun.env.TMPDIR ?? '/tmp'}/fw-portal-run-${process.pid}.env`;
-        await Bun.write(tmp, templateToRunEnv(text));
-        try {
-          await Bun.spawn(['chmod', '600', tmp]).exited;
-        } catch {
-          /* ignore */
-        }
+        const tmp = await writeRunEnvTemp(text);
         runBefore[envIdx + 1] = tmp;
         cleanup = tmp;
       }

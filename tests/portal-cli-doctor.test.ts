@@ -318,6 +318,13 @@ describe('portal-cli doctor pure', () => {
       full: true,
       group: 'gates',
       skipLiveAccess: true,
+      passSessionProbe: async () => ({
+        passCliPath: '/usr/bin/pass-cli',
+        ready: true,
+        patName: 'factorywager-bot',
+        sessionHasLock: false,
+        vaults: ['factorywager'],
+      }),
       spawn: async argv => {
         spawned.push(argv.join(' '));
         return 0;
@@ -331,6 +338,7 @@ describe('portal-cli doctor pure', () => {
       ok: true,
       heavy: true,
     });
+    expect(r.checks.find(c => c.id === 'pass-session-ready')?.ok).toBe(true);
   });
 
   test('runBunfigChecks exports machine key / excludes constants', async () => {
@@ -484,6 +492,59 @@ describe('portal-cli doctor pure', () => {
     expect(ci.checks.find(c => c.id === 'catalog-deprecated-flags')).toBeUndefined();
     expect(all.checks.find(c => c.id === 'catalog-deprecated-flags')).toBeTruthy();
     expect(ci.summary.checkCount).toBeLessThan(all.summary.checkCount);
+  });
+
+  test('--full pass-session-ready uses injected probe (PAT matrix)', async () => {
+    const r = await runPortalDoctor({
+      cwd: ROOT,
+      full: true,
+      skipLiveAccess: true,
+      spawn: async () => 0,
+      passSessionProbe: async () => ({
+        passCliPath: '/usr/bin/pass-cli',
+        ready: true,
+        patName: 'factorywager-bot',
+        sessionHasLock: false,
+        vaults: ['factorywager'],
+      }),
+    });
+    const pass = r.checks.find(c => c.id === 'pass-session-ready');
+    expect(pass?.ok).toBe(true);
+    expect(pass?.group).toBe('gates');
+    expect(pass?.envScope).toBe('dev');
+    expect(pass?.message).toMatch(/factorywager-bot/);
+
+    const bad = await runPortalDoctor({
+      cwd: ROOT,
+      full: true,
+      skipLiveAccess: true,
+      spawn: async () => 0,
+      passSessionProbe: async () => ({
+        passCliPath: '/usr/bin/pass-cli',
+        ready: true,
+        patName: 'factorywager-bot',
+        sessionHasLock: false,
+        vaults: [],
+      }),
+    });
+    expect(bad.checks.find(c => c.id === 'pass-session-ready')?.ok).toBe(false);
+
+    const ciFull = await runPortalDoctor({
+      cwd: ROOT,
+      full: true,
+      env: 'ci',
+      skipLiveAccess: true,
+      spawn: async () => 0,
+      passSessionProbe: async () => ({
+        passCliPath: null,
+        ready: false,
+        patName: null,
+        sessionHasLock: null,
+        vaults: [],
+      }),
+    });
+    // pass-session-ready is envScope=dev — dropped under --env ci
+    expect(ciFull.checks.find(c => c.id === 'pass-session-ready')).toBeUndefined();
   });
 
   test('parseDoctorGroup / parseDoctorEnv / filterDoctorByScope', () => {

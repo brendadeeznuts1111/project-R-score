@@ -77,7 +77,7 @@ pass://factorywager/Socket API Key/password
 |-------|---------|-------------------------|------|
 | **Gate (CI)** | `bun test tests/vault-health.test.ts` · `portal-cli vault health` | No | Report-shape + **env→vault inventory** snapshot SSOT in git (`tests/__snapshots__/vault-health.test.ts.snap`). Harness Gates step. |
 | **Intentional drift** | `portal-cli vault health --update` | No | Refresh inventory/shape snaps after you move/rename a mapped item; commit the `.snap`. |
-| **Live bake** | `bun run vault:health:bake` | Yes (agent session) | Cross-check live Proton Pass titles/states vs map; exit 1 on trashed/missing refs **or** `item list` failure (fail-closed — never treat list failure as empty vault). |
+| **Live bake** | `bun run vault:health:bake` | Yes (agent session) | Requires ready session + PAT vault matrix; then cross-check live titles/states vs map; exit 1 on trashed/missing refs **or** `item list` failure (fail-closed — never treat list failure as empty vault). |
 | **Dashboard** | `/portal/vault/` · `public/registry/vault-health.json` | — | Visual summary of the last bake — not the gate. Doctor warns when the bake is **>48h** stale. |
 | **CLI hub** | `/portal/tools/` · `portal-cli dashboard` | No | Command → board matrix, bake freshness, capability subset, copy-CLI. Nav badges from registry JSON (no pass-cli in browser). |
 
@@ -104,7 +104,7 @@ Grounded in [Configuration](https://protonpass.github.io/pass-cli/get-started/co
 | Session proof | `pass-cli info` / `info --output json` (`personal_access_token_name`) | Required by `agent-env.sh` — **`test` is connectivity only** |
 | PAT login | `PROTON_PASS_PERSONAL_ACCESS_TOKEN=pst_…::TOKENKEY pass-cli login` | `.env.pass-tokens` → `agent-env.sh` |
 
-Helpers: [`scripts/lib/pass-session.sh`](../../../scripts/lib/pass-session.sh) (`pass_session_ready`, `pass_template_to_run_env`).
+Helpers: [`scripts/lib/pass-session.sh`](../../../scripts/lib/pass-session.sh) (`pass_session_ready`, `pass_template_to_run_env`, `pass_ssh_vault_for_session`) · TS twin [`lib/security/pass-session.ts`](../../../lib/security/pass-session.ts) (`probePassSession`, `checkPatVaultMatrix`, `writeRunEnvTemp`). Doctor `--full` (dev scope) probes live session + PAT vault matrix.
 
 ### Session recovery (corrupt / missing / zsh)
 

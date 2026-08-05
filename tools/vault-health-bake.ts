@@ -26,6 +26,7 @@ import {
   type VaultLiveItem,
   type VaultRefInput,
 } from '../lib/security/vault-health.ts';
+import { checkPatVaultMatrix, probePassSession } from '../lib/security/pass-session.ts';
 import { capturePassCli } from './portal-secret.ts';
 
 const ROOT = joinPath(import.meta.dir, '..');
@@ -157,6 +158,30 @@ function renderHtml(report: ReturnType<typeof computeVaultHealth>, listFailures:
 }
 
 async function main(): Promise<void> {
+  const session = await probePassSession({ listVaults: true });
+  if (!session.ready) {
+    console.error(
+      'UNHEALTHY: Pass session not ready — source scripts/agent-env.sh factorywager' +
+        (session.infoError ? ` (${session.infoError})` : '')
+    );
+    console.error('Proof: pass-cli info --output json (not `test` alone)');
+    if (!NO_FAIL) process.exit(1);
+  } else {
+    const matrix = checkPatVaultMatrix(session.patName, session.vaults);
+    console.log(
+      `session: PAT=${session.patName} vaults=${session.vaults.join(',') || '(none)'}` +
+        (matrix.expected.length
+          ? ` expected=${matrix.expected.join(',')} matrix=${matrix.ok ? 'ok' : 'MISSING'}`
+          : '')
+    );
+    if (!matrix.ok) {
+      console.error(
+        `UNHEALTHY: PAT "${session.patName}" cannot see expected vault(s): ${matrix.missing.join(', ')}`
+      );
+      if (!NO_FAIL) process.exit(1);
+    }
+  }
+
   const bundle = await buildVaultMapBundle();
   const refs: VaultRefInput[] = bundle.entries
     .filter(e => e.vault && e.item)

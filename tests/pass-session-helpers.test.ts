@@ -99,4 +99,30 @@ describe('pass-session helpers', () => {
     expect(await r.exited).toBe(0);
     expect(stdout.length).toBeGreaterThan(0);
   });
+
+  test('pass_ssh_vault_for_session respects PASS_SSH_VAULT override', async () => {
+    const r = await Bun.spawn(
+      [
+        'bash',
+        '-c',
+        `set -e; . '${HELPERS}'; PASS_SSH_VAULT=Personal pass_ssh_vault_for_session`,
+      ],
+      { stdout: 'pipe' }
+    );
+    expect((await new Response(r.stdout).text()).trim()).toBe('Personal');
+    expect(await r.exited).toBe(0);
+  });
+
+  test('pass_ssh_vault_for_session defaults factorywager without live PAT', async () => {
+    const r = await Bun.spawn(
+      [
+        'bash',
+        '-c',
+        `set -e; unset PASS_SSH_VAULT FACTORYWAGER_VAULT; . '${HELPERS}'; pass_ssh_vault_for_session`,
+      ],
+      { stdout: 'pipe' }
+    );
+    expect((await new Response(r.stdout).text()).trim()).toBe('factorywager');
+    expect(await r.exited).toBe(0);
+  });
 });

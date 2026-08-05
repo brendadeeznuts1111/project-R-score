@@ -1,12 +1,16 @@
 // @see https://bun.com/docs/test
 import { describe, expect, test } from 'bun:test';
+import { unlinkSync } from 'node:fs';
 import {
   PASS_PAT_VAULT_MATRIX,
+  checkPatVaultMatrix,
   defaultSshVaultForPat,
+  expectedVaultsForPatName,
   isPassSessionReady,
   parsePassInfoJson,
   templateToRunEnv,
   vaultNamesFromListJson,
+  writeRunEnvTemp,
 } from '../lib/security/pass-session.ts';
 
 describe('pass-session (TS)', () => {
@@ -55,5 +59,39 @@ describe('pass-session (TS)', () => {
     expect(defaultSshVaultForPat('kalshi-bot')).toBe('kalshi-bot');
     expect(defaultSshVaultForPat('partners-bot')).toBe('partners');
     expect(defaultSshVaultForPat('agent-work')).toBe('Personal');
+  });
+
+  test('expectedVaultsForPatName + checkPatVaultMatrix', () => {
+    expect([...expectedVaultsForPatName('factorywager-bot')]).toEqual(['factorywager']);
+    expect([...expectedVaultsForPatName('cloudflare-bot')].sort()).toEqual([
+      'cloudflare',
+      'factorywager',
+    ]);
+    const ok = checkPatVaultMatrix('factorywager-bot', ['factorywager']);
+    expect(ok.ok).toBe(true);
+    expect(ok.missing).toEqual([]);
+    const bad = checkPatVaultMatrix('factorywager-bot', []);
+    expect(bad.ok).toBe(false);
+    expect(bad.missing).toEqual(['factorywager']);
+    // Extra visible vaults do not fail (unexpected is informational)
+    const extra = checkPatVaultMatrix('factorywager-bot', ['factorywager', 'Personal']);
+    expect(extra.ok).toBe(true);
+    expect(extra.unexpected).toEqual(['Personal']);
+    // Unknown PAT → no expected vaults → ok
+    expect(checkPatVaultMatrix('mystery-pat', ['x']).ok).toBe(true);
+  });
+
+  test('writeRunEnvTemp materializes + chmod; caller deletes', async () => {
+    const dir = `${Bun.env.TMPDIR ?? '/tmp'}`;
+    const path = await writeRunEnvTemp('K={{ pass://factorywager/X/password }}\n', {
+      dir,
+      pid: 424242,
+    });
+    expect(path.endsWith('fw-pass-run-424242.env')).toBe(true);
+    const text = await Bun.file(path).text();
+    expect(text).toContain('K=pass://factorywager/X/password');
+    expect(text).not.toMatch(/\{\{/);
+    unlinkSync(path);
+    expect(await Bun.file(path).exists()).toBe(false);
   });
 });

@@ -186,3 +186,74 @@ export function defaultSshVaultForPat(patName: string | null | undefined): strin
   // Interactive / Personal PAT names (e.g. agent-work)
   return 'Personal';
 }
+
+/** Expected vault names for a PAT display name (from PASS_PAT_VAULT_MATRIX). */
+export function expectedVaultsForPatName(patName: string | null | undefined): readonly string[] {
+  if (!patName) return [];
+  const n = patName.toLowerCase();
+  for (const row of Object.values(PASS_PAT_VAULT_MATRIX)) {
+    if (row.patName.toLowerCase() === n || n.includes(row.patName.toLowerCase())) {
+      return row.vaults;
+    }
+  }
+  // Heuristic fallbacks when PAT title drifts from matrix patName
+  if (n.includes('factorywager')) return PASS_PAT_VAULT_MATRIX.factorywager.vaults;
+  if (n.includes('bet-ticker') || n.includes('betticker'))
+    return PASS_PAT_VAULT_MATRIX['bet-ticker'].vaults;
+  if (n.includes('cascade')) return PASS_PAT_VAULT_MATRIX['cascade-mover'].vaults;
+  if (n.includes('kalshi')) return PASS_PAT_VAULT_MATRIX['kalshi-bot'].vaults;
+  if (n.includes('partner')) return PASS_PAT_VAULT_MATRIX.partners.vaults;
+  if (n.includes('cloudflare')) return PASS_PAT_VAULT_MATRIX.cloudflare.vaults;
+  return [];
+}
+
+export type VaultMatrixCheck = {
+  ok: boolean;
+  expected: string[];
+  visible: string[];
+  missing: string[];
+  unexpected: string[];
+};
+
+/** Compare live `vault list` names against expected vaults for this PAT. */
+export function checkPatVaultMatrix(
+  patName: string | null | undefined,
+  visibleVaults: readonly string[]
+): VaultMatrixCheck {
+  const expected = [...expectedVaultsForPatName(patName)];
+  const visible = [...visibleVaults].sort((a, b) => a.localeCompare(b));
+  if (expected.length === 0) {
+    return { ok: true, expected, visible, missing: [], unexpected: [] };
+  }
+  const vis = new Set(visible.map(v => v.toLowerCase()));
+  const exp = new Set(expected.map(v => v.toLowerCase()));
+  const missing = expected.filter(v => !vis.has(v.toLowerCase()));
+  const unexpected = visible.filter(v => !exp.has(v.toLowerCase()));
+  return {
+    ok: missing.length === 0,
+    expected,
+    visible,
+    missing,
+    unexpected,
+  };
+}
+
+/**
+ * Write inject-style template text to a temp run env (bare pass://), mode 0600.
+ * Caller must delete the path (Bun process.exit skips finally).
+ */
+export async function writeRunEnvTemp(
+  templateText: string,
+  opts?: { dir?: string; pid?: number }
+): Promise<string> {
+  const dir = opts?.dir ?? Bun.env.TMPDIR ?? '/tmp';
+  const pid = opts?.pid ?? process.pid;
+  const path = `${dir.replace(/\/$/, '')}/fw-pass-run-${pid}.env`;
+  await Bun.write(path, templateToRunEnv(templateText));
+  try {
+    await Bun.spawn(['chmod', '600', path]).exited;
+  } catch {
+    /* ignore */
+  }
+  return path;
+}

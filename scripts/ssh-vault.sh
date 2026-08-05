@@ -22,7 +22,8 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=lib/pass-session.sh
 . "$SCRIPT_DIR/lib/pass-session.sh"
 
-VAULT="$(pass_ssh_vault_default)"
+# Resolved after session when possible (PAT → vault); PASS_SSH_VAULT wins.
+VAULT="$(pass_ssh_vault_for_session)"
 
 show_help() {
   echo "SSH Key Vault Manager (pass-cli)"
@@ -36,13 +37,14 @@ show_help() {
   echo "  clear             ssh-add -D"
   echo "  help              This message"
   echo ""
-  echo "Default vault: factorywager (agent PAT). Override PASS_SSH_VAULT=Personal for full-account."
+  echo "Default vault: PAT-aware (factorywager-bot → factorywager). Override PASS_SSH_VAULT=Personal for full-account."
   echo "Troubleshoot: https://protonpass.github.io/pass-cli/help/troubleshoot/"
 }
 
 ensure_agent_session() {
   # shellcheck disable=SC1091
   source "$SCRIPT_DIR/agent-env.sh" factorywager 2>/dev/null || true
+  VAULT="$(pass_ssh_vault_for_session)"
 }
 
 debug_keys() {

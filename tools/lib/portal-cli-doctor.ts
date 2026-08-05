@@ -38,6 +38,11 @@ import {
   INSTALL_LINKER_DOCS,
   probeLockfileConfigVersion,
 } from '../../lib/docs/bun-install-linker-docs.ts';
+import {
+  checkPatVaultMatrix,
+  probePassSession,
+  type PassSessionProbe,
+} from '../../lib/security/pass-session.ts';
 import { joinPath } from '../../scripts/lib/fs-bun.ts';
 import {
   readMachineBunfig,
@@ -163,6 +168,11 @@ export type PortalDoctorOpts = {
    * Distinct from doctor --env ci|dev|all (envScope filter).
    */
   machineEnv?: Record<string, string | undefined>;
+  /**
+   * Inject Pass session probe for tests / offline. When omitted under --full,
+   * runs live `probePassSession({ listVaults: true })` (dev scope).
+   */
+  passSessionProbe?: () => Promise<PassSessionProbe>;
 };
 
 export const GROUP_LABEL: Record<PortalDoctorGroup, string> = {
@@ -603,6 +613,64 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
 
   // 4) Optional full: spawn existing gates (no network assumed)
   if (full) {
+    // Live Pass session + PAT vault matrix (dev-only; skipped under --env ci).
+    // @see https://protonpass.github.io/pass-cli/commands/info/
+    const passProbe =
+      opts.passSessionProbe != null
+        ? await opts.passSessionProbe()
+        : await probePassSession({ listVaults: true });
+    const matrix = checkPatVaultMatrix(passProbe.patName, passProbe.vaults);
+    const passReadyOk = passProbe.ready && matrix.ok;
+    checks.push(
+      withMeta(
+        {
+          id: 'pass-session-ready',
+          level: 'warn',
+          group: 'gates',
+          ok: passReadyOk,
+          message: !passProbe.passCliPath
+            ? 'pass-cli missing — cannot probe session'
+            : !passProbe.ready
+              ? `Pass session not ready${passProbe.infoError ? ` (${passProbe.infoError})` : ''} — source scripts/agent-env.sh factorywager`
+              : !matrix.ok
+                ? `PAT ${passProbe.patName} missing vault(s): ${matrix.missing.join(', ')} (visible: ${passProbe.vaults.join(',') || 'none'})`
+                : `Pass session ready · PAT=${passProbe.patName} vaults=${passProbe.vaults.join(',') || 'none'}`,
+          source: 'https://protonpass.github.io/pass-cli/commands/info/',
+        },
+        {
+          fixCommand: passReadyOk
+            ? undefined
+            : 'source scripts/agent-env.sh factorywager && bun run proton:session:ready',
+          impact: 'Inject/run/bake and SSH agent load require a ready PAT session',
+          autoFixable: false,
+          timeToFix: passReadyOk ? undefined : '1–5 min',
+          envScope: 'dev',
+          heavy: true,
+        }
+      )
+    );
+    if (passProbe.ready && passProbe.sessionHasLock === true) {
+      checks.push(
+        withMeta(
+          {
+            id: 'pass-session-unlocked',
+            level: 'warn',
+            group: 'gates',
+            ok: false,
+            message: 'Pass session has lock — unlock before inject/run (pass-cli unlock)',
+            source: 'https://protonpass.github.io/pass-cli/help/troubleshoot/',
+          },
+          {
+            fixCommand: 'pass-cli unlock',
+            impact: 'Locked sessions fail inject/run until unlocked',
+            autoFixable: false,
+            envScope: 'dev',
+            heavy: true,
+          }
+        )
+      );
+    }
+
     const installVerify = await spawn(bunSpawnArgs(['run', 'install:verify']), { cwd });
     checks.push(
       withMeta(
