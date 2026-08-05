@@ -51,6 +51,10 @@ export type GateDecisionId = BrandedString<'GateDecisionId'>;
 export type OpsChannelEventId = BrandedString<'OpsChannelEventId'>;
 /** Immutable issued limit-forecast identity. */
 export type LimitForecastIssueId = BrandedString<'LimitForecastIssueId'>;
+/** Synthetic or live odds event identity. */
+export type EventId = BrandedString<'EventId'>;
+/** Detected betting-edge opportunity identity. */
+export type EdgeId = BrandedString<'EdgeId'>;
 /** Canonical sportsbook slug used by limit-policy and scrape registries. */
 export type SportsbookId = BrandedString<'SportsbookId'>;
 /**
@@ -88,6 +92,8 @@ const outId = defineBrandConstructors('OutId');
 const gateDecisionId = defineBrandConstructors('GateDecisionId');
 const opsChannelEventId = defineBrandConstructors('OpsChannelEventId');
 const limitForecastIssueId = defineBrandConstructors('LimitForecastIssueId');
+const eventId = defineBrandConstructors('EventId');
+const edgeId = defineBrandConstructors('EdgeId');
 
 export const asOperationId = operation.as;
 export const tryOperationId = operation.try;
@@ -183,6 +189,14 @@ export const parseOpsChannelEventId = opsChannelEventId.parse;
 export const asLimitForecastIssueId = limitForecastIssueId.as;
 export const tryLimitForecastIssueId = limitForecastIssueId.try;
 export const parseLimitForecastIssueId = limitForecastIssueId.parse;
+
+export const asEventId = eventId.as;
+export const tryEventId = eventId.try;
+export const parseEventId = eventId.parse;
+
+export const asEdgeId = edgeId.as;
+export const tryEdgeId = edgeId.try;
+export const parseEdgeId = edgeId.parse;
 
 const SPORTSBOOK_ID_VALIDATION = {
   shape: 'pattern',
@@ -448,6 +462,20 @@ export const OPERATIONS_BRAND_SPECS = [
     tiers: ['as', 'try', 'parse'],
     mint: ['system-internal'],
     description: 'Immutable issued limit forecast identity',
+  },
+  {
+    name: 'EventId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Synthetic or live odds event identity',
+  },
+  {
+    name: 'EdgeId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Detected betting-edge opportunity identity',
   },
   {
     name: 'SportsbookId',

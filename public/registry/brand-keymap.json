@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-04T20:37:29.099Z",
+  "generatedAt": "2026-08-05T23:51:15.174Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -12,12 +12,12 @@
     "colorKernel": "public/portal/theme.jsonc"
   },
   "summary": {
-    "brands": 67,
+    "brands": 69,
     "domains": 9,
-    "ids": 61,
+    "ids": 63,
     "keys": 1,
     "codes": 5,
-    "covered": 45,
+    "covered": 47,
     "referencedUnconstructed": 7,
     "unused": 15,
     "cataloguedProjects": 35,
@@ -87,7 +87,7 @@
     {
       "name": "operations",
       "module": "lib/types/branded/operations.ts",
-      "brandCount": 27,
+      "brandCount": 29,
       "colorKey": "accent",
       "color": "#58a6ff",
       "tone": "info"
@@ -160,11 +160,11 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 23,
+        "references": 27,
         "constructors": {
           "as": 8,
           "try": 0,
-          "parse": 0
+          "parse": 1
         },
         "guards": 0,
         "files": [
@@ -174,13 +174,14 @@
           "lib/identity/impersonate.ts",
           "lib/security/secret-audit-logger.ts",
           "lib/security/zero-trust-manager.ts",
-          "projects/active/factorywager/registry/packages/dev-dashboard/src/api/routes.ts"
+          "projects/active/factorywager/registry/packages/dev-dashboard/src/api/routes.ts",
+          "tools/codex-thread-portfolio.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 21,
-            "constructionCalls": 8,
+            "references": 25,
+            "constructionCalls": 9,
             "guardCalls": 0,
             "files": [
               "lib/core/fw-types.ts",
@@ -188,7 +189,8 @@
               "lib/identity/identity.ts",
               "lib/identity/impersonate.ts",
               "lib/security/secret-audit-logger.ts",
-              "lib/security/zero-trust-manager.ts"
+              "lib/security/zero-trust-manager.ts",
+              "tools/codex-thread-portfolio.ts"
             ]
           },
           "projects": {
@@ -358,7 +360,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 20,
+        "references": 23,
         "constructors": {
           "as": 4,
           "try": 0,
@@ -367,19 +369,23 @@
         "guards": 0,
         "files": [
           "lib/ai/ai-operations-manager.ts",
+          "lib/concept-registry/schema.ts",
           "lib/core/structured-logger.ts",
+          "lib/docs/bun-brand-usages.ts",
           "lib/verification/pages-edge-weave.ts",
           "tools/concept-inventory.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 20,
+            "references": 23,
             "constructionCalls": 4,
             "guardCalls": 0,
             "files": [
               "lib/ai/ai-operations-manager.ts",
+              "lib/concept-registry/schema.ts",
               "lib/core/structured-logger.ts",
+              "lib/docs/bun-brand-usages.ts",
               "lib/verification/pages-edge-weave.ts",
               "tools/concept-inventory.ts"
             ]
@@ -640,7 +646,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 14,
+        "references": 16,
         "constructors": {
           "as": 5,
           "try": 0,
@@ -648,6 +654,7 @@
         },
         "guards": 0,
         "files": [
+          "lib/docs/bun-brand-usages.ts",
           "lib/identity/identity.ts",
           "lib/identity/timeline.ts",
           "lib/security/zero-trust-manager.ts"
@@ -655,10 +662,11 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 14,
+            "references": 16,
             "constructionCalls": 5,
             "guardCalls": 0,
             "files": [
+              "lib/docs/bun-brand-usages.ts",
               "lib/identity/identity.ts",
               "lib/identity/timeline.ts",
               "lib/security/zero-trust-manager.ts"
@@ -840,7 +848,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 14,
+        "references": 16,
         "constructors": {
           "as": 10,
           "try": 0,
@@ -848,6 +856,7 @@
         },
         "guards": 0,
         "files": [
+          "lib/docs/bun-brand-usages.ts",
           "lib/identity/http.ts",
           "lib/identity/identity.ts",
           "lib/identity/impersonate.ts",
@@ -856,10 +865,11 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 14,
+            "references": 16,
             "constructionCalls": 10,
             "guardCalls": 0,
             "files": [
+              "lib/docs/bun-brand-usages.ts",
               "lib/identity/http.ts",
               "lib/identity/identity.ts",
               "lib/identity/impersonate.ts",
@@ -1034,7 +1044,7 @@
         "status": "covered",
         "references": 4,
         "constructors": {
-          "as": 20,
+          "as": 41,
           "try": 0,
           "parse": 0
         },
@@ -1049,7 +1059,7 @@
           "spine": {
             "status": "covered",
             "references": 4,
-            "constructionCalls": 20,
+            "constructionCalls": 41,
             "guardCalls": 0,
             "files": [
               "lib/docs/bun-brand-contract.ts",
@@ -1613,7 +1623,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 16,
+        "references": 18,
         "constructors": {
           "as": 3,
           "try": 0,
@@ -1629,7 +1639,7 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 16,
+            "references": 18,
             "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
@@ -1682,23 +1692,25 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 8,
+        "references": 11,
         "constructors": {
           "as": 0,
           "try": 0,
-          "parse": 2
+          "parse": 3
         },
         "guards": 0,
         "files": [
+          "lib/dod/telegram-accounting-ingest.ts",
           "lib/dod/verifier.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 8,
-            "constructionCalls": 2,
+            "references": 11,
+            "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
+              "lib/dod/telegram-accounting-ingest.ts",
               "lib/dod/verifier.ts"
             ]
           },
@@ -1745,24 +1757,28 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 4,
+        "references": 9,
         "constructors": {
-          "as": 6,
-          "try": 0,
+          "as": 14,
+          "try": 2,
           "parse": 0
         },
         "guards": 0,
         "files": [
-          "lib/ai/anomaly-detector.ts"
+          "lib/ai/anomaly-detector.ts",
+          "lib/operator-research/edge-engine.ts",
+          "tools/agent-odds-dashboard-serve.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 4,
-            "constructionCalls": 6,
+            "references": 9,
+            "constructionCalls": 16,
             "guardCalls": 0,
             "files": [
-              "lib/ai/anomaly-detector.ts"
+              "lib/ai/anomaly-detector.ts",
+              "lib/operator-research/edge-engine.ts",
+              "tools/agent-odds-dashboard-serve.ts"
             ]
           },
           "projects": {
@@ -2473,17 +2489,18 @@
       ],
       "coverage": {
         "status": "covered",
-        "references": 281,
+        "references": 287,
         "constructors": {
-          "as": 104,
+          "as": 105,
           "try": 2,
-          "parse": 12
+          "parse": 13
         },
         "guards": 0,
         "files": [
           "lib/accounts/accounts.ts",
           "lib/accounts/automation.ts",
           "lib/channels/outbox.ts",
+          "lib/docs/bun-brand-usages.ts",
           "lib/dod/verifier.ts",
           "lib/experiments/cluster.ts",
           "lib/experiments/design.ts",
@@ -2491,19 +2508,19 @@
           "lib/experiments/outcomes.ts",
           "lib/experiments/runner.ts",
           "lib/experiments/switchback.ts",
-          "lib/http/public-routes.ts",
-          "lib/identity/anomaly.ts"
+          "lib/http/public-routes.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 281,
-            "constructionCalls": 118,
+            "references": 287,
+            "constructionCalls": 120,
             "guardCalls": 0,
             "files": [
               "lib/accounts/accounts.ts",
               "lib/accounts/automation.ts",
               "lib/channels/outbox.ts",
+              "lib/docs/bun-brand-usages.ts",
               "lib/dod/verifier.ts",
               "lib/experiments/cluster.ts",
               "lib/experiments/design.ts",
@@ -2511,8 +2528,7 @@
               "lib/experiments/outcomes.ts",
               "lib/experiments/runner.ts",
               "lib/experiments/switchback.ts",
-              "lib/http/public-routes.ts",
-              "lib/identity/anomaly.ts"
+              "lib/http/public-routes.ts"
             ]
           },
           "projects": {
@@ -2622,7 +2638,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 2,
+        "references": 4,
         "constructors": {
           "as": 1,
           "try": 0,
@@ -2630,15 +2646,17 @@
         },
         "guards": 0,
         "files": [
+          "lib/docs/bun-brand-usages.ts",
           "lib/operations/rail-limits.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 2,
+            "references": 4,
             "constructionCalls": 1,
             "guardCalls": 0,
             "files": [
+              "lib/docs/bun-brand-usages.ts",
               "lib/operations/rail-limits.ts"
             ]
           },
@@ -2685,7 +2703,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 8,
+        "references": 10,
         "constructors": {
           "as": 1,
           "try": 0,
@@ -2693,16 +2711,18 @@
         },
         "guards": 0,
         "files": [
-          "lib/ai/ai-operations-manager.ts"
+          "lib/ai/ai-operations-manager.ts",
+          "lib/docs/bun-brand-usages.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 8,
+            "references": 10,
             "constructionCalls": 1,
             "guardCalls": 0,
             "files": [
-              "lib/ai/ai-operations-manager.ts"
+              "lib/ai/ai-operations-manager.ts",
+              "lib/docs/bun-brand-usages.ts"
             ]
           },
           "projects": {
@@ -2749,7 +2769,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 32,
+        "references": 34,
         "constructors": {
           "as": 3,
           "try": 0,
@@ -2757,6 +2777,7 @@
         },
         "guards": 0,
         "files": [
+          "lib/docs/bun-brand-usages.ts",
           "lib/experiments/cluster.ts",
           "lib/experiments/design.ts",
           "lib/experiments/engine.ts",
@@ -2768,10 +2789,11 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 32,
+            "references": 34,
             "constructionCalls": 13,
             "guardCalls": 0,
             "files": [
+              "lib/docs/bun-brand-usages.ts",
               "lib/experiments/cluster.ts",
               "lib/experiments/design.ts",
               "lib/experiments/engine.ts",
@@ -2823,7 +2845,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 3,
+        "references": 5,
         "constructors": {
           "as": 6,
           "try": 0,
@@ -2831,16 +2853,18 @@
         },
         "guards": 0,
         "files": [
+          "lib/docs/bun-brand-usages.ts",
           "lib/experiments/engine.ts",
           "lib/experiments/switchback.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 3,
+            "references": 5,
             "constructionCalls": 6,
             "guardCalls": 0,
             "files": [
+              "lib/docs/bun-brand-usages.ts",
               "lib/experiments/engine.ts",
               "lib/experiments/switchback.ts"
             ]
@@ -2887,7 +2911,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 0,
+        "references": 2,
         "constructors": {
           "as": 2,
           "try": 0,
@@ -2895,15 +2919,17 @@
         },
         "guards": 0,
         "files": [
+          "lib/docs/bun-brand-usages.ts",
           "lib/experiments/engine.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 0,
+            "references": 2,
             "constructionCalls": 2,
             "guardCalls": 0,
             "files": [
+              "lib/docs/bun-brand-usages.ts",
               "lib/experiments/engine.ts"
             ]
           },
@@ -3092,24 +3118,28 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 2,
+        "references": 5,
         "constructors": {
           "as": 1,
-          "try": 0,
+          "try": 1,
           "parse": 0
         },
         "guards": 0,
         "files": [
-          "lib/partner-profile/register.ts"
+          "lib/partner-profile/register.ts",
+          "scripts/lib/partners-env-join.ts",
+          "scripts/validate-partner-dashboard-plan.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 2,
-            "constructionCalls": 1,
+            "references": 5,
+            "constructionCalls": 2,
             "guardCalls": 0,
             "files": [
-              "lib/partner-profile/register.ts"
+              "lib/partner-profile/register.ts",
+              "scripts/lib/partners-env-join.ts",
+              "scripts/validate-partner-dashboard-plan.ts"
             ]
           },
           "projects": {
@@ -3154,7 +3184,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 2,
+        "references": 4,
         "constructors": {
           "as": 4,
           "try": 0,
@@ -3162,6 +3192,7 @@
         },
         "guards": 0,
         "files": [
+          "lib/docs/bun-brand-usages.ts",
           "lib/operations/ops-loop-gate-backfill.ts",
           "lib/operations/partner-profile-bridge.ts",
           "lib/operations/play-dispatcher.ts"
@@ -3169,10 +3200,11 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 2,
+            "references": 4,
             "constructionCalls": 4,
             "guardCalls": 0,
             "files": [
+              "lib/docs/bun-brand-usages.ts",
               "lib/operations/ops-loop-gate-backfill.ts",
               "lib/operations/partner-profile-bridge.ts",
               "lib/operations/play-dispatcher.ts"
@@ -3220,7 +3252,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 2,
+        "references": 4,
         "constructors": {
           "as": 1,
           "try": 0,
@@ -3229,17 +3261,19 @@
         "guards": 0,
         "files": [
           "lib/channels/ops-channel-event.ts",
-          "lib/channels/outbox.ts"
+          "lib/channels/outbox.ts",
+          "lib/docs/bun-brand-usages.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 2,
+            "references": 4,
             "constructionCalls": 1,
             "guardCalls": 0,
             "files": [
               "lib/channels/ops-channel-event.ts",
-              "lib/channels/outbox.ts"
+              "lib/channels/outbox.ts",
+              "lib/docs/bun-brand-usages.ts"
             ]
           },
           "projects": {
@@ -3317,6 +3351,134 @@
       }
     },
     {
+      "name": "EventId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Synthetic or live odds event identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asEventId",
+        "try": "tryEventId",
+        "parse": "parseEventId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isEventId",
+      "shortName": "eventId",
+      "envName": "EVENT_ID",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 4,
+        "constructors": {
+          "as": 1,
+          "try": 2,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/operator-research/edge-engine.ts",
+          "tools/agent-odds-dashboard-serve.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 4,
+            "constructionCalls": 3,
+            "guardCalls": 0,
+            "files": [
+              "lib/operator-research/edge-engine.ts",
+              "tools/agent-odds-dashboard-serve.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "EdgeId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Detected betting-edge opportunity identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asEdgeId",
+        "try": "tryEdgeId",
+        "parse": "parseEdgeId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isEdgeId",
+      "shortName": "edgeId",
+      "envName": "EDGE_ID",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 2,
+        "constructors": {
+          "as": 3,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/operator-research/edge-engine.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 2,
+            "constructionCalls": 3,
+            "guardCalls": 0,
+            "files": [
+              "lib/operator-research/edge-engine.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
       "name": "SportsbookId",
       "domain": "operations",
       "tiers": [
@@ -3352,14 +3514,16 @@
       ],
       "coverage": {
         "status": "covered",
-        "references": 37,
+        "references": 59,
         "constructors": {
-          "as": 48,
-          "try": 0,
-          "parse": 6
+          "as": 49,
+          "try": 1,
+          "parse": 16
         },
         "guards": 0,
         "files": [
+          "lib/bookmakers/desk-coverage.ts",
+          "lib/bookmakers/merged-registry.ts",
           "lib/operations/baseline-sportsbook-policies.ts",
           "lib/operations/phone-sportsbook-journal.ts",
           "lib/operations/scrapers/book-scrape-agent.ts",
@@ -3369,17 +3533,17 @@
           "lib/operations/scrapers/books/caesars.ts",
           "lib/operations/scrapers/books/circa.ts",
           "lib/operations/scrapers/books/draftkings.ts",
-          "lib/operations/scrapers/books/espnbet.ts",
-          "lib/operations/scrapers/books/fanatics.ts",
-          "lib/operations/scrapers/books/fanduel.ts"
+          "lib/operations/scrapers/books/espnbet.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 37,
-            "constructionCalls": 54,
+            "references": 59,
+            "constructionCalls": 66,
             "guardCalls": 0,
             "files": [
+              "lib/bookmakers/desk-coverage.ts",
+              "lib/bookmakers/merged-registry.ts",
               "lib/operations/baseline-sportsbook-policies.ts",
               "lib/operations/phone-sportsbook-journal.ts",
               "lib/operations/scrapers/book-scrape-agent.ts",
@@ -3389,9 +3553,7 @@
               "lib/operations/scrapers/books/caesars.ts",
               "lib/operations/scrapers/books/circa.ts",
               "lib/operations/scrapers/books/draftkings.ts",
-              "lib/operations/scrapers/books/espnbet.ts",
-              "lib/operations/scrapers/books/fanatics.ts",
-              "lib/operations/scrapers/books/fanduel.ts"
+              "lib/operations/scrapers/books/espnbet.ts"
             ]
           },
           "projects": {
@@ -3671,9 +3833,9 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 21,
+        "references": 20,
         "constructors": {
-          "as": 9,
+          "as": 10,
           "try": 0,
           "parse": 0
         },
@@ -3694,8 +3856,8 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 21,
-            "constructionCalls": 9,
+            "references": 20,
+            "constructionCalls": 10,
             "guardCalls": 0,
             "files": [
               "lib/accounts/account-r2-store.ts",
@@ -3950,9 +4112,9 @@
         "status": "covered",
         "references": 40,
         "constructors": {
-          "as": 3,
+          "as": 2,
           "try": 4,
-          "parse": 0
+          "parse": 1
         },
         "guards": 0,
         "files": [
@@ -4173,9 +4335,9 @@
         "status": "covered",
         "references": 14,
         "constructors": {
-          "as": 4,
+          "as": 3,
           "try": 0,
-          "parse": 0
+          "parse": 1
         },
         "guards": 0,
         "files": [
@@ -4499,10 +4661,10 @@
         "wire-input",
         "system-internal"
       ],
-      "description": "Backend family shortcode (cloudflare-pages|cloudflared|github-pages|helpscout|none|unknown)",
+      "description": "Backend family shortcode (cloudflare-pages|cloudflare-worker|cloudflared|github-pages|helpscout|none|unknown)",
       "validation": {
         "shape": "pattern",
-        "pattern": "^(?:cloudflare-pages|cloudflared|github-pages|helpscout|none|unknown)$",
+        "pattern": "^(?:cloudflare-pages|cloudflare-worker|cloudflared|github-pages|helpscout|none|unknown)$",
         "flags": "",
         "ingressNormalization": "trim"
       },

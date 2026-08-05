@@ -27,6 +27,8 @@ import type {
   DeploymentId,
   DocumentId,
   DomId,
+  EdgeId,
+  EventId,
   FeedId,
   HostId,
   IdentityId,
@@ -74,6 +76,8 @@ import {
   asDocumentId,
   asDomId,
   asDocTokenId,
+  asEdgeId,
+  asEventId,
   asExperimentAssignmentId,
   asExperimentId,
   asExperimentVariantId,
@@ -281,7 +285,7 @@ if (isBrandedValue('SessionId', guardInput)) {
   void guardedSession;
 }
 
-// ─── 6. Aggregate unions cover the complete 61-value catalog (55 IDs + codes) ─
+// ─── 6. Aggregate unions cover the complete 69-value catalog (63 IDs + key/codes) ─
 
 const everyId: readonly AnyId[] = [
   asSessionId('s'),
@@ -325,6 +329,8 @@ const everyId: readonly AnyId[] = [
   asPartnerTemplateId('template'),
   asGateDecisionId('gate'),
   asOpsChannelEventId('event'),
+  asEventId('event-1'),
+  asEdgeId('edge-1'),
   asSportsbookId('draftkings'),
   asPortalTenantId('factory'),
   asTelegramUserId('telegram-user'),

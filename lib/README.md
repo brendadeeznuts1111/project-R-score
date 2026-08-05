@@ -72,6 +72,7 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | [`harness/`](./harness/) | Harness proof paths | `proof.ts` |
 | [`macros/`](./macros/) | Bundle-time Bun macros (git commit · repo parts) | `git-commit.ts` · `github-repository.ts` |
 | [`mcp/`](./mcp/) | MCP / domain helpers | `stdio-jsonrpc.ts` |
+| [`operator-research/`](./operator-research/) | Typed operator research and edge detection | `edge-engine.ts` |
 | [`package/`](./package/) | Package manager graph helpers | `package-manager.ts` |
 | [`performance/`](./performance/) | Cache / memory helpers | `cache-manager.ts` |
 | [`r2/`](./r2/) | R2 storage and analytics | `r2-storage-enhanced.ts` |
