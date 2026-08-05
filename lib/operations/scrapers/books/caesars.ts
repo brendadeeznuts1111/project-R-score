@@ -1,4 +1,4 @@
-// @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortController
+// @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortSignal.timeout
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Caesars Tier 4 scrape agent (fixture-first; American Wagering live path).
@@ -127,11 +127,9 @@ export async function fetchCaesarsBetsConfiguration(opts?: {
 }): Promise<CaesarsLiveFetchResult> {
   const location = opts?.location ?? locationFromEnv();
   const url = opts?.url ?? caesarsLimitCandidateUrl(location);
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), opts?.timeoutMs ?? 12_000);
   try {
     const response = await fetch(url, {
-      signal: controller.signal,
+      signal: AbortSignal.timeout(opts?.timeoutMs ?? 12_000),
       headers: buildLiveHeaders(),
     });
     const contentType = response.headers.get('content-type') ?? '';
@@ -195,8 +193,6 @@ export async function fetchCaesarsBetsConfiguration(opts?: {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return { kind: 'network', url, status: null, data: null, detail: message };
-  } finally {
-    clearTimeout(timer);
   }
 }
 

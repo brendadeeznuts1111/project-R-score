@@ -12,6 +12,7 @@
  *   #telegram:code:topic.
  */
 
+import { base64UrlToUtf8, utf8ToBase64Url } from '../bytes-base64.ts';
 import type { PartnerOpsPhase } from '../telegram/partner-ops-registry.ts';
 import { partnerHash } from './partner-routes.ts';
 import {
@@ -49,10 +50,7 @@ export function telegramDeepLink(
   const code = partnerCode.trim().toUpperCase();
   if (!BOT_USERNAME_RE.test(username)) throw new Error('Invalid Telegram bot username');
   if (!PARTNER_CODE_RE.test(code)) throw new Error('Invalid partner code');
-  const payload = btoa(`${code}:${topic}`)
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/g, '');
+  const payload = utf8ToBase64Url(`${code}:${topic}`);
   return `https://t.me/${username}?start=${payload}`;
 }
 
@@ -63,9 +61,7 @@ export function decodeTelegramStartPayload(
   const token = String(raw || '').trim();
   if (!token || token.startsWith('link_')) return null;
   try {
-    const pad = token.length % 4 === 0 ? '' : '='.repeat(4 - (token.length % 4));
-    const b64 = token.replace(/-/g, '+').replace(/_/g, '/') + pad;
-    const decoded = atob(b64);
+    const decoded = base64UrlToUtf8(token);
     const colon = decoded.indexOf(':');
     if (colon < 0) return null;
     const code = decoded.slice(0, colon).trim().toUpperCase();

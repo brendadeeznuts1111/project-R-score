@@ -1,4 +1,4 @@
-// @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortController
+// @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortSignal.timeout
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * FanDuel Tier 4 scrape agent (same loop as DraftKings).
@@ -89,10 +89,8 @@ export function scrapeFanDuelHtmlStub(): FanDuelAgentResult {
 }
 
 async function fetchLiveJson(timeoutMs: number): Promise<unknown | null> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const response = await fetch(FANDUEL_LIVE_URL, { signal: controller.signal });
+    const response = await fetch(FANDUEL_LIVE_URL, { signal: AbortSignal.timeout(timeoutMs) });
     if (!response.ok) {
       console.warn(`[fanduel-agent] live HTTP ${response.status}`);
       return null;
@@ -102,8 +100,6 @@ async function fetchLiveJson(timeoutMs: number): Promise<unknown | null> {
     const message = error instanceof Error ? error.message : String(error);
     console.warn(`[fanduel-agent] live error: ${message}`);
     return null;
-  } finally {
-    clearTimeout(timer);
   }
 }
 

@@ -4,10 +4,6 @@
 /**
  * Shared vault-gap status — used by vault:gap:status, secret-ratchet tests, vault CLI.
  */
-// Sync fs for baseline/template probes in test/CLI paths (Bun.file is async-only).
-// eslint-disable-next-line no-restricted-imports -- sync gap list for bun:test + status
-import { existsSync, readFileSync } from 'node:fs';
-
 import { joinPath } from '../../lib/path-bun.ts';
 import {
   isMintableSecretKey,
@@ -15,6 +11,7 @@ import {
   mintedSecretPath,
   MINTABLE_SECRET_KEYS,
 } from '../../lib/security/mintable-secret.ts';
+import { fileExistsSync, readJsonSync, readTextSync } from './fs-bun.ts';
 import { parseEnvTemplate } from './env-defaults-scan.ts';
 import {
   RUNTIME_MINTABLE_SECRETS,
@@ -115,8 +112,8 @@ function envSet(key: string): boolean {
 function localMintExists(key: string): boolean {
   try {
     const p = mintedSecretPath(key);
-    if (!existsSync(p)) return false;
-    return readFileSync(p, 'utf8').trim().length > 0;
+    if (!fileExistsSync(p)) return false;
+    return readTextSync(p).trim().length > 0;
   } catch {
     return false;
   }
@@ -124,8 +121,8 @@ function localMintExists(key: string): boolean {
 
 function templateVaultKeys(): Set<string> {
   try {
-    if (!existsSync(TEMPLATE)) return new Set();
-    const text = readFileSync(TEMPLATE, 'utf8');
+    if (!fileExistsSync(TEMPLATE)) return new Set();
+    const text = readTextSync(TEMPLATE);
     return new Set(parseEnvTemplate(text).vaultRefs.map(r => r.key));
   } catch {
     return new Set();
@@ -134,8 +131,8 @@ function templateVaultKeys(): Set<string> {
 
 function loadBaseline(): string[] {
   try {
-    if (!existsSync(BASELINE)) return [...VAULT_REQUIRED_SECRETS];
-    const j = JSON.parse(readFileSync(BASELINE, 'utf8')) as { actionableVaultGaps?: string[] };
+    if (!fileExistsSync(BASELINE)) return [...VAULT_REQUIRED_SECRETS];
+    const j = readJsonSync<{ actionableVaultGaps?: string[] }>(BASELINE);
     return Array.isArray(j.actionableVaultGaps)
       ? j.actionableVaultGaps
       : [...VAULT_REQUIRED_SECRETS];

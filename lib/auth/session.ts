@@ -5,6 +5,7 @@
  * Bun handlers and Cloudflare Workers/Pages Functions.
  */
 
+import { base64UrlToBytes, bytesToBase64Url } from '../bytes-base64.ts';
 import { BRAND_GUARDS, type PortalAccountId, type PortalTenantId } from '../types/branded.ts';
 
 export const SESSION_COOKIE_NAME = 'fw_session';
@@ -34,9 +35,7 @@ export interface SignSessionInput {
 }
 
 function encodeBase64Url(bytes: Uint8Array): string {
-  let binary = '';
-  for (const byte of bytes) binary += String.fromCharCode(byte);
-  return btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/u, '');
+  return bytesToBase64Url(bytes);
 }
 
 function copyArrayBuffer(bytes: Uint8Array): ArrayBuffer {
@@ -47,13 +46,8 @@ function copyArrayBuffer(bytes: Uint8Array): ArrayBuffer {
 
 function decodeBase64Url(value: string): Uint8Array | null {
   if (!/^[A-Za-z0-9_-]+$/u.test(value)) return null;
-  const padded = value
-    .replaceAll('-', '+')
-    .replaceAll('_', '/')
-    .padEnd(Math.ceil(value.length / 4) * 4, '=');
   try {
-    const binary = atob(padded);
-    return Uint8Array.from(binary, character => character.charCodeAt(0));
+    return base64UrlToBytes(value);
   } catch {
     return null;
   }

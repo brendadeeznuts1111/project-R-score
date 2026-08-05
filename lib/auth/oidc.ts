@@ -5,6 +5,7 @@
  * safe in Cloudflare Pages Functions as well as Bun.
  */
 
+import { base64UrlToUtf8 } from '../bytes-base64.ts';
 import type { OidcClientId } from '../types/branded.ts';
 
 export interface OidcClaims {
@@ -31,14 +32,8 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function decodeBase64UrlJson(value: string): unknown {
   if (!/^[A-Za-z0-9_-]+$/u.test(value)) return undefined;
-  const padded = value
-    .replaceAll('-', '+')
-    .replaceAll('_', '/')
-    .padEnd(Math.ceil(value.length / 4) * 4, '=');
   try {
-    const binary = atob(padded);
-    const bytes = Uint8Array.from(binary, character => character.charCodeAt(0));
-    return JSON.parse(new TextDecoder().decode(bytes)) as unknown;
+    return JSON.parse(base64UrlToUtf8(value)) as unknown;
   } catch {
     return undefined;
   }
