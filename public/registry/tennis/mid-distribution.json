@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "tennis-mid-distribution",
-  "generatedAt": "2026-08-05T07:57:06.849Z",
+  "generatedAt": "2026-08-05T22:07:13.324Z",
   "source": "event-store",
   "n": 52,
   "note": "Live from event-store · 174 latest books · 52 mids",
@@ -32,5 +32,5 @@
       "pct": 8
     }
   ],
-  "eventStorePath": "Kalshi-bot/research/cache/event-store.db"
+  "eventStorePath": "/Users/nolarose/Projects/Kalshi-bot/research/cache/event-store.db"
 }

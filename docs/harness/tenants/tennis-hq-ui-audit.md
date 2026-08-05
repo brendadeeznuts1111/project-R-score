@@ -187,10 +187,10 @@ never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
 | URL | Status | Notes |
 | --- | ------ | ----- |
 | `/portal/tennis/` | 200 | Tenant board |
-| `/registry/tennis/board-metrics.json` | 200 | `generatedAt` **2026-07-30T23:09:19Z** · event-store · 6378 markets |
+| `/registry/tennis/board-metrics.json` | 200 | `generatedAt` **2026-08-05T22:07:13Z** · event-store · 8856 markets · 52 mids |
 | `/registry/tennis/mid-distribution.json` | 200 | same bake stamp |
-| `/registry/tennis/live-matches.json` | 200 | `generatedAt` 2026-07-30 · 12 matches |
-| `/registry/tennis/avatar-index.json` | 200 | same bake stamp |
+| `/registry/tennis/live-matches.json` | 200 | `generatedAt` 2026-08-05T22:07:13Z · 12 matches · mid-ok 12/12 |
+| `/registry/tennis/avatar-index.json` | 200 | same bake stamp · 221 players |
 | `/registry/tennis/agent-auth.json` | 200 | `status: configured` · `generatedAt` 2026-08-05T02:48:46Z |
 | `/registry/tennis/registry.json` | 200 | `lastUpdated` 2026-08-04 |
 | `/registry/surfaces-state.json` | 200 | tennis row note tracks tip SHA · re-bake after tip change (`bun run surfaces:bake`) |
@@ -227,9 +227,11 @@ never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
 
 ### P2 — Portal consumer drift
 
-7. **Stale board bake** — board-metrics / live-matches / avatar-index stamped
-   **2026-07-30**; Worker build **2026-08-05**. Ownership: **monorepo** operator
-   (`bun run tennis:board:bake`).
+7. ~~**Stale board bake**~~ — **Closed 2026-08-05.** Re-ran
+   `bun run tennis:board:bake` from event-store → board-metrics /
+   mid-distribution / live-matches / avatar-index stamped
+   **2026-08-05T22:07Z** (8856 markets · 12 matches · 221 avatars). Ownership
+   was **monorepo** operator.
 8. ~~**Orphan `tennis-desk.js` + missing `tennis-board.js` doc**~~ — **Closed**
    (PR #363 + foundation Board UI row). Controller is wired; no `tennis-board.js`
    cite remains.
@@ -258,12 +260,13 @@ Documentation-only audit — **do not** apply these without an explicit fix lane
 | Lane | Action |
 | ---- | ------ |
 | Producer | Implement remaining v1 routes **or** shrink manifest/docs to `research` only; attach warehouse/DB or hide empty panels; add favicon/manifest |
-| Monorepo | `bun run tennis:board:bake` (stale 2026-07-30 metrics); after each producer deploy: refresh tip in `tennis-hq-registry.md` + `[surfaces.tennis].note` + `bun run surfaces:bake` |
+| Monorepo | After each producer deploy: refresh tip in `tennis-hq-registry.md` + `[surfaces.tennis].note` + `bun run surfaces:bake`; re-run `tennis:board:bake` when event-store drifts |
 | Edge | Kalshi probe ACL / outbound permission for `?probe=1` |
 
 **Done this tip lane:** production tip pin `0f7b6d9` / Worker `b3f2c700` ·
 surfaces note accuracy · `tennis-desk.js` inventory · `PARTNER_API_TOKEN`
-configured (unauth **401**) · Wrangler redeploy matched `origin/main`.
+configured (unauth **401**) · Wrangler redeploy matched `origin/main` ·
+board bake refreshed 2026-08-05T22:07Z (finding #7 closed).
 
 Out of scope here: Pages deploy, vault token mint, Kalshi network ACL changes.
 
