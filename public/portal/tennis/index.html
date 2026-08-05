@@ -18,6 +18,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/portal/style.css" />
   <link rel="stylesheet" href="/portal/venues.css" />
+  <style>
+    .tennis-hero-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; width: 100%; }
+    .tennis-hero-copy { flex: 1; min-width: 12rem; }
+    .tennis-avatar-chip {
+      display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: inherit;
+      border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px 4px 4px; background: var(--surface);
+    }
+    .tennis-avatar-chip img { border-radius: 50%; object-fit: cover; display: block; background: var(--border); }
+    .tennis-avatar-name { font-size: 12px; font-weight: 600; }
+    #kpi-host .portal-stat { cursor: default; }
+    #kpi-host .portal-stat:hover { transform: none; box-shadow: none; }
+  </style>
 </head>
 <body>
   <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
@@ -89,40 +101,47 @@
   </header>
 
   <main class="main portal-page">
-    <header class="portal-hero">
-      <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;width:100%">
-        <a href="/avatars/demo-player.webp" class="tennis-avatar-chip" title="demo-player avatar (Bun.Image)" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:999px;padding:4px 12px 4px 4px;background:var(--surface)">
-          <img id="hero-avatar" src="/avatars/demo-player.webp" width="40" height="40" alt="demo-player" style="border-radius:50%;object-fit:cover;display:block;background:var(--border)" loading="lazy" />
-          <span style="font-size:12px;font-weight:600">demo-player</span>
-          <span class="tone-chip tone-neutral" style="font-size:10px">avatar</span>
+    <section class="portal-hero portal-hero--card tennis-hero" aria-labelledby="tennis-hero-title">
+      <p class="portal-eyebrow">Tennis HQ · venue desk</p>
+      <div class="tennis-hero-row">
+        <a href="/avatars/demo-player.webp" class="tennis-avatar-chip" title="demo-player avatar (Bun.Image)">
+          <img id="hero-avatar" src="/avatars/demo-player.webp" width="40" height="40" alt="demo-player" loading="lazy" />
+          <span class="tennis-avatar-name">demo-player</span>
+          <span class="tone-chip tone-neutral">avatar</span>
         </a>
-        <div style="flex:1;min-width:12rem">
-          <h2 class="portal-hero__title">Tennis</h2>
-          <p class="sub" style="margin-top:4px">
-            Live desk board from event-store bake when present —
+        <div class="tennis-hero-copy">
+          <h2 id="tennis-hero-title" class="portal-hero__title">Tennis desk</h2>
+          <p class="hero-sub">
+            Live metrics from event-store bake —
             <code>bun run tennis:board:bake</code> →
             <code>/registry/tennis/board-metrics.json</code>.
             Venue colors are identity; edge uses semantic green/red.
-            Owned runtime: <a href="https://tennis.factory-wager.com" target="_blank" rel="noopener noreferrer"><code>tennis.factory-wager.com</code></a>.
-            Local on-demand: <code>GET /avatar/demo-player</code> (serve-public · Bun.Image).
+            Runtime:
+            <a href="https://tennis.factory-wager.com" target="_blank" rel="noopener noreferrer"><code>tennis.factory-wager.com</code></a>.
           </p>
         </div>
       </div>
-    </header>
+      <div class="portal-hero-meta">
+        <span id="tennis-gate" class="portal-gate warn" aria-live="polite"><span class="dot" aria-hidden="true"></span>loading</span>
+        <span id="tennis-baked" class="portal-baked">metrics · registry · venues</span>
+        <div class="portal-source-links" aria-label="Related artifacts">
+          <a href="/registry/tennis/board-metrics.json" target="_blank" rel="noopener">board-metrics</a>
+          <a href="/registry/tennis/live-matches.json" target="_blank" rel="noopener">live-matches</a>
+          <a href="/registry/tennis/agent-auth.json" target="_blank" rel="noopener">agent-auth</a>
+          <a href="https://tennis.factory-wager.com" target="_blank" rel="noopener noreferrer">runtime</a>
+          <a href="https://tennis.factory-wager.com/api/version" target="_blank" rel="noopener noreferrer">runtime version</a>
+          <a href="/portal/env/">env</a>
+        </div>
+      </div>
+    </section>
 
     <div class="portal-actions">
-      <a href="/registry/tennis/board-metrics.json" target="_blank" rel="noopener">board-metrics</a>
       <a href="/registry/tennis/mid-distribution.json" target="_blank" rel="noopener">mid-distribution</a>
       <a href="/registry/tennis/registry.json" target="_blank" rel="noopener">registry</a>
-      <a href="/registry/tennis/agent-auth.json" target="_blank" rel="noopener" title="Cloud agent FACTORY_WAGER_TOKEN status">agent-auth</a>
-      <a href="https://tennis.factory-wager.com" target="_blank" rel="noopener noreferrer" title="Operator-owned Tennis HQ Cloudflare Worker">production runtime</a>
-      <a href="https://tennis.factory-wager.com/api/version" target="_blank" rel="noopener noreferrer" title="Merged producer build identity">runtime version</a>
-      <a href="/portal/env/" title="Vault map · FACTORY_WAGER_TOKEN">Env / vault</a>
-      <a href="/portal/health/">Health</a>
       <button type="button" id="btn-refresh">Refresh</button>
     </div>
 
-    <div class="portal-banner warn" id="live-banner" role="status">
+    <div class="portal-banner warn" id="live-banner" role="status" hidden>
       <span class="dot"></span>
       <div>
         <div class="title" id="banner-title">Loading tennis board…</div>
@@ -130,7 +149,7 @@
       </div>
     </div>
 
-    <div class="portal-card-grid" id="kpi-host" aria-live="polite"></div>
+    <div class="portal-stat-grid" id="kpi-host" aria-live="polite"></div>
 
     <section class="portal-section" aria-labelledby="runtime-heading">
       <h2 id="runtime-heading">Owned production runtime</h2>
@@ -292,20 +311,25 @@ function barChartHtml(data, { title, subtitle = '' } = {}) {
   </div>`;
 }
 
-function kpiHtml(label, value, sub = '') {
-  return `<article class="portal-card portal-card--metric" data-kpi="${esc(label)}">
-    <h3 style="font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-dim);margin:0 0 6px">${esc(label)}</h3>
-    <div class="val">${esc(String(value))}</div>
-    ${sub ? `<div class="sub">${esc(sub)}</div>` : ''}
-  </article>`;
+function statHtml(label, value, sub = '', cls = 'muted') {
+  return `<div class="portal-stat ${cls}"><div class="k">${esc(label)}</div><div class="v">${esc(String(value))}</div>${sub ? `<div class="hint">${esc(sub)}</div>` : ''}</div>`;
+}
+
+function setGate(tone, label, meta) {
+  const gate = $('tennis-gate');
+  const baked = $('tennis-baked');
+  if (gate) {
+    gate.className = `portal-gate ${tone === 'ok' ? 'pass' : tone === 'bad' ? 'fail' : 'warn'}`;
+    gate.innerHTML = `<span class="dot" aria-hidden="true"></span>${esc(label)}`;
+  }
+  if (baked) baked.textContent = meta;
 }
 
 function setBanner(tone, title, meta) {
+  setGate(tone, title, meta);
   const banner = $('live-banner');
   if (!banner) return;
-  banner.className = `portal-banner ${tone}`;
-  $('banner-title').textContent = title;
-  $('banner-meta').textContent = meta;
+  banner.hidden = true;
 }
 
 function renderKpis(metrics, regPkgCount, agentAuth) {
@@ -334,25 +358,13 @@ function renderKpis(metrics, regPkgCount, agentAuth) {
         : '')
     : 'from live-matches bake';
   host.innerHTML = [
-    kpiHtml('Source', source, metrics?.note?.slice(0, 48) ?? ''),
-    kpiHtml('Markets', metrics?.markets ?? '—', 'event-store rows'),
-    kpiHtml('Book mids', metrics?.midsUsable ?? '—', `${metrics?.bookTicksLatest ?? 0} latest ticks`),
-    kpiHtml('Desk coverage', coverage, coverageSub),
-    kpiHtml('Packages', regPkgCount, 'tennis registry'),
-    kpiHtml('Registry token', authStatus, authSub),
+    statHtml('Source', source, metrics?.note?.slice(0, 48) ?? '', tone === 'ok' ? 'ok' : 'warn'),
+    statHtml('Markets', metrics?.markets ?? '—', 'event-store rows', 'muted'),
+    statHtml('Book mids', metrics?.midsUsable ?? '—', `${metrics?.bookTicksLatest ?? 0} latest ticks`, 'muted'),
+    statHtml('Desk coverage', coverage, coverageSub, desk && Number(desk.coveragePct) >= 70 ? 'ok' : desk && Number(desk.coveragePct) >= 30 ? 'warn' : desk ? 'bad' : 'muted'),
+    statHtml('Packages', regPkgCount, 'tennis registry', 'muted'),
+    statHtml('Registry token', authStatus, authSub, authStatus === 'configured' ? 'ok' : 'warn'),
   ].join('');
-  // tint first card by source
-  const first = host.querySelector('[data-kpi="Source"] .val');
-  if (first) first.className = `val st-${tone === 'ok' ? 'ok' : 'warn'}`;
-  const covVal = host.querySelector('[data-kpi="Desk coverage"] .val');
-  if (covVal && desk) {
-    const pct = Number(desk.coveragePct) || 0;
-    covVal.className = `val st-${pct >= 70 ? 'ok' : pct >= 30 ? 'warn' : 'bad'}`;
-  }
-  const authVal = host.querySelector('[data-kpi="Registry token"] .val');
-  if (authVal) {
-    authVal.className = `val st-${authStatus === 'configured' ? 'ok' : 'warn'}`;
-  }
 }
 
 function renderCharts(metrics) {
@@ -482,8 +494,8 @@ function renderAvatarStrip() {
     const id = ids[0] || 'demo-player';
     img.src = `/avatars/${id}.webp`;
     img.alt = id;
-    const label = img.closest('a')?.querySelector('span');
-    // keep first text span as name
+    const label = img.closest('a')?.querySelector('.tennis-avatar-name');
+    if (label) label.textContent = id;
   }
   if (host) {
     host.innerHTML = ids.map((id) => {
@@ -688,39 +700,6 @@ export async function load() {
   } else {
     renderKpis(null, pkgCount, agentAuth);
     setBanner('bad', 'Metrics unavailable', 'Run bun run tennis:board:bake' + (agentAuth?.status === 'configured' ? ' · registry token configured' : ''));
-  }
-}
-
-function renderAvatarStrip() {
-  const host = document.getElementById('avatar-strip');
-  const img = document.getElementById('hero-avatar');
-  const ids = ['demo-player'];
-  // Prefer static bake on Pages; probe on-demand path when local serve-public
-  const candidates = (id) => [`/avatars/${id}.webp`, `/avatar/${id}`];
-  if (img) {
-    const id = 'demo-player';
-    const tryNext = (i) => {
-      if (i >= 2) return;
-      const url = candidates(id)[i] + (i === 0 ? '' : `?s=128`);
-      const probe = new Image();
-      probe.onload = () => { img.src = url; };
-      probe.onerror = () => tryNext(i + 1);
-      probe.src = url;
-    };
-    tryNext(0);
-  }
-  if (host) {
-    host.innerHTML = ids.map((id) => {
-      const src = `/avatars/${id}.webp`;
-      return `<a href="${src}" class="portal-card" style="display:flex;align-items:center;gap:10px;padding:10px 12px;text-decoration:none;color:inherit">
-        <img src="${src}" width="48" height="48" alt="${id}" style="border-radius:50%;object-fit:cover;background:var(--border)" loading="lazy"
-          onerror="this.onerror=null;this.src='/avatar/${id}'" />
-        <div>
-          <div style="font-weight:600;font-size:13px">${id}</div>
-          <div class="sub" style="margin:0">Bun.Image · /avatars · /avatar/:id</div>
-        </div>
-      </a>`;
-    }).join('');
   }
 }
 
