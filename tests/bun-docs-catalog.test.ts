@@ -193,10 +193,18 @@ describe('bun-docs-changelog overlay', () => {
     expect(cl.blogAnchor).toBe('bugfixes');
   });
 
-  test('changelogFor Bun.WebView has releasedIn 1.4.0', () => {
+  test('changelogFor Bun.WebView has releasedIn 1.3.12', () => {
     const cl = changelogFor('Bun.WebView');
-    expect(cl.releasedIn).toBe('1.4.0');
+    expect(cl.releasedIn).toBe('1.3.12');
     expect(cl.events.some(e => e.kind === 'feature')).toBe(true);
+  });
+
+  test('recent release overlay preserves the 1.3.12 and 1.3.14 behavior boundary', () => {
+    expect(changelogFor('Bun.cron').releasedIn).toBe('1.3.12');
+    expect(changelogFor('Bun.markdown.ansi').releasedIn).toBe('1.3.12');
+    for (const token of ['FormData', 'Blob', 'ReadableStream', 'WebSocket']) {
+      expect(changelogFor(token).fixedIn).toBe('1.3.14');
+    }
   });
 
   test('changelogFor Bun.Terminal releasedIn 1.3.5 with PTY blog anchor', () => {

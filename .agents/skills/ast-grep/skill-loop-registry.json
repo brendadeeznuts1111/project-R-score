@@ -334,6 +334,24 @@
         }
       }
     },
+    "project-r-ops-management": {
+      "path": ".agents/skills/project-r-ops-management",
+      "zone": "agents",
+      "phases": {
+        "doctor": {
+          "enabled": true,
+          "note": "bun run bun:channel:check"
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 50
+        },
+        "precommit": {
+          "enabled": false,
+          "note": "delegates to repository staged and merge gates"
+        }
+      }
+    },
     "branded-ids": {
       "path": ".agents/skills/branded-ids",
       "zone": "agents",

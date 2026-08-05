@@ -2,6 +2,7 @@ import { describe, expect, it } from 'bun:test';
 import {
   checkBunPin,
   isConceptSsotPath,
+  isPartnerDashboardPlanPath,
   isSkillValidationPath,
   isTestSourcePath,
   readPrecommitEnvironment,
@@ -31,6 +32,23 @@ describe('pre-commit path gates', () => {
     expect(isConceptSsotPath('public/portal/concepts/index.html')).toBe(true);
     expect(isConceptSsotPath('public/registry/concepts-state.json')).toBe(true);
     expect(isConceptSsotPath('lib/http/skills-catalog.ts')).toBe(false);
+  });
+
+  it('selects partner dashboard semantic plan paths', () => {
+    expect(isPartnerDashboardPlanPath('docs/design/partner-dashboard-mvp.toml')).toBe(true);
+    expect(isPartnerDashboardPlanPath('docs/design/partner-dashboard-semantic-map.md')).toBe(true);
+    expect(isPartnerDashboardPlanPath('scripts/validate-partner-dashboard-plan.ts')).toBe(true);
+    expect(isPartnerDashboardPlanPath('tests/validate-partner-dashboard-plan.test.ts')).toBe(true);
+    expect(isPartnerDashboardPlanPath('docs/design/partner-dashboard-mvp.md')).toBe(true);
+    expect(isPartnerDashboardPlanPath('lib/partner-profile/schema.ts')).toBe(true);
+    expect(isPartnerDashboardPlanPath('packages/partners/src/dashboard-plan.ts')).toBe(true);
+    expect(isPartnerDashboardPlanPath('public/registry/partner-profiles.json')).toBe(true);
+    expect(isPartnerDashboardPlanPath('lib/portal/partner-routes.ts')).toBe(true);
+    expect(isPartnerDashboardPlanPath('lib/portal/theme.ts')).toBe(true);
+    expect(isPartnerDashboardPlanPath('public/portal/theme.jsonc')).toBe(true);
+    expect(isPartnerDashboardPlanPath('public/portal/partners/index.html')).toBe(true);
+    expect(isPartnerDashboardPlanPath('public/registry/domain-glossary.json')).toBe(true);
+    expect(isPartnerDashboardPlanPath('docs/design/partner-code-consolidation.md')).toBe(false);
   });
 });
 

@@ -70,13 +70,17 @@ Three version axes are deliberately separate:
 1. `package.json#version` and `package.json#versioning.current` identify the
    FactoryWager artifact release.
 2. `package.json#catalog` pins the compile-time Bun and TypeScript definitions.
-   `@types/bun` and `bun-types` must remain on the same version.
+   `@types/bun` follows the configured latest/stable wrapper channel and direct
+   `bun-types` follows the configured canary declaration channel. Their versions
+   are intentionally independent; [`config/bun-channels.toml`](../../../config/bun-channels.toml)
+   owns the policy and `bun run bun:channel:check` proves each pin.
 3. `DocTokenId` entries in `tools/bun-docs-catalog.json` own each Bun API's
    introduction version and stability. The generated cross-map copies those
    values; declarations and prose do not override them.
 
-This is why `Bun.Image` reports `1.3.14` regardless of the FactoryWager release
-number, the `bun@1.4.0` runtime pin, or the `1.3.14` definition catalog pin.
+This is why `Bun.Image` reports its introduction version regardless of the
+FactoryWager release number, the stable runtime pin, or the independently
+selected wrapper/declaration type pins.
 `schemaVersion` on the registry payload versions the JSON contract and is not a
 package or Bun runtime version.
 

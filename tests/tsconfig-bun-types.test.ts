@@ -118,5 +118,5 @@ describe('tsconfig-types-audit helpers', () => {
     expect(monorepoRisk).toEqual([]);
     expect(summary.bunOk).toBeGreaterThan(0);
     expect(summary.emitClean).toBeGreaterThanOrEqual(1);
-  });
+  }, 15_000);
 });

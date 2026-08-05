@@ -3,9 +3,10 @@
 // lib/partner-profile/ledger.ts — partner ledger table + minimal client.
 //
 // SQLite `partner_ledger` table in the ops DB, keyed by partner CODE. Records
-// deposits, credits, settlements and free-roll usage with a running balance
-// (`balance_after`). The DDL is idempotent and wired into ops `migrateSchema`,
-// so every `openOperationsDb` gets it as a migration path.
+// deposits, credits, settlements and free-roll usage with a running balance.
+// Canonical storage is integer minor units. Existing databases may temporarily
+// retain the legacy REAL columns; reads prefer minor units and writes dual-write
+// until the migration finalizer removes those columns.
 //
 // This is the Phase-2 storage layer of the accounting integration; the
 // settlement engine (Phase 3) posts to it later.
@@ -28,7 +29,7 @@ CREATE TABLE IF NOT EXISTS partner_ledger (
   id TEXT PRIMARY KEY,
   partner_code TEXT NOT NULL, -- brand-ok — partner CODE (^[A-Z]{3,6}$), canonical key
   type TEXT NOT NULL CHECK(type IN ('initial_capital', 'deposit', 'credit', 'settlement', 'free_roll')),
-  amount REAL NOT NULL,
+  amount_minor INTEGER NOT NULL,
   currency TEXT NOT NULL,
   description TEXT,
   reference TEXT,
@@ -40,7 +41,7 @@ CREATE TABLE IF NOT EXISTS partner_ledger (
   external_id TEXT,
   proof TEXT,
   batch_id TEXT,
-  balance_after REAL NOT NULL,
+  balance_after_minor INTEGER NOT NULL,
   created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_partner_ledger_code ON partner_ledger(partner_code, created_at);
@@ -93,62 +94,164 @@ export interface NewLedgerEntry {
   batchId?: string; // brand-ok — opaque batch key
 }
 
-export function ensurePartnerLedgerSchema(db: Database): void {
-  db.exec(PARTNER_LEDGER_DDL);
+export type PartnerLedgerMoneyColumns = {
+  amountMinor: boolean;
+  balanceAfterMinor: boolean;
+  legacyAmount: boolean;
+  legacyBalanceAfter: boolean;
+};
+
+const CURRENCY_RE = /^[A-Z]{3}$/;
+
+/** ISO-4217 minor-unit exponent as provided by the runtime ICU data. */
+export function currencyMinorUnitExponent(currency: string): number {
+  const normalized = currency.trim().toUpperCase();
+  if (!CURRENCY_RE.test(normalized)) {
+    throw new Error(`currency must be a 3-letter ISO code (got "${currency}")`);
+  }
+  if (!Intl.supportedValuesOf('currency').includes(normalized)) {
+    throw new Error(`unsupported ISO-4217 currency "${normalized}"`);
+  }
+  return new Intl.NumberFormat('en', { style: 'currency', currency: normalized }).resolvedOptions()
+    .maximumFractionDigits;
 }
 
-/** Insert a ledger entry; balance_after = prior balance + amount. */
-export function insertLedgerEntry(db: Database, entry: NewLedgerEntry): PartnerLedgerRow {
-  const prior = db
-    .query(
-      `SELECT balance_after FROM partner_ledger
-       WHERE partner_code = $code ORDER BY created_at DESC, id DESC LIMIT 1`
-    )
-    .get({ $code: entry.partnerCode }) as { balance_after: number } | null;
-  const balanceAfter = (prior?.balance_after ?? 0) + entry.amount;
-  const row: PartnerLedgerRow = {
-    id: Bun.randomUUIDv7(),
-    partnerCode: entry.partnerCode,
-    type: entry.type,
-    amount: entry.amount,
-    currency: entry.currency,
-    description: entry.description ?? null,
-    ...(entry.reference !== undefined ? { reference: entry.reference } : {}),
-    ...(entry.bookKey !== undefined ? { bookKey: entry.bookKey } : {}),
-    ...(entry.trackingId !== undefined ? { trackingId: entry.trackingId } : {}),
-    ...(entry.accountScope !== undefined ? { accountScope: entry.accountScope } : {}),
-    ...(entry.counterparty !== undefined ? { counterparty: entry.counterparty } : {}),
-    ...(entry.source !== undefined ? { source: entry.source } : {}),
-    ...(entry.externalId !== undefined ? { externalId: entry.externalId } : {}),
-    ...(entry.proof !== undefined ? { proof: entry.proof } : {}),
-    ...(entry.batchId !== undefined ? { batchId: entry.batchId } : {}),
-    balanceAfter,
-    createdAt: new Date().toISOString(),
+/** Convert a major-unit API value to a JSON-safe integer for SQLite storage. */
+export function toMinorUnits(amount: number, currency: string): number {
+  if (!Number.isFinite(amount)) throw new Error(`amount must be finite (got ${amount})`);
+  const factor = 10 ** currencyMinorUnitExponent(currency);
+  const scaled = amount * factor;
+  const rounded = Math.round(scaled);
+  if (Math.abs(scaled - rounded) > 1e-7) {
+    throw new Error(`${currency.toUpperCase()} amount ${amount} exceeds its minor-unit precision`);
+  }
+  if (!Number.isSafeInteger(rounded)) {
+    throw new Error(`${currency.toUpperCase()} amount ${amount} exceeds safe integer storage`);
+  }
+  return rounded;
+}
+
+export function fromMinorUnits(amountMinor: number, currency: string): number {
+  if (!Number.isSafeInteger(amountMinor)) {
+    throw new Error(`minor-unit amount must be a safe integer (got ${amountMinor})`);
+  }
+  return amountMinor / 10 ** currencyMinorUnitExponent(currency);
+}
+
+export function partnerLedgerMoneyColumns(db: Database): PartnerLedgerMoneyColumns {
+  const columns = new Set(
+    (db.query('PRAGMA table_info(partner_ledger)').all() as { name: string }[]).map(row => row.name)
+  );
+  return {
+    amountMinor: columns.has('amount_minor'),
+    balanceAfterMinor: columns.has('balance_after_minor'),
+    legacyAmount: columns.has('amount'),
+    legacyBalanceAfter: columns.has('balance_after'),
   };
-  db.query(
-    `INSERT INTO partner_ledger
-       (id, partner_code, type, amount, currency, description, reference, book_key, tracking_id, account_scope, counterparty, source, external_id, proof, batch_id, balance_after, created_at)
-     VALUES ($id, $code, $type, $amount, $cur, $desc, $ref, $book, $track, $scope, $cparty, $source, $ext, $proof, $batch, $bal, $ts)`
-  ).run({
-    $id: row.id,
-    $code: row.partnerCode,
-    $type: row.type,
-    $amount: row.amount,
-    $cur: row.currency,
-    $desc: row.description,
-    $ref: row.reference ?? null,
-    $book: row.bookKey ?? null,
-    $track: row.trackingId ?? null,
-    $scope: row.accountScope ?? null,
-    $cparty: row.counterparty ?? null,
-    $source: row.source ?? null,
-    $ext: row.externalId ?? null,
-    $proof: row.proof ?? null,
-    $batch: row.batchId ?? null,
-    $bal: row.balanceAfter,
-    $ts: row.createdAt,
-  });
-  return row;
+}
+
+export function ensurePartnerLedgerSchema(db: Database): void {
+  db.exec(PARTNER_LEDGER_DDL);
+  const columns = partnerLedgerMoneyColumns(db);
+  if (!columns.amountMinor) db.run('ALTER TABLE partner_ledger ADD COLUMN amount_minor INTEGER');
+  if (!columns.balanceAfterMinor) {
+    db.run('ALTER TABLE partner_ledger ADD COLUMN balance_after_minor INTEGER');
+  }
+}
+
+function assertMoneyColumnPair(columns: PartnerLedgerMoneyColumns): void {
+  if (!columns.amountMinor || !columns.balanceAfterMinor) {
+    throw new Error('partner_ledger minor-unit columns are incomplete');
+  }
+  if (columns.legacyAmount !== columns.legacyBalanceAfter) {
+    throw new Error('partner_ledger legacy money columns are incomplete');
+  }
+}
+
+/** Insert atomically; legacy databases receive both major and minor values. */
+export function insertLedgerEntry(db: Database, entry: NewLedgerEntry): PartnerLedgerRow {
+  const columns = partnerLedgerMoneyColumns(db);
+  assertMoneyColumnPair(columns);
+  const currency = entry.currency.trim().toUpperCase();
+  const amountMinor = toMinorUnits(entry.amount, currency);
+
+  db.run('BEGIN IMMEDIATE');
+  try {
+    const legacySelect = columns.legacyBalanceAfter ? ', balance_after' : '';
+    const prior = db
+      .query(
+        `SELECT balance_after_minor, currency${legacySelect} FROM partner_ledger
+         WHERE partner_code = $code ORDER BY created_at DESC, id DESC LIMIT 1`
+      )
+      .get({ $code: entry.partnerCode }) as {
+      balance_after_minor: number | null;
+      balance_after?: number;
+      currency: string;
+    } | null;
+    if (prior && prior.currency.toUpperCase() !== currency) {
+      throw new Error(
+        `partner ${entry.partnerCode} ledger currency is ${prior.currency}; cannot append ${currency}`
+      );
+    }
+    const priorBalanceMinor = prior
+      ? (prior.balance_after_minor ?? toMinorUnits(prior.balance_after!, prior.currency))
+      : 0;
+    const balanceAfterMinor = priorBalanceMinor + amountMinor;
+    if (!Number.isSafeInteger(balanceAfterMinor)) {
+      throw new Error(`partner ${entry.partnerCode} balance exceeds safe integer storage`);
+    }
+    const row: PartnerLedgerRow = {
+      id: Bun.randomUUIDv7(),
+      partnerCode: entry.partnerCode,
+      type: entry.type,
+      amount: fromMinorUnits(amountMinor, currency),
+      currency,
+      description: entry.description ?? null,
+      ...(entry.reference !== undefined ? { reference: entry.reference } : {}),
+      ...(entry.bookKey !== undefined ? { bookKey: entry.bookKey } : {}),
+      ...(entry.trackingId !== undefined ? { trackingId: entry.trackingId } : {}),
+      ...(entry.accountScope !== undefined ? { accountScope: entry.accountScope } : {}),
+      ...(entry.counterparty !== undefined ? { counterparty: entry.counterparty } : {}),
+      ...(entry.source !== undefined ? { source: entry.source } : {}),
+      ...(entry.externalId !== undefined ? { externalId: entry.externalId } : {}),
+      ...(entry.proof !== undefined ? { proof: entry.proof } : {}),
+      ...(entry.batchId !== undefined ? { batchId: entry.batchId } : {}),
+      balanceAfter: fromMinorUnits(balanceAfterMinor, currency),
+      createdAt: new Date().toISOString(),
+    };
+    const legacyColumns = columns.legacyAmount ? ', amount, balance_after' : '';
+    const legacyValues = columns.legacyAmount ? ', $amount, $balance' : '';
+    db.query(
+      `INSERT INTO partner_ledger
+         (id, partner_code, type, amount_minor, currency, description, reference, book_key, tracking_id, account_scope, counterparty, source, external_id, proof, batch_id, balance_after_minor, created_at${legacyColumns})
+       VALUES ($id, $code, $type, $amountMinor, $currency, $description, $reference, $bookKey, $trackingId, $accountScope, $counterparty, $source, $externalId, $proof, $batchId, $balanceMinor, $createdAt${legacyValues})`
+    ).run({
+      $id: row.id,
+      $code: row.partnerCode,
+      $type: row.type,
+      $amountMinor: amountMinor,
+      $currency: row.currency,
+      $description: row.description,
+      $reference: row.reference ?? null,
+      $bookKey: row.bookKey ?? null,
+      $trackingId: row.trackingId ?? null,
+      $accountScope: row.accountScope ?? null,
+      $counterparty: row.counterparty ?? null,
+      $source: row.source ?? null,
+      $externalId: row.externalId ?? null,
+      $proof: row.proof ?? null,
+      $batchId: row.batchId ?? null,
+      $balanceMinor: balanceAfterMinor,
+      $createdAt: row.createdAt,
+      $amount: row.amount,
+      $balance: row.balanceAfter,
+    });
+    db.run('COMMIT');
+    return row;
+  } catch (error) {
+    db.run('ROLLBACK');
+    throw error;
+  }
 }
 
 /** Does a row with this external reference already exist? (import idempotency.) */
@@ -164,13 +267,22 @@ export function ledgerEntryExists(db: Database, partnerCode: string, reference: 
 
 /** Current running balance for a partner (0 when no ledger rows exist). */
 export function ledgerBalance(db: Database, partnerCode: string): number {
+  const columns = partnerLedgerMoneyColumns(db);
+  assertMoneyColumnPair(columns);
+  const legacySelect = columns.legacyBalanceAfter ? ', balance_after' : '';
   const row = db
     .query(
-      `SELECT balance_after FROM partner_ledger
+      `SELECT balance_after_minor, currency${legacySelect} FROM partner_ledger
        WHERE partner_code = $code ORDER BY created_at DESC, id DESC LIMIT 1`
     )
-    .get({ $code: partnerCode }) as { balance_after: number } | null;
-  return row?.balance_after ?? 0;
+    .get({ $code: partnerCode }) as {
+    balance_after_minor: number | null;
+    balance_after?: number;
+    currency: string;
+  } | null;
+  if (!row) return 0;
+  const minor = row.balance_after_minor ?? toMinorUnits(row.balance_after!, row.currency);
+  return fromMinorUnits(minor, row.currency);
 }
 
 /** Does the partner already have any ledger rows? (initial-capital idempotency.) */
@@ -183,16 +295,22 @@ export function hasLedgerRows(db: Database, partnerCode: string): boolean {
 
 /** All ledger rows for a partner, oldest first. */
 export function listLedgerEntries(db: Database, partnerCode: string): PartnerLedgerRow[] {
+  const columns = partnerLedgerMoneyColumns(db);
+  assertMoneyColumnPair(columns);
+  const legacySelect = columns.legacyAmount
+    ? ', amount AS amount_legacy, balance_after AS balance_after_legacy'
+    : ', NULL AS amount_legacy, NULL AS balance_after_legacy';
   const rows = db
     .query(
-      `SELECT id, partner_code, type, amount, currency, description, reference, book_key, tracking_id, account_scope, counterparty, source, external_id, proof, batch_id, balance_after, created_at
+      `SELECT id, partner_code, type, amount_minor, currency, description, reference, book_key, tracking_id, account_scope, counterparty, source, external_id, proof, batch_id, balance_after_minor, created_at${legacySelect}
        FROM partner_ledger WHERE partner_code = $code ORDER BY created_at ASC, id ASC`
     )
     .all({ $code: partnerCode }) as {
     id: string; // brand-ok — opaque ledger entry PK (UUIDv7)
     partner_code: string; // brand-ok — partner CODE (^[A-Z]{3,6}$), canonical key
     type: PartnerLedgerType;
-    amount: number;
+    amount_minor: number | null;
+    amount_legacy: number | null;
     currency: string;
     description: string | null;
     reference: string | null;
@@ -204,14 +322,18 @@ export function listLedgerEntries(db: Database, partnerCode: string): PartnerLed
     external_id: string | null; // brand-ok — opaque external reference
     proof: string | null;
     batch_id: string | null; // brand-ok — opaque batch key
-    balance_after: number;
+    balance_after_minor: number | null;
+    balance_after_legacy: number | null;
     created_at: string;
   }[];
   return rows.map(r => ({
     id: r.id,
     partnerCode: r.partner_code,
     type: r.type,
-    amount: r.amount,
+    amount: fromMinorUnits(
+      r.amount_minor ?? toMinorUnits(r.amount_legacy!, r.currency),
+      r.currency
+    ),
     currency: r.currency,
     description: r.description,
     ...(r.reference !== null ? { reference: r.reference } : {}),
@@ -223,7 +345,10 @@ export function listLedgerEntries(db: Database, partnerCode: string): PartnerLed
     ...(r.external_id !== null ? { externalId: r.external_id } : {}),
     ...(r.proof !== null ? { proof: r.proof } : {}),
     ...(r.batch_id !== null ? { batchId: r.batch_id } : {}),
-    balanceAfter: r.balance_after,
+    balanceAfter: fromMinorUnits(
+      r.balance_after_minor ?? toMinorUnits(r.balance_after_legacy!, r.currency),
+      r.currency
+    ),
     createdAt: r.created_at,
   }));
 }

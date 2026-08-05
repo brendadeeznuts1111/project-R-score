@@ -33,6 +33,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Read this index in-terminal (zero-overhead) → `bun ./docs/harness/README.md` · `bun run docs:harness`
 - Discover day-loop + ratchet status (live) → `bun run harness:status` (local ratchets + timings SSOT · `Bun.markdown.ansi`) · `--table` · `--show-actions-noise`
 - Bun.cron (OS-persistent primary · in-process complement) → `bun run docs:cron` · [`cron.md`](cron.md) · `bun run test:cron` · `bun run test:cron-os`
+- Bun runtime/type channel drift (stable + canary + main tip + RSS + Atom + npm) → `bun run bun:channel:check` · [`tenants/bun-channel-doctor.md`](tenants/bun-channel-doctor.md) · policy [`config/bun-channels.toml`](../../config/bun-channels.toml)
 - Spine multi-tenant (docs-integrity + install-verify) → `bun run spine:schedule:once` · claim `spine-multi-tenant` · [`cron.md`](cron.md)
 - Spine maintenance runbooks (typed signal · intervention · proof · retirement) → `bun run test:tenant-runbooks` · [`spine-tenants.md`](spine-tenants.md) · claim `spine-maintenance-runbooks` · agent-operated discovery tenants (reference · public-plane) indexed there
 - Spine tenant E2E heal (sandboxed break → signal → intervene → recover) → `bun run test:tenant-heal` · claim `spine-tenant-heal`

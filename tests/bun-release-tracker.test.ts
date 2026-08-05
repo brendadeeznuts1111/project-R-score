@@ -52,6 +52,7 @@ describe('lib/docs/bun-release-tracker', () => {
       'http3',
       'http2-client',
       'event-loop-refactor',
+      'web-apis',
       'tls-getcacertificates-system-now-works-without-use-system-ca',
     ] as const;
     for (const key of expected) {

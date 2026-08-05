@@ -5,6 +5,7 @@ Verification helpers — install-env probes and channel checks.
 | File | Purpose |
 |------|---------|
 | `channels.ts` | Channel resolve via GitHub Releases (`bun upgrade` feeds) |
+| `bun-channel-doctor.ts` | Read-only reconciliation of stable, canary, main tip, RSS, Atom, npm type tags, manifests, lockfile, and installed evidence |
 | `types.ts` | `SemanticTags` / `ChannelAwareVerificationReport` / snapshot index |
 | `subsystem.ts` | Meta-verification pillar: `runtime` \| `package-manager` \| `networking` \| `bundler` (+ DocSection map) |
 | `bundler-loader-probes.ts` | Thin Asset Processing loader proofs (css / jsonc / ts / text / file) |
@@ -32,6 +33,13 @@ Verification helpers — install-env probes and channel checks.
 | `latest` / `stable` | `Jarred-Sumner/bun-releases-for-updater` → `/releases/latest` (fallback `oven-sh/bun`) |
 | `canary` | `oven-sh/bun` → `/releases/tags/canary` → `canary+<sha12>` + commit / publishedAt / match |
 | `runtime` / pinned semver | Local `Bun.version` / literal |
+
+`channels.ts` resolves metadata for verification runs; it does not switch the
+binary. The stricter channel doctor is governed by
+[`config/bun-channels.toml`](../../config/bun-channels.toml): stable is promotion
+authority, main tip and rolling canary are observations, RSS/Atom corroborate
+publication, and npm dist-tags prove the independently selected type channels.
+The doctor never upgrades or rewrites pins.
 
 Optional auth (precedence): `GITHUB_TOKEN` → `GITHUB_ACCESS_TOKEN` → `GH_TOKEN` → `gh auth token`  
 API host: `GITHUB_API_DOMAIN` (default `api.github.com`).  
@@ -86,4 +94,3 @@ bun tools/verify-channel.ts \
 
 bun tools/verify-channel.ts --diff=a.json --diff-against=b.json --json
 ```
-

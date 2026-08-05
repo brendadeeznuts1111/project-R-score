@@ -1,0 +1,10 @@
+Generated: 2026-08-05T21:55:34Z
+Command: git log --reverse --format='%h %s' origin/main..HEAD
+
+b07bc493f fix(bun): ground recent runtime release contracts
+b53e4b2ad feat(bun): add read-only channel governance
+96a1aaacf feat(partners): establish dashboard contract workspace
+0d8a42f6a feat(partners): enforce integer money migration
+fcae7ddfb test(snapshot): track compile-only type contracts
+07962dae9 feat(agents): add Project R operations skill
+e84868d33 fix(bun): make cron verification release-aware

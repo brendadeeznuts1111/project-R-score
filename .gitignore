@@ -265,6 +265,7 @@ lib/auth/*
 **/credentials/
 !config/
 config/*
+!config/bun-channels.toml
 !config/machine.bunfig.toml.template
 !config/domain-branding.json
 !config/vault-map.json
@@ -447,11 +448,8 @@ public/registry/@factorywager/*/0.0.0+*.json
 .dev/
 snapshots/
 
-# Snapshot types and probe files (regenerable test infrastructure)
-tests/snapshot-types.test-d.ts
-tests/tsconfig.snapshot.json
+# Snapshot probe file (regenerable test infrastructure)
 tools/portal-probe.ts
-tools/snapshot-types.ts
 
 # Test debris from bun-file-analyzer example/monitoring tests (regenerable; accidentally committed in ed55fc42f)
 /bun-write-test/

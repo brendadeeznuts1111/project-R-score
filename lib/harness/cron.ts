@@ -40,7 +40,7 @@ export async function removeOsCron(title: string): Promise<void> {
  * In-process complement — embed a scheduler in a long-lived process
  * (servers, containers, spine daemon). Shares pools/caches/module state.
  *
- * - Schedules are **UTC** (`0 9 * * *` = 09:00 UTC). OS-level form uses local time.
+ * - Bun 1.3 schedules are **UTC** (`0 9 * * *` = 09:00 UTC). OS-level form uses local time.
  * - **No overlap**: next fire only after handler + returned Promise settle.
  * - Errors match setTimeout: sync throw → uncaughtException; rejected Promise →
  *   unhandledRejection. Catch inside handlers so the daemon keeps running.
@@ -58,7 +58,7 @@ export function scheduleInProcess(
 }
 
 /**
- * Preview next fire for an expression (always UTC).
+ * Preview next fire for an expression (UTC on the pinned Bun 1.3 runtime).
  * @see https://bun.com/docs/runtime/cron#bun-cron-parse
  */
 export function parseCron(expression: string, relativeDate?: Date | number): Date | null {
