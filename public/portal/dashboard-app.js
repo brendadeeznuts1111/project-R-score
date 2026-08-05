@@ -666,7 +666,7 @@ function renderReleaseSection(release, bake) {
     if (preview.length && tags) {
       cards.innerHTML = renderVerificationResults({ results: preview, semanticTags: tags }, 12);
     } else if (preview.length) {
-      cards.innerHTML = `<table class="ops-table"><thead><tr><th>Test</th><th>Status</th><th>Docs</th></tr></thead><tbody>${preview
+      cards.innerHTML = `<table class="portal-table"><thead><tr><th>Test</th><th>Status</th><th>Docs</th></tr></thead><tbody>${preview
         .map(r => renderVerificationTableRow(r))
         .join('')}</tbody></table>`;
     } else {
@@ -697,7 +697,7 @@ function renderDefaults(def) {
     .join('');
   const hash = def.proofHash || def.summary?.proofHash || '';
   el.innerHTML = `<h2>Bun defaults verification</h2>
-    <table class="ops-table"><thead><tr><th>Test</th><th>Expected</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>
+    <table class="portal-table"><thead><tr><th>Test</th><th>Expected</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>
     ${hash ? `<p class="proof-line"><span class="phash">sha256 ${esc(String(hash).slice(0, 24))}…</span></p>` : ''}`;
 }
 
@@ -726,7 +726,7 @@ function renderTaxonomy(taxonomy) {
   const cTot = (taxonomy.consistency || []).length;
   el.innerHTML = `<h2>Proof taxonomy audit</h2>
     <p class="section-sub">${taxonomy.ok ? '✅' : '❌'} contracts · consistency ${cOk}/${cTot}</p>
-    <table class="ops-table"><thead><tr><th>Artifact</th><th>Subsystem</th><th>Rows</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
+    <table class="portal-table"><thead><tr><th>Artifact</th><th>Subsystem</th><th>Rows</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 function renderErrors(failed) {

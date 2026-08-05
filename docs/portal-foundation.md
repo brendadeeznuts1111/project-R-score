@@ -195,7 +195,9 @@ Shared layout / status classes in [`public/portal/style.css`](../public/portal/s
 | `.portal-skeleton` · `.portal-error` | Shimmer loading + actionable failure card. |
 | `.portal-section` / `.section` + `.section-sub` | Bordered `h2` + dim description. **No emoji in headings.** |
 | `.portal-card` / `.portal-card-grid` | Metric / panel cards (accent hairline). |
-| `.data-table` + `.table-wrap` | Dark data tables; aliases include `.env-table`, `.ops-table`, `.live-table`, `.doc-table`. |
+| `.portal-table` + `.table-wrap` | **Canonical** dark data tables (`data-density` · `data-zebra` · `data-tone`). CSS aliases still style `.data-table` / `.ops-table` / `.env-table` / `.live-table` / `.doc-table` — new markup should use `.portal-table` only. |
+| `.portal-chip` · `.portal-pill` · `.portal-meta-row` | Shared chips / category pills / mono meta rows (prefer over per-board CSS). |
+| `lib/portal/ui-html.ts` · `components/portal-ui.js` | Pure HTML builders — `renderPortalTable` · `renderPortalStatGrid` · `renderToneChip` · `renderPortalPanel` (import once, reuse in bakes + browser boards). |
 | `.row-ok` / `.row-warn` / `.row-bad` | 3px inset row rails (Live check pattern). |
 | `.tone-chip.tone-ok\|warn\|bad\|neutral` | Status pills. |
 | `.status-text` / `.st-ok` / `.st-warn` / `.st-bad` | Inline status color. |

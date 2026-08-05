@@ -16,30 +16,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/portal/style.css" />
   <script type="application/json" id="identity-board-embed">{"kind":"identity-board","generatedAt":"2026-07-28T18:41:27.412Z","empty":false,"dbPath":"/Users/nolarose/Projects/data/accounts-operations.db","counts":{"aliases":2,"activeSessions":0,"lockedAccounts":0,"anomalies24h":0},"anomalyByAction":{},"aliases":[{"nodeId":"019faa06-db84-75cc-b061-ee56dac24e64","slug":"demo-superadmin","role":"superadmin","failedAttempts":0,"lockedUntil":null,"lockReason":null,"createdAt":"2026-07-28T18:40:04.051Z"},{"nodeId":"019faa06-dbd4-71ef-92d1-9ea7e1a1ed1d","slug":"demo-partner","role":"operator","failedAttempts":0,"lockedUntil":null,"lockReason":null,"createdAt":"2026-07-28T18:40:04.121Z"}],"sessions":[],"audit":[{"nodeId":"019faa06-dbd4-71ef-92d1-9ea7e1a1ed1d","action":"account_unlocked","success":true,"ip":null,"createdAt":"2026-07-28T18:40:20.369Z","impersonatorId":null},{"nodeId":"019faa06-dbd4-71ef-92d1-9ea7e1a1ed1d","action":"alias_created","success":true,"ip":null,"createdAt":"2026-07-28T18:40:04.121Z","impersonatorId":null},{"nodeId":"019faa06-db84-75cc-b061-ee56dac24e64","action":"alias_created","success":true,"ip":null,"createdAt":"2026-07-28T18:40:04.052Z","impersonatorId":null}]}</script>
-  <style>
-    .ib-wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px 48px; }
-    .ib-stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin: 16px 0 20px; }
-    .ib-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
-    .ib-stat .k { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
-    .ib-stat .v { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; }
-    .ib-stat.bad .v { color: var(--red, #f85149); }
-    .ib-stat.warn .v { color: var(--yellow, #d29922); }
-    .ib-stat.ok .v { color: var(--green, #3fb950); }
-    .ib-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 16px; }
-    .ib-panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin: 0 0 12px; }
-    .ib-empty p { font-size: 13px; }
-    .ib-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    .ib-table th { text-align: left; padding: 6px 8px; color: var(--text-dim); font-weight: 500; border-bottom: 1px solid var(--border); }
-    .ib-table td { padding: 6px 8px; border-bottom: 1px solid rgba(48,54,61,.4); vertical-align: top; }
-    .ib-table td.ok { color: var(--green, #3fb950); }
-    .ib-table td.bad { color: var(--red, #f85149); }
-    .ib-badge { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 11px; border: 1px solid var(--border); }
-    .ib-badge.ok { color: var(--green, #3fb950); }
-    .ib-badge.bad { color: var(--red, #f85149); }
-    .ib-badge.warn { color: var(--yellow, #d29922); }
-    .dim { color: var(--text-dim); font-size: 11px; }
-  </style>
-</head>
+  </head>
 <body>
   <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
   <header class="topbar">
@@ -101,18 +78,18 @@
       </nav>
     </div>
   </header>
-  <main class="ib-wrap">
+  <main class="portal-page">
     <p class="dim">Accounts DB (<code>data/accounts-operations.db</code>) · generated 2026-07-28T18:41:27.412Z · <code>bun run identity:board</code></p>
-    <div class="ib-stats">
-      <div class="ib-stat "><div class="k">Aliases</div><div class="v">2</div></div>
-      <div class="ib-stat "><div class="k">Active sessions</div><div class="v">0</div></div>
-      <div class="ib-stat ok"><div class="k">Locked accounts</div><div class="v">0</div></div>
-      <div class="ib-stat ok"><div class="k">Anomalies 24h</div><div class="v">0</div></div>
+    <div class="portal-stat-grid" aria-label="Identity summary">
+      <div class="portal-stat muted"><div class="k">Aliases</div><div class="v">2</div></div>
+      <div class="portal-stat muted"><div class="k">Active sessions</div><div class="v">0</div></div>
+      <div class="portal-stat ok"><div class="k">Locked accounts</div><div class="v">0</div></div>
+      <div class="portal-stat ok"><div class="k">Anomalies 24h</div><div class="v">0</div></div>
     </div>
     
-    <div class="ib-panel">
-      <h2>Aliases</h2>
-      <table class="ib-table">
+    <div class="portal-panel">
+      <div class="portal-panel-head"><h2>Aliases</h2></div>
+      <div class="table-wrap"><table class="portal-table">
         <thead><tr><th>Slug</th><th>Role</th><th>Lock</th><th>Failed</th><th>Created</th></tr></thead>
         <tbody><tr>
         <td><code>demo-superadmin</code></td>
@@ -128,41 +105,41 @@
         <td class="dim">0</td>
         <td class="dim">2026-07-28T18:40:04.121Z</td>
       </tr></tbody>
-      </table>
+      </table></div>
     </div>
-    <div class="ib-panel">
-      <h2>Active sessions</h2>
-      <table class="ib-table">
+    <div class="portal-panel">
+      <div class="portal-panel-head"><h2>Active sessions</h2></div>
+      <div class="table-wrap"><table class="portal-table">
         <thead><tr><th>Node</th><th>Created</th><th>Expires</th><th>IP</th><th>User agent</th><th>Impersonation</th></tr></thead>
         <tbody><tr><td colspan="6" class="dim">No active sessions</td></tr></tbody>
-      </table>
+      </table></div>
     </div>
-    <div class="ib-panel">
-      <h2>Recent audit</h2>
-      <table class="ib-table">
+    <div class="portal-panel">
+      <div class="portal-panel-head"><h2>Recent audit</h2></div>
+      <div class="table-wrap"><table class="portal-table">
         <thead><tr><th>Time</th><th>Action</th><th>Node</th><th>IP</th><th></th></tr></thead>
         <tbody><tr>
         <td class="dim">2026-07-28T18:40:20.369Z</td>
-        <td><span class="ib-badge ok">account_unlocked</span></td>
+        <td><span class="tone-chip tone-ok">account_unlocked</span></td>
         <td class="dim">019faa06-dbd4-71ef-92d1-9ea7e1a1ed1d</td>
         <td class="dim">—</td>
         <td></td>
       </tr>
 <tr>
         <td class="dim">2026-07-28T18:40:04.121Z</td>
-        <td><span class="ib-badge ok">alias_created</span></td>
+        <td><span class="tone-chip tone-ok">alias_created</span></td>
         <td class="dim">019faa06-dbd4-71ef-92d1-9ea7e1a1ed1d</td>
         <td class="dim">—</td>
         <td></td>
       </tr>
 <tr>
         <td class="dim">2026-07-28T18:40:04.052Z</td>
-        <td><span class="ib-badge ok">alias_created</span></td>
+        <td><span class="tone-chip tone-ok">alias_created</span></td>
         <td class="dim">019faa06-db84-75cc-b061-ee56dac24e64</td>
         <td class="dim">—</td>
         <td></td>
       </tr></tbody>
-      </table>
+      </table></div>
     </div>
     <p class="dim">Credentials and session tokens are never baked — this board selects export-safe columns only (<code>lib/identity/board.ts</code>). Operator actions: <code>bun tools/identity-admin.ts</code>. Machine report: <a href="/registry/identity-board.json">/registry/identity-board.json</a>.</p>
   </main>

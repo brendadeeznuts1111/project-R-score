@@ -388,7 +388,7 @@ function renderLanes() {
   if (!lanes || !state) return;
   const list = Array.isArray(state.publishLanes) ? state.publishLanes : [];
   lanes.innerHTML = list.length
-    ? `<div class="table-wrap"><table class="data-table"><thead><tr><th>id</th><th>protocol</th><th>entry</th></tr></thead><tbody>${list
+    ? `<div class="table-wrap"><table class="portal-table"><thead><tr><th>id</th><th>protocol</th><th>entry</th></tr></thead><tbody>${list
         .map(
           l =>
             `<tr><td class="mono"><code>${esc(l.id)}</code></td><td>${esc(l.protocol)}</td><td class="mono"><code>${esc(l.entry)}</code></td></tr>`
