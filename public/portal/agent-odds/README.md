@@ -4,8 +4,9 @@ Local agent shell dashboards (not Tennis HQ Worker).
 
 | Version | File | Notes |
 |---------|------|--------|
-| **v1.02** (default `/`) | `dashboard-v1.02.html` | Streaming SSE · FormData+Blob upload · connection pool / prefetch UI |
-| v1.01 | `dashboard.html` | Drill-down filters only |
+| **v1.03** (default `/`) | `dashboard-v1.03.html` | Arbitrage · alerts · charts · tiers · login · export · backup |
+| v1.02 | `dashboard-v1.02.html` | SSE · FormData · pool / prefetch |
+| v1.01 | `dashboard.html` | Drill-down filters |
 
 ## Run
 
@@ -14,17 +15,22 @@ bun run agent:odds-dashboard
 # → http://127.0.0.1:3000/
 ```
 
+## Demo login (local mock only)
+
+| User | Password |
+|------|----------|
+| `analyst` | `password123` |
+
+Or set `AGENT_DEMO_USER` / `AGENT_DEMO_PASS`. **Not for production.**
+
 ## APIs (mock agent)
 
 | Method | Path | Role |
 |--------|------|------|
-| GET | `/api/odds/options` | Filter dropdowns |
-| GET | `/api/odds?…` | Filtered odds rows |
-| GET | `/api/odds/stats` | Aggregates |
-| GET | `/api/odds/stream` | **SSE** live odds events |
-| POST | `/api/upload` | **FormData** file (Blob) → sha256 |
-| GET | `/api/pool` | Connection pool mock stats |
-| GET | `/api/prefetch?host=` | DNS prefetch + timing |
-| GET | `/api/platform` | Bun version / capabilities |
+| GET | `/api/odds/*` | Options, rows, stats, SSE stream |
+| POST | `/api/upload` | FormData + Blob |
+| POST | `/api/auth/login` | Demo session |
+| POST | `/api/backup` | Mock DB backup stamp |
+| GET | `/api/pool` · `/api/prefetch` · `/api/platform` | Pool / DNS / capabilities + rate counters |
 
-Replace mock handlers when a real operator-research HTTP agent owns these paths.
+UI panels for arbitrage, anomalies, and tier comparison ship with **client-side mock data** until real backend routes exist.
