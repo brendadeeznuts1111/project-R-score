@@ -31,30 +31,31 @@ export type SeedDodDemoResult = {
   byStatus?: Record<string, number>;
 };
 
+/** OCR includes partner CODE so /portal/dod/ can deep-link Accounting confirm. */
 const DEMO_ROWS = [
   {
     type: 'balance',
     status: 'flagged',
     tamper: 78,
-    ocr: 'Balance $12,450.00 FanDuel',
+    ocr: 'ASH · Balance $12,450.00 FanDuel',
   },
   {
     type: 'slip',
     status: 'flagged',
     tamper: 62,
-    ocr: 'NBA LAL -4.5 · DraftKings',
+    ocr: 'BIL-001 · NBA LAL -4.5 $250 · DraftKings',
   },
   {
     type: 'receipt',
     status: 'pending',
     tamper: 18,
-    ocr: 'Deposit confirmation $500',
+    ocr: 'NOV · Deposit confirmation $500',
   },
   {
     type: 'balance',
     status: 'verified',
     tamper: 12,
-    ocr: 'Balance $8,200.00 BetMGM',
+    ocr: 'SPEN · Balance $8,200.00 BetMGM',
   },
   {
     type: 'id',

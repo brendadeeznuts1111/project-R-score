@@ -21,12 +21,12 @@ Product domains on chrome (partner desk first). Full machine map:
 
 | Lane | Boards (entry) | Focus |
 |------|----------------|-------|
-| **Partner** | [Partners](./partners/) · [Account](./account/) · [Limits](./limits/) · [Bookmakers](./bookmakers/) · [Factory](./factory/) · [Telegram](./telegram.md) | Package groups, outs, Telegram chats (plays · balances · bets · accounting), handshake |
+| **Partner** | [Partners](./partners/) · [Account](./account/) · [Limits](./limits/) · [Bookmakers](./bookmakers/) · [Factory](./factory/) · [Telegram](./telegram.md) · [DOD](./dod.md) | Package groups, outs, Telegram chats (plays · balances · bets · accounting), handshake, image proof confirm |
 | **Trading** | [Tennis](./tennis/) · prediction report | Tennis HQ desk · agent-auth · live metrics |
 | **Control** | [Ops](./ops/) · [TOC](./toc/) · [Dashboard](./dashboard/) · [Compliance](./compliance/) · [Monitoring](./monitoring.md) | ops-summary pulse, loop, MA/NJ |
 | **Identity** | [Identity](./identity/) · [Vault](./vault/) · [Env](./env/) | Auth · Proton · inject map |
 | **Knowledge** | [Glossary](./glossary/) · [Concepts](./concepts/) · [Brands](./brands/) · [Catalog](./catalog/) · [Surfaces](./surfaces/) · [Skills](./skills/) | Vocabulary · scrape-wire · edge inventory |
-| **Platform** | [Packages](./packages/) · [Health](./health/) · [DOD](./dod/) · [Tools](./tools/) | Graph map · monorepo score · proof |
+| **Platform** | [Packages](./packages/) · [Health](./health/) · [DOD](./dod/) · [Tools](./tools/) | Graph map · monorepo score · proof · R2 evidence |
 
 ## Priority boards
 
@@ -42,8 +42,8 @@ Product domains on chrome (partner desk first). Full machine map:
 | Tennis | [`/portal/tennis/`](./tennis/) | [`tennis/agent-auth.json`](../registry/tennis/agent-auth.json) |
 
 Markdown companions (when present): `ops.md` · `partners.md` · `telegram.md` ·
-`factory.md` · `packages.md` · `limits.md` · `compliance.md` · `brands.md` ·
-`glossary.md` · `health.md` · `tennis.md` · `tools.md` · `toc.md`.
+`factory.md` · `dod.md` · `packages.md` · `limits.md` · `compliance.md` ·
+`brands.md` · `glossary.md` · `health.md` · `tennis.md` · `tools.md` · `toc.md`.
 
 ## Registry artifacts (operator)
 
@@ -56,6 +56,7 @@ Markdown companions (when present): `ops.md` · `partners.md` · `telegram.md` �
 | [`telegram-handshake.json`](../registry/telegram-handshake.json) | Package-group readiness · invite gaps |
 | [`seat-capital-desk.json`](../registry/seat-capital-desk.json) | Seat FUND · outs · max bet · partner messages |
 | [`soft-accounting-export.json`](../registry/soft-accounting-export.json) | Soft plays · weeks · book types (read-only mirror) |
+| [`dod-queue.json`](../registry/dod-queue.json) | DOD evidence queue (Bun.Image · R2/local `s3_path`) |
 | [`domain-glossary.json`](../registry/domain-glossary.json) | Concept glossary (Kalshi cores + Factory overlay) |
 | [`registry.json`](../registry/registry.json) | Package index (R2 snapshot for Pages) |
 

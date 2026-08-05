@@ -1,6 +1,18 @@
 /**
  * DOD review portal — snapshot-first on Pages, live API on serve-public.
+ * Raised to shared operator primitives (hero · stats · hash filters).
+ * Partner bet-amount / deposit screenshots confirm in package-forum Accounting.
+ *
+ * @see docs/portal-foundation.md
+ * @see docs/harness/tenants/partner-package-group-handshake.md
+ * @see docs/harness/tenants/seat-capital-desk.md
  */
+import { bindCopyButtons } from '../copy-cli.js';
+import { partnerTelegramHash } from '../partners/partner-routes.js';
+
+const CONFIRM_TYPES = new Set(['slip', 'balance', 'receipt']);
+const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
+const HANDSHAKE_URL = '/registry/telegram-handshake.json';
 
 function esc(text) {
   return String(text ?? '')
@@ -8,6 +20,83 @@ function esc(text) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+/** Resolve partner CODE from optional fields or OCR (ASH-001 / "ASH · …"). */
+export function resolvePartnerCode(entry) {
+  const candidates = [
+    entry?.partner_code,
+    entry?.partnerCode,
+    entry?.call_sign,
+    entry?.callSign,
+  ];
+  for (const raw of candidates) {
+    if (raw == null || raw === '') continue;
+    const s = String(raw).trim().toUpperCase();
+    if (PARTNER_CODE_RE.test(s)) return s;
+    const call = s.match(/^([A-Z]{3,6})-\d+/);
+    if (call && PARTNER_CODE_RE.test(call[1])) return call[1];
+  }
+  const ocr = String(entry?.extracted_text || '');
+  const fromCall = ocr.match(/\b([A-Z]{3,6})-\d{3}\b/);
+  if (fromCall && PARTNER_CODE_RE.test(fromCall[1])) return fromCall[1];
+  const fromPrefix = ocr.match(/^([A-Z]{3,6})\s*(?:·|\|)/u);
+  if (fromPrefix && PARTNER_CODE_RE.test(fromPrefix[1])) return fromPrefix[1];
+  return null;
+}
+
+/** Confirm bet/deposit amounts in partner Telegram Accounting (or Partners desk). */
+export function confirmLinksHtml(entry) {
+  if (!CONFIRM_TYPES.has(String(entry?.type || ''))) return '';
+  const code = resolvePartnerCode(entry);
+  if (code) {
+    const tg = `/portal/partners/${partnerTelegramHash(code, 'accounting')}`;
+    const acct = `/portal/partners/#partner/${code}/accounting`;
+    return `<div class="dod-confirm" data-partner-code="${esc(code)}">
+      <span class="dod-confirm-label">Confirm amount</span>
+      <a class="dod-confirm-link" href="${esc(tg)}" data-glossary-concept="telegram.forum.topic.accounting">Telegram · Accounting (${esc(code)})</a>
+      <a class="dod-confirm-link" href="${esc(acct)}" data-glossary-concept="section.partnersAccounting">Partners desk</a>
+    </div>`;
+  }
+  return `<div class="dod-confirm">
+    <span class="dod-confirm-label">Confirm amount</span>
+    <a class="dod-confirm-link" href="/portal/partners/#section:telegram" data-glossary-concept="telegram.forum.topic.accounting">Partner Accounting chat</a>
+    <a class="dod-confirm-link" href="/portal/factory/">Factory handshake</a>
+  </div>`;
+}
+
+export function partnerConfirmStripHtml(partners) {
+  const rows = Array.isArray(partners) ? partners : [];
+  const chips = rows.length
+    ? rows
+        .map(r => {
+          const code = String(r.partnerCode || r.code || '')
+            .trim()
+            .toUpperCase();
+          if (!PARTNER_CODE_RE.test(code)) return '';
+          const href = `/portal/partners/${partnerTelegramHash(code, 'accounting')}`;
+          return `<a class="dod-partner-chip" href="${esc(href)}" title="Confirm bet/deposit screenshots · ${esc(code)} Accounting">${esc(code)}</a>`;
+        })
+        .filter(Boolean)
+        .join('')
+    : '<span class="dim">No handshake partners baked — run <code>bun run telegram:handshake:catalog</code></span>';
+
+  return `<section class="dod-confirm-strip" aria-label="Partner Telegram Accounting">
+    <div class="dod-confirm-strip-head">
+      <h3>Confirm bet amounts in partner chats</h3>
+      <p>
+        Deposit / withdraw / bet-slip screenshots live in each package forum’s
+        <a href="/portal/glossary/#glossary:telegram.forum.topic.accounting" data-glossary-concept="telegram.forum.topic.accounting">Accounting</a>
+        topic — open a CODE to confirm amounts against the DOD card (Bun.Image
+        processed · R2/local <code>s3_path</code>).
+        Overview: <a href="/portal/dod.md">dod.md</a> ·
+        <a href="/portal/telegram.md">telegram.md</a> ·
+        <a href="/portal/factory/">Factory</a> ·
+        <a href="/portal/partners/">Partners</a>.
+      </p>
+    </div>
+    <div class="dod-partner-chips">${chips}</div>
+  </section>`;
 }
 
 function fmtRel(iso) {
@@ -54,6 +143,30 @@ function readEmbed() {
   }
 }
 
+function parseHash(hash = location.hash) {
+  const params = new URLSearchParams(String(hash).replace(/^#/, ''));
+  const status = params.get('status') || '';
+  const allowed = ['flagged', 'pending', 'verified', 'rejected', 'all'];
+  return allowed.includes(status) ? status : '';
+}
+
+function writeHash(status) {
+  const params = new URLSearchParams();
+  if (status && status !== 'flagged') params.set('status', status);
+  const fragment = params.toString();
+  history.replaceState(
+    null,
+    '',
+    `${location.pathname}${location.search}${fragment ? `#${fragment}` : ''}`
+  );
+}
+
+function pollMs() {
+  const meta = document.querySelector('meta[name="portal-poll-ms"]');
+  const n = Number(meta?.getAttribute('content'));
+  return Number.isFinite(n) && n > 0 ? n : 30_000;
+}
+
 function normalizePayload(data, headers, source) {
   const readOnly =
     headers?.get?.('X-DOD-Read-Only') === '1' ||
@@ -77,7 +190,10 @@ function normalizePayload(data, headers, source) {
       readOnly: data.readOnly !== false || readOnly,
       mode: data.mode || (readOnly ? 'snapshot' : 'live'),
       generatedAt: data.generatedAt ?? null,
-      byStatus: data.byStatus && typeof data.byStatus === 'object' ? data.byStatus : countByStatus(data.entries),
+      byStatus:
+        data.byStatus && typeof data.byStatus === 'object'
+          ? data.byStatus
+          : countByStatus(data.entries),
       source,
     };
   }
@@ -102,7 +218,7 @@ async function fetchQueue(status, timeoutMs = 8000) {
       const normalized = normalizePayload(data, res.headers, url);
       if (!normalized) continue;
       if (url.includes('dod-queue.json') && status !== 'all') {
-        normalized.entries = normalized.entries.filter((e) => e.status === status);
+        normalized.entries = normalized.entries.filter(e => e.status === status);
       }
       return normalized;
     } catch {
@@ -133,14 +249,99 @@ function toast(message, kind = 'info') {
   }, 3200);
 }
 
+function updateHero({ readOnly, mode, generatedAt, byStatus, source }) {
+  const gate = document.getElementById('dod-gate');
+  const baked = document.getElementById('dod-baked');
+  const flagged = Number(byStatus?.flagged || 0);
+  const live = mode === 'live' && !readOnly;
+  let tone = 'ok';
+  let label = live ? 'live' : 'snapshot';
+  if (flagged > 0) {
+    tone = 'bad';
+    label = `${flagged} flagged`;
+  } else if (readOnly) {
+    tone = 'warn';
+    label = 'snapshot';
+  }
+  if (gate) {
+    gate.className = `portal-gate ${tone === 'ok' ? 'ok' : tone}`;
+    gate.innerHTML = `<span class="dot" aria-hidden="true"></span>${esc(label)}`;
+  }
+  if (baked) {
+    const rel = fmtRel(generatedAt);
+    baked.textContent = [
+      live ? 'writable SQLite' : 'read-only Pages/bake',
+      rel ? `baked ${rel}` : null,
+      source && source !== 'none' ? source.replace(/^\//, '') : null,
+    ]
+      .filter(Boolean)
+      .join(' · ');
+  }
+}
+
+function renderStats({ byStatus, currentFilter, onFilter }) {
+  const host = document.getElementById('dod-stats');
+  if (!host) return;
+  const total = Object.values(byStatus || {}).reduce((n, v) => n + Number(v || 0), 0);
+  const countFor = s => (s === 'all' ? total : Number(byStatus?.[s] || 0));
+  /** @type {Array<{ key: string, label: string, tone: string, hint: string }>} */
+  const stats = [
+    {
+      key: 'flagged',
+      label: 'Flagged',
+      tone: countFor('flagged') ? 'bad' : 'muted',
+      hint: 'needs review',
+    },
+    {
+      key: 'pending',
+      label: 'Pending',
+      tone: countFor('pending') ? 'warn' : 'muted',
+      hint: 'awaiting triage',
+    },
+    {
+      key: 'verified',
+      label: 'Verified',
+      tone: countFor('verified') ? 'ok' : 'muted',
+      hint: 'approved',
+    },
+    {
+      key: 'rejected',
+      label: 'Rejected',
+      tone: 'muted',
+      hint: 'closed',
+    },
+    {
+      key: 'all',
+      label: 'Total',
+      tone: 'muted',
+      hint: 'all statuses',
+    },
+  ];
+  host.innerHTML = stats
+    .map(s => {
+      const active = currentFilter === s.key;
+      return `<button type="button" class="portal-stat ${esc(s.tone)}${active ? ' active' : ''}"
+        data-status="${esc(s.key)}" aria-pressed="${active ? 'true' : 'false'}">
+        <div class="k">${esc(s.label)}</div>
+        <div class="v">${countFor(s.key)}</div>
+        <div class="hint">${esc(s.hint)}</div>
+      </button>`;
+    })
+    .join('');
+  host.querySelectorAll('.portal-stat').forEach(btn => {
+    btn.addEventListener('click', () => onFilter(btn.getAttribute('data-status') || 'all'));
+  });
+}
+
 export function renderDodDashboard(state) {
-  const { entries, currentFilter, readOnly, byStatus, mode, generatedAt } = state;
+  const { entries, currentFilter, readOnly, byStatus, mode, generatedAt, handshakePartners } =
+    state;
   const statuses = ['flagged', 'pending', 'verified', 'rejected', 'all'];
   const total = Object.values(byStatus || {}).reduce((n, v) => n + Number(v || 0), 0);
-  const countFor = (s) => (s === 'all' ? total : Number(byStatus?.[s] || 0));
+  const countFor = s => (s === 'all' ? total : Number(byStatus?.[s] || 0));
 
   const filtersHtml = statuses
-    .map((s) => {
+    .map(s => {
       const n = countFor(s);
       return `<button type="button" class="dod-filter ${s} ${currentFilter === s ? 'active' : ''}" data-status="${s}">
         <span class="dod-filter-label">${s}</span>
@@ -149,57 +350,27 @@ export function renderDodDashboard(state) {
     })
     .join('');
 
-  const statsHtml = `
-    <div class="dod-stats" role="group" aria-label="Queue counts">
-      <div class="dod-stat ${countFor('flagged') ? 'hot' : ''}"><span class="k">Flagged</span><span class="v">${countFor('flagged')}</span></div>
-      <div class="dod-stat"><span class="k">Pending</span><span class="v">${countFor('pending')}</span></div>
-      <div class="dod-stat ok"><span class="k">Verified</span><span class="v">${countFor('verified')}</span></div>
-      <div class="dod-stat"><span class="k">Rejected</span><span class="v">${countFor('rejected')}</span></div>
-      <div class="dod-stat"><span class="k">Total</span><span class="v">${total}</span></div>
-    </div>`;
+  const confirmStripHtml = partnerConfirmStripHtml(handshakePartners);
 
-  const rel = fmtRel(generatedAt);
-  const modeLabel = mode === 'live' && !readOnly ? 'Live' : 'Snapshot';
-  const modeClass = mode === 'live' && !readOnly ? 'live' : 'snapshot';
-  const needsAttention = readOnly && countFor('flagged') > 0;
-  const metaHtml = `
-    <div class="dod-head">
-      <div class="dod-head-main">
-        <h2 class="dod-title">DOD Review</h2>
-        <p class="dod-sub">Document-of-deposit evidence queue — balance slips, IDs, receipts.</p>
-      </div>
-      <div class="dod-mode ${modeClass}${needsAttention ? ' warn' : ''}">
-        <span class="dod-mode-pill">${modeLabel}</span>
-        <span class="dod-mode-detail">
-          ${
-            readOnly
-              ? needsAttention
-                ? `Read-only on Pages · ${countFor('flagged')} flagged need local review`
-                : `Read-only on Pages${rel ? ` · baked ${rel}` : ''}`
-              : 'Approve and reject write to local SQLite'
-          }
-        </span>
-        ${generatedAt ? `<span class="dod-mode-time" title="${esc(generatedAt)}">${esc(fmtTime(generatedAt))}</span>` : ''}
-      </div>
-    </div>
-    ${
-      readOnly
-        ? `<details class="dod-help"><summary>How to approve or reject</summary>
+  const helpHtml =
+    readOnly
+      ? `<details class="dod-help"><summary>How to approve or reject</summary>
             <p>Pages serves a baked queue from <code>bun run ops:snapshot</code>. Mutations need Bun + SQLite:</p>
             <pre><code>bun run serve:public
 open http://localhost:3000/portal/dod/</code></pre>
           </details>`
-        : ''
-    }
-    ${statsHtml}`;
+      : '';
 
   const listHtml = entries.length
     ? entries
-        .map((e) => {
+        .map(e => {
           const canAct = !readOnly && e.status !== 'verified' && e.status !== 'rejected';
           const tamper = Number(e.tamper_score ?? 0);
           const tamperCls = tamper > 50 ? 'tamper-high' : 'tamper-low';
-          return `<article class="dod-card ${esc(e.status)}" data-id="${esc(e.id)}">
+          const partner = resolvePartnerCode(e);
+          return `<article class="dod-card ${esc(e.status)}" data-id="${esc(e.id)}"${
+            partner ? ` data-partner-code="${esc(partner)}"` : ''
+          }>
             <div class="dod-preview">
               ${
                 e.s3_path
@@ -212,6 +383,7 @@ open http://localhost:3000/portal/dod/</code></pre>
               <div class="dod-card-top">
                 <span class="dod-status-pill ${esc(e.status)}">${esc(e.status)}</span>
                 <span class="dod-type">${esc(e.type || 'unknown')}</span>
+                ${partner ? `<span class="dod-partner-pill">${esc(partner)}</span>` : ''}
               </div>
               <dl class="dod-meta">
                 <div><dt>ID</dt><dd><code title="${esc(e.id)}">${esc(shortId(e.id))}</code></dd></div>
@@ -226,6 +398,7 @@ open http://localhost:3000/portal/dod/</code></pre>
                 ${e.signature ? `<div><dt>Sig</dt><dd><code title="${esc(e.signature)}">${esc(String(e.signature).slice(0, 16))}…</code></dd></div>` : ''}
               </dl>
               ${e.extracted_text ? `<p class="dod-ocr">${esc(String(e.extracted_text).slice(0, 180))}${String(e.extracted_text).length > 180 ? '…' : ''}</p>` : ''}
+              ${confirmLinksHtml(e)}
               ${e.rejection_reason ? `<div class="reject-reason">${esc(e.rejection_reason)}</div>` : ''}
             </div>
             ${
@@ -250,7 +423,18 @@ open http://localhost:3000/portal/dod/</code></pre>
         }</p>
       </div>`;
 
-  return { metaHtml, filtersHtml, listHtml };
+  return {
+    filtersHtml,
+    listHtml,
+    helpHtml,
+    confirmStripHtml,
+    total,
+    mode,
+    generatedAt,
+    readOnly,
+    byStatus,
+    currentFilter,
+  };
 }
 
 async function postAction(path, body) {
@@ -271,23 +455,42 @@ async function postAction(path, body) {
 export async function initDodDashboard() {
   const loading = document.getElementById('loading');
   const dashboard = document.getElementById('dashboard');
-  const meta = document.getElementById('dod-meta');
   const filters = document.getElementById('dod-filters');
   const list = document.getElementById('dod-list');
+  const helpHost = document.getElementById('dod-help-host');
+  const confirmHost = document.getElementById('dod-confirm-host');
   const rejectModal = document.getElementById('dod-reject-modal');
   const rejectReason = document.getElementById('dod-reject-reason');
   const rejectConfirm = document.getElementById('dod-reject-confirm');
   const rejectCancel = document.getElementById('dod-reject-cancel');
-  if (!loading || !dashboard || !meta || !filters || !list) return;
+  const countEl = document.getElementById('dod-count');
+  const clearBtn = document.getElementById('dod-clear');
+  if (!loading || !dashboard || !filters || !list) return;
 
-  let currentFilter = 'flagged';
+  bindCopyButtons(document);
+
+  let currentFilter = parseHash() || 'flagged';
   let entries = [];
   let byStatus = {};
   let readOnly = true;
   let mode = 'snapshot';
   let generatedAt = null;
+  let source = 'embed';
+  let handshakePartners = [];
   let rejectTargetId = null;
   let busy = false;
+
+  const syncChrome = () => {
+    writeHash(currentFilter);
+    if (countEl) {
+      const total = Object.values(byStatus || {}).reduce((n, v) => n + Number(v || 0), 0);
+      const shown = currentFilter === 'all' ? total : Number(byStatus?.[currentFilter] || 0);
+      countEl.textContent =
+        currentFilter === 'all' ? `${total} shown` : `${entries.length}/${total} · ${currentFilter}`;
+      void shown;
+    }
+    if (clearBtn) clearBtn.disabled = currentFilter === 'flagged';
+  };
 
   const paint = () => {
     const view = renderDodDashboard({
@@ -297,27 +500,47 @@ export async function initDodDashboard() {
       byStatus,
       mode,
       generatedAt,
+      handshakePartners,
     });
     loading.classList.add('hidden');
     dashboard.classList.remove('hidden');
-    meta.innerHTML = view.metaHtml;
+    updateHero({ readOnly, mode, generatedAt, byStatus, source });
+    renderStats({
+      byStatus,
+      currentFilter,
+      onFilter: status => void load(status),
+    });
+    if (confirmHost) confirmHost.innerHTML = view.confirmStripHtml;
+    if (helpHost) helpHost.innerHTML = view.helpHtml;
     filters.innerHTML = view.filtersHtml;
     list.innerHTML = view.listHtml;
-    filters.querySelectorAll('button').forEach((btn) => {
+    syncChrome();
+    filters.querySelectorAll('button').forEach(btn => {
       btn.addEventListener('click', () => load(btn.dataset.status || 'all'));
     });
     if (!readOnly) wireActions();
   };
 
+  async function loadHandshakePartners() {
+    try {
+      const res = await fetch(HANDSHAKE_URL, { headers: { Accept: 'application/json' } });
+      if (!res.ok) return;
+      const data = await res.json();
+      handshakePartners = Array.isArray(data?.rows) ? data.rows : [];
+    } catch {
+      handshakePartners = [];
+    }
+  }
+
   function setBusy(on) {
     busy = on;
-    list.querySelectorAll('button').forEach((btn) => {
+    list.querySelectorAll('button').forEach(btn => {
       btn.disabled = on;
     });
   }
 
   function wireActions() {
-    list.querySelectorAll('.btn-approve').forEach((btn) => {
+    list.querySelectorAll('.btn-approve').forEach(btn => {
       btn.addEventListener('click', async () => {
         if (busy) return;
         const id = btn.dataset.id;
@@ -332,7 +555,7 @@ export async function initDodDashboard() {
         }
       });
     });
-    list.querySelectorAll('.btn-reject').forEach((btn) => {
+    list.querySelectorAll('.btn-reject').forEach(btn => {
       btn.addEventListener('click', () => {
         if (busy) return;
         rejectTargetId = btn.dataset.id;
@@ -368,11 +591,21 @@ export async function initDodDashboard() {
     }
   });
 
-  rejectModal?.addEventListener('click', (ev) => {
+  rejectModal?.addEventListener('click', ev => {
     if (ev.target === rejectModal) {
       rejectModal.classList.add('hidden');
       rejectTargetId = null;
     }
+  });
+
+  document.getElementById('dod-refresh')?.addEventListener('click', e => {
+    e.preventDefault();
+    void load(currentFilter);
+  });
+  clearBtn?.addEventListener('click', () => void load('flagged'));
+  window.addEventListener('hashchange', () => {
+    const next = parseHash() || 'flagged';
+    if (next !== currentFilter) void load(next);
   });
 
   async function load(status = 'flagged') {
@@ -380,11 +613,12 @@ export async function initDodDashboard() {
     const embed = readEmbed();
     if (embed?.entries) {
       entries =
-        status === 'all' ? embed.entries : embed.entries.filter((e) => e.status === status);
+        status === 'all' ? embed.entries : embed.entries.filter(e => e.status === status);
       byStatus = embed.byStatus || countByStatus(embed.entries);
       readOnly = embed.readOnly !== false;
       mode = embed.mode || (readOnly ? 'snapshot' : 'live');
       generatedAt = embed.generatedAt ?? null;
+      source = 'embed';
       paint();
     } else {
       loading.classList.remove('hidden');
@@ -396,28 +630,30 @@ export async function initDodDashboard() {
     readOnly = live.readOnly;
     mode = live.mode;
     generatedAt = live.generatedAt ?? generatedAt;
-    // Prefer full byStatus from envelope; otherwise keep embed counts or derive.
+    source = live.source || source;
     if (live.byStatus && Object.keys(live.byStatus).length) {
       byStatus = live.byStatus;
     } else if (!Object.keys(byStatus).length) {
       byStatus = countByStatus(entries);
     }
-    // Live array responses are filtered — refresh counts from all when needed.
     if (!live.readOnly && (!live.byStatus || !Object.keys(live.byStatus).length)) {
       const all = await fetchQueue('all');
       byStatus = countByStatus(all.entries);
       if (status !== 'all') {
-        entries = all.entries.filter((e) => e.status === status);
+        entries = all.entries.filter(e => e.status === status);
       } else {
         entries = all.entries;
       }
       readOnly = all.readOnly;
       mode = all.mode;
+      source = all.source || source;
     }
     paint();
   }
 
-  await load('flagged');
+  await loadHandshakePartners();
+  await load(currentFilter);
+  setInterval(() => void load(currentFilter), pollMs());
 }
 
 if (typeof document !== 'undefined') {
