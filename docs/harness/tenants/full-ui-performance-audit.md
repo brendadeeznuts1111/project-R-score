@@ -10,12 +10,12 @@ static + Functions boundary.
 
 | Requirement | Metric | Baseline | Candidate | Result |
 |---|---|---:|---:|---:|
-| Bundle reduction | Aggregate initial JS + CSS bytes over all 33 portal pages | 6,415,396 B | 3,708,011 B | **42.20% smaller — pass** |
+| Bundle reduction | Aggregate initial JS + CSS bytes over all 33 portal pages | 6,415,396 B | 3,715,671 B | **42.08% smaller — pass** |
 | Speed improvement | Wall time for a sequential 95-route local catalog sweep | 28,761.108 ms | 915.178 ms median of 3 | **96.82% faster — pass** |
 | Route correctness | HTTP/status/content verification | 95/95 local | 95/95 local | **pass** |
-| Live edge correctness | Canonical live weave probes | — | 93/93 | **pass before deploy** |
+| Live edge correctness | Canonical live weave probes | — | 105/105 | **pass after deploy** |
 | Portal page correctness | Pages + shared asset verifier | — | 34/34 | **pass** |
-| Pages boundary | Static, Functions, headers, discovery, and API verifier | — | all checks | **pass locally** |
+| Pages boundary | Static, Functions, headers, discovery, and API verifier | — | all checks | **pass live** |
 
 The bundle metric counts each route's initial static module and stylesheet graph,
 plus inline runnable JavaScript and CSS. Dynamic imports are intentionally
@@ -35,9 +35,9 @@ access and retirement states instead of reporting them as outages.
 | Vanity | `health`, `telegram` | Resolve to the Pages app; canonical functions remain paths on `score` |
 | Retired | `terminal`, `support`, `reasonix`, internal registry writer | No DNS/service is the required state |
 
-The live weave covered 28 declared surfaces, 41 artifacts, 14 shared components,
-and 10 cross-subdomain references across five reachable hosts. All 93 probes
-passed at the audit baseline.
+The post-deploy live weave covered 32 declared surfaces, 42 artifacts, 21 shared
+components, and 10 cross-subdomain references across five reachable hosts. All
+105 probes passed.
 
 ## Route and UI review
 
@@ -52,6 +52,11 @@ passed at the audit baseline.
   Each page hydrates shared health, tenant, navigation, and footer chrome with no
   console warnings/errors or document-level horizontal overflow. The Ops page
   also passes a mobile-width overflow check.
+- A three-run Lighthouse 13.4.1 desktop trace on Ops records a median performance
+  score of 98, 553.332 ms LCP, 0 ms total blocking time, and 0.091956 CLS. The
+  pre-fix deployment scored 75 with 1.126323 CLS. The shift came from the empty
+  tenant rail gaining height after hydration; shared chrome and the asynchronous
+  dashboard now reserve their layout slots before data arrives.
 
 ## Fixes
 
@@ -89,13 +94,14 @@ PAGES_VERIFY_BASE=http://127.0.0.1:6111 bun run verify:pages-edge
 bun run verify:weave -- --summary
 ```
 
-Cloudflare uses `BUN_VERSION=1.3.14`; that pinned runtime produces 3,708,836 B,
-a 42.19% reduction.
+Cloudflare uses `BUN_VERSION=1.3.14`; that pinned runtime produces 3,716,496 B,
+a 42.07% reduction.
 
-## Remaining proof boundary
+## Production proof
 
-Core Web Vitals (LCP, CLS, INP) and browser main-thread traces require the
-Chrome DevTools MCP named by the repository's `web-perf` workflow. That MCP is
-not available in the current Codex runtime, so this audit does not invent
-browser-trace results. Deployment and post-deploy live verification must also
-complete before this document can be marked final.
+Cloudflare Pages deploy `1d792100-51ac-40e5-ba89-3d4667183e0f` completed from
+`main`; the immutable origin proved the optimized portal scripts and all 37
+glossary sections. The canonical edge verifier and 105-probe weave then passed.
+Lighthouse supplies lab LCP, CLS, and main-thread evidence. INP requires real
+user interaction and is therefore not inferred from a page-load trace; rendered
+desktop and mobile interaction checks cover the navigation and dashboard paths.

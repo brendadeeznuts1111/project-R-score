@@ -296,6 +296,12 @@ body {
 }
 
 /* Domain rail on partner/ops boards */
+[data-domain-lanes][hidden] {
+  display: block !important;
+  min-block-size: 104px;
+  visibility: hidden;
+}
+
 .domain-lane-rail {
   margin: 0 0 18px;
   padding: 12px 14px;
@@ -482,6 +488,7 @@ body {
   place-items: center;
   gap: 6px;
   flex-shrink: 0;
+  min-block-size: 34px;
 }
 
 .tenant-btn {
@@ -1889,7 +1896,8 @@ body {
 }
 
 .ops-jump[hidden] {
-  display: none;
+  display: flex !important;
+  visibility: hidden;
 }
 
 .ops-jump-label {
@@ -1924,6 +1932,11 @@ body {
 
 .ops-dashboard {
   padding: 0 clamp(16px, 3vw, 24px) 32px;
+}
+
+operations-dashboard {
+  display: block;
+  min-block-size: 100vh;
 }
 
 .ops-page {
