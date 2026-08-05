@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "generatedAt": "2026-08-05T03:12:57.584Z",
+  "generatedAt": "2026-08-05T23:47:57.586Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
-  "brandCount": 67,
+  "brandCount": 69,
   "domainCount": 9,
   "domains": [
     "audit",
@@ -16,7 +16,7 @@
     "surfaces"
   ],
   "kinds": {
-    "id": 61,
+    "id": 63,
     "key": 1,
     "code": 5
   },
@@ -44,7 +44,7 @@
     {
       "name": "operations",
       "module": "lib/types/branded/operations.ts",
-      "brandCount": 27
+      "brandCount": 29
     },
     {
       "name": "portal",
@@ -1430,6 +1430,62 @@
       "guard": "BRAND_GUARDS.isLimitForecastIssueId",
       "shortName": "limitForecastIssueId",
       "envName": "LIMIT_FORECAST_ISSUE_ID"
+    },
+    {
+      "name": "EventId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Synthetic or live odds event identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asEventId",
+        "try": "tryEventId",
+        "parse": "parseEventId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isEventId",
+      "shortName": "eventId",
+      "envName": "EVENT_ID"
+    },
+    {
+      "name": "EdgeId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Detected betting-edge opportunity identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asEdgeId",
+        "try": "tryEdgeId",
+        "parse": "parseEdgeId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isEdgeId",
+      "shortName": "edgeId",
+      "envName": "EDGE_ID"
     },
     {
       "name": "SportsbookId",

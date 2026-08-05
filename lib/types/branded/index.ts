@@ -105,6 +105,8 @@ import type {
   GateDecisionId,
   OpsChannelEventId,
   LimitForecastIssueId,
+  EventId,
+  EdgeId,
   SportsbookId,
   StateCode,
   ZipCode,
@@ -209,6 +211,8 @@ export type AnyId =
   | GateDecisionId
   | OpsChannelEventId
   | LimitForecastIssueId
+  | EventId
+  | EdgeId
   | SportsbookId
   | PortalTenantId
   | TelegramUserId

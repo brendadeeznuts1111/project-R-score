@@ -1,8 +1,8 @@
 # Subagent fanout board — multi-lane execute
 
-**Created:** 2026-08-05  
-**Parent goal:** Close dual-plane residuals (Tennis edge **R2-only**, monorepo tip docs, operator-research agent tooling) without crossing lanes.  
-**Policy:** **No D1** on Workers. Durable edge snapshots = **R2** (+ embed fallback). Auth planes stay `PARTNER_API_TOKEN` / `FACTORY_WAGER_TOKEN` — do **not** invent parallel public API-key stacks on Tennis.  
+**Created:** 2026-08-05\
+**Parent goal:** Close dual-plane residuals (Tennis edge **R2-only**, monorepo tip docs, operator-research agent tooling) without crossing lanes.\
+**Policy:** **No D1** on Workers. Durable edge snapshots = **R2** (+ embed fallback). Auth planes stay `PARTNER_API_TOKEN` / `FACTORY_WAGER_TOKEN` — do **not** invent parallel public API-key stacks on Tennis.\
 **Orchestrator:** one parent session; spawn **general-purpose** subagents with the spawn prompts below; merge via worktree PRs (squash).
 
 ## Status legend
