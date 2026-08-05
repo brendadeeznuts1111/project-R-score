@@ -367,8 +367,10 @@ const server = Bun.serve({
       if (refresh) MERGED = null;
       const merged = await getMerged();
       const summary = healthSummary(merged.health);
+      const lastProbe = merged.health.find(partner => partner.lastProbe)?.lastProbe ?? null;
       return json({
         generatedAt: merged.generatedAt,
+        lastProbe,
         source: merged.source,
         summary,
         health: merged.health,
@@ -460,7 +462,7 @@ const server = Bun.serve({
         rateCurrent: rateState.rateCurrent,
         rateLimit: rateState.rateLimit,
         lastBackup: rateState.lastBackup,
-        lastProbe: merged.generatedAt,
+        lastProbe: merged.health.find(partner => partner.lastProbe)?.lastProbe ?? null,
         features: [
           'sse',
           'formdata',

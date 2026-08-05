@@ -144,7 +144,9 @@ export function mergeBookmakersWithOps(
       const cur = outsByBookSlug.get(slug) ?? { ready: 0, total: 0 };
       cur.total += 1;
       const st = String(out.status ?? '').toLowerCase();
-      if (st === 'ready' || st === 'active' || st === 'warmed') cur.ready += 1;
+      if (st === 'ready' || st === 'funded' || st === 'active' || st === 'warmed') {
+        cur.ready += 1;
+      }
       outsByBookSlug.set(slug, cur);
     }
   }
@@ -208,7 +210,7 @@ export function mergeBookmakersWithOps(
       liquidityTier,
       maxBetUsd: Number.isFinite(maxBetUsd as number) ? (maxBetUsd as number) : null,
       minBetUsd: Number.isFinite(minBetUsd as number) ? (minBetUsd as number) : null,
-      lastProbe: partnersOps?.generatedAt ?? generatedAt,
+      lastProbe: partnersOps?.generatedAt ?? null,
       urls,
       fetcher: entry.fetcher ? String(entry.fetcher) : null,
       sports: Array.isArray(entry.sports) ? entry.sports.map(String) : [],

@@ -753,12 +753,14 @@
       liquidityMix.textContent = Object.entries(summary.byLiquidity)
         .map(([k, v]) => `${k}:${v}`).join(' · ') || '—';
     }
-    if (lastProbe && payload.generatedAt) {
+    if (lastProbe && payload.lastProbe) {
       try {
-        lastProbe.textContent = new Date(payload.generatedAt).toLocaleString();
+        lastProbe.textContent = new Date(payload.lastProbe).toLocaleString();
       } catch (_) {
-        lastProbe.textContent = payload.generatedAt;
+        lastProbe.textContent = payload.lastProbe;
       }
+    } else if (lastProbe) {
+      lastProbe.textContent = '—';
     }
     renderPartnerStrip(health);
     alerts = alertsFromHealth(health);
@@ -833,9 +835,10 @@
     return params;
   }
 
-  async function refreshHealth() {
+  async function refreshHealth(refresh = false) {
     try {
-      const res = await fetch(AGENT_API_BASE + '/api/partners/health');
+      const suffix = refresh ? '?refresh=1' : '';
+      const res = await fetch(AGENT_API_BASE + '/api/partners/health' + suffix);
       if (!res.ok) throw new Error('health ' + res.status);
       const data = await res.json();
       updateHealthUI(data);
@@ -847,10 +850,12 @@
     }
   }
 
-  async function refreshData() {
-    await refreshHealth();
+  async function refreshData(refresh = false) {
+    await refreshHealth(refresh);
     try {
-      const qs = filterQuery().toString();
+      const params = filterQuery();
+      if (refresh) params.set('refresh', '1');
+      const qs = params.toString();
       const res = await fetch(AGENT_API_BASE + '/api/odds?' + qs);
       if (!res.ok) throw new Error('odds ' + res.status);
       const body = await res.json();
@@ -999,7 +1004,7 @@
     document.querySelectorAll('.filter-bar select').forEach(s => s.value = '');
     refreshData();
   });
-  document.getElementById('refreshOdds').addEventListener('click', refreshData);
+  document.getElementById('refreshOdds').addEventListener('click', () => refreshData(true));
   document.getElementById('exportBtn').addEventListener('click', exportCSV);
   document.getElementById('backupBtn').addEventListener('click', backupDB);
 
@@ -1068,7 +1073,7 @@
   drawChart();
 
   // Auto‑refresh every 30 seconds
-  setInterval(refreshData, 30000);
+  setInterval(() => refreshData(true), 30000);
 
   fetch(AGENT_API_BASE + '/api/platform').then(r => r.ok ? r.json() : null).then(p => {
     if (!p) return;
