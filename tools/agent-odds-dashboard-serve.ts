@@ -1,4 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
+// @see https://bun.com/docs/runtime/networking/dns#dns-prefetch — Bun.dns
+// @see https://bun.com/docs/runtime/networking/dns#dns-prefetch — Bun.dns.prefetch
+// @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
 // @see https://bun.com/docs/api/http — Bun.serve
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
@@ -21,18 +25,18 @@
  *   POST /api/upload · /api/auth/login · /api/backup
  *   GET  /api/pool · /api/prefetch · /api/platform
  */
-import { join } from 'node:path';
 import {
   loadMergedRegistry,
   resolvePartnerForHost,
   type MergedPartnerHealth,
   type MergedRegistry,
 } from '../lib/bookmakers/merged-registry.ts';
+import { joinPath } from '../lib/path-bun.ts';
 
-const ROOT = join(import.meta.dir, '..');
-const DASH_DIR = join(ROOT, 'public/portal/agent-odds');
-const PORT = Number(process.env.PORT || process.env.AGENT_ODDS_PORT || 3000);
-const HOST = process.env.HOST || '127.0.0.1';
+const ROOT = joinPath(import.meta.dir, '..');
+const DASH_DIR = joinPath(ROOT, 'public/portal/agent-odds');
+const PORT = Number(Bun.env.PORT || Bun.env.AGENT_ODDS_PORT || 3000);
+const HOST = Bun.env.HOST || '127.0.0.1';
 
 /** Fallback hosts when registry has no urls.web */
 const FALLBACK_HOSTS = [
@@ -82,13 +86,7 @@ const LEAGUES = [
   'Bundesliga',
 ] as const;
 
-const MARKETS = [
-  'moneyline',
-  'spread',
-  'total',
-  'team_total',
-  'over_under',
-] as const;
+const MARKETS = ['moneyline', 'spread', 'total', 'team_total', 'over_under'] as const;
 
 const SESSIONS = ['pregame', 'live'] as const;
 
@@ -116,8 +114,8 @@ const poolState = {
 };
 
 /** Demo-only credentials for local mock agent (not production). */
-const DEMO_USER = process.env.AGENT_DEMO_USER || 'analyst';
-const DEMO_PASS = process.env.AGENT_DEMO_PASS || 'password123';
+const DEMO_USER = Bun.env.AGENT_DEMO_USER || 'analyst';
+const DEMO_PASS = Bun.env.AGENT_DEMO_PASS || 'password123';
 
 const rateState = {
   rateCurrent: 12,
@@ -131,9 +129,7 @@ function pick<T extends readonly string[]>(arr: T): T[number] {
 
 function enrichRow(row: OddsRow, merged: MergedRegistry): OddsRow {
   const id = resolvePartnerForHost(merged.hostIndex, row.host);
-  const partner = id
-    ? merged.health.find(h => h.id === id)
-    : undefined;
+  const partner = id ? merged.health.find(h => h.id === id) : undefined;
   return {
     ...row,
     bookmakerId: id,
@@ -173,10 +169,7 @@ async function getCatalog(refresh = false): Promise<OddsRow[]> {
   return CATALOG;
 }
 
-function filterOdds(
-  rows: OddsRow[],
-  url: URL,
-): { data: OddsRow[]; total: number } {
+function filterOdds(rows: OddsRow[], url: URL): { data: OddsRow[]; total: number } {
   let filtered = rows;
   const host = url.searchParams.get('host');
   const sport = url.searchParams.get('sport');
@@ -201,9 +194,7 @@ function filterOdds(
 }
 
 function healthSummary(health: MergedPartnerHealth[]) {
-  const online = health.filter(
-    p => p.status === 'active' || p.status === 'low_balance',
-  ).length;
+  const online = health.filter(p => p.status === 'active' || p.status === 'low_balance').length;
   return {
     online,
     total: health.length,
@@ -213,14 +204,14 @@ function healthSummary(health: MergedPartnerHealth[]) {
         acc[p.status] = (acc[p.status] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>,
+      {} as Record<string, number>
     ),
     byLiquidity: health.reduce(
       (acc, p) => {
         acc[p.liquidityTier] = (acc[p.liquidityTier] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>,
+      {} as Record<string, number>
     ),
   };
 }
@@ -244,7 +235,7 @@ function statsFrom(rows: OddsRow[], hostCount: number) {
   };
 }
 
-function json(data: unknown, status = 200): Response {
+function json(data: object, status = 200): Response {
   const body = JSON.stringify(data);
   return new Response(body, {
     status,
@@ -283,9 +274,7 @@ function oddsStreamResponse(hosts: string[]): Response {
           session: pick(SESSIONS),
           at: new Date().toISOString(),
         };
-        controller.enqueue(
-          enc.encode(`id: ${id}\ndata: ${JSON.stringify(payload)}\n\n`),
-        );
+        controller.enqueue(enc.encode(`id: ${id}\ndata: ${JSON.stringify(payload)}\n\n`));
         poolState.streams = Math.min(poolState.streams + 1, 99);
       };
       send();
@@ -345,14 +334,7 @@ const server = Bun.serve({
         marketTypes: [...MARKETS],
         sessions: [...SESSIONS],
         liquidityTiers: ['high', 'medium', 'low', 'illiquid', 'unknown'],
-        partnerStatuses: [
-          'active',
-          'low_balance',
-          'critical',
-          'degraded',
-          'offline',
-          'deferred',
-        ],
+        partnerStatuses: ['active', 'low_balance', 'critical', 'degraded', 'offline', 'deferred'],
         partners: merged.health.map(p => ({
           id: p.id,
           label: p.label,
@@ -460,7 +442,7 @@ const server = Bun.serve({
     if (path === '/api/platform') {
       rateState.rateCurrent = Math.min(
         rateState.rateCurrent + Math.floor(Math.random() * 3),
-        rateState.rateLimit,
+        rateState.rateLimit
       );
       const merged = await getMerged();
       const summary = healthSummary(merged.health);
@@ -498,13 +480,13 @@ const server = Bun.serve({
     let filePath = path === '/' || path === '' ? '/dashboard-v1.03.html' : path;
     if (filePath === '/index.html') filePath = '/dashboard-v1.03.html';
     if (filePath === '/dashboard.html') {
-      const v1 = join(DASH_DIR, 'dashboard.html');
+      const v1 = joinPath(DASH_DIR, 'dashboard.html');
       if (!(await Bun.file(v1).exists())) {
         filePath = '/dashboard-v1.03.html';
       }
     }
     const safe = filePath.replace(/\.\./g, '').replace(/^\/+/, '');
-    const abs = join(DASH_DIR, safe || 'dashboard-v1.03.html');
+    const abs = joinPath(DASH_DIR, safe || 'dashboard-v1.03.html');
     if (!abs.startsWith(DASH_DIR)) {
       return new Response('Forbidden', { status: 403 });
     }
@@ -522,5 +504,5 @@ const server = Bun.serve({
 });
 
 console.log(
-  `agent-odds dashboard v1.03+liquidity → http://${server.hostname}:${server.port}/  (health · liquidity · arb · auth mock)`,
+  `agent-odds dashboard v1.03+liquidity → http://${server.hostname}:${server.port}/  (health · liquidity · arb · auth mock)`
 );
