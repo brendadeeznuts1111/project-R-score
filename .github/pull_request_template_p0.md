@@ -15,6 +15,14 @@ Fixes #<!-- issue number -->
 |----------------------|-----------------------------------------------------|----------|
 | | | |
 
+## Routing (optional)
+
+| Field | Value |
+|-------|-------|
+| Domain | `partner` · `control` · `platform` · … · or n/a |
+| Tracker | tenant open-issue id (e.g. `BM-1`) · or n/a |
+| Concept | vocabulary id only if chrome/wire changes · or n/a |
+
 ## 🔒 Security Impact
 <!-- For security fixes -->
 - [ ] Vulnerability addressed

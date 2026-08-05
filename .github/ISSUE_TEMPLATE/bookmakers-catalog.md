@@ -5,6 +5,17 @@ title: "[bookmakers] "
 labels: bookmakers, registry
 ---
 
+## Routing (human queue only)
+
+| Field | Value | Rule |
+|-------|-------|------|
+| **Domain** | `partner` | Required (bookmakers desk) |
+| **Tracker** | e.g. `BM-1` (Orange777) · `BM-3` (webview maxBet) · or `n/a` | Prefer id from [bookmakers-open-issues.md](../../docs/harness/tenants/bookmakers-open-issues.md) |
+| **Concept** | usually `n/a` | Only if adding glossary chrome for books; never invent free-text “concepts” |
+| **Surface** | `/portal/bookmakers/` · `/registry/bookmakers.json` | |
+
+**Do not invent** a registry `id`/`urls.web` for unmatched desk labels (e.g. Orange777) until domain SSOT exists.
+
 ## Bookmaker
 
 | Field | Value |
@@ -38,17 +49,20 @@ labels: bookmakers, registry
 - [ ] Desk coverage checked if seat desk free-text is involved (`bun run bookmakers:desk-coverage`)
 - [ ] Bake / migrate evidence: `bookmakers:bake:check` or migrate + board tests
 - [ ] PR Claim → evidence filled; Naming (v0.4) section completed
+- [ ] If closing a **Tracker** (BM-\*): mark acceptance in `bookmakers-open-issues.md` in the same PR
 
 ## Commands (operator)
 
 ```bash
 bun run bookmakers:migrate          # v0.3 → v0.4 public + ops
 bun run bookmakers:desk-coverage
-bun run bookmakers:bake             # or -- --local
+bun run bookmakers:bake -- --version 0.4.1
 bun run bookmakers:bake:check
 bun test tests/bookmakers-board.test.ts
 ```
 
 ## Related
 
-Tenant: [bookmakers-registry.md](../../docs/harness/tenants/bookmakers-registry.md) · board `/portal/bookmakers/`
+Tenant: [bookmakers-registry.md](../../docs/harness/tenants/bookmakers-registry.md) ·
+open issues: [bookmakers-open-issues.md](../../docs/harness/tenants/bookmakers-open-issues.md) ·
+board `/portal/bookmakers/`

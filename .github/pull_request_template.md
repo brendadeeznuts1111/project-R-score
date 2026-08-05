@@ -26,6 +26,14 @@ Install/layout touched → also `bun run proof:install`.
 Fill when this PR touches portal boards, partner glossary, or Soft/Factory domain map.
 Skip when N/A.
 
+Human routing (optional — GitHub is not concept SSOT):
+
+| Field | Value |
+|-------|-------|
+| **Domain** | `partner` · `control` · `trading` · `identity` · `knowledge` · `platform` · or n/a |
+| **Tracker** | e.g. `BM-1` · link to `*-open-issues.md` · or n/a |
+| **Concept** | glossary id only if vocabulary changed · or n/a |
+
 | Surface | Path / doc | Touched? |
 |---------|------------|----------|
 | Board slug | `/portal/<slug>/` · `PORTAL_BOARD_SLUGS` | |
@@ -35,6 +43,8 @@ Skip when N/A.
 
 - [ ] Board · route · chrome · page-concepts stay synced (if board added/removed)
 - [ ] Glossary / partners-ops bake checked when overlay concepts moved
+- [ ] If **Concept** filled: `bun run concept:audit --strict` green
+- [ ] If **Tracker** filled: mark acceptance on the tenant open-issues doc in this PR
 
 ## Artifact publish
 

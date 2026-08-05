@@ -1,6 +1,10 @@
 # Bookmakers open issues
 
 Remaining gaps after `@factorywager/bookmakers@0.4.1` publish + public bake.
+
+**Human tickets:** open a GitHub issue with the **Bookmakers catalog** or **Portal gap**
+template and set **Domain** = `partner`, **Tracker** = `BM-*` (this table). Do not use
+GitHub labels as concept SSOT — see [CONCEPT_LIFECYCLE.md](../../CONCEPT_LIFECYCLE.md).
 Parent runbook: [`bookmakers-registry.md`](./bookmakers-registry.md) · board
 [`/portal/bookmakers.md`](../../../public/portal/bookmakers.md) · lib
 [`lib/bookmakers/README.md`](../../../lib/bookmakers/README.md).
