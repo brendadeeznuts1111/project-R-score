@@ -63,9 +63,9 @@ curl -fsS -H "Authorization: Bearer $PARTNER_API_TOKEN" \
 ## 3. Versioned v1 contracts (bearer)
 
 From `@tennis-hq/ssot` transport manifest (Factory consumes the packed artifact).
-**Live tip `628fbd9` wires all five v1 domains** — unauth probes return JSON
+**Live tip `30f7c70` wires all five v1 domains** — unauth probes return JSON
 **401** when `PARTNER_API_TOKEN` is set (not SPA 404). Desk tip matches
-producer `origin/main` (Worker `bbdb3e2a`, verified 2026-08-05 via
+producer `origin/main` (Worker `3847207a`, verified 2026-08-05 via
 `/api/version`). Payload emptiness (desk rows / warehouse / edge storage) is
 orthogonal to route presence.
 
