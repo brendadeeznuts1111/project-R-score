@@ -120,7 +120,7 @@ export async function loadBookmakersModule(dir: string): Promise<Record<string, 
 }
 
 export interface BookmakersBakeResult {
-  schemaVersion: 1;
+  schemaVersion: 1 | 2;
   generatedAt: string;
   artifact: { name: string; version: string; checksum: string; source: string };
   bookmakers: Record<string, unknown>;
@@ -134,7 +134,19 @@ export interface BookmakersBakeResult {
   };
 }
 
-/** Build the bake payload (pure, testable). */
+function entryFetcher(b: { fetcher?: string; fetcherType?: string }): string | undefined {
+  return b.fetcher ?? b.fetcherType;
+}
+
+function entrySports(b: { sports?: string[]; supportedSports?: string[] }): string[] | undefined {
+  return b.sports ?? b.supportedSports;
+}
+
+function entryWeb(b: { urls?: { web?: string }; domain?: string }): string | undefined {
+  return b.urls?.web ?? (b.domain ? `https://${String(b.domain).replace(/^https?:\/\//, '')}` : undefined);
+}
+
+/** Build the bake payload (pure, testable). Accepts v0.3 and v0.4 field names. */
 export function buildBookmakersBake(
   bookmakers: Record<string, unknown>,
   version: string,
@@ -143,30 +155,49 @@ export function buildBookmakersBake(
 ): BookmakersBakeResult {
   const issues: string[] = [];
   const entries = Object.values(bookmakers) as Array<{
+    id?: string;
+    slug?: string;
+    fetcher?: string;
     fetcherType?: string;
+    sports?: string[];
     supportedSports?: string[];
     color?: string;
+    urls?: { web?: string };
+    domain?: string;
+    brandGroup?: string;
   }>;
   const sports = new Set<string>();
+  let looksV4 = 0;
   for (const b of entries) {
-    if (b.fetcherType !== 'rest' && b.fetcherType !== 'webview' && b.fetcherType !== 'seat') {
-      issues.push(`entry missing valid fetcherType (got ${b.fetcherType})`);
+    const fetcher = entryFetcher(b);
+    if (fetcher !== 'rest' && fetcher !== 'webview' && fetcher !== 'seat') {
+      issues.push(`entry missing valid fetcher/fetcherType (got ${fetcher})`);
     }
-    if (!Array.isArray(b.supportedSports)) issues.push('entry missing supportedSports');
-    else for (const s of b.supportedSports) sports.add(s);
+    const sportList = entrySports(b);
+    if (!Array.isArray(sportList)) issues.push('entry missing sports/supportedSports');
+    else for (const s of sportList) sports.add(s);
     if (!b.color) issues.push('entry missing color');
+    if (!entryWeb(b)) issues.push('entry missing urls.web/domain');
+    if (b.fetcher || b.sports || b.urls || b.slug) looksV4 += 1;
+    if (b.id && b.slug && b.id !== b.slug) {
+      issues.push(`entry id !== slug (${b.id} vs ${b.slug})`);
+    }
+    for (const secret of ['restBaseUrl', 'apiKeyEnv', 'envVars'] as const) {
+      if (secret in b) issues.push(`public entry must not include ${secret}`);
+    }
   }
+  const schemaVersion: 1 | 2 = looksV4 >= Math.max(1, Math.floor(entries.length / 2)) ? 2 : 1;
   return {
-    schemaVersion: 1,
+    schemaVersion,
     generatedAt,
     artifact: { name: BOOKMAKERS_ARTIFACT_NAME, version, checksum, source: 'artifact-registry' },
     bookmakers,
     audit: { ok: issues.length === 0, issues },
     summary: {
       count: entries.length,
-      webview: entries.filter(b => b.fetcherType === 'webview').length,
-      rest: entries.filter(b => b.fetcherType === 'rest').length,
-      seat: entries.filter(b => b.fetcherType === 'seat').length,
+      webview: entries.filter(b => entryFetcher(b) === 'webview').length,
+      rest: entries.filter(b => entryFetcher(b) === 'rest').length,
+      seat: entries.filter(b => entryFetcher(b) === 'seat').length,
       sports: [...sports].sort(),
     },
   };
@@ -187,7 +218,10 @@ async function main(): Promise<void> {
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+  // Prefer v0.4 Pages-safe catalog when the package exports it.
   const candidate =
+    module.PUBLIC_BOOKMAKERS ??
+    (module.default as Record<string, unknown> | undefined)?.PUBLIC_BOOKMAKERS ??
     module.BOOKMAKERS ??
     (module.default as Record<string, unknown> | undefined)?.BOOKMAKERS ??
     module.default ??
@@ -197,6 +231,12 @@ async function main(): Promise<void> {
     release.version,
     release.checksum
   );
+  if (
+    module.PUBLIC_BOOKMAKERS ||
+    (module.default as Record<string, unknown> | undefined)?.PUBLIC_BOOKMAKERS
+  ) {
+    payload.schemaVersion = 2;
+  }
 
   const body = `${JSON.stringify(payload, null, 2)}\n`;
   if (check) {

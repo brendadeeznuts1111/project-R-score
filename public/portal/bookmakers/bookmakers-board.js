@@ -19,7 +19,21 @@ export function esc(value) {
   );
 }
 
-/** Normalize bake map or list into sorted book rows. */
+/** Domain from v0.3 `domain` or v0.4 `urls.web`. */
+export function bookDomain(b) {
+  if (b?.domain) return String(b.domain).replace(/^https?:\/\//i, '');
+  const web = b?.urls?.web;
+  if (typeof web === 'string' && web) {
+    try {
+      return new URL(web).host;
+    } catch {
+      return web.replace(/^https?:\/\//i, '').replace(/\/$/, '');
+    }
+  }
+  return '';
+}
+
+/** Normalize bake map or list into sorted book rows (v0.3 + v0.4). */
 export function normalizeBooks(payload) {
   const raw = payload?.bookmakers;
   let list = [];
@@ -27,17 +41,30 @@ export function normalizeBooks(payload) {
   else if (raw && typeof raw === 'object') list = Object.values(raw);
   return list
     .filter(b => b && typeof b === 'object')
-    .map(b => ({
-      id: String(b.id || ''),
-      label: String(b.label || b.id || ''),
-      domain: String(b.domain || ''),
-      fetcherType: String(b.fetcherType || b.fetcher || ''),
-      supportedSports: Array.isArray(b.supportedSports) ? b.supportedSports.map(String) : [],
-      regions: Array.isArray(b.regions) ? b.regions : [],
-      color: b.color ? String(b.color) : '',
-      restBaseUrl: b.restBaseUrl ? String(b.restBaseUrl) : '',
-      envVars: Array.isArray(b.envVars) ? b.envVars.map(String) : [],
-    }))
+    .map(b => {
+      const id = String(b.id || b.slug || '');
+      const slug = String(b.slug || b.id || '');
+      const sports = Array.isArray(b.sports)
+        ? b.sports.map(String)
+        : Array.isArray(b.supportedSports)
+          ? b.supportedSports.map(String)
+          : [];
+      return {
+        id,
+        slug,
+        label: String(b.label || id),
+        skin: b.skin ? String(b.skin) : '',
+        brandGroup: b.brandGroup ? String(b.brandGroup) : '',
+        domain: bookDomain(b),
+        fetcherType: String(b.fetcher || b.fetcherType || ''),
+        supportedSports: sports,
+        regions: Array.isArray(b.regions) ? b.regions : [],
+        color: b.color ? String(b.color) : '',
+        lifecycle: Array.isArray(b.lifecycle) ? b.lifecycle.map(String) : [],
+        liquidityTier: b.limits?.liquidityTier ? String(b.limits.liquidityTier) : '',
+        note: b.note ? String(b.note) : '',
+      };
+    })
     .sort((a, b) => a.id.localeCompare(b.id));
 }
 
@@ -59,6 +86,13 @@ export function bookStatus(book) {
   return 'incomplete';
 }
 
+/** v0.4 mode A: id is the route slug (id === slug). */
+export function slugEqualsId(book) {
+  if (!book?.id) return false;
+  if (!book.slug) return true; // v0.3: id alone is the slug
+  return book.id === book.slug;
+}
+
 export function filterBooks(books, { fetcher = 'all', q = '' } = {}) {
   const query = String(q || '')
     .trim()
@@ -67,7 +101,18 @@ export function filterBooks(books, { fetcher = 'all', q = '' } = {}) {
   return books.filter(b => {
     if (fetcherKey !== 'all' && String(b.fetcherType).toLowerCase() !== fetcherKey) return false;
     if (!query) return true;
-    const hay = [b.id, b.label, b.domain, b.fetcherType, ...(b.supportedSports || [])]
+    const hay = [
+      b.id,
+      b.slug,
+      b.label,
+      b.skin,
+      b.brandGroup,
+      b.domain,
+      b.fetcherType,
+      b.liquidityTier,
+      ...(b.supportedSports || []),
+      ...(b.lifecycle || []),
+    ]
       .join(' ')
       .toLowerCase();
     return hay.includes(query);
@@ -124,17 +169,24 @@ export function rowHtml(book, glossaryIds) {
   const color = book.color
     ? `<span class="dot" style="background:${esc(book.color)}" title="${esc(book.color)}"></span>`
     : '';
+  const brandBits = [
+    book.skin ? `<div class="book-skin">${esc(book.skin)}</div>` : '',
+    book.brandGroup ? `<div class="book-brand dim">${esc(book.brandGroup)}</div>` : '',
+  ].join('');
   const domainCell = book.domain
     ? `<a class="domain-link" href="https://${esc(book.domain.replace(/^https?:\/\//, ''))}" target="_blank" rel="noopener noreferrer"><code>${esc(book.domain)}</code></a>`
     : '<span class="dim">—</span>';
   const fetcher = book.fetcherType
     ? `<span class="fetcher-pill fetcher-${esc(book.fetcherType)}">${esc(book.fetcherType)}</span>`
     : '<span class="dim">—</span>';
-  return `<tr data-id="${esc(book.id)}" data-fetcher="${esc(book.fetcherType)}">
+  const tier = book.liquidityTier
+    ? `<div class="dim" style="margin-top:4px;font-size:11px">${esc(book.liquidityTier)}</div>`
+    : '';
+  return `<tr data-id="${esc(book.id)}" data-slug="${esc(book.slug || book.id)}" data-fetcher="${esc(book.fetcherType)}">
     <td class="col-id">${color}<code>${esc(book.id || '?')}</code></td>
-    <td>${esc(book.label || '?')}</td>
+    <td><div class="book-label">${esc(book.label || '?')}</div>${brandBits}</td>
     <td>${domainCell}</td>
-    <td>${fetcher}</td>
+    <td>${fetcher}${tier}</td>
     <td class="col-sports">${sportsChipsHtml(book.supportedSports, glossaryIds)}</td>
     <td class="col-regions">${regionsHtml(book.regions)}</td>
     <td class="${status === 'ok' ? 'state-ok' : 'state-err'}">${status}</td>
