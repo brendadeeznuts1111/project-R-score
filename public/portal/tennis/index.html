@@ -195,13 +195,14 @@
               <th>Call</th>
               <th>Phase</th>
               <th>Outs</th>
+              <th>Incompl.</th>
               <th>Max bet ¢</th>
               <th>FUND</th>
               <th>HS</th>
               <th>Links</th>
             </tr>
           </thead>
-          <tbody><tr><td colspan="8">…</td></tr></tbody>
+          <tbody><tr><td colspan="9">…</td></tr></tbody>
         </table>
       </div>
       <div class="portal-source-links" aria-label="Partner desk boards" style="flex-wrap:wrap;gap:8px;margin-top:10px">
@@ -825,27 +826,51 @@ function renderPartnerContracts(doc) {
     } else {
       const s = doc.summary || {};
       const gen = doc.generatedAt ? String(doc.generatedAt).replace('T', ' ').slice(0, 19) : '—';
+      const src = String(doc.source || '—');
+      const srcTone =
+        src === 'live' ? 'ok' : src === 'offline-join' ? 'warn' : src === 'empty' ? 'bad' : 'muted';
+      const srcChip = `<span class="tone-chip tone-${srcTone}" title="Bake source">${esc(src)}</span>`;
+      const offlineHint =
+        src === 'offline-join'
+          ? ' · max bet empty until live bake with <code>PARTNER_API_TOKEN</code>'
+          : '';
       meta.innerHTML =
-        `source <strong>${esc(doc.source || '—')}</strong> · ` +
+        `source ${srcChip} · ` +
         `${esc(String(s.partnerCount ?? rows.length))} partners · ` +
         `${esc(String(s.activeOuts ?? '—'))} active outs · ` +
         `ready ${esc(String(s.operatorReady ?? '—'))}` +
         (s.handshakeOk != null ? ` · handshake ok ${esc(String(s.handshakeOk))}` : '') +
-        ` · baked ${esc(gen)}`;
+        ` · baked ${esc(gen)}` +
+        offlineHint;
     }
   }
 
   if (!tbody) return;
   if (!rows.length) {
     tbody.innerHTML =
-      '<tr><td colspan="8">No partner rows — bake live or offline join</td></tr>';
+      '<tr><td colspan="9">No partner rows — bake live or offline join</td></tr>';
     return;
   }
+  const src = String(doc?.source || '');
   tbody.innerHTML = rows
     .map(r => {
       const code = esc(r.partnerCode);
       const outs = `${esc(String(r.activeOuts ?? 0))}/${esc(String(r.totalOuts ?? 0))}`;
-      const maxBet = r.totalPerBetMaxCents != null ? esc(String(r.totalPerBetMaxCents)) : '—';
+      const incomplete =
+        r.incompleteOuts != null && Number(r.incompleteOuts) > 0
+          ? esc(String(r.incompleteOuts))
+          : '—';
+      const incompleteCls =
+        r.incompleteOuts != null && Number(r.incompleteOuts) > 0 ? 'st-warn' : '';
+      // Offline-join never has capacity max bet — show honest dash + title.
+      let maxBet = '—';
+      let maxTitle = '';
+      if (r.totalPerBetMaxCents != null) {
+        maxBet = esc(String(r.totalPerBetMaxCents));
+      } else if (src === 'offline-join') {
+        maxBet = '—';
+        maxTitle = 'title="offline-join: run live bake for per-bet max ¢"';
+      }
       const hs =
         r.handshakeOk === true ? 'ok' : r.handshakeOk === false ? 'gap' : '—';
       const hsCls =
@@ -860,7 +885,8 @@ function renderPartnerContracts(doc) {
         `<td class="mono">${esc(r.callSign || '—')}</td>` +
         `<td>${esc(r.phase || r.factoryPhase || '—')}</td>` +
         `<td class="mono">${outs}</td>` +
-        `<td class="mono">${maxBet}</td>` +
+        `<td class="mono ${incompleteCls}">${incomplete}</td>` +
+        `<td class="mono" ${maxTitle}>${maxBet}</td>` +
         `<td>${esc(r.fundStatus || '—')}</td>` +
         `<td class="${hsCls}">${esc(hs)}</td>` +
         `<td>${links}</td>` +
