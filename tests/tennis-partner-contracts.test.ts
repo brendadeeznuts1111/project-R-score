@@ -127,9 +127,19 @@ describe('tennis partner-contracts', () => {
   });
 
   test('portal tennis board loads partner-contracts bake', async () => {
-    const portal = await Bun.file('public/portal/tennis/index.html').text();
+    const [portal, controller] = await Promise.all([
+      Bun.file('public/portal/tennis/index.html').text(),
+      Bun.file('public/portal/components/tennis-desk.js').text(),
+    ]);
     expect(portal).toContain('/registry/tennis/partner-contracts.json');
-    expect(portal).toContain('loadPartnerContracts');
+    expect(portal).toContain(
+      '<script type="module" src="/portal/components/tennis-desk.js"></script>'
+    );
+    expect(controller).toContain('/registry/tennis/partner-contracts.json');
+    expect(controller).toContain('loadPartnerContracts');
+    expect(controller).toContain('Books as of');
+    expect(controller).toContain('offline-join');
+    expect(controller).toContain('tone-chip');
   });
 
   test('contract shape required by CODE chips / board table', () => {
