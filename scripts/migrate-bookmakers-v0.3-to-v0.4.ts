@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/bundler/executables — --force
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
  * Migrate committed/live v0.3 bookmakers bake → v0.4 public + ops artifacts.
@@ -11,8 +14,8 @@
  *   artifact-registry/bookmakers/v0.4.0/public/books.json   (SSOT public)
  *   artifact-registry/bookmakers/v0.4.0/ops/books.json      (ops-only, not on Pages)
  */
-import { mkdirSync } from 'node:fs';
-import { dirnamePath, joinPath } from '../lib/path-bun.ts';
+import { jsonOut } from '../lib/console-depth.ts';
+import { joinPath } from '../lib/path-bun.ts';
 import { migrateCatalogV03ToV04 } from '../lib/bookmakers/migrate-v03-to-v04.ts';
 
 const DEFAULT_IN = 'public/registry/bookmakers.json';
@@ -41,15 +44,17 @@ async function main(): Promise<void> {
   if (raw.schemaVersion === 2 && !Bun.argv.includes('--force')) {
     const sample = Object.values(raw.bookmakers ?? {})[0] as { fetcher?: string } | undefined;
     if (sample && typeof sample.fetcher === 'string') {
-      console.log(`already v0.4 public catalog (${inPath}); pass --force to re-run migration`);
-      if (!asJson) return;
+      if (!asJson) {
+        console.log(`already v0.4 public catalog (${inPath}); pass --force to re-run migration`);
+        return;
+      }
     }
   }
 
   const { public: pub, ops } = migrateCatalogV03ToV04(raw, { version: '0.4.0' });
 
   if (asJson) {
-    console.log(JSON.stringify({ public: pub, ops }, null, 2));
+    jsonOut({ public: pub, ops });
   } else {
     console.log(
       `migrate v0.3→v0.4: ${pub.summary.count} books · audit ${pub.audit.ok ? 'ok' : 'FAIL'} · issues ${pub.audit.issues.length}`
@@ -60,13 +65,10 @@ async function main(): Promise<void> {
   }
 
   if (dry) {
-    console.log('--dry-run: no files written');
+    if (!asJson) console.log('--dry-run: no files written');
     process.exit(pub.audit.ok ? 0 : 1);
   }
 
-  for (const path of [PUBLIC_OUT, ARTIFACT_PUBLIC, ARTIFACT_OPS]) {
-    mkdirSync(dirnamePath(path), { recursive: true });
-  }
   // Strip undefined checksum for stable JSON
   if (!pub.artifact.checksum) delete (pub.artifact as { checksum?: string }).checksum;
 
