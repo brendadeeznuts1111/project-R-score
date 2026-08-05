@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'bun:test';
 import {
+  checkBunPin,
   isConceptSsotPath,
   isSkillValidationPath,
   isTestSourcePath,
@@ -46,5 +47,21 @@ describe('pre-commit environment', () => {
       skipQualityConcept: false,
       skipTestChanged: true,
     });
+  });
+});
+
+describe('pre-commit bun pin', () => {
+  it('accepts runtime that satisfies engines.bun (>=1.3.14)', async () => {
+    const pin = await checkBunPin('1.3.14');
+    expect(pin.ok).toBe(true);
+    expect(pin.enginesBun).toBe('>=1.3.14');
+    expect(pin.bunVersionFile).toBe('1.3.14');
+    expect(pin.packageManager).toBe('bun@1.3.14');
+  });
+
+  it('rejects runtime below engines.bun', async () => {
+    const pin = await checkBunPin('1.3.13');
+    expect(pin.ok).toBe(false);
+    expect(pin.message).toContain('does not satisfy');
   });
 });
