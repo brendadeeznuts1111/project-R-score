@@ -86,6 +86,20 @@
       display: inline-block; background: #1a212a; padding: 2px 10px;
       border-radius: 12px; font-size: 11px; color: #b6c8e0; margin-right: 4px;
     }
+    .liq-high { background: #1a3a2a; color: #6fcf97; }
+    .liq-medium { background: #2a2a1a; color: #f9ca7f; }
+    .liq-low { background: #3a2a14; color: #f0a060; }
+    .liq-illiquid { background: #3a1a1a; color: #f28b82; }
+    .liq-unknown { background: #1a212a; color: #7a8ba3; }
+    .partner-strip {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;
+    }
+    .partner-chip {
+      background: #131b24; border: 1px solid #1e2834; border-radius: 10px;
+      padding: 8px 12px; font-size: 12px; min-width: 140px;
+    }
+    .partner-chip .chip-label { font-weight: 600; color: #e8edf5; }
+    .partner-chip .chip-meta { color: #7a8ba3; margin-top: 2px; font-size: 11px; }
     .live-panel {
       max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;
     }
@@ -184,10 +198,14 @@
     <select id="filterLeague"><option value="">All Leagues</option></select>
     <select id="filterMarketType"><option value="">All Markets</option></select>
     <select id="filterSession"><option value="">All Sessions</option></select>
-    <select id="filterTier"><option value="">All Tiers</option></select>
+    <select id="filterLiquidity"><option value="">All Liquidity</option></select>
+    <select id="filterStatus"><option value="">All Status</option></select>
     <button id="applyFilters">Apply</button>
     <span style="margin-left:auto; font-size:13px; color:#7a8ba3;" id="resultCount">0 rows</span>
   </div>
+
+  <!-- PARTNER HEALTH STRIP -->
+  <div class="partner-strip" id="partnerStrip" aria-live="polite"></div>
 
   <!-- STATS ROW -->
   <div class="stats-row" style="margin-bottom:16px;">
@@ -297,8 +315,10 @@
         <div class="card-body">
           <div class="flex" style="gap:16px; flex-wrap:wrap;">
             <div><span class="text-muted">Requests/min</span> <strong id="rateCurrent">0</strong> / <span id="rateLimit">100</span></div>
-            <div><span class="text-muted">Bookmaker health</span> <span class="status-badge status-online" id="healthStatus">All online</span></div>
-            <div><span class="text-muted">Last backup</span> <span id="lastBackup">2026‑08‑05 14:23</span></div>
+            <div><span class="text-muted">Bookmaker health</span> <span class="status-badge status-pending" id="healthStatus">Loading…</span></div>
+            <div><span class="text-muted">Liquidity mix</span> <span id="liquidityMix" class="text-muted">—</span></div>
+            <div><span class="text-muted">Last probe</span> <span id="lastProbe">—</span></div>
+            <div><span class="text-muted">Last backup</span> <span id="lastBackup">—</span></div>
           </div>
           <div class="mt-2 flex">
             <button class="btn btn-sm" id="backupBtn">💾 Backup DB</button>
@@ -361,11 +381,16 @@
   let loggedIn = false;
   let userName = 'Guest';
   let oddsData = [];
+  let partnerHealth = [];
+  let partnerSummary = null;
   let arbs = [];
   let alerts = [];
   let anomalies = [];
   let tierData = {};
   let rateCounter = 0;
+
+  const LIQ_RANK = { high: 0, medium: 1, low: 2, illiquid: 3, unknown: 4 };
+  const EXCLUDE_ARB_STATUS = new Set(['offline', 'degraded', 'critical']);
 
   // ──────────────────────────────────────────────────────────────
   // DOM REFS
@@ -403,6 +428,9 @@
   const rateLimit = document.getElementById('rateLimit');
   const healthStatus = document.getElementById('healthStatus');
   const lastBackup = document.getElementById('lastBackup');
+  const lastProbe = document.getElementById('lastProbe');
+  const liquidityMix = document.getElementById('liquidityMix');
+  const partnerStrip = document.getElementById('partnerStrip');
 
   const backupBtn = document.getElementById('backupBtn');
   const backupResult = document.getElementById('backupResult');
@@ -410,81 +438,143 @@
   const chartCanvas = document.getElementById('lineChart');
 
   // ──────────────────────────────────────────────────────────────
-  // MOCK DATA GENERATORS
+  // HELPERS · LIQUIDITY · ARB FILTER
   // ──────────────────────────────────────────────────────────────
-  function generateMockOdds(count) {
-    const hosts = ['hardrock.bet', 'bet365.com', 'stake.com', 'cloudbet.com', 'fonbet.com', 'tipsport.cz', 'synottip.cz'];
-    const sports = ['basketball', 'football', 'tennis', 'ice hockey', 'baseball', 'american football'];
-    const leagues = ['NBA', 'Premier League', 'ATP', 'NHL', 'MLB', 'NFL', 'La Liga', 'Serie A', 'Bundesliga'];
-    const markets = ['moneyline', 'spread', 'total', 'team_total', 'over_under'];
-    const sessions = ['pregame', 'live'];
-    const tiers = [1,2,3];
-    const result = [];
-    for (let i = 0; i < count; i++) {
-      const tier = tiers[Math.floor(Math.random() * tiers.length)];
-      result.push({
-        host: hosts[Math.floor(Math.random() * hosts.length)],
-        sport: sports[Math.floor(Math.random() * sports.length)],
-        league: leagues[Math.floor(Math.random() * leagues.length)],
-        market_type: markets[Math.floor(Math.random() * markets.length)],
-        session: sessions[Math.floor(Math.random() * sessions.length)],
-        tier,
-        price: (1 + Math.random() * 3).toFixed(2),
-        timestamp: Date.now() - Math.floor(Math.random() * 600000),
-        marketData: { selections: [{ price: (1 + Math.random() * 3).toFixed(2) }] },
-        event: `Team ${String.fromCharCode(65+i)} vs Team ${String.fromCharCode(75+i)}`
-      });
-    }
-    return result;
+  function liquidityClass(tier) {
+    const t = String(tier || 'unknown').toLowerCase();
+    return 'pill liq-' + (['high','medium','low','illiquid'].includes(t) ? t : 'unknown');
   }
 
+  function partnerEligibleForArb(p) {
+    if (!p) return false;
+    if (p.liquidityTier === 'illiquid') return false;
+    if (EXCLUDE_ARB_STATUS.has(p.status)) return false;
+    if (p.balance != null && p.balance < 100) return false;
+    return true;
+  }
+
+  function eligibleHostsForArb() {
+    const ok = new Set();
+    for (const p of partnerHealth) {
+      if (partnerEligibleForArb(p)) {
+        for (const h of p.hosts || []) ok.add(h);
+        if (p.urls?.web) {
+          try { ok.add(new URL(p.urls.web).hostname.replace(/^www\./, '')); } catch (_) {}
+        }
+        ok.add(p.id);
+      }
+    }
+    return ok;
+  }
+
+  /** Client mock arbs — only pairs from liquid, online partners when health is loaded. */
   function generateMockArbs() {
     const types = ['2-way', '3-way', 'Asian'];
-    return Array.from({ length: 3 + Math.floor(Math.random() * 5) }, (_, i) => ({
-      event: `NBA: Lakers vs Celtics`,
-      book1: ['hardrock.bet','bet365.com'][Math.floor(Math.random()*2)],
-      book2: ['stake.com','cloudbet.com'][Math.floor(Math.random()*2)],
-      profit: (1 + Math.random() * 5).toFixed(2) + '%',
-      time: new Date().toLocaleTimeString(),
-      type: types[Math.floor(Math.random() * types.length)]
-    }));
+    const eligible = partnerHealth.filter(partnerEligibleForArb);
+    const books = eligible.length
+      ? eligible.map(p => p.label || p.id)
+      : ['hardrock.bet', 'bet365.com', 'stake.com', 'cloudbet.com'];
+    if (books.length < 2) return [];
+    const n = Math.min(3 + Math.floor(Math.random() * 4), Math.floor(books.length * 2));
+    return Array.from({ length: n }, () => {
+      const i = Math.floor(Math.random() * books.length);
+      let j = Math.floor(Math.random() * books.length);
+      if (j === i) j = (j + 1) % books.length;
+      return {
+        event: 'NBA: Lakers vs Celtics',
+        book1: books[i],
+        book2: books[j],
+        profit: (1 + Math.random() * 5).toFixed(2) + '%',
+        time: new Date().toLocaleTimeString(),
+        type: types[Math.floor(Math.random() * types.length)],
+      };
+    });
   }
 
-  function generateMockAlerts() {
-    const types = ['Line move', 'Arbitrage', 'Anomaly', 'Delay'];
-    const severity = ['info','warning','critical'];
-    return Array.from({ length: 3 + Math.floor(Math.random() * 4) }, (_, i) => ({
-      type: types[Math.floor(Math.random() * types.length)],
-      host: ['hardrock.bet','bet365.com','stake.com'][Math.floor(Math.random()*3)],
-      message: `Price changed by ${(Math.random()*10).toFixed(1)}%`,
-      severity: severity[Math.floor(Math.random() * severity.length)],
-      time: new Date().toLocaleTimeString()
-    }));
+  function alertsFromHealth(health) {
+    const out = [];
+    const now = new Date().toLocaleTimeString();
+    for (const p of health) {
+      if (p.status === 'offline' || p.status === 'critical') {
+        out.push({
+          type: 'Health',
+          host: p.label || p.id,
+          message: `Status ${p.status}` + (p.outsTotal ? ` · outs ${p.outsReady}/${p.outsTotal}` : ''),
+          severity: 'critical',
+          time: now,
+          icon: '🔴',
+        });
+      } else if (p.status === 'degraded') {
+        out.push({
+          type: 'Health',
+          host: p.label || p.id,
+          message: `Degraded · outs ${p.outsReady}/${p.outsTotal || 0}`,
+          severity: 'warning',
+          time: now,
+          icon: '🟠',
+        });
+      } else if (p.status === 'low_balance' || p.liquidityTier === 'low') {
+        out.push({
+          type: 'Liquidity',
+          host: p.label || p.id,
+          message: `Low liquidity tier (${p.liquidityTier})`,
+          severity: 'warning',
+          time: now,
+          icon: '💰',
+        });
+      } else if (p.liquidityTier === 'illiquid') {
+        out.push({
+          type: 'Liquidity',
+          host: p.label || p.id,
+          message: 'Illiquid — excluded from arbitrage',
+          severity: 'warning',
+          time: now,
+          icon: '🚫',
+        });
+      }
+    }
+    return out;
   }
 
-  function generateMockAnomalies() {
-    const types = ['Stale odds', 'Price spike', 'Outage'];
-    return Array.from({ length: 1 + Math.floor(Math.random() * 3) }, (_, i) => ({
-      host: ['hardrock.bet','bet365.com','fonbet.com'][Math.floor(Math.random()*3)],
-      type: types[Math.floor(Math.random() * types.length)],
-      detail: `No update in ${(5+Math.random()*10).toFixed(0)} minutes`,
-      time: new Date().toLocaleTimeString()
-    }));
+  function anomaliesFromHealth(health) {
+    return health
+      .filter(p => p.status === 'offline' || p.status === 'degraded')
+      .map(p => ({
+        host: p.label || p.id,
+        type: p.status === 'offline' ? 'Outage' : 'Degraded readiness',
+        detail: p.outsTotal
+          ? `Outs ready ${p.outsReady}/${p.outsTotal}`
+          : `status=${p.status}`,
+        time: new Date().toLocaleTimeString(),
+      }));
   }
 
-  function generateTierData() {
-    const tiers = ['Tier 1 (Sharp)', 'Tier 2 (Medium)', 'Tier 3 (Recreational)'];
-    const prices = [
-      { home: 1.85, away: 2.10 },
-      { home: 1.80, away: 2.20 },
-      { home: 1.75, away: 2.30 }
-    ];
-    return tiers.map((t, idx) => ({
-      tier: t,
-      home: prices[idx].home.toFixed(2),
-      away: prices[idx].away.toFixed(2),
-      diff: (prices[idx].away - prices[idx].home).toFixed(2)
-    }));
+  function tierDataFromHealth(health) {
+    const groups = { high: [], medium: [], low: [], illiquid: [] };
+    for (const p of health) {
+      const t = p.liquidityTier;
+      if (groups[t]) groups[t].push(p);
+    }
+    const labels = {
+      high: 'High (Sharp)',
+      medium: 'Medium',
+      low: 'Low',
+      illiquid: 'Illiquid',
+    };
+    // synthetic moneyline midpoints by tier for comparison panel
+    const base = { high: 1.91, medium: 1.88, low: 1.84, illiquid: 1.78 };
+    return Object.keys(labels).map(key => {
+      const n = groups[key].length;
+      const home = base[key];
+      const away = +(3.0 - home + 0.05).toFixed(2);
+      return {
+        tier: `${labels[key]} · ${n} books`,
+        home: home.toFixed(2),
+        away: away.toFixed(2),
+        diff: (away - home).toFixed(2),
+        count: n,
+      };
+    }).filter(r => r.count > 0);
   }
 
   // ──────────────────────────────────────────────────────────────
@@ -497,14 +587,20 @@
       return;
     }
     let html = `<table><thead><tr>
-      <th>Tier</th><th>Bookmaker</th><th>Sport</th><th>League</th><th>Market</th><th>Session</th><th>Price</th><th>Time</th>
+      <th>Liquidity</th><th>Bookmaker</th><th>Status</th><th>Sport</th><th>League</th><th>Market</th><th>Session</th><th>Price</th><th>Time</th>
     </tr></thead><tbody>`;
     for (const row of rows) {
-      const tierBadge = row.tier === 1 ? '🔴' : row.tier === 2 ? '🟡' : '🟢';
+      const tier = row.liquidityTier || 'unknown';
       const sessionClass = row.session === 'live' ? 'status-online' : 'status-pending';
-      html += `<tr>
-        <td>${tierBadge} T${row.tier}</td>
-        <td><strong>${row.host}</strong></td>
+      const st = row.partnerStatus || 'unknown';
+      const stClass = st === 'active' ? 'status-online'
+        : (st === 'offline' || st === 'critical') ? 'status-offline'
+        : 'status-pending';
+      const bookLabel = row.label || row.bookmakerId || row.host;
+      html += `<tr data-host="${row.host}" data-book="${row.bookmakerId || ''}">
+        <td><span class="${liquidityClass(tier)}">${tier}</span></td>
+        <td><strong title="${row.host}">${bookLabel}</strong><div class="text-muted">${row.host}</div></td>
+        <td><span class="status-badge ${stClass}">${st}</span></td>
         <td><span class="pill">${row.sport}</span></td>
         <td>${row.league}</td>
         <td>${row.market_type}</td>
@@ -599,13 +695,75 @@
   }
 
   function renderTiers() {
-    const data = generateTierData();
-    let html = `<table><thead><tr><th>Tier</th><th>Home</th><th>Away</th><th>Spread</th></tr></thead><tbody>`;
+    const data = partnerHealth.length
+      ? tierDataFromHealth(partnerHealth)
+      : [{ tier: 'No partner health yet', home: '—', away: '—', diff: '—' }];
+    let html = `<table><thead><tr><th>Liquidity tier</th><th>Home</th><th>Away</th><th>Spread</th></tr></thead><tbody>`;
     for (const row of data) {
       html += `<tr><td>${row.tier}</td><td>${row.home}</td><td>${row.away}</td><td>${row.diff}</td></tr>`;
     }
     html += `</tbody></table>`;
     tierContainer.innerHTML = html;
+  }
+
+  function renderPartnerStrip(health) {
+    if (!partnerStrip) return;
+    if (!health || !health.length) {
+      partnerStrip.innerHTML = '';
+      return;
+    }
+    // show up to 12 partners sorted: illiquid/degraded first for ops attention, then by label
+    const sorted = [...health].sort((a, b) => {
+      const rank = (p) =>
+        (p.status === 'offline' || p.status === 'critical' ? 0 : p.status === 'degraded' ? 1 : 2) * 10
+        + (LIQ_RANK[p.liquidityTier] ?? 4);
+      return rank(a) - rank(b) || a.label.localeCompare(b.label);
+    });
+    partnerStrip.innerHTML = sorted.slice(0, 12).map(p => {
+      const bal = p.balance != null ? `$${Number(p.balance).toFixed(0)}` : 'bal n/a';
+      return `<div class="partner-chip" title="${p.id}">
+        <div class="chip-label">${p.label}</div>
+        <div class="chip-meta">
+          <span class="${liquidityClass(p.liquidityTier)}">${p.liquidityTier}</span>
+          <span class="status-badge ${p.status === 'active' ? 'status-online' : (p.status === 'offline' || p.status === 'critical') ? 'status-offline' : 'status-pending'}">${p.status}</span>
+          ${bal}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function updateHealthUI(payload) {
+    const health = payload.health || [];
+    const summary = payload.summary || {};
+    partnerHealth = health;
+    partnerSummary = summary;
+    const online = summary.online ?? health.filter(p => p.status === 'active' || p.status === 'low_balance').length;
+    const total = summary.total ?? health.length;
+    if (total === 0) {
+      healthStatus.textContent = 'No partners';
+      healthStatus.className = 'status-badge status-pending';
+    } else if (summary.allOnline || online === total) {
+      healthStatus.textContent = 'All online';
+      healthStatus.className = 'status-badge status-online';
+    } else {
+      healthStatus.textContent = `${online}/${total} online`;
+      healthStatus.className = 'status-badge status-pending';
+    }
+    if (liquidityMix && summary.byLiquidity) {
+      liquidityMix.textContent = Object.entries(summary.byLiquidity)
+        .map(([k, v]) => `${k}:${v}`).join(' · ') || '—';
+    }
+    if (lastProbe && payload.generatedAt) {
+      try {
+        lastProbe.textContent = new Date(payload.generatedAt).toLocaleString();
+      } catch (_) {
+        lastProbe.textContent = payload.generatedAt;
+      }
+    }
+    renderPartnerStrip(health);
+    alerts = alertsFromHealth(health);
+    anomalies = anomaliesFromHealth(health);
+    renderTiers();
   }
 
   // ──────────────────────────────────────────────────────────────
@@ -653,26 +811,80 @@
   }
 
   // ──────────────────────────────────────────────────────────────
-  // FILTER & REFRESH
+  // FILTER & REFRESH (real agent endpoints + mock fallback)
   // ──────────────────────────────────────────────────────────────
-  function refreshData() {
-    const count = 30 + Math.floor(Math.random() * 30);
-    oddsData = generateMockOdds(count);
-    arbs = generateMockArbs();
-    alerts = generateMockAlerts();
-    anomalies = generateMockAnomalies();
-    renderOddsTable(oddsData);
-    drawChart();
-    // Rate counter
-    rateCounter = Math.floor(Math.random() * 80) + 10;
-    rateCurrent.textContent = rateCounter;
-    healthStatus.textContent = Math.random() > 0.2 ? 'All online' : 'Degraded';
-    healthStatus.className = 'status-badge ' + (Math.random() > 0.2 ? 'status-online' : 'status-pending');
+  function filterQuery() {
+    const params = new URLSearchParams();
+    const host = document.getElementById('filterHost')?.value;
+    const sport = document.getElementById('filterSport')?.value;
+    const league = document.getElementById('filterLeague')?.value;
+    const market = document.getElementById('filterMarketType')?.value;
+    const session = document.getElementById('filterSession')?.value;
+    const liquidity = document.getElementById('filterLiquidity')?.value;
+    const status = document.getElementById('filterStatus')?.value;
+    if (host) params.set('host', host);
+    if (sport) params.set('sport', sport);
+    if (league) params.set('league', league);
+    if (market) params.set('market_type', market);
+    if (session) params.set('session', session);
+    if (liquidity) params.set('liquidity', liquidity);
+    if (status) params.set('status', status);
+    params.set('limit', '100');
+    return params;
   }
 
-  function applyFilters() {
-    // Simulate filtering
-    refreshData();
+  async function refreshHealth() {
+    try {
+      const res = await fetch(AGENT_API_BASE + '/api/partners/health');
+      if (!res.ok) throw new Error('health ' + res.status);
+      const data = await res.json();
+      updateHealthUI(data);
+      return data;
+    } catch (err) {
+      healthStatus.textContent = 'Health unavailable';
+      healthStatus.className = 'status-badge status-pending';
+      return null;
+    }
+  }
+
+  async function refreshData() {
+    await refreshHealth();
+    try {
+      const qs = filterQuery().toString();
+      const res = await fetch(AGENT_API_BASE + '/api/odds?' + qs);
+      if (!res.ok) throw new Error('odds ' + res.status);
+      const body = await res.json();
+      oddsData = body.data || [];
+    } catch (_) {
+      oddsData = [];
+      showToast('Odds API unavailable');
+    }
+    arbs = generateMockArbs();
+    if (!alerts.length && partnerHealth.length) {
+      alerts = alertsFromHealth(partnerHealth);
+    }
+    if (!anomalies.length && partnerHealth.length) {
+      anomalies = anomaliesFromHealth(partnerHealth);
+    }
+    renderOddsTable(oddsData);
+    drawChart();
+    try {
+      const plat = await fetch(AGENT_API_BASE + '/api/platform').then(r => r.ok ? r.json() : null);
+      if (plat) {
+        if (plat.rateLimit) rateLimit.textContent = plat.rateLimit;
+        if (plat.rateCurrent != null) rateCurrent.textContent = plat.rateCurrent;
+        if (plat.lastBackup) lastBackup.textContent = new Date(plat.lastBackup).toLocaleString();
+        if (plat.bun) document.getElementById('bunVersion').textContent = plat.bun;
+        if (plat.operators != null) {
+          document.getElementById('operatorCount').textContent = plat.operators;
+          document.getElementById('bookCount').textContent = plat.operators;
+        }
+      }
+    } catch (_) { /* ignore */ }
+  }
+
+  async function applyFilters() {
+    await refreshData();
     showToast('Filters applied');
   }
 
@@ -680,10 +892,10 @@
   // EXPORT CSV
   // ──────────────────────────────────────────────────────────────
   function exportCSV() {
-    const rows = oddsData.slice(0, 20);
-    let csv = 'Bookmaker,Sport,League,Market,Price,Time\n';
+    const rows = oddsData.slice(0, 100);
+    let csv = 'Liquidity,Bookmaker,Host,Status,Sport,League,Market,Price,Time\n';
     for (const row of rows) {
-      csv += `${row.host},${row.sport},${row.league},${row.market_type},${row.price},${new Date(row.timestamp).toLocaleTimeString()}\n`;
+      csv += `${row.liquidityTier || ''},${row.label || row.bookmakerId || ''},${row.host},${row.partnerStatus || ''},${row.sport},${row.league},${row.market_type},${row.price},${new Date(row.timestamp).toLocaleTimeString()}\n`;
     }
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -816,31 +1028,43 @@
   // ──────────────────────────────────────────────────────────────
   // INIT
   // ──────────────────────────────────────────────────────────────
-  // Populate filter dropdowns (mock)
-  function populateSelect(id, values) {
+  function populateSelect(id, values, allLabel) {
     const sel = document.getElementById(id);
-    sel.innerHTML = '<option value="">All</option>';
+    if (!sel) return;
+    const keep = allLabel || 'All';
+    sel.innerHTML = `<option value="">${keep}</option>`;
     for (const val of values) {
       const opt = document.createElement('option');
-      opt.value = val;
-      opt.textContent = val;
+      if (typeof val === 'object' && val) {
+        opt.value = val.value;
+        opt.textContent = val.label;
+      } else {
+        opt.value = val;
+        opt.textContent = val;
+      }
       sel.appendChild(opt);
     }
   }
-  const hosts = ['hardrock.bet', 'bet365.com', 'stake.com', 'cloudbet.com', 'fonbet.com', 'tipsport.cz', 'synottip.cz'];
-  const sports = ['basketball', 'football', 'tennis', 'ice hockey', 'baseball', 'american football'];
-  const leagues = ['NBA', 'Premier League', 'ATP', 'NHL', 'MLB', 'NFL', 'La Liga', 'Serie A', 'Bundesliga'];
-  const markets = ['moneyline', 'spread', 'total', 'team_total', 'over_under'];
-  const sessions = ['pregame', 'live'];
-  const tiers = ['1', '2', '3'];
-  populateSelect('filterHost', hosts);
-  populateSelect('filterSport', sports);
-  populateSelect('filterLeague', leagues);
-  populateSelect('filterMarketType', markets);
-  populateSelect('filterSession', sessions);
-  populateSelect('filterTier', tiers);
 
-  refreshData();
+  async function loadOptions() {
+    try {
+      const res = await fetch(AGENT_API_BASE + '/api/odds/options');
+      if (!res.ok) throw new Error('options');
+      const o = await res.json();
+      populateSelect('filterHost', o.hosts || [], 'All Bookmakers');
+      populateSelect('filterSport', o.sports || [], 'All Sports');
+      populateSelect('filterLeague', o.leagues || [], 'All Leagues');
+      populateSelect('filterMarketType', o.marketTypes || [], 'All Markets');
+      populateSelect('filterSession', o.sessions || [], 'All Sessions');
+      populateSelect('filterLiquidity', o.liquidityTiers || ['high','medium','low','illiquid'], 'All Liquidity');
+      populateSelect('filterStatus', o.partnerStatuses || ['active','low_balance','degraded','offline'], 'All Status');
+    } catch (_) {
+      populateSelect('filterLiquidity', ['high','medium','low','illiquid','unknown'], 'All Liquidity');
+      populateSelect('filterStatus', ['active','low_balance','critical','degraded','offline'], 'All Status');
+    }
+  }
+
+  loadOptions().then(() => refreshData());
   drawChart();
 
   // Auto‑refresh every 30 seconds
