@@ -53,10 +53,10 @@ consumer evidence.
 | ---------------- | ---------------------------------------------------------------------------------------------------- |
 | Runtime          | `https://tennis.factory-wager.com`                                                                   |
 | Worker           | `tennis-hq`                                                                                          |
-| Production tip   | [`0f7b6d9`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/commit/0f7b6d9fba84bfeb404edc1edfba964b8ef96cd1) · `tennis-hq@1.4.0` · `/api/version` `at` 2026-08-05T22:03:01Z · `fix(desk): scan-flag filter OR parity + hash text-fragment strip (#10)` |
-| Worker version   | `8072c3da-fa46-408b-88c5-50c35df2d87c`                                                               |
+| Production tip   | [`628fbd9`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/commit/628fbd91c96972ad2cbbeaad6ead1f189ec47b5c) · `tennis-hq@1.4.0` · `/api/version` `at` 2026-08-05T22:25:16Z · `feat(edge): publish partner-executions cache for Worker SQLite soft-fail (#11)` |
+| Worker version   | `bbdb3e2a-2cb4-48d0-927d-b64d9a09c016`                                                               |
 | Git tip (`main`) | Matches production tip after Wrangler redeploy (`cloudflare:deploy` + `deploy:verify:prod` 2026-08-05) |
-| Verified         | 2026-08-05 · `/api/version` ok · unauth **all five** `GET /api/v1/*` → **401** · warehouse-json **401** · glossary 300 entries · `/favicon.svg` + `/site.webmanifest` **200** |
+| Verified         | 2026-08-05 · `/api/version` ok · tip `628fbd9` · executions **cache count 4** · unauth all five v1 **401** · warehouse-json **401** · favicon.svg + site.webmanifest **200** |
 | Inventory        | `config/surfaces.toml` → `/registry/surfaces-state.json` (re-bake after tip change)                  |
 | Cross-host probe | `bun run verify:weave -- --subdomains` → version, glossary, all five configured v1 bearer rejections |
 
@@ -185,7 +185,7 @@ not import files from the sibling Tennis HQ source tree. The soft-pass extracts
 `package/registry/contracts/v1/manifest.json` from the tarball and requires
 package-version parity plus exactly these five authenticated read domains:
 
-| Domain     | Runtime path                     | Contract package export               | Live tip `0f7b6d9` |
+| Domain     | Runtime path                     | Contract package export               | Live tip `628fbd9` |
 | ---------- | -------------------------------- | ------------------------------------- | ------------------ |
 | research   | `GET /api/v1/research/status`    | `contracts/v1/research.schema.json`   | **wired** (unauth **401**) |
 | marketdata | `GET /api/v1/marketdata/desk`    | `contracts/v1/marketdata.schema.json` | **wired** (unauth **401**) |
@@ -198,7 +198,7 @@ probes return JSON **401** (not SPA HTML). Runtime reads require
 `PARTNER_API_TOKEN` (provider-side `OPERATOR_API_TOKEN` alias) and fail closed
 when it is absent (`401` unauthorized when set; `503`
 `contract_auth_unconfigured` only when missing). Payload quality (empty desk
-rows, warehouse stubs, edge storage) is separate from route wiring.
+rows, warehouse payloads, edge ledger) is separate from route wiring; executions use published cache on edge.
 `FACTORY_WAGER_TOKEN` remains registry/package authentication and is not a
 runtime API credential.
 
