@@ -76,7 +76,7 @@ export type ResizeScreenshotOptions = {
 
 const DIGEST_ALGORITHMS = new Set<ImageDigestAlgorithm>(['sha256', 'sha3-256']);
 
-function toUint8(bytes: Uint8Array | Buffer | ArrayBuffer): Uint8Array {
+function toUint8(bytes: Uint8Array | ArrayBuffer): Uint8Array {
   return bytes instanceof ArrayBuffer ? new Uint8Array(bytes) : bytes;
 }
 
@@ -113,7 +113,7 @@ export function parseImageEvidenceMeta(value: unknown): ImageEvidenceMeta {
  * Read Bun.Image metadata for `bytes` and attach size + content digest.
  */
 export async function extractImageEvidenceMeta(
-  bytes: Uint8Array | Buffer | ArrayBuffer,
+  bytes: Uint8Array | ArrayBuffer,
   options: ExtractImageMetaOptions = {}
 ): Promise<ImageEvidenceMeta> {
   const buf = toUint8(bytes);
@@ -147,7 +147,7 @@ export async function extractImageEvidenceMeta(
  * Matches `new Bun.Image(screenshot).resize(400, 300).png()`.
  */
 export async function resizeScreenshotPng(
-  screenshot: Uint8Array | Buffer,
+  screenshot: Uint8Array,
   opts: ResizeScreenshotOptions = {}
 ): Promise<{ bytes: Uint8Array; meta: ImageEvidenceMeta }> {
   const width = opts.width ?? DEFAULT_THUMB_MAX_WIDTH;

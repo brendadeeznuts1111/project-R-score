@@ -224,7 +224,7 @@ export class EnhancedDocsCacheManager {
   }
 
   private calculateSize(data: any): number {
-    return Buffer.byteLength(JSON.stringify(data), 'utf8');
+    return new TextEncoder().encode(JSON.stringify(data)).byteLength;
   }
 
   private calculateChecksum(data: any): string {

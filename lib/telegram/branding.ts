@@ -114,7 +114,7 @@ async function telegramMultipart(
   const form = new FormData();
   for (const [k, v] of Object.entries(fields)) form.append(k, v);
   for (const f of files) {
-    form.append(f.name, new Blob([Buffer.from(f.bytes)], { type: f.type }), f.filename);
+    form.append(f.name, new Blob([f.bytes], { type: f.type }), f.filename);
   }
   const res = await fetch(`https://api.telegram.org/bot${token}/` + method, {
     method: 'POST',

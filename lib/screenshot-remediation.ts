@@ -124,7 +124,7 @@ function resizeCommand(thumbMaxWidth: number, thumbMaxHeight: number): string {
  * Source metadata + thumbnail resize run in parallel via {@link awaitAllSettled}.
  */
 export async function buildScreenshotEvidenceRecord(
-  screenshotBytes: Uint8Array | Buffer,
+  screenshotBytes: Uint8Array,
   options: BuildScreenshotEvidenceOptions = {}
 ): Promise<{
   record: ScreenshotEvidenceRecord;
@@ -277,7 +277,7 @@ export function runTest003(
  * Pass `previous` to detect unchanged captures via Bun.deepEquals.
  */
 export async function remediateScreenshotCapture(
-  screenshotBytes: Uint8Array | Buffer,
+  screenshotBytes: Uint8Array,
   options: BuildScreenshotEvidenceOptions = {}
 ): Promise<Test003Response & { thumbnailBytes: Uint8Array }> {
   const thumbMaxWidth = options.thumbMaxWidth ?? DEFAULT_THUMB_MAX_WIDTH;
