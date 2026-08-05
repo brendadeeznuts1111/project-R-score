@@ -1,88 +1,81 @@
-# Bookmakers registry
+# Bookmakers registry (v0.4 public)
 
-Canonical **book / sportsbook** registry for the deep-link pipeline — mirrored
-from the `@factorywager/bookmakers` artifact onto the portal read plane.
+Canonical **book / sportsbook** registry for the deep-link pipeline — **Pages
+public catalog only** (`schemaVersion: 2`). Ops credentials live under
+`artifact-registry/bookmakers/v0.4.0/ops/` and are **never** deployed to Pages.
 
 | Surface | Path |
 |---------|------|
 | Board | [`/portal/bookmakers/`](./bookmakers/) |
-| Bake | [`/registry/bookmakers.json`](../registry/bookmakers.json) |
-| Artifact registry | `registry.factory-wager.com` · package `@factorywager/bookmakers` |
-| Bake CLI | `bun run bookmakers:bake` · check `bookmakers:bake:check` |
+| Public bake | [`/registry/bookmakers.json`](../registry/bookmakers.json) |
+| Ops desk (local/artifact) | `artifact-registry/bookmakers/v0.4.0/ops/books.json` |
+| Migrate CLI | `bun run bookmakers:migrate` |
 | Tenant | [`docs/harness/tenants/bookmakers-registry.md`](../../docs/harness/tenants/bookmakers-registry.md) |
 | Route map | [routing.md](./routing.md) |
 
-## Live bake shape (v1)
+## Decisions (v0.3 → v0.4)
+
+| Topic | Choice |
+|-------|--------|
+| Route key | `id === slug` (mode A) |
+| Regions | `{ country, stateCode? }` objects |
+| Public branding | `label` · `skin` · `brandGroup` · `color` |
+| URLs | `urls.{ web, api, limitsPage, termsPage }` |
+| Fetcher | `fetcher` (`rest` \| `webview` \| `seat`) — was `fetcherType` |
+| Sports | `sports` — was `supportedSports` |
+| Limits | `limits.{ minBetUsd, maxBetUsd, liquidityTier }` |
+| Lifecycle | `lifecycle[]` (`pre_match` · `live` · …) |
+| Ops only | `restBaseUrl` · `apiKeyEnv` · `envVars` · balance/health |
+
+## Public row shape
 
 ```json
 {
-  "schemaVersion": 1,
-  "generatedAt": "…",
-  "artifact": { "name": "@factorywager/bookmakers", "version": "…", "checksum": "…", "source": "artifact-registry" },
-  "bookmakers": { "<id>": { "id", "label", "domain", "fetcherType", "supportedSports", "regions", "color", … } },
-  "summary": { "count", "webview", "rest", "seat", "sports": [] },
-  "audit": { "ok": true, "issues": [] }
+  "id": "hard-rock-florida",
+  "slug": "hard-rock-florida",
+  "label": "Hard Rock Florida",
+  "skin": "HardRockBet Florida",
+  "brandGroup": "Hard Rock International",
+  "urls": { "web": "https://…", "api": null, "limitsPage": null, "termsPage": null },
+  "fetcher": "seat",
+  "lifecycle": ["pre_match"],
+  "sports": ["basketball"],
+  "regions": [{ "country": "US", "stateCode": "FL" }],
+  "limits": { "minBetUsd": null, "maxBetUsd": null, "liquidityTier": "medium" },
+  "color": "#db2777",
+  "note": "…"
 }
 ```
-
-`bookmakers` is a **map keyed by id** (not an array). The board normalizes to a
-sorted list for display.
-
-## Fetcher types
-
-| `fetcherType` | Role | Board filter |
-|---------------|------|--------------|
-| `rest` | HTTP API (e.g. Pinnacle) | REST pill |
-| `webview` | Browser / scrape lane (US books) | Webview pill |
-| `seat` | Seat / soft package books | Seat pill |
-
-## Regions
-
-Each region is typically `{ "country": "US", "stateCode": "NY" }` (state optional).
-Board shows `US-NY` chips — not `[object Object]`.
 
 ## Board UX
 
 | Control | Behavior |
 |---------|----------|
-| Stats strip | count · webview · rest · seat · unique sports |
-| Fetcher filter | all / rest / webview / seat |
-| Search | id · label · domain · sport |
-| Sports chips | glossary-wired when `sport.<id>` exists |
-| Domain | external link |
-| Audit gate | `audit.ok` on hero |
-
-## Related partner surfaces
-
-| Concern | Board / bake |
-|---------|--------------|
-| Partner outs · book · max bet | [Partners](./partners/) · seat-capital-desk — match `BOOK` to registry `id` |
-| Limit raises by node / book | [Limits](./limits/) · [limits.md](./limits.md) · `limit-raises.json` |
-| Forecast lab | [`/portal/limits-lab/`](./limits-lab/) |
-| Balance / slip image proof | [DOD](./dod/) · [dod.md](./dod.md) |
-| Soft book types | Soft export · Partners Soft tables |
-| Routing audit | [routing.md](./routing.md) · `bun run check:routes` |
+| Stats | count · webview · rest · seat · sports |
+| Filter | fetcher all / rest / webview / seat |
+| Search | id · skin · brandGroup · domain · sport |
+| Label cell | label + skin + brandGroup |
+| Regions | `US-FL` chips from objects or strings |
 
 ## CLI
 
 ```bash
-bun run bookmakers:bake
+bun run bookmakers:migrate          # v0.3 mirror → v0.4 public + ops
+bun run bookmakers:bake             # from published package (prefers PUBLIC_BOOKMAKERS)
 bun run bookmakers:bake:check
 bun test tests/bookmakers-registry-bake.test.ts
+bun test tests/bookmakers-migrate-v04.test.ts
 bun test tests/bookmakers-board.test.ts
-# after package publish:
-# bun lib/factory/cli.ts publish … → snapshot → bookmakers:bake
 ```
 
 ## Failure paths
 
 | Symptom | Fix |
 |---------|-----|
-| Board empty / load failed | Fetch `/registry/bookmakers.json` · rebake · Pages deploy |
-| `bookmakers:bake:check` fails | Mirror stale vs live artifact · re-run bake and commit |
-| Regions show blank / wrong | Expect `{country,stateCode}` objects · board uses `formatRegion` |
-| Outs book id unknown on Partners | Align seat desk `BOOK` with registry `id` |
-| Glossary sport chips plain | Bake `domain-glossary.json` · `sport.*` concept ids |
-| Audit fail gate | Inspect `audit.issues` on bake · invalid registry entries |
+| Live still shows v0.3 / secrets | Deploy Pages with committed v0.4 public bake |
+| `apiKeyEnv` in public JSON | Re-run migrate · never bake ops into `public/` |
+| Board empty domains | Ensure `urls.web` present (board falls back to `domain`) |
+| brandGroup missing audit | Enrichment map in `lib/bookmakers/v04-types.ts` |
+| Stale package bake | Publish `@factorywager/bookmakers@0.4.x` with `PUBLIC_BOOKMAKERS` |
 
-Weave surface: `bookmakers` · artifact `bookmakers-registry`.
+Related: [limits.md](./limits.md) · [partners.md](./partners.md) · [dod.md](./dod.md) · [routing.md](./routing.md).

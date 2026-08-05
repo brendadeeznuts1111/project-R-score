@@ -1649,6 +1649,7 @@
     "tennis:board:bake": "bun scripts/bake-tennis-board.ts",
     "bookmakers:bake": "bun scripts/bake-bookmakers-board.ts",
     "bookmakers:bake:check": "bun scripts/bake-bookmakers-board.ts --check",
+    "bookmakers:migrate": "bun scripts/migrate-bookmakers-v0.3-to-v0.4.ts",
     "images:generate": "bun scripts/images-generate.ts",
     "images:avatars": "bun scripts/images-generate.ts --template=avatar --source=./warehouse/avatars --out=./public/avatars --size=128x128",
     "images:hero:demo": "bun scripts/images-generate.ts --template=hero --source=./warehouse/avatars/demo-player.png --out=./artifacts/phase2-hero.webp --quality=85",

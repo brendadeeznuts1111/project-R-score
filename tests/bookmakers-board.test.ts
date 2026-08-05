@@ -8,6 +8,8 @@ import {
   countByFetcher,
   uniqueSports,
   rowHtml,
+  slugEqualsId,
+  bookDomain,
 } from '../public/portal/bookmakers/bookmakers-board.js';
 
 const BOARD = 'public/portal/bookmakers/index.html';
@@ -77,22 +79,52 @@ describe('bookmakers board helpers', () => {
   test('bookStatus and rowHtml include region chips', () => {
     const ok = {
       id: 'pinnacle',
+      slug: 'pinnacle',
       label: 'Pinnacle',
       domain: 'www.pinnacle.com',
       fetcherType: 'rest',
       supportedSports: ['tennis'],
       regions: [{ country: 'US' }, { country: 'GB' }],
       color: '#f59e0b',
-      restBaseUrl: '',
-      envVars: [],
+      skin: '',
+      brandGroup: 'Pinnacle',
+      lifecycle: ['pre_match', 'live'],
+      liquidityTier: 'high',
+      note: '',
     };
     expect(bookStatus(ok)).toBe('ok');
+    expect(slugEqualsId(ok)).toBe(true);
     expect(bookStatus({ ...ok, domain: '' })).toBe('incomplete');
     const html = rowHtml(ok, new Set(['sport.tennis']));
     expect(html).toContain('data-glossary-concept="sport.tennis"');
     expect(html).toContain('US');
     expect(html).toContain('fetcher-rest');
     expect(html).toContain('state-ok');
+  });
+
+  test('normalizeBooks reads v0.4 urls/fetcher/sports and id===slug', () => {
+    const books = normalizeBooks({
+      bookmakers: {
+        'hard-rock-florida': {
+          id: 'hard-rock-florida',
+          slug: 'hard-rock-florida',
+          label: 'Hard Rock Florida',
+          skin: 'HardRockBet Florida',
+          brandGroup: 'Hard Rock International',
+          fetcher: 'seat',
+          sports: ['basketball'],
+          urls: { web: 'https://hardrockfl.sportsbook.hardrock.bet' },
+          limits: { liquidityTier: 'medium' },
+          regions: [{ country: 'US', stateCode: 'FL' }],
+        },
+      },
+    });
+    expect(books).toHaveLength(1);
+    expect(books[0]!.domain).toBe('hardrockfl.sportsbook.hardrock.bet');
+    expect(books[0]!.fetcherType).toBe('seat');
+    expect(books[0]!.skin).toBe('HardRockBet Florida');
+    expect(slugEqualsId(books[0]!)).toBe(true);
+    expect(bookDomain({ urls: { web: 'https://www.pinnacle.com/path' } })).toBe('www.pinnacle.com');
   });
 });
 
@@ -124,6 +156,8 @@ describe('bookmakers board shell', () => {
     expect(books.length).toBeGreaterThanOrEqual(5);
     expect(books.some(b => b.id === 'pinnacle')).toBe(true);
     expect(books.some(b => b.fetcherType === 'rest')).toBe(true);
+    expect(books.every(b => slugEqualsId(b))).toBe(true);
+    expect(books.some(b => b.brandGroup)).toBe(true);
     const regions = books.flatMap(b => b.regions.map(formatRegion));
     expect(regions.some(r => r.includes('US'))).toBe(true);
   });
