@@ -3,7 +3,7 @@
 <html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />\n    <meta name="portal-poll-ms" content="60000" />
     <meta
       name="description"
       content="Partner package groups · Telegram forum chats · Accounting topic deals · betting deposit rails from seat capital desk."
@@ -22,72 +22,67 @@
     />
     <link rel="stylesheet" href="/portal/style.css" />
     <style>
-      .partners-page {
-        max-width: 1120px;
-        margin: 0 auto;
-        padding: 28px 24px 48px;
+      .partners-page.portal-page {
+        max-width: 1180px;
       }
-      .partners-hero {
-        margin-bottom: 20px;
+      .partners-hero.portal-hero--card .partners-title,
+      .partners-hero.portal-hero--card .portal-hero__title {
+        margin: 0;
       }
-      .partners-title {
-        margin: 0 0 8px;
-        font-size: 28px;
-        font-weight: 650;
-        letter-spacing: -0.03em;
+      .partners-hero.portal-hero--card .partners-title a,
+      .partners-hero.portal-hero--card .portal-hero__title a {
+        color: inherit;
+        text-decoration: none;
       }
-      .partners-lede {
-        margin: 0 0 14px;
-        font-size: 14px;
-        color: var(--text-dim);
-        line-height: 1.5;
-        max-width: 62ch;
-      }
-      .partners-lede code {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 12px;
-      }
-      .partners-meta {
-        font-size: 12px;
-        color: var(--text-dim);
-        margin: 0 0 16px;
-      }
-      .partners-meta a {
+      .partners-hero.portal-hero--card .partners-title a:hover,
+      .partners-hero.portal-hero--card .portal-hero__title a:hover {
         color: var(--accent);
       }
-      .partners-stats {
+      .partners-meta-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
-        gap: 10px;
-        margin: 0 0 22px;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 8px;
+        width: 100%;
+        margin-top: 12px;
       }
-      @media (max-width: 900px) {
-        .partners-stats {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-      .partners-stat {
-        background: var(--surface);
+      .partners-meta-chip {
         border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 12px 14px;
-      }
-      .partners-stat .k {
+        border-radius: 8px;
+        padding: 8px 10px;
+        background: color-mix(in srgb, var(--bg, #0d1117) 40%, transparent);
         font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--text-dim);
+        line-height: 1.35;
       }
-      .partners-stat .v {
-        font-size: 22px;
-        font-weight: 650;
+      .partners-meta-chip .k {
+        display: block;
+        color: var(--text-dim);
+        font: 600 10px/1.2 var(--font-mono, ui-monospace, monospace);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+      }
+      .partners-meta-chip time,
+      .partners-meta-chip .v {
+        font-family: var(--font-mono, ui-monospace, monospace);
         font-variant-numeric: tabular-nums;
       }
-      .partners-stat.ok .v {
-        color: var(--green, #3fb950);
+      .partners-meta-chip.warn {
+        border-color: color-mix(in srgb, var(--yellow, #d29922) 45%, var(--border));
       }
-      .partners-stat.warn .v {
-        color: var(--yellow, #d29922);
+      .partners-meta-chip.ok {
+        border-color: color-mix(in srgb, var(--green, #3fb950) 40%, var(--border));
+      }
+      .partners-meta-links {
+        margin: 10px 0 0;
+        font-size: 11px;
+        color: var(--text-dim);
+        line-height: 1.5;
+      }
+      .partners-meta-links a {
+        color: var(--accent);
+      }
+      #partners-stats.portal-stat-grid {
+        margin: 0 0 22px;
       }
       .partners-section {
         margin: 0 0 26px;
@@ -318,9 +313,10 @@
       </div>
     </header>
 
-    <main class="partners-page" id="partner-panel">
-      <header class="partners-hero">
-        <h2 class="partners-title">
+    <main class="partners-page portal-page" id="partner-panel">
+      <header class="partners-hero portal-hero--card" aria-labelledby="partners-hero-title">
+        <p class="portal-eyebrow">Package groups · Telegram · Soft bake mirror</p>
+        <h2 class="partners-title portal-hero__title" id="partners-hero-title">
           <a
             class="semantic-label"
             href="/portal/glossary/#glossary:page.partners"
@@ -328,40 +324,45 @@
             >Partners</a
           >
         </h2>
-        <p class="partners-lede">
-          Package Telegram forums, Accounting topic deals, and betting deposit rails from the seat
-          capital desk. Soft ledger mutations stay in <code>ct</code>; this board is the factory
-          bake mirror. Glossary:
-          <a href="/portal/glossary/#glossary:telegram.wire" data-glossary-concept="telegram.wire"
-            >telegram.wire</a
+        <p class="partners-lede hero-sub">
+          Forums, Accounting topic deals, and seat-desk deposit rails. Soft ledger mutations stay in
+          <code>ct</code> — this board is the factory bake mirror.
+        </p>
+        <div class="portal-hero-meta">
+          <span id="partners-gate" class="portal-gate" aria-live="polite">…</span>
+          <span id="partners-baked" class="portal-baked">loading…</span>
+          <div class="portal-source-links" aria-label="Related artifacts">
+            <a href="/registry/partners-ops.json">partners-ops.json</a>
+            <a href="/registry/telegram-handshake.json">handshake</a>
+            <a href="/registry/soft-accounting-export.json">soft export</a>
+            <a href="/portal/glossary/#glossary:telegram.wire">telegram.wire</a>
+          </div>
+        </div>
+        <div class="partners-meta-grid" id="partners-meta" aria-label="Bake provenance">Loading registry…</div>
+        <p class="partners-meta-links">
+          CLI <code>bun run partners:validate</code> ·
+          <a
+            href="/portal/glossary/#glossary:section.partnersTags"
+            data-glossary-concept="section.partnersTags"
+            >Partner tags</a
           >
-          · taxonomy
-          <a href="/registry/partners-ops.json"><code>partners-ops.json</code></a>
-          · <code>bun run partners:validate</code>.
+          ·
+          <a
+            href="/portal/glossary/#glossary:ui.route.partnerHash"
+            data-glossary-concept="ui.route.partnerHash"
+            >hash routes</a
+          >
         </p>
         <nav
           class="tag-filter-bar"
           id="tag-filter-bar"
           aria-label="Partner-ops taxonomy filters"
           data-glossary-concept="section.partnersTags"
+          style="margin-top: 14px"
         >
           <div id="section:tag-filter-bar" class="sr-only" aria-hidden="true"></div>
-          <p class="blurb" style="margin: 0 0 6px">
-            <a
-              href="/portal/glossary/#glossary:section.partnersTags"
-              data-glossary-concept="section.partnersTags"
-              >Partner tags</a
-            >
-            ·
-            <a
-              href="/portal/glossary/#glossary:ui.route.partnerHash"
-              data-glossary-concept="ui.route.partnerHash"
-              >hash routes</a
-            >
-          </p>
           <ul class="topic-chips" id="taxonomy-chips" aria-label="Partner-ops taxonomy"></ul>
         </nav>
-        <p class="partners-meta" id="partners-meta">Loading registry…</p>
         <nav
           class="partner-route-bar"
           id="partner-route-bar"
@@ -381,7 +382,7 @@
         <p>Loading partners…</p>
       </div>
       <div id="dashboard" class="hidden">
-        <div class="partners-stats" id="partners-stats"></div>
+        <div class="portal-stat-grid" id="partners-stats" aria-label="Partners summary"></div>
 
         <section
           class="partners-section partner-profile hidden"
@@ -1159,6 +1160,26 @@
           .join('');
       }
 
+
+      function bakeLabel(iso, source = '') {
+        if (!iso) return { text: '—', tone: '' };
+        const t = Date.parse(iso);
+        if (!Number.isFinite(t) || t <= 0) {
+          return {
+            text: source ? `fixture · ${source}` : 'fixture / unset',
+            tone: 'warn',
+          };
+        }
+        // Treat unix epoch sentinel as fixture marker
+        if (t < Date.parse('1980-01-01T00:00:00.000Z')) {
+          return {
+            text: source ? `fixture · ${source}` : 'fixture (epoch bake)',
+            tone: 'warn',
+          };
+        }
+        return { text: new Date(t).toISOString().replace('T', ' ').replace(/\.\d+Z$/, ' UTC'), tone: 'ok' };
+      }
+
       function renderStats(handshake, seat, ops) {
         const partners =
           ops?.summary?.partners ?? handshake?.partners ?? (handshake?.rows?.length || 0);
@@ -1170,29 +1191,71 @@
         const trackedLimits = ops?.summary?.trackedLimits ?? 0;
         const communicationReady = ops?.summary?.communicationReady ?? 0;
         const cells = [
-          ['Partners', partners, ''],
-          ['Operator ready', ready, ready === partners && partners > 0 ? 'ok' : ''],
-          ['Accounts', accounts, ''],
+          ['Partners', partners, '', 'section:telegram', 'Package groups in handshake'],
+          [
+            'Operator ready',
+            ready,
+            ready === partners && partners > 0 ? 'ok' : 'warn',
+            'section:telegram',
+            'Phase operator_ready',
+          ],
+          ['Accounts', accounts, '', 'section:accounts-limits', 'Outs / accounts tracked'],
           [
             'Tracked limits',
             trackedLimits,
             trackedLimits === accounts && accounts > 0 ? 'ok' : 'warn',
+            'section:accounts-limits',
+            'Limit pattern coverage',
           ],
           [
             'Telegram ready',
             communicationReady,
             communicationReady === partners && partners > 0 ? 'ok' : 'warn',
+            'section:telegram',
+            'Invite + membership ready',
           ],
-          ['Seat desks', desks, ''],
-          ['Incomplete outs', incomplete, incomplete > 0 ? 'warn' : 'ok'],
-          ['Invite gaps', inviteGaps, inviteGaps > 0 ? 'warn' : 'ok'],
+          ['Seat desks', desks, '', 'section:deposits', 'Seat capital desks'],
+          [
+            'Incomplete outs',
+            incomplete,
+            incomplete > 0 ? 'warn' : 'ok',
+            'section:accounts-limits',
+            'Needs attention',
+          ],
+          [
+            'Invite gaps',
+            inviteGaps,
+            inviteGaps > 0 ? 'warn' : 'ok',
+            'section:telegram',
+            'Missing Telegram invites',
+          ],
         ];
+        const gaps = incomplete + inviteGaps;
+        const gate = $('partners-gate');
+        if (gate) {
+          const ok = partners > 0 && gaps === 0;
+          gate.className = `portal-gate ${ok ? 'pass' : gaps > 0 ? 'warn' : 'pass'}`;
+          gate.innerHTML = `<span class="dot" aria-hidden="true"></span>${ok ? 'ready' : gaps > 0 ? 'gaps' : 'ok'}`;
+        }
         $('partners-stats').innerHTML = cells
           .map(
-            ([k, v, tone]) =>
-              `<div class="partners-stat ${tone}"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div></div>`
+            ([k, v, tone, target, hint]) =>
+              `<button type="button" class="portal-stat ${tone}" data-scroll-target="${esc(target)}">` +
+              `<span class="k">${esc(k)}</span>` +
+              `<span class="v">${esc(v)}</span>` +
+              `<span class="hint">${esc(hint)}</span>` +
+              `</button>`
           )
           .join('');
+        for (const btn of $('partners-stats').querySelectorAll('[data-scroll-target]')) {
+          btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-scroll-target');
+            const el = id ? document.getElementById(id) : null;
+            if (!el) return;
+            el.classList.remove('hidden');
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        }
       }
 
       function routeChip(href, label, color, conceptId = '') {
@@ -1885,19 +1948,27 @@
                       String(a.bookType).localeCompare(String(b.bookType))
                   )
               : [];
-          $('partners-meta').innerHTML =
-            `Handshake <time>${esc(handshake.generatedAt || '—')}</time> · ` +
-            `Seat desk <time>${esc(seat.generatedAt || '—')}</time> · ` +
-            `Ops <time>${esc(ops.generatedAt || '—')}</time> · ` +
-            `Profiles <time>${esc(partnerProfiles.generatedAt || '—')}</time> (${esc(partnerProfiles.summary?.count ?? 0)}) · ` +
-            `Soft <time>${esc(softAccounting?.generatedAt || '—')}</time> (${esc(softAccountingSource)}) · ` +
-            `<a href="/registry/telegram-handshake.json"><code>telegram-handshake.json</code></a> · ` +
-            `<a href="/registry/seat-capital-desk.json"><code>seat-capital-desk.json</code></a> · ` +
-            `<a href="/registry/partners-ops.json"><code>partners-ops.json</code></a> · ` +
-            `<a href="/registry/partner-profiles.json"><code>partner-profiles.json</code></a> · ` +
-            `<a href="/registry/soft-accounting-export.json" data-glossary-concept="ops.view.per_play"><code>soft-accounting-export.json</code></a> · ` +
-            `<a href="/registry/limit-raises.json"><code>limit-raises.json</code></a> · ` +
-            `<a href="/portal/glossary/#glossary:telegram.wire"><code>telegram glossary</code></a>`;
+          const softBake = bakeLabel(softAccounting?.generatedAt, softAccountingSource);
+          const opsBake = bakeLabel(ops.generatedAt);
+          const hsBake = bakeLabel(handshake.generatedAt);
+          const seatBake = bakeLabel(seat.generatedAt);
+          const profBake = bakeLabel(partnerProfiles.generatedAt);
+          const baked = $('partners-baked');
+          if (baked) {
+            baked.textContent = `ops ${opsBake.text} · ${ops?.summary?.partners ?? 0} partners · schema ${esc(ops.schema || ops.version || 'v2')}`;
+          }
+          $('partners-meta').innerHTML = [
+            ['Handshake', hsBake],
+            ['Seat desk', seatBake],
+            ['Ops', opsBake],
+            ['Profiles', { text: `${profBake.text} · ${partnerProfiles.summary?.count ?? 0}`, tone: profBake.tone }],
+            ['Soft', softBake],
+          ]
+            .map(
+              ([k, b]) =>
+                `<div class="partners-meta-chip ${esc(b.tone)}"><span class="k">${esc(k)}</span><span class="v">${esc(b.text)}</span></div>`
+            )
+            .join('');
           renderTopics(catalog, ops);
           renderTaxonomyChips(ops);
           renderPartnerRoutes(ops);
@@ -1920,7 +1991,24 @@
           $('loading').classList.add('hidden');
           const banner = $('error-banner');
           banner.classList.remove('hidden');
-          banner.textContent = err instanceof Error ? err.message : String(err);
+          banner.className = 'portal-error';
+          const msg = err instanceof Error ? err.message : String(err);
+          banner.innerHTML =
+            `<h3>Partners bake unavailable</h3>` +
+            `<p>One or more registry artifacts failed to load.</p>` +
+            `<p><code>${esc(msg)}</code></p>` +
+            `<div class="portal-actions">` +
+            `<button type="button" class="btn" id="partners-retry">Retry</button>` +
+            `<a class="btn" href="/registry/partners-ops.json">Open partners-ops.json</a>` +
+            `<a class="btn" href="/registry/soft-accounting-export.json">Open soft export</a>` +
+            `</div>` +
+            `<p class="dim" style="margin-top:10px">Local: <code>bun run partners:validate</code> · <code>bun run soft:accounting:bake</code></p>`;
+          $('partners-retry')?.addEventListener('click', () => void load());
+          const gate = $('partners-gate');
+          if (gate) {
+            gate.className = 'portal-gate fail';
+            gate.innerHTML = '<span class="dot" aria-hidden="true"></span>error';
+          }
         }
       }
 
