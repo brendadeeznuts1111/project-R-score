@@ -8,13 +8,12 @@
 
 The machine-readable authority is
 [`tools/codex-thread-portfolio.json`](../../../tools/codex-thread-portfolio.json).
-Schema v2 covers all 40 Project R root user threads present on 2026-08-05:
+Schema v2 covers all 27 Project R root user threads present on 2026-08-05:
 
-- 38 visible Codex Desktop threads;
-- one visible user CLI thread;
-- one legacy user CLI record with an empty preview.
+- 26 visible Codex Desktop threads;
+- one visible user CLI thread.
 
-The same local state contains 61 subagent sessions. They remain implementation
+The same local state contains 74 subagent sessions. They remain implementation
 history under their root threads and do not consume root reference numbers. The
 verification command proves that every subagent parent resolves to a cataloged
 root thread.
@@ -25,7 +24,7 @@ Thread identity, ranking, and subject lane are separate fields:
 
 | Field              | Example             | Stability         | Meaning                                             |
 | ------------------ | ------------------- | ----------------- | --------------------------------------------------- |
-| Human reference    | `RTH-003`           | Immutable         | Chronological Project R root-thread reference       |
+| Human reference    | `RTH-002`           | Immutable         | Chronological Project R root-thread reference       |
 | Provider identity  | `019fa629-…`        | Immutable         | Codex UUIDv7-shaped `SessionId`; machine joins only |
 | Rank               | `6`                 | Mutable           | Current value order; never identity                 |
 | State              | `MERGED`            | Mutable           | Delivery lifecycle at the last evidence review      |
@@ -42,9 +41,9 @@ RTH-### · STATE · LANE · Purpose — delivery reference
 Examples:
 
 ```text
-RTH-003 · MERGED · BUN · API Surface Proof — PR #52
-RTH-021 · SHIPPED · PORTAL · Partner Routing — PR #153
-RTH-036 · BLOCKED · TENNIS · v1 Auth Cutover — PRs #10/#290
+RTH-002 · MERGED · BUN · API Surface Proof — PR #52
+RTH-007 · SHIPPED · PORTAL · Partner Routing — PR #153
+RTH-022 · BLOCKED · TENNIS · v1 Auth Cutover — PRs #10/#290
 ```
 
 Do not use `UID-7` or `Bun UID-7`:
@@ -99,9 +98,8 @@ bun run threads:portfolio:verify
 ```
 
 Title changes use Codex's supported `thread/name/set` app-server method. Codex
-0.146 does not expose pin mutation through that protocol. The legacy `RTH-001`
-CLI record also has no rollout file, so its catalog entry explicitly declares
-`titleTransport: state-only`. The guarded local-state lane:
+0.146 does not expose pin mutation through that protocol. The guarded
+local-state lane is therefore limited to pin policy:
 
 1. verifies the expected `threads.id`, `threads.cwd`, and `threads.is_pinned`
    columns;
@@ -115,25 +113,24 @@ The default command is read-only. State changes require explicit `--apply` and
 
 ## Reference map and bring-home queue
 
-The catalog is the complete ranked map. Current highest-value open work:
+The catalog is the complete ranked map. The merged `RTH-026` domain authority
+task provides the integration order. Current highest-value open work:
 
-- **RTH-040 — domain authority/backlog map:** Review and merge PR #337, then use
-  its integration order for mapped domain lanes.
-- **RTH-030 — Tennis matcher/cache/registry:** Publish the clean three-commit
+- **RTH-016 — Tennis matcher/cache/registry:** Publish the clean three-commit
   lane through a focused PR.
-- **RTH-029 — cross-venue reconciliation:** Push and review the clean
+- **RTH-015 — cross-venue reconciliation:** Push and review the clean
   three-commit lane.
-- **RTH-032 — Tennis v1/Plum:** Complete package publication and the
+- **RTH-018 — Tennis v1/Plum:** Complete package publication and the
   checksum/registry handoff.
-- **RTH-036 — Tennis auth:** Supply authorized `PARTNER_API_TOKEN` custody and
+- **RTH-022 — Tennis auth:** Supply authorized `PARTNER_API_TOKEN` custody and
   Tennis Worker secret access; PRs #10 and #290 remain blocked.
-- **RTH-027 — branded IDs:** Publish the clean integration branch.
-- **RTH-025 / RTH-023:** Confirm pushed revisions are reachable from `main` or
+- **RTH-013 — branded IDs:** Publish the clean integration branch.
+- **RTH-011 / RTH-009:** Confirm pushed revisions are reachable from `main` or
   recover them through focused PRs.
-- **RTH-037 / RTH-016 / RTH-012–RTH-015:** Compare historical local lanes with
-  current `main` before recovering unique changes.
-- **RTH-020:** PR #55 is closed unmerged; recover only unique changes.
-- **RTH-018 / RTH-001:** Empty root records and archive candidates.
+- **RTH-023:** Compare the historical local portal lane with current `main`
+  before recovering unique changes.
+- **RTH-006:** PR #55 is closed unmerged; recover only unique changes.
+- **RTH-004 / RTH-027:** Empty or unscoped root records and archive candidates.
 
 ## Repository reconciliation
 

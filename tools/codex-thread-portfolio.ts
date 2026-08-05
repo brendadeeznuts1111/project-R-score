@@ -637,7 +637,7 @@ export function inspectThreadInventory(
       .all(portfolio.scope.cwd);
     const rootRows = rows
       .filter(row => row.source === 'vscode' || row.threadSource === 'user')
-      .sort((a, b) => a.createdAt - b.createdAt || a.opaqueKey.localeCompare(b.opaqueKey));
+      .sort((a, b) => a.opaqueKey.localeCompare(b.opaqueKey));
     const catalogBySessionId = new Map(
       portfolio.threads.map(thread => [thread.sessionId as string, thread])
     );
