@@ -825,6 +825,7 @@ body {
   border-radius: var(--radius);
 }
 
+.portal-table,
 .data-table,
 .env-table,
 .ops-table,
@@ -836,6 +837,7 @@ body {
   background: var(--surface);
 }
 
+.portal-table th,
 .data-table th,
 .env-table th,
 .ops-table th,
@@ -850,6 +852,7 @@ body {
   white-space: nowrap;
 }
 
+.portal-table td,
 .data-table td,
 .env-table td,
 .ops-table td,
@@ -860,6 +863,7 @@ body {
   vertical-align: top;
 }
 
+.portal-table .mono,
 .data-table .mono,
 .env-table .mono,
 .ops-table .mono,
@@ -868,16 +872,45 @@ body {
   font-size: 11px;
 }
 
+/* Modifiers — canonical `.portal-table` contract; legacy class aliases above keep working */
+.portal-table[data-density='compact'] {
+  font-size: 11px;
+}
+
+.portal-table[data-density='compact'] th,
+.portal-table[data-density='compact'] td {
+  padding: 4px 8px;
+}
+
+.portal-table[data-tone='accent'] th {
+  border-bottom-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+}
+
+.portal-table[data-tone='warn'] th {
+  border-bottom-color: var(--yellow);
+}
+
+.portal-table[data-tone='bad'] th {
+  border-bottom-color: var(--red);
+}
+
+.portal-table[data-zebra] tbody tr:nth-child(odd) {
+  background: var(--surface-hover);
+}
+
 /* Row tone rails (Live check pattern) */
+.portal-table tr.row-ok td:first-child,
 .data-table tr.row-ok td:first-child,
 .live-table tr.live-row-ok td:first-child,
 .ops-table tr.row-ok td:first-child {
   box-shadow: inset 3px 0 0 var(--green, #3fb950);
 }
+.portal-table tr.row-warn td:first-child,
 .data-table tr.row-warn td:first-child,
 .live-table tr.live-row-warn td:first-child {
   box-shadow: inset 3px 0 0 var(--yellow, #d29922);
 }
+.portal-table tr.row-bad td:first-child,
 .data-table tr.row-bad td:first-child,
 .live-table tr.live-row-bad td:first-child {
   box-shadow: inset 3px 0 0 var(--red, #f85149);
@@ -2305,27 +2338,6 @@ operations-dashboard {
 
 .tree-counts span {
   color: var(--accent);
-}
-
-#plays-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-}
-
-#plays-table th {
-  text-align: left;
-  padding: 4px 8px;
-  color: var(--text-dim);
-  font-weight: 500;
-}
-
-#plays-table td {
-  padding: 4px 8px;
-}
-
-#plays-table tbody tr:nth-child(odd) {
-  background: var(--surface-hover);
 }
 
 .rail-row {

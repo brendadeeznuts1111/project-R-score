@@ -176,7 +176,7 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-sub" id="limits-detail"></div>
             <div class="ops-sub" id="limits-patterns-detail" hidden></div>
             <div class="ops-sub" id="limits-predict-detail" hidden></div>
-            <table id="limits-table" style="width:100%;font-size:0.85em;margin-top:4px">
+            <table id="limits-table" class="ops-table" data-density="compact">
               <thead><tr><th>Partner</th><th>Book</th><th>Sport</th><th>Market</th><th>Type</th><th>Old</th><th>New</th><th>Influence</th><th>When</th></tr></thead>
               <tbody id="limits-tbody"></tbody>
             </table>
@@ -448,7 +448,7 @@ class OperationsDashboard extends HTMLElement {
           <section class="ops-panel wide" id="ops-plays">
             <h2>Plays</h2>
             <div class="ops-source" id="ops-source"></div>
-            <table id="plays-table"><thead><tr><th>Time</th><th>Expert</th><th>Event</th><th>Pick</th><th>Odds</th><th>Sent</th><th>Placed</th></tr></thead><tbody></tbody></table>
+            <table id="plays-table" class="ops-table" data-zebra><thead><tr><th>Time</th><th>Expert</th><th>Event</th><th>Pick</th><th>Odds</th><th>Sent</th><th>Placed</th></tr></thead><tbody></tbody></table>
           </section>
           <section class="ops-panel" id="ops-rails">
             <h2>Rails</h2>
