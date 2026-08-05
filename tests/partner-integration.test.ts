@@ -23,6 +23,9 @@ describe('partner integration contracts', () => {
     expect(route && anchorDomId(route)).toBe('out-card-out-ASH-1');
     expect(route && anchorConceptId(route)).toBe('section.partnersOuts');
     expect(parsePartnerHash('#partner/ASH/out/out-BIL-1')).toBeNull();
+    expect(parsePartnerHash('#partner/ASH/out/out-ASH-0')).toBeNull();
+    expect(parsePartnerHash('#partner/ASH/out/out-ASH-01')).toBeNull();
+    expect(parsePartnerHash('#partner/ASH/out/out-ASH--')).toBeNull();
     expect(parsePartnerHash('#partner/ASH/telegram/admin')).toBeNull();
     expect(partnerHash({ type: 'partner', code: '../bad' })).toBe('#partners');
   });
@@ -76,6 +79,14 @@ describe('partner integration contracts', () => {
       const ts = parsePartnerHash(hash);
       const js = board.parsePartnerHash(hash) as { type?: string } | null;
       expect(js?.type, hash).toBe(ts?.type);
+    }
+    for (const hash of [
+      '#partner/ASH/out/out-ASH-0',
+      '#partner/ASH/out/out-ASH-01',
+      '#partner/ASH/out/out-ASH--',
+    ]) {
+      expect(parsePartnerHash(hash), hash).toBeNull();
+      expect(board.parsePartnerHash(hash), hash).toBeNull();
     }
   });
 

@@ -1,12 +1,14 @@
 // @see https://bun.com/docs/test — bun:test
 import { describe, expect, test } from 'bun:test';
 import {
+  canonicalProfileCoverage,
   coverageBarStyle,
   filterPartnerOuts,
   flattenPartnerOuts,
   indexOpsByPartner,
   listPartnerPhases,
   normalizePartnerCode,
+  partnerReadinessGate,
   summarizePartnerDesk,
 } from '../public/portal/partners/partners-board.js';
 
@@ -112,5 +114,49 @@ describe('partners-board domain helpers', () => {
     expect(coverageBarStyle(50).tone).toBe('warn');
     expect(coverageBarStyle(10).tone).toBe('bad');
     expect(coverageBarStyle(150).pct).toBe(100);
+  });
+
+  test('readiness distinguishes legacy visibility from canonical profile coverage', () => {
+    expect(
+      canonicalProfileCoverage(
+        { partners: [{ code: 'ASH' }, { code: 'BIL' }] },
+        null,
+        { profiles: { ASH: {}, NOV: {}, SPEN: {} }, summary: { count: 3 } }
+      )
+    ).toEqual({
+      partnerCodes: ['ASH', 'BIL'],
+      coveredCodes: ['ASH'],
+      missingCodes: ['BIL'],
+    });
+    expect(
+      partnerReadinessGate({
+        partnerCount: 4,
+        canonicalProfileCount: 0,
+        incompleteOuts: 0,
+        inviteGaps: 0,
+      })
+    ).toEqual({
+      tone: 'warn',
+      label: 'legacy ready · profiles 0/4',
+      ok: false,
+      profilesReady: false,
+      gaps: 0,
+    });
+    expect(
+      partnerReadinessGate({
+        partnerCount: 4,
+        canonicalProfileCount: 4,
+        incompleteOuts: 0,
+        inviteGaps: 0,
+      }).tone
+    ).toBe('pass');
+    expect(
+      partnerReadinessGate({
+        partnerCount: 4,
+        canonicalProfileCount: 0,
+        incompleteOuts: 1,
+      }).label
+    ).toBe('legacy gaps · profiles 0/4');
+    expect(partnerReadinessGate({ partnerCount: 0 }).tone).toBe('fail');
   });
 });

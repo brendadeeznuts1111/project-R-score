@@ -41,6 +41,9 @@ export type PartnerDashboardPlanValidation = {
     regions: number;
     sectionMounts: number;
     hashRoutes: number;
+    portalInputs: number;
+    portalRequiredInputs: number;
+    portalOptionalInputs: number;
     presentationStates: number;
     canonicalProfiles: number;
   };
@@ -190,36 +193,42 @@ const EXPECTED_HASH_ROUTES = [
   {
     routeType: 'out',
     pattern: PARTNER_HASH_PATTERN_INITS.out.hash,
+    anchorKind: 'template',
     anchorTemplate: 'out-card-{outId}',
     conceptId: 'section.partnersOuts',
   },
   {
     routeType: 'accounting',
     pattern: PARTNER_HASH_PATTERN_INITS.accounting.hash,
+    anchorKind: 'static',
     anchorTemplate: 'accounting-ledger',
     conceptId: 'section.partnersAccounting',
   },
   {
     routeType: 'telegram',
     pattern: PARTNER_HASH_PATTERN_INITS.telegram.hash,
+    anchorKind: 'static',
     anchorTemplate: 'telegram-thread',
     conceptId: 'section.partnersTelegram',
   },
   {
     routeType: 'partner',
     pattern: PARTNER_HASH_PATTERN_INITS.partner.hash,
+    anchorKind: 'template',
     anchorTemplate: 'partner-detail-{code}',
     conceptId: 'page.partners',
   },
   {
     routeType: 'book',
     pattern: PARTNER_HASH_PATTERN_INITS.book.hash,
+    anchorKind: 'template',
     anchorTemplate: 'book-card-{bookId}',
     conceptId: 'section.partnersBookDetail',
   },
   {
     routeType: 'partners',
     pattern: PARTNER_HASH_PATTERN_INITS.partners.hash,
+    anchorKind: 'static',
     anchorTemplate: 'partner-panel',
     conceptId: 'page.partners',
   },
@@ -297,6 +306,19 @@ function htmlHasId(html: string, domAnchor: string): boolean {
   return html.includes(`id="${domAnchor}"`) || html.includes(`id='${domAnchor}'`);
 }
 
+function portalRegistryInputs(html: string): { required: string[]; optional: string[] } {
+  const required = new Set<string>();
+  const optional = new Set<string>();
+  for (const match of html.matchAll(
+    /\b(?:loadJson|fetch)\(\s*(['"])(\/registry\/[^'"]+)\1\s*\)(\s*\.catch\s*\()?/g
+  )) {
+    const inputRef = match[2];
+    if (match[3]) optional.add(inputRef);
+    else required.add(inputRef);
+  }
+  return { required: [...required].sort(), optional: [...optional].sort() };
+}
+
 export async function loadPartnerDashboardPlan(
   path = DEFAULT_PARTNER_DASHBOARD_PLAN
 ): Promise<AnyRecord> {
@@ -335,6 +357,7 @@ export async function validatePartnerDashboardPlan(
   const regions = (plan.surfaces?.portal?.regions ?? []) as AnyRecord[];
   const sectionMounts = (plan.surfaces?.portal?.section_mount_compatibility ?? []) as AnyRecord[];
   const hashRoutes = (plan.surfaces?.portal?.partner_hash_route_compatibility ?? []) as AnyRecord[];
+  const portalConsumerContract = plan.surfaces?.portal?.consumer_contract as AnyRecord | undefined;
   const states = (plan.presentation?.state ?? []) as AnyRecord[];
   const themeRoles = (plan.theme?.roles ?? {}) as Record<string, string>;
   const legacyCalendar = plan.deprecation_calendar?.legacy_ops as AnyRecord | undefined;
@@ -367,6 +390,96 @@ export async function validatePartnerDashboardPlan(
   }
   if (plan.shapes?.dashboard_artifact?.artifact_embeds_colors !== false) {
     errors.push('dashboard artifact must not embed presentation colors');
+  }
+
+  const dashboardArtifactRef = String(plan.shapes?.dashboard_artifact?.path ?? '');
+  const dashboardArtifactPath = resolvePath(
+    REPO_ROOT,
+    'public',
+    dashboardArtifactRef.replace(/^\//, '')
+  );
+  if (
+    plan.plan?.status === 'implementation-ready' &&
+    (!dashboardArtifactRef.startsWith('/registry/') ||
+      !(await Bun.file(dashboardArtifactPath).exists()))
+  ) {
+    errors.push('implementation-ready plans require the canonical dashboard artifact to exist');
+  }
+
+  if (plan.surfaces?.portal?.target_consumer !== plan.shapes?.dashboard_artifact?.type) {
+    errors.push('surfaces.portal.target_consumer must match the dashboard artifact type');
+  }
+  if ('consumer' in (plan.surfaces?.portal ?? {})) {
+    errors.push('surfaces.portal.consumer is ambiguous; use target_consumer');
+  }
+  if (!portalConsumerContract) {
+    errors.push('surfaces.portal.consumer_contract is required');
+  } else {
+    const requiredInputs = (portalConsumerContract.required_input_refs ?? []).map(String);
+    const optionalInputs = (portalConsumerContract.optional_input_refs ?? []).map(String);
+    const declaredInputs = [...requiredInputs, ...optionalInputs];
+    const observedInputs = portalRegistryInputs(boardHtml);
+    const observedCombined = [...observedInputs.required, ...observedInputs.optional];
+    if (portalConsumerContract.entrypoint_path !== 'public/portal/partners/index.html') {
+      errors.push('portal consumer contract entrypoint must be the partners board HTML');
+    } else if (
+      !(await Bun.file(resolvePath(REPO_ROOT, portalConsumerContract.entrypoint_path)).exists())
+    ) {
+      errors.push('portal consumer contract entrypoint does not exist');
+    }
+    if (!unique(declaredInputs)) {
+      errors.push('portal consumer input refs must be unique and disjoint');
+    }
+    if (declaredInputs.some(inputRef => !inputRef.startsWith('/registry/'))) {
+      errors.push('portal consumer input refs must use /registry/ paths');
+    }
+    if (
+      !sameMembers(observedInputs.required, requiredInputs) ||
+      !sameMembers(observedInputs.optional, optionalInputs)
+    ) {
+      errors.push(
+        `portal registry input map does not match HTML (required: ${observedInputs.required.join(', ')}; optional: ${observedInputs.optional.join(', ')})`
+      );
+    }
+    if (portalConsumerContract.target_shape_ref !== 'shapes.dashboard_artifact') {
+      errors.push('portal consumer target_shape_ref must be shapes.dashboard_artifact');
+    }
+    if (
+      portalConsumerContract.target_input_mode !== 'canonical-single-artifact' ||
+      portalConsumerContract.retirement_condition !== 'portal-loads-only-target-artifact'
+    ) {
+      errors.push(
+        'portal consumer contract must declare the canonical one-artifact retirement shape'
+      );
+    }
+    const consumerStatus = portalConsumerContract.implementation_status;
+    const inputMode = portalConsumerContract.active_input_mode;
+    if (consumerStatus === 'current-compatibility') {
+      if (inputMode !== 'legacy-multi-artifact') {
+        errors.push('current-compatibility portal consumer must use legacy-multi-artifact mode');
+      }
+      if (observedCombined.includes(dashboardArtifactRef)) {
+        errors.push('current-compatibility portal consumer must not claim the target artifact');
+      }
+    } else if (consumerStatus === 'implemented') {
+      if (
+        inputMode !== 'canonical-single-artifact' ||
+        !sameMembers(requiredInputs, [dashboardArtifactRef]) ||
+        optionalInputs.length > 0
+      ) {
+        errors.push('implemented portal consumer must load only the canonical dashboard artifact');
+      }
+      if (!(await Bun.file(dashboardArtifactPath).exists())) {
+        errors.push(
+          'implemented portal consumer requires the canonical dashboard artifact to exist'
+        );
+      }
+    } else {
+      errors.push('portal consumer contract has invalid implementation_status');
+    }
+    if (plan.plan?.status === 'implementation-ready' && consumerStatus !== 'implemented') {
+      errors.push('implementation-ready plans require the portal consumer to be implemented');
+    }
   }
 
   if (!legacyCalendar) {
@@ -759,6 +872,19 @@ export async function validatePartnerDashboardPlan(
     if (!['current', 'planned'].includes(region.implementation_status)) {
       errors.push(`region ${region.region_id} has invalid implementation_status`);
     }
+    if (region.surface_kind === 'registered-section') {
+      const matchingMount = sectionMounts.find(
+        mount =>
+          mount.anchor === region.route_anchor &&
+          mount.dom_id === region.route_dom_id &&
+          mount.target_region_id === region.region_id
+      );
+      if (!region.route_anchor || region.route_dom_id !== region.dom_id || !matchingMount) {
+        errors.push(
+          `registered region ${region.region_id} must map its route anchor and DOM id to a compatibility mount`
+        );
+      }
+    }
   }
   for (const connector of connectors) {
     for (const regionId of connector.region_ids ?? []) {
@@ -780,6 +906,9 @@ export async function validatePartnerDashboardPlan(
   const actualMounts = new Set(
     sectionMounts.map(mount => `${mount.anchor}|${mount.dom_id}|${mount.concept_id}`)
   );
+  if (!unique(sectionMounts.map(mount => String(mount.anchor)))) {
+    errors.push('section mount compatibility anchors must be unique');
+  }
   for (const mount of expectedMounts) {
     if (!actualMounts.has(mount))
       errors.push(`missing section mount compatibility mapping ${mount}`);
@@ -802,14 +931,22 @@ export async function validatePartnerDashboardPlan(
 
   const expectedHashes = new Set(
     EXPECTED_HASH_ROUTES.map(
-      route => `${route.routeType}|${route.pattern}|${route.anchorTemplate}|${route.conceptId}`
+      route =>
+        `${route.routeType}|${route.pattern}|${route.anchorKind}|${route.anchorTemplate}|${route.conceptId}`
     )
   );
   const actualHashes = new Set(
     hashRoutes.map(
-      route => `${route.route_type}|${route.pattern}|${route.anchor_template}|${route.concept_id}`
+      route =>
+        `${route.route_type}|${route.pattern}|${route.anchor_kind}|${route.anchor_template}|${route.concept_id}`
     )
   );
+  if (!unique(hashRoutes.map(route => String(route.route_type)))) {
+    errors.push('partner hash route types must be unique');
+  }
+  if (!unique(hashRoutes.map(route => String(route.pattern)))) {
+    errors.push('partner hash route patterns must be unique');
+  }
   for (const route of expectedHashes) {
     if (!actualHashes.has(route))
       errors.push(`missing partner hash route compatibility mapping ${route}`);
@@ -817,6 +954,23 @@ export async function validatePartnerDashboardPlan(
   for (const route of actualHashes) {
     if (!expectedHashes.has(route))
       errors.push(`unexpected partner hash route compatibility mapping ${route}`);
+  }
+  for (const route of hashRoutes) {
+    const anchorTemplate = String(route.anchor_template ?? '');
+    const anchorPrefix = anchorTemplate.split('{', 1)[0];
+    if (route.anchor_kind === 'static') {
+      if (!htmlHasId(boardHtml, anchorTemplate)) {
+        errors.push(`static partner hash route anchor does not exist: ${anchorTemplate}`);
+      }
+    } else if (route.anchor_kind === 'template') {
+      const rendersTemplateAnchor =
+        boardHtml.includes(`id="${anchorPrefix}`) || boardHtml.includes(`id: \`${anchorPrefix}\${`);
+      if (!anchorTemplate.includes('{') || !rendersTemplateAnchor) {
+        errors.push(`template partner hash route anchor is not rendered: ${anchorTemplate}`);
+      }
+    } else {
+      errors.push(`partner hash route ${route.route_type} has invalid anchor_kind`);
+    }
   }
 
   if (legacyStatus === 'retired') {
@@ -854,6 +1008,12 @@ export async function validatePartnerDashboardPlan(
       regions: regions.length,
       sectionMounts: sectionMounts.length,
       hashRoutes: hashRoutes.length,
+      portalInputs: (() => {
+        const inputs = portalRegistryInputs(boardHtml);
+        return inputs.required.length + inputs.optional.length;
+      })(),
+      portalRequiredInputs: portalRegistryInputs(boardHtml).required.length,
+      portalOptionalInputs: portalRegistryInputs(boardHtml).optional.length,
       presentationStates: states.length,
       canonicalProfiles: canonicalProfileCount,
     },
@@ -902,7 +1062,7 @@ if (import.meta.main) {
     }
     const summary = result.summary;
     console.info(
-      `✅ partner dashboard plan valid · ${summary.bindings} bindings · ${summary.gaps} gaps · ${summary.connectors} connectors · ${summary.regions} regions · ${summary.sectionMounts} section mounts · ${summary.hashRoutes} hash routes · ${summary.presentationStates} presentation states · ${summary.canonicalProfiles} canonical profiles`
+      `✅ partner dashboard plan valid · ${summary.bindings} bindings · ${summary.gaps} gaps · ${summary.connectors} connectors · ${summary.regions} regions · ${summary.sectionMounts} section mounts · ${summary.hashRoutes} hash routes · ${summary.portalRequiredInputs} required + ${summary.portalOptionalInputs} optional portal inputs · ${summary.presentationStates} presentation states · ${summary.canonicalProfiles} canonical profiles`
     );
   } catch (error) {
     console.error(`❌ unable to validate partner dashboard plan: ${String(error)}`);

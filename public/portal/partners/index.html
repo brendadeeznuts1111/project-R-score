@@ -3,7 +3,8 @@
 <html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />\n    <meta name="portal-poll-ms" content="60000" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="portal-poll-ms" content="60000" />
     <meta
       name="description"
       content="Partner package groups · Telegram forum chats · Accounting topic deals · betting deposit rails from seat capital desk."
@@ -430,14 +431,14 @@
             <a href="/registry/telegram-handshake.json">handshake</a>
             <a href="/registry/soft-accounting-export.json">soft export</a>
             <a href="/registry/bake-manifest.json">bake-manifest</a>
-            <a
-              href="/portal/glossary/#glossary:telegram.wire"
-              data-glossary-concept="telegram.wire"
+            <a href="/portal/glossary/#glossary:telegram.wire" data-glossary-concept="telegram.wire"
               >telegram.wire</a
             >
           </div>
         </div>
-        <div class="partners-meta-grid" id="partners-meta" aria-label="Bake provenance">Loading registry…</div>
+        <div class="partners-meta-grid" id="partners-meta" aria-label="Bake provenance">
+          Loading registry…
+        </div>
         <p class="partners-meta-links">
           CLI <code>bun run partners:validate</code> ·
           <a
@@ -475,8 +476,13 @@
         ></nav>
       </header>
 
-      <div id="error-banner" class="ops-banner error hidden"></div>
-      <div id="loading" class="ops-loading">
+      <div
+        id="error-banner"
+        class="ops-banner error hidden"
+        role="alert"
+        aria-live="assertive"
+      ></div>
+      <div id="loading" class="ops-loading" role="status" aria-live="polite">
         <div class="spinner"></div>
         <p>Loading partners…</p>
       </div>
@@ -563,7 +569,9 @@
           data-glossary-concept="out.status.ready"
         >
           <h2 id="outs-heading">
-            <a href="/portal/glossary/#glossary:out.status.ready" data-glossary-concept="out.status.ready"
+            <a
+              href="/portal/glossary/#glossary:out.status.ready"
+              data-glossary-concept="out.status.ready"
               >Outs inventory</a
             >
           </h2>
@@ -571,7 +579,9 @@
             Flattened seats from
             <a href="/registry/partners-ops.json"><code>partners-ops.json</code></a>
             — book, funding rail, max bet, and
-            <a href="/portal/glossary/#glossary:out.status.ready" data-glossary-concept="out.status.ready"
+            <a
+              href="/portal/glossary/#glossary:out.status.ready"
+              data-glossary-concept="out.status.ready"
               >out status</a
             >. Filter by readiness; open a partner profile via CODE.
           </p>
@@ -1110,6 +1120,8 @@
         indexOpsByPartner,
         listPartnerPhases,
         normalizePartnerCode,
+        canonicalProfileCoverage,
+        partnerReadinessGate,
         summarizePartnerDesk,
       } from '/portal/partners/partners-board.js';
       import { mountFreshnessBadge } from '/portal/data-freshness.js';
@@ -1457,7 +1469,6 @@
           .join('');
       }
 
-
       function bakeLabel(iso, source = '') {
         if (!iso) return { text: '—', tone: '' };
         const t = Date.parse(iso);
@@ -1474,12 +1485,20 @@
             tone: 'warn',
           };
         }
-        return { text: new Date(t).toISOString().replace('T', ' ').replace(/\.\d+Z$/, ' UTC'), tone: 'ok' };
+        return {
+          text: new Date(t)
+            .toISOString()
+            .replace('T', ' ')
+            .replace(/\.\d+Z$/, ' UTC'),
+          tone: 'ok',
+        };
       }
 
-      function renderStats(handshake, seat, ops) {
+      function renderStats(handshake, seat, ops, partnerProfiles) {
         const desk = summarizePartnerDesk(ops, handshake);
         const desks = seat?.desks ?? (seat?.rows?.length || 0);
+        const profileCoverage = canonicalProfileCoverage(ops, handshake, partnerProfiles);
+        const canonicalProfiles = profileCoverage.coveredCodes.length;
         const cells = [
           ['Partners', desk.partners, '', 'section:telegram', 'Package groups in handshake'],
           [
@@ -1513,6 +1532,15 @@
           ],
           ['Seat desks', desks, '', 'section:deposits', 'Seat capital desks'],
           [
+            'Canonical profiles',
+            canonicalProfiles,
+            canonicalProfiles >= desk.partners && desk.partners > 0 ? 'ok' : 'warn',
+            'partner-profile',
+            profileCoverage.missingCodes.length
+              ? `Exact CODE coverage; missing ${profileCoverage.missingCodes.join(', ')}`
+              : 'Exact CODE coverage is complete',
+          ],
+          [
             'Incomplete outs',
             desk.incompleteOuts,
             desk.incompleteOuts > 0 ? 'warn' : 'ok',
@@ -1527,12 +1555,19 @@
             'Missing Telegram invites',
           ],
         ];
-        const gaps = desk.incompleteOuts + desk.inviteGaps;
+        const readiness = partnerReadinessGate({
+          partnerCount: desk.partners,
+          canonicalProfileCount: canonicalProfiles,
+          incompleteOuts: desk.incompleteOuts,
+          inviteGaps: desk.inviteGaps,
+        });
         const gate = $('partners-gate');
         if (gate) {
-          const ok = desk.partners > 0 && gaps === 0;
-          gate.className = `portal-gate ${ok ? 'pass' : gaps > 0 ? 'warn' : 'pass'}`;
-          gate.innerHTML = `<span class="dot" aria-hidden="true"></span>${ok ? 'ready' : gaps > 0 ? 'gaps' : 'ok'}`;
+          gate.className = `portal-gate ${readiness.tone}`;
+          gate.title = readiness.profilesReady
+            ? 'Canonical profile authority is complete'
+            : 'Legacy compatibility view; canonical profile coverage is incomplete';
+          gate.innerHTML = `<span class="dot" aria-hidden="true"></span>${esc(readiness.label)}`;
         }
         $('partners-stats').innerHTML = renderPortalStatGrid(
           cells.map(([k, v, tone, target, hint]) => ({
@@ -1573,10 +1608,10 @@
         }
         const chips = [
           `<span class="phase-filter-label">Phase</span>`,
-          `<button type="button" class="phase-filter-chip${!phaseFilter ? ' is-active' : ''}" data-phase="">All (${ops?.partners?.length || 0})</button>`,
+          `<button type="button" class="phase-filter-chip${!phaseFilter ? ' is-active' : ''}" data-phase="" aria-pressed="${!phaseFilter}">All (${ops?.partners?.length || 0})</button>`,
           ...phases.map(
             p =>
-              `<button type="button" class="phase-filter-chip${phaseFilter === p.phase ? ' is-active' : ''}" data-phase="${esc(p.phase)}" title="${esc(p.conceptId)}">${esc(p.phase)} (${p.count})</button>`
+              `<button type="button" class="phase-filter-chip${phaseFilter === p.phase ? ' is-active' : ''}" data-phase="${esc(p.phase)}" aria-pressed="${phaseFilter === p.phase}" title="${esc(p.conceptId)}">${esc(p.phase)} (${p.count})</button>`
           ),
         ];
         bar.innerHTML = chips.join('');
@@ -1779,7 +1814,8 @@
           r => String(r.partnerCode || '').toUpperCase() === code
         );
         const unified = partnerProfilesCache?.profiles?.[code] || null;
-        const callSign = unified?.identity?.callSign || hs?.callSign || desk?.callSign || `${code}-001`;
+        const callSign =
+          unified?.identity?.callSign || hs?.callSign || desk?.callSign || `${code}-001`;
         const tracking = ops?.tracking || {};
         const accounts = tracking.accounts || {};
         const limits = tracking.limits || {};
@@ -1894,8 +1930,7 @@
               { html: fmtMoney(outs[o].balance) },
               { html: `<time>${esc(outs[o].lastTransactionAt || '—')}</time>` },
               {
-                html:
-                  outs[o].lastAmount != null ? fmtMoney(outs[o].lastAmount) : '—',
+                html: outs[o].lastAmount != null ? fmtMoney(outs[o].lastAmount) : '—',
               },
               outs[o].lastType || '—',
             ]),
@@ -2315,8 +2350,7 @@
             ];
           }),
           {
-            emptyMessage:
-              'No partnerViews in seat-capital-desk bake — run bun run ops:snapshot',
+            emptyMessage: 'No partnerViews in seat-capital-desk bake — run bun run ops:snapshot',
             rowAttrs: i => {
               const partnerCode = String(views[i]?.callSign || '')
                 .split('-')[0]
@@ -2337,11 +2371,8 @@
                 const id = String(book.id || '');
                 const wire = book.color && typeof book.color === 'object' ? book.color : {};
                 const concept = book.typeConceptId || 'scrape.book';
-                const chip = conceptChip(concept, book.name || id, wire).replace(
-                  'topic-chip',
-                  'book-chip'
-                );
-                return `<a class="book-card" id="book-card-${esc(id)}" href="#book/${esc(id)}" data-book-id="${esc(id)}">${chip}</a>`;
+                const colorAttrs = colorWireAttributes(wire);
+                return `<a class="book-card book-chip" id="book-card-${esc(id)}" href="#book/${esc(id)}" data-book-id="${esc(id)}" data-glossary-concept="${esc(concept)}"${colorAttrs}>${esc(book.name || id)}</a>`;
               })
               .join('')
           : '<span class="tone-warn">No books in partners-ops bake</span>';
@@ -2382,7 +2413,8 @@
         if (route.type === 'out') {
           target =
             document.getElementById(`out-card-${route.outId}`) ||
-            document.querySelector(`[data-partner-code="${route.code}"] a[href*="${route.outId}"]`)
+            document
+              .querySelector(`[data-partner-code="${route.code}"] a[href*="${route.outId}"]`)
               ?.closest('tr') ||
             $('section:outs');
         }
@@ -2418,17 +2450,16 @@
             partnerProfiles,
             limitPatterns,
             softAccounting,
-          ] =
-            await Promise.all([
-              loadJson('/registry/telegram-handshake.json'),
-              loadJson('/registry/seat-capital-desk.json'),
-              loadJson('/registry/telegram-handshake-catalog.json'),
-              loadJson('/registry/scrape-wire-taxonomy.json'),
-              loadJson('/registry/partners-ops.json'),
-              loadJson('/registry/partner-profiles.json'),
-              loadJson('/registry/limit-raises.json'),
-              loadJson('/registry/soft-accounting-export.json').catch(() => null),
-            ]);
+          ] = await Promise.all([
+            loadJson('/registry/telegram-handshake.json'),
+            loadJson('/registry/seat-capital-desk.json'),
+            loadJson('/registry/telegram-handshake-catalog.json'),
+            loadJson('/registry/scrape-wire-taxonomy.json'),
+            loadJson('/registry/partners-ops.json'),
+            loadJson('/registry/partner-profiles.json'),
+            loadJson('/registry/limit-raises.json'),
+            loadJson('/registry/soft-accounting-export.json').catch(() => null),
+          ]);
           installColorTokens(ops.colors);
           colorsCache = ops.colors || {};
           bookIndex = indexBooks(taxonomy);
@@ -2517,7 +2548,13 @@
             ['Handshake', hsBake],
             ['Seat desk', seatBake],
             ['Ops', opsBake],
-            ['Profiles', { text: `${profBake.text} · ${partnerProfiles.summary?.count ?? 0}`, tone: profBake.tone }],
+            [
+              'Profiles',
+              {
+                text: `${profBake.text} · ${partnerProfiles.summary?.count ?? 0}`,
+                tone: profBake.tone,
+              },
+            ],
             ['Soft', softBake],
           ]
             .map(
@@ -2528,7 +2565,7 @@
           renderTopics(catalog, ops);
           renderTaxonomyChips(ops);
           renderPartnerRoutes(ops);
-          renderStats(handshake, seat, ops);
+          renderStats(handshake, seat, ops, partnerProfiles);
           renderPhaseFilter(ops);
           renderPartners(handshake);
           renderOutsInventory(null);

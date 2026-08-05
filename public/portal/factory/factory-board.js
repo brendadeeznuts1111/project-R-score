@@ -6,6 +6,7 @@
  */
 import { bindCopyButtons } from '../copy-cli.js';
 import { fetchJsonResult } from '../fetch-json.js';
+import { partnerHash } from '../partners/partner-routes.js';
 
 const HANDSHAKE_URL = '/registry/telegram-handshake.json';
 const CATALOG_URL = '/registry/telegram-handshake-catalog.json';
@@ -423,7 +424,7 @@ function renderTable() {
           const verify = `${row.verifyPassed ?? '—'}/${row.verifyTotal ?? '—'}`;
           const lanes = `${row.lanesOk ?? '—'}/${row.lanesTotal ?? '—'}`;
           const next = (row.nextSteps && row.nextSteps[0]) || '—';
-          const partnerHref = `/portal/partners/#partner=${encodeURIComponent(code)}`;
+          const partnerHref = `/portal/partners/${partnerHash(code)}`;
           return `<tr data-partner-code="${esc(code)}">
             <td><a href="${esc(partnerHref)}"><code>${esc(code)}</code></a></td>
             <td><span class="tone-chip tone-neutral">${esc(row.phase || '—')}</span></td>
@@ -448,7 +449,8 @@ function renderTenantRegistry() {
 
   if (!tenantReg?.packages) {
     meta.textContent = 'tenant registry optional / unavailable';
-    body.innerHTML = '<tr><td colspan="3" class="dim">No /registry/factory/registry.json packages</td></tr>';
+    body.innerHTML =
+      '<tr><td colspan="3" class="dim">No /registry/factory/registry.json packages</td></tr>';
     return;
   }
 

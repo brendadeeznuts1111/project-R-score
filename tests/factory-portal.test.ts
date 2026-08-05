@@ -45,6 +45,9 @@ describe('factory portal board', () => {
     expect(script).toContain('factorywager.telegram-handshake.v1');
     expect(script).toContain('fetchJsonResult');
     expect(script).toContain('bindCopyButtons');
+    expect(script).toContain("import { partnerHash } from '../partners/partner-routes.js'");
+    expect(script).toContain('`/portal/partners/${partnerHash(code)}`');
+    expect(script).not.toContain('#partner=');
     expect(script).not.toContain("fetch('/api/health");
   });
 
