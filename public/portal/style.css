@@ -827,18 +827,19 @@ body {
   color: var(--text-dim);
 }
 
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: 999px;
+/* Chip atom (canonical base) — theme variants below compose it */
+.chip,
+.portal-chip,
+.tone-chip,
+.kind-chip,
+.plane-chip,
+.portal-pill,
+.ops-badge {
+  display: inline-block;
   border: 1px solid var(--border);
-  font-size: 10.5px;
-  font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: 0.04em;
-  color: var(--text-dim);
+  border-radius: 999px;
+  padding: 2px 8px;
+  white-space: nowrap;
 }
 
 .portal-card {
@@ -1021,11 +1022,9 @@ body {
 /* Shared chips / meta / pills — prefer over per-board .chip */
 .portal-chip,
 .chip {
-  display: inline-block;
   font-size: 11px;
   padding: 2px 7px;
   border-radius: 4px;
-  border: 1px solid var(--border);
   background: var(--surface);
   margin: 0 4px 4px 0;
   text-decoration: none;
@@ -1070,13 +1069,9 @@ a.chip {
 
 /* Soft category pills (fetcher, lifecycle, plane) */
 .portal-pill {
-  display: inline-block;
   font-size: 11px;
   font-weight: 650;
   letter-spacing: 0.03em;
-  padding: 2px 8px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
   text-transform: lowercase;
 }
 .portal-pill--rest,
@@ -1135,15 +1130,10 @@ a.chip {
 .tone-chip,
 .kind-chip,
 .plane-chip {
-  display: inline-block;
   font-size: 10px;
   font-weight: 650;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  padding: 2px 8px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  white-space: nowrap;
   max-width: 100%;
   word-break: break-word;
 }
@@ -2896,7 +2886,6 @@ operations-dashboard {
   align-items: center;
   margin-left: 6px;
   padding: 1px 7px;
-  border-radius: 999px;
   border: 1px solid rgba(210, 153, 34, 0.5);
   background: rgba(210, 153, 34, 0.12);
   color: var(--yellow, #d29922);

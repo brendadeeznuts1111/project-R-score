@@ -216,7 +216,7 @@ Canonical names for new `/portal/*` boards. Aliases are **permanent legacy-compa
 |-----------|---------|-----------|-------|
 | **Table** | `.portal-table` | `data-density="compact"` · `data-tone="accent|warn|bad"` · `data-zebra` | Aliases: `.data-table`, `.env-table`, `.ops-table`, `.live-table`, `.doc-table` (share base + `row-ok/warn/bad` rails). |
 | **Card** | `.portal-card` | `--metric` (numbers) · `--panel` (sections) · `--stat` (KPI summaries) | Composed aliases: `.pkg-card`, `.ops-panel`, `.stat-card`, `.ops-desk-stat`, `.card`, `.verification-result`. |
-| **Atoms** | `.kicker` (micro labels) · `.chip` (pills/tags) · `.metric-value` (large tabular numbers) | tone via `--tone-*` tokens | Avoid inventing new per-board names (`ops-*`, `vh-*`, `tf-*`…) for these roles. |
+| **Atoms** | `.kicker` (micro labels) · `.chip` (pills/tags — canonical pill base) · `.metric-value` (large tabular numbers) | tone via `--tone-*` tokens | `.chip` theme variants compose the base: `.tone-chip`, `.kind-chip`, `.plane-chip`, `.portal-pill`, `.ops-badge`, `.portal-chip` (`.version-badge`/`.channel-badge` are the accent-badge family, own base). Avoid inventing new per-board names (`ops-*`, `vh-*`, `tf-*`…) for these roles. |
 
 **Governance:** new boards targeting `/portal/*` must use the canonical primitives above. Reviewers suggest swapping an alias → canonical on *new* elements; aliases on legacy elements are never a blocker.
 
