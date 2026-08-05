@@ -9,6 +9,7 @@
  */
 
 import { bookmakerHost, type BookmakerRegistryEntry } from './resolve.ts';
+import { parseSportsbookId, type SportsbookId } from '../types/branded.ts';
 
 /** Desk book strings that are not sportsbook entities. */
 export const DESK_BOOK_PLACEHOLDERS = new Set([
@@ -39,7 +40,7 @@ export type DeskBookClass = 'matched' | 'placeholder' | 'unmatched';
 export interface DeskBookHit {
   deskBook: string;
   class: DeskBookClass;
-  registryId?: string;
+  registryId?: SportsbookId;
   /** Parsed max bet dollars when desk shows a number (not "—"). */
   maxBetUsd?: number;
   samples: number;
@@ -53,7 +54,7 @@ export interface DeskCoverageReport {
   unmatched: number;
   hits: DeskBookHit[];
   /** registry ids never seen on desk (coverage gap the other way) */
-  registryUnused: string[];
+  registryUnused: SportsbookId[];
 }
 
 function parseMaxBet(raw: unknown): number | undefined {
@@ -65,11 +66,11 @@ function parseMaxBet(raw: unknown): number | undefined {
 }
 
 /** Collect distinct desk `book` labels with sample counts + max bets. */
-export function collectDeskBooks(desk: unknown): Map<string, { count: number; maxBets: number[] }> {
+export function parseDeskBooks(desk: unknown): Map<string, { count: number; maxBets: number[] }> {
   const map = new Map<string, { count: number; maxBets: number[] }>();
-  const walk = (o: unknown): void => {
+  const parseDeskValue = (o: unknown): void => {
     if (Array.isArray(o)) {
-      for (const x of o) walk(x);
+      for (const x of o) parseDeskValue(x);
       return;
     }
     if (!o || typeof o !== 'object') return;
@@ -82,9 +83,9 @@ export function collectDeskBooks(desk: unknown): Map<string, { count: number; ma
       if (mb != null) cur.maxBets.push(mb);
       map.set(key, cur);
     }
-    for (const v of Object.values(rec)) walk(v);
+    for (const v of Object.values(rec)) parseDeskValue(v);
   };
-  walk(desk);
+  parseDeskValue(desk);
   return map;
 }
 
@@ -92,27 +93,27 @@ export function collectDeskBooks(desk: unknown): Map<string, { count: number; ma
 export function matchDeskBookToRegistry(
   deskBook: string,
   registry: Record<string, BookmakerRegistryEntry>
-): string | undefined {
+): SportsbookId | undefined {
   const q = deskBook.trim().toLowerCase();
   if (!q) return undefined;
   if (DESK_BOOK_PLACEHOLDERS.has(q)) return undefined;
 
   // known typos / compact labels (never Orange777 — no domain SSOT)
   const aliasId = DESK_BOOK_ALIASES[q];
-  if (aliasId && registry[aliasId]) return registry[aliasId]!.id;
+  if (aliasId && registry[aliasId]) return parseSportsbookId(registry[aliasId]!.id);
 
   // exact id / slug
-  if (registry[q]) return registry[q]!.id;
+  if (registry[q]) return parseSportsbookId(registry[q]!.id);
   const values = Object.values(registry);
 
   const byId = values.find(
     b => b.id.toLowerCase() === q || (b.slug && String(b.slug).toLowerCase() === q)
   );
-  if (byId) return byId.id;
+  if (byId) return parseSportsbookId(byId.id);
 
   // domain-like: parlay21.com ↔ parlay21-com
   const asSlug = q.replace(/\./g, '-');
-  if (registry[asSlug]) return registry[asSlug]!.id;
+  if (registry[asSlug]) return parseSportsbookId(registry[asSlug]!.id);
 
   // label / skin / host
   for (const b of values) {
@@ -125,15 +126,16 @@ export function matchDeskBookToRegistry(
       hostBare === q ||
       hostBare === q.replace(/^www\./, '')
     ) {
-      return b.id;
+      return parseSportsbookId(b.id);
     }
   }
 
   // partial id/label (Hard Rock Florida → hard-rock-florida via label)
   for (const b of values) {
-    if (b.label && q.includes(b.label.toLowerCase())) return b.id;
-    if (b.label && b.label.toLowerCase().includes(q) && q.length >= 4) return b.id;
-    if (b.id.replace(/-/g, ' ') === q.replace(/-/g, ' ')) return b.id;
+    if (b.label && q.includes(b.label.toLowerCase())) return parseSportsbookId(b.id);
+    if (b.label && b.label.toLowerCase().includes(q) && q.length >= 4)
+      return parseSportsbookId(b.id);
+    if (b.id.replace(/-/g, ' ') === q.replace(/-/g, ' ')) return parseSportsbookId(b.id);
   }
 
   return undefined;
@@ -142,7 +144,7 @@ export function matchDeskBookToRegistry(
 export function classifyDeskBook(
   deskBook: string,
   registry: Record<string, BookmakerRegistryEntry>
-): { class: DeskBookClass; registryId?: string } {
+): { class: DeskBookClass; registryId?: SportsbookId } {
   const q = deskBook.trim().toLowerCase();
   if (!q || DESK_BOOK_PLACEHOLDERS.has(q)) return { class: 'placeholder' };
   const id = matchDeskBookToRegistry(deskBook, registry);
@@ -150,14 +152,14 @@ export function classifyDeskBook(
   return { class: 'unmatched' };
 }
 
-export function buildDeskCoverageReport(
+export function parseDeskCoverageReport(
   desk: unknown,
   registry: Record<string, BookmakerRegistryEntry>,
   generatedAt = new Date().toISOString()
 ): DeskCoverageReport {
-  const collected = collectDeskBooks(desk);
+  const collected = parseDeskBooks(desk);
   const hits: DeskBookHit[] = [];
-  const usedIds = new Set<string>();
+  const usedIds = new Set<SportsbookId>();
 
   for (const [deskBook, { count, maxBets }] of [...collected.entries()].sort((a, b) =>
     a[0].localeCompare(b[0])
@@ -186,6 +188,7 @@ export function buildDeskCoverageReport(
     unmatched,
     hits,
     registryUnused: Object.keys(registry)
+      .map(parseSportsbookId)
       .filter(id => !usedIds.has(id))
       .sort(),
   };
