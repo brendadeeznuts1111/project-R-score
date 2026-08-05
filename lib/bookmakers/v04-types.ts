@@ -105,6 +105,9 @@ export const BOOK_ENRICHMENT: Record<
     brandGroup?: string;
     lifecycle?: LifecycleMode[];
     liquidityTier?: LiquidityTier;
+    /** Desk-observed max stake (USD) when known from seat capital desk. */
+    maxBetUsd?: number;
+    minBetUsd?: number;
     contact?: BookContact;
   }
 > = {
@@ -142,29 +145,35 @@ export const BOOK_ENRICHMENT: Record<
     brandGroup: 'Hard Rock International',
     lifecycle: ['pre_match'],
     liquidityTier: 'medium',
+    // seat-capital-desk ready outs (ASH/NOV) · $500 max bet
+    maxBetUsd: 500,
   },
   'parlay21-com': {
     skin: 'Parlay21',
     brandGroup: 'Parlay21',
     lifecycle: ['pre_match'],
     liquidityTier: 'low',
+    maxBetUsd: 500,
   },
   'lonestarwagering-com': {
     skin: 'LoneStar Wagering',
     brandGroup: 'LoneStar',
     lifecycle: ['pre_match'],
     liquidityTier: 'low',
+    maxBetUsd: 500,
   },
   'action92-com': {
     skin: 'Action92',
     brandGroup: 'Action92',
     lifecycle: ['pre_match'],
     liquidityTier: 'low',
+    maxBetUsd: 500,
   },
   'betvegas23-com': {
     skin: 'BetVegas23',
     brandGroup: 'BetVegas23',
     lifecycle: ['pre_match'],
     liquidityTier: 'low',
+    maxBetUsd: 500,
   },
 };

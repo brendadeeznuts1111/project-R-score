@@ -123,6 +123,12 @@
         color: var(--yellow, #d29922);
         background: color-mix(in srgb, var(--yellow, #d29922) 12%, var(--surface));
       }
+      .bookmakers-page .max-bet {
+        font-family: var(--font-mono, ui-monospace, monospace);
+        font-weight: 650;
+        font-variant-numeric: tabular-nums;
+      }
+      .bookmakers-page .lifecycle-chip { text-transform: none; }
       .bookmakers-toolbar {
         display: flex;
         flex-wrap: wrap;
@@ -256,12 +262,21 @@
             <option value="seat">seat</option>
           </select>
         </label>
+        <label>
+          Liquidity
+          <select id="bookmakers-tier">
+            <option value="all">all</option>
+            <option value="high">high</option>
+            <option value="medium">medium</option>
+            <option value="low">low</option>
+          </select>
+        </label>
         <label style="flex: 1 1 14rem">
           Search
           <input
             id="bookmakers-search"
             type="search"
-            placeholder="id · label · domain · sport"
+            placeholder="id · skin · brand · domain · sport · max"
             autocomplete="off"
           />
         </label>
@@ -273,9 +288,11 @@
           <thead>
             <tr>
               <th>id</th>
-              <th>label</th>
+              <th>label / brand</th>
               <th>domain</th>
               <th>fetcher</th>
+              <th>max bet</th>
+              <th>lifecycle</th>
               <th>sports</th>
               <th>regions</th>
               <th>status</th>
@@ -283,7 +300,7 @@
           </thead>
           <tbody id="bookmakers-body">
             <tr>
-              <td colspan="7">loading…</td>
+              <td colspan="9">loading…</td>
             </tr>
           </tbody>
         </table>

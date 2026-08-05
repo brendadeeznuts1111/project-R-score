@@ -34,39 +34,15 @@ import {
 /** Baked @factorywager/bookmakers registry mirror (SSOT: scripts/bake-bookmakers-board.ts). */
 export const BOOKMAKERS_REGISTRY_PATH = 'public/registry/bookmakers.json';
 
-export interface BookmakerEntry {
-  id: string; // brand-ok — bookmaker registry id (SportsbookId mirror); opaque slug minted upstream by bookmakers:bake, never re-minted here
-  label?: string;
-  domain?: string;
-  [key: string]: unknown;
-}
+export type {
+  BookmakerRegistryEntry as BookmakerEntry,
+} from '../lib/bookmakers/resolve.ts';
 
-/** Load the canonical bookmaker registry mirror (public/registry/bookmakers.json). */
-export async function loadBookmakerRegistry(): Promise<Record<string, BookmakerEntry>> {
-  const body = JSON.parse(await Bun.file(BOOKMAKERS_REGISTRY_PATH).text()) as {
-    bookmakers: Record<string, BookmakerEntry>;
-  };
-  return body.bookmakers ?? {};
-}
-
-/** Resolve a --bookmaker query: exact id, then case-insensitive id/label/domain/partial. */
-export function resolveBookmakerEntry(
-  registry: Record<string, BookmakerEntry>,
-  query: string
-): BookmakerEntry | undefined {
-  const q = query.trim().toLowerCase();
-  if (!q) return undefined;
-  if (registry[q]) return registry[q];
-  const byId = Object.values(registry).find(b => b.id.toLowerCase() === q);
-  if (byId) return byId;
-  return Object.values(registry).find(
-    b =>
-      b.label?.toLowerCase() === q ||
-      b.domain?.toLowerCase() === q ||
-      b.label?.toLowerCase().includes(q) ||
-      b.id.toLowerCase().includes(q)
-  );
-}
+export {
+  loadBookmakerRegistry,
+  resolveBookmakerEntry,
+  bookmakerHost,
+} from '../lib/bookmakers/resolve.ts';
 
 function usage(): never {
   console.log(`Usage:

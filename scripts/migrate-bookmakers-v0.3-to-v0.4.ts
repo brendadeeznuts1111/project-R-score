@@ -72,9 +72,35 @@ async function main(): Promise<void> {
   // Strip undefined checksum for stable JSON
   if (!pub.artifact.checksum) delete (pub.artifact as { checksum?: string }).checksum;
 
+  // When re-migrating from an already-public catalog, merge prior ops secrets
+  // so restBaseUrl/apiKeyEnv are not wiped.
+  let opsOut = ops;
+  try {
+    if (await Bun.file(ARTIFACT_OPS).exists()) {
+      const prior = JSON.parse(await Bun.file(ARTIFACT_OPS).text()) as {
+        bookmakers?: Record<string, Record<string, unknown>>;
+      };
+      const merged = { ...ops, bookmakers: { ...ops.bookmakers } };
+      for (const [id, row] of Object.entries(merged.bookmakers)) {
+        const prev = prior.bookmakers?.[id];
+        if (!prev) continue;
+        merged.bookmakers[id] = {
+          ...row,
+          restBaseUrl: row.restBaseUrl ?? (prev.restBaseUrl as string | undefined),
+          restProtocol: row.restProtocol ?? (prev.restProtocol as string | undefined),
+          apiKeyEnv: row.apiKeyEnv ?? (prev.apiKeyEnv as string | undefined),
+          envVars: row.envVars ?? (prev.envVars as string[] | undefined),
+        };
+      }
+      opsOut = merged;
+    }
+  } catch {
+    /* no prior ops */
+  }
+
   await Bun.write(PUBLIC_OUT, `${JSON.stringify(pub, null, 2)}\n`);
   await Bun.write(ARTIFACT_PUBLIC, `${JSON.stringify(pub, null, 2)}\n`);
-  await Bun.write(ARTIFACT_OPS, `${JSON.stringify(ops, null, 2)}\n`);
+  await Bun.write(ARTIFACT_OPS, `${JSON.stringify(opsOut, null, 2)}\n`);
 
   // README for the artifact split
   const readme = joinPath('artifact-registry/bookmakers/v0.4.0', 'README.md');
