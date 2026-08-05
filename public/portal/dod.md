@@ -43,6 +43,26 @@ Outbox route: `dod` → house surface **`hq`** (not partner CODE forum). Partner
 **Accounting** is where humans post deposit / withdraw / bet-slip screenshots
 for amount confirmation — see [telegram.md](./telegram.md). Tennis runtime contracts: [tennis.factory-wager.com](https://tennis.factory-wager.com/) `partners/capacity` · `accounting/finance` · board [tennis.md](./tennis.md).
 
+## Partner Telegram confirm
+
+Bet-amount and deposit screenshots are confirmed in each partner package
+forum’s **Accounting** topic. The board:
+
+- Loads handshake partners from `/registry/telegram-handshake.json`
+- Shows a CODE chip strip →
+  `/portal/partners/#partner/{CODE}/telegram/accounting`
+- Per slip / balance / receipt card:
+  - **Accounting figure** from OCR / `accounting_amount`
+  - **Open Telegram message** deep-link (`t.me/c/{chat}/{thread}/{msg}` when baked)
+  - Forum Accounting + Partners desk + handshake invite link
+  - **Bun.Image metadata strip** (width / format / EXIF / gps) for agent learning
+
+Wire helpers: [`lib/dod/enrich-entry.ts`](../../lib/dod/enrich-entry.ts)
+(`telegramMessageDeepLink`, `parseBunImageMetaStrip`, `enrichDodEntry`).
+
+Related: [Factory](./factory/) handshake · [Partners](./partners/) desk ·
+[`partner-package-group-handshake.md`](../../docs/harness/tenants/partner-package-group-handshake.md).
+
 ## Types → confirm path
 
 | DOD type | Typical proof | Confirm in |
@@ -145,9 +165,11 @@ bun run soft:accounting:bake
 |---------|-------------|
 | Confirm bet / deposit amounts | [telegram.md](./telegram.md) Accounting · Partners |
 | Limit raises / coverage | [limits.md](./limits.md) · [`/portal/limits/`](./limits/) |
-| Book registry (id / domain) | [bookmakers.md](./bookmakers.md) · `bookmakers.json` |
+| Book registry (`id === slug` · `fetcher` · `urls.web`) | [bookmakers.md](./bookmakers.md) · `bookmakers.json` |
 | URL / API audit (Pages vs local) | [routing.md](./routing.md) |
 | Soft plays · weeks | Partners Soft · soft-accounting-export |
+| Bot wire · handshake | [factory.md](./factory.md) |
+| Desk pulse | [ops.md](./ops.md) |
 
 ## Related
 

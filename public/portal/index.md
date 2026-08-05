@@ -35,7 +35,7 @@ Product domains on chrome (partner desk first). Full machine map:
 | Ops (control pulse) | [`/portal/ops/`](./ops/) | [`ops-summary.json`](../registry/ops-summary.json) |
 | Partners | [`/portal/partners/`](./partners/) | [`partners-ops.json`](../registry/partners-ops.json) |
 | Limits | [`/portal/limits/`](./limits/) | [`limit-raises.json`](../registry/limit-raises.json) |
-| Bookmakers | [`/portal/bookmakers/`](./bookmakers/) | [`bookmakers.json`](../registry/bookmakers.json) |
+| Bookmakers | [`/portal/bookmakers/`](./bookmakers/) | [`bookmakers.json`](../registry/bookmakers.json) (`@factorywager/bookmakers@0.4.1`) |
 | DOD | [`/portal/dod/`](./dod/) | [`dod-queue.json`](../registry/dod-queue.json) |
 | Packages | [`/portal/packages/`](./packages/) | [`packages-graph-map.json`](../registry/packages-graph-map.json) |
 | Health | [`/portal/health/`](./health/) | [`monorepo-health.json`](../registry/monorepo-health.json) |
@@ -47,6 +47,14 @@ Markdown companions (when present): `ops.md` · `partners.md` · `telegram.md` �
 `factory.md` · `dod.md` · `limits.md` · `bookmakers.md` · `routing.md` ·
 `packages.md` · `compliance.md` · `brands.md` · `glossary.md` · `health.md` ·
 `tennis.md` · `tools.md` · `toc.md`.
+
+### Partner domain mesh
+
+Cross-read these companions together for desk work:
+
+[partners.md](./partners.md) · [telegram.md](./telegram.md) ·
+[factory.md](./factory.md) · [dod.md](./dod.md) · [limits.md](./limits.md) ·
+[bookmakers.md](./bookmakers.md) · [routing.md](./routing.md) · [ops.md](./ops.md).
 
 ## Registry artifacts (operator)
 
@@ -61,7 +69,8 @@ Markdown companions (when present): `ops.md` · `partners.md` · `telegram.md` �
 | [`soft-accounting-export.json`](../registry/soft-accounting-export.json) | Soft plays · weeks · book types (read-only mirror) |
 | [`dod-queue.json`](../registry/dod-queue.json) | DOD evidence queue (Bun.Image · R2/local `s3_path`) |
 | [`limit-raises.json`](../registry/limit-raises.json) | Multi-factor partner limit raises |
-| [`bookmakers.json`](../registry/bookmakers.json) | Book registry mirror (`@factorywager/bookmakers`) |
+| [`bookmakers.json`](../registry/bookmakers.json) | Book registry mirror v0.4.1 (`fetcher` · `sports` · `urls.web` · `id === slug`) |
+| [`bookmakers-desk-coverage.json`](../registry/bookmakers-desk-coverage.json) | Seat desk BOOK labels ↔ registry (matched / placeholder / unmatched) |
 | [`domain-glossary.json`](../registry/domain-glossary.json) | Concept glossary (Kalshi cores + Factory overlay) |
 | [`registry.json`](../registry/registry.json) | Package index (R2 snapshot for Pages) |
 
@@ -78,6 +87,7 @@ bun run portal:chrome:bake         # nav + domainLanes
 bun run audit:packages:full        # packages graph
 bun run monorepo:health:bake
 bun run bookmakers:bake:check
+bun run bookmakers:desk-coverage
 bun run portal:doctor
 bun run public:discover:check
 bun run verify:portal:static
@@ -92,8 +102,9 @@ Deploy Pages after Proton inject: `bun run proton:inject:factorywager:reasonix` 
 | Topic | Doc |
 |-------|-----|
 | Portal foundation | [`docs/portal-foundation.md`](../../docs/portal-foundation.md) |
-| Platform routing | [`docs/platform-routing.md`](../../docs/platform-routing.md) |
+| Platform routing | [`docs/platform-routing.md`](../../docs/platform-routing.md) · [routing.md](./routing.md) |
 | Partner domain map | [`docs/harness/tenants/partner-domain-map.md`](../../docs/harness/tenants/partner-domain-map.md) |
+| Bookmakers registry | [`bookmakers-registry.md`](../../docs/harness/tenants/bookmakers-registry.md) · open issues [`bookmakers-open-issues.md`](../../docs/harness/tenants/bookmakers-open-issues.md) · [bookmakers.md](./bookmakers.md) |
 | Ops snapshot | [`docs/harness/tenants/ops-snapshot.md`](../../docs/harness/tenants/ops-snapshot.md) |
 | Authority / merge | [`docs/harness/AUTHORITY.md`](../../docs/harness/AUTHORITY.md) · `bun run bun:ci` |
 | Wiki hub | [wiki.factory-wager.com](https://wiki.factory-wager.com/) |
@@ -106,3 +117,5 @@ Deploy Pages after Proton inject: `bun run proton:inject:factorywager:reasonix` 
 | MD link 404 | Ensure `public/portal/index.md` is deployed (slug `index` in `PORTAL_MARKDOWN_SLUGS`) |
 | Stale nav / domain lanes | `bun run portal:chrome:bake` · apply chrome · Pages deploy |
 | Access 302 on score.\* | Cloudflare Access — login or service token; registry JSON may still be public on some paths |
+| Bookmakers still v0.3 / secrets | [bookmakers.md](./bookmakers.md) · migrate · never bake ops plane |
+| Partner desk pulse stale | [ops.md](./ops.md) · `ops:snapshot --no-seed` |

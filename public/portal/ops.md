@@ -26,12 +26,22 @@ Top panel KPIs from `ops-summary` (domain-first):
 Deep links: [Partners](./partners/) · [Outs](./partners/#section:outs) ·
 [Limits](./limits.md) · [Bookmakers](./bookmakers.md) · [Account](./account/) ·
 [TOC](./toc/) · [Compliance](./compliance/) · [Telegram map](./telegram.md) ·
-[DOD](./dod.md) · [Routing audit](./routing.md).
+[Factory](./factory.md) · [DOD](./dod.md) · [Routing audit](./routing.md).
 
 ## Jump sections
 
 Sticky jump strip: Desk · Handshake · Seat · Partners · Limits · Loop · TOC ·
 Compliance · Liquidity · Health · Nits · Taxonomy · Weave · Plays.
+
+| Area | Primary bake / board |
+|------|----------------------|
+| Handshake | `telegram-handshake.json` · [factory.md](./factory.md) · [telegram.md](./telegram.md) |
+| Seat capital | `seat-capital-desk.json` · Partners deposits / outs |
+| Limits | `limit-raises.json` · [limits.md](./limits.md) |
+| Books | `bookmakers.json` · desk coverage · [bookmakers.md](./bookmakers.md) |
+| DOD queue | `dod-queue.json` · [dod.md](./dod.md) |
+| Loop / outbox | ops-loop throughput · `ops:outbox:requeue` when stuck |
+| Soft plays | `soft-accounting-export.json` · Partners Soft tables |
 
 ## CLI
 
@@ -42,8 +52,26 @@ bun run telegram:handshake:invite-gap
 bun run seat:desk:refresh
 bun run partners:validate
 bun run ops:limits:demo
+bun run bookmakers:desk-coverage
+bun run bookmakers:bake:check
+bun run soft:accounting:bake
 bun run portal:doctor
+bun run public:audit:verify
+bun run check:routes               # see routing.md
 ```
+
+Day-loop rollup also lives on the [registry hub](./index.md).
+
+## Failure paths
+
+| Symptom | Fix |
+|---------|-----|
+| Pulse metrics “—” / stale | `ops:snapshot --no-seed` · deploy `ops-summary.json` |
+| Handshake gaps high | [telegram.md](./telegram.md) · `telegram:handshake:invite-gap` |
+| Seat incomplete | `seat:desk:refresh CALL` · Partners outs inventory |
+| Limit raises empty on Pages | Rebake `limit-raises.json` · [limits.md](./limits.md) |
+| Book desk unmatched | [bookmakers.md](./bookmakers.md) desk coverage (e.g. Orange777) |
+| Outbox pending stuck | `ops:outbox:requeue` · [`ops-loop-throughput.md`](../../docs/harness/tenants/ops-loop-throughput.md) |
 
 ## Docs
 
@@ -54,4 +82,6 @@ bun run portal:doctor
 - [`portal-foundation.md`](../../docs/portal-foundation.md)
 
 Related MD: [Registry hub](./index.md) · [Partners](./partners.md) ·
-[Limits](./limits.md) · [TOC](./toc.md) · [Compliance](./compliance.md).
+[Telegram](./telegram.md) · [Factory](./factory.md) · [DOD](./dod.md) ·
+[Limits](./limits.md) · [Bookmakers](./bookmakers.md) · [Routing](./routing.md) ·
+[TOC](./toc.md) · [Compliance](./compliance.md).

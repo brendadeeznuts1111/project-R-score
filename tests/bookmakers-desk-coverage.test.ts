@@ -2,12 +2,14 @@
 import { describe, expect, test } from 'bun:test';
 import {
   applyDeskMaxBetsToCatalog,
-  buildDeskCoverageReport,
   classifyDeskBook,
-  collectDeskBooks,
+  DESK_BOOK_ALIASES,
   matchDeskBookToRegistry,
+  parseDeskBooks,
+  parseDeskCoverageReport,
 } from '../lib/bookmakers/desk-coverage.ts';
 import { loadBookmakerRegistry } from '../lib/bookmakers/resolve.ts';
+import { asSportsbookId } from '../lib/types/branded.ts';
 
 describe('bookmakers desk coverage', () => {
   test('classifies placeholders and domain-style desk books', async () => {
@@ -20,13 +22,22 @@ describe('bookmakers desk coverage', () => {
     expect(classifyDeskBook('Orange777', reg).class).toBe('unmatched');
   });
 
+  test('DESK_BOOK_ALIASES maps known typos only (not Orange777)', async () => {
+    const reg = await loadBookmakerRegistry();
+    expect(DESK_BOOK_ALIASES['orange777']).toBeUndefined();
+    expect(DESK_BOOK_ALIASES['orange-777']).toBeUndefined();
+    expect(matchDeskBookToRegistry('hardrock florida', reg)).toBe('hard-rock-florida');
+    expect(matchDeskBookToRegistry('parlay21', reg)).toBe('parlay21-com');
+    expect(matchDeskBookToRegistry('Orange777', reg)).toBeUndefined();
+  });
+
   test('report against committed seat desk + registry', async () => {
     if (!(await Bun.file('public/registry/seat-capital-desk.json').exists())) {
       return; // optional in some worktrees
     }
     const desk = JSON.parse(await Bun.file('public/registry/seat-capital-desk.json').text());
     const reg = await loadBookmakerRegistry();
-    const report = buildDeskCoverageReport(desk, reg, 'fixed');
+    const report = parseDeskCoverageReport(desk, reg, 'fixed');
     expect(report.deskBooks).toBeGreaterThanOrEqual(3);
     expect(report.matched).toBeGreaterThanOrEqual(1);
     expect(report.hits.some(h => h.class === 'placeholder')).toBe(true);
@@ -52,7 +63,7 @@ describe('bookmakers desk coverage', () => {
         {
           deskBook: 'Hard Rock Florida',
           class: 'matched' as const,
-          registryId: 'hard-rock-florida',
+          registryId: asSportsbookId('hard-rock-florida'),
           maxBetUsd: 500,
           samples: 2,
         },
@@ -64,8 +75,8 @@ describe('bookmakers desk coverage', () => {
     expect(books.pinnacle.limits.maxBetUsd).toBeNull();
   });
 
-  test('collectDeskBooks counts samples', () => {
-    const map = collectDeskBooks({
+  test('parseDeskBooks counts samples', () => {
+    const map = parseDeskBooks({
       desks: [
         { outs: [{ book: 'Hard Rock Florida', maxBet: '500' }, { book: 'Hard Rock Florida', maxBet: '—' }] },
       ],

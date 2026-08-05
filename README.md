@@ -33,6 +33,7 @@ from `public/` and `functions/`, with machine-readable proofs baked under
 | Portal foundation | [`docs/portal-foundation.md`](docs/portal-foundation.md) |
 | Portal operator command map | [`docs/portal-ops-board-map.md`](docs/portal-ops-board-map.md) — generated from Portal weave v2 |
 | Harness JIT | [`docs/harness/`](docs/harness/) · `bun run harness:status` |
+| Codex thread portfolio | [`docs/harness/tenants/codex-thread-portfolio.md`](docs/harness/tenants/codex-thread-portfolio.md) · `bun run threads:portfolio:verify` |
 | Local merge + Pages delivery | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) · [`cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) · `bun run bun:ci` |
 | Projects triage | [`projects/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/projects/README.md) |
 | Path SSOT (code) | [`lib/docs/repo-docs.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/repo-docs.ts) (`CANONICAL_REPO_DOCS`) |

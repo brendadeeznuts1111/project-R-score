@@ -109,6 +109,7 @@ These may exist on disk under `~/Projects` but are **gitignored** or separate re
 - **Brands:** [`lib/types/branded/README.md`](lib/types/branded/README.md) · `bun run check:brands:all`
 - **Console depth:** [`lib/console-depth.ts`](lib/console-depth.ts)
 - **Agent triage:** [`projects/README.md`](projects/README.md)
+- **Codex threads:** stable `RTH-###` identity, ranking, references, and bring-home parity → [`docs/harness/tenants/codex-thread-portfolio.md`](docs/harness/tenants/codex-thread-portfolio.md) · `bun run threads:portfolio:verify`
 
 ## Root workspaces (authoritative)
 
