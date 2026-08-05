@@ -33,8 +33,10 @@ Ensure topics: `bun run telegram:package-group:enhance CODE --ensure-topics`.
 |-------|-----|
 | [Partners](./partners/) | Package groups · Soft plays/weeks · deposits · accounting deals · outs |
 | [Ops](./ops/) | Handshake gaps · seat incomplete · outbox pending |
+| [DOD](./dod/) | Image proofs (Bun.Image · R2) · confirm amounts in Accounting |
 | [Account](./account/) | Per-account Soft accounting chrome |
 | [Telegram map](./telegram.md) | Full chat grammar · house surfaces · CLI day loop |
+| [dod.md](./dod.md) | R2 evidence keys · OCR · approve/reject |
 
 ## CLI
 

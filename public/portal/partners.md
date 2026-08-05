@@ -3,7 +3,8 @@
 Package **Telegram** forums, **Accounting** deals, **betting deposits** (max bet /
 rails), Soft **plays** / weeks / book types, and partner messages.
 
-Full Telegram grammar (house vs package · plays · balances · bets): [telegram.md](./telegram.md).
+Full Telegram grammar (house vs package · plays · balances · bets): [telegram.md](./telegram.md).  
+DOD image proofs (Bun.Image · R2) + amount confirm: [dod.md](./dod.md) · [`/portal/dod/`](./dod/).
 
 | Board | Path |
 |-------|------|
@@ -13,6 +14,7 @@ Full Telegram grammar (house vs package · plays · balances · bets): [telegram
 | Partners-ops (v2) | [`/registry/partners-ops.json`](../registry/partners-ops.json) |
 | Soft accounting export | [`/registry/soft-accounting-export.json`](../registry/soft-accounting-export.json) |
 | Handshake catalog | [`/registry/telegram-handshake-catalog.json`](../registry/telegram-handshake-catalog.json) |
+| DOD queue | [`/registry/dod-queue.json`](../registry/dod-queue.json) · [`/portal/dod/`](./dod/) |
 | Limit raises | [`/registry/limit-raises.json`](../registry/limit-raises.json) |
 
 ## Sections (HTML board)
@@ -35,9 +37,10 @@ Hash routes: `#partners` · `#partner/CODE` · `#partner/CODE/accounting` ·
 | Telegram topic | Board section / bake |
 |----------------|----------------------|
 | Liquidity/Outs (pinned desk) | Deposits · outs inventory · seat-capital-desk · max bet / FUND |
-| Accounting | Accounting deals · Soft tables · bet-slip proof |
+| Accounting | Accounting deals · Soft tables · bet-slip proof · **DOD confirm** chips |
 | Ops / Alerts | Package group table · handshake · invite gaps |
 | Soft plays / balances (house staging) | Soft plays · Soft weeks · soft-accounting-export |
+| House `hq` outbox `dod` | [`/portal/dod/`](./dod/) evidence queue (not package Accounting) |
 
 ## CLI
 
@@ -51,10 +54,11 @@ bun run partners:build
 bun run partners:validate
 bun run soft:accounting:bake
 # Soft live: bun run soft:accounting:from-ct
+bun run ops:snapshot --no-seed   # dod-queue + partners embeds
 ```
 
 Docs: [`partner-package-group-handshake.md`](../../docs/harness/tenants/partner-package-group-handshake.md) ·
 [`seat-capital-desk.md`](../../docs/harness/tenants/seat-capital-desk.md) ·
 [`partner-domain-map.md`](../../docs/harness/tenants/partner-domain-map.md) ·
 [`telegram-factory.md`](../../docs/harness/tenants/telegram-factory.md) ·
-[telegram.md](./telegram.md).
+[telegram.md](./telegram.md) · [dod.md](./dod.md).
