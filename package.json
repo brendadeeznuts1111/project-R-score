@@ -2125,6 +2125,7 @@
     "ci:bun:check": "bun run scripts/ci-bun-check.ts",
     "ci:r2:version:check": "bun run scripts/ci-r2-version-check.ts",
     "check:brands:types": "bun x tsc -p tests/tsconfig.branded.json",
+    "check:bun-native-comprehensive:types": "bun x tsc -p tests/tsconfig.bun-native-comprehensive.json",
     "check:snapshot:types": "bun x tsc -p tests/tsconfig.snapshot.json",
     "check:snapshot:all": "bun run check:snapshot:types && bun test tests/snapshot-data-plane.test.ts tests/portal-snapshot-cron.test.ts tests/public-lander.test.ts tests/command-centre.test.ts",
     "check:brands:all": "bun run brand:manifest:check && bun run check:brands && bun run check:brands:types",

@@ -25,6 +25,7 @@ const MUST_INCLUDE_BUN = [
   'tsconfig.lint.json',
   'tools/tsconfig.json',
   'tests/tsconfig.branded.json',
+  'tests/tsconfig.bun-native-comprehensive.json',
   'tests/tsconfig.snapshot.json',
 ] as const;
 
