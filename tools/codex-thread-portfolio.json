@@ -1,0 +1,386 @@
+{
+  "schemaVersion": 1,
+  "catalog": "project-r-thread-portfolio",
+  "scope": {
+    "cwd": "/Users/nolarose/Projects",
+    "reviewedAt": "2026-08-05",
+    "scoreWeights": {
+      "deliveredValue": 30,
+      "verification": 25,
+      "integration": 20,
+      "reusability": 15,
+      "closure": 10
+    }
+  },
+  "threads": [
+    {
+      "rank": 0,
+      "threadId": "019fd1a6-b090-7d62-92af-9d20d69715b3",
+      "title": "INDEX · Project R Thread Portfolio & Work Reconciliation",
+      "score": 100,
+      "state": "index",
+      "pin": true,
+      "summary": "Durable index for the scored Project R thread portfolio and bring-home queue.",
+      "evidence": [
+        "25 visible Project R threads inventoried",
+        "local Codex session records reviewed"
+      ],
+      "closure": "Keep pinned as the portfolio entrypoint."
+    },
+    {
+      "rank": 1,
+      "threadId": "019fd112-8f05-7943-adb0-f82bac162f43",
+      "title": "01 · SHIPPED · Portal Performance — 42% Smaller, 96.8% Faster",
+      "score": 98,
+      "state": "shipped",
+      "pin": true,
+      "summary": "Completed the full UI performance audit, exceeded both targets, merged two PRs, and deployed production proof.",
+      "evidence": [
+        "PRs #334 and #335 merged",
+        "bun:ci passed",
+        "105/105 live routes passed",
+        "production deployment verified"
+      ],
+      "closure": "Closed; preserve as the highest-value performance reference."
+    },
+    {
+      "rank": 2,
+      "threadId": "019fb89b-b759-7d43-b2b6-86274684a548",
+      "title": "02 · SHIPPED · Partner Portal Routing — PR #153",
+      "score": 97,
+      "state": "shipped",
+      "pin": true,
+      "summary": "Delivered governed URLPattern routing, glossary integration, branded UI identifiers, and production Access verification.",
+      "evidence": [
+        "PR #153 merged",
+        "bun:ci passed",
+        "Cloudflare Pages deployed",
+        "production Access verified"
+      ],
+      "closure": "Closed; preserve as the portal routing and glossary reference."
+    },
+    {
+      "rank": 3,
+      "threadId": "019fcebc-3d20-7f92-b31c-b72daa20f0af",
+      "title": "03 · MERGED · Partner Lifecycle Storage — PR #280",
+      "score": 96,
+      "state": "merged",
+      "pin": true,
+      "summary": "Implemented the eight-state SQLite lifecycle migration with transactional preservation, rollback, and idempotence proof.",
+      "evidence": [
+        "PR #280 merged",
+        "44 focused tests",
+        "767 pre-commit tests",
+        "bun:ci passed"
+      ],
+      "closure": "Closed; storage foundation is on main."
+    },
+    {
+      "rank": 4,
+      "threadId": "019fcf4b-622e-7882-a5ee-bd3ea79e1d87",
+      "title": "04 · MERGED · Partner Lifecycle Contract — PR #281",
+      "score": 95,
+      "state": "merged",
+      "pin": true,
+      "summary": "Opened the lifecycle contract PR that is now merged into main.",
+      "evidence": [
+        "PR #281 merged",
+        "35 focused tests",
+        "concept and surface checks passed"
+      ],
+      "closure": "Closed; retain for the PR-level lifecycle handoff."
+    },
+    {
+      "rank": 5,
+      "threadId": "019fcf3b-4144-7b13-9f84-4f33305641d0",
+      "title": "05 · VERIFIED · Lifecycle Guards & Consumer Propagation",
+      "score": 94,
+      "state": "verified",
+      "pin": true,
+      "summary": "Implemented canonical lifecycle parsing, boundary propagation, exhaustive gate tests, and tenant documentation.",
+      "evidence": [
+        "69 focused tests",
+        "782-test pre-commit lane",
+        "bun:ci passed",
+        "two rollback-safe commits"
+      ],
+      "closure": "Closed through merged PR #281; retain as implementation detail."
+    },
+    {
+      "rank": 6,
+      "threadId": "019fa629-a03d-7781-9297-6cd7b1696611",
+      "title": "06 · MERGED · Bun API Surface Proof — PR #52",
+      "score": 94,
+      "state": "merged",
+      "pin": false,
+      "summary": "Added namespace-aware Bun API validation, canonical source proof, and mutation-safe R2 behavior.",
+      "evidence": [
+        "PR #52 merged",
+        "73/73 API surfaces validated",
+        "399 changed-path tests",
+        "Cloudflare and Socket checks passed"
+      ],
+      "closure": "Closed; keep as the Bun source-authority reference."
+    },
+    {
+      "rank": 7,
+      "threadId": "019fcbf4-c80b-7da0-8e0d-eba6684af0ef",
+      "title": "07 · READY · Tennis Matcher, Cache & Registry Hardening",
+      "score": 93,
+      "state": "ready",
+      "pin": false,
+      "summary": "Added registry-driven semantics, durable quote provenance, and inventory fingerprinting in three clean commits.",
+      "evidence": [
+        "three clean commits",
+        "1,053 tests passed",
+        "three specialist reviews",
+        "no remaining P0/P1 findings"
+      ],
+      "closure": "Bring home by publishing the clean lane through a focused PR."
+    },
+    {
+      "rank": 8,
+      "threadId": "019fcbdf-d9fd-7183-95f2-890225b55d9b",
+      "title": "08 · READY · Cross-Venue Tennis Reconciliation",
+      "score": 92,
+      "state": "ready",
+      "pin": false,
+      "summary": "Replaced mock reconciliation with live matching, persistence, freshness, and Tennis HQ health diagnostics.",
+      "evidence": [
+        "three rollback-safe commits",
+        "989 tests passed",
+        "bun:ci passed",
+        "live matcher results recorded"
+      ],
+      "closure": "Bring home by pushing and reviewing the three-commit lane."
+    },
+    {
+      "rank": 9,
+      "threadId": "019fce75-48f5-72c3-bec5-f2f7de13a085",
+      "title": "09 · READY · Tennis HQ v1 Contract & Plum Integration",
+      "score": 90,
+      "state": "ready",
+      "pin": false,
+      "summary": "Built authenticated five-domain producer contracts and immutable FactoryWager consumer verification.",
+      "evidence": [
+        "five producer commits",
+        "two consumer commits",
+        "production build passed",
+        "package and boundary checks passed"
+      ],
+      "closure": "Finish the canonical package publication and checksum/registry handoff."
+    },
+    {
+      "rank": 10,
+      "threadId": "019fcf8c-3eb5-7fb3-973a-c282a3155d21",
+      "title": "10 · BLOCKED · Tennis v1 Auth Cutover — PRs #10/#290",
+      "score": 89,
+      "state": "blocked",
+      "pin": false,
+      "summary": "Prepared the fail-closed producer/consumer cutover but production remains intentionally unconfigured.",
+      "evidence": [
+        "Project R PR #290 open draft",
+        "Tennis PR #10 open draft",
+        "bun:ci passed",
+        "five live endpoints fail closed"
+      ],
+      "closure": "Requires the authorized PARTNER_API_TOKEN and Tennis Worker secret write."
+    },
+    {
+      "rank": 11,
+      "threadId": "019fcb38-308e-7650-8e0b-14597dd86b34",
+      "title": "11 · READY · Branded-ID Adoption Wave 2",
+      "score": 88,
+      "state": "ready",
+      "pin": false,
+      "summary": "Expanded branded-ID coverage and made guidance/catalog drift mechanically testable.",
+      "evidence": [
+        "coverage improved to 44 covered",
+        "61 focused tests",
+        "bun:ci passed",
+        "nine clean commits"
+      ],
+      "closure": "Bring home by publishing the clean integration branch."
+    },
+    {
+      "rank": 12,
+      "threadId": "019fc026-5d94-7d73-a50f-1a51857e67e9",
+      "title": "12 · PUSHED · Portal URLPattern Link Integrity",
+      "score": 86,
+      "state": "pushed",
+      "pin": false,
+      "summary": "Added static/live URLPattern link validation and corrected stale portal tenant links.",
+      "evidence": [
+        "22 focused tests",
+        "1,673 links reviewed",
+        "122 deployed targets checked",
+        "commit 5467014d1 pushed"
+      ],
+      "closure": "Confirm whether the pushed branch was merged; open or recover a PR if absent."
+    },
+    {
+      "rank": 13,
+      "threadId": "019f8fbe-efa7-7163-87e8-0bca13ca5e4c",
+      "title": "13 · PUSHED · Bun Install Platform Selection Proof",
+      "score": 85,
+      "state": "pushed",
+      "pin": false,
+      "summary": "Added lock normalization, OS/CPU filtering, stability, dry-run, and invalid-flag proof.",
+      "evidence": ["22 tests passed", "commit 6f13397b0", "pushed to main"],
+      "closure": "Closed if commit 6f13397b0 remains reachable from main."
+    },
+    {
+      "rank": 14,
+      "threadId": "019fd011-fed5-7e63-8f4d-d1cb46bb894f",
+      "title": "14 · LOCAL · UI Accessibility & Vite Boundary Hardening",
+      "score": 82,
+      "state": "local",
+      "pin": false,
+      "summary": "Fixed accessibility order, focus behavior, ARIA linkage, React keys, and Bun/Vite client boundaries.",
+      "evidence": [
+        "18 focused tests",
+        "production build passed",
+        "changed-file typecheck passed",
+        "git diff check clean"
+      ],
+      "closure": "Split the local changes into a focused lane and resolve the unrelated full-suite/runtime debt separately."
+    },
+    {
+      "rank": 15,
+      "threadId": "019fce6d-d837-7a41-a618-6984f1690415",
+      "title": "15 · AUDIT · Workspace Recovery & Untracked Lanes",
+      "score": 78,
+      "state": "audit",
+      "pin": false,
+      "summary": "Mapped mixed staged concerns, untracked worktrees, bake drift, and large nested repositories without destructive cleanup.",
+      "evidence": [
+        "primary checkout inventory",
+        "dirty worktree inventory",
+        "large untracked repository preserved"
+      ],
+      "closure": "Use as recovery evidence; current lane status supersedes its counts."
+    },
+    {
+      "rank": 16,
+      "threadId": "019fcbd3-e78c-7dc3-8830-4ab1cecde985",
+      "title": "16 · SNAPSHOT · Kalshi vs Polymarket Live Tennis",
+      "score": 72,
+      "state": "snapshot",
+      "pin": false,
+      "summary": "Produced a timestamped cross-venue live tennis inventory with league and volume separation.",
+      "evidence": [
+        "55 Kalshi in-play events",
+        "two Polymarket in-play events",
+        "league breakdown",
+        "source-linked methodology"
+      ],
+      "closure": "Reference only; rerun for current market state."
+    },
+    {
+      "rank": 17,
+      "threadId": "019faa2b-192a-7ca3-9422-526b30537871",
+      "title": "17 · ANALYSIS · Market Inefficiency Archive",
+      "score": 65,
+      "state": "analysis",
+      "pin": false,
+      "summary": "Analyzed four hours of market snapshots and identified a missing surface attribution prerequisite.",
+      "evidence": [
+        "595 snapshots",
+        "118 tickers",
+        "155 gaps at or above five cents"
+      ],
+      "closure": "Add surface attribution before using the archive for surface-edge conclusions."
+    },
+    {
+      "rank": 18,
+      "threadId": "019fb57d-9f08-7622-a5ff-12ee1da34489",
+      "title": "18 · CLOSED · Hosted CI Cleanup — PR #55 Unmerged",
+      "score": 60,
+      "state": "closed-unmerged",
+      "pin": false,
+      "summary": "Removed hosted workflows and retained self-hosted cache lifecycle proof, but the PR later closed without merge.",
+      "evidence": [
+        "81 governance tests",
+        "PR #55 closed unmerged",
+        "branch reported pushed"
+      ],
+      "closure": "Audit main for equivalent changes before recovering any unique commits."
+    },
+    {
+      "rank": 19,
+      "threadId": "019fc5ec-b6e9-7471-bcf6-4e5cb2375b2b",
+      "title": "19 · INCOMPLETE · Serve-Public Port Parsing",
+      "score": 55,
+      "state": "incomplete",
+      "pin": false,
+      "summary": "Found Bun CLI port-shape and fallback defects but stopped before recording a completed patch.",
+      "evidence": [
+        "Bun 1.4 port behavior reproduced",
+        "regression scope identified"
+      ],
+      "closure": "Re-open as a focused port-parser fix with tests and a clean final summary."
+    },
+    {
+      "rank": 20,
+      "threadId": "019fc653-d1e7-7310-982d-94bbdbbfc6b9",
+      "title": "20 · INCOMPLETE · Local Skill Gate Cleanup",
+      "score": 54,
+      "state": "incomplete",
+      "pin": false,
+      "summary": "Identified a dead skill alias and catalog parser warning but ended during mutation.",
+      "evidence": [
+        "new gate passed",
+        "dead alias identified",
+        "false warning isolated"
+      ],
+      "closure": "Verify the alias archive and parser fix in git before retaining or discarding the lane."
+    },
+    {
+      "rank": 21,
+      "threadId": "019fc64c-c202-7230-9eb2-8bbe8e2dc912",
+      "title": "21 · INCOMPLETE · DX Installer & Wiki Index Recovery",
+      "score": 50,
+      "state": "incomplete",
+      "pin": false,
+      "summary": "Validated a dry-run and discovered a release-snapshot installer gap, then stopped during recovery.",
+      "evidence": [
+        "installer dry-run passed",
+        "unpublished CLI source dependency isolated"
+      ],
+      "closure": "Inspect the DX symlink and machine modules before resuming the recovery path."
+    },
+    {
+      "rank": 22,
+      "threadId": "019fb90f-b9b4-7d63-9616-f36cfd94c7cd",
+      "title": "22 · BLOCKED · Domain Commit by Legacy Sandbox",
+      "score": 40,
+      "state": "blocked",
+      "pin": false,
+      "summary": "A commit attempt stopped on a legacy sandbox index-lock restriction with no final delivery summary.",
+      "evidence": ["staged index reported unchanged"],
+      "closure": "Inspect the corresponding worktree before deciding whether any changes remain valuable."
+    },
+    {
+      "rank": 23,
+      "threadId": "019fb27d-90a3-7ce2-afbb-c5a09d557685",
+      "title": "23 · BLOCKED · TOML Demo Coverage Missing Input",
+      "score": 25,
+      "state": "blocked",
+      "pin": false,
+      "summary": "The requested TOML enhancement could not proceed because the referenced demo was absent.",
+      "evidence": ["workspace search completed", "missing input reported"],
+      "closure": "Archive unless the missing demo is supplied."
+    },
+    {
+      "rank": 24,
+      "threadId": "019faaf6-a784-7ef1-bd84-55b3f326881c",
+      "title": "24 · EMPTY · Unscoped Agent Thread",
+      "score": 5,
+      "state": "empty",
+      "pin": false,
+      "summary": "The thread contains no usable request or delivery outcome.",
+      "evidence": ["no assistant outcome"],
+      "closure": "Safe archive candidate."
+    }
+  ]
+}
