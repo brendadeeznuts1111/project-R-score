@@ -411,13 +411,13 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     // Prefer deep links: #bun-cron-schedule-handler-—-in-process · #no-overlap-guarantee
     // (bare #cron is not a section id on the page)
     description: 'In-process cron scheduling (UTC; no-overlap after handler settles)',
-    minVersion: '1.3.14',
+    minVersion: '1.3.12',
   },
   {
     term: 'Bun.WebView',
     path: 'runtime/webview',
     description: 'Headless browser automation',
-    minVersion: '1.4.0',
+    minVersion: '1.3.12',
     stability: 'experimental',
   },
   {

@@ -1,3 +1,4 @@
+// @see https://bun.com/reference/bun/gc — Bun.gc
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
@@ -61,6 +62,7 @@ export const BUN_V1314_ANCHORS = {
   'tls-getcacertificates-system-no-longer-stalls-on-managed-macs': `${BUN_V1314_BLOG}#tls-getcacertificates-system-no-longer-stalls-on-managed-macs`,
   'use-system-ca-on-windows-now-loads-intermediate-and-trustedpeople-certificates': `${BUN_V1314_BLOG}#use-system-ca-on-windows-now-loads-intermediate-and-trustedpeople-certificates`,
   'event-loop-refactor': `${BUN_V1314_BLOG}#event-loop-refactor`,
+  'web-apis': `${BUN_V1314_BLOG}#web-apis`,
   'bun-archive-api': 'https://bun.com/docs/runtime/archive',
 } as const;
 

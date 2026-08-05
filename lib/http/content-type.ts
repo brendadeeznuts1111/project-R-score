@@ -632,11 +632,38 @@ export function guessContentType(path: string): string {
 
 export function fetchHeadersForBody(
   body: BodyInit | null | undefined,
-  base?: HeadersInit
+  base?: HeadersInit,
+  explicitMime?: string
 ): Headers {
   const h = new Headers(base);
   if (body == null) return h;
-  if (h.has('Content-Type') || h.has('content-type')) return h;
+
+  const configuredMime = explicitMime?.trim();
+  if (explicitMime !== undefined && !configuredMime) {
+    throw new TypeError('explicitMime must be a non-empty MIME type');
+  }
+
+  const headerMime = h.get('Content-Type');
+  if (typeof FormData !== 'undefined' && body instanceof FormData) {
+    if (configuredMime || headerMime) {
+      throw new TypeError(
+        'Do not set Content-Type for FormData; Bun must generate the multipart boundary'
+      );
+    }
+    return h;
+  }
+
+  if (configuredMime) {
+    if (headerMime && normalizeContentType(headerMime) !== normalizeContentType(configuredMime)) {
+      throw new TypeError(
+        `Conflicting Content-Type values: header=${headerMime}, explicitMime=${configuredMime}`
+      );
+    }
+    h.set('Content-Type', configuredMime);
+    return h;
+  }
+
+  if (headerMime) return h;
   const our = ourContentTypeForBody(body);
   if (our) h.set('Content-Type', our);
   return h;
