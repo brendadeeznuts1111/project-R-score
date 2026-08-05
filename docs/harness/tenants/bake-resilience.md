@@ -37,7 +37,7 @@ GitHub Actions is **disabled** repository-wide. The bake pipeline is:
 |------|---------|
 | Full offline rollup | `bun run bake:all` |
 | Tennis partner join | `bun tools/bake-tennis-partner-contracts.ts` |
-| Inventory timestamps | `bun tools/bake-registry-manifest.ts` → `/registry/bake-manifest.json` |
+| Inventory timestamps | `bun tools/bake-registry-manifest.ts` → `/registry/bake-manifest.json` (schema v2: `runtime.runtime` / `runtime.runtimeVersion` / `runtime.bakedAt` — which Bun wrote the inventory) |
 | Projects browser | `bun run registry:projects` |
 
 **Schedule (operator machine):** cron / Bun.cron / launchd calling `bake:all`
@@ -111,4 +111,4 @@ and the partner-contracts table (`partnerCode`, hrefs, outs counts,
 - [`tennis-hq-registry.md`](tennis-hq-registry.md) — dual auth planes
 - [`partner-limits.md`](partner-limits.md) — limits APIs
 - `lib/http/data-source.ts` — `X-Data-Source` helper
-- `lib/registry/bake-manifest.ts` — bake inventory
+- `lib/registry/bake-manifest.ts` — bake inventory + `runtime` provenance (`Bun.version`, optional `BUN_VERSION` override)
