@@ -72,7 +72,7 @@ export type OnboardNodeContext = {
   pendingWelcomeCount: number;
 };
 
-export type PartnerOnboardPlan = {
+export type PartnerSeatOnboardingPlan = {
   treeNodeId: TreeNodeId;
   callSign: string | null;
   name: string;
@@ -92,7 +92,7 @@ export type PartnerOnboardPlan = {
 
 export type PartnerOnboardApplyResult = {
   status: 'ok' | 'skip' | 'dry-run';
-  plan: PartnerOnboardPlan;
+  plan: PartnerSeatOnboardingPlan;
   binding?: PartnerProfileBinding;
   outboxEventId?: string; // brand-ok — opaque ops_channel_outbox id
   onboardCompleteEventId?: string; // brand-ok
@@ -333,7 +333,7 @@ export function planPartnerOnboardPackage(
   db: Database,
   treeNodeId: TreeNodeId,
   opts?: PartnerOnboardPackageOpts
-): PartnerOnboardPlan {
+): PartnerSeatOnboardingPlan {
   const ctx = loadOnboardNodeContext(db, treeNodeId);
   const wouldAssign = peekAssignOnboardingDefaults(db, treeNodeId, opts);
   const wouldBind = { templateId: wouldAssign.templateId };
@@ -432,7 +432,7 @@ export function attachProfileMessageTemplates(
 /** Apply onboard package (respects dryRun + idempotency). */
 export function applyPartnerOnboardPackage(
   db: Database,
-  plan: PartnerOnboardPlan,
+  plan: PartnerSeatOnboardingPlan,
   opts?: PartnerOnboardPackageOpts
 ): PartnerOnboardApplyResult {
   if (opts?.dryRun) {
@@ -517,7 +517,7 @@ export function applyPartnerOnboardPackage(
   };
 }
 
-export function displayRef(plan: PartnerOnboardPlan): string {
+export function displayRef(plan: PartnerSeatOnboardingPlan): string {
   return plan.callSign ?? (plan.treeNodeId as string);
 }
 
@@ -538,7 +538,7 @@ export function formatOnboardStatusLine(result: PartnerOnboardApplyResult): stri
   return `OK ${ref} template=${template} expert=${expert} parent=${parent} ${outbox}`;
 }
 
-export function formatOnboardPlanLines(plan: PartnerOnboardPlan): string[] {
+export function formatOnboardPlanLines(plan: PartnerSeatOnboardingPlan): string[] {
   const ref = displayRef(plan);
   const lines = [
     `PLAN ${ref}`,

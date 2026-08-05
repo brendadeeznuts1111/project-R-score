@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // lib/partner-profile/onboard.ts — one-command partner onboarding (phase 3 of
 // the unified Partner Profile plan). Chains identity → forum → book → bake →
 // audit, idempotently, with --dry-run.
@@ -112,7 +114,7 @@ export interface PartnerOnboardInput {
   auditPath?: string;
 }
 
-export interface PartnerOnboardPlan {
+export interface PartnerRegistrationPlan {
   code: string;
   callSign: string;
   bookKey: string;
@@ -124,7 +126,7 @@ export interface PartnerOnboardPlan {
   actions: string[];
 }
 
-function fmtPlan(plan: PartnerOnboardPlan): string {
+function fmtPlan(plan: PartnerRegistrationPlan): string {
   return [
     `identity:  ${plan.identity} tree node ${plan.callSign}`,
     `forum:     ${plan.forum}${plan.chatId ? ` (${plan.chatId})` : ''}`,
@@ -138,7 +140,7 @@ function fmtPlan(plan: PartnerOnboardPlan): string {
  * With `dryRun` nothing is written (DB, vault, intake, profile, bake, audit).
  */
 export async function onboardPartner(input: PartnerOnboardInput): Promise<{
-  plan: PartnerOnboardPlan;
+  plan: PartnerRegistrationPlan;
   nodeId: string | null; // brand-ok — tree-node id (derived alias of CODE)
   intakePath: string | null;
   profilePath: string | null;
@@ -159,7 +161,7 @@ export async function onboardPartner(input: PartnerOnboardInput): Promise<{
   const db = openOperationsDb({ path: input.dbPath } as OpenOperationsDbOpts);
   let nodeId: string | null = null; // brand-ok — tree-node id (derived alias of CODE)
   let identity: 'create' | 'reuse' = 'reuse';
-  let forum: PartnerOnboardPlan['forum'] = input.chatId
+  let forum: PartnerRegistrationPlan['forum'] = input.chatId
     ? 'given'
     : input.skipForum
       ? 'skip'
@@ -279,7 +281,7 @@ export async function onboardPartner(input: PartnerOnboardInput): Promise<{
       }
     }
 
-    const plan: PartnerOnboardPlan = {
+    const plan: PartnerRegistrationPlan = {
       code,
       callSign,
       bookKey,
