@@ -172,7 +172,10 @@ Triage tiers `experimental/` / `archive/` are documented under `projects/`; only
 `gh pr merge --squash --delete-branch` → `git sync-main` (squash-merge sync;
 `git pull --ff-only` fails after a squash). Configure once:
 `git config --global alias.sync-main '!git fetch origin main && git reset --soft origin/main'`
-and `git config --global merge.conflictstyle zdiff3`.
+and `git config --global merge.conflictstyle zdiff3`. Note: after `git sync-main`,
+just-merged files show as staged (a `--soft` reset leaves index/worktree at the
+old content); they match `HEAD`, so clear per file with
+`git show origin/main:<path> > <path> && git add <path>`.
 
 See `bun run help --verbose` (regenerate long [`docs/CLI.md`](docs/CLI.md) with `bun run cli:docs` only when needed).
 
