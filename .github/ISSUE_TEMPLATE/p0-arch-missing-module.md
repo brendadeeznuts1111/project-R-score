@@ -6,6 +6,16 @@ labels: architecture, p0, bug
 assignees: arch-team
 ---
 
+## Routing (optional — human queue)
+
+| Field | Value |
+|-------|-------|
+| **Domain** | `partner` · `control` · `trading` · `identity` · `knowledge` · `platform` · or n/a |
+| **Tracker** | tenant open-issue id · or n/a |
+| **Concept** | vocabulary id only if chrome/wire changes · or n/a |
+
+See [ISSUE-ROUTING.md](../../docs/harness/ISSUE-ROUTING.md).
+
 ## 🐛 Description
 Code imports `EnterpriseScanner` from non-existent module, causing runtime error.
 

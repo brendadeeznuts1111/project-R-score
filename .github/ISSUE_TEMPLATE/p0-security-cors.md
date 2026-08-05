@@ -6,6 +6,16 @@ labels: security, cors, p0, api
 assignees: backend-team
 ---
 
+## Routing (optional — human queue)
+
+| Field | Value |
+|-------|-------|
+| **Domain** | `partner` · `control` · `trading` · `identity` · `knowledge` · `platform` · or n/a |
+| **Tracker** | tenant open-issue id · or n/a |
+| **Concept** | vocabulary id only if chrome/wire changes · or n/a |
+
+See [ISSUE-ROUTING.md](../../docs/harness/ISSUE-ROUTING.md).
+
 ## 🔒 Description
 Current CORS config allows wildcard (`*`) origins, enabling XSS attacks.
 

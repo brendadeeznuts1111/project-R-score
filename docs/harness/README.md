@@ -26,6 +26,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Day loop / affected / type-check honesty → [`docs/organization/VELOCITY_BASELINE.md`](../organization/VELOCITY_BASELINE.md)
 - Claim vs evidence (“done?”) → [`PROOF.md`](PROOF.md) · lib docs/Bun/other map → [Lib surface](PROOF.md#lib-surface--docs-vs-bun-vs-other-external) · `bun run proof:install`
 - **New claim?** → fill out [`CLAIM-DISCOVERY.md`](CLAIM-DISCOVERY.md) · `bun run docs:claim-discovery`
+- GitHub issue / PR human routing (Domain · Tracker · Concept — not concept SSOT) → [`ISSUE-ROUTING.md`](ISSUE-ROUTING.md) · templates `.github/ISSUE_TEMPLATE/`
 - Repository review (9 trajectory questions) → [`REVIEW.md`](REVIEW.md)
 - Repeat failure → earliest owner → [`FEEDBACK.md`](FEEDBACK.md)
 - Lanes / push / credentials / irreversible ops → [`AUTHORITY.md`](AUTHORITY.md)

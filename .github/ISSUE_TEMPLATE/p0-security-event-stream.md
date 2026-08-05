@@ -6,6 +6,16 @@ labels: security, cve, p0, dependencies
 assignees: security-team
 ---
 
+## Routing (optional — human queue)
+
+| Field | Value |
+|-------|-------|
+| **Domain** | `partner` · `control` · `trading` · `identity` · `knowledge` · `platform` · or n/a |
+| **Tracker** | tenant open-issue id · or n/a |
+| **Concept** | vocabulary id only if chrome/wire changes · or n/a |
+
+See [ISSUE-ROUTING.md](../../docs/harness/ISSUE-ROUTING.md).
+
 ## 🚨 Description
 Dependency `event-stream@4.0.1` has known vulnerability CVE-2018-16489 (malicious code injection). 
 
