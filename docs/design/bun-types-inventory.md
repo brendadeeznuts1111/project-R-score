@@ -92,11 +92,15 @@ usage, and status do.
 
 ### Flags / settings
 
-**REF:ID** = Contents section number path under §4 (`4.1.<leaf>`). **href** =
-`#` + REF:ID (HTML anchors above). Doc **current** cannot show process argv —
-live default vs current is printed by `bun run bun:types-status` (Flags section
-
-- `report.json` `flags[]`).
+**REF:ID** (v2) = Contents section number path under §4 (`4.1.<leaf>`). **href**
+MUST be `#` + REF:ID (HTML anchors above). Rules: kebab-case keywords (2–32
+chars, no leading/trailing hyphens); reserved leaves `index` · `top` · `toc` ·
+`anchor`; globally unique per doc; table `href` equals `#` + REF:ID; every
+table/tool REF:ID has a matching `<a id>`. Validate:
+`bun run docs:refid:check` (also part of `docs:map:check`; skip with
+`--skip-refid-check`). Doc **current** cannot show process argv — live default
+vs current is printed by `bun run bun:types-status` (Flags section ·
+`report.json` `flags[]`).
 
 | Script             | REF:ID                    | href                                                   | --flag           | shortcode | default       | current                     |
 | ------------------ | ------------------------- | ------------------------------------------------------ | ---------------- | --------- | ------------- | --------------------------- |
