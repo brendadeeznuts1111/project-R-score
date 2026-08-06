@@ -36,6 +36,24 @@ stop for manual review. A manual selection must still name a registered
 substring guesses are rejected. Loading `/registry/bookmakers.json` remains the
 planned bookmakers connector's responsibility.
 
+Three implemented observation adapters now parse the existing integration
+artifacts without taking over their domains:
+
+- `./adapters/tennis-capacity` accepts only the pinned
+  `https://tennis.factory-wager.com/api/v1` contract paths. Live bakes may emit
+  credential and integer `max_stake` evidence; offline joins are visibility only
+  and require explicit book-reference mapping.
+- `./adapters/telegram-handshake` emits handshake phase, DM linkage, gaps, and
+  next steps. It drops invite URLs and does not invent membership counts or
+  configured topics absent from the artifact.
+- `./adapters/limit-changes` maps tree nodes and sportsbook references
+  explicitly, converts exact USD values to integer cents, and marks every row
+  `currentExecutionCeiling: false`.
+
+Connector loading, last-known-good resilience, reconciliation into the public
+dashboard artifact, liquidity reservation, accounting posting, and Telegram
+delivery remain outside these pure adapters.
+
 The browser-neutral `./portal` contract now owns the current input inventory,
 the canonical artifact path, and the future query-only `?compare=legacy` policy.
 The canonical single-artifact browser loader and generated public modules remain

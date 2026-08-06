@@ -170,8 +170,10 @@ describe('partner dashboard semantic plan', () => {
     const plan = copyPlan();
     plan.package.components.out_capability_contract = 'planned';
     plan.package.components.bookmaker_account_resolver = 'planned';
+    plan.package.components.tennis_capacity_adapter = 'planned';
     plan.shapes.out_capability_snapshot.schema = 'factorywager.partner-out-capability.v2';
     plan.adapters.bookmaker_account_resolver.unknown_host_policy = 'guess-parent-domain';
+    plan.adapters.tennis_capacity.execution_evidence_policy = 'offline-is-good-enough';
     plan.out_capabilities.bet_structures = ['straight', 'parlay'];
     plan.out_capabilities.limit_kinds = ['max_stake'];
     plan.out_capabilities.promotions_gate_execution = true;
@@ -179,6 +181,7 @@ describe('partner dashboard semantic plan', () => {
     expect(result.errors).toContain('package component statuses must distinguish implemented artifact core from planned adapters');
     expect(result.errors).toContain('out capability snapshot must match the implemented private preflight contract');
     expect(result.errors).toContain('bookmaker account resolver must remain fail-closed and separate from registry I/O');
+    expect(result.errors).toContain('integration observation adapters must preserve source authority and redaction');
     expect(result.errors).toContain('out_capabilities must match the package-owned execution constraint axes');
   });
 

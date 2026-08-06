@@ -27,6 +27,9 @@ profile_coverage_adapter = "implemented"
 out_capability_contract = "implemented"
 execution_constraint_evaluator = "implemented"
 bookmaker_account_resolver = "implemented"
+tennis_capacity_adapter = "implemented"
+telegram_handshake_adapter = "implemented"
+limit_change_adapter = "implemented"
 current_compatibility_fetch_transport = "implemented"
 canonical_dashboard_browser_loader = "planned"
 connector_ports = "partial"
@@ -84,6 +87,32 @@ alternate_host_policy = "explicit-host-alias-only"
 unknown_host_policy = "manual-review-no-parent-domain-or-substring-guess"
 manual_resolution_policy = "operator-selected-registered-sportsbook-id"
 registry_io_status = "planned-owned-by-bookmakers-registry-connector"
+
+[adapters.tennis_capacity]
+export = "./adapters/tennis-capacity"
+implementation_status = "implemented"
+schema_version = 1
+kind = "tennis-partner-contracts"
+runtime = "https://tennis.factory-wager.com"
+execution_evidence_policy = "live-source-only"
+book_identity_policy = "explicit-external-book-ref-map"
+offline_policy = "visibility-only-no-max-stake-promotion"
+
+[adapters.telegram_handshake]
+export = "./adapters/telegram-handshake"
+implementation_status = "implemented"
+schema = "factorywager.telegram-handshake.v1"
+invite_url_policy = "drop-at-partner-boundary"
+membership_policy = "not-exposed-by-current-artifact"
+topic_policy = "not-exposed-by-current-artifact"
+
+[adapters.limit_changes]
+export = "./adapters/limit-changes"
+implementation_status = "implemented"
+schema_version = 3
+identity_policy = "explicit-tree-node-and-sportsbook-maps"
+money_policy = "usd-major-units-to-exact-integer-cents"
+execution_ceiling_policy = "never-current-ceiling-change-event-only"
 
 [surfaces.portal]
 board_id = "partners"
@@ -310,6 +339,27 @@ owner_domain = "trading"
 meaning = "pure out-level allow, deny, or manual-review preflight"
 forbidden_core_aliases = ["authorized", "ready"]
 
+[[nomenclature.term]]
+canonical = "TennisOutCapacityObservation"
+wire_path = "adapters.tennisCapacity.observations[]"
+owner_domain = "trading"
+meaning = "live-only out capacity and credential evidence from the authenticated Tennis contract bake"
+forbidden_core_aliases = ["tennisOut", "capacityRow"]
+
+[[nomenclature.term]]
+canonical = "PartnerCommunicationObservation"
+wire_path = "adapters.telegramHandshake.observations[]"
+owner_domain = "telegram"
+meaning = "handshake and DM linkage observation without invite URLs or invented membership detail"
+forbidden_core_aliases = ["telegramStatus", "chatConfig"]
+
+[[nomenclature.term]]
+canonical = "PartnerLimitChangeObservation"
+wire_path = "adapters.limitChanges.observations[]"
+owner_domain = "compliance"
+meaning = "historical limit change event that is never the current executable ceiling"
+forbidden_core_aliases = ["currentLimit", "maxBet"]
+
 [metadata.decision_log]
 partner_identity = "PartnerCode is the only canonical partner join key; external partnerId values stay qualified"
 money_storage = "Financial amounts and balances use integer minor units with explicit currency and scope"
@@ -319,6 +369,9 @@ frozen_mapping = "Sports Terminal frozen maps to suspended with mandatory querya
 out_constraints = "Max stake, gross payout, net win, and liquidity are distinct checks; missing evidence requires manual review"
 offer_split = "Wager markets and structures are separate from promotional offers"
 bookmaker_host_resolution = "Account URLs resolve by exact host or explicit alias; unknown hosts require a registered manual choice"
+tennis_evidence = "Only live Tennis v1 contract bakes may contribute max-stake evidence; offline joins are visibility only"
+telegram_evidence = "Handshake artifacts do not expose membership counts or configured topic keys and those fields must not be invented"
+limit_change_evidence = "Limit raises are historical events and may trigger attention but never replace a fresh execution ceiling"
 
 [deprecation_calendar.legacy_ops]
 status = "active"
@@ -1238,16 +1291,18 @@ source_owner_domain = "telegram"
 adapter_id = "telegram-handshake"
 adapter_version = "1"
 target_owner_package = "@factorywager/partners"
-target_adapter_export = "./adapters/telegram"
+target_adapter_export = "./adapters/telegram-handshake"
+target_adapter_implementation_status = "implemented"
 port = "CommunicationReadPort"
-implementation_status = "planned"
+implementation_status = "partial"
 enabled = true
 input_kind = "registry-artifact"
 required = false
 input_ref = "/registry/telegram-handshake.json"
-authoritative_fact_paths = ["partners[].communication"]
+authoritative_fact_paths = ["partners[].communication.handshakeStatus"]
 visual_group = "operations"
-provides = ["chat-linkage", "handshake", "membership", "topic-readiness"]
+provides = ["handshake-phase", "dm-linkage-status", "gap-count", "next-steps"]
+does_not_provide = ["membership-count", "configured-topic-keys", "invite-url"]
 region_ids = ["roster", "telegram", "attention"]
 
 [[connectors]]
@@ -1255,19 +1310,21 @@ id = "limits-registry"
 snapshot_key = "limits"
 source_system_id = "factorywager-limits"
 source_owner_domain = "compliance"
-adapter_id = "limits-artifact"
-adapter_version = "1"
+adapter_id = "limit-changes"
+adapter_version = "3"
 target_owner_package = "@factorywager/partners"
-target_adapter_export = "./adapters/limits"
-port = "LimitReadPort"
-implementation_status = "planned"
+target_adapter_export = "./adapters/limit-changes"
+target_adapter_implementation_status = "implemented"
+port = "LimitChangeObservationPort"
+implementation_status = "partial"
 enabled = true
 input_kind = "registry-artifact"
 required = false
 input_ref = "/registry/limit-raises.json"
-authoritative_fact_paths = ["partners[].limits", "partners[].outs[].limitCoverageRatio"]
+authoritative_fact_paths = []
 visual_group = "operations"
-provides = ["limit-coverage", "observed-limits"]
+provides = ["limit-change-events", "raise-patterns", "attention-evidence"]
+does_not_provide = ["current-max-stake", "max-gross-payout", "max-net-win", "limit-coverage"]
 region_ids = ["roster", "accounts-limits", "attention"]
 
 [[connectors]]
@@ -1300,9 +1357,10 @@ source_owner_domain = "trading"
 adapter_id = "tennis-contract"
 adapter_version = "1"
 target_owner_package = "@factorywager/partners"
-target_adapter_export = "./adapters/tennis"
+target_adapter_export = "./adapters/tennis-capacity"
+target_adapter_implementation_status = "implemented"
 port = "CapacityReadPort"
-implementation_status = "planned"
+implementation_status = "partial"
 enabled = true
 input_kind = "registry-artifact"
 required = false
@@ -1315,6 +1373,7 @@ authoritative_fact_paths = [
 ]
 visual_group = "operations"
 provides = ["active-outs", "executable-capacity", "freshness"]
+execution_evidence_policy = "live-source-only"
 region_ids = ["roster", "integrations", "attention"]
 
 [[connectors]]

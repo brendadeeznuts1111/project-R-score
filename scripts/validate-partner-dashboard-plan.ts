@@ -22,10 +22,15 @@ import {
   EXECUTION_CONSTRAINT_OUTCOMES,
   EXECUTION_CRITICAL_LIMIT_KINDS,
   MARKET_PHASES,
+  LIMIT_CHANGES_SCHEMA_VERSION,
   OUT_LIMIT_KINDS,
   OUT_LIMIT_STATUSES,
   PARTNER_OUT_CAPABILITY_SCHEMA_V1,
   SPORTSBOOK_RESOLUTION_METHODS,
+  TELEGRAM_HANDSHAKE_SCHEMA_V1,
+  TENNIS_CAPACITY_ARTIFACT_KIND,
+  TENNIS_CAPACITY_ARTIFACT_VERSION,
+  TENNIS_CAPACITY_RUNTIME,
   PARTNER_DASHBOARD_ARTIFACT_REF,
   PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
   PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS,
@@ -100,7 +105,7 @@ type ConnectorContract = {
   port: string;
   inputKind: string;
   inputRef: string;
-  implementationStatus: 'implemented' | 'planned' | 'blocked' | 'current-compatibility';
+  implementationStatus: 'implemented' | 'partial' | 'planned' | 'blocked' | 'current-compatibility';
   authoritativeFactPaths: readonly string[];
 };
 
@@ -134,7 +139,7 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     port: 'CommunicationReadPort',
     inputKind: 'registry-artifact',
     inputRef: '/registry/telegram-handshake.json',
-    implementationStatus: 'planned',
+    implementationStatus: 'partial',
     authoritativeFactPaths:
       PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['telegram-handshake'],
   },
@@ -142,10 +147,10 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     snapshotKey: 'limits',
     required: false,
     sourceSystemId: 'factorywager-limits',
-    port: 'LimitReadPort',
+    port: 'LimitChangeObservationPort',
     inputKind: 'registry-artifact',
     inputRef: '/registry/limit-raises.json',
-    implementationStatus: 'planned',
+    implementationStatus: 'partial',
     authoritativeFactPaths: PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['limits-registry'],
   },
   'bookmakers-registry': {
@@ -166,7 +171,7 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     port: 'CapacityReadPort',
     inputKind: 'registry-artifact',
     inputRef: '/registry/tennis/partner-contracts.json',
-    implementationStatus: 'planned',
+    implementationStatus: 'partial',
     authoritativeFactPaths: PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['tennis-contract'],
   },
   'sports-terminal': {
@@ -248,6 +253,18 @@ const EXPECTED_NOMENCLATURE: Readonly<
   PromotionOfferCatalog: { ownerDomain: 'trading', wirePath: 'capability.promotionOfferCatalog' },
   OutLimitFact: { ownerDomain: 'compliance', wirePath: 'capability.limits[]' },
   ExecutionConstraintDecision: { ownerDomain: 'trading', wirePath: 'executionConstraintDecision' },
+  TennisOutCapacityObservation: {
+    ownerDomain: 'trading',
+    wirePath: 'adapters.tennisCapacity.observations[]',
+  },
+  PartnerCommunicationObservation: {
+    ownerDomain: 'telegram',
+    wirePath: 'adapters.telegramHandshake.observations[]',
+  },
+  PartnerLimitChangeObservation: {
+    ownerDomain: 'compliance',
+    wirePath: 'adapters.limitChanges.observations[]',
+  },
 };
 
 const EXPECTED_HASH_ROUTES = [
@@ -460,8 +477,13 @@ export async function validatePartnerDashboardPlan(
     partnersPackage.exports?.['./adapters'] !== './src/adapters/index.ts' ||
     partnersPackage.exports?.['./adapters/bookmaker-account'] !==
       './src/adapters/bookmaker-account.ts' ||
+    partnersPackage.exports?.['./adapters/limit-changes'] !== './src/adapters/limit-changes.ts' ||
     partnersPackage.exports?.['./adapters/profile-coverage'] !==
       './src/adapters/profile-coverage.ts' ||
+    partnersPackage.exports?.['./adapters/telegram-handshake'] !==
+      './src/adapters/telegram-handshake.ts' ||
+    partnersPackage.exports?.['./adapters/tennis-capacity'] !==
+      './src/adapters/tennis-capacity.ts' ||
     partnersPackage.exports?.['./compatibility'] !== './src/compatibility/index.ts' ||
     partnersPackage.exports?.['./compatibility/legacy-partners-ops'] !==
       './src/compatibility/legacy-partners-ops.ts' ||
@@ -482,6 +504,9 @@ export async function validatePartnerDashboardPlan(
     plan.package?.components?.out_capability_contract !== 'implemented' ||
     plan.package?.components?.execution_constraint_evaluator !== 'implemented' ||
     plan.package?.components?.bookmaker_account_resolver !== 'implemented' ||
+    plan.package?.components?.tennis_capacity_adapter !== 'implemented' ||
+    plan.package?.components?.telegram_handshake_adapter !== 'implemented' ||
+    plan.package?.components?.limit_change_adapter !== 'implemented' ||
     plan.package?.components?.current_compatibility_fetch_transport !== 'implemented' ||
     plan.package?.components?.canonical_dashboard_browser_loader !== 'planned' ||
     'browser_loader' in (plan.package?.components ?? {}) ||
@@ -492,6 +517,28 @@ export async function validatePartnerDashboardPlan(
     errors.push(
       'package component statuses must distinguish implemented artifact core from planned adapters'
     );
+  }
+  if (
+    plan.adapters?.tennis_capacity?.export !== './adapters/tennis-capacity' ||
+    plan.adapters?.tennis_capacity?.implementation_status !== 'implemented' ||
+    plan.adapters?.tennis_capacity?.schema_version !== TENNIS_CAPACITY_ARTIFACT_VERSION ||
+    plan.adapters?.tennis_capacity?.kind !== TENNIS_CAPACITY_ARTIFACT_KIND ||
+    plan.adapters?.tennis_capacity?.runtime !== TENNIS_CAPACITY_RUNTIME ||
+    plan.adapters?.tennis_capacity?.execution_evidence_policy !== 'live-source-only' ||
+    plan.adapters?.tennis_capacity?.offline_policy !== 'visibility-only-no-max-stake-promotion' ||
+    plan.adapters?.telegram_handshake?.export !== './adapters/telegram-handshake' ||
+    plan.adapters?.telegram_handshake?.implementation_status !== 'implemented' ||
+    plan.adapters?.telegram_handshake?.schema !== TELEGRAM_HANDSHAKE_SCHEMA_V1 ||
+    plan.adapters?.telegram_handshake?.invite_url_policy !== 'drop-at-partner-boundary' ||
+    plan.adapters?.telegram_handshake?.membership_policy !== 'not-exposed-by-current-artifact' ||
+    plan.adapters?.telegram_handshake?.topic_policy !== 'not-exposed-by-current-artifact' ||
+    plan.adapters?.limit_changes?.export !== './adapters/limit-changes' ||
+    plan.adapters?.limit_changes?.implementation_status !== 'implemented' ||
+    plan.adapters?.limit_changes?.schema_version !== LIMIT_CHANGES_SCHEMA_VERSION ||
+    plan.adapters?.limit_changes?.execution_ceiling_policy !==
+      'never-current-ceiling-change-event-only'
+  ) {
+    errors.push('integration observation adapters must preserve source authority and redaction');
   }
   if (
     plan.shapes?.out_capability_snapshot?.type !== 'PartnerOutCapabilitySnapshot' ||
@@ -1161,6 +1208,18 @@ export async function validatePartnerDashboardPlan(
         !sameMembers(connector.provides ?? [], ['identity', 'lifecycle', 'policy']))
     ) {
       errors.push('canonical-profile-config must remain the planned profile authority');
+    }
+    const observationTarget = {
+      'telegram-handshake': './adapters/telegram-handshake',
+      'limits-registry': './adapters/limit-changes',
+      'tennis-contract': './adapters/tennis-capacity',
+    }[String(connector.id)];
+    if (
+      observationTarget &&
+      (connector.target_adapter_export !== observationTarget ||
+        connector.target_adapter_implementation_status !== 'implemented')
+    ) {
+      errors.push(`connector ${connector.id} must target its implemented observation adapter`);
     }
     for (const regionId of connector.region_ids ?? []) {
       if (!regionIds.includes(regionId)) {
