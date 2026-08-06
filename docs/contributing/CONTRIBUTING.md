@@ -18,6 +18,10 @@ bun run harness:status
 
 Full testing / hooks map: [DEVELOPMENT-WORKFLOW.md](../DEVELOPMENT-WORKFLOW.md).
 
+Design-doc **REF:ID** rules (flags / TOC fragments): see
+[DEVELOPMENT-STANDARDS.md — REF:ID](../DEVELOPMENT-STANDARDS.md#refid-design-doc-flags--toc)
+· `bun run docs:refid:check` · `bun run docs:refid:suggest`.
+
 ## Testing & concept changes
 
 | Change                                           | Gate                                                                       |

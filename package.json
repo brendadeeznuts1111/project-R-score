@@ -2019,6 +2019,8 @@
     "docs:map:check": "bun tools/doc-map-check.ts",
     "docs:refid:check": "bun tools/docs-refid-check.ts",
     "docs:refid:check:strict": "bun tools/docs-refid-check.ts --strict-format",
+    "docs:refid:suggest": "bun tools/docs-refid-check.ts suggest",
+    "docs:refid:write-hrefs": "bun tools/docs-refid-check.ts --write-hrefs",
     "wiki:coverage:check": "bun tools/wiki-index-coverage.ts",
     "wiki:links:check": "bun tools/wiki-link-check.ts",
     "wiki:links:fix": "bun tools/wiki-link-check.ts --fix",

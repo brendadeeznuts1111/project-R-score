@@ -1,15 +1,19 @@
 // @see https://bun.com/docs/test — bun:test
 import { describe, expect, test } from 'bun:test';
 import {
+  buildSuggestRefIdResult,
   checkRefIdDocument,
+  collectTakenRefIds,
+  fillEmptyHrefCells,
   hrefFromRefId,
   parseRefId,
+  scanMarkdownRefIds,
   suggestRefId,
   validateRefIdFormat,
   extractFlagTableRows,
   extractHtmlAnchors,
 } from '../lib/docs/ref-id.ts';
-import { runRefIdChecks } from '../tools/docs-refid-check.ts';
+import { runRefIdChecks, suggestFromRegistry } from '../tools/docs-refid-check.ts';
 import {
   BUN_TYPES_INVENTORY_DOC,
   buildStatusFlagRows,
@@ -107,5 +111,86 @@ describe('REF:ID markdown extract + check', () => {
     const rows = buildStatusFlagRows(defaultStatusCli());
     expect(rows.every(r => r.href === `#${r.refId}`)).toBe(true);
     expect(BUN_TYPES_INVENTORY_DOC).toBe('docs/design/bun-types-inventory.md');
+  });
+
+  test('empty href cell is accepted as implied #REF:ID', () => {
+    const md = `
+<a id="4.1.refresh"></a>
+<a id="4.1"></a>
+### Flags / settings
+| Script | REF:ID | href | --flag |
+| --- | --- | --- | --- |
+| x | \`4.1.refresh\` | — | \`--refresh\` |
+`;
+    const issues = checkRefIdDocument(md, 't.md', {
+      sectionRefId: '4.1',
+      sectionHeading: '### Flags / settings',
+    });
+    expect(issues.some(i => i.kind === 'href-mismatch')).toBe(false);
+  });
+
+  test('section placement fails when 4.1 is not above heading', () => {
+    const md = `
+<a id="4.1"></a>
+<a id="4.1.refresh"></a>
+### Flags / settings
+| Script | REF:ID | href |
+| --- | --- | --- |
+| x | \`4.1.refresh\` | \`#4.1.refresh\` |
+`;
+    const issues = checkRefIdDocument(md, 't.md', {
+      sectionRefId: '4.1',
+      sectionHeading: '### Flags / settings',
+    });
+    expect(issues.some(i => i.kind === 'section-placement')).toBe(true);
+  });
+
+  test('comment without matching anchor is error', () => {
+    const md = `
+<!-- REF:ID 4.1.refresh -->
+<a id="4.1"></a>
+### Flags / settings
+| Script | REF:ID | href |
+| --- | --- | --- |
+| x | \`4.1.strict\` | \`#4.1.strict\` |
+`;
+    const issues = checkRefIdDocument(md, 't.md', {
+      sectionRefId: '4.1',
+      sectionHeading: '### Flags / settings',
+    });
+    expect(issues.some(i => i.kind === 'comment-missing-anchor' && i.refId === '4.1.refresh')).toBe(
+      true
+    );
+  });
+
+  test('fillEmptyHrefCells rewrites — cells', () => {
+    const md = `| Script | REF:ID | href |
+| --- | --- | --- |
+| x | \`4.1.refresh\` | — |
+`;
+    const { text, filled } = fillEmptyHrefCells(md);
+    expect(filled).toBe(1);
+    expect(text).toContain('[`#4.1.refresh`](#4.1.refresh)');
+  });
+
+  test('suggestFromRegistry returns taken refresh-2', async () => {
+    const r = await suggestFromRegistry({ section: '4.1', keyword: 'refresh' });
+    expect(r.refId).toBe('4.1.refresh-2');
+    expect(r.href).toBe('#4.1.refresh-2');
+    expect(r.paste.anchor).toContain('4.1.refresh-2');
+    const fresh = await suggestFromRegistry({ section: '4.1', keyword: 'dry-run' });
+    expect(fresh.refId).toBe('4.1.dry-run');
+  });
+
+  test('collectTakenRefIds + buildSuggestRefIdResult', () => {
+    const scan = scanMarkdownRefIds(
+      `<a id="4.1.refresh"></a>\n| REF:ID | href |\n| --- | --- |\n| \`4.1.json\` | \`#4.1.json\` |\n`,
+      't.md'
+    );
+    const taken = collectTakenRefIds(scan);
+    expect(taken.has('4.1.refresh')).toBe(true);
+    expect(taken.has('4.1.json')).toBe(true);
+    const s = buildSuggestRefIdResult('4.1', 'refresh', taken);
+    expect(s.refId).toBe('4.1.refresh-2');
   });
 });

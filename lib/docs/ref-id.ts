@@ -46,7 +46,9 @@ export type RefIdIssueKind =
   | 'missing-anchor'
   | 'href-mismatch'
   | 'toc-href-mismatch'
-  | 'orphan-anchor';
+  | 'orphan-anchor'
+  | 'section-placement'
+  | 'comment-missing-anchor';
 
 export type RefIdIssue = {
   severity: RefIdSeverity;
@@ -283,7 +285,17 @@ export type CheckRefIdDocOpts = {
   toolFlags?: readonly ToolFlagRef[];
   /** When true, missing tool↔doc rows are errors */
   requireToolCoverage?: boolean;
+  /** Section id that must sit on the previous non-empty line above `sectionHeading`. */
+  sectionRefId?: string;
+  /** Exact markdown heading line, e.g. `### Flags / settings`. */
+  sectionHeading?: string;
 };
+
+/** Empty / em-dash href cells are treated as `#` + REF:ID. */
+export function isEmptyHrefCell(href: string): boolean {
+  const h = href.trim();
+  return h === '' || h === '—' || h === '-' || h === '–';
+}
 
 /**
  * Validate one markdown file against REF:ID v2 rules.
@@ -342,16 +354,16 @@ export function checkRefIdDocument(
     } else {
       seenTableRef.set(row.refId, row.line);
     }
-    // href match
+    // href match — empty / — soft-accepts as #REF:ID
     const expected = hrefFromRefId(row.refId);
-    if (row.href !== expected) {
+    if (!isEmptyHrefCell(row.href) && row.href !== expected) {
       issues.push({
         severity: 'error',
         kind: 'href-mismatch',
         file,
         line: row.line,
         refId: row.refId,
-        detail: `href '${row.href}' must equal '${expected}'`,
+        detail: `href '${row.href}' must equal '${expected}' (or empty/— to imply it)`,
       });
     }
     // anchor exists
@@ -364,6 +376,49 @@ export function checkRefIdDocument(
         refId: row.refId,
         detail: `REF:ID '${row.refId}' has no matching <a id="${row.refId}">`,
       });
+    }
+  }
+
+  // <!-- REF:ID X --> must have matching <a id="X">
+  for (const c of scan.commentRefs) {
+    if (!anchorIds.has(c.refId)) {
+      issues.push({
+        severity: 'error',
+        kind: 'comment-missing-anchor',
+        file,
+        line: c.line,
+        refId: c.refId,
+        detail: `comment REF:ID '${c.refId}' has no matching <a id="${c.refId}">`,
+      });
+    }
+  }
+
+  // Section placement: sectionRefId on previous non-empty line above heading
+  if (opts.sectionRefId && opts.sectionHeading) {
+    const lines = text.split(/\r?\n/);
+    const headingIdx = lines.findIndex(l => l.trim() === opts.sectionHeading!.trim());
+    if (headingIdx < 0) {
+      issues.push({
+        severity: 'error',
+        kind: 'section-placement',
+        file,
+        refId: opts.sectionRefId,
+        detail: `heading not found: ${opts.sectionHeading}`,
+      });
+    } else {
+      let prev = headingIdx - 1;
+      while (prev >= 0 && lines[prev]!.trim() === '') prev--;
+      const prevLine = prev >= 0 ? lines[prev]! : '';
+      if (!prevLine.includes(`id="${opts.sectionRefId}"`)) {
+        issues.push({
+          severity: 'error',
+          kind: 'section-placement',
+          file,
+          line: headingIdx + 1,
+          refId: opts.sectionRefId,
+          detail: `expected <a id="${opts.sectionRefId}"> on the line immediately above heading`,
+        });
+      }
     }
   }
 
@@ -463,6 +518,103 @@ export function suggestRefId(section: string, keyword: string, taken: ReadonlySe
     n++;
   }
   return base;
+}
+
+/** Collect taken REF:IDs from a scanned doc + optional tool flags. */
+export function collectTakenRefIds(
+  scan: RefIdDocScan,
+  toolFlags?: readonly ToolFlagRef[]
+): Set<string> {
+  const taken = new Set<string>();
+  for (const a of scan.anchors) taken.add(a.id);
+  for (const r of scan.flagRows) taken.add(r.refId);
+  for (const c of scan.commentRefs) taken.add(c.refId);
+  for (const t of scan.tocLinks) {
+    const frag = t.href.startsWith('#') ? t.href.slice(1) : t.href;
+    if (frag) taken.add(frag);
+  }
+  for (const t of toolFlags ?? []) taken.add(t.refId);
+  return taken;
+}
+
+export type SuggestRefIdResult = {
+  refId: string;
+  href: string;
+  section: string;
+  keyword: string;
+  taken: boolean;
+  paste: {
+    anchor: string;
+    comment: string;
+    tableCells: string;
+  };
+};
+
+/** Build suggest result + copy-paste snippet for Flags table / anchors. */
+export function buildSuggestRefIdResult(
+  section: string,
+  keyword: string,
+  taken: ReadonlySet<string>
+): SuggestRefIdResult {
+  const refId = suggestRefId(section, keyword, taken);
+  const href = hrefFromRefId(refId);
+  const base = `${section.replace(/^#+/, '').trim()}.${keyword.trim().toLowerCase()}`;
+  return {
+    refId,
+    href,
+    section: section.replace(/^#+/, '').trim(),
+    keyword: keyword.trim().toLowerCase(),
+    taken: taken.has(base),
+    paste: {
+      anchor: `<a id="${refId}"></a>`,
+      comment: `<!-- REF:ID ${refId} -->`,
+      tableCells: `| \`bun:types-status\` | \`${refId}\` | [\`${href}\`](${href}) | \`--${keyword.trim().toLowerCase()}\` | — | off | — |`,
+    },
+  };
+}
+
+/**
+ * Fill empty / — href cells in Flags tables with `[`#id`](#id)`.
+ * Returns rewritten markdown and count of cells filled.
+ */
+export function fillEmptyHrefCells(text: string): { text: string; filled: number } {
+  const lines = text.split(/\r?\n/);
+  let headers: string[] | null = null;
+  let refIdx = -1;
+  let hrefIdx = -1;
+  let filled = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    const raw = lines[i]!;
+    const line = raw.trim();
+    if (!line.startsWith('|')) {
+      headers = null;
+      continue;
+    }
+    const cells = splitTableRow(line);
+    if (cells.length < 2) continue;
+    if (cells.every(c => /^:?-+:?$/.test(c.replace(/\s/g, '')))) continue;
+
+    if (!headers) {
+      const lower = cells.map(c => c.toLowerCase());
+      refIdx = lower.findIndex(c => c === 'ref:id' || c === 'refid' || c === 'ref id');
+      hrefIdx = lower.findIndex(c => c === 'href');
+      if (refIdx >= 0 && hrefIdx >= 0) headers = cells;
+      continue;
+    }
+
+    const refId = stripMd(cells[refIdx] ?? '');
+    const hrefRaw = cells[hrefIdx] ?? '';
+    const href = stripMd(hrefRaw);
+    if (!refId || !isEmptyHrefCell(href)) continue;
+
+    const expected = hrefFromRefId(refId);
+    cells[hrefIdx] = `[\`${expected}\`](${expected})`;
+    lines[i] = `| ${cells.join(' | ')} |`;
+    filled++;
+  }
+
+  return { text: lines.join('\n'), filled };
 }
 
 function splitTableRow(line: string): string[] {
