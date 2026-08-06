@@ -9,6 +9,7 @@ import {
   bookTypeWire,
   buildPartnersOpsRegistry,
   exportPartnersOpsRegistry,
+  projectPartnersOpsRegistry,
   validatePartnersOpsRegistry,
   PARTNERS_OPS_SCHEMA,
 } from '../lib/telegram/partner-ops-registry.ts';
@@ -84,6 +85,23 @@ describe('partner-ops color + glossary', () => {
 });
 
 describe('partners-ops registry bake', () => {
+  test('projectPartnersOpsRegistry is pure (empty sources → empty partners)', () => {
+    const registry = projectPartnersOpsRegistry({
+      seatRows: [],
+      handshakeRows: [],
+      taxonomy: { bookRegistry: [] },
+      events: [],
+      ledgerSnapshots: new Map(),
+      forumByCode: new Map(),
+      generatedAt: '2026-01-01T00:00:00.000Z',
+    });
+    expect(registry.schema).toBe(PARTNERS_OPS_SCHEMA);
+    expect(registry.partners).toEqual([]);
+    expect(registry.generatedAt).toBe('2026-01-01T00:00:00.000Z');
+    expect(registry.validation.ok).toBe(true);
+    expect(registry.summary.partners).toBe(0);
+  });
+
   test('builds v2 registry from seat + handshake without collisions', async () => {
     const registry = await buildPartnersOpsRegistry();
     expect(registry.schema).toBe(PARTNERS_OPS_SCHEMA);
