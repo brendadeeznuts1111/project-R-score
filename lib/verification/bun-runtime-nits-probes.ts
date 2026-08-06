@@ -11,13 +11,9 @@
  *
  * @see docs/bun-runtime-nits.md
  */
-// eslint-disable-next-line no-restricted-imports
-import { mkdtemp, rm, readFile } from 'node:fs/promises';
-// eslint-disable-next-line no-restricted-imports
-import { statSync } from 'node:fs';
-import { tmpdir } from 'node:os';
 import { inspect, inspectCustom } from '../console-depth.ts';
 import { joinPath } from '../path-bun.ts';
+import { makeTempDir, removeTempDir } from '../tmp-probe.ts';
 import { resolveCanonicalForProbe } from '../../tools/canonical-helpers.ts';
 import type { VerificationResult } from './types.ts';
 import { withSubsystem } from './subsystem.ts';
@@ -417,9 +413,9 @@ export function probeUrlHostLegacy(): { ok: boolean; note: string } {
   return { ok: row.passed, note: row.actual };
 }
 
-/** Bun.file lazy stat + size matches fs. */
+/** Bun.file lazy stat + size matches written length. */
 export async function probeBunFileLazyStat(): Promise<BunRuntimeNitsProbeRow> {
-  const dir = await mkdtemp(joinPath(tmpdir(), 'fw-nits-file-'));
+  const dir = await makeTempDir('fw-nits-file');
   const path = joinPath(dir, 'probe.txt');
   try {
     const data = new Uint8Array([1, 2, 3, 4]);
@@ -427,13 +423,12 @@ export async function probeBunFileLazyStat(): Promise<BunRuntimeNitsProbeRow> {
     const lazy = Bun.file(path);
     const exists = await lazy.exists();
     const size = lazy.size;
-    const fsSize = statSync(path).size;
-    const ok = exists && size === fsSize && size === data.byteLength;
+    const ok = exists && size === data.byteLength;
     return resultRow(
       'bun.file.lazy-stat',
       'file-io',
-      'Bun.file size matches fs.stat after write',
-      ok ? `size=${size} exists=${exists}` : `bun=${size} fs=${fsSize}`,
+      'Bun.file size matches write length',
+      ok ? `size=${size} exists=${exists}` : `size=${size} expected=${data.byteLength}`,
       ok,
       { canonicalKey: 'bun.file.lazy-stat' }
     );
@@ -441,19 +436,19 @@ export async function probeBunFileLazyStat(): Promise<BunRuntimeNitsProbeRow> {
     return resultRow(
       'bun.file.lazy-stat',
       'file-io',
-      'Bun.file size matches fs.stat after write',
+      'Bun.file size matches write length',
       e instanceof Error ? e.message : String(e),
       false,
       { canonicalKey: 'bun.file.lazy-stat' }
     );
   } finally {
-    await rm(dir, { recursive: true, force: true }).catch(() => {});
+    await removeTempDir(dir).catch(() => {});
   }
 }
 
 /** Bun.write creates nested directories. */
 export async function probeBunWriteAutoDir(): Promise<BunRuntimeNitsProbeRow> {
-  const dir = await mkdtemp(joinPath(tmpdir(), 'fw-nits-write-'));
+  const dir = await makeTempDir('fw-nits-write');
   const path = joinPath(dir, 'nested', 'deep', 'file.txt');
   try {
     await Bun.write(path, 'auto-dir-probe');
@@ -476,27 +471,26 @@ export async function probeBunWriteAutoDir(): Promise<BunRuntimeNitsProbeRow> {
       { canonicalKey: 'bun.write.auto-dir' }
     );
   } finally {
-    await rm(dir, { recursive: true, force: true }).catch(() => {});
+    await removeTempDir(dir).catch(() => {});
   }
 }
 
-/** Bun.file().bytes() matches fs readFile. */
+/** Bun.file().bytes() round-trips written bytes. */
 export async function probeBunFileBytesVsBuffer(): Promise<BunRuntimeNitsProbeRow> {
-  const dir = await mkdtemp(joinPath(tmpdir(), 'fw-nits-bytes-'));
+  const dir = await makeTempDir('fw-nits-bytes');
   const path = joinPath(dir, 'bytes.bin');
   try {
     const data = new Uint8Array([10, 20, 30, 40, 50]);
     await Bun.write(path, data);
     const fromBun = await Bun.file(path).bytes();
-    const fromFs = new Uint8Array(await readFile(path));
-    const ok = fromBun.byteLength === fromFs.byteLength && fromBun.every((b, i) => b === fromFs[i]);
+    const ok = fromBun.byteLength === data.byteLength && fromBun.every((b, i) => b === data[i]);
     return resultRow(
       'bun.file.bytes-vs-buffer',
       'file-io',
-      'Bun.file().bytes() equals fs read bytes',
+      'Bun.file().bytes() equals written bytes',
       ok
         ? `${fromBun.byteLength} bytes match`
-        : `bun=${fromBun.byteLength} fs=${fromFs.byteLength}`,
+        : `bun=${fromBun.byteLength} expected=${data.byteLength}`,
       ok,
       { canonicalKey: 'bun.file.bytes-vs-buffer' }
     );
@@ -504,13 +498,13 @@ export async function probeBunFileBytesVsBuffer(): Promise<BunRuntimeNitsProbeRo
     return resultRow(
       'bun.file.bytes-vs-buffer',
       'file-io',
-      'Bun.file().bytes() equals fs read bytes',
+      'Bun.file().bytes() equals written bytes',
       e instanceof Error ? e.message : String(e),
       false,
       { canonicalKey: 'bun.file.bytes-vs-buffer' }
     );
   } finally {
-    await rm(dir, { recursive: true, force: true }).catch(() => {});
+    await removeTempDir(dir).catch(() => {});
   }
 }
 

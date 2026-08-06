@@ -11,10 +11,8 @@
  * Proves Bun.build Asset Processing loaders (css, jsonc, ts, text, file).
  * Portal *build* (`tools/build-portal-css.ts`) stays separate from these proofs.
  */
-// eslint-disable-next-line no-restricted-imports
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
 import { joinPath } from '../path-bun.ts';
+import { makeTempDir, removeTempDir } from '../tmp-probe.ts';
 import { resolveCanonicalForProbe } from '../../tools/canonical-helpers.ts';
 import { withSubsystem } from './subsystem.ts';
 import type { VerificationResult } from './types.ts';
@@ -58,11 +56,11 @@ function resultRow(
 async function withTempDir(
   fn: (dir: string) => Promise<BundlerLoaderProbeRow>
 ): Promise<BundlerLoaderProbeRow> {
-  const dir = await mkdtemp(joinPath(tmpdir(), 'fw-bundler-'));
+  const dir = await makeTempDir('fw-bundler');
   try {
     return await fn(dir);
   } finally {
-    await rm(dir, { recursive: true, force: true }).catch(() => {});
+    await removeTempDir(dir).catch(() => {});
   }
 }
 
@@ -71,7 +69,7 @@ export async function probeCssLoaderExplicit(): Promise<BundlerLoaderProbeRow> {
   return withTempDir(async dir => {
     const entry = joinPath(dir, 'entry.css');
     const outdir = joinPath(dir, 'out');
-    await writeFile(entry, ':root { color: tomato; }\n');
+    await Bun.write(entry, ':root { color: tomato; }\n');
     const result = await Bun.build({
       entrypoints: [entry],
       outdir,
@@ -109,7 +107,7 @@ export async function probeCssLoaderDefault(): Promise<BundlerLoaderProbeRow> {
   return withTempDir(async dir => {
     const entry = joinPath(dir, 'entry.css');
     const outdir = joinPath(dir, 'out');
-    await writeFile(entry, '.x { margin-inline: 1rem; }\n');
+    await Bun.write(entry, '.x { margin-inline: 1rem; }\n');
     const result = await Bun.build({
       entrypoints: [entry],
       outdir,
@@ -133,7 +131,7 @@ export async function probeJsoncLoader(): Promise<BundlerLoaderProbeRow> {
   return withTempDir(async dir => {
     const entry = joinPath(dir, 'theme.jsonc');
     const outdir = joinPath(dir, 'out');
-    await writeFile(
+    await Bun.write(
       entry,
       `{
   // comment ok
@@ -178,7 +176,7 @@ export async function probeTextLoader(): Promise<BundlerLoaderProbeRow> {
   return withTempDir(async dir => {
     const entry = joinPath(dir, 'note.txt');
     const outdir = joinPath(dir, 'out');
-    await writeFile(entry, 'portal-theme-ok\n');
+    await Bun.write(entry, 'portal-theme-ok\n');
     const result = await Bun.build({
       entrypoints: [entry],
       outdir,
@@ -215,7 +213,7 @@ export async function probeTsLoader(): Promise<BundlerLoaderProbeRow> {
   return withTempDir(async dir => {
     const entry = joinPath(dir, 'hello.ts');
     const outdir = joinPath(dir, 'out');
-    await writeFile(entry, `const msg: string = "hello";\nconsole.log(msg);\nexport { msg };\n`);
+    await Bun.write(entry, `const msg: string = "hello";\nconsole.log(msg);\nexport { msg };\n`);
     const result = await Bun.build({
       entrypoints: [entry],
       outdir,
@@ -257,8 +255,8 @@ export async function probeFileLoader(): Promise<BundlerLoaderProbeRow> {
     const asset = joinPath(dir, 'logo.bin');
     const outdir = joinPath(dir, 'out');
     // Minimal binary-ish payload (not a real PNG — file loader only copies bytes)
-    await writeFile(asset, new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
-    await writeFile(entry, `import logo from "./logo.bin";\nexport default logo;\n`);
+    await Bun.write(asset, new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+    await Bun.write(entry, `import logo from "./logo.bin";\nexport default logo;\n`);
     const result = await Bun.build({
       entrypoints: [entry],
       outdir,

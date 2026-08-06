@@ -590,13 +590,12 @@ export async function probeBunTerminalPty(): Promise<{ ok: boolean; note: string
 
 /** v1.3.5 compile-time feature flags via bun:bundle + bun build --feature. */
 export async function probeCompileTimeFeatureFlags(): Promise<{ ok: boolean; note: string }> {
-  const { mkdtemp, rm } = await import('node:fs/promises');
-  const { tmpdir } = await import('node:os');
-  const { join } = await import('node:path');
-  const dir = await mkdtemp(join(tmpdir(), 'fw-feature-probe-'));
+  const { makeTempDir, removeTempDir } = await import('../tmp-probe.ts');
+  const { joinPath } = await import('../path-bun.ts');
+  const dir = await makeTempDir('fw-feature-probe');
   try {
-    const entry = join(dir, 'entry.ts');
-    const outdir = join(dir, 'out');
+    const entry = joinPath(dir, 'entry.ts');
+    const outdir = joinPath(dir, 'out');
     await Bun.write(
       entry,
       'import { feature } from "bun:bundle";\nexport const mode = feature("FW_PROBE_PREMIUM") ? "premium" : "free";\n'
@@ -611,7 +610,7 @@ export async function probeCompileTimeFeatureFlags(): Promise<{ ok: boolean; not
         note: `build exit=${proc.exitCode} ${new TextDecoder().decode(proc.stderr).slice(0, 120)}`,
       };
     }
-    const built = await Bun.file(join(outdir, 'entry.js')).text();
+    const built = await Bun.file(joinPath(outdir, 'entry.js')).text();
     const ok = built.includes('premium') && !built.includes('free');
     return {
       ok,
@@ -622,7 +621,7 @@ export async function probeCompileTimeFeatureFlags(): Promise<{ ok: boolean; not
   } catch (e) {
     return { ok: false, note: e instanceof Error ? e.message : String(e) };
   } finally {
-    await rm(dir, { recursive: true, force: true }).catch(() => {});
+    await removeTempDir(dir).catch(() => {});
   }
 }
 

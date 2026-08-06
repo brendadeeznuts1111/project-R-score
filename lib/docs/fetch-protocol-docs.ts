@@ -9,12 +9,10 @@
  * @see https://bun.com/docs/runtime/networking/fetch#s3-urls-s3
  * @see https://bun.com/docs/runtime/networking/fetch#file-urls-file
  */
-// eslint-disable-next-line no-restricted-imports -- probe scratch mkdtemp (defer: probe batch)
-import { mkdtemp, unlink } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
 import { bunSpawnArgs } from '../bun-executable.ts';
 import { pathToFileURL } from '../bun-path-url.ts';
 import { joinPath } from '../path-bun.ts';
+import { makeTempDir, removeTempDir } from '../tmp-probe.ts';
 import {
   hasR2Credentials,
   type NormalizedR2Credentials,
@@ -243,7 +241,7 @@ async function probeFetchBlob(): Promise<FetchProtocolProbeRow> {
 
 async function probeFetchFile(): Promise<FetchProtocolProbeRow> {
   const name = 'fetch protocol (file://)';
-  const dir = await mkdtemp(joinPath(tmpdir(), 'fw-fetch-file-'));
+  const dir = await makeTempDir('fw-fetch-file');
   const path = joinPath(dir, 'probe.txt');
   try {
     await Bun.write(path, 'file-protocol-ok');
@@ -268,7 +266,7 @@ async function probeFetchFile(): Promise<FetchProtocolProbeRow> {
       canonical: FETCH_PROTOCOL_DOCS.file,
     };
   } finally {
-    await unlink(path).catch(() => {});
+    await removeTempDir(dir).catch(() => {});
   }
 }
 

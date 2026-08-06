@@ -7,10 +7,8 @@
  * @see https://bun.com/docs/pm/cli/install#cpu-and-os-flags
  */
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
-// eslint-disable-next-line no-restricted-imports
-import { mkdtemp, rm } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
 import { joinPath } from '../path-bun.ts';
+import { makeTempDir, removeTempDir } from '../tmp-probe.ts';
 import { resolveVerificationBunBinary } from '../verification/resolve-bun-binary.ts';
 import { bunDocs } from './bun-site-url.ts';
 
@@ -68,7 +66,7 @@ function decodeSpawnOutput(data: Uint8Array | string | undefined): string {
  * and invalid cpu values are rejected with a helpful error.
  */
 export async function probeBunInstallPlatformFlags(): Promise<BunInstallPlatformProbe> {
-  const dir = await mkdtemp(joinPath(tmpdir(), 'fw-bun-install-probe-'));
+  const dir = await makeTempDir('fw-bun-install-probe');
   const bunPath = resolveVerificationBunBinary().path;
   try {
     await Bun.write(
@@ -116,6 +114,6 @@ export async function probeBunInstallPlatformFlags(): Promise<BunInstallPlatform
       invalidMessage: '',
     };
   } finally {
-    await rm(dir, { recursive: true, force: true }).catch(() => {});
+    await removeTempDir(dir).catch(() => {});
   }
 }
