@@ -1,37 +1,49 @@
-<!DOCTYPE html>
-<!-- @see docs/portal-foundation.md · docs/harness/tenants/telegram-factory.md · telegram-handshake bake -->
+<!doctype html>
+<!-- @see docs/harness/tenants/workspace-lane-cross-map.md — lanes board; reads /registry/workspace-lane-map.json -->
 <html lang="en" data-theme="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="portal-poll-ms" content="30000" />
-  <meta name="description" content="Factory Telegram handshake readiness — package-group wire, invites, verify lanes." />
-  <title>Factory · FactoryWager</title>
-  <meta name="theme-color" content="#0d1117" />
-  <meta name="application-name" content="FactoryWager" />
-  <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
-  <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
-  <link rel="manifest" href="/site.webmanifest" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/portal/style.css" />
-  <style>
-    .portal-error .portal-error-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-    #fx-commands { display: flex; flex-wrap: wrap; gap: 8px; }
-  </style>
-</head>
-<body>
-  <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <h1 class="logo">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="portal-poll-ms" content="60000" />
+    <title>Lane crosswalk · FactoryWager</title>
+    <meta
+      name="description"
+      content="Session archive lanes correlated with chrome Domain lanes and ConceptDomains — correlations, not containment."
+    />
+    <meta name="theme-color" content="#0d1117" />
+    <meta name="application-name" content="FactoryWager" />
+    <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+    <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/portal/style.css" />
+    <style>
+      .lane-chip {
+        display: inline-block;
+        margin: 0 4px 4px 0;
+        padding: 1px 6px;
+        font-size: 0.85em;
+        border-radius: 4px;
+        background: color-mix(in srgb, var(--portal-border, #30363d) 55%, transparent);
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <h1 class="logo">
         <span class="logo-icon" aria-hidden="true"></span>
         <span class="brand-wordmark">FactoryWager</span>
         <span class="brand-badge">ops</span>
-        <span class="logo-page">Factory</span>
+        <span class="logo-page">Lanes</span>
       </h1>
-      <nav class="topbar-nav" aria-label="Primary">
+        <nav class="topbar-nav" aria-label="Primary">
         <a href="/" class="nav-link" title="public lander · portal entry" data-group="other" data-domain="platform">Home</a>
         <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · C4/C5 loop · partner handshake panel · bun run ops:snapshot" data-group="ops" data-domain="control" data-cli="bun run ops:snapshot" data-registry="/registry/ops-summary.json">Ops</a>
         <a href="/portal/" class="nav-link" title="portal hub · board index · weave surfaces" data-group="registry" data-domain="platform">Registry</a>
@@ -50,7 +62,7 @@
             <a href="/portal/limits/" class="nav-link" title="multi-factor partner limit raises · CLV · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Limits</a>
             <a href="/portal/limits-lab/" class="nav-link" title="forecast / predict lab · multi-factor backtest · bun run ops:limits:predict" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:predict" data-registry="/registry/limit-forecast-lab.json" role="menuitem">Limits lab</a>
             <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers artifact · canonical bookmaker registry · bun run bookmakers:bake" data-group="ops" data-domain="partner" data-cli="bun run bookmakers:bake" data-registry="/registry/bookmakers.json" role="menuitem">Bookmakers</a>
-            <a href="/portal/factory/" class="nav-link active" aria-current="page" title="Factory Telegram ops · package-group wire · handshake · bun run telegram:verify" data-group="ops" data-domain="partner" data-cli="bun run telegram:verify" data-registry="/registry/telegram-handshake.json" role="menuitem">Factory</a>
+            <a href="/portal/factory/" class="nav-link" title="Factory Telegram ops · package-group wire · handshake · bun run telegram:verify" data-group="ops" data-domain="partner" data-cli="bun run telegram:verify" data-registry="/registry/telegram-handshake.json" role="menuitem">Factory</a>
             <a href="/portal/tennis/" class="nav-link" title="Tennis HQ desk · agent-auth · live matches · bun run tennis:board:bake" data-group="ops" data-domain="trading" data-cli="bun run tennis:board:bake" data-registry="/registry/tennis/agent-auth.json" role="menuitem">Tennis</a>
             <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-domain="trading" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
             <a href="/portal/dashboard/" class="nav-link" title="KPIs · TOC · compliance plane · proof-index pins" data-group="ops" data-domain="control" role="menuitem">Dashboard</a>
@@ -69,7 +81,7 @@
             <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-domain="platform" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" data-registry="/registry/packages-graph-map.json" role="menuitem">Packages</a>
             <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-domain="knowledge" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
             <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-domain="knowledge" data-cli="bun run glossary:portal" data-registry="/registry/domain-glossary.json" role="menuitem">Glossary</a>
-            <a href="/portal/lanes/" class="nav-link" title="session · chrome · concept crosswalk · correlations not containment · bun run workspace-taxonomy:bake" data-group="registry" data-domain="knowledge" data-cli="bun run workspace-taxonomy:bake" data-registry="/registry/workspace-lane-map.json" role="menuitem">Lanes</a>
+            <a href="/portal/lanes/" class="nav-link active" aria-current="page" title="session · chrome · concept crosswalk · correlations not containment · bun run workspace-taxonomy:bake" data-group="registry" data-domain="knowledge" data-cli="bun run workspace-taxonomy:bake" data-registry="/registry/workspace-lane-map.json" role="menuitem">Lanes</a>
             <a href="/portal/issues/" class="nav-link" title="repository issue spine · labels · ownership · public drift health · bun run github-issue-taxonomy:check" data-group="registry" data-domain="knowledge" data-cli="bun run github-issue-taxonomy:check" data-registry="/registry/github-issue-taxonomy.json" role="menuitem">Issues</a>
             <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-domain="knowledge" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" data-registry="/registry/surfaces-state.json" role="menuitem">Surfaces</a>
             <a href="/portal/skills/" class="nav-link" title="harness + Kimi skill catalogs · loop registry alignment · bun run skills:validate" data-group="registry" data-domain="knowledge" data-cli="bun run skills:validate" data-registry="/registry/harness-skills-catalog.json" role="menuitem">Skills</a>
@@ -83,107 +95,66 @@
           </div>
         </div>
       </nav>
-      <div class="topbar-status">
-        <a href="/portal/factory.md" class="nav-link nav-md" title="Markdown view">MD</a>
-        <a href="/portal/health/" class="topbar-health-link" title="System health">
-          <span id="health-dot" class="health-dot unknown"></span>
-          <span id="health-label" class="health-label">…</span>
-        </a>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <main class="portal-page">
-    <section class="portal-hero portal-hero--card" aria-labelledby="fx-hero-title">
-      <p class="portal-eyebrow">Factory Telegram · package-group wire</p>
-      <h2 id="fx-hero-title" class="portal-hero__title">
-        Handshake readiness —
-        <a
-          href="/portal/glossary/#glossary:telegram.handshake"
-          data-glossary-concept="telegram.handshake"
-          >telegram.handshake</a
-        >
-      </h2>
-      <p class="hero-sub">
-        Monitor <code>@factorywager_bot</code> package-group handshake —
-        operator phase, verify lanes, invite gaps, and next steps.
-        Bake: <code data-copy>bun run telegram:handshake:catalog</code> →
-        <code>/registry/telegram-handshake.json</code>.
-        Bot check: <code data-copy>bun run telegram:verify</code>.
-      </p>
-      <div class="portal-hero-meta">
-        <span id="fx-gate" class="portal-gate" aria-live="polite">…</span>
-        <span id="fx-baked" class="portal-baked">loading…</span>
-        <div class="portal-source-links" aria-label="Related artifacts">
-          <a href="/registry/telegram-handshake.json">telegram-handshake.json</a>
-          <a href="/registry/telegram-handshake-catalog.json">catalog</a>
-          <a href="/registry/factory/registry.json">tenant registry</a>
-          <a href="/portal/partners/">partners</a>
-          <a href="/portal/env/">env</a>
-        </div>
-      </div>
-    </section>
-
-    <div class="portal-actions">
-      <button type="button" id="fx-refresh">Refresh</button>
-      <button type="button" class="copy-cli portal-clear" data-cli="bun run telegram:verify">Copy verify</button>
-      <button type="button" class="copy-cli portal-clear" data-cli="bun run telegram:handshake:catalog">Copy catalog</button>
-      <a class="portal-clear" href="/registry/telegram-handshake.json" style="display:inline-flex;align-items:center;text-decoration:none">Open JSON</a>
-    </div>
-
-    <div id="fx-error" hidden></div>
-
-    <div id="fx-dashboard" class="hidden">
-      <div id="fx-stats" class="portal-stat-grid" aria-label="Handshake summary"></div>
-
-      <section class="portal-panel" aria-labelledby="fx-cmd-title">
-        <div class="portal-panel-head">
-          <div>
-            <h2 id="fx-cmd-title">Operator commands</h2>
-            <p class="portal-panel-desc">Copy-ready CLI from the handshake bake.</p>
+    <main class="portal-page" data-glossary-concept="page.lanes">
+      <section class="portal-hero portal-hero--card" aria-labelledby="lanes-hero-title">
+        <p class="portal-eyebrow">Workspace taxonomy · four machines</p>
+        <h2 id="lanes-hero-title">Session lane correlates — never nests — chrome and concept</h2>
+        <p class="hero-sub">
+          Archive filenames stay <code>&lt;t&gt;-&lt;lane&gt;-&lt;slug&gt;</code>. Chrome Domain,
+          ConceptDomain, and commit scope are separate machines; this board shows reviewed
+          correlations only.
+        </p>
+        <div class="portal-hero-meta">
+          <span id="lanes-gate" class="portal-gate" aria-live="polite">…</span>
+          <span id="lanes-meta" class="portal-baked">loading…</span>
+          <div class="portal-source-links" aria-label="Related artifacts">
+            <a href="/registry/workspace-lane-map.json">workspace-lane-map.json</a>
+            <a href="/portal/concepts/">concepts</a>
+            <a href="/portal/glossary/">glossary</a>
           </div>
         </div>
-        <div id="fx-commands" aria-label="Handshake commands"></div>
       </section>
 
-      <section class="portal-panel" aria-labelledby="fx-table-title">
+      <div id="lanes-error" hidden></div>
+      <div id="lanes-stats" class="portal-stat-grid" aria-label="Taxonomy summary"></div>
+
+      <section class="portal-panel" aria-labelledby="lanes-table-title">
         <div class="portal-panel-head">
           <div>
-            <h2 id="fx-table-title">Partners</h2>
+            <h2 id="lanes-table-title">Correlations</h2>
             <p class="portal-panel-desc">
-              Shareable filters via URL hash · click stats to filter · open a CODE on Partners.
+              Session archive lane → chrome Domain → ConceptDomain · commit scope hints only ·
+              <code data-copy>bun run workspace-taxonomy:bake</code>
             </p>
           </div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <span class="portal-count" id="fx-count">…</span>
-            <button type="button" class="portal-clear" id="fx-clear" disabled>Clear filters</button>
+          <div style="display: flex; gap: 8px; align-items: center">
+            <span class="portal-count" id="lanes-count">…</span>
+            <button type="button" class="portal-clear" id="lanes-clear" disabled>Clear filters</button>
           </div>
         </div>
         <div class="portal-toolbar">
           <label>
             Search
-            <input type="search" id="fx-q" placeholder="CODE, call sign, next step…" aria-label="Search partners" />
+            <input
+              id="lanes-q"
+              type="search"
+              placeholder="Filter lane / domain / rationale…"
+              aria-label="Search correlations"
+            />
           </label>
           <label>
-            Phase
-            <select id="fx-phase" aria-label="Filter by phase">
-              <option value="">all phases</option>
-              <option value="operator_ready">operator_ready</option>
-              <option value="forum_ready">forum_ready</option>
-              <option value="designated">designated</option>
-              <option value="blocked">blocked / handshake fail</option>
-              <option value="invite_gap">invite gap</option>
-              <option value="other">other</option>
+            Chrome
+            <select id="lanes-chrome" aria-label="Filter by chrome Domain">
+              <option value="">all chrome</option>
             </select>
           </label>
           <label>
-            Attention
-            <select id="fx-attention" aria-label="Filter by attention">
-              <option value="">any</option>
-              <option value="gaps">any gaps</option>
-              <option value="invite">invite issues</option>
-              <option value="verify">verify fails</option>
-              <option value="lanes">lane fails</option>
+            Concept
+            <select id="lanes-concept" aria-label="Filter by ConceptDomain">
+              <option value="">all concepts</option>
             </select>
           </label>
         </div>
@@ -191,60 +162,24 @@
           <table class="portal-table">
             <thead>
               <tr>
-                <th scope="col">Partner</th>
-                <th scope="col">Phase</th>
-                <th scope="col">Membership</th>
-                <th scope="col">Call sign</th>
-                <th scope="col">DM seat</th>
-                <th scope="col">Handshake · verify</th>
-                <th scope="col">Lanes</th>
-                <th scope="col">Invite</th>
-                <th scope="col">Gaps</th>
-                <th scope="col">Next step</th>
+                <th scope="col">Session lane</th>
+                <th scope="col">Chrome domains</th>
+                <th scope="col">Concept domains</th>
+                <th scope="col">Commit scope hints</th>
+                <th scope="col">Rationale</th>
               </tr>
             </thead>
-            <tbody id="fx-body"><tr><td colspan="10" class="dim">Loading…</td></tr></tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="portal-panel" aria-labelledby="fx-tenant-title">
-        <div class="portal-panel-head">
-          <div>
-            <h2 id="fx-tenant-title">Tenant registry packages</h2>
-            <p class="portal-panel-desc" id="fx-tenant-meta">Loading…</p>
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table class="portal-table">
-            <thead>
+            <tbody id="lanes-rows">
               <tr>
-                <th scope="col">Package</th>
-                <th scope="col">Latest</th>
-                <th scope="col">Versions</th>
+                <td colspan="5" class="dim">Loading…</td>
               </tr>
-            </thead>
-            <tbody id="fx-tenant-body"><tr><td colspan="3" class="dim">…</td></tr></tbody>
+            </tbody>
           </table>
         </div>
       </section>
-    </div>
-  </main>
+    </main>
 
-  <notification-center aria-live="polite"></notification-center>
-
-  <script type="module" src="/portal/data.js"></script>
-  <script type="module" src="/portal/factory/factory-board.js"></script>
-  <script type="module" src="/portal/topbar.js"></script>
-  <script type="module" src="/portal/components/sidebar.js"></script>
-  <script type="module" src="/portal/components/notification.js"></script>
-  <script type="module" src="/portal/components/footer.js"></script>
-  <script type="module">
-    import { bootGlossaryUx } from '/portal/components/glossary-ux.js';
-    bootGlossaryUx({ scrollSections: false });
-  </script>
-
-  <footer class="footer" data-portal-chrome="footer">
+    <footer class="footer" data-portal-chrome="footer">
     <p>
       <strong>FactoryWager</strong> ·
       <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
@@ -275,5 +210,12 @@
       · <span data-footer-ts>…</span>
     </p>
   </footer>
-</body>
+
+    <script type="module" src="/portal/data.js"></script>
+    <script type="module" src="/portal/topbar.js"></script>
+    <script type="module" src="/portal/components/sidebar.js"></script>
+    <script type="module" src="/portal/components/footer.js"></script>
+    <script type="module" src="/portal/copy-cli.js"></script>
+    <script type="module" src="/portal/lanes/lanes-board.js"></script>
+  </body>
 </html>

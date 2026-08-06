@@ -38,3 +38,8 @@ When opening or triaging a ticket:
 2. Set **Tracker** when closing a tenant residual (`BM-*`, etc.).
 3. Set **Concept** only if vocabulary/wire chrome moves — then `concept:audit --strict`.
 4. Prove the fix with **Claim → evidence** on the PR, not by closing the issue alone.
+5. When naming a Reasonix session rename or quarantine/scratch artifact, use
+   **session archive lane** from
+   [`naming-grammar.md`](../organization/naming-grammar.md) — do not reuse the
+   issue **Domain** field as the filename `<lane>`. Homonyms:
+   [`workspace-lane-cross-map.md`](tenants/workspace-lane-cross-map.md).

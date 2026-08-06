@@ -1,0 +1,317 @@
+{
+  "kind": "workspace-lane-map",
+  "schemaVersion": 1,
+  "claim": "workspace-lane-cross-map",
+  "bakedAt": "2026-08-06T18:30:59.325Z",
+  "principle": "correlations-not-containment",
+  "sessionLanes": [
+    {
+      "id": "harness-infra",
+      "display": "harness/infra",
+      "description": "Remote SSH/staging, config, proof pipeline, verification ratchets, hooks, architecture review"
+    },
+    {
+      "id": "partner",
+      "display": "partner",
+      "description": "Limits detection, accounting/ledger, onboarding, Fantasy402, partner domain map"
+    },
+    {
+      "id": "portal-ui",
+      "display": "portal/UI",
+      "description": "HTML designs, ops portal tables/cards, registry/package cards dashboard"
+    },
+    {
+      "id": "concepts",
+      "display": "concepts",
+      "description": "Concept audit / graph / health dashboard proposals"
+    },
+    {
+      "id": "tennis-hq",
+      "display": "tennis-hq",
+      "description": "Tennis HQ producer/runtime PR review and site checks"
+    },
+    {
+      "id": "git-ops-meta",
+      "display": "git-ops / meta",
+      "description": "Main rebase, bun:ci sync, commit summaries, session archive map"
+    },
+    {
+      "id": "docs",
+      "display": "docs",
+      "description": "Documentation translation and doc-map hygiene"
+    },
+    {
+      "id": "bugfix",
+      "display": "bugfix",
+      "description": "Generic bug hunt sessions"
+    },
+    {
+      "id": "empty-misc",
+      "display": "empty / misc",
+      "description": "Casual Q&A and misc zero-product sessions"
+    }
+  ],
+  "chromeDomains": [
+    {
+      "id": "partner",
+      "label": "Partner desk",
+      "description": "Package groups · account dossier · limit raises · bookmakers · Factory Telegram · seat capital",
+      "doc": "docs/harness/tenants/partner-domain-map.md"
+    },
+    {
+      "id": "trading",
+      "label": "Trading",
+      "description": "Tennis HQ runtime · prediction reports · live desk metrics",
+      "doc": "docs/harness/tenants/tennis-hq-registry.md"
+    },
+    {
+      "id": "control",
+      "label": "Control loop",
+      "description": "Ops snapshot · TOC · dashboard · monitoring · compliance (MA/NJ)",
+      "doc": "docs/harness/tenants/ops-loop-throughput.md"
+    },
+    {
+      "id": "identity",
+      "label": "Identity & secrets",
+      "description": "Auth board · vault · env inject · lockout / geo / JIT",
+      "doc": "lib/identity/README.md"
+    },
+    {
+      "id": "knowledge",
+      "label": "Knowledge",
+      "description": "Glossary · concepts · brands · catalog · surfaces · skills",
+      "doc": "docs/portal-foundation.md"
+    },
+    {
+      "id": "platform",
+      "label": "Platform",
+      "description": "Packages graph · health · DOD · wiki hub",
+      "doc": "docs/harness/AUTHORITY.md"
+    }
+  ],
+  "conceptDomains": [
+    {
+      "id": "accounting",
+      "label": "Accounting",
+      "description": "Ledger, settlements, P&L, deposits/withdrawals"
+    },
+    {
+      "id": "trading",
+      "label": "Trading",
+      "description": "Bet execution, order management, pricing"
+    },
+    {
+      "id": "compliance",
+      "label": "Compliance",
+      "description": "Jurisdiction policies, KYC, limits, AML"
+    },
+    {
+      "id": "partners",
+      "label": "Partners",
+      "description": "Partner onboarding, profiles, outs, seat desks"
+    },
+    {
+      "id": "telegram",
+      "label": "Telegram",
+      "description": "Notifications, bots, forum topics, handshake"
+    },
+    {
+      "id": "portal",
+      "label": "Portal",
+      "description": "UI chrome, navigation, surfaces"
+    },
+    {
+      "id": "registry",
+      "label": "Registry",
+      "description": "Artifact registry, packages, proofs"
+    },
+    {
+      "id": "operations",
+      "label": "Operations",
+      "description": "Ops tooling, CI, governance, monitoring"
+    },
+    {
+      "id": "analytics",
+      "label": "Analytics",
+      "description": "Metrics, reporting, dashboards"
+    },
+    {
+      "id": "infrastructure",
+      "label": "Infrastructure",
+      "description": "Deployment, networking, security"
+    },
+    {
+      "id": "data",
+      "label": "Data",
+      "description": "Data pipelines, warehouses, schemas"
+    },
+    {
+      "id": "research",
+      "label": "Research",
+      "description": "Model training, signals, edge calculations"
+    },
+    {
+      "id": "marketdata",
+      "label": "Market Data",
+      "description": "Live odds, price feeds, venue data"
+    },
+    {
+      "id": "warehouse",
+      "label": "Warehouse",
+      "description": "Archival, snapshots, historical data"
+    },
+    {
+      "id": "tbd",
+      "label": "TBD",
+      "description": "Unknown / to be determined"
+    }
+  ],
+  "correlations": [
+    {
+      "sessionLane": "harness-infra",
+      "chromeDomains": [
+        "platform",
+        "knowledge"
+      ],
+      "conceptDomains": [
+        "operations",
+        "infrastructure",
+        "registry"
+      ],
+      "commitScopeHints": [
+        "harness",
+        "ci",
+        "lib",
+        "bun"
+      ],
+      "rationale": "Proof/config/hooks sessions usually land on platform chrome and operations/infrastructure concept ownership."
+    },
+    {
+      "sessionLane": "partner",
+      "chromeDomains": [
+        "partner"
+      ],
+      "conceptDomains": [
+        "partners",
+        "accounting",
+        "telegram"
+      ],
+      "commitScopeHints": [
+        "ops",
+        "partners",
+        "partner"
+      ],
+      "rationale": "Partner desk chats correlate to chrome partner Domain; meaning often spans partners/accounting/telegram ConceptDomains."
+    },
+    {
+      "sessionLane": "portal-ui",
+      "chromeDomains": [
+        "knowledge",
+        "platform"
+      ],
+      "conceptDomains": [
+        "portal"
+      ],
+      "commitScopeHints": [
+        "portal",
+        "ui"
+      ],
+      "rationale": "Static portal HTML/UX work is portal ConceptDomain; chrome routing often knowledge or platform."
+    },
+    {
+      "sessionLane": "concepts",
+      "chromeDomains": [
+        "knowledge"
+      ],
+      "conceptDomains": [
+        "portal",
+        "registry",
+        "tbd"
+      ],
+      "commitScopeHints": [
+        "concepts",
+        "glossary",
+        "portal"
+      ],
+      "rationale": "Vocabulary/graph sessions sit under knowledge chrome; ConceptDomain varies by topic (often portal/registry)."
+    },
+    {
+      "sessionLane": "tennis-hq",
+      "chromeDomains": [
+        "trading"
+      ],
+      "conceptDomains": [
+        "trading",
+        "marketdata",
+        "research"
+      ],
+      "commitScopeHints": [
+        "tennis",
+        "sports-terminal"
+      ],
+      "rationale": "Tennis HQ producer/runtime aligns with trading chrome Domain and trading/marketdata concepts."
+    },
+    {
+      "sessionLane": "git-ops-meta",
+      "chromeDomains": [
+        "platform"
+      ],
+      "conceptDomains": [
+        "operations"
+      ],
+      "commitScopeHints": [
+        "chore",
+        "docs",
+        "organization"
+      ],
+      "rationale": "Rebase/ci/session-map meta work is platform chrome; operations ConceptDomain for tooling ownership."
+    },
+    {
+      "sessionLane": "docs",
+      "chromeDomains": [
+        "knowledge",
+        "platform"
+      ],
+      "conceptDomains": [
+        "portal",
+        "operations"
+      ],
+      "commitScopeHints": [
+        "docs",
+        "organization",
+        "harness"
+      ],
+      "rationale": "Doc translation/hygiene spans knowledge boards and platform authority docs."
+    },
+    {
+      "sessionLane": "bugfix",
+      "chromeDomains": [
+        "platform"
+      ],
+      "conceptDomains": [
+        "tbd",
+        "operations"
+      ],
+      "commitScopeHints": [
+        "fix"
+      ],
+      "rationale": "Generic bug hunts have no stable product Domain; default platform chrome and tbd until scoped."
+    },
+    {
+      "sessionLane": "empty-misc",
+      "chromeDomains": [],
+      "conceptDomains": [
+        "tbd"
+      ],
+      "commitScopeHints": [],
+      "rationale": "Casual/empty sessions do not imply product Domain or commit scope."
+    }
+  ],
+  "docs": {
+    "tenant": "docs/harness/tenants/workspace-lane-cross-map.md",
+    "namingGrammar": "docs/organization/naming-grammar.md",
+    "domainConceptShape": "docs/DOMAIN_CONCEPT_SHAPE.md",
+    "issueRouting": "docs/harness/ISSUE-ROUTING.md",
+    "lib": "lib/docs/workspace-taxonomy.ts"
+  }
+}

@@ -37,6 +37,14 @@ domain, and a concept identifier does not by itself prove a valid runtime shape.
 - **Surface** is a consumer: portal board, endpoint, registry artifact, CLI, or
   operator workflow. Derived bakes are evidence and delivery artifacts, not the
   source of meaning.
+- **Session archive lane** (`partner`, `portal-ui`, `harness-infra`, …) is a
+  Reasonix chat/history filter — not a `ConceptDomain` and not a chrome Domain
+  lane. See [`naming-grammar.md`](organization/naming-grammar.md) and claim
+  `workspace-lane-cross-map`.
+- **Chrome Domain lane** (`partner` · `control` · `trading` · …) is issue/PR
+  routing and portal desk filter — orthogonal to ConceptDomain ownership.
+- **Commit scope** in `type(scope):` is an open git-history hint — not a frozen
+  child of session lane or ConceptDomain.
 
 ## Agent workflow
 

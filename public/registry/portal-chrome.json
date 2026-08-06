@@ -1,26 +1,26 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-08-06T04:14:03.369Z",
+  "generated": "2026-08-06T18:32:03.262Z",
   "path": "/registry/portal-chrome.json",
   "runtime": {
-    "bunVersion": "1.4.0",
-    "bunRevision": "3f93daaf"
+    "bunVersion": "1.3.14",
+    "bunRevision": "0d9b296a"
   },
   "summary": {
     "priorityNav": 6,
-    "overflowNav": 26,
+    "overflowNav": 27,
     "footerLinks": 21,
     "components": 21,
     "scripts": 6,
     "badgeSources": 6,
     "unlistedSurfaces": 8,
-    "boardCoverage": 40,
+    "boardCoverage": 41,
     "domainLanes": 6,
     "groups": {
       "ops": 16,
       "harness": 1,
-      "registry": 10,
+      "registry": 11,
       "secrets": 2,
       "plane": 1,
       "other": 2
@@ -146,6 +146,17 @@
       "note": "market · model · trading · warehouse · pipeline concepts",
       "cli": "bun run glossary:portal",
       "registryArtifact": "/registry/domain-glossary.json"
+    },
+    {
+      "id": "lanes",
+      "label": "Lanes",
+      "href": "/portal/lanes/",
+      "tier": "overflow",
+      "group": "registry",
+      "domain": "knowledge",
+      "note": "session · chrome · concept crosswalk · correlations not containment",
+      "cli": "bun run workspace-taxonomy:bake",
+      "registryArtifact": "/registry/workspace-lane-map.json"
     },
     {
       "id": "issues",
@@ -784,6 +795,14 @@
       "label": "Glossary"
     },
     {
+      "id": "lanes",
+      "href": "/portal/lanes/",
+      "tier": "overflow",
+      "group": "registry",
+      "domain": "knowledge",
+      "label": "Lanes"
+    },
+    {
       "id": "issues",
       "href": "/portal/issues/",
       "tier": "overflow",
@@ -1060,6 +1079,7 @@
         "catalog",
         "brands",
         "glossary",
+        "lanes",
         "issues",
         "surfaces",
         "skills",

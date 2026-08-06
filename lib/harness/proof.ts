@@ -125,6 +125,25 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'runtime-tooling',
   },
   {
+    id: 'workspace-lane-cross-map',
+    claim:
+      'Session archive lane ↔ chrome Domain ↔ ConceptDomain correlations bake to workspace-lane-map.json (not containment)',
+    kinds: ['unit'],
+    gateClass: 'human-only',
+    gateRef: 'bun test tests/workspace-taxonomy.test.ts',
+    evidence: [
+      'bun test tests/workspace-taxonomy.test.ts',
+      'bun run workspace-taxonomy:check',
+      'lib/docs/workspace-taxonomy.ts',
+      'docs/harness/tenants/workspace-lane-cross-map.md',
+      'public/portal/lanes/',
+      'public/registry/workspace-lane-map.json',
+    ],
+    freshRerun: 'bun test tests/workspace-taxonomy.test.ts && bun run workspace-taxonomy:check',
+    freshRerunKind: 'claim',
+    owner: 'platform / harness',
+  },
+  {
     id: 'install-verify',
     claim: 'Factory install produces a working Bun workspace',
     kinds: ['journey', 'deployed'],

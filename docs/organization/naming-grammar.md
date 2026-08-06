@@ -58,6 +58,23 @@ Display form (tables) ↔ kebab form (filenames):
 Add a lane only when a new durable workstream needs filterability — do not
 invent per-file lanes.
 
+## Scope vs lane
+
+Archive filenames encode **session lane** only. Finer product cuts are not a
+fourth token:
+
+| Word people say | Machine | Where it lives |
+| --------------- | ------- | -------------- |
+| lane (chat/archive) | Session archive lane | this grammar · [`session-organization.md`](session-organization.md) |
+| Domain (issue/PR) | Chrome Domain lane | [`ISSUE-ROUTING.md`](../harness/ISSUE-ROUTING.md) · `PORTAL_DOMAIN_LANE_META` |
+| domain (meaning) | ConceptDomain | [`DOMAIN_CONCEPT_SHAPE.md`](../DOMAIN_CONCEPT_SHAPE.md) · `concept-domains.ts` |
+| scope (commit) | Conventional commit scope | `type(scope):` — open set |
+
+Crosswalk (correlations, not nesting):
+[`docs/harness/tenants/workspace-lane-cross-map.md`](../harness/tenants/workspace-lane-cross-map.md)
+· [`lib/docs/workspace-taxonomy.ts`](../../lib/docs/workspace-taxonomy.ts) ·
+`/portal/lanes/`.
+
 ## Where to use / not use
 
 | Surface                                 | Use?      | Instead                                                                  |
