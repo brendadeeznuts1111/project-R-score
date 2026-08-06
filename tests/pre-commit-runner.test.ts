@@ -3,6 +3,8 @@ import {
   checkBunPin,
   isConceptSsotPath,
   isPartnerDashboardPlanPath,
+  isPartnerDomainInventorySsotPath,
+  isPartnerDomainLintPath,
   isPartnerWireInventorySsotPath,
   isPartnerWireLintPath,
   isSkillValidationPath,
@@ -61,6 +63,22 @@ describe('pre-commit path gates', () => {
     expect(isPartnerWireInventorySsotPath('lib/foo.ts')).toBe(false);
   });
 
+  it('selects partner domain-lint paths', () => {
+    expect(isPartnerDomainLintPath('lib/foo.ts')).toBe(true);
+    expect(isPartnerDomainLintPath('x.tsx')).toBe(true);
+    expect(isPartnerDomainLintPath('public/registry/partner-surface-inventory.json')).toBe(true);
+    expect(isPartnerDomainLintPath('docs/design/partner-surface-inventory.md')).toBe(true);
+    expect(isPartnerDomainLintPath('docs/design/partner-surface-inventory.generated.md')).toBe(
+      true
+    );
+    expect(isPartnerDomainLintPath('docs/README.md')).toBe(false);
+    expect(isPartnerDomainInventorySsotPath('lib/docs/partner-surface-domain-lint.ts')).toBe(true);
+    expect(isPartnerDomainInventorySsotPath('scripts/validate-partner-domain-isolation.ts')).toBe(
+      true
+    );
+    expect(isPartnerDomainInventorySsotPath('lib/foo.ts')).toBe(false);
+  });
+
   it('selects partner dashboard semantic plan paths', () => {
     expect(isPartnerDashboardPlanPath('docs/design/partner-dashboard-mvp.toml')).toBe(true);
     expect(isPartnerDashboardPlanPath('docs/design/partner-dashboard-semantic-map.md')).toBe(true);
@@ -87,12 +105,14 @@ describe('pre-commit environment', () => {
         SKIP_QUALITY_CONCEPT: '0',
         SKIP_TEST_CHANGED: '1',
         SKIP_WIRE_LINT: '1',
+        SKIP_DOMAIN_LINT: '1',
       })
     ).toEqual({
       skipGitleaks: true,
       skipQualityConcept: false,
       skipTestChanged: true,
       skipWireLint: true,
+      skipDomainLint: true,
     });
   });
 });

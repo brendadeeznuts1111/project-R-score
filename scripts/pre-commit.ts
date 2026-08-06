@@ -34,6 +34,7 @@ export type PrecommitEnvironment = {
   skipQualityConcept: boolean;
   skipTestChanged: boolean;
   skipWireLint: boolean;
+  skipDomainLint: boolean;
 };
 
 export function readPrecommitEnvironment(env: Environment = Bun.env): PrecommitEnvironment {
@@ -42,6 +43,7 @@ export function readPrecommitEnvironment(env: Environment = Bun.env): PrecommitE
     skipQualityConcept: env.SKIP_QUALITY_CONCEPT === '1',
     skipTestChanged: env.SKIP_TEST_CHANGED === '1',
     skipWireLint: env.SKIP_WIRE_LINT === '1',
+    skipDomainLint: env.SKIP_DOMAIN_LINT === '1',
   };
 }
 
@@ -80,6 +82,29 @@ export function isPartnerWireInventorySsotPath(path: string): boolean {
     path === 'lib/docs/partner-surface-inventory.ts' ||
     path === 'lib/docs/partner-surface-wire-lint.ts' ||
     path === 'scripts/validate-wire-traps.ts' ||
+    path === 'public/registry/partner-surface-inventory.json'
+  );
+}
+
+/** Staged paths that should trigger partner-surface domain isolation lint (Layer D). */
+export function isPartnerDomainLintPath(path: string): boolean {
+  if (/\.(ts|tsx)$/.test(path)) return true;
+  return (
+    path === 'public/registry/partner-surface-inventory.json' ||
+    path === 'docs/design/partner-surface-inventory.md' ||
+    path === 'docs/design/partner-surface-inventory.generated.md'
+  );
+}
+
+/**
+ * Domain-lint SSOT paths — when staged, also pass --strict so out-of-home brand
+ * type uses fail the commit. Ordinary .ts commits use --scan only (warn default).
+ */
+export function isPartnerDomainInventorySsotPath(path: string): boolean {
+  return (
+    path === 'lib/docs/partner-surface-inventory.ts' ||
+    path === 'lib/docs/partner-surface-domain-lint.ts' ||
+    path === 'scripts/validate-partner-domain-isolation.ts' ||
     path === 'public/registry/partner-surface-inventory.json'
   );
 }
@@ -318,6 +343,31 @@ export async function runPrecommit(args: string[] = Bun.argv.slice(2)): Promise<
     }
   } else {
     console.info('  ⏭️  no staged .ts/.tsx or partner-surface inventory — skip wire lint');
+  }
+
+  section('partner-surface domain lint (path-gated)');
+  if (environment.skipDomainLint) {
+    console.info('  ⏭️  SKIP_DOMAIN_LINT=1');
+  } else if (stagedFiles.some(isPartnerDomainLintPath)) {
+    const strict = stagedFiles.some(isPartnerDomainInventorySsotPath);
+    const domainCmd = [
+      'bun',
+      'scripts/validate-partner-domain-isolation.ts',
+      '--scan',
+      ...(strict ? (['--strict'] as const) : []),
+    ];
+    if (dryRun) {
+      console.info(`  [dry-run] ${domainCmd.join(' ')}`);
+    } else {
+      const code = await requireCommand(
+        [...domainCmd],
+        '❌ Domain lint failed. Keep inventory brand types in home globs, expand homes on the brand bag, or SKIP_DOMAIN_LINT=1 with reason in commit message.\n' +
+          '   Help: bun scripts/validate-partner-domain-isolation.ts --hlp · Rules: … --rules'
+      );
+      if (code !== 0) return code;
+    }
+  } else {
+    console.info('  ⏭️  no staged .ts/.tsx or partner-surface inventory — skip domain lint');
   }
 
   console.info(

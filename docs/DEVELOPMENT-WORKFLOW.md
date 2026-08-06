@@ -78,6 +78,7 @@ commit.
 | `SKIP_QUALITY_CONCEPT=1` | Concept SSOT is staged but the gate fails for a **documented** exception (foreign-lane surface drift, temporary env mismatch, known allowlist work in flight). | Reference issue/PR or owner lane; prefer fixing or narrowing the gate over skipping. |
 | `SKIP_GITLEAKS=1` | Rare — false positive credential scan (e.g. test fixture with a clearly fake secret). | Explain why the match is not a real secret. |
 | `SKIP_WIRE_LINT=1` | Partner-surface wire lint (`lint-wires`) false-fails — e.g. empty nested checkout while proving unrelated `.ts`, or inventory globs in flight. Prefer `// wire-ok: <reason>` or `boundaryPathGlobs`. | Local `bun scripts/validate-wire-traps.ts --scan` (and `--strict-globs` when inventory SSOT staged) plus why the hit is not yours. |
+| `SKIP_DOMAIN_LINT=1` | Partner-surface domain isolation lint (`lint-domains`) false-fails — e.g. temporary out-of-home brand use while expanding home globs, or SSOT `--strict` noise from another lane. Prefer fixing homes on the brand bag. | Local `bun scripts/validate-partner-domain-isolation.ts --scan` (and `--strict` when domain-lint SSOT staged) plus why the hit is not yours. |
 
 **Usage example:**
 

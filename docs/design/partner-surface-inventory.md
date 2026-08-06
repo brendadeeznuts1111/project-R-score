@@ -126,6 +126,12 @@ bun scripts/validate-partner-domain-isolation.ts --rules
 bun scripts/validate-partner-domain-isolation.ts --scan --strict
 ```
 
+Pre-commit (`scripts/pre-commit.ts`): runs Layer D `--scan` when staged
+`.ts`/`.tsx` or inventory bake/doc changes; adds `--strict` when domain-lint
+SSOT is staged (`partner-surface-inventory.ts` · `partner-surface-domain-lint.ts`
+· `validate-partner-domain-isolation.ts` · inventory JSON). Escape:
+`SKIP_DOMAIN_LINT=1` (reason in commit message).
+
 Registry bag notes:
 
 - `conceptIds` are glossary / relatedConcept refs (may include `*`) — **not**
