@@ -116,11 +116,21 @@ Example: session #15 → `20260802-2351-partner-accounting-integration-bake.json
   conflict), tennis-hq producer PR review, and HTML design edits.
 - **08-06 (recent):** two HTML/`Bun.color` design sessions, a casual philosophy
   Q&A, and this session.
+- **08-06 (afternoon delivery):** lane hygiene + product holds —
+  project-R-score anchor-stability (#459); king portal tennis redirect + desk
+  UI (#14); toc-ops Soft play odds/`book_type` DATA_MODEL 2.31 (#204). Local
+  `artifacts/worktree-quarantine/20260806/` cleaned: discarded orphaned
+  sports-terminal `jwt.ts` hold; landed king/toc-ops snapshots removed; only
+  plum→king `partners/signal` draft remains.
 
 ## Housekeeping recommendations
 
 - **Deleted (empty, zero turns) — 2026-08-06:** `20260722-122910…` and
   `20260804-143051…` moved to Reasonix `.trash/` (0-byte `*.jsonl`).
+- **Quarantine — 2026-08-06 afternoon:** discarded
+  `sports-terminal-jwt-untracked` (auth middleware already verifies via jose);
+  removed landed king/toc-ops patch snapshots from
+  `artifacts/worktree-quarantine/20260806/` (gitignored local holds).
 - **Likely complete — can archive:** #1 (guide review), #5 (staging fix +
   ratchet), #9 (partner domain map committed), #15 (accounting integration
   proven end-to-end), #23 (rebase done), #26 (PR reviewed for merge).
