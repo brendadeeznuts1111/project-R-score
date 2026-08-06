@@ -395,6 +395,7 @@ artifacts/reports/
 /artifacts/browser/
 /artifacts/phase2-hero.webp
 /artifacts/root-hygiene/
+/artifacts/worktree-quarantine/
 /artifacts/snapshots/
 # reports/ already ignored above (harness-gate-timing · ci-*-timing · inventories)
 
