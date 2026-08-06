@@ -440,7 +440,12 @@ fetches oven-sh/bun `packages/bun-types` into `.cache/` (or `--prefer-local`
 on policy breach; reports under `.cache/bun-types-tip-diff/`.
 **Usage (Phase 4):** `bun run bun:types-usage` / `:unused` cross-references
 inventory type-likes (class/interface/type) with codebase chains, type
-positions, and `from "bun"` imports → `.cache/bun-types-usage/`
+positions, and `from "bun"` imports → `.cache/bun-types-usage/`.
+**Changelog (Phase 5):** `bun run bun:types-changelog` · `:tip` diffs two
+inventory snapshots (or pin vs tip types) into Added/Removed/Changed under
+`.cache/bun-types-changelog/`. **Wired:** `bun:types-inventory:tip-diff` always
+emits that changelog (unless `--no-changelog`). **Full stack:**
+`bun run bun:types-report` · `:local` runs tip-diff+changelog then usage.
 
 Operate loop (feeds → scrape → catalog with embedded `releaseHits` → integrity):
 [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · **daily**
