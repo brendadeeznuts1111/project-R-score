@@ -378,6 +378,9 @@ projects/archive/lazycodex/
 # Grok / agent git worktrees nested under the primary checkout (lane hygiene)
 .worktrees/
 /.worktrees/
+# Codex/agent nested worktrees (often other remotes: plum / Kalshi-bot / king-zippy)
+.codex-worktrees/
+/.codex-worktrees/
 herdr-worktrees/
 /~/
 /index.html

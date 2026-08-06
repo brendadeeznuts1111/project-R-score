@@ -199,6 +199,8 @@ On disk under `~/Projects` but **not** platform SSOT — gitignored, excluded, o
 | `kimi-toolchain` | symlink | filesystem | `…/kimi-toolchain` (outside tree) | `nested-park` | → `~/kimi-toolchain` |
 | `projects/active/kimiremote/`, `…/enterprise/{cascade-mover-v3,bet-ticker-worker-v1.1}/`, `…/f402-openapi/` | nested under active | own remotes | own | `nested-park` | Path convenience only |
 | Root `herdr-worktrees/`, `profiles/`, `bun-write-test/`, `test-*-*`, `test-binary-*`, `**/sports-terminal-{before,after}` | local parking | — | — | `meta` | Delete if reappear |
+| `.worktrees/` | git worktrees (this repo) | filesystem | `project-R-score` feat lanes | `meta` | Gitignored; `git worktree list` |
+| `.codex-worktrees/` | nested worktrees | filesystem | often other remotes | `meta` | Gitignored; not in this repo's `git worktree list` — checkouts of plum / Kalshi-bot / king-zippy etc. |
 
 Related (not root files): `lib/channels/` → `ops-outbox`; `tools/verify-channel.ts` → `verify-channel`.
 
@@ -255,6 +257,7 @@ Detail: [`docs/organization/HOMEBASE_DISCOVERY.md`](docs/organization/HOMEBASE_D
 - Further freezes under `projects/archive/` as packages leave the install graph.
 - Curate remaining `scratch/bun-v1.3.9-examples/`.
 - Optional: physical move of root-parked nested repos out of `~/Projects` entirely.
+- Prune idle `.codex-worktrees/*` checkouts when their product remotes no longer need a local lane (they are not FactoryWager `git worktree` entries).
 Session archive map: [`docs/organization/session-organization.md`](docs/organization/session-organization.md).
 
 Maintained by the platform team. Run `bun run dashboard` for live views, or use active CLIs under [`tools/cli/`](tools/cli/) (e.g. `endpoint-status.ts`).
