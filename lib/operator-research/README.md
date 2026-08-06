@@ -10,7 +10,7 @@ portal agent-odds surfaces. HTTP ingress and static delivery remain under
 | [`odds/`](./odds/)                                          | Bun-native live odds pipeline: prewarm, fetch, diff, store, patterns, cron, WS |
 | [`odds/scheduler.ts`](./odds/scheduler.ts)                  | In-process `Bun.cron` odds monitor (1.3.12+)                                   |
 | [`desk-jobs.ts`](./desk-jobs.ts)                            | `GET /api/system/jobs` snapshot for `agent serve`                              |
-| [`registry-desk.ts`](./registry-desk.ts)                    | Phase 0 registry browse/publish helpers (snapshot + CSRF publish)              |
+| [`registry-desk.ts`](./registry-desk.ts)                    | Registry browse/publish (snapshot · optional live packument · CSRF publish)    |
 | [`matching/`](./matching/)                                  | Cross-book matching, line movement, arbitrage, alerts                          |
 | [`normalization/`](./normalization/)                        | Odds format conversion, team/market seed store                                 |
 | [`doctor.ts`](./doctor.ts) · [`platform.ts`](./platform.ts) | Runtime/capability checks (`Bun.WebView` via `await using`)                    |

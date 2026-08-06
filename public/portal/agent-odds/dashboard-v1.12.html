@@ -248,9 +248,13 @@
             <option value="prod">prod</option>
           </select>
           <button id="registryRefreshHealth" class="btn btn-sm">↻ Health</button>
+          <label class="text-muted" style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input type="checkbox" id="registryLivePackument" />
+            Live packument
+          </label>
           <span class="text-muted" id="registryUrlDisplay">—</span>
         </div>
-        <div id="registryStatus" class="text-muted">Phase 0 browse uses public/registry/registry.json (factory:snapshot / ops:snapshot).</div>
+        <div id="registryStatus" class="text-muted">Browse uses public/registry/registry.json; enable Live packument for allowlisted registry fetch.</div>
       </div>
     </div>
     <div class="card">
@@ -994,6 +998,7 @@ function switchTab(tabId) {
 // ──────────────────────────────────────────────────────────────
 let registryPreset = 'local';
 let registryPresets = [];
+let registryLivePackument = false;
 let registryDetailName = '';
 let registryDetailVersion = '';
 let registryDetailReadme = '';
@@ -1152,6 +1157,8 @@ async function openRegistryDetail(name, highlightVersion) {
   registryDetailReadmeHtml = '';
   registryReadmeView = 'rendered';
   if (highlightVersion) registryDetailVersion = highlightVersion;
+  const liveCb = document.getElementById('registryLivePackument');
+  if (liveCb) registryLivePackument = !!liveCb.checked;
   const modal = document.getElementById('registryDetailModal');
   const copyReadmeBtn = document.getElementById('registryDetailCopyReadme');
   if (copyReadmeBtn) copyReadmeBtn.style.display = 'none';
@@ -1159,11 +1166,16 @@ async function openRegistryDetail(name, highlightVersion) {
   document.getElementById('registryDetailBody').textContent = 'Loading…';
   modal.classList.add('active');
   try {
-    const verQ = highlightVersion || registryDetailVersion
-      ? `?version=${encodeURIComponent(highlightVersion || registryDetailVersion)}`
-      : '';
+    const qs = new URLSearchParams();
+    const ver = highlightVersion || registryDetailVersion;
+    if (ver) qs.set('version', ver);
+    if (registryLivePackument) {
+      qs.set('live', '1');
+      qs.set('preset', registryPreset || 'local');
+    }
+    const qStr = qs.toString() ? `?${qs}` : '';
     const detail = await apiJson(
-      `/api/registry/packages/${name.split('/').map(encodeURIComponent).join('/')}${verQ}`
+      `/api/registry/packages/${name.split('/').map(encodeURIComponent).join('/')}${qStr}`
     );
     const highlight = registryDetailVersion || highlightVersion || '';
     const selected = detail.selectedVersion || detail.latest || '';
@@ -1213,7 +1225,11 @@ async function openRegistryDetail(name, highlightVersion) {
         ${st.checksum ? ' · sha ' + esc(String(st.checksum).slice(0, 16)) + '…' : ''}</p>
       ${highlight ? `<p class="text-muted">Deep link version: <code>${esc(highlight)}</code></p>` : ''}
       ${readmeBlock}
-      <p class="text-muted" style="margin-top:8px;">Phase 0: snapshot only (not live packument).</p>`;
+      <p class="text-muted" style="margin-top:8px;">
+        Source: <strong>${esc(detail.source || 'snapshot')}</strong>
+        ${detail.preset ? ` · preset <code>${esc(detail.preset)}</code>` : ''}
+        ${detail.liveError ? ` · live error: ${esc(detail.liveError)}` : ''}
+      </p>`;
     if (hasReadme) {
       paintRegistryReadmeBody();
       document.querySelectorAll('[data-readme-view]').forEach(btn => {
@@ -1331,10 +1347,16 @@ function handleRegistryDeepLink() {
   const reg = params.get('registry');
   const pkg = params.get('package');
   const version = params.get('version') || '';
+  const live = params.get('live') === '1' || params.get('live') === 'true';
   if (reg === 'local' || reg === 'prod') {
     registryPreset = reg;
     const sel = document.getElementById('registryPreset');
     if (sel) sel.value = reg;
+  }
+  if (live) {
+    registryLivePackument = true;
+    const cb = document.getElementById('registryLivePackument');
+    if (cb) cb.checked = true;
   }
   if (tab === 'registry' || reg || pkg) {
     switchTab('registry');
@@ -1613,6 +1635,9 @@ document.getElementById('registryPreset')?.addEventListener('change', (e) => {
   registryPreset = e.target.value || 'local';
   syncPublishLaneUi();
   loadRegistryHealth();
+});
+document.getElementById('registryLivePackument')?.addEventListener('change', (e) => {
+  registryLivePackument = !!e.target.checked;
 });
 document.getElementById('registryRefreshHealth')?.addEventListener('click', loadRegistryHealth);
 document.getElementById('registrySearchBtn')?.addEventListener('click', () =>

@@ -2,8 +2,8 @@
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 /**
  * Agent desk registry browser + publish helpers.
- * Phase 0: browse/detail from public/registry/registry.json snapshot;
- * local `bun publish --registry`; prod via factory publish (confirm).
+ * Browse: snapshot (default) + optional live npm packument for allowlisted presets.
+ * Publish: local `bun publish --registry`; prod via factory publish (confirm).
  *
  * @see https://bun.com/docs/pm/cli/publish#custom-registry
  * @see https://bun.com/blog/bun-v1.3.14#bun-publish-now-sends-readme-metadata-to-the-registry
@@ -22,6 +22,7 @@ import { ROOT } from './paths.ts';
 
 /** Cap rendered README body size in the desk detail payload. */
 const README_HTML_MAX_CHARS = 120_000;
+const PACKUMENT_TIMEOUT_MS = 4_000;
 
 export type RegistryPresetId = 'local' | 'prod';
 
@@ -68,6 +69,8 @@ export type RegistrySearchHit = {
   description: string;
 };
 
+export type RegistryDetailSource = 'snapshot' | 'live' | 'live+snapshot';
+
 export type RegistryPackageDetail = {
   name: string;
   latest: string | null;
@@ -84,12 +87,27 @@ export type RegistryPackageDetail = {
   readmeFilename?: string;
   /** Server-rendered HTML via Bun.markdown.html (tagFilter). */
   readmeHtml?: string;
+  /** Where version/readme metadata came from. */
+  source?: RegistryDetailSource;
+  /** Preset used for a live fetch attempt. */
+  preset?: RegistryPresetId;
+  /** Set when live was requested but packument failed (snapshot may still be returned). */
+  liveError?: string;
   storage?: {
     r2Key?: string;
     size?: number;
     checksum?: string;
     contentType?: string;
   };
+};
+
+export type ResolveRegistryPackageOpts = {
+  version?: string | null;
+  live?: boolean;
+  preset?: RegistryPresetId;
+  /** Test seam — defaults to global fetch. */
+  fetchImpl?: typeof fetch;
+  timeoutMs?: number;
 };
 
 export type PublishFlags = {
@@ -203,6 +221,107 @@ export async function searchRegistryPackages(
   return { results, total: results.length, source: SNAPSHOT_PATH };
 }
 
+function attachReadmeFields(
+  detail: Omit<RegistryPackageDetail, 'readmeHtml'> & { readme?: string; readmeFilename?: string }
+): RegistryPackageDetail {
+  const readme = detail.readme;
+  const readmeHtml = readme
+    ? renderReadmeHTML(
+        readme.length > README_HTML_MAX_CHARS
+          ? `${readme.slice(0, README_HTML_MAX_CHARS)}\n\n…(truncated)`
+          : readme
+      )
+    : undefined;
+  return { ...detail, readmeHtml };
+}
+
+/** npm-compatible packument URL for an allowlisted preset base. */
+export function buildPackumentUrl(registryBaseUrl: string, packageName: string): string {
+  const base = registryBaseUrl.endsWith('/') ? registryBaseUrl : `${registryBaseUrl}/`;
+  // Scoped: @scope/name → @scope%2Fname (npm registry convention)
+  const encoded = packageName.startsWith('@')
+    ? `@${packageName.slice(1).replace('/', '%2F')}`
+    : encodeURIComponent(packageName);
+  return new URL(encoded, base).href;
+}
+
+type NpmPackument = {
+  name?: string;
+  'dist-tags'?: Record<string, string>;
+  versions?: Record<
+    string,
+    {
+      description?: string;
+      readme?: string;
+      readmeFilename?: string;
+      version?: string;
+    }
+  >;
+  readme?: string;
+  time?: Record<string, string>;
+};
+
+/** Pure: npm packument JSON → desk detail (no snapshot). */
+export function detailFromPackument(
+  packageName: string,
+  packument: NpmPackument,
+  version?: string | null
+): RegistryPackageDetail | null {
+  const versionsMap = packument.versions ?? {};
+  const versionList = Object.keys(versionsMap);
+  if (versionList.length === 0 && !packument['dist-tags']?.latest) return null;
+  const distTags = { ...(packument['dist-tags'] ?? {}) };
+  const latest = distTags.latest ?? versionList[0] ?? null;
+  const pick =
+    (version && versionsMap[version] ? version : null) || latest || versionList[0] || null;
+  const ver = pick ? versionsMap[pick] : undefined;
+  const readmeRaw =
+    (typeof ver?.readme === 'string' && ver.readme) ||
+    (typeof packument.readme === 'string' && packument.readme) ||
+    undefined;
+  const readme = readmeRaw && readmeRaw.length > 0 ? readmeRaw : undefined;
+  const readmeFilename =
+    (typeof ver?.readmeFilename === 'string' && ver.readmeFilename) ||
+    (readme ? 'README.md' : undefined);
+  const publishedAt = pick && packument.time?.[pick] ? packument.time[pick] : undefined;
+  return attachReadmeFields({
+    name: typeof packument.name === 'string' ? packument.name : packageName,
+    latest,
+    selectedVersion: pick,
+    versions: versionList.sort((a, b) => a.localeCompare(b, undefined, { numeric: true })),
+    distTags,
+    description: ver?.description ?? '',
+    publishedAt,
+    readme,
+    readmeFilename,
+    source: 'live',
+  });
+}
+
+export async function fetchRegistryPackument(
+  presetId: RegistryPresetId,
+  packageName: string,
+  opts: { fetchImpl?: typeof fetch; timeoutMs?: number } = {}
+): Promise<{ ok: true; packument: NpmPackument } | { ok: false; error: string; status?: number }> {
+  const preset = REGISTRY_PRESETS[presetId];
+  const url = buildPackumentUrl(preset.url, packageName);
+  const fetchImpl = opts.fetchImpl ?? fetch;
+  const timeoutMs = opts.timeoutMs ?? PACKUMENT_TIMEOUT_MS;
+  try {
+    const res = await fetchImpl(url, {
+      headers: { accept: 'application/json' },
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+    if (!res.ok) {
+      return { ok: false, error: `HTTP ${res.status}`, status: res.status };
+    }
+    const packument = (await res.json()) as NpmPackument;
+    return { ok: true, packument };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
 export async function getRegistryPackage(
   name: string,
   version?: string | null
@@ -222,14 +341,7 @@ export async function getRegistryPackage(
       : readme
         ? 'README.md'
         : undefined;
-  const readmeHtml = readme
-    ? renderReadmeHTML(
-        readme.length > README_HTML_MAX_CHARS
-          ? `${readme.slice(0, README_HTML_MAX_CHARS)}\n\n…(truncated)`
-          : readme
-      )
-    : undefined;
-  return {
+  return attachReadmeFields({
     name,
     latest,
     selectedVersion: pick,
@@ -241,7 +353,7 @@ export async function getRegistryPackage(
     type: rel?.type,
     readme,
     readmeFilename,
-    readmeHtml,
+    source: 'snapshot',
     storage: rel?.storage
       ? {
           r2Key: rel.storage.r2Key,
@@ -250,7 +362,60 @@ export async function getRegistryPackage(
           contentType: rel.storage.contentType,
         }
       : undefined,
-  };
+  });
+}
+
+/**
+ * Snapshot by default; with `live: true` prefer allowlisted packument and
+ * fall back to snapshot (annotate liveError) when fetch fails.
+ */
+export async function resolveRegistryPackage(
+  name: string,
+  opts: ResolveRegistryPackageOpts = {}
+): Promise<RegistryPackageDetail | null> {
+  const snapshot = await getRegistryPackage(name, opts.version);
+  if (!opts.live) return snapshot;
+
+  const preset = opts.preset ?? 'local';
+  const live = await fetchRegistryPackument(preset, name, {
+    fetchImpl: opts.fetchImpl,
+    timeoutMs: opts.timeoutMs,
+  });
+
+  if (!live.ok) {
+    if (!snapshot) return null;
+    return {
+      ...snapshot,
+      source: 'snapshot',
+      preset,
+      liveError: live.error,
+    };
+  }
+
+  const fromLive = detailFromPackument(name, live.packument, opts.version);
+  if (!fromLive) {
+    if (!snapshot) return null;
+    return {
+      ...snapshot,
+      source: 'snapshot',
+      preset,
+      liveError: 'packument had no versions',
+    };
+  }
+
+  // Enrich with snapshot storage/type when the same version exists locally.
+  if (snapshot?.selectedVersion && snapshot.selectedVersion === fromLive.selectedVersion) {
+    return {
+      ...fromLive,
+      type: fromLive.type ?? snapshot.type,
+      publisher: fromLive.publisher ?? snapshot.publisher,
+      storage: fromLive.storage ?? snapshot.storage,
+      source: 'live+snapshot',
+      preset,
+    };
+  }
+
+  return { ...fromLive, source: 'live', preset };
 }
 
 export async function registryHealth(presetId: RegistryPresetId): Promise<{

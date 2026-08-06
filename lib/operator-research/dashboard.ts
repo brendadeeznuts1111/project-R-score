@@ -29,13 +29,13 @@ import {
   type UpdateFlags,
 } from './package-update.ts';
 import {
-  getRegistryPackage,
   listPresets,
   listPublishableWorkspaces,
   packageNameFromPathSuffix,
   parseRegistryPreset,
   publishEventsToSse,
   registryHealth,
+  resolveRegistryPackage,
   runBunPublish,
   runFactoryPublish,
   searchRegistryPackages,
@@ -634,7 +634,10 @@ export function startResearchDashboard(
         const name = packageNameFromPathSuffix(suffix);
         if (!name) return json({ error: 'package name required' }, 400);
         const version = url.searchParams.get('version');
-        const detail = await getRegistryPackage(name, version);
+        const live =
+          url.searchParams.get('live') === '1' || url.searchParams.get('live') === 'true';
+        const preset = parseRegistryPreset(url.searchParams.get('preset')) ?? 'local';
+        const detail = await resolveRegistryPackage(name, { version, live, preset });
         if (!detail) return json({ error: 'package not found', name }, 404);
         return json(detail);
       }

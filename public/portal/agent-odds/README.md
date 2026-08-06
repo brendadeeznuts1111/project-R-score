@@ -76,7 +76,7 @@ Or set `AGENT_DEMO_USER` / `AGENT_DEMO_PASS`. **Not for production.**
 | GET      | `/api/system/jobs` · `/api/desk/jobs`          | Research agent · odds dashboard · optional `Bun.cron` monitor status  |
 | GET      | `/api/registry/presets`                        | Allowlisted registry presets (`local` · `prod`)                       |
 | GET      | `/api/registry/packages?q=`                    | Search `public/registry/registry.json` (Phase 0 snapshot)             |
-| GET      | `/api/registry/packages/:name`                 | Package detail (`?version=` · `readme` / `readmeFilename` / `readmeHtml` when baked) |
+| GET      | `/api/registry/packages/:name`                 | Detail (`?version=` · `?live=1` · `?preset=` · `readme` / `readmeHtml` · `source`) |
 | GET      | `/api/registry/health?preset=`                 | Snapshot + optional local `/-/ping`                                   |
 | GET      | `/api/registry/workspaces`                     | Publishable `packages/*` workspaces                                   |
 | POST     | `/api/registry/publish`                        | Local `bun publish --registry` (CSRF · dry-run default · `confirm`)   |
@@ -98,9 +98,13 @@ bun run factory:snapshot
 bun run ops:snapshot
 ```
 
-Detail modal shows snapshot `readme` / `readmeFilename` when present (Bun ≥1.3.14 publish
-metadata). API also returns `readmeHtml` from server-side `Bun.markdown.html` (`tagFilter`).
-Modal defaults to **Rendered** with a **Raw** toggle (escaped text). Use `?version=` to pick a release.
+Detail modal shows `readme` / `readmeFilename` / `readmeHtml` (`Bun.markdown.html` + `tagFilter`).
+**Rendered** / **Raw** toggle. Check **Live packument** to fetch the allowlisted preset
+(`local` / `prod`) with snapshot fallback (`source`, `liveError` on failure).
+
+```
+GET /api/registry/packages/event-store?live=1&preset=local&version=1.0.0
+```
 
 **Serve + Bun 1.3.12 desk jobs:**
 
@@ -118,7 +122,7 @@ bun run agent registry-readme event-store --version 1.0.0
 
 ```
 /registry?tab=registry&registry=local&package=event-store
-/dashboard-v1.12.html?tab=registry&registry=prod&package=@factorywager/registry-client&version=1.0.0
+/dashboard-v1.12.html?tab=registry&registry=prod&package=@factorywager/registry-client&version=1.0.0&live=1
 ```
 
 Pages / public score hosts are **not** publish targets ([ADR-0002](../../../docs/adr/0002-registry-index-ssot.md)).
