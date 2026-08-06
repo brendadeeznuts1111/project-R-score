@@ -4,11 +4,18 @@ import {
   calculateVariance,
   checkAnchorStability,
   groupByMarket,
+  listPartnersWithHistory,
   scanStaleAnchors,
+  scanStaleAnchorsFromDb,
   splitWindows,
   type StaleAnchorSignal,
 } from '../lib/operations/anchor-stability.ts';
+import { recordLimit } from '../lib/research/limit-tracker.ts';
 import type { LimitHistoryRow } from '../lib/research/limit-tracker.ts';
+
+function tmpLimitsDb(): string {
+  return `/tmp/anchor-stability-test-${Date.now()}-${Math.floor(Math.random() * 1e9)}.db`;
+}
 
 function row(partial: Partial<LimitHistoryRow> & { maxStakeUsd: number }): LimitHistoryRow {
   return {
@@ -115,5 +122,76 @@ describe('anchor stability analysis', () => {
     expect(signals).toHaveLength(1);
     expect(signals[0].partnerId).toBe('parlay21-com');
     expect((signals[0] as StaleAnchorSignal).kind).toBe('stale_anchor');
+  });
+
+  test('listPartnersWithHistory enumerates distinct partners from the limits db', () => {
+    const dbPath = tmpLimitsDb();
+    recordLimit({ partnerId: 'parlay21-com', marketId: 'm1', sport: 'basketball', league: 'NBA', marketType: 'moneyline', maxStakeUsd: 100, currency: 'USD', source: 'test', observedAt: '2026-08-06T00:00:00.000Z' }, dbPath);
+    recordLimit({ partnerId: 'pinnacle', marketId: 'm1', sport: 'tennis', league: 'ATP', marketType: 'moneyline', maxStakeUsd: 200, currency: 'USD', source: 'test', observedAt: '2026-08-06T00:00:00.000Z' }, dbPath);
+    recordLimit({ partnerId: 'parlay21-com', marketId: 'm2', sport: 'basketball', league: 'NBA', marketType: 'spread', maxStakeUsd: 150, currency: 'USD', source: 'test', observedAt: '2026-08-06T00:00:00.000Z' }, dbPath);
+    const partners = listPartnersWithHistory({ path: dbPath });
+    expect(partners.sort()).toEqual(['parlay21-com', 'pinnacle']);
+  });
+
+  test('scanStaleAnchorsFromDb reads live history and is safe on an empty db', () => {
+    const empty = scanStaleAnchorsFromDb({ path: tmpLimitsDb() });
+    expect(empty.ok).toBe(true);
+    expect(empty.scanned).toBe(0);
+    expect(empty.signals).toEqual([]);
+    expect(empty.generatedAt).toBeTruthy();
+
+    const dbPath = tmpLimitsDb();
+    // newest-first: stable at 100 after drifting down from 200
+    recordLimit({ partnerId: 'parlay21-com', marketId: 'm1', sport: 'basketball', league: 'NBA', marketType: 'moneyline', maxStakeUsd: 100, currency: 'USD', source: 'test', observedAt: '2026-08-06T04:00:00.000Z' }, dbPath);
+    recordLimit({ partnerId: 'parlay21-com', marketId: 'm1', sport: 'basketball', league: 'NBA', marketType: 'moneyline', maxStakeUsd: 100, currency: 'USD', source: 'test', observedAt: '2026-08-06T03:00:00.000Z' }, dbPath);
+    recordLimit({ partnerId: 'parlay21-com', marketId: 'm1', sport: 'basketball', league: 'NBA', marketType: 'moneyline', maxStakeUsd: 100, currency: 'USD', source: 'test', observedAt: '2026-08-06T02:00:00.000Z' }, dbPath);
+    recordLimit({ partnerId: 'parlay21-com', marketId: 'm1', sport: 'basketball', league: 'NBA', marketType: 'moneyline', maxStakeUsd: 150, currency: 'USD', source: 'test', observedAt: '2026-08-06T01:00:00.000Z' }, dbPath);
+    recordLimit({ partnerId: 'parlay21-com', marketId: 'm1', sport: 'basketball', league: 'NBA', marketType: 'moneyline', maxStakeUsd: 200, currency: 'USD', source: 'test', observedAt: '2026-08-06T00:00:00.000Z' }, dbPath);
+    const scan = scanStaleAnchorsFromDb({ path: dbPath, minDriftUsd: 50 });
+    expect(scan.scanned).toBe(1);
+    expect(scan.signals).toHaveLength(1);
+    expect(scan.signals[0].driftUsd).toBe(-50);
+    expect(scan.signals[0].currentMaxStakeUsd).toBe(100);
+  });
+
+  test('runBookReconciliation appends stale_anchor mismatches when anchorScan is on', async () => {
+    const { openOperationsDb } = await import('../lib/operations/db.ts');
+    const { initSchema } = await import('../lib/operations/schema.ts');
+    const { runBookReconciliation } = await import('../lib/operations/book-reconcile.ts');
+
+    const db = openOperationsDb({ path: ':memory:' });
+    initSchema(db);
+    // one active account whose reported balance matches (no book_balance mismatch)
+    db.run(
+      `INSERT INTO tree_nodes (id, type, name, created_at) VALUES ('agent-1', 'agent', 'agent-1', '2026-08-06T00:00:00.000Z')`
+    );
+    db.run(
+      `INSERT INTO sb_accounts (id, agent_id, book, username, balance, status, login_method, created_at)
+       VALUES ('acct-1', 'agent-1', 'draftkings', 'u1', 1000, 'active', 'webview', '2026-08-06T00:00:00.000Z')`
+    );
+
+    // seed a stale anchor in a temp limits db
+    const limitsPath = tmpLimitsDb();
+    recordLimit({ partnerId: 'parlay21-com', marketId: 'm1', sport: 'basketball', league: 'NBA', marketType: 'moneyline', maxStakeUsd: 100, currency: 'USD', source: 'test', observedAt: '2026-08-06T04:00:00.000Z' }, limitsPath);
+    recordLimit({ partnerId: 'parlay21-com', marketId: 'm1', sport: 'basketball', league: 'NBA', marketType: 'moneyline', maxStakeUsd: 100, currency: 'USD', source: 'test', observedAt: '2026-08-06T03:00:00.000Z' }, limitsPath);
+    recordLimit({ partnerId: 'parlay21-com', marketId: 'm1', sport: 'basketball', league: 'NBA', marketType: 'moneyline', maxStakeUsd: 100, currency: 'USD', source: 'test', observedAt: '2026-08-06T02:00:00.000Z' }, limitsPath);
+    recordLimit({ partnerId: 'parlay21-com', marketId: 'm1', sport: 'basketball', league: 'NBA', marketType: 'moneyline', maxStakeUsd: 150, currency: 'USD', source: 'test', observedAt: '2026-08-06T01:00:00.000Z' }, limitsPath);
+    recordLimit({ partnerId: 'parlay21-com', marketId: 'm1', sport: 'basketball', league: 'NBA', marketType: 'moneyline', maxStakeUsd: 200, currency: 'USD', source: 'test', observedAt: '2026-08-06T00:00:00.000Z' }, limitsPath);
+
+    const result = await runBookReconciliation(db, {
+      anchorScan: true,
+      anchorScanPath: limitsPath,
+      anchorScanOpts: { minDriftUsd: 50 },
+    });
+
+    const stale = result.mismatches.filter(m => m.kind === 'stale_anchor');
+    expect(stale).toHaveLength(1);
+    expect(stale[0].diff).toBe(-50);
+    expect(stale[0].detail).toContain('parlay21-com');
+
+    // anchorScan off → no stale_anchor entries
+    const plain = await runBookReconciliation(db);
+    expect(plain.mismatches.filter(m => m.kind === 'stale_anchor')).toHaveLength(0);
+    db.close();
   });
 });

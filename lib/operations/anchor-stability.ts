@@ -20,7 +20,7 @@
  * @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
  */
 
-import type { LimitHistoryRow } from '../research/limit-tracker.ts';
+import { getLimitsHistory, openLimitsDb, type LimitHistoryRow } from '../research/limit-tracker.ts';
 
 export type AnchorStabilityOpts = {
   /** Minimum absolute drift (USD) across the drift window to flag. */
@@ -154,4 +154,48 @@ export function groupByMarket(history: LimitHistoryRow[]): Map<string, LimitHist
     else map.set(key, [row]);
   }
   return map;
+}
+
+/** Distinct partner ids that have recorded limit history. */
+export function listPartnersWithHistory(opts: { path?: string } = {}): string[] {
+  const database = openLimitsDb(opts.path);
+  const rows = database
+    .query(`SELECT DISTINCT partner_id AS partnerId FROM account_limits ORDER BY partnerId`)
+    .all() as Array<{ partnerId: string }>; // brand-ok — account_limits.partner_id
+  return rows.map(r => r.partnerId);
+}
+
+export type StaleAnchorScan = {
+  ok: true;
+  scanned: number;
+  signals: StaleAnchorSignal[];
+  generatedAt: string;
+  opts: AnchorStabilityOpts;
+};
+
+/**
+ * DB-backed scan: enumerate every partner with limit history, read each
+ * partner's newest-first history, and run stale-anchor detection.
+ * Safe with an empty database (returns ok with zero signals).
+ */
+export function scanStaleAnchorsFromDb(
+  opts: AnchorStabilityOpts & { path?: string } = {}
+): StaleAnchorScan {
+  const { path, ...rest } = opts;
+  const partners = listPartnersWithHistory({ path });
+  const histories: Record<string, LimitHistoryRow[]> = {};
+  for (const partnerId of partners) {
+    histories[partnerId] = getLimitsHistory(partnerId, {
+      limit: rest.historyLimit ?? 100,
+      path,
+    });
+  }
+  const signals = scanStaleAnchors(histories, rest);
+  return {
+    ok: true,
+    scanned: partners.length,
+    signals,
+    generatedAt: new Date().toISOString(),
+    opts: rest,
+  };
 }

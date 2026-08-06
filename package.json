@@ -2038,6 +2038,7 @@
     "ops:seed-platforms": "bun scripts/seed-platforms.ts",
     "ops:reconcile": "bun tools/ops-reconcile.ts",
     "ops:book-reconcile": "bun tools/ops-book-reconcile.ts",
+    "ops:anchor:scan": "bun tools/ops-anchor-scan.ts",
     "ops:postgres-probe": "bun tools/ops-postgres-probe.ts",
     "ops:sync": "bun tools/ops-sync-consumer.ts",
     "ops:settle": "bun tools/ops-settle.ts",
