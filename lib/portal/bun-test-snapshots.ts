@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/test/snapshots — toMatchSnapshot / --update-snapshots / Bun Snapshot v1
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn contract catalog
 /**
  * Bun:test snapshot SSOT — inventory of reviewed git snapshots under tests/__snapshots__/.
  *
@@ -10,8 +11,8 @@
  *
  *   bun run check:snapshots
  *   bun run test:snapshots
- *   bun run test:snapshots:update   # file-scoped only — never repo-wide --update-snapshots
- *   bun tools/bun-test-snapshots.ts --list|--check|--update [--id capability-map]
+ *   bun run test:snapshots:update   # file-scoped only — never repo-wide -u
+ *   bun tools/bun-test-snapshots.ts --list|--check|--test|--update [--id capability-map]
  *
  * Orphan snap files (no matching test) fail --check. Intentional cleanup:
  *   bun tools/bun-test-snapshots.ts --prune-orphans
@@ -22,6 +23,7 @@ export const BUN_SNAPSHOT_HEADER = '// Bun Snapshot v1, https://bun.sh/docs/test
 
 export type TestSnapshotSuiteId =
   | 'capability-map'
+  | 'partner-cli'
   | 'vault-health'
   | 'console-depth'
   | 'failure-report'
@@ -60,6 +62,15 @@ export const TEST_SNAPSHOT_SUITES: readonly TestSnapshotSuite[] = [
       'AGENTS grounded capability matrix drift gate (schema v3, summary, minBun/source). Bake first: bake:capabilities.',
     updateScript: 'bake:capabilities:update',
     cli: 'portal-cli capabilities health --update',
+  },
+  {
+    id: 'partner-cli',
+    label: 'Partner CLI validators',
+    testRel: 'tests/partner-cli-snapshots.test.ts',
+    snapRel: 'tests/__snapshots__/partner-cli-snapshots.test.ts.snap',
+    purpose:
+      'Pinned Bun runtime provenance and typed Bun.spawn stdout/stderr contracts for partner validators.',
+    updateScript: 'test:partner-cli:snapshots:update',
   },
   {
     id: 'vault-health',
@@ -352,13 +363,13 @@ export function resolveSuite(idOrPath: string): TestSnapshotSuite | undefined {
   );
 }
 
-/** Args for `bun test <files…> [--update-snapshots]` — always file-scoped. */
+/** Args for `bun test <files…> [-u]` — always file-scoped. */
 export function bunTestArgsForSuites(
   suites: readonly TestSnapshotSuite[],
   update: boolean
 ): string[] {
   const files = suites.map(s => s.testRel);
   const args = ['test', ...files];
-  if (update) args.push('--update-snapshots');
+  if (update) args.push('-u');
   return args;
 }

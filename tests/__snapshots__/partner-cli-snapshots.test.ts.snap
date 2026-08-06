@@ -1,0 +1,72 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`partner CLI Bun.spawn snapshot contract captures stable validator output and exact runtime provenance: pinned Bun partner CLI output 1`] = `
+{
+  "commands": [
+    {
+      "args": [
+        "scripts/validate-partner-dashboard-plan.ts",
+      ],
+      "exitCode": 0,
+      "name": "dashboard-plan",
+      "stderr": [],
+      "stdout": [
+        "✅ partner dashboard plan valid · 33 bindings · 15 gaps · 8 connectors · 8 regions · 9 section mounts · 6 hash routes · 7 required + 1 optional portal inputs · 31 presentation states · 0 profile coverage entries · 4 missing",
+      ],
+    },
+    {
+      "args": [
+        "scripts/validate-partner-dashboard-plan.ts",
+        "--unregistered",
+      ],
+      "exitCode": 0,
+      "name": "dashboard-unregistered-concepts",
+      "stderr": [],
+      "stdout": [
+        "Unregistered partner concepts (15):",
+        "accounting.funding_status	accounting	out.funding_status	non-blocking",
+        "accounting.scoped_balance	accounting	accounting.scoped_balance	non-blocking",
+        "connector.data_status	operations	connector.data_status	non-blocking",
+        "partner.attention_item	partners	partner.attention_item	non-blocking",
+        "partner.lifecycle_provenance	partners	partner.lifecycle_provenance	non-blocking",
+        "partner.lifecycle_state	partners	partner.lifecycle_state	non-blocking",
+        "partner.profile	partners	partner.profile	non-blocking",
+        "partner.source_conflict	partners	partner.source_conflict	non-blocking",
+        "provider.connection_status	trading	provider.connection_status	non-blocking",
+        "section.partnersAttention	portal	section.attention	non-blocking",
+        "section.partnersIntegrations	portal	section.integrations	non-blocking",
+        "section.partnersProfile	portal	section.profile	non-blocking",
+        "section.partnersRoster	portal	section.roster	non-blocking",
+        "section.partnersSummary	portal	section.summary	non-blocking",
+        "ui.filter.partnerCode	portal	ui.filter.partner_code	non-blocking",
+      ],
+    },
+    {
+      "args": [
+        "scripts/validate-partner-surface-inventory.ts",
+      ],
+      "exitCode": 0,
+      "name": "surface-inventory",
+      "stderr": [],
+      "stdout": [
+        "✅ partner-surface-inventory validate: 92 rows · 0 warn · schema v3",
+      ],
+    },
+    {
+      "args": [
+        "scripts/validate-partner-integration.ts",
+      ],
+      "exitCode": 0,
+      "name": "portal-integration",
+      "stderr": [],
+      "stdout": [
+        "Partner integration validation: PASS · routes 6 · tables 3 · tags 25 · topics 5",
+      ],
+    },
+  ],
+  "runtime": {
+    "revision": "0d9b296af33f2b851fcbf4df3e9ec89751734ba4",
+    "version": "1.3.14",
+  },
+}
+`;
