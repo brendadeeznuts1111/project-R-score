@@ -4,8 +4,9 @@ Local agent shell dashboards (not Tennis HQ Worker).
 
 | Version | File | Notes |
 |---------|------|--------|
-| **v1.06** (default `/`) | `dashboard-v1.06.html` | Uncovered Edges · tabs · events · alerts · Kelly · steam · value |
-| v1.03+liquidity | `dashboard-v1.03.html` | Partner health · liquidity filters · arb eligibility |
+| **v1.07** (default `/`) | `dashboard-v1.07.html` | Trading desk · WebSocket · mock bet · backtest · ML annotate |
+| v1.06 | `dashboard-v1.06.html` | Uncovered Edges · tabs · events · alerts · Kelly · steam · value |
+| v1.03+liquidity | `dashboard-v1.03.html` | Partner health · liquidity filters |
 | v1.02 | `dashboard-v1.02.html` | SSE · FormData · pool / prefetch |
 | v1.01 | `dashboard.html` | Drill-down filters |
 
@@ -14,6 +15,7 @@ Local agent shell dashboards (not Tennis HQ Worker).
 ```bash
 bun run agent:odds-dashboard
 # → http://127.0.0.1:3000/
+# → WebSocket ws://127.0.0.1:3000/ws
 ```
 
 ## Demo login (local mock only)
@@ -24,39 +26,41 @@ bun run agent:odds-dashboard
 
 Or set `AGENT_DEMO_USER` / `AGENT_DEMO_PASS`. **Not for production.**
 
-## Partner merge (SSOT)
+## Safety
 
-`lib/bookmakers/merged-registry.ts` loads:
-
-- `public/registry/bookmakers.json` — public catalog (`liquidityTier`, urls, limits)
-- `public/registry/partners-ops.json` — ops outs readiness → derived `status`
+- **`POST /api/bet` is an in-memory mock.** No real money, no live book placement.
+- **Backtest** uses synthetic outcomes, not exchange history.
+- **ML** fields are deterministic annotations from edge math (XGBoost/LSTM labels only — no trained weights).
 
 ## Edge engine
 
-`lib/operator-research/edge-engine.ts`:
+`lib/operator-research/edge-engine.ts` · `bet-mock.ts` · `backtest.ts`
 
 | Signal | Logic |
 |--------|--------|
-| **Arbitrage** | Two-way `1/o1 + 1/o2 < 1` across books; illiquid/offline excluded |
-| **Value** | EV vs sharp (highest liquidity) de-vig true price; Kelly stake |
-| **Steam** | Synthetic prior vs current move % on live books |
-| **Latency** | Confidence penalty when quote latency exceeds threshold |
+| **Arbitrage** | Two-way `1/o1 + 1/o2 < 1`; illiquid/offline excluded |
+| **Value** | EV vs sharp de-vig + Kelly |
+| **Steam** | Prior vs current move % |
+| **ML annotate** | `ml.predicted_prob` / `model` / `confidence` |
+| **Mock bet** | ~80% success · rejects illiquid |
+| **Backtest** | Seedable synthetic win rate / ROI / daily returns |
 
-## APIs (local mock agent)
+## APIs
 
 | Method | Path | Role |
 |--------|------|------|
-| GET | `/api/edges` | Live opportunities (`type`, `min`, sport/league filters) |
-| GET | `/api/events` | Simulated multi-book events from partner catalog |
-| GET | `/api/events/:id` | Event detail + book quotes |
-| GET | `/api/events/:id/history` | Odds history series for charts |
-| GET/POST | `/api/alerts/rules` | Alert rule CRUD (in-memory) |
-| DELETE | `/api/alerts/rules/:id` | Delete rule |
-| GET | `/api/alerts/history` | Recent alert feed |
-| GET | `/api/alerts/performance` | Hit rate / P&L snapshot per rule |
-| GET | `/api/partners/health` | Merged registry health + liquidity |
-| GET | `/api/odds/*` | Partner-enriched odds rows / options / stats / SSE |
-| POST | `/api/upload` · `/api/auth/login` · `/api/backup` | Upload · demo auth · backup stamp |
-| GET | `/api/pool` · `/api/prefetch` · `/api/platform` | Pool / DNS / capabilities |
+| GET | `/api/edges` | Opportunities (+ `ml`) |
+| POST | `/api/bet` | Mock place `{ edgeId, stake, bookmaker }` → `{ mock: true, orderId }` |
+| GET | `/api/bets` | Recent mock orders |
+| POST | `/api/backtest` | `{ ruleId, startDate, endDate, seed? }` |
+| GET | `/api/events` · `/:id` · `/:id/history` | Events + charts |
+| GET/POST | `/api/alerts/rules` | Rules CRUD |
+| GET | `/api/alerts/history` · `/performance` | Feed + snapshot |
+| GET | `/api/partners/health` | Merged registry |
+| GET | `/api/odds/*` | Partner-enriched odds |
+| WS | `/ws` | Live feed topic `agent-odds` |
+| GET | `/api/platform` | Capabilities |
 
-Query params for edges: `sport`, `league`, `type` (`arbitrage`\|`value`\|`steam`), `min` (edge %), `refresh=1`, `limit`.
+## Tabs (v1.07)
+
+Odds · Events · Detail · Edges · **Live** · **Backtest** · Rules · Health

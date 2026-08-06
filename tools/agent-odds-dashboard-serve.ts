@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
+// @see https://bun.com/docs/runtime/http/websockets — WebSocket server
 // @see https://bun.com/docs/runtime/networking/dns#dns-prefetch — Bun.dns
 // @see https://bun.com/docs/runtime/networking/dns#dns-prefetch — Bun.dns.prefetch
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
@@ -10,21 +11,24 @@
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 /**
- * Serve Bun Agent Live Odds Intelligence dashboard (v1.06 Uncovered Edges) + mock APIs.
+ * Serve Bun Agent Live Odds Intelligence dashboard (v1.07 Trading Desk) + mock APIs.
  *
  *   bun run agent:odds-dashboard
  *   open http://127.0.0.1:3000/
  *
  * Static:
- *   public/portal/agent-odds/dashboard-v1.06.html (default /)
- *   public/portal/agent-odds/dashboard-v1.03.html · v1.02 · dashboard.html
+ *   public/portal/agent-odds/dashboard-v1.07.html (default /)
+ *   public/portal/agent-odds/dashboard-v1.06.html · v1.03 · v1.02 · dashboard.html
  *
  * APIs:
  *   GET  /api/odds/* · /api/partners/health
  *   GET  /api/events · /api/events/:id · /api/events/:id/history
- *   GET  /api/edges  (arb · value · steam · Kelly · latency-adjusted)
+ *   GET  /api/edges  (arb · value · steam · Kelly · ML annotate)
+ *   POST /api/bet · GET /api/bets  (mock execution — not production)
+ *   POST /api/backtest
  *   GET|POST /api/alerts/rules · DELETE /api/alerts/rules/:id
  *   GET  /api/alerts/history · /api/alerts/performance
+ *   WS   /ws  (live feed topic agent-odds)
  *   POST /api/upload · /api/auth/login · /api/backup
  *   GET  /api/pool · /api/prefetch · /api/platform
  */
@@ -34,6 +38,8 @@ import {
   type MergedPartnerHealth,
   type MergedRegistry,
 } from '../lib/bookmakers/merged-registry.ts';
+import { runBacktest } from '../lib/operator-research/backtest.ts';
+import { listMockBets, placeMockBet } from '../lib/operator-research/bet-mock.ts';
 import {
   defaultAlertRules,
   detectEdges,
@@ -49,11 +55,14 @@ import {
 import { joinPath } from '../lib/path-bun.ts';
 import {
   asRuleId,
+  tryEdgeId,
   tryEventId,
   tryRuleId,
   type RuleId,
   type SportsbookId,
 } from '../lib/types/branded.ts';
+
+const WS_TOPIC = 'agent-odds';
 
 const ROOT = joinPath(import.meta.dir, '..');
 const DASH_DIR = joinPath(ROOT, 'public/portal/agent-odds');
@@ -392,9 +401,18 @@ async function handleUpload(req: Request): Promise<Response> {
 const server = Bun.serve({
   hostname: HOST,
   port: PORT,
-  async fetch(req) {
+  async fetch(req, srv) {
     const url = new URL(req.url);
     const path = url.pathname;
+
+    // WebSocket upgrade
+    if (path === '/ws' || path === '/ws/') {
+      const ok = srv.upgrade(req, {
+        data: { joinedAt: Date.now() },
+      });
+      if (ok) return undefined as unknown as Response;
+      return new Response('WebSocket upgrade failed', { status: 400 });
+    }
 
     if (path === '/api/odds/options') {
       const merged = await getMerged();
@@ -587,6 +605,97 @@ const server = Bun.serve({
       return json({ data: rulePerformanceSnapshot(ALERT_RULES) });
     }
 
+    // ── Bet mock + backtest (v1.07) ─────────────────────────────
+    if ((path === '/api/bet' || path === '/api/bet/') && req.method === 'POST') {
+      try {
+        const body = (await req.json()) as {
+          edgeId?: string;
+          stake?: number;
+          bookmaker?: string;
+        };
+        const edgeIdRaw = body.edgeId?.trim() ?? '';
+        const edgeId = tryEdgeId(edgeIdRaw);
+        if (!edgeId) {
+          return json({ ok: false, error: 'edgeId required or invalid', mock: true }, 400);
+        }
+        const edges = await getEdges();
+        const edge =
+          edges.find(e => e.id === edgeId) ||
+          edges.find(e => String(e.id) === edgeIdRaw);
+        const result = placeMockBet(edge, {
+          edgeId,
+          stake: Number(body.stake),
+          bookmaker: String(body.bookmaker ?? ''),
+        });
+        if (result.order) {
+          try {
+            server.publish(
+              WS_TOPIC,
+              JSON.stringify({
+                type: 'bet',
+                at: new Date().toISOString(),
+                order: result.order,
+              }),
+            );
+          } catch {
+            /* no subscribers */
+          }
+        }
+        return json(
+          {
+            ok: result.ok,
+            success: result.order?.success ?? false,
+            orderId: result.order?.orderId || null,
+            message: result.order?.message || result.error,
+            mock: true as const,
+            order: result.order,
+          },
+          result.status,
+        );
+      } catch {
+        return json({ ok: false, error: 'invalid json', mock: true }, 400);
+      }
+    }
+
+    if (path === '/api/bets' || path === '/api/bets/') {
+      const limit = Math.min(Math.max(Number(url.searchParams.get('limit') || 50), 1), 200);
+      const data = listMockBets(limit);
+      return json({ data, total: data.length, mock: true });
+    }
+
+    if ((path === '/api/backtest' || path === '/api/backtest/') && req.method === 'POST') {
+      try {
+        const body = (await req.json()) as {
+          ruleId?: string;
+          startDate?: string;
+          endDate?: string;
+          seed?: number;
+        };
+        if (!body.ruleId || !body.startDate || !body.endDate) {
+          return json(
+            { ok: false, error: 'ruleId, startDate, endDate required' },
+            400,
+          );
+        }
+        const ruleId = tryRuleId(String(body.ruleId));
+        if (!ruleId) {
+          return json({ ok: false, error: 'invalid ruleId', mock: true }, 400);
+        }
+        const out = runBacktest(ALERT_RULES, {
+          ruleId,
+          startDate: String(body.startDate),
+          endDate: String(body.endDate),
+          seed: body.seed,
+        });
+        if (!out.ok) {
+          return json({ ok: false, error: out.error, mock: true }, out.status);
+        }
+        return json({ ok: true, data: out.result, mock: true });
+      } catch {
+        return json({ ok: false, error: 'invalid json', mock: true }, 400);
+      }
+    }
+
     if (path === '/api/upload' && req.method === 'POST') {
       return handleUpload(req);
     }
@@ -666,7 +775,7 @@ const server = Bun.serve({
         partnersOnline: summary.online,
         partnersTotal: summary.total,
         byLiquidity: summary.byLiquidity,
-        dashboard: 'agent-odds v1.06 edges',
+        dashboard: 'agent-odds v1.07 trading-desk',
         rateCurrent: rateState.rateCurrent,
         rateLimit: rateState.rateLimit,
         lastBackup: rateState.lastBackup,
@@ -688,21 +797,26 @@ const server = Bun.serve({
           'kelly',
           'steam',
           'value-bets',
+          'websocket',
+          'mock-bet',
+          'backtest',
+          'ml-annotate',
         ],
+        mockDisclaimer: 'bet + backtest are local mock only — not production trading',
       });
     }
 
-    // Static: default to v1.06 Uncovered Edges
-    let filePath = path === '/' || path === '' ? '/dashboard-v1.06.html' : path;
-    if (filePath === '/index.html') filePath = '/dashboard-v1.06.html';
+    // Static: default to v1.07 Trading Desk
+    let filePath = path === '/' || path === '' ? '/dashboard-v1.07.html' : path;
+    if (filePath === '/index.html') filePath = '/dashboard-v1.07.html';
     if (filePath === '/dashboard.html') {
       const v1 = joinPath(DASH_DIR, 'dashboard.html');
       if (!(await Bun.file(v1).exists())) {
-        filePath = '/dashboard-v1.06.html';
+        filePath = '/dashboard-v1.07.html';
       }
     }
     const safe = filePath.replace(/\.\./g, '').replace(/^\/+/, '');
-    const abs = joinPath(DASH_DIR, safe || 'dashboard-v1.06.html');
+    const abs = joinPath(DASH_DIR, safe || 'dashboard-v1.07.html');
     if (!abs.startsWith(DASH_DIR)) {
       return new Response('Forbidden', { status: 403 });
     }
@@ -717,8 +831,76 @@ const server = Bun.serve({
     }
     return new Response('Not found', { status: 404 });
   },
+  websocket: {
+    open(ws) {
+      ws.subscribe(WS_TOPIC);
+      ws.send(
+        JSON.stringify({
+          type: 'system',
+          at: new Date().toISOString(),
+          message: 'Connected to agent-odds WS · topic agent-odds · local mock',
+        }),
+      );
+    },
+    message(ws, message) {
+      const text = typeof message === 'string' ? message : new TextDecoder().decode(message);
+      if (text === 'ping' || text === '{"type":"ping"}') {
+        ws.send(JSON.stringify({ type: 'pong', at: new Date().toISOString() }));
+      }
+    },
+    close(ws) {
+      try {
+        ws.unsubscribe(WS_TOPIC);
+      } catch {
+        /* ignore */
+      }
+    },
+  },
 });
 
+// Live feed broadcast (edges / alerts ticks)
+let tick = 0;
+const broadcastTimer = setInterval(async () => {
+  tick += 1;
+  try {
+    const edges = await getEdges(tick % 15 === 0);
+    const top = edges[0];
+    const payload =
+      tick % 4 === 0 && ALERT_HISTORY[0]
+        ? {
+            type: 'alert' as const,
+            at: new Date().toISOString(),
+            rule_id: ALERT_HISTORY[0].rule_id,
+            message: ALERT_HISTORY[0].message,
+          }
+        : top
+          ? {
+              type: 'edge' as const,
+              at: new Date().toISOString(),
+              edge: {
+                id: top.id,
+                type: top.type,
+                edge_percent: top.edge_percent,
+                home: top.home,
+                away: top.away,
+                league: top.league,
+                ml: top.ml,
+              },
+            }
+          : {
+              type: 'tick' as const,
+              at: new Date().toISOString(),
+              n: tick,
+            };
+    server.publish(WS_TOPIC, JSON.stringify(payload));
+  } catch {
+    /* ignore publish errors when idle */
+  }
+}, 2000);
+
+// Keep process from being considered unused
+void broadcastTimer;
+
 console.log(
-  `agent-odds dashboard v1.06 edges → http://${server.hostname}:${server.port}/  (edges · events · alerts · health)`
+  `agent-odds dashboard v1.07 trading-desk → http://${server.hostname}:${server.port}/  (ws · mock-bet · backtest · edges)`
 );
