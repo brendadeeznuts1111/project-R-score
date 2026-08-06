@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
@@ -23,6 +24,22 @@ import {
   type RefIdIssue,
   type ToolFlagRef,
 } from '../lib/docs/ref-id.ts';
+import {
+  COMPLEXITY_FLOOR_DOC,
+  IMAGES_GENERATE_DOC,
+  LINT_WIRES_DOC,
+  MONOREPO_FILTER_DOC,
+  OPS_SNAPSHOT_DOC,
+  PARTNER_ONBOARD_DOC,
+  TELEGRAM_OPS_DOC,
+  complexityFloorToolFlags,
+  imagesGenerateToolFlags,
+  lintWiresToolFlags,
+  monorepoFilterToolFlags,
+  opsSnapshotToolFlags,
+  partnerOnboardToolFlags,
+  telegramOpsToolFlags,
+} from '../lib/docs/ref-id-tool-flags.ts';
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
 import { PARTNER_DOCUMENTATION_REFS } from '../lib/docs/partner-surface-inventory.ts';
 import {
@@ -44,15 +61,19 @@ export type RefIdRegistryEntry = {
   sectionHeading?: string;
 };
 
-/** Documents that participate in REF:ID v2 checks. */
+/**
+ * Documents that participate in REF:ID v2 checks.
+ * Flag-table owners use requireToolCoverage + lib/docs/ref-id-tool-flags.ts.
+ * Partner documentation register paths (PARTNER_DOCUMENTATION_REFS) not already
+ * covered stay doc-only until their tool rows are wired.
+ */
 export function refIdRegistry(): RefIdRegistryEntry[] {
-  /** Docs with operator Flags tables converted to REF:ID (no tool flagDocRef yet). */
   const docOnly = (doc: string): RefIdRegistryEntry => ({
     doc,
     requireToolCoverage: false,
     toolFlags: () => [],
   });
-  return [
+  const primary: RefIdRegistryEntry[] = [
     {
       doc: BUN_TYPES_INVENTORY_DOC,
       requireToolCoverage: true,
@@ -67,12 +88,47 @@ export function refIdRegistry(): RefIdRegistryEntry[] {
         }));
       },
     },
-    docOnly('docs/IMAGES.md'),
-    docOnly('docs/harness/tenants/complexity-floor.md'),
-    docOnly('docs/harness/tenants/monorepo-workspaces.md'),
-    docOnly('docs/harness/tenants/ops-snapshot.md'),
-    ...PARTNER_DOCUMENTATION_REFS.map(ref => docOnly(ref.path)),
+    {
+      doc: LINT_WIRES_DOC,
+      requireToolCoverage: true,
+      toolFlags: lintWiresToolFlags,
+    },
+    {
+      doc: PARTNER_ONBOARD_DOC,
+      requireToolCoverage: true,
+      toolFlags: partnerOnboardToolFlags,
+    },
+    {
+      doc: IMAGES_GENERATE_DOC,
+      requireToolCoverage: true,
+      toolFlags: imagesGenerateToolFlags,
+    },
+    {
+      doc: COMPLEXITY_FLOOR_DOC,
+      requireToolCoverage: true,
+      toolFlags: complexityFloorToolFlags,
+    },
+    {
+      doc: MONOREPO_FILTER_DOC,
+      requireToolCoverage: true,
+      toolFlags: monorepoFilterToolFlags,
+    },
+    {
+      doc: OPS_SNAPSHOT_DOC,
+      requireToolCoverage: true,
+      toolFlags: opsSnapshotToolFlags,
+    },
+    {
+      doc: TELEGRAM_OPS_DOC,
+      requireToolCoverage: true,
+      toolFlags: telegramOpsToolFlags,
+    },
   ];
+  const covered = new Set(primary.map(e => e.doc));
+  const partnerRest = PARTNER_DOCUMENTATION_REFS.map(ref => ref.path)
+    .filter(path => !covered.has(path))
+    .map(docOnly);
+  return [...primary, ...partnerRest];
 }
 
 export async function runRefIdChecks(opts: {

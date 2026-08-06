@@ -91,11 +91,14 @@ Registered document for `check` (no `--doc`):
 | Doc | Tool rows | Coverage |
 | --- | --------- | -------- |
 | `docs/design/bun-types-inventory.md` | `tools/bun-types-status.ts` → `buildStatusFlagRows` | **requireToolCoverage** |
-| design/harness/IMAGES Flag docs | (doc-only) | registered · no tool rows yet |
+| `docs/design/partner-surface-inventory.md` | `lib/docs/ref-id-tool-flags.ts` → `lintWiresToolFlags` | **requireToolCoverage** |
+| `docs/design/unified-partner-profile.md` | `partnerOnboardToolFlags` | **requireToolCoverage** |
+| `docs/IMAGES.md` | `imagesGenerateToolFlags` | **requireToolCoverage** |
+| harness tenants (ops-snapshot · handshake · monorepo · complexity) | matching `*ToolFlags` | **requireToolCoverage** |
 
-`bun run docs:refid:audit` must report **flags-table-only=0** (all operator Flag tables
-are either REF:ID-registered or not Flag-option tables). Board maps with a trailing
-`Flags` column are not REF:ID surfaces.
+Tool flag SSOT: [`lib/docs/ref-id-tool-flags.ts`](../../lib/docs/ref-id-tool-flags.ts).
+`bun run docs:refid:audit` must report **flags-table-only=0**. Board maps with a
+trailing `Flags` column are not REF:ID surfaces.
 
 Ad-hoc draft:
 
