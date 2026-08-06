@@ -93,6 +93,7 @@ export const BAKE_MANIFEST_PRIORITY_PATHS = [
   'tennis/board-metrics.json',
   'portal-chrome.json',
   'domain-glossary.json',
+  'github-issue-taxonomy.json',
   'concepts-graph.json',
 ] as const;
 

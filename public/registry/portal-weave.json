@@ -5,10 +5,10 @@
   "generated": "2026-08-06T00:13:52.101Z",
   "summary": {
     "surfaces": 33,
-    "artifacts": 42,
+    "artifacts": 43,
     "components": 21,
     "wiki": 6,
-    "scripts": 45
+    "scripts": 46
   },
   "related": {
     "chrome": "/registry/portal-chrome.json",
@@ -624,6 +624,19 @@
       "cli": "bun run tennis:agent-auth:bake",
       "purpose": "script",
       "id": "artifact-41-tennis-agent-auth"
+    },
+    {
+      "id": "github-issue-taxonomy",
+      "artifactId": "github-issue-taxonomy",
+      "artifactName": "GitHub issue taxonomy",
+      "label": "GitHub issue taxonomy",
+      "href": "/registry/github-issue-taxonomy.json",
+      "conceptId": "registry.github_issue_taxonomy",
+      "colorKey": "middleware",
+      "note": "repository-governed dimensions · labels · color projection · drift health",
+      "group": "registry",
+      "cli": "bun run github-issue-taxonomy:check",
+      "purpose": "shared"
     }
   ],
   "components": [
@@ -1096,6 +1109,13 @@
       "doc": "docs/harness/tenants/proton-integration.md",
       "group": "secrets",
       "id": "script-42-vault-map-resolve-list"
+    },
+    {
+      "id": "github-issue-taxonomy-check",
+      "label": "GitHub issue taxonomy drift check",
+      "cmd": "bun run github-issue-taxonomy:check",
+      "doc": "docs/harness/tenants/github-issue-taxonomy.md",
+      "group": "registry"
     },
     {
       "id": "portal-chrome-bake-apply",

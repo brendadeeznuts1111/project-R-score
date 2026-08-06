@@ -102,6 +102,8 @@ describe('portal weave', () => {
     expect(arts).toContain('/registry/bun-runtime-nits-proof.json');
     expect(arts).toContain('/registry/bun-brand-map.json');
     expect(arts).toContain('/registry/brand-keymap.json');
+    expect(arts).toContain('/registry/github-issue-taxonomy.json');
+    expect(p.scripts.some(s => s.cmd === 'bun run github-issue-taxonomy:check')).toBe(true);
   });
 
   test('publish-plane weave artifacts carry name/id + color kernel keys', () => {

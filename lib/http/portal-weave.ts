@@ -644,6 +644,19 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveArtifact[] = [
     cli: 'bun run tennis:agent-auth:bake',
     purpose: 'script',
   },
+  {
+    id: 'github-issue-taxonomy', // brand-ok — weave artifact slug, not a domain entity id
+    artifactId: 'github-issue-taxonomy',
+    artifactName: 'GitHub issue taxonomy',
+    label: 'GitHub issue taxonomy',
+    href: '/registry/github-issue-taxonomy.json',
+    conceptId: 'registry.github_issue_taxonomy',
+    colorKey: 'middleware',
+    note: 'repository-governed dimensions · labels · color projection · drift health',
+    group: 'registry',
+    cli: 'bun run github-issue-taxonomy:check',
+    purpose: 'shared',
+  },
 ];
 
 /**
@@ -914,6 +927,13 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
     cmd: 'bun run vault:resolve',
     doc: 'docs/harness/tenants/proton-integration.md',
     group: 'secrets',
+  },
+  {
+    id: 'github-issue-taxonomy-check',
+    label: 'GitHub issue taxonomy drift check',
+    cmd: 'bun run github-issue-taxonomy:check',
+    doc: 'docs/harness/tenants/github-issue-taxonomy.md',
+    group: 'registry',
   },
 ];
 

@@ -74,6 +74,11 @@ const STEPS: BakeStep[] = [
     note: 'scrape-wire-taxonomy.json',
   },
   {
+    id: 'github-issue-taxonomy',
+    bunArgs: ['run', 'github-issue-taxonomy:bake'],
+    note: 'github-issue-taxonomy.json',
+  },
+  {
     id: 'schema-audit',
     bunArgs: ['run', 'schema:audit'],
     note: 'scrape-wire-schema-audit.json',

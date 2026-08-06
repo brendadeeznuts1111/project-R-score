@@ -25,6 +25,13 @@
       "etag": null
     },
     {
+      "path": "/registry/github-issue-taxonomy.json",
+      "bakedAt": null,
+      "source": null,
+      "bytes": 9911,
+      "etag": null
+    },
+    {
       "path": "/registry/limit-raises.json",
       "bakedAt": "2026-07-31T23:41:59.270Z",
       "source": null,
@@ -89,8 +96,8 @@
     }
   ],
   "summary": {
-    "files": 11,
+    "files": 12,
     "withTimestamp": 11,
-    "totalBytes": 955987
+    "totalBytes": 965898
   }
 }
