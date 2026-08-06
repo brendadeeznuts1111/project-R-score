@@ -36,8 +36,20 @@ bun run partner-surface-inventory:bake
 bun run partner-surface-inventory:check
 bun run partner-surface-inventory:validate
 bun run partner-surface-inventory:lint-wires
+bun run partner-surface-inventory:lint-wires -- --hlp
+bun run partner-surface-inventory:lint-wires -- --why
+bun run partner-surface-inventory:lint-wires -- --document
 bun test tests/partner-surface-inventory.test.ts tests/partner-surface-wire-lint.test.ts
 ```
+
+### `lint-wires` CLI flags
+
+| Flag | Meaning |
+| ---- | ------- |
+| `-h` · `--help` · `--hlp` | Usage (no scan) |
+| `--why` | Claim / allowlist rationale (ANSI markdown when available) |
+| `--document` | Path + wire-bag excerpt from this design doc |
+| `--strict-globs` | Fail when an allowlist glob matches 0 files (`WIRE_TRAP_STRICT_GLOBS=1`) |
 
 Compact table (bags):
 

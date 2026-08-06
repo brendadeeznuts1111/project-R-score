@@ -13,6 +13,12 @@ import {
   allPartnerSurfaceRows,
   type PartnerSurfaceRow,
 } from '../lib/docs/partner-surface-inventory.ts';
+import {
+  DOCUMENT_REL,
+  HELP_TEXT,
+  WHY_MARKDOWN,
+  main as lintWiresMain,
+} from '../scripts/validate-wire-traps.ts';
 
 /** Split so this test file itself does not trip lint-wires when scanned. */
 const colonString = ': string';
@@ -138,5 +144,14 @@ describe('partner-surface-wire-lint', () => {
     const globs = collectWireAllowPathGlobs(rows);
     expect(pathMatchesAnyGlob('lib/adapters/demo/parse.ts', globs)).toBe(true);
     expect(pathMatchesAnyGlob('lib/core/service.ts', globs)).toBe(false);
+  });
+
+  test('CLI --hlp / --why / --document exit 0 without scanning failures', async () => {
+    expect(HELP_TEXT).toContain('--hlp');
+    expect(WHY_MARKDOWN).toContain('Layer C');
+    expect(DOCUMENT_REL).toBe('docs/design/partner-surface-inventory.md');
+    expect(await lintWiresMain(['bun', 'scripts/validate-wire-traps.ts', '--hlp'])).toBe(0);
+    expect(await lintWiresMain(['bun', 'scripts/validate-wire-traps.ts', '--why'])).toBe(0);
+    expect(await lintWiresMain(['bun', 'scripts/validate-wire-traps.ts', '--document'])).toBe(0);
   });
 });
