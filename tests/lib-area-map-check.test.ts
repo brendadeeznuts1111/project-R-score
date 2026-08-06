@@ -9,6 +9,9 @@ import {
   isExternalPath,
   isPathToken,
   issueToOpenPath,
+  issueToOpenTarget,
+  issueToOpenTargetAsync,
+  lineOfNeedle,
   MEGA_DOMAINS,
   verifiedAgeDays,
 } from '../tools/lib-area-map-check.ts';
@@ -85,7 +88,7 @@ describe('lib-area-map-check helpers', () => {
     expect(MEGA_DOMAINS).toContain('operations');
   });
 
-  test('issueToOpenPath resolves README and module paths for Bun.openInEditor', () => {
+  test('issueToOpenPath / target resolve README and module paths', () => {
     const readme = issueToOpenPath({
       kind: 'missing-verified',
       domain: 'http',
@@ -93,12 +96,26 @@ describe('lib-area-map-check helpers', () => {
     });
     expect(readme?.endsWith('lib/http/README.md')).toBe(true);
 
-    const modulePath = issueToOpenPath({
+    const t = issueToOpenTarget({
       kind: 'orphan-top-level',
       domain: 'http',
       path: 'sha256.ts',
     });
-    expect(modulePath?.endsWith('lib/http/sha256.ts')).toBe(true);
+    expect(t?.path.endsWith('lib/http/sha256.ts')).toBe(true);
+    expect(t?.line).toBe(1);
+    expect(t?.column).toBe(1);
+  });
+
+  test('lineOfNeedle and async target find Area map line', async () => {
+    expect(lineOfNeedle('a\n## Area map\nb\n', '## Area map')).toBe(2);
+    const t = await issueToOpenTargetAsync({
+      kind: 'missing-verified',
+      domain: 'http',
+      detail: 'missing stamp',
+    });
+    expect(t?.path.endsWith('lib/http/README.md')).toBe(true);
+    expect(t!.line).toBeGreaterThanOrEqual(1);
+    expect(t!.column).toBe(1);
   });
 });
 
