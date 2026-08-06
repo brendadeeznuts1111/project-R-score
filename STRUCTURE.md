@@ -132,7 +132,7 @@ Doctor reports the wrapper/defs split as **intentional**, not drift. Same-versio
 | Pages Functions | toml | Wrangler + R2 binding | same · Pages `project-r-score` | `pages` | `wrangler.toml` (`REGISTRY_BUCKET` → `factory-wager-registry`) |
 | Wiki host | text / yaml | GitHub Pages / Jekyll | same | `wiki` | `CNAME`, `_config.yml` |
 | Access policy | yaml | Access policy-as-code | same | `access` | `.cloudflare-access.yml` |
-| Reasonix | toml | app permissions (hosts live in `~/.reasonix/config.toml`) | same | `meta` | `reasonix.toml` |
+| Reasonix | toml | project override stub (`config_version` only; remotes in `~/.reasonix/config.toml`) | same | `meta` | `reasonix.toml` |
 | MCP catalog | json | MCP servers | same | `mcp` | `.mcp.json` |
 | Submodule pin | gitmodules | git submodule (HTTPS) | same → Kalshi-bot | `git-submodule` | `.gitmodules` |
 | Ownership / license | text / toml | GitHub / gitleaks | same | `meta` | `CODEOWNERS`, `LICENSE`, `.gitleaks.toml` |
@@ -255,5 +255,9 @@ Detail: [`docs/organization/HOMEBASE_DISCOVERY.md`](docs/organization/HOMEBASE_D
 - Further freezes under `projects/archive/` as packages leave the install graph.
 - Curate remaining `scratch/bun-v1.3.9-examples/`.
 - Optional: physical move of root-parked nested repos out of `~/Projects` entirely.
+- Kalshi-bot gitlink bump: parent may lag the submodule worktree — bump only after the Kalshi lane merges (do not pin an unmerged feature tip from primary).
+- Trim allowlist ghosts in [`config/repo-root-policy.ts`](config/repo-root-policy.ts) (`database`, `herdr-worktrees`, `logs`, `services`, `src`, `utils`, `workers`) when no revival path remains.
+
+Session archive map: [`docs/organization/session-organization.md`](docs/organization/session-organization.md).
 
 Maintained by the platform team. Run `bun run dashboard` for live views, or use active CLIs under [`tools/cli/`](tools/cli/) (e.g. `endpoint-status.ts`).

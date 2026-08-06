@@ -1,2 +1,9 @@
-[permissions]
-allow = ["Bash=echo \"=== conflictstyle ===\"; git config --global --get merge.conflictstyle || echo \"(unset)\"; echo \"=== existing aliases ===\"; git config --global --get-regexp '^alias\\.' || echo \"(none)\"; echo \"=== gh ===\"; command -v gh || echo \"(not installed)\"; echo \"=== global gitignore ===\"; ls ~/.gitignore_global 2>/dev/null && head -5 ~/.gitignore_global || echo \"(none)\"", "Bash=cd Kalshi-bot && for f in scripts/audit-mappings.ts scripts/export-toml.ts scripts/market-inefficiency.ts src/agent/design-agent.ts tests/institutions/ledger-types.test.ts; do echo \"=== $f ===\"; head -6 \"$f\" | grep -E '^\\s*(\\*|//|/\\*)|import' | head -3; done"]
+# FactoryWager project Reasonix overrides (optional).
+# Resolution: flag > ./reasonix.toml > ~/.reasonix/config.toml > defaults.
+#
+# [remote] and most CLI/desktop prefs are user/global only — edit
+# ~/.reasonix/config.toml (e.g. factorywager-staging). This file cannot override them.
+# Secrets: Proton Pass → `bun run proton:inject:factorywager:reasonix` (never paste keys here).
+# @see AGENTS.md · docs/harness/tenants/proton-integration.md
+
+config_version = 5
