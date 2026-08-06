@@ -320,6 +320,11 @@ Shebang: `#!/usr/bin/env bun`. Persistent knobs: `bunfig.toml`.
 
 ## Console depth & stdin
 
+Canonical Bun docs:
+[Object inspection depth](https://bun.com/docs/runtime/console#object-inspection-depth) ·
+module note [`console-depth.md`](./console-depth.md) · policy
+[`console-depth.ts`](./console-depth.ts).
+
 ### Object inspection depth (`console.log()`)
 
 By default, Bun’s `console.log()` prints nested objects to a depth of **2** so
@@ -329,6 +334,7 @@ terminals are not flooded with large structures.
 const nested = { a: { b: { c: { d: 'deep' } } } };
 console.log(nested);
 // Default (depth 2): { a: { b: { c: [Object ...] } } }
+// With depth 4:      { a: { b: { c: { d: 'deep' } } } }
 ```
 
 ### How to change the depth

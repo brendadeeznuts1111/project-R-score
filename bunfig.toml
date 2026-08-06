@@ -17,7 +17,9 @@
 
 [console]
 # Deep inspect for doctor gates and nested log fields (default 2 truncates too early)
-# Docs: https://bun.com/docs/runtime/console (precedence: --console-depth flag > this > default 2)
+# @see https://bun.com/docs/runtime/console#object-inspection-depth
+# Precedence: --console-depth flag > this file > default 2
+# Policy wrappers (lib/console-depth.ts) also honor BUN_CONSOLE_DEPTH (runtime does not)
 depth = 6
 
 # Process-tree hygiene for husky / CI / spawn chains (workspace-owned, like [test]/[console]).
