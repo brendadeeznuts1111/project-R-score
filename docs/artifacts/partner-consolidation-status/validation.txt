@@ -1,4 +1,4 @@
-Generated: 2026-08-05T21:55:34Z
+Generated: 2026-08-06T05:20:33Z
 Command: bun scripts/validate-partner-dashboard-plan.ts
 
 partner dashboard plan valid
@@ -8,5 +8,18 @@ connectors: 8
 regions: 8
 section mounts: 9
 hash routes: 6
+portal inputs: 7 required + 1 optional
 presentation states: 31
-canonical profiles: 0
+profile coverage entries: 0
+missing profile coverage: 4 (ASH, BIL, NOV, SPEN)
+sports terminal boundary rows: 4
+sports terminal partner route mount: absent (connector remains blocked)
+
+Portable reader QA:
+- structural payload verification: pass
+- enhanced desktop reader: pass (bounded verifier; graph and table rendered)
+- bounded mobile overflow check: todo
+  Shared reader `.analytics-top-bar` uses `width: 100vw`; Chromium headless-shell
+  reports 383px document width for a 375px client area when the vertical
+  scrollbar is present at the 390px verification viewport.
+  Expected fix owner: shared Data Analytics portable reader, not this artifact.

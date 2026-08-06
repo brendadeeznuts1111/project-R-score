@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "generatedAt": "2026-08-06T03:22:59.978Z",
+  "generatedAt": "2026-08-06T08:26:12.754Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
-  "brandCount": 82,
+  "brandCount": 92,
   "domainCount": 10,
   "domains": [
     "audit",
@@ -17,9 +17,9 @@
     "surfaces"
   ],
   "kinds": {
-    "id": 65,
+    "id": 70,
     "key": 3,
-    "code": 14
+    "code": 19
   },
   "domainCatalog": [
     {
@@ -50,7 +50,7 @@
     {
       "name": "operations",
       "module": "lib/types/branded/operations.ts",
-      "brandCount": 29
+      "brandCount": 39
     },
     {
       "name": "portal",
@@ -1679,6 +1679,92 @@
       "envName": "PARTNER_PROFILE_KEY"
     },
     {
+      "name": "PartnerCode",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Canonical uppercase partner business join key",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[A-Z]{3,6}$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asPartnerCode",
+        "try": "tryPartnerCode",
+        "parse": "parsePartnerCode"
+      },
+      "guard": "BRAND_GUARDS.isPartnerCode",
+      "shortName": "partnerCode",
+      "envName": "PARTNER_CODE"
+    },
+    {
+      "name": "PartnerCallSignCode",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Canonical partner operator call sign",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[A-Z]{3,6}-[0-9]{3}$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asPartnerCallSignCode",
+        "try": "tryPartnerCallSignCode",
+        "parse": "parsePartnerCallSignCode"
+      },
+      "guard": "BRAND_GUARDS.isPartnerCallSignCode",
+      "shortName": "partnerCallSignCode",
+      "envName": "PARTNER_CALL_SIGN_CODE"
+    },
+    {
+      "name": "PartnerProfileVersionCode",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Canonical partner profile document version",
+      "kind": "code",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asPartnerProfileVersionCode",
+        "try": "tryPartnerProfileVersionCode",
+        "parse": "parsePartnerProfileVersionCode"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isPartnerProfileVersionCode",
+      "shortName": "partnerProfileVersionCode",
+      "envName": "PARTNER_PROFILE_VERSION_CODE"
+    },
+    {
       "name": "PartnerTemplateId",
       "domain": "operations",
       "tiers": [
@@ -1717,7 +1803,12 @@
       "mint": [
         "system-internal"
       ],
-      "description": "Seat-intake out token (e.g. SPEN-1 / CODE-1)",
+      "description": "Canonical partner out identity (for example out-SPEN-1)",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^out-[A-Z]{3,6}-[1-9][0-9]*$",
+        "ingressNormalization": "trim"
+      },
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
       "constructors": {
@@ -1725,13 +1816,207 @@
         "try": "tryOutId",
         "parse": "parseOutId"
       },
+      "guard": "BRAND_GUARDS.isOutId",
+      "shortName": "outId",
+      "envName": "OUT_ID"
+    },
+    {
+      "name": "LedgerEntryId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Immutable partner ledger entry identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asLedgerEntryId",
+        "try": "tryLedgerEntryId",
+        "parse": "parseLedgerEntryId"
+      },
       "validation": {
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isOutId",
-      "shortName": "outId",
-      "envName": "OUT_ID"
+      "guard": "BRAND_GUARDS.isLedgerEntryId",
+      "shortName": "ledgerEntryId",
+      "envName": "LEDGER_ENTRY_ID"
+    },
+    {
+      "name": "CurrencyCode",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "ISO-style currency code for minor-unit money",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[A-Z]{3}$",
+        "ingressNormalization": "trim-uppercase"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asCurrencyCode",
+        "try": "tryCurrencyCode",
+        "parse": "parseCurrencyCode"
+      },
+      "guard": "BRAND_GUARDS.isCurrencyCode",
+      "shortName": "currencyCode",
+      "envName": "CURRENCY_CODE"
+    },
+    {
+      "name": "AttentionReasonCode",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Stable machine-readable operator attention reason",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)+$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asAttentionReasonCode",
+        "try": "tryAttentionReasonCode",
+        "parse": "parseAttentionReasonCode"
+      },
+      "guard": "BRAND_GUARDS.isAttentionReasonCode",
+      "shortName": "attentionReasonCode",
+      "envName": "ATTENTION_REASON_CODE"
+    },
+    {
+      "name": "SourceSystemId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Source-qualified system identity for provenance",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z0-9][a-z0-9-]*$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asSourceSystemId",
+        "try": "trySourceSystemId",
+        "parse": "parseSourceSystemId"
+      },
+      "guard": "BRAND_GUARDS.isSourceSystemId",
+      "shortName": "sourceSystemId",
+      "envName": "SOURCE_SYSTEM_ID"
+    },
+    {
+      "name": "AdapterId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Adapter implementation identity for provenance",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z0-9][a-z0-9-]*$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asAdapterId",
+        "try": "tryAdapterId",
+        "parse": "parseAdapterId"
+      },
+      "guard": "BRAND_GUARDS.isAdapterId",
+      "shortName": "adapterId",
+      "envName": "ADAPTER_ID"
+    },
+    {
+      "name": "ExternalPartnerId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input"
+      ],
+      "description": "Source-owned non-canonical partner identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asExternalPartnerId",
+        "try": "tryExternalPartnerId",
+        "parse": "parseExternalPartnerId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isExternalPartnerId",
+      "shortName": "externalPartnerId",
+      "envName": "EXTERNAL_PARTNER_ID"
+    },
+    {
+      "name": "ExternalAccountId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input"
+      ],
+      "description": "Source-owned non-canonical account identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asExternalAccountId",
+        "try": "tryExternalAccountId",
+        "parse": "parseExternalAccountId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isExternalAccountId",
+      "shortName": "externalAccountId",
+      "envName": "EXTERNAL_ACCOUNT_ID"
     },
     {
       "name": "GateDecisionId",

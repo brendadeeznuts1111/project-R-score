@@ -1,16 +1,22 @@
 # Partner code consolidation review
 
-Status: proposed consolidation plan (2026-08-05)
+Status: extraction in progress (2026-08-05)
 
 ## Decision
 
-Create one cohesive partner-owned workspace at `projects/active/partners/` and
-add that exact path to the root workspace list. Its package name is
-`@factorywager/partners`. Move toward it in small compatibility-preserving
-slices. The workspace owns partner identity, profile semantics, lifecycle,
-book/account references, and the canonical dashboard read model. Accounting,
-Telegram, limits, Tennis HQ, Sports Terminal, vault, and portal code remain
-explicit adapters or consumers.
+Use the implemented partner-owned workspace at `packages/partners/`, package
+name `@factorywager/partners`, and continue in small compatibility-preserving
+slices. The workspace owns parsed partner identifiers, the dashboard artifact
+contract, pure compatibility/profile-coverage adapters, and the target
+partner-domain vocabulary. Full profile/lifecycle authority, book/account
+references, and source reconciliation remain planned. Accounting, Telegram,
+limits, Tennis HQ, Sports Terminal, vault, and portal code remain explicit
+adapters or consumers.
+
+The machine composition authority is the
+[partner dashboard MVP TOML](./partner-dashboard-mvp.toml); its human
+nomenclature and surface interpretation live in the
+[semantic map](./partner-dashboard-semantic-map.md).
 
 Do not start by moving every file whose text contains `partner`. The repository
 contains hundreds of partner vocabulary touchpoints, but many belong to other
@@ -22,13 +28,18 @@ joins one boundary at a time.
 The current implementation is healthy but fragmented:
 
 - `bun run partners:governance` passes.
-- 44 focused profile, ledger, isolation, board, and portal tests pass.
+- Focused package, profile-coverage, plan-validator, portal, and shared-fetch
+  suites pass; use the validation commands below instead of preserving a stale
+  test count in prose.
 - `public/registry/partners-ops.json` contains 4 partners and 10 outs.
 - `public/registry/partner-profiles.json` is valid and current but contains 0
   real profiles.
-- `public/portal/partners/index.html` is 2,586 lines and joins profile,
-  partners-ops, Telegram handshake, seat desk, limits, bookkeeping, and Soft
-  data in the browser.
+- `public/registry/partner-profile-coverage.json` is the new redacted coverage
+  boundary. It is structurally valid with 0 entries and explicitly fails the
+  four-CODE readiness gate until profiles are materialized.
+- `public/portal/partners/index.html` remains a large inline controller and
+  joins profile, partners-ops, Telegram handshake, seat desk, limits,
+  bookkeeping, and Soft data in the browser.
 - `lib/telegram/partner-ops-registry.ts` is 965 lines and currently acts as
   domain model, legacy source adapter, projection engine, validator, event
   reader, ledger join, and registry writer.
@@ -48,27 +59,25 @@ content searches for `partner` / `partners`. This produced two inventories:
    concept or workflow.
 2. **Touchpoints**: code that refers to partners but is owned by another domain.
 
-The filename/path inventory finds 128 tracked paths containing `partner` or
-`partners` (34 tests, 33 library files, 15 tools, 14 Sports Terminal files, 13
-public files, 7 scripts, 7 docs, 3 config files, and 2 skills). The broader
-content search finds more than 500 tracked files with partner vocabulary. Those
-numbers are intentionally not move lists. Tests, docs, generated registries,
+The filename/path and content inventories are intentionally discovery aids, not
+move lists. Their counts change as extraction proceeds; refresh them from
+tracked files rather than copying old totals. Tests, docs, generated registries,
 semantic vocabulary, shared portal chrome, and cross-domain joins account for
-most of the content hits.
+most hits.
 
 ### Partner-owned candidates
 
-| Cluster                   | Current paths                                                                                                                   | Keep / extract                                                                                                               |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Profile core              | `lib/partner-profile/schema.ts`, `parse.ts`, `bake.ts`                                                                          | Best starting core. Preserve CODE key, lifecycle, book references, vault-only credentials, validation, and Bun TOML parsing. |
-| Profile commands          | `lib/partner-profile/onboard.ts`, `register.ts`, `tools/partner-*.ts`                                                           | Keep as application services/CLI adapters; they should call package APIs rather than own shapes.                             |
-| Ledger and settlement     | `lib/partner-profile/ledger.ts`, `deposit-import.ts`, `accounting-stub.ts`, `settlement-runner.ts`, `settlement-cron-worker.ts` | Extract behind an accounting port. SQLite and cron are adapters, not profile-core dependencies.                              |
-| Legacy partner projection | `lib/telegram/partner-ops-registry.ts`, `partner-ops-events.ts`, `ops-accounting-view.ts`                                       | Keep the useful projection/validation behavior; split legacy ingestion from the canonical read-model builder.                |
-| Telegram adapter          | `lib/telegram/partner-*`, package-group/handshake modules, `lib/portal/partner-telegram*.ts`                                    | Retain in `lib/telegram` initially. Export partner communication facts through a narrow adapter contract.                    |
-| Portal domain helpers     | `lib/portal/partner-routes.ts`, `partner-tables.ts`, `partner-tags.ts`                                                          | Strong reusable portal contracts. Move only after the read model stabilizes.                                                 |
-| Dashboard                 | `public/portal/partners/`, `public/portal/partners.md`                                                                          | Keep the route. Replace its many registry joins with one dashboard artifact and split the monolithic inline controller.      |
-| Profiles/config           | `config/partner-profiles/*.toml`, `config/partner-templates/*.toml`                                                             | Canonical source data. Use Bun native TOML; do not copy profile data into TypeScript.                                        |
-| Governance                | partner tests, `scripts/validate-partner-*`, `tools/partners-ops.ts`                                                            | Retain focused gates and redirect them to package exports during migration.                                                  |
+| Cluster                   | Current paths                                                                                                                   | Keep / extract                                                                                                                                            |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Profile core              | `lib/partner-profile/schema.ts`, `parse.ts`, `bake.ts`                                                                          | Preserve schema/parser and private `loadAllProfiles`. Use the redacted coverage bake for readiness; keep the public full-profile bake compatibility-only. |
+| Profile commands          | `lib/partner-profile/onboard.ts`, `register.ts`, `tools/partner-*.ts`                                                           | Keep as application services/CLI adapters; they should call package APIs rather than own shapes.                                                          |
+| Ledger and settlement     | `lib/partner-profile/ledger.ts`, `deposit-import.ts`, `accounting-stub.ts`, `settlement-runner.ts`, `settlement-cron-worker.ts` | Extract behind an accounting port. SQLite and cron are adapters, not profile-core dependencies.                                                           |
+| Legacy partner projection | `lib/telegram/partner-ops-registry.ts`, `partner-ops-events.ts`, `ops-accounting-view.ts`                                       | Keep the useful projection/validation behavior; split legacy ingestion from the canonical read-model builder.                                             |
+| Telegram adapter          | `lib/telegram/partner-*`, package-group/handshake modules, `lib/portal/partner-telegram*.ts`                                    | Retain in `lib/telegram` initially. Export partner communication facts through a narrow adapter contract.                                                 |
+| Portal domain helpers     | `lib/portal/partner-routes.ts`, `partner-tables.ts`, `partner-tags.ts`                                                          | Strong reusable portal contracts. Move only after the read model stabilizes.                                                                              |
+| Dashboard                 | `public/portal/partners/`, `public/portal/partners.md`                                                                          | Keep the route. Replace its many registry joins with one dashboard artifact and split the monolithic inline controller.                                   |
+| Profiles/config           | `config/partner-profiles/*.toml`, `config/partner-templates/*.toml`                                                             | Canonical source data. Use Bun native TOML; do not copy profile data into TypeScript.                                                                     |
+| Governance                | partner tests, `scripts/validate-partner-*`, `tools/partners-ops.ts`                                                            | Retain focused gates and redirect them to package exports during migration.                                                                               |
 
 ### Touchpoints that stay with their owning domains
 
@@ -93,8 +102,9 @@ owner before adding routing, auth, or package contracts.
 
 1. `lib/partner-profile/schema.ts`: the approved CODE-keyed profile and
    lifecycle contract is the strongest canonical core.
-2. `lib/partner-profile/parse.ts` plus `bake.ts`: parse once at the TOML
-   boundary, validate, then publish a static artifact.
+2. `lib/partner-profile/parse.ts` plus private `loadAllProfiles`: parse once at
+   the TOML boundary and validate. Publish only the redacted coverage artifact
+   for readiness; `buildPartnerProfilesBake` remains compatibility-only.
 3. `lib/portal/partner-routes.ts` and `partner-tables.ts`: typed routes and
    table metadata are already separated from DOM rendering.
 4. `public/portal/partners/partners-board.js`: pure indexing, filtering, and
@@ -169,19 +179,19 @@ The closed `agent/partner-opportunities` and `feat/concept-lifecycle-phase1`
 branches are not MVP sources. The former needs a fresh event-fold design against
 the current schema; the latter duplicated the canonical lifecycle engine.
 
-## Proposed workspace
+## Implemented workspace and target shape
 
 ```text
-projects/active/partners/
+packages/partners/
 ├── package.json                  # @factorywager/partners
 ├── src/
 │   ├── index.ts                 # stable public exports
-│   ├── core/                    # CODE, lifecycle, profile, books, validation
-│   ├── config/                  # Bun TOML loader/materializer
-│   ├── read-model/              # PartnerDashboardRecord + summary builder
-│   ├── ports/                   # accounting, telegram, limits, bookmakers
-│   └── compatibility/           # partners-ops.v2 projection during migration
-└── tests/
+│   ├── core/                    # identifiers and dashboard-domain types
+│   ├── boundary/                # strict artifact parser and pure assembler
+│   ├── adapters/                # implemented redacted profile coverage
+│   ├── compatibility/           # ingress and partners-ops.v2 projection
+│   └── portal/                  # browser-neutral consumer contract
+└── README.md
 ```
 
 Keep implementations that perform SQLite, Telegram API calls, vault operations,
@@ -207,16 +217,17 @@ Use both Bun TOML paths intentionally:
 - Writes use `Bun.TOML.stringify` only in command adapters. Core functions
   receive typed values and do not touch the filesystem.
 
-The active Bun 1.4.0 runtime passes the machine file-type doctor for native TOML
-imports. Existing repository policy already requires canonical Bun API refs on
-files that use these APIs.
+Runtime and type-channel claims belong to `config/bun-channels.toml` and
+`docs/design/bun-channel-governance.md`. Partner loading code uses only reviewed
+Bun APIs and canonical documentation references; this plan does not duplicate a
+runtime version.
 
 ## Cutover controls
 
-- `IngressTranslator` is owned by the partners compatibility boundary and is
-  called by HTTP/BFF, CLI, and artifact ingress before core parsing. Its only
-  MVP rewrite is `CODE-N` to `out-CODE-N`; it records telemetry and original
-  provenance and rejects unknown aliases.
+- `IngressTranslator` is owned by the partners compatibility boundary. HTTP/BFF,
+  CLI, and connector callers are not wired yet. Its only MVP rewrite is `CODE-N`
+  to `out-CODE-N`; it returns warning/counter metadata and original provenance
+  for the future caller to emit, and rejects unknown aliases.
 - Lifecycle is a structured fact with mandatory source system, original state,
   adapter version, mapping confidence, and effective timestamp. The Sports
   `frozen` to `suspended` mapping is therefore auditable rather than a lossy
@@ -240,12 +251,12 @@ files that use these APIs.
 
 ## Migration slices
 
-1. Add `projects/active/partners` / `@factorywager/partners` with core types,
-   parsers, and read-model contracts. Re-export from old modules so no consumer
-   moves yet.
-2. Make an empty canonical bake fail, then materialize real profiles for the
-   four current partners, or explicitly record why a legacy-only partner cannot
-   materialize.
+1. **Implemented:** add `packages/partners` / `@factorywager/partners` with core
+   identifiers, strict artifact contracts, the assembler, and compatibility
+   boundaries without moving legacy consumers.
+2. **In progress:** materialize redacted coverage for the four current partners.
+   The empty coverage artifact remains structurally valid in proposal mode but
+   fails implementation readiness with the exact missing CODEs.
 3. Enforce the financial SQL storage ratchet, then harden the accounting adapter
    around transactional minor-unit balances.
 4. Add adapters that project Telegram, accounting, limits, and bookmaker facts

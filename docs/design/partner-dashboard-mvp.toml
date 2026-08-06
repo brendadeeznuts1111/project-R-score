@@ -14,7 +14,21 @@ primary_concept_namespaces = ["partner", "out"]
 [package]
 target_name = "@factorywager/partners"
 target_workspace = "packages/partners"
-implementation_status = "scaffolded"
+implementation_status = "artifact-core-implemented"
+
+[package.components]
+identifiers = "implemented"
+artifact_boundary = "implemented"
+artifact_assembler = "implemented"
+ingress_translator = "implemented"
+legacy_ops_adapter = "implemented"
+portal_consumer_contract = "implemented"
+profile_coverage_adapter = "implemented"
+current_compatibility_fetch_transport = "implemented"
+canonical_dashboard_browser_loader = "planned"
+connector_ports = "partial"
+source_adapters = "partial"
+reconciliation = "planned"
 
 [toolchain]
 authority = "config/bun-channels.toml"
@@ -32,6 +46,19 @@ canonical_join_type = "PartnerCode"
 canonical_wire_key = "partnerCode"
 display_identity_label = "CODE"
 artifact_embeds_colors = false
+active_out_identity_field = "activeOutIds"
+conflict_value_policy = "redacted-json-scalars-only"
+
+[shapes.profile_coverage_artifact]
+type = "PartnerProfileCoverageArtifact"
+schema = "factorywager.partner-profile-coverage.v1"
+path = "/registry/partner-profile-coverage.json"
+implementation_status = "implemented"
+role = "implementation-readiness-input"
+dashboard_connector = false
+public_fact_paths = ["generatedAt", "evidenceByPartnerCode.*.callSign", "evidenceByPartnerCode.*.profileDocumentVersion"]
+forbidden_fact_classes = ["lifecycle", "phase", "credentials", "funding", "telegram", "accounting", "money", "policy"]
+lifecycle_authority = false
 
 [surfaces.portal]
 board_id = "partners"
@@ -57,6 +84,38 @@ optional_input_refs = ["/registry/soft-accounting-export.json"]
 target_shape_ref = "shapes.dashboard_artifact"
 target_input_mode = "canonical-single-artifact"
 retirement_condition = "portal-loads-only-target-artifact"
+transition_implementation_status = "planned"
+transition_input_mode = "canonical-single-artifact-with-explicit-legacy-comparison"
+canonical_input_ref = "/registry/partners-dashboard.json"
+canonical_failure_policy = "error-never-fallback"
+automatic_legacy_fallback = false
+
+[surfaces.portal.consumer_contract.current_fetch_transport]
+module_ref = "/portal/fetch-json.js"
+export_name = "fetchJsonResult"
+default_timeout_ms = 5000
+content_type_diagnostic_policy = "advisory-debug-gated"
+required_failure_policy = "throw-path-qualified-error"
+optional_failure_policy = "explicit-catch-to-null"
+
+[surfaces.portal.consumer_contract.legacy_comparison]
+implementation_status = "planned"
+activation = "explicit-search-param"
+search_param = "compare"
+search_value = "legacy"
+load_order = "after-canonical-validation"
+result_role = "diagnostic-only"
+failure_policy = "warn-never-fallback"
+required_input_refs = [
+  "/registry/telegram-handshake.json",
+  "/registry/seat-capital-desk.json",
+  "/registry/telegram-handshake-catalog.json",
+  "/registry/scrape-wire-taxonomy.json",
+  "/registry/partners-ops.json",
+  "/registry/partner-profiles.json",
+  "/registry/limit-raises.json",
+]
+optional_input_refs = ["/registry/soft-accounting-export.json"]
 
 [semantic_model]
 semantic_order = ["business-domain", "concept", "parsed-shape", "consuming-surface"]
@@ -84,6 +143,13 @@ wire_path = "partners[].partnerCode"
 owner_domain = "partners"
 meaning = "canonical partner join key"
 forbidden_core_aliases = ["partnerId", "code"]
+
+[[nomenclature.term]]
+canonical = "ProfileDocumentVersion"
+wire_path = "evidenceByPartnerCode.*.profileDocumentVersion"
+owner_domain = "partners"
+meaning = "source profile document revision; not the coverage artifact schema or template version"
+forbidden_core_aliases = ["schemaVersion", "templateVersion"]
 
 [[nomenclature.term]]
 canonical = "PartnerLifecycleState"
@@ -227,7 +293,7 @@ type = "OutId"
 pattern = "^out-([A-Z]{3,6})-([1-9][0-9]*)$"
 role = "canonical-partner-scoped-out-identity"
 target_parser = "parseCanonicalOutId"
-implementation_status = "planned"
+implementation_status = "implemented"
 
 [identity.legacy_seat_out_token]
 type = "LegacySeatOutToken"
@@ -237,18 +303,29 @@ policy = "ingress-only"
 [ingress]
 translator = "IngressTranslator"
 owner = "@factorywager/partners/compatibility"
+implementation_status = "translator-implemented"
 stage = "before-core-parse"
 callers = ["http-bff", "cli", "artifact-adapter"]
+caller_integration_status = "unwired"
+telemetry_emission_status = "unwired"
 unknown_mapping = "reject"
 telemetry_counter = "partner_ingress_translation_total"
+
+[ingress.http]
+route_status = "no-canonical-route"
+auth_integration_status = "unwired"
+accepted_media_types = []
+multipart_status = "unsupported-not-required"
 
 [ingress.mappings.legacy_seat_out_token]
 from_pattern = "^([A-Z]{3,6})-([1-9][0-9]*)$"
 to_template = "out-{code}-{sequence}"
 canonical_pattern = "^out-([A-Z]{3,6})-([1-9][0-9]*)$"
 canonical_parser = "parseCanonicalOutId"
-canonical_parser_implementation_status = "planned"
+canonical_parser_implementation_status = "implemented"
 emit_deprecation_warning = true
+warning_emission_owner = "future-ingress-caller"
+deprecation_warning_code = "partner.out_id.legacy_translated"
 preserve_original_as_provenance = true
 sunset_condition = "zero-production-translations-for-30-days-and-all-producers-canonical"
 
@@ -966,6 +1043,7 @@ writer_candidate_status = "observed-on-1.4.0-canary-not-on-reviewed-production-p
 mutation_policy = "do-not-enable-native-writes-before-runtime-promotion-and-contract-proof"
 
 [core]
+ownership_status = "target-contract"
 owns = [
   "partner-code",
   "profile",
@@ -977,16 +1055,27 @@ owns = [
   "commercial-agreement-terms",
   "dashboard-read-model",
 ]
+implemented_now = ["partner-code", "dashboard-artifact-boundary", "artifact-assembler", "profile-coverage-adapter"]
+planned = [
+  "profile",
+  "lifecycle-domain-logic",
+  "phase-derivation",
+  "book-account-reference-adapters",
+  "risk-and-sor-policy",
+  "cultivation-policy",
+  "commercial-agreement-terms",
+  "adapter-reconciliation",
+]
 must_not_import = ["telegram-api", "bun:sqlite", "vault-crypto", "portal-dom"]
 
 [reconciliation]
-identity_precedence = ["profiles-registry"]
+profile_precedence = ["canonical-profile-config"]
 capacity_precedence = ["tennis-contract", "sports-terminal", "legacy-ops-registry"]
 communication_precedence = ["telegram-handshake"]
 finance_precedence = ["accounting-ledger"]
 conflict_policy = "emit-conflict-never-latest-wins"
 registered_outs_metric = "distinct-from-active-outs"
-profile_coverage = "four-current-codes-or-explicit-migration-reason"
+profile_coverage = "all-four-current-codes-required-for-implementation-ready"
 
 [connector_defaults.resilience]
 timeout_ms = 3000
@@ -1000,23 +1089,23 @@ required_source_failure = "use-last-known-good-within-stale-window-else-fail-bak
 optional_source_failure = "use-last-known-good-within-max-age-else-mark-unavailable"
 
 [[connectors]]
-id = "profiles-registry"
+id = "canonical-profile-config"
 snapshot_key = "profiles"
 source_system_id = "factorywager-partner-profile"
 source_owner_domain = "partners"
-adapter_id = "profile-artifact"
+adapter_id = "canonical-profile-config"
 adapter_version = "1"
 target_owner_package = "@factorywager/partners"
 target_adapter_export = "./adapters/profile"
 port = "PartnerProfileReadPort"
 implementation_status = "planned"
 enabled = true
-input_kind = "registry-artifact"
+input_kind = "private-toml-glob"
 required = true
-input_ref = "/registry/partner-profiles.json"
-authoritative_fact_paths = ["partners[].identity", "partners[].lifecycle"]
+input_ref = "config/partner-profiles/*.toml"
+authoritative_fact_paths = ["partners[].identity", "partners[].lifecycle", "partners[].policy"]
 visual_group = "registry"
-provides = ["identity", "lifecycle", "policy", "agreement", "account-references"]
+provides = ["identity", "lifecycle", "policy"]
 region_ids = ["summary", "roster", "profile", "accounts-limits", "attention"]
 
 [[connectors]]
@@ -1138,7 +1227,7 @@ target_adapter_export = "./adapters/sports-terminal"
 port = "IntegrationHealthReadPort"
 implementation_status = "blocked"
 enabled = false
-blocking_reason = "one exact parsed sports-terminal package export or registry artifact is required"
+blocking_reason = "one exact parsed input, explicit external-ID resolution, authenticated route integration, and integer-minor-unit money wire are required"
 input_kind = "unresolved"
 required = false
 input_ref = ""
@@ -1156,6 +1245,7 @@ adapter_id = "legacy-partners-ops"
 adapter_version = "2"
 target_owner_package = "@factorywager/partners"
 target_adapter_export = "./compatibility/legacy-partners-ops"
+target_adapter_implementation_status = "implemented"
 current_owner_module = "lib/telegram/partner-ops-registry.ts"
 port = "LegacyPartnerProjectionPort"
 implementation_status = "current-compatibility"
@@ -1180,7 +1270,7 @@ theme_role = "panel_default"
 concept_refs = ["page.partners", "ui.semantic.status", "ui.semantic.source"]
 proposed_concept_id = "section.partnersSummary"
 concept_status = "proposed"
-connectors = ["profiles-registry", "accounting-ledger", "legacy-ops-registry"]
+connectors = ["canonical-profile-config", "accounting-ledger", "legacy-ops-registry"]
 
 [[surfaces.portal.regions]]
 region_id = "roster"
@@ -1194,7 +1284,7 @@ concept_refs = ["page.partners", "ui.filter.partnerId", "ui.semantic.status"]
 proposed_concept_id = "section.partnersRoster"
 concept_status = "proposed"
 connectors = [
-  "profiles-registry",
+  "canonical-profile-config",
   "accounting-ledger",
   "telegram-handshake",
   "limits-registry",
@@ -1213,7 +1303,7 @@ theme_role = "panel_default"
 concept_refs = ["page.partners", "ui.semantic.status", "ui.semantic.source"]
 proposed_concept_id = "section.partnersProfile"
 concept_status = "proposed"
-connectors = ["profiles-registry", "sports-terminal"]
+connectors = ["canonical-profile-config", "sports-terminal"]
 
 [[surfaces.portal.regions]]
 region_id = "accounts-limits"
@@ -1227,7 +1317,7 @@ route_dom_id = "section:accounts-limits"
 theme_role = "panel_default"
 concept_refs = ["section.partnersAccountsLimits", "section.partnersOuts"]
 concept_status = "existing"
-connectors = ["profiles-registry", "limits-registry", "bookmakers-registry"]
+connectors = ["canonical-profile-config", "limits-registry", "bookmakers-registry"]
 
 [[surfaces.portal.regions]]
 region_id = "accounting"
@@ -1277,7 +1367,7 @@ concept_refs = ["page.partners", "ui.semantic.status", "ui.semantic.source"]
 proposed_concept_id = "section.partnersAttention"
 concept_status = "proposed"
 connectors = [
-  "profiles-registry",
+  "canonical-profile-config",
   "accounting-ledger",
   "telegram-handshake",
   "limits-registry",

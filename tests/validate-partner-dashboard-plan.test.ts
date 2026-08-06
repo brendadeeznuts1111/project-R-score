@@ -31,7 +31,8 @@ describe('partner dashboard semantic plan', () => {
       portalRequiredInputs: 7,
       portalOptionalInputs: 1,
       presentationStates: 31,
-      canonicalProfiles: 0,
+      profileCoverageEntries: 0,
+      missingProfileCoverage: 4,
     });
   });
 
@@ -100,7 +101,9 @@ describe('partner dashboard semantic plan', () => {
     plan.surfaces.portal.regions[0].business_domains.push('not-a-domain');
 
     const result = await validatePartnerDashboardPlan(plan);
-    expect(result.errors).toContain('package.implementation_status must be scaffolded');
+    expect(result.errors).toContain(
+      'package.implementation_status must be artifact-core-implemented'
+    );
     expect(result.errors.some(error => error.includes('PartnerCode wire_path must be'))).toBe(true);
     expect(result.errors.some(error => error.includes('invalid owner_domain source-adapter'))).toBe(
       true
@@ -112,6 +115,57 @@ describe('partner dashboard semantic plan', () => {
     expect(result.errors).toContain('region has invalid business domain not-a-domain');
   });
 
+  it('rejects profile coverage boundary drift into lifecycle or private facts', async () => {
+    const plan = copyPlan();
+    plan.shapes.profile_coverage_artifact.lifecycle_authority = true;
+    plan.shapes.profile_coverage_artifact.public_fact_paths.push('telegram.chatId');
+    plan.reconciliation.profile_precedence = ['legacy-ops-registry'];
+    plan.reconciliation.profile_coverage = 'four-current-codes-or-explicit-migration-reason';
+
+    const result = await validatePartnerDashboardPlan(plan);
+    expect(result.errors).toContain(
+      'profile coverage artifact must remain redacted identity evidence only'
+    );
+    expect(result.errors).toContain(
+      'reconciliation must separate canonical profile authority from coverage readiness'
+    );
+  });
+
+  it('rejects identifier and ingress translation drift from package parsers', async () => {
+    const plan = copyPlan();
+    plan.package.components.reconciliation = 'implemented';
+    plan.shapes.dashboard_artifact.active_out_identity_field = 'hiddenCountOnly';
+    plan.identity.partner_code.pattern = '^wrong$';
+    plan.identity.out_id.implementation_status = 'planned';
+    plan.ingress.stage = 'inside-core';
+    plan.ingress.http.route_status = 'implemented';
+    plan.ingress.mappings.legacy_seat_out_token.from_pattern = '^unsafe$';
+    plan.ingress.mappings.legacy_seat_out_token.warning_emission_owner = 'translator';
+
+    const result = await validatePartnerDashboardPlan(plan);
+    expect(result.errors).toContain(
+      'package component statuses must distinguish implemented artifact core from planned adapters'
+    );
+    expect(result.errors).toContain(
+      'dashboard artifact must expose active OutIds and scalar-only conflict evidence'
+    );
+    expect(result.errors).toContain(
+      'identity.partner_code must match the package-owned PartnerCode parser'
+    );
+    expect(result.errors).toContain(
+      'identity.out_id must match the implemented canonical OutId parser'
+    );
+    expect(result.errors).toContain(
+      'ingress must declare the implemented pre-core rejecting translator'
+    );
+    expect(result.errors).toContain(
+      'ingress HTTP status must not claim an unwired canonical API contract'
+    );
+    expect(result.errors).toContain(
+      'legacy seat OutId mapping must match the package ingress translator'
+    );
+  });
+
   it('rejects connector identity, requiredness, and reciprocal-region drift', async () => {
     const plan = copyPlan();
     plan.connectors[0].snapshot_key = 'profiles-v2';
@@ -119,8 +173,18 @@ describe('partner dashboard semantic plan', () => {
     plan.connectors[0].region_ids.push('unknown-region');
     plan.surfaces.portal.regions[0].connectors.push('unknown-connector');
     plan.surfaces.portal.regions[1].connectors = plan.surfaces.portal.regions[1].connectors.filter(
-      (connectorKey: string) => connectorKey !== 'profiles-registry'
+      (connectorKey: string) => connectorKey !== 'canonical-profile-config'
     );
+    const legacyConnector = plan.connectors.find(
+      (connector: Record<string, unknown>) => connector.id === 'legacy-ops-registry'
+    );
+    if (!legacyConnector) throw new Error('legacy connector fixture missing');
+    legacyConnector.target_adapter_implementation_status = 'planned';
+    const sportsConnector = plan.connectors.find(
+      (connector: Record<string, unknown>) => connector.id === 'sports-terminal'
+    );
+    if (!sportsConnector) throw new Error('sports connector fixture missing');
+    sportsConnector.blocking_reason = 'input undecided';
 
     const result = await validatePartnerDashboardPlan(plan);
     expect(result.errors.some(error => error.includes('snapshot_key must be profiles'))).toBe(true);
@@ -130,6 +194,34 @@ describe('partner dashboard semantic plan', () => {
       true
     );
     expect(result.errors.some(error => error.includes('are not reciprocal'))).toBe(true);
+    expect(result.errors).toContain(
+      'connector legacy-ops-registry target compatibility adapter must be implemented'
+    );
+    expect(result.errors).toContain(
+      'sports-terminal blocking reason must name every unresolved boundary'
+    );
+  });
+
+  it('keeps profile coverage separate from the planned canonical profile connector', async () => {
+    const plan = copyPlan();
+    const connector = plan.connectors.find(
+      (candidate: Record<string, unknown>) => candidate.id === 'canonical-profile-config'
+    );
+    if (!connector) throw new Error('canonical profile connector fixture missing');
+    connector.adapter_id = 'profile-artifact';
+    connector.target_adapter_export = './adapters/profile-coverage';
+    connector.provides = ['identity-coverage'];
+    connector.authoritative_fact_paths = ['evidenceByPartnerCode.*'];
+
+    const result = await validatePartnerDashboardPlan(plan);
+    expect(result.errors).toContain(
+      'canonical-profile-config must remain the planned profile authority'
+    );
+    expect(
+      result.errors.some(error =>
+        error.includes('canonical-profile-config has invalid authoritative fact path')
+      )
+    ).toBe(true);
   });
 
   it('separately rejects section-mount and partner-hash-route drift', async () => {
@@ -167,6 +259,9 @@ describe('partner dashboard semantic plan', () => {
 
     const result = await validatePartnerDashboardPlan(plan);
     expect(result.errors.some(error => error.includes('portal registry input map'))).toBe(true);
+    expect(result.errors).toContain(
+      'portal current input refs must match the package consumer contract'
+    );
     expect(result.errors).toContain('portal consumer target_shape_ref must be shapes.dashboard_artifact');
   });
 
@@ -179,12 +274,29 @@ describe('partner dashboard semantic plan', () => {
     expect(result.errors.some(error => error.includes('portal registry input map'))).toBe(true);
   });
 
+  it('pins the current portal to the shared structured JSON fetch transport', async () => {
+    const plan = copyPlan();
+    plan.surfaces.portal.consumer_contract.current_fetch_transport.export_name = 'fetchJson';
+    const html = await Bun.file('public/portal/partners/index.html').text();
+    const result = await validatePartnerDashboardPlan(plan, {
+      boardHtml: html.replace(
+        "import { fetchJsonResult } from '/portal/fetch-json.js'",
+        "import { fetchJson } from '/portal/fetch-json.js'"
+      ),
+    });
+
+    expect(result.errors).toContain(
+      'current-compatibility portal must use the shared structured JSON fetch transport'
+    );
+  });
+
   it('rejects ambiguous target naming and premature canonical-consumer claims', async () => {
     const plan = copyPlan();
     plan.surfaces.portal.consumer = 'PartnerDashboardArtifact';
     plan.surfaces.portal.target_consumer = 'WrongArtifact';
     plan.surfaces.portal.consumer_contract.implementation_status = 'implemented';
     plan.surfaces.portal.consumer_contract.active_input_mode = 'canonical-single-artifact';
+    plan.surfaces.portal.consumer_contract.automatic_legacy_fallback = true;
 
     const result = await validatePartnerDashboardPlan(plan);
     expect(result.errors).toContain(
@@ -194,6 +306,100 @@ describe('partner dashboard semantic plan', () => {
     expect(result.errors).toContain(
       'implemented portal consumer must load only the canonical dashboard artifact'
     );
+    expect(result.errors).toContain(
+      'implemented portal consumer must retire transition policy and remove legacy comparison'
+    );
+  });
+
+  it('rejects drift across every planned transition and legacy-comparison field', async () => {
+    const mutations: Array<[string, (plan: ReturnType<typeof copyPlan>) => void]> = [
+      ['dashboard artifact path must match the package portal contract', plan => {
+        plan.shapes.dashboard_artifact.path = '/registry/wrong.json';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.transition_implementation_status = 'implemented';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.transition_input_mode = 'automatic-fallback';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.canonical_input_ref = '/registry/wrong.json';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.canonical_failure_policy = 'fallback';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.automatic_legacy_fallback = true;
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.legacy_comparison.implementation_status =
+          'implemented';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.legacy_comparison.activation = 'hash';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.legacy_comparison.search_param = 'mode';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.legacy_comparison.search_value = 'true';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.legacy_comparison.load_order = 'before-canonical';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.legacy_comparison.result_role = 'fallback';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.legacy_comparison.failure_policy = 'fail-primary';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.legacy_comparison.required_input_refs.pop();
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.legacy_comparison.optional_input_refs.push(
+          '/not-registry/value.txt'
+        );
+      }],
+    ];
+
+    for (const [expectedError, mutate] of mutations) {
+      const plan = copyPlan();
+      mutate(plan);
+      const result = await validatePartnerDashboardPlan(plan);
+      expect(result.errors.some(error => error.includes(expectedError))).toBe(true);
+    }
+
+    const activeTransition = copyPlan();
+    activeTransition.surfaces.portal.consumer_contract.implementation_status = 'transition';
+    const activeResult = await validatePartnerDashboardPlan(activeTransition);
+    expect(activeResult.errors).toContain('portal consumer contract has invalid implementation_status');
+  });
+
+  it('stops comparing the live legacy HTML after the canonical consumer is implemented', async () => {
+    const plan = copyPlan();
+    plan.surfaces.portal.consumer_contract.implementation_status = 'implemented';
+    plan.surfaces.portal.consumer_contract.active_input_mode = 'canonical-single-artifact';
+    plan.surfaces.portal.consumer_contract.required_input_refs = [
+      '/registry/partners-dashboard.json',
+    ];
+    plan.surfaces.portal.consumer_contract.optional_input_refs = [];
+    plan.surfaces.portal.consumer_contract.transition_implementation_status = 'retired';
+    delete plan.surfaces.portal.consumer_contract.legacy_comparison;
+
+    const result = await validatePartnerDashboardPlan(plan);
+    expect(result.errors).not.toContain(
+      'portal current input refs must match the package consumer contract'
+    );
+    expect(result.errors.some(error => error.includes('portal registry input map'))).toBe(false);
+    expect(result.errors).toContain(
+      'implemented portal consumer requires the canonical dashboard artifact to exist'
+    );
+    expect(result.summary).toMatchObject({
+      portalInputs: 1,
+      portalRequiredInputs: 1,
+      portalOptionalInputs: 0,
+    });
   });
 
   it('turns the active legacy-ops cutoff into a hard removal gate', async () => {
@@ -253,50 +459,54 @@ describe('partner dashboard semantic plan', () => {
       'implementation-ready plans require every connector to be implemented'
     );
     expect(result.errors).toContain(
-      'implementation-ready plans require at least one canonical partner profile'
+      'implementation-ready plans require complete partner profile coverage; missing ASH, BIL, NOV, SPEN'
     );
   });
 
-  it('rejects inconsistent canonical profile artifact counts', async () => {
+  it('rejects private fields at the public profile coverage boundary', async () => {
     const result = await validatePartnerDashboardPlan(copyPlan(), {
-      partnerProfiles: {
-        schemaVersion: 1,
-        profiles: { ASH: { identity: { code: 'ASH' } } },
-        summary: { count: 0 },
+      partnerProfileCoverage: {
+        schema: 'factorywager.partner-profile-coverage.v1',
+        generatedAt: '2026-08-05T12:00:00.000Z',
+        evidenceByPartnerCode: {
+          ASH: {
+            callSign: 'ASH-001',
+            profileDocumentVersion: '1.0.0',
+            lifecycle: 'active',
+          },
+        },
       },
+      requiredPartnerCodes: ['ASH'],
     });
 
-    expect(result.errors).toContain('partner profile artifact summary.count must match profiles');
     expect(
-      result.errors.some(error => error.includes('canonical partner profile ASH is invalid'))
+      result.errors.some(error => error.includes('partner profile coverage artifact is invalid'))
     ).toBe(true);
   });
 
-  it('recognizes a schema-valid canonical profile for readiness accounting', async () => {
+  it('recognizes complete redacted profile coverage for readiness accounting', async () => {
     const plan = copyPlan();
     plan.plan.status = 'implementation-ready';
     const result = await validatePartnerDashboardPlan(plan, {
-      partnerProfiles: {
-        schemaVersion: 1,
-        profiles: {
+      partnerProfileCoverage: {
+        schema: 'factorywager.partner-profile-coverage.v1',
+        generatedAt: '2026-08-05T12:00:00.000Z',
+        evidenceByPartnerCode: {
           ASH: {
-            meta: {
-              templateId: 'partner-active',
-              name: 'ASH partner',
-              version: '1.0.0',
-              source: 'promoted',
-            },
-            identity: { code: 'ASH', callSign: 'ASH-001', status: 'onboarded' },
-            lifecycle: { status: 'active', phase: 'incomplete' },
+            callSign: 'ASH-001',
+            profileDocumentVersion: '1.0.0',
           },
         },
-        summary: { count: 1 },
       },
+      requiredPartnerCodes: ['ASH'],
     });
 
-    expect(result.summary.canonicalProfiles).toBe(1);
-    expect(result.errors).not.toContain(
-      'implementation-ready plans require at least one canonical partner profile'
-    );
+    expect(result.summary).toMatchObject({
+      profileCoverageEntries: 1,
+      missingProfileCoverage: 0,
+    });
+    expect(
+      result.errors.some(error => error.includes('require complete partner profile coverage'))
+    ).toBe(false);
   });
 });

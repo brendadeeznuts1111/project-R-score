@@ -4,6 +4,12 @@ import { describe, expect, test } from 'bun:test';
 import { PORTAL_HTML_ROUTES, PORTAL_MARKDOWN_SLUGS } from '../lib/http/portal-route-manifest.ts';
 import { PORTAL_OVERFLOW_NAV } from '../lib/portal/chrome-catalog.ts';
 import {
+  PARTNER_DASHBOARD_ARTIFACT_REF,
+  PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS,
+  PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS,
+  PARTNER_PROFILE_COVERAGE_INPUT_REF,
+} from '../packages/partners/src/index.ts';
+import {
   parsePartnerHash,
   partnerAccountingHash,
   partnerBookHash,
@@ -154,6 +160,17 @@ describe('partners portal board', () => {
   });
 
   test('baked registry artifacts exist for the board consumers', async () => {
+    const html = await Bun.file(BOARD).text();
+    expect(html).toContain("import { fetchJsonResult } from '/portal/fetch-json.js'");
+    for (const ref of [
+      ...PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS,
+      ...PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS,
+    ]) {
+      expect(html).toContain(`loadJson('${ref}')`);
+      expect(await Bun.file(`public${ref}`).exists()).toBe(true);
+    }
+    expect(html).not.toContain(PARTNER_DASHBOARD_ARTIFACT_REF);
+    expect(html).not.toContain(PARTNER_PROFILE_COVERAGE_INPUT_REF);
     expect(await Bun.file('public/registry/telegram-handshake.json').exists()).toBe(true);
     expect(await Bun.file('public/registry/seat-capital-desk.json').exists()).toBe(true);
     expect(await Bun.file('public/registry/telegram-handshake-catalog.json').exists()).toBe(true);

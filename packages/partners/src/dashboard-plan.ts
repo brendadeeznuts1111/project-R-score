@@ -9,7 +9,7 @@
 export const PARTNERS_PACKAGE_TARGET = {
   target_name: '@factorywager/partners',
   target_workspace: 'packages/partners',
-  implementation_status: 'scaffolded',
+  implementation_status: 'artifact-core-implemented',
 } as const;
 
 export const PARTNER_DASHBOARD_SEMANTIC_GAPS = [

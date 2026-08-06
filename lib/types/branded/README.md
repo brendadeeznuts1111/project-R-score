@@ -10,7 +10,7 @@ text must not travel through the harness as a bare `string`.
 - **Source catalog:** [`index.ts`](./index.ts) → `BRAND_CATALOG`
 - **Generated record:** [`brand-manifest.json`](../brand-manifest.json) — never
   hand-edit
-- **Inventory:** 82 values across 10 domains: 65 IDs, 3 keys, and 14 codes
+- **Inventory:** 92 values across 10 domains: 70 IDs, 3 keys, and 19 codes
 - **Runtime:** branded values remain ordinary strings; the nominal tag is
   type-only
 - **Shape guards:** `BRAND_GUARDS.isX(value)` and `isBrandedValue(name, value)`
@@ -26,45 +26,46 @@ authoritative.
 
 ## Domain routing
 
-| Domain     | Values                                                                                   | Module                                 |
-| ---------- | ---------------------------------------------------------------------------------------- | -------------------------------------- |
-| session    | 5 session, terminal, request, correlation, and snapshot IDs                              | [`session.ts`](./session.ts)           |
-| identity   | 6 user, account, identity, OIDC-client, access-key, and token IDs                        | [`identity.ts`](./identity.ts)         |
-| documents  | 3 document, zone, and Bun documentation-token IDs                                        | [`documents.ts`](./documents.ts)       |
-| security   | 2 challenge and policy IDs                                                               | [`security.ts`](./security.ts)         |
-| deployment | 1 deployment ID                                                                          | [`deployment.ts`](./deployment.ts)     |
-| audit      | 8 version, audit, finding, concept, entry, evidence, DOD, and rule IDs                   | [`audit.ts`](./audit.ts)               |
-| governance | 13 GitHub issue artifact/concept IDs plus label, dimension, and lifecycle keys/codes     | [`governance.ts`](./governance.ts)     |
-| operations | 29 values: ops IDs, `PartnerProfileKey`, `SportsbookId`, `StateCode`, and `ZipCode`      | [`operations.ts`](./operations.ts)     |
-| portal     | 5 portal tenant, Telegram user, portal account, link-nonce, and DOM mount IDs            | [`portal.ts`](./portal.ts)             |
-| surfaces   | 10 host/apex/subdomain/surface/Pages/publish/Access IDs + status/access/backend codes    | [`surfaces.ts`](./surfaces.ts)         |
+| Domain     | Values                                                                                  | Module                             |
+| ---------- | --------------------------------------------------------------------------------------- | ---------------------------------- |
+| session    | 5 session, terminal, request, correlation, and snapshot IDs                             | [`session.ts`](./session.ts)       |
+| identity   | 6 user, account, identity, OIDC-client, access-key, and token IDs                       | [`identity.ts`](./identity.ts)     |
+| documents  | 3 document, zone, and Bun documentation-token IDs                                       | [`documents.ts`](./documents.ts)   |
+| security   | 2 challenge and policy IDs                                                              | [`security.ts`](./security.ts)     |
+| deployment | 1 deployment ID                                                                         | [`deployment.ts`](./deployment.ts) |
+| audit      | 8 version, audit, finding, concept, entry, evidence, DOD, and rule IDs                  | [`audit.ts`](./audit.ts)           |
+| governance | 13 GitHub issue artifact/concept IDs plus label, dimension, and lifecycle keys/codes    | [`governance.ts`](./governance.ts) |
+| operations | 39 ops, partner identity/provenance, money, sportsbook, jurisdiction, and postal values | [`operations.ts`](./operations.ts) |
+| portal     | 5 portal tenant, Telegram user, portal account, link-nonce, and DOM mount IDs           | [`portal.ts`](./portal.ts)         |
+| surfaces   | 10 host/apex/subdomain/surface/Pages/publish/Access IDs + status/access/backend codes   | [`surfaces.ts`](./surfaces.ts)     |
 
 `StateCode` and `ZipCode` have format-aware constructors. Do not replace those
 constructors with the generic factory. `HostId` / `AccessDomainId` are also
 format-aware (FQDN vs host/path) — never use a path-bearing Access domain as a
 `HostId`. Keep these shortcodes separate:
 
-| Brand | Is | Is not |
-|-------|----|--------|
-| `SubdomainId` | DNS left-of-apex (`score`, `@`) | `SurfaceId` inventory key |
-| `PagesProjectId` | CF Pages project (`project-r-score`) | operations `ProjectId` |
-| `SurfaceStatusCode` | live/vanity/… | free-form string |
-| `SurfaceAccessCode` | public/applied/… | free-form string |
+| Brand               | Is                                   | Is not                    |
+| ------------------- | ------------------------------------ | ------------------------- |
+| `SubdomainId`       | DNS left-of-apex (`score`, `@`)      | `SurfaceId` inventory key |
+| `PagesProjectId`    | CF Pages project (`project-r-score`) | operations `ProjectId`    |
+| `SurfaceStatusCode` | live/vanity/…                        | free-form string          |
+| `SurfaceAccessCode` | public/applied/…                     | free-form string          |
 
 **Surfaces helpers** ([`surfaces.ts`](./surfaces.ts)):
 
-| Helper | Role |
-|--------|------|
-| `splitHostId` / `hostIdFromParts` | apex + subdomain ↔ `HostId` |
-| `FACTORY_WAGER_APEX` / `PROJECT_R_SCORE_PAGES` | canonical apex + Pages project |
-| `tryPagesProjectIdFromBackend` | parse `cloudflare-pages:…` backend field |
-| `accessDomainFromHost(host, path?)` | compose Access domain from `HostId` |
-| `hostIdFromAccessDomain` / `pathFromAccessDomain` | split Access domain |
-| `isPathScopedAccessDomain` | path-bearing vs whole-host |
-| `hostIdFromUrl` / `tryHostIdFromUrl` | extract FQDN from URL or bare host |
-| `httpsUrlForHost` / `httpsUrlForAccessDomain` | probe URLs |
+| Helper                                            | Role                                     |
+| ------------------------------------------------- | ---------------------------------------- |
+| `splitHostId` / `hostIdFromParts`                 | apex + subdomain ↔ `HostId`             |
+| `FACTORY_WAGER_APEX` / `PROJECT_R_SCORE_PAGES`    | canonical apex + Pages project           |
+| `tryPagesProjectIdFromBackend`                    | parse `cloudflare-pages:…` backend field |
+| `accessDomainFromHost(host, path?)`               | compose Access domain from `HostId`      |
+| `hostIdFromAccessDomain` / `pathFromAccessDomain` | split Access domain                      |
+| `isPathScopedAccessDomain`                        | path-bearing vs whole-host               |
+| `hostIdFromUrl` / `tryHostIdFromUrl`              | extract FQDN from URL or bare host       |
+| `httpsUrlForHost` / `httpsUrlForAccessDomain`     | probe URLs                               |
 
-Inventory (parse once): [`lib/surfaces/inventory.ts`](../../surfaces/inventory.ts) ·
+Inventory (parse once):
+[`lib/surfaces/inventory.ts`](../../surfaces/inventory.ts) ·
 `loadSurfacesInventory` · `appliedAccessDomains` · `findSurfaceByHost` ·
 `hostPartsForSurface`.
 
@@ -100,15 +101,15 @@ flowchart TB
   HostId -->|"httpsUrlForHost"| Url
 ```
 
-| Rule | Detail |
-|------|--------|
-| `HostId` | Full FQDN (`score.factory-wager.com`) — no scheme, no path |
-| `ApexDomainId` | Zone apex (`factory-wager.com`) |
-| `SubdomainId` | Left labels (`score`) or `@` for bare apex |
-| Scheme | Only on URL helpers (`httpsUrlForHost` / `httpsUrlForAccessDomain`) |
-| Path | Only on `AccessDomainId` or the URL path argument — never inside `HostId` |
-| Assignability | `AccessDomainId` ≇ `HostId` — cross only via `hostIdFromAccessDomain` |
-| Ops scope | Cookie / TLS / CORS follow `HostId`, not `SurfaceId` |
+| Rule           | Detail                                                                    |
+| -------------- | ------------------------------------------------------------------------- |
+| `HostId`       | Full FQDN (`score.factory-wager.com`) — no scheme, no path                |
+| `ApexDomainId` | Zone apex (`factory-wager.com`)                                           |
+| `SubdomainId`  | Left labels (`score`) or `@` for bare apex                                |
+| Scheme         | Only on URL helpers (`httpsUrlForHost` / `httpsUrlForAccessDomain`)       |
+| Path           | Only on `AccessDomainId` or the URL path argument — never inside `HostId` |
+| Assignability  | `AccessDomainId` ≇ `HostId` — cross only via `hostIdFromAccessDomain`     |
+| Ops scope      | Cookie / TLS / CORS follow `HostId`, not `SurfaceId`                      |
 
 Compose: `hostIdFromParts(apex, '@')` → bare apex host; otherwise `sub.apex`.
 Split: `splitHostId` prefers `FACTORY_WAGER_APEX` over the public-suffix
@@ -153,9 +154,9 @@ ZIP+4. Use `parse*` when input needs trimming or normalization.
 
 ## Aggregate types
 
-- `AnyId` is the union of all 53 catalog values whose names end in `Id`.
-- `AnyBrandedValue` is the complete union:
-  `AnyId | PartnerProfileKey | StateCode | ZipCode`.
+- `AnyId` is the union of all 70 catalog values whose names end in `Id`.
+- `AnyBrandedValue` is the complete union: `AnyId` plus all branded keys and
+  validated codes.
 - `unbrand(value)` deliberately returns a plain `string` for serialization,
   persistence, URLs, and other outbound boundaries.
 

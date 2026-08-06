@@ -35,6 +35,25 @@ function sampleFor(name: string): { input: string; expected: string } {
   if (name === 'StateCode') return { input: 'ma', expected: 'MA' };
   if (name === 'SportsbookId') return { input: 'DraftKings', expected: 'draftkings' };
   if (name === 'ZipCode') return { input: '02139', expected: '02139' };
+  if (name === 'PartnerCode') return { input: 'SPEN', expected: 'SPEN' };
+  if (name === 'PartnerCallSignCode') return { input: 'SPEN-001', expected: 'SPEN-001' };
+  if (name === 'PartnerProfileVersionCode') return { input: 'v1.0', expected: 'v1.0' };
+  if (name === 'OutId') return { input: 'out-SPEN-1', expected: 'out-SPEN-1' };
+  if (name === 'LedgerEntryId') return { input: 'ledger-entry-1', expected: 'ledger-entry-1' };
+  if (name === 'CurrencyCode') return { input: 'usd', expected: 'USD' };
+  if (name === 'AttentionReasonCode') {
+    return { input: 'partner.profile.migration_required', expected: 'partner.profile.migration_required' };
+  }
+  if (name === 'SourceSystemId') {
+    return { input: 'factorywager-partner-profile', expected: 'factorywager-partner-profile' };
+  }
+  if (name === 'AdapterId') return { input: 'legacy-seat-adapter', expected: 'legacy-seat-adapter' };
+  if (name === 'ExternalPartnerId') {
+    return { input: 'external-partner-1', expected: 'external-partner-1' };
+  }
+  if (name === 'ExternalAccountId') {
+    return { input: 'external-account-1', expected: 'external-account-1' };
+  }
   // surfaces domain: format-aware FQDN / shortcodes / Access / type codes
   if (name === 'HostId') return { input: 'Ledger.Factory-Wager.COM', expected: 'ledger.factory-wager.com' };
   if (name === 'ApexDomainId') {
@@ -59,8 +78,8 @@ function sampleFor(name: string): { input: string; expected: string } {
 }
 
 describe('branded domain-value catalog', () => {
-  test('catalog is a unique 82-value, 10-domain contract', () => {
-    expect(branded.BRAND_CATALOG).toHaveLength(82);
+  test('catalog is a unique 92-value, 10-domain contract', () => {
+    expect(branded.BRAND_CATALOG).toHaveLength(92);
 
     const names = branded.BRAND_CATALOG.map(spec => spec.name);
     const domains = new Set(branded.BRAND_CATALOG.map(spec => spec.domain));
@@ -70,9 +89,9 @@ describe('branded domain-value catalog', () => {
     expect(domains.size).toBe(10);
     expect(domains.has('governance')).toBeTrue();
     expect(domains.has('surfaces')).toBeTrue();
-    expect(kinds.filter(kind => kind === 'id')).toHaveLength(65);
+    expect(kinds.filter(kind => kind === 'id')).toHaveLength(70);
     expect(kinds.filter(kind => kind === 'key')).toHaveLength(3);
-    expect(kinds.filter(kind => kind === 'code')).toHaveLength(14);
+    expect(kinds.filter(kind => kind === 'code')).toHaveLength(19);
   });
 
   test('entity names and generated symbols are collision-free after normalization', () => {
@@ -111,7 +130,7 @@ describe('branded domain-value catalog', () => {
   });
 
   test('generated guards cover every canonical runtime shape', () => {
-    expect(Object.keys(branded.BRAND_GUARDS)).toHaveLength(82);
+    expect(Object.keys(branded.BRAND_GUARDS)).toHaveLength(92);
 
     for (const spec of branded.BRAND_CATALOG) {
       const guardName = `is${spec.name}` as keyof typeof branded.BRAND_GUARDS;
@@ -134,6 +153,10 @@ describe('branded domain-value catalog', () => {
     expect(branded.BRAND_GUARDS.isHostId('score.factory-wager.com/portal')).toBeFalse();
     expect(branded.BRAND_GUARDS.isAccessDomainId('score.factory-wager.com/portal')).toBeTrue();
     expect(branded.BRAND_GUARDS.isSurfaceId('pages_dev')).toBeTrue();
+    expect(branded.BRAND_GUARDS.isOutId('out-SPEN-1')).toBeTrue();
+    expect(branded.BRAND_GUARDS.isOutId('SPEN-1')).toBeFalse();
+    expect(branded.BRAND_GUARDS.isPartnerCode('SPEN')).toBeTrue();
+    expect(branded.BRAND_GUARDS.isPartnerCode('spen')).toBeFalse();
   });
 
   test('surfaces brands keep HostId separate from path-bearing AccessDomainId', () => {

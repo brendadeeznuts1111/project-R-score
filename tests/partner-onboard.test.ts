@@ -147,7 +147,7 @@ describe('onboardPartner', () => {
     // intake: vaultKey present, no plaintext password
     const intake = await loadSeatIntake('JOHNNY-001', intakeDir);
     expect(intake?.outs[0]).toMatchObject({
-      outId: 'JOHNNY-1',
+      outId: 'out-JOHNNY-1',
       book: 'https://rc.youwager.lv',
       bookLogin: 'youwager-user',
       vaultKey: 'partner:JOHNNY:youwager',

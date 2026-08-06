@@ -5,17 +5,30 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 
 import { CONCEPT_DOMAINS, inferDomain } from '../lib/portal/concept-domains.ts';
-import {
-  PARTNER_LIFECYCLE_STATUSES,
-  PARTNER_PHASES,
-  validatePartnerProfile,
-} from '../lib/partner-profile/schema.ts';
+import { PARTNER_LIFECYCLE_STATUSES, PARTNER_PHASES } from '../lib/partner-profile/schema.ts';
 import { portalTheme, renderThemeTokensCss } from '../lib/portal/theme.ts';
 import { PARTNER_HASH_PATTERN_INITS } from '../lib/portal/url-planes.ts';
 import { resolvePath } from '../lib/path-bun.ts';
 import {
+  CANONICAL_OUT_ID_PATTERN,
+  CANONICAL_PROFILE_SOURCE_SYSTEM_ID,
+  INGRESS_TRANSLATION_COUNTER,
+  LEGACY_OUT_ID_WARNING_CODE,
+  LEGACY_SEAT_OUT_TOKEN_PATTERN,
+  PARTNER_DASHBOARD_ARTIFACT_REF,
+  PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
+  PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS,
+  PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS,
+  PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT,
+  PARTNER_PROFILE_COVERAGE_INPUT_REF,
+  PARTNER_PROFILE_COVERAGE_SCHEMA_V1,
   PARTNER_DASHBOARD_SEMANTIC_GAPS,
+  PARTNER_CODE_PATTERN,
   PARTNERS_PACKAGE_TARGET,
+  derivePartnerProfileCoverage,
+  parseLegacyPartnersOpsProjection,
+  parsePartnerCode,
+  parsePartnerProfileCoverageArtifact,
   type PartnerDashboardConceptGapId,
 } from '../packages/partners/src/index.ts';
 
@@ -27,8 +40,15 @@ export const DEFAULT_PARTNER_DASHBOARD_PLAN = resolvePath(
 const DOMAIN_GLOSSARY = resolvePath(REPO_ROOT, 'public/registry/domain-glossary.json');
 const PARTNERS_BOARD_HTML = resolvePath(REPO_ROOT, 'public/portal/partners/index.html');
 const GENERATED_THEME_CSS = resolvePath(REPO_ROOT, 'public/portal/theme-tokens.css');
-const PARTNER_PROFILES_REGISTRY = resolvePath(REPO_ROOT, 'public/registry/partner-profiles.json');
+const PARTNER_PROFILE_COVERAGE_REGISTRY = resolvePath(
+  REPO_ROOT,
+  'public',
+  PARTNER_PROFILE_COVERAGE_INPUT_REF.replace(/^\//, '')
+);
+const PARTNERS_OPS_REGISTRY = resolvePath(REPO_ROOT, 'public/registry/partners-ops.json');
 const PARTNERS_PACKAGE_JSON = resolvePath(REPO_ROOT, 'packages/partners/package.json');
+const SPORTS_TERMINAL_BLOCKING_REASON =
+  'one exact parsed input, explicit external-ID resolution, authenticated route integration, and integer-minor-unit money wire are required';
 
 type AnyRecord = Record<string, any>;
 
@@ -45,7 +65,8 @@ export type PartnerDashboardPlanValidation = {
     portalRequiredInputs: number;
     portalOptionalInputs: number;
     presentationStates: number;
-    canonicalProfiles: number;
+    profileCoverageEntries: number;
+    missingProfileCoverage: number;
   };
 };
 
@@ -63,17 +84,17 @@ type ConnectorContract = {
   port: string;
   inputKind: string;
   inputRef: string;
-  implementationStatus: 'planned' | 'blocked' | 'current-compatibility';
+  implementationStatus: 'implemented' | 'planned' | 'blocked' | 'current-compatibility';
 };
 
 const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
-  'profiles-registry': {
+  'canonical-profile-config': {
     snapshotKey: 'profiles',
     required: true,
-    sourceSystemId: 'factorywager-partner-profile',
+    sourceSystemId: CANONICAL_PROFILE_SOURCE_SYSTEM_ID,
     port: 'PartnerProfileReadPort',
-    inputKind: 'registry-artifact',
-    inputRef: '/registry/partner-profiles.json',
+    inputKind: 'private-toml-glob',
+    inputRef: 'config/partner-profiles/*.toml',
     implementationStatus: 'planned',
   },
   'accounting-ledger': {
@@ -145,6 +166,10 @@ const EXPECTED_NOMENCLATURE: Readonly<
   Record<string, { ownerDomain: string; wirePath?: string; wireShape?: string }>
 > = {
   PartnerCode: { ownerDomain: 'partners', wirePath: 'partners[].partnerCode' },
+  ProfileDocumentVersion: {
+    ownerDomain: 'partners',
+    wirePath: 'evidenceByPartnerCode.*.profileDocumentVersion',
+  },
   PartnerLifecycleState: {
     ownerDomain: 'partners',
     wirePath: 'partners[].lifecycle.state',
@@ -332,21 +357,27 @@ export async function validatePartnerDashboardPlan(
     now?: Date;
     boardHtml?: string;
     themeCss?: string;
-    partnerProfiles?: AnyRecord;
+    partnerProfileCoverage?: AnyRecord;
+    partnersOps?: AnyRecord;
+    requiredPartnerCodes?: unknown[];
   } = {}
 ): Promise<PartnerDashboardPlanValidation> {
   const errors: string[] = [];
-  const [glossary, boardHtml, themeCss, partnerProfiles, partnersPackage] = await Promise.all([
-    options.glossary
-      ? Promise.resolve(options.glossary)
-      : (Bun.file(DOMAIN_GLOSSARY).json() as Promise<AnyRecord>),
-    options.boardHtml ?? Bun.file(PARTNERS_BOARD_HTML).text(),
-    options.themeCss ?? Bun.file(GENERATED_THEME_CSS).text(),
-    options.partnerProfiles
-      ? Promise.resolve(options.partnerProfiles)
-      : (Bun.file(PARTNER_PROFILES_REGISTRY).json() as Promise<AnyRecord>),
-    Bun.file(PARTNERS_PACKAGE_JSON).json() as Promise<AnyRecord>,
-  ]);
+  const [glossary, boardHtml, themeCss, partnerProfileCoverage, partnersOps, partnersPackage] =
+    await Promise.all([
+      options.glossary
+        ? Promise.resolve(options.glossary)
+        : (Bun.file(DOMAIN_GLOSSARY).json() as Promise<AnyRecord>),
+      options.boardHtml ?? Bun.file(PARTNERS_BOARD_HTML).text(),
+      options.themeCss ?? Bun.file(GENERATED_THEME_CSS).text(),
+      options.partnerProfileCoverage
+        ? Promise.resolve(options.partnerProfileCoverage)
+        : (Bun.file(PARTNER_PROFILE_COVERAGE_REGISTRY).json() as Promise<AnyRecord>),
+      options.partnersOps
+        ? Promise.resolve(options.partnersOps)
+        : (Bun.file(PARTNERS_OPS_REGISTRY).json() as Promise<AnyRecord>),
+      Bun.file(PARTNERS_PACKAGE_JSON).json() as Promise<AnyRecord>,
+    ]);
   const concepts = new Map<string, AnyRecord>(
     (glossary.concepts ?? []).map((concept: AnyRecord) => [String(concept.id), concept])
   );
@@ -378,9 +409,121 @@ export async function validatePartnerDashboardPlan(
   if (
     partnersPackage.name !== PARTNERS_PACKAGE_TARGET.target_name ||
     partnersPackage.private !== true ||
-    partnersPackage.exports?.['./dashboard-plan'] !== './src/dashboard-plan.ts'
+    partnersPackage.exports?.['./dashboard-plan'] !== './src/dashboard-plan.ts' ||
+    partnersPackage.exports?.['./core'] !== './src/core/index.ts' ||
+    partnersPackage.exports?.['./boundary'] !== './src/boundary/index.ts' ||
+    partnersPackage.exports?.['./adapters'] !== './src/adapters/index.ts' ||
+    partnersPackage.exports?.['./adapters/profile-coverage'] !==
+      './src/adapters/profile-coverage.ts' ||
+    partnersPackage.exports?.['./compatibility'] !== './src/compatibility/index.ts' ||
+    partnersPackage.exports?.['./compatibility/legacy-partners-ops'] !==
+      './src/compatibility/legacy-partners-ops.ts' ||
+    partnersPackage.exports?.['./portal'] !== './src/portal/index.ts'
   ) {
-    errors.push('packages/partners must remain a private workspace exporting ./dashboard-plan');
+    errors.push(
+      'packages/partners must remain private and export adapters, dashboard-plan, core, boundary, compatibility, and portal'
+    );
+  }
+  if (
+    plan.package?.components?.identifiers !== 'implemented' ||
+    plan.package?.components?.artifact_boundary !== 'implemented' ||
+    plan.package?.components?.artifact_assembler !== 'implemented' ||
+    plan.package?.components?.ingress_translator !== 'implemented' ||
+    plan.package?.components?.legacy_ops_adapter !== 'implemented' ||
+    plan.package?.components?.portal_consumer_contract !== 'implemented' ||
+    plan.package?.components?.profile_coverage_adapter !== 'implemented' ||
+    plan.package?.components?.current_compatibility_fetch_transport !== 'implemented' ||
+    plan.package?.components?.canonical_dashboard_browser_loader !== 'planned' ||
+    'browser_loader' in (plan.package?.components ?? {}) ||
+    plan.package?.components?.connector_ports !== 'partial' ||
+    plan.package?.components?.source_adapters !== 'partial' ||
+    plan.package?.components?.reconciliation !== 'planned'
+  ) {
+    errors.push(
+      'package component statuses must distinguish implemented artifact core from planned adapters'
+    );
+  }
+  if (
+    plan.shapes?.profile_coverage_artifact?.type !== 'PartnerProfileCoverageArtifact' ||
+    plan.shapes?.profile_coverage_artifact?.schema !== PARTNER_PROFILE_COVERAGE_SCHEMA_V1 ||
+    plan.shapes?.profile_coverage_artifact?.path !== PARTNER_PROFILE_COVERAGE_INPUT_REF ||
+    plan.shapes?.profile_coverage_artifact?.implementation_status !== 'implemented' ||
+    plan.shapes?.profile_coverage_artifact?.role !== 'implementation-readiness-input' ||
+    plan.shapes?.profile_coverage_artifact?.dashboard_connector !== false ||
+    plan.shapes?.profile_coverage_artifact?.lifecycle_authority !== false ||
+    !sameMembers(plan.shapes?.profile_coverage_artifact?.public_fact_paths ?? [], [
+      'generatedAt',
+      'evidenceByPartnerCode.*.callSign',
+      'evidenceByPartnerCode.*.profileDocumentVersion',
+    ]) ||
+    !sameMembers(plan.shapes?.profile_coverage_artifact?.forbidden_fact_classes ?? [], [
+      'lifecycle',
+      'phase',
+      'credentials',
+      'funding',
+      'telegram',
+      'accounting',
+      'money',
+      'policy',
+    ])
+  ) {
+    errors.push('profile coverage artifact must remain redacted identity evidence only');
+  }
+  if (
+    plan.shapes?.dashboard_artifact?.active_out_identity_field !== 'activeOutIds' ||
+    plan.shapes?.dashboard_artifact?.conflict_value_policy !== 'redacted-json-scalars-only' ||
+    (legacyStatus !== 'retired' &&
+      plan.shapes?.dashboard_artifact?.schema !== PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1)
+  ) {
+    errors.push('dashboard artifact must expose active OutIds and scalar-only conflict evidence');
+  }
+  if (
+    plan.identity?.partner_code?.pattern !== PARTNER_CODE_PATTERN ||
+    plan.identity?.partner_code?.type !== 'PartnerCode'
+  ) {
+    errors.push('identity.partner_code must match the package-owned PartnerCode parser');
+  }
+  if (
+    plan.identity?.out_id?.pattern !== CANONICAL_OUT_ID_PATTERN ||
+    plan.identity?.out_id?.type !== 'OutId' ||
+    plan.identity?.out_id?.target_parser !== 'parseCanonicalOutId' ||
+    plan.identity?.out_id?.implementation_status !== 'implemented'
+  ) {
+    errors.push('identity.out_id must match the implemented canonical OutId parser');
+  }
+  if (
+    plan.ingress?.translator !== 'IngressTranslator' ||
+    plan.ingress?.implementation_status !== 'translator-implemented' ||
+    plan.ingress?.caller_integration_status !== 'unwired' ||
+    plan.ingress?.telemetry_emission_status !== 'unwired' ||
+    plan.ingress?.stage !== 'before-core-parse' ||
+    plan.ingress?.unknown_mapping !== 'reject' ||
+    plan.ingress?.telemetry_counter !== INGRESS_TRANSLATION_COUNTER
+  ) {
+    errors.push('ingress must declare the implemented pre-core rejecting translator');
+  }
+  if (
+    plan.ingress?.http?.route_status !== 'no-canonical-route' ||
+    plan.ingress?.http?.auth_integration_status !== 'unwired' ||
+    !Array.isArray(plan.ingress?.http?.accepted_media_types) ||
+    plan.ingress.http.accepted_media_types.length !== 0 ||
+    plan.ingress?.http?.multipart_status !== 'unsupported-not-required'
+  ) {
+    errors.push('ingress HTTP status must not claim an unwired canonical API contract');
+  }
+  const legacyOutMapping = plan.ingress?.mappings?.legacy_seat_out_token;
+  if (
+    legacyOutMapping?.from_pattern !== LEGACY_SEAT_OUT_TOKEN_PATTERN ||
+    legacyOutMapping?.canonical_pattern !== CANONICAL_OUT_ID_PATTERN ||
+    legacyOutMapping?.to_template !== 'out-{code}-{sequence}' ||
+    legacyOutMapping?.canonical_parser !== 'parseCanonicalOutId' ||
+    legacyOutMapping?.canonical_parser_implementation_status !== 'implemented' ||
+    legacyOutMapping?.emit_deprecation_warning !== true ||
+    legacyOutMapping?.warning_emission_owner !== 'future-ingress-caller' ||
+    legacyOutMapping?.deprecation_warning_code !== LEGACY_OUT_ID_WARNING_CODE ||
+    legacyOutMapping?.preserve_original_as_provenance !== true
+  ) {
+    errors.push('legacy seat OutId mapping must match the package ingress translator');
   }
   if (plan.shapes?.dashboard_artifact?.canonical_join_type !== 'PartnerCode') {
     errors.push('dashboard artifact canonical_join_type must be PartnerCode');
@@ -398,6 +541,9 @@ export async function validatePartnerDashboardPlan(
     'public',
     dashboardArtifactRef.replace(/^\//, '')
   );
+  if (dashboardArtifactRef !== PARTNER_DASHBOARD_ARTIFACT_REF) {
+    errors.push('dashboard artifact path must match the package portal contract');
+  }
   if (
     plan.plan?.status === 'implementation-ready' &&
     (!dashboardArtifactRef.startsWith('/registry/') ||
@@ -420,7 +566,12 @@ export async function validatePartnerDashboardPlan(
     const declaredInputs = [...requiredInputs, ...optionalInputs];
     const observedInputs = portalRegistryInputs(boardHtml);
     const observedCombined = [...observedInputs.required, ...observedInputs.optional];
-    if (portalConsumerContract.entrypoint_path !== 'public/portal/partners/index.html') {
+    const consumerStatus = portalConsumerContract.implementation_status;
+    const inputMode = portalConsumerContract.active_input_mode;
+    if (
+      portalConsumerContract.entrypoint_path !==
+      PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.entrypointPath
+    ) {
       errors.push('portal consumer contract entrypoint must be the partners board HTML');
     } else if (
       !(await Bun.file(resolvePath(REPO_ROOT, portalConsumerContract.entrypoint_path)).exists())
@@ -433,29 +584,100 @@ export async function validatePartnerDashboardPlan(
     if (declaredInputs.some(inputRef => !inputRef.startsWith('/registry/'))) {
       errors.push('portal consumer input refs must use /registry/ paths');
     }
-    if (
-      !sameMembers(observedInputs.required, requiredInputs) ||
-      !sameMembers(observedInputs.optional, optionalInputs)
-    ) {
-      errors.push(
-        `portal registry input map does not match HTML (required: ${observedInputs.required.join(', ')}; optional: ${observedInputs.optional.join(', ')})`
-      );
-    }
     if (portalConsumerContract.target_shape_ref !== 'shapes.dashboard_artifact') {
       errors.push('portal consumer target_shape_ref must be shapes.dashboard_artifact');
     }
     if (
-      portalConsumerContract.target_input_mode !== 'canonical-single-artifact' ||
-      portalConsumerContract.retirement_condition !== 'portal-loads-only-target-artifact'
+      portalConsumerContract.target_input_mode !==
+        PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.target.inputMode ||
+      portalConsumerContract.retirement_condition !==
+        PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.target.retirementCondition
     ) {
       errors.push(
         'portal consumer contract must declare the canonical one-artifact retirement shape'
       );
     }
-    const consumerStatus = portalConsumerContract.implementation_status;
-    const inputMode = portalConsumerContract.active_input_mode;
-    if (consumerStatus === 'current-compatibility') {
-      if (inputMode !== 'legacy-multi-artifact') {
+    const transitionContract = PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.transition;
+    const targetContract = PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.target;
+    const currentCompatibilityContract =
+      PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.currentCompatibility;
+    const currentFetchTransport = portalConsumerContract.current_fetch_transport as
+      | AnyRecord
+      | undefined;
+    const legacyComparison = portalConsumerContract.legacy_comparison as AnyRecord | undefined;
+    const legacyComparisonRequired = (legacyComparison?.required_input_refs ?? []).map(String);
+    const legacyComparisonOptional = (legacyComparison?.optional_input_refs ?? []).map(String);
+    const legacyComparisonInputs = [...legacyComparisonRequired, ...legacyComparisonOptional];
+    if (
+      consumerStatus === currentCompatibilityContract.implementationStatus &&
+      (portalConsumerContract.transition_implementation_status !==
+        transitionContract.implementationStatus ||
+        portalConsumerContract.transition_input_mode !== transitionContract.inputMode ||
+        portalConsumerContract.canonical_input_ref !== transitionContract.canonicalInputRef ||
+        portalConsumerContract.canonical_failure_policy !==
+          transitionContract.canonicalFailurePolicy ||
+        portalConsumerContract.automatic_legacy_fallback !==
+          transitionContract.automaticLegacyFallback ||
+        legacyComparison?.implementation_status !==
+          transitionContract.legacyComparison.implementationStatus ||
+        legacyComparison?.activation !== transitionContract.legacyComparison.activation ||
+        legacyComparison?.search_param !== transitionContract.legacyComparison.searchParam ||
+        legacyComparison?.search_value !== transitionContract.legacyComparison.searchValue ||
+        legacyComparison?.load_order !== transitionContract.legacyComparison.loadOrder ||
+        legacyComparison?.result_role !== transitionContract.legacyComparison.resultRole ||
+        legacyComparison?.failure_policy !== transitionContract.legacyComparison.failurePolicy ||
+        !sameMembers(
+          legacyComparisonRequired,
+          transitionContract.legacyComparison.requiredInputRefs
+        ) ||
+        !sameMembers(
+          legacyComparisonOptional,
+          transitionContract.legacyComparison.optionalInputRefs
+        ) ||
+        !unique(legacyComparisonInputs) ||
+        legacyComparisonInputs.some(inputRef => !/^\/registry\/[^/].*\.json$/.test(inputRef)))
+    ) {
+      errors.push(
+        'portal transition contract must require canonical input and explicit query-only legacy comparison'
+      );
+    }
+    if (consumerStatus === currentCompatibilityContract.implementationStatus) {
+      if (
+        currentFetchTransport?.module_ref !==
+          currentCompatibilityContract.fetchTransport.moduleRef ||
+        currentFetchTransport?.export_name !==
+          currentCompatibilityContract.fetchTransport.exportName ||
+        currentFetchTransport?.default_timeout_ms !==
+          currentCompatibilityContract.fetchTransport.defaultTimeoutMs ||
+        currentFetchTransport?.content_type_diagnostic_policy !==
+          currentCompatibilityContract.fetchTransport.contentTypeDiagnosticPolicy ||
+        currentFetchTransport?.required_failure_policy !==
+          currentCompatibilityContract.fetchTransport.requiredFailurePolicy ||
+        currentFetchTransport?.optional_failure_policy !==
+          currentCompatibilityContract.fetchTransport.optionalFailurePolicy ||
+        !boardHtml.includes(
+          `import { ${currentCompatibilityContract.fetchTransport.exportName} } from '${currentCompatibilityContract.fetchTransport.moduleRef}'`
+        )
+      ) {
+        errors.push(
+          'current-compatibility portal must use the shared structured JSON fetch transport'
+        );
+      }
+      if (
+        !sameMembers(observedInputs.required, requiredInputs) ||
+        !sameMembers(observedInputs.optional, optionalInputs)
+      ) {
+        errors.push(
+          `portal registry input map does not match HTML (required: ${observedInputs.required.join(', ')}; optional: ${observedInputs.optional.join(', ')})`
+        );
+      }
+      if (
+        !sameMembers(requiredInputs, PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS) ||
+        !sameMembers(optionalInputs, PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS)
+      ) {
+        errors.push('portal current input refs must match the package consumer contract');
+      }
+      if (inputMode !== currentCompatibilityContract.inputMode) {
         errors.push('current-compatibility portal consumer must use legacy-multi-artifact mode');
       }
       if (observedCombined.includes(dashboardArtifactRef)) {
@@ -472,6 +694,15 @@ export async function validatePartnerDashboardPlan(
       if (!(await Bun.file(dashboardArtifactPath).exists())) {
         errors.push(
           'implemented portal consumer requires the canonical dashboard artifact to exist'
+        );
+      }
+      if (
+        portalConsumerContract.transition_implementation_status !==
+          targetContract.transitionPolicyStatus ||
+        legacyComparison !== undefined
+      ) {
+        errors.push(
+          'implemented portal consumer must retire transition policy and remove legacy comparison'
         );
       }
     } else {
@@ -652,35 +883,25 @@ export async function validatePartnerDashboardPlan(
   }
   const gapCandidateSet = new Set(gapCandidates);
 
-  const profileRecords = partnerProfiles.profiles;
-  const canonicalProfileCount =
-    profileRecords && typeof profileRecords === 'object' && !Array.isArray(profileRecords)
-      ? Object.keys(profileRecords).length
-      : 0;
-  if (partnerProfiles.schemaVersion !== 1) {
-    errors.push('partner profile artifact schemaVersion must be 1');
-  }
-  if (!profileRecords || typeof profileRecords !== 'object' || Array.isArray(profileRecords)) {
-    errors.push('partner profile artifact profiles must be a CODE-keyed object');
-  } else {
-    for (const [code, profile] of Object.entries(profileRecords)) {
-      const validation = validatePartnerProfile(profile);
-      if (!validation.valid) {
-        errors.push(
-          `canonical partner profile ${code} is invalid: ${validation.issues.join('; ')}`
-        );
-      } else if (validation.profile.identity.code !== code) {
-        errors.push(
-          `canonical partner profile ${code} identity.code must match its artifact map key`
-        );
-      }
+  let profileCoverageEntries = 0;
+  let missingProfileCoverage = 0;
+  try {
+    const coverage = parsePartnerProfileCoverageArtifact(partnerProfileCoverage);
+    profileCoverageEntries = Object.keys(coverage.evidenceByPartnerCode).length;
+    const requiredPartnerCodes = options.requiredPartnerCodes
+      ? options.requiredPartnerCodes.map(parsePartnerCode)
+      : parseLegacyPartnersOpsProjection(partnersOps).partners.map(partner => partner.partnerCode);
+    const coverageResult = derivePartnerProfileCoverage(coverage, requiredPartnerCodes);
+    missingProfileCoverage = coverageResult.missingCodes.length;
+    if (plan.plan?.status === 'implementation-ready' && !coverageResult.complete) {
+      errors.push(
+        `implementation-ready plans require complete partner profile coverage; missing ${coverageResult.missingCodes.join(', ')}`
+      );
     }
-  }
-  if (partnerProfiles.summary?.count !== canonicalProfileCount) {
-    errors.push('partner profile artifact summary.count must match profiles');
-  }
-  if (plan.plan?.status === 'implementation-ready' && canonicalProfileCount === 0) {
-    errors.push('implementation-ready plans require at least one canonical partner profile');
+  } catch (error) {
+    errors.push(
+      `partner profile coverage artifact is invalid: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 
   const allowedAxes = new Set(Object.keys(EXPECTED_AXES));
@@ -747,6 +968,13 @@ export async function validatePartnerDashboardPlan(
   ) {
     errors.push(`connector snapshot keys do not match the ${legacyStatus} legacy contract`);
   }
+  if (
+    !sameMembers(plan.reconciliation?.profile_precedence ?? [], ['canonical-profile-config']) ||
+    plan.reconciliation?.profile_coverage !==
+      'all-four-current-codes-required-for-implementation-ready'
+  ) {
+    errors.push('reconciliation must separate canonical profile authority from coverage readiness');
+  }
   for (const [key, precedence] of Object.entries(plan.reconciliation ?? {})) {
     if (!key.endsWith('_precedence') || !Array.isArray(precedence)) continue;
     if (!unique(precedence)) errors.push(`reconciliation ${key} contains duplicate connectors`);
@@ -802,6 +1030,14 @@ export async function validatePartnerDashboardPlan(
         errors.push(`connector ${connector.id} has invalid authoritative fact path ${path}`);
       }
     }
+    if (
+      connector.id === 'canonical-profile-config' &&
+      (connector.adapter_id !== 'canonical-profile-config' ||
+        connector.target_adapter_export !== './adapters/profile' ||
+        !sameMembers(connector.provides ?? [], ['identity', 'lifecycle', 'policy']))
+    ) {
+      errors.push('canonical-profile-config must remain the planned profile authority');
+    }
     for (const regionId of connector.region_ids ?? []) {
       if (!regionIds.includes(regionId)) {
         errors.push(`connector ${connector.id} references unknown region ${regionId}`);
@@ -810,6 +1046,12 @@ export async function validatePartnerDashboardPlan(
     if (connector.implementation_status === 'blocked') {
       if (connector.enabled !== false || !connector.blocking_reason) {
         errors.push(`blocked connector ${connector.id} must be disabled with a blocking reason`);
+      }
+      if (
+        connector.id === 'sports-terminal' &&
+        connector.blocking_reason !== SPORTS_TERMINAL_BLOCKING_REASON
+      ) {
+        errors.push('sports-terminal blocking reason must name every unresolved boundary');
       }
     } else if (connector.input_kind === 'registry-artifact') {
       const sourcePath = resolvePath(REPO_ROOT, 'public', connector.input_ref.replace(/^\//, ''));
@@ -823,6 +1065,9 @@ export async function validatePartnerDashboardPlan(
       const modulePath = resolvePath(REPO_ROOT, connector.current_owner_module ?? '');
       if (!connector.current_owner_module || !(await Bun.file(modulePath).exists())) {
         errors.push(`connector ${connector.id} current_owner_module does not exist`);
+      }
+      if (connector.target_adapter_implementation_status !== 'implemented') {
+        errors.push(`connector ${connector.id} target compatibility adapter must be implemented`);
       }
     }
   }
@@ -1008,14 +1253,14 @@ export async function validatePartnerDashboardPlan(
       regions: regions.length,
       sectionMounts: sectionMounts.length,
       hashRoutes: hashRoutes.length,
-      portalInputs: (() => {
-        const inputs = portalRegistryInputs(boardHtml);
-        return inputs.required.length + inputs.optional.length;
-      })(),
-      portalRequiredInputs: portalRegistryInputs(boardHtml).required.length,
-      portalOptionalInputs: portalRegistryInputs(boardHtml).optional.length,
+      portalInputs:
+        (portalConsumerContract?.required_input_refs ?? []).length +
+        (portalConsumerContract?.optional_input_refs ?? []).length,
+      portalRequiredInputs: (portalConsumerContract?.required_input_refs ?? []).length,
+      portalOptionalInputs: (portalConsumerContract?.optional_input_refs ?? []).length,
       presentationStates: states.length,
-      canonicalProfiles: canonicalProfileCount,
+      profileCoverageEntries,
+      missingProfileCoverage,
     },
   };
 }
@@ -1062,7 +1307,7 @@ if (import.meta.main) {
     }
     const summary = result.summary;
     console.info(
-      `✅ partner dashboard plan valid · ${summary.bindings} bindings · ${summary.gaps} gaps · ${summary.connectors} connectors · ${summary.regions} regions · ${summary.sectionMounts} section mounts · ${summary.hashRoutes} hash routes · ${summary.portalRequiredInputs} required + ${summary.portalOptionalInputs} optional portal inputs · ${summary.presentationStates} presentation states · ${summary.canonicalProfiles} canonical profiles`
+      `✅ partner dashboard plan valid · ${summary.bindings} bindings · ${summary.gaps} gaps · ${summary.connectors} connectors · ${summary.regions} regions · ${summary.sectionMounts} section mounts · ${summary.hashRoutes} hash routes · ${summary.portalRequiredInputs} required + ${summary.portalOptionalInputs} optional portal inputs · ${summary.presentationStates} presentation states · ${summary.profileCoverageEntries} profile coverage entries · ${summary.missingProfileCoverage} missing`
     );
   } catch (error) {
     console.error(`❌ unable to validate partner dashboard plan: ${String(error)}`);

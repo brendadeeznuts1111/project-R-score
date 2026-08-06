@@ -1,34 +1,32 @@
--- Reviewed snapshot query for the connector contract.
+-- Reviewed snapshot query for the connector proposal.
 -- Upstream: docs/design/partner-dashboard-mvp.toml
 
 CREATE TEMP TABLE mvp_overview AS
 SELECT
-  33 AS semanticBindings,
-  15 AS semanticGaps,
-  8 AS connectors,
-  1 AS blockedConnectors,
   0 AS canonicalProfiles,
   4 AS profileTarget,
-  9 AS sectionMounts,
-  6 AS hashRoutes,
-  31 AS presentationStates,
-  7 AS foundationCommits,
-  2 AS intentionalTodos;
+  8 AS implementedComponents,
+  12 AS totalComponents,
+  8 AS connectors,
+  1 AS blockedConnectors,
+  4 AS legacyPartners,
+  10 AS legacyOuts,
+  15 AS semanticGaps;
 
 CREATE TEMP TABLE connector_status_summary AS
-SELECT 'Planned' AS status, 6 AS count, 'Contracted adapter and port; implementation not started' AS meaning
-UNION ALL SELECT 'Blocked', 1, 'Sports Terminal requires one exact versioned input contract'
-UNION ALL SELECT 'Compatibility', 1, 'Legacy operations projection retained only through migration';
+SELECT 'Planned' AS status, 6 AS count, 'Canonical connector and port are contracted; implementation is not complete' AS meaning
+UNION ALL SELECT 'Blocked', 1, 'Sports Terminal lacks its exact parsed and authenticated boundary'
+UNION ALL SELECT 'Compatibility', 1, 'Legacy operations visibility is temporary and excluded from canonical authority';
 
 CREATE TEMP TABLE connector_inventory AS
-SELECT 1 AS "order", 'profiles-registry' AS connector, 'partners' AS owner, 'planned' AS status, 'yes' AS required, 'Materialize and parse the first canonical profiles' AS nextAction
-UNION ALL SELECT 2, 'accounting-ledger', 'accounting', 'planned', 'no', 'Read integer minor-unit balances through AccountingReadPort'
-UNION ALL SELECT 3, 'telegram-handshake', 'telegram', 'planned', 'no', 'Project readiness only; preserve transport boundary'
-UNION ALL SELECT 4, 'limits-registry', 'compliance', 'planned', 'no', 'Adapt per-out coverage without owning identity'
-UNION ALL SELECT 5, 'bookmakers-registry', 'trading', 'planned', 'no', 'Resolve SportsbookId and display metadata'
-UNION ALL SELECT 6, 'tennis-contract', 'trading', 'planned', 'no', 'Reuse strict parsing and last-known-good reliability pattern'
-UNION ALL SELECT 7, 'sports-terminal', 'trading', 'blocked', 'no', 'Select one exact versioned package export or registry artifact'
-UNION ALL SELECT 8, 'legacy-ops-registry', 'partners', 'current-compatibility', 'no', 'Instrument usage and remove under artifact schema v2';
+SELECT 1 AS "order", 'canonical-profile-config' AS connector, 'partners' AS owner, 'planned' AS status, 'Profiles and lifecycle' AS nextAction
+UNION ALL SELECT 2, 'accounting-ledger', 'accounting', 'planned', 'Scoped integer money'
+UNION ALL SELECT 3, 'telegram-handshake', 'telegram', 'planned', 'Handshake projection'
+UNION ALL SELECT 4, 'limits-registry', 'compliance', 'planned', 'Per-out limit coverage'
+UNION ALL SELECT 5, 'bookmakers-registry', 'trading', 'planned', 'Sportsbook ID aliases'
+UNION ALL SELECT 6, 'tennis-contract', 'trading', 'planned', 'Capacity and freshness'
+UNION ALL SELECT 7, 'sports-terminal', 'trading', 'blocked', 'Input, IDs, auth, money'
+UNION ALL SELECT 8, 'legacy-ops-registry', 'partners', 'current-compatibility', 'Zero usage and schema v2';
 
 SELECT * FROM mvp_overview;
 SELECT * FROM connector_status_summary;

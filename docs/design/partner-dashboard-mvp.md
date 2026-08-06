@@ -9,19 +9,19 @@ release feeds, npm channels, or cron schedules.
 
 ## Authority map
 
-| Artifact | Owns | Must not own |
-| --- | --- | --- |
-| `partner-dashboard-mvp.toml` | MVP composition, connector/region bindings, ingress compatibility, resilience, theme references, and retirement gates | Runtime/type channel values or generated dashboard data |
-| `partner-dashboard-semantic-map.md` | Human-readable nomenclature and concept/surface interpretation | A second machine contract |
-| `partner-type-reference-map.md` | Existing-to-canonical type/reference decisions and migration evidence | Dashboard layout or runtime policy |
-| `config/bun-channels.toml` | Bun/runtime/type/feed/schedule policy | Partner business semantics |
-| `partners-dashboard.json` | No policy | Derived read model only; safe to regenerate |
-| `@factorywager/partners` | Parsed domain types, ports, pure adapters, and projection code | Telegram transport, accounting storage, or theme token ownership |
+| Artifact                            | Owns                                                                                                                                                                                           | Must not own                                                     |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `partner-dashboard-mvp.toml`        | MVP composition, connector/region bindings, ingress compatibility, resilience, theme references, and retirement gates                                                                          | Runtime/type channel values or generated dashboard data          |
+| `partner-dashboard-semantic-map.md` | Human-readable nomenclature and concept/surface interpretation                                                                                                                                 | A second machine contract                                        |
+| `partner-type-reference-map.md`     | Existing-to-canonical type/reference decisions and migration evidence                                                                                                                          | Dashboard layout or runtime policy                               |
+| `config/bun-channels.toml`          | Bun/runtime/type/feed/schedule policy                                                                                                                                                          | Partner business semantics                                       |
+| `partners-dashboard.json`           | Derived read model only; safe to regenerate                                                                                                                                                    | Policy or source truth                                           |
+| `@factorywager/partners`            | Target owner for parsed domain types, ports, pure adapters, and projection code; currently artifact core, ingress and legacy compatibility, profile coverage, and the portal consumer contract | Telegram transport, accounting storage, or theme token ownership |
 
 The TOML is the machine-readable MVP planning SSOT. The semantic and type maps
 explain its vocabulary and migration evidence; validators enforce that they do
-not silently become competing contracts. Global DX may register these paths,
-but it never copies their values.
+not silently become competing contracts. Global DX may register these paths, but
+it never copies their values.
 
 ## Outcome
 
@@ -68,6 +68,7 @@ type PartnerDashboardArtifact = {
     | 'legacyOps',
     ConnectorSnapshot
   >;
+  activeOutIds: OutId[]; // explicit live-capacity set; distinct from registered outs
   summary: {
     partnerCount: number;
     canonicalProfileCount: number;
@@ -80,8 +81,8 @@ type PartnerDashboardArtifact = {
   conflicts: Array<{
     partnerCode: PartnerCode;
     fieldPath: string;
-    adapterIds: string[];
-    values: unknown[];
+    adapterIds: AdapterId[];
+    values: Array<string | number | boolean | null>; // redacted forensic scalars only
   }>;
   partners: PartnerDashboardRecord[];
 };
@@ -93,7 +94,7 @@ type PartnerDashboardRecord = {
   operationalPhase: PartnerOperationalPhase;
   identity: {
     treeNodeId?: TreeNodeId;
-    profileSourceSystemId: string;
+    profileSourceSystemId: SourceSystemId;
     externalPartnerRefs: ExternalPartnerRef[];
   };
   outs: Array<{
@@ -152,9 +153,9 @@ type LifecycleStateFact = {
   state: PartnerLifecycleState;
   effectiveAt: string;
   provenance: {
-    sourceSystemId: string;
+    sourceSystemId: SourceSystemId;
     sourceRecordRef?: string;
-    adapterId: string;
+    adapterId: AdapterId;
     adapterVersion: string;
     observedAt: string;
     originalValue: string;
@@ -164,13 +165,13 @@ type LifecycleStateFact = {
 };
 
 type ExternalPartnerRef = {
-  sourceSystemId: string;
-  externalId: string;
+  sourceSystemId: SourceSystemId;
+  externalId: ExternalPartnerId;
 };
 
 type ExternalAccountRef = {
-  sourceSystemId: string;
-  externalId: string;
+  sourceSystemId: SourceSystemId;
+  externalId: ExternalAccountId;
 };
 
 type OutOperationalStatus =
@@ -212,18 +213,39 @@ concept/surface/theme bindings are in the
 validated strings at the JSON boundary. Canonical `OutId` is
 `out-{PartnerCode}-{n}`; the older `CODE-N` seat form is ingress-only.
 
-Every lifecycle value carries the mandatory provenance block. A Sports Terminal
-`frozen` value therefore serializes as a canonical `suspended` state while
-remaining queryable as `originalValue: "frozen"`, adapter ID `sports-terminal`,
-adapter version `2`, mapping method `declared`, and confidence `exact`.
-Canonical profile values use their profile adapter as the source and an
-`identity` mapping method.
+Every lifecycle value carries the mandatory provenance block. Once its blocked
+adapter has an exact input contract, a Sports Terminal `frozen` value must
+serialize as a canonical `suspended` state while remaining queryable as
+`originalValue: "frozen"`, adapter ID `sports-terminal`, adapter version `2`,
+mapping method `declared`, and confidence `exact`. This is a target mapping, not
+current adapter behavior. A future canonical lifecycle/profile adapter must use
+its profile source and an `identity` mapping method; that adapter and its exact
+source contract are not implemented in the current slice.
 
-All untrusted files, network responses, database rows, and environment values
-are parsed by their owning adapters. The read-model builder receives typed
-adapter results. The dashboard receives one trusted JSON artifact.
+In the target architecture, all untrusted files, network responses, database
+rows, and environment values are parsed by their owning adapters. The read-model
+builder then receives typed adapter results and the dashboard receives one
+trusted JSON artifact. Today, only the profile-coverage and legacy compatibility
+slices implement that boundary; the current portal still reads its documented
+7+1 compatibility inputs.
 
-Source precedence is field-specific:
+There is no canonical partner HTTP route yet. Sports Terminal contains an
+existing `partnerRoutes(req)` module and a mounted React `/partners` page that
+calls it, but the module is not imported or mounted by the main API router or
+server entrypoint. Its header claims JWT/admin protection while its exported
+boundary receives no auth context. The list/detail shapes use bare `partnerId`;
+the detail response mixes contact data, Telegram config, lifecycle, limits, and
+floating-point money. These surfaces are now exact cutover evidence, not an
+approved connector. The closest read candidate is
+`GET /api/partners/:id/sources/health`, which still needs authenticated mounting,
+`ExternalPartnerRef` resolution, response parsing, and a money-free projection.
+No inbound JSON, Blob, explicit MIME, FormData, or multipart contract has been
+selected. The browser's outbound GET transport does not imply an inbound API
+Content-Type contract. Legacy APIs remain inventory sources, not the canonical
+partner API.
+
+Target source precedence is field-specific; only the profile-coverage and
+legacy-ops boundaries are implemented in the current slice:
 
 - identity and policy: canonical profile;
 - live capacity: fresh Tennis/Sports adapter, with a labeled legacy fallback;
@@ -247,10 +269,10 @@ rather than being claimed as implemented.
 
 ## Ingress translation
 
-The planned `IngressTranslator` will live in
-`@factorywager/partners/compatibility` and run before the core parser. HTTP/BFF
-handlers, CLIs, and connector adapters will call the same pure translator. It
-will not be embedded in the core or limited to one deployment transport.
+The pure `IngressTranslator` now lives in `@factorywager/partners/compatibility`
+and runs before the core parser. Its HTTP/BFF, CLI, and connector-adapter
+callers are still unwired; once added, each will call this same translator. It
+is not embedded in the core or limited to one deployment transport.
 
 The sole MVP rewrite is:
 
@@ -258,11 +280,13 @@ The sole MVP rewrite is:
 CODE-N  →  out-CODE-N
 ```
 
-The translator validates `^([A-Z]{3,6})-([1-9][0-9]*)$`, emits a deprecation
-counter/warning, retains the original input in fact provenance, and then calls
-the planned canonical `parseCanonicalOutId`. Unknown aliases are rejected rather
-than guessed. The mapping can be removed only after production translation count
-remains zero for 30 days and every producer emits canonical IDs.
+The translator validates `^([A-Z]{3,6})-([1-9][0-9]*)$`, returns the canonical
+ID plus the SSOT-owned counter/warning metadata, retains the original input for
+fact provenance, and then calls `parseCanonicalOutId`. Ingress callers—not the
+pure translator—emit the warning and increment the counter. Unknown aliases are
+rejected rather than guessed. The mapping can be removed only after production
+translation count remains zero for 30 days and every producer emits canonical
+IDs.
 
 ## Page structure
 
@@ -283,24 +307,27 @@ surfaces while presenting their partner-keyed health and freshness.
 
 ## Sections
 
-| Section        | Required source                 | MVP content                                                                        | Deferred                             |
-| -------------- | ------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------ |
-| Summary        | read model                      | partners, ready, attention, accounts, balance                                      | forecasts and trends                 |
-| Roster         | profile + adapters              | CODE, lifecycle/phase, out readiness, coverage, funding status, Telegram readiness | custom columns                       |
-| Partner detail | profile                         | lineage, template, jurisdiction summary, lifecycle                                 | profile editing                      |
-| Accounts       | profile + bookmakers + limits   | book, status, max bet, funding method label, coverage                              | live credentials/balances            |
-| Accounting     | accounting adapter              | scoped balances, recent ledger rows, proof links                                   | payment execution and reconciliation |
-| Communication  | Telegram adapter                | linked, handshake, members, configured topics                                      | sending messages from Pages          |
-| Attention      | all adapters                    | deterministic action rows with deep links/CLI hints                                | automated remediation                |
-| Integrations   | Tennis/Sports Terminal adapters | availability and freshness only                                                    | embedding product dashboards         |
+| Section        | Required source                            | MVP content                                                                        | Deferred                             |
+| -------------- | ------------------------------------------ | ---------------------------------------------------------------------------------- | ------------------------------------ |
+| Summary        | read model                                 | partners, ready, attention, accounts, balance                                      | forecasts and trends                 |
+| Roster         | planned lifecycle/profile facts + adapters | CODE, lifecycle/phase, out readiness, coverage, funding status, Telegram readiness | custom columns                       |
+| Partner detail | planned lifecycle/profile adapter          | lineage, template, jurisdiction summary, lifecycle                                 | profile editing                      |
+| Accounts       | planned profile + bookmakers + limits      | book, status, max bet, funding method label, coverage                              | live credentials/balances            |
+| Accounting     | accounting adapter                         | scoped balances, recent ledger rows, proof links                                   | payment execution and reconciliation |
+| Communication  | Telegram adapter                           | linked, handshake, members, configured topics                                      | sending messages from Pages          |
+| Attention      | all adapters                               | deterministic action rows with deep links/CLI hints                                | automated remediation                |
+| Integrations   | Tennis/Sports Terminal adapters            | availability and freshness only                                                    | embedding product dashboards         |
 
 ## State and failure behavior
 
 - Missing optional adapters never erase a partner profile.
 - Each connector reports `ok`, `stale`, or `unavailable` with its own timestamp.
 - A stale connector snapshot is visible at page and partner level.
-- The bake fails only when the canonical profile is invalid or the artifact
-  cannot satisfy its schema. Optional adapter failures produce attention rows.
+- The target dashboard bake fails when required canonical facts are invalid or
+  the artifact cannot satisfy its schema. The redacted coverage artifact may be
+  structurally empty during proposal work, but implementation readiness fails
+  until every required CODE is covered. Optional adapter failures produce
+  attention rows.
 - No plaintext credentials, raw provider account output, tokens, or secret vault
   values enter the artifact.
 - Profile, accounting, and Telegram facts retain provenance; the UI does not
@@ -314,15 +341,20 @@ surfaces while presenting their partner-keyed health and freshness.
 
 ## Connector resilience
 
+These are target connector/bake policies. They are separate from the current
+browser compatibility helper's five-second request timeout, which is owned by
+`/portal/fetch-json.js`.
+
 - Each connector times out after 3 seconds and opens its circuit after 3
   consecutive failures for 60 seconds.
 - Data up to 300 seconds old is stale-but-acceptable and is rendered with a
   visible warning and source timestamp.
 - Optional connectors use last-known-good data for at most 24 hours, then become
   `unavailable`; they never erase the canonical partner record.
-- The required profile connector may use last-known-good data only inside the
-  300-second stale window. Beyond that, the bake fails rather than inventing
-  identity or policy.
+- The required profile-coverage connector may use last-known-good data only
+  inside the 300-second stale window. Beyond that, the dashboard bake fails
+  rather than inventing identity coverage. It has no lifecycle or policy
+  authority.
 - One successful probe closes the circuit. Every fallback is represented in
   `connectorSnapshots`, partner-level provenance, and deterministic attention
   rows.
@@ -330,26 +362,50 @@ surfaces while presenting their partner-keyed health and freshness.
 ## First implementation slices
 
 The private `packages/partners` workspace now owns the target package identity,
-TOML-facing plan types, and unresolved semantic-gap map. The remaining slices
-are:
+TOML-facing plan types, unresolved semantic-gap map, canonical identifier
+parsers, ingress-only out translation, the v1 artifact boundary, and the pure
+artifact assembler over already reconciled records. It performs no I/O, does not
+yet join adapters or apply source precedence, and emits no production artifact
+by itself. A selective `partners-ops.v2` compatibility adapter now keeps the
+four current partner/out identities available as narrow observations while
+deliberately dropping credentials, payment targets, Telegram IDs, money, limits,
+colors, and other non-authoritative facts. It does not manufacture canonical
+dashboard records, lifecycle facts, active outs, or resolved Sportsbook IDs. A
+browser-neutral package contract now owns the current input inventory, canonical
+artifact path, and query-only legacy comparison policy; the browser loader
+itself remains planned. The current compatibility board now delegates its
+unchanged 7+1 JSON calls to the shared `/portal/fetch-json.js` transport for its
+five-second timeout, explicit JSON `Accept`, same-origin credentials, advisory
+debug-gated MIME diagnostics, structured transport results, and path-qualified
+thrown errors at the board boundary. A profile-coverage adapter boundary and
+redacted `partner-profile-coverage.json` readiness artifact now prove only
+`PartnerCode`, call sign, and source profile document revision; lifecycle,
+phase, credentials, funding, Telegram, accounting, money, and policy are
+structurally excluded. Coverage feeds future assembly/reconciliation but is not
+the `profiles` connector snapshot. The planned private canonical-profile
+connector must supply identity, lifecycle, and policy facts. The remaining
+slices are:
 
-1. Define the artifact types and pure builder in `@factorywager/partners`.
-2. Implement a compatibility adapter over `partners-ops.v2` so the four current
-   partners render immediately.
-3. Join `partner-profiles.json`; emit attention for legacy records without a
-   real profile.
-4. Add a minimum profile-coverage gate for the four known CODEs.
-5. Add accounting and Telegram adapter summaries.
-6. Point the board at the new artifact; retain old fetches behind a temporary
+1. Materialize redacted coverage for the four known CODEs; emit attention for
+   legacy records without coverage.
+2. Define a defensible lifecycle source with effective-time provenance; do not
+   infer it from profile coverage.
+3. Add accounting and Telegram adapter summaries.
+4. Implement reconciliation/source precedence over typed adapter results.
+5. Point the board at the new artifact; retain old fetches behind a temporary
    debug flag for comparison tests.
-7. Split the current inline board controller into small browser modules and use
+6. Split the current inline board controller into small browser modules and use
    shared `lib/portal/ui-html` builders.
 
 ## Acceptance criteria
 
 - All four current partners appear even when optional adapters are unavailable.
-- All four current CODEs either have a canonical profile or a visible,
-  machine-readable migration reason; an empty profile bake fails.
+- The redacted coverage artifact contains all four current CODEs. It may remain
+  structurally empty while the plan is a proposal, but the readiness gate fails
+  with the exact missing CODEs.
+- Every canonical dashboard record has defensible lifecycle/profile provenance.
+  A migration reason may preserve legacy runtime visibility, but it never waives
+  the four-CODE implementation-readiness gate.
 - Every row has CODE, lifecycle/phase provenance, out readiness, scoped
   balances, Telegram handshake readiness, and deterministic attention actions.
 - No new core/read-model field is named bare `partnerId`; external identifiers
@@ -358,16 +414,19 @@ are:
   carry a structured account scope.
 - Every lifecycle state has queryable source, original state, adapter,
   confidence, and effective-time provenance.
-- Legacy out translation happens only in `IngressTranslator`, emits telemetry,
-  and passes the result through the canonical parser.
+- Legacy out translation happens only in `IngressTranslator` and passes the
+  result through the canonical parser. Once an authenticated caller is wired,
+  that caller emits the translator-provided warning and telemetry counter.
 - Connector timeout, stale, last-known-good, and circuit-breaker behavior
-  matches the TOML plan and is covered by builder tests.
+  matches the TOML plan and is covered by adapter/reconciliation tests.
 - Pre-commit rejects new floating-point financial SQL storage.
 - Browser code fetches one partner-domain artifact for primary rendering.
 - No DOM module imports SQLite, Telegram transport, vault, or profile TOML code.
 - Existing hash routes remain valid.
-- `partner-profiles.json` no longer reports zero profiles for active partners,
-  unless each legacy-only record has an explicit migration reason.
+- `partner-profile-coverage.json` contains all four current partner CODEs before
+  the plan becomes implementation-ready. Migration reasons may explain legacy
+  visibility but cannot replace coverage. The legacy full-profile artifact is
+  not a canonical dashboard input.
 - Focused gates pass: profile/schema, read-model, board, portal route, concept,
   surface, ledger, import graph, workspace validation, and type-check.
 - The full local `bun run bun:ci` is required before merge.
@@ -381,6 +440,7 @@ bun test tests/partners-board.test.ts tests/partners-portal.test.ts
 bun run partners:governance
 bun run partner:dashboard-plan:validate
 bun run partner:dashboard-plan:validate -- --unregistered
+bun run partner-profile:coverage:bake:check
 bun --cwd=packages/partners run build
 bun run lint:money-sql:staged
 bun run validate:surface-coverage

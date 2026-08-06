@@ -2,10 +2,12 @@
 
 Status: proposed canonical map (2026-08-05)
 
-This map is the type-level companion to the partner consolidation review and
-dashboard MVP. It names the current definitions, scores their fitness, assigns
-an owner, and states the compatibility rule. It is a decision artifact, not a
-new runtime schema.
+This map is the type-level companion to the
+[partner consolidation review](./partner-code-consolidation.md),
+[dashboard MVP](./partner-dashboard-mvp.md), and machine-readable
+[MVP plan](./partner-dashboard-mvp.toml). It names the current definitions,
+scores their fitness, assigns an owner, and states the compatibility rule. It is
+a decision artifact, not a new runtime schema.
 
 ## Target identity graph
 
@@ -42,7 +44,7 @@ Fitness is scored from 1 (unsafe or ambiguous) to 5 (ready to reuse).
 
 | Concept                   | Current references                                                                                                                         | Current shape / examples                                          | Fitness | Decision         | Target owner and type                                                                                                                              |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------- | ------: | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Partner business identity | `lib/partner-profile/schema.ts` `identity.code`; `lib/telegram/handshake-ref.ts`; `PartnersOpsPartner.code`; Kalshi TOML `partners[].code` | Repeated plain strings with `^[A-Z]{3,6}$`                        |       4 | Keep + brand     | Partners core: `PartnerCode`; normalize trim/uppercase only at ingress, validate once.                                                             |
+| Partner business identity | `lib/partner-profile/schema.ts` `identity.code`; `lib/telegram/handshake-ref.ts`; `PartnersOpsPartner.code`; Kalshi TOML `partners[].code` | Repeated plain strings with `^[A-Z]{3,6}$`                        |       4 | Keep + brand     | Partners core: exact `PartnerCode` parser; caller-side trim/uppercase normalization is planned only for explicitly named ingress adapters.         |
 | Base operator alias       | profile `identity.callSign`; handshake; seat intake                                                                                        | `CODE-NNN`, such as `SPEN-001`                                    |       4 | Keep + brand     | Partners core: `PartnerCallSign`; derive its `PartnerCode`, never use it as the business PK.                                                       |
 | Nested seat alias         | `HANDSHAKE_CALL_SIGN_RE`; partners-ops local regex                                                                                         | `CODE-NNN-SUBNN[-SUBNN]`                                          |       3 | Adapt            | Operations: `SeatCallSign`; map to a base `PartnerCode` and preserve the full seat ref as provenance. Do not widen `PartnerCallSign`.              |
 | Operations node           | `lib/types/branded/operations.ts` `TreeNodeId`; profile `treeNodeId`; bridge                                                               | Opaque branded string                                             |       5 | Keep reference   | Operations owns `TreeNodeId`; partner profile may carry an optional reference.                                                                     |
@@ -71,26 +73,27 @@ Fitness is scored from 1 (unsafe or ambiguous) to 5 (ready to reuse).
 
 ## Translation decision matrix
 
-`IngressTranslator` is a pure compatibility service invoked before the core
-parser by HTTP/BFF handlers, CLIs, and artifact adapters.
+`IngressTranslator` is an implemented pure compatibility service intended to run
+before the core parser. HTTP/BFF, CLI, and artifact-adapter callers remain
+unwired.
 
-| Incoming source / field      | Example          | Canonical result                                              | Translation rule                                                            | Failure behavior                                | Retirement                                                        |
-| ---------------------------- | ---------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------- |
-| Profile or handshake `code`  | `SPEN`           | `PartnerCode("SPEN")`                                         | Trim, uppercase, validate `PartnerCode`; no alias lookup                    | Reject invalid CODE                             | Permanent boundary normalization                                  |
-| Base call-sign               | `SPEN-001`       | `PartnerCallSign` + `PartnerCode("SPEN")`                     | Validate base grammar and derive CODE                                       | Reject mismatched/invalid call-sign             | Permanent derived alias                                           |
-| Nested operations seat       | `SPEN-001-SUB02` | `SeatCallSign` + `PartnerCode("SPEN")`                        | Operations parser preserves full seat path and derives CODE                 | Reject depth/grammar drift                      | Permanent operations reference                                    |
-| Legacy seat out              | `SPEN-1`         | `OutId("out-SPEN-1")`                                         | Planned `IngressTranslator.legacyOutId`, then planned `parseCanonicalOutId` | Reject; never guess sequence                    | Remove after zero translations for 30 days and producer migration |
-| partners-ops/Tennis out      | `out-SPEN-1`     | same `OutId`                                                  | Canonical parse only                                                        | Reject invalid canonical ID                     | No translation                                                    |
-| Sports Terminal `partner_id` | `partner-42`     | `ExternalPartnerRef` plus resolved `PartnerCode`              | Require an explicit source-qualified resolution row                         | Quarantine unresolved record and emit attention | Adapter remains; duplicate profile authority retires              |
-| Kalshi `partners[].code`     | `SPEN`           | `PartnerCode("SPEN")`                                         | Validate CODE                                                               | Reject invalid CODE                             | Permanent adapter boundary                                        |
-| Kalshi registry `id`         | `partner-spen`   | `ExternalPartnerRef { sourceSystemId: "kalshi", externalId }` | Preserve as a source-qualified identity reference; join through TOML CODE   | Quarantine if CODE association is missing       | Never promote external ID                                         |
-| Pandora wire `partnerId`     | `118`            | provider-scoped `ExternalPartnerRef`                          | Preserve only; resolution requires an explicit adapter mapping              | Do not infer from numeric ID                    | Never promote remote ID                                           |
-| Sports lifecycle             | `frozen`         | `suspended` lifecycle fact                                    | Declared state map with mandatory provenance                                | Reject unknown state or quarantine record       | Mapping remains while source emits `frozen`                       |
+| Incoming source / field      | Example          | Canonical result                                              | Translation rule                                                                                                         | Failure behavior                                | Retirement                                                                                |
+| ---------------------------- | ---------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Profile or handshake `code`  | `SPEN`           | `PartnerCode("SPEN")`                                         | Current core parser validates the exact canonical string; any trim/uppercase step must be owned by a future named caller | Reject invalid CODE                             | Permanent canonical validation; normalization remains planned at named ingress boundaries |
+| Base call-sign               | `SPEN-001`       | `PartnerCallSign` + `PartnerCode("SPEN")`                     | Validate base grammar and derive CODE                                                                                    | Reject mismatched/invalid call-sign             | Permanent derived alias                                                                   |
+| Nested operations seat       | `SPEN-001-SUB02` | `SeatCallSign` + `PartnerCode("SPEN")`                        | Operations parser preserves full seat path and derives CODE                                                              | Reject depth/grammar drift                      | Permanent operations reference                                                            |
+| Legacy seat out              | `SPEN-1`         | `OutId("out-SPEN-1")`                                         | Implemented `IngressTranslator.translateOutId`, then `parseCanonicalOutId`                                               | Reject; never guess sequence                    | Remove after zero translations for 30 days and producer migration                         |
+| partners-ops/Tennis out      | `out-SPEN-1`     | same `OutId`                                                  | Canonical parse only                                                                                                     | Reject invalid canonical ID                     | No translation                                                                            |
+| Sports Terminal `partner_id` | `partner-42`     | `ExternalPartnerRef` plus resolved `PartnerCode`              | Require an explicit source-qualified resolution row                                                                      | Quarantine unresolved record and emit attention | Adapter remains; duplicate profile authority retires                                      |
+| Kalshi `partners[].code`     | `SPEN`           | `PartnerCode("SPEN")`                                         | Validate CODE                                                                                                            | Reject invalid CODE                             | Permanent adapter boundary                                                                |
+| Kalshi registry `id`         | `partner-spen`   | `ExternalPartnerRef { sourceSystemId: "kalshi", externalId }` | Preserve as a source-qualified identity reference; join through TOML CODE                                                | Quarantine if CODE association is missing       | Never promote external ID                                                                 |
+| Pandora wire `partnerId`     | `118`            | provider-scoped `ExternalPartnerRef`                          | Preserve only; resolution requires an explicit adapter mapping                                                           | Do not infer from numeric ID                    | Never promote remote ID                                                                   |
+| Sports lifecycle             | `frozen`         | `suspended` lifecycle fact                                    | Declared state map with mandatory provenance                                                                             | Reject unknown state or quarantine record       | Mapping remains while source emits `frozen`                                               |
 
-Every successful non-identity translation increments
-`partner_ingress_translation_total` with mapping and caller labels. The
-dashboard exposes aggregate compatibility use, never raw external identifiers as
-primary keys.
+Every successful non-identity translation returns metadata for
+`partner_ingress_translation_total` plus its warning code. Future callers must
+increment that counter with mapping and caller labels. The dashboard exposes
+aggregate compatibility use, never raw external identifiers as primary keys.
 
 ## Domain type map
 
@@ -113,14 +116,14 @@ primary keys.
 
 ## Best parts, ranked
 
-| Rank | Component                                         | Why it is strong                                                                                    | Reuse rule                                                                                          |
-| ---: | ------------------------------------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-|    1 | Root profile parser/schema/bake                   | Approved CODE key, lifecycle, vault-only references, Bun TOML boundary, static artifact             | Extract into partners core with stronger brands and money/percentage types.                         |
-|    2 | Tennis partner contract bake                      | Strict wire parsing, integer cents, explicit live/offline/empty provenance, atomic last-good output | Use as the adapter and artifact reliability pattern.                                                |
-|    3 | Sports `PartnerGateway`                           | Clear, ordered eligibility gates and useful list/detail/tab information architecture                | Reuse evaluator behavior and UI concepts only after replacing its duplicate schema and float money. |
-|    4 | Root partner ledger audit fields                  | External references, idempotency indexes, proof, batch, scope, balance-after                        | Preserve fields in accounting adapter; replace storage and transaction semantics.                   |
-|    5 | Portal route/table helpers and board pure helpers | Route parsing and table metadata are already separated from the giant HTML controller               | Keep as portal-owned consumers of the new read model.                                               |
-|    6 | Kalshi out×skin model                             | Correctly distinguishes one credentialed out from several execution skins and concentration by out  | Keep in the execution adapter; publish summarized capacity, not provider secrets or raw meta.       |
+| Rank | Component                                         | Why it is strong                                                                                    | Reuse rule                                                                                                                                         |
+| ---: | ------------------------------------------------- | --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+|    1 | Root profile parser/schema/private loader         | Approved CODE key, lifecycle, vault-only references, and Bun TOML boundary                          | Extract schema, parser, and `loadAllProfiles`; use the redacted coverage bake for readiness. Keep the public full-profile bake compatibility-only. |
+|    2 | Tennis partner contract bake                      | Strict wire parsing, integer cents, explicit live/offline/empty provenance, atomic last-good output | Use as the adapter and artifact reliability pattern.                                                                                               |
+|    3 | Sports `PartnerGateway`                           | Clear, ordered eligibility gates and useful list/detail/tab information architecture                | Reuse evaluator behavior and UI concepts only after replacing its duplicate schema and float money.                                                |
+|    4 | Root partner ledger audit fields                  | External references, idempotency indexes, proof, batch, scope, balance-after                        | Preserve fields in accounting adapter; replace storage and transaction semantics.                                                                  |
+|    5 | Portal route/table helpers and board pure helpers | Route parsing and table metadata are already separated from the giant HTML controller               | Keep as portal-owned consumers of the new read model.                                                                                              |
+|    6 | Kalshi out×skin model                             | Correctly distinguishes one credentialed out from several execution skins and concentration by out  | Keep in the execution adapter; publish summarized capacity, not provider secrets or raw meta.                                                      |
 
 ## Worst parts and retirement priority
 
@@ -146,6 +149,11 @@ type PartnerCallSign = Brand<string, 'PartnerCallSign'>; // CODE-NNN only
 type SeatCallSign = Brand<string, 'SeatCallSign'>; // CODE-NNN[-SUBNN]{0,2}
 type OutId = Brand<string, 'OutId'>; // out-{CODE}-{positive integer}
 type CurrencyCode = Brand<string, 'CurrencyCode'>; // ISO 4217 uppercase
+type SourceSystemId = Brand<string, 'SourceSystemId'>;
+type AdapterId = Brand<string, 'AdapterId'>;
+type ExternalPartnerId = Brand<string, 'ExternalPartnerId'>;
+type ExternalAccountId = Brand<string, 'ExternalAccountId'>;
+type ProfileDocumentVersion = Brand<string, 'ProfileDocumentVersion'>;
 
 type MoneyAmount = {
   currency: CurrencyCode;
@@ -153,18 +161,13 @@ type MoneyAmount = {
 };
 
 type ExternalPartnerRef = {
-  sourceSystemId:
-    | 'operations'
-    | 'sports-terminal'
-    | 'kalshi'
-    | 'tennis'
-    | string;
-  externalId: string;
+  sourceSystemId: SourceSystemId;
+  externalId: ExternalPartnerId;
 };
 
 type ExternalAccountRef = {
-  sourceSystemId: string;
-  externalId: string;
+  sourceSystemId: SourceSystemId;
+  externalId: ExternalAccountId;
 };
 
 type AccountScope =
@@ -181,16 +184,16 @@ type SourceFact<T> = {
 type LifecycleStateFact = {
   state: PartnerLifecycleState;
   effectiveAt: string;
-  provenance: FactProvenance;
+  provenance: FactProvenance & { originalValue: string };
 };
 
 type FactProvenance = {
-  sourceSystemId: string;
+  sourceSystemId: SourceSystemId;
   sourceRecordRef?: string;
-  adapterId: string;
+  adapterId: AdapterId;
   adapterVersion: string;
   observedAt: string;
-  originalValue?: string; // required by LifecycleStateFact
+  originalValue?: string;
   mappingMethod: 'identity' | 'declared' | 'derived' | 'heuristic';
   confidence: 'exact' | 'approximate' | 'unknown';
 };
@@ -214,18 +217,38 @@ credentials, Telegram tokens, or remote payloads.
 
 ## Source-to-target adapter map
 
-| Source                            | Parser boundary                              | Emits                                                             | May not own                                               |
-| --------------------------------- | -------------------------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------- |
-| `config/partner-profiles/*.toml`  | partners config adapter via `Bun.TOML.parse` | identity, lifecycle, policy, agreement, desired account refs      | balances, Telegram membership, live capacity              |
-| `partner-profiles.json`           | profiles artifact adapter                    | validated profile facts and coverage                              | fallback invention for missing profiles                   |
-| `partners-ops.v2`                 | `legacy-ops` compatibility adapter           | temporary CODE/out/status/accounting observations with provenance | canonical lifecycle, partner identity, final money totals |
-| SQLite/accounting feed            | accounting adapter                           | typed entries, scoped balances, proofs, freshness                 | profile policy or Telegram delivery                       |
-| Telegram handshake/forum metadata | Telegram adapter                             | chat linkage, membership/topic readiness, action links            | lifecycle or accounting mutation                          |
-| bookmakers registry               | bookmakers adapter                           | canonical `SportsbookId`, aliases, display metadata               | partner account status                                    |
-| limits artifacts                  | limits adapter                               | out/book coverage and observed limits                             | bookmaker or partner identity                             |
-| Tennis contract                   | Tennis adapter                               | active outs, per-bet capacity, source/freshness                   | canonical profile identity                                |
-| Sports Terminal                   | Sports compatibility adapter                 | external state, gate observations, integration health             | a second profile store or lifecycle enum                  |
-| Kalshi partner registry           | execution adapter                            | provider/out/skin capacity and qualified external refs            | canonical partner IDs, money ledger truth                 |
+| Source                            | Parser boundary                              | Emits                                                                                                                                     | May not own                                                |
+| --------------------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `config/partner-profiles/*.toml`  | partners config adapter via `Bun.TOML.parse` | identity, lifecycle, policy, agreement, desired account refs                                                                              | balances, Telegram membership, live capacity               |
+| `partner-profile-coverage.json`   | `profile-coverage-artifact` adapter          | CODE, call sign, source profile document revision, observed time; feeds future assembly/reconciliation, never a second final portal fetch | lifecycle, phase, credentials, policy, money, account data |
+| legacy `partner-profiles.json`    | current portal compatibility only            | the only current full-profile compatibility input; no new canonical authority                                                             | canonical dashboard facts or public expansion              |
+| `partners-ops.v2`                 | `legacy-ops` compatibility adapter           | temporary CODE/out/status/accounting observations with provenance                                                                         | canonical lifecycle, partner identity, final money totals  |
+| SQLite/accounting feed            | accounting adapter                           | typed entries, scoped balances, proofs, freshness                                                                                         | profile policy or Telegram delivery                        |
+| Telegram handshake/forum metadata | Telegram adapter                             | chat linkage, membership/topic readiness, action links                                                                                    | lifecycle or accounting mutation                           |
+| bookmakers registry               | bookmakers adapter                           | canonical `SportsbookId`, aliases, display metadata                                                                                       | partner account status                                     |
+| limits artifacts                  | limits adapter                               | out/book coverage and observed limits                                                                                                     | bookmaker or partner identity                              |
+| Tennis contract                   | Tennis adapter                               | active outs, per-bet capacity, source/freshness                                                                                           | canonical profile identity                                 |
+| Sports Terminal                   | planned Sports compatibility adapter         | external state, gate observations, integration health after an authenticated parsed boundary exists                                        | a second profile store, lifecycle enum, contact/Telegram payload, or floating-point money |
+| Kalshi partner registry           | execution adapter                            | provider/out/skin capacity and qualified external refs                                                                                    | canonical partner IDs, money ledger truth                  |
+
+### Sports Terminal API and HTML cutover evidence
+
+The existing Sports Terminal surfaces are implementation references, not a
+connector contract. The React `/partners` route is mounted and calls the paths
+below, but `partnerRoutes` is not imported or mounted by the main API router or
+server entrypoint. Its file header describes JWT/admin protection while the
+exported router receives only `Request`, so that claim is not enforced at this
+boundary.
+
+| Candidate | Current evidence | Canonical decision |
+| --- | --- | --- |
+| React `/partners` | Page-local `PartnerListItem`/request types; calls list, create, transition, deposit, limit, and evaluate paths | Reuse list/detail information architecture only; do not copy the duplicate schema or mutation surface |
+| `GET /api/partners` | Handler exists, returns unqualified `partnerId` list records, but its router is unmounted | Keep blocked until mounted behind explicit authentication and a parsed adapter response |
+| `GET /api/partners/:id` | Mixes contact data, Telegram config, lifecycle, limits, and floating-point balance/exposure fields | Never consume directly; project only qualified external state and integration health |
+| `GET /api/partners/:id/sources/health` | Closest match for `IntegrationHealthReadPort`; still unmounted and keyed by an unqualified path ID | Define `ExternalPartnerRef` resolution, authentication, response parsing, and a money-free projection first |
+
+This evidence narrows the unresolved input choice without promoting a dead or
+unsafe route. The `sports-terminal` connector remains `blocked` in the TOML.
 
 ## MVP changes caused by this map
 
@@ -244,8 +267,9 @@ credentials, Telegram tokens, or remote payloads.
   not a comment or optional debug field.
 - Report profile coverage, registered outs, active outs, and executable capacity
   as separate measures.
-- Treat the current four CODEs as the minimum migration coverage set; an empty
-  canonical profile bake fails.
+- Treat the current four CODEs as the minimum migration coverage set. The
+  redacted coverage artifact accepts an empty map structurally in proposal mode,
+  while the implementation-readiness gate reports all missing CODEs.
 
 ## Remaining decisions before implementation
 

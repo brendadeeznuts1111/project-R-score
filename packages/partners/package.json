@@ -3,15 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Partner dashboard contracts and semantic-map authority",
+  "description": "Partner artifact contracts, ingress compatibility, and validated assembler",
   "exports": {
     ".": "./src/index.ts",
+    "./adapters": "./src/adapters/index.ts",
+    "./adapters/profile-coverage": "./src/adapters/profile-coverage.ts",
+    "./boundary": "./src/boundary/index.ts",
+    "./compatibility": "./src/compatibility/index.ts",
+    "./compatibility/legacy-partners-ops": "./src/compatibility/legacy-partners-ops.ts",
+    "./core": "./src/core/index.ts",
     "./dashboard-plan": "./src/dashboard-plan.ts",
+    "./portal": "./src/portal/index.ts",
     "./package.json": "./package.json"
   },
   "module": "./src/index.ts",
   "scripts": {
     "build": "bun run tsc --project ./tsconfig.json",
-    "test": "bun test ../../tests/partners-package.test.ts"
+    "test": "bun test ../../tests/partners-package.test.ts ../../tests/partner-dashboard-artifact.test.ts ../../tests/partner-legacy-ops-adapter.test.ts ../../tests/partner-consumer-contract.test.ts ../../tests/partner-profile-coverage.test.ts ../../tests/partner-dashboard-proposal.test.ts"
   }
 }

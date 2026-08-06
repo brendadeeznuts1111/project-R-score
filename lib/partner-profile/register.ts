@@ -79,7 +79,7 @@ export interface RegisterBookmakerInput {
   holdTargetPct?: number; // settlement.holdTargetPct (0–1)
   initialBalance?: number; // balance.initialCapitalRequirement
   fundingMethod?: string; // books.<bookKey>.funding.method (wire|crypto|voucher|internal)
-  outId?: OutId; // default `${code}-1`
+  outId?: OutId; // default `out-${code}-1`
   /** Injected ops DB (tests). Default: open via dbPath / DEFAULT_OPS_DB_PATH. */
   db?: Database;
   dbPath?: string; // ops DB (default DEFAULT_OPS_DB_PATH)
@@ -217,7 +217,7 @@ export async function registerPartnerBookmaker(
       outs: [],
       recordedAt: new Date().toISOString(),
     } as SeatIntakeRecord);
-  const outId = input.outId ?? asOutId(`${input.code}-1`);
+  const outId = input.outId ?? asOutId(`out-${input.code}-1`);
   const existing = record.outs.find(o => o.outId === outId);
   const out: SeatOut = {
     ...(existing ?? {}),
