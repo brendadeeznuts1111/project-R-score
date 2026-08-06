@@ -55,6 +55,10 @@ describe('system-panel Bun native APIs', () => {
       /forbidden/i
     );
 
+    // package.json is readable but not writable from the desk
+    expect(resolveUnderProject('package.json').ok).toBe(true);
+    await expect(writeProjectFile('package.json', '{}')).rejects.toThrow(/forbidden/i);
+
     const hits = await globSearch(smokeFile);
     expect(hits.results.some(r => r.includes('system-panel-smoke'))).toBe(true);
   });
