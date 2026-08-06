@@ -10,3 +10,9 @@ markets = ["tennis", "tabletennis", "soccer", "basketball", "american-football"]
 lifecycle = ["pre_match", "live"]
 expected_stack = ["williamhill", "openbet"]
 probe_paths = ["/", "/us"]
+
+[scrape]
+agent_id = "caesars-agent"
+live_url = "https://api.americanwagering.com/regions/us/locations/nj/brands/czr/sb/bets/configuration"
+html = false
+jurisdiction = "NJ"

@@ -1,0 +1,19 @@
+# Tier 4 scrape fleet defaults (cron · WebView · timeouts).
+# Per-book URLs / html capability: config/operators/<bookId>.toml [scrape]
+# @see lib/operations/scrapers/scrape-agents-config.ts
+# @see docs/harness/tenants/partner-limits.md
+
+[defaults]
+jurisdiction = "NJ"
+json_timeout_ms = 10000
+html_timeout_ms = 18000
+
+[webview]
+timeout_ms = 18000
+settle_ms = 800
+width = 1280
+height = 720
+
+[cron]
+schedule = "*/15 * * * *"
+title = "baseline-scrape"

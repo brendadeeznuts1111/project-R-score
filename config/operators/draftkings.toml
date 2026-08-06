@@ -10,3 +10,11 @@ markets = ["tennis", "american-football", "basketball", "baseball", "mma", "boxi
 lifecycle = ["pre_match", "live"]
 expected_stack = ["draftkings"]
 probe_paths = ["/", "/sportsbook"]
+
+[scrape]
+agent_id = "draftkings-agent"
+live_url = "https://api.draftkings.com/odds/v1/limits?state=NJ"
+html = true
+html_url = "https://sportsbook.draftkings.com/"
+html_fixture = "lib/operations/scrapers/fixtures/draftkings-limits.html"
+jurisdiction = "NJ"

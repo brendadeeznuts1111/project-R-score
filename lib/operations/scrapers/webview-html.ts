@@ -5,7 +5,10 @@
  *
  * Operations plane only — do not wrap odds SQLite (`openOddsDb`).
  * Screenshot PNG capture stays in `lib/operator-research/screenshot.ts`.
+ * Defaults from `config/scrape-agents.toml` `[webview]`.
  */
+
+import { resolveWebViewOptions } from './scrape-agents-config.ts';
 
 export type CaptureHtmlViaWebViewOptions = {
   timeoutMs?: number;
@@ -23,11 +26,10 @@ export async function captureHtmlViaWebView(
   url: string,
   options: CaptureHtmlViaWebViewOptions = {}
 ): Promise<string> {
-  const timeoutMs = options.timeoutMs ?? 18_000;
-  const settleMs = options.settleMs ?? 800;
+  const { timeoutMs, settleMs, width, height } = resolveWebViewOptions(options);
   await using wv = new Bun.WebView({
-    width: options.width ?? 1280,
-    height: options.height ?? 720,
+    width,
+    height,
     headless: true,
   });
   const nav = wv.navigate(url);

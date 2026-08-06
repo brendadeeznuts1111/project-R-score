@@ -18,19 +18,27 @@ import { expandScrapedLimitSeeds } from '../../baseline-scraped-limits.ts';
 import { asSportsbookId, asStateCode } from '../domain.ts';
 import { parseGenericLimitsPayload } from '../scraper-targets.ts';
 import type { LimitObservation } from '../limit-observation-wire.ts';
+import {
+  requireBookScrapeConfig,
+  resolveHtmlLiveUrl,
+  resolveHtmlTimeoutMs,
+  resolveJsonTimeoutMs,
+} from '../scrape-agents-config.ts';
 import { captureHtmlViaWebView } from '../webview-html.ts';
 import { parseDraftKingsHtml } from './draftkings-parse.ts';
 
 export const DRAFTKINGS_AGENT_ID = 'draftkings-agent' as const;
 export const DRAFTKINGS_SPORTSBOOK = asSportsbookId('draftkings');
-export const DRAFTKINGS_LIVE_URL = 'https://api.draftkings.com/odds/v1/limits?state=NJ';
-/** Opt-in live HTML target (override with DRAFTKINGS_HTML_URL). */
-export const DRAFTKINGS_HTML_URL =
-  Bun.env.DRAFTKINGS_HTML_URL ?? 'https://sportsbook.draftkings.com/';
 
-export const DRAFTKINGS_HTML_FIXTURE_PATH = Bun.fileURLToPath(
-  new URL('../fixtures/draftkings-limits.html', import.meta.url)
-);
+const dkScrape = requireBookScrapeConfig('draftkings');
+
+export const DRAFTKINGS_LIVE_URL = dkScrape.liveUrl;
+/** Opt-in live HTML target (override with DRAFTKINGS_HTML_URL). */
+export const DRAFTKINGS_HTML_URL = resolveHtmlLiveUrl('draftkings', 'DRAFTKINGS_HTML_URL');
+
+export const DRAFTKINGS_HTML_FIXTURE_PATH =
+  dkScrape.htmlFixtureAbs ??
+  Bun.fileURLToPath(new URL('../fixtures/draftkings-limits.html', import.meta.url));
 
 export type DraftKingsAgentResult = {
   ok: boolean;
@@ -204,13 +212,13 @@ export async function runDraftKingsAgent(
 
   if (options.html) {
     if (wantsWebViewHtml(options)) {
-      return scrapeDraftKingsHtmlLive(options.timeoutMs ?? 18_000, observedAt);
+      return scrapeDraftKingsHtmlLive(resolveHtmlTimeoutMs(options.timeoutMs), observedAt);
     }
     return scrapeDraftKingsHtmlFixture(observedAt);
   }
 
   if (live) {
-    const data = await fetchLiveJson(options.timeoutMs ?? 10_000);
+    const data = await fetchLiveJson(resolveJsonTimeoutMs(options.timeoutMs));
     if (data != null) {
       const observations = parsePayloadToObservations(data, observedAt, 'live');
       if (observations.length > 0) {

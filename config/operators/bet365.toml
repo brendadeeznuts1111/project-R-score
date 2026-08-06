@@ -10,3 +10,9 @@ markets = ["soccer", "tennis", "basketball", "cricket"]
 lifecycle = ["pre_match", "live"]
 expected_stack = ["bet365"]
 probe_paths = ["/", "/en/"]
+
+[scrape]
+agent_id = "bet365-agent"
+live_url = "https://www.bet365.com/api/limits?state=NJ"
+html = false
+jurisdiction = "NJ"

@@ -277,6 +277,9 @@ config/*
 !config/images.toml
 !config/runtime-flags.json
 !config/scraper-targets.ts
+!config/scrape-agents.toml
+!config/operators/
+!config/operators/**
 !config/tenants.ts
 !config/github-issue-taxonomy.ts
 # Homebase harness SSOT (must clone into worktrees; not machine secrets)

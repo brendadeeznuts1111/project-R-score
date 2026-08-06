@@ -170,8 +170,9 @@ See [`bun --filter` docs](https://bun.com/docs/cli/filter).
 | `bun run baseline:scrape-book -- <bookId>` | One registry agent by `bookId` → `artifacts/raw-limits/{bookId}.jsonl` + health.json |
 | `bun run scrape:odds <bookId>` / `bun run agent scrape odds --source <bookId>` | Same CLI aliases (`--live` JSON · `--html` HTML path) |
 | `bun run scrape:odds draftkings --html` / `fanduel --html` | DraftKings / FanDuel HTML fixture parse (`html_fixture`); live WebView only with `--live` or `OPERATOR_WEBVIEW_SCRAPE=1` ([scrapers README](../../../lib/operations/scrapers/README.md)) |
+| Scrape agents TOML | Fleet [`config/scrape-agents.toml`](../../../config/scrape-agents.toml) · per-book [`config/operators/<bookId>.toml`](../../../config/operators/) `[scrape]` · loader [`scrape-agents-config.ts`](../../../lib/operations/scrapers/scrape-agents-config.ts) |
 | `bun run baseline:scrape-draftkings` / `fanduel` / `bet365` / `espnbet` / `betmgm` / `caesars` / `hardrock` / `fanatics` / `betrivers` / `circa` | Aliases for `baseline:scrape-book` (US top-10 Tier 4 fleet) |
-| `bun run baseline:scrape-cron` / `:once` | In-process [`Bun.cron`](https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process) · default `*/15 * * * *` UTC · no-overlap · JSONL + alert eval |
+| `bun run baseline:scrape-cron` / `:once` | In-process [`Bun.cron`](https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process) · schedule from TOML `[cron]` (env `BASELINE_SCRAPE_CRON_SCHEDULE` wins) · no-overlap · JSONL + alert eval |
 | `bun run baseline:scrape-alert` | Evaluate consecutive agent fails → Slack/webhook (`BASELINE_SCRAPE_ALERT_WEBHOOK`, threshold default 3) |
 | `bun run baseline:caesars:probe` | Deep-probe Caesars/AW catalog (`--location=co` · `--live` · `--json`) — WAF vs public |
 | `bun run baseline:test-tier4`        | Tier 4 agent + registry + scrape unit tests                                                     |

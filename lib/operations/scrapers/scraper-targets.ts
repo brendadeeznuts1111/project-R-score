@@ -22,6 +22,7 @@ import {
   normalizeScrapeSport,
   SCRAPE_DEFAULT_JURISDICTION,
 } from './scrape-wire-taxonomy.ts';
+import { getBookScrapeConfig, loadScrapeAgentsConfigSync } from './scrape-agents-config.ts';
 
 export type ScrapeTargetParsedRow = {
   sport: string;
@@ -113,29 +114,55 @@ export function parseGenericLimitsPayload(
   return rows;
 }
 
-function target(sportsbook: SportsbookId, url: string): ScrapeTarget {
-  const jurisdiction = SCRAPE_DEFAULT_JURISDICTION;
+function target(sportsbook: SportsbookId, url: string, jurisdiction?: StateCode): ScrapeTarget {
+  const jur = jurisdiction ?? SCRAPE_DEFAULT_JURISDICTION;
   return {
     sportsbook,
-    jurisdiction,
+    jurisdiction: jur,
     url,
-    fixtureKey: `${sportsbook}-${jurisdiction.toLowerCase()}`,
-    parser: data => parseGenericLimitsPayload(data, sportsbook, jurisdiction),
+    fixtureKey: `${sportsbook}-${jur.toLowerCase()}`,
+    parser: data => parseGenericLimitsPayload(data, sportsbook, jur),
   };
 }
 
-export const DEFAULT_SCRAPE_TARGETS: readonly ScrapeTarget[] = [
-  target(asSportsbookId('draftkings'), 'https://api.draftkings.com/odds/v1/limits?state=NJ'),
-  target(asSportsbookId('fanduel'), 'https://api.fanduel.com/odds/v1/limits?state=NJ'),
-  target(asSportsbookId('betmgm'), 'https://api.betmgm.com/odds/v1/limits?state=NJ'),
-  target(
-    asSportsbookId('caesars'),
-    'https://api.americanwagering.com/regions/us/locations/nj/brands/czr/sb/bets/configuration'
-  ),
-  target(asSportsbookId('espnbet'), 'https://sportsbook.espn.com/apis/v1/limits?state=NJ'),
-  target(asSportsbookId('bet365'), 'https://www.bet365.com/api/limits?state=NJ'),
-  target(asSportsbookId('hardrock'), 'https://www.hardrock.bet/api/v1/limits?state=NJ'),
-  target(asSportsbookId('fanatics'), 'https://sportsbook.fanatics.com/api/v1/limits?state=NJ'),
-  target(asSportsbookId('betrivers'), 'https://nj.betrivers.com/api/v1/limits?state=NJ'),
-  target(asSportsbookId('circa'), 'https://www.circasports.com/api/v1/limits?state=NJ'),
+/** Fallback URLs when operator `[scrape]` is missing (should not happen for US top-10). */
+const FALLBACK_LIVE_URLS: Readonly<Record<string, string>> = {
+  draftkings: 'https://api.draftkings.com/odds/v1/limits?state=NJ',
+  fanduel: 'https://api.fanduel.com/odds/v1/limits?state=NJ',
+  betmgm: 'https://api.betmgm.com/odds/v1/limits?state=NJ',
+  caesars:
+    'https://api.americanwagering.com/regions/us/locations/nj/brands/czr/sb/bets/configuration',
+  espnbet: 'https://sportsbook.espn.com/apis/v1/limits?state=NJ',
+  bet365: 'https://www.bet365.com/api/limits?state=NJ',
+  hardrock: 'https://www.hardrock.bet/api/v1/limits?state=NJ',
+  fanatics: 'https://sportsbook.fanatics.com/api/v1/limits?state=NJ',
+  betrivers: 'https://nj.betrivers.com/api/v1/limits?state=NJ',
+  circa: 'https://www.circasports.com/api/v1/limits?state=NJ',
+};
+
+const FLEET_BOOK_IDS = [
+  'draftkings',
+  'fanduel',
+  'betmgm',
+  'caesars',
+  'espnbet',
+  'bet365',
+  'hardrock',
+  'fanatics',
+  'betrivers',
+  'circa',
 ] as const;
+
+function buildDefaultScrapeTargets(): readonly ScrapeTarget[] {
+  // Ensure fleet TOML + operators are loaded once.
+  loadScrapeAgentsConfigSync();
+  return FLEET_BOOK_IDS.map(id => {
+    const sportsbook = asSportsbookId(id);
+    const cfg = getBookScrapeConfig(id);
+    const url = cfg?.liveUrl ?? FALLBACK_LIVE_URLS[id]!;
+    return target(sportsbook, url, cfg?.jurisdiction);
+  });
+}
+
+/** Live JSON targets — URLs from `config/operators/*.toml` `[scrape].live_url`. */
+export const DEFAULT_SCRAPE_TARGETS: readonly ScrapeTarget[] = buildDefaultScrapeTargets();

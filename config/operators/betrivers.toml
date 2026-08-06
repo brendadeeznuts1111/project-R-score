@@ -10,3 +10,9 @@ markets = ["american-football", "basketball", "baseball", "hockey", "tennis"]
 lifecycle = ["pre_match", "live"]
 expected_stack = ["kambi"]
 probe_paths = ["/"]
+
+[scrape]
+agent_id = "betrivers-agent"
+live_url = "https://nj.betrivers.com/api/v1/limits?state=NJ"
+html = false
+jurisdiction = "NJ"
