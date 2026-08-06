@@ -40,7 +40,7 @@ export const PM_PROOF_CLI = 'bun run verify:pm:save' as const;
 export const PM_PROOF_BOARD_PATH = '/portal/packages/' as const;
 export const PM_PROOF_WEAVE_PATH = '/registry/portal-weave.json' as const;
 
-const REPO_ROOT = new URL('../../', import.meta.url).pathname;
+const REPO_ROOT = Bun.fileURLToPath(new URL('../../', import.meta.url));
 const DEFAULT_REGISTRY = 'https://registry.factory-wager.com/api/npm';
 
 export interface PmSpawnResult {
@@ -145,11 +145,17 @@ async function readRootPackageJson(): Promise<Record<string, unknown>> {
 }
 
 export function scopedPackumentUrl(registry: string, pkg: string): string {
+  const target = new URL(registry);
+  const basePath = target.pathname.replace(/\/+$/, '');
   if (pkg.startsWith('@')) {
     const slash = pkg.indexOf('/');
-    if (slash > 0) return `${registry}/${pkg.slice(0, slash)}%2f${pkg.slice(slash + 1)}`;
+    if (slash > 0) {
+      target.pathname = `${basePath}/${pkg.slice(0, slash)}%2f${pkg.slice(slash + 1)}`;
+      return target.toString();
+    }
   }
-  return `${registry}/${pkg}`;
+  target.pathname = `${basePath}/${pkg}`;
+  return target.toString();
 }
 
 export interface NpmPackumentVersion {
@@ -239,13 +245,18 @@ export function registryHostOrigin(registryUrl: string): string {
   }
 }
 
+/** Registry health is host-rooted even when the npm registry uses a path prefix. */
+export function artifactRegistryHealthUrl(registryUrl: string): string {
+  return `${registryHostOrigin(registryUrl)}/api/registry/health`;
+}
+
 /** 2b — artifact registry API live on the registry host (`/api/registry/health`). */
 export async function artifactRegistryApi(
   fetchImpl: typeof fetch = fetch,
   registry?: string
 ): Promise<PmProbeRow> {
   const base = registry ?? (await resolveRegistryUrl());
-  const url = `${registryHostOrigin(base)}/api/registry/health`;
+  const url = artifactRegistryHealthUrl(base);
   try {
     const res = await fetchImpl(url, { signal: AbortSignal.timeout(8_000) });
     if (!res.ok) return row('artifact registry api', false, `${url} → ${res.status}`);
