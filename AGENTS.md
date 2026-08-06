@@ -439,7 +439,10 @@ Commands: `bun:types-inventory` / `:write` / `:check` → committed
 changelog / usage → gitignored `.cache/bun-types-*/`; stack
 `bun:types-report:local` · soft CI `bun:types-ci` (end of `bun:ci`); skip
 `BUN_TYPES_CI=0` / `SKIP_BUN_TYPES_CI=1`; hard `BUN_TYPES_CI_STRICT=1` or
-`bun:types-ci:strict`.
+`bun:types-ci:strict`. Deep parse: multi-line + **one-liner** + **union-branch**
+anonymous objects · getters · maxDepth 3+. Console inspect depth (separate
+axis): [object inspection depth](https://bun.com/docs/runtime/console#object-inspection-depth)
+· `bunfig [console] depth = 6` · [`lib/console-depth.ts`](lib/console-depth.ts).
 
 Operate loop (feeds → scrape → catalog with embedded `releaseHits` → integrity):
 [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · **daily**

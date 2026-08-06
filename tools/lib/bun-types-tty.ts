@@ -1,11 +1,12 @@
 // @see https://bun.com/docs/runtime/color — Bun.color
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — stringWidth
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — inspect.table
+// @see https://bun.com/docs/runtime/console#object-inspection-depth — inspect depth for deep maps
 /**
  * Shared terminal chrome for bun-types inventory / tip-diff / usage / report.
  * Goal: map-first, table-second — operator can read status without scrolling a wall of rows.
  */
-import { colorize, logTable, shouldColor } from '../../lib/console-depth.ts';
+import { colorize, inspect, logTable, shouldColor } from '../../lib/console-depth.ts';
 
 export type TtyKv = { key: string; value: string; note?: string };
 
@@ -136,6 +137,52 @@ export function printPreviewTable<T extends object>(
   if (more && more > 0) {
     console.info(ttyDim(`  … +${more} more (use --write / --json / --verbose for full)`));
   }
+}
+
+/**
+ * Deepest setting chains (types inventory depth, not console inspect depth).
+ * Prints a compact list + nested object sample via policy `inspect` (console depth).
+ */
+export function printDeepestChains(
+  members: Array<{ setting: string; depth: number; kind: string }>,
+  opts: { limit?: number; inspectDepth?: number } = {}
+): void {
+  const limit = opts.limit ?? 10;
+  const maxD = members.reduce((m, x) => Math.max(m, x.depth), 0);
+  if (maxD <= 0) return;
+  printSection(`Deepest chains (d${maxD})`);
+  const deepest = members
+    .filter(m => m.depth === maxD)
+    .sort((a, b) => a.setting.localeCompare(b.setting))
+    .slice(0, limit);
+  for (const m of deepest) {
+    console.info(`  ${ttyDim(`d${m.depth}`)} ${ttyDim(m.kind.padEnd(12))} ${m.setting}`);
+  }
+  const more = members.filter(m => m.depth === maxD).length - deepest.length;
+  if (more > 0) console.info(ttyDim(`  … +${more} more at d${maxD}`));
+
+  // nested map sample — uses console object-inspection depth (docs depth 2 vs 4 analogy)
+  const tree: Record<string, unknown> = {};
+  for (const m of deepest.slice(0, 6)) {
+    const parts = m.setting.replace(/^Bun\./, '').split('.');
+    let cur: Record<string, unknown> = tree;
+    for (let i = 0; i < parts.length; i++) {
+      const p = parts[i]!;
+      if (i === parts.length - 1) cur[p] = m.kind;
+      else {
+        if (!cur[p] || typeof cur[p] !== 'object') cur[p] = {};
+        cur = cur[p] as Record<string, unknown>;
+      }
+    }
+  }
+  const depth = opts.inspectDepth ?? 4;
+  console.info(ttyDim(`  tree sample (inspect depth ${depth}):`));
+  console.info(
+    inspect(tree, { depth, colors: shouldColor(), compact: false })
+      .split('\n')
+      .map(l => `  ${l}`)
+      .join('\n')
+  );
 }
 
 /** Final status line. */

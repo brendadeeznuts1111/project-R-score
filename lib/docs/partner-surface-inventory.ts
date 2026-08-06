@@ -1147,7 +1147,8 @@ export type PartnerSurfaceLiveCode = {
 
 /** Live OutId seat sourced from partners-ops outs[] (or a test fixture). */
 export type PartnerSurfaceLiveOut = {
-  readonly outId: string;
+  /** Wire/fixture seat id before pattern filter + inventory tokenization. */
+  readonly outId: string; // brand-ok — partners-ops outs[] wire/fixture; not yet OutId brand
   readonly partnerCode: string;
   readonly status?: string;
 };

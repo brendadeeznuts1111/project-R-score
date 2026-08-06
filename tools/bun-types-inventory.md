@@ -5,23 +5,23 @@ Generated from pinned **bun-types** — top-level + nested namespace/class/**int
 | Field | Value |
 | --- | --- |
 | Schema | `factorywager/bun-types-inventory/v3` |
-| Generated | 2026-08-06T20:39:33.359Z |
+| Generated | 2026-08-06T20:50:31.288Z |
 | Runtime | Bun 1.3.14 (`0d9b296a`) |
 | bun-types | bun-types@1.4.0-tip.ed700c20 |
 | Types root | `/Users/nolarose/.grok/worktrees/nolarose-projects/2026-08-06-3e0e2535/node_modules/bun-types` |
 | Source files | `bun.d.ts`, `deprecated.d.ts`, `serve.d.ts`, `sql.d.ts`, `s3.d.ts`, `redis.d.ts`, `shell.d.ts`, `security.d.ts`, `wasm.d.ts`, `jsc.d.ts`, `ffi.d.ts`, `sqlite.d.ts`, `test.d.ts`, `bundle.d.ts` |
 | Mode | deep · interfaces · typeAliases · props · enums · nestedObjects |
 | Scan roots | `lib/`, `tools/`, `scripts/`, `tests/`, `config/` |
-| Total members | **2364** (top **454** · nested **1910** · maxDepth **3**) |
-| By depth | d0=454 · d1=1524 · d2=363 · d3=23 |
-| By kind | class 33 · const 107 · enum 1 · enum-member 31 · function 158 · interface 225 · method 581 · namespace 29 · property 1012 · type 184 · var 3 |
-| By module | `bun` 1856 · `bun:test` 263 · `bun:sqlite` 116 · `bun:ffi` 79 · `bun:jsc` 48 · `bun:bundle` 2 |
-| AGENTS map hits | 70 / 2364 |
-| Call sites > 0 | 158 · zero 2206 |
+| Total members | **2388** (top **454** · nested **1934** · maxDepth **3**) |
+| By depth | d0=454 · d1=1527 · d2=378 · d3=29 |
+| By kind | class 33 · const 107 · enum 1 · enum-member 31 · function 158 · interface 225 · method 584 · namespace 29 · property 1033 · type 184 · var 3 |
+| By module | `bun` 1876 · `bun:test` 265 · `bun:sqlite` 117 · `bun:ffi` 80 · `bun:jsc` 48 · `bun:bundle` 2 |
+| AGENTS map hits | 70 / 2388 |
+| Call sites > 0 | 158 · zero 2230 |
 
 Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inventory:check` · flags: `--shallow` · `--no-interfaces` · `--no-type-aliases` · `--no-props` · `--no-enums` · `--no-nested-objects` · `--tip-diff`
 
-## Module `bun` (1856)
+## Module `bun` (1876)
 
 ### Top-level (344)
 
@@ -126,7 +126,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | var | `Bun.fetch` | `Bun.fetch: typeof globalThis.fetch;` | — | — | 9 | 1 | — | `bun.d.ts:4890` |
 | 0 | interface | `Bun.FetchEvent` | `Bun.FetchEvent` | — | — | 0 | 1 | — | `bun.d.ts:180` |
 | 0 | type | `Bun.FFIFunctionCallable` | `Bun.FFIFunctionCallable` | — | — | 0 | 1 | — | `bun.d.ts:5561` |
-| 0 | function | `Bun.file` | `Bun.file(path: string \| URL, options?: BlobPropertyBag): BunFile;` | — | yes | 2187 | 3 | [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) powered by the fastest system calls available for operating on files. | `bun.d.ts:4142` |
+| 0 | function | `Bun.file` | `Bun.file(path: string \| URL, options?: BlobPropertyBag): BunFile;` | — | yes | 2189 | 3 | [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) powered by the fastest system calls available for operating on files. | `bun.d.ts:4142` |
 | 0 | interface | `Bun.FileBlob` | `Bun.FileBlob` | — | — | 0 | 1 | — | `bun.d.ts:2097` |
 | 0 | interface | `Bun.FileSink` | `Bun.FileSink` | — | — | 0 | 1 | Fast incremental writer for files and pipes. | `s3.d.ts:7` |
 | 0 | class | `Bun.FileSystemRouter` | `new Bun.FileSystemRouter(…)` | — | — | 10 | 1 | — | `bun.d.ts:8015` |
@@ -372,7 +372,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | function | `Bun.zstdDecompress` | `Bun.zstdDecompress(data: NodeJS.TypedArray \| Buffer \| string \| ArrayBuffer): Promise<Buffer>;` | — | yes | 2 | 1 | Decompresses a chunk of data with the Zstandard (zstd) decompression algorithm. | `bun.d.ts:5372` |
 | 0 | function | `Bun.zstdDecompressSync` | `Bun.zstdDecompressSync(data: NodeJS.TypedArray \| Buffer \| string \| ArrayBuffer): Buffer;` | — | — | 10 | 1 | Decompresses a chunk of data with the Zstandard (zstd) decompression algorithm. | `bun.d.ts:5365` |
 
-### Nested (1512)
+### Nested (1532)
 
 | Depth | Kind | Setting | Form | Default | agentsMap | callSites | Overloads | Notes | Source |
 | ---: | --- | --- | --- | --- | --- | ---: | ---: | --- | --- |
@@ -1160,6 +1160,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 1 | method | `Bun.ShellPromise.lines` | `Bun.ShellPromise.lines(): AsyncIterable<string>;` | — | — | 0 | 1 | Read from stdout as a string, line by line | `shell.d.ts:124` |
 | 1 | method | `Bun.ShellPromise.nothrow` | `Bun.ShellPromise.nothrow(): this;` | — | — | 0 | 1 | Configure the shell to not throw an exception on non-zero exit codes. Throwing can be re-enabled with `.throws(true)`. | `shell.d.ts:197` |
 | 1 | method | `Bun.ShellPromise.quiet` | `Bun.ShellPromise.quiet(isQuiet?: boolean): this;` | — | — | 0 | 1 | By default, the shell will write to the current process's stdout and stderr, as well as buffering that output. | `shell.d.ts:117` |
+| 1 | method | `Bun.ShellPromise.stdin` | `get Bun.ShellPromise.stdin(): WritableStream;` | — | — | 0 | 1 | — | `shell.d.ts:91` |
 | 1 | method | `Bun.ShellPromise.text` | `Bun.ShellPromise.text(encoding?: BufferEncoding): Promise<string>;` | — | — | 0 | 1 | Read from stdout as a string. | `shell.d.ts:147` |
 | 1 | method | `Bun.ShellPromise.throws` | `Bun.ShellPromise.throws(shouldThrow: boolean): this;` | — | — | 0 | 1 | Configure whether or not the shell should throw an exception on non-zero exit codes. | `shell.d.ts:204` |
 | 1 | property | `Bun.SliceAnsiOptions.ambiguousIsNarrow` | `Bun.SliceAnsiOptions.ambiguousIsNarrow?: boolean;` | true | — | 0 | 1 | Count characters with East Asian Width "Ambiguous" as 1 column (narrow) | `bun.d.ts:637` |
@@ -1536,6 +1537,14 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 2 | property | `Bun.BuildConfig.jsx.importSource` | `Bun.BuildConfig.jsx.importSource?: string;` | — | — | 0 | 1 | — | `bun.d.ts:2892` |
 | 2 | property | `Bun.BuildConfig.jsx.runtime` | `Bun.BuildConfig.jsx.runtime?: "automatic" \| "classic";` | — | — | 0 | 1 | — | `bun.d.ts:2891` |
 | 2 | property | `Bun.BuildConfig.jsx.sideEffects` | `Bun.BuildConfig.jsx.sideEffects?: boolean;` | — | — | 0 | 1 | — | `bun.d.ts:2895` |
+| 2 | property | `Bun.BuildConfig.minify.identifiers` | `Bun.BuildConfig.minify.identifiers?: boolean;` | — | — | 0 | 1 | — | `bun.d.ts:2761` |
+| 2 | property | `Bun.BuildConfig.minify.keepNames` | `Bun.BuildConfig.minify.keepNames?: boolean;` | — | — | 0 | 1 | — | `bun.d.ts:2762` |
+| 2 | property | `Bun.BuildConfig.minify.syntax` | `Bun.BuildConfig.minify.syntax?: boolean;` | — | — | 0 | 1 | — | `bun.d.ts:2760` |
+| 2 | property | `Bun.BuildConfig.minify.whitespace` | `Bun.BuildConfig.minify.whitespace?: boolean;` | — | — | 0 | 1 | — | `bun.d.ts:2759` |
+| 2 | property | `Bun.BuildConfig.naming.asset` | `Bun.BuildConfig.naming.asset?: string;` | — | — | 0 | 1 | — | `bun.d.ts:2673` |
+| 2 | property | `Bun.BuildConfig.naming.chunk` | `Bun.BuildConfig.naming.chunk?: string;` | — | — | 0 | 1 | — | `bun.d.ts:2671` |
+| 2 | property | `Bun.BuildConfig.naming.entry` | `Bun.BuildConfig.naming.entry?: string;` | — | — | 0 | 1 | — | `bun.d.ts:2672` |
+| 2 | property | `Bun.BunFile.options.highWaterMark` | `Bun.BunFile.options.highWaterMark: number` | — | — | 0 | 1 | — | `bun.d.ts:2203` |
 | 2 | property | `Bun.CompileBuildOptions.windows.copyright` | `Bun.CompileBuildOptions.windows.copyright?: string;` | — | — | 0 | 1 | — | `bun.d.ts:3116` |
 | 2 | property | `Bun.CompileBuildOptions.windows.description` | `Bun.CompileBuildOptions.windows.description?: string;` | — | — | 0 | 1 | — | `bun.d.ts:3115` |
 | 2 | property | `Bun.CompileBuildOptions.windows.hideConsole` | `Bun.CompileBuildOptions.windows.hideConsole?: boolean;` | — | — | 0 | 1 | — | `bun.d.ts:3110` |
@@ -1668,6 +1677,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 2 | property | `Bun.ResourceUsage.messages.received` | `Bun.ResourceUsage.messages.received: number;` | — | — | 0 | 1 | The number of IPC messages received. | `bun.d.ts:7198` |
 | 2 | property | `Bun.ResourceUsage.messages.sent` | `Bun.ResourceUsage.messages.sent: number;` | — | — | 0 | 1 | The number of IPC messages sent. | `bun.d.ts:7194` |
 | 2 | property | `Bun.ResourceUsage.ops.out` | `Bun.ResourceUsage.ops.out: number;` | — | — | 0 | 1 | The number of output operations via the file system. | `bun.d.ts:7211` |
+| 2 | property | `Bun.S3ListObjectsResponse.commonPrefixes.prefix` | `Bun.S3ListObjectsResponse.commonPrefixes.prefix: string` | — | — | 0 | 1 | All of the keys (up to 1,000) that share the same prefix are grouped together. When counting the total numbers of returns by this API operation, this group o… | `s3.d.ts:741` |
 | 2 | property | `Bun.S3ListObjectsResponse.contents.checksumAlgorithm` | `Bun.S3ListObjectsResponse.contents.checksumAlgorithm?: "CRC32" \| "CRC32C" \| "SHA1" \| "SHA256" \| "CRC64NVME";` | — | — | 0 | 1 | The algorithm that was used to create a checksum of the object. | `s3.d.ts:745` |
 | 2 | property | `Bun.S3ListObjectsResponse.contents.checksumType` | `Bun.S3ListObjectsResponse.contents.checksumType?: "COMPOSITE" \| "FULL_OBJECT";` | — | — | 0 | 1 | The checksum type that is used to calculate the object's checksum value. | `s3.d.ts:747` |
 | 2 | property | `Bun.S3ListObjectsResponse.contents.eTag` | `Bun.S3ListObjectsResponse.contents.eTag?: string;` | — | — | 0 | 1 | The entity tag is a hash of the object. The ETag reflects changes only to the contents of an object, not its metadata. The ETag may or may not be an MD5 dige… | `s3.d.ts:757` |
@@ -1851,6 +1861,10 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 2 | property | `Bun.WebAssembly.ValueTypeMap.i64` | `Bun.WebAssembly.ValueTypeMap.i64: bigint;` | — | — | 0 | 1 | — | `wasm.d.ts:17` |
 | 2 | property | `Bun.WebAssembly.ValueTypeMap.v128` | `Bun.WebAssembly.ValueTypeMap.v128: never;` | — | — | 0 | 1 | — | `wasm.d.ts:18` |
 | 2 | property | `Bun.WebAssembly.WebAssemblyInstantiatedSource.instance` | `Bun.WebAssembly.WebAssemblyInstantiatedSource.instance: Instance;` | — | — | 0 | 1 | — | `wasm.d.ts:95` |
+| 2 | property | `Bun.WebSocketHandler.perMessageDeflate.compress` | `Bun.WebSocketHandler.perMessageDeflate.compress?: WebSocketCompressor \| boolean;` | — | — | 0 | 1 | Sets the compression level. | `serve.d.ts:481` |
+| 2 | property | `Bun.WebSocketHandler.perMessageDeflate.decompress` | `Bun.WebSocketHandler.perMessageDeflate.decompress?: WebSocketCompressor \| boolean;` | — | — | 0 | 1 | Sets the decompression level. | `serve.d.ts:485` |
+| 2 | property | `Bun.WebSocketOptionsProxy.proxy.headers` | `Bun.WebSocketOptionsProxy.proxy.headers?: import("node:http").OutgoingHttpHeaders \| Headers;` | — | — | 0 | 1 | Custom headers to send to the proxy server. | `bun.d.ts:4318` |
+| 2 | property | `Bun.WebSocketOptionsProxy.proxy.url` | `Bun.WebSocketOptionsProxy.proxy.url: string;` | — | — | 0 | 1 | The proxy URL (http:// or https://) | `bun.d.ts:4313` |
 | 2 | property | `Bun.WebView.ClickOptions.button` | `Bun.WebView.ClickOptions.button?: "left" \| "right" \| "middle";` | "left" | — | 0 | 1 | — | `bun.d.ts:8517` |
 | 2 | property | `Bun.WebView.ClickOptions.clickCount` | `Bun.WebView.ClickOptions.clickCount?: 1 \| 2 \| 3;` | 1 | — | 0 | 1 | Number of clicks (1 = single, 2 = double, 3 = triple). @default 1 | `bun.d.ts:8521` |
 | 2 | property | `Bun.WebView.ClickOptions.modifiers` | `Bun.WebView.ClickOptions.modifiers?: Modifier[];` | — | — | 0 | 1 | Modifier keys to hold during the click. | `bun.d.ts:8519` |
@@ -1865,6 +1879,11 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 2 | property | `Bun.WebView.PressOptions.modifiers` | `Bun.WebView.PressOptions.modifiers?: Modifier[];` | — | — | 0 | 1 | Modifier keys to hold during the keypress. | `bun.d.ts:8550` |
 | 2 | property | `Bun.WebView.ScrollToOptions.block` | `Bun.WebView.ScrollToOptions.block?: "start" \| "center" \| "end" \| "nearest";` | "center" | — | 0 | 1 | Vertical alignment. `"nearest"` scrolls minimally (no-op if already | `bun.d.ts:8545` |
 | 2 | property | `Bun.WebView.ScrollToOptions.timeout` | `Bun.WebView.ScrollToOptions.timeout?: number;` | 30000 | — | 0 | 1 | Maximum time in milliseconds to wait for the element to exist. | `bun.d.ts:8538` |
+| 3 | property | `Bun.markdown.Options.autolinks.email` | `Bun.markdown.Options.autolinks.email: boolean` | — | — | 0 | 1 | Enable autolinks. Pass `true` to enable all autolink types (URL, WWW, email), | `bun.d.ts:1067` |
+| 3 | property | `Bun.markdown.Options.autolinks.url` | `Bun.markdown.Options.autolinks.url: boolean` | — | — | 0 | 1 | Enable autolinks. Pass `true` to enable all autolink types (URL, WWW, email), | `bun.d.ts:1067` |
+| 3 | property | `Bun.markdown.Options.autolinks.www` | `Bun.markdown.Options.autolinks.www: boolean` | — | — | 0 | 1 | Enable autolinks. Pass `true` to enable all autolink types (URL, WWW, email), | `bun.d.ts:1067` |
+| 3 | property | `Bun.markdown.Options.headings.autolink` | `Bun.markdown.Options.headings.autolink: boolean` | — | — | 0 | 1 | Configure heading IDs and autolink headings. Pass `true` to enable both | `bun.d.ts:1080` |
+| 3 | property | `Bun.markdown.Options.headings.ids` | `Bun.markdown.Options.headings.ids: boolean` | — | — | 0 | 1 | Configure heading IDs and autolink headings. Pass `true` to enable both | `bun.d.ts:1080` |
 | 3 | property | `Bun.S3ListObjectsResponse.contents.owner.displayName` | `Bun.S3ListObjectsResponse.contents.owner.displayName?: string;` | — | — | 0 | 1 | The display name of the owner. | `s3.d.ts:767` |
 | 3 | property | `Bun.S3ListObjectsResponse.contents.owner.id` | `Bun.S3ListObjectsResponse.contents.owner.id?: string;` | — | — | 0 | 1 | The ID of the owner. | `s3.d.ts:765` |
 | 3 | property | `Bun.S3ListObjectsResponse.contents.restoreStatus.isRestoreInProgress` | `Bun.S3ListObjectsResponse.contents.restoreStatus.isRestoreInProgress?: boolean;` | — | — | 0 | 1 | Specifies whether the object is currently being restored. | `s3.d.ts:772` |
@@ -1888,6 +1907,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 3 | property | `Bun.SQL.PostgresError.options.where` | `Bun.SQL.PostgresError.options.where?: string \| undefined;` | — | — | 0 | 1 | — | `sql.d.ts:134` |
 | 3 | property | `Bun.udp.ConnectSocketOptions.connect.hostname` | `Bun.udp.ConnectSocketOptions.connect.hostname: string;` | — | — | 0 | 1 | — | `bun.d.ts:6622` |
 | 3 | property | `Bun.udp.ConnectSocketOptions.connect.port` | `Bun.udp.ConnectSocketOptions.connect.port: number;` | — | — | 0 | 1 | — | `bun.d.ts:6623` |
+| 3 | property | `Bun.WebView.ConstructorOptions.dataStore.directory` | `Bun.WebView.ConstructorOptions.dataStore.directory: string` | — | — | 0 | 1 | Storage backing for cookies, localStorage, IndexedDB, etc. | `bun.d.ts:8710` |
 
 ## Module `bun:bundle` (2)
 
@@ -1898,7 +1918,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | function | `bun:bundle.feature` | `bun:bundle.feature(flag: Registry extends { features: infer Features extends string } ? Features : string): boolean;` | — | — | 10 | 1 | Check if a feature flag is enabled at compile time. | `bundle.d.ts:73` |
 | 0 | interface | `bun:bundle.Registry` | `bun:bundle.Registry` | — | — | 0 | 1 | Registry for type-safe feature flags. | `bundle.d.ts:51` |
 
-## Module `bun:ffi` (79)
+## Module `bun:ffi` (80)
 
 ### Top-level (24)
 
@@ -1929,10 +1949,11 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | type | `bun:ffi.ToFFIType` | `bun:ffi.ToFFIType` | — | — | 0 | 1 | — | `ffi.d.ts:538` |
 | 0 | function | `bun:ffi.viewSource` | `bun:ffi.viewSource(symbols: Symbols, is_callback?: false): string[];` | — | — | 0 | 2 | View the generated C code for FFI bindings | `ffi.d.ts:1117` |
 
-### Nested (55)
+### Nested (56)
 
 | Depth | Kind | Setting | Form | Default | agentsMap | callSites | Overloads | Notes | Source |
 | ---: | --- | --- | --- | --- | --- | ---: | ---: | --- | --- |
+| 1 | method | `bun:ffi.CString.arrayBuffer` | `get bun:ffi.CString.arrayBuffer(): ArrayBuffer;` | — | — | 0 | 1 | Get the {@link ptr} as an `ArrayBuffer` | `ffi.d.ts:1076` |
 | 1 | property | `bun:ffi.CString.byteLength` | `bun:ffi.CString.byteLength?: number;` | — | — | 0 | 1 | — | `ffi.d.ts:1069` |
 | 1 | property | `bun:ffi.CString.byteOffset` | `bun:ffi.CString.byteOffset?: number;` | — | — | 0 | 1 | — | `ffi.d.ts:1068` |
 | 1 | property | `bun:ffi.CString.ptr` | `bun:ffi.CString.ptr: Pointer;` | — | — | 0 | 1 | The ptr to the C string | `ffi.d.ts:1067` |
@@ -2049,7 +2070,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 1 | property | `bun:jsc.SamplingProfile.functions` | `bun:jsc.SamplingProfile.functions: string;` | — | — | 0 | 1 | A formatted summary of the top functions | `jsc.d.ts:108` |
 | 1 | property | `bun:jsc.SamplingProfile.stackTraces` | `bun:jsc.SamplingProfile.stackTraces: string[];` | — | — | 0 | 1 | Stack traces of the top functions | `jsc.d.ts:175` |
 
-## Module `bun:sqlite` (116)
+## Module `bun:sqlite` (117)
 
 ### Top-level (8)
 
@@ -2064,7 +2085,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | type | `bun:sqlite.SQLQueryBindings` | `bun:sqlite.SQLQueryBindings` | — | — | 0 | 1 | — | `sqlite.d.ts:1259` |
 | 0 | class | `bun:sqlite.Statement` | `new bun:sqlite.Statement(…)` | — | — | 0 | 1 | A prepared statement. | `sqlite.d.ts:596` |
 
-### Nested (108)
+### Nested (109)
 
 | Depth | Kind | Setting | Form | Default | agentsMap | callSites | Overloads | Notes | Source |
 | ---: | --- | --- | --- | --- | --- | ---: | ---: | --- | --- |
@@ -2143,6 +2164,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 1 | property | `bun:sqlite.Database.filename` | `bun:sqlite.Database.filename: string;` | — | — | 0 | 1 | The filename passed when `new Database()` was called | `sqlite.d.ts:302` |
 | 1 | property | `bun:sqlite.Database.handle` | `bun:sqlite.Database.handle: number;` | — | — | 0 | 1 | The underlying `sqlite3` database handle | `sqlite.d.ts:309` |
 | 1 | property | `bun:sqlite.Database.insideTransaction` | `bun:sqlite.Database.insideTransaction: (...args: A)` | — | — | 0 | 1 | — | `sqlite.d.ts:381` |
+| 1 | method | `bun:sqlite.Database.inTransaction` | `get bun:sqlite.Database.inTransaction(): boolean;` | — | — | 0 | 1 | Is the database in a transaction? | `sqlite.d.ts:261` |
 | 1 | method | `bun:sqlite.Database.loadExtension` | `bun:sqlite.Database.loadExtension(extension: string, entryPoint?: string): void;` | — | — | 0 | 1 | Load a SQLite3 extension | `sqlite.d.ts:321` |
 | 1 | method | `bun:sqlite.Database.open` | `bun:sqlite.Database.open(filename: string, options?: number \| DatabaseOptions): Database;` | — | — | 0 | 1 | Open or create a SQLite3 databases | `sqlite.d.ts:136` |
 | 1 | property | `bun:sqlite.Database.options` | `bun:sqlite.Database.options?: { readonly?: boolean; strict?: boolean; safeIntegers?: boolean },` | — | — | 0 | 1 | — | `sqlite.d.ts:553` |
@@ -2177,7 +2199,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 1 | method | `bun:sqlite.Statement.toString` | `bun:sqlite.Statement.toString(): string;` | — | — | 0 | 1 | Return the expanded SQL string for the prepared statement. | `sqlite.d.ts:900` |
 | 1 | method | `bun:sqlite.Statement.values` | `bun:sqlite.Statement.values(...params: ParamsType): Array<Array<string \| bigint \| number \| boolean \| Uint8Array>>;` | — | — | 0 | 1 | Execute the prepared statement and return the results as an array of arrays. | `sqlite.d.ts:740` |
 
-## Module `bun:test` (263)
+## Module `bun:test` (265)
 
 ### Top-level (45)
 
@@ -2229,7 +2251,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | const | `bun:test.xdescribe` | `bun:test.xdescribe: Describe<[]>;` | — | — | 0 | 1 | Skips a group of related tests. | `test.d.ts:306` |
 | 0 | const | `bun:test.xtest` | `bun:test.xtest: Test<[]>;` | — | — | 0 | 1 | Skips a test. | `test.d.ts:600` |
 
-### Nested (218)
+### Nested (220)
 
 | Depth | Kind | Setting | Form | Default | agentsMap | callSites | Overloads | Notes | Source |
 | ---: | --- | --- | --- | --- | --- | ---: | ---: | --- | --- |
@@ -2451,6 +2473,8 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 2 | method | `bun:test.JestMock.MockInstance.withImplementation` | `bun:test.JestMock.MockInstance.withImplementation(fn: T, callback: () => Promise<unknown>): Promise<void>;` | — | — | 0 | 2 | — | `test.d.ts:2172` |
 | 2 | method | `bun:test.JestMock.Replaced.replaceValue` | `bun:test.JestMock.Replaced.replaceValue(value: T): this;` | — | — | 0 | 1 | Change the value of the property. | `test.d.ts:2310` |
 | 2 | method | `bun:test.JestMock.Replaced.restore` | `bun:test.JestMock.Replaced.restore(): void;` | — | — | 0 | 1 | Restore property to its original value known at the time of mocking. | `test.d.ts:2306` |
+| 2 | property | `bun:test.JestMock.SpyInstance.accessType` | `bun:test.JestMock.SpyInstance.accessType: A,` | — | — | 0 | 1 | — | `test.d.ts:2366` |
+| 2 | property | `bun:test.JestMock.SpyInstance.methodKey` | `bun:test.JestMock.SpyInstance.methodKey: K_2,` | — | — | 0 | 2 | — | `test.d.ts:2365` |
 
 ## Related SSOTs
 

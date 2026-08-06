@@ -81,6 +81,14 @@ Useful inventory flags (see tool `--help`): `--shallow` · `--no-interfaces` ·
 `--no-type-aliases` · `--no-props` · `--no-enums` · `--no-nested-objects` ·
 `--module=bun:jsc` · `--kind=…` · `--tip-diff`.
 
+**Deep parse (v3):** namespace/class/interface/`type X = {…}`/enum bodies;
+anonymous nested objects on properties (**multi-line**, **closed one-liners**,
+**union branches** `x?: string | {…}`); getters as methods; maxDepth 3+ on
+current pin. **Not** the same as console object-inspection depth
+([docs](https://bun.com/docs/runtime/console#object-inspection-depth) ·
+`bunfig [console] depth = 6` · `lib/console-depth.ts`) — TTY deepest-chain
+samples use policy `inspect` at depth 4 for readability only.
+
 ## Local CI (`bun:ci`)
 
 `bun run bun:ci` runs **hard** merge-proof steps, then a **soft** Bun-types
