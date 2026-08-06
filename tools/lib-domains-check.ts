@@ -8,6 +8,10 @@
  * Every first-level directory under lib/ must have README.md.
  * lib/README.md itself must exist (spine + domain inventory SSOT).
  *
+ * Domains with zero `*.ts` files must declare non-default lifecycle status
+ * (`**Status:** \`hub\`` / experimental / frozen / deprecated) in their README —
+ * see lib/README.md Domain lifecycle (default is active).
+ *
  * Usage:
  *   bun tools/lib-domains-check.ts
  *   bun tools/lib-domains-check.ts --json
@@ -18,7 +22,11 @@ import { joinPath, resolvePath } from '../lib/path-bun';
 const REPO = resolvePath(import.meta.dir, '..');
 const LIB = joinPath(REPO, 'lib');
 
-type Issue = { kind: 'missing-readme'; path: string };
+type Issue =
+  | { kind: 'missing-readme'; path: string }
+  | { kind: 'hub-status-missing'; path: string; detail: string };
+
+const STATUS_RE = /\*\*Status:\*\*\s*`?(hub|experimental|frozen|deprecated)`?/i;
 
 async function isDir(abs: string): Promise<boolean> {
   const p = Bun.spawn(['test', '-d', abs], { stdout: 'ignore', stderr: 'ignore' });
@@ -53,8 +61,31 @@ async function main(): Promise<void> {
   const domains = await listDirs(LIB);
   for (const name of domains) {
     const rel = `lib/${name}/README.md`;
-    if (!(await exists(joinPath(LIB, name, 'README.md')))) {
+    const readmeAbs = joinPath(LIB, name, 'README.md');
+    if (!(await exists(readmeAbs))) {
       issues.push({ kind: 'missing-readme', path: rel });
+      continue;
+    }
+
+    let tsCount = 0;
+    for await (const f of new Bun.Glob('**/*.ts').scan({
+      cwd: joinPath(LIB, name),
+      onlyFiles: true,
+    })) {
+      if (f.endsWith('.test.ts') || f.endsWith('.d.ts')) continue;
+      tsCount++;
+    }
+
+    if (tsCount === 0) {
+      const text = await Bun.file(readmeAbs).text();
+      if (!STATUS_RE.test(text)) {
+        issues.push({
+          kind: 'hub-status-missing',
+          path: rel,
+          detail:
+            'domain has no .ts files — declare **Status:** `hub` (or experimental/frozen/deprecated) per lib/README Domain lifecycle',
+        });
+      }
     }
   }
 
@@ -67,7 +98,8 @@ async function main(): Promise<void> {
   } else {
     console.info(`\n❌ lib-domains-check: ${issues.length} issue(s) (${domains.length} domains)\n`);
     for (const i of issues) {
-      console.info(`  [${i.kind}] ${i.path}`);
+      const extra = 'detail' in i && i.detail ? ` — ${i.detail}` : '';
+      console.info(`  [${i.kind}] ${i.path}${extra}`);
     }
     console.info('');
   }
