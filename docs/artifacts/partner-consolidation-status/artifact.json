@@ -13,8 +13,16 @@
         "dataset": "mvp_overview",
         "sourceId": "profile_coverage_source",
         "metrics": [
-          { "label": "Profile CODEs covered", "field": "canonicalProfiles", "format": "number" },
-          { "label": "Required CODEs", "field": "profileTarget", "format": "number" }
+          {
+            "label": "Profile CODEs covered",
+            "field": "canonicalProfiles",
+            "format": "number"
+          },
+          {
+            "label": "Required CODEs",
+            "field": "profileTarget",
+            "format": "number"
+          }
         ]
       },
       {
@@ -23,8 +31,16 @@
         "dataset": "mvp_overview",
         "sourceId": "partner_plan",
         "metrics": [
-          { "label": "Components implemented", "field": "implementedComponents", "format": "number" },
-          { "label": "Components declared", "field": "totalComponents", "format": "number" }
+          {
+            "label": "Components implemented",
+            "field": "implementedComponents",
+            "format": "number"
+          },
+          {
+            "label": "Components declared",
+            "field": "totalComponents",
+            "format": "number"
+          }
         ]
       },
       {
@@ -33,8 +49,16 @@
         "dataset": "mvp_overview",
         "sourceId": "partner_plan",
         "metrics": [
-          { "label": "Connectors declared", "field": "connectors", "format": "number" },
-          { "label": "Blocked connectors", "field": "blockedConnectors", "format": "number" }
+          {
+            "label": "Connectors declared",
+            "field": "connectors",
+            "format": "number"
+          },
+          {
+            "label": "Blocked connectors",
+            "field": "blockedConnectors",
+            "format": "number"
+          }
         ]
       },
       {
@@ -43,7 +67,11 @@
         "dataset": "mvp_overview",
         "sourceId": "plan_validator",
         "metrics": [
-          { "label": "Semantic gaps", "field": "semanticGaps", "format": "number" }
+          {
+            "label": "Semantic gaps",
+            "field": "semanticGaps",
+            "format": "number"
+          }
         ]
       }
     ],
@@ -57,8 +85,16 @@
         "sourceId": "partner_plan",
         "valueFormat": "number",
         "encodings": {
-          "x": { "field": "status", "type": "nominal", "label": "Implementation state" },
-          "y": { "field": "count", "type": "quantitative", "label": "Connectors" },
+          "x": {
+            "field": "status",
+            "type": "nominal",
+            "label": "Implementation state"
+          },
+          "y": {
+            "field": "count",
+            "type": "quantitative",
+            "label": "Connectors"
+          },
           "tooltip": [
             { "field": "meaning", "type": "nominal", "label": "Meaning" }
           ]
@@ -93,7 +129,7 @@
           "language": "sql",
           "description": "Materializes reviewed package-component and connector counts from the partner MVP TOML.",
           "executed_at": "2026-08-06T05:20:33Z",
-          "sql": "SELECT 10 AS implementedComponents, 14 AS totalComponents, 8 AS connectors, 1 AS blockedConnectors;"
+          "sql": "SELECT 11 AS implementedComponents, 15 AS totalComponents, 8 AS connectors, 1 AS blockedConnectors;"
         }
       },
       {
@@ -160,8 +196,8 @@
         {
           "canonicalProfiles": 0,
           "profileTarget": 4,
-          "implementedComponents": 10,
-          "totalComponents": 14,
+          "implementedComponents": 11,
+          "totalComponents": 15,
           "connectors": 8,
           "blockedConnectors": 1,
           "semanticGaps": 15
@@ -277,7 +313,7 @@
         "language": "sql",
         "description": "Materializes reviewed package-component and connector counts from the partner MVP TOML.",
         "executed_at": "2026-08-06T05:20:33Z",
-        "sql": "SELECT 10 AS implementedComponents, 14 AS totalComponents, 8 AS connectors, 1 AS blockedConnectors;"
+        "sql": "SELECT 11 AS implementedComponents, 15 AS totalComponents, 8 AS connectors, 1 AS blockedConnectors;"
       }
     },
     {
