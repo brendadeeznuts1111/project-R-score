@@ -15,20 +15,32 @@ import {
   checkBrandLinkingBag,
   checkDeprecatedBrandReferences,
   checkLiveCodesCoveredByInventory,
+  checkLiveOutsCoveredByInventory,
+  checkOutIdArtifactPresence,
+  checkOutIdBag,
+  checkPartnerCallSignPresence,
   checkPartnerCodeArtifactPresence,
   checkPartnerCodeBag,
   collectAllowedBrandLinkDomains,
   collectBrandBagsByToken,
   collectInventoryBrandTokens,
+  type LiveOutMeta,
+  type LivePartnerCodeMeta,
 } from '../lib/docs/partner-surface-brand-check.ts';
-import { livePartnerCodesFromPartnersOps } from '../lib/docs/partner-surface-docs.ts';
 import {
+  liveOutIdsFromPartnersOps,
+  livePartnerCodesFromPartnersOps,
+} from '../lib/docs/partner-surface-docs.ts';
+import {
+  checkBrandMintModuleEvidence,
   checkBrandTestCoverageEvidence,
+  loadBrandModuleTexts,
   loadTestCorpusText,
 } from '../lib/docs/partner-surface-fitness-evidence.ts';
 import {
   buildPartnerSurfaceInventory,
   type PartnerSurfaceLiveCode,
+  type PartnerSurfaceLiveOut,
   type PartnerSurfaceRow,
 } from '../lib/docs/partner-surface-inventory.ts';
 import { checkRegistryArtifact } from '../lib/docs/partner-surface-registry-check.ts';
@@ -102,6 +114,12 @@ function aspectBagRules(row: PartnerSurfaceRow, issues: Issue[]): void {
       message: `${row.id}: partnerCode bag only allowed on aspect=partner-code`,
     });
   }
+  if (row.outId && row.aspect !== 'out-id') {
+    issues.push({
+      level: 'error',
+      message: `${row.id}: outId bag only allowed on aspect=out-id`,
+    });
+  }
 }
 
 async function validate(rows: readonly PartnerSurfaceRow[]): Promise<Issue[]> {
@@ -113,18 +131,40 @@ async function validate(rows: readonly PartnerSurfaceRow[]): Promise<Issue[]> {
   const brandByToken = collectBrandBagsByToken(rows);
 
   let liveCodes: Set<string> | undefined;
-  let liveByCode: Map<string, string | undefined> | undefined;
+  let liveByCode: Map<string, LivePartnerCodeMeta> | undefined;
+  let liveOutIdSet: Set<string> | undefined;
+  let liveByOutId: Map<string, LiveOutMeta> | undefined;
   const partnersOpsFile = Bun.file(PARTNERS_OPS_PATH);
   if (await partnersOpsFile.exists()) {
     try {
       const artifact = await partnersOpsFile.json();
       const live = livePartnerCodesFromPartnersOps(artifact);
       liveCodes = new Set(live.map(c => c.code.trim().toUpperCase()));
-      liveByCode = new Map(live.map(c => [c.code.trim().toUpperCase(), c.phase]));
+      liveByCode = new Map(
+        live.map(c => [
+          c.code.trim().toUpperCase(),
+          {
+            ...(c.phase ? { phase: c.phase } : {}),
+            ...(c.callSign ? { callSign: c.callSign } : {}),
+          },
+        ])
+      );
+      const outs = liveOutIdsFromPartnersOps(artifact);
+      liveOutIdSet = new Set(outs.map(o => o.outId));
+      liveByOutId = new Map(
+        outs.map(o => [
+          o.outId,
+          {
+            partnerCode: o.partnerCode,
+            ...(o.status ? { status: o.status } : {}),
+          },
+        ])
+      );
     } catch {
       issues.push({
         level: 'warn',
-        message: 'partners-ops.json present but failed to parse — skip partner-code live sync',
+        message:
+          'partners-ops.json present but failed to parse — skip partner-code/out-id live sync',
       });
     }
   }
@@ -226,6 +266,23 @@ async function validate(rows: readonly PartnerSurfaceRow[]): Promise<Issue[]> {
       }
     }
 
+    if (row.aspect === 'out-id') {
+      if (!row.outId) {
+        issues.push({
+          level: 'error',
+          message: `${row.id}: out-id aspect missing outId bag`,
+        });
+      } else {
+        issues.push(
+          ...checkOutIdBag(row.id, row.token, row.outId, {
+            brandByToken,
+            registryTokens,
+            liveCodes,
+          })
+        );
+      }
+    }
+
     if (row.aspect === 'wire-field') {
       if (!row.wireField) {
         issues.push({
@@ -286,7 +343,6 @@ async function validate(rows: readonly PartnerSurfaceRow[]): Promise<Issue[]> {
       row.chromeNav?.registryArtifact &&
       !registryTokens.has(row.chromeNav.registryArtifact)
     ) {
-      // limit-raises / bookmakers / telegram-handshake may not be partner-inventory registries
       const knownExternal = new Set([
         'limit-raises',
         'limit-forecast-lab',
@@ -325,27 +381,46 @@ async function validate(rows: readonly PartnerSurfaceRow[]): Promise<Issue[]> {
   }
   if (liveByCode) {
     issues.push(...checkPartnerCodeArtifactPresence(rows, liveByCode));
+    issues.push(...checkPartnerCallSignPresence(rows, liveByCode));
+  }
+  if (liveOutIdSet) {
+    issues.push(...checkLiveOutsCoveredByInventory(rows, liveOutIdSet));
+  }
+  if (liveByOutId) {
+    issues.push(...checkOutIdArtifactPresence(rows, liveByOutId));
   }
 
   const corpus = await loadTestCorpusText(ROOT);
   issues.push(...checkBrandTestCoverageEvidence(rows, corpus));
+  const moduleTexts = await loadBrandModuleTexts(ROOT, rows);
+  issues.push(...checkBrandMintModuleEvidence(rows, moduleTexts));
 
   return issues;
 }
 
-async function loadLivePartnerCodes(): Promise<readonly PartnerSurfaceLiveCode[]> {
+async function loadLiveFromPartnersOps(): Promise<{
+  livePartnerCodes: readonly PartnerSurfaceLiveCode[];
+  liveOutIds: readonly PartnerSurfaceLiveOut[];
+}> {
   const file = Bun.file(PARTNERS_OPS_PATH);
-  if (!(await file.exists())) return [];
+  if (!(await file.exists())) return { livePartnerCodes: [], liveOutIds: [] };
   try {
-    return livePartnerCodesFromPartnersOps(await file.json());
+    const artifact = await file.json();
+    return {
+      livePartnerCodes: livePartnerCodesFromPartnersOps(artifact),
+      liveOutIds: liveOutIdsFromPartnersOps(artifact),
+    };
   } catch {
-    return [];
+    return { livePartnerCodes: [], liveOutIds: [] };
   }
 }
 
 async function main(): Promise<number> {
-  const livePartnerCodes = await loadLivePartnerCodes();
-  const inv = buildPartnerSurfaceInventory(new Date().toISOString(), { livePartnerCodes });
+  const { livePartnerCodes, liveOutIds } = await loadLiveFromPartnersOps();
+  const inv = buildPartnerSurfaceInventory(new Date().toISOString(), {
+    livePartnerCodes,
+    liveOutIds,
+  });
   if (inv.schemaVersion < 2) {
     console.error('expected schemaVersion >= 2 (structured bags)');
     return 1;

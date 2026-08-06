@@ -95,3 +95,63 @@ export function checkBrandTestCoverageEvidence(
   }
   return issues;
 }
+
+/**
+ * Prove mintAuthority symbols appear in brand.module source.
+ * Missing module text or no term hits → warn.
+ */
+export function checkBrandMintModuleEvidence(
+  rows: readonly PartnerSurfaceRow[],
+  moduleTextByPath: ReadonlyMap<string, string>
+): readonly FitnessEvidenceIssue[] {
+  const issues: FitnessEvidenceIssue[] = [];
+  for (const r of rows) {
+    if (r.aspect !== 'brand' || !r.brand) continue;
+    const bag = r.brand;
+    const terms = mintAuthoritySearchTerms(bag.mintAuthority);
+    if (terms.length === 0) {
+      issues.push({
+        level: 'warn',
+        message: `${r.id}: mintAuthority "${bag.mintAuthority}" has no searchable mint terms`,
+      });
+      continue;
+    }
+    const text = moduleTextByPath.get(bag.module);
+    if (text === undefined) {
+      issues.push({
+        level: 'warn',
+        message: `${r.id}: brand.module "${bag.module}" unreadable for mintAuthority evidence`,
+      });
+      continue;
+    }
+    if (!terms.some(term => text.includes(term))) {
+      issues.push({
+        level: 'warn',
+        message:
+          `${r.id}: mintAuthority terms not found in ${bag.module} ` +
+          `(terms: ${terms.join(', ')})`,
+      });
+    }
+  }
+  return issues;
+}
+
+/** Load brand.module texts keyed by inventory-relative path. */
+export async function loadBrandModuleTexts(
+  root: string,
+  rows: readonly PartnerSurfaceRow[]
+): Promise<Map<string, string>> {
+  const base = root.replace(/\/$/, '');
+  const map = new Map<string, string>();
+  for (const r of rows) {
+    if (r.aspect !== 'brand' || !r.brand) continue;
+    const rel = r.brand.module;
+    if (map.has(rel)) continue;
+    try {
+      map.set(rel, await Bun.file(`${base}/${rel}`).text());
+    } catch {
+      // absent — checkBrandMintModuleEvidence warns
+    }
+  }
+  return map;
+}

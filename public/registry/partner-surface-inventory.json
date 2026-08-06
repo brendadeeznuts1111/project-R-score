@@ -2,7 +2,7 @@
   "kind": "partner-surface-inventory",
   "schemaVersion": 2,
   "claim": "partner-surface-inventory",
-  "bakedAt": "2026-08-06T20:29:49.623Z",
+  "bakedAt": "2026-08-06T20:37:47.470Z",
   "principle": "map-before-rename",
   "chromeDomain": {
     "id": "partner",
@@ -1452,7 +1452,8 @@
         "live desk code",
         "derived-from-partners-ops",
         "brandRef=PartnerCode",
-        "registryRef=partners-ops"
+        "registryRef=partners-ops",
+        "callSign=ASH-001"
       ],
       "owner": "partners-ops",
       "machine": "identity",
@@ -1461,7 +1462,8 @@
       "partnerCode": {
         "brandRef": "PartnerCode",
         "registryRef": "partners-ops",
-        "phase": "operator_ready"
+        "phase": "operator_ready",
+        "callSign": "ASH-001"
       }
     },
     {
@@ -1474,7 +1476,8 @@
         "live desk code",
         "derived-from-partners-ops",
         "brandRef=PartnerCode",
-        "registryRef=partners-ops"
+        "registryRef=partners-ops",
+        "callSign=BIL-001"
       ],
       "owner": "partners-ops",
       "machine": "identity",
@@ -1483,7 +1486,8 @@
       "partnerCode": {
         "brandRef": "PartnerCode",
         "registryRef": "partners-ops",
-        "phase": "operator_ready"
+        "phase": "operator_ready",
+        "callSign": "BIL-001"
       }
     },
     {
@@ -1496,7 +1500,8 @@
         "live desk code",
         "derived-from-partners-ops",
         "brandRef=PartnerCode",
-        "registryRef=partners-ops"
+        "registryRef=partners-ops",
+        "callSign=NOV-001"
       ],
       "owner": "partners-ops",
       "machine": "identity",
@@ -1505,7 +1510,8 @@
       "partnerCode": {
         "brandRef": "PartnerCode",
         "registryRef": "partners-ops",
-        "phase": "operator_ready"
+        "phase": "operator_ready",
+        "callSign": "NOV-001"
       }
     },
     {
@@ -1518,7 +1524,8 @@
         "live desk code",
         "derived-from-partners-ops",
         "brandRef=PartnerCode",
-        "registryRef=partners-ops"
+        "registryRef=partners-ops",
+        "callSign=SPEN-001"
       ],
       "owner": "partners-ops",
       "machine": "identity",
@@ -1527,7 +1534,258 @@
       "partnerCode": {
         "brandRef": "PartnerCode",
         "registryRef": "partners-ops",
-        "phase": "operator_ready"
+        "phase": "operator_ready",
+        "callSign": "SPEN-001"
+      }
+    },
+    {
+      "id": "out-id.out-ASH-1",
+      "aspect": "out-id",
+      "token": "out-ASH-1",
+      "repo": "project-R-score",
+      "path": "public/registry/partners-ops.json",
+      "properties": [
+        "live out seat",
+        "derived-from-partners-ops",
+        "brandRef=OutId",
+        "registryRef=partners-ops",
+        "partnerCode=ASH",
+        "status=ready"
+      ],
+      "owner": "partners-ops",
+      "machine": "identity",
+      "typeOrExport": "OutId",
+      "href": "/portal/partners/#partner/ASH",
+      "outId": {
+        "brandRef": "OutId",
+        "registryRef": "partners-ops",
+        "partnerCode": "ASH",
+        "status": "ready"
+      }
+    },
+    {
+      "id": "out-id.out-ASH-2",
+      "aspect": "out-id",
+      "token": "out-ASH-2",
+      "repo": "project-R-score",
+      "path": "public/registry/partners-ops.json",
+      "properties": [
+        "live out seat",
+        "derived-from-partners-ops",
+        "brandRef=OutId",
+        "registryRef=partners-ops",
+        "partnerCode=ASH",
+        "status=deferred"
+      ],
+      "owner": "partners-ops",
+      "machine": "identity",
+      "typeOrExport": "OutId",
+      "href": "/portal/partners/#partner/ASH",
+      "outId": {
+        "brandRef": "OutId",
+        "registryRef": "partners-ops",
+        "partnerCode": "ASH",
+        "status": "deferred"
+      }
+    },
+    {
+      "id": "out-id.out-BIL-1",
+      "aspect": "out-id",
+      "token": "out-BIL-1",
+      "repo": "project-R-score",
+      "path": "public/registry/partners-ops.json",
+      "properties": [
+        "live out seat",
+        "derived-from-partners-ops",
+        "brandRef=OutId",
+        "registryRef=partners-ops",
+        "partnerCode=BIL",
+        "status=ready"
+      ],
+      "owner": "partners-ops",
+      "machine": "identity",
+      "typeOrExport": "OutId",
+      "href": "/portal/partners/#partner/BIL",
+      "outId": {
+        "brandRef": "OutId",
+        "registryRef": "partners-ops",
+        "partnerCode": "BIL",
+        "status": "ready"
+      }
+    },
+    {
+      "id": "out-id.out-NOV-1",
+      "aspect": "out-id",
+      "token": "out-NOV-1",
+      "repo": "project-R-score",
+      "path": "public/registry/partners-ops.json",
+      "properties": [
+        "live out seat",
+        "derived-from-partners-ops",
+        "brandRef=OutId",
+        "registryRef=partners-ops",
+        "partnerCode=NOV",
+        "status=ready"
+      ],
+      "owner": "partners-ops",
+      "machine": "identity",
+      "typeOrExport": "OutId",
+      "href": "/portal/partners/#partner/NOV",
+      "outId": {
+        "brandRef": "OutId",
+        "registryRef": "partners-ops",
+        "partnerCode": "NOV",
+        "status": "ready"
+      }
+    },
+    {
+      "id": "out-id.out-NOV-2",
+      "aspect": "out-id",
+      "token": "out-NOV-2",
+      "repo": "project-R-score",
+      "path": "public/registry/partners-ops.json",
+      "properties": [
+        "live out seat",
+        "derived-from-partners-ops",
+        "brandRef=OutId",
+        "registryRef=partners-ops",
+        "partnerCode=NOV",
+        "status=deferred"
+      ],
+      "owner": "partners-ops",
+      "machine": "identity",
+      "typeOrExport": "OutId",
+      "href": "/portal/partners/#partner/NOV",
+      "outId": {
+        "brandRef": "OutId",
+        "registryRef": "partners-ops",
+        "partnerCode": "NOV",
+        "status": "deferred"
+      }
+    },
+    {
+      "id": "out-id.out-SPEN-1",
+      "aspect": "out-id",
+      "token": "out-SPEN-1",
+      "repo": "project-R-score",
+      "path": "public/registry/partners-ops.json",
+      "properties": [
+        "live out seat",
+        "derived-from-partners-ops",
+        "brandRef=OutId",
+        "registryRef=partners-ops",
+        "partnerCode=SPEN",
+        "status=ready"
+      ],
+      "owner": "partners-ops",
+      "machine": "identity",
+      "typeOrExport": "OutId",
+      "href": "/portal/partners/#partner/SPEN",
+      "outId": {
+        "brandRef": "OutId",
+        "registryRef": "partners-ops",
+        "partnerCode": "SPEN",
+        "status": "ready"
+      }
+    },
+    {
+      "id": "out-id.out-SPEN-2",
+      "aspect": "out-id",
+      "token": "out-SPEN-2",
+      "repo": "project-R-score",
+      "path": "public/registry/partners-ops.json",
+      "properties": [
+        "live out seat",
+        "derived-from-partners-ops",
+        "brandRef=OutId",
+        "registryRef=partners-ops",
+        "partnerCode=SPEN",
+        "status=ready"
+      ],
+      "owner": "partners-ops",
+      "machine": "identity",
+      "typeOrExport": "OutId",
+      "href": "/portal/partners/#partner/SPEN",
+      "outId": {
+        "brandRef": "OutId",
+        "registryRef": "partners-ops",
+        "partnerCode": "SPEN",
+        "status": "ready"
+      }
+    },
+    {
+      "id": "out-id.out-SPEN-3",
+      "aspect": "out-id",
+      "token": "out-SPEN-3",
+      "repo": "project-R-score",
+      "path": "public/registry/partners-ops.json",
+      "properties": [
+        "live out seat",
+        "derived-from-partners-ops",
+        "brandRef=OutId",
+        "registryRef=partners-ops",
+        "partnerCode=SPEN",
+        "status=ready"
+      ],
+      "owner": "partners-ops",
+      "machine": "identity",
+      "typeOrExport": "OutId",
+      "href": "/portal/partners/#partner/SPEN",
+      "outId": {
+        "brandRef": "OutId",
+        "registryRef": "partners-ops",
+        "partnerCode": "SPEN",
+        "status": "ready"
+      }
+    },
+    {
+      "id": "out-id.out-SPEN-4",
+      "aspect": "out-id",
+      "token": "out-SPEN-4",
+      "repo": "project-R-score",
+      "path": "public/registry/partners-ops.json",
+      "properties": [
+        "live out seat",
+        "derived-from-partners-ops",
+        "brandRef=OutId",
+        "registryRef=partners-ops",
+        "partnerCode=SPEN",
+        "status=ready"
+      ],
+      "owner": "partners-ops",
+      "machine": "identity",
+      "typeOrExport": "OutId",
+      "href": "/portal/partners/#partner/SPEN",
+      "outId": {
+        "brandRef": "OutId",
+        "registryRef": "partners-ops",
+        "partnerCode": "SPEN",
+        "status": "ready"
+      }
+    },
+    {
+      "id": "out-id.out-SPEN-5",
+      "aspect": "out-id",
+      "token": "out-SPEN-5",
+      "repo": "project-R-score",
+      "path": "public/registry/partners-ops.json",
+      "properties": [
+        "live out seat",
+        "derived-from-partners-ops",
+        "brandRef=OutId",
+        "registryRef=partners-ops",
+        "partnerCode=SPEN",
+        "status=deferred"
+      ],
+      "owner": "partners-ops",
+      "machine": "identity",
+      "typeOrExport": "OutId",
+      "href": "/portal/partners/#partner/SPEN",
+      "outId": {
+        "brandRef": "OutId",
+        "registryRef": "partners-ops",
+        "partnerCode": "SPEN",
+        "status": "deferred"
       }
     }
   ],

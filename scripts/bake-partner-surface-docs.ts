@@ -13,6 +13,7 @@ import { buildPartnerSurfaceInventory } from '../lib/docs/partner-surface-invent
 import {
   PARTNER_SURFACE_GENERATED_DOC_REL,
   formatPartnerSurfaceGeneratedMarkdown,
+  loadLiveOutIds,
   loadLivePartnerCodes,
 } from '../lib/docs/partner-surface-docs.ts';
 import { resolvePath } from './lib/fs-bun.ts';
@@ -23,9 +24,12 @@ const PARTNERS_OPS_PATH = resolvePath(ROOT, 'public/registry/partners-ops.json')
 const CHECK = Bun.argv.includes('--check');
 
 async function render(): Promise<{ markdown: string; warned: boolean }> {
-  const { codes, warned } = await loadLivePartnerCodes(PARTNERS_OPS_PATH);
+  const { codes, warned: codesWarned } = await loadLivePartnerCodes(PARTNERS_OPS_PATH);
+  const { outs, warned: outsWarned } = await loadLiveOutIds(PARTNERS_OPS_PATH);
+  const warned = codesWarned || outsWarned;
   const inv = buildPartnerSurfaceInventory('—', {
     livePartnerCodes: codes ?? [],
+    liveOutIds: outs ?? [],
   });
   return {
     markdown: formatPartnerSurfaceGeneratedMarkdown(inv, codes),
