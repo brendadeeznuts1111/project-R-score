@@ -28,6 +28,21 @@ bun tools/brand-catalog.ts
 bun run check:brands:all
 ```
 
+## Bun.markdown.Options (HTML)
+
+SSOT presets: [`lib/markdown/options.ts`](../lib/markdown/options.ts). Defaults match
+[docs options table](https://bun.com/docs/runtime/markdown#options) (GFM
+tables/strikethrough/tasklists **on**; headings/autolinks/wiki/math/tagFilter
+**off**).
+
+| Prefer | Avoid |
+| ------ | ----- |
+| `headings: true` or `{ ids: true }` | blog-era `headingIds` / `autolinkHeadings` (no-ops) |
+| `MARKDOWN_PRESET_PORTAL` / `_README` / `_SECURE` / `_DESIGN` | ad-hoc option soup per call site |
+| `tagFilter: true` for untrusted HTML | raw HTML without filter |
+
+Proof: `bun test tests/markdown-options.test.ts`.
+
 ## Console output (structured dumps)
 
 Use the [`lib/console-depth.ts`](../lib/console-depth.ts) helpers for

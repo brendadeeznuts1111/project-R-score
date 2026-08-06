@@ -1,7 +1,9 @@
 /**
  * Portal markdown pages — raw source + HTML shell.
  * @see https://bun.com/docs/runtime/markdown#bun-markdown-html
+ * @see ../markdown/options.ts — MARKDOWN_PRESET_PORTAL
  */
+import { MARKDOWN_PRESET_PORTAL, markdownHtml } from '../markdown/options.ts';
 
 const PAGES: Record<string, string> = {
   index: `# Registry\n\nFactoryWager package registry overview.\n`,
@@ -62,7 +64,7 @@ export function renderPortalMarkdownPage(slug: string): string {
   const md = portalMarkdownRaw(slug);
   let bodyHtml: string;
   try {
-    bodyHtml = Bun.markdown.html(md);
+    bodyHtml = markdownHtml(md, MARKDOWN_PRESET_PORTAL);
   } catch {
     bodyHtml = `<pre>${escapeHtml(md)}</pre>`;
   }
