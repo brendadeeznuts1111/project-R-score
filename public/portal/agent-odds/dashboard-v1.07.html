@@ -905,7 +905,7 @@ function setPlaneMode(mode, detail) {
       banner.textContent = detail || 'Live Bun agent APIs connected · edges/WS/mock bet available.';
     } else if (mode === 'static') {
       banner.innerHTML = (detail || 'Pages static plane — partner chips from registry bakes.') +
-        ' Live edges/WS: run <code>bun run agent:odds-dashboard</code> locally (or set <code>window.AGENT_API_BASE</code>).';
+        ' Live edges/WS: run <code>bun run serve:public</code> (portal + desk) or <code>bun run agent:odds-dashboard</code>.';
     } else {
       banner.textContent = detail || 'Checking agent API vs Pages static registry…';
     }
@@ -1435,7 +1435,7 @@ document.getElementById('runBacktestBtn').addEventListener('click', runBacktestH
   } else {
     const edgesBox = document.getElementById('edgesTableContainer');
     if (edgesBox) {
-      edgesBox.innerHTML = '<div class="empty-state">Live edges need the Bun agent. On Pages: partner chips load from registry. Locally: <code>bun run agent:odds-dashboard</code>.</div>';
+      edgesBox.innerHTML = '<div class="empty-state">Live edges need a Bun host. On Pages: partner chips load from registry. Locally: <code>bun run serve:public</code> then open this board (same-origin APIs), or <code>bun run agent:odds-dashboard</code>.</div>';
     }
   }
 })();
