@@ -36,9 +36,10 @@ bun run partner-surface-inventory:bake
 bun run partner-surface-inventory:check
 bun run partner-surface-inventory:validate
 bun run partner-surface-inventory:lint-wires
-bun run partner-surface-inventory:lint-wires -- --hlp
-bun run partner-surface-inventory:lint-wires -- --why
-bun run partner-surface-inventory:lint-wires -- --document
+bun scripts/validate-wire-traps.ts
+bun scripts/validate-wire-traps.ts --hlp
+bun scripts/validate-wire-traps.ts --why
+bun scripts/validate-wire-traps.ts --document
 bun test tests/partner-surface-inventory.test.ts tests/partner-surface-wire-lint.test.ts
 ```
 
@@ -46,7 +47,8 @@ bun test tests/partner-surface-inventory.test.ts tests/partner-surface-wire-lint
 
 | Flag | Meaning |
 | ---- | ------- |
-| `-h` · `--help` · `--hlp` | Usage (no scan) |
+| *(no args)* · `-h` · `--help` · `--hlp` | Usage (teaching default; no scan) |
+| `--scan` | Run the wire-trap scan (`package.json` passes this) |
 | `--why` | Claim / allowlist rationale (ANSI markdown when available) |
 | `--document` | Path + wire-bag excerpt from this design doc |
 | `--strict-globs` | Fail when an allowlist glob matches 0 files (`WIRE_TRAP_STRICT_GLOBS=1`) |

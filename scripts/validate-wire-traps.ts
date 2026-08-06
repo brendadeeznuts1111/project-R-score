@@ -7,11 +7,13 @@
 /**
  * validate-wire-traps.ts — Layer C inventory-aware naked partnerId lint + glob proof.
  *
- *   bun run partner-surface-inventory:lint-wires
- *   bun run partner-surface-inventory:lint-wires -- --help
- *   bun run partner-surface-inventory:lint-wires -- --why
- *   bun run partner-surface-inventory:lint-wires -- --document
- *   bun run partner-surface-inventory:lint-wires -- --strict-globs
+ *   bun run partner-surface-inventory:lint-wires              # --scan (package.json)
+ *   bun scripts/validate-wire-traps.ts                       # help (no args)
+ *   bun scripts/validate-wire-traps.ts --hlp
+ *   bun scripts/validate-wire-traps.ts --why
+ *   bun scripts/validate-wire-traps.ts --document
+ *   bun scripts/validate-wire-traps.ts --scan
+ *   bun scripts/validate-wire-traps.ts --scan --strict-globs
  *
  * Does **not** replace partner-surface-inventory:validate (Layers A/B).
  * Allowlist SSOT = wire-field rows in partner-surface-inventory.
@@ -32,17 +34,21 @@ Usage:
   bun run partner-surface-inventory:lint-wires [-- flags]
   bun scripts/validate-wire-traps.ts [flags]
 
+No args (or -h / --help / --hlp) prints this help.
+Scan requires --scan (the package.json script passes it).
+
 Flags:
-  -h, --help, --hlp   Show this help (no scan)
+  -h, --help, --hlp   Show this help (default when no args)
   --why               Why this gate exists (claim + allowlist model)
   --document          Print design-doc path + wire-bag excerpt
-  --strict-globs      Fail when an allowlist glob matches 0 files (also
-                      WIRE_TRAP_STRICT_GLOBS=1); default warns on empty
-                      nested checkouts (e.g. empty Kalshi-bot/)
+  --scan              Run the wire-trap scan
+  --strict-globs      With --scan (or alone): fail when an allowlist glob
+                      matches 0 files (also WIRE_TRAP_STRICT_GLOBS=1);
+                      default warns on empty nested checkouts
 
 Layers (do not conflate):
   A/B  bun run partner-surface-inventory:validate
-  C    bun run partner-surface-inventory:lint-wires   ← this script
+  C    bun run partner-surface-inventory:lint-wires   ← --scan
 
 Fix a hit:
   1. Brand as PartnerCode / ExternalPartnerRef after the boundary, or
@@ -228,7 +234,8 @@ function printIssueTable(issues: readonly WireTrapIssue[], root: string): void {
 async function main(argv: readonly string[] = Bun.argv): Promise<number> {
   const args = argsOf(argv);
 
-  if (hasFlag(args, '-h', '--help', '--hlp')) {
+  // No args → help (teaching default). Package script passes --scan.
+  if (args.length === 0 || hasFlag(args, '-h', '--help', '--hlp')) {
     printHelp();
     return 0;
   }
@@ -241,12 +248,17 @@ async function main(argv: readonly string[] = Bun.argv): Promise<number> {
     return 0;
   }
 
-  const known = new Set(['--strict-globs']);
+  const known = new Set(['--scan', '--strict-globs']);
   const unknown = args.filter(a => a.startsWith('-') && !known.has(a));
   if (unknown.length > 0) {
     console.error(`Unknown option(s): ${unknown.join(', ')}\n`);
     printHelp();
     return 2;
+  }
+
+  if (!hasFlag(args, '--scan') && !hasFlag(args, '--strict-globs')) {
+    printHelp();
+    return 0;
   }
 
   const inv = buildPartnerSurfaceInventory();

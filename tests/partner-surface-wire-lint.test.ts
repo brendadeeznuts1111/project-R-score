@@ -148,10 +148,16 @@ describe('partner-surface-wire-lint', () => {
 
   test('CLI --hlp / --why / --document exit 0 without scanning failures', async () => {
     expect(HELP_TEXT).toContain('--hlp');
+    expect(HELP_TEXT).toContain('--scan');
     expect(WHY_MARKDOWN).toContain('Layer C');
     expect(DOCUMENT_REL).toBe('docs/design/partner-surface-inventory.md');
+    expect(await lintWiresMain(['bun', 'scripts/validate-wire-traps.ts'])).toBe(0);
     expect(await lintWiresMain(['bun', 'scripts/validate-wire-traps.ts', '--hlp'])).toBe(0);
     expect(await lintWiresMain(['bun', 'scripts/validate-wire-traps.ts', '--why'])).toBe(0);
     expect(await lintWiresMain(['bun', 'scripts/validate-wire-traps.ts', '--document'])).toBe(0);
+  });
+
+  test('CLI --scan runs the gate', async () => {
+    expect(await lintWiresMain(['bun', 'scripts/validate-wire-traps.ts', '--scan'])).toBe(0);
   });
 });
