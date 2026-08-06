@@ -25,6 +25,7 @@
  * Fallback: if the scratch-repo setup fails for any reason, it warns and
  * runs the legacy worktree `bun test --changed` so the gate never wedges.
  */
+import { isDirectorySync } from './lib/fs-bun.ts';
 import { removeIndexTreeSync } from './lib/index-tree.ts';
 
 const ROOT = process.cwd();
@@ -136,9 +137,15 @@ async function buildScratchRepo(tmp: string): Promise<void> {
   if (tar.exitCode !== 0) throw new Error(`tar extract: ${tar.stderr.toString().trim()}`);
 
   // 2. Big dirs link so test imports resolve (tracked → not "changed").
+  // Skip absent optional checkouts (e.g. uninitialized Kalshi-bot submodule) —
+  // a dangling symlink makes Bun.file look present then fail with ENOENT.
   for (const d of SCRATCH_LINK_DIRS) {
+    const source = `${ROOT}/${d}`;
+    if (!isDirectorySync(source)) {
+      continue;
+    }
     const ln = Bun.spawnSync({
-      cmd: ['ln', '-s', `${ROOT}/${d}`, `${tmp}/${d}`],
+      cmd: ['ln', '-s', source, `${tmp}/${d}`],
       stdout: 'pipe',
       stderr: 'pipe',
     });

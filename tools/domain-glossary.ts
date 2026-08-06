@@ -348,9 +348,16 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
 
 async function main(): Promise<void> {
   const root = joinPath(import.meta.dir, '..');
-  const source = (await Bun.file(
-    joinPath(root, DOMAIN_GLOSSARY_SOURCE_PATH)
-  ).json()) as CanonicalGlossaryDump;
+  const sourcePath = joinPath(root, DOMAIN_GLOSSARY_SOURCE_PATH);
+  const sourceFile = Bun.file(sourcePath);
+  if (!(await sourceFile.exists())) {
+    console.error(
+      `❌ missing ${DOMAIN_GLOSSARY_SOURCE_PATH} — init the Kalshi-bot submodule ` +
+        `(git submodule update --init Kalshi-bot) before baking or checking the dump.`
+    );
+    process.exit(2);
+  }
+  const source = (await sourceFile.json()) as CanonicalGlossaryDump;
   const payload = buildDomainGlossary(source);
   const target = joinPath(root, DOMAIN_GLOSSARY_PATH);
   const serialized = `${JSON.stringify(payload, null, 2)}\n`;
