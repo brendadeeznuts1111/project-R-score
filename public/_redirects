@@ -37,6 +37,7 @@
 /portal/account          /portal/account/          301
 /portal/identity         /portal/identity/         301
 /portal/issues           /portal/issues/           301
+/portal/lanes            /portal/lanes/            301
 /portal/factory          /portal/factory/          301
 /portal/science          /portal/science/          301
 # legacy flat report path → directory index (ops:prediction / Pages pretty URL)

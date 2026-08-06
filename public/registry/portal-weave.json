@@ -2,13 +2,13 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-08-06T04:14:03.371Z",
+  "generated": "2026-08-06T18:32:03.263Z",
   "summary": {
-    "surfaces": 34,
-    "artifacts": 43,
+    "surfaces": 36,
+    "artifacts": 44,
     "components": 21,
     "wiki": 6,
-    "scripts": 46
+    "scripts": 47
   },
   "related": {
     "chrome": "/registry/portal-chrome.json",
@@ -122,6 +122,18 @@
       "cli": "bun run github-issue-taxonomy:check",
       "relatedArtifactIds": [
         "github-issue-taxonomy"
+      ]
+    },
+    {
+      "id": "lanes",
+      "label": "Lanes",
+      "href": "/portal/lanes/",
+      "conceptId": "page.lanes",
+      "note": "session · chrome · concept crosswalk · correlations not containment",
+      "group": "registry",
+      "cli": "bun run workspace-taxonomy:bake",
+      "relatedArtifactIds": [
+        "workspace-lane-map"
       ]
     },
     {
@@ -287,6 +299,14 @@
       "note": "@factorywager/bookmakers artifact · canonical bookmaker registry · weave runbook",
       "group": "ops",
       "cli": "bun run bookmakers:bake"
+    },
+    {
+      "id": "agent-odds",
+      "label": "Agent odds",
+      "href": "/portal/agent-odds/",
+      "note": "trading desk shell · partner liquidity from registry bakes · live APIs local agent only",
+      "group": "ops",
+      "cli": "bun run agent:odds-dashboard"
     },
     {
       "id": "factory",
@@ -649,6 +669,18 @@
       "note": "repository-governed dimensions · labels · color projection · drift health",
       "group": "registry",
       "cli": "bun run github-issue-taxonomy:check",
+      "purpose": "shared"
+    },
+    {
+      "id": "workspace-lane-map",
+      "artifactId": "workspace-lane-map",
+      "artifactName": "Workspace lane map",
+      "label": "Workspace lane map",
+      "href": "/registry/workspace-lane-map.json",
+      "conceptId": "page.lanes",
+      "note": "session · chrome · concept correlations · not containment",
+      "group": "registry",
+      "cli": "bun run workspace-taxonomy:bake",
       "purpose": "shared"
     }
   ],
@@ -1128,6 +1160,13 @@
       "label": "GitHub issue taxonomy drift check",
       "cmd": "bun run github-issue-taxonomy:check",
       "doc": "docs/harness/tenants/github-issue-taxonomy.md",
+      "group": "registry"
+    },
+    {
+      "id": "workspace-taxonomy-bake",
+      "label": "Workspace taxonomy bake",
+      "cmd": "bun run workspace-taxonomy:bake",
+      "doc": "docs/harness/tenants/workspace-lane-cross-map.md",
       "group": "registry"
     },
     {

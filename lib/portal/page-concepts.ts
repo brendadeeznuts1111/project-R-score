@@ -169,6 +169,14 @@ export const PORTAL_PAGE_CONCEPT_DEFINITIONS = [
     synonyms: ['issue spine', 'issue labels', 'issue governance', 'GitHub taxonomy'],
   },
   {
+    path: '/portal/lanes/',
+    id: 'page.lanes',
+    label: 'Workspace lane crosswalk',
+    description:
+      'Portal page correlating session archive lanes with chrome Domain lanes and ConceptDomains — correlations, not containment.',
+    synonyms: ['lane map', 'session lanes', 'workspace taxonomy', 'homonym lanes'],
+  },
+  {
     path: '/portal/install-hygiene/',
     id: 'page.installHygiene',
     label: 'Install hygiene',

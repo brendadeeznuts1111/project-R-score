@@ -25,12 +25,7 @@ export type PortalChromeNavGroup = 'ops' | 'harness' | 'registry' | 'secrets' | 
  * @see docs/harness/tenants/partner-domain-map.md
  */
 export type PortalChromeDomainLane =
-  | 'partner'
-  | 'trading'
-  | 'control'
-  | 'identity'
-  | 'knowledge'
-  | 'platform';
+  'partner' | 'trading' | 'control' | 'identity' | 'knowledge' | 'platform';
 
 export type PortalChromeNavItem = {
   id: string; // brand-ok — chrome nav slot key (home|ops|…), not a domain *Id
@@ -322,6 +317,17 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     note: 'market · model · trading · warehouse · pipeline concepts',
     cli: 'bun run glossary:portal',
     registryArtifact: '/registry/domain-glossary.json',
+  },
+  {
+    id: 'lanes',
+    label: 'Lanes',
+    href: '/portal/lanes/',
+    tier: 'overflow',
+    group: 'registry',
+    domain: 'knowledge',
+    note: 'session · chrome · concept crosswalk · correlations not containment',
+    cli: 'bun run workspace-taxonomy:bake',
+    registryArtifact: '/registry/workspace-lane-map.json',
   },
   {
     id: 'issues', // brand-ok — chrome navigation slot key, not a domain entity id

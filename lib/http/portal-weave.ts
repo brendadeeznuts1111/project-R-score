@@ -21,13 +21,7 @@ import {
 } from '../verification/publish-plane-weave.ts';
 
 export type PortalWeaveGroup =
-  | 'ops'
-  | 'harness'
-  | 'registry'
-  | 'secrets'
-  | 'wiki'
-  | 'plane'
-  | 'other';
+  'ops' | 'harness' | 'registry' | 'secrets' | 'wiki' | 'plane' | 'other';
 
 export type PortalWeaveLink = {
   /** Stable slug for UI chips / filters */
@@ -183,6 +177,16 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     group: 'registry',
     cli: 'bun run github-issue-taxonomy:check',
     relatedArtifactIds: ['github-issue-taxonomy'],
+  },
+  {
+    id: 'lanes',
+    label: 'Lanes',
+    href: '/portal/lanes/',
+    conceptId: 'page.lanes',
+    note: 'session · chrome · concept crosswalk · correlations not containment',
+    group: 'registry',
+    cli: 'bun run workspace-taxonomy:bake',
+    relatedArtifactIds: ['workspace-lane-map'],
   },
   {
     id: 'surfaces',
@@ -676,6 +680,18 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveArtifact[] = [
     cli: 'bun run github-issue-taxonomy:check',
     purpose: 'shared',
   },
+  {
+    id: 'workspace-lane-map',
+    artifactId: 'workspace-lane-map',
+    artifactName: 'Workspace lane map',
+    label: 'Workspace lane map',
+    href: '/registry/workspace-lane-map.json',
+    conceptId: 'page.lanes',
+    note: 'session · chrome · concept correlations · not containment',
+    group: 'registry',
+    cli: 'bun run workspace-taxonomy:bake',
+    purpose: 'shared',
+  },
 ];
 
 /**
@@ -952,6 +968,13 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
     label: 'GitHub issue taxonomy drift check',
     cmd: 'bun run github-issue-taxonomy:check',
     doc: 'docs/harness/tenants/github-issue-taxonomy.md',
+    group: 'registry',
+  },
+  {
+    id: 'workspace-taxonomy-bake',
+    label: 'Workspace taxonomy bake',
+    cmd: 'bun run workspace-taxonomy:bake',
+    doc: 'docs/harness/tenants/workspace-lane-cross-map.md',
     group: 'registry',
   },
 ];

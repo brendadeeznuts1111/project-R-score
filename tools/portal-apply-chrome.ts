@@ -66,6 +66,7 @@ type PageKey =
   | 'factory'
   | 'identity'
   | 'issues'
+  | 'lanes'
   | 'limits-lab'
   | 'brands'
   | 'surfaces'
@@ -168,6 +169,12 @@ const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: st
     active: 'issues',
     pageLabel: 'Issues',
     brandBadge: 'governance',
+  },
+  {
+    file: 'lanes/index.html',
+    active: 'lanes',
+    pageLabel: 'Lanes',
+    brandBadge: 'ops',
   },
   {
     file: 'limits-lab/index.html',

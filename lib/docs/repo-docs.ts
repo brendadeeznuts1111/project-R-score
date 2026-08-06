@@ -54,6 +54,9 @@ export const CANONICAL_REPO_DOCS = {
   sessionOrganization: 'docs/organization/session-organization.md',
   /** Archive filename grammar `<t>-<lane>-<slug>` (sessions · quarantine · scratch) */
   archiveNamingGrammar: 'docs/organization/naming-grammar.md',
+  /** Session lane ↔ chrome Domain ↔ ConceptDomain correlations */
+  workspaceTaxonomy: 'lib/docs/workspace-taxonomy.ts',
+  workspaceLaneCrossMap: 'docs/harness/tenants/workspace-lane-cross-map.md',
   /** Velocity baseline + day-loop honesty */
   velocityBaseline: 'docs/organization/VELOCITY_BASELINE.md',
   /** JIT harness thesis index */
@@ -177,6 +180,8 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   organizationHistory: 'Homebase discovery / organization map',
   sessionOrganization: 'Reasonix session rename map · lane taxonomy',
   archiveNamingGrammar: 'Archive filename grammar (<t>-<lane>-<slug>)',
+  workspaceTaxonomy: 'Workspace taxonomy crosswalk (session · chrome · concept)',
+  workspaceLaneCrossMap: 'Workspace lane cross-map tenant (claim workspace-lane-cross-map)',
   velocityBaseline: 'Velocity baseline + day-loop honesty',
   harnessIndex: 'JIT harness thesis index',
   harnessProof: 'Proof claim kinds',

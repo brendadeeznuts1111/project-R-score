@@ -33,6 +33,12 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   declarations bake to `bun-brand-map.json` (`unit` + `boundary`) _Ratchet_ →
   `bun run bun:brand-map:check` ·
   [`tenants/bun-brand-cross-map.md`](tenants/bun-brand-cross-map.md)
+- **`workspace-lane-cross-map`** — session archive lane ↔ chrome Domain ↔
+  ConceptDomain correlations (not containment) bake to
+  `workspace-lane-map.json` (`unit`) _Ratchet_ →
+  `bun test tests/workspace-taxonomy.test.ts` ·
+  `bun run workspace-taxonomy:check` ·
+  [`tenants/workspace-lane-cross-map.md`](tenants/workspace-lane-cross-map.md)
 - **`install-verify`** — Factory install produces a working Bun workspace
   (`journey` + `deployed`) _Ratchet_ → `bun run proof:install` ·
   `bun run install:verify` (CI: `repo-hygiene.yml`)
@@ -339,6 +345,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 | ---------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `branded-ids`                      | continuous | pre-commit brands staged‖smart; `ci:harness` smart; types when branded staged or `--full`                                                                            |
 | `bun-brand-cross-map`              | continuous | `ci:harness` · `bun run bun:brand-map:check`                                                                                                                         |
+| `workspace-lane-cross-map`         | human-only | `bun test tests/workspace-taxonomy.test.ts` · `bun run workspace-taxonomy:check`                                                                                     |
 | `install-verify`                   | continuous | `ci:core` · harness-gates                                                                                                                                            |
 | `install-verify-journey`           | human-only | `bun run test:install-verify`                                                                                                                                        |
 | `test-changed`                     | continuous | `ci:harness` · harness-gates                                                                                                                                         |

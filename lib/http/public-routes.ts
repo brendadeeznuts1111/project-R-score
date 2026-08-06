@@ -506,6 +506,22 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     note: '/registry/github-issue-taxonomy.json · credential-free ownership and drift board',
   },
   {
+    path: '/portal/lanes/',
+    name: 'Workspace lane crosswalk',
+    category: 'portal',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: '/registry/workspace-lane-map.json · session · chrome · concept correlations',
+  },
+  {
+    path: '/registry/workspace-lane-map.json',
+    name: 'Workspace lane map projection',
+    category: 'registry',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: 'session archive lanes correlated with chrome Domain and ConceptDomain',
+  },
+  {
     path: '/registry/github-issue-taxonomy.json',
     name: 'GitHub issue taxonomy projection',
     category: 'registry',

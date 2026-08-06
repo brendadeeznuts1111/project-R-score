@@ -340,7 +340,10 @@ Detail:
   archive map:
   [`docs/organization/session-organization.md`](docs/organization/session-organization.md)
   · naming grammar:
-  [`docs/organization/naming-grammar.md`](docs/organization/naming-grammar.md).
+  [`docs/organization/naming-grammar.md`](docs/organization/naming-grammar.md) ·
+  lane crosswalk:
+  [`docs/harness/tenants/workspace-lane-cross-map.md`](docs/harness/tenants/workspace-lane-cross-map.md)
+  · `/portal/lanes/`.
 
 Maintained by the platform team. Run `bun run dashboard` for live views, or use
 active CLIs under [`tools/cli/`](tools/cli/) (e.g. `endpoint-status.ts`).
