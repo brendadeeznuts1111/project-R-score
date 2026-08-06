@@ -1,5 +1,6 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/utils#bun-inflatesync — Bun.inflateSync (zlib/raw via windowBits)
 /**
  * DOD (Daily Operations Document) image evidence — Bun.Image pack/verify.
  *
@@ -13,9 +14,6 @@
  * @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
  * @see ../image-metadata.ts
  */
-/* eslint-disable no-restricted-imports -- PNG IDAT inflate; Bun lacks zlib-wrapped inflate for IDAT */
-import { inflateSync } from 'node:zlib';
-/* eslint-enable no-restricted-imports */
 import {
   extractImageEvidenceMeta,
   type ImageDigestAlgorithm,
@@ -122,7 +120,10 @@ export function decodePngRgba(png: Uint8Array): {
     throw new Error(`decodePngRgba: unsupported colorType ${colorType}`);
   }
   const bpp = colorType === 6 ? 4 : 3;
-  const inflated = inflateSync(Buffer.concat(idat));
+  // PNG IDAT is zlib-wrapped DEFLATE (RFC 1950 header, e.g. 0x78 0xda).
+  // Bun.inflateSync default does not always accept that stream; pin windowBits 15
+  // (zlib header/footer range 9..15 per Bun ZlibCompressionOptions).
+  const inflated = Bun.inflateSync(Buffer.concat(idat), { windowBits: 15 });
   const stride = width * bpp;
   const rgba = new Uint8Array(width * height * 4);
   let prev = Buffer.alloc(stride);
