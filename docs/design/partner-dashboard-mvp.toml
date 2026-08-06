@@ -26,6 +26,7 @@ portal_consumer_contract = "implemented"
 profile_coverage_adapter = "implemented"
 out_capability_contract = "implemented"
 execution_constraint_evaluator = "implemented"
+bookmaker_account_resolver = "implemented"
 current_compatibility_fetch_transport = "implemented"
 canonical_dashboard_browser_loader = "planned"
 connector_ports = "partial"
@@ -73,6 +74,16 @@ required_limit_kinds = ["max_stake", "max_gross_payout", "max_net_win"]
 url_policy = "absolute-http-or-https-without-credentials-query-or-fragment"
 missing_constraint_policy = "manual-review-never-assume-unlimited"
 odds_money_policy = "caller-supplies-integer-projected-gross-payout-and-net-win"
+
+[adapters.bookmaker_account_resolver]
+export = "./adapters/bookmaker-account"
+implementation_status = "implemented"
+input = "sanitized-account-entrypoint-url-plus-bookmaker-registry"
+exact_match_policy = "exact-host-with-www-normalization"
+alternate_host_policy = "explicit-host-alias-only"
+unknown_host_policy = "manual-review-no-parent-domain-or-substring-guess"
+manual_resolution_policy = "operator-selected-registered-sportsbook-id"
+registry_io_status = "planned-owned-by-bookmakers-registry-connector"
 
 [surfaces.portal]
 board_id = "partners"
@@ -307,6 +318,7 @@ legacy_ops = "legacy-ops is the eighth compatibility adapter and has an explicit
 frozen_mapping = "Sports Terminal frozen maps to suspended with mandatory queryable provenance"
 out_constraints = "Max stake, gross payout, net win, and liquidity are distinct checks; missing evidence requires manual review"
 offer_split = "Wager markets and structures are separate from promotional offers"
+bookmaker_host_resolution = "Account URLs resolve by exact host or explicit alias; unknown hosts require a registered manual choice"
 
 [deprecation_calendar.legacy_ops]
 status = "active"
@@ -449,6 +461,7 @@ policy = "never-collapse-into-one-status-field"
 
 [out_capabilities]
 schema = "factorywager.partner-out-capability.v1"
+resolution_methods = ["exact", "alias", "manual"]
 bet_structures = ["straight", "parlay", "same_game_parlay"]
 capability_support = ["supported", "unsupported", "unknown"]
 market_phases = ["pregame", "live"]

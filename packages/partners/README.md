@@ -28,6 +28,14 @@ net-win ceilings. Unknown evidence produces `manual_review`; the core does not
 fetch providers, read secrets, reserve liquidity, post accounting entries, or
 send Telegram.
 
+The implemented `./adapters/bookmaker-account` resolver joins a submitted PPH
+account URL to the bookmaker registry without probing the provider. Exact hosts
+resolve directly, alternate hosts require an explicit alias, and unknown hosts
+stop for manual review. A manual selection must still name a registered
+`SportsbookId`; URL credentials, query tokens, fragments, ambiguous hosts, and
+substring guesses are rejected. Loading `/registry/bookmakers.json` remains the
+planned bookmakers connector's responsibility.
+
 The browser-neutral `./portal` contract now owns the current input inventory,
 the canonical artifact path, and the future query-only `?compare=legacy` policy.
 The canonical single-artifact browser loader and generated public modules remain

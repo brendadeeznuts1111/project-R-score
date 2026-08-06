@@ -328,6 +328,13 @@ URL to `PartnerCode`, canonical `OutId`, `SportsbookId`, and optional skin
 metadata. It keeps straight, parlay, and same-game-parlay support explicit and
 separates wager market catalogs from promotional offers.
 
+The implemented bookmaker-account resolver now performs the URL-to-book/skin
+join. It accepts exact registry hosts or explicit alternate-host aliases; an
+unknown host becomes manual review, and a manual choice must still resolve to a
+registered `SportsbookId`. It does not guess from substrings or parent domains.
+The resolver is pure; loading the bookmaker artifact and probing a provider
+remain planned connector work.
+
 Maximum stake, gross payout, net win, and reservable liquidity are independent
 checks. Each critical ceiling is explicitly `known`, `not_applicable`, or
 `unknown`; missing evidence yields `manual_review`, never “unlimited.” Scoped

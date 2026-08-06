@@ -25,6 +25,7 @@ import {
   OUT_LIMIT_KINDS,
   OUT_LIMIT_STATUSES,
   PARTNER_OUT_CAPABILITY_SCHEMA_V1,
+  SPORTSBOOK_RESOLUTION_METHODS,
   PARTNER_DASHBOARD_ARTIFACT_REF,
   PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
   PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS,
@@ -457,6 +458,8 @@ export async function validatePartnerDashboardPlan(
     partnersPackage.exports?.['./core/out-capabilities'] !== './src/core/out-capabilities.ts' ||
     partnersPackage.exports?.['./boundary'] !== './src/boundary/index.ts' ||
     partnersPackage.exports?.['./adapters'] !== './src/adapters/index.ts' ||
+    partnersPackage.exports?.['./adapters/bookmaker-account'] !==
+      './src/adapters/bookmaker-account.ts' ||
     partnersPackage.exports?.['./adapters/profile-coverage'] !==
       './src/adapters/profile-coverage.ts' ||
     partnersPackage.exports?.['./compatibility'] !== './src/compatibility/index.ts' ||
@@ -478,6 +481,7 @@ export async function validatePartnerDashboardPlan(
     plan.package?.components?.profile_coverage_adapter !== 'implemented' ||
     plan.package?.components?.out_capability_contract !== 'implemented' ||
     plan.package?.components?.execution_constraint_evaluator !== 'implemented' ||
+    plan.package?.components?.bookmaker_account_resolver !== 'implemented' ||
     plan.package?.components?.current_compatibility_fetch_transport !== 'implemented' ||
     plan.package?.components?.canonical_dashboard_browser_loader !== 'planned' ||
     'browser_loader' in (plan.package?.components ?? {}) ||
@@ -505,7 +509,26 @@ export async function validatePartnerDashboardPlan(
     errors.push('out capability snapshot must match the implemented private preflight contract');
   }
   if (
+    plan.adapters?.bookmaker_account_resolver?.export !== './adapters/bookmaker-account' ||
+    plan.adapters?.bookmaker_account_resolver?.implementation_status !== 'implemented' ||
+    plan.adapters?.bookmaker_account_resolver?.exact_match_policy !==
+      'exact-host-with-www-normalization' ||
+    plan.adapters?.bookmaker_account_resolver?.alternate_host_policy !==
+      'explicit-host-alias-only' ||
+    plan.adapters?.bookmaker_account_resolver?.unknown_host_policy !==
+      'manual-review-no-parent-domain-or-substring-guess' ||
+    plan.adapters?.bookmaker_account_resolver?.manual_resolution_policy !==
+      'operator-selected-registered-sportsbook-id' ||
+    plan.adapters?.bookmaker_account_resolver?.registry_io_status !==
+      'planned-owned-by-bookmakers-registry-connector'
+  ) {
+    errors.push(
+      'bookmaker account resolver must remain fail-closed and separate from registry I/O'
+    );
+  }
+  if (
     plan.out_capabilities?.schema !== PARTNER_OUT_CAPABILITY_SCHEMA_V1 ||
+    !sameMembers(plan.out_capabilities?.resolution_methods ?? [], SPORTSBOOK_RESOLUTION_METHODS) ||
     !sameMembers(plan.out_capabilities?.bet_structures ?? [], BET_STRUCTURES) ||
     !sameMembers(plan.out_capabilities?.capability_support ?? [], CAPABILITY_SUPPORT_VALUES) ||
     !sameMembers(plan.out_capabilities?.market_phases ?? [], MARKET_PHASES) ||
