@@ -6,7 +6,7 @@
   "taxonomy": "tools/bun-docs-taxonomy.json",
   "taxonomyTagged": 74,
   "pages": 318,
-  "anchors": 2135,
+  "anchors": 2136,
   "entries": [
     {
       "section": "Docs",
@@ -3603,6 +3603,7 @@
         "nested-list-numbering",
         "code-block-syntax-highlighting",
         "parser-options",
+        "parser-options-2",
         "bun-markdown-react",
         "server-side-rendering",
         "component-overrides",
@@ -4344,7 +4345,7 @@
       "section": "Docs",
       "title": "WebView",
       "url": "https://bun.com/docs/runtime/webview.md",
-      "desc": "Control a headless browser from Bun for automation, testing, and scraping — zero dependencies on macOS, Chrome DevTools Protocol everywhere else",
+      "desc": "Control a headless browser from Bun for automation, testing, and scraping \u2014 zero dependencies on macOS, Chrome DevTools Protocol everywhere else",
       "domain": "runtime/webview",
       "anchors": [
         "creating-a-view",

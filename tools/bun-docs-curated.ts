@@ -32,7 +32,7 @@
 // @see https://bun.com/docs/runtime/markdown#available-overrides — available-overrides
 // @see https://bun.com/docs/runtime/markdown#options — options
 // @see https://bun.com/docs/runtime/markdown#parser-options — parser-options
-// @see https://bun.com/docs/runtime/markdown#parser-options — parser-options-2
+// @see https://bun.com/docs/runtime/markdown#parser-options-2 — parser-options-2
 // @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options — BUN_OPTIONS
 // @see https://bun.com/docs/bundler/executables#embedding-runtime-arguments — --compile-exec-argv
 // @see https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata — file-uploads
@@ -472,7 +472,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     related: [
       'runtime/markdown#component-overrides',
       'runtime/markdown#available-overrides',
-      'runtime/markdown#parser-options',
+      'runtime/markdown#parser-options-2',
       'runtime/markdown#options',
     ],
     relatedTokens: [
@@ -525,9 +525,9 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   {
     term: 'parser-options-2',
-    path: 'runtime/markdown#parser-options',
+    path: 'runtime/markdown#parser-options-2',
     description:
-      'Pass any of the parser options (#options) as the third argument to Bun.markdown.react.',
+      'Pass any of the parser options (#options) as the third argument to Bun.markdown.react. Live Bun docs slug is #parser-options-2 (duplicate “Parser options” heading under react).',
     minVersion: '1.3.8',
     relatedTokens: ['options', 'parser-options', 'Bun.markdown.react'],
   },
