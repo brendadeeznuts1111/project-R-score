@@ -5,6 +5,9 @@ import {
   checkBrandLifecycleFields,
   checkBrandLinkingBag,
   checkDeprecatedBrandReferences,
+  checkOutIdArtifactPresence,
+  checkOutIdBag,
+  checkPartnerCallSignPresence,
   checkPartnerCodeArtifactPresence,
   checkPartnerCodeBag,
   collectAllowedBrandLinkDomains,
@@ -14,11 +17,13 @@ import {
   isPartnerSurfaceFitnessScore,
 } from '../lib/docs/partner-surface-brand-check.ts';
 import {
+  checkBrandMintModuleEvidence,
   checkBrandTestCoverageEvidence,
   mintAuthoritySearchTerms,
 } from '../lib/docs/partner-surface-fitness-evidence.ts';
 import {
   allPartnerSurfaceRows,
+  outIdSurfaceRows,
   partnerCodeSurfaceRows,
   type PartnerSurfaceRow,
 } from '../lib/docs/partner-surface-inventory.ts';
@@ -194,14 +199,64 @@ describe('partner-surface-brand-check', () => {
     expect(missing.some(i => i.level === 'error' && i.message.includes('not found'))).toBe(true);
     const ok = checkPartnerCodeArtifactPresence(
       rows,
-      new Map([['SPEN', 'operator_ready']])
+      new Map([['SPEN', { phase: 'operator_ready' }]])
     );
     expect(ok.filter(i => i.level === 'error')).toEqual([]);
     const phaseDrift = checkPartnerCodeArtifactPresence(
       rows,
-      new Map([['SPEN', 'onboarding']])
+      new Map([['SPEN', { phase: 'onboarding' }]])
     );
     expect(phaseDrift.some(i => i.message.includes('phase'))).toBe(true);
+  });
+
+  test('checkPartnerCallSignPresence warns on missing or malformed callSign', () => {
+    const rows = partnerCodeSurfaceRows([{ code: 'SPEN', phase: 'operator_ready' }]);
+    const missing = checkPartnerCallSignPresence(rows, new Map([['SPEN', {}]]));
+    expect(missing.some(i => i.message.includes('callSign missing'))).toBe(true);
+    const bad = checkPartnerCallSignPresence(
+      rows,
+      new Map([['SPEN', { callSign: 'SPEN1' }]])
+    );
+    expect(bad.some(i => i.message.includes('does not match'))).toBe(true);
+    const ok = checkPartnerCallSignPresence(
+      rows,
+      new Map([['SPEN', { callSign: 'SPEN-001' }]])
+    );
+    expect(ok).toEqual([]);
+  });
+
+  test('checkOutIdBag + artifact presence', () => {
+    const rows = allPartnerSurfaceRows({
+      liveOutIds: [{ outId: 'out-SPEN-1', partnerCode: 'SPEN', status: 'ready' }],
+    });
+    const brandByToken = collectBrandBagsByToken(rows);
+    const registryTokens = new Set(rows.filter(r => r.aspect === 'registry').map(r => r.token));
+    const bag = {
+      brandRef: 'OutId',
+      registryRef: 'partners-ops',
+      partnerCode: 'SPEN',
+      status: 'ready',
+    };
+    const ok = checkOutIdBag('out-id.out-SPEN-1', 'out-SPEN-1', bag, {
+      brandByToken,
+      registryTokens,
+      liveCodes: new Set(['SPEN']),
+    });
+    expect(ok.filter(i => i.level === 'error')).toEqual([]);
+
+    const outRows = outIdSurfaceRows([{ outId: 'out-SPEN-1', partnerCode: 'SPEN', status: 'ready' }]);
+    const missing = checkOutIdArtifactPresence(outRows, new Map());
+    expect(missing.some(i => i.level === 'error' && i.message.includes('not found'))).toBe(true);
+    const present = checkOutIdArtifactPresence(
+      outRows,
+      new Map([['out-SPEN-1', { partnerCode: 'SPEN', status: 'ready' }]])
+    );
+    expect(present.filter(i => i.level === 'error')).toEqual([]);
+    const statusDrift = checkOutIdArtifactPresence(
+      outRows,
+      new Map([['out-SPEN-1', { partnerCode: 'SPEN', status: 'deferred' }]])
+    );
+    expect(statusDrift.some(i => i.message.includes('status'))).toBe(true);
   });
 
   test('mintAuthoritySearchTerms + test-coverage evidence', () => {
@@ -218,6 +273,21 @@ describe('partner-surface-brand-check', () => {
     expect(issuesTrue).toEqual([]);
     const issuesMissing = checkBrandTestCoverageEvidence([partnerCode], '// no mint symbols here');
     expect(issuesMissing.some(i => i.message.includes('hasTestCoverage=true'))).toBe(true);
+  });
+
+  test('checkBrandMintModuleEvidence requires mint terms in module text', () => {
+    const rows = allPartnerSurfaceRows();
+    const partnerCode = rows.find(r => r.token === 'PartnerCode')!;
+    const ok = checkBrandMintModuleEvidence(
+      [partnerCode],
+      new Map([['lib/types/branded/operations.ts', 'export const parsePartnerCode = …']])
+    );
+    expect(ok).toEqual([]);
+    const missing = checkBrandMintModuleEvidence(
+      [partnerCode],
+      new Map([['lib/types/branded/operations.ts', '// no constructors']])
+    );
+    expect(missing.some(i => i.message.includes('not found in'))).toBe(true);
   });
 
   test('checkDeprecatedBrandReferences warns wire/portal/registry consumers', () => {

@@ -9,13 +9,18 @@
  *   bun run partner-surface-inventory:bake
  *   bun run partner-surface-inventory:check
  *
- * Partner-code rows are derived from public/registry/partners-ops.json when present.
+ * Partner-code and out-id rows are derived from public/registry/partners-ops.json
+ * when present.
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
-import { livePartnerCodesFromPartnersOps } from '../lib/docs/partner-surface-docs.ts';
+import {
+  liveOutIdsFromPartnersOps,
+  livePartnerCodesFromPartnersOps,
+} from '../lib/docs/partner-surface-docs.ts';
 import {
   buildPartnerSurfaceInventory,
   type PartnerSurfaceLiveCode,
+  type PartnerSurfaceLiveOut,
 } from '../lib/docs/partner-surface-inventory.ts';
 import { resolvePath } from './lib/fs-bun.ts';
 
@@ -24,19 +29,29 @@ const OUT_PATH = resolvePath(ROOT, 'public/registry/partner-surface-inventory.js
 const PARTNERS_OPS_PATH = resolvePath(ROOT, 'public/registry/partners-ops.json');
 const CHECK = Bun.argv.includes('--check');
 
-async function loadLivePartnerCodes(): Promise<readonly PartnerSurfaceLiveCode[]> {
+async function loadLiveFromPartnersOps(): Promise<{
+  livePartnerCodes: readonly PartnerSurfaceLiveCode[];
+  liveOutIds: readonly PartnerSurfaceLiveOut[];
+}> {
   const file = Bun.file(PARTNERS_OPS_PATH);
-  if (!(await file.exists())) return [];
+  if (!(await file.exists())) {
+    return { livePartnerCodes: [], liveOutIds: [] };
+  }
   try {
-    return livePartnerCodesFromPartnersOps(await file.json());
+    const artifact = await file.json();
+    return {
+      livePartnerCodes: livePartnerCodesFromPartnersOps(artifact),
+      liveOutIds: liveOutIdsFromPartnersOps(artifact),
+    };
   } catch {
-    console.warn('⚠️  partners-ops.json unreadable — baking without partner-code rows');
-    return [];
+    console.warn('⚠️  partners-ops.json unreadable — baking without partner-code/out-id rows');
+    return { livePartnerCodes: [], liveOutIds: [] };
   }
 }
 
 async function main(): Promise<number> {
-  const livePartnerCodes = await loadLivePartnerCodes();
+  const { livePartnerCodes, liveOutIds } = await loadLiveFromPartnersOps();
+  const options = { livePartnerCodes, liveOutIds };
 
   if (CHECK) {
     if (!(await Bun.file(OUT_PATH).exists())) {
@@ -46,7 +61,7 @@ async function main(): Promise<number> {
     const existing = (await Bun.file(OUT_PATH).json()) as Record<string, unknown>;
     const next = buildPartnerSurfaceInventory(
       typeof existing.bakedAt === 'string' ? existing.bakedAt : new Date().toISOString(),
-      { livePartnerCodes }
+      options
     );
     const a = { ...existing, bakedAt: 'x' };
     const b = { ...next, bakedAt: 'x' };
@@ -60,11 +75,12 @@ async function main(): Promise<number> {
     return 0;
   }
 
-  const map = buildPartnerSurfaceInventory(new Date().toISOString(), { livePartnerCodes });
+  const map = buildPartnerSurfaceInventory(new Date().toISOString(), options);
   await Bun.write(OUT_PATH, `${JSON.stringify(map, null, 2)}\n`);
   const partnerCodes = map.rows.filter(r => r.aspect === 'partner-code').length;
+  const outIds = map.rows.filter(r => r.aspect === 'out-id').length;
   console.info(
-    `partner-surface-inventory.json baked: ${map.rows.length} rows · chrome nav ${listPartnerChromeCount(map)} · partner-codes ${partnerCodes}`
+    `partner-surface-inventory.json baked: ${map.rows.length} rows · chrome nav ${listPartnerChromeCount(map)} · partner-codes ${partnerCodes} · out-ids ${outIds}`
   );
   return 0;
 }

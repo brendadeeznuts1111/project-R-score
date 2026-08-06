@@ -72,6 +72,21 @@
 | `NOV` | `PartnerCode` | `partners-ops` | `operator_ready` | `/portal/partners/#partner/NOV` |
 | `SPEN` | `PartnerCode` | `partners-ops` | `operator_ready` | `/portal/partners/#partner/SPEN` |
 
+## OutIds
+
+| OutId | Brand | PartnerCode | Status | Href |
+| ----- | ----- | ----------- | ------ | ---- |
+| `out-ASH-1` | `OutId` | `ASH` | `ready` | `/portal/partners/#partner/ASH` |
+| `out-ASH-2` | `OutId` | `ASH` | `deferred` | `/portal/partners/#partner/ASH` |
+| `out-BIL-1` | `OutId` | `BIL` | `ready` | `/portal/partners/#partner/BIL` |
+| `out-NOV-1` | `OutId` | `NOV` | `ready` | `/portal/partners/#partner/NOV` |
+| `out-NOV-2` | `OutId` | `NOV` | `deferred` | `/portal/partners/#partner/NOV` |
+| `out-SPEN-1` | `OutId` | `SPEN` | `ready` | `/portal/partners/#partner/SPEN` |
+| `out-SPEN-2` | `OutId` | `SPEN` | `ready` | `/portal/partners/#partner/SPEN` |
+| `out-SPEN-3` | `OutId` | `SPEN` | `ready` | `/portal/partners/#partner/SPEN` |
+| `out-SPEN-4` | `OutId` | `SPEN` | `ready` | `/portal/partners/#partner/SPEN` |
+| `out-SPEN-5` | `OutId` | `SPEN` | `deferred` | `/portal/partners/#partner/SPEN` |
+
 ## Partner boards
 
 | Aspect | Token | Href | Registry |

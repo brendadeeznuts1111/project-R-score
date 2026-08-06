@@ -9,7 +9,9 @@ import {
   buildPartnerSurfaceInventory,
   partnerDeskHrefs,
   type PartnerSurfaceInventory,
+  type PartnerSurfaceLiveOut,
   type PartnerSurfaceRow,
+  PARTNER_SURFACE_OUT_ID_PATTERN,
 } from './partner-surface-inventory.ts';
 
 export { partnerDeskHrefs };
@@ -20,7 +22,10 @@ export const PARTNER_SURFACE_GENERATED_DOC_REL =
 export type LivePartnerCodeRow = {
   readonly code: string;
   readonly phase?: string;
+  readonly callSign?: string;
 };
+
+export type LivePartnerOutRow = PartnerSurfaceLiveOut;
 
 function cell(value: string | undefined | null): string {
   const t = (value ?? '').trim();
@@ -155,6 +160,27 @@ export function formatPartnerSurfaceGeneratedMarkdown(
     );
   }
 
+  const outIds = inv.rows
+    .filter(r => r.aspect === 'out-id')
+    .slice()
+    .sort(sortByToken);
+
+  lines.push(
+    '',
+    '## OutIds',
+    '',
+    '| OutId | Brand | PartnerCode | Status | Href |',
+    '| ----- | ----- | ----------- | ------ | ---- |'
+  );
+
+  for (const r of outIds) {
+    const bag = r.outId;
+    if (!bag) continue;
+    lines.push(
+      `| \`${r.token}\` | \`${bag.brandRef}\` | \`${bag.partnerCode}\` | ${bag.status ? `\`${bag.status}\`` : '—'} | ${cell(r.href)} |`
+    );
+  }
+
   lines.push(
     '',
     '## Partner boards',
@@ -218,9 +244,63 @@ export function livePartnerCodesFromPartnersOps(
     const raw = rec.code ?? rec.partnerCode;
     if (typeof raw !== 'string' || !raw.trim()) continue;
     const phase = typeof rec.phase === 'string' ? rec.phase : undefined;
-    out.push({ code: raw.trim().toUpperCase(), phase });
+    const callSign =
+      typeof rec.callSign === 'string' && rec.callSign.trim()
+        ? rec.callSign.trim().toUpperCase()
+        : undefined;
+    out.push({ code: raw.trim().toUpperCase(), phase, ...(callSign ? { callSign } : {}) });
   }
   return out;
+}
+
+/** Parse OutId seats from partners[].outs[] on a partners-ops-shaped artifact. */
+export function liveOutIdsFromPartnersOps(
+  // eslint-disable-next-line harness/no-unknown-function-param -- registry JSON edge
+  artifact: unknown
+): readonly LivePartnerOutRow[] {
+  if (typeof artifact !== 'object' || artifact === null) return [];
+  const partners = (artifact as { partners?: unknown }).partners;
+  if (!Array.isArray(partners)) return [];
+  const out: LivePartnerOutRow[] = [];
+  for (const p of partners) {
+    if (typeof p !== 'object' || p === null) continue;
+    const rec = p as Record<string, unknown>;
+    const rawCode = rec.code ?? rec.partnerCode;
+    if (typeof rawCode !== 'string' || !rawCode.trim()) continue;
+    const partnerCode = rawCode.trim().toUpperCase();
+    const outs = rec.outs;
+    if (!Array.isArray(outs)) continue;
+    for (const seat of outs) {
+      if (typeof seat !== 'object' || seat === null) continue;
+      const seatRec = seat as Record<string, unknown>;
+      const rawId = seatRec.id;
+      if (typeof rawId !== 'string' || !rawId.trim()) continue;
+      const outId = rawId.trim();
+      if (!PARTNER_SURFACE_OUT_ID_PATTERN.test(outId)) continue;
+      const status = typeof seatRec.status === 'string' ? seatRec.status : undefined;
+      out.push({
+        outId,
+        partnerCode,
+        ...(status ? { status } : {}),
+      });
+    }
+  }
+  return out;
+}
+
+export async function loadLiveOutIds(
+  partnersOpsAbsPath: string
+): Promise<{ outs: readonly LivePartnerOutRow[] | null; warned: boolean }> {
+  const file = Bun.file(partnersOpsAbsPath);
+  if (!(await file.exists())) {
+    return { outs: null, warned: true };
+  }
+  try {
+    const artifact = await file.json();
+    return { outs: liveOutIdsFromPartnersOps(artifact), warned: false };
+  } catch {
+    return { outs: null, warned: true };
+  }
 }
 
 export async function loadLivePartnerCodes(

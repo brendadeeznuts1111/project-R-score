@@ -8,11 +8,14 @@
  *
  * @see docs/design/partner-surface-inventory.md
  */
-import type {
-  PartnerSurfaceBrandBag,
-  PartnerSurfaceFitnessScore,
-  PartnerSurfacePartnerCodeBag,
-  PartnerSurfaceRow,
+import {
+  PARTNER_SURFACE_CALL_SIGN_PATTERN,
+  PARTNER_SURFACE_OUT_ID_PATTERN,
+  type PartnerSurfaceBrandBag,
+  type PartnerSurfaceFitnessScore,
+  type PartnerSurfaceOutIdBag,
+  type PartnerSurfacePartnerCodeBag,
+  type PartnerSurfaceRow,
 } from './partner-surface-inventory.ts';
 
 export const PARTNER_SURFACE_BRAND_CATEGORIES = [
@@ -305,13 +308,18 @@ export function checkLiveCodesCoveredByInventory(
   return issues;
 }
 
+export type LivePartnerCodeMeta = {
+  readonly phase?: string;
+  readonly callSign?: string;
+};
+
 /**
  * Prove each partner-code token exists in the partners-ops artifact and that
  * phase matches when both sides declare it.
  */
 export function checkPartnerCodeArtifactPresence(
   rows: readonly PartnerSurfaceRow[],
-  liveByCode: ReadonlyMap<string, string | undefined>
+  liveByCode: ReadonlyMap<string, LivePartnerCodeMeta | string | undefined>
 ): readonly BrandLinkIssue[] {
   const issues: BrandLinkIssue[] = [];
   for (const r of rows) {
@@ -326,12 +334,199 @@ export function checkPartnerCodeArtifactPresence(
       });
       continue;
     }
-    const livePhase = liveByCode.get(code);
+    const meta = liveByCode.get(code);
+    const livePhase = typeof meta === 'string' ? meta : meta?.phase;
     const bagPhase = r.partnerCode.phase?.trim();
     if (bagPhase && livePhase && bagPhase !== livePhase) {
       issues.push({
         level: 'warn',
         message: `${r.id}: partnerCode.phase "${bagPhase}" drifts from partners-ops phase "${livePhase}"`,
+      });
+    }
+  }
+  return issues;
+}
+
+/**
+ * Warn when a live partner-code is missing callSign or the callSign fails
+ * PartnerCallSignCode shape (`CODE-NNN`).
+ */
+export function checkPartnerCallSignPresence(
+  rows: readonly PartnerSurfaceRow[],
+  liveByCode: ReadonlyMap<string, LivePartnerCodeMeta>
+): readonly BrandLinkIssue[] {
+  const issues: BrandLinkIssue[] = [];
+  for (const r of rows) {
+    if (r.aspect !== 'partner-code' || !r.partnerCode) continue;
+    const code = r.token.trim().toUpperCase();
+    const live = liveByCode.get(code);
+    const callSign = (r.partnerCode.callSign ?? live?.callSign)?.trim().toUpperCase();
+    if (!callSign) {
+      issues.push({
+        level: 'warn',
+        message: `${r.id}: partners-ops callSign missing for "${code}"`,
+      });
+      continue;
+    }
+    if (!PARTNER_SURFACE_CALL_SIGN_PATTERN.test(callSign)) {
+      issues.push({
+        level: 'warn',
+        message:
+          `${r.id}: callSign "${callSign}" does not match PartnerCallSignCode ` +
+          `(expected ^[A-Z]{3,6}-[0-9]{3}$)`,
+      });
+    }
+  }
+  return issues;
+}
+
+/**
+ * out-id rows must link an active OutId brand with registryRef and an owning
+ * PartnerCode present in the live code set when provided.
+ */
+export function checkOutIdBag(
+  rowId: string, // brand-ok — inventory row key
+  token: string,
+  bag: PartnerSurfaceOutIdBag,
+  options: {
+    readonly brandByToken: ReadonlyMap<string, BrandBagByTokenEntry>;
+    readonly registryTokens: ReadonlySet<string>;
+    readonly liveCodes?: ReadonlySet<string>;
+  }
+): readonly BrandLinkIssue[] {
+  const issues: BrandLinkIssue[] = [];
+
+  if (!bag.brandRef?.trim()) {
+    issues.push({
+      level: 'error',
+      message: `${rowId}: outId.brandRef is required`,
+    });
+    return issues;
+  }
+  if (!bag.registryRef?.trim()) {
+    issues.push({
+      level: 'error',
+      message: `${rowId}: outId.registryRef is required`,
+    });
+    return issues;
+  }
+  if (!bag.partnerCode?.trim()) {
+    issues.push({
+      level: 'error',
+      message: `${rowId}: outId.partnerCode is required`,
+    });
+    return issues;
+  }
+
+  const brand = options.brandByToken.get(bag.brandRef);
+  if (!brand) {
+    issues.push({
+      level: 'error',
+      message: `${rowId}: outId.brandRef "${bag.brandRef}" is not an inventory brand token`,
+    });
+  } else {
+    if (!brand.bag.isActive) {
+      issues.push({
+        level: 'error',
+        message: `${rowId}: outId.brandRef "${bag.brandRef}" is inactive (${brand.rowId})`,
+      });
+    }
+    if (!brand.bag.registryRef?.trim()) {
+      issues.push({
+        level: 'error',
+        message: `${rowId}: outId.brandRef "${bag.brandRef}" has no brand.registryRef`,
+      });
+    } else if (brand.bag.registryRef !== bag.registryRef) {
+      issues.push({
+        level: 'warn',
+        message:
+          `${rowId}: outId.registryRef "${bag.registryRef}" drifts from ` +
+          `brand.registryRef "${brand.bag.registryRef}"`,
+      });
+    }
+  }
+
+  if (!options.registryTokens.has(bag.registryRef)) {
+    issues.push({
+      level: 'error',
+      message: `${rowId}: outId.registryRef "${bag.registryRef}" has no inventory registry row`,
+    });
+  }
+
+  if (!PARTNER_SURFACE_OUT_ID_PATTERN.test(token.trim())) {
+    issues.push({
+      level: 'error',
+      message: `${rowId}: out-id token "${token}" does not match OutId pattern`,
+    });
+  }
+
+  const owning = bag.partnerCode.trim().toUpperCase();
+  if (options.liveCodes && !options.liveCodes.has(owning)) {
+    issues.push({
+      level: 'warn',
+      message: `${rowId}: outId.partnerCode "${owning}" not present in partners-ops live codes`,
+    });
+  }
+
+  return issues;
+}
+
+export type LiveOutMeta = {
+  readonly partnerCode: string;
+  readonly status?: string;
+};
+
+/** Warn when partners-ops has an out with no inventory out-id row. */
+export function checkLiveOutsCoveredByInventory(
+  rows: readonly PartnerSurfaceRow[],
+  liveOutIds: ReadonlySet<string>
+): readonly BrandLinkIssue[] {
+  const inventoried = new Set(rows.filter(r => r.aspect === 'out-id').map(r => r.token.trim()));
+  const issues: BrandLinkIssue[] = [];
+  for (const outId of liveOutIds) {
+    if (!inventoried.has(outId)) {
+      issues.push({
+        level: 'warn',
+        message: `partners-ops live out "${outId}" has no inventory out-id row`,
+      });
+    }
+  }
+  return issues;
+}
+
+/**
+ * Prove each out-id token exists in partners-ops outs[] and warn on status drift.
+ */
+export function checkOutIdArtifactPresence(
+  rows: readonly PartnerSurfaceRow[],
+  liveByOutId: ReadonlyMap<string, LiveOutMeta>
+): readonly BrandLinkIssue[] {
+  const issues: BrandLinkIssue[] = [];
+  for (const r of rows) {
+    if (r.aspect !== 'out-id' || !r.outId) continue;
+    const outId = r.token.trim();
+    const live = liveByOutId.get(outId);
+    if (!live) {
+      issues.push({
+        level: 'error',
+        message:
+          `${r.id}: out-id "${outId}" not found in partners-ops.json ` +
+          `partners[].outs[].id (registry presence failed)`,
+      });
+      continue;
+    }
+    const bagCode = r.outId.partnerCode.trim().toUpperCase();
+    if (live.partnerCode !== bagCode) {
+      issues.push({
+        level: 'warn',
+        message: `${r.id}: outId.partnerCode "${bagCode}" drifts from partners-ops owner "${live.partnerCode}"`,
+      });
+    }
+    const bagStatus = r.outId.status?.trim();
+    if (bagStatus && live.status && bagStatus !== live.status) {
+      issues.push({
+        level: 'warn',
+        message: `${r.id}: outId.status "${bagStatus}" drifts from partners-ops status "${live.status}"`,
       });
     }
   }

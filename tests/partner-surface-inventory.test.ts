@@ -3,6 +3,7 @@ import {
   allPartnerSurfaceRows,
   buildPartnerSurfaceInventory,
   listPartnerChromeNavItems,
+  outIdSurfaceRows,
   partnerChromeNavSurfaceRows,
   partnerCodeSurfaceRows,
   partnerDeskHrefs,
@@ -10,10 +11,16 @@ import {
 import { explainHomonym } from '../lib/docs/workspace-taxonomy.ts';
 
 const LIVE_FIXTURE = [
-  { code: 'ASH', phase: 'operator_ready' },
-  { code: 'BIL', phase: 'operator_ready' },
-  { code: 'NOV', phase: 'operator_ready' },
-  { code: 'SPEN', phase: 'operator_ready' },
+  { code: 'ASH', phase: 'operator_ready', callSign: 'ASH-001' },
+  { code: 'BIL', phase: 'operator_ready', callSign: 'BIL-001' },
+  { code: 'NOV', phase: 'operator_ready', callSign: 'NOV-001' },
+  { code: 'SPEN', phase: 'operator_ready', callSign: 'SPEN-001' },
+] as const;
+
+const LIVE_OUTS = [
+  { outId: 'out-ASH-1', partnerCode: 'ASH', status: 'ready' },
+  { outId: 'out-ASH-2', partnerCode: 'ASH', status: 'deferred' },
+  { outId: 'out-SPEN-1', partnerCode: 'SPEN', status: 'ready' },
 ] as const;
 
 describe('partner surface inventory', () => {
@@ -112,6 +119,7 @@ describe('partner surface inventory', () => {
     for (const r of codes) {
       expect(r.partnerCode?.brandRef).toBe('PartnerCode');
       expect(r.partnerCode?.registryRef).toBe('partners-ops');
+      expect(r.partnerCode?.callSign).toBe(`${r.token}-001`);
       expect(r.properties).toContain('derived-from-partners-ops');
       expect(r.href).toBe(`/portal/partners/#partner/${r.token}`);
     }
@@ -120,5 +128,23 @@ describe('partner surface inventory', () => {
       livePartnerCodes: LIVE_FIXTURE,
     });
     expect(inv.rows.filter(r => r.aspect === 'partner-code').length).toBe(4);
+  });
+
+  test('out-id rows derive from live partners-ops outs', () => {
+    expect(outIdSurfaceRows([]).length).toBe(0);
+    const outs = outIdSurfaceRows(LIVE_OUTS);
+    expect(outs.length).toBe(3);
+    for (const r of outs) {
+      expect(r.outId?.brandRef).toBe('OutId');
+      expect(r.outId?.registryRef).toBe('partners-ops');
+      expect(r.properties).toContain('derived-from-partners-ops');
+      expect(r.href).toBe(`/portal/partners/#partner/${r.outId!.partnerCode}`);
+    }
+    expect(outs.map(r => r.token)).toEqual(['out-ASH-1', 'out-ASH-2', 'out-SPEN-1']);
+    const inv = buildPartnerSurfaceInventory('1970-01-01T00:00:00.000Z', {
+      livePartnerCodes: LIVE_FIXTURE,
+      liveOutIds: LIVE_OUTS,
+    });
+    expect(inv.rows.filter(r => r.aspect === 'out-id').length).toBe(3);
   });
 });

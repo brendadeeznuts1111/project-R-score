@@ -3,6 +3,7 @@ import { buildPartnerSurfaceInventory } from '../lib/docs/partner-surface-invent
 import {
   PARTNER_SURFACE_GENERATED_DOC_REL,
   formatPartnerSurfaceGeneratedMarkdown,
+  liveOutIdsFromPartnersOps,
   livePartnerCodesFromPartnersOps,
   partnerDeskHrefs,
 } from '../lib/docs/partner-surface-docs.ts';
@@ -20,11 +21,15 @@ describe('partner-surface-docs', () => {
 
   test('generated markdown includes brand linking columns', () => {
     const live = [
-      { code: 'ASH', phase: 'operator_ready' },
-      { code: 'SPEN', phase: 'operator_ready' },
+      { code: 'ASH', phase: 'operator_ready', callSign: 'ASH-001' },
+      { code: 'SPEN', phase: 'operator_ready', callSign: 'SPEN-001' },
+    ];
+    const outs = [
+      { outId: 'out-ASH-1', partnerCode: 'ASH', status: 'ready' },
+      { outId: 'out-SPEN-1', partnerCode: 'SPEN', status: 'ready' },
     ];
     const md = formatPartnerSurfaceGeneratedMarkdown(
-      buildPartnerSurfaceInventory('—', { livePartnerCodes: live }),
+      buildPartnerSurfaceInventory('—', { livePartnerCodes: live, liveOutIds: outs }),
       live
     );
     expect(md).toContain('## Brands');
@@ -37,6 +42,8 @@ describe('partner-surface-docs', () => {
     expect(md).toContain('| `PartnerCode` | 4 | yes | yes | `identity` |');
     expect(md).toContain('## Partner codes');
     expect(md).toContain('| `SPEN` | `PartnerCode` | `partners-ops` |');
+    expect(md).toContain('## OutIds');
+    expect(md).toContain('| `out-SPEN-1` | `OutId` | `SPEN` | `ready` |');
     expect(md).toContain('## Domains');
     expect(md).toContain('## Partner boards');
     expect(md).toContain('## Live PartnerCodes');
@@ -46,13 +53,37 @@ describe('partner-surface-docs', () => {
     );
   });
 
-  test('livePartnerCodesFromPartnersOps reads code + phase', () => {
+  test('livePartnerCodesFromPartnersOps reads code + phase + callSign', () => {
     const codes = livePartnerCodesFromPartnersOps({
-      partners: [{ code: 'ash', phase: 'onboarding' }, { partnerCode: 'BIL' }, { nope: true }],
+      partners: [
+        { code: 'ash', phase: 'onboarding', callSign: 'ash-001' },
+        { partnerCode: 'BIL' },
+        { nope: true },
+      ],
     });
     expect(codes).toEqual([
-      { code: 'ASH', phase: 'onboarding' },
+      { code: 'ASH', phase: 'onboarding', callSign: 'ASH-001' },
       { code: 'BIL', phase: undefined },
+    ]);
+  });
+
+  test('liveOutIdsFromPartnersOps reads outs[].id + status', () => {
+    const outs = liveOutIdsFromPartnersOps({
+      partners: [
+        {
+          code: 'ash',
+          outs: [
+            { id: 'out-ASH-1', status: 'ready' },
+            { id: 'bad-id', status: 'ready' },
+            { id: 'out-ASH-2' },
+          ],
+        },
+        { code: 'BIL', outs: 'nope' },
+      ],
+    });
+    expect(outs).toEqual([
+      { outId: 'out-ASH-1', partnerCode: 'ASH', status: 'ready' },
+      { outId: 'out-ASH-2', partnerCode: 'ASH' },
     ]);
   });
 

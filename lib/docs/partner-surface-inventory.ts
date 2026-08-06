@@ -23,6 +23,7 @@ export const PARTNER_SURFACE_ASPECTS = [
   'registry',
   'brand',
   'partner-code',
+  'out-id',
   'package',
   'lib-module',
   'wire-field',
@@ -103,7 +104,30 @@ export type PartnerSurfacePartnerCodeBag = {
   readonly registryRef: string;
   /** Operator phase when known (e.g. operator_ready). */
   readonly phase?: string;
+  /** Desk call sign when known (e.g. ASH-001). */
+  readonly callSign?: string;
 };
+
+/**
+ * Live OutId seat — bookmaker account linked to the OutId brand + owning
+ * PartnerCode in partners-ops.
+ */
+export type PartnerSurfaceOutIdBag = {
+  /** Inventory brand token (OutId). */
+  readonly brandRef: string;
+  /** Inventory registry token that lists this out. */
+  readonly registryRef: string;
+  /** Owning PartnerCode. */
+  readonly partnerCode: string;
+  /** outs[].status when present. */
+  readonly status?: string;
+};
+
+/** OutId wire shape — mirrors brand.OutId pattern. */
+export const PARTNER_SURFACE_OUT_ID_PATTERN = /^out-[A-Z]{3,6}-[1-9][0-9]*$/;
+
+/** PartnerCallSignCode shape used for partners-ops callSign checks. */
+export const PARTNER_SURFACE_CALL_SIGN_PATTERN = /^[A-Z]{3,6}-[0-9]{3}$/;
 
 export type PartnerSurfaceMoneyPolicy = 'integerMinorUnits' | 'forbidden' | 'unset';
 
@@ -198,6 +222,7 @@ export type PartnerSurfaceRow = {
   readonly notes?: string;
   readonly brand?: PartnerSurfaceBrandBag;
   readonly partnerCode?: PartnerSurfacePartnerCodeBag;
+  readonly outId?: PartnerSurfaceOutIdBag;
   readonly registry?: PartnerSurfaceRegistryBag;
   readonly wireField?: PartnerSurfaceWireFieldBag;
   readonly chromeNav?: PartnerSurfaceChromeNavBag;
@@ -225,6 +250,8 @@ function row(partial: PartnerSurfaceRow): PartnerSurfaceRow {
     (out as { brand?: PartnerSurfaceBrandBag }).brand = partial.brand;
   if (partial.partnerCode !== undefined)
     (out as { partnerCode?: PartnerSurfacePartnerCodeBag }).partnerCode = partial.partnerCode;
+  if (partial.outId !== undefined)
+    (out as { outId?: PartnerSurfaceOutIdBag }).outId = partial.outId;
   if (partial.registry !== undefined)
     (out as { registry?: PartnerSurfaceRegistryBag }).registry = partial.registry;
   if (partial.wireField !== undefined)
@@ -1115,6 +1142,14 @@ export function partnerPortalBoardSurfaceRows(): readonly PartnerSurfaceRow[] {
 export type PartnerSurfaceLiveCode = {
   readonly code: string;
   readonly phase?: string;
+  readonly callSign?: string;
+};
+
+/** Live OutId seat sourced from partners-ops outs[] (or a test fixture). */
+export type PartnerSurfaceLiveOut = {
+  readonly outId: string;
+  readonly partnerCode: string;
+  readonly status?: string;
 };
 
 /**
@@ -1128,6 +1163,7 @@ export function partnerCodeSurfaceRows(
     .map(c => ({
       code: c.code.trim().toUpperCase(),
       phase: c.phase?.trim() || undefined,
+      callSign: c.callSign?.trim().toUpperCase() || undefined,
     }))
     .filter(c => /^[A-Z]{3,6}$/.test(c.code))
     .sort((a, b) => a.code.localeCompare(b.code))
@@ -1147,12 +1183,59 @@ export function partnerCodeSurfaceRows(
           'derived-from-partners-ops',
           'brandRef=PartnerCode',
           'registryRef=partners-ops',
+          ...(c.callSign ? [`callSign=${c.callSign}`] : []),
         ],
         owner: 'partners-ops',
         partnerCode: {
           brandRef: 'PartnerCode',
           registryRef: 'partners-ops',
           ...(c.phase ? { phase: c.phase } : {}),
+          ...(c.callSign ? { callSign: c.callSign } : {}),
+        },
+      });
+    });
+}
+
+/**
+ * Derive out-id aspect rows from live partners-ops outs (partner-code style).
+ * Empty input → no out-id rows.
+ */
+export function outIdSurfaceRows(
+  liveOuts: readonly PartnerSurfaceLiveOut[] = []
+): readonly PartnerSurfaceRow[] {
+  return [...liveOuts]
+    .map(o => ({
+      outId: o.outId.trim(),
+      partnerCode: o.partnerCode.trim().toUpperCase(),
+      status: o.status?.trim() || undefined,
+    }))
+    .filter(o => PARTNER_SURFACE_OUT_ID_PATTERN.test(o.outId) && /^[A-Z]{3,6}$/.test(o.partnerCode))
+    .sort((a, b) => a.outId.localeCompare(b.outId))
+    .map(o => {
+      const hrefs = partnerDeskHrefs(o.partnerCode);
+      return row({
+        id: `out-id.${o.outId}`,
+        aspect: 'out-id',
+        machine: 'identity',
+        token: o.outId,
+        typeOrExport: 'OutId',
+        repo: 'project-R-score',
+        path: 'public/registry/partners-ops.json',
+        href: hrefs.partnersHref,
+        properties: [
+          'live out seat',
+          'derived-from-partners-ops',
+          'brandRef=OutId',
+          'registryRef=partners-ops',
+          `partnerCode=${o.partnerCode}`,
+          ...(o.status ? [`status=${o.status}`] : []),
+        ],
+        owner: 'partners-ops',
+        outId: {
+          brandRef: 'OutId',
+          registryRef: 'partners-ops',
+          partnerCode: o.partnerCode,
+          ...(o.status ? { status: o.status } : {}),
         },
       });
     });
@@ -1161,6 +1244,8 @@ export function partnerCodeSurfaceRows(
 export type PartnerSurfaceBuildOptions = {
   /** When set, partner-code rows are derived from these codes (partners-ops bake). */
   readonly livePartnerCodes?: readonly PartnerSurfaceLiveCode[];
+  /** When set, out-id rows are derived from these outs (partners-ops bake). */
+  readonly liveOutIds?: readonly PartnerSurfaceLiveOut[];
 };
 
 export function allPartnerSurfaceRows(
@@ -1171,6 +1256,7 @@ export function allPartnerSurfaceRows(
     ...partnerChromeNavSurfaceRows(),
     ...partnerPortalBoardSurfaceRows(),
     ...partnerCodeSurfaceRows(options.livePartnerCodes ?? []),
+    ...outIdSurfaceRows(options.liveOutIds ?? []),
   ];
 }
 
