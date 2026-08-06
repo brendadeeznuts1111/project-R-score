@@ -1,8 +1,8 @@
 {
   "kind": "partner-surface-inventory",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "claim": "partner-surface-inventory",
-  "bakedAt": "2026-08-06T18:42:31.437Z",
+  "bakedAt": "2026-08-06T18:52:14.385Z",
   "principle": "map-before-rename",
   "chromeDomain": {
     "id": "partner",
@@ -40,7 +40,11 @@
       "owner": "organization / naming-grammar",
       "machine": "sessionLane",
       "typeOrExport": "SessionLaneId",
-      "notes": "Filename token in <t>-<lane>-<slug>; not chrome Domain or ConceptDomain"
+      "notes": "Filename token in <t>-<lane>-<slug>; not chrome Domain or ConceptDomain",
+      "taxonomy": {
+        "homonymDistinct": true,
+        "conceptDomain": "partners"
+      }
     },
     {
       "id": "taxonomy.chromeDomain.partner",
@@ -56,7 +60,11 @@
       "owner": "portal chrome / ISSUE-ROUTING",
       "machine": "chromeDomain",
       "typeOrExport": "PortalChromeDomainLane",
-      "notes": "Homonym of session lane partner; boards use data-domain=partner"
+      "notes": "Homonym of session lane partner; boards use data-domain=partner",
+      "taxonomy": {
+        "homonymDistinct": true,
+        "conceptDomain": "partners"
+      }
     },
     {
       "id": "taxonomy.conceptDomain.partners",
@@ -72,7 +80,11 @@
       "owner": "concepts / DOMAIN_CONCEPT_SHAPE",
       "machine": "conceptDomain",
       "typeOrExport": "ConceptDomain",
-      "notes": "Plural token — not chrome partner and not PartnerCode"
+      "notes": "Plural token — not chrome partner and not PartnerCode",
+      "taxonomy": {
+        "homonymDistinct": true,
+        "conceptDomain": "partners"
+      }
     },
     {
       "id": "taxonomy.commitScope.partner",
@@ -88,7 +100,11 @@
       "owner": "workspace taxonomy correlations",
       "machine": "commitScope",
       "typeOrExport": "commitScopeHint",
-      "notes": "Guidance only — not a frozen enum"
+      "notes": "Guidance only — not a frozen enum",
+      "taxonomy": {
+        "homonymDistinct": true,
+        "conceptDomain": "partners"
+      }
     },
     {
       "id": "taxonomy.commitScope.partners",
@@ -103,7 +119,11 @@
       ],
       "owner": "workspace taxonomy correlations",
       "machine": "commitScope",
-      "typeOrExport": "commitScopeHint"
+      "typeOrExport": "commitScopeHint",
+      "taxonomy": {
+        "homonymDistinct": true,
+        "conceptDomain": "partners"
+      }
     },
     {
       "id": "taxonomy.commitScope.ops",
@@ -119,7 +139,11 @@
       "owner": "workspace taxonomy correlations",
       "machine": "commitScope",
       "typeOrExport": "commitScopeHint",
-      "notes": "Common commit scope for partner-desk work; not a Domain lane"
+      "notes": "Common commit scope for partner-desk work; not a Domain lane",
+      "taxonomy": {
+        "homonymDistinct": true,
+        "conceptDomain": "partners"
+      }
     },
     {
       "id": "portal-board.lanes",
@@ -135,7 +159,14 @@
       "machine": "nav",
       "typeOrExport": "page.lanes",
       "href": "/portal/lanes/",
-      "notes": "Explains partner homonym across machines — not a partner desk board"
+      "notes": "Explains partner homonym across machines — not a partner desk board",
+      "chromeNav": {
+        "domain": "knowledge",
+        "group": "registry",
+        "tier": "overflow",
+        "registryArtifact": "workspace-lane-map",
+        "cli": "bun run workspace-taxonomy:bake"
+      }
     },
     {
       "id": "brand.PartnerCode",
@@ -151,7 +182,17 @@
       "owner": "partners core / branded operations",
       "machine": "identity",
       "typeOrExport": "PartnerCode",
-      "notes": "Only unqualified partner key — see partner-type-reference-map"
+      "notes": "Only unqualified partner key — see partner-type-reference-map",
+      "brand": {
+        "pattern": "^[A-Z]{3,6}$",
+        "mintAuthority": "parsePartnerCode",
+        "module": "lib/types/branded/operations.ts",
+        "interiorOnly": false,
+        "replaces": [
+          "partnerId",
+          "partner_id"
+        ]
+      }
     },
     {
       "id": "brand.PartnerCallSignCode",
@@ -165,7 +206,13 @@
       ],
       "owner": "partners core",
       "machine": "identity",
-      "typeOrExport": "PartnerCallSignCode"
+      "typeOrExport": "PartnerCallSignCode",
+      "brand": {
+        "pattern": "^[A-Z]{3,6}-[0-9]{3}$",
+        "mintAuthority": "parsePartnerCallSignCode",
+        "module": "lib/types/branded/operations.ts",
+        "interiorOnly": false
+      }
     },
     {
       "id": "brand.PartnerProfileKey",
@@ -180,7 +227,12 @@
       "owner": "operations",
       "machine": "identity",
       "typeOrExport": "PartnerProfileKey",
-      "notes": "Not dashboard or partner business identity"
+      "notes": "Not dashboard or partner business identity",
+      "brand": {
+        "mintAuthority": "asPartnerProfileKey",
+        "module": "lib/types/branded/operations.ts",
+        "interiorOnly": true
+      }
     },
     {
       "id": "brand.PartnerTemplateId",
@@ -193,7 +245,12 @@
       ],
       "owner": "operations / config",
       "machine": "identity",
-      "typeOrExport": "PartnerTemplateId"
+      "typeOrExport": "PartnerTemplateId",
+      "brand": {
+        "mintAuthority": "asPartnerTemplateId",
+        "module": "lib/types/branded/operations.ts",
+        "interiorOnly": true
+      }
     },
     {
       "id": "brand.OutId",
@@ -207,7 +264,17 @@
       ],
       "owner": "partners core",
       "machine": "identity",
-      "typeOrExport": "OutId"
+      "typeOrExport": "OutId",
+      "brand": {
+        "pattern": "^out-[A-Z]{3,6}-[1-9][0-9]*$",
+        "mintAuthority": "parseOutId",
+        "module": "lib/types/branded/operations.ts",
+        "interiorOnly": false,
+        "replaces": [
+          "accountId",
+          "SPEN-1 legacy"
+        ]
+      }
     },
     {
       "id": "brand.ExternalPartnerId",
@@ -221,7 +288,15 @@
       ],
       "owner": "adapter boundary",
       "machine": "identity",
-      "typeOrExport": "ExternalPartnerId"
+      "typeOrExport": "ExternalPartnerId",
+      "brand": {
+        "mintAuthority": "asExternalPartnerId",
+        "module": "lib/types/branded/operations.ts",
+        "interiorOnly": false,
+        "replaces": [
+          "partnerId"
+        ]
+      }
     },
     {
       "id": "brand.TreeNodeId",
@@ -235,7 +310,12 @@
       ],
       "owner": "operations",
       "machine": "identity",
-      "typeOrExport": "TreeNodeId"
+      "typeOrExport": "TreeNodeId",
+      "brand": {
+        "mintAuthority": "asTreeNodeId",
+        "module": "lib/types/branded/operations.ts",
+        "interiorOnly": true
+      }
     },
     {
       "id": "brand.parsers.partners-package",
@@ -250,7 +330,17 @@
       ],
       "owner": "@factorywager/partners",
       "machine": "identity",
-      "typeOrExport": "packages/partners identifiers"
+      "typeOrExport": "PartnerCode",
+      "notes": "Package re-export parsers — brand name remains PartnerCode in manifest",
+      "brand": {
+        "pattern": "^[A-Z]{3,6}$",
+        "mintAuthority": "packages/partners parsePartnerCode",
+        "module": "packages/partners/src/core/identifiers.ts",
+        "interiorOnly": false,
+        "replaces": [
+          "partnerId"
+        ]
+      }
     },
     {
       "id": "package.factorywager-partners",
@@ -348,7 +438,23 @@
       ],
       "owner": "partner-ops-registry",
       "machine": "artifact",
-      "href": "/registry/partners-ops.json"
+      "href": "/registry/partners-ops.json",
+      "registry": {
+        "schemaId": "factorywager.partners-ops.v2",
+        "artifactPath": "public/registry/partners-ops.json",
+        "conceptIds": [
+          "partner.phase.*",
+          "out.status.*",
+          "ops.view.per_account"
+        ],
+        "omits": [
+          "vaultKey",
+          "credentials",
+          "softBalance",
+          "apiKey"
+        ],
+        "moneyPolicy": "integerMinorUnits"
+      }
     },
     {
       "id": "registry.partner-health",
@@ -362,7 +468,18 @@
       ],
       "owner": "lib/partner-profile/partner-health",
       "machine": "artifact",
-      "href": "/registry/partner-health.json"
+      "href": "/registry/partner-health.json",
+      "registry": {
+        "schemaId": "partner-health.v1",
+        "artifactPath": "public/registry/partner-health.json",
+        "omits": [
+          "vaultKey",
+          "credentials",
+          "softBalance",
+          "password"
+        ],
+        "moneyPolicy": "forbidden"
+      }
     },
     {
       "id": "registry.partner-profiles",
@@ -376,7 +493,16 @@
       "owner": "partner-profile bake",
       "machine": "artifact",
       "href": "/registry/partner-profiles.json",
-      "notes": "Compatibility input — not new canonical authority"
+      "notes": "Compatibility input — not new canonical authority",
+      "registry": {
+        "schemaId": "partner-profiles.legacy",
+        "artifactPath": "public/registry/partner-profiles.json",
+        "omits": [
+          "vaultKey",
+          "credentials"
+        ],
+        "moneyPolicy": "unset"
+      }
     },
     {
       "id": "registry.partner-profile-coverage",
@@ -391,7 +517,17 @@
       ],
       "owner": "packages/partners profile-coverage adapter",
       "machine": "artifact",
-      "href": "/registry/partner-profile-coverage.json"
+      "href": "/registry/partner-profile-coverage.json",
+      "registry": {
+        "schemaId": "partner-profile-coverage.v1",
+        "artifactPath": "public/registry/partner-profile-coverage.json",
+        "omits": [
+          "vaultKey",
+          "credentials",
+          "softBalance"
+        ],
+        "moneyPolicy": "forbidden"
+      }
     },
     {
       "id": "registry.tennis.partner-contracts",
@@ -405,7 +541,16 @@
       "owner": "tennis-hq-registry",
       "machine": "artifact",
       "href": "/registry/tennis/partner-contracts.json",
-      "notes": "Trading chrome Domain; partner-adjacent contracts"
+      "notes": "Trading chrome Domain; partner-adjacent contracts",
+      "registry": {
+        "schemaId": "tennis.partner-contracts",
+        "artifactPath": "public/registry/tennis/partner-contracts.json",
+        "omits": [
+          "vaultKey",
+          "credentials"
+        ],
+        "moneyPolicy": "integerMinorUnits"
+      }
     },
     {
       "id": "registry.workspace-lane-map",
@@ -419,7 +564,40 @@
       ],
       "owner": "workspace taxonomy",
       "machine": "artifact",
-      "href": "/registry/workspace-lane-map.json"
+      "href": "/registry/workspace-lane-map.json",
+      "registry": {
+        "schemaId": "workspace-lane-map.v1",
+        "artifactPath": "public/registry/workspace-lane-map.json",
+        "omits": [
+          "softBalance",
+          "credentials"
+        ],
+        "moneyPolicy": "forbidden"
+      }
+    },
+    {
+      "id": "registry.partner-surface-inventory",
+      "aspect": "registry",
+      "token": "partner-surface-inventory",
+      "repo": "project-R-score",
+      "path": "public/registry/partner-surface-inventory.json",
+      "properties": [
+        "claim partner-surface-inventory",
+        "structured bags"
+      ],
+      "owner": "partner surface inventory",
+      "machine": "artifact",
+      "href": "/registry/partner-surface-inventory.json",
+      "registry": {
+        "schemaId": "partner-surface-inventory.v1",
+        "artifactPath": "public/registry/partner-surface-inventory.json",
+        "omits": [
+          "softBalance",
+          "credentials",
+          "vaultKey"
+        ],
+        "moneyPolicy": "forbidden"
+      }
     },
     {
       "id": "wire.partnerId.unqualified",
@@ -434,8 +612,14 @@
       ],
       "owner": "partner-type-reference-map",
       "machine": "identity",
-      "typeOrExport": "ExternalPartnerRef (target)",
-      "notes": "Means CODE / tree node / Kalshi row / remote id — isolate as ExternalPartnerRef"
+      "typeOrExport": "ExternalPartnerRef",
+      "notes": "Means CODE / tree node / Kalshi row / remote id — isolate as ExternalPartnerRef",
+      "wireField": {
+        "wireName": "partnerId",
+        "sourceSystemId": "unqualified",
+        "resolvesTo": "ExternalPartnerRef",
+        "quarantineOnFail": true
+      }
     },
     {
       "id": "wire.partner_id.sports",
@@ -449,7 +633,13 @@
       ],
       "owner": "sports-terminal adapter (planned)",
       "machine": "identity",
-      "typeOrExport": "ExternalPartnerRef"
+      "typeOrExport": "ExternalPartnerRef",
+      "wireField": {
+        "wireName": "partner_id",
+        "sourceSystemId": "sports-terminal",
+        "resolvesTo": "ExternalPartnerRef",
+        "quarantineOnFail": true
+      }
     },
     {
       "id": "wire.kalshi.partners.id",
@@ -463,7 +653,13 @@
       ],
       "owner": "execution adapter",
       "machine": "identity",
-      "typeOrExport": "ExternalPartnerRef"
+      "typeOrExport": "ExternalPartnerRef",
+      "wireField": {
+        "wireName": "partners[].id",
+        "sourceSystemId": "kalshi",
+        "resolvesTo": "ExternalPartnerRef",
+        "quarantineOnFail": true
+      }
     },
     {
       "id": "wire.pandora.partnerId",
@@ -477,7 +673,13 @@
       ],
       "owner": "adapter boundary",
       "machine": "identity",
-      "typeOrExport": "ExternalPartnerRef"
+      "typeOrExport": "ExternalPartnerRef",
+      "wireField": {
+        "wireName": "partnerId",
+        "sourceSystemId": "pandora",
+        "resolvesTo": "ExternalPartnerRef",
+        "quarantineOnFail": true
+      }
     },
     {
       "id": "doc.partner-domain-map",
@@ -659,7 +861,14 @@
       "machine": "nav",
       "typeOrExport": "PortalChromeNavItem",
       "href": "/portal/partners/",
-      "notes": "package groups · telegram forums · accounting · deposits · seat capital"
+      "notes": "package groups · telegram forums · accounting · deposits · seat capital",
+      "chromeNav": {
+        "domain": "partner",
+        "group": "ops",
+        "tier": "overflow",
+        "registryArtifact": "partners-ops",
+        "cli": "bun run telegram:handshake:catalog"
+      }
     },
     {
       "id": "chrome-nav.partner-health",
@@ -678,7 +887,14 @@
       "machine": "nav",
       "typeOrExport": "PortalChromeNavItem",
       "href": "/portal/partner/",
-      "notes": "partner domain readiness · profile alignment · per-out checks"
+      "notes": "partner domain readiness · profile alignment · per-out checks",
+      "chromeNav": {
+        "domain": "partner",
+        "group": "ops",
+        "tier": "overflow",
+        "registryArtifact": "partner-health",
+        "cli": "bun run partner:health:bake"
+      }
     },
     {
       "id": "chrome-nav.account",
@@ -697,7 +913,14 @@
       "machine": "nav",
       "typeOrExport": "PortalChromeNavItem",
       "href": "/portal/account/",
-      "notes": "single-account dossier · tree · telemetry · betlog · ops.view.per_account"
+      "notes": "single-account dossier · tree · telemetry · betlog · ops.view.per_account",
+      "chromeNav": {
+        "domain": "partner",
+        "group": "ops",
+        "tier": "overflow",
+        "registryArtifact": "partners-ops",
+        "cli": "bun run ops:dossier:seed"
+      }
     },
     {
       "id": "chrome-nav.partner-history",
@@ -716,7 +939,14 @@
       "machine": "nav",
       "typeOrExport": "PortalChromeNavItem",
       "href": "/portal/partner-history/",
-      "notes": "per-partner limit history board"
+      "notes": "per-partner limit history board",
+      "chromeNav": {
+        "domain": "partner",
+        "group": "ops",
+        "tier": "overflow",
+        "registryArtifact": "limit-raises",
+        "cli": "bun run ops:limits:demo"
+      }
     },
     {
       "id": "chrome-nav.limits",
@@ -735,7 +965,14 @@
       "machine": "nav",
       "typeOrExport": "PortalChromeNavItem",
       "href": "/portal/limits/",
-      "notes": "multi-factor partner limit raises · CLV"
+      "notes": "multi-factor partner limit raises · CLV",
+      "chromeNav": {
+        "domain": "partner",
+        "group": "ops",
+        "tier": "overflow",
+        "registryArtifact": "limit-raises",
+        "cli": "bun run ops:limits:demo"
+      }
     },
     {
       "id": "chrome-nav.limits-lab",
@@ -754,7 +991,14 @@
       "machine": "nav",
       "typeOrExport": "PortalChromeNavItem",
       "href": "/portal/limits-lab/",
-      "notes": "forecast / predict lab · multi-factor backtest"
+      "notes": "forecast / predict lab · multi-factor backtest",
+      "chromeNav": {
+        "domain": "partner",
+        "group": "ops",
+        "tier": "overflow",
+        "registryArtifact": "limit-forecast-lab",
+        "cli": "bun run ops:limits:predict"
+      }
     },
     {
       "id": "chrome-nav.bookmakers",
@@ -773,7 +1017,14 @@
       "machine": "nav",
       "typeOrExport": "PortalChromeNavItem",
       "href": "/portal/bookmakers/",
-      "notes": "@factorywager/bookmakers artifact · canonical bookmaker registry"
+      "notes": "@factorywager/bookmakers artifact · canonical bookmaker registry",
+      "chromeNav": {
+        "domain": "partner",
+        "group": "ops",
+        "tier": "overflow",
+        "registryArtifact": "bookmakers",
+        "cli": "bun run bookmakers:bake"
+      }
     },
     {
       "id": "chrome-nav.factory",
@@ -792,7 +1043,14 @@
       "machine": "nav",
       "typeOrExport": "PortalChromeNavItem",
       "href": "/portal/factory/",
-      "notes": "Factory Telegram ops · package-group wire · handshake"
+      "notes": "Factory Telegram ops · package-group wire · handshake",
+      "chromeNav": {
+        "domain": "partner",
+        "group": "ops",
+        "tier": "overflow",
+        "registryArtifact": "telegram-handshake",
+        "cli": "bun run telegram:verify"
+      }
     },
     {
       "id": "portal-board.partners",
@@ -809,7 +1067,14 @@
       "machine": "nav",
       "typeOrExport": "page.partners",
       "href": "/portal/partners/",
-      "notes": "package groups · telegram forums · accounting · deposits · seat capital"
+      "notes": "package groups · telegram forums · accounting · deposits · seat capital",
+      "chromeNav": {
+        "domain": "partner",
+        "group": "ops",
+        "tier": "overflow",
+        "registryArtifact": "partners-ops",
+        "cli": "bun run telegram:handshake:catalog"
+      }
     },
     {
       "id": "portal-board.partner",
@@ -826,7 +1091,14 @@
       "machine": "nav",
       "typeOrExport": "page.partnerHealth",
       "href": "/portal/partner/",
-      "notes": "partner domain readiness · profile alignment · per-out checks"
+      "notes": "partner domain readiness · profile alignment · per-out checks",
+      "chromeNav": {
+        "domain": "partner",
+        "group": "ops",
+        "tier": "overflow",
+        "registryArtifact": "partner-health",
+        "cli": "bun run partner:health:bake"
+      }
     },
     {
       "id": "portal-board.account",
@@ -843,7 +1115,14 @@
       "machine": "nav",
       "typeOrExport": "page.account",
       "href": "/portal/account/",
-      "notes": "single-account dossier · tree · telemetry · betlog · ops.view.per_account"
+      "notes": "single-account dossier · tree · telemetry · betlog · ops.view.per_account",
+      "chromeNav": {
+        "domain": "partner",
+        "group": "ops",
+        "tier": "overflow",
+        "registryArtifact": "partners-ops",
+        "cli": "bun run ops:dossier:seed"
+      }
     },
     {
       "id": "portal-board.partner-history",
@@ -860,7 +1139,14 @@
       "machine": "nav",
       "typeOrExport": "page.partner-history",
       "href": "/portal/partner-history/",
-      "notes": "per-partner limit history board"
+      "notes": "per-partner limit history board",
+      "chromeNav": {
+        "domain": "partner",
+        "group": "ops",
+        "tier": "overflow",
+        "registryArtifact": "limit-raises",
+        "cli": "bun run ops:limits:demo"
+      }
     },
     {
       "id": "portal-board.limits",
@@ -877,7 +1163,14 @@
       "machine": "nav",
       "typeOrExport": "page.limits",
       "href": "/portal/limits/",
-      "notes": "multi-factor partner limit raises · CLV"
+      "notes": "multi-factor partner limit raises · CLV",
+      "chromeNav": {
+        "domain": "partner",
+        "group": "ops",
+        "tier": "overflow",
+        "registryArtifact": "limit-raises",
+        "cli": "bun run ops:limits:demo"
+      }
     },
     {
       "id": "portal-board.limits-lab",
@@ -894,7 +1187,14 @@
       "machine": "nav",
       "typeOrExport": "page.limits-lab",
       "href": "/portal/limits-lab/",
-      "notes": "forecast / predict lab · multi-factor backtest"
+      "notes": "forecast / predict lab · multi-factor backtest",
+      "chromeNav": {
+        "domain": "partner",
+        "group": "ops",
+        "tier": "overflow",
+        "registryArtifact": "limit-forecast-lab",
+        "cli": "bun run ops:limits:predict"
+      }
     },
     {
       "id": "portal-board.bookmakers",
@@ -911,7 +1211,14 @@
       "machine": "nav",
       "typeOrExport": "page.bookmakers",
       "href": "/portal/bookmakers/",
-      "notes": "@factorywager/bookmakers artifact · canonical bookmaker registry"
+      "notes": "@factorywager/bookmakers artifact · canonical bookmaker registry",
+      "chromeNav": {
+        "domain": "partner",
+        "group": "ops",
+        "tier": "overflow",
+        "registryArtifact": "bookmakers",
+        "cli": "bun run bookmakers:bake"
+      }
     },
     {
       "id": "portal-board.factory",
@@ -928,7 +1235,14 @@
       "machine": "nav",
       "typeOrExport": "page.factory",
       "href": "/portal/factory/",
-      "notes": "Factory Telegram ops · package-group wire · handshake"
+      "notes": "Factory Telegram ops · package-group wire · handshake",
+      "chromeNav": {
+        "domain": "partner",
+        "group": "ops",
+        "tier": "overflow",
+        "registryArtifact": "telegram-handshake",
+        "cli": "bun run telegram:verify"
+      }
     }
   ],
   "docs": {

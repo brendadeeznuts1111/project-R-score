@@ -45,6 +45,49 @@ export type PartnerSurfaceMachine = (typeof PARTNER_SURFACE_MACHINES)[number];
 
 export type PartnerSurfaceRepo = 'project-R-score' | 'Kalshi-bot' | 'toc-ops' | 'sports-terminal';
 
+/** Layer-2 bag on brand rows — checkable against brand-manifest. */
+export type PartnerSurfaceBrandBag = {
+  readonly pattern?: string;
+  readonly mintAuthority: string;
+  readonly module: string;
+  readonly interiorOnly: boolean;
+  readonly replaces?: readonly string[];
+};
+
+export type PartnerSurfaceMoneyPolicy = 'integerMinorUnits' | 'forbidden' | 'unset';
+
+/** Layer-3 bag on registry rows — file + schema + omit policy. */
+export type PartnerSurfaceRegistryBag = {
+  readonly schemaId: string;
+  readonly artifactPath: string;
+  readonly conceptIds?: readonly string[];
+  readonly omits: readonly string[];
+  readonly moneyPolicy: PartnerSurfaceMoneyPolicy;
+};
+
+/** Wire-field semantics — never promote bare partnerId to PartnerCode. */
+export type PartnerSurfaceWireFieldBag = {
+  readonly wireName: string;
+  readonly sourceSystemId: string;
+  readonly resolvesTo: 'ExternalPartnerRef' | 'PartnerCode';
+  readonly quarantineOnFail: boolean;
+};
+
+/** Live chrome / board nav contract. */
+export type PartnerSurfaceChromeNavBag = {
+  readonly domain: string;
+  readonly group: string;
+  readonly tier: string;
+  readonly registryArtifact?: string;
+  readonly cli?: string;
+};
+
+/** Taxonomy homonym marker. */
+export type PartnerSurfaceTaxonomyBag = {
+  readonly homonymDistinct: boolean;
+  readonly conceptDomain?: string;
+};
+
 export type PartnerSurfaceRow = {
   /** Inventory row key (not a domain entity id). */
   readonly id: string; // brand-ok — opaque inventory row key
@@ -59,6 +102,11 @@ export type PartnerSurfaceRow = {
   readonly properties: readonly string[];
   readonly owner: string;
   readonly notes?: string;
+  readonly brand?: PartnerSurfaceBrandBag;
+  readonly registry?: PartnerSurfaceRegistryBag;
+  readonly wireField?: PartnerSurfaceWireFieldBag;
+  readonly chromeNav?: PartnerSurfaceChromeNavBag;
+  readonly taxonomy?: PartnerSurfaceTaxonomyBag;
 };
 
 function row(partial: PartnerSurfaceRow): PartnerSurfaceRow {
@@ -78,6 +126,16 @@ function row(partial: PartnerSurfaceRow): PartnerSurfaceRow {
     (out as { typeOrExport?: string }).typeOrExport = partial.typeOrExport;
   if (partial.href !== undefined) (out as { href?: string }).href = partial.href;
   if (partial.notes !== undefined) (out as { notes?: string }).notes = partial.notes;
+  if (partial.brand !== undefined)
+    (out as { brand?: PartnerSurfaceBrandBag }).brand = partial.brand;
+  if (partial.registry !== undefined)
+    (out as { registry?: PartnerSurfaceRegistryBag }).registry = partial.registry;
+  if (partial.wireField !== undefined)
+    (out as { wireField?: PartnerSurfaceWireFieldBag }).wireField = partial.wireField;
+  if (partial.chromeNav !== undefined)
+    (out as { chromeNav?: PartnerSurfaceChromeNavBag }).chromeNav = partial.chromeNav;
+  if (partial.taxonomy !== undefined)
+    (out as { taxonomy?: PartnerSurfaceTaxonomyBag }).taxonomy = partial.taxonomy;
   return out;
 }
 
@@ -95,6 +153,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     properties: ['SESSION_LANES', 'archive <lane>', 'display: partner'],
     owner: 'organization / naming-grammar',
     notes: 'Filename token in <t>-<lane>-<slug>; not chrome Domain or ConceptDomain',
+    taxonomy: { homonymDistinct: true, conceptDomain: 'partners' },
   }),
   row({
     id: 'taxonomy.chromeDomain.partner',
@@ -108,6 +167,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     properties: ['PORTAL_DOMAIN_LANE_META', 'label: Partner desk', 'ISSUE-ROUTING Domain'],
     owner: 'portal chrome / ISSUE-ROUTING',
     notes: 'Homonym of session lane partner; boards use data-domain=partner',
+    taxonomy: { homonymDistinct: true, conceptDomain: 'partners' },
   }),
   row({
     id: 'taxonomy.conceptDomain.partners',
@@ -120,6 +180,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     properties: ['CONCEPT_DOMAINS', 'prefix partner.', 'prefix out.'],
     owner: 'concepts / DOMAIN_CONCEPT_SHAPE',
     notes: 'Plural token — not chrome partner and not PartnerCode',
+    taxonomy: { homonymDistinct: true, conceptDomain: 'partners' },
   }),
   row({
     id: 'taxonomy.commitScope.partner',
@@ -132,6 +193,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     properties: ['commitScopeHints', 'type(partner):', 'open set'],
     owner: 'workspace taxonomy correlations',
     notes: 'Guidance only — not a frozen enum',
+    taxonomy: { homonymDistinct: true, conceptDomain: 'partners' },
   }),
   row({
     id: 'taxonomy.commitScope.partners',
@@ -143,6 +205,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     path: 'lib/docs/workspace-taxonomy.ts',
     properties: ['commitScopeHints', 'type(partners):', 'open set'],
     owner: 'workspace taxonomy correlations',
+    taxonomy: { homonymDistinct: true, conceptDomain: 'partners' },
   }),
   row({
     id: 'taxonomy.commitScope.ops',
@@ -155,6 +218,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     properties: ['commitScopeHints', 'type(ops):', 'open set'],
     owner: 'workspace taxonomy correlations',
     notes: 'Common commit scope for partner-desk work; not a Domain lane',
+    taxonomy: { homonymDistinct: true, conceptDomain: 'partners' },
   }),
   row({
     id: 'portal-board.lanes',
@@ -168,6 +232,13 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     properties: ['chrome domain: knowledge', 'registry: workspace-lane-map.json'],
     owner: 'workspace-lane-cross-map',
     notes: 'Explains partner homonym across machines — not a partner desk board',
+    chromeNav: {
+      domain: 'knowledge',
+      group: 'registry',
+      tier: 'overflow',
+      registryArtifact: 'workspace-lane-map',
+      cli: 'bun run workspace-taxonomy:bake',
+    },
   }),
 
   // ── Brands / identity ──
@@ -182,6 +253,13 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     properties: ['^[A-Z]{3,6}$', 'canonical business join key', 'parsePartnerCode'],
     owner: 'partners core / branded operations',
     notes: 'Only unqualified partner key — see partner-type-reference-map',
+    brand: {
+      pattern: '^[A-Z]{3,6}$',
+      mintAuthority: 'parsePartnerCode',
+      module: 'lib/types/branded/operations.ts',
+      interiorOnly: false,
+      replaces: ['partnerId', 'partner_id'],
+    },
   }),
   row({
     id: 'brand.PartnerCallSignCode',
@@ -193,6 +271,12 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     path: 'lib/types/branded/operations.ts',
     properties: ['CODE-NNN', 'derived from PartnerCode'],
     owner: 'partners core',
+    brand: {
+      pattern: '^[A-Z]{3,6}-[0-9]{3}$',
+      mintAuthority: 'parsePartnerCallSignCode',
+      module: 'lib/types/branded/operations.ts',
+      interiorOnly: false,
+    },
   }),
   row({
     id: 'brand.PartnerProfileKey',
@@ -205,6 +289,11 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     properties: ['pp-${treeNodeId}', 'compatibility binding'],
     owner: 'operations',
     notes: 'Not dashboard or partner business identity',
+    brand: {
+      mintAuthority: 'asPartnerProfileKey',
+      module: 'lib/types/branded/operations.ts',
+      interiorOnly: true,
+    },
   }),
   row({
     id: 'brand.PartnerTemplateId',
@@ -216,6 +305,11 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     path: 'lib/types/branded/operations.ts',
     properties: ['onboarding template slug'],
     owner: 'operations / config',
+    brand: {
+      mintAuthority: 'asPartnerTemplateId',
+      module: 'lib/types/branded/operations.ts',
+      interiorOnly: true,
+    },
   }),
   row({
     id: 'brand.OutId',
@@ -227,6 +321,13 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     path: 'lib/types/branded/operations.ts',
     properties: ['out-{PartnerCode}-{n}', 'bookmaker account identity'],
     owner: 'partners core',
+    brand: {
+      pattern: '^out-[A-Z]{3,6}-[1-9][0-9]*$',
+      mintAuthority: 'parseOutId',
+      module: 'lib/types/branded/operations.ts',
+      interiorOnly: false,
+      replaces: ['accountId', 'SPEN-1 legacy'],
+    },
   }),
   row({
     id: 'brand.ExternalPartnerId',
@@ -238,6 +339,12 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     path: 'lib/types/branded/operations.ts',
     properties: ['source-owned non-canonical', 'never bare partnerId in core'],
     owner: 'adapter boundary',
+    brand: {
+      mintAuthority: 'asExternalPartnerId',
+      module: 'lib/types/branded/operations.ts',
+      interiorOnly: false,
+      replaces: ['partnerId'],
+    },
   }),
   row({
     id: 'brand.TreeNodeId',
@@ -249,17 +356,30 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     path: 'lib/types/branded/operations.ts',
     properties: ['ops tree node PK', 'partner|agent|sub_agent'],
     owner: 'operations',
+    brand: {
+      mintAuthority: 'asTreeNodeId',
+      module: 'lib/types/branded/operations.ts',
+      interiorOnly: true,
+    },
   }),
   row({
     id: 'brand.parsers.partners-package',
     aspect: 'brand',
     machine: 'identity',
     token: 'parsePartnerCode',
-    typeOrExport: 'packages/partners identifiers',
+    typeOrExport: 'PartnerCode',
     repo: 'project-R-score',
     path: 'packages/partners/src/core/identifiers.ts',
     properties: ['parsePartnerCode', 'parsePartnerCallSign', 'parseCanonicalOutIdentity'],
     owner: '@factorywager/partners',
+    notes: 'Package re-export parsers — brand name remains PartnerCode in manifest',
+    brand: {
+      pattern: '^[A-Z]{3,6}$',
+      mintAuthority: 'packages/partners parsePartnerCode',
+      module: 'packages/partners/src/core/identifiers.ts',
+      interiorOnly: false,
+      replaces: ['partnerId'],
+    },
   }),
 
   // ── Package ──
@@ -343,6 +463,13 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     href: '/registry/partners-ops.json',
     properties: ['schema factorywager.partners-ops.v2', 'boards: partners, account'],
     owner: 'partner-ops-registry',
+    registry: {
+      schemaId: 'factorywager.partners-ops.v2',
+      artifactPath: 'public/registry/partners-ops.json',
+      conceptIds: ['partner.phase.*', 'out.status.*', 'ops.view.per_account'],
+      omits: ['vaultKey', 'credentials', 'softBalance', 'apiKey'],
+      moneyPolicy: 'integerMinorUnits',
+    },
   }),
   row({
     id: 'registry.partner-health',
@@ -354,6 +481,12 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     href: '/registry/partner-health.json',
     properties: ['partner:health:bake', 'board: /portal/partner/'],
     owner: 'lib/partner-profile/partner-health',
+    registry: {
+      schemaId: 'partner-health.v1',
+      artifactPath: 'public/registry/partner-health.json',
+      omits: ['vaultKey', 'credentials', 'softBalance', 'password'],
+      moneyPolicy: 'forbidden',
+    },
   }),
   row({
     id: 'registry.partner-profiles',
@@ -366,6 +499,12 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     properties: ['legacy full-profile compatibility'],
     owner: 'partner-profile bake',
     notes: 'Compatibility input — not new canonical authority',
+    registry: {
+      schemaId: 'partner-profiles.legacy',
+      artifactPath: 'public/registry/partner-profiles.json',
+      omits: ['vaultKey', 'credentials'],
+      moneyPolicy: 'unset',
+    },
   }),
   row({
     id: 'registry.partner-profile-coverage',
@@ -377,6 +516,12 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     href: '/registry/partner-profile-coverage.json',
     properties: ['CODE', 'call sign', 'document revision'],
     owner: 'packages/partners profile-coverage adapter',
+    registry: {
+      schemaId: 'partner-profile-coverage.v1',
+      artifactPath: 'public/registry/partner-profile-coverage.json',
+      omits: ['vaultKey', 'credentials', 'softBalance'],
+      moneyPolicy: 'forbidden',
+    },
   }),
   row({
     id: 'registry.tennis.partner-contracts',
@@ -389,6 +534,12 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     properties: ['Tennis HQ cross-surface'],
     owner: 'tennis-hq-registry',
     notes: 'Trading chrome Domain; partner-adjacent contracts',
+    registry: {
+      schemaId: 'tennis.partner-contracts',
+      artifactPath: 'public/registry/tennis/partner-contracts.json',
+      omits: ['vaultKey', 'credentials'],
+      moneyPolicy: 'integerMinorUnits',
+    },
   }),
   row({
     id: 'registry.workspace-lane-map',
@@ -400,6 +551,29 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     href: '/registry/workspace-lane-map.json',
     properties: ['claim workspace-lane-cross-map', 'partner correlation row'],
     owner: 'workspace taxonomy',
+    registry: {
+      schemaId: 'workspace-lane-map.v1',
+      artifactPath: 'public/registry/workspace-lane-map.json',
+      omits: ['softBalance', 'credentials'],
+      moneyPolicy: 'forbidden',
+    },
+  }),
+  row({
+    id: 'registry.partner-surface-inventory',
+    aspect: 'registry',
+    machine: 'artifact',
+    token: 'partner-surface-inventory',
+    repo: 'project-R-score',
+    path: 'public/registry/partner-surface-inventory.json',
+    href: '/registry/partner-surface-inventory.json',
+    properties: ['claim partner-surface-inventory', 'structured bags'],
+    owner: 'partner surface inventory',
+    registry: {
+      schemaId: 'partner-surface-inventory.v1',
+      artifactPath: 'public/registry/partner-surface-inventory.json',
+      omits: ['softBalance', 'credentials', 'vaultKey'],
+      moneyPolicy: 'forbidden',
+    },
   }),
 
   // ── Wire-field traps ──
@@ -408,12 +582,18 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     aspect: 'wire-field',
     machine: 'identity',
     token: 'partnerId',
-    typeOrExport: 'ExternalPartnerRef (target)',
+    typeOrExport: 'ExternalPartnerRef',
     repo: 'project-R-score',
     path: 'docs/design/partner-type-reference-map.md',
     properties: ['unqualified', 'ambiguous', 'never core PK'],
     owner: 'partner-type-reference-map',
     notes: 'Means CODE / tree node / Kalshi row / remote id — isolate as ExternalPartnerRef',
+    wireField: {
+      wireName: 'partnerId',
+      sourceSystemId: 'unqualified',
+      resolvesTo: 'ExternalPartnerRef',
+      quarantineOnFail: true,
+    },
   }),
   row({
     id: 'wire.partner_id.sports',
@@ -425,6 +605,12 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     path: 'Sports Terminal API /partners',
     properties: ['snake_case wire', 'blocked connector'],
     owner: 'sports-terminal adapter (planned)',
+    wireField: {
+      wireName: 'partner_id',
+      sourceSystemId: 'sports-terminal',
+      resolvesTo: 'ExternalPartnerRef',
+      quarantineOnFail: true,
+    },
   }),
   row({
     id: 'wire.kalshi.partners.id',
@@ -436,6 +622,12 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     path: 'Kalshi partner registry',
     properties: ['e.g. partner-spen', 'join via partners[].code → PartnerCode'],
     owner: 'execution adapter',
+    wireField: {
+      wireName: 'partners[].id',
+      sourceSystemId: 'kalshi',
+      resolvesTo: 'ExternalPartnerRef',
+      quarantineOnFail: true,
+    },
   }),
   row({
     id: 'wire.pandora.partnerId',
@@ -447,6 +639,12 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     path: 'Pandora remote wire',
     properties: ['numeric remote id', 'never infer PartnerCode'],
     owner: 'adapter boundary',
+    wireField: {
+      wireName: 'partnerId',
+      sourceSystemId: 'pandora',
+      resolvesTo: 'ExternalPartnerRef',
+      quarantineOnFail: true,
+    },
   }),
 
   // ── Doc tenants / design ──
@@ -583,6 +781,25 @@ export function listPartnerChromeNavItems(): readonly PortalChromeNavItem[] {
   return [...PORTAL_PRIORITY_NAV, ...PORTAL_OVERFLOW_NAV].filter(n => n.domain === 'partner');
 }
 
+function registryTokenFromHref(registryArtifact: string | undefined): string | undefined {
+  if (!registryArtifact) return undefined;
+  const base = registryArtifact.replace(/^\/registry\//, '').replace(/\.json$/, '');
+  // tennis/partner-contracts → partner-contracts token in inventory
+  return base.includes('/') ? base.split('/').pop() : base;
+}
+
+function chromeNavBag(item: PortalChromeNavItem): PartnerSurfaceChromeNavBag {
+  const bag: PartnerSurfaceChromeNavBag = {
+    domain: item.domain,
+    group: item.group,
+    tier: item.tier,
+  };
+  const regToken = registryTokenFromHref(item.registryArtifact);
+  if (regToken) (bag as { registryArtifact?: string }).registryArtifact = regToken;
+  if (item.cli) (bag as { cli?: string }).cli = item.cli;
+  return bag;
+}
+
 export function partnerChromeNavSurfaceRows(): readonly PartnerSurfaceRow[] {
   return listPartnerChromeNavItems().map(item =>
     row({
@@ -603,6 +820,7 @@ export function partnerChromeNavSurfaceRows(): readonly PartnerSurfaceRow[] {
       ],
       owner: 'portal chrome Partner desk',
       notes: item.note,
+      chromeNav: chromeNavBag(item),
     })
   );
 }
@@ -627,6 +845,7 @@ export function partnerPortalBoardSurfaceRows(): readonly PartnerSurfaceRow[] {
       ],
       owner: 'portal Partner desk boards',
       notes: item.note,
+      chromeNav: chromeNavBag(item),
     });
   });
 }
@@ -641,7 +860,8 @@ export function allPartnerSurfaceRows(): readonly PartnerSurfaceRow[] {
 
 export type PartnerSurfaceInventory = {
   readonly kind: 'partner-surface-inventory';
-  readonly schemaVersion: 1;
+  /** v2 adds structured brand/registry/wireField/chromeNav/taxonomy bags */
+  readonly schemaVersion: 2;
   readonly claim: 'partner-surface-inventory';
   readonly bakedAt: string;
   readonly principle: 'map-before-rename';
@@ -684,7 +904,7 @@ export function buildPartnerSurfaceInventory(
 
   return {
     kind: 'partner-surface-inventory',
-    schemaVersion: 1,
+    schemaVersion: 2,
     claim: 'partner-surface-inventory',
     bakedAt,
     principle: 'map-before-rename',
