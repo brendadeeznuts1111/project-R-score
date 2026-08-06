@@ -102,6 +102,22 @@ export function formatPartnerSurfaceGeneratedMarkdown(
 
   lines.push(
     '',
+    '## Brand status',
+    '',
+    '| Brand | Active | Deprecated | Reason | Replaced by |',
+    '| ----- | ------ | ---------- | ------ | ----------- |'
+  );
+
+  for (const r of brands) {
+    const bag = r.brand;
+    if (!bag) continue;
+    lines.push(
+      `| \`${r.token}\` | ${bag.isActive ? 'yes' : 'no'} | ${cell(bag.deprecatedAt)} | ${bag.deprecationReason?.trim() ? bag.deprecationReason.trim() : '—'} | ${cell(bag.replacedBy)} |`
+    );
+  }
+
+  lines.push(
+    '',
     '## Partner boards',
     '',
     '| Aspect | Token | Href | Registry |',

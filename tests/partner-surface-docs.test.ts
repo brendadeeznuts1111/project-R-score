@@ -25,6 +25,9 @@ describe('partner-surface-docs', () => {
     expect(md).toContain('## Brands');
     expect(md).toContain('| `PartnerCode` | `operations` | `partners-ops` | yes | `identity` |');
     expect(md).toContain('| `ExternalPartnerId` | `cross-domain` | — | yes | `external` |');
+    expect(md).toContain('## Brand status');
+    expect(md).toContain('| Brand | Active | Deprecated | Reason | Replaced by |');
+    expect(md).toContain('| `PartnerCode` | yes | — | — | — |');
     expect(md).toContain('## Domains');
     expect(md).toContain('## Partner boards');
     expect(md).toContain('## Live PartnerCodes');

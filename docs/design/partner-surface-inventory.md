@@ -80,7 +80,7 @@ Each row in the lib SSOT / registry bake:
 | `href`         | public portal/registry URL when applicable (domains → lanes/concepts/partners; brands → `/portal/brands/#domain=operations&q=…`; live PartnerCode → `partnerDeskHrefs`) |
 | `properties`   | key attrs (domain, registry, brand shape, cli)                                                                        |
 | `owner`        | owning lane / doc                                                                                                     |
-| `brand`        | (brand only) pattern · mintAuthority · module · interiorOnly · replaces · domain · registryRef? · isActive · category |
+| `brand`        | (brand only) pattern · mintAuthority · module · interiorOnly · replaces · domain · registryRef? · isActive · category · deprecatedAt? · deprecationReason? · replacedBy? |
 | `registry`     | (registry only) schemaId · schemaIdField · artifactPath · omits · moneyPolicy · requiredTopKeys · conceptIds          |
 | `wireField`    | (wire-field only) wireName · pattern(s) · brandedType · resolvesTo · nakedType · boundaryPathGlobs · strict · requireReason |
 | `chromeNav`    | (chrome-nav / portal-board) domain · group · tier · registryArtifact                                                  |
@@ -88,15 +88,20 @@ Each row in the lib SSOT / registry bake:
 
 Brand linking metadata (Layer A cross-checks):
 
-| Field         | Meaning                                                                                                           |
-| ------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `domain`      | Brand-catalog domain (`operations`, …), taxonomy `conceptDomain`/`chromeDomain` token, or sentinel `cross-domain` |
-| `registryRef` | Inventory `registry` row `token` that holds instances (omit when none / external)                                 |
-| `isActive`    | Live brand vs deprecated/legacy                                                                                   |
-| `category`    | `identity` · `profile` · `template` · `external` · `node`                                                         |
+| Field               | Meaning                                                                                                           |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `domain`            | Brand-catalog domain (`operations`, …), taxonomy `conceptDomain`/`chromeDomain` token, or sentinel `cross-domain` |
+| `registryRef`       | Inventory `registry` row `token` that holds instances (omit when none / external)                                 |
+| `isActive`          | Live brand vs deprecated/legacy                                                                                   |
+| `category`          | `identity` · `profile` · `template` · `external` · `node`                                                         |
+| `deprecatedAt`      | Optional ISO date when sunsetting started                                                                         |
+| `deprecationReason` | Optional why (required when `deprecatedAt` or recommended when `isActive=false`)                                  |
+| `replacedBy`        | Optional successor brand token                                                                                    |
 
 `bun run partner-surface-inventory:validate` enforces domain ∈ allowlist and
-`registryRef` → existing registry row when set.
+`registryRef` → existing registry row when set. Inactive / deprecated brands
+still referenced by wire-field, portal-board/chrome-nav, or registry consumers
+emit **warn**. Generated docs include a **Brand status** section.
 
 Chrome-nav and portal-board rows for Domain `partner` are **derived live** from
 [`chrome-catalog.ts`](../../lib/portal/chrome-catalog.ts) so board adds cannot
@@ -105,7 +110,7 @@ and wire traps with `bun run partner-surface-inventory:lint-wires`:
 
 | Layer | Check                                                                                                     |
 | ----- | --------------------------------------------------------------------------------------------------------- |
-| A     | brand-manifest + `Bun.file.exists` + brand linking (`domain` · `registryRef` · `isActive` · `category`)   |
+| A     | brand-manifest + `Bun.file.exists` + brand linking + lifecycle (`deprecatedAt` · references warn)         |
 | B     | baked JSON vs bag: schema identity · `requiredTopKeys` · omitted **key names** absent · `moneyPolicy`     |
 | C     | `lint-wires`: inventory-driven naked brand annotations outside `boundaryPathGlobs` — see [wire-lint.md](./wire-lint.md) |
 | D     | `lint-domains`: inventory brand types used outside home path globs (default **warn**; `--strict` → error) |

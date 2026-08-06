@@ -13,7 +13,9 @@
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import {
   checkBrandLinkingBag,
+  checkDeprecatedBrandReferences,
   collectAllowedBrandLinkDomains,
+  collectInventoryBrandTokens,
 } from '../lib/docs/partner-surface-brand-check.ts';
 import {
   buildPartnerSurfaceInventory,
@@ -90,6 +92,7 @@ async function validate(rows: readonly PartnerSurfaceRow[]): Promise<Issue[]> {
   const { names: brandNames, byName, domains: manifestDomains } = await loadBrandNames();
   const registryTokens = new Set(rows.filter(r => r.aspect === 'registry').map(r => r.token));
   const allowedBrandDomains = collectAllowedBrandLinkDomains(rows, manifestDomains);
+  const brandTokens = collectInventoryBrandTokens(rows);
 
   for (const row of rows) {
     aspectBagRules(row, issues);
@@ -128,6 +131,7 @@ async function validate(rows: readonly PartnerSurfaceRow[]): Promise<Issue[]> {
             allowedDomains: allowedBrandDomains,
             registryTokens,
             manifestDomain: entry?.domain,
+            brandTokens,
           })
         );
       }
@@ -262,6 +266,8 @@ async function validate(rows: readonly PartnerSurfaceRow[]): Promise<Issue[]> {
       }
     }
   }
+
+  issues.push(...checkDeprecatedBrandReferences(rows));
 
   return issues;
 }
