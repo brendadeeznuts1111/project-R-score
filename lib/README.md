@@ -211,7 +211,8 @@ listed under **Domain lifecycle** above.
 | [`experiments/`](./experiments/)             | Multi-factor partner-policy experiment engine                              | `engine.ts` · `design.ts`                                  |
 | [`factory/`](./factory/)                     | Internal registry client, CLI, artifact scaffolding                        | `artifact.ts` · `registry.ts`                              |
 | [`glossary/`](./glossary/)                   | Glossary utilities beside portal / Kalshi SSOT bakes                       | `tournament-snap.ts`                                       |
-| [`harness/`](./harness/)                     | Harness proof paths, monorepo health, CI discovery                         | `proof.ts` · `monorepo-health.ts`                          |
+| [`harness/`](./harness/)                     | Harness proof paths, monorepo health, CI discovery (**Area map**)          | [README Area map](./harness/README.md#area-map) · `proof.ts` |
+
 | [`http/`](./http/)                           | `Bun.serve` / fetch / portal / static HTTP surfaces (**Area map**)         | [README Area map](./http/README.md#area-map) · `bun-server.ts` |
 
 | [`identity/`](./identity/)                   | Auth layer (lockout, MFA, geo, WebAuthn, JIT)                              | `identity.ts` · `lockout.ts`                               |
@@ -245,4 +246,4 @@ listed under **Domain lifecycle** above.
 | [`types/`](./types/)                         | Branded IDs and shared types                                               | `branded.ts` · [branded/README](./types/branded/README.md) |
 | [`utils/`](./utils/)                         | General utilities barrel                                                   | `index.ts`                                                 |
 | [`venues/`](./venues/)                       | Market venue brand identity (desk badges)                                  | `venue-brand.ts`                                           |
-| [`verification/`](./verification/)           | Install-env / bundler / runtime channel probes                             | domain README                                              |
+| [`verification/`](./verification/)           | Install-env / bundler / runtime channel probes (**Area map**)              | [README Area map](./verification/README.md#area-map)       |
