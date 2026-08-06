@@ -54,15 +54,19 @@ call sites need an explicit reason (and usually a line-level `eslint-disable`
 with that reason). Prefer shrinking this table over growing it. **Target** is
 the planned resolution lane (not a commitment date).
 
-| File / cluster                                                                                                                                            | Reason                                                                                                                                                 | Target                              |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------- |
-| [`security/mintable-secret.ts`](./security/mintable-secret.ts)                                                                                            | Sync `requireSecret` / constructors; file modes `0o600` / `0o700`. Prefer async mint path or governed sync wrapper (`Bun.mmap` + peek/`Bun.write`).    | **Lane 3a**                         |
-| Probe `mkdtemp` / `tmpdir` in [`verification/`](./verification/), [`docs/`](./docs/) probes, [`http/bun-defaults-proof.ts`](./http/bun-defaults-proof.ts) | Scratch dirs for runtime contract probes — not product I/O. No first-class Bun `mkdtemp`; keep `node:fs`/`node:os` until a shared probe helper exists. | **Deferred** (low priority)         |
-| Per-file `eslint-disable` with rationale                                                                                                                  | Documented intentional dual port                                                                                                                       | Remove when that call site migrates |
+| File / cluster                                                                                                                                            | Reason                                                                                                                                          | Target                              |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| Probe `mkdtemp` / `tmpdir` in [`verification/`](./verification/), [`docs/`](./docs/) probes, [`http/bun-defaults-proof.ts`](./http/bun-defaults-proof.ts) | Scratch dirs for runtime contract probes — not product I/O. No first-class Bun `mkdtemp`; keep `node:fs`/`node:os` until a shared probe helper. | **Deferred** (low priority)         |
+| Per-file `eslint-disable` with rationale                                                                                                                  | Documented intentional dual port                                                                                                                | Remove when that call site migrates |
 
-**Resolved:** PNG IDAT inflate in [`dod/evidence.ts`](./dod/evidence.ts) →
-`Bun.inflateSync(..., { windowBits: 15 })`
-([#424](https://github.com/brendadeeznuts1111/project-R-score/pull/424)).
+**Resolved:**
+
+- PNG IDAT inflate in [`dod/evidence.ts`](./dod/evidence.ts) →
+  `Bun.inflateSync(..., { windowBits: 15 })`
+  ([#424](https://github.com/brendadeeznuts1111/project-R-score/pull/424)).
+- Machine-local mint in
+  [`security/mintable-secret.ts`](./security/mintable-secret.ts) →
+  `bun-fs-utils` mmap/peek write + chmod spawn (Lane 3a).
 
 Product FS migration (mkdir / sync JSON / path URL): PR
 [#422](https://github.com/brendadeeznuts1111/project-R-score/pull/422) — spine

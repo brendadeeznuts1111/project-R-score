@@ -54,3 +54,51 @@ export function readTextSync(path: string): string {
 export function readJsonSync<T = unknown>(path: string): T {
   return JSON.parse(readTextSync(path)) as T;
 }
+
+/** Sync exists for a regular file — mmap throws when the path is missing. */
+export function fileExistsSync(path: string): boolean {
+  try {
+    Bun.mmap(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Sync write via Bun.write settled with Bun.peek (creates parent dirs).
+ * Optional POSIX mode via `chmod` after write (best-effort; ignored when chmod missing).
+ */
+export function writeTextSync(path: string, content: string, opts?: { mode?: number }): void {
+  Bun.peek(Bun.write(path, content));
+  if (opts?.mode != null) chmodBestEffort(path, opts.mode);
+}
+
+/** Best-effort chmod (spawn). No-op when binary missing or platform ignores mode. */
+export function chmodBestEffort(path: string, mode: number): void {
+  const octal = (mode & 0o777).toString(8).padStart(3, '0');
+  try {
+    Bun.spawnSync(['chmod', octal, path], { stdout: 'ignore', stderr: 'ignore' });
+  } catch {
+    // ignore
+  }
+}
+
+/**
+ * Sync list of entry names under `dir` (files only by default).
+ * Empty array if dir is missing or not readable.
+ */
+export function listFileNamesSync(dir: string, opts?: { dot?: boolean }): string[] {
+  if (!isDirectorySync(dir)) return [];
+  try {
+    return [
+      ...new Bun.Glob('*').scanSync({
+        cwd: dir,
+        onlyFiles: true,
+        dot: opts?.dot ?? false,
+      }),
+    ].sort();
+  } catch {
+    return [];
+  }
+}
