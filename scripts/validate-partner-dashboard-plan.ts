@@ -15,6 +15,16 @@ import {
   INGRESS_TRANSLATION_COUNTER,
   LEGACY_OUT_ID_WARNING_CODE,
   LEGACY_SEAT_OUT_TOKEN_PATTERN,
+  BET_STRUCTURES,
+  CAPABILITY_SUPPORT_VALUES,
+  CREDENTIAL_READINESS_VALUES,
+  EXECUTION_AUTHORIZATION_STATUSES,
+  EXECUTION_CONSTRAINT_OUTCOMES,
+  EXECUTION_CRITICAL_LIMIT_KINDS,
+  MARKET_PHASES,
+  OUT_LIMIT_KINDS,
+  OUT_LIMIT_STATUSES,
+  PARTNER_OUT_CAPABILITY_SCHEMA_V1,
   PARTNER_DASHBOARD_ARTIFACT_REF,
   PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
   PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS,
@@ -231,6 +241,12 @@ const EXPECTED_NOMENCLATURE: Readonly<
     ownerDomain: 'partners',
     wirePath: 'partners[].attention[].reasonCode',
   },
+  SportsbookResolution: { ownerDomain: 'trading', wirePath: 'capability.sportsbook' },
+  BetStructureCapability: { ownerDomain: 'trading', wirePath: 'capability.betStructures[]' },
+  WagerOfferCatalog: { ownerDomain: 'trading', wirePath: 'capability.wagerOfferCatalog' },
+  PromotionOfferCatalog: { ownerDomain: 'trading', wirePath: 'capability.promotionOfferCatalog' },
+  OutLimitFact: { ownerDomain: 'compliance', wirePath: 'capability.limits[]' },
+  ExecutionConstraintDecision: { ownerDomain: 'trading', wirePath: 'executionConstraintDecision' },
 };
 
 const EXPECTED_HASH_ROUTES = [
@@ -438,6 +454,7 @@ export async function validatePartnerDashboardPlan(
     partnersPackage.private !== true ||
     partnersPackage.exports?.['./dashboard-plan'] !== './src/dashboard-plan.ts' ||
     partnersPackage.exports?.['./core'] !== './src/core/index.ts' ||
+    partnersPackage.exports?.['./core/out-capabilities'] !== './src/core/out-capabilities.ts' ||
     partnersPackage.exports?.['./boundary'] !== './src/boundary/index.ts' ||
     partnersPackage.exports?.['./adapters'] !== './src/adapters/index.ts' ||
     partnersPackage.exports?.['./adapters/profile-coverage'] !==
@@ -459,6 +476,8 @@ export async function validatePartnerDashboardPlan(
     plan.package?.components?.legacy_ops_adapter !== 'implemented' ||
     plan.package?.components?.portal_consumer_contract !== 'implemented' ||
     plan.package?.components?.profile_coverage_adapter !== 'implemented' ||
+    plan.package?.components?.out_capability_contract !== 'implemented' ||
+    plan.package?.components?.execution_constraint_evaluator !== 'implemented' ||
     plan.package?.components?.current_compatibility_fetch_transport !== 'implemented' ||
     plan.package?.components?.canonical_dashboard_browser_loader !== 'planned' ||
     'browser_loader' in (plan.package?.components ?? {}) ||
@@ -469,6 +488,50 @@ export async function validatePartnerDashboardPlan(
     errors.push(
       'package component statuses must distinguish implemented artifact core from planned adapters'
     );
+  }
+  if (
+    plan.shapes?.out_capability_snapshot?.type !== 'PartnerOutCapabilitySnapshot' ||
+    plan.shapes?.out_capability_snapshot?.schema !== PARTNER_OUT_CAPABILITY_SCHEMA_V1 ||
+    plan.shapes?.out_capability_snapshot?.implementation_status !== 'implemented' ||
+    plan.shapes?.out_capability_snapshot?.parser !== 'parsePartnerOutCapabilitySnapshot' ||
+    plan.shapes?.out_capability_snapshot?.evaluator !== 'evaluateExecutionConstraints' ||
+    plan.shapes?.out_capability_snapshot?.missing_constraint_policy !==
+      'manual-review-never-assume-unlimited' ||
+    !sameMembers(
+      plan.shapes?.out_capability_snapshot?.required_limit_kinds ?? [],
+      EXECUTION_CRITICAL_LIMIT_KINDS
+    )
+  ) {
+    errors.push('out capability snapshot must match the implemented private preflight contract');
+  }
+  if (
+    plan.out_capabilities?.schema !== PARTNER_OUT_CAPABILITY_SCHEMA_V1 ||
+    !sameMembers(plan.out_capabilities?.bet_structures ?? [], BET_STRUCTURES) ||
+    !sameMembers(plan.out_capabilities?.capability_support ?? [], CAPABILITY_SUPPORT_VALUES) ||
+    !sameMembers(plan.out_capabilities?.market_phases ?? [], MARKET_PHASES) ||
+    !sameMembers(plan.out_capabilities?.limit_kinds ?? [], OUT_LIMIT_KINDS) ||
+    !sameMembers(
+      plan.out_capabilities?.critical_limit_kinds ?? [],
+      EXECUTION_CRITICAL_LIMIT_KINDS
+    ) ||
+    !sameMembers(plan.out_capabilities?.limit_statuses ?? [], OUT_LIMIT_STATUSES) ||
+    !sameMembers(plan.out_capabilities?.credential_readiness ?? [], CREDENTIAL_READINESS_VALUES) ||
+    !sameMembers(
+      plan.out_capabilities?.execution_authorization ?? [],
+      EXECUTION_AUTHORIZATION_STATUSES
+    ) ||
+    !sameMembers(plan.out_capabilities?.constraint_outcomes ?? [], EXECUTION_CONSTRAINT_OUTCOMES) ||
+    !sameMembers(plan.out_capabilities?.decision_values ?? [], [
+      'allow',
+      'deny',
+      'manual_review',
+    ]) ||
+    plan.out_capabilities?.global_critical_limit_facts_required !== true ||
+    plan.out_capabilities?.equal_specificity_policy !== 'reject-ambiguous-match' ||
+    plan.out_capabilities?.cross_currency_policy !== 'reject-no-implicit-conversion' ||
+    plan.out_capabilities?.promotions_gate_execution !== false
+  ) {
+    errors.push('out_capabilities must match the package-owned execution constraint axes');
   }
   if (
     plan.shapes?.profile_coverage_artifact?.type !== 'PartnerProfileCoverageArtifact' ||

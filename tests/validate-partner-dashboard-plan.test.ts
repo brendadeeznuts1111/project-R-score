@@ -166,6 +166,19 @@ describe('partner dashboard semantic plan', () => {
     );
   });
 
+  it('rejects out capability and execution-constraint axis drift', async () => {
+    const plan = copyPlan();
+    plan.package.components.out_capability_contract = 'planned';
+    plan.shapes.out_capability_snapshot.schema = 'factorywager.partner-out-capability.v2';
+    plan.out_capabilities.bet_structures = ['straight', 'parlay'];
+    plan.out_capabilities.limit_kinds = ['max_stake'];
+    plan.out_capabilities.promotions_gate_execution = true;
+    const result = await validatePartnerDashboardPlan(plan);
+    expect(result.errors).toContain('package component statuses must distinguish implemented artifact core from planned adapters');
+    expect(result.errors).toContain('out capability snapshot must match the implemented private preflight contract');
+    expect(result.errors).toContain('out_capabilities must match the package-owned execution constraint axes');
+  });
+
   it('rejects connector identity, requiredness, and reciprocal-region drift', async () => {
     const plan = copyPlan();
     plan.connectors[0].snapshot_key = 'profiles-v2';

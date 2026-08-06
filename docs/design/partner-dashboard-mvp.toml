@@ -4,7 +4,7 @@
 [plan]
 schema = "factorywager.partner-dashboard-plan.v2"
 status = "proposal"
-last_reviewed = "2026-08-05"
+last_reviewed = "2026-08-06"
 owner = "@factorywager/partners"
 
 [domain]
@@ -24,6 +24,8 @@ ingress_translator = "implemented"
 legacy_ops_adapter = "implemented"
 portal_consumer_contract = "implemented"
 profile_coverage_adapter = "implemented"
+out_capability_contract = "implemented"
+execution_constraint_evaluator = "implemented"
 current_compatibility_fetch_transport = "implemented"
 canonical_dashboard_browser_loader = "planned"
 connector_ports = "partial"
@@ -59,6 +61,18 @@ dashboard_connector = false
 public_fact_paths = ["generatedAt", "evidenceByPartnerCode.*.callSign", "evidenceByPartnerCode.*.profileDocumentVersion"]
 forbidden_fact_classes = ["lifecycle", "phase", "credentials", "funding", "telegram", "accounting", "money", "policy"]
 lifecycle_authority = false
+
+[shapes.out_capability_snapshot]
+type = "PartnerOutCapabilitySnapshot"
+schema = "factorywager.partner-out-capability.v1"
+implementation_status = "implemented"
+parser = "parsePartnerOutCapabilitySnapshot"
+evaluator = "evaluateExecutionConstraints"
+role = "private-authenticated-out-preflight"
+required_limit_kinds = ["max_stake", "max_gross_payout", "max_net_win"]
+url_policy = "absolute-http-or-https-without-credentials-query-or-fragment"
+missing_constraint_policy = "manual-review-never-assume-unlimited"
+odds_money_policy = "caller-supplies-integer-projected-gross-payout-and-net-win"
 
 [surfaces.portal]
 board_id = "partners"
@@ -243,12 +257,56 @@ owner_domain = "partners"
 meaning = "stable machine reason for an operator action"
 forbidden_core_aliases = ["code", "message"]
 
+[[nomenclature.term]]
+canonical = "SportsbookResolution"
+wire_path = "capability.sportsbook"
+owner_domain = "trading"
+meaning = "sanitized account entrypoint resolved to SportsbookId plus optional skin metadata"
+forbidden_core_aliases = ["book", "provider", "rawUrl"]
+
+[[nomenclature.term]]
+canonical = "BetStructureCapability"
+wire_path = "capability.betStructures[]"
+owner_domain = "trading"
+meaning = "explicit straight, parlay, and same-game-parlay support state"
+forbidden_core_aliases = ["allowsParlays", "parlayFlag"]
+
+[[nomenclature.term]]
+canonical = "WagerOfferCatalog"
+wire_path = "capability.wagerOfferCatalog"
+owner_domain = "trading"
+meaning = "observed sports, markets, and phases; distinct from promotions"
+forbidden_core_aliases = ["offers", "promos"]
+
+[[nomenclature.term]]
+canonical = "PromotionOfferCatalog"
+wire_path = "capability.promotionOfferCatalog"
+owner_domain = "trading"
+meaning = "promotional references that never authorize wager execution"
+forbidden_core_aliases = ["offers", "markets"]
+
+[[nomenclature.term]]
+canonical = "OutLimitFact"
+wire_path = "capability.limits[]"
+owner_domain = "compliance"
+meaning = "provenance-complete account ceiling with kind, status, money, and scope"
+forbidden_core_aliases = ["maxBet", "winMax", "limitNumber"]
+
+[[nomenclature.term]]
+canonical = "ExecutionConstraintDecision"
+wire_path = "executionConstraintDecision"
+owner_domain = "trading"
+meaning = "pure out-level allow, deny, or manual-review preflight"
+forbidden_core_aliases = ["authorized", "ready"]
+
 [metadata.decision_log]
 partner_identity = "PartnerCode is the only canonical partner join key; external partnerId values stay qualified"
 money_storage = "Financial amounts and balances use integer minor units with explicit currency and scope"
 telegram_boundary = "Telegram owns communication transport and cannot own lifecycle or accounting truth"
 legacy_ops = "legacy-ops is the eighth compatibility adapter and has an explicit retirement condition"
 frozen_mapping = "Sports Terminal frozen maps to suspended with mandatory queryable provenance"
+out_constraints = "Max stake, gross payout, net win, and liquidity are distinct checks; missing evidence requires manual review"
+offer_split = "Wager markets and structures are separate from promotional offers"
 
 [deprecation_calendar.legacy_ops]
 status = "active"
@@ -388,6 +446,24 @@ funding_status = ["unknown", "unfunded", "partial", "funded"]
 provider_connection_status = ["unknown", "active", "inactive", "pending"]
 legacy_fund_status_policy = "translate-with-provenance-never-copy"
 policy = "never-collapse-into-one-status-field"
+
+[out_capabilities]
+schema = "factorywager.partner-out-capability.v1"
+bet_structures = ["straight", "parlay", "same_game_parlay"]
+capability_support = ["supported", "unsupported", "unknown"]
+market_phases = ["pregame", "live"]
+limit_kinds = ["max_stake", "max_gross_payout", "max_net_win", "daily_stake", "weekly_stake"]
+critical_limit_kinds = ["max_stake", "max_gross_payout", "max_net_win"]
+limit_statuses = ["known", "not_applicable", "unknown"]
+credential_readiness = ["configured", "missing", "unknown"]
+execution_authorization = ["allowed", "blocked", "unknown"]
+decision_values = ["allow", "deny", "manual_review"]
+constraint_outcomes = ["pass", "fail", "unknown", "not_applicable"]
+global_critical_limit_facts_required = true
+scope_specific_override_policy = "most-specific-matching-scope"
+equal_specificity_policy = "reject-ambiguous-match"
+cross_currency_policy = "reject-no-implicit-conversion"
+promotions_gate_execution = false
 
 [concepts]
 registry = "public/registry/domain-glossary.json"
@@ -1054,8 +1130,10 @@ owns = [
   "cultivation-policy",
   "commercial-agreement-terms",
   "dashboard-read-model",
+  "out-capability-contract",
+  "execution-constraint-evaluation",
 ]
-implemented_now = ["partner-code", "dashboard-artifact-boundary", "artifact-assembler", "profile-coverage-adapter"]
+implemented_now = ["partner-code", "dashboard-artifact-boundary", "artifact-assembler", "profile-coverage-adapter", "out-capability-contract", "execution-constraint-evaluation"]
 planned = [
   "profile",
   "lifecycle-domain-logic",
@@ -1513,6 +1591,7 @@ concept_id = "section.partnersBookDetail"
 [delivery]
 slices = [
   "package-core-and-compatibility-exports",
+  "out-capability-and-execution-constraint-contract",
   "materialize-current-profiles",
   "transactional-minor-unit-ledger",
   "adapter-projections",
@@ -1529,4 +1608,5 @@ items = [
   "make-tennis-source-of-truth",
   "merge-adjacent-portal-routes",
   "publish-or-deploy",
+  "calculate-odds-derived-money-inside-partner-core",
 ]

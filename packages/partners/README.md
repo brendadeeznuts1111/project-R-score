@@ -20,6 +20,14 @@ payment targets, money, Telegram IDs, limits, and presentation fields rather
 than promoting them into partner-domain truth. Its output is a narrow
 observation shape, not `PartnerDashboardRecord[]`.
 
+The package also exports the implemented private `PartnerOutCapabilitySnapshot`
+boundary and pure `evaluateExecutionConstraints` preflight. It models sanitized
+sportsbook/skin resolution, straight/parlay/SGP support, wager catalogs
+separately from promotions, and provenance-complete stake, gross-payout, and
+net-win ceilings. Unknown evidence produces `manual_review`; the core does not
+fetch providers, read secrets, reserve liquidity, post accounting entries, or
+send Telegram.
+
 The browser-neutral `./portal` contract now owns the current input inventory,
 the canonical artifact path, and the future query-only `?compare=legacy` policy.
 The canonical single-artifact browser loader and generated public modules remain
