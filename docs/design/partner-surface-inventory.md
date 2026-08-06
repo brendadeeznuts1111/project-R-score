@@ -77,7 +77,7 @@ Each row in the lib SSOT / registry bake:
 | `typeOrExport` | TypeScript export or wire label when known                                                                            |
 | `repo`         | project-R-score · Kalshi-bot · toc-ops · sports-terminal                                                              |
 | `path`         | source path or package                                                                                                |
-| `href`         | public URL when applicable                                                                                            |
+| `href`         | public portal/registry URL when applicable (domains → lanes/concepts/partners; brands → `/portal/brands/#domain=operations&q=…`; live PartnerCode → `partnerDeskHrefs`) |
 | `properties`   | key attrs (domain, registry, brand shape, cli)                                                                        |
 | `owner`        | owning lane / doc                                                                                                     |
 | `brand`        | (brand only) pattern · mintAuthority · module · interiorOnly · replaces · domain · registryRef? · isActive · category |

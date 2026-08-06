@@ -17,25 +17,25 @@
 
 | Machine | Token | Href | Notes |
 | ------- | ----- | ---- | ----- |
-| `commitScope` | `ops` | — | Common commit scope for partner-desk work; not a Domain lane |
-| `chromeDomain` | `partner` | — | Homonym of session lane partner; boards use data-domain=partner |
-| `commitScope` | `partner` | — | Guidance only — not a frozen enum |
-| `sessionLane` | `partner` | — | Filename token in <t>-<lane>-<slug>; not chrome Domain or ConceptDomain |
-| `commitScope` | `partners` | — | commitScopeHints |
-| `conceptDomain` | `partners` | — | Plural token — not chrome partner and not PartnerCode |
+| `commitScope` | `ops` | `/portal/lanes/` | Common commit scope for partner-desk work; not a Domain lane |
+| `chromeDomain` | `partner` | `/portal/partners/` | Homonym of session lane partner; boards use data-domain=partner |
+| `commitScope` | `partner` | `/portal/lanes/` | Guidance only — not a frozen enum |
+| `sessionLane` | `partner` | `/portal/lanes/` | Filename token in <t>-<lane>-<slug>; not chrome Domain or ConceptDomain |
+| `commitScope` | `partners` | `/portal/lanes/` | commitScopeHints |
+| `conceptDomain` | `partners` | `/portal/concepts/#domain=partners` | Plural token — not chrome partner and not PartnerCode |
 
 ## Brands
 
 | Brand | Domain | Registry | Active | Category | Href | Mint |
 | ----- | ------ | -------- | ------ | -------- | ---- | ---- |
-| `ExternalPartnerId` | `cross-domain` | — | yes | `external` | — | `asExternalPartnerId` |
-| `OutId` | `operations` | `partners-ops` | yes | `identity` | — | `parseOutId` |
-| `parsePartnerCode` → `PartnerCode` | `operations` | `partners-ops` | yes | `identity` | — | `packages/partners parsePartnerCode` |
-| `PartnerCallSignCode` | `operations` | — | yes | `identity` | — | `parsePartnerCallSignCode` |
-| `PartnerCode` | `operations` | `partners-ops` | yes | `identity` | — | `parsePartnerCode` |
-| `PartnerProfileKey` | `operations` | `partner-profiles` | yes | `profile` | — | `asPartnerProfileKey` |
-| `PartnerTemplateId` | `operations` | `partner-contracts` | yes | `template` | — | `asPartnerTemplateId` |
-| `TreeNodeId` | `operations` | `workspace-lane-map` | yes | `node` | — | `asTreeNodeId` |
+| `ExternalPartnerId` | `cross-domain` | — | yes | `external` | `/portal/brands/#domain=operations&q=ExternalPartnerId` | `asExternalPartnerId` |
+| `OutId` | `operations` | `partners-ops` | yes | `identity` | `/portal/brands/#domain=operations&q=OutId` | `parseOutId` |
+| `parsePartnerCode` → `PartnerCode` | `operations` | `partners-ops` | yes | `identity` | `/portal/brands/#domain=operations&q=PartnerCode` | `packages/partners parsePartnerCode` |
+| `PartnerCallSignCode` | `operations` | — | yes | `identity` | `/portal/brands/#domain=operations&q=PartnerCallSignCode` | `parsePartnerCallSignCode` |
+| `PartnerCode` | `operations` | `partners-ops` | yes | `identity` | `/portal/brands/#domain=operations&q=PartnerCode` | `parsePartnerCode` |
+| `PartnerProfileKey` | `operations` | `partner-profiles` | yes | `profile` | `/portal/brands/#domain=operations&q=PartnerProfileKey` | `asPartnerProfileKey` |
+| `PartnerTemplateId` | `operations` | `partner-contracts` | yes | `template` | `/portal/brands/#domain=operations&q=PartnerTemplateId` | `asPartnerTemplateId` |
+| `TreeNodeId` | `operations` | `workspace-lane-map` | yes | `node` | `/portal/brands/#domain=operations&q=TreeNodeId` | `asTreeNodeId` |
 
 ## Partner boards
 

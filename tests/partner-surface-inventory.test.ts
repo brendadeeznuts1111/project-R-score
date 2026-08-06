@@ -5,6 +5,7 @@ import {
   buildPartnerSurfaceInventory,
   listPartnerChromeNavItems,
   partnerChromeNavSurfaceRows,
+  partnerDeskHrefs,
 } from '../lib/docs/partner-surface-inventory.ts';
 import { explainHomonym } from '../lib/docs/workspace-taxonomy.ts';
 
@@ -28,6 +29,22 @@ describe('partner surface inventory', () => {
     expect(concept).toBeDefined();
     expect(session!.id).not.toBe(chrome!.id);
     expect(concept!.token).not.toBe(chrome!.token);
+    expect(session!.href).toBe('/portal/lanes/');
+    expect(chrome!.href).toBe('/portal/partners/');
+    expect(concept!.href).toBe('/portal/concepts/#domain=partners');
+  });
+
+  test('brand and partner-desk rows carry portal hrefs', () => {
+    const brands = allPartnerSurfaceRows().filter(r => r.aspect === 'brand');
+    expect(brands.every(r => r.href?.startsWith('/portal/brands/'))).toBe(true);
+    expect(partnerDeskHrefs('spen')).toEqual({
+      partnersHref: '/portal/partners/#partner/SPEN',
+      accountingHref: '/portal/partners/#partner/SPEN/accounting',
+      accountHref: '/portal/account/?account=SPEN',
+      historyHref: '/portal/partner-history/?account=SPEN',
+    });
+    const boards = allPartnerSurfaceRows().filter(r => r.aspect === 'portal-board');
+    expect(boards.every(r => Boolean(r.href))).toBe(true);
   });
 
   test('taxonomy homonyms carry distinct machine fields', () => {

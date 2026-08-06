@@ -2,7 +2,7 @@
   "kind": "partner-surface-inventory",
   "schemaVersion": 2,
   "claim": "partner-surface-inventory",
-  "bakedAt": "2026-08-06T20:04:26.724Z",
+  "bakedAt": "2026-08-06T20:04:55.255Z",
   "principle": "map-before-rename",
   "chromeDomain": {
     "id": "partner",
@@ -40,6 +40,7 @@
       "owner": "organization / naming-grammar",
       "machine": "sessionLane",
       "typeOrExport": "SessionLaneId",
+      "href": "/portal/lanes/",
       "notes": "Filename token in <t>-<lane>-<slug>; not chrome Domain or ConceptDomain",
       "taxonomy": {
         "homonymDistinct": true,
@@ -60,6 +61,7 @@
       "owner": "portal chrome / ISSUE-ROUTING",
       "machine": "chromeDomain",
       "typeOrExport": "PortalChromeDomainLane",
+      "href": "/portal/partners/",
       "notes": "Homonym of session lane partner; boards use data-domain=partner",
       "taxonomy": {
         "homonymDistinct": true,
@@ -80,6 +82,7 @@
       "owner": "concepts / DOMAIN_CONCEPT_SHAPE",
       "machine": "conceptDomain",
       "typeOrExport": "ConceptDomain",
+      "href": "/portal/concepts/#domain=partners",
       "notes": "Plural token — not chrome partner and not PartnerCode",
       "taxonomy": {
         "homonymDistinct": true,
@@ -100,6 +103,7 @@
       "owner": "workspace taxonomy correlations",
       "machine": "commitScope",
       "typeOrExport": "commitScopeHint",
+      "href": "/portal/lanes/",
       "notes": "Guidance only — not a frozen enum",
       "taxonomy": {
         "homonymDistinct": true,
@@ -120,6 +124,7 @@
       "owner": "workspace taxonomy correlations",
       "machine": "commitScope",
       "typeOrExport": "commitScopeHint",
+      "href": "/portal/lanes/",
       "taxonomy": {
         "homonymDistinct": true,
         "conceptDomain": "partners"
@@ -139,6 +144,7 @@
       "owner": "workspace taxonomy correlations",
       "machine": "commitScope",
       "typeOrExport": "commitScopeHint",
+      "href": "/portal/lanes/",
       "notes": "Common commit scope for partner-desk work; not a Domain lane",
       "taxonomy": {
         "homonymDistinct": true,
@@ -182,6 +188,7 @@
       "owner": "partners core / branded operations",
       "machine": "identity",
       "typeOrExport": "PartnerCode",
+      "href": "/portal/brands/#domain=operations&q=PartnerCode",
       "notes": "Only unqualified partner key — see partner-type-reference-map",
       "brand": {
         "pattern": "^[A-Z]{3,6}$",
@@ -211,6 +218,7 @@
       "owner": "partners core",
       "machine": "identity",
       "typeOrExport": "PartnerCallSignCode",
+      "href": "/portal/brands/#domain=operations&q=PartnerCallSignCode",
       "brand": {
         "pattern": "^[A-Z]{3,6}-[0-9]{3}$",
         "mintAuthority": "parsePartnerCallSignCode",
@@ -234,6 +242,7 @@
       "owner": "operations",
       "machine": "identity",
       "typeOrExport": "PartnerProfileKey",
+      "href": "/portal/brands/#domain=operations&q=PartnerProfileKey",
       "notes": "Not dashboard or partner business identity",
       "brand": {
         "mintAuthority": "asPartnerProfileKey",
@@ -257,6 +266,7 @@
       "owner": "operations / config",
       "machine": "identity",
       "typeOrExport": "PartnerTemplateId",
+      "href": "/portal/brands/#domain=operations&q=PartnerTemplateId",
       "brand": {
         "mintAuthority": "asPartnerTemplateId",
         "module": "lib/types/branded/operations.ts",
@@ -280,6 +290,7 @@
       "owner": "partners core",
       "machine": "identity",
       "typeOrExport": "OutId",
+      "href": "/portal/brands/#domain=operations&q=OutId",
       "brand": {
         "pattern": "^out-[A-Z]{3,6}-[1-9][0-9]*$",
         "mintAuthority": "parseOutId",
@@ -308,6 +319,7 @@
       "owner": "adapter boundary",
       "machine": "identity",
       "typeOrExport": "ExternalPartnerId",
+      "href": "/portal/brands/#domain=operations&q=ExternalPartnerId",
       "brand": {
         "mintAuthority": "asExternalPartnerId",
         "module": "lib/types/branded/operations.ts",
@@ -333,6 +345,7 @@
       "owner": "operations",
       "machine": "identity",
       "typeOrExport": "TreeNodeId",
+      "href": "/portal/brands/#domain=operations&q=TreeNodeId",
       "brand": {
         "mintAuthority": "asTreeNodeId",
         "module": "lib/types/branded/operations.ts",
@@ -357,6 +370,7 @@
       "owner": "@factorywager/partners",
       "machine": "identity",
       "typeOrExport": "PartnerCode",
+      "href": "/portal/brands/#domain=operations&q=PartnerCode",
       "notes": "Package re-export parsers — brand name remains PartnerCode in manifest",
       "brand": {
         "pattern": "^[A-Z]{3,6}$",
@@ -388,6 +402,7 @@
       ],
       "owner": "partners package",
       "typeOrExport": "@factorywager/partners",
+      "href": "/portal/partners/",
       "notes": "Artifact contracts, ingress compatibility, dashboard assembler"
     },
     {
@@ -403,7 +418,8 @@
         "onboard"
       ],
       "owner": "partner profile / seat desk",
-      "typeOrExport": "PartnerProfile"
+      "typeOrExport": "PartnerProfile",
+      "href": "/portal/partner/"
     },
     {
       "id": "lib.partner-ops-registry",
@@ -430,7 +446,8 @@
         "deposit.method.*",
         "telegram.topic.*"
       ],
-      "owner": "partner-domain-map"
+      "owner": "partner-domain-map",
+      "href": "/portal/concepts/#domain=partners"
     },
     {
       "id": "lib.partner-ops-color-kernel",
@@ -442,7 +459,8 @@
         "9-key palette",
         "PARTNER_OPS_CONCEPT_COLORS"
       ],
-      "owner": "partner-ops color kernel"
+      "owner": "partner-ops color kernel",
+      "href": "/portal/partners/"
     },
     {
       "id": "lib.partner-ops-events",
@@ -454,7 +472,8 @@
         "11 event codes",
         "PARTNER_OPS_EVENT_GLOSSARY"
       ],
-      "owner": "partner-ops events"
+      "owner": "partner-ops events",
+      "href": "/portal/partners/"
     },
     {
       "id": "registry.partners-ops",
@@ -844,7 +863,8 @@
         "glossary cores + Factory overlay",
         "seat capital desk"
       ],
-      "owner": "partner-ops domain"
+      "owner": "partner-ops domain",
+      "href": "/portal/concepts/#domain=partners"
     },
     {
       "id": "doc.partner-limits",
@@ -869,7 +889,8 @@
         "Telegram package groups",
         "handshake catalog"
       ],
-      "owner": "Factory Telegram"
+      "owner": "Factory Telegram",
+      "href": "/portal/factory/"
     },
     {
       "id": "doc.partner-onboarding-package",
@@ -880,7 +901,8 @@
       "properties": [
         "onboarding package"
       ],
-      "owner": "partner onboarding"
+      "owner": "partner onboarding",
+      "href": "/portal/partner/"
     },
     {
       "id": "doc.ops-partner-bridge",
@@ -891,7 +913,8 @@
       "properties": [
         "ops ↔ partner bridge"
       ],
-      "owner": "ops-partner-bridge"
+      "owner": "ops-partner-bridge",
+      "href": "/portal/partners/"
     },
     {
       "id": "doc.partner-type-reference-map",
@@ -904,7 +927,8 @@
         "fitness scores",
         "translation matrix"
       ],
-      "owner": "partners design"
+      "owner": "partners design",
+      "href": "/portal/brands/#domain=operations&q=PartnerCode"
     },
     {
       "id": "doc.partner-dashboard-mvp",
@@ -916,7 +940,8 @@
         "MVP contract",
         "partner-dashboard-mvp.toml"
       ],
-      "owner": "partners design"
+      "owner": "partners design",
+      "href": "/portal/partners/"
     },
     {
       "id": "doc.partner-code-consolidation",
@@ -927,7 +952,8 @@
       "properties": [
         "consolidation review"
       ],
-      "owner": "partners design"
+      "owner": "partners design",
+      "href": "/portal/brands/#domain=operations&q=PartnerCode"
     },
     {
       "id": "doc.workspace-lane-cross-map",
@@ -952,7 +978,8 @@
         "<t>-<lane>-<slug>",
         "session lane partner"
       ],
-      "owner": "organization"
+      "owner": "organization",
+      "href": "/portal/lanes/"
     },
     {
       "id": "cross.kalshi.partner-phase",
@@ -966,6 +993,7 @@
       ],
       "owner": "Kalshi glossary / partner-domain-map",
       "typeOrExport": "glossary concept",
+      "href": "/portal/concepts/#domain=partners",
       "notes": "Factory must not re-declare Kalshi cores"
     },
     {
@@ -980,6 +1008,7 @@
         "phones"
       ],
       "owner": "toc-ops",
+      "href": "/portal/toc/",
       "notes": "Not a FactoryWager partner board — Soft stays in toc-ops"
     },
     {
