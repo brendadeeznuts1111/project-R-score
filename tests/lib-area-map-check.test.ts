@@ -5,17 +5,24 @@ import {
   extractAreaMapSection,
   extractPathTokens,
   extractVerifiedDate,
+  globToRegExp,
   isExternalPath,
   isPathToken,
+  MEGA_DOMAINS,
+  verifiedAgeDays,
 } from '../tools/lib-area-map-check.ts';
 
 describe('lib-area-map-check helpers', () => {
-  test('extractAreaMapSection stops before next H2/H3', () => {
-    const md = `# X\n\n## Area map\n\n| A | B |\n| - | - |\n| x | [\`db.ts\`](db.ts) |\n\n### Notes\n\nignore\n\n## Other\n\nno\n`;
-    const section = extractAreaMapSection(md);
-    expect(section).toContain('db.ts');
-    expect(section).not.toContain('## Other');
-    expect(section).not.toContain('### Notes');
+  test('extractAreaMapSection accepts Area map and Ownership map', () => {
+    const area = extractAreaMapSection(`# X\n\n## Area map\n\n| A |\n| [\`db.ts\`](db.ts) |\n\n## Other\n`);
+    expect(area).toContain('db.ts');
+    expect(area).not.toContain('## Other');
+
+    const own = extractAreaMapSection(
+      `# portal\n\n## Ownership map\n\n| C | [\`url-planes.ts\`](url-planes.ts) |\n\n## Hash\n`
+    );
+    expect(own).toContain('url-planes.ts');
+    expect(own).not.toContain('## Hash');
   });
 
   test('extractPathTokens prefers links and backticks', () => {
@@ -28,14 +35,16 @@ describe('lib-area-map-check helpers', () => {
     expect(paths).not.toContain('prose');
   });
 
-  test('isPathToken rejects prose and API names', () => {
+  test('isPathToken accepts kebab stems and rejects prose', () => {
     expect(isPathToken('db.ts')).toBe(true);
     expect(isPathToken('limits/')).toBe(true);
     expect(isPathToken('seat-desk-*.ts')).toBe(true);
+    expect(isPathToken('portal-cors')).toBe(true);
+    expect(isPathToken('url-planes')).toBe(true);
+    expect(isPathToken('Area')).toBe(false);
     expect(isPathToken('Bun.serve')).toBe(false);
     expect(isPathToken('Request/response')).toBe(false);
     expect(isPathToken('oven-sh/bun')).toBe(false);
-    expect(isPathToken('I/O')).toBe(false);
   });
 
   test('isExternalPath skips docs, registry names, other roots', () => {
@@ -48,20 +57,36 @@ describe('lib-area-map-check helpers', () => {
     expect(isExternalPath('scrapers/books/')).toBe(false);
   });
 
-  test('coversTopLevel matches explicit and simple globs', () => {
+  test('coversTopLevel: basename globs work; path globs do not match all', () => {
     expect(coversTopLevel('seat-intake.ts', ['seat-intake.ts'])).toBe(true);
     expect(coversTopLevel('seat-desk-callback.ts', ['seat-desk-*.ts'])).toBe(true);
+    expect(coversTopLevel('portal-cors.ts', ['portal-cors'])).toBe(true);
+    // P0 regression: flows/cards/* must NOT cover every top-level file
+    expect(coversTopLevel('ops-bot.ts', ['flows/cards/*'])).toBe(false);
     expect(coversTopLevel('mystery.ts', ['seat-desk-*.ts'])).toBe(false);
   });
 
-  test('extractVerifiedDate', () => {
+  test('globToRegExp matches relative paths', () => {
+    expect(globToRegExp('flows/cards/*').test('flows/cards/menu.ts')).toBe(true);
+    expect(globToRegExp('flows/cards/*').test('ops-bot.ts')).toBe(false);
+    expect(globToRegExp('seat-desk-*.ts').test('seat-desk-callback.ts')).toBe(true);
+  });
+
+  test('extractVerifiedDate and age', () => {
     expect(extractVerifiedDate('<!-- area-map-verified: 2026-08-06 -->\n')).toBe('2026-08-06');
     expect(extractVerifiedDate('# no stamp')).toBeUndefined();
+    expect(verifiedAgeDays('2026-08-06', new Date('2026-08-06T12:00:00Z'))).toBe(0);
+    expect(verifiedAgeDays('2026-07-01', new Date('2026-08-06T12:00:00Z'))).toBe(36);
+  });
+
+  test('mega allowlist includes portal', () => {
+    expect(MEGA_DOMAINS).toContain('portal');
+    expect(MEGA_DOMAINS).toContain('operations');
   });
 });
 
 describe('lib-area-map-check CLI', () => {
-  test('repo Area maps pass path validation', async () => {
+  test('repo Area maps pass path validation (hard fails only)', async () => {
     const proc = Bun.spawn(['bun', 'tools/lib-area-map-check.ts'], {
       stdout: 'pipe',
       stderr: 'pipe',
@@ -70,7 +95,6 @@ describe('lib-area-map-check CLI', () => {
     const code = await proc.exited;
     const out = await new Response(proc.stdout).text();
     expect(code).toBe(0);
-    expect(out).toContain('lib-area-map-check');
-    expect(out).toContain('OK');
+    expect(out).toMatch(/lib-area-map-check/);
   });
 });

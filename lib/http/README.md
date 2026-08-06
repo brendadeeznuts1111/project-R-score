@@ -1,21 +1,26 @@
 # http
 
+<!-- area-map-verified: 2026-08-06 -->
+
+> **AGENT PROTOCOL:** Do not list files recursively. Read the **## Area map**
+> below, pick one cluster, and open only the entry paths listed.
+
 HTTP helpers for Bun.serve surfaces (static response utilities, caching
 headers).
 
 ## Area map
 
-Cluster index (not every file). Three planes: **local** `serve-public` ·
-**Pages edge** (`functions/`) · **bake** (`portal-weave` → registry/chrome).
+Cluster index (not every file). Three planes: **local** serve-public · **Pages
+edge** (functions/) · **bake** (portal-weave → registry/chrome).
 
-| Area | Paths (entry) | Role |
-| ---- | ------------- | ---- |
-| Serve-public runtime | [`serve-public-config.ts`](serve-public-config.ts) · [`serve-public-bind.ts`](serve-public-bind.ts) · [`serve-public-error.ts`](serve-public-error.ts) · [`live-reload.ts`](live-reload.ts) · [`static-response.ts`](static-response.ts) | Local static server policy + HMR |
-| Bun.serve identity | [`bun-server.ts`](bun-server.ts) · [`bun-serve-shape.ts`](bun-serve-shape.ts) · [`bun-serve-lifecycle.ts`](bun-serve-lifecycle.ts) · [`bind-identity-card.ts`](bind-identity-card.ts) | Port/protocol matrix + startup card |
-| Routes / boards | [`public-routes.ts`](public-routes.ts) · [`portal-board-slugs.ts`](portal-board-slugs.ts) · [`portal-route-manifest.ts`](portal-route-manifest.ts) · [`portal-nav.ts`](portal-nav.ts) · [`wiki-nav.ts`](wiki-nav.ts) | Path inventory SSOT for verify + dashboards |
-| Portal edge (Pages) | `portal-cors` · `portal-env-edge` · `portal-health-edge` · `portal-markdown` · [`cloudflare-security-headers.ts`](cloudflare-security-headers.ts) · [`pages-local-only.ts`](pages-local-only.ts) | Edge handlers + CORS + security |
-| Fetch / content wire | [`fetch-headers.ts`](fetch-headers.ts) · [`fetch-preconnect.ts`](fetch-preconnect.ts) · [`content-type.ts`](content-type.ts) · [`form-upload.ts`](form-upload.ts) · [`data-etag.ts`](data-etag.ts) | Outbound/inbound HTTP primitives |
-| Proof / weave / catalog | `networking-*.ts` · [`bun-defaults-proof.ts`](bun-defaults-proof.ts) · [`verification-scripts.ts`](verification-scripts.ts) · [`portal-weave.ts`](portal-weave.ts) · [`skills-catalog.ts`](skills-catalog.ts) | Registry artifacts + pipe scripts + chrome weave |
+| Area                    | Paths (entry)                                                                                                                                                                                                                                                                                                                                        | Role                                             |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Serve-public runtime    | [`serve-public-config.ts`](serve-public-config.ts) · [`serve-public-bind.ts`](serve-public-bind.ts) · [`serve-public-error.ts`](serve-public-error.ts) · [`live-reload.ts`](live-reload.ts) · [`static-response.ts`](static-response.ts)                                                                                                             | Local static server policy + HMR                 |
+| Bun.serve identity      | [`bun-server.ts`](bun-server.ts) · [`bun-serve-shape.ts`](bun-serve-shape.ts) · [`bun-serve-lifecycle.ts`](bun-serve-lifecycle.ts) · [`bind-identity-card.ts`](bind-identity-card.ts) · [`host-planes.ts`](host-planes.ts) · [`host-lineage.ts`](host-lineage.ts)                                                                                    | Port/protocol matrix + host vocabulary           |
+| Routes / boards         | [`public-routes.ts`](public-routes.ts) · [`portal-board-slugs.ts`](portal-board-slugs.ts) · [`portal-route-manifest.ts`](portal-route-manifest.ts) · [`portal-nav.ts`](portal-nav.ts) · [`wiki-nav.ts`](wiki-nav.ts) · [`canonical-redirect.ts`](canonical-redirect.ts) · [`public-read-path.ts`](public-read-path.ts)                               | Path inventory SSOT for verify + dashboards      |
+| Portal edge (Pages)     | `portal-*.ts` · [`cloudflare-security-headers.ts`](cloudflare-security-headers.ts) · [`pages-local-only.ts`](pages-local-only.ts)                                                                                                                                                                                                                    | Edge handlers + CORS + health + markdown         |
+| Fetch / content wire    | [`fetch-headers.ts`](fetch-headers.ts) · [`fetch-preconnect.ts`](fetch-preconnect.ts) · [`content-type.ts`](content-type.ts) · [`form-upload.ts`](form-upload.ts) · [`data-etag.ts`](data-etag.ts) · [`data-source.ts`](data-source.ts) · [`sha256.ts`](sha256.ts)                                                                                   | Outbound/inbound HTTP primitives                 |
+| Proof / weave / catalog | `networking-*.ts` · [`bun-defaults-proof.ts`](bun-defaults-proof.ts) · [`verification-scripts.ts`](verification-scripts.ts) · [`portal-weave.ts`](portal-weave.ts) · [`skills-catalog.ts`](skills-catalog.ts) · [`defaults-cron.ts`](defaults-cron.ts) · [`llms-txt.ts`](llms-txt.ts) · [`registry-board-negotiate.ts`](registry-board-negotiate.ts) | Registry artifacts + pipe scripts + chrome weave |
 
 Large data SSOTs: [`portal-weave.ts`](portal-weave.ts) ·
 [`public-routes.ts`](public-routes.ts) — catalogs, not general runtime helpers.

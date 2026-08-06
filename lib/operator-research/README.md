@@ -1,5 +1,10 @@
 # Operator research
 
+<!-- area-map-verified: 2026-08-06 -->
+
+> **AGENT PROTOCOL:** Do not list files recursively. Read the **## Area map**
+> below, pick one cluster, and open only the entry paths listed.
+
 Research-domain helpers for bookmaker discovery, live odds monitoring, and
 portal agent-odds surfaces. HTTP ingress and static delivery remain under
 `tools/` and `public/portal/`.
@@ -11,17 +16,19 @@ Use the **Area map** first. Inventory SSOT: [`../README.md`](../README.md).
 
 Cluster index (not every file). **Limit scrape agents live under
 [`../operations/scrapers/`](../operations/scrapers/)** — not here. Shared
-bridge: `config/operators/*.toml` `[scrape]` via [`operators.ts`](./operators.ts).
+bridge: `config/operators/*.toml` `[scrape]` via
+[`operators.ts`](./operators.ts).
 
-| Area | Paths (entry) | Role |
-| ---- | ------------- | ---- |
-| Discovery / enrich | [`research.ts`](./research.ts) · [`batch.ts`](./batch.ts) · [`enrich.ts`](./enrich.ts) · [`fetch-url.ts`](./fetch-url.ts) · [`detect-stack.ts`](./detect-stack.ts) · [`evidence.ts`](./evidence.ts) · [`coverage.ts`](./coverage.ts) | Seed → fetch/fixture → stack fingerprint → evidence DB → coverage |
-| Operator config | [`operators.ts`](./operators.ts) · [`types.ts`](./types.ts) · [`paths.ts`](./paths.ts) + `config/operators/*.toml` | Declarative operator identity + optional scrape block |
-| Odds pipeline | [`odds/`](./odds/) | Live/fixture odds: fetch, parse, diff, store, cron, WS + edge depth |
-| Normalization | [`normalization/`](./normalization/) | Leagues/teams/markets seed store + line conversion (`config/operator-research/*` when present) |
-| Matching / signals | [`matching/`](./matching/) | Cross-book match, arb, line movement, smart-money, alerts |
-| Desk HTTP / chrome | [`dashboard.ts`](./dashboard.ts) · [`desk-jobs.ts`](./desk-jobs.ts) · [`registry-desk.ts`](./registry-desk.ts) · [`system-panel.ts`](./system-panel.ts) · [`auth/`](./auth/) · [`doctor.ts`](./doctor.ts) | `agent serve` megasurface + registry publish |
-| Portal sim / edges | [`edge-engine.ts`](./edge-engine.ts) · [`bet-mock.ts`](./bet-mock.ts) · [`backtest.ts`](./backtest.ts) | Simulated edges/Kelly for `/portal/agent-odds/` (not full live feed) |
+| Area               | Paths (entry)                                                                                                                                                                                                                                                                                                                                                     | Role                                                                 |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Discovery / enrich | [`research.ts`](./research.ts) · [`batch.ts`](./batch.ts) · [`enrich.ts`](./enrich.ts) · [`enrich-worker.ts`](./enrich-worker.ts) · [`fetch-url.ts`](./fetch-url.ts) · [`fetch-classify.ts`](./fetch-classify.ts) · [`detect-stack.ts`](./detect-stack.ts) · [`evidence.ts`](./evidence.ts) · [`coverage.ts`](./coverage.ts) · [`screenshot.ts`](./screenshot.ts) | Seed → fetch/fixture → stack fingerprint → evidence DB → coverage    |
+| Operator config    | [`operators.ts`](./operators.ts) · [`types.ts`](./types.ts) · [`paths.ts`](./paths.ts) · [`index.ts`](./index.ts) · [`version-check.ts`](./version-check.ts) + `config/operators/*.toml`                                                                                                                                                                          | Declarative operator identity + optional scrape block                |
+| Odds pipeline      | [`odds/`](./odds/) · [`odds/odds-store.ts`](./odds/odds-store.ts) · [`odds/pipeline.ts`](./odds/pipeline.ts)                                                                                                                                                                                                                                                      | Live/fixture odds: fetch, parse, diff, store, cron, WS + edge depth  |
+| Normalization      | [`normalization/`](./normalization/)                                                                                                                                                                                                                                                                                                                              | Leagues/teams/markets seed store + line conversion                   |
+| Matching / signals | [`matching/`](./matching/)                                                                                                                                                                                                                                                                                                                                        | Cross-book match, arb, line movement, smart-money, alerts            |
+| Desk HTTP / chrome | [`dashboard.ts`](./dashboard.ts) · [`desk-jobs.ts`](./desk-jobs.ts) · [`tasks.ts`](./tasks.ts) · [`registry-desk.ts`](./registry-desk.ts) · [`system-panel.ts`](./system-panel.ts) · [`package-update.ts`](./package-update.ts) · [`auth/`](./auth/) · [`doctor.ts`](./doctor.ts) · [`http/bun-file.ts`](./http/bun-file.ts)                                      | `agent serve` megasurface + registry publish                         |
+| Workers / partners | [`worker-registry.ts`](./worker-registry.ts) · [`partners-signal.ts`](./partners-signal.ts) · [`partners-liquidity.ts`](./partners-liquidity.ts)                                                                                                                                                                                                                  | Background workers + partner signal bridges                          |
+| Portal sim / edges | [`edge-engine.ts`](./edge-engine.ts) · [`bet-mock.ts`](./bet-mock.ts) · [`backtest.ts`](./backtest.ts)                                                                                                                                                                                                                                                            | Simulated edges/Kelly for `/portal/agent-odds/` (not full live feed) |
 
 **Three “edges” surfaces (do not merge casually):** live matching arb
 (`matching/`) · pipeline pattern / depth signals (`odds/`) · portal
