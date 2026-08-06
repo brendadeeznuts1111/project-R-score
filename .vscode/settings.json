@@ -3,7 +3,10 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
-  "editor.rulers": [80, 100],
+  "editor.rulers": [
+    80,
+    100
+  ],
   "editor.wordWrap": "off",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
@@ -27,8 +30,17 @@
   "eslint.options": {
     "overrideConfigFile": "eslint.harness.config.ts"
   },
-  "eslint.workingDirectories": [{ "mode": "auto" }],
-  "eslint.validate": ["typescript", "typescriptreact", "javascript", "javascriptreact"],
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "eslint.validate": [
+    "typescript",
+    "typescriptreact",
+    "javascript",
+    "javascriptreact"
+  ],
   "eslint.lintTask.enable": true,
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -83,5 +95,5 @@
   "bun.test.enabled": true,
   "npm.autoDetect": "off",
   "npm.packageManager": "bun",
-  "npm.exclude": "**/plum-spruce-dawn-dune1/**"
+  "npm.exclude": "{**/plum-spruce-dawn-dune1/**,**/.worktrees/**,**/.codex-worktrees/**}"
 }
